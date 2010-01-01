@@ -1,0 +1,576 @@
+﻿# Finnish language file for Raw Therapee v2.4m1 (www.rawtherapee.com)
+# Compiled by T.Kauppinen 31.7.2008
+ADJUSTER_RESET_TO_DEFAULT;Palauta oletusasetukset
+CURVEEDITOR_FILEDLGFILTERANY;Kaikki tiedostot
+CURVEEDITOR_FILEDLGFILTERCURVE;Käyrä tiedostot
+CURVEEDITOR_LINEAR;Suora
+CURVEEDITOR_LOADDLGLABEL;Lataa käyrä...
+CURVEEDITOR_SAVEDLGLABEL;Tallenna käyrä...
+CURVEEDITOR_TOOLTIPLINEAR;Palauta suoraksi
+CURVEEDITOR_TOOLTIPLOAD;Lataa käyrä tiedostosta
+CURVEEDITOR_TOOLTIPSAVE;Tallenna käyrä
+EXIFFILTER_APERTURE;Aperture
+EXIFFILTER_CAMERA;Camera
+EXIFFILTER_DIALOGLABEL;Exif Filter
+EXIFFILTER_FOCALLEN;Focal Length
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Lens
+EXIFFILTER_SHUTTER;Shutter
+EXIFPANEL_ADDEDIT;Lisää/Muokkaa
+EXIFPANEL_ADDEDITHINT;Lisää uusi tai muokkaa
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Valitse
+EXIFPANEL_ADDTAGDLG_TITLE;Lisää/Muokkaa
+EXIFPANEL_KEEP;Pidä
+EXIFPANEL_KEEPHINT;Pidä valitut tallennettaessa
+EXIFPANEL_REMOVE;Poista
+EXIFPANEL_REMOVEHINT;Poista valitut tallennettaessa
+EXIFPANEL_RESET;Palauta
+EXIFPANEL_RESETALL;Palauta kaikki
+EXIFPANEL_RESETALLHINT;Palauta kaikki alkuperäisiksi
+EXIFPANEL_RESETHINT;Palauta valitut alkuperäisiksi
+EXIFPANEL_SUBDIRECTORY;Alihakemisto
+FILEBROWSER_APPLYPROFILE;Apply profile
+FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
+FILEBROWSER_CLEARPROFILE;Clear profile
+FILEBROWSER_COPYPROFILE;Copy profile
+FILEBROWSER_DELETEDLGLABEL;File delete confirmation
+FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
+FILEBROWSER_EMPTYTRASH;Empty Trash
+FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
+FILEBROWSER_EXIFFILTERAPPLY;Apply
+FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
+FILEBROWSER_EXIFFILTERLABEL;Exif Filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
+FILEBROWSER_PASTEPROFILE;Paste profile
+FILEBROWSER_POPUPCANCELJOB;Cancel job
+FILEBROWSER_POPUPMOVEEND;Move to end of queue
+FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
+FILEBROWSER_POPUPOPEN;Open
+FILEBROWSER_POPUPPROCESS;Put to processing queue
+FILEBROWSER_POPUPRANK1;Rank 1
+FILEBROWSER_POPUPRANK2;Rank 2
+FILEBROWSER_POPUPRANK3;Rank 3
+FILEBROWSER_POPUPRANK4;Rank 4
+FILEBROWSER_POPUPRANK5;Rank 5
+FILEBROWSER_POPUPREMOVE;Remove from filesystem
+FILEBROWSER_POPUPRENAME;Rename
+FILEBROWSER_POPUPSELECTALL;Select all
+FILEBROWSER_POPUPTRASH;Move to trash
+FILEBROWSER_POPUPUNRANK;Unrank
+FILEBROWSER_POPUPUNTRASH;Remove from trash
+FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_RENAMEDLGLABEL;Rename file
+FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
+FILEBROWSER_SHOWDIRHINT;Show all images of the directory
+FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
+FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star
+FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star
+FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star
+FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
+FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
+FILEBROWSER_SHOWTRASHHINT;Show content of the trash
+FILEBROWSER_SHOWUNRANKHINT;Show unranked images
+FILEBROWSER_STARTPROCESSING;Start Processing
+FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
+FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_THUMBSIZE;Thumb. size
+FILEBROWSER_ZOOMINHINT;Increase thumbnail size
+FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
+GENERAL_ABOUT;Tietoja
+GENERAL_CANCEL;Peruuta
+GENERAL_DISABLE;Pois
+GENERAL_DISABLED;Pois
+GENERAL_ENABLE;Päälle
+GENERAL_ENABLED;Päällä
+GENERAL_LANDSCAPE;Vaaka
+GENERAL_LOAD;Lataa
+GENERAL_NA;-
+GENERAL_NO;Ei
+GENERAL_OK;OK
+GENERAL_PORTRAIT;Pysty
+GENERAL_SAVE;Tallenna
+GENERAL_YES;Kyllä
+HISTOGRAM_LABEL;Histogram
+HISTOGRAM_TOOLTIP_B;Näytä/piilota SININEN
+HISTOGRAM_TOOLTIP_G;Näytä/piilota VIHREÄ
+HISTOGRAM_TOOLTIP_L;Näytä/piilota CIELAB luminanssi
+HISTOGRAM_TOOLTIP_R;Näytä/piilota PUNAINEN
+HISTORY_CHANGED;Muutettu
+HISTORY_CUSTOMCURVE;Oma käyrä
+HISTORY_DELSNAPSHOT;Poista pikakuva
+HISTORY_FROMCLIPBOARD;From clipboard
+HISTORY_LABEL;Historia
+HISTORY_MSG_10;Valotus\nTummien alueiden vaimennus
+HISTORY_MSG_11;Valotus\nSävykäyrä
+HISTORY_MSG_12;Valotus\nAutomaattinen
+HISTORY_MSG_13;Valotus\nAutomaattisen valotuksen raja
+HISTORY_MSG_14;Luminanssi\nKirkkaus
+HISTORY_MSG_15;Luminanssi\nKontrasti
+HISTORY_MSG_16;Luminanssi\nTummuus
+HISTORY_MSG_17;Luminanssi\nVaaleiden alueiden vaimennus
+HISTORY_MSG_18;Luminanssi\nTummien alueiden vaimennus
+HISTORY_MSG_19;Luminanssi\nKäyrä
+HISTORY_MSG_1;Kuva ladattu
+HISTORY_MSG_20;Terävöinti
+HISTORY_MSG_21;Terävöinti\nEpäterävä maski: Säde
+HISTORY_MSG_22;Terävöinti\nEpäterävä maski: Määrä
+HISTORY_MSG_23;Terävöinti\nEpäterävä maski: Kynnys
+HISTORY_MSG_24;Terävöinti\nEpäterävä maski: Vain reunat
+HISTORY_MSG_25;Terävöinti\nEpäterävä maski: Reunatunnistuksen säde
+HISTORY_MSG_26;Terävöinti\nEpäterävä maski: Reunatunnistuksen herkkyys
+HISTORY_MSG_27;Terävöinti\nEpäterävä maski: Halo-ilmiön esto
+HISTORY_MSG_28;Terävöinti\nEpäterävä maski: Halo-ilmiön eston määrä
+HISTORY_MSG_29;Terävöinti\nMenetelmä
+HISTORY_MSG_2;Profiili ladattu
+HISTORY_MSG_30;Terävöinti\nDekonvoluutio: Säde
+HISTORY_MSG_31;Terävöinti\nDekonvoluutio: Määrä
+HISTORY_MSG_32;Terävöinti\nDekonvoluutio: Vaimennus
+HISTORY_MSG_33;Terävöinti\nDekonvoluutio: Iteraatiot
+HISTORY_MSG_34;Värikylläisyys\nVältä leikkautuminen
+HISTORY_MSG_35;Värikylläisyys\nEstä kyllästyminen
+HISTORY_MSG_36;Värikylläisyys\nKyllästymisraja
+HISTORY_MSG_37;Värikylläisyys
+HISTORY_MSG_38;Valkotasapaino\nMenetelmä
+HISTORY_MSG_39;Valkotasapaino\nVärilämpötila
+HISTORY_MSG_3;Profiili vaihdettu
+HISTORY_MSG_40;Valkotasapaino\nValkoisen sävy
+HISTORY_MSG_41;Värisävy\nvihreä-punainen
+HISTORY_MSG_42;Värisävy\nsininen-keltainen
+HISTORY_MSG_43;Luminanssin kohinanvaimennus
+HISTORY_MSG_44;Luminanssin kohinanvaimennus\nSäde
+HISTORY_MSG_45;Luminanssin kohinanvaimennus\nReunan tunnistusherkkyys
+HISTORY_MSG_46;Värin kohinanvaimennus
+HISTORY_MSG_47;Värin kohinanvaimennus\nSäde
+HISTORY_MSG_48;Värin kohinanvaimennus\nReunan tunnistusherkkyys
+HISTORY_MSG_49;Värin kohinanvaimennus\nReunaherkkä
+HISTORY_MSG_4;Historian selaus
+HISTORY_MSG_50;Tummat/vaaleat alueet
+HISTORY_MSG_51;Tummat/vaaleat alueet\nVaaleiden alueiden vaimennus
+HISTORY_MSG_52;Tummat/vaaleat alueet\nTummien alueiden vaimennus
+HISTORY_MSG_53;Tummat/vaaleat alueet\nVaalean sävyalueen leveys
+HISTORY_MSG_54;Tummat/vaaleat alueet\nTumman sävyalueen leveys
+HISTORY_MSG_55;Tummat/vaaleat alueet\nPaikallinen kontrasti
+HISTORY_MSG_56;Tummat/vaaleat alueet\nSäde
+HISTORY_MSG_57;Kääntö
+HISTORY_MSG_58;Peilaa vaakasuunnassa
+HISTORY_MSG_59;Peilaa pystysuunnassa
+HISTORY_MSG_5;Valotus\nKirkkaus
+HISTORY_MSG_60;Kääntö
+HISTORY_MSG_61;Kääntö
+HISTORY_MSG_62;Linssivääristymän korjaus
+HISTORY_MSG_63;Pikakuva valittu
+HISTORY_MSG_64;Rajaus
+HISTORY_MSG_65;Värivääristymän korjaus
+HISTORY_MSG_66;Huippuvaloalueiden palautus
+HISTORY_MSG_67;Huippuvaloalueiden palautus\nMäärä
+HISTORY_MSG_68;Huippuvaloalueiden palautus\nMenetelmä
+HISTORY_MSG_69;Työväriprofiili
+HISTORY_MSG_6;Valotus\nKontrasti
+HISTORY_MSG_70;Tulosväriprofiili
+HISTORY_MSG_71;Lähdeväriprofiili
+HISTORY_MSG_72;Vinjetoinnin korjaus
+HISTORY_MSG_73;Kanavat
+HISTORY_MSG_74;Koko
+HISTORY_MSG_75;Koko\nMenetelmä
+HISTORY_MSG_76;Exif-tiedot
+HISTORY_MSG_77;IPTC-tiedot
+HISTORY_MSG_7;Valotus\nTummuus
+HISTORY_MSG_8;Valotus\nKompensointi
+HISTORY_MSG_9;Valotus\nVaaleiden alueiden vaimennus
+HISTORY_NEWSNAPSHOT;Uusi pikakuva
+HISTORY_NEWSNAPSHOTAS;...
+HISTORY_NEWSSDIALOGLABEL;Pikakuvan nimi:
+HISTORY_NEWSSDIALOGTITLE;Lisää uusi pikakuva
+HISTORY_SETTO;Aseta
+HISTORY_SNAPSHOT;Pikakuva
+HISTORY_SNAPSHOTS;Pikakuvat
+ICMPANEL_FILEDLGFILTERANY;kaikki tiedostot
+ICMPANEL_FILEDLGFILTERICM;ICC-profiilitiedostot
+ICMPANEL_GAMMABEFOREINPUT;Käytä profiilin gammaa
+ICMPANEL_INPUTCAMERA;Kameran oletus
+ICMPANEL_INPUTCUSTOM;Oma
+ICMPANEL_INPUTDLGLABEL;Valitse lähteen ICC-profiili...
+ICMPANEL_INPUTEMBEDDED;Käytä kuvan omaa, jos mahdollista
+ICMPANEL_INPUTPROFILE;Lähdeväriprofiili
+ICMPANEL_NOICM;Ei ICM-profiilia: sRGB
+ICMPANEL_OUTPUTDLGLABEL;Valitse tuloksen ICC-profiili...
+ICMPANEL_OUTPUTPROFILE;Tulosväriprofiili
+ICMPANEL_SAVEREFERENCE;Tallenna mallikuva\nprofilointia varten
+ICMPANEL_WORKINGPROFILE;Työväriprofiili
+IMAGEAREA_DETAILVIEW;Suurennos
+IPTCPANEL_AUTHOR;Kuvaaja
+IPTCPANEL_AUTHORHINT;(Author) Kuvaajan nimi.
+IPTCPANEL_AUTHORSPOSITION;Kuvaajan titteli
+IPTCPANEL_AUTHORSPOSITIONHINT;(Author position) Kuvaajan titteli.
+IPTCPANEL_CAPTION;Aihe
+IPTCPANEL_CAPTIONHINT;(Caption) Kuvaus kohteesta.
+IPTCPANEL_CAPTIONWRITER;Kuvauksen kirjoittaja
+IPTCPANEL_CAPTIONWRITERHINT;(Caption Writer) Kuvauksen kirjoittajan nimi.
+IPTCPANEL_CATEGORY;Aiheryhmä
+IPTCPANEL_CATEGORYHINT;(Category) Aiheryhmän 3-kirjaiminen koodi.
+IPTCPANEL_CITY;Kaupunki
+IPTCPANEL_CITYHINT;(City) Kaupunki jossa kuva on otettu.
+IPTCPANEL_COPYHINT;Kopioi IPTC asetukset leikepöydälle
+IPTCPANEL_COPYRIGHT;Tekijänoikeudet
+IPTCPANEL_COPYRIGHTHINT;(Copyright) Tekijänoikeustiedot.
+IPTCPANEL_COUNTRY;Maa
+IPTCPANEL_COUNTRYHINT;(Country) Maa jossa kuva on otettu.
+IPTCPANEL_CREDIT;Välittäjä
+IPTCPANEL_CREDITHINT;(Credit) Välittäjän tiedot.
+IPTCPANEL_DATECREATED;Päivämäärä
+IPTCPANEL_DATECREATEDHINT;(Date Created) Päivämäärä jolloin kuva on otettu.
+IPTCPANEL_EMBEDDED;Kuvan oma
+IPTCPANEL_EMBEDDEDHINT;Palauta kuvan IPTC tiedot
+IPTCPANEL_HEADLINE;Julkaistava otsikko
+IPTCPANEL_HEADLINEHINT;(Headline) Julkaistava otsikko.
+IPTCPANEL_INSTRUCTIONS;Ohjeet
+IPTCPANEL_INSTRUCTIONSHINT;(Instructions) Ohjeet ja rajoitukset.
+IPTCPANEL_KEYWORDS;Avainsanat
+IPTCPANEL_KEYWORDSHINT;(Keywords) Kohdetta kuvaavia avainsanoja.
+IPTCPANEL_PASTEHINT;Liitä IPTC asetukset leikepöydältä
+IPTCPANEL_PROVINCE;Maakunta
+IPTCPANEL_PROVINCEHINT;(Province) Maakunta jossa kuva on otettu.
+IPTCPANEL_RESET;Palauta
+IPTCPANEL_RESETHINT;Palauta profiilin oletukseen
+IPTCPANEL_SOURCE;Lähde
+IPTCPANEL_SOURCEHINT;(Source) Kuvan lähde.
+IPTCPANEL_SUPPCATEGORIES;Tarkempi aiheryhmä
+IPTCPANEL_SUPPCATEGORIESHINT;(Supplemental Categories) Tarkempi aiheryhmä.
+IPTCPANEL_TITLE;Otsikko
+IPTCPANEL_TITLEHINT;(Title) Otsikko.
+IPTCPANEL_TRANSREFERENCE;Alkuperäviite
+IPTCPANEL_TRANSREFERENCEHINT;(Original Transmission Reference) Alkuperäviite.
+MAIN_BUTTON_PREFERENCES;Asetukset
+MAIN_BUTTON_SAVE;Tallenna kuva
+MAIN_BUTTON_SAVEAS;...
+MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_MSG_ALREADYEXISTS;Tiedosto on jo olemassa.
+MAIN_MSG_CANNOTLOAD;Kuvaa ei voi avata
+MAIN_MSG_CANNOTSAVE;Tiedoston tallennusongelma
+MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
+MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
+MAIN_MSG_JOBSINQUEUE;työtä jonossa
+MAIN_MSG_QOVERWRITE;Haluatko tallentaa päälle?
+MAIN_TAB_BASIC;Säädöt
+MAIN_TAB_COLOR;Color
+MAIN_TAB_DETAIL;Detail
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_ICM;ICM
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TRANSFORM;Muunnokset
+MAIN_TOOLTIP_HIDEFP;Näytä/piilota alaikkuna (shortcut key: F)
+MAIN_TOOLTIP_HIDEHP;Näytä/piilota vasen ikkuna (shortcut key: H)
+MAIN_TOOLTIP_INDCLIPPEDH;Näytä leikkautuvat\nvaaleat alueet
+MAIN_TOOLTIP_INDCLIPPEDS;Näytä leikkautuvat\ntummat alueet
+MAIN_TOOLTIP_PREFERENCES;Muuta asetuksia
+MAIN_TOOLTIP_QINFO;Kuvan tiedot
+MAIN_TOOLTIP_SAVE;Tallenna kuva\noletuskansioon
+MAIN_TOOLTIP_SAVEAS;Tallenna kuva\nvalittuun kansioon
+PARTIALPASTE_BASICGROUP;Basic settings
+PARTIALPASTE_CACORRECTION;C/A correction
+PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
+PARTIALPASTE_COLORBOOST;Color boost
+PARTIALPASTE_COLORDENOISE;Color denoise
+PARTIALPASTE_COLORGROUP;Color related settings
+PARTIALPASTE_COLORMIXER;Color mixer
+PARTIALPASTE_COLORSHIFT;Color shift
+PARTIALPASTE_COMPOSITIONGROUP;Composition settings
+PARTIALPASTE_CROP;Crop
+PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
+PARTIALPASTE_DISTORTION;Distortion correction
+PARTIALPASTE_EXIFCHANGES;Changes to exif data
+PARTIALPASTE_EXPOSURE;Exposure
+PARTIALPASTE_HLRECOVERY;Highlight recovery
+PARTIALPASTE_ICMSETTINGS;ICM settings
+PARTIALPASTE_IPTCINFO;IPTC info
+PARTIALPASTE_LENSGROUP;Lens related settings
+PARTIALPASTE_LUMACURVE;Luminance curve
+PARTIALPASTE_LUMADENOISE;Luminance noise reduction
+PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
+PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
+PARTIALPASTE_RESIZE;Resize
+PARTIALPASTE_ROTATION;Rotation
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
+PARTIALPASTE_SHARPENING;Sharpening
+PARTIALPASTE_VIGNETTING;Vignetting correction
+PARTIALPASTE_WHITEBALANCE;White balance
+PREFERENCES_APPLNEXTSTARTUP;käytössä käynnistyksen jälkeen
+PREFERENCES_BLINKCLIPPED;Välkytä leikkautuvia alueita
+PREFERENCES_CACHECLEARALL;Clear All
+PREFERENCES_CACHECLEARPROFILES;Clear Profiles
+PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
+PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
+PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
+PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
+PREFERENCES_CACHEOPTS;Cache Options
+PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
+PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
+PREFERENCES_CACHESTRAT;Cache Strategy
+PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
+PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
+PREFERENCES_CLEARDLG_LINE1;Clearing cache
+PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
+PREFERENCES_CLEARDLG_TITLE;Please wait
+PREFERENCES_CLIPPINGIND;Leikkautuminen
+PREFERENCES_CMETRICINTENT;Näköistystapa
+PREFERENCES_DATEFORMAT;Päivämäärän muoto
+PREFERENCES_DATEFORMATHINT;<i>Voit käyttää seuraavia komentoja:</i>\n<b>%y</b><i> : vuosi</i>\n<b>%m</b><i> : kuukausi</i>\n<b>%d</b><i> : päivä</i>\n<i>\nEsimerkiksi, pp.kk.vvvv:</i>\n<b>%d.%m.%y</b>
+PREFERENCES_DEFAULTLANG;Oletuskieli
+PREFERENCES_DEFAULTTHEME;Oletus
+PREFERENCES_DEMOSAICINGALGO;Koostamismenetelmä (interpolointi)
+PREFERENCES_DIRHOME;Kotihakemisto
+PREFERENCES_DIRLAST;Viimeksi käytetty hakemisto
+PREFERENCES_DIROTHER;Muu
+PREFERENCES_DIRSELECTDLG;Valitse kuvahakemisto käynnistettäessä...
+PREFERENCES_DIRSOFTWARE;Asennushakemisto
+PREFERENCES_DMETHOD;Menetelmä
+PREFERENCES_EDITORCMDLINE;Other command line
+PREFERENCES_EXTERNALEDITOR;External editor
+PREFERENCES_FALSECOLOR;Värivääristymien eston määrä
+PREFERENCES_FBROWSEROPTS;Tiedostojen valinnat
+PREFERENCES_FILEFORMAT;Tiedoston tyyppi
+PREFERENCES_FORIMAGE;Kuvatiedostoille
+PREFERENCES_FORRAW;RAW tiedostoille
+PREFERENCES_GIMPPATH;GIMP installation directory
+PREFERENCES_GTKTHEME;GTK oletus
+PREFERENCES_HINT;Neuvo
+PREFERENCES_HLTHRESHOLD;Kynnysarvo vaaleille alueille
+PREFERENCES_ICCDIR;ICC-profiilien hakemisto
+PREFERENCES_IMPROCPARAMS;Oletusasetukset
+PREFERENCES_INTENT_ABSOLUTE;Absoluuttinen kolorimetrinen
+PREFERENCES_INTENT_PERCEPTUAL;Havainnollinen
+PREFERENCES_INTENT_RELATIVE;Suhteellinen kolorimetrinen
+PREFERENCES_INTENT_SATURATION;Kylläisyyden säilyttävä
+PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_MONITORICC;Näytön profiili
+PREFERENCES_OUTDIR;Tallennushakemisto
+PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRHINT;<i>Voit käyttää seuraavia komentoja:\n</i><b>%f</b><i> tiedosto\n</i><b>%p1, %p2, ...</b><i> polku\n</i><b>%d1, %d2, ...,</b><i> hakemisto\nNämä komennot viittaavat RAW-tiedoston hakemistoihin ja polkuihin.\n\nEsimerkiksi: jos </i><b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>on avattu, komennot tarkoittavat seuraavaa:\n</i><b>%f=dsc0012\n%d1=02-09-2006, %d2=image,...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nJos haluat tallentaa alkuperäisen kuvan hakemistoon:\n</i><b>%p1/%f\n</b><i>\nJos haluat tallentaa hakemistoon nimeltä  'converted' joka sijaitsee alkuperäisen kuvan hakemistossa:\n</i><b>%p1/converted/%f\n</b><i>\nJos haluat tallentaa hakemistoon '/home/tom/converted' ja pitää päivämäärähakemistot:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_PARSEDEXTADD;Add Extension
+PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
+PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PROFILEHANDLING;Processing Profile Handling
+PREFERENCES_PROFILELOADPR;Profile Loading Priority
+PREFERENCES_PROFILEPRCACHE;Profile in Cache
+PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
+PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
+PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
+PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_SELECTICCDIRDLG;Valitse ICC-profiilin hakemisto...
+PREFERENCES_SELECTLANG;Valitse kieli
+PREFERENCES_SELECTMONITORPROFDLG;Valitse näytön ICC-profiili...
+PREFERENCES_SELECTTHEME;Valitse teema
+PREFERENCES_SHOWBASICEXIF;Näytä perus Exif-tiedot
+PREFERENCES_SHOWDATETIME;Näytä päivämäärä ja aika
+PREFERENCES_SHOWONLYRAW;Näytä vain RAW-tiedostot
+PREFERENCES_SHTHRESHOLD;Kynnysarvo tummille alueille
+PREFERENCES_STARTUPIMDIR;Kuvahakemisto käynnistettäessä
+PREFERENCES_TAB_BROWSER;Tiedostot
+PREFERENCES_TAB_COLORMGR;Värit
+PREFERENCES_TAB_GENERAL;Yleiset
+PREFERENCES_TAB_IMPROC;Kuvankäsittely
+PREFERENCES_TAB_OUTPUT;Tallennus
+PREFERENCES_THUMBSIZE;Esikatselukuvien koko
+PROFILEPANEL_FILEDLGFILTERANY;Kaikki tiedostot
+PROFILEPANEL_FILEDLGFILTERPP;Profiilitiedostot
+PROFILEPANEL_LABEL;Käsittelyprofiili
+PROFILEPANEL_LOADDLGLABEL;Lataa käsittelyprofiili...
+PROFILEPANEL_PCUSTOM;Oma
+PROFILEPANEL_PFILE;Tiedostosta
+PROFILEPANEL_PLASTPHOTO;Viimeisimmästä kuvasta
+PROFILEPANEL_PLASTSAVED;Viimeisin tallennettu
+PROFILEPANEL_PROFILE;Profiili
+PROFILEPANEL_SAVEDLGLABEL;Tallenna käsittelyprofiili...
+PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
+PROFILEPANEL_TOOLTIPLOAD;Lataa profiili tiedostosta
+PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
+PROFILEPANEL_TOOLTIPSAVE;Tallenna profiili
+PROGRESSBAR_DECODING;RAW-tiedostoa puretaan...
+PROGRESSBAR_DEMOSAICING;Kuvaa koostetaan...
+PROGRESSBAR_LOADING;Kuvaa ladataan...
+PROGRESSBAR_LOADJPEG;JPEG-tiedostoa ladataan...
+PROGRESSBAR_LOADPNG;PNG-tiedostoa ladataan...
+PROGRESSBAR_LOADTIFF;TIFF-tiedostoa ladataan...
+PROGRESSBAR_PROCESSING;Kuvaa käsitellään...
+PROGRESSBAR_READY;Valmis.
+PROGRESSBAR_SAVEJPEG;JPEG-tiedostoa tallennetaan...
+PROGRESSBAR_SAVEPNG;PNG-tiedostoa tallennetaan...
+PROGRESSBAR_SAVETIFF;TIFF-tiedostoa tallennetaan...
+PROGRESSDLG_LOADING;Loading file...
+PROGRESSDLG_PROCESSING;Processing image...
+PROGRESSDLG_SAVING;Saving file...
+QINFO_FOCALLENGTH;Polttoväli
+QINFO_ISO;ISO
+QINFO_LENS;Lens
+QINFO_NOEXIF;Exif tietoja ei saatavilla.
+SAVEDLG_FILEFORMAT;Tiedoston tyyppi
+SAVEDLG_JPEGQUAL;JPEG laatu (suurempi luku, parempi laatu)
+SAVEDLG_JPGFILTER;JPEG tiedostot
+SAVEDLG_PNGCOMPR;PNG pakkaus (suurempi luku, enemmän pakkausta)
+SAVEDLG_PNGFILTER;PNG tiedostot
+SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_SAVEIMMEDIATELY;Save immediately
+SAVEDLG_SAVESPP;Tallenna kuvankäsittelytiedot kuvan mukana
+SAVEDLG_TIFFFILTER;TIFF tiedostot
+TOOLBAR_TOOLTIP_CROP;Valitse rajattava alue (shortcut key: C)
+TOOLBAR_TOOLTIP_HAND;Kuvan siirtotyökalu (shortcut key: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Valitse suora linja (shortcut key: S)
+TOOLBAR_TOOLTIP_WB;Valitse valkotasapainon\nvalkea piste kuvasta (shortcut key: W)
+TP_CACORRECTION_BLUE;Sininen
+TP_CACORRECTION_LABEL;Väripoikkeaman korjaus
+TP_CACORRECTION_RED;Punainen
+TP_CHMIXER_BLUE;Sininen
+TP_CHMIXER_GREEN;Vihreä
+TP_CHMIXER_LABEL;Kanavat
+TP_CHMIXER_RED;Punainen
+TP_COARSETRAF_DEGREE;astetta
+TP_COARSETRAF_TOOLTIP_HFLIP;Peilaa vaakasuunnassa
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Käännä vasemmalle
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Käännä oikealle
+TP_COARSETRAF_TOOLTIP_VFLIP;Peilaa pystysuunnassa
+TP_COLORBOOST_ACHANNEL;a*
+TP_COLORBOOST_AMOUNT;Määrä
+TP_COLORBOOST_AVOIDCOLORCLIP;Vältä leikkautuminen
+TP_COLORBOOST_BCHANNEL;b*
+TP_COLORBOOST_CHAB;a* ja b*
+TP_COLORBOOST_CHANNEL;Kanava
+TP_COLORBOOST_CHSEPARATE;säädä erikseen
+TP_COLORBOOST_ENABLESATLIMITER;Estä kyllästyminen
+TP_COLORBOOST_LABEL;Värikylläisyys
+TP_COLORBOOST_SATLIMIT;Kyllästymisraja
+TP_COLORDENOISE_EDGESENSITIVE;Reunaherkkä
+TP_COLORDENOISE_EDGETOLERANCE;Reunan tunnistusherkkyys
+TP_COLORDENOISE_LABEL;Värin kohinanvaimennus
+TP_COLORDENOISE_RADIUS;Säde
+TP_COLORSHIFT_BLUEYELLOW;sininen-keltainen
+TP_COLORSHIFT_GREENMAGENTA;vihreä-punainen
+TP_COLORSHIFT_LABEL;Värisävy
+TP_CROP_DPI;Erottelutarkkuus (DPI):
+TP_CROP_FIXRATIO;Pidä kuvasuhde:
+TP_CROP_GTDIAGONALS;Kulmien puolittajat
+TP_CROP_GTHARMMEANS1;Kultainen leikkaus 1
+TP_CROP_GTHARMMEANS2;Kultainen leikkaus 2
+TP_CROP_GTHARMMEANS3;Kultainen leikkaus 3
+TP_CROP_GTHARMMEANS4;Kultainen leikkaus 4
+TP_CROP_GTNONE;Ei mikään
+TP_CROP_GTRULETHIRDS;Kolmijako
+TP_CROP_GUIDETYPE;Sommittelumalli:
+TP_CROP_H;Kork.
+TP_CROP_LABEL;Rajaus
+TP_CROP_SELECTCROP;Valitse alue
+TP_CROP_W;Lev.
+TP_CROP_X;   x
+TP_CROP_Y;   y
+TP_DISTORTION_AMOUNT;Määrä
+TP_DISTORTION_LABEL;Linssivääristymän korjaus
+TP_EXPOSURE_AUTOLEVELS;Automaattinen
+TP_EXPOSURE_BLACKLEVEL;Tummuus
+TP_EXPOSURE_BRIGHTNESS;Kirkkaus
+TP_EXPOSURE_CLIP;Raja
+TP_EXPOSURE_COMPRHIGHLIGHTS;Vaaleiden alueiden vaimennus
+TP_EXPOSURE_COMPRSHADOWS;Tummien alueiden vaimennus
+TP_EXPOSURE_CONTRAST;Kontrasti
+TP_EXPOSURE_CURVEEDITOR;Sävykäyrä
+TP_EXPOSURE_EXPCOMP;Kompensointi
+TP_EXPOSURE_LABEL;Valotus
+TP_HLREC_CIELAB;CIELAB värisekoitus
+TP_HLREC_COLOR;Värin palautus
+TP_HLREC_LABEL;Huippuvaloalueiden palautus
+TP_HLREC_LUMINANCE;Luminanssin palautus
+TP_HLREC_METHOD;Menetelmä: 
+TP_ICM_FILEDLGFILTERANY;kaikki tiedostot
+TP_ICM_FILEDLGFILTERICM;ICC-profiilitiedostot
+TP_ICM_GAMMABEFOREINPUT;Käytä profiilin gammaa
+TP_ICM_INPUTCAMERA;Kameran oletus
+TP_ICM_INPUTCUSTOM;Oma
+TP_ICM_INPUTDLGLABEL;Valitse lähteen ICC-profiili...
+TP_ICM_INPUTEMBEDDED;Käytä kuvan omaa, jos mahdollista
+TP_ICM_INPUTPROFILE;Lähdeväriprofiili
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;Ei ICM-profiilia: sRGB
+TP_ICM_OUTPUTDLGLABEL;Valitse tuloksen ICC-profiili...
+TP_ICM_OUTPUTPROFILE;Tulosväriprofiili
+TP_ICM_SAVEREFERENCE;Tallenna mallikuva\nprofilointia varten
+TP_ICM_WORKINGPROFILE;Työväriprofiili
+TP_LUMACURVE_BLACKLEVEL;Tummuus
+TP_LUMACURVE_BRIGHTNESS;Kirkkaus
+TP_LUMACURVE_COMPRHIGHLIGHTS;Vaaleiden alueiden vaimennus
+TP_LUMACURVE_COMPRSHADOWS;Tummien alueiden vaimennus
+TP_LUMACURVE_CONTRAST;Kontrasti
+TP_LUMACURVE_CURVEEDITOR;Luminanssin käyrä
+TP_LUMACURVE_LABEL;Luminanssi
+TP_LUMADENOISE_EDGETOLERANCE;Reunan tunnistusherkkyys
+TP_LUMADENOISE_LABEL;Luminanssin kohinanvaimennus
+TP_LUMADENOISE_RADIUS;Säde
+TP_RESIZE_BICUBIC;Bikuutiollinen
+TP_RESIZE_BICUBICSF;Bikuutiollinen (Pehmeämpi)
+TP_RESIZE_BICUBICSH;Bikuutiollinen (Terävämpi)
+TP_RESIZE_BILINEAR;Bilineaarinen
+TP_RESIZE_FULLSIZE;Kuvan koko:
+TP_RESIZE_H;Kork.:
+TP_RESIZE_LABEL;Koko
+TP_RESIZE_METHOD;Menetelmä: 
+TP_RESIZE_NEAREST;Lähin
+TP_RESIZE_SCALE;Mittakaava
+TP_RESIZE_W;Lev.:
+TP_ROTATE_AUTOCROP;Aseta rajaus
+TP_ROTATE_DEGREE;Astetta
+TP_ROTATE_FILL;Suurenna/pienennä kuva automaattisesti
+TP_ROTATE_LABEL;Kääntö
+TP_ROTATE_SELECTLINE;Valitse suora linja
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Vaaleiden alueiden vaimennus
+TP_SHADOWSHLIGHTS_HLTONALW;Vaalean sävyalueen leveys
+TP_SHADOWSHLIGHTS_LABEL;Tummat/vaaleat alueet
+TP_SHADOWSHLIGHTS_LOCALCONTR;Paikallinen kontrasti
+TP_SHADOWSHLIGHTS_RADIUS;Säde
+TP_SHADOWSHLIGHTS_SHADOWS;Tummien alueiden vaimennus
+TP_SHADOWSHLIGHTS_SHTONALW;Tumman sävyalueen leveys
+TP_SHARPENING_AMOUNT;Määrä
+TP_SHARPENING_EDRADIUS;Säde
+TP_SHARPENING_EDTOLERANCE;Reunan tunnistusherkkyys
+TP_SHARPENING_HALOCONTROL;Halo-ilmiön esto
+TP_SHARPENING_HCAMOUNT;Määrä
+TP_SHARPENING_LABEL;Terävöinti
+TP_SHARPENING_METHOD;Menetelmä
+TP_SHARPENING_ONLYEDGES;Terävöi vain reunat
+TP_SHARPENING_RADIUS;Säde
+TP_SHARPENING_RLD;RL dekonvoluutio
+TP_SHARPENING_RLD_AMOUNT;Määrä
+TP_SHARPENING_RLD_DAMPING;Vaimennus
+TP_SHARPENING_RLD_ITERATIONS;Iteraatiot
+TP_SHARPENING_THRESHOLD;Kynnys
+TP_SHARPENING_USM;Epäterävä maski
+TP_VIGNETTING_AMOUNT;Määrä
+TP_VIGNETTING_LABEL;Vinjetoinnin korjaus
+TP_VIGNETTING_RADIUS;Säde
+TP_WBALANCE_AUTO;Automaattinen
+TP_WBALANCE_CAMERA;Kamera
+TP_WBALANCE_CUSTOM;Oma
+TP_WBALANCE_GREEN;Valkoisen sävy
+TP_WBALANCE_LABEL;Valkotasapaino
+TP_WBALANCE_METHOD;Menetelmä
+TP_WBALANCE_SIZE;Koko:
+TP_WBALANCE_SPOTWB;Valitse valkoinen kuvasta
+TP_WBALANCE_TEMPERATURE;Lämpötila [K]
+ZOOMBAR_DETAIL;
+ZOOMBAR_HUGE;Suurin
+ZOOMBAR_LARGE;Suuri
+ZOOMBAR_NORMAL;Normaali
+ZOOMBAR_PREVIEW;
+ZOOMBAR_SCALE;
+ZOOMBAR_SMALL;Pieni

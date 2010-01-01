@@ -1,0 +1,577 @@
+﻿# 2008-06-22
+# Translated by Torben Nielsen
+# danish translation of RawTherapee
+ADJUSTER_RESET_TO_DEFAULT;Tilbage til standard
+CURVEEDITOR_FILEDLGFILTERANY;Hvilken som helst fil
+CURVEEDITOR_FILEDLGFILTERCURVE;Kurvefiler
+CURVEEDITOR_LINEAR;Liniær
+CURVEEDITOR_LOADDLGLABEL;Åbn kurve...
+CURVEEDITOR_SAVEDLGLABEL;Gem kurve...
+CURVEEDITOR_TOOLTIPLINEAR;Nulstil kurve til liniær
+CURVEEDITOR_TOOLTIPLOAD;Gem kurve fra fil
+CURVEEDITOR_TOOLTIPSAVE;Gem nuværende kurve
+EXIFFILTER_APERTURE;Aperture
+EXIFFILTER_CAMERA;Camera
+EXIFFILTER_DIALOGLABEL;Exif Filter
+EXIFFILTER_FOCALLEN;Focal Length
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Lens
+EXIFFILTER_SHUTTER;Shutter
+EXIFPANEL_ADDEDIT;Tilføj/Rediger
+EXIFPANEL_ADDEDITHINT;Tilføj ny tag eller rediger tag
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Skriv værdi
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Vælg tag
+EXIFPANEL_ADDTAGDLG_TITLE;Tilføj/Rediger Tag
+EXIFPANEL_KEEP;Behold
+EXIFPANEL_KEEPHINT;Behold de udvalgte tags når der skrives output fil
+EXIFPANEL_REMOVE;Fjern
+EXIFPANEL_REMOVEHINT;Fjern de udvalgte tags når der skrives output fil
+EXIFPANEL_RESET;Nulstil
+EXIFPANEL_RESETALL;Nulstil alle
+EXIFPANEL_RESETALLHINT;Nulstil alle tags til deres oprindelige værdier
+EXIFPANEL_RESETHINT;Nulstil de udvalgte tags til deres oprindelige værdier
+EXIFPANEL_SUBDIRECTORY;Undermappe
+FILEBROWSER_APPLYPROFILE;Apply profile
+FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
+FILEBROWSER_CLEARPROFILE;Clear profile
+FILEBROWSER_COPYPROFILE;Copy profile
+FILEBROWSER_DELETEDLGLABEL;File delete confirmation
+FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
+FILEBROWSER_EMPTYTRASH;Empty Trash
+FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
+FILEBROWSER_EXIFFILTERAPPLY;Apply
+FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
+FILEBROWSER_EXIFFILTERLABEL;Exif Filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
+FILEBROWSER_PASTEPROFILE;Paste profile
+FILEBROWSER_POPUPCANCELJOB;Cancel job
+FILEBROWSER_POPUPMOVEEND;Move to end of queue
+FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
+FILEBROWSER_POPUPOPEN;Open
+FILEBROWSER_POPUPPROCESS;Put to processing queue
+FILEBROWSER_POPUPRANK1;Rank 1
+FILEBROWSER_POPUPRANK2;Rank 2
+FILEBROWSER_POPUPRANK3;Rank 3
+FILEBROWSER_POPUPRANK4;Rank 4
+FILEBROWSER_POPUPRANK5;Rank 5
+FILEBROWSER_POPUPREMOVE;Remove from filesystem
+FILEBROWSER_POPUPRENAME;Rename
+FILEBROWSER_POPUPSELECTALL;Select all
+FILEBROWSER_POPUPTRASH;Move to trash
+FILEBROWSER_POPUPUNRANK;Unrank
+FILEBROWSER_POPUPUNTRASH;Remove from trash
+FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_RENAMEDLGLABEL;Rename file
+FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
+FILEBROWSER_SHOWDIRHINT;Show all images of the directory
+FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
+FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star
+FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star
+FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star
+FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
+FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
+FILEBROWSER_SHOWTRASHHINT;Show content of the trash
+FILEBROWSER_SHOWUNRANKHINT;Show unranked images
+FILEBROWSER_STARTPROCESSING;Start Processing
+FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
+FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_THUMBSIZE;Thumb. size
+FILEBROWSER_ZOOMINHINT;Increase thumbnail size
+FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
+GENERAL_ABOUT;Om
+GENERAL_CANCEL;Annuller
+GENERAL_DISABLE;Deaktivere
+GENERAL_DISABLED;Deaktiveret
+GENERAL_ENABLE;Aktiveret
+GENERAL_ENABLED;Aktiveret
+GENERAL_LANDSCAPE;Landskab
+GENERAL_LOAD;Åbn
+GENERAL_NA;n/a
+GENERAL_NO;Nej
+GENERAL_OK;Ok
+GENERAL_PORTRAIT;Portræt
+GENERAL_SAVE;Gem
+GENERAL_YES;Ja
+HISTOGRAM_LABEL;Histogram
+HISTOGRAM_TOOLTIP_B;Vis/skjul blåt histogram
+HISTOGRAM_TOOLTIP_G;Vis/skjul grønt histogram
+HISTOGRAM_TOOLTIP_L;Vis/skjul CIELAB Luminans histogram
+HISTOGRAM_TOOLTIP_R;Vis/skjul rødt histogram
+HISTORY_CHANGED;Forandret
+HISTORY_CUSTOMCURVE;Egen kurve
+HISTORY_DELSNAPSHOT;Fjern bogmærke
+HISTORY_FROMCLIPBOARD;From clipboard
+HISTORY_LABEL;Historik
+HISTORY_MSG_10;Skyggekomprimering
+HISTORY_MSG_11;Tonekurve
+HISTORY_MSG_12;Autoeksponering
+HISTORY_MSG_13;Eksponeringsmarkering
+HISTORY_MSG_14;Luminanslysstyrke
+HISTORY_MSG_15;Luminanskontrast
+HISTORY_MSG_16;Sort luminans
+HISTORY_MSG_17;Luminans højlys kompr.
+HISTORY_MSG_18;Luminans skygge kompr.
+HISTORY_MSG_19;Luminanskurve
+HISTORY_MSG_1;Foto åbnet
+HISTORY_MSG_20;Skarphed
+HISTORY_MSG_21;Skarphedsradius
+HISTORY_MSG_22;Skarphedsmængde
+HISTORY_MSG_23;Skarphedstærskelværdi
+HISTORY_MSG_24;Skarphed kun i kanter
+HISTORY_MSG_25;Kanttegningsradie-skarphed
+HISTORY_MSG_26;Kantskarphedstolerance
+HISTORY_MSG_27;Halo-skarphedsskontrol
+HISTORY_MSG_28;Halo-kontrolstørrelse
+HISTORY_MSG_29;Skarphedsmetode
+HISTORY_MSG_2;Profil åbnet
+HISTORY_MSG_30;Deconvolution-radius
+HISTORY_MSG_31;Deconvolution-størrelse
+HISTORY_MSG_32;Deconvolution-dæmpning
+HISTORY_MSG_33;Deconvolution-gentagelse
+HISTORY_MSG_34;Undgå farvemarkeringer
+HISTORY_MSG_35;Mæhedsbegrænsning
+HISTORY_MSG_36;Mæthedsgrænse
+HISTORY_MSG_37;Farveforstærkning
+HISTORY_MSG_38;Hvidbalancemetode
+HISTORY_MSG_39;Farvetemperatur
+HISTORY_MSG_3;Profil ændret
+HISTORY_MSG_40;Hvidbalancenuance
+HISTORY_MSG_41;Farveskift "A"
+HISTORY_MSG_42;Farveskift "B"
+HISTORY_MSG_43;Luminans støjreduktion
+HISTORY_MSG_44;Lum. støjreduktion-radie
+HISTORY_MSG_45;Lum. støjreduktion kanttolerance
+HISTORY_MSG_46;Farvestøjreduktion
+HISTORY_MSG_47;Farvestøjreduktion-radie
+HISTORY_MSG_48;Farvestøjreduktion-kanttolerance
+HISTORY_MSG_49;Kantfølsom farvestøjreduktion
+HISTORY_MSG_4;Historik-gennemsyn
+HISTORY_MSG_50;Skygge/højlys værktøj
+HISTORY_MSG_51;Højlys-forstærkning
+HISTORY_MSG_52;Skyggeforstærkning
+HISTORY_MSG_53;Højlys-tonvidde
+HISTORY_MSG_54;Skygge-tonevidde
+HISTORY_MSG_55;Lokal kontrast
+HISTORY_MSG_56;Skygge/højlys -radie
+HISTORY_MSG_57;Enkel rotation
+HISTORY_MSG_58;Vend horisontalt
+HISTORY_MSG_59;Vend vertikalt
+HISTORY_MSG_5;Lysstyrke
+HISTORY_MSG_60;Rotation
+HISTORY_MSG_61;Rotation
+HISTORY_MSG_62;Objektivforvrængning-korrigering
+HISTORY_MSG_63;Valgt bogmærke
+HISTORY_MSG_64;Beskær foto
+HISTORY_MSG_65;C/A korrigering
+HISTORY_MSG_66;Højlys-forbedring
+HISTORY_MSG_67;Højlys-forbedringsstyrke
+HISTORY_MSG_68;Højlys-forbedringsmetode
+HISTORY_MSG_69;Arbejdsfarverum
+HISTORY_MSG_6;Kontrast
+HISTORY_MSG_70;Udgangssfarverum
+HISTORY_MSG_71;Indgangsfarverum
+HISTORY_MSG_72;Vignettering-korrigering
+HISTORY_MSG_73;Kanalmixer
+HISTORY_MSG_74;Ændre størrelsesskala
+HISTORY_MSG_75;Ændre størrelses metode
+HISTORY_MSG_76;Exif Metadata
+HISTORY_MSG_77;IPTC Metadata
+HISTORY_MSG_7;Sort
+HISTORY_MSG_8;Eksponerings-komprimering
+HISTORY_MSG_9;Højlys-komprimering
+HISTORY_NEWSNAPSHOT;Nyt bogmærke
+HISTORY_NEWSNAPSHOTAS;Som...
+HISTORY_NEWSSDIALOGLABEL;Navn på bogmærket:
+HISTORY_NEWSSDIALOGTITLE;Opret nyt bogmærke
+HISTORY_SETTO;Indtil
+HISTORY_SNAPSHOT;Bogmærke
+HISTORY_SNAPSHOTS;Bogmærker
+ICMPANEL_FILEDLGFILTERANY;Alle filer
+ICMPANEL_FILEDLGFILTERICM;ICC profilfiler
+ICMPANEL_GAMMABEFOREINPUT;Profilen tilføjer Gamma
+ICMPANEL_INPUTCAMERA;Kameravalg
+ICMPANEL_INPUTCUSTOM;Egen
+ICMPANEL_INPUTDLGLABEL;Vælg indgangs ICC-profil...
+ICMPANEL_INPUTEMBEDDED;Anvend intern, hvis muligt
+ICMPANEL_INPUTPROFILE;Indgangprofil
+ICMPANEL_NOICM;Ingen ICM: sRGB-profil
+ICMPANEL_OUTPUTDLGLABEL;Vælg udgangs ICC-profil...
+ICMPANEL_OUTPUTPROFILE;Udgangsprofil
+ICMPANEL_SAVEREFERENCE;Gem reference billede til profil
+ICMPANEL_WORKINGPROFILE;Arbejdsprofil
+IMAGEAREA_DETAILVIEW;Detaljeret
+IPTCPANEL_AUTHOR;Opretter
+IPTCPANEL_AUTHORHINT;Navnet på opretteren, f.eks. forfatter, fotograf eller grafiker (By-line).
+IPTCPANEL_AUTHORSPOSITION;Opretterens titel
+IPTCPANEL_AUTHORSPOSITIONHINT;Beskrivelse af opretterens titel (By-line Title).
+IPTCPANEL_CAPTION;Billedtekst
+IPTCPANEL_CAPTIONHINT;Tekstbeskrivelse af billedets indhold (Caption - Abstract).
+IPTCPANEL_CAPTIONWRITER;Billedtekst forfatter
+IPTCPANEL_CAPTIONWRITERHINT;Navnet på personen der har oprettet, redigeret eller korigeret billedeteksten (Writer - Editor).
+IPTCPANEL_CATEGORY;Kategori
+IPTCPANEL_CATEGORYHINT;Bruges til at beskrive indholdet i billedet ifølge kategorien (Category).
+IPTCPANEL_CITY;By
+IPTCPANEL_CITYHINT;Billedets  oprindelsesby (City).
+IPTCPANEL_COPYHINT;Kopier IPTC indstillinger til udklipsholderen
+IPTCPANEL_COPYRIGHT;Copyright
+IPTCPANEL_COPYRIGHTHINT;Eventuelle copyright tilføjelser (Copyright Notice).
+IPTCPANEL_COUNTRY;Land
+IPTCPANEL_COUNTRYHINT;Navnet på landet/primære område hvor billedet er optaget (Country - Primary Location Name).
+IPTCPANEL_CREDIT;Kredit
+IPTCPANEL_CREDITHINT;Idetificere opretteren af billedet, ikke nødvendivis den samme som ejeren (Credit).
+IPTCPANEL_DATECREATED;Optagelsesdato
+IPTCPANEL_DATECREATEDHINT;Datoen hvor billedet blev optaget; Format: JJJJMMTT (Date Created).
+IPTCPANEL_EMBEDDED;Intern IPTC data
+IPTCPANEL_EMBEDDEDHINT;Nulstil til de IPTC data der findes internt i billedfilen
+IPTCPANEL_HEADLINE;Overskrift
+IPTCPANEL_HEADLINEHINT;En kort beskrivelse af indholdet af billedet (Headline).
+IPTCPANEL_INSTRUCTIONS;Instruktioner
+IPTCPANEL_INSTRUCTIONSHINT;Andre instuktioner der omhandler brugen af billedet (Special Instructions).
+IPTCPANEL_KEYWORDS;Nøgleord
+IPTCPANEL_KEYWORDSHINT;Bruges til at beskrive specifikke nøgleord (Keywords).
+IPTCPANEL_PASTEHINT;Indsæt IPTC indstillinger fra udklipsholderen
+IPTCPANEL_PROVINCE;Provins
+IPTCPANEL_PROVINCEHINT;Billedets oprindelsesprovins/-stat (Province-State).
+IPTCPANEL_RESET;Nulstil
+IPTCPANEL_RESETHINT;Nulstil til standard profil
+IPTCPANEL_SOURCE;Kilde
+IPTCPANEL_SOURCEHINT;Den originale ejer af billedets indhold (Source).
+IPTCPANEL_SUPPCATEGORIES;Suppl. kategorier
+IPTCPANEL_SUPPCATEGORIESHINT;Yderlige beskrivelser af indholdet i billedet (Supplemental Categories).
+IPTCPANEL_TITLE;Billedtitel
+IPTCPANEL_TITLEHINT;En kort beskrivelse af billedet (Object Name).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;En kode der representere stedet for original transmission (Original Transmission Reference).
+MAIN_BUTTON_PREFERENCES;Indstillinger
+MAIN_BUTTON_SAVE;Gem billede
+MAIN_BUTTON_SAVEAS;Som...
+MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_MSG_ALREADYEXISTS;Filen eksistere allerede.
+MAIN_MSG_CANNOTLOAD;Kan ikke åbne billedet
+MAIN_MSG_CANNOTSAVE;Kan ikke gemme
+MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
+MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
+MAIN_MSG_JOBSINQUEUE;Arbejdet sættes i kø
+MAIN_MSG_QOVERWRITE;Vil du overskrive?
+MAIN_TAB_BASIC;Grundlæggende
+MAIN_TAB_COLOR;Color
+MAIN_TAB_DETAIL;Detail
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_ICM;ICM
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TRANSFORM;Ændre
+MAIN_TOOLTIP_HIDEFP;Vis/skjul nederste panel (Mapper og Filgennemsyn, shortcut key: F)
+MAIN_TOOLTIP_HIDEHP;Vis/skjul venstre panel (Indeholder historiken shortcut key: H)
+MAIN_TOOLTIP_INDCLIPPEDH;Marker højlys-indikation
+MAIN_TOOLTIP_INDCLIPPEDS;Marker skygge-indikation
+MAIN_TOOLTIP_PREFERENCES;Ændre indstillinger
+MAIN_TOOLTIP_QINFO;Hurtig information om billedet
+MAIN_TOOLTIP_SAVE;Gem billedet i standardmappen
+MAIN_TOOLTIP_SAVEAS;Gem billedet i en anden mappe
+PARTIALPASTE_BASICGROUP;Basic settings
+PARTIALPASTE_CACORRECTION;C/A correction
+PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
+PARTIALPASTE_COLORBOOST;Color boost
+PARTIALPASTE_COLORDENOISE;Color denoise
+PARTIALPASTE_COLORGROUP;Color related settings
+PARTIALPASTE_COLORMIXER;Color mixer
+PARTIALPASTE_COLORSHIFT;Color shift
+PARTIALPASTE_COMPOSITIONGROUP;Composition settings
+PARTIALPASTE_CROP;Crop
+PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
+PARTIALPASTE_DISTORTION;Distortion correction
+PARTIALPASTE_EXIFCHANGES;Changes to exif data
+PARTIALPASTE_EXPOSURE;Exposure
+PARTIALPASTE_HLRECOVERY;Highlight recovery
+PARTIALPASTE_ICMSETTINGS;ICM settings
+PARTIALPASTE_IPTCINFO;IPTC info
+PARTIALPASTE_LENSGROUP;Lens related settings
+PARTIALPASTE_LUMACURVE;Luminance curve
+PARTIALPASTE_LUMADENOISE;Luminance noise reduction
+PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
+PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
+PARTIALPASTE_RESIZE;Resize
+PARTIALPASTE_ROTATION;Rotation
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
+PARTIALPASTE_SHARPENING;Sharpening
+PARTIALPASTE_VIGNETTING;Vignetting correction
+PARTIALPASTE_WHITEBALANCE;White balance
+PREFERENCES_APPLNEXTSTARTUP;ændres ved næste opstart
+PREFERENCES_BLINKCLIPPED;Vis markerede områder
+PREFERENCES_CACHECLEARALL;Clear All
+PREFERENCES_CACHECLEARPROFILES;Clear Profiles
+PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
+PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
+PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
+PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
+PREFERENCES_CACHEOPTS;Cache Options
+PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
+PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
+PREFERENCES_CACHESTRAT;Cache Strategy
+PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
+PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
+PREFERENCES_CLEARDLG_LINE1;Clearing cache
+PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
+PREFERENCES_CLEARDLG_TITLE;Please wait
+PREFERENCES_CLIPPINGIND;Markerings-indikation
+PREFERENCES_CMETRICINTENT;Colorimetric Intent
+PREFERENCES_DATEFORMAT;Datoformat
+PREFERENCES_DATEFORMATHINT;<i>Du kan bruge følgende formattering:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DEFAULTLANG;Programsprog
+PREFERENCES_DEFAULTTHEME;Standard tema
+PREFERENCES_DEMOSAICINGALGO;Demosaikering Algorithme
+PREFERENCES_DIRHOME;Hjemmemappe
+PREFERENCES_DIRLAST;Sidste besøgte mappe
+PREFERENCES_DIROTHER;Anden
+PREFERENCES_DIRSELECTDLG;Vælg billedemappe ved opstart...
+PREFERENCES_DIRSOFTWARE;Installations-mappe
+PREFERENCES_DMETHOD;Metode
+PREFERENCES_EDITORCMDLINE;Other command line
+PREFERENCES_EXTERNALEDITOR;External editor
+PREFERENCES_FALSECOLOR;Falsk farvefortrængningsværdi
+PREFERENCES_FBROWSEROPTS;Filfremviser-indstillinger
+PREFERENCES_FILEFORMAT;Filformat
+PREFERENCES_FORIMAGE;For billedfiler
+PREFERENCES_FORRAW;For RAW-filer
+PREFERENCES_GIMPPATH;GIMP installation directory
+PREFERENCES_GTKTHEME;GTK standard
+PREFERENCES_HINT;Tips
+PREFERENCES_HLTHRESHOLD;Tærskelværdi for markerede højlys
+PREFERENCES_ICCDIR;Mappe til ICC-profiler
+PREFERENCES_IMPROCPARAMS;Standard-billedbehandlingsparametre
+PREFERENCES_INTENT_ABSOLUTE;Total colorimetric
+PREFERENCES_INTENT_PERCEPTUAL;Perceptual
+PREFERENCES_INTENT_RELATIVE;Relativ colorimetric
+PREFERENCES_INTENT_SATURATION;Mæthed
+PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_MONITORICC;Skærmprofil
+PREFERENCES_OUTDIR;Outputmappe
+PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRHINT;<i>Du kan bruge følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_PARSEDEXTADD;Add Extension
+PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
+PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PROFILEHANDLING;Processing Profile Handling
+PREFERENCES_PROFILELOADPR;Profile Loading Priority
+PREFERENCES_PROFILEPRCACHE;Profile in Cache
+PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
+PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
+PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
+PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_SELECTICCDIRDLG;Vælg ICC-profil mappe...
+PREFERENCES_SELECTLANG;Vælg sprog
+PREFERENCES_SELECTMONITORPROFDLG;Vælg ICC-profil til skærmen...
+PREFERENCES_SELECTTHEME;Vælg tema
+PREFERENCES_SHOWBASICEXIF;Vis udvidet Exif-information
+PREFERENCES_SHOWDATETIME;Vis dato og tid
+PREFERENCES_SHOWONLYRAW;Vis kun RAW-filer
+PREFERENCES_SHTHRESHOLD;Tærskelværdi for markerede skygger
+PREFERENCES_STARTUPIMDIR;Billedmappe som vises ved opstart
+PREFERENCES_TAB_BROWSER;Filfremviser
+PREFERENCES_TAB_COLORMGR;Farvehåndtering
+PREFERENCES_TAB_GENERAL;Generel
+PREFERENCES_TAB_IMPROC;Billedbehandling
+PREFERENCES_TAB_OUTPUT;Output-indtillinger
+PREFERENCES_THUMBSIZE;Miniaturebilledstørrelse
+PROFILEPANEL_FILEDLGFILTERANY;Alle filer
+PROFILEPANEL_FILEDLGFILTERPP;Billedbehandlings profiler
+PROFILEPANEL_LABEL;Billedbehandlings profiler
+PROFILEPANEL_LOADDLGLABEL;Åbn billedbehandlingsparametre...
+PROFILEPANEL_PCUSTOM;Egen
+PROFILEPANEL_PFILE;Fra fil
+PROFILEPANEL_PLASTPHOTO;Seneste foto
+PROFILEPANEL_PLASTSAVED;Seneste gemt
+PROFILEPANEL_PROFILE;Profil
+PROFILEPANEL_SAVEDLGLABEL;Gem billedbehandlingsparametre...
+PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
+PROFILEPANEL_TOOLTIPLOAD;Åbn profil fra fil
+PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
+PROFILEPANEL_TOOLTIPSAVE;Gem nuværende profil
+PROGRESSBAR_DECODING;Afkoder Raw-fil...
+PROGRESSBAR_DEMOSAICING;Demosaikere...
+PROGRESSBAR_LOADING;Åbner billede...
+PROGRESSBAR_LOADJPEG;Åbner JPEG-fil...
+PROGRESSBAR_LOADPNG;Åbner PNG-fil...
+PROGRESSBAR_LOADTIFF;Åbner TIFF-fil...
+PROGRESSBAR_PROCESSING;Bearbejder Billede...
+PROGRESSBAR_READY;Klar.
+PROGRESSBAR_SAVEJPEG;Gem JPEG-fil...
+PROGRESSBAR_SAVEPNG;Gem PNG-fil...
+PROGRESSBAR_SAVETIFF;Gem TIFF-fil...
+PROGRESSDLG_LOADING;Loading file...
+PROGRESSDLG_PROCESSING;Processing image...
+PROGRESSDLG_SAVING;Saving file...
+QINFO_FOCALLENGTH;Brændevidde
+QINFO_ISO;ISO
+QINFO_LENS;Lens
+QINFO_NOEXIF;Exifdata utilgængelig.
+SAVEDLG_FILEFORMAT;Filformat
+SAVEDLG_JPEGQUAL;JPEG-kvalitet
+SAVEDLG_JPGFILTER;JPEG-filer
+SAVEDLG_PNGCOMPR;PNG-komprimering
+SAVEDLG_PNGFILTER;PNG-filer
+SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_SAVEIMMEDIATELY;Save immediately
+SAVEDLG_SAVESPP;Gem billedbehandlingsparameterne med billederne
+SAVEDLG_TIFFFILTER;TIFF-filer
+TOOLBAR_TOOLTIP_CROP;Vælg beskæringsområde (shortcut key: C)
+TOOLBAR_TOOLTIP_HAND;Håndværktøj (shortcut key: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Ret op (shortcut key: S)
+TOOLBAR_TOOLTIP_WB;Punkt-hvidbalanse (shortcut key: W)
+TP_CACORRECTION_BLUE;Blå
+TP_CACORRECTION_LABEL;C/A justering
+TP_CACORRECTION_RED;Rød
+TP_CHMIXER_BLUE;Blå
+TP_CHMIXER_GREEN;Grøn
+TP_CHMIXER_LABEL;Kanalmixer
+TP_CHMIXER_RED;Rød
+TP_COARSETRAF_DEGREE;grad:
+TP_COARSETRAF_TOOLTIP_HFLIP;Vend horisontalt
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotere mod venster
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotere mod højre
+TP_COARSETRAF_TOOLTIP_VFLIP;Vend vertikalt
+TP_COLORBOOST_ACHANNEL;kanal "a"
+TP_COLORBOOST_AMOUNT;Mængde
+TP_COLORBOOST_AVOIDCOLORCLIP;Undgå farveclipping
+TP_COLORBOOST_BCHANNEL;kanal "b"
+TP_COLORBOOST_CHAB;a & b
+TP_COLORBOOST_CHANNEL;Kanal
+TP_COLORBOOST_CHSEPARATE;separat
+TP_COLORBOOST_ENABLESATLIMITER;Mæthedsdsgrænse
+TP_COLORBOOST_LABEL;Farveforstærkning
+TP_COLORBOOST_SATLIMIT;Mæthedssgrænse
+TP_COLORDENOISE_EDGESENSITIVE;Kantfølsomhed
+TP_COLORDENOISE_EDGETOLERANCE;Kanttolerance
+TP_COLORDENOISE_LABEL;Farvestøj-reducering
+TP_COLORDENOISE_RADIUS;Radius
+TP_COLORSHIFT_BLUEYELLOW;Blå-Gul
+TP_COLORSHIFT_GREENMAGENTA;Grøn-Magenta
+TP_COLORSHIFT_LABEL;Farveskifte
+TP_CROP_DPI;DPI=
+TP_CROP_FIXRATIO;Fast proportion
+TP_CROP_GTDIAGONALS;Diagonalreglen
+TP_CROP_GTHARMMEANS1;Harmonic means 1
+TP_CROP_GTHARMMEANS2;Harmonic means 2
+TP_CROP_GTHARMMEANS3;Harmonic means 3
+TP_CROP_GTHARMMEANS4;Harmonic means 4
+TP_CROP_GTNONE;Ingen
+TP_CROP_GTRULETHIRDS;Tredjedelsreglen
+TP_CROP_GUIDETYPE;Guidetype:
+TP_CROP_H;H
+TP_CROP_LABEL;Beskæring
+TP_CROP_SELECTCROP;    Vælg beskæringsområde
+TP_CROP_W;B
+TP_CROP_X;x
+TP_CROP_Y;y
+TP_DISTORTION_AMOUNT;Mængde
+TP_DISTORTION_LABEL;Forvrængning
+TP_EXPOSURE_AUTOLEVELS;Auto niveau
+TP_EXPOSURE_BLACKLEVEL;Sort
+TP_EXPOSURE_BRIGHTNESS;Lysstyrke
+TP_EXPOSURE_CLIP;Clip
+TP_EXPOSURE_COMPRHIGHLIGHTS;Højlyskomprimering
+TP_EXPOSURE_COMPRSHADOWS;Skyggekomprimering
+TP_EXPOSURE_CONTRAST;Kontrast
+TP_EXPOSURE_CURVEEDITOR;Tonekurve
+TP_EXPOSURE_EXPCOMP;Eks. Komp.
+TP_EXPOSURE_LABEL;Eksponering
+TP_HLREC_CIELAB;CIELab Blending
+TP_HLREC_COLOR;Farvespedning
+TP_HLREC_LABEL;Højlys-forbedring
+TP_HLREC_LUMINANCE;Forbedring af luminans
+TP_HLREC_METHOD;Metode: 
+TP_ICM_FILEDLGFILTERANY;Alle filer
+TP_ICM_FILEDLGFILTERICM;ICC profilfiler
+TP_ICM_GAMMABEFOREINPUT;Profilen tilføjer Gamma
+TP_ICM_INPUTCAMERA;Kameravalg
+TP_ICM_INPUTCUSTOM;Egen
+TP_ICM_INPUTDLGLABEL;Vælg indgangs ICC-profil...
+TP_ICM_INPUTEMBEDDED;Anvend intern, hvis muligt
+TP_ICM_INPUTPROFILE;Indgangprofil
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;Ingen ICM: sRGB-profil
+TP_ICM_OUTPUTDLGLABEL;Select Vælg udgangs ICC-profil...
+TP_ICM_OUTPUTPROFILE;Udgangsprofil
+TP_ICM_SAVEREFERENCE;Gem reference billede til profil
+TP_ICM_WORKINGPROFILE;Arbejdsprofil
+TP_LUMACURVE_BLACKLEVEL;Sort
+TP_LUMACURVE_BRIGHTNESS;Lysstyrke
+TP_LUMACURVE_COMPRHIGHLIGHTS;Højlyskomprimering
+TP_LUMACURVE_COMPRSHADOWS;Skyggekomprimering
+TP_LUMACURVE_CONTRAST;Kontrast
+TP_LUMACURVE_CURVEEDITOR;Luminanskurve
+TP_LUMACURVE_LABEL;Luminanskurve
+TP_LUMADENOISE_EDGETOLERANCE;Kanttolerance
+TP_LUMADENOISE_LABEL;Luminans-støjreducering
+TP_LUMADENOISE_RADIUS;Radius
+TP_RESIZE_BICUBIC;Bicubic
+TP_RESIZE_BICUBICSF;Bicubic (Blødere)
+TP_RESIZE_BICUBICSH;Bicubic (Skarpere)
+TP_RESIZE_BILINEAR;Bilinjær
+TP_RESIZE_FULLSIZE;Billedstørrelse:
+TP_RESIZE_H;H:
+TP_RESIZE_LABEL;Ændre størrelse
+TP_RESIZE_METHOD;Metode: 
+TP_RESIZE_NEAREST;Nærmeste
+TP_RESIZE_SCALE;Skala
+TP_RESIZE_W;B:
+TP_ROTATE_AUTOCROP;Autobeskæring
+TP_ROTATE_DEGREE;Antal grader
+TP_ROTATE_FILL;Fyld
+TP_ROTATE_LABEL;Ret op
+TP_ROTATE_SELECTLINE;    Vælg lige linje
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Højlys
+TP_SHADOWSHLIGHTS_HLTONALW;Toneomfang
+TP_SHADOWSHLIGHTS_LABEL;Skygger/højlys
+TP_SHADOWSHLIGHTS_LOCALCONTR;Lokal kontrast
+TP_SHADOWSHLIGHTS_RADIUS;Radius
+TP_SHADOWSHLIGHTS_SHADOWS;Skygger
+TP_SHADOWSHLIGHTS_SHTONALW;Toneomfang
+TP_SHARPENING_AMOUNT;Mængde
+TP_SHARPENING_EDRADIUS;Radius
+TP_SHARPENING_EDTOLERANCE;Kanttolerance
+TP_SHARPENING_HALOCONTROL;Halo-kontrol
+TP_SHARPENING_HCAMOUNT;Mængde
+TP_SHARPENING_LABEL;Skarphed
+TP_SHARPENING_METHOD;Metode
+TP_SHARPENING_ONLYEDGES;Skarphed kun i kanter
+TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RLD;RL Dekonvolution
+TP_SHARPENING_RLD_AMOUNT;Mængde
+TP_SHARPENING_RLD_DAMPING;Dæmpning
+TP_SHARPENING_RLD_ITERATIONS;Gentagelse
+TP_SHARPENING_THRESHOLD;Tærskelværdi
+TP_SHARPENING_USM;Uskarp maske
+TP_VIGNETTING_AMOUNT;Mængde
+TP_VIGNETTING_LABEL;Vignetterings-korrigering
+TP_VIGNETTING_RADIUS;Radius
+TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_CAMERA;Kamera
+TP_WBALANCE_CUSTOM;Egen
+TP_WBALANCE_GREEN;Nuance
+TP_WBALANCE_LABEL;Hvidbalance
+TP_WBALANCE_METHOD;Metode
+TP_WBALANCE_SIZE;Størrelse:
+TP_WBALANCE_SPOTWB;Punkt HB
+TP_WBALANCE_TEMPERATURE;Temperatur
+ZOOMBAR_DETAIL;Lup
+ZOOMBAR_HUGE;Ekstra stor
+ZOOMBAR_LARGE;Stor
+ZOOMBAR_NORMAL;Normal
+ZOOMBAR_PREVIEW;Filgennemsyn
+ZOOMBAR_SCALE;Skala
+ZOOMBAR_SMALL;Lille

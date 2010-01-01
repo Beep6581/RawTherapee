@@ -1,0 +1,33 @@
+#ifndef _RECENTBROWSER_
+#define _RECENTBROWSER_
+
+#include <gtkmm.h>
+#include <dirbrowserremoteinterface.h>
+#include <dirselectionlistener.h>
+
+class RecentBrowser : public Gtk::VBox, public DirSelectionListener {
+
+        class RecentColumns : public Gtk::TreeModel::ColumnRecord {
+            public:
+                Gtk::TreeModelColumn<Glib::ustring> dir;
+                RecentColumns() { add(dir); }
+        };
+        RecentColumns                recentColumns;
+        Gtk::ScrolledWindow*         scrollw;
+        Gtk::TreeView*               treeView;
+        Glib::RefPtr<Gtk::ListStore> recentModel;
+        DirBrowserRemoteInterface*   listener;
+
+    public:
+    
+        RecentBrowser ();
+        
+        void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l) { listener = l; }
+        
+        void selectionChanged ();
+        void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
+};
+
+#endif
+
+

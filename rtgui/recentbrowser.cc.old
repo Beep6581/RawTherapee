@@ -1,0 +1,59 @@
+#include <recentbrowser.h>
+
+RecentBrowser::RecentBrowser () : listener (NULL) {
+
+    scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
+    scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+
+    Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ("Recent Folders"));
+    frame->add (*scrollw);
+
+    pack_start (*frame);
+    
+    treeView = Gtk::manage (new Gtk::TreeView ());
+    scrollw->add (*treeView);
+    
+    recentModel = Gtk::ListStore::create (recentColumns);
+    treeView->set_model (recentModel);
+    treeView->set_headers_visible (false);
+
+    Gtk::CellRendererText *crt = Gtk::manage (new Gtk::CellRendererText());
+    Gtk::TreeView::Column *col = Gtk::manage (new Gtk::TreeView::Column (""));
+    col->pack_start (*crt, true);
+    col->add_attribute (crt->property_text (), recentColumns.dir);
+    col->set_sizing (Gtk::TREE_VIEW_COLUMN_FIXED);
+    crt->set_property ("xalign", 1.0);
+
+    treeView->append_column (*col); 
+    treeView->set_tooltip_column (0);
+    
+    treeView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &RecentBrowser::selectionChanged));
+
+    show_all ();
+}
+
+void RecentBrowser::selectionChanged () {
+
+    Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
+    if (iter && listener) 
+        listener->selectDir (iter->get_value (recentColumns.dir));
+}
+
+void RecentBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile) {
+
+    // check if the dirname is already in the list. If yes, remove it.
+    Gtk::TreeModel::iterator iter = recentModel->children ().begin();
+    while (iter != recentModel->children().end()) {
+        if (iter->get_value (recentColumns.dir) == dirname) {
+            recentModel->erase (iter);
+            break;
+        }
+        iter++;
+    }
+
+    // append dirname to the top of the list
+    iter = recentModel->prepend ();
+    iter->set_value (recentColumns.dir, dirname);
+}
+

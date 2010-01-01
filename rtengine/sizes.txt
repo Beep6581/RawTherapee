@@ -1,0 +1,24 @@
+sizes of procparams:
+
+        ToneCurveParams       53+3
+        CurveParams           36
+        SharpeningParams      68
+        ColorBoostParams      24
+        WBParams              16
+        ColorShiftParams      16
+        LumaDenoiseParams     16
+        ColorDenoiseParams    20
+        SHParams              28
+        CropParams            36
+        CoarseTransformParams 12
+        RotateParams          12
+        DistortionParams      8
+        CACorrParams          16
+        VignettingParams      8
+        ChannelMixerParams    36
+        HRecParams            8
+        ResizeParams          12
+        ColorManagementParams 16
+        std::vector<ExifPair> 12
+        std::vector<IPTCPair> 12
+

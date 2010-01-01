@@ -1,0 +1,259 @@
+# DarknessReturns GTK+ Theme for Clearlooks GTK Engine
+# 
+# Created for CrunchBang Linux by Philip Newborough
+# http://crunchbang.org/projects/linux/
+
+style "theme-default" {
+
+    font_name = "tahoma 8"
+
+    GtkButton      ::default_border    = { 0, 0, 0, 0 }
+    GtkRange       ::trough_border     = 1
+    GtkPaned       ::handle_size       = 6
+    GtkRange       ::slider_width      = 12
+    GtkRange       ::stepper_size      = 12
+    GtkScrollbar   ::min_slider_length = 30
+    GtkCheckButton ::indicator_size    = 13
+    GtkMenuBar     ::internal-padding  = 0
+    GtkTreeView    ::expander_size     = 12
+    GtkExpander    ::expander_size     = 12
+
+    xthickness = 1
+    ythickness = 1
+
+    fg[NORMAL]        = "#101010" 
+    fg[PRELIGHT]      = "#101010" 
+    fg[ACTIVE]        = "#31353A" 
+    fg[SELECTED]      = "#B2B2B2" 
+    fg[INSENSITIVE]   = "#9E9C9E" 
+
+    bg[NORMAL]        = "#A1A1A1" 
+    bg[PRELIGHT]      = "#B2B2B2" 
+    bg[ACTIVE]        = "#B2B2B2" 
+    bg[SELECTED]      = "#31353A" 
+    bg[INSENSITIVE]   = "#B2B2B2" 
+
+    base[NORMAL]      = "#B2B2B2" 
+    base[PRELIGHT]    = "#31353A"
+    base[SELECTED]    = "#31353A" 
+    base[INSENSITIVE] = "#fbf8f1" 
+    base[ACTIVE]      = "#31353A" 
+    base[PRELIGHT]    = "#729fcf"
+
+    text[NORMAL]      = "#101010"
+    text[PRELIGHT]    = "#d0d0d0"
+    text[ACTIVE]      = "#E2E2E2"
+    text[SELECTED]    = "#E2E2E2"
+    text[INSENSITIVE] = "#E2E2E2"
+
+    engine "clearlooks" {
+        menubarstyle = 0
+    }
+}
+
+style "theme-wide" = "theme-default" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "theme-text" = "theme-default" {
+    #base[SELECTED]     = "#fc9747"  # Outline?
+}
+
+style "theme-toolbar" = "theme-default" {
+    bg[NORMAL] = "#A1A1A1"
+}
+
+style "theme-tasklist" = "theme-default" {
+    xthickness = 5
+    ythickness = 3
+}
+
+style "theme-menu" = "theme-default" {
+    xthickness = 2
+    ythickness = 2
+    bg[NORMAL] = "#A1A1A1"
+}
+
+style "theme-menu-item" = "theme-default" {
+    xthickness = 1
+    ythickness = 1
+    fg[PRELIGHT] = "#ffffff"
+    text[PRELIGHT] = "#ffffff"
+    base[PRELIGHT] = "#A1A1A1"
+}
+
+style "tpstyle" = "theme-default" {
+
+    bg[NORMAL]        = "#000000" 
+    bg[PRELIGHT]      = "#000000" 
+    bg[ACTIVE]        = "#000000" 
+    bg[SELECTED]      = "#000000" 
+    bg[INSENSITIVE]   = "#000000" 
+    fg[NORMAL]        = "#000000" 
+    fg[PRELIGHT]      = "#000000" 
+    fg[ACTIVE]        = "#000000" 
+    fg[SELECTED]      = "#000000" 
+    bg[INSENSITIVE]   = "#000000" 
+    base[NORMAL]        = "#000000" 
+    base[PRELIGHT]      = "#000000" 
+    base[ACTIVE]        = "#000000" 
+    base[SELECTED]      = "#000000" 
+    base[INSENSITIVE]   = "#000000" 
+    text[NORMAL]        = "#000000" 
+    text[PRELIGHT]      = "#000000" 
+    text[ACTIVE]        = "#000000" 
+    text[SELECTED]      = "#000000" 
+    text[INSENSITIVE]   = "#000000" 
+}
+
+style "theme-menu-itembar" = "theme-default" {
+    xthickness = 0
+    ythickness = 0
+}
+
+style "theme-tree" = "theme-default" {
+    xthickness = 2
+    ythickness = 2
+    GtkTreeView::odd_row_color = "#f7f7ff"
+    GtkTreeView::even_row_color = "#ffffff"
+}
+
+style "theme-frame-title" = "theme-default" {
+    fg[NORMAL] = "#2a2a2a"
+}
+
+style "theme-panel" = "theme-default" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "theme-tooltips" = "theme-default" {
+    xthickness = 4
+    ythickness = 4
+    bg[NORMAL] = { 1.0,1.0,0.75 }
+}
+
+style "theme-progressbar" = "theme-default" {
+    xthickness = 1
+    ythickness = 1
+    fg[PRELIGHT]  = "#ffffff"
+}
+
+style "theme-combo" = "theme-default" {
+    xthickness = 2
+    ythickness = 0
+}
+
+style "theme-button" = "theme-wide" {
+    xthickness = 1
+    ythickness = 1
+    #bg[NORMAL] = "#31353A"
+    #bg[PRELIGHT] = "#555555"
+    #bg[NORMAL] = "#31353A"
+}
+style "theme-check" = "theme-button" {
+}
+
+style "theme-panel" = "theme-default" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "theme-notebook" = "theme-wide" {
+    base[SELECTED]      = "#A1A1A1"
+    bg[ACTIVE]        = "#A1A1A1"
+    base[PRELIGHT]    = "#A1A1A1"
+    bg[PRELIGHT]      = "#A1A1A1"
+}
+
+style "metacity-frame" {
+  bg[SELECTED]  = "#5c82b5"
+}
+
+style "theme-slab" = "theme-default" {
+    bg[SELECTED] = "#84b0da"
+    bg[NORMAL] = "#fdfbf7"
+    bg[ACTIVE] = "#e9eef5"
+    fg[NORMAL] = "#6a97c5"
+    fg[INSENSITIVE] = "#5c8dbf"
+}
+
+style "theme-slab-group" = "theme-default" {
+    #bg[SELECTED] = "#adc09b"  # Slab group text
+}
+
+style "theme-shell" = "theme-default" {
+    bg[ACTIVE] = "#e9eef5"      # Left side bg color
+    fg[NORMAL] = "#5c8dbf"      # Left side text color
+    fg[INSENSITIVE] = "#bdcce1" # Left side line
+
+    base[NORMAL] = "#fdfbf7"        # Base bg color
+    text[INSENSITIVE] = "#6a97c5"   # Base text color
+}
+
+style "evolution-hack" = "clearlooks-default" {
+    bg[ACTIVE]   = "#96b9d5"
+    bg[SELECTED] = "#6798cb"
+    fg[ACTIVE]   = "#000000"
+    fg[SELECTED] = "#ffffff"
+}
+
+style "theme-shell-highlight" = "theme-default" {
+}
+
+style "extra-view" {
+    bg[NORMAL] = "#729fcf"
+    font = "Sans 6"
+} 
+
+style "rox" = "theme-default" {
+    bg[NORMAL] = "#ffffff"
+    bg[ACTIVE] = "#ffffff"
+    fg[NORMAL] = "#000000"
+    fg[ACTIVE] = "#000000"
+}
+
+class "GtkWidget" style "theme-default"
+class "GtkButton" style "theme-button"
+class "GtkCombo"  style "theme-button"
+class "GtkRange"  style "theme-wide"
+class "GtkFrame"  style "theme-wide"
+class "GtkMenu"   style "theme-menu"
+class "GtkEntry"  style "theme-button"
+class "GtkMenuItem"    style "theme-menu-item"
+class "GtkStatusbar"   style "theme-wide"
+class "GtkNotebook"    style "theme-notebook"
+class "GtkProgressBar" style "theme-progressbar"
+class "GtkCheckButton" style "theme-check"
+class "GtkRadioButton" style "theme-check"
+
+widget_class "*MenuItem.*" style "theme-menu-item"
+widget_class "*.GtkComboBox.GtkButton" style "theme-combo"
+widget_class "*.GtkCombo.GtkButton"    style "theme-combo"
+widget_class "*.tooltips.*.GtkToggleButton" style "theme-tasklist"
+widget "gtk-tooltip" style "theme-tooltips"
+widget_class "*.GtkTreeView.GtkButton" style "theme-tree"
+widget_class "*.GtkCTree.GtkButton" style "theme-tree"
+widget_class "*.GtkList.GtkButton" style "theme-tree"
+widget_class "*.GtkCList.GtkButton" style "theme-tree"
+widget_class "*.GtkFrame.GtkLabel" style "theme-frame-title"
+widget_class "*.GtkNotebook.*.GtkEventBox" style "theme-notebook"
+widget_class "*.GtkNotebook.*.GtkViewport" style "theme-notebook"
+class "MetaFrames" style "metacity-frame"
+widget_class "BasePWidget.GtkEventBox.GtkTable.GtkFrame" style "theme-panel"
+widget "*.nautilus-extra-view-widget" style:highest "extra-view"
+class "SlabWindow" style "theme-slab"
+class "ShellWindow" style "theme-shell"
+widget_class "ShellWindow.*.GtkEventBox" style "theme-shell-highlight"
+widget_class "*GtkCTree*" style "evolution-hack"
+widget_class "*GtkList*" style "evolution-hack"
+widget_class "*GtkCList*" style "evolution-hack"
+widget_class "*.ETree.*" style "evolution-hack"
+widget_class "*Collection*" style "rox"
+widget_class "*ToolPanel" style "tpstyle"
+widget_class "*ToolPanel*" style "tpstyle"
+widget_class "*ToolPanel.*" style "tpstyle"
+widget_class "*.ToolPanel.*" style "tpstyle"
+widget_class "*.ToolPanel" style "tpstyle"
+

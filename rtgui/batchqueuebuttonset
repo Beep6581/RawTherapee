@@ -1,0 +1,27 @@
+#ifndef _THUMBNAILBUTTONSET_
+#define _THUMBNAILBUTTONSET_
+
+#include <lwbuttonset.h>
+#include <gtkmm.h>
+#include <thumbbrowserentry.h>
+
+class ThumbBrowserEntry;
+class ThumbnailButtonSet : public LWButtonSet {
+
+        static bool iconsLoaded;
+        
+    public:
+        static Glib::RefPtr<Gdk::Pixbuf> rankIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> gRankIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> unRankIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> trashIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> unTrashIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> processIcon;
+
+        ThumbnailButtonSet (ThumbBrowserEntry* myEntry);
+        void    setRank (int stars);
+        void    setInTrash (bool inTrash);
+
+};
+
+#endif
