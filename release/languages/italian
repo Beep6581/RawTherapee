@@ -271,8 +271,8 @@ MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadati
 MAIN_TAB_TRANSFORM;Trasformazione
-MAIN_TOOLTIP_HIDEFP;Mostra/Nascondi il pannello dei pulsanti (cartelle e navigatore di file, shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;Mostra/Nascondi il pannello sinistro (inclusa la cronologia, shortcut key: H)
+MAIN_TOOLTIP_HIDEFP;Mostra/Nascondi il pannello dei pulsanti (cartelle e navigatore di file, tasto rapido: F)
+MAIN_TOOLTIP_HIDEHP;Mostra/Nascondi il pannello sinistro (inclusa la cronologia, tasto rapido: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate
 MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate
 MAIN_TOOLTIP_PREFERENCES;Imposta preferenze
@@ -426,15 +426,15 @@ SAVEDLG_JPGFILTER;file JPEG
 SAVEDLG_PNGCOMPR;Compressione PNG
 SAVEDLG_PNGFILTER;file PNG
 SAVEDLG_PUTTOQUEUE;Inserisci nella coda di sviluppo
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di elaborazione
+SAVEDLG_PUTTOQUEUETAIL;Metti in fondo alla coda di elaborazione
 SAVEDLG_SAVEIMMEDIATELY;Salva subito
 SAVEDLG_SAVESPP;Salva i parametri di elaborazione assieme all'immagine
 SAVEDLG_TIFFFILTER;file TIFF
-TOOLBAR_TOOLTIP_CROP;Ritaglia selezione (shortcut key: C)
-TOOLBAR_TOOLTIP_HAND;Strumento mano (shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Seleziona linea dritta (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;Bilanciamento del bianco puntuale (shortcut key: W)
+TOOLBAR_TOOLTIP_CROP;Ritaglia selezione (tasto rapido: C)
+TOOLBAR_TOOLTIP_HAND;Strumento mano (tasto rapido: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Seleziona linea dritta (tasto rapido: S)
+TOOLBAR_TOOLTIP_WB;Bilanciamento del bianco puntuale (tasto rapido: W)
 TP_CACORRECTION_BLUE;Blu
 TP_CACORRECTION_LABEL;Correzione A/C
 TP_CACORRECTION_RED;Rosso

@@ -1,7 +1,7 @@
 ﻿# RT 2.3 Nederlands
 # 26.12.2007: door Rens Duijsens en Brent Huisman
 # 14.03.2008: updated by reggybe
-# 26.12.2008: updated to RT2.4b4 by paul.matthijsse
+# 01.02.2009: updated to RT2.4-RC by paul.matthijsse
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 CURVEEDITOR_FILEDLGFILTERANY;Alle bestanden
 CURVEEDITOR_FILEDLGFILTERCURVE;Curvebestanden
@@ -269,8 +269,8 @@ MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TRANSFORM;Transformeer
-MAIN_TOOLTIP_HIDEFP;Toon/verberg onderpaneel (bestandsnavigator, shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;Toon/verberg linkerpaneel (geschiedenis, shortcut key: H)
+MAIN_TOOLTIP_HIDEFP;Toon/verberg onderpaneel (bestandsnavigator, sneltoets F)
+MAIN_TOOLTIP_HIDEHP;Toon/verberg linkerpaneel (geschiedenis, sneltoets H)
 MAIN_TOOLTIP_INDCLIPPEDH;Overbelichtingsindicatie
 MAIN_TOOLTIP_INDCLIPPEDS;Onderbelichtingsindicatie
 MAIN_TOOLTIP_PREFERENCES;Voorkeuren en instellingen
@@ -310,12 +310,12 @@ PREFERENCES_BLINKCLIPPED;Knipper bij over/onderbelichting
 PREFERENCES_CACHECLEARALL;Wis alles
 PREFERENCES_CACHECLEARPROFILES;Wis profielen
 PREFERENCES_CACHECLEARTHUMBS;Wis miniaturen
-PREFERENCES_CACHEFORMAT1;RawTherapee (sneller en hogere kwalteit)
-PREFERENCES_CACHEFORMAT2;JPEG (minder harde schijfruimte vereist)
+PREFERENCES_CACHEFORMAT1;RawTherapee (sneller, beter)
+PREFERENCES_CACHEFORMAT2;JPEG (minder schijfruimte)
 PREFERENCES_CACHEMAXENTRIES;Maximaal aantal elementen in cache
 PREFERENCES_CACHEOPTS;Cache-opties
-PREFERENCES_CACHESTRAT1;Prefereer snelheid boven weinig geheugenbeslag
-PREFERENCES_CACHESTRAT2;Prefereer weinig geheugenbeslag boven snelheid
+PREFERENCES_CACHESTRAT1;Sneller, meer geheugenbeslag
+PREFERENCES_CACHESTRAT2;Langzamer, minder geheugenbeslag
 PREFERENCES_CACHESTRAT;Cache-strategie
 PREFERENCES_CACHETHUMBFORM;Miniatuurformaat cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
@@ -424,15 +424,15 @@ SAVEDLG_JPGFILTER;JPEG-bestanden
 SAVEDLG_PNGCOMPR;PNG-compressie
 SAVEDLG_PNGFILTER;PNG-bestanden
 SAVEDLG_PUTTOQUEUE;Plaats in verwerkingsrij
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Plaats vooraan in verwerkingsrij
+SAVEDLG_PUTTOQUEUETAIL;Plaats achteraan in verwerkingsrij
 SAVEDLG_SAVEIMMEDIATELY;Bewaar meteen
 SAVEDLG_SAVESPP;Bewaar afbeelding met profiel
 SAVEDLG_TIFFFILTER;TIFF-bestanden
-TOOLBAR_TOOLTIP_CROP;Bijsnijden (shortcut key: C)
-TOOLBAR_TOOLTIP_HAND;Sleepgereedschap (shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Rechte lijn bepalen (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;Witbalans (shortcut key: W)
+TOOLBAR_TOOLTIP_CROP;Bijsnijden (sneltoets C)
+TOOLBAR_TOOLTIP_HAND;Sleepgereedschap (sneltoets N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Rechte lijn bepalen (sneltoets S)
+TOOLBAR_TOOLTIP_WB;Witbalans (sneltoets W)
 TP_CACORRECTION_BLUE;Blauw
 TP_CACORRECTION_LABEL;Corrigeer chrom. aberratie
 TP_CACORRECTION_RED;Rood

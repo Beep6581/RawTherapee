@@ -1,5 +1,6 @@
 # Slovenčina
 # 08.05.2008
+# 01.02.2009
 # (Slapo)
 ADJUSTER_RESET_TO_DEFAULT;Resetovať na predvolené nastavenia
 CURVEEDITOR_FILEDLGFILTERANY;Všetky súbory
@@ -423,8 +424,8 @@ SAVEDLG_JPGFILTER;JPEG súbory
 SAVEDLG_PNGCOMPR;PNG Kompresia
 SAVEDLG_PNGFILTER;PNG súbory
 SAVEDLG_PUTTOQUEUE;Vložiť do radu na spracovanie
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Presunúť na čelo radu na spracovanie
+SAVEDLG_PUTTOQUEUETAIL;Presunúť na koniec radu na spracovanie
 SAVEDLG_SAVEIMMEDIATELY;Uložiť okamžite
 SAVEDLG_SAVESPP;Uložiť parametre spracovania s obrázkom
 SAVEDLG_TIFFFILTER;TIFF súbory

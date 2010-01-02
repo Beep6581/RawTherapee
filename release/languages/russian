@@ -2,7 +2,7 @@
 # 23.12.2007
 # ArtDen
 # 20.07.2008: Denis Artemov
-# 29.12.2008: Kvark
+# 16.02.2009: Kvark
 ADJUSTER_RESET_TO_DEFAULT;По умолчанию
 CURVEEDITOR_FILEDLGFILTERANY;Любые файлы
 CURVEEDITOR_FILEDLGFILTERCURVE;Файлы тоновых кривых
@@ -257,7 +257,7 @@ MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображени
 MAIN_MSG_CANNOTSAVE;Ошибка при сохранении файла
 MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный путь в диалоге "Настройки".
-MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходу.
+MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходе из программы.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Вы уверены, что хотите выйти из программы? В очереди остались необработанные изображения.
 MAIN_MSG_JOBSINQUEUE;Идёт обработка
 MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
@@ -270,8 +270,8 @@ MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Метаданные
 MAIN_TAB_TRANSFORM;Преобразования
-MAIN_TOOLTIP_HIDEFP;Показать/скрыть нижнюю панель (папки и список файлов, shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;Показать/скрыть левую панель (включая историю, shortcut key: H)
+MAIN_TOOLTIP_HIDEFP;Показать/скрыть нижнюю панель (каталоги и список файлов, горячая клавиша: F)
+MAIN_TOOLTIP_HIDEHP;Показать/скрыть левую панель (включая историю, горячая клавиша: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Индикатор пересветов
 MAIN_TOOLTIP_INDCLIPPEDS;Индикатор затемнений
 MAIN_TOOLTIP_PREFERENCES;задать настройки
@@ -311,12 +311,12 @@ PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
 PREFERENCES_CACHECLEARALL;Удалить все
 PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
 PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
-PREFERENCES_CACHEFORMAT1;Собственный (быстрее, выше качество)
-PREFERENCES_CACHEFORMAT2;JPEG (меньший объем дискового пространства)
+PREFERENCES_CACHEFORMAT1;Свой (быстрее, выше качество)
+PREFERENCES_CACHEFORMAT2;JPEG (меньший места на диске)
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
-PREFERENCES_CACHESTRAT1;Более высокая скорость работы - больший расход памяти
-PREFERENCES_CACHESTRAT2;Меньший расход памяти - более низкая скорость работы
+PREFERENCES_CACHESTRAT1;Выше скорость - больше расход ОЗУ
+PREFERENCES_CACHESTRAT2;Меньше расход памяти - скорость ниже
 PREFERENCES_CACHESTRAT;Стратегия кэширования
 PREFERENCES_CACHETHUMBFORM;Формат кэширования эскизов
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
@@ -326,14 +326,14 @@ PREFERENCES_CLEARDLG_TITLE;Пожалуйста, подождите
 PREFERENCES_CLIPPINGIND;Индикация пересветов/затемнений
 PREFERENCES_CMETRICINTENT;Колориметрическое преобразование
 PREFERENCES_DATEFORMAT;Формат даты
-PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMATHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%y</b><i> : год</i>\n<b>%m</b><i> : месяц</i>\n<b>%d</b><i> : день</i>\n<i>\nНапример, венгерский формат даты такой:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
 PREFERENCES_DIRHOME;Домашний каталог
 PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
-PREFERENCES_DIRSELECTDLG;Выберите каталог для изображений
+PREFERENCES_DIRSELECTDLG;Выберите каталог для хранения изображений
 PREFERENCES_DIRSOFTWARE;Каталог установки
 PREFERENCES_DMETHOD;Метод
 PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
@@ -347,7 +347,7 @@ PREFERENCES_GIMPPATH;Путь установки GIMP
 PREFERENCES_GTKTHEME;GTK по умолчанию
 PREFERENCES_HINT;Подсказка
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
-PREFERENCES_ICCDIR;Каталог для ICC профилей
+PREFERENCES_ICCDIR;Каталог ICC профилей
 PREFERENCES_IMPROCPARAMS;Параметры обработки по умолчанию
 PREFERENCES_INTENT_ABSOLUTE;Абсолютное
 PREFERENCES_INTENT_PERCEPTUAL;Перцепционное
@@ -356,13 +356,13 @@ PREFERENCES_INTENT_SATURATION;По насыщенности
 PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MONITORICC;Профиль монитора
 PREFERENCES_OUTDIR;Каталог
-PREFERENCES_OUTDIRFOLDER;Сохранить в папку
-PREFERENCES_OUTDIRFOLDERHINT;Сохранение изображений в выбранную папку
-PREFERENCES_OUTDIRHINT;<i>Вы можете использовать следующие элементы для форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют директориям и поддиректориям в пути к RAW файлу.\n\nДля примера, если путь к файлу - </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы для форматирования будут следующими:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в один каталог с оригиналом, настройка должна быть следующей:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в подкаталог 'converted' в директории оригинального файла, укажите настройку:\n</i><b>%p1/converted/%f\n</b><i>\nЕсли вы хотите сохранять изображения в каталог '/home/tom/converted' с сохранением поддиректорий с датами, укажите настройку:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRFOLDER;Каталог для сохранения изображений
+PREFERENCES_OUTDIRFOLDERHINT;Сохранение изображений в выбранный каталог
+PREFERENCES_OUTDIRHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если путь к файлу - </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут следующими:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в один каталог с оригиналом, введите строку:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в подкаталог "converted" в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений в каталог "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Расширения файлов для предварительного просмотра
-PREFERENCES_PARSEDEXTADD;Добавить расширение
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если был открыт каталог </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут выглядеть так:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге с оригиналом, введите:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге "converted", расположенной в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений папке в "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Расширения для предпросмотра
+PREFERENCES_PARSEDEXTADD;Добавить
 PREFERENCES_PARSEDEXTADDHINT;Введите расширение и нажмите на эту кнопку, чтобы добавить его в список
 PREFERENCES_PARSEDEXTDELHINT;Удаление выбранных расширений из списка
 PREFERENCES_PROFILEHANDLING;Профиль постобработки
@@ -394,7 +394,7 @@ PROFILEPANEL_LOADDLGLABEL;Загрузить профиль постобрабо
 PROFILEPANEL_PCUSTOM;Пользовательский
 PROFILEPANEL_PFILE;Из файла
 PROFILEPANEL_PLASTPHOTO;Из прошлого изображения
-PROFILEPANEL_PLASTSAVED;Последний записанный
+PROFILEPANEL_PLASTSAVED;Послед. сохр.
 PROFILEPANEL_PROFILE;Профиль
 PROFILEPANEL_SAVEDLGLABEL;Сохранить профиль постобработки...
 PROFILEPANEL_TOOLTIPCOPY;Скопировать текущий профиль в буфер обмена
@@ -425,15 +425,15 @@ SAVEDLG_JPGFILTER;Файлы JPEG
 SAVEDLG_PNGCOMPR;Сжатие PNG
 SAVEDLG_PNGFILTER;Файлы PNG
 SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Поместить в начало очереди на обработку
+SAVEDLG_PUTTOQUEUETAIL;Поместить в конец очереди на обработку
 SAVEDLG_SAVEIMMEDIATELY;Сохранить сейчас
 SAVEDLG_SAVESPP;Сохранять параметры обработки вместе с изображением
 SAVEDLG_TIFFFILTER;Файлы TIFF
-TOOLBAR_TOOLTIP_CROP;Кадрирование (shortcut key: C)
-TOOLBAR_TOOLTIP_HAND;Инструмент "Рука" (shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Установка прямой линии (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;Указать белую точку (shortcut key: W)
+TOOLBAR_TOOLTIP_CROP;Кадрирование (горячая клавиша: C)
+TOOLBAR_TOOLTIP_HAND;Инструмент "Рука" (горячая клавиша: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Установка прямой линии (горячая клавиша: S)
+TOOLBAR_TOOLTIP_WB;Указать белую точку (горячая клавиша: W)
 TP_CACORRECTION_BLUE;Синий
 TP_CACORRECTION_LABEL;Хроматические аберрации
 TP_CACORRECTION_RED;Красный
@@ -485,11 +485,11 @@ TP_EXPOSURE_AUTOLEVELS;Автоматические уровни
 TP_EXPOSURE_BLACKLEVEL;Уровень чёрного
 TP_EXPOSURE_BRIGHTNESS;Яркость
 TP_EXPOSURE_CLIP;Ограничить
-TP_EXPOSURE_COMPRHIGHLIGHTS;Сжатие бликов
+TP_EXPOSURE_COMPRHIGHLIGHTS;Сжатие светов
 TP_EXPOSURE_COMPRSHADOWS;Сжатие теней
 TP_EXPOSURE_CONTRAST;Контраст
 TP_EXPOSURE_CURVEEDITOR;Тоновая кривая
-TP_EXPOSURE_EXPCOMP;Комп. эксп.
+TP_EXPOSURE_EXPCOMP;Компенсация экспозиции
 TP_EXPOSURE_LABEL;Экспозиция
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Реконструкция цвета
@@ -512,7 +512,7 @@ TP_ICM_SAVEREFERENCE;Сохранить исходное изображение 
 TP_ICM_WORKINGPROFILE;Рабочий профиль
 TP_LUMACURVE_BLACKLEVEL;Уровень чёрного
 TP_LUMACURVE_BRIGHTNESS;Яркость
-TP_LUMACURVE_COMPRHIGHLIGHTS;Сжатие бликов
+TP_LUMACURVE_COMPRHIGHLIGHTS;Сжатие светов
 TP_LUMACURVE_COMPRSHADOWS;Сжатие теней
 TP_LUMACURVE_CONTRAST;Контраст
 TP_LUMACURVE_CURVEEDITOR;Тоновая кривая
@@ -536,7 +536,7 @@ TP_ROTATE_DEGREE;Угол
 TP_ROTATE_FILL;Автообрезка
 TP_ROTATE_LABEL;Поворот
 TP_ROTATE_SELECTLINE;    Выбрать прямую линию
-TP_SHADOWSHLIGHTS_HIGHLIGHTS;Яркие участки
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Света
 TP_SHADOWSHLIGHTS_HLTONALW;Уровень
 TP_SHADOWSHLIGHTS_LABEL;Тени/света
 TP_SHADOWSHLIGHTS_LOCALCONTR;Локальный контраст
