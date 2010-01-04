@@ -1,4 +1,4 @@
-ADJUSTER_RESET_TO_DEFAULT;Atiestatīt uz noklusēto
+﻿ADJUSTER_RESET_TO_DEFAULT;Atiestatīt uz noklusēto
 CURVEEDITOR_FILEDLGFILTERANY;Visi faili
 CURVEEDITOR_FILEDLGFILTERCURVE;Līkņu faili
 CURVEEDITOR_LINEAR;Lineāri
@@ -9,7 +9,7 @@ CURVEEDITOR_TOOLTIPLOAD;Ielādēt līkni no faila
 CURVEEDITOR_TOOLTIPSAVE;Saglabāt esošo līkni
 EXIFFILTER_APERTURE;Aperture
 EXIFFILTER_CAMERA;Camera
-EXIFFILTER_DIALOGLABEL;Exif Filter
+EXIFFILTER_DIALOGLABEL;Exif Filtrs
 EXIFFILTER_FOCALLEN;Fokusa garums
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lēca
@@ -27,58 +27,58 @@ EXIFPANEL_RESET;Atiestate
 EXIFPANEL_RESETALL;Atiestatīt visu
 EXIFPANEL_RESETALLHINT;Atiestatīt visas birkas uz to noklusētajām vērtībām
 EXIFPANEL_RESETHINT;Atiestatīt izvēlētās birkas uz to noklusētajām vērtībām
-EXIFPANEL_SUBDIRECTORY;Subdirectory
-FILEBROWSER_APPLYPROFILE;Apply profile
-FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
-FILEBROWSER_CLEARPROFILE;Clear profile
-FILEBROWSER_COPYPROFILE;Copy profile
-FILEBROWSER_DELETEDLGLABEL;File delete confirmation
-FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
-FILEBROWSER_EMPTYTRASH;Empty Trash
-FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
-FILEBROWSER_EXIFFILTERAPPLY;Apply
-FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
-FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
-FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
-FILEBROWSER_PASTEPROFILE;Paste profile
-FILEBROWSER_POPUPCANCELJOB;Cancel job
-FILEBROWSER_POPUPMOVEEND;Move to end of queue
-FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
-FILEBROWSER_POPUPOPEN;Open
-FILEBROWSER_POPUPPROCESS;Put to processing queue
-FILEBROWSER_POPUPRANK1;Rank 1
-FILEBROWSER_POPUPRANK2;Rank 2
-FILEBROWSER_POPUPRANK3;Rank 3
-FILEBROWSER_POPUPRANK4;Rank 4
-FILEBROWSER_POPUPRANK5;Rank 5
-FILEBROWSER_POPUPREMOVE;Remove from filesystem
-FILEBROWSER_POPUPRENAME;Rename
-FILEBROWSER_POPUPSELECTALL;Select all
-FILEBROWSER_POPUPTRASH;Move to trash
-FILEBROWSER_POPUPUNRANK;Unrank
-FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
-FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
-FILEBROWSER_RENAMEDLGLABEL;Rename file
-FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
-FILEBROWSER_SHOWDIRHINT;Show all images of the directory
-FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
-FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star
-FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star
-FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star
-FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
-FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
-FILEBROWSER_SHOWTRASHHINT;Show content of the trash
-FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
-FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
-FILEBROWSER_THUMBSIZE;Thumb. size
-FILEBROWSER_ZOOMINHINT;Increase thumbnail size
-FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
+EXIFPANEL_SUBDIRECTORY;Subdirektorijs
+FILEBROWSER_APPLYPROFILE;Lietot profilu
+FILEBROWSER_ARRANGEMENTHINT;Pārslēgt vertikālu/horizontālu sīktēlu izvietojumu
+FILEBROWSER_CLEARPROFILE;Notīrīt profilu
+FILEBROWSER_COPYPROFILE;Kopēt profilu
+FILEBROWSER_DELETEDLGLABEL;Faila dzēšanas apstiprinājums
+FILEBROWSER_DELETEDLGMSG;Vai tiešām dzēst %1 atzīmētos filus?
+FILEBROWSER_EMPTYTRASH;Izmest atkritumus
+FILEBROWSER_EMPTYTRASHHINT;Galīgi izdzēst atkritumu failus
+FILEBROWSER_EXIFFILTERAPPLY;Lietot
+FILEBROWSER_EXIFFILTERAPPLYHINT;Pārslēgt failu pārlūka exif filtru
+FILEBROWSER_EXIFFILTERLABEL;Exif filtrs
+FILEBROWSER_EXIFFILTERSETTINGS;Uzstādījumi
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Mainīt exif filtra uzstādījumus
+FILEBROWSER_PARTIALPASTEPROFILE;Daļēja ielīmēšana
+FILEBROWSER_PASTEPROFILE;Ielīmēt profilu
+FILEBROWSER_POPUPCANCELJOB;Atcelt darbu
+FILEBROWSER_POPUPMOVEEND;Pārvietot uz rindas beigām
+FILEBROWSER_POPUPMOVEHEAD;Pārvietot uz rindas sākumu
+FILEBROWSER_POPUPOPEN;Atvērt
+FILEBROWSER_POPUPPROCESS;Ielikt apstrādes rindā
+FILEBROWSER_POPUPRANK1;Vērtēt 1
+FILEBROWSER_POPUPRANK2;Vērtēt 2
+FILEBROWSER_POPUPRANK3;Vērtēt 3
+FILEBROWSER_POPUPRANK4;Vērtēt 4
+FILEBROWSER_POPUPRANK5;Vērtēt 5
+FILEBROWSER_POPUPREMOVE;Dzēst no failu sistēmas
+FILEBROWSER_POPUPRENAME;Pārsaukt
+FILEBROWSER_POPUPSELECTALL;Atzīmēt visu
+FILEBROWSER_POPUPTRASH;Pārvietot uz atkritumiem
+FILEBROWSER_POPUPUNRANK;Nevērtēt
+FILEBROWSER_POPUPUNTRASH;Izņemt no atkritumiem
+FILEBROWSER_PROCESSINGSETTINGS;Uzstādījumi
+FILEBROWSER_PROCESSINGSETTINGSHINT;Uzstādīt failu formātu un izvades direktoriju
+FILEBROWSER_RENAMEDLGLABEL;Pārsaukt failu
+FILEBROWSER_RENAMEDLGMSG;Pārsaukt failu "%1" uz:
+FILEBROWSER_SHOWDIRHINT;Rādīt visus direktorija attēlus
+FILEBROWSER_SHOWQUEUEHINT;Rādīt apstrādes rindas saturu
+FILEBROWSER_SHOWRANK1HINT;Rādīt attēlus ar 1 zvaigzni
+FILEBROWSER_SHOWRANK2HINT;Rādīt attēlus ar 2 zvaigznēm
+FILEBROWSER_SHOWRANK3HINT;Rādīt attēlus ar 3 zvaigznēm
+FILEBROWSER_SHOWRANK4HINT;Rādīt attēlus ar 4 zvaigznēm
+FILEBROWSER_SHOWRANK5HINT;Rādīt attēlus ar 5 zvaigznēm
+FILEBROWSER_SHOWTRASHHINT;Rādīt atkritumus
+FILEBROWSER_SHOWUNRANKHINT;Rādīt nevērtētus attēlus
+FILEBROWSER_STARTPROCESSING;Sākt apstrādi
+FILEBROWSER_STARTPROCESSINGHINT;Sākt attēlu rindas apstrādi/saglabāšanu
+FILEBROWSER_STOPPROCESSING;Apturēt apstrādi
+FILEBROWSER_STOPPROCESSINGHINT;Apturēt attēlu apstrādi
+FILEBROWSER_THUMBSIZE;Sīktēlu izmērs
+FILEBROWSER_ZOOMINHINT;Palielināt sīktēlus
+FILEBROWSER_ZOOMOUTHINT;Samazināt sīktēlus
 GENERAL_ABOUT;Par
 GENERAL_CANCEL;Atcelt
 GENERAL_DISABLE;Atslēgt
@@ -93,7 +93,7 @@ GENERAL_OK;Labi
 GENERAL_PORTRAIT;Portrets
 GENERAL_SAVE;Saglabāt
 GENERAL_YES;Jā
-HISTOGRAM_LABEL;Histogram
+HISTOGRAM_LABEL;Histogramma
 HISTOGRAM_TOOLTIP_B;Rādīt/Slēpt Zilā histogrammu
 HISTOGRAM_TOOLTIP_G;Rādīt/Slēpt Zaļā histogrammu
 HISTOGRAM_TOOLTIP_L;Rādīt/Slēpt CIELAB Spīduma histogrammu
@@ -101,7 +101,7 @@ HISTOGRAM_TOOLTIP_R;Rādīt/Slēpt Sarkanā histogrammu
 HISTORY_CHANGED;Mainīts
 HISTORY_CUSTOMCURVE;Pielāgota līkne
 HISTORY_DELSNAPSHOT;Noņemt grāmtzīmi
-HISTORY_FROMCLIPBOARD;From clipboard
+HISTORY_FROMCLIPBOARD;No starplikas
 HISTORY_LABEL;Vēsture
 HISTORY_MSG_10;Ēnu spiešana
 HISTORY_MSG_11;Toņa līkne
@@ -246,24 +246,24 @@ IPTCPANEL_TRANSREFERENCEHINT;Kods, kas norāda uz attēla sākotnējas pārneses
 MAIN_BUTTON_PREFERENCES;Iestatījumi
 MAIN_BUTTON_SAVE;Saglabāt attēlu
 MAIN_BUTTON_SAVEAS;Kā...
-MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_BUTTON_SENDTOEDITOR;Sūtīt uz redaktoru
 MAIN_MSG_ALREADYEXISTS;Fails jau ir.
 MAIN_MSG_CANNOTLOAD;Nevaru ielādēt attēlu
 MAIN_MSG_CANNOTSAVE;Faila saglabāšanas kļūda
-MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
-MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
+MAIN_MSG_CANNOTSTARTEDITOR;Nevar uzsākt redaktoru.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Lūdzu ievadiet pareizu ceļu dialogā "Uzstādījumi".
+MAIN_MSG_EXITJOBSINQUEUEINFO;Beidzot neapstrādātie attēli no rindas pazudīs.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Vai tiešām beigt? Apstrādes rindā ir neapstrādāti attēli.
 MAIN_MSG_JOBSINQUEUE;darbs(i) rindā
 MAIN_MSG_QOVERWRITE;Vai pārrakstīt to?
 MAIN_TAB_BASIC;Pamats
-MAIN_TAB_COLOR;Color
-MAIN_TAB_DETAIL;Detail
+MAIN_TAB_COLOR;Krāsa
+MAIN_TAB_DETAIL;Detaļas
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_EXPOSURE;Ekspozīcija
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
-MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA;Metadati
 MAIN_TAB_TRANSFORM;Pārveidot
 MAIN_TOOLTIP_HIDEFP;Rādīt/slēpt apakšējo ielaidumu (mapju un failu pārlūks, shortcut key: F))
 MAIN_TOOLTIP_HIDEHP;Rādīt/slēpt kreiso ielaidumu (ieskaitot vēsturi, shortcut key: H)
@@ -273,51 +273,51 @@ MAIN_TOOLTIP_PREFERENCES;Mainīt iestatījumus
 MAIN_TOOLTIP_QINFO;Ātrā info uz attēla
 MAIN_TOOLTIP_SAVE;Saglabāt attēlu noklusētā mapē
 MAIN_TOOLTIP_SAVEAS;Saglabāt attēlu izvēlētā mapē
-PARTIALPASTE_BASICGROUP;Basic settings
-PARTIALPASTE_CACORRECTION;C/A correction
-PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
-PARTIALPASTE_COLORBOOST;Color boost
-PARTIALPASTE_COLORDENOISE;Color denoise
-PARTIALPASTE_COLORGROUP;Color related settings
-PARTIALPASTE_COLORMIXER;Color mixer
-PARTIALPASTE_COLORSHIFT;Color shift
-PARTIALPASTE_COMPOSITIONGROUP;Composition settings
-PARTIALPASTE_CROP;Crop
-PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
-PARTIALPASTE_DISTORTION;Distortion correction
-PARTIALPASTE_EXIFCHANGES;Changes to exif data
-PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_HLRECOVERY;Highlight recovery
-PARTIALPASTE_ICMSETTINGS;ICM settings
+PARTIALPASTE_BASICGROUP;Pamata uzstādījumi
+PARTIALPASTE_CACORRECTION;C/A labošana
+PARTIALPASTE_COARSETRANS;90 grādu rotēšana / apmešana
+PARTIALPASTE_COLORBOOST;Krāsu pastiprināšana
+PARTIALPASTE_COLORDENOISE;Krāsu attīrīšana
+PARTIALPASTE_COLORGROUP;Krāsu uzstādījumi
+PARTIALPASTE_COLORMIXER;Krāsu jaucējs
+PARTIALPASTE_COLORSHIFT;Krāsu nobīde
+PARTIALPASTE_COMPOSITIONGROUP;Kompozīcijas uzstādījumi
+PARTIALPASTE_CROP;Apcirpt
+PARTIALPASTE_DIALOGLABEL;Daļēji ielīmēt apstrādes profilu
+PARTIALPASTE_DISTORTION;Kropļojumu labošana
+PARTIALPASTE_EXIFCHANGES;exif datu izmaiņas
+PARTIALPASTE_EXPOSURE;Ekspozīcija
+PARTIALPASTE_HLRECOVERY;Izgaismojumu atgūšana
+PARTIALPASTE_ICMSETTINGS;ICM uzstādījumi
 PARTIALPASTE_IPTCINFO;IPTC info
-PARTIALPASTE_LENSGROUP;Lens related settings
-PARTIALPASTE_LUMACURVE;Luminance curve
-PARTIALPASTE_LUMADENOISE;Luminance noise reduction
-PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
-PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
-PARTIALPASTE_RESIZE;Resize
-PARTIALPASTE_ROTATION;Rotation
-PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
-PARTIALPASTE_SHARPENING;Sharpening
-PARTIALPASTE_VIGNETTING;Vignetting correction
-PARTIALPASTE_WHITEBALANCE;White balance
+PARTIALPASTE_LENSGROUP;Lēcas uzstādījumi
+PARTIALPASTE_LUMACURVE;Spīduma līkne
+PARTIALPASTE_LUMADENOISE;Spīduma trokšņu slāpēšana
+PARTIALPASTE_LUMINANCEGROUP;Spīduma uzstādījumi
+PARTIALPASTE_METAICMGROUP;Metadati/ICM uzstādījumi
+PARTIALPASTE_RESIZE;Izmērmaiņa
+PARTIALPASTE_ROTATION;Rotācija
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Ēnas/izgaismojumi
+PARTIALPASTE_SHARPENING;Asināšana
+PARTIALPASTE_VIGNETTING;Vinjetes labošana
+PARTIALPASTE_WHITEBALANCE;Baltā līdzsvarss
 PREFERENCES_APPLNEXTSTARTUP;lietos nākamā reizē
 PREFERENCES_BLINKCLIPPED;Mirgot cirptos laukumus
-PREFERENCES_CACHECLEARALL;Clear All
-PREFERENCES_CACHECLEARPROFILES;Clear Profiles
-PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
-PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
-PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
-PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
-PREFERENCES_CACHEOPTS;Cache Options
-PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
-PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
-PREFERENCES_CACHESTRAT;Cache Strategy
-PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
-PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-PREFERENCES_CLEARDLG_LINE1;Clearing cache
-PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
-PREFERENCES_CLEARDLG_TITLE;Please wait
+PREFERENCES_CACHECLEARALL;Attīrīt visu
+PREFERENCES_CACHECLEARPROFILES;Attīrīt Profilus
+PREFERENCES_CACHECLEARTHUMBS;Attīrīt sīktēlus
+PREFERENCES_CACHEFORMAT1;Savs (ātrāks un kvalitatīvāks)
+PREFERENCES_CACHEFORMAT2;JPEG (mazāka diska vieta)
+PREFERENCES_CACHEMAXENTRIES;Maksimālais keša ierakstu skaits
+PREFERENCES_CACHEOPTS;Keša opcijas
+PREFERENCES_CACHESTRAT1;Priekšroka ātrumam pret mazu atmiņas patēriņu
+PREFERENCES_CACHESTRAT2;Priekšroka mazam atmiņas patēriņam pret ātrumu
+PREFERENCES_CACHESTRAT;Keša stratēģija
+PREFERENCES_CACHETHUMBFORM;Keša sīktēlu formāts
+PREFERENCES_CACHETHUMBHEIGHT;Keša maksimālais sīktēla augstums
+PREFERENCES_CLEARDLG_LINE1;Attīrīt kešu
+PREFERENCES_CLEARDLG_LINE2;Tas var aizņemt dažas sekundes.
+PREFERENCES_CLEARDLG_TITLE;Lūdzu uzgaidiet
 PREFERENCES_CLIPPINGIND;Cirpšanas pazīme
 PREFERENCES_CMETRICINTENT;Kolorimetriskais nolūks
 PREFERENCES_DATEFORMAT;Datuma formāts
@@ -331,14 +331,14 @@ PREFERENCES_DIROTHER;Cita
 PREFERENCES_DIRSELECTDLG;Izvēlies attēlu mapi sākumam...
 PREFERENCES_DIRSOFTWARE;Uzstādīšanas mape
 PREFERENCES_DMETHOD;Metode
-PREFERENCES_EDITORCMDLINE;Other command line
-PREFERENCES_EXTERNALEDITOR;External editor
+PREFERENCES_EDITORCMDLINE;Cita komandrinda
+PREFERENCES_EXTERNALEDITOR;Ārējais redaktors
 PREFERENCES_FALSECOLOR;Neīsto krāsu slāpēšanas soļi
 PREFERENCES_FBROWSEROPTS;Failu pārlūka iespējas
 PREFERENCES_FILEFORMAT;Faila formāts
 PREFERENCES_FORIMAGE;Attēlu failiem
 PREFERENCES_FORRAW;RAW failiem
-PREFERENCES_GIMPPATH;GIMP installation directory
+PREFERENCES_GIMPPATH;GIMP instalācijas direktorijs
 PREFERENCES_GTKTHEME;GTK noklusētā
 PREFERENCES_HINT;Mājiens
 PREFERENCES_HLTHRESHOLD;Cirpto izgaismojumu slieksnis
@@ -348,25 +348,25 @@ PREFERENCES_INTENT_ABSOLUTE;Absolūtā kolorimetrija
 PREFERENCES_INTENT_PERCEPTUAL;Uztverams
 PREFERENCES_INTENT_RELATIVE;Relatīvā kolorimetrija
 PREFERENCES_INTENT_SATURATION;Piesātinājums
-PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_LIVETHUMBNAILS;Dzīvie sīktēli (lēnāk)
 PREFERENCES_MONITORICC;Monitora Profils
 PREFERENCES_OUTDIR;Izvades mape
-PREFERENCES_OUTDIRFOLDER;Save to folder
-PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRFOLDER;Saglabāt mapē
+PREFERENCES_OUTDIRFOLDERHINT;Likt saglabātos attēlus norādītajā mapē
 PREFERENCES_OUTDIRHINT;<i>Jūs varat lietot šāduas formatēšanas parametrus:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nŠie formatēšanas parametri attiecas uz raw faila direktoriju un apakšceļiem.\n\nPiemēram, ja </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ir atvērts, formatēšanas parametri nozīmē:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nJa Jūs vēlaties saglabāt rezultātu tur pat kur ir oriģināls, rakstiet:\n</i><b>%p1/%f\n</b><i>\nJa Jūs vēlaties saglabāt rezultātu direktorijā 'converted', kas novietota oriģināla direktorijā, rakstiet:\n</i><b>%p1/converted/%f\n</b><i>\nJa Jūs vēlaties saglabāt rezultātu '/home/tom/converted' paturot tādu pašu apakšdirektoriju datumu struktūru, rakstiet:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Parsed Extensions
-PREFERENCES_PARSEDEXTADD;Add Extension
-PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
-PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
-PREFERENCES_PROFILEHANDLING;Processing Profile Handling
-PREFERENCES_PROFILELOADPR;Profile Loading Priority
-PREFERENCES_PROFILEPRCACHE;Profile in Cache
-PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
-PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
-PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
-PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_OUTDIRTEMPLATE;Lietot veidni
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Jūs varat lietot šādas formatēšanas virknes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nŠīs formatēšanas virknes attiecas uz direktorijiem un RAW faila apakšceļiem.\n\nPiemēram, ja ir atvērts</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, formatējuma virkņu nozīme ir:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nJa vēlaties rezultātu saglabāt turpat pie oriģināla, rakstiet:\n</i><b>%p1/%f\n</b><i>\nJa vēlaties rezultātu saglabāt direktorijā 'converted' pie oriģināla, rakstiet:\n</i><b>%p1/converted/%f\n</b><i>\nJa vēlaties rezultātu saglabāt direktorijā '/home/tom/converted' paturot to pašu datumu apakšdirektoriju, rakstiet:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsētie paplašīnājumi
+PREFERENCES_PARSEDEXTADD;Pielikt paplašinājumu
+PREFERENCES_PARSEDEXTADDHINT;Ierakstiet paplašinājumu un nospiediet šo pogu lai pievienotu sarakstam
+PREFERENCES_PARSEDEXTDELHINT;Dzēst atzīmēto paplašinājumu no saraksta
+PREFERENCES_PROFILEHANDLING;Rīkošanās ar apstrādes profiliem
+PREFERENCES_PROFILELOADPR;Profilu ielādes prioritāte
+PREFERENCES_PROFILEPRCACHE;Profils kešā
+PREFERENCES_PROFILEPRFILE;Profils pie ievades faila
+PREFERENCES_PROFILESAVECACHE;Saglabāt apstrādes parametrus kešā
+PREFERENCES_PROFILESAVEINPUT;Saglabāt apstrādes parametrus pie ievades faila
+PREFERENCES_PSPATH;Adobe Photoshop instalācijas direktorijs
 PREFERENCES_SELECTICCDIRDLG;Izvēlies ICC Profilu mapi...
 PREFERENCES_SELECTLANG;Izvēlies valodu
 PREFERENCES_SELECTMONITORPROFDLG;Izvēlies displeja ICC profilu...
@@ -392,9 +392,9 @@ PROFILEPANEL_PLASTPHOTO;Iepriekšējais attēls
 PROFILEPANEL_PLASTSAVED;Pēdējais saglabātais
 PROFILEPANEL_PROFILE;Profils
 PROFILEPANEL_SAVEDLGLABEL;Saglabāt apstrādes parametrus...
-PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
+PROFILEPANEL_TOOLTIPCOPY;Kopēt esošo profilu uz starpliku
 PROFILEPANEL_TOOLTIPLOAD;Ielādēt profilu no faila
-PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
+PROFILEPANEL_TOOLTIPPASTE;Ielīmēt profilu no starplikas
 PROFILEPANEL_TOOLTIPSAVE;Saglabāt šībrīža profilu
 PROGRESSBAR_DECODING;Dekodēju raw failu...
 PROGRESSBAR_DEMOSAICING;Mozaīkas interpolācija...
@@ -407,28 +407,28 @@ PROGRESSBAR_READY;Gatavs.
 PROGRESSBAR_SAVEJPEG;Saglabāju JPEG failu...
 PROGRESSBAR_SAVEPNG;Saglabāju PNG failu...
 PROGRESSBAR_SAVETIFF;Saglabāju TIFF failu...
-PROGRESSDLG_LOADING;Loading file...
-PROGRESSDLG_PROCESSING;Processing image...
-PROGRESSDLG_SAVING;Saving file...
+PROGRESSDLG_LOADING;Ielādēju failu...
+PROGRESSDLG_PROCESSING;Apstrādāju attēlu...
+PROGRESSDLG_SAVING;Saglabāju failu...
 QINFO_FOCALLENGTH;Fokusa garums
 QINFO_ISO;ISO
-QINFO_LENS;Lens
+QINFO_LENS;Lēca
 QINFO_NOEXIF;Exif dati nav pieejami.
 SAVEDLG_FILEFORMAT;Faila formāts
 SAVEDLG_JPEGQUAL;JPEG Kvalitāte
 SAVEDLG_JPGFILTER;JPEG faili
 SAVEDLG_PNGCOMPR;PNG Spiešana
 SAVEDLG_PNGFILTER;PNG faili
-SAVEDLG_PUTTOQUEUE;Put into processing queue
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
-SAVEDLG_SAVEIMMEDIATELY;Save immediately
+SAVEDLG_PUTTOQUEUE;Likt apstrādes rindā
+SAVEDLG_PUTTOQUEUEHEAD;Likt apstrādes rindas sākumā
+SAVEDLG_PUTTOQUEUETAIL;Likt apstrādes rindas beigās
+SAVEDLG_SAVEIMMEDIATELY;Saglabāt tūlīt
 SAVEDLG_SAVESPP;Saglabāt apstrādes parametrus ar attēlu
 SAVEDLG_TIFFFILTER;TIFF faili
-TOOLBAR_TOOLTIP_CROP;Kadrēšanas rīks (shortcut key: C)
-TOOLBAR_TOOLTIP_HAND;Plaukstas rīks (shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Taisnošanas rīks (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;Punkta baltā līdzsvara rīks (shortcut key: W)
+TOOLBAR_TOOLTIP_CROP;Kadrēšanas rīks (saīsne: C)
+TOOLBAR_TOOLTIP_HAND;Plaukstas rīks (saīsne: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Taisnošanas rīks (saīsne: S)
+TOOLBAR_TOOLTIP_WB;Punkta baltā līdzsvara rīks (saīsne: W)
 TP_CACORRECTION_BLUE;Zils
 TP_CACORRECTION_LABEL;Lēcas krāsu nobīdes
 TP_CACORRECTION_RED;Sarkans
@@ -563,7 +563,7 @@ TP_WBALANCE_GREEN;Nokrāsa
 TP_WBALANCE_LABEL;Baltā līdzsvars
 TP_WBALANCE_METHOD;Metode
 TP_WBALANCE_SIZE;izmērs:
-TP_WBALANCE_SPOTWB;Punkta WB
+TP_WBALANCE_SPOTWB;Punkta BL
 TP_WBALANCE_TEMPERATURE;Temperatūra
 ZOOMBAR_DETAIL;Tuvskats
 ZOOMBAR_HUGE;Milzīgs
