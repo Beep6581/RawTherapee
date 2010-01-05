@@ -1,4 +1,5 @@
-﻿ADJUSTER_RESET_TO_DEFAULT;Atiestatīt uz noklusēto
+﻿#Latvian language file
+ADJUSTER_RESET_TO_DEFAULT;Atiestatīt uz noklusēto
 CURVEEDITOR_FILEDLGFILTERANY;Visi faili
 CURVEEDITOR_FILEDLGFILTERCURVE;Līkņu faili
 CURVEEDITOR_LINEAR;Lineāri
@@ -29,13 +30,13 @@ EXIFPANEL_RESETALLHINT;Atiestatīt visas birkas uz to noklusētajām vērtībām
 EXIFPANEL_RESETHINT;Atiestatīt izvēlētās birkas uz to noklusētajām vērtībām
 EXIFPANEL_SUBDIRECTORY;Subdirektorijs
 FILEBROWSER_APPLYPROFILE;Lietot profilu
-FILEBROWSER_ARRANGEMENTHINT;Pārslēgt vertikālu/horizontālu sīktēlu izvietojumu
+FILEBROWSER_ARRANGEMENTHINT;Pārslēgt sīktēlu izvietojumu vertikāli/horizontāli
 FILEBROWSER_CLEARPROFILE;Notīrīt profilu
 FILEBROWSER_COPYPROFILE;Kopēt profilu
 FILEBROWSER_DELETEDLGLABEL;Faila dzēšanas apstiprinājums
 FILEBROWSER_DELETEDLGMSG;Vai tiešām dzēst %1 atzīmētos filus?
 FILEBROWSER_EMPTYTRASH;Izmest atkritumus
-FILEBROWSER_EMPTYTRASHHINT;Galīgi izdzēst atkritumu failus
+FILEBROWSER_EMPTYTRASHHINT;Galīgi izdzēst atkritnes failus
 FILEBROWSER_EXIFFILTERAPPLY;Lietot
 FILEBROWSER_EXIFFILTERAPPLYHINT;Pārslēgt failu pārlūka exif filtru
 FILEBROWSER_EXIFFILTERLABEL;Exif filtrs
@@ -56,9 +57,9 @@ FILEBROWSER_POPUPRANK5;Vērtēt 5
 FILEBROWSER_POPUPREMOVE;Dzēst no failu sistēmas
 FILEBROWSER_POPUPRENAME;Pārsaukt
 FILEBROWSER_POPUPSELECTALL;Atzīmēt visu
-FILEBROWSER_POPUPTRASH;Pārvietot uz atkritumiem
+FILEBROWSER_POPUPTRASH;Izmest atkritnē
 FILEBROWSER_POPUPUNRANK;Nevērtēt
-FILEBROWSER_POPUPUNTRASH;Izņemt no atkritumiem
+FILEBROWSER_POPUPUNTRASH;Izņemt no atkritnes
 FILEBROWSER_PROCESSINGSETTINGS;Uzstādījumi
 FILEBROWSER_PROCESSINGSETTINGSHINT;Uzstādīt failu formātu un izvades direktoriju
 FILEBROWSER_RENAMEDLGLABEL;Pārsaukt failu
@@ -70,7 +71,7 @@ FILEBROWSER_SHOWRANK2HINT;Rādīt attēlus ar 2 zvaigznēm
 FILEBROWSER_SHOWRANK3HINT;Rādīt attēlus ar 3 zvaigznēm
 FILEBROWSER_SHOWRANK4HINT;Rādīt attēlus ar 4 zvaigznēm
 FILEBROWSER_SHOWRANK5HINT;Rādīt attēlus ar 5 zvaigznēm
-FILEBROWSER_SHOWTRASHHINT;Rādīt atkritumus
+FILEBROWSER_SHOWTRASHHINT;Rādīt atkritni
 FILEBROWSER_SHOWUNRANKHINT;Rādīt nevērtētus attēlus
 FILEBROWSER_STARTPROCESSING;Sākt apstrādi
 FILEBROWSER_STARTPROCESSINGHINT;Sākt attēlu rindas apstrādi/saglabāšanu
@@ -319,7 +320,7 @@ PREFERENCES_CLEARDLG_LINE1;Attīrīt kešu
 PREFERENCES_CLEARDLG_LINE2;Tas var aizņemt dažas sekundes.
 PREFERENCES_CLEARDLG_TITLE;Lūdzu uzgaidiet
 PREFERENCES_CLIPPINGIND;Cirpšanas pazīme
-PREFERENCES_CMETRICINTENT;Kolorimetriskais nolūks
+PREFERENCES_CMETRICINTENT;Kolorimetrijas nolūks
 PREFERENCES_DATEFORMAT;Datuma formāts
 PREFERENCES_DATEFORMATHINT;<i>Jūs varat lietot šāduas formatēšanas parametrus:</i>\n<b>%y</b><i> : gads</i>\n<b>%m</b><i> : mēnesis</i>\n<b>%d</b><i> : diena</i>\n<i>\nPiemēram, ungāru datuma formāts ir:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Noklusētā valoda
@@ -360,12 +361,12 @@ PREFERENCES_PARSEDEXT;Parsētie paplašīnājumi
 PREFERENCES_PARSEDEXTADD;Pielikt paplašinājumu
 PREFERENCES_PARSEDEXTADDHINT;Ierakstiet paplašinājumu un nospiediet šo pogu lai pievienotu sarakstam
 PREFERENCES_PARSEDEXTDELHINT;Dzēst atzīmēto paplašinājumu no saraksta
-PREFERENCES_PROFILEHANDLING;Rīkošanās ar apstrādes profiliem
+PREFERENCES_PROFILEHANDLING;Apstrādes profilu politika
 PREFERENCES_PROFILELOADPR;Profilu ielādes prioritāte
 PREFERENCES_PROFILEPRCACHE;Profils kešā
 PREFERENCES_PROFILEPRFILE;Profils pie ievades faila
-PREFERENCES_PROFILESAVECACHE;Saglabāt apstrādes parametrus kešā
-PREFERENCES_PROFILESAVEINPUT;Saglabāt apstrādes parametrus pie ievades faila
+PREFERENCES_PROFILESAVECACHE;Saglabāt apstrādes profilu kešā
+PREFERENCES_PROFILESAVEINPUT;Saglabāt apstrādes profilu pie ievades faila
 PREFERENCES_PSPATH;Adobe Photoshop instalācijas direktorijs
 PREFERENCES_SELECTICCDIRDLG;Izvēlies ICC Profilu mapi...
 PREFERENCES_SELECTLANG;Izvēlies valodu
@@ -385,13 +386,13 @@ PREFERENCES_THUMBSIZE;Sīktēla izmērs
 PROFILEPANEL_FILEDLGFILTERANY;Visus failus
 PROFILEPANEL_FILEDLGFILTERPP;Apstrādes profili
 PROFILEPANEL_LABEL;Pēcapstrādes profili
-PROFILEPANEL_LOADDLGLABEL;Ielādēt apstrādes parametrus...
+PROFILEPANEL_LOADDLGLABEL;Ielādēt apstrādes profilu...
 PROFILEPANEL_PCUSTOM;Pielāgots
 PROFILEPANEL_PFILE;No faila
 PROFILEPANEL_PLASTPHOTO;Iepriekšējais attēls
 PROFILEPANEL_PLASTSAVED;Pēdējais saglabātais
 PROFILEPANEL_PROFILE;Profils
-PROFILEPANEL_SAVEDLGLABEL;Saglabāt apstrādes parametrus...
+PROFILEPANEL_SAVEDLGLABEL;Saglabāt apstrādes profilu...
 PROFILEPANEL_TOOLTIPCOPY;Kopēt esošo profilu uz starpliku
 PROFILEPANEL_TOOLTIPLOAD;Ielādēt profilu no faila
 PROFILEPANEL_TOOLTIPPASTE;Ielīmēt profilu no starplikas
@@ -423,11 +424,11 @@ SAVEDLG_PUTTOQUEUE;Likt apstrādes rindā
 SAVEDLG_PUTTOQUEUEHEAD;Likt apstrādes rindas sākumā
 SAVEDLG_PUTTOQUEUETAIL;Likt apstrādes rindas beigās
 SAVEDLG_SAVEIMMEDIATELY;Saglabāt tūlīt
-SAVEDLG_SAVESPP;Saglabāt apstrādes parametrus ar attēlu
+SAVEDLG_SAVESPP;Saglabāt apstrādes profilu ar attēlu
 SAVEDLG_TIFFFILTER;TIFF faili
 TOOLBAR_TOOLTIP_CROP;Kadrēšanas rīks (saīsne: C)
 TOOLBAR_TOOLTIP_HAND;Plaukstas rīks (saīsne: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Taisnošanas rīks (saīsne: S)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Līmeņošanas rīks (saīsne: S)
 TOOLBAR_TOOLTIP_WB;Punkta baltā līdzsvara rīks (saīsne: W)
 TP_CACORRECTION_BLUE;Zils
 TP_CACORRECTION_LABEL;Lēcas krāsu nobīdes
@@ -521,7 +522,7 @@ TP_RESIZE_BICUBICSH;Bikubiski (Asāk)
 TP_RESIZE_BILINEAR;Bilineāri
 TP_RESIZE_FULLSIZE;Pilns attēla izmērs:
 TP_RESIZE_H;A:
-TP_RESIZE_LABEL;Mainīt izmēru
+TP_RESIZE_LABEL;Izmērmaiņa
 TP_RESIZE_METHOD;Metode: 
 TP_RESIZE_NEAREST;Tuvākais
 TP_RESIZE_SCALE;Mērogs
@@ -530,7 +531,7 @@ TP_ROTATE_AUTOCROP;Auto Kardēšana
 TP_ROTATE_DEGREE;Grādi
 TP_ROTATE_FILL;Aizpildīt
 TP_ROTATE_LABEL;Pagriezt
-TP_ROTATE_SELECTLINE;    Norādīt taisnu līniju
+TP_ROTATE_SELECTLINE;    Norādīt līmeni
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Izgaismojumi
 TP_SHADOWSHLIGHTS_HLTONALW;Toņa platums
 TP_SHADOWSHLIGHTS_LABEL;Ēnas/Izgaismojumi
