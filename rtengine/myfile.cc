@@ -19,7 +19,9 @@
 #include <myfile.h>
 #include <cstdarg>
 #include <glibmm.h>
+#ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
+#endif
 
 IMFILE* fopen (const char* fname) {
 

@@ -71,7 +71,10 @@ int main(int argc, char **argv)
 
    Options::load ();
 
-   Gtk::RC::add_default_file (argv0+"/themes/"+options.theme);
+//   Gtk::RC::add_default_file (argv0+"/themes/"+options.theme);
+   std::vector<std::string> rcfiles;
+   rcfiles.push_back (argv0+"/themes/"+options.theme);
+   Gtk::RC::set_default_files (rcfiles);
 
    Gtk::Main m(&argc, &argv);
 //   MainWindow *MainWindow = new class MainWindow();

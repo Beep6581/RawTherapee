@@ -25,6 +25,7 @@
 /*RT*/int ciff_base, ciff_len, exif_base, pre_filters;
 /*RT*/#undef MAX
 /*RT*/#undef MIN
+/*RT*/#undef ABS
 /*RT*/#define NO_LCMS
 /*RT*/#define NO_JPEG
 /*RT*/#define LOCALTIME

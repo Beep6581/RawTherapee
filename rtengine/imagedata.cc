@@ -19,7 +19,9 @@
 #include <imagedata.h>
 #include <iptcpairs.h>
 #include <glib/gstdio.h>
+#ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
+#endif
 
 using namespace rtengine;
 
