@@ -20,8 +20,6 @@
 #include <stdio.h>
 #include <rawimagesource.h>
 
-#define MAX(a,b) ((a)<(b)?(b):(a))
-
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 

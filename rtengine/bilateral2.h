@@ -25,9 +25,7 @@
 #include <alignedbuffer.h>
 #include <mytime.h>
 #include <gauss.h>
-
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+#include <glibmm.h>
 
 #define ELEM(a,b) (src[i-a][j-b] * ec[src[i-a][j-b]-src[i][j]+0x10000])
 #define SULY(a,b) (ec[src[i-a][j-b]-src[i][j]+0x10000])
