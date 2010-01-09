@@ -2,10 +2,9 @@
 # 24.12.2007
 # Mateusz Ludwin
 # -----------------------------
-# 17.03.2007
-# Some minor bugfixes
-# Multiple capitalized letters removed
-# Mateusz Ludwin
+# 08.01.2010
+# Initial update for 3.0 release
+# Bartosz "Simek" Kaszubowski
 #
 ADJUSTER_RESET_TO_DEFAULT;Przywróć domyślne
 CURVEEDITOR_FILEDLGFILTERANY;Wszystkie pliki
@@ -16,79 +15,79 @@ CURVEEDITOR_SAVEDLGLABEL;Zapisz krzywą...
 CURVEEDITOR_TOOLTIPLINEAR;Zresetuj krzywą do liniowej
 CURVEEDITOR_TOOLTIPLOAD;Wczytaj krzywą z pliku
 CURVEEDITOR_TOOLTIPSAVE;Zapisz aktualną krzywą
-EXIFFILTER_APERTURE;Aperture
-EXIFFILTER_CAMERA;Camera
-EXIFFILTER_DIALOGLABEL;Exif Filter
-EXIFFILTER_FOCALLEN;Focal Length
+EXIFFILTER_APERTURE;Przesłona
+EXIFFILTER_CAMERA;Aparat
+EXIFFILTER_DIALOGLABEL;Filrt Exif
+EXIFFILTER_FOCALLEN;Wartość ogniskowej
 EXIFFILTER_ISO;ISO
-EXIFFILTER_LENS;Lens
-EXIFFILTER_SHUTTER;Shutter
-EXIFPANEL_ADDEDIT;Add/Edit
-EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
-EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
-EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
-EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEP;Keep
-EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
-EXIFPANEL_REMOVE;Remove
-EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
-EXIFPANEL_RESET;Reset
-EXIFPANEL_RESETALL;Reset All
-EXIFPANEL_RESETALLHINT;Reset all tags to their original values
-EXIFPANEL_RESETHINT;Reset the selected tags to their original values
-EXIFPANEL_SUBDIRECTORY;Subdirectory
-FILEBROWSER_APPLYPROFILE;Apply profile
-FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
-FILEBROWSER_CLEARPROFILE;Clear profile
-FILEBROWSER_COPYPROFILE;Copy profile
-FILEBROWSER_DELETEDLGLABEL;File delete confirmation
-FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
-FILEBROWSER_EMPTYTRASH;Empty Trash
-FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
-FILEBROWSER_EXIFFILTERAPPLY;Apply
-FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
-FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
-FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
-FILEBROWSER_PASTEPROFILE;Paste profile
-FILEBROWSER_POPUPCANCELJOB;Cancel job
-FILEBROWSER_POPUPMOVEEND;Move to end of queue
-FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
-FILEBROWSER_POPUPOPEN;Open
-FILEBROWSER_POPUPPROCESS;Put to processing queue
-FILEBROWSER_POPUPRANK1;Rank 1
-FILEBROWSER_POPUPRANK2;Rank 2
-FILEBROWSER_POPUPRANK3;Rank 3
-FILEBROWSER_POPUPRANK4;Rank 4
-FILEBROWSER_POPUPRANK5;Rank 5
-FILEBROWSER_POPUPREMOVE;Remove from filesystem
-FILEBROWSER_POPUPRENAME;Rename
-FILEBROWSER_POPUPSELECTALL;Select all
-FILEBROWSER_POPUPTRASH;Move to trash
-FILEBROWSER_POPUPUNRANK;Unrank
-FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
-FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
-FILEBROWSER_RENAMEDLGLABEL;Rename file
-FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
-FILEBROWSER_SHOWDIRHINT;Show all images of the directory
-FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
-FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star
-FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star
-FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star
-FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
-FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
-FILEBROWSER_SHOWTRASHHINT;Show content of the trash
-FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
-FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
-FILEBROWSER_THUMBSIZE;Thumb. size
-FILEBROWSER_ZOOMINHINT;Increase thumbnail size
-FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
-GENERAL_ABOUT;About
+EXIFFILTER_LENS;Obiektyw
+EXIFFILTER_SHUTTER;Migawka
+EXIFPANEL_ADDEDIT;Dodaj/Edytuj
+EXIFPANEL_ADDEDITHINT;Dodaj nową etykietę lub edytuj etykietę
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Wpisz wartość
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Wybierz etykietę
+EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Edytuj etykietę
+EXIFPANEL_KEEP;Zapamiętaj
+EXIFPANEL_KEEPHINT;Zapamiętaj wybrane etykiety podczas zapisywania pliku wyjściowego
+EXIFPANEL_REMOVE;Usuń
+EXIFPANEL_REMOVEHINT;Usuń wybrane etykiety podczas zapisywania pliku wyjściowego
+EXIFPANEL_RESET;Przywróć
+EXIFPANEL_RESETALL;Przywróć wszystkie
+EXIFPANEL_RESETALLHINT;Przywróć wszystkie etykiety do ich oryginalnych wartości
+EXIFPANEL_RESETHINT;Przywróć wybrane etykiety do ich oryginalnych wartości
+EXIFPANEL_SUBDIRECTORY;Podkatalog
+FILEBROWSER_APPLYPROFILE;Zastosuj profil
+FILEBROWSER_ARRANGEMENTHINT;Przełącz pomiędzy poziomym/pionowym wyrównaniem miniaturek
+FILEBROWSER_CLEARPROFILE;Wyczyść profil
+FILEBROWSER_COPYPROFILE;Kopiuj profil
+FILEBROWSER_DELETEDLGLABEL;Potwierdzenie usunięcia pliku
+FILEBROWSER_DELETEDLGMSG;Jesteś pewień, że chcesz usunąć zaznaczone %1 pliki?
+FILEBROWSER_EMPTYTRASH;Wyczyść kosz
+FILEBROWSER_EMPTYTRASHHINT;Permanentnie usuń pliki z kosza
+FILEBROWSER_EXIFFILTERAPPLY;Zastosuj
+FILEBROWSER_EXIFFILTERAPPLYHINT;Włącz/wyłącz filtr Exif w przeglądarce plików
+FILEBROWSER_EXIFFILTERLABEL;Filrt Exif
+FILEBROWSER_EXIFFILTERSETTINGS;Ustawienia
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Zmień ustawienia filtru Exif
+FILEBROWSER_PARTIALPASTEPROFILE;Wklej częściowo
+FILEBROWSER_PASTEPROFILE;Wklej profil
+FILEBROWSER_POPUPCANCELJOB;Anuluj zadanie
+FILEBROWSER_POPUPMOVEEND;Przenieś na koniec kolejki
+FILEBROWSER_POPUPMOVEHEAD;Przenieś na początek kolejki
+FILEBROWSER_POPUPOPEN;Otrórz
+FILEBROWSER_POPUPPROCESS;Umieść w kolejce do przetwarzania
+FILEBROWSER_POPUPRANK1;Ocena 1
+FILEBROWSER_POPUPRANK2;Ocena 2
+FILEBROWSER_POPUPRANK3;Ocena 3
+FILEBROWSER_POPUPRANK4;Ocena 4
+FILEBROWSER_POPUPRANK5;Ocena 5
+FILEBROWSER_POPUPREMOVE;Usuń z systemu plików
+FILEBROWSER_POPUPRENAME;Zmień nazwę
+FILEBROWSER_POPUPSELECTALL;Zaznacz wszystkie
+FILEBROWSER_POPUPTRASH;Przenieś do kosza
+FILEBROWSER_POPUPUNRANK;Usuń ocenę
+FILEBROWSER_POPUPUNTRASH;Usuń z kosza
+FILEBROWSER_PROCESSINGSETTINGS;Ustawienia
+FILEBROWSER_PROCESSINGSETTINGSHINT;Ustaw format pliku i katalog wyjściowy
+FILEBROWSER_RENAMEDLGLABEL;Zmień nazwę pliku
+FILEBROWSER_RENAMEDLGMSG;Zmień nazwę plki "%1" na:
+FILEBROWSER_SHOWDIRHINT;Pokaż wszystkie zdjęcia w katalogu
+FILEBROWSER_SHOWQUEUEHINT;Pokaz zawartość kolejki przetwarzania
+FILEBROWSER_SHOWRANK1HINT;Pokaż zdjęcia ocenione na 1 gwiazdkę
+FILEBROWSER_SHOWRANK2HINT;Pokaż zdjęcia ocenione na 2 gwiazdki
+FILEBROWSER_SHOWRANK3HINT;Pokaż zdjęcia ocenione na 3 gwiazdki
+FILEBROWSER_SHOWRANK4HINT;Pokaż zdjęcia ocenione na 4 gwiazdki
+FILEBROWSER_SHOWRANK5HINT;Pokaż zdjęcia ocenione na 5 gwiazdek
+FILEBROWSER_SHOWTRASHHINT;Pokaż zawartość kosza
+FILEBROWSER_SHOWUNRANKHINT;Pokaz nieocenione zdjęcia
+FILEBROWSER_STARTPROCESSING;Rozpocznij przetwarzanie
+FILEBROWSER_STARTPROCESSINGHINT;Rozpocznij przetwarzanie/zapisywanie plików w kolejce
+FILEBROWSER_STOPPROCESSING;Zatrzymaj przetwarzanie
+FILEBROWSER_STOPPROCESSINGHINT;Zatrzymaj przetwarzanie zdjęć
+FILEBROWSER_THUMBSIZE;Rozmiar minaturek
+FILEBROWSER_ZOOMINHINT;Zwiększ rozmiar miniaturek
+FILEBROWSER_ZOOMOUTHINT;Zmniejsz rozmiar miniaturek
+GENERAL_ABOUT;O programie
 GENERAL_CANCEL;Anuluj
 GENERAL_DISABLE;Wyłącz
 GENERAL_DISABLED;Wyłączone
@@ -103,14 +102,14 @@ GENERAL_PORTRAIT;Pionowo
 GENERAL_SAVE;Zapisz
 GENERAL_YES;Tak
 HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_B;Pokaż/Ukryj histogram NIEBIESKIEGO
-HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram ZIELENI
+HISTOGRAM_TOOLTIP_B;Pokaż/Ukryj histogram błękitów
+HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram zieleni
 HISTOGRAM_TOOLTIP_L;Pokaż/Ukryj histogram luminancji CIELAB
-HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram CZERWIENI
-HISTORY_CHANGED;Changed
+HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram czerwieni
+HISTORY_CHANGED;Zmieniono
 HISTORY_CUSTOMCURVE;Dowolna krzywa
 HISTORY_DELSNAPSHOT;Usuń migawkę
-HISTORY_FROMCLIPBOARD;From clipboard
+HISTORY_FROMCLIPBOARD;Ze schowka
 HISTORY_LABEL;Historia
 HISTORY_MSG_10;Kompresja cieni
 HISTORY_MSG_11;Krzywa tonalna
@@ -184,8 +183,8 @@ HISTORY_MSG_72;Korekcja winietowania
 HISTORY_MSG_73;Mikser kanałów
 HISTORY_MSG_74;Skala zmiany rozmiaru
 HISTORY_MSG_75;Metoda zmiany rozmiaru
-HISTORY_MSG_76;Exif Metadata
-HISTORY_MSG_77;IPTC Metadata
+HISTORY_MSG_76;Metadane Exif
+HISTORY_MSG_77;Metadane IPTC
 HISTORY_MSG_7;Czerń
 HISTORY_MSG_8;Kompensacja ekspozycji
 HISTORY_MSG_9;Kompresja świateł
@@ -210,69 +209,69 @@ ICMPANEL_OUTPUTPROFILE;Profil wyjściowy
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;Profil roboczy
 IMAGEAREA_DETAILVIEW;Lupa
-IPTCPANEL_AUTHOR;Author
-IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
+IPTCPANEL_AUTHOR;Autor
+IPTCPANEL_AUTHORHINT;Imię lub nazwa twórcy obiektu np. pisarza, fotografa lub grafika (w linii).
 IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_CAPTION;Caption
+IPTCPANEL_CAPTION;Tytuł
 IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITER;Caption Writer
 IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-IPTCPANEL_CATEGORY;Category
+IPTCPANEL_CATEGORY;Kategoria
 IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-IPTCPANEL_CITY;City
+IPTCPANEL_CITY;Miasto
 IPTCPANEL_CITYHINT;City of image origin (City).
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COUNTRY;Country
+IPTCPANEL_COUNTRY;Kraj
 IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Credit
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-IPTCPANEL_DATECREATED;Date Created
+IPTCPANEL_DATECREATED;Data utworzenia
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_HEADLINE;Headline
+IPTCPANEL_HEADLINE;Nagłówek
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONS;Instructions
+IPTCPANEL_INSTRUCTIONS;Instrukcje
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_KEYWORDS;Słowa kluczowe
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCE;Province
+IPTCPANEL_PROVINCE;Stan, województwo, dystrykt itd.
 IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_RESET;Reset
 IPTCPANEL_RESETHINT;Reset to profile default
-IPTCPANEL_SOURCE;Source
+IPTCPANEL_SOURCE;Źródło
 IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_TITLE;Title
+IPTCPANEL_TITLE;Tytuł
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 MAIN_BUTTON_PREFERENCES;Preferencje
 MAIN_BUTTON_SAVE;Zapisz obraz
 MAIN_BUTTON_SAVEAS;Jako...
-MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_BUTTON_SENDTOEDITOR;Wyślij do edytora
 MAIN_MSG_ALREADYEXISTS;Plik już istnieje.
 MAIN_MSG_CANNOTLOAD;Nie można wczytać obrazu
 MAIN_MSG_CANNOTSAVE;Błąd zapisu pliku
-MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
-MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
+MAIN_MSG_CANNOTSTARTEDITOR;Nie mozna uruchomic edytora.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Musisz wspisać prawidłową ścieżkę w oknie "Preferencji".
+MAIN_MSG_EXITJOBSINQUEUEINFO;Nieprzetworzone zdjęcia w kolejce będą utracone po zamknięciu.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Jesteś pewien, że chcesz zamknąć alpikację? W kolejce znajdują się nieprzetworzone zdjęcia.
 MAIN_MSG_JOBSINQUEUE;zadań w kolejce
 MAIN_MSG_QOVERWRITE;Czy chcesz go zastąpić?
 MAIN_TAB_BASIC;Podstawowe
-MAIN_TAB_COLOR;Color
-MAIN_TAB_DETAIL;Detail
+MAIN_TAB_COLOR;Kolor
+MAIN_TAB_DETAIL;Szczegóły
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_EXPOSURE;Ekspozycja
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
-MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA;Metadane
 MAIN_TAB_TRANSFORM;Transformacje
 MAIN_TOOLTIP_HIDEFP;Pokaż/ukryj dolny panel (przeglądarka plików i katalogów, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Pokaż/ukryj lewy panel (razem z historią, shortcut key: H)
@@ -282,51 +281,51 @@ MAIN_TOOLTIP_PREFERENCES;Ustaw preferencje
 MAIN_TOOLTIP_QINFO;Informacje o pliku
 MAIN_TOOLTIP_SAVE;Zapisz obraz w katalogu domyślnym
 MAIN_TOOLTIP_SAVEAS;Zapisz obraz we wskazanym katalogu
-PARTIALPASTE_BASICGROUP;Basic settings
-PARTIALPASTE_CACORRECTION;C/A correction
-PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
-PARTIALPASTE_COLORBOOST;Color boost
-PARTIALPASTE_COLORDENOISE;Color denoise
-PARTIALPASTE_COLORGROUP;Color related settings
-PARTIALPASTE_COLORMIXER;Color mixer
-PARTIALPASTE_COLORSHIFT;Color shift
-PARTIALPASTE_COMPOSITIONGROUP;Composition settings
-PARTIALPASTE_CROP;Crop
+PARTIALPASTE_BASICGROUP;Podstawowe ustawienia
+PARTIALPASTE_CACORRECTION;Korekcja C/A
+PARTIALPASTE_COARSETRANS;Rotacja/odwrócenie o 90 stopni
+PARTIALPASTE_COLORBOOST;Uwydatnienie koloru
+PARTIALPASTE_COLORDENOISE;Odszumienie koloru
+PARTIALPASTE_COLORGROUP;Ustawienia związane z kolorem
+PARTIALPASTE_COLORMIXER;Mikser koloru
+PARTIALPASTE_COLORSHIFT;Przesunięcie koloru
+PARTIALPASTE_COMPOSITIONGROUP;Ustawienia kompozycji
+PARTIALPASTE_CROP;Przytnij
 PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
-PARTIALPASTE_DISTORTION;Distortion correction
-PARTIALPASTE_EXIFCHANGES;Changes to exif data
-PARTIALPASTE_EXPOSURE;Exposure
+PARTIALPASTE_DISTORTION;Korekcja zniekształcenia
+PARTIALPASTE_EXIFCHANGES;Zmień dane Exif
+PARTIALPASTE_EXPOSURE;Ekspozycja
 PARTIALPASTE_HLRECOVERY;Highlight recovery
-PARTIALPASTE_ICMSETTINGS;ICM settings
-PARTIALPASTE_IPTCINFO;IPTC info
-PARTIALPASTE_LENSGROUP;Lens related settings
-PARTIALPASTE_LUMACURVE;Luminance curve
-PARTIALPASTE_LUMADENOISE;Luminance noise reduction
-PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
-PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
-PARTIALPASTE_RESIZE;Resize
-PARTIALPASTE_ROTATION;Rotation
-PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
-PARTIALPASTE_SHARPENING;Sharpening
-PARTIALPASTE_VIGNETTING;Vignetting correction
-PARTIALPASTE_WHITEBALANCE;White balance
+PARTIALPASTE_ICMSETTINGS;Ustawienia ICM
+PARTIALPASTE_IPTCINFO;Informacje IPTC
+PARTIALPASTE_LENSGROUP;Ustawienia związane z obiektywem
+PARTIALPASTE_LUMACURVE;Krzywa obiektywu
+PARTIALPASTE_LUMADENOISE;Redukcja zaszumienia jaskrawości
+PARTIALPASTE_LUMINANCEGROUP;Ustawienia związane z jaskrawością
+PARTIALPASTE_METAICMGROUP;Metadanea/Ustawienia ICM
+PARTIALPASTE_RESIZE;Zmień rozmiar
+PARTIALPASTE_ROTATION;Rotacja
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Cienie/Podświetlenia
+PARTIALPASTE_SHARPENING;Wyostrzanie
+PARTIALPASTE_VIGNETTING;Korekcja winiety
+PARTIALPASTE_WHITEBALANCE;Balans bieli
 PREFERENCES_APPLNEXTSTARTUP;wymaga ponownego uruchomienia
 PREFERENCES_BLINKCLIPPED;Mrugające prześwietlenia
-PREFERENCES_CACHECLEARALL;Clear All
-PREFERENCES_CACHECLEARPROFILES;Clear Profiles
-PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
+PREFERENCES_CACHECLEARALL;Wyczyść wszystko
+PREFERENCES_CACHECLEARPROFILES;Wyczyść profile
+PREFERENCES_CACHECLEARTHUMBS;Wyczyść miniaturki
 PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
 PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
-PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
-PREFERENCES_CACHEOPTS;Cache Options
+PREFERENCES_CACHEMAXENTRIES;Maksymalna liczba wpisów w pamięci podręcznej
+PREFERENCES_CACHEOPTS;Opcje pamięci podręcznej
 PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
 PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
 PREFERENCES_CACHESTRAT;Cache Strategy
 PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-PREFERENCES_CLEARDLG_LINE1;Clearing cache
-PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
-PREFERENCES_CLEARDLG_TITLE;Please wait
+PREFERENCES_CLEARDLG_LINE1;Czyszczenie pamięci podręcznej
+PREFERENCES_CLEARDLG_LINE2;Może to potrwać kilka sekund.
+PREFERENCES_CLEARDLG_TITLE;Prosze czekać
 PREFERENCES_CLIPPINGIND;Pokazywanie prześwietleń
 PREFERENCES_CMETRICINTENT;Sposób odwzorowania barw
 PREFERENCES_DATEFORMAT;Format daty
@@ -341,13 +340,13 @@ PREFERENCES_DIRSELECTDLG;Wybierz katalog z obrazami po uruchomieniu...
 PREFERENCES_DIRSOFTWARE;Katalog instalacyjny
 PREFERENCES_DMETHOD;Metoda
 PREFERENCES_EDITORCMDLINE;Other command line
-PREFERENCES_EXTERNALEDITOR;External editor
+PREFERENCES_EXTERNALEDITOR;Zewnętrzny edytor
 PREFERENCES_FALSECOLOR;Kroki zapobiegania zafałszowaniom kolorów
 PREFERENCES_FBROWSEROPTS;Opcje przeglądarki plików
 PREFERENCES_FILEFORMAT;Format pliku
 PREFERENCES_FORIMAGE;Dla plików z obrazami
 PREFERENCES_FORRAW;Dla plików RAW
-PREFERENCES_GIMPPATH;GIMP installation directory
+PREFERENCES_GIMPPATH;Katalog, w którym zainstalowany jest GIMP
 PREFERENCES_GTKTHEME;GTK default
 PREFERENCES_HINT;Porada
 PREFERENCES_HLTHRESHOLD;Próg dla prześwietleñ
@@ -357,16 +356,16 @@ PREFERENCES_INTENT_ABSOLUTE;Absolutnie kolorymetryczny
 PREFERENCES_INTENT_PERCEPTUAL;Percepcyjny
 PREFERENCES_INTENT_RELATIVE;Względnie kolorymetryczny
 PREFERENCES_INTENT_SATURATION;Nasyceniowy
-PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_LIVETHUMBNAILS;Miniaturki na żywo (wojniej)
 PREFERENCES_MONITORICC;Profil monitora
 PREFERENCES_OUTDIR;Katalog wyjściowy
-PREFERENCES_OUTDIRFOLDER;Save to folder
-PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRFOLDER;Zapisz do katalogu
+PREFERENCES_OUTDIRFOLDERHINT;Umieść zapisane zdjęcia w wybranym katalogu
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATE;Użyj schemat
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_PARSEDEXT;Parsed Extensions
-PREFERENCES_PARSEDEXTADD;Add Extension
+PREFERENCES_PARSEDEXTADD;Dodaj rozszerzenie
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
@@ -375,7 +374,7 @@ PREFERENCES_PROFILEPRCACHE;Profile in Cache
 PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
 PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
 PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
-PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_PSPATH;Katalog w którym zainstalowany jest Adobe Photoshop
 PREFERENCES_SELECTICCDIRDLG;Wybierz katalog z profilami ICC...
 PREFERENCES_SELECTLANG;Wybierz język
 PREFERENCES_SELECTMONITORPROFDLG;Wybierz profil ICC do wyświetlenia...
@@ -401,9 +400,9 @@ PROFILEPANEL_PLASTPHOTO;Ostatnie Zdjęcie
 PROFILEPANEL_PLASTSAVED;Ostatnio zapisany
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Zapisz parametry postprocessingu...
-PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
+PROFILEPANEL_TOOLTIPCOPY;Skopiuj aktualny profil do schowka
 PROFILEPANEL_TOOLTIPLOAD;Ładuj profil z pliku
-PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
+PROFILEPANEL_TOOLTIPPASTE;Wklej profil ze schowka
 PROFILEPANEL_TOOLTIPSAVE;Zapisz aktualny profil
 PROGRESSBAR_DECODING;Dekodowanie pliku raw...
 PROGRESSBAR_DEMOSAICING;Demozaikowanie...
@@ -416,12 +415,12 @@ PROGRESSBAR_READY;Gotowe.
 PROGRESSBAR_SAVEJPEG;Zapisywanie pliku JPEG...
 PROGRESSBAR_SAVEPNG;Zapisywanie pliku PNG...
 PROGRESSBAR_SAVETIFF;Zapisywanie pliku TIFF...
-PROGRESSDLG_LOADING;Loading file...
-PROGRESSDLG_PROCESSING;Processing image...
-PROGRESSDLG_SAVING;Saving file...
+PROGRESSDLG_LOADING;Wczytywanie pliku...
+PROGRESSDLG_PROCESSING;Przetwarzanie zdjęcia...
+PROGRESSDLG_SAVING;Zapisywanie pliku...
 QINFO_FOCALLENGTH;Ogniskowa
 QINFO_ISO;ISO
-QINFO_LENS;Lens
+QINFO_LENS;Obiektyw
 QINFO_NOEXIF;Dane exif niedostępne.
 SAVEDLG_FILEFORMAT;Format pliku
 SAVEDLG_JPEGQUAL;Jakość JPEG
@@ -441,10 +440,10 @@ TOOLBAR_TOOLTIP_WB;Wskaż balans bieli (shortcut key: W)
 TP_CACORRECTION_BLUE;Niebieski
 TP_CACORRECTION_LABEL;Korekcja AC
 TP_CACORRECTION_RED;Czerwony
-TP_CHMIXER_BLUE;Blue
-TP_CHMIXER_GREEN;Green
+TP_CHMIXER_BLUE;Niebieski
+TP_CHMIXER_GREEN;Zielony
 TP_CHMIXER_LABEL;Mikser kanałów
-TP_CHMIXER_RED;Red
+TP_CHMIXER_RED;Czerwony
 TP_COARSETRAF_DEGREE;stopnie:
 TP_COARSETRAF_TOOLTIP_HFLIP;Odbij w poziomie
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Obróć w lewo
@@ -479,7 +478,7 @@ TP_CROP_GTRULETHIRDS;Trójpodział
 TP_CROP_GUIDETYPE;Typ pomocy:
 TP_CROP_H;W
 TP_CROP_LABEL;Kadrowanie
-TP_CROP_SELECTCROP;    Wybierz kadr
+TP_CROP_SELECTCROP;Wybierz kadr
 TP_CROP_W;S
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -495,7 +494,7 @@ TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR;Krzywa tonalna
 TP_EXPOSURE_EXPCOMP;EV
 TP_EXPOSURE_LABEL;Ekspozycja
-TP_HLREC_CIELAB;CIELab Blending
+TP_HLREC_CIELAB;Mieszanie koloru CIELab
 TP_HLREC_COLOR;Propagacja koloru
 TP_HLREC_LABEL;Odzyskiwanie prześwietleń
 TP_HLREC_LUMINANCE;Odzyskiwanie luminancji
@@ -532,14 +531,14 @@ TP_RESIZE_FULLSIZE;Pełny rozmiar obrazu:
 TP_RESIZE_H;W:
 TP_RESIZE_LABEL;Skalowanie
 TP_RESIZE_METHOD;Metoda: 
-TP_RESIZE_NEAREST;Nearest
+TP_RESIZE_NEAREST;Najbliższa
 TP_RESIZE_SCALE;Skala
 TP_RESIZE_W;S:
-TP_ROTATE_AUTOCROP;Auto crop
+TP_ROTATE_AUTOCROP;Auto przycinanie
 TP_ROTATE_DEGREE;Stopnie
 TP_ROTATE_FILL;Wypełnij
 TP_ROTATE_LABEL;Obrót
-TP_ROTATE_SELECTLINE;    Wyprostuj obraz
+TP_ROTATE_SELECTLINE;Wyprostuj obraz
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Światła
 TP_SHADOWSHLIGHTS_HLTONALW;Szerokość tonalna
 TP_SHADOWSHLIGHTS_LABEL;Cienie/Światła
