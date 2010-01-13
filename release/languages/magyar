@@ -180,7 +180,11 @@ HISTORY_MSG_74;Átméretezés szorzó
 HISTORY_MSG_75;Átméretezés algoritmus
 HISTORY_MSG_76;Exif Meta-adatok 
 HISTORY_MSG_77;IPTC Meta-adatok
+HISTORY_MSG_78;Data specified for resize
+HISTORY_MSG_79;Resize width
 HISTORY_MSG_7;Fekete szint
+HISTORY_MSG_80;Resize height
+HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Expozíció kompenzáció
 HISTORY_MSG_9;Világos tónus tömörítés
 HISTORY_NEWSNAPSHOT;Új

@@ -1,4 +1,6 @@
-﻿# Latvian language file
+﻿#
+# Latvian language file
+#
 ADJUSTER_RESET_TO_DEFAULT;Atmest uz noklusēto
 CURVEEDITOR_FILEDLGFILTERANY;Visi faili
 CURVEEDITOR_FILEDLGFILTERCURVE;Līkņu faili
@@ -104,7 +106,6 @@ HISTORY_CUSTOMCURVE;Pielāgota līkne
 HISTORY_DELSNAPSHOT;Noņemt grāmtzīmi
 HISTORY_FROMCLIPBOARD;No starplikas
 HISTORY_LABEL;Vēsture
-HISTORY_MSG_1;Attēls ielādēts
 HISTORY_MSG_10;Ēnu spiešana
 HISTORY_MSG_11;Toņa līkne
 HISTORY_MSG_12;Auto Ekspozīcija
@@ -115,7 +116,7 @@ HISTORY_MSG_16;Spīduma Melnais
 HISTORY_MSG_17;Spīduma Izgaismojumu spiešana
 HISTORY_MSG_18;Spīduma Ēnu spiešana
 HISTORY_MSG_19;Spīduma Līkne
-HISTORY_MSG_2;Profils ielādēts
+HISTORY_MSG_1;Attēls ielādēts
 HISTORY_MSG_20;Asināšana
 HISTORY_MSG_21;Asināšanas radiuss
 HISTORY_MSG_22;Asināšanas apjoms
@@ -126,7 +127,7 @@ HISTORY_MSG_26;Asināšanas malu iecietība
 HISTORY_MSG_27;Asināšanas caurumu kontrole
 HISTORY_MSG_28;Caurumu kontroles apjoms
 HISTORY_MSG_29;Asināšanas metode
-HISTORY_MSG_3;Profils izmainīts
+HISTORY_MSG_2;Profils ielādēts
 HISTORY_MSG_30;Atritināšanas radiuss
 HISTORY_MSG_31;Atritināšanas apjoms
 HISTORY_MSG_32;Atritināšanas slāpēšana
@@ -137,7 +138,7 @@ HISTORY_MSG_36;Piesātinājuma robeža
 HISTORY_MSG_37;Krāsu pastiprināšana
 HISTORY_MSG_38;Baltā līdzsvara metode
 HISTORY_MSG_39;Krāsu temperatūra
-HISTORY_MSG_4;Vēstures pārlūkošana
+HISTORY_MSG_3;Profils izmainīts
 HISTORY_MSG_40;Baltā līdzsvara nokrāsa
 HISTORY_MSG_41;Krāsu nobīde "A"
 HISTORY_MSG_42;Krāsu nobīde "B"
@@ -148,7 +149,7 @@ HISTORY_MSG_46;Krāsu trokšņu slāpēšana
 HISTORY_MSG_47;Krāsu trokšņu slāpēšanas radiuss
 HISTORY_MSG_48;Krāsu trokšņu slāpēšanas malu iecietība
 HISTORY_MSG_49;Krāsu trokšņu slāpēšanas malu jutīgums
-HISTORY_MSG_5;Gaišums
+HISTORY_MSG_4;Vēstures pārlūkošana
 HISTORY_MSG_50;Ēnu/Izgaismojumu rīks
 HISTORY_MSG_51;Izgaismojumu pastiprināšana
 HISTORY_MSG_52;Ēnu pastiprināšana
@@ -159,7 +160,7 @@ HISTORY_MSG_56;Ēnu/Izgaismojumu radiuss
 HISTORY_MSG_57;Raupja pagriešana
 HISTORY_MSG_58;Horizontāla apmešana
 HISTORY_MSG_59;Vertikāla apmešana
-HISTORY_MSG_6;Kontrasts
+HISTORY_MSG_5;Gaišums
 HISTORY_MSG_60;Pagriešana
 HISTORY_MSG_61;Pagriešana
 HISTORY_MSG_62;Lēcu kropļojumu labošana
@@ -170,7 +171,7 @@ HISTORY_MSG_66;Izgaismojumu atgūšana
 HISTORY_MSG_67;Izgaismojumu atgūšanas apjoms
 HISTORY_MSG_68;Izgaismojumu atgūšanas metode
 HISTORY_MSG_69;Krāsu telpa darbam
-HISTORY_MSG_7;Melnais
+HISTORY_MSG_6;Kontrasts
 HISTORY_MSG_70;Krāsu telpa izvadei
 HISTORY_MSG_71;Ievades krāsu telpa
 HISTORY_MSG_72;Vinjetes labošana
@@ -181,9 +182,10 @@ HISTORY_MSG_76;Exif metadati
 HISTORY_MSG_77;IPTC metadati
 HISTORY_MSG_78;Norādīti izmērmaiņas dati
 HISTORY_MSG_79;Izmērmaiņas platums
-HISTORY_MSG_8;Ekspozīcijas labošana
+HISTORY_MSG_7;Melnais
 HISTORY_MSG_80;Izmērmaiņas augstums
 HISTORY_MSG_81;Izmērmaiņa ieslēgta
+HISTORY_MSG_8;Ekspozīcijas labošana
 HISTORY_MSG_9;Izgaismojumu spiešana
 HISTORY_NEWSNAPSHOT;Jauna grāmtzīme
 HISTORY_NEWSNAPSHOTAS;Kā...
@@ -315,9 +317,9 @@ PREFERENCES_CACHEFORMAT1;Savs (ātrāks un kvalitatīvāks)
 PREFERENCES_CACHEFORMAT2;JPEG (mazāka diska vieta)
 PREFERENCES_CACHEMAXENTRIES;Maksimālais keša ierakstu skaits
 PREFERENCES_CACHEOPTS;Keša opcijas
-PREFERENCES_CACHESTRAT;Keša stratēģija
 PREFERENCES_CACHESTRAT1;Priekšroka ātrumam pret mazu atmiņas patēriņu
 PREFERENCES_CACHESTRAT2;Priekšroka mazam atmiņas patēriņam pret ātrumu
+PREFERENCES_CACHESTRAT;Keša stratēģija
 PREFERENCES_CACHETHUMBFORM;Keša sīktēlu formāts
 PREFERENCES_CACHETHUMBHEIGHT;Keša maksimālais sīktēla augstums
 PREFERENCES_CLEARDLG_LINE1;Attīrīt kešu
