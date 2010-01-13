@@ -181,7 +181,11 @@ HISTORY_MSG_74;Schalingsinstelling
 HISTORY_MSG_75;Schalingsmethode
 HISTORY_MSG_76;Exif-metadata
 HISTORY_MSG_77;IPTC-metadata
+HISTORY_MSG_78;Data specified for resize
+HISTORY_MSG_79;Resize width
 HISTORY_MSG_7;Schaduwen versterken
+HISTORY_MSG_80;Resize height
+HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Belichtingscompensatie
 HISTORY_MSG_9;Compressie hoge lichten
 HISTORY_NEWSNAPSHOT;Nieuw

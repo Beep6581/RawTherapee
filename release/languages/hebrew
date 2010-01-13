@@ -180,7 +180,11 @@ HISTORY_MSG_74;מידת שינוי גודל
 HISTORY_MSG_75;שיטת שינוי גודל
 HISTORY_MSG_76;Exif Metadata
 HISTORY_MSG_77;IPTC Metadata
+HISTORY_MSG_78;Data specified for resize
+HISTORY_MSG_79;Resize width
 HISTORY_MSG_7;שחור
+HISTORY_MSG_80;Resize height
+HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;פיצוי חשיפה
 HISTORY_MSG_9;דחיסת גוונים בהירים
 HISTORY_NEWSNAPSHOT;תצלום חדש

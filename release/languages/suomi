@@ -1,4 +1,5 @@
-﻿# Finnish language file for Raw Therapee v2.4RC2 (www.rawtherapee.com)
+﻿#
+# Finnish language file for Raw Therapee v2.4RC2 (www.rawtherapee.com)
 # Compiled by T.Kauppinen 3.5.2009
 ADJUSTER_RESET_TO_DEFAULT;Palauta oletusasetukset
 CURVEEDITOR_FILEDLGFILTERANY;Kaikki tiedostot
@@ -179,7 +180,11 @@ HISTORY_MSG_74;Koko
 HISTORY_MSG_75;Koko\nMenetelmä
 HISTORY_MSG_76;EXIF-tiedot
 HISTORY_MSG_77;IPTC-tiedot
+HISTORY_MSG_78;Data specified for resize
+HISTORY_MSG_79;Resize width
 HISTORY_MSG_7;Valotus\nTummuus
+HISTORY_MSG_80;Resize height
+HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Valotus\nKompensointi
 HISTORY_MSG_9;Valotus\nVaaleiden alueiden vaimennus
 HISTORY_NEWSNAPSHOT;Uusi pikakuva
