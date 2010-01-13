@@ -182,6 +182,10 @@ HISTORY_MSG_74;Масштаб изменения размеров
 HISTORY_MSG_75;Способ изменения размеров
 HISTORY_MSG_76;Метаданные Exif
 HISTORY_MSG_77;Метаданные IPTC
+HISTORY_MSG_78;Data specified for resize
+HISTORY_MSG_79;Resize width
+HISTORY_MSG_80;Resize height
+HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_7;Уровень чёрного
 HISTORY_MSG_8;Компенсация экспозиции
 HISTORY_MSG_9;Сжатие светов
