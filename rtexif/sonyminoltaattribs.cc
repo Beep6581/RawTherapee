@@ -72,6 +72,12 @@ class SADynamicRangeOptimizerInterpreter : public ChoiceInterpreter {
             choices[0] = "Off";
             choices[1] = "Standard";
             choices[2] = "Advanced";
+            choices[3] = "Auto";
+            choices[8] = "Advanced Lv1";
+            choices[9] = "Advanced Lv2";
+            choices[10] = "Advanced Lv3";
+            choices[11] = "Advanced Lv4";
+            choices[12] = "Advanced Lv5";
         }
 };
 SADynamicRangeOptimizerInterpreter saDynamicRangeOptimizerInterpreter;
@@ -88,6 +94,12 @@ class SAColorModeInterpreter : public ChoiceInterpreter {
             choices[6]  = "B&W";
             choices[7]  = "Adobe RGB";
             choices[12] = "Neutral";
+            choices[100]= "Neutral";
+            choices[101]= "Clear";
+            choices[102]= "Deep";
+            choices[103]= "Light";
+            choices[104]= "Night View";
+            choices[105]= "Autumn Leaves";
         }
 };
 SAColorModeInterpreter saColorModeInterpreter;
@@ -102,6 +114,9 @@ class SAExposureModeInterpreter : public ChoiceInterpreter {
             choices[8]  = "Shutter Priority";
             choices[9]  = "Night Scene";
             choices[15] = "Manual";
+            choices[34] = "Panorama";
+            choices[35] = "Handheld Twilight";
+            choices[36] = "Anti Motion Blur";
         }
 };
 SAExposureModeInterpreter saExposureModeInterpreter;
@@ -172,13 +187,27 @@ class SALensIDInterpreter : public ChoiceInterpreter {
             choices[45] = "Carl Zeiss Planar T* 85mm F1.4 ZA";
             choices[46] = "Carl Zeiss Vario-Sonnar T* DT 16-80mm F3.5-4.5 ZA";
             choices[47] = "Carl Zeiss Sonnar T* 135mm F1.8 ZA";
+            choices[48] = "Carl Zeiss Vario-Sonnar T* 24-70mm F2.8 ZA SSM";
+            choices[49] = "Sony AF DT 55-200mm F4-5.6";
             choices[50] = "Sony AF DT 18-250mm F3.5-6.3";
             choices[51] = "Sony AF DT 16-105mm F3.5-5.6 or 55-200mm f/4-5.5";
-            choices[128] = "Tamron Lens (various models)";
+            choices[52] = "Sony AF 70-300mm F4.5-5.6 G SSM";
+            choices[53] = "Sony AF 70-400mm F4.5-5.6 G SSM";
+            choices[54] = "Carl Zeiss Vario-Sonnar T* 16-35mm F2.8 ZA SSM";
+            choices[55] = "Sony DT 18-55mm F3.5-5.6 SAM";
+            choices[56] = "Sony AF DT 55-200mm F4-5.6 SAM";
+            choices[57] = "Sony AF DT 50mm F1.8 SAM";
+            choices[58] = "Sony AF DT 30mm F2.8 SAM Macro";
+            choices[59] = "Sony AF 28-75mm F2.8 SAM";
+            choices[128] = "Tamron or Sigma Lens";
             choices[129] = "Tamron 200-400mm F5.6 or 70-300mm f/4-5.6 LD";
+            choices[135] = "Vivitar 28-210mm F3.5-5.6";
+            choices[136] = "Tokina EMZ M100 AF 100mm F3.5";
             choices[137] = "Cosina 70-210mm F2.8-4 AF";
             choices[138] = "Soligor 19-35mm F3.5-4.5";
-            choices[255] = "Tamron AF 70-300mm f/4-5.6 Di LD MACRO 1:2";
+            choices[142] = "Voigtlander 70-300mm F4.5-5.6";
+            choices[146] = "Voigtlander Macro APO-Lanthar 125mm F2.5 SL";
+            choices[255] = "Tamron Lens";
             choices[2550] = "Minolta AF 50mm F1.7";
             choices[2551] = "Minolta AF 35-70mm F4";
             choices[2552] = "Minolta AF 28-85mm F3.5-4.5 [New]";
@@ -196,9 +225,9 @@ class SALensIDInterpreter : public ChoiceInterpreter {
             choices[2565] = "Minolta AF 600mm F4";
             choices[2566] = "Minolta AF 24mm F2.8";
             choices[2572] = "Minolta/Sony AF 500mm F8 Reflex";
-            choices[2578] = "Minolta AF 16mm F2.8 Fisheye";
+            choices[2578] = "Minolta AF 16mm F2.8 Fisheye or Sigma Lens";
             choices[2579] = "Minolta AF 20mm F2.8";
-            choices[2581] = "Minolta/Sony AF 100mm F2.8 Macro New";
+            choices[2581] = "Minolta/Sony AF 100mm F2.8 Macro or Sigma or Tamron";
             choices[2585] = "Minolta AF 35-105mm F3.5-4.5 New";
             choices[2588] = "Minolta AF 70-210mm F3.5-4.5";
             choices[2589] = "Minolta AF 80-200 F2.8 APO";
@@ -238,6 +267,7 @@ class SALensIDInterpreter : public ChoiceInterpreter {
             choices[2668] = "Minolta AF 28mm F2 New";
             choices[2672] = "Minolta AF 24-105mm F3.5-4.5 (D)";
             choices[4574] = "Minolta AF 200mm F2.8 G x2";
+            choices[4575] = "1.4 x Teleconverter";
             choices[4585] = "Tamron - SP AF 300 F2.8 LD IF";
             choices[25501] = "Minolta AF 50mm F1.7";
             choices[25511] = "Minolta AF 35-70mm F4";
@@ -259,6 +289,7 @@ class SALensIDInterpreter : public ChoiceInterpreter {
             choices[25781] = "Minolta AF 16mm F2.8 Fisheye";
             choices[25791] = "Minolta AF 20mm F2.8";
             choices[25811] = "Minolta/Sony AF 100mm F2.8 Macro New";
+            choices[25851] = "Beroflex 35-135mm F3.5-4.5";
             choices[25858] = "Minolta AF 35-105mm F3.5-4.5 New";
             choices[25881] = "Minolta AF 70-210mm F3.5-4.5";
             choices[25891] = "Minolta AF 80-200 F2.8 APO";
@@ -297,8 +328,9 @@ class SALensIDInterpreter : public ChoiceInterpreter {
             choices[26671] = "Minolta AF 35mm F2 New";
             choices[26681] = "Minolta AF 28mm F2 New";
             choices[26721] = "Minolta AF 24-105mm F3.5-4.5 (D)";
+            choices[45671] = "Tokina 70-210mm F4-5.6";
             choices[45741] = "Minolta AF 200mm F2.8 G x2";
-            choices[45851] = "Tamron - SP AF 300 F2.8 LD I";
+            choices[45851] = "Tamron - SP AF 300 F2.8 LD IF";
         }
 };
 SALensIDInterpreter saLensIDInterpreter;
@@ -324,6 +356,9 @@ class MAQualityInterpreter : public ChoiceInterpreter {
             choices[3]  = "Standard";
             choices[4]  = "Economy";
             choices[5]  = "Extra fine";
+            choices[6]  = "RAW + JPEG";
+            choices[7]  = "cRAW";
+            choices[8]  = "cRAW + JPEG";
         }
 };
 MAQualityInterpreter maQualityInterpreter;

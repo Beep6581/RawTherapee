@@ -139,6 +139,9 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
         fpanel->refreshEditedState (filesEdited);
 
         mainNB->remove_page (*ep);
+       
+        if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
+            mainNB->set_current_page (mainNB->page_num (*fpanel));
     }
     // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
 }

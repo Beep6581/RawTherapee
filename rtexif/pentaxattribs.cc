@@ -37,6 +37,7 @@ class PAQualityInterpreter : public ChoiceInterpreter {
             choices[2]      = "Best";
             choices[3]      = "TIFF";
             choices[4]      = "RAW";
+            choices[5]      = "Premium";
         }
 };
 PAQualityInterpreter paQualityInterpreter;
@@ -54,6 +55,7 @@ class PAPictureModeInterpreter : public ChoiceInterpreter {
     public:
         PAPictureModeInterpreter () {
             choices[0] = "Program";
+            choices[1] = "Shutter Speed Priority";
             choices[2] = "Program AE";
             choices[3] = "Manual";
             choices[5] = "Portrait";
@@ -71,8 +73,10 @@ class PAPictureModeInterpreter : public ChoiceInterpreter {
             choices[30] = "Self Portrait";
             choices[31] = "Illustrations";
             choices[33] = "Digital Filter";
+            choices[35] = "Night Scene Portrait";
             choices[37] = "Museum";
             choices[38] = "Food";
+            choices[39] = "Underwater";
             choices[40] = "Green Mode";
             choices[49] = "Light Pet";
             choices[50] = "Dark Pet";
@@ -82,8 +86,10 @@ class PAPictureModeInterpreter : public ChoiceInterpreter {
             choices[55] = "Natural Skin Tone";
             choices[56] = "Synchro Sound Record";
             choices[58] = "Frame Composite";
+            choices[59] = "Report";
             choices[60] = "Kids";
             choices[61] = "Blur Reduction";
+            choices[65] = "Half-length Portrait";
         }
 };
 PAPictureModeInterpreter paPictureModeInterpreter;
@@ -116,9 +122,11 @@ class PAFocusModeInterpreter : public ChoiceInterpreter {
             choices[1] = "Macro";
             choices[2] = "Infinity";
             choices[3] = "Manual";
+            choices[4] = "Super Macro";
             choices[5] = "Pan Focus";
             choices[16] = "AF-S";
             choices[17] = "AF-C";
+            choices[18] = "AF-A";
         }
 };
 PAFocusModeInterpreter paFocusModeInterpreter;
@@ -137,6 +145,8 @@ class PAAFPointInterpreter : public ChoiceInterpreter {
             choices[9] = "Lower-left";
             choices[10] = "Bottom";
             choices[11] = "Lower-right";
+            choices[65532] = "Face Recognition AF";
+            choices[65533] = "Automatic Tracking AF";
             choices[65534] = "Fixed Center";
             choices[65535] = "Auto";
         }
@@ -330,6 +340,7 @@ class PALensTypeInterpreter : public ChoiceInterpreter {
             choices[256*3+ 41] = "smc PENTAX-F MACRO 50mm F2.8 or Sigma 50mm F2,8 MACRO";
             choices[256*3+ 44] = "Tamron 35-90mm F4 AF or various SIGMA models";
             choices[256*3+ 46] = "SIGMA APO 70-200mm F2.8 EX";
+            choices[256*3+ 50] = "smc PENTAX-FA 28-70 F4 AL";
             choices[256*3+ 51] = "SIGMA 28mm F1.8 EX DG ASPHERICAL MACRO";
             choices[256*3+ 52] = "smc PENTAX-FA 28-200mm F3.8-5.6 AL[IF]";
             choices[256*3+ 53] = "smc PENTAX-FA 28-80mm F3.5-5.6 AL";
@@ -350,6 +361,7 @@ class PALensTypeInterpreter : public ChoiceInterpreter {
             choices[256*4+ 16] = "TAMRON AF 80-210mm F4-5.6 (178D)";
             choices[256*4+ 19] = "TAMRON SP AF 90mm F2.8 (172E)";
             choices[256*4+ 20] = "smc PENTAX-FA 28-80mm F3.5-5.6";
+            choices[256*4+ 21] = "Cosina AF 100-300mm F5.6-6.7";
             choices[256*4+ 22] = "TOKINA 28-80mm F3.5-5.6";
             choices[256*4+ 23] = "smc PENTAX-FA 20-35mm F4 AL";
             choices[256*4+ 24] = "smc PENTAX-FA 77mm F1.8 Limited";
@@ -373,6 +385,13 @@ class PALensTypeInterpreter : public ChoiceInterpreter {
             choices[256*4+ 49] = "TAMRON SP AF 28-75mm F2.8 XR Di (A09)";
             choices[256*4+ 51] = "smc PENTAX-D FA 50mm F2.8 MACRO";
             choices[256*4+ 52] = "smc PENTAX-D FA 100mm F2.8 MACRO";
+            choices[256*4+ 75] = "TAMRON SP AF 70-200 F2.8 Di LD [IF] Macro (A001)";
+            choices[256*4+ 229] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL II";
+            choices[256*4+ 230] = "TAMRON SP AF 17-50mm F2.8 XR Di II";
+            choices[256*4+ 231] = "smc PENTAX-DA 18-250mm F3.5-6.3 ED AL [IF]";
+            choices[256*4+ 237] = "Samsung/Schneider D-XENOGON 10-17mm F3.5-4.5";
+            choices[256*4+ 239] = "Samsung D-XENON 12-24mm F4 ED AL [IF]";
+            choices[256*4+ 243] = "smc PENTAX-DA 70mm F2.4 Limited";
             choices[256*4+ 244] = "smc PENTAX-DA 21mm F3.2 AL Limited";
             choices[256*4+ 245] = "Schneider D-XENON 50-200mm";
             choices[256*4+ 246] = "Schneider D-XENON 18-55mm";
@@ -400,6 +419,7 @@ class PALensTypeInterpreter : public ChoiceInterpreter {
             choices[256*5+ 14] = "smc PENTAX-FA* 250-600mm F5.6 ED[IF]";
             choices[256*5+ 15] = "smc PENTAX-FA 28-105mm F4-5.6";
             choices[256*5+ 16] = "smc PENTAX-FA 100-300mm F4.5-5.6";
+            choices[256*5+ 98] = "smc PENTAX-FA 100-300mm F4.5-5.6";
             choices[256*6+ 1] = "smc PENTAX-FA* 85mm F1.4 [IF]";
             choices[256*6+ 2] = "smc PENTAX-FA* 200mm F2.8 ED[IF]";
             choices[256*6+ 3] = "smc PENTAX-FA* 300mm F2.8 ED[IF]";
@@ -413,25 +433,34 @@ class PALensTypeInterpreter : public ChoiceInterpreter {
             choices[256*6+ 13] = "smc PENTAX-FA* 400mm F5.6 ED[IF]";
             choices[256*6+ 14] = "smc PENTAX-FA* MACRO 200mm F4 ED[IF]";
             choices[256*7+ 0] = "smc PENTAX-DA 21mm F3.2 AL Limited";
+            choices[256*7+ 75] = "TAMRON SP AF 70-200mm F2.8 Di LD [IF] Macro (A001)";
+            choices[256*7+ 217] = "smc PENTAX-DA 50-200mm F4-5.6 ED WR";
+            choices[256*7+ 218] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL WR";
+            choices[256*7+ 220] = "TAMRON SP AF 10-24mm F3.5-4.5 Di II LD Aspherical [IF]";
+            choices[256*7+ 222] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL II";
+            choices[256*7+ 223] = "Samsung D-XENON 18-55mm F3.5-5.6 II";
+            choices[256*7+ 224] = "smc PENTAX-DA 15mm F4 ED AL Limited";
+            choices[256*7+ 225] = "Samsung D-XENON 18-250mm F3.5-6.3";
             choices[256*7+ 229] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL II";
+            choices[256*7+ 230] = "TAMRON AF 17-50mm F2.8 XR Di-II LD (Model A16)";
             choices[256*7+ 231] = "smc PENTAX-DA 18-250mm F3.5-6.3 ED AL [IF]";
             choices[256*7+ 233] = "smc PENTAX-DA 35mm F2.8 Macro Limited";
+            choices[256*7+ 234] = "smc PENTAX-DA* 300mm F4 ED [IF] SDM (SDM unused)";
             choices[256*7+ 235] = "smc PENTAX-DA* 200mm F2.8 ED [IF] SDM (SDM unused)";
+            choices[256*7+ 236] = "smc PENTAX-DA 55-300mm F4-5.8 ED";
             choices[256*7+ 238] = "TAMRON AF 18-250mm F3.5-6.3 Di II LD Aspherical [IF] MACRO";
             choices[256*7+ 241] = "smc PENTAX-DA* 50-135mm F2.8 ED [IF] SDM (SDM unused)";
             choices[256*7+ 242] = "smc PENTAX-DA* 16-50mm F2.8 ED AL [IF] SDM (SDM unused)";
             choices[256*7+ 243] = "smc PENTAX-DA 70mm F2.4 Limited";
             choices[256*7+ 244] = "smc PENTAX-DA 21mm F3.2 AL Limited";
-            choices[256*8+ 235] = "smc PENTAX-DA* 200mm F2.8 ED [IF] SDM";
-            choices[256*8+ 241] = "smc PENTAX-DA* 50-135mm F2.8 ED [IF] SDM";
-            choices[256*8+ 242] = "smc PENTAX-DA* 16-50mm F2.8 ED AL [IF] SDM";
+            choices[256*8+ 226] = "smc PENTAX-DA* 55mm F1.4 SDM";
+            choices[256*8+ 227] = "smc PENTAX DA* 60-250mm F4 [IF] SDM";
             choices[256*8+ 232] = "smc PENTAX-DA 17-70mm F4 AL [IF] SDM";
             choices[256*8+ 234] = "smc PENTAX-DA* 300mm F4 ED [IF] SDM";
             choices[256*8+ 235] = "smc PENTAX-DA* 200mm F2.8 ED [IF] SDM";
             choices[256*8+ 241] = "smc PENTAX-DA* 50-135mm F2.8 ED [IF] SDM";
             choices[256*8+ 242] = "smc PENTAX-DA* 16-50mm F2.8 ED AL [IF] SDM";
-            choices[256*8+ 255] = "Sigma 70-200mm F2.8 EX DG Macro HSM II";
-
+            choices[256*8+ 255] = "Sigma 70-200mm F2.8 EX DG Macro HSM II or 150-500mm F5-6.3 DG OS";
         }
         virtual std::string toString (Tag* t) {
             return choices[256*t->toInt(0,BYTE) + t->toInt(1,BYTE)];

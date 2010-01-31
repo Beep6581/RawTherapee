@@ -195,9 +195,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int rmi, gmi, bmi;
     if (!isRaw || !params.hlrecovery.enabled) {
         logDefGain = 0.0;
-        rmi = 16384.0 * rm * defGain / mul_lum;
-        gmi = 16384.0 * gm * defGain / mul_lum;
-        bmi = 16384.0 * bm * defGain / mul_lum;  
+        rmi = 1024.0 * rm * defGain / mul_lum;
+        gmi = 1024.0 * gm * defGain / mul_lum;
+        bmi = 1024.0 * bm * defGain / mul_lum;  
     }
     else {
         rmi = 1024.0 * rm / mul_lum;
