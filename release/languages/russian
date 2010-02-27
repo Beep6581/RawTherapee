@@ -3,6 +3,7 @@
 # ArtDen
 # 20.07.2008: Denis Artemov
 # 16.02.2009: Kvark
+# 26.02.2010: Sergey Smirnov AKA smiserg
 ADJUSTER_RESET_TO_DEFAULT;По умолчанию
 CURVEEDITOR_FILEDLGFILTERANY;Любые файлы
 CURVEEDITOR_FILEDLGFILTERCURVE;Файлы тоновых кривых
@@ -98,7 +99,7 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;Портретный
 GENERAL_SAVE;Сохранить
 GENERAL_YES;Да
-HISTOGRAM_LABEL;Histogram
+HISTOGRAM_LABEL;Гистограмма
 HISTOGRAM_TOOLTIP_B;Показать/скрыть СИНИЙ канал гистограммы
 HISTOGRAM_TOOLTIP_G;Показать/скрыть ЗЕЛЁНЫЙ канал гистограммы
 HISTOGRAM_TOOLTIP_L;Показать/скрыть CIELAB канал гистограммы
@@ -182,11 +183,11 @@ HISTORY_MSG_74;Масштаб изменения размеров
 HISTORY_MSG_75;Способ изменения размеров
 HISTORY_MSG_76;Метаданные Exif
 HISTORY_MSG_77;Метаданные IPTC
-HISTORY_MSG_78;Data specified for resize
-HISTORY_MSG_79;Resize width
+HISTORY_MSG_78;Данные изменения размеров
+HISTORY_MSG_79;Ширина изменения размеров
+HISTORY_MSG_80;Высота изменения размеров
+HISTORY_MSG_81;Изменение размеров включено
 HISTORY_MSG_7;Уровень чёрного
-HISTORY_MSG_80;Resize height
-HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Компенсация экспозиции
 HISTORY_MSG_9;Сжатие светов
 HISTORY_NEWSNAPSHOT;Новый снимок
@@ -227,8 +228,8 @@ IPTCPANEL_COPYRIGHT;Авторские права
 IPTCPANEL_COPYRIGHTHINT;Любые предупреждения об авторских правах (Copyright Notice).
 IPTCPANEL_COUNTRY;Страна
 IPTCPANEL_COUNTRYHINT;Название страны/начального местоположения (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Credit
-IPTCPANEL_CREDITHINT;Идентифицирует продавца изображения (Credit).
+IPTCPANEL_CREDIT;Поддержка
+IPTCPANEL_CREDITHINT;Лица и организации, осуществляющие какую либо поддержку изображения (Credit).
 IPTCPANEL_DATECREATED;Дата создания
 IPTCPANEL_DATECREATEDHINT;Дата создания интеллектуального содержания изображения; Формат: ГГГГММДД (Date Created).
 IPTCPANEL_EMBEDDED;Встроенный
@@ -250,8 +251,8 @@ IPTCPANEL_SUPPCATEGORIES;Доп. категории
 IPTCPANEL_SUPPCATEGORIESHINT;Дополнительные уточнения темы изображения (Supplemental Categories).
 IPTCPANEL_TITLE;Название
 IPTCPANEL_TITLEHINT;Простое описание изображения (Object Name).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
-IPTCPANEL_TRANSREFERENCEHINT;Код, представляющий происхождение изображения (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Код поддержки
+IPTCPANEL_TRANSREFERENCEHINT;Код, облегчающий отслеживание изображения при передаче в обработку на сторону (Original Transmission Reference).
 MAIN_BUTTON_PREFERENCES;Настройки
 MAIN_BUTTON_SAVE;Сохранить изображение
 MAIN_BUTTON_SAVEAS;Как...
@@ -495,7 +496,7 @@ TP_EXPOSURE_CONTRAST;Контраст
 TP_EXPOSURE_CURVEEDITOR;Тоновая кривая
 TP_EXPOSURE_EXPCOMP;Компенсация экспозиции
 TP_EXPOSURE_LABEL;Экспозиция
-TP_HLREC_CIELAB;CIELab Blending
+TP_HLREC_CIELAB;Смешивание CIELab
 TP_HLREC_COLOR;Реконструкция цвета
 TP_HLREC_LABEL;Восстановление ярких участков
 TP_HLREC_LUMINANCE;Восстановление яркости
