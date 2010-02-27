@@ -180,11 +180,11 @@ HISTORY_MSG_74;Escala de Redimensionamento
 HISTORY_MSG_75;Método de Redimensionamento
 HISTORY_MSG_76;Metadados Exif 
 HISTORY_MSG_77;Metadados IPTC 
-HISTORY_MSG_78;Data specified for resize
-HISTORY_MSG_79;Resize width
+HISTORY_MSG_78;Dados especificados para redimensionamento
+HISTORY_MSG_79;Largura do redimensionamento
 HISTORY_MSG_7;Preto
-HISTORY_MSG_80;Resize height
-HISTORY_MSG_81;Resize enabled
+HISTORY_MSG_80;Altura do redimensionamento
+HISTORY_MSG_81;Redimensionamento habilitado
 HISTORY_MSG_8;Compensação de Exposição 
 HISTORY_MSG_9;Compressão da Luz
 HISTORY_NEWSNAPSHOT;Adicionar
