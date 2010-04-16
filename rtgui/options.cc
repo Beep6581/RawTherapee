@@ -22,6 +22,7 @@
 #include <glib/gstdio.h>
 #include <sstream>
 #include <multilangmgr.h>
+#include <addsetids.h>
 
 Options options;
 Glib::ustring versionString = "v3.0 alpha 1";
@@ -107,8 +108,8 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
 
-    int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
-    baBehav = std::vector<int> (babehav, babehav+22);
+    int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
+    baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.demosaicMethod = "eahd";

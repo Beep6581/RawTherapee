@@ -285,7 +285,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     ipc->setPreviewImageListener (previewHandler);
     ipc->setPreviewScale (10);
     tpc->initImage (ipc, tmb->getType()==FT_Raw);
-    ipc->setHistogramListener (histogramPanel);
+    ipc->setHistogramListener (this);
 
 //    iarea->fitZoom ();   // tell to the editorPanel that the next image has to be fitted to the screen
     iarea->imageArea->setPreviewHandler (previewHandler);
@@ -799,3 +799,8 @@ void EditorPanel::beforeAfterToggled () {
     }
 }
 
+void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl) {
+    
+    histogramPanel->histogramChanged (rh, gh, bh, lh); 
+    tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
+}

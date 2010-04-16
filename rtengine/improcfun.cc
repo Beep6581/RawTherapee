@@ -187,7 +187,7 @@ void ImProcFunctions::release () {
 	monitorTransform = NULL;
 }
 
-void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, int* histogram, int* chroma_radius, int row_from, int row_to) {
+void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
 
 	TMatrix wprof = iccStore.workingSpaceMatrix (wprofile);
     int toxyz[3][3];
@@ -242,11 +242,11 @@ void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile,
     *chroma_radius = cradius;
 }
 
-void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params, int* histogram, double gamma) {
+void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params, unsigned int* histogram, double gamma) {
 
     int cr1, cr2;
-    int* hist1 = new int[65536]; memset (hist1, 0, 65536*sizeof(int));
-    int* hist2 = new int[65536]; memset (hist2, 0, 65536*sizeof(int));
+    unsigned int* hist1 = new unsigned int[65536]; memset (hist1, 0, 65536*sizeof(int));
+    unsigned int* hist2 = new unsigned int[65536]; memset (hist2, 0, 65536*sizeof(int));
     
     int H = original->height;
 
@@ -366,8 +366,6 @@ void ImProcFunctions::rgbProc_ (Image16* working, LabImage* lab, const ProcParam
                     b = CLIP((int)(factor*b-sub));
                 }
                 else {
-                if (i==100 && j==3500)
-                    printf ("r=%d, %d, fact=%g, mapval=%d, %d\n", r, (int)(factor*r), factor, mapval, shmap->map[i][j]);
                     r = CLIP((int)(factor*r));
                     g = CLIP((int)(factor*g));
                     b = CLIP((int)(factor*b));
@@ -2020,7 +2018,7 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
     }
 }
 
-void ImProcFunctions::getAutoExp  (int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
+void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
 
     double sum = 0;
     for (int i=0; i<65536>>histcompr; i++)

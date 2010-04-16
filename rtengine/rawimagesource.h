@@ -112,7 +112,7 @@ class RawImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
-        int         getAEHistogram (int* histogram, int& histcompr);
+        int         getAEHistogram (unsigned int* histogram, int& histcompr);
 
         static void colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);

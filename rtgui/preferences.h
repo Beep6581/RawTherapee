@@ -42,7 +42,8 @@ class Preferences : public Gtk::Dialog {
                 Gtk::TreeModelColumn<bool>          badd;
                 Gtk::TreeModelColumn<bool>          bset;
                 Gtk::TreeModelColumn<bool>          visible;
-                BehavColumns() { add(label); add(badd); add(bset); add(visible);}
+                Gtk::TreeModelColumn<int>           addsetid;
+                BehavColumns() { add(label); add(badd); add(bset); add(visible); add(addsetid); }
         };
         Glib::RefPtr<Gtk::TreeStore> behModel;
         BehavColumns behavColumns;
@@ -108,7 +109,7 @@ class Preferences : public Gtk::Dialog {
 
     void themeChanged ();
 
-    void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, bool set);
+    void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
     Gtk::Widget* getProcParamsPanel ();
     Gtk::Widget* getColorManagementPanel ();

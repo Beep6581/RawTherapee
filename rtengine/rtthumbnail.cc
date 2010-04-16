@@ -100,7 +100,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     // histogram computation
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram = new int[65536>>tpp->aeHistCompression];
+    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
     memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
     int ix = 0;
     for (int i=0; i<img->height*img->width; i++) {
@@ -197,7 +197,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         logDefGain = 0.0;
         rmi = 1024.0 * rm * defGain / mul_lum;
         gmi = 1024.0 * gm * defGain / mul_lum;
-        bmi = 1024.0 * bm * defGain / mul_lum;  
+        bmi = 1024.0 * bm * defGain / mul_lum;
     }
     else {
         rmi = 1024.0 * rm / mul_lum;
@@ -268,7 +268,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int fh = baseImg->height;
 
     ImProcFunctions ipf;
-    int* hist16 = new int [65536];
+    unsigned int* hist16 = new unsigned int [65536];
     ipf.firstAnalysis (baseImg, &params, hist16, isRaw ? 2.2 : 0.0);
 
     // perform transform
@@ -316,7 +316,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
 
     int* curve = new int [65536];
-    CurveFactory::updateCurve3 (curve, hist16, params.toneCurve.curve, logDefGain, br, bl, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,  isRaw ? 2.2 : 0, true);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve, NULL, 16);
 
     LabImage* labView = new LabImage (baseImg);
     ipf.rgbProc (baseImg, labView, &params, curve, shmap);
@@ -331,7 +331,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[labView->L[i][j]]++;
 
     // luminance processing
-    CurveFactory::updateCurve2 (curve, hist16, params.lumaCurve.curve, 0, params.lumaCurve.brightness, params.lumaCurve.black, params.lumaCurve.hlcompr, params.lumaCurve.shcompr, params.lumaCurve.contrast, 0.0, false);
+    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, hist16, curve, NULL, 16);
+
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
 
     delete [] curve;
@@ -866,7 +867,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
     if (!f) 
         aeHistogram = NULL;
     else {
-        aeHistogram = new int[65536>>aeHistCompression];
+        aeHistogram = new unsigned int[65536>>aeHistCompression];
         fread (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
         fclose (f);
         return true;

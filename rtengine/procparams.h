@@ -26,28 +26,31 @@ namespace rtengine {
 namespace procparams {
 
 /**
-  * Common parameters of the tone curve and the luminance curve
+  * Parameters of the tone curve 
   */
-class CurveParams {
-
-    public:
-        std::vector<double>   curve;
-        double          brightness;
-        int             black;
-        int             contrast;
-        int             shcompr;
-        int             hlcompr;
-};
-
-/**
-  * Additional parameters of the tone curve (auto exposure related parameters)
-  */
-class ToneCurveParams : public CurveParams {
+class ToneCurveParams {
 
     public:
         bool        autoexp;
         double      clip;
         double      expcomp;
+        std::vector<double>   curve;
+        int         brightness;
+        int         black;
+        int         contrast;
+        int         shcompr;
+        int         hlcompr;
+};
+
+/**
+  * Parameters of the luminance curve
+  */
+class LCurveParams {
+
+    public:
+        std::vector<double>   curve;
+        int      	brightness;
+        int         contrast;
 };
 
 /**
@@ -287,7 +290,7 @@ class ProcParams {
 
     public:
         ToneCurveParams         toneCurve;      ///< Tone curve parameters
-        CurveParams             lumaCurve;      ///< CIELAB luminance curve parameters
+        LCurveParams            lumaCurve;      ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;     ///< Sharpening parameters
         ColorBoostParams        colorBoost;     ///< Color boost parameters
         WBParams                wb;             ///< White balance parameters

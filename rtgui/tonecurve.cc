@@ -49,7 +49,7 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
 //----------- Exposure Compensation ------------------------
-  expcomp   = new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 5, 0.01, 0);
+  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 5, 0.01, 0));
   pack_start (*expcomp);
   hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 150, 1, 0));
   pack_start (*hlcompr);
@@ -68,7 +68,7 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   contrast   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_CONTRAST"), -100, 100, 1, 0));
   pack_start (*contrast);
 
-/*  
+  
 //----------- Curve ------------------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
@@ -78,7 +78,7 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   curvexp->add (*shape);
 
   pack_start (*curvexp, Gtk::PACK_SHRINK, 4);
-*/
+
 // --------- Set Up Listeners -------------
   expcomp->setAdjusterListener (this);
   brightness->setAdjusterListener (this);
@@ -86,11 +86,6 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   hlcompr->setAdjusterListener (this);
   shcompr->setAdjusterListener (this);
   contrast->setAdjusterListener (this);
-}
-
-ToneCurve::~ToneCurve () {
-
-    delete expcomp;
 }
 
 void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -106,6 +101,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         contrast->setEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
         autolevels->set_inconsistent (!pedited->toneCurve.autoexp);
         clipDirty = pedited->toneCurve.clip;
+        shape->setUnChanged (!pedited->toneCurve.curve);
     }
 
     autoconn.block (true);
@@ -120,7 +116,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     shcompr->setValue (pp->toneCurve.shcompr);
     brightness->setValue (pp->toneCurve.brightness);
     contrast->setValue (pp->toneCurve.contrast);
-//    shape->setCurve (pp->toneCurve.curve);
+    shape->setCurve (pp->toneCurve.curve);
 
     enableListener ();
 }
@@ -135,7 +131,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->toneCurve.shcompr = (int)shcompr->getValue ();
     pp->toneCurve.brightness = (int)brightness->getValue ();
     pp->toneCurve.contrast = (int)contrast->getValue ();
-//    pp->toneCurve.curve = shape->getCurve ();
+    pp->toneCurve.curve = shape->getCurve ();
 
     if (pedited) {
         pedited->toneCurve.expcomp = expcomp->getEditedState ();
@@ -144,8 +140,9 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.shcompr = shcompr->getEditedState ();
         pedited->toneCurve.brightness = brightness->getEditedState ();
         pedited->toneCurve.contrast = contrast->getEditedState ();
-        pedited->toneCurve.autoexp   = !autolevels->get_inconsistent();
-        pedited->toneCurve.clip   = clipDirty;
+        pedited->toneCurve.autoexp  = !autolevels->get_inconsistent();
+        pedited->toneCurve.clip     = clipDirty;
+        pedited->toneCurve.curve    = !shape->isUnChanged ();
     }
 }
 
@@ -176,13 +173,13 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
     }
 }
 
-/*void ToneCurve::curveChanged () {
+void ToneCurve::curveChanged () {
 
     if (listener) {
         listener->panelChanged (EvToneCurve, M("HISTORY_CUSTOMCURVE"));
     }
 }
-*/
+
 void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
     if (autolevels->get_active() && (a==expcomp || a==black || a==hlcompr || a==shcompr)) {
@@ -270,7 +267,7 @@ void ToneCurve::waitForAutoExp () {
     hlcompr->setEnabled (false);
     shcompr->setEnabled (false);
     contrast->setEnabled (false);
-//    shape->set_sensitive (false);
+    shape->set_sensitive (false);
 }
 
 int aexpcomputed (void* data) {
@@ -287,7 +284,6 @@ void ToneCurve::autoExpChanged (double br, int bl) {
     nextBr = br;
     g_idle_add (aexpcomputed, this);
 
-
 //    Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::autoExpComputed_));
 }
 
@@ -300,7 +296,7 @@ void ToneCurve::enableAll () {
     hlcompr->setEnabled (true);
     shcompr->setEnabled (true);
     contrast->setEnabled (true);
-//     shape->set_sensitive (true);
+     shape->set_sensitive (true);
 }
 
 bool ToneCurve::autoExpComputed_ () {
@@ -314,7 +310,6 @@ bool ToneCurve::autoExpComputed_ () {
     return false;
 }
 
-/*
 void ToneCurve::expandCurve (bool isExpanded) {
 
     curvexp->set_expanded (isExpanded);
@@ -324,7 +319,7 @@ bool ToneCurve::isCurveExpanded () {
 
     return curvexp->get_expanded ();
 }
-*/
+
 
 void ToneCurve::setBatchMode (bool batchMode) {
 
@@ -340,6 +335,8 @@ void ToneCurve::setBatchMode (bool batchMode) {
     shcompr->showEditedCB ();
     brightness->showEditedCB ();
     contrast->showEditedCB ();
+    
+    shape->setBatchMode (batchMode);
 }
 
 void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, bool contradd) {
@@ -351,9 +348,9 @@ void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, boo
     else if (blackAdd && !blackadd)
         black->setLimits (0, 32768, 1, 0);
     if (!brAdd && bradd || brAdd && !bradd)
-        brightness->setLimits (-100, 100, 0.01, 0);
+        brightness->setLimits (-100, 100, 1, 0);
     if (!contrAdd && contradd || contrAdd && !contradd)
-        contrast->setLimits (-100, 100, 0.01, 0);
+        contrast->setLimits (-100, 100, 1, 0);
     
     expAdd = expadd;
     blackAdd = blackadd;
@@ -361,3 +358,7 @@ void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, boo
     contrAdd = contradd;
 }
 
+void ToneCurve::updateCurveBackgroundHistogram (unsigned* hist) {
+    
+    shape->updateBackgroundHistogram (hist);
+}

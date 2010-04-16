@@ -60,7 +60,7 @@ class ImProcFunctions {
         void lab2rgb_           (LabImage* lab, Image8* image, int row_from, int row_to);
         void colorCurve_        (LabImage* lold, LabImage* lnew, const ProcParams* params, int row_from, int row_to, double* cmultiplier);
         void sharpenHaloCtrl    (LabImage* lab, const ProcParams* params, unsigned short** blurmap, unsigned short** base, int W, int row_from, int row_to);
-        void firstAnalysis_     (Image16* original, Glib::ustring wprofile, int* histogram, int* chroma_radius, int row_from, int row_to);
+        void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to);
         void resize_            (Image16* src, Image16* dst, ResizeParams params, int row_from, int row_to);
         void damping_           (float** aI, unsigned short** aO, float damping, int W, int rowfrom, int rowto);
 
@@ -86,7 +86,7 @@ class ImProcFunctions {
 		void release    ();
 		
 		
-        void firstAnalysis  (Image16* working, const ProcParams* params, int* vhist16, double gamma);
+        void firstAnalysis  (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
     
         void rgbProc        (Image16* working, LabImage* lab, const ProcParams* params, int* tonecurve, SHMap* shmap);
         void luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to);
@@ -107,7 +107,7 @@ class ImProcFunctions {
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 
-        static void getAutoExp  (int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
+        static void getAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
 };
 };
 #endif

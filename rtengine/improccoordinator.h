@@ -64,10 +64,10 @@ class ImProcCoordinator : public StagedImageProcessor {
         int tonecurve [65536];
         int lumacurve [65536];
         
-        int vhist16[65536];
-        int lhist16[65536];
+        unsigned int vhist16[65536];
+        unsigned int lhist16[65536];
 
-        unsigned int rhist[256], ghist[256], bhist[256], Lhist[256];
+        unsigned int rhist[256], ghist[256], bhist[256], Lhist[256], bcrgbhist[256], bcLhist[256];
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

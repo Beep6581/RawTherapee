@@ -154,7 +154,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
 
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
-            int aehist[65536]; int aehistcompr;
+            unsigned int aehist[65536]; int aehistcompr;
             imgsrc->getAEHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
             if (aeListener)
@@ -163,7 +163,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     }
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
-        CurveFactory::updateCurve3 (tonecurve, vhist16, params.toneCurve.curve, imgsrc->getDefGain(), params.toneCurve.expcomp, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true);
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
         ipf.rgbProc (oprevi, oprevl, &params, tonecurve, shmap);
 
         // recompute luminance histogram
@@ -177,7 +177,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::updateCurve2 (lumacurve, lhist16, params.lumaCurve.curve, 0, params.lumaCurve.brightness, params.lumaCurve.black, params.lumaCurve.hlcompr, params.lumaCurve.shcompr, params.lumaCurve.contrast, 0.0, false);
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
     }
 
     if (todo & M_LUMINANCE) {
@@ -246,7 +246,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
             hy2 = MIN(pH,MAX(0,(params.crop.y+params.crop.h) / scale));
         }
         updateHistograms (hx1, hy1, hx2, hy2);
-        hListener->histogramChanged (rhist, ghist, bhist, Lhist);
+        hListener->histogramChanged (rhist, ghist, bhist, Lhist, bcrgbhist, bcLhist);
     }
 
     t9.set ();

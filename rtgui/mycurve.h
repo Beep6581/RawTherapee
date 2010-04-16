@@ -21,24 +21,29 @@
 
 #include <gtkmm.h>
 #include <vector>
+#include <curvelistener.h>
 
-class CurveListener {
-
-    public:
-        virtual void curveChanged () {}
-};
-
-enum CurveType {Linear, Spline};
+enum CurveType {Linear, Spline, Parametric};
 
 class CurveDescr {
 
     public:
         CurveType type;
-        std::vector<double> x, y;
+        std::vector<double> x, y;   // in case of parametric curves the curve parameters are stored in vector x. In other cases these vectors store the coordinates of the bullets.
+};
+
+class MyCurve;
+struct MyCurveIdleHelper {
+    MyCurve* myCurve;
+    bool destroyed;
+    int pending;
 };
 
 class MyCurve : public Gtk::DrawingArea {
 
+        friend int mchistupdate (void* data);
+    
+    protected:
         CurveListener* listener;
         CurveDescr curve;
         Gdk::CursorType cursor_type;
@@ -47,16 +52,20 @@ class MyCurve : public Gtk::DrawingArea {
         int grab_point;              
         int last;
         std::vector<Gdk::Point> point;
+        std::vector<Gdk::Point> upoint;
+        std::vector<Gdk::Point> lpoint;
+        int activeParam;
+        unsigned int bghist[256];
+        bool bghistvalid;
+        MyCurveIdleHelper* mcih;
         
-    protected:
         void draw (int width, int height);
         void interpolate (int width, int height);
         std::vector<double> get_vector (int veclen);
-        double spline_eval (int n, double x[], double y[], double y2[], double val);
-        void spline_solve (int n, double x[], double y[], double y2[]);
 
     public:
         MyCurve ();
+        ~MyCurve ();
         
         void setCurveListener (CurveListener* cl) { listener = cl; }
         std::vector<double> getPoints ();
@@ -64,6 +73,8 @@ class MyCurve : public Gtk::DrawingArea {
         void setType (CurveType t);
         bool handleEvents (GdkEvent* event);
         void notifyListener ();
+        void setActiveParam (int ac);
+        void updateBackgroundHistogram (unsigned int* hist);
 };
 
 #endif

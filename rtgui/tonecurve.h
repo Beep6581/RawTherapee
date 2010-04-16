@@ -22,10 +22,10 @@
 #include <gtkmm.h>
 #include <adjuster.h>
 #include <toolpanel.h>
-//#include <curveeditor.h>
-//#include <mycurve.h>
+#include <curveeditor.h>
+#include <mycurve.h>
 
-class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, public rtengine::AutoExpListener/*, public CurveListener */{
+class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, public rtengine::AutoExpListener, public CurveListener {
 
   protected:
     Gtk::HBox* abox;
@@ -39,15 +39,14 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, p
     Adjuster* contrast;
     bool expAdd, blackAdd, brAdd, contrAdd, clipDirty, lastAuto;
     sigc::connection autoconn;
-//    CurveEditor* shape;
-//    Gtk::Expander* curvexp;
+    CurveEditor* shape;
+    Gtk::Expander* curvexp;
     double nextBr;
     int nextBl;
   
   public:
 
     ToneCurve ();
-    virtual ~ToneCurve ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
@@ -63,9 +62,10 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, p
     void autoExpChanged (double br, int bl);
     bool autoExpComputed_ ();
     void enableAll ();
-/*    void curveChanged ();
+    void curveChanged ();
     void expandCurve (bool isExpanded);
-    bool isCurveExpanded ();*/
+    bool isCurveExpanded ();
+    void updateCurveBackgroundHistogram (unsigned* hist);
 };
 
 #endif

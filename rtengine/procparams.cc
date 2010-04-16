@@ -28,7 +28,6 @@ namespace procparams {
 ProcParams::ProcParams () { 
 
     setDefaults (); 
-
 }       
 
 ProcParams* ProcParams::create () {
@@ -55,9 +54,6 @@ void ProcParams::setDefaults () {
     
     lumaCurve.brightness    = 0;
     lumaCurve.contrast      = 0;
-    lumaCurve.black         = 0;
-    lumaCurve.hlcompr       = 0;
-    lumaCurve.shcompr       = 0;
     lumaCurve.curve.clear ();
     
     sharpening.enabled          = true;
@@ -170,7 +166,7 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
     keyFile.set_double  ("Exposure", "Clip",            toneCurve.clip);
     keyFile.set_double  ("Exposure", "Compensation",    toneCurve.expcomp);
-    keyFile.set_double  ("Exposure", "Brightness",      toneCurve.brightness);
+    keyFile.set_integer ("Exposure", "Brightness",      toneCurve.brightness);
     keyFile.set_integer ("Exposure", "Contrast",        toneCurve.contrast);
     keyFile.set_integer ("Exposure", "Black",           toneCurve.black);
     keyFile.set_integer ("Exposure", "HighlightCompr",  toneCurve.hlcompr);
@@ -187,11 +183,8 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
 
     // save luma curve
-    keyFile.set_double  ("Luminance Curve", "Brightness",      lumaCurve.brightness);
+    keyFile.set_integer ("Luminance Curve", "Brightness",      lumaCurve.brightness);
     keyFile.set_integer ("Luminance Curve", "Contrast",        lumaCurve.contrast);
-    keyFile.set_integer ("Luminance Curve", "Black",           lumaCurve.black);
-    keyFile.set_integer ("Luminance Curve", "HighlightCompr",  lumaCurve.hlcompr);
-    keyFile.set_integer ("Luminance Curve", "ShadowCompr",     lumaCurve.shcompr);
     Glib::ArrayHandle<double> lcurve = lumaCurve.curve;
     keyFile.set_double_list("Luminance Curve", "Curve",        lcurve);
 
@@ -346,7 +339,7 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "Auto"))           toneCurve.autoexp       = keyFile.get_boolean ("Exposure", "Auto");
     if (keyFile.has_key ("Exposure", "Clip"))           toneCurve.clip          = keyFile.get_double  ("Exposure", "Clip");
     if (keyFile.has_key ("Exposure", "Compensation"))   toneCurve.expcomp       = keyFile.get_double  ("Exposure", "Compensation");
-    if (keyFile.has_key ("Exposure", "Brightness"))     toneCurve.brightness    = keyFile.get_double  ("Exposure", "Brightness");
+    if (keyFile.has_key ("Exposure", "Brightness"))     toneCurve.brightness    = keyFile.get_integer ("Exposure", "Brightness");
     if (keyFile.has_key ("Exposure", "Contrast"))       toneCurve.contrast      = keyFile.get_integer ("Exposure", "Contrast");
     if (keyFile.has_key ("Exposure", "Black"))          toneCurve.black         = keyFile.get_integer ("Exposure", "Black");
     if (keyFile.has_key ("Exposure", "HighlightCompr")) toneCurve.hlcompr       = keyFile.get_integer ("Exposure", "HighlightCompr");
@@ -369,13 +362,10 @@ if (keyFile.has_group ("Channel Mixer")) {
 
     // load luma curve
 if (keyFile.has_group ("Luminance Curve")) {    
-    if (keyFile.has_key ("Luminance Curve", "Brightness"))     lumaCurve.brightness    = keyFile.get_double  ("Luminance Curve", "Brightness");
-    if (keyFile.has_key ("Luminance Curve", "Contrast"))       lumaCurve.contrast      = keyFile.get_integer ("Luminance Curve", "Contrast");
-    if (keyFile.has_key ("Luminance Curve", "Black"))          lumaCurve.black         = keyFile.get_integer ("Luminance Curve", "Black");
-    if (keyFile.has_key ("Luminance Curve", "HighlightCompr")) lumaCurve.hlcompr       = keyFile.get_integer ("Luminance Curve", "HighlightCompr");
-    if (keyFile.has_key ("Luminance Curve", "ShadowCompr"))    lumaCurve.shcompr       = keyFile.get_integer ("Luminance Curve", "ShadowCompr");
+    if (keyFile.has_key ("Luminance Curve", "Brightness"))     lumaCurve.brightness = keyFile.get_integer  ("Luminance Curve", "Brightness");
+    if (keyFile.has_key ("Luminance Curve", "Contrast"))       lumaCurve.contrast   = keyFile.get_integer ("Luminance Curve", "Contrast");
     if (version>200)
-	if (keyFile.has_key ("Luminance Curve", "Curve"))          lumaCurve.curve         = keyFile.get_double_list ("Luminance Curve", "Curve");
+	if (keyFile.has_key ("Luminance Curve", "Curve"))          lumaCurve.curve      = keyFile.get_double_list ("Luminance Curve", "Curve");
 }
 
     // load sharpening
@@ -569,10 +559,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && toneCurve.expcomp    == other.toneCurve.expcomp
         && lumaCurve.curve      == other.lumaCurve.curve
         && lumaCurve.brightness == other.lumaCurve.brightness
-        && lumaCurve.black      == other.lumaCurve.black
         && lumaCurve.contrast   == other.lumaCurve.contrast
-        && lumaCurve.shcompr    == other.lumaCurve.shcompr
-        && lumaCurve.hlcompr    == other.lumaCurve.hlcompr
         && sharpening.enabled   == other.sharpening.enabled
         && sharpening.radius    == other.sharpening.radius
         && sharpening.amount    == other.sharpening.amount

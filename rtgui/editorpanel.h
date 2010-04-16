@@ -44,7 +44,8 @@ class EditorPanel : public Gtk::VBox,
                     public PParamsChangeListener,
                     public rtengine::ProgressListener,
                     public ThumbnailListener,
-                    public HistoryBeforeLineListener {
+                    public HistoryBeforeLineListener,
+                    public rtengine::HistogramListener {
 
     protected:      
         Gtk::Label *progressLabel;
@@ -121,6 +122,9 @@ class EditorPanel : public Gtk::VBox,
         // HistoryBeforeLineListener
         void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params);
         
+        // HistogramListener
+        void histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl);
+
         // event handlers
         void info_toggled ();
         void hideHistoryActivated ();
