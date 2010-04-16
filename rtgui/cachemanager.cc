@@ -22,6 +22,7 @@
 #include <giomm.h>
 #include <guiutils.h>
 #include <procparamchangers.h>
+#include <safegtk.h>
 
 CacheManager cacheMgr;
 
@@ -212,19 +213,13 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) {
 
 std::string CacheManager::getMD5 (const Glib::ustring& fname) {
 
-    try {
-        Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
-        if (!file)
-            return "";
-        Glib::RefPtr<Gio::FileInfo> info = file->query_info();
-        if (!info)
-            return "";
-        else
+    Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
+    if (file)	{
+        Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (file);
+        if (info)
             return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, Glib::ustring::compose ("%1%2", fname, info->get_size()));
     }
-    catch (...) {
-        return "";
-    }
+    return "";
 }
 
 Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fname, const Glib::ustring& md5) {
@@ -234,46 +229,25 @@ Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subdir, const
     return Glib::build_filename (cfn, cname);
 }
 
-class FileMTimeInfo {
-
-    public:
-        Glib::ustring fname;
-        Glib::TimeVal mtime;
-        
-        FileMTimeInfo (Glib::ustring name, Glib::TimeVal mtime) : fname(name), mtime(mtime) {}
-        bool operator<(const FileMTimeInfo& other) const { return mtime<other.mtime; }
-};
-
 void CacheManager::applyCacheSizeLimitation () {
 
     std::vector<FileMTimeInfo> flist;
-    try {
-        Glib::ustring dataDir = Glib::build_filename (baseDir, "data");
-        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dataDir);
-        if (!dir)
-            return;
-        Glib::RefPtr<Gio::FileEnumerator> dirList = dir->enumerate_children ();
-        if (!dirList)
-            return;
-
-        for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) 
-            flist.push_back (FileMTimeInfo (removeExtension(info->get_name()), info->modification_time()));
-        if (flist.size() > options.maxCacheEntries) {
-            std::sort (flist.begin(), flist.end());
-            while (flist.size() > options.maxCacheEntries) {
-                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "data"), flist.front().fname) + ".txt").c_str());
-                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust").c_str());
-                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg").c_str());
-                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname)).c_str());
-                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "embprofiles"), flist.front().fname) + ".icc").c_str());
+    Glib::ustring dataDir = Glib::build_filename (baseDir, "data");
+    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dataDir);
+    
+		safe_build_file_list (dir, flist);
+								
+    if (flist.size() > options.maxCacheEntries) {
+        std::sort (flist.begin(), flist.end());
+        while (flist.size() > options.maxCacheEntries) {
+            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "data"), flist.front().fname) + ".txt").c_str());
+            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust").c_str());
+            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg").c_str());
+            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname)).c_str());
+            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "embprofiles"), flist.front().fname) + ".icc").c_str());
 //                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "profiles"), flist.front().fname) + ".pp2").c_str());
-                flist.erase (flist.begin());
-            }
+            flist.erase (flist.begin());
         }
     }
-    catch (Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-
 }
 

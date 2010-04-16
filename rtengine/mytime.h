@@ -19,11 +19,13 @@
 #ifndef _MYTIME_
 #define _MYTIME_
 
-#ifndef WIN32
-#include <time.h>
-#else
+#ifdef WIN32
 #include <windows.h>
-#endif
+#elif defined __APPLE__
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif 
 
 class MyTime {
 
@@ -35,12 +37,17 @@ class MyTime {
 #endif
 
 	void set () {
-#ifndef WIN32
-	        clock_gettime (CLOCK_REALTIME, &t);  
+#ifdef WIN32
+      t = GetTickCount ();
+#elif defined __APPLE__
+   struct timeval tv;
+   gettimeofday(&tv, NULL);
+   t.tv_sec = tv.tv_sec;
+   t.tv_nsec = tv.tv_usec*1000;
 #else
-		t = GetTickCount ();
-#endif
-	}
+   clock_gettime (CLOCK_REALTIME, &t); 
+#endif 	
+}
 
 	int etime (MyTime a) {
 #ifndef WIN32

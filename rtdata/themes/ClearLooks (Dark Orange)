@@ -1,0 +1,197 @@
+# Color scheme contributed by Franco Gotusso based on Clearlooks-DarkCoffee by Chibi
+# and edited by bvc as Clearlooks-DarkCoffee2
+
+style "clearlooks-default"
+{
+  GtkMenuItem::selected_shadow_type = none
+  GtkWidget::interior_focus = 1
+  GtkButton::default_border = { 3, 3, 3, 3 }
+  GtkButton::default_outside_border = { 3, 3, 3, 3 }
+  GtkRange::trough_border = 2
+
+  GtkWidget::focus_padding = 1
+
+  GtkPaned::handle_size = 6
+
+  GtkRange::slider_width = 15
+  GtkRange::stepper_size = 15
+  GtkScrollbar::min_slider_length = 30
+  GtkCheckButton::indicator_size = 12
+  GtkMenuBar::internal-padding = 0
+
+  GtkTreeView::expander_size = 14
+  GtkExpander::expander_size = 16
+
+  GtkTreeView::odd_row_color = "#343434"
+
+  GtkWidget::cursor_color           = "#E3DFDC"
+  GtkWidget::secondary_cursor_color = "#E3DFDC"
+
+  xthickness = 1
+  ythickness = 1
+
+  fg[NORMAL]        = "#d2cfcc" #Main window text
+  fg[PRELIGHT]      = "#E9E9E9" #Highlighted widget text
+  fg[ACTIVE]        = "#ADA59D" #Inactive widget text
+  fg[SELECTED]      = "#E9E9E9" #?#E9E9E9
+  fg[INSENSITIVE]   = "#202020" #CAN'T TOUCH DIS -[EDIT] I did (bvc) - [EDIT] Me too :)
+
+  bg[NORMAL]        = "#181818" #Backround
+  bg[PRELIGHT]      = "#dd6003" #Highlight Widget
+  bg[ACTIVE]        = "#343434" #Selected Widget
+  bg[SELECTED]      = "#dd6003" #The box words are usually in @_@!
+  bg[INSENSITIVE]   = "#202020" #Not active buttons 
+  base[NORMAL]      = "#000000" #Text area widgets.
+  base[PRELIGHT]    = "#313131" #Check and radio button background
+  base[ACTIVE]      = "#a64a07" #Unfocused Select
+  base[SELECTED]    = "#e26000" #Selected Text area item, and that bar over the tabs.
+  base[INSENSITIVE] = "#f5f2ee" #Haven't got a clue
+
+  text[NORMAL]      = "#d2cfcc" # Text area widget text.
+  text[PRELIGHT]    = "#E9E9E9" #?
+  text[ACTIVE]      = "#ADA59D" #?
+  text[SELECTED]    = "#E9E9E9" #Selected Text area widget text.
+  text[INSENSITIVE] = "#757575" #CAN'T TOUCH DIS -[EDIT] I did (bvc)
+
+engine "clearlooks"
+   {
+    sunkenmenubar    	= 1       # 0 = disable, 1 = enable
+    menuitemstyle     	= 1       # 0 = flat, 1 = 3d-ish (button)
+    listviewitemstyle 	= 1       # 0 = flat, 1 = 3d-ish (gradient)
+    progressbarstyle  	= 0       # 0 = candy bar, 1 = flat
+  }
+}
+
+style "clearlooks-wide" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 2
+  bg[NORMAL]			= "#313131"
+  bg[PRELIGHT]			= "#393939"
+}
+
+style "clearlooks-button" = "clearlooks-wide"
+{
+  bg[NORMAL]			= "#313131"
+  bg[PRELIGHT]			= "#393939"
+}
+
+style "clearlooks-notebook" = "clearlooks-wide"
+{
+  bg[NORMAL] = "#202020"
+  bg[ACTIVE] = "#101010"
+}
+
+style "clearlooks-tasklist" = "clearlooks-default"
+{
+  xthickness = 5
+  ythickness = 3
+}
+
+style "clearlooks-menu" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 1
+  bg[NORMAL] = "#202020"
+}
+
+style "clearlooks-menu-item" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 3
+  fg[PRELIGHT]  	= "#E9E9E9"
+  text[PRELIGHT]	= "#E9E9E9"
+  base[PRELIGHT] 	= "#dd6003"
+  base[SELECTED]     	= "#dd6003"
+}
+
+style "clearlooks-menu-itembar" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+
+style "clearlooks-tree" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 2
+}
+
+style "clearlooks-frame-title" = "clearlooks-default"
+{
+  fg[NORMAL] = "#d2cfcc"
+}
+
+style "clearlooks-panel" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+
+style "clearlooks-tooltips" = "clearlooks-default"
+{
+  xthickness = 4
+  ythickness = 4
+  bg[NORMAL] = "#dd6003"
+}
+
+style "clearlooks-progressbar"	= "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+   fg[PRELIGHT]  		= "#d2cfcc"
+   bg[NORMAL] 			= "#1d0d01"
+}
+
+style "clearlooks-combo" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 2
+  fg[NORMAL]    		= "#040404"
+  fg[PRELIGHT]    		= "#dd6003"
+  fg[ACTIVE]     		= "#d2cfcc"
+  bg[NORMAL]			= "#313131"
+  bg[PRELIGHT]			= "#393939"
+}
+
+style "clearlooks-scrollbar" = "clearlooks-default"
+{
+  fg[NORMAL]    		= "#040404"
+  fg[PRELIGHT]    		= "#d2cfcc"
+  fg[ACTIVE]     		= "#d2cfcc"
+  bg[NORMAL]			= "#313131"
+  bg[PRELIGHT]			= "#393939"
+}
+
+style "clearlooks-spin" = "clearlooks-wide"
+{
+  fg[NORMAL]    		= "#040404"
+  fg[PRELIGHT]			= "#d2cfcc"
+  fg[ACTIVE]			= "#d2cfcc"
+  bg[PRELIGHT]    		= "#313131"
+  bg[ACTIVE]     		= "#393939"
+}
+
+class "GtkWidget" style "clearlooks-default"
+class "GtkRange" style "clearlooks-wide"
+class "GtkFrame" style "clearlooks-wide"
+class "GtkSpinButton" style "clearlooks-spin"
+class "GtkStatusbar" style "clearlooks-wide"
+class "GtkMenu" style "clearlooks-menu"
+class "GtkMenuItem" style "clearlooks-menu-item"
+widget_class "*MenuItem.*" style "clearlooks-menu-item"
+class "GtkEntry" style "clearlooks-wide"
+widget_class "*.tooltips.*.GtkToggleButton" style "clearlooks-tasklist"
+widget_class "*.GtkTreeView.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCTree.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkFrame.GtkLabel" style "clearlooks-frame-title"
+widget_class "BasePWidget.GtkEventBox.GtkTable.GtkFrame" style "clearlooks-panel"
+widget "gtk-tooltips" style "clearlooks-tooltips"
+class "GtkNotebook" style "clearlooks-notebook"
+class "GtkProgressBar" style "clearlooks-progressbar"
+widget_class "*.GtkComboBox.GtkButton" style "clearlooks-combo"
+widget_class "*.GtkCombo.GtkButton" style "clearlooks-combo"
+class "GtkButton" style "clearlooks-button"
+class "GtkScrollbar" style "clearlooks-scrollbar"

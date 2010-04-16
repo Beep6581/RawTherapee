@@ -31,6 +31,8 @@ namespace rtengine {
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
             Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
             bool            verbose;
+	    int dcb_iterations;	// number of dcb iterations
+	    bool dcb_enhance;	// whether to do image refinment
 
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

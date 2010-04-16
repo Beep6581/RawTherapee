@@ -1,0 +1,570 @@
+# Textured gray theme.  Based off of GM Looks and Cillop Midnite
+
+# Sneaking through the code are we.? ;)
+style "clearlooks-default"
+{
+	GtkRange::trough_border = 0
+	GtkRange::slider_width = 14
+	GtkRange::stepper_size = 10
+
+	
+
+	GtkMenuItem::selected_shadow_type = out
+	GtkWidget::interior_focus = 1
+	GtkButton::default_border = { 1, 1, 1, 1 }
+	GtkButton::default_outside_border = { 0, 0, 0, 0 }
+	GtkRange::trough_border = 0
+	GtkWidget::focus_padding = 1
+	GtkPaned::handle_size = 6
+	GtkRange::slider_width = 15
+	GtkRange::stepper_size = 15
+	GtkScrollbar::min_slider_length = 30
+	GtkCheckButton::indicator_size = 12
+	GtkMenuBar::internal-padding = 0
+	#GtkOptionMenu::indicator_size = { 11, 6 }
+	#GtkOptionMenu::indicator_spacing = { 4, 5, 2, 2 }
+	GtkTreeView::expander_size = 14
+	GtkExpander::expander_size = 16
+	xthickness = 1
+	ythickness = 1
+	
+	fg[NORMAL]        = "#CACAC6"
+	fg[ACTIVE]        = "#CACAC6"
+	fg[INSENSITIVE]   = "#000000"
+	fg[PRELIGHT]      = "#E2E2E2"
+	fg[SELECTED]      = "#E2E2E2"
+
+	bg[ACTIVE]        = "#484949"
+	bg[NORMAL]        = "#5f5f5f"
+	bg[INSENSITIVE]   = "#505050"
+	bg[PRELIGHT]      = "#6A6C6F"
+	bg[SELECTED]      = "#797979"
+
+	base[NORMAL]      = "#646464"
+	base[ACTIVE]      = "#797979"
+	base[INSENSITIVE] = "#5f5f5f"
+	base[PRELIGHT]    = "#686868"
+	base[SELECTED]    = "#797979"
+
+	text[NORMAL]      = "#000000"
+	text[ACTIVE]      = "#000000"
+	text[PRELIGHT]    = "#000000"
+	text[SELECTED]    = "#d7d4c9"
+	text[INSENSITIVE] = "#777777"
+
+  engine "clearlooks"
+  {
+    contrast		= 1.1
+    menubarstyle	= 2
+    animation           = TRUE
+    #menuitemstyle	= 2
+    #progressbarstyle	= 0
+    style		= CLASSIC 
+  }
+}
+
+style "clearlooks-wide" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 2
+}
+
+style "clearlooks-notebook" = "clearlooks-wide"
+{
+  bg[NORMAL] = "#5f5f5f"
+}
+style "clearlooks-tasklist" = "clearlooks-default"
+{
+  xthickness = 5
+  ythickness = 3
+}
+
+style "clearlooks-menu" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 1
+}
+
+style "clearlooks-menu-item" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 3
+}
+
+style "clearlooks-menu-itembar" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+style "clearlooks-tree" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 2
+}
+
+style "clearlooks-frame-title" = "clearlooks-default"
+{
+  fg[NORMAL] = "#FFFFFF"
+}
+
+style "clearlooks-panel" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+
+style "clearlooks-tooltips" = "clearlooks-default"
+{
+  xthickness = 4
+  ythickness = 4
+  bg[NORMAL] = "#404040"
+}
+style "clearlooks-progressbar"          = "clearlooks-default"
+{
+  xthickness = 0
+  ythickness = 0
+  fg[PRELIGHT]  = "#000000"
+}
+
+style "clearlooks-combo" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 2
+}
+
+style "metacity-frame"
+{
+  # Normal base color
+  #bg[NORMAL]  = "#bbbbbb"
+
+  # Unfocused title background color
+  #bg[INSENSITIVE]  = { 0.8, 0.8, 0.8 }
+
+  # Unfocused title text color
+  #fg[INSENSITIVE]  = { 1.55, 1.55, 1.55 }
+
+  # Focused icon color
+  #fg[NORMAL]  = { 0.2, 0.2, 0.2 }
+
+  # Focused title background color
+  #bg[SELECTED]  = { 0.5, 0.8, 0.5 }
+
+  # Focused title text color
+  #fg[SELECTED]  = "black"
+}
+style "clearlooks-scale" = "clearooks-button"
+{
+	GtkRange::trough-side-details = 1
+}
+
+
+
+style "scrollbar" = "clearlooks-default"
+{
+
+  engine "pixmap" 
+  {
+    image 
+   {
+   function				= BOX
+      detail				= "trough"
+      file					= "gray_textured/trough2.png"
+      border				= { 6,6,6,6 }
+      stretch				= TRUE
+      orientation			= VERTICAL
+    }
+    image 
+    {
+      function				= BOX
+      detail				= "trough"
+      file					= "gray_textured/trough2-h.png"
+      border				= { 6,6,6,6 }
+      stretch				= TRUE
+      orientation			= HORIZONTAL
+    }
+    image 
+    {
+      function			= SLIDER
+      state           		= NORMAL
+      file				= "gray_textured/slider-h.png" 
+      border			= { 6,6,2,2 }
+      stretch				= TRUE
+      orientation			= HORIZONTAL
+	
+      
+	
+    }
+    image 
+    {
+      function			= SLIDER
+      state           		= PRELIGHT
+      file				= "gray_textured/slider-h-pre.png" 
+      border			= { 6,6,2,2 }
+      stretch				= TRUE
+      orientation			= HORIZONTAL
+      
+    }
+    image 
+    {
+      function			= SLIDER
+      state           		= INSENSITIVE
+      file				= "gray_textured/slider-h-ins.png"
+      border			= { 6,6,2,2 }
+      stretch				= TRUE
+      orientation			= HORIZONTAL
+    }
+    image 
+    {
+      function			= SLIDER
+      state           		= NORMAL
+      file				= "gray_textured/slider-v.png" 
+      border			= { 2, 2, 6, 6 }
+      stretch				= TRUE
+      orientation			= VERTICAL
+	
+	
+      
+    }
+    image 
+    {
+      function			= SLIDER
+      state           		= PRELIGHT
+      file				= "gray_textured/slider-v-pre.png" 
+      border			= { 2, 2, 6, 6 }
+      stretch				= TRUE
+      orientation			= VERTICAL
+	
+	
+    }
+    image 
+    {
+      function			= SLIDER
+      state           		= INSENSITIVE
+      file				= "gray_textured/slider-v-ins.png"
+      border			= { 2,2,6,6 }
+      stretch				= TRUE
+      orientation			= VERTICAL
+	
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= NORMAL
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= UP
+      overlay_file			= "gray_textured/arrow-up.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= PRELIGHT
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= UP
+      overlay_file			= "gray_textured/arrow-up-pre.png"
+      overlay_stretch		= FALSE
+    }
+    image
+    {
+      function				= STEPPER
+      state					= ACTIVE
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= UP
+      overlay_file			= "gray_textured/arrow-up.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= INSENSITIVE
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= UP
+      overlay_file			= "gray_textured/arrow-up-ins.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= NORMAL
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= DOWN
+      overlay_file			= "gray_textured/arrow-down.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= PRELIGHT
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= DOWN
+      overlay_file			= "gray_textured/arrow-down-pre.png"
+      overlay_stretch		= FALSE
+    }
+    image
+    {
+      function				= STEPPER
+      state					= ACTIVE
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= DOWN
+      overlay_file			= "gray_textured/arrow-down.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= INSENSITIVE
+      file					= "gray_textured/null.png"
+      border				= { 1,1,4,4 }
+      stretch				= TRUE
+      arrow_direction		= DOWN
+      overlay_file			= "gray_textured/arrow-down-ins.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= NORMAL
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= RIGHT
+      overlay_file			= "gray_textured/arrow-right.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= PRELIGHT
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= RIGHT
+      overlay_file			= "gray_textured/arrow-right-pre.png"
+      overlay_stretch		= FALSE
+    }
+    image
+    {
+      function				= STEPPER
+      state					= ACTIVE
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= RIGHT
+      overlay_file			= "gray_textured/arrow-right.png"
+      overlay_stretch		= FALSE
+    }
+    image
+    {
+      function				= STEPPER
+      state					= INSENSITIVE
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= RIGHT
+      overlay_file			= "gray_textured/arrow-right-ins.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= NORMAL
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= LEFT
+      overlay_file			= "gray_textured/arrow-left.png"
+      overlay_stretch		= FALSE
+    }
+   image 
+    {
+      function				= STEPPER
+      state					= PRELIGHT
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= LEFT
+      overlay_file			= "gray_textured/arrow-left-pre.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= ACTIVE
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= LEFT
+      overlay_file			= "gray_textured/arrow-left.png"
+      overlay_stretch		= FALSE
+    }
+    image 
+    {
+      function				= STEPPER
+      state					= INSENSITIVE
+      file					= "gray_textured/null.png"
+      border				= { 4,4,1,1 }
+      stretch				= TRUE
+      arrow_direction		= LEFT
+      overlay_file			= "gray_textured/arrow-left-ins.png"
+      overlay_stretch		= FALSE
+    }
+  }
+}
+
+
+style "range" = "clearlooks-default"
+{
+  engine "pixmap" 
+  {
+# image
+# {
+#   function			= FOCUS
+#   file				= "gray_textured/null.png"
+#   stretch				= TRUE
+# }	
+    image 
+    {
+      function			= BOX
+      detail			= "trough"
+      file				= "gray_textured/pbtroughh.png"
+      border			= { 6, 6, 6, 6 }
+      stretch			= TRUE
+      orientation		= HORIZONTAL
+    }	
+    image 
+    {
+      function			= BOX
+      detail			= "trough"
+      file				= "gray_textured/pbtroughv.png"
+      border			= { 6, 6, 6, 6 }
+      stretch			= TRUE
+      orientation		= VERTICAL
+    }
+    image 
+    {
+      function		= SLIDER
+      state           	= NORMAL
+      file			= "gray_textured/rangeslider.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= HORIZONTAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+     state           	= PRELIGHT
+      file			= "gray_textured/rangeslider-pre.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= HORIZONTAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+      state           	= ACTIVE
+      file			= "gray_textured/rangeslider-pre.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= HORIZONTAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+      state           	= INSENSITIVE
+      file			= "gray_textured/rangeslider-ins.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= HORIZONTAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+      state           	= NORMAL
+      file			= "gray_textured/rangeslider.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= VERTICAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+     state           	= PRELIGHT
+      file			= "gray_textured/rangeslider-pre.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= VERTICAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+      state           	= ACTIVE
+      file			= "gray_textured/rangeslider-pre.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= VERTICAL
+	
+    }
+    image 
+    {
+      function		= SLIDER
+      state           	= INSENSITIVE
+      file			= "gray_textured/rangeslider-ins.png"
+      border		= { 6, 6, 6, 6 }
+      stretch		= TRUE
+      orientation	= VERTICAL
+
+    }
+  }
+}
+
+class "GtkWidget" style "clearlooks-default"
+class "GtkButton" style "clearlooks-wide"
+class "GtkRange" style "clearlooks-wide"
+class "GtkFrame" style "clearlooks-wide"
+class "GtkStatusbar" style "clearlooks-wide"
+class "GtkMenu" style "clearlooks-menu"
+class "GtkMenuItem" style "clearlooks-menu-item"
+widget_class "*.GtkMenuItem.*" style "clearlooks-menu-item"
+widget_class "*.GtkAccelMenuItem.*" style "clearlooks-menu-item"
+widget_class "*.GtkRadioMenuItem.*" style "clearlooks-menu-item"
+widget_class "*.GtkCheckMenuItem.*" style "clearlooks-menu-item"
+widget_class "*.GtkImageMenuItem.*" style "clearlooks-menu-item"
+widget_class "*.GtkSeparatorMenuItem.*" style "clearlooks-menu-item"
+class "GtkEntry" style "clearlooks-wide"
+widget_class "*.tooltips.*.GtkToggleButton" style "clearlooks-tasklist"
+widget_class "*.GtkTreeView.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCTree.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkFrame.GtkLabel" style "clearlooks-frame-title"
+widget_class "BasePWidget.GtkEventBox.GtkTable.GtkFrame" style "clearlooks-panel"
+widget "gtk-tooltips" style "clearlooks-tooltips"
+class "GtkNotebook" style "clearlooks-notebook"
+class "GtkProgressBar" style "clearlooks-progressbar"
+widget_class "*.GtkComboBox.GtkButton" style "clearlooks-combo"
+widget_class "*.GtkCombo.GtkButton" style "clearlooks-combo"
+class "MetaFrames" style "metacity-frame"
+
+
+class "GtkScrollbar"       			style "scrollbar"
+class "GtkRange"         			style "range"

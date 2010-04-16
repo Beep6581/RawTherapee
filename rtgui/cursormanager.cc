@@ -18,6 +18,7 @@
  */
 #include <cursormanager.h>
 #include <options.h>
+#include <safegtk.h>
 
 CursorManager cursorManager;
 
@@ -34,9 +35,12 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
 #else
     cNormal = new Gdk::Cursor (Gdk::ARROW);
 #endif
-    cHand = new Gdk::Cursor (cNormal->get_display(), Gdk::Pixbuf::create_from_file(argv0+"/images/openhand22.png"), 10, 10);
-    cClosedHand = new Gdk::Cursor (cNormal->get_display(), Gdk::Pixbuf::create_from_file(argv0+"/images/closedhand22.png"), 10, 10);
-    cWB = new Gdk::Cursor (cNormal->get_display(), Gdk::Pixbuf::create_from_file(argv0+"/images/wbpicker16.png"), 1, 12);
+		Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
+		Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file(argv0+"/images/closedhand22.png");
+		Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file(argv0+"/images/wbpicker16.png");
+		cHand = hand ? new Gdk::Cursor (cNormal->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
+    cClosedHand = close_hand ? new Gdk::Cursor (cNormal->get_display(), close_hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
+    cWB = wbpick ? new Gdk::Cursor (cNormal->get_display(), wbpick, 1, 12) : new Gdk::Cursor (Gdk::ARROW);
 
     mainWindow = mainWin;
 }

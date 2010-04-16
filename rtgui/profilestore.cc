@@ -97,9 +97,11 @@ std::vector<Glib::ustring> ProfileStore::getProfileNames () {
 
 rtengine::procparams::ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
 
-    if (!isRaw)
-        return getProfile (options.defProfImg);
-    else
-        return getProfile (options.defProfRaw);
+		rtengine::procparams::ProcParams* pp = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
+		if (!pp) {
+				pp = new ProcParams ();
+				pparams[isRaw ? options.defProfRaw : options.defProfImg] = pp;
+		}
+		return pp;
 }
 

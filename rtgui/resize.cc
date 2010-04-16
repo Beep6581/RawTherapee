@@ -37,6 +37,8 @@ Resize::Resize () : maxw(100000), maxh(100000) {
 	method->append_text (M("TP_RESIZE_BICUBIC"));
 	method->append_text (M("TP_RESIZE_BICUBICSF"));
 	method->append_text (M("TP_RESIZE_BICUBICSH"));
+	method->append_text (M("TP_RESIZE_DOWNSCALEB"));
+	method->append_text (M("TP_RESIZE_DOWNSCALEF"));
 	method->set_active (0);
 
     combos->attach (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"))), 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -124,6 +126,10 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
         method->set_active (3);
     else if (pp->resize.method == "Bicubic (Sharper)")
         method->set_active (4);
+    else if (pp->resize.method == "Downscale (Better)")
+        method->set_active (5);
+    else if (pp->resize.method == "Downscale (Faster)")
+        method->set_active (6);
 
     wDirty = false;
     hDirty = false;
@@ -160,6 +166,10 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->resize.method = "Bicubic (Softer)";
     else if (method->get_active_row_number() == 4) 
         pp->resize.method = "Bicubic (Sharper)";
+    else if (method->get_active_row_number() == 5) 
+        pp->resize.method = "Downscale (Better)";
+    else if (method->get_active_row_number() == 6) 
+        pp->resize.method = "Downscale (Faster)";
         
     pp->resize.dataspec = spec->get_active_row_number();
     pp->resize.width = round (w->get_value ());

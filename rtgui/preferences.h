@@ -72,6 +72,9 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* showBasicExif;
 
     Gtk::SpinButton*  ccSteps;
+    Gtk::Label* dcbIterationsLabel;
+    Gtk::SpinButton*  dcbIterations;
+    Gtk::CheckButton* dcbEnhance;
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
 

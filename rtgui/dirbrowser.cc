@@ -22,6 +22,7 @@
 #include <windows.h>
 #endif
 #include <options.h>
+#include <safegtk.h>
 
 #define CHECKTIME 5000
 extern Glib::ustring argv0;
@@ -50,13 +51,13 @@ DirBrowser::DirBrowser () {
 
 void DirBrowser::fillDirTree () {
 
-  openfolder = Gdk::Pixbuf::create_from_file (argv0+"/images/folder_open.png");
-  closedfolder = Gdk::Pixbuf::create_from_file (argv0+"/images/folder.png");
-  icdrom = Gdk::Pixbuf::create_from_file (argv0+"/images/cdrom.png");
-  ifloppy = Gdk::Pixbuf::create_from_file (argv0+"/images/floppy.png");
-  ihdd = Gdk::Pixbuf::create_from_file (argv0+"/images/hdd.png");
-  iremovable = Gdk::Pixbuf::create_from_file (argv0+"/images/usbpendrive.png");
-  inetwork = Gdk::Pixbuf::create_from_file (argv0+"/images/network.png");
+  openfolder = safe_create_from_file (argv0+"/images/folder_open.png");
+  closedfolder = safe_create_from_file (argv0+"/images/folder.png");
+  icdrom = safe_create_from_file (argv0+"/images/cdrom.png");
+  ifloppy = safe_create_from_file (argv0+"/images/floppy.png");
+  ihdd = safe_create_from_file (argv0+"/images/hdd.png");
+  iremovable = safe_create_from_file (argv0+"/images/usbpendrive.png");
+  inetwork = safe_create_from_file (argv0+"/images/network.png");
 
   //Create the Tree model:
   dirTreeModel = Gtk::TreeStore::create(dtColumns);
@@ -198,38 +199,33 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
 
   int todel = iter->children().size();
 
-  try {
 	std::vector<Glib::ustring> subDirs;
-    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
-    if (!dir)
-        return;
-    Glib::RefPtr<Gio::FileEnumerator> dirList = dir->enumerate_children ();
-    try {
-    for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) 
-        if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || options.fbShowHidden))
-		    subDirs.push_back (info->get_name());
-    }
-    catch (...) {}
-    std::sort (subDirs.begin(), subDirs.end());
-	for (int i=0; i<subDirs.size(); i++) 
-        addDir (iter, subDirs[i]);
+  Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
+    
+  safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-    for (int i=0; i<todel; i++)
-      dirTreeModel->erase (iter->children().begin());
-    expandSuccess = true;
+	if (subDirs.size() == 0)
+			dirtree->collapse_row (path);
+	else {
+	
+			std::sort (subDirs.begin(), subDirs.end());
+			for (int i=0; i<subDirs.size(); i++) 
+					addDir (iter, subDirs[i]);
+
+			for (int i=0; i<todel; i++)
+					dirTreeModel->erase (iter->children().begin());
+			expandSuccess = true;
+	}
 #ifdef _WIN32
-    Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
-    iter->set_value (dtColumns.monitor, monitor);
+  Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
+  iter->set_value (dtColumns.monitor, monitor);
+#elif defined __APPLE__
+  printf("TODO fix dir->monitor_directory () for OSX\n"); 
 #else
-    Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
-    iter->set_value (dtColumns.monitor, monitor);
-    monitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &DirBrowser::file_changed), iter, dir->get_parse_name()));
+  Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
+  iter->set_value (dtColumns.monitor, monitor);
+  monitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &DirBrowser::file_changed), iter, dir->get_parse_name()));
 #endif
-  }
-  catch (Glib::Exception &ex) {
-printf ("HEJJ!\n");
-    dirtree->collapse_row (path);
-  }
 }
 
 void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
@@ -247,29 +243,17 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
             }
     }
     // test if new files are created
-    try {
-	    std::vector<Glib::ustring> subDirs;
-        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
-        if (!dir)
-            return;
-        Glib::RefPtr<Gio::FileEnumerator> dirList = dir->enumerate_children ();
-        for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) 
-            if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || options.fbShowHidden))
-		        subDirs.push_back (info->get_name());
+		std::vector<Glib::ustring> subDirs;
+    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
+		safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-        for (int i=0; i<subDirs.size(); i++) {
-            bool found = false;
-            for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end(); it++) 
-                if (it->get_value (dtColumns.filename)==subDirs[i]) {
-                    found = true;
-                    break;
-                }
-            if (!found)
-                addDir (iter, subDirs[i]);
-        }
-    }
-    catch (Glib::Exception &ex) {
-        printf ("HEJJ!\n");
+    for (int i=0; i<subDirs.size(); i++) {
+        bool found = false;
+        for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end() && !found ; it++) 
+            found = (it->get_value (dtColumns.filename)==subDirs[i]);
+
+        if (!found)
+            addDir (iter, subDirs[i]);
     }
 }
 
@@ -301,9 +285,8 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
 
     int end = 0;
     int beg = 0;
-    char* dir = new char [1024];
     char* dcpy = strdup (absDirPath.c_str());
-    dir = strtok (dcpy, "/\\");
+    char* dir = strtok (dcpy, "/\\");
     int count = 0;
     expandSuccess = true;
 
@@ -344,8 +327,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
         dir = strtok(NULL, "/\\");
     }
 
-    delete dir;
-    delete dcpy;
+    free(dcpy);
 
     path.up ();
     dirtree->expand_to_path (path);
@@ -377,7 +359,8 @@ void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::
     updateDir (iter);
     gdk_threads_leave();
 }
-void DirBrowser::selectDir (Glib::ustring dir) {
+
+void DirBrowser::selectDir (Glib::ustring dir) {
 
     open (dir, "");
 }

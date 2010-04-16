@@ -57,6 +57,7 @@ void Image16::allocate (int width, int height) {
 
     int lsize  = width + 8 - width % 8;
     unaligned = new unsigned char[16 + 3 * lsize * sizeof(short) * height];
+    memset(unaligned, 0, (16 + 3 * lsize * sizeof(short) * height) * sizeof(unsigned char));
 
     unsigned long poin = (unsigned long)unaligned + 16 - (unsigned long)unaligned % 16;
     data = (unsigned short*) (poin);

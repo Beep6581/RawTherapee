@@ -124,46 +124,77 @@ FilterPanel::FilterPanel () : listener (NULL) {
 	show_all ();
 }
 
-void FilterPanel::setFilter (ExifFilterSettings& defefs) {
+void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists) {
 
-	curefs = defefs;
 	
 	for (int i=0; i<conns; i++)
 		sChange[i].block (true);
 	
 //	enaFNumber->set_active (curefs.filterFNumber);
-    fnumberFrom->set_text (ImageMetaData::apertureToString (curefs.fnumberFrom));    
-    fnumberTo->set_text (ImageMetaData::apertureToString (curefs.fnumberTo));    
+    fnumberFrom->set_text (ImageMetaData::apertureToString (defefs.fnumberFrom));
+    curefs.fnumberFrom = defefs.fnumberFrom;
+    fnumberTo->set_text (ImageMetaData::apertureToString (defefs.fnumberTo));
+    curefs.fnumberTo = defefs.fnumberTo;
 
 //	enaShutter->set_active (curefs.filterShutter);
-    shutterFrom->set_text (ImageMetaData::shutterToString (curefs.shutterFrom));    
-    shutterTo->set_text (ImageMetaData::shutterToString (curefs.shutterTo));    
+    shutterFrom->set_text (ImageMetaData::shutterToString (defefs.shutterFrom));
+    curefs.shutterFrom = defefs.shutterFrom;
+    shutterTo->set_text (ImageMetaData::shutterToString (defefs.shutterTo));
+    curefs.shutterTo = defefs.shutterTo;
 
 //	enaISO->set_active (curefs.filterISO);
-    isoFrom->set_text (Glib::ustring::format (curefs.isoFrom));    
-    isoTo->set_text (Glib::ustring::format (curefs.isoTo));    
+    isoFrom->set_text (Glib::ustring::format (defefs.isoFrom));
+    curefs.isoFrom = defefs.isoFrom;
+    isoTo->set_text (Glib::ustring::format (defefs.isoTo));
+    curefs.isoTo = defefs.isoTo;
 
 //	enaFocalLen->set_active (curefs.filterFocalLen);
-    focalFrom->set_text (Glib::ustring::format (curefs.focalFrom));    
-    focalTo->set_text (Glib::ustring::format (curefs.focalTo));    
+    focalFrom->set_text (Glib::ustring::format (defefs.focalFrom));
+    curefs.focalFrom = defefs.focalFrom;
+    focalTo->set_text (Glib::ustring::format (defefs.focalTo));
+    curefs.focalTo = defefs.focalTo;
 
 //	enaCamera->set_active (curefs.filterCamera);
     Glib::RefPtr<Gtk::TreeSelection> cselection = camera->get_selection ();
-    int j=0;
-    for (std::set<std::string>::iterator i = defefs.cameras.begin(); i!=defefs.cameras.end(); i++, j++) {
-        camera->append_text (*i);
-        if (curefs.cameras.count (*i)>0)
-            cselection->select (camera->get_model()->children()[j]);
-    }
 
 //	enaLens->set_active (curefs.filterLens);
     Glib::RefPtr<Gtk::TreeSelection> lselection = lens->get_selection ();
-    j = 0;
-    for (std::set<std::string>::iterator i = defefs.lenses.begin(); i!=defefs.lenses.end(); i++, j++) {
-        lens->append_text (*i);
-        if (curefs.lenses.count (*i)>0)
-            lselection->select (lens->get_model()->children()[j]);
+    if( updateLists ){
+    	lens->clear_items();
+    	curefs.lenses.clear();
+    	for (std::set<std::string>::iterator i = defefs.lenses.begin(); i!=defefs.lenses.end(); i++) {
+    		lens->append_text (*i);
+    		curefs.lenses.insert(*i);
+    	}
+       	lselection->select_all();
+
+       	camera->clear_items();
+       	curefs.cameras.clear();
+       	for (std::set<std::string>::iterator i = defefs.cameras.begin(); i!=defefs.cameras.end(); i++) {
+       		camera->append_text(*i);
+       		curefs.cameras.insert(*i);
+       	}
+       	cselection->select_all();
+    }else{
+    	for( Gtk::TreeModel::Children::iterator iter = lens->get_model()->children().begin(); iter != lens->get_model()->children().end();iter++){
+    		Glib::ustring v;
+    		iter->get_value(0,v);
+    		if( defefs.lenses.find( v ) != defefs.lenses.end() )
+    			lselection->select( iter );
+    		else
+    			lselection->unselect( iter );
+    	}
+    	for( Gtk::TreeModel::Children::iterator iter = camera->get_model()->children().begin(); iter != camera->get_model()->children().end();iter++){
+    		Glib::ustring v;
+    		iter->get_value(0,v);
+    		if( defefs.cameras.find( v ) != defefs.cameras.end() )
+    			cselection->select(iter);
+    		else
+    			cselection->unselect(iter);
+    	}
     }
+
+	curefs = defefs;
 
 	for (int i=0; i<conns; i++)
 		sChange[i].block (false);

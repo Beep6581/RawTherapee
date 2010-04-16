@@ -23,6 +23,10 @@
 #include <rwz_sdk.h>
 #endif
 
+#ifndef GLIBMM_EXCEPTIONS_ENABLED
+#include <memory>
+#endif
+
 using namespace rtengine;
 
 extern "C" IptcData *iptc_data_new_from_jpeg_file (FILE* infile);
@@ -274,6 +278,27 @@ ImageData::~ImageData () {
         iptc_data_free (iptc);
 }
 
+Glib::ustring safe_locale_to_utf8 (const std::string& src)
+{
+	Glib::ustring utf8_str;
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+            try {
+                utf8_str = Glib::locale_to_utf8(src);
+            }
+            catch (const Glib::ConvertError& e) {
+                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
+            }
+#else
+						{
+							std::auto_ptr<Glib::Error> error;
+							utf8_str = locale_to_utf8(src, error);
+							if (error.get())
+								utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
+						}
+#endif //GLIBMM_EXCEPTIONS_ENABLED
+	return utf8_str;
+}
+
 const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
 
     std::vector<procparams::IPTCPair> iptcc;
@@ -287,12 +312,8 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
             iptc_dataset_get_data (ds, buffer, 2100);
             procparams::IPTCPair ic;
             ic.field = strTags[i].field;
-            try {
-                ic.values.push_back (Glib::locale_to_utf8((char*)buffer));
-            }
-            catch (const Glib::ConvertError& e) {
-                ic.values.push_back (Glib::convert_with_fallback((char*)buffer, "UTF8", "LATIN1","?"));
-            }
+            ic.values.push_back (safe_locale_to_utf8((char*)buffer));
+
             iptcc.push_back (ic);
             iptc_dataset_unref (ds);
         }
@@ -302,12 +323,7 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
     ickw.field = "Keywords";
     while (ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS)) {
         iptc_dataset_get_data (ds, buffer, 2100);
-        try {
-            ickw.values.push_back (Glib::locale_to_utf8((char*)buffer));
-        }
-        catch (const Glib::ConvertError& e) {
-            ickw.values.push_back (Glib::convert_with_fallback((char*)buffer, "UTF8", "LATIN1","?"));
-        }
+        ickw.values.push_back (safe_locale_to_utf8((char*)buffer));
     }
     iptcc.push_back (ickw);
     ds = NULL;
@@ -315,12 +331,7 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
     icsc.field = "SupplementalCategories";
     while (ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY)) {
         iptc_dataset_get_data (ds, buffer, 2100);
-        try {
-            icsc.values.push_back (Glib::locale_to_utf8((char*)buffer));
-        }
-        catch (const Glib::ConvertError& e) {
-            icsc.values.push_back (Glib::convert_with_fallback((char*)buffer, "UTF8", "LATIN1","?"));
-        }
+        icsc.values.push_back (safe_locale_to_utf8((char*)buffer));
         iptc_dataset_unref (ds);
     }
     iptcc.push_back (icsc);
