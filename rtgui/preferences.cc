@@ -21,6 +21,7 @@
 #include <multilangmgr.h>
 #include <splash.h>
 #include <cachemanager.h>
+#include <addsetids.h>
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -126,74 +127,74 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_EXPOSURE_LABEL"));
-    appendBehavList (mi, M("TP_EXPOSURE_EXPCOMP"), false);
-    appendBehavList (mi, M("TP_EXPOSURE_BRIGHTNESS"), false);
-    appendBehavList (mi, M("TP_EXPOSURE_BLACKLEVEL"), false);
-    appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), false);
+    appendBehavList (mi, M("TP_EXPOSURE_EXPCOMP"), ADDSET_TC_EXPCOMP, false);
+    appendBehavList (mi, M("TP_EXPOSURE_BRIGHTNESS"), ADDSET_TC_BRIGHTNESS, false);
+    appendBehavList (mi, M("TP_EXPOSURE_BLACKLEVEL"), ADDSET_TC_BLACKLEVEL, false);
+    appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), ADDSET_TC_CONTRAST, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));
-    appendBehavList (mi, M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), false);
-    appendBehavList (mi, M("TP_SHADOWSHLIGHTS_SHADOWS"), false);
-    appendBehavList (mi, M("TP_SHADOWSHLIGHTS_LOCALCONTR"), false);
+    appendBehavList (mi, M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), ADDSET_SH_HIGHLIGHTS, false);
+    appendBehavList (mi, M("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
+    appendBehavList (mi, M("TP_SHADOWSHLIGHTS_LOCALCONTR"), ADDSET_SH_LOCALCONTRAST, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_LUMACURVE_LABEL"));
-    appendBehavList (mi, M("TP_LUMACURVE_BRIGHTNESS"), false);
-    appendBehavList (mi, M("TP_LUMACURVE_BLACKLEVEL"), false);
-    appendBehavList (mi, M("TP_LUMACURVE_CONTRAST"), false);
+    appendBehavList (mi, M("TP_LUMACURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
+    appendBehavList (mi, M("TP_LUMACURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHARPENING_LABEL"));
-    appendBehavList (mi, M("TP_SHARPENING_AMOUNT"), false);
+    appendBehavList (mi, M("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_LUMADENOISE_LABEL"));
-    appendBehavList (mi, M("TP_LUMADENOISE_EDGETOLERANCE"), true);
+    appendBehavList (mi, M("TP_LUMADENOISE_EDGETOLERANCE"), ADDSET_LD_EDGETOLERANCE, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_WBALANCE_LABEL"));
-    appendBehavList (mi, M("TP_WBALANCE_TEMPERATURE"), true);
-    appendBehavList (mi, M("TP_WBALANCE_GREEN"), true);
+    appendBehavList (mi, M("TP_WBALANCE_TEMPERATURE"), ADDSET_WB_TEMPERATURE, true);
+    appendBehavList (mi, M("TP_WBALANCE_GREEN"), ADDSET_WB_GREEN, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_COLORBOOST_LABEL"));
-    appendBehavList (mi, M("TP_COLORBOOST_AMOUNT"), false);
+    appendBehavList (mi, M("TP_COLORBOOST_AMOUNT"), ADDSET_CBOOST_AMOUNT, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_COLORSHIFT_LABEL"));
-    appendBehavList (mi, M("TP_COLORSHIFT_BLUEYELLOW"), false);
-    appendBehavList (mi, M("TP_COLORSHIFT_GREENMAGENTA"), false);
+    appendBehavList (mi, M("TP_COLORSHIFT_BLUEYELLOW"), ADDSET_CS_BLUEYELLOW, false);
+    appendBehavList (mi, M("TP_COLORSHIFT_GREENMAGENTA"), ADDSET_CS_GREENMAGENTA, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));
-    appendBehavList (mi, M("TP_ROTATE_DEGREE"), false);
+    appendBehavList (mi, M("TP_ROTATE_DEGREE"), ADDSET_ROTATE_DEGREE, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_DISTORTION_LABEL"));
-    appendBehavList (mi, M("TP_DISTORTION_AMOUNT"), false);
+    appendBehavList (mi, M("TP_DISTORTION_AMOUNT"), ADDSET_DIST_AMOUNT, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CACORRECTION_LABEL"));
-    appendBehavList (mi, M("TP_CACORRECTION_BLUE"), true);
-    appendBehavList (mi, M("TP_CACORRECTION_RED"), true);
+    appendBehavList (mi, M("TP_CACORRECTION_BLUE"), ADDSET_CA_BLUE, true);
+    appendBehavList (mi, M("TP_CACORRECTION_RED"), ADDSET_CA_RED, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_VIGNETTING_LABEL"));
-    appendBehavList (mi, M("TP_VIGNETTING_AMOUNT"), false);
+    appendBehavList (mi, M("TP_VIGNETTING_AMOUNT"), ADDSET_VIGN_AMOUNT, false);
 
     behTreeView->expand_all ();
 
     return mvbpp;
 }
 
-void Preferences::appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, bool set) {
+void Preferences::appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set) {
 
     Gtk::TreeModel::iterator ci = behModel->append (parent->children());
     ci->set_value (behavColumns.label, label);
     ci->set_value (behavColumns.visible, true);
     ci->set_value (behavColumns.badd, !set);
     ci->set_value (behavColumns.bset, set);
+    ci->set_value (behavColumns.addsetid, id);
 }
 
 void Preferences::behAddRadioToggled (const Glib::ustring& path) {
@@ -703,10 +704,10 @@ void Preferences::storePreferences () {
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
     int i = 0;
-    moptions.baBehav.clear ();
+    moptions.baBehav.resize (ADDSET_PARAM_NUM);
     for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
         for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
-            moptions.baBehav.push_back (adjs->get_value (behavColumns.badd));
+            moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
 }
 
 void Preferences::fillPreferences () {
@@ -784,13 +785,16 @@ void Preferences::fillPreferences () {
 
     addc.block (true);
     setc.block (true);
-    int i = 0;
-    for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
-        for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
-            if (moptions.baBehav.size()>i) {
-                adjs->set_value (behavColumns.badd, moptions.baBehav[i]==1);
-                adjs->set_value (behavColumns.bset, moptions.baBehav[i++]!=1);
-            }
+    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
+		for (int i=0; i<moptions.baBehav.size(); i++) 
+			for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
+				for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
+					if (adjs->get_value (behavColumns.addsetid) == i) {
+						adjs->set_value (behavColumns.badd, moptions.baBehav[i]==1);
+						adjs->set_value (behavColumns.bset, moptions.baBehav[i]!=1);
+						break;
+					}
+    }
     addc.block (false);
     setc.block (false);
     

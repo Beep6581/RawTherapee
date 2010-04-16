@@ -21,22 +21,58 @@
 
 #include <gtkmm.h>
 #include <mycurve.h>
+#include <shcselector.h>
+#include <adjuster.h>
 
-class CurveEditor : public Gtk::VBox {
+class CurveEditor : public Gtk::VBox, public CurveListener, public SHCListener, public AdjusterListener {
 
-        MyCurve* curve;
-        Gtk::Button* linear;
+        Gtk::ComboBoxText* curveType;
+        Gtk::VBox* paramCurveBox;
+        Gtk::VBox* customCurveBox;
+
+        MyCurve* customCurve;
+        MyCurve* paramCurve;
+        SHCSelector* shcSelector;
+        
+        Adjuster* highlights;
+        Adjuster* lights;
+        Adjuster* darks;
+        Adjuster* shadows;
+        
         Gtk::Button* save;
         Gtk::Button* load;
+        
+        CurveListener* cl;
+        
+        bool realized;
+        std::vector<double> tmpCurve;
+        int curveTypeIx;
+        
+        int activeParamControl;
+        
+        sigc::connection typeconn;
 
     public:
+
         CurveEditor ();
-        void setCurveListener (CurveListener* cl) { curve->setCurveListener (cl); }
-        void linearPressed ();
+        virtual ~CurveEditor ();
+        void setBatchMode (bool batchMode);
+        bool isUnChanged ();
+        void setUnChanged (bool uc);
+        
+        void on_realize ();
+        void setCurveListener (CurveListener* l) { cl = l; }
         void savePressed ();
         void loadPressed ();
+        void typeSelectionChanged ();
         void setCurve (const std::vector<double>& c);
         std::vector<double> getCurve ();
+        void curveChanged ();
+        void shcChanged ();
+        void adjusterChanged (Adjuster* a, double newval);
+        bool adjusterEntered (GdkEventCrossing* ev, int ac);
+        bool adjusterLeft (GdkEventCrossing* ev, int ac);
+        void updateBackgroundHistogram (unsigned int* hist);
 };
 
 

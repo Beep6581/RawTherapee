@@ -33,7 +33,7 @@ int init (const Settings* s) {
 
     settings = s;
     iccStore.parseDir (s->iccDirectory);
-    CurveFactory::loadCurves ("");
+    CurveFactory::init ();
     ImProcFunctions::initCache ();
     delete dcrMutex;
     dcrMutex = new Glib::Mutex;

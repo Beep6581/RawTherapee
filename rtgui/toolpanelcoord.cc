@@ -36,7 +36,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
-//    lcurve              = Gtk::manage (new LCurve ());
+    lcurve              = Gtk::manage (new LCurve ());
     colorboost          = Gtk::manage (new ColorBoost ());
     colorshift          = Gtk::manage (new ColorShift ());
     distortion          = Gtk::manage (new Distortion ());
@@ -60,7 +60,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
-/*    addPanel (exposurePanel, lcurve,            M("TP_LUMACURVE_LABEL"));      toolPanels.push_back (lcurve);*/
+    addPanel (exposurePanel, lcurve,            M("TP_LUMACURVE_LABEL"));      toolPanels.push_back (lcurve);
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);
@@ -249,26 +249,23 @@ void ToolPanelCoordinator::closeImage () {
 void ToolPanelCoordinator::readOptions () {
 
     crop->readOptions (); 
-/*    for (int i=0; i<options.tpOpen.size(); i++)
+    for (int i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
             expList[i]->set_expanded (options.tpOpen[i]);
 
-    if (options.crvOpen.size()>1) {
+    if (options.crvOpen.size()>1)
         curve->expandCurve (options.crvOpen[0]);
-        lcurve->expandCurve (options.crvOpen[1]);
-    }*/
 }
 
 void ToolPanelCoordinator::writeOptions () { 
 
     crop->writeOptions (); 
-/*    options.tpOpen.clear ();
+    options.tpOpen.clear ();
     for (int i=0; i<expList.size(); i++)
         options.tpOpen.push_back (expList[i]->get_expanded ());
 
     options.crvOpen.clear ();
     options.crvOpen.push_back (curve->isCurveExpanded());
-    options.crvOpen.push_back (lcurve->isCurveExpanded());*/
 }
 
 
@@ -352,4 +349,10 @@ void ToolPanelCoordinator::saveInputICCReference (Glib::ustring fname) {
 int ToolPanelCoordinator::getSpotWBRectSize () {
 
     return whitebalance->getSize ();
+}
+
+void ToolPanelCoordinator::updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl) {
+
+    curve->updateCurveBackgroundHistogram (histrgb);
+    lcurve->updateCurveBackgroundHistogram (histl);
 }

@@ -22,28 +22,16 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : ToolPanel() {
+LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false) {
 
   Gtk::HBox* abox = Gtk::manage (new Gtk::HBox ());
   abox->set_border_width (2);
 
-  brightness = Gtk::manage (new Adjuster (M("TP_LUMACURVE_BRIGHTNESS"), -2, 2, 0.01, 0));
-  hlcompr    = Gtk::manage (new Adjuster (M("TP_LUMACURVE_COMPRHIGHLIGHTS"), 0, 100, 1, 0));
-  black      = Gtk::manage (new Adjuster (M("TP_LUMACURVE_BLACKLEVEL"), 0, 32768, 1, 0));
-  shcompr    = Gtk::manage (new Adjuster (M("TP_LUMACURVE_COMPRSHADOWS"), 0, 100, 1, 0));
-  contrast   = Gtk::manage (new Adjuster (M("TP_LUMACURVE_CONTRAST"), -50, 50, 1, 0));
+  brightness = Gtk::manage (new Adjuster (M("TP_LUMACURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
+  contrast   = Gtk::manage (new Adjuster (M("TP_LUMACURVE_CONTRAST"), -100, 100, 1, 0));
 
   pack_start (*brightness);
   brightness->show ();
-
-  pack_start (*hlcompr);
-  hlcompr->show ();
-
-  pack_start (*black);
-  black->show ();
-
-  pack_start (*shcompr);
-  shcompr->show ();
 
   pack_start (*contrast);
   contrast->show ();
@@ -56,51 +44,55 @@ LCurve::LCurve () : ToolPanel() {
   shape->show ();
   shape->setCurveListener (this);
 
-  curvexp = Gtk::manage (new Gtk::Expander (M("TP_LUMACURVE_CURVEEDITOR")));
-  curvexp->show ();
-  curvexp->add (*shape);
-
-  pack_start (*curvexp, Gtk::PACK_SHRINK, 4);
+  pack_start (*shape, Gtk::PACK_SHRINK, 4);
 
   brightness->setAdjusterListener (this);
-  hlcompr->setAdjusterListener (this);
-  black->setAdjusterListener (this);
-  shcompr->setAdjusterListener (this);
   contrast->setAdjusterListener (this);
 }
 
-void LCurve::read (const ProcParams* pp) {
+void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
-    brightness->setValue    (pp->lumaCurve.brightness);
-    black->setValue         (pp->lumaCurve.black);
-    hlcompr->setValue       (pp->lumaCurve.hlcompr);
-    shcompr->setValue       (pp->lumaCurve.shcompr);
+    if (pedited) {
+        brightness->setEditedState (pedited->lumaCurve.brightness ? Edited : UnEdited);
+        contrast->setEditedState (pedited->lumaCurve.contrast ? Edited : UnEdited);
+        shape->setUnChanged (!pedited->lumaCurve.curve);
+    }
 
+    brightness->setValue    (pp->lumaCurve.brightness);
     contrast->setValue      (pp->lumaCurve.contrast);
     shape->setCurve         (pp->lumaCurve.curve);
 
     enableListener ();
 }
 
-void LCurve::write (ProcParams* pp) {
+void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->lumaCurve.brightness    = brightness->getValue ();
-    pp->lumaCurve.black         = (int)black->getValue ();
-    pp->lumaCurve.hlcompr       = (int)hlcompr->getValue ();
-    pp->lumaCurve.shcompr       = (int)shcompr->getValue ();
     pp->lumaCurve.contrast      = (int)contrast->getValue ();
     pp->lumaCurve.curve         = shape->getCurve ();
+
+    if (pedited) {
+        pedited->lumaCurve.brightness = brightness->getEditedState ();
+        pedited->lumaCurve.contrast = contrast->getEditedState ();
+        pedited->lumaCurve.curve    = !shape->isUnChanged ();
+    }
 }
 
-void LCurve::setDefaults (const ProcParams* defParams) {
+void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
     brightness->setDefault (defParams->lumaCurve.brightness);
-    black->setDefault (defParams->lumaCurve.black);
-    hlcompr->setDefault (defParams->lumaCurve.hlcompr);
-    shcompr->setDefault (defParams->lumaCurve.shcompr);
     contrast->setDefault (defParams->lumaCurve.contrast);
+
+    if (pedited) {
+        brightness->setDefaultEditedState (pedited->lumaCurve.brightness ? Edited : UnEdited);
+        contrast->setDefaultEditedState (pedited->lumaCurve.contrast ? Edited : UnEdited);
+    }
+    else {
+        brightness->setDefaultEditedState (Irrelevant);
+        contrast->setDefaultEditedState (Irrelevant);
+    }
 }
 
 void LCurve::curveChanged () {
@@ -122,22 +114,31 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
 
     if (a==brightness)
         listener->panelChanged (EvLBrightness, costr);
-    else if (a==black)
-        listener->panelChanged (EvLBlack, costr);
     else if (a==contrast)
         listener->panelChanged (EvLContrast, costr);
-    else if (a==hlcompr)
-        listener->panelChanged (EvLHLCompr, costr);
-    else if (a==shcompr)
-        listener->panelChanged (EvLSHCompr, costr);
-}
-void LCurve::expandCurve (bool isExpanded) {
-
-    curvexp->set_expanded (isExpanded);
 }
 
-bool LCurve::isCurveExpanded () {
+void LCurve::setBatchMode (bool batchMode) {
 
-    return curvexp->get_expanded ();
+    ToolPanel::setBatchMode (batchMode);
+    brightness->showEditedCB ();
+    contrast->showEditedCB ();
+       
+    shape->setBatchMode (batchMode);
 }
 
+void LCurve::setAdjusterBehavior (bool bradd, bool contradd) {
+
+    if (!brAdd && bradd || brAdd && !bradd)
+        brightness->setLimits (-100, 100, 1, 0);
+    if (!contrAdd && contradd || contrAdd && !contradd)
+        contrast->setLimits (-100, 100, 1, 0);
+    
+    brAdd = bradd;
+    contrAdd = contradd;
+}
+
+void LCurve::updateCurveBackgroundHistogram (unsigned* hist) {
+    
+    shape->updateBackgroundHistogram (hist);
+}

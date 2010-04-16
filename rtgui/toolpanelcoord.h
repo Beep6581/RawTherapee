@@ -34,7 +34,7 @@
 #include <lumadenoise.h>
 #include <colordenoise.h>
 #include <sharpening.h>
-//#include <lcurve.h>
+#include <lcurve.h>
 #include <exifpanel.h>
 #include <iptcpanel.h>
 #include <crop.h>
@@ -54,7 +54,7 @@ class ImageEditorCoordinator;
 class ToolPanelCoordinator :    public ToolPanelListener, 
                                 public ProfileChangeListener, 
                                 public WBProvider,
-                                public RotateListener ,
+                                public RotateListener,
                                 public SpotWBListener,
                                 public CropPanelListener,
                                 public ICMPanelListener,
@@ -79,7 +79,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
         Sharpening* sharpening;
-//        LCurve* lcurve;
+        LCurve* lcurve;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -109,7 +109,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ToolPanelCoordinator ();
         ~ToolPanelCoordinator ();
 
-        bool getChangedState            () { return hasChanged; }
+        bool getChangedState                ()                                      { return hasChanged; }
+        void updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
         void addPParamsChangeListener   (PParamsChangeListener* pp) { paramcListeners.push_back (pp); }

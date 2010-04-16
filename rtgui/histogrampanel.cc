@@ -18,6 +18,7 @@
  */
 #include <histogrampanel.h>
 #include <multilangmgr.h>
+#include <string.h>
 
 HistogramPanel::HistogramPanel () {
 

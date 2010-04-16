@@ -1925,7 +1925,7 @@ void RawImageSource::hlRecovery (std::string method, unsigned short* red, unsign
         HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);
 }
 
-int RawImageSource::getAEHistogram (int* histogram, int& histcompr) {
+int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 
     histcompr = 3;
 

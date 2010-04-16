@@ -443,7 +443,7 @@ void StdImageSource::hlRecovery (unsigned short* red, unsigned short* green, uns
     rtengine::hlRecovery (red, green, blue, img->height, img->width, i, sx1, sx2, skip, needhr, hrmap);
 }
 */
-int StdImageSource::getAEHistogram (int* histogram, int& histcompr) {
+int StdImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 
     histcompr = 3;
 

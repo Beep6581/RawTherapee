@@ -21,6 +21,7 @@
 #include <options.h>
 #include <filepanel.h>
 #include <procparamchangers.h>
+#include <addsetids.h>
 
 using namespace rtengine::procparams;
 
@@ -119,43 +120,47 @@ void BatchToolPanelCoordinator::initSession () {
         pparams = selected[0]->getProcParams ();
         coarse->initBatchBehavior ();
 
-        curve->setAdjusterBehavior (options.baBehav[0], options.baBehav[1], options.baBehav[2], options.baBehav[3]);
-        whitebalance->setAdjusterBehavior (options.baBehav[12], options.baBehav[13]);
-        vignetting->setAdjusterBehavior (options.baBehav[21]);
-        rotate->setAdjusterBehavior (options.baBehav[17]);
-        distortion->setAdjusterBehavior (options.baBehav[18]);
-        cacorrection->setAdjusterBehavior (options.baBehav[19], options.baBehav[20]);
-        colorshift->setAdjusterBehavior (options.baBehav[15], options.baBehav[16]);
-        colorboost->setAdjusterBehavior (options.baBehav[14]);
-        lumadenoise->setAdjusterBehavior (options.baBehav[11]);
-        sharpening->setAdjusterBehavior (options.baBehav[10]);
-        shadowshighlights->setAdjusterBehavior (options.baBehav[4], options.baBehav[5], options.baBehav[6]);
+        curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL], options.baBehav[ADDSET_TC_CONTRAST]);
+        lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST]);
+        whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
+        vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
+        rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
+        distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
+        cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA_RED], options.baBehav[ADDSET_CA_BLUE]);
+        colorshift->setAdjusterBehavior (options.baBehav[ADDSET_CS_BLUEYELLOW], options.baBehav[ADDSET_CS_GREENMAGENTA]);
+        colorboost->setAdjusterBehavior (options.baBehav[ADDSET_CBOOST_AMOUNT]);
+        lumadenoise->setAdjusterBehavior (options.baBehav[ADDSET_LD_EDGETOLERANCE]);
+        sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
+        shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
         
-        if (options.baBehav[0])  pparams.toneCurve.expcomp = 0;
-        if (options.baBehav[1])  pparams.toneCurve.brightness = 0;
-        if (options.baBehav[2])  pparams.toneCurve.black = 0;
-        if (options.baBehav[3])  pparams.toneCurve.contrast = 0;
+        if (options.baBehav[ADDSET_TC_EXPCOMP])  pparams.toneCurve.expcomp = 0;
+        if (options.baBehav[ADDSET_TC_BRIGHTNESS])  pparams.toneCurve.brightness = 0;
+        if (options.baBehav[ADDSET_TC_BLACKLEVEL])  pparams.toneCurve.black = 0;
+        if (options.baBehav[ADDSET_TC_CONTRAST])  pparams.toneCurve.contrast = 0;
 
-        if (options.baBehav[4])  pparams.sh.highlights = 0;
-        if (options.baBehav[5])  pparams.sh.shadows = 0;
-        if (options.baBehav[6])  pparams.sh.localcontrast = 0;
+        if (options.baBehav[ADDSET_SH_HIGHLIGHTS])  pparams.sh.highlights = 0;
+        if (options.baBehav[ADDSET_SH_SHADOWS])  pparams.sh.shadows = 0;
+        if (options.baBehav[ADDSET_SH_LOCALCONTRAST])  pparams.sh.localcontrast = 0;
+
+        if (options.baBehav[ADDSET_LC_BRIGHTNESS])  pparams.lumaCurve.brightness = 0;
+        if (options.baBehav[ADDSET_LC_CONTRAST])  pparams.lumaCurve.contrast = 0;
         
-        if (options.baBehav[10])  pparams.sharpening.amount = 0;
-        if (options.baBehav[11])  pparams.lumaDenoise.edgetolerance = 0;
+        if (options.baBehav[ADDSET_SHARP_AMOUNT])  pparams.sharpening.amount = 0;
+        if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 
-        if (options.baBehav[12])  pparams.wb.temperature = 0;
-        if (options.baBehav[13])  pparams.wb.green = 0;
+        if (options.baBehav[ADDSET_WB_TEMPERATURE])  pparams.wb.temperature = 0;
+        if (options.baBehav[ADDSET_WB_GREEN])  pparams.wb.green = 0;
 
-        if (options.baBehav[14])  pparams.colorBoost.amount = 0;
+        if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
 
-        if (options.baBehav[15])  pparams.colorShift.a = 0;
-        if (options.baBehav[16])  pparams.colorShift.b = 0;
+        if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
+        if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
 
-        if (options.baBehav[17])  pparams.rotate.degree = 0;
-        if (options.baBehav[18])  pparams.distortion.amount = 0;
-        if (options.baBehav[19])  pparams.cacorrection.red = 0;
-        if (options.baBehav[20])  pparams.cacorrection.blue = 0;
-        if (options.baBehav[21])  pparams.vignetting.amount = 0;
+        if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
+        if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;
+        if (options.baBehav[ADDSET_CA_RED])  pparams.cacorrection.red = 0;
+        if (options.baBehav[ADDSET_CA_BLUE])  pparams.cacorrection.blue = 0;
+        if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;
 
         for (int i=0; i<toolPanels.size(); i++) {
             toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
@@ -260,7 +265,6 @@ CropGUIListener* BatchToolPanelCoordinator::startCropEditing (Thumbnail* thm) {
     if (thm) {
         int w, h;
         thm->getFinalSize (thm->getProcParams (), w, h);
-        printf ("final=%d %d\n", w, h);
         crop->setDimensions (w, h);
     }
     return crop;

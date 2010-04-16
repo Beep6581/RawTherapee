@@ -24,7 +24,7 @@
 #include <rtengine.h>
 #include <procparams.h>
 
-class CurveParamsEdited {
+class ToneCurveParamsEdited {
 
     public:
         bool curve;
@@ -33,14 +33,17 @@ class CurveParamsEdited {
         bool contrast;
         bool shcompr;
         bool hlcompr;
-};
-
-class ToneCurveParamsEdited : public CurveParamsEdited {
-
-    public:
         bool autoexp;
         bool clip;
         bool expcomp;
+};
+
+class LCurveParamsEdited {
+
+    public:
+        bool brightness;
+        bool contrast;
+        bool curve;
 };
 
 class SharpeningParamsEdited {
@@ -217,7 +220,7 @@ class ParamsEdited {
 
     public:
         ToneCurveParamsEdited         toneCurve;      
-        CurveParamsEdited             lumaCurve;      
+        LCurveParamsEdited            lumaCurve;      
         SharpeningParamsEdited        sharpening;     
         ColorBoostParamsEdited        colorBoost;     
         WBParamsEdited                wb;             

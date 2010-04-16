@@ -88,7 +88,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgress (0.25);
 
     // perform first analysis
-    int* hist16 = new int[65536];
+    unsigned int* hist16 = new unsigned int[65536];
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
     // perform transform
@@ -126,13 +126,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int    bl = params.toneCurve.black;
 
     if (params.toneCurve.autoexp) {
-        int aehist[65536]; int aehistcompr;
+        unsigned int aehist[65536]; int aehistcompr;
         imgsrc->getAEHistogram (aehist, aehistcompr);
         ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
     }
 
     int* curve = new int [65536];
-    CurveFactory::updateCurve3 (curve, hist16, params.toneCurve.curve, imgsrc->getDefGain(), br, bl, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true);
+
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve, NULL);
 
     LabImage* labView = new LabImage (baseImg);
     ipf.rgbProc (baseImg, labView, &params, curve, shmap);
@@ -150,7 +151,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             hist16[labView->L[i][j]]++;
 
     // luminance processing
-    CurveFactory::updateCurve2 (curve, hist16, params.lumaCurve.curve, 0, params.lumaCurve.brightness, params.lumaCurve.black, params.lumaCurve.hlcompr, params.lumaCurve.shcompr, params.lumaCurve.contrast, 0.0, false);
+    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, hist16, curve, NULL);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
     ipf.lumadenoise (labView, &params, 1, buffer);
     ipf.sharpening (labView, &params, 1, (unsigned short**)buffer);

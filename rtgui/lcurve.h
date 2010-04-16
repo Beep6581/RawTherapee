@@ -29,25 +29,23 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
 
   protected:
     Adjuster* brightness;
-    Adjuster* black;
     Adjuster* contrast;
-    Adjuster* hlcompr;
-    Adjuster* shcompr;
     CurveEditor* shape;
-    Gtk::Expander* curvexp;
+    bool brAdd, contrAdd;
 
   public:
 
     LCurve ();
 
-    void read           (const rtengine::procparams::ProcParams* pp);
-    void write          (rtengine::procparams::ProcParams* pp);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams);   
+    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
+    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setBatchMode   (bool batchMode);
+    void setAdjusterBehavior (bool bradd, bool contradd);   
 
     void curveChanged ();
     void adjusterChanged (Adjuster* a, double newval);
-    void expandCurve (bool isExpanded);
-    bool isCurveExpanded ();
+    void updateCurveBackgroundHistogram (unsigned* hist);
 };
 
 #endif

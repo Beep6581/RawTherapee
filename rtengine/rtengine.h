@@ -201,7 +201,7 @@ namespace rtengine {
               * @param greenh is the array of size 256 containing the histogram of the green channel
               * @param blueh is the array of size 256 containing the histogram of the blue channel
               * @param lumah is the array of size 256 containing the histogram of the luminance channel */
-            virtual void histogramChanged (unsigned int* redh, unsigned int* greenh, unsigned int* blueh, unsigned int* lumah) {}
+            virtual void histogramChanged (unsigned int* redh, unsigned int* greenh, unsigned int* blueh, unsigned int* lumah, unsigned int* bcrgbhist, unsigned int* bcLhist) {}
     };
 
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */

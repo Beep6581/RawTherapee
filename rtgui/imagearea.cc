@@ -51,7 +51,7 @@ void ImageArea::on_realize()
 {
   Gtk::DrawingArea::on_realize();
 
-  add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+  add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
 
   Cairo::FontOptions cfo;
   cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);

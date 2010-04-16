@@ -21,7 +21,6 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
-#include <rtengine.h>
 
 class HistogramArea;
 struct HistogramAreaIdleHelper {
@@ -74,7 +73,7 @@ class HistogramArea : public Gtk::DrawingArea {
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
 };
 
-class HistogramPanel : public Gtk::HBox, public rtengine::HistogramListener {
+class HistogramPanel : public Gtk::HBox {
 
   protected:
 
