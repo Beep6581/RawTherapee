@@ -25,10 +25,10 @@
 
 IMFILE* fopen (const char* fname) {
 
-	IMFILE* mf = new IMFILE;
 	FILE* f = fopen (fname, "rb");
     if (!f)
         return NULL;
+    IMFILE* mf = new IMFILE;
 	fseek (f, 0, SEEK_END);
 	mf->size = ftell (f);
 	mf->data = new char [mf->size];
@@ -63,10 +63,10 @@ IMFILE* fopen (const char* fname) {
 
 IMFILE* gfopen (const char* fname) {
 
-	IMFILE* mf = new IMFILE;
 	FILE* f = g_fopen (fname, "rb");
     if (!f)
         return NULL;
+    IMFILE* mf = new IMFILE;
 	fseek (f, 0, SEEK_END);
 	mf->size = ftell (f);
 	mf->data = new char [mf->size];

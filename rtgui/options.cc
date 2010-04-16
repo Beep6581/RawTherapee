@@ -22,6 +22,7 @@
 #include <glib/gstdio.h>
 #include <sstream>
 #include <multilangmgr.h>
+#include <safekeyfile.h>
 #include <addsetids.h>
 
 Options options;
@@ -32,8 +33,12 @@ Options::Options () {
     setDefaults ();
 }
 
+const char *DefaultLanguage = "English (US)";
+
 void Options::setDefaults () {
 
+    windowWidth = 1000;
+    windowHeight = 600;
     firstRun = true;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
@@ -77,7 +82,7 @@ void Options::setDefaults () {
     shadowThreshold = 0;
     bgcolor = 0;
     blinkClipped = true;
-    language = "english";
+    language = DefaultLanguage;
     lastSaveAsPath = "";
     theme = "";
     maxThumbnailHeight = 400;
@@ -108,12 +113,14 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
 
-    int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
+    int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.demosaicMethod = "eahd";
     rtSettings.colorCorrectionSteps = 2;
+    rtSettings.dcb_iterations = 2;
+    rtSettings.dcb_enhance = true;
     rtSettings.iccDirectory = "/usr/share/color/icc";
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
@@ -127,12 +134,15 @@ Options* Options::copyFrom (Options* other) {
 
 int Options::readFromFile (Glib::ustring fname) {
 
-    Glib::KeyFile keyFile;
-    
-    try {
+    rtengine::SafeKeyFile keyFile;
 
-    if (!keyFile.load_from_file (fname)) 
+    try {    
+        if (!keyFile.load_from_file (fname)) 
+            return 1;
+    }
+    catch (Glib::FileError) {
         return 1;
+    }
 
     setDefaults ();
     
@@ -217,6 +227,8 @@ if (keyFile.has_group ("Clipping Indication")) {
 }
 
 if (keyFile.has_group ("GUI")) { 
+    if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth   = keyFile.get_integer ("GUI", "WindowWidth");
+    if (keyFile.has_key ("GUI", "WindowHeight"))     windowHeight   = keyFile.get_integer ("GUI", "WindowHeight");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth   = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight  = keyFile.get_integer ("GUI", "DirBrowserHeight");
     if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth    = keyFile.get_integer ("GUI", "ToolPanelWidth");
@@ -238,6 +250,8 @@ if (keyFile.has_group ("GUI")) {
 if (keyFile.has_group ("Algorithms")) { 
     if (keyFile.has_key ("Algorithms", "DemosaicMethod"))  rtSettings.demosaicMethod       = keyFile.get_string  ("Algorithms", "DemosaicMethod");
     if (keyFile.has_key ("Algorithms", "ColorCorrection")) rtSettings.colorCorrectionSteps = keyFile.get_integer ("Algorithms", "ColorCorrection");
+    if(keyFile.has_key("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
+    if(keyFile.has_key("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
 }
 
 if (keyFile.has_group ("Crop Settings")) { 
@@ -255,15 +269,11 @@ if (keyFile.has_group ("Batch Processing")) {
 }
 
         return 0;
-    }
-    catch (Glib::Error) {
-        return 1;
-    }
 }
 
 int Options::saveToFile (Glib::ustring fname) {
 
-    Glib::KeyFile keyFile;
+    rtengine::SafeKeyFile keyFile;
     
     keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
     if (startupDir==STARTUPDIR_HOME)
@@ -336,6 +346,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     
+    keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
+    keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
     keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
@@ -357,6 +369,8 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Algorithms", "DemosaicMethod", rtSettings.demosaicMethod);
     keyFile.set_integer ("Algorithms", "ColorCorrection", rtSettings.colorCorrectionSteps);
+    keyFile.set_integer ("Algorithms", "DCBIterations", rtSettings.dcb_iterations);
+    keyFile.set_boolean ("Algorithms", "DCBEnhance", rtSettings.dcb_enhance);
     
     keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
 
@@ -395,8 +409,12 @@ void Options::load () {
         }
         cacheBaseDir = rtdir + "/cache";
     }
-    if (!langMgr.load (argv0+"/languages/"+options.language, new MultiLangMgr (argv0+"/languages/english-us")))
-        langMgr.load (argv0+"/languages/english-us");
+
+    Glib::ustring fname = argv0+"/languages/";
+    fname += (options.language.empty())? DefaultLanguage : options.language;
+			
+    if (!langMgr.load (fname, new MultiLangMgr (argv0+"/languages/"+DefaultLanguage)))
+        langMgr.load (argv0+"/languages/"+DefaultLanguage);
 
     rtengine::init (&options.rtSettings);
 }
@@ -409,4 +427,11 @@ void Options::save () {
     else {
         options.saveToFile (rtdir + "/options");
     }
+}
+
+bool Options::is_extention_enabled (Glib::ustring ext) {
+		for (int j=0; j<parseExtensions.size(); j++)
+      if (parseExtensions[j].casefold() == ext.casefold())
+				return j>=parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
+		return false;
 }

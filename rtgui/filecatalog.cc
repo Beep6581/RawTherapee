@@ -25,6 +25,7 @@
 #include <iostream>
 #include <renamedlg.h>
 #include <thumbimageupdater.h>
+#include <safegtk.h>
 
 #define CHECKTIME 2000
 
@@ -210,22 +211,8 @@ void FileCatalog::closeDir () {
 std::vector<Glib::ustring> FileCatalog::getFileList () {
 
     std::vector<Glib::ustring> names;
-
-    try {
-        Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (selectedDirectory);
-        if (!dir)
-            return names;
-		
-// FILE enumerator api leaks memory. Fixed in glibmm 2.18.1. Waiting for new release...
-        Glib::RefPtr<Gio::FileEnumerator> dirList = dir->enumerate_children ();
-        if (!dirList)
-            return names;	
-        for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) 
-            names.push_back (Glib::build_filename (selectedDirectory, info->get_name()));
-    }
-    catch (Glib::Exception& ex) {
-        std::cout << ex.what();
-    }
+    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (selectedDirectory);
+		safe_build_file_list (dir, names, selectedDirectory);
     return names;
 }
 
@@ -255,11 +242,13 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         _refreshProgressBar ();
         previewLoader.process ();
 		
-#ifndef _WIN32
+#ifdef _WIN32
+      wdMonitor = new WinDirMonitor (selectedDirectory, this);
+#elif defined __APPLE__
+      printf("TODO fix dir->monitor_directory () for OSX\n");
+#else  
         dirMonitor = dir->monitor_directory ();
         dirMonitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
-#else
-        wdMonitor = new WinDirMonitor (selectedDirectory, this);
 #endif
     }
     catch (Glib::Exception& ex) {
@@ -342,7 +331,12 @@ void FileCatalog::_previewsFinished () {
     progressBar->hide ();
 	if (filterPanel) {
 		filterPanel->set_sensitive (true);
-		filterPanel->setFilter (currentEFS);
+	    if ( !hasValidCurrentEFS ){
+	        currentEFS = dirEFS;
+		    filterPanel->setFilter ( dirEFS,true );
+	    }else {
+		    filterPanel->setFilter ( currentEFS,false );
+	    }
 	}
 }
 
@@ -698,18 +692,13 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
 
     if (!file)
         return;
-    Glib::RefPtr<Gio::FileInfo> info = file->query_info();
+    Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
-        Glib::ustring ext = lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "";
-        // look up if it is supported
-        for (int j=0; j<options.parseExtensions.size(); j++)
-            // if supported, add it to the loader queue
-            if (options.parseExtensions[j].casefold() == ext.casefold() && options.parseExtensionsEnabled[j]) {
-                previewLoader.add (DirEntry (file->get_parse_name()));
-                previewsToLoad++;
-                break;
-            }
+        if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+						previewLoader.add (DirEntry (file->get_parse_name()));
+            previewsToLoad++;
+				}
     }
 }
 
@@ -718,26 +707,22 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
     if (!file)
         return;
-    Glib::RefPtr<Gio::FileInfo> info = file->query_info();
+    Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     int lastdot = info->get_name().find_last_of ('.');
-    Glib::ustring ext = lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "";
-    // look up if it is supported
-    for (int j=0; j<options.parseExtensions.size(); j++)
-        if (options.parseExtensions[j].casefold() == ext.casefold() && options.parseExtensionsEnabled[j]) {
-            // if supported, load thumbnail first
-            Thumbnail* tmb = cacheMgr.getEntry (file->get_parse_name());
-            if (tmb) {
-                FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-      	        previewReady (entry);
-                // open the file
-                FCOIParams* params = new FCOIParams;
-                params->catalog = this;
-                params->tmb.push_back (tmb);
-                tmb->increaseRef ();
-                g_idle_add (fcopenimg, params);
-            }
-            break;
+    if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+        // if supported, load thumbnail first
+        Thumbnail* tmb = cacheMgr.getEntry (file->get_parse_name());
+        if (tmb) {
+            FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
+  	        previewReady (entry);
+            // open the file
+            FCOIParams* params = new FCOIParams;
+            params->catalog = this;
+            params->tmb.push_back (tmb);
+            tmb->increaseRef ();
+            g_idle_add (fcopenimg, params);
         }
+    }
 }
 
 void FileCatalog::emptyTrash () {

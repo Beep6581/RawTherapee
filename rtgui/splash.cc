@@ -18,13 +18,14 @@
  */
 #include <splash.h>
 #include <multilangmgr.h>
+#include <safegtk.h>
 
 extern Glib::ustring argv0;
 extern Glib::ustring versionString;
 
 SplashImage::SplashImage () {
 
-    pixbuf = Gdk::Pixbuf::create_from_file (argv0+"/images/splash.png");
+    pixbuf = safe_create_from_file (argv0+"/images/splash.png");
     set_size_request (pixbuf->get_width(), pixbuf->get_height());
 }
 

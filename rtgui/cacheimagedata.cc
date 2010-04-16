@@ -19,6 +19,7 @@
 #include <cacheimagedata.h>
 #include <vector>
 #include <glib/gstdio.h>
+#include <safekeyfile.h>
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rank(0), inTrash(false), recentlySaved(false),
@@ -27,7 +28,7 @@ CacheImageData::CacheImageData ()
 
 int CacheImageData::load (const Glib::ustring& fname) {
 
-    Glib::KeyFile keyFile;
+    rtengine::SafeKeyFile keyFile;
     
     try {
         if (!keyFile.load_from_file (fname)) 
@@ -88,7 +89,7 @@ int CacheImageData::load (const Glib::ustring& fname) {
 
 int CacheImageData::save (const Glib::ustring& fname) {
 
-    Glib::KeyFile keyFile;
+    rtengine::SafeKeyFile keyFile;
     
     try {
         keyFile.load_from_file (fname); 

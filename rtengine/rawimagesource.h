@@ -79,6 +79,10 @@ class RawImageSource : public ImageSource {
        
         // the interpolated green plane:
         unsigned short** green; 
+        // the interpolated red plane:
+        unsigned short** red;
+        // the interpolated blue plane:
+        unsigned short** blue;
     
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
@@ -121,6 +125,7 @@ class RawImageSource : public ImageSource {
         static void HLRecovery_CIELab (unsigned short* rin, unsigned short* gin, unsigned short* bin, unsigned short* rout, unsigned short* gout, unsigned short* bout, int width, int maxval, double cam[3][3], double icam[3][3]);
 
     protected:
+        typedef unsigned short ushort;
                 void correction_YIQ_LQ  (Image16* i, int times);
         inline  void convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W);
         inline  void convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W);
@@ -133,6 +138,21 @@ class RawImageSource : public ImageSource {
         void    eahd_demosaic   ();
         void    hphd_demosaic   ();
         void    vng4_demosaic   ();
+        void    ppg_demosaic();
+        void    dcb_demosaic(int iterations, int dcb_enhance);
+        void    ahd_demosaic();
+	void	border_interpolate(int border, ushort (*image)[4]);
+	void copy_to_buffer(float (*image2)[3], ushort (*image)[4]);
+	void hid(ushort (*image)[4]);
+	void dcb_color(ushort (*image)[4]);
+	void hid2(ushort (*image)[4]);
+	void dcb_map(ushort (*image)[4]);
+	void dcb_correction(ushort (*image)[4]);
+	void dcb_pp(ushort (*image)[4]);
+	void dcb_correction2(ushort (*image)[4]);
+	void restore_from_buffer(ushort (*image)[4], float (*image2)[3]);
+	void dcb_refinement(ushort (*image)[4]);
+	void dcb_color_full(ushort (*image)[4]);
 
         void    transLine   (unsigned short* red, unsigned short* green, unsigned short* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
         void    hflip       (Image16* im);

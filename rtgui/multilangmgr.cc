@@ -19,6 +19,7 @@
 #include <glib/gstdio.h>
 #include <multilangmgr.h>
 #include <string.h>
+#include <safegtk.h>
 
 MultiLangMgr langMgr;
 
@@ -79,7 +80,7 @@ bool MultiLangMgr::save (Glib::ustring fname) {
 
     std::map<std::string, Glib::ustring>::iterator r;
     for (r=transTable.begin (); r!=transTable.end(); r++)
-        fprintf (f, "%s;%s\n", r->first.c_str(), Glib::locale_from_utf8(r->second).c_str());
+        fprintf (f, "%s;%s\n", r->first.c_str(), safe_locale_from_utf8(r->second).c_str());
 
     fclose (f);
     return true;

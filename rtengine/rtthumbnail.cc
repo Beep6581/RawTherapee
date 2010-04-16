@@ -32,6 +32,8 @@
 #include <stdimagesource.h>
 #include <glib/gstdio.h>
 #include <setjmp.h>
+#include <safekeyfile.h>
+
 extern "C" {
 #include <jpeglib.h>
 extern jmp_buf jpeg_jmp_buf;
@@ -758,7 +760,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
 
 bool Thumbnail::readData  (const Glib::ustring& fname) {
 
-    Glib::KeyFile keyFile;
+    SafeKeyFile keyFile;
     
     try {
         if (!keyFile.load_from_file (fname)) 
@@ -795,7 +797,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
 
 bool Thumbnail::writeData  (const Glib::ustring& fname) {
 
-    Glib::KeyFile keyFile;
+    SafeKeyFile keyFile;
 
     try {
         keyFile.load_from_file (fname); 

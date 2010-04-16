@@ -47,7 +47,7 @@ extern const Settings* settings;
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 
-RawImageSource::RawImageSource () : ImageSource(), plistener(NULL), green(NULL), cache(NULL), border(4) {
+RawImageSource::RawImageSource () : ImageSource(), plistener(NULL), green(NULL), red(NULL), blue(NULL), cache(NULL), border(4) {
 
     hrmap[0] = NULL;
     hrmap[1] = NULL;
@@ -73,6 +73,11 @@ RawImageSource::~RawImageSource () {
     }
     if (green)
         freeArray<unsigned short>(green, H);
+    if (red)
+        freeArray<unsigned short>(red, H);
+    if (blue)
+        freeArray<unsigned short>(blue, H);
+    
     delete [] cache;
     if (hrmap[0]!=NULL) {
         int dh = H/HR_SCALE;
@@ -226,7 +231,13 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     unsigned short* blue = new unsigned short[imwidth];
 
     for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
-        if (ri->filters) {
+        if (ri->filters && this->red && this->blue) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+                red[j] = CLIP(rm*this->red[i][jx]);
+                grn[j] = CLIP(gm*green[i][jx]);
+                blue[j] = CLIP(bm*this->blue[i][jx]);
+	    }
+	} else if(ri->filters) {
             if (i==0)
                 interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, sx1, imwidth, pp.skip);
             else if (i==H-1)
@@ -236,8 +247,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
                    
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) 
                 grn[j] = CLIP(gm*green[i][jx]);
-        }
-        else {
+        } else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
                 red[j]  = CLIP(rm*ri->data[i][jx*3+0]);
                 grn[j]  = CLIP(gm*ri->data[i][jx*3+1]);
@@ -652,6 +662,19 @@ int RawImageSource::load (Glib::ustring fname) {
     if (res)
         return res;
 
+   if(red) {
+	   delete red;
+	   red = 0;
+   }
+   if(green) {
+	   delete green;
+	   green = 0;
+   }
+   if(blue) {
+	   delete blue;
+	   blue = 0;
+   }
+
     W = ri->width;
     H = ri->height;
 
@@ -754,6 +777,12 @@ int RawImageSource::load (Glib::ustring fname) {
             hphd_demosaic ();
         else if (settings->demosaicMethod=="vng4")
             vng4_demosaic ();
+        else if (settings->demosaicMethod=="ahd")
+            ahd_demosaic ();
+        else if (settings->demosaicMethod=="ppg")
+            ppg_demosaic ();
+        else if (settings->demosaicMethod=="dcb")
+            dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
         else
             eahd_demosaic ();
     }
@@ -2373,5 +2402,725 @@ void RawImageSource::vng4_demosaic () {
   }
   free (image);
 }
+
+//#define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
+//#define MIN(a,b) ((a) < (b) ? (a) : (b))
+//#define MAX(a,b) ((a) > (b) ? (a) : (b))
+//#define LIM(x,min,max) MAX(min,MIN(x,max))
+//#define CLIP(x) LIM(x,0,65535)
+#undef fc
+#define fc(row,col) \
+	(ri->filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
+#define FC(x,y) fc(x,y)
+#define LIM(x,min,max) MAX(min,MIN(x,max))
+#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
+
+/*
+   Patterned Pixel Grouping Interpolation by Alain Desbiolles
+*/
+void RawImageSource::ppg_demosaic()
+{
+  int width=W, height=H;
+  int dir[5] = { 1, width, -1, -width, 1 };
+  int row, col, diff[2], guess[2], c, d, i;
+  ushort (*pix)[4];
+
+  ushort (*image)[4];
+  int colors = 3;
+
+  if (plistener) {
+    plistener->setProgressStr ("Demosaicing...");
+    plistener->setProgress (0.0);
+  }
+  
+  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+  for (int ii=0; ii<H; ii++)
+    for (int jj=0; jj<W; jj++)
+        image[ii*W+jj][fc(ii,jj)] = ri->data[ii][jj];
+
+  border_interpolate(3, image);
+
+/*  Fill in the green layer with gradients and pattern recognition: */
+  for (row=3; row < height-3; row++) {
+    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
+      pix = image + row*width+col;
+      for (i=0; (d=dir[i]) > 0; i++) {
+	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
+		      - pix[-2*d][c] - pix[2*d][c];
+	diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
+		    ABS(pix[ 2*d][c] - pix[ 0][c]) +
+		    ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
+		  ( ABS(pix[ 3*d][1] - pix[ d][1]) +
+		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
+      }
+      d = dir[i = diff[0] > diff[1]];
+      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
+    }
+    if(plistener) plistener->setProgress(0.33*row/(height-3));
+  }
+/*  Calculate red and blue for each green pixel:		*/
+  for (row=1; row < height-1; row++) {
+    for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
+      pix = image + row*width+col;
+      for (i=0; (d=dir[i]) > 0; c=2-c, i++)
+	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
+			- pix[-d][1] - pix[d][1]) >> 1);
+    }
+    if(plistener) plistener->setProgress(0.33 + 0.33*row/(height-1));
+  }
+/*  Calculate blue for red pixels and vice versa:		*/
+  for (row=1; row < height-1; row++) {
+    for (col=1+(FC(row,1) & 1), c=2-FC(row,col); col < width-1; col+=2) {
+      pix = image + row*width+col;
+      for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
+	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
+		  ABS(pix[-d][1] - pix[0][1]) +
+		  ABS(pix[ d][1] - pix[0][1]);
+	guess[i] = pix[-d][c] + pix[d][c] + 2*pix[0][1]
+		 - pix[-d][1] - pix[d][1];
+      }
+      if (diff[0] != diff[1])
+	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
+      else
+	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
+    }
+    if(plistener) plistener->setProgress(0.67 + 0.33*row/(height-1));
+  }
+
+  red = new unsigned short*[H];
+  for (int i=0; i<H; i++) {
+    red[i] = new unsigned short[W];
+    for (int j=0; j<W; j++)
+        red[i][j] = image[i*W+j][0];
+  }
+  green = new unsigned short*[H];
+  for (int i=0; i<H; i++) {
+    green[i] = new unsigned short[W];
+    for (int j=0; j<W; j++)
+        green[i][j] = image[i*W+j][1];
+  }
+  blue = new unsigned short*[H];
+  for (int i=0; i<H; i++) {
+    blue[i] = new unsigned short[W];
+    for (int j=0; j<W; j++)
+        blue[i][j] = image[i*W+j][2];
+  }
+  free (image);
 }
+
+void RawImageSource::border_interpolate(int border, ushort (*image)[4])
+{
+  unsigned row, col, y, x, f, c, sum[8];
+  int width=W, height=H;
+  int colors = 3;
+
+  for (row=0; row < height; row++)
+    for (col=0; col < width; col++) {
+      if (col==border && row >= border && row < height-border)
+	col = width-border;
+      memset (sum, 0, sizeof sum);
+      for (y=row-1; y != row+2; y++)
+	for (x=col-1; x != col+2; x++)
+	  if (y < height && x < width) {
+	    f = fc(y,x);
+	    sum[f] += image[y*width+x][f];
+	    sum[f+4]++;
+	  }
+      f = fc(row,col);
+      FORCC if (c != f && sum[c+4])
+	image[row*width+col][c] = sum[c] / sum[c+4];
+    }
+}
+
+/*
+   Adaptive Homogeneity-Directed interpolation is based on
+   the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
+ */
+#define TS 256		/* Tile Size */
+#define FORC(cnt) for (c=0; c < cnt; c++)
+#define FORC3 FORC(3)
+#define SQR(x) ((x)*(x))
+
+void RawImageSource::ahd_demosaic()
+{
+  int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
+  ushort (*pix)[4], (*rix)[3];
+  static const int dir[4] = { -1, 1, -TS, TS };
+  unsigned ldiff[2][4], abdiff[2][4], leps, abeps;
+  float r, cbrt[0x10000], xyz[3], xyz_cam[3][4];
+  ushort (*rgb)[TS][TS][3];
+   short (*lab)[TS][TS][3], (*lix)[3];
+   char (*homo)[TS][TS], *buffer;
+
+  int width=W, height=H;
+  ushort (*image)[4];
+  int colors = 3;
+
+  const double xyz_rgb[3][3] = {			/* XYZ from RGB */
+    { 0.412453, 0.357580, 0.180423 },
+    { 0.212671, 0.715160, 0.072169 },
+    { 0.019334, 0.119193, 0.950227 } };
+  const float d65_white[3] = { 0.950456, 1, 1.088754 };
+
+  if (plistener) {
+    plistener->setProgressStr ("Demosaicing...");
+    plistener->setProgress (0.0);
+  }
+  
+  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+  for (int ii=0; ii<H; ii++)
+    for (int jj=0; jj<W; jj++)
+        image[ii*W+jj][fc(ii,jj)] = ri->data[ii][jj];
+
+  for (i=0; i < 0x10000; i++) {
+    r = i / 65535.0;
+    cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
+  }
+  for (i=0; i < 3; i++)
+    for (j=0; j < colors; j++)
+      for (xyz_cam[i][j] = k=0; k < 3; k++)
+	xyz_cam[i][j] += xyz_rgb[i][k] * coeff[k][j] / d65_white[i];
+
+  border_interpolate(5, image);
+  buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
+  //merror (buffer, "ahd_interpolate()");
+  rgb  = (ushort(*)[TS][TS][3]) buffer;
+  lab  = (short (*)[TS][TS][3])(buffer + 12*TS*TS);
+  homo = (char  (*)[TS][TS])   (buffer + 24*TS*TS);
+
+  for (top=2; top < height-5; top += TS-6)
+    for (left=2; left < width-5; left += TS-6) {
+
+/*  Interpolate green horizontally and vertically:		*/
+      for (row = top; row < top+TS && row < height-2; row++) {
+	col = left + (FC(row,left) & 1);
+	for (c = FC(row,col); col < left+TS && col < width-2; col+=2) {
+	  pix = image + row*width+col;
+	  val = ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
+		- pix[-2][c] - pix[2][c]) >> 2;
+	  rgb[0][row-top][col-left][1] = ULIM(val,pix[-1][1],pix[1][1]);
+	  val = ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
+		- pix[-2*width][c] - pix[2*width][c]) >> 2;
+	  rgb[1][row-top][col-left][1] = ULIM(val,pix[-width][1],pix[width][1]);
+	}
+      }
+
+    if(plistener) plistener->setProgress (0.33);
+/*  Interpolate red and blue, and convert to CIELab:		*/
+      for (d=0; d < 2; d++)
+	for (row=top+1; row < top+TS-1 && row < height-3; row++)
+	  for (col=left+1; col < left+TS-1 && col < width-3; col++) {
+	    pix = image + row*width+col;
+	    rix = &rgb[d][row-top][col-left];
+	    lix = &lab[d][row-top][col-left];
+	    if ((c = 2 - FC(row,col)) == 1) {
+	      c = FC(row+1,col);
+	      val = pix[0][1] + (( pix[-1][2-c] + pix[1][2-c]
+				 - rix[-1][1] - rix[1][1] ) >> 1);
+	      rix[0][2-c] = CLIP(val);
+	      val = pix[0][1] + (( pix[-width][c] + pix[width][c]
+				 - rix[-TS][1] - rix[TS][1] ) >> 1);
+	    } else
+	      val = rix[0][1] + (( pix[-width-1][c] + pix[-width+1][c]
+				 + pix[+width-1][c] + pix[+width+1][c]
+				 - rix[-TS-1][1] - rix[-TS+1][1]
+				 - rix[+TS-1][1] - rix[+TS+1][1] + 1) >> 2);
+	    rix[0][c] = CLIP(val);
+	    c = FC(row,col);
+	    rix[0][c] = pix[0][c];
+	    xyz[0] = xyz[1] = xyz[2] = 0.5;
+	    FORCC {
+	      xyz[0] += xyz_cam[0][c] * rix[0][c];
+	      xyz[1] += xyz_cam[1][c] * rix[0][c];
+	      xyz[2] += xyz_cam[2][c] * rix[0][c];
+	    }
+	    xyz[0] = cbrt[CLIP((int) xyz[0])];
+	    xyz[1] = cbrt[CLIP((int) xyz[1])];
+	    xyz[2] = cbrt[CLIP((int) xyz[2])];
+	    lix[0][0] = 64 * (116 * xyz[1] - 16);
+	    lix[0][1] = 64 * 500 * (xyz[0] - xyz[1]);
+	    lix[0][2] = 64 * 200 * (xyz[1] - xyz[2]);
+	  }
+
+      if(plistener) plistener->setProgress (0.5);
+/*  Build homogeneity maps from the CIELab images:		*/
+      memset (homo, 0, 2*TS*TS);
+      for (row=top+2; row < top+TS-2 && row < height-4; row++) {
+	tr = row-top;
+	for (col=left+2; col < left+TS-2 && col < width-4; col++) {
+	  tc = col-left;
+	  for (d=0; d < 2; d++) {
+	    lix = &lab[d][tr][tc];
+	    for (i=0; i < 4; i++) {
+	       ldiff[d][i] = ABS(lix[0][0]-lix[dir[i]][0]);
+	      abdiff[d][i] = SQR(lix[0][1]-lix[dir[i]][1])
+			   + SQR(lix[0][2]-lix[dir[i]][2]);
+	    }
+	  }
+	  leps = MIN(MAX(ldiff[0][0],ldiff[0][1]),
+		     MAX(ldiff[1][2],ldiff[1][3]));
+	  abeps = MIN(MAX(abdiff[0][0],abdiff[0][1]),
+		      MAX(abdiff[1][2],abdiff[1][3]));
+	  for (d=0; d < 2; d++)
+	    for (i=0; i < 4; i++)
+	      if (ldiff[d][i] <= leps && abdiff[d][i] <= abeps)
+		homo[d][tr][tc]++;
+	}
+      }
+      if(plistener) plistener->setProgress (0.8);
+/*  Combine the most homogenous pixels for the final result:	*/
+      for (row=top+3; row < top+TS-3 && row < height-5; row++) {
+	tr = row-top;
+	for (col=left+3; col < left+TS-3 && col < width-5; col++) {
+	  tc = col-left;
+	  for (d=0; d < 2; d++)
+	    for (hm[d]=0, i=tr-1; i <= tr+1; i++)
+	      for (j=tc-1; j <= tc+1; j++)
+		hm[d] += homo[d][i][j];
+	  if (hm[0] != hm[1])
+	    FORC3 image[row*width+col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
+	  else
+	    FORC3 image[row*width+col][c] =
+		(rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) >> 1;
+	}
+      }
+    }
+  if(plistener) plistener->setProgress (1.0);
+  free (buffer);
+  red = new unsigned short*[H];
+  for (int i=0; i<H; i++) {
+    red[i] = new unsigned short[W];
+    for (int j=0; j<W; j++)
+        red[i][j] = image[i*W+j][0];
+  }
+  green = new unsigned short*[H];
+  for (int i=0; i<H; i++) {
+    green[i] = new unsigned short[W];
+    for (int j=0; j<W; j++)
+        green[i][j] = image[i*W+j][1];
+  }
+  blue = new unsigned short*[H];
+  for (int i=0; i<H; i++) {
+    blue[i] = new unsigned short[W];
+    for (int j=0; j<W; j++)
+        blue[i][j] = image[i*W+j][2];
+  }
+  free (image);
+}
+#undef TS
+
+/*
+ *      Redistribution and use in source and binary forms, with or without
+ *      modification, are permitted provided that the following conditions are
+ *      met:
+ *      
+ *      * Redistributions of source code must retain the above copyright
+ *        notice, this list of conditions and the following disclaimer.
+ *      * Redistributions in binary form must reproduce the above
+ *        copyright notice, this list of conditions and the following disclaimer
+ *        in the documentation and/or other materials provided with the
+ *        distribution.
+ *      * Neither the name of the author nor the names of its
+ *        contributors may be used to endorse or promote products derived from
+ *        this software without specific prior written permission.
+ *      
+ *      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *      "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ *      LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ *      A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *      OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *      SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ *      LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *      DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *      THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *      (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ *      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// If you want to use the code, you need to display name of the original authors in
+// your software!
+  
+
+
+/* DCB demosaicing by Jacek Gozdz (cuniek@kft.umcs.lublin.pl)
+ * the implementation is not speed optimised
+ * the code is open source (BSD licence)
+*/
+
+// saves red and blue
+void RawImageSource::copy_to_buffer(float (*image2)[3], ushort (*image)[4])
+{
+	int width=W, height=H;
+	int indx;
+
+	for (indx=0; indx < height*width; indx++) {
+		image2[indx][0]=image[indx][0]; //R
+		image2[indx][2]=image[indx][2]; //B
+	}
+}
+
+// fast green interpolation
+void RawImageSource::hid(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int row, col, c, u=width, v=2*u, indx;
+	
+	for (row=2; row < height-2; row++) {
+	for (col=2, indx=row*width+col; col < width-2; col++, indx++) {
+
+		c =  fc(row,col);
+		if(c != 1) 
+		{
+			image[indx][1] = CLIP((image[indx+u][1] + image[indx-u][1] + image[indx-1][1] + image[indx+1][1])/4.0 + 
+							 (image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c])/4.0)/2.0);
+		}
+	} 
+	}	
+	
+}
+
+// missing colors are interpolated
+void RawImageSource::dcb_color(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int row, col, c, d, u=width, indx;
+
+
+	for (row=1; row < height-1; row++)
+		for (col=1+(FC(row,1) & 1), indx=row*width+col, c=2-FC(row,col); col < u-1; col+=2, indx+=2) {
+
+			
+			image[indx][c] = CLIP(( 
+			4*image[indx][1] 
+			- image[indx+u+1][1] - image[indx+u-1][1] - image[indx-u+1][1] - image[indx-u-1][1] 
+			+ image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] )/4.0);
+		}
+
+	for (row=1; row<height-1; row++)
+		for (col=1+(FC(row,2)&1), indx=row*width+col,c=FC(row,col+1),d=2-c; col<width-1; col+=2, indx+=2) {
+			
+			image[indx][c] = CLIP((2*image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c])/2.0);
+			image[indx][d] = CLIP((2*image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d])/2.0);
+		}	
+}
+
+// green correction
+void RawImageSource::hid2(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int row, col, c, u=width, v=2*u, indx;
+
+	
+	for (row=4; row < height-4; row++) {
+	for (col=4, indx=row*width+col; col < width-4; col++, indx++) {
+
+		c =  fc(row,col);
+
+		if (c != 1)
+		{	
+			image[indx][1] = CLIP((image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1])/4.0 + 
+							  image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c])/4.0);
+    	}	
+
+	} 
+	}	
+
+}
+
+// green is used to create
+// an interpolation direction map 
+// 1 = vertical
+// 0 = horizontal
+// saved in image[][3]
+void RawImageSource::dcb_map(ushort (*image)[4])
+{	
+	int width=W, height=H;
+	int current, row, col, c, u=width, v=2*u, indx;
+
+	for (row=2; row < height-2; row++) {
+	for (col=2, indx=row*width+col; col < width-2; col++, indx++) { 
+
+		if (image[indx][1] > ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1])/4.0)
+			image[indx][3] = ((MIN( image[indx-1][1], image[indx+1][1]) + image[indx-1][1] + image[indx+1][1] ) < (MIN( image[indx-u][1], image[indx+u][1]) + image[indx-u][1] + image[indx+u][1]));   
+		else
+			image[indx][3] = ((MAX( image[indx-1][1], image[indx+1][1]) + image[indx-1][1] + image[indx+1][1] ) > (MAX( image[indx-u][1], image[indx+u][1]) + image[indx-u][1] + image[indx+u][1])) ; 
+	}
+	}
+}
+
+
+
+
+
+// interpolated green pixels are corrected using the map
+void RawImageSource::dcb_correction(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int current, row, col, c, u=width, v=2*u, indx;
+
+	for (row=4; row < height-4; row++) {
+	for (col=4, indx=row*width+col; col < width-4; col++, indx++) { 
+
+		c =  FC(row,col);
+	
+		if (c != 1)
+		{
+			current = 4*image[indx][3] + 
+				      2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) + 
+					    image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
+						
+			image[indx][1] = ((16-current)*(image[indx-1][1] + image[indx+1][1])/2.0 + current*(image[indx-u][1] + image[indx+u][1])/2.0)/16.0;		   
+		}
+	
+	}
+	}
+
+}
+
+// R and B smoothing using green contrast, all pixels except 2 pixel wide border
+void RawImageSource::dcb_pp(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int g1, r1, b1, u=width, indx, row, col;
+
+	
+	for (row=2; row < height-2; row++) 
+	for (col=2, indx=row*u+col; col < width-2; col++, indx++) { 
+
+		r1 = ( image[indx-1][0] + image[indx+1][0] + image[indx-u][0] + image[indx+u][0] + image[indx-u-1][0] + image[indx+u+1][0] + image[indx-u+1][0] + image[indx+u-1][0])/8.0;
+		g1 = ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1] + image[indx-u-1][1] + image[indx+u+1][1] + image[indx-u+1][1] + image[indx+u-1][1])/8.0;
+		b1 = ( image[indx-1][2] + image[indx+1][2] + image[indx-u][2] + image[indx+u][2] + image[indx-u-1][2] + image[indx+u+1][2] + image[indx-u+1][2] + image[indx+u-1][2])/8.0;
+		 
+		image[indx][0] = CLIP(r1 + ( image[indx][1] - g1 ));
+		image[indx][2] = CLIP(b1 + ( image[indx][1] - g1 ));
+	
+	}
+}
+
+// interpolated green pixels are corrected using the map
+// with correction
+void RawImageSource::dcb_correction2(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int current, row, col, c, u=width, v=2*u, indx;
+	ushort (*pix)[4];
+
+	for (row=4; row < height-4; row++) {
+	for (col=4, indx=row*width+col; col < width-4; col++, indx++) { 
+
+		c =  FC(row,col);
+	
+		if (c != 1)
+		{
+			current = 4*image[indx][3] + 
+				      2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) + 
+					    image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
+						
+			image[indx][1] = CLIP(((16-current)*((image[indx-1][1] + image[indx+1][1])/2.0 + image[indx][c] - (image[indx+2][c] + image[indx-2][c])/2.0) + current*((image[indx-u][1] + image[indx+u][1])/2.0 + image[indx][c] - (image[indx+v][c] + image[indx-v][c])/2.0))/16.0);			   
+		}
+	
+	}
+	}
+
+}
+
+// restores red and blue
+void RawImageSource::restore_from_buffer(ushort (*image)[4], float (*image2)[3])
+{
+	int width=W, height=H;
+	int indx;
+
+	for (indx=0; indx < height*width; indx++) {
+		image[indx][0]=image2[indx][0]; //R
+		image[indx][2]=image2[indx][2]; //B
+	}
+}
+
+// image refinement
+void RawImageSource::dcb_refinement(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int row, col, c, u=width, v=2*u, w=3*u, x=4*u, y=5*u, indx, max, min;
+	float f[4], g[4];
+	
+	for (row=5; row < height-5; row++)
+		for (col=5+(FC(row,1)&1),indx=row*width+col,c=FC(row,col); col < u-5; col+=2,indx+=2) {
+
+// Cubic Spline Interpolation by Li and Randhawa, modified by Jacek Gozdz and Luis Sanz Rodríguez
+		f[0]=1.0/(1.0+abs(image[indx-u][c]-image[indx][c])+abs(image[indx-u][1]-image[indx][1]));
+		f[1]=1.0/(1.0+abs(image[indx+1][c]-image[indx][c])+abs(image[indx+1][1]-image[indx][1]));
+		f[2]=1.0/(1.0+abs(image[indx-1][c]-image[indx][c])+abs(image[indx-1][1]-image[indx][1]));
+		f[3]=1.0/(1.0+abs(image[indx+u][c]-image[indx][c])+abs(image[indx+u][1]-image[indx][1]));
+
+g[0]=CLIP(image[indx-u][1]+0.5*(image[indx][c]-image[indx-u][c]) + 0.25*(image[indx][c]-image[indx-v][c]));
+g[1]=CLIP(image[indx+1][1]+0.5*(image[indx][c]-image[indx+1][c]) + 0.25*(image[indx][c]-image[indx+2][c]));
+g[2]=CLIP(image[indx-1][1]+0.5*(image[indx][c]-image[indx-1][c]) + 0.25*(image[indx][c]-image[indx-2][c]));
+g[3]=CLIP(image[indx+u][1]+0.5*(image[indx][c]-image[indx+u][c]) + 0.25*(image[indx][c]-image[indx+v][c]));
+
+
+
+	image[indx][1]=CLIP(((f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]) ));
+
+// get rid of the overshooted pixels
+	min = MIN(image[indx+1+u][1], MIN(image[indx+1-u][1], MIN(image[indx-1+u][1], MIN(image[indx-1-u][1], MIN(image[indx-1][1], MIN(image[indx+1][1], MIN(image[indx-u][1], image[indx+u][1])))))));
+
+	max = MAX(image[indx+1+u][1], MAX(image[indx+1-u][1], MAX(image[indx-1+u][1], MAX(image[indx-1-u][1], MAX(image[indx-1][1], MAX(image[indx+1][1], MAX(image[indx-u][1], image[indx+u][1])))))));
+
+	image[indx][1] =  ULIM(image[indx][1], max, min);
+
+			
+		}
+}
+
+// missing colors are interpolated using high quality algorithm by Luis Sanz Rodríguez
+void RawImageSource::dcb_color_full(ushort (*image)[4])
+{
+	int width=W, height=H;
+	int row,col,c,d,i,j,u=width,v=2*u,w=3*u,indx;
+	float f[4],g[4],(*chroma)[2];
+
+	chroma = (float (*)[2]) calloc(width*height,sizeof *chroma);
+	//merror (chroma, "dcb_color_full()");
+
+	for (row=1; row < height-1; row++)
+		for (col=1+(FC(row,1)&1),indx=row*width+col,c=FC(row,col),d=c/2; col < u-1; col+=2,indx+=2)
+			chroma[indx][d]=image[indx][c]-image[indx][1];
+
+	for (row=3; row<height-3; row++)
+		for (col=3+(FC(row,1)&1),indx=row*width+col,c=1-FC(row,col)/2,d=1-c; col<u-3; col+=2,indx+=2) {
+			f[0]=1.0/(float)(1.0+fabs(chroma[indx-u-1][c]-chroma[indx+u+1][c])+fabs(chroma[indx-u-1][c]-chroma[indx-w-3][c])+fabs(chroma[indx+u+1][c]-chroma[indx-w-3][c]));
+			f[1]=1.0/(float)(1.0+fabs(chroma[indx-u+1][c]-chroma[indx+u-1][c])+fabs(chroma[indx-u+1][c]-chroma[indx-w+3][c])+fabs(chroma[indx+u-1][c]-chroma[indx-w+3][c]));
+			f[2]=1.0/(float)(1.0+fabs(chroma[indx+u-1][c]-chroma[indx-u+1][c])+fabs(chroma[indx+u-1][c]-chroma[indx+w+3][c])+fabs(chroma[indx-u+1][c]-chroma[indx+w-3][c]));
+			f[3]=1.0/(float)(1.0+fabs(chroma[indx+u+1][c]-chroma[indx-u-1][c])+fabs(chroma[indx+u+1][c]-chroma[indx+w-3][c])+fabs(chroma[indx-u-1][c]-chroma[indx+w+3][c]));
+			g[0]=1.325*chroma[indx-u-1][c]-0.175*chroma[indx-w-3][c]-0.075*chroma[indx-w-1][c]-0.075*chroma[indx-u-3][c];
+			g[1]=1.325*chroma[indx-u+1][c]-0.175*chroma[indx-w+3][c]-0.075*chroma[indx-w+1][c]-0.075*chroma[indx-u+3][c];
+			g[2]=1.325*chroma[indx+u-1][c]-0.175*chroma[indx+w-3][c]-0.075*chroma[indx+w-1][c]-0.075*chroma[indx+u-3][c];
+			g[3]=1.325*chroma[indx+u+1][c]-0.175*chroma[indx+w+3][c]-0.075*chroma[indx+w+1][c]-0.075*chroma[indx+u+3][c];
+			chroma[indx][c]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]);
+		}
+	for (row=3; row<height-3; row++)
+		for (col=3+(FC(row,2)&1),indx=row*width+col,c=FC(row,col+1)/2; col<u-3; col+=2,indx+=2)
+			for(d=0;d<=1;c=1-c,d++){
+				f[0]=1.0/(float)(1.0+fabs(chroma[indx-u][c]-chroma[indx+u][c])+fabs(chroma[indx-u][c]-chroma[indx-w][c])+fabs(chroma[indx+u][c]-chroma[indx-w][c]));
+				f[1]=1.0/(float)(1.0+fabs(chroma[indx+1][c]-chroma[indx-1][c])+fabs(chroma[indx+1][c]-chroma[indx+3][c])+fabs(chroma[indx-1][c]-chroma[indx+3][c]));
+				f[2]=1.0/(float)(1.0+fabs(chroma[indx-1][c]-chroma[indx+1][c])+fabs(chroma[indx-1][c]-chroma[indx-3][c])+fabs(chroma[indx+1][c]-chroma[indx-3][c]));
+				f[3]=1.0/(float)(1.0+fabs(chroma[indx+u][c]-chroma[indx-u][c])+fabs(chroma[indx+u][c]-chroma[indx+w][c])+fabs(chroma[indx-u][c]-chroma[indx+w][c]));
+			
+				g[0]=0.875*chroma[indx-u][c]+0.125*chroma[indx-w][c];
+				g[1]=0.875*chroma[indx+1][c]+0.125*chroma[indx+3][c];
+				g[2]=0.875*chroma[indx-1][c]+0.125*chroma[indx-3][c];
+				g[3]=0.875*chroma[indx+u][c]+0.125*chroma[indx+w][c];				
+
+				chroma[indx][c]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]);
+			}
+
+	for(row=3; row<height-3; row++)
+		for(col=3,indx=row*width+col; col<width-3; col++,indx++){
+			image[indx][0]=CLIP(chroma[indx][0]+image[indx][1]);
+			image[indx][2]=CLIP(chroma[indx][1]+image[indx][1]);
+		}
+
+	free(chroma);
+}
+
+
+// DCB demosaicing main routine (sharp version)
+void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
+{
+        int i=1;
+        float (*image2)[3];
+        image2 = (float (*)[3]) calloc(W*H, sizeof *image2);
+
+        ushort (*image)[4];
+
+        if(plistener) {
+                plistener->setProgressStr ("Demosaicing...");
+                plistener->setProgress (0.0);
+        }
+
+        image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+        for (int ii=0; ii<H; ii++)
+                for (int jj=0; jj<W; jj++)
+                        image[ii*W+jj][fc(ii,jj)] = ri->data[ii][jj];
+
+        border_interpolate(2, image);
+        copy_to_buffer(image2, image);
+
+        hid(image);
+        dcb_color(image);
+
+        while (i<=iterations) {
+		//if (verbose) fprintf (stderr,_("DCB correction pass %d...\n"), i);
+		hid2(image);
+		hid2(image);
+		hid2(image);
+		dcb_map(image);
+		dcb_correction(image);
+		if(plistener) plistener->setProgress (0.33*i/iterations);
+		i++;
+        }
+        if(plistener) plistener->setProgress (0.33);
+
+        dcb_color(image);
+        dcb_pp(image);	
+        hid2(image);
+        hid2(image);  
+        hid2(image);
+
+        //if (verbose) fprintf (stderr,_("finishing DCB...\n"));
+        if(plistener) plistener->setProgress (0.5);
+
+        dcb_map(image);
+        dcb_correction2(image);
+
+        restore_from_buffer(image, image2); 
+
+        dcb_map(image);
+        dcb_correction(image);
+
+        dcb_color(image);
+        dcb_pp(image);
+        dcb_map(image);
+        dcb_correction(image);
+
+        dcb_map(image);
+        dcb_correction(image);
+
+        restore_from_buffer(image, image2);
+        dcb_color(image);
+
+        if(plistener) plistener->setProgress (0.7);
+        if (dcb_enhance) {
+		//if (verbose) fprintf (stderr,_("optional DCB refinement...\n"));			
+		dcb_refinement(image);
+		dcb_color_full(image);
+        }
+
+        if(plistener) plistener->setProgress (1.0);
+
+        free(image2);
+
+        red = new unsigned short*[H];
+        for (int i=0; i<H; i++) {
+	        red[i] = new unsigned short[W];
+		for (int j=0; j<W; j++)
+			red[i][j] = image[i*W+j][0];
+        }
+        green = new unsigned short*[H];
+        for (int i=0; i<H; i++) {
+	        green[i] = new unsigned short[W];
+	        for (int j=0; j<W; j++)
+		        green[i][j] = image[i*W+j][1];
+        }
+        blue = new unsigned short*[H];
+        for (int i=0; i<H; i++) {
+	        blue[i] = new unsigned short[W];
+	        for (int j=0; j<W; j++)
+		        blue[i][j] = image[i*W+j][2];
+        }
+        free(image);
+}
+
+
+} /* namespace */
 

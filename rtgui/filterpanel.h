@@ -60,7 +60,7 @@ class FilterPanel : public Gtk::VBox {
 		
 		void setFilterPanelListener (FilterPanelListener* l) { listener = l; }
 		
-		void setFilter (ExifFilterSettings& defefs);
+		void setFilter (ExifFilterSettings& defefs, bool updateLists);
         ExifFilterSettings getFilter ();
 		bool isEnabled				();
 		

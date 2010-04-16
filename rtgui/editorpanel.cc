@@ -22,6 +22,7 @@
 #include <rtwindow.h>
 #include <guiutils.h>
 #include <procparamchangers.h>
+#include <safegtk.h>
 
 using namespace rtengine::procparams;
 
@@ -658,73 +659,58 @@ void EditorPanel::sendToGimpPressed () {
         int err = saveImage (img, filename, sf, true);
         img->free ();
         if (!err) {
-		    bool success=false;
-            Glib::ustring cmdLine;
-		    try {
-                // start gimp
-                if (options.editorToSendTo==1) {
-                    #ifdef _WIN32    
-                    cmdLine = Glib::ustring("\"") + Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote") + "\" gimp-2.4.exe" + " \"" + filename + "\"";
-                    #else
-                    cmdLine = Glib::ustring("gimp-remote ") + " \"" + filename + "\"";
-                    #endif
-                    try {
-                        printf ("command line: |%s|\n", Glib::filename_from_utf8(cmdLine).c_str());
-                        Glib::spawn_command_line_async (Glib::filename_from_utf8(cmdLine));
-                        success = true;
-                    }
-                    catch (const Glib::SpawnError&) {
-                        #ifdef _WIN32    
-                		int ver = 12;
-                		while (!success && ver) {
-                	                cmdLine = Glib::ustring("\"") + Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose("gimp-2.%1.exe",ver)) + "\" \"" + filename + "\"";
-                			ver--;
-                	                printf ("command line: |%s|\n", Glib::filename_from_utf8(cmdLine).c_str());
-                			try {
-                		                Glib::spawn_command_line_async (Glib::filename_from_utf8(cmdLine));
-                				success = true;
-                			}
-                			catch (const Glib::SpawnError&) {
-                				success = false;
-                			}
-                		}
-                        #else
-                        cmdLine = Glib::ustring("gimp ") + " \"" + filename + "\"";
-                        printf ("command line: |%s|\n", Glib::filename_from_utf8(cmdLine).c_str());
-                        try {
-                            Glib::spawn_command_line_async (Glib::filename_from_utf8(cmdLine));
-                            success = true;
-                        }
-                        catch (const Glib::SpawnError&) {
-                            success = false;
-                        }
-                        #endif
-                    }
-                }
-                else if (options.editorToSendTo==2) {
-                    cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir,"Photoshop.exe") + "\" \"" + filename + "\"";
-                    printf ("command line: |%s|\n", Glib::filename_from_utf8(cmdLine).c_str());
-                    Glib::spawn_command_line_async (Glib::filename_from_utf8(cmdLine));
-                    success = true;
-                }
-                else if (options.editorToSendTo==3) {
-                    cmdLine = Glib::ustring("\"") + options.customEditorProg + "\" \"" + filename + "\"";
-                    printf ("command line: |%s|\n", Glib::filename_from_utf8(cmdLine).c_str());
-                    Glib::spawn_command_line_async (Glib::filename_from_utf8(cmdLine));
-                    success = true;
-                }
-            }
-            catch (const Glib::SpawnError&) {
-                success = false;
-            }
-            if (!success) {
-                Gtk::MessageDialog* msgd = new Gtk::MessageDialog (*parent, M("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-                msgd->set_secondary_text (M("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
-                msgd->set_title (M("MAIN_BUTTON_SENDTOEDITOR"));
-                msgd->run ();
-                delete msgd;
-            }
-        }
+						bool success=false;
+						Glib::ustring cmdLine;
+						// start gimp
+						if (options.editorToSendTo==1) {
+#ifdef _WIN32
+								cmdLine = Glib::ustring("\"") + Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote") + "\" gimp-2.4.exe" + " \"" + filename + "\"";
+#else
+								cmdLine = Glib::ustring("gimp-remote ") + " \"" + filename + "\"";
+#endif
+								success = safe_spawn_command_line_async (cmdLine);
+								if (!success){
+#ifdef _WIN32
+										int ver = 12;
+										while (!success && ver) {
+												cmdLine = Glib::ustring("\"") + Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose("gimp-2.%1.exe",ver)) + "\" \"" + filename + "\"";
+												ver--;
+												success = safe_spawn_command_line_async (cmdLine);
+										}
+#elif defined __APPLE__
+										cmdLine = Glib::ustring("gimp ") + " \"" + filename + "\"";
+										success = safe_spawn_command_line_async (cmdLine);
+#else
+										cmdLine = Glib::ustring("gimp ") + " \"" + filename + "\"";
+										success = safe_spawn_command_line_async (cmdLine);
+#endif
+								}
+						}
+						else if (options.editorToSendTo==2) {
+#ifdef __APPLE__
+								cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir,"Photoshop.app\' ")  + "\'" + filename + "\'";
+#else
+								cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir,"Photoshop.exe") + "\" \"" + filename + "\"";
+#endif
+								success = safe_spawn_command_line_async (cmdLine);
+						}
+						else if (options.editorToSendTo==3) {
+#ifdef __APPLE__
+								cmdLine = Glib::ustring("") + options.customEditorProg + filename;
+#else
+								cmdLine = Glib::ustring("\"") + options.customEditorProg + "\" \"" + filename + "\"";
+#endif
+								success = safe_spawn_command_line_async (cmdLine);
+						}
+
+						if (!success) {
+								Gtk::MessageDialog* msgd = new Gtk::MessageDialog (*parent, M("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+								msgd->set_secondary_text (M("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
+								msgd->set_title (M("MAIN_BUTTON_SENDTOEDITOR"));
+								msgd->run ();
+								delete msgd;
+						}
+				}
     }
 }
 

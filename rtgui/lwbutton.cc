@@ -21,8 +21,12 @@
 LWButton::LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip) 
     : icon(i), actionCode(aCode), actionData(aData), halign(ha), valign(va), state(Normal), toolTip(tooltip), listener(NULL) {
     
-    w = i->get_width () + 2;
-    h = i->get_height () + 2;
+    if (i)  {
+			w = i->get_width () + 2;
+			h = i->get_height () + 2;
+    }
+    else
+			w = h = 2;
 }
 
 void LWButton::getSize (int& minw, int& minh) {
@@ -46,8 +50,12 @@ void LWButton::getPosition (int& x, int& y) {
 void LWButton::setIcon (Cairo::RefPtr<Cairo::ImageSurface> i) {
 
     icon = i;
-    w = i->get_width () + 2;
-    h = i->get_height () + 2;
+    if (i)  {
+			w = i->get_width () + 2;
+			h = i->get_height () + 2;
+    }
+    else
+			w = h = 2;
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> LWButton::getIcon () {
@@ -154,8 +162,10 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context) {
     if (state==Pressed_In)
         dilat++;
 
-    context->set_source (icon, xpos+dilat, ypos+dilat);
-    context->paint ();
+		if (icon)		{
+			context->set_source (icon, xpos+dilat, ypos+dilat);
+			context->paint ();
+		}
 }
 
 void LWButton::getAlignment (Alignment& ha, Alignment& va) {
