@@ -20,6 +20,7 @@
 #include <sigc++/class_slot.h>
 #include <math.h>
 #include <multilangmgr.h>
+#include <rtengine.h>
 
 extern Glib::ustring argv0;
 
@@ -115,14 +116,14 @@ void Adjuster::resetPressed () {
 
 double Adjuster::shapeValue (double a) {
 
-  return round(a*pow(10, digits)) / pow(10, digits);
+  return round(a*pow(double(10), digits)) / pow(double(10), digits);
 }
 
 void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefault) {
 
   sliderChange.block (true);
   spinChange.block (true);
-  for (digits=0; fabs(vstep*pow(10,digits)-floor(vstep*pow(10,digits)))>0.000000000001; digits++);
+  for (digits=0; fabs(vstep*pow(double(10),digits)-floor(vstep*pow(double(10),digits)))>0.000000000001; digits++);
   spin->set_digits (digits);
   spin->set_increments (vstep, 2.0*vstep);
   spin->set_range (vmin, vmax);

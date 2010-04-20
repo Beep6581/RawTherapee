@@ -143,7 +143,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
 
     progress ("Preparing shadow/highlight map...",100*readyphase/numofphases);
     if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt (pW*pW+pH*pH) / 2.0;
+        double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (oprevi, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }

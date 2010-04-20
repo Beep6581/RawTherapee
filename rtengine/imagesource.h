@@ -65,11 +65,11 @@ class ImageSource : public InitialImage {
                             ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
 
         virtual ~ImageSource            () {}
-        virtual int         load        (Glib::ustring fname) {}
+        virtual int         load        (Glib::ustring fname) =0;
         virtual void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp) {}
-        virtual ColorTemp   getWB       () {}
-        virtual ColorTemp   getAutoWB   () {}
-        virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {}
+        virtual ColorTemp   getWB       () =0;
+        virtual ColorTemp   getAutoWB   () =0;
+        virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;
 
         virtual double      getDefGain  () { return 1.0; }
         
@@ -78,7 +78,7 @@ class ImageSource : public InitialImage {
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
 
-        virtual ImageData*  getImageData () {}
+        virtual ImageData*  getImageData () =0;
         virtual void        setProgressListener (ProgressListener* pl) {}
 
                 void        increaseRef () { references++; }

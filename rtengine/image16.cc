@@ -22,10 +22,6 @@
 
 using namespace rtengine;
 
-unsigned short** IImage16::getRPlane () {}
-unsigned short** IImage16::getGPlane () {}
-unsigned short** IImage16::getBPlane () {}
-
 Image16::Image16 () 
   : r (NULL), g (NULL), b (NULL), data (NULL), unaligned (NULL) {
 }

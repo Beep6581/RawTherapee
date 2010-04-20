@@ -163,7 +163,7 @@ void Crop::update (int todo, bool internal) {
     if (settings->verbose) printf ("C-TRANSFORM: %d\n", t3.etime(t2));
 
     if ((todo & M_BLURMAP) && params.sh.enabled) {
-        double radius = sqrt (SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip)) / 2.0;
+        double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         cshmap->update (baseCrop, (unsigned short**)cbuffer, shradius, parent->ipf.lumimul, params.sh.hq);
         cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);

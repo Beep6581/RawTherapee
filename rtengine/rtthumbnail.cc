@@ -300,7 +300,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 buffer[i] = new unsigned short[fw];
         }
         shmap = new SHMap (fw, fh);
-        double radius = sqrt (fw*fw+fh*fh) / 2.0;
+        double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (baseImg, buffer, shradius, ipf.lumimul, params.sh.hq);
         if (buffer) {

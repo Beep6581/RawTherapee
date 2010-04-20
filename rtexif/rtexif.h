@@ -192,7 +192,12 @@ class StdInterpreter : public Interpreter {
         StdInterpreter () {}
         virtual std::string toString (Tag* t) {
             t->toString (buffer);
-            return std::string (buffer);
+            std::string s(buffer);
+            std::string::size_type p1 = s.find_first_not_of(' ');
+            if( p1 == std::string::npos )
+            	return s;
+            else
+            	return s.substr(p1, s.find_last_not_of(' ')-p1+1);
         }
         virtual void fromString (Tag* t, const std::string& value) {
             if (t->getType()==SHORT || t->getType()==LONG)
@@ -226,7 +231,7 @@ inline void sset2 (unsigned short v, unsigned char *s, ByteOrder order);
 inline void sset4 (int v, unsigned char *s, ByteOrder order);
 inline float int_to_float (int i);
 inline short int int2_to_signed (short unsigned int i);
-
+bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
 
 extern const TagAttrib exifAttribs[];
 extern const TagAttrib gpsAttribs[];

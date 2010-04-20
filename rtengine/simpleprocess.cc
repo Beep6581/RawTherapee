@@ -25,6 +25,8 @@
 #include <processingjob.h>
 #include <glibmm.h>
 
+#undef THREAD_PRIORITY_NORMAL
+
 namespace rtengine {
 
 IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl) {
@@ -116,7 +118,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh);
-        double radius = sqrt (fw*fw+fh*fh) / 2.0;
+        double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (baseImg, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }

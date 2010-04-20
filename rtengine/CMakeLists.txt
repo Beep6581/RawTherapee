@@ -10,7 +10,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc gauss.cc iccstore.cc
     image8.cc image16.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
-    helpers.cc processingjob.cc rtthumbnail.cc utils.cc bilateral2.cc)
+    processingjob.cc rtthumbnail.cc utils.cc bilateral2.cc)
 
 if (BUILD_SHARED)
     add_library (rtengine SHARED ${RTENGINESOURCEFILES})

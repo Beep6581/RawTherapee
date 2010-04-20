@@ -483,8 +483,11 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 }
 void ThumbBrowserBase::refreshThumbImages () {
 
-    for (int i=0; i<fd.size(); i++) 
+    for (int i=0; i<fd.size(); i++){
+    	previewHeight = options.thumbSize;
+    	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
         fd[i]->refreshThumbnailImage ();
+    }
 
     redraw ();
 }

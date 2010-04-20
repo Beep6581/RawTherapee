@@ -57,10 +57,10 @@ class ImageIO {
 
         void setProgressListener (ProgressListener* l) { pl = l; }
 
-        virtual int     getW            () {}
-		virtual int     getH            () {}
-		virtual void    allocate        (int width, int height) {}
-        virtual int     getBPS          () {}
+        virtual int     getW            () =0;
+		virtual int     getH            () =0;
+		virtual void    allocate        (int width, int height) =0;
+        virtual int     getBPS          () =0;
         virtual void    getScanline     (int row, unsigned char* buffer, int bps) {}
         virtual void    setScanline     (int row, unsigned char* buffer, int bps) {}
 

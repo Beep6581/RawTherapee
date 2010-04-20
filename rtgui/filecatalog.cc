@@ -119,6 +119,13 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
         categoryButtons[i+2] = bRank[i];
     categoryButtons[7] = bTrash;
 
+    exifInfo = Gtk::manage(new Gtk::ToggleButton ());
+    exifInfo->set_image (*(new Gtk::Image (argv0+"/images/info.png")));
+    exifInfo->set_relief (Gtk::RELIEF_NONE);
+    exifInfo->set_active( options.showFileNames );
+    exifInfo->signal_toggled().connect(sigc::mem_fun(*this, &FileCatalog::exifInfoButtonToggled));
+    buttonBar->pack_start (*exifInfo, Gtk::PACK_SHRINK);
+
     // thumbnail zoom
     Gtk::HBox* zoomBox = new Gtk::HBox ();
     zoomInButton  = new Gtk::Button ();
@@ -168,6 +175,12 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     checkCounter = 2;
     g_timeout_add (CHECKTIME, _directoryUpdater, this);
 #endif
+}
+
+void FileCatalog::exifInfoButtonToggled()
+{
+   options.showFileNames =  exifInfo->get_active();
+   fileBrowser->refreshThumbImages ();
 }
 
 void FileCatalog::on_realize() {

@@ -27,8 +27,8 @@
 #include <gauss.h>
 #include <glibmm.h>
 
-#define ELEM(a,b) (src[i-a][j-b] * ec[src[i-a][j-b]-src[i][j]+0x10000])
-#define SULY(a,b) (ec[src[i-a][j-b]-src[i][j]+0x10000])
+#define ELEM(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+0x10000])
+#define SULY(a,b) (ec[src[i - a][j - b]-src[i][j]+0x10000])
 
 #define BL_BEGIN(a,b)   double scale = (a); \
                         int* ec = new int [0x20000]; \

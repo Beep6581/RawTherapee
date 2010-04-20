@@ -106,7 +106,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     virtual bool checkFilter (ThumbBrowserEntryBase* entry) { return true; }
     virtual void rightClicked (ThumbBrowserEntryBase* entry) {}
     virtual void doubleClicked (ThumbBrowserEntryBase* entry) {}
-    virtual bool keyPressed (GdkEventKey* event) {}
+    virtual bool keyPressed (GdkEventKey* event) {return true;}
     virtual void selectionChanged () {}
     
     virtual void redrawNeeded (ThumbBrowserEntryBase* entry) {}

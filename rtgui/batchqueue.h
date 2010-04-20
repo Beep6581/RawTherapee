@@ -29,10 +29,10 @@
 class BatchQueueListener {
 
     public:
-        virtual void queueSizeChanged     (int qsize) {}
-        virtual void imageProcessingReady (Glib::ustring fname) {}
-        virtual void queueEmpty           () {}
-        virtual bool canStartNext         () {}
+        virtual void queueSizeChanged     (int qsize) =0;
+        virtual void imageProcessingReady (Glib::ustring fname) =0;
+        virtual void queueEmpty           () =0;
+        virtual bool canStartNext         () =0;
 };
 
 class FileCatalog;
