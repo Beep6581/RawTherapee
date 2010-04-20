@@ -44,7 +44,7 @@ void LWButtonSet::getMinimalDimensions (int& w, int& h) {
     }
 }
 
-int LWButtonSet::arrangeButtons (int x, int y, int w, int h) {
+void LWButtonSet::arrangeButtons (int x, int y, int w, int h) {
 
     int mw, mh;
     getMinimalDimensions (mw, mh);

@@ -25,8 +25,8 @@
 class FileSelectionListener {
 
   public:
-    virtual bool fileSelected           (Thumbnail* thm) {}
-    virtual bool addBatchQueueJob       (BatchQueueEntry* bqe) {}
+    virtual bool fileSelected           (Thumbnail* thm) =0;
+    virtual bool addBatchQueueJob       (BatchQueueEntry* bqe) =0;
 };
 
 #endif

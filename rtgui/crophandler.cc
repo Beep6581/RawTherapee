@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <crophandler.h>
+#undef THREAD_PRIORITY_NORMAL
 
 using namespace rtengine;
 

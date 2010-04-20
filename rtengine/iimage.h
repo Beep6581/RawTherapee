@@ -31,42 +31,42 @@ namespace rtengine {
         public:
         /** Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
           * @return The mutex */
-            virtual Glib::Mutex& getMutex ();
-            virtual cmsHPROFILE getProfile ();
+            virtual Glib::Mutex& getMutex ()=0;
+            virtual cmsHPROFILE getProfile ()=0;
         /** Returns the width of the image.
           * @return The width of the image */
-            virtual int getWidth ();
+            virtual int getWidth ()=0;
         /** Returns the height of the image.
           * @return The height of the image */
-            virtual int getHeight ();
+            virtual int getHeight ()=0;
         /** Returns the bits per pixel of the image.
           * @return The bits per pixel of the image */
-            virtual int getBitsPerPixel ();
+            virtual int getBitsPerPixel ()=0;
         /** Saves the image to file. It autodetects the format (jpg, tif, png are supported).
           * @param fname is the name of the file 
             @return the error code, 0 if none */
-            virtual int saveToFile (Glib::ustring fname);
+            virtual int saveToFile (Glib::ustring fname)=0;
         /** Saves the image to file in a png format.
           * @param fname is the name of the file 
           * @param compression is the amount of compression (0-6), -1 corresponds to the default
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
             @return the error code, 0 if none */
-            virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1);
+            virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1)=0;
         /** Saves the image to file in a jpg format.
           * @param fname is the name of the file 
           * @param quality is the quality of the jpeg (0...100), set it to -1 to use default
             @return the error code, 0 if none */
-            virtual int saveAsJPEG (Glib::ustring fname, int quality = 100);
+            virtual int saveAsJPEG (Glib::ustring fname, int quality = 100)=0;
         /** Saves the image to file in a tif format.
           * @param fname is the name of the file 
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
             @return the error code, 0 if none */
-            virtual int saveAsTIFF (Glib::ustring fname, int bps = -1);
+            virtual int saveAsTIFF (Glib::ustring fname, int bps = -1)=0;
         /** Sets the progress listener if you want to follow the progress of the image saving operations (optional).
           * @param pl is the pointer to the class implementing the ProgressListener interface */
-            virtual void setSaveProgressListener (ProgressListener* pl);
+            virtual void setSaveProgressListener (ProgressListener* pl)=0;
         /** Free the image */
-            virtual void free ();
+            virtual void free ()=0;
     };
 
   /** This class represents an image having a classical 8 bits/pixel representation */
@@ -74,7 +74,7 @@ namespace rtengine {
         public:
         /** Returns the pixel data, in r/g/b order from top left to bottom right continously.
           * @return a pointer to the pixel data */
-            virtual const unsigned char* getData ();
+            virtual const unsigned char* getData ()=0;
     };
 
   /** This class represents an image having a 16 bits/pixel planar representation. 
@@ -83,13 +83,13 @@ namespace rtengine {
         public:
         /** Returns the "red" plane data.
           * @return the two dimensional array of the red plane */
-            virtual unsigned short** getRPlane ();
+            virtual unsigned short** getRPlane ()=0;
         /** Returns the "green" plane data.
           * @return the two dimensional array of the green plane */
-            virtual unsigned short** getGPlane ();
+            virtual unsigned short** getGPlane ()=0;
         /** Returns the "blue" plane data.
           * @return the two dimensional array of the blue plane */
-            virtual unsigned short** getBPlane ();
+            virtual unsigned short** getBPlane ()=0;
     };
 }
 

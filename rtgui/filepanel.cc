@@ -177,6 +177,7 @@ bool FilePanel::addBatchQueueJob (BatchQueueEntry* bqe) {
 
     if (parent)
         parent->addBatchQueueJob (bqe);
+	return true;
 }
 
 void FilePanel::optionsChanged () {

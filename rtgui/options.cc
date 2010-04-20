@@ -112,6 +112,7 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (0.8);
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
+    showFileNames = true;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -130,6 +131,7 @@ void Options::setDefaults () {
 Options* Options::copyFrom (Options* other) {
 
     *this = *other;
+	return this;
 }
 
 int Options::readFromFile (Glib::ustring fname) {
@@ -218,6 +220,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "RenameUseTemplates")) renameUseTemplates = keyFile.get_boolean ("File Browser", "RenameUseTemplates");
     if (keyFile.has_key ("File Browser", "ThumbnailZoomRatios"))thumbnailZoomRatios= keyFile.get_double_list ("File Browser", "ThumbnailZoomRatios");
     if (keyFile.has_key ("File Browser", "OverlayedFileNames")) overlayedFileNames = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
+    if (keyFile.has_key ("File Browser", "ShowFileNames"))      showFileNames = keyFile.get_boolean ("File Browser", "ShowFileNames");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -323,6 +326,7 @@ int Options::saveToFile (Glib::ustring fname) {
     Glib::ArrayHandle<double> ptzoom = thumbnailZoomRatios;
     keyFile.set_double_list ("File Browser", "ThumbnailZoomRatios", ptzoom);
     keyFile.set_boolean ("File Browser", "OverlayedFileNames", overlayedFileNames);
+    keyFile.set_boolean ("File Browser", "ShowFileNames", showFileNames );
     
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);

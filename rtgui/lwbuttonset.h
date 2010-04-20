@@ -36,7 +36,7 @@ class LWButtonSet {
         
         void    getMinimalDimensions (int& w, int& h);
         void    getAllocatedDimensions (int& w, int& h);
-        int     arrangeButtons (int x, int y, int w, int h);
+        void    arrangeButtons (int x, int y, int w, int h);
         void    setColors     (const Gdk::Color& bg, const Gdk::Color& fg);
         bool    motionNotify  (int x, int y);
         bool    pressNotify   (int x, int y);

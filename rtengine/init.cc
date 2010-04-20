@@ -39,6 +39,7 @@ int init (const Settings* s) {
     dcrMutex = new Glib::Mutex;
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
+	return 0;
 }
 
 StagedImageProcessor* StagedImageProcessor::create (InitialImage* initialImage) {

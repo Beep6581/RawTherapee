@@ -112,7 +112,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     int istartx = prex;
     int istarty = prey;
 
-    if (options.overlayedFileNames) {
+    if (options.showFileNames && options.overlayedFileNames) {
         cr->begin_new_path ();
         cr->rectangle (istartx, istarty, prew, fnlabh+dtlabh+exlabh+2*iofs_y);
         if ((texts.get_red_p()+texts.get_green_p()+texts.get_blue_p())/3 > 0.5)
@@ -146,62 +146,64 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
         }
     }
 
-    int textposx_fn, textposx_ex, textposx_dt, textposy, textw;
-    if (!options.overlayedFileNames) {
-        textposx_fn = exp_width/2 - fnlabw/2;
-        if (textposx_fn<0) textposx_fn = 0;
-        textposx_ex = exp_width/2 - exlabw/2;
-        if (textposx_ex<0) textposx_ex = 0;
-        textposx_dt = exp_width/2 - dtlabw/2;
-        if (textposx_dt<0) textposx_dt = 0;
-        textposy = upperMargin + bsHeight + 2*borderWidth + preh + borderWidth + textGap;
-        textw = exp_width - 2*textGap;
-        gc_->set_foreground (selected ? texts : textn);
-    }
-    else {
-        textposx_fn = istartx;
-        textposx_ex = istartx;
-        textposx_dt = istartx;
-        textposy = istarty;
-        textw = prew - (istartx - prex);
-        gc_->set_foreground (texts);
-    }
+    if( options.showFileNames ){
+		int textposx_fn, textposx_ex, textposx_dt, textposy, textw;
+		if (!options.overlayedFileNames) {
+			textposx_fn = exp_width/2 - fnlabw/2;
+			if (textposx_fn<0) textposx_fn = 0;
+			textposx_ex = exp_width/2 - exlabw/2;
+			if (textposx_ex<0) textposx_ex = 0;
+			textposx_dt = exp_width/2 - dtlabw/2;
+			if (textposx_dt<0) textposx_dt = 0;
+			textposy = upperMargin + bsHeight + 2*borderWidth + preh + borderWidth + textGap;
+			textw = exp_width - 2*textGap;
+			gc_->set_foreground (selected ? texts : textn);
+		}
+		else {
+			textposx_fn = istartx;
+			textposx_ex = istartx;
+			textposx_dt = istartx;
+			textposy = istarty;
+			textw = prew - (istartx - prex);
+			gc_->set_foreground (texts);
+		}
 
-    // draw file name
-    Glib::RefPtr<Pango::Context> context = w->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
-    fontd.set_weight (Pango::WEIGHT_BOLD);
-    if (italicstyle)
-        fontd.set_style (Pango::STYLE_ITALIC);
-    else
-        fontd.set_style (Pango::STYLE_NORMAL);
+		// draw file name
+		Glib::RefPtr<Pango::Context> context = w->get_pango_context () ;
+		Pango::FontDescription fontd = context->get_font_description ();
+		fontd.set_weight (Pango::WEIGHT_BOLD);
+		if (italicstyle)
+			fontd.set_style (Pango::STYLE_ITALIC);
+		else
+			fontd.set_style (Pango::STYLE_NORMAL);
 
-    context->set_font_description (fontd);
-    Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout (dispname);
-    fn->set_width (textw*Pango::SCALE);
-    fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-    backBuffer->draw_layout(gc_, textposx_fn, textposy, fn);
-    
-    fontd.set_weight (Pango::WEIGHT_NORMAL);
-    fontd.set_style (Pango::STYLE_NORMAL);
-    context->set_font_description (fontd);
+		context->set_font_description (fontd);
+		Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout (dispname);
+		fn->set_width (textw*Pango::SCALE);
+		fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+		backBuffer->draw_layout(gc_, textposx_fn, textposy, fn);
 
-    // draw date/time label
-    int tpos = fnlabh;
-    if (options.fbShowDateTime && datetimeline!="") {
-        fn = w->create_pango_layout (datetimeline);
-        fn->set_width (textw*Pango::SCALE);
-        fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-        backBuffer->draw_layout(gc_, textposx_dt, textposy + tpos, fn);
-        tpos += dtlabh;
-    }
-    // draw basic exif info
-    if (options.fbShowBasicExif && exifline!="") {
-        fn = w->create_pango_layout (exifline);
-        fn->set_width (textw*Pango::SCALE);
-        fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
-        backBuffer->draw_layout (gc_, textposx_ex, textposy + tpos, fn);
-        tpos += exlabh;
+		fontd.set_weight (Pango::WEIGHT_NORMAL);
+		fontd.set_style (Pango::STYLE_NORMAL);
+		context->set_font_description (fontd);
+
+		// draw date/time label
+		int tpos = fnlabh;
+		if (options.fbShowDateTime && datetimeline!="") {
+			fn = w->create_pango_layout (datetimeline);
+			fn->set_width (textw*Pango::SCALE);
+			fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+			backBuffer->draw_layout(gc_, textposx_dt, textposy + tpos, fn);
+			tpos += dtlabh;
+		}
+		// draw basic exif info
+		if (options.fbShowBasicExif && exifline!="") {
+			fn = w->create_pango_layout (exifline);
+			fn->set_width (textw*Pango::SCALE);
+			fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
+			backBuffer->draw_layout (gc_, textposx_ex, textposy + tpos, fn);
+			tpos += exlabh;
+		}
     }
 }
 
@@ -265,7 +267,7 @@ void ThumbBrowserEntryBase::resize (int h) {
     // calculate the height remaining for the thumbnail image
     preh = height - upperMargin - 2*borderWidth - lowerMargin - bsh;
     int infow, infoh;
-    if (!options.overlayedFileNames) {
+    if (options.showFileNames && !options.overlayedFileNames) {
         // dimensions of the info text
         getTextSizes (infow, infoh);
         preh -= infoh + textGap;
@@ -273,7 +275,7 @@ void ThumbBrowserEntryBase::resize (int h) {
 
     calcThumbnailSize ();
     width = prew + 2*sideMargin + 2*borderWidth;
-    if (!options.overlayedFileNames) {
+    if (options.showFileNames && !options.overlayedFileNames) {
         width = prew + 2*sideMargin + 2*borderWidth;
         if (width<infow + 2*sideMargin + 2*borderWidth)
             width = infow + 2*sideMargin + 2*borderWidth;

@@ -23,6 +23,8 @@
 #include <gtkmm.h>
 #include <rtengine.h>
 
+#undef THREAD_PRIORITY_NORMAL
+
 class PLDBridge : public rtengine::ProgressListener {
 
         Gtk::Dialog* dialog;

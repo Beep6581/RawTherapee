@@ -48,32 +48,32 @@ namespace rtengine {
         public:
           /** Checks the availability of exif metadata tags.
             * @return Returns true if image contains exif metadata tags */
-            virtual bool hasExif () const {}        
+            virtual bool hasExif () const =0;        
           /** Returns the directory of exif metadata tags.
             * @return The directory of exif metadata tags */
-            virtual const rtexif::TagDirectory* getExifData () const {}
+            virtual const rtexif::TagDirectory* getExifData () const =0;
           /** Checks the availability of IPTC tags.
             * @return Returns true if image contains IPTC tags */
-            virtual bool hasIPTC () const {}
+            virtual bool hasIPTC () const =0;
           /** Returns the directory of IPTC tags.
             * @return The directory of IPTC tags */
-            virtual const std::vector<procparams::IPTCPair> getIPTCData () const {}
+            virtual const std::vector<procparams::IPTCPair> getIPTCData () const =0;
           /** @return a struct containing the date and time of the image */
-            virtual struct tm   getDateTime () const {}
+            virtual struct tm   getDateTime () const =0;
           /** @return the ISO of the image */
-            virtual int         getISOSpeed () const {}
+            virtual int         getISOSpeed () const =0;
           /** @return the F number of the image */
-            virtual double      getFNumber  () const {}
+            virtual double      getFNumber  () const =0;
           /** @return the focal length used at the exposure */
-            virtual double      getFocalLen () const {}
+            virtual double      getFocalLen () const =0;
           /** @return the shutter speed */
-            virtual double      getShutterSpeed () const {}
+            virtual double      getShutterSpeed () const =0;
           /** @return the maker of the camera */
-            virtual std::string getMake     () const {}
+            virtual std::string getMake     () const =0;
           /** @return the model of the camera */
-            virtual std::string getModel    () const {}
+            virtual std::string getModel    () const =0;
           /** @return the lens on the camera  */
-            virtual std::string getLens     () const {}
+            virtual std::string getLens     () const =0;
           /** Functions to convert between floating point and string representation of shutter and aperture */
             static std::string apertureToString (double aperture);
           /** Functions to convert between floating point and string representation of shutter and aperture */
@@ -121,15 +121,15 @@ namespace rtengine {
         public:
           /** Returns the file name of the image.
             * @return The file name of the image */
-            virtual Glib::ustring getFileName () {}
+            virtual Glib::ustring getFileName () =0;
           /** Returns the embedded icc profile of the image.
             * @return The handle of the embedded profile */
-            virtual cmsHPROFILE getEmbeddedProfile () {}
+            virtual cmsHPROFILE getEmbeddedProfile () =0;
           /** Returns a class providing access to the exif and iptc metadata tags of the image.
             * @return An instance of the ImageMetaData class */
-            virtual const ImageMetaData* getMetaData () {}
+            virtual const ImageMetaData* getMetaData () =0;
           /** This is a function used for internal purposes only. */
-            virtual ImageSource* getImageSource () {}
+            virtual ImageSource* getImageSource () =0;
           /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
             virtual void increaseRef () {}
           /** This class has manual reference counting. You have to call this function each time to remove a reference 
@@ -234,61 +234,61 @@ namespace rtengine {
         public:
             /** Returns the inital image corresponding to the image processor.
               * @return the inital image corresponding to the image processor */
-            virtual InitialImage* getInitialImage () {}
+            virtual InitialImage* getInitialImage () =0;
             /** Returns the current processing parameters.
               * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller) */
-            virtual void        getParams (procparams::ProcParams* dst) {}
+            virtual void        getParams (procparams::ProcParams* dst) =0;
             /** An essential member function. Call this when a setting has been changed. This function returns a pointer to the
               * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady 
               * function to start the image update.
               * @param change is the ID of the changed setting */
-            virtual procparams::ProcParams* getParamsForUpdate (ProcEvent change) {}
+            virtual procparams::ProcParams* getParamsForUpdate (ProcEvent change) =0;
             /** An essential member function. This indicates that you are ready with the update of the processing parameters you got 
               * with the getParamsForUpdate call, so the image can be updated. This function returns immediately.
               * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
               * and to a DetailedCropListener (if enabled). */
-            virtual void        paramsUpdateReady () {}
+            virtual void        paramsUpdateReady () =0;
             /** Stops image processing. When it returns, the image processing is already stopped. */
-            virtual void        stopProcessing () {}
+            virtual void        stopProcessing () =0;
             /** Sets the scale of the preview image. The larger the number is, the faster the image updates are (typical values are 4-5).
               * @param scale is the scale of the preview image */
-            virtual void        setPreviewScale (int scale) {}
+            virtual void        setPreviewScale (int scale) =0;
             /** Returns the scale of the preview image. 
               * @return the current scale of the preview image */
-            virtual int         getPreviewScale () {}
+            virtual int         getPreviewScale () =0;
             /** Performs a full update on the preview image. The resulting image is passed to the listener. */
-            virtual void        fullUpdatePreviewImage () {}
+            virtual void        fullUpdatePreviewImage () =0;
             /** Performs a full update on the detailed crops corresponding to the image. The resulting images are passed to the listeners of the crops. */
-            virtual void        fullUpdateDetailedCrops () {}
+            virtual void        fullUpdateDetailedCrops () =0;
             /** Returns the full width of the resulting image (in 1:1 scale). 
               * @return the width of the final image */
-            virtual int         getFullWidth () {}
+            virtual int         getFullWidth () =0;
             /** Returns the full height of the resulting image (in 1:1 scale). 
               * @return the height of the final image */
-            virtual int         getFullHeight () {}
+            virtual int         getFullHeight () =0;
             /** Returns the width of the preview image. 
               * @return the width of the preview image */
-            virtual int         getPreviewWidth () {}
+            virtual int         getPreviewWidth () =0;
             /** Returns the height of the preview image. 
               * @return the height of the preview image */
-            virtual int         getPreviewHeight () {}
+            virtual int         getPreviewHeight () =0;
 
             /** Creates and returns a Crop instance that acts as a window on the image */
-            virtual DetailedCrop* createCrop  () {}
+            virtual DetailedCrop* createCrop  () =0;
 
-            virtual void        getAutoWB   (double& temp, double& green) {}
-            virtual void        getCamWB    (double& temp, double& green) {}
-            virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) {}
-            virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) {}
+            virtual void        getAutoWB   (double& temp, double& green) =0;
+            virtual void        getCamWB    (double& temp, double& green) =0;
+            virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) =0;
+            virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) =0;
 
-            virtual void        saveInputICCReference (const Glib::ustring& fname) {}
+            virtual void        saveInputICCReference (const Glib::ustring& fname) =0;
 
-            virtual void        setProgressListener     (ProgressListener* l) {}
-            virtual void        setSizeListener         (SizeListener* l) {}
-            virtual void        delSizeListener         (SizeListener* l) {}
-            virtual void        setAutoExpListener      (AutoExpListener* l) {}
-            virtual void        setHistogramListener    (HistogramListener *l) {}
-            virtual void        setPreviewImageListener (PreviewImageListener* l) {}
+            virtual void        setProgressListener     (ProgressListener* l) =0;
+            virtual void        setSizeListener         (SizeListener* l) =0;
+            virtual void        delSizeListener         (SizeListener* l) =0;
+            virtual void        setAutoExpListener      (AutoExpListener* l) =0;
+            virtual void        setHistogramListener    (HistogramListener *l) =0;
+            virtual void        setPreviewImageListener (PreviewImageListener* l) =0;
 
             virtual ~StagedImageProcessor () {}
 
@@ -368,7 +368,7 @@ namespace rtengine {
                         * there is no jobs left.
                         * @param img is the result of the last ProcessingJob 
                         * @return the next ProcessingJob to process */  
-            virtual ProcessingJob* imageReady (IImage16* img) {}
+            virtual ProcessingJob* imageReady (IImage16* img) =0;
     };
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
    * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on 

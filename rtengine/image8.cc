@@ -21,7 +21,6 @@
 
 using namespace rtengine;
 
-const unsigned char* IImage8::getData () {}
 
 Image8::Image8 () 
   : width(-1), height(-1), data(NULL) {

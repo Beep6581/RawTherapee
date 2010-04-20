@@ -41,18 +41,6 @@ Glib::ustring safe_locale_to_utf8 (const std::string& src);
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Glib::Mutex& IImage::getMutex () {}
-cmsHPROFILE IImage::getProfile () {}
-int IImage::getWidth ()  {}
-int IImage::getHeight () {}
-int IImage::getBitsPerPixel () {}
-int IImage::saveToFile (Glib::ustring fname) {}
-int IImage::saveAsPNG  (Glib::ustring fname, int compression, int bps) { }
-int IImage::saveAsJPEG (Glib::ustring fname, int quality) {}
-int IImage::saveAsTIFF (Glib::ustring fname, int bps) {}
-void IImage::setSaveProgressListener (ProgressListener* pl) {} 
-void IImage::free () {}
-
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {

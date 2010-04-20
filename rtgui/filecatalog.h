@@ -96,6 +96,7 @@ class FileCatalog : public Gtk::VBox,
         Gtk::ToggleButton* bRank[5];
         Gtk::ToggleButton* bTrash;
         Gtk::ToggleButton* categoryButtons[8];
+        Gtk::ToggleButton* exifInfo;
         sigc::connection bCateg[8];
         Gtk::Image* iranked[5], *igranked[5];
         
@@ -171,7 +172,7 @@ class FileCatalog : public Gtk::VBox,
                 void setFileSelectionChangeListener (FileSelectionChangeListener* l) { fslistener = l; }
                 void setImageAreaToolListener (ImageAreaToolListener* l) { iatlistener = l; }
 				void setFilterPanel (FilterPanel* fpanel);
-				
+				void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
                 void filterChanged ();
                 void runFilterDialog ();

@@ -24,6 +24,7 @@
 #include <string.h>
 #include <time.h>
 #include <algorithm>
+#include <sstream>
 
 namespace rtexif {
 
@@ -1380,5 +1381,54 @@ short int int2_to_signed (short unsigned int i) {
   u.i = i;
   return u.s;
 }
+
+/* Function to parse and extract focal length and aperture information from description
+ * @fullname must conform to the following formats
+ * <focal>mm f/<aperture>
+ * <focal>-<focal>mm f/<aperture>
+ * <focal>-<focal>mm f/<aperture>-<aperture>
+ * NB: no space between separator '-'; no space between focal length and 'mm'
+ */
+bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal)
+{
+	 minFocal=0.0;
+	 maxFocal=0.0;
+	 maxApertureAtMinFocal=0.0;
+	 maxApertureAtMaxFocal=0.0;
+
+	 int iAperture = fullname.find("f/");
+	 if( iAperture != std::string::npos ){
+		 char meno;
+		 std::istringstream apertures( std::string(fullname,iAperture+2) );
+			 apertures >> maxApertureAtMinFocal;
+			 if( !apertures.eof())
+				apertures >> meno;
+			 if( !apertures.eof())
+				apertures >> maxApertureAtMaxFocal;
+		 if(maxApertureAtMinFocal >0. && maxApertureAtMaxFocal==0.)
+			 maxApertureAtMaxFocal= maxApertureAtMinFocal;
+
+		 int eFocal = fullname.rfind("mm",iAperture);
+		 if( eFocal != -1 ){
+			 int iFocal = fullname.rfind(' ',eFocal); // find first space leading focal length
+			 if( iFocal == std::string::npos )
+				 iFocal = 0;
+
+			 std::istringstream focals( std::string(fullname,iFocal,eFocal-iFocal) );
+			 focals >> minFocal;
+			 if( !focals.eof())
+				focals >> meno;
+			 if( !focals.eof())
+				focals >> maxFocal;
+			 if(minFocal >0. && maxFocal==0.0)
+				 maxFocal=minFocal;
+
+			 return true;
+		 }
+		 return false;
+	 }
+     return false;
+}
+
 
 }
