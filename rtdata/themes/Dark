@@ -1,0 +1,194 @@
+# colour scheme (RT Dark) by Bytec ( http://bytec.vitanet.lv )
+# based on the default gtkrc for
+# rawtherapee ( http://www.rawtherapee.com )
+# which is based on Bluecurve
+# Created by Richard Stellingwerff, Emil Jacobs and Daniel Borgmann.
+
+
+style "clearlooks-default"
+{
+  font_name = "tahoma 8"
+  GtkButton      ::default_border    = { 0, 0, 0, 0 }
+  GtkComboBox    ::default_border    = { 0, 0, 0, 0 }
+  GtkRange       ::trough_border     = 0
+  GtkPaned       ::handle_size       = 6
+  GtkRange       ::slider_width      = 12
+  GtkRange       ::stepper_size      = 12
+  GtkScrollbar   ::min_slider_length = 30
+  GtkCheckButton ::indicator_size    = 12
+  GtkMenuBar     ::internal-padding  = 2
+  GtkTreeView    ::expander_size     = 11
+  GtkExpander    ::expander_size     = 11
+
+  xthickness = 1
+  ythickness = 1
+
+  fg[NORMAL]        = "#808080"
+  fg[PRELIGHT]      = "#d0d0d0"
+  fg[ACTIVE]        = "#808080"
+  fg[SELECTED]      = "#404040"
+  fg[INSENSITIVE]   = "#2d2d2d"
+
+  bg[NORMAL]        = "#2d2d2d"
+  bg[PRELIGHT]      = "#404040"
+  bg[ACTIVE]        = "#2d2d2d"
+  bg[SELECTED]      = "#606060"
+  bg[INSENSITIVE]   = "#2d2d2d"
+   
+  base[NORMAL]      = "#404040"
+  base[PRELIGHT]    = "#404040"
+  base[ACTIVE]      = "#404040"
+  base[SELECTED]    = "#606060"
+  base[INSENSITIVE] = "#2d2d2d"
+   
+  text[NORMAL]      = "#a0a0a0"
+  text[PRELIGHT]    = "#d0d0d0"
+  text[ACTIVE]      = "#a0a0a0"
+  text[SELECTED]    = "#101010"
+  text[INSENSITIVE] = "#101010"
+
+  engine "clearlooks"  {
+    sunkenmenubar     = 0       # 0 = disable, 1 = enable
+    menuitemstyle     = 0       # 0 = flat, 1 = 3d-ish (button)
+    listviewitemstyle = 0       # 0 = flat, 1 = 3d-ish (gradient)
+    progressbarstyle  = 1       # 0 = candy bar, 1 = flat
+    radius = 10.0
+  }
+}
+
+style "clearlooks-wide" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+style "clearlooks-toggle" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+
+  bg[ACTIVE]        = "#606060"
+  text[ACTIVE]      = "#000000"
+  bg[SELECTED]        = "#606060"
+  text[SELECTED]      = "#000000"
+}
+
+style "clearlooks-combo" = "clearlooks-default"
+{
+  xthickness = 0
+  ythickness = 0
+}
+
+style "clearlooks-notebook" = "clearlooks-wide"
+{
+  bg[NORMAL] = "#2d2d2d"
+}
+
+style "clearlooks-tasklist" = "clearlooks-default"
+{
+  xthickness = 5
+  ythickness = 3
+}
+
+style "clearlooks-menu" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 1
+  bg[NORMAL] = "#2d2d2d"
+}
+
+style "clearlooks-menu-item" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+  fg[PRELIGHT] = "#404040"
+  text[PRELIGHT] = "#000000"
+}
+
+style "clearlooks-menu-itembar" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+style "clearlooks-tree" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+style "clearlooks-frame-title" = "clearlooks-default"
+{
+  fg[NORMAL] = "#404040"
+}
+
+style "clearlooks-panel" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+
+style "clearlooks-tooltips" = "clearlooks-default"
+{
+  xthickness = 4
+  ythickness = 4
+  bg[NORMAL] = {1.0, 1.0, 1.0}
+  fg[NORMAL] = {0.0, 0.0, 0.0}
+
+  fg[NORMAL]        = "#000000"
+  fg[PRELIGHT]      = "#000000"
+  fg[ACTIVE]        = "#000000"
+  fg[SELECTED]      = "#000000"
+  fg[INSENSITIVE]   = "#000000"
+
+  bg[NORMAL]        = "#ffffff"
+  bg[PRELIGHT]      = "#ffffff"
+  bg[ACTIVE]        = "#ffffff"
+  bg[SELECTED]      = "#ffffff"
+  bg[INSENSITIVE]   = "#ffffff"
+   
+  base[NORMAL]      = "#000000"
+  base[PRELIGHT]    = "#000000"
+  base[ACTIVE]      = "#000000"
+  base[SELECTED]    = "#000000"
+  base[INSENSITIVE] = "#000000"
+   
+  text[NORMAL]      = "#000000"
+  text[PRELIGHT]    = "#000000"
+  text[ACTIVE]      = "#000000"
+  text[SELECTED]    = "#000000"
+  text[INSENSITIVE] = "#000000"
+
+
+}
+
+style "clearlooks-progressbar" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+  fg[PRELIGHT]  = "#000000"
+}
+
+class "GtkWidget" style "clearlooks-default"
+class "GtkTreeView" style "clearlooks-default"
+class "GtkButton" style "clearlooks-wide"
+class "GtkToggleButton" style "clearlooks-toggle"
+class "GtkRange" style "clearlooks-wide"
+class "GtkFrame" style "clearlooks-wide"
+class "GtkStatusbar" style "clearlooks-wide"
+class "GtkMenu" style "clearlooks-menu"
+class "GtkMenuItem" style "clearlooks-menu-item"
+widget_class "*MenuItem.*" style "clearlooks-menu-item"
+class "GtkEntry" style "clearlooks-wide"
+widget_class "*.tooltip.*.GtkToggleButton" style "clearlooks-tasklist"
+widget "gtk-tooltip" style "clearlooks-tooltips"
+widget_class "*.GtkTreeView.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCTree.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkFrame.GtkLabel" style "clearlooks-frame-title"
+widget_class "BasePWidget.GtkEventBox.GtkTable.GtkFrame" style "clearlooks-panel"
+class "GtkNotebook" style "clearlooks-notebook"
+class "GtkProgressBar" style "clearlooks-progressbar"
+widget_class "*.GtkComboBox.GtkButton" style "clearlooks-combo"
+widget_class "*.GtkCombo.GtkButton" style "clearlooks-combo"
