@@ -8854,6 +8854,292 @@ extern Settings* settings;
 
 Glib::Mutex* dcrMutex=NULL;
 
+int loadFujiRaw (const char* fname, struct RawImage *ri) {
+
+  ushort height_r;
+  ushort width_r;
+  ushort (*image_r)[4];
+  int col;
+  int row;
+  int c;
+
+  // Valores de saturacion escalados entre 0 y 1 sobre 2^14
+  int max_val = pow(2, 14) - 1;
+  float sat_s; 
+  float sat_r;
+
+  // Factores entre los diferentes canales
+  const float factor_canal[] = {4.32, 3.84, 4.46, 3.84};
+
+  static const double xyzd50_srgb[3][3] =
+  { { 0.436083, 0.385083, 0.143055 },
+    { 0.222507, 0.716888, 0.060608 },
+    { 0.013930, 0.097097, 0.714022 } };
+
+dcrMutex->lock ();
+
+  ifname = fname;//strdup (fname);
+  image = NULL;
+  
+  exif_base = -1;
+  ciff_base = -1;
+  ciff_len = -1;
+  verbose = settings->verbose;
+  oprof = NULL;
+  ri->data = NULL;
+  ri->allocation = NULL;
+  ri->profile_data = NULL;
+  ifp = gfopen (fname);
+  if (!ifp) {
+    dcrMutex->unlock ();
+    return 3;
+  }
+
+  use_camera_wb = 0;
+  highlight = 1;
+  half_size = 0;
+
+  //Sensor R
+  shot_select = 1; 
+
+  identify ();
+  use_camera_wb = 1;
+  shrink = 0;
+
+  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname);
+  iheight = height;
+  iwidth  = width;
+
+  image   = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
+  image_r = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
+  meta_data = (char *) (image + height*width);
+
+  if (setjmp (failure)) {
+      if (image)
+        free (image);
+      if (ri->data)
+        free(ri->data);
+      fclose (ifp);
+      dcrMutex->unlock ();
+      return 100;
+  }
+
+  fseek (ifp, data_offset, SEEK_SET);
+  (*load_raw)();
+
+  // Copiaremos la imagen en otra ubicacion y la liberaremos
+  memcpy(image_r, image, height*width*sizeof *image + meta_length);
+  height_r = height;
+  width_r = width;
+  free(image);
+
+  // Cargaremos la otra imagen
+  exif_base = -1;
+  ciff_base = -1;
+  ciff_len = -1;
+  verbose = settings->verbose;
+  oprof = NULL;
+  ri->data = NULL;
+  ri->allocation = NULL;
+  ri->profile_data = NULL;
+  fseek (ifp, 0, SEEK_SET); // Podremos el apuntador del fichero en el inicio
+
+  //Sensor S
+  shot_select = 0; 
+
+  use_camera_wb = 0;
+  highlight = 1;
+  half_size = 0;
+
+  identify ();
+  use_camera_wb = 1;
+  shrink = 0;
+
+  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname);
+  iheight = height;
+  iwidth  = width;
+
+  image = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
+  meta_data = (char *) (image + height*width);
+
+  if (setjmp (failure)) {
+      if (image)
+        free (image);
+      if (ri->data)
+        free(ri->data);
+      fclose (ifp);
+      dcrMutex->unlock ();
+      return 100;
+  }
+
+  fseek (ifp, data_offset, SEEK_SET);
+  (*load_raw)();
+
+  // Segun los valores de iso establecemos los valores de saturacion de S
+  switch((int)iso_speed){
+  case 100:
+    sat_s = 0.82;
+    break;
+  default:
+    sat_s = 0.96;
+  }
+
+  // Segun los valores de iso establecemos los valores de saturacion de R
+  switch((int)iso_speed){
+  case 100:
+    sat_r = 0.20;
+    break;
+  case 125:
+    sat_r = 0.28;
+    break;
+  case 160:
+    sat_r = 0.36;
+    break;
+  case 200:
+    sat_r = 0.31;
+    break;
+  case 250:
+    sat_r = 0.4;
+    break;
+  case 320:
+    sat_r = 0.5;
+    break;
+  case 400:
+    sat_r = 0.41;
+    break;
+  case 500:
+    sat_r = 0.52;
+    break;
+  case 640:
+    sat_r = 0.68;
+    break;
+  default:
+    sat_r = 0.96;
+  }
+
+  printf("Los valores de saturacion son: %f(S), %f(R)", sat_s, sat_r);
+
+  // Escalamos los valores
+  ushort *pvalue_r;
+  ushort *pvalue_s;
+  float svalue;
+  float rvalue;
+  float value;
+  for (int row = 0; row < height_r; row++) 
+    for (int col = 0; col < width_r; col++) 
+      FORC4 {
+	pvalue_r = &image_r[row*width_r+col][c];
+	pvalue_s = &image[(row+1)*width+col][c];
+	rvalue = *pvalue_r/(float)max_val;
+	svalue = *pvalue_s/(float)max_val;
+	
+	value = MIN(svalue/sat_s, 1.0);
+
+	if(value == 1.0) /* Si el pixel esta saturado */
+	  value = MIN(rvalue/sat_r, 1.0) * factor_canal[c];
+	value /= 4.46;
+
+	// Escalamos el valor a 2^16
+	value *= (pow(2,16) - 1);
+
+ 	// Asignamos el valor a la imagen S
+	*pvalue_s = (ushort) CLIP(value);
+      }
+
+  puts("Concluido");
+  
+  ri->profile_len = 0;
+  ri->profile_data = NULL;
+  if (profile_length) {
+    ri->profile_len = profile_length;
+    ri->profile_data = (char *) malloc (profile_length);
+    fseek (ifp, profile_offset, SEEK_SET);
+    fread (ri->profile_data, 1, profile_length, ifp);
+  }
+
+  fclose(ifp);
+  if (zero_is_bad) remove_zeroes();
+
+  ri->red_multiplier = pre_mul[0];
+  ri->green_multiplier = pre_mul[1];
+  ri->blue_multiplier = pre_mul[2];
+
+  // Establecemos el maximo en 65535 con el fin de que no se escalen
+  // los valores, ya que estos han sido ya escalados previamente por
+  // nosotros. No obstante deberemos seguir ejecutando scale_colors,
+  // ya que dicha funcion aplica el balance de blancos
+  maximum = 65535;
+
+  scale_colors();
+  pre_interpolate ();
+
+  ri->width = width;
+  ri->height = height;
+  ri->filters = filters;
+
+  if (filters) {
+    ri->allocation = (short unsigned int*)calloc(height*width, sizeof(unsigned short));
+    ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
+    for (int i=0; i<height; i++) 
+        ri->data[i] = ri->allocation + i*width;
+    for (int row = 0; row < height; row++) 
+      for (int col = 0; col < width; col++) 
+          if (ISGREEN(ri,row,col))
+              ri->data[row][col] = image[row*width+col][1];
+          else if (ISRED(ri,row,col))
+              ri->data[row][col] = image[row*width+col][0];
+          else 
+              ri->data[row][col] = image[row*width+col][2];
+  }
+  else {
+    ri->allocation = (short unsigned int*)calloc(3*height*width, sizeof(unsigned short));
+    ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
+    for (int i=0; i<height; i++) 
+        ri->data[i] = ri->allocation + 3*i*width;
+    for (int row = 0; row < height; row++) 
+      for (int col = 0; col < width; col++) {
+          ri->data[row][3*col+0] = image[row*width+col][0];
+          ri->data[row][3*col+1] = image[row*width+col][1];
+          ri->data[row][3*col+2] = image[row*width+col][2];
+      }
+  }
+
+  if (flip==5)
+    ri->rotate_deg = 270;
+  else if (flip==3)
+    ri->rotate_deg = 180;
+  else if (flip==6)
+    ri->rotate_deg = 90;
+  else
+    ri->rotate_deg = 0;
+
+  ri->make = strdup (make);
+  ri->model = strdup (model);
+
+  ri->exifbase = exif_base;
+  ri->prefilters = pre_filters;
+  ri->ciff_base = ciff_base;
+  ri->ciff_len = ciff_len;
+
+  ri->camwb_red = ri->red_multiplier / pre_mul[0];
+  ri->camwb_green = ri->green_multiplier / pre_mul[1];
+  ri->camwb_blue = ri->blue_multiplier / pre_mul[2];
+
+  ri->defgain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
+
+  ri->fuji_width = fuji_width;
+
+    for (int a=0; a < 3; a++)
+      for (int b=0; b < 3; b++)
+        ri->coeff[a][b] = rgb_cam[a][b];
+
+  free (image);
+  free (image_r);
+dcrMutex->unlock ();
+  return 0;
+
+}
+
 int loadRaw (const char* fname, struct RawImage *ri) {
 
   static const double xyzd50_srgb[3][3] =
@@ -8890,6 +9176,11 @@ dcrMutex->lock ();
     fclose(ifp);
     dcrMutex->unlock ();
     return 2;
+  }
+  else if (is_raw == 2 && !strcmp("FUJIFILM", make) && !strcmp("FinePix S5Pro", model)) {
+    fclose(ifp);
+    dcrMutex->unlock ();
+    return loadFujiRaw(fname, ri);
   }
 
   shrink = 0;
