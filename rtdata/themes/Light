@@ -1,0 +1,150 @@
+# Based on Bluecurve
+# Created by Richard Stellingwerff, Emil Jacobs and Daniel Borgmann.
+
+
+style "clearlooks-default"
+{
+font_name = "sans 8"
+  GtkButton      ::default_border    = { 0, 0, 0, 0 }
+  GtkRange       ::trough_border     = 0
+  GtkPaned       ::handle_size       = 6
+  GtkRange       ::slider_width      = 12
+  GtkRange       ::stepper_size      = 12
+  GtkScrollbar   ::min_slider_length = 30
+  GtkCheckButton ::indicator_size    = 12
+  GtkMenuBar     ::internal-padding  = 0
+  GtkTreeView    ::expander_size     = 11
+  GtkExpander    ::expander_size     = 11
+
+  xthickness = 1
+  ythickness = 1
+
+  fg[NORMAL]        = "#101010" # very dark gray #101010
+  fg[PRELIGHT]      = "#101010" # dark grey
+  fg[ACTIVE]        = "#000000" # black
+  fg[SELECTED]      = "#ffffff" # white
+  fg[INSENSITIVE]   = "#b5b3ac" # dark beige / grey
+
+  bg[NORMAL]        = "#efebe7" # light beige / grey
+  bg[PRELIGHT]      = "#f5f3f0" # very light beige
+  bg[ACTIVE]        = "#d4cfca" # mid beige / grey
+  bg[SELECTED]      = "#7c99ad" # blueish
+  bg[INSENSITIVE]   = "#efebe7" # light beige / grey
+	
+  base[NORMAL]      = "#ffffff" # white
+  base[PRELIGHT]    = "#7c99ad" # blueish
+  base[ACTIVE]      = "#a29e8e" # dark beige / grey
+  base[SELECTED]    = "#7c99ad" # blueish
+  base[INSENSITIVE] = "#efebe7" #light beige / grey
+	
+  text[NORMAL]      = "#000000" # black
+  text[PRELIGHT]    = "#000000" # black
+  text[ACTIVE]      = "#ffffff" # white
+  text[SELECTED]    = "#ffffff" # white
+  text[INSENSITIVE] = "#b5b3ac" # dark beige / grey
+
+  engine "clearlooks"  {
+    sunkenmenubar     = 1       # 0 = disable, 1 = enable
+    menuitemstyle     = 0       # 0 = flat, 1 = 3d-ish (button)
+    listviewitemstyle = 0       # 0 = flat, 1 = 3d-ish (gradient)
+    progressbarstyle  = 0       # 0 = candy bar, 1 = flat
+  }
+}
+
+style "clearlooks-wide" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+style "clearlooks-notebook" = "clearlooks-wide"
+{
+  bg[NORMAL] = "#eae4df"
+}
+
+style "clearlooks-tasklist" = "clearlooks-default"
+{
+  xthickness = 5
+  ythickness = 3
+}
+
+style "clearlooks-menu" = "clearlooks-default"
+{
+  xthickness = 2
+  ythickness = 1
+  bg[NORMAL] = "#f8f5f2"
+}
+
+style "clearlooks-menu-item" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+  fg[PRELIGHT] = "#ffffff"
+  text[PRELIGHT] = "#ffffff"
+}
+
+style "clearlooks-menu-itembar" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+style "clearlooks-tree" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+style "clearlooks-frame-title" = "clearlooks-default"
+{
+  fg[NORMAL] = "#404040"
+}
+
+style "clearlooks-panel" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+
+style "clearlooks-tooltips" = "clearlooks-default"
+{
+  xthickness = 4
+  ythickness = 4
+  bg[NORMAL] = { 1.0,1.0,0.75 }
+}
+
+style "clearlooks-progressbar" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 0
+
+  fg[PRELIGHT]  = "#ffffff"
+}
+
+style "clearlooks-combo" = "clearlooks-default"
+{
+  xthickness = 1
+  ythickness = 1
+}
+
+class "GtkWidget" style "clearlooks-default"
+class "GtkButton" style "clearlooks-wide"
+class "GtkRange" style "clearlooks-wide"
+class "GtkFrame" style "clearlooks-wide"
+class "GtkStatusbar" style "clearlooks-wide"
+class "GtkMenu" style "clearlooks-menu"
+class "GtkMenuItem" style "clearlooks-menu-item"
+widget_class "*MenuItem.*" style "clearlooks-menu-item"
+class "GtkEntry" style "clearlooks-wide"
+widget_class "*.tooltips.*.GtkToggleButton" style "clearlooks-tasklist"
+widget_class "*.GtkTreeView.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCTree.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkFrame.GtkLabel" style "clearlooks-frame-title"
+widget_class "BasePWidget.GtkEventBox.GtkTable.GtkFrame" style "clearlooks-panel"
+widget "gtk-tooltip" style "clearlooks-tooltips"
+class "GtkNotebook" style "clearlooks-notebook"
+class "GtkProgressBar" style "clearlooks-progressbar"
+widget_class "*.GtkComboBox.GtkButton" style "clearlooks-combo"
+widget_class "*.GtkCombo.GtkButton" style "clearlooks-combo"
