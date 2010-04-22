@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
 
 if (APPLE)
 #    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;" )
