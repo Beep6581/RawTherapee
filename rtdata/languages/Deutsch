@@ -1,13 +1,13 @@
 ﻿# Deutsch: Deutschland
-# 20.12.2007
-# (phberlin; basiert auf keenonkites' Erstübersetzung)
-# 22.12.2007
 # (keenonkites; Aktualisierte Version für 2.3 beta2)
+# (phberlin; basiert auf keenonkites' Erstübersetzung)
 # 08.01.2008/15.01.2008/20.02.2008
-# Leichte Anpassungen (keenonkites/klonk)
-# 4.4.2008: Anpassungen für 2.4
-# 20.9.2008: keenonkites, Anpassungen für 2.4m2
 # 19.12.2008: keenonkites, Anpassungen für 2.4beta4
+# 20.12.2007
+# 20.9.2008: keenonkites, Anpassungen für 2.4m2
+# 22.12.2007
+# 4.4.2008: Anpassungen für 2.4
+# Leichte Anpassungen (keenonkites/klonk)
 ADJUSTER_RESET_TO_DEFAULT;Zurück zum Standard
 CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvendateien
@@ -257,10 +257,19 @@ IPTCPANEL_TITLE;Titel
 IPTCPANEL_TITLEHINT;Kurztitel des Bildes (Object Name).
 IPTCPANEL_TRANSREFERENCE;Übertragungs Referenz
 IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung definiert (Original Transmission Reference).
+MAIN_BUTTON_EXIT;Verlassen
+MAIN_BUTTON_EXIT;Verlassen
 MAIN_BUTTON_PREFERENCES;Einstellungen
+MAIN_BUTTON_QUEUE;Auf die Warteschlange
 MAIN_BUTTON_SAVE;Bild speichern
 MAIN_BUTTON_SAVEAS;unter...
 MAIN_BUTTON_SENDTOEDITOR;Im Editor laden
+MAIN_FRAME_BATCHQUEUE;Warteschlange 
+MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
+MAIN_FRAME_PLACES;Orte
+MAIN_FRAME_PLACES_ADD;Hinzu
+MAIN_FRAME_PLACES_DEL;Lââschen
+MAIN_FRAME_RECENT;Verwendete Ordner
 MAIN_MSG_ALREADYEXISTS;Diese Datei existiert schon.
 MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
 MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
@@ -273,11 +282,14 @@ MAIN_MSG_QOVERWRITE;Wollen sie die Datei überschreiben ?
 MAIN_TAB_BASIC;Basis
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DEVELOP;Entwickeln
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Belichtung
+MAIN_TAB_FILTER;Metadaten-Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOOLTIP_HIDEFP;Zeigen/Verstecken von Verzeichnis- und Datei-Browser (Taste F)
 MAIN_TOOLTIP_HIDEHP;Zeigen/Verstecken linke Seite (Abfolge der Änderungen, Taste H)
@@ -336,8 +348,8 @@ PREFERENCES_CLIPPINGIND;Anzeige zu helle/zu dunkle Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%y</b><i> : Jahr</i>\n<b>%m</b><i> : Monat</i>\n<b>%d</b><i> : Tag</i>\n<i>\nDas Deutsche Datumsformat zum Beispiel ist:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DCBITERATIONS;Anzahl der DCB Iterationen
 PREFERENCES_DCBENHANCE;DCB Verfeinerungsschritt durchführen
+PREFERENCES_DCBITERATIONS;Anzahl der DCB Iterationen
 PREFERENCES_DEFAULTLANG;Sprache für die Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard Oberflächendesign
 PREFERENCES_DEMOSAICINGALGO;Algorithmus zur Entrasterung

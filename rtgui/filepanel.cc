@@ -81,11 +81,11 @@ FilePanel::FilePanel () : parent(NULL) {
 
     rightNotebook->set_tab_pos (Gtk::POS_LEFT);
     
-    Gtk::Label* devLab = new Gtk::Label ("Develop");
+    Gtk::Label* devLab = new Gtk::Label (M("MAIN_TAB_DEVELOP"));
     devLab->set_angle (90);
-    Gtk::Label* filtLab = new Gtk::Label ("Filter");
+    Gtk::Label* filtLab = new Gtk::Label (M("MAIN_TAB_FILTER"));
     filtLab->set_angle (90);
-    Gtk::Label* tagLab = new Gtk::Label ("Tagging");
+    Gtk::Label* tagLab = new Gtk::Label (M("MAIN_TAB_TAGGING"));
     tagLab->set_angle (90);
 
     Gtk::VPaned* tpcPaned = new Gtk::VPaned ();

@@ -27,8 +27,8 @@ PlacesBrowser::PlacesBrowser () : listener (NULL) {
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
     pack_start (*scrollw);
 
-    add = Gtk::manage (new Gtk::Button ("Add"));
-    del = Gtk::manage (new Gtk::Button ("Del"));
+    add = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_ADD")));
+    del = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_DEL")));
     add->set_image (*Gtk::manage (new Gtk::Image (Gtk::Stock::ADD, Gtk::ICON_SIZE_MENU)));
     del->set_image (*Gtk::manage (new Gtk::Image (Gtk::Stock::REMOVE, Gtk::ICON_SIZE_MENU)));
     Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());
@@ -45,7 +45,7 @@ PlacesBrowser::PlacesBrowser () : listener (NULL) {
     treeView->set_model (placesModel);
     treeView->set_headers_visible (true);
 
-    Gtk::TreeView::Column *iviewcol = Gtk::manage (new Gtk::TreeView::Column ("Places"));
+    Gtk::TreeView::Column *iviewcol = Gtk::manage (new Gtk::TreeView::Column (M("MAIN_FRAME_PLACES")));
     Gtk::CellRendererPixbuf *iconCR  = Gtk::manage (new Gtk::CellRendererPixbuf());
     Gtk::CellRendererText *labelCR  = Gtk::manage (new Gtk::CellRendererText());
     iviewcol->pack_start (*iconCR, false);

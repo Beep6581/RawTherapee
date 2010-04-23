@@ -50,7 +50,7 @@ RTWindow::RTWindow () {
     // decorate tab
     Gtk::HBox* hbf = Gtk::manage (new Gtk::HBox ());
     hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-    hbf->pack_start (*Gtk::manage (new Gtk::Label ("File Browser")));
+    hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
     hbf->set_spacing (2);
     hbf->show_all ();
     mainNB->append_page (*fpanel, *hbf);
@@ -61,7 +61,7 @@ RTWindow::RTWindow () {
     // decorate tab
     Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
     hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)));
-    hbb->pack_start (*Gtk::manage (new Gtk::Label ("Batch Queue")));
+    hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"))));
     hbb->set_spacing (2);
     hbb->show_all ();
     mainNB->append_page (*bpanel, *hbb);
@@ -78,7 +78,7 @@ RTWindow::RTWindow () {
     preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
     preferences->set_relief (Gtk::RELIEF_NONE);
     preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
-    Gtk::Button* exit = Gtk::manage (new Gtk::Button ("Exit"));
+    Gtk::Button* exit = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_EXIT")));
     exit->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-quit"), Gtk::ICON_SIZE_BUTTON)));
     exit->set_relief (Gtk::RELIEF_NONE);
     exit->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::onExit) );

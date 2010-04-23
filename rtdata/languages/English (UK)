@@ -1,6 +1,6 @@
 ﻿#  British english
-# 16.01.2009: Richard Regal
 #
+# 16.01.2009: Richard Regal
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 CURVEEDITOR_FILEDLGFILTERANY;Any files
 CURVEEDITOR_FILEDLGFILTERCURVE;Curve files
@@ -250,10 +250,18 @@ IPTCPANEL_TITLE;Title
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferences
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVE;Save Image
 MAIN_BUTTON_SAVEAS;As...
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;File already exists.
 MAIN_MSG_CANNOTLOAD;Cannot load image
 MAIN_MSG_CANNOTSAVE;File saving error
@@ -266,11 +274,14 @@ MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
 MAIN_TAB_BASIC;Basic
 MAIN_TAB_COLOR;Colour
 MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transform
 MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history, shortcut key: H)
@@ -329,8 +340,8 @@ PREFERENCES_CLIPPINGIND;Clipping indication
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
 PREFERENCES_DATEFORMAT;Date Format
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DCBITERATIONS;Number of DCB iterations
 PREFERENCES_DCBENHANCE;Apply DCB enhancment step
+PREFERENCES_DCBITERATIONS;Number of DCB iterations
 PREFERENCES_DEFAULTLANG;Default language
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
