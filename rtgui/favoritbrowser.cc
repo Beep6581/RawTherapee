@@ -46,8 +46,8 @@ FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
     treeView->set_tooltip_column (2);
     treeView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &FavoritBrowser::selectionChanged));
 
-    add = Gtk::manage (new Gtk::Button ("Add"));
-    del = Gtk::manage (new Gtk::Button ("Del"));
+    add = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_ADD")));
+    del = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_DEL")));
     add->set_image (*Gtk::manage (new Gtk::Image (Gtk::Stock::ADD, Gtk::ICON_SIZE_MENU)));
     del->set_image (*Gtk::manage (new Gtk::Image (Gtk::Stock::REMOVE, Gtk::ICON_SIZE_MENU)));
     Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());

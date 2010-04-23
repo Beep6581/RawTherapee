@@ -22,7 +22,7 @@ RecentBrowser::RecentBrowser () : listener (NULL) {
 
     recentDirs = Gtk::manage (new Gtk::ComboBoxText ());
 
-    Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ("Recent Folders"));
+    Gtk::Frame* frame = Gtk::manage (new Gtk::Frame (M("MAIN_FRAME_RECENT")));
     frame->add (*recentDirs);
 
     pack_start (*frame, Gtk::PACK_SHRINK, 4);

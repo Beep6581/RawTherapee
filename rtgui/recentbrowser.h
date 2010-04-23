@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <dirbrowserremoteinterface.h>
 #include <dirselectionlistener.h>
+#include <multilangmgr.h>
 
 class RecentBrowser : public Gtk::VBox, public DirSelectionListener {
 

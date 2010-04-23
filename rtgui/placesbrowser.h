@@ -23,6 +23,7 @@
 #include <giomm.h>
 #include <dirbrowserremoteinterface.h>
 #include <dirselectionlistener.h>
+#include <multilangmgr.h>
 
 class PlacesBrowser : public Gtk::VBox, public DirSelectionListener {
 
