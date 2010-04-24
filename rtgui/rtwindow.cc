@@ -144,6 +144,16 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 }
 
 bool RTWindow::keyPressed (GdkEventKey* event) {
+    if(event->keyval == GDK_F11) {
+        if(is_fullscreen){
+            unfullscreen();
+            is_fullscreen = false;
+        }
+        else {
+            fullscreen();
+            is_fullscreen = true;
+        }
+    }
 
     if (mainNB->get_nth_page (mainNB->get_current_page()) == fpanel) {
     }

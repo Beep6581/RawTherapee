@@ -34,6 +34,8 @@ class RTWindow : public Gtk::Window {
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
         
+        bool is_fullscreen;
+        
     public:
         RTWindow ();
 
