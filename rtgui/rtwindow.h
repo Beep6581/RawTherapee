@@ -47,7 +47,6 @@ class RTWindow : public Gtk::Window {
         
         void imageDeveloped (Glib::ustring fname); // called by the batchqueue when it finishes an image
         void showPreferences ();
-        void onExit ();
         void on_realize ();
 };
 
