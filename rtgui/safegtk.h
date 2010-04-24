@@ -3,6 +3,7 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
+#include <giomm.h>
 
 Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename);
 
