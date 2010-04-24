@@ -167,9 +167,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         iunchanged->set_active (!pedited->icm.input);
         igamma->set_sensitive (false);
         if (!pedited->icm.working)
-            wnames->set_active_text("(Unchanged)");
+            wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
-            onames->set_active_text("(Unchanged)");
+            onames->set_active_text(M("GENERAL_UNCHANGED"));
     }
         
     ipc.block (false);
@@ -196,8 +196,8 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();
-        pedited->icm.working = wnames->get_active_text()!="(Unchanged)";
-        pedited->icm.output = onames->get_active_text()!="(Unchanged)";
+        pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
+        pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.gammaOnInput = !ifromfile->get_active ();
     }
 }
@@ -279,12 +279,12 @@ void ICMPanel::saveReferencePressed () {
 void ICMPanel::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
-    iunchanged = Gtk::manage (new Gtk::RadioButton ("(Unchanged)"));
+    iunchanged = Gtk::manage (new Gtk::RadioButton (M("GENERAL_UNCHANGED")));
     iunchanged->set_group (opts);
     pack_start (*iunchanged, Gtk::PACK_SHRINK, 4);
     reorder_child (*iunchanged, 5);
     removeIfThere (this, saveRef);
-    onames->append_text ("(Unchanged)");
-    wnames->append_text ("(Unchanged)");
+    onames->append_text (M("GENERAL_UNCHANGED"));
+    wnames->append_text (M("GENERAL_UNCHANGED"));
 }
 

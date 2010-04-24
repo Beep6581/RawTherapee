@@ -18,7 +18,7 @@
  */
 #include <placesbrowser.h>
 #include <options.h>
-#include <algorithm>
+#include <toolpanel.h>>
 #include <safegtk.h>
 
 PlacesBrowser::PlacesBrowser () : listener (NULL) {

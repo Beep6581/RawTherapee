@@ -69,8 +69,8 @@ EditorPanel::EditorPanel (Thumbnail* tmb, rtengine::InitialImage* isrc) : parent
     info->set_relief(Gtk::RELIEF_NONE);
     info->set_tooltip_text (M("MAIN_TOOLTIP_QINFO"));
 
-    beforeAfter = Gtk::manage (new Gtk::ToggleButton ("B|A"));
-    beforeAfter->set_tooltip_text ("Toggle before/after view");
+    beforeAfter = Gtk::manage (new Gtk::ToggleButton (M("MAIN_TOGGLE_BEFORE_AFTER")));
+    beforeAfter->set_tooltip_text (M("MAIN_TOOLTIP_TOGGLE"));
 
 
     Gtk::VSeparator* vsept = Gtk::manage (new Gtk::VSeparator ());
@@ -129,7 +129,7 @@ EditorPanel::EditorPanel (Thumbnail* tmb, rtengine::InitialImage* isrc) : parent
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
     saveimgas = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_SAVE")));
     saveimgas->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-    queueimg = Gtk::manage (new Gtk::Button ("Put to queue"));
+    queueimg = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PUTTOQUEUE")));
     queueimg->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-execute"), Gtk::ICON_SIZE_BUTTON)));
     sendtogimp = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_SENDTOEDITOR")));
     sendtogimp->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/gimp.png")));
@@ -754,13 +754,13 @@ void EditorPanel::beforeAfterToggled () {
         beforeIarea = new ImageAreaPanel ();
 
         beforeLabel = Gtk::manage (new Gtk::Label ());
-        beforeLabel->set_markup ("<b>Before:</b>");
+        beforeLabel->set_markup (Glib::ustring("<b>") + M("GENERAL_BEFORE") + "</b>");
         beforeBox = Gtk::manage (new Gtk::VBox ());
         beforeBox->pack_start (*beforeLabel, Gtk::PACK_SHRINK, 2);
         beforeBox->pack_start (*beforeIarea);
 
         afterLabel = Gtk::manage (new Gtk::Label ());
-        afterLabel->set_markup ("<b>After:</b>");
+        afterLabel->set_markup (Glib::ustring("<b>") + M("GENERAL_AFTER") + "</b>");
         afterBox->pack_start (*afterLabel, Gtk::PACK_SHRINK, 2);
         afterBox->reorder_child (*afterLabel, 0);
 
