@@ -46,6 +46,8 @@ struct FileBrowserIdleHelper {
 
 class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {  
 
+    typedef sigc::signal<void> type_trash_changed;
+
   protected:
 
     Gtk::MenuItem* rank[6];
@@ -75,6 +77,8 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
     void rankingRequested   (std::vector<FileBrowserEntry*> tbe, int rank);
     void notifySelectionListener ();
+    
+    type_trash_changed m_trash_changed;
     
   public:
    
@@ -111,6 +115,8 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void _thumbRearrangementNeeded ();
     
     void selectionChanged ();
+    
+    type_trash_changed trash_changed();
 };
 
 #endif

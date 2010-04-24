@@ -99,6 +99,7 @@ class FileCatalog : public Gtk::VBox,
         Gtk::ToggleButton* exifInfo;
         sigc::connection bCateg[8];
         Gtk::Image* iranked[5], *igranked[5];
+        Gtk::Image *iTrashEmpty, *iTrashFull;
         
         double hScrollPos[8];
         double vScrollPos[8];
@@ -136,6 +137,7 @@ class FileCatalog : public Gtk::VBox,
         void checkAndAddFile (Glib::RefPtr<Gio::File> info);
         std::vector<Glib::ustring> getFileList ();
         BrowserFilter getFilter ();
+        void trashChanged ();
                
     public:
             CoarsePanel* coarsePanel;
@@ -167,6 +169,7 @@ class FileCatalog : public Gtk::VBox,
                 void renameRequested        (std::vector<FileBrowserEntry*> tbe);
                 void selectionChanged       (std::vector<Thumbnail*> tbe);
                 void emptyTrash ();
+                bool trashIsEmpty ();
                 
                 void setFileSelectionListener (FileSelectionListener* l) { listener = l; }
                 void setFileSelectionChangeListener (FileSelectionChangeListener* l) { fslistener = l; }
