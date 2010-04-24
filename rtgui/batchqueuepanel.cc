@@ -184,6 +184,7 @@ void BatchQueuePanel::startBatchProc () {
     if (batchQueue->hasJobs()) {
         fdir->set_sensitive (false);
         fformat->set_sensitive (false);
+	saveOptions();
         batchQueue->startProcessing ();
     }
     else 
