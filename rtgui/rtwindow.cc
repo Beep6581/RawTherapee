@@ -72,13 +72,19 @@ RTWindow::RTWindow () {
     mainBox->pack_start (*mainNB);   
     Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
     mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
+
+    // filling bottom box
     Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
     Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")));
     preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
     preferences->set_relief (Gtk::RELIEF_NONE);
     preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
+    btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
+    btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
     bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
     bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
+    bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 4);
+
     Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
     style->set_xthickness (0);
     style->set_ythickness (0);    
@@ -145,14 +151,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 
 bool RTWindow::keyPressed (GdkEventKey* event) {
     if(event->keyval == GDK_F11) {
-        if(is_fullscreen){
-            unfullscreen();
-            is_fullscreen = false;
-        }
-        else {
-            fullscreen();
-            is_fullscreen = true;
-        }
+        toggle_fullscreen();
     }
 
     if (mainNB->get_nth_page (mainNB->get_current_page()) == fpanel) {
@@ -232,4 +231,15 @@ void RTWindow::showPreferences () {
   fpanel->optionsChanged ();
 }
 
-
+void RTWindow::toggle_fullscreen () {
+    if(is_fullscreen){
+        unfullscreen();
+        is_fullscreen = false;
+        btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
+    }
+    else {
+        fullscreen();
+        is_fullscreen = true;
+        btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
+    }
+}

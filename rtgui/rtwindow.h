@@ -35,6 +35,7 @@ class RTWindow : public Gtk::Window {
         std::map<Glib::ustring, EditorPanel*> epanels;
         
         bool is_fullscreen;
+        Gtk::Button * btn_fullscreen;
         
     public:
         RTWindow ();
@@ -50,6 +51,7 @@ class RTWindow : public Gtk::Window {
         void imageDeveloped (Glib::ustring fname); // called by the batchqueue when it finishes an image
         void showPreferences ();
         void on_realize ();
+        void toggle_fullscreen ();
 };
 
 #endif
