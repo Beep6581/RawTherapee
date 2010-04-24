@@ -12,13 +12,9 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc gauss.cc iccstore.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc bilateral2.cc)
 
-if (BUILD_SHARED)
-    add_library (rtengine SHARED ${RTENGINESOURCEFILES})
-    # it may be nice to store library version too
-    install (TARGETS rtengine DESTINATION ${LIBDIR})
-else (BUILD_SHARED)
-    add_library (rtengine STATIC ${RTENGINESOURCEFILES})
-endif (BUILD_SHARED)
+add_library (rtengine ${RTENGINESOURCEFILES})
+#It may be nice to store library version too
+install (TARGETS rtengine DESTINATION ${LIBDIR})
 
 set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -funroll-loops")
 
