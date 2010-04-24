@@ -1925,96 +1925,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, ResizeParams params) {
 }
 
 void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, int row_from, int row_to) {
-    if(params.scale < 0.5)
-    {
-        // small-scale algorithm by Ilia
-        // provides much better quality on small scales
-        // calculates mean value over source pixels which current destination pixel covers
-        // works only for scales < 1
-        // for scales ~1 it is analogous to bilinear
-        // possibly, for even less scale factors (< 0.2 possibly) boundary pixels are not needed, omitting them can give a speedup
-        // this algorithm is much slower on small factors than others, because it uses all pixels of the SOURCE image
-        
-        double delta = 1.0 / params.scale;
-        double k = params.scale * params.scale;
-        
-        for(int i = row_from; i < row_to; i++)
-        {
-            // top and bottom boundary coordinates
-            double y0 = i * delta;
-            double y1 = (i + 1) * delta;
-            
-            int m0 = y0;
-            m0 = CLIPTO(m0, 0, src->height-1);
-            
-            int m1 = y1;
-            m1 = CLIPTO(m1, 0, src->height-1);
-            
-            // weights of boundary pixels
-            double wy0 = 1.0 - (y0 - m0);
-            double wy1 = y1 - m1;
-            
-            for(int j = 0; j < dst->width; j++)
-            {
-                // left and right boundary coordinates
-                double x0 = j * delta;
-                double x1 = (j + 1) * delta;
-                
-                int n0 = x0;
-                n0 = CLIPTO(n0, 0, src->width-1);
-                int n1 = x1;
-                n1 = CLIPTO(n1, 0, src->width-1);
-                
-                double wx0 = 1.0 - (x0 - n0);
-                double wx1 = x1 - n1;
-                
-                double r = 0;
-                double g = 0;
-                double b = 0;
-
-                // integration
-                // corners
-                r += wy0 * wx0 * src->r[m0][n0] + wy0 * wx1 * src->r[m0][n1] + wy1 * wx0 * src->r[m1][n0] + wy1 * wx1 * src->r[m1][n1]; 
-                g += wy0 * wx0 * src->g[m0][n0] + wy0 * wx1 * src->g[m0][n1] + wy1 * wx0 * src->g[m1][n0] + wy1 * wx1 * src->g[m1][n1]; 
-                b += wy0 * wx0 * src->b[m0][n0] + wy0 * wx1 * src->b[m0][n1] + wy1 * wx0 * src->b[m1][n0] + wy1 * wx1 * src->b[m1][n1]; 
-                // top and bottom boundaries
-                for(int n = n0 + 1; n < n1; n++)
-                {
-                    r += wy0 * src->r[m0][n] + wy1 * src->r[m1][n];
-                    g += wy0 * src->g[m0][n] + wy1 * src->g[m1][n];
-                    b += wy0 * src->b[m0][n] + wy1 * src->b[m1][n];
-                }
-                // inner rows
-                for(int m = m0 + 1; m < m1; m++)
-                {
-                    // left and right boundaries
-                    r += wx0 * src->r[m][n0] + wx1 * src->r[m][n1];
-                    g += wx0 * src->g[m][n0] + wx1 * src->g[m][n1];
-                    b += wx0 * src->b[m][n0] + wx1 * src->b[m][n1];
-                    // inner pixels
-                    for(int n = n0 + 1; n < n1; n++)
-                    {
-                        r += src->r[m][n];
-                        g += src->g[m][n];
-                        b += src->b[m][n];
-                    }
-                    
-                }
-                
-                // overall weight is equal to the DST pixel area in SRC coordinates
-                r *= k;
-                g *= k;
-                b *= k;
-                
-                dst->r[i][j] = CLIP((int)r);
-                dst->g[i][j] = CLIP((int)g);
-                dst->b[i][j] = CLIP((int)b);
-            }
-        }
-        return;
-    }
-    if(params.method == "Downscale (Better)")
-	{
+    if(params.method == "Downscale (Better)") {
         // small-scale algorithm by Ilia
         // provides much better quality on small scales
         // calculates mean value over source pixels which current destination pixel covers
@@ -2027,8 +1938,7 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
         double delta = 1.0 / params.scale;
         double k = params.scale * params.scale;
 
-        for(int i = row_from; i < row_to; i++)
-        {
+        for(int i = row_from; i < row_to; i++) {
             // top and bottom boundary coordinates
             double y0 = i * delta;
             double y1 = (i + 1) * delta;
@@ -2043,8 +1953,7 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
             double wy0 = 1.0 - (y0 - m0);
             double wy1 = y1 - m1;
 
-            for(int j = 0; j < dst->width; j++)
-            {
+            for(int j = 0; j < dst->width; j++) {
                 // left and right boundary coordinates
                 double x0 = j * delta;
                 double x1 = (j + 1) * delta;
@@ -2068,23 +1977,20 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
                 b += wy0 * wx0 * src->b[m0][n0] + wy0 * wx1 * src->b[m0][n1] + wy1 * wx0 * src->b[m1][n0] + wy1 * wx1 * src->b[m1][n1]; 
 
                 // top and bottom boundaries
-                for(int n = n0 + 1; n < n1; n++)
-                {
+                for(int n = n0 + 1; n < n1; n++) {
                     r += wy0 * src->r[m0][n] + wy1 * src->r[m1][n];
                     g += wy0 * src->g[m0][n] + wy1 * src->g[m1][n];
                     b += wy0 * src->b[m0][n] + wy1 * src->b[m1][n];
                 }
 
                 // inner rows
-                for(int m = m0 + 1; m < m1; m++)
-                {
+                for(int m = m0 + 1; m < m1; m++) {
                     // left and right boundaries
                     r += wx0 * src->r[m][n0] + wx1 * src->r[m][n1];
                     g += wx0 * src->g[m][n0] + wx1 * src->g[m][n1];
                     b += wx0 * src->b[m][n0] + wx1 * src->b[m][n1];
                     // inner pixels
-                    for(int n = n0 + 1; n < n1; n++)
-                    {
+                    for(int n = n0 + 1; n < n1; n++) {
                         r += src->r[m][n];
                         g += src->g[m][n];
                         b += src->b[m][n];
@@ -2129,8 +2035,7 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
         // scaling factor after summation
         int k = divider / (p * p); 
 
-        for(int i = row_from; i < row_to; i++)
-        {
+        for(int i = row_from; i < row_to; i++) {
             // y coordinate of center of destination pixel
             double y = (i + 0.5) * delta;
 
@@ -2138,15 +2043,13 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
             m0 = CLIPTO(m0, 0, src->height-1);
 
             int m1 = m0 + p;
-            if(m1 > src->height)
-            {
+            if(m1 > src->height) {
                 m1 = src->height;
                 m0 = m1 - p;
             }
             m1 = CLIPTO(m1, 0, src->height);
 
-            for(int j = 0; j < dst->width; j++)
-            {
+            for(int j = 0; j < dst->width; j++) {
                 // x coordinate of center of destination pixel
                 double x = (j + 0.5) * delta;
 
@@ -2154,8 +2057,7 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
                 n0 = CLIPTO(n0, 0, src->width-1);
 
                 int n1 = n0 + p;
-                if(n1 > src->width)
-                {
+                if(n1 > src->width) {
                     n1 = src->width;
                     n0 = n1 - p;
                 }
@@ -2166,10 +2068,8 @@ void ImProcFunctions::resize_ (Image16* src, Image16* dst, ResizeParams params, 
                 int b = 0;
 
                 // integration
-                for(int m = m0; m < m1; m++)
-                {
-                    for(int n = n0; n < n1; n++)
-                    {
+                for(int m = m0; m < m1; m++) {
+                    for(int n = n0; n < n1; n++) {
                         r += src->r[m][n];
                         g += src->g[m][n];
                         b += src->b[m][n];
