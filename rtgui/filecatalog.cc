@@ -105,13 +105,17 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bRank[4]->set_tooltip_text (M("FILEBROWSER_SHOWRANK5HINT"));
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
+    iTrashEmpty = new Gtk::Image(argv0+"/images/trash-show-empty.png");
+    iTrashFull = new Gtk::Image(argv0+"/images/trash-show-full.png");
+
     bTrash = new Gtk::ToggleButton ();
-    bTrash->set_image (*(new Gtk::Image (Gtk::StockID("gtk-delete"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    bTrash->set_image (*iTrashEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_text (M("FILEBROWSER_SHOWTRASHHINT"));
     bCateg[7] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash));    
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+    fileBrowser->trash_changed().connect( sigc::mem_fun(*this, &FileCatalog::trashChanged) );
 
     categoryButtons[0] = bDir;
     categoryButtons[1] = bUnRanked;
@@ -746,6 +750,16 @@ void FileCatalog::emptyTrash () {
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             toDel.push_back (((FileBrowserEntry*)t[i]));
     deleteRequested (toDel);
+    trashChanged();
+}
+
+bool FileCatalog::trashIsEmpty () {
+    const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
+    for (int i=0; i<t.size(); i++)
+        if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
+            return false;
+
+    return true;
 }
 
 void FileCatalog::zoomIn () {
@@ -794,4 +808,12 @@ void FileCatalog::setFilterPanel (FilterPanel* fpanel) {
 	filterPanel = fpanel; 
 	filterPanel->set_sensitive (false);
 	filterPanel->setFilterPanelListener (this);
+}
+void FileCatalog::trashChanged () {
+    if (trashIsEmpty()) {
+        bTrash->set_image(*iTrashEmpty);
+    }
+    else {
+        bTrash->set_image(*iTrashFull);
+    }
 }

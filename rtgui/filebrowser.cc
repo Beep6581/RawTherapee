@@ -447,6 +447,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
             tbe[i]->getThumbButtonSet()->setInTrash (true);
         }
     }
+    trash_changed().emit();
     applyFilter (filter);
 }
 
@@ -461,6 +462,7 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
             tbe[i]->getThumbButtonSet()->setInTrash (false);
         }
     }
+    trash_changed().emit();
     applyFilter (filter);
 }
 
@@ -578,4 +580,7 @@ void FileBrowser::redrawNeeded (ThumbBrowserEntryBase* entry) {
 void FileBrowser::redrawNeeded (LWButton* button) {
     
     queue_draw ();
+}
+FileBrowser::type_trash_changed FileBrowser::trash_changed () {
+    return m_trash_changed;
 }
