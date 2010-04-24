@@ -73,24 +73,17 @@ RTWindow::RTWindow () {
     Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
     mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
     Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
-    bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 1);
     Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")));
     preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
     preferences->set_relief (Gtk::RELIEF_NONE);
     preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
-    Gtk::Button* exit = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_EXIT")));
-    exit->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-quit"), Gtk::ICON_SIZE_BUTTON)));
-    exit->set_relief (Gtk::RELIEF_NONE);
-    exit->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::onExit) );
-    bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 1);
-    bottomBox->pack_end (*exit, Gtk::PACK_SHRINK, 1);
-    bottomBox->pack_end (*preferences, Gtk::PACK_SHRINK, 8);
+    bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
+    bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
     Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
     style->set_xthickness (0);
     style->set_ythickness (0);    
     rtWeb->modify_style (style);
     preferences->modify_style (style);
-    exit->modify_style (style);
 
     add (*mainBox);
     show_all ();
@@ -172,11 +165,6 @@ void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
 
     bpanel->addBatchQueueJob (bqe, head);
     fpanel->queue_draw ();
-}
-
-void RTWindow::onExit () {
-
-    on_delete_event (NULL);
 }
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
