@@ -78,37 +78,42 @@ PlacesBrowser::PlacesBrowser () : listener (NULL) {
 void PlacesBrowser::refreshPlacesList () {
 
     placesModel->clear ();
-    
+   
     // append home directory
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (Glib::get_home_dir ());
     if (hfile) {
+      try { 
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
         if (info) {
-            Gtk::TreeModel::Row newrow = *(placesModel->append());
-            newrow[placesColumns.label] = info->get_display_name ();
-            newrow[placesColumns.icon]  = info->get_icon ();
-            newrow[placesColumns.root]  = hfile->get_parse_name ();
-            newrow[placesColumns.type]  = 4;
-            newrow[placesColumns.rowSeparator] = false;
+          Gtk::TreeModel::Row newrow = *(placesModel->append());
+          newrow[placesColumns.label] = info->get_display_name ();
+          newrow[placesColumns.icon]  = info->get_icon ();
+          newrow[placesColumns.root]  = hfile->get_parse_name ();
+          newrow[placesColumns.type]  = 4;
+          newrow[placesColumns.rowSeparator] = false;
         }
+      } catch (Gio::Error&) { /* This will be thrown if the path doesn't exist */ }
     }
+
     // append pictures directory
     hfile = Gio::File::create_for_path (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
     if (hfile) {
+      try { 
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
         if (info) {
-            Gtk::TreeModel::Row newrow = *(placesModel->append());
-            newrow[placesColumns.label] = info->get_display_name ();
-            newrow[placesColumns.icon]  = info->get_icon ();
-            newrow[placesColumns.root]  = hfile->get_parse_name ();
-            newrow[placesColumns.type]  = 4;
-            newrow[placesColumns.rowSeparator] = false;
+          Gtk::TreeModel::Row newrow = *(placesModel->append());
+          newrow[placesColumns.label] = info->get_display_name ();
+          newrow[placesColumns.icon]  = info->get_icon ();
+          newrow[placesColumns.root]  = hfile->get_parse_name ();
+          newrow[placesColumns.type]  = 4;
+          newrow[placesColumns.rowSeparator] = false;
         }
+      } catch (Gio::Error&) { /* This will be thrown if the path doesn't exist */ }
     }
-    
+
     if (placesModel->children().size()>0) {
-            Gtk::TreeModel::Row newrow = *(placesModel->append());
-            newrow[placesColumns.rowSeparator] = true;
+      Gtk::TreeModel::Row newrow = *(placesModel->append());
+      newrow[placesColumns.rowSeparator] = true;
     }
     
     // scan all drives
