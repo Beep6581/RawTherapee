@@ -134,7 +134,7 @@ void WhiteBalance::optChanged () {
             }
         }
         else if (opt==3) {
-            meth = "(Unchanged)";
+            meth = M("GENERAL_UNCHANGED");
             temp->setEditedState (UnEdited);
             green->setEditedState (UnEdited);
         }
@@ -258,7 +258,7 @@ void WhiteBalance::setBatchMode (bool batchMode) {
     ToolPanel::setBatchMode (batchMode);
     temp->showEditedCB ();
     green->showEditedCB ();
-    method->append_text ("(Unchanged)");
+    method->append_text (M("GENERAL_UNCHANGED"));
 }
 
 int WhiteBalance::getSize () {

@@ -29,7 +29,7 @@ ColorDenoise::ColorDenoise () : ToolPanel() {
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 
-	amount = Gtk::manage (new Adjuster ("Amount", 1, 100, 1, 30));
+	amount = Gtk::manage (new Adjuster (M("TP_DETAIL_AMOUNT"), 1, 100, 1, 30));
 
 	pack_start (*enabled);
 	pack_start (*Gtk::manage (new  Gtk::HSeparator()));

@@ -30,7 +30,7 @@ ShadowsHighlights::ShadowsHighlights () : ToolPanel() {
 
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  hq = Gtk::manage (new Gtk::CheckButton ("High Quality"));
+  hq = Gtk::manage (new Gtk::CheckButton (M("GENERAL_HIGH_QUALITY")));
   hq->set_active (false);
   pack_start (*hq);
   hqConn = hq->signal_toggled().connect( sigc::mem_fun(*this, &ShadowsHighlights::hqChanged) );

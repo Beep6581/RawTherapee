@@ -444,7 +444,7 @@ void Sharpening::setBatchMode (bool batchMode) {
     damount->showEditedCB ();
     ddamping->showEditedCB ();
     diter->showEditedCB ();
-    method->append_text ("(Unchanged)");
+    method->append_text (M("GENERAL_UNCHANGED"));
 }
 
 void Sharpening::setAdjusterBehavior (bool bamountadd) {

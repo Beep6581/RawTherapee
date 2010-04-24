@@ -30,10 +30,10 @@ BatchQueuePanel::BatchQueuePanel () {
     Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
     start = Gtk::manage (new Gtk::ToggleButton (M("FILEBROWSER_STARTPROCESSING")));
     stop = Gtk::manage (new Gtk::ToggleButton (M("FILEBROWSER_STOPPROCESSING")));
-    autoStart = Gtk::manage (new Gtk::CheckButton ("Auto start"));
+    autoStart = Gtk::manage (new Gtk::CheckButton (M("BATCHQUEUE_AUTOSTART")));
     start->set_tooltip_text (M("FILEBROWSER_STARTPROCESSINGHINT"));
     stop->set_tooltip_text (M("FILEBROWSER_STOPPROCESSINGHINT"));
-    autoStart->set_tooltip_text ("Start processing automatically when a new job arrives");
+    autoStart->set_tooltip_text (M("FILEBROWSER_TOOLTIP_STOPPROCESSING"));
     start->set_active (false);
     stop->set_active (true);
     autoStart->set_active (options.procQueueEnabled);

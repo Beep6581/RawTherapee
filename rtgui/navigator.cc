@@ -17,10 +17,11 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <navigator.h>
+#include <toolpanel.h>
 
 Navigator::Navigator () {
 
-	set_label ("Navigator");
+	set_label (M("MAIN_MSG_NAVIGATOR"));
 	Gtk::VBox* mbox = Gtk::manage (new Gtk::VBox ());
 	previewWindow = Gtk::manage (new PreviewWindow ());
 	mbox->pack_start (*previewWindow, Gtk::PACK_SHRINK, 2);

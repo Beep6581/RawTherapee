@@ -45,12 +45,12 @@ Resize::Resize () : maxw(100000), maxh(100000) {
     combos->attach (*method, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
 	spec = Gtk::manage (new Gtk::ComboBoxText ());
-	spec->append_text ("Scale");
-	spec->append_text ("Width");
-    spec->append_text ("Height");
+	spec->append_text (M("TP_RESIZE_SCALE"));
+	spec->append_text (M("TP_RESIZE_WIDTH"));
+	spec->append_text (M("TP_RESIZE_HEIGHT"));
 	method->set_active (0);
     
-    combos->attach (*Gtk::manage (new Gtk::Label ("Specify:")), 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+	combos->attach (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY"))), 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     combos->attach (*spec, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
 	pack_start (*combos, Gtk::PACK_SHRINK, 4);
@@ -325,8 +325,8 @@ void Resize::specChanged () {
 
 void Resize::setBatchMode (bool batchMode) {
 
-	method->append_text ("(Unchanged)");
-	spec->append_text ("(Unchanged)");
+	method->append_text (M("GENERAL_UNCHANGED"));
+	spec->append_text (M("GENERAL_UNCHANGED"));
     ToolPanel::setBatchMode (batchMode);
     scale->showEditedCB ();
 }

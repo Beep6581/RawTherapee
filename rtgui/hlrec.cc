@@ -127,5 +127,5 @@ void HLRecovery::setRaw (bool raw) {
 void HLRecovery::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
-    method->append_text ("(Unchanged)");
+    method->append_text (M("GENERAL_UNCHANGED"));
 }
