@@ -17,19 +17,19 @@ EXIFFILTER_FOCALLEN;Fókusztávolság
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektív
 EXIFFILTER_SHUTTER;Záridő
-EXIFPANEL_ADDEDIT;Hozzáad/Szerkeszt
 EXIFPANEL_ADDEDITHINT;Új tagok hozzáadása, szerkesztése
+EXIFPANEL_ADDEDIT;Hozzáad/Szerkeszt
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Érték megadása
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Tag kijelölése
 EXIFPANEL_ADDTAGDLG_TITLE;Új tagok hozzáadása / Tagok szerkesztése
-EXIFPANEL_KEEP;Megtart
 EXIFPANEL_KEEPHINT;A kijelölt adatok megtartása a végső fájl mentésekor
+EXIFPANEL_KEEP;Megtart
 EXIFPANEL_REMOVE;Eltávolít
 EXIFPANEL_REMOVEHINT;A kijelölt adatok eldobása a végső fájl mentésekor
-EXIFPANEL_RESET;Visszaállít
-EXIFPANEL_RESETALL;Mindent visszaállít
 EXIFPANEL_RESETALLHINT;Az összes meta-adat visszaáttítása az eredeti állapotba
+EXIFPANEL_RESETALL;Mindent visszaállít
 EXIFPANEL_RESETHINT;A kijelölt adatok visszaáttítása az eredeti állapotba
+EXIFPANEL_RESET;Visszaállít
 EXIFPANEL_SUBDIRECTORY;Alkönyvtár
 FILEBROWSER_APPLYPROFILE;Feldolgozási paraméter hozzárendelés
 FILEBROWSER_ARRANGEMENTHINT;Váltás az előnézeti képek függőleges/vízszintes elrendezése között
@@ -37,8 +37,8 @@ FILEBROWSER_CLEARPROFILE;Feldolgozási paraméter törlése
 FILEBROWSER_COPYPROFILE;Feldolgozási paraméterek másolása
 FILEBROWSER_DELETEDLGLABEL;Fájl törlés megerősítése
 FILEBROWSER_DELETEDLGMSG;Biztosan törölni kívánja a kijelölt %1 képet?
-FILEBROWSER_EMPTYTRASH;Kuka ürítése
 FILEBROWSER_EMPTYTRASHHINT;Véglegesen letörli a kukában lévő képeket
+FILEBROWSER_EMPTYTRASH;Kuka ürítése
 FILEBROWSER_EXIFFILTERAPPLY;Aktív
 FILEBROWSER_EXIFFILTERAPPLYHINT;Az exif szűrő ki/bekapcsolása
 FILEBROWSER_EXIFFILTERLABEL;Exif Szűrő
@@ -84,10 +84,10 @@ FILEBROWSER_ZOOMINHINT;Növelés
 FILEBROWSER_ZOOMOUTHINT;Csökkentés
 GENERAL_ABOUT;Névjegy
 GENERAL_CANCEL;Mégsem
-GENERAL_DISABLE;Kikapcsol
 GENERAL_DISABLED;Kikapcsolva
-GENERAL_ENABLE;Engedélyez
+GENERAL_DISABLE;Kikapcsol
 GENERAL_ENABLED;Engedélyezve
+GENERAL_ENABLE;Engedélyez
 GENERAL_LANDSCAPE;Fekvő
 GENERAL_LOAD;Betöltés
 GENERAL_NA;n/a
@@ -187,8 +187,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Expozíció kompenzáció
 HISTORY_MSG_9;Világos tónus tömörítés
-HISTORY_NEWSNAPSHOT;Új
 HISTORY_NEWSNAPSHOTAS;cimkével...
+HISTORY_NEWSNAPSHOT;Új
 HISTORY_NEWSSDIALOGLABEL;Pillanatkép cimkéje:
 HISTORY_NEWSSDIALOGTITLE;Új pillanatkép
 HISTORY_SETTO;új érték:
@@ -208,52 +208,60 @@ ICMPANEL_OUTPUTPROFILE;Kimeneti színprofil
 ICMPANEL_SAVEREFERENCE;Referencia kép mentése profil kalibráláshoz
 ICMPANEL_WORKINGPROFILE;Munka színprofil
 IMAGEAREA_DETAILVIEW;Részlet nézet
-IPTCPANEL_AUTHOR;Szerző
 IPTCPANEL_AUTHORHINT;A kép létrehozójának neve, pl. író, fényképész, grafikus művész (By-line)
-IPTCPANEL_AUTHORSPOSITION;Szerző titulusa
 IPTCPANEL_AUTHORSPOSITIONHINT;A kép létrehozójának munkaköre illetve titulusa (By-line Title)
-IPTCPANEL_CAPTION;Leírás
+IPTCPANEL_AUTHORSPOSITION;Szerző titulusa
+IPTCPANEL_AUTHOR;Szerző
 IPTCPANEL_CAPTIONHINT;A kép szöveges leírása (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Író
+IPTCPANEL_CAPTION;Leírás
 IPTCPANEL_CAPTIONWRITERHINT;A leírást és az adatok rögzítését/szerkesztését/javítását végző személy neve (Writer - Editor)
-IPTCPANEL_CATEGORY;Kategória
+IPTCPANEL_CAPTIONWRITER;Író
 IPTCPANEL_CATEGORYHINT;A kép témáját azonosítja (Category)
-IPTCPANEL_CITY;Város
+IPTCPANEL_CATEGORY;Kategória
 IPTCPANEL_CITYHINT;A város, ahonnan a kép származik (City)
+IPTCPANEL_CITY;Város
 IPTCPANEL_COPYHINT;IPTC beállítások másolása a vágólapra
-IPTCPANEL_COPYRIGHT;Szerzői jog
 IPTCPANEL_COPYRIGHTHINT;Szerzői joggal kapcsolatos megjegyzések (Copyright Notice)
-IPTCPANEL_COUNTRY;Ország
+IPTCPANEL_COPYRIGHT;Szerzői jog
 IPTCPANEL_COUNTRYHINT;Az ország, ahonnan a kép származik (Country - Primary Location Name)
-IPTCPANEL_CREDIT;Rendelkező
+IPTCPANEL_COUNTRY;Ország
 IPTCPANEL_CREDITHINT;A kép kibocsájtójának neve (nem feltétlenül a szerző) (Credit)
+IPTCPANEL_CREDIT;Rendelkező
 IPTCPANEL_DATECREATED;Dátum
 IPTCPANEL_DATECREATEDHINT;A kép rögzítésének dátuma; formátum: ééééhhnn (Date Created)
 IPTCPANEL_EMBEDDED;Beágyazott
 IPTCPANEL_EMBEDDEDHINT;A betöltött képbe ágyazott információk kiolvasása
 IPTCPANEL_HEADLINE;Főcím
 IPTCPANEL_HEADLINEHINT;A kép témájának összegzése (Headline)
-IPTCPANEL_INSTRUCTIONS;Útmutatás
 IPTCPANEL_INSTRUCTIONSHINT;Egyéb, a képre vonatkozó szerkesztési útmutatás (Special Instructions)
-IPTCPANEL_KEYWORDS;Kulcsszavak
+IPTCPANEL_INSTRUCTIONS;Útmutatás
 IPTCPANEL_KEYWORDSHINT;Kategorizáláshoz/szűréshez használatos, a képre vonatkozó kulcsszavak (Keywords)
+IPTCPANEL_KEYWORDS;Kulcsszavak
 IPTCPANEL_PASTEHINT;IPTC beállítások beillesztése a vágólapról
-IPTCPANEL_PROVINCE;Régió
 IPTCPANEL_PROVINCEHINT;A megye/állam/régió, ahonnan a kép származik (Province-State)
-IPTCPANEL_RESET;Visszaállítás
+IPTCPANEL_PROVINCE;Régió
 IPTCPANEL_RESETHINT;Visszatérés az aktuális profil alapértékéhez
+IPTCPANEL_RESET;Visszaállítás
 IPTCPANEL_SOURCE;Forrás
 IPTCPANEL_SOURCEHINT;A kép szellemi tartalmának eredeti tulajdonosa (Source)
-IPTCPANEL_SUPPCATEGORIES;További kategóriák
 IPTCPANEL_SUPPCATEGORIESHINT;A kép finomabb, részletesebb kategorizálását teszi lehetővé (Supplemental Categories)
+IPTCPANEL_SUPPCATEGORIES;További kategóriák
 IPTCPANEL_TITLE;Címke
 IPTCPANEL_TITLEHINT;A kép rövid azonosítója (Object Name)
-IPTCPANEL_TRANSREFERENCE;Továbbítás helye
 IPTCPANEL_TRANSREFERENCEHINT;A továbbítás helyének megjelölése (Original Transmission Reference)
+IPTCPANEL_TRANSREFERENCE;Továbbítás helye
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Beállítások
-MAIN_BUTTON_SAVE;Kép mentése
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;másként...
+MAIN_BUTTON_SAVE;Kép mentése
 MAIN_BUTTON_SENDTOEDITOR;Megnyitás külső programmal
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Ilyen nevü fájl már létezik.
 MAIN_MSG_CANNOTLOAD;A képet nem sikerült betölteni.
 MAIN_MSG_CANNOTSAVE;Hiba történt a fájl mentése közben.
@@ -266,11 +274,14 @@ MAIN_MSG_QOVERWRITE;Felülírjam?
 MAIN_TAB_BASIC;Alap
 MAIN_TAB_COLOR;Színek
 MAIN_TAB_DETAIL;Részletek
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Expozíció
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Meta-adatok
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transzformáció
 MAIN_TOOLTIP_HIDEFP;A fájlkezelő alsó panel elrejtése/megjelenítése (Gyorsbillentyű: F)
 MAIN_TOOLTIP_HIDEHP;Az előzményeket is tartalmazó bal panel elrejtése/megjelenítése (Gyorsbillentyű: H)
@@ -357,16 +368,16 @@ PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LIVETHUMBNAILS;Élő előnézeti képek (lassabb)
 PREFERENCES_MONITORICC;Monitor ICC profilja
-PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
-PREFERENCES_OUTDIRFOLDER;Mentés ebbe a könyvtárba:
 PREFERENCES_OUTDIRFOLDERHINT;Ha ezt a lehetőséget választja, az összes feldolgozott képek ebbe a könyvtárba kerül
+PREFERENCES_OUTDIRFOLDER;Mentés ebbe a könyvtárba:
 PREFERENCES_OUTDIRHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda kívánja menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba kívánja menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba kívánja menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írja ezt:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Sablon használata
+PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda kívánja menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba kívánja menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba kívánja menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írja ezt:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Felismert kiterjesztések
-PREFERENCES_PARSEDEXTADD;Kiterjesztés hozzáadása
+PREFERENCES_OUTDIRTEMPLATE;Sablon használata
 PREFERENCES_PARSEDEXTADDHINT;A kiterjesztés beírása után ez a gomb felveszi a listára
+PREFERENCES_PARSEDEXTADD;Kiterjesztés hozzáadása
 PREFERENCES_PARSEDEXTDELHINT;A kiválasztott sor törlése a listából
+PREFERENCES_PARSEDEXT;Felismert kiterjesztések
 PREFERENCES_PROFILEHANDLING;Feldolgozási paraméterek kezelése
 PREFERENCES_PROFILELOADPR;Ha mindkét helyen van feldolgozási paraméter
 PREFERENCES_PROFILEPRCACHE;A gyorsítótárban lévőt használja
@@ -554,10 +565,10 @@ TP_SHARPENING_LABEL;Élesítés
 TP_SHARPENING_METHOD;Algoritmus
 TP_SHARPENING_ONLYEDGES;Csak az élek élesítése
 TP_SHARPENING_RADIUS;Sugár
-TP_SHARPENING_RLD;RL Dekonvolúció
 TP_SHARPENING_RLD_AMOUNT;Erősség
 TP_SHARPENING_RLD_DAMPING;Zajelnyomás
 TP_SHARPENING_RLD_ITERATIONS;Iterációszám
+TP_SHARPENING_RLD;RL Dekonvolúció
 TP_SHARPENING_THRESHOLD;Küszöb
 TP_SHARPENING_USM;Unsharp Mask
 TP_VIGNETTING_AMOUNT;Erősség

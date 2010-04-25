@@ -26,10 +26,10 @@ EXIFPANEL_KEEP;Guarda
 EXIFPANEL_KEEPHINT;Conserva atributs seleccionats en escriure un nou fitxer
 EXIFPANEL_REMOVE;Esborra
 EXIFPANEL_REMOVEHINT;Esborra atributs seleccionats en escriure un nou fitxer
-EXIFPANEL_RESET;Reinicialitza
-EXIFPANEL_RESETALL;Reinic. tot
 EXIFPANEL_RESETALLHINT;Reinicialitza atributs als valors originals
+EXIFPANEL_RESETALL;Reinic. tot
 EXIFPANEL_RESETHINT;Reinic. atributs seleccionats als valors originals
+EXIFPANEL_RESET;Reinicialitza
 EXIFPANEL_SUBDIRECTORY;Subdirectori
 FILEBROWSER_APPLYPROFILE;Aplica perfil
 FILEBROWSER_ARRANGEMENTHINT;Canvia entre alineació vertical/horitzontal de les minifotos
@@ -75,8 +75,8 @@ FILEBROWSER_SHOWRANK4HINT;Exposa imatges de 4 estrelles
 FILEBROWSER_SHOWRANK5HINT;Exposa imatges de 5 estrelles
 FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera
 FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang
-FILEBROWSER_STARTPROCESSING;Inicia procés
 FILEBROWSER_STARTPROCESSINGHINT;Inicia processar/desar d'imatges de la cua
+FILEBROWSER_STARTPROCESSING;Inicia procés
 FILEBROWSER_STOPPROCESSING;Atura processament
 FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges
 FILEBROWSER_THUMBSIZE;Tamany minifoto
@@ -84,8 +84,8 @@ FILEBROWSER_ZOOMINHINT;Engrandir minifoto
 FILEBROWSER_ZOOMOUTHINT;Reduïr minifoto
 GENERAL_ABOUT;Respecte a
 GENERAL_CANCEL;Cancel·la
-GENERAL_DISABLE;Inactiva
 GENERAL_DISABLED;Inactivat
+GENERAL_DISABLE;Inactiva
 GENERAL_ENABLE;Activa
 GENERAL_ENABLED;Activat
 GENERAL_LANDSCAPE;Horitzontal
@@ -210,10 +210,10 @@ ICMPANEL_WORKINGPROFILE;Perfil de treball
 IMAGEAREA_DETAILVIEW;Vista de detall
 IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Nom del creador de l'objecte, p.e. escriptor, fotògraf o artista gràfic (By-line).
-IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
 IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
-IPTCPANEL_CAPTION;Text descriptiu
+IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
 IPTCPANEL_CAPTIONHINT;Un text de descripció de les dades (Caption - Abstract).
+IPTCPANEL_CAPTION;Text descriptiu
 IPTCPANEL_CAPTIONWRITER;Autor de la descripció
 IPTCPANEL_CAPTIONWRITERHINT;Nom de qui ha escrit, editat o corregit la imatge o la descripció (Writer - Editor).
 IPTCPANEL_CATEGORY;Classificació
@@ -223,8 +223,8 @@ IPTCPANEL_CITYHINT;Ciutat d'origen de la imatge (City).
 IPTCPANEL_COPYHINT;Copiar dades actuals IPTC al portapapers
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Qualsevol notificació necessària sobre copyright (Copyright Notice).
-IPTCPANEL_COUNTRY;País
 IPTCPANEL_COUNTRYHINT;Nom del país o lloc on va ser creada la imatge (Country - Primary Location Name).
+IPTCPANEL_COUNTRY;País
 IPTCPANEL_CREDIT;Crèdit
 IPTCPANEL_CREDITHINT;Identitat del proveïdor de la imatge, no necessàriament el propietari/creador (Credit).
 IPTCPANEL_DATECREATED;Data de creació
@@ -233,27 +233,35 @@ IPTCPANEL_EMBEDDED;Encastat
 IPTCPANEL_EMBEDDEDHINT;Restaurar les dades IPTC encastades al fitxer d'imatge
 IPTCPANEL_HEADLINE;Capçalera
 IPTCPANEL_HEADLINEHINT;Una nota publicable que és una sinopsi dels continguts de la imatge (Headline).
-IPTCPANEL_INSTRUCTIONS;Instruccions
 IPTCPANEL_INSTRUCTIONSHINT;Altres instruccions editorials sobre l'ús de la imatge (Special Instructions).
-IPTCPANEL_KEYWORDS;Paraules clau
+IPTCPANEL_INSTRUCTIONS;Instruccions
 IPTCPANEL_KEYWORDSHINT;Paraules clau que faciliten la recerca de la imatge (Keywords).
+IPTCPANEL_KEYWORDS;Paraules clau
 IPTCPANEL_PASTEHINT;Enganxa les dades IPTC del portapapers
-IPTCPANEL_PROVINCE;Regió
 IPTCPANEL_PROVINCEHINT;Regió/Estat d'origen de la imatge (Province-State).
-IPTCPANEL_RESET;Reinici
+IPTCPANEL_PROVINCE;Regió
 IPTCPANEL_RESETHINT;Reinici perfil per omissió
+IPTCPANEL_RESET;Reinici
 IPTCPANEL_SOURCE;Font
 IPTCPANEL_SOURCEHINT;Propietari original del contingut intel·lectual de la imatge (Source).
 IPTCPANEL_SUPPCATEGORIES;Classif. detallada
 IPTCPANEL_SUPPCATEGORIESHINT;Precisió sobre el tema de la imatge (Supplemental Categories).
-IPTCPANEL_TITLE;Títol
 IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
-IPTCPANEL_TRANSREFERENCE;Refer. transmissió
+IPTCPANEL_TITLE;Títol
 IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Refer. transmissió
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferències
-MAIN_BUTTON_SAVE;Desa la imatge
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Com...
+MAIN_BUTTON_SAVE;Desa la imatge
 MAIN_BUTTON_SENDTOEDITOR;Envia a l'editor
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Fitxer la existent
 MAIN_MSG_CANNOTLOAD;No puc carregar la imatge
 MAIN_MSG_CANNOTSAVE;Error desant el fitxer
@@ -266,11 +274,14 @@ MAIN_MSG_QOVERWRITE;El voleu sobreescriure?
 MAIN_TAB_BASIC;Bàsic
 MAIN_TAB_COLOR;Color
 MAIN_TAB_DETAIL;Detall
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposició
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadades
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Forma
 MAIN_TOOLTIP_HIDEFP;Mostra/amaga panell inferior (directori i gestor de fitxers, tecla: F)
 MAIN_TOOLTIP_HIDEHP;Mostra/amaga panell esquerre (incloent la història, tecla: H)
@@ -278,8 +289,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Indicador de pèrdues en clars
 MAIN_TOOLTIP_INDCLIPPEDS;Indicador de pèrdues en foscos
 MAIN_TOOLTIP_PREFERENCES;Fixa preferències
 MAIN_TOOLTIP_QINFO;Info breu de la imatge
-MAIN_TOOLTIP_SAVE;Desa la imatge al directori per defecte
 MAIN_TOOLTIP_SAVEAS;Desa la imatge en directori escollit
+MAIN_TOOLTIP_SAVE;Desa la imatge al directori per defecte
 PARTIALPASTE_BASICGROUP;Ajustos bàsics
 PARTIALPASTE_CACORRECTION;Correcció A. C.(Aberració Cromàtica)
 PARTIALPASTE_COARSETRANS;Rotació 90 graus/ inversió
@@ -361,12 +372,12 @@ PREFERENCES_OUTDIR;Directori de sortida
 PREFERENCES_OUTDIRFOLDER;Desa al directori
 PREFERENCES_OUTDIRFOLDERHINT;Posa les imatges desades al directori seleccionat
 PREFERENCES_OUTDIRHINT;<i>Podeu usar les següents cadenes de format:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nAquestes cadenes de format refereixen als directoris i sub-paths del path del fitxer RAW.\n\nPer exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ha estat obert, el significat de les cadenes de format és:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, %p3=/home/tom, ...\n</b><i>\nSi voleu desar la imatge actual on hi ha l'original, escriviu:\n</i><b>%p1/%f\n</b><i>\nSi voleu desar la imatge actual en el directori 'refetes' dins el directori on hi ha l'original, escriviu:\n</i><b>%p1/refetes/%f\n</b><i>\nSi voleu desar la imatge actual en el directori '/home/tom/refetes' conservant el mateix subdirectori de dates, escriviu:\n</i><b>%p2/refetes/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Podeu usar les següents cadenes de format:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nAquestes cadenes de format refereixen als directoris i sub-paths del path del fitxer RAW.\n\nPer exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ha estat obert, el significat de les cadenes de format és:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, %p3=/home/tom, ...\n</b><i>\nSi voleu desar la imatge actual en el directori on hi ha l'original, escriviu:\n</i><b>%p1/%f\n</b><i>\nSi voleu desar la imatge actual en el directori 'refetes' sota el directori on hi ha l'original, escriviu:\n</i><b>%p1/refetes/%f\n</b><i>\nSi voleu desar la imatge actual en el directori '/home/tom/refetes' conservant el mateix subdirectori de dates, escriviu:\n</i><b>%p2/refetes/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Extensions analitzades
+PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
 PREFERENCES_PARSEDEXTADD;Afegir extensió
 PREFERENCES_PARSEDEXTADDHINT;Escriu una extensió i prem aquí per veure la llista
 PREFERENCES_PARSEDEXTDELHINT;Esborrar l'extensió seleccionada de la llista
+PREFERENCES_PARSEDEXT;Extensions analitzades
 PREFERENCES_PROFILEHANDLING;Ficant mà als perfils de procés
 PREFERENCES_PROFILELOADPR;Prioritat de càrrega de perfils
 PREFERENCES_PROFILEPRCACHE;Perfil a la mem. cau
@@ -426,8 +437,8 @@ SAVEDLG_JPEGQUAL;Qualitat JPEG
 SAVEDLG_JPGFILTER;Fitxers JPEG
 SAVEDLG_PNGCOMPR;Compressió PNG
 SAVEDLG_PNGFILTER;Fitxers PNG
-SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
 SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
+SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
 SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
 SAVEDLG_SAVEIMMEDIATELY;Desa ara mateix
 SAVEDLG_SAVESPP;Desa els paràmetres de procés amb la imatge
@@ -554,10 +565,10 @@ TP_SHARPENING_LABEL;Enfocant
 TP_SHARPENING_METHOD;Mètode
 TP_SHARPENING_ONLYEDGES;Enfocar només vores
 TP_SHARPENING_RADIUS;Radi
-TP_SHARPENING_RLD;RL Deconvolució
 TP_SHARPENING_RLD_AMOUNT;Quantitat
 TP_SHARPENING_RLD_DAMPING;Ablaniment
 TP_SHARPENING_RLD_ITERATIONS;Iteracions
+TP_SHARPENING_RLD;RL Deconvolució
 TP_SHARPENING_THRESHOLD;Llindar
 TP_SHARPENING_USM;Màscara d'enfocament
 TP_VIGNETTING_AMOUNT;Quantitat

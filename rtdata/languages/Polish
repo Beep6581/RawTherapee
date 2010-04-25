@@ -27,14 +27,14 @@ EXIFPANEL_ADDEDITHINT;Dodaj nową etykietę lub edytuj etykietę
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Wpisz wartość
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Wybierz etykietę
 EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Edytuj etykietę
-EXIFPANEL_KEEP;Zapamiętaj
 EXIFPANEL_KEEPHINT;Zapamiętaj wybrane etykiety podczas zapisywania pliku wyjściowego
-EXIFPANEL_REMOVE;Usuń
+EXIFPANEL_KEEP;Zapamiętaj
 EXIFPANEL_REMOVEHINT;Usuń wybrane etykiety podczas zapisywania pliku wyjściowego
-EXIFPANEL_RESET;Przywróć
-EXIFPANEL_RESETALL;Przywróć wszystkie
+EXIFPANEL_REMOVE;Usuń
 EXIFPANEL_RESETALLHINT;Przywróć wszystkie etykiety do ich oryginalnych wartości
+EXIFPANEL_RESETALL;Przywróć wszystkie
 EXIFPANEL_RESETHINT;Przywróć wybrane etykiety do ich oryginalnych wartości
+EXIFPANEL_RESET;Przywróć
 EXIFPANEL_SUBDIRECTORY;Podkatalog
 FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_ARRANGEMENTHINT;Przełącz pomiędzy poziomym/pionowym wyrównaniem miniaturek
@@ -42,13 +42,13 @@ FILEBROWSER_CLEARPROFILE;Wyczyść profil
 FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_DELETEDLGLABEL;Potwierdzenie usunięcia pliku
 FILEBROWSER_DELETEDLGMSG;Jesteś pewień, że chcesz usunąć zaznaczone %1 pliki?
-FILEBROWSER_EMPTYTRASH;Wyczyść kosz
 FILEBROWSER_EMPTYTRASHHINT;Permanentnie usuń pliki z kosza
-FILEBROWSER_EXIFFILTERAPPLY;Zastosuj
+FILEBROWSER_EMPTYTRASH;Wyczyść kosz
 FILEBROWSER_EXIFFILTERAPPLYHINT;Włącz/wyłącz filtr Exif w przeglądarce plików
+FILEBROWSER_EXIFFILTERAPPLY;Zastosuj
 FILEBROWSER_EXIFFILTERLABEL;Filrt Exif
-FILEBROWSER_EXIFFILTERSETTINGS;Ustawienia
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Zmień ustawienia filtru Exif
+FILEBROWSER_EXIFFILTERSETTINGS;Ustawienia
 FILEBROWSER_PARTIALPASTEPROFILE;Wklej częściowo
 FILEBROWSER_PASTEPROFILE;Wklej profil
 FILEBROWSER_POPUPCANCELJOB;Anuluj zadanie
@@ -67,8 +67,8 @@ FILEBROWSER_POPUPSELECTALL;Zaznacz wszystkie
 FILEBROWSER_POPUPTRASH;Przenieś do kosza
 FILEBROWSER_POPUPUNRANK;Usuń ocenę
 FILEBROWSER_POPUPUNTRASH;Usuń z kosza
-FILEBROWSER_PROCESSINGSETTINGS;Ustawienia
 FILEBROWSER_PROCESSINGSETTINGSHINT;Ustaw format pliku i katalog wyjściowy
+FILEBROWSER_PROCESSINGSETTINGS;Ustawienia
 FILEBROWSER_RENAMEDLGLABEL;Zmień nazwę pliku
 FILEBROWSER_RENAMEDLGMSG;Zmień nazwę plki "%1" na:
 FILEBROWSER_SHOWDIRHINT;Pokaż wszystkie zdjęcia w katalogu
@@ -80,19 +80,19 @@ FILEBROWSER_SHOWRANK4HINT;Pokaż zdjęcia ocenione na 4 gwiazdki
 FILEBROWSER_SHOWRANK5HINT;Pokaż zdjęcia ocenione na 5 gwiazdek
 FILEBROWSER_SHOWTRASHHINT;Pokaż zawartość kosza
 FILEBROWSER_SHOWUNRANKHINT;Pokaz nieocenione zdjęcia
-FILEBROWSER_STARTPROCESSING;Rozpocznij przetwarzanie
 FILEBROWSER_STARTPROCESSINGHINT;Rozpocznij przetwarzanie/zapisywanie plików w kolejce
-FILEBROWSER_STOPPROCESSING;Zatrzymaj przetwarzanie
+FILEBROWSER_STARTPROCESSING;Rozpocznij przetwarzanie
 FILEBROWSER_STOPPROCESSINGHINT;Zatrzymaj przetwarzanie zdjęć
+FILEBROWSER_STOPPROCESSING;Zatrzymaj przetwarzanie
 FILEBROWSER_THUMBSIZE;Rozmiar minaturek
 FILEBROWSER_ZOOMINHINT;Zwiększ rozmiar miniaturek
 FILEBROWSER_ZOOMOUTHINT;Zmniejsz rozmiar miniaturek
 GENERAL_ABOUT;O programie
 GENERAL_CANCEL;Anuluj
-GENERAL_DISABLE;Wyłącz
 GENERAL_DISABLED;Wyłączone
-GENERAL_ENABLE;Włącz
+GENERAL_DISABLE;Wyłącz
 GENERAL_ENABLED;Włączone
+GENERAL_ENABLE;Włącz
 GENERAL_LANDSCAPE;Poziomo
 GENERAL_LOAD;Ładuj
 GENERAL_NA;nd.
@@ -192,8 +192,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Kompensacja ekspozycji
 HISTORY_MSG_9;Kompresja świateł
-HISTORY_NEWSNAPSHOT;Nowa migawka
 HISTORY_NEWSNAPSHOTAS;Jako...
+HISTORY_NEWSNAPSHOT;Nowa migawka
 HISTORY_NEWSSDIALOGLABEL;Nazwa migawki:
 HISTORY_NEWSSDIALOGTITLE;Dodaj nową migawkę
 HISTORY_SETTO;Wybrano
@@ -217,48 +217,56 @@ IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Imię lub nazwa twórcy obiektu np. pisarza, fotografa lub grafika (w linii).
 IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_CAPTION;Tytuł
 IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
+IPTCPANEL_CAPTION;Tytuł
 IPTCPANEL_CAPTIONWRITER;Caption Writer
 IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-IPTCPANEL_CATEGORY;Kategoria
 IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-IPTCPANEL_CITY;Miasto
+IPTCPANEL_CATEGORY;Kategoria
 IPTCPANEL_CITYHINT;City of image origin (City).
+IPTCPANEL_CITY;Miasto
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COUNTRY;Kraj
 IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
+IPTCPANEL_COUNTRY;Kraj
 IPTCPANEL_CREDIT;Credit
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
 IPTCPANEL_DATECREATED;Data utworzenia
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_HEADLINE;Nagłówek
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONS;Instrukcje
+IPTCPANEL_HEADLINE;Nagłówek
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_KEYWORDS;Słowa kluczowe
+IPTCPANEL_INSTRUCTIONS;Instrukcje
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_KEYWORDS;Słowa kluczowe
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCE;Stan, województwo, dystrykt itd.
 IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-IPTCPANEL_RESET;Reset
+IPTCPANEL_PROVINCE;Stan, województwo, dystrykt itd.
 IPTCPANEL_RESETHINT;Reset to profile default
-IPTCPANEL_SOURCE;Źródło
+IPTCPANEL_RESET;Reset
 IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+IPTCPANEL_SOURCE;Źródło
 IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_TITLE;Tytuł
+IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TITLE;Tytuł
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferencje
-MAIN_BUTTON_SAVE;Zapisz obraz
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Jako...
+MAIN_BUTTON_SAVE;Zapisz obraz
 MAIN_BUTTON_SENDTOEDITOR;Wyślij do edytora
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Plik już istnieje.
 MAIN_MSG_CANNOTLOAD;Nie można wczytać obrazu
 MAIN_MSG_CANNOTSAVE;Błąd zapisu pliku
@@ -271,11 +279,14 @@ MAIN_MSG_QOVERWRITE;Czy chcesz go zastąpić?
 MAIN_TAB_BASIC;Podstawowe
 MAIN_TAB_COLOR;Kolor
 MAIN_TAB_DETAIL;Szczegóły
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Ekspozycja
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadane
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transformacje
 MAIN_TOOLTIP_HIDEFP;Pokaż/ukryj dolny panel (przeglądarka plików i katalogów, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Pokaż/ukryj lewy panel (razem z historią, shortcut key: H)
@@ -283,8 +294,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Pokaż prześwietlenia
 MAIN_TOOLTIP_INDCLIPPEDS;Pokaż niedoświetlenia
 MAIN_TOOLTIP_PREFERENCES;Ustaw preferencje
 MAIN_TOOLTIP_QINFO;Informacje o pliku
-MAIN_TOOLTIP_SAVE;Zapisz obraz w katalogu domyślnym
 MAIN_TOOLTIP_SAVEAS;Zapisz obraz we wskazanym katalogu
+MAIN_TOOLTIP_SAVE;Zapisz obraz w katalogu domyślnym
 PARTIALPASTE_BASICGROUP;Podstawowe ustawienia
 PARTIALPASTE_CACORRECTION;Korekcja C/A
 PARTIALPASTE_COARSETRANS;Rotacja/odwrócenie o 90 stopni
@@ -362,16 +373,16 @@ PREFERENCES_INTENT_RELATIVE;Względnie kolorymetryczny
 PREFERENCES_INTENT_SATURATION;Nasyceniowy
 PREFERENCES_LIVETHUMBNAILS;Miniaturki na żywo (wojniej)
 PREFERENCES_MONITORICC;Profil monitora
-PREFERENCES_OUTDIR;Katalog wyjściowy
-PREFERENCES_OUTDIRFOLDER;Zapisz do katalogu
 PREFERENCES_OUTDIRFOLDERHINT;Umieść zapisane zdjęcia w wybranym katalogu
+PREFERENCES_OUTDIRFOLDER;Zapisz do katalogu
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Użyj schemat
+PREFERENCES_OUTDIR;Katalog wyjściowy
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_OUTDIRTEMPLATE;Użyj schemat
 PREFERENCES_PARSEDEXTADD;Dodaj rozszerzenie
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -431,8 +442,8 @@ SAVEDLG_JPEGQUAL;Jakość JPEG
 SAVEDLG_JPGFILTER;Pliki JPEG
 SAVEDLG_PNGCOMPR;Kompresja PNG
 SAVEDLG_PNGFILTER;Pliki PNG
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Zapisz parametry przetwarzania wraz z obrazem
@@ -559,9 +570,9 @@ TP_SHARPENING_LABEL;Wyostrzanie
 TP_SHARPENING_METHOD;Metoda
 TP_SHARPENING_ONLYEDGES;Wyostrz tylko krawędzie
 TP_SHARPENING_RADIUS;Promień
-TP_SHARPENING_RLD;Dekonwolucja RL 
 TP_SHARPENING_RLD_AMOUNT;Siła
 TP_SHARPENING_RLD_DAMPING;Tłumienie
+TP_SHARPENING_RLD;Dekonwolucja RL 
 TP_SHARPENING_RLD_ITERATIONS;Iteracje
 TP_SHARPENING_THRESHOLD;Próg
 TP_SHARPENING_USM;Maska wyostrzająca

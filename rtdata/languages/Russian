@@ -20,19 +20,19 @@ EXIFFILTER_FOCALLEN;Фокусное расстояние
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Объектив
 EXIFFILTER_SHUTTER;Выдержка
-EXIFPANEL_ADDEDIT;Добавить/редактировать
 EXIFPANEL_ADDEDITHINT;Добавить новый тэг или редактировать тег
+EXIFPANEL_ADDEDIT;Добавить/редактировать
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ввести значение
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Выбрать тег
 EXIFPANEL_ADDTAGDLG_TITLE;Добавить/редактировать тег
-EXIFPANEL_KEEP;Сохранить
 EXIFPANEL_KEEPHINT;Сохранять выбранные теги при записи файла
-EXIFPANEL_REMOVE;Удалить
+EXIFPANEL_KEEP;Сохранить
 EXIFPANEL_REMOVEHINT;Удалять выбранные теги при записи файла
-EXIFPANEL_RESET;Сбросить
-EXIFPANEL_RESETALL;Сбросить все
+EXIFPANEL_REMOVE;Удалить
 EXIFPANEL_RESETALLHINT;Сбросить все теги в первоначальные значения
+EXIFPANEL_RESETALL;Сбросить все
 EXIFPANEL_RESETHINT;Сбросить выбранные теги в первоначальные значения
+EXIFPANEL_RESET;Сбросить
 EXIFPANEL_SUBDIRECTORY;Подкаталог
 FILEBROWSER_APPLYPROFILE;Применить профиль
 FILEBROWSER_ARRANGEMENTHINT;Вертикальное/горизонтальное расположение эскизов
@@ -40,13 +40,13 @@ FILEBROWSER_CLEARPROFILE;Удалить профиль
 FILEBROWSER_COPYPROFILE;Скопировать профиль
 FILEBROWSER_DELETEDLGLABEL;Подтверждение удаления файла
 FILEBROWSER_DELETEDLGMSG;Вы уверены, что хотите удалить %1 выбранный(ых) файл(ов)?
-FILEBROWSER_EMPTYTRASH;Очистить корзину
 FILEBROWSER_EMPTYTRASHHINT;Удалить файлы из корзины без возможности восстановления
-FILEBROWSER_EXIFFILTERAPPLY;Применить
+FILEBROWSER_EMPTYTRASH;Очистить корзину
 FILEBROWSER_EXIFFILTERAPPLYHINT;Включение/выключения фильтра Exif в браузере
+FILEBROWSER_EXIFFILTERAPPLY;Применить
 FILEBROWSER_EXIFFILTERLABEL;Фильтр Exif
-FILEBROWSER_EXIFFILTERSETTINGS;Настройка
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Настройка параметров фильтра Exif
+FILEBROWSER_EXIFFILTERSETTINGS;Настройка
 FILEBROWSER_PARTIALPASTEPROFILE;Частичная вставка
 FILEBROWSER_PASTEPROFILE;Вставка профиля
 FILEBROWSER_POPUPCANCELJOB;Отменить задание
@@ -65,8 +65,8 @@ FILEBROWSER_POPUPSELECTALL;Выбрать все
 FILEBROWSER_POPUPTRASH;Удалить в корзину
 FILEBROWSER_POPUPUNRANK;Снять рейтинг
 FILEBROWSER_POPUPUNTRASH;Удалить из корзины
-FILEBROWSER_PROCESSINGSETTINGS;Параметры
 FILEBROWSER_PROCESSINGSETTINGSHINT;Задать формат файла и выходной каталог
+FILEBROWSER_PROCESSINGSETTINGS;Параметры
 FILEBROWSER_RENAMEDLGLABEL;Переименовать файл
 FILEBROWSER_RENAMEDLGMSG;Переименовать файл "%1" в:
 FILEBROWSER_SHOWDIRHINT;Показать все изображения в каталоге
@@ -78,19 +78,19 @@ FILEBROWSER_SHOWRANK4HINT;Показать изображения с рейти�
 FILEBROWSER_SHOWRANK5HINT;Показать изображения с рейтингом 5
 FILEBROWSER_SHOWTRASHHINT;Показать содержимое корзины
 FILEBROWSER_SHOWUNRANKHINT;Показать изображения без рейтинга
-FILEBROWSER_STARTPROCESSING;Начать обработку
 FILEBROWSER_STARTPROCESSINGHINT;Запуск обработки/сохранения помещенных в очередь изображений
-FILEBROWSER_STOPPROCESSING;Остановить обработку
+FILEBROWSER_STARTPROCESSING;Начать обработку
 FILEBROWSER_STOPPROCESSINGHINT;Отмена обработки изображений
+FILEBROWSER_STOPPROCESSING;Остановить обработку
 FILEBROWSER_THUMBSIZE;Размер эскиза
 FILEBROWSER_ZOOMINHINT;Увеличить размер эскиза
 FILEBROWSER_ZOOMOUTHINT;Уменьшить размер эскиза
 GENERAL_ABOUT;О программе
 GENERAL_CANCEL;Отмена
-GENERAL_DISABLE;Выключить
 GENERAL_DISABLED;Выключено
-GENERAL_ENABLE;Включить
+GENERAL_DISABLE;Выключить
 GENERAL_ENABLED;Включено
+GENERAL_ENABLE;Включить
 GENERAL_LANDSCAPE;Альбомный
 GENERAL_LOAD;Загрузить
 GENERAL_NA;Н/Д
@@ -185,18 +185,18 @@ HISTORY_MSG_76;Метаданные Exif
 HISTORY_MSG_77;Метаданные IPTC
 HISTORY_MSG_78;Данные изменения размеров
 HISTORY_MSG_79;Ширина изменения размеров
+HISTORY_MSG_7;Уровень чёрного
 HISTORY_MSG_80;Высота изменения размеров
 HISTORY_MSG_81;Изменение размеров включено
-HISTORY_MSG_7;Уровень чёрного
 HISTORY_MSG_8;Компенсация экспозиции
 HISTORY_MSG_9;Сжатие светов
-HISTORY_NEWSNAPSHOT;Новый снимок
 HISTORY_NEWSNAPSHOTAS;Как...
+HISTORY_NEWSNAPSHOT;Новый снимок
 HISTORY_NEWSSDIALOGLABEL;Название снимка:
 HISTORY_NEWSSDIALOGTITLE;Добавить снимок
 HISTORY_SETTO;Установить в
-HISTORY_SNAPSHOT;Снимок
 HISTORY_SNAPSHOTS;Снимки
+HISTORY_SNAPSHOT;Снимок
 ICMPANEL_FILEDLGFILTERANY;Любые файлы
 ICMPANEL_FILEDLGFILTERICM;Файлы ICC профилей
 ICMPANEL_GAMMABEFOREINPUT;Применять гамму для профиля
@@ -211,57 +211,65 @@ ICMPANEL_OUTPUTPROFILE;Выходной профиль
 ICMPANEL_SAVEREFERENCE;Сохранить исходное изображение для профилирования
 ICMPANEL_WORKINGPROFILE;Рабочий профиль
 IMAGEAREA_DETAILVIEW;Детальный просмотр
-IPTCPANEL_AUTHOR;Автор
 IPTCPANEL_AUTHORHINT;Имя создателя объекта (писателя, фотографа или художника) (By-line)
-IPTCPANEL_AUTHORSPOSITION;Позиция автора
 IPTCPANEL_AUTHORSPOSITIONHINT;Название автора или авторов объекта (By-line Title).
-IPTCPANEL_CAPTION;Подпись
+IPTCPANEL_AUTHORSPOSITION;Позиция автора
+IPTCPANEL_AUTHOR;Автор
 IPTCPANEL_CAPTIONHINT;Текстовое описание данных (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Автор подписи
 IPTCPANEL_CAPTIONWRITERHINT;Имя человека, участвовавшего в создании, изменении или редактировании изображения либо подписи (Writer - Editor).
-IPTCPANEL_CATEGORY;Категория
+IPTCPANEL_CAPTIONWRITER;Автор подписи
+IPTCPANEL_CAPTION;Подпись
 IPTCPANEL_CATEGORYHINT;Устанавливает тему изображения (Category)
-IPTCPANEL_CITY;Город
+IPTCPANEL_CATEGORY;Категория
 IPTCPANEL_CITYHINT;Город (City).
+IPTCPANEL_CITY;Город
 IPTCPANEL_COPYHINT;Копировать данные IPTC в буфер обмена
-IPTCPANEL_COPYRIGHT;Авторские права
 IPTCPANEL_COPYRIGHTHINT;Любые предупреждения об авторских правах (Copyright Notice).
-IPTCPANEL_COUNTRY;Страна
+IPTCPANEL_COPYRIGHT;Авторские права
 IPTCPANEL_COUNTRYHINT;Название страны/начального местоположения (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Поддержка
+IPTCPANEL_COUNTRY;Страна
 IPTCPANEL_CREDITHINT;Лица и организации, осуществляющие какую либо поддержку изображения (Credit).
-IPTCPANEL_DATECREATED;Дата создания
+IPTCPANEL_CREDIT;Поддержка
 IPTCPANEL_DATECREATEDHINT;Дата создания интеллектуального содержания изображения; Формат: ГГГГММДД (Date Created).
-IPTCPANEL_EMBEDDED;Встроенный
+IPTCPANEL_DATECREATED;Дата создания
 IPTCPANEL_EMBEDDEDHINT;Сбросить данные IPTC, встроенные в файл изображения
-IPTCPANEL_HEADLINE;Заголовок
+IPTCPANEL_EMBEDDED;Встроенный
 IPTCPANEL_HEADLINEHINT;Подходящий для публикации краткий обзор содержимого изображения (Headline).
-IPTCPANEL_INSTRUCTIONS;Инструкции
+IPTCPANEL_HEADLINE;Заголовок
 IPTCPANEL_INSTRUCTIONSHINT;Прочие редакторские инструкции об использовании изображения (Special Instructions).
-IPTCPANEL_KEYWORDS;Ключевые слова
+IPTCPANEL_INSTRUCTIONS;Инструкции
 IPTCPANEL_KEYWORDSHINT;Ключевые слова, используемые для поиска (Keywords).
+IPTCPANEL_KEYWORDS;Ключевые слова
 IPTCPANEL_PASTEHINT;Вставить данные IPTC из буфера обмена
-IPTCPANEL_PROVINCE;Провинция
 IPTCPANEL_PROVINCEHINT;Провинция/штат (Province-State).
-IPTCPANEL_RESET;Сбросить
+IPTCPANEL_PROVINCE;Провинция
 IPTCPANEL_RESETHINT;Сбросить профиль на значения по умолчанию
-IPTCPANEL_SOURCE;Источник
+IPTCPANEL_RESET;Сбросить
 IPTCPANEL_SOURCEHINT;Первоначальный владелец интеллектуального содержания изображения (Source).
-IPTCPANEL_SUPPCATEGORIES;Доп. категории
+IPTCPANEL_SOURCE;Источник
 IPTCPANEL_SUPPCATEGORIESHINT;Дополнительные уточнения темы изображения (Supplemental Categories).
-IPTCPANEL_TITLE;Название
+IPTCPANEL_SUPPCATEGORIES;Доп. категории
 IPTCPANEL_TITLEHINT;Простое описание изображения (Object Name).
-IPTCPANEL_TRANSREFERENCE;Код поддержки
+IPTCPANEL_TITLE;Название
 IPTCPANEL_TRANSREFERENCEHINT;Код, облегчающий отслеживание изображения при передаче в обработку на сторону (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Код поддержки
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Настройки
-MAIN_BUTTON_SAVE;Сохранить изображение
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Как...
+MAIN_BUTTON_SAVE;Сохранить изображение
 MAIN_BUTTON_SENDTOEDITOR;Открыть в редакторе
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Файл уже существует.
 MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображение
 MAIN_MSG_CANNOTSAVE;Ошибка при сохранении файла
-MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный путь в диалоге "Настройки".
+MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
 MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходе из программы.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Вы уверены, что хотите выйти из программы? В очереди остались необработанные изображения.
 MAIN_MSG_JOBSINQUEUE;Идёт обработка
@@ -269,11 +277,14 @@ MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
 MAIN_TAB_BASIC;Основные
 MAIN_TAB_COLOR;Цвет
 MAIN_TAB_DETAIL;Детализация
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Экспозиция
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Метаданные
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Преобразования
 MAIN_TOOLTIP_HIDEFP;Показать/скрыть нижнюю панель (каталоги и список файлов, горячая клавиша: F)
 MAIN_TOOLTIP_HIDEHP;Показать/скрыть левую панель (включая историю, горячая клавиша: H)
@@ -281,8 +292,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Индикатор пересветов
 MAIN_TOOLTIP_INDCLIPPEDS;Индикатор затемнений
 MAIN_TOOLTIP_PREFERENCES;задать настройки
 MAIN_TOOLTIP_QINFO;Информация об изображении
-MAIN_TOOLTIP_SAVE;Сохранить изображение в каталог по умолчанию
 MAIN_TOOLTIP_SAVEAS;Сохранить изображение в...
+MAIN_TOOLTIP_SAVE;Сохранить изображение в каталог по умолчанию
 PARTIALPASTE_BASICGROUP;Базовые настройки
 PARTIALPASTE_CACORRECTION;Коррекция C/A
 PARTIALPASTE_COARSETRANS;поворот на 90 гр. / отражение
@@ -330,8 +341,8 @@ PREFERENCES_CLEARDLG_LINE2;Это может занять несколько с�
 PREFERENCES_CLEARDLG_TITLE;Пожалуйста, подождите
 PREFERENCES_CLIPPINGIND;Индикация пересветов/затемнений
 PREFERENCES_CMETRICINTENT;Колориметрическое преобразование
-PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DATEFORMATHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%y</b><i> : год</i>\n<b>%m</b><i> : месяц</i>\n<b>%d</b><i> : день</i>\n<i>\nНапример, венгерский формат даты такой:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
@@ -360,16 +371,16 @@ PREFERENCES_INTENT_RELATIVE;Относительное
 PREFERENCES_INTENT_SATURATION;По насыщенности
 PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MONITORICC;Профиль монитора
-PREFERENCES_OUTDIR;Каталог
-PREFERENCES_OUTDIRFOLDER;Каталог для сохранения изображений
 PREFERENCES_OUTDIRFOLDERHINT;Сохранение изображений в выбранный каталог
+PREFERENCES_OUTDIRFOLDER;Каталог для сохранения изображений
 PREFERENCES_OUTDIRHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если путь к файлу - </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут следующими:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в один каталог с оригиналом, введите строку:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в подкаталог "converted" в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений в каталог "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если был открыт каталог </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут выглядеть так:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге с оригиналом, введите:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге "converted", расположенной в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений папке в "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Расширения для предпросмотра
-PREFERENCES_PARSEDEXTADD;Добавить
+PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
+PREFERENCES_OUTDIR;Каталог
 PREFERENCES_PARSEDEXTADDHINT;Введите расширение и нажмите на эту кнопку, чтобы добавить его в список
+PREFERENCES_PARSEDEXTADD;Добавить
 PREFERENCES_PARSEDEXTDELHINT;Удаление выбранных расширений из списка
+PREFERENCES_PARSEDEXT;Расширения для предпросмотра
 PREFERENCES_PROFILEHANDLING;Профиль постобработки
 PREFERENCES_PROFILELOADPR;Приоритет загрузки профиля постобработки
 PREFERENCES_PROFILEPRCACHE;загружать из кэша
@@ -429,9 +440,9 @@ SAVEDLG_JPEGQUAL;Качество JPEG
 SAVEDLG_JPGFILTER;Файлы JPEG
 SAVEDLG_PNGCOMPR;Сжатие PNG
 SAVEDLG_PNGFILTER;Файлы PNG
-SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
 SAVEDLG_PUTTOQUEUEHEAD;Поместить в начало очереди на обработку
 SAVEDLG_PUTTOQUEUETAIL;Поместить в конец очереди на обработку
+SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
 SAVEDLG_SAVEIMMEDIATELY;Сохранить сейчас
 SAVEDLG_SAVESPP;Сохранять параметры обработки вместе с изображением
 SAVEDLG_TIFFFILTER;Файлы TIFF
@@ -525,9 +536,9 @@ TP_LUMACURVE_LABEL;Кривая яркости
 TP_LUMADENOISE_EDGETOLERANCE;Устойчивость к границам
 TP_LUMADENOISE_LABEL;Удаление шума
 TP_LUMADENOISE_RADIUS;радиус
-TP_RESIZE_BICUBIC;Бикубический
 TP_RESIZE_BICUBICSF;Мягкий бикубический
 TP_RESIZE_BICUBICSH;Резкий бикубический
+TP_RESIZE_BICUBIC;Бикубический
 TP_RESIZE_BILINEAR;Билинейный
 TP_RESIZE_FULLSIZE;Размер изображения:
 TP_RESIZE_H;В:
@@ -557,10 +568,10 @@ TP_SHARPENING_LABEL;Резкость
 TP_SHARPENING_METHOD;Метод
 TP_SHARPENING_ONLYEDGES;Только границы
 TP_SHARPENING_RADIUS;Радиус
-TP_SHARPENING_RLD;Обращённая свёртка RL
 TP_SHARPENING_RLD_AMOUNT;Величина
 TP_SHARPENING_RLD_DAMPING;Ослабление
 TP_SHARPENING_RLD_ITERATIONS;Повторений
+TP_SHARPENING_RLD;Обращённая свёртка RL
 TP_SHARPENING_THRESHOLD;Порог
 TP_SHARPENING_USM;Маска размытия
 TP_VIGNETTING_AMOUNT;Величина

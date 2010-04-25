@@ -22,14 +22,14 @@ EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEP;Keep
 EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
-EXIFPANEL_REMOVE;Remove
+EXIFPANEL_KEEP;Keep
 EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
-EXIFPANEL_RESET;Reset
-EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_REMOVE;Remove
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_RESET;Reset
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -42,8 +42,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -62,8 +62,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -75,19 +75,19 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
 GENERAL_ABOUT;אודות
 GENERAL_CANCEL;בטל
-GENERAL_DISABLE;בטל
 GENERAL_DISABLED;מבוטל
-GENERAL_ENABLE;הפעל
+GENERAL_DISABLE;בטל
 GENERAL_ENABLED;מופעל
+GENERAL_ENABLE;הפעל
 GENERAL_LANDSCAPE;נוף
 GENERAL_LOAD;הטען
 GENERAL_NA;אין
@@ -187,13 +187,13 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;פיצוי חשיפה
 HISTORY_MSG_9;דחיסת גוונים בהירים
-HISTORY_NEWSNAPSHOT;תצלום חדש
 HISTORY_NEWSNAPSHOTAS;בשם
+HISTORY_NEWSNAPSHOT;תצלום חדש
 HISTORY_NEWSSDIALOGLABEL;שם התצלום
 HISTORY_NEWSSDIALOGTITLE;הוסף תצלום חדש
 HISTORY_SETTO;העבר אל
-HISTORY_SNAPSHOT;תצלום
 HISTORY_SNAPSHOTS;תצלומים
+HISTORY_SNAPSHOT;תצלום
 ICMPANEL_FILEDLGFILTERANY;קבצים כלשהם
 ICMPANEL_FILEDLGFILTERICM;ICC קבצי צבע
 ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
@@ -233,27 +233,35 @@ IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_KEYWORDS;Keywords
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCE;Province
 IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-IPTCPANEL_RESET;Reset
+IPTCPANEL_PROVINCE;Province
 IPTCPANEL_RESETHINT;Reset to profile default
-IPTCPANEL_SOURCE;Source
+IPTCPANEL_RESET;Reset
 IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+IPTCPANEL_SOURCE;Source
 IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_TITLE;Title
+IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TITLE;Title
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;העדפויות
-MAIN_BUTTON_SAVE;שמור צילום
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;שמור בשם
+MAIN_BUTTON_SAVE;שמור צילום
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;הקובץ כבר קיים
 MAIN_MSG_CANNOTLOAD;לא יכול להעלות את הקובץ
 MAIN_MSG_CANNOTSAVE;טעות בשמירת הקובץ
@@ -266,11 +274,14 @@ MAIN_MSG_QOVERWRITE;?רצונך לכתוב אותו מחדש?
 MAIN_TAB_BASIC;יסודות
 MAIN_TAB_COLOR;Color
 MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ניהול צבע
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;התמרות
 MAIN_TOOLTIP_HIDEFP;גלה\הסתר לוח תחתון - דפדפן (shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;גלה\הסתר לוח שמאלי - היסטוריה (shortcut key: F)
@@ -278,8 +289,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;סימן לגוונים בהירים מקוצצים
 MAIN_TOOLTIP_INDCLIPPEDS;סימן לגוונים כהים מקוצצים
 MAIN_TOOLTIP_PREFERENCES;קבע העדפויות
 MAIN_TOOLTIP_QINFO;מידע מהיר אודות הצילום
-MAIN_TOOLTIP_SAVE;שמור לתיק ברירת המחדל
 MAIN_TOOLTIP_SAVEAS;שמור לתיק נבחר
+MAIN_TOOLTIP_SAVE;שמור לתיק ברירת המחדל
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -327,8 +338,8 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;סימון קיצוץ
 PREFERENCES_CMETRICINTENT;כוונה קולורמטרית
-PREFERENCES_DATEFORMAT;צורת תאריך
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;צורת תאריך
 PREFERENCES_DEFAULTLANG;שפה ברירת המחדל
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;אלגוריתם דימוזאיק
@@ -357,16 +368,16 @@ PREFERENCES_INTENT_RELATIVE;קולורמטרית יחסית
 PREFERENCES_INTENT_SATURATION;רויה
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;פרופיל מסך
-PREFERENCES_OUTDIR;תיקיית ייצוא
-PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIR;תיקיית ייצוא
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -426,8 +437,8 @@ SAVEDLG_JPEGQUAL;JPEG איכות
 SAVEDLG_JPGFILTER;JPEG קבצי
 SAVEDLG_PNGCOMPR;PNG דחיסת
 SAVEDLG_PNGFILTER;PNG קבצי
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;שמור נתוני עיבוד עם הצילום
@@ -522,9 +533,9 @@ TP_LUMACURVE_LABEL;עקמת בהירות
 TP_LUMADENOISE_EDGETOLERANCE;סבילות לקצוות
 TP_LUMADENOISE_LABEL;הסרת רעש בהירות
 TP_LUMADENOISE_RADIUS;רדיוס
-TP_RESIZE_BICUBIC;ביקובי
 TP_RESIZE_BICUBICSF;ביקובי חלק
 TP_RESIZE_BICUBICSH;ביקובי חד
+TP_RESIZE_BICUBIC;ביקובי
 TP_RESIZE_BILINEAR;בילינארי
 TP_RESIZE_FULLSIZE;גודל מלא
 TP_RESIZE_H;גובה
@@ -554,10 +565,10 @@ TP_SHARPENING_LABEL;חידוד
 TP_SHARPENING_METHOD;שיטה
 TP_SHARPENING_ONLYEDGES;חידוד רק בקצוות
 TP_SHARPENING_RADIUS;רדיוס
-TP_SHARPENING_RLD;RL דיקונבולוציה
 TP_SHARPENING_RLD_AMOUNT;כמות
 TP_SHARPENING_RLD_DAMPING;ריסון
 TP_SHARPENING_RLD_ITERATIONS;חזרות
+TP_SHARPENING_RLD;RL דיקונבולוציה
 TP_SHARPENING_THRESHOLD;םף
 TP_SHARPENING_USM;מיסוך אי-חדות
 TP_VIGNETTING_AMOUNT;כמות
