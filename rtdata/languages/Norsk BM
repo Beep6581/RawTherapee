@@ -17,8 +17,8 @@ EXIFFILTER_FOCALLEN;Fokallengde
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_SHUTTER;Lukker
-EXIFPANEL_ADDEDIT;Tilføy/Rediger
 EXIFPANEL_ADDEDITHINT;Tilføy ny tag eller rediger tag
+EXIFPANEL_ADDEDIT;Tilføy/Rediger
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Skriv verdi
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Velg tag
 EXIFPANEL_ADDTAGDLG_TITLE;Tilføy/Rediger Tag
@@ -26,10 +26,10 @@ EXIFPANEL_KEEP;Behold
 EXIFPANEL_KEEPHINT;Behold de utvalgte tags når det skrives output fil
 EXIFPANEL_REMOVE;Fjern
 EXIFPANEL_REMOVEHINT;Fjern de utvalgte tags når det skrives output fil
-EXIFPANEL_RESET;Nullstil
-EXIFPANEL_RESETALL;Nullstil alle
 EXIFPANEL_RESETALLHINT;Nullstil alle tags til de opprinnelige verdier
+EXIFPANEL_RESETALL;Nullstil alle
 EXIFPANEL_RESETHINT;Nullstil de utvalgte tags til de opprinnelige verdier
+EXIFPANEL_RESET;Nullstil
 EXIFPANEL_SUBDIRECTORY;Undermappe
 FILEBROWSER_APPLYPROFILE;Legg til profil
 FILEBROWSER_ARRANGEMENTHINT;Bytt mellom vertikal/horisontal oppstilling av thumbnails
@@ -37,13 +37,13 @@ FILEBROWSER_CLEARPROFILE;Slett profil
 FILEBROWSER_COPYPROFILE;Kopier profil
 FILEBROWSER_DELETEDLGLABEL;Bekreft slett fil
 FILEBROWSER_DELETEDLGMSG;Vil du slette valgte %1 filer?
-FILEBROWSER_EMPTYTRASH;Tøm søpla
 FILEBROWSER_EMPTYTRASHHINT;Tøm søpla permanent
-FILEBROWSER_EXIFFILTERAPPLY;Legg til
+FILEBROWSER_EMPTYTRASH;Tøm søpla
 FILEBROWSER_EXIFFILTERAPPLYHINT;Skru på/av exif filter i filleseren
+FILEBROWSER_EXIFFILTERAPPLY;Legg til
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Oppsett
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Forandre opsettet i exif filteret
+FILEBROWSER_EXIFFILTERSETTINGS;Oppsett
 FILEBROWSER_PARTIALPASTEPROFILE;Delvis lim inn
 FILEBROWSER_PASTEPROFILE;Lim inn profil
 FILEBROWSER_POPUPCANCELJOB;Avbryt jobben
@@ -62,8 +62,8 @@ FILEBROWSER_POPUPSELECTALL;Velg alt
 FILEBROWSER_POPUPTRASH;Flytt til søpla
 FILEBROWSER_POPUPUNRANK;Fjern rangering
 FILEBROWSER_POPUPUNTRASH;Fjern fra søpla
-FILEBROWSER_PROCESSINGSETTINGS;Innstillinger
 FILEBROWSER_PROCESSINGSETTINGSHINT;Sett filformat og folderbane
+FILEBROWSER_PROCESSINGSETTINGS;Innstillinger
 FILEBROWSER_RENAMEDLGLABEL;Bytt filnavn
 FILEBROWSER_RENAMEDLGMSG;Bytt filnavn "%1" til:
 FILEBROWSER_SHOWDIRHINT;Vis alle bildene i folderen
@@ -75,17 +75,17 @@ FILEBROWSER_SHOWRANK4HINT;Vis bilder rangert med 4 stjerne
 FILEBROWSER_SHOWRANK5HINT;Vis bilder rangert med 5 stjerne
 FILEBROWSER_SHOWTRASHHINT;Vis innholdet i søpla
 FILEBROWSER_SHOWUNRANKHINT;Vis unrangerte bilder
-FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STARTPROCESSINGHINT;Begynn prosessering/lagring av bilder i køen
-FILEBROWSER_STOPPROCESSING;Stopp prosesseringen
+FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STOPPROCESSINGHINT;Stopp prosesseringen av bilder
+FILEBROWSER_STOPPROCESSING;Stopp prosesseringen
 FILEBROWSER_THUMBSIZE;Thumbnail størrelse
 FILEBROWSER_ZOOMINHINT;Øk thumbnail størrelse
 FILEBROWSER_ZOOMOUTHINT;Reduser thumbnail størrelse
 GENERAL_ABOUT;Om
 GENERAL_CANCEL;Annuller
-GENERAL_DISABLE;Deaktiver
 GENERAL_DISABLED;Deaktivert
+GENERAL_DISABLE;Deaktiver
 GENERAL_ENABLE;Aktiver
 GENERAL_ENABLED;Aktivert
 GENERAL_LANDSCAPE;Landskap
@@ -187,8 +187,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Eksponerings-komprimering
 HISTORY_MSG_9;Høylys-komprimering
-HISTORY_NEWSNAPSHOT;Nytt b.m
 HISTORY_NEWSNAPSHOTAS;Som...
+HISTORY_NEWSNAPSHOT;Nytt b.m
 HISTORY_NEWSSDIALOGLABEL;Navn på bokmerket:
 HISTORY_NEWSSDIALOGTITLE;Opprett nytt bogmerke
 HISTORY_SETTO;Inntil
@@ -208,52 +208,60 @@ ICMPANEL_OUTPUTPROFILE;Utgangsprofil
 ICMPANEL_SAVEREFERENCE;Lagre referansebilde til profil
 ICMPANEL_WORKINGPROFILE;Arbeidsprofil
 IMAGEAREA_DETAILVIEW;Detaljert
-IPTCPANEL_AUTHOR;Oppretter
 IPTCPANEL_AUTHORHINT;Navnet på oppretteren, f.eks. forfatter, fotograf eller grafiker (By-line).
-IPTCPANEL_AUTHORSPOSITION;Oppretterens tittel
+IPTCPANEL_AUTHOR;Oppretter
 IPTCPANEL_AUTHORSPOSITIONHINT;Beskrivelse av oppretterens tittel (By-line Title).
+IPTCPANEL_AUTHORSPOSITION;Oppretterens tittel
 IPTCPANEL_CAPTION;Billdetekst
 IPTCPANEL_CAPTIONHINT;Tekstbeskrivelse av bildets innhold (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITER;Bildetekst forfatter
 IPTCPANEL_CAPTIONWRITERHINT;Navnet på personen som har opprettet, redigert eller korrigeret bildeteksten (Writer - Editor).
-IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CATEGORYHINT;Brukes til å beskrive innholdet i bildet ifølge kategorien (Category).
+IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CITY;By
 IPTCPANEL_CITYHINT;Bildets  opprinnelsesby (City).
 IPTCPANEL_COPYHINT;Kopier IPTC innstillinger til utklippstavlen
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Eventuelle copyright tilføyelser (Copyright Notice).
-IPTCPANEL_COUNTRY;Land
 IPTCPANEL_COUNTRYHINT;Navnet på landet/primære område hvor bildet er tatt (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Kreditering
+IPTCPANEL_COUNTRY;Land
 IPTCPANEL_CREDITHINT;Identifisere oppretteren av bildet, ikke nødvendivis den samme som eieren (Credit).
-IPTCPANEL_DATECREATED;Opptakelsesdato
+IPTCPANEL_CREDIT;Kreditering
 IPTCPANEL_DATECREATEDHINT;Datoen bildet ble tatt; Format: JJJJMMTT (Date Created).
-IPTCPANEL_EMBEDDED;Intern IPTC data
+IPTCPANEL_DATECREATED;Opptakelsesdato
 IPTCPANEL_EMBEDDEDHINT;Nullstil til de IPTC data som finnes internt i bildefilen
-IPTCPANEL_HEADLINE;Overskrift
+IPTCPANEL_EMBEDDED;Intern IPTC data
 IPTCPANEL_HEADLINEHINT;En kort beskrivelse av innholdet av bildet (Headline).
-IPTCPANEL_INSTRUCTIONS;Instruksjoner
+IPTCPANEL_HEADLINE;Overskrift
 IPTCPANEL_INSTRUCTIONSHINT;Andre instuksjoner som omhandler bruken av bildet (Special Instructions).
-IPTCPANEL_KEYWORDS;Nøkkelord
+IPTCPANEL_INSTRUCTIONS;Instruksjoner
 IPTCPANEL_KEYWORDSHINT;Brukes til å beskrive spesifikke nøkkelord (Keywords).
+IPTCPANEL_KEYWORDS;Nøkkelord
 IPTCPANEL_PASTEHINT;Innsett IPTC innstillinger fra utklipstavlen
-IPTCPANEL_PROVINCE;Provins
 IPTCPANEL_PROVINCEHINT;Billedets opprinnelsesprovins/-stat (Province-State).
-IPTCPANEL_RESET;Nullstil
+IPTCPANEL_PROVINCE;Provins
 IPTCPANEL_RESETHINT;Nullstil til standard profil
-IPTCPANEL_SOURCE;Kilde
+IPTCPANEL_RESET;Nullstil
 IPTCPANEL_SOURCEHINT;Den originale eier af bildets innhold (Source).
-IPTCPANEL_SUPPCATEGORIES;Suppl. kategorier
+IPTCPANEL_SOURCE;Kilde
 IPTCPANEL_SUPPCATEGORIESHINT;Ytterlige beskrivelser av innholdet i bildet (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIES;Suppl. kategorier
 IPTCPANEL_TITLE;Bildetittel
 IPTCPANEL_TITLEHINT;En kort beskrivelse av bildet (Object Name).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
 IPTCPANEL_TRANSREFERENCEHINT;En kode som representerer stedet for original transmisjon (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Innstillinger
-MAIN_BUTTON_SAVE;Lagre bilde
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Som...
+MAIN_BUTTON_SAVE;Lagre bilde
 MAIN_BUTTON_SENDTOEDITOR;Send til editor
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Filen eksisterer allerede.
 MAIN_MSG_CANNOTLOAD;Kan ikke åpne bildet
 MAIN_MSG_CANNOTSAVE;Kan ikke lagre
@@ -266,11 +274,14 @@ MAIN_MSG_QOVERWRITE;Vil du overskrive?
 MAIN_TAB_BASIC;Grunnleggende
 MAIN_TAB_COLOR;Farge
 MAIN_TAB_DETAIL;Detailj
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Eksponering
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Endre
 MAIN_TOOLTIP_HIDEFP;Vis/skjul nederste panel (Mapper og Filgjennomsyn, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Vis/skjul venstre panel (Inneholder historikken shortcut key: H)
@@ -278,8 +289,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Marker høylys-indikering
 MAIN_TOOLTIP_INDCLIPPEDS;Marker skygge-indikering
 MAIN_TOOLTIP_PREFERENCES;Endre innstillinger
 MAIN_TOOLTIP_QINFO;Hurtig informasjon om bildet
-MAIN_TOOLTIP_SAVE;Lagre bildet i standardmappen
 MAIN_TOOLTIP_SAVEAS;Lagre bildet i en annen mappe
+MAIN_TOOLTIP_SAVE;Lagre bildet i standardmappen
 PARTIALPASTE_BASICGROUP;Basisinnstillinger
 PARTIALPASTE_CACORRECTION;C/A korreksjon
 PARTIALPASTE_COARSETRANS;90° rotasjon/flipping
@@ -357,15 +368,15 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetri
 PREFERENCES_INTENT_SATURATION;Metning
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (tregere)
 PREFERENCES_MONITORICC;Skjermprofil
-PREFERENCES_OUTDIR;Utmappe
-PREFERENCES_OUTDIRFOLDER;Lagre til folder
 PREFERENCES_OUTDIRFOLDERHINT;Send lagrede bilder til valgt folder
+PREFERENCES_OUTDIRFOLDER;Lagre til folder
 PREFERENCES_OUTDIRHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nFormateringsstrengene refererer til folderne og understier av stien til RAW-filen.\n\nF. eks., hvis </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>har vært åpnet, vil det bety at formateringsstrengen er:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHvis du vil lagre det prosesserte bildet der originalen er, skriv:\n</i><b>%p1/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i folderen 'converted' under inni originalfolderen, skriv:\n</i><b>%p1/converted/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i '/home/tom/converted' men beholde underfolderens datomerking, skriv:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Bruk mal
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nFormateringsstrengene refererer til folderne og understier av stien til RAW-filen.\n\nF. eks., hvis </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>har vært åpnet, vil det bety at formateringsstrengen er:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nvis du vil lagre det prosesserte bildet der originalen er, skriv:\n</i><b>%p1/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i folderen 'converted' under inni originalfolderen, skriv:\n</i><b>%p1/converted/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i '/home/tom/converted' men beholde underfolderens datomerking, skriv:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Analyserte utvidelser
-PREFERENCES_PARSEDEXTADD;Legg til utvidelse
+PREFERENCES_OUTDIR;Utmappe
 PREFERENCES_PARSEDEXTADDHINT;Skriv inn en utvidelse og trykk på kanppen for å legge til listen
+PREFERENCES_PARSEDEXTADD;Legg til utvidelse
+PREFERENCES_PARSEDEXT;Analyserte utvidelser
 PREFERENCES_PARSEDEXTDELHINT;Fjern valgte utvidelse fra listen
 PREFERENCES_PROFILEHANDLING;Prosesserer filbehandling
 PREFERENCES_PROFILELOADPR;Profillastingsprioritet
@@ -426,8 +437,8 @@ SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filter
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filter
-SAVEDLG_PUTTOQUEUE;Sett i prosesseringskø
 SAVEDLG_PUTTOQUEUEHEAD;Sett øverst i prosesseringskøen
+SAVEDLG_PUTTOQUEUE;Sett i prosesseringskø
 SAVEDLG_PUTTOQUEUETAIL;Sett nederst i prosesseringskøen
 SAVEDLG_SAVEIMMEDIATELY;Lagre med en gang
 SAVEDLG_SAVESPP;Lagre bildebehandlingsparametre med bildene
@@ -554,10 +565,10 @@ TP_SHARPENING_LABEL;Skarphet
 TP_SHARPENING_METHOD;Metode
 TP_SHARPENING_ONLYEDGES;Skarphet kun i kanter
 TP_SHARPENING_RADIUS;Radius
-TP_SHARPENING_RLD;RL Dekonvolusjon
 TP_SHARPENING_RLD_AMOUNT;Mengde
 TP_SHARPENING_RLD_DAMPING;Demping
 TP_SHARPENING_RLD_ITERATIONS;Gjentakelse
+TP_SHARPENING_RLD;RL Dekonvolusjon
 TP_SHARPENING_THRESHOLD;Terskelverdi
 TP_SHARPENING_USM;Uskarp maske
 TP_VIGNETTING_AMOUNT;Mengde

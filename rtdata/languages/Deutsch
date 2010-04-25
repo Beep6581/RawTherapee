@@ -268,7 +268,7 @@ MAIN_FRAME_BATCHQUEUE;Warteschlange
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
 MAIN_FRAME_PLACES;Orte
 MAIN_FRAME_PLACES_ADD;Hinzu
-MAIN_FRAME_PLACES_DEL;Lââschen
+MAIN_FRAME_PLACES_DEL;Löschen
 MAIN_FRAME_RECENT;Verwendete Ordner
 MAIN_MSG_ALREADYEXISTS;Diese Datei existiert schon.
 MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden

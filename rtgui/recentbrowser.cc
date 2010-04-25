@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <recentbrowser.h>
+#include <multilangmgr.h>
 
 RecentBrowser::RecentBrowser () : listener (NULL) {
 

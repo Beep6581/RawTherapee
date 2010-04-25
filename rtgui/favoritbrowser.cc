@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <favoritbrowser.h>
+#include <multilangmgr.h>
 
 FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
 

@@ -15,19 +15,19 @@ EXIFFILTER_FOCALLEN;Focal Length
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
 EXIFFILTER_SHUTTER;Shutter
-EXIFPANEL_ADDEDIT;Προσθήκη/Επεξεργασία
 EXIFPANEL_ADDEDITHINT;Προσθήκη καινούριας ετικέττας ή επεξεργασία
+EXIFPANEL_ADDEDIT;Προσθήκη/Επεξεργασία
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Εισαγωγή τιμής
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Επιλογή ετικέττας
 EXIFPANEL_ADDTAGDLG_TITLE;Προσθήκη/Επεξεργασία ετικέττας
-EXIFPANEL_KEEP;Συγκράτηση
 EXIFPANEL_KEEPHINT;Συγκράτηση των επιλεγμένων ετικεττών κατά την εγγραφή του παραγώμενου αρχείου
-EXIFPANEL_REMOVE;Αφαίρεση
+EXIFPANEL_KEEP;Συγκράτηση
 EXIFPANEL_REMOVEHINT;Αφαίρεση των επιλεγμένων ετικεττών κατά την εγγραφή του παραγώμενου αρχείου
-EXIFPANEL_RESET;Επαναφορά
-EXIFPANEL_RESETALL;Επαναφορά όλων
+EXIFPANEL_REMOVE;Αφαίρεση
 EXIFPANEL_RESETALLHINT;Επαναφορά όλων των ετικεττών στην αρχική τους τιμή
+EXIFPANEL_RESETALL;Επαναφορά όλων
 EXIFPANEL_RESETHINT;Επαναφορά των επιλεγμένων ετικεττών στις πρωτότυπες τους τιμές
+EXIFPANEL_RESET;Επαναφορά
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -40,8 +40,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -60,8 +60,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -73,19 +73,19 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
 GENERAL_ABOUT;About
 GENERAL_CANCEL;Ακύρωση
-GENERAL_DISABLE;Απενεργοποίηση
 GENERAL_DISABLED;Απενεργοποιημένο
-GENERAL_ENABLE;Ενεργοποίηση
+GENERAL_DISABLE;Απενεργοποίηση
 GENERAL_ENABLED;Ενεργοποιημένο
+GENERAL_ENABLE;Ενεργοποίηση
 GENERAL_LANDSCAPE;Τοπίο
 GENERAL_LOAD;Φόρτωση
 GENERAL_NA;μη διαθέσιμο
@@ -185,13 +185,13 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Επανόρθωση Έκθεσης
 HISTORY_MSG_9;Συμπίεση φωτεινών σημείων
-HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
 HISTORY_NEWSNAPSHOTAS;Ως...
+HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
 HISTORY_NEWSSDIALOGLABEL;Όνομα στιγμιοτύπου:
 HISTORY_NEWSSDIALOGTITLE;Προσθήκη νέου στιγμιοτύπου
 HISTORY_SETTO;Ορισμός σε
-HISTORY_SNAPSHOT;Στιγμιότυπο
 HISTORY_SNAPSHOTS;Στιγμιότυπα
+HISTORY_SNAPSHOT;Στιγμιότυπο
 ICMPANEL_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
 ICMPANEL_FILEDLGFILTERICM;Αρχεία προφίλ ICC
 ICMPANEL_GAMMABEFOREINPUT;Το προφίλ αλλάζει την gamma
@@ -206,52 +206,60 @@ ICMPANEL_OUTPUTPROFILE;Προφίλ εξόδου
 ICMPANEL_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφορά για δημιουργία προφίλ.
 ICMPANEL_WORKINGPROFILE;Παρόν προφίλ
 IMAGEAREA_DETAILVIEW;Λεπτομερής προβολή
-IPTCPANEL_AUTHOR;Συγγραφέας
 IPTCPANEL_AUTHORHINT;Όνομα του δημιουργού του αντικειμένου, π.χ. συγγραφέας, φωτογράφος ή γραφίστας (Ανα γραμμή).
-IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
 IPTCPANEL_AUTHORSPOSITIONHINT;Τίτλος που αποδίδεται από τον/τους δημιουργό/γους (Ανα γραμμή τίτλος).
-IPTCPANEL_CAPTION;Λεζάντα
+IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
+IPTCPANEL_AUTHOR;Συγγραφέας
 IPTCPANEL_CAPTIONHINT;Μια λεκτική περιγραφή των στοιχείων (Λεζάντα - Περίληψη).
-IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
 IPTCPANEL_CAPTIONWRITERHINT;Το όνομα του προσώπου που ασχολήθηκε με την συγγραφή, επεξεργασία ή διόρθωση της εικόνας ή λεζάντας/περίληψης (Συγγραφέας - Επιμελητής).
-IPTCPANEL_CATEGORY;Κατηγορία
+IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
+IPTCPANEL_CAPTION;Λεζάντα
 IPTCPANEL_CATEGORYHINT;Ταυτοποιεί το θέμα της εικόνας βάση της άποψης του παροχέα (Κατηγορία).
-IPTCPANEL_CITY;Πόλη
+IPTCPANEL_CATEGORY;Κατηγορία
 IPTCPANEL_CITYHINT;Πόλη προέλευσης εικόνας (Πόλη).
+IPTCPANEL_CITY;Πόλη
 IPTCPANEL_COPYHINT;Αντιγραφή ρυθμίσεων IPTC στην περιοχή αποκομμάτων
-IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
 IPTCPANEL_COPYRIGHTHINT;Όποιο απαραίτητο σχόλιο περι πνευματικής ιδιοκτησίας (Σχόλια περι πνευματική ιδιοκτησία).
-IPTCPANEL_COUNTRY;Χώρα
+IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
 IPTCPANEL_COUNTRYHINT;Χώρα/αρχική τοποθεσία δημιουργίας εικόνας (Χώρα/αρχική τοποθεσία).
-IPTCPANEL_CREDIT;Εύσημα
+IPTCPANEL_COUNTRY;Χώρα
 IPTCPANEL_CREDITHINT;Ταυτοποιεί τον παροχέα της εικόνας, όχι απραίτητα δημιουργό/ιδιοκτήτη (Εύσημα).
-IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
+IPTCPANEL_CREDIT;Εύσημα
 IPTCPANEL_DATECREATEDHINT;Η ημερομηνία δημιουργίας του πνευματικού περιεχομένου; Τύπος: JJJJMMTT (Ημερομηνία δημιουργίας).
-IPTCPANEL_EMBEDDED;Ενσωματωμένο
+IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
 IPTCPANEL_EMBEDDEDHINT;Επαναφορά στοιχείων IPTC αρχείου εικόνας
-IPTCPANEL_HEADLINE;Επικεφαλίδα
+IPTCPANEL_EMBEDDED;Ενσωματωμένο
 IPTCPANEL_HEADLINEHINT;Ένας δημοσιεύσιμος τίτλος που παρέχει μια σύνοψη των περιεχομένων της εικόνας (Επικεφαλίδα).
-IPTCPANEL_INSTRUCTIONS;Οδηγίες
+IPTCPANEL_HEADLINE;Επικεφαλίδα
 IPTCPANEL_INSTRUCTIONSHINT;Άλλες οδηγίες επιμέλειας που αφορούν την χρήση της εικόνας (Ειδικίες οδηγίες).
-IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
+IPTCPANEL_INSTRUCTIONS;Οδηγίες
 IPTCPANEL_KEYWORDSHINT;Χρησιμοποιούνται ενδεικτικά ως λέξεις ανάκτησης(Λέξεις-κλειδιά).
+IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
 IPTCPANEL_PASTEHINT;Επικόλληση ρυθμίσεων IPTC από την περιοχή αποκομμάτων
-IPTCPANEL_PROVINCE;Επαρχία
 IPTCPANEL_PROVINCEHINT;Επαρχία/Πολιτεία/Νομός προέλευσης της εικόνας (Επαρχία/Πολιτεία/Νομός).
-IPTCPANEL_RESET;Επαναφορά
+IPTCPANEL_PROVINCE;Επαρχία
 IPTCPANEL_RESETHINT;Επαναφορά προεπιλεγμένου προφίλ
-IPTCPANEL_SOURCE;Πηγή
+IPTCPANEL_RESET;Επαναφορά
 IPTCPANEL_SOURCEHINT;Αυθεντικός ιδιοκτήτης πνευματικού περιεχομένου της εικόνας (Πηγή).
-IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
+IPTCPANEL_SOURCE;Πηγή
 IPTCPANEL_SUPPCATEGORIESHINT;Προσδιορίζουν επιπλέον το θέμα της εικόνας (Συμπληρωματικές κατηγορίες).
-IPTCPANEL_TITLE;Τίτλος
+IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
 IPTCPANEL_TITLEHINT;Μια σύντομη αναφορά για την εικόνα (Όνομα αντικειμένου).
-IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
+IPTCPANEL_TITLE;Τίτλος
 IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπροσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
+IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Ρυθμίσεις
-MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Ως...
+MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Το αρχείο ήδη υπάρχει.
 MAIN_MSG_CANNOTLOAD;Αδύνατη η φόρτωση εικόνας
 MAIN_MSG_CANNOTSAVE;Αδύνατη η αποθήκευση αρχείου
@@ -264,11 +272,14 @@ MAIN_MSG_QOVERWRITE;Θέλετε να το αντικαταστήσετε;
 MAIN_TAB_BASIC;Βασικό
 MAIN_TAB_COLOR;Color
 MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Μετατροπή
 MAIN_TOOLTIP_HIDEFP;Προβολή/απόκρυψη του κάτω πλαισίου (τοποθεσίες και περιηγητής αρχείων, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Προβολή/απόκρυψη αριστερού πλαισίου (περιλαμβανομένου του ιστορικού, shortcut key: H)
@@ -276,8 +287,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Ένδειξη ψαλισμού φωτεινών σημ
 MAIN_TOOLTIP_INDCLIPPEDS;Ένδειξη ψαλισμού σκιών
 MAIN_TOOLTIP_PREFERENCES;Ορισμός ρυθμίσεων
 MAIN_TOOLTIP_QINFO;Γρήγορες πληροφορίες στην εικόνα
-MAIN_TOOLTIP_SAVE;Αποθήκευση εικόνας στον προκαθορισμένο φάκελο
 MAIN_TOOLTIP_SAVEAS;Αποθήκευση εικόνας σε ένα επιλεγμένο φάκελο
+MAIN_TOOLTIP_SAVE;Αποθήκευση εικόνας στον προκαθορισμένο φάκελο
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -325,8 +336,8 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Ένδειξη ψαλιδίσματος
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
-PREFERENCES_DATEFORMAT;Διάταξη ημερομηνίας
 PREFERENCES_DATEFORMATHINT;<i>YΜπορείτε να χρησιμοποιήσετε τις εξής εντολές μορφοποίησης:</i>\n<b>%y</b><i> : χρονολογία</i>\n<b>%m</b><i> : μήνας</i>\n<b>%d</b><i> : ημέρα</i>\n<i>\nΓια παράδειγμα, η μορφοποίηση ημερομηνίας στην Ελλάδα είναι:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Διάταξη ημερομηνίας
 PREFERENCES_DEFAULTLANG;Προεπιλεγμένη γλώσσα
 PREFERENCES_DEFAULTTHEME;Προεπιλεγμένο θέμα
 PREFERENCES_DEMOSAICINGALGO;Αλγόριθμος απομωσαϊκοποίησης
@@ -355,16 +366,16 @@ PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;Προφίλ οθόνης
-PREFERENCES_OUTDIR;Τοποθεσία εξόδου
-PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>Μπορείτε να χρησιμοποιήσετε τις ακόλουθες σειρές μορφοποίησης:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nΑυτές οι σειρές μορφοποίησης αναφέρονται στις τοποθεσίες και τις υπο-διαδρομές της τοποθεσίας του αρχείου raw.\n\nΓια παράδειγμα, αν το</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ανοιχθεί, η σημασία των ακόλουθων σειρών μορφοποίησης είναι:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nΑν θέλεθτε να αποδηκεύσετε την εικόνα εξόδου μαζί με το πρωτότυπο, γράψτε:\n</i><b>%p1/%f\n</b><i>\nΑν θέλετε να αποθηκεύσετε την εικόνα εξόδου σε ένα φάκελο 'converted', μέσα στην τοποθεσία που βρίσκεται το πρωτότυπο, γράψτε:\n</i><b>%p1/converted/%f\n</b><i>\nΑν θέλετε να αποθηκεύσετε την εικόνα εξόδου σε στην τοποθεσία '/home/tom/converted' κρατώντας όμως την ίδια δομή υπο-τοποθεσιών ημερομηνίων, γράψτε:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIR;Τοποθεσία εξόδου
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -424,8 +435,8 @@ SAVEDLG_JPEGQUAL;Ποιότητα JPEG
 SAVEDLG_JPGFILTER;Αρχεία JPEG
 SAVEDLG_PNGCOMPR;Συμπίεση PNG
 SAVEDLG_PNGFILTER;Αρχεία PNG
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Αποθήκευση παραμέτρων επεξεργασίας μαζί με την εικόνα
@@ -552,10 +563,10 @@ TP_SHARPENING_LABEL;Όξυνση
 TP_SHARPENING_METHOD;Μέθοδος
 TP_SHARPENING_ONLYEDGES;Όξυνση μόνο ορίων
 TP_SHARPENING_RADIUS;Ακτίνα
-TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Ένταση
 TP_SHARPENING_RLD_DAMPING;Απόσβεση
 TP_SHARPENING_RLD_ITERATIONS;Επαναλήψεις
+TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_THRESHOLD;Κατώφλι
 TP_SHARPENING_USM;Unsharp Mask
 TP_VIGNETTING_AMOUNT;Ένταση

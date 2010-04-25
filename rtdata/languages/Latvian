@@ -17,18 +17,18 @@ EXIFFILTER_FOCALLEN;Fokusa garums
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lēca
 EXIFFILTER_SHUTTER;Slēdzis
-EXIFPANEL_ADDEDIT;Pielikt/Labot
 EXIFPANEL_ADDEDITHINT;Pielikt jaunu birku vai labot birku
+EXIFPANEL_ADDEDIT;Pielikt/Labot
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ievadiet vērtību
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Izvēlēt birku
 EXIFPANEL_ADDTAGDLG_TITLE;Pielikt/Labot birku
 EXIFPANEL_KEEP;Atstāt
 EXIFPANEL_KEEPHINT;Atstāt izvēlētās birkas kad raksta izvades failu
-EXIFPANEL_REMOVE;Noņemt
 EXIFPANEL_REMOVEHINT;Noņemt izvēlētās birkas kad raksta izvades failu
-EXIFPANEL_RESET;Atmest
+EXIFPANEL_REMOVE;Noņemt
 EXIFPANEL_RESETALL;Atmest visu
 EXIFPANEL_RESETALLHINT;Atmest visas birkas uz to noklusētajām vērtībām
+EXIFPANEL_RESET;Atmest
 EXIFPANEL_RESETHINT;Atmest izvēlētās birkas uz to noklusētajām vērtībām
 EXIFPANEL_SUBDIRECTORY;Subdirektorijs
 FILEBROWSER_APPLYPROFILE;Lietot profilu
@@ -37,13 +37,13 @@ FILEBROWSER_CLEARPROFILE;Notīrīt profilu
 FILEBROWSER_COPYPROFILE;Kopēt profilu
 FILEBROWSER_DELETEDLGLABEL;Faila dzēšanas apstiprinājums
 FILEBROWSER_DELETEDLGMSG;Vai tiešām dzēst %1 atzīmētos filus?
-FILEBROWSER_EMPTYTRASH;Izmest atkritumus
 FILEBROWSER_EMPTYTRASHHINT;Galīgi izdzēst atkritnes failus
-FILEBROWSER_EXIFFILTERAPPLY;Lietot
+FILEBROWSER_EMPTYTRASH;Izmest atkritumus
 FILEBROWSER_EXIFFILTERAPPLYHINT;Pārslēgt failu pārlūka exif filtru
+FILEBROWSER_EXIFFILTERAPPLY;Lietot
 FILEBROWSER_EXIFFILTERLABEL;Exif filtrs
-FILEBROWSER_EXIFFILTERSETTINGS;Uzstādījumi
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Mainīt exif filtra uzstādījumus
+FILEBROWSER_EXIFFILTERSETTINGS;Uzstādījumi
 FILEBROWSER_PARTIALPASTEPROFILE;Daļēja ielīmēšana
 FILEBROWSER_PASTEPROFILE;Ielīmēt profilu
 FILEBROWSER_POPUPCANCELJOB;Atcelt darbu
@@ -62,8 +62,8 @@ FILEBROWSER_POPUPSELECTALL;Atzīmēt visu
 FILEBROWSER_POPUPTRASH;Izmest atkritnē
 FILEBROWSER_POPUPUNRANK;Nevērtēt
 FILEBROWSER_POPUPUNTRASH;Izņemt no atkritnes
-FILEBROWSER_PROCESSINGSETTINGS;Uzstādījumi
 FILEBROWSER_PROCESSINGSETTINGSHINT;Uzstādīt failu formātu un izvades direktoriju
+FILEBROWSER_PROCESSINGSETTINGS;Uzstādījumi
 FILEBROWSER_RENAMEDLGLABEL;Pārsaukt failu
 FILEBROWSER_RENAMEDLGMSG;Pārsaukt failu "%1" uz:
 FILEBROWSER_SHOWDIRHINT;Rādīt visus direktorija attēlus
@@ -75,8 +75,8 @@ FILEBROWSER_SHOWRANK4HINT;Rādīt attēlus ar 4 zvaigznēm
 FILEBROWSER_SHOWRANK5HINT;Rādīt attēlus ar 5 zvaigznēm
 FILEBROWSER_SHOWTRASHHINT;Rādīt atkritni
 FILEBROWSER_SHOWUNRANKHINT;Rādīt nevērtētus attēlus
-FILEBROWSER_STARTPROCESSING;Sākt apstrādi
 FILEBROWSER_STARTPROCESSINGHINT;Sākt attēlu rindas apstrādi/saglabāšanu
+FILEBROWSER_STARTPROCESSING;Sākt apstrādi
 FILEBROWSER_STOPPROCESSING;Apturēt apstrādi
 FILEBROWSER_STOPPROCESSINGHINT;Apturēt attēlu apstrādi
 FILEBROWSER_THUMBSIZE;Sīktēlu izmērs
@@ -86,8 +86,8 @@ GENERAL_ABOUT;Par
 GENERAL_CANCEL;Atcelt
 GENERAL_DISABLE;Atslēgt
 GENERAL_DISABLED;Atslēgts
-GENERAL_ENABLE;Ieslēgt
 GENERAL_ENABLED;Ieslēgts
+GENERAL_ENABLE;Ieslēgt
 GENERAL_LANDSCAPE;Ainava
 GENERAL_LOAD;Ielādēt
 GENERAL_NA;n/a
@@ -187,8 +187,8 @@ HISTORY_MSG_80;Izmērmaiņas augstums
 HISTORY_MSG_81;Izmērmaiņa ieslēgta
 HISTORY_MSG_8;Ekspozīcijas labošana
 HISTORY_MSG_9;Izgaismojumu spiešana
-HISTORY_NEWSNAPSHOT;Jauna grāmtzīme
 HISTORY_NEWSNAPSHOTAS;Kā...
+HISTORY_NEWSNAPSHOT;Jauna grāmtzīme
 HISTORY_NEWSSDIALOGLABEL;Grāmtzīmes nosaukums:
 HISTORY_NEWSSDIALOGTITLE;Pielikt grāmtzīmi
 HISTORY_SETTO;Iestatīts uz
@@ -212,48 +212,56 @@ IPTCPANEL_AUTHOR;Autors
 IPTCPANEL_AUTHORHINT;Objekta radītājs vārds, t.i. rakstnieks, fotogrāfs vai mākslinieks (By-line).
 IPTCPANEL_AUTHORSPOSITION;Autora amats
 IPTCPANEL_AUTHORSPOSITIONHINT;Objekta radītāja amapts (By-line Title).
-IPTCPANEL_CAPTION;Virsraksts
 IPTCPANEL_CAPTIONHINT;Datu tekstveida apraksts (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Virsraksta autors
+IPTCPANEL_CAPTION;Virsraksts
 IPTCPANEL_CAPTIONWRITERHINT;Personas vārfds, kura ir iesaistīta attēla, virsraksta vai kopsavilkuma rakstīšanā, rediģēšanā vai labošānā (Writer - Editor)
-IPTCPANEL_CATEGORY;Kategorija
+IPTCPANEL_CAPTIONWRITER;Virsraksta autors
 IPTCPANEL_CATEGORYHINT;Attēla radītājs identificē attēla subjektu (Category).
-IPTCPANEL_CITY;Pilsēta
+IPTCPANEL_CATEGORY;Kategorija
 IPTCPANEL_CITYHINT;Attēla izcelsmes pilsēta (City).
+IPTCPANEL_CITY;Pilsēta
 IPTCPANEL_COPYHINT;Kopēt IPTC iestatījumus uz starpliku
 IPTCPANEL_COPYRIGHT;Autortiesības
 IPTCPANEL_COPYRIGHTHINT;Jebkāds nepieciešamais brīdinājums par autortiesībām (Copyright Notice).
-IPTCPANEL_COUNTRY;Valsts
 IPTCPANEL_COUNTRYHINT;Attēla sākotnējās izveidošanas valsts (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Pateicība
+IPTCPANEL_COUNTRY;Valsts
 IPTCPANEL_CREDITHINT;Identificē attēla sniedzēju, nav obligāti radītājs vai īpašnieks (Credit).
-IPTCPANEL_DATECREATED;Izveidošanas datums
+IPTCPANEL_CREDIT;Pateicība
 IPTCPANEL_DATECREATEDHINT;Attēla intelektuālā satura radīšanas datums; Formāts: ggggmmdd (Date Created).
-IPTCPANEL_EMBEDDED;Iegultais
+IPTCPANEL_DATECREATED;Izveidošanas datums
 IPTCPANEL_EMBEDDEDHINT;Attiestatīt uz attēla iegultajiem IPTC datiem
-IPTCPANEL_HEADLINE;Konspekts
+IPTCPANEL_EMBEDDED;Iegultais
 IPTCPANEL_HEADLINEHINT;Publicējams raksts, kas satur attēla konspektu (Headline).
-IPTCPANEL_INSTRUCTIONS;Norādījumi
+IPTCPANEL_HEADLINE;Konspekts
 IPTCPANEL_INSTRUCTIONSHINT;Citi redaktora norādījumi par attēla lietošanu (Special Instructions).
+IPTCPANEL_INSTRUCTIONS;Norādījumi
 IPTCPANEL_KEYWORDS;Atslēgvārdi
 IPTCPANEL_KEYWORDSHINT;Norāda vārdus specifiskas informācijas iegūšanai (Keywords).
 IPTCPANEL_PASTEHINT;Ielīmēt IPTC iestatījumus no starplikas
-IPTCPANEL_PROVINCE;Province
 IPTCPANEL_PROVINCEHINT;Attēla izcelsmes valsts vai province (Province-State).
+IPTCPANEL_PROVINCE;Province
 IPTCPANEL_RESET;Atiestate
 IPTCPANEL_RESETHINT;Atiestatīt uz profila noklusējumu
 IPTCPANEL_SOURCE;Avots
 IPTCPANEL_SOURCEHINT;Attēla intelektuālā īpašuma īpašnieks (Source).
 IPTCPANEL_SUPPCATEGORIES;Apakškategorija
 IPTCPANEL_SUPPCATEGORIESHINT;Precizē attēla subjektu (Supplemental Categories).
-IPTCPANEL_TITLE;Nosaukums
 IPTCPANEL_TITLEHINT;Attēla saīsināts nosaukums (Object Name).
-IPTCPANEL_TRANSREFERENCE;Pārneses atsauce
+IPTCPANEL_TITLE;Nosaukums
 IPTCPANEL_TRANSREFERENCEHINT;Kods, kas norāda uz attēla sākotnējas pārneses vietu (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Pārneses atsauce
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Iestatījumi
-MAIN_BUTTON_SAVE;Saglabāt attēlu
+MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Kā...
+MAIN_BUTTON_SAVE;Saglabāt attēlu
 MAIN_BUTTON_SENDTOEDITOR;Sūtīt uz redaktoru
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Fails jau ir.
 MAIN_MSG_CANNOTLOAD;Nevaru ielādēt attēlu
 MAIN_MSG_CANNOTSAVE;Faila saglabāšanas kļūda
@@ -266,11 +274,14 @@ MAIN_MSG_QOVERWRITE;Vai pārrakstīt to?
 MAIN_TAB_BASIC;Pamats
 MAIN_TAB_COLOR;Krāsa
 MAIN_TAB_DETAIL;Detaļas
+MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Ekspozīcija
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadati
+MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Pārveidot
 MAIN_TOOLTIP_HIDEFP;Rādīt/slēpt apakšējo ielaidumu (mapju un failu pārlūks, saīsne: F))
 MAIN_TOOLTIP_HIDEHP;Rādīt/slēpt kreiso ielaidumu (ieskaitot vēsturi, saīsne: H)
@@ -278,8 +289,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Izgaismojumu cirpšanas pazīme
 MAIN_TOOLTIP_INDCLIPPEDS;Ēnu cirpšanas pazīme
 MAIN_TOOLTIP_PREFERENCES;Mainīt iestatījumus
 MAIN_TOOLTIP_QINFO;Ātrā info uz attēla
-MAIN_TOOLTIP_SAVE;Saglabāt attēlu noklusētajā mapē
 MAIN_TOOLTIP_SAVEAS;Saglabāt attēlu izvēlētajā mapē
+MAIN_TOOLTIP_SAVE;Saglabāt attēlu noklusētajā mapē
 PARTIALPASTE_BASICGROUP;Pamata uzstādījumi
 PARTIALPASTE_CACORRECTION;Krāsu novirzes labošana
 PARTIALPASTE_COARSETRANS;90 grādu rotēšana / apmešana
@@ -357,16 +368,16 @@ PREFERENCES_INTENT_RELATIVE;Relatīvā kolorimetrija
 PREFERENCES_INTENT_SATURATION;Piesātinājums
 PREFERENCES_LIVETHUMBNAILS;Dzīvie sīktēli (lēnāk)
 PREFERENCES_MONITORICC;Monitora Profils
-PREFERENCES_OUTDIR;Izvades mape
-PREFERENCES_OUTDIRFOLDER;Saglabāt mapē
 PREFERENCES_OUTDIRFOLDERHINT;Likt saglabātos attēlus norādītajā mapē
+PREFERENCES_OUTDIRFOLDER;Saglabāt mapē
 PREFERENCES_OUTDIRHINT;Jūs varat lietot šāduas formatēšanas parametrus:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠie formatēšanas parametri attiecas uz raw faila direktoriju un apakšceļiem.\n\nPiemēram, ja  /home/tom/image/02-09-2006/dsc0012.nef ir atvērts, formatēšanas parametri nozīmē:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa Jūs vēlaties saglabāt rezultātu tur pat kur ir oriģināls, rakstiet:\n%p1/%f\n\nJa Jūs vēlaties saglabāt rezultātu direktorijā 'converted', kas novietota oriģināla direktorijā, rakstiet:\n%p1/converted/%f\n\nJa Jūs vēlaties saglabāt rezultātu '/home/tom/converted' paturot tādu pašu apakšdirektoriju datumu struktūru, rakstiet:\n%p2/converted/%d1/%f
-PREFERENCES_OUTDIRTEMPLATE;Lietot veidni
+PREFERENCES_OUTDIR;Izvades mape
 PREFERENCES_OUTDIRTEMPLATEHINT;Jūs varat lietot šādas formatēšanas virknes:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠīs formatēšanas virknes attiecas uz direktorijiem un RAW faila apakšceļiem.\n\nPiemēram, ja ir atvērts /home/tom/image/02-09-2006/dsc0012.nef, formatējuma virkņu nozīme ir:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa vēlaties rezultātu saglabāt turpat pie oriģināla, rakstiet:\n%p1/%f\n\nJa vēlaties rezultātu saglabāt direktorijā 'converted' pie oriģināla, rakstiet:\n%p1/converted/%f\n\nJa vēlaties rezultātu saglabāt direktorijā '/home/tom/converted' paturot to pašu datumu apakšdirektoriju, rakstiet:\n%p2/converted/%d1/%f
-PREFERENCES_PARSEDEXT;Parsētie paplašīnājumi
-PREFERENCES_PARSEDEXTADD;Pielikt paplašinājumu
+PREFERENCES_OUTDIRTEMPLATE;Lietot veidni
 PREFERENCES_PARSEDEXTADDHINT;Ierakstiet paplašinājumu un nospiediet šo pogu lai pievienotu sarakstam
+PREFERENCES_PARSEDEXTADD;Pielikt paplašinājumu
 PREFERENCES_PARSEDEXTDELHINT;Dzēst atzīmēto paplašinājumu no saraksta
+PREFERENCES_PARSEDEXT;Parsētie paplašīnājumi
 PREFERENCES_PROFILEHANDLING;Apstrādes profilu politika
 PREFERENCES_PROFILELOADPR;Profilu ielādes prioritāte
 PREFERENCES_PROFILEPRCACHE;Profils kešā
@@ -426,8 +437,8 @@ SAVEDLG_JPEGQUAL;JPEG Kvalitāte
 SAVEDLG_JPGFILTER;JPEG faili
 SAVEDLG_PNGCOMPR;PNG Spiešana
 SAVEDLG_PNGFILTER;PNG faili
-SAVEDLG_PUTTOQUEUE;Likt apstrādes rindā
 SAVEDLG_PUTTOQUEUEHEAD;Likt apstrādes rindas sākumā
+SAVEDLG_PUTTOQUEUE;Likt apstrādes rindā
 SAVEDLG_PUTTOQUEUETAIL;Likt apstrādes rindas beigās
 SAVEDLG_SAVEIMMEDIATELY;Saglabāt tūlīt
 SAVEDLG_SAVESPP;Saglabāt apstrādes profilu ar attēlu
@@ -554,10 +565,10 @@ TP_SHARPENING_LABEL;Asināšana
 TP_SHARPENING_METHOD;Metode
 TP_SHARPENING_ONLYEDGES;Asināt tikai malas
 TP_SHARPENING_RADIUS;Radiuss
-TP_SHARPENING_RLD;RL atritināšana
 TP_SHARPENING_RLD_AMOUNT;Apjoms
 TP_SHARPENING_RLD_DAMPING;Slāpēšana
 TP_SHARPENING_RLD_ITERATIONS;Soļi
+TP_SHARPENING_RLD;RL atritināšana
 TP_SHARPENING_THRESHOLD;Slieksnis
 TP_SHARPENING_USM;Neasā maska
 TP_VIGNETTING_AMOUNT;Apjoms
