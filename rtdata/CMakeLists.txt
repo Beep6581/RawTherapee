@@ -1,38 +1,8 @@
 
 file (GLOB IMAGEFILES "images/*.png")
 file (GLOB PROFILEFILES "profiles/*.pp2")
-# unfortunatelly GLOB * matches directories too which breas cmake build from
-# sources handled by subversion, so better stick with manual list for these
-#file(GLOB LANGUAGEFILES "languages/*")
-#file(GLOB THEMEFILES "themes/*")
-set (LANGUAGEFILES 
-	"languages/Catala"
-	"languages/Chinese (Simplified)"
-	"languages/Chinese (Traditional)"
-	"languages/Czech"
-	"languages/Dansk"
-	"languages/Deutsch"
-	"languages/English (UK)"
-	"languages/English (US)"
-	"languages/Espanol"
-	"languages/Euskara"
-	"languages/Francais"
-	"languages/Greek"
-	"languages/Hebrew"
-	"languages/Italian"
-	"languages/Japanese"
-	"languages/Latvian"
-	"languages/Magyar"
-	"languages/Nederlands"
-	"languages/Norsk BM"
-	"languages/Polish"
-	"languages/Polish (Latin Characters)"
-	"languages/Portugues (Brasil)"
-	"languages/Russian"
-	"languages/Slovak"
-	"languages/Suomi"
-	"languages/Swedish"
-	"languages/Turkish")
+file (GLOB LANGUAGEFILES "languages/*")
+# THEMEDIR includes subfolders for image resources for some themes; doing the normal glob won't work.
 set (THEMEDIR "themes")
 
 if (WIN32)
