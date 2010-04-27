@@ -14,7 +14,9 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc gauss.cc iccstore.cc
 
 add_library (rtengine ${RTENGINESOURCEFILES})
 #It may be nice to store library version too
-install (TARGETS rtengine DESTINATION ${LIBDIR})
+IF (BUILD_SHARED_LIBS)
+    install (TARGETS rtengine DESTINATION ${LIBDIR})
+ENDIF (BUILD_SHARED_LIBS)
 
 set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -funroll-loops")
 

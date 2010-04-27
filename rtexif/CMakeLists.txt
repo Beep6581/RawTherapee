@@ -8,5 +8,6 @@ ELSE (WIN32)
     set_target_properties (rtexif PROPERTIES COMPILE_FLAGS "-O3 -ffast-math -fexpensive-optimizations -fPIC")
 ENDIF (WIN32)
 
-INSTALL(TARGETS rtexif DESTINATION ${LIBDIR})
- 
+IF (BUILD_SHARED_LIBS)
+    INSTALL(TARGETS rtexif DESTINATION ${LIBDIR})
+ENDIF (BUILD_SHARED_LIBS)
