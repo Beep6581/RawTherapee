@@ -581,5 +581,5 @@ const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter,
  -1, 0, 0,  0, 0, "", NULL};
 };
-#endif
+#endif
 

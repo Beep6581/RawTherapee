@@ -259,5 +259,5 @@ const TagAttrib fujiAttribs[] = {
  0, 1, 0, 0, 0x8003, "FrameNumber", &stdInterpreter,
  -1, 0, 0,  0, 0, "", NULL};
 };
-#endif
+#endif
 

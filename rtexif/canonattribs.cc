@@ -855,5 +855,5 @@ const TagAttrib canonAttribs[] = {
  -1, 0, 0,  0, 0, "", NULL};
 
 };
-#endif
+#endif
 

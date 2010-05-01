@@ -612,5 +612,5 @@ const TagAttrib sonyAttribs[] = {
  -1, 0, 0,  0, 0, "", NULL};
 
 };
-#endif
+#endif
 

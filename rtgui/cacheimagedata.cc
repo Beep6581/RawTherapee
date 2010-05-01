@@ -135,5 +135,5 @@ int CacheImageData::save (const Glib::ustring& fname) {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);
         return 0;
-    }}
+    }}
 

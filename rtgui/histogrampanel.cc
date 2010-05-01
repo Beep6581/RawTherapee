@@ -214,7 +214,7 @@ void HistogramArea::renderHistogram () {
        	        cr->line_to (i*stepSize, winh-1-val);
     	}
         cr->save ();
-        cr->line_to (winw-1, winh-1);    	cr->fill_preserve ();
+        cr->line_to (winw-1, winh-1);    	cr->fill_preserve ();
         cr->restore ();
         cr->set_source_rgb (0.5, 0.5, 0.5);
     	cr->stroke ();
@@ -231,7 +231,7 @@ void HistogramArea::renderHistogram () {
     	}
     	cr->stroke ();
     }
-    if (needGreen) {        cr->move_to (0, winh-1);
+    if (needGreen) {        cr->move_to (0, winh-1);
         cr->set_source_rgb (0.0, 1.0, 0.0);
         for (int i=0; i<256; i++) {
             double val = ghist[i] * (double)(winh-2) / realhistheight;
