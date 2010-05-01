@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Français
+﻿# Français
 # 1.3.2008: Hombre
 # 1.5.2008: Hombre: updates for 2.4m1
 # 27.10.2008: Hombre: updates for 2.4b1
@@ -35,7 +35,7 @@ EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
 EXIFFILTER_FOCALLEN;Longueur focale
 EXIFFILTER_ISO;ISO
-EXIFFILTER_LENS;Objectif
+EXIFFILTER_LENS;Optique
 EXIFFILTER_SHUTTER;Obturateur
 EXIFPANEL_ADDEDIT;Ajouter/Editer
 EXIFPANEL_ADDEDITHINT;Ajoute ou édite un tag
@@ -200,7 +200,7 @@ HISTORY_MSG_74;Echelle de redimensionnement
 HISTORY_MSG_75;Méthode de redimensionnement
 HISTORY_MSG_76;Métadonnées EXIF
 HISTORY_MSG_77;Métadonnées IPTC
-HISTORY_MSG_78;Données spécifiées pour le redimensionnement
+HISTORY_MSG_78;Données spécifiées pour redimensionnement
 HISTORY_MSG_79;Redimensionner la largeur
 HISTORY_MSG_7;Noir
 HISTORY_MSG_80;Redimensionner la hauteur
@@ -270,18 +270,18 @@ IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
 IPTCPANEL_TITLE;Titre
 IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
-MAIN_BUTTON_EXIT;Quitter
+MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Préférences
-MAIN_BUTTON_QUEUE;Mettre dans la queue
+MAIN_BUTTON_QUEUE;Envoyer dans la file
 MAIN_BUTTON_SAVEAS;Sous...
 MAIN_BUTTON_SAVE;Enregistrer l'image
 MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
-MAIN_FRAME_BATCHQUEUE;Queue de traitement 
-MAIN_FRAME_FILEBROWSER;Navigateur de fichier 
+MAIN_FRAME_BATCHQUEUE;File d'attente 
+MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
 MAIN_FRAME_PLACES_ADD;Ajouter
 MAIN_FRAME_PLACES_DEL;Supprimer
 MAIN_FRAME_PLACES;Emplacements 
-MAIN_FRAME_RECENT;Dossiers récents 
+MAIN_FRAME_RECENT;Fichiers récents 
 MAIN_MSG_ALREADYEXISTS;Le fichier existe déjà.
 MAIN_MSG_CANNOTLOAD;Impossible de charger l'image
 MAIN_MSG_CANNOTSAVE;Erreur d'enregistrement du fichier
@@ -294,14 +294,14 @@ MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
 MAIN_TAB_BASIC;Basique
 MAIN_TAB_COLOR;Couleur
 MAIN_TAB_DETAIL;Détail
-MAIN_TAB_DEVELOP;Dévelop.
+MAIN_TAB_DEVELOP;Développer
 MAIN_TAB_EXIF;EXIF
 MAIN_TAB_EXPOSURE;Exposition
-MAIN_TAB_FILTER;Filtre
+MAIN_TAB_FILTER;Filtrer
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
-MAIN_TAB_TAGGING;Étiquetage
+MAIN_TAB_TAGGING;Tagguer
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers, touche F)
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique, touche H)
@@ -610,21 +610,24 @@ ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Prévisualiation
 ZOOMBAR_SCALE;Echelle
 ZOOMBAR_SMALL;Petit
-GENERAL_HIGH_QUALITY;Haute Qualité
+
+GENERAL_HIGH_QUALITY;Qualité élevée
 GENERAL_UNCHANGED;(Inchangé)
-MAIN_MSG_PLACES;Emplacements
-GENERAL_BEFORE;Avant
-GENERAL_AFTER;Après
-MAIN_TOOLTIP_TOGGLE;Basculer la vue avant/après
-MAIN_BUTTON_PUTTOQUEUE;Mettre dans la queue
+MAIN_MSG_PLACES;Emplacement
+GENERAL_BEFORE;Après
+GENERAL_AFTER;Avant
+MAIN_TOOLTIP_TOGGLE;Comparaison avant/après	
+MAIN_BUTTON_PUTTOQUEUE;Envoyer dans la file
 MAIN_MSG_NAVIGATOR;Navigateur
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer le traitement automatiquement dès qu'un nouveau travail arrive
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
 BATCHQUEUE_AUTOSTART;Démarrage auto
 TP_DETAIL_AMOUNT;Quantité
-TP_RESIZE_SPECIFY;Spécifiez:
-TP_RESIZE_SCALE;Échelle
+TP_RESIZE_SPECIFY;Préciser:
+TP_RESIZE_SCALE;Echelle
 TP_RESIZE_WIDTH;Largeur
 TP_RESIZE_HEIGHT;Hauteur
+MAIN_TOGGLE_BEFORE_AFTER;B|A
+
 
 ###
 
@@ -670,4 +673,3 @@ NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_H_VALUE;T = %1
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_VALUE;V = %1
-MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
