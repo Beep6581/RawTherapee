@@ -480,12 +480,12 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 #ifdef _WIN32
     gdk_window_process_updates (get_window()->gobj(), true);
 #endif    
-}
+}
 void ThumbBrowserBase::refreshThumbImages () {
 
     for (int i=0; i<fd.size(); i++){
     	previewHeight = options.thumbSize;
-    	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
+    	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
         fd[i]->refreshThumbnailImage ();
     }
 

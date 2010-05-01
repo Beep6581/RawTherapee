@@ -279,7 +279,7 @@ void WhiteBalance::setWB (int vtemp, double vgreen) {
     if (listener) 
         listener->panelChanged (EvWBTemp, Glib::ustring::compose("%1, %2", (int)temp->getValue(), Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), green->getValue())));
 }
-void WhiteBalance::setAdjusterBehavior (bool btempadd, bool bgreenadd) {
+void WhiteBalance::setAdjusterBehavior (bool btempadd, bool bgreenadd) {
 
     if (!tempAdd && btempadd)
         temp->setLimits (-4000, +4000, 1, 0);

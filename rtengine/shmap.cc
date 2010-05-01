@@ -131,5 +131,5 @@ void SHMap::forceStat (unsigned short max_, unsigned short min_, unsigned short 
     max = max_;
     min = min_;
     avg = avg_;
-}}
+}}
 

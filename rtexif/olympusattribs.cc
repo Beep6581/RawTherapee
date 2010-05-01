@@ -669,5 +669,5 @@ const TagAttrib olympusAttribs[] = {
  0, 1, 0, 0, 0x3000, "RawInfo", &stdInterpreter,
  -1, 0, 0,  0, 0, "", NULL};
 };
-#endif
+#endif
 
