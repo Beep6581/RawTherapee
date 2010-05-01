@@ -26,7 +26,7 @@ FilterPanel::FilterPanel () : listener (NULL) {
 
 	set_border_width (4);
 
-	enabled = Gtk::manage (new Gtk::CheckButton ("Enable Metadata Filters"));
+	enabled = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_METADATAFILTER")));
 	pack_start (*enabled, Gtk::PACK_SHRINK, 2);
 	pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
 	

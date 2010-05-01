@@ -18,6 +18,7 @@
  */
 #include <profilestore.h>
 #include <options.h>
+#include <toolpanel.h>
 
 ProfileStore profileStore;
 
@@ -63,7 +64,7 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
       if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
         int lastdot = sname.find_last_of ('.');
         if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && !sname.casefold().compare (lastdot, 4, ".pp2")) {
-          printf ("processing file %s...\n", fname.c_str());
+          printf ("Processing file %s...\n", fname.c_str());
           Glib::ustring name = sname.substr(0,lastdot);
           if (pparams.find(name)!=pparams.end()) {
             delete pparams[name];

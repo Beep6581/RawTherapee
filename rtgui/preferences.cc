@@ -76,7 +76,7 @@ Preferences::Preferences (int initialPage)  {
     nb->append_page (*getProcParamsPanel(),     M("PREFERENCES_TAB_IMPROC"));
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
-    nb->append_page (*getBatchProcPanel(),      "Batch Processing");
+    nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
     nb->set_current_page (initialPage);
 
     fillPreferences ();
@@ -91,7 +91,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
 
     Gtk::ScrolledWindow* behscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     behscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    Gtk::Frame* behFrame = Gtk::manage (new Gtk::Frame ("Behavior"));
+    Gtk::Frame* behFrame = Gtk::manage (new Gtk::Frame (M("PREFERENCES_BEHAVIOR")));
     behFrame->add (*behscrollw);
     mvbpp->pack_start (*behFrame);
 //    mvbpp->pack_start (*behFrame, Gtk::PACK_SHRINK, 2);
@@ -101,9 +101,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     behModel = Gtk::TreeStore::create (behavColumns);
     behTreeView->set_model (behModel);
     
-    behTreeView->append_column ("Property", behavColumns.label); 
-    behTreeView->append_column_editable ("ADD", behavColumns.badd); 
-    behTreeView->append_column_editable ("SET", behavColumns.bset); 
+    behTreeView->append_column (M("PREFERENCES_PROPERTY"), behavColumns.label); 
+    behTreeView->append_column_editable (M("PREFERENCES_ADD"), behavColumns.badd); 
+    behTreeView->append_column_editable (M("PREFERENCES_SET"), behavColumns.bset); 
     
     Gtk::CellRendererToggle* cr_add = static_cast<Gtk::CellRendererToggle*> (behTreeView->get_column (1)->get_first_cell_renderer());
     Gtk::CellRendererToggle* cr_set = static_cast<Gtk::CellRendererToggle*> (behTreeView->get_column (2)->get_first_cell_renderer());
@@ -531,7 +531,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     showDateTime = new Gtk::CheckButton (M("PREFERENCES_SHOWDATETIME"));
     showBasicExif = new Gtk::CheckButton (M("PREFERENCES_SHOWBASICEXIF"));
     Gtk::VBox* vbro = new Gtk::VBox ();
-    overlayedFileNames = new Gtk::CheckButton ("Overlay filenames on thumbnails");
+    overlayedFileNames = new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES"));
     vbro->set_border_width (4);
     vbro->pack_start (*showDateTime, Gtk::PACK_SHRINK, 0);
     vbro->pack_start (*showBasicExif, Gtk::PACK_SHRINK, 0);

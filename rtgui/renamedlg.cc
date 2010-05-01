@@ -24,8 +24,8 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), imageData(NULL), p(parent) {
     
     Gtk::Table* names = Gtk::manage (new Gtk::Table (2, 2));
-    Gtk::Label* onlab = Gtk::manage (new Gtk::Label ("Current name:"));
-    Gtk::Label* nnlab = Gtk::manage (new Gtk::Label ("New name:"));
+    Gtk::Label* onlab = Gtk::manage (new Gtk::Label (M("FILEBROWSER_CURRENT_NAME")));
+      Gtk::Label* nnlab = Gtk::manage (new Gtk::Label (M("FILEBROWSER_NEW_NAME")));
     oldName = Gtk::manage (new Gtk::Label ("alma"));
     newName = Gtk::manage (new Gtk::Entry ());
     
@@ -37,7 +37,7 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     get_vbox()->pack_start (*names, Gtk::PACK_SHRINK, 4);
     
     Gtk::HBox* tbox = Gtk::manage (new Gtk::HBox());
-    useTmpl = Gtk::manage (new Gtk::CheckButton ("Use template:"));
+    useTmpl = Gtk::manage (new Gtk::CheckButton (M("FILEBROWSER_USETEMPLATE")));
     templates = Gtk::manage (new Gtk::ComboBox ());
     templateModel = Gtk::ListStore::create (templateColumns);
     templates->set_model (templateModel);
@@ -95,7 +95,7 @@ void RenameDialog::fillTemplateList () {
     iter->set_value (templateColumns.tmplName, Glib::ustring(""));
     iter->set_value (templateColumns.rowSeparator, true);
     iter = templateModel->append ();
-    iter->set_value (templateColumns.tmplName, Glib::ustring("Add/Del templates..."));
+    iter->set_value (templateColumns.tmplName, Glib::ustring(M("FILEBROWSER_ADDDELTEMPLATE")));
     iter->set_value (templateColumns.rowSeparator, false);
 }
 
@@ -119,13 +119,13 @@ void RenameDialog::useTemplToggled () {
 bool RenameDialog::isTemplSelected () {
 
     Gtk::TreeModel::iterator iter = templates->get_active();
-    return iter && iter->get_value (templateColumns.tmplName)!="Add/Del templates...";
+    return iter && iter->get_value (templateColumns.tmplName)!=M("FILEBROWSER_ADDDELTEMPLATE");
 }
 
 Glib::ustring RenameDialog::getActiveTemplate () {
 
     Gtk::TreeModel::iterator iter = templates->get_active();
-    if (iter && iter->get_value (templateColumns.tmplName)!="Add/Del templates...")
+    if (iter && iter->get_value (templateColumns.tmplName)!=M("FILEBROWSER_ADDDELTEMPLATE"))
         return iter->get_value (templateColumns.tmplName);
     else
         return "";
@@ -134,7 +134,7 @@ Glib::ustring RenameDialog::getActiveTemplate () {
 void RenameDialog::tmplSelectionChanged () {
 
     Gtk::TreeModel::iterator iter = templates->get_active();
-    if (iter && iter->get_value (templateColumns.tmplName)=="Add/Del templates...") {
+    if (iter && iter->get_value (templateColumns.tmplName)==M("FILEBROWSER_ADDDELTEMPLATE")) {
         RenameTemplateEditor* rte = new RenameTemplateEditor (p);
         if (rte->run()==Gtk::RESPONSE_OK) {
             fillTemplateList ();

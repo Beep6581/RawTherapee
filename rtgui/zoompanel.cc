@@ -74,13 +74,13 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoom11->signal_clicked().connect ( sigc::mem_fun(*this, &ZoomPanel::zoom11Clicked) );
     newCrop->signal_clicked().connect ( sigc::mem_fun(*this, &ZoomPanel::newCropClicked) );
 
-    zoomIn->set_tooltip_text ("Zoom In");
-    zoomOut->set_tooltip_text ("Zoom Out");
-    zoom11->set_tooltip_text ("Zoom to 100%");
-    zoomFit->set_tooltip_text ("Fit to screen");
-    newCrop->set_tooltip_text ("Add new crop window");
+    zoomIn->set_tooltip_text (M("ZOOMPANEL_ZOOMIN"));
+    zoomOut->set_tooltip_text (M("ZOOMPANEL_ZOOMOUT"));
+    zoom11->set_tooltip_text (M("ZOOMPANEL_ZOOM100"));
+    zoomFit->set_tooltip_text (M("ZOOMPANEL_ZOOMFITSCREEN"));
+    newCrop->set_tooltip_text (M("ZOOMPANEL_NEWCROPWINDOW"));
 
-    zoomLabel->set_text ("(100%)");
+    zoomLabel->set_text (M("ZOOMPANEL_100"));
 }
 
 void ZoomPanel::zoomInClicked () {

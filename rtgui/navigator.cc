@@ -54,12 +54,12 @@ Navigator::Navigator () {
 void Navigator::setInvalid () {
 
 	position->set_text ("x = n/a, y = n/a");
-	R->set_text ("R = n/a");
-	G->set_text ("G = n/a");
-	B->set_text ("B = n/a");
-	H->set_text ("H = n/a");
-	S->set_text ("S = n/a");
-	V->set_text ("V = n/a");
+	R->set_text (M("NAVIGATOR_R_NA"));
+	G->set_text (M("NAVIGATOR_G_NA"));
+	B->set_text (M("NAVIGATOR_B_NA"));
+	H->set_text (M("NAVIGATOR_H_NA"));
+	S->set_text (M("NAVIGATOR_S_NA"));
+	V->set_text (M("NAVIGATOR_V_NA"));
 }
 
 void Navigator::pointerMoved (bool validPos, int x, int y, int r, int g, int b) {
@@ -68,14 +68,14 @@ void Navigator::pointerMoved (bool validPos, int x, int y, int r, int g, int b) 
 		setInvalid ();
 	else {
 		position->set_text (Glib::ustring::compose ("x = %1, y = %2", x, y));
-		R->set_text (Glib::ustring::compose ("R = %1", r));
-		G->set_text (Glib::ustring::compose ("G = %1", g));
-		B->set_text (Glib::ustring::compose ("B = %1", b));
+		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), r));
+		G->set_text (Glib::ustring::compose (M("NAVIGATOR_G_VALUE"), g));
+		B->set_text (Glib::ustring::compose (M("NAVIGATOR_B_VALUE"), b));
 		int h, s, v;
 		rgb2hsv (r, g, b, h, s, v);
-		H->set_text (Glib::ustring::compose ("H = %1", h));
-		S->set_text (Glib::ustring::compose ("S = %1", s));
-		V->set_text (Glib::ustring::compose ("V = %1", v));
+		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), h));
+		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), s));
+		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), v));
 	}
 }
 

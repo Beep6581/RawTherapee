@@ -524,7 +524,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
     if (whoChangedIt!=EDITOR) 
-        tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, "Profile Changed in Browser");    
+      tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));    
 }
 
 rtengine::IImage16* EditorPanel::processImage () {
@@ -622,7 +622,7 @@ void EditorPanel::saveAsPressed () {
             }
         }
         if (!img || err) {
-            Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
+	  Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ERRORDURINGIMAGESAVING") + "\n</b>";
             Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }

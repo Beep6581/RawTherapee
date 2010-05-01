@@ -25,7 +25,7 @@
 CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false), curveTypeIx(-1) {
 
     Gtk::HBox* tsbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::Label* tslab = Gtk::manage (new Gtk::Label ("Type:"));
+    Gtk::Label* tslab = Gtk::manage (new Gtk::Label (M("CURVEEDITOR_TYPE")));
     curveType = Gtk::manage (new Gtk::ComboBoxText ());
     
     tsbox->pack_start (*tslab, Gtk::PACK_SHRINK, 8);
@@ -83,10 +83,10 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
 
     paramCurveBox->pack_start (*tmpb, true, true);
 
-    highlights = Gtk::manage (new Adjuster ("Highlights", -100, 100, 1, 0));
-    lights     = Gtk::manage (new Adjuster ("Lights", -100, 100, 1, 0));
-    darks      = Gtk::manage (new Adjuster ("Darks", -100, 100, 1, 0));
-    shadows    = Gtk::manage (new Adjuster ("Shadows", -100, 100, 1, 0));
+    highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
+    lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
+    darks      = Gtk::manage (new Adjuster (M("CURVEEDITOR_DARKS"), -100, 100, 1, 0));
+    shadows    = Gtk::manage (new Adjuster (M("CURVEEDITOR_SHADOWS"), -100, 100, 1, 0));
 
     Gtk::EventBox* evhighlights = Gtk::manage (new Gtk::EventBox ());
     Gtk::EventBox* evlights = Gtk::manage (new Gtk::EventBox ());
@@ -361,7 +361,7 @@ bool CurveEditor::adjusterLeft (GdkEventCrossing* ev, int ac) {
 
 void CurveEditor::setBatchMode (bool batchMode) {
 
-    curveType->append_text ("(Unchanged)");
+  curveType->append_text (M("GENERAL_UNCHANGED"));
 }
 
 bool CurveEditor::isUnChanged () {

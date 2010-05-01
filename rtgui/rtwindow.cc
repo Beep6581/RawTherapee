@@ -34,7 +34,7 @@ RTWindow::RTWindow () {
 		}
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
-    set_title("Raw Therapee "+versionString);
+    set_title("RawTherapee "+versionString);
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);

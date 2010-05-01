@@ -167,7 +167,7 @@ void BatchToolPanelCoordinator::initSession () {
             toolPanels[i]->read (&pparams, &pparamsEdited);
         }
         for (int i=0; i<paramcListeners.size(); i++)
-            paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, "batch processing", &pparamsEdited);
+	  paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M("BATCH_PROCESSING"), &pparamsEdited);
     }
 }
 
