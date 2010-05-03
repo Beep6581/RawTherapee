@@ -35,20 +35,20 @@ EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
 EXIFFILTER_FOCALLEN;Longueur focale
 EXIFFILTER_ISO;ISO
-EXIFFILTER_LENS;Optique
+EXIFFILTER_LENS;Objectif
 EXIFFILTER_SHUTTER;Obturateur
-EXIFPANEL_ADDEDIT;Ajouter/Editer
-EXIFPANEL_ADDEDITHINT;Ajoute ou édite un tag
+EXIFPANEL_ADDEDIT;Ajouter/Éditer
+EXIFPANEL_ADDEDITHINT;Ajoute ou édite une donnée
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Saisissez une valeur
-EXIFPANEL_ADDTAGDLG_SELECTTAG;Choisissez un tag
-EXIFPANEL_ADDTAGDLG_TITLE;Ajouter/Editer un tag
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Choisissez une donnée
+EXIFPANEL_ADDTAGDLG_TITLE;Ajouter/Éditer une donnée
 EXIFPANEL_KEEP;Conserver
-EXIFPANEL_KEEPHINT;Conserve les tags sélectionnés lors de l'écriture du fichier de sortie
-EXIFPANEL_REMOVEHINT;Retire les tags sélectionnés lors de l'écriture du fichier de sortie
+EXIFPANEL_KEEPHINT;Conserve les données sélectionnés lors de l'écriture du fichier de sortie
+EXIFPANEL_REMOVEHINT;Retire les données sélectionnés lors de l'écriture du fichier de sortie
 EXIFPANEL_REMOVE;Retirer
 EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
 EXIFPANEL_RESETALL;Réinitialiser tout
-EXIFPANEL_RESETHINT;Réinitialise les tags séléctionnés à la valeur initiale
+EXIFPANEL_RESETHINT;Réinitialise les données séléctionnés à la valeur initiale
 EXIFPANEL_RESET;Réinitialiser
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
@@ -196,7 +196,7 @@ HISTORY_MSG_70;Espace de couleur de sortie
 HISTORY_MSG_71;Espace de couleur d'entrée
 HISTORY_MSG_72;Correction du vignetage
 HISTORY_MSG_73;Mixage des canaux
-HISTORY_MSG_74;Echelle de redimensionnement
+HISTORY_MSG_74;Échelle de redimensionnement
 HISTORY_MSG_75;Méthode de redimensionnement
 HISTORY_MSG_76;Métadonnées EXIF
 HISTORY_MSG_77;Métadonnées IPTC
@@ -270,7 +270,7 @@ IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
 IPTCPANEL_TITLE;Titre
 IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
-MAIN_BUTTON_EXIT;Exit
+MAIN_BUTTON_EXIT;Sortie
 MAIN_BUTTON_PREFERENCES;Préférences
 MAIN_BUTTON_QUEUE;Envoyer dans la file
 MAIN_BUTTON_SAVEAS;Sous...
@@ -301,7 +301,7 @@ MAIN_TAB_FILTER;Filtrer
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
-MAIN_TAB_TAGGING;Tagguer
+MAIN_TAB_TAGGING;Étiquetage
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers, touche F)
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique, touche H)
@@ -562,7 +562,7 @@ TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Redimensionnement
 TP_RESIZE_METHOD;Méthode: 
 TP_RESIZE_NEAREST;Au plus proche
-TP_RESIZE_SCALE;Echelle
+TP_RESIZE_SCALE;Échelle
 TP_RESIZE_W;L:
 TP_ROTATE_AUTOCROP;Rognage auto
 TP_ROTATE_DEGREE;Degré
@@ -608,7 +608,7 @@ ZOOMBAR_HUGE;Énorme
 ZOOMBAR_LARGE;Large
 ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Prévisualiation
-ZOOMBAR_SCALE;Echelle
+ZOOMBAR_SCALE;Échelle
 ZOOMBAR_SMALL;Petit
 
 GENERAL_HIGH_QUALITY;Qualité élevée
@@ -623,26 +623,26 @@ FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'
 BATCHQUEUE_AUTOSTART;Démarrage auto
 TP_DETAIL_AMOUNT;Quantité
 TP_RESIZE_SPECIFY;Préciser:
-TP_RESIZE_SCALE;Echelle
+TP_RESIZE_SCALE;Échelle
 TP_RESIZE_WIDTH;Largeur
 TP_RESIZE_HEIGHT;Hauteur
-MAIN_TOGGLE_BEFORE_AFTER;B|A
+MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
 
 
 ###
 
 EXIFFILTER_METADATAFILTER;Activer les filtres sur les Métadonnées
 CURVEEDITOR_TYPE;Type:
-CURVEEDITOR_HIGHLIGHTS;Hautes kumières
-CURVEEDITOR_LIGHTS;Lights
-CURVEEDITOR_DARKS;Darks
-CURVEEDITOR_SHADOWS;Ombres
+CURVEEDITOR_HIGHLIGHTS;Hautes lumières
+CURVEEDITOR_LIGHTS;Zones claires
+CURVEEDITOR_DARKS;Zones sombres
+CURVEEDITOR_SHADOWS;Ombres bouchées
 BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_PROPERTY;Propriété
-PREFERENCES_ADD;ADD
-PREFERENCES_SET;SET
+PREFERENCES_ADD;Ajoute
+PREFERENCES_SET;Remplace
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
 MAIN_MSG_ERRORDURINGIMAGESAVING;Erreur pendant la sauvegarde de l'image
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -651,7 +651,7 @@ FILEBROWSER_USETEMPLATE;Utiliser le modèle:
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 ZOOMPANEL_ZOOMIN;Zoom +
 ZOOMPANEL_ZOOMOUT;Zoom -
-ZOOMPANEL_ZOOM100;Zoom to 100%
+ZOOMPANEL_ZOOM100;Zoom à 100%
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre
 ZOOMPANEL_NEWCROPWINDOW;Ajouter une nouvelle fenêtre de zoom
 ZOOMPANEL_100;(100%)
