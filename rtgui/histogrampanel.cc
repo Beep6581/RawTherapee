@@ -161,9 +161,11 @@ void HistogramArea::renderHistogram () {
   if (valid) {
 
     // compute height of the full histogram (realheight) and
+    // does not take into account 0 and 255 values
+    // them are handled separately
 
     int fullhistheight = 0;
-    for (int i=0; i<256; i++) {
+    for (int i=1; i<255; i++) {
         if (needVal && lhist[i]>fullhistheight)
 	        fullhistheight = lhist[i];
         if (needRed && rhist[i]>fullhistheight)
@@ -173,8 +175,7 @@ void HistogramArea::renderHistogram () {
         if (needBlue && bhist[i]>fullhistheight)
 	        fullhistheight = bhist[i];
     }
-    
-    // compute two hights, one for the magnified view and one for the threshold
+
     int realhistheight = fullhistheight;
 
     if (!showFull) {    
@@ -202,57 +203,38 @@ void HistogramArea::renderHistogram () {
     Cairo::RefPtr<Cairo::Context> cr = backBuffer->create_cairo_context();
     cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
     cr->set_line_width (1.0);
-    double stepSize = (winw-1) / 256.0;
+
+    int ui = 0, oi = 0;
+
     if (needVal) {
-        cr->move_to (0, winh-1);
+        drawCurve(cr, lhist, realhistheight, winw, winh);
         cr->set_source_rgb (0.75, 0.75, 0.75);
-        for (int i=0; i<256; i++) {
-            double val = lhist[i] * (double)(winh-2) / realhistheight;
-            if (val>winh-1)
-                val = winh-1;
-      	    if (i>0)
-       	        cr->line_to (i*stepSize, winh-1-val);
-    	}
-        cr->save ();
-        cr->line_to (winw-1, winh-1);    	cr->fill_preserve ();
-        cr->restore ();
+        cr->fill_preserve ();
         cr->set_source_rgb (0.5, 0.5, 0.5);
     	cr->stroke ();
+
+        drawMarks(cr, lhist, realhistheight, winw, ui, oi);
     }
     if (needRed) {
-        cr->move_to (0, winh-1);
+        drawCurve(cr, rhist, realhistheight, winw, winh);
         cr->set_source_rgb (1.0, 0.0, 0.0);
-        for (int i=0; i<256; i++) {
-            double val = rhist[i] * (double)(winh-2) / realhistheight;
-            if (val>winh-1)
-                val = winh-1;
-  	        if (i>0)
-   	            cr->line_to (i*stepSize, winh-1-val);	
-    	}
     	cr->stroke ();
+
+        drawMarks(cr, rhist, realhistheight, winw, ui, oi);
     }
-    if (needGreen) {        cr->move_to (0, winh-1);
+    if (needGreen) {
+        drawCurve(cr, ghist, realhistheight, winw, winh);
         cr->set_source_rgb (0.0, 1.0, 0.0);
-        for (int i=0; i<256; i++) {
-            double val = ghist[i] * (double)(winh-2) / realhistheight;
-            if (val>winh-1)
-                val = winh-1;
-  	        if (i>0)
-   	            cr->line_to (i*stepSize, winh-1-val);	
-    	}
     	cr->stroke ();
+
+        drawMarks(cr, ghist, realhistheight, winw, ui, oi);
     }
     if (needBlue) {
-        cr->move_to (0, winh-1);
+        drawCurve(cr, bhist, realhistheight, winw, winh);
         cr->set_source_rgb (0.0, 0.0, 1.0);
-        for (int i=0; i<256; i++) {
-            int val = bhist[i] * (double)(winh-2) / realhistheight;
-            if (val>winh-1)
-                val = winh-1;
-      	    if (i>0)
-       	        cr->line_to (i*stepSize, winh-1-val);
-    	}
     	cr->stroke ();
+
+        drawMarks(cr, bhist, realhistheight, winw, ui, oi);
     }
   }
 
@@ -432,24 +414,51 @@ void HistogramArea::on_realize () {
 
 }
 
+void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
+    unsigned int * data, double scale, int hsize, int vsize)
+{
+    cr->move_to (0, vsize-1);
+    for (int i = 0; i < 256; i++) {
+        double val = data[i] * (double)(vsize-2) / scale;
+        if (val > vsize - 1)
+            val = vsize - 1;
+        cr->line_to ((i/255.0)*(hsize - 1), vsize - 1 - val);
+	}
+    cr->line_to (hsize - 1, vsize - 1);
+}
+
+void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
+    unsigned int * data, double scale, int hsize, int & ui, int & oi)
+{
+    int s = 8;
+    
+    if(data[0] > scale) {
+            cr->rectangle(0, (ui++)*s, s, s);
+    }
+    if(data[255] > scale) {
+            cr->rectangle(hsize - s, (oi++)*s, s, s);
+    }
+    cr->fill();
+}
+
 void HistogramArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 
-  white = get_style()->get_base(Gtk::STATE_NORMAL);
-  queue_draw ();
+    white = get_style()->get_base(Gtk::STATE_NORMAL);
+    queue_draw ();
 }
 
 bool HistogramArea::on_expose_event(GdkEventExpose* event) {
 
-  Glib::RefPtr<Gdk::Window> window = get_window();
+    Glib::RefPtr<Gdk::Window> window = get_window();
 
-  int winx, winy, winw, winh, wind;
-  window->get_geometry(winx, winy, winw, winh, wind);
+    int winx, winy, winw, winh, wind;
+    window->get_geometry(winx, winy, winw, winh, wind);
 
-  if (winw!=oldwidth && winh!=oldheight)
+    if (winw!=oldwidth && winh!=oldheight)
     renderHistogram ();
-  window->draw_drawable (gc_, backBuffer, 0, 0, 0, 0, -1, -1);
+    window->draw_drawable (gc_, backBuffer, 0, 0, 0, 0, -1, -1);
 
-  return true;
+    return true;
 }
 
 
@@ -460,7 +469,6 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event) {
         renderHistogram ();
         queue_draw ();
     }
-	return true;
+    return true;
 }
-
 
