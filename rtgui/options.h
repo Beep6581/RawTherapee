@@ -62,6 +62,8 @@ class Options {
     Glib::ustring startupPath;
     Glib::ustring profilePath;
     Glib::ustring lastSaveAsPath;
+    int saveAsDialogWidth;
+    int saveAsDialogHeight;
     int toolPanelWidth;
     int browserToolPanelWidth;
     int historyPanelWidth;

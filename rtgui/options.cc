@@ -234,6 +234,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "WindowHeight"))     windowHeight   = keyFile.get_integer ("GUI", "WindowHeight");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth   = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight  = keyFile.get_integer ("GUI", "DirBrowserHeight");
+    if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))     saveAsDialogWidth   = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
+    if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))     saveAsDialogHeight   = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
     if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth    = keyFile.get_integer ("GUI", "ToolPanelWidth");
     if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))browserToolPanelWidth = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
     if (keyFile.has_key ("GUI", "HistoryPanelWidth"))   historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
@@ -354,6 +356,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
+    keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
+    keyFile.set_integer ("GUI", "SaveAsDialogHeight", saveAsDialogHeight);
     keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
     keyFile.set_integer ("GUI", "BrowserToolPanelWidth", browserToolPanelWidth);
     keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
