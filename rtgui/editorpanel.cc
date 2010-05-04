@@ -181,6 +181,7 @@ EditorPanel::EditorPanel (Thumbnail* tmb, rtengine::InitialImage* isrc) : parent
     else 
         saveAsDialog = new SaveAsDialog (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
 
+    saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
 
 // connect listeners
     profilep->setProfileChangeListener (tpc);
@@ -590,6 +591,10 @@ void EditorPanel::saveAsPressed () {
     Glib::ustring fname = saveAsDialog->getFileName ();
     if (fname=="")
         return;
+
+    options.lastSaveAsPath = saveAsDialog->getDirectory ();
+    options.saveAsDialogWidth = saveAsDialog->get_width();
+    options.saveAsDialogHeight = saveAsDialog->get_height();
 
     SaveFormat sf = saveAsDialog->getFormat ();
     if (getExtension (fname)!=sf.format)
