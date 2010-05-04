@@ -546,9 +546,9 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
                 if (thumbImg->r[row][col]>max)
                     max = thumbImg->r[row][col];
                 if (thumbImg->g[row][col]>max)
-                    max = thumbImg->r[row][col];
+                    max = thumbImg->g[row][col];
                 if (thumbImg->b[row][col]>max)
-                    max = thumbImg->r[row][col];
+                    max = thumbImg->b[row][col];
             }
         if (max < 16384)
             max = 16384;
