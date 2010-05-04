@@ -71,6 +71,11 @@ class HistogramArea : public Gtk::DrawingArea {
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+  private:
+    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
+        unsigned int * data, double scale, int hsize, int vsize);
+    void drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
+        unsigned int * data, double scale, int hsize, int & ui, int & oi);
 };
 
 class HistogramPanel : public Gtk::HBox {
