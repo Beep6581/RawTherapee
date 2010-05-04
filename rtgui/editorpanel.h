@@ -31,6 +31,7 @@
 #include <batchqueueentry.h>
 #include <thumbnaillistener.h>
 #include <navigator.h>
+#include <ProgressDialog.h>
 
 class EditorPanel;
 struct EditorPanelIdleHelper {
@@ -88,20 +89,21 @@ class EditorPanel : public Gtk::VBox,
 
         EditorPanelIdleHelper* epih;
 
-        void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
         void close ();
 
-        rtengine::IImage16* processImage ();
         BatchQueueEntry*    createBatchQueueEntry ();
         int                 saveImage (rtengine::IImage16* img, Glib::ustring& fname, SaveFormat sf, bool findNewNameIfNeeded);
-
+        bool                idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring fname, SaveFormat sf);
+        bool                idle_saveImage(ProgressConnector<rtengine::IImage16*> *pc,Glib::ustring fname, SaveFormat sf,bool findNewNameIfNeeded);
+        bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc);
+        bool                idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring filename);
+        int err;
     public:
-    
-        static rtengine::InitialImage* loadImage (Thumbnail* tmb);
 
-        EditorPanel (Thumbnail* tmb, rtengine::InitialImage* isrc);
+        EditorPanel ();
         virtual ~EditorPanel ();
 
+        void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
         bool beforeClosing ();
         void on_realize ();
 

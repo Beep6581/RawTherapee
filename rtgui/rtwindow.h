@@ -24,8 +24,9 @@
 #include <editorpanel.h>
 #include <batchqueuepanel.h>
 #include <set>
+#include <Progressdialog.h>
 
-class RTWindow : public Gtk::Window {
+class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
     private:
         Gtk::Notebook* mainNB;
@@ -33,14 +34,18 @@ class RTWindow : public Gtk::Window {
         BatchQueuePanel* bpanel;
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
-        
+
+        Gtk::Label prLabel;
+        Gtk::ProgressBar prProgBar;
+        PLDBridge* pldBridge;
         bool is_fullscreen;
         Gtk::Button * btn_fullscreen;
         
+
     public:
         RTWindow ();
 
-        void addEditorPanel (EditorPanel* ep);
+        void addEditorPanel (EditorPanel* ep,const std::string &name);
         void remEditorPanel (EditorPanel* ep);
 
         void addBatchQueueJob       (BatchQueueEntry* bqe, bool head=false);
@@ -52,6 +57,11 @@ class RTWindow : public Gtk::Window {
         void showPreferences ();
         void on_realize ();
         void toggle_fullscreen ();
+        void setProgress (double p);
+        void setProgressStr (Glib::ustring str);
+        void setProgressState (int state);
+        void error (Glib::ustring descr);
+        rtengine::ProgressListener* getProgressListener () { return pldBridge; }
 };
 
 #endif
