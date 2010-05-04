@@ -79,11 +79,16 @@ RTWindow::RTWindow () {
     preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
     preferences->set_relief (Gtk::RELIEF_NONE);
     preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
+    is_fullscreen = false;
     btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
     btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
     bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
-    bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
     bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 4);
+    bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
+    bottomBox->pack_start (prLabel );
+    prLabel.set_alignment(Gtk::ALIGN_RIGHT);
+    bottomBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 4);
+    pldBridge = new PLDBridge(&prLabel,&prProgBar);
 
     Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
     style->set_xthickness (0);
@@ -102,14 +107,14 @@ void RTWindow::on_realize () {
     cursorManager.init (get_window());
 }
 
-void RTWindow::addEditorPanel (EditorPanel* ep) {
+void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
     ep->setParent (this);
 
     // construct closeable tab for the image
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FILE, Gtk::ICON_SIZE_MENU)));
-    hb->pack_start (*Gtk::manage (new Gtk::Label (ep->getShortName ())));
+    hb->pack_start (*Gtk::manage (new Gtk::Label (name)));
     Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
     closeb->set_image (*Gtk::manage(new Gtk::Image (Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU)));
     closeb->set_relief (Gtk::RELIEF_NONE);
@@ -128,8 +133,8 @@ void RTWindow::addEditorPanel (EditorPanel* ep) {
     mainNB->set_current_page (mainNB->page_num (*ep));
     mainNB->set_tab_reorderable (*ep, true);
 
-    epanels[ep->getFileName()] = ep;
-    filesEdited.insert (ep->getFileName ());
+    epanels[ name ] = ep;
+    filesEdited.insert ( name );
     fpanel->refreshEditedState (filesEdited);
 }
 
@@ -230,7 +235,22 @@ void RTWindow::showPreferences () {
   
   fpanel->optionsChanged ();
 }
-
+void RTWindow::setProgress (double p){
+	prProgBar.set_fraction (p);
+}
+void RTWindow::setProgressStr (Glib::ustring str){
+	prLabel.set_text ( str );
+}
+void RTWindow::setProgressState (int state){
+	if(state){
+		prProgBar.show();
+		prLabel.show();
+	}else{
+		prProgBar.hide();
+		prLabel.hide();
+	}
+}
+		
 void RTWindow::toggle_fullscreen () {
     if(is_fullscreen){
         unfullscreen();
@@ -242,4 +262,8 @@ void RTWindow::toggle_fullscreen () {
         is_fullscreen = true;
         btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
     }
+}
+
+void RTWindow::error (Glib::ustring descr){
+	prLabel.set_text ( descr );
 }

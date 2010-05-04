@@ -138,21 +138,31 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
         return false;
 
     // try to open the file
-    bool succ = false;
     fileCatalog->setEnabled (false);
-    rtengine::InitialImage* isrc = EditorPanel::loadImage (thm);
-    if (isrc) {
-        EditorPanel* epanel = Gtk::manage (new EditorPanel (thm, isrc));
-        parent->addEditorPanel (epanel);
-        succ = true;
-    }
-    else {
-        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
-        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-        msgd.run ();
-    }
-    fileCatalog->setEnabled (true);
-    return succ;
+    ProgressConnector<rtengine::InitialImage*> *ld = new ProgressConnector<rtengine::InitialImage*>();
+    ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType()==FT_Raw, &error, parent->getProgressListener()),
+   		           sigc::bind(sigc::mem_fun(*this,&FilePanel::imageLoaded), thm, ld) );
+    return true;
+}
+bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc ){
+
+	if (pc->returnValue() && thm) {
+		EditorPanel* epanel = Gtk::manage (new EditorPanel ());
+		parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
+		epanel->open(thm, pc->returnValue() );
+	}else {
+		gdk_threads_enter ();
+		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
+		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+		msgd.run ();
+		gdk_threads_leave ();
+	}
+	delete pc;
+
+	parent->setProgress(0.);
+	parent->setProgressStr("");
+	fileCatalog->setEnabled (true);
+	return false; // MUST return false from idle function
 }
 
 void FilePanel::saveOptions () { 

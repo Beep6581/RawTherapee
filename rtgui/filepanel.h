@@ -29,6 +29,7 @@
 #include <pparamschangelistener.h>
 #include <history.h>
 #include <filterpanel.h>
+#include <progressdialog.h>
 
 class RTWindow;
 class FilePanel : public Gtk::HPaned,
@@ -50,6 +51,8 @@ class FilePanel : public Gtk::HPaned,
         RTWindow* parent;      
         Gtk::Notebook* rightNotebook;
 
+        int error;
+
     public:
         FilePanel ();
 
@@ -68,6 +71,7 @@ class FilePanel : public Gtk::HPaned,
         bool addBatchQueueJob       (BatchQueueEntry* bqe);
 
         void optionsChanged         ();
+        bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
 };
 
 #endif

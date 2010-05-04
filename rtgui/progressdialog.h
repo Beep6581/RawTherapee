@@ -27,15 +27,14 @@
 
 class PLDBridge : public rtengine::ProgressListener {
 
-        Gtk::Dialog* dialog;
         Gtk::Label* label;
         Gtk::ProgressBar* progBar;
 
     public:
-        PLDBridge (Gtk::Dialog* d, Gtk::Label* l, Gtk::ProgressBar* pb) 
-            : dialog(d), label(l), progBar(pb) {}
+        PLDBridge ( Gtk::Label* l, Gtk::ProgressBar* pb)
+            : label(l), progBar(pb) {}
 
-    // progresslistener interface
+    // ProgressListener interface
     void setProgress (double p) {
         gdk_threads_enter ();
         progBar->set_fraction (p);
@@ -72,57 +71,39 @@ class PLDBridge : public rtengine::ProgressListener {
         label->set_text (progrstr);
         gdk_threads_leave ();
     }
-    void setProgressState (int state) {}
-    void error (Glib::ustring descr) {}
 };
 
 template<class T>
-class ProgressDialog : public Gtk::Dialog {
+class ProgressConnector {
 
-        sigc::signal0<T> operation;
-        T* retval;
-        Gtk::Label prLabel;
-        Gtk::ProgressBar prProgBar;
-        
-        PLDBridge* pldBridge;
-        
+        sigc::slot0<T> slotStart;
+        sigc::slot0<bool> slotEnd;
+        T retval;
+        Glib::Thread *workThread;
         
         void workingThread () {
-            *retval = operation.emit ();
-            gdk_threads_enter ();
-            response (1);
-            gdk_threads_leave ();
+        	sigc::signal0<T> op;
+        	sigc::connection conn= op.connect(slotStart);
+            retval = op.emit ();
+            conn.disconnect();
+            Glib::signal_idle().connect(slotEnd);
+            workThread = 0;
         }
         
     public:
     
-        ProgressDialog (Glib::ustring label) : Gtk::Dialog (label, true) {
-            pldBridge = new PLDBridge (this, &prLabel, &prProgBar); 
-            get_vbox()->pack_start (prLabel, Gtk::PACK_SHRINK, 4);
-            get_vbox()->pack_start (prProgBar, Gtk::PACK_SHRINK, 4);
-            set_size_request (300, -1);
-            show_all_children ();
+        ProgressConnector ():workThread( 0 ) { }
+
+        void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler ) {
+        	if( !workThread ){
+				slotStart = startHandler;
+				slotEnd = endHandler;
+				workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        	}
         }
-        
-        ~ProgressDialog () {
-            delete pldBridge;
-        }
-        
-        rtengine::ProgressListener* getProgressListener () { return pldBridge; }
-        
-        void setFunc (const sigc::slot0<T>& slot, T* rv) {
-            retval = rv;
-            operation.connect (slot);
-        }
-        
-        void start () {
-            Glib::Thread *thread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressDialog<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            int x = run ();
-            if (x<0) {
-                gdk_threads_leave ();
-                thread->join ();
-                gdk_threads_enter ();
-            }
+
+        T returnValue(){
+        	return retval;
         }
 };
 #endif
