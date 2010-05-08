@@ -141,7 +141,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 	//reading PNG header
 	unsigned char header[8];
 	fread (header, 1, 8, file);
-	if (!png_sig_cmp (header, 0, 8)) {
+	if (png_sig_cmp (header, 0, 8)) {
 		fclose(file);
 		return IMIO_HEADERERROR;
 	}
