@@ -61,7 +61,10 @@ void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h) {
 void PreviewWindow::updatePreviewImage () {
 
     int W = get_width(), H = get_height();
-    backBuffer = Gdk::Pixmap::create (get_window(), W, H, -1);
+    Glib::RefPtr<Gdk::Window> wind = get_window();
+    if( ! wind )
+    	return;
+    backBuffer = Gdk::Pixmap::create (wind, W, H, -1);
     backBuffer->draw_rectangle (get_style()->get_base_gc(Gtk::STATE_NORMAL), true, 0, 0, W, H);
     if (previewHandler) {
         Glib::RefPtr<Gdk::Pixbuf> resPixbuf = previewHandler->getRoughImage (W, H, zoom);
