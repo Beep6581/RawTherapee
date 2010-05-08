@@ -31,7 +31,7 @@
 #include <batchqueueentry.h>
 #include <thumbnaillistener.h>
 #include <navigator.h>
-#include <ProgressDialog.h>
+#include <progressdialog.h>
 
 class EditorPanel;
 struct EditorPanelIdleHelper {
