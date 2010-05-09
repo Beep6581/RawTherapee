@@ -725,6 +725,8 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     if (!file)
         return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
+    if( !info )
+    	return;
     int lastdot = info->get_name().find_last_of ('.');
     if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
