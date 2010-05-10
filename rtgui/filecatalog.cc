@@ -126,6 +126,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     exifInfo = Gtk::manage(new Gtk::ToggleButton ());
     exifInfo->set_image (*(new Gtk::Image (argv0+"/images/info.png")));
     exifInfo->set_relief (Gtk::RELIEF_NONE);
+    exifInfo->set_tooltip_text (M("FILEBROWSER_SHOWEXIFINFO"));
     exifInfo->set_active( options.showFileNames );
     exifInfo->signal_toggled().connect(sigc::mem_fun(*this, &FileCatalog::exifInfoButtonToggled));
     buttonBar->pack_start (*exifInfo, Gtk::PACK_SHRINK);
