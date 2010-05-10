@@ -341,13 +341,10 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
 
     Glib::ustring absDirPath = Gio::File::create_for_path(dirname)->get_parse_name ();
     Gtk::TreePath path = expandToDir (absDirPath);
-
-    if (expandSuccess) {
-        dirtree->scroll_to_row (path);
-        dirtree->get_selection()->select (path);
-        for (int i=0; i<dllisteners.size(); i++)
-            dllisteners[i]->dirSelected (absDirPath, Glib::build_filename (absDirPath, fileName));
-    }
+	dirtree->scroll_to_row (path);
+	dirtree->get_selection()->select (path);
+	for (int i=0; i<dllisteners.size(); i++)
+		dllisteners[i]->dirSelected (absDirPath, Glib::build_filename (absDirPath, fileName));
 }
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName) {
