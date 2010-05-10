@@ -28,6 +28,8 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     pngcompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
     pngcompr->setAdjusterListener (this);
     pngcompr->show ();
+    tiffuncompressed = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED")));
+    tiffuncompressed->show();
 
     Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* flab = Gtk::manage (new Gtk::Label (M("SAVEDLG_FILEFORMAT")+":"));
@@ -80,6 +82,7 @@ void SaveFormatPanel::init (SaveFormat &sf) {
     pngcompr->setValue (sf.pngCompression);
     jpegqual->setValue (sf.jpegQuality);
     savespp->set_active (sf.saveParams);
+    tiffuncompressed->set_active (sf.tiffUncompressed);
     listener = tmp;
 }
  
@@ -99,6 +102,7 @@ SaveFormat SaveFormatPanel::getFormat () {
         sf.tiffBits = 8;
     sf.pngCompression   = (int) pngcompr->getValue ();
     sf.jpegQuality      = (int) jpegqual->getValue ();
+    sf.tiffUncompressed = tiffuncompressed->get_active();
     sf.saveParams       = savespp->get_active ();
     return sf;
 }
@@ -109,6 +113,8 @@ void SaveFormatPanel::formatChanged () {
         removeIfThere (formatopts, jpegqual);
     else if (oformat==3 || oformat==4)
         removeIfThere (formatopts, pngcompr);
+    else if (oformat==1 || oformat==2)
+				removeIfThere (formatopts, tiffuncompressed);
 
     int act = format->get_active_row_number();
     if (act<0 || act>4)
@@ -119,6 +125,8 @@ void SaveFormatPanel::formatChanged () {
         formatopts->pack_start (*jpegqual, Gtk::PACK_SHRINK,4);
     else if (fr=="png") 
         formatopts->pack_start (*pngcompr, Gtk::PACK_SHRINK,4);
+		else if (fr=="tif") 
+        formatopts->pack_start (*tiffuncompressed, Gtk::PACK_SHRINK,4);
 
     oformat = act;
   

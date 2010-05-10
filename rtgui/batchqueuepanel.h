@@ -71,6 +71,7 @@ class BatchQueuePanel : public Gtk::VBox,
         void stopBatchProc ();
         
         void saveOptions ();
+        void pathFolderChanged ();
         void formatChanged ();       
 };
 

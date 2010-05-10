@@ -84,7 +84,7 @@ BatchQueuePanel::BatchQueuePanel () {
 
     // setup signal handlers
     outdirTemplate->signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
-    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
+    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));    
     useTemplate->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
     useFolder->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
     saveFormatPanel->setListener (this);
@@ -229,14 +229,19 @@ bool BatchQueuePanel::canStartNext () {
 
 void BatchQueuePanel::saveOptions () { 
 
-    options.saveFormat          = saveFormatPanel->getFormat ();
     options.savePathTemplate    = outdirTemplate->get_text();
-    options.savePathFolder      = outdirFolder->get_filename();
     options.saveUsePathTemplate = useTemplate->get_active();
     options.procQueueEnabled    = autoStart->get_active ();
 }
 
+// We only want to save the following when it changes, \
+// since these settings are shared with editorpanel : 
+void BatchQueuePanel::pathFolderChanged () {
+    
+    options.savePathFolder      = outdirFolder->get_filename();
+}
+
 void BatchQueuePanel::formatChanged () {
     
-    saveOptions ();
+    options.saveFormat          = saveFormatPanel->getFormat ();
 }

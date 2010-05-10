@@ -461,6 +461,7 @@ SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;İşeme değişkenlerini görüntü ile birlikte kaydet
 SAVEDLG_TIFFFILTER;TIFF dosyaları
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Seçimi kırp (shorcut key: C)
 TOOLBAR_TOOLTIP_HAND;El aracı (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Düz çizgi seçimi (shortcut key: S)
