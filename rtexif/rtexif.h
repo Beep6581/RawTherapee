@@ -74,8 +74,8 @@ class TagDirectory {
     const TagAttrib* getAttrib     (int id);
     const TagAttrib* getAttrib     (const char* name);
     const TagAttrib* getAttribTable() { return attribs; }
-    Tag*             getTag        (const char* name);
-    Tag*             getTag        (int ID);
+    Tag*             getTag        (const char* name) const;
+    Tag*             getTag        (int ID) const;
     void             addTag        (Tag* a);
     void             addTagFront   (Tag* a);
     void             replaceTag    (Tag* a);

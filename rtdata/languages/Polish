@@ -466,6 +466,7 @@ SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Zapisz parametry przetwarzania wraz z obrazem
 SAVEDLG_TIFFFILTER;Pliki TIFF
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Kadruj (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Przesuń (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Wyprostuj obraz (shortcut key: S)

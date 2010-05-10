@@ -585,7 +585,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
     return IMIO_SUCCESS;
 }
 
-int ImageIO::saveTIFF (Glib::ustring fname, int bps) {
+int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
 	int width = getW ();
     int height = getH ();
@@ -595,15 +595,15 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps) {
 
     int lineWidth = width*3*bps/8;
     unsigned char* linebuffer = new unsigned char[lineWidth];
-
-    if (exifRoot) {
+// TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
+    if (exifRoot && uncompressed) {
         FILE *file = g_fopen (fname.c_str (), "wb");
 
         if (!file)
             return IMIO_CANNOTREADFILE;           
             
         if (pl) {
-            pl->setProgressStr ("Saving TIFF file...");
+            pl->setProgressStr ("Saving TIFF file ...");
             pl->setProgress (0.0);
         }
         
@@ -639,21 +639,58 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps) {
         fclose (file);
     }
     else {
+				// little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
+				const char *mode = !exifRoot ? "w" : (exifRoot->getOrder()==rtexif::INTEL ? "wl":"wb");
         #ifdef WIN32
         wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-        TIFF* out = TIFFOpenW (wfilename, "w");
+        TIFF* out = TIFFOpenW (wfilename, mode);
         g_free (wfilename);
         #else
-        TIFF* out = TIFFOpen(fname.c_str(), "w");
+        TIFF* out = TIFFOpen(fname.c_str(), mode);
         #endif
         if (!out) 
             return IMIO_CANNOTREADFILE;
 
         if (pl) {
-            pl->setProgressStr ("Saving TIFF file...");
+            pl->setProgressStr ("Saving TIFF file ...");
             pl->setProgress (0.0);
         }
-    
+        
+        if (exifRoot){
+        	rtexif::Tag *tag = exifRoot->getTag (TIFFTAG_EXIFIFD);
+        	if (tag && tag->isDirectory()){
+							rtexif::TagDirectory *exif = tag->getDirectory();
+							if (exif)	{
+								int exif_size = exif->calculateSize();
+								unsigned char *buffer = new unsigned char[exif_size+8];
+								// TIFFOpen writes out the header and sets file pointer at position 8
+								
+								exif->write (8, buffer);
+								write (TIFFFileno (out), buffer+8, exif_size);
+								delete buffer;
+								// let libtiff know that scanlines or any other following stuff should go 
+								// at a different offset:
+								TIFFSetWriteOffset (out, exif_size+8);
+								TIFFSetField (out, TIFFTAG_EXIFIFD, 8);								
+							}
+        	}
+
+//TODO Even though we are saving EXIF IFD - MakerNote still comes out screwy.
+
+        	if ((tag = exifRoot->getTag (TIFFTAG_MODEL)) != NULL)
+						TIFFSetField (out, TIFFTAG_MODEL, tag->getValue());
+        	if ((tag = exifRoot->getTag (TIFFTAG_MAKE)) != NULL)
+						TIFFSetField (out, TIFFTAG_MAKE, tag->getValue());
+        	if ((tag = exifRoot->getTag (TIFFTAG_DATETIME)) != NULL)
+						TIFFSetField (out, TIFFTAG_DATETIME, tag->getValue());
+        	if ((tag = exifRoot->getTag (TIFFTAG_ARTIST)) != NULL)
+						TIFFSetField (out, TIFFTAG_ARTIST, tag->getValue());
+        	if ((tag = exifRoot->getTag (TIFFTAG_COPYRIGHT)) != NULL)
+						TIFFSetField (out, TIFFTAG_COPYRIGHT, tag->getValue());
+	
+        }
+				
+				TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee 3");
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
@@ -662,8 +699,10 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps) {
         TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
         TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-        TIFFSetField (out, TIFFTAG_COMPRESSION, COMPRESSION_NONE);
-
+        TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_LZW);
+        if (!uncompressed) 
+					TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
+	
         if (profileData) 
             TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);   
 

@@ -461,6 +461,7 @@ SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
 SAVEDLG_TIFFFILTER;TIFF-filer
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Handverktyg (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Räta ut (shortcut key: S)

@@ -553,7 +553,7 @@ int EditorPanel::saveImage (rtengine::IImage16* img, Glib::ustring& fname, SaveF
     ProgressConnector<int> *ld = new ProgressConnector<int>();
     img->setSaveProgressListener (parent->getProgressListener());
     if (sf.format=="tif")
-    	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits),
+    	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
     			       sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fileName,sf));
     else if (sf.format=="png")
     	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsPNG), fileName, sf.pngCompression, sf.pngBits),
@@ -605,6 +605,8 @@ void EditorPanel::saveAsPressed () {
     SaveFormat sf = saveAsDialog->getFormat ();
     if (getExtension (fname)!=sf.format)
         fname = fname + "." + sf.format;
+		
+		options.saveFormat = sf;
 
     if (saveAsDialog->getImmediately ()) {
         // check if it exists
@@ -670,26 +672,26 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
 
         Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
 
-		int tries = 1;
-		while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
-			fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
-			tries++;
-		}
-		if (tries==1000){
-			img->free ();
-			return false;
-		}
+				int tries = 1;
+				while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
+					fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
+					tries++;
+				}
+				if (tries==1000){
+					img->free ();
+					return false;
+				}
 
         ProgressConnector<int> *ld = new ProgressConnector<int>();
         img->setSaveProgressListener (parent->getProgressListener());
-       	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits),
+       	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
         			   sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_sentToGimp), ld, img, fileName));
     }else{
-    	gdk_threads_enter();
-		Glib::ustring msg_ = Glib::ustring("<b> Error during image processing\n</b>");
-		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-		msgd.run ();
-		gdk_threads_leave ();
+				gdk_threads_enter();
+				Glib::ustring msg_ = Glib::ustring("<b> Error during image processing\n</b>");
+				Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+				msgd.run ();
+				gdk_threads_leave ();
         saveimgas->set_sensitive(true);
         sendtogimp->set_sensitive(true);
     }

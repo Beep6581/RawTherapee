@@ -471,6 +471,7 @@ SAVEDLG_PUTTOQUEUETAIL;Ans Ende der Warteschlange für Verarbeitung legen
 SAVEDLG_SAVEIMMEDIATELY;Sofort Speichern
 SAVEDLG_SAVESPP;Speichere die Prozessparameter mit dem Bild
 SAVEDLG_TIFFFILTER;TIFF-Datei
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Auswahl des Ausschnitts (Taste C)
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug (Taste N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Auswahl einer Leitlinie (Taste S)

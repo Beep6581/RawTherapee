@@ -465,6 +465,7 @@ SAVEDLG_PUTTOQUEUE;Vložit soubor do fronty
 SAVEDLG_SAVEIMMEDIATELY;Okamžitě uložit
 SAVEDLG_SAVESPP;Uschovat s obrazem i parametry zpracování
 SAVEDLG_TIFFFILTER;Soubory TIFF
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Označení výřezu (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Nástroj ruka (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Vyznačení roviny (shortcut key: S)

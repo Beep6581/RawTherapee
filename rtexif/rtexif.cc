@@ -167,7 +167,7 @@ void TagDirectory::replaceTag (Tag* tag) {
   tags.push_back (tag);
 }
 
-Tag* TagDirectory::getTag (int ID) {
+Tag* TagDirectory::getTag (int ID) const {
 
   for (int i=0; i<tags.size(); i++) 
     if (tags[i]->getID()==ID)
@@ -175,7 +175,7 @@ Tag* TagDirectory::getTag (int ID) {
   return NULL;
 }
 
-Tag* TagDirectory::getTag (const char* name) {
+Tag* TagDirectory::getTag (const char* name) const {
 
   if (attribs) {
     for (int i=0; attribs[i].ignore!=-1; i++)

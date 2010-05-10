@@ -184,6 +184,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "PngCompression"))   saveFormat.pngCompression  = keyFile.get_integer ("Output", "PngCompression");
     if (keyFile.has_key ("Output", "PngBps"))           saveFormat.pngBits         = keyFile.get_integer ("Output", "PngBps");
     if (keyFile.has_key ("Output", "TiffBps"))          saveFormat.tiffBits        = keyFile.get_integer ("Output", "TiffBps");
+    if (keyFile.has_key ("Output", "TiffUncompressed")) saveFormat.tiffUncompressed= keyFile.get_boolean ("Output", "TiffUncompressed");
     if (keyFile.has_key ("Output", "SaveProcParams"))   saveFormat.saveParams      = keyFile.get_boolean ("Output", "SaveProcParams");
     if (keyFile.has_key ("Output", "Path"))             savePathTemplate           = keyFile.get_string ("Output", "Path");
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
@@ -339,6 +340,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
     keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
+    keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
     keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
     keyFile.set_string ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string ("Output", "PathFolder", savePathFolder);

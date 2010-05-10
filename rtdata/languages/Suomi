@@ -461,6 +461,7 @@ SAVEDLG_PUTTOQUEUETAIL;Laita käsittelyjonon viimeiseksi
 SAVEDLG_SAVEIMMEDIATELY;Tallenna heti
 SAVEDLG_SAVESPP;Tallenna kuvankäsittelytiedot kuvan mukana
 SAVEDLG_TIFFFILTER;TIFF tiedostot
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Valitse rajattava alue (pikanäppäin: C)
 TOOLBAR_TOOLTIP_HAND;Kuvan siirtotyökalu (pikanäppäin: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Valitse suora linja (pikanäppäin: S)
