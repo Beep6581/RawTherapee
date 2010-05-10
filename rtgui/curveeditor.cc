@@ -33,9 +33,9 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     
     pack_start (*tsbox);
     
-    curveType->append_text ("Linear");
-    curveType->append_text ("Parametric");
-    curveType->append_text ("Custom");
+    curveType->append_text (M("CURVEEDITOR_LINEAR"));
+    curveType->append_text (M("CURVEEDITOR_PARAMETRIC"));
+    curveType->append_text (M("CURVEEDITOR_CUSTOM"));
     curveType->set_active (0);
     
     // custom curve

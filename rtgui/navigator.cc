@@ -53,7 +53,7 @@ Navigator::Navigator () {
 
 void Navigator::setInvalid () {
 
-	position->set_text ("x = n/a, y = n/a");
+        position->set_text (M("NAVIGATOR_XY_NA"));
 	R->set_text (M("NAVIGATOR_R_NA"));
 	G->set_text (M("NAVIGATOR_G_NA"));
 	B->set_text (M("NAVIGATOR_B_NA"));
