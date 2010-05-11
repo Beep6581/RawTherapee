@@ -23,10 +23,10 @@
 HistogramPanel::HistogramPanel () {
 
    histogramArea = Gtk::manage (new HistogramArea ());
-   showRed   = Gtk::manage (new Gtk::ToggleButton ("R"));
-   showGreen = Gtk::manage (new Gtk::ToggleButton ("G"));
-   showBlue  = Gtk::manage (new Gtk::ToggleButton ("B"));
-   showValue = Gtk::manage (new Gtk::ToggleButton ("L"));
+   showRed   = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_R")));
+   showGreen = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_G")));
+   showBlue  = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_B")));
+   showValue = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_L")));
    Gtk::VBox* vbox = Gtk::manage (new Gtk::VBox (false, 0));
 
    showRed->set_active (true);

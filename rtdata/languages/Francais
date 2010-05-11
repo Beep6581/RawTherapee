@@ -301,14 +301,14 @@ MAIN_TAB_FILTER;Filtrer
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
-MAIN_TAB_TAGGING;Étiquetage
+MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers, touche F)
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique, touche H)
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine
 MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine
 MAIN_TOOLTIP_PREFERENCES;Régler les préférences
-MAIN_TOOLTIP_QINFO;Infos rapides sur l'image
+MAIN_TOOLTIP_QINFO;Montrer les infos EXIF
 MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
 PARTIALPASTE_BASICGROUP;Réglages de base
@@ -680,3 +680,7 @@ FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+HISTOGRAM_BUTTON_R;R
+HISTOGRAM_BUTTON_G;V
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_L;L
