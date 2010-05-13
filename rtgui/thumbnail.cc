@@ -125,19 +125,17 @@ const ProcParams& Thumbnail::getProcParams () {
     if (pparamsValid)
         return pparams;
     else {
-        rtengine::procparams::ProcParams* pp = profileStore.getDefaultProcParams (getType()==FT_Raw);
-        if (pp->wb.method=="Camera") {
+        pparams = *(profileStore.getDefaultProcParams (getType()==FT_Raw));
+        if (pparams.wb.method=="Camera") {
             double ct;
-            getCamWB (ct, pp->wb.green);
-            pp->wb.temperature = ct;
+            getCamWB (ct, pparams.wb.green);
+            pparams.wb.temperature = ct;
         }
-        else if (pp->wb.method=="Auto") {
+        else if (pparams.wb.method=="Auto") {
             double ct;
-            getAutoWB (ct, pp->wb.green);
-            pp->wb.temperature = ct;
+            getAutoWB (ct, pparams.wb.green);
+            pparams.wb.temperature = ct;
         }
-        if (pp)
-            return *pp;
     }
     return pparams; // there is no valid pp to return, but we have to return something
 }

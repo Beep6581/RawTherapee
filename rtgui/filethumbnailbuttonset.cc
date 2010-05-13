@@ -18,6 +18,7 @@
  */
 #include <filethumbnailbuttonset.h>
 #include <multilangmgr.h>
+#include <safegtk.h>
 
 extern Glib::ustring argv0;
 
@@ -33,15 +34,13 @@ Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::processIcon;
 FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 
     if (!iconsLoaded) {
-        try {
-					unRankIcon  = Cairo::ImageSurface::create_from_png (argv0+"/images/unrated.png");
-					rankIcon    = Cairo::ImageSurface::create_from_png (argv0+"/images/rated.png");
-					gRankIcon   = Cairo::ImageSurface::create_from_png (argv0+"/images/grayrated.png");
-					trashIcon   = Cairo::ImageSurface::create_from_png (argv0+"/images/trash.png");
-					unTrashIcon = Cairo::ImageSurface::create_from_png (argv0+"/images/undelete.png");
-					processIcon = Cairo::ImageSurface::create_from_png (argv0+"/images/processing.png");
-					iconsLoaded = true;
-        } catch (...) {}
+				unRankIcon  = safe_create_from_png (argv0+"/images/unrated.png");
+				rankIcon    = safe_create_from_png (argv0+"/images/rated.png");
+				gRankIcon   = safe_create_from_png (argv0+"/images/grayrated.png");
+				trashIcon   = safe_create_from_png (argv0+"/images/trash.png");
+				unTrashIcon = safe_create_from_png (argv0+"/images/undelete.png");
+				processIcon = safe_create_from_png (argv0+"/images/processing.png");
+				iconsLoaded = true;
     }
 
     add (new LWButton (unRankIcon, 0, myEntry, LWButton::Left, LWButton::Center, M("FILEBROWSER_POPUPUNRANK")));

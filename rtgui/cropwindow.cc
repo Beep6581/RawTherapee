@@ -23,6 +23,7 @@
 #include <mytime.h>
 #include <imagearea.h>
 #include <cursormanager.h>
+#include <safegtk.h>
 
 struct ZoomStep {   
     Glib::ustring label;
@@ -68,12 +69,12 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_)
     
     titleHeight = ih;
        
-    resizeSurface = Cairo::ImageSurface::create_from_png (argv0+"/images/resize.png");
-    bZoomIn  = new LWButton (Cairo::ImageSurface::create_from_png (argv0+"/images/gtk-zoom-in.png"),  0, NULL, LWButton::Left, LWButton::Center, "Zoom In");
-    bZoomOut = new LWButton (Cairo::ImageSurface::create_from_png (argv0+"/images/gtk-zoom-out.png"), 1, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
-    bZoom100 = new LWButton (Cairo::ImageSurface::create_from_png (argv0+"/images/gtk-zoom-100.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
-    bZoomFit = new LWButton (Cairo::ImageSurface::create_from_png (argv0+"/images/gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton (Cairo::ImageSurface::create_from_png (argv0+"/images/gtk-close.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
+    resizeSurface = safe_create_from_png (argv0+"/images/resize.png");
+    bZoomIn  = new LWButton (safe_create_from_png (argv0+"/images/gtk-zoom-in.png"),  0, NULL, LWButton::Left, LWButton::Center, "Zoom In");
+    bZoomOut = new LWButton (safe_create_from_png (argv0+"/images/gtk-zoom-out.png"), 1, NULL, LWButton::Left, LWButton::Center, "Zoom Out");
+    bZoom100 = new LWButton (safe_create_from_png (argv0+"/images/gtk-zoom-100.png"), 2, NULL, LWButton::Left, LWButton::Center, "Zoom 100/%");
+    bZoomFit = new LWButton (safe_create_from_png (argv0+"/images/gtk-zoom-fit.png"), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton (safe_create_from_png (argv0+"/images/gtk-close.png"),    4, NULL, LWButton::Right, LWButton::Center, "Close");
     
     buttonSet.add (bZoomIn);
     buttonSet.add (bZoomOut);

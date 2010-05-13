@@ -18,6 +18,7 @@
  */
 #include <batchqueuebuttonset.h>
 #include <multilangmgr.h>
+#include <safegtk.h>
 
 extern Glib::ustring argv0;
 
@@ -30,9 +31,9 @@ Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::tailIcon;
 BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry) {
 
     if (!iconsLoaded) {
-        cancelIcon = Cairo::ImageSurface::create_from_png (argv0+"/images/deltags.png");
-        headIcon   = Cairo::ImageSurface::create_from_png (argv0+"/images/head.png");
-        tailIcon   = Cairo::ImageSurface::create_from_png (argv0+"/images/tail.png");
+        cancelIcon = safe_create_from_png (argv0+"/images/deltags.png");
+        headIcon   = safe_create_from_png (argv0+"/images/head.png");
+        tailIcon   = safe_create_from_png (argv0+"/images/tail.png");
         iconsLoaded = true;
     }
 

@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2010 Sasha Vasko <sasha@aftercode.net>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -40,6 +41,20 @@ Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename)
 	return res;
 }
 
+Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const std::string& filename)
+{
+	Cairo::RefPtr<Cairo::ImageSurface> res;
+
+  if (!Glib::file_test (filename, Glib::FILE_TEST_EXISTS))  {
+  	printf ("ERROR: File \"%s\" not found.\n", filename.c_str());
+  } else	{
+      try {
+				res = Cairo::ImageSurface::create_from_png (filename);
+      } catch (...) {}
+	}
+	
+	return res;
+}
 
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 {
