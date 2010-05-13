@@ -1,0 +1,57 @@
+
+Windows
+-------
+
+Requirements:
+- MinGW + MSYS
+- CMake
+- GTK and GTKMM development environments
+
+Compile:
+- Start MSYS
+- Enter the root directory of the RawTherapee source tree
+- Type: cmake -G "MSYS Makefiles" .
+- Type: make install
+- You find the compiled program in the release directory
+
+Linux
+-----
+
+Requirements:
+- CMake
+- GTK and GTKMM development packages
+- libtiff, libpng, libjpeg, lcms, libiptcdata development packages
+- ...did I forget something?
+
+On Ubuntu/Debian the requirements can be installed by running:
+sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev merciurial
+
+Compile:
+- Enter the root directory of the RawTherapee source tree
+- Type: cmake .
+- Type: make install
+- You find the compiled program in the release directory (you can copy it 
+anywhere you want)
+
+...If you have problems with the compilation, identified the reason and fixed 
+the bug, please send me the updated build scripts (CMakeLists.txt files) to:
+hgabor@rawtherapee.com
+
+OSX
+---
+
+Requirements:
+- XCode Development Tools (you only need a subset of these, but it is probably easier to just install all of them)
+- MacPorts
+  - Set /opt/local/etc/macports/variants.conf to include "+universal +no_x11 +quartz"  (NOTE: as of this writing the Pango and Pango-devel ports are broken and will not build as Universal variants.  Until this is fixed, leave the universal flag off.)
+  - Set /opt/local/etc/macports/macports.conf key 'universal_archs' to "i386 x86_64"
+  - Run "sudo port install cairomm pango-devel gtk2 cmake glibmm gtkmm lcms libiptcdata mercurial" to install all needed libraries and tools
+
+Compile:
+- Enter root directory of RawTherapee source tree
+- Type: cmake .
+- Type: make install
+- Type: ./tools/osx/make-app-bundle
+- You will find a RawTherapee.dmg file in release/ folder; this is the distribution release and can be run on any 10.5 or 10.6 Intel machine.
+
+For any bugs or patches to the OSX build, please contact Wyatt <wyatt@digitalcave.ca>
