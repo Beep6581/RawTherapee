@@ -24,7 +24,7 @@ Requirements:
 - ...did I forget something?
 
 On Ubuntu/Debian the requirements can be installed by running:
-sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev merciurial
+sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev mercurial
 
 Compile:
 - Enter the root directory of the RawTherapee source tree
