@@ -19,6 +19,7 @@
 #include <multilangmgr.h>
 #include <thumbnail.h>
 #include <sstream>
+#include <iomanip>
 #include <options.h>
 #include <mytime.h>
 #include <stdio.h>
@@ -268,25 +269,28 @@ void Thumbnail::generateExifDateTimeStrings () {
     std::ostringstream ostr;
     bool spec = false;
     for (int i=0; i<dateFormat.size(); i++)
-    if (spec && dateFormat[i]=='y') {
-        ostr << cfs.year;
-        spec = false;
-    }
-    else if (spec && dateFormat[i]=='m') {
-        ostr << (int)cfs.month;
-        spec = false;
-    }
-    else if (spec && dateFormat[i]=='d') {
-        ostr << (int)cfs.day;
-        spec = false;
-    }
-    else if (dateFormat[i]=='%') 
-        spec = true;
-    else {
-        ostr << (char)dateFormat[i];
-        spec = false;
-    }
-    ostr << " " << (int)cfs.hour << ":" << (int)cfs.min << ":" << (int)cfs.sec;
+        if (spec && dateFormat[i]=='y') {
+            ostr << cfs.year;
+            spec = false;
+        }
+        else if (spec && dateFormat[i]=='m') {
+            ostr << (int)cfs.month;
+            spec = false;
+        }
+        else if (spec && dateFormat[i]=='d') {
+            ostr << (int)cfs.day;
+            spec = false;
+        }
+        else if (dateFormat[i]=='%') 
+            spec = true;
+        else {
+            ostr << (char)dateFormat[i];
+            spec = false;
+        }
+
+    ostr << " " << (int)cfs.hour;
+    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
+    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
 
     dateTimeString = ostr.str ();
 }
