@@ -204,7 +204,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality);
         img->free ();
         if (!err && saveFormat.saveParams)
-            processing->params.save (removeExtension(fname) + ".pp2");
+            processing->params.save (removeExtension(fname) + paramFileExtension);
         if (processing->thumbnail) {
             processing->thumbnail->imageDeveloped ();
             processing->thumbnail->imageRemovedFromQueue ();

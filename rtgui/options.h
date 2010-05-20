@@ -140,5 +140,6 @@ extern Options options;
 extern Glib::ustring argv0;
 extern Glib::ustring argv1;
 extern Glib::ustring versionString;
+extern Glib::ustring paramFileExtension;
 
 #endif

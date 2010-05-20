@@ -293,8 +293,8 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 
     std::vector<Glib::ustring> pnames;
     if (options.multiUser)
-        parseDir (Options::rtdir + "/" + options.profilePath, pnames, ".pp2");
-    parseDir (argv0 + "/" + options.profilePath, pnames, ".pp2");
+        parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
+    parseDir (argv0 + "/" + options.profilePath, pnames, paramFileExtension);
     for (int i=0; i<pnames.size(); i++) {
         rprofiles->append_text (pnames[i]);
         iprofiles->append_text (pnames[i]);
