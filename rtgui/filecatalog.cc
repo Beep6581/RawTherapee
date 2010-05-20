@@ -468,9 +468,9 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
             cacheMgr.deleteEntry (fname);
             // delete from file system
             ::g_remove (fname.c_str());
-            // delete .pp2 if found
-            ::g_remove (Glib::ustring(fname+".pp2").c_str());
-            ::g_remove (Glib::ustring(removeExtension(fname)+".pp2").c_str());
+            // delete paramfile if found
+            ::g_remove (Glib::ustring(fname+paramFileExtension).c_str());
+            ::g_remove (Glib::ustring(removeExtension(fname)+paramFileExtension).c_str());
             // delete .thm file
             ::g_remove (Glib::ustring(removeExtension(fname)+".thm").c_str());
             ::g_remove (Glib::ustring(removeExtension(fname)+".THM").c_str());

@@ -126,7 +126,7 @@ void ProfilePanel::save_clicked () {
 
     Gtk::FileFilter filter_pp;
     filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
-    filter_pp.add_pattern("*.pp2");
+    filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
 
     Gtk::FileFilter filter_any;
@@ -156,7 +156,7 @@ void ProfilePanel::save_clicked () {
             hasext = false;
 
         if (!hasext) 
-            fname = fname + ".pp2";
+            fname = fname + paramFileExtension;
 
         if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
           Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
@@ -215,7 +215,7 @@ void ProfilePanel::load_clicked () {
 
     Gtk::FileFilter filter_pp;
     filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
-    filter_pp.add_pattern("*.pp2");
+    filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
 
     Gtk::FileFilter filter_any;

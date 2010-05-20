@@ -26,7 +26,8 @@
 #include <addsetids.h>
 
 Options options;
-Glib::ustring versionString = "v3.0 alpha 1";
+Glib::ustring versionString      = "v3.0 alpha 1";
+Glib::ustring paramFileExtension = ".pp2";
 
 Options::Options () {
 

@@ -145,18 +145,18 @@ void Thumbnail::loadProcParams () {
 
     pparamsValid = false;
     if (options.paramsLoadLocation==PLL_Input) {
-        // try to load it from pp2 file next to the image file    
-        int ppres = pparams.load (fname + ".pp2");
+        // try to load it from params file next to the image file
+        int ppres = pparams.load (fname + paramFileExtension);
         pparamsValid = !ppres && pparams.version>=220;
         if (!pparamsValid) 
-                pparamsValid = !pparams.load (getCacheFileName ("profiles")+".pp2");
+                pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
     }
     else {
         // try to load it from cache
-        pparamsValid = !pparams.load (getCacheFileName ("profiles")+".pp2");
-        // if no success, load it from pp2 file next to the image file    
+        pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
+        // if no success, load it from params file next to the image file
         if (!pparamsValid) {
-            int ppres = pparams.load (fname + ".pp2");
+            int ppres = pparams.load (fname + paramFileExtension);
             pparamsValid = !ppres && pparams.version>=220;
         }
     }
@@ -167,16 +167,16 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     cfs.recentlySaved = false;
     pparamsValid = false;
     needsReProcessing = true;
-    // remove pp2 file from cache
-    Glib::ustring fname_ = getCacheFileName ("profiles")+".pp2";
+    // remove param file from cache
+    Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
     if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
         ::g_remove (fname_.c_str());
-    // remove pp2 file located next to the file
-//    fname_ = removeExtension(fname) + ".pp2";
-    fname_ = fname + ".pp2";
+    // remove param file located next to the file
+//    fname_ = removeExtension(fname) + paramFileExtension;
+    fname_ = fname + paramFileExtension;
     if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
         ::g_remove (fname_.c_str());
-    fname_ = removeExtension(fname) + ".pp2";
+    fname_ = removeExtension(fname) + paramFileExtension;
     if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
         ::g_remove (fname_.c_str());
 
@@ -213,7 +213,7 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-    pparams.save (getCacheFileName ("profiles")+".pp2");
+    pparams.save (getCacheFileName ("profiles")+paramFileExtension);
 }
 
 void Thumbnail::imageEnqueued () {
@@ -410,10 +410,10 @@ void Thumbnail::updateCache () {
 
     if (pparamsValid) {
         if (options.saveParamsCache)
-            pparams.save (getCacheFileName ("profiles")+".pp2");
+            pparams.save (getCacheFileName ("profiles")+paramFileExtension);
         if (options.saveParamsFile)
-//            pparams.save (removeExtension(fname) + ".pp2");
-            pparams.save (fname + ".pp2");
+//            pparams.save (removeExtension(fname) + paramFileExtension);
+            pparams.save (fname + paramFileExtension);
     }
     cfs.save (getCacheFileName ("data")+".txt");
 }

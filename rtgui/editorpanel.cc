@@ -275,7 +275,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     navigator->previewWindow->setPreviewHandler (previewHandler);
     navigator->previewWindow->setImageArea (iarea->imageArea);
 
-    // try to load the last saved parameters from the cache or from the pp2 file
+    // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = NULL;
     if (openThm->hasProcParams()) {
         ldprof = new ProcParams ();
@@ -315,7 +315,7 @@ void EditorPanel::saveProfile () {
     ipc->getParams (&params);
     
     if (options.saveParamsFile)
-        params.save (openThm->getFileName() + ".pp2");
+        params.save (openThm->getFileName() + paramFileExtension);
     if (openThm && options.saveParamsCache) 
         openThm->setProcParams (params, EDITOR);
 }
@@ -570,7 +570,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 		if (sf.saveParams) {
 			rtengine::procparams::ProcParams pparams;
 			ipc->getParams (&pparams);
-			pparams.save (removeExtension (fname) + ".out.pp2");
+			pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
 		}
 	}else{
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
