@@ -29,7 +29,7 @@
 #include <pparamschangelistener.h>
 #include <history.h>
 #include <filterpanel.h>
-#include <progressdialog.h>
+#include <progressconnector.h>
 
 class RTWindow;
 class FilePanel : public Gtk::HPaned,

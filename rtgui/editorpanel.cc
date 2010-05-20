@@ -18,7 +18,7 @@
  */
 #include <editorpanel.h>
 #include <options.h>
-#include <progressdialog.h>
+#include <progressconnector.h>
 #include <rtwindow.h>
 #include <guiutils.h>
 #include <procparamchangers.h>
@@ -514,11 +514,9 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
 	if( img )
 	   saveImage( img, fname, sf, findNewNameIfNeeded);
 	else{
-		gdk_threads_enter ();
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image processing\n</b>";
 		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 		msgd.run ();
-		gdk_threads_leave ();
 
         saveimgas->set_sensitive(true);
         sendtogimp->set_sensitive(true);
@@ -575,11 +573,9 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 			pparams.save (removeExtension (fname) + ".out.pp2");
 		}
 	}else{
-		gdk_threads_enter ();
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
 		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 		msgd.run ();
-		gdk_threads_leave ();
     }
     saveimgas->set_sensitive(true);
     sendtogimp->set_sensitive(true);
@@ -687,11 +683,9 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
        	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
         			   sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_sentToGimp), ld, img, fileName));
     }else{
-				gdk_threads_enter();
 				Glib::ustring msg_ = Glib::ustring("<b> Error during image processing\n</b>");
 				Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 				msgd.run ();
-				gdk_threads_leave ();
         saveimgas->set_sensitive(true);
         sendtogimp->set_sensitive(true);
     }
@@ -752,13 +746,11 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 						}
 
 						if (!success) {
-							    gdk_threads_enter ();
 								Gtk::MessageDialog* msgd = new Gtk::MessageDialog (*parent, M("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 								msgd->set_secondary_text (M("MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY"));
 								msgd->set_title (M("MAIN_BUTTON_SENDTOEDITOR"));
 								msgd->run ();
 								delete msgd;
-								gdk_threads_leave ();
 						}
 
     }

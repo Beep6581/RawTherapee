@@ -151,11 +151,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 		parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
 		epanel->open(thm, pc->returnValue() );
 	}else {
-		gdk_threads_enter ();
 		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
 		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 		msgd.run ();
-		gdk_threads_leave ();
 	}
 	delete pc;
 

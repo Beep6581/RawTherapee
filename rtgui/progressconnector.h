@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PROGRESSDIALOG_
-#define _PROGRESSDIALOG_
+#ifndef _PROGRESSCONNECTOR_
+#define _PROGRESSCONNECTOR_
 
 #include <sigc++/sigc++.h>
 #include <gtkmm.h>
@@ -76,17 +76,23 @@ class PLDBridge : public rtengine::ProgressListener {
 template<class T>
 class ProgressConnector {
 
-        sigc::slot0<T> slotStart;
-        sigc::slot0<bool> slotEnd;
+        sigc::signal0<T> opStart;
+        sigc::signal0<bool> opEnd;
         T retval;
         Glib::Thread *workThread;
+
+		static int emitEndSignal (void* data) {
+			gdk_threads_enter ();
+			sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
+			int r = opEnd->emit ();
+			delete opEnd;
+			gdk_threads_leave ();
+			return r;
+		}
         
         void workingThread () {
-        	sigc::signal0<T> op;
-        	sigc::connection conn= op.connect(slotStart);
-            retval = op.emit ();
-            conn.disconnect();
-            Glib::signal_idle().connect(slotEnd);
+            retval = opStart.emit ();
+            g_idle_add (ProgressConnector<T>::emitEndSignal, new sigc::signal0<bool> (opEnd));
             workThread = 0;
         }
         
@@ -96,8 +102,8 @@ class ProgressConnector {
 
         void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler ) {
         	if( !workThread ){
-				slotStart = startHandler;
-				slotEnd = endHandler;
+				opStart.connect (startHandler);
+				opEnd.connect (endHandler);
 				workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
         	}
         }

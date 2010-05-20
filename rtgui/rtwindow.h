@@ -24,7 +24,7 @@
 #include <editorpanel.h>
 #include <batchqueuepanel.h>
 #include <set>
-#include <progressdialog.h>
+#include <progressconnector.h>
 
 class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
