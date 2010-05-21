@@ -206,7 +206,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         gmi = 1024.0 * gm / mul_lum;
         bmi = 1024.0 * bm / mul_lum;  
     }
-    // resize to requested with and perform coarse transformation
+    // resize to requested width and perform coarse transformation
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) {
         rwidth = rheight;
@@ -269,7 +269,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int fw = baseImg->width;
     int fh = baseImg->height;
 
-    ImProcFunctions ipf;
+    ImProcFunctions ipf (&params, false);
+    ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
+
     unsigned int* hist16 = new unsigned int [65536];
     ipf.firstAnalysis (baseImg, &params, hist16, isRaw ? 2.2 : 0.0);
 
@@ -299,7 +301,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             for (int i=0; i<fh; i++)
                 buffer[i] = new unsigned short[fw];
         }
-        shmap = new SHMap (fw, fh);
+        shmap = new SHMap (fw, fh, false);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (baseImg, buffer, shradius, ipf.lumimul, params.sh.hq);
@@ -321,7 +323,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve, NULL, 16);
 
     LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, &params, curve, shmap);
+    ipf.rgbProc (baseImg, labView, curve, shmap);
 
     if (shmap)
         delete shmap;
@@ -341,12 +343,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     delete [] hist16;
 
     // color processing
-    ipf.colorCurve (labView, labView, &params);
+    ipf.colorCurve (labView, labView);
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);
     ipf.lab2rgb (labView, readyImg);
-    ipf.release ();
     delete baseImg;
 
     // calculate scale
@@ -453,8 +454,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
         fw = thumbImg->height;
         fh = thumbImg->width;
     }
-    ImProcFunctions ipf;  
-    ipf.transCoord (&params, fw, fh, points, red, green, blue);
+    ImProcFunctions::transCoord (&params, fw, fh, points, red, green, blue);
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
     if (params.coarse.rotate==180) tr |= TR_R180;

@@ -29,8 +29,9 @@ class SHMap {
         int W, H;
         unsigned short** map;
         unsigned short   max, min, avg;
+        bool multiThread;
         
-     SHMap (int w, int h);
+     SHMap (int w, int h, bool multiThread);
     ~SHMap ();
 
     void update (Image16* img, unsigned short** buffer, double radius, double lumi[3], bool hq);

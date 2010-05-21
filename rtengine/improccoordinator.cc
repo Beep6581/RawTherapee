@@ -28,7 +28,7 @@ namespace rtengine {
 extern Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : allocated(false), scale(-1), pW(-1), pH(-1),
+    : ipf(&params, true), allocated(false), scale(-1), pW(-1), pH(-1),
     plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),
     resultValid(false), awbComputed(false),
     changeSinceLast(0), updaterRunning(false), 
@@ -54,7 +54,6 @@ ImProcCoordinator::~ImProcCoordinator () {
         delete toDel[i];
 
     imgsrc->decreaseRef ();
-	ipf.release ();
     updaterThreadStart.unlock ();
 }
 
@@ -78,6 +77,8 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         params.resize.scale = (double)params.resize.width / (params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
     else if (params.resize.dataspec==2)
         params.resize.scale = (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
+
+    ipf.setScale (scale);
 
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
     if (todo & M_INIT) {
@@ -164,7 +165,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, &params, tonecurve, shmap);
+        ipf.rgbProc (oprevi, oprevl, tonecurve, shmap);
 
         // recompute luminance histogram
         memset (lhist16, 0, 65536*sizeof(int));
@@ -186,12 +187,12 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         readyphase++;
         if (scale==1) {
             progress ("Denoising luminance...",100*readyphase/numofphases);
-            ipf.lumadenoise (nprevl, &params, scale*params.resize.scale, buffer);
+            ipf.lumadenoise (nprevl, buffer);
         }
         readyphase++;
         if (scale==1) {
             progress ("Sharpening...",100*readyphase/numofphases);
-            ipf.sharpening (nprevl, &params, scale*params.resize.scale, (unsigned short**)buffer);
+            ipf.sharpening (nprevl, (unsigned short**)buffer);
         }
         readyphase++;
     }
@@ -201,11 +202,11 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
 
     if (todo & M_COLOR) {
         progress ("Applying Color Boost...",100*readyphase/numofphases);
-        ipf.colorCurve (oprevl, nprevl, &params);
+        ipf.colorCurve (oprevl, nprevl);
         readyphase++;
         if (scale==1) {
             progress ("Denoising color...",100*readyphase/numofphases);
-            ipf.colordenoise (nprevl, &params, scale*params.resize.scale, buffer);
+            ipf.colordenoise (nprevl, buffer);
         }
         readyphase++;
     }
@@ -314,7 +315,7 @@ if (settings->verbose) printf ("setscale before lock\n");
         oprevl = new LabImage (pW, pH);    
         nprevl = new LabImage (pW, pH);    
         previmg = new Image8 (pW, pH);
-        shmap = new SHMap (pW, pH);
+        shmap = new SHMap (pW, pH, true);
         
         buffer = new int*[pH];
         for (int i=0; i<pH; i++)
@@ -410,7 +411,7 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
         for (int j=x-rect; j<=x+rect; j++) 
             points.push_back (Coord2D (j, i));
 
-    ipf.transCoord (&params, fw, fh, points, red, green, blue);
+    ImProcFunctions::transCoord (&params, fw, fh, points, red, green, blue);
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
     if (params.coarse.rotate==180) tr |= TR_R180;
@@ -437,7 +438,7 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
         x = (fullw - w) / 2;
         y = (fullh - h) / 2;       
         int orx, ory, orw, orh;
-        clipped = ipf.transCoord (&params, fw, fh, x, y, w, h, orx, ory, orw, orh);
+        clipped = ImProcFunctions::transCoord (&params, fw, fh, x, y, w, h, orx, ory, orw, orh);
         w -= 4;
     }
     if (ratio>0)
