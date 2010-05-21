@@ -29,7 +29,7 @@ namespace rtengine {
 
 extern const Settings* settings;
 
-SHMap::SHMap (int w, int h) : W(w), H(h) {
+SHMap::SHMap (int w, int h, bool multiThread) : W(w), H(h), multiThread(multiThread) {
 
     map = new unsigned short*[H];
     for (int i=0; i<H; i++)
@@ -52,51 +52,27 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
 			map[i][j] = CLIP(val);
 		}
 
-//MyTime t1,t2;
-//t1.set ();
-
     if (!hq) {
+    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
 
-        AlignedBuffer<double>* buffer1 = new AlignedBuffer<double> (MAX(W,H)*5);
-        AlignedBuffer<double>* buffer2 = new AlignedBuffer<double> (MAX(W,H)*5);
+    	gaussHorizontal<unsigned short> (map, map, buffer, W, H, radius, multiThread);
+		gaussVertical<unsigned short>   (map, map, buffer, W, H, radius, multiThread);
 
-        // blur
-        if (settings->dualThreadEnabled) {
-            Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::ptr_fun(gaussHorizontal_unsigned), map, map, buffer1, W, 0, H/2, radius), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::ptr_fun(gaussHorizontal_unsigned), map, map, buffer2, W, H/2, H, radius), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread1->join ();
-            thread2->join ();
-            thread1 = Glib::Thread::create(sigc::bind(sigc::ptr_fun(gaussVertical_unsigned), map, map, buffer1, H, 0, W/2, radius), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread2 = Glib::Thread::create(sigc::bind(sigc::ptr_fun(gaussVertical_unsigned), map, map, buffer2, H, W/2, W, radius), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread1->join ();
-            thread2->join ();
-        }
-        else {
-            gaussHorizontal_unsigned (map, map, buffer1, W, 0, H, radius);
-            gaussVertical_unsigned (map, map, buffer1, H, 0, W, radius);
-        }    
-
-        delete buffer1;
-        delete buffer2;
+        delete buffer;
     }
     else {
-        if (settings->dualThreadEnabled) {
-            bilateralparams r1, r2;
-            r1.row_from = 0;
-            r1.row_to = H/2;
-            r2.row_from = H/2;
-            r2.row_to = H;
-            Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::ptr_fun(bilateral_box_unsigned), map, buffer, W, H, 8000, radius, r1), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::ptr_fun(bilateral_box_unsigned), map, buffer, W, H, 8000, radius, r2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread1->join ();
-            thread2->join ();
-        }
-        else {
-            bilateralparams r1;
-            r1.row_from = 0;
-            r1.row_to = H;
-            bilateral_box_unsigned (map, buffer, W, H, 8000, radius, r1);
-        }
+		#pragma omp parallel if (multiThread)
+    	{
+    		int tid = omp_get_thread_num();
+    		int nthreads = omp_get_num_threads();
+    		int blk = H/nthreads;
+
+    		if (tid<nthreads-1)
+    			bilateral<unsigned short> (map, buffer, W, H, 8000, radius, tid*blk, (tid+1)*blk);
+    		else
+    			bilateral<unsigned short> (map, buffer, W, H, 8000, radius, tid*blk, H);
+		}
+        // anti-alias filtering the result
         for (int i=0; i<H; i++)
             for (int j=0; j<W; j++)
                 if (i>0 && j>0 && i<H-1 && j<W-1)
@@ -104,9 +80,6 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
                 else
                     map[i][j] = buffer[i][j];
     }
-
-//    t2.set ();
-//    printf ("shmap: %d\n", t2.etime (t1));
 
     // update average, minimum, maximum
     double _avg = 0;

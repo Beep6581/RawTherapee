@@ -74,6 +74,8 @@ void Crop::update (int todo, bool internal) {
 
     MyTime t1,t2,t3,t4,t5,t6,t7,t8,t9;
 
+    parent->ipf.setScale (skip);
+
     t1.set ();
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
@@ -130,7 +132,7 @@ void Crop::update (int todo, bool internal) {
             }
             if (!resizeCrop)
                 resizeCrop = new Image16 (rcw, rch);
-            parent->ipf.resize (origCrop, resizeCrop, params.resize);
+            parent->ipf.resize (origCrop, resizeCrop);
             baseCrop = resizeCrop;
         }
         parent->minit.unlock ();
@@ -173,7 +175,7 @@ void Crop::update (int todo, bool internal) {
     if (settings->verbose) printf ("C-BLURMAP: %d\n", t4.etime(t3));
 
     if (todo & M_RGBCURVE) {
-        parent->ipf.rgbProc (baseCrop, laboCrop, &params, parent->tonecurve, cshmap);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve, cshmap);
     }
 
     t5.set ();
@@ -182,8 +184,8 @@ void Crop::update (int todo, bool internal) {
     if (todo & M_LUMINANCE) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
         if (skip==1) {
-            parent->ipf.lumadenoise (labnCrop, &params, 1, cbuffer);
-            parent->ipf.sharpening (labnCrop, &params, 1, (unsigned short**)cbuffer);
+            parent->ipf.lumadenoise (labnCrop, cbuffer);
+            parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
         }
     }
 
@@ -191,9 +193,9 @@ void Crop::update (int todo, bool internal) {
     if (settings->verbose) printf ("C-LUMINANCE: %d\n", t6.etime(t5));
 
     if (todo & M_COLOR) {
-        parent->ipf.colorCurve (laboCrop, labnCrop, &params);
+        parent->ipf.colorCurve (laboCrop, labnCrop);
         if (skip==1)
-            parent->ipf.colordenoise (labnCrop, &params, 1, cbuffer);
+            parent->ipf.colordenoise (labnCrop, cbuffer);
     }
 
     t7.set ();
@@ -290,7 +292,7 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     // determine which part of the source image is required to compute the crop rectangle
     int orx, ory, orw, orh;
     ProcParams& params = parent->params;
-    parent->ipf.transCoord (&params, parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
+    ImProcFunctions::transCoord (&params, parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
         
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -324,7 +326,7 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         laboCrop = new LabImage (cropw, croph);    
         labnCrop = new LabImage (cropw, croph);    
         cropImg = new Image8 (cropw, croph);
-        cshmap = new SHMap (cropw, croph);
+        cshmap = new SHMap (cropw, croph, true);
         
         cbuffer = new int*[croph];
         for (int i=0; i<croph; i++)

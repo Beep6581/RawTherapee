@@ -69,7 +69,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int fw, fh;
     imgsrc->getFullSize (fw, fh, tr);
 
-    ImProcFunctions ipf;
+    ImProcFunctions ipf (&params, true);
     
     Image16* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
@@ -83,7 +83,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         fw *= params.resize.scale;
         fh *= params.resize.scale;
         baseImg = new Image16 (fw, fh);
-        ipf.resize (oorig, baseImg, params.resize);
+        ipf.resize (oorig, baseImg);
         delete oorig;
     }
     if (pl) 
@@ -117,7 +117,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
-        shmap = new SHMap (fw, fh);
+        shmap = new SHMap (fw, fh, true);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (baseImg, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
@@ -138,7 +138,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve, NULL);
 
     LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, &params, curve, shmap);
+    ipf.rgbProc (baseImg, labView, curve, shmap);
 
     if (shmap)
         delete shmap;
@@ -155,15 +155,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, hist16, curve, NULL);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
-    ipf.lumadenoise (labView, &params, 1, buffer);
-    ipf.sharpening (labView, &params, 1, (unsigned short**)buffer);
+    ipf.lumadenoise (labView, buffer);
+    ipf.sharpening (labView, (unsigned short**)buffer);
 
     delete [] curve;
     delete [] hist16;
 
     // color processing
-    ipf.colorCurve (labView, labView, &params);
-    ipf.colordenoise (labView, &params, 1, buffer);
+    ipf.colorCurve (labView, labView);
+    ipf.colordenoise (labView, buffer);
 
     for (int i=0; i<fh; i++)
         delete [] buffer[i];
@@ -182,7 +182,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         ch = params.crop.h;
     }
     readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
-    ipf.release ();
 
     if (pl) 
         pl->setProgress (1.0);

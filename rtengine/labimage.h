@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,20 +16,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <bilateral2.h>
+#ifndef _LABIMAGE_H_
+#define _LABIMAGE_H_
 
-void bilateral_unsigned (unsigned short** src, unsigned short** dst, unsigned short** buffer, Dim dim, double sigma, double sens) {
+#include <image16.h>
 
-    bilateral<unsigned short, unsigned int> (src, dst, buffer, dim, sigma, sens);
+namespace rtengine {
+
+class LabImage {
+    private:
+        bool fromImage;
+
+    public:
+        int W, H;
+        unsigned short** L;
+        short** a;
+        short** b;
+
+     LabImage (int w, int h);
+     LabImage (Image16* im);
+    ~LabImage ();
+};
 }
-
-void bilateral_signed (short** src, short** dst, short** buffer, Dim dim, double sigma, double sens) {
-
-    bilateral<short, int> (src, dst, buffer, dim, sigma, sens);
-}
-
-void bilateral_box_unsigned (unsigned short** src, unsigned short** dst, int W, int H, int sigmar, double sigmas, bilateralparams row) {
-
-    bilateral<unsigned short> (src, dst, W, H, sigmar, sigmas, row.row_from, row.row_to);
-}
-
+#endif
