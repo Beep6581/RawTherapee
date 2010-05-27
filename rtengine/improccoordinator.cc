@@ -65,8 +65,6 @@ DetailedCrop* ImProcCoordinator::createCrop  () {
 void ImProcCoordinator::updatePreviewImage (int todo) {
 
     mProcessing.lock ();
-    MyTime t1,t2,t3,t4,t5,t6,t7,t8,t9;
-    t1.set ();
 
     int numofphases = 10;
     int readyphase = 0;
@@ -111,36 +109,20 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
         minit.unlock ();
     }
-
-    t2.set ();
-    if (settings->verbose) printf ("INIT: %d\n", t2.etime(t1));
     readyphase++;
 
     progress ("Rotate / Distortion...",100*readyphase/numofphases);
-//    printf ("ROTSTAT: %g, %g, %d, %d\n", params.rotate.degree, params.distortion.amount, (int)orig_prev, (int)oprevi);
-    // check if the transformation has been switched off:
-    bool needstransform  = fabs(params.rotate.degree)>1e-15 || fabs(params.distortion.amount)>1e-15 || fabs(params.cacorrection.red)>1e-15 || fabs(params.cacorrection.blue)>1e-15;
-    bool needsvignetting = params.vignetting.amount!=0;
-    if (!needstransform && !needsvignetting && orig_prev!=oprevi) {
+    bool needstransform = ipf.needsTransform();
+    if (!needstransform && orig_prev!=oprevi) {
         delete oprevi;
         oprevi = orig_prev;
-      }
-    // check if the transformation has been switched on:
-    else if ((needstransform || needsvignetting) && orig_prev==oprevi) {
-        oprevi = new Image16 (pW, pH);
     }
-    if ((todo & M_TRANSFORM) && !needstransform && needsvignetting)
-        ipf.vignetting (orig_prev, oprevi, &params, 0, 0, pW, pH);
-    else if ((todo & M_TRANSFORM) && needstransform)
-        if (scale==1)
-            ipf.transform (orig_prev, oprevi, &params, 0, 0, 0, 0, pW, pH);
-        else
-            ipf.simpltransform (orig_prev, oprevi, &params, 0, 0, 0, 0, pW, pH);
-            
-    t3.set ();
-    if (settings->verbose) printf ("TRANSFORM: %d\n", t3.etime(t2));
-    readyphase++;
+    if (needstransform && orig_prev==oprevi)
+        oprevi = new Image16 (pW, pH);
+    if ((todo & M_TRANSFORM) && needstransform)
+    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH);
 
+    readyphase++;
 
     progress ("Preparing shadow/highlight map...",100*readyphase/numofphases);
     if ((todo & M_BLURMAP) && params.sh.enabled) {
@@ -148,9 +130,6 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (oprevi, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }
-
-    t4.set ();
-    if (settings->verbose) printf ("BLURMAP: %d\n", t4.etime(t3));
     readyphase++;
 
     if (todo & M_AUTOEXP) {
@@ -162,6 +141,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.black);
         }
     }
+
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
@@ -173,13 +153,10 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
             for (int j=0; j<pW; j++)
                 lhist16[oprevl->L[i][j]]++;
     }
-    t5.set ();
-    if (settings->verbose) printf ("RGB: %d\n", t5.etime(t4));
     readyphase++;
 
-    if (todo & M_LUMACURVE) {
+    if (todo & M_LUMACURVE)
         CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
-    }
 
     if (todo & M_LUMINANCE) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
@@ -197,9 +174,6 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         readyphase++;
     }
 
-    t6.set ();
-    if (settings->verbose) printf ("LUMINANCE: %d\n", t6.etime(t5));
-
     if (todo & M_COLOR) {
         progress ("Applying Color Boost...",100*readyphase/numofphases);
         ipf.colorCurve (oprevl, nprevl);
@@ -210,9 +184,6 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         }
         readyphase++;
     }
-
-    t7.set ();
-    if (settings->verbose) printf ("COLOR: %d\n", t7.etime(t6));
 
     // process crop, if needed
     for (int i=0; i<crops.size(); i++)
@@ -235,9 +206,6 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
 
     readyphase++;
 
-    t8.set ();
-    if (settings->verbose) printf ("RGBCONVERT: %d\n", t8.etime(t7));
-
     if (hListener) {
         int hx1 = 0, hx2 = pW, hy1 = 0, hy2 = pH;
         if (params.crop.enabled) {
@@ -250,10 +218,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         hListener->histogramChanged (rhist, ghist, bhist, Lhist, bcrgbhist, bcLhist);
     }
 
-    t9.set ();
-    if (settings->verbose) printf ("Total processing time: %d\n", t9.etime(t1));
     progress ("Ready",100*readyphase/numofphases);
-
     mProcessing.unlock ();
 }
 
@@ -411,7 +376,7 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
         for (int j=x-rect; j<=x+rect; j++) 
             points.push_back (Coord2D (j, i));
 
-    ImProcFunctions::transCoord (&params, fw, fh, points, red, green, blue);
+    ipf.transCoord (fw, fh, points, red, green, blue);
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
     if (params.coarse.rotate==180) tr |= TR_R180;
@@ -428,25 +393,23 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
 void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &h) {
 
     mProcessing.lock ();
-    w = fullw;
-    bool clipped = true;
-    while (clipped && w>16) {
-        if (ratio>0)
-            h = w / ratio;
-        else
-            h = w * fullh / fullw;
-        x = (fullw - w) / 2;
-        y = (fullh - h) / 2;       
-        int orx, ory, orw, orh;
-        clipped = ImProcFunctions::transCoord (&params, fw, fh, x, y, w, h, orx, ory, orw, orh);
-        w -= 4;
+
+    double fillscale = ipf.getTransformAutoFill (fullw, fullh);
+    if (ratio>0) {
+        w = fullw * fillscale;
+    	h = w / ratio;
+    	if (h > fullh * fillscale) {
+    		h = fullh * fillscale;
+        	w = h * ratio;
+    	}
     }
-    if (ratio>0)
-        h = w / ratio;
-    else
-        h = w * fullh / fullw;
+    else {
+        w = fullw * fillscale;
+    	h = fullh * fillscale;
+    }
     x = (fullw - w) / 2;
     y = (fullh - h) / 2;
+
     mProcessing.unlock ();
 }
 

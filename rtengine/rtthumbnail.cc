@@ -276,18 +276,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.firstAnalysis (baseImg, &params, hist16, isRaw ? 2.2 : 0.0);
 
     // perform transform
-    bool needstransform  = fabs(params.rotate.degree)>1e-15 || fabs(params.distortion.amount)>1e-15 || fabs(params.cacorrection.red)>1e-15 || fabs(params.cacorrection.blue)>1e-15;
-    bool needsvignetting = params.vignetting.amount!=0;
-
-    if (!needstransform && needsvignetting) {
+    if (ipf.needsTransform()) {
         Image16* trImg = new Image16 (fw, fh);
-        ipf.vignetting (baseImg, trImg, &params, 0, 0, fw, fh);
-        delete baseImg;
-        baseImg = trImg;
-    }
-    else if (needstransform) {
-        Image16* trImg = new Image16 (fw, fh);
-        ipf.simpltransform (baseImg, trImg, &params, 0, 0, 0, 0, fw, fh);
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
     }
@@ -438,8 +429,10 @@ void Thumbnail::getAutoWB (double& temp, double& green) {
 
 void Thumbnail::applyAutoExp (procparams::ProcParams& params) {
 
-    if (params.toneCurve.autoexp && aeHistogram) 
-        ImProcFunctions::getAutoExp (aeHistogram, aeHistCompression, log(defGain) / log(2.0), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
+    if (params.toneCurve.autoexp && aeHistogram) {
+        ImProcFunctions ipf (&params, false);
+        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain) / log(2.0), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
+    }
 }
 
 void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp, int rect, double& rtemp, double& rgreen) {
@@ -454,7 +447,8 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
         fw = thumbImg->height;
         fh = thumbImg->width;
     }
-    ImProcFunctions::transCoord (&params, fw, fh, points, red, green, blue);
+    ImProcFunctions ipf (&params, false);
+    ipf.transCoord (fw, fh, points, red, green, blue);
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
     if (params.coarse.rotate==180) tr |= TR_R180;

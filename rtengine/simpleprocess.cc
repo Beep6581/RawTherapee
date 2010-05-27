@@ -94,18 +94,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
     // perform transform
-    bool needstransform  = fabs(params.rotate.degree)>1e-15 || fabs(params.distortion.amount)>1e-15 || fabs(params.cacorrection.red)>1e-15 || fabs(params.cacorrection.blue)>1e-15;
-    bool needsvignetting = params.vignetting.amount!=0;
-
-    if (!needstransform && needsvignetting) {
+    if (ipf.needsTransform()) {
         Image16* trImg = new Image16 (fw, fh);
-        ipf.vignetting (baseImg, trImg, &params, 0, 0, fw, fh);
-        delete baseImg;
-        baseImg = trImg;
-    }
-    else if (needstransform) {
-        Image16* trImg = new Image16 (fw, fh);
-        ipf.transform (baseImg, trImg, &params, 0, 0, 0, 0, fw, fh);
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
     }

@@ -86,7 +86,7 @@ class RawImageSource : public ImageSource {
     
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
-        void hphd_green          (int row_from, int row_to);
+        void hphd_green          ();
         void correction_YIQ_LQ_  (Image16* im, int row_from, int row_to);
         void hlRecovery          (std::string method, unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
         int  defTransform        (int tran);

@@ -25,6 +25,7 @@
 #include <iccstore.h>
 #include <image8.h>
 #include <curves.h>
+#include <omp.h>
 
 namespace rtengine {
 
@@ -38,7 +39,6 @@ extern const Settings* settings;
 #undef DIST
 #undef MAXVAL
 #undef CLIP
-#undef THREAD_PRIORITY_NORMAL
 
 #define ABS(a) ((a)<0?-(a):(a))
 #define MAX(a,b) ((a)<(b)?(b):(a))
@@ -961,21 +961,19 @@ void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
     if (im->height<4)
         return;
 
-    MyTime t1, t2;
-
-    t1.set ();
     for (int t=0; t<times; t++) {
-        if (settings->dualThreadEnabled) {
-            Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::correction_YIQ_LQ_), im, 1, im->height/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::correction_YIQ_LQ_), im, im->height/2, im->height-1), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread1->join ();
-            thread2->join ();
-        }
-        else
-            correction_YIQ_LQ_ (im, 1, im->height-1);
+	    #pragma omp parallel
+    	{
+    		int tid = omp_get_thread_num();
+    		int nthreads = omp_get_num_threads();
+    		int blk = (im->height-2)/nthreads;
+
+    		if (tid<nthreads-1)
+    			correction_YIQ_LQ_ (im, 1 + tid*blk, 1 + (tid+1)*blk);
+    		else
+    			correction_YIQ_LQ_ (im, 1 + tid*blk, im->height - 1);
+    	}
     }
-    t2.set ();
-//    printf ("Corrected. (%d)\n", t2.etime(t1));
 }
 
 
@@ -1702,9 +1700,10 @@ void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
   delete [] dev;
 }
 
-void RawImageSource::hphd_green (int row_from, int row_to) {
+void RawImageSource::hphd_green () {
 
-  for (int i=row_from; i<row_to; i++) {
+  #pragma omp parallel for
+  for (int i=3; i<H-3; i++) {
     for (int j=3; j<W-3; j++) {
       if (ISGREEN(ri,i,j))
         green[i][j] = ri->data[i][j];
@@ -1808,54 +1807,47 @@ void RawImageSource::hphd_demosaic () {
     memset(hpmap[i], 0, W*sizeof(float));
   }
   
-//  MyTime t1, t2, t3, t4;
-//  t1.set ();
+  #pragma omp parallel
+  {
+		int tid = omp_get_thread_num();
+		int nthreads = omp_get_num_threads();
+		int blk = W/nthreads;
 
-  // vertical 
-  if (settings->dualThreadEnabled) {
-      Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::hphd_vertical), hpmap, 0, W/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-      Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::hphd_vertical), hpmap, W/2, W), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-      thread1->join ();
-      thread2->join ();
+		if (tid<nthreads-1)
+			hphd_vertical (hpmap, tid*blk, (tid+1)*blk);
+		else
+			hphd_vertical (hpmap, tid*blk, W);
   }
-  else
-      hphd_vertical (hpmap, 0, W);
 
   if (plistener) 
     plistener->setProgress (0.33);
 
-  // horizontal
   this->hpmap = allocArray<char>(W, H);
   for (int i=0; i<H; i++)
     memset(this->hpmap[i], 0, W*sizeof(char));
-  
-  if (settings->dualThreadEnabled) {
-      Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::hphd_horizontal), hpmap, 0, H/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-      Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::hphd_horizontal), hpmap, H/2, H), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-      thread1->join ();
-      thread2->join ();
+
+  #pragma omp parallel
+  {
+		int tid = omp_get_thread_num();
+		int nthreads = omp_get_num_threads();
+		int blk = H/nthreads;
+
+		if (tid<nthreads-1)
+			hphd_horizontal (hpmap, tid*blk, (tid+1)*blk);
+		else
+			hphd_horizontal (hpmap, tid*blk, H);
   }
-  else
-      hphd_horizontal (hpmap, 0, H);
 
   freeArray<float>(hpmap, H);
 
   if (plistener) 
     plistener->setProgress (0.66);
  
-// reconstruct G
   green = new unsigned short*[H];
   for (int i=0; i<H; i++)
     green[i] = new unsigned short[W];
     
-  if (settings->dualThreadEnabled) {
-      Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::hphd_green), 3, H/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-      Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &RawImageSource::hphd_green), H/2, H-3), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-      thread1->join ();
-      thread2->join ();
-  }
-  else
-      hphd_green (3, H-3);
+  hphd_green ();
 
   if (plistener) 
     plistener->setProgress (1.0);

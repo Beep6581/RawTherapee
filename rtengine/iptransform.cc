@@ -19,6 +19,7 @@
 #include <rtengine.h>
 #include <improcfun.h>
 #include <omp.h>
+#include <mytime.h>
 
 namespace rtengine {
 
@@ -26,477 +27,17 @@ namespace rtengine {
 #undef MAX
 #undef MIN
 #undef CLIP
+#undef CLIPTO
 #undef CLIPTOC
 
 #define CMAXVAL 0xffff
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
-#define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):((c),d=true)):((b),d=true))
+#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
+#define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 
-extern const Settings* settings;
-
-void ImProcFunctions::vignetting_ (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to) {
-
-  int oW = sizes.oW;
-  int oH = sizes.oH;
-  int cx = sizes.cx;
-  int cy = sizes.cy;
-
-  double  w2 = (double) oW  / 2.0 - 0.5;
-  double  h2 = (double) oH  / 2.0 - 0.5;
-
-  double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-
-  double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-  double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-
-  double mul = (1.0-v) / tanh(b);
-
-  int val;
-  for (int y=row_from; y<row_to; y++) {
-      double y_d = (double) (y + cy) - h2 ;
-      for (int x=0; x<transformed->width; x++) {
-          double x_d = (double) (x + cx) - w2 ;
-          double r = sqrt(x_d*x_d + y_d*y_d);
-          double vign = v + mul * tanh (b*(maxRadius-r) / maxRadius);
-          val = original->r[y][x] / vign;
-          transformed->r[y][x] = CLIP(val);
-          val =  original->g[y][x] / vign;
-          transformed->g[y][x] = CLIP(val);
-          val = original->b[y][x] / vign;
-          transformed->b[y][x] = CLIP(val);
-      }
-  }
-}
-
-void ImProcFunctions::vignetting (Image16* original, Image16* transformed, const ProcParams* params, int cx, int cy, int oW, int oH) {
-
-    STemp sizes;
-    sizes.cx = cx;
-    sizes.cy = cy;
-    sizes.oW = oW;
-    sizes.oH = oH;
-
-    if (settings->dualThreadEnabled) {
-        Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::vignetting_), original, transformed, params, sizes, 0, transformed->height/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-        Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::vignetting_), original, transformed, params, sizes, transformed->height/2, transformed->height), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-        thread1->join ();
-        thread2->join ();
-    }
-    else
-        vignetting_ (original, transformed, params, sizes, 0, transformed->height);
-}
-
-#include "cubint.cc"
-void ImProcFunctions::transform_ (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to) {
-
-  int oW = sizes.oW;
-  int oH = sizes.oH;
-  int cx = sizes.cx;
-  int cy = sizes.cy;
-  int sx = sizes.sx;
-  int sy = sizes.sy;
-
-  double  w2 = (double) oW  / 2.0 - 0.5;
-  double  h2 = (double) oH  / 2.0 - 0.5;
-
-  double cost = cos(params->rotate.degree * 3.14/180.0);
-  double sint = sin(params->rotate.degree * 3.14/180.0);
-
-  double  max_x = (double) (sx + original->width - 1);
-  double  max_y = (double) (sy + original->height - 1);
-  double  min_x = (double) sx;
-  double  min_y = (double) sy;
-
-  const int n2 = 2;
-  const int n = 4;
-
-  int mix  = original->width - 1; // maximum x-index src
-  int miy  = original->height - 1;// maximum y-index src
-  int mix2 = mix +1 - n;
-  int miy2 = miy +1 - n;
-
-  double scale = (oW>oH) ? (double)oW / 2.0 : (double)oH / 2.0 ;
-  double radius = sqrt( (double)( oW*oW + oH*oH ) );
-  radius /= (oW<oH) ? oW : oH;
-
-  double a = params->distortion.amount;
-
-  double d = 1.0 - a;
-
-    // magnify image to keep size
-    double rotmagn = 1.0;
-    if (params->rotate.fill) {
-        double beta = atan((double)MIN(oH,oW)/MAX(oW,oH));
-        rotmagn = sin(beta) / sin(fabs(params->rotate.degree) * 3.14/180.0 + beta);
-    }
-    // 1. check upper and lower border
-    double d1 = rotmagn - a*h2/scale;
-    double d2 = rotmagn - a*w2/scale;
-    double d3 = rotmagn - a*sqrt(h2*h2+w2*w2) / scale;
-    d = MIN(d,MIN(d1,MIN(d2,d3)));
-
-    // auxilary variables for vignetting
-    double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2 / scale;
-
-    double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-
-    double mul = (1.0-v) / tanh(b);
-
-    // main cycle
-    double eps = 1e-10;
-    bool calc_r=( (fabs(a)>eps) || (fabs(1.0-v)>eps) );
-    bool do_vign = (fabs(1.0-v)>eps);
-
-    for (int y=row_from; y<row_to; y++) {
-        double y_d = (double) (y + cy) - h2 ;
-        for (int x=0; x<transformed->width; x++) {
-            double x_d = (double) (x + cx) - w2 ;
-
-            double r=0.0;
-            double s = d;//10000.0;
-	    if (calc_r)
-	    {
-	            r=(sqrt(x_d*x_d + y_d*y_d)) / scale;
-	            if (r<radius)
-	            s += a * r ;
-	    }
-
-            double Dx = s*(x_d * cost - y_d * sint) + w2;
-            double Dy = s*(x_d * sint + y_d * cost) + h2;
-
-            if (fabs(Dx)<eps) Dx = 0;
-            if (fabs(Dy)<eps) Dy = 0;
-            if (fabs(Dx-max_x)<eps) Dx = nextafter(max_x,0);
-            if (fabs(Dy-max_y)<eps) Dy = nextafter(max_y,0);
-
-            bool valid = !((Dx >= max_x)   || (Dy >= max_y) || (Dx < min_x) || (Dy < min_y));
-
-            // Convert only valid pixels
-            if (valid) {
-                // Extract integer and fractions of source screen coordinates
-                int xc  =  (int) (Dx); Dx -= (double)xc;
-                int yc  =  (int) (Dy); Dy -= (double)yc;
-                int ys = yc +1 - n2 - sy; // smallest y-index used for interpolation
-                int xs = xc +1 - n2 - sx; // smallest x-index used for interpolation
-
-                double vignmul = 1.0;
-		if (do_vign) vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
-
-                if (ys >= 0 && ys <= miy2 && xs >= 0 && xs <= mix2)   // all interpolation pixels inside image
-                    cubint (original, xs, ys, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
-                else { // edge pixels
-                    int y1 = (yc>0) ? yc : 0;
-                    if (y1>miy) y1 = miy;
-                    int y2 = (yc<miy) ? yc+1 : miy;
-                    if (y2<0) y2 = 0;
-                    int x1 = (xc>0) ? xc : 0;
-                    if (x1>mix) x1 = mix;
-                    int x2 = (xc<mix) ? xc+1 : mix;
-                    if (x2<0) x2 = 0;
-                    int r = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                    int g = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                    int b = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
-                    transformed->r[y][x] = CLIP(r);
-                    transformed->g[y][x] = CLIP(g);
-                    transformed->b[y][x] = CLIP(b);
-                }
-            }
-            else {
-                // not valid (source pixel x,y not inside source image, etc.)
-                transformed->r[y][x] = 0;
-                transformed->g[y][x] = 0;
-                transformed->b[y][x] = 0;
-            }
-        }
-    }
-}
-
-void ImProcFunctions::simpltransform_ (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to) {
-
-  int oW = sizes.oW;
-  int oH = sizes.oH;
-  int cx = sizes.cx;
-  int cy = sizes.cy;
-  int sx = sizes.sx;
-  int sy = sizes.sy;
-
-  double  w2 = (double) oW  / 2.0 - 0.5;
-  double  h2 = (double) oH  / 2.0 - 0.5;
-
-  double cost = cos(params->rotate.degree * 3.14/180.0);
-  double sint = sin(params->rotate.degree * 3.14/180.0);
-
-  double  max_x = (double) (sx + original->width - 1);
-  double  max_y = (double) (sy + original->height - 1);
-  double  min_x = (double) sx;
-  double  min_y = (double) sy;
-
-  const int n2 = 2;
-  const int n = 2;
-
-  int mix  = original->width - 1; // maximum x-index src
-  int miy  = original->height - 1;// maximum y-index src
-  int mix2 = mix +1 - n;
-  int miy2 = miy +1 - n;
-
-  double scale = (oW>oH) ? (double)oW / 2.0 : (double)oH / 2.0 ;
-  double radius = sqrt( (double)( oW*oW + oH*oH ) );
-  radius /= (oW<oH) ? oW : oH;
-
-  double a = params->distortion.amount;
-
-  double d = 1.0 - a;
-
-
-    // magnify image to keep size
-    double rotmagn = 1.0;
-    if (params->rotate.fill) {
-        double beta = atan((double)MIN(oH,oW)/MAX(oW,oH));
-        rotmagn = sin(beta) / sin(fabs(params->rotate.degree) * 3.14/180.0 + beta);
-    }
-    // 1. check upper and lower border
-    double d1r = rotmagn - a*h2/scale - params->cacorrection.red;
-    double d2r = rotmagn - a*w2/scale - params->cacorrection.red;
-    double d3r = rotmagn - a*sqrt(h2*h2+w2*w2) / scale - params->cacorrection.red;
-    double dr = MIN(d,MIN(d1r,MIN(d2r,d3r)));
-    double d1b = rotmagn - a*h2/scale - params->cacorrection.blue;
-    double d2b = rotmagn - a*w2/scale - params->cacorrection.blue;
-    double d3b = rotmagn - a*sqrt(h2*h2+w2*w2) / scale - params->cacorrection.blue;
-    double db = MIN(d,MIN(d1b,MIN(d2b,d3b)));
-    double d1g = rotmagn - a*h2/scale;
-    double d2g = rotmagn - a*w2/scale;
-    double d3g = rotmagn - a*sqrt(h2*h2+w2*w2) / scale;
-    double dg = MIN(d,MIN(d1g,MIN(d2g,d3g)));
-
-    d = MIN(dg,MIN(dr,db));
-
-    // auxilary variables for vignetting
-    double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2 / scale;
-
-    double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-
-    double mul = (1.0-v) / tanh(b);
-
-    // main cycle
-    double eps = 1e-10;
-    bool calc_r=( (fabs(a)>eps) || (fabs(1.0-v)>eps) );
-    bool do_vign = (fabs(1.0-v)>eps);
-
-    for (int y=row_from; y<row_to; y++) {
-        double y_d = (double) (y + cy) - h2 ;
-        for (int x=0; x<transformed->width; x++) {
-            double x_d = (double) (x + cx) - w2 ;
-
-            double r=0.0;
-            double s = d;//10000.0;
-	    if (calc_r)
-	    {
-	            r=(sqrt(x_d*x_d + y_d*y_d)) / scale;
-	            if (r<radius)
-	            s += a * r ;
-	    }
-
-            double Dx = s*(x_d * cost - y_d * sint) + w2;
-            double Dy = s*(x_d * sint + y_d * cost) + h2;
-
-            if (fabs(Dx)<eps) Dx = 0;
-            if (fabs(Dy)<eps) Dy = 0;
-            if (fabs(Dx-max_x)<eps) Dx = nextafter(max_x,0);
-            if (fabs(Dy-max_y)<eps) Dy = nextafter(max_y,0);
-
-            bool valid = !((Dx >= max_x)   || (Dy >= max_y) || (Dx < min_x) || (Dy < min_y));
-
-            // Convert only valid pixels
-            if (valid) {
-                // Extract integer and fractions of source screen coordinates
-                int xc  =  (int) (Dx); Dx -= (double)xc;
-                int yc  =  (int) (Dy); Dy -= (double)yc;
-                int ys = yc +1 - n2 - sy; // smallest y-index used for interpolation
-                int xs = xc +1 - n2 - sx; // smallest x-index used for interpolation
-
-                double vignmul = 1.0;
-		if (do_vign) vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
-
-                if (ys >= 0 && ys <= miy2 && xs >= 0 && xs <= mix2 && yc < miy-1) {   // all interpolation pixels inside image
-
-                    int r = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
-                    int g = vignmul*(original->g[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->g[yc][xc+1]*Dx*(1.0-Dy) + original->g[yc+1][xc]*(1.0-Dx)*Dy + original->g[yc+1][xc+1]*Dx*Dy);
-                    int b = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
-                    transformed->r[y][x] = CLIP(r);
-                    transformed->g[y][x] = CLIP(g);
-                    transformed->b[y][x] = CLIP(b);
-                }
-                else { // edge pixels
-                    int y1 = (yc>0) ? yc : 0;
-                    if (y1>miy) y1 = miy;
-                    int y2 = (yc<miy) ? yc+1 : miy;
-                    if (y2<0) y2 = 0;
-                    int x1 = (xc>0) ? xc : 0;
-                    if (x1>mix) x1 = mix;
-                    int x2 = (xc<mix) ? xc+1 : mix;
-                    if (x2<0) x2 = 0;
-                    int r = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                    int g = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                    int b = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
-                    transformed->r[y][x] = CLIP(r);
-                    transformed->g[y][x] = CLIP(g);
-                    transformed->b[y][x] = CLIP(b);
-                }
-            }
-            else {
-                // not valid (source pixel x,y not inside source image, etc.)
-                transformed->r[y][x] = 0;
-                transformed->g[y][x] = 0;
-                transformed->b[y][x] = 0;
-            }
-        }
-    }
-}
-
-
-#include "cubintch.cc"
-void ImProcFunctions::transform_sep_ (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to) {
-
-  int oW = sizes.oW;
-  int oH = sizes.oH;
-  int cx = sizes.cx;
-  int cy = sizes.cy;
-  int sx = sizes.sx;
-  int sy = sizes.sy;
-
-  double  w2 = (double) oW  / 2.0 - 0.5;
-  double  h2 = (double) oH  / 2.0 - 0.5;
-
-  double cost = cos(params->rotate.degree * 3.14/180.0);
-  double sint = sin(params->rotate.degree * 3.14/180.0);
-
-  double  max_x = (double) (sx + original->width - 1);
-  double  max_y = (double) (sy + original->height - 1);
-  double  min_x = (double) sx;
-  double  min_y = (double) sy;
-
-  const int n2 = 2;
-  const int n = 4;
-
-  int mix  = original->width - 1; // maximum x-index src
-  int miy  = original->height - 1;// maximum y-index src
-  int mix2 = mix +1 - n;
-  int miy2 = miy +1 - n;
-
-  double scale = (oW>oH) ? (double)oW / 2.0 : (double)oH / 2.0 ;
-  double radius = sqrt( (double)( oW*oW + oH*oH ) );
-  radius /= (oW<oH) ? oW : oH;
-
-  double a = params->distortion.amount;
-    double d = 1.0 - a;
-
-    double cdist[3];
-    cdist[0] = params->cacorrection.red;
-    cdist[1] = 0.0;
-    cdist[2] = params->cacorrection.blue;
-
-    // magnify image to keep size
-    double rotmagn = 1.0;
-    if (params->rotate.fill) {
-        double beta = atan((double)MIN(oH,oW)/MAX(oW,oH));
-        rotmagn = sin(beta) / sin(fabs(params->rotate.degree) * 3.14/180.0 + beta);
-    }
-    // 1. check upper and lower border
-    double d1r = rotmagn - a*h2/scale - params->cacorrection.red;
-    double d2r = rotmagn - a*w2/scale - params->cacorrection.red;
-    double d3r = rotmagn - a*sqrt(h2*h2+w2*w2) / scale - params->cacorrection.red;
-    double dr = MIN(d,MIN(d1r,MIN(d2r,d3r)));
-    double d1b = rotmagn - a*h2/scale - params->cacorrection.blue;
-    double d2b = rotmagn - a*w2/scale - params->cacorrection.blue;
-    double d3b = rotmagn - a*sqrt(h2*h2+w2*w2) / scale - params->cacorrection.blue;
-    double db = MIN(d,MIN(d1b,MIN(d2b,d3b)));
-    double d1g = rotmagn - a*h2/scale;
-    double d2g = rotmagn - a*w2/scale;
-    double d3g = rotmagn - a*sqrt(h2*h2+w2*w2) / scale;
-    double dg = MIN(d,MIN(d1g,MIN(d2g,d3g)));
-
-    d = MIN(dg,MIN(dr,db));
-
-    unsigned short** chorig[3];
-    chorig[0] = original->r;
-    chorig[1] = original->g;
-    chorig[2] = original->b;
-
-    unsigned short** chtrans[3];
-    chtrans[0] = transformed->r;
-    chtrans[1] = transformed->g;
-    chtrans[2] = transformed->b;
-
-
-    // auxilary variables for vignetting
-    double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2 / scale;
-
-    double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-
-    double mul = (1.0-v) / tanh(b);
-
-    // main cycle
-    double eps = 1e-10;
-    for (int y=row_from; y<row_to; y++) {
-        double y_d = (double) (y + cy) - h2 ;
-        for (int x=0; x<transformed->width; x++) {
-            double x_d = (double) (x + cx) - w2 ;
-
-            double r = (sqrt(x_d*x_d + y_d*y_d)) / scale;
-            double s = 10000.0;
-            if (r<radius)
-	            s = a * r + d;
-
-            double vignmul = 1.0 / (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
-
-            for (int c=0; c<3; c++) {
-
-                double Dx = (s + cdist[c]) * (x_d * cost - y_d * sint) + w2;
-                double Dy = (s + cdist[c]) * (x_d * sint + y_d * cost) + h2;
-
-                if (fabs(Dx)<eps) Dx = 0;
-                if (fabs(Dy)<eps) Dy = 0;
-                if (fabs(Dx-max_x)<eps) Dx = nextafter(max_x,0);
-                if (fabs(Dy-max_y)<eps) Dy = nextafter(max_y,0);
-
-                bool valid = !((Dx >= max_x)   || (Dy >= max_y) || (Dx < min_x) || (Dy < min_y));
-
-                // Convert only valid pixels
-                if (valid) {
-                    // Extract integer and fractions of source screen coordinates
-                    int xc  =  (int) (Dx); Dx -= (double)xc;
-                    int yc  =  (int) (Dy); Dy -= (double)yc;
-                    int ys = yc +1 - n2 - sy; // smallest y-index used for interpolation
-                    int xs = xc +1 - n2 - sx; // smallest x-index used for interpolation
-
-                    if (ys >= 0 && ys <= miy2 && xs >= 0 && xs <= mix2)  // all interpolation pixels inside image
-                        cubintch (chorig[c], xs, ys, Dx, Dy, &(chtrans[c][y][x]), vignmul);
-                    else {// edge pixels, linear interpolation
-                        int y1 = (yc>0) ? yc : 0;
-                        if (y1>miy) y1 = miy;
-                        int y2 = (yc<miy) ? yc+1 : miy;
-                        if (y2<0) y2 = 0;
-                        int x1 = (xc>0) ? xc : 0;
-                        if (x1>mix) x1 = mix;
-                        int x2 = (xc<mix) ? xc+1 : mix;
-                        if (x2<0) x2 = 0;
-                        int val = vignmul*(chorig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chorig[c][y1][x2]*Dx*(1.0-Dy) + chorig[c][y2][x1]*(1.0-Dx)*Dy + chorig[c][y2][x2]*Dx*Dy);
-                        chtrans[c][y][x] = CLIP(val);
-                    }
-                }
-                else // not valid (source pixel x,y not inside source image, etc.)
-                    chtrans[c][y][x] = 0;
-            }
-        }
-    }
-}
-
-bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue) {
+bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
 
     bool clipresize = true;
     bool clipped = false;
@@ -504,8 +45,8 @@ bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, std::v
     red.clear ();
     green.clear ();
     blue.clear ();
-    bool needstransform  = 0;// fabs(params->rotate.degree)>1e-15 || fabs(params->distortion.amount)>1e-15 || fabs(params->cacorrection.red)>1e-15 || fabs(params->cacorrection.blue)>1e-15;
-    if (!needstransform) {
+
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective()) {
         if (clipresize) {
             // Apply resizing
             if (fabs(params->resize.scale-1.0)>=1e-7) {
@@ -532,83 +73,34 @@ bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, std::v
         }
         return clipped;
     }
-    double rW = W*params->resize.scale;
-    double rH = H*params->resize.scale;
-    double  w2 = (double) rW  / 2.0 - 0.5;
-    double  h2 = (double) rH  / 2.0 - 0.5;
-    double cost = cos(params->rotate.degree * 3.14/180.0);
-    double sint = sin(params->rotate.degree * 3.14/180.0);
 
-    double scale = (rW>rH) ? rW / 2.0 : rH / 2.0 ;
-    double radius = sqrt ((double)(rW*rW + rH*rH ));
-    radius /= (rW<rH) ? rW : rH;
-    double a = params->distortion.amount;
-    double d = 1.0 - a;
+    double oW = W*params->resize.scale;
+    double oH = H*params->resize.scale;
+	double  w2 = (double) oW  / 2.0 - 0.5;
+	double  h2 = (double) oH  / 2.0 - 0.5;
+	double a = params->distortion.amount;
+	double cost = cos(params->rotate.degree * 3.14/180.0);
+	double sint = sin(params->rotate.degree * 3.14/180.0);
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double ascale = ascaleDef>0 ? ascaleDef : (params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0);
 
-    // magnify image to keep size
-    double rotmagn = 1.0;
-    if (params->rotate.fill) {
-        double beta = atan(MIN(rH,rW)/MAX(rW,rH));
-        rotmagn = sin(beta) / sin(fabs(params->rotate.degree) * 3.14/180.0 + beta);
-    }
-    if (params->cacorrection.red==0 && params->cacorrection.blue==0) {
-        // 1. check upper and lower border
-        double d1 = rotmagn - a*h2/scale;
-        double d2 = rotmagn - a*w2/scale;
-        double d3 = rotmagn - a*sqrt(h2*h2+w2*w2) / scale;
-        d = MIN(d,MIN(d1,MIN(d2,d3)));
+	for (int i=0; i<src.size(); i++) {
 
-        for (int i=0; i<src.size(); i++) {
-            double y_d = src[i].y - h2 ;
-            double x_d = src[i].x - w2 ;
-            double r = (sqrt(x_d*x_d + y_d*y_d)) / scale;
-            double s = 10000.0;
-            if (r<radius)
-                s = a * r + d;
-            red.push_back (Coord2D(s*(x_d * cost - y_d * sint) + w2, s*(x_d * sint + y_d * cost) + h2));
-            green.push_back (Coord2D(s*(x_d * cost - y_d * sint) + w2, s*(x_d * sint + y_d * cost) + h2));
-            blue.push_back (Coord2D(s*(x_d * cost - y_d * sint) + w2, s*(x_d * sint + y_d * cost) + h2));
-        }
-    }
-    else {
-        double cdist[3];
-        cdist[0] = params->cacorrection.red;
-        cdist[1] = 0.0;
-        cdist[2] = params->cacorrection.blue;
+		double y_d = ascale * (src[i].y - h2);
+		double x_d = ascale * (src[i].x - w2);
 
-        // 1. check upper and lower border
-        double d1r = rotmagn - a*h2/scale - params->cacorrection.red;
-        double d2r = rotmagn - a*w2/scale - params->cacorrection.red;
-        double d3r = rotmagn - a*sqrt(h2*h2+w2*w2) / scale - params->cacorrection.red;
-        double dr = MIN(d,MIN(d1r,MIN(d2r,d3r)));
-        double d1b = rotmagn - a*h2/scale - params->cacorrection.blue;
-        double d2b = rotmagn - a*w2/scale - params->cacorrection.blue;
-        double d3b = rotmagn - a*sqrt(h2*h2+w2*w2) / scale - params->cacorrection.blue;
-        double db = MIN(d,MIN(d1b,MIN(d2b,d3b)));
-        double d1g = rotmagn - a*h2/scale;
-        double d2g = rotmagn - a*w2/scale;
-        double d3g = rotmagn - a*sqrt(h2*h2+w2*w2) / scale;
-        double dg = MIN(d,MIN(d1g,MIN(d2g,d3g)));
+		double Dx = x_d * cost - y_d * sint;
+		double Dy = x_d * sint + y_d * cost;
 
-        d = MIN(dg,MIN(dr,db));
+		double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+		double s = 1.0 - a + a * r ;
 
-        for (int i=0; i<src.size(); i++) {
-            double y_d = src[i].y - h2 ;
-            double x_d = src[i].x - w2 ;
-            double r = (sqrt(x_d*x_d + y_d*y_d)) / scale;
-            double s = 10000.0;
-            if (r<radius)
-                s = a * r + d;
-            src[i].x = s*(x_d * cost - y_d * sint) + w2;
-            src[i].y  = s*(x_d * sint + y_d * cost) + h2;
+		red.push_back (Coord2D(Dx*(s+params->cacorrection.red)+w2, Dy*(s+params->cacorrection.red)+h2));
+		green.push_back (Coord2D(Dx*s+w2, Dy*s+h2));
+		blue.push_back (Coord2D(Dx*(s+params->cacorrection.blue)+w2, Dy*(s+params->cacorrection.blue)+h2));
+	}
 
-            red.push_back (Coord2D((s+cdist[0])*(x_d * cost - y_d * sint) + w2, (s+cdist[0])*(x_d * sint + y_d * cost) + h2));
-            green.push_back (Coord2D((s+cdist[1])*(x_d * cost - y_d * sint) + w2, (s+cdist[1])*(x_d * sint + y_d * cost) + h2));
-            blue.push_back (Coord2D((s+cdist[2])*(x_d * cost - y_d * sint) + w2, (s+cdist[2])*(x_d * sint + y_d * cost) + h2));
-        }
-    }
-
-    if (clipresize) {
+	if (clipresize) {
         if (fabs(params->resize.scale-1.0)>=1e-7) {
             for (int i=0; i<src.size(); i++) {
                 red[i].x /= params->resize.scale;
@@ -631,7 +123,7 @@ bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, std::v
     return clipped;
 }
 
-bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv) {
+bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef) {
 
     int x1 = x, y1 = y;
     int x2 = x1 + w - 1;
@@ -646,10 +138,22 @@ bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, int x,
     corners[5].set ((x1+x2)/2, y2);
     corners[6].set (x1, (y1+y2)/2);
     corners[7].set (x2, (y1+y2)/2);
+    int xstep = (x2-x1)/16;
+    if (xstep<1) xstep = 1;
+    for (int i=x1+xstep; i<=x2-xstep; i+=xstep) {
+        corners.push_back (Coord2D (i, y1));
+        corners.push_back (Coord2D (i, y2));
+    }
+    int ystep = (y2-y1)/16;
+    if (ystep<1) ystep = 1;
+    for (int i=y1+ystep; i<=y2-ystep; i+=ystep) {
+        corners.push_back (Coord2D (x1, i));
+        corners.push_back (Coord2D (x2, i));
+    }
 
     std::vector<Coord2D> r, g, b;
 
-    bool result = transCoord (params, W, H, corners, r, g, b);
+    bool result = transCoord (W, H, corners, r, g, b, ascaleDef);
 
     std::vector<Coord2D> transCorners;
     transCorners.insert (transCorners.end(), r.begin(), r.end());
@@ -688,134 +192,357 @@ bool ImProcFunctions::transCoord (const ProcParams* params, int W, int H, int x,
     return result;
 }
 
-void ImProcFunctions::transform (Image16* original, Image16* transformed, const ProcParams* params, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
-    STemp sizes;
-    sizes.cx = 0;//cx;
-    sizes.cy = 0;//cy;
-    sizes.oW = oW;
-    sizes.oH = oH;
-    sizes.sx = 0;//sx;
-    sizes.sy = 0;//sy;
+	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective()) && needsVignetting())
+		vignetting (original, transformed, cx, cy, oW, oH);
+	else if (!needsCA()) {
+		MyTime t1,t2;
+		t1.set ();
+		if (scale==1)
+			transformNonSep (original, transformed, cx, cy, sx, sy, oW, oH);
+		else
+			simpltransform (original, transformed, cx, cy, sx, sy, oW, oH);
+		t2.set ();
+		printf ("transform time=%d\n", t2.etime(t1));
+	}
+	else
+		transformSep (original, transformed, cx, cy, sx, sy, oW, oH);
+}
 
-    if (params->cacorrection.red==0 && params->cacorrection.blue==0) {
-        if (settings->dualThreadEnabled) {
-            Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::transform_), original, transformed, params, sizes, 0, transformed->height/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::transform_), original, transformed, params, sizes, transformed->height/2, transformed->height), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread1->join ();
-            thread2->join ();
+void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH) {
+
+	double  w2 = (double) oW  / 2.0 - 0.5;
+	double  h2 = (double) oH  / 2.0 - 0.5;
+
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+
+	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
+	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
+
+	double mul = (1.0-v) / tanh(b);
+
+	#pragma omp parallel for if (multiThread)
+	for (int y=0; y<transformed->height; y++) {
+		double y_d = (double) (y + cy) - h2 ;
+		int val;
+		for (int x=0; x<transformed->width; x++) {
+			double x_d = (double) (x + cx) - w2 ;
+			double r = sqrt(x_d*x_d + y_d*y_d);
+			double vign = v + mul * tanh (b*(maxRadius-r) / maxRadius);
+			val = original->r[y][x] / vign;
+			transformed->r[y][x] = CLIP(val);
+			val =  original->g[y][x] / vign;
+			transformed->g[y][x] = CLIP(val);
+			val = original->b[y][x] / vign;
+			transformed->b[y][x] = CLIP(val);
+		}
+	}
+}
+
+#include "cubint.cc"
+void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+
+	double  w2 = (double) oW  / 2.0 - 0.5;
+	double  h2 = (double) oH  / 2.0 - 0.5;
+
+	// auxiliary variables for distortion correction
+	double a = params->distortion.amount;
+
+	// auxiliary variables for rotation
+	double cost = cos(params->rotate.degree * 3.14/180.0);
+	double sint = sin(params->rotate.degree * 3.14/180.0);
+
+	// auxiliary variables for vignetting
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
+	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
+	double mul = (1.0-v) / tanh(b);
+	bool dovign = params->vignetting.amount != 0;
+
+	double ascale = params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0;
+
+	// main cycle
+	#pragma omp parallel for if (multiThread)
+    for (int y=0; y<transformed->height; y++) {
+        double y_d = ascale * (y + cy - h2);			// centering y coord & scale
+        for (int x=0; x<transformed->width; x++) {
+            double x_d = ascale * (x + cx - w2);		// centering x coord & scale
+
+			// rotate
+            double Dx = x_d * cost - y_d * sint;
+            double Dy = x_d * sint + y_d * cost;
+
+            // distortion correction
+            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+            double s = 1.0 - a + a * r ;
+	        Dx *= s;
+            Dy *= s;
+
+            // de-center
+            Dx += w2;
+            Dy += h2;
+
+            // Extract integer and fractions of source screen coordinates
+            int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
+            int yc = (int)Dy; Dy -= (double)yc; yc -= sy;
+
+            // Convert only valid pixels
+            if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
+
+                // multiplier for vignetting correction
+            	double vignmul = 1.0;
+                if (dovign)
+                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+
+                if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
+                    cubint (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
+                else { // edge pixels
+                	int y1 = CLIPTO(yc,   0, original->height-1);
+                	int y2 = CLIPTO(yc+1, 0, original->height-1);
+                	int x1 = CLIPTO(xc,   0, original->width-1);
+                	int x2 = CLIPTO(xc+1, 0, original->width-1);
+                    int r = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
+                    int g = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
+                    int b = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
+                    transformed->r[y][x] = CLIP(r);
+                    transformed->g[y][x] = CLIP(g);
+                    transformed->b[y][x] = CLIP(b);
+                }
+            }
+            else {
+                // not valid (source pixel x,y not inside source image, etc.)
+                transformed->r[y][x] = 0;
+                transformed->g[y][x] = 0;
+                transformed->b[y][x] = 0;
+            }
         }
-        else
-            transform_ (original, transformed, params, sizes, 0, transformed->height);
-    }
-    else {
-        if (settings->dualThreadEnabled) {
-            Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::transform_sep_), original, transformed, params, sizes, 0, transformed->height/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::transform_sep_), original, transformed, params, sizes, transformed->height/2, transformed->height), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            thread1->join ();
-            thread2->join ();
-        }
-        else
-            transform_sep_ (original, transformed, params, sizes, 0, transformed->height);
     }
 }
 
-void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, const ProcParams* params, int cx, int cy, int sx, int sy, int oW, int oH) {
+#include "cubintch.cc"
+void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
-    STemp sizes;
-    sizes.cx = 0;//cx;
-    sizes.cy = 0;//cy;
-    sizes.oW = oW;
-    sizes.oH = oH;
-    sizes.sx = 0;//sx;
-    sizes.sy = 0;//sy;
+	double  w2 = (double) oW  / 2.0 - 0.5;
+	double  h2 = (double) oH  / 2.0 - 0.5;
 
-    if (settings->dualThreadEnabled) {
-        Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::simpltransform_), original, transformed, params, sizes, 0, transformed->height/2), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-        Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ImProcFunctions::simpltransform_), original, transformed, params, sizes, transformed->height/2, transformed->height), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-        thread1->join ();
-        thread2->join ();
-    }
-    else
-        simpltransform_ (original, transformed, params, sizes, 0, transformed->height);
-}
-/*void ImProcFunctions::transform (Image16* original, Image16* transformed, const ProcParams* params, int ox, int oy) {
+	// auxiliary variables for c/a correction
+    double cdist[3];
+    cdist[0] = params->cacorrection.red;
+    cdist[1] = 0.0;
+    cdist[2] = params->cacorrection.blue;
+    unsigned short** chorig[3];
+    chorig[0] = original->r;
+    chorig[1] = original->g;
+    chorig[2] = original->b;
+    unsigned short** chtrans[3];
+    chtrans[0] = transformed->r;
+    chtrans[1] = transformed->g;
+    chtrans[2] = transformed->b;
 
-  if (!transformed)
-    return;
+	// auxiliary variables for distortion correction
+	double a = params->distortion.amount;
 
-  int oW = W, oH = H, tW = W, tH = H;
+	// auxiliary variables for rotation
+	double cost = cos(params->rotate.degree * 3.14/180.0);
+	double sint = sin(params->rotate.degree * 3.14/180.0);
 
-  double  w2 = (double) tW / 2.0 - 0.5;
-  double  h2 = (double) tH / 2.0 - 0.5;
-  double  sw2 = (double) oW  / 2.0 - 0.5;
-  double  sh2 = (double) oH  / 2.0 - 0.5;
+	// auxiliary variables for vignetting
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
+	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
+	double mul = (1.0-v) / tanh(b);
+	bool dovign = params->vignetting.amount != 0;
 
-  double cost = cos(params->rotate_fine * 3.14/180.0);
-  double sint = sin(params->rotate_fine * 3.14/180.0);
+	double ascale = params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0;
 
-  double  max_x = (double) oW;
-  double  max_y = (double) oH;
-  double  min_x =  0.0;
-  double  min_y =  0.0;
+	// main cycle
+	#pragma omp parallel for if (multiThread)
+    for (int y=0; y<transformed->height; y++) {
+        double y_d = ascale * (y + cy - h2);			// centering y coord & scale
+        for (int x=0; x<transformed->width; x++) {
+            double x_d = ascale * (x + cx - w2);		// centering x coord & scale
 
-  const int n2 = 2;
-  const int n = 4;
+			// rotate
+            double Dxc = x_d * cost - y_d * sint;
+            double Dyc = x_d * sint + y_d * cost;
 
-  int mix  = oW - 1; // maximum x-index src
-  int miy  = oH - 1;// maximum y-index src
-  int mix2 = mix +1 - n;
-  int miy2 = miy +1 - n;
+            // distortion correction
+            double r = sqrt(Dxc*Dxc + Dyc*Dyc) / maxRadius;
+            double s = 1.0 - a + a * r ;
 
-  double scale = (tW>tH) ? (double)tW / 2.0 : (double)tH / 2.0 ;
-  double radius = sqrt( (double)( tW*tW + tH*tH ) );
-  radius /= (tW<tH) ? tW : tH;
+            for (int c=0; c<3; c++) {
 
-  double a = params->lens_distortion;
+                double Dx = Dxc * (s + cdist[c]);
+                double Dy = Dyc * (s + cdist[c]);
 
-  for (int y=0; y<transformed->height; y++) {
-    double y_d = (double) y + oy - h2 ;
+                // de-center
+                Dx += w2;
+                Dy += h2;
 
-    for (int x=0; x<transformed->width; x++) {
-      double x_d = (double) x + ox - w2 ;
+				// Extract integer and fractions of source screen coordinates
+				int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
+				int yc = (int)Dy; Dy -= (double)yc; yc -= sy;
 
-      double r = (sqrt(x_d*x_d + y_d*y_d)) / scale;
-      double s = 10000.0;
-      if (r<radius)
-	        s = a * r + 1.0 - a;
+				// Convert only valid pixels
+				if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
 
-      double Dx = s*(x_d * cost - y_d * sint) + sw2;
-      double Dy = s*(x_d * sint + y_d * cost) + sh2;
+					// multiplier for vignetting correction
+					double vignmul = 1.0;
+					if (dovign)
+						vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
 
-      bool valid = !((Dx >= max_x)   || (Dy >= max_y) || (Dx < min_x) || (Dy < min_y));
-
-      // Convert only valid pixels
-      if (valid) {
-        // Extract integer and fractions of source screen coordinates
-        int xc  =  (int) floor (Dx) ; Dx -= (double)xc;
-        int yc  =  (int) floor (Dy) ; Dy -= (double)yc;
-        int ys = yc +1 - n2 ; // smallest y-index used for interpolation
-        int xs = xc +1 - n2 ; // smallest x-index used for interpolation
-
-        unsigned short sr[2][2], sg[2][2], sb[2][2];
-
-        if (ys >= 0 && ys <= miy2 && xs >= 0 && xs <= mix2)   // all interpolation pixels inside image
-          cubint (original, xs, ys, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]));
-        else { // edge pixels
-          transformed->r[y][x] = 0;
-          transformed->g[y][x] = 0;
-          transformed->b[y][x] = 0;
+					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
+                        cubintch (chorig[c], xc-1, yc-1, Dx, Dy, &(chtrans[c][y][x]), vignmul);
+					else { // edge pixels
+						int y1 = CLIPTO(yc,   0, original->height-1);
+						int y2 = CLIPTO(yc+1, 0, original->height-1);
+						int x1 = CLIPTO(xc,   0, original->width-1);
+						int x2 = CLIPTO(xc+1, 0, original->width-1);
+                        int val = vignmul*(chorig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chorig[c][y1][x2]*Dx*(1.0-Dy) + chorig[c][y2][x1]*(1.0-Dx)*Dy + chorig[c][y2][x2]*Dx*Dy);
+                        chtrans[c][y][x] = CLIP(val);
+					}
+				}
+				else
+					// not valid (source pixel x,y not inside source image, etc.)
+					chtrans[c][y][x] = 0;
+			}
         }
-      }
-      else {
-        // not valid (source pixel x,y not inside source image, etc.)
-        transformed->r[y][x] = 0;
-        transformed->g[y][x] = 0;
-        transformed->b[y][x] = 0;
-      }
     }
-  }
-}*/
+}
+
+void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+
+	double  w2 = (double) oW  / 2.0 - 0.5;
+	double  h2 = (double) oH  / 2.0 - 0.5;
+
+	// auxiliary variables for distortion correction
+	double a = params->distortion.amount;
+
+	// auxiliary variables for rotation
+	double cost = cos(params->rotate.degree * 3.14/180.0);
+	double sint = sin(params->rotate.degree * 3.14/180.0);
+
+	// auxiliary variables for vignetting
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
+	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
+	double mul = (1.0-v) / tanh(b);
+	bool dovign = params->vignetting.amount != 0;
+
+	double ascale = params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0;
+
+    // main cycle
+	#pragma omp parallel for if (multiThread)
+    for (int y=0; y<transformed->height; y++) {
+        double y_d = ascale * (y + cy - h2);			// centering y coord & scale
+        for (int x=0; x<transformed->width; x++) {
+            double x_d = ascale * (x + cx - w2);		// centering x coord & scale
+
+			// rotate
+            double Dx = x_d * cost - y_d * sint;
+            double Dy = x_d * sint + y_d * cost;
+
+            // distortion correction
+            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+            double s = 1.0 - a + a * r ;
+	        Dx *= s;
+            Dy *= s;
+
+            // de-center
+            Dx += w2;
+            Dy += h2;
+
+            // Extract integer and fractions of source screen coordinates
+            int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
+            int yc = (int)Dy; Dy -= (double)yc; yc -= sy;
+
+            // Convert only valid pixels
+            if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
+
+                // multiplier for vignetting correction
+            	double vignmul = 1.0;
+                if (dovign)
+                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+
+                if (yc < original->height-1 && xc < original->width-1) {  // all interpolation pixels inside image
+                    int r = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
+                    int g = vignmul*(original->g[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->g[yc][xc+1]*Dx*(1.0-Dy) + original->g[yc+1][xc]*(1.0-Dx)*Dy + original->g[yc+1][xc+1]*Dx*Dy);
+                    int b = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
+                    transformed->r[y][x] = CLIP(r);
+                    transformed->g[y][x] = CLIP(g);
+                    transformed->b[y][x] = CLIP(b);
+                }
+                else { // edge pixels
+                	int y1 = CLIPTO(yc,   0, original->height-1);
+                	int y2 = CLIPTO(yc+1, 0, original->height-1);
+                	int x1 = CLIPTO(xc,   0, original->width-1);
+                	int x2 = CLIPTO(xc+1, 0, original->width-1);
+                    int r = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
+                    int g = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
+                    int b = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
+                    transformed->r[y][x] = CLIP(r);
+                    transformed->g[y][x] = CLIP(g);
+                    transformed->b[y][x] = CLIP(b);
+                }
+            }
+            else {
+                // not valid (source pixel x,y not inside source image, etc.)
+                transformed->r[y][x] = 0;
+                transformed->g[y][x] = 0;
+                transformed->b[y][x] = 0;
+            }
+        }
+    }
+}
+
+double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
+
+	MyTime t1,t2;
+	t1.set ();
+	double scaleU = 1.0;
+	double scaleL = 0.001;
+	while (scaleU - scaleL > 0.001) {
+		double scale = (scaleU + scaleL) / 2.0;
+
+        int orx, ory, orw, orh;
+        bool clipped = transCoord (oW, oH, 0, 0, oW, oH, orx, ory, orw, orh, scale);
+
+        if (clipped)
+        	scaleU = scale;
+        else
+        	scaleL = scale;
+	}
+	t2.set ();
+	printf ("autofill time=%d\n", t2.etime(t1));
+	return scaleL;
+}
+
+bool ImProcFunctions::needsCA () {
+
+	return fabs (params->cacorrection.red) > 1e-15 || fabs (params->cacorrection.blue) > 1e-15;
+}
+bool ImProcFunctions::needsDistortion () {
+
+	return fabs (params->distortion.amount) > 1e-15;
+}
+bool ImProcFunctions::needsRotation	() {
+
+	return fabs (params->rotate.degree) > 1e-15;
+}
+bool ImProcFunctions::needsPerspective () {
+
+	return false;
+}
+bool ImProcFunctions::needsVignetting () {
+
+	return params->vignetting.amount != 0;
+}
+bool ImProcFunctions::needsTransform () {
+
+	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsVignetting ();
+}
+
 
 }
 

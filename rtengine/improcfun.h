@@ -40,9 +40,6 @@ class ImProcFunctions {
         static int* zcache;
         static unsigned short gamma2curve[65536];
 
-        struct STemp {
-            int cx, cy, sx, sy, oW, oH;
-        };
 		cmsHTRANSFORM monitorTransform;
 
         int chroma_scale;
@@ -52,13 +49,20 @@ class ImProcFunctions {
 		double scale;
 		bool multiThread;
 
-        void transform_         (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to);
-        void simpltransform_    (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to);
-        void vignetting_        (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to);
-        void transform_sep_     (Image16* original, Image16* transformed, const ProcParams* params, STemp sizes, int row_from, int row_to);
+        void simpltransform     (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+        void vignetting         (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH);
+        void transformNonSep    (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+        void transformSep    	(Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
         void sharpenHaloCtrl    (LabImage* lab, unsigned short** blurmap, unsigned short** base, int W, int H);
         void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to);
         void dcdamping          (float** aI, unsigned short** aO, float damping, int W, int H);
+
+        bool needsCA			();
+        bool needsDistortion	();
+        bool needsRotation		();
+        bool needsPerspective	();
+        bool needsVignetting	();
+
 
     public:
 
@@ -71,29 +75,28 @@ class ImProcFunctions {
         ~ImProcFunctions ();
 
         void setScale 		(double iscale);
-		
+
+        bool needsTransform ();
+
         void firstAnalysis  (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
-    
         void rgbProc        (Image16* working, LabImage* lab, int* tonecurve, SHMap* shmap);
         void luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to);
         void colorCurve     (LabImage* lold, LabImage* lnew);
         void sharpening     (LabImage* lab, unsigned short** buffer);
         void lumadenoise    (LabImage* lab, int** buffer);
         void colordenoise   (LabImage* lab, int** buffer);
-        void transform      (Image16* original, Image16* transformed, const ProcParams* params, int cx, int cy, int sx, int sy, int oW, int oH);
-        void simpltransform (Image16* original, Image16* transformed, const ProcParams* params, int cx, int cy, int sx, int sy, int oW, int oH);
-        void vignetting     (Image16* original, Image16* transformed, const ProcParams* params, int cx, int cy, int oW, int oH);
+        void transform      (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
         void lab2rgb        (LabImage* lab, Image8* image);
         void resize         (Image16* src, Image16* dst);
-
         void deconvsharpening(LabImage* lab, unsigned short** buffer);
 
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 
-        static bool transCoord     (const ProcParams* params, int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv);
-        static bool transCoord     (const ProcParams* params, int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue);
-        static void getAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
+        bool transCoord     (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
+        bool transCoord     (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
+        void getAutoExp  	(unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
+        double getTransformAutoFill (int oW, int oH);
 };
-};
+}
 #endif

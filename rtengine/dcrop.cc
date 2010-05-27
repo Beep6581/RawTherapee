@@ -72,11 +72,8 @@ void Crop::update (int todo, bool internal) {
     else if (params.resize.dataspec==2)
         params.resize.scale = (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? parent->fw : parent->fh);
 
-    MyTime t1,t2,t3,t4,t5,t6,t7,t8,t9;
-
     parent->ipf.setScale (skip);
 
-    t1.set ();
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
     bool overrideWindow = false;
@@ -96,7 +93,8 @@ void Crop::update (int todo, bool internal) {
         baseCrop = resizeCrop;
     else
         baseCrop = origCrop;
-    bool needstransform  = fabs(params.rotate.degree)>1e-15 || fabs(params.distortion.amount)>1e-15 || fabs(params.cacorrection.red)>1e-15 || fabs(params.cacorrection.blue)>1e-15;
+
+    bool needstransform  = parent->ipf.needsTransform();
 
     if (todo & M_INIT) {
         parent->minit.lock ();
@@ -138,32 +136,19 @@ void Crop::update (int todo, bool internal) {
         parent->minit.unlock ();
     }
 
-    t2.set ();
-    if (settings->verbose) printf ("C-INIT: %d\n", t2.etime(t1));
-
-    bool needsvignetting = params.vignetting.amount!=0;
-
-    if ((!needstransform && !needsvignetting && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
+    // transform
+    if ((!needstransform && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
         delete transCrop;
         transCrop = NULL;
-      }
-    // check if the transformation has been switched on:
-    else if ((needstransform || needsvignetting) && !transCrop) 
-        transCrop = new Image16 (cropw, croph);
-    if ((todo & M_TRANSFORM) && !needstransform && needsvignetting) 
-        parent->ipf.vignetting (baseCrop, transCrop, &params, cropx/skip, cropy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
-    else if ((todo & M_TRANSFORM) && needstransform) {
-        if (skip==1)
-            parent->ipf.transform (baseCrop, transCrop, &params, cropx/skip, cropy/skip, trafx*params.resize.scale/skip, trafy*params.resize.scale/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
-        else
-            parent->ipf.simpltransform (baseCrop, transCrop, &params, cropx/skip, cropy/skip, trafx*params.resize.scale/skip, trafy*params.resize.scale/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
     }
+    if (needstransform && !transCrop)
+        transCrop = new Image16 (cropw, croph);
+    if ((todo & M_TRANSFORM) && needstransform)
+    	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx*params.resize.scale/skip, trafy*params.resize.scale/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
     if (transCrop)
         baseCrop = transCrop;
 
-    t3.set ();
-    if (settings->verbose) printf ("C-TRANSFORM: %d\n", t3.etime(t2));
-
+    // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
@@ -171,16 +156,11 @@ void Crop::update (int todo, bool internal) {
         cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);
     }
 
-    t4.set ();
-    if (settings->verbose) printf ("C-BLURMAP: %d\n", t4.etime(t3));
-
-    if (todo & M_RGBCURVE) {
+    // shadows & highlights & tone curve & convert to cielab
+    if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve, cshmap);
-    }
 
-    t5.set ();
-    if (settings->verbose) printf ("C-RGB: %d\n", t5.etime(t4));
-
+    // apply luminance operations
     if (todo & M_LUMINANCE) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
         if (skip==1) {
@@ -189,22 +169,16 @@ void Crop::update (int todo, bool internal) {
         }
     }
 
-    t6.set ();
-    if (settings->verbose) printf ("C-LUMINANCE: %d\n", t6.etime(t5));
-
+    // apply color operations
     if (todo & M_COLOR) {
         parent->ipf.colorCurve (laboCrop, labnCrop);
         if (skip==1)
             parent->ipf.colordenoise (labnCrop, cbuffer);
     }
 
-    t7.set ();
-    if (settings->verbose) printf ("C-COLOR: %d\n", t7.etime(t6));
-
+    // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
 
-    t8.set ();
-    if (settings->verbose) printf ("C-RGBCONVERT: %d\n", t8.etime(t7));
     if (cropImageListener) {
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)
@@ -219,9 +193,6 @@ void Crop::update (int todo, bool internal) {
         cropImageListener->setDetailedCrop (final, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
         delete final;
     }
-
-    t9.set ();
-    if (settings->verbose) printf ("Total crop processing time: %d\n", t9.etime(t1));
 
     cropMutex.unlock ();
 
@@ -292,7 +263,7 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     // determine which part of the source image is required to compute the crop rectangle
     int orx, ory, orw, orh;
     ProcParams& params = parent->params;
-    ImProcFunctions::transCoord (&params, parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
+    parent->ipf.transCoord (parent->fw, parent->fh, bx1, by1, bw, bh, orx, ory, orw, orh);
         
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -341,7 +312,7 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     }
     
     cropx = bx1;
-    cropy = bx2;
+    cropy = by1;
     trafx = orx;
     trafy = ory;
 
