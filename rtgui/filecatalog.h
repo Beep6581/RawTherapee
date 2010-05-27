@@ -178,7 +178,7 @@ class FileCatalog : public Gtk::VBox,
 				void setFilterPanel (FilterPanel* fpanel);
 				void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
-                bool on_my_button_press_event(GdkEventButton* event);
+                bool capture_event(GdkEventButton* event);
                 void filterChanged ();
                 void runFilterDialog ();
 
