@@ -178,13 +178,21 @@ class CoarseTransformParams {
 };
 
 /**
+  * Common transformation parameters
+  */
+class CommonTransformParams {
+
+	public:
+		bool autofill;
+};
+
+/**
   * Parameters of the rotation
   */
 class RotateParams {
     
     public:
         double  degree;
-        bool    fill;
 };
 
 /**
@@ -193,7 +201,18 @@ class RotateParams {
 class DistortionParams {
 
     public:
+		bool    uselensfun;
         double  amount;
+};
+
+/**
+  * Parameters of the perspective correction
+  */
+class PerspectiveParams {
+
+    public:
+		int  horizontal;
+		int  vertical;
 };
 
 /**
@@ -300,8 +319,10 @@ class ProcParams {
         SHParams                sh;             ///< Shadow/highlight enhancement parameters
         CropParams              crop;           ///< Crop parameters
         CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
+        CommonTransformParams	commonTrans;	///< Common transformation parameters (autofill)
         RotateParams            rotate;         ///< Rotation parameters
         DistortionParams        distortion;     ///< Lens distortion correction parameters
+        PerspectiveParams       perspective;    ///< Perspective correction parameters
         CACorrParams            cacorrection;   ///< Lens c/a correction parameters
         VignettingParams        vignetting;     ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;        ///< Channel mixer parameters

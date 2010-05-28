@@ -33,22 +33,13 @@ Rotate::Rotate () : ToolPanel (), degAdd(false) {
   degree->setAdjusterListener (this); 
   pack_start (*degree);
 
-  fill = Gtk::manage (new Gtk::CheckButton (M("TP_ROTATE_FILL")));
-  pack_start (*fill);
-
   selectStraight = Gtk::manage (new Gtk::Button (M("TP_ROTATE_SELECTLINE")));
   Gtk::Image* selimg = Gtk::manage (new Gtk::Image (argv0+"/images/straighten16.png"));
   selectStraight->set_image (*selimg);
   pack_start (*selectStraight, Gtk::PACK_SHRINK, 2);
 
-  autoCrop = Gtk::manage (new Gtk::Button (M("TP_ROTATE_AUTOCROP")));
-  pack_start (*autoCrop, Gtk::PACK_SHRINK, 2); 
-
   selectStraight->signal_pressed().connect( sigc::mem_fun(*this, &Rotate::selectStraightPressed) );
-  autoCrop->signal_pressed().connect( sigc::mem_fun(*this, &Rotate::autoCropPressed) );
-  fillConn = fill->signal_toggled().connect( sigc::mem_fun(*this, &Rotate::fillPressed) );
 
-  fill->set_active (true);
   show_all ();
 }
 
@@ -56,17 +47,10 @@ void Rotate::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
-    if (pedited) {
+    if (pedited)
         degree->setEditedState (pedited->rotate.degree ? Edited : UnEdited);
-        fill->set_inconsistent (!pedited->rotate.fill);
-    }
 
     degree->setValue (pp->rotate.degree);
-    fillConn.block (true);
-    fill->set_active (pp->rotate.fill);
-    fillConn.block (false);
-    
-    lastFill = pp->rotate.fill;
     
     enableListener ();
 }
@@ -74,12 +58,9 @@ void Rotate::read (const ProcParams* pp, const ParamsEdited* pedited) {
 void Rotate::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->rotate.degree = degree->getValue ();
-    pp->rotate.fill   = fill->get_active ();
 
-    if (pedited) {
+    if (pedited)
         pedited->rotate.degree = degree->getEditedState ();
-        pedited->rotate.fill   = !fill->get_inconsistent();
-    }
 }
 
 void Rotate::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
@@ -112,40 +93,10 @@ void Rotate::selectStraightPressed () {
         rlistener->straightenRequested ();
 }
 
-void Rotate::autoCropPressed () {
-
-    if (rlistener)
-        rlistener->autoCropRequested ();
-}
-
-void Rotate::fillPressed () {
-
-    if (batchMode) {
-        if (fill->get_inconsistent()) {
-            fill->set_inconsistent (false);
-            fillConn.block (true);
-            fill->set_active (false);
-            fillConn.block (false);
-        }
-        else if (lastFill)
-            fill->set_inconsistent (true);
-
-        lastFill = fill->get_active ();
-    }
-
-    if (listener) {
-        if (fill->get_active())
-            listener->panelChanged (EvROTDegree, M("TP_ROTATE_FILL")+' '+M("GENERAL_ENABLED"));
-        else
-            listener->panelChanged (EvROTFill, M("TP_ROTATE_FILL")+' '+M("GENERAL_DISABLED"));
-    }
-}
-
 void Rotate::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
     degree->showEditedCB ();
-    removeIfThere (this, autoCrop);
 }
 
 void Rotate::setAdjusterBehavior (bool brotadd) {

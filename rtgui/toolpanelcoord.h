@@ -45,16 +45,20 @@
 #include <colorshift.h>
 #include <cacorrection.h>
 #include <distortion.h>
+#include <perspective.h>
 #include <rotate.h>
 #include <vignetting.h>
 #include <toolbar.h>
+#include <lensgeom.h>
+#include <lensgeomlistener.h>
+
 
 class ImageEditorCoordinator;
 
 class ToolPanelCoordinator :    public ToolPanelListener, 
                                 public ProfileChangeListener, 
                                 public WBProvider,
-                                public RotateListener,
+                                public LensGeomListener,
                                 public SpotWBListener,
                                 public CropPanelListener,
                                 public ICMPanelListener,
@@ -64,8 +68,10 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         
         WhiteBalance* whitebalance;
         Vignetting* vignetting;
+        LensGeometry* lensgeom;
         Rotate* rotate;
         Distortion* distortion;
+        PerspCorrection* perspective;
         CACorrection* cacorrection;
         ColorShift* colorshift;
         HLRecovery* hlrecovery;

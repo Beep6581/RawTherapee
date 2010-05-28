@@ -39,10 +39,12 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lcurve              = Gtk::manage (new LCurve ());
     colorboost          = Gtk::manage (new ColorBoost ());
     colorshift          = Gtk::manage (new ColorShift ());
+    lensgeom			= Gtk::manage (new LensGeometry ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
+    perspective			= Gtk::manage (new PerspCorrection ());
     cacorrection        = Gtk::manage (new CACorrection ());
     hlrecovery          = Gtk::manage (new HLRecovery ());
     chmixer             = Gtk::manage (new ChMixer ());
@@ -64,11 +66,13 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);
-    addPanel (transformPanel, rotate,           M("TP_ROTATE_LABEL"));         toolPanels.push_back (rotate);
-    addPanel (transformPanel, distortion,       M("TP_DISTORTION_LABEL"));     toolPanels.push_back (distortion);
-    addPanel (transformPanel, cacorrection,     M("TP_CACORRECTION_LABEL"));   toolPanels.push_back (cacorrection);
-    addPanel (transformPanel, vignetting,       M("TP_VIGNETTING_LABEL"));     toolPanels.push_back (vignetting);
     addPanel (transformPanel, resize,           M("TP_RESIZE_LABEL"));         toolPanels.push_back (resize);
+    addPanel (transformPanel, lensgeom,         M("TP_LENSGEOM_LABEL"));       toolPanels.push_back (lensgeom);
+    addPanel (lensgeom->getPackBox(), rotate,       M("TP_ROTATE_LABEL"));       toolPanels.push_back (rotate);
+    addPanel (lensgeom->getPackBox(), perspective,  M("TP_PERSPECTIVE_LABEL"));  toolPanels.push_back (perspective);
+    addPanel (lensgeom->getPackBox(), distortion,   M("TP_DISTORTION_LABEL"));   toolPanels.push_back (distortion);
+    addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL")); toolPanels.push_back (cacorrection);
+    addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));   toolPanels.push_back (vignetting);
     addPanel (colorPanel, icm,                  M("TP_ICM_LABEL"));            toolPanels.push_back (icm);
 
     toolPanels.push_back (coarse);
@@ -110,7 +114,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
     whitebalance->setWBProvider (this);
     whitebalance->setSpotWBListener (this);
-    rotate->setRotateListener (this);
+    lensgeom->setLensGeomListener (this);
+    rotate->setLensGeomListener (this);
     crop->setCropPanelListener (this);
     icm->setICMPanelListener (this);
 

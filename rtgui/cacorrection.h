@@ -28,7 +28,7 @@ class CACorrection : public Gtk::VBox, public AdjusterListener, public ToolPanel
   protected:
     Adjuster* red;
     Adjuster* blue;
-    bool      valaAdd, valbAdd;
+    bool      vAdd;
 
   public:
 
@@ -40,7 +40,7 @@ class CACorrection : public Gtk::VBox, public AdjusterListener, public ToolPanel
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool baadd, bool bbadd);
+    void setAdjusterBehavior (bool badd);
 };
 
 #endif

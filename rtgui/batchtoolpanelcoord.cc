@@ -126,7 +126,8 @@ void BatchToolPanelCoordinator::initSession () {
         vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
         rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
         distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
-        cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA_RED], options.baBehav[ADDSET_CA_BLUE]);
+        perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
+        cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
         colorshift->setAdjusterBehavior (options.baBehav[ADDSET_CS_BLUEYELLOW], options.baBehav[ADDSET_CS_GREENMAGENTA]);
         colorboost->setAdjusterBehavior (options.baBehav[ADDSET_CBOOST_AMOUNT]);
         lumadenoise->setAdjusterBehavior (options.baBehav[ADDSET_LD_EDGETOLERANCE]);
@@ -158,8 +159,9 @@ void BatchToolPanelCoordinator::initSession () {
 
         if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
         if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;
-        if (options.baBehav[ADDSET_CA_RED])  pparams.cacorrection.red = 0;
-        if (options.baBehav[ADDSET_CA_BLUE])  pparams.cacorrection.blue = 0;
+        if (options.baBehav[ADDSET_PERSPECTIVE])  pparams.perspective.horizontal = pparams.perspective.vertical = 0;
+        if (options.baBehav[ADDSET_CA])  pparams.cacorrection.red = 0;
+        if (options.baBehav[ADDSET_CA])  pparams.cacorrection.blue = 0;
         if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;
 
         for (int i=0; i<toolPanels.size(); i++) {

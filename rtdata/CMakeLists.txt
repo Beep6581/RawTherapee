@@ -1,6 +1,6 @@
 
 file (GLOB IMAGEFILES "images/*.png")
-file (GLOB PROFILEFILES "profiles/*.pp2")
+file (GLOB PROFILEFILES "profiles/*.pp3")
 file (GLOB LANGUAGEFILES "languages/*")
 # THEMEDIR includes subfolders for image resources for some themes; doing the normal glob won't work.
 set (THEMEDIR "themes")

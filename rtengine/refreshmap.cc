@@ -79,7 +79,7 @@ ALL,    //    EvCTRotate,
 ALL,    //    EvCTHFlip,
 ALL,    //    EvCTVFlip,
 TRANSFORM,  //    EvROTDegree,
-TRANSFORM,  //    EvROTFill,
+TRANSFORM,  //    EvTransAutoFill,
 TRANSFORM,  //    EvDISTAmount,
 ALL,    //    EvBookmarkSelected,
 CROP,   //    EvCrop,
@@ -101,6 +101,7 @@ ALL,    //    EvResizeWidth
 ALL,    //    EvResizeHeight
 ALL,    //    EvResizeEnabled
 ALL,    //    EvProfileChangeNotification
-RETINEX    //    EvShrHighQuality
-	};
+RETINEX,    //    EvShrHighQuality
+TRANSFORM  //    EvPerspCorr
+};
 

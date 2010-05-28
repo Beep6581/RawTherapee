@@ -174,9 +174,12 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_DISTORTION_AMOUNT"), ADDSET_DIST_AMOUNT, false);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_PERSPECTIVE_LABEL"));
+    appendBehavList (mi, M("TP_PERSPECTIVE_HORIZONTAL")+", "+M("TP_PERSPECTIVE_VERTICAL"), ADDSET_PERSPECTIVE, false);
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CACORRECTION_LABEL"));
-    appendBehavList (mi, M("TP_CACORRECTION_BLUE"), ADDSET_CA_BLUE, true);
-    appendBehavList (mi, M("TP_CACORRECTION_RED"), ADDSET_CA_RED, true);
+    appendBehavList (mi, M("TP_CACORRECTION_BLUE")+", "+M("TP_CACORRECTION_RED"), ADDSET_CA, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_VIGNETTING_LABEL"));
