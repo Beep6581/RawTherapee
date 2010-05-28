@@ -117,10 +117,16 @@ void ProcParams::setDefaults () {
     coarse.hflip    = false;
     coarse.vflip    = false;
     
+    commonTrans.autofill = true;
+
     rotate.degree       = 0;
-    rotate.fill         = true;
-    distortion.amount   = 0;
+
+    distortion.amount     = 0;
+    distortion.uselensfun = false;
     
+    perspective.horizontal = 0;
+    perspective.vertical   = 0;
+
     cacorrection.red  = 0;
     cacorrection.blue = 0;
     
@@ -259,12 +265,19 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Coarse Transformation", "HorizontalFlip",  coarse.hflip);
     keyFile.set_boolean ("Coarse Transformation", "VerticalFlip",    coarse.vflip);
     
+    // save commonTrans
+    keyFile.set_boolean ("Common Properties for Transformations", "AutoFill", commonTrans.autofill);
+
     // save rotate
     keyFile.set_double  ("Rotation", "Degree", rotate.degree);
-    keyFile.set_double  ("Rotation", "Fill",   rotate.fill);
 
     // save distortion
     keyFile.set_double  ("Distortion", "Amount", distortion.amount);
+    keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
+
+    // save perspective correction
+    keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
+    keyFile.set_integer  ("Perspective", "Vertical",   perspective.vertical);
 
     // save C/A correction
     keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
@@ -464,15 +477,25 @@ if (keyFile.has_group ("Coarse Transformation")) {
     // load rotate
 if (keyFile.has_group ("Rotation")) {    
     if (keyFile.has_key ("Rotation", "Degree"))   rotate.degree = keyFile.get_double ("Rotation", "Degree");
-    if (keyFile.has_key ("Rotation", "Fill"))     rotate.fill   = keyFile.get_double ("Rotation", "Fill");
+}
+	// load commonTrans
+if (keyFile.has_group ("Common Properties for Transformations")) {
+    if (keyFile.has_key ("Common Properties for Transformations", "AutoFill"))   commonTrans.autofill = keyFile.get_boolean ("Common Properties for Transformations", "AutoFill");
 }
 
     // load distortion
 if (keyFile.has_group ("Distortion")) {    
-    if (keyFile.has_key ("Distortion", "Amount")) distortion.amount = keyFile.get_double ("Distortion", "Amount");
+    if (keyFile.has_key ("Distortion", "Amount"))     distortion.amount     = keyFile.get_double  ("Distortion", "Amount");
+    if (keyFile.has_key ("Distortion", "UseLensFun")) distortion.uselensfun = keyFile.get_boolean ("Distortion", "UseLensFun");
 }
     
-    // load c/a correction
+	// load perspective correction
+if (keyFile.has_group ("Perspective")) {
+	if (keyFile.has_key ("Perspective", "Horizontal")) 	perspective.horizontal 	= keyFile.get_integer ("Perspective", "Horizontal");
+	if (keyFile.has_key ("Perspective", "Vertical")) 	perspective.vertical 	= keyFile.get_integer ("Perspective", "Vertical");
+}
+
+// load c/a correction
 if (keyFile.has_group ("CACorrection")) {    
     if (keyFile.has_key ("CACorrection", "Red"))  cacorrection.red  = keyFile.get_double ("CACorrection", "Red");
     if (keyFile.has_key ("CACorrection", "Blue")) cacorrection.blue = keyFile.get_double ("CACorrection", "Blue");
@@ -534,7 +557,7 @@ if (keyFile.has_group ("IPTC")) {
         printf ("-->%s\n", e.what().c_str());
     }
     catch (...) {
-        printf ("-->ismeretlen exception!\n");
+        printf ("-->unknown exception!\n");
         return 1;
     }
 }
@@ -614,8 +637,11 @@ bool ProcParams::operator== (const ProcParams& other) {
         && coarse.hflip == other.coarse.hflip
         && coarse.vflip == other.coarse.vflip
         && rotate.degree == other.rotate.degree
-        && rotate.fill == other.rotate.fill
+        && commonTrans.autofill == other.commonTrans.autofill
+        && distortion.uselensfun == other.distortion.uselensfun
         && distortion.amount == other.distortion.amount
+        && perspective.horizontal == other.perspective.horizontal
+        && perspective.vertical == other.perspective.vertical
         && cacorrection.red == other.cacorrection.red
         && cacorrection.blue == other.cacorrection.blue
         && vignetting.amount == other.vignetting.amount

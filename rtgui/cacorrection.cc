@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CACorrection::CACorrection () : valaAdd(false), valbAdd(false) {
+CACorrection::CACorrection () : vAdd(false) {
 
     red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0));
     red->setAdjusterListener (this); 
@@ -83,16 +83,14 @@ void CACorrection::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvCACorr, Glib::ustring::compose ("%1=%3\n%2=%4", M("TP_CACORRECTION_RED"), M("TP_CACORRECTION_BLUE"), Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(4), red->getValue()), Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(4), blue->getValue())));
 }
 
-void CACorrection::setAdjusterBehavior (bool baadd, bool bbadd) {
+void CACorrection::setAdjusterBehavior (bool badd) {
 
-    if (!valaAdd && baadd || valaAdd && !baadd)
+    if (!vAdd && badd || vAdd && !badd) {
         red->setLimits (-0.005, 0.005, 0.0001, 0);
-    
-    if (!valbAdd && bbadd || valbAdd && !bbadd)
         blue->setLimits (-0.005, 0.005, 0.0001, 0);
-    
-    valaAdd = baadd;
-    valbAdd = bbadd;
+    }
+
+    vAdd = badd;
 }
 
 void CACorrection::setBatchMode (bool batchMode) {

@@ -27,7 +27,7 @@
 
 Options options;
 Glib::ustring versionString      = "v3.0 alpha 1";
-Glib::ustring paramFileExtension = ".pp2";
+Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options () {
 

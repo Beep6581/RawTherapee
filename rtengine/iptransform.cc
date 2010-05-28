@@ -76,18 +76,33 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
 
     double oW = W*params->resize.scale;
     double oH = H*params->resize.scale;
-	double  w2 = (double) oW  / 2.0 - 0.5;
-	double  h2 = (double) oH  / 2.0 - 0.5;
+	double w2 = (double) oW  / 2.0 - 0.5;
+	double h2 = (double) oH  / 2.0 - 0.5;
 	double a = params->distortion.amount;
 	double cost = cos(params->rotate.degree * 3.14/180.0);
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-	double ascale = ascaleDef>0 ? ascaleDef : (params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0);
+    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
+    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
+    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
+
+	double ascale = ascaleDef>0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0);
 
 	for (int i=0; i<src.size(); i++) {
 
 		double y_d = ascale * (src[i].y - h2);
 		double x_d = ascale * (src[i].x - w2);
+
+        y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
+        x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+
+        x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
+        y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
 
 		double Dx = x_d * cost - y_d * sint;
 		double Dy = x_d * sint + y_d * cost;
@@ -197,14 +212,10 @@ void ImProcFunctions::transform (Image16* original, Image16* transformed, int cx
 	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective()) && needsVignetting())
 		vignetting (original, transformed, cx, cy, oW, oH);
 	else if (!needsCA()) {
-		MyTime t1,t2;
-		t1.set ();
 		if (scale==1)
 			transformNonSep (original, transformed, cx, cy, sx, sy, oW, oH);
 		else
 			simpltransform (original, transformed, cx, cy, sx, sy, oW, oH);
-		t2.set ();
-		printf ("transform time=%d\n", t2.etime(t1));
 	}
 	else
 		transformSep (original, transformed, cx, cy, sx, sy, oW, oH);
@@ -260,14 +271,34 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 	double mul = (1.0-v) / tanh(b);
 	bool dovign = params->vignetting.amount != 0;
 
-	double ascale = params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0;
+	// auxiliary variables for vertical perspective correction
+    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
+    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+
+	// auxiliary variables for horizontal perspective correction
+    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
+    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
+
+	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
 
 	// main cycle
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
-        double y_d = ascale * (y + cy - h2);			// centering y coord & scale
         for (int x=0; x<transformed->width; x++) {
             double x_d = ascale * (x + cx - w2);		// centering x coord & scale
+            double y_d = ascale * (y + cy - h2);		// centering y coord & scale
+
+            // horizontal perspective transformation
+            y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
+            x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+
+            // vertical perspective transformation
+            x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
+            y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
 
 			// rotate
             double Dx = x_d * cost - y_d * sint;
@@ -354,16 +385,36 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 	double mul = (1.0-v) / tanh(b);
 	bool dovign = params->vignetting.amount != 0;
 
-	double ascale = params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0;
+	// auxiliary variables for vertical perspective correction
+    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
+    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+
+	// auxiliary variables for horizontal perspective correction
+    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
+    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
+
+	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
 
 	// main cycle
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
-        double y_d = ascale * (y + cy - h2);			// centering y coord & scale
         for (int x=0; x<transformed->width; x++) {
             double x_d = ascale * (x + cx - w2);		// centering x coord & scale
+            double y_d = ascale * (y + cy - h2);		// centering y coord & scale
 
-			// rotate
+            // horizontal perspective transformation
+            y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
+            x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+
+            // vertical perspective transformation
+            x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
+            y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+
+            // rotate
             double Dxc = x_d * cost - y_d * sint;
             double Dyc = x_d * sint + y_d * cost;
 
@@ -430,14 +481,34 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
 	double mul = (1.0-v) / tanh(b);
 	bool dovign = params->vignetting.amount != 0;
 
-	double ascale = params->rotate.fill ? getTransformAutoFill (oW, oH) : 1.0;
+	// auxiliary variables for vertical perspective correction
+    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
+    double vpalpha = (90 - vpdeg) / 180.0 * 3.14;
+    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+
+	// auxiliary variables for horizontal perspective correction
+    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
+    double hpalpha = (90 - hpdeg) / 180.0 * 3.14;
+    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
+
+	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
 
     // main cycle
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
-        double y_d = ascale * (y + cy - h2);			// centering y coord & scale
         for (int x=0; x<transformed->width; x++) {
+            double y_d = ascale * (y + cy - h2);		// centering y coord & scale
             double x_d = ascale * (x + cx - w2);		// centering x coord & scale
+
+            // horizontal perspective transformation
+            y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
+            x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+
+            // vertical perspective transformation
+            x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
+            y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
 
 			// rotate
             double Dx = x_d * cost - y_d * sint;
@@ -498,8 +569,6 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
 
 double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
 
-	MyTime t1,t2;
-	t1.set ();
 	double scaleU = 1.0;
 	double scaleL = 0.001;
 	while (scaleU - scaleL > 0.001) {
@@ -513,8 +582,6 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
         else
         	scaleL = scale;
 	}
-	t2.set ();
-	printf ("autofill time=%d\n", t2.etime(t1));
 	return scaleL;
 }
 
@@ -532,11 +599,11 @@ bool ImProcFunctions::needsRotation	() {
 }
 bool ImProcFunctions::needsPerspective () {
 
-	return false;
+	return params->perspective.horizontal || params->perspective.vertical;
 }
 bool ImProcFunctions::needsVignetting () {
 
-	return params->vignetting.amount != 0;
+	return params->vignetting.amount;
 }
 bool ImProcFunctions::needsTransform () {
 

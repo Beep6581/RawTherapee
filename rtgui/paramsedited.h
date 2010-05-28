@@ -140,17 +140,30 @@ class CoarseTransformParamsEdited {
         bool vflip;
 };
 
+class CommonTransformParamsEdited {
+
+	public:
+		bool autofill;
+};
+
 class RotateParamsEdited {
     
     public:
         bool degree;
-        bool fill;
 };
 
 class DistortionParamsEdited {
 
     public:
+		bool uselensfun;
         bool amount;
+};
+
+class PerspectiveParamsEdited {
+
+	public:
+		bool horizontal;
+		bool vertical;
 };
 
 class VignettingParamsEdited {
@@ -230,8 +243,10 @@ class ParamsEdited {
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           
         CoarseTransformParamsEdited   coarse;         
+        CommonTransformParamsEdited	  commonTrans;
         RotateParamsEdited            rotate;         
-        DistortionParamsEdited        distortion;     
+        DistortionParamsEdited        distortion;
+        PerspectiveParamsEdited		  perspective;
         CACorrParamsEdited            cacorrection;   
         VignettingParamsEdited        vignetting;     
         ChannelMixerParamsEdited      chmixer;        
