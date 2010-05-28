@@ -132,6 +132,7 @@ class FileCatalog : public Gtk::VBox,
 #endif		
         std::vector<Glib::ustring> fileNameList;
         std::set<Glib::ustring> editedFiles;
+        guint modifierKey; // any modifiers held when rank button was pressed
 
         void addAndOpenFile (const Glib::ustring& fname);
         void checkAndAddFile (Glib::RefPtr<Gio::File> info);
@@ -177,6 +178,7 @@ class FileCatalog : public Gtk::VBox,
 				void setFilterPanel (FilterPanel* fpanel);
 				void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
+                bool capture_event(GdkEventButton* event);
                 void filterChanged ();
                 void runFilterDialog ();
 

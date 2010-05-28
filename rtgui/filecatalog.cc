@@ -97,6 +97,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
         bRank[i]->set_relief (Gtk::RELIEF_NONE);
         buttonBar->pack_start (*bRank[i], Gtk::PACK_SHRINK);
         bCateg[i+2] = bRank[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bRank[i]));    
+        bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }  
     bRank[0]->set_tooltip_text (M("FILEBROWSER_SHOWRANK1HINT"));
     bRank[1]->set_tooltip_text (M("FILEBROWSER_SHOWRANK2HINT"));
@@ -180,6 +181,12 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     checkCounter = 2;
     g_timeout_add (CHECKTIME, _directoryUpdater, this);
 #endif
+}
+
+bool FileCatalog::capture_event(GdkEventButton* event){
+    // need to record modifiers on the button press, because signal_toggled does not pass the event.
+    modifierKey = event->state;
+    return false;
 }
 
 void FileCatalog::exifInfoButtonToggled()
@@ -584,27 +591,74 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 }
 
 void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
-
+    
     for (int i=0; i<8; i++)
         bCateg[i].block (true);
 
     fileBrowser->getScrollPosition (hScrollPos[lastScrollPos], vScrollPos[lastScrollPos]);
-
-    // seek the one pressed
-    for (int i=0; i<8; i++) {
-        categoryButtons[i]->set_active (categoryButtons[i]==b);
-        if (categoryButtons[i]==b)
-            lastScrollPos = i;
+    
+    //find the number of the button
+    int toggled_button = 0;
+    for (int i=0; i<8; i++){
+        if(categoryButtons[i]==b){
+            toggled_button = i;
+        }
     }
-       
-    // change the images of the buttons to reflect current ranking
-    for (int i=0; i<5; i++) 
-        bRank[i]->set_image (*igranked[i]);
-    for (int i=0; i<5; i++)
-        if (b==bRank[i]) 
-            for (int j=0; j<=i; j++)
-                bRank[j]->set_image (*iranked[j]);               
-
+    
+    //was control key pressed
+    bool control_down = modifierKey & GDK_CONTROL_MASK;
+    
+    // for a normal switch, untoggle the other buttons
+    if (!control_down || toggled_button==0 || toggled_button==7){
+        for (int i=0; i<8; i++) {
+            categoryButtons[i]->set_active (i==toggled_button);
+        }
+    }else{
+        // but if we have control clicked a star we need to untoggle non-stars
+        categoryButtons[0]->set_active(false);
+        categoryButtons[1]->set_active(false);
+        categoryButtons[7]->set_active(false);
+    }
+    
+    // how we color the buttons depends on how many are selected
+    int toggled_count = 0;
+    for (int i=0; i<8; i++) {
+        if (categoryButtons[i]->get_active())
+            toggled_count ++;
+    }
+    
+    // if we have untoggled all the buttons, set to show all
+    if (toggled_count == 0){
+        toggled_button = 0;
+        categoryButtons[0]->set_active(true);
+    }
+    
+    // so set the right images
+    if (toggled_count == 1){
+        int n_stars = 0;
+        // only one button is active, find out which
+        // if its not a star button, then n_stars stays on zero
+        for (int i=0; i<5; i++){
+            if (bRank[i]->get_active())
+                n_stars = i+1;
+        }
+        // color up to the correct rank
+        for (int i=0; i<5; i++){
+            if (i<n_stars)
+                bRank[i]->set_image (*iranked[i]);
+            else
+                bRank[i]->set_image (*igranked[i]);
+        }
+    }else{
+        // if several stars are selected, color them
+        for (int i=0; i<5; i++){
+            if (bRank[i]->get_active())
+                bRank[i]->set_image (*iranked[i]);
+            else
+                bRank[i]->set_image (*igranked[i]);
+        }
+    }
+    
     fileBrowser->applyFilter (getFilter ());
 
     // rearrange panels according to the selected filter
