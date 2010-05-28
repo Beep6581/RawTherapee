@@ -470,6 +470,7 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
 
     for (int i=0; i<tbe.size(); i++) {
         tbe[i]->thumbnail->setRank (rank);
+        tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
         if (tbe[i]->getThumbButtonSet())
                 tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
     }
