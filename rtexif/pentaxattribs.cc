@@ -815,8 +815,12 @@ class PAEVStepsInterpreter:public Interpreter {
 public:
 	PAEVStepsInterpreter(){}
 	virtual std::string toString (Tag* t) {
-		   strcpy(buffer, (t->toInt(0,BYTE) & 0x20)?"1/3 EV steps":"1/2 EV steps");
-		   return buffer;
+		std::ostringstream str;
+		if( t->toInt(0,BYTE) & 0x20 )
+		   str << "1/3 EV steps";
+		else
+			str << "1/2 EV steps";
+		return str.str();
 	}
 };
 PAEVStepsInterpreter paEVStepsInterpreter;
@@ -825,8 +829,12 @@ class PAEDialinInterpreter:public Interpreter {
 public:
 	PAEDialinInterpreter(){}
 	virtual std::string toString (Tag* t) {
-		   strcpy(buffer, (t->toInt(0,BYTE) & 0x40)?"P Shift":"Tv or Av");
-		   return buffer;
+		std::ostringstream str;
+		if(  t->toInt(0,BYTE) & 0x40 )
+		   str << "P Shift";
+		else
+			str << "Tv or Av";
+	    return str.str();
 	}
 };
 PAEDialinInterpreter paEDialinInterpreter;
@@ -835,8 +843,12 @@ class PAApertureRingUseInterpreter: public Interpreter {
 public:
 	PAApertureRingUseInterpreter(){}
 	virtual std::string toString (Tag* t) {
-		   strcpy(buffer, (t->toInt(0,BYTE) & 0x80)?"Permitted":"Prohibited");
-		   return buffer;
+		std::ostringstream str;
+		if(  t->toInt(0,BYTE) & 0x80 )
+			str << "Permitted";
+		else
+			str << "Prohibited";
+	    return str.str();
 	}
 };
 PAApertureRingUseInterpreter paApertureRingUseInterpreter;
@@ -960,7 +972,7 @@ class PAAFPointSelectedInterpreter: public Interpreter {
 public:
 	PAAFPointSelectedInterpreter(){}
 	virtual std::string toString (Tag* t) {
-		char *ps[]={"Upper-left","Top","Upper-right","Left","Mid-left","Center","Mid-right","Right","Lower-left","Bottom","Lower-right"};
+		const char *ps[]={"Upper-left","Top","Upper-right","Left","Mid-left","Center","Mid-right","Right","Lower-left","Bottom","Lower-right"};
 		int c = t->toInt(0,SHORT);
 		if( !c )
 			return "Auto";
