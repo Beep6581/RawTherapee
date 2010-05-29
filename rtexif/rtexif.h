@@ -23,6 +23,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <sstream>
 #include <stdlib.h>
 
 namespace rtexif {
@@ -30,7 +31,7 @@ namespace rtexif {
 enum TagType {INVALID=0, BYTE=1, ASCII=2, SHORT=3, LONG=4, RATIONAL=5, UNDEFINED=7, SSHORT=8, SLONG=9, SRATIONAL=10, FLOAT=11, DOUBLE=12, OLYUNDEF=13, SUBDIR=99};
 enum ActionCode {DONTWRITE=0, WRITE=1, SYSTEM=2};
 enum ByteOrder {INTEL=0x4949, MOTOROLA=0x4D4D};
-enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI};
+enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI,TABLESUBDIR};
 
 struct TIFFHeader {
 
@@ -48,7 +49,7 @@ struct TagAttrib {
     int                 action;    //=0: dont write it to the output, =1: write it to the output, =2: dont write, dont show, =3: write, dont show
     int                 editable;
     const  TagAttrib*   subdirAttribs;     // =0 ->not subdir
-    unsigned short      ID;
+    unsigned short      ID;      // Numeric identifier of tag (or index inside DirectoryTable)
     const char*         name;
     Interpreter*        interpreter;
 };
@@ -66,29 +67,48 @@ class TagDirectory {
     TagDirectory ();
     TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border);
     TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border);
-   ~TagDirectory ();
+    virtual ~TagDirectory ();
    
     inline ByteOrder getOrder      () const { return order; }   
     TagDirectory*    getParent     () { return parent; }
+    TagDirectory*    getRoot       ();
     inline int       getCount      () const { return tags.size (); }
     const TagAttrib* getAttrib     (int id);
     const TagAttrib* getAttrib     (const char* name);
     const TagAttrib* getAttribTable() { return attribs; }
-    Tag*             getTag        (const char* name) const;
-    Tag*             getTag        (int ID) const;
-    void             addTag        (Tag* a);
-    void             addTagFront   (Tag* a);
-    void             replaceTag    (Tag* a);
+    virtual Tag*     getTag        (const char* name) const;
+    virtual Tag*     getTag        (int ID) const;
+    virtual Tag*     findTag       (const char* name) const;
+    virtual void     addTag        (Tag* a);
+    virtual void     addTagFront   (Tag* a);
+    virtual void     replaceTag    (Tag* a);
     inline Tag*      getTagByIndex (int ix) { return tags[ix]; }
     inline void      setOrder      (ByteOrder bo) { order = bo; }   
 
-    int           calculateSize ();
-    int           write         (int start, unsigned char* buffer);
-    TagDirectory* clone         (TagDirectory* parent);
-    void          applyChange   (std::string field, std::string value);
+    virtual int      calculateSize ();
+    virtual int      write         (int start, unsigned char* buffer);
+    virtual TagDirectory* clone    (TagDirectory* parent);
+    virtual void     applyChange   (std::string field, std::string value);
 
-    void printAll () const;
-    void sort     ();
+    virtual void     printAll () const;
+    virtual void     sort     ();
+};
+
+// a table of tags: id are offset from beginning and not identifiers
+class TagDirectoryTable: public TagDirectory {
+   protected:
+	unsigned char *values; // Tags values are saved internally here
+	long           zeroOffset; // Offset 0 (index 0) could be at an offset from values
+	long           valuesSize; // Size of allocated memory
+	TagType        defaultType; // Default type of all tags in this directory
+   public:
+	TagDirectoryTable();
+	TagDirectoryTable (TagDirectory* p, unsigned char *v,int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border);
+	TagDirectoryTable (TagDirectory* p, FILE* f, int memsize,int offset, TagType type, const TagAttrib* ta, ByteOrder border);
+	virtual ~TagDirectoryTable();
+	virtual int calculateSize ();
+	virtual int write (int start, unsigned char* buffer);
+	virtual TagDirectory* clone (TagDirectory* parent);
 };
 
 // a class representing a single tag
@@ -101,6 +121,7 @@ class Tag {
     unsigned char* value;
     int            valuesize;
     bool           keep;
+    bool           allocOwnMemory;
 
     const TagAttrib* attrib;
     TagDirectory*    parent;
@@ -109,10 +130,12 @@ class Tag {
     
   public:
     Tag (TagDirectory* parent, FILE* f, int base);                          // parse next tag from the file
-    Tag (TagDirectory* parent, const TagAttrib* attr); 
+    Tag (TagDirectory* parent, const TagAttrib* attr);
+    Tag (TagDirectory* parent, const TagAttrib* attr, unsigned char *data, TagType t);
     Tag (TagDirectory* parent, const TagAttrib* attr, int data, TagType t);  // create a new tag from array (used
     Tag (TagDirectory* parent, const TagAttrib* attr, const char* data);  // create a new tag from array (used
    ~Tag ();
+   void initType       (unsigned char *data, TagType type);
    void initInt        (int data, TagType t, int count=1);
    void initString     (const char* text);
    void initSubDir     ();
@@ -130,6 +153,7 @@ class Tag {
     inline ByteOrder     getOrder  () const { return parent ? parent->getOrder() : INTEL; }
     inline TagDirectory* getParent () const { return parent; }
     int                  getValueSize () const { return valuesize; }
+    bool                 getOwnMemory() const { return allocOwnMemory; }
 
     // read/write value
     int    toInt        (int ofs=0, TagType astype=INVALID);
@@ -223,6 +247,20 @@ class ChoiceInterpreter : public Interpreter {
         }
 };
 
+
+template< class T >
+class IntLensInterpreter : public Interpreter {
+protected:
+   typedef std::multimap< T, std::string> container_t;
+   typedef typename std::multimap< T, std::string>::iterator it_t;
+   typedef std::pair< T, std::string> p_t;
+   container_t choices;
+
+   virtual std::string guess(const T lensID, double focalLength, double maxApertureAtFocal );
+};
+
+template class IntLensInterpreter< int >;
+inline int getTypeSize( TagType type );
 inline unsigned short sget2 (unsigned char *s, ByteOrder order);
 inline int sget4 (unsigned char *s, ByteOrder order);
 inline unsigned short get2 (FILE* f, ByteOrder order);
@@ -241,9 +279,17 @@ extern const TagAttrib nikon2Attribs[];
 extern const TagAttrib nikon3Attribs[];
 extern const TagAttrib canonAttribs[];
 extern const TagAttrib pentaxAttribs[];
+extern const TagAttrib pentaxLensDataAttribs[];
+extern const TagAttrib pentaxAEInfoAttribs[];
+extern const TagAttrib pentaxCameraSettingsAttribs[];
+extern const TagAttrib pentaxFlashInfoAttribs[];
+extern const TagAttrib pentaxSRInfoAttribs[];
+extern const TagAttrib pentaxBatteryInfoAttribs[];
 extern const TagAttrib fujiAttribs[];
 extern const TagAttrib minoltaAttribs[];
 extern const TagAttrib sonyAttribs[];
+extern const TagAttrib sonyCameraSettingsAttribs[];
+extern const TagAttrib sonyCameraSettingsAttribs2[];
 extern const TagAttrib olympusAttribs[];
 };
 #endif

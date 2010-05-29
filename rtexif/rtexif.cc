@@ -99,6 +99,11 @@ void TagDirectory::sort () {
             for (int j=0; tags[i]->getDirectory(j); j++)
                 tags[i]->getDirectory(j)->sort ();
 }
+TagDirectory*  TagDirectory::getRoot()
+{
+	if(parent) return parent->getRoot();
+	else return this;
+}
 
 const TagAttrib* TagDirectory::getAttrib (int id) {
 
@@ -183,6 +188,24 @@ Tag* TagDirectory::getTag (const char* name) const {
             return getTag (attribs[i].ID);
   }
   return NULL;
+}
+
+Tag* TagDirectory::findTag (const char* name) const {
+	  if (attribs) {
+		for (int i=0; attribs[i].ignore!=-1; i++)
+			if (!strcmp (attribs[i].name, name)){
+				Tag* t= getTag (attribs[i].ID);
+				if(t) return t;
+				else break;
+			}
+	  }
+	  for (int i=0; i<tags.size(); i++)
+	     if(tags[i]->isDirectory()){
+	    	 TagDirectory *dir = tags[i]->getDirectory();
+	    	 Tag* t=dir->findTag(name);
+	    	 if(t) return t;
+	     }
+	  return NULL;
 }
 
 int TagDirectory::calculateSize () {
@@ -310,12 +333,63 @@ void TagDirectory::applyChange (std::string name, std::string value) {
     }
 }
 
+TagDirectoryTable::TagDirectoryTable ()
+:valuesSize(0),zeroOffset(0)
+{
+}
+
+TagDirectoryTable::TagDirectoryTable (TagDirectory* p, unsigned char *v,int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border)
+:TagDirectory(p,ta,border),valuesSize(memsize),zeroOffset(offs),defaultType( type )
+{
+	  values = new unsigned char[valuesSize];
+	  memcpy(values,v,valuesSize);
+	  for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
+		  Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)),type);
+		  tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+	  }
+}
+
+TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border)
+:TagDirectory(p,ta,border),valuesSize(memsize),zeroOffset(offs),defaultType( type )
+{
+	  values = new unsigned char[valuesSize];
+	  fread (values, 1, valuesSize, f);
+
+	  for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
+		  Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)),type);
+		  tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+	  }
+}
+TagDirectory* TagDirectoryTable::clone (TagDirectory* parent) {
+
+    TagDirectory* td = new TagDirectoryTable (parent,values,valuesSize,zeroOffset,defaultType, attribs, order);
+    return td;
+}
+
+TagDirectoryTable::~TagDirectoryTable()
+{
+	if(values)
+		delete [] values;
+}
+int TagDirectoryTable::calculateSize ()
+{
+	return valuesSize;
+}
+
+int TagDirectoryTable::write (int start, unsigned char* buffer) {
+	if( values && valuesSize){
+        memcpy(buffer+start,values,valuesSize);
+        return start+valuesSize;
+	}else
+		return start;
+}
+
 //--------------- class Tag ---------------------------------------------------
 // this class represents a tag stored in the directory
 //-----------------------------------------------------------------------------
 
 Tag::Tag (TagDirectory* p, FILE* f, int base) 
-  : parent(p), value(NULL), directory(NULL), count(0), attrib(NULL), type(INVALID) {
+  : parent(p), value(NULL), directory(NULL), count(0), attrib(NULL), type(INVALID),allocOwnMemory(true) {
 
   tag   = get2 (f, getOrder());
   type  = (TagType)get2 (f, getOrder());
@@ -334,7 +408,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
   int save = ftell(f) + 4;
 
   // load value field (possibly seek before)
-  valuesize = count * ("11124811248484"[type<14?type:0]-'0');
+  valuesize = count * getTypeSize(type);
 
   if (valuesize > 4) 
     fseek (f, get4(f, getOrder()) + base, SEEK_SET);
@@ -453,44 +527,103 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
         return;
     }
   }
-  else if (type==UNDEFINED && attrib && attrib->subdirAttribs) {
-        count = 1;
-        type = LONG;
-        directory = new TagDirectory*[2];
-        directory[0] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
-        directory[1] = NULL;
+  else if (attrib && attrib->subdirAttribs) {
+	    // Some subdirs are specific of maker and model
+	    char make[128], model[128];
+	    Tag* tmake = parent->getRoot()->getTag ("Make");
+	    if (tmake) tmake->toString (make);
+	    else       make[0] = 0;
+	    Tag* tmodel = parent->getRoot()->getTag ("Model");
+	    if (tmodel) tmodel->toString (model);
+	    else        model[0] = 0;
+
+
+        if (!strncmp(make, "SONY", 4)) {
+			switch( tag ){
+			case 0x0114:
+				{
+			        directory = new TagDirectory*[2];
+			        directory[1] = NULL;
+					if( strstr(model, "A330")  || strstr(model, "A380") )
+					   directory[0] = new TagDirectoryTable (parent, f, valuesize*2,0,SHORT , sonyCameraSettingsAttribs2, MOTOROLA);
+					else
+					   directory[0] = new TagDirectoryTable (parent, f, valuesize*2,0,SHORT , sonyCameraSettingsAttribs, MOTOROLA);
+					makerNoteKind = TABLESUBDIR;
+				}
+				break;
+			default:
+				goto defsubdirs;
+			}
+        }else if (!strncmp(make, "PENTAX", 6)) {
+			switch( tag ){
+			case 0x005c:
+			case 0x0205:
+			case 0x0206:
+			case 0x0208:
+			case 0x0216:
+		        directory = new TagDirectory*[2];
+		        directory[1] = NULL;
+		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , attrib->subdirAttribs, getOrder());
+		        makerNoteKind = TABLESUBDIR;
+				break;
+			case 0x0207:
+				{   // There are 2 format pentaxLensDataAttribs
+					int offsetFirst = 4;
+					if( strstr(model, "*ist") || strstr(model, "GX-1") || strstr(model, "K100D") || strstr(model, "K110D") )
+						offsetFirst = 3;
+			        directory = new TagDirectory*[2];
+			        directory[1] = NULL;
+					directory[0] = new TagDirectoryTable (parent, f, valuesize,offsetFirst,BYTE , attrib->subdirAttribs, getOrder());
+					makerNoteKind = TABLESUBDIR;
+				}
+				break;
+			default:
+				goto defsubdirs;
+			}
+        }else if(type==UNDEFINED){
+            count = 1;
+            type = LONG;
+        	directory[0] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
+        }else
+        	goto defsubdirs;
   }
   else {
     // read value
     value = new unsigned char [valuesize];
     fread (value, 1, valuesize, f);
-
-      // if it is a subdirectory, load it (there may be several directories if count>1)
-      if (attrib && attrib->subdirAttribs) {
-        int pos = ftell (f);
-        // count the number of valid subdirs
-        int sdcount = count;
-        if (sdcount>0) {
-            if (parent->getAttribTable()==olympusAttribs)
-                sdcount = 1;
-            // allocate space
-            directory = new TagDirectory*[sdcount+1];
-            // load directories
-            for (int j=0,i=0; j<count; j++,i++) {
-                int newpos = base + toInt(j*4, LONG);
-                fseek (f, newpos, SEEK_SET);
-                directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
-                fseek (f, pos, SEEK_SET);
-            }
-            // set the terminating NULL
-            directory[sdcount] = NULL;
-         }
-         else
-            type = INVALID;
-      }
   }
   // seek back to the saved position
   fseek (f, save, SEEK_SET);
+  return;
+defsubdirs:
+		// read value
+		value = new unsigned char [valuesize];
+		fread (value, 1, valuesize, f);
+          int pos = ftell (f);
+          // count the number of valid subdirs
+          int sdcount = count;
+          if (sdcount>0) {
+              if (parent->getAttribTable()==olympusAttribs)
+                  sdcount = 1;
+              // allocate space
+              directory = new TagDirectory*[sdcount+1];
+              // load directories
+              for (int j=0,i=0; j<count; j++,i++) {
+                  int newpos = base + toInt(j*4, LONG);
+                  fseek (f, newpos, SEEK_SET);
+                  directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
+                  fseek (f, pos, SEEK_SET);
+              }
+              // set the terminating NULL
+              directory[sdcount] = NULL;
+           }
+           else
+              type = INVALID;
+
+// seek back to the saved position
+fseek (f, save, SEEK_SET);
+return;
+
 }
 
 Tag* Tag::clone (TagDirectory* parent) {
@@ -525,7 +658,7 @@ Tag* Tag::clone (TagDirectory* parent) {
 Tag::~Tag () {
 
   // delete value
-  if (value)
+  if (value && allocOwnMemory)
     delete [] value;
   
   // if there are directories behind the tag, delete them
@@ -559,13 +692,15 @@ void Tag::fromInt (int v) {
 
 void Tag::fromString (const char* v, int size) {
 
-    delete value;
+	if( value && allocOwnMemory)
+        delete [] value;
     if (size<0)
         valuesize = strlen (v) + 1;
     else
         valuesize = size;
     count = valuesize;
-    value = new unsigned char [valuesize];
+    if( allocOwnMemory )
+       value = new unsigned char [valuesize];
     memcpy ((char*)value, v, valuesize);
 }
 
@@ -720,7 +855,6 @@ int Tag::calculateSize () {
         size += valuesize;
    else if (makerNoteKind==HEADERIFD)
         size += valuesize;
-
     return size;
 }    
 
@@ -770,6 +904,11 @@ int Tag::write (int offs, int dataOffs, unsigned char* buffer) {
         dataOffs += directory[0]->write (dataOffs, buffer);
         return dataOffs;
     }
+    else if( makerNoteKind==TABLESUBDIR){
+    	sset4 (dataOffs, buffer+offs, parent->getOrder());
+        dataOffs = directory[0]->write (dataOffs, buffer);
+        return dataOffs;
+    }
     else if (!directory[1]) {
         sset4 (dataOffs, buffer+offs, parent->getOrder());
         return directory[0]->write (dataOffs, buffer);
@@ -790,19 +929,35 @@ int Tag::write (int offs, int dataOffs, unsigned char* buffer) {
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr)
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(0), valuesize(0), value(NULL), type(INVALID) {
+ : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(0), valuesize(0), value(NULL), type(INVALID),allocOwnMemory(true) {
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, int data, TagType t) 
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(t) {
+ : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(t),allocOwnMemory(true) {
 
     initInt (data, t);
 }
 
+Tag::Tag (TagDirectory* p, const TagAttrib* attr, unsigned char *data, TagType t)
+ : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(t),allocOwnMemory(false) {
+
+    initType (data, t);
+}
+
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, const char* text) 
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(ASCII) {
+ : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(ASCII),allocOwnMemory(true) {
 
     initString (text);
+}
+
+void Tag::initType (unsigned char *data, TagType type)
+{
+    valuesize = getTypeSize(type);
+    if( allocOwnMemory ){
+       value = new unsigned char[valuesize];
+       memcpy ((char*)value, data, valuesize);
+    }else
+    	value = data;
 }
 
 void Tag::initInt (int data, TagType t, int cnt) {
@@ -1382,6 +1537,13 @@ short int int2_to_signed (short unsigned int i) {
   return u.s;
 }
 
+int getTypeSize( TagType type ){
+	return ("11124811248484"[type<14?type:0]-'0');
+}
+
+#undef	ABS
+#define ABS(a)	   (((a) < 0) ? -(a) : (a))
+
 /* Function to parse and extract focal length and aperture information from description
  * @fullname must conform to the following formats
  * <focal>mm f/<aperture>
@@ -1430,5 +1592,75 @@ bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, d
      return false;
 }
 
+template<class T>
+std::string IntLensInterpreter< T >::guess( const T lensID, double focalLength, double maxApertureAtFocal )
+{
+	 it_t r;
+	 size_t nFound = choices.count( lensID );
 
+	 switch( nFound )
+	 {
+	 case 0: // lens Unknown
+	    {
+	       std::ostringstream s;
+	       s << lensID;
+		   return s.str();
+	    }
+	 case 1: // lens found
+		 r = choices.find ( lensID );
+		 return r->second;
+	 default:
+		 // More than one hit: we must guess
+		 break;
+	 }
+
+
+	double deltaMin = 1000.;
+
+	 /* Choose the best match: thanks to exiftool by Phil Harvey
+	  * first throws for "out of focal range" and lower or upper aperture of the lens compared to MaxApertureAtFocal
+	  * if the lens is not constant aperture, calculate aprox. aperture of the lens at focalLength
+	  * and compare with actual aperture.
+	*/
+	std::string bestMatch("Unknown");
+	std::ostringstream candidates;
+	for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); r++  ){
+		double a1,a2,f1,f2,lensAperture,dif;
+
+		if( !extractLensInfo( r->second ,f1,f2,a1,a2) )
+		    continue;
+		if( f1 == 0. || a1 == 0.)
+			continue;
+
+		if( focalLength < f1 - .5 || focalLength > f2 + 0.5 )
+		    continue;
+		if( maxApertureAtFocal > 0.1){
+			 if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 +0.15)
+				continue;
+
+			 if( a1 == a2 || f1 == f2)
+				 lensAperture = a1;
+			 else
+				 lensAperture = exp( log(a1)+(log(a2)-log(a1))/(log(f2)-log(f1))*(log(focalLength)-log(f1)) );
+
+			 dif = ABS(lensAperture - maxApertureAtFocal);
+		}else
+			 dif = 0;
+		if( dif < deltaMin ){
+		     deltaMin = dif;
+			 bestMatch = r->second;
+		}
+		if( dif < 0.15){
+		     if( candidates.tellp() )
+				 candidates << "\n or " <<  r->second;
+			 else
+				 candidates <<  r->second;
+		}
+
+	 }
+	 if( !candidates.tellp() )
+	    return bestMatch;
+	 else
+	    return candidates.str();
+}
 }

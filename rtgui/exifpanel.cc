@@ -205,7 +205,7 @@ void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children 
                 addDirectory (t->getDirectory(j), ch);
             }
         else 
-            addTag (root, t->nameToString (), t->valueToString (), t->getAttrib() ? t->getAttrib()->action : 0, t->getAttrib() && t->getAttrib()->editable);
+            addTag (root, t->nameToString (), t->valueToString (), t->getAttrib() ? (t->getOwnMemory()?t->getAttrib()->action:SYSTEM) : 0, t->getAttrib() && t->getAttrib()->editable);
     }
 }
 

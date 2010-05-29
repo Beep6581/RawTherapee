@@ -70,6 +70,15 @@ class PAPictureModeInterpreter : public ChoiceInterpreter {
             choices[17] = "Fireworks";
             choices[18] = "Text";
             choices[19] = "Panorama";
+            choices[20] = "3-D";
+            choices[21] = "Black & White";
+            choices[22] = "Sepia";
+            choices[23] = "Red";
+            choices[24] = "Pink";
+            choices[25] = "Purple";
+            choices[26] = "Blue";
+            choices[27] = "Green";
+            choices[28] = "Yellow";
             choices[30] = "Self Portrait";
             choices[31] = "Illustrations";
             choices[33] = "Digital Filter";
@@ -90,6 +99,8 @@ class PAPictureModeInterpreter : public ChoiceInterpreter {
             choices[60] = "Kids";
             choices[61] = "Blur Reduction";
             choices[65] = "Half-length Portrait";
+            choices[221] = "P";
+            choices[255] = "PICT";
         }
 };
 PAPictureModeInterpreter paPictureModeInterpreter;
@@ -212,10 +223,20 @@ class PAISOInterpreter : public ChoiceInterpreter {
             choices[400] = "400";
             choices[800] = "800";
             choices[1600] = "1600";
-            choices[3200] = "320";
+            choices[3200] = "3200";
         }
 };
 PAISOInterpreter paISOInterpreter;
+
+class PAFNumberInterpreter: public Interpreter {
+public:
+	PAFNumberInterpreter () {}
+    virtual std::string toString (Tag* t) {
+        sprintf (buffer, "%0.1f", t->toDouble()/10);
+        return buffer;
+    }
+};
+PAFNumberInterpreter paFNumberInterpreter;
 
 class PAMeteringModeInterpreter : public ChoiceInterpreter {
     public:
@@ -307,190 +328,678 @@ class PASharpnessInterpreter : public ChoiceInterpreter {
 };
 PASharpnessInterpreter paSharpnessInterpreter;
 
-class PALensTypeInterpreter : public ChoiceInterpreter {
+class PAPictureModeInterpreter2: public ChoiceInterpreter {
+public:
+	PAPictureModeInterpreter2(){
+		choices[ 0] = "Program";
+		choices[ 1] = "Hi-speed Program";
+		choices[ 2] = "DOF Program";
+		choices[ 3] = "MTF Program";
+		choices[ 4] = "Standard";
+		choices[ 5] = "Portrait";
+		choices[ 6] = "Landscape";
+		choices[ 7] = "Macro";
+		choices[ 8] = "Sport ";
+		choices[ 9] = "Night Scene Portrait ";
+		choices[10] = "No Flash";
+		choices[11] = "Night Scene";
+		choices[12] = "Surf & Snow";
+		choices[13] = "Text";
+		choices[14] = "Sunset";
+		choices[15] = "Kids";
+		choices[16] = "Pet";
+		choices[17] = "Candlelight";
+		choices[18] = "Museum";
+		choices[19] = "Food ";
+		choices[20] = "Stage Lighting";
+		choices[21] = "Night Snap";
+		choices[256+4] = "Auto PICT";
+		choices[256+5] = "Auto PICT (Portrait)";
+		choices[256+6] = "Auto PICT (Landscape)";
+		choices[256+7] = "Auto PICT (Macro)";
+		choices[256+8] = "Auto PICT (Sport)";
+		choices[256+8] = "Auto PICT (Sport)";
+		choices[512+0] = "Program (HyP)";
+		choices[512+1] = "Hi-speed Program (HyP)";
+		choices[512+2] = "DOF Program (HyP)";
+		choices[512+3] = "MTF Program (HyP)";
+		choices[3*256] = "Green Mode";
+		choices[4*256] = "Shutter Speed Priority";
+		choices[5*256] = "Aperture Priority";
+		choices[6*256] = "Program Tv Shift";
+		choices[7*256] = "Program Av Shift";
+		choices[8*256] = "Manual";
+		choices[9*256] = "Bulb";
+		choices[10*256] = "Aperture Priority, Off-Auto-Aperture";
+		choices[11*256] = "Manual, Off-Auto-Aperture";
+		choices[12*256] = "Bulb, Off-Auto-Aperture";
+		choices[13*256] = "Shutter & Aperture Priority AE";
+		choices[15*256] = "Sensitivity Priority AE";
+		choices[16*256] = "Flash X-Sync Speed AE";
+	}
+    virtual std::string toString (Tag* t) {
+    	int c = 256*t->toInt(0,BYTE) + t->toInt(1,BYTE);
+        std::map<int,std::string>::iterator r = choices.find (c);
+        if (r!=choices.end()){
+        	std::ostringstream s;
+        	s << r->second;
+        	if( t->toInt(1,BYTE)==0 )
+        		s << "\n1/2 EV steps";
+        	else
+        		s << "\n1/3 EV steps";
+            return s.str();
+        }else {
+            t->toString (buffer);
+            return std::string (buffer);
+        }
+    }
+};
+PAPictureModeInterpreter2 paPictureModeInterpreter2;
+
+class PADriveModeInterpreter : public ChoiceInterpreter{
+	std::map<int,std::string> choices1;
+	std::map<int,std::string> choices2;
+	std::map<int,std::string> choices3;
+public:
+	PADriveModeInterpreter(){
+		choices[0] = "Single-frame";
+		choices[1] = "Continuous";
+		choices[2] = "Continuous (Hi)";
+		choices[3] = "Burst";
+		choices[255] = "Video";
+		choices1[0] = "No Timer";
+		choices1[1] = "Self-timer (12 s)";
+		choices1[2] = "Self-timer (2 s)";
+		choices1[255] = "n/a";
+		choices2[0] = "Shutter Button";
+		choices2[1] = "Remote Control (3 s delay)";
+		choices2[2] = "Remote Control";
+		choices3[0] = "Single Exposure";
+		choices3[1] = "Multiple Exposure";
+		choices3[255] = "Video";
+	}
+    virtual std::string toString (Tag* t) {
+        std::map<int,std::string>::iterator r  = choices.find (t->toInt(0,BYTE));
+        std::map<int,std::string>::iterator r1 = choices1.find (t->toInt(1,BYTE));
+        std::map<int,std::string>::iterator r2 = choices2.find (t->toInt(2,BYTE));
+        std::map<int,std::string>::iterator r3 = choices3.find (t->toInt(3,BYTE));
+        std::ostringstream s;
+        s << ((r !=choices.end())? r->second : "");
+        s << ((r1!=choices1.end())? r1->second : "")<<" ";
+        s << ((r2!=choices2.end())? r2->second : "")<<" ";
+        s << ((r3!=choices3.end())? r3->second : "")<<" ";
+        return s.str();
+    }
+};
+PADriveModeInterpreter paDriveModeInterpreter;
+
+class PAColorSpaceInterpreter: public ChoiceInterpreter{
+public:
+	PAColorSpaceInterpreter(){
+		choices[0] = "sRGB";
+		choices[1] = "Adobe RGB";
+	}
+};
+PAColorSpaceInterpreter paColorSpaceInterpreter;
+
+class PALensTypeInterpreter : public IntLensInterpreter< int > {
     public:
         PALensTypeInterpreter () {
-            choices[256*0+ 0] = "M-42 or No Lens";
-            choices[256*1+ 0] = "K,M Lens";
-            choices[256*2+ 0] = "A Series Lens";
-            choices[256*3+ 0] = "SIGMA";
-            choices[256*3+ 17] = "smc PENTAX-FA SOFT 85mm F2.8";
-            choices[256*3+ 18] = "smc PENTAX-F 1.7X AF ADAPTER";
-            choices[256*3+ 19] = "smc PENTAX-F 24-50mm F4";
-            choices[256*3+ 20] = "smc PENTAX-F 35-80mm F4-5.6";
-            choices[256*3+ 21] = "smc PENTAX-F 80-200mm F4.7-5.6";
-            choices[256*3+ 22] = "smc PENTAX-F FISH-EYE 17-28mm F3.5-4.5";
-            choices[256*3+ 23] = "smc PENTAX-F 100-300mm F4.5-5.6";
-            choices[256*3+ 24] = "smc PENTAX-F 35-135mm F3.5-4.5";
-            choices[256*3+ 25] = "smc PENTAX-F 35-105mm F4-5.6 or SIGMA or Tokina";
-            choices[256*3+ 26] = "smc PENTAX-F* 250-600mm F5.6 ED[IF]";
-            choices[256*3+ 27] = "smc PENTAX-F 28-80mm F3.5-4.5";
-            choices[256*3+ 28] = "smc PENTAX-F 35-70mm F3.5-4.5";
-            choices[256*3+ 29] = "PENTAX-F 28-80mm F3.5-4.5 or SIGMA AF 18-125mm F3.5-5.6 DC";
-            choices[256*3+ 30] = "PENTAX-F 70-200mm F4-5.6";
-            choices[256*3+ 31] = "smc PENTAX-F 70-210mm F4-5.6";
-            choices[256*3+ 32] = "smc PENTAX-F 50mm F1.4";
-            choices[256*3+ 33] = "smc PENTAX-F 50mm F1.7";
-            choices[256*3+ 34] = "smc PENTAX-F 135mm F2.8 [IF]";
-            choices[256*3+ 35] = "smc PENTAX-F 28mm F2.8";
-            choices[256*3+ 36] = "SIGMA 20mm F1.8 EX DG ASPHERICAL RF";
-            choices[256*3+ 38] = "smc PENTAX-F* 300mm F4.5 ED[IF]";
-            choices[256*3+ 39] = "smc PENTAX-F* 600mm F4 ED[IF]";
-            choices[256*3+ 40] = "smc PENTAX-F MACRO 100mm F2.8";
-            choices[256*3+ 41] = "smc PENTAX-F MACRO 50mm F2.8 or Sigma 50mm F2,8 MACRO";
-            choices[256*3+ 44] = "Tamron 35-90mm F4 AF or various SIGMA models";
-            choices[256*3+ 46] = "SIGMA APO 70-200mm F2.8 EX";
-            choices[256*3+ 50] = "smc PENTAX-FA 28-70 F4 AL";
-            choices[256*3+ 51] = "SIGMA 28mm F1.8 EX DG ASPHERICAL MACRO";
-            choices[256*3+ 52] = "smc PENTAX-FA 28-200mm F3.8-5.6 AL[IF]";
-            choices[256*3+ 53] = "smc PENTAX-FA 28-80mm F3.5-5.6 AL";
-            choices[256*3+ 247] = "smc PENTAX-DA FISH-EYE 10-17mm F3.5-4.5 ED[IF]";
-            choices[256*3+ 248] = "smc PENTAX-DA 12-24mm F4 ED AL[IF]";
-            choices[256*3+ 250] = "smc PENTAX-DA 50-200mm F4-5.6 ED";
-            choices[256*3+ 251] = "smc PENTAX-DA 40mm F2.8 Limited";
-            choices[256*3+ 252] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL";
-            choices[256*3+ 253] = "smc PENTAX-DA 14mm F2.8 ED[IF]";
-            choices[256*3+ 254] = "smc PENTAX-DA 16-45mm F4 ED AL";
-            choices[256*3+ 255] = "SIGMA";
-            choices[256*4+ 1] = "smc PENTAX-FA SOFT 28mm F2.8";
-            choices[256*4+ 2] = "smc PENTAX-FA 80-320mm F4.5-5.6";
-            choices[256*4+ 3] = "smc PENTAX-FA 43mm F1.9 Limited";
-            choices[256*4+ 6] = "smc PENTAX-FA 35-80mm F4-5.6";
-            choices[256*4+ 12] = "smc PENTAX-FA 50mm F1.4";
-            choices[256*4+ 15] = "smc PENTAX-FA 28-105mm F4-5.6 [IF]";
-            choices[256*4+ 16] = "TAMRON AF 80-210mm F4-5.6 (178D)";
-            choices[256*4+ 19] = "TAMRON SP AF 90mm F2.8 (172E)";
-            choices[256*4+ 20] = "smc PENTAX-FA 28-80mm F3.5-5.6";
-            choices[256*4+ 21] = "Cosina AF 100-300mm F5.6-6.7";
-            choices[256*4+ 22] = "TOKINA 28-80mm F3.5-5.6";
-            choices[256*4+ 23] = "smc PENTAX-FA 20-35mm F4 AL";
-            choices[256*4+ 24] = "smc PENTAX-FA 77mm F1.8 Limited";
-            choices[256*4+ 25] = "TAMRON SP AF 14mm F2.8";
-            choices[256*4+ 26] = "smc PENTAX-FA MACRO 100mm F3.5";
-            choices[256*4+ 27] = "TAMRON AF28-300mm F/3.5-6.3 LD Aspherical[IF] MACRO (285D)";
-            choices[256*4+ 28] = "smc PENTAX-FA 35mm F2 AL";
-            choices[256*4+ 29] = "TAMRON AF 28-200mm F/3.8-5.6 LD Super II MACRO (371D)";
-            choices[256*4+ 34] = "smc PENTAX-FA 24-90mm F3.5-4.5 AL[IF]";
-            choices[256*4+ 35] = "smc PENTAX-FA 100-300mm F4.7-5.8";
-            choices[256*4+ 36] = "TAMRON AF70-300mm F/4-5.6 LD MACRO";
-            choices[256*4+ 37] = "TAMRON SP AF 24-135mm F3.5-5.6 AD AL (190D)";
-            choices[256*4+ 38] = "smc PENTAX-FA 28-105mm F3.2-4.5 AL[IF]";
-            choices[256*4+ 39] = "smc PENTAX-FA 31mm F1.8AL Limited";
-            choices[256*4+ 41] = "TAMRON AF 28-200mm Super Zoom F3.8-5.6 Aspherical XR [IF] MACRO (A03)";
-            choices[256*4+ 43] = "smc PENTAX-FA 28-90mm F3.5-5.6";
-            choices[256*4+ 44] = "smc PENTAX-FA J 75-300mm F4.5-5.8 AL";
-            choices[256*4+ 45] = "TAMRON 28-300mm F3.5-6.3 Ultra zoom XR";
-            choices[256*4+ 46] = "smc PENTAX-FA J 28-80mm F3.5-5.6 AL";
-            choices[256*4+ 47] = "smc PENTAX-FA J 18-35mm F4-5.6 AL";
-            choices[256*4+ 49] = "TAMRON SP AF 28-75mm F2.8 XR Di (A09)";
-            choices[256*4+ 51] = "smc PENTAX-D FA 50mm F2.8 MACRO";
-            choices[256*4+ 52] = "smc PENTAX-D FA 100mm F2.8 MACRO";
-            choices[256*4+ 75] = "TAMRON SP AF 70-200 F2.8 Di LD [IF] Macro (A001)";
-            choices[256*4+ 229] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL II";
-            choices[256*4+ 230] = "TAMRON SP AF 17-50mm F2.8 XR Di II";
-            choices[256*4+ 231] = "smc PENTAX-DA 18-250mm F3.5-6.3 ED AL [IF]";
-            choices[256*4+ 237] = "Samsung/Schneider D-XENOGON 10-17mm F3.5-4.5";
-            choices[256*4+ 239] = "Samsung D-XENON 12-24mm F4 ED AL [IF]";
-            choices[256*4+ 243] = "smc PENTAX-DA 70mm F2.4 Limited";
-            choices[256*4+ 244] = "smc PENTAX-DA 21mm F3.2 AL Limited";
-            choices[256*4+ 245] = "Schneider D-XENON 50-200mm";
-            choices[256*4+ 246] = "Schneider D-XENON 18-55mm";
-            choices[256*4+ 247] = "smc PENTAX-DA 10-17mm F3.5-4.5 ED [IF] Fisheye zoom";
-            choices[256*4+ 248] = "smc PENTAX-DA 12-24mm F4 ED AL [IF]";
-            choices[256*4+ 249] = "TAMRON XR DiII 18-200mm F3.5-6.3 (A14)";
-            choices[256*4+ 250] = "smc PENTAX-DA 50-200mm F4-5.6 ED";
-            choices[256*4+ 251] = "smc PENTAX-DA 40mm F2.8 Limited";
-            choices[256*4+ 252] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL";
-            choices[256*4+ 253] = "smc PENTAX-DA 14mm F2.8 ED[IF]";
-            choices[256*4+ 254] = "smc PENTAX-DA 16-45mm F4 ED AL";
-            choices[256*5+ 1] = "smc PENTAX-FA* 24mm F2 AL[IF]";
-            choices[256*5+ 2] = "smc PENTAX-FA 28mm F2.8 AL";
-            choices[256*5+ 3] = "smc PENTAX-FA 50mm F1.7";
-            choices[256*5+ 4] = "smc PENTAX-FA 50mm F1.4";
-            choices[256*5+ 5] = "smc PENTAX-FA* 600mm F4 ED[IF]";
-            choices[256*5+ 6] = "smc PENTAX-FA* 300mm F4.5 ED[IF]";
-            choices[256*5+ 7] = "smc PENTAX-FA 135mm F2.8 [IF]";
-            choices[256*5+ 8] = "smc PENTAX-FA MACRO 50mm F2.8";
-            choices[256*5+ 9] = "smc PENTAX-FA MACRO 100mm F2.8";
-            choices[256*5+ 10] = "smc PENTAX-FA* 85mm F1.4 [IF]";
-            choices[256*5+ 11] = "smc PENTAX-FA* 200mm F2.8 ED[IF]";
-            choices[256*5+ 12] = "smc PENTAX-FA 28-80mm F3.5-4.7";
-            choices[256*5+ 13] = "smc PENTAX-FA 70-200mm F4-5.6";
-            choices[256*5+ 14] = "smc PENTAX-FA* 250-600mm F5.6 ED[IF]";
-            choices[256*5+ 15] = "smc PENTAX-FA 28-105mm F4-5.6";
-            choices[256*5+ 16] = "smc PENTAX-FA 100-300mm F4.5-5.6";
-            choices[256*5+ 98] = "smc PENTAX-FA 100-300mm F4.5-5.6";
-            choices[256*6+ 1] = "smc PENTAX-FA* 85mm F1.4 [IF]";
-            choices[256*6+ 2] = "smc PENTAX-FA* 200mm F2.8 ED[IF]";
-            choices[256*6+ 3] = "smc PENTAX-FA* 300mm F2.8 ED[IF]";
-            choices[256*6+ 4] = "smc PENTAX-FA* 28-70mm F2.8 AL";
-            choices[256*6+ 5] = "smc PENTAX-FA* 80-200mm F2.8 ED[IF]";
-            choices[256*6+ 6] = "smc PENTAX-FA* 28-70mm F2.8 AL";
-            choices[256*6+ 7] = "smc PENTAX-FA* 80-200mm F2.8 ED[IF]";
-            choices[256*6+ 8] = "smc PENTAX-FA 28-70mm F4AL";
-            choices[256*6+ 9] = "smc PENTAX-FA 20mm F2.8";
-            choices[256*6+ 10] = "smc PENTAX-FA* 400mm F5.6 ED[IF]";
-            choices[256*6+ 13] = "smc PENTAX-FA* 400mm F5.6 ED[IF]";
-            choices[256*6+ 14] = "smc PENTAX-FA* MACRO 200mm F4 ED[IF]";
-            choices[256*7+ 0] = "smc PENTAX-DA 21mm F3.2 AL Limited";
-            choices[256*7+ 75] = "TAMRON SP AF 70-200mm F2.8 Di LD [IF] Macro (A001)";
-            choices[256*7+ 217] = "smc PENTAX-DA 50-200mm F4-5.6 ED WR";
-            choices[256*7+ 218] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL WR";
-            choices[256*7+ 220] = "TAMRON SP AF 10-24mm F3.5-4.5 Di II LD Aspherical [IF]";
-            choices[256*7+ 222] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL II";
-            choices[256*7+ 223] = "Samsung D-XENON 18-55mm F3.5-5.6 II";
-            choices[256*7+ 224] = "smc PENTAX-DA 15mm F4 ED AL Limited";
-            choices[256*7+ 225] = "Samsung D-XENON 18-250mm F3.5-6.3";
-            choices[256*7+ 229] = "smc PENTAX-DA 18-55mm F3.5-5.6 AL II";
-            choices[256*7+ 230] = "TAMRON AF 17-50mm F2.8 XR Di-II LD (Model A16)";
-            choices[256*7+ 231] = "smc PENTAX-DA 18-250mm F3.5-6.3 ED AL [IF]";
-            choices[256*7+ 233] = "smc PENTAX-DA 35mm F2.8 Macro Limited";
-            choices[256*7+ 234] = "smc PENTAX-DA* 300mm F4 ED [IF] SDM (SDM unused)";
-            choices[256*7+ 235] = "smc PENTAX-DA* 200mm F2.8 ED [IF] SDM (SDM unused)";
-            choices[256*7+ 236] = "smc PENTAX-DA 55-300mm F4-5.8 ED";
-            choices[256*7+ 238] = "TAMRON AF 18-250mm F3.5-6.3 Di II LD Aspherical [IF] MACRO";
-            choices[256*7+ 241] = "smc PENTAX-DA* 50-135mm F2.8 ED [IF] SDM (SDM unused)";
-            choices[256*7+ 242] = "smc PENTAX-DA* 16-50mm F2.8 ED AL [IF] SDM (SDM unused)";
-            choices[256*7+ 243] = "smc PENTAX-DA 70mm F2.4 Limited";
-            choices[256*7+ 244] = "smc PENTAX-DA 21mm F3.2 AL Limited";
-            choices[256*8+ 226] = "smc PENTAX-DA* 55mm F1.4 SDM";
-            choices[256*8+ 227] = "smc PENTAX DA* 60-250mm F4 [IF] SDM";
-            choices[256*8+ 232] = "smc PENTAX-DA 17-70mm F4 AL [IF] SDM";
-            choices[256*8+ 234] = "smc PENTAX-DA* 300mm F4 ED [IF] SDM";
-            choices[256*8+ 235] = "smc PENTAX-DA* 200mm F2.8 ED [IF] SDM";
-            choices[256*8+ 241] = "smc PENTAX-DA* 50-135mm F2.8 ED [IF] SDM";
-            choices[256*8+ 242] = "smc PENTAX-DA* 16-50mm F2.8 ED AL [IF] SDM";
-            choices[256*8+ 255] = "Sigma 70-200mm F2.8 EX DG Macro HSM II or 150-500mm F5-6.3 DG OS";
+            choices.insert(p_t( 0,"M-42 or No Lens"));
+            choices.insert(p_t(256*1, "K,M Lens"));
+            choices.insert(p_t(256*2, "A Series Lens"));
+            choices.insert(p_t(256*3+ 0, "Sigma Lens"));
+            choices.insert(p_t(256*3+ 17, "smc PENTAX-FA SOFT 85mm f/2.8"));
+            choices.insert(p_t(256*3+ 18, "smc PENTAX-F 1.7X AF ADAPTER"));
+            choices.insert(p_t(256*3+ 19, "smc PENTAX-F 24-50mm f/4"));
+            choices.insert(p_t(256*3+ 20, "smc PENTAX-F 35-80mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 21, "smc PENTAX-F 80-200mm f/4.7-5.6"));
+            choices.insert(p_t(256*3+ 22, "smc PENTAX-F FISH-EYE 17-28mm f/3.5-4.5"));
+            choices.insert(p_t(256*3+ 23, "smc PENTAX-F 100-300mm f/4.5-5.6"));
+            choices.insert(p_t(256*3+ 23, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
+            choices.insert(p_t(256*3+ 23, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
+            choices.insert(p_t(256*3+ 24, "smc PENTAX-F 35-135mm f/3.5-4.5"));
+            choices.insert(p_t(256*3+ 25, "smc PENTAX-F 35-105mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
+            choices.insert(p_t(256*3+ 25, "Sigma 55-200mm f/4-5.6 DC"));
+            choices.insert(p_t(256*3+ 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
+            choices.insert(p_t(256*3+ 25, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
+            choices.insert(p_t(256*3+ 25, "Tokina 80-200mm f/2.8 ATX-Pro"));
+            choices.insert(p_t(256*3+ 26, "smc PENTAX-F* 250-600mm f/5.6 ED[IF]"));
+            choices.insert(p_t(256*3+ 27, "smc PENTAX-F 28-80mm f/3.5-4.5"));
+            choices.insert(p_t(256*3+ 27, "Tokina AT-X PRO AF 28-70mm f/2.6-2.8"));
+            choices.insert(p_t(256*3+ 28, "smc PENTAX-F 35-70mm f/3.5-4.5"));
+            choices.insert(p_t(256*3+ 28, "Tokina 19-35mm f/3.5-4.5 AF"));
+            choices.insert(p_t(256*3+ 29, "PENTAX-F 28-80mm f/3.5-4.5"));
+            choices.insert(p_t(256*3+ 29, "Sigma AF 18-125mm f/3.5-5.6 DC"));
+            choices.insert(p_t(256*3+ 29, "Tokina AT-X PRO 28-70mm f/2.6-2.8"));
+            choices.insert(p_t(256*3+ 30, "PENTAX-F 70-200mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 31, "smc PENTAX-F 70-210mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 31, "Tokina AF 730 75-300mm f/4.5-5.6"));
+            choices.insert(p_t(256*3+ 31, "Takumar-F 70-210mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 32, "smc PENTAX-F 50mm f/1.4"));
+            choices.insert(p_t(256*3+ 33, "smc PENTAX-F 50mm f/1.7"));
+            choices.insert(p_t(256*3+ 34, "smc PENTAX-F 135mm f/2.8 [IF]"));
+            choices.insert(p_t(256*3+ 35, "smc PENTAX-F 28mm f/2.8"));
+            choices.insert(p_t(256*3+ 36, "Sigma 20mm f/1.8 EX DG ASPHERICAL RF"));
+            choices.insert(p_t(256*3+ 38, "smc PENTAX-F* 300mm f/4.5 ED[IF]"));
+            choices.insert(p_t(256*3+ 39, "smc PENTAX-F* 600mm f/4 ED[IF]"));
+            choices.insert(p_t(256*3+ 40, "smc PENTAX-F MACRO 100mm f/2.8"));
+            choices.insert(p_t(256*3+ 41, "smc PENTAX-F MACRO 50mm f/2.8"));
+            choices.insert(p_t(256*3+ 41, "Sigma 50mm f/2.8 Macro"));
+            choices.insert(p_t(256*3+ 44, "Sigma AF 10-20mm f/4-5.6 EX DC"));
+            choices.insert(p_t(256*3+ 44, "Sigma 12-24mm f/4.5 EX DG"));
+            choices.insert(p_t(256*3+ 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
+            choices.insert(p_t(256*3+ 44, "Sigma 18-50mm f/3.5-5.6 DC"));
+            choices.insert(p_t(256*3+ 44, "Tamron 35-90mm f/4 AF"));
+            choices.insert(p_t(256*3+ 46, "Sigma APO 70-200mm f/2.8 EX"));
+            choices.insert(p_t(256*3+ 46, "Sigma EX APO 100-300mm f/4 IF"));
+            choices.insert(p_t(256*3+ 50, "smc PENTAX-FA 28-70 f/4 AL"));
+            choices.insert(p_t(256*3+ 51, "Sigma 28mm f/1.8 EX DG ASPHERICAL MACRO"));
+            choices.insert(p_t(256*3+ 52, "smc PENTAX-FA 28-200mm f/3.8-5.6 AL[IF]"));
+            choices.insert(p_t(256*3+ 52, "Tamron AF LD 28-200mm f/3.8-5.6 [IF] Aspherical (171D)"));
+            choices.insert(p_t(256*3+ 53, "smc PENTAX-FA 28-80mm f/3.5-5.6 AL"));
+            choices.insert(p_t(256*3+ 247,"smc PENTAX-DA FISH-EYE 10-17mm f/3.5-4.5 ED[IF]"));
+            choices.insert(p_t(256*3+ 248,"smc PENTAX-DA 12-24mm f/4 ED AL[IF]"));
+            choices.insert(p_t(256*3+ 250,"smc PENTAX-DA 50-200mm f/4-5.6 ED"));
+            choices.insert(p_t(256*3+ 251,"smc PENTAX-DA 40mm f/2.8 Limited"));
+            choices.insert(p_t(256*3+ 252,"smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
+            choices.insert(p_t(256*3+ 253,"smc PENTAX-DA 14mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*3+ 254,"smc PENTAX-DA 16-45mm f/4 ED AL"));
+            choices.insert(p_t(256*3+ 255, "Sigma 18-200mm f/3.5-6.3 DC"));
+            choices.insert(p_t(256*3+ 255, "Sigma DL-II 35-80mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 255, "Sigma DL Zoom 75-300mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 255, "Sigma DF EX Aspherical 28-70mm f/2.8"));
+            choices.insert(p_t(256*3+ 255, "Sigma AF Tele 400mm f/5.6 Multi-coated"));
+            choices.insert(p_t(256*3+ 255, "Sigma 24-60mm f/2.8 EX DG"));
+            choices.insert(p_t(256*3+ 255, "Sigma 70-300mm f/4-5.6 Macro"));
+            choices.insert(p_t(256*3+ 255, "Sigma 55-200mm f/4-5.6 DC"));
+            choices.insert(p_t(256*3+ 255, "Sigma 18-50mm f/2.8 EX DC"));
+            choices.insert(p_t(256*4+ 1,  "smc PENTAX-FA SOFT 28mm f/2.8"));
+            choices.insert(p_t(256*4+ 2,  "smc PENTAX-FA 80-320mm f/4.5-5.6"));
+            choices.insert(p_t(256*4+ 3,  "smc PENTAX-FA 43mm f/1.9 Limited"));
+            choices.insert(p_t(256*4+ 6,  "smc PENTAX-FA 35-80mm f/4-5.6"));
+            choices.insert(p_t(256*4+ 12, "smc PENTAX-FA 50mm f/1.4"));
+            choices.insert(p_t(256*4+ 15, "smc PENTAX-FA 28-105mm f/4-5.6 [IF]"));
+            choices.insert(p_t(256*4+ 16, "Tamron AF 80-210mm f/4-5.6 (178D)"));
+            choices.insert(p_t(256*4+ 19, "Tamron SP AF 90mm f/2.8 (172E)"));
+            choices.insert(p_t(256*4+ 20, "smc PENTAX-FA 28-80mm f/3.5-5.6"));
+            choices.insert(p_t(256*4+ 21, "Cosina AF 100-300mm f/5.6-6.7"));
+            choices.insert(p_t(256*4+ 22, "TOKINA 28-80mm f/3.5-5.6"));
+            choices.insert(p_t(256*4+ 23, "smc PENTAX-FA 20-35mm f/4 AL"));
+            choices.insert(p_t(256*4+ 24, "smc PENTAX-FA 77mm f/1.8 Limited"));
+            choices.insert(p_t(256*4+ 25, "Tamron SP AF 14mm f/2.8"));
+            choices.insert(p_t(256*4+ 26, "smc PENTAX-FA MACRO 100mm f/3.5"));
+            choices.insert(p_t(256*4+ 26, "Cosina 100mm f/3.5 Macro"));
+            choices.insert(p_t(256*4+ 27, "Tamron AF 28-300mm f/3.5-6.3 LD Aspherical[IF] MACRO (285D)"));
+            choices.insert(p_t(256*4+ 28, "smc PENTAX-FA 35mm f/2 AL"));
+            choices.insert(p_t(256*4+ 29, "Tamron AF 28-200mm f/3.8-5.6 LD Super II MACRO (371D)"));
+            choices.insert(p_t(256*4+ 34, "smc PENTAX-FA 24-90mm f/3.5-4.5 AL[IF]"));
+            choices.insert(p_t(256*4+ 35, "smc PENTAX-FA 100-300mm f/4.7-5.8"));
+            choices.insert(p_t(256*4+ 36, "Tamron AF 70-300mm f/4-5.6 LD MACRO"));
+            choices.insert(p_t(256*4+ 37, "Tamron SP AF 24-135mm f/3.5-5.6 AD AL (190D)"));
+            choices.insert(p_t(256*4+ 38, "smc PENTAX-FA 28-105mm f/3.2-4.5 AL[IF]"));
+            choices.insert(p_t(256*4+ 39, "smc PENTAX-FA 31mm f/1.8 AL Limited"));
+            choices.insert(p_t(256*4+ 41, "Tamron AF 28-200mm Super Zoom f/3.8-5.6 Aspherical XR [IF] MACRO (A03)"));
+            choices.insert(p_t(256*4+ 43, "smc PENTAX-FA 28-90mm f/3.5-5.6"));
+            choices.insert(p_t(256*4+ 44, "smc PENTAX-FA J 75-300mm f/4.5-5.8 AL"));
+            choices.insert(p_t(256*4+ 45, "Tamron 28-300mm f/3.5-6.3 Ultra zoom XR"));
+            choices.insert(p_t(256*4+ 45, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"));
+            choices.insert(p_t(256*4+ 46, "smc PENTAX-FA J 28-80mm f/3.5-5.6 AL"));
+            choices.insert(p_t(256*4+ 47, "smc PENTAX-FA J 18-35mm f/4-5.6 AL"));
+            choices.insert(p_t(256*4+ 49, "Tamron SP AF 28-75mm f/2.8 XR Di (A09)"));
+            choices.insert(p_t(256*4+ 51, "smc PENTAX-D FA 50mm f/2.8 MACRO"));
+            choices.insert(p_t(256*4+ 52, "smc PENTAX-D FA 100mm f/2.8 MACRO"));
+            choices.insert(p_t(256*4+ 75, "Tamron SP AF 70-200 f/2.8 Di LD [IF] Macro (A001)"));
+            choices.insert(p_t(256*4+ 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
+            choices.insert(p_t(256*4+ 230, "Tamron SP AF 17-50mm f/2.8 XR Di II"));
+            choices.insert(p_t(256*4+ 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
+            choices.insert(p_t(256*4+ 237, "Samsung/Schneider D-XENOGON 10-17mm f/3.5-4.5"));
+            choices.insert(p_t(256*4+ 239, "Samsung D-XENON 12-24mm f/4 ED AL [IF]"));
+            choices.insert(p_t(256*4+ 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
+            choices.insert(p_t(256*4+ 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+            choices.insert(p_t(256*4+ 245, "Schneider D-XENON 50-200mm"));
+            choices.insert(p_t(256*4+ 246, "Schneider D-XENON 18-55mm"));
+            choices.insert(p_t(256*4+ 247, "smc PENTAX-DA 10-17mm f/3.5-4.5 ED [IF] Fisheye zoom"));
+            choices.insert(p_t(256*4+ 248, "smc PENTAX-DA 12-24mm f/4 ED AL [IF]"));
+            choices.insert(p_t(256*4+ 249, "Tamron 18-200mm f/3.5-6.3 XR DiII (A14)"));
+            choices.insert(p_t(256*4+ 250, "smc PENTAX-DA 50-200mm f/4-5.6 ED"));
+            choices.insert(p_t(256*4+ 251, "smc PENTAX-DA 40mm f/2.8 Limited"));
+            choices.insert(p_t(256*4+ 252, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
+            choices.insert(p_t(256*4+ 253, "smc PENTAX-DA 14mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*4+ 254, "smc PENTAX-DA 16-45mm f/4 ED AL"));
+            choices.insert(p_t(256*5+ 1, "smc PENTAX-FA* 24mm f/2 AL[IF]"));
+            choices.insert(p_t(256*5+ 2, "smc PENTAX-FA 28mm f/2.8 AL"));
+            choices.insert(p_t(256*5+ 3, "smc PENTAX-FA 50mm f/1.7"));
+            choices.insert(p_t(256*5+ 4, "smc PENTAX-FA 50mm f/1.4"));
+            choices.insert(p_t(256*5+ 5, "smc PENTAX-FA* 600mm f/4 ED[IF]"));
+            choices.insert(p_t(256*5+ 6, "smc PENTAX-FA* 300mm f/4.5 ED[IF]"));
+            choices.insert(p_t(256*5+ 7, "smc PENTAX-FA 135mm f/2.8 [IF]"));
+            choices.insert(p_t(256*5+ 8, "smc PENTAX-FA MACRO 50mm f/2.8"));
+            choices.insert(p_t(256*5+ 9, "smc PENTAX-FA MACRO 100mm f/2.8"));
+            choices.insert(p_t(256*5+ 10, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
+            choices.insert(p_t(256*5+ 11, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*5+ 12, "smc PENTAX-FA 28-80mm f/3.5-4.7"));
+            choices.insert(p_t(256*5+ 13, "smc PENTAX-FA 70-200mm f/4-5.6"));
+            choices.insert(p_t(256*5+ 14, "smc PENTAX-FA* 250-600mm f/5.6 ED[IF]"));
+            choices.insert(p_t(256*5+ 15, "smc PENTAX-FA 28-105mm f/4-5.6"));
+            choices.insert(p_t(256*5+ 16, "smc PENTAX-FA 100-300mm f/4.5-5.6"));
+            choices.insert(p_t(256*5+ 98, "smc PENTAX-FA 100-300mm f/4.5-5.6"));
+            choices.insert(p_t(256*6+ 1, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
+            choices.insert(p_t(256*6+ 2, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*6+ 3, "smc PENTAX-FA* 300mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*6+ 4, "smc PENTAX-FA* 28-70mm f/2.8 AL"));
+            choices.insert(p_t(256*6+ 5, "smc PENTAX-FA* 80-200mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*6+ 6, "smc PENTAX-FA* 28-70mm f/2.8 AL"));
+            choices.insert(p_t(256*6+ 7, "smc PENTAX-FA* 80-200mm f/2.8 ED[IF]"));
+            choices.insert(p_t(256*6+ 8, "smc PENTAX-FA 28-70mm f/4 AL"));
+            choices.insert(p_t(256*6+ 9, "smc PENTAX-FA 20mm f/2.8"));
+            choices.insert(p_t(256*6+ 10, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
+            choices.insert(p_t(256*6+ 13, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
+            choices.insert(p_t(256*6+ 14, "smc PENTAX-FA* MACRO 200mm f/4 ED[IF]"));
+            choices.insert(p_t(256*7+ 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+            choices.insert(p_t(256*7+ 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
+            choices.insert(p_t(256*7+ 217, "smc PENTAX-DA 50-200mm f/4-5.6 ED WR"));
+            choices.insert(p_t(256*7+ 218, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL WR"));
+            choices.insert(p_t(256*7+ 220, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical [IF]"));
+            choices.insert(p_t(256*7+ 222, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
+            choices.insert(p_t(256*7+ 223, "Samsung D-XENON 18-55mm f/3.5-5.6 II"));
+            choices.insert(p_t(256*7+ 224, "smc PENTAX-DA 15mm f/4 ED AL Limited"));
+            choices.insert(p_t(256*7+ 225, "Samsung D-XENON 18-250mm f/3.5-6.3"));
+            choices.insert(p_t(256*7+ 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
+            choices.insert(p_t(256*7+ 230, "Tamron AF 17-50mm f/2.8 XR Di-II LD (Model A16)"));
+            choices.insert(p_t(256*7+ 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
+            choices.insert(p_t(256*7+ 233, "smc PENTAX-DA 35mm f/2.8 Macro Limited"));
+            choices.insert(p_t(256*7+ 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 236, "smc PENTAX-DA 55-300mm f/4-5.8 ED"));
+            choices.insert(p_t(256*7+ 238, "Tamron AF 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] MACRO"));
+            choices.insert(p_t(256*7+ 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
+            choices.insert(p_t(256*7+ 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+            choices.insert(p_t(256*8+ 226, "smc PENTAX-DA* 55mm f/1.4 SDM"));
+            choices.insert(p_t(256*8+ 227, "smc PENTAX DA* 60-250mm f/4 [IF] SDM"));
+            choices.insert(p_t(256*8+ 232, "smc PENTAX-DA 17-70mm f/4 AL [IF] SDM"));
+            choices.insert(p_t(256*8+ 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM"));
+            choices.insert(p_t(256*8+ 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM"));
+            choices.insert(p_t(256*8+ 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM"));
+            choices.insert(p_t(256*8+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM"));
+            choices.insert(p_t(256*8+ 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
+            choices.insert(p_t(256*8+ 255, "Sigma APO 150-500mm f/5-6.3 DG OS HSM"));
         }
         virtual std::string toString (Tag* t) {
-            return choices[256*t->toInt(0,BYTE) + t->toInt(1,BYTE)];
+       	   double maxApertureAtFocal = 0;
+       	   double focalLength = 0;
+           int lensID = 256*t->toInt(0,BYTE) + t->toInt(1,BYTE);
+           TagDirectory *root=t->getParent()->getRoot();
+           if (root){
+       	      Tag *t1;
+              t1 = root->findTag("FocalLength");
+        	  if( t1)
+      	         focalLength = t1->toDouble(); // Focal Length
+        	  t1 = root->findTag("MaxAperture");
+        	  if( t1){
+        		  int a=t1->toInt(0,BYTE)&0x7F;
+   	              maxApertureAtFocal = pow(2.0, (a-1)/32.0) ; // MaxApertureValue at focal Length
+        	  }
+           }
+       	   return guess( lensID, focalLength, maxApertureAtFocal);
         }
 };
 PALensTypeInterpreter paLensTypeInterpreter;
 
-class PASRInfoInterpreter : public Interpreter {
-    public:
-        PASRInfoInterpreter () { }
-
-        virtual std::string toString (Tag* t) {
-            std::ostringstream str;
-            int b = t->toInt(0,BYTE);
-            if (!b)
-                str << "SRResult = Not stabilized" << std::endl;
-            else if (b & 1)
-                str << "SRResult = Stabilized" << std::endl;
-            b = t->toInt(1,BYTE);
-            if (!b)
-                str << "ShakeReduction = Off" << std::endl;
-            else
-                str << "ShakeReduction = On" << std::endl;
-            str << "SRHalfPressTime = " << t->toInt(2,BYTE) << std::endl;
-            str << "SRFocalLength = " << t->toInt(3,BYTE);
-            return str.str();
-        }
+class PASRResultInterpreter: public Interpreter {
+public:
+	PASRResultInterpreter(){ }
+    virtual std::string toString (Tag* t) {
+        std::ostringstream str;
+        int b = t->toInt(0,BYTE);
+        if (!b)
+            str << "Not stabilized";
+        else if (b & 1)
+            str << "Stabilized";
+        else if (b & 64)
+        	str << "Not Ready";
+        return str.str();
+	}
 };
-PASRInfoInterpreter paSRInfoInterpreter;
+PASRResultInterpreter paSRResultInterpreter;
 
+class PAHighISONoiseInterpreter: public ChoiceInterpreter {
+public:
+	PAHighISONoiseInterpreter(){
+		choices[0] = "Off";
+		choices[1] = "Weakest";
+		choices[2] = "Weak";
+		choices[3] = "Strong";
+	}
+};
+PAHighISONoiseInterpreter paHighISONoiseInterpreter;
+
+class PAPowerSourceInterpreter: public ChoiceInterpreter {
+public:
+	PAPowerSourceInterpreter(){
+		choices[2] = "Body Battery";
+		choices[3] = "Grip Battery ";
+		choices[4] = "External Power Supply";
+	}
+};
+PAPowerSourceInterpreter paPowerSourceInterpreter;
+
+class PAMaxApertureInterpreter: public Interpreter {
+	public:
+	   PAMaxApertureInterpreter(){}
+       virtual std::string toString (Tag* t){
+    	   int a = t->toInt(0,BYTE);
+    	   a &= 0x7F;
+    	   if(a>1){
+              sprintf (buffer, "%0.1f", pow(2.0, (a-1)/32.0));
+              return buffer;
+    	   }else
+    		  return "n/a";
+       }
+};
+PAMaxApertureInterpreter paMaxApertureInterpreter;
+
+class PANominalMinMaxApertureInterpreter: public Interpreter {
+public:
+	PANominalMinMaxApertureInterpreter(){}
+    virtual std::string toString (Tag* t){
+ 	   int a = t->toInt(0,BYTE);
+ 	   int mina = a & 0x0F;
+ 	   int maxa = (a & 0xF0)>>4;
+       sprintf (buffer, "%0.1f - %0.0f", pow(2.0, maxa/4.0), pow(2.0, (mina+10)/4.0));
+       return buffer;
+
+    }
+};
+PANominalMinMaxApertureInterpreter paNominalMinMaxApertureInterpreter;
+
+class PAFlashStatusInterpreter: public ChoiceInterpreter {
+public:
+	PAFlashStatusInterpreter(){
+		choices[0x0] = "Off";
+		choices[0x2] = "External, Did not fire";
+		choices[0x6] = "External, Fired";
+		choices[0x9] = "Internal, Did not fire";
+		choices[0xd] = "Internal, Fired";
+	}
+};
+PAFlashStatusInterpreter paFlashStatusInterpreter;
+
+class PAInternalFlashModeInterpreter: public ChoiceInterpreter {
+public:
+	PAInternalFlashModeInterpreter(){
+		choices[0x0] = "n/a - Off-Auto-Aperture";
+		choices[0x86] = "On, Wireless (Control)";
+		choices[0x95] = "On, Wireless (Master)";
+		choices[0xc0] = "On";
+		choices[0xc1] = "On, Red-eye reduction";
+		choices[0xc2] = "On, Auto";
+		choices[0xc3] = "On, Auto, Red-eye reduction";
+		choices[0xc8] = "On, Slow-sync";
+		choices[0xc9] = "On, Slow-sync, Red-eye reduction";
+		choices[0xca] = "On, Trailing-curtain Sync";
+		choices[0xf0] = "Off, Normal";
+		choices[0xf1] = "Off, Red-eye reduction";
+		choices[0xf2] = "Off, Auto";
+		choices[0xf3] = "Off, Auto, Red-eye reduction";
+		choices[0xf4] = "Off, (Unknown 0xf4)";
+		choices[0xf5] = "Off, Wireless (Master)";
+		choices[0xf6] = "Off, Wireless (Control)";
+		choices[0xf8] = "Off, Slow-sync";
+		choices[0xf9] = "Off, Slow-sync, Red-eye reduction";
+		choices[0xfa] = "Off, Trailing-curtain Sync";
+	}
+};
+PAInternalFlashModeInterpreter paInternalFlashModeInterpreter;
+
+class PAExternalFlashModeInterpreter: public ChoiceInterpreter {
+	public:
+	PAExternalFlashModeInterpreter(){
+		choices[0x0 ]= "n/a - Off-Auto-Aperture";
+		choices[0x3f] = "Off";
+		choices[0x40] = "On, Auto";
+		choices[0xbf] = "On, Flash Problem";
+		choices[0xc0] = "On, Manual";
+		choices[0xc4] = "On, P-TTL Auto";
+		choices[0xc5] = "On, Contrast-control Sync";
+		choices[0xc6] = "On, High-speed Sync";
+		choices[0xcc] = "On, Wireless";
+		choices[0xcd] = "On, Wireless, High-speed Sync";
+	}
+};
+PAExternalFlashModeInterpreter paExternalFlashModeInterpreter;
+
+class PAExternalFlashExposureCompInterpreter: public ChoiceInterpreter {
+	public:
+		PAExternalFlashExposureCompInterpreter(){
+			choices[0] = "n/a";
+			choices[144] = "n/a (Manual Mode)";
+			choices[164] = "-3.0";
+			choices[167] = "-2.5";
+			choices[168] = "-2.0";
+			choices[171] = "-1.5";
+			choices[172] = "-1.0";
+			choices[175] = "-0.5";
+			choices[176] = "0";
+			choices[179] = "+0.5";
+			choices[180] = "+1.0";
+		}
+};
+PAExternalFlashExposureCompInterpreter paExternalFlashExposureCompInterpreter;
+
+class PAExternalFlashBounceInterpreter: public ChoiceInterpreter {
+	public:
+		PAExternalFlashBounceInterpreter(){
+			choices[0] = "n/a";
+			choices[16] = "Direct";
+			choices[48] = "Bonce";
+		}
+};
+PAExternalFlashBounceInterpreter paExternalFlashBounceInterpreter;
+
+class PAExternalFlashGNInterpreter: public Interpreter {
+	public:
+	PAExternalFlashGNInterpreter(){}
+	virtual std::string toString (Tag* t) {
+	       int b = t->toInt(0,BYTE) & 0x1F;
+	       sprintf (buffer, "%0.0f", pow(2.,b/16.+4) );
+	       return buffer;
+	}
+};
+PAExternalFlashGNInterpreter paExternalFlashGNInterpreter;
+
+class PAEVStepsInterpreter:public Interpreter {
+public:
+	PAEVStepsInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		   strcpy(buffer, (t->toInt(0,BYTE) & 0x20)?"1/3 EV steps":"1/2 EV steps");
+		   return buffer;
+	}
+};
+PAEVStepsInterpreter paEVStepsInterpreter;
+
+class PAEDialinInterpreter:public Interpreter {
+public:
+	PAEDialinInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		   strcpy(buffer, (t->toInt(0,BYTE) & 0x40)?"P Shift":"Tv or Av");
+		   return buffer;
+	}
+};
+PAEDialinInterpreter paEDialinInterpreter;
+
+class PAApertureRingUseInterpreter: public Interpreter {
+public:
+	PAApertureRingUseInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		   strcpy(buffer, (t->toInt(0,BYTE) & 0x80)?"Permitted":"Prohibited");
+		   return buffer;
+	}
+};
+PAApertureRingUseInterpreter paApertureRingUseInterpreter;
+
+class PAFlashOptionInterpreter: public ChoiceInterpreter {
+public:
+	PAFlashOptionInterpreter(){
+		choices[0x0] = "Normal";
+		choices[0x1] = "Red-eye reduction";
+		choices[0x2] = "Auto";
+		choices[0x3] = "Auto, Red-eye reduction";
+		choices[0x5] = "Wireless (Master)";
+		choices[0x6] = "Wireless (Control)";
+		choices[0x8] = "Slow-sync";
+		choices[0x9] = "Slow-sync, Red-eye reduction";
+		choices[0xa] = "Trailing-curtain Sync";
+	}
+	virtual std::string toString (Tag* t) {
+		std::map<int,std::string>::iterator r = choices.find (t->toInt(0,BYTE) >>4);
+		if (r!=choices.end())
+			return r->second;
+		else {
+			t->toString (buffer);
+			return std::string (buffer);
+		}
+		return buffer;
+	}
+};
+PAFlashOptionInterpreter paFlashOptionInterpreter;
+
+class PAMeteringMode2Interpreter: public Interpreter {
+public:
+	PAMeteringMode2Interpreter(){}
+	virtual std::string toString (Tag* t) {
+		std::ostringstream str;
+		int v = (t->toInt(0,BYTE) & 0xF);
+		if(!v)
+			str << "Multi-segment";
+		else if(v&1)
+			str << "Center-weighted average";
+		else if(v&2)
+			str << "Spot";
+		return str.str();
+	}
+};
+PAMeteringMode2Interpreter paMeteringMode2Interpreter;
+
+class PAExposureBracketStepSizeInterpreter: public ChoiceInterpreter {
+public:
+	PAExposureBracketStepSizeInterpreter(){
+		choices[3] = "0.3";
+		choices[4] = "0.5";
+		choices[5] = "0.7";
+		choices[8] = "1.0";
+		choices[11] = "1.3";
+		choices[12] = "1.5";
+		choices[13] = "1.7";
+		choices[16] = "2.0";
+	}
+};
+PAExposureBracketStepSizeInterpreter paExposureBracketStepSizeInterpreter;
+
+class PAPictureMode2Interpreter: public ChoiceInterpreter {
+public:
+	PAPictureMode2Interpreter(){
+		choices[0] = "Scene Mode";
+		choices[1] = "Auto PICT";
+		choices[2] = "Program AE";
+		choices[3] = "Green Mode";
+		choices[4] = "Shutter Speed Priority";
+		choices[5] = "Aperture Priority";
+		choices[6] = "Program Tv Shift";
+		choices[7] = "Program Av Shift";
+		choices[8] = "Manual";
+		choices[9] = "Bulb";
+		choices[10] = "Aperture Priority, Off-Auto-Aperture";
+		choices[11] = "Manual, Off-Auto-Aperture";
+		choices[12] = "Bulb, Off-Auto-Aperture";
+		choices[13] = "Shutter & Aperture Priority AE";
+		choices[15] = "Sensitivity Priority AE";
+		choices[16] = "Flash X-Sync Speed AE";
+	}
+};
+PAPictureMode2Interpreter paPictureMode2Interpreter;
+
+class PAProgramLineInterpreter: public Interpreter {
+public:
+	PAProgramLineInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		std::ostringstream str;
+		int c = t->toInt(0,BYTE);
+		switch(c & 0xf){
+		case 0: str << "Manual";break;
+		case 1: str << "AF-S";break;
+		case 2: str << "AF-C";break;
+		case 3: str << "AF-A";break;
+		}
+		if( c & 0xF0 == 0) str << ", Point Selection Auto";
+		else if( c & 0x20 ) str << ", Fixed Center Point Selected";
+		else if( c & 0x10 ) str << ", Point Selected";
+		return str.str();
+	}
+};
+PAProgramLineInterpreter paProgramLineInterpreter;
+
+class PAAFModeInterpreter: public Interpreter {
+public:
+	PAAFModeInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		switch(t->toInt(0,BYTE) & 0x3){
+		case 0: return "Normal";
+		case 1: return "Hi Speed";
+		case 2: return "Depth";
+		case 3: return "MTF";
+		}
+	}
+};
+PAAFModeInterpreter paAFModeInterpreter;
+
+class PAAFPointSelectedInterpreter: public Interpreter {
+public:
+	PAAFPointSelectedInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		char *ps[]={"Upper-left","Top","Upper-right","Left","Mid-left","Center","Mid-right","Right","Lower-left","Bottom","Lower-right"};
+		int c = t->toInt(0,SHORT);
+		if( !c )
+			return "Auto";
+		else{
+			for( int iBit=0; iBit<11; iBit++)
+				if( c & (1<<iBit) )
+				   return ps[iBit];
+			return "n/a";
+		}
+	}
+};
+PAAFPointSelectedInterpreter paAFPointSelectedInterpreter;
+
+class PADriveMode2Interpreter: public Interpreter {
+public:
+	PADriveMode2Interpreter(){}
+	virtual std::string toString (Tag* t) {
+		int c = t->toInt(0,BYTE);
+		if( !c )
+			return "Single-frame";
+		else if( c & 0x01)
+			return "Continuous";
+		else if( c & 0x04)
+			return "Self-timer (12 s)";
+		else if( c & 0x08)
+			return "Self-timer (2 s)";
+		else if( c & 0x10 )
+			return "Remote Control (3 s delay)";
+		else if( c & 0x20)
+			return "Remote Control";
+		else if( c & 0x40)
+			return "Exposure Bracket";
+		else if( c & 0x80)
+			return "Multiple Exposure";
+		else
+			return "Unknown";
+	}
+};
+PADriveMode2Interpreter paDriveMode2Interpreter;
 
 const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x0001, "PentaxVersion", &stdInterpreter,
@@ -510,7 +1019,7 @@ const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x000f, "AFPointsInFocus", &paAFFocusInterpreter,
  0, 1, 0, 0, 0x0010, "FocusPosition", &stdInterpreter,
  0, 1, 0, 0, 0x0012, "ExposureTime", &stdInterpreter,
- 0, 1, 0, 0, 0x0013, "FNumber", &stdInterpreter,
+ 0, 1, 0, 0, 0x0013, "FNumber", &paFNumberInterpreter,
  0, 1, 0, 0, 0x0014, "ISO", &paISOInterpreter,
  0, 1, 0, 0, 0x0015, "LightReading", &stdInterpreter,
  0, 1, 0, 0, 0x0016, "ExposureCompensation", &stdInterpreter,
@@ -535,9 +1044,9 @@ const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x0029, "FrameNumber", &stdInterpreter,
  0, 1, 0, 0, 0x002d, "EffectiveLV", &stdInterpreter,
  0, 1, 0, 0, 0x0032, "ImageProcessing", &stdInterpreter,
- 0, 1, 0, 0, 0x0033, "PictureMode", &stdInterpreter,
- 0, 1, 0, 0, 0x0034, "DriveMode", &stdInterpreter,
- 0, 1, 0, 0, 0x0037, "ColorSpace", &stdInterpreter,
+ 0, 1, 0, 0, 0x0033, "PictureMode", &paPictureModeInterpreter2,
+ 0, 1, 0, 0, 0x0034, "DriveMode", &paDriveModeInterpreter,
+ 0, 1, 0, 0, 0x0037, "ColorSpace", &paColorSpaceInterpreter,
  0, 1, 0, 0, 0x0038, "ImageAreaOffset", &stdInterpreter,
  0, 1, 0, 0, 0x0039, "RawImageSize", &stdInterpreter,
  0, 1, 0, 0, 0x003c, "AFPointsInFocus", &stdInterpreter,
@@ -551,14 +1060,19 @@ const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x004d, "FlashExposureComp", &stdInterpreter,
  0, 1, 0, 0, 0x004f, "ImageTone", &stdInterpreter,
  0, 1, 0, 0, 0x0050, "ColorTemperature", &stdInterpreter,
- 0, 1, 0, 0, 0x005c, "ShakeReductionInfo", &paSRInfoInterpreter,
+ 0, 1, 0, pentaxSRInfoAttribs, 0x005c, "ShakeReductionInfo", &stdInterpreter,
  0, 1, 0, 0, 0x005d, "ShutterCount", &stdInterpreter,
+ 0, 1, 0, 0, 0x0069, "DynamicRangeExpansion", &paOnOffInterpreter,
+ 0, 1, 0, 0, 0x0071, "HighISONoiseReduction", &paHighISONoiseInterpreter,
+ 0, 1, 0, 0, 0x0072, "AFAdjustment", &stdInterpreter,
  0, 1, 0, 0, 0x0200, "BlackPoint", &stdInterpreter,
  0, 1, 0, 0, 0x0201, "WhitePoint", &stdInterpreter,
- 0, 1, 0, 0, 0x0205, "ShotInfo", &stdInterpreter,
- 0, 1, 0, 0, 0x0206, "AEInfo", &stdInterpreter,
- 0, 1, 0, 0, 0x0207, "LensInfo", &stdInterpreter,
- 0, 1, 0, 0, 0x0208, "FlashInfo", &stdInterpreter,
+ 0, 1, 0, 0, 0x0203, "ColorMatrixA", &stdInterpreter,
+ 0, 1, 0, 0, 0x0204, "ColorMatrixB", &stdInterpreter,
+ 0, 1, 0, pentaxCameraSettingsAttribs, 0x0205, "CameraSettings", &stdInterpreter,
+ 0, 1, 0, pentaxAEInfoAttribs, 0x0206, "AEInfo", &stdInterpreter,
+ 0, 1, 0, pentaxLensDataAttribs, 0x0207, "LensInfo", &stdInterpreter,
+ 0, 1, 0, pentaxFlashInfoAttribs, 0x0208, "FlashInfo", &stdInterpreter,
  0, 1, 0, 0, 0x0209, "AEMeteringSegments", &stdInterpreter,
  0, 1, 0, 0, 0x020a, "FlashADump", &stdInterpreter,
  0, 1, 0, 0, 0x020b, "FlashBDump", &stdInterpreter,
@@ -571,7 +1085,7 @@ const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x0213, "WB_RGGBLevelsFluorescentW", &stdInterpreter,
  0, 1, 0, 0, 0x0214, "WB_RGGBLevelsFlash", &stdInterpreter,
  0, 1, 0, 0, 0x0215, "CameraInfo", &stdInterpreter,
- 0, 1, 0, 0, 0x0216, "BatteryInfo", &stdInterpreter,
+ 0, 1, 0, pentaxBatteryInfoAttribs, 0x0216, "BatteryInfo", &stdInterpreter,
  0, 1, 0, 0, 0x021f, "AFInfo", &stdInterpreter,
  0, 1, 0, 0, 0x0222, "ColorInfo", &stdInterpreter,
  0, 1, 0, 0, 0x03fe, "DataDump", &stdInterpreter,
@@ -580,6 +1094,72 @@ const TagAttrib pentaxAttribs[] = {
  0, 1, 0, 0, 0x0403, "ToneCurves", &stdInterpreter,
  0, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter,
  -1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib pentaxSRInfoAttribs[] = {
+ 0, 1, 0, 0,  0, "SRResult", &paSRResultInterpreter,
+ 0, 1, 0, 0,  1, "ShakeReduction", &paOnOffInterpreter,
+ 0, 1, 0, 0,  2, "SRHalfPressTime", &stdInterpreter,
+ 0, 1, 0, 0,  3, "SRFocalLength", &stdInterpreter,
+ -1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib pentaxLensDataAttribs[] = {
+ 0, 1, 0, 0, 10, "NominalMinMaxAperture", &paNominalMinMaxApertureInterpreter,
+ 0, 1, 0, 0, 14, "MaxAperture", &paMaxApertureInterpreter,
+-1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib pentaxCameraSettingsAttribs[] = {
+ 0, 1, 0, 0,  0, "PictureMode2", &paPictureMode2Interpreter,
+ 0, 1, 0, 0,  1, "ProgramLine", &paProgramLineInterpreter,
+ 0, 1, 0, 0,  1, "EVSteps", &paEVStepsInterpreter,
+ 0, 1, 0, 0,  1, "E-DialinProgram", &paEDialinInterpreter,
+ 0, 1, 0, 0,  1, "ApertureRing", &paApertureRingUseInterpreter,
+ 0, 1, 0, 0,  2, "FlashOptions", &paFlashOptionInterpreter,
+ 0, 1, 0, 0,  2, "MeteringMode2", &paMeteringMode2Interpreter,
+ 0, 1, 0, 0,  3, "AFMode", &paAFModeInterpreter,
+ 0, 1, 0, 0,  4, "AFPointSelected2", &paAFPointSelectedInterpreter,
+ 0, 1, 0, 0,  7, "DriveMode2", &paDriveMode2Interpreter,
+ 0, 1, 0, 0,  8, "ExposureBracketStepSize", &paExposureBracketStepSizeInterpreter,
+ 0, 1, 0, 0,  9, "BracketShotNumber", &stdInterpreter,
+ 0, 1, 0, 0, 10, "WhiteBalanceSet", &stdInterpreter,
+-1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib pentaxAEInfoAttribs[] = {
+ 0, 1, 0, 0,  0, "AEExposureTime", &stdInterpreter,
+ 0, 1, 0, 0,  1, "AEAperture", &stdInterpreter,
+ 0, 1, 0, 0,  2, "AE_ISO", &stdInterpreter,
+ 0, 1, 0, 0,  3, "AEXv", &stdInterpreter,
+ 0, 1, 0, 0,  4, "AEBXv", &stdInterpreter,
+ 0, 1, 0, 0,  5, "AEMinExposureTime", &stdInterpreter,
+ 0, 1, 0, 0,  6, "AEProgramMode", &stdInterpreter,
+ 0, 1, 0, 0,  9, "AEMaxAperture", &stdInterpreter,
+ 0, 1, 0, 0, 10, "AEMaxAperture2", &stdInterpreter,
+ 0, 1, 0, 0, 11, "AEMinAperture", &stdInterpreter,
+ 0, 1, 0, 0, 12, "AEMeteringMode", &stdInterpreter,
+ 0, 1, 0, 0, 14, "FlashExposureCompSet", &stdInterpreter,
+ -1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib pentaxFlashInfoAttribs[] = {
+ 0, 1, 0, 0,  0, "FlashStatus", &paFlashStatusInterpreter,
+ 0, 1, 0, 0,  1, "InternalFlashMode", &paInternalFlashModeInterpreter,
+ 0, 1, 0, 0,  2, "ExternalFlashMode", &paExternalFlashModeInterpreter,
+ 0, 1, 0, 0,  3, "InternalFlashStrength", &stdInterpreter,
+ 0, 1, 0, 0, 24, "ExternalFlashGuideNumber", &paExternalFlashGNInterpreter,
+ 0, 1, 0, 0, 25, "ExternalFlashExposureComp", &paExternalFlashExposureCompInterpreter,
+ 0, 1, 0, 0, 26, "ExternalFlashBounce", &paExternalFlashBounceInterpreter,
+ -1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib pentaxBatteryInfoAttribs[] = {
+0, 1, 0, 0,  0, "PowerSource", &paPowerSourceInterpreter,
+0, 1, 0, 0,  1, "BatteryStates", &stdInterpreter,
+0, 1, 0, 0,  2, "BatteryADBodyNoLoad", &stdInterpreter,
+0, 1, 0, 0,  3, "BatteryADBodyLoad", &stdInterpreter,
+0, 1, 0, 0,  4, "BatteryADGripNoLoad", &stdInterpreter,
+0, 1, 0, 0,  5, "BatteryADGripLoad", &stdInterpreter,
+-1, 0, 0,  0, 0, "", NULL};
+
 };
 #endif
+
+
+
 

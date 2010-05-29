@@ -32,6 +32,7 @@ class ColorSpaceInterpreter : public ChoiceInterpreter {
     public:
         ColorSpaceInterpreter () {
             choices[1]      = "sRGB";
+            choices[2]      = "Adobe RGB";
             choices[0xffff] = "Uncalibrated";
         }
 };
@@ -324,30 +325,64 @@ class UserCommentInterpreter : public Interpreter {
 };
 UserCommentInterpreter userCommentInterpreter;
 
+class CFAInterpreter : public Interpreter {
+public:
+	CFAInterpreter(){}
+	virtual std::string toString (Tag* t) {
+		char colors[]="RGB";
+		for( int i=0; i< t->getCount();i++){
+			unsigned char c = t->toInt(i,BYTE);
+			buffer[i]= c<3 ?colors[c]:' ';
+		}
+		buffer[t->getCount()]=0;
+		return buffer;
+	}
+};
+CFAInterpreter cfaInterpreter;
+
+class OrientationInterpreter : public ChoiceInterpreter {
+public:
+	OrientationInterpreter (){
+        choices[1] = "Horizontal (normal)";
+        choices[2] = "Mirror horizontal ";
+        choices[3] = "Rotate 180";
+        choices[4] = "Mirror vertical";
+        choices[5] = "Mirror horizontal and rotate 270 CW";
+        choices[6] = "Rotate 90 CW";
+        choices[7] = "Mirror horizontal and rotate 90 CW";
+        choices[8] = "Rotate 270 CW";
+	}
+};
+OrientationInterpreter orientationInterpreter;
+
+class UnitsInterpreter : public ChoiceInterpreter {
+public:
+	UnitsInterpreter(){
+        choices[0] = "Unknown";
+        choices[1] = "inches";
+        choices[2] = "cm";
+	}
+};
+UnitsInterpreter unitsInterpreter;
+
 const TagAttrib exifAttribs[] = {
+ 0, 2, 0, 0, 0x0100, "ImageWidth", &stdInterpreter,
+ 0, 2, 0, 0, 0x0101, "ImageHeight", &stdInterpreter,
+ 0, 2, 0, 0, 0x0102, "BitsPerSample", &stdInterpreter,
  0, 2, 0, 0, 0x0103, "Compression", &compressionInterpreter,
- 0, 2, 0, 0, 0xA000, "FlashpixVersion", &stdInterpreter,
- 0, 2, 0, 0, 0xA001, "ColorSpace", &colorSpaceInterpreter,
- 0, 1, 0, 0, 0x9000, "ExifVersion", &stdInterpreter,
- 0, 1, 0, 0, 0x9003, "DateTimeOriginal", &stdInterpreter,
- 0, 1, 0, 0, 0x9004, "DateTimeDigitized", &stdInterpreter,
- 0, 2, 0, 0, 0x9101, "ComponentsConfiguration", &stdInterpreter,
- 0, 2, 0, 0, 0x9102, "CompressedBitsPerPixel", &stdInterpreter,
- 0, 2, 0, 0, 0xA002, "PixelXDimension", &stdInterpreter,
- 0, 2, 0, 0, 0xA003, "PixelYDimension", &stdInterpreter,
- 0, 1, 0, 0, 0x927C, "MakerNote", &stdInterpreter,
- 0, 1, 1, 0, 0x9286, "UserComment", &userCommentInterpreter,
- 1, 0, 0, 0, 0xA004, "RelatedSoundFile", &stdInterpreter,
- 0, 1, 0, 0, 0x9290, "SubSecTime", &stdInterpreter,
- 0, 1, 0, 0, 0x9291, "SubSecTimeOriginal", &stdInterpreter,
- 0, 1, 0, 0, 0x9292, "SubSecTimeDigitized", &stdInterpreter,
- 0, 1, 0, 0, 0xA420, "ImageUniqueID", &stdInterpreter,
+ 0, 1, 0, 0, 0x828d, "CFAPatternDim", &stdInterpreter,
+ 0, 1, 0, 0, 0x828e, "CFAPattern", &cfaInterpreter,
  0, 1, 0, 0, 0x829A, "ExposureTime", &exposureTimeInterpreter,
  0, 1, 0, 0, 0x829D, "FNumber", &fNumberInterpreter,
  0, 1, 0, 0, 0x8822, "ExposureProgram", &exposureProgramInterpreter,
  0, 1, 0, 0, 0x8824, "SpectralSensitivity", &stdInterpreter,
  0, 1, 0, 0, 0x8827, "ISOSpeedRatings", &stdInterpreter,
  0, 1, 0, 0, 0x8828, "OECF", &stdInterpreter,
+ 0, 1, 0, 0, 0x9000, "ExifVersion", &stdInterpreter,
+ 0, 1, 0, 0, 0x9003, "DateTimeOriginal", &stdInterpreter,
+ 0, 1, 0, 0, 0x9004, "DateTimeDigitized", &stdInterpreter,
+ 0, 2, 0, 0, 0x9101, "ComponentsConfiguration", &stdInterpreter,
+ 0, 2, 0, 0, 0x9102, "CompressedBitsPerPixel", &stdInterpreter,
  0, 1, 0, 0, 0x9201, "ShutterSpeedValue", &shutterSpeedInterpreter,
  0, 1, 0, 0, 0x9202, "ApertureValue", &apertureInterpreter,
  0, 1, 0, 0, 0x9203, "BrightnessValue", &stdInterpreter,
@@ -361,6 +396,17 @@ const TagAttrib exifAttribs[] = {
  0, 1, 0, 0, 0x9214, "SubjectArea", &stdInterpreter,
  0, 0, 0, 0, 0x9216, "TIFFEPSStandardID", &stdInterpreter,
  0, 1, 0, 0, 0x9217, "SensingMethod", &stdInterpreter,
+ 0, 1, 0, 0, 0x927C, "MakerNote", &stdInterpreter,
+ 0, 1, 1, 0, 0x9286, "UserComment", &userCommentInterpreter,
+ 0, 1, 0, 0, 0x9290, "SubSecTime", &stdInterpreter,
+ 0, 1, 0, 0, 0x9291, "SubSecTimeOriginal", &stdInterpreter,
+ 0, 1, 0, 0, 0x9292, "SubSecTimeDigitized", &stdInterpreter,
+ 0, 2, 0, 0, 0xA000, "FlashpixVersion", &stdInterpreter,
+ 0, 0, 0, 0, 0xA001, "ColorSpace", &colorSpaceInterpreter,
+ 0, 2, 0, 0, 0xA002, "PixelXDimension", &stdInterpreter,
+ 0, 2, 0, 0, 0xA003, "PixelYDimension", &stdInterpreter,
+ 1, 0, 0, 0, 0xA004, "RelatedSoundFile", &stdInterpreter,
+ 0, 1, 0, iopAttribs,  0xA005, "Interoperability", &stdInterpreter,
  0, 1, 0, 0, 0xA20B, "FlashEnergy", &stdInterpreter,
  0, 1, 0, 0, 0xA20C, "SpatialFrequencyResponse", &stdInterpreter,
  0, 1, 0, 0, 0xA20E, "FocalPlaneXResolution", &stdInterpreter,
@@ -371,7 +417,7 @@ const TagAttrib exifAttribs[] = {
  0, 1, 0, 0, 0xA217, "SensingMethod", &stdInterpreter,
  0, 1, 0, 0, 0xA300, "FileSource", &stdInterpreter,
  0, 1, 0, 0, 0xA301, "SceneType", &stdInterpreter,
- 0, 0, 0, 0, 0xA302, "CFAPattern", &stdInterpreter,
+ 0, 0, 0, 0, 0xA302, "CFAPattern", &cfaInterpreter,
  0, 1, 0, 0, 0xA401, "CustomRendered", &stdInterpreter,
  0, 1, 0, 0, 0xA402, "ExposureMode", &exposureModeInterpreter,
  0, 1, 0, 0, 0xA403, "WhiteBalance", &whiteBalanceInterpreter,
@@ -384,10 +430,9 @@ const TagAttrib exifAttribs[] = {
  0, 1, 0, 0, 0xA40A, "Sharpness", &sharpnessInterpreter,
  0, 1, 0, 0, 0xA40B, "DeviceSettingDescription", &stdInterpreter,
  0, 1, 0, 0, 0xA40C, "SubjectDistanceRange", &stdInterpreter,
- 0, 0, 0, 0, 0x828d, "CFAPattern", &stdInterpreter,
- 0, 0, 0, 0, 0x828e, "CFARepeatPatternDim", &stdInterpreter,
+ 0, 1, 0, 0, 0xA420, "ImageUniqueID", &stdInterpreter,
 -1, 0, 0, 0, 0, "", NULL };
-// 0, 0xA005, LONG,       1, "Interoperability tag",                      "Interoperability IFD Pointer"};
+
 
 const TagAttrib gpsAttribs[] = {
  0, 1, 0, 0, 0x0000, "GPSVersionID", &stdInterpreter,
@@ -423,8 +468,6 @@ const TagAttrib gpsAttribs[] = {
  0, 1, 0, 0, 0x001e, "GPSDifferential", &stdInterpreter,
  -1, 0, 0,  0, 0, "", NULL };
 
-
-
 const TagAttrib iopAttribs[] = {
  0, 1, 0, 0, 0x0001, "InteroperabilityIndex", &stdInterpreter,
  0, 1, 0, 0, 0x0002, "InteroperabilityVersion", &stdInterpreter,
@@ -437,30 +480,35 @@ const TagAttrib iopAttribs[] = {
  0, 2, 0, 0, 0x0102, "BitsPerSample", &stdInterpreter,
  0, 2, 0, 0, 0x0103, "Compression", &compressionInterpreter,
  0, 2, 0, 0, 0x0106, "PhotometricInterpretation", &photometricInterpreter,
- 0, 2, 0, 0, 0x0112, "Orientation", &stdInterpreter,
- 0, 2, 0, 0, 0x0115, "SamplesPerPixel", &stdInterpreter,
- 0, 2, 0, 0, 0x011C, "PlanarConfiguration", &planarConfigInterpreter,
- 0, 2, 0, 0, 0x0212, "YCbCrSubSampling", &stdInterpreter,
- 0, 2, 0, 0, 0x0213, "YCbCrPositioning", &stdInterpreter,
- 0, 2, 0, 0, 0x011A, "XResolution", &stdInterpreter,
- 0, 2, 0, 0, 0x011B, "YResolution", &stdInterpreter,
- 0, 2, 0, 0, 0x0128, "ResolutionUnit", &stdInterpreter,
- 1, 0, 0, 0, 0x0111, "StripOffsets", &stdInterpreter,
- 1, 0, 0, 0, 0x0116, "RowsPerStrip", &stdInterpreter,
- 1, 0, 0, 0, 0x0117, "StripByteCounts", &stdInterpreter,
- 0, 2, 0, 0, 0x0201, "JPEGInterchangeFormat", &stdInterpreter,
- 0, 2, 0, 0, 0x0202, "JPEGInterchangeFormatLength", &stdInterpreter,
- 0, 2, 0, 0, 0x012D, "TransferFunction", &stdInterpreter,
- 0, 2, 0, 0, 0x013E, "WhitePoint", &stdInterpreter,
- 0, 2, 0, 0, 0x013F, "PriomaryChromaticities", &stdInterpreter,
- 0, 2, 0, 0, 0x0211, "YCbCrCoefficients", &stdInterpreter,
- 0, 2, 0, 0, 0x0214, "ReferenceBlackWhite", &stdInterpreter,
- 0, 1, 0, 0, 0x0132, "DateTime", &stdInterpreter,
  0, 1, 1, 0, 0x010E, "ImageDescription", &stdInterpreter,
  0, 1, 0, 0, 0x010F, "Make", &stdInterpreter,
  0, 1, 0, 0, 0x0110, "Model", &stdInterpreter,
+ 1, 0, 0, 0, 0x0111, "StripOffsets", &stdInterpreter,
+ 0, 2, 0, 0, 0x0112, "Orientation", &orientationInterpreter,
+ 0, 2, 0, 0, 0x0115, "SamplesPerPixel", &stdInterpreter,
+ 1, 0, 0, 0, 0x0116, "RowsPerStrip", &stdInterpreter,
+ 1, 0, 0, 0, 0x0117, "StripByteCounts", &stdInterpreter,
+ 0, 2, 0, 0, 0x011A, "XResolution", &stdInterpreter,
+ 0, 2, 0, 0, 0x011B, "YResolution", &stdInterpreter,
+ 0, 2, 0, 0, 0x011C, "PlanarConfiguration", &planarConfigInterpreter,
+ 0, 2, 0, 0, 0x0128, "ResolutionUnit", &unitsInterpreter,
+ 0, 2, 0, 0, 0x012D, "TransferFunction", &stdInterpreter,
  0, 2, 0, 0, 0x0131, "Software", &stdInterpreter,
+ 0, 1, 0, 0, 0x0132, "DateTime", &stdInterpreter,
  0, 1, 1, 0, 0x013B, "Artist", &stdInterpreter,
+ 0, 2, 0, 0, 0x013E, "WhitePoint", &stdInterpreter,
+ 0, 2, 0, 0, 0x013F, "PriomaryChromaticities", &stdInterpreter,
+ 0, 1, 0, ifdAttribs, 0x014A, "SubIFD", &stdInterpreter,
+ 0, 2, 0, 0, 0x0201, "JPEGInterchangeFormat", &stdInterpreter,
+ 0, 2, 0, 0, 0x0202, "JPEGInterchangeFormatLength", &stdInterpreter,
+ 0, 2, 0, 0, 0x0211, "YCbCrCoefficients", &stdInterpreter,
+ 0, 2, 0, 0, 0x0212, "YCbCrSubSampling", &stdInterpreter,
+ 0, 2, 0, 0, 0x0213, "YCbCrPositioning", &stdInterpreter,
+ 0, 2, 0, 0, 0x0214, "ReferenceBlackWhite", &stdInterpreter,
+ 0, 1, 0, 0, 0x4746, "Rating",&stdInterpreter,
+ 0, 1, 0, 0, 0x4749, "RatingPercent",&stdInterpreter,
+ 0, 1, 0, 0, 0x828d, "CFAPatternDim", &stdInterpreter,
+ 0, 1, 0, 0, 0x828e, "CFAPattern", &cfaInterpreter,
  0, 1, 1, 0, 0x8298, "Copyright", &stdInterpreter,
  0, 1, 0, exifAttribs, 0x8769, "Exif", &stdInterpreter,
  0, 2, 0, 0, 0x8773, "ICCProfile", &stdInterpreter,
@@ -469,7 +517,6 @@ const TagAttrib iopAttribs[] = {
  0, 1, 0, 0, 0x9003, "DateTimeOriginal", &stdInterpreter,
  0, 1, 0, 0, 0x9004, "DateTimeDigitized", &stdInterpreter,
  0, 1, 0, iopAttribs,  0xA005, "Interoperability", &stdInterpreter,
- 1, 2, 0, ifdAttribs, 0x014A, "SubIFD", &stdInterpreter,
  0, 0, 0, 0, 0xC4A5, "PrintIMInformation", &stdInterpreter,
  0, 2, 0, 0, 0x00fe, "NewSubFileType", &stdInterpreter,
  -1, 0, 0,  0, 0, "", NULL};
