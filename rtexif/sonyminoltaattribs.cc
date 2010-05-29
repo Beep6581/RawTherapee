@@ -21,13 +21,9 @@
 
 #include <rtexif.h>
 #include <string>
-#include <map>
 #include <math.h>
-#include <sstream>
 #include <iomanip>
 
-#undef	ABS
-#define ABS(a)	   (((a) < 0) ? -(a) : (a))
 
 namespace rtexif {
 
@@ -40,6 +36,22 @@ class SAOnOffInterpreter : public ChoiceInterpreter {
         }
 };
 SAOnOffInterpreter saOnOffInterpreter;
+
+class SAWhiteBalanceInterpreter: public ChoiceInterpreter {
+	public:
+	SAWhiteBalanceInterpreter(){
+		choices[ 0x0] = "Auto";
+		choices[ 0x1] = "Color Temperature/Color Filter";
+		choices[0x10] = "Daylight";
+		choices[0x20] = "Cloudy";
+		choices[0x30] = "Shade";
+		choices[0x40] = "Tungsten";
+		choices[0x50] = "Flash";
+		choices[0x60] = "Fluorescent";
+		choices[0x70] = "Custom";
+	}
+};
+SAWhiteBalanceInterpreter saWhiteBalanceInterpreter;
 
 class SASceneModeInterpreter : public ChoiceInterpreter {
     public:
@@ -144,11 +156,7 @@ class SAAntiBlurInterpreter : public ChoiceInterpreter {
 };
 SAAntiBlurInterpreter saAntiBlurInterpreter;
 
-class SALensIDInterpreter : public Interpreter {
-	typedef std::multimap<int, std::string> container_t;
-	typedef std::pair<int,std::string> p_t;
-    protected:
-	   container_t choices;
+class SALensIDInterpreter : public IntLensInterpreter< int > {
     public:
         SALensIDInterpreter () {
             choices.insert(p_t(0, "Minolta AF 28-85mm f/3.5-4.5"));
@@ -457,71 +465,13 @@ class SALensIDInterpreter : public Interpreter {
             choices.insert(p_t(65535, "Helios 44-2 58mm f/2"));
         }
 
-
         virtual std::string toString (Tag* t)
         {
         	 int lensID = t->toInt();
-        	 size_t nFound = choices.count( lensID );
-        	 container_t::iterator r;
-        	 switch( nFound )
-        	 {
-        	 case 0: // lens Unknown
-                 t->toString (buffer);
-                 return std::string (buffer);
-        	 case 1: // lens found
-        		 r = choices.find ( lensID );
-        		 return r->second;
-        	 default:
-        		 // More than one hit: we must guess
-        		 break;
-        	 }
-
-             double maxApertureAtFocal = pow(2.0, t->getParent()->getParent()->getTag(0x9205)->toDouble()/2.0); // MaxApertureValue at focal Length
-             double focalLength = t->getParent()->getParent()->getTag(0x920A)->toDouble(); // Focal Length
-             double deltaMin = 1000.;
-
-			 /* Choose the best match: thanks to exiftool by Phil Harvey
-			  * first throws for "out of focal range" and lower or upper aperture of the lens compared to MaxApertureAtFocal
-			  * if the lens is not constant aperture, calculate aprox. aperture of the lens at focalLength
-			  * and compare with actual aperture.
-             */
-             std::string bestMatch("Unknown");
-             std::ostringstream candidates;
-             for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); r++  ){
-                 double a1,a2,f1,f2,lensAperture,dif;
-
-                 if( !extractLensInfo( r->second ,f1,f2,a1,a2) )
-                	 continue;
-                 if( f1 == 0. || a1 == 0.)
-                     continue;
-
-                 if( focalLength < f1 - .5 || focalLength > f2 + 0.5 )
-                	 continue;
-				 if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 +0.15)
-					 continue;
-
-				 if( a1 == a2 || f1 == f2)
-					 lensAperture = a1;
-				 else
-					 lensAperture = exp( log(a1)+(log(a2)-log(a1))/(log(f2)-log(f1))*(log(focalLength)-log(f1)) );
-
-				 dif = ABS(lensAperture - maxApertureAtFocal);
-				 if( dif < deltaMin ){
-					 deltaMin = dif;
-					 bestMatch = r->second;
-				 }
-				 if( dif < 0.15){
-					 if( candidates.tellp() )
-						 candidates << "\n or " <<  r->second;
-					 else
-						 candidates <<  r->second;
-				 }
-             }
-             if( !candidates.tellp() )
-                 return bestMatch;
-             else
-            	 return candidates.str();
-         }
+        	 double maxApertureAtFocal = pow(2.0, t->getParent()->getParent()->getTag(0x9205)->toDouble()/2.0); // MaxApertureValue at focal Length
+        	 double focalLength = t->getParent()->getParent()->getTag(0x920A)->toDouble(); // Focal Length
+        	 return guess( lensID, focalLength, maxApertureAtFocal );
+        }
 };
 SALensIDInterpreter saLensIDInterpreter;
 
@@ -566,6 +516,240 @@ class MAImageSizeInterpreter : public ChoiceInterpreter {
 };
 MAImageSizeInterpreter maImageSizeInterpreter;
 
+class SAQualityInterpreter2 : public ChoiceInterpreter {
+    public:
+	SAQualityInterpreter2 () {
+            choices[0]  = "Raw";
+            choices[2]  = "cRAW";
+            choices[16] = "Extra fine";
+            choices[32]  = "Fine";
+            choices[34]  = "RAW + JPEG";
+            choices[35]  = "cRAW + JPEG";
+            choices[48]  = "Standard";
+        }
+};
+SAQualityInterpreter2 saQualityInterpreter2;
+
+class SADriveMode : public ChoiceInterpreter {
+    public:
+	SADriveMode () {
+            choices[0]  = "Single Frame";
+            choices[1]  = "Continuous High";
+            choices[4]  = "Self-timer 10 sec";
+            choices[5]  = "Self-timer 2 sec";
+            choices[7]  = "Continuous Bracketing";
+            choices[12] = "Continuous Low";
+            choices[18] = "White Balance Bracketing Low";
+            choices[19] = "D-Range Optimizer Bracketing Low";
+        }
+};
+SADriveMode saDriveMode;
+
+class SAFocusMode: public ChoiceInterpreter {
+	public:
+	SAFocusMode () {
+        choices[0]  = "Manual";
+        choices[1]  = "AF-S";
+        choices[2]  = "AF-C";
+        choices[3]  = "AF-A";
+        choices[4]  = "Permanent-AF";
+        choices[65535] = "n/a";
+    }
+};
+SAFocusMode saFocusMode;
+
+class SAAFMode: public ChoiceInterpreter {
+	public:
+	SAAFMode(){
+		choices[0] = "Default";
+		choices[1] = "Multi AF";
+		choices[2] = "Center AF";
+		choices[3] = "Spot AF";
+		choices[4] = "Flexible Spot AF";
+		choices[6] = "Touch AF";
+		choices[14] = "Manual Focus";
+		choices[15] = "Face Detected";
+		choices[65535] = "n/a";
+	}
+};
+SAAFMode saAFMode;
+
+class SAAFAreaMode: public ChoiceInterpreter {
+	public:
+	SAAFAreaMode () {
+        choices[0]  = "Wide";
+        choices[1]  = "Local";
+        choices[2]  = "Spot";
+    }
+};
+SAAFAreaMode saAFAreaMode;
+
+class SALocalAFAreaPoint: public ChoiceInterpreter {
+	public:
+	SALocalAFAreaPoint () {
+		choices[1] = "Center";
+		choices[2] = "Top";
+		choices[3] = "Top-Right";
+		choices[4] = "Right";
+		choices[5] = "Bottom-Right";
+		choices[6] = "Bottom";
+		choices[7] = "Bottom-Left";
+		choices[8] = "Left";
+		choices[9] = "Top-Left";
+		choices[10] = "Far Right";
+		choices[11] = "Far Left";
+	}
+};
+SALocalAFAreaPoint saLocalAFAreaPoint;
+
+class SAMeteringMode: public ChoiceInterpreter {
+	public:
+	SAMeteringMode () {
+		choices[1] = "Multi-segment";
+		choices[2] = "Center-weighted Average";
+		choices[4] = "Spot";
+	}
+};
+SAMeteringMode saMeteringMode;
+
+class SADynamicRangeOptimizerMode: public ChoiceInterpreter {
+	public:
+	SADynamicRangeOptimizerMode () {
+		choices[0] = "Off";
+		choices[1] = "Standard";
+		choices[2] = "Advanced Auto";
+		choices[3] = "Advanced Level";
+		choices[4097] = "Auto";
+	}
+};
+SADynamicRangeOptimizerMode saDynamicRangeOptimizerMode;
+
+class SACreativeStyle: public ChoiceInterpreter {
+	public:
+	SACreativeStyle () {
+		choices[1] = "Standard";
+		choices[2] = "Vivid";
+		choices[3] = "Portrait";
+		choices[4] = "Landscape";
+		choices[5] = "Sunset";
+		choices[6] = "Night View/Portrait";
+		choices[8] = "B&W";
+		choices[9] = "Adobe RGB";
+		choices[11] = "Neutral";
+		choices[12] = "Clear";
+		choices[13] = "Deep";
+		choices[14] = "Light";
+		choices[15] = "Autumn";
+		choices[16] = "Sepia";
+	}
+};
+SACreativeStyle saCreativeStyle;
+
+class SAFlashMode: public ChoiceInterpreter {
+	public:
+	SAFlashMode () {
+		choices[0] = "ADI";
+		choices[1] = "TTL";
+	}
+};
+SAFlashMode saFlashMode;
+
+class SAExposureProgram: public ChoiceInterpreter {
+	public:
+		SAExposureProgram () {
+			choices[0] = "Auto";
+			choices[1] = "Manual";
+			choices[2] = "Program AE";
+			choices[3] = "Aperture-priority AE";
+			choices[4] = "Shutter speed priority AE";
+			choices[8] = "Program Shift A";
+			choices[9] = "Program Shift S";
+			choices[16] = "Portrait";
+			choices[17] = "Sports";
+			choices[18] = "Sunset";
+			choices[19] = "Night Portrait";
+			choices[20] = "Landscape";
+			choices[21] = "Macro";
+			choices[35] = "Auto No Flash";
+	}
+};
+SAExposureProgram saExposureProgram;
+
+class SARotation: public ChoiceInterpreter {
+	public:
+		SARotation () {
+			choices[0] = "Horizontal";
+			choices[1] = "Rotate 90 CW";
+			choices[2] = "Rotate 270 CW";
+			choices[3] = "None";
+	}
+};
+SARotation saRotation;
+
+class SASonyImageSize: public ChoiceInterpreter {
+	public:
+		SASonyImageSize () {
+			choices[1] = "Large";
+			choices[2] = "Medium ";
+			choices[3] = "Small";
+	}
+};
+SASonyImageSize saSonyImageSize;
+
+class SAAspectRatio: public ChoiceInterpreter {
+	public:
+		SAAspectRatio () {
+			choices[1] = "3:2";
+			choices[2] = "16:9";
+	}
+};
+SAAspectRatio saAspectRatio;
+
+class SAExposureLevelIncrements: public ChoiceInterpreter {
+	public:
+		SAExposureLevelIncrements () {
+			choices[33] = "1/3 EV";
+			choices[50] = "1/2 EV";
+	}
+};
+SAExposureLevelIncrements saExposureLevelIncrements;
+
+class SAAFIlluminator: public ChoiceInterpreter {
+	public:
+	SAAFIlluminator () {
+			choices[0] = "Off";
+			choices[1] = "Auto";
+			choices[65535]="n/a";
+	}
+};
+SAAFIlluminator saAFIlluminator;
+
+class SAReleaseModeInterpreter: public ChoiceInterpreter {
+	public:
+	SAReleaseModeInterpreter () {
+		choices[0] = "Normal";
+		choices[2] = "Burst";
+		choices[5] = "Exposure Bracketing";
+		choices[6] = "White Balance Bracketing";
+		choices[65535]="n/a";
+	}
+};
+SAReleaseModeInterpreter saReleaseModeInterpreter;
+
+class SAImageStyleInterpreter: public ChoiceInterpreter {
+	public:
+	SAImageStyleInterpreter () {
+		choices[1] = "Standard";
+		choices[2] = "Vivid";
+		choices[9] = "Adobe RGB";
+		choices[11] = "Neutral";
+		choices[129]="StyleBox1";
+		choices[130]="StyleBox2";
+		choices[131]="StyleBox3";
+	}
+};
+SAImageStyleInterpreter saImageStyleInterpreter;
+
 const TagAttrib minoltaAttribs[] = {
  0, 1, 0, 0, 0x0000, "MakerNoteVersion", &stdInterpreter,
  0, 1, 0, 0, 0x0001, "MinoltaCameraSettingsOld", &stdInterpreter,
@@ -593,8 +777,14 @@ const TagAttrib minoltaAttribs[] = {
  -1, 0, 0,  0, 0, "", NULL};
 
 const TagAttrib sonyAttribs[] = {
+ 0, 1, 0, 0, 0x0102, "Quality", &maQualityInterpreter,
+ 0, 1, 0, 0, 0x0104, "FlashExposureComp",&stdInterpreter,
+ 0, 1, 0, 0, 0x0106, "TeleConverter", &maTeleconverterInterpreter,
+ 0, 1, 0, sonyCameraSettingsAttribs, 0x0114, "SonyCameraSettings",&stdInterpreter,
+ 0, 1, 0, 0, 0x0115, "WhiteBalance",&saWhiteBalanceInterpreter,
  1, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter,
  1, 1, 0, 0, 0x2001, "PreviewImage", &stdInterpreter,
+ 0, 1, 0, 0, 0x200a, "AutoHDR", &stdInterpreter,
  0, 1, 0, 0, 0xb020, "ColorReproduction", &stdInterpreter,
  0, 1, 0, 0, 0xb021, "ColorTemperature", &stdInterpreter,
  0, 1, 0, 0, 0xb023, "SceneMode", &saSceneModeInterpreter,
@@ -606,11 +796,66 @@ const TagAttrib sonyAttribs[] = {
  0, 1, 0, 0, 0xb029, "ColorMode", &saColorModeInterpreter,
  0, 1, 0, 0, 0xb040, "Macro", &saOnOffInterpreter,
  0, 1, 0, 0, 0xb041, "ExposureMode", &saExposureModeInterpreter,
+ 0, 1, 0, 0, 0xb042, "FocusMode", &saFocusMode,
+ 0, 1, 0, 0, 0xb043, "AFMode", &saAFMode,
+ 0, 1, 0, 0, 0xb044, "AFIlluminator", &saAFIlluminator,
  0, 1, 0, 0, 0xb047, "Quality", &saQualityInterpreter,
+ 0, 1, 0, 0, 0xb049, "ReleaseMode",&saReleaseModeInterpreter,
  0, 1, 0, 0, 0xb04b, "AntiBlur", &saAntiBlurInterpreter,
  0, 1, 0, 0, 0xb04e, "LongExposureNoiseReduction", &saOnOffInterpreter,
  -1, 0, 0,  0, 0, "", NULL};
 
+const TagAttrib sonyCameraSettingsAttribs[]={
+0, 1, 0, 0, 4, "DriveMode", &saDriveMode,
+0, 1, 0, 0, 6, "WhiteBalanceFineTune",&stdInterpreter,
+0, 1, 0, 0, 16, "FocusMode",&saFocusMode,
+0, 1, 0, 0, 17, "AFAreaMode",&saAFAreaMode,
+0, 1, 0, 0, 18, "LocalAFAreaPoint", &saLocalAFAreaPoint,
+0, 1, 0, 0, 21, "MeteringMode",&saMeteringMode,
+0, 1, 0, 0, 22, "ISOSetting",&stdInterpreter,
+0, 1, 0, 0, 24, "DynamicRangeOptimizerMode", &saDynamicRangeOptimizerMode,
+0, 1, 0, 0, 25, "DynamicRangeOptimizerLevel",&stdInterpreter,
+0, 1, 0, 0, 26, "CreativeStyle",&saCreativeStyle,
+0, 1, 0, 0, 28, "Sharpness",&stdInterpreter,
+0, 1, 0, 0, 29, "Contrast",&stdInterpreter,
+0, 1, 0, 0, 30, "Saturation",&stdInterpreter,
+0, 1, 0, 0, 31, "ZoneMatchingValue",&stdInterpreter,
+0, 1, 0, 0, 34, "Brightness",&stdInterpreter,
+0, 1, 0, 0, 35, "FlashMode",&saFlashMode,
+0, 1, 0, 0, 40, "PrioritySetupShutterRelease",&stdInterpreter,
+0, 1, 0, 0, 41, "AFIlluminator",&saAFIlluminator,
+0, 1, 0, 0, 42, "AFWithShutter",&saOnOffInterpreter,
+0, 1, 0, 0, 43, "LongExposureNoiseReduction",&saOnOffInterpreter,
+0, 1, 0, 0, 44, "HighISONoiseReduction",&stdInterpreter,
+0, 1, 0, 0, 45, "ImageStyle",&saImageStyleInterpreter,
+0, 1, 0, 0, 60, "ExposureProgram",&saExposureProgram,
+0, 1, 0, 0, 61, "ImageStabilization",&saOnOffInterpreter,
+0, 1, 0, 0, 63, "Rotation",&saRotation,
+0, 1, 0, 0, 84, "SonyImageSize",&saSonyImageSize,
+0, 1, 0, 0, 85, "AspectRatio",&saAspectRatio,
+0, 1, 0, 0, 86, "Quality",&saQualityInterpreter2,
+0, 1, 0, 0, 88, "ExposureLevelIncrements",&saExposureLevelIncrements,
+-1, 0, 0,  0, 0, "", NULL};
+
+const TagAttrib sonyCameraSettingsAttribs2[]={
+0, 1, 0, 0, 16, "FocusMode",&saFocusMode,
+0, 1, 0, 0, 17, "AFAreaMode",&saAFAreaMode,
+0, 1, 0, 0, 18, "LocalAFAreaPoint",&saLocalAFAreaPoint,
+0, 1, 0, 0, 19, "MeteringMode",&saMeteringMode,
+0, 1, 0, 0, 20, "ISOSetting",&stdInterpreter,
+0, 1, 0, 0, 22, "DynamicRangeOptimizerMode",&saDynamicRangeOptimizerMode,
+0, 1, 0, 0, 23, "DynamicRangeOptimizerLevel",&stdInterpreter,
+0, 1, 0, 0, 24, "CreativeStyle",&saCreativeStyle,
+0, 1, 0, 0, 25, "Sharpness",&stdInterpreter,
+0, 1, 0, 0, 26, "Contrast",&stdInterpreter,
+0, 1, 0, 0, 27, "Saturation",&stdInterpreter,
+0, 1, 0, 0, 35, "FlashMode",&saFlashMode,
+0, 1, 0, 0, 60, "ExposureProgram",&saExposureProgram,
+0, 1, 0, 0, 63, "Rotation",&saRotation,
+0, 1, 0, 0, 84, "SonyImageSize",&saSonyImageSize,
+-1, 0, 0,  0, 0, "", NULL};
+
 };
 #endif
+
 
