@@ -139,7 +139,9 @@ int Options::readFromFile (Glib::ustring fname) {
 
     rtengine::SafeKeyFile keyFile;
 
-    try {    
+    try {
+    	if( !Glib::file_test(fname,Glib::FILE_TEST_EXISTS))
+    		return 1;
         if (!keyFile.load_from_file (fname)) 
             return 1;
     }

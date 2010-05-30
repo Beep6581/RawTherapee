@@ -27,7 +27,9 @@
 #include <mytime.h>
 #include <glibmm.h>
 #include <iccstore.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 namespace rtengine {
 
@@ -192,7 +194,13 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 	}
 
 	// calculate chroma radius and histogram of the y channel needed for exposure curve calculation
+
+#ifdef _OPENMP
     int T = omp_get_max_threads();
+#else
+    int T = 1;
+#endif
+
 	int* cr = new int [T];
     unsigned int** hist = new unsigned int* [T];
     for (int i=0; i<T; i++) {
@@ -202,6 +210,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     }
 
     int H = original->height;
+#ifdef _OPENMP
 	#pragma omp parallel if (multiThread)
     {
 		int tid = omp_get_thread_num();
@@ -213,7 +222,9 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 		else
 			firstAnalysis_ (original, wprofile, hist[tid], &cr[tid], tid*blk, H);
     }
-
+#else
+    firstAnalysis_ (original, wprofile, hist[0], &cr[0], 0, original->height);
+#endif
     chroma_radius = cr[0];
     for (int i=0; i<T; i++)
     	if (cr[i]>chroma_radius)
@@ -421,9 +432,11 @@ void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
 void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
 
   if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
-
+#ifdef _OPENMP
 	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H)*omp_get_max_threads());
-
+#else
+	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
+#endif
       gaussHorizontal<short> (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussHorizontal<short> (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussVertical<short>   (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);

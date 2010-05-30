@@ -23,7 +23,9 @@
 #include <string.h> 
 #include <math.h>
 #include <alignedbuffer.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 // classical filtering if the support window is small:
 
@@ -31,7 +33,11 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, T* buffer, int W, int
 
 	#pragma omp parallel for if (multiThread)
     for (int i=0; i<H; i++) {
+#ifdef _OPENMP
     	T* temp = buffer + omp_get_thread_num() * W;
+#else
+    	T* temp = buffer;
+#endif
         for (int j=1; j<W-1; j++)
             temp[j] = (T)(c1 * (src[i][j-1] + src[i][j+1]) + c0 * src[i][j]);
         dst[i][0] = src[i][0];
@@ -44,7 +50,11 @@ template<class T> void gaussVertical3 (T** src, T** dst, T* buffer, int W, int H
     
 	#pragma omp parallel for if (multiThread)
     for (int i=0; i<W; i++) {
+#ifdef _OPENMP
     	T* temp = buffer + omp_get_thread_num() * H;
+#else
+    	T* temp = buffer;
+#endif
         for (int j = 1; j<H-1; j++) 
         	temp[j] = (T)(c1 * (src[j-1][i] + src[j+1][i]) + c0 * src[j][i]);
         dst[0][i] = src[0][i];
@@ -107,9 +117,11 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
     
 	#pragma omp parallel for if (multiThread)
     for (int i=0; i<H; i++) {
-
+#ifdef _OPENMP
         double* temp2 = buffer->data + omp_get_thread_num() * W;
-
+#else
+        double* temp2 = buffer->data;
+#endif
         temp2[0] = B * src[i][0] + b1*src[i][0] + b2*src[i][0] + b3*src[i][0];
         temp2[1] = B * src[i][1] + b1*temp2[0]  + b2*src[i][0] + b3*src[i][0];
         temp2[2] = B * src[i][2] + b1*temp2[1]  + b2*temp2[0]  + b3*src[i][0];
@@ -183,9 +195,11 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
 
 	#pragma omp parallel for if (multiThread)
     for (int i=0; i<W; i++) {
-
+#ifdef _OPENMP
         double* temp2 = buffer->data + omp_get_thread_num() * H;
-
+#else
+        double* temp2 = buffer->data;
+#endif
     	temp2[0] = B * src[0][i] + b1*src[0][i] + b2*src[0][i] + b3*src[0][i];
         temp2[1] = B * src[1][i] + b1*temp2[0]  + b2*src[0][i] + b3*src[0][i];
         temp2[2] = B * src[2][i] + b1*temp2[1]  + b2*temp2[0]  + b3*src[0][i];
