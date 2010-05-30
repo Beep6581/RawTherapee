@@ -18,7 +18,9 @@
  */
 #include <rtengine.h>
 #include <improcfun.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <mytime.h>
 
 namespace rtengine {

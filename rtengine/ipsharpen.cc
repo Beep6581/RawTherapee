@@ -18,7 +18,9 @@
  */
 #include <rtengine.h>
 #include <improcfun.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <minmax.h>
 #include <gauss.h>
 #include <bilateral2.h>
@@ -66,9 +68,11 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
     }
 
     float** tmp = (float**)b2;
-
+#ifdef _OPENMP
     AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
-
+#else
+    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+#endif
     float damping = params->sharpening.deconvdamping / 5.0;
     bool needdamp = params->sharpening.deconvdamping > 0;
     for (int k=0; k<params->sharpening.deconviter; k++) {
@@ -118,9 +122,11 @@ void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
 
     int W = lab->W, H = lab->H;
     unsigned short** b3;
-
+#ifdef _OPENMP
     AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
-
+#else
+    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+#endif
     if (params->sharpening.edgesonly==false) {
 
         gaussHorizontal<unsigned short> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);

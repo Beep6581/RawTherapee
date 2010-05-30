@@ -53,14 +53,18 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
 		}
 
     if (!hq) {
+#ifdef _OPENMP
     	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
-
+#else
+    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+#endif
     	gaussHorizontal<unsigned short> (map, map, buffer, W, H, radius, multiThread);
 		gaussVertical<unsigned short>   (map, map, buffer, W, H, radius, multiThread);
 
         delete buffer;
     }
     else {
+#ifdef _OPENMP
 		#pragma omp parallel if (multiThread)
     	{
     		int tid = omp_get_thread_num();
@@ -72,6 +76,9 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
     		else
     			bilateral<unsigned short> (map, buffer, W, H, 8000, radius, tid*blk, H);
 		}
+#else
+    	bilateral<unsigned short> (map, buffer, W, H, 8000, radius, 0, H);
+#endif
         // anti-alias filtering the result
         for (int i=0; i<H; i++)
             for (int j=0; j<W; j++)

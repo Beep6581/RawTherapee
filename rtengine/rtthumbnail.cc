@@ -794,6 +794,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     SafeKeyFile keyFile;
 
     try {
+    if( Glib::file_test(fname,Glib::FILE_TEST_EXISTS) )
         keyFile.load_from_file (fname); 
     } catch (...) {}
 

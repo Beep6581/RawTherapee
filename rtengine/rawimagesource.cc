@@ -25,7 +25,9 @@
 #include <iccstore.h>
 #include <image8.h>
 #include <curves.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 namespace rtengine {
 
@@ -962,6 +964,7 @@ void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
         return;
 
     for (int t=0; t<times; t++) {
+#ifdef _OPENMP
 	    #pragma omp parallel
     	{
     		int tid = omp_get_thread_num();
@@ -973,6 +976,9 @@ void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
     		else
     			correction_YIQ_LQ_ (im, 1 + tid*blk, im->height - 1);
     	}
+#else
+    	correction_YIQ_LQ_ (im, 1 , im->height - 1);
+#endif
     }
 }
 
@@ -1807,6 +1813,7 @@ void RawImageSource::hphd_demosaic () {
     memset(hpmap[i], 0, W*sizeof(float));
   }
   
+#ifdef _OPENMP
   #pragma omp parallel
   {
 		int tid = omp_get_thread_num();
@@ -1818,7 +1825,9 @@ void RawImageSource::hphd_demosaic () {
 		else
 			hphd_vertical (hpmap, tid*blk, W);
   }
-
+#else
+  hphd_vertical (hpmap, 0, W);
+#endif
   if (plistener) 
     plistener->setProgress (0.33);
 
@@ -1826,6 +1835,7 @@ void RawImageSource::hphd_demosaic () {
   for (int i=0; i<H; i++)
     memset(this->hpmap[i], 0, W*sizeof(char));
 
+#ifdef _OPENMP
   #pragma omp parallel
   {
 		int tid = omp_get_thread_num();
@@ -1837,7 +1847,9 @@ void RawImageSource::hphd_demosaic () {
 		else
 			hphd_horizontal (hpmap, tid*blk, H);
   }
-
+#else
+  hphd_horizontal (hpmap, 0, H);
+#endif
   freeArray<float>(hpmap, H);
 
   if (plistener) 

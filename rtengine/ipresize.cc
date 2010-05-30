@@ -19,7 +19,9 @@
 #include <rtengine.h>
 #include <improcfun.h>
 #include <glibmm.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 namespace rtengine {
 

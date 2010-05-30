@@ -26,7 +26,9 @@
 #include <mytime.h>
 #include <gauss.h>
 #include <glibmm.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 // This seems ugly, but way faster than any other solutions I tried
 
