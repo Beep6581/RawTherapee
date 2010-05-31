@@ -11,6 +11,7 @@ endif (APPLE)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
+option (OPTION_OMP "Build with OpenMP support" ON)
 
 # set install directories
 if (NOT DEFINED DATADIR)
@@ -116,10 +117,12 @@ if (WITH_RAWZOR)
     endif (WIN32)
 endif (WITH_RAWZOR)
 
-find_package(OpenMP)
-if (OPENMP_FOUND)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif (OPENMP_FOUND)
+if (OPTION_OMP)
+	find_package(OpenMP)
+	if (OPENMP_FOUND)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+	endif (OPENMP_FOUND)
+endif (OPTION_OMP)
 
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)
