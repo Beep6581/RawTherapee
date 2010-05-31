@@ -1541,9 +1541,6 @@ int getTypeSize( TagType type ){
 	return ("11124811248484"[type<14?type:0]-'0');
 }
 
-#undef	ABS
-#define ABS(a)	   (((a) < 0) ? -(a) : (a))
-
 /* Function to parse and extract focal length and aperture information from description
  * @fullname must conform to the following formats
  * <focal>mm f/<aperture>
@@ -1592,75 +1589,4 @@ bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, d
      return false;
 }
 
-template<class T>
-std::string IntLensInterpreter< T >::guess( const T lensID, double focalLength, double maxApertureAtFocal )
-{
-	 it_t r;
-	 size_t nFound = choices.count( lensID );
-
-	 switch( nFound )
-	 {
-	 case 0: // lens Unknown
-	    {
-	       std::ostringstream s;
-	       s << lensID;
-		   return s.str();
-	    }
-	 case 1: // lens found
-		 r = choices.find ( lensID );
-		 return r->second;
-	 default:
-		 // More than one hit: we must guess
-		 break;
-	 }
-
-
-	double deltaMin = 1000.;
-
-	 /* Choose the best match: thanks to exiftool by Phil Harvey
-	  * first throws for "out of focal range" and lower or upper aperture of the lens compared to MaxApertureAtFocal
-	  * if the lens is not constant aperture, calculate aprox. aperture of the lens at focalLength
-	  * and compare with actual aperture.
-	*/
-	std::string bestMatch("Unknown");
-	std::ostringstream candidates;
-	for ( r = choices.lower_bound( lensID ); r != choices.upper_bound(lensID); r++  ){
-		double a1,a2,f1,f2,lensAperture,dif;
-
-		if( !extractLensInfo( r->second ,f1,f2,a1,a2) )
-		    continue;
-		if( f1 == 0. || a1 == 0.)
-			continue;
-
-		if( focalLength < f1 - .5 || focalLength > f2 + 0.5 )
-		    continue;
-		if( maxApertureAtFocal > 0.1){
-			 if( maxApertureAtFocal < a1 - 0.15 || maxApertureAtFocal > a2 +0.15)
-				continue;
-
-			 if( a1 == a2 || f1 == f2)
-				 lensAperture = a1;
-			 else
-				 lensAperture = exp( log(a1)+(log(a2)-log(a1))/(log(f2)-log(f1))*(log(focalLength)-log(f1)) );
-
-			 dif = ABS(lensAperture - maxApertureAtFocal);
-		}else
-			 dif = 0;
-		if( dif < deltaMin ){
-		     deltaMin = dif;
-			 bestMatch = r->second;
-		}
-		if( dif < 0.15){
-		     if( candidates.tellp() )
-				 candidates << "\n or " <<  r->second;
-			 else
-				 candidates <<  r->second;
-		}
-
-	 }
-	 if( !candidates.tellp() )
-	    return bestMatch;
-	 else
-	    return candidates.str();
-}
 }
