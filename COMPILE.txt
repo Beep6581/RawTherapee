@@ -51,7 +51,8 @@ Requirements:
 
 Compile:
 - Enter root directory of RawTherapee source tree
-- Type: cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 .
+- Type: cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 . (to enable OpenMP) OR:
+        cmake -D OPTION_OMP=false (to disable OpenMP and use the older compiler)
 - Type: make install
 - Type: ./tools/osx/make-app-bundle
 - You will find a RawTherapee.dmg file in release/ folder; this is the distribution release and can be run on any 10.5 or 10.6 Intel machine.
