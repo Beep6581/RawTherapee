@@ -119,8 +119,8 @@ void Options::setDefaults () {
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
-    rtSettings.demosaicMethod = "eahd";
-    rtSettings.colorCorrectionSteps = 2;
+    rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
+    rtSettings.colorCorrectionSteps = 0;
     rtSettings.dcb_iterations = 2;
     rtSettings.dcb_enhance = true;
     rtSettings.iccDirectory = "/usr/share/color/icc";

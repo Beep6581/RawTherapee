@@ -781,8 +781,10 @@ int RawImageSource::load (Glib::ustring fname) {
             vng4_demosaic ();
         else if (settings->demosaicMethod=="ahd")
             ahd_demosaic ();
-        else if (settings->demosaicMethod=="ppg")
-            ppg_demosaic ();
+        //else if (settings->demosaicMethod=="ppg")
+        //    ppg_demosaic ();
+		else if (settings->demosaicMethod=="amaze")
+            amaze_demosaic_RT ();//Emil's code for AMaZE
         else if (settings->demosaicMethod=="dcb")
             dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
         else
@@ -3124,6 +3126,11 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
         }
         free(image);
 }
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//Emil's code for AMaZE
+#include "amaze_interpolate_RT.cc"//AMaZE demosaic	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 } /* namespace */

@@ -139,6 +139,7 @@ class RawImageSource : public ImageSource {
         void    hphd_demosaic   ();
         void    vng4_demosaic   ();
         void    ppg_demosaic();
+		void	amaze_demosaic_RT	();//Emil's code for AMaZE
         void    dcb_demosaic(int iterations, int dcb_enhance);
         void    ahd_demosaic();
 	void	border_interpolate(int border, ushort (*image)[4]);

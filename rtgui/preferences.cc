@@ -263,7 +263,8 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     dmethod->append_text ("EAHD");
     dmethod->append_text ("HPHD");
     dmethod->append_text ("VNG-4");
-    dmethod->append_text ("PPG");
+    //dmethod->append_text ("PPG");
+	dmethod->append_text ("AMaZE");//Emil's code for AMaZE
     dmethod->append_text ("DCB");
     dmethod->append_text ("AHD");
     Gtk::Label* cclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FALSECOLOR")+":"));
@@ -707,8 +708,10 @@ void Preferences::storePreferences () {
         moptions.rtSettings.demosaicMethod = "hphd";
     else if (dmethod->get_active_row_number()==2)
         moptions.rtSettings.demosaicMethod = "vng4";
-    else if (dmethod->get_active_row_number()==3)
-        moptions.rtSettings.demosaicMethod = "ppg";
+    //else if (dmethod->get_active_row_number()==3)
+    //    moptions.rtSettings.demosaicMethod = "ppg";
+	else if (dmethod->get_active_row_number()==3)
+        moptions.rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
     else if (dmethod->get_active_row_number()==4)
         moptions.rtSettings.demosaicMethod = "dcb";
     else if (dmethod->get_active_row_number()==5)
@@ -800,7 +803,9 @@ void Preferences::fillPreferences () {
         dmethod->set_active (1);
     else if (moptions.rtSettings.demosaicMethod=="vng4")
         dmethod->set_active (2);
-    else if (moptions.rtSettings.demosaicMethod=="ppg")
+    //else if (moptions.rtSettings.demosaicMethod=="ppg")
+    //    dmethod->set_active (3);
+	else if (moptions.rtSettings.demosaicMethod=="amaze")//Emil's code for AMaZE
         dmethod->set_active (3);
     else if (moptions.rtSettings.demosaicMethod=="dcb")
         dmethod->set_active (4);
