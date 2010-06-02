@@ -468,8 +468,14 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
         virtual std::string toString (Tag* t)
         {
         	 int lensID = t->toInt();
-        	 double maxApertureAtFocal = pow(2.0, t->getParent()->getParent()->getTag(0x9205)->toDouble()/2.0); // MaxApertureValue at focal Length
-        	 double focalLength = t->getParent()->getParent()->getTag(0x920A)->toDouble(); // Focal Length
+        	 Tag *apertureTag = t->getParent()->getRoot()->findTag("MaxApertureValue");
+        	 Tag *focalLengthTag = t->getParent()->getRoot()->findTag("FocalLength");
+        	 double maxApertureAtFocal = 0.;
+        	 double focalLength = 0.;
+        	 if( apertureTag )
+        		 maxApertureAtFocal = pow(2.0, apertureTag->toDouble()/2.0);
+        	 if( focalLengthTag )
+        		 focalLength = focalLengthTag->toDouble();
         	 return guess( lensID, focalLength, maxApertureAtFocal );
         }
 };
