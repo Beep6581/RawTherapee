@@ -273,10 +273,10 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
     double factor;
     int tW = working->width;
     int tH = working->height;
-
-	#pragma omp parallel for if (multiThread)
+    int r, g, b;
+		#pragma omp parallel for  private(r, g, b,factor,mapval) if (multiThread)
     for (int i=0; i<tH; i++) {
-        int r, g, b;
+
         for (int j=0; j<tW; j++) {
 
             r = working->r[i][j];
