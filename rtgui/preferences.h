@@ -75,6 +75,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Label* dcbIterationsLabel;
     Gtk::SpinButton*  dcbIterations;
     Gtk::CheckButton* dcbEnhance;
+	Gtk::CheckButton* caAutoCorrect;//Emil's CA correction
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
 

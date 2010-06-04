@@ -772,6 +772,20 @@ int RawImageSource::load (Glib::ustring fname) {
         delete corr_data;
 */                        
     }
+	
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//Emil's CA auto correction
+	
+	if (settings->ca_autocorrect) {
+		if (plistener) {
+			plistener->setProgressStr ("CA Auto Correction...");
+			plistener->setProgress (0.0);
+		}
+		
+		CA_correct_RT();
+	}
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     if (ri->filters) {
         // demosaic
@@ -3127,10 +3141,11 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
         free(image);
 }
 	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//Emil's code for AMaZE
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//Emil's code for AMaZE
 #include "amaze_interpolate_RT.cc"//AMaZE demosaic	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#include "CA_correct_RT.cc"//Emil's CA auto correction
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 } /* namespace */

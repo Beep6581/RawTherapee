@@ -120,6 +120,7 @@ void Options::setDefaults () {
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
+	rtSettings.ca_autocorrect = false;//Emil's CA correction
     rtSettings.colorCorrectionSteps = 0;
     rtSettings.dcb_iterations = 2;
     rtSettings.dcb_enhance = true;
@@ -384,6 +385,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Algorithms", "ColorCorrection", rtSettings.colorCorrectionSteps);
     keyFile.set_integer ("Algorithms", "DCBIterations", rtSettings.dcb_iterations);
     keyFile.set_boolean ("Algorithms", "DCBEnhance", rtSettings.dcb_enhance);
+	keyFile.set_boolean ("Algorithms", "CACorrect", rtSettings.ca_autocorrect);//Emil's CA correction
     
     keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
 

@@ -135,6 +135,9 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb     (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i);
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
+		int	LinEqSolve			(int c, int dir, int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
+		void CA_correct_RT		();
+	
         void    eahd_demosaic   ();
         void    hphd_demosaic   ();
         void    vng4_demosaic   ();

@@ -286,11 +286,14 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     hb13->pack_start (*dcbIterations);
 
     dcbEnhance = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_DCBENHANCE"))));
+	
+	caAutoCorrect = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_CACORRECTION"))));//Emil's CA correction
 
     fdb->pack_start (*hb11, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*hb12, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*hb13, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*dcbEnhance, Gtk::PACK_SHRINK, 4);
+	fdb->pack_start (*caAutoCorrect, Gtk::PACK_SHRINK, 4);//Emil's CA correction
     mvbpp->pack_start (*fdem, Gtk::PACK_SHRINK, 4);
     mvbpp->set_border_width (4);
     //  drlab->set_size_request (drimg->get_width(), -1);
@@ -718,6 +721,7 @@ void Preferences::storePreferences () {
         moptions.rtSettings.demosaicMethod = "ahd";
     moptions.rtSettings.dcb_iterations=(int)dcbIterations->get_value();
     moptions.rtSettings.dcb_enhance=dcbEnhance->get_active();
+	moptions.rtSettings.ca_autocorrect=caAutoCorrect->get_active();//Emil's CA correction
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -816,6 +820,7 @@ void Preferences::fillPreferences () {
     dcbEnhance->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
     dcbIterations->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
     dcbIterationsLabel->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
+	caAutoCorrect->set_active(moptions.rtSettings.ca_autocorrect);//Emil's CA Auto Correction
 
     if (moptions.startupDir==STARTUPDIR_CURRENT) 
         sdcurrent->set_active ();
