@@ -323,7 +323,7 @@ void RawImageSource::CA_correct_RT() {
 					//solve for the interpolation position that minimizes color difference variance over the tile
 
 					//vertical
-					gdiff=0.625*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.1875*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
+					gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
 					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );
 					
 					deltgrb=(rgb[indx][c]-rgb[indx][1]);
@@ -333,7 +333,7 @@ void RawImageSource::CA_correct_RT() {
 					coeff[0][2][c] += gradwt*gdiff*gdiff;
 
 					//horizontal
-					gdiff=0.625*(rgb[indx+1][1]-rgb[indx-1][1])+0.1875*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
+					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
 					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );
 					
 					deltgrb=(rgb[indx][c]-rgb[indx][1]);
