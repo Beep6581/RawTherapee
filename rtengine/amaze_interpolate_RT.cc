@@ -349,10 +349,10 @@ void RawImageSource::amaze_demosaic_RT() {
 					rbint[indx]=0;
 					
 					//color ratios in each cardinal direction
-					cru = cfa[indx-v1]*(dirwts[indx-v2][0]+dirwts[indx][0])/(eps+dirwts[indx-v2][0]*cfa[indx]+dirwts[indx][0]*cfa[indx-v2]);
-					crd = cfa[indx+v1]*(dirwts[indx+v2][0]+dirwts[indx][0])/(eps+dirwts[indx+v2][0]*cfa[indx]+dirwts[indx][0]*cfa[indx+v2]);
-					crl = cfa[indx-1]*(dirwts[indx-2][1]+dirwts[indx][1])/(eps+dirwts[indx-2][1]*cfa[indx]+dirwts[indx][1]*cfa[indx-2]);
-					crr = cfa[indx+1]*(dirwts[indx+2][1]+dirwts[indx][1])/(eps+dirwts[indx+2][1]*cfa[indx]+dirwts[indx][1]*cfa[indx+2]);
+					cru = cfa[indx-v1]*(eps+dirwts[indx-v2][0]+dirwts[indx][0])/(eps+dirwts[indx-v2][0]*cfa[indx]+dirwts[indx][0]*cfa[indx-v2]);
+					crd = cfa[indx+v1]*(eps+dirwts[indx+v2][0]+dirwts[indx][0])/(eps+dirwts[indx+v2][0]*cfa[indx]+dirwts[indx][0]*cfa[indx+v2]);
+					crl = cfa[indx-1]*(eps+dirwts[indx-2][1]+dirwts[indx][1])/(eps+dirwts[indx-2][1]*cfa[indx]+dirwts[indx][1]*cfa[indx-2]);
+					crr = cfa[indx+1]*(eps+dirwts[indx+2][1]+dirwts[indx][1])/(eps+dirwts[indx+2][1]*cfa[indx]+dirwts[indx][1]*cfa[indx+2]);
 					
 					guha=cfa[indx-v1]+0.5*(cfa[indx]-cfa[indx-v2]);
 					gdha=cfa[indx+v1]+0.5*(cfa[indx]-cfa[indx+v2]);

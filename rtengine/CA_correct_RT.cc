@@ -113,7 +113,7 @@ void RawImageSource::CA_correct_RT() {
 	float (*Gtmp);
 	Gtmp = (float (*)) calloc ((height)*(width), sizeof *Gtmp);
 	
-	int polyord=4, numpar=16, numblox[3]={0,0,0};
+	int polyord=2, numpar=4, numblox[3]={0,0,0};
 
 	//static const int border=8;
 	int rrmin, rrmax, ccmin, ccmax;
@@ -133,8 +133,9 @@ void RawImageSource::CA_correct_RT() {
 	float	polymat[3][2][1296], shiftmat[3][2][36], fitparams[3][2][36];
 	float	shifthfrac[3], shiftvfrac[3], temp, p[9];
 	float	gdiff, deltgrb, denom, Ginthfloor, Ginthceil, Gint, gradwt;
-	float	grbdiffinthfloor, grbdiffinthceil, grbdiffint;
-	float	blockgave, blockgsqave;
+	float	grbdiffinthfloor, grbdiffinthceil, grbdiffint, grbdiffold;
+	float	blockave[2][3]={{0,0,0},{0,0,0}}, blocksqave[2][3]={{0,0,0},{0,0,0}}, blockdenom[2][3]={{0,0,0},{0,0,0}}, blockvar[2][3];
+
 	
 	static const float gaussg[5] = {0.171582, 0.15839, 0.124594, 0.083518, 0.0477063};
 	static const float gaussrb[3] = {0.332406, 0.241376, 0.0924212};
@@ -200,7 +201,6 @@ void RawImageSource::CA_correct_RT() {
 			if (bottom>height) {rrmax=height-top;} else {rrmax=rr1;}
 			if (right>width) {ccmax=width-left;} else {ccmax=cc1;}
 			
-			blockgave=blockgsqave=denom=0;
 			for (rr=rrmin; rr < rrmax; rr++)
 				for (row=rr+top, cc=ccmin; cc < ccmax; cc++) {
 					col = cc+left;
@@ -352,7 +352,7 @@ void RawImageSource::CA_correct_RT() {
 				for (j=0; j<2; j++) {// vert/hor
 					
 					CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
-					blockwt[vblock*hblsz+hblock]= (rr1-8)*(cc1-8)/4;
+					blockwt[vblock*hblsz+hblock] = (float)(rr1-8)*(cc1-8)/4 * coeff[j][2][c]/(eps+coeff[j][0][c]) ;
 
 					//data structure = CAshift[vert/hor][color]
 					//j=0=vert, 1=hor
@@ -364,6 +364,12 @@ void RawImageSource::CA_correct_RT() {
 					}	
 					offset[j][c]=floor(CAshift[j][c]);
 					//offset gives NW corner of square containing the min; j=0=vert, 1=hor
+					
+					if (fabs(CAshift[j][c])<2.0) {
+						blockave[j][c] += CAshift[j][c];
+						blocksqave[j][c] += SQR(CAshift[j][c]);
+						blockdenom[j][c] += 1;
+					}
 					
 				}//vert/hor
 			}//color
@@ -382,6 +388,12 @@ void RawImageSource::CA_correct_RT() {
 				//data structure: blockshifts[blocknum][R/B][v/h]
 			}
 		}
+	
+	for (j=0; j<2; j++)
+		for (c=0; c<3; c+=2) {
+			blockvar[j][c] = blocksqave[j][c]/blockdenom[j][c]-SQR(blockave[j][c]/blockdenom[j][c]);
+		}
+	
 	//end of diagnostic pass
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -436,7 +448,7 @@ void RawImageSource::CA_correct_RT() {
 				}
 				
 				//now prepare coefficient matrix
-				if (fabs(blockshifts[(vblock)*hblsz+hblock][c][0])>1.0 || fabs(blockshifts[(vblock)*hblsz+hblock][c][1])>1.0) continue;
+				if (SQR(blockshifts[(vblock)*hblsz+hblock][c][0])>4*blockvar[0][c] || SQR(blockshifts[(vblock)*hblsz+hblock][c][1])>4*blockvar[1][c]) continue;
 				numblox[c] += 1;
 				for (dir=0; dir<2; dir++) {
 					for (i=0; i<polyord; i++)
@@ -641,7 +653,14 @@ void RawImageSource::CA_correct_RT() {
 						
 						//there is an assumption that the grid point is no more than 2 pixels from the optical point; perhaps should correct for this???
 						//now determine R/B at grid points using interpolated color differences and interpolated G value at grid point
-						rgb[(rr)*TS+cc][c]=rgb[(rr)*TS+cc][1]-grbdiffint;
+						grbdiffold = rgb[(rr)*TS+cc][1]-rgb[(rr)*TS+cc][c];
+						
+						if (fabs(grbdiffold)>fabs(grbdiffint) ) {
+							rgb[(rr)*TS+cc][c]=rgb[(rr)*TS+cc][1]-grbdiffint;
+						}
+						if (grbdiffold*grbdiffint<0) {
+							rgb[(rr)*TS+cc][c]=rgb[(rr)*TS+cc][1];
+						}
 						
 					}
 				}
