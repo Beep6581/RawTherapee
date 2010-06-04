@@ -33,6 +33,7 @@ namespace rtengine {
             bool            verbose;
 	    int dcb_iterations;	// number of dcb iterations
 	    bool dcb_enhance;	// whether to do image refinment
+		bool ca_autocorrect;	// Emil's auto CA correction
 
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */
