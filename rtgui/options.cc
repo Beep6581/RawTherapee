@@ -422,7 +422,7 @@ void Options::load () {
             g_mkdir_with_parents (profdir.c_str(), 511);
             options.saveToFile (rtdir + "/options");
         }
-        cacheBaseDir = rtdir + "/cache";
+        cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + "/cache";
     }
 
     Glib::ustring fname = argv0+"/languages/";
