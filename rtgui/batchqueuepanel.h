@@ -72,8 +72,7 @@ class BatchQueuePanel : public Gtk::VBox,
         
         void saveOptions ();
         void pathFolderChanged ();
-        void formatChanged ();       
+        void formatChanged (Glib::ustring f);
 };
-
 #endif
 

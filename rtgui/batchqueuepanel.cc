@@ -241,7 +241,8 @@ void BatchQueuePanel::pathFolderChanged () {
     options.savePathFolder      = outdirFolder->get_filename();
 }
 
-void BatchQueuePanel::formatChanged () {
+void BatchQueuePanel::formatChanged (Glib::ustring f) {
     
     options.saveFormat          = saveFormatPanel->getFormat ();
+    
 }
