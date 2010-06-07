@@ -445,6 +445,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
             tbe[i]->getThumbButtonSet()->setInTrash (true);
+            tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
         }
     }
     trash_changed().emit();
@@ -460,6 +461,7 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
             tbe[i]->getThumbButtonSet()->setInTrash (false);
+            tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
         }
     }
     trash_changed().emit();
