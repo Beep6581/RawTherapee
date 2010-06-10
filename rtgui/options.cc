@@ -422,9 +422,8 @@ void Options::load () {
             g_mkdir_with_parents (profdir.c_str(), 511);
             options.saveToFile (rtdir + "/options");
         }
-#if defined(__MINGW32__) || defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+#ifdef _WIN32
         cacheBaseDir = rtdir + "/cache";
-    }
 #else
 		cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + "/RawTherapee";
 #endif
