@@ -533,6 +533,15 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
     int prevh = options.maxThumbnailHeight;
     int prevw = prevh;
     guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
+    double tmpscale;
+    rtengine::IImage8* img = openThm->processThumbImage (pparams, options.maxThumbnailHeight, tmpscale);
+    if (img) {
+    	prevw = img->getWidth ();
+    	prevh = img->getHeight ();
+        prev = new guint8 [prevw*prevh*3];
+        memcpy (prev, img->getData (), prevw*prevh*3);
+        delete img;
+    }
     return new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
 }
 
