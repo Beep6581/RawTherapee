@@ -427,6 +427,7 @@ void Options::load () {
 #else
 		cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + "/RawTherapee";
 #endif
+    }
 
     Glib::ustring fname = argv0+"/languages/";
     fname += (options.language.empty())? DefaultLanguage : options.language;
