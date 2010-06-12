@@ -1,4 +1,4 @@
-﻿#
+#
 #   This file is part of RawTherapee.
 #
 #   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -365,6 +365,10 @@ PREFERENCES_DCBENHANCE;Apply DCB enhancment step
 PREFERENCES_DCBITERATIONS;Number of DCB iterations
 #Emil's CA autocorrection
 PREFERENCES_CACORRECTION;Apply CA auto correction
+#Emil's hot/dead pixel filter
+PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+#Emil's line noise filter
+PREFERENCES_LINEDENOISE;Line noise filter
 PREFERENCES_DEFAULTLANG;Default language
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm

@@ -138,6 +138,11 @@ class RawImageSource : public ImageSource {
 		int	LinEqSolve			(int c, int dir, int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
 		void CA_correct_RT		();
 	
+		void cfa_clean (float thresh);//Emil's hot/dead pixel filter
+	void ddct8x8s(int isgn, float **a);
+
+		void cfa_linedn (float linenoiselevel);//Emil's line denoise
+	
         void    eahd_demosaic   ();
         void    hphd_demosaic   ();
         void    vng4_demosaic   ();

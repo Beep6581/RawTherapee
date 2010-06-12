@@ -324,6 +324,59 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 
     isrcMutex.unlock ();
 }
+	
+	
+void RawImageSource::cfa_clean(float thresh) //Emil's hot/dead pixel removal -- only filters egregiously impulsive pixels
+	{  
+		// local variables
+		int rr, cc;
+		int gin, g[8];
+		
+		float eps=1e-10;//tolerance to avoid dividing by zero
+		float p[8];
+		float pixave, pixratio;
+
+		// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//The cleaning algorithm starts here
+				
+		for (rr=4; rr < H-4; rr++)
+			for (cc=4; cc < W-4; cc++) {
+				
+				//pixel neighbor average
+				gin=ri->data[rr][cc];
+				g[0]=ri->data[rr-2][cc-2];
+				g[1]=ri->data[rr-2][cc];
+				g[2]=ri->data[rr-2][cc+2];
+				g[3]=ri->data[rr][cc-2];
+				g[4]=ri->data[rr][cc+2];
+				g[5]=ri->data[rr+2][cc-2];
+				g[6]=ri->data[rr+2][cc];
+				g[7]=ri->data[rr+2][cc+2];
+				
+				pixave=(float)(g[0]+g[1]+g[2]+g[3]+g[4]+g[5]+g[6]+g[7])/8;
+				pixratio=MIN(gin,pixave)/(eps+MAX(gin,pixave));
+				
+				if (pixratio > thresh) continue;
+				
+				p[0]=1/(eps+fabs(g[0]-gin)+fabs(g[0]-ri->data[rr-4][cc-4])+fabs(ri->data[rr-1][cc-1]-ri->data[rr-3][cc-3]));
+				p[1]=1/(eps+fabs(g[1]-gin)+fabs(g[1]-ri->data[rr-4][cc])+fabs(ri->data[rr-1][cc]-ri->data[rr-3][cc]));
+				p[2]=1/(eps+fabs(g[2]-gin)+fabs(g[2]-ri->data[rr-4][cc+4])+fabs(ri->data[rr-1][cc+1]-ri->data[rr-3][cc+3]));
+				p[3]=1/(eps+fabs(g[3]-gin)+fabs(g[3]-ri->data[rr][cc-4])+fabs(ri->data[rr][cc-1]-ri->data[rr][cc-3]));
+				p[4]=1/(eps+fabs(g[4]-gin)+fabs(g[4]-ri->data[rr][cc+4])+fabs(ri->data[rr][cc+1]-ri->data[rr][cc+3]));
+				p[5]=1/(eps+fabs(g[5]-gin)+fabs(g[5]-ri->data[rr+4][cc-4])+fabs(ri->data[rr+1][cc-1]-ri->data[rr+3][cc-3]));
+				p[6]=1/(eps+fabs(g[6]-gin)+fabs(g[6]-ri->data[rr+4][cc])+fabs(ri->data[rr+1][cc]-ri->data[rr+3][cc]));
+				p[7]=1/(eps+fabs(g[7]-gin)+fabs(g[7]-ri->data[rr+4][cc+4])+fabs(ri->data[rr+1][cc+1]-ri->data[rr+3][cc+3]));
+				
+				ri->data[rr][cc] = (int)((g[0]*p[0]+g[1]*p[1]+g[2]*p[2]+g[3]*p[3]+g[4]*p[4]+ \
+										g[5]*p[5]+g[6]*p[6]+g[7]*p[7])/(p[0]+p[1]+p[2]+p[3]+p[4]+p[5]+p[6]+p[7]));
+				
+			}//now impulsive values have been corrected
+		
+		
+		// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+	}
+	
 
 void RawImageSource::rotateLine (unsigned short* line, unsigned short** channel, int tran, int i, int w, int h) {
 
@@ -773,6 +826,29 @@ int RawImageSource::load (Glib::ustring fname) {
 */                        
     }
 	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//Emil's CFA hot/dead pixel filter
+	
+	if (settings->hotdeadpix_filt) {
+		if (plistener) {
+			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
+			plistener->setProgress (0.0);
+		}
+		
+		cfa_clean(0.1);
+	}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//Emil's line noise filter
+	
+	if (settings->linenoise) {
+		if (plistener) {
+			plistener->setProgressStr ("Line Denoise...");
+			plistener->setProgress (0.0);
+		}
+		
+		cfa_linedn(0.00002*(settings->linenoise));
+	}
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's CA auto correction
@@ -3145,6 +3221,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 //Emil's code for AMaZE
 #include "amaze_interpolate_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
+#include "cfa_linedn_RT.cc"//Emil's CA auto correction
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

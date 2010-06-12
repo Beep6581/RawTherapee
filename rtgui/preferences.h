@@ -76,6 +76,10 @@ class Preferences : public Gtk::Dialog {
     Gtk::SpinButton*  dcbIterations;
     Gtk::CheckButton* dcbEnhance;
 	Gtk::CheckButton* caAutoCorrect;//Emil's CA correction
+	Gtk::CheckButton* HotDeadPixFilt;//Emil's hot/dead pixel filter
+	Gtk::Label* LineDenoiseLabel;//Emil's line denoise
+	Gtk::SpinButton*  LineDenoise;
+
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
 
