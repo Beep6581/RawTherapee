@@ -367,6 +367,10 @@ PREFERENCES_DCBENHANCE;Apply DCB enhancement step
 PREFERENCES_DCBITERATIONS;Number of DCB iterations
 #Emil's CA autocorrection
 PREFERENCES_CACORRECTION;Apply CA auto correction
+#Emil's hot/dead pixel filter
+PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+#Emil's line noise filter
+PREFERENCES_LINEDENOISE;Line noise filter
 PREFERENCES_DEFAULTLANG;Default language
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm

@@ -121,6 +121,10 @@ void Options::setDefaults () {
     rtSettings.dualThreadEnabled = true;
     rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
 	rtSettings.ca_autocorrect = false;//Emil's CA correction
+	rtSettings.hotdeadpix_filt = true;//Emil's hot/dead pixel filter
+	
+    rtSettings.linenoise = 0;//Emil's line denoise
+	
     rtSettings.colorCorrectionSteps = 0;
     rtSettings.dcb_iterations = 2;
     rtSettings.dcb_enhance = true;
@@ -262,6 +266,9 @@ if (keyFile.has_group ("Algorithms")) {
     if (keyFile.has_key ("Algorithms", "ColorCorrection")) rtSettings.colorCorrectionSteps = keyFile.get_integer ("Algorithms", "ColorCorrection");
     if(keyFile.has_key("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
     if(keyFile.has_key("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
+	if(keyFile.has_key("Algorithms", "CACorrect")) rtSettings.ca_autocorrect = keyFile.get_boolean("Algorithms", "CACorrect");//Emil's CA autocorrect
+    if(keyFile.has_key("Algorithms", "HotDeadPixFilt")) rtSettings.hotdeadpix_filt = keyFile.get_boolean("Algorithms", "HotDeadPixFilt");//Emil's hot/dead pixel filter
+	if(keyFile.has_key("Algorithms", "LineDenoise")) rtSettings.linenoise = keyFile.get_integer("Algorithms", "LineDenoise");//Emil's line denoise
 }
 
 if (keyFile.has_group ("Crop Settings")) { 
@@ -386,7 +393,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Algorithms", "DCBIterations", rtSettings.dcb_iterations);
     keyFile.set_boolean ("Algorithms", "DCBEnhance", rtSettings.dcb_enhance);
 	keyFile.set_boolean ("Algorithms", "CACorrect", rtSettings.ca_autocorrect);//Emil's CA correction
-    
+	keyFile.set_boolean ("Algorithms", "HotDeadPixFilt", rtSettings.hotdeadpix_filt);//Emil's hot/dead pixel filter
+    keyFile.set_integer ("Algorithms", "LineDenoise", rtSettings.linenoise);//Emil's line denoise
+	
     keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
 
     keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);
@@ -422,11 +431,7 @@ void Options::load () {
             g_mkdir_with_parents (profdir.c_str(), 511);
             options.saveToFile (rtdir + "/options");
         }
-#ifdef _WIN32
         cacheBaseDir = rtdir + "/cache";
-#else
-		cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + "/RawTherapee";
-#endif
     }
 
     Glib::ustring fname = argv0+"/languages/";
