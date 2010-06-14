@@ -540,7 +540,7 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
     	prevh = img->getHeight ();
         prev = new guint8 [prevw*prevh*3];
         memcpy (prev, img->getData (), prevw*prevh*3);
-        delete img;
+        img->free();
     }
     return new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
 }
