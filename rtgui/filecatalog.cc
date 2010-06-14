@@ -500,6 +500,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
                 int ph = img->getHeight ();
                 guint8* prev = new guint8 [pw*ph*3];
                 memcpy (prev, img->getData (), pw*ph*3);
+                img->free();
                 listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
             }
             else {
