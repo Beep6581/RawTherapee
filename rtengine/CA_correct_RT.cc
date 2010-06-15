@@ -5,7 +5,7 @@
 //		copyright (c) 2008-2010  Emil Martinec <ejmartin@uchicago.edu>
 //
 //
-// code dated: June 2, 2010
+// code dated: June 14, 2010
 //
 //	CA_correct_RT.cc is free software: you can redistribute it and/or modify
 //	it under the terms of the GNU General Public License as published by
@@ -100,10 +100,8 @@ int RawImageSource::LinEqSolve(int c, int dir, int nDim, float* pfMatr, float* p
 void RawImageSource::CA_correct_RT() { 
 
 #define TS 256		// Tile size
-//#define polyord	4	// max order of fit monomial
-//#define numpar 16	// number of fit parameters = SQR(polyord)
-#define border 8
-#define border2	16
+//#define border 8
+//#define border2	16
 	
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	#define SQR(x) ((x)*(x))
@@ -113,18 +111,20 @@ void RawImageSource::CA_correct_RT() {
 	float (*Gtmp);
 	Gtmp = (float (*)) calloc ((height)*(width), sizeof *Gtmp);
 	
-	int polyord=2, numpar=4, numblox[3]={0,0,0};
+	static const int border=8;
+	static const int border2=16;
+	int polyord=4, numpar=16, numblox[3]={0,0,0};
 
-	//static const int border=8;
 	int rrmin, rrmax, ccmin, ccmax;
 	int top, bottom, left, right, row, col;
 	int rr, cc, rr1, cc1, c, indx, indx1, i, j, k, m, n, dir;
+	int areawt[2][3];
 	int GRBdir[2][3], offset[2][3];
 	int	shifthfloor[3], shiftvfloor[3], shifthceil[3], shiftvceil[3];
-	int vblsz, hblsz, vblock, hblock;
+	int vblsz, hblsz, vblock, hblock, vz1, hz1;
 	//int verbose=1;
 	int res;
-	int v1=TS, v2=2*TS, v3=3*TS, v4=4*TS;//, p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
+	static const int v1=TS, v2=2*TS, v3=3*TS, v4=4*TS;//, p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
 	
 	float eps=1e-10;			//tolerance to avoid dividing by zero
 	
@@ -132,13 +132,13 @@ void RawImageSource::CA_correct_RT() {
 	float	coeff[2][3][3], CAshift[2][3];
 	float	polymat[3][2][1296], shiftmat[3][2][36], fitparams[3][2][36];
 	float	shifthfrac[3], shiftvfrac[3], temp, p[9];
-	float	gdiff, deltgrb, denom, Ginthfloor, Ginthceil, Gint, gradwt;
+	float	gdiff, deltgrb, denom, Ginthfloor, Ginthceil, Gint, RBint, gradwt;
 	float	grbdiffinthfloor, grbdiffinthceil, grbdiffint, grbdiffold;
 	float	blockave[2][3]={{0,0,0},{0,0,0}}, blocksqave[2][3]={{0,0,0},{0,0,0}}, blockdenom[2][3]={{0,0,0},{0,0,0}}, blockvar[2][3];
-
+	float	glpfh, glpfv, ghpfh, ghpfv;
 	
-	static const float gaussg[5] = {0.171582, 0.15839, 0.124594, 0.083518, 0.0477063};
-	static const float gaussrb[3] = {0.332406, 0.241376, 0.0924212};
+	static const float gaussg[5] = {0.171582, 0.15839, 0.124594, 0.083518, 0.0477063};//sig=2.5
+	static const float gaussrb[3] = {0.332406, 0.241376, 0.0924212};//sig=1.25
 	
 	//char		*buffer1;				// vblsz*hblsz*3*2
 	//float		(*blockshifts)[3][2];	// vblsz*hblsz*3*2
@@ -150,10 +150,10 @@ void RawImageSource::CA_correct_RT() {
 	float         (*rgb)[3];		// TS*TS*12
 	float         (*grbdiff);		// TS*TS*4
 	float         (*gshift);		// TS*TS*4
-	float         (*ghpfh);		// TS*TS*4
-	float         (*ghpfv);		// TS*TS*4
 	float         (*rbhpfh);		// TS*TS*4
 	float         (*rbhpfv);		// TS*TS*4
+	float         (*rblpfh);		// TS*TS*4
+	float         (*rblpfv);		// TS*TS*4
 
 	
 	/* assign working space; this would not be necessary
@@ -166,14 +166,16 @@ void RawImageSource::CA_correct_RT() {
 	rgb         = (float (*)[3])		buffer;
 	grbdiff		= (float (*))			(buffer +	12*TS*TS);
 	gshift		= (float (*))			(buffer +	16*TS*TS);
-	ghpfh		= (float (*))			(buffer +	20*TS*TS);
-	ghpfv		= (float (*))			(buffer +	24*TS*TS);
-	rbhpfh		= (float (*))			(buffer +	28*TS*TS);
-	rbhpfv		= (float (*))			(buffer +	32*TS*TS);
+	rbhpfh		= (float (*))			(buffer +	20*TS*TS);
+	rbhpfv		= (float (*))			(buffer +	24*TS*TS);
+	rblpfh		= (float (*))			(buffer +	28*TS*TS);
+	rblpfv		= (float (*))			(buffer +	32*TS*TS);
 	
-	
-	vblsz=ceil((float)(height+border2)/(TS-border2))+2;
-	hblsz=ceil((float)(width+border2)/(TS-border2))+2;
+	if((height+border2)%(TS-border2)==0) vz1=1; else vz1=0;
+    if((width+border2)%(TS-border2)==0) hz1=1; else hz1=0;
+    
+    vblsz=ceil((float)(height+border2)/(TS-border2)+2+vz1);
+    hblsz=ceil((float)(width+border2)/(TS-border2)+2+hz1);
 	
 	/*buffer1 = (char *) malloc(4*vblsz*hblsz*3*2);
 	 merror(buffer1,"CA_correct()");
@@ -208,9 +210,8 @@ void RawImageSource::CA_correct_RT() {
 					indx=row*width+col;
 					indx1=rr*TS+cc;
 					rgb[indx1][c] = (ri->data[row][col])/65535.0f;
+					//rgb[indx1][c] = image[indx][c]/65535.0f;//for dcraw implementation
 				}
-			blockwt[vblock*hblsz+hblock]=0;
-			//blockwt[vblock*hblsz+hblock]=1;
 			
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			//fill borders
@@ -226,6 +227,7 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=ccmin; cc<ccmax; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+cc][c] = (ri->data[(height-rr-2)][left+cc])/65535.0f;
+						//rgb[(rrmax+rr)*TS+cc][c] = (image[(height-rr-2)*width+left+cc][c])/65535.0f;//for dcraw implementation
 					}
 			}
 			if (ccmin>0) {
@@ -240,6 +242,7 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[rr*TS+ccmax+cc][c] = (ri->data[(top+rr)][(width-cc-2)])/65535.0f;
+						//rgb[rr*TS+ccmax+cc][c] = (image[(top+rr)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
 					}
 			}
 			
@@ -249,6 +252,7 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rr)*TS+cc][c] = (ri->data[border2-rr][border2-cc])/65535.0f;
+						//rgb[(rr)*TS+cc][c] = (rgb[(border2-rr)*TS+(border2-cc)][c]);//for dcraw implementation
 					}
 			}
 			if (rrmax<rr1 && ccmax<cc1) {
@@ -256,6 +260,7 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+ccmax+cc][c] = (ri->data[(height-rr-2)][(width-cc-2)])/65535.0f;
+						//rgb[(rrmax+rr)*TS+ccmax+cc][c] = (image[(height-rr-2)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
 					}
 			}
 			if (rrmin>0 && ccmax<cc1) {
@@ -263,6 +268,7 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rr)*TS+ccmax+cc][c] = (ri->data[(border2-rr)][(width-cc-2)])/65535.0f;
+						//rgb[(rr)*TS+ccmax+cc][c] = (image[(border2-rr)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
 					}
 			}
 			if (rrmax<rr1 && ccmin>0) {
@@ -270,19 +276,22 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+cc][c] = (ri->data[(height-rr-2)][(border2-cc)])/65535.0f;
+						//rgb[(rrmax+rr)*TS+cc][c] = (image[(height-rr-2)*width+(border2-cc)][c])/65535.0f;//for dcraw implementation
 					}
 			}
 			
 			//end of border fill
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
-				for (j=0; j<2; j++)
-					for (k=0; k<3; k++)
-						for (c=0; c<3; c+=2) coeff[j][k][c]=0;
 			
+			for (j=0; j<2; j++) 
+				for (k=0; k<3; k++)
+					for (c=0; c<3; c+=2) {
+						coeff[j][k][c]=0;
+					}
 			//end of initialization
 			
-						
+			
 			for (rr=3; rr < rr1-3; rr++)
 				for (row=rr+top, cc=3, indx=rr*TS+cc; cc < cc1-3; cc++, indx++) {
 					col = cc+left;
@@ -294,7 +303,6 @@ void RawImageSource::CA_correct_RT() {
 						wtd=1/SQR(eps+fabs(rgb[(rr-1)*TS+cc][1]-rgb[(rr+1)*TS+cc][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr+2)*TS+cc][c])+fabs(rgb[(rr+1)*TS+cc][1]-rgb[(rr+3)*TS+cc][1]));
 						wtl=1/SQR(eps+fabs(rgb[(rr)*TS+cc+1][1]-rgb[(rr)*TS+cc-1][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr)*TS+cc-2][c])+fabs(rgb[(rr)*TS+cc-1][1]-rgb[(rr)*TS+cc-3][1]));
 						wtr=1/SQR(eps+fabs(rgb[(rr)*TS+cc-1][1]-rgb[(rr)*TS+cc+1][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr)*TS+cc+2][c])+fabs(rgb[(rr)*TS+cc+1][1]-rgb[(rr)*TS+cc+3][1]));
-
 						
 						//store in rgb array the interpolated G value at R/B grid points using directional weighted average
 						rgb[indx][1]=(wtu*rgb[indx-v1][1]+wtd*rgb[indx+v1][1]+wtl*rgb[indx-1][1]+wtr*rgb[indx+1][1])/(wtu+wtd+wtl+wtr);
@@ -302,46 +310,66 @@ void RawImageSource::CA_correct_RT() {
 					if (row>-1 && row<height && col>-1 && col<width)
 						Gtmp[row*width + col] = rgb[indx][1];
 				}
-			
-			//color difference curvatures
+
 			for (rr=4; rr < rr1-4; rr++)
 				for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
 					
-					ghpfv[indx] = 2*rgb[indx][1]-rgb[indx+v2][1]-rgb[indx-v2][1];
-					ghpfh[indx] = 2*rgb[indx][1]-rgb[indx+2][1]-rgb[indx-2][1];
-					rbhpfv[indx] = ghpfv[indx]-(2*rgb[indx][c]-rgb[indx+v2][c]-rgb[indx-v2][c]);
-					rbhpfh[indx] = ghpfh[indx]-(2*rgb[indx][c]-rgb[indx+2][c]-rgb[indx-2][c]);
+					/*ghpfv = 2*rgb[indx][1]-rgb[indx+v2][1]-rgb[indx-v2][1];
+					ghpfh = 2*rgb[indx][1]-rgb[indx+2][1]-rgb[indx-2][1];
+					rbhpfv[indx] = ghpfv-(2*rgb[indx][c]-rgb[indx+v2][c]-rgb[indx-v2][c]);
+					rbhpfh[indx] = ghpfh-(2*rgb[indx][c]-rgb[indx+2][c]-rgb[indx-2][c]);*/
 					
+					//ghpfv = fabs(fabs(rgb[indx][1]-rgb[indx+v4][1])+fabs(rgb[indx][1]-rgb[indx-v4][1]) - \
+					fabs(rgb[indx+v4][1]-rgb[indx-v4][1]));
+					//ghpfh = fabs(fabs(rgb[indx][1]-rgb[indx+4][1])+fabs(rgb[indx][1]-rgb[indx-4][1]) - \
+					fabs(rgb[indx+4][1]-rgb[indx-4][1]));
+					rbhpfv[indx] = fabs(fabs(rgb[indx][1]-rgb[indx][1]-(rgb[indx+v4][c]+rgb[indx+v4][c]))+ \
+										fabs(rgb[indx][1]-rgb[indx-v4][1]-(rgb[indx][c]-rgb[indx-v4][c])) - \
+										fabs(rgb[indx+v4][1]-rgb[indx-v4][1]-(rgb[indx+v4][c]-rgb[indx-v4][c])));
+					rbhpfh[indx] = fabs(fabs(rgb[indx][1]-rgb[indx+4][1]-(rgb[indx][c]-rgb[indx+4][c]))+ \
+										fabs(rgb[indx][1]-rgb[indx-4][1]-(rgb[indx][c]-rgb[indx-4][c])) - \
+										fabs(rgb[indx+4][1]-rgb[indx-4][1]-(rgb[indx+4][c]-rgb[indx-4][c])));
+					
+					glpfv = 0.25*(2*rgb[indx][1]+rgb[indx+v2][1]+rgb[indx-v2][1]);
+					glpfh = 0.25*(2*rgb[indx][1]+rgb[indx+2][1]+rgb[indx-2][1]);
+					rblpfv[indx] = eps+fabs(glpfv - 0.25*(2*rgb[indx][c]+rgb[indx+v2][c]+rgb[indx-v2][c]));
+					rblpfh[indx] = eps+fabs(glpfh - 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]));
 				}
 			
 			// along line segments, find the point along each segment that minimizes the color variance
 			// averaged over the tile; evaluate for up/down and left/right away from R/B grid point 
-			for (rr=4; rr < rr1-4; rr++)
-				for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
+			for (rr=8; rr < rr1-8; rr++)
+				for (cc=8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-8; cc+=2, indx+=2) {
 					
+					areawt[0][c]=areawt[1][c]=0;
+
 					//in linear interpolation, color differences are a quadratic function of interpolation position;
 					//solve for the interpolation position that minimizes color difference variance over the tile
-
+					
 					//vertical
 					gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
-					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );
-					
 					deltgrb=(rgb[indx][c]-rgb[indx][1]);
 					
+					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) )/(eps+MAX(rblpfv[indx-v2],rblpfv[indx+v2]));
+
 					coeff[0][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[0][1][c] += gradwt*gdiff*deltgrb;
 					coeff[0][2][c] += gradwt*gdiff*gdiff;
+					areawt[0][c]+=1;
 
+					//}
 					//horizontal
 					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
-					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );
-					
 					deltgrb=(rgb[indx][c]-rgb[indx][1]);
 					
+					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) )/(eps+MAX(rblpfh[indx-2],rblpfh[indx+2]));
+
 					coeff[1][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[1][1][c] += gradwt*gdiff*deltgrb;
 					coeff[1][2][c] += gradwt*gdiff*gdiff;
+					areawt[1][c]+=1;
 
+					//}
 					
 					//	In Mathematica,
 					//  f[x_]=Expand[Total[Flatten[
@@ -351,11 +379,20 @@ void RawImageSource::CA_correct_RT() {
 			for (c=0; c<3; c+=2){
 				for (j=0; j<2; j++) {// vert/hor
 					
-					CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
-					blockwt[vblock*hblsz+hblock] = (float)(rr1-8)*(cc1-8)/4 * coeff[j][2][c]/(eps+coeff[j][0][c]) ;
-
+					if (areawt[j][c]>0) {
+						CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
+						blockwt[vblock*hblsz+hblock]= areawt[j][c];//*coeff[j][2][c]/(eps+coeff[j][0][c]) ;
+					} else {
+						CAshift[j][c]=17.0;
+						blockwt[vblock*hblsz+hblock]=0;
+					}
+					
+					//CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
+					//blockwt[vblock*hblsz+hblock] = (float)(rr1-8)*(cc1-8)/4 * coeff[j][2][c]/(eps+coeff[j][0][c]) ;
+					
 					//data structure = CAshift[vert/hor][color]
 					//j=0=vert, 1=hor
+					
 					
 					if ((CAshift[j][c])<0) {
 						GRBdir[j][c]=-1;
@@ -370,17 +407,15 @@ void RawImageSource::CA_correct_RT() {
 						blocksqave[j][c] += SQR(CAshift[j][c]);
 						blockdenom[j][c] += 1;
 					}
-					
 				}//vert/hor
 			}//color
 			
 			
-						
+			
 			/* CAshift[j][c] are the locations  
 			 that minimize color difference variances; 
 			 This is the approximate _optical_ location of the R/B pixels */
-			
-			
+
 			for (c=0; c<3; c+=2) {
 				//evaluate the shifts to the location that minimizes CA within the tile
 				blockshifts[(vblock)*hblsz+hblock][c][0]=(CAshift[0][c]); //vert CA shift for R/B
@@ -388,13 +423,19 @@ void RawImageSource::CA_correct_RT() {
 				//data structure: blockshifts[blocknum][R/B][v/h]
 			}
 		}
+	//end of diagnostic pass
 	
 	for (j=0; j<2; j++)
 		for (c=0; c<3; c+=2) {
-			blockvar[j][c] = blocksqave[j][c]/blockdenom[j][c]-SQR(blockave[j][c]/blockdenom[j][c]);
+			if (blockdenom[j][c]) {
+				blockvar[j][c] = blocksqave[j][c]/blockdenom[j][c]-SQR(blockave[j][c]/blockdenom[j][c]);
+			} else {
+				return;
+			}
 		}
 	
-	//end of diagnostic pass
+	//if (verbose) fprintf (stderr,_("tile variances %f %f %f %f \n"),blockvar[0][0],blockvar[1][0],blockvar[0][2],blockvar[1][2] );
+	
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -447,17 +488,21 @@ void RawImageSource::CA_correct_RT() {
 					if (p[4]<0) {GRBdir[dir][c]=-1;} else {GRBdir[dir][c]=1;}
 				}
 				
+				
+				//if (verbose) fprintf (stderr,_("tile vshift hshift (%d %d %4f %4f)...\n"),vblock, hblock, blockshifts[(vblock)*hblsz+hblock][c][0], blockshifts[(vblock)*hblsz+hblock][c][1]);
+				
+				
 				//now prepare coefficient matrix
-				if (SQR(blockshifts[(vblock)*hblsz+hblock][c][0])>4*blockvar[0][c] || SQR(blockshifts[(vblock)*hblsz+hblock][c][1])>4*blockvar[1][c]) continue;
+				if (SQR(blockshifts[(vblock)*hblsz+hblock][c][0])>4.0*blockvar[0][c] || SQR(blockshifts[(vblock)*hblsz+hblock][c][1])>4.0*blockvar[1][c]) continue;
 				numblox[c] += 1;
 				for (dir=0; dir<2; dir++) {
 					for (i=0; i<polyord; i++)
 						for (j=0; j<polyord; j++) {
 							for (m=0; m<polyord; m++)
 								for (n=0; n<polyord; n++) {
-									polymat[c][dir][numpar*(polyord*i+j)+(polyord*m+n)] += (float)pow(vblock,i+m)*pow(hblock,j+n)*blockwt[vblock*hblsz+hblock];
+									polymat[c][dir][numpar*(polyord*i+j)+(polyord*m+n)] += (float)pow((float)vblock,i+m)*pow((float)hblock,j+n)*blockwt[vblock*hblsz+hblock];
 								}
-							shiftmat[c][dir][(polyord*i+j)] += (float)pow(vblock,i)*pow(hblock,j)*blockshifts[(vblock)*hblsz+hblock][c][dir]*blockwt[vblock*hblsz+hblock];
+							shiftmat[c][dir][(polyord*i+j)] += (float)pow((float)vblock,i)*pow((float)hblock,j)*blockshifts[(vblock)*hblsz+hblock][c][dir]*blockwt[vblock*hblsz+hblock];
 						}//monomials	
 				}//dir 
 				
@@ -467,18 +512,17 @@ void RawImageSource::CA_correct_RT() {
 	numblox[1]=MIN(numblox[0],numblox[2]);
 	//if (numblox[1]<72) {
 	//	polyord=4; numpar=16;
-		if (numblox[1]<32) {
-			polyord=2; numpar=4;
-			if (numblox[1]< 10) return;
-		}
-	//}	
+	if (numblox[1]<32) {
+		polyord=2; numpar=4;
+		if (numblox[1]< 10) return;
+	}
+	//}
 	
 	//fit parameters to blockshifts
 	for (c=0; c<3; c+=2)
 		for (dir=0; dir<2; dir++) {
 			res = LinEqSolve(c, dir, numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir]);
 			if (res) {
-				//if (verbose) fprintf(stderr,_("problem fitting CA parameters for (c = %d dir = %d)\n"),c,dir);
 				for (i=0; i<numpar; i++) fitparams[c][dir][i]=0;
 			}
 		}
@@ -486,7 +530,17 @@ void RawImageSource::CA_correct_RT() {
 	
 	//end of initialization for CA correction pass
 	
-
+	
+	blockshifts[(vblock)*hblsz+hblock][0][0] = blockshifts[(vblock)*hblsz+hblock][0][1] = 0;
+	blockshifts[(vblock)*hblsz+hblock][2][0] = blockshifts[(vblock)*hblsz+hblock][2][1] = 0;
+	for (i=0; i<polyord; i++)
+		for (j=0; j<polyord; j++) {
+			blockshifts[(vblock)*hblsz+hblock][0][0] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[0][0][polyord*i+j];
+			blockshifts[(vblock)*hblsz+hblock][0][1] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[0][1][polyord*i+j];
+			blockshifts[(vblock)*hblsz+hblock][2][0] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[2][0][polyord*i+j];
+			blockshifts[(vblock)*hblsz+hblock][2][1] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[2][1][polyord*i+j];
+		}
+	
 	
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
@@ -513,6 +567,8 @@ void RawImageSource::CA_correct_RT() {
 					indx1=rr*TS+cc;	
 					//rgb[indx1][c] = image[indx][c]/65535.0f;
 					rgb[indx1][c] = (ri->data[row][col])/65535.0f;
+					//rgb[indx1][c] = image[indx][c]/65535.0f;//for dcraw implementation
+
 					if ((c&1)==0) rgb[indx1][1] = Gtmp[indx];
 				}
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -530,6 +586,8 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=ccmin; cc<ccmax; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+cc][c] = (ri->data[(height-rr-2)][left+cc])/65535.0f;
+						//rgb[(rrmax+rr)*TS+cc][c] = (image[(height-rr-2)*width+left+cc][c])/65535.0f;//for dcraw implementation
+
 						rgb[(rrmax+rr)*TS+cc][1] = Gtmp[(height-rr-2)*width+left+cc];
 					}
 			}
@@ -546,6 +604,8 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[rr*TS+ccmax+cc][c] = (ri->data[(top+rr)][(width-cc-2)])/65535.0f;
+						//rgb[rr*TS+ccmax+cc][c] = (image[(top+rr)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
+
 						rgb[rr*TS+ccmax+cc][1] = Gtmp[(top+rr)*width+(width-cc-2)];
 					}
 			}
@@ -556,6 +616,8 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rr)*TS+cc][c] = (ri->data[border2-rr][border2-cc])/65535.0f;
+						//rgb[(rr)*TS+cc][c] = (rgb[(border2-rr)*TS+(border2-cc)][c]);//for dcraw implementation
+
 						rgb[(rr)*TS+cc][1] = Gtmp[(border2-rr)*width+border2-cc];
 					}
 			}
@@ -564,6 +626,8 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+ccmax+cc][c] = (ri->data[(height-rr-2)][(width-cc-2)])/65535.0f;
+						//rgb[(rrmax+rr)*TS+ccmax+cc][c] = (image[(height-rr-2)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
+
 						rgb[(rrmax+rr)*TS+ccmax+cc][1] = Gtmp[(height-rr-2)*width+(width-cc-2)];
 					}
 			}
@@ -572,6 +636,8 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rr)*TS+ccmax+cc][c] = (ri->data[(border2-rr)][(width-cc-2)])/65535.0f;
+						//rgb[(rr)*TS+ccmax+cc][c] = (image[(border2-rr)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
+
 						rgb[(rr)*TS+ccmax+cc][1] = Gtmp[(border2-rr)*width+(width-cc-2)];
 					}
 			}
@@ -580,6 +646,8 @@ void RawImageSource::CA_correct_RT() {
 					for (cc=0; cc<border; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+cc][c] = (ri->data[(height-rr-2)][(border2-cc)])/65535.0f;
+						//rgb[(rrmax+rr)*TS+cc][c] = (image[(height-rr-2)*width+(border2-cc)][c])/65535.0f;//for dcraw implementation
+
 						rgb[(rrmax+rr)*TS+cc][1] = Gtmp[(height-rr-2)*width+(border2-cc)];
 					}
 			}
@@ -587,16 +655,6 @@ void RawImageSource::CA_correct_RT() {
 			//end of border fill
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%			
 			
-			
-			blockshifts[(vblock)*hblsz+hblock][0][0] = blockshifts[(vblock)*hblsz+hblock][0][1] = 0;
-			blockshifts[(vblock)*hblsz+hblock][2][0] = blockshifts[(vblock)*hblsz+hblock][2][1] = 0;
-			for (i=0; i<polyord; i++)
-				for (j=0; j<polyord; j++) {
-					blockshifts[(vblock)*hblsz+hblock][0][0] += (float)pow(vblock,i)*pow(hblock,j)*fitparams[0][0][polyord*i+j];
-					blockshifts[(vblock)*hblsz+hblock][0][1] += (float)pow(vblock,i)*pow(hblock,j)*fitparams[0][1][polyord*i+j];
-					blockshifts[(vblock)*hblsz+hblock][2][0] += (float)pow(vblock,i)*pow(hblock,j)*fitparams[2][0][polyord*i+j];
-					blockshifts[(vblock)*hblsz+hblock][2][1] += (float)pow(vblock,i)*pow(hblock,j)*fitparams[2][1][polyord*i+j];
-				}
 			
 			for (c=0; c<3; c+=2) {
 				
@@ -623,45 +681,47 @@ void RawImageSource::CA_correct_RT() {
 					//determine R/B at grid points using color differences at shift point plus interpolated G value at grid point
 					//but first we need to interpolate G-R/G-B to grid points...
 					grbdiff[(rr)*TS+cc]=Gint-rgb[(rr)*TS+cc][c];
-					
+					gshift[(rr)*TS+cc]=Gint;
 				}
 			
 			for (rr=8; rr < rr1-8; rr++)
-				for (cc=8+(FC(rr,2)&1), c = FC(rr,cc); cc < cc1-8; cc+=2) {
-					//interpolate color difference from optical R/B locations to grid locations
+				for (cc=8+(FC(rr,2)&1), c = FC(rr,cc), indx=rr*TS+cc; cc < cc1-8; cc+=2, indx+=2) {
 					
-					grbdiffinthfloor=(1-shifthfrac[c]/2)*grbdiff[(rr)*TS+cc]+(shifthfrac[c]/2)*grbdiff[(rr)*TS+cc-2*GRBdir[1][c]];
+					grbdiffold = rgb[indx][1]-rgb[indx][c];
+					
+					//interpolate color difference from optical R/B locations to grid locations
+					grbdiffinthfloor=(1-shifthfrac[c]/2)*grbdiff[indx]+(shifthfrac[c]/2)*grbdiff[indx-2*GRBdir[1][c]];
 					grbdiffinthceil=(1-shifthfrac[c]/2)*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+(shifthfrac[c]/2)*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]];
 					//grbdiffint is bilinear interpolation of G-R/G-B at grid point
 					grbdiffint=(1-shiftvfrac[c]/2)*grbdiffinthfloor+(shiftvfrac[c]/2)*grbdiffinthceil;
 					
 					//now determine R/B at grid points using interpolated color differences and interpolated G value at grid point
-					Gint=rgb[(rr)*TS+cc][1]-grbdiffint;
+					RBint=rgb[indx][1]-grbdiffint;
 					
-					if (fabs(Gint-rgb[(rr)*TS+cc][c])<0.25*(Gint+rgb[(rr)*TS+cc][c])) {
-						rgb[(rr)*TS+cc][c]=Gint;
+					if (fabs(RBint-rgb[indx][c])<0.25*(RBint+rgb[indx][c])) {
+						if (fabs(grbdiffold)>fabs(grbdiffint) ) {
+							rgb[indx][c]=RBint;
+						}
 					} else {
 						
 						//gradient weights using difference from G at CA shift points and G at grid points
-						p[0]=1/(eps+fabs(rgb[(rr)*TS+cc][1]-gshift[(rr)*TS+cc]));
-						p[1]=1/(eps+fabs(rgb[(rr)*TS+cc][1]-gshift[(rr)*TS+cc-2*GRBdir[1][c]]));
-						p[2]=1/(eps+fabs(rgb[(rr)*TS+cc][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc]));
-						p[3]=1/(eps+fabs(rgb[(rr)*TS+cc][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]]));
+						p[0]=1/(eps+fabs(rgb[indx][1]-gshift[indx]));
+						p[1]=1/(eps+fabs(rgb[indx][1]-gshift[indx-2*GRBdir[1][c]]));
+						p[2]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc]));
+						p[3]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]]));
 						
-						grbdiffint = (p[0]*grbdiff[(rr)*TS+cc]+p[1]*grbdiff[(rr)*TS+cc-2*GRBdir[1][c]]+ \
+						grbdiffint = (p[0]*grbdiff[indx]+p[1]*grbdiff[indx-2*GRBdir[1][c]]+ \
 									  p[2]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+p[3]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]])/(p[0]+p[1]+p[2]+p[3]);
 						
-						//there is an assumption that the grid point is no more than 2 pixels from the optical point; perhaps should correct for this???
 						//now determine R/B at grid points using interpolated color differences and interpolated G value at grid point
-						grbdiffold = rgb[(rr)*TS+cc][1]-rgb[(rr)*TS+cc][c];
-						
 						if (fabs(grbdiffold)>fabs(grbdiffint) ) {
-							rgb[(rr)*TS+cc][c]=rgb[(rr)*TS+cc][1]-grbdiffint;
+							rgb[indx][c]=rgb[indx][1]-grbdiffint;
 						}
-						if (grbdiffold*grbdiffint<0) {
-							rgb[(rr)*TS+cc][c]=rgb[(rr)*TS+cc][1];
-						}
-						
+					}
+					
+					//if color difference interpolation overshot the correction, just desaturate
+					if (grbdiffold*grbdiffint<0) {
+						rgb[indx][c]=rgb[indx][1]-0.5*(grbdiffold+grbdiffint);
 					}
 				}
 			
@@ -673,8 +733,11 @@ void RawImageSource::CA_correct_RT() {
 					c = FC(row,col);
 					 
 					ri->data[row][col] = CLIP((int)(65535.0f*rgb[(rr)*TS+cc][c] + 0.5f));
+					//image[indx][c] = CLIP((int)(65535.0*rgb[(rr)*TS+cc][c] + 0.5));//for dcraw implementation
 
 				} 
+			
+			if(plistener) plistener->setProgress(fabs((float)top/height));
 		}
 	
 	// clean up
@@ -685,9 +748,8 @@ void RawImageSource::CA_correct_RT() {
 
 	
 #undef TS
-#undef polyord
-#undef numpar
-#undef border
+//#undef border
+//#undef border2
 #undef PIX_SORT
 #undef SQR
 
