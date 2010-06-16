@@ -431,7 +431,11 @@ void Options::load () {
             g_mkdir_with_parents (profdir.c_str(), 511);
             options.saveToFile (rtdir + "/options");
         }
+#ifdef _WIN32
         cacheBaseDir = rtdir + "/cache";
+#else
+        cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + "/RawTherapee";
+#endif
     }
 
     Glib::ustring fname = argv0+"/languages/";
