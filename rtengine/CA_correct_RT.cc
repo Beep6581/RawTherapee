@@ -126,7 +126,7 @@ void RawImageSource::CA_correct_RT() {
 	int res;
 	static const int v1=TS, v2=2*TS, v3=3*TS, v4=4*TS;//, p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
 	
-	float eps=1e-10;			//tolerance to avoid dividing by zero
+	float eps=1e-5;			//tolerance to avoid dividing by zero
 	
 	float	wtu, wtd, wtl, wtr;
 	float	coeff[2][3][3], CAshift[2][3];
@@ -154,13 +154,15 @@ void RawImageSource::CA_correct_RT() {
 	float         (*rbhpfv);		// TS*TS*4
 	float         (*rblpfh);		// TS*TS*4
 	float         (*rblpfv);		// TS*TS*4
+	float         (*grblpfh);		// TS*TS*4
+	float         (*grblpfv);		// TS*TS*4
 
 	
 	/* assign working space; this would not be necessary
 	 if the algorithm is part of the larger pre-interpolation processing */
-	buffer = (char *) malloc(36*TS*TS);
+	buffer = (char *) malloc(44*TS*TS);
 	//merror(buffer,"CA_correct()");
-	memset(buffer,0,36*TS*TS);
+	memset(buffer,0,44*TS*TS);
 	
 	// rgb array
 	rgb         = (float (*)[3])		buffer;
@@ -170,6 +172,9 @@ void RawImageSource::CA_correct_RT() {
 	rbhpfv		= (float (*))			(buffer +	24*TS*TS);
 	rblpfh		= (float (*))			(buffer +	28*TS*TS);
 	rblpfv		= (float (*))			(buffer +	32*TS*TS);
+	grblpfh		= (float (*))			(buffer +	36*TS*TS);
+	grblpfv		= (float (*))			(buffer +	40*TS*TS);
+
 	
 	if((height+border2)%(TS-border2)==0) vz1=1; else vz1=0;
     if((width+border2)%(TS-border2)==0) hz1=1; else hz1=0;
@@ -314,26 +319,29 @@ void RawImageSource::CA_correct_RT() {
 			for (rr=4; rr < rr1-4; rr++)
 				for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
 					
-					/*ghpfv = 2*rgb[indx][1]-rgb[indx+v2][1]-rgb[indx-v2][1];
-					ghpfh = 2*rgb[indx][1]-rgb[indx+2][1]-rgb[indx-2][1];
-					rbhpfv[indx] = ghpfv-(2*rgb[indx][c]-rgb[indx+v2][c]-rgb[indx-v2][c]);
-					rbhpfh[indx] = ghpfh-(2*rgb[indx][c]-rgb[indx+2][c]-rgb[indx-2][c]);*/
+
+					rbhpfv[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) + \
+										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])));
+					rbhpfh[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) + \
+										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx+4][1]-rgb[indx+4][c])));
 					
-					//ghpfv = fabs(fabs(rgb[indx][1]-rgb[indx+v4][1])+fabs(rgb[indx][1]-rgb[indx-v4][1]) - \
-					fabs(rgb[indx+v4][1]-rgb[indx-v4][1]));
-					//ghpfh = fabs(fabs(rgb[indx][1]-rgb[indx+4][1])+fabs(rgb[indx][1]-rgb[indx-4][1]) - \
-					fabs(rgb[indx+4][1]-rgb[indx-4][1]));
-					rbhpfv[indx] = fabs(fabs(rgb[indx][1]-rgb[indx][1]-(rgb[indx+v4][c]+rgb[indx+v4][c]))+ \
-										fabs(rgb[indx][1]-rgb[indx-v4][1]-(rgb[indx][c]-rgb[indx-v4][c])) - \
-										fabs(rgb[indx+v4][1]-rgb[indx-v4][1]-(rgb[indx+v4][c]-rgb[indx-v4][c])));
-					rbhpfh[indx] = fabs(fabs(rgb[indx][1]-rgb[indx+4][1]-(rgb[indx][c]-rgb[indx+4][c]))+ \
-										fabs(rgb[indx][1]-rgb[indx-4][1]-(rgb[indx][c]-rgb[indx-4][c])) - \
-										fabs(rgb[indx+4][1]-rgb[indx-4][1]-(rgb[indx+4][c]-rgb[indx-4][c])));
+					/*ghpfv = fabs(fabs(rgb[indx][1]-rgb[indx+v4][1])+fabs(rgb[indx][1]-rgb[indx-v4][1]) - \
+					 fabs(rgb[indx+v4][1]-rgb[indx-v4][1]));
+					 ghpfh = fabs(fabs(rgb[indx][1]-rgb[indx+4][1])+fabs(rgb[indx][1]-rgb[indx-4][1]) - \
+					 fabs(rgb[indx+4][1]-rgb[indx-4][1]));
+					rbhpfv[indx] = fabs(ghpfv - fabs(fabs(rgb[indx][c]-rgb[indx+v4][c])+fabs(rgb[indx][c]-rgb[indx-v4][c]) - \
+													 fabs(rgb[indx+v4][c]-rgb[indx-v4][c])));
+					rbhpfh[indx] = fabs(ghpfh - fabs(fabs(rgb[indx][c]-rgb[indx+4][c])+fabs(rgb[indx][c]-rgb[indx-4][c]) - \
+													 fabs(rgb[indx+4][c]-rgb[indx-4][c])));*/
 					
 					glpfv = 0.25*(2*rgb[indx][1]+rgb[indx+v2][1]+rgb[indx-v2][1]);
 					glpfh = 0.25*(2*rgb[indx][1]+rgb[indx+2][1]+rgb[indx-2][1]);
 					rblpfv[indx] = eps+fabs(glpfv - 0.25*(2*rgb[indx][c]+rgb[indx+v2][c]+rgb[indx-v2][c]));
 					rblpfh[indx] = eps+fabs(glpfh - 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]));
+					grblpfv[indx] = glpfv + 0.25*(2*rgb[indx][c]+rgb[indx+v2][c]+rgb[indx-v2][c]);
+					grblpfh[indx] = glpfh + 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]);
 				}
 			
 			// along line segments, find the point along each segment that minimizes the color variance
@@ -350,26 +358,25 @@ void RawImageSource::CA_correct_RT() {
 					gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
 					deltgrb=(rgb[indx][c]-rgb[indx][1]);
 					
-					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) )/(eps+MAX(rblpfv[indx-v2],rblpfv[indx+v2]));
+					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) )*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
 
 					coeff[0][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[0][1][c] += gradwt*gdiff*deltgrb;
 					coeff[0][2][c] += gradwt*gdiff*gdiff;
 					areawt[0][c]+=1;
 
-					//}
+					
 					//horizontal
 					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
 					deltgrb=(rgb[indx][c]-rgb[indx][1]);
 					
-					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) )/(eps+MAX(rblpfh[indx-2],rblpfh[indx+2]));
+					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) )*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
 
 					coeff[1][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[1][1][c] += gradwt*gdiff*deltgrb;
 					coeff[1][2][c] += gradwt*gdiff*gdiff;
 					areawt[1][c]+=1;
 
-					//}
 					
 					//	In Mathematica,
 					//  f[x_]=Expand[Total[Flatten[
@@ -422,6 +429,9 @@ void RawImageSource::CA_correct_RT() {
 				blockshifts[(vblock)*hblsz+hblock][c][1]=(CAshift[1][c]); //hor CA shift for R/B
 				//data structure: blockshifts[blocknum][R/B][v/h]
 			}
+			
+			if(plistener) plistener->setProgress(0.5*fabs((float)top/height));
+
 		}
 	//end of diagnostic pass
 	
@@ -737,7 +747,8 @@ void RawImageSource::CA_correct_RT() {
 
 				} 
 			
-			if(plistener) plistener->setProgress(fabs((float)top/height));
+			if(plistener) plistener->setProgress(0.5+0.5*fabs((float)top/height));
+
 		}
 	
 	// clean up
