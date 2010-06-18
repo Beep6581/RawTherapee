@@ -38,7 +38,7 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
 
 // build GUI
     // build left side panel
-    leftbox = Gtk::manage (new Gtk::VBox ());
+    leftbox = new Gtk::VBox ();
     leftbox->set_border_width (4);
 
     histogramPanel = Gtk::manage (new HistogramPanel ());
@@ -118,7 +118,7 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
     editbox->pack_start (*beforeAfterBox);
 
     // build right side panel
-    vboxright = Gtk::manage (new Gtk::VBox (false, 0));
+    vboxright = new Gtk::VBox (false, 0);
     vboxright->set_border_width (4);
     vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
     vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
