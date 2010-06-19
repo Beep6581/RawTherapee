@@ -583,7 +583,9 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
         }else if(type==UNDEFINED){
             count = 1;
             type = LONG;
+		directory = new TagDirectory*[2];
         	directory[0] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
+        	directory[1] = NULL;
         }else
         	goto defsubdirs;
   }
