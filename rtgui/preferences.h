@@ -79,6 +79,8 @@ class Preferences : public Gtk::Dialog {
 	Gtk::CheckButton* HotDeadPixFilt;//Emil's hot/dead pixel filter
 	Gtk::Label* LineDenoiseLabel;//Emil's line denoise
 	Gtk::SpinButton*  LineDenoise;
+	Gtk::Label* GreenEquilLabel;//Emil's Green equilibration
+	Gtk::SpinButton*  GreenEquil;
 
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;

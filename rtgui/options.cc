@@ -124,7 +124,8 @@ void Options::setDefaults () {
 	rtSettings.hotdeadpix_filt = true;//Emil's hot/dead pixel filter
 	
     rtSettings.linenoise = 0;//Emil's line denoise
-	
+	rtSettings.greenthresh = 0;//Emil's Green equilibration
+
     rtSettings.colorCorrectionSteps = 0;
     rtSettings.dcb_iterations = 2;
     rtSettings.dcb_enhance = true;
@@ -269,6 +270,7 @@ if (keyFile.has_group ("Algorithms")) {
 	if(keyFile.has_key("Algorithms", "CACorrect")) rtSettings.ca_autocorrect = keyFile.get_boolean("Algorithms", "CACorrect");//Emil's CA autocorrect
     if(keyFile.has_key("Algorithms", "HotDeadPixFilt")) rtSettings.hotdeadpix_filt = keyFile.get_boolean("Algorithms", "HotDeadPixFilt");//Emil's hot/dead pixel filter
 	if(keyFile.has_key("Algorithms", "LineDenoise")) rtSettings.linenoise = keyFile.get_integer("Algorithms", "LineDenoise");//Emil's line denoise
+	if(keyFile.has_key("Algorithms", "GreenEquil")) rtSettings.greenthresh = keyFile.get_integer("Algorithms", "GreenEquil");//Emil's Green equilibration
 }
 
 if (keyFile.has_group ("Crop Settings")) { 
@@ -395,7 +397,8 @@ int Options::saveToFile (Glib::ustring fname) {
 	keyFile.set_boolean ("Algorithms", "CACorrect", rtSettings.ca_autocorrect);//Emil's CA correction
 	keyFile.set_boolean ("Algorithms", "HotDeadPixFilt", rtSettings.hotdeadpix_filt);//Emil's hot/dead pixel filter
     keyFile.set_integer ("Algorithms", "LineDenoise", rtSettings.linenoise);//Emil's line denoise
-	
+	keyFile.set_integer ("Algorithms", "GreenEquil", rtSettings.greenthresh);//Emil's Green equilibration
+
     keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
 
     keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);

@@ -302,6 +302,18 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 	hb14->pack_start (*LineDenoise);
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//Emil's Green equilibration
+	GreenEquilLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_GREENEQUIL")+":"));
+	GreenEquil = Gtk::manage(new Gtk::SpinButton ());
+	GreenEquil->set_digits(0);
+	GreenEquil->set_increments(1, 10);
+	GreenEquil->set_range(0, 100);
+	Gtk::HBox* hb15 = Gtk::manage(new Gtk::HBox());
+	hb15->pack_start (*GreenEquilLabel, Gtk::PACK_SHRINK, 4);
+	hb15->pack_start (*GreenEquil);
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
     fdb->pack_start (*hb11, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*hb12, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*hb13, Gtk::PACK_SHRINK, 4);
@@ -309,6 +321,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 	fdb->pack_start (*caAutoCorrect, Gtk::PACK_SHRINK, 4);//Emil's CA correction
 	fdb->pack_start (*HotDeadPixFilt, Gtk::PACK_SHRINK, 4);//Emil's hot/dead pixel filter
     fdb->pack_start (*hb14, Gtk::PACK_SHRINK, 4);//Emil's line denoise
+	fdb->pack_start (*hb15, Gtk::PACK_SHRINK, 4);//Emil's Green equlibration
 
     mvbpp->pack_start (*fdem, Gtk::PACK_SHRINK, 4);
     mvbpp->set_border_width (4);
@@ -740,6 +753,7 @@ void Preferences::storePreferences () {
 	moptions.rtSettings.ca_autocorrect=caAutoCorrect->get_active();//Emil's CA correction
 	moptions.rtSettings.hotdeadpix_filt=HotDeadPixFilt->get_active();//Emil's hot/dead pixel filter
     moptions.rtSettings.linenoise=(int)LineDenoise->get_value();//Emil's line denoise
+	moptions.rtSettings.greenthresh=(int)GreenEquil->get_value();//Emil's Green equilibration
 
 
     if (sdcurrent->get_active ()) 
@@ -842,6 +856,7 @@ void Preferences::fillPreferences () {
 	caAutoCorrect->set_active(moptions.rtSettings.ca_autocorrect);//Emil's CA Auto Correction
 	HotDeadPixFilt->set_active(moptions.rtSettings.hotdeadpix_filt);//Emil's hot/dead pixel filter
     LineDenoise->set_value(moptions.rtSettings.linenoise);//Emil's line denoise
+	GreenEquil->set_value(moptions.rtSettings.greenthresh);//Emil's Green equilibration
 
 	
 

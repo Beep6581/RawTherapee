@@ -59,8 +59,8 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 {  
 	// local variables
 	int height=H, width=W;
-	int top, bottom, left, right, row, col;
-	int rr, cc, rr1, cc1, c, indx, i, j;
+	int top, left, row, col;
+	int rr, cc, indx, i, j;
 	int ex, ey; 
 	int verbose=1;
 	
@@ -74,11 +74,13 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	float aarr[8][8], *dctblock[8];
     for (i = 0; i < 8; i++) dctblock[i] = aarr[i];
 	
+	/*
 	char		*buffer;			// TS*TS*16
 	float         (*cfain);			// TS*TS*4
 	float         (*cfablur);		// TS*TS*4
 	float         (*cfadiff);		// TS*TS*4
 	float         (*cfadn);			// TS*TS*4
+	*/
 	
 	double dt;
 	clock_t t1, t2;
@@ -89,17 +91,23 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	//if (verbose) fprintf (stderr,_("CFA line denoise ...\n"));
 	//t1 = clock();
 	
-	
+	/*
 	// assign working space
-	buffer = (char *) malloc(16*TS*TS);
+	buffer = (char *) malloc(4*TS*TS*sizeof(float));
 	//merror(buffer,"cfa_linedn()");
-	memset(buffer,0,16*TS*TS);
+	memset(buffer,0,4*TS*TS*sizeof(float));
 	// rgb array
 	cfain			= (float (*))		buffer; //pointers to rows of array
  	cfablur			= (float (*))			(buffer +  4*TS*TS);
 	cfadiff			= (float (*))			(buffer +  8*TS*TS);
 	cfadn			= (float (*))			(buffer +  12*TS*TS);
-	
+	*/
+	/*
+	float cfain[TS*TS];
+	float cfablur[TS*TS];
+	float cfadiff[TS*TS];
+	float cfadn[TS*TS];
+	 */
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
@@ -118,49 +126,53 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	// Main algorithm: Tile loop
 	for (top=0; top < height-16; top += TS-32)
 		for (left=0; left < width-16; left += TS-32) {
-			bottom = MIN( top+TS,height);
-			right  = MIN(left+TS, width);
-			rr1 = bottom - top;
-			cc1 = right - left;
+			int bottom = MIN( top+TS,height);
+			int right  = MIN(left+TS, width);
+			int numrows = bottom - top;
+			int numcols = right - left;
+			
+			float cfain[TS*TS];
+			float cfablur[TS*TS];
+			float cfadiff[TS*TS];
+			float cfadn[TS*TS];
+			
 			// load CFA data; data should be in linear gamma space, before white balance multipliers are applied
-			for (rr=0; rr < rr1; rr++)
-				for (row=rr+top, cc=0, indx=rr*TS+cc; cc < cc1; cc++, indx++) {
-					col = cc+left;
-					c = FC(rr,cc);
-					cfain[indx] = ri->data[row][col]; 
+			for (rr=top; rr < top+numrows; rr++)
+				for (cc=left, indx=(rr-top)*TS; cc < left+numcols; cc++, indx++) {
+					cfain[indx] = ri->data[rr][cc]; 
 				}
 			//pad the block to a multiple of 16 on both sides
 			
-			if (cc1 < TS) {
-				indx=cc1 % 16;
+			if (numcols < TS) {
+				indx=numcols % 16;
 				for (i=0; i<(16-indx); i++) 
-					for (rr=0; rr<rr1; rr++) 
-						cfain[(rr)*TS+cc1+i+1]=cfain[(rr)*TS+cc1-i];
-				cc1 += 16-indx;
+					for (rr=0; rr<numrows; rr++) 
+						cfain[(rr)*TS+numcols+i+1]=cfain[(rr)*TS+numcols-i];
+				numcols += 16-indx;
 			}
 			
-			if (rr1 < TS) {
-				indx=rr1 % 16;
+			if (numrows < TS) {
+				indx=numrows % 16;
 				for (i=0; i<(16-indx); i++)
-					for (cc=0; cc<cc1; cc++)
-						cfain[(rr1+i+1)*TS+cc]=cfain[(rr1-i)*TS+cc];
-				rr1 += 16-indx;
+					for (cc=0; cc<numcols; cc++)
+						cfain[(numrows+i+1)*TS+cc]=cfain[(numrows-i)*TS+cc];
+				numrows += 16-indx;
 			}
 			
 			//The cleaning algorithm starts here
 			
 			
 			//gaussian blur of CFA data
-			for (rr=8; rr < rr1-8; rr++)
-				for (cc=0, indx=rr*TS+cc; cc < cc1; cc++, indx++) {
+			for (rr=8; rr < numrows-8; rr++)
+				for (indx=rr*TS; indx < rr*TS+numcols; indx++) {
 					
 					cfablur[indx]=gauss[0]*cfain[indx];
 					for (i=1; i<5; i++) {
 						cfablur[indx] += gauss[i]*(cfain[indx-(2*i)*TS]+cfain[indx+(2*i)*TS]);
 					}
 				}
-			for (rr=8; rr < rr1-8; rr++)
-				for (cc=8, indx=rr*TS+cc; cc < cc1-8; cc++, indx++) {
+			for (rr=8; rr < numrows-8; rr++)
+				for (indx=rr*TS+8; indx < rr*TS+numcols-8; indx++) {
 					
 					cfadn[indx] = gauss[0]*cfablur[indx];
 					for (i=1; i<5; i++) {
@@ -172,8 +184,8 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			//begin block DCT
 			for (ey=0; ey<2; ey++) // (ex,ey) specify RGGB subarray
 				for (ex=0; ex<2; ex++) 
-					for (rr=8+ey; rr < rr1-22; rr+=8) // (rr,cc) shift by 8 to overlap blocks
-						for (cc=8+ex; cc < cc1-22; cc+=8) {
+					for (rr=8+ey; rr < numrows-22; rr+=8) // (rr,cc) shift by 8 to overlap blocks
+						for (cc=8+ex; cc < numcols-22; cc+=8) {
 							//grab an 8x8 block of a given RGGB channel
 							for (i=0; i<8; i++) 
 								for (j=0; j<8; j++) {
@@ -211,18 +223,18 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 						}	
 
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			
 			// copy smoothed results back to image matrix
-			for (rr=16; rr < rr1-16; rr++)
-				for (row=rr+top, cc=16, indx=rr*TS+cc; cc < cc1-16; cc++, indx++) {
-					col = cc + left;
+			for (rr=16; rr < numrows-16; rr++) {
+				row = rr + top; 
+				for (col=16+left, indx=rr*TS+16; indx < rr*TS+numcols-16; indx++, col++) {
 					ri->data[row][col] = CLIP((int)(cfadn[indx]+ 0.5)); 
 				}
+			}
 			if(plistener) plistener->setProgress(fabs((float)top/height));
 		}
 	
 	// clean up
-	free(buffer);
+	//free(buffer);
 	
 	// done
 	/*t2 = clock();
