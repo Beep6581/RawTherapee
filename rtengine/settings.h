@@ -36,6 +36,7 @@ namespace rtengine {
 		bool ca_autocorrect;	// Emil's CA auto correction
 		bool hotdeadpix_filt;	// Emil's hot/dead pixel filter
 		int	linenoise;		//Emil's line denoise
+		int greenthresh;	//Emil's Green equilibration
 
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

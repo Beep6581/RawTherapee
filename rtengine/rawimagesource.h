@@ -142,6 +142,9 @@ class RawImageSource : public ImageSource {
 	void ddct8x8s(int isgn, float **a);
 
 		void cfa_linedn (float linenoiselevel);//Emil's line denoise
+
+		void green_equilibrate		(float greenthresh);//Emil's green equilibration
+
 	
         void    eahd_demosaic   ();
         void    hphd_demosaic   ();

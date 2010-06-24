@@ -777,7 +777,7 @@ int RawImageSource::load (Glib::ustring fname) {
     idata = new ImageData (fname, &rml); 
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
-    if (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && settings->demosaicMethod!="vng4" && ri->filters) {
+    if (settings->greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && settings->demosaicMethod!="vng4" && ri->filters) ) {
         // global correction
         int ng1=0, ng2=0;
         double avgg1=0, avgg2=0;
@@ -799,8 +799,18 @@ int RawImageSource::load (Glib::ustring fname) {
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) 
                         ri->data[i][j] = CLIP(ri->data[i][j] * (i%2 ? corrg2 : corrg1));
+	}
+	
 
-        // local correction in a 9x9 box
+	// local correction in a 9x9 box
+	if (settings->greenthresh) {
+//Emil's green equilbration		
+		if (plistener) {
+			plistener->setProgressStr ("Green equilibrate...");
+			plistener->setProgress (0.0);
+		}
+		green_equilibrate(0.01*(settings->greenthresh));
+
 /*        unsigned short* corr_alloc = new unsigned short[W*H];
         unsigned short** corr_data = new unsigned short* [H];
         for (int i=0; i<H; i++) 
@@ -822,8 +832,8 @@ int RawImageSource::load (Glib::ustring fname) {
                 }
         memcpy (ri->allocation, corr_alloc, W*H*sizeof(unsigned short));
         delete corr_alloc;
-        delete corr_data;
-*/                        
+        delete corr_data; */ 
+                       
     }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3222,6 +3232,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 #include "amaze_interpolate_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's CA auto correction
+#include "green_equil_RT.cc"//Emil's green channel equilibration
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
