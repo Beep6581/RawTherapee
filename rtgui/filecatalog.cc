@@ -74,6 +74,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bDir->set_image (*(new Gtk::Image (argv0+"/images/folder.png")));
     bDir->set_relief (Gtk::RELIEF_NONE);
     bDir->set_tooltip_text (M("FILEBROWSER_SHOWDIRHINT"));
+    bDir->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     bCateg[0] = bDir->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bDir));    
     buttonBar->pack_start (*bDir, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
@@ -85,7 +86,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bUnRanked->set_tooltip_text (M("FILEBROWSER_SHOWUNRANKHINT"));
     bCateg[1] = bUnRanked->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnRanked));    
     buttonBar->pack_start (*bUnRanked, Gtk::PACK_SHRINK);
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+    bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
     for (int i=0; i<5; i++) {
         iranked[i] = new Gtk::Image (argv0+"/images/rated.png");
@@ -114,6 +115,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_text (M("FILEBROWSER_SHOWTRASHHINT"));
     bCateg[7] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash));    
+    bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
     fileBrowser->trash_changed().connect( sigc::mem_fun(*this, &FileCatalog::trashChanged) );
@@ -593,85 +595,112 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
 void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
     
-    for (int i=0; i<8; i++)
-        bCateg[i].block (true);
-
-    fileBrowser->getScrollPosition (hScrollPos[lastScrollPos], vScrollPos[lastScrollPos]);
-    
-    //find the number of the button
-    int toggled_button = 0;
-    for (int i=0; i<8; i++){
-        if(categoryButtons[i]==b){
-            toggled_button = i;
-        }
-    }
-    
     //was control key pressed
     bool control_down = modifierKey & GDK_CONTROL_MASK;
-    
-    // for a normal switch, untoggle the other buttons
-    if (!control_down || toggled_button==0 || toggled_button==7){
-        for (int i=0; i<8; i++) {
-            categoryButtons[i]->set_active (i==toggled_button);
-        }
-    }else{
-        // but if we have control clicked a star we need to untoggle non-stars
-        categoryButtons[0]->set_active(false);
-        categoryButtons[1]->set_active(false);
-        categoryButtons[7]->set_active(false);
-    }
-    
-    // how we color the buttons depends on how many are selected
-    int toggled_count = 0;
-    for (int i=0; i<8; i++) {
-        if (categoryButtons[i]->get_active())
-            toggled_count ++;
-    }
-    
-    // if we have untoggled all the buttons, set to show all
-    if (toggled_count == 0){
-        toggled_button = 0;
-        categoryButtons[0]->set_active(true);
-    }
-    
-    // so set the right images
-    if (toggled_count == 1){
-        int n_stars = 0;
-        // only one button is active, find out which
-        // if its not a star button, then n_stars stays on zero
-        for (int i=0; i<5; i++){
-            if (bRank[i]->get_active())
-                n_stars = i+1;
-        }
-        // color up to the correct rank
-        for (int i=0; i<5; i++){
-            if (i<n_stars)
-                bRank[i]->set_image (*iranked[i]);
-            else
-                bRank[i]->set_image (*igranked[i]);
-        }
-    }else{
-        // if several stars are selected, color them
-        for (int i=0; i<5; i++){
-            if (bRank[i]->get_active())
-                bRank[i]->set_image (*iranked[i]);
-            else
-                bRank[i]->set_image (*igranked[i]);
-        }
-    }
-    
-    fileBrowser->applyFilter (getFilter ());
 
-    // rearrange panels according to the selected filter
-    removeIfThere (hBox, trashButtonBox);
-    if (bTrash->get_active ())
-        hBox->pack_start (*trashButtonBox, Gtk::PACK_SHRINK, 4);
-    hBox->queue_draw ();
+    //was shift key pressed
+    bool shift_down   = modifierKey & GDK_SHIFT_MASK;
 
-    fileBrowser->setScrollPosition (hScrollPos[lastScrollPos], vScrollPos[lastScrollPos]);
+	for (int i=0; i<8; i++)
+		bCateg[i].block (true);
 
-    for (int i=0; i<8; i++)
-        bCateg[i].block (false);
+	//button is already toggled when entering this function, so we switch it back to its initial state
+    b->set_active(!b->get_active());
+
+    //if both control and shift keys were pressed, do nothing
+    if (!(control_down && shift_down)) {
+
+		fileBrowser->getScrollPosition (hScrollPos[lastScrollPos], vScrollPos[lastScrollPos]);
+
+		//we look how many stars are already toggled on, if any
+		int toggled_stars_count=0, buttons=0, start_star=0, toggled_button=0;
+
+		for (int i=0; i<8; i++) {
+			if (categoryButtons[i]->get_active()) {
+				if (i>0 && i<7) {
+					toggled_stars_count ++;
+					start_star = i;
+				}
+				buttons |= (1 << i);
+			}
+			if (categoryButtons[i] == b) toggled_button = i;
+		}
+
+		//if no modifier key were pressed, we can switch-on the button, and clear all others
+		if (!(control_down || shift_down)) {
+			for (int i=0; i<8; i++) {
+				categoryButtons[i]->set_active (i==toggled_button);
+			}
+		}
+		//modifier key allowed only for stars
+		else if (toggled_button>0 && toggled_button<7) {
+			if (control_down) {
+				//control is pressed
+				if (toggled_stars_count == 1 && (buttons & (1 << toggled_button))) {
+					//we're deselecting the only star still active, so we activate the folder filter
+					categoryButtons[0]->set_active(true);
+					//and we deselect the toggled star
+					categoryButtons[toggled_button]->set_active (false);
+				}
+				else if (toggled_stars_count >= 1) {
+					//we toggle the state of a star (eventually another one than the only one selected)
+					categoryButtons[toggled_button]->set_active(!categoryButtons[toggled_button]->get_active());
+				}
+				else {
+					//no star selected
+					//we deselect the 2 non star filters
+					if (buttons &  1    ) categoryButtons[0]->set_active(false);
+					if (buttons & (1 << 7)) categoryButtons[7]->set_active(false);
+					//and we toggle on the star
+					categoryButtons[toggled_button]->set_active (true);
+				}
+			}
+			else {
+				//shift is pressed, only allowed if 0 or 1 star is selected
+				if (!toggled_stars_count) {
+					//we deselect the 2 non star filters
+					if (buttons &  1      ) categoryButtons[0]->set_active(false);
+					if (buttons & (1 << 7)) categoryButtons[7]->set_active(false);
+					//and we set the start star to 1 (unrated images)
+					start_star = 1;
+					//we act as if one star were selected
+					toggled_stars_count = 1;
+				}
+				if (toggled_stars_count == 1) {
+					int current_star=MIN(start_star,toggled_button);
+					int last_star   =MAX(start_star,toggled_button);
+					//we permute the start and the end star for the next loop
+					for (; current_star <= last_star; current_star++) {
+						//we toggle on all the star in the range
+						if (!(buttons & (1 << current_star))) categoryButtons[current_star]->set_active(true);
+					}
+				}
+				//if more than one star selected, do nothing
+			}
+		}
+
+		//so set the right images
+		for (int i=0; i<5; i++) {
+			bool active_now, active_before;
+			active_now = bRank[i]->get_active();
+			active_before = buttons & (1 << i+2);
+			if      ( active_now && !active_before) bRank[i]->set_image (*iranked[i]);
+			else if (!active_now &&  active_before) bRank[i]->set_image (*igranked[i]);
+		}
+
+		fileBrowser->applyFilter (getFilter ());
+
+		//rearrange panels according to the selected filter
+		removeIfThere (hBox, trashButtonBox);
+		if (bTrash->get_active ())
+			hBox->pack_start (*trashButtonBox, Gtk::PACK_SHRINK, 4);
+		hBox->queue_draw ();
+
+		fileBrowser->setScrollPosition (hScrollPos[lastScrollPos], vScrollPos[lastScrollPos]);
+    }
+
+	for (int i=0; i<8; i++)
+		bCateg[i].block (false);
 }
 
 BrowserFilter FileCatalog::getFilter () {
