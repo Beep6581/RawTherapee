@@ -874,8 +874,6 @@ int RawImageSource::load (Glib::ustring fname) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     if (ri->filters) {
-    	MyTime t1,t2;
-    	t1.set();
         // demosaic
         if (settings->demosaicMethod=="hphd")
             hphd_demosaic ();
@@ -891,8 +889,6 @@ int RawImageSource::load (Glib::ustring fname) {
             dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
         else
             eahd_demosaic ();
-        t2.set();
-        printf("Totale demosaicing:%d \n",t2.etime(t1));
     }
 
 
@@ -2866,8 +2862,8 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
 	colMax = CACHESIZE-border;
 	if(!y0 ) rowMin = TILEBORDER+border;
 	if(!x0 ) colMin = TILEBORDER+border;
-	if( y0+TILESIZE > H-border) rowMax = TILEBORDER+H-border-y0;
-	if( x0+TILESIZE > W-border) colMax = TILEBORDER+W-border-x0;
+	if( y0+TILESIZE >= H-border) rowMax = TILEBORDER+H-border-y0;
+	if( x0+TILESIZE >= W-border) colMax = TILEBORDER+W-border-x0;
 }
 
 void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData)
@@ -2876,8 +2872,8 @@ void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, ushort** raw
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,0);
 
     for (int row=rowMin,y=y0-TILEBORDER+rowMin; row<rowMax; row++,y++)
-    	for (int col=colMin,x=x0-TILEBORDER+colMin; col<colMax; col++,x++){
-    		cache[row*CACHESIZE+col][fc(y,x)] = rawData[y][x];
+    	for (int col=colMin,x=x0-TILEBORDER+colMin,indx=row*CACHESIZE+col; col<colMax; col++,x++,indx++){
+    		cache[indx][fc(y,x)] = rawData[y][x];
     	}
 }
 
@@ -2934,17 +2930,12 @@ void RawImageSource::hid(ushort (*image)[4], int x0, int y0)
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
 	
 	for (int row = rowMin; row < rowMax; row++) {
-		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			int c = fc(y0-TILEBORDER+row,x0-TILEBORDER+col);
-			if( c != 1)
-			{
-				int current = (image[indx+u][1] + image[indx-u][1] + image[indx-1][1] + image[indx+1][1])/4 +
-						      (image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c])/4)/2;
-				image[indx][1] = CLIP(current);
-			}
+		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
+			int current = (image[indx+u][1] + image[indx-u][1] + image[indx-1][1] + image[indx+1][1])/4 +
+						  (image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c])/4)/2;
+			image[indx][1] = CLIP(current);
 		}
 	}	
-	
 }
 
 // missing colors are interpolated
@@ -2981,14 +2972,10 @@ void RawImageSource::hid2(ushort (*image)[4], int x0, int y0)
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,4);
 	
 	for (int row=rowMin; row < rowMax; row++) {
-		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			int c = fc(y0-TILEBORDER+row,x0-TILEBORDER+col);
-			if ( c != 1)
-			{
-				int current = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1])/4 +
+		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
+			int current = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1])/4 +
 						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c])/4;
-				image[indx][1]=CLIP(current);
-			}
+			image[indx][1]=CLIP(current);
 		}
 	}	
 }
@@ -3000,16 +2987,17 @@ void RawImageSource::hid2(ushort (*image)[4], int x0, int y0)
 // saved in image[][3]
 void RawImageSource::dcb_map(ushort (*image)[4], int x0, int y0)
 {	
-	int u=CACHESIZE, v=2*CACHESIZE;
+	int u=4*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			if (image[indx][1] > ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1])/4 )
-				image[indx][3] = ((MIN( image[indx-1][1], image[indx+1][1]) + image[indx-1][1] + image[indx+1][1] ) < (MIN( image[indx-u][1], image[indx+u][1]) + image[indx-u][1] + image[indx+u][1]));
+			ushort *pix = &(image[indx][1]);
+			if ( *pix > ( pix[-4] + pix[+4] + pix[-u] + pix[+u])/4 )
+				image[indx][3] = ((MIN( pix[-4], pix[+4]) + pix[-4] + pix[+4] ) < (MIN( pix[-u], pix[+u]) + pix[-u] + pix[+u]));
 			else
-				image[indx][3] = ((MAX( image[indx-1][1], image[indx+1][1]) + image[indx-1][1] + image[indx+1][1] ) > (MAX( image[indx-u][1], image[indx+u][1]) + image[indx-u][1] + image[indx+u][1]));
+				image[indx][3] = ((MAX( pix[-4], pix[+4]) + pix[-4] + pix[+4] ) > (MAX( pix[-u], pix[+u]) + pix[-u] + pix[+u]));
 		}
 	}
 }
@@ -3023,15 +3011,11 @@ void RawImageSource::dcb_correction(ushort (*image)[4], int x0, int y0)
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,4);
 	
 	for (int row=rowMin; row < rowMax; row++) {
-		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			if ( fc(y0-TILEBORDER+row,x0-TILEBORDER+col) != 1)
-			{
-				int current = 4*image[indx][3] +
+		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
+			int current = 4*image[indx][3] +
 						  2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
-
-				image[indx][1] = ((16-current)*(image[indx-1][1] + image[indx+1][1])/2 + current*(image[indx-u][1] + image[indx+u][1])/2)/16;
-			}
+			image[indx][1] = ((16-current)*(image[indx-1][1] + image[indx+1][1])/2 + current*(image[indx-u][1] + image[indx+u][1])/2)/16;
 		}
 	}
 }
@@ -3045,10 +3029,44 @@ void RawImageSource::dcb_pp(ushort (*image)[4], int x0, int y0)
 	
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			int r1 = ( image[indx-1][0] + image[indx+1][0] + image[indx-u][0] + image[indx+u][0] + image[indx-u-1][0] + image[indx+u+1][0] + image[indx-u+1][0] + image[indx+u-1][0])/8;
-			int g1 = ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1] + image[indx-u-1][1] + image[indx+u+1][1] + image[indx-u+1][1] + image[indx+u-1][1])/8;
-			int b1 = ( image[indx-1][2] + image[indx+1][2] + image[indx-u][2] + image[indx+u][2] + image[indx-u-1][2] + image[indx+u+1][2] + image[indx-u+1][2] + image[indx+u-1][2])/8;
-
+			//int r1 = ( image[indx-1][0] + image[indx+1][0] + image[indx-u][0] + image[indx+u][0] + image[indx-u-1][0] + image[indx+u+1][0] + image[indx-u+1][0] + image[indx+u-1][0])/8;
+			//int g1 = ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1] + image[indx-u-1][1] + image[indx+u+1][1] + image[indx-u+1][1] + image[indx+u-1][1])/8;
+			//int b1 = ( image[indx-1][2] + image[indx+1][2] + image[indx-u][2] + image[indx+u][2] + image[indx-u-1][2] + image[indx+u+1][2] + image[indx-u+1][2] + image[indx+u-1][2])/8;
+			ushort (*pix)[4] = image+(indx-u-1);
+			int r1 = (*pix)[0];
+			int g1 = (*pix)[1];
+			int b1 = (*pix)[2];
+			pix++;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			pix++;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			pix+=CACHESIZE-2;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			pix+=2;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			pix+=CACHESIZE-2;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			pix++;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			pix++;
+			r1 += (*pix)[0];
+			g1 += (*pix)[1];
+			b1 += (*pix)[2];
+			r1 /=8;
+			g1 /=8;
+			b1 /=8;
 			r1 = r1 + ( image[indx][1] - g1 );
 			b1 = b1 + ( image[indx][1] - g1 );
 			image[indx][0] = CLIP(r1);
@@ -3065,16 +3083,12 @@ void RawImageSource::dcb_correction2(ushort (*image)[4], int x0, int y0)
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,4);
 	
 	for (int row=rowMin; row < rowMax; row++) {
-		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			int c =  fc(y0-TILEBORDER+row,x0-TILEBORDER+col);
-			if (c != 1)
-			{
-				int current = 4*image[indx][3] +
+		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
+			int current = 4*image[indx][3] +
 						  2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
-				current = ((16-current)*((image[indx-1][1] + image[indx+1][1])/2 + image[indx][c] - (image[indx+2][c] + image[indx-2][c])/2) + current*((image[indx-u][1] + image[indx+u][1])/2 + image[indx][c] - (image[indx+v][c] + image[indx-v][c])/2))/16;
-				image[indx][1] = CLIP(current);
-			}
+			current = ((16-current)*((image[indx-1][1] + image[indx+1][1])/2 + image[indx][c] - (image[indx+2][c] + image[indx-2][c])/2) + current*((image[indx-u][1] + image[indx+u][1])/2 + image[indx][c] - (image[indx+v][c] + image[indx-v][c])/2))/16;
+			image[indx][1] = CLIP(current);
 		}
 	}
 }
@@ -3167,7 +3181,6 @@ void RawImageSource::dcb_color_full(ushort (*image)[4], int x0, int y0, float (*
 // DCB demosaicing main routine (sharp version)
 void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 {
-
     red = new unsigned short*[H];
     green = new unsigned short*[H];
     blue = new unsigned short*[H];
@@ -3226,7 +3239,6 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 		   fill_border(tile,2, x0, y0);
         copy_to_buffer(buffer, tile);
         hid(tile,x0,y0);
-
        	dcb_color(tile,x0,y0);
         for (int i=iterations; i>0;i--) {
 			hid2(tile,x0,y0);
@@ -3272,7 +3284,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 	for(int i=0; i<nthreads; i++){
 		free(image[i]);
 		free(image2[i]);
-		free(chroma[i])
+		free(chroma[i]);
 	}
 #endif
 	free(image);
@@ -3280,10 +3292,10 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
     free(chroma);
 
     if(plistener) plistener->setProgress (1.0);
-
 }
 #undef TILEBORDER
 #undef TILESIZE
+#undef CACHESIZE
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's code for AMaZE
