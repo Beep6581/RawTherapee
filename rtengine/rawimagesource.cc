@@ -874,6 +874,8 @@ int RawImageSource::load (Glib::ustring fname) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     if (ri->filters) {
+    	//MyTime t1,t2;
+    	//t1.set();
         // demosaic
         if (settings->demosaicMethod=="hphd")
             hphd_demosaic ();
@@ -889,6 +891,8 @@ int RawImageSource::load (Glib::ustring fname) {
             dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
         else
             eahd_demosaic ();
+        //t2.set();
+        //printf("Demosaicing:%d usec\n",t2.etime(t1));
     }
 
 
@@ -3188,19 +3192,17 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
         red[i] = new unsigned short[W];
         green[i] = new unsigned short[W];
         blue[i] = new unsigned short[W];
-        memset(red[i],0,W*2);
-        memset(green[i],0,W*2);
-        memset(blue[i],0,W*2);
     }
+    double currentProgress=0.0;
     if(plistener) {
         plistener->setProgressStr ("DCB Demosaicing...");
-        plistener->setProgress (0.0);
+        plistener->setProgress (currentProgress);
     }
 
     int wTiles = W/TILESIZE + (W%TILESIZE?1:0);
     int hTiles = H/TILESIZE + (H%TILESIZE?1:0);
     int numTiles = wTiles * hTiles;
-
+    int tilesDone=0;
 #ifdef _OPENMP
 	int nthreads = omp_get_max_threads();
  	ushort (**image)[4]  =  (ushort(**)[4]) calloc( nthreads,sizeof( void*) );
@@ -3223,6 +3225,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
     	int yTile = iTile / wTiles;
     	int x0 = xTile*TILESIZE;
     	int y0 = yTile*TILESIZE;
+
 #ifdef _OPENMP
     	int tid = omp_get_thread_num();
     	ushort (*tile)[4]   = image[tid];
@@ -3278,6 +3281,18 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 				blue[y0+y][x0+j]  = tile[(y+TILEBORDER)*CACHESIZE+TILEBORDER+j][2];
 			}
         }
+
+#ifdef _OPENMP
+        if(omp_get_thread_num()==0)
+#endif
+        {
+    		if( plistener && double(tilesDone)/numTiles > currentProgress){
+    			currentProgress+=0.1; // Show progress each 10%
+    			plistener->setProgress (currentProgress);
+    		}
+        }
+#pragma omp atomic
+        tilesDone++;
     }
 
 #ifdef _OPENMP
