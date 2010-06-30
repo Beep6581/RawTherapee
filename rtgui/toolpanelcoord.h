@@ -51,6 +51,7 @@
 #include <toolbar.h>
 #include <lensgeom.h>
 #include <lensgeomlistener.h>
+#include <equalizer.h>
 
 
 class ImageEditorCoordinator;
@@ -86,6 +87,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ColorDenoise* colordenoise;
         Sharpening* sharpening;
         LCurve* lcurve;
+        Equalizer * equalizer;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 

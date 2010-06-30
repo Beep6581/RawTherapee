@@ -303,6 +303,16 @@ class IPTCPair {
 };
 
 /**
+  * Wavelet equalizer params
+  */
+class EqualizerParams {
+
+    public:
+        bool enabled;
+        int c[8];
+};
+
+/**
   * This class holds all the processing parameters applied on the images
   */
 class ProcParams {
@@ -329,6 +339,7 @@ class ProcParams {
         HRecParams              hlrecovery;     ///< Highlight recovery parameters
         ResizeParams            resize;         ///< Resize parameters
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
+        EqualizerParams         equalizer;      ///< wavelet equalizer parameters
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
         int version;                            ///< Version of the file from which the parameters have been read

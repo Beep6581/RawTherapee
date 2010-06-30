@@ -119,6 +119,11 @@ void ParamsEdited::set (bool v) {
         icm.gammaOnInput = v;
         icm.working      = v;
         icm.output       = v;
+        equalizer.enabled = v;
+        for(int i = 0; i < 8; i++)
+        {
+            equalizer.c[i] = v;
+        }
         exif.clear ();
         iptc.clear ();
 }
@@ -226,6 +231,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gammaOnInput = icm.gammaOnInput && p.icm.gammaOnInput == other.icm.gammaOnInput;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
+        equalizer.enabled = equalizer.enabled && p.equalizer.enabled == other.equalizer.enabled;
+        for(int i = 0; i < 8; i++) {
+            equalizer.c[i] = equalizer.c[i] && p.equalizer.c[i] == other.equalizer.c[i];
+        }
 //        exif = exif && p.exif==other.exif
 //        iptc = other.iptc;
     }
@@ -324,6 +333,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.gammaOnInput)	toEdit.icm.gammaOnInput = mods.icm.gammaOnInput;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output 	    = mods.icm.output;
+	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
+	for(int i = 0; i < 8; i++) {
+	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
+	}
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;
 }

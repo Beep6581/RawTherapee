@@ -158,6 +158,12 @@ void ProcParams::setDefaults () {
     icm.working = "sRGB";
     icm.output  = "sRGB";
     
+    equalizer.enabled = false;    
+    for(int i = 0; i < 8; i ++)
+    {
+        equalizer.c[i] = 0;
+    }
+    
     exif.clear ();
     iptc.clear ();
     
@@ -303,6 +309,15 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Color Management", "ApplyGammaBeforeInputProfile",   icm.gammaOnInput);
     keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
+    
+    // save wavelet equalizer parameters
+    keyFile.set_boolean ("Equalizer", "Enabled", equalizer.enabled);
+    for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "C" << i;
+        keyFile.set_integer("Equalizer", ss.str(), equalizer.c[i]);
+    }
 
     // save exif change list
     for (int i=0; i<exif.size(); i++)
@@ -530,6 +545,17 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "OutputProfile"))  icm.output  = keyFile.get_string ("Color Management", "OutputProfile");
 }
 
+    // load wavelet equalizer parameters
+if (keyFile.has_group ("Equalizer")) {
+    if (keyFile.has_key ("Equalizer", "Enabled")) equalizer.enabled = keyFile.get_boolean ("Equalizer", "Enabled");
+    for(int i = 0; i < 8; i ++)
+    {
+        std::stringstream ss;
+        ss << "C" << i;
+        if(keyFile.has_key ("Equalizer", ss.str())) equalizer.c[i] = keyFile.get_integer ("Equalizer", ss.str());
+    }
+}
+
     // load exif change settings
 if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
@@ -560,6 +586,17 @@ if (keyFile.has_group ("IPTC")) {
         printf ("-->unknown exception!\n");
         return 1;
     }
+}
+
+bool operator==(const EqualizerParams & a, const EqualizerParams & b) {
+    if(a.enabled != b.enabled)
+        return false;
+
+    for(int i = 0; i < 8; i++) {
+        if(a.c[i] != b.c[i])
+            return false;
+    }
+    return true;
 }
 
 bool operator==(const ExifPair& a, const ExifPair& b) {
@@ -660,6 +697,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.gammaOnInput == other.icm.gammaOnInput
         && icm.working      == other.icm.working
         && icm.output       == other.icm.output
+        && equalizer == other.equalizer
         && exif==other.exif
         && iptc==other.iptc;
 }

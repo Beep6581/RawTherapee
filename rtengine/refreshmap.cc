@@ -102,6 +102,7 @@ ALL,    //    EvResizeHeight
 ALL,    //    EvResizeEnabled
 ALL,    //    EvProfileChangeNotification
 RETINEX,    //    EvShrHighQuality
-TRANSFORM  //    EvPerspCorr
+TRANSFORM,  //    EvPerspCorr
+ALL     // ????? EvEqualizer
 };
 
