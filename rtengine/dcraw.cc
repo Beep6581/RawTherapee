@@ -1,31 +1,8 @@
-/*
- *  This file is part of RawTherapee.
- *
- *  The functions defined after the original "main" are copyrighted
- *  by Gabor Horvath <hgabor@rawtherapee.com> and protected by the GNU
- *  General Public License.
- *  The original copyright notice of Dave Coffin is valid for everything 
- *  before that point (see below).
- *
- *  RawTherapee is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- * 
- *  RawTherapee is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- */
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
 /*RT*/int ciff_base, ciff_len, exif_base, pre_filters;
 /*RT*/#undef MAX
 /*RT*/#undef MIN
-/*RT*/#undef ABS
 /*RT*/#define NO_LCMS
 /*RT*/#define NO_JPEG
 /*RT*/#define LOCALTIME
@@ -55,11 +32,11 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.435 $
-   $Date: 2010/06/11 07:03:46 $
+   $Revision: 1.437 $
+   $Date: 2010/06/27 00:23:33 $
  */
 
-#define VERSION "9.02"
+#define VERSION "9.03"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -310,7 +287,7 @@ void CLASS derror()
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
   }
   data_error++;
-  /*RT*/ longjmp (failure, 1);
+  /*RT*/  longjmp (failure, 1);
 }
 
 ushort CLASS sget2 (uchar *s)
@@ -3805,7 +3782,7 @@ void CLASS pre_interpolate()
       for (row = FC(1,0) >> 1; row < height; row+=2)
 	for (col = FC(row,1) & 1; col < width; col+=2)
 	  image[row*width+col][1] = image[row*width+col][3];
-      /*RT*/ pre_filters = filters;
+/*RT*/ pre_filters = filters;
       filters &= ~((filters & 0x55555555) << 1);
     }
   }
@@ -4932,10 +4909,12 @@ int CLASS parse_tiff_ifd (int base)
 	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
 	  if (ljpeg_start (&jh, 1)) {
 	    tiff_ifd[ifd].comp    = 6;
-	    tiff_ifd[ifd].width   = jh.wide << (jh.clrs == 2);
+	    tiff_ifd[ifd].width   = jh.wide;
 	    tiff_ifd[ifd].height  = jh.high;
 	    tiff_ifd[ifd].bps     = jh.bits;
 	    tiff_ifd[ifd].samples = jh.clrs;
+	    if (!(jh.sraw || (jh.clrs & 1)))
+	      tiff_ifd[ifd].width *= jh.clrs;
 	  }
 	}
 	break;
@@ -5180,6 +5159,8 @@ guess_cfa_pc:
 	blrr = get2();
 	blrc = get2();
 	break;
+      case 61450:
+	blrr = blrc = 2;
       case 50714:			/* BlackLevel */
 	black = getreal(type);
 	if (!filters || !~filters) break;
@@ -5293,7 +5274,9 @@ void CLASS parse_tiff (int base)
 {
   int doff, max_samp=0, raw=-1, thm=-1, i;
   struct jhead jh;
-/*RT*/  exif_base = base;
+
+  /*RT*/  exif_base = base;
+
   fseek (ifp, base, SEEK_SET);
   order = get2();
   if (order != 0x4949 && order != 0x4d4d) return;
@@ -5490,7 +5473,7 @@ void CLASS parse_external_jpeg()
       *jext = '0';
     }
   if (strcmp (jname, ifname)) {
-/*RT*/ if ((ifp = fopen (jname))) {
+/*RT*/    if ((ifp = fopen (jname))) {
 //    if ((ifp = fopen (jname, "rb"))) {
       if (verbose)
 	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);
@@ -6237,8 +6220,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 21461,-10807,-1441,-2332,10599,1999,289,875,7703 } },
     { "FUJIFILM IS Pro", 0, 0,
 	{ 12300,-5110,-1304,-9117,17143,1998,-1947,2448,8100 } },
-    { "FUJIFILM FinePix HS10 HS11", 79, 0xf68, /* DJC */
-	{ 12123,-3090,-1806,-1486,10894,593,-683,2369,3114 } },
+    { "FUJIFILM FinePix HS10 HS11", 0, 0xf68, /* DJC */
+	{ 12164,-3169,-1662,-1020,10358,662,-224,2108,3106 } },
     { "Imacon Ixpress", 0, 0,		/* DJC */
 	{ 7025,-1415,-704,-5188,13765,1424,-1248,2742,6038 } },
     { "KODAK NC2000", 0, 0,
@@ -6703,6 +6686,7 @@ void CLASS identify()
     {  5298000, "Canon",    "PowerShot SD300" ,0 },
     {  7710960, "Canon",    "PowerShot S3 IS" ,0 },
     { 15467760, "Canon",    "PowerShot SX110 IS",0 },
+    { 18653760, "Canon",    "PowerShot SX20 IS",0 },
     {  5939200, "OLYMPUS",  "C770UZ"          ,0 },
     {  1581060, "NIKON",    "E900"            ,1 },  /* or E900s,E910 */
     {  2465792, "NIKON",    "E950"            ,1 },  /* or E800,E700 */
@@ -6780,12 +6764,12 @@ void CLASS identify()
   fread (head, 1, 32, ifp);
   fseek (ifp, 0, SEEK_END);
   flen = fsize = ftell(ifp);
-  
-/*RT*/ if (fsize<100000) {
+
+  /*RT*/ if (fsize<100000) {
         is_raw = 0;
         return;
-    }  
-    
+    }
+
   if ((cp = (char *) memmem (head, 32, "MMMM", 4)) ||
       (cp = (char *) memmem (head, 32, "IIII", 4))) {
     parse_phase_one (cp-head);
@@ -6794,7 +6778,7 @@ void CLASS identify()
     if (!memcmp (head+6,"HEAPCCDR",8)) {
       data_offset = hlen;
 /*RT*/      ciff_base = hlen;
-/*RT*/      ciff_len = fsize - hlen;      
+/*RT*/      ciff_len = fsize - hlen;
       parse_ciff (hlen, flen - hlen);
     } else {
       parse_tiff(0);
@@ -7082,6 +7066,16 @@ canon_a5:
     load_raw = &CLASS packed_load_raw;
     load_flags = 40;
     zero_is_bad = 1;
+  } else if (!strcmp(model,"PowerShot SX20 IS")) {
+    height = 3024;
+    width  = 4032;
+    raw_height = 3048;
+    raw_width  = 4080;
+    top_margin  = 12;
+    left_margin = 24;
+    load_raw = &CLASS packed_load_raw;
+    load_flags = 40;
+    zero_is_bad = 1;
   } else if (!strcmp(model,"PowerShot Pro90 IS")) {
     width  = 1896;
     colors = 4;
@@ -7190,34 +7184,29 @@ canon_a5:
     top_margin  = 10;
     left_margin = 12;
     filters = 0x49494949;
-  } else if (is_canon && raw_width == 1208) {
+  } else if (is_canon && raw_width == 4832) {
     top_margin = unique_id == 0x80000261 ? 51:26;
     left_margin = 62;
-    raw_width = width *= 4;
     if (unique_id == 0x80000252)
       adobe_coeff ("Canon","EOS 500D");
     goto canon_cr2;
-  } else if (is_canon && raw_width == 1280) {
+  } else if (is_canon && raw_width == 5120) {
     height -= top_margin = 45;
     left_margin = 142;
-    raw_width *= 4;
     width = 4916;
-  } else if (is_canon && raw_width == 1336) {
+  } else if (is_canon && raw_width == 5344) {
     top_margin = 51;
     left_margin = 142;
-    raw_width = width *= 4;
     if (unique_id == 0x80000270)
       adobe_coeff ("Canon","EOS 550D");
     goto canon_cr2;
-  } else if (is_canon && raw_width == 1340) {
+  } else if (is_canon && raw_width == 5360) {
     top_margin = 51;
     left_margin = 158;
-    raw_width = width *= 4;
     goto canon_cr2;
-  } else if (is_canon && raw_width == 1448) {
+  } else if (is_canon && raw_width == 5792) {
     top_margin  = 51;
     left_margin = 158;
-    raw_width = width *= 4;
     goto canon_cr2;
   } else if (is_canon && raw_width == 5108) {
     top_margin  = 13;
@@ -7494,6 +7483,16 @@ konica_400z:
   } else if (!strcmp(model,"NX10")) {
     height -= top_margin = 4;
     width -= 2 * (left_margin = 8);
+  } else if (!strcmp(model,"EX1")) {
+    order = 0x4949;
+    height = 2760;
+    top_margin = 2;
+    if ((width -= 6) > 3682) {
+      height = 2750;
+      width  = 3668;
+      top_margin = 8;
+    }
+    maximum = 0x3e00;
   } else if (fsize == 20487168) {
     height = 2808;
     width  = 3648;
@@ -8927,245 +8926,6 @@ extern Settings* settings;
 
 Glib::Mutex* dcrMutex=NULL;
 
-int loadFujiRaw (const char* fname, struct RawImage *ri) {
-
-  ushort height_r;
-  ushort width_r;
-  ushort (*image_r)[4];
-  int col;
-  int row;
-  int c;
-
-  ushort max_val = pow(2, 14) - 1;
-  float  sat_s;
-
-  ushort *pvalue_r;
-  ushort *pvalue_s;
-  float svalue;
-  float rvalue;
-
-  // Factors between S captors and R captors
-  const double factor_canal[] = {17.71, 15.75, 18.3, 15.75};
-
-  static const double xyzd50_srgb[3][3] =
-  { { 0.436083, 0.385083, 0.143055 },
-    { 0.222507, 0.716888, 0.060608 },
-    { 0.013930, 0.097097, 0.714022 } };
-
-dcrMutex->lock ();
-
-  ifname = fname;//strdup (fname);
-  image = NULL;
-  
-  exif_base = -1;
-  ciff_base = -1;
-  ciff_len = -1;
-  verbose = settings->verbose;
-  oprof = NULL;
-  ri->data = NULL;
-  ri->allocation = NULL;
-  ri->profile_data = NULL;
-  ifp = gfopen (fname);
-  if (!ifp) {
-    dcrMutex->unlock ();
-    return 3;
-  }
-
-  use_camera_wb = 0;
-  highlight = 1;
-  half_size = 0;
-
-  // Load image belonging to the R captors
-  shot_select = 1; 
-
-  identify ();
-  use_camera_wb = 1;
-  shrink = 0;
-
-  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname);
-  iheight = height;
-  iwidth  = width;
-
-  image   = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
-  image_r = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
-  meta_data = (char *) (image + height*width);
-
-  if (setjmp (failure)) {
-      if (image)
-        free (image);
-      if (ri->data)
-        free(ri->data);
-      fclose (ifp);
-      dcrMutex->unlock ();
-      return 100;
-  }
-
-  fseek (ifp, data_offset, SEEK_SET);
-  (*load_raw)();
-
-  memcpy(image_r, image, height*width*sizeof *image + meta_length);
-  height_r = height;
-  width_r = width;
-  free(image);
-
-  // Load image belonging to the S captors
-  exif_base = -1;
-  ciff_base = -1;
-  ciff_len = -1;
-  verbose = settings->verbose;
-  oprof = NULL;
-  ri->data = NULL;
-  ri->allocation = NULL;
-  ri->profile_data = NULL;
-  fseek (ifp, 0, SEEK_SET);
-
-  shot_select = 0; 
-
-  use_camera_wb = 0;
-  highlight = 1;
-  half_size = 0;
-
-  identify ();
-  use_camera_wb = 1;
-  shrink = 0;
-
-  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname);
-  iheight = height;
-  iwidth  = width;
-
-  image = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
-  meta_data = (char *) (image + height*width);
-
-  if (setjmp (failure)) {
-      if (image)
-        free (image);
-      if (ri->data)
-        free(ri->data);
-      fclose (ifp);
-      dcrMutex->unlock ();
-      return 100;
-  }
-
-  fseek (ifp, data_offset, SEEK_SET);
-  (*load_raw)();
-
-  // The saturation of the S captors depends of the ISO value
-  switch((int)iso_speed){
-  case 100:
-    sat_s = 0.82;
-    break;
-  default:
-    sat_s = 0.96;
-  }
-
-  ushort saturacion = sat_s * max_val;
-
-  // Scale values
-  for (int row = 0; row < height_r; row++) 
-    for (int col = 0; col < width_r; col++) 
-      FORC4 {
-	pvalue_r = &image_r[row*width_r+col][c];
-	pvalue_s = &image[(row+1)*width+col][c];
-	rvalue = *pvalue_r;
-	svalue = *pvalue_s;
-	
-	// If the captors is saturated
-	if(svalue > saturacion) 
-	  svalue = rvalue * factor_canal[c];
-
-	*pvalue_s = (ushort) CLIP(svalue);
-      }
-
-  ri->profile_len = 0;
-  ri->profile_data = NULL;
-  if (profile_length) {
-    ri->profile_len = profile_length;
-    ri->profile_data = (char *) malloc (profile_length);
-    fseek (ifp, profile_offset, SEEK_SET);
-    fread (ri->profile_data, 1, profile_length, ifp);
-  }
-
-  fclose(ifp);
-  if (zero_is_bad) remove_zeroes();
-
-  ri->red_multiplier = pre_mul[0];
-  ri->green_multiplier = pre_mul[1];
-  ri->blue_multiplier = pre_mul[2];
-
-  // We set up the max value to 65535 for don't scale values. However
-  // we should execute "scale_colors" to apply the white balance
-  maximum = 65535;
-
-  scale_colors();
-  pre_interpolate ();
-
-  ri->width = width;
-  ri->height = height;
-  ri->filters = filters;
-
-  if (filters) {
-    ri->allocation = (short unsigned int*)calloc(height*width, sizeof(unsigned short));
-    ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
-    for (int i=0; i<height; i++) 
-        ri->data[i] = ri->allocation + i*width;
-    for (int row = 0; row < height; row++) 
-      for (int col = 0; col < width; col++) 
-          if (ISGREEN(ri,row,col))
-              ri->data[row][col] = image[row*width+col][1];
-          else if (ISRED(ri,row,col))
-              ri->data[row][col] = image[row*width+col][0];
-          else 
-              ri->data[row][col] = image[row*width+col][2];
-  }
-  else {
-    ri->allocation = (short unsigned int*)calloc(3*height*width, sizeof(unsigned short));
-    ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
-    for (int i=0; i<height; i++) 
-        ri->data[i] = ri->allocation + 3*i*width;
-    for (int row = 0; row < height; row++) 
-      for (int col = 0; col < width; col++) {
-          ri->data[row][3*col+0] = image[row*width+col][0];
-          ri->data[row][3*col+1] = image[row*width+col][1];
-          ri->data[row][3*col+2] = image[row*width+col][2];
-      }
-  }
-
-  if (flip==5)
-    ri->rotate_deg = 270;
-  else if (flip==3)
-    ri->rotate_deg = 180;
-  else if (flip==6)
-    ri->rotate_deg = 90;
-  else
-    ri->rotate_deg = 0;
-
-  ri->make = strdup (make);
-  ri->model = strdup (model);
-
-  ri->exifbase = exif_base;
-  ri->prefilters = pre_filters;
-  ri->ciff_base = ciff_base;
-  ri->ciff_len = ciff_len;
-
-  ri->camwb_red = ri->red_multiplier / pre_mul[0];
-  ri->camwb_green = ri->green_multiplier / pre_mul[1];
-  ri->camwb_blue = ri->blue_multiplier / pre_mul[2];
-
-  ri->defgain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
-
-  ri->fuji_width = fuji_width;
-
-    for (int a=0; a < 3; a++)
-      for (int b=0; b < 3; b++)
-        ri->coeff[a][b] = rgb_cam[a][b];
-
-  free (image);
-  free (image_r);
-dcrMutex->unlock ();
-  return 0;
-
-}
-
 int loadRaw (const char* fname, struct RawImage *ri) {
 
   static const double xyzd50_srgb[3][3] =
@@ -9202,11 +8962,6 @@ dcrMutex->lock ();
     fclose(ifp);
     dcrMutex->unlock ();
     return 2;
-  }
-  else if (is_raw == 2 && !strcmp("FUJIFILM", make) && !strcmp("FinePix S5Pro", model)) {
-    fclose(ifp);
-    dcrMutex->unlock ();
-    return loadFujiRaw(fname, ri);
   }
 
   shrink = 0;
@@ -9575,7 +9330,7 @@ t4.set ();
 
     // generate histogram for auto exposure
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
+    tpp->aeHistogram = new int[65536>>tpp->aeHistCompression];
     memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
     int radd = 4;
     int gadd = 2;
@@ -9689,3 +9444,4 @@ dcrMutex->unlock ();
 
 
 }
+
