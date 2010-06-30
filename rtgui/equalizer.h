@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,29 +13,33 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
-#ifndef _COLORBOOST_H_
-#define _COLORBOOST_H_
+ 
+#ifndef EQUALIZE_H_INCLUDED
+#define EQUALIZE_H_INCLUDED
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "toolpanel.h"
+#include <adjuster.h>
+#include <toolpanel.h>
 
-class ColorBoost : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class Equalizer : public Gtk::VBox, public AdjusterListener, public ToolPanel 
+{
 
-  protected:
-    Adjuster* colorboost;
-    Gtk::CheckButton* avoidclip;  
-    Gtk::CheckButton* enablelimiter;  
-    Adjuster* saturationlimiter;
-    bool cbAdd;
-    sigc::connection  acconn, elconn;
-    bool lastACVal, lastELVal;
-  
-  public:
+protected:
 
-    ColorBoost ();
-    virtual ~ColorBoost ();
+    Gtk::CheckButton * enabled;
+    Adjuster* correction[8]; 
+
+    sigc::connection enaConn;
+    
+    bool lastEnabled;
+
+public:
+
+    Equalizer ();
+    virtual ~Equalizer ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
@@ -45,9 +47,7 @@ class ColorBoost : public Gtk::VBox, public AdjusterListener, public ToolPanel {
     void setBatchMode   (bool batchMode);
    
     void adjusterChanged (Adjuster* a, double newval);
-    void avoidclip_toggled ();
-    void enablelimiter_toggled ();
-    void setAdjusterBehavior (bool bcbadd);
+    void enabled_toggled ();
 };
 
 #endif

@@ -11,7 +11,8 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc iccstore.cc
     loadinitial.cc procparams.cc rawimagesource.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc
-    iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc)
+    iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc
+    wavelet_dec.cc ipequalizer.cc)
 
 add_library (rtengine ${RTENGINESOURCEFILES})
 #It may be nice to store library version too

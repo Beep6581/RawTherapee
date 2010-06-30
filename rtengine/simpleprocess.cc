@@ -25,6 +25,8 @@
 #include <processingjob.h>
 #include <glibmm.h>
 
+#include <iostream>
+
 #undef THREAD_PRIORITY_NORMAL
 
 namespace rtengine {
@@ -99,6 +101,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
+    }
+
+    if (params.equalizer.enabled) {
+        ipf.waveletEqualizer (baseImg, fw, fh, params.equalizer);
     }
     
     // update blurmap

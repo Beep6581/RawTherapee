@@ -21,7 +21,7 @@
 
 #include <rtengine.h>
 
-#define NUMOFEVENTS 84
+#define NUMOFEVENTS 86
 
 namespace rtengine {
 
@@ -109,7 +109,9 @@ enum ProcEvent {
     EvResizeEnabled=80,
     EvProfileChangeNotification=81,
     EvSHHighQuality=82,
-    EvPerspCorr=83
+    EvPerspCorr=83,
+    EvEqualizer=84,
+    EvEqlEnabled=85
 	};
 }    
 #endif    

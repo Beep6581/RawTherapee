@@ -215,6 +215,13 @@ class ColorManagementParamsEdited {
         bool output;
 };
 
+class EqualizerParamsEdited {
+
+    public:
+        bool enabled;
+        bool c[8];
+};
+
 class ExifPairEdited {
 
     public:
@@ -253,6 +260,7 @@ class ParamsEdited {
         HRecParamsEdited              hlrecovery;     
         ResizeParamsEdited            resize;         
         ColorManagementParamsEdited   icm;            
+        EqualizerParamsEdited         equalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         
