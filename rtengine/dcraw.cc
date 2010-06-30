@@ -9330,7 +9330,7 @@ t4.set ();
 
     // generate histogram for auto exposure
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram = new int[65536>>tpp->aeHistCompression];
+    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
     memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
     int radd = 4;
     int gadd = 2;
