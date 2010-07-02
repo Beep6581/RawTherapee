@@ -22,7 +22,7 @@
 
 #include <wavelet_dec.h>
 
-#include <iostream>
+//#include <iostream>
 
 namespace rtengine {
 
@@ -51,7 +51,7 @@ void ImProcFunctions :: waveletEqualizer (LabImage * image, bool luminance, bool
         return;
     }
     
-    clock_t start = clock();
+    //clock_t start = clock();
 
     if (luminance) {
         limiter<wavelet_decomposition::internal_type> l1(0, 65535);
@@ -70,7 +70,7 @@ void ImProcFunctions :: waveletEqualizer (LabImage * image, bool luminance, bool
         b.reconstruct(image->b, params->equalizer.c, l2);
     }
     
-    std::cout << "Wavelets done in " << (double)(clock() - start) / CLOCKS_PER_SEC << std::endl;
+    //std::cout << "Wavelets done in " << (double)(clock() - start) / CLOCKS_PER_SEC << std::endl;
 
 }
 

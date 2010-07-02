@@ -27,11 +27,30 @@ Equalizer::Equalizer () : ToolPanel() {
     enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
     enabled->set_active (true);
     pack_start(*enabled);
-    enabled->show();
-    enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Equalizer::enabled_toggled) );
+    enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Equalizer::enabledToggled) );
 
-    Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
-    pack_start(*separator, Gtk::PACK_SHRINK, 2);
+    Gtk::HSeparator *separator1 = Gtk::manage (new  Gtk::HSeparator());
+    pack_start(*separator1, Gtk::PACK_SHRINK, 2);
+    
+    Gtk::HBox * buttonBox = Gtk::manage (new Gtk::HBox());
+    pack_start(*buttonBox, Gtk::PACK_SHRINK, 2);
+
+        Gtk::Button * contrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_EQUALIZER_CONTRAST_MINUS")));
+        buttonBox->pack_start(*contrastMinusButton, Gtk::PACK_SHRINK, 2);
+        contrastMinusPressedConn = contrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &Equalizer::contrastMinusPressed));
+
+        Gtk::Button * neutralButton = Gtk::manage (new Gtk::Button(M("TP_EQUALIZER_NEUTRAL")));
+        buttonBox->pack_start(*neutralButton, Gtk::PACK_SHRINK, 2);
+        neutralPressedConn = neutralButton->signal_pressed().connect( sigc::mem_fun(*this, &Equalizer::neutralPressed));
+        
+        Gtk::Button * contrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_EQUALIZER_CONTRAST_PLUS")));
+        buttonBox->pack_start(*contrastPlusButton, Gtk::PACK_SHRINK, 2);
+        contrastPlusPressedConn = contrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &Equalizer::contrastPlusPressed));
+
+    buttonBox->show_all_children();
+
+    Gtk::HSeparator *separator2 = Gtk::manage (new  Gtk::HSeparator());
+    pack_start(*separator2, Gtk::PACK_SHRINK, 2);
 
     for(int i = 0; i < 8; i++)
     {
@@ -141,7 +160,7 @@ void Equalizer::adjusterChanged (Adjuster* a, double newval) {
     }    
 }
 
-void Equalizer::enabled_toggled () {
+void Equalizer::enabledToggled () {
 
     if (batchMode) {
         if (enabled->get_inconsistent()) {
@@ -164,4 +183,32 @@ void Equalizer::enabled_toggled () {
     }
 }
 
+
+void Equalizer::neutralPressed () {
+
+    for (int i = 0; i < 8; i++) {
+        correction[i]->setValue(0);
+        adjusterChanged(correction[i], 0);
+    }
+}
+
+
+void Equalizer::contrastPlusPressed () {
+
+    for (int i = 0; i < 8; i++) {
+        int inc = 1 * (8 - i);
+        correction[i]->setValue(correction[i]->getValue() + inc);
+        adjusterChanged(correction[i], correction[i]->getValue());
+    }
+}
+
+
+void Equalizer::contrastMinusPressed () {
+
+    for (int i = 0; i < 8; i++) {
+        int inc = -1 * (8 - i);
+        correction[i]->setValue(correction[i]->getValue() + inc);
+        adjusterChanged(correction[i], correction[i]->getValue());
+    }
+}
 

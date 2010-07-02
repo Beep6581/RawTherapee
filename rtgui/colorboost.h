@@ -20,8 +20,8 @@
 #define _COLORBOOST_H_
 
 #include <gtkmm.h>
-#include "adjuster.h"
-#include "toolpanel.h"
+#include <adjuster.h>
+#include <toolpanel.h>
 
 class ColorBoost : public Gtk::VBox, public AdjusterListener, public ToolPanel {
 
