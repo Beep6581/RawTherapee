@@ -73,44 +73,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	
 	float aarr[8][8], *dctblock[8];
     for (i = 0; i < 8; i++) dctblock[i] = aarr[i];
-	
-	/*
-	char		*buffer;			// TS*TS*16
-	float         (*cfain);			// TS*TS*4
-	float         (*cfablur);		// TS*TS*4
-	float         (*cfadiff);		// TS*TS*4
-	float         (*cfadn);			// TS*TS*4
-	*/
-	
-	double dt;
-	clock_t t1, t2;
-	
-	//clock_t t1_main,       t2_main       = 0;
-	
-	// start
-	//if (verbose) fprintf (stderr,_("CFA line denoise ...\n"));
-	//t1 = clock();
-	
-	/*
-	// assign working space
-	buffer = (char *) malloc(4*TS*TS*sizeof(float));
-	//merror(buffer,"cfa_linedn()");
-	memset(buffer,0,4*TS*TS*sizeof(float));
-	// rgb array
-	cfain			= (float (*))		buffer; //pointers to rows of array
- 	cfablur			= (float (*))			(buffer +  4*TS*TS);
-	cfadiff			= (float (*))			(buffer +  8*TS*TS);
-	cfadn			= (float (*))			(buffer +  12*TS*TS);
-	*/
-	/*
-	float cfain[TS*TS];
-	float cfablur[TS*TS];
-	float cfadiff[TS*TS];
-	float cfadn[TS*TS];
-	 */
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
+
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	if (plistener) {
@@ -120,8 +83,12 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	
+
 	noisevar=SQR(3*noise*65535); // _noise_ (as a fraction of saturation) is input to the algorithm
+	float *cfain= new float[TS*TS];
+	float *cfablur= new float[TS*TS];
+	float *cfadiff= new float[TS*TS];
+	float *cfadn= new float[TS*TS];
 
 	// Main algorithm: Tile loop
 	for (top=0; top < height-16; top += TS-32)
@@ -130,11 +97,6 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			int right  = MIN(left+TS, width);
 			int numrows = bottom - top;
 			int numcols = right - left;
-			
-			float cfain[TS*TS];
-			float cfablur[TS*TS];
-			float cfadiff[TS*TS];
-			float cfadn[TS*TS];
 			
 			// load CFA data; data should be in linear gamma space, before white balance multipliers are applied
 			for (rr=top; rr < top+numrows; rr++)
@@ -232,18 +194,12 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			}
 			if(plistener) plistener->setProgress(fabs((float)top/height));
 		}
-	
 	// clean up
-	//free(buffer);
-	
-	// done
-	/*t2 = clock();
-	dt = ((double)(t2-t1)) / CLOCKS_PER_SEC;
-	if (verbose) {
-		fprintf(stderr,_("elapsed time = %5.3fs\n"),dt);
-	}*/
-	
-	
+	delete [] cfain;
+	delete [] cfablur;
+	delete [] cfadiff;
+	delete [] cfadn;
+
 }
 #undef TS
 
