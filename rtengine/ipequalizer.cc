@@ -22,18 +22,55 @@
 
 #include <wavelet_dec.h>
 
+#include <iostream>
+
 namespace rtengine {
 
-void ImProcFunctions :: waveletEqualizer(Image16 * image, int fw, int fh, const EqualizerParams & params) {
+void ImProcFunctions :: waveletEqualizer(Image16 * image) {
 
-    wavelet_decomposition r(image->r, fw, fh);
-    r.reconstruct(image->r, params.c);
+    if (!params->equalizer.enabled) {
+        return;
+    }
 
-    wavelet_decomposition g(image->g, fw, fh);
-    g.reconstruct(image->g, params.c);
+    limiter<wavelet_decomposition::internal_type> l(0, 65535);
 
-    wavelet_decomposition b(image->b, fw, fh);
-    b.reconstruct(image->b, params.c);
+    wavelet_decomposition r(image->r, image->getW(), image->getH());
+    r.reconstruct(image->r, params->equalizer.c, l);
+
+    wavelet_decomposition g(image->g, image->getW(), image->getH());
+    g.reconstruct(image->g, params->equalizer.c, l);
+
+    wavelet_decomposition b(image->b, image->getW(), image->getH());
+    b.reconstruct(image->b, params->equalizer.c, l);
+
+}
+
+void ImProcFunctions :: waveletEqualizer (LabImage * image, bool luminance, bool chromaticity) {
+
+    if (!params->equalizer.enabled) {
+        return;
+    }
+    
+    clock_t start = clock();
+
+    if (luminance) {
+        limiter<wavelet_decomposition::internal_type> l1(0, 65535);
+
+        wavelet_decomposition L(image->L, image->W, image->H);
+        L.reconstruct(image->L, params->equalizer.c, l1);
+    }
+
+    if (chromaticity) {
+        limiter<wavelet_decomposition::internal_type> l2(-32768, 32767);
+
+        wavelet_decomposition a(image->a, image->W, image->H);
+        a.reconstruct(image->a, params->equalizer.c, l2);
+
+        wavelet_decomposition b(image->b, image->W, image->H);
+        b.reconstruct(image->b, params->equalizer.c, l2);
+    }
+    
+    std::cout << "Wavelets done in " << (double)(clock() - start) / CLOCKS_PER_SEC << std::endl;
 
 }
 

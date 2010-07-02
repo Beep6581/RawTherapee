@@ -89,7 +89,8 @@ class ImProcFunctions {
         void lab2rgb        (LabImage* lab, Image8* image);
         void resize         (Image16* src, Image16* dst);
         void deconvsharpening(LabImage* lab, unsigned short** buffer);
-        void waveletEqualizer(Image16 * image, int fw, int fh, const EqualizerParams & params);
+        void waveletEqualizer(Image16 * image);
+        void waveletEqualizer(LabImage * image, bool luminance, bool chromaticity);
 
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);

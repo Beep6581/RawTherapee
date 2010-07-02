@@ -103,10 +103,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         baseImg = trImg;
     }
 
-    if (params.equalizer.enabled) {
-        ipf.waveletEqualizer (baseImg, fw, fh, params.equalizer);
-    }
-    
     // update blurmap
     int** buffer = new int*[fh];
     for (int i=0; i<fh; i++)
@@ -143,6 +139,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (pl) 
         pl->setProgress (0.5);
 
+
     // luminance histogram update
     memset (hist16, 0, 65536*sizeof(int));
     for (int i=0; i<fh; i++)
@@ -161,6 +158,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // color processing
     ipf.colorCurve (labView, labView);
     ipf.colordenoise (labView, buffer);
+
+    // wavelet equalizer
+    ipf.waveletEqualizer (labView, true, true);
 
     for (int i=0; i<fh; i++)
         delete [] buffer[i];

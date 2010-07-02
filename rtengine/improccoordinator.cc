@@ -171,8 +171,13 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
             progress ("Sharpening...",100*readyphase/numofphases);
             ipf.sharpening (nprevl, (unsigned short**)buffer);
         }
+        if (scale==1) {
+            progress ("Wavelet...",100*readyphase/numofphases);
+            ipf.waveletEqualizer (nprevl, true, false);
+        }
         readyphase++;
     }
+
 
     if (todo & M_COLOR) {
         progress ("Applying Color Boost...",100*readyphase/numofphases);
@@ -181,6 +186,10 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         if (scale==1) {
             progress ("Denoising color...",100*readyphase/numofphases);
             ipf.colordenoise (nprevl, buffer);
+        }
+        if (scale==1) {
+            progress ("Wavelet...",100*readyphase/numofphases);
+            ipf.waveletEqualizer (nprevl, false, true);
         }
         readyphase++;
     }
