@@ -166,15 +166,19 @@ void Crop::update (int todo, bool internal) {
         if (skip==1) {
             parent->ipf.lumadenoise (labnCrop, cbuffer);
             parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
+            parent->ipf.waveletEqualizer(labnCrop, true, false);
         }
     }
 
     // apply color operations
     if (todo & M_COLOR) {
         parent->ipf.colorCurve (laboCrop, labnCrop);
-        if (skip==1)
+        if (skip==1) {
             parent->ipf.colordenoise (labnCrop, cbuffer);
+            parent->ipf.waveletEqualizer(labnCrop, false, true);
+        }
     }
+    
 
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);

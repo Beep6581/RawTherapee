@@ -28,7 +28,36 @@
 namespace rtengine
 {
 
-template<class T>
+template<typename T>
+class limiter
+{
+    T min_value, max_value;
+public:
+    limiter(T min, T max)
+    : min_value(min), max_value(max)
+    {}
+    
+    T operator()(T x)
+    {
+        if(x < min_value)
+            return min_value;
+        if(x > max_value)
+            return max_value;
+        return x;
+    }
+};
+
+template<typename T>
+class noop
+{
+public:
+    T operator()(T x)
+    {
+        return x;
+    }
+};
+
+template<typename T>
 inline T clip(T x, T min_value, T max_value)
 {
     if(x < min_value)
@@ -38,17 +67,17 @@ inline T clip(T x, T min_value, T max_value)
     return x;
 }
 
-template <class A, class B>
-void plane_copy(A ** a, B ** b, size_t w, size_t h)
+template <typename A, typename B, typename L>
+void plane_copy(A ** a, B ** b, size_t w, size_t h, L & l)
 {
     for(size_t j = 0; j < h; j++)
         for(size_t i = 0; i < w; i++)
-            b[j][i] = static_cast<B>(a[j][i]);
+            b[j][i] = static_cast<B>(l(a[j][i]));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<class T>
+template<typename T>
 class wavelet_level
 {
     // full size
@@ -73,9 +102,7 @@ class wavelet_level
 
 public:
 
-    static const bool CLIP = true;
-    
-    template<class E>
+    template<typename E>
     wavelet_level(E ** src, size_t w, size_t h)
     : m_w(w), m_h(h), m_w2((w+1)/2), m_h2((h+1)/2), m_pitch(0), m_coeffs(NULL)
     {
@@ -104,16 +131,16 @@ public:
         return m_h2;
     }
 
-    template<class E>
+    template<typename E>
     void decompose(E ** src);
 
-    template<class E>
-    void reconstruct(E ** dst, int alpha, bool do_clip = false);
+    template<typename E, typename L>
+    void reconstruct(E ** dst, int alpha, L & limiter);
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<class T>
+template<typename T>
 void wavelet_level<T>::dwt_2d(size_t w, size_t h)
 {
     T * buffer = new T[std::max(w, h) + 4];
@@ -133,7 +160,7 @@ void wavelet_level<T>::dwt_2d(size_t w, size_t h)
     delete buffer;
 }
 
-template<class T>
+template<typename T>
 void wavelet_level<T>::idwt_2d(size_t w, size_t h, int alpha)
 {
     T * buffer = new T[std::max(w, h) + 4];
@@ -154,7 +181,7 @@ void wavelet_level<T>::idwt_2d(size_t w, size_t h, int alpha)
 
 }
 
-template<class T>
+template<typename T>
 void wavelet_level<T>::create()
 {
     // 16-byte alignment: no effect
@@ -168,7 +195,7 @@ void wavelet_level<T>::create()
     }
 }
 
-template<class T>
+template<typename T>
 void wavelet_level<T>::destroy()
 {
     if(m_coeffs)
@@ -179,28 +206,22 @@ void wavelet_level<T>::destroy()
     }
 }
 
-template<class T> template<class E>
+template<typename T> template<typename E>
 void wavelet_level<T>::decompose(E ** src)
 {
-    plane_copy(src, m_coeffs, m_w, m_h);
+    noop<T> l;
+
+    plane_copy(src, m_coeffs, m_w, m_h, l);
 
     dwt_2d(m_w, m_h);
 }
 
-template<class T> template<class E>
-void wavelet_level<T>::reconstruct(E ** dst, int alpha, bool do_clip)
+template<typename T> template<typename E, typename L>
+void wavelet_level<T>::reconstruct(E ** dst, int alpha, L & l)
 {
     idwt_2d(m_w, m_h, alpha);
 
-    if(do_clip)
-    {
-        for(size_t j = 0; j < m_h; j++)
-            for(size_t i = 0; i < m_w; i++)
-                m_coeffs[j][i] = clip(m_coeffs[j][i], 0, 65535);
-    }
-
-    plane_copy(m_coeffs, dst, m_w, m_h);
-
+    plane_copy(m_coeffs, dst, m_w, m_h, l);
 }
 
 };

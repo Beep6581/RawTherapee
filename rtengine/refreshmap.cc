@@ -103,6 +103,7 @@ ALL,    //    EvResizeEnabled
 ALL,    //    EvProfileChangeNotification
 RETINEX,    //    EvShrHighQuality
 TRANSFORM,  //    EvPerspCorr
-ALL     // ????? EvEqualizer
+EQUALIZER,  // EvEqualizer
+EQUALIZER   // EvEqlEnabled
 };
 
