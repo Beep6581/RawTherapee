@@ -17,8 +17,8 @@
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
  
-#ifndef EQUALIZE_H_INCLUDED
-#define EQUALIZE_H_INCLUDED
+#ifndef EQUALIZER_H_INCLUDED
+#define EQUALIZER_H_INCLUDED
 
 #include <gtkmm.h>
 #include <adjuster.h>
@@ -33,6 +33,9 @@ protected:
     Adjuster* correction[8]; 
 
     sigc::connection enaConn;
+    sigc::connection neutralPressedConn;
+    sigc::connection contrastPlusPressedConn;
+    sigc::connection contrastMinusPressedConn;
     
     bool lastEnabled;
 
@@ -47,7 +50,10 @@ public:
     void setBatchMode   (bool batchMode);
    
     void adjusterChanged (Adjuster* a, double newval);
-    void enabled_toggled ();
+    void enabledToggled ();
+    void neutralPressed ();
+    void contrastPlusPressed ();
+    void contrastMinusPressed ();
 };
 
 #endif

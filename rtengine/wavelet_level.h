@@ -157,7 +157,7 @@ void wavelet_level<T>::dwt_2d(size_t w, size_t h)
         dwt_53(&m_coeffs[0][i], m_pitch, buffer, h);
     }
     
-    delete buffer;
+    delete[] buffer;
 }
 
 template<typename T>
@@ -177,7 +177,7 @@ void wavelet_level<T>::idwt_2d(size_t w, size_t h, int alpha)
         idwt_53(&m_coeffs[0][i], m_pitch, buffer, h, alpha);
     }
     
-    delete buffer;
+    delete[] buffer;
 
 }
 
