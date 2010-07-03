@@ -30,7 +30,7 @@ class wavelet_decomposition
 {
 public:
 
-    typedef int internal_type;
+    typedef float internal_type;
 
 private:
 
