@@ -192,13 +192,16 @@ void idwt_53(T * data, size_t pitch, T * buffer, size_t n, int alpha)
 template<typename T>
 inline T wcdf_weight(T a, T b)
 {
-    static const T eps = 1e-5;
+    static const T eps = 1;
     static const T one = 1.0;
-    return one / (abs(a - b) + eps); // will use overloaded abs for floating numbers
+    return one / (fabs(a - b) + eps);
 }
 
+// buffer is a temporary storage
+// buffer2 must be preserved between dwt and idwt
+
 template<typename T>
-void dwt_wcdf(T * data, size_t pitch, T * buffer, T * buffer2, size_t n)
+void dwt_wcdf(T * data, size_t pitch, T * buffer, size_t n, T * buffer2)
 {
     size_t n2 = n/2;
     size_t n2a = (n + 1) / 2;
@@ -225,10 +228,11 @@ void dwt_wcdf(T * data, size_t pitch, T * buffer, T * buffer2, size_t n)
     for(ptrdiff_t i = 0; i < (ptrdiff_t)n - 1; i++)
     {
         w[i] = wcdf_weight(tmp[i], tmp[i+1]);
+        //w[i] = 1;
     }
     
     w[-1] = w[-2] = (T)0.0;
-    w[n] = w[n + 1] = (T)0.0;
+    w[n-1] = w[n] = w[n + 1] = (T)0.0;
 
     // calculate coefficients
     
@@ -255,6 +259,54 @@ void dwt_wcdf(T * data, size_t pitch, T * buffer, T * buffer2, size_t n)
     }
 }
 
+template<typename T>
+void idwt_wcdf(T * data, size_t pitch, T * buffer, size_t n, int alpha, T * buffer2)
+{
+    size_t n2 = n/2;
+    size_t n2a = (n + 1) / 2;
+    T * tmp = buffer + 2;
+    T * w = buffer2 + 2;
 
+    // copy with reordering
+    
+    for(size_t i = 0, j = 0; i < n; i+=2, j += pitch)
+    {
+        tmp[i] = data[j];
+    }
+
+    for(size_t i = 1, j = n2a*pitch; i < n; i+=2, j += pitch)
+    {
+        tmp[i] = (alpha * data[j]) / 1024;
+    }
+
+    // extend mirror-like
+    
+    tmp[-1] = tmp[1];
+    tmp[-2] = tmp[2];
+    
+    tmp[n] = tmp[n-2];
+    tmp[n+1] = tmp[n-3];
+
+    // calculate coefficients
+
+    for(ptrdiff_t i = 0; i < (ptrdiff_t)n; i += 2)
+    {
+        tmp[i] = tmp[i] - (T)0.5 * (w[i-1]*tmp[i-1] + w[i]*tmp[i+1]) / (w[i-1] + w[i]);
+    }
+
+    for(ptrdiff_t i = 1; i < (ptrdiff_t)n; i += 2)
+    {
+        tmp[i] = tmp[i] + (w[i-1]*tmp[i-1] + w[i]*tmp[i+1]) / (w[i-1] + w[i]);
+    }
+   
+    // copy data
+
+    for(size_t i = 0, j = 0; i < n; i++, j += pitch)
+    {
+        data[j] = tmp[i];
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 #endif

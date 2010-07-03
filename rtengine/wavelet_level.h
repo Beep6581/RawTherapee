@@ -86,16 +86,17 @@ class wavelet_level
     // size of low frequency part
     size_t m_w2, m_h2;
 
-    // distance between lines in the array of coeffs
-    size_t m_pitch;
-
     // array of pointers to lines of coeffs
     // actually is a single contiguous data array pointed by m_coeffs[0]
     T ** m_coeffs;
-
+    
+    // weights storage
+    T ** m_weights_rows;
+    T ** m_weights_cols;
+    
     // allocation and destruction of data storage
-    void create();
-    void destroy();
+    T ** create(size_t w, size_t h);
+    void destroy(T ** p);
 
     void dwt_2d(size_t w, size_t h);
     void idwt_2d(size_t w, size_t h, int alpha);
@@ -104,16 +105,21 @@ public:
 
     template<typename E>
     wavelet_level(E ** src, size_t w, size_t h)
-    : m_w(w), m_h(h), m_w2((w+1)/2), m_h2((h+1)/2), m_pitch(0), m_coeffs(NULL)
+    : m_w(w), m_h(h), m_w2((w+1)/2), m_h2((h+1)/2), 
+      m_coeffs(NULL), m_weights_rows(NULL), m_weights_cols(NULL)
     {
-        create();
+        m_coeffs = create(w, h);
+        m_weights_rows = create(w + 4, h);
+        m_weights_cols = create(h + 4, w);
         
         decompose(src);
     }
     
     ~wavelet_level()
     {
-        destroy();
+        destroy(m_coeffs);
+        destroy(m_weights_rows);
+        destroy(m_weights_cols);
     }
     
     T ** lowfreq() const
@@ -148,13 +154,15 @@ void wavelet_level<T>::dwt_2d(size_t w, size_t h)
     for(size_t j = 0; j < h; j++)
     {
         //dwt_haar(m_coeffs[j], 1, buffer, w);
-        dwt_53(m_coeffs[j], 1, buffer, w);
+        //dwt_53(m_coeffs[j], 1, buffer, w);
+        dwt_wcdf(m_coeffs[j], 1, buffer, w, m_weights_rows[j]);
     }
     
     for(size_t i = 0; i < w; i++)
     {
         //dwt_haar(&m_coeffs[0][i], m_pitch, buffer, h);
-        dwt_53(&m_coeffs[0][i], m_pitch, buffer, h);
+        //dwt_53(&m_coeffs[0][i], w, buffer, h);
+        dwt_wcdf(&m_coeffs[0][i], w, buffer, h, m_weights_cols[i]);
     }
     
     delete[] buffer;
@@ -165,44 +173,45 @@ void wavelet_level<T>::idwt_2d(size_t w, size_t h, int alpha)
 {
     T * buffer = new T[std::max(w, h) + 4];
     
-    for(size_t j = 0; j < h; j++)
-    {
-        //idwt_haar(m_coeffs[j], 1, buffer, w, alpha);
-        idwt_53(m_coeffs[j], 1, buffer, w, alpha);
-    }
-    
     for(size_t i = 0; i < w; i++)
     {
         //idwt_haar(&m_coeffs[0][i], m_pitch, buffer, h, alpha);
-        idwt_53(&m_coeffs[0][i], m_pitch, buffer, h, alpha);
+        //idwt_53(&m_coeffs[0][i], w, buffer, h, alpha);
+        idwt_wcdf(&m_coeffs[0][i], w, buffer, h, alpha, m_weights_cols[i]);
+        //idwt_noop(&m_coeffs[0][i], w, buffer, h, alpha);
     }
     
+    for(size_t j = 0; j < h; j++)
+    {
+        //idwt_haar(m_coeffs[j], 1, buffer, w, alpha);
+        //idwt_53(m_coeffs[j], 1, buffer, w, alpha);
+        idwt_wcdf(m_coeffs[j], 1, buffer, w, alpha, m_weights_rows[j]);
+        //idwt_noop(m_coeffs[j], 1, buffer, w, alpha);
+    }
+
     delete[] buffer;
-
 }
 
 template<typename T>
-void wavelet_level<T>::create()
+T ** wavelet_level<T>::create(size_t w, size_t h)
 {
-    // 16-byte alignment: no effect
-    //m_pitch = (((m_w*sizeof(T) + 15) / 16) * 16) / sizeof(T);
-    m_pitch = m_w;
-    T * data = new T[m_pitch * m_h];
-    m_coeffs = new T*[m_h];
-    for(size_t j = 0; j < m_h; j++)
+    T * data = new T[w * h];
+    T ** p = new T*[h];
+    for(size_t j = 0; j < h; j++)
     {
-        m_coeffs[j] = data + m_pitch * j;
+        p[j] = data + w * j;
     }
+    return p;
 }
 
 template<typename T>
-void wavelet_level<T>::destroy()
+void wavelet_level<T>::destroy(T ** p)
 {
-    if(m_coeffs)
+    if(p)
     {
-        delete[] m_coeffs[0];
+        delete[] p[0];
     
-        delete[] m_coeffs;
+        delete[] p;
     }
 }
 
