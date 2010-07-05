@@ -21,7 +21,7 @@
 
 #include <gtkmm.h>
 
-enum CursorShape {CSArrow, CSOpenHand, CSClosedHand, CSMove, CSResizeWidth, CSResizeHeight, CSResizeDiagonal, CSSpotWB, CSCropSelect, CSStraighten};
+enum CursorShape {CSArrow, CSOpenHand, CSClosedHand, CSMove, CSResizeWidth, CSResizeHeight, CSResizeDiagonal, CSSpotWB, CSCropSelect, CSStraighten, CSPlus, CSEmpty};
 
 class CursorManager {
 
@@ -33,14 +33,17 @@ class CursorManager {
         Gdk::Cursor* cCropMoving;
         Gdk::Cursor* cNormal;
         Gdk::Cursor* cCropSelection;
+        Gdk::Cursor* cAdd;
         Gdk::Cursor* cHand;
         Gdk::Cursor* cClosedHand;
         Gdk::Cursor* cWB;
+        Gdk::Cursor* cHidden;
         Glib::RefPtr<Gdk::Window> mainWindow;
 
     public:
         void init        (Glib::RefPtr<Gdk::Window> mainWin);
         void setCursor   (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
+        void setCursor   (CursorShape shape);
 };
 
 extern CursorManager cursorManager;

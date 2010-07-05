@@ -40,13 +40,17 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     
     // custom curve
     customCurveBox = new Gtk::VBox ();
+    Gtk::HBox* tmpa = Gtk::manage (new Gtk::HBox ());
     customCurve = Gtk::manage (new MyCurve ());
-    Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
-    af->add (*customCurve);
-    customCurve->set_size_request (-1, 200);
+    Gtk::Table* cctab = Gtk::manage (new Gtk::Table (2,1));
+    //Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
+    //af->add (*customCurve);
+    customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
     customCurve->setType (Spline);
-    customCurveBox->pack_start (*af, Gtk::PACK_EXPAND_WIDGET);
-    
+    tmpa->pack_start (*customCurve, true, false, 4);
+    customCurveBox->pack_start (*tmpa, true, true,4);
+    //customCurveBox->set_size_request (0, -1);
+
     Gtk::HBox* bbox = Gtk::manage (new Gtk::HBox ());
     save = Gtk::manage (new Gtk::Button ());
     save->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
@@ -55,7 +59,7 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     
     bbox->pack_end (*save, Gtk::PACK_EXPAND_WIDGET, 4);
     bbox->pack_end (*load, Gtk::PACK_EXPAND_WIDGET, 4);
-    
+
     customCurveBox->pack_end (*bbox, Gtk::PACK_SHRINK, 2);
     customCurveBox->show_all ();
 
@@ -66,20 +70,20 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     
     // parametric curve
     paramCurveBox = new Gtk::VBox ();
-    paramCurve = Gtk::manage (new MyCurve ());    
-    Gtk::Table* ctab = Gtk::manage (new Gtk::Table (2,1));
-    Gtk::AspectFrame* afp = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
-    afp->add (*paramCurve);
-    paramCurve->set_size_request (200, 200);
+    paramCurve = Gtk::manage (new MyCurve ());
+    Gtk::Table* paramctab = Gtk::manage (new Gtk::Table (2,1));
+    //Gtk::AspectFrame* afp = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
+    //afp->add (*paramCurve);
+    paramCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
     paramCurve->setType (Parametric);
     shcSelector = Gtk::manage (new SHCSelector ());
-    shcSelector->set_size_request (200, 20);
+    shcSelector->set_size_request (GRAPH_SIZE, 20);
 
-    ctab->attach (*afp, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    ctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, RADIUS+2, RADIUS+2);
+    paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS+2, 2);
 
     Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
-    tmpb->pack_start (*ctab, true, false);
+    tmpb->pack_start (*paramctab, true, false);
 
     paramCurveBox->pack_start (*tmpb, true, true);
 

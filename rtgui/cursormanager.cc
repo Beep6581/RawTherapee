@@ -30,21 +30,25 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
     cCropMove = new Gdk::Cursor (Gdk::FLEUR);
     cCropMoving = new Gdk::Cursor (Gdk::HAND2);
     cCropSelection = new Gdk::Cursor (Gdk::CROSSHAIR);
-#ifdef _WIN32
-    cNormal = new Gdk::Cursor (Gdk::LAST_CURSOR);
-#else
+    cAdd = new Gdk::Cursor (Gdk::PLUS);
+//#ifdef _WIN32
+//    cNormal = new Gdk::Cursor (Gdk::LAST_CURSOR);
+//#else
     cNormal = new Gdk::Cursor (Gdk::ARROW);
-#endif
-		Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
-		Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file(argv0+"/images/closedhand22.png");
-		Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file(argv0+"/images/wbpicker16.png");
-		cHand = hand ? new Gdk::Cursor (cNormal->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
+//#endif
+	Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
+	Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file(argv0+"/images/closedhand22.png");
+	Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file(argv0+"/images/wbpicker16.png");
+	Glib::RefPtr<Gdk::Pixbuf> empty = safe_create_from_file(argv0+"/images/empty.png");
+	cHand = hand ? new Gdk::Cursor (cNormal->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
     cClosedHand = close_hand ? new Gdk::Cursor (cNormal->get_display(), close_hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
     cWB = wbpick ? new Gdk::Cursor (cNormal->get_display(), wbpick, 1, 12) : new Gdk::Cursor (Gdk::ARROW);
+    cHidden = empty ? new Gdk::Cursor (cNormal->get_display(), empty, 12, 12) : new Gdk::Cursor (Gdk::FLEUR);
 
     mainWindow = mainWin;
 }
 
+/* Set the cursor of the given window */
 void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape) {
 
     if (shape==CSArrow)
@@ -67,6 +71,14 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         window->set_cursor (*cCropSelection);
     else if (shape==CSStraighten)
         window->set_cursor (*cCropSelection);
+    else if (shape==CSPlus)
+        window->set_cursor (*cAdd);
+    else if (shape==CSEmpty)
+        window->set_cursor (*cHidden);
 }
 
+/* Set the cursor of the main window */
+void CursorManager::setCursor (CursorShape shape) {
+	setCursor(mainWindow, shape);
+}
 
