@@ -412,29 +412,67 @@ bool MyCurve::handleEvents (GdkEvent* event) {
     	            double delta_x = (double)(new_cursor_x - cursor_x) * factor / (double)(width-1);
     	            double delta_y = (double)(cursor_y - new_cursor_y) * factor / (double)(height-1);
 
+    	            // bounds of the grabed point
+	            	double leftbound = (grab_point == 0) ? 0. : curve.x[grab_point-1];
+	            	double rightbound = (grab_point == num-1) ? 1. : curve.x[grab_point+1];
+	            	double bottombound = (double)(-MIN_DISTANCE) * factor / (double)(height-1);
+	            	double topbound = (double)1.0 + (double)(MIN_DISTANCE) * factor / (double)(height-1);
+
     	            // modification of the unclamped grabed point
-    	            ugp_x += delta_x;
-    	            ugp_y += delta_y;
-
-    	            // first and last point cannot be deleted anymore (there's no point to do it)
-    	            // for intermediate points, we look if the point must be deleted
-    	            if (grab_point > 0 && grab_point < num-1) {
-    	            	double leftbound = curve.x[grab_point-1];
-    	            	double rightbound = curve.x[grab_point+1];
-        	            double bottombound = (double)(-MIN_DISTANCE) * factor / (double)(height-1);
-        	            double topbound = (double)1.0 + (double)(MIN_DISTANCE) * factor / (double)(height-1);
-
-    	            	if (ugp_x <= leftbound || ugp_x >= rightbound || ugp_y > topbound || ugp_y < bottombound) {
-        		            curve.x[grab_point] = -1.0;
+					bool delete_me = false;
+					// Handling limitations along X axis
+    	            if (ugp_x >= leftbound && ugp_x <= rightbound) {
+    	            	ugp_x += delta_x;
+    	            	if (ugp_x > rightbound) {
+    	            		if (grab_point == num-1)
+    	            			curve.x[grab_point] = 1.;
+    	            		else
+    	            			if (num == 2)
+    	            				curve.x[grab_point] = rightbound;
+    	            			else
+    	            				curve.x[grab_point] = -1.;
     	            	}
+    	            	else if (ugp_x < leftbound) {
+    	            		if (grab_point == 0)
+    	            			curve.x[grab_point] = 0.;
+    	            		else
+    	            			if (num == 2)
+    	            				curve.x[grab_point] = leftbound;
+    	            			else
+    	            				curve.x[grab_point] = -1.;
+    	            	}
+    	            	else
+    	            		curve.x[grab_point] = ugp_x;
     	            }
-    	            // first and last points are clamped to the [0.0 ; 1.0] range
-    	            if (curve.x[grab_point] != -1.0) {
-    	            	double new_curve_x = curve.x[grab_point] + delta_x;
-    	            	double new_curve_y = curve.y[grab_point] + delta_y;
-    		            curve.x[grab_point] = CLAMP(new_curve_x,0.0,1.0);
-    		            curve.y[grab_point] = CLAMP(new_curve_y,0.0,1.0);
-                    }
+    	            else if (ugp_x > rightbound && delta_x < 0.)
+						curve.x[grab_point] = ugp_x = rightbound;
+					else if (ugp_x < leftbound && delta_x > 0.)
+						curve.x[grab_point] = ugp_x = leftbound;
+
+					// Handling limitations along Y axis
+    	            if (ugp_y >= bottombound && ugp_y <= topbound) {
+    	            	ugp_y += delta_y;
+    	            	if (ugp_y > topbound) {
+    	            		if (grab_point == 0 || grab_point == num-1)
+    	            			curve.y[grab_point] = 1.;
+    	            		else
+   	            				curve.x[grab_point] = -1.;
+    	            	}
+    	            	else if (ugp_y < bottombound) {
+    	            		if (grab_point == 0 || grab_point == num-1)
+    	            			curve.y[grab_point] = 0.;
+    	            		else
+   	            				curve.x[grab_point] = -1.;
+    	            	}
+    	            	else
+       	            		curve.y[grab_point] = CLAMP(ugp_y, 0.0, 1.0);
+    	            }
+    	            else if (ugp_y > 1. && delta_y < 0.)
+						curve.y[grab_point] = ugp_y = 1.0;
+					else if (ugp_y < 0. && delta_y > 0.)
+						curve.y[grab_point] = ugp_y = 0.;
+    	            else if ((grab_point > 0 && grab_point < num-1) && (ugp_y > topbound || ugp_y < bottombound))
+           				curve.x[grab_point] = -1.;
 
     	            interpolate (width, height);
 
