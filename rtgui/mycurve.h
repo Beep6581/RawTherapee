@@ -22,6 +22,11 @@
 #include <gtkmm.h>
 #include <vector>
 #include <curvelistener.h>
+#include <cursormanager.h>
+
+#define RADIUS			3	/* radius of the control points. Assuming that the center of the spot is in the center of the pixel, the real RADIUS will be this value +0.5 */
+#define MIN_DISTANCE	8	/* min distance between control points */
+#define GRAPH_SIZE		200 /* size of the curve editor graphic */
 
 enum CurveType {Linear, Spline, Parametric};
 
@@ -46,10 +51,11 @@ class MyCurve : public Gtk::DrawingArea {
     protected:
         CurveListener* listener;
         CurveDescr curve;
-        Gdk::CursorType cursor_type;
+        CursorShape cursor_type;
         Glib::RefPtr<Gdk::Pixmap> pixmap;
-        int height;                 
-        int grab_point;              
+        int height;
+        int grab_point;
+        int lit_point;
         int last;
         std::vector<Gdk::Point> point;
         std::vector<Gdk::Point> upoint;
@@ -58,8 +64,10 @@ class MyCurve : public Gtk::DrawingArea {
         unsigned int bghist[256];
         bool bghistvalid;
         MyCurveIdleHelper* mcih;
+    	int cursor_x, cursor_y;
+    	double ugp_x, ugp_y;  // unclamped grabed point coordinates
         
-        void draw (int width, int height);
+        void draw (int width, int height, int handle);
         void interpolate (int width, int height);
         std::vector<double> get_vector (int veclen);
 
