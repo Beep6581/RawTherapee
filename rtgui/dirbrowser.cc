@@ -265,7 +265,6 @@ void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustri
     child->set_value (1, closedfolder);
     Glib::ustring fullname = Glib::build_filename (iter->get_value (dtColumns.dirname), dirname);
     child->set_value (dtColumns.dirname, fullname);
-    Glib::RefPtr<Gio::File> f = Gio::File::create_for_path (fullname);
     Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());
     fooRow->set_value (dtColumns.filename, Glib::ustring("foo"));
 }
@@ -339,7 +338,11 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
   
     dirtree->collapse_all ();
 
-    Glib::ustring absDirPath = Gio::File::create_for_path(dirname)->get_parse_name ();
+
+    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path(dirname);
+    if( !dir->query_exists())
+    	return;
+    Glib::ustring absDirPath = dir->get_parse_name ();
     Gtk::TreePath path = expandToDir (absDirPath);
 	dirtree->scroll_to_row (path);
 	dirtree->get_selection()->select (path);

@@ -792,8 +792,10 @@ void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Gli
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
 
-    if (!file)
+    if (!file )
         return;
+    if( !file->query_exists())
+    	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
@@ -807,8 +809,10 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
 void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
 
     Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
-    if (!file)
+    if (!file )
         return;
+    if( !file->query_exists())
+    	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if( !info )
     	return;
