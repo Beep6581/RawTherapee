@@ -214,7 +214,7 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) {
 std::string CacheManager::getMD5 (const Glib::ustring& fname) {
 
     Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
-    if (file)	{
+    if (file && file->query_exists())	{
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (file);
         if (info)
             return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, Glib::ustring::compose ("%1%2", fname, info->get_size()));

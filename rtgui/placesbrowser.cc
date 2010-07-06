@@ -81,7 +81,7 @@ void PlacesBrowser::refreshPlacesList () {
    
     // append home directory
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (Glib::get_home_dir ());
-    if (hfile) {
+    if (hfile && hfile->query_exists()) {
       try { 
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
         if (info) {
@@ -97,7 +97,7 @@ void PlacesBrowser::refreshPlacesList () {
 
     // append pictures directory
     hfile = Gio::File::create_for_path (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
-    if (hfile) {
+    if (hfile && hfile->query_exists()) {
       try { 
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
         if (info) {
@@ -191,7 +191,7 @@ void PlacesBrowser::refreshPlacesList () {
     }
     for (int i=0; i<options.favoriteDirs.size(); i++) {
         Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (options.favoriteDirs[i]);
-        if (hfile) {
+        if (hfile && hfile->query_exists()) {
             Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
             if (info) {
                 Gtk::TreeModel::Row newrow = *(placesModel->append());
@@ -274,7 +274,7 @@ void PlacesBrowser::addPressed () {
 
     // append
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (lastSelectedDir);
-    if (hfile) {
+    if (hfile && hfile->query_exists()) {
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
         if (info) {
             options.favoriteDirs.push_back (hfile->get_parse_name ());
