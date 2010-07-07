@@ -19,6 +19,7 @@
 
 #include <shcselector.h>
 #include <iomanip>
+#include <mycurve.h>
 
 SHCSelector::SHCSelector() : movingPosition(-1), cl(NULL) {
 
@@ -99,18 +100,22 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
     cr->set_line_width (0.5);
     if (movingPosition >= 0) {
         int i = movingPosition;
+        int offset;
+        int layout_width, layout_height;
         Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions[i]));
-        cr->move_to (w*positions[i]+wslider/2-0.5, 0);
+        layout->get_pixel_size(layout_width, layout_height);
+        offset = positions[i] > 0.5 ? -layout_width-1-wslider/2 : 1+wslider/2;
+        cr->move_to (w*positions[i]+offset-0.5, 0);
         cr->set_source_rgb (bgc.get_red_p(), bgc.get_green_p(), bgc.get_blue_p());
         layout->add_to_cairo_context (cr);
         cr->fill_preserve ();
         cr->stroke ();
-        cr->move_to (w*positions[i]+wslider/2+0.5, 1);
+        cr->move_to (w*positions[i]+offset+0.5, 1);
         layout->add_to_cairo_context (cr);
         cr->fill_preserve ();
         cr->stroke ();
         cr->set_source_rgb (fgc.get_red_p(), fgc.get_green_p(), fgc.get_blue_p());
-        cr->move_to (w*positions[i]+wslider/2, 0.5);
+        cr->move_to (w*positions[i]+offset, 0.5);
         layout->add_to_cairo_context (cr);
         cr->fill_preserve ();
         cr->stroke ();
@@ -162,5 +167,12 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event) {
 
 void SHCSelector::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
     
+    queue_draw ();
+}
+
+void SHCSelector::reset () {	//  : movingPosition(-1), cl(NULL) {
+	positions[0] = 0.25;
+	positions[1] = 0.5;
+	positions[2] = 0.75;
     queue_draw ();
 }

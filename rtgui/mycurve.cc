@@ -603,3 +603,26 @@ void MyCurve::updateBackgroundHistogram (unsigned int* hist) {
 
 }
 
+void MyCurve::reset() {
+	int width = get_allocation().get_width() - RADIUS * 2;
+	int height = get_allocation().get_height() - RADIUS * 2;
+
+	switch (curve.type) {
+	case Spline :
+		curve.x.clear();
+		curve.y.clear();
+	    curve.x.push_back(0.);
+	    curve.y.push_back(0.);
+	    curve.x.push_back(1.);
+	    curve.y.push_back(1.);
+	    grab_point = -1;
+	    lit_point = -1;
+        interpolate (width, height);
+		break;
+	case Parametric :
+		// Nothing to do (?)
+	default:
+		break;
+	}
+	//draw(width, height, -1);
+}

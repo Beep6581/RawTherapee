@@ -27,6 +27,7 @@
 class CurveEditor : public Gtk::VBox, public CurveListener, public SHCListener, public AdjusterListener {
 
         Gtk::ComboBoxText* curveType;
+        Gtk::Button* curve_reset;
         Gtk::VBox* paramCurveBox;
         Gtk::VBox* customCurveBox;
 
@@ -68,6 +69,7 @@ class CurveEditor : public Gtk::VBox, public CurveListener, public SHCListener, 
         void setCurve (const std::vector<double>& c);
         std::vector<double> getCurve ();
         void curveChanged ();
+        void curveResetPressed ();
         void shcChanged ();
         void adjusterChanged (Adjuster* a, double newval);
         bool adjusterEntered (GdkEventCrossing* ev, int ac);

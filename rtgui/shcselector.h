@@ -55,6 +55,7 @@ class SHCSelector : public Gtk::DrawingArea {
     bool on_button_release_event (GdkEventButton* event);
     bool on_motion_notify_event (GdkEventMotion* event);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void reset ();
 };
 
 #endif
