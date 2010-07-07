@@ -83,6 +83,7 @@ class MyCurve : public Gtk::DrawingArea {
         void notifyListener ();
         void setActiveParam (int ac);
         void updateBackgroundHistogram (unsigned int* hist);
+        void reset ();
 };
 
 #endif

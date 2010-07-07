@@ -22,14 +22,22 @@
 #include <guiutils.h>
 #include <multilangmgr.h>
 
+extern Glib::ustring argv0;
+
 CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false), curveTypeIx(-1) {
 
     Gtk::HBox* tsbox = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* tslab = Gtk::manage (new Gtk::Label (M("CURVEEDITOR_TYPE")));
     curveType = Gtk::manage (new Gtk::ComboBoxText ());
-    
+    curve_reset = Gtk::manage (new Gtk::Button ());
+    curve_reset->add (*Gtk::manage (new Gtk::Image (argv0+"/images/undo.png")));
+    curve_reset->set_relief (Gtk::RELIEF_NONE);
+    curve_reset->set_border_width (0);
+    curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
+
     tsbox->pack_start (*tslab, Gtk::PACK_SHRINK, 8);
     tsbox->pack_start (*curveType);
+    tsbox->pack_start (*curve_reset, Gtk::PACK_SHRINK, 0);
     
     pack_start (*tsbox);
     
@@ -37,7 +45,9 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     curveType->append_text (M("CURVEEDITOR_PARAMETRIC"));
     curveType->append_text (M("CURVEEDITOR_CUSTOM"));
     curveType->set_active (0);
-    
+
+    curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::curveResetPressed) );
+
     // custom curve
     customCurveBox = new Gtk::VBox ();
     Gtk::HBox* tmpa = Gtk::manage (new Gtk::HBox ());
@@ -47,16 +57,16 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     //af->add (*customCurve);
     customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
     customCurve->setType (Spline);
+    //customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
     tmpa->pack_start (*customCurve, true, false, 4);
     customCurveBox->pack_start (*tmpa, true, true,4);
-    //customCurveBox->set_size_request (0, -1);
 
     Gtk::HBox* bbox = Gtk::manage (new Gtk::HBox ());
     save = Gtk::manage (new Gtk::Button ());
     save->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
     load = Gtk::manage (new Gtk::Button ());
     load->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
-    
+
     bbox->pack_end (*save, Gtk::PACK_EXPAND_WIDGET, 4);
     bbox->pack_end (*load, Gtk::PACK_EXPAND_WIDGET, 4);
 
@@ -67,7 +77,7 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     load->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::loadPressed) );
     save->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
     load->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
-    
+
     // parametric curve
     paramCurveBox = new Gtk::VBox ();
     paramCurve = Gtk::manage (new MyCurve ());
@@ -79,8 +89,8 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     shcSelector = Gtk::manage (new SHCSelector ());
     shcSelector->set_size_request (GRAPH_SIZE, 20);
 
-    paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, RADIUS+2, RADIUS+2);
-    paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS+2, 2);
+    paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 4, 4);
+    paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS+4, 0);
 
     Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
     tmpb->pack_start (*paramctab, true, false);
@@ -329,6 +339,25 @@ void CurveEditor::curveChanged () {
 
     if (cl)
         cl->curveChanged ();
+}
+
+void CurveEditor::curveResetPressed () {
+	switch (curveTypeIx) {
+	case 2 : // Custom
+		customCurve->reset ();
+		break;
+	case 1 : // Parametric
+	    highlights->resetPressed();
+	    lights->resetPressed();
+	    darks->resetPressed();
+	    shadows->resetPressed();
+	    shcSelector->reset();
+	    paramCurve->reset ();
+		break;
+	default:
+		break;
+	}
+	curveChanged ();
 }
 
 void CurveEditor::shcChanged () {
