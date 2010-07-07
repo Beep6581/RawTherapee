@@ -29,6 +29,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     pngcompr->setAdjusterListener (this);
     pngcompr->show ();
     tiffuncompressed = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED")));
+    tiffuncompressed->signal_toggled().connect( sigc::mem_fun(*this,&SaveFormatPanel::formatChanged));
     tiffuncompressed->show();
 
     Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
@@ -51,6 +52,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     pack_start (*formatopts, Gtk::PACK_SHRINK, 4);
     
     savespp = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
+    savespp->signal_toggled().connect( sigc::mem_fun(*this,&SaveFormatPanel::formatChanged));
     pack_start (*savespp, Gtk::PACK_SHRINK, 4);
 
     show_all ();
