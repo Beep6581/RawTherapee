@@ -124,6 +124,9 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
         sw = h;
         sh = w;
     }
+    if( pp.w > sw-2*border) pp.w = sw-2*border;
+    if( pp.h > sh-2*border) pp.h = sh-2*border;
+
     int ppx = pp.x, ppy = pp.y;
     if (tran & TR_HFLIP) 
         ppx = sw - pp.x - pp.w;
