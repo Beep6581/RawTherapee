@@ -30,27 +30,31 @@ class CurveEditor : public Gtk::VBox, public CurveListener, public SHCListener, 
         Gtk::Button* curve_reset;
         Gtk::VBox* paramCurveBox;
         Gtk::VBox* customCurveBox;
+        Gtk::VBox* NURBSCurveBox;
 
         MyCurve* customCurve;
+        MyCurve* NURBSCurve;
         MyCurve* paramCurve;
         SHCSelector* shcSelector;
-        
+
         Adjuster* highlights;
         Adjuster* lights;
         Adjuster* darks;
         Adjuster* shadows;
-        
-        Gtk::Button* save;
-        Gtk::Button* load;
-        
+
+        Gtk::Button* saveCustom;
+        Gtk::Button* loadCustom;
+        Gtk::Button* saveNURBS;
+        Gtk::Button* loadNURBS;
+
         CurveListener* cl;
-        
+
         bool realized;
         std::vector<double> tmpCurve;
-        int curveTypeIx;
-        
+        CurveType curveTypeIx;
+
         int activeParamControl;
-        
+
         sigc::connection typeconn;
 
     public:

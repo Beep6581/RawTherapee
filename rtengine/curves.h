@@ -23,6 +23,9 @@
 #include <map>
 #include <string>
 #include <math.h>
+#include <mycurve.h>
+
+#define CURVES_MIN_POLY_POINTS  1000
 
 namespace rtengine {
 
@@ -132,22 +135,26 @@ class Curve {
 
   protected:
     int N;
+    int ppn;			// targeted polyline point number
     double* x;
     double* y;
+    std::vector<double> poly_x;		// X points of the faceted curve
+    std::vector<double> poly_y;		// Y points of the faceted curve
     double* ypp;
-    int kind;       // = -1: linear interp., 0: empty, 1: spline interp., 2: parametric
+    CurveType kind;
 
   protected:
     void spline_cubic_set ();
+    void NURBS_set ();
     static inline double p00 (double x, double prot) { return CurveFactory::clower (x, 2.0, prot); }
     static inline double p11 (double x, double prot) { return CurveFactory::cupper (x, 2.0, prot); }
     static inline double p01 (double x, double prot) { return x<=0.5 ? CurveFactory::clower (x*2, 2.0, prot)/2.0 : 0.5 + CurveFactory::cupper ((x-0.5)*2, 2.0, prot)/2.0; }
     static inline double p10 (double x, double prot) { return x<=0.5 ? CurveFactory::cupper (x*2, 2.0, prot)/2.0 : 0.5 + CurveFactory::clower ((x-0.5)*2, 2.0, prot)/2.0; }
     static inline double pfull (double x, double prot, double sh, double hl) { return (1-sh)*(1-hl)*p00(x,prot) + sh*hl*p11(x,prot) + (1-sh)*hl*p01(x,prot) + sh*(1-hl)*p10(x,prot); }
-    
+
   public:
 
-    Curve (const std::vector<double>& points);
+    Curve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
    ~Curve ();
 
     double getVal (double x);

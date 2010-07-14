@@ -686,3 +686,7 @@ HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_L;L
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
+
+###
+
+CURVEEDITOR_NURBS;Cage de contrôle

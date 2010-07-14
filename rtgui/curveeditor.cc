@@ -24,7 +24,7 @@
 
 extern Glib::ustring argv0;
 
-CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false), curveTypeIx(-1) {
+CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false), curveTypeIx(Linear) {
 
     Gtk::HBox* tsbox = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* tslab = Gtk::manage (new Gtk::Label (M("CURVEEDITOR_TYPE")));
@@ -40,11 +40,13 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     tsbox->pack_start (*curve_reset, Gtk::PACK_SHRINK, 0);
     
     pack_start (*tsbox);
-    
-    curveType->append_text (M("CURVEEDITOR_LINEAR"));
-    curveType->append_text (M("CURVEEDITOR_PARAMETRIC"));
-    curveType->append_text (M("CURVEEDITOR_CUSTOM"));
-    curveType->set_active (0);
+
+    // Order set in the same order than "enum CurveType". Shouldn't change, for compatibility reason
+    curveType->append_text (M("CURVEEDITOR_LINEAR"));		// 0 Linear
+    curveType->append_text (M("CURVEEDITOR_CUSTOM"));		// 1 Spline
+    curveType->append_text (M("CURVEEDITOR_PARAMETRIC"));	// 2 Parametric
+    curveType->append_text (M("CURVEEDITOR_NURBS"));		// 3 NURBS
+    curveType->set_active (Linear);
 
     curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::curveResetPressed) );
 
@@ -52,7 +54,6 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     customCurveBox = new Gtk::VBox ();
     Gtk::HBox* tmpa = Gtk::manage (new Gtk::HBox ());
     customCurve = Gtk::manage (new MyCurve ());
-    Gtk::Table* cctab = Gtk::manage (new Gtk::Table (2,1));
     //Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
     //af->add (*customCurve);
     customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
@@ -61,22 +62,51 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     tmpa->pack_start (*customCurve, true, false, 4);
     customCurveBox->pack_start (*tmpa, true, true,4);
 
-    Gtk::HBox* bbox = Gtk::manage (new Gtk::HBox ());
-    save = Gtk::manage (new Gtk::Button ());
-    save->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-    load = Gtk::manage (new Gtk::Button ());
-    load->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+    Gtk::HBox* custombbox = Gtk::manage (new Gtk::HBox ());
+    saveCustom = Gtk::manage (new Gtk::Button ());
+    saveCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+    loadCustom = Gtk::manage (new Gtk::Button ());
+    loadCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
 
-    bbox->pack_end (*save, Gtk::PACK_EXPAND_WIDGET, 4);
-    bbox->pack_end (*load, Gtk::PACK_EXPAND_WIDGET, 4);
+    custombbox->pack_end (*saveCustom, Gtk::PACK_EXPAND_WIDGET, 4);
+    custombbox->pack_end (*loadCustom, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    customCurveBox->pack_end (*bbox, Gtk::PACK_SHRINK, 2);
+    customCurveBox->pack_end (*custombbox, Gtk::PACK_SHRINK, 2);
     customCurveBox->show_all ();
 
-    save->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::savePressed) );
-    load->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::loadPressed) );
-    save->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
-    load->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
+    saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::savePressed) );
+    loadCustom->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::loadPressed) );
+    saveCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
+    loadCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
+
+    // NURBS curve
+    NURBSCurveBox = new Gtk::VBox ();
+    Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
+    NURBSCurve = Gtk::manage (new MyCurve ());
+    //Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
+    //af->add (*customCurve);
+    NURBSCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
+    NURBSCurve->setType (NURBS);
+    //customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
+    tmpb->pack_start (*NURBSCurve, true, false, 4);
+    NURBSCurveBox->pack_start (*tmpb, true, true,4);
+
+    Gtk::HBox* NURBSbbox = Gtk::manage (new Gtk::HBox ());
+    saveNURBS = Gtk::manage (new Gtk::Button ());
+    saveNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+    loadNURBS = Gtk::manage (new Gtk::Button ());
+    loadNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+
+    NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_EXPAND_WIDGET, 4);
+    NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_EXPAND_WIDGET, 4);
+
+    NURBSCurveBox->pack_end (*NURBSbbox, Gtk::PACK_SHRINK, 2);
+    NURBSCurveBox->show_all ();
+
+    saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::savePressed) );
+    loadNURBS->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditor::loadPressed) );
+    saveNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
+    loadNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
 
     // parametric curve
     paramCurveBox = new Gtk::VBox ();
@@ -92,10 +122,10 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 4, 4);
     paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS+4, 0);
 
-    Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
-    tmpb->pack_start (*paramctab, true, false);
+    Gtk::HBox* tmpc = Gtk::manage (new Gtk::HBox ());
+    tmpc->pack_start (*paramctab, true, false);
 
-    paramCurveBox->pack_start (*tmpb, true, true);
+    paramCurveBox->pack_start (*tmpc, true, true);
 
     highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
     lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
@@ -123,6 +153,7 @@ CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false),
     paramCurveBox->reference ();
     
     customCurve->setCurveListener (this); 
+    NURBSCurve->setCurveListener (this);
     paramCurve->setCurveListener (this);
     shcSelector->setSHCListener (this);
     
@@ -196,11 +227,26 @@ void CurveEditor::savePressed () {
     
         std::ofstream f (fname.c_str());
         std::vector<double> p = customCurve->getPoints ();
+
+        switch (curveType->get_active_row_number()) {
+        case Spline:		// custom
+        	p = customCurve->getPoints ();
+        	break;
+        case NURBS:		// NURBS
+        	p = NURBSCurve->getPoints ();
+        	break;
+        default:
+        	break;
+        }
+
         int ix = 0;
-        if (p[ix++]<0)
+        if (p[ix]==(double)(Linear))
             f << "Linear\n";
-        else
+        else if (p[ix]==(double)(Spline))
             f << "Spline\n";
+        else if (p[ix]==(double)(NURBS))
+            f << "NURBS\n";
+        ix++;
         for (int i=0; i<p.size()/2; i++, ix+=2)
             f << p[ix] << ' ' << p[ix+1] << std::endl;
         f.close ();
@@ -233,9 +279,11 @@ void CurveEditor::loadPressed () {
             std::string s;
             f >> s;
             if (s=="Linear")
-                p.push_back (-1);
+                p.push_back ((double)(Linear));
             else if (s=="Spline")
-                p.push_back (1);
+                p.push_back ((double)(Spline));
+            else if (s=="NURBS")
+                p.push_back ((double)(NURBS));
             else return;
             double x;
             while (f) {
@@ -243,9 +291,16 @@ void CurveEditor::loadPressed () {
                 if (f)
                     p.push_back (x);
             }
-            customCurve->setPoints (p);
-            customCurve->queue_draw ();
-            customCurve->notifyListener ();
+            if (p[0] == (double)(Spline)) {
+				customCurve->setPoints (p);
+				customCurve->queue_draw ();
+				customCurve->notifyListener ();
+            }
+            else if (p[0] == (double)(NURBS)) {
+				NURBSCurve->setPoints (p);
+				NURBSCurve->queue_draw ();
+				NURBSCurve->notifyListener ();
+            }
         }
     }
 }
@@ -261,21 +316,21 @@ void CurveEditor::setCurve (const std::vector<double>& c) {
 
     tmpCurve = c;
     
-    if (realized && curveType->get_active_row_number()<3) { // if it is not realized or "unchanged" is selected, just store the curve (prev line) and do not change gui
-        
+    if (realized && curveType->get_active_row_number()<=Unchanged) { // if it is not realized or "unchanged" is selected, just store the curve (prev line) and do not change gui
+
         typeconn.block(true);
-        if (c.size()==0 || c[0]==0) {
-            curveType->set_active (0);
-            curveTypeIx = 0;
+        if (c.size()==0 || c[0]==(double)(Linear)) {
+            curveType->set_active (Linear);		// Change the combo selection
+            curveTypeIx = Linear;
         }
-        else if (c[0]==1) {
-            curveType->set_active (2);
-            curveTypeIx = 2;
+        else if (c[0]==(double)(Spline)) {
+            curveType->set_active (Spline);
+            curveTypeIx = Spline;
             customCurve->setPoints (c);
         }
-        else if (c[0]==2) {
-            curveType->set_active (1);
-            curveTypeIx = 1;
+        else if (c[0]==(double)(Parametric)) {
+            curveType->set_active (Parametric);
+            curveTypeIx = Parametric;
             paramCurve->setPoints (c);
             shcSelector->setPositions (c[1], c[2], c[3]);
             highlights->setValue (c[4]);
@@ -283,13 +338,21 @@ void CurveEditor::setCurve (const std::vector<double>& c) {
             darks->setValue (c[6]);
             shadows->setValue (c[7]);
         }
+        else if (c[0]==(double)(NURBS)) {
+            curveType->set_active (NURBS);
+            curveTypeIx = NURBS;
+            NURBSCurve->setPoints (c);
+        }
         removeIfThere (this, customCurveBox, false);
         removeIfThere (this, paramCurveBox, false);
+        removeIfThere (this, NURBSCurveBox, false);
 
-        if (curveType->get_active_row_number()==1) 
-            pack_start (*paramCurveBox);   
-        else if (curveType->get_active_row_number()==2) 
+        if (curveType->get_active_row_number()==Spline)
             pack_start (*customCurveBox);
+        else if (curveType->get_active_row_number()==Parametric)
+            pack_start (*paramCurveBox);   
+        else if (curveType->get_active_row_number()==NURBS)
+            pack_start (*NURBSCurveBox);
 
         typeconn.block(false);
     }
@@ -297,17 +360,19 @@ void CurveEditor::setCurve (const std::vector<double>& c) {
 
 std::vector<double> CurveEditor::getCurve () {
 
-    if (!realized || curveType->get_active_row_number()==3)
+    if (!realized || curveType->get_active_row_number()==Unchanged)
         return tmpCurve;
 
-    if (curveTypeIx<=0) {
+    // linear
+    if (curveTypeIx<=Linear) {
         std::vector<double> lcurve (1);
-        lcurve[0] = 0.0;
+        lcurve[0] = (double)(Linear);
         return lcurve;
     }
-    else if (curveTypeIx==1) {
+    // parametric
+    else if (curveTypeIx==Parametric) {
         std::vector<double> lcurve (8);
-        lcurve[0] = 2.0;
+        lcurve[0] = (double)(Parametric);
         shcSelector->getPositions (lcurve[1], lcurve[2], lcurve[3]);
         lcurve[4] = highlights->getValue ();
         lcurve[5] = lights->getValue ();
@@ -315,23 +380,33 @@ std::vector<double> CurveEditor::getCurve () {
         lcurve[7] = shadows->getValue ();
         return lcurve;
     }
-    else if (curveTypeIx==2)
+    // spline (custom)
+    else if (curveTypeIx==Spline)
         return customCurve->getPoints ();
+    // NURBS (control cage)
+    else if (curveTypeIx==NURBS)
+        return NURBSCurve->getPoints ();
 }
 
 void CurveEditor::typeSelectionChanged () {
 
     removeIfThere (this, customCurveBox, false);
     removeIfThere (this, paramCurveBox, false);
+    removeIfThere (this, NURBSCurveBox, false);
 
-    if (curveType->get_active_row_number()==1) 
-        pack_start (*paramCurveBox);   
-    else if (curveType->get_active_row_number()==2) 
+    if (curveType->get_active_row_number()==Spline) {
         pack_start (*customCurveBox);
+    }
+    else if (curveType->get_active_row_number()==Parametric) {
+        pack_start (*paramCurveBox);   
+    }
+    else if (curveType->get_active_row_number()==NURBS) {
+        pack_start (*NURBSCurveBox);
+    }
 
-    if (curveType->get_active_row_number()<3)
-        curveTypeIx = curveType->get_active_row_number();
-        
+    if (curveType->get_active_row_number() < Unchanged)
+        curveTypeIx = (CurveType)curveType->get_active_row_number();
+
     curveChanged ();
 }
 
@@ -343,10 +418,13 @@ void CurveEditor::curveChanged () {
 
 void CurveEditor::curveResetPressed () {
 	switch (curveTypeIx) {
-	case 2 : // Custom
+	case NURBS :	// = Control cage
+		NURBSCurve->reset ();
+		break;
+	case Spline :	// = Custom
 		customCurve->reset ();
 		break;
-	case 1 : // Parametric
+	case Parametric :
 	    highlights->resetPressed();
 	    lights->resetPressed();
 	    darks->resetPressed();
@@ -399,7 +477,7 @@ void CurveEditor::setBatchMode (bool batchMode) {
 
 bool CurveEditor::isUnChanged () {
 
-    return curveType->get_active_row_number()==3;
+    return curveType->get_active_row_number()==Unchanged;
 }
 
 void CurveEditor::setUnChanged (bool uc) {
@@ -408,7 +486,8 @@ void CurveEditor::setUnChanged (bool uc) {
         typeconn.block(true);
         removeIfThere (this, customCurveBox, false);
         removeIfThere (this, paramCurveBox, false);
-        curveType->set_active (3); 
+        removeIfThere (this, NURBSCurveBox, false);
+        curveType->set_active (Unchanged);
         typeconn.block(false);
     }
     else {
@@ -423,4 +502,5 @@ void CurveEditor::updateBackgroundHistogram (unsigned int* hist) {
 
     paramCurve->updateBackgroundHistogram (hist);
     customCurve->updateBackgroundHistogram (hist);
+    NURBSCurve->updateBackgroundHistogram (hist);
 }
