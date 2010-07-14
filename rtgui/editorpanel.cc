@@ -466,6 +466,7 @@ void EditorPanel::hideHistoryActivated () {
     removeIfThere (hpanedl, leftbox, false);
     if (hidehp->get_active()) 
         hpanedl->pack1 (*leftbox, false, true);
+    options.showHistory = hidehp->get_active();
 }
 
 bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
