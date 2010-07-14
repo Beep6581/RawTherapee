@@ -28,7 +28,16 @@
 #define MIN_DISTANCE	8	/* min distance between control points */
 #define GRAPH_SIZE		200 /* size of the curve editor graphic */
 
-enum CurveType {Linear, Spline, Parametric};
+// For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
+enum CurveType {
+	Empty = -1,
+	Linear,			// 0
+	Spline,			// 1
+	Parametric,		// 2
+	NURBS,			// 3
+	// Insert new curve type above this line
+	Unchanged		// Must remain the last of the enum
+};
 
 class CurveDescr {
 
@@ -65,7 +74,7 @@ class MyCurve : public Gtk::DrawingArea {
         bool bghistvalid;
         MyCurveIdleHelper* mcih;
     	int cursor_x, cursor_y;
-    	double ugp_x, ugp_y;  // unclamped grabed point coordinates
+    	double ugp_x, ugp_y;  // unclamped grabbed point coordinates
         
         void draw (int width, int height, int handle);
         void interpolate (int width, int height);

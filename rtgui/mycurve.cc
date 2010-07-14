@@ -56,9 +56,9 @@ std::vector<double> MyCurve::get_vector (int veclen) {
 
     std::vector<double> vector;
     vector.resize (veclen);
-  
+
     if (curve.type != Parametric) {
-        // count active points: 
+        // count active points:
         double prev =- 1.0;
         int active = 0;
         int firstact = -1;
@@ -69,7 +69,7 @@ std::vector<double> MyCurve::get_vector (int veclen) {
                 prev = curve.x[i];
                 ++active;
             }
-        // handle degenerate case: 
+        // handle degenerate case:
         if (active < 2) {
             double ry;
             if (active > 0)
@@ -86,7 +86,7 @@ std::vector<double> MyCurve::get_vector (int veclen) {
 
     // calculate remaining points
     std::vector<double> curveDescr = getPoints ();
-    rtengine::Curve* rtcurve = new rtengine::Curve (curveDescr);
+    rtengine::Curve* rtcurve = new rtengine::Curve (curveDescr, veclen*1.5);
     std::vector<double> t;
     t.resize (veclen);
     for (int i = 0; i < veclen; i++)
@@ -211,6 +211,25 @@ void MyCurve::draw (int width, int height, int handle) {
         cr->fill ();
     }
 
+    // draw the cage of the NURBS curve
+    if (curve.type==NURBS) {
+        std::valarray<double> ch_ds (1);
+        ch_ds[0] = 2;
+        cr->set_dash (ch_ds, 0);
+        cr->set_source_rgb (0.0, 0.0, 0.0);
+        std::vector<double> points = getPoints();
+        for (int i = 1; i < points.size(); ) {
+			double x = ((width-1) * points[i++] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, width);
+			double y = height - ((height-1) * points[i++] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, height);
+			if (i==3)
+				cr->move_to (x, y);
+			else
+				cr->line_to (x, y);
+        }
+        cr->stroke ();
+        cr->unset_dash ();
+    }
+
     // draw curve
     cr->set_source_rgb (0.0, 0.0, 0.0);
     cr->move_to (point[0].get_x(), point[0].get_y());
@@ -258,16 +277,25 @@ bool MyCurve::handleEvents (GdkEvent* event) {
     int x =            CLAMP ((tx - RADIUS), 0, width-1);  // X position of the pointer from the origin of the graph
     int y = height-1 - CLAMP ((ty - RADIUS), 0, height-1); // Y position of the pointer from the origin of the graph
 
-    unsigned int distance = ~0U;
+    unsigned int distance_x = ~0U,  distance_y = ~0U;
     int num = curve.x.size();
     int closest_point = -1;
 
     if (curve.type!=Parametric) {
         for (int i = 0; i < num; ++i) {
             int cx = (int)((width-1) * curve.x[i] + 0.5); //project (c->ctlpoint[i][0], min_x, c->max_x, width);
-            if ((unsigned int) abs (x - cx) < distance) {
-                distance = abs (x - cx);
+            int cy = (int)((height-1) * curve.y[i] + 0.5); //project (c->ctlpoint[i][0], min_x, c->max_x, width);
+            unsigned int curr_dist_x = abs (x - cx);
+            unsigned int curr_dist_y = abs (y - cy);
+            if (curr_dist_x < distance_x) {
+                distance_x = curr_dist_x;
+                distance_y = curr_dist_y;
                 closest_point = i;
+            }
+            else if (curr_dist_x == distance_x && curr_dist_y < distance_y) {
+			// there is mode than 1 point for that X coordinate, we select the point closest to the cursor
+				distance_y = curr_dist_y;
+				closest_point = i;
             }
         }
     }
@@ -295,7 +323,7 @@ bool MyCurve::handleEvents (GdkEvent* event) {
                 rt_display->get_pointer(cursor_x, cursor_y, mod_type);
 
                 new_type = CSEmpty;
-    	        if (distance > MIN_DISTANCE) {
+    	        if (distance_x > MIN_DISTANCE) {
 	                /* insert a new control point */
 	                if (num > 0) {
 		                int cx = (int)((width-1)*curve.x[closest_point]+0.5);
@@ -350,7 +378,7 @@ bool MyCurve::handleEvents (GdkEvent* event) {
     		            draw (width, height, lit_point);
                     }
 	            }
-	            if (distance <= MIN_DISTANCE) {
+	            if (distance_x <= MIN_DISTANCE) {
 		            new_type = CSMove;
 					lit_point = closest_point;
 				}
@@ -376,11 +404,11 @@ bool MyCurve::handleEvents (GdkEvent* event) {
         case Gdk::MOTION_NOTIFY:
             mevent = (GdkEventMotion *) event;
 
-            if (curve.type == Linear || curve.type == Spline) {
+            if (curve.type == Linear || curve.type == Spline || curve.type == NURBS) {
     	        if (grab_point == -1) {
     	        	int previous_lit_point = lit_point;
     	            /* if no point is grabbed...  */
-    	            if (distance <= MIN_DISTANCE) {
+    	            if (distance_x <= MIN_DISTANCE) {
     		            new_type = CSMove;
 						lit_point = closest_point;
 					}
@@ -501,15 +529,19 @@ std::vector<double> MyCurve::getPoints () {
 
     std::vector<double> result;
     if (curve.type==Parametric) {
-        result.push_back (+2.0);
+        result.push_back ((double)(Parametric));
         for (int i=0; i<curve.x.size(); i++)
             result.push_back (curve.x[i]);
     }
     else {
+    	// the first value gives the type of the curve
         if (curve.type==Linear)
-            result.push_back (-1.0);
-        else
-            result.push_back (+1.0);
+            result.push_back ((double)(Linear));
+        else if (curve.type==Spline)
+            result.push_back ((double)(Spline));
+        else if (curve.type==NURBS)
+            result.push_back ((double)(NURBS));
+        // then we push all the points coordinate
         for (int i=0; i<curve.x.size(); i++)
             if (curve.x[i]>=0) {
                 result.push_back (curve.x[i]);
@@ -522,19 +554,15 @@ std::vector<double> MyCurve::getPoints () {
 void MyCurve::setPoints (const std::vector<double>& p) {
 
     int ix = 0;
-    int t = p[ix++];
-    if (t==2) {
-        curve.type = Parametric;
+    CurveType t = (CurveType)p[ix++];
+    curve.type = t;
+    if (t==Parametric) {
         curve.x.clear ();
         curve.y.clear ();
         for (int i=1; i<p.size(); i++)
             curve.x.push_back (p[ix++]);
     }
     else {
-        if (t==1)
-            curve.type = Spline;
-        else
-            curve.type = Linear;
         curve.x.clear ();
         curve.y.clear ();
         for (int i=0; i<p.size()/2; i++) {
@@ -609,6 +637,7 @@ void MyCurve::reset() {
 
 	switch (curve.type) {
 	case Spline :
+	case  NURBS :
 		curve.x.clear();
 		curve.y.clear();
 	    curve.x.push_back(0.);
@@ -624,5 +653,5 @@ void MyCurve::reset() {
 	default:
 		break;
 	}
-	//draw(width, height, -1);
+	draw(width, height, -1);
 }

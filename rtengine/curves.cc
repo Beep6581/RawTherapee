@@ -30,14 +30,16 @@
 
 namespace rtengine {
 
-Curve::Curve (const std::vector<double>& p) : x(NULL), y(NULL), ypp(NULL) {
+Curve::Curve (const std::vector<double>& p, int poly_pn) : x(NULL), y(NULL), ypp(NULL) {
+
+	ppn = poly_pn;
 
     if (p.size()<3) {
-        kind = 0;
+        kind = Empty;
     }
     else {
-        kind = p[0];
-        if (kind==-1 || kind==1) {
+        kind = (CurveType)p[0];
+        if (kind==Linear || kind==Spline || kind==NURBS) {
             N = (p.size()-1)/2;
             x = new double[N];
             y = new double[N];
@@ -46,12 +48,14 @@ Curve::Curve (const std::vector<double>& p) : x(NULL), y(NULL), ypp(NULL) {
                 x[i] = p[ix++];
                 y[i] = p[ix++];
             }
-            if (kind==1)
+            if (kind==Spline)
                 spline_cubic_set ();
+            else if (kind==NURBS && N > 2)
+                NURBS_set ();
         }
-        if (kind==2) {
+        else if (kind==Parametric) {
             if (p.size()!=8 && p.size()!=9)
-                kind = 0;
+                kind = Empty;
             else {
                 x = new double[9];
                 for (int i=0; i<4; i++)
@@ -65,7 +69,7 @@ Curve::Curve (const std::vector<double>& p) : x(NULL), y(NULL), ypp(NULL) {
             }
         }
     }
-}  
+}
 
 Curve::~Curve () {
 
@@ -98,21 +102,107 @@ void Curve::spline_cubic_set () {
     delete [] u;
 }
 
+void Curve::NURBS_set () {
+
+    std::vector<double> sc_x;		// X sub-curve points (  XP0,XP1,XP2,  XP2,XP3,XP4,  ...)
+    std::vector<double> sc_y;		// Y sub-curve points (  YP0,YP1,YP2,  YP2,YP3,YP4,  ...)
+    std::vector<double> sc_length;	// Length of the subcurves
+    double total_length=0;
+
+    // Create the list of Bezier sub-curves
+    // NURBS_set is called if N > 2 only
+
+    for (int i = 0; i < N-1;) {
+        double length;
+
+    	// first point (on the curve)
+    	double sc_x2, sc_y2;
+    	if (!i) {
+    		sc_x2 = x[i];
+    		sc_y2 = y[i];
+    		i++;
+    	}
+    	else {
+    		sc_x2 = (x[i-1] + x[i]) / 2.;
+    		sc_y2 = (y[i-1] + y[i]) / 2.;
+    	}
+		sc_x.push_back(sc_x2);
+		sc_y.push_back(sc_y2);
+
+		// second point (control point)
+		sc_x.push_back(x[i]);
+		sc_y.push_back(y[i]);
+		length = sqrt(pow(x[i] - sc_x2,2) + pow(y[i] - sc_y2,2));
+		i++;
+
+    	// third point (on the curve)
+		if (i==N-1) {
+			sc_x2 = x[i];
+			sc_y2 = y[i];
+			i++;
+		}
+		else {
+			sc_x2 =  (x[i-1] + x[i]) / 2.;
+			sc_y2 =  (y[i-1] + y[i]) / 2.;
+		}
+		sc_x.push_back(sc_x2);
+		sc_y.push_back(sc_y2);
+		length += sqrt(pow(x[i] - sc_x2,2) + pow(y[i] - sc_y2,2));
+
+		// Storing the length of all sub-curves and the total length (to have a better distribution
+		// of the points along the curve)
+	    sc_length.push_back(length);
+	    total_length += length;
+    }
+    sc_x.begin();
+    sc_y.begin();
+    sc_length.begin();
+
+    // create the polyline with the number of points adapted to the X range of the sub-curve
+    for (int i=0; i < sc_x.size(); i+=3) {
+    	// TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
+    	int nbr_points = (int)(((double)ppn+N-2) * sc_length[i/3] / total_length) + (i==0 ? 1 : 0);
+
+    	// increment along the curve, not along the X axis
+    	double increment = 1.0 / (double)(nbr_points-1);
+    	if (!i) {
+    		poly_x.push_back(sc_x[i]);
+    		poly_y.push_back(sc_y[i]);
+    	}
+    	for (int j=1; j<nbr_points-1; j++) {
+    		double t = j*increment;
+    		double t2 = t*t;
+    		double tr = 1.-t;
+    		double tr2 = tr*tr;
+    		double tr2t = tr*2*t;
+
+    		// adding a point to the polyline
+    		poly_x.push_back( tr2*sc_x[i] + tr2t*sc_x[i+1] + t2*sc_x[i+2] );
+    		poly_y.push_back( tr2*sc_y[i] + tr2t*sc_y[i+1] + t2*sc_y[i+2] );
+    	}
+    	// adding the last point of the sub-curve
+		poly_x.push_back(sc_x[i+2]);
+		poly_y.push_back(sc_y[i+2]);
+    }
+}
+
 double Curve::getVal (double t) {
 
-    if (!kind)
-        return t;
+    switch (kind) {
 
-    if (kind==2) {
-        
+    case Empty :
+        return t;
+        break;
+
+    case Parametric : {
         if (t<=1e-14)
             return 0.0;
         double c = -log(2.0)/log(x[2]);
         double tv = exp(c*log(t));
         double base = pfull (tv, x[8], x[6], x[5]);
         double stretched = base<=1e-14 ? 0.0 : exp(log(base)/c);
-        
-        base = pfull (0.5, x[8], x[6], x[5]);   
+
+        base = pfull (0.5, x[8], x[6], x[5]);
         double fc = base<=1e-14 ? 0.0 : exp(log(base)/c);   // value of the curve at the center point
         if (t<x[2]) {
             // add shadows effect:
@@ -130,14 +220,17 @@ double Curve::getVal (double t) {
             double hstretched = fc + (1-fc)*(hbase<=1e-14 ? 0.0 : exp(log(hbase)/hc));
             return hstretched;
         }
+        break;
     }
-    else {
+    case Linear :
+    case Spline : {
+    	// values under and over the first and last point
         if (t>x[N-1])
             return y[N-1];
         else if (t<x[0])
             return y[0];
 
-        /* do a binary search for the right interval: */
+        // do a binary search for the right interval:
         int k_lo = 0, k_hi = N - 1;
         while (k_hi - k_lo > 1){
             int k = (k_hi + k_lo) / 2;
@@ -148,23 +241,49 @@ double Curve::getVal (double t) {
         }
 
         double h = x[k_hi] - x[k_lo];
-        if (kind==-1)
+        // linear
+        if (kind==Linear)
             return y[k_lo] + (t - x[k_lo]) * ( y[k_hi] - y[k_lo] ) / h;
-        else if (kind==1) {
+        // spline curve
+        else { // if (kind==Spline) {
             double a = (x[k_hi] - t) / h;
             double b = (t - x[k_lo]) / h;
             double r = a*y[k_lo] + b*y[k_hi] + ((a*a*a - a)*ypp[k_lo] + (b*b*b - b)*ypp[k_hi]) * (h*h)/6.0;
-   	        if (r < 0.0) return 0.0;
-	        if (r > 1.0) return 1.0;
-            return r;
+            return CLIPD(r);
         }
-        else
-            return t;
+        break;
+    }
+    case NURBS : {
+    	// values under and over the first and last point
+        if (t>x[N-1])
+            return y[N-1];
+        else if (t<x[0])
+            return y[0];
+        else if (N == 2)
+            return y[0] + (t - x[0]) * ( y[1] - y[0] ) / (x[1] - x[0]);
+
+        // do a binary search for the right interval:
+        int k_lo = 0, k_hi = poly_x.size() - 1;
+        while (k_hi - k_lo > 1){
+            int k = (k_hi + k_lo) / 2;
+            if (poly_x[k] > t)
+                k_hi = k;
+            else
+                k_lo = k;
+        }
+
+        double h = poly_x[k_hi] - poly_x[k_lo];
+        return poly_y[k_lo] + (t - poly_x[k_lo]) * ( poly_y[k_hi] - poly_y[k_lo] ) / h;
+		break;
+    }
+    default:
+    	// all other (unknown) kind
+		return t;
     }
 }
 
 void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
-    
+
 // TODO!!!! can be made much faster!!! Binary search of getVal(double) at each point can be avoided
 
     res.resize (t.size());
@@ -322,7 +441,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     // create a curve if needed
     Curve* tcurve = NULL;
     if (curvePoints.size()>0 && curvePoints[0]!=0)
-        tcurve = new Curve (curvePoints);
+   		tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 
     // clear array that stores histogram valid before applying the custom curve
     if (outBeforeCCurveHistogram)
@@ -330,7 +449,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
     for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
 
-        // change to [0,1] rage
+        // change to [0,1] range
         double val = (double)i / 65535.0;
 
         // apply default multiplier (that is >1 if highlight recovery is on)
@@ -346,7 +465,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         // apply brightness curve
         val = brightness (val, br/100.0);
         
-        // apply custom/parametric curve, if any
+        // apply custom/parametric/NURBS curve, if any
         if (tcurve) {
             if (outBeforeCCurveHistogram) {
                 double hval = val;
