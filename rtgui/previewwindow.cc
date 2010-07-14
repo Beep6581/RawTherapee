@@ -20,17 +20,18 @@
 #include <guiutils.h>
 #include <imagearea.h>
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), isMoving(false) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), isMoving(false),cCropMoving(NULL),cNormal(NULL) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
 
 PreviewWindow::~PreviewWindow () {
 
-    delete cCropMoving;
-#ifndef WIN32
-    delete cNormal;
-#endif
+	if( cCropMoving )
+		delete cCropMoving;
+	if( cNormal )
+		delete cNormal;
+
 }
 
 void PreviewWindow::on_realize () {
