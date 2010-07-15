@@ -27,13 +27,17 @@
 
 
 void RawImageSource::amaze_demosaic_RT() {  
+
+#undef MAX
+#undef MIN
+#undef CLIP
 	
 #define SQR(x) ((x)*(x))
-	//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-	//#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-	//#define CLIP(x) LIM(x,0,65535)
+#define CLIP(x) LIM(x,0,65535)
 	
 	
 	int width=W, height=H;
