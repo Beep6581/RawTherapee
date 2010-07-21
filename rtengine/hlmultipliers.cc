@@ -19,6 +19,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <rawimagesource.h>
+#include <rawimagesource_i.h>
 
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
