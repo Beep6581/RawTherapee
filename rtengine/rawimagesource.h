@@ -157,15 +157,15 @@ class RawImageSource : public ImageSource {
 	void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
 	void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
 	void fill_border( ushort (*cache )[4], int border, int x0, int y0);
-	void copy_to_buffer(ushort (*image2)[2], ushort (*image)[4]);
-	void hid(ushort (*image)[4], int x0, int y0);
+	void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
+	void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
 	void dcb_color(ushort (*image)[4], int x0, int y0);
-	void hid2(ushort (*image)[4], int x0, int y0);
+	void dcb_hid2(ushort (*image)[4], int x0, int y0);
 	void dcb_map(ushort (*image)[4], int x0, int y0);
 	void dcb_correction(ushort (*image)[4], int x0, int y0);
 	void dcb_pp(ushort (*image)[4], int x0, int y0);
 	void dcb_correction2(ushort (*image)[4], int x0, int y0);
-	void restore_from_buffer(ushort (*image)[4], ushort (*image2)[2]);
+	void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
 	void dcb_refinement(ushort (*image)[4], int x0, int y0);
 	void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
