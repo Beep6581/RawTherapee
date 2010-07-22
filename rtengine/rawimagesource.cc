@@ -2574,8 +2574,8 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
 	colMax = CACHESIZE-border;
 	if(!y0 ) rowMin = TILEBORDER+border;
 	if(!x0 ) colMin = TILEBORDER+border;
-	if( y0+TILESIZE >= H-border) rowMax = TILEBORDER+H-border-y0;
-	if( x0+TILESIZE >= W-border) colMax = TILEBORDER+W-border-x0;
+	if( y0+TILESIZE+TILEBORDER >= H-border) rowMax = TILEBORDER+H-border-y0;
+	if( x0+TILESIZE+TILEBORDER >= W-border) colMax = TILEBORDER+W-border-x0;
 }
 
 void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData)
