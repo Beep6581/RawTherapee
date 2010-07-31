@@ -490,6 +490,8 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
         if (awg < maxaw)
             awg = maxaw;
     }
+	
+	awg = CurveFactory::igamma2 (awg); //need to inverse gamma transform to get correct exposure compensation parameter
 
     br = log(65535.0 / (awg-bl)) / log(2.0);   
     if (br<0)

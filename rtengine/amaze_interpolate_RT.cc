@@ -69,7 +69,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	static const float eps=1e-5, epssq=1e-10;			//tolerance to avoid dividing by zero
 
 	//adaptive ratios threshold
-	static const float arthresh=-0.75;
+	static const float arthresh=0.75;
 	//nyquist texture test threshold
 	static const float nyqthresh=0.5;
 	//diagonal interpolation test threshold
@@ -798,16 +798,19 @@ void RawImageSource::amaze_demosaic_RT() {
 					ve=fabs(0.5-hvwtalt);
 					if (vo<ve) {hvwt[indx]=hvwtalt;}//a better result was obtained from the neighbors
 					
-					//if (hvwt[indx]<0.25) hvwt[indx]=0.0;
-					//if (hvwt[indx]>0.75) hvwt[indx]=1.0;
+					
 					
 					Dgrb[indx][0] = (hcd[indx]*(1-hvwt[indx]) + vcd[indx]*hvwt[indx]);//evaluate color differences
+					//if (hvwt[indx]<0.5) Dgrb[indx][0]=hcd[indx];
+					//if (hvwt[indx]>0.5) Dgrb[indx][0]=vcd[indx];
 					rgb[indx][1] = cfa[indx] + Dgrb[indx][0];//evaluate G (finally!)
 
 					//local curvature in G (preparation for nyquist refinement step)
 					if (nyquist[indx]) {
 						Dgrbh2[indx] = SQR(rgb[indx][1] - 0.5*(rgb[indx-1][1]+rgb[indx+1][1]));
 						Dgrbv2[indx] = SQR(rgb[indx][1] - 0.5*(rgb[indx-v1][1]+rgb[indx+v1][1]));
+					} else {
+						Dgrbh2[indx] = Dgrbv2[indx] = 0;
 					}
 				}
 
