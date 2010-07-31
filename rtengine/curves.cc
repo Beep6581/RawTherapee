@@ -446,6 +446,9 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     // clear array that stores histogram valid before applying the custom curve
     if (outBeforeCCurveHistogram)
         memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
+	
+	//float atmp=a;
+	//a = 1;
 
     for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
 
@@ -454,13 +457,20 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         // apply default multiplier (that is >1 if highlight recovery is on)
         val *= def_mul;
+		
+		//exposure compensation
+		//val *= atmp;
+		//black *= atmp;
+		//D *= atmp;
         
-        // gamma correction
-        if (gamma_>0) 
-            val = gamma (val, gamma_, start, slope, mul, add);
+
   
         // apply base curve, thus, exposure compensation and black point with shadow and highlight protection
         val = basecurve (val, a, black, D, hlcompr/100.0, shcompr/100.0);
+		
+		// gamma correction
+        if (gamma_>0) 
+            val = gamma (val, gamma_, start, slope, mul, add);
 
         // apply brightness curve
         val = brightness (val, br/100.0);
