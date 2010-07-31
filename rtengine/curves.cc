@@ -424,7 +424,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     double add = 0.099;
 
     // theoretical maximum of the curve
-    double D = gamma_>0 ? gamma (def_mul, gamma_, start, slope, mul, add) : def_mul;
+    double D = /* gamma_>0 ? gamma (def_mul, gamma_, start, slope, mul, add) : */ def_mul;
 
     // a: slope of the curve, black: starting point at the x axis
     double a = pow (2.0, ecomp);
@@ -463,8 +463,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		//black *= atmp;
 		//D *= atmp;
         
-
-  
+		
         // apply base curve, thus, exposure compensation and black point with shadow and highlight protection
         val = basecurve (val, a, black, D, hlcompr/100.0, shcompr/100.0);
 		
