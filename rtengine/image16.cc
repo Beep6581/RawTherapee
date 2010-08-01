@@ -55,15 +55,15 @@ void Image16::allocate (int width, int height) {
     unaligned = new unsigned char[16 + 3 * lsize * sizeof(short) * height];
     memset(unaligned, 0, (16 + 3 * lsize * sizeof(short) * height) * sizeof(unsigned char));
 
-    unsigned long poin = (unsigned long)unaligned + 16 - (unsigned long)unaligned % 16;
+    size_t poin = (size_t)unaligned + 16 - (size_t)unaligned % 16;
     data = (unsigned short*) (poin);
 
     rowstride = lsize * sizeof(unsigned short);
     planestride = rowstride * height;
 
-    unsigned long redstart   = poin + 0*planestride;
-    unsigned long greenstart = poin + 1*planestride;
-    unsigned long bluestart  = poin + 2*planestride;
+    size_t redstart   = poin + 0*planestride;
+    size_t greenstart = poin + 1*planestride;
+    size_t bluestart  = poin + 2*planestride;
        
     r = new unsigned short*[height];
     g = new unsigned short*[height];
