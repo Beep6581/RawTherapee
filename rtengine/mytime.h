@@ -33,12 +33,22 @@ class MyTime {
 #ifndef WIN32
         timespec t;
 #else
-	DWORD t;
+        LONGLONG t;
+        LONGLONG baseFrequency;
+        MyTime(){
+    		LARGE_INTEGER ulf;
+    		QueryPerformanceFrequency(&ulf);
+    		baseFrequency = ulf.QuadPart;
+    		QueryPerformanceCounter(&ulf);
+    		t = ulf.QuadPart;
+        }
 #endif
 
 	void set () {
 #ifdef WIN32
-      t = GetTickCount ();
+		LARGE_INTEGER ulf;
+		QueryPerformanceCounter(&ulf);
+		t = ulf.QuadPart;
 #elif defined __APPLE__
    struct timeval tv;
    gettimeofday(&tv, NULL);
@@ -53,7 +63,7 @@ class MyTime {
 #ifndef WIN32
 		return (t.tv_sec-a.t.tv_sec)*1000000 + (t.tv_nsec-a.t.tv_nsec)/1000;
 #else
-		return (t - a.t)*1000;
+		return (t - a.t)*1000/(baseFrequency/1000);
 #endif
 	}
 };
