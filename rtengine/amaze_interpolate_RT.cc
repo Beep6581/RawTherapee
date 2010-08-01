@@ -54,8 +54,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	
 	// local variables
 
-	//position of top/left corner of the tile
-	int top, left;
+
 	//offset of R pixel within a Bayer quartet
 	int ex, ey;
 
@@ -89,9 +88,12 @@ void RawImageSource::amaze_demosaic_RT() {
 	//guassian on quincunx grid
 	static const float gquinc[4] = {0.169917f, 0.108947f, 0.069855f, 0.0287182f};
 
-
+	volatile double progress = 0.0;
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+#pragma omp parallel
+{
+	//position of top/left corner of the tile
+	int top, left;
 	// beginning of storage block for tile
 	char  *buffer;
 	// rgb values
@@ -236,6 +238,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(ri->data,height,width,red,green,blue) private(top,left) schedule(dynamic)
 	//code is openmp ready; just have to pull local tile variable declarations inside the tile loop
+#pragma omp for schedule(dynamic) nowait
 	for (top=-16; top < height; top += TS-32)
 		for (left=-16; left < width; left += TS-32) {
 			//location of tile bottom edge
@@ -1070,8 +1073,12 @@ void RawImageSource::amaze_demosaic_RT() {
 
 			// clean up
 			//free(buffer);
-
-			if(plistener) plistener->setProgress(fabs((float)top/height));
+			progress+=(double)((TS-32)*(TS-32))/(height*width);
+			if (progress>1.0)
+			{
+				progress=1.0;
+			}
+			if(plistener) plistener->setProgress(progress);
 		}
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1080,7 +1087,7 @@ void RawImageSource::amaze_demosaic_RT() {
 
 	// clean up
 	free(buffer);
-
+}
 	// done
 
 #undef TS
