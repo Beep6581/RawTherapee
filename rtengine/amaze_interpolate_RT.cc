@@ -49,6 +49,9 @@ void RawImageSource::amaze_demosaic_RT() {
 	for (int i=0; i<H; i++) {
 		blue[i] = new unsigned short[W];
 	}
+	
+	static const float pre_mul[3] = {ri->red_multiplier,ri->green_multiplier,ri->blue_multiplier};
+	
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
 	
@@ -316,81 +319,7 @@ void RawImageSource::amaze_demosaic_RT() {
 			float rbvarp, rbvarm;
 
 
-			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*			
-			char		*buffer;			// TS*TS*168
-			float         (*rgb)[3];		// TS*TS*12
-			float         (*delh);			// TS*TS*4
-			float         (*delv);			// TS*TS*4
-			float         (*delhsq);		// TS*TS*4
-			float         (*delvsq);		// TS*TS*4
-			float         (*dirwts)[2];		// TS*TS*8
-			float         (*vcd);			// TS*TS*4
-			float         (*hcd);			// TS*TS*4
-			float         (*vcdalt);		// TS*TS*4
-			float         (*hcdalt);		// TS*TS*4
-			float         (*vcdsq);			// TS*TS*4
-			float         (*hcdsq);			// TS*TS*4
-			float         (*cddiffsq);		// TS*TS*4
-			float         (*hvwt);			// TS*TS*4
-			float         (*Dgrb)[2];		// TS*TS*8
-			float         (*delp);			// TS*TS*4
-			float         (*delm);			// TS*TS*4
-			float         (*rbint);			// TS*TS*4
-			float         (*Dgrbh2);		// TS*TS*4
-			float         (*Dgrbv2);		// TS*TS*4
-			float         (*dgintv);		// TS*TS*4
-			float         (*dginth);		// TS*TS*4
-			float         (*Dgrbp1);		// TS*TS*4
-			float         (*Dgrbm1);		// TS*TS*4
-			float         (*Dgrbpsq1);		// TS*TS*4
-			float         (*Dgrbmsq1);		// TS*TS*4
-			float         (*cfa);			// TS*TS*4
-			float         (*pmwt);			// TS*TS*4
-			float         (*rbp);			// TS*TS*4
-			float         (*rbm);			// TS*TS*4
-
-			int			(*nyquist);			// TS*TS*4
-
-
-			// assign working space
-			buffer = (char *) malloc(35*sizeof(float)*TS*TS);
-			//merror(buffer,"amaze_interpolate()");
-			memset(buffer,0,35*sizeof(float)*TS*TS);
-			// rgb array
-			rgb         = (float (*)[3])		buffer; //pointers to array
-			delh		= (float (*))			(buffer +  3*sizeof(float)*TS*TS);
-			delv		= (float (*))			(buffer +  4*sizeof(float)*TS*TS);
-			delhsq		= (float (*))			(buffer +  5*sizeof(float)*TS*TS);
-			delvsq		= (float (*))			(buffer +  6*sizeof(float)*TS*TS);
-			dirwts		= (float (*)[2])		(buffer +  7*sizeof(float)*TS*TS);
-			vcd			= (float (*))			(buffer +  9*sizeof(float)*TS*TS);
-			hcd			= (float (*))			(buffer +  10*sizeof(float)*TS*TS);
-			vcdalt		= (float (*))			(buffer +  11*sizeof(float)*TS*TS);
-			hcdalt		= (float (*))			(buffer +  12*sizeof(float)*TS*TS);
-			vcdsq		= (float (*))			(buffer +  13*sizeof(float)*TS*TS);
-			hcdsq		= (float (*))			(buffer +  14*sizeof(float)*TS*TS);
-			cddiffsq	= (float (*))			(buffer +  15*sizeof(float)*TS*TS);
-			hvwt		= (float (*))			(buffer +  16*sizeof(float)*TS*TS);
-			Dgrb		= (float (*)[2])		(buffer +  17*sizeof(float)*TS*TS);
-			delp		= (float (*))			(buffer +  19*sizeof(float)*TS*TS);
-			delm		= (float (*))			(buffer +  20*sizeof(float)*TS*TS);
-			rbint		= (float (*))			(buffer +  21*sizeof(float)*TS*TS);
-			Dgrbh2		= (float (*))			(buffer +  22*sizeof(float)*TS*TS);
-			Dgrbv2		= (float (*))			(buffer +  23*sizeof(float)*TS*TS);	
-			dgintv		= (float (*))			(buffer +  24*sizeof(float)*TS*TS);
-			dginth		= (float (*))			(buffer +  25*sizeof(float)*TS*TS);
-			Dgrbp1		= (float (*))			(buffer +  26*sizeof(float)*TS*TS);
-			Dgrbm1		= (float (*))			(buffer +  27*sizeof(float)*TS*TS);
-			Dgrbpsq1	= (float (*))			(buffer +  28*sizeof(float)*TS*TS);
-			Dgrbmsq1	= (float (*))			(buffer +  29*sizeof(float)*TS*TS);
-			cfa			= (float (*))			(buffer +  30*sizeof(float)*TS*TS);
-			pmwt		= (float (*))			(buffer +  31*sizeof(float)*TS*TS);
-			rbp			= (float (*))			(buffer +  32*sizeof(float)*TS*TS);
-			rbm			= (float (*))			(buffer +  33*sizeof(float)*TS*TS);
-
-			nyquist		= (int (*))				(buffer +  34*sizeof(float)*TS*TS);
-*/			
+		
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -556,6 +485,8 @@ void RawImageSource::amaze_demosaic_RT() {
 					if (fabs(1-crd)<arthresh) {gdar=cfa[indx]*crd;} else {gdar=gdha;}
 					if (fabs(1-crl)<arthresh) {glar=cfa[indx]*crl;} else {glar=glha;}
 					if (fabs(1-crr)<arthresh) {grar=cfa[indx]*crr;} else {grar=grha;}
+					
+					if (cfa[indx]>pre_mul[1]) {guar=guha; gdar=gdha; glar=glha; grar=grha;}//use HA if highlights are clipped
 
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
@@ -620,10 +551,10 @@ void RawImageSource::amaze_demosaic_RT() {
 							}
 						}
 						
-						if (Ginth > 1) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for RT implementation
-						if (Gintv > 1) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
-						//if (Ginth > pre_mul[c]) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for dcraw implementation
-						//if (Gintv > pre_mul[c]) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
+						//if (Ginth > 1) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for RT implementation
+						//if (Gintv > 1) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
+						if (Ginth > pre_mul[c]) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for dcraw implementation
+						if (Gintv > pre_mul[c]) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
 
 					} else {
 
@@ -647,10 +578,10 @@ void RawImageSource::amaze_demosaic_RT() {
 							}
 						}
 
-						if (Ginth > 1) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for RT implementation
-						if (Gintv > 1) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
-						//if (Ginth > pre_mul[c]) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for dcraw implementation
-						//if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
+						//if (Ginth > 1) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for RT implementation
+						//if (Gintv > 1) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
+						if (Ginth > pre_mul[c]) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for dcraw implementation
+						if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
 					}
 
 					vcdsq[indx] = SQR(vcd[indx]);
@@ -918,11 +849,11 @@ void RawImageSource::amaze_demosaic_RT() {
 						}
 					}
 
-					if (rbp[indx] > 1) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);//for RT implementation
-					if (rbm[indx] > 1) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
-					//c=FC(rr,cc);//for dcraw implementation
-					//if (rbp[indx] > pre_mul[c]) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);
-					//if (rbm[indx] > pre_mul[c]) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
+					//if (rbp[indx] > 1) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);//for RT implementation
+					//if (rbm[indx] > 1) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
+					c=2-FC(rr,cc);//for dcraw implementation
+					if (rbp[indx] > pre_mul[c]) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);
+					if (rbm[indx] > pre_mul[c]) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
 					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 					//rbint[indx] = 0.5*(cfa[indx] + (rbp*rbvarm+rbm*rbvarp)/(rbvarp+rbvarm));//this is R+B, interpolated
@@ -993,11 +924,11 @@ void RawImageSource::amaze_demosaic_RT() {
 						}
 					}
 
-					if (Ginth > 1) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);//for RT implementation
-					if (Gintv > 1) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
-					//c=FC(rr,cc);//for dcraw implementation
-					//if (Ginth > pre_mul[c]) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);
-					//if (Gintv > pre_mul[c]) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
+					//if (Ginth > 1) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);//for RT implementation
+					//if (Gintv > 1) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
+					c=FC(rr,cc);//for dcraw implementation
+					if (Ginth > pre_mul[c]) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);
+					if (Gintv > pre_mul[c]) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
 					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 					rgb[indx][1] = Ginth*(1-hvwt[indx]) + Gintv*hvwt[indx];
