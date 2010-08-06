@@ -27,9 +27,9 @@ template <class T> class AlignedBuffer {
     public:
       T* data ;
 
-        AlignedBuffer (int size, int align=16) {
+        AlignedBuffer (size_t size, size_t align=16) {
             real = new T[size+2*align];
-            data = (T*)((long)real + (align-((long)real)%align));
+            data = (T*)((uintptr_t)real + (align-((uintptr_t)real)%align));
         }
 
         ~AlignedBuffer () {

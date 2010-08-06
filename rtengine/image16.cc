@@ -23,11 +23,11 @@
 using namespace rtengine;
 
 Image16::Image16 () 
-  : r (NULL), g (NULL), b (NULL), data (NULL), unaligned (NULL) {
+  : unaligned (NULL), data (NULL), r (NULL), g (NULL), b (NULL){
 }
 
 Image16::Image16 (int w, int h) 
-  : width(w), height (h), r (NULL), g (NULL), b (NULL), data (NULL), unaligned (NULL) {
+  : unaligned (NULL), width(w), height (h), data (NULL), r (NULL), g (NULL), b (NULL) {
 
     allocate (w, h);
 }
@@ -55,15 +55,15 @@ void Image16::allocate (int width, int height) {
     unaligned = new unsigned char[16 + 3 * lsize * sizeof(short) * height];
     memset(unaligned, 0, (16 + 3 * lsize * sizeof(short) * height) * sizeof(unsigned char));
 
-    size_t poin = (size_t)unaligned + 16 - (size_t)unaligned % 16;
+    uintptr_t poin = (uintptr_t)unaligned + 16 - (uintptr_t)unaligned % 16;
     data = (unsigned short*) (poin);
 
     rowstride = lsize * sizeof(unsigned short);
     planestride = rowstride * height;
 
-    size_t redstart   = poin + 0*planestride;
-    size_t greenstart = poin + 1*planestride;
-    size_t bluestart  = poin + 2*planestride;
+    uintptr_t redstart   = poin + 0*planestride;
+    uintptr_t greenstart = poin + 1*planestride;
+    uintptr_t bluestart  = poin + 2*planestride;
        
     r = new unsigned short*[height];
     g = new unsigned short*[height];
