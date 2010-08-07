@@ -25,7 +25,7 @@
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-int RawImageSource::LinEqSolve(int c, int dir, int nDim, float* pfMatr, float* pfVect, float* pfSolution) 
+int RawImageSource::LinEqSolve(int nDim, float* pfMatr, float* pfVect, float* pfSolution) 
 {
 //==============================================================================
 // return 1 if system not solving, 0 if system solved
@@ -106,41 +106,76 @@ void RawImageSource::CA_correct_RT() {
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	#define SQR(x) ((x)*(x))
 	
+	//static const float pre_mul[3] = {MIN(ri->red_multiplier,ri->green_multiplier), ri->green_multiplier, \
+									 MIN(ri->blue_multiplier,ri->green_multiplier)};
+	
+	static const float pre_mul[3] = {ri->red_multiplier, ri->green_multiplier, ri->blue_multiplier};
+	
+	static const float clip_pt = MIN(pre_mul[1],MIN(pre_mul[2],pre_mul[3]));
+	
 	// local variables
 	int width=W, height=H;
+	//temporary array to store simple interpolation of G
 	float (*Gtmp);
 	Gtmp = (float (*)) calloc ((height)*(width), sizeof *Gtmp);
 	
 	static const int border=8;
 	static const int border2=16;
-	int polyord=4, numpar=16, numblox[3]={0,0,0};
-
+	//order of 2d polynomial fit (polyord), and numpar=polyord^2
+	int polyord=4, numpar=16;
+	//number of blocks used in the fit
+	int numblox[3]={0,0,0};
+	
 	int rrmin, rrmax, ccmin, ccmax;
 	int top, left, row, col;
 	int rr, cc, c, indx, indx1, i, j, k, m, n, dir;
+	//number of pixels in a tile contributing to the CA shift diagnostic
 	int areawt[2][3];
-	int GRBdir[2][3], offset[2][3];
+	//direction of the CA shift in a tile
+	int GRBdir[2][3];
+	//offset data of the plaquette where the optical R/B data are sampled
+	int offset[2][3];
 	int	shifthfloor[3], shiftvfloor[3], shifthceil[3], shiftvceil[3];
+	//number of tiles in the image
 	int vblsz, hblsz, vblock, hblock, vz1, hz1;
 	//int verbose=1;
+	//flag indicating success or failure of polynomial fit
 	int res;
+	//shifts to location of vertical and diagonal neighbors
 	static const int v1=TS, v2=2*TS, v3=3*TS, v4=4*TS;//, p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
 	
 	float eps=1e-5;			//tolerance to avoid dividing by zero
 	
+	//adaptive weights for green interpolation
 	float	wtu, wtd, wtl, wtr;
-	float	coeff[2][3][3], CAshift[2][3];
+	//local quadratic fit to shift data within a tile
+	float	coeff[2][3][3];
+	//measured CA shift parameters for a tile
+	float	CAshift[2][3];
+	//polynomial fit coefficients
 	float	polymat[3][2][1296], shiftmat[3][2][36], fitparams[3][2][36];
-	float	shifthfrac[3], shiftvfrac[3], temp, p[9];
-	float	gdiff, deltgrb, denom, Ginthfloor, Ginthceil, Gint, RBint, gradwt;
+	//residual CA shift amount within a plaquette
+	float	shifthfrac[3], shiftvfrac[3];
+	//temporary storage for median filter
+	float	temp, p[9];
+	//temporary parameters for tile CA evaluation
+	float	gdiff, deltgrb, denom;
+	//interpolated G at edge of plaquette
+	float	Ginthfloor, Ginthceil, Gint, RBint, gradwt;
+	//interpolated color difference at edge of plaquette
 	float	grbdiffinthfloor, grbdiffinthceil, grbdiffint, grbdiffold;
+	//data for evaluation of block CA shift variance
 	float	blockave[2][3]={{0,0,0},{0,0,0}}, blocksqave[2][3]={{0,0,0},{0,0,0}}, blockdenom[2][3]={{0,0,0},{0,0,0}}, blockvar[2][3];
+	//low and high pass 1D filters of G in vertical/horizontal directions
 	float	glpfh, glpfv, ghpfh, ghpfv;
 	
+	//max allowed CA shift
 	static const float bslim = 3.99;
+	//gaussians for low pass filtering of G and R/B
 	static const float gaussg[5] = {0.171582, 0.15839, 0.124594, 0.083518, 0.0477063};//sig=2.5
 	static const float gaussrb[3] = {0.332406, 0.241376, 0.0924212};//sig=1.25
 	
+	//block CA shift values and weight assigned to block
 	//char		*buffer1;				// vblsz*hblsz*3*2
 	//float		(*blockshifts)[3][2];	// vblsz*hblsz*3*2
 	float blockshifts[10000][3][2]; //fixed memory allocation
@@ -148,14 +183,23 @@ void RawImageSource::CA_correct_RT() {
 	
 	
 	char		*buffer;			// TS*TS*16
+	//rgb data in a tile
 	float         (*rgb)[3];		// TS*TS*12
+	//color differences
 	float         (*grbdiff);		// TS*TS*4
+	//green interpolated to optical sample points for R/B
 	float         (*gshift);		// TS*TS*4
+	//high pass filter for R/B in vertical direction
 	float         (*rbhpfh);		// TS*TS*4
+	//high pass filter for R/B in horizontal direction
 	float         (*rbhpfv);		// TS*TS*4
+	//low pass filter for R/B in horizontal direction
 	float         (*rblpfh);		// TS*TS*4
+	//low pass filter for R/B in vertical direction
 	float         (*rblpfv);		// TS*TS*4
+	//low pass filter for color differences in horizontal direction
 	float         (*grblpfh);		// TS*TS*4
+	//low pass filter for color differences in vertical direction
 	float         (*grblpfv);		// TS*TS*4
 
 	
@@ -183,9 +227,9 @@ void RawImageSource::CA_correct_RT() {
     vblsz=ceil((float)(height+border2)/(TS-border2)+2+vz1);
     hblsz=ceil((float)(width+border2)/(TS-border2)+2+hz1);
 	
-	/*buffer1 = (char *) malloc(4*vblsz*hblsz*3*2);
+	/*buffer1 = (char *) malloc(vblsz*hblsz*3*2*sizeof(float));
 	 merror(buffer1,"CA_correct()");
-	 memset(buffer1,0,4*vblsz*hblsz*3*2);
+	 memset(buffer1,0,vblsz*hblsz*3*2*sizeof(float));
 	 // block CA shifts
 	 blockshifts	= (float (*)[3][2])		buffer1;*/
 	
@@ -350,6 +394,9 @@ void RawImageSource::CA_correct_RT() {
 			for (rr=8; rr < rr1-8; rr++)
 				for (cc=8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-8; cc+=2, indx+=2) {
 					
+					//if (rgb[indx][c]>0.8*pre_mul[c] || Gtmp[indx]>0.8*pre_mul[1]) continue;
+					if (rgb[indx][c]>0.8*clip_pt || Gtmp[indx]>0.8*clip_pt) continue;
+
 					areawt[0][c]=areawt[1][c]=0;
 
 					//in linear interpolation, color differences are a quadratic function of interpolation position;
@@ -357,7 +404,7 @@ void RawImageSource::CA_correct_RT() {
 					
 					//vertical
 					gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
-					deltgrb=(rgb[indx][c]-rgb[indx][1]);
+					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-v4][c]-rgb[indx-v4][1])+(rgb[indx+v4][c]-rgb[indx+v4][1]));
 					
 					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );//*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
 
@@ -369,7 +416,7 @@ void RawImageSource::CA_correct_RT() {
 					
 					//horizontal
 					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
-					deltgrb=(rgb[indx][c]-rgb[indx][1]);
+					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-4][c]-rgb[indx-4][1])+(rgb[indx+4][c]-rgb[indx+4][1]));
 					
 					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );//*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
 
@@ -530,7 +577,7 @@ void RawImageSource::CA_correct_RT() {
 	//fit parameters to blockshifts
 	for (c=0; c<3; c+=2)
 		for (dir=0; dir<2; dir++) {
-			res = LinEqSolve(c, dir, numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir]);
+			res = LinEqSolve(numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir]);
 			if (res) {
 				return;
 			}
@@ -700,6 +747,9 @@ void RawImageSource::CA_correct_RT() {
 			for (rr=8; rr < rr1-8; rr++)
 				for (cc=8+(FC(rr,2)&1), c = FC(rr,cc), indx=rr*TS+cc; cc < cc1-8; cc+=2, indx+=2) {
 					
+					//if (rgb[indx][c]>0.95*pre_mul[c] || Gtmp[indx]>0.95*pre_mul[1]) continue;
+					if (rgb[indx][c]>clip_pt || Gtmp[indx]>clip_pt) continue;
+
 					grbdiffold = rgb[indx][1]-rgb[indx][c];
 					
 					//interpolate color difference from optical R/B locations to grid locations
