@@ -52,6 +52,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	
 	static const float pre_mul[3] = {ri->red_multiplier,ri->green_multiplier,ri->blue_multiplier};
 	
+	static const float clip_pt = MIN(pre_mul[1],MIN(pre_mul[2],pre_mul[3]));	
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
 	
@@ -72,7 +73,7 @@ void RawImageSource::amaze_demosaic_RT() {
 
 	//adaptive ratios threshold
 	static const float arthresh=0.75;
-	static const float armax[3]={MIN(0.8*pre_mul[1],pre_mul[0]),pre_mul[1],MIN(0.8*pre_mul[1],pre_mul[2])};
+	static const float armax[3]={0.8*MIN(pre_mul[1],pre_mul[0]),0.8*pre_mul[1],0.8*MIN(pre_mul[1],pre_mul[2])};
 	//nyquist texture test threshold
 	static const float nyqthresh=0.5;
 	//diagonal interpolation test threshold
@@ -487,7 +488,7 @@ void RawImageSource::amaze_demosaic_RT() {
 					if (fabs(1-crl)<arthresh) {glar=cfa[indx]*crl;} else {glar=glha;}
 					if (fabs(1-crr)<arthresh) {grar=cfa[indx]*crr;} else {grar=grha;}
 					
-					if (cfa[indx]>armax[c]) {guar=guha; gdar=gdha; glar=glha; grar=grha;}//use HA if highlights are clipped
+					//if (cfa[indx]>armax[c]) {guar=guha; gdar=gdha; glar=glha; grar=grha;}//use HA if highlights are (nearly) clipped
 
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
@@ -502,6 +503,13 @@ void RawImageSource::amaze_demosaic_RT() {
 					hcd[indx] = sgn*(Ginthar-cfa[indx]);
 					vcdalt[indx] = sgn*(Gintvha-cfa[indx]);
 					hcdalt[indx] = sgn*(Ginthha-cfa[indx]);
+					
+					//if (cfa[indx]>armax[c] || Gintvha > armax[1] || Ginthha > armax[1]) {
+					if (cfa[indx] > 0.8*clip_pt || Gintvha > 0.8*clip_pt || Ginthha > 0.8*clip_pt) {
+						//use HA if highlights are (nearly) clipped
+						guar=guha; gdar=gdha; glar=glha; grar=grha;
+						vcd[indx]=vcdalt[indx]; hcd[indx]=hcdalt[indx];
+					}
 
 					//differences of interpolations in opposite directions
 					dgintv[indx]=MIN(SQR(guha-gdha),SQR(guar-gdar));
