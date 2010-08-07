@@ -72,6 +72,7 @@ void RawImageSource::amaze_demosaic_RT() {
 
 	//adaptive ratios threshold
 	static const float arthresh=0.75;
+	static const float armax[3]={MIN(0.8*pre_mul[1],pre_mul[0]),pre_mul[1],MIN(0.8*pre_mul[1],pre_mul[2])};
 	//nyquist texture test threshold
 	static const float nyqthresh=0.5;
 	//diagonal interpolation test threshold
@@ -486,7 +487,7 @@ void RawImageSource::amaze_demosaic_RT() {
 					if (fabs(1-crl)<arthresh) {glar=cfa[indx]*crl;} else {glar=glha;}
 					if (fabs(1-crr)<arthresh) {grar=cfa[indx]*crr;} else {grar=grha;}
 					
-					if (cfa[indx]>pre_mul[1]) {guar=guha; gdar=gdha; glar=glha; grar=grha;}//use HA if highlights are clipped
+					if (cfa[indx]>armax[c]) {guar=guha; gdar=gdha; glar=glha; grar=grha;}//use HA if highlights are clipped
 
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
