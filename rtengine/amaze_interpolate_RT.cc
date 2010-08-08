@@ -50,9 +50,8 @@ void RawImageSource::amaze_demosaic_RT() {
 		blue[i] = new unsigned short[W];
 	}
 	
-	static const float pre_mul[3] = {ri->red_multiplier,ri->green_multiplier,ri->blue_multiplier};
 	
-	static const float clip_pt = MIN(pre_mul[1],MIN(pre_mul[2],pre_mul[3]));	
+	static const float clip_pt = 1/ri->defgain; 
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
 	
@@ -73,7 +72,6 @@ void RawImageSource::amaze_demosaic_RT() {
 
 	//adaptive ratios threshold
 	static const float arthresh=0.75;
-	static const float armax[3]={0.8*MIN(pre_mul[1],pre_mul[0]),0.8*pre_mul[1],0.8*MIN(pre_mul[1],pre_mul[2])};
 	//nyquist texture test threshold
 	static const float nyqthresh=0.5;
 	//diagonal interpolation test threshold
@@ -488,8 +486,6 @@ void RawImageSource::amaze_demosaic_RT() {
 					if (fabs(1-crl)<arthresh) {glar=cfa[indx]*crl;} else {glar=glha;}
 					if (fabs(1-crr)<arthresh) {grar=cfa[indx]*crr;} else {grar=grha;}
 					
-					//if (cfa[indx]>armax[c]) {guar=guha; gdar=gdha; glar=glha; grar=grha;}//use HA if highlights are (nearly) clipped
-
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
 
@@ -504,7 +500,6 @@ void RawImageSource::amaze_demosaic_RT() {
 					vcdalt[indx] = sgn*(Gintvha-cfa[indx]);
 					hcdalt[indx] = sgn*(Ginthha-cfa[indx]);
 					
-					//if (cfa[indx]>armax[c] || Gintvha > armax[1] || Ginthha > armax[1]) {
 					if (cfa[indx] > 0.8*clip_pt || Gintvha > 0.8*clip_pt || Ginthha > 0.8*clip_pt) {
 						//use HA if highlights are (nearly) clipped
 						guar=guha; gdar=gdha; glar=glha; grar=grha;
@@ -560,10 +555,10 @@ void RawImageSource::amaze_demosaic_RT() {
 							}
 						}
 						
-						//if (Ginth > 1) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for RT implementation
-						//if (Gintv > 1) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
-						if (Ginth > pre_mul[c]) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for dcraw implementation
-						if (Gintv > pre_mul[c]) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
+						if (Ginth > clip_pt) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for RT implementation
+						if (Gintv > clip_pt) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
+						//if (Ginth > pre_mul[c]) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for dcraw implementation
+						//if (Gintv > pre_mul[c]) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
 
 					} else {
 
@@ -587,10 +582,10 @@ void RawImageSource::amaze_demosaic_RT() {
 							}
 						}
 
-						//if (Ginth > 1) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for RT implementation
-						//if (Gintv > 1) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
-						if (Ginth > pre_mul[c]) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for dcraw implementation
-						if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
+						if (Ginth > clip_pt) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for RT implementation
+						if (Gintv > clip_pt) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
+						//if (Ginth > pre_mul[c]) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for dcraw implementation
+						//if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
 					}
 
 					vcdsq[indx] = SQR(vcd[indx]);
@@ -858,11 +853,11 @@ void RawImageSource::amaze_demosaic_RT() {
 						}
 					}
 
-					//if (rbp[indx] > 1) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);//for RT implementation
-					//if (rbm[indx] > 1) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
-					c=2-FC(rr,cc);//for dcraw implementation
-					if (rbp[indx] > pre_mul[c]) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);
-					if (rbm[indx] > pre_mul[c]) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
+					if (rbp[indx] > clip_pt) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);//for RT implementation
+					if (rbm[indx] > clip_pt) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
+					//c=2-FC(rr,cc);//for dcraw implementation
+					//if (rbp[indx] > pre_mul[c]) rbp[indx]=ULIM(rbp[indx],cfa[indx-p1],cfa[indx+p1]);
+					//if (rbm[indx] > pre_mul[c]) rbm[indx]=ULIM(rbm[indx],cfa[indx-m1],cfa[indx+m1]);
 					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 					//rbint[indx] = 0.5*(cfa[indx] + (rbp*rbvarm+rbm*rbvarp)/(rbvarp+rbvarm));//this is R+B, interpolated
@@ -933,11 +928,11 @@ void RawImageSource::amaze_demosaic_RT() {
 						}
 					}
 
-					//if (Ginth > 1) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);//for RT implementation
-					//if (Gintv > 1) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
-					c=FC(rr,cc);//for dcraw implementation
-					if (Ginth > pre_mul[c]) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);
-					if (Gintv > pre_mul[c]) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
+					if (Ginth > clip_pt) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);//for RT implementation
+					if (Gintv > clip_pt) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
+					//c=FC(rr,cc);//for dcraw implementation
+					//if (Ginth > pre_mul[c]) Ginth=ULIM(Ginth,cfa[indx-1],cfa[indx+1]);
+					//if (Gintv > pre_mul[c]) Gintv=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1]);
 					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 					rgb[indx][1] = Ginth*(1-hvwt[indx]) + Gintv*hvwt[indx];

@@ -32,7 +32,7 @@ Preferences::Preferences (int initialPage)  {
 
     moptions.copyFrom (&options);
 
-    set_size_request (650, 550);
+    set_size_request (650, 650);
     set_border_width (4);
 
     Gtk::VBox* mainvb = get_vbox ();

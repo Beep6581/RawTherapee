@@ -108,11 +108,9 @@ void RawImageSource::CA_correct_RT() {
 	
 	//static const float pre_mul[3] = {MIN(ri->red_multiplier,ri->green_multiplier), ri->green_multiplier, \
 									 MIN(ri->blue_multiplier,ri->green_multiplier)};
-	
-	static const float pre_mul[3] = {ri->red_multiplier, ri->green_multiplier, ri->blue_multiplier};
-	
-	static const float clip_pt = MIN(pre_mul[1],MIN(pre_mul[2],pre_mul[3]));
-	
+		
+	static const float clip_pt = ri->defgain; 
+		
 	// local variables
 	int width=W, height=H;
 	//temporary array to store simple interpolation of G
@@ -394,7 +392,6 @@ void RawImageSource::CA_correct_RT() {
 			for (rr=8; rr < rr1-8; rr++)
 				for (cc=8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-8; cc+=2, indx+=2) {
 					
-					//if (rgb[indx][c]>0.8*pre_mul[c] || Gtmp[indx]>0.8*pre_mul[1]) continue;
 					if (rgb[indx][c]>0.8*clip_pt || Gtmp[indx]>0.8*clip_pt) continue;
 
 					areawt[0][c]=areawt[1][c]=0;
@@ -747,8 +744,7 @@ void RawImageSource::CA_correct_RT() {
 			for (rr=8; rr < rr1-8; rr++)
 				for (cc=8+(FC(rr,2)&1), c = FC(rr,cc), indx=rr*TS+cc; cc < cc1-8; cc+=2, indx+=2) {
 					
-					//if (rgb[indx][c]>0.95*pre_mul[c] || Gtmp[indx]>0.95*pre_mul[1]) continue;
-					if (rgb[indx][c]>clip_pt || Gtmp[indx]>clip_pt) continue;
+					//if (rgb[indx][c]>clip_pt || Gtmp[indx]>clip_pt) continue;
 
 					grbdiffold = rgb[indx][1]-rgb[indx][c];
 					
