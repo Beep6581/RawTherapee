@@ -306,12 +306,12 @@ MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transform
-MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser, shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history, shortcut key: H)
+MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
+MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication
 MAIN_TOOLTIP_PREFERENCES;Set preferences
-MAIN_TOOLTIP_QINFO;Quick info on the image
+MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
 PARTIALPASTE_BASICGROUP;Basic settings
@@ -476,10 +476,10 @@ SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_TIFFFILTER;TIFF files
-TOOLBAR_TOOLTIP_CROP;Crop selection (Shortcut key: C)
-TOOLBAR_TOOLTIP_HAND;Hand tool (Shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Straight line selection (Shortcut key: S)
-TOOLBAR_TOOLTIP_WB;Spot white balance (Shortcut key: W)
+TOOLBAR_TOOLTIP_CROP;Crop selection <b>C</b>
+TOOLBAR_TOOLTIP_HAND;Hand tool <b>N</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;Straight line selection <b>S</b>
+TOOLBAR_TOOLTIP_WB;Spot white balance <b>W</b>
 TP_CACORRECTION_BLUE;Blue
 TP_CACORRECTION_LABEL;C/A Correction
 TP_CACORRECTION_RED;Red
@@ -641,7 +641,7 @@ GENERAL_UNCHANGED;(Unchanged)
 MAIN_MSG_PLACES;Places
 GENERAL_BEFORE;Before
 GENERAL_AFTER;After
-MAIN_TOOLTIP_TOGGLE;Toggle before/after view
+MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 MAIN_BUTTON_PUTTOQUEUE;Put to queue
 MAIN_MSG_NAVIGATOR;Navigator
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
@@ -678,10 +678,10 @@ FILEBROWSER_CURRENT_NAME;Current name:
 FILEBROWSER_NEW_NAME;New name:
 FILEBROWSER_USETEMPLATE;Use template:
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-ZOOMPANEL_ZOOMIN;Zoom In
-ZOOMPANEL_ZOOMOUT;Zoom Out
-ZOOMPANEL_ZOOM100;Zoom to 100%
-ZOOMPANEL_ZOOMFITSCREEN;Fit to screen
+ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
+ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
 ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
 ZOOMPANEL_100;(100%)
 
@@ -714,3 +714,10 @@ HISTOGRAM_BUTTON_L;L
 ###
 
 CURVEEDITOR_NURBS;Control cage
+
+###
+
+MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+

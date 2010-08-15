@@ -68,10 +68,10 @@ ToolBar::ToolBar () : listener (NULL) {
    cropConn = cropTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::crop_pressed));
    straConn = straTool->signal_toggled().connect( sigc::mem_fun(*this, &ToolBar::stra_pressed));
 
-   handTool->set_tooltip_text (M("TOOLBAR_TOOLTIP_HAND"));
-   wbTool->set_tooltip_text (M("TOOLBAR_TOOLTIP_WB"));
-   cropTool->set_tooltip_text (M("TOOLBAR_TOOLTIP_CROP"));
-   straTool->set_tooltip_text (M("TOOLBAR_TOOLTIP_STRAIGHTEN"));
+   handTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_HAND"));
+   wbTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_WB"));
+   cropTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_CROP"));
+   straTool->set_tooltip_markup (M("TOOLBAR_TOOLTIP_STRAIGHTEN"));
 }
 
 //
