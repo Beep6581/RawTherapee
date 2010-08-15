@@ -67,10 +67,13 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
     Gtk::Image* infoimg = Gtk::manage (new Gtk::Image (argv0+"/images/info.png"));
     info->add (*infoimg);
     info->set_relief(Gtk::RELIEF_NONE);
-    info->set_tooltip_text (M("MAIN_TOOLTIP_QINFO"));
+    info->set_tooltip_markup (M("MAIN_TOOLTIP_QINFO"));
 
-    beforeAfter = Gtk::manage (new Gtk::ToggleButton (M("MAIN_TOGGLE_BEFORE_AFTER")));
-    beforeAfter->set_tooltip_text (M("MAIN_TOOLTIP_TOGGLE"));
+    beforeAfter = Gtk::manage (new Gtk::ToggleButton ());
+    Gtk::Image* beforeAfterIcon = Gtk::manage (new Gtk::Image (argv0+"/images/beforeafter.png"));
+    beforeAfter->add(*beforeAfterIcon);
+    beforeAfter->set_relief(Gtk::RELIEF_NONE);
+    beforeAfter->set_tooltip_markup (M("MAIN_TOOLTIP_TOGGLE"));
 
 
     Gtk::VSeparator* vsept = Gtk::manage (new Gtk::VSeparator ());
@@ -88,7 +91,7 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
     hidehp->add (*hidehpBox);
     hidehp->set_relief(Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
-    hidehp->set_tooltip_text (M("MAIN_TOOLTIP_HIDEHP"));
+    hidehp->set_tooltip_markup (M("MAIN_TOOLTIP_HIDEHP"));
 
     Gtk::VSeparator* vsepcl = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
@@ -125,18 +128,35 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
-    // buttons & status
+    // Save buttons
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
-    saveimgas = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_SAVE")));
-    saveimgas->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-    queueimg = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PUTTOQUEUE")));
-    queueimg->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-execute"), Gtk::ICON_SIZE_BUTTON)));
-    sendtogimp = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_SENDTOEDITOR")));
-    sendtogimp->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/gimp.png")));
+
+    Gtk::HBox * saveButtonBox = Gtk::manage(new Gtk::HBox());
+    saveButtonBox->pack_start(*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)), Gtk::PACK_SHRINK, 2);
+    saveButtonBox->pack_start(*Gtk::manage (new Gtk::Label (M("MAIN_BUTTON_SAVE"))), Gtk::PACK_SHRINK, 2);
+    saveimgas = Gtk::manage (new Gtk::Button ());
+    saveimgas->add(*saveButtonBox);
+    saveimgas->set_tooltip_markup(M("MAIN_BUTTON_SAVE_TOOLTIP"));
+
+    Gtk::HBox * queueButtonBox = Gtk::manage(new Gtk::HBox());
+    queueButtonBox->pack_start(*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-execute"), Gtk::ICON_SIZE_BUTTON)), Gtk::PACK_SHRINK, 2);
+    queueButtonBox->pack_start(*Gtk::manage (new Gtk::Label (M("MAIN_BUTTON_PUTTOQUEUE"))), Gtk::PACK_SHRINK, 2);
+    queueimg = Gtk::manage (new Gtk::Button ());
+    queueimg->add(*queueButtonBox);
+    queueimg->set_tooltip_markup(M("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
+
+    Gtk::HBox * sendToEditorButtonBox = Gtk::manage(new Gtk::HBox());
+    sendToEditorButtonBox->pack_start(*Gtk::manage (new Gtk::Image (argv0+"/images/gimp.png")), Gtk::PACK_SHRINK, 2);
+    sendToEditorButtonBox->pack_start(*Gtk::manage (new Gtk::Label (M("MAIN_BUTTON_SENDTOEDITOR"))), Gtk::PACK_SHRINK, 2);
+    sendtogimp = Gtk::manage (new Gtk::Button ());
+    sendtogimp->add(*sendToEditorButtonBox);
+    sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
+
     iops->pack_start (*saveimgas, Gtk::PACK_SHRINK);
     iops->pack_start (*queueimg, Gtk::PACK_SHRINK);
     iops->pack_start (*sendtogimp, Gtk::PACK_SHRINK);
 
+    // Status box
     statusBox = Gtk::manage (new Gtk::HBox ());
     progressLabel = Gtk::manage (new Gtk::Label(""));
     statusBox->pack_start (*progressLabel);
@@ -147,6 +167,7 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
     statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
     iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 4);
 
+    // Zoom panel
     iops->pack_end (*iarea->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz2, Gtk::PACK_SHRINK, 2);
 
@@ -471,36 +492,77 @@ void EditorPanel::hideHistoryActivated () {
 
 bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 
-    if (event->keyval==GDK_H || event->keyval==GDK_h) {
-        hidehp->set_active (!hidehp->get_active());
-        return true;
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+
+    if (!ctrl) {
+        switch(event->keyval) {
+            case GDK_h:
+            case GDK_H:
+                hidehp->set_active (!hidehp->get_active());
+                return true;
+            case GDK_w:
+            case GDK_W:
+                tpc->getToolBar()->wb_pressed ();
+                return true;
+            case GDK_c:
+            case GDK_C:
+                tpc->getToolBar()->crop_pressed ();
+                return true;
+            case GDK_s:
+            case GDK_S:
+                tpc->getToolBar()->stra_pressed ();
+                return true;
+            case GDK_n:
+            case GDK_N:
+                tpc->getToolBar()->hand_pressed ();
+                return true;
+            case GDK_i:
+            case GDK_I:
+                info->set_active (!info->get_active());
+                return true;
+            case GDK_b:
+            case GDK_B:
+                beforeAfter->set_active (!beforeAfter->get_active());
+                return true;
+            case GDK_plus:
+            case GDK_equal:
+                iarea->imageArea->zoomPanel->zoomInClicked();
+                return true;
+            case GDK_minus:
+            case GDK_underscore:
+                iarea->imageArea->zoomPanel->zoomOutClicked();
+                return true;
+            case GDK_1:
+                iarea->imageArea->zoomPanel->zoom11Clicked();
+                return true;
+            case GDK_f:
+            case GDK_F:            
+                iarea->imageArea->zoomPanel->zoomFitClicked();
+                return true;
+        }
     }
-    else if ((event->keyval==GDK_Z || event->keyval==GDK_z) && event->state & GDK_CONTROL_MASK && !(event->state & GDK_SHIFT_MASK)) {
-        history->undo ();
-        return true;
+    else {
+        switch (event->keyval) {
+            case GDK_s:
+                saveAsPressed();
+                return true;
+            case GDK_q:
+                queueImgPressed();
+                return true;
+            case GDK_e:
+                sendToGimpPressed();
+                return true;
+            case GDK_z:
+                history->undo ();
+                return true;
+            case GDK_Z:
+                history->redo ();
+                return true;
+        }
     }
-    else if ((event->keyval==GDK_Z || event->keyval==GDK_z) && event->state & GDK_CONTROL_MASK && event->state & GDK_SHIFT_MASK) {
-        history->redo ();
-        return true;
-    }
-    else if (event->keyval==GDK_w || event->keyval==GDK_W) {
-        tpc->getToolBar()->wb_pressed ();
-        return true;
-    }
-    else if (event->keyval==GDK_c || event->keyval==GDK_C) {
-        tpc->getToolBar()->crop_pressed ();
-        return true;
-    }
-    else if (event->keyval==GDK_s || event->keyval==GDK_S) {
-        tpc->getToolBar()->stra_pressed ();
-        return true;
-    }
-    else if (event->keyval==GDK_n || event->keyval==GDK_N) {
-        tpc->getToolBar()->hand_pressed ();
-        return true;
-    }
-    else
-        return false;
+
+    return false;
 }
 
 void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
