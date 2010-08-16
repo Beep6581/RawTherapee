@@ -308,12 +308,12 @@ MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
 MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
-MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers, touche F)
-MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique, touche H)
+MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers) <b>F</b>
+MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique) <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine
 MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine
 MAIN_TOOLTIP_PREFERENCES;Régler les préférences
-MAIN_TOOLTIP_QINFO;Montrer les infos EXIF
+MAIN_TOOLTIP_QINFO;Montrer les infos EXIF <b>I</b>
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
 MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
 PARTIALPASTE_BASICGROUP;Réglages de base
@@ -478,10 +478,10 @@ SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
 SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
 SAVEDLG_TIFFFILTER;Fichiers TIFF
-TOOLBAR_TOOLTIP_CROP;Sélection du rognage (touche C)
-TOOLBAR_TOOLTIP_HAND;Outil de navigation (touche N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon (touche S)
-TOOLBAR_TOOLTIP_WB;Choix du point déterminant la balance des blancs (touche W)
+TOOLBAR_TOOLTIP_CROP;Sélection du rognage <b>C</b>
+TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
+TOOLBAR_TOOLTIP_WB;Choix du point déterminant la balance des blancs <b>W</b>
 TP_CACORRECTION_BLUE;Bleu
 TP_CACORRECTION_LABEL;Correction aberration chromatique
 TP_CACORRECTION_RED;Rouge
@@ -643,7 +643,7 @@ GENERAL_UNCHANGED;(Inchangé)
 MAIN_MSG_PLACES;Emplacement
 GENERAL_BEFORE;Avant
 GENERAL_AFTER;Après
-MAIN_TOOLTIP_TOGGLE;Comparaison avant/après
+MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
 MAIN_BUTTON_PUTTOQUEUE;Envoyer dans la file
 MAIN_MSG_NAVIGATOR;Navigateur
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
@@ -680,10 +680,10 @@ FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_USETEMPLATE;Utiliser le modèle:
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
-ZOOMPANEL_ZOOMIN;Zoom +
-ZOOMPANEL_ZOOMOUT;Zoom -
-ZOOMPANEL_ZOOM100;Zoom à 100%
-ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre
+ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_NEWCROPWINDOW;Ouvrir une (nouvelle) vue détaillée
 ZOOMPANEL_100;(100%)
 
@@ -692,6 +692,7 @@ ZOOMPANEL_100;(100%)
 MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_UNFULLSCREEN;Quitter plein écran
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
+
 NAVIGATOR_R_NA;R = n/d
 NAVIGATOR_G_NA;V = n/d
 NAVIGATOR_B_NA;B = n/d
@@ -715,3 +716,10 @@ HISTOGRAM_BUTTON_L;L
 ###
 
 CURVEEDITOR_NURBS;Cage de contrôle
+
+###
+
+MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
+
