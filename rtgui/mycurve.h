@@ -55,29 +55,45 @@ struct MyCurveIdleHelper {
 
 class MyCurve : public Gtk::DrawingArea {
 
-        friend int mchistupdate (void* data);
-    
+    friend int mchistupdate (void* data);
+
     protected:
         CurveListener* listener;
         CurveDescr curve;
         CursorShape cursor_type;
         Glib::RefPtr<Gdk::Pixmap> pixmap;
-        int height;
-        int grab_point;
-        int lit_point;
-        int last;
+        int innerWidth;		// inner width of the editor, allocated by the system
+        int innerHeight;	// inner height of the editor, allocated by the system
+        int prevInnerHeight;// previous inner height of the editor
+        int grab_point;		// the point that the user is moving
+        int closest_point;	// the point that is the closest from the cursor
+        int lit_point;		// the point that is lit when the cursor is near it
+        //int last;
+		Gdk::ModifierType mod_type;
+    	int cursorX;		// X coordinate in the graph of the cursor
+    	int cursorY;		// Y coordinate in the graph of the cursor
+    	double clampedX;	// clamped grabbed point X coordinates in the [0;1] range
+    	double clampedY;	// clamped grabbed point Y coordinates in the [0;1] range
+        double deltaX;		// signed X distance of the cursor between two consecutive MOTION_NOTIFY
+        double deltaY;		// signed Y distance of the cursor between two consecutive MOTION_NOTIFY
+        double distanceX;	// X distance from the cursor to the closest point
+        double distanceY;	// Y distance from the cursor to the closest point
+    	double ugpX;		// unclamped grabbed point X coordinate in the graph
+    	double ugpY;		// unclamped grabbed point Y coordinate in the graph
+        GdkInputSource source;
         std::vector<Gdk::Point> point;
         std::vector<Gdk::Point> upoint;
         std::vector<Gdk::Point> lpoint;
         int activeParam;
-        unsigned int bghist[256];
+        unsigned int bghist[256];	// histogram values
         bool bghistvalid;
+        bool buttonPressed;
         MyCurveIdleHelper* mcih;
-    	int cursor_x, cursor_y;
-    	double ugp_x, ugp_y;  // unclamped grabbed point coordinates
-        
-        void draw (int width, int height, int handle);
-        void interpolate (int width, int height);
+
+        void draw (int handle);
+        void interpolate ();
+        void getCursorPosition(GdkEvent* event);
+        void findClosestPoint();
         std::vector<double> get_vector (int veclen);
 
     public:
