@@ -21,6 +21,7 @@
 #include <improcfun.h>
 #include <improccoordinator.h>
 #include <curves.h>
+#include <dfmanager.h>
 
 namespace rtengine {
 
@@ -39,6 +40,7 @@ int init (const Settings* s) {
     dcrMutex = new Glib::Mutex;
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
+    dfm.init( s->darkFramesPath );
 	return 0;
 }
 

@@ -76,47 +76,47 @@ inline void RawImageSource::interpolate_row_g (unsigned short* agh, unsigned sho
 
   for (int j=0; j<W; j++) {
     if (ISGREEN(ri,i,j)) {
-      agh[j] = ri->data[i][j];
-      agv[j] = ri->data[i][j];
+      agh[j] = rawData[i][j];
+      agv[j] = rawData[i][j];
     }
     else {
       int gh=0;
       int gv=0;
       if (j>1 && j<W-2) {
-        gh = (-ri->data[i][j-2] + 2*ri->data[i][j-1] + 2*ri->data[i][j] + 2*ri->data[i][j+1] -ri->data[i][j+2]) / 4;
-        int maxgh = MAX(ri->data[i][j-1], ri->data[i][j+1]);
-        int mingh = MIN(ri->data[i][j-1], ri->data[i][j+1]);
+        gh = (-rawData[i][j-2] + 2*rawData[i][j-1] + 2*rawData[i][j] + 2*rawData[i][j+1] -rawData[i][j+2]) / 4;
+        int maxgh = MAX(rawData[i][j-1], rawData[i][j+1]);
+        int mingh = MIN(rawData[i][j-1], rawData[i][j+1]);
         if (gh>maxgh)
             gh = maxgh;
         else if (gh<mingh)
             gh = mingh;
       }
       else if (j==0)
-        gh = ri->data[i][1];
+        gh = rawData[i][1];
       else if (j==1)
-        gh = (ri->data[i][0] + ri->data[i][2]) / 2;
+        gh = (rawData[i][0] + rawData[i][2]) / 2;
       else if (j==W-1)
-        gh = ri->data[i][W-2];
+        gh = rawData[i][W-2];
       else if (j==W-2)
-        gh = (ri->data[i][W-1] + ri->data[i][W-3]) / 2;
+        gh = (rawData[i][W-1] + rawData[i][W-3]) / 2;
  
      if (i>1 && i<H-2) {
-        gv = (-ri->data[i-2][j] + 2*ri->data[i-1][j] + 2*ri->data[i][j] + 2*ri->data[i+1][j] - ri->data[i+2][j]) / 4;
-        int maxgv = MAX(ri->data[i-1][j], ri->data[i+1][j]);
-        int mingv = MIN(ri->data[i-1][j], ri->data[i+1][j]);
+        gv = (-rawData[i-2][j] + 2*rawData[i-1][j] + 2*rawData[i][j] + 2*rawData[i+1][j] - rawData[i+2][j]) / 4;
+        int maxgv = MAX(rawData[i-1][j], rawData[i+1][j]);
+        int mingv = MIN(rawData[i-1][j], rawData[i+1][j]);
         if (gv>maxgv)
           gv = maxgv;
         else if (gv<mingv)
           gv = mingv;
       }
       else if (i==0)
-        gv = ri->data[1][j];
+        gv = rawData[1][j];
       else if (i==1)
-        gv = (ri->data[0][j] + ri->data[2][j]) / 2;
+        gv = (rawData[0][j] + rawData[2][j]) / 2;
       else if (i==H-1)
-        gv = ri->data[H-2][j];
+        gv = rawData[H-2][j];
       else if (i==H-2)
-        gv = (ri->data[H-1][j] + ri->data[H-3][j]) / 2;
+        gv = (rawData[H-1][j] + rawData[H-3][j]) / 2;
 
       agh[j] = CLIP(gh);
       agv[j] = CLIP(gv);
@@ -130,24 +130,24 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
     for (int j=0; j<W; j++) {
       if (ISRED(ri,i,j)) {
          // red is simple
-         ar[j] = ri->data[i][j];
+         ar[j] = rawData[i][j];
          // blue: cross interpolation
          int b = 0;
          int n = 0;
          if (i>0 && j>0) {
-           b += ri->data[i-1][j-1] - pg[j-1];
+           b += rawData[i-1][j-1] - pg[j-1];
            n++;
          }
          if (i>0 && j<W-1) {
-           b += ri->data[i-1][j+1] - pg[j+1];
+           b += rawData[i-1][j+1] - pg[j+1];
            n++;
          }
          if (i<H-1 && j>0) {
-           b += ri->data[i+1][j-1] - ng[j-1];
+           b += rawData[i+1][j-1] - ng[j-1];
            n++;
          }
          if (i<H-1 && j<W-1) {
-           b += ri->data[i+1][j+1] - ng[j+1];
+           b += rawData[i+1][j+1] - ng[j+1];
            n++;
          }
          b = cg[j] + b / n;
@@ -157,20 +157,20 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
         // linear R-G interp. horizontally
         int r;
         if (j==0)
-          r = cg[0] + ri->data[i][1] - cg[1];
+          r = cg[0] + rawData[i][1] - cg[1];
         else if (j==W-1)
-          r = cg[W-1] + ri->data[i][W-2] - cg[W-2];
+          r = cg[W-1] + rawData[i][W-2] - cg[W-2];
         else
-          r = cg[j] + (ri->data[i][j-1] - cg[j-1] + ri->data[i][j+1] - cg[j+1]) / 2;
+          r = cg[j] + (rawData[i][j-1] - cg[j-1] + rawData[i][j+1] - cg[j+1]) / 2;
         ar[j] = CLIP(r);
         // linear B-G interp. vertically
         int b;
         if (i==0)
-          b = ng[j] + ri->data[1][j] - cg[j];
+          b = ng[j] + rawData[1][j] - cg[j];
         else if (i==H-1)
-          b = pg[j] + ri->data[H-2][j] - cg[j];
+          b = pg[j] + rawData[H-2][j] - cg[j];
         else
-          b = cg[j] + (ri->data[i-1][j] - pg[j] + ri->data[i+1][j] - ng[j]) / 2;
+          b = cg[j] + (rawData[i-1][j] - pg[j] + rawData[i+1][j] - ng[j]) / 2;
         ab[j] = CLIP(b);
       }
     }
@@ -180,24 +180,24 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
     for (int j=0; j<W; j++) {
       if (ISBLUE(ri,i,j)) {
          // red is simple
-         ab[j] = ri->data[i][j];
+         ab[j] = rawData[i][j];
          // blue: cross interpolation
          int r = 0;
          int n = 0;
          if (i>0 && j>0) {
-           r += ri->data[i-1][j-1] - pg[j-1];
+           r += rawData[i-1][j-1] - pg[j-1];
            n++;
          }
          if (i>0 && j<W-1) {
-           r += ri->data[i-1][j+1] - pg[j+1];
+           r += rawData[i-1][j+1] - pg[j+1];
            n++;
          }
          if (i<H-1 && j>0) {
-           r += ri->data[i+1][j-1] - ng[j-1];
+           r += rawData[i+1][j-1] - ng[j-1];
            n++;
          }
          if (i<H-1 && j<W-1) {
-           r += ri->data[i+1][j+1] - ng[j+1];
+           r += rawData[i+1][j+1] - ng[j+1];
            n++;
          }
          r = cg[j] + r / n;
@@ -208,20 +208,20 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
         // linear B-G interp. horizontally
         int b;
         if (j==0)
-          b = cg[0] + ri->data[i][1] - cg[1];
+          b = cg[0] + rawData[i][1] - cg[1];
         else if (j==W-1)
-          b = cg[W-1] + ri->data[i][W-2] - cg[W-2];
+          b = cg[W-1] + rawData[i][W-2] - cg[W-2];
         else
-          b = cg[j] + (ri->data[i][j-1] - cg[j-1] + ri->data[i][j+1] - cg[j+1]) / 2;
+          b = cg[j] + (rawData[i][j-1] - cg[j-1] + rawData[i][j+1] - cg[j+1]) / 2;
         ab[j] = CLIP(b);
         // linear R-G interp. vertically
         int r;
         if (i==0)
-          r = ng[j] + ri->data[1][j] - cg[j];
+          r = ng[j] + rawData[1][j] - cg[j];
         else if (i==H-1)
-          r = pg[j] + ri->data[H-2][j] - cg[j];
+          r = pg[j] + rawData[H-2][j] - cg[j];
         else
-          r = cg[j] + (ri->data[i-1][j] - pg[j] + ri->data[i+1][j] - ng[j]) / 2;
+          r = cg[j] + (rawData[i-1][j] - pg[j] + rawData[i+1][j] - ng[j]) / 2;
         ar[j] = CLIP(r);
       }
     }
@@ -235,24 +235,24 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsig
     for (int j=x1, jx=0; jx<width; j+=skip, jx++) {
       if (ISRED(ri,i,j)) {
          // red is simple
-         ar[jx] = CLIP(r_mul * ri->data[i][j]);
+         ar[jx] = CLIP(r_mul * rawData[i][j]);
          // blue: cross interpolation
          int b = 0;
          int n = 0;
          if (i>0 && j>0) {
-           b += b_mul*ri->data[i-1][j-1] - g_mul*pg[j-1];
+           b += b_mul*rawData[i-1][j-1] - g_mul*pg[j-1];
            n++;
          }
          if (i>0 && j<W-1) {
-           b += b_mul*ri->data[i-1][j+1] - g_mul*pg[j+1];
+           b += b_mul*rawData[i-1][j+1] - g_mul*pg[j+1];
            n++;
          }
          if (i<H-1 && j>0) {
-           b += b_mul*ri->data[i+1][j-1] - g_mul*ng[j-1];
+           b += b_mul*rawData[i+1][j-1] - g_mul*ng[j-1];
            n++;
          }
          if (i<H-1 && j<W-1) {
-           b += b_mul*ri->data[i+1][j+1] - g_mul*ng[j+1];
+           b += b_mul*rawData[i+1][j+1] - g_mul*ng[j+1];
            n++;
          }
          b = g_mul*cg[j] + b / n;
@@ -262,20 +262,20 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsig
         // linear R-G interp. horizontally
         int r;
         if (j==0)
-          r = g_mul*cg[0] + r_mul*ri->data[i][1] - g_mul*cg[1];
+          r = g_mul*cg[0] + r_mul*rawData[i][1] - g_mul*cg[1];
         else if (j==W-1)
-          r = g_mul*cg[W-1] + r_mul*ri->data[i][W-2] - g_mul*cg[W-2];
+          r = g_mul*cg[W-1] + r_mul*rawData[i][W-2] - g_mul*cg[W-2];
         else
-          r = g_mul*cg[j] + (r_mul*ri->data[i][j-1] - g_mul*cg[j-1] + r_mul*ri->data[i][j+1] - g_mul*cg[j+1]) / 2;
+          r = g_mul*cg[j] + (r_mul*rawData[i][j-1] - g_mul*cg[j-1] + r_mul*rawData[i][j+1] - g_mul*cg[j+1]) / 2;
         ar[jx] = CLIP(r);
         // linear B-G interp. vertically
         int b;
         if (i==0)
-          b = g_mul*ng[j] + b_mul*ri->data[1][j] - g_mul*cg[j];
+          b = g_mul*ng[j] + b_mul*rawData[1][j] - g_mul*cg[j];
         else if (i==H-1)
-          b = g_mul*pg[j] + b_mul*ri->data[H-2][j] - g_mul*cg[j];
+          b = g_mul*pg[j] + b_mul*rawData[H-2][j] - g_mul*cg[j];
         else
-          b = g_mul*cg[j] + (b_mul*ri->data[i-1][j] - g_mul*pg[j] + b_mul*ri->data[i+1][j] - g_mul*ng[j]) / 2;
+          b = g_mul*cg[j] + (b_mul*rawData[i-1][j] - g_mul*pg[j] + b_mul*rawData[i+1][j] - g_mul*ng[j]) / 2;
         ab[jx] = CLIP(b);
       }
     }
@@ -285,24 +285,24 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsig
     for (int j=x1, jx=0; jx<width; j+=skip, jx++) {
       if (ISBLUE(ri,i,j)) {
          // red is simple
-         ab[jx] = CLIP(b_mul*ri->data[i][j]);
+         ab[jx] = CLIP(b_mul*rawData[i][j]);
          // blue: cross interpolation
          int r = 0;
          int n = 0;
          if (i>0 && j>0) {
-           r += r_mul*ri->data[i-1][j-1] - g_mul*pg[j-1];
+           r += r_mul*rawData[i-1][j-1] - g_mul*pg[j-1];
            n++;
          }
          if (i>0 && j<W-1) {
-           r += r_mul*ri->data[i-1][j+1] - g_mul*pg[j+1];
+           r += r_mul*rawData[i-1][j+1] - g_mul*pg[j+1];
            n++;
          }
          if (i<H-1 && j>0) {
-           r += r_mul*ri->data[i+1][j-1] - g_mul*ng[j-1];
+           r += r_mul*rawData[i+1][j-1] - g_mul*ng[j-1];
            n++;
          }
          if (i<H-1 && j<W-1) {
-           r += r_mul*ri->data[i+1][j+1] - g_mul*ng[j+1];
+           r += r_mul*rawData[i+1][j+1] - g_mul*ng[j+1];
            n++;
          }
          r = g_mul*cg[j] + r / n;
@@ -313,20 +313,20 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsig
         // linear B-G interp. horizontally
         int b;
         if (j==0)
-          b = g_mul*cg[0] + b_mul*ri->data[i][1] - g_mul*cg[1];
+          b = g_mul*cg[0] + b_mul*rawData[i][1] - g_mul*cg[1];
         else if (j==W-1)
-          b = g_mul*cg[W-1] + b_mul*ri->data[i][W-2] - g_mul*cg[W-2];
+          b = g_mul*cg[W-1] + b_mul*rawData[i][W-2] - g_mul*cg[W-2];
         else
-          b = g_mul*cg[j] + (b_mul*ri->data[i][j-1] - g_mul*cg[j-1] + b_mul*ri->data[i][j+1] - g_mul*cg[j+1]) / 2;
+          b = g_mul*cg[j] + (b_mul*rawData[i][j-1] - g_mul*cg[j-1] + b_mul*rawData[i][j+1] - g_mul*cg[j+1]) / 2;
         ab[jx] = CLIP(b);
         // linear R-G interp. vertically
         int r;
         if (i==0)
-          r = g_mul*ng[j] + r_mul*ri->data[1][j] - g_mul*cg[j];
+          r = g_mul*ng[j] + r_mul*rawData[1][j] - g_mul*cg[j];
         else if (i==H-1)
-          r = g_mul*pg[j] + r_mul*ri->data[H-2][j] - g_mul*cg[j];
+          r = g_mul*pg[j] + r_mul*rawData[H-2][j] - g_mul*cg[j];
         else
-          r = g_mul*cg[j] + (r_mul*ri->data[i-1][j] - g_mul*pg[j] + r_mul*ri->data[i+1][j] - g_mul*ng[j]) / 2;
+          r = g_mul*cg[j] + (r_mul*rawData[i-1][j] - g_mul*pg[j] + r_mul*rawData[i+1][j] - g_mul*ng[j]) / 2;
         ar[jx] = CLIP(r);
       }
     }

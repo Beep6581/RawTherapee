@@ -313,6 +313,28 @@ class EqualizerParams {
 };
 
 /**
+  * Parameters for RAW demosaicing
+  */
+class RAWParams {
+
+    public:
+		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,
+					numMethods }; // This MUST be the last enum
+		static const char *methodstring[numMethods];
+
+	    Glib::ustring dark_frame;
+	    bool df_autoselect;
+		bool ca_autocorrect;
+		bool hotdeadpix_filt;
+		int	linenoise;
+		int greenthresh;
+        int ccSteps;
+        Glib::ustring dmethod;
+        int dcb_iterations;
+        bool dcb_enhance;
+};
+
+/**
   * This class holds all the processing parameters applied on the images
   */
 class ProcParams {
@@ -340,6 +362,7 @@ class ProcParams {
         ResizeParams            resize;         ///< Resize parameters
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         EqualizerParams         equalizer;      ///< wavelet equalizer parameters
+        RAWParams               raw;            ///< RAW parameters before demosaicing
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
         int version;                            ///< Version of the file from which the parameters have been read

@@ -222,6 +222,21 @@ class EqualizerParamsEdited {
         bool c[8];
 };
 
+class RAWParamsEdited {
+
+    public:
+        bool ccSteps;
+        bool dmethod;
+        bool dcbIterations;
+        bool dcbEnhance;
+        bool caCorrection;
+        bool greenEq;
+        bool hotDeadPixel;
+        bool linenoise;
+        bool darkFrame;
+        bool dfAuto;
+};
+
 class ExifPairEdited {
 
     public:
@@ -261,6 +276,7 @@ class ParamsEdited {
         ResizeParamsEdited            resize;         
         ColorManagementParamsEdited   icm;            
         EqualizerParamsEdited         equalizer;
+        RAWParamsEdited               raw;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

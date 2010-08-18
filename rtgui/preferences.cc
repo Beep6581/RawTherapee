@@ -22,6 +22,8 @@
 #include <splash.h>
 #include <cachemanager.h>
 #include <addsetids.h>
+#include <dfmanager.h>
+#include <sstream>
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -251,81 +253,19 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     fdp->add (*vbdp);
     mvbpp->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fdem = Gtk::manage (new Gtk::Frame (M("PREFERENCES_DEMOSAICINGALGO")));
-    Gtk::VBox* fdb = Gtk::manage (new Gtk::VBox ());
-    fdb->set_border_width (4);
-    fdem->add (*fdb);
-    Gtk::Label* dmlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_DMETHOD")+":"));
-    dmethod = Gtk::manage (new Gtk::ComboBoxText ());
-    Gtk::HBox* hb11 = Gtk::manage (new Gtk::HBox ());
-    hb11->pack_start (*dmlab, Gtk::PACK_SHRINK, 4);
-    hb11->pack_start (*dmethod);
-    dmethod->append_text ("EAHD");
-    dmethod->append_text ("HPHD");
-    dmethod->append_text ("VNG-4");
-    //dmethod->append_text ("PPG");
-	dmethod->append_text ("AMaZE");//Emil's code for AMaZE
-    dmethod->append_text ("DCB");
-    dmethod->append_text ("AHD");
-    Gtk::Label* cclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FALSECOLOR")+":"));
-    ccSteps = Gtk::manage (new Gtk::SpinButton ());
-    ccSteps->set_digits (0);
-    ccSteps->set_increments (1, 2);
-    ccSteps->set_range (0, 5);
-    Gtk::HBox* hb12 = Gtk::manage (new Gtk::HBox ());
-    hb12->pack_start (*cclab, Gtk::PACK_SHRINK, 4);
-    hb12->pack_start (*ccSteps);
-
-    dcbIterationsLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_DCBITERATIONS")+":"));
-    dcbIterations = Gtk::manage(new Gtk::SpinButton ());
-    dcbIterations->set_digits(0);
-    dcbIterations->set_increments(1, 2);
-    dcbIterations->set_range(0, 10);
-    Gtk::HBox* hb13 = Gtk::manage(new Gtk::HBox());
-    hb13->pack_start (*dcbIterationsLabel, Gtk::PACK_SHRINK, 4);
-    hb13->pack_start (*dcbIterations);
-
-    dcbEnhance = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_DCBENHANCE"))));
-	
-	caAutoCorrect = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_CACORRECTION"))));//Emil's CA correction
-	HotDeadPixFilt = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_HOTDEADPIXFILT"))));//Emil's hot/dead pixel filter
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//Emil's line denoise
-	LineDenoiseLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LINEDENOISE")+":"));
-	LineDenoise = Gtk::manage(new Gtk::SpinButton ());
-	LineDenoise->set_digits(0);
-	LineDenoise->set_increments(1, 10);
-	LineDenoise->set_range(0, 1000);
-	Gtk::HBox* hb14 = Gtk::manage(new Gtk::HBox());
-	hb14->pack_start (*LineDenoiseLabel, Gtk::PACK_SHRINK, 4);
-	hb14->pack_start (*LineDenoise);
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//Emil's Green equilibration
-	GreenEquilLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_GREENEQUIL")+":"));
-	GreenEquil = Gtk::manage(new Gtk::SpinButton ());
-	GreenEquil->set_digits(0);
-	GreenEquil->set_increments(1, 10);
-	GreenEquil->set_range(0, 100);
-	Gtk::HBox* hb15 = Gtk::manage(new Gtk::HBox());
-	hb15->pack_start (*GreenEquilLabel, Gtk::PACK_SHRINK, 4);
-	hb15->pack_start (*GreenEquil);
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-    fdb->pack_start (*hb11, Gtk::PACK_SHRINK, 4);
-    fdb->pack_start (*hb12, Gtk::PACK_SHRINK, 4);
-    fdb->pack_start (*hb13, Gtk::PACK_SHRINK, 4);
-    fdb->pack_start (*dcbEnhance, Gtk::PACK_SHRINK, 4);
-	fdb->pack_start (*caAutoCorrect, Gtk::PACK_SHRINK, 4);//Emil's CA correction
-	fdb->pack_start (*HotDeadPixFilt, Gtk::PACK_SHRINK, 4);//Emil's hot/dead pixel filter
-    fdb->pack_start (*hb14, Gtk::PACK_SHRINK, 4);//Emil's line denoise
-	fdb->pack_start (*hb15, Gtk::PACK_SHRINK, 4);//Emil's Green equlibration
-
-    mvbpp->pack_start (*fdem, Gtk::PACK_SHRINK, 4);
+    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame ("Dark Frame") );
+    Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
+    darkFrameDir = Gtk::manage(new Gtk::FileChooserButton( "Dark frames directory", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    Gtk::Label *dfLab = Gtk::manage(new Gtk::Label("Dark Frames directory"));
+    hb42->pack_start(*dfLab , Gtk::PACK_SHRINK, 4 );
+    hb42->pack_start(*darkFrameDir);
+    dfLabel = Gtk::manage(new Gtk::Label("Found:"));
+    Gtk::VBox* vbdf = Gtk::manage (new Gtk::VBox ());
+    vbdf->pack_start( *hb42, Gtk::PACK_SHRINK, 4);
+    vbdf->pack_start( *dfLabel, Gtk::PACK_SHRINK, 4 );
+    fdf->add( *vbdf );
+    mvbpp->pack_start ( *fdf , Gtk::PACK_SHRINK, 4);
     mvbpp->set_border_width (4);
-    //  drlab->set_size_request (drimg->get_width(), -1);
 
     std::vector<Glib::ustring> pnames;
     if (options.multiUser)
@@ -336,7 +276,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
         iprofiles->append_text (pnames[i]);
     }
 
-    dmconn = dmethod->signal_changed().connect( sigc::mem_fun(*this, &Preferences::dmethodChanged) );
+    dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
 
     return mvbpp;
 }
@@ -730,31 +670,9 @@ void Preferences::storePreferences () {
         moptions.editorToSendTo = 3;
 
 
-    moptions.rtSettings.colorCorrectionSteps= (int)ccSteps->get_value ();
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
 	moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
 	moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
-    if (dmethod->get_active_row_number()==0)
-        moptions.rtSettings.demosaicMethod = "eahd";
-    else if (dmethod->get_active_row_number()==1)
-        moptions.rtSettings.demosaicMethod = "hphd";
-    else if (dmethod->get_active_row_number()==2)
-        moptions.rtSettings.demosaicMethod = "vng4";
-    //else if (dmethod->get_active_row_number()==3)
-    //    moptions.rtSettings.demosaicMethod = "ppg";
-	else if (dmethod->get_active_row_number()==3)
-        moptions.rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
-    else if (dmethod->get_active_row_number()==4)
-        moptions.rtSettings.demosaicMethod = "dcb";
-    else if (dmethod->get_active_row_number()==5)
-        moptions.rtSettings.demosaicMethod = "ahd";
-    moptions.rtSettings.dcb_iterations=(int)dcbIterations->get_value();
-    moptions.rtSettings.dcb_enhance=dcbEnhance->get_active();
-	moptions.rtSettings.ca_autocorrect=caAutoCorrect->get_active();//Emil's CA correction
-	moptions.rtSettings.hotdeadpix_filt=HotDeadPixFilt->get_active();//Emil's hot/dead pixel filter
-    moptions.rtSettings.linenoise=(int)LineDenoise->get_value();//Emil's line denoise
-	moptions.rtSettings.greenthresh=(int)GreenEquil->get_value();//Emil's Green equilibration
-
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -790,6 +708,8 @@ void Preferences::storePreferences () {
     moptions.saveParamsCache = saveParamsCache->get_active ();
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
+    moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
+
     int i = 0;
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
     for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
@@ -799,13 +719,12 @@ void Preferences::storePreferences () {
 
 void Preferences::fillPreferences () {
 
-    dmconn.block (true);
     tconn.block (true);
+    dfconn.block (true);
 
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
     dateformat->set_text (moptions.dateFormat);
-    ccSteps->set_value (moptions.rtSettings.colorCorrectionSteps);
     if (Glib::file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
@@ -833,32 +752,6 @@ void Preferences::fillPreferences () {
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);
-
-    if (moptions.rtSettings.demosaicMethod=="eahd")
-        dmethod->set_active (0);
-    else if (moptions.rtSettings.demosaicMethod=="hphd")
-        dmethod->set_active (1);
-    else if (moptions.rtSettings.demosaicMethod=="vng4")
-        dmethod->set_active (2);
-    //else if (moptions.rtSettings.demosaicMethod=="ppg")
-    //    dmethod->set_active (3);
-	else if (moptions.rtSettings.demosaicMethod=="amaze")//Emil's code for AMaZE
-        dmethod->set_active (3);
-    else if (moptions.rtSettings.demosaicMethod=="dcb")
-        dmethod->set_active (4);
-    else if (moptions.rtSettings.demosaicMethod=="ahd")
-        dmethod->set_active (5);
-    dcbEnhance->set_active(moptions.rtSettings.dcb_enhance);
-    dcbIterations->set_value(moptions.rtSettings.dcb_iterations);
-    dcbEnhance->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
-    dcbIterations->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
-    dcbIterationsLabel->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
-	caAutoCorrect->set_active(moptions.rtSettings.ca_autocorrect);//Emil's CA Auto Correction
-	HotDeadPixFilt->set_active(moptions.rtSettings.hotdeadpix_filt);//Emil's hot/dead pixel filter
-    LineDenoise->set_value(moptions.rtSettings.linenoise);//Emil's line denoise
-	GreenEquil->set_value(moptions.rtSettings.greenthresh);//Emil's Green equilibration
-
-	
 
     if (moptions.startupDir==STARTUPDIR_CURRENT) 
         sdcurrent->set_active ();
@@ -893,6 +786,9 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
+    darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
+    updateDFinfos();
+
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
@@ -907,9 +803,8 @@ void Preferences::fillPreferences () {
     }
     addc.block (false);
     setc.block (false);
-    
-    dmconn.block (false);
     tconn.block (false);
+    dfconn.block (false);
 }
 
 void Preferences::loadPressed () {
@@ -950,26 +845,6 @@ void Preferences::selectStartupDir () {
 
     if (result==Gtk::RESPONSE_OK) 
         startupdir->set_text (dialog.get_filename());
-}
-
-void Preferences::dmethodChanged () {
-
-    if (dmethod->get_active_row_number()==0)
-        ccSteps->set_value (2);
-    else if (dmethod->get_active_row_number()==1)
-        ccSteps->set_value (1);
-    else if (dmethod->get_active_row_number()==2)
-        ccSteps->set_value (2);
-
-    if (dmethod->get_active_row_number()==4) {
-        dcbEnhance->set_sensitive(true);
-        dcbIterations->set_sensitive(true);
-        dcbIterationsLabel->set_sensitive(true);
-    } else {
-        dcbEnhance->set_sensitive(false);
-        dcbIterations->set_sensitive(false);
-        dcbIterationsLabel->set_sensitive(false);
-    }
 }
 
 void Preferences::aboutPressed () {
@@ -1040,3 +915,19 @@ void Preferences::clearAllPressed () {
     md.hide ();
 }
 
+void Preferences::darkFrameChanged ()
+{
+	Glib::ustring s(darkFrameDir->get_filename());
+	if( s.compare( rtengine::dfm.getPathname()) !=0 ){
+	   rtengine::dfm.init( s );
+	   updateDFinfos();
+	}
+}
+void Preferences::updateDFinfos()
+{
+    int t1,t2;
+    rtengine::dfm.getStat(t1,t2);
+    std::ostringstream s;
+    s << "Found: "<< t1 << " shots, " << t2 << " templates";
+    dfLabel->set_text(s.str());
+}
