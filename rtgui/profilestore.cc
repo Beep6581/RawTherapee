@@ -35,7 +35,7 @@ void ProfileStore::parseProfiles () {
     pparams.clear ();
 
     if (options.multiUser) {
-        Glib::ustring userPD = options.rtdir + "/" + options.profilePath;
+        Glib::ustring userPD = options.cacheBaseDir + "/" + options.profilePath;
         if (!Glib::file_test (userPD, Glib::FILE_TEST_IS_DIR))
             g_mkdir_with_parents (userPD.c_str(), 511);
         parseDir (userPD);

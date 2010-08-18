@@ -149,11 +149,11 @@ void Thumbnail::loadProcParams () {
         int ppres = pparams.load (fname + paramFileExtension);
         pparamsValid = !ppres && pparams.version>=220;
         if (!pparamsValid) 
-                pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
+                pparamsValid = !pparams.load (getCacheFileName (options.profilePath)+paramFileExtension);
     }
     else {
         // try to load it from cache
-        pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
+        pparamsValid = !pparams.load (getCacheFileName (options.profilePath)+paramFileExtension);
         // if no success, load it from params file next to the image file
         if (!pparamsValid) {
             int ppres = pparams.load (fname + paramFileExtension);
@@ -168,7 +168,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     pparamsValid = false;
     needsReProcessing = true;
     // remove param file from cache
-    Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
+    Glib::ustring fname_ = getCacheFileName (options.profilePath)+paramFileExtension;
     if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
         ::g_remove (fname_.c_str());
     // remove param file located next to the file
@@ -213,7 +213,7 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-    pparams.save (getCacheFileName ("profiles")+paramFileExtension);
+    pparams.save (getCacheFileName (options.profilePath)+paramFileExtension);
 }
 
 void Thumbnail::imageEnqueued () {
@@ -410,7 +410,7 @@ void Thumbnail::updateCache () {
 
     if (pparamsValid) {
         if (options.saveParamsCache)
-            pparams.save (getCacheFileName ("profiles")+paramFileExtension);
+            pparams.save (getCacheFileName (options.profilePath)+paramFileExtension);
         if (options.saveParamsFile)
 //            pparams.save (removeExtension(fname) + paramFileExtension);
             pparams.save (fname + paramFileExtension);
