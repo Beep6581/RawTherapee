@@ -52,7 +52,8 @@
 #include <lensgeom.h>
 #include <lensgeomlistener.h>
 #include <equalizer.h>
-
+#include <rawprocess.h>
+#include <preprocess.h>
 
 class ImageEditorCoordinator;
 
@@ -88,6 +89,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
+        RawProcess* rawprocess;
+        PreProcess* preprocess;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -98,6 +101,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::VBox* detailsPanel;
         Gtk::VBox* colorPanel;
         Gtk::VBox* transformPanel;
+        Gtk::VBox* rawPanel;
         Gtk::Notebook* metadataPanel;
         ExifPanel* exifpanel;
         IPTCPanel* iptcpanel;
