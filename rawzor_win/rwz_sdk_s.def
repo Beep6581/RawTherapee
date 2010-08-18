@@ -1,0 +1,7 @@
+LIBRARY rwz_sdk_s.dll
+EXPORTS
+m_rwz_check
+m_rwz_decompress
+m_rwz_get_meta_and_thumbnail
+m_rwz_get_meta_only
+rwz_sdk_get_max_version
