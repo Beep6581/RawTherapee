@@ -80,7 +80,6 @@ class MyCurve : public Gtk::DrawingArea {
         double distanceY;	// Y distance from the cursor to the closest point
     	double ugpX;		// unclamped grabbed point X coordinate in the graph
     	double ugpY;		// unclamped grabbed point Y coordinate in the graph
-        GdkInputSource source;
         std::vector<Gdk::Point> point;
         std::vector<Gdk::Point> upoint;
         std::vector<Gdk::Point> lpoint;

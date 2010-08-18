@@ -30,10 +30,9 @@ MyCurve::MyCurve () : listener(NULL), activeParam(-1), bghistvalid(false) {
     prevInnerHeight = innerHeight;
     grab_point = -1;
     lit_point = -1;
-    source = GDK_SOURCE_MOUSE;
     buttonPressed = false;
 
-    set_extension_events(Gdk::EXTENSION_EVENTS_CURSOR);
+    set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
     signal_event().connect( sigc::mem_fun(*this, &MyCurve::handleEvents) );
 
@@ -298,10 +297,6 @@ bool MyCurve::handleEvents (GdkEvent* event) {
 					buttonPressed = true;
 					add_modal_grab ();
 
-					//we memorize the input device that "pressed" in the editor, to avoid unwanted motion from
-					//an eventual mouse connected
-					source = event->button.device->source;
-
 					// get the pointer position
 					getCursorPosition(event);
 					findClosestPoint();
@@ -339,52 +334,50 @@ bool MyCurve::handleEvents (GdkEvent* event) {
 
 		case Gdk::BUTTON_RELEASE:
 			if (curve.type!=Parametric) {
-				if (event->button.device->source == source) {
-					if (event->button.button == 1) {
-						buttonPressed = false;
-					}
-					if (!buttonPressed) {
-						/*  get the pointer position  */
-						getCursorPosition(event);
-						findClosestPoint();
+				if (event->button.button == 1) {
+					buttonPressed = false;
+				}
+				if (!buttonPressed) {
+					/*  get the pointer position  */
+					getCursorPosition(event);
+					findClosestPoint();
 
-						remove_modal_grab ();
-						int previous_lit_point = lit_point;
-						/* delete inactive points: */
-						itx = curve.x.begin();
-						ity = curve.y.begin();
-						for (src = dst = 0; src < num; ++src)
-							if (curve.x[src] >= 0.0) {
-								curve.x[dst] = curve.x[src];
-								curve.y[dst] = curve.y[src];
-								++dst;
-								++itx;
-								++ity;
-							}
-						if (dst < src) {
-							curve.x.erase (itx, curve.x.end());
-							curve.y.erase (ity, curve.y.end());
-							if (curve.x.size() <= 0) {
-								curve.x.push_back (0);
-								curve.y.push_back (0);
-								interpolate ();
-								draw (lit_point);
-							}
+					remove_modal_grab ();
+					int previous_lit_point = lit_point;
+					/* delete inactive points: */
+					itx = curve.x.begin();
+					ity = curve.y.begin();
+					for (src = dst = 0; src < num; ++src)
+						if (curve.x[src] >= 0.0) {
+							curve.x[dst] = curve.x[src];
+							curve.y[dst] = curve.y[src];
+							++dst;
+							++itx;
+							++ity;
 						}
-						if (distanceX <= minDistanceX) {
-							new_type = CSMove;
-							lit_point = closest_point;
-						}
-						else {
-							new_type = CSPlus;
-							lit_point = -1;
-						}
-						if (lit_point != previous_lit_point)
+					if (dst < src) {
+						curve.x.erase (itx, curve.x.end());
+						curve.y.erase (ity, curve.y.end());
+						if (curve.x.size() <= 0) {
+							curve.x.push_back (0);
+							curve.y.push_back (0);
+							interpolate ();
 							draw (lit_point);
-						grab_point = -1;
-						retval = true;
-						notifyListener ();
+						}
 					}
+					if (distanceX <= minDistanceX) {
+						new_type = CSMove;
+						lit_point = closest_point;
+					}
+					else {
+						new_type = CSPlus;
+						lit_point = -1;
+					}
+					if (lit_point != previous_lit_point)
+						draw (lit_point);
+					grab_point = -1;
+					retval = true;
+					notifyListener ();
 				}
 			}
 			break;
