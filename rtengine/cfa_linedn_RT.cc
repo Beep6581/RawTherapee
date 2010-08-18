@@ -101,7 +101,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			// load CFA data; data should be in linear gamma space, before white balance multipliers are applied
 			for (rr=top; rr < top+numrows; rr++)
 				for (cc=left, indx=(rr-top)*TS; cc < left+numcols; cc++, indx++) {
-					cfain[indx] = ri->data[rr][cc]; 
+					cfain[indx] = rawData[rr][cc];
 				}
 			//pad the block to a multiple of 16 on both sides
 			
@@ -189,7 +189,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			for (rr=16; rr < numrows-16; rr++) {
 				row = rr + top; 
 				for (col=16+left, indx=rr*TS+16; indx < rr*TS+numcols-16; indx++, col++) {
-					ri->data[row][col] = CLIP((int)(cfadn[indx]+ 0.5)); 
+					rawData[row][col] = CLIP((int)(cfadn[indx]+ 0.5));
 				}
 			}
 			if(plistener) plistener->setProgress(fabs((float)top/height));

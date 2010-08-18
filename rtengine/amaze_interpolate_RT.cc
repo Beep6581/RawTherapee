@@ -35,20 +35,7 @@ void RawImageSource::amaze_demosaic_RT() {
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 	//#define CLIP(x) LIM(x,0,65535)
 
-	//allocate outpute arrays
 	int width=W, height=H;
-	red = new unsigned short*[H];
-	for (int i=0; i<H; i++) {
-		red[i] = new unsigned short[W];
-	}
-	green = new unsigned short*[H];
-	for (int i=0; i<H; i++) {
-		green[i] = new unsigned short[W];
-	}	
-	blue = new unsigned short*[H];
-	for (int i=0; i<H; i++) {
-		blue[i] = new unsigned short[W];
-	}
 	
 	
 	static const float clip_pt = 1/ri->defgain; 
@@ -239,7 +226,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	}
 
 	// Main algorithm: Tile loop
-	//#pragma omp parallel for shared(ri->data,height,width,red,green,blue) private(top,left) schedule(dynamic)
+	//#pragma omp parallel for shared(rawData,height,width,red,green,blue) private(top,left) schedule(dynamic)
 	//code is openmp ready; just have to pull local tile variable declarations inside the tile loop
 #pragma omp for schedule(dynamic) nowait
 	for (top=-16; top < height; top += TS-32)
@@ -340,7 +327,7 @@ void RawImageSource::amaze_demosaic_RT() {
 					c = FC(rr,cc);
 					indx=row*width+col;
 					indx1=rr*TS+cc;
-					rgb[indx1][c] = (ri->data[row][col])/65535.0f;
+					rgb[indx1][c] = (rawData[row][col])/65535.0f;
 					//rgb[indx1][c] = image[indx][c]/65535.0f;//for dcraw implementation
 
 					cfa[indx1] = rgb[indx1][c];
@@ -359,7 +346,7 @@ void RawImageSource::amaze_demosaic_RT() {
 				for (rr=0; rr<16; rr++) 
 					for (cc=ccmin; cc<ccmax; cc++) {
 						c=FC(rr,cc);
-						rgb[(rrmax+rr)*TS+cc][c] = (ri->data[(height-rr-2)][left+cc])/65535.0f;
+						rgb[(rrmax+rr)*TS+cc][c] = (rawData[(height-rr-2)][left+cc])/65535.0f;
 						//rgb[(rrmax+rr)*TS+cc][c] = (image[(height-rr-2)*width+left+cc][c])/65535.0f;//for dcraw implementation
 						cfa[(rrmax+rr)*TS+cc] = rgb[(rrmax+rr)*TS+cc][c];
 					}
@@ -376,7 +363,7 @@ void RawImageSource::amaze_demosaic_RT() {
 				for (rr=rrmin; rr<rrmax; rr++)
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
-						rgb[rr*TS+ccmax+cc][c] = (ri->data[(top+rr)][(width-cc-2)])/65535.0f;
+						rgb[rr*TS+ccmax+cc][c] = (rawData[(top+rr)][(width-cc-2)])/65535.0f;
 						//rgb[rr*TS+ccmax+cc][c] = (image[(top+rr)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
 						cfa[rr*TS+ccmax+cc] = rgb[rr*TS+ccmax+cc][c];
 					}
@@ -387,7 +374,7 @@ void RawImageSource::amaze_demosaic_RT() {
 				for (rr=0; rr<16; rr++) 
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
-						rgb[(rr)*TS+cc][c] = (ri->data[32-rr][32-cc])/65535.0f;
+						rgb[(rr)*TS+cc][c] = (rawData[32-rr][32-cc])/65535.0f;
 						//rgb[(rr)*TS+cc][c] = (rgb[(32-rr)*TS+(32-cc)][c]);//for dcraw implementation
 						cfa[(rr)*TS+cc] = rgb[(rr)*TS+cc][c];
 					}
@@ -396,7 +383,7 @@ void RawImageSource::amaze_demosaic_RT() {
 				for (rr=0; rr<16; rr++) 
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
-						rgb[(rrmax+rr)*TS+ccmax+cc][c] = (ri->data[(height-rr-2)][(width-cc-2)])/65535.0f;
+						rgb[(rrmax+rr)*TS+ccmax+cc][c] = (rawData[(height-rr-2)][(width-cc-2)])/65535.0f;
 						//rgb[(rrmax+rr)*TS+ccmax+cc][c] = (image[(height-rr-2)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
 						cfa[(rrmax+rr)*TS+ccmax+cc] = rgb[(rrmax+rr)*TS+ccmax+cc][c];
 					}
@@ -405,7 +392,7 @@ void RawImageSource::amaze_demosaic_RT() {
 				for (rr=0; rr<16; rr++) 
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
-						rgb[(rr)*TS+ccmax+cc][c] = (ri->data[(32-rr)][(width-cc-2)])/65535.0f;
+						rgb[(rr)*TS+ccmax+cc][c] = (rawData[(32-rr)][(width-cc-2)])/65535.0f;
 						//rgb[(rr)*TS+ccmax+cc][c] = (image[(32-rr)*width+(width-cc-2)][c])/65535.0f;//for dcraw implementation
 						cfa[(rr)*TS+ccmax+cc] = rgb[(rr)*TS+ccmax+cc][c];
 					}
@@ -414,7 +401,7 @@ void RawImageSource::amaze_demosaic_RT() {
 				for (rr=0; rr<16; rr++) 
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
-						rgb[(rrmax+rr)*TS+cc][c] = (ri->data[(height-rr-2)][(32-cc)])/65535.0f;
+						rgb[(rrmax+rr)*TS+cc][c] = (rawData[(height-rr-2)][(32-cc)])/65535.0f;
 						//rgb[(rrmax+rr)*TS+cc][c] = (image[(height-rr-2)*width+(32-cc)][c])/65535.0f;//for dcraw implementation
 						cfa[(rrmax+rr)*TS+cc] = rgb[(rrmax+rr)*TS+cc][c];
 					}

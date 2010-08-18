@@ -223,7 +223,7 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     delete [] blue;
 }
 
-void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp) {
+void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
 
     MyTime t1,t2;
 

@@ -24,6 +24,8 @@
 #include <profilestore.h>
 #include <procparamchangers.h>
 
+extern Options options;
+
 FileBrowser::FileBrowser () 
     : tbl(NULL) {
 
@@ -56,6 +58,10 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*(selectDF = new Gtk::MenuItem ("Select Dark Frame...")), 0, 1, p, p+1); p++;
+    pmenu->attach (*(autoDF = new Gtk::MenuItem ("Auto Dark Frame")), 0, 1, p, p+1); p++;
+    pmenu->attach (*(thisIsDF = new Gtk::MenuItem ("This is a Dark Frame")), 0, 1, p, p+1); p++;
+    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(copyprof = new Gtk::MenuItem (M("FILEBROWSER_COPYPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
@@ -83,7 +89,9 @@ FileBrowser::FileBrowser ()
     develop->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), develop));    
     rename->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rename));    
     remove->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), remove));    
-    selall->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selall));    
+    selall->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selall));
+    selectDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectDF));
+    autoDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoDF));
     copyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), copyprof));    
     pasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), pasteprof));    
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
@@ -288,7 +296,33 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         queue_draw ();
         notifySelectionListener ();
     }
-    else if (m==copyprof)
+    else if (m==autoDF){
+		for (int i=0; i<mselected.size(); i++){
+			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+			pp.raw.df_autoselect= true;
+			pp.raw.dark_frame.clear();
+			mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+		}
+    }else if (m==selectDF){
+    	if( mselected.size() > 0 ){
+    		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
+    		Gtk::FileChooserDialog fc("Dark Frame",Gtk::FILE_CHOOSER_ACTION_OPEN );
+    		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    		fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+    		if( pp.raw.dark_frame.empty())
+    		   fc.set_current_folder( options.rtSettings.darkFramesPath );
+    		else
+    		   fc.set_filename( pp.raw.dark_frame );
+    		if( fc.run() == Gtk::RESPONSE_APPLY ){
+    			for (int i=0; i<mselected.size(); i++){
+    				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+					pp.raw.dark_frame= fc.get_filename();
+					pp.raw.df_autoselect= false;
+					mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+				}
+			}
+    	}
+    }else if (m==copyprof)
         copyProfile ();
     else if (m==pasteprof) 
         pasteProfile ();

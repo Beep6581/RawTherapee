@@ -119,16 +119,7 @@ void Options::setDefaults () {
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
-    rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
-	rtSettings.ca_autocorrect = false;//Emil's CA correction
-	rtSettings.hotdeadpix_filt = true;//Emil's hot/dead pixel filter
-	
-    rtSettings.linenoise = 0;//Emil's line denoise
-	rtSettings.greenthresh = 0;//Emil's Green equilibration
-
-    rtSettings.colorCorrectionSteps = 0;
-    rtSettings.dcb_iterations = 2;
-    rtSettings.dcb_enhance = true;
+    rtSettings.darkFramesPath = "";
     rtSettings.iccDirectory = "/usr/share/color/icc";
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
@@ -178,6 +169,8 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
+	if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
+	if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
 }
 
 if (keyFile.has_group ("External Editor")) { 
@@ -262,16 +255,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
 }
 
-if (keyFile.has_group ("Algorithms")) { 
-    if (keyFile.has_key ("Algorithms", "DemosaicMethod"))  rtSettings.demosaicMethod       = keyFile.get_string  ("Algorithms", "DemosaicMethod");
-    if (keyFile.has_key ("Algorithms", "ColorCorrection")) rtSettings.colorCorrectionSteps = keyFile.get_integer ("Algorithms", "ColorCorrection");
-    if(keyFile.has_key("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
-    if(keyFile.has_key("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
-	if(keyFile.has_key("Algorithms", "CACorrect")) rtSettings.ca_autocorrect = keyFile.get_boolean("Algorithms", "CACorrect");//Emil's CA autocorrect
-    if(keyFile.has_key("Algorithms", "HotDeadPixFilt")) rtSettings.hotdeadpix_filt = keyFile.get_boolean("Algorithms", "HotDeadPixFilt");//Emil's hot/dead pixel filter
-	if(keyFile.has_key("Algorithms", "LineDenoise")) rtSettings.linenoise = keyFile.get_integer("Algorithms", "LineDenoise");//Emil's line denoise
-	if(keyFile.has_key("Algorithms", "GreenEquil")) rtSettings.greenthresh = keyFile.get_integer("Algorithms", "GreenEquil");//Emil's Green equilibration
-}
+
 
 if (keyFile.has_group ("Crop Settings")) { 
     if (keyFile.has_key ("Crop Settings", "DPI"))       cropDPI      = keyFile.get_integer ("Crop Settings", "DPI");
@@ -312,6 +296,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "Theme", theme);
     keyFile.set_integer ("General", "Version", 290);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
+	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
 
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
@@ -389,15 +374,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
     Glib::ArrayHandle<int> crvopen = crvOpen;
     keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
-
-    keyFile.set_string  ("Algorithms", "DemosaicMethod", rtSettings.demosaicMethod);
-    keyFile.set_integer ("Algorithms", "ColorCorrection", rtSettings.colorCorrectionSteps);
-    keyFile.set_integer ("Algorithms", "DCBIterations", rtSettings.dcb_iterations);
-    keyFile.set_boolean ("Algorithms", "DCBEnhance", rtSettings.dcb_enhance);
-	keyFile.set_boolean ("Algorithms", "CACorrect", rtSettings.ca_autocorrect);//Emil's CA correction
-	keyFile.set_boolean ("Algorithms", "HotDeadPixFilt", rtSettings.hotdeadpix_filt);//Emil's hot/dead pixel filter
-    keyFile.set_integer ("Algorithms", "LineDenoise", rtSettings.linenoise);//Emil's line denoise
-	keyFile.set_integer ("Algorithms", "GreenEquil", rtSettings.greenthresh);//Emil's Green equilibration
 
     keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
 

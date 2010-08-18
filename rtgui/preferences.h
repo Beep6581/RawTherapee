@@ -52,7 +52,6 @@ class Preferences : public Gtk::Dialog {
   protected:
     Gtk::ComboBoxText* rprofiles;
     Gtk::ComboBoxText* iprofiles;
-    Gtk::ComboBoxText* dmethod;
     Gtk::ComboBoxText* languages;
     Gtk::Entry* dateformat;
     Gtk::Entry* startupdir;
@@ -66,21 +65,11 @@ class Preferences : public Gtk::Dialog {
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
-    
+    Gtk::FileChooserButton* darkFrameDir;
+    Gtk::Label *dfLabel;
 
     Gtk::CheckButton* showDateTime;
     Gtk::CheckButton* showBasicExif;
-
-    Gtk::SpinButton*  ccSteps;
-    Gtk::Label* dcbIterationsLabel;
-    Gtk::SpinButton*  dcbIterations;
-    Gtk::CheckButton* dcbEnhance;
-	Gtk::CheckButton* caAutoCorrect;//Emil's CA correction
-	Gtk::CheckButton* HotDeadPixFilt;//Emil's hot/dead pixel filter
-	Gtk::Label* LineDenoiseLabel;//Emil's line denoise
-	Gtk::SpinButton*  LineDenoise;
-	Gtk::Label* GreenEquilLabel;//Emil's Green equilibration
-	Gtk::SpinButton*  GreenEquil;
 
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
@@ -110,13 +99,12 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* loadParamsPreference;
 	
     Options moptions;
-    sigc::connection dmconn, tconn, addc, setc;
+    sigc::connection tconn, addc, setc, dfconn;
 
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
-    void dmethodChanged ();
-
+    void updateDFinfos ();
     void themeChanged ();
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
@@ -139,7 +127,7 @@ class Preferences : public Gtk::Dialog {
     void selectStartupDir ();
     void addExtPressed ();
     void delExtPressed ();
-
+    void darkFrameChanged ();
     void clearProfilesPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();
