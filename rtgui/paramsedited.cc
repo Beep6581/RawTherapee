@@ -119,10 +119,6 @@ void ParamsEdited::set (bool v) {
         icm.gammaOnInput = v;
         icm.working      = v;
         icm.output       = v;
-        raw.ccSteps = v;
-        raw.dmethod = v;
-        raw.dcbIterations = v;
-        raw.dcbEnhance = v;
         equalizer.enabled = v;
         for(int i = 0; i < 8; i++)
         {
@@ -235,17 +231,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gammaOnInput = icm.gammaOnInput && p.icm.gammaOnInput == other.icm.gammaOnInput;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
-        raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
-        raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
-        raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
-        raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
-        raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
-        raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
-        raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
-        raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
-        raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
-        raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
-
         equalizer.enabled = equalizer.enabled && p.equalizer.enabled == other.equalizer.enabled;
         for(int i = 0; i < 8; i++) {
             equalizer.c[i] = equalizer.c[i] && p.equalizer.c[i] == other.equalizer.c[i];
@@ -348,16 +333,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.gammaOnInput)	toEdit.icm.gammaOnInput = mods.icm.gammaOnInput;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output 	    = mods.icm.output;
-    if (raw.ccSteps)            toEdit.raw.ccSteps      = mods.raw.ccSteps;
-    if (raw.dmethod)            toEdit.raw.dmethod      = mods.raw.dmethod;
-    if (raw.dcbIterations)      toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
-    if (raw.dcbEnhance)         toEdit.raw.dcb_enhance  = mods.raw.dcb_enhance;
-    if (raw.caCorrection)       toEdit.raw.ca_autocorrect = mods.raw.ca_autocorrect;
-    if (raw.greenEq)            toEdit.raw.greenthresh  = mods.raw.greenthresh;
-    if (raw.hotDeadPixel)       toEdit.raw.hotdeadpix_filt= mods.raw.hotdeadpix_filt;
-    if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
-    if (raw.darkFrame)          toEdit.raw.dark_frame   = mods.raw.dark_frame;
-    if (raw.dfAuto)             toEdit.raw.df_autoselect= mods.raw.df_autoselect;
 	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];

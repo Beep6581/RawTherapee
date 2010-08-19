@@ -75,15 +75,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     
     Image16* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
-    imgsrc->preprocess( params.raw );
-    imgsrc->demosaic( params.raw );
     if (fabs(params.resize.scale-1.0)<1e-5) {
         baseImg = new Image16 (fw, fh);
-        imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm);
     }
     else {
         Image16* oorig = new Image16 (fw, fh);
-        imgsrc->getImage (currWB, tr, oorig, pp, params.hlrecovery, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, oorig, pp, params.hlrecovery, params.icm);
         fw *= params.resize.scale;
         fh *= params.resize.scale;
         baseImg = new Image16 (fw, fh);

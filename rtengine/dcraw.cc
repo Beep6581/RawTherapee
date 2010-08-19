@@ -3777,18 +3777,16 @@ void CLASS pre_interpolate()
     }
   }
   if (filters && colors == 3) {
-		if ((mix_green = four_color_rgb))
-			colors++;
-		else {
-			for (row = FC(1,0) >> 1; row < height; row += 2)
-				for (col = FC(row,1) & 1; col < width; col += 2)
-					image[row * width + col][1] = image[row * width + col][3];
-			/*RT*/	pre_filters = filters;
-			filters &= ~((filters & 0x55555555) << 1);
-		}
-	}
-	if (half_size)
-		filters = 0;
+    if ((mix_green = four_color_rgb)) colors++;
+    else {
+      for (row = FC(1,0) >> 1; row < height; row+=2)
+	for (col = FC(row,1) & 1; col < width; col+=2)
+	  image[row*width+col][1] = image[row*width+col][3];
+/*RT*/ pre_filters = filters;
+      filters &= ~((filters & 0x55555555) << 1);
+    }
+  }
+  if (half_size) filters = 0;
 }
 
 void CLASS border_interpolate (int border)
@@ -8917,6 +8915,7 @@ cleanup:
 
 #include <common.h>
 #include <rawmetadatalocation.h>
+#include <glibmm.h>
 #include <utils.h>
 #include <colortemp.h>
 #include <settings.h>
@@ -8927,147 +8926,149 @@ extern Settings* settings;
 
 Glib::Mutex* dcrMutex=NULL;
 
-int RawImage::loadRaw (bool loadData) {
+int loadRaw (const char* fname, struct RawImage *ri) {
 
-  Glib::Mutex::Lock lock(*dcrMutex); // auto unlock
+  static const double xyzd50_srgb[3][3] =
+  { { 0.436083, 0.385083, 0.143055 },
+    { 0.222507, 0.716888, 0.060608 },
+    { 0.013930, 0.097097, 0.714022 } };
 
-  ifname = fname.c_str();
+dcrMutex->lock ();
+
+  ifname = fname;//strdup (fname);
   image = NULL;
+  
   exif_base = -1;
   ciff_base = -1;
   ciff_len = -1;
   verbose = settings->verbose;
   oprof = NULL;
-
-  ifp = gfopen (fname.c_str());
-  if (!ifp)
+  ri->data = NULL;
+  ri->allocation = NULL;
+  ri->profile_data = NULL;
+  ifp = gfopen (fname);
+  if (!ifp) {
+    dcrMutex->unlock ();
     return 3;
+  }
 
-  thumb_length = 0;
-  thumb_offset = 0;
-  thumb_load_raw = 0;
   use_camera_wb = 0;
   highlight = 1;
   half_size = 0;
 
-  //***************** Read ALL raw file info
   identify ();
+  use_camera_wb = 1;
   if (!is_raw) {
     fclose(ifp);
+    dcrMutex->unlock ();
     return 2;
   }
-  this->filters = ::filters;
-  this->height = ::height;
-  this->width = ::width;
-  this->colors = ::colors;
-  this->profile_len = ::profile_length;
 
-  int i = ::cblack[3];
-  for (int c=0; c <3; c++)
-	  if (i > ::cblack[c])
-		  i = ::cblack[c];
-  for (int c=0; c < 4; c++)
-	  ::cblack[c] -= i;
-  ::black += i;
-  for (int c=0; c < 4; c++) this->cblack[c] = ::cblack[c];
-  for (int c=0; c < 4; c++) this->cam_mul[c] = ::cam_mul[c];
-  for (int c=0; c < 4; c++) this->pre_mul[c] = ::pre_mul[c];
-  for (int a = 0; a < 3; a++)
-		for (int b = 0; b < 3; b++)
-			this->coeff[a][b] = ::rgb_cam[a][b];
+  shrink = 0;
 
-  this->black_point = ::black;
-  this->maximum = ::maximum;
-  this->fuji_width = ::fuji_width;
+  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname);
+  iheight = height;
+  iwidth  = width;
 
-  for(int i=0; i<8;i++)
-	  for(int j=0;j<8;j++)
-		  this->white[i][j] = ::white[i][j];
+  image = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
+  meta_data = (char *) (image + height*width);
+
+  if (setjmp (failure)) {
+      if (image)
+        free (image);
+      if (ri->data)
+        free(ri->data);
+      fclose (ifp);
+      dcrMutex->unlock ();
+      return 100;
+  }
+
+  fseek (ifp, data_offset, SEEK_SET);
+  (*load_raw)();
+
+  ri->profile_len = 0;
+  ri->profile_data = NULL;
+  if (profile_length) {
+    ri->profile_len = profile_length;
+    ri->profile_data = (char *) malloc (profile_length);
+    fseek (ifp, profile_offset, SEEK_SET);
+    fread (ri->profile_data, 1, profile_length, ifp);
+  }
+
+  fclose(ifp);
+  if (zero_is_bad) remove_zeroes();
+
+  ri->red_multiplier = pre_mul[0];
+  ri->green_multiplier = pre_mul[1];
+  ri->blue_multiplier = pre_mul[2];
+
+  scale_colors();
+  pre_interpolate ();
+
+  ri->width = width;
+  ri->height = height;
+  ri->filters = filters;
+
+  if (filters) {
+    ri->allocation = (short unsigned int*)calloc(height*width, sizeof(unsigned short));
+    ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
+    for (int i=0; i<height; i++) 
+        ri->data[i] = ri->allocation + i*width;
+    for (int row = 0; row < height; row++) 
+      for (int col = 0; col < width; col++) 
+          if (ISGREEN(ri,row,col))
+              ri->data[row][col] = image[row*width+col][1];
+          else if (ISRED(ri,row,col))
+              ri->data[row][col] = image[row*width+col][0];
+          else 
+              ri->data[row][col] = image[row*width+col][2];
+  }
+  else {
+    ri->allocation = (short unsigned int*)calloc(3*height*width, sizeof(unsigned short));
+    ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
+    for (int i=0; i<height; i++) 
+        ri->data[i] = ri->allocation + 3*i*width;
+    for (int row = 0; row < height; row++) 
+      for (int col = 0; col < width; col++) {
+          ri->data[row][3*col+0] = image[row*width+col][0];
+          ri->data[row][3*col+1] = image[row*width+col][1];
+          ri->data[row][3*col+2] = image[row*width+col][2];
+      }
+  }
 
   if (flip==5)
-     this->rotate_deg = 270;
+    ri->rotate_deg = 270;
   else if (flip==3)
-     this->rotate_deg = 180;
+    ri->rotate_deg = 180;
   else if (flip==6)
-     this->rotate_deg = 90;
+    ri->rotate_deg = 90;
   else
-     this->rotate_deg = 0;
+    ri->rotate_deg = 0;
 
-  this->make = strdup (::make);
-  this->model = strdup (::model);
-  this->iso_speed = ::iso_speed;
-  this->shutter = ::shutter;
-  this->aperture = ::aperture;
-  this->focal_len = ::focal_len;
-  this->timestamp = ::timestamp;
-  this->exifbase = ::exif_base;
-  this->ciff_base = ::ciff_base;
-  this->ciff_len = ::ciff_len;
-  this->thumbOffset = ::thumb_offset;
-  this->thumbLength = ::thumb_length;
-  this->thumbHeight = ::thumb_height;
-  this->thumbWidth = ::thumb_width;
-  if (!thumb_load_raw && thumb_offset && write_thumb == jpeg_thumb)
-     this->thumbType = 1;
-  else if (!thumb_load_raw && thumb_offset && write_thumb == ppm_thumb)
-     this->thumbType = 2;
-  else {
-	 this->thumbType = 0;
-	 this->thumbWidth = ::width;
-	 this->thumbHeight = ::height;
-  }
+  ri->make = strdup (make);
+  ri->model = strdup (model);
 
-  if( loadData ){
-	  allocData();
-	  use_camera_wb = 1;
-	  shrink = 0;
-	  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname.c_str());
-	  iheight = height;
-	  iwidth  = width;
+  ri->exifbase = exif_base;
+  ri->prefilters = pre_filters;
+  ri->ciff_base = ciff_base;
+  ri->ciff_len = ciff_len;
 
-	  // dcraw needs this global variable to hold pixel data
-	  image = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
-	  meta_data = (char *) (image + height*width);
-	  if(!image)
-		  return 200;
+  ri->camwb_red = ri->red_multiplier / pre_mul[0];
+  ri->camwb_green = ri->green_multiplier / pre_mul[1];
+  ri->camwb_blue = ri->blue_multiplier / pre_mul[2];
 
-	  if (setjmp (failure)) {
-		  if (image)
-			free (image);
-		  fclose (ifp);
-		  return 100;
-	  }
+  ri->defgain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
 
-	  // Load raw pixels data
-	  fseek (ifp, data_offset, SEEK_SET);
-	  (*load_raw)();
+  ri->fuji_width = fuji_width;
 
-	  // Load embedded profile
-	  if (profile_length) {
-		fseek (ifp, profile_offset, SEEK_SET);
-		fread ( this->profile_data, 1, this->profile_len, ifp);
-	  }
-	  fclose(ifp);
+    for (int a=0; a < 3; a++)
+      for (int b=0; b < 3; b++)
+        ri->coeff[a][b] = rgb_cam[a][b];
 
-	  // copy pixel raw data: the compressed format earns space
-	  if (this->filters) {
-			for (int row = 0; row < height; row++)
-				for (int col = 0; col < width; col++)
-					this->data[row][col] = image[row * width + col][FC(row,col)];
-	  } else {
-			for (int row = 0; row < height; row++)
-				for (int col = 0; col < width; col++) {
-					this->data[row][3 * col + 0] = image[row * width + col][0];
-					this->data[row][3 * col + 1] = image[row * width + col][1];
-					this->data[row][3 * col + 2] = image[row * width + col][2];
-				}
-	  }
-	  free(image); // we don't need this anymore
-  }
+  free (image);
+dcrMutex->unlock ();
   return 0;
 }
-
-
 
 int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType) {
 

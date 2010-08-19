@@ -17,9 +17,8 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <refreshmap.h>
-#include <procevents.h>
 
-int refreshmap[rtengine::NUMOFEVENTS] = {
+int refreshmap[] = {
 ALL,        //    EvPhotoLoaded,
 ALL,        //    EvProfileLoaded,
 ALL,        //    EvProfileChanged,
@@ -105,8 +104,6 @@ ALL,    //    EvProfileChangeNotification
 RETINEX,    //    EvShrHighQuality
 TRANSFORM,  //    EvPerspCorr
 EQUALIZER,  // EvEqualizer
-EQUALIZER,   // EvEqlEnabled
-DEMOSAIC, // EvDemosaic
-DARKFRAME //EvPreProcess
+EQUALIZER   // EvEqlEnabled
 };
 

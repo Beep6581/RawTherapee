@@ -58,9 +58,6 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* remove;
     Gtk::MenuItem* open;
     Gtk::MenuItem* selall;
-    Gtk::MenuItem* selectDF;
-    Gtk::MenuItem* thisIsDF;
-    Gtk::MenuItem* autoDF;
     Gtk::MenuItem* copyprof;
     Gtk::MenuItem* pasteprof;
     Gtk::MenuItem* partpasteprof;
