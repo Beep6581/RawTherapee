@@ -21,7 +21,6 @@
 
 #include <imagesource.h>
 #include <lcms.h>
-
 #define HR_SCALE 2
 
 namespace rtengine {
@@ -54,9 +53,6 @@ class RawImageSource : public ImageSource {
         int W, H;
         ColorTemp wb;
         ProgressListener* plistener;
-        double camwb_red;
-        double camwb_green;
-        double camwb_blue;
         double coeff[3][3];
         double icoeff[3][3];
         double cam[3][3];
@@ -69,20 +65,18 @@ class RawImageSource : public ImageSource {
         char** needhr;      // for color propagation
         int max[3];
         double defGain;
-
+        bool full;
+		Glib::ustring oldmethod;
 		cmsHPROFILE camProfile;
 		cmsHPROFILE embProfile;
 
-        RawImage* ri; // Copy of raw pixels
-        RawImage* df; // Darkframe pixels (if present)
+        RawImage* ri;
         
         // to accelerate CIELAB conversion:
         double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
         double* cache;
         int threshold;
-
-        unsigned short** rawData;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
-
+       
         // the interpolated green plane:
         unsigned short** green; 
         // the interpolated red plane:
@@ -103,18 +97,13 @@ class RawImageSource : public ImageSource {
         void updateHLRecoveryMap (std::string method, double rm, double gm, double bm);
         void updateHLRecoveryMap_ColorPropagation ();
         void HLRecovery_ColorPropagation (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
-        int  FC(int row, int col){ return (ri->prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3); }
+        
     public:
         RawImageSource ();
         ~RawImageSource ();
     
         int         load        (Glib::ustring fname);
-        void        preprocess  (const RAWParams &raw);
-        void        demosaic    (const RAWParams &raw);
-        void        copyOriginalPixels( RawImage *ri, RawImage *riDark );
-        void        scaleColors( bool use_auto_wb=true, bool use_camera_wb=false, int highlight=1 );
-        void        preInterpolate(bool force4colors=false);
-        void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
+        void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
@@ -146,9 +135,9 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb     (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i);
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
-		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
+		int	LinEqSolve			(int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
 		void CA_correct_RT		();
-		void cfaCleanFromList( const std::list<badPix> &bpList );
+	
 		void cfa_clean (float thresh);//Emil's hot/dead pixel filter
 	void ddct8x8s(int isgn, float **a);
 
@@ -156,7 +145,7 @@ class RawImageSource : public ImageSource {
 
 		void green_equilibrate		(float greenthresh);//Emil's green equilibration
 
-	    void    nodemosaic      ();
+	
         void    eahd_demosaic   ();
         void    hphd_demosaic   ();
         void    vng4_demosaic   ();

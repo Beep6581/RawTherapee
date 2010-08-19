@@ -29,7 +29,6 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     detailsPanel    = Gtk::manage (new Gtk::VBox ());
     colorPanel      = Gtk::manage (new Gtk::VBox ());
     transformPanel  = Gtk::manage (new Gtk::VBox ());
-    rawPanel        = Gtk::manage (new Gtk::VBox ());
 
     coarse              = Gtk::manage (new CoarsePanel ());
     curve               = Gtk::manage (new ToneCurve ());
@@ -55,8 +54,6 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     exifpanel           = Gtk::manage (new ExifPanel ());
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     equalizer           = Gtk::manage (new Equalizer ());
-    rawprocess          = Gtk::manage (new RawProcess ());
-    preprocess          = Gtk::manage (new PreProcess ());
 
     addPanel (colorPanel, whitebalance,         M("TP_WBALANCE_LABEL"));       toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, curve,             M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (curve);
@@ -79,8 +76,6 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL")); toolPanels.push_back (cacorrection);
     addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));   toolPanels.push_back (vignetting);
     addPanel (colorPanel, icm,                  M("TP_ICM_LABEL"));            toolPanels.push_back (icm);
-    addPanel (rawPanel, rawprocess,             "Demosaicing");                toolPanels.push_back (rawprocess);
-    addPanel (rawPanel, preprocess,             "Pre-processing");             toolPanels.push_back (preprocess);
 
     toolPanels.push_back (coarse);
     toolPanels.push_back (exifpanel);
@@ -96,24 +91,20 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     Gtk::ScrolledWindow* detailsPanelSW     = Gtk::manage (new Gtk::ScrolledWindow ());
     Gtk::ScrolledWindow* colorPanelSW       = Gtk::manage (new Gtk::ScrolledWindow ());
     Gtk::ScrolledWindow* transformPanelSW   = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* rawPanelSW         = Gtk::manage (new Gtk::ScrolledWindow ());
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
     exposurePanelSW->add  (*exposurePanel);
     detailsPanelSW->add   (*detailsPanel);
     colorPanelSW->add     (*colorPanel);
     transformPanelSW->add (*transformPanel);
-    rawPanelSW->add       (*rawPanel);
 
     toolPanelNotebook->append_page (*exposurePanelSW,  M("MAIN_TAB_EXPOSURE"));
     toolPanelNotebook->append_page (*detailsPanelSW,   M("MAIN_TAB_DETAIL"));
     toolPanelNotebook->append_page (*colorPanelSW,     M("MAIN_TAB_COLOR"));
     toolPanelNotebook->append_page (*transformPanelSW, M("MAIN_TAB_TRANSFORM"));
-    toolPanelNotebook->append_page (*rawPanelSW,       "RAW");
     toolPanelNotebook->append_page (*metadataPanel,    M("MAIN_TAB_METADATA"));
     toolPanelNotebook->set_current_page (0);
 

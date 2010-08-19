@@ -23,7 +23,7 @@ set (BASESOURCEFILES
     thumbbrowserentrybase.cc batchqueueentry.cc
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
-    profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
+    profilestore.cc partialpastedlg.cc
     equalizer.cc)
 
 if (WIN32)

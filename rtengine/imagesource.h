@@ -66,9 +66,7 @@ class ImageSource : public InitialImage {
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname) =0;
-        virtual void        preprocess  (const RAWParams &raw){};
-        virtual void        demosaic    (const RAWParams &raw){};
-        virtual void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+        virtual void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp) {}
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;

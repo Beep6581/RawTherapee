@@ -108,7 +108,7 @@ void Crop::update (int todo, bool internal) {
         if (!needsinitupdate)
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
-        parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
+        parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm);
 
         if (fabs(params.resize.scale-1.0)<1e-7) {
             if (resizeCrop) {

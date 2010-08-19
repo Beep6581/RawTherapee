@@ -113,6 +113,7 @@ namespace rtengine {
 
   /**
     * This class represents an image loaded into the memory. It is the basis of further processing.
+    * In case of raw files the most time consuming operation, the demosaicing is already performed.
     * The embedded icc profile and metadata information can be obtained through this class, too.
     */
     class InitialImage {
@@ -136,7 +137,7 @@ namespace rtengine {
             virtual void decreaseRef () {}
 
 
-          /** Loads an image into the memory.
+          /** Loads an image into the memory. If it is a raw file, is is partially demosaiced (the time consuming part is done)
             * @param fname the name of the file
             * @param isRaw shall be true if it is a raw file
             * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
