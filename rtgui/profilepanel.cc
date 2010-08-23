@@ -114,7 +114,7 @@ void ProfilePanel::save_clicked () {
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     if (options.multiUser)
-    dialog.set_current_folder (Options::cacheBaseDir + "/" + options.profilePath);
+    dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
     else
     dialog.set_current_folder (argv0 + "/" + options.profilePath);
 
@@ -203,7 +203,7 @@ void ProfilePanel::load_clicked () {
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     if (options.multiUser)
-    dialog.set_current_folder (Options::cacheBaseDir + "/" + options.profilePath);
+    dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
     else
     dialog.set_current_folder (argv0 + "/" + options.profilePath);
 

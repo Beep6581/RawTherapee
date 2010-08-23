@@ -430,6 +430,8 @@ void Options::load () {
     if (options.multiUser) {
         int r = options.readFromFile (rtdir + "/options");
         if (r && !g_mkdir_with_parents (rtdir.c_str(), 511)) {
+            Glib::ustring profdir = rtdir + "/profiles";
+            g_mkdir_with_parents (profdir.c_str(), 511);
             options.saveToFile (rtdir + "/options");
         }
 #ifdef _WIN32
