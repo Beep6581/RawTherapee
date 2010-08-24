@@ -27,6 +27,9 @@
 #include <image8.h>
 #include <curves.h>
 #include <dfmanager.h>
+#include <slicer.h>
+
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -3287,11 +3290,12 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 		free(image3[i]);
 		free(chroma[i]);
 	}
-#endif
+#else
 	free(image);
     free(image2);
     free(image3);
     free(chroma);
+#endif
 
     if(plistener) plistener->setProgress (1.0);
 }
