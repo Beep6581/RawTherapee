@@ -21,13 +21,7 @@
 
 //The image is divided in blocks even on single processor machine, mainly to decrease memory consumption
 //maximum number of pixel per block
-#define PIXELS_PER_BLOCK	1000000
-
-// DEBUG!
-#include <glibmm.h>
-#include <stdio.h>
-//#include <glib/gstdio.h>
-
+#define PIXELS_PER_BLOCK	250000
 
 namespace rtengine {
 
@@ -52,7 +46,6 @@ class Block {
 class Slicer {
 	protected:
 		bool portrait;					// Orientation of the sub-region
-		unsigned int procNumber;		// Number of processor
 		unsigned int imWidth;			// Image width
 		unsigned int imHeight;			// Image height
 		Block region;					// Sub-region to process
@@ -64,7 +57,6 @@ class Slicer {
 		unsigned int blockNumber;		// number of block for the sub-region
 		unsigned int maxPixelNumber;	// number of pixel of the biggest block (for memory allocation purpose)
 		Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegion, unsigned int pixels, const char* nomFichier);
-		~Slicer(void);
 		void get_block(unsigned int blockId, Block *block);
 };
 
