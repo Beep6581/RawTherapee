@@ -18,8 +18,11 @@
  */
 
 #include <math.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <slicer.h>
+#include <gtkmm.h>
 
 using namespace rtengine;
 
@@ -67,9 +70,9 @@ Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegi
 
 	//total number of core/processor
 #ifdef _OPENMP
-	procNumber = omp_get_num_procs();
+	unsigned int procNumber = omp_get_num_procs();
 #else
-	procNumber = 1;
+	unsigned int procNumber = 1;
 #endif
 
 	//calculate the number of block
@@ -86,9 +89,6 @@ Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegi
 	if (maxPixelNumberY - (double)((unsigned int)maxPixelNumberY) != 0.) maxPixelNumberY += 1.;
 	maxPixelNumber = (unsigned int)maxPixelNumberX * (unsigned int)maxPixelNumberY;
 
-}
-
-Slicer::~Slicer() {
 }
 
 // return the absolute position and size of the requested block
