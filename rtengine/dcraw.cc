@@ -8962,21 +8962,6 @@ int RawImage::loadRaw (bool loadData) {
   this->colors = ::colors;
   this->profile_len = ::profile_length;
 
-  int i = ::cblack[3];
-  for (int c=0; c <3; c++)
-	  if (i > ::cblack[c])
-		  i = ::cblack[c];
-  for (int c=0; c < 4; c++)
-	  ::cblack[c] -= i;
-  ::black += i;
-  for (int c=0; c < 4; c++) this->cblack[c] = ::cblack[c];
-  for (int c=0; c < 4; c++) this->cam_mul[c] = ::cam_mul[c];
-  for (int c=0; c < 4; c++) this->pre_mul[c] = ::pre_mul[c];
-  for (int a = 0; a < 3; a++)
-		for (int b = 0; b < 3; b++)
-			this->coeff[a][b] = ::rgb_cam[a][b];
-
-  this->black_point = ::black;
   this->maximum = ::maximum;
   this->fuji_width = ::fuji_width;
 
@@ -9048,6 +9033,23 @@ int RawImage::loadRaw (bool loadData) {
 		fread ( this->profile_data, 1, this->profile_len, ifp);
 	  }
 	  fclose(ifp);
+
+	  // Setting the black_point and cblack
+	  int i = ::cblack[3];
+	  for (int c=0; c <3; c++)
+		  if (i > ::cblack[c])
+			  i = ::cblack[c];
+	  for (int c=0; c < 4; c++)
+		  ::cblack[c] -= i;
+	  ::black += i;
+	  for (int c=0; c < 4; c++) this->cblack[c] = ::cblack[c];
+	  for (int c=0; c < 4; c++) this->cam_mul[c] = ::cam_mul[c];
+	  for (int c=0; c < 4; c++) this->pre_mul[c] = ::pre_mul[c];
+	  for (int a = 0; a < 3; a++)
+			for (int b = 0; b < 3; b++)
+				this->coeff[a][b] = ::rgb_cam[a][b];
+
+	  this->black_point = ::black;
 
 	  // copy pixel raw data: the compressed format earns space
 	  if (this->filters) {
