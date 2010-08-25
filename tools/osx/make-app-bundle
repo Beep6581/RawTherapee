@@ -29,7 +29,7 @@ ETC=${MACOS}/etc
 LIB=${MACOS}/lib
 SHARE=${MACOS}/share
 RELEASE=release
-DMG=${RELEASE}/RawTherapee.dmg
+DMG=${RELEASE}/rawtherapee_osx105_`date "+%Y-%m-%d"`_release-3.0-a1+`hg log | head -1 | cut -f 4 -d ' ' | sed 's/:/-/g'`.dmg
 EXECUTABLE=rt
 
 #Find where MacPorts is installed.  We take a known binary (cmake), which is in <MacPorts>/bin, and 
@@ -47,10 +47,8 @@ if [ -d "${APP}" ]; then
 	echo "Removing old application..."
 	rm -rf "${APP}"
 fi
-if [ -f ${DMG} ]; then
-	echo "Removing old disk image..."
-	rm "${DMG}"
-fi
+echo "Removing any old disk images..."
+rm "${RELEASE}/*.dmg"
 
 echo "Making application directory structure..."
 mkdir -p "${RESOURCES}"
