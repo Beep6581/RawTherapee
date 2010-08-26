@@ -35,6 +35,8 @@
 #ifndef WIN32
 #include <config.h>
 #include <glibmm/fileutils.h>
+#include <glib.h>
+#include <glib/gstdio.h>
 #endif
 
 #include <safegtk.h>
@@ -92,6 +94,12 @@ int main(int argc, char **argv)
    Gio::init ();
 
    Options::load ();
+
+#ifndef _WIN32
+   // Move the old path to the new one if the new does not exist
+   if (Glib::file_test(Glib::build_filename(options.rtdir,"cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR))
+       ::g_rename(Glib::build_filename(options.rtdir,"cache").c_str(), options.cacheBaseDir.c_str());
+#endif
 
 //   Gtk::RC::add_default_file (argv0+"/themes/"+options.theme);
    std::vector<std::string> rcfiles;
