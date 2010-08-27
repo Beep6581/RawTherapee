@@ -24,6 +24,8 @@
 # Sneaking through the code are we.? ;)
 style "clearlooks-default"
 {
+	font_name = "Lucida"
+
 	GtkRange::trough_border = 0
 	GtkRange::slider_width = 14
 	GtkRange::stepper_size = 10
