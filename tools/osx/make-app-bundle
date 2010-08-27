@@ -48,7 +48,7 @@ if [ -d "${APP}" ]; then
 	rm -rf "${APP}"
 fi
 echo "Removing any old disk images..."
-rm "${RELEASE}/*.dmg"
+rm ${RELEASE}/rawtherapee*.dmg
 
 echo "Making application directory structure..."
 mkdir -p "${RESOURCES}"
