@@ -751,6 +751,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         }
         return true;
     }
+    return false;
 }
 
 bool Thumbnail::readData  (const Glib::ustring& fname) {

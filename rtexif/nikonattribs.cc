@@ -158,9 +158,10 @@ class NAAFInfoInterpreter : public Interpreter {
             else if (aff&512)
                 if (af.str()=="") af << "Far Left";
                 else af << ", Far Left";
-            else if (aff&1024)
+            else if (aff&1024) {
                 if (af.str()=="") af << "Far Right";
                 else af << ", Far Right";
+            }
 
             str << "AFPointsInFocus = " << af.str();
             return str.str();

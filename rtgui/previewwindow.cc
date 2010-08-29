@@ -175,7 +175,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event) {
         get_window()->set_cursor (*cCropMoving);
 	else
         get_window()->set_cursor (*cNormal);
-
+	return true;
 }
 
 bool PreviewWindow::on_button_press_event (GdkEventButton* event) {
@@ -201,6 +201,7 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event) {
     	}
         get_window()->set_cursor (*cCropMoving);
 	}
+	return true;
 }
 
 bool PreviewWindow::on_button_release_event (GdkEventButton* event) {
@@ -213,4 +214,5 @@ bool PreviewWindow::on_button_release_event (GdkEventButton* event) {
 		get_window()->set_cursor (*cNormal);
 		mainCropWin->remoteMoveReady ();
 	}
+	return true;
 }

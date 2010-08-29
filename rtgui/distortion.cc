@@ -69,7 +69,7 @@ void Distortion::adjusterChanged (Adjuster* a, double newval) {
 
 void Distortion::setAdjusterBehavior (bool bvadd) {
 
-    if (!distAdd && bvadd || distAdd && !bvadd)
+    if ((!distAdd && bvadd) || (distAdd && !bvadd))
         distor->setLimits (-0.5, 0.5, 0.001, 0);
     
     distAdd = bvadd;

@@ -946,7 +946,7 @@ public:
 		case 2: str << "AF-C";break;
 		case 3: str << "AF-A";break;
 		}
-		if( c & 0xF0 == 0) str << ", Point Selection Auto";
+		if( (c & 0xF0) == 0) str << ", Point Selection Auto";
 		else if( c & 0x20 ) str << ", Fixed Center Point Selected";
 		else if( c & 0x10 ) str << ", Point Selected";
 		return str.str();
