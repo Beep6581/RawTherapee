@@ -23,7 +23,7 @@
 #include <mytime.h>
 
 ThumbBrowserBase::ThumbBrowserBase () 
-    : previewHeight(options.thumbSize), lastClicked(NULL) {
+    : lastClicked(NULL), previewHeight(options.thumbSize) {
 
     inW = -1; inH = -1;
 
@@ -259,7 +259,7 @@ void ThumbBrowserBase::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
   refreshThumbImages ();
 }
 
-ThumbBrowserBase::Internal::Internal () : parent(NULL), ofsX(0), ofsY(0), dirty(true) {
+ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(true) {
 }
 
 void ThumbBrowserBase::Internal::setParent (ThumbBrowserBase* p) {

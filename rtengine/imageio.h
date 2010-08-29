@@ -25,6 +25,7 @@
 #define IMIO_HEADERERROR           3
 #define IMIO_READERROR             4
 #define IMIO_VARIANTNOTSUPPORTED   5
+#define IMIO_FILETYPENOTSUPPORTED  6
 
 #include <rtengine.h>
 #include <glibmm.h>
@@ -51,7 +52,7 @@ class ImageIO {
     public:
         static Glib::ustring errorMsg[6];
     	
-        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), exifRoot (NULL), iptc(NULL), loadedProfileData(NULL), loadedProfileLength(0) {}
+        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), loadedProfileData(NULL), loadedProfileLength(0), iptc(NULL), exifRoot (NULL) {}
         
         virtual ~ImageIO ();
 

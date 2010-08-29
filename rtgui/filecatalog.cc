@@ -44,7 +44,7 @@ int _directoryUpdater (void* cat) {
 }
 #endif
 
-FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), coarsePanel(cp), filterPanel(NULL), toolBar(tb) {
+FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
 
     previewLoader.setPreviewLoaderListener (this);
     

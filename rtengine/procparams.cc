@@ -320,11 +320,11 @@ int ProcParams::save (Glib::ustring fname) const {
     }
 
     // save exif change list
-    for (int i=0; i<exif.size(); i++)
+    for (int i=0; i<(int)exif.size(); i++)
         keyFile.set_string ("Exif", exif[i].field, exif[i].value);
 
     // save iptc change list
-    for (int i=0; i<iptc.size(); i++) {
+    for (int i=0; i<(int)iptc.size(); i++) {
         Glib::ArrayHandle<Glib::ustring> values = iptc[i].values;
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
@@ -560,7 +560,7 @@ if (keyFile.has_group ("Equalizer")) {
 if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
     exif.resize (keys.size());
-    for (int i=0; i<keys.size(); i++) {
+    for (int i=0; i<(int)keys.size(); i++) {
         exif[i].field = keys[i];
         exif[i].value = keyFile.get_string ("Exif", keys[i]);
     }
@@ -570,7 +570,7 @@ if (keyFile.has_group ("Exif")) {
 if (keyFile.has_group ("IPTC")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("IPTC");
     iptc.resize (keys.size());
-    for (int i=0; i<keys.size(); i++) {
+    for (int i=0; i<(int)keys.size(); i++) {
         iptc[i].field = keys[i];
         iptc[i].values = keyFile.get_string_list ("IPTC", keys[i]);
     }
@@ -581,6 +581,7 @@ if (keyFile.has_group ("IPTC")) {
     }
     catch (const Glib::Error& e) {
         printf ("-->%s\n", e.what().c_str());
+        return 1;
     }
     catch (...) {
         printf ("-->unknown exception!\n");

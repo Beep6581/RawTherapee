@@ -26,7 +26,7 @@
 
 using namespace rtengine::procparams;
 
-EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHandler(NULL), beforeIpc(NULL) {
+EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;

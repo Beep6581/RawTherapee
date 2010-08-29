@@ -23,11 +23,11 @@ using namespace rtengine;
 
 
 Image8::Image8 () 
-  : width(-1), height(-1), data(NULL) {
+  : data(NULL), width(-1), height(-1) {
 }
 
 Image8::Image8 (int w, int h) 
-  : width(w), height (h), data(NULL) {
+  : data(NULL), width(w), height (h) {
   
     allocate (w, h);
 }

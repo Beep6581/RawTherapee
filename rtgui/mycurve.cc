@@ -54,6 +54,8 @@ MyCurve::~MyCurve () {
         mcih->destroyed = true;
     else
         delete mcih;
+    curve.x.empty();
+    curve.y.empty();
 }
 
 std::vector<double> MyCurve::get_vector (int veclen) {
@@ -134,7 +136,7 @@ void MyCurve::draw (int handle) {
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevInnerHeight != innerHeight || point.size() != innerWidth)
+    if (prevInnerHeight != innerHeight || (int)point.size() != innerWidth)
         interpolate ();
 
     Gtk::StateType state = Gtk::STATE_NORMAL;
@@ -204,10 +206,10 @@ void MyCurve::draw (int handle) {
     if (curve.type==Parametric && activeParam>0 && lpoint.size()>1 && upoint.size()>1) {
         cr->set_source_rgba (0.0, 0.0, 0.0, 0.15);
         cr->move_to (upoint[0].get_x(), upoint[0].get_y());
-        for (int i=1; i<upoint.size(); i++)
+        for (int i=1; i<(int)upoint.size(); i++)
             cr->line_to (upoint[i].get_x(), upoint[i].get_y());
         cr->line_to (lpoint[lpoint.size()-1].get_x(), lpoint[lpoint.size()-1].get_y());
-        for (int i=lpoint.size()-2; i>=0; i--)
+        for (int i=(int)lpoint.size()-2; i>=0; i--)
             cr->line_to (lpoint[i].get_x(), lpoint[i].get_y());
         cr->line_to (upoint[0].get_x(), upoint[0].get_y());
         cr->fill ();
@@ -220,7 +222,7 @@ void MyCurve::draw (int handle) {
         cr->set_dash (ch_ds, 0);
         cr->set_source_rgb (0.0, 0.0, 0.0);
         std::vector<double> points = getPoints();
-        for (int i = 1; i < points.size(); ) {
+        for (int i = 1; i < (int)points.size(); ) {
 			double x = ((innerWidth-1) * points[i++] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
 			double y = innerHeight - ((innerHeight-1) * points[i++] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
 			if (i==3)
@@ -235,13 +237,13 @@ void MyCurve::draw (int handle) {
     // draw curve
     cr->set_source_rgb (0.0, 0.0, 0.0);
     cr->move_to (point[0].get_x(), point[0].get_y());
-    for (int i=1; i<point.size(); i++)
+    for (int i=1; i<(int)point.size(); i++)
         cr->line_to (point[i].get_x(), point[i].get_y());
     cr->stroke ();
 
     // draw bullets
     if (curve.type!=Parametric)
-        for (int i = 0; i < curve.x.size(); ++i) {
+        for (int i = 0; i < (int)curve.x.size(); ++i) {
             cr->set_source_rgb ((i == handle ? 1.0 : 0.0), 0.0, 0.0);
             double x = ((innerWidth-1) * curve.x[i] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
             double y = innerHeight - ((innerHeight-1) * curve.y[i] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
@@ -257,16 +259,10 @@ bool MyCurve::handleEvents (GdkEvent* event) {
 
 	CursorShape new_type = cursor_type;
 	int src, dst;
-	unsigned int x, y;
-	GdkEventMotion *mevent;
 	std::vector<double>::iterator itx, ity;
-	double moveX, moveY;  // translation vector of the point
-
-	//Glib::RefPtr<Gdk::Display> rt_display = Gtk::Widget::get_display();
-	//Glib::RefPtr<Gdk::Screen> rt_screen = Gtk::Widget::get_screen();
 
 	bool retval = false;
-	int num = curve.x.size();
+	int num = (int)curve.x.size();
 
 	/* innerWidth and innerHeight are the size of the graph */
 	innerWidth = get_allocation().get_width() - RADIUS * 2;
@@ -358,7 +354,7 @@ bool MyCurve::handleEvents (GdkEvent* event) {
 					if (dst < src) {
 						curve.x.erase (itx, curve.x.end());
 						curve.y.erase (ity, curve.y.end());
-						if (curve.x.size() <= 0) {
+						if (!curve.x.size()) {
 							curve.x.push_back (0);
 							curve.y.push_back (0);
 							interpolate ();
@@ -545,7 +541,7 @@ void MyCurve::findClosestPoint() {
     closest_point = -1;
 
     if (curve.type!=Parametric) {
-        for (int i = 0; i < curve.x.size(); i++) {
+        for (int i = 0; i < (int)curve.x.size(); i++) {
             double dX = curve.x[i] - clampedX;
             double dY = curve.y[i] - clampedY;
             double currDistX = dX < 0. ? -dX : dX; //abs (dX);
@@ -569,7 +565,7 @@ std::vector<double> MyCurve::getPoints () {
     std::vector<double> result;
     if (curve.type==Parametric) {
         result.push_back ((double)(Parametric));
-        for (int i=0; i<curve.x.size(); i++)
+        for (int i=0; i<(int)curve.x.size(); i++)
             result.push_back (curve.x[i]);
     }
     else {
@@ -581,7 +577,7 @@ std::vector<double> MyCurve::getPoints () {
         else if (curve.type==NURBS)
             result.push_back ((double)(NURBS));
         // then we push all the points coordinate
-        for (int i=0; i<curve.x.size(); i++)
+        for (int i=0; i<(int)curve.x.size(); i++)
             if (curve.x[i]>=0) {
                 result.push_back (curve.x[i]);
                 result.push_back (curve.y[i]);
@@ -598,13 +594,13 @@ void MyCurve::setPoints (const std::vector<double>& p) {
     if (t==Parametric) {
         curve.x.clear ();
         curve.y.clear ();
-        for (int i=1; i<p.size(); i++)
+        for (int i=1; i<(int)p.size(); i++)
             curve.x.push_back (p[ix++]);
     }
     else {
         curve.x.clear ();
         curve.y.clear ();
-        for (int i=0; i<p.size()/2; i++) {
+        for (int i=0; i<(int)p.size()/2; i++) {
             curve.x.push_back (p[ix++]);
             curve.y.push_back (p[ix++]);
         }

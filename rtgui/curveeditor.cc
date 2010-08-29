@@ -24,7 +24,7 @@
 
 extern Glib::ustring argv0;
 
-CurveEditor::CurveEditor () : cl(NULL), activeParamControl(-1), realized(false), curveTypeIx(Linear) {
+CurveEditor::CurveEditor () : cl(NULL), realized(false), curveTypeIx(Linear), activeParamControl(-1) {
 
     Gtk::HBox* tsbox = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* tslab = Gtk::manage (new Gtk::Label (M("CURVEEDITOR_TYPE")));
@@ -247,7 +247,7 @@ void CurveEditor::savePressed () {
         else if (p[ix]==(double)(NURBS))
             f << "NURBS\n";
         ix++;
-        for (int i=0; i<p.size()/2; i++, ix+=2)
+        for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
             f << p[ix] << ' ' << p[ix+1] << std::endl;
         f.close ();
     }
@@ -384,7 +384,7 @@ std::vector<double> CurveEditor::getCurve () {
     else if (curveTypeIx==Spline)
         return customCurve->getPoints ();
     // NURBS (control cage)
-    else if (curveTypeIx==NURBS)
+    else // Default solution, we return the NURBS curve (curveTypeIx==NURBS)
         return NURBSCurve->getPoints ();
 }
 

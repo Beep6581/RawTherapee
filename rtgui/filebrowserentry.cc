@@ -31,7 +31,7 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname) 
-    : ThumbBrowserEntryBase (fname), thumbnail(thm), iatlistener(NULL), state(SNormal), cropgl(NULL) {
+    : ThumbBrowserEntryBase (fname), iatlistener(NULL), cropgl(NULL), state(SNormal), thumbnail(thm) {
 
     feih = new FileBrowserEntryIdleHelper;
     feih->fbentry = this;

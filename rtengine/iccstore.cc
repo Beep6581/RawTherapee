@@ -36,7 +36,7 @@ const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB
 std::vector<std::string> getWorkingProfiles () {
 
     std::vector<std::string> res;
-    for (int i=0; i<sizeof(wpnames)/sizeof(wpnames[0]); i++) 
+    for (unsigned int i=0; i<sizeof(wpnames)/sizeof(wpnames[0]); i++)
         res.push_back (wpnames[i]);
     return res;
 }
@@ -67,7 +67,7 @@ ICCStore::ICCStore () {
         iwMatrices[wpnames[i]] = iwprofiles[i];
     }
     
-    double mat[3][3]={1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0};
+    double mat[3][3]={ {1.0, 0, 0}, {0, 1.0, 0}, {0, 0, 1.0}};
     xyz  = createFromMatrix (mat, false, "XYZ");
     srgb = cmsCreate_sRGBProfile ();
 }

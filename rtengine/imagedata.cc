@@ -321,7 +321,7 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
     IptcDataSet* ds = NULL;
     procparams::IPTCPair ickw;
     ickw.field = "Keywords";
-    while (ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS)) {
+    while ((ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS))) {
         iptc_dataset_get_data (ds, buffer, 2100);
         ickw.values.push_back (safe_locale_to_utf8((char*)buffer));
     }
@@ -329,12 +329,13 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
     ds = NULL;
     procparams::IPTCPair icsc;
     icsc.field = "SupplementalCategories";
-    while (ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY)) {
+    while ((ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY))) {
         iptc_dataset_get_data (ds, buffer, 2100);
         icsc.values.push_back (safe_locale_to_utf8((char*)buffer));
         iptc_dataset_unref (ds);
     }
     iptcc.push_back (icsc);
+    return iptcc;
 }
 
 //------inherited functions--------------//

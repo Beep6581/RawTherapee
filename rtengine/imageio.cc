@@ -772,6 +772,7 @@ int ImageIO::load (Glib::ustring fname) {
     return loadJPEG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".tif"))
     return loadTIFF (fname);
+  else return IMIO_FILETYPENOTSUPPORTED;
 }
 
 int ImageIO::save (Glib::ustring fname) {
@@ -784,5 +785,6 @@ int ImageIO::save (Glib::ustring fname) {
     return saveJPEG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".tif"))
     return saveTIFF (fname);
+  else return IMIO_FILETYPENOTSUPPORTED;
 }
 
