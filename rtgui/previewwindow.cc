@@ -20,7 +20,7 @@
 #include <guiutils.h>
 #include <imagearea.h>
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), isMoving(false),cCropMoving(NULL),cNormal(NULL) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL),cCropMoving(NULL),cNormal(NULL), isMoving(false) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }

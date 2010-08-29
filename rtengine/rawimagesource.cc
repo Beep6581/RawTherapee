@@ -47,7 +47,7 @@ extern const Settings* settings;
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define DIST(a,b) (ABS(a-b))
 
-RawImageSource::RawImageSource () : ImageSource(), plistener(NULL), green(NULL), red(NULL), blue(NULL), cache(NULL), border(4) {
+RawImageSource::RawImageSource () : ImageSource(), plistener(NULL), border(4), cache(NULL), green(NULL), red(NULL), blue(NULL) {
 
     hrmap[0] = NULL;
     hrmap[1] = NULL;
@@ -1127,7 +1127,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
         TMatrix work = iccStore.workingSpaceInverseMatrix (cmp.working);
-        double mat[3][3] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
@@ -1958,7 +1958,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
 ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
 
     int x; int y;
-    int d[9][2] = {0,0, -1,-1, -1,0, -1,1, 0,-1, 0,1, 1,-1, 1,0, 1,1};
+    int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
     

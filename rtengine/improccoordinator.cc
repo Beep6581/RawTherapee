@@ -28,11 +28,10 @@ namespace rtengine {
 extern Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : ipf(&params, true), allocated(false), scale(-1), pW(-1), pH(-1),
-    plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),
-    resultValid(false), awbComputed(false),
-    changeSinceLast(0), updaterRunning(false), 
-    destroying(false) {
+    : awbComputed(false), ipf(&params, true), scale(-1), allocated(false),
+    pW(-1), pH(-1), plistener(NULL), imageListener(NULL),
+    aeListener(NULL), hListener(NULL), resultValid(false),
+    changeSinceLast(0), updaterRunning(false), destroying(false) {
 }
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {

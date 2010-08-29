@@ -43,7 +43,7 @@ template<class T> T** allocArray (int W, int H) {
 }
 
 #define HR_SCALE 2
-StdImageSource::StdImageSource () : ImageSource(), plistener(NULL), img(NULL) {
+StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL) {
 
     hrmap[0] = NULL;
     hrmap[1] = NULL;

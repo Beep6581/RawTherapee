@@ -76,6 +76,8 @@ Curve::~Curve () {
     delete [] x;
     delete [] y;
     delete [] ypp;
+    poly_x.empty();
+    poly_y.empty();
 }
 
 void Curve::spline_cubic_set () {
@@ -159,7 +161,7 @@ void Curve::NURBS_set () {
     sc_length.begin();
 
     // create the polyline with the number of points adapted to the X range of the sub-curve
-    for (int i=0; i < sc_x.size(); i+=3) {
+    for (unsigned int i=0; i < sc_x.size(); i+=3) {
     	// TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
     	int nbr_points = (int)(((double)ppn+N-2) * sc_length[i/3] / total_length) + (i==0 ? 1 : 0);
 
@@ -287,7 +289,7 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 // TODO!!!! can be made much faster!!! Binary search of getVal(double) at each point can be avoided
 
     res.resize (t.size());
-    for (int i=0; i<t.size(); i++)
+    for (unsigned int i=0; i<t.size(); i++)
         res[i] = getVal(t[i]);
 }
 
@@ -359,7 +361,7 @@ void CurveFactory::updateCurve3 (int* curve, int* ohistogram, const std::vector<
         dcurve[i] = val;
     }
     delete tcurve;
-/*            
+/ *
 if (igamma) {
   FILE* f = fopen ("curve.txt","wt");
   for (int i=0; i<65536; i++)
@@ -369,8 +371,7 @@ if (igamma) {
 //    fprintf (f, "%g\t%g\n", i/65535.0, dcurve[i]);
   fclose (f);
 }
-*/
-/*
+* /
     int prev = 0;
     for (int i=1; i<=0xffff-skip; i++) {
         if (i%skip==0) {

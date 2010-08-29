@@ -29,10 +29,10 @@ namespace rtengine {
 extern Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent)
-    : parent(parent), cropAllocated(false),
+    : resizeCrop(NULL), transCrop(NULL), updating(false),
     cropw(-1), croph(-1), trafw(-1), trafh(-1),
-    cropImageListener(NULL), updating(false),   
-    resizeCrop(NULL), transCrop(NULL), borderRequested(32)
+    borderRequested(32), cropAllocated(false),
+    cropImageListener(NULL), parent(parent)
 {
     parent->crops.push_back (this);
 }

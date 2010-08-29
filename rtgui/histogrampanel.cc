@@ -75,7 +75,7 @@ void HistogramPanel::rgbv_toggled () {
 }
 
 HistogramArea::HistogramArea () : 
-      needVal(true), needRed(true), needGreen(true), needBlue(true), oldwidth(-1), valid(false), showFull(true) {
+      valid(false), showFull(true), oldwidth(-1), needVal(true), needRed(true), needGreen(true), needBlue(true) {
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;

@@ -341,7 +341,7 @@ void ToneCurve::setBatchMode (bool batchMode) {
 
 void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, bool contradd) {
 
-    if (!expAdd && expadd || expAdd && !expadd)
+    if ((!expAdd && expadd) || (expAdd && !expadd))
         expcomp->setLimits (-5, 5, 0.01, 0);
     if (!blackAdd && blackadd)
         black->setLimits (0, 16384, 1, 0);

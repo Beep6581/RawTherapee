@@ -21,7 +21,7 @@
 #include <options.h>
 
 RenameDialog::RenameDialog (Gtk::Window* parent) 
-    : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), imageData(NULL), p(parent) {
+    : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(NULL) {
     
     Gtk::Table* names = Gtk::manage (new Gtk::Table (2, 2));
     Gtk::Label* onlab = Gtk::manage (new Gtk::Label (M("FILEBROWSER_CURRENT_NAME")));

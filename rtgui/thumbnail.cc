@@ -33,8 +33,8 @@
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
-    : cachemgr(cm), cfs(*cf), pparamsValid(false), fname(fname), 
-        lastImg(NULL), ref(1), enqueueNumber(0), tpp(NULL), needsReProcessing(true) {
+    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
+      pparamsValid(false), needsReProcessing(true), lastImg(NULL) {
 
     mutex = new Glib::Mutex ();
     cfs.load (getCacheFileName ("data")+".txt");
@@ -44,8 +44,8 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : cachemgr(cm), pparamsValid(false), lastImg(NULL), fname(fname),
-        ref(1), enqueueNumber(0), tpp(NULL), needsReProcessing(true) {
+    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
+      needsReProcessing(true), lastImg(NULL) {
 
     mutex = new Glib::Mutex ();
 
