@@ -260,9 +260,9 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 		selectedDirectory = dir->get_parse_name();
         fileNameList = getFileList ();
 
-        for (int i=0; i<fileNameList.size(); i++) {
+        for (unsigned int i=0; i<fileNameList.size(); i++) {
             Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
-            if (f->get_parse_name() != openfile) // if we opened a file at the beginning dont add it again
+            if (f->get_parse_name() != openfile) // if we opened a file at the beginning don't add it again
                 checkAndAddFile (f);
         }
 
@@ -326,10 +326,10 @@ void FileCatalog::previewReady (FileBrowserEntry* fdn) {
             dirEFS.shutterFrom = cfs->shutter;
         if (cfs->shutter > dirEFS.shutterTo)
             dirEFS.shutterTo = cfs->shutter;
-        if (cfs->iso>0 && cfs->iso < dirEFS.isoFrom)
-            dirEFS.isoFrom = cfs->iso;
-        if (cfs->iso>0 && cfs->iso > dirEFS.isoTo)
-            dirEFS.isoTo = cfs->iso;
+        if (cfs->iso>0 && (int)cfs->iso < dirEFS.isoFrom)
+            dirEFS.isoFrom = (int)cfs->iso;
+        if (cfs->iso>0 && (int)cfs->iso > dirEFS.isoTo)
+            dirEFS.isoTo = (int)cfs->iso;
         if (cfs->focalLen < dirEFS.focalFrom)
             dirEFS.focalFrom = cfs->focalLen;
         if (cfs->focalLen > dirEFS.focalTo)
@@ -423,7 +423,7 @@ void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
     if (enabled && listener!=NULL) {
         previewLoader.stop ();
         thumbImageUpdater.stop ();
-        for (int i=0; i<tmb.size(); i++) {
+        for (unsigned int i=0; i<tmb.size(); i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end())
                 listener->fileSelected (tmb[i]);
             tmb[i]->decreaseRef ();
@@ -453,7 +453,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
     FCOIParams* params = new FCOIParams;
     params->catalog = this;
     params->tmb = tmb;
-    for (int i=0; i<tmb.size(); i++)
+    for (unsigned int i=0; i<tmb.size(); i++)
         tmb[i]->increaseRef ();
     g_idle_add (fcopenimg, params);
 }
@@ -467,7 +467,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
     msd.set_secondary_text(Glib::ustring::compose (M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
 
     if (msd.run()==Gtk::RESPONSE_YES) {
-        for (int i=0; i<tbe.size(); i++) {
+        for (unsigned int i=0; i<tbe.size(); i++) {
             Glib::ustring fname = tbe[i]->filename;
             // remove from browser
             FileBrowserEntry* t = fileBrowser->delEntry (fname);
@@ -492,7 +492,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
         thumbImageUpdater.stop ();
-        for (int i=0; i<tbe.size(); i++) {
+        for (unsigned int i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
             double tmpscale;
@@ -519,7 +519,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
     RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
-    for (int i=0; i<tbe.size(); i++) {
+    for (unsigned int i=0; i<tbe.size(); i++) {
         renameDlg->initName (Glib::path_get_basename (tbe[i]->filename), tbe[i]->thumbnail->getCacheImageData());
 
         Glib::ustring ofname = tbe[i]->filename;
@@ -683,7 +683,7 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 		for (int i=0; i<5; i++) {
 			bool active_now, active_before;
 			active_now = bRank[i]->get_active();
-			active_before = buttons & (1 << i+2);
+			active_before = buttons & (1 << (i+2));
 			if      ( active_now && !active_before) bRank[i]->set_image (*iranked[i]);
 			else if (!active_now &&  active_before) bRank[i]->set_image (*igranked[i]);
 		}
@@ -743,16 +743,16 @@ int FileCatalog::reparseDirectory () {
 	// check if a thumbnailed file has been deleted
 	const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries ();
 	std::vector<Glib::ustring> fileNamesToDel;
-	for (int i=0; i<t.size(); i++) 
+	for (unsigned int i=0; i<t.size(); i++)
 		if (!Glib::file_test (t[i]->filename, Glib::FILE_TEST_EXISTS))
 			fileNamesToDel.push_back (t[i]->filename);
-	for (int i=0; i<fileNamesToDel.size(); i++) {
+	for (unsigned int i=0; i<fileNamesToDel.size(); i++) {
 		delete fileBrowser->delEntry (fileNamesToDel[i]);
 		cacheMgr.deleteEntry (fileNamesToDel[i]);
 	}
 
 	// check if a new file has been added
-	for (int i=0; i<nfileNameList.size(); i++) {
+	for (unsigned int i=0; i<nfileNameList.size(); i++) {
 		bool found = false;
 		for (int j=0; j<fileNameList.size(); j++)
 			if (nfileNameList[i]==fileNameList[j]) {
@@ -799,7 +799,7 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
-        if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+        if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
 						previewLoader.add (DirEntry (file->get_parse_name()));
             previewsToLoad++;
 				}
@@ -817,7 +817,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     if( !info )
     	return;
     int lastdot = info->get_name().find_last_of ('.');
-    if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+    if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
         Thumbnail* tmb = cacheMgr.getEntry (file->get_parse_name());
         if (tmb) {
@@ -837,7 +837,7 @@ void FileCatalog::emptyTrash () {
     
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     std::vector<FileBrowserEntry*> toDel;
-    for (int i=0; i<t.size(); i++)
+    for (unsigned int i=0; i<t.size(); i++)
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             toDel.push_back (((FileBrowserEntry*)t[i]));
     deleteRequested (toDel);
@@ -846,7 +846,7 @@ void FileCatalog::emptyTrash () {
 
 bool FileCatalog::trashIsEmpty () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
-    for (int i=0; i<t.size(); i++)
+    for (unsigned int i=0; i<t.size(); i++)
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             return false;
 

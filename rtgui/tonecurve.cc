@@ -347,9 +347,9 @@ void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, boo
         black->setLimits (0, 16384, 1, 0);
     else if (blackAdd && !blackadd)
         black->setLimits (0, 32768, 1, 0);
-    if (!brAdd && bradd || brAdd && !bradd)
+    if ((!brAdd && bradd) || (brAdd && !bradd))
         brightness->setLimits (-100, 100, 1, 0);
-    if (!contrAdd && contradd || contrAdd && !contradd)
+    if ((!contrAdd && contradd) || (contrAdd && !contradd))
         contrast->setLimits (-100, 100, 1, 0);
     
     expAdd = expadd;

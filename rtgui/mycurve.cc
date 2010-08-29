@@ -68,7 +68,7 @@ std::vector<double> MyCurve::get_vector (int veclen) {
         double prev =- 1.0;
         int active = 0;
         int firstact = -1;
-        for (int i = 0; i < curve.x.size(); ++i)
+        for (int i = 0; i < (int)curve.x.size(); ++i)
             if (curve.x[i] > prev) {
                 if (firstact < 0)
                   firstact = i;
@@ -154,8 +154,8 @@ void MyCurve::draw (int handle) {
 
     // histogram in the background
     if (bghistvalid) {
-        // find heighest bin
-        int histheight = 0;
+        // find highest bin
+        unsigned int histheight = 0;
         for (int i=0; i<256; i++)
             if (bghist[i]>histheight)
 	            histheight = bghist[i];
@@ -165,7 +165,7 @@ void MyCurve::draw (int handle) {
         cr->move_to (RADIUS, innerHeight-1+RADIUS);
         cr->set_source_rgb (0.75, 0.75, 0.75);
         for (int i=0; i<256; i++) {
-            double val = bghist[i] * (double)(innerHeight-2) / histheight;
+            double val = bghist[i] * (double)(innerHeight-2) / (double)histheight;
             if (val>innerHeight-1)
                 val = innerHeight-1;
       	    if (i>0)
@@ -275,204 +275,206 @@ bool MyCurve::handleEvents (GdkEvent* event) {
 		return false;
 
 	switch (event->type) {
-		case Gdk::CONFIGURE:
-			if (pixmap)
-				pixmap.clear ();
+	case Gdk::CONFIGURE:
+		if (pixmap)
+			pixmap.clear ();
+		retval = true;
+		break;
 
-		case Gdk::EXPOSE:
-			if (!pixmap) {
-				pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
-				interpolate ();
-			}
-			draw (lit_point);
-			break;
+	case Gdk::EXPOSE:
+		if (!pixmap) {
+			pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
+			interpolate ();
+		}
+		draw (lit_point);
+		retval = true;
+		break;
 
-		case Gdk::BUTTON_PRESS:
-			if (curve.type!=Parametric) {
-				if (event->button.button == 1) {
-					buttonPressed = true;
-					add_modal_grab ();
+	case Gdk::BUTTON_PRESS:
+		if (curve.type!=Parametric) {
+			if (event->button.button == 1) {
+				buttonPressed = true;
+				add_modal_grab ();
 
-					// get the pointer position
-					getCursorPosition(event);
-					findClosestPoint();
+				// get the pointer position
+				getCursorPosition(event);
+				findClosestPoint();
 
-					new_type = CSMove;
-					if (distanceX > minDistanceX) {
-						/* insert a new control point */
-						if (num > 0) {
-							if (clampedX > curve.x[closest_point])
-								++closest_point;
-						}
-						itx = curve.x.begin();
-						ity = curve.y.begin();
-						for (int i=0; i<closest_point; i++) { itx++; ity++; }
-						curve.x.insert (itx, 0);
-						curve.y.insert (ity, 0);
-						num++;
-
-						// the graph is refreshed only if a new point is created (snaped to a pixel)
-						curve.x[closest_point] = clampedX;
-						curve.y[closest_point] = clampedY;
-
-						interpolate ();
-						draw (closest_point);
-						notifyListener ();
+				new_type = CSMove;
+				if (distanceX > minDistanceX) {
+					/* insert a new control point */
+					if (num > 0) {
+						if (clampedX > curve.x[closest_point])
+							++closest_point;
 					}
-					grab_point = closest_point;
-					lit_point = closest_point;
-					ugpX = curve.x[closest_point];
-					ugpY = curve.y[closest_point];
-				}
-			}
-			retval = true;
-			break;
-
-		case Gdk::BUTTON_RELEASE:
-			if (curve.type!=Parametric) {
-				if (event->button.button == 1) {
-					buttonPressed = false;
-				}
-				if (!buttonPressed) {
-					/*  get the pointer position  */
-					getCursorPosition(event);
-					findClosestPoint();
-
-					remove_modal_grab ();
-					int previous_lit_point = lit_point;
-					/* delete inactive points: */
 					itx = curve.x.begin();
 					ity = curve.y.begin();
-					for (src = dst = 0; src < num; ++src)
-						if (curve.x[src] >= 0.0) {
-							curve.x[dst] = curve.x[src];
-							curve.y[dst] = curve.y[src];
-							++dst;
-							++itx;
-							++ity;
-						}
-					if (dst < src) {
-						curve.x.erase (itx, curve.x.end());
-						curve.y.erase (ity, curve.y.end());
-						if (!curve.x.size()) {
-							curve.x.push_back (0);
-							curve.y.push_back (0);
-							interpolate ();
-							draw (lit_point);
-						}
+					for (int i=0; i<closest_point; i++) { itx++; ity++; }
+					curve.x.insert (itx, 0);
+					curve.y.insert (ity, 0);
+					num++;
+
+					// the graph is refreshed only if a new point is created (snaped to a pixel)
+					curve.x[closest_point] = clampedX;
+					curve.y[closest_point] = clampedY;
+
+					interpolate ();
+					draw (closest_point);
+					notifyListener ();
+				}
+				grab_point = closest_point;
+				lit_point = closest_point;
+				ugpX = curve.x[closest_point];
+				ugpY = curve.y[closest_point];
+			}
+			if (buttonPressed) retval = true;
+		}
+		break;
+
+	case Gdk::BUTTON_RELEASE:
+		if (curve.type!=Parametric) {
+			if (buttonPressed && event->button.button == 1) {
+				buttonPressed = false;
+				/*  get the pointer position  */
+				getCursorPosition(event);
+				findClosestPoint();
+
+				remove_modal_grab ();
+				int previous_lit_point = lit_point;
+				/* delete inactive points: */
+				itx = curve.x.begin();
+				ity = curve.y.begin();
+				for (src = dst = 0; src < num; ++src)
+					if (curve.x[src] >= 0.0) {
+						curve.x[dst] = curve.x[src];
+						curve.y[dst] = curve.y[src];
+						++dst;
+						++itx;
+						++ity;
 					}
-					if (distanceX <= minDistanceX) {
-						new_type = CSMove;
-						lit_point = closest_point;
-					}
-					else {
-						new_type = CSPlus;
-						lit_point = -1;
-					}
-					if (lit_point != previous_lit_point)
+				if (dst < src) {
+					curve.x.erase (itx, curve.x.end());
+					curve.y.erase (ity, curve.y.end());
+					if (!curve.x.size()) {
+						curve.x.push_back (0);
+						curve.y.push_back (0);
+						interpolate ();
 						draw (lit_point);
-					grab_point = -1;
-					retval = true;
+					}
+				}
+				if (distanceX <= minDistanceX) {
+					new_type = CSMove;
+					lit_point = closest_point;
+				}
+				else {
+					new_type = CSPlus;
+					lit_point = -1;
+				}
+				if (lit_point != previous_lit_point)
+					draw (lit_point);
+				grab_point = -1;
+				retval = true;
+				notifyListener ();
+			}
+		}
+		break;
+
+	case Gdk::LEAVE_NOTIFY:
+		// Pointer can LEAVE even when dragging the point, so we don't modify the cursor in this case
+		// The cursor will have to LEAVE another time after the drag...
+		if (!buttonPressed)
+			if (grab_point == -1) {
+				new_type = CSArrow;
+				lit_point = -1;
+				draw (lit_point);
+			}
+		retval = true;
+		break;
+
+	case Gdk::MOTION_NOTIFY:
+		if (curve.type == Linear || curve.type == Spline || curve.type == NURBS) {
+			// get the pointer position
+			getCursorPosition(event);
+
+			if (grab_point == -1) {
+				// there's no point currently being moved
+				int previous_lit_point = lit_point;
+				findClosestPoint();
+				if (distanceX <= minDistanceX) {
+					new_type = CSMove;
+					lit_point = closest_point;
+				}
+				else {
+					new_type = CSPlus;
+					lit_point = -1;
+				}
+				if (lit_point != previous_lit_point)
+					draw (lit_point);
+			}
+			else {
+				// a point is being moved
+
+				// bounds of the grabbed point
+				double leftBound         = (grab_point == 0    ) ? 0. : curve.x[grab_point-1];
+				double rightBound        = (grab_point == num-1) ? 1. : curve.x[grab_point+1];
+				double const bottomBound = 0.;
+				double const topBound    = 1.;
+
+				double leftDeletionBound   = leftBound   - minDistanceX;
+				double rightDeletionBound  = rightBound  + minDistanceX;
+				double bottomDeletionBound = bottomBound - minDistanceY;
+				double topDeletionBound    = topBound    + minDistanceY;
+
+				// we memorize the previous position of the point, for optimization purpose
+				double prevPosX = curve.x[grab_point];
+				double prevPosY = curve.y[grab_point];
+
+				// we memorize the previous position of the point, for optimization purpose
+				ugpX += deltaX;
+				ugpY += deltaY;
+
+				// handling limitations along X axis
+				if (ugpX >= rightDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
+					curve.x[grab_point] = -1.;
+				}
+				else if (ugpX <= leftDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
+					curve.x[grab_point] = -1.;
+				}
+				else
+					// nextPosX is in bounds
+					curve.x[grab_point] = CLAMP(ugpX, leftBound, rightBound);
+
+				// Handling limitations along Y axis
+				if (ugpY >= topDeletionBound && grab_point != 0 && grab_point != num-1) {
+					curve.x[grab_point] = -1.;
+				}
+				else if (ugpY <= bottomDeletionBound && grab_point != 0 && grab_point != num-1) {
+					curve.x[grab_point] = -1.;
+				}
+				else
+					// nextPosY is in the bounds
+					curve.y[grab_point] = CLAMP(ugpY, 0.0, 1.0);
+
+				if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
+					// we recalculate the curve only if we have to
+					interpolate ();
+					draw (lit_point);
 					notifyListener ();
 				}
 			}
-			break;
+		}
 
-		case Gdk::LEAVE_NOTIFY:
-			// Pointer can LEAVE even when dragging the point, so we don't modify the cursor in this case
-			// The cursor will have to LEAVE another time after the drag...
-			if (!buttonPressed)
-				if (grab_point == -1) {
-					new_type = CSArrow;
-					lit_point = -1;
-					draw (lit_point);
-				}
-			break;
+		retval = true;
+		break;
 
-		case Gdk::MOTION_NOTIFY:
-			if (curve.type == Linear || curve.type == Spline || curve.type == NURBS) {
-				// get the pointer position
-				getCursorPosition(event);
-
-				if (grab_point == -1) {
-					// there's no point currently being moved
-					int previous_lit_point = lit_point;
-					findClosestPoint();
-					if (distanceX <= minDistanceX) {
-						new_type = CSMove;
-						lit_point = closest_point;
-					}
-					else {
-						new_type = CSPlus;
-						lit_point = -1;
-					}
-					if (lit_point != previous_lit_point)
-						draw (lit_point);
-				}
-				else {
-					// a point is being moved
-
-					// bounds of the grabbed point
-					double leftBound         = (grab_point == 0    ) ? 0. : curve.x[grab_point-1];
-					double rightBound        = (grab_point == num-1) ? 1. : curve.x[grab_point+1];
-					double const bottomBound = 0.;
-					double const topBound    = 1.;
-
-					double leftDeletionBound   = leftBound   - minDistanceX;
-					double rightDeletionBound  = rightBound  + minDistanceX;
-					double bottomDeletionBound = bottomBound - minDistanceY;
-					double topDeletionBound    = topBound    + minDistanceY;
-
-					// we memorize the previous position of the point, for optimization purpose
-					double prevPosX = curve.x[grab_point];
-					double prevPosY = curve.y[grab_point];
-
-					// we memorize the previous position of the point, for optimization purpose
-					ugpX += deltaX;
-					ugpY += deltaY;
-
-					// handling limitations along X axis
-					if (ugpX >= rightDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
-						curve.x[grab_point] = -1.;
-					}
-					else if (ugpX <= leftDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
-						curve.x[grab_point] = -1.;
-					}
-					else
-						// nextPosX is in bounds
-						curve.x[grab_point] = CLAMP(ugpX, leftBound, rightBound);
-
-					// Handling limitations along Y axis
-					if (ugpY >= topDeletionBound && grab_point != 0 && grab_point != num-1) {
-						curve.x[grab_point] = -1.;
-					}
-					else if (ugpY <= bottomDeletionBound && grab_point != 0 && grab_point != num-1) {
-						curve.x[grab_point] = -1.;
-					}
-					else
-						// nextPosY is in the bounds
-						curve.y[grab_point] = CLAMP(ugpY, 0.0, 1.0);
-
-					if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
-						// we recalculate the curve only if we have to
-						interpolate ();
-						draw (lit_point);
-						notifyListener ();
-					}
-				}
-    	    }
-
-        retval = true;
-        break;
-
-    default:
-      break;
-  }
-  if (new_type != cursor_type) {
-	cursor_type = new_type;
-	cursorManager.setCursor(cursor_type);
-  }
-  return retval;
+	default:
+		break;
+	}
+	if (new_type != cursor_type) {
+		cursor_type = new_type;
+		cursorManager.setCursor(cursor_type);
+	}
+	return retval;
 }
 
 void MyCurve::getCursorPosition(GdkEvent* event) {

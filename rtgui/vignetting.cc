@@ -77,7 +77,7 @@ void Vignetting::adjusterChanged (Adjuster* a, double newval) {
 
 void Vignetting::setAdjusterBehavior (bool bvadd) {
 
-    if (!vigAdd && bvadd || vigAdd && !bvadd)
+    if ((!vigAdd && bvadd) || (vigAdd && !bvadd))
         amount->setLimits (-100, 100, 1, 0);
     
     vigAdd = bvadd;
