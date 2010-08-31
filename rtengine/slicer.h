@@ -23,8 +23,6 @@
 //maximum number of pixel per block
 #define PIXELS_PER_BLOCK	250000
 
-namespace rtengine {
-
 /*
  * Used to specify a subregion of an image and to specify a cell in this subregion
  */
@@ -56,10 +54,8 @@ class Slicer {
 	public:
 		unsigned int blockNumber;		// number of block for the sub-region
 		unsigned int maxPixelNumber;	// number of pixel of the biggest block (for memory allocation purpose)
-		Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegion, unsigned int pixels, const char* nomFichier);
+		Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegion, unsigned int pixels);
 		void get_block(unsigned int blockId, Block *block);
-};
-
 };
 
 #endif
