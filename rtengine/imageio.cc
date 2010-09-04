@@ -690,21 +690,22 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 	
         }
 				
-				TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee 3");
+        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee 3");
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
+        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, height);
         TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
         TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
         TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-        TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_LZW);
-        if (!uncompressed) 
-					TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
-	
-        if (profileData) 
-            TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);   
+        TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_DEFLATE);
+        if (!uncompressed)
+		    TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_NONE);
+
+        if (profileData)
+            TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
 
         for (int row = 0; row < height; row++) {
             getScanline (row, linebuffer, bps);
