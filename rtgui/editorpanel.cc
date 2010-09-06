@@ -26,7 +26,7 @@
 
 using namespace rtengine::procparams;
 
-EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
+EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -186,8 +186,22 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
        hpanedl->set_position (options.historyPanelWidth);
     }
 
+    ipc = NULL;
+    btpCoordinator = new BatchToolPanelCoordinator (filePanel);
+    fCatalog =  new FileCatalog (btpCoordinator->coarse, btpCoordinator->getToolBar()); //,  filePanel->fileCatalog->fileBrowser);
+    filePanel->dirBrowser->addDirSelectionListener (fCatalog);
+   // fCatalog->setFilterPanel (filePanel->filterPanel);
+    fCatalog->setImageAreaToolListener (btpCoordinator);
+    fCatalog->setFileSelectionListener (filePanel);
+    fCatalog->setFileSelectionChangeListener (btpCoordinator);
+    fCatalog->setEnabled(true);
+
+    Gtk::VPaned * viewpaned = Gtk::manage (new Gtk::VPaned());
+    viewpaned->pack1(*fCatalog, false, true);
+    viewpaned->pack2(*editbox, true, true);
+
     Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
-    vbfr->add (*editbox);
+    vbfr->add (*viewpaned);
     hpanedl->pack2(*vbfr, true, true);
 
     hpanedr->pack1(*hpanedl, true, true);
@@ -276,6 +290,7 @@ void EditorPanel::on_realize () {
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
+    if (ipc) close();
     // initialize everything
     openThm = tmb;
     openThm->increaseRef ();
@@ -311,23 +326,54 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     openThm->addThumbnailListener (this);
     info_toggled ();
+    
+    beforeAfterToggled();
+    beforeAfterToggled();
+
+    Gtk::Allocation r;
+    iarea->imageArea->on_resized(r);
+    //iarea->show_all();
+    //hpanedl->show_all();
+    //show_all();
+
 }
 
 void EditorPanel::close () {
-
-    saveProfile ();
-
-    // close image processor and the current thumbnail
-    tpc->closeImage ();    // this call stops image processing
-    tpc->writeOptions ();
-
+    
     if (ipc)
-        rtengine::StagedImageProcessor::destroy (ipc);
-    if (beforeIpc)
-        rtengine::StagedImageProcessor::destroy (beforeIpc);
+    {
+        saveProfile ();
+        // close image processor and the current thumbnail
+        tpc->closeImage ();    // this call stops image processing
+        tpc->writeOptions ();
 
-    openThm->removeThumbnailListener (this);
-    openThm->decreaseRef ();
+        if (ipc)
+            ipc->setPreviewImageListener (NULL);
+        
+        if (beforeIpc)
+            beforeIpc->setPreviewImageListener (NULL);
+
+        delete previewHandler;
+        previewHandler= NULL;
+//        delete beforePreviewHandler;
+//        beforePreviewHandler = NULL;
+
+        delete iarea->imageArea->mainCropWindow;
+        iarea->imageArea->mainCropWindow = NULL;
+
+        rtengine::StagedImageProcessor::destroy (ipc);          
+        ipc = NULL;
+       
+        iarea->imageArea->setPreviewHandler (NULL);
+        iarea->imageArea->setImProcCoordinator (NULL);
+        navigator->previewWindow->setPreviewHandler (NULL);
+  //      navigator->previewWindow->setImageArea (NULL);
+
+        openThm->removeThumbnailListener (this);
+        openThm->decreaseRef ();
+
+
+    }    
 }
 
 void EditorPanel::saveProfile () {
@@ -832,8 +878,12 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveOptions () {
 
+    close();
     options.historyPanelWidth = hpanedl->get_position ();
     options.toolPanelWidth = vboxright->get_width ();
+    if (options.startupDir==STARTUPDIR_LAST && fCatalog->lastSelectedDir ()!="")
+        options.startupPath = fCatalog->lastSelectedDir ();
+    fCatalog->closeDir ();
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {

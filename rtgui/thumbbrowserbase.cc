@@ -138,11 +138,11 @@ void ThumbBrowserBase::arrangeFiles () {
     if (arrangement==TB_Horizontal) {            
 
         int numOfRows = 1;
-        if (rowHeight>0) {
-            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
-            if (numOfRows<1)
-                numOfRows = 1;
-        }
+//        if (rowHeight>0) {
+//            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
+//            if (numOfRows<1)
+//                numOfRows = 1;
+//        }
 
         int ct = 0;
         int currx = 0; int curry = 0;
@@ -502,7 +502,7 @@ void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles
     
 void ThumbBrowserBase::setArrangement (Arrangement a) {
 
-    arrangement = a;
+    arrangement = a;    
     redraw ();
 }
 

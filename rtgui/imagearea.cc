@@ -45,6 +45,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );
 
     dirty = false;
+    ipc = NULL;
 }
 
 void ImageArea::on_realize()
