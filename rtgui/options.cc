@@ -90,6 +90,7 @@ void Options::setDefaults () {
     maxCacheEntries = 10000;
     thumbnailFormat = FT_Custom16;
     thumbInterp = 1;
+    autoSuffix = false;
     saveParamsFile = false;
     saveParamsCache = true;
     paramsLoadLocation = PLL_Cache;
@@ -198,6 +199,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "Path"))             savePathTemplate           = keyFile.get_string ("Output", "Path");
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
     if (keyFile.has_key ("Output", "PathFolder"))       savePathFolder             = keyFile.get_string ("Output", "PathFolder");
+    if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 }
@@ -357,6 +359,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
     keyFile.set_string ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string ("Output", "PathFolder", savePathFolder);
+    keyFile.set_boolean("Output", "AutoSuffix", autoSuffix);
     keyFile.set_boolean("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string ("Output", "LastSaveAsPath", lastSaveAsPath);
 
