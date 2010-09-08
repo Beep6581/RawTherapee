@@ -24,7 +24,7 @@
 //
 ////////////////////////////////////////////////////////////////
 
-
+using namespace rtengine;
 
 void RawImageSource::amaze_demosaic_RT() {  
 

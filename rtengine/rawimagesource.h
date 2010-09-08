@@ -150,35 +150,36 @@ class RawImageSource : public ImageSource {
 		void CA_correct_RT		();
 		void cfaCleanFromList( const std::list<badPix> &bpList );
 		void cfa_clean (float thresh);//Emil's hot/dead pixel filter
-	void ddct8x8s(int isgn, float **a);
+		void ddct8x8s(int isgn, float **a);
 
 		void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
 		void green_equilibrate		(float greenthresh);//Emil's green equilibration
 
-	    void    nodemosaic      ();
-        void    eahd_demosaic   ();
-        void    hphd_demosaic   ();
-        void    vng4_demosaic   ();
-        void    ppg_demosaic();
-		void	amaze_demosaic_RT	();//Emil's code for AMaZE
-        void    dcb_demosaic(int iterations, int dcb_enhance);
-        void    ahd_demosaic();
-	void	border_interpolate(int border, ushort (*image)[4]);
-	void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
-	void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
-	void fill_border( ushort (*cache )[4], int border, int x0, int y0);
-	void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
-	void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
-	void dcb_color(ushort (*image)[4], int x0, int y0);
-	void dcb_hid2(ushort (*image)[4], int x0, int y0);
-	void dcb_map(ushort (*image)[4], int x0, int y0);
-	void dcb_correction(ushort (*image)[4], int x0, int y0);
-	void dcb_pp(ushort (*image)[4], int x0, int y0);
-	void dcb_correction2(ushort (*image)[4], int x0, int y0);
-	void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
-	void dcb_refinement(ushort (*image)[4], int x0, int y0);
-	void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
+	    void nodemosaic();
+        void eahd_demosaic();
+        void hphd_demosaic();
+        void vng4_demosaic();
+        void ppg_demosaic();
+		void amaze_demosaic_RT();//Emil's code for AMaZE
+		void fast_demo();//Emil's code for fast demosaicing
+        void dcb_demosaic(int iterations, int dcb_enhance);
+        void ahd_demosaic();
+		void border_interpolate(int border, ushort (*image)[4]);
+		void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
+		void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
+		void fill_border( ushort (*cache )[4], int border, int x0, int y0);
+		void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
+		void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
+		void dcb_color(ushort (*image)[4], int x0, int y0);
+		void dcb_hid2(ushort (*image)[4], int x0, int y0);
+		void dcb_map(ushort (*image)[4], int x0, int y0);
+		void dcb_correction(ushort (*image)[4], int x0, int y0);
+		void dcb_pp(ushort (*image)[4], int x0, int y0);
+		void dcb_correction2(ushort (*image)[4], int x0, int y0);
+		void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
+		void dcb_refinement(ushort (*image)[4], int x0, int y0);
+		void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
         void    transLine   (unsigned short* red, unsigned short* green, unsigned short* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
         void    hflip       (Image16* im);

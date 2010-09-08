@@ -318,7 +318,7 @@ class EqualizerParams {
 class RAWParams {
 
     public:
-		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,
+		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,
 					numMethods }; // This MUST be the last enum
 		static const char *methodstring[numMethods];
 
