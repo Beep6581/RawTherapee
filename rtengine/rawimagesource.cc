@@ -908,8 +908,8 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 void RawImageSource::demosaic(const RAWParams &raw)
 {
     if (ri->filters) {
-    	//MyTime t1,t2;
-    	//t1.set();
+    	MyTime t1,t2;
+    	t1.set();
         if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
             hphd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
@@ -922,10 +922,12 @@ void RawImageSource::demosaic(const RAWParams &raw)
             dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance? 1:0);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
             eahd_demosaic ();
+        else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
+            fast_demo ();
         else
-        	nodemosaic();
-        //t2.set();
-        //printf("Demosaicing:%d usec\n",t2.etime(t1));
+        	nodemosaic();	// TODO: Should we use "fast" instead of nodemosaic ?
+        t2.set();
+        printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
@@ -3309,6 +3311,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's CA auto correction
 #include "green_equil_RT.cc"//Emil's green channel equilibration
+#include "fast_demo.cc"//Fast demosaic
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
