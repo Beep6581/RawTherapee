@@ -327,8 +327,11 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     openThm->addThumbnailListener (this);
     info_toggled ();
     
-    beforeAfterToggled();
-    beforeAfterToggled();
+    if (beforeIarea)
+    {
+        beforeAfterToggled();
+        beforeAfterToggled();
+    }
 
     Gtk::Allocation r;
     iarea->imageArea->on_resized(r);
