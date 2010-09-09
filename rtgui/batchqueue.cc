@@ -197,7 +197,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     if (img && fname!="") {
         int err = 0;
         if (saveFormat.format=="tif")
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits);
+            err = img->saveAsTIFF (fname, saveFormat.tiffBits,saveFormat.tiffUncompressed);
         else if (saveFormat.format=="png")
             err = img->saveAsPNG (fname, saveFormat.pngCompression, saveFormat.pngBits);
         else if (saveFormat.format=="jpg")
