@@ -222,7 +222,7 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl) {
 void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl) {
 
     if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, false, true, Glib::THREAD_PRIORITY_LOW);
 }
 
 }

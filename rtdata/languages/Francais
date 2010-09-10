@@ -723,3 +723,6 @@ MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 
+###
+
+SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà

@@ -712,3 +712,13 @@ HISTOGRAM_BUTTON_L;L
 ###
 
 CURVEEDITOR_NURBS;Control cage
+
+###
+
+MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+
+###
+
+SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists

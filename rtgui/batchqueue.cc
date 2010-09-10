@@ -197,14 +197,17 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     if (img && fname!="") {
         int err = 0;
         if (saveFormat.format=="tif")
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits);
+            err = img->saveAsTIFF (fname, saveFormat.tiffBits,saveFormat.tiffUncompressed);
         else if (saveFormat.format=="png")
             err = img->saveAsPNG (fname, saveFormat.pngCompression, saveFormat.pngBits);
         else if (saveFormat.format=="jpg")
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality);
         img->free ();
         if (!err && saveFormat.saveParams)
-            processing->params.save (removeExtension(fname) + paramFileExtension);
+			// We keep the extension to avoid overwriting the profile when we have
+			// the same output filename with different extension
+            //processing->params.save (removeExtension(fname) + paramFileExtension);
+            processing->params.save (fname + paramFileExtension);
         if (processing->thumbnail) {
             processing->thumbnail->imageDeveloped ();
             processing->thumbnail->imageRemovedFromQueue ();

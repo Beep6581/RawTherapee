@@ -6099,7 +6099,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "Canon EOS", 0, 0,
 	{ 8197,-2000,-1118,-6714,14335,2592,-2536,3178,8266 } },
     { "Canon PowerShot A530", 0, 0,
-	{ 0 } },	/* don't want the A5 matrix */	
+	{ 0 } },	/* don't want the A5 matrix */
     { "Canon PowerShot A50", 0, 0,
 	{ -5300,9846,1776,3436,684,3939,-5540,9879,6200,-1404,11175,217 } },
     { "Canon PowerShot A5", 0, 0,
@@ -8937,7 +8937,7 @@ dcrMutex->lock ();
 
   ifname = fname;//strdup (fname);
   image = NULL;
-  
+
   exif_base = -1;
   ciff_base = -1;
   ciff_len = -1;
@@ -9012,23 +9012,23 @@ dcrMutex->lock ();
   if (filters) {
     ri->allocation = (short unsigned int*)calloc(height*width, sizeof(unsigned short));
     ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
-    for (int i=0; i<height; i++) 
+    for (int i=0; i<height; i++)
         ri->data[i] = ri->allocation + i*width;
-    for (int row = 0; row < height; row++) 
-      for (int col = 0; col < width; col++) 
+    for (int row = 0; row < height; row++)
+      for (int col = 0; col < width; col++)
           if (ISGREEN(ri,row,col))
               ri->data[row][col] = image[row*width+col][1];
           else if (ISRED(ri,row,col))
               ri->data[row][col] = image[row*width+col][0];
-          else 
+          else
               ri->data[row][col] = image[row*width+col][2];
   }
   else {
     ri->allocation = (short unsigned int*)calloc(3*height*width, sizeof(unsigned short));
     ri->data = (unsigned short**)calloc(height, sizeof(unsigned short*));
-    for (int i=0; i<height; i++) 
+    for (int i=0; i<height; i++)
         ri->data[i] = ri->allocation + 3*i*width;
-    for (int row = 0; row < height; row++) 
+    for (int row = 0; row < height; row++)
       for (int col = 0; col < width; col++) {
           ri->data[row][3*col+0] = image[row*width+col][0];
           ri->data[row][3*col+1] = image[row*width+col][1];
@@ -9079,7 +9079,7 @@ dcrMutex->lock ();
   exif_base = -1;
   ciff_base = -1;
   ciff_len = -1;
-  
+
   half_size = 1;
   bright = 1.0;
   verbose = settings->verbose;
@@ -9165,8 +9165,8 @@ t1.set ();
       fclose (ifp);
       dcrMutex->unlock ();
       return NULL;
-    }   
-    
+    }
+
     use_camera_wb = 0;
     highlight = 1;
     half_size = 0;
@@ -9180,7 +9180,7 @@ t1.set ();
     }
 
 t2.set();
-  
+
     iheight = ::height;
     iwidth  = ::width;
 
@@ -9193,7 +9193,7 @@ t2.set();
     if (zero_is_bad) remove_zeroes();
 
   rtengine::Thumbnail* tpp = new rtengine::Thumbnail;
-  
+
     tpp->isRaw = true;
     tpp->embProfileLength = 0;
     if (profile_length) {
@@ -9207,12 +9207,12 @@ t2.set();
         tpp->embProfile = NULL;
         tpp->embProfileData = NULL;
     }
-        
+
     fclose(ifp);
     tpp->redMultiplier = pre_mul[0];
     tpp->greenMultiplier = pre_mul[1];
     tpp->blueMultiplier = pre_mul[2];
-  
+
 t3.set ();
 
     scale_colors();
@@ -9221,13 +9221,13 @@ t3.set ();
     unsigned filter = filters;
     int firstgreen = 1;
     // locate first green location in the first row
-    while (!FISGREEN(filter,1,firstgreen)) 
+    while (!FISGREEN(filter,1,firstgreen))
         firstgreen++;
 
     int skip = 1;
     if (fixwh==1) // fix height, scale width
         skip = (::height-firstgreen-1) / h;
-    else 
+    else
         skip = (::width-firstgreen-1) / w;
     if (skip%2)
         skip--;
@@ -9237,7 +9237,7 @@ t3.set ();
     int hskip = skip, vskip = skip;
     if (!strcmp (model, "D1X"))
         hskip *=2;
-        
+
     rml.exifBase = exif_base;
     rml.ciffBase = ciff_base;
     rml.ciffLength = ciff_len;
@@ -9245,7 +9245,7 @@ t3.set ();
     tpp->camwbGreen = tpp->greenMultiplier / pre_mul[1];
     tpp->camwbBlue = tpp->blueMultiplier / pre_mul[2];
 
-    tpp->defGain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);  
+    tpp->defGain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
     tpp->gammaCorrected = true;
 
     int ix = 0;
@@ -9272,7 +9272,7 @@ t3.set ();
                 tmpImg->g[y][x] = g;
                 tmpImg->b[y][x] = b;
             }
-        }       
+        }
     }
     else {
         for (int row=1, y=0; row< ::height-1 && y<tmph; row+=vskip, y++) {
@@ -9283,9 +9283,9 @@ t3.set ();
                 tmpImg->g[y][x] = image[ofs][1];
                 tmpImg->b[y][x] = image[ofs][2];
             }
-        }       
+        }
     }
-        
+
     if (fuji_width) {
         int fw = fuji_width / hskip;
         double step = sqrt(0.5);
@@ -9298,7 +9298,7 @@ t3.set ();
             for (int col=0; col < wide; col++) {
                 unsigned ur = r = fw + (row-col)*step;
                 unsigned uc = c = (row+col)*step;
-                if (ur > tmph-2 || uc > tmpw-2) 
+                if (ur > tmph-2 || uc > tmpw-2)
                     continue;
                 double fr = r - ur;
                 double fc = c - uc;
@@ -9311,22 +9311,22 @@ t3.set ();
         delete tmpImg;
         tmpImg = fImg;
     }
-    
-    
+
+
     if (fixwh==1) // fix height, scale width
         w = tmpw * h / tmph;
     else
         h = tmph * w / tmpw;
-        
+
     tpp->thumbImg = tmpImg->resize (w, h, TI_Bilinear);
     delete tmpImg;
 
     if (fuji_width)
         tpp->scale = (double)(::height - fuji_width) / sqrt(0.5) / h;
     else
-        tpp->scale = (double)::height / h;      
-    
-t4.set ();  
+        tpp->scale = (double)::height / h;
+
+t4.set ();
 
     // generate histogram for auto exposure
     tpp->aeHistCompression = 3;
@@ -9348,7 +9348,7 @@ t4.set ();
             start = 8;
             end = ::width-8;
         }
-        for (int j=start; j<end; j++) 
+        for (int j=start; j<end; j++)
             if (FISGREEN(filter,i,j))
                 tpp->aeHistogram[image[i* ::width+j][1]>>tpp->aeHistCompression]+=gadd;
             else if (FISRED(filter,i,j))
@@ -9356,7 +9356,7 @@ t4.set ();
             else if (FISBLUE(filter,i,j))
                 tpp->aeHistogram[image[i* ::width+j][2]>>tpp->aeHistCompression]+=badd;
     }
-                
+
 t5.set ();
 
     // generate autoWB
@@ -9376,7 +9376,7 @@ t5.set ();
             start = 32;
             end = ::width-32;
         }
-        for (int j=start; j<end; j++) {            
+        for (int j=start; j<end; j++) {
             if (FISGREEN(filter,i,j)) {
                 double d = tpp->defGain * image[i* ::width+j][1];
                 if (d>64000)
@@ -9404,7 +9404,7 @@ t5.set ();
     double reds   = pow (avg_r/rn, 1.0/6.0) * tpp->camwbRed;
     double greens = pow (avg_g/gn, 1.0/6.0) * tpp->camwbGreen;
     double blues  = pow (avg_b/bn, 1.0/6.0) * tpp->camwbBlue;
-    
+
     double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
     double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
     double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
@@ -9413,7 +9413,7 @@ t5.set ();
 
 t6.set ();
 
-if (settings->verbose) printf ("0: %d, 1: %d, 2: %d, 3: %d, 4: %d, 5: %d All: %d\n", t1.etime(t0), t2.etime(t1), t3.etime(t2), t4.etime(t3), t5.etime(t4), t6.etime(t5), t6.etime(t0));    
+if (settings->verbose) printf ("0: %d, 1: %d, 2: %d, 3: %d, 4: %d, 5: %d All: %d\n", t1.etime(t0), t2.etime(t1), t3.etime(t2), t4.etime(t3), t5.etime(t4), t6.etime(t5), t6.etime(t0));
 
     int deg = 0;
     if (flip==5)
@@ -9434,7 +9434,7 @@ if (settings->verbose) printf ("0: %d, 1: %d, 2: %d, 3: %d, 4: %d, 5: %d All: %d
         tpp->colorMatrix[a][b] = rgb_cam[a][b];
 
     tpp->init ();
-    
+
   free (image);
   
 dcrMutex->unlock ();
