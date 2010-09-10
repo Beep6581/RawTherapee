@@ -782,6 +782,7 @@ int RawImageSource::load (Glib::ustring fname) {
         // global correction
         int ng1=0, ng2=0;
         double avgg1=0, avgg2=0;
+#pragma omp parallel for
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) {
@@ -796,6 +797,7 @@ int RawImageSource::load (Glib::ustring fname) {
                 }
         double corrg1 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg1/ng1);
         double corrg2 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg2/ng2);
+#pragma omp parallel for
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) 
