@@ -59,7 +59,7 @@ void BatchQueueEntryUpdater::process () {
 
     if (stopped)
         #undef THREAD_PRIORITY_NORMAL
-        thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
 }
 
 void BatchQueueEntryUpdater::process_ () { 

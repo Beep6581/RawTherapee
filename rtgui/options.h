@@ -95,6 +95,7 @@ class Options {
     Glib::ustring language;
     Glib::ustring theme;
     static Glib::ustring cacheBaseDir;
+    bool autoSuffix;
     bool saveParamsFile;
     bool saveParamsCache;
     PPLoadLocation paramsLoadLocation;
