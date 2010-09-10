@@ -37,6 +37,7 @@ RTWindow::RTWindow () {
     set_title("RawTherapee "+versionString);
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
+    maximize();
     set_modal(false);
     set_resizable(true);
     property_destroy_with_parent().set_value(false);
@@ -65,6 +66,19 @@ RTWindow::RTWindow () {
     hbb->set_spacing (2);
     hbb->show_all ();
     mainNB->append_page (*bpanel, *hbb);
+    
+    
+    epanel = new EditorPanel (fpanel);
+    epanel->setParent (this);
+    // decorate tab
+    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+    hbe->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)));
+    hbe->pack_start (*Gtk::manage (new Gtk::Label("Editor")));
+    hbe->set_spacing (2);
+    hbe->show_all ();
+    mainNB->append_page (*epanel, *hbe);
+    mainNB->set_current_page (mainNB->page_num (*epanel));
+
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
@@ -183,8 +197,10 @@ void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
 
+
     fpanel->saveOptions ();
     bpanel->saveOptions ();
+    epanel->saveOptions();
 
 /*    if (fileBrowser->getFileCatalog()->getBatchQueue()->hasJobs()) {
         Gtk::MessageDialog msgd (M("MAIN_MSG_EXITJOBSINQUEUEQUEST"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);

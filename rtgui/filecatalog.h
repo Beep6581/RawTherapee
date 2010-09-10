@@ -67,7 +67,7 @@ class PreviewLoader : public ProcessingThread<DirEntry> {
     void end ();
 };
 
-class FileCatalog : public Gtk::VBox, 
+class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
 					public FilterPanelListener,
@@ -77,9 +77,7 @@ class FileCatalog : public Gtk::VBox,
 #endif
  {
 
-        // thumbnail browsers
-        FileBrowser* fileBrowser;
-        
+
         Gtk::HBox* hBox;
         Glib::ustring selectedDirectory;
         bool enabled;
@@ -141,6 +139,9 @@ class FileCatalog : public Gtk::VBox,
         void trashChanged ();
                
     public:
+            // thumbnail browsers
+            FileBrowser* fileBrowser;
+            
             CoarsePanel* coarsePanel;
             ToolBar* toolBar;
 

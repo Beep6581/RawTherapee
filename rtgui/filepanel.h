@@ -40,14 +40,12 @@ class FilePanel : public Gtk::HPaned,
     protected:
         Gtk::VPaned* placespaned;
         Gtk::HPaned* dirpaned;
-        DirBrowser* dirBrowser;
+        Gtk::VPaned* viewpaned;        
         PlacesBrowser* placesBrowser;
-        RecentBrowser* recentBrowser;
-        FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
+        RecentBrowser* recentBrowser;        
         Gtk::HBox* rightBox;
         BatchToolPanelCoordinator* tpc;
-        History* history;
-		FilterPanel* filterPanel;
+        History* history;		
         RTWindow* parent;      
         Gtk::Notebook* rightNotebook;
 
@@ -55,6 +53,10 @@ class FilePanel : public Gtk::HPaned,
 
     public:
         FilePanel ();
+
+        DirBrowser* dirBrowser;
+        FilterPanel* filterPanel;
+        FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
 
         void on_realize ();
 

@@ -45,7 +45,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
 	bool showClippedH, showClippedS;
 
     ImageAreaPanel* parent;   
-    CropWindow* mainCropWindow;
+  
     std::list<CropWindow*> cropWins;
     PreviewHandler* previewHandler;
     rtengine::StagedImageProcessor* ipc;
@@ -61,7 +61,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     CropWindow* getCropWindow (int x, int y);
 
   public:
-        
+    CropWindow* mainCropWindow;
     ZoomPanel* zoomPanel;
 	IndicateClippedPanel* indClippedPanel;
 

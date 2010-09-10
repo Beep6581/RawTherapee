@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -26,7 +26,7 @@
 
 using namespace rtengine::procparams;
 
-EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
+EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -110,13 +110,13 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 4);
     toolBarPanel->pack_end   (*iarea->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz, Gtk::PACK_SHRINK, 2);
-    
+
     afterBox = Gtk::manage (new Gtk::VBox ());
     afterBox->pack_start (*iarea);
 
     beforeAfterBox = Gtk::manage (new Gtk::HBox());
     beforeAfterBox->pack_start (*afterBox);
-    
+
     editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK);
     editbox->pack_start (*beforeAfterBox);
 
@@ -171,7 +171,7 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     iops->pack_end (*iarea->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz2, Gtk::PACK_SHRINK, 2);
 
-    
+
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4);
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 4);
     editbox->show_all ();
@@ -186,8 +186,22 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
        hpanedl->set_position (options.historyPanelWidth);
     }
 
+    ipc = NULL;
+    btpCoordinator = new BatchToolPanelCoordinator (filePanel);
+    fCatalog =  new FileCatalog (btpCoordinator->coarse, btpCoordinator->getToolBar()); //,  filePanel->fileCatalog->fileBrowser);
+    filePanel->dirBrowser->addDirSelectionListener (fCatalog);
+   // fCatalog->setFilterPanel (filePanel->filterPanel);
+    fCatalog->setImageAreaToolListener (btpCoordinator);
+    fCatalog->setFileSelectionListener (filePanel);
+    fCatalog->setFileSelectionChangeListener (btpCoordinator);
+    fCatalog->setEnabled(true);
+
+    Gtk::VPaned * viewpaned = Gtk::manage (new Gtk::VPaned());
+    viewpaned->pack1(*fCatalog, false, true);
+    viewpaned->pack2(*editbox, true, true);
+
     Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
-    vbfr->add (*editbox);
+    vbfr->add (*viewpaned);
     hpanedl->pack2(*vbfr, true, true);
 
     hpanedr->pack1(*hpanedl, true, true);
@@ -197,9 +211,9 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     show_all ();
 
     // save as dialog
-    if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR)) 
+    if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
-    else 
+    else
         saveAsDialog = new SaveAsDialog (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
@@ -214,7 +228,7 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     iarea->imageArea->setCropGUIListener (tpc->getCropGUIListener());
     iarea->imageArea->setPointerMotionListener (navigator);
 	iarea->imageArea->setImageAreaToolListener (tpc);
-    
+
 // initialize components
     info->set_active (options.showInfo);
     tpc->readOptions ();
@@ -264,18 +278,19 @@ EditorPanel::~EditorPanel () {
     delete green;
     delete leftbox;
     delete vboxright;
-    
+
     delete saveAsDialog;
 }
 
 void EditorPanel::on_realize () {
-    
+
     Gtk::VBox::on_realize ();
     vboxright->set_size_request (options.toolPanelWidth, -1);
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
+    if (ipc) close();
     // initialize everything
     openThm = tmb;
     openThm->increaseRef ();
@@ -307,37 +322,68 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     if (openThm->getType()!=FT_Raw)
         profilep->initProfile (options.defProfImg, ldprof, NULL);
     else
-        profilep->initProfile (options.defProfRaw, ldprof, NULL);      
+        profilep->initProfile (options.defProfRaw, ldprof, NULL);
 
     openThm->addThumbnailListener (this);
     info_toggled ();
+
+    beforeAfterToggled();
+    beforeAfterToggled();
+
+    Gtk::Allocation r;
+    iarea->imageArea->on_resized(r);
+    //iarea->show_all();
+    //hpanedl->show_all();
+    //show_all();
+
 }
 
 void EditorPanel::close () {
 
-    saveProfile ();
-
-    // close image processor and the current thumbnail
-    tpc->closeImage ();    // this call stops image processing
-    tpc->writeOptions ();
-
     if (ipc)
-        rtengine::StagedImageProcessor::destroy (ipc);
-    if (beforeIpc)
-        rtengine::StagedImageProcessor::destroy (beforeIpc);
+    {
+        saveProfile ();
+        // close image processor and the current thumbnail
+        tpc->closeImage ();    // this call stops image processing
+        tpc->writeOptions ();
 
-    openThm->removeThumbnailListener (this);
-    openThm->decreaseRef ();
+        if (ipc)
+            ipc->setPreviewImageListener (NULL);
+
+        if (beforeIpc)
+            beforeIpc->setPreviewImageListener (NULL);
+
+        delete previewHandler;
+        previewHandler= NULL;
+//        delete beforePreviewHandler;
+//        beforePreviewHandler = NULL;
+
+        delete iarea->imageArea->mainCropWindow;
+        iarea->imageArea->mainCropWindow = NULL;
+
+        rtengine::StagedImageProcessor::destroy (ipc);
+        ipc = NULL;
+
+        iarea->imageArea->setPreviewHandler (NULL);
+        iarea->imageArea->setImProcCoordinator (NULL);
+        navigator->previewWindow->setPreviewHandler (NULL);
+  //      navigator->previewWindow->setImageArea (NULL);
+
+        openThm->removeThumbnailListener (this);
+        openThm->decreaseRef ();
+
+
+    }
 }
 
 void EditorPanel::saveProfile () {
 
     ProcParams params;
     ipc->getParams (&params);
-    
+
     if (options.saveParamsFile)
         params.save (openThm->getFileName() + paramFileExtension);
-    if (openThm && options.saveParamsCache) 
+    if (openThm && options.saveParamsCache)
         openThm->setProcParams (params, EDITOR);
 }
 
@@ -351,7 +397,7 @@ Glib::ustring EditorPanel::getFileName () {
     return openThm->getFileName ();
 }
 
-// TODO!!! 
+// TODO!!!
 void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited) {
 
 //    if (ev!=EvPhotoLoaded)
@@ -371,7 +417,7 @@ int setprocstate (void* data) {
     if (p->epih->destroyed) {
         if (p->epih->pending == 1)
             delete p->epih;
-        else    
+        else
             p->epih->pending--;
         delete p;
         gdk_threads_leave ();
@@ -411,7 +457,7 @@ void EditorPanel::refreshProcessingState (bool state) {
         if (wlast)
             statusBox->remove (*wlast);
     }
-    if (state) 
+    if (state)
         statusBox->pack_end (*red, Gtk::PACK_SHRINK, 4);
     else
         statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
@@ -440,7 +486,7 @@ int disperror (void* data) {
     if (p->epih->destroyed) {
         if (p->epih->pending == 1)
             delete p->epih;
-        else    
+        else
             p->epih->pending--;
         delete p;
         gdk_threads_leave ();
@@ -469,13 +515,13 @@ void EditorPanel::info_toggled () {
 
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if (idata && idata->hasExif())
-        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n", 
+        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n",
             Glib::ustring(idata->getMake()), Glib::ustring(idata->getModel()),
             Glib::ustring(idata->apertureToString(idata->getFNumber())), Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
             M("QINFO_ISO"), idata->getISOSpeed(),
             M("QINFO_FOCALLENGTH"), idata->getFocalLen())
             + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
-    else 
+    else
         infoString = M("QINFO_NOEXIF");
 
     iarea->imageArea->setInfoText (infoString);
@@ -485,7 +531,7 @@ void EditorPanel::info_toggled () {
 void EditorPanel::hideHistoryActivated () {
 
     removeIfThere (hpanedl, leftbox, false);
-    if (hidehp->get_active()) 
+    if (hidehp->get_active())
         hpanedl->pack1 (*leftbox, false, true);
     options.showHistory = hidehp->get_active();
 }
@@ -537,7 +583,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
                 iarea->imageArea->zoomPanel->zoom11Clicked();
                 return true;
             case GDK_f:
-            case GDK_F:            
+            case GDK_F:
                 iarea->imageArea->zoomPanel->zoomFitClicked();
                 return true;
         }
@@ -567,8 +613,8 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 
 void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
-    if (whoChangedIt!=EDITOR) 
-      tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));    
+    if (whoChangedIt!=EDITOR)
+      tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
 }
 
 bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf, bool findNewNameIfNeeded){
@@ -642,10 +688,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 		if (sf.saveParams) {
 			rtengine::procparams::ProcParams pparams;
 			ipc->getParams (&pparams);
-			// We keep the extension to avoid overwriting the profile when we have
-			// the same output filename with different extension
-			//pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
-			pparams.save (fname + ".out" + paramFileExtension);
+			pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
 		}
 	}else{
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
@@ -662,82 +705,51 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveAsPressed () {
 
-	bool fnameOK = false;
-	Glib::ustring fname;
+    // obtaining short name without extension
+    saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
+    saveAsDialog->run ();
+    Glib::ustring fname = saveAsDialog->getFileName ();
+    if (fname=="")
+        return;
 
-	saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
-	do {
-		saveAsDialog->run ();
-		fname = saveAsDialog->getFileName ();
-		if (fname=="")
-			return;
+    options.lastSaveAsPath = saveAsDialog->getDirectory ();
+    options.saveAsDialogWidth = saveAsDialog->get_width();
+    options.saveAsDialogHeight = saveAsDialog->get_height();
 
-		options.lastSaveAsPath = saveAsDialog->getDirectory ();
-		options.saveAsDialogWidth = saveAsDialog->get_width();
-		options.saveAsDialogHeight = saveAsDialog->get_height();
-
-		SaveFormat sf = saveAsDialog->getFormat ();
+    SaveFormat sf = saveAsDialog->getFormat ();
+    if (getExtension (fname)!=sf.format)
+        fname = fname + "." + sf.format;
 
 		options.saveFormat = sf;
-		options.autoSuffix = saveAsDialog->getAutoSuffix();
 
-		if (saveAsDialog->getImmediately ()) {
-			// separate filename and the path to the destination directory
-			Glib::ustring dstdir = Glib::path_get_dirname (fname);
-			Glib::ustring dstfname = Glib::path_get_basename (removeExtension(fname));
-
-			if (saveAsDialog->getAutoSuffix()) {
-
-				Glib::ustring fnameTemp;
-				for (int tries=0; tries<100; tries++) {
-					if (tries==0)
-						fnameTemp = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
-					else
-						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, sf.format);
-
-					if (!Glib::file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
-						fname = fnameTemp;
-						fnameOK = true;
-						break;
-					}
-				}
-			}
-			// check if it exists
-			if (!fnameOK) {
-				fname = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
-				if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
-					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-					int response = msgd.run ();
-					if (response==Gtk::RESPONSE_YES)
-						fnameOK = true;
-				}
-				else fnameOK = true;
-			}
-
-			if (fnameOK) {
-				// save image
-				rtengine::procparams::ProcParams pparams;
-				ipc->getParams (&pparams);
-				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
-				fname = removeExtension (fname);
-				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
-							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
-				saveimgas->set_sensitive(false);
-				sendtogimp->set_sensitive(false);
-			}
-		}
-		else {
-			BatchQueueEntry* bqe = createBatchQueueEntry ();
-			bqe->outFileName = fname;
-			bqe->saveFormat = saveAsDialog->getFormat ();
-			parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
-			fnameOK = true;
-		}
-		// ask parent to redraw file browser
-		// ... or does it automatically when the tab is switched to it
-	} while (!fnameOK);
+    if (saveAsDialog->getImmediately ()) {
+        // check if it exists
+        if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
+            Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
+            Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+            int response = msgd.run ();
+            if (response==Gtk::RESPONSE_NO)
+                return;
+        }
+        // save image
+        rtengine::procparams::ProcParams pparams;
+        ipc->getParams (&pparams);
+        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+        fname = removeExtension (fname);
+        ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
+        ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
+        		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
+        saveimgas->set_sensitive(false);
+        sendtogimp->set_sensitive(false);
+    }
+    else {
+        BatchQueueEntry* bqe = createBatchQueueEntry ();
+        bqe->outFileName = fname;
+        bqe->saveFormat = saveAsDialog->getFormat ();
+        parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
+    }
+    // ask parent to redraw file browser
+    // ... or does it automatically when the tab is switched to it
 }
 
 void EditorPanel::queueImgPressed () {
@@ -866,8 +878,12 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveOptions () {
 
+    close();
     options.historyPanelWidth = hpanedl->get_position ();
     options.toolPanelWidth = vboxright->get_width ();
+    if (options.startupDir==STARTUPDIR_LAST && fCatalog->lastSelectedDir ()!="")
+        options.startupPath = fCatalog->lastSelectedDir ();
+    fCatalog->closeDir ();
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
@@ -885,12 +901,12 @@ void EditorPanel::beforeAfterToggled () {
     removeIfThere (afterBox,  afterLabel, false);
 
     if (beforeIarea) {
-        if (beforeIpc) 
+        if (beforeIpc)
             beforeIpc->stopProcessing ();
         iarea->setBeforeAfterViews (NULL, iarea);
         delete beforeIarea;
         beforeIarea = NULL;
-        if (beforeIpc) 
+        if (beforeIpc)
             beforeIpc->setPreviewImageListener (NULL);
         delete beforePreviewHandler;
         beforePreviewHandler = NULL;
@@ -928,7 +944,7 @@ void EditorPanel::beforeAfterToggled () {
 
         iarea->setBeforeAfterViews (beforeIarea, iarea);
         beforeIarea->setBeforeAfterViews (beforeIarea, iarea);
-        
+
         rtengine::procparams::ProcParams params;
         if (history->getBeforeLineParams (params))
             historyBeforeLineChanged (params);
@@ -936,7 +952,7 @@ void EditorPanel::beforeAfterToggled () {
 }
 
 void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl) {
-    
-    histogramPanel->histogramChanged (rh, gh, bh, lh); 
+
+    histogramPanel->histogramChanged (rh, gh, bh, lh);
     tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
 }

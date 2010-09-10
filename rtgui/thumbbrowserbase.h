@@ -91,7 +91,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void zoomIn ()  { zoomChanged (true); }
     void zoomOut () { zoomChanged (false); }
     
-    const std::vector<ThumbBrowserEntryBase*>& getEntries () { return fd; } 
+    const std::vector<ThumbBrowserEntryBase*>& getEntries () { return fd; }
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
     void redraw ();   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw

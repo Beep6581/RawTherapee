@@ -201,7 +201,16 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {
         previmg->getMutex().lock();
-        ipf.lab2rgb (nprevl, previmg);
+        try
+        {
+            ipf.lab2rgb (nprevl, previmg);
+        }
+        catch(char * str)
+        {
+           progress ("Error converting file...",0);
+            mProcessing.unlock ();
+            return;
+        }
         previmg->getMutex().unlock();
     }   
     if (!resultValid) {

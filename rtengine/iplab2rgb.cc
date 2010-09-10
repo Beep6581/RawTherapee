@@ -38,6 +38,9 @@ extern const Settings* settings;
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 
+        if (chroma_scale == 0)
+            throw "Division by zero exception";
+
 	if (monitorTransform) {
 	    int ix = 0;
         short* buffer = new short [3*lab->W];

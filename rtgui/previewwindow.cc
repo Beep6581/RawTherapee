@@ -81,7 +81,8 @@ void PreviewWindow::updatePreviewImage () {
 void PreviewWindow::setPreviewHandler (PreviewHandler* ph) {
 
     previewHandler = ph;
-    previewHandler->addPreviewImageListener (this);
+    if (previewHandler)
+        previewHandler->addPreviewImageListener (this);
 }
 
 void PreviewWindow::on_resized (Gtk::Allocation& req) {

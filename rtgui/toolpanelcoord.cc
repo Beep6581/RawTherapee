@@ -248,7 +248,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
 void ToolPanelCoordinator::closeImage () {
 
     if (ipc) {
-        ipc->stopProcessing ();
+        ipc->stopProcessing ();        
         ipc = NULL;
     }
 }
