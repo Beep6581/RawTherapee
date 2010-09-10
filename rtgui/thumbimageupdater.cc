@@ -88,7 +88,7 @@ void ThumbImageUpdater::process_ () {
             Job current = *i;
             jqueue.erase (i);
             if (current.listener) 
-                threadPool[threads] = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ThumbImageUpdater::processJob), current), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+                threadPool[threads] = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ThumbImageUpdater::processJob), current), 0, true, true, Glib::THREAD_PRIORITY_LOW);
             else 
                 threadPool[threads] = NULL;
         }
