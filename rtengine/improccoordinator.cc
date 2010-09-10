@@ -504,7 +504,7 @@ void ImProcCoordinator::stopProcessing () {
 
 void ImProcCoordinator::startProcessing () {
 
-    #undef THREAD_PRIORITY_NORMAL
+    #undef THREAD_PRIORITY_LOW
 
     if (!destroying) {
         updaterThreadStart.lock ();
@@ -512,7 +512,7 @@ void ImProcCoordinator::startProcessing () {
             thread = NULL;
             updaterRunning = true;
             updaterThreadStart.unlock ();
-            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);    
+            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, false, true, Glib::THREAD_PRIORITY_LOW);
         }
         else
             updaterThreadStart.unlock ();
