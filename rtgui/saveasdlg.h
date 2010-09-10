@@ -28,6 +28,7 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
 
   protected:
     Gtk::FileChooserWidget* fchooser;
+    Gtk::CheckButton* autoSuffix;
     SaveFormatPanel* formatOpts;
     Glib::ustring fname;
     Gtk::FileFilter filter_jpg;
@@ -43,6 +44,7 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     Glib::ustring   getFileName      ();
     Glib::ustring   getDirectory     ();
     SaveFormat      getFormat        ();
+    bool            getAutoSuffix    ();
     bool            getImmediately   ();
     bool            getToHeadOfQueue ();
     bool            getToTailOfQueue ();    

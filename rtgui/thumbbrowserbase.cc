@@ -401,7 +401,7 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 
     dirty = false;
 
-    Glib::RefPtr<Gdk::Window> window = get_window();    
+    Glib::RefPtr<Gdk::Window> window = get_window();
 
     int w = get_width();
     int h = get_height();
@@ -411,14 +411,14 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
     context->set_font_description (get_style()->get_font());
     for (int i=0; i<parent->fd.size(); i++) {
-        if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h)) 
+        if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h))
             parent->fd[i]->updatepriority = false;
         else {
             parent->fd[i]->updatepriority = true;
             parent->fd[i]->draw ();
         }
     }
-    
+
     return true;
 }
 
