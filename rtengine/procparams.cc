@@ -163,6 +163,9 @@ void ProcParams::setDefaults () {
     {
         equalizer.c[i] = 0;
     }
+
+    postcropvignette.enabled = false;
+    postcropvignette.amount = 0;
     
     exif.clear ();
     iptc.clear ();
@@ -318,6 +321,10 @@ int ProcParams::save (Glib::ustring fname) const {
         ss << "C" << i;
         keyFile.set_integer("Equalizer", ss.str(), equalizer.c[i]);
     }
+
+    // save post crop vignette parameters
+    keyFile.set_boolean ("Post Crop Vignette", "Enabled", postcropvignette.enabled);
+    keyFile.set_integer ("Post Crop Vignette", "Amount", postcropvignette.amount);
 
     // save exif change list
     for (int i=0; i<(int)exif.size(); i++)
@@ -556,6 +563,12 @@ if (keyFile.has_group ("Equalizer")) {
     }
 }
 
+// load post crop vignette parameters
+if (keyFile.has_group("Post Crop Vignette")) {
+	if (keyFile.has_key ("PostCropVignette", "Enabled")) postcropvignette.enabled = keyFile.get_boolean ("Post Crop Vignette", "Enabled");
+	if (keyFile.has_key ("PostCropVignette", "Amount")) postcropvignette.amount = keyFile.get_integer ("Post Crop Vignette", "Amount");
+}
+
     // load exif change settings
 if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
@@ -597,6 +610,16 @@ bool operator==(const EqualizerParams & a, const EqualizerParams & b) {
         if(a.c[i] != b.c[i])
             return false;
     }
+    return true;
+}
+
+bool operator==(const PostCropVignetteParams & a, const PostCropVignetteParams & b) {
+    if(a.enabled != b.enabled)
+        return false;
+
+    if(a.amount != b.amount)
+        return false;
+
     return true;
 }
 
@@ -699,6 +722,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.working      == other.icm.working
         && icm.output       == other.icm.output
         && equalizer == other.equalizer
+	&& postcropvignette == other.postcropvignette
         && exif==other.exif
         && iptc==other.iptc;
 }

@@ -46,38 +46,38 @@ void PostCropVignette::read (const ProcParams* pp, const ParamsEdited* pedited) 
     disableListener ();
 
     if (pedited) {
-        amount->setEditedState    (pedited->postCropVignette.amount ? Edited : UnEdited);
-        enabled->set_inconsistent (!pedited->postCropVignette.enabled);
+        amount->setEditedState    (pedited->postcropvignette.amount ? Edited : UnEdited);
+        enabled->set_inconsistent (!pedited->postcropvignette.enabled);
     }
 
     enaConn.block (true);
-    enabled->set_active (pp->postCropVignette.enabled);
+    enabled->set_active (pp->postcropvignette.enabled);
     enaConn.block (false);
     
-    lastEnabled = pp->postCropVignette.enabled;
+    lastEnabled = pp->postcropvignette.enabled;
 
-    amount->setValue (pp->postCropVignette.amount);
+    amount->setValue (pp->postcropvignette.amount);
 
     enableListener ();
 }
 
 void PostCropVignette::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    pp->postCropVignette.amount    = amount->getValue ();
-    pp->postCropVignette.enabled   = enabled->get_active();
+    pp->postcropvignette.amount    = amount->getValue ();
+    pp->postcropvignette.enabled   = enabled->get_active();
 	
     if (pedited) {
-        pedited->postCropVignette.amount        = amount->getEditedState ();
-        pedited->postCropVignette.enabled       = !enabled->get_inconsistent();
+        pedited->postcropvignette.amount        = amount->getEditedState ();
+        pedited->postcropvignette.enabled       = !enabled->get_inconsistent();
     }
 }
 
 void PostCropVignette::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
-    amount->setDefault (defParams->postCropVignette.amount);
+    amount->setDefault (defParams->postcropvignette.amount);
 
     if (pedited) 
-        amount->setDefaultEditedState (pedited->postCropVignette.amount ? Edited : UnEdited);
+        amount->setDefaultEditedState (pedited->postcropvignette.amount ? Edited : UnEdited);
     else
         amount->setDefaultEditedState (Irrelevant);
 }

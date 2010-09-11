@@ -726,3 +726,5 @@ MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur extern
 ###
 
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
+TP_POST_CROP_VIGNETTE;Post Crop Vignette
+
