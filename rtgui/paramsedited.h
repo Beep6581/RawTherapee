@@ -222,6 +222,12 @@ class EqualizerParamsEdited {
         bool c[8];
 };
 
+class PostCropVignetteParamsEdited {
+	public:
+		bool enabled;
+		bool amount;
+};
+
 class ExifPairEdited {
 
     public:
@@ -261,6 +267,7 @@ class ParamsEdited {
         ResizeParamsEdited            resize;         
         ColorManagementParamsEdited   icm;            
         EqualizerParamsEdited         equalizer;
+        PostCropVignetteParamsEdited  postcropvignette;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

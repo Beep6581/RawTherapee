@@ -312,6 +312,13 @@ class EqualizerParams {
         int c[8];
 };
 
+class PostCropVignetteParams {
+
+	public:
+		bool enabled;
+		int amount;
+};
+
 /**
   * This class holds all the processing parameters applied on the images
   */
@@ -340,6 +347,7 @@ class ProcParams {
         ResizeParams            resize;         ///< Resize parameters
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         EqualizerParams         equalizer;      ///< wavelet equalizer parameters
+        PostCropVignetteParams	postCropVignette;///< Post Crop Vignette parameters
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
         int version;                            ///< Version of the file from which the parameters have been read

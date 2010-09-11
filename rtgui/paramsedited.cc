@@ -124,6 +124,8 @@ void ParamsEdited::set (bool v) {
         {
             equalizer.c[i] = v;
         }
+        postcropvignette.enabled = v;
+        postcropvignette.amount = v;
         exif.clear ();
         iptc.clear ();
 }
@@ -235,6 +237,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         for(int i = 0; i < 8; i++) {
             equalizer.c[i] = equalizer.c[i] && p.equalizer.c[i] == other.equalizer.c[i];
         }
+        postcropvignette.enabled = postcropvignette.enabled && p.postcropvignette.enabled == other.postcropvignette.enabled;
+        postcropvignette.amount = postcropvignette.amount && p.postcropvignette.amount == other.postcropvignette.amount;
 //        exif = exif && p.exif==other.exif
 //        iptc = other.iptc;
     }
@@ -337,6 +341,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
 	}
+	if (postcropvignette.enabled)	    toEdit.postcropvignette.enabled 	= mods.postcropvignette.enabled;
+	if (postcropvignette.amount)	    toEdit.postcropvignette.amount 	= mods.postcropvignette.amount;
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;
 }

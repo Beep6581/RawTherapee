@@ -52,6 +52,7 @@
 #include <lensgeom.h>
 #include <lensgeomlistener.h>
 #include <equalizer.h>
+#include <postcropvignette.h>
 
 
 class ImageEditorCoordinator;
@@ -88,6 +89,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
+        PostCropVignette * postcropvignette;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 
