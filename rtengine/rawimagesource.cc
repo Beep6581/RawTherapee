@@ -173,6 +173,49 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
     }      
 }
 
+void RawImageSource::interpolate_image(Image16* image,  HRecParams hrp, double rm, double gm, double bm, int skip, int tran, int fw, int imwidth, int imheight, int sx1, int sy1, int start, int end)
+{
+
+    unsigned short* red  = new unsigned short[imwidth];
+    unsigned short* grn  = new unsigned short[imwidth];
+    unsigned short* blue = new unsigned short[imwidth];
+
+    for (int i=sy1 + start*skip ,ix=start; ix<end; ix++, i+=skip){
+        if (ri->filters && this->red && this->blue) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+                red[j] = CLIP(rm*this->red[i][jx]);
+                grn[j] = CLIP(gm*green[i][jx]);
+                blue[j] = CLIP(bm*this->blue[i][jx]);
+	    }
+	} else if(ri->filters) {
+            if (i==0)
+                interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, sx1, imwidth, skip);
+            else if (i==H-1)
+                interpolate_row_rb_mul_pp (red, blue, green[i-1], green[i], NULL, i, rm, gm, bm, sx1, imwidth, skip);
+            else
+                interpolate_row_rb_mul_pp (red, blue, green[i-1], green[i], green[i+1], i, rm, gm, bm, sx1, imwidth, skip);
+
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip)
+                grn[j] = CLIP(gm*green[i][jx]);
+        } else {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+                red[j]  = CLIP(rm*ri->data[i][jx*3+0]);
+                grn[j]  = CLIP(gm*ri->data[i][jx*3+1]);
+                blue[j] = CLIP(bm*ri->data[i][jx*3+2]);
+            }
+        }
+
+        if (hrp.enabled)
+           hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, skip);
+
+        transLine (red, grn, blue, ix, image, tran, imwidth, imheight, fw);
+
+    }
+    delete [] red;
+    delete [] grn;
+    delete [] blue;
+}
+
 void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp) {
 
     isrcMutex.lock ();
@@ -227,47 +270,24 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
         imwidth = maximwidth;
     if (!fuji && imheight>maximheight)
         imheight = maximheight;
-       
-    // render the requested image part
-    unsigned short* red  = new unsigned short[imwidth];
-    unsigned short* grn  = new unsigned short[imwidth];
-    unsigned short* blue = new unsigned short[imwidth];
 
-    for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
-        if (ri->filters && this->red && this->blue) {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j] = CLIP(rm*this->red[i][jx]);
-                grn[j] = CLIP(gm*green[i][jx]);
-                blue[j] = CLIP(bm*this->blue[i][jx]);
-	    }
-	} else if(ri->filters) {
-            if (i==0)
-                interpolate_row_rb_mul_pp (red, blue, NULL, green[i], green[i+1], i, rm, gm, bm, sx1, imwidth, pp.skip);
-            else if (i==H-1)
-                interpolate_row_rb_mul_pp (red, blue, green[i-1], green[i], NULL, i, rm, gm, bm, sx1, imwidth, pp.skip);
-            else 
-                interpolate_row_rb_mul_pp (red, blue, green[i-1], green[i], green[i+1], i, rm, gm, bm, sx1, imwidth, pp.skip);
-                   
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) 
-                grn[j] = CLIP(gm*green[i][jx]);
-        } else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j]  = CLIP(rm*ri->data[i][jx*3+0]);
-                grn[j]  = CLIP(gm*ri->data[i][jx*3+1]);
-                blue[j] = CLIP(bm*ri->data[i][jx*3+2]);
-            }
-        }
-                
-        if (hrp.enabled)
-            hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, pp.skip);
+#ifdef _OPENMP
+#pragma omp parallel
+{
+        int tid = omp_get_thread_num();
+        int nthreads = omp_get_num_threads();
+        int blk = imheight/nthreads;
 
-        transLine (red, grn, blue, ix, image, tran, imwidth, imheight, fw);
-    }
 
-    delete [] red;
-    delete [] grn;
-    delete [] blue;
-          
+        if (tid<nthreads-1)
+                interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, tid*blk, (tid+1)*blk);
+        else
+                interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, tid*blk,imheight);
+}    
+#else
+        interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, 0, imheight);
+#endif
+
     if (fuji) {   
         int a = ((tran & TR_ROT) == TR_R90 && image->width%2==0) || ((tran & TR_ROT) == TR_R180 && image->height%2+image->width%2==1) || ((tran & TR_ROT) == TR_R270 && image->height%2==0);
         // first row
