@@ -19,6 +19,7 @@
 #ifndef _IMPROCCOORDINATOR_H_
 #define _IMPROCCOORDINATOR_H_
 
+#include <postcropvignette.h>
 #include <rtengine.h>
 #include <improcfun.h>
 #include <image8.h>
@@ -79,6 +80,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         std::vector<SizeListener*> sizeListeners;
         
         std::vector<Crop*> crops;
+
+	PostCropVignette pcv;
         
         bool resultValid;
         

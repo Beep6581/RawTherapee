@@ -52,6 +52,8 @@ ImProcCoordinator::~ImProcCoordinator () {
     for (int i=0; i<toDel.size(); i++)
         delete toDel[i];
 
+    pcv = new PostCropVignette();
+
     imgsrc->decreaseRef ();
     updaterThreadStart.unlock ();
 }
@@ -197,6 +199,9 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     for (int i=0; i<crops.size(); i++)
         if (crops[i]->hasListener ())
             crops[i]->update (todo, true);
+
+    // Apply post crop vignette
+    pcv.apply(this);
 
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {
