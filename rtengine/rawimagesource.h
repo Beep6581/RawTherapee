@@ -97,6 +97,7 @@ class RawImageSource : public ImageSource {
         void updateHLRecoveryMap (std::string method, double rm, double gm, double bm);
         void updateHLRecoveryMap_ColorPropagation ();
         void HLRecovery_ColorPropagation (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
+
         void interpolate_image(Image16* image,  HRecParams hrp, double rm, double gm, double bm, int skip, int tran, int fw, int imwidth, int imheight, int sx, int sy, int start, int end);
 
     public:
