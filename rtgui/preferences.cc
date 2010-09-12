@@ -384,8 +384,11 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
-    for (int i=0; i<langs.size(); i++) 
-        languages->append_text (langs[i]);
+    for (int i=0; i<langs.size(); i++) {
+	if ("default" != langs[i]) {
+  	    languages->append_text (langs[i]);
+	}
+    }
 
     Gtk::Label* langw = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
     hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 4);
