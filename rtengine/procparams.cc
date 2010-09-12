@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
+#include <safegtk.h>
 #include <procparams.h>
 #include <glibmm.h>
 #include <sstream>
@@ -329,7 +330,7 @@ int ProcParams::save (Glib::ustring fname) const {
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = g_fopen (safe_locale_from_utf8(fname).c_str(), "wt");
     
     if (f==NULL)
         return 1;
