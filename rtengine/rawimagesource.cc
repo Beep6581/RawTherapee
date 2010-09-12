@@ -906,9 +906,11 @@ int RawImageSource::load (Glib::ustring fname) {
             vng4_demosaic ();
         else if (settings->demosaicMethod=="ahd")
             ahd_demosaic ();
+        else if (settings->demosaicMethod=="bilinear")
+           bilinear_demosaic();
         //else if (settings->demosaicMethod=="ppg")
         //    ppg_demosaic ();
-		else if (settings->demosaicMethod=="amaze")
+        else if (settings->demosaicMethod=="amaze")
             amaze_demosaic_RT ();//Emil's code for AMaZE
         else if (settings->demosaicMethod=="dcb")
             dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
@@ -2339,13 +2341,14 @@ void RawImageSource::ppg_demosaic()
   free (image);
 }
 
-void RawImageSource::border_interpolate(int border, ushort (*image)[4])
+void RawImageSource::border_interpolate(int border, ushort (*image)[4], int start, int end)
 {
   unsigned row, col, y, x, f, c, sum[8];
   int width=W, height=H;
   int colors = 3;
 
-  for (row=0; row < height; row++)
+  if (end == 0 )end = H;
+  for (row=start; row < end; row++)
     for (col=0; col < width; col++) {
       if (col==border && row >= border && row < height-border)
 	col = width-border;
@@ -2361,6 +2364,110 @@ void RawImageSource::border_interpolate(int border, ushort (*image)[4])
       FORCC if (c != f && sum[c+4])
 	image[row*width+col][c] = sum[c] / sum[c+4];
     }
+}
+
+void RawImageSource::bilinear_interpolate_block(ushort (*image)[4], int start, int end)
+{
+  ushort (*pix);
+  int i, *ip, sum[4];
+  int width=W;
+  int colors = 3;
+
+  for (int row = start; row < end; row++)
+    for (int col=1; col < width-1; col++) {
+      pix = image[row*width+col];
+      ip = blcode[row & 15][col & 15];
+      memset (sum, 0, sizeof sum);
+      for (i=8; i--; ip+=3)
+	sum[ip[2]] += pix[ip[0]] << ip[1];
+      for (i=colors; --i; ip+=2)
+	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
+    }
+    
+    for (int i=start; i<end; i++) {
+        red[i] = new unsigned short[W];
+        green[i] = new unsigned short[W];
+        blue[i] = new unsigned short[W];
+        for (int j=0; j<W; j++){
+            red[i][j] = image[i*W+j][0];
+            green[i][j] = image[i*W+j][1];
+            blue[i][j] = image[i*W+j][2];
+        }
+    }
+}
+
+void RawImageSource::bilinear_demosaic()
+{
+  int width=W, height=H;  
+  int *ip, sum[4];
+  int c,  x, y, row, col, shift, color;
+  int colors = 3;
+ 
+  ushort (*image)[4], *pix;
+  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+
+  for (int ii=0; ii<H; ii++)
+    for (int jj=0; jj<W; jj++)
+        image[ii*W+jj][fc(ii,jj)] = ri->data[ii][jj];
+
+  //if (verbose) fprintf (stderr,_("Bilinear interpolation...\n"));
+  if (plistener) {
+        plistener->setProgressStr ("Demosaicing...");
+        plistener->setProgress (0.0);
+    }
+
+  for (row=0; row < 16; row++)
+    for (col=0; col < 16; col++) {
+      ip = blcode[row][col];
+      memset (sum, 0, sizeof sum);
+      for (y=-1; y <= 1; y++)
+	for (x=-1; x <= 1; x++) {
+	  shift = (y==0) + (x==0);
+	  if (shift == 2) continue;
+	  color = fc(row+y,col+x);
+	  *ip++ = (width*y + x)*4 + color;
+	  *ip++ = shift;
+	  *ip++ = color;
+	  sum[color] += 1 << shift;
+	}
+      FORCC
+	if (c != fc(row,col)) {
+	  *ip++ = c;
+	  *ip++ = 256 / sum[c];
+	}
+    }
+  
+    red = new unsigned short*[H];
+    green = new unsigned short*[H];
+    blue = new unsigned short*[H];
+
+#ifdef _OPENMP
+  #pragma omp parallel
+  {
+            int tid = omp_get_thread_num();
+            int nthreads = omp_get_num_threads();
+            int blk = W/nthreads;
+
+            int start = 0;
+            if (tid == 0) start = 1;
+            if (tid<nthreads-1)
+            {
+                border_interpolate(1, image, tid*blk, (tid+1)*blk);
+                bilinear_interpolate_block(image, start+tid*blk, (tid+1)*blk);
+            }
+            else
+            {
+                border_interpolate(1, image, tid*blk, height);
+                bilinear_interpolate_block(image, tid*blk, height-1);
+            }
+  }
+#else
+    border_interpolate(1, image);
+    bilinear_interpolate_block(image, 1, height-1);
+#endif
+
+    if(plistener) plistener->setProgress (1.0);
+    free (image);
 }
 
 /*
