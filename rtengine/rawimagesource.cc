@@ -2384,16 +2384,7 @@ void RawImageSource::bilinear_interpolate_block(ushort (*image)[4], int start, i
 	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
     }
     
-    for (int i=start; i<end; i++) {
-        red[i] = new unsigned short[W];
-        green[i] = new unsigned short[W];
-        blue[i] = new unsigned short[W];
-        for (int j=0; j<W; j++){
-            red[i][j] = image[i*W+j][0];
-            green[i][j] = image[i*W+j][1];
-            blue[i][j] = image[i*W+j][2];
-        }
-    }
+
 }
 
 void RawImageSource::bilinear_demosaic()
@@ -2416,6 +2407,7 @@ void RawImageSource::bilinear_demosaic()
         plistener->setProgress (0.0);
     }
 
+  memset(blcode,0,16*16*32);
   for (row=0; row < 16; row++)
     for (col=0; col < 16; col++) {
       ip = blcode[row][col];
@@ -2437,10 +2429,6 @@ void RawImageSource::bilinear_demosaic()
 	}
     }
   
-    red = new unsigned short*[H];
-    green = new unsigned short*[H];
-    blue = new unsigned short*[H];
-
 #ifdef _OPENMP
   #pragma omp parallel
   {
@@ -2465,6 +2453,22 @@ void RawImageSource::bilinear_demosaic()
     border_interpolate(1, image);
     bilinear_interpolate_block(image, 1, height-1);
 #endif
+
+red = new unsigned short*[H];
+green = new unsigned short*[H];
+blue = new unsigned short*[H];
+
+#pragma omp parallel for
+    for (int i=0; i<H; i++) {
+        red[i] = new unsigned short[W];
+        green[i] = new unsigned short[W];
+        blue[i] = new unsigned short[W];
+        for (int j=0; j<W; j++){
+            red[i][j] = image[i*W+j][0];
+            green[i][j] = image[i*W+j][1];
+            blue[i][j] = image[i*W+j][2];
+        }
+    }
 
     if(plistener) plistener->setProgress (1.0);
     free (image);
