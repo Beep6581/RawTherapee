@@ -97,5 +97,5 @@ Glib::ustring MultiLangMgr::getStr (std::string key) {
     else if (fallBack)
         return fallBack->getStr (key);
     else
-        return "";
+        return key;
 }
