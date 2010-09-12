@@ -25,6 +25,8 @@
 #include <safekeyfile.h>
 #include <addsetids.h>
 
+#include <iostream>
+
 Options options;
 Glib::ustring versionString      = "v3.0 alpha 1";
 Glib::ustring paramFileExtension = ".pp3";
@@ -444,13 +446,40 @@ void Options::load () {
 #endif
     }
 
-    Glib::ustring fname = argv0+"/languages/";
-    fname += (options.language.empty())? DefaultLanguage : options.language;
-			
-    if (!langMgr.load (fname, new MultiLangMgr (argv0+"/languages/"+DefaultLanguage)))
-        langMgr.load (argv0+"/languages/"+DefaultLanguage);
+	//We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
+	// (most likely using simple English).  The next level is the language: for instance, English, French, Chinese, etc.  This file should contain a 
+	// generic translation for all items which differ from default.  Finally there is the locale.  This is region-specific items which differ from the
+	// language file.  These files must be name in the format <Language> (<LC>), where Language is the name of the language which it inherits from,
+	// and LC is the locale code.  Some examples of this would be English (US) (American English), French (FR) (Franch French), French (CA) (Canadian 
+	// French), etc.
+	//
+	// Each level will only contain the differences between itself and its parent translation.  For instance, English (UK) or English (CA) may 
+	// include the translation "HISTORY_MSG_34;Avoid Colour Clipping" where English would translate it as "HISTORY_MSG_34;Avoid Color Clipping" (note
+	// the difference in the spelling of 'colour').
+	//
+	// It is important that when naming the translation files, that you stick to the format <Language> or <Language> (<LC>).  We depend on that to figure 
+	// out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have 
+	// 'French (CA)' unless there is a file 'French'.
 
-    rtengine::init (&options.rtSettings);
+    	Glib::ustring defaultTranslation = argv0 + "/languages/default";
+	Glib::ustring languageTranslation = "";
+	Glib::ustring localeTranslation = "";
+
+	if (!options.language.empty()){
+		std::vector<Glib::ustring> langPortions = Glib::Regex::split_simple(" ", options.language);
+		if (langPortions.size() >= 1){
+			languageTranslation = argv0 + "/languages/" + langPortions.at(0);
+		}
+		if (langPortions.size() >= 2){
+			localeTranslation = argv0 + "/languages/" + options.language;
+		}
+	}
+
+	std::cout << "Languages: " + defaultTranslation + "," + languageTranslation + "," + localeTranslation + "\n";
+
+	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
+
+	rtengine::init (&options.rtSettings);
 }
 
 void Options::save () {
