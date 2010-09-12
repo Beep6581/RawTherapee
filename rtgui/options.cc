@@ -25,8 +25,6 @@
 #include <safekeyfile.h>
 #include <addsetids.h>
 
-#include <iostream>
-
 Options options;
 Glib::ustring versionString      = "v3.0 alpha 1";
 Glib::ustring paramFileExtension = ".pp3";
@@ -474,8 +472,6 @@ void Options::load () {
 			localeTranslation = argv0 + "/languages/" + options.language;
 		}
 	}
-
-	std::cout << "Languages: " + defaultTranslation + "," + languageTranslation + "," + localeTranslation + "\n";
 
 	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
 

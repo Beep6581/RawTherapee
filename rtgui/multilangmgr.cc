@@ -21,8 +21,6 @@
 #include <string.h>
 #include <safegtk.h>
 
-#include <iostream>
-
 MultiLangMgr langMgr;
 
 Glib::ustring M (std::string key) { return langMgr.getStr (key); }
@@ -31,8 +29,6 @@ bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb) {
     FILE *f = g_fopen (fname.c_str(), "rt");
 
     fallBack = fb;
-
-    std::cout << "Loading translation " << fname << "\n";
 
     if (f==NULL)
         return false;
