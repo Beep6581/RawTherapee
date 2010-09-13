@@ -65,6 +65,7 @@ class RawImageSource : public ImageSource {
         char** needhr;      // for color propagation
         int max[3];
         double defGain;
+        int blcode[16][16][32];
         bool full;
 		Glib::ustring oldmethod;
 		cmsHPROFILE camProfile;
@@ -155,7 +156,9 @@ class RawImageSource : public ImageSource {
 		void	amaze_demosaic_RT	();//Emil's code for AMaZE
         void    dcb_demosaic(int iterations, int dcb_enhance);
         void    ahd_demosaic();
-	void	border_interpolate(int border, ushort (*image)[4]);
+        void    bilinear_demosaic();
+        void    bilinear_interpolate_block(ushort (*image)[4], int start, int end);
+	void	border_interpolate(int border, ushort (*image)[4], int start = 0, int end = 0);
 	void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
 	void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
 	void fill_border( ushort (*cache )[4], int border, int x0, int y0);

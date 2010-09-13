@@ -264,9 +264,10 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     dmethod->append_text ("HPHD");
     dmethod->append_text ("VNG-4");
     //dmethod->append_text ("PPG");
-	dmethod->append_text ("AMaZE");//Emil's code for AMaZE
+    dmethod->append_text ("AMaZE");//Emil's code for AMaZE
     dmethod->append_text ("DCB");
     dmethod->append_text ("AHD");
+    dmethod->append_text ("Bilinear");
     Gtk::Label* cclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FALSECOLOR")+":"));
     ccSteps = Gtk::manage (new Gtk::SpinButton ());
     ccSteps->set_digits (0);
@@ -751,6 +752,8 @@ void Preferences::storePreferences () {
         moptions.rtSettings.demosaicMethod = "dcb";
     else if (dmethod->get_active_row_number()==5)
         moptions.rtSettings.demosaicMethod = "ahd";
+    else if (dmethod->get_active_row_number()==6)
+        moptions.rtSettings.demosaicMethod = "bilinear";
     moptions.rtSettings.dcb_iterations=(int)dcbIterations->get_value();
     moptions.rtSettings.dcb_enhance=dcbEnhance->get_active();
 	moptions.rtSettings.ca_autocorrect=caAutoCorrect->get_active();//Emil's CA correction
@@ -851,6 +854,8 @@ void Preferences::fillPreferences () {
         dmethod->set_active (4);
     else if (moptions.rtSettings.demosaicMethod=="ahd")
         dmethod->set_active (5);
+    else if (moptions.rtSettings.demosaicMethod=="bilinear")
+         dmethod->set_active (6);
     dcbEnhance->set_active(moptions.rtSettings.dcb_enhance);
     dcbIterations->set_value(moptions.rtSettings.dcb_iterations);
     dcbEnhance->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
