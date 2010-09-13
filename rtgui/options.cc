@@ -120,7 +120,8 @@ void Options::setDefaults () {
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
-    rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
+    rtSettings.demosaicMethod = "hphd";
+    rtSettings.demosaicMethodBatch = "hphd";
 	rtSettings.ca_autocorrect = false;//Emil's CA correction
 	rtSettings.hotdeadpix_filt = true;//Emil's hot/dead pixel filter
 	
@@ -266,6 +267,7 @@ if (keyFile.has_group ("GUI")) {
 
 if (keyFile.has_group ("Algorithms")) { 
     if (keyFile.has_key ("Algorithms", "DemosaicMethod"))  rtSettings.demosaicMethod       = keyFile.get_string  ("Algorithms", "DemosaicMethod");
+    if (keyFile.has_key ("Algorithms", "DemosaicMethodBatch"))  rtSettings.demosaicMethodBatch       = keyFile.get_string  ("Algorithms", "DemosaicMethodBatch");
     if (keyFile.has_key ("Algorithms", "ColorCorrection")) rtSettings.colorCorrectionSteps = keyFile.get_integer ("Algorithms", "ColorCorrection");
     if(keyFile.has_key("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
     if(keyFile.has_key("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
@@ -394,6 +396,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
     keyFile.set_string  ("Algorithms", "DemosaicMethod", rtSettings.demosaicMethod);
+    keyFile.set_string  ("Algorithms", "DemosaicMethodBatch", rtSettings.demosaicMethodBatch);
     keyFile.set_integer ("Algorithms", "ColorCorrection", rtSettings.colorCorrectionSteps);
     keyFile.set_integer ("Algorithms", "DCBIterations", rtSettings.dcb_iterations);
     keyFile.set_boolean ("Algorithms", "DCBEnhance", rtSettings.dcb_enhance);

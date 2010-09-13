@@ -255,6 +255,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     Gtk::VBox* fdb = Gtk::manage (new Gtk::VBox ());
     fdb->set_border_width (4);
     fdem->add (*fdb);
+
     Gtk::Label* dmlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_DMETHOD")+":"));
     dmethod = Gtk::manage (new Gtk::ComboBoxText ());
     Gtk::HBox* hb11 = Gtk::manage (new Gtk::HBox ());
@@ -268,6 +269,21 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     dmethod->append_text ("DCB");
     dmethod->append_text ("AHD");
     dmethod->append_text ("Bilinear");
+
+    Gtk::Label* dmlab2 = Gtk::manage (new Gtk::Label (M("PREFERENCES_DMETHODBATCH")+":  "));
+    dmethodBatch = Gtk::manage (new Gtk::ComboBoxText ());
+    Gtk::HBox* hb111 = Gtk::manage (new Gtk::HBox ());
+    hb111->pack_start (*dmlab2, Gtk::PACK_SHRINK, 4);
+    hb111->pack_start (*dmethodBatch);
+    dmethodBatch->append_text ("EAHD");
+    dmethodBatch->append_text ("HPHD");
+    dmethodBatch->append_text ("VNG-4");
+    //dmethod->append_text ("PPG");
+    dmethodBatch->append_text ("AMaZE");//Emil's code for AMaZE
+    dmethodBatch->append_text ("DCB");
+    dmethodBatch->append_text ("AHD");
+    dmethodBatch->append_text ("Bilinear");
+
     Gtk::Label* cclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FALSECOLOR")+":"));
     ccSteps = Gtk::manage (new Gtk::SpinButton ());
     ccSteps->set_digits (0);
@@ -316,6 +332,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
     fdb->pack_start (*hb11, Gtk::PACK_SHRINK, 4);
+    fdb->pack_start (*hb111, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*hb12, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*hb13, Gtk::PACK_SHRINK, 4);
     fdb->pack_start (*dcbEnhance, Gtk::PACK_SHRINK, 4);
@@ -338,6 +355,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     }
 
     dmconn = dmethod->signal_changed().connect( sigc::mem_fun(*this, &Preferences::dmethodChanged) );
+    dmconnBatch = dmethod->signal_changed().connect( sigc::mem_fun(*this, &Preferences::dmethodBatchChanged) );
 
     return mvbpp;
 }
@@ -751,6 +769,21 @@ void Preferences::storePreferences () {
         moptions.rtSettings.demosaicMethod = "ahd";
     else if (dmethod->get_active_row_number()==6)
         moptions.rtSettings.demosaicMethod = "bilinear";
+
+    if (dmethodBatch->get_active_row_number()==0)
+        moptions.rtSettings.demosaicMethodBatch = "eahd";
+    else if (dmethodBatch->get_active_row_number()==1)
+        moptions.rtSettings.demosaicMethodBatch = "hphd";
+    else if (dmethodBatch->get_active_row_number()==2)
+        moptions.rtSettings.demosaicMethodBatch = "vng4";
+    else if (dmethodBatch->get_active_row_number()==3)
+        moptions.rtSettings.demosaicMethodBatch = "amaze";
+    else if (dmethodBatch->get_active_row_number()==4)
+        moptions.rtSettings.demosaicMethodBatch = "dcb";
+    else if (dmethodBatch->get_active_row_number()==5)
+        moptions.rtSettings.demosaicMethodBatch = "ahd";
+    else if (dmethodBatch->get_active_row_number()==6)
+        moptions.rtSettings.demosaicMethodBatch = "bilinear";
     moptions.rtSettings.dcb_iterations=(int)dcbIterations->get_value();
     moptions.rtSettings.dcb_enhance=dcbEnhance->get_active();
 	moptions.rtSettings.ca_autocorrect=caAutoCorrect->get_active();//Emil's CA correction
@@ -803,6 +836,7 @@ void Preferences::storePreferences () {
 void Preferences::fillPreferences () {
 
     dmconn.block (true);
+    dmconnBatch.block(true);
     tconn.block (true);
 
     rprofiles->set_active_text (moptions.defProfRaw);
@@ -853,6 +887,22 @@ void Preferences::fillPreferences () {
         dmethod->set_active (5);
     else if (moptions.rtSettings.demosaicMethod=="bilinear")
          dmethod->set_active (6);
+
+    if (moptions.rtSettings.demosaicMethodBatch=="eahd")
+        dmethodBatch->set_active (0);
+    else if (moptions.rtSettings.demosaicMethodBatch=="hphd")
+        dmethodBatch->set_active (1);
+    else if (moptions.rtSettings.demosaicMethodBatch=="vng4")
+        dmethodBatch->set_active (2);
+	else if (moptions.rtSettings.demosaicMethodBatch=="amaze")//Emil's code for AMaZE
+        dmethodBatch->set_active (3);
+    else if (moptions.rtSettings.demosaicMethodBatch=="dcb")
+        dmethodBatch->set_active (4);
+    else if (moptions.rtSettings.demosaicMethodBatch=="ahd")
+        dmethodBatch->set_active (5);
+    else if (moptions.rtSettings.demosaicMethodBatch=="bilinear")
+         dmethodBatch->set_active (6);
+
     dcbEnhance->set_active(moptions.rtSettings.dcb_enhance);
     dcbIterations->set_value(moptions.rtSettings.dcb_iterations);
     dcbEnhance->set_sensitive(moptions.rtSettings.demosaicMethod=="dcb");
@@ -914,6 +964,7 @@ void Preferences::fillPreferences () {
     setc.block (false);
     
     dmconn.block (false);
+    dmconnBatch.block(false);
     tconn.block (false);
 }
 
@@ -958,6 +1009,26 @@ void Preferences::selectStartupDir () {
 }
 
 void Preferences::dmethodChanged () {
+
+    if (dmethod->get_active_row_number()==0)
+        ccSteps->set_value (2);
+    else if (dmethod->get_active_row_number()==1)
+        ccSteps->set_value (1);
+    else if (dmethod->get_active_row_number()==2)
+        ccSteps->set_value (2);
+
+    if (dmethod->get_active_row_number()==4) {
+        dcbEnhance->set_sensitive(true);
+        dcbIterations->set_sensitive(true);
+        dcbIterationsLabel->set_sensitive(true);
+    } else {
+        dcbEnhance->set_sensitive(false);
+        dcbIterations->set_sensitive(false);
+        dcbIterationsLabel->set_sensitive(false);
+    }
+}
+
+void Preferences::dmethodBatchChanged () {
 
     if (dmethod->get_active_row_number()==0)
         ccSteps->set_value (2);
