@@ -53,6 +53,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* rprofiles;
     Gtk::ComboBoxText* iprofiles;
     Gtk::ComboBoxText* dmethod;
+    Gtk::ComboBoxText* dmethodBatch;
     Gtk::ComboBoxText* languages;
     Gtk::Entry* dateformat;
     Gtk::Entry* startupdir;
@@ -110,12 +111,13 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* loadParamsPreference;
 	
     Options moptions;
-    sigc::connection dmconn, tconn, addc, setc;
+    sigc::connection dmconn, dmconnBatch, tconn, addc, setc;
 
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
     void dmethodChanged ();
+    void dmethodBatchChanged ();
 
     void themeChanged ();
 

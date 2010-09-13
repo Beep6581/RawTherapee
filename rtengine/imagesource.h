@@ -65,7 +65,7 @@ class ImageSource : public InitialImage {
                             ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
 
         virtual ~ImageSource            () {}
-        virtual int         load        (Glib::ustring fname) =0;
+        virtual int         load        (Glib::ustring fname, bool batch = false) =0;
         virtual void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp) {}
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;

@@ -724,7 +724,7 @@ void RawImageSource::inverse33 (double (*coeff)[3], double (*icoeff)[3]) {
     icoeff[2][2] = (coeff[0][1]*coeff[1][0]-coeff[0][0]*coeff[1][1]) / nom;
 }
     
-int RawImageSource::load (Glib::ustring fname) {
+int RawImageSource::load (Glib::ustring fname, bool batch) {
 
     fileName = fname;
 
@@ -900,22 +900,44 @@ int RawImageSource::load (Glib::ustring fname) {
     	//MyTime t1,t2;
     	//t1.set();
         // demosaic
-        if (settings->demosaicMethod=="hphd")
-            hphd_demosaic ();
-        else if (settings->demosaicMethod=="vng4")
-            vng4_demosaic ();
-        else if (settings->demosaicMethod=="ahd")
-            ahd_demosaic ();
-        else if (settings->demosaicMethod=="bilinear")
-           bilinear_demosaic();
-        //else if (settings->demosaicMethod=="ppg")
-        //    ppg_demosaic ();
-        else if (settings->demosaicMethod=="amaze")
-            amaze_demosaic_RT ();//Emil's code for AMaZE
-        else if (settings->demosaicMethod=="dcb")
-            dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
+        if(!batch)
+        {
+            if (settings->demosaicMethod=="hphd")
+                hphd_demosaic ();
+            else if (settings->demosaicMethod=="vng4")
+                vng4_demosaic ();
+            else if (settings->demosaicMethod=="ahd")
+                ahd_demosaic ();
+            else if (settings->demosaicMethod=="bilinear")
+               bilinear_demosaic();
+            //else if (settings->demosaicMethod=="ppg")
+            //    ppg_demosaic ();
+            else if (settings->demosaicMethod=="amaze")
+                amaze_demosaic_RT ();//Emil's code for AMaZE
+            else if (settings->demosaicMethod=="dcb")
+                dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
+            else
+                eahd_demosaic ();
+        }
         else
-            eahd_demosaic ();
+        {
+            if (settings->demosaicMethodBatch =="hphd")
+                hphd_demosaic ();
+            else if (settings->demosaicMethodBatch=="vng4")
+                vng4_demosaic ();
+            else if (settings->demosaicMethodBatch=="ahd")
+                ahd_demosaic ();
+            else if (settings->demosaicMethodBatch=="bilinear")
+               bilinear_demosaic();
+            //else if (settings->demosaicMethod=="ppg")
+            //    ppg_demosaic ();
+            else if (settings->demosaicMethodBatch=="amaze")
+                amaze_demosaic_RT ();//Emil's code for AMaZE
+            else if (settings->demosaicMethodBatch=="dcb")
+                dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
+            else
+                eahd_demosaic ();
+        }
         //t2.set();
         //printf("Demosaicing:%d usec\n",t2.etime(t1));
     }

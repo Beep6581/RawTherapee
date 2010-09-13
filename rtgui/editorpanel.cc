@@ -381,6 +381,8 @@ void EditorPanel::close () {
 
 void EditorPanel::saveProfile () {
 
+    if (!ipc)
+        return;
     ProcParams params;
     ipc->getParams (&params);
 
@@ -641,7 +643,8 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
 
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+    //rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams);
     int prevh = options.maxThumbnailHeight;
     int prevw = prevh;
     guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
