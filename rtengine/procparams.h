@@ -132,6 +132,26 @@ class ColorDenoiseParams {
         bool    edgesensitive;
         int		amount;
 };
+	
+	/**
+	 * Parameters of impulse denoising
+	 */
+	class ImpulseDenoiseParams {
+		
+    public:
+        bool    enabled;
+	};
+	
+	/**
+	 * Parameters of the directional pyramid denoising
+	 */
+	class DirPyrDenoiseParams {
+		
+    public:
+        bool    enabled;
+        int		luma;
+        int     chroma;
+	};
 
 /**
   * Parameters of the shadow/highlight enhancement
@@ -326,6 +346,8 @@ class ProcParams {
         ColorShiftParams        colorShift;     ///< Color shift parameters
         LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
         ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
+		ImpulseDenoiseParams    impulseDenoise; ///< Impulse denoising parameters
+		DirPyrDenoiseParams		dirpyrDenoise;  ///< Directional Pyramid denoising parameters
         SHParams                sh;             ///< Shadow/highlight enhancement parameters
         CropParams              crop;           ///< Crop parameters
         CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters

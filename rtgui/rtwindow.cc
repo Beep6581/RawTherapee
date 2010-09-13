@@ -218,8 +218,8 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     options.fbArrangement = fileBrowser->getFileCatalog()->getArrangement ();
     options.firstRun = false;
 */
-    options.windowWidth = get_width();
-    options.windowHeight = get_height();
+    //options.windowWidth = get_width();
+    //options.windowHeight = get_height();
    
 
     Options::save ();
