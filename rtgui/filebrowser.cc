@@ -23,6 +23,7 @@
 #include <clipboard.h>
 #include <profilestore.h>
 #include <procparamchangers.h>
+#include <dfmanager.h>
 
 extern Options options;
 
@@ -60,7 +61,7 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(selectDF = new Gtk::MenuItem ("Select Dark Frame...")), 0, 1, p, p+1); p++;
     pmenu->attach (*(autoDF = new Gtk::MenuItem ("Auto Dark Frame")), 0, 1, p, p+1); p++;
-    pmenu->attach (*(thisIsDF = new Gtk::MenuItem ("This is a Dark Frame")), 0, 1, p, p+1); p++;
+    pmenu->attach (*(thisIsDF = new Gtk::MenuItem ("Move to Dark Frames folder")), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(copyprof = new Gtk::MenuItem (M("FILEBROWSER_COPYPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
@@ -92,6 +93,7 @@ FileBrowser::FileBrowser ()
     selall->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selall));
     selectDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectDF));
     autoDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoDF));
+    thisIsDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated),thisIsDF ));
     copyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), copyprof));    
     pasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), pasteprof));    
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
@@ -321,6 +323,18 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 					mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
 				}
 			}
+    	}
+    }else if( m==thisIsDF){
+    	if( options.rtSettings.darkFramesPath.size() >0 && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
+			for (int i=0; i<mselected.size(); i++){
+				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+				if( !file )continue;
+				Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
+				Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+				file->move(  dest );
+			}
+			// Reinit cache
+			rtengine::dfm.init( options.rtSettings.darkFramesPath );
     	}
     }else if (m==copyprof)
         copyProfile ();

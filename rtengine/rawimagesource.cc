@@ -88,8 +88,8 @@ RawImageSource::~RawImageSource () {
         freeArray<unsigned short>(blue, H);
     if(rawData)
     	freeArray<unsigned short>(rawData, H);
-    
-    delete [] cache;
+    if( cache )
+        delete [] cache;
     if (hrmap[0]!=NULL) {
         int dh = H/HR_SCALE;
         freeArray<float>(hrmap[0], dh);
@@ -3292,12 +3292,11 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 		free(image3[i]);
 		free(chroma[i]);
 	}
-#else
+#endif
 	free(image);
     free(image2);
     free(image3);
     free(chroma);
-#endif
 
     if(plistener) plistener->setProgress (1.0);
 }
