@@ -914,6 +914,37 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
     
+    modifierKey = event->state;
+    
+    switch(event->keyval) {
+        case GDK_1:
+            categoryButtonToggled(bRank[0]);
+            return true;
+        case GDK_2:
+            categoryButtonToggled(bRank[1]);
+            return true;
+        case GDK_3:
+            categoryButtonToggled(bRank[2]);
+            return true;
+        case GDK_4:
+            categoryButtonToggled(bRank[3]);
+            return true;
+        case GDK_5:
+            categoryButtonToggled(bRank[4]);
+            return true;
+        case GDK_grave:
+            categoryButtonToggled(bUnRanked);
+            return true;
+        case GDK_d:
+        case GDK_D:
+            categoryButtonToggled(bDir);
+            return true;
+        case GDK_t:
+        case GDK_T:
+            categoryButtonToggled(bTrash);
+            return true;
+    }
+
     if (!ctrl) {
         switch(event->keyval) {
             case GDK_i:
@@ -928,51 +959,10 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
             case GDK_underscore:
                 zoomOut();
                 return true;
-            case GDK_1:
-                categoryButtonToggled(bRank[0]);
-                return true;
-            case GDK_2:
-                categoryButtonToggled(bRank[1]);
-                return true;
-            case GDK_3:
-                categoryButtonToggled(bRank[2]);
-                return true;
-            case GDK_4:
-                categoryButtonToggled(bRank[3]);
-                return true;
-            case GDK_5:
-                categoryButtonToggled(bRank[4]);
-                return true;
-            case GDK_grave:
-                categoryButtonToggled(bUnRanked);
-                return true;
-            case GDK_d:
-            case GDK_D:
-                categoryButtonToggled(bDir);
-                return true;
-            case GDK_t:
-            case GDK_T:
-                categoryButtonToggled(bTrash);
-                return true;
         }
     }
     else {
         switch (event->keyval) {
-//            case GDK_s:
-//                saveAsPressed();
-//                return true;
-//            case GDK_q:
-//                queueImgPressed();
-//                return true;
-//            case GDK_e:
-//                sendToGimpPressed();
-//                return true;
-//            case GDK_z:
-//                history->undo ();
-//                return true;
-//            case GDK_Z:
-//                history->redo ();
-//                return true;
         }
     }
 
