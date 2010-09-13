@@ -159,7 +159,8 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
         toggle_fullscreen();
     }
 
-    if (mainNB->get_nth_page (mainNB->get_current_page()) == fpanel) {
+    if (mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
+        return fpanel->handleShortcutKey (event);
     }
 //    else if (mainNB->get_nth_page (mainNB->get_current_page()) == bqpanel) {
 //    }

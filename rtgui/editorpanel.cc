@@ -501,22 +501,6 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
             case GDK_H:
                 hidehp->set_active (!hidehp->get_active());
                 return true;
-            case GDK_w:
-            case GDK_W:
-                tpc->getToolBar()->wb_pressed ();
-                return true;
-            case GDK_c:
-            case GDK_C:
-                tpc->getToolBar()->crop_pressed ();
-                return true;
-            case GDK_s:
-            case GDK_S:
-                tpc->getToolBar()->stra_pressed ();
-                return true;
-            case GDK_n:
-            case GDK_N:
-                tpc->getToolBar()->hand_pressed ();
-                return true;
             case GDK_i:
             case GDK_I:
                 info->set_active (!info->get_active());
@@ -561,6 +545,9 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
                 return true;
         }
     }
+    
+    if(tpc->getToolBar()->handleShortcutKey(event))
+        return true;
 
     return false;
 }

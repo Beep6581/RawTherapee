@@ -55,6 +55,8 @@ class ToolBar : public Gtk::HBox {
     void wb_pressed ();
     void crop_pressed ();
     void stra_pressed ();
+
+    bool handleShortcutKey (GdkEventKey* event);
 };
 
 #endif

@@ -72,6 +72,8 @@ class FilePanel : public Gtk::HPaned,
 
         void optionsChanged         ();
         bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
+
+        bool handleShortcutKey (GdkEventKey* event);
 };
 
 #endif
