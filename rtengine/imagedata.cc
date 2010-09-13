@@ -19,6 +19,7 @@
 #include <imagedata.h>
 #include <iptcpairs.h>
 #include <glib/gstdio.h>
+#include <safegtk.h>
 #ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
 #endif
@@ -276,27 +277,6 @@ ImageData::~ImageData () {
     delete root;
     if (iptc) 
         iptc_data_free (iptc);
-}
-
-Glib::ustring safe_locale_to_utf8 (const std::string& src)
-{
-	Glib::ustring utf8_str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
-            try {
-                utf8_str = Glib::locale_to_utf8(src);
-            }
-            catch (const Glib::ConvertError& e) {
-                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
-            }
-#else
-						{
-							std::auto_ptr<Glib::Error> error;
-							utf8_str = locale_to_utf8(src, error);
-							if (error.get())
-								utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
-						}
-#endif //GLIBMM_EXCEPTIONS_ENABLED
-	return utf8_str;
 }
 
 const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
