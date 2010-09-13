@@ -208,6 +208,9 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 			// the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
             processing->params.save (fname + paramFileExtension);
+        else {
+        	printf("Unable to process or save %s\n", fname.c_str());
+        }
         if (processing->thumbnail) {
             processing->thumbnail->imageDeveloped ();
             processing->thumbnail->imageRemovedFromQueue ();
