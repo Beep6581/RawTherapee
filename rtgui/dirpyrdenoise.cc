@@ -72,8 +72,8 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
 void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 
   pp->dirpyrDenoise.luma        = luma->getValue ();
-  pp->dirpyrDenoise.chroma = (int)chroma->getValue ();
-  pp->dirpyrDenoise.enabled       = enabled->get_active();
+  pp->dirpyrDenoise.chroma		= chroma->getValue ();
+  pp->dirpyrDenoise.enabled     = enabled->get_active();
 
     if (pedited) {
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
@@ -88,7 +88,7 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
     chroma->setDefault (defParams->dirpyrDenoise.chroma);
 
     if (pedited) {
-        luma->setDefaultEditedState (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
+        luma->setDefaultEditedState		(pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         chroma->setDefaultEditedState   (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
     }
     else {
@@ -102,9 +102,9 @@ void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
     if (listener && enabled->get_active()) {
         
         if (a==luma)
-            listener->panelChanged (EvLDNRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
+            listener->panelChanged (EvDPDNLuma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
         else if (a==chroma) 
-            listener->panelChanged (EvLDNEdgeTolerance, Glib::ustring::format ((int)a->getValue()));
+            listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
     }
 }
 
@@ -125,9 +125,9 @@ void DirPyrDenoise::enabledChanged () {
 
     if (listener) {
         if (enabled->get_active ())
-            listener->panelChanged (EvLDNEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (EvDPDNEnabled, M("GENERAL_ENABLED"));
         else
-            listener->panelChanged (EvLDNEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (EvDPDNEnabled, M("GENERAL_DISABLED"));
     }  
 }
 
