@@ -283,7 +283,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
                 interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, tid*blk, (tid+1)*blk);
         else
                 interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, tid*blk,imheight);
-}
+}    
 #else
         interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, 0, imheight);
 #endif
@@ -1154,8 +1154,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
                     mat[i][j] += camMatrix[i][k] * work[k][j];
-
-#pragma omp parallel for
+                    
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
 
@@ -1177,8 +1176,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
         if (hTransform) {
             if (cmp.gammaOnInput) {
                 double gd = pow (2.0, defgain);
-                defgain = 0.0;
-#pragma omp parallel for
+                defgain = 0.0;                
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
                         im->r[i][j] = CurveFactory::gamma (CLIP(defgain*im->r[i][j]));
