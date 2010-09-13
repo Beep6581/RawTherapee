@@ -161,6 +161,10 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
         ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
         readyphase++;
+		if (scale==1) {
+            progress ("Denoising luminance impulse...",100*readyphase/numofphases);
+            ipf.impulsedenoise (nprevl);
+        }
         if (scale==1) {
             progress ("Denoising luminance...",100*readyphase/numofphases);
             ipf.lumadenoise (nprevl, buffer);
@@ -185,6 +189,10 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         if (scale==1) {
             progress ("Denoising color...",100*readyphase/numofphases);
             ipf.colordenoise (nprevl, buffer);
+        }
+		if (scale==1) {
+            progress ("Denoising luma/chroma...",100*readyphase/numofphases);
+            ipf.dirpyrdenoise (nprevl);
         }
         if (scale==1) {
             progress ("Wavelet...",100*readyphase/numofphases);

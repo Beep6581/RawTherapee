@@ -105,6 +105,20 @@ class ColorDenoiseParamsEdited {
         bool amount;
 };
 
+class ImpulseDenoiseParamsEdited {
+	
+public:
+	bool enabled;
+};
+
+class DirPyrDenoiseParamsEdited {
+	
+public:
+	bool enabled;
+	bool luma;
+	bool chroma;
+};
+
 class SHParamsEdited {
 
     public:
@@ -246,7 +260,11 @@ class ParamsEdited {
         WBParamsEdited                wb;             
         ColorShiftParamsEdited        colorShift;     
         LumaDenoiseParamsEdited       lumaDenoise;    
-        ColorDenoiseParamsEdited      colorDenoise;   
+        ColorDenoiseParamsEdited      colorDenoise; 
+	
+	DirPyrDenoiseParamsEdited       dirpyrDenoise;    
+	ImpulseDenoiseParamsEdited       impulseDenoise;    
+
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           
         CoarseTransformParamsEdited   coarse;         
