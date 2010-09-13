@@ -107,9 +107,9 @@ void ImpulseDenoise::enabledChanged () {
 
     if (listener) {
         if (enabled->get_active ())
-            listener->panelChanged (EvCDNEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (EvIDNEnabled, M("GENERAL_ENABLED"));
         else
-            listener->panelChanged (EvCDNEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (EvIDNEnabled, M("GENERAL_DISABLED"));
     }  
 }
 

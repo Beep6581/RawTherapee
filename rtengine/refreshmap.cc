@@ -104,6 +104,10 @@ ALL,    //    EvProfileChangeNotification
 RETINEX,    //    EvShrHighQuality
 TRANSFORM,  //    EvPerspCorr
 EQUALIZER,  // EvEqualizer
-EQUALIZER   // EvEqlEnabled
+EQUALIZER,   // EvEqlEnabled
+IMPULSEDENOISE,    // EvIDNEnabled,
+DIRPYRDENOISE,    //  EvDPDNEnabled,
+DIRPYRDENOISE,    //  EvDPDNLuma,
+DIRPYRDENOISE    //  EvDPDNChroma,
 };
 
