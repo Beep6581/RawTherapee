@@ -84,22 +84,22 @@ FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
-FILEBROWSER_SHOWDIRHINT;Show all images of the directory
+FILEBROWSER_SHOWDIRHINT;Show all images of the directory <b>D</b>
 FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
-FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star
-FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star
-FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star
-FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
-FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
-FILEBROWSER_SHOWTRASHHINT;Show content of the trash
-FILEBROWSER_SHOWUNRANKHINT;Show unranked images
+FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star <b>5</b>
+FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
+FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>
 FILEBROWSER_STARTPROCESSING;Start processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
 FILEBROWSER_THUMBSIZE;Thumb. size
-FILEBROWSER_ZOOMINHINT;Increase thumbnail size
-FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
+FILEBROWSER_ZOOMINHINT;Increase thumbnail size <b>+</b>
+FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size <b>-</b>
 GENERAL_ABOUT;About
 GENERAL_CANCEL;Cancel
 GENERAL_DISABLE;Disable
@@ -708,7 +708,7 @@ NAVIGATOR_H_VALUE;H = %1
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
-FILEBROWSER_SHOWEXIFINFO;Show EXIF info
+FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_BUTTON_G;G
