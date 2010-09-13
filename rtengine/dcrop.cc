@@ -164,6 +164,7 @@ void Crop::update (int todo, bool internal) {
     if (todo & M_LUMINANCE) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
         if (skip==1) {
+			parent->ipf.impulsedenoise (labnCrop);
             parent->ipf.lumadenoise (labnCrop, cbuffer);
             parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
             parent->ipf.waveletEqualizer(labnCrop, true, false);
@@ -175,6 +176,7 @@ void Crop::update (int todo, bool internal) {
         parent->ipf.colorCurve (laboCrop, labnCrop);
         if (skip==1) {
             parent->ipf.colordenoise (labnCrop, cbuffer);
+			parent->ipf.dirpyrdenoise (labnCrop);
             parent->ipf.waveletEqualizer(labnCrop, false, true);
         }
     }

@@ -35,6 +35,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
+	impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
+	dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
     lcurve              = Gtk::manage (new LCurve ());
     colorboost          = Gtk::manage (new ColorBoost ());
@@ -64,8 +66,10 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
     addPanel (exposurePanel, lcurve,            M("TP_LUMACURVE_LABEL"));      toolPanels.push_back (lcurve);
+	addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL"));    toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
+	addPanel (detailsPanel, dirpyrdenoise,        M("TP_DIRPYRDENOISE_LABEL"));    toolPanels.push_back (dirpyrdenoise);
     addPanel (detailsPanel, equalizer,          M("TP_EQUALIZER_LABEL"));      toolPanels.push_back (equalizer);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);
     addPanel (transformPanel, resize,           M("TP_RESIZE_LABEL"));         toolPanels.push_back (resize);
@@ -168,7 +172,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     for (int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (params);
 
-    // some transformations make the crop change for convinience
+    // some transformations make the crop change for convenience
     if (event==rtengine::EvResizeScale) {
         crop->resizeScaleChanged (params->resize.scale);
         crop->write (params);
