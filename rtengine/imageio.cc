@@ -19,7 +19,6 @@
 #include <png.h>
 #include <glib/gstdio.h>
 #include <imageio.h>
-#include <safegtk.h>
 #include <tiff.h>
 #include <tiffio.h>
 #include <stdio.h>
@@ -410,7 +409,7 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 
-    FILE* file=g_fopen(safe_locale_from_utf8(fname).c_str (),"wb");
+    FILE* file=g_fopen(fname.c_str (),"wb");
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -494,7 +493,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
 
-	FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+	FILE *file = g_fopen (fname.c_str (), "wb");
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -598,7 +597,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     unsigned char* linebuffer = new unsigned char[lineWidth];
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+        FILE *file = g_fopen (fname.c_str (), "wb");
 
         if (!file)
             return IMIO_CANNOTREADFILE;           
