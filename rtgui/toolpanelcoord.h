@@ -33,6 +33,8 @@
 #include <shadowshighlights.h>
 #include <lumadenoise.h>
 #include <colordenoise.h>
+#include <impulsedenoise.h>
+#include <dirpyrdenoise.h>
 #include <sharpening.h>
 #include <lcurve.h>
 #include <exifpanel.h>
@@ -85,6 +87,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
+		ImpulseDenoise* impulsedenoise;
+		DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;

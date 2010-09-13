@@ -8,6 +8,7 @@ set (BASESOURCEFILES
     coarsepanel.cc cacorrection.cc colorshift.cc hlrec.cc chmixer.cc
     colorboost.cc resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     colordenoise.cc
+    impulsedenoise.cc dirpyrdenoise.cc
     exifpanel.cc
     sharpening.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
