@@ -22,6 +22,7 @@
 #include <glibmm.h>
 #include <rtengine.h>
 #include <thumbnail.h>
+#include <glib.h>
 
 class ThumbImageUpdateListener {
 
@@ -46,11 +47,11 @@ class ThumbImageUpdater {
     Glib::Thread* thread;
     Glib::Mutex* qMutex;
     Glib::Mutex* startMutex;
-    Glib::Thread **threadPool;
+    //Glib::Thread **threadPool;
+    Glib::ThreadPool * threadPool;
 
   public:
-    ThumbImageUpdater ();
-    ~ThumbImageUpdater ();
+    ThumbImageUpdater ();    
 
     void add        (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l);
     void process    ();

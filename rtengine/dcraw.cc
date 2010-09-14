@@ -8973,6 +8973,13 @@ dcrMutex->lock ();
   image = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
   meta_data = (char *) (image + height*width);
 
+  if(!image)
+  {
+    fclose(ifp);
+    dcrMutex->unlock ();
+    return 3;
+  }
+
   if (setjmp (failure)) {
       if (image)
         free (image);
