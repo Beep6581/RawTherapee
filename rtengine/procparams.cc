@@ -101,6 +101,7 @@ void ProcParams::setDefaults () {
 	dirpyrDenoise.enabled       = false;
     dirpyrDenoise.luma          = 10;
     dirpyrDenoise.chroma		= 10;
+	dirpyrDenoise.gamma			= 2.0;
     
     sh.enabled       = false;
     sh.hq            = false;
@@ -253,7 +254,8 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
     keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
-    
+	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
+
     // save lumaDenoise
     keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
     keyFile.set_double  ("Luminance Denoising", "Radius",         lumaDenoise.radius);
@@ -472,6 +474,7 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled")) dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
 }
   
     // load lumaDenoise
@@ -683,6 +686,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 	&& dirpyrDenoise.enabled      == other.dirpyrDenoise.enabled
 	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
 	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
+	&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
         && lumaDenoise.enabled      == other.lumaDenoise.enabled
         && lumaDenoise.radius       == other.lumaDenoise.radius
         && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance

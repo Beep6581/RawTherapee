@@ -24,92 +24,112 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 DirPyrDenoise::DirPyrDenoise () : ToolPanel ()  {
+	
+	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
+	enabled->set_active (false);
+	enabled->show ();
+	pack_start (*enabled);
+	
+	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
+	hsep1->show ();
+	pack_start (*hsep1);
+	
+	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enabledChanged) );
+	
+	luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"), 0, 100, 1, 10));
+	chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 1, 10));
+	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 0.10));
+	
+	luma->setAdjusterListener (this);
+	chroma->setAdjusterListener (this); 
+    gamma->setAdjusterListener (this); 
+	
+	luma->show();
+	chroma->show();
+	gamma->show();
+	
+	pack_start (*luma);
+	pack_start (*chroma);
+	pack_start (*gamma);
 
-  enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-  enabled->set_active (false);
-  enabled->show ();
-  pack_start (*enabled);
-
-  Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
-  hsep1->show ();
-  pack_start (*hsep1);
-
-  enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enabledChanged) );
-
-  luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"), 0, 100, 1, 10));
-  chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 1, 10));
-  luma->setAdjusterListener (this);
-  chroma->setAdjusterListener (this); 
-  luma->show();
-  chroma->show();
-
-  pack_start (*luma);
-  pack_start (*chroma);
 }
 
 void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
-
+	
     disableListener ();
-
+	
     if (pedited) {
         luma->setEditedState    (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         chroma->setEditedState      (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
+        gamma->setEditedState      (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
         enabled->set_inconsistent (!pedited->dirpyrDenoise.enabled);
     }
-
+	
     enaConn.block (true);
     enabled->set_active (pp->dirpyrDenoise.enabled);
     enaConn.block (false);
     
     lastEnabled = pp->dirpyrDenoise.enabled;
-
+	
     luma->setValue    (pp->dirpyrDenoise.luma);
     chroma->setValue      (pp->dirpyrDenoise.chroma);
+	gamma->setValue      (pp->dirpyrDenoise.gamma);
 
     enableListener ();
 }
 
 void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
-
-  pp->dirpyrDenoise.luma        = luma->getValue ();
-  pp->dirpyrDenoise.chroma		= chroma->getValue ();
-  pp->dirpyrDenoise.enabled     = enabled->get_active();
-
+	
+	pp->dirpyrDenoise.luma      = luma->getValue ();
+	pp->dirpyrDenoise.chroma	= chroma->getValue ();
+	pp->dirpyrDenoise.gamma		= gamma->getValue ();
+	pp->dirpyrDenoise.enabled   = enabled->get_active();
+	
     if (pedited) {
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
         pedited->dirpyrDenoise.chroma	= chroma->getEditedState ();
-        pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
+		pedited->dirpyrDenoise.gamma	= gamma->getEditedState ();
+		pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
     }
 }
 
 void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
-
+	
     luma->setDefault (defParams->dirpyrDenoise.luma);
     chroma->setDefault (defParams->dirpyrDenoise.chroma);
+	gamma->setDefault (defParams->dirpyrDenoise.chroma);
 
     if (pedited) {
         luma->setDefaultEditedState		(pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         chroma->setDefaultEditedState   (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
-    }
+		gamma->setDefaultEditedState   (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
+   }
     else {
         luma->setDefaultEditedState (Irrelevant);
         chroma->setDefaultEditedState   (Irrelevant);
+        gamma->setDefaultEditedState   (Irrelevant);
     }
 }
 
 void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
-
+	
     if (listener && enabled->get_active()) {
         
-        if (a==luma)
-            listener->panelChanged (EvDPDNLuma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
-        else if (a==chroma) 
+        if (a==luma) {
+            listener->panelChanged (EvDPDNLuma, Glib::ustring::format ((int)a->getValue()));
+        } else {
+			if (a==chroma) { 
             listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
-    }
+			} else {
+				if (a==gamma) 
+					listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
+			}
+		}
+	}
 }
 
 void DirPyrDenoise::enabledChanged () {
-
+	
     if (batchMode) {
         if (enabled->get_inconsistent()) {
             enabled->set_inconsistent (false);
@@ -119,10 +139,10 @@ void DirPyrDenoise::enabledChanged () {
         }
         else if (lastEnabled)
             enabled->set_inconsistent (true);
-
+		
         lastEnabled = enabled->get_active ();
     }
-
+	
     if (listener) {
         if (enabled->get_active ())
             listener->panelChanged (EvDPDNEnabled, M("GENERAL_ENABLED"));
@@ -132,18 +152,18 @@ void DirPyrDenoise::enabledChanged () {
 }
 
 void DirPyrDenoise::setBatchMode (bool batchMode) {
-
+	
     ToolPanel::setBatchMode (batchMode);
     luma->showEditedCB ();
     chroma->showEditedCB ();
 }
 
 /*void DirPyrDenoise::setAdjusterBehavior (bool bedgetoladd) {
-
-    if (!edgetolAdd && bedgetoladd)
-		edge->setLimits (-10000, 10000, 100, 0);
-	else if (edgetolAdd && !bedgetoladd)
-		edge->setLimits (10, 30000, 100, 1500);
-    
-    edgetolAdd = bedgetoladd;
-}*/
+ 
+ if (!edgetolAdd && bedgetoladd)
+ edge->setLimits (-10000, 10000, 100, 0);
+ else if (edgetolAdd && !bedgetoladd)
+ edge->setLimits (10, 30000, 100, 1500);
+ 
+ edgetolAdd = bedgetoladd;
+ }*/
