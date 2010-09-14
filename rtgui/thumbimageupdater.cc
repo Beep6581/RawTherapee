@@ -31,7 +31,7 @@ ThumbImageUpdater::ThumbImageUpdater ()
 
 ThumbImageUpdater::~ThumbImageUpdater ()
 {
-    delete threadPool;
+    delete [] threadPool;
 }
 
 void ThumbImageUpdater::add (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l) {
