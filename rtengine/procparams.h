@@ -140,10 +140,8 @@ class ColorDenoiseParams {
 		
     public:
         bool    enabled;
-<<<<<<< local
 		int		thresh;
-=======
->>>>>>> other
+
 	};
 	
 	/**

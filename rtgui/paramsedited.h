@@ -109,10 +109,8 @@ class ImpulseDenoiseParamsEdited {
 	
 public:
 	bool enabled;
-<<<<<<< local
 	bool thresh;
-=======
->>>>>>> other
+
 };
 
 class DirPyrDenoiseParamsEdited {
