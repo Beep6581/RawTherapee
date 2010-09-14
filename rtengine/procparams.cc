@@ -96,10 +96,7 @@ void ProcParams::setDefaults () {
     colorDenoise.edgetolerance  = 2000;
 	
 	impulseDenoise.enabled      = false;
-<<<<<<< local
 	impulseDenoise.thresh		= 50;
-=======
->>>>>>> other
 
 	dirpyrDenoise.enabled       = false;
     dirpyrDenoise.luma          = 10;
@@ -249,12 +246,9 @@ int ProcParams::save (Glib::ustring fname) const {
 	
 	// save impulseDenoise
     keyFile.set_boolean ("Impulse Denoising", "Enabled",        impulseDenoise.enabled);
-<<<<<<< local
 	keyFile.set_integer ("Impulse Denoising", "Threshold",        impulseDenoise.thresh);
 
-=======
 	
->>>>>>> other
 	// save dirpyrDenoise
     keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
     keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
@@ -470,10 +464,7 @@ if (keyFile.has_group ("Color Shift")) {
 	// load impulseDenoise
 if (keyFile.has_group ("Impulse Denoising")) {    
 	if (keyFile.has_key ("Impulse Denoising", "Enabled")) impulseDenoise.enabled = keyFile.get_boolean ("Impulse Denoising", "Enabled");
-<<<<<<< local
 	if (keyFile.has_key ("Impulse Denoising", "Threshold")) impulseDenoise.thresh = keyFile.get_integer ("Impulse Denoising", "Threshold");
-=======
->>>>>>> other
 }
 		
 	// load dirpyrDenoise
@@ -688,10 +679,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && colorShift.a     == other.colorShift.a
         && colorShift.b     == other.colorShift.b
 	&& impulseDenoise.enabled      == other.impulseDenoise.enabled
-<<<<<<< local
 	&& impulseDenoise.thresh      == other.impulseDenoise.thresh
-=======
->>>>>>> other
 	&& dirpyrDenoise.enabled      == other.dirpyrDenoise.enabled
 	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
 	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma

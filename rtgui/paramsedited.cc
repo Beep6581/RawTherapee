@@ -69,10 +69,7 @@ void ParamsEdited::set (bool v) {
         colorDenoise.enabled      = v;
         colorDenoise.amount       = v;
 	impulseDenoise.enabled      = v;
-<<<<<<< local
 	impulseDenoise.thresh      = v;
-=======
->>>>>>> other
 	dirpyrDenoise.enabled      = v;
 	dirpyrDenoise.luma       = v;
 	dirpyrDenoise.chroma = v;
@@ -190,10 +187,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorDenoise.amount = colorDenoise.amount && p.colorDenoise.amount == other.colorDenoise.amount;
 		
 		impulseDenoise.enabled = impulseDenoise.enabled && p.impulseDenoise.enabled == other.impulseDenoise.enabled;
-<<<<<<< local
 		impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
-=======
->>>>>>> other
 
 		dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
@@ -303,10 +297,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
 	
 	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
-<<<<<<< local
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
-=======
->>>>>>> other
 
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
 	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= mods.dirpyrDenoise.luma;

@@ -177,10 +177,7 @@ void Crop::update (int todo, bool internal) {
         if (skip==1) {
             parent->ipf.colordenoise (labnCrop, cbuffer);
 			parent->ipf.dirpyrdenoise (labnCrop);
-<<<<<<< local
 			parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
-=======
->>>>>>> other
             parent->ipf.waveletEqualizer(labnCrop, false, true);
         }
     }

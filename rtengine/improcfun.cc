@@ -434,11 +434,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
-<<<<<<< local
 			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 /*1024*/);
-=======
 			impulse_nr (lab->L, lab->L, lab->W, lab->H, 1024);
->>>>>>> other
 	}
 	
 	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
