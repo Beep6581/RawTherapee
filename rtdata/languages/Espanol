@@ -1,30 +1,3 @@
-﻿#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Espanol
-# 15.1.2008: keenonkites, first translation
-# 03.03.2008: Ioritz Ibarguren, corrections
-# 05.04.2008: keenonkites, completed for 2.4m1
-# 09.04.2008: Ramon, partly corrected (part of 2.3)
-# 29.04.2008: Ramon, small correction
-# 09.06.2008: Ramon, Adaptions regarding 2.4m1 and others
-# 20.09.2008: keenonkites, first version for 2.4m2
-# 19.12.2008: keenonkites, first version for 2.4beta4
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
 CURVEEDITOR_FILEDLGFILTERANY;Cuaquier archivo
 CURVEEDITOR_FILEDLGFILTERCURVE;Archivos de curvas
@@ -50,10 +23,10 @@ EXIFPANEL_KEEP;Conservar
 EXIFPANEL_KEEPHINT;Conserva las etiquetas seleccionadas al escribir el archivo de salida
 EXIFPANEL_REMOVE;Borrar
 EXIFPANEL_REMOVEHINT;Quita las etiquetas seleccionadas al escribir el archivo de salida
-EXIFPANEL_RESETALLHINT;Reiniciar todos los atributos a los valores originales
-EXIFPANEL_RESETALL;Reiniciar todo
-EXIFPANEL_RESETHINT;Reiniciar atributos seleccionados a los valores originales
 EXIFPANEL_RESET;Reiniciar
+EXIFPANEL_RESETALL;Reiniciar todo
+EXIFPANEL_RESETALLHINT;Reiniciar todos los atributos a los valores originales
+EXIFPANEL_RESETHINT;Reiniciar atributos seleccionados a los valores originales
 EXIFPANEL_SUBDIRECTORY;Subcarpeta
 FILEBROWSER_APPLYPROFILE;Aplicar perfil
 FILEBROWSER_ARRANGEMENTHINT;Cambiar disposición de las miniaturas entre horizontal y vertical
@@ -61,8 +34,8 @@ FILEBROWSER_CLEARPROFILE;Borrar perfil
 FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_DELETEDLGLABEL;Confirmacion de borrar archivos
 FILEBROWSER_DELETEDLGMSG;¿Seguro que quieres borrar los %1 archivos seleccionados?
-FILEBROWSER_EMPTYTRASHHINT;Borrar archivos de la papelera definitivamente
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
+FILEBROWSER_EMPTYTRASHHINT;Borrar archivos de la papelera definitivamente
 FILEBROWSER_EXIFFILTERAPPLY;Aplicar
 FILEBROWSER_EXIFFILTERAPPLYHINT;Activar/desactivar filtro exif en el explorador de archivos
 FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
@@ -99,17 +72,17 @@ FILEBROWSER_SHOWRANK4HINT;Mostrar imagenes con 4 estrellas
 FILEBROWSER_SHOWRANK5HINT;Mostrar imagenes con 5 estrellas
 FILEBROWSER_SHOWTRASHHINT;Mostrar contenido de la papelera
 FILEBROWSER_SHOWUNRANKHINT;Mostrar imagenes sin valoración
-FILEBROWSER_STARTPROCESSINGHINT;Iniciar procesamiento de imagenes en la cola
 FILEBROWSER_STARTPROCESSING;Iniciar procesamiento
-FILEBROWSER_STOPPROCESSINGHINT;Parar procesamiento de imagenes en la cola
+FILEBROWSER_STARTPROCESSINGHINT;Iniciar procesamiento de imagenes en la cola
 FILEBROWSER_STOPPROCESSING;Parar procesamiento
+FILEBROWSER_STOPPROCESSINGHINT;Parar procesamiento de imagenes en la cola
 FILEBROWSER_THUMBSIZE;Tamaño miniatura
 FILEBROWSER_ZOOMINHINT;Agrandar miniatura
 FILEBROWSER_ZOOMOUTHINT;Reducir miniatura
 GENERAL_ABOUT;Acerca de
 GENERAL_CANCEL;Cancelar
-GENERAL_DISABLED;Desactivado
 GENERAL_DISABLE;Desactivar
+GENERAL_DISABLED;Desactivado
 GENERAL_ENABLE;Activar
 GENERAL_ENABLED;Activado
 GENERAL_LANDSCAPE;Paisaje
@@ -211,8 +184,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Compensación de Exposición
 HISTORY_MSG_9;Compresión de Luces Altas
-HISTORY_NEWSNAPSHOTAS;Como...
 HISTORY_NEWSNAPSHOT;Instantánea nueva
+HISTORY_NEWSNAPSHOTAS;Como...
 HISTORY_NEWSSDIALOGLABEL;Etiqueta de la Instantánea:
 HISTORY_NEWSSDIALOGTITLE;Añadir Instantánea Nueva
 HISTORY_SETTO;Ajustado a
@@ -234,10 +207,10 @@ ICMPANEL_WORKINGPROFILE;Perfil de Trabajo
 IMAGEAREA_DETAILVIEW;Vista de detalle
 IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Nombre del creador del objeto, por ejemplo el escritor, el fotótografo o el artista gráfico (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Título del creador o de los creadores del objeto (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Tratamiento o título del autor
-IPTCPANEL_CAPTIONHINT;Descripción textual de la información (Caption - Abstract).
+IPTCPANEL_AUTHORSPOSITIONHINT;Título del creador o de los creadores del objeto (By-line Title).
 IPTCPANEL_CAPTION;Leyenda
+IPTCPANEL_CAPTIONHINT;Descripción textual de la información (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITER;Autor de la Leyenda
 IPTCPANEL_CAPTIONWRITERHINT;Nombre de la persona que escribió, modificó o corrigió la imagen o leyenda/resumen (Writer - Editor).
 IPTCPANEL_CATEGORY;Categoría
@@ -247,44 +220,44 @@ IPTCPANEL_CITYHINT;Origen de la imagen: Ciudad (City).
 IPTCPANEL_COPYHINT;Copiar ajustes IPTC al portapapeles
 IPTCPANEL_COPYRIGHT;Derechos de autor
 IPTCPANEL_COPYRIGHTHINT;Cualquier llamada de atención necesaria sobre los derechos de autor (Copyright Notice).
-IPTCPANEL_COUNTRYHINT;Origen de la imagen: Pais (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;País
+IPTCPANEL_COUNTRYHINT;Origen de la imagen: Pais (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Créditos
 IPTCPANEL_CREDITHINT;Identifica el proveedor de la imagen, no tiene que ser el creador o el propietario (Credit).
 IPTCPANEL_DATECREATED;Fecha de creación
 IPTCPANEL_DATECREATEDHINT;Fecha de creación del contenido intelectual de la imagen; Format: AAAAMMDD (Date Created).
-IPTCPANEL_EMBEDDEDHINT;Reiniciar a los datos IPTC incrustados en el archivo de la imagen
 IPTCPANEL_EMBEDDED;Incrustado
-IPTCPANEL_HEADLINEHINT;Una anotación publicable que provee una sinopsis de los contenidos de la imagen (Headline).
+IPTCPANEL_EMBEDDEDHINT;Reiniciar a los datos IPTC incrustados en el archivo de la imagen
 IPTCPANEL_HEADLINE;Titular
-IPTCPANEL_INSTRUCTIONSHINT;Otras instrucciones editoriales sobre el uso de la imagen (Special Instructions).
+IPTCPANEL_HEADLINEHINT;Una anotación publicable que provee una sinopsis de los contenidos de la imagen (Headline).
 IPTCPANEL_INSTRUCTIONS;Instrucciones
-IPTCPANEL_KEYWORDSHINT;Palabras clave que hacen la búsqueda de la imagen mas fácil (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Otras instrucciones editoriales sobre el uso de la imagen (Special Instructions).
 IPTCPANEL_KEYWORDS;Palabras clave
+IPTCPANEL_KEYWORDSHINT;Palabras clave que hacen la búsqueda de la imagen mas fácil (Keywords).
 IPTCPANEL_PASTEHINT;Pegar ajustes IPTC desde el portapapeles
 IPTCPANEL_PROVINCE;Estado/Provincia
 IPTCPANEL_PROVINCEHINT;Origen de la imagen: Estado/Provincia (Province-State).
-IPTCPANEL_RESETHINT;Reiniciar a los ajustes predeterminados del perfil.
 IPTCPANEL_RESET;Reiniciar
+IPTCPANEL_RESETHINT;Reiniciar a los ajustes predeterminados del perfil.
 IPTCPANEL_SOURCE;Fuente
 IPTCPANEL_SOURCEHINT;Propietario original del contenido intelectual de la imagen (Source).
 IPTCPANEL_SUPPCATEGORIES;Categorías suplementarias
 IPTCPANEL_SUPPCATEGORIESHINT;Afinado del sujeto de la imagen (Supplemental Categories).
-IPTCPANEL_TITLEHINT;Referencia concisa de la imagen (Object Name).
 IPTCPANEL_TITLE;Título
-IPTCPANEL_TRANSREFERENCEHINT;Un código que representa el lugar de la transmisión original (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;Referencia concisa de la imagen (Object Name).
 IPTCPANEL_TRANSREFERENCE;Ref. trans. original
+IPTCPANEL_TRANSREFERENCEHINT;Un código que representa el lugar de la transmisión original (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferencias
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Como...
 MAIN_BUTTON_SAVE;Guardar Imagen
+MAIN_BUTTON_SAVEAS;Como...
 MAIN_BUTTON_SENDTOEDITOR;Abrir con editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Este archivo ya existe.
 MAIN_MSG_CANNOTLOAD;No se puede abrir imagen
@@ -313,8 +286,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Indicación de luces altas recortadas
 MAIN_TOOLTIP_INDCLIPPEDS;Indicación de sombras recortadas
 MAIN_TOOLTIP_PREFERENCES;Ajustar preferencias
 MAIN_TOOLTIP_QINFO; Información breve de la imagen
-MAIN_TOOLTIP_SAVEAS;Guardar imagen a una carpeta seleccionada
 MAIN_TOOLTIP_SAVE;Guardar imagen a la carpeta predeterminada
+MAIN_TOOLTIP_SAVEAS;Guardar imagen a una carpeta seleccionada
 PARTIALPASTE_BASICGROUP;Ajustes Básicos
 PARTIALPASTE_CACORRECTION;Corrección de Aberraciones Cromáticas
 PARTIALPASTE_COARSETRANS;Rotar 90 grados / voltear
@@ -396,12 +369,12 @@ PREFERENCES_OUTDIR;Carpeta de Salida
 PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imagenes creadas en una carpeta elegida
 PREFERENCES_OUTDIRHINT;<i>Se puede usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se puede usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se puede usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Extensiones analizados
 PREFERENCES_PARSEDEXTADD;Agregar Extensión
 PREFERENCES_PARSEDEXTADDHINT;Entra una extensión y apreta este botón para agregar a la lista
 PREFERENCES_PARSEDEXTDELHINT;Borrar extensión de la lista
-PREFERENCES_PARSEDEXT;Extensiones analizados
 PREFERENCES_PROFILEHANDLING;Tratamiento de perfiles de procesamiento
 PREFERENCES_PROFILELOADPR;Prioridad de perfiles quando abriendo imagen
 PREFERENCES_PROFILEPRCACHE;Perfil en memoria intermedia
@@ -461,8 +434,8 @@ SAVEDLG_JPEGQUAL;Calidad JPEG
 SAVEDLG_JPGFILTER;Archivos JPEG
 SAVEDLG_PNGCOMPR;Compresión PNG
 SAVEDLG_PNGFILTER;Archivos PNG
-SAVEDLG_PUTTOQUEUEHEAD;Poner al principio de la cola
 SAVEDLG_PUTTOQUEUE;Poner en la cola
+SAVEDLG_PUTTOQUEUEHEAD;Poner al principio de la cola
 SAVEDLG_PUTTOQUEUETAIL;Poner al fin de la cola
 SAVEDLG_SAVEIMMEDIATELY;Guardar inmediatamente
 SAVEDLG_SAVESPP;Guardar parámetros de procesamiento con la imagen
@@ -589,9 +562,9 @@ TP_SHARPENING_LABEL;Enfoque
 TP_SHARPENING_METHOD;Método
 TP_SHARPENING_ONLYEDGES;Enfocar solo Bordes
 TP_SHARPENING_RADIUS;Radio
+TP_SHARPENING_RLD;Deconvolución RL
 TP_SHARPENING_RLD_AMOUNT;Cantidad
 TP_SHARPENING_RLD_DAMPING;Amortiguación
-TP_SHARPENING_RLD;Deconvolución RL
 TP_SHARPENING_RLD_ITERATIONS;Reiteraciones
 TP_SHARPENING_THRESHOLD;Umbral
 TP_SHARPENING_USM;Máscara de enfoque
@@ -614,3 +587,4 @@ ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Previsualización
 ZOOMBAR_SCALE;Escala
 ZOOMBAR_SMALL;Pequeño
+﻿#

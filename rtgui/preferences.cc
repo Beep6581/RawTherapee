@@ -386,7 +386,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
     for (int i=0; i<langs.size(); i++) {
-	if ("default" != langs[i]) {
+	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
   	    languages->append_text (langs[i]);
 	}
     }

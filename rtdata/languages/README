@@ -1,0 +1,35 @@
+This is the directory where all translations should go.
+
+Translations are loaded for a given term at three levels:
+
+1) default
+2) <Language>
+3) <Language> <Locale/Variant>
+
+Developers who are adding a new feature should add new strings *only* to default.  This file
+should be comprised of basic English text.  It will be used in the event that there are no
+more specific languages specified.
+
+Translators should in general implement the <Language> file.  This is the generic translation
+for a given language; for instance, 'French', 'German', 'Norsk', etc.  If a string exists in
+this file (and the user has specified this language), then RawTherapee will override the value
+in default with the value in <Language>.  Please note that the filename for this file must not
+contain any spaces.
+
+In some situations, translations may differ based on region, locale, etc.  A good example of this
+is the difference in spelling between 'color' (American English) and 'colour' (British English).
+In this case, the vast majority of strings are identical between English and English (UK); 
+however, to keep the proper spelling in Britain, we have a locale file called 'English (UK)' which
+contains the differences between the two.  RawTherapee uses locale files when:
+ a) The user has selected a language which has a space in the file name
+ b) There is another file which is identical to the locale file up until the space (i.e., 'English'
+to the locale file 'English (UK)').
+
+If a locale file is used, it is applied in the same manner as <Language> is to default.  The locale
+will override any keys present from the ones in the language file (and in turn, the default).
+
+
+It is recommended to look for differences from default using a text editor with compare cabailities.
+For ease of maintentance, you should insert new entries in alphabetical order.  Comments *may*
+be included, but in general you should try to avoid them as they can confuse comparison editors.
+
