@@ -19,11 +19,19 @@
 #include <thumbimageupdater.h>
 #include <gtkmm.h>
 
+#define threadNum 4 // IF LCMS GETS THREAD SAFETY WE CAN ENABLE MORE THREADS
 ThumbImageUpdater thumbImageUpdater;
 
 ThumbImageUpdater::ThumbImageUpdater () 
     : tostop(false), stopped(true), qMutex(NULL), startMutex(NULL) {
-    
+
+    threadPool = new Glib::Thread* [threadNum];
+
+}
+
+ThumbImageUpdater::~ThumbImageUpdater ()
+{
+    delete threadPool;
 }
 
 void ThumbImageUpdater::add (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l) {
@@ -59,9 +67,9 @@ void ThumbImageUpdater::add (Thumbnail* t, const rtengine::procparams::ProcParam
 void ThumbImageUpdater::process () {
 
     if (stopped) {
-        #undef THREAD_PRIORITY_NORMAL
+        #undef THREAD_PRIORITY_LOW
         stopped = false;
-        thread = Glib::Thread::create(sigc::mem_fun(*this, &ThumbImageUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        thread = Glib::Thread::create(sigc::mem_fun(*this, &ThumbImageUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
     }
 }
 
@@ -70,9 +78,7 @@ void ThumbImageUpdater::process_ () {
     stopped = false;
     tostop = false;
 
-    #define threadNum 4 // IF LCMS GETS THREAD SAFETY WE CAN ENABLE MORE THREADS
-    Glib::Thread **threadPool = new Glib::Thread* [threadNum];
-
+   
     while (!tostop && !jqueue.empty ()) {
 
         qMutex->lock ();
@@ -88,15 +94,18 @@ void ThumbImageUpdater::process_ () {
             Job current = *i;
             jqueue.erase (i);
             if (current.listener) 
-                threadPool[threads] = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ThumbImageUpdater::processJob), current), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-            else 
-                threadPool[threads] = NULL;
+                threadPool[threads] = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ThumbImageUpdater::processJob), current), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+            //else
+              //  threadPool[threads] = NULL;
         }
         qMutex->unlock ();
 
         for (int j=0; j<threads; j++)
             if (threadPool[j])
                 threadPool[j]->join ();
+
+        for(int j =0; j <threadNum;j++)
+            threadPool[j] = NULL;
     }
     stopped = true;
 }

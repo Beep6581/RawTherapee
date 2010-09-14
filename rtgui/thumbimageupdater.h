@@ -46,9 +46,11 @@ class ThumbImageUpdater {
     Glib::Thread* thread;
     Glib::Mutex* qMutex;
     Glib::Mutex* startMutex;
+    Glib::Thread **threadPool;
 
   public:
     ThumbImageUpdater ();
+    ~ThumbImageUpdater ();
 
     void add        (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l);
     void process    ();
