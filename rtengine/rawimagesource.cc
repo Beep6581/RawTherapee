@@ -2456,7 +2456,7 @@ void RawImageSource::bilinear_demosaic()
   {
             int tid = omp_get_thread_num();
             int nthreads = omp_get_num_threads();
-            int blk = W/nthreads;
+            int blk = H/nthreads;
 
             int start = 0;
             if (tid == 0) start = 1;
