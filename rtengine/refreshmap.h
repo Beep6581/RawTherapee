@@ -28,12 +28,23 @@
 #define AUTOEXP        31
 #define RGBCURVE       15
 #define LUMINANCECURVE 6
+<<<<<<< local
+#define SHARPENING     3//2
+#define IMPULSEDENOISE 3//2
+#define LUMADENOISE    3//2
+=======
 #define SHARPENING     2
 #define IMPULSEDENOISE 2
 #define LUMADENOISE    2
+>>>>>>> other
 #define WHITEBALANCE   255
+<<<<<<< local
+#define COLORBOOST     3//1
+#define COLORDENOISE   3//1
+=======
 #define COLORBOOST     1
 #define COLORDENOISE   1
+>>>>>>> other
 #define DIRPYRDENOISE  3
 #define CROP           16384
 #define EXIF           32768

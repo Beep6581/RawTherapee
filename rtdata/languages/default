@@ -566,6 +566,10 @@ TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+<<<<<<< local
+TP_IMPULSEDENOISE_THRESH;Threshold
+=======
+>>>>>>> other
 TP_LENSGEOM_AUTOCROP;Auto Crop
 TP_LENSGEOM_FILL;Auto Fill
 TP_LENSGEOM_LABEL;Lens / Geometry

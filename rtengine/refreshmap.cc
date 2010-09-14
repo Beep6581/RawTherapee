@@ -106,6 +106,10 @@ TRANSFORM,  //    EvPerspCorr
 EQUALIZER,  // EvEqualizer
 EQUALIZER,   // EvEqlEnabled
 IMPULSEDENOISE,    // EvIDNEnabled,
+<<<<<<< local
+IMPULSEDENOISE,    // EvIDNThresh,
+=======
+>>>>>>> other
 DIRPYRDENOISE,    //  EvDPDNEnabled,
 DIRPYRDENOISE,    //  EvDPDNLuma,
 DIRPYRDENOISE    //  EvDPDNChroma,
