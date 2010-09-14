@@ -29,14 +29,14 @@ ImpulseDenoise::ImpulseDenoise () : ToolPanel() {
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 
-	//amount = Gtk::manage (new Adjuster (M("TP_DETAIL_AMOUNT"), 1, 100, 1, 30));
+	thresh = Gtk::manage (new Adjuster (M("TP_DETAIL_AMOUNT"), 0, 100, 1, 10));
 
 	pack_start (*enabled);
 	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-	//pack_start (*amount);
+	pack_start (*thresh);
 
 	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ImpulseDenoise::enabledChanged) );
-	//amount->setAdjusterListener (this);
+	thresh->setAdjusterListener (this);
 
 	show_all_children ();
 }
@@ -46,7 +46,7 @@ void ImpulseDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     disableListener ();
 
     if (pedited) {
-        //amount->setEditedState    (pedited->impulseDenoise.amount ? Edited : UnEdited);
+        thresh->setEditedState    (pedited->impulseDenoise.thresh ? Edited : UnEdited);
         enabled->set_inconsistent (!pedited->impulseDenoise.enabled);
     }
 
@@ -56,39 +56,39 @@ void ImpulseDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     
     lastEnabled = pp->impulseDenoise.enabled;
 
-    //amount->setValue (pp->impulseDenoise.amount);
+    thresh->setValue (pp->impulseDenoise.thresh);
 
     enableListener ();
 }
 
 void ImpulseDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    //pp->impulseDenoise.amount    = amount->getValue ();
+    pp->impulseDenoise.thresh    = thresh->getValue ();
     pp->impulseDenoise.enabled   = enabled->get_active();
 	
     if (pedited) {
-        //pedited->impulseDenoise.amount        = amount->getEditedState ();
+        pedited->impulseDenoise.thresh        = thresh->getEditedState ();
         pedited->impulseDenoise.enabled       = !enabled->get_inconsistent();
     }
 }
 
 void ImpulseDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
-    //amount->setDefault (defParams->impulseDenoise.amount);
+    thresh->setDefault (defParams->impulseDenoise.thresh);
 
-    /*if (pedited) 
-        amount->setDefaultEditedState (pedited->impulseDenoise.amount ? Edited : UnEdited);
+    if (pedited) 
+        thresh->setDefaultEditedState (pedited->impulseDenoise.thresh ? Edited : UnEdited);
     else
-        amount->setDefaultEditedState (Irrelevant);*/
+        thresh->setDefaultEditedState (Irrelevant);
 }
 
-/*void ImpulseDenoise::adjusterChanged (Adjuster* a, double newval) {
+void ImpulseDenoise::adjusterChanged (Adjuster* a, double newval) {
 
     if (listener && enabled->get_active()) {
 
         listener->panelChanged (EvCDNRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }
-}*/
+}
 
 void ImpulseDenoise::enabledChanged () {
 
@@ -116,5 +116,5 @@ void ImpulseDenoise::enabledChanged () {
 void ImpulseDenoise::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
-    //amount->showEditedCB ();
+    thresh->showEditedCB ();
 }

@@ -103,14 +103,14 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 	float wtdsum, dirwt, norm;
 	int i1, j1;	
 	
-	rangeblur<unsigned short, unsigned int> (src, lpf, impish /*used as buffer here*/, width, height, thresh, false);
+	//rangeblur<unsigned short, unsigned int> (src, lpf, impish /*used as buffer here*/, width, height, thresh, false);
 	
-	//AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
+	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
 
-	//gaussHorizontal<unsigned short> (src, lpf, buffer, width, height, 2.0, false /*multiThread*/);
-	//gaussVertical<unsigned short>   (lpf, lpf, buffer, width, height, 2.0, false);
+	gaussHorizontal<unsigned short> (src, lpf, buffer, width, height, 2.0, false /*multiThread*/);
+	gaussVertical<unsigned short>   (lpf, lpf, buffer, width, height, 2.0, false);
 
-	//delete buffer;
+	delete buffer;
 
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +125,7 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 					hfnbrave += fabs(src[i1][j1]-lpf[i1][j1]);
 				}
 			hfnbrave = (hfnbrave-hpfabs)/24;
-			hpfabs>(hfnbrave*3) ? impish[i][j]=1 : impish[i][j]=0;
+			hpfabs>(hfnbrave*(5.5-thresh)) ? impish[i][j]=1 : impish[i][j]=0;
 			
 		}//now impulsive values have been corrected
 	

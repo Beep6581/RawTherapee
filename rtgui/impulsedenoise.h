@@ -23,10 +23,10 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class ImpulseDenoise : public Gtk::VBox, /*public AdjusterListener,*/ public ToolPanel {
+class ImpulseDenoise : public Gtk::VBox, public AdjusterListener, public ToolPanel {
 
   protected:
-    //Adjuster* radius;
+    Adjuster* thresh;
     //Adjuster* edge;
     Gtk::CheckButton* enabled;
     bool lastEnabled;
@@ -42,10 +42,10 @@ class ImpulseDenoise : public Gtk::VBox, /*public AdjusterListener,*/ public Too
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
 
-    //void adjusterChanged (Adjuster* a, double newval);
+    void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged ();
 
-    //void setAdjusterBehavior (bool bedgetoladd);
+    void setAdjusterBehavior (bool bedgetoladd);
 };
 
 #endif
