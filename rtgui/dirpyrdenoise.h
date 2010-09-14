@@ -28,6 +28,8 @@ class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public ToolPane
   protected:
     Adjuster* luma;
     Adjuster* chroma;
+	Adjuster* gamma;
+
     Gtk::CheckButton* enabled;
     bool lastEnabled;
     sigc::connection enaConn;

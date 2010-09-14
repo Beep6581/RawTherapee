@@ -153,6 +153,7 @@ class ColorDenoiseParams {
         bool    enabled;
         int		luma;
         int     chroma;
+		float	gamma;
 	};
 
 /**

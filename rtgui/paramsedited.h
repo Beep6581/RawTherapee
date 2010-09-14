@@ -119,6 +119,7 @@ public:
 	bool enabled;
 	bool luma;
 	bool chroma;
+	bool gamma;
 };
 
 class SHParamsEdited {

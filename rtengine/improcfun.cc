@@ -442,7 +442,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
-			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise.luma, params->dirpyrDenoise.chroma );
+			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise.luma, params->dirpyrDenoise.chroma, params->dirpyrDenoise.gamma/3.0 );
 	}
 
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
