@@ -16,11 +16,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Français
-# 1.3.2008: Hombre
-# 1.5.2008: Hombre: updates for 2.4m1
-# 27.10.2008: Hombre: updates for 2.4b1
-# 18.11.2008: Hombre: updates for 2.4b2
+#
+#
+#
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 CURVEEDITOR_FILEDLGFILTERANY;Tous les fichiers
 CURVEEDITOR_FILEDLGFILTERCURVE;Fichiers de courbe
@@ -86,22 +84,22 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
-FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier
+FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
-FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile
-FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles
-FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles
-FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles
-FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles
-FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille
-FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile
+FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles <b>5</b>
+FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille <b>T</b>
+FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile  <b>`</b>
 FILEBROWSER_STARTPROCESSING;Démarrer le traitement
 FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
 FILEBROWSER_STOPPROCESSING;Arrêter le traitement
 FILEBROWSER_STOPPROCESSINGHINT;Arrête le traitement des images
 FILEBROWSER_THUMBSIZE;Taille vign.
-FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes
-FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes
+FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes <b>+</b>
+FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes <b>-</b>
 GENERAL_ABOUT;À propos
 GENERAL_CANCEL;Annuler
 GENERAL_DISABLE;Désactiver
@@ -527,6 +525,10 @@ TP_CROP_SELECTCROP;    Sélection du rognage
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DIRPYRDENOISE_CHROMA;Chrominance
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Réduction pyramidal du bruit directionnel
+TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DISTORTION_AMOUNT;Quantité
 TP_DISTORTION_LABEL;Distorsion
 TP_EQUALIZER_LABEL;Égaliseur d'ondelette
@@ -564,6 +566,8 @@ TP_ICM_OUTPUTDLGLABEL;Choix du profil ICC de sortie...
 TP_ICM_OUTPUTPROFILE;Profil de sortie
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
+TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
+TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LENSGEOM_AUTOCROP;Rognage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
@@ -706,7 +710,7 @@ NAVIGATOR_H_VALUE;T = %1
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
-FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF
+FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_BUTTON_G;V
