@@ -1,29 +1,3 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# polish version
-# 24.12.2007
-# Mateusz Ludwin
-# -----------------------------
-# 08.01.2010
-# Initial update for 3.0 release
-# Bartosz "Simek" Kaszubowski
-#
 ADJUSTER_RESET_TO_DEFAULT;Przywroc domyslne
 CURVEEDITOR_FILEDLGFILTERANY;Wszystkie pliki
 CURVEEDITOR_FILEDLGFILTERCURVE;Pliki z krzywymi
@@ -45,14 +19,14 @@ EXIFPANEL_ADDEDITHINT;Dodaj nowa etykiete lub edytuj etykiete
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Wpisz wartosc
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Wybierz etykiete
 EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Edytuj etykiete
-EXIFPANEL_KEEPHINT;Zapamietaj wybrane etykiety podczas zapisywania pliku wyjsciowego
 EXIFPANEL_KEEP;Zapamietaj
-EXIFPANEL_REMOVEHINT;Usun wybrane etykiety podczas zapisywania pliku wyjsciowego
+EXIFPANEL_KEEPHINT;Zapamietaj wybrane etykiety podczas zapisywania pliku wyjsciowego
 EXIFPANEL_REMOVE;Usun
-EXIFPANEL_RESETALLHINT;Przywroc wszystkie etykiety do ich oryginalnych wartosci
-EXIFPANEL_RESETALL;Przywroc wszystkie
-EXIFPANEL_RESETHINT;Przywroc wybrane etykiety do ich oryginalnych wartosci
+EXIFPANEL_REMOVEHINT;Usun wybrane etykiety podczas zapisywania pliku wyjsciowego
 EXIFPANEL_RESET;Przywroc
+EXIFPANEL_RESETALL;Przywroc wszystkie
+EXIFPANEL_RESETALLHINT;Przywroc wszystkie etykiety do ich oryginalnych wartosci
+EXIFPANEL_RESETHINT;Przywroc wybrane etykiety do ich oryginalnych wartosci
 EXIFPANEL_SUBDIRECTORY;Podkatalog
 FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_ARRANGEMENTHINT;Przelacz pomiedzy poziomym/pionowym wyrownaniem miniaturek
@@ -60,13 +34,13 @@ FILEBROWSER_CLEARPROFILE;Wyczysc profil
 FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_DELETEDLGLABEL;Potwierdzenie usuniecia pliku
 FILEBROWSER_DELETEDLGMSG;Jestes pewien, ze chcesz usunac zaznaczone %1 pliki?
-FILEBROWSER_EMPTYTRASHHINT;Permanentnie usun pliki z kosza
 FILEBROWSER_EMPTYTRASH;Wyczysc kosz
-FILEBROWSER_EXIFFILTERAPPLYHINT;Wlacz/wylacz filtr Exif w przegladarce plikow
+FILEBROWSER_EMPTYTRASHHINT;Permanentnie usun pliki z kosza
 FILEBROWSER_EXIFFILTERAPPLY;Zastosuj
+FILEBROWSER_EXIFFILTERAPPLYHINT;Wlacz/wylacz filtr Exif w przegladarce plikow
 FILEBROWSER_EXIFFILTERLABEL;Filrt Exif
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Zmien ustawienia filtru Exif
 FILEBROWSER_EXIFFILTERSETTINGS;Ustawienia
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Zmien ustawienia filtru Exif
 FILEBROWSER_PARTIALPASTEPROFILE;Wklej czesciowo
 FILEBROWSER_PASTEPROFILE;Wklej profil
 FILEBROWSER_POPUPCANCELJOB;Anuluj zadanie
@@ -85,8 +59,8 @@ FILEBROWSER_POPUPSELECTALL;Zaznacz wszystkie
 FILEBROWSER_POPUPTRASH;Przenies do kosza
 FILEBROWSER_POPUPUNRANK;Usun ocene
 FILEBROWSER_POPUPUNTRASH;Usun z kosza
-FILEBROWSER_PROCESSINGSETTINGSHINT;Ustaw format pliku i katalog wyjsciowy
 FILEBROWSER_PROCESSINGSETTINGS;Ustawienia
+FILEBROWSER_PROCESSINGSETTINGSHINT;Ustaw format pliku i katalog wyjsciowy
 FILEBROWSER_RENAMEDLGLABEL;Zmien nazwe pliku
 FILEBROWSER_RENAMEDLGMSG;Zmien nazwe plki "%1" na:
 FILEBROWSER_SHOWDIRHINT;Pokaz wszystkie zdjecia w katalogu
@@ -98,19 +72,19 @@ FILEBROWSER_SHOWRANK4HINT;Pokaz zdjecia ocenione na 4 gwiazdki
 FILEBROWSER_SHOWRANK5HINT;Pokaz zdjecia ocenione na 5 gwiazdek
 FILEBROWSER_SHOWTRASHHINT;Pokaz zawartosc kosza
 FILEBROWSER_SHOWUNRANKHINT;Pokaz nieocenione zdjecia
-FILEBROWSER_STARTPROCESSINGHINT;Rozpocznij przetwarzanie/zapisywanie plikow w kolejce
 FILEBROWSER_STARTPROCESSING;Rozpocznij przetwarzanie
-FILEBROWSER_STOPPROCESSINGHINT;Zatrzymaj przetwarzanie zdjec
+FILEBROWSER_STARTPROCESSINGHINT;Rozpocznij przetwarzanie/zapisywanie plikow w kolejce
 FILEBROWSER_STOPPROCESSING;Zatrzymaj przetwarzanie
+FILEBROWSER_STOPPROCESSINGHINT;Zatrzymaj przetwarzanie zdjec
 FILEBROWSER_THUMBSIZE;Rozmiar minaturek
 FILEBROWSER_ZOOMINHINT;Zwieksz rozmiar miniaturek
 FILEBROWSER_ZOOMOUTHINT;Zmniejsz rozmiar miniaturek
 GENERAL_ABOUT;O programie
 GENERAL_CANCEL;Anuluj
-GENERAL_DISABLED;Wylaczone
 GENERAL_DISABLE;Wylacz
-GENERAL_ENABLED;Wlaczone
+GENERAL_DISABLED;Wylaczone
 GENERAL_ENABLE;Wlacz
+GENERAL_ENABLED;Wlaczone
 GENERAL_LANDSCAPE;Poziomo
 GENERAL_LOAD;laduj
 GENERAL_NA;nd.
@@ -210,8 +184,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Kompensacja ekspozycji
 HISTORY_MSG_9;Kompresja swiatel
-HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Nowa migawka
+HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSSDIALOGLABEL;Nazwa migawki:
 HISTORY_NEWSSDIALOGTITLE;Dodaj nowa migawke
 HISTORY_SETTO;Wybrano
@@ -235,55 +209,55 @@ IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Imie lub nazwa tworcy obiektu np. pisarza, fotografa lub grafika (w linii).
 IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
 IPTCPANEL_CAPTION;Tytul
+IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITER;Caption Writer
 IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
 IPTCPANEL_CATEGORY;Kategoria
-IPTCPANEL_CITYHINT;City of image origin (City).
+IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
 IPTCPANEL_CITY;Miasto
+IPTCPANEL_CITYHINT;City of image origin (City).
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;Kraj
+IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Credit
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
 IPTCPANEL_DATECREATED;Data utworzenia
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
 IPTCPANEL_HEADLINE;Naglowek
-IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
+IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
 IPTCPANEL_INSTRUCTIONS;Instrukcje
-IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_KEYWORDS;Slowa kluczowe
+IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_PROVINCE;Stan, wojewodztwo, dystrykt itd.
-IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_RESET;Reset
-IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
+IPTCPANEL_RESETHINT;Reset to profile default
 IPTCPANEL_SOURCE;zrodlo
-IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
+IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
+IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
 IPTCPANEL_TITLE;Tytul
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferencje
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Jako...
 MAIN_BUTTON_SAVE;Zapisz obraz
+MAIN_BUTTON_SAVEAS;Jako...
 MAIN_BUTTON_SENDTOEDITOR;Wyslij do edytora
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Plik juz istnieje.
 MAIN_MSG_CANNOTLOAD;Nie mozna wczytac obrazu
@@ -312,8 +286,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Pokaz przeswietlenia
 MAIN_TOOLTIP_INDCLIPPEDS;Pokaz niedoswietlenia
 MAIN_TOOLTIP_PREFERENCES;Ustaw preferencje
 MAIN_TOOLTIP_QINFO;Informacje o pliku
-MAIN_TOOLTIP_SAVEAS;Zapisz obraz we wskazanym katalogu
 MAIN_TOOLTIP_SAVE;Zapisz obraz w katalogu domyslnym
+MAIN_TOOLTIP_SAVEAS;Zapisz obraz we wskazanym katalogu
 PARTIALPASTE_BASICGROUP;Podstawowe ustawienia
 PARTIALPASTE_CACORRECTION;Korekcja C/A
 PARTIALPASTE_COARSETRANS;Rotacja/odwrocenie o 90 stopni
@@ -391,16 +365,16 @@ PREFERENCES_INTENT_RELATIVE;Wzglednie kolorymetryczny
 PREFERENCES_INTENT_SATURATION;Nasyceniowy
 PREFERENCES_LIVETHUMBNAILS;Miniaturki na zywo (wojniej)
 PREFERENCES_MONITORICC;Profil monitora
-PREFERENCES_OUTDIRFOLDERHINT;Umiesc zapisane zdjecia w wybranym katalogu
-PREFERENCES_OUTDIRFOLDER;Zapisz do katalogu
-PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIR;Katalog wyjsciowy
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRFOLDER;Zapisz do katalogu
+PREFERENCES_OUTDIRFOLDERHINT;Umiesc zapisane zdjecia w wybranym katalogu
+PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Uzyj schemat
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Dodaj rozszerzenie
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
-PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -460,8 +434,8 @@ SAVEDLG_JPEGQUAL;Jakosc JPEG
 SAVEDLG_JPGFILTER;Pliki JPEG
 SAVEDLG_PNGCOMPR;Kompresja PNG
 SAVEDLG_PNGFILTER;Pliki PNG
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Zapisz parametry przetwarzania wraz z obrazem
@@ -588,9 +562,9 @@ TP_SHARPENING_LABEL;Wyostrzanie
 TP_SHARPENING_METHOD;Metoda
 TP_SHARPENING_ONLYEDGES;Wyostrz tylko krawedzie
 TP_SHARPENING_RADIUS;Promien
+TP_SHARPENING_RLD;Dekonwolucja RL 
 TP_SHARPENING_RLD_AMOUNT;Sila
 TP_SHARPENING_RLD_DAMPING;Tlumienie
-TP_SHARPENING_RLD;Dekonwolucja RL 
 TP_SHARPENING_RLD_ITERATIONS;Iteracje
 TP_SHARPENING_THRESHOLD;Prog
 TP_SHARPENING_USM;Maska wyostrzajaca

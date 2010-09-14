@@ -1,24 +1,3 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Turkish
-# 2.3.2008
-# Oguz
 ADJUSTER_RESET_TO_DEFAULT;Varsayılana dön
 CURVEEDITOR_FILEDLGFILTERANY;Bütün dosyalar
 CURVEEDITOR_FILEDLGFILTERCURVE;Eğri dosyaları
@@ -40,14 +19,14 @@ EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
 EXIFPANEL_KEEP;Keep
-EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
+EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
 EXIFPANEL_REMOVE;Remove
-EXIFPANEL_RESETALLHINT;Reset all tags to their original values
-EXIFPANEL_RESETALL;Reset All
-EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
 EXIFPANEL_RESET;Reset
+EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETHINT;Reset the selected tags to their original values
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -60,8 +39,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_EXIFFILTERSETTINGS;Setup
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -80,8 +59,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -93,19 +72,19 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
 GENERAL_ABOUT;Hakkında
 GENERAL_CANCEL;İptal
-GENERAL_DISABLED;Devre dışı
 GENERAL_DISABLE;Etkisizleştir
-GENERAL_ENABLED;Etkin
+GENERAL_DISABLED;Devre dışı
 GENERAL_ENABLE;Etkinleştir
+GENERAL_ENABLED;Etkin
 GENERAL_LANDSCAPE;Yatay
 GENERAL_LOAD;Yükle
 GENERAL_NA;Uygun değil
@@ -205,8 +184,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Pozlama telafisi
 HISTORY_MSG_9;Parıltı sıkıştırma
-HISTORY_NEWSNAPSHOTAS;... olarak
 HISTORY_NEWSNAPSHOT;Yeni şipşak
+HISTORY_NEWSNAPSHOTAS;... olarak
 HISTORY_NEWSSDIALOGLABEL;Şipşak etiketi:
 HISTORY_NEWSSDIALOGTITLE;Yeni şipşak ekle
 HISTORY_SETTO;Belirle
@@ -251,34 +230,34 @@ IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_RESET;Reset
-IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
+IPTCPANEL_RESETHINT;Reset to profile default
 IPTCPANEL_SOURCE;Source
-IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
+IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
+IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
 IPTCPANEL_TITLE;Title
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Seçenekler
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;... olarak
 MAIN_BUTTON_SAVE;Görüntüyü kaydet
+MAIN_BUTTON_SAVEAS;... olarak
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Dosya zaten var.
 MAIN_MSG_CANNOTLOAD;Görüntü yüklenemiyor
@@ -307,8 +286,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Kırpılmış parıltı gösterme
 MAIN_TOOLTIP_INDCLIPPEDS;Kırpılmış karaltı gösterme
 MAIN_TOOLTIP_PREFERENCES;Seçenekleri belirle
 MAIN_TOOLTIP_QINFO;Görüntü hakkında kısa bilgi
-MAIN_TOOLTIP_SAVEAS;Görüntüyü seçili klasöre kaydet
 MAIN_TOOLTIP_SAVE;Görüntüyü varsayılan klasöre kaydet
+MAIN_TOOLTIP_SAVEAS;Görüntüyü seçili klasöre kaydet
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -356,8 +335,8 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Kırpma gösterme
 PREFERENCES_CMETRICINTENT;Renkölçer
-PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;Tarih biçimi
+PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Varsayılan dil
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;Demozaikleme algoritması
@@ -387,15 +366,15 @@ PREFERENCES_INTENT_SATURATION;Doyum
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;Ekran profili
 PREFERENCES_OUTDIR;Çıktı dizini
-PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
 PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
-PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -455,8 +434,8 @@ SAVEDLG_JPEGQUAL;JPEG kalitesi
 SAVEDLG_JPGFILTER;JPEG dosyaları
 SAVEDLG_PNGCOMPR;PNG sıkıştırma düzeyi
 SAVEDLG_PNGFILTER;PNG dosyaları
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;İşeme değişkenlerini görüntü ile birlikte kaydet
@@ -584,10 +563,10 @@ TP_SHARPENING_LABEL;Keskinleştirme
 TP_SHARPENING_METHOD;Yöntem
 TP_SHARPENING_ONLYEDGES;Sadece kenarları keskinleştir
 TP_SHARPENING_RADIUS;Çap
+TP_SHARPENING_RLD;R-L Ters evrişimi
 TP_SHARPENING_RLD_AMOUNT;Miktar
 TP_SHARPENING_RLD_DAMPING;Düşürme
 TP_SHARPENING_RLD_ITERATIONS;Yineleme
-TP_SHARPENING_RLD;R-L Ters evrişimi
 TP_SHARPENING_THRESHOLD;Eşik
 TP_SHARPENING_USM;Bulanıklık Maskesi
 TP_VIGNETTING_AMOUNT;Miktar

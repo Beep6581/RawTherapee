@@ -1,28 +1,3 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# czech
-# ----------------------------------------
-# 20.1.2008: translated by absolution
-# 21.2.2008: updated by mkyral (typos and some missing strings)
-# 24.4.2008: updated by mkyral (for version 2.4m1)
-# 28.10.2008: updated by mkyral (for version 2.4 beta1)
-#
 ADJUSTER_RESET_TO_DEFAULT;Vrátit se k původnímu
 CURVEEDITOR_FILEDLGFILTERANY;Jakékoliv soubory
 CURVEEDITOR_FILEDLGFILTERCURVE;Soubory křivek
@@ -39,19 +14,19 @@ EXIFFILTER_FOCALLEN;Ohnisková vzdálenost
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_SHUTTER;Rychlost závěrky
-EXIFPANEL_ADDEDITHINT;Přidej/Oprav štítek
 EXIFPANEL_ADDEDIT;Přidej/Změň
+EXIFPANEL_ADDEDITHINT;Přidej/Oprav štítek
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Vlož hodnotu
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Vyber štítek
 EXIFPANEL_ADDTAGDLG_TITLE;Přidej/Změň štítek
-EXIFPANEL_KEEPHINT;Ulož vybrané štítky při zápisu do souboru
 EXIFPANEL_KEEP;Zachovej
-EXIFPANEL_REMOVEHINT;Neulož vybrané štítky při zápisu do souboru
+EXIFPANEL_KEEPHINT;Ulož vybrané štítky při zápisu do souboru
 EXIFPANEL_REMOVE;Zahoď
-EXIFPANEL_RESETALLHINT;Obnov původní hodnoty u všech štítků
-EXIFPANEL_RESETALL;Obnov vše
-EXIFPANEL_RESETHINT;Obnov původní hodnoty u vybraných štítků
+EXIFPANEL_REMOVEHINT;Neulož vybrané štítky při zápisu do souboru
 EXIFPANEL_RESET;Obnov
+EXIFPANEL_RESETALL;Obnov vše
+EXIFPANEL_RESETALLHINT;Obnov původní hodnoty u všech štítků
+EXIFPANEL_RESETHINT;Obnov původní hodnoty u vybraných štítků
 EXIFPANEL_SUBDIRECTORY;Podadresář
 FILEBROWSER_APPLYPROFILE;Aplikuj profil
 FILEBROWSER_ARRANGEMENTHINT;Přepnutí mezi vertikálním/horizontálním zarovnáním náhledů
@@ -59,13 +34,13 @@ FILEBROWSER_CLEARPROFILE;Vymaž profil
 FILEBROWSER_COPYPROFILE;Kopíruj profil
 FILEBROWSER_DELETEDLGLABEL;Potvrzení smazání souboru
 FILEBROWSER_DELETEDLGMSG;Opravdu chcete vymazat %1 souborů?
-FILEBROWSER_EMPTYTRASHHINT;Navždy vymaže soubory v koši
 FILEBROWSER_EMPTYTRASH;Vysypat koš
-FILEBROWSER_EXIFFILTERAPPLYHINT;Zapne/Vypne filtrování dle exif v prohlížeči souborů
+FILEBROWSER_EMPTYTRASHHINT;Navždy vymaže soubory v koši
 FILEBROWSER_EXIFFILTERAPPLY;Použij
+FILEBROWSER_EXIFFILTERAPPLYHINT;Zapne/Vypne filtrování dle exif v prohlížeči souborů
 FILEBROWSER_EXIFFILTERLABEL;Exif Filtr
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Změna nastavení exif filtru
 FILEBROWSER_EXIFFILTERSETTINGS;Nastavení
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Změna nastavení exif filtru
 FILEBROWSER_PARTIALPASTEPROFILE;Vlož částečně
 FILEBROWSER_PASTEPROFILE;Vlož profil
 FILEBROWSER_POPUPCANCELJOB;Zruš úlohu
@@ -84,8 +59,8 @@ FILEBROWSER_POPUPSELECTALL;Vyber vše
 FILEBROWSER_POPUPTRASH;Přesuň do koše
 FILEBROWSER_POPUPUNRANK;Odstraň hodnocení
 FILEBROWSER_POPUPUNTRASH;Vymaž z koše
-FILEBROWSER_PROCESSINGSETTINGSHINT;Nastavení formátu souboru a výstupního adresáře
 FILEBROWSER_PROCESSINGSETTINGS;Nastavení
+FILEBROWSER_PROCESSINGSETTINGSHINT;Nastavení formátu souboru a výstupního adresáře
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
 FILEBROWSER_RENAMEDLGMSG;Přejmenovat soubor "%1" na:
 FILEBROWSER_SHOWDIRHINT;Ukaž všechny obrázky v adresáři
@@ -97,19 +72,19 @@ FILEBROWSER_SHOWRANK4HINT;Ukaž obrázky hodnocené 4 hvězdičkama
 FILEBROWSER_SHOWRANK5HINT;Ukaž obrázky hodnocené 5 hvězdičkama
 FILEBROWSER_SHOWTRASHHINT;Ukaž obsah koše
 FILEBROWSER_SHOWUNRANKHINT;Ukaž nehodnocené obrázky
-FILEBROWSER_STARTPROCESSINGHINT;Spustí zpracování nebo ukládání obrázků ve frontě
 FILEBROWSER_STARTPROCESSING;Spusť zpracování
-FILEBROWSER_STOPPROCESSINGHINT;Zastaví zpracovávaní obrázků
+FILEBROWSER_STARTPROCESSINGHINT;Spustí zpracování nebo ukládání obrázků ve frontě
 FILEBROWSER_STOPPROCESSING;Zastav zpracovávaní
+FILEBROWSER_STOPPROCESSINGHINT;Zastaví zpracovávaní obrázků
 FILEBROWSER_THUMBSIZE;Velikost náhledů
 FILEBROWSER_ZOOMINHINT;Zvětší velikost náhledů
 FILEBROWSER_ZOOMOUTHINT;Zmenší velikost náhledů
 GENERAL_ABOUT;O programu
 GENERAL_CANCEL;Storno
-GENERAL_DISABLED;Vypnuto
 GENERAL_DISABLE;Vypnout
-GENERAL_ENABLED;Zapnuto
+GENERAL_DISABLED;Vypnuto
 GENERAL_ENABLE;Zapnout
+GENERAL_ENABLED;Zapnuto
 GENERAL_LANDSCAPE;Na šířku
 GENERAL_LOAD;Načíst
 GENERAL_NA;n/a
@@ -209,8 +184,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Expoziční korekce
 HISTORY_MSG_9;Komprese světel
-HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Nový snímek
+HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSSDIALOGLABEL;Titulek snímku:
 HISTORY_NEWSSDIALOGTITLE;Přidat nový snímek
 HISTORY_SETTO;Nastavit na
@@ -234,55 +209,55 @@ IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Jméno autora, například spisovatele, fotografa nebo grafika (By-line).
 IPTCPANEL_AUTHORSPOSITION;Autorova pozice
 IPTCPANEL_AUTHORSPOSITIONHINT;Titul/pozice autora nebo autorů obrázku (By-line Title).
-IPTCPANEL_CAPTIONHINT;Textový popis dat (Popis - Shrnutí)
 IPTCPANEL_CAPTION;Popis
-IPTCPANEL_CAPTIONWRITERHINT;Jméno osoby, která vložila, změnila nebo opravila obrázek nebo popis/shrnutí (Autor - Editor)
+IPTCPANEL_CAPTIONHINT;Textový popis dat (Popis - Shrnutí)
 IPTCPANEL_CAPTIONWRITER;Popisovač
-IPTCPANEL_CATEGORYHINT;Obsah obrázku dle názoru dodavatele (Kategorie).
+IPTCPANEL_CAPTIONWRITERHINT;Jméno osoby, která vložila, změnila nebo opravila obrázek nebo popis/shrnutí (Autor - Editor)
 IPTCPANEL_CATEGORY;Kategorie
-IPTCPANEL_CITYHINT;Místo vzniku obrázku (Město).
+IPTCPANEL_CATEGORYHINT;Obsah obrázku dle názoru dodavatele (Kategorie).
 IPTCPANEL_CITY;Město
+IPTCPANEL_CITYHINT;Místo vzniku obrázku (Město).
 IPTCPANEL_COPYHINT;Zkopíruj IPTC nastavení do schránky
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Autorská práva (Copyright Notice).
-IPTCPANEL_COUNTRYHINT;Jméno země/lokace kde byl obrázek vytvořen (Země - Lokace).
 IPTCPANEL_COUNTRY;Země
-IPTCPANEL_CREDITHINT;Dodavatel obrázku, ne nutně vlastník/autor (Credit).
+IPTCPANEL_COUNTRYHINT;Jméno země/lokace kde byl obrázek vytvořen (Země - Lokace).
 IPTCPANEL_CREDIT;Zásluhy
+IPTCPANEL_CREDITHINT;Dodavatel obrázku, ne nutně vlastník/autor (Credit).
 IPTCPANEL_DATECREATED;Datum vytvoření
 IPTCPANEL_DATECREATEDHINT;Kdy byl obrázek vytvořen; Formát: RRRRMMDD (Datum vytvoření).
-IPTCPANEL_EMBEDDEDHINT;Obnov IPTC data z obrázku
 IPTCPANEL_EMBEDDED;Uložené
-IPTCPANEL_HEADLINEHINT;Uveřejnitelný krátký popis obrázku (Nadpis).
+IPTCPANEL_EMBEDDEDHINT;Obnov IPTC data z obrázku
 IPTCPANEL_HEADLINE;Nadpis
-IPTCPANEL_INSTRUCTIONSHINT;Další instrukce vztahující se k obrázku (Speciální instrukce).
+IPTCPANEL_HEADLINEHINT;Uveřejnitelný krátký popis obrázku (Nadpis).
 IPTCPANEL_INSTRUCTIONS;Instrukce
-IPTCPANEL_KEYWORDSHINT;Jednoslovná hesla popisující obrázek (Klíčová slova).
+IPTCPANEL_INSTRUCTIONSHINT;Další instrukce vztahující se k obrázku (Speciální instrukce).
 IPTCPANEL_KEYWORDS;Klíčová slova
+IPTCPANEL_KEYWORDSHINT;Jednoslovná hesla popisující obrázek (Klíčová slova).
 IPTCPANEL_PASTEHINT;Vlož IPTC nastavení ze schránky
-IPTCPANEL_PROVINCEHINT;Kraj/stát kde byl obrázek vytvořen (Kraj-Stát).
 IPTCPANEL_PROVINCE;Kraj 
-IPTCPANEL_RESETHINT;Obnov výchozí profil
+IPTCPANEL_PROVINCEHINT;Kraj/stát kde byl obrázek vytvořen (Kraj-Stát).
 IPTCPANEL_RESET;Obnov
-IPTCPANEL_SOURCEHINT;Původní vlastník intelektuálního obsahu obrázku (Zdroj).
+IPTCPANEL_RESETHINT;Obnov výchozí profil
 IPTCPANEL_SOURCE;Zdroj
+IPTCPANEL_SOURCEHINT;Původní vlastník intelektuálního obsahu obrázku (Zdroj).
 IPTCPANEL_SUPPCATEGORIES;Dodat. kategorie
 IPTCPANEL_SUPPCATEGORIESHINT;Upřesňující popis obsahu obrázku (Dodatečné kategorie).
-IPTCPANEL_TITLEHINT;Zkrácený popis obrázku (Jméno obrázku).
 IPTCPANEL_TITLE;Titulek
-IPTCPANEL_TRANSREFERENCEHINT;Kód místa, odkud byl převzat originální obrázek (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;Zkrácený popis obrázku (Jméno obrázku).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;Kód místa, odkud byl převzat originální obrázek (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Volby
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;jako...
 MAIN_BUTTON_SAVE;Uložit
+MAIN_BUTTON_SAVEAS;jako...
 MAIN_BUTTON_SENDTOEDITOR;Odeslat do editoru
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Soubor již existuje.
 MAIN_MSG_CANNOTLOAD;Nepodařilo se načíst obrázek
@@ -311,8 +286,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Zvýraznit oříznuté jasy
 MAIN_TOOLTIP_INDCLIPPEDS;Zvýraznit oříznuté stíny
 MAIN_TOOLTIP_PREFERENCES;Změnit volby
 MAIN_TOOLTIP_QINFO;Stručné informace o obrázku
-MAIN_TOOLTIP_SAVEAS;Uložit obrázek do vybrané složky
 MAIN_TOOLTIP_SAVE;Uložit obrázek do výchozí složky
+MAIN_TOOLTIP_SAVEAS;Uložit obrázek do vybrané složky
 PARTIALPASTE_BASICGROUP;Základní nastavení
 PARTIALPASTE_CACORRECTION;Korekce C/A
 PARTIALPASTE_COARSETRANS;Orientace / převrácení
@@ -390,16 +365,16 @@ PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Saturace
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
 PREFERENCES_MONITORICC;Profil monitoru
-PREFERENCES_OUTDIRFOLDERHINT;Uloží obrázky do vybraného adresáře
-PREFERENCES_OUTDIRFOLDER;Ulož do souboru
-PREFERENCES_OUTDIRHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTyto formátovací řetězce reprezentují adresáře a části cesty, kde je uložen raw soubor.\n\nNapříklad pokud je otevřen soubor </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, mají jednotlivé formátovací řetězce tento význam:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nPokud si přejete uložit výstupní obrázek vedle originálu, napiště:\n</i><b>%p1/%f\n</b><i>\nJestliže si jej ale přejete uložit do adresáře 'converted' ve stejném adresáři jako originál, napiště:\n</i><b>%p1/converted/%f\n</b><i>\nPro uložení výstupního obrázku do adresáře '/home/tom/converted' se zachováním adresáře s datem, použijte:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTyto formátovací řetězce reprezentují adresáře a části cesty, kde je uložen raw soubor.\n\nNapříklad pokud je otevřen soubor </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, mají jednotlivé formátovací řetězce tento význam:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nPokud si přejete uložit výstupní obrázek vedle originálu, napiště:\n</i><b>%p1/%f\n</b><i>\nJestliže si jej ale přejete uložit do adresáře 'converted' ve stejném adresáři jako originál, napiště:\n</i><b>%p1/converted/%f\n</b><i>\nPro uložení výstupního obrázku do adresáře '/home/tom/converted' se zachováním adresáře s datem, použijte:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Použij šablonu
 PREFERENCES_OUTDIR;Výstupní složka
-PREFERENCES_PARSEDEXTADDHINT;Vložte příponu a stiskněte toto tlačítko pro přidání do seznamu
-PREFERENCES_PARSEDEXTADD;Přidej příponu
-PREFERENCES_PARSEDEXTDELHINT;Vymaže označenou příponu ze seznamu
+PREFERENCES_OUTDIRFOLDER;Ulož do souboru
+PREFERENCES_OUTDIRFOLDERHINT;Uloží obrázky do vybraného adresáře
+PREFERENCES_OUTDIRHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTyto formátovací řetězce reprezentují adresáře a části cesty, kde je uložen raw soubor.\n\nNapříklad pokud je otevřen soubor </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, mají jednotlivé formátovací řetězce tento význam:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nPokud si přejete uložit výstupní obrázek vedle originálu, napiště:\n</i><b>%p1/%f\n</b><i>\nJestliže si jej ale přejete uložit do adresáře 'converted' ve stejném adresáři jako originál, napiště:\n</i><b>%p1/converted/%f\n</b><i>\nPro uložení výstupního obrázku do adresáře '/home/tom/converted' se zachováním adresáře s datem, použijte:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Použij šablonu
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTyto formátovací řetězce reprezentují adresáře a části cesty, kde je uložen raw soubor.\n\nNapříklad pokud je otevřen soubor </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, mají jednotlivé formátovací řetězce tento význam:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nPokud si přejete uložit výstupní obrázek vedle originálu, napiště:\n</i><b>%p1/%f\n</b><i>\nJestliže si jej ale přejete uložit do adresáře 'converted' ve stejném adresáři jako originál, napiště:\n</i><b>%p1/converted/%f\n</b><i>\nPro uložení výstupního obrázku do adresáře '/home/tom/converted' se zachováním adresáře s datem, použijte:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_PARSEDEXT;Zobrazované přípony
+PREFERENCES_PARSEDEXTADD;Přidej příponu
+PREFERENCES_PARSEDEXTADDHINT;Vložte příponu a stiskněte toto tlačítko pro přidání do seznamu
+PREFERENCES_PARSEDEXTDELHINT;Vymaže označenou příponu ze seznamu
 PREFERENCES_PROFILEHANDLING;Profily zpracování
 PREFERENCES_PROFILELOADPR;Priorita nahrávání profilu
 PREFERENCES_PROFILEPRCACHE;Profil v cache
@@ -459,9 +434,9 @@ SAVEDLG_JPEGQUAL;JPEG Kvalita
 SAVEDLG_JPGFILTER;Soubory JPEG
 SAVEDLG_PNGCOMPR;PNG Komprese
 SAVEDLG_PNGFILTER;Soubory PNG
+SAVEDLG_PUTTOQUEUE;Vložit soubor do fronty
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
-SAVEDLG_PUTTOQUEUE;Vložit soubor do fronty
 SAVEDLG_SAVEIMMEDIATELY;Okamžitě uložit
 SAVEDLG_SAVESPP;Uschovat s obrazem i parametry zpracování
 SAVEDLG_TIFFFILTER;Soubory TIFF
@@ -588,10 +563,10 @@ TP_SHARPENING_LABEL;Doostření
 TP_SHARPENING_METHOD;Metoda
 TP_SHARPENING_ONLYEDGES;Doostřit pouze okraje
 TP_SHARPENING_RADIUS;Poloměr
+TP_SHARPENING_RLD;RL Dekonvoluce
 TP_SHARPENING_RLD_AMOUNT;Míra
 TP_SHARPENING_RLD_DAMPING;Útlum
 TP_SHARPENING_RLD_ITERATIONS;Počet opakování
-TP_SHARPENING_RLD;RL Dekonvoluce
 TP_SHARPENING_THRESHOLD;Práh
 TP_SHARPENING_USM;Maskovat rozostření
 TP_VIGNETTING_AMOUNT;Míra
