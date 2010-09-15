@@ -39,6 +39,10 @@ RTWindow::RTWindow () {
     set_default_size(options.windowWidth, options.windowHeight);
     set_modal(false);
     set_resizable(true);
+    if (options.windowMaximized)
+    	maximize();
+    else
+    	unmaximize();
     property_destroy_with_parent().set_value(false);
 
     mainNB = Gtk::manage (new Gtk::Notebook ());
@@ -220,8 +224,14 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     options.fbArrangement = fileBrowser->getFileCatalog()->getArrangement ();
     options.firstRun = false;
 */
-    //options.windowWidth = get_width();
-    //options.windowHeight = get_height();
+    Gdk::WindowState state = get_window()->get_state();
+    if (!(state & (Gdk::WINDOW_STATE_MAXIMIZED | Gdk::WINDOW_STATE_FULLSCREEN))) {
+		options.windowWidth = get_width();
+		options.windowHeight = get_height();
+		options.windowMaximized = false;
+    }
+    else
+		options.windowMaximized = true;
    
 
     Options::save ();

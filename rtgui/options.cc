@@ -40,6 +40,7 @@ void Options::setDefaults () {
 
     windowWidth = 1000;
     windowHeight = 600;
+    windowMaximized = false;
     firstRun = true;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
@@ -242,14 +243,15 @@ if (keyFile.has_group ("Clipping Indication")) {
 }
 
 if (keyFile.has_group ("GUI")) { 
-    if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth   = keyFile.get_integer ("GUI", "WindowWidth");
-    if (keyFile.has_key ("GUI", "WindowHeight"))     windowHeight   = keyFile.get_integer ("GUI", "WindowHeight");
-    if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth   = keyFile.get_integer ("GUI", "DirBrowserWidth");
-    if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight  = keyFile.get_integer ("GUI", "DirBrowserHeight");
-    if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))     saveAsDialogWidth   = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
-    if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))     saveAsDialogHeight   = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
-    if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth    = keyFile.get_integer ("GUI", "ToolPanelWidth");
-    if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))browserToolPanelWidth = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
+    if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
+    if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
+    if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
+    if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth         = keyFile.get_integer ("GUI", "DirBrowserWidth");
+    if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight        = keyFile.get_integer ("GUI", "DirBrowserHeight");
+    if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth       = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
+    if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))  saveAsDialogHeight      = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
+    if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth          = keyFile.get_integer ("GUI", "ToolPanelWidth");
+    if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))browserToolPanelWidth  = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
     if (keyFile.has_key ("GUI", "HistoryPanelWidth"))   historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
     if (keyFile.has_key ("GUI", "LastPreviewScale"))    lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
     if (keyFile.has_key ("GUI", "LastCropSize"))        lastCropSize      = keyFile.get_integer ("GUI", "LastCropSize");
@@ -372,6 +374,7 @@ int Options::saveToFile (Glib::ustring fname) {
     
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
+    keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
     keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
