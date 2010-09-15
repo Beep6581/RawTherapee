@@ -47,11 +47,11 @@ FilePanel::FilePanel () : parent(NULL) {
     placespaned->pack1 (*placesBrowser, false, true);
     placespaned->pack2 (*obox, true, true);
 
-    dirpaned->pack1 (*placespaned, Gtk::SHRINK);
+    dirpaned->pack1 (*placespaned, true, true);
 
     tpc = new BatchToolPanelCoordinator (this);
     fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
-    dirpaned->pack2 (*fileCatalog, Gtk::EXPAND|Gtk::SHRINK);
+    dirpaned->pack2 (*fileCatalog, true, true);
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
     recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
@@ -99,7 +99,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightBox->pack_start (*rightNotebook);
 
     pack1(*dirpaned, true, true);
-    pack2(*rightBox, false, true);
+    pack2(*rightBox, true, true);
 
     fileCatalog->setFileSelectionChangeListener (tpc);
 
