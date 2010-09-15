@@ -144,17 +144,15 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
 
-    if (ep->beforeClosing ()) {
-        ep->saveOptions ();
-        epanels.erase (ep->getFileName());
-        filesEdited.erase (ep->getFileName ());
-        fpanel->refreshEditedState (filesEdited);
+	ep->saveOptions ();
+	epanels.erase (ep->getFileName());
+	filesEdited.erase (ep->getFileName ());
+	fpanel->refreshEditedState (filesEdited);
 
-        mainNB->remove_page (*ep);
-       
-        if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
-            mainNB->set_current_page (mainNB->page_num (*fpanel));
-    }
+	mainNB->remove_page (*ep);
+
+	if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
+		mainNB->set_current_page (mainNB->page_num (*fpanel));
     // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
 }
 
@@ -232,7 +230,6 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     }
     else
 		options.windowMaximized = true;
-   
 
     Options::save ();
     hide();
