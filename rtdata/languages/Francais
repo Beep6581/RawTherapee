@@ -560,7 +560,7 @@ TP_CROP_Y;y
 TP_DETAIL_AMOUNT;Quantité
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_LABEL;Réduction pyramidal du bruit directionnel
+TP_DIRPYRDENOISE_LABEL;Réduction du bruit présevant les bords
 TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DISTORTION_AMOUNT;Quantité
 TP_DISTORTION_LABEL;Distorsion
