@@ -101,18 +101,14 @@ FilePanel::FilePanel () : parent(NULL) {
     pack1(*dirpaned, true, true);
     pack2(*rightBox, true, true);
 
+    set_position(options.browserToolPanelWidth);
+
     fileCatalog->setFileSelectionChangeListener (tpc);
 
     fileCatalog->setFileSelectionListener (this);
     g_idle_add (fbinit, this);
 
     show_all ();
-}
-
-void FilePanel::on_realize () {
-    
-    Gtk::HPaned::on_realize ();
-    rightBox->set_size_request (options.browserToolPanelWidth, -1);
 }
 
 void FilePanel::init () {
@@ -167,7 +163,7 @@ void FilePanel::saveOptions () {
 
     options.dirBrowserWidth = dirpaned->get_position ();
     options.dirBrowserHeight = placespaned->get_position ();
-    options.browserToolPanelWidth = rightBox->get_width ();
+    options.browserToolPanelWidth = get_position();
     if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
         options.startupPath = fileCatalog->lastSelectedDir ();
     fileCatalog->closeDir (); 

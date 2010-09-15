@@ -190,8 +190,9 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     vbfr->add (*editbox);
     hpanedl->pack2(*vbfr, true, true);
 
-    hpanedr->pack1(*hpanedl, true, true);
-    hpanedr->pack2(*vboxright, false, true);
+	hpanedr->pack1(*hpanedl, true, true);
+	hpanedr->pack2(*vboxright, false, true);
+	hpanedr->set_position(options.toolPanelWidth);
 
     pack_start (*hpanedr);
     show_all ();
@@ -229,12 +230,6 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
 
 }
 
-bool EditorPanel::beforeClosing () {
-
-    options.toolPanelWidth = vboxright->get_width ();
-    return true;
-}
-
 EditorPanel::~EditorPanel () {
 
     history->setHistoryBeforeLineListener (NULL);
@@ -266,12 +261,6 @@ EditorPanel::~EditorPanel () {
     delete vboxright;
     
     delete saveAsDialog;
-}
-
-void EditorPanel::on_realize () {
-    
-    Gtk::VBox::on_realize ();
-    vboxright->set_size_request (options.toolPanelWidth, -1);
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
@@ -854,7 +843,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 void EditorPanel::saveOptions () {
 
     options.historyPanelWidth = hpanedl->get_position ();
-    options.toolPanelWidth = vboxright->get_width ();
+    options.toolPanelWidth = hpanedr->get_position ();
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
