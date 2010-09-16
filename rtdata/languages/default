@@ -1,3 +1,5 @@
+#00 default translation file 
+#01 Developers should add translations to this file and then run 'generateDifferences.sh' script to update other locales.
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 BATCHQUEUE_AUTOSTART;Auto start
 BATCH_PROCESSING;batch processing

@@ -1,3 +1,8 @@
+#00 Nederlands
+#01 26.12.2007: door Rens Duijsens en Brent Huisman
+#02 14.03.2008: updated by reggybe
+#03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
+#04 02-05-2010: updated to rt3a1 by paul.matthijsse
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batch-verwerking

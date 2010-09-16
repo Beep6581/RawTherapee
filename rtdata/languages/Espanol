@@ -1,3 +1,12 @@
+#00 Espanol
+#01 15.1.2008: keenonkites, first translation
+#02 03.03.2008: Ioritz Ibarguren, corrections
+#03 05.04.2008: keenonkites, completed for 2.4m1
+#04 09.04.2008: Ramon, partly corrected (part of 2.3)
+#05 29.04.2008: Ramon, small correction
+#06 09.06.2008: Ramon, Adaptions regarding 2.4m1 and others
+#07 20.09.2008: keenonkites, first version for 2.4m2
+#08 19.12.2008: keenonkites, first version for 2.4beta4
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
 CURVEEDITOR_FILEDLGFILTERANY;Cuaquier archivo
 CURVEEDITOR_FILEDLGFILTERCURVE;Archivos de curvas

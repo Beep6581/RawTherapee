@@ -1,3 +1,7 @@
+#00 Japanese
+#01 2009-02-18 by A3novy
+#02 updated to RT2.4-RC by paul.matthijsse
+#03 2010-06-20 updated to RT3.0 alpha 1 by A3novy
 ADJUSTER_RESET_TO_DEFAULT;リセット初期化
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCH_PROCESSING;バッチ処理

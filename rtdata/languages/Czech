@@ -1,3 +1,8 @@
+#00 Czech
+#01 20.1.2008: translated by absolution
+#02 21.2.2008: updated by mkyral (typos and some missing strings)
+#03 24.4.2008: updated by mkyral (for version 2.4m1)
+#04 28.10.2008: updated by mkyral (for version 2.4 beta1)
 ADJUSTER_RESET_TO_DEFAULT;Vrátit se k původnímu
 CURVEEDITOR_FILEDLGFILTERANY;Jakékoliv soubory
 CURVEEDITOR_FILEDLGFILTERCURVE;Soubory křivek
