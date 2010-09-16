@@ -372,7 +372,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     
-    keyFile.set_integer ("GUI", "WindowWidth", 1200);//windowWidth);
+    keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
