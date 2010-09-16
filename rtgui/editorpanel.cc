@@ -192,7 +192,7 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
 
 	hpanedr->pack1(*hpanedl, true, true);
 	hpanedr->pack2(*vboxright, false, true);
-	hpanedr->set_position(options.toolPanelWidth);
+	//hpanedr->set_position(options.toolPanelWidth);
 
     pack_start (*hpanedr);
     show_all ();
@@ -843,7 +843,8 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 void EditorPanel::saveOptions () {
 
     options.historyPanelWidth = hpanedl->get_position ();
-    options.toolPanelWidth = hpanedr->get_position ();
+	options.toolPanelWidth = vboxright->get_width ();//older code
+    //options.toolPanelWidth = hpanedr->get_position ();//Hombre's change which screws up OSX build
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {

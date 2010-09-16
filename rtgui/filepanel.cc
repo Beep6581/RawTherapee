@@ -101,7 +101,7 @@ FilePanel::FilePanel () : parent(NULL) {
     pack1(*dirpaned, true, true);
     pack2(*rightBox, true, true);
 
-    set_position(options.browserToolPanelWidth);
+    //set_position(options.browserToolPanelWidth);////Hombre's change which screws up OSX build
 
     fileCatalog->setFileSelectionChangeListener (tpc);
 
