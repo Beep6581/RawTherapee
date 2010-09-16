@@ -266,7 +266,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     //dmethod->append_text ("PPG");
     dmethod->append_text ("AMaZE");//Emil's code for AMaZE
     dmethod->append_text ("DCB");
-    dmethod->append_text ("AHD");
+    dmethod->append_text ("Fast Demosaic");//("AHD");
     dmethod->append_text ("Bilinear");
     Gtk::Label* cclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FALSECOLOR")+":"));
     ccSteps = Gtk::manage (new Gtk::SpinButton ());

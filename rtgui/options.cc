@@ -61,8 +61,8 @@ void Options::setDefaults () {
     profilePath = "profiles";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
-    toolPanelWidth = 700;
-    browserToolPanelWidth = 700;
+    toolPanelWidth = 300;
+    browserToolPanelWidth = 300;
     historyPanelWidth = 150;
     lastScale = 4;
     lastCropSize = 1;
@@ -372,7 +372,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     
-    keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
+    keyFile.set_integer ("GUI", "WindowWidth", 1200);//windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);

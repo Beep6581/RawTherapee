@@ -903,7 +903,8 @@ int RawImageSource::load (Glib::ustring fname) {
         else if (settings->demosaicMethod=="vng4")
             vng4_demosaic ();
         else if (settings->demosaicMethod=="ahd")
-            ahd_demosaic ();
+            //ahd_demosaic ();
+			fast_demo ();
         else if (settings->demosaicMethod=="bilinear")
            bilinear_demosaic();
         //else if (settings->demosaicMethod=="ppg")
@@ -3215,6 +3216,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's code for AMaZE
+#include "fast_demo.cc"//fast demosaic	
 #include "amaze_interpolate_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's CA auto correction
