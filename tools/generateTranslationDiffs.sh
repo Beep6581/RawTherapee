@@ -11,6 +11,10 @@ TEMP=temp_file
 PATH=rtdata/languages
 
 cd $PATH
+if [[ $? != 0 ]]; then
+	echo "You must run this script from the root of the project."
+	exit
+fi
 
 #First thing, we want to strip default of any !s and duplicates.
 cat "default" | grep -v '^!' | sort | uniq > "$TEMP"
