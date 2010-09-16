@@ -8,9 +8,8 @@
 #
 #####################
 TEMP=temp_file
-PATH=rtdata/languages
 
-cd $PATH
+cd "rtdata/languages"
 if [[ $? != 0 ]]; then
 	echo "You must run this script from the root of the project."
 	exit
