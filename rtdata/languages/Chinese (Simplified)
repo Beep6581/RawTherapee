@@ -1,3 +1,9 @@
+#00 Chinese (Simplified)
+#01 06.11.2008
+#02 Chinese simplified
+#03 Yang Gao (grantyale)
+#04 Added new translations for 2.4beta, fixed mistranslations(eg. Vignetting - 暗角/失光 instead of 紫边 which corresponds to purple fringing, and RL Deconvolution)
+#05 based on Version 13.2.2008 by Forrest Sun
 ADJUSTER_RESET_TO_DEFAULT;重置缺省参数
 CURVEEDITOR_FILEDLGFILTERANY;任意文件
 CURVEEDITOR_FILEDLGFILTERCURVE;曲线文件

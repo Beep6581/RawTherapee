@@ -1,3 +1,13 @@
+#00 Deutsch
+#01 (keenonkites; Aktualisierte Version für 2.3 beta2)
+#02 (phberlin; basiert auf keenonkites' Erstübersetzung)
+#03 08.01.2008/15.01.2008/20.02.2008
+#04 19.12.2008: keenonkites, Anpassungen für 2.4beta4
+#05 20.12.2007
+#06 20.9.2008: keenonkites, Anpassungen für 2.4m2
+#07 22.12.2007
+#08 4.4.2008: Anpassungen für 2.4
+#09 Leichte Anpassungen (keenonkites/klonk)
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
 CURVEEDITOR_CUSTOM;Angepasst

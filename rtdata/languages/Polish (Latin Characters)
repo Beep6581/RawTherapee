@@ -1,3 +1,9 @@
+#00 Polish
+#01 24.12.2007
+#02 Mateusz Ludwin
+#03 -----------------------------
+#04 08.01.2010#05 Initial update for 3.0 release
+#06 Bartosz "Simek" Kaszubowski
 ADJUSTER_RESET_TO_DEFAULT;Przywroc domyslne
 CURVEEDITOR_FILEDLGFILTERANY;Wszystkie pliki
 CURVEEDITOR_FILEDLGFILTERCURVE;Pliki z krzywymi
