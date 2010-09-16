@@ -353,7 +353,7 @@ void RawImageSource::cfa_clean(float thresh) //Emil's hot/dead pixel removal -- 
 		int rr, cc;
 		int gin, g[8];
 		
-		float eps=1e-10;//tolerance to avoid dividing by zero
+		float eps=1.0;//tolerance to avoid dividing by zero
 		float p[8];
 		float pixave, pixratio;
 

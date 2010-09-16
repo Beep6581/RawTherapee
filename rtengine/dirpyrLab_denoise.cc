@@ -39,6 +39,7 @@
 #define DIRWT_L(i1,j1,i,j) (/*domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] */  rangefn_L[(int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000)] )
 
 #define DIRWT_AB(i1,j1,i,j) ( /*domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin]*/ rangefn_ab[(int)(data_fine->a[i1][j1]-data_fine->a[i][j]+0x10000)] *  \
+rangefn_ab[(int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000)] * \
 rangefn_ab[(int)(data_fine->b[i1][j1]-data_fine->b[i][j]+0x10000)] )
 
 #define NRWT_L(a) (nrwt_l[a] )
@@ -106,15 +107,13 @@ namespace rtengine {
 		
 		
 		int * rangefn_L = new int [0x20000];
-		int * irangefn_L = new int [0x20000];
 		float * nrwt_l = new float [0x10000];
 		
 		
 		int * rangefn_ab = new int [0x20000];
-		int * irangefn_ab = new int [0x20000];
 		float * nrwt_ab = new float [0x20000];
 		
-		int intfactor = 16384;
+		int intfactor = 1024;//16384;
 		
 		
 		//set up NR weight functions
@@ -143,10 +142,6 @@ namespace rtengine {
 		for (int i=0; i<0x20000; i++) 
 			rangefn_ab[i] = (int)(( exp(-(double)fabs(i-0x10000) * tonefactor / (1+3*noise_ab)) * noisevar_ab/((double)(i-0x10000)*(double)(i-0x10000) + noisevar_ab))*intfactor); 
 		
-		for (int i=0; i<0x20000; i++) 
-			irangefn_L[i] = 1+(int)( exp(-(double)fabs(i-0x10000) / (1+16*noise_L) )*intfactor);
-		for (int i=0; i<0x20000; i++) 
-			irangefn_ab[i] = 1+(int)( exp(-(double)fabs(i-0x10000)/ (1+64*noise_ab) )*intfactor);
 		
 		for (int i=0; i<0x20000; i++) 
 			nrwt_ab[i] = ((1+abs(i-0x10000)/(1+8*noise_ab)) * exp(-(double)fabs(i-0x10000)/ (1+8*noise_ab) ) );
@@ -251,8 +246,6 @@ namespace rtengine {
 		
 		delete [] rangefn_L;
 		delete [] rangefn_ab;
-		delete [] irangefn_L;
-		delete [] irangefn_ab;
 		delete [] nrwt_l;
 		delete [] nrwt_ab;
 		
@@ -478,10 +471,11 @@ namespace rtengine {
 				
 				//Wiener filter
 				//luma
-				if (level<3) {
+				if (level<2) {
 					hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
 					hpffluct[0]=SQR(hipass[0])+0.001;
 					hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
+					data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
 				}
 				
 				//chroma
@@ -497,12 +491,9 @@ namespace rtengine {
 				 }*/
 				hipass[1] *= nrfactor;
 				hipass[2] *= nrfactor;
-				
-				//hipass[0] = hipass[1] = hipass[2] = 0.0;//for testing
-				
-				wtdsum[0]=data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
-				wtdsum[1]=data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
-				wtdsum[2]=data_fine->b[i][j] = hipass[2]+smooth->b[i][j];
+							
+				data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
+				data_fine->b[i][j] = hipass[2]+smooth->b[i][j];
 			}
 		
 		delete smooth;
