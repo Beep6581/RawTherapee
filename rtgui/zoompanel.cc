@@ -111,7 +111,11 @@ void ZoomPanel::refreshZoomLabel () {
 
     if (iarea->mainCropWindow) {
         int z = (int)(iarea->mainCropWindow->getZoom () * 100);
-        zoomLabel->set_text (Glib::ustring::compose("%1%%", z));
+		if (z<100) {
+			zoomLabel->set_text (Glib::ustring::compose(" %1%%", z));
+		} else {
+			zoomLabel->set_text (Glib::ustring::compose("%1%%", z));
+		}
     }
 }
 
