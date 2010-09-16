@@ -8,7 +8,9 @@ Translations are loaded for a given term at three levels:
 
 Developers who are adding a new feature should add new strings *only* to default.  This file
 should be comprised of basic English text.  It will be used in the event that there are no
-more specific languages specified.
+more specific languages specified.  Once you have modified default, you should run 
+./tools/generateTranslationDiffs.sh (bash script) which will re-generate the localizations
+with commented out additions which you have just added.
 
 Translators should in general implement the <Language> file.  This is the generic translation
 for a given language; for instance, 'French', 'German', 'Norsk', etc.  If a string exists in
@@ -29,11 +31,11 @@ If a locale file is used, it is applied in the same manner as <Language> is to d
 will override any keys present from the ones in the language file (and in turn, the default).
 
 
-It is recommended to look for differences from default using a text editor with compare cabailities.
-For ease of maintentance, you should insert new entries in alphabetical order.  Comments *may*
-be included, but in general you should try to avoid them as they can confuse comparison editors.  If
-you do include comments, you should prefix each line with 00, 01, etc so that the file can be sorted
-and still keep comments in correct order, e.g.
+After the generateTranslationDiffs.sh has been run, all untranslated terms for a given language / 
+locale will exist at the end of the file, prefixed by a ! comment marker.  Translators should 
+go through this section of the file and translate all terms which they can.  After you have translated
+a line, just remove the ! comment marker.  Comments may bee included using the #xx comment marker, where
+xx is a numeric prefix used to make sure automated sorting keeps comments in the right order, e.g.:
 
 #00 Comment line 1...
 #01 Line 2...
