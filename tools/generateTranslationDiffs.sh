@@ -2,8 +2,15 @@
 #
 # Append translation differences on the end of all files.  Developers should run this script 
 # after changing default, so that translators can easily see what items need to be translated.
-
+#
+# This script should be run from the project root, e.g:
+# $ ./tools/generateTranslationDiffs.sh
+#
+#####################
 TEMP=temp_file
+PATH=rtdata/languages
+
+cd $PATH
 
 #First thing, we want to strip default of any !s and duplicates.
 cat "default" | grep -v '^!' | sort | uniq > "$TEMP"
