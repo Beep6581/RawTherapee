@@ -1,3 +1,4 @@
+
 #00 Chinese (Traditional)
 #01 29.07.2008
 #02 Chinese Traditional
@@ -607,3 +608,92 @@ ZOOMBAR_NORMAL;普通
 ZOOMBAR_PREVIEW;預覽
 ZOOMBAR_SCALE;比例
 ZOOMBAR_SMALL;小
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!BATCH_PROCESSING;batch processing
+!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_DARKS;Darks
+!CURVEEDITOR_HIGHLIGHTS;Highlights
+!CURVEEDITOR_LIGHTS;Lights
+!CURVEEDITOR_NURBS;Control cage
+!CURVEEDITOR_PARAMETRIC;Parametric
+!CURVEEDITOR_SHADOWS;Shadows
+!CURVEEDITOR_TYPE;Type:
+!EXIFFILTER_METADATAFILTER;Enable Metadata Filters
+!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+!FILEBROWSER_CURRENT_NAME;Current name:
+!FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
+!FILEBROWSER_USETEMPLATE;Use template:
+!HISTOGRAM_BUTTON_B;B
+!HISTOGRAM_BUTTON_G;G
+!HISTOGRAM_BUTTON_L;L
+!HISTOGRAM_BUTTON_R;R
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!NAVIGATOR_B_NA;B = n/a
+!NAVIGATOR_B_VALUE;B = %1
+!NAVIGATOR_G_NA;G = n/a
+!NAVIGATOR_G_VALUE;G = %1
+!NAVIGATOR_H_NA;H = n/a
+!NAVIGATOR_H_VALUE;H = %1
+!NAVIGATOR_R_NA;R = n/a
+!NAVIGATOR_R_VALUE;R = %1
+!NAVIGATOR_S_NA;S = n/a
+!NAVIGATOR_S_VALUE;S = %1
+!NAVIGATOR_V_NA;V = n/a
+!NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PREFERENCES_ADD;ADD
+!PREFERENCES_BATCH_PROCESSING;batch processing
+!PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_CACORRECTION;Apply CA auto correction
+!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
+!PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PREFERENCES_LINEDENOISE;Line noise filter
+!PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_PROPERTY;Property
+!PREFERENCES_SET;SET
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+!TP_EQUALIZER_FINEST;finest
+!TP_EQUALIZER_LABEL;Wavelet equalizer
+!TP_EQUALIZER_LARGEST;coarsest
+!TP_EQUALIZER_NEUTRAL;Neutral
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_FILL;Auto Fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_RESIZE_DOWNSCALEB;Downscale (Better)
+!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!ZOOMPANEL_100;(100%)
+!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
+!ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
+!ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
+!ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>

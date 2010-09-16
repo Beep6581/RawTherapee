@@ -1,3 +1,4 @@
+
 #00 Deutsch
 #01 (keenonkites; Aktualisierte Version für 2.3 beta2)
 #02 (phberlin; basiert auf keenonkites' Erstübersetzung)
@@ -664,3 +665,41 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen
 ZOOMPANEL_ZOOMIN;Hinein zoomen 
 ZOOMPANEL_ZOOMOUT;Heraus zoomen
 ﻿ADJUSTER_RESET_TO_DEFAULT;Zurück zum Standard
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!ADJUSTER_RESET_TO_DEFAULT;Reset to default
+!CURVEEDITOR_NURBS;Control cage
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!PREFERENCES_CACORRECTION;Apply CA auto correction
+!PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PREFERENCES_LINEDENOISE;Line noise filter
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+!TP_EQUALIZER_FINEST;finest
+!TP_EQUALIZER_LABEL;Wavelet equalizer
+!TP_EQUALIZER_LARGEST;coarsest
+!TP_EQUALIZER_NEUTRAL;Neutral
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_FILL;Auto Fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical

@@ -5,15 +5,22 @@
 
 TEMP=temp_file
 
+#First thing, we want to strip default of any !s and duplicates.
+cat "default" | grep -v '^!' | sort | uniq > "$TEMP"
+mv "$TEMP" "default"
+
+echo "Generating differences... this may take a few minutes."
+
 find . | 
 grep -v 'default' | 
 grep -v 'README' | 
 grep -v 'LICENSE' | 
 grep -v 'generateDiffs.sh' | 
+grep -v "$TEMP" |
 grep -v '^.$' |
 
 while read X; do 
-	echo "$X"
+	echo "Working on differences for $X"
 
 	#Start by copying the existing file to a temporary one, after sorting and removing all 
 	#previous differences
@@ -33,3 +40,4 @@ while read X; do
 	mv "$TEMP" "$X"
 done
 
+echo "Finished generating differences."

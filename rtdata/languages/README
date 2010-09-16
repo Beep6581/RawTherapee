@@ -31,5 +31,11 @@ will override any keys present from the ones in the language file (and in turn, 
 
 It is recommended to look for differences from default using a text editor with compare cabailities.
 For ease of maintentance, you should insert new entries in alphabetical order.  Comments *may*
-be included, but in general you should try to avoid them as they can confuse comparison editors.
+be included, but in general you should try to avoid them as they can confuse comparison editors.  If
+you do include comments, you should prefix each line with 00, 01, etc so that the file can be sorted
+and still keep comments in correct order, e.g.
+
+#00 Comment line 1...
+#01 Line 2...
+#02 3, etc.
 
