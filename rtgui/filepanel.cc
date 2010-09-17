@@ -47,7 +47,7 @@ FilePanel::FilePanel () : parent(NULL) {
     placespaned->pack1 (*placesBrowser, false, true);
     placespaned->pack2 (*obox, true, true);
 
-    dirpaned->pack1 (*placespaned, Gtk::SHRINK);
+    dirpaned->pack1 (*placespaned, true, true);
 
     tpc = new BatchToolPanelCoordinator (this);
 //    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
@@ -114,12 +114,6 @@ FilePanel::FilePanel () : parent(NULL) {
     g_idle_add (fbinit, this);
 
     show_all ();
-}
-
-void FilePanel::on_realize () {
-    
-    Gtk::HPaned::on_realize ();
- //   rightBox->set_size_request (options.browserToolPanelWidth, -1);
 }
 
 void FilePanel::init () {
@@ -221,3 +215,27 @@ void FilePanel::optionsChanged () {
     tpc->optionsChanged ();
    // fileCatalog->refreshAll ();
 }
+
+bool FilePanel::handleShortcutKey (GdkEventKey* event) {
+
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    
+    if (!ctrl) {
+        switch(event->keyval) {
+        }
+    }
+    else {
+        switch (event->keyval) {
+        }
+    }
+    
+    if(tpc->getToolBar()->handleShortcutKey(event))
+        return true;
+    
+    if(fileCatalog->handleShortcutKey(event))
+        return true;
+
+    return false;
+}
+

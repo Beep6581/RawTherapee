@@ -109,7 +109,7 @@ void RawImageSource::CA_correct_RT() {
 	/*static const float pre_mul[3] = {MIN(ri->red_multiplier,ri->green_multiplier), ri->green_multiplier, \
 									 MIN(ri->blue_multiplier,ri->green_multiplier)};*/
 		
-	static const float clip_pt = ri->defgain; 
+	const float clip_pt = ri->defgain; 
 		
 	// local variables
 	int width=W, height=H;

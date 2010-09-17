@@ -267,7 +267,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     //dmethod->append_text ("PPG");
     dmethod->append_text ("AMaZE");//Emil's code for AMaZE
     dmethod->append_text ("DCB");
-    dmethod->append_text ("AHD");
+    dmethod->append_text ("Fast Demosaic");//("AHD");
     dmethod->append_text ("Bilinear");
 
     Gtk::Label* dmlab2 = Gtk::manage (new Gtk::Label (M("PREFERENCES_DMETHODBATCH")+":  "));
@@ -281,7 +281,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     //dmethod->append_text ("PPG");
     dmethodBatch->append_text ("AMaZE");//Emil's code for AMaZE
     dmethodBatch->append_text ("DCB");
-    dmethodBatch->append_text ("AHD");
+    dmethodBatch->append_text ("Fast Demosaic");//("AHD");
     dmethodBatch->append_text ("Bilinear");
 
     Gtk::Label* cclab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FALSECOLOR")+":"));
@@ -402,9 +402,11 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     languages = new Gtk::ComboBoxText ();
 
     std::vector<Glib::ustring> langs;
-    parseDir (argv0 + "/languages", langs, "");
-    for (int i=0; i<langs.size(); i++) 
-        languages->append_text (langs[i]);
+    for (int i=0; i<langs.size(); i++) {
+	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
+  	    languages->append_text (langs[i]);
+	}
+    }
 
     Gtk::Label* langw = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
     hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 4);

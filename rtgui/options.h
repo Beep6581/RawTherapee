@@ -69,6 +69,7 @@ class Options {
     int historyPanelWidth;
     int windowWidth;
     int windowHeight;
+    bool windowMaximized;
     int dirBrowserWidth;
     int dirBrowserHeight;
     int lastScale;

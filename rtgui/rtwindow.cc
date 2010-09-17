@@ -40,6 +40,10 @@ RTWindow::RTWindow () {
     maximize();
     set_modal(false);
     set_resizable(true);
+    if (options.windowMaximized)
+    	maximize();
+    else
+    	unmaximize();
     property_destroy_with_parent().set_value(false);
 
     mainNB = Gtk::manage (new Gtk::Notebook ());
@@ -154,17 +158,15 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
 
-    if (ep->beforeClosing ()) {
-        ep->saveOptions ();
-        epanels.erase (ep->getFileName());
-        filesEdited.erase (ep->getFileName ());
-        fpanel->refreshEditedState (filesEdited);
+	ep->saveOptions ();
+	epanels.erase (ep->getFileName());
+	filesEdited.erase (ep->getFileName ());
+	fpanel->refreshEditedState (filesEdited);
 
-        mainNB->remove_page (*ep);
-       
-        if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
-            mainNB->set_current_page (mainNB->page_num (*fpanel));
-    }
+	mainNB->remove_page (*ep);
+
+	if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
+		mainNB->set_current_page (mainNB->page_num (*fpanel));
     // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
 }
 
@@ -173,10 +175,12 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
         toggle_fullscreen();
     }
 
-    if (mainNB->get_nth_page (mainNB->get_current_page()) == fpanel) {
+    if (mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
+        return fpanel->handleShortcutKey (event);
     }
-//    else if (mainNB->get_nth_page (mainNB->get_current_page()) == bqpanel) {
-//    }
+    else if (mainNB->get_current_page() == mainNB->page_num(*bpanel)) {
+        return false;
+    }
     else {
         EditorPanel* ep = (EditorPanel*)mainNB->get_nth_page (mainNB->get_current_page());
         return ep->handleShortcutKey (event);
@@ -234,9 +238,14 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     options.fbArrangement = fileBrowser->getFileCatalog()->getArrangement ();
     options.firstRun = false;
 */
-    options.windowWidth = get_width();
-    options.windowHeight = get_height();
-   
+    Gdk::WindowState state = get_window()->get_state();
+    if (!(state & (Gdk::WINDOW_STATE_MAXIMIZED | Gdk::WINDOW_STATE_FULLSCREEN))) {
+		options.windowWidth = get_width();
+		options.windowHeight = get_height();
+		options.windowMaximized = false;
+    }
+    else
+		options.windowMaximized = true;
 
     Options::save ();
     hide();

@@ -1,41 +1,35 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Français
-# 1.3.2008: Hombre
-# 1.5.2008: Hombre: updates for 2.4m1
-# 27.10.2008: Hombre: updates for 2.4b1
-# 18.11.2008: Hombre: updates for 2.4b2
+
+#00 Français
+#01 1.3.2008: Hombre
+#02 1.5.2008: Hombre: updates for 2.4m1
+#03 27.10.2008: Hombre: updates for 2.4b1
+#04 18.11.2008: Hombre: updates for 2.4b2
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
+BATCHQUEUE_AUTOSTART;Démarrage auto
+BATCH_PROCESSING;Traitement par lot
+CURVEEDITOR_CUSTOM;Personnalisé
+CURVEEDITOR_DARKS;Zones sombres
 CURVEEDITOR_FILEDLGFILTERANY;Tous les fichiers
 CURVEEDITOR_FILEDLGFILTERCURVE;Fichiers de courbe
+CURVEEDITOR_HIGHLIGHTS;Hautes lumières
+CURVEEDITOR_LIGHTS;Zones claires
 CURVEEDITOR_LINEAR;Linéaire
 CURVEEDITOR_LOADDLGLABEL;Charger la courbe...
+CURVEEDITOR_NURBS;Cage de contrôle
+CURVEEDITOR_PARAMETRIC;Paramétrique
 CURVEEDITOR_SAVEDLGLABEL;Enregistrer la courbe...
+CURVEEDITOR_SHADOWS;Ombres bouchées
 CURVEEDITOR_TOOLTIPLINEAR;Réinitialise la courbe en linéaire
 CURVEEDITOR_TOOLTIPLOAD;Charger une courbe depuis un fichier
 CURVEEDITOR_TOOLTIPSAVE;Enregistrer la courbe actuelle
+CURVEEDITOR_TYPE;Type:
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
 EXIFFILTER_FOCALLEN;Longueur focale
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objectif
+EXIFFILTER_METADATAFILTER;Activer les filtres sur les Métadonnées
 EXIFFILTER_SHUTTER;Obturateur
 EXIFPANEL_ADDEDIT;Ajouter/Éditer
 EXIFPANEL_ADDEDITHINT;Ajoute ou édite une donnée
@@ -51,10 +45,12 @@ EXIFPANEL_RESETALL;Réinitialiser tout
 EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
 EXIFPANEL_RESETHINT;Réinitialise les données séléctionnés à la valeur initiale
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
+FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
+FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
 FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
@@ -64,6 +60,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
+FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Abandonner la file de traitement
@@ -86,28 +83,34 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
-FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier
+FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
+FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
-FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile
-FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles
-FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles
-FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles
-FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles
-FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille
-FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile
+FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles <b>5</b>
+FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille <b>T</b>
+FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile  <b>`</b>
 FILEBROWSER_STARTPROCESSING;Démarrer le traitement
 FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
 FILEBROWSER_STOPPROCESSING;Arrêter le traitement
 FILEBROWSER_STOPPROCESSINGHINT;Arrête le traitement des images
 FILEBROWSER_THUMBSIZE;Taille vign.
-FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes
-FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
+FILEBROWSER_USETEMPLATE;Utiliser le modèle:
+FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes <b>+</b>
+FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes <b>-</b>
 GENERAL_ABOUT;À propos
+GENERAL_AFTER;Après
+GENERAL_BEFORE;Avant
 GENERAL_CANCEL;Annuler
 GENERAL_DISABLE;Désactiver
 GENERAL_DISABLED;Désactivé
 GENERAL_ENABLE;Activer
 GENERAL_ENABLED;Activé
+GENERAL_HIGH_QUALITY;Qualité élevée
 GENERAL_LANDSCAPE;Paysage
 GENERAL_LOAD;Charger
 GENERAL_NA;indisponible
@@ -115,7 +118,12 @@ GENERAL_NO;Non
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
+GENERAL_UNCHANGED;(Inchangé)
 GENERAL_YES;Oui
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;V
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramme
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
@@ -274,13 +282,18 @@ IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
 IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
 MAIN_BUTTON_EXIT;Sortie
+MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_PREFERENCES;Préférences
+MAIN_BUTTON_PUTTOQUEUE;Envoyer dans la file
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Envoyer dans la file
 MAIN_BUTTON_SAVE;Enregistrer l'image
 MAIN_BUTTON_SAVEAS;Sous...
+MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
-MAIN_BUTTON_FULLSCREEN;Plein écran
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
+MAIN_BUTTON_UNFULLSCREEN;Quitter plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
 MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
 MAIN_FRAME_PLACES;Emplacements 
@@ -292,9 +305,12 @@ MAIN_MSG_CANNOTLOAD;Impossible de charger l'image
 MAIN_MSG_CANNOTSAVE;Erreur d'enregistrement du fichier
 MAIN_MSG_CANNOTSTARTEDITOR;Impossible de lancer l'éditeur.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Veuillez saisir son chemin d'accès dans les "Préférences".
+MAIN_MSG_ERRORDURINGIMAGESAVING;Erreur pendant la sauvegarde de l'image
 MAIN_MSG_EXITJOBSINQUEUEINFO;Les images non traitées seront perdues en quittant l'application
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Êtes-vous sûr de vouloir quitter? Il reste dans la file des images en attente de traitement.
 MAIN_MSG_JOBSINQUEUE;travail(aux) en file d'attente
+MAIN_MSG_NAVIGATOR;Navigateur
+MAIN_MSG_PLACES;Emplacement
 MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
 MAIN_TAB_BASIC;Basique
 MAIN_TAB_COLOR;Couleur
@@ -308,6 +324,7 @@ MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
 MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
+MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique) <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine
@@ -316,6 +333,20 @@ MAIN_TOOLTIP_PREFERENCES;Régler les préférences
 MAIN_TOOLTIP_QINFO;Montrer les infos EXIF <b>I</b>
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
 MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
+MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
+NAVIGATOR_B_NA;B = n/d
+NAVIGATOR_B_VALUE;B = %1
+NAVIGATOR_G_NA;V = n/d
+NAVIGATOR_G_VALUE;V = %1
+NAVIGATOR_H_NA;T = n/d
+NAVIGATOR_H_VALUE;T = %1
+NAVIGATOR_R_NA;R = n/d
+NAVIGATOR_R_VALUE;R = %1
+NAVIGATOR_S_NA;S = n/d
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = n/d
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = n/d, y = n/d
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Correction aberr./chrom.
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
@@ -344,7 +375,10 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
+PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
+PREFERENCES_BATCH_PROCESSING;Traitement par lot
+PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
@@ -358,6 +392,7 @@ PREFERENCES_CACHESTRAT2;Optimiser la consommation mémoire au détriment de la v
 PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
+PREFERENCES_CACORRECTION;Appliquer la correction auto. de l'aberration chromatique
 PREFERENCES_CLEARDLG_LINE1;Nettoyage du Cache
 PREFERENCES_CLEARDLG_LINE2;Ceci peut prendre plusieurs secondes.
 PREFERENCES_CLEARDLG_TITLE;Veuillez patienter
@@ -367,14 +402,6 @@ PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
-#Emil's CA autocorrection
-PREFERENCES_CACORRECTION;Appliquer la correction auto. de l'aberration chromatique
-#Emil's hot/dead pixel filter
-PREFERENCES_HOTDEADPIXFILT;Appliquer le filtre des pixels chauds/morts
-#Emil's line noise filter
-PREFERENCES_LINEDENOISE;Filtre de bruit de Ligne
-PREFERENCES_GREENEQUIL;Équilibrage du vert
-
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
@@ -392,15 +419,18 @@ PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
+PREFERENCES_GREENEQUIL;Équilibrage du vert
 PREFERENCES_GTKTHEME;GTK par défaut
 PREFERENCES_HINT;Conseil
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
+PREFERENCES_HOTDEADPIXFILT;Appliquer le filtre des pixels chauds/morts
 PREFERENCES_ICCDIR;Dossier des profils ICC
 PREFERENCES_IMPROCPARAMS;Paramètres de traitement d'image par défaut
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrie absolue
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
+PREFERENCES_LINEDENOISE;Filtre de bruit de Ligne
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_OUTDIR;Dossier de sortie
@@ -409,6 +439,7 @@ PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectio
 PREFERENCES_OUTDIRHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatés se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
+PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
 PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
@@ -419,11 +450,13 @@ PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
 PREFERENCES_PROFILEPRFILE;Profil accolé au fichier d'entrée
 PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Cache
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
+PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
 PREFERENCES_SELECTICCDIRDLG;Choix du dossier des profils ICC...
 PREFERENCES_SELECTLANG;Choix de la langue
 PREFERENCES_SELECTMONITORPROFDLG;Choix du profil ICC de l'affichage...
 PREFERENCES_SELECTTHEME;Choisissez un thème
+PREFERENCES_SET;Remplace
 PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
@@ -462,11 +495,13 @@ PROGRESSBAR_SAVEPNG;Enregistrement du fichier PNG...
 PROGRESSBAR_SAVETIFF;Enregistrement du fichier TIFF...
 PROGRESSDLG_LOADING;Chargement du fichier...
 PROGRESSDLG_PROCESSING;Traitement de l'image...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
 PROGRESSDLG_SAVING;Enregistrement du fichier...
 QINFO_FOCALLENGTH;Longueur focale
 QINFO_ISO;ISO
 QINFO_LENS;Objectif
 QINFO_NOEXIF;Données EXIF non disponibles.
+SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_JPEGQUAL;Qualité JPEG
 SAVEDLG_JPGFILTER;Fichiers JPEG
@@ -478,6 +513,7 @@ SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
 SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
 SAVEDLG_TIFFFILTER;Fichiers TIFF
+SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 TOOLBAR_TOOLTIP_CROP;Sélection du rognage <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
@@ -527,14 +563,19 @@ TP_CROP_SELECTCROP;    Sélection du rognage
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DETAIL_AMOUNT;Quantité
+TP_DIRPYRDENOISE_CHROMA;Chrominance
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Réduction du bruit présevant les bords
+TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DISTORTION_AMOUNT;Quantité
 TP_DISTORTION_LABEL;Distorsion
-TP_EQUALIZER_LABEL;Égaliseur d'ondelette
+TP_EQUALIZER_CONTRAST_MINUS;Contraste-
+TP_EQUALIZER_CONTRAST_PLUS;Contraste+
 TP_EQUALIZER_FINEST;les plus petites
+TP_EQUALIZER_LABEL;Égaliseur d'ondelette
 TP_EQUALIZER_LARGEST;les plus grandes
 TP_EQUALIZER_NEUTRAL;Neutre
-TP_EQUALIZER_CONTRAST_PLUS;Contraste+
-TP_EQUALIZER_CONTRAST_MINUS;Contraste-
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
 TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
@@ -564,6 +605,8 @@ TP_ICM_OUTPUTDLGLABEL;Choix du profil ICC de sortie...
 TP_ICM_OUTPUTPROFILE;Profil de sortie
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
+TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
+TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LENSGEOM_AUTOCROP;Rognage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
@@ -577,8 +620,8 @@ TP_LUMACURVE_LABEL;Courbe de luminance
 TP_LUMADENOISE_EDGETOLERANCE;Tolérance des bords
 TP_LUMADENOISE_LABEL;Réduction du bruit de luminance
 TP_LUMADENOISE_RADIUS;Rayon
-TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
+TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
@@ -588,11 +631,14 @@ TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
+TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_LABEL;Redimensionnement
 TP_RESIZE_METHOD;Méthode: 
 TP_RESIZE_NEAREST;Au plus proche
 TP_RESIZE_SCALE;Échelle
+TP_RESIZE_SPECIFY;Préciser:
 TP_RESIZE_W;L:
+TP_RESIZE_WIDTH;Largeur
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
 TP_ROTATE_SELECTLINE;Choisir la ligne d'horizon
@@ -637,92 +683,16 @@ ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Prévisualiation
 ZOOMBAR_SCALE;Échelle
 ZOOMBAR_SMALL;Petit
-
-GENERAL_HIGH_QUALITY;Qualité élevée
-GENERAL_UNCHANGED;(Inchangé)
-MAIN_MSG_PLACES;Emplacement
-GENERAL_BEFORE;Avant
-GENERAL_AFTER;Après
-MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
-MAIN_BUTTON_PUTTOQUEUE;Envoyer dans la file
-MAIN_MSG_NAVIGATOR;Navigateur
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
-BATCHQUEUE_AUTOSTART;Démarrage auto
-TP_DETAIL_AMOUNT;Quantité
-TP_RESIZE_SPECIFY;Préciser:
-TP_RESIZE_SCALE;Échelle
-TP_RESIZE_WIDTH;Largeur
-TP_RESIZE_HEIGHT;Hauteur
-MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
-
-
-###
-
-###
-
-EXIFFILTER_METADATAFILTER;Activer les filtres sur les Métadonnées
-CURVEEDITOR_PARAMETRIC;Paramétrique
-CURVEEDITOR_CUSTOM;Personnalisé
-CURVEEDITOR_TYPE;Type:
-CURVEEDITOR_HIGHLIGHTS;Hautes lumières
-CURVEEDITOR_LIGHTS;Zones claires
-CURVEEDITOR_DARKS;Zones sombres
-CURVEEDITOR_SHADOWS;Ombres bouchées
-BATCH_PROCESSING;Traitement par lot
-PREFERENCES_BATCH_PROCESSING;Traitement par lot
-PREFERENCES_BEHAVIOR;Comportement
-PREFERENCES_PROPERTY;Propriété
-PREFERENCES_ADD;Ajoute
-PREFERENCES_SET;Remplace
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
-MAIN_MSG_ERRORDURINGIMAGESAVING;Erreur pendant la sauvegarde de l'image
-FILEBROWSER_CURRENT_NAME;Nom courant:
-FILEBROWSER_NEW_NAME;Nouveau nom:
-FILEBROWSER_USETEMPLATE;Utiliser le modèle:
-FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
-ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
-ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Ouvrir une (nouvelle) vue détaillée
 ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
-ZOOMPANEL_NEWCROPWINDOW;Ouvrir une (nouvelle) vue détaillée
-ZOOMPANEL_100;(100%)
+ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-###
 
-MAIN_BUTTON_FULLSCREEN;Plein écran
-MAIN_BUTTON_UNFULLSCREEN;Quitter plein écran
-PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
 
-NAVIGATOR_R_NA;R = n/d
-NAVIGATOR_G_NA;V = n/d
-NAVIGATOR_B_NA;B = n/d
-NAVIGATOR_H_NA;T = n/d
-NAVIGATOR_S_NA;S = n/d
-NAVIGATOR_V_NA;V = n/d
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_G_VALUE;V = %1
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_H_VALUE;T = %1
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/d, y = n/d
-FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF
-SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_BUTTON_G;V
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_L;L
 
-###
-
-CURVEEDITOR_NURBS;Cage de contrôle
-
-###
-
-MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
-
-###
-
-SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
