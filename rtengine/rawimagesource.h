@@ -74,7 +74,6 @@ class RawImageSource : public ImageSource {
 		cmsHPROFILE embProfile;
 
         RawImage* ri; // Copy of raw pixels
-        RawImage* df; // Darkframe pixels (if present)
         
         // to accelerate CIELAB conversion:
         double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
@@ -148,8 +147,8 @@ class RawImageSource : public ImageSource {
 
 		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
 		void CA_correct_RT		();
-		void cfaCleanFromList( const std::list<badPix> &bpList );
-		void cfa_clean (float thresh);//Emil's hot/dead pixel filter
+		int  cfaCleanFromMap( BYTE* bitmapBads );
+		int  findHotDeadPixel( BYTE *bpMap, float thresh);
 		void ddct8x8s(int isgn, float **a);
 
 		void cfa_linedn (float linenoiselevel);//Emil's line denoise

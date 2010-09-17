@@ -29,7 +29,7 @@ class dfInfo
 public:
 
 	Glib::ustring pathname; // filename of dark frame
-	std::list<Glib::ustring> pathNames; // other similar dark frames, used to mediate
+	std::list<Glib::ustring> pathNames; // other similar dark frames, used for average
 	std::string maker;  ///< manufacturer
 	std::string model;  ///< model
 	int iso;      ///< ISO (gain)
@@ -55,11 +55,11 @@ public:
 	std::string key(){ return key( maker,model,iso,shutter); }
 
 	RawImage *getRawImage();
-	std::list<badPix> &getBadPixels();
+	std::list<badPix> &getHotPixels();
 
 protected:
 	RawImage *ri; ///< Dark Frame raw data
-	std::list<badPix> badPixels; ///< Unreliable pixels
+	std::list<badPix> badPixels; ///< Extracted hot pixels
 
 	void updateBadPixelList( RawImage *df );
 	void updateRawImage();
@@ -72,16 +72,21 @@ public:
 	Glib::ustring getPathname(){ return currentPath; };
 	void getStat( int &totFiles, int &totTemplate);
 	RawImage *searchDarkFrame( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
-	RawImage *searchDarkFrame( Glib::ustring filename );
-	std::list<badPix> searchBadPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
+	RawImage *searchDarkFrame( const Glib::ustring filename );
+	std::list<badPix> *getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
+	std::list<badPix> *getHotPixels ( const Glib::ustring filename );
+	std::list<badPix> *getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial);
 
 protected:
 	typedef std::multimap<std::string,dfInfo> dfList_t;
+	typedef std::map<std::string, std::list<badPix> > bpList_t;
 	dfList_t dfList;
+	bpList_t bpList;
 	bool initialized;
 	Glib::ustring currentPath;
-	bool addFileInfo(const Glib::ustring &filename );
-	dfInfo &find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t );
+	dfInfo *addFileInfo(const Glib::ustring &filename );
+	dfInfo *find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t );
+	bool scanBadPixelsFile( Glib::ustring filename );
 };
 
 extern DFManager dfm;

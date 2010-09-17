@@ -59,7 +59,6 @@ RawImageSource::RawImageSource ()
 ,border(4)
 ,rawData(NULL)
 ,ri(NULL)
-,df(NULL)
 {
     hrmap[0] = NULL;
     hrmap[1] = NULL;
@@ -75,9 +74,6 @@ RawImageSource::~RawImageSource () {
     delete idata;
     if (ri) {
         delete ri;
-    }
-    if(df){
-    	delete df;
     }
 
     if (green)
@@ -328,95 +324,67 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     isrcMutex.unlock ();
 }
 
-void RawImageSource::cfaCleanFromList( const std::list<badPix> &bpList )
+/* cfaCleanFromMap: correct raw pixels looking at the bitmap
+ * takes into consideration if there are multiple bad pixels in the neighborhood
+ */
+int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 {
-	int rr, cc;
-	unsigned short gin,g[8];
-	float eps=1e-10;//tolerance to avoid dividing by zero
-	float p[8];
+	const int border=4;
+	double eps=1e-10;
+	int bmpW= (W/8+ (W%8?1:0));
+	int counter=0;
+	for( int row = 0; row < H; row++ ){
+		for(int col = 0; col <W; col++ ){
 
-	for (std::list<badPix>::const_iterator iter=bpList.begin(); iter != bpList.end(); iter++  ){
-		rr = iter->y;
-		if( rr<4 || rr>=H-4 )
-			continue;
-		cc = iter->x;
-		if( cc<4 || cc>=W-4 )
-			continue;
+			if( !bitmapBads[ row *bmpW + col/8] ){ col+=7;continue; } //optimization
 
-		//pixel neighbor average
-		gin=rawData[rr][cc];
-		g[0]=rawData[rr-2][cc-2];
-		g[1]=rawData[rr-2][cc];
-		g[2]=rawData[rr-2][cc+2];
-		g[3]=rawData[rr][cc-2];
-		g[4]=rawData[rr][cc+2];
-		g[5]=rawData[rr+2][cc-2];
-		g[6]=rawData[rr+2][cc];
-		g[7]=rawData[rr+2][cc+2];
+			if( !(bitmapBads[ row *bmpW + col/8] & (1<<col%8)) ) continue;
 
-		p[0]=1/(eps+fabs(g[0]-gin)+fabs(g[0]-rawData[rr-4][cc-4])+fabs(rawData[rr-1][cc-1]-rawData[rr-3][cc-3]));
-		p[1]=1/(eps+fabs(g[1]-gin)+fabs(g[1]-rawData[rr-4][cc])+fabs(rawData[rr-1][cc]-rawData[rr-3][cc]));
-		p[2]=1/(eps+fabs(g[2]-gin)+fabs(g[2]-rawData[rr-4][cc+4])+fabs(rawData[rr-1][cc+1]-rawData[rr-3][cc+3]));
-		p[3]=1/(eps+fabs(g[3]-gin)+fabs(g[3]-rawData[rr][cc-4])+fabs(rawData[rr][cc-1]-rawData[rr][cc-3]));
-		p[4]=1/(eps+fabs(g[4]-gin)+fabs(g[4]-rawData[rr][cc+4])+fabs(rawData[rr][cc+1]-rawData[rr][cc+3]));
-		p[5]=1/(eps+fabs(g[5]-gin)+fabs(g[5]-rawData[rr+4][cc-4])+fabs(rawData[rr+1][cc-1]-rawData[rr+3][cc-3]));
-		p[6]=1/(eps+fabs(g[6]-gin)+fabs(g[6]-rawData[rr+4][cc])+fabs(rawData[rr+1][cc]-rawData[rr+3][cc]));
-		p[7]=1/(eps+fabs(g[7]-gin)+fabs(g[7]-rawData[rr+4][cc+4])+fabs(rawData[rr+1][cc+1]-rawData[rr+3][cc+3]));
+			double wtdsum=0,norm=0;
+			for( int dy=-2;dy<=2;dy+=2){
+				for( int dx=-2;dx<=2;dx+=2){
+					if (dy==0 && dx==0) continue;
+					if (row+dy<0 || row+dy>=H || col+dx<0 || row+dx>=W ) continue;
+					if (bitmapBads[ (row+dy) *bmpW + (col+dx)/8] & (1<<(col+dx)%8)) continue;
 
-		rawData[rr][cc] = (int)((g[0]*p[0]+g[1]*p[1]+g[2]*p[2]+g[3]*p[3]+g[4]*p[4]+ g[5]*p[5]+g[6]*p[6]+g[7]*p[7])/(p[0]+p[1]+p[2]+p[3]+p[4]+p[5]+p[6]+p[7]));
+					double dirwt = 1/( ( rawData[row+dy][col+dx]- rawData[row][col])*( rawData[row+dy][col+dx]- rawData[row][col])+eps);
+					wtdsum += dirwt* rawData[row+dy][col+dx];
+					norm += dirwt;
+				}
+			}
+			if (norm > 0.){
+				rawData[row][col]= wtdsum / norm;//low pass filter
+				counter++;
+			}
+		}
 	}
+	return counter;
 }
-	
-void RawImageSource::cfa_clean(float thresh) //Emil's hot/dead pixel removal -- only filters egregiously impulsive pixels
-	{  
-		// local variables
-		int rr, cc;
-		int gin, g[8];
-		
-		float eps=1e-10;//tolerance to avoid dividing by zero
-		float p[8];
-		float pixave, pixratio;
 
-		// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		//The cleaning algorithm starts here
-				
-		for (rr=4; rr < H-4; rr++)
-			for (cc=4; cc < W-4; cc++) {
-				
-				//pixel neighbor average
-				gin=rawData[rr][cc];
-				g[0]=rawData[rr-2][cc-2];
-				g[1]=rawData[rr-2][cc];
-				g[2]=rawData[rr-2][cc+2];
-				g[3]=rawData[rr][cc-2];
-				g[4]=rawData[rr][cc+2];
-				g[5]=rawData[rr+2][cc-2];
-				g[6]=rawData[rr+2][cc];
-				g[7]=rawData[rr+2][cc+2];
-				
-				pixave=(float)(g[0]+g[1]+g[2]+g[3]+g[4]+g[5]+g[6]+g[7])/8;
-				pixratio=MIN(gin,pixave)/(eps+MAX(gin,pixave));
-				
-				if (pixratio > thresh) continue;
-				
-				p[0]=1/(eps+fabs(g[0]-gin)+fabs(g[0]-rawData[rr-4][cc-4])+fabs(rawData[rr-1][cc-1]-rawData[rr-3][cc-3]));
-				p[1]=1/(eps+fabs(g[1]-gin)+fabs(g[1]-rawData[rr-4][cc])+fabs(rawData[rr-1][cc]-rawData[rr-3][cc]));
-				p[2]=1/(eps+fabs(g[2]-gin)+fabs(g[2]-rawData[rr-4][cc+4])+fabs(rawData[rr-1][cc+1]-rawData[rr-3][cc+3]));
-				p[3]=1/(eps+fabs(g[3]-gin)+fabs(g[3]-rawData[rr][cc-4])+fabs(rawData[rr][cc-1]-rawData[rr][cc-3]));
-				p[4]=1/(eps+fabs(g[4]-gin)+fabs(g[4]-rawData[rr][cc+4])+fabs(rawData[rr][cc+1]-rawData[rr][cc+3]));
-				p[5]=1/(eps+fabs(g[5]-gin)+fabs(g[5]-rawData[rr+4][cc-4])+fabs(rawData[rr+1][cc-1]-rawData[rr+3][cc-3]));
-				p[6]=1/(eps+fabs(g[6]-gin)+fabs(g[6]-rawData[rr+4][cc])+fabs(rawData[rr+1][cc]-rawData[rr+3][cc]));
-				p[7]=1/(eps+fabs(g[7]-gin)+fabs(g[7]-rawData[rr+4][cc+4])+fabs(rawData[rr+1][cc+1]-rawData[rr+3][cc+3]));
-				
-				rawData[rr][cc] = (int)((g[0]*p[0]+g[1]*p[1]+g[2]*p[2]+g[3]*p[3]+g[4]*p[4]+ \
-										g[5]*p[5]+g[6]*p[6]+g[7]*p[7])/(p[0]+p[1]+p[2]+p[3]+p[4]+p[5]+p[6]+p[7]));
-				
-			}//now impulsive values have been corrected
-		
-		
-		// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-	}
+/*  Search for hot or dead pixels in the image and update the map
+ *  For each pixel compare its value to the average of similar color surrounding
+ *  (Taken from Emil Martinec idea)
+ */
+int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
+{
+	int bmpW= (W/8+ (W%8?1:0));
+	float eps=1e-10;//tolerance to avoid dividing by zero
+    int counter=0;
+	for (int rr=2; rr < H-2; rr++)
+		for (int cc=2; cc < W-2; cc++) {
+
+			int  gin=rawData[rr][cc];
+			int  pixave = (rawData[rr-2][cc-2]+rawData[rr-2][cc]+rawData[rr-2][cc+2]+rawData[rr][cc-2]+rawData[rr][cc+2]+rawData[rr+2][cc-2]+rawData[rr+2][cc]+rawData[rr+2][cc+2])/8;
+			float  pixratio=MIN(gin,pixave)/(eps+MAX(gin,pixave));
+
+			if (pixratio > thresh) continue;
+
+			// mark the pixel as "bad"
+			bpMap[rr*bmpW+cc/8 ] |= 1<<(cc%8);
+			counter++;
+		}
+	return counter;
+}
 	
 
 void RawImageSource::rotateLine (unsigned short* line, unsigned short** channel, int tran, int i, int w, int h) {
@@ -802,31 +770,33 @@ int RawImageSource::load (Glib::ustring fname) {
 void RawImageSource::preprocess  (const RAWParams &raw)
 {
 	Glib::ustring newDF = raw.dark_frame;
-	Glib::ustring currentDF = (df ? df->fname : "");
+	RawImage *rid=NULL;
 	if (!raw.df_autoselect) {
-		if (newDF != currentDF) {
-			if (df)
-				delete df;
-			df = NULL;
-			if (newDF.length() > 0) {
-				df = new RawImage(newDF);
-				int res = df->loadRaw();
-				if (res) {
-					delete df;
-					df = NULL;
-				}
-			}
-		}
-
-		copyOriginalPixels(ri, df);
+		if( raw.dark_frame.size()>0)
+		   rid = dfm.searchDarkFrame( raw.dark_frame );
 	}else{
-		RawImage *rid = dfm.searchDarkFrame( ri->make, ri->model, ri->iso_speed, ri->shutter, ri->timestamp);
-		copyOriginalPixels(ri, rid);
+		rid = dfm.searchDarkFrame( ri->make, ri->model, ri->iso_speed, ri->shutter, ri->timestamp);
 	}
-	if(!raw.hotdeadpix_filt &&  raw.df_autoselect ){
-		std::list<badPix> bp = dfm.searchBadPixels( ri->make, ri->model, ri->iso_speed, ri->shutter, ri->timestamp);
-		cfaCleanFromList(bp);
+	copyOriginalPixels(ri, rid);
+	size_t widthBitmap = (ri->width/8+ (ri->width%8?1:0));
+	size_t dimBitmap = widthBitmap*ri->height;
+
+	BYTE *bitmapBads = new BYTE [ dimBitmap ];
+	std::list<badPix> *bp = dfm.getBadPixels( ri->make, ri->model, std::string("") );
+	if( bp ){
+		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++)
+			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x%8);
 	}
+	bp = 0;
+	if( raw.df_autoselect )
+		bp = dfm.getHotPixels( ri->make, ri->model, ri->iso_speed, ri->shutter, ri->timestamp);
+	else if( raw.dark_frame.size()>0 )
+		bp = dfm.getHotPixels( raw.dark_frame );
+	if(bp)
+		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++)
+			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x%8);
+
+
     preInterpolate(false);
     scaleColors( false,true);
 
@@ -840,7 +810,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
     double tg = icoeff[1][0] * cam_r + icoeff[1][1] * cam_g + icoeff[1][2] * cam_b;
     double tb = icoeff[2][0] * cam_r + icoeff[2][1] * cam_g + icoeff[2][2] * cam_b;
 
-    defGain = log(ri->defgain) / log(2.0); //\TODO rivedere l'assegnamento di ri->defgain che dovrebbe essere "costante"
+    defGain = log(ri->defgain) / log(2.0); //\TODO  ri->defgain should be "costant"
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->filters) ) {
@@ -880,9 +850,10 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
 		}
-		
-		cfa_clean(0.1);
+		findHotDeadPixel( bitmapBads,0.1 );
 	}
+	cfaCleanFromMap( bitmapBads );
+	delete [] bitmapBads;
 	
 	if ( raw.linenoise >0 ) {
 		if (plistener) {
