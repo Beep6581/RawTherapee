@@ -58,6 +58,7 @@ void RawImageSource::fast_demo() {
 	//first, interpolate borders using bilinear
 	for (i=0; i<H; i++) {
 		for (j=0; j<bord; j++) {//first few columns
+			for (c=0; c<6; c++) sum[c]=0;
 			for (i1=i-1; i1<i+2; i1++)
 				for (j1=j-1; j1<j+2; j1++) {
 					if (i1 > -1 && i1 < H && j1 > -1) {
@@ -84,6 +85,7 @@ void RawImageSource::fast_demo() {
 		}//j
 		
 		for (j=W-bord; j<W; j++) {//last few columns
+			for (c=0; c<6; c++) sum[c]=0;
 			for (i1=i-1; i1<i+2; i1++)
 				for (j1=j-1; j1<j+2; j1++) {
 					if (i1 > -1 && i1 < H && j1 < W) {
@@ -114,6 +116,7 @@ void RawImageSource::fast_demo() {
 	
 	for (j=bord; j<W-bord; j++) {
 		for (i=0; i<bord; i++) {//first few rows
+			for (c=0; c<6; c++) sum[c]=0;
 			for (i1=i-1; i1<i+2; i1++)
 				for (j1=j-1; j1<j+2; j1++) {
 					if (j1 > -1 && j1 < W && i1 > -1) {
@@ -140,6 +143,7 @@ void RawImageSource::fast_demo() {
 		}//i
 		
 		for (i=H-bord; i<H; i++) {//last few rows
+			for (c=0; c<6; c++) sum[c]=0;
 			for (i1=i-1; i1<i+2; i1++)
 				for (j1=j-1; j1<j+2; j1++) {
 					if (j1 > -1 && j1 < W && i1 < H) {
@@ -174,7 +178,7 @@ void RawImageSource::fast_demo() {
 	{
 		int rb;
 		
-		float	wtu, wtd, wtl, wtr;
+		float	wt1, wt2, wt3, wt4;
 		
 		float * dirwt = new float [0x20000];
 		
@@ -198,18 +202,13 @@ void RawImageSource::fast_demo() {
 					
 				} else {
 					//compute directional weights using image gradients
-					wtu=dirwt[(abs(ri->data[i+1][j]-ri->data[i-1][j])+abs(ri->data[i][j]-ri->data[i-2][j])+abs(ri->data[i-1][j]-ri->data[i-3][j])) >>8];
-					wtd=dirwt[(abs(ri->data[i-1][j]-ri->data[i+1][j])+abs(ri->data[i][j]-ri->data[i+2][j])+abs(ri->data[i+1][j]-ri->data[i+3][j])) >>8];
-					wtl=dirwt[(abs(ri->data[i][j+1]-ri->data[i][j-1])+abs(ri->data[i][j]-ri->data[i][j-2])+abs(ri->data[i][j-1]-ri->data[i][j-3])) >>8];
-					wtr=dirwt[(abs(ri->data[i][j-1]-ri->data[i][j+1])+abs(ri->data[i][j]-ri->data[i][j+2])+abs(ri->data[i][j+1]-ri->data[i][j+3])) >>8];
-					
-					//wtu=1/SQR(1.0+fabs((int)ri->data[i+1][j]-ri->data[i-1][j])+fabs((int)ri->data[i][j]-ri->data[i-2][j])+fabs((int)ri->data[i-1][j]-ri->data[i-3][j]));
-					//wtd=1/SQR(1.0+fabs((int)ri->data[i-1][j]-ri->data[i+1][j])+fabs((int)ri->data[i][j]-ri->data[i+2][j])+fabs((int)ri->data[i+1][j]-ri->data[i+3][j]));
-					//wtl=1/SQR(1.0+fabs((int)ri->data[i][j+1]-ri->data[i][j-1])+fabs((int)ri->data[i][j]-ri->data[i][j-2])+fabs((int)ri->data[i][j-1]-ri->data[i][j-3]));
-					//wtr=1/SQR(1.0+fabs((int)ri->data[i][j-1]-ri->data[i][j+1])+fabs((int)ri->data[i][j]-ri->data[i][j+2])+fabs((int)ri->data[i][j+1]-ri->data[i][j+3]));
-					
+					wt1=dirwt[(abs(ri->data[i+1][j]-ri->data[i-1][j])+abs(ri->data[i][j]-ri->data[i-2][j])+abs(ri->data[i-1][j]-ri->data[i-3][j])) >>4];
+					wt2=dirwt[(abs(ri->data[i-1][j]-ri->data[i+1][j])+abs(ri->data[i][j]-ri->data[i+2][j])+abs(ri->data[i+1][j]-ri->data[i+3][j])) >>4];
+					wt3=dirwt[(abs(ri->data[i][j+1]-ri->data[i][j-1])+abs(ri->data[i][j]-ri->data[i][j-2])+abs(ri->data[i][j-1]-ri->data[i][j-3])) >>4];
+					wt4=dirwt[(abs(ri->data[i][j-1]-ri->data[i][j+1])+abs(ri->data[i][j]-ri->data[i][j+2])+abs(ri->data[i][j+1]-ri->data[i][j+3])) >>4];
+
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
-					green[i][j]=(int)((wtu*ri->data[i-1][j]+wtd*ri->data[i+1][j]+wtl*ri->data[i][j-1]+wtr*ri->data[i][j+1])/(wtu+wtd+wtl+wtr));
+					green[i][j]=(int)((wt1*ri->data[i-1][j]+wt2*ri->data[i+1][j]+wt3*ri->data[i][j-1]+wt4*ri->data[i][j+1])/(wt1+wt2+wt3+wt4));
 					//red[i][j] = green[i][j];
 					//blue[i][j] = green[i][j];
 					
