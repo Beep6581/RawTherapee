@@ -31,19 +31,16 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
     cCropMoving = new Gdk::Cursor (Gdk::HAND2);
     cCropSelection = new Gdk::Cursor (Gdk::CROSSHAIR);
     cAdd = new Gdk::Cursor (Gdk::PLUS);
-//#ifdef _WIN32
-//    cNormal = new Gdk::Cursor (Gdk::LAST_CURSOR);
-//#else
-    cNormal = new Gdk::Cursor (Gdk::ARROW);
-//#endif
-	Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
-	Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file(argv0+"/images/closedhand22.png");
-	Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file(argv0+"/images/wbpicker16.png");
-	Glib::RefPtr<Gdk::Pixbuf> empty = safe_create_from_file(argv0+"/images/empty.png");
-	cHand = hand ? new Gdk::Cursor (cNormal->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
-    cClosedHand = close_hand ? new Gdk::Cursor (cNormal->get_display(), close_hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
-    cWB = wbpick ? new Gdk::Cursor (cNormal->get_display(), wbpick, 1, 12) : new Gdk::Cursor (Gdk::ARROW);
-    cHidden = empty ? new Gdk::Cursor (cNormal->get_display(), empty, 12, 12) : new Gdk::Cursor (Gdk::FLEUR);
+
+    Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
+    Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file(argv0+"/images/closedhand22.png");
+    Glib::RefPtr<Gdk::Pixbuf> wbpick = safe_create_from_file(argv0+"/images/wbpicker16.png");
+    Glib::RefPtr<Gdk::Pixbuf> empty = safe_create_from_file(argv0+"/images/empty.png");
+    
+    cHand = hand ? new Gdk::Cursor (cAdd->get_display(), hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
+    cClosedHand = close_hand ? new Gdk::Cursor (cAdd->get_display(), close_hand, 10, 10) : new Gdk::Cursor (Gdk::HAND2);
+    cWB = wbpick ? new Gdk::Cursor (cAdd->get_display(), wbpick, 1, 12) : new Gdk::Cursor (Gdk::ARROW);
+    cHidden = empty ? new Gdk::Cursor (cAdd->get_display(), empty, 12, 12) : new Gdk::Cursor (Gdk::FLEUR);
 
     mainWindow = mainWin;
 }
@@ -52,7 +49,8 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
 void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape shape) {
 
     if (shape==CSArrow)
-        window->set_cursor (*cNormal);
+	   // set_cursor without any arguments to select system default
+        window->set_cursor ();    
     else if (shape==CSOpenHand)
         window->set_cursor (*cHand);
     else if (shape==CSClosedHand)
