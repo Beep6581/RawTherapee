@@ -23,6 +23,7 @@
 #include <safegtk.h>
 #include <common.h>
 #include <sstream>
+#include <stdio.h>
 
 namespace rtengine{
 
@@ -92,7 +93,7 @@ RawImage* dfInfo::getRawImage()
 	return ri;
 }
 
-std::list<badPix>& dfInfo::getBadPixels()
+std::list<badPix>& dfInfo::getHotPixels()
 {
 	if( !ri ){
 		updateRawImage();
@@ -206,8 +207,17 @@ void DFManager::init( Glib::ustring pathname )
 	safe_build_file_list (dir, names, pathname);
 	
 	dfList.clear();
+	bpList.clear();
     for (int i=0; i<names.size(); i++) {
-        addFileInfo(names[i]);
+        int lastdot = names[i].find_last_of ('.');
+        if (lastdot != Glib::ustring::npos && names[i].substr(lastdot) == ".badpixels" ){
+        	if( scanBadPixelsFile( names[i] ) && settings->verbose)
+        		printf("Loaded badpixels file %s\n",names[i].c_str());
+        	continue;
+        }
+        try{
+            addFileInfo(names[i]);
+        }catch( std::exception e ){}
     }
     // Where multiple shots exist for same group, move filename to list
     for( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
@@ -229,7 +239,7 @@ void DFManager::init( Glib::ustring pathname )
     return;
 }
 
-bool DFManager::addFileInfo(const Glib::ustring &filename )
+dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
 {
 	Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filename);
     if (!file )
@@ -248,7 +258,7 @@ bool DFManager::addFileInfo(const Glib::ustring &filename )
         	   dfList_t::iterator iter = dfList.find( key );
         	   if( iter == dfList.end() ){
 				   dfInfo n(filename, ri.make, ri.model,(int)ri.iso_speed,ri.shutter,ri.timestamp);
-				   dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
+				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         	   }else{
         		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.timestamp) >60*60*6 ) // 6 hour difference
         			   iter++;
@@ -257,14 +267,14 @@ bool DFManager::addFileInfo(const Glib::ustring &filename )
         		      iter->second.pathNames.push_back( filename );
         		   else{
     				   dfInfo n(filename, ri.make, ri.model,(int)ri.iso_speed,ri.shutter,ri.timestamp);
-    				   dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
+    				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         		   }
         	   }
-               return true;
+               return &(iter->second);
         	}
 		}
     }
-    return false;
+    return 0;
 }
 
 void DFManager::getStat( int &totFiles, int &totTemplates)
@@ -285,10 +295,10 @@ void DFManager::getStat( int &totFiles, int &totTemplates)
  *  if perfect matches for iso and shutter are found, then the list is scanned for lesser distance in time
  *  otherwise if no match is found, the whole list is searched for lesser distance in iso and shutter
  */
-dfInfo& DFManager::find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t )
+dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t )
 {
 	if( dfList.size() == 0 )
-		throw std::exception();
+		return 0;
 	std::string key( dfInfo::key(mak,mod,isospeed,shut) );
 	dfList_t::iterator iter = dfList.find( key );
 
@@ -302,7 +312,7 @@ dfInfo& DFManager::find( const std::string &mak, const std::string &mod, int iso
 				bestDeltaTime = d;
 			}
 		}
-        return bestMatch->second;
+        return &(bestMatch->second);
 	}else{
 		iter = dfList.begin();
 		dfList_t::iterator bestMatch = iter;
@@ -314,36 +324,83 @@ dfInfo& DFManager::find( const std::string &mak, const std::string &mod, int iso
         	   bestMatch = iter;
            }
 		}
-		return bestMatch->second;
+		return &(bestMatch->second);
 	}
 }
 
 RawImage* DFManager::searchDarkFrame( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
 {
-   try{
-	   dfInfo &df = find( mak, mod, iso, shut, t );
-	   return df.getRawImage();
-   }catch( std::exception e){
-	   return NULL;
-   }
+   dfInfo *df = find( mak, mod, iso, shut, t );
+   if( df )
+      return df->getRawImage();
+   else
+	  return 0;
 }
 
-RawImage* DFManager::searchDarkFrame( Glib::ustring filename )
+RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
 {
 	for ( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
 		if( iter->second.pathname.compare( filename )==0  )
 			return iter->second.getRawImage();
 	}
+	dfInfo *df = addFileInfo( filename );
+	if(df)
+		return df->getRawImage();
+	return 0;
+}
+std::list<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
+{
+	for ( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
+		if( iter->second.pathname.compare( filename )==0  )
+			return &iter->second.getHotPixels();
+	}
+	return 0;
+}
+std::list<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
+{
+   dfInfo *df = find( mak, mod, iso, shut, t );
+   if( df )
+	   return &df->getHotPixels();
+   else
+	   return 0;
 }
 
-std::list<badPix> DFManager::searchBadPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
+bool DFManager::scanBadPixelsFile( Glib::ustring filename )
 {
-   try{
-	   dfInfo &df = find( mak, mod, iso, shut, t );
-	   return df.getBadPixels();
-   }catch( std::exception e){
-	   return std::list<badPix>();
-   }
+	FILE *file = fopen( filename.c_str(),"r" );
+	if( !file ) return false;
+	int lastdot = filename.find_last_of ('.');
+	int dirpos1 = filename.find_last_of ('/');
+	int dirpos2 = filename.find_last_of ('\\');
+	if( dirpos1 == Glib::ustring::npos && dirpos2== Glib::ustring::npos )
+		dirpos1 =0;
+	else
+		dirpos1= (dirpos1> dirpos2 ? dirpos1: dirpos2);
+	std::string makmodel(filename,dirpos1+1,lastdot-(dirpos1+1) );
+	std::list<badPix> bp;
+	char line[256];
+    while( fgets(line,sizeof(line),file ) ){
+    	int x,y;
+    	if( sscanf(line,"%d %d",&x,&y) == 2 )
+    		bp.push_back( badPix(x,y) );
+    }
+    if( bp.size()>0 ){
+    	bpList[ makmodel ] = bp;
+    	return true;
+    }
+	return false;
+}
+
+std::list<badPix> *DFManager::getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial)
+{
+	std::ostringstream s;
+	s << mak << " " <<mod;
+	if( serial.size()>0)
+	   s << " " << serial;
+	bpList_t::iterator iter = bpList.find( s.str() );
+	if( iter != bpList.end() )
+		return &(iter->second);
+	return 0;
 }
 
 // Global variable
@@ -351,3 +408,4 @@ DFManager dfm;
 
 
 }
+
