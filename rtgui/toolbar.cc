@@ -193,3 +193,37 @@ void ToolBar::stra_pressed () {
   if (listener)
     listener->toolSelected (TMStraighten);
 }
+
+bool ToolBar::handleShortcutKey (GdkEventKey* event) {
+
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    
+    if (!ctrl) {
+        switch(event->keyval) {
+            case GDK_w:
+            case GDK_W:
+                wb_pressed ();
+                return true;
+            case GDK_c:
+            case GDK_C:
+                crop_pressed ();
+                return true;
+            case GDK_s:
+            case GDK_S:
+                stra_pressed ();
+                return true;
+            case GDK_n:
+            case GDK_N:
+                hand_pressed ();
+                return true;
+        }
+    }
+    else {
+        switch (event->keyval) {
+        }
+    }
+    
+    return false;
+}
+

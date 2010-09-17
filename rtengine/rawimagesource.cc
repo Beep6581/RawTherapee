@@ -283,7 +283,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
                 interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, tid*blk, (tid+1)*blk);
         else
                 interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, tid*blk,imheight);
-}
+}    
 #else
         interpolate_image(image, hrp, rm, gm, bm, pp.skip, tran, fw, imwidth, imheight, sx1, sy1, 0, imheight);
 #endif
@@ -353,7 +353,7 @@ void RawImageSource::cfa_clean(float thresh) //Emil's hot/dead pixel removal -- 
 		int rr, cc;
 		int gin, g[8];
 		
-		float eps=1e-10;//tolerance to avoid dividing by zero
+		float eps=1.0;//tolerance to avoid dividing by zero
 		float p[8];
 		float pixave, pixratio;
 
@@ -907,7 +907,8 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
             else if (settings->demosaicMethod=="vng4")
                 vng4_demosaic ();
             else if (settings->demosaicMethod=="ahd")
-                ahd_demosaic ();
+            //ahd_demosaic ();
+			fast_demo ();
             else if (settings->demosaicMethod=="bilinear")
                bilinear_demosaic();
             //else if (settings->demosaicMethod=="ppg")
@@ -926,7 +927,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
             else if (settings->demosaicMethodBatch=="vng4")
                 vng4_demosaic ();
             else if (settings->demosaicMethodBatch=="ahd")
-                ahd_demosaic ();
+                fast_demo ();
             else if (settings->demosaicMethodBatch=="bilinear")
                bilinear_demosaic();
             //else if (settings->demosaicMethod=="ppg")
@@ -3241,6 +3242,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's code for AMaZE
+#include "fast_demo.cc"//fast demosaic	
 #include "amaze_interpolate_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's CA auto correction

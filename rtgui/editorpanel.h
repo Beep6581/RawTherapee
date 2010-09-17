@@ -107,8 +107,6 @@ class EditorPanel : public Gtk::VBox,
         virtual ~EditorPanel ();
 
         void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
-        bool beforeClosing ();
-        void on_realize ();
 
         void setParent (RTWindow* p) { parent = p; }
 

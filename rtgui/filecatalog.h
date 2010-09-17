@@ -193,6 +193,8 @@ class FileCatalog : public Gtk::VBox,
 
                 void openNextImage () { fileBrowser->openNextImage(); }
                 void openPrevImage () { fileBrowser->openPrevImage(); }               
+
+                bool handleShortcutKey (GdkEventKey* event);
 };
 
 #endif

@@ -117,6 +117,49 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
     }
 }
 
+Glib::ustring safe_locale_to_utf8 (const std::string& src)
+{
+	Glib::ustring utf8_str;
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+            try {
+                utf8_str = Glib::locale_to_utf8(src);
+            }
+            catch (const Glib::ConvertError& e) {
+                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
+            }
+#else
+            {
+                std::auto_ptr<Glib::Error> error;
+                utf8_str = locale_to_utf8(src, error);
+                if (error.get())
+                    utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
+            }
+#endif //GLIBMM_EXCEPTIONS_ENABLED
+	return utf8_str;
+}
+
+std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
+{
+		std::string str;
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+		try {
+            str = Glib::locale_from_utf8(utf8_str);
+        }
+        catch (const Glib::ConvertError& e) {
+            //str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?");
+        }
+#else
+        {
+            std::auto_ptr<Glib::Error> error;
+            str = Glib::locale_from_utf8(utf8_str, error);
+            /*if (error.get())
+                {str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?", error);}*/
+        }
+#endif //GLIBMM_EXCEPTIONS_ENABLED
+	return str;
+}
+
+
 bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 {
 		std::string cmd;
@@ -143,25 +186,4 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 				success = true;
 #endif
 		return success;
-}
-
-std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
-{
-		std::string str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
-		try {
-        str = Glib::locale_from_utf8(utf8_str);
-    }
-    catch (const Glib::ConvertError& e) {
-                //utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
-    }
-#else
-		{
-				std::auto_ptr<Glib::Error> error;
-				str = Glib::locale_from_utf8(utf8_str, error);
-				if (error.get())
-						{/*utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);*/}
-		}
-#endif //GLIBMM_EXCEPTIONS_ENABLED
-	return str;
 }

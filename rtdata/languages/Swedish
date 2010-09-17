@@ -1,24 +1,7 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Swedish translation of RawTherapee
-# Translated by Emil Ericsson
-# 2008-01-22
+
+#00 Swedish
+#01 Translated by Emil Ericsson
+#02 2008-01-22
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 CURVEEDITOR_FILEDLGFILTERANY;Vilka filer som helst
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvfiler
@@ -40,14 +23,14 @@ EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
 EXIFPANEL_KEEP;Keep
-EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
+EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
 EXIFPANEL_REMOVE;Remove
-EXIFPANEL_RESETALLHINT;Reset all tags to their original values
-EXIFPANEL_RESETALL;Reset All
-EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
 EXIFPANEL_RESET;Reset
+EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETHINT;Reset the selected tags to their original values
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -60,8 +43,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_EXIFFILTERSETTINGS;Setup
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -80,8 +63,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -93,10 +76,10 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
@@ -104,8 +87,8 @@ GENERAL_ABOUT;Om
 GENERAL_CANCEL;Avbryt
 GENERAL_DISABLE;Avaktivera
 GENERAL_DISABLED;Avaktivera
-GENERAL_ENABLED;Verkställ
 GENERAL_ENABLE;Verkställ
+GENERAL_ENABLED;Verkställ
 GENERAL_LANDSCAPE;Landskap
 GENERAL_LOAD;Ladda
 GENERAL_NA;n/a
@@ -205,8 +188,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Exponerings-komprimering
 HISTORY_MSG_9;Högdager-komprimering
-HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt bokmärke
+HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
 HISTORY_NEWSSDIALOGTITLE;Lägg till nytt bokmärke
 HISTORY_SETTO;Ställ in till
@@ -251,34 +234,34 @@ IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_RESET;Reset
-IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
+IPTCPANEL_RESETHINT;Reset to profile default
 IPTCPANEL_SOURCE;Source
-IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
+IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
+IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
 IPTCPANEL_TITLE;Title
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Inställningar
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE;Spara bild
+MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Filen existerar redan.
 MAIN_MSG_CANNOTLOAD;Kan inte ladda bilden
@@ -307,8 +290,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdager-indikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skugg-indikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Snabb info om bilden
-MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
 MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
+MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -386,16 +369,16 @@ PREFERENCES_INTENT_RELATIVE;Relativ colorimetric
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;Skärmprofil
-PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
-PREFERENCES_OUTDIRFOLDER;Save to folder
-PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIR;Utmatningskatalog
+PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
-PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -455,8 +438,8 @@ SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filer
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
@@ -584,10 +567,10 @@ TP_SHARPENING_LABEL;Skärpa
 TP_SHARPENING_METHOD;Metod
 TP_SHARPENING_ONLYEDGES;Skärp bara kanter
 TP_SHARPENING_RADIUS;Radie
+TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Mängd
 TP_SHARPENING_RLD_DAMPING;Dämpning
 TP_SHARPENING_RLD_ITERATIONS;Upprepningar
-TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_THRESHOLD;Tröskelvärde
 TP_SHARPENING_USM;Oskarp mask
 TP_VIGNETTING_AMOUNT;Mängd
@@ -610,80 +593,105 @@ ZOOMBAR_PREVIEW;Förhandsvisning
 ZOOMBAR_SCALE;Skala
 ZOOMBAR_SMALL;Liten
 
-GENERAL_HIGH_QUALITY;High Quality
-GENERAL_UNCHANGED;(Unchanged)
-MAIN_MSG_PLACES;Places
-GENERAL_BEFORE;Before
-GENERAL_AFTER;After
-MAIN_TOOLTIP_TOGGLE;Toggle before/after view
-MAIN_BUTTON_PUTTOQUEUE;Put to queue
-MAIN_MSG_NAVIGATOR;Navigator
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-BATCHQUEUE_AUTOSTART;Auto start
-TP_DETAIL_AMOUNT;Amount
-TP_RESIZE_SPECIFY;Specify:
-TP_RESIZE_SCALE;Scale
-TP_RESIZE_WIDTH;Width
-TP_RESIZE_HEIGHT;Height
-MAIN_TOGGLE_BEFORE_AFTER;B|A
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-###
-
-###
-
-EXIFFILTER_METADATAFILTER;Enable Metadata Filters
-CURVEEDITOR_PARAMETRIC;Parametric
-CURVEEDITOR_CUSTOM;Custom
-CURVEEDITOR_TYPE;Type:
-CURVEEDITOR_HIGHLIGHTS;Highlights
-CURVEEDITOR_LIGHTS;Lights
-CURVEEDITOR_DARKS;Darks
-CURVEEDITOR_SHADOWS;Shadows
-BATCH_PROCESSING;batch processing
-PREFERENCES_BATCH_PROCESSING;batch processing
-PREFERENCES_BEHAVIOR;Behavior
-PREFERENCES_PROPERTY;Property
-PREFERENCES_ADD;ADD
-PREFERENCES_SET;SET
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
-FILEBROWSER_CURRENT_NAME;Current name:
-FILEBROWSER_NEW_NAME;New name:
-FILEBROWSER_USETEMPLATE;Use template:
-FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-ZOOMPANEL_ZOOMIN;Zoom In
-ZOOMPANEL_ZOOMOUT;Zoom Out
-ZOOMPANEL_ZOOM100;Zoom to 100%
-ZOOMPANEL_ZOOMFITSCREEN;Fit to screen
-ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-ZOOMPANEL_100;(100%)
-
-###
-
-MAIN_BUTTON_FULLSCREEN;Fullscreen
-MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
-
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
-FILEBROWSER_SHOWEXIFINFO;Show EXIF info
-TP_RESIZE_DOWNSCALEB;Downscale (Better)
-TP_RESIZE_DOWNSCALEF;Downscale (Faster)
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_L;L
-PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!BATCHQUEUE_AUTOSTART;Auto start
+!BATCH_PROCESSING;batch processing
+!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_DARKS;Darks
+!CURVEEDITOR_HIGHLIGHTS;Highlights
+!CURVEEDITOR_LIGHTS;Lights
+!CURVEEDITOR_NURBS;Control cage
+!CURVEEDITOR_PARAMETRIC;Parametric
+!CURVEEDITOR_SHADOWS;Shadows
+!CURVEEDITOR_TYPE;Type:
+!EXIFFILTER_METADATAFILTER;Enable Metadata Filters
+!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+!FILEBROWSER_CURRENT_NAME;Current name:
+!FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
+!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
+!FILEBROWSER_USETEMPLATE;Use template:
+!GENERAL_AFTER;After
+!GENERAL_BEFORE;Before
+!GENERAL_HIGH_QUALITY;High Quality
+!GENERAL_UNCHANGED;(Unchanged)
+!HISTOGRAM_BUTTON_B;B
+!HISTOGRAM_BUTTON_G;G
+!HISTOGRAM_BUTTON_L;L
+!HISTOGRAM_BUTTON_R;R
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_PUTTOQUEUE;Put to queue
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!MAIN_MSG_NAVIGATOR;Navigator
+!MAIN_MSG_PLACES;Places
+!MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
+!NAVIGATOR_B_NA;B = n/a
+!NAVIGATOR_B_VALUE;B = %1
+!NAVIGATOR_G_NA;G = n/a
+!NAVIGATOR_G_VALUE;G = %1
+!NAVIGATOR_H_NA;H = n/a
+!NAVIGATOR_H_VALUE;H = %1
+!NAVIGATOR_R_NA;R = n/a
+!NAVIGATOR_R_VALUE;R = %1
+!NAVIGATOR_S_NA;S = n/a
+!NAVIGATOR_S_VALUE;S = %1
+!NAVIGATOR_V_NA;V = n/a
+!NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PREFERENCES_ADD;ADD
+!PREFERENCES_BATCH_PROCESSING;batch processing
+!PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_CACORRECTION;Apply CA auto correction
+!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
+!PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PREFERENCES_LINEDENOISE;Line noise filter
+!PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_PROPERTY;Property
+!PREFERENCES_SET;SET
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!TP_DETAIL_AMOUNT;Amount
+!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+!TP_EQUALIZER_FINEST;finest
+!TP_EQUALIZER_LABEL;Wavelet equalizer
+!TP_EQUALIZER_LARGEST;coarsest
+!TP_EQUALIZER_NEUTRAL;Neutral
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_FILL;Auto Fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_RESIZE_DOWNSCALEB;Downscale (Better)
+!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_HEIGHT;Height
+!TP_RESIZE_SPECIFY;Specify:
+!TP_RESIZE_WIDTH;Width
+!ZOOMPANEL_100;(100%)
+!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
+!ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
+!ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
+!ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>

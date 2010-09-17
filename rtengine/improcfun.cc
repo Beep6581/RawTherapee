@@ -27,6 +27,8 @@
 #include <mytime.h>
 #include <glibmm.h>
 #include <iccstore.h>
+#include <impulse_denoise.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -427,6 +429,21 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
     delete [] cmultiplier;
 }
+	
+	void ImProcFunctions::impulsedenoise (LabImage* lab) {
+		
+		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
+			
+			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 /*1024*/);
+			impulse_nr (lab->L, lab->L, lab->W, lab->H, 1024);
+	}
+	
+	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
+		
+		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
+			
+			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise.luma, params->dirpyrDenoise.chroma, params->dirpyrDenoise.gamma/3.0 );
+	}
 
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
 

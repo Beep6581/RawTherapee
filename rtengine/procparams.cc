@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
+#include <safegtk.h>
 #include <procparams.h>
 #include <glibmm.h>
 #include <sstream>
@@ -84,7 +85,7 @@ void ProcParams::setDefaults () {
     
     colorShift.a    = 0;
     colorShift.b    = 0;
-    
+	    
     lumaDenoise.enabled         = false;
     lumaDenoise.radius          = 1.9;
     lumaDenoise.edgetolerance   = 2000;
@@ -93,6 +94,14 @@ void ProcParams::setDefaults () {
     colorDenoise.edgesensitive  = false;
     colorDenoise.radius         = 1.9;
     colorDenoise.edgetolerance  = 2000;
+	
+	impulseDenoise.enabled      = false;
+	impulseDenoise.thresh		= 50;
+
+	dirpyrDenoise.enabled       = false;
+    dirpyrDenoise.luma          = 10;
+    dirpyrDenoise.chroma		= 10;
+	dirpyrDenoise.gamma			= 2.0;
     
     sh.enabled       = false;
     sh.hq            = false;
@@ -235,7 +244,18 @@ int ProcParams::save (Glib::ustring fname) const {
     // save colorShift
     keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
     keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
-    
+	
+	// save impulseDenoise
+    keyFile.set_boolean ("Impulse Denoising", "Enabled",        impulseDenoise.enabled);
+	keyFile.set_integer ("Impulse Denoising", "Threshold",        impulseDenoise.thresh);
+
+	
+	// save dirpyrDenoise
+    keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
+    keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
+    keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
+	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
+
     // save lumaDenoise
     keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
     keyFile.set_double  ("Luminance Denoising", "Radius",         lumaDenoise.radius);
@@ -329,7 +349,7 @@ int ProcParams::save (Glib::ustring fname) const {
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = g_fopen (safe_locale_from_utf8(fname).c_str(), "wt");
     
     if (f==NULL)
         return 1;
@@ -441,6 +461,20 @@ if (keyFile.has_group ("White Balance")) {
 if (keyFile.has_group ("Color Shift")) {    
     if (keyFile.has_key ("Color Shift", "ChannelA")) colorShift.a = keyFile.get_double ("Color Shift", "ChannelA");
     if (keyFile.has_key ("Color Shift", "ChannelB")) colorShift.b = keyFile.get_double ("Color Shift", "ChannelB");
+}
+		
+	// load impulseDenoise
+if (keyFile.has_group ("Impulse Denoising")) {    
+	if (keyFile.has_key ("Impulse Denoising", "Enabled")) impulseDenoise.enabled = keyFile.get_boolean ("Impulse Denoising", "Enabled");
+	if (keyFile.has_key ("Impulse Denoising", "Threshold")) impulseDenoise.thresh = keyFile.get_integer ("Impulse Denoising", "Threshold");
+}
+		
+	// load dirpyrDenoise
+if (keyFile.has_group ("Directional Pyramid Denoising")) {    
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled")) dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
 }
   
     // load lumaDenoise
@@ -647,6 +681,12 @@ bool ProcParams::operator== (const ProcParams& other) {
         && wb.temperature   == other.wb.temperature
         && colorShift.a     == other.colorShift.a
         && colorShift.b     == other.colorShift.b
+	&& impulseDenoise.enabled      == other.impulseDenoise.enabled
+	&& impulseDenoise.thresh      == other.impulseDenoise.thresh
+	&& dirpyrDenoise.enabled      == other.dirpyrDenoise.enabled
+	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
+	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
+	&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
         && lumaDenoise.enabled      == other.lumaDenoise.enabled
         && lumaDenoise.radius       == other.lumaDenoise.radius
         && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance
