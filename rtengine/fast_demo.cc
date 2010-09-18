@@ -36,11 +36,12 @@ void RawImageSource::fast_demo() {
 	float progress = 0.0;
 	
 	//allocate output arrays
+
 	red = new unsigned short*[H];
 	for (int i=0; i<H; i++) {
 		red[i] = new unsigned short[W];
 	}
-	green = new unsigned short*[H];
+	green = new unsigned short* [H];
 	for (int i=0; i<H; i++) {
 		green[i] = new unsigned short[W];
 	}	
@@ -48,26 +49,27 @@ void RawImageSource::fast_demo() {
 	for (int i=0; i<H; i++) {
 		blue[i] = new unsigned short[W];
 	}
-	
+
+   	
 #define bord 4
 	
-	int i, j, i1, j1, c, sum[6];
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	//first, interpolate borders using bilinear
-	for (i=0; i<H; i++) {
-		for (j=0; j<bord; j++) {//first few columns
-			for (c=0; c<6; c++) sum[c]=0;
-			for (i1=i-1; i1<i+2; i1++)
-				for (j1=j-1; j1<j+2; j1++) {
-					if (i1 > -1 && i1 < H && j1 > -1) {
-						c = FC(i1,j1);
+	for (int i=0; i<H; i++) {
+		for (int j=0; j<bord; j++) {//first few columns
+			unsigned int sum[6];
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((i1 > -1) && (i1 < H) && (j1 > -1)) {
+						int c = FC(i1,j1);
 						sum[c] += ri->data[i1][j1];
 						sum[c+3]++;
 					}
 				}
-			c=FC(i,j);
+			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
 				green[i][j]=ri->data[i][j];
@@ -84,17 +86,18 @@ void RawImageSource::fast_demo() {
 			}
 		}//j
 		
-		for (j=W-bord; j<W; j++) {//last few columns
-			for (c=0; c<6; c++) sum[c]=0;
-			for (i1=i-1; i1<i+2; i1++)
-				for (j1=j-1; j1<j+2; j1++) {
-					if (i1 > -1 && i1 < H && j1 < W) {
-						c = FC(i1,j1);
+		for (int j=W-bord; j<W; j++) {//last few columns
+			unsigned int sum[6];
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((i1 > -1) && (i1 < H ) && (j1 < W)) {
+						int c = FC(i1,j1);
 						sum[c] += ri->data[i1][j1];
 						sum[c+3]++;
 					}
 				}
-			c=FC(i,j);
+			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
 				green[i][j]=ri->data[i][j];
@@ -114,18 +117,19 @@ void RawImageSource::fast_demo() {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	for (j=bord; j<W-bord; j++) {
-		for (i=0; i<bord; i++) {//first few rows
-			for (c=0; c<6; c++) sum[c]=0;
-			for (i1=i-1; i1<i+2; i1++)
-				for (j1=j-1; j1<j+2; j1++) {
-					if (j1 > -1 && j1 < W && i1 > -1) {
-						c = FC(i1,j1);
+	for (int j=bord; j<W-bord; j++) {
+		for (int i=0; i<bord; i++) {//first few rows
+			unsigned int sum[6];
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((j1 > -1) && (j1 < W) && (i1 > -1)) {
+						int c = FC(i1,j1);
 						sum[c] += ri->data[i1][j1];
 						sum[c+3]++;
 					}
 				}
-			c=FC(i,j);
+			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
 				green[i][j]=ri->data[i][j];
@@ -142,17 +146,18 @@ void RawImageSource::fast_demo() {
 			}
 		}//i
 		
-		for (i=H-bord; i<H; i++) {//last few rows
-			for (c=0; c<6; c++) sum[c]=0;
-			for (i1=i-1; i1<i+2; i1++)
-				for (j1=j-1; j1<j+2; j1++) {
-					if (j1 > -1 && j1 < W && i1 < H) {
-						c = FC(i1,j1);
+		for (int i=H-bord; i<H; i++) {//last few rows
+			unsigned int sum[6];
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if  ((j1 > -1) && (j1 < W) && (i1 < H)) {
+						int c = FC(i1,j1);
 						sum[c] += ri->data[i1][j1];
 						sum[c+3]++;
 					}
 				}
-			c=FC(i,j);
+			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
 				green[i][j]=ri->data[i][j];
@@ -173,27 +178,19 @@ void RawImageSource::fast_demo() {
 	if(plistener) plistener->setProgress(0.05);
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-#pragma omp parallel private(i,j,c)
-	{
-		int rb;
+	float * dirwt = new float [0x20000];
 		
-		float	wt1, wt2, wt3, wt4;
+	//set up directional weight function
+	for (int i=0; i<0x10000; i++) 
+		dirwt[i] = 1.0/SQR(1.0+i); 
 		
-		float * dirwt = new float [0x20000];
-		
-#pragma omp for schedule(dynamic) nowait
+#pragma omp parallel 
+	{		
 
-		//set up directional weight function
-		for (int i=0; i<0x10000; i++) 
-			dirwt[i] = 1.0/SQR(1.0+i); 
-		
-		
-#pragma omp for schedule(dynamic) nowait
-		
+#pragma omp for 
 		// interpolate G using gradient weights
-		for (i=bord; i< H-bord; i++) {
-			for (j=bord; j < W-bord; j++) {
+		for (int i=bord; i< H-bord; i++) {
+			for (int j=bord; j < W-bord; j++) {
 				
 				if (FC(i,j)==1) {
 					green[i][j] = ri->data[i][j];
@@ -202,6 +199,7 @@ void RawImageSource::fast_demo() {
 					
 				} else {
 					//compute directional weights using image gradients
+					float	wt1, wt2, wt3, wt4;
 					wt1=dirwt[(abs(ri->data[i+1][j]-ri->data[i-1][j])+abs(ri->data[i][j]-ri->data[i-2][j])+abs(ri->data[i-1][j]-ri->data[i-3][j])) >>4];
 					wt2=dirwt[(abs(ri->data[i-1][j]-ri->data[i+1][j])+abs(ri->data[i][j]-ri->data[i+2][j])+abs(ri->data[i+1][j]-ri->data[i+3][j])) >>4];
 					wt3=dirwt[(abs(ri->data[i][j+1]-ri->data[i][j-1])+abs(ri->data[i][j]-ri->data[i][j-2])+abs(ri->data[i][j-1]-ri->data[i][j-3])) >>4];
@@ -214,20 +212,18 @@ void RawImageSource::fast_demo() {
 					
 				}
 			}
-			progress+=(double)0.33/(H);
+			//progress+=(double)0.33/(H);
 			//if(plistener) plistener->setProgress(progress);
 		}
 		if(plistener) plistener->setProgress(0.4);
 
 		
-#pragma omp for schedule(dynamic) nowait
-		
-		for (i=bord; i< H-bord; i++) {
-			for (j=bord+(FC(i,2)&1); j < W-bord; j+=2) {
-				
-				c=FC(i,j);
+#pragma omp for 		
+		for (int i=bord; i< H-bord; i++) {
+			for (int j=bord+(FC(i,2)&1), c=FC(i,j); j < W-bord; j+=2) {
+								
 				//interpolate B/R colors at R/B sites
-				rb = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]-ri->data[i-1][j-1])+(green[i-1][j+1]-ri->data[i-1][j+1])+  \
+				unsigned int rb = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]-ri->data[i-1][j-1])+(green[i-1][j+1]-ri->data[i-1][j+1])+  \
 													(green[i+1][j+1]-ri->data[i+1][j+1])+(green[i+1][j-1]-ri->data[i+1][j-1]))));
 				if (c==0) {//R site
 					red[i][j] = ri->data[i][j];
@@ -237,35 +233,31 @@ void RawImageSource::fast_demo() {
 					blue[i][j] = ri->data[i][j];
 				}
 			}
-			progress+=(double)0.33/(H);
+			//progress+=(double)0.33/(H);
 			//if(plistener) plistener->setProgress(progress);
 		}
 		if(plistener) plistener->setProgress(0.7);
 
+#pragma omp barrier
 		
-#pragma omp for schedule(dynamic) nowait
-		
-		// interpolate R/B using color differences
-		for (i=bord; i< H-bord; i++) {
-			for (j=bord+1-(FC(i,2)&1); j < W-bord; j+=2) {
-				
-				//interpolate R and B colors at G sites
-				red[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j]-red[i-1][j])+(green[i+1][j]-red[i+1][j])+ \
-														   (green[i][j-1]-red[i][j-1])+(green[i][j+1]-red[i][j+1]))));
-				blue[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j]-blue[i-1][j])+(green[i+1][j]-blue[i+1][j])+ \
-															(green[i][j-1]-blue[i][j-1])+(green[i][j+1]-blue[i][j+1]))));
-			}
-			progress+=(double)0.33/(H);
-			//if(plistener) plistener->setProgress(progress);
-		}
-		if(plistener) plistener->setProgress(0.99);
+#pragma omp for 		
 
+	// interpolate R/B using color differences
+	for (int i=bord; i< H-bord; i++) {
+		for (int j=bord+1-(FC(i,2)&1); j < W-bord; j+=2) {
+			
+			//interpolate R and B colors at G sites
+			red[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j]-red[i-1][j])+(green[i+1][j]-red[i+1][j])+ \
+													   (green[i][j-1]-red[i][j-1])+(green[i][j+1]-red[i][j+1]))));
+			blue[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j]-blue[i-1][j])+(green[i+1][j]-blue[i+1][j])+ \
+														(green[i][j-1]-blue[i][j-1])+(green[i][j+1]-blue[i][j+1]))));
+		}
+		progress+=(double)0.33/(H);
+		//if(plistener) plistener->setProgress(progress);
+	}
+	if(plistener) plistener->setProgress(0.99);
 	}
 	
-	
-	
 #undef bord
-	
-
 	
 }//namespace
