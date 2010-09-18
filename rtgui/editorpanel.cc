@@ -458,12 +458,21 @@ void EditorPanel::info_toggled () {
 
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if (idata && idata->hasExif())
-        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n", 
-            Glib::ustring(idata->getMake()), Glib::ustring(idata->getModel()),
-            Glib::ustring(idata->apertureToString(idata->getFNumber())), Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+//        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n", 
+//            Glib::ustring(idata->getMake()), Glib::ustring(idata->getModel()),
+//            Glib::ustring(idata->apertureToString(idata->getFNumber())), Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+//            M("QINFO_ISO"), idata->getISOSpeed(),
+//            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
+//            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
+        infoString = Glib::ustring::compose (
+            "%1 + %2\n<span size=\"xx-large\">%3</span>s  f/<span size=\"xx-large\">%4</span>  %5<span size=\"xx-large\">%6</span>  f=<span size=\"xx-large\">%7</span>mm",
+            Glib::ustring(idata->getModel()),
+            Glib::ustring(idata->getLens()),
+            Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+            Glib::ustring(idata->apertureToString(idata->getFNumber())),
             M("QINFO_ISO"), idata->getISOSpeed(),
-            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
-            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
+            idata->getFocalLen()
+            );
     else 
         infoString = M("QINFO_NOEXIF");
 
