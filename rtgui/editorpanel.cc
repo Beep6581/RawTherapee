@@ -465,7 +465,7 @@ void EditorPanel::info_toggled () {
 //            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
 //            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
         infoString = Glib::ustring::compose (
-            "%1 + %2\n<span size=\"xx-large\">%3</span>s  f/<span size=\"xx-large\">%4</span>  %5<span size=\"xx-large\">%6</span>  f=<span size=\"xx-large\">%7</span>mm",
+            "%1 + %2\n<span size=\"large\">%3</span>s  f/<span size=\"large\">%4</span>  %5<span size=\"large\">%6</span>  f=<span size=\"large\">%7</span>mm",
             Glib::ustring(idata->getModel()),
             Glib::ustring(idata->getLens()),
             Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
