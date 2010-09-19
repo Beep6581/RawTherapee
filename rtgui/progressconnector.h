@@ -74,12 +74,13 @@ class PLDBridge : public rtengine::ProgressListener {
 };
 
 template<class T>
-class ProgressConnector {
+class ProgressConnector  {
 
         sigc::signal0<T> opStart;
         sigc::signal0<bool> opEnd;
         T retval;
         Glib::Thread *workThread;
+        Glib::Mutex* qMutex;
 
 		static int emitEndSignal (void* data) {
 			gdk_threads_enter ();
@@ -91,14 +92,19 @@ class ProgressConnector {
 		}
         
         void workingThread () {
+           if (!qMutex)
+                qMutex = new Glib::Mutex ();
+
+            qMutex->lock();
             retval = opStart.emit ();
             g_idle_add (ProgressConnector<T>::emitEndSignal, new sigc::signal0<bool> (opEnd));
             workThread = 0;
+            qMutex->unlock();
         }
         
     public:
     
-        ProgressConnector ():workThread( 0 ) { }
+        ProgressConnector ():workThread( 0 ) , qMutex(NULL) { }
 
         void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler ) {
         	if( !workThread ){
@@ -106,6 +112,9 @@ class ProgressConnector {
 				opEnd.connect (endHandler);
 				workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
         	}
+
+                if (qMutex)
+                    delete qMutex;
         }
 
         T returnValue(){
