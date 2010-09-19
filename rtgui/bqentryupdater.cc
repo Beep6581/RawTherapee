@@ -57,9 +57,10 @@ void BatchQueueEntryUpdater::add (guint8* oimg, int ow, int oh, int newh, BQEntr
 
 void BatchQueueEntryUpdater::process () {
 
-    if (stopped)
-        #undef THREAD_PRIORITY_NORMAL
+    if (stopped){
+        #undef THREAD_PRIORITY_LOW
         thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
+    }
 }
 
 void BatchQueueEntryUpdater::process_ () { 
@@ -93,7 +94,7 @@ void BatchQueueEntryUpdater::stop () {
     tostop = true; 
     Glib::Thread::self()->yield(); 
     if (!stopped) 
-        thread->join (); 
+        thread->join ();
     gdk_threads_enter();
 }
 
