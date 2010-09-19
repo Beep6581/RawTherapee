@@ -114,7 +114,10 @@ class ProgressConnector  {
         	}
 
                 if (qMutex)
+                {
                     delete qMutex;
+                    qMutex = NULL;
+                }
         }
 
         T returnValue(){
