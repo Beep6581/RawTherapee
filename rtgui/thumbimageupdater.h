@@ -51,7 +51,8 @@ class ThumbImageUpdater {
     Glib::ThreadPool * threadPool;
 
   public:
-    ThumbImageUpdater ();    
+    ThumbImageUpdater ();
+    ~ThumbImageUpdater ();
 
     void add        (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l);
     void process    ();
