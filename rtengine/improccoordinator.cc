@@ -20,6 +20,7 @@
 #include <curves.h>
 #include <mytime.h>
 #include <refreshmap.h>
+#include <simpleprocess.h>
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
 #define CLIP(a) ((a)<65535 ? (a) : (65535));
 
@@ -561,7 +562,7 @@ void ImProcCoordinator::stopProcessing () {
 
 void ImProcCoordinator::startProcessing () {
 
-    #undef THREAD_PRIORITY_LOW
+    #undef THREAD_PRIORITY_NORMAL
 
     if (!destroying) {
         updaterThreadStart.lock ();
@@ -569,7 +570,11 @@ void ImProcCoordinator::startProcessing () {
             thread = NULL;
             updaterRunning = true;
             updaterThreadStart.unlock ();
-            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, false, true, Glib::THREAD_PRIORITY_LOW);
+
+            batchThread->yield(); //the running batch should wait other threads to avoid conflict
+            
+            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+
         }
         else
             updaterThreadStart.unlock ();
