@@ -39,6 +39,7 @@ public:
 	void switchTo  (ColorSpace cs);	// just switches the "colorSpace" without doing any conversion
 	bool setDimensions (int w, int h); // sets dimensions without reallocating everything
 	bool copyFrom (MultiImage* other);
+	bool copyFrom (MultiImage* other, int ofsx, int ofsy, int skip);
 	Buffer<unsigned short> getBufferView (unsigned short** channel);
 
 	inline bool raw_isRed (int row, int col) {

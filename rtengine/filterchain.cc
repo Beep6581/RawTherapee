@@ -83,7 +83,7 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 	// set mandatory cache points
 	first->hasOutputCache = true;
 	for (curr = first->next; curr != last; curr = curr->next)
-		if (curr->forceOutputCache || !(curr->sourceImageView == curr->targetImageView))
+		if (curr->forceOutputCache || !(curr->sourceImageView == curr->targetImageView) || (curr->next && !(curr->targetImageView == curr->next->sourceImageView)))
 			curr->hasOutputCache = true;
 		else
 			curr->hasOutputCache = false;
@@ -122,11 +122,13 @@ void FilterChain::process (Buffer<int>* buffer, MultiImage* worker) {
 		MultiImage* sourceImage = NULL;
 		MultiImage* targetImage = NULL;
 		if (curr != first) {
-			if (curr->prev->hasOutputCache)
+			if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView)
 				sourceImage = curr->prev->outputCache;
 			else {
 				sourceImage = worker;
 				worker->setDimensions (curr->sourceImageView.getPixelWidth(), curr->sourceImageView.getPixelHeight());
+				if (curr->prev->hasOutputCache) // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
+					worker->copyFrom (curr->prev->outputCache, curr->sourceImageView.x - curr->prev->targetImageView.x, curr->sourceImageView.y - curr->prev->targetImageView.y, curr->sourceImageView.skip / curr->prev->targetImageView.skip);
 			}
 			sourceImage->convertTo (curr->inputColorSpace);
 		}

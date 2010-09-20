@@ -193,7 +193,7 @@ void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiIma
         rotate270 (sourceImage->g, targetImage->g, sourceImage->width, sourceImage->height, buffer);
         rotate270 (sourceImage->b, targetImage->b, sourceImage->width, sourceImage->height, buffer);
     }
-    else
+    else if (targetImage!=sourceImage)
         targetImage->copyFrom (sourceImage);
 
     if (procParams->coarse.hflip)

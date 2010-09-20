@@ -17,7 +17,7 @@ FilterChainGroup::~FilterChainGroup () {
 void FilterChainGroup::addNewFilterChain (ImProcListener* listener) {
 
 	if (filterChains.empty())
-		filterChains.push_back (new FilterChain (listener, imgSource, pparams, multiThread));
+		filterChains.push_back (new FilterChain (listener, imgSource, procParams, multiThread));
 	else
 		filterChains.push_back (new FilterChain (listener, filterChains.back()));
 	filterChains.back()->invalidate ();
@@ -75,7 +75,7 @@ void FilterChainGroup::process (const set<ProcEvent>& events) {
 
 	// process all filter chains
 	for (int i=0; i<filterChains.size(); i++)
-		filterChains[i]->process (buffer);
+		filterChains[i]->process (buffer, workerImage);
 }
 
 void FilterChainGroup::updateBuffer (int bw, int bh) {

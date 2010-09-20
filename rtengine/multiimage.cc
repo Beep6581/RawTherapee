@@ -36,7 +36,6 @@ MultiImage::MultiImage (const MultiImage& other)
 
 void MultiImage::initArrays () {
 
-
 	if (colorSpace!=RGB)
 		r = g = b = NULL;
 	if (colorSpace!=Lab)
@@ -46,7 +45,9 @@ void MultiImage::initArrays () {
 
 	if (colorSpace==Raw) {
 		data = new unsigned short*[allocWidth*allocHeight*sizeof(unsigned short)];
-		raw = data;
+		raw = new unsigned short* [allocHeight];
+		for (int i=0; i<allocHeight; i++)
+			raw[i] = data + i*allocWidth;
 	}
 	else if (colorSpace==RGB) {
 		data = new unsigned short*[allocWidth*allocHeight*sizeof(unsigned short)*3];
@@ -75,6 +76,13 @@ void MultiImage::initArrays () {
 MultiImage::~MultiImage () {
 
 	delete [] data;
+	delete [] r;
+	delete [] g;
+	delete [] b;
+	delete [] cieL;
+	delete [] ciea;
+	delete [] cieb;
+	delete [] raw;
 }
 
 bool MultiImage::setDimensions (int w, int h) {
@@ -117,6 +125,74 @@ bool MultiImage::copyFrom (MultiImage* other) {
         return true;
     }
 }
+
+bool MultiImage::copyFrom (MultiImage* other, int ofsx, int ofsy, int skip) {
+
+	if (ofsx<0 || ofsy<0 || ofsx + (width-1)*skip >= other->width || ofsy + (height-1)*skip >= other->height || skip<1)
+		return false;
+
+	if (colorSpace!=other->colorSpace) {
+		delete [] r;
+		delete [] g;
+		delete [] b;
+		delete [] cieL;
+		delete [] ciea;
+		delete [] cieb;
+		delete [] raw;
+		r = g = b = NULL;
+		cieL = ciea = cieb = NULL;
+		raw = NULL;
+		colorSpace = other->colorSpace;
+		if (colorSpace==Raw) {
+			raw = new unsigned short* [allocHeight];
+			for (int i=0; i<allocHeight; i++)
+				raw[i] = data + i*allocWidth;
+		}
+		else if (colorSpace==RGB) {
+			r = new unsigned short* [allocHeight];
+			g = new unsigned short* [allocHeight];
+			b = new unsigned short* [allocHeight];
+			for (int i=0; i<allocHeight; i++) {
+				r[i] = data + i*allocWidth;
+				g[i] = data + allocWidth*allocHeight + i*allocWidth;
+				b[i] = data + 2*allocWidth*allocHeight + i*allocWidth;
+			}
+		}
+		else if (colorSpace==Lab) {
+			cieL = new unsigned short* [allocHeight];
+			ciea = new short* [allocHeight];
+			cieb = new short* [allocHeight];
+			for (int i=0; i<allocHeight; i++) {
+				cieL[i] = data + i*allocWidth;
+				ciea[i] = (short*)(data + allocWidth*allocHeight + i*allocWidth);
+				cieb[i] = (short*)(data + 2*allocWidth*allocHeight + i*allocWidth);
+			}
+		}
+	}
+
+	if (colorSpace==Raw) {
+		for (int i=0; i<height; i++)
+			for (int j=0; j<width; j++)
+				raw[i][j] = other->raw[ofsy + i*skip][ofsx + j*skip];
+		// TODO!!! UPDATE FILTER
+	}
+	else if (colorSpace==RGB)
+		for (int i=0; i<height; i++)
+			for (int j=0; j<width; j++) {
+				r[i][j] = other->r[ofsy + i*skip][ofsx + j*skip];
+				g[i][j] = other->g[ofsy + i*skip][ofsx + j*skip];
+				b[i][j] = other->b[ofsy + i*skip][ofsx + j*skip];
+		}
+	else if (colorSpace==Lab)
+		for (int i=0; i<height; i++)
+			for (int j=0; j<width; j++) {
+				cieL[i][j] = other->cieL[ofsy + i*skip][ofsx + j*skip];
+				ciea[i][j] = other->ciea[ofsy + i*skip][ofsx + j*skip];
+				cieb[i][j] = other->cieb[ofsy + i*skip][ofsx + j*skip];
+		}
+	return true;
+}
+
 
 Buffer<unsigned short> getBufferView (unsigned short** channel) {
 
