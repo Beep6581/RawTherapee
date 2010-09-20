@@ -38,7 +38,7 @@ FilePanel::FilePanel () : parent(NULL) {
     placesBrowser = new PlacesBrowser ();
     recentBrowser = new RecentBrowser ();
 
-    placespaned = new Gtk::VPaned ();
+    placespaned = new Gtk::HPaned ();
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
@@ -49,69 +49,14 @@ FilePanel::FilePanel () : parent(NULL) {
     placespaned->pack2 (*obox, true, true);
 
     dirpaned->pack1 (*placespaned, true, true);
-
     tpc = new BatchToolPanelCoordinator (this);
-//    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
-//
-//    viewpaned = new Gtk::VPaned();
-//    viewpaned->pack1(*fileCatalog, false, true);
-//
-//
-//     dirpaned->pack2 (*viewpaned, Gtk::EXPAND|Gtk::SHRINK);
-
-
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
     recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
-  //  dirBrowser->addDirSelectionListener (fileCatalog);
     dirBrowser->addDirSelectionListener (recentBrowser);
     dirBrowser->addDirSelectionListener (placesBrowser);
-  //  fileCatalog->setFileSelectionListener (this);
-    
-//    rightBox = new Gtk::HBox ();
-//    rightNotebook = new Gtk::Notebook ();
-//    Gtk::VBox* taggingBox = new Gtk::VBox ();
-//
-//    history = new History (false);
-//
-//    tpc->addPParamsChangeListener (history);
-//    history->setProfileChangeListener (tpc);
-//
-//    Gtk::ScrolledWindow* sFilterPanel = new Gtk::ScrolledWindow();
-//	filterPanel = new FilterPanel ();
-//	sFilterPanel->add (*filterPanel);
-//	sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
-//
-////	fileCatalog->setFilterPanel (filterPanel);
-// //   fileCatalog->setImageAreaToolListener (tpc);
-//
-//    //------------------
-//
-//    rightNotebook->set_tab_pos (Gtk::POS_LEFT);
-//
-//    Gtk::Label* devLab = new Gtk::Label (M("MAIN_TAB_DEVELOP"));
-//    devLab->set_angle (90);
-//    Gtk::Label* filtLab = new Gtk::Label (M("MAIN_TAB_FILTER"));
-//    filtLab->set_angle (90);
-//    Gtk::Label* tagLab = new Gtk::Label (M("MAIN_TAB_TAGGING"));
-//    tagLab->set_angle (90);
-//
-//    Gtk::VPaned* tpcPaned = new Gtk::VPaned ();
-//    tpcPaned->pack1 (*tpc->toolPanelNotebook, true, true);
-//    tpcPaned->pack2 (*history, true, true);
-//
-//    rightNotebook->append_page (*tpcPaned, *devLab);
-//    rightNotebook->append_page (*sFilterPanel, *filtLab);
-//    rightNotebook->append_page (*taggingBox, *tagLab);
-//
-//    rightBox->pack_start (*rightNotebook);
 
     pack1(*dirpaned, true, true);
-  //  pack2(*rightBox, false, true);
-
- //   fileCatalog->setFileSelectionChangeListener (tpc);
-
-//    fileCatalog->setFileSelectionListener (this);
     g_idle_add (fbinit, this);
 
     show_all ();
@@ -153,30 +98,7 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc ){
 
 	if (pc->returnValue() && thm) {
-		//EditorPanel* epanel = Gtk::manage (new EditorPanel (fileCatalog));
-
-
-//                BatchToolPanelCoordinator* tpc1 = new BatchToolPanelCoordinator (this);
-//                FileCatalog* fc =  new FileCatalog (tpc1->coarse, tpc1->getToolBar());
-//                dirBrowser->addDirSelectionListener (fc);
-//                fc->setFilterPanel (filterPanel);
-//                fc->setImageAreaToolListener (tpc1);
-//                fc->setFileSelectionListener (this);
-//                fc->setFileSelectionChangeListener (tpc1);
-//                fc->setEnabled(true);
-              //  fc->refreshAll ();
-
-
-              //  EditorPanel* epanel = new EditorPanel (this);
-             //   epanel->setParent(parent);
-               //    EditorPanel* epanel = new EditorPanel (fileCatalog);
-                
-               // dirpaned->pack2 (*epanel, Gtk::SHRINK);
-		//epanel->open(thm, pc->returnValue() );
                 parent->epanel->open(thm, pc->returnValue() );
-               // parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
-
-                //viewpaned->pack2(*epanel, true, true);
 	}else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
 		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -186,7 +108,6 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
         
 	parent->setProgress(0.);
 	parent->setProgressStr("");
-//	fileCatalog->setEnabled (true);
         isloading = false;
 
 	return false; // MUST return false from idle function
@@ -196,10 +117,6 @@ void FilePanel::saveOptions () {
 
     options.dirBrowserWidth = dirpaned->get_position ();
     options.dirBrowserHeight = placespaned->get_position ();
-//    options.browserToolPanelWidth = rightBox->get_width ();
-//    if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
-//        options.startupPath = fileCatalog->lastSelectedDir ();
-//    fileCatalog->closeDir ();
 }
 
 void FilePanel::open (const Glib::ustring& d) {

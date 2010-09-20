@@ -897,6 +897,8 @@ void EditorPanel::saveOptions () {
 
     options.historyPanelWidth = hpanedl->get_position ();
     options.toolPanelWidth = vboxright->get_width ();
+    if (options.startupDir==STARTUPDIR_LAST && fCatalog->lastSelectedDir ()!="")
+        options.startupPath = fCatalog->lastSelectedDir ();
 }
 
 
