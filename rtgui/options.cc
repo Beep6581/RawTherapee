@@ -297,6 +297,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("General", "Version", 290);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
 	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+	keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
 
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);

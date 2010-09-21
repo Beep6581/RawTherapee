@@ -777,6 +777,9 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}else{
 		rid = dfm.searchDarkFrame( ri->make, ri->model, ri->iso_speed, ri->shutter, ri->timestamp);
 	}
+	if( rid && settings->verbose){
+		printf( "Subtracting Darkframe:%s\n",rid->fname.c_str());
+	}
 	copyOriginalPixels(ri, rid);
 	size_t widthBitmap = (ri->width/8+ (ri->width%8?1:0));
 	size_t dimBitmap = widthBitmap*ri->height;
@@ -786,17 +789,22 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	if( bp ){
 		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++)
 			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x%8);
+		if( settings->verbose ){
+			printf( "Correcting %u pixels from .badpixels\n",bp->size());
+		}
 	}
 	bp = 0;
-	if( raw.df_autoselect )
+	if( raw.df_autoselect ){
 		bp = dfm.getHotPixels( ri->make, ri->model, ri->iso_speed, ri->shutter, ri->timestamp);
-	else if( raw.dark_frame.size()>0 )
+	}else if( raw.dark_frame.size()>0 )
 		bp = dfm.getHotPixels( raw.dark_frame );
-	if(bp)
+	if(bp){
 		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++)
 			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x%8);
-
-
+		if( settings->verbose && bp->size()>0){
+			printf( "Correcting %u hotpixels from darkframe\n",bp->size());
+		}
+	}
     preInterpolate(false);
     scaleColors( false,true);
 
@@ -850,7 +858,10 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
 		}
-		findHotDeadPixel( bitmapBads,0.1 );
+		int nFound =findHotDeadPixel( bitmapBads,0.1 );
+		if( settings->verbose && nFound>0){
+			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
+		}
 	}
 	cfaCleanFromMap( bitmapBads );
 	delete [] bitmapBads;
