@@ -86,7 +86,7 @@ protected:
 	Glib::ustring currentPath;
 	dfInfo *addFileInfo(const Glib::ustring &filename );
 	dfInfo *find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t );
-	bool scanBadPixelsFile( Glib::ustring filename );
+	int scanBadPixelsFile( Glib::ustring filename );
 };
 
 extern DFManager dfm;

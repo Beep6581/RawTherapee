@@ -189,9 +189,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
 			}
 	}
 	if( settings->verbose ){
-		for (std::list<badPix>::iterator iter = badPixels.begin(); iter !=badPixels.end(); iter ++)
-			printf( "(%d,%d) ",iter->x, iter->y);
-		printf( "Tot: %d\n", badPixels.size() );
+		printf( "Extracted %u pixels from darkframe %s\n", badPixels.size(),df->fname.c_str() );
 	}
 }
 
@@ -211,8 +209,9 @@ void DFManager::init( Glib::ustring pathname )
     for (int i=0; i<names.size(); i++) {
         int lastdot = names[i].find_last_of ('.');
         if (lastdot != Glib::ustring::npos && names[i].substr(lastdot) == ".badpixels" ){
-        	if( scanBadPixelsFile( names[i] ) && settings->verbose)
-        		printf("Loaded badpixels file %s\n",names[i].c_str());
+        	int n = scanBadPixelsFile( names[i] );
+        	if( n>0 && settings->verbose)
+        		printf("Loaded %s: %d pixels\n",names[i].c_str(),n);
         	continue;
         }
         try{
@@ -359,13 +358,18 @@ std::list<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
 std::list<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t )
 {
    dfInfo *df = find( mak, mod, iso, shut, t );
-   if( df )
+   if( df ){
+	   if( settings->verbose )
+		   if( df->pathname.size() >0 )
+		      printf( "Searched hotpixels from %s\n",df->pathname.c_str());
+		   else if( df->pathNames.size() >0 )
+			  printf( "Searched hotpixels from template (first %s)\n",df->pathNames.begin()->c_str());
 	   return &df->getHotPixels();
-   else
+   }else
 	   return 0;
 }
 
-bool DFManager::scanBadPixelsFile( Glib::ustring filename )
+int DFManager::scanBadPixelsFile( Glib::ustring filename )
 {
 	FILE *file = fopen( filename.c_str(),"r" );
 	if( !file ) return false;
@@ -384,11 +388,10 @@ bool DFManager::scanBadPixelsFile( Glib::ustring filename )
     	if( sscanf(line,"%d %d",&x,&y) == 2 )
     		bp.push_back( badPix(x,y) );
     }
-    if( bp.size()>0 ){
+    int numPixels = bp.size();
+    if( numPixels >0 )
     	bpList[ makmodel ] = bp;
-    	return true;
-    }
-	return false;
+	return numPixels;
 }
 
 std::list<badPix> *DFManager::getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial)
@@ -398,8 +401,13 @@ std::list<badPix> *DFManager::getBadPixels ( const std::string &mak, const std::
 	if( serial.size()>0)
 	   s << " " << serial;
 	bpList_t::iterator iter = bpList.find( s.str() );
-	if( iter != bpList.end() )
+	if( iter != bpList.end() ){
+		if( settings->verbose )
+		   printf("Found:%s.badpixels in list\n",s.str().c_str());
 		return &(iter->second);
+	}
+	if( settings->verbose )
+	   printf("%s.badpixels not found\n",s.str().c_str());
 	return 0;
 }
 
