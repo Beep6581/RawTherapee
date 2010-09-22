@@ -851,8 +851,8 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveOptions () {
 
-    options.historyPanelWidth = hpanedl->get_position ();
-	options.toolPanelWidth = vboxright->get_width ();//older code
+    //options.historyPanelWidth = hpanedl->get_position ();//older code
+	//options.toolPanelWidth = vboxright->get_width ();//older code
     //options.toolPanelWidth = hpanedr->get_position ();//Hombre's change which screws up OSX build
 }
 

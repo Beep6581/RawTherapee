@@ -56,6 +56,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     exifpanel           = Gtk::manage (new ExifPanel ());
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     equalizer           = Gtk::manage (new Equalizer ());
+    dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
 
     addPanel (colorPanel, whitebalance,         M("TP_WBALANCE_LABEL"));       toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, curve,             M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (curve);
@@ -70,6 +71,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
 	addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
+	addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
     addPanel (detailsPanel, equalizer,          M("TP_EQUALIZER_LABEL"));      toolPanels.push_back (equalizer);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);
     addPanel (transformPanel, resize,           M("TP_RESIZE_LABEL"));         toolPanels.push_back (resize);

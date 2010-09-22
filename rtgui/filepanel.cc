@@ -161,9 +161,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 
 void FilePanel::saveOptions () { 
 
-    options.dirBrowserWidth = dirpaned->get_position ();
-    options.dirBrowserHeight = placespaned->get_position ();
-    options.browserToolPanelWidth = get_position();
+    //options.dirBrowserWidth = dirpaned->get_position ();
+    //options.dirBrowserHeight = placespaned->get_position ();
+    //options.browserToolPanelWidth = get_position();
     if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
         options.startupPath = fileCatalog->lastSelectedDir ();
     fileCatalog->closeDir (); 

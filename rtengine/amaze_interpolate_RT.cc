@@ -51,7 +51,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	}
 	
 	
-	static const float clip_pt = 1/ri->defgain; 
+	const float clip_pt = 1/ri->defgain; 
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
 	

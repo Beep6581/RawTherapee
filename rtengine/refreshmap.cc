@@ -110,6 +110,8 @@ IMPULSEDENOISE,    // EvIDNThresh,
 DIRPYRDENOISE,    //  EvDPDNEnabled,
 DIRPYRDENOISE,    //  EvDPDNLuma,
 DIRPYRDENOISE,    //  EvDPDNChroma,
-DIRPYRDENOISE    //  EvDPDNGamma,
+DIRPYRDENOISE,    //  EvDPDNGamma,
+DIRPYREQUALIZER,  // EvDirPyrEqualizer
+DIRPYREQUALIZER   // EvDirPyrEqlEnabled
 };
 

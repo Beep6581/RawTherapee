@@ -13,7 +13,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc iccstore.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc
-    wavelet_dec.cc ipequalizer.cc dirpyrLab_denoise.cc )
+    wavelet_dec.cc ipequalizer.cc dirpyrLab_denoise.cc dirpyrLab_equalizer.cc)
 
 add_library (rtengine ${RTENGINESOURCEFILES})
 #It may be nice to store library version too

@@ -27,7 +27,9 @@
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-void RawImageSource::fast_demo() { 
+void RawImageSource::fast_demo() {
+	int winx=0, winy=0;
+	int winw=W, winh=H;
 	
 	if (plistener) {
 		plistener->setProgressStr ("Fast demosaicing...");
@@ -52,7 +54,8 @@ void RawImageSource::fast_demo() {
 
    	
 #define bord 4
-	
+		
+	int clip_pt = 4*65535*ri->defgain;
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -190,6 +193,7 @@ void RawImageSource::fast_demo() {
 #pragma omp for 
 		// interpolate G using gradient weights
 		for (int i=bord; i< H-bord; i++) {
+			float	wtu, wtd, wtl, wtr;
 			for (int j=bord; j < W-bord; j++) {
 				
 				if (FC(i,j)==1) {
@@ -199,14 +203,13 @@ void RawImageSource::fast_demo() {
 					
 				} else {
 					//compute directional weights using image gradients
-					float	wt1, wt2, wt3, wt4;
-					wt1=dirwt[(abs(ri->data[i+1][j]-ri->data[i-1][j])+abs(ri->data[i][j]-ri->data[i-2][j])+abs(ri->data[i-1][j]-ri->data[i-3][j])) >>4];
-					wt2=dirwt[(abs(ri->data[i-1][j]-ri->data[i+1][j])+abs(ri->data[i][j]-ri->data[i+2][j])+abs(ri->data[i+1][j]-ri->data[i+3][j])) >>4];
-					wt3=dirwt[(abs(ri->data[i][j+1]-ri->data[i][j-1])+abs(ri->data[i][j]-ri->data[i][j-2])+abs(ri->data[i][j-1]-ri->data[i][j-3])) >>4];
-					wt4=dirwt[(abs(ri->data[i][j-1]-ri->data[i][j+1])+abs(ri->data[i][j]-ri->data[i][j+2])+abs(ri->data[i][j+1]-ri->data[i][j+3])) >>4];
+					wtu=dirwt[(abs(ri->data[i+1][j]-ri->data[i-1][j])+abs(ri->data[i][j]-ri->data[i-2][j])+abs(ri->data[i-1][j]-ri->data[i-3][j])) >>4];
+					wtd=dirwt[(abs(ri->data[i-1][j]-ri->data[i+1][j])+abs(ri->data[i][j]-ri->data[i+2][j])+abs(ri->data[i+1][j]-ri->data[i+3][j])) >>4];
+					wtl=dirwt[(abs(ri->data[i][j+1]-ri->data[i][j-1])+abs(ri->data[i][j]-ri->data[i][j-2])+abs(ri->data[i][j-1]-ri->data[i][j-3])) >>4];
+					wtr=dirwt[(abs(ri->data[i][j-1]-ri->data[i][j+1])+abs(ri->data[i][j]-ri->data[i][j+2])+abs(ri->data[i][j+1]-ri->data[i][j+3])) >>4];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
-					green[i][j]=(int)((wt1*ri->data[i-1][j]+wt2*ri->data[i+1][j]+wt3*ri->data[i][j-1]+wt4*ri->data[i][j+1])/(wt1+wt2+wt3+wt4));
+					green[i][j]=(int)((wtu*ri->data[i-1][j]+wtd*ri->data[i+1][j]+wtl*ri->data[i][j-1]+wtr*ri->data[i][j+1])/(wtu+wtd+wtl+wtr));
 					//red[i][j] = green[i][j];
 					//blue[i][j] = green[i][j];
 					
@@ -220,16 +223,18 @@ void RawImageSource::fast_demo() {
 		
 #pragma omp for 		
 		for (int i=bord; i< H-bord; i++) {
-			for (int j=bord+(FC(i,2)&1), c=FC(i,j); j < W-bord; j+=2) {
-								
+			for (int j=bord+(FC(i,2)&1); j < W-bord; j+=2) {
+				
+				int c=FC(i,j);
 				//interpolate B/R colors at R/B sites
-				unsigned int rb = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]-ri->data[i-1][j-1])+(green[i-1][j+1]-ri->data[i-1][j+1])+  \
-													(green[i+1][j+1]-ri->data[i+1][j+1])+(green[i+1][j-1]-ri->data[i+1][j-1]))));
+				
 				if (c==0) {//R site
 					red[i][j] = ri->data[i][j];
-					blue[i][j] = rb;
+					blue[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
+																 MIN(clip_pt,ri->data[i-1][j-1]+ri->data[i-1][j+1]+ri->data[i+1][j+1]+ri->data[i+1][j-1]))));
 				} else {//B site
-					red[i][j] = rb;
+					red[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
+															   MIN(clip_pt,ri->data[i-1][j-1]+ri->data[i-1][j+1]+ri->data[i+1][j+1]+ri->data[i+1][j-1]))));
 					blue[i][j] = ri->data[i][j];
 				}
 			}

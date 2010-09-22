@@ -39,6 +39,7 @@
 #define EXIF           32768
 #define IPTC           32768
 #define EQUALIZER      3
+#define DIRPYREQUALIZER	3
 #define NONE           0
 
 #define M_INIT      128

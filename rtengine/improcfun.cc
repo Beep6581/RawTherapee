@@ -434,8 +434,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
-			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 /*1024*/);
-			impulse_nr (lab->L, lab->L, lab->W, lab->H, 1024);
+			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 );
 	}
 	
 	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
@@ -443,6 +442,14 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
 			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise.luma, params->dirpyrDenoise.chroma, params->dirpyrDenoise.gamma/3.0 );
+	}
+	
+	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
+		
+		if (params->dirpyrequalizer.enabled && lab->W>=8 && lab->H>=8) {
+			
+			dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
+		}
 	}
 
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {

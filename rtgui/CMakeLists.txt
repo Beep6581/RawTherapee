@@ -25,7 +25,7 @@ set (BASESOURCEFILES
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc
-    equalizer.cc)
+    equalizer.cc dirpyrequalizer.cc)
 
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.o)

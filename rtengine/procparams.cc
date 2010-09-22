@@ -172,6 +172,11 @@ void ProcParams::setDefaults () {
     {
         equalizer.c[i] = 0;
     }
+	dirpyrequalizer.enabled = false;    
+    for(int i = 0; i < 8; i ++)
+    {
+        dirpyrequalizer.mult[i] = 1.0;
+    }
     
     exif.clear ();
     iptc.clear ();
@@ -337,6 +342,15 @@ int ProcParams::save (Glib::ustring fname) const {
         std::stringstream ss;
         ss << "C" << i;
         keyFile.set_integer("Equalizer", ss.str(), equalizer.c[i]);
+    }
+	
+	// save directional pyramid equalizer parameters
+    keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
+    for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Mult" << i;
+        keyFile.set_integer("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
 
     // save exif change list
@@ -589,6 +603,17 @@ if (keyFile.has_group ("Equalizer")) {
         if(keyFile.has_key ("Equalizer", ss.str())) equalizer.c[i] = keyFile.get_integer ("Equalizer", ss.str());
     }
 }
+		
+	// load directional pyramid equalizer parameters
+if (keyFile.has_group ("Directional Pyramid Equalizer")) {
+	if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) equalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled");
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Mult" << i;
+		if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) dirpyrequalizer.mult[i] = keyFile.get_integer ("Directional Pyramid Equalizer", ss.str());
+	}
+}
 
     // load exif change settings
 if (keyFile.has_group ("Exif")) {
@@ -632,6 +657,17 @@ bool operator==(const EqualizerParams & a, const EqualizerParams & b) {
             return false;
     }
     return true;
+}
+	
+bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b) {
+	if(a.enabled != b.enabled)
+		return false;
+		
+	for(int i = 0; i < 8; i++) {
+		if(a.mult[i] != b.mult[i])
+			return false;
+	}
+	return true;
 }
 
 bool operator==(const ExifPair& a, const ExifPair& b) {
@@ -739,6 +775,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.working      == other.icm.working
         && icm.output       == other.icm.output
         && equalizer == other.equalizer
+		&& dirpyrequalizer == other.dirpyrequalizer
         && exif==other.exif
         && iptc==other.iptc;
 }

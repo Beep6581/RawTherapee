@@ -239,13 +239,13 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         //    ipf.impulsedenoise (nprevl);
         //}
 		if (scale==1) {
+            progress ("Pyramid equalizer...",100*readyphase/numofphases);
+            ipf.dirpyrequalizer (nprevl);
+        }
+		if (scale==1) {
             progress ("Wavelet...",100*readyphase/numofphases);
             ipf.waveletEqualizer (nprevl, true, true);
         }
-        //if (scale==1) {
-        //    progress ("Wavelet...",100*readyphase/numofphases);
-        //    ipf.waveletEqualizer (nprevl, false, true);
-        //}
 		
 
     }
