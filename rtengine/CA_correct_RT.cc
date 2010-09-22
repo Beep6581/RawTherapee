@@ -105,10 +105,7 @@ void RawImageSource::CA_correct_RT() {
 	
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	#define SQR(x) ((x)*(x))
-	
-	/*static const float pre_mul[3] = {MIN(ri->red_multiplier,ri->green_multiplier), ri->green_multiplier, \
-									 MIN(ri->blue_multiplier,ri->green_multiplier)};*/
-		
+
 	const float clip_pt = ri->defgain; 
 		
 	// local variables
