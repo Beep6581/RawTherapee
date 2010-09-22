@@ -22,6 +22,7 @@
 #include <sigc++/sigc++.h>
 #include <gtkmm.h>
 #include <rtengine.h>
+#include <simpleprocess.h>
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -83,23 +84,23 @@ class ProgressConnector  {
         Glib::Mutex* qMutex;
 
 		static int emitEndSignal (void* data) {
-			gdk_threads_enter ();
+		//	gdk_threads_enter ();
 			sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
 			int r = opEnd->emit ();
 			delete opEnd;
-			gdk_threads_leave ();
+			//gdk_threads_leave ();
 			return r;
 		}
         
         void workingThread () {
-           if (!qMutex)
-                qMutex = new Glib::Mutex ();
+      ///     if (!qMutex)
+         //       qMutex = new Glib::Mutex ();
 
-            qMutex->lock();
+           // qMutex->lock();
             retval = opStart.emit ();
             g_idle_add (ProgressConnector<T>::emitEndSignal, new sigc::signal0<bool> (opEnd));
-            workThread = 0;
-            qMutex->unlock();
+           // workThread = 0;
+           // qMutex->unlock();
         }
         
     public:
@@ -110,7 +111,9 @@ class ProgressConnector  {
         	if( !workThread ){
 				opStart.connect (startHandler);
 				opEnd.connect (endHandler);
-				workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+                  //              rtengine::batchThread->yield();
+                                workingThread();
+		//		workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
         	}
 
                 if (qMutex)
