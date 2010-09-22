@@ -18,8 +18,9 @@ extern "C" {
 #ifdef	__cplusplus
 }
 #endif
+namespace rtengine {
 
 extern Glib::Thread *batchThread;
-
+}
 #endif	/* SIMPLEPROCESS_H */
 
