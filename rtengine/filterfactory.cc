@@ -6,6 +6,17 @@
  */
 
 #include "filterfactory.h"
+#include "filtwb.h"
+#include "filtdemosaic.h"
+#include "filttonecurve.h"
+#include "filtlumadenoise.h"
+#include "filtlumacurve.h"
+#include "filtcolordenoise.h"
+#include "filtchmixer.h"
+#include "filtcoarse.h"
+#include "filtsh.h"
+#include "filtsharpener.h"
+#include "filtcolorcurve.h"
 
 namespace rtengine {
 
@@ -16,7 +27,9 @@ FilterFactory::FilterFactory() {
     registerFilterDescriptor (&whiteBalanceFilterDescriptor);
     registerFilterDescriptor (&demosaicFilterDescriptor);
     registerFilterDescriptor (&toneCurveFilterDescriptor);
+    registerFilterDescriptor (&coarseTransformFilterDescriptor);
     registerFilterDescriptor (&lumaDenoiseFilterDescriptor);
+    registerFilterDescriptor (&lumaCurveFilterDescriptor);
     registerFilterDescriptor (&colorDenoiseFilterDescriptor);
     registerFilterDescriptor (&colorMixerFilterDescriptor);
     registerFilterDescriptor (&shadowsHighlightsFilterDescriptor);

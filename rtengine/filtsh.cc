@@ -12,6 +12,8 @@
 #include "buffer.h"
 #include "gauss.h"
 #include "bilateral2.h"
+#include "filterchain.h"
+#include "iccstore.h"
 
 namespace rtengine {
 
@@ -91,17 +93,17 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
             {
                 int tid = omp_get_thread_num();
                 int nthreads = omp_get_num_threads();
-                int blk = H/nthreads;
+                int blk = map->height/nthreads;
 
                 if (tid<nthreads-1)
-                    bilateral<unsigned short> (map, map, W, H, 8000, radius, tid*blk, (tid+1)*blk);
+                    bilateral<unsigned short> (map, map, 8000, radius, tid*blk, (tid+1)*blk);
                 else
-                    bilateral<unsigned short> (map, map, W, H, 8000, radius, tid*blk, H);
+                    bilateral<unsigned short> (map, map, 8000, radius, tid*blk, map->height);
             }
             // anti-alias filtering the result
             for (int i=0; i<map->height; i++)
                 for (int j=0; j<map->width; j++)
-                    if (i>0 && j>0 && i<H-1 && j<W-1)
+                    if (i>0 && j>0 && i<map->height-1 && j<map->width-1)
                         buffer->rows[i][j] = (map->rows[i-1][j-1]+map->rows[i-1][j]+map->rows[i-1][j+1]+map->rows[i][j-1]+map->rows[i][j]+map->rows[i][j+1]+map->rows[i+1][j-1]+map->rows[i+1][j]+map->rows[i+1][j+1])/9;
                     else
                         buffer->rows[i][j] = map->rows[i][j];
@@ -117,9 +119,9 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
             int n = 1;
             min = 65535;
             max = 0;
-            for (int i=32; i<H-32; i++)
-                for (int j=32; j<W-32; j++) {
-                    int val = map[i][j];
+            for (int i=32; i<map->height-32; i++)
+                for (int j=32; j<map->width-32; j++) {
+                    int val = map->rows[i][j];
                     if (val < min)
                         min = val;
                     if (val > max)
@@ -195,18 +197,12 @@ void PreShadowsHighlightsFilter::getReqiredBufferSize (int& w, int& h) {
 }
 
 ShadowsHighlightsFilter::ShadowsHighlightsFilter (PreShadowsHighlightsFilter* pshf)
-	: Filter (&toneCurveFilterDescriptor), pshFilter (pshf) {
+	: Filter (&shadowsHighlightsFilterDescriptor), pshFilter (pshf) {
 }
 
 void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
     // apply filter
-    int h_th, s_th;
-    if (shmap) {
-        h_th = pshFilter->getMapMax() - procParams->sh.htonalwidth * (pshFilter->getMapMax() - pshFilter->getMapAvg()) / 100;
-        s_th = procParams->sh.stonalwidth * (pshFilter->getMapAvg() - pshFilter->getMapMin()) / 100;
-    }
-
     bool processSH  = procParams->sh.enabled && (procParams->sh.highlights>0 || procParams->sh.shadows>0);
     bool processLCE = procParams->sh.enabled && procParams->sh.localcontrast>0;
     double lceamount = procParams->sh.localcontrast / 200.0;
@@ -214,6 +210,13 @@ void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiI
     if (processSH || processLCE) {
 
         unsigned short** shmap = pshFilter->getSHMap ();
+
+        int h_th, s_th;
+        if (shmap) {
+            h_th = pshFilter->getMapMax() - procParams->sh.htonalwidth * (pshFilter->getMapMax() - pshFilter->getMapAvg()) / 100;
+            s_th = procParams->sh.stonalwidth * (pshFilter->getMapAvg() - pshFilter->getMapMin()) / 100;
+        }
+
         TMatrix wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
         double lumimulr = wprof[0][1];
         double lumimulg = wprof[1][1];

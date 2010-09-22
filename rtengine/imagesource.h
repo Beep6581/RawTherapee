@@ -9,18 +9,19 @@
 #define IMAGESOURCE_H_
 
 #include "rtengine.h"
-#include "filter.h"
 #include "colortemp.h"
 #include "matrix33.h"
+#include "coord2d.h"
+#include "multiimage.h"
 
 namespace rtengine {
 
-class ImageSource : public InitialImage, public Filter {
+class ImageSource : public InitialImage {
 
 		int references;
 
 	public:
-		ImageSource (FilterDescriptor* descr);
+		ImageSource ();
 
         virtual int load (const Glib::ustring& fileName, ProgressListener* listener = NULL);
 
@@ -37,6 +38,9 @@ class ImageSource : public InitialImage, public Filter {
         // inherited from InitialImage
         void increaseRef ();
 		void decreaseRef ();
+
+        void getFullImageSize (int& w, int& h);
+        void getImage (const ImageView& targetImageView, MultiImage* targetImage);
 };
 
 }

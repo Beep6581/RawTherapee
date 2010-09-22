@@ -10,6 +10,7 @@
 #include "macros.h"
 #include "gauss.h"
 #include "bilateral2.h"
+#include "minmax.h"
 
 namespace rtengine {
 
@@ -91,7 +92,7 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
                         tmp->rows[i][j] = (float)sourceImage->cieL[i][j] / tmp->rows[i][j];
         }
         else
-            dcdamping (tmp, lab, damping);
+            dcdamping (tmp, sourceImage, damping);
 
         gaussHorizontal<float> (tmp, tmp, buffer, procParams->sharpening.deconvradius / scale, multiThread);
         gaussVertical<float>   (tmp, tmp, buffer, procParams->sharpening.deconvradius / scale, multiThread);
@@ -99,7 +100,7 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<H; i++)
             for (int j=0; j<W; j++)
-                tmpI[i][j] = tmpI->rows[i][j] * tmp->rows[i][j];
+                tmpI->rows[i][j] = tmpI->rows[i][j] * tmp->rows[i][j];
     }
     delete [] buffer;
 
@@ -157,14 +158,14 @@ void SharpenFilter::sharpenHaloCtrl (MultiImage* sourceImage, MultiImage* target
 
 void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetImage, Buffer<unsigned short>* b2) {
 
-    int W = lab->W, H = lab->H;
+    int W = sourceImage->width, H = sourceImage->height;
     double scale = getScale ();
 
     Buffer<unsigned short>* b3;
     Buffer<unsigned short> sourceView = sourceImage->getBufferView (sourceImage->cieL);
 
     double* buffer = new double [std::max(W, H) * omp_get_max_threads()];
-    if (params->sharpening.edgesonly==false) {
+    if (procParams->sharpening.edgesonly==false) {
         gaussHorizontal<unsigned short> (&sourceView, b2, buffer, procParams->sharpening.radius / scale, multiThread);
         gaussVertical<unsigned short>   (b2,          b2, buffer, procParams->sharpening.radius / scale, multiThread);
     }
@@ -194,7 +195,7 @@ void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetIm
     else
         sharpenHaloCtrl (sourceImage, targetImage, b2, base);
 
-    if (params->sharpening.edgesonly)
+    if (procParams->sharpening.edgesonly)
         delete b3;
 }
 

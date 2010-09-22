@@ -38,8 +38,7 @@ extern "C" {
 
 Glib::ustring safe_locale_to_utf8 (const std::string& src);
 
-using namespace rtengine;
-using namespace rtengine::procparams;
+namespace rtengine {
 
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
@@ -785,4 +784,4 @@ int ImageIO::save (Glib::ustring fname) {
   else if (!fname.casefold().compare (lastdot, 4, ".tif"))
     return saveTIFF (fname);
 }
-
+}

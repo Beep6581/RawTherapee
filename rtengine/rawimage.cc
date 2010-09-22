@@ -7,6 +7,8 @@
 
 #include "rawimage.h"
 
+namespace rtengine {
+
 RawImage::RawImage ()
 	: width(-1), height(-1), filter(0), allocation(NULL), data(NULL),
 	  profileLength(0), profileData(NULL) {
@@ -18,4 +20,4 @@ RawImage::~RawImage() {
 	delete [] data;
 	delete [] profileData;
 }
-
+}

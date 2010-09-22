@@ -8,6 +8,7 @@
 #ifndef INTERACTIVEIMPROCIMPL_H_
 #define INTERACTIVEIMPROCIMPL_H_
 
+#include "improclistener.h"
 #include <glibmm.h>
 #include "rtengine.h"
 #include "colortemp.h"
@@ -18,12 +19,12 @@ namespace rtengine {
 
 class PreviewListenerAdapter : public ImProcListener {
 
-		PreviewListener* prevListener;
+        PreviewImageListener* prevListener;
 
 	public:
 
 		PreviewListenerAdapter ();
-		void 		setPreviewListener (PreviewListener* prevListener);
+		void 		setPreviewListener (PreviewImageListener* prevListener);
 
 		// implements ImProcListener interface:
 		ImageView 	getViewToProcess 	(int fullW, int fullH);
@@ -52,19 +53,19 @@ class InteractiveImProcImpl : public InteractiveImageProcessor {
 		void process ();
 
 	public:
-		InteractiveImProcImpl  (ImageSource* imageSource);
+		InteractiveImProcImpl  (ImageSource* imageSource, PreviewImageListener* prevListener);
 		~InteractiveImProcImpl ();
 
 		InitialImage* 			getInitialImage ();
 		void          			getParams (ProcParams& dst);
 
-		ProcParams*             getParamsForUpdate (ProcEvent change) =0;
-		void        			paramsUpdateReady () =0;
-		void        			stopProcessing () =0;
+		ProcParams*             getParamsForUpdate (ProcEvent change);
+		void        			paramsUpdateReady ();
+		void        			stopProcessing ();
 
-		void		createView  (ImProcListener* listener) =0;
-		void		removeView  (ImProcListener* listener) =0;
-		void        fullUpdate  (ImProcListener* listener) =0;
+		void		createView  (ImProcListener* listener);
+		void		removeView  (ImProcListener* listener);
+		void        fullUpdate  (ImProcListener* listener);
 
 		ColorTemp   getAutoWB   ();
 		ColorTemp   getCamWB    ();
@@ -77,4 +78,7 @@ class InteractiveImProcImpl : public InteractiveImageProcessor {
 };
 
 }
+
+#endif
+
 

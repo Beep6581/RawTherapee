@@ -8,6 +8,7 @@
 #include "filtwb.h"
 #include "rtengine.h"
 #include "macros.h"
+#include "filterchain.h"
 
 namespace rtengine {
 
@@ -38,7 +39,7 @@ void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage*
 	ColorTemp wb;
     if (procParams->wb.method=="Camera")
         wb = imgsrc->getCamWB ();
-    else if (params.wb.method=="Auto")
+    else if (procParams->wb.method=="Auto")
         wb = imgsrc->getAutoWB ();
     else
     	wb = ColorTemp (procParams->wb.temperature, procParams->wb.green);

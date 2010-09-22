@@ -39,7 +39,7 @@ template<class T> void gaussHorizontal3 (Buffer<T>* src, Buffer<T>* dst, T* buff
             temp[j] = (T)(c1 * (src->rows[i][j-1] + src->rows[i][j+1]) + c0 * src->rows[i][j]);
         dst->rows[i][0] = src->rows[i][0];
         memcpy (dst->rows[i]+1, temp+1, (W-2)*sizeof(T));
-        dst[i][W-1] = src[i][W-1];
+        dst->rows[i][W-1] = src->rows[i][W-1];
     }
 }
 
@@ -51,7 +51,7 @@ template<class T> void gaussVertical3 (Buffer<T>* src, Buffer<T>* dst, T* buffer
     	T* temp = buffer + omp_get_thread_num() * H;
         for (int j = 1; j<H-1; j++) 
         	temp[j] = (T)(c1 * (src->rows[j-1][i] + src->rows[j+1][i]) + c0 * src->rows[j][i]);
-        dst[0][i] = src->rows[0][i];
+        dst->rows[0][i] = src->rows[0][i];
 	    for (int j=1; j<H-1; j++)
             dst->rows[j][i] = temp[j];
         dst->rows[H-1][i] = src->rows[H-1][i];

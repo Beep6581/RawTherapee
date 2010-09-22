@@ -9,12 +9,19 @@
 
 namespace rtengine {
 
-Matrix33::Matrix33 (double (*values)[3]) {
+Matrix33::Matrix33 (float (*values)[4]) {
 
 	if (values)
 		for (int i=0; i<3; i++)
 			for (int j=0; j<3; j++)
 				data[i][j] = values[i][j];
+}
+
+Matrix33::Matrix33 () {
+
+    for (int i=0; i<3; i++)
+        for (int j=0; j<3; j++)
+            data[i][j] = i==j ? 1.0 : 0.0;
 }
 
 // applies transformation on the given (r,g,b) (column) vector

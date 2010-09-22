@@ -8,6 +8,9 @@
 #include "filtdemosaic.h"
 #include "rtengine.h"
 #include "macros.h"
+#include <string.h>
+#include <omp.h>
+#include "median.h"
 
 namespace rtengine {
 
@@ -35,7 +38,7 @@ ImageView DemosaicFilter::calculateTargetImageView (const ImageView& requestedIm
     result.skip = 1;
     result.x = 0;
     result.y = 0;
-    prev->getFullImageSize (result.w, result.h);
+    getPreviousFilter()->getFullImageSize (result.w, result.h);
     result.w -= 2 * border;
     result.h -= 2 * border;
 
@@ -44,19 +47,19 @@ ImageView DemosaicFilter::calculateTargetImageView (const ImageView& requestedIm
 
 ImageView DemosaicFilter::calculateSourceImageView (const ImageView& requestedImView) {
 
-    return calculateTargetImageView ();
+    return calculateTargetImageView (requestedImView);
 }
 
 void DemosaicFilter::getFullImageSize (int& w, int& h) {
 
-    prev->getFullImageSize (w, h);
+    getPreviousFilter()->getFullImageSize (w, h);
     w -= 2 * border;
     h -= 2 * border;
 }
 
 void DemosaicFilter::getReqiredBufferSize (int& w, int& h) {
 
-    prev->getFullImageSize (w, h);
+    getPreviousFilter()->getFullImageSize (w, h);
 }
 
 void DemosaicFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
@@ -138,11 +141,11 @@ void DemosaicFilter::hphd_horizontal (MultiImage* si, Buffer<float>* hpmap, int 
             float devR = dev[j+1];
             float hpv = avgL + (avgR - avgL) * devL / (devL + devR);
             if (hpmap->rows[i][j] < 0.8*hpv)
-                (int)(hpmap->rows[i][j]) = 2;
-            else if (hpv < 0.8*hpmap[i][j])
-                (int)(hpmap->rows[i][j]) = 1;
+                *(int*)(&(hpmap->rows[i][j])) = 2;
+            else if (hpv < 0.8*hpmap->rows[i][j])
+                *(int*)(&(hpmap->rows[i][j])) = 1;
             else
-                (int)(hpmap->rows[i][j]) = 0;
+                *(int*)(&(hpmap->rows[i][j])) = 0;
         }
     }
 
@@ -151,15 +154,15 @@ void DemosaicFilter::hphd_horizontal (MultiImage* si, Buffer<float>* hpmap, int 
     delete [] dev;
 }
 
-void RawImageSource::hphd_green (MultiImage* si, MultiImage* ti, Buffer<int>* hpmap) {
+void DemosaicFilter::hphd_green (MultiImage* si, MultiImage* ti, Buffer<int>* hpmap) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=border; i<si->height-border; i++) {
         for (int j=border; j<si->width-border; j++) {
-            if (si->raw_isGreen(ri,i,j))
+            if (si->raw_isGreen(i,j))
                 ti->g[i-border][j-border] = si->raw[i][j];
             else {
-                if (this->hpmap[i][j]==1) {
+                if (hpmap->rows[i][j]==1) {
                     int g2 = si->raw[i][j+1] + ((si->raw[i][j] - si->raw[i][j+2]) >> 1);
                     int g4 = si->raw[i][j-1] + ((si->raw[i][j] - si->raw[i][j-2]) >> 1);
 
@@ -180,7 +183,7 @@ void RawImageSource::hphd_green (MultiImage* si, MultiImage* ti, Buffer<int>* hp
 
                     ti->g[i-border][j-border] = CLIP((e2 * g2 + e4 * g4) / (e2 + e4));
                 }
-                else if (this->hpmap[i][j]==2) {
+                else if (hpmap->rows[i][j]==2) {
                     int g1 = si->raw[i-1][j] + ((si->raw[i][j] - si->raw[i-2][j]) >> 1);
                     int g3 = si->raw[i+1][j] + ((si->raw[i][j] - si->raw[i+2][j]) >> 1);
 
@@ -247,10 +250,10 @@ void RawImageSource::hphd_green (MultiImage* si, MultiImage* ti, Buffer<int>* hp
 
 void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<int>* hpmap) {
 
-    if (plistener) {
-        plistener->startTimeConsumingOperation ();
-        plistener->setProgressStr ("Demosaicing...");
-        plistener->setProgress (0.0);
+    if (getProgressListener()) {
+        getProgressListener()->startTimeConsumingOperation ();
+        getProgressListener()->setProgressStr ("Demosaicing...");
+        getProgressListener()->setProgress (0.0);
     }
 
     memset(hpmap->data, 0, hpmap->width*hpmap->height*sizeof(float));
@@ -259,46 +262,47 @@ void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<int>*
     {
         int tid = omp_get_thread_num();
         int nthreads = omp_get_num_threads();
-        int blk = W/nthreads;
+        int blk = si->width/nthreads;
 
         if (tid<nthreads-1)
             hphd_vertical (si, (Buffer<float>*)hpmap, tid*blk, (tid+1)*blk);
         else
-            hphd_vertical (si, (Buffer<float>*)hpmap, tid*blk, W);
+            hphd_vertical (si, (Buffer<float>*)hpmap, tid*blk, si->width);
     }
 
-    if (plistener)
-        plistener->setProgress (0.33);
+    if (getProgressListener())
+        getProgressListener()->setProgress (0.33);
 
     #pragma omp parallel if (multiThread)
     {
         int tid = omp_get_thread_num();
         int nthreads = omp_get_num_threads();
-        int blk = H/nthreads;
+        int blk = si->height/nthreads;
 
         if (tid<nthreads-1)
             hphd_horizontal (si, (Buffer<float>*)hpmap, tid*blk, (tid+1)*blk);
         else
-            hphd_horizontal (si, (Buffer<float>*)hpmap, tid*blk, H);
+            hphd_horizontal (si, (Buffer<float>*)hpmap, tid*blk, si->height);
     }
 
-    if (plistener)
-        plistener->setProgress (0.66);
+    if (getProgressListener())
+        getProgressListener()->setProgress (0.66);
 
     hphd_green (si, ti, hpmap);
 
-    if (plistener) {
-        plistener->setProgress (1.0);
-        plistener->progressReady ();
+    if (getProgressListener()) {
+        getProgressListener()->setProgress (1.0);
+        getProgressListener()->progressReady ();
     }
 }
 
 void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
 
-    int W = ti->width;
-    int H = ti->height;
+    int W = si->width;
+    int H = si->height;
     #pragma omp parallel for if (multiThread)
-    for (int i=border, ix=0; i<si->height-border; i++, ix++) {
+    for (int i=border; i<si->height-border; i++) {
+        int ix = i-border;
         if (si->raw_isRed (i,0) || si->raw_isRed(i,1)) {
             // RGRGR or GRGRGR line
             for (int j=border, jx=0; j<si->width-border; j++, jx++) {
@@ -375,7 +379,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                         n++;
                     }
                     r = ti->g[ix][jx]; + r / n;
-                    ti->b[ix][jx] = CLIP(b);
+                    ti->r[ix][jx] = CLIP(r);
                 }
                 else {
                     // linear B-G interp. horizontally
@@ -386,7 +390,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                         b = ti->g[ix][W-1] + si->raw[i][W-2] - ti->g[ix][W-2];
                     else
                         b = ti->g[ix][jx] + (si->raw[i][j-1] - ti->g[ix][jx-1] + si->raw[i][j+1] - ti->g[ix][jx+1]) / 2;
-                    ab[jx] = CLIP(b);
+                    ti->b[ix][jx] = CLIP(b);
                     // linear R-G interp. vertically
                     int r;
                     if (ix==0)
@@ -519,11 +523,21 @@ void DemosaicFilter::correction_YIQ_LQ_  (MultiImage* im, int row_from, int row_
     row_Q[W-1] = rbout_Q[cx][W-1];
     convert_row_to_RGB (im->r[row_to-1], im->g[row_to-1], im->b[row_to-1], rbconv_Y[cx], row_I, row_Q, W);
 
-  freeArray<int>(rbconv_Y, 3);
-  freeArray<int>(rbconv_I, 3);
-  freeArray<int>(rbconv_Q, 3);
-  freeArray<int>(rbout_I, 3);
-  freeArray<int>(rbout_Q, 3);
+  for (int i=0; i<3; i++)
+      delete [] rbconv_Y[i];
+  delete [] rbconv_Y;
+  for (int i=0; i<3; i++)
+      delete [] rbconv_I[i];
+  delete [] rbconv_I;
+  for (int i=0; i<3; i++)
+      delete [] rbconv_Q[i];
+  delete [] rbconv_Q;
+  for (int i=0; i<3; i++)
+      delete [] rbout_I[i];
+  delete [] rbout_I;
+  for (int i=0; i<3; i++)
+      delete [] rbout_Q[i];
+  delete [] rbout_Q;
   delete [] row_I;
   delete [] row_Q;
   delete [] pre1_I;

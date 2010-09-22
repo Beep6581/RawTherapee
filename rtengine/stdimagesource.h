@@ -11,6 +11,10 @@
 #include "imagesource.h"
 #include "image16.h"
 #include "imagedata.h"
+#include "colortemp.h"
+#include <glibmm.h>
+#include "imageview.h"
+#include "multiimage.h"
 
 namespace rtengine {
 
@@ -45,11 +49,10 @@ class StdImageSource : public ImageSource {
         Matrix33	getCamToRGBMatrix ()=0;
         Matrix33	getRGBToCamMatrix ()=0;
 
-        // inherited from Filter
-    	virtual void getFullImageSize (int& w, int& h);
-    	virtual void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) = 0;
+    	void getFullImageSize (int& w, int& h);
+    	void getImage (const ImageView& targetImageView, MultiImage* targetImage);
 
-        virtual bool isRaw () { return false; }
+        bool isRaw () { return false; }
 };
 
 }

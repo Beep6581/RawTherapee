@@ -294,7 +294,7 @@ if (igamma) {
     delete [] dcurve;
 }*/
 
-void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
+void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, unsigned int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
 
     double def_mul = pow (2.0, defmul);
 

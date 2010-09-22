@@ -53,7 +53,6 @@ class Image8 : public ImageIO, public IImage8 {
         virtual void    setScanline     (int row, unsigned char* buffer, int bps);
     
         // functions inherited from IImage*:
-        virtual Glib::Mutex& getMutex () { return mutex (); }
         virtual cmsHPROFILE getProfile () { return getEmbeddedProfile (); }
         virtual int getWidth ()  { return width; }
         virtual int getHeight () { return height; }

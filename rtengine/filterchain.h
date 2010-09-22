@@ -6,21 +6,23 @@
 #include "improclistener.h"
 #include "imagesource.h"
 #include "procparams.h"
+#include "filter.h"
 
 namespace rtengine {
 
-using namespace procparams;
 class FilterChain {
 
 protected:
 
     bool multiThread;
-	ImageSource* first;
+	ImageSource* imgSource;
+	Filter* first;
 	Filter* last;
 	ImProcListener* listener;
 	Filter* firstToUpdate;
 	ProcParams* procParams;
 	std::vector<Glib::ustring> filterOrder;
+	bool invalidated;
 
 	void setupChain (FilterChain* previous);
 
@@ -32,13 +34,15 @@ public:
 	void getReqiredBufferSize (int& w, int& h);
 	void getFullImageSize (int& w, int& h);
 
-	void setupProcessing (const set<ProcEvent>& events, int fullW, int fullH, int& maxWorkerWidth, int& maxWorkerHeight);
-	void process (Buffer<int>* buffer);
+	void setupProcessing (const std::set<ProcEvent>& events, int fullW, int fullH, int& maxWorkerWidth, int& maxWorkerHeight, bool useShortCut = false);
+	void process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker);
 
 	ImProcListener* getListener () { return listener; }
 	void invalidate ();
 
-	ImageSource* getImageSource () { return first; }
+	ImageSource* getImageSource () { return imgSource; }
+
+	void setNextChain (FilterChain* other);
 };
 }
 #endif

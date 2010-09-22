@@ -8,7 +8,7 @@
 #include "filterchain.h"
 
 namespace rtengine {
-using namespace procparams;
+
 class FilterChainGroup {
 
 	std::vector<FilterChain*> filterChains;

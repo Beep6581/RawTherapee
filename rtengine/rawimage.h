@@ -22,6 +22,9 @@
 #include <glibmm.h>
 #include "rawmetadatalocation.h"
 #include "matrix33.h"
+#include "colortemp.h"
+
+namespace rtengine {
 
 class RawImage {
 
@@ -71,5 +74,5 @@ class RawImage {
 			return (filter >> (((row << 1 & 14) + (col & 1)) << 1) & 3)==2;
 		}
 };
-
+}
 #endif

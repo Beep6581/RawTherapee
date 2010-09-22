@@ -6,21 +6,19 @@
  */
 
 #include "rawimagesource.h"
-#include "multiimage.h"
 #include <algorithm>
 #include <lcms2.h>
 #include "macros.h"
+#include "matrix33.h"
 
 namespace rtengine {
 
-FilterDescriptor rawImageSourceFilterDescriptor ("ImageSource", MultiImage::Invalid, MultiImage::Raw);
-
 RawImageSource::RawImageSource ()
-	: ImageSource (&stdImageSourceFilterDescriptor), img (NULL), idata (NULL), autoWBComputed (false),
+	: ImageSource (), img (NULL), idata (NULL), autoWBComputed (false),
 	  embProfile (NULL), border (4) {
 }
 
-virtual RawImageSource::~RawImageSource () {
+RawImageSource::~RawImageSource () {
 
 	delete img;
 	delete idata;
@@ -28,9 +26,9 @@ virtual RawImageSource::~RawImageSource () {
 		cmsCloseProfile (embProfile);
 }
 
-int RawImageSource::load (const Glib::ustring& fileName, ProgressListener* plistener = NULL) {
+int RawImageSource::load (const Glib::ustring& fileName, ProgressListener* plistener) {
 
-    fileName = fname;
+    this->fileName = fileName;
 
     delete img;
     delete idata;
@@ -42,17 +40,16 @@ int RawImageSource::load (const Glib::ustring& fileName, ProgressListener* plist
     if (plistener) {
         plistener->setProgressStr ("Loading...");
         plistener->setProgress (0.0);
-        img->setProgressListener (plistener);
     }
 
-    int error = img->load (fname);
+    int error = img->load (fileName);
     if (error) {
         delete img;
         img = NULL;
         return error;
     }
 
-    idata = new ImageData (fname, &img->rml);
+    idata = new ImageData (fileName, &img->rml);
 
     if (img->profileData)
         embProfile = cmsOpenProfileFromMem (img->profileData, img->profileLength);
@@ -72,14 +69,14 @@ Matrix33 RawImageSource::getCamToRGBMatrix () {
 	if (img)
 		return img->cam_srgb;
 	else
-		return Matrix ();
+		return Matrix33 ();
 }
 Matrix33 RawImageSource::getRGBToCamMatrix () {
 
 	if (img)
 		return img->srgb_cam;
 	else
-		return Matrix ();
+		return Matrix33 ();
 }
 
 cmsHPROFILE RawImageSource::getEmbeddedProfile () {
@@ -119,6 +116,8 @@ ColorTemp RawImageSource::getAutoWB () {
     // adjust to to 2%
     int upper = minv + (maxv+minv) * 0.98;
     int lower = minv + (maxv+minv) * 0.02;
+
+    int rn = 0, gn = 0, bn = 0;
 
     for (int i=32; i<img->height-32; i++)
         for (int j=32; j<img->width-32; j++) {
@@ -271,7 +270,7 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
             start = border;
             end = img->width-border;
         }
-        if (img->filters)
+        if (img->filter)
             for (int j=start; j<end; j++)
                 if (img->isGreen(i,j))
                     histogram[img->data[i][j]>>histcompr]+=2;
@@ -284,7 +283,6 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
                     histogram[img->data[i][j+2]>>histcompr]++;
             }
     }
-    return 1;
 }
 
 void RawImageSource::getFullImageSize (int& w, int& h) {
@@ -295,9 +293,8 @@ void RawImageSource::getFullImageSize (int& w, int& h) {
 
 // TODO: Fuji/D1X and non-bayer raw files are broken!!!
 
-void RawImageSource::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void RawImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 
-	ImageView& view = getTargetImageView ();
 	int x = 0, y = 0;
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
 		for (int j=view.x; j<view.x+view.w; j+=view.skip)

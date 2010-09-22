@@ -19,17 +19,16 @@
 #ifndef __PROCEVENT__
 #define __PROCEVENT__
 
-#include <rtengine.h>
-
 #define NUMOFEVENTS 84
 
 namespace rtengine {
 
 enum ProcEvent {
-    EvPhotoLoaded=0,
-    EvProfileLoaded=1,
-    EvProfileChanged=2,
-    EvHistoryBrowsed=3,
+    EvAll=-5,
+    EvPhotoLoaded=-4,
+    EvProfileLoaded=-3,
+    EvProfileChanged=-2,
+    EvHistoryBrowsed=-1,
     EvBrightness=4,
     EvContrast=5,
     EvBlack=6,

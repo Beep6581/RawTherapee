@@ -7,7 +7,7 @@
 /*RT*/#define NO_JPEG
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
-/*RT*/#include <rtthumbnail.h>
+///*RT*/#include <rtthumbnail.h>
 
 #include "myfile.h"
 
@@ -8913,12 +8913,11 @@ cleanup:
 }
 */
 
-#include <common.h>
-#include <rawmetadatalocation.h>
+#include "rawimage.h"
+#include "rawmetadatalocation.h"
 #include <glibmm.h>
-#include <utils.h>
-#include <colortemp.h>
-#include <settings.h>
+#include "colortemp.h"
+#include "settings.h"
 #include <string>
 #include "matrix33.h"
 
@@ -8942,7 +8941,7 @@ int RawImage::load (const Glib::ustring& fname) {
 
 	data = NULL;
 	allocation = NULL;
-	profile_data = NULL;
+	profileData = NULL;
 
 	ifp = gfopen (fname.c_str());
 	if (!ifp) {
@@ -9018,7 +9017,7 @@ int RawImage::load (const Glib::ustring& fname) {
 			for (int col = 0; col < width; col++)
 				if (isGreen (row,col))
 					data[row][col] = image[row*width+col][1];
-				else if (isRed (ri,row,col))
+				else if (isRed (row,col))
 					data[row][col] = image[row*width+col][0];
 				else
 					data[row][col] = image[row*width+col][2];
@@ -9088,7 +9087,7 @@ int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocati
   
 	half_size = 1;
 	bright = 1.0;
-	verbose = settings->verbose;
+	verbose = Settings::settings->verbose;
 	use_camera_wb = 1;
 
 	thumb_length = 0;

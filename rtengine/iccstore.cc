@@ -25,6 +25,7 @@
 #include <iccmatrices.h>
 #include <glib/gstdio.h>
 #include <string>
+#include "string.h"
 
 namespace rtengine {
 
@@ -96,8 +97,6 @@ const std::string wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "Br
 
 ICCStore::ICCStore () {
 
-    cmsErrorAction (LCMS_ERROR_SHOW);
-
     int N = sizeof(wpnames)/sizeof(wpnames[0]);
     for (int i=0; i<N; i++) {
         wProfiles[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i]);
@@ -125,11 +124,6 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
     for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
         res.push_back (i->first);
     return res;
-}
-
-int ICCStore::numOfWProfiles () {
-
-    return sizeof(wpnames)/sizeof(wpnames[0]);
 }
 
 TMatrix ICCStore::workingSpaceMatrix (Glib::ustring name) {

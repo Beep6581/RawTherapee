@@ -37,7 +37,7 @@ class ColorCurveFilter : public Filter {
 	public:
         ColorCurveFilter ();
         ~ColorCurveFilter ();
-    	void process (MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
 };
 
 }

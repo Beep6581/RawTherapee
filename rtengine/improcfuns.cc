@@ -6,10 +6,12 @@
  */
 
 #include "improcfuns.h"
+#include <math.h>
+#include "curves.h"
 
 namespace rtengine {
 
-void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
+void ImProcFunctions::calcAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
 
     double sum = 0;
     for (int i=0; i<65536>>histcompr; i++)

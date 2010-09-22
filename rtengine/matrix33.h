@@ -8,6 +8,8 @@
 #ifndef MATRIX33_H_
 #define MATRIX33_H_
 
+#include <string.h>
+
 namespace rtengine {
 
 // This class represents a 3x3 transformation matrix used for converting
@@ -18,7 +20,8 @@ class Matrix33 {
 
 	public:
 		// initializes the matrix with the array passed
-		Matrix33 (double (*values)[3] = NULL);
+        Matrix33 (float (*values)[4]);
+        Matrix33 ();
 
 		// applies transformation on the given (r,g,b) (column) vector
 		// result is written back to the variables passed

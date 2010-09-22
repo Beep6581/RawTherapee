@@ -6,12 +6,11 @@
  */
 
 #include "imagesource.h"
-#include "multiimage.h"
 
 namespace rtengine {
 
-ImageSource::ImageSource (FilterDescriptor* descr)
-	: references (1), Filter (descr, NULL) {
+ImageSource::ImageSource ()
+	: references (1) {
 }
 
 void ImageSource::increaseRef () {
@@ -24,4 +23,5 @@ void ImageSource::decreaseRef () {
 	references--;
 	if (!references)
 		delete this;
+}
 }

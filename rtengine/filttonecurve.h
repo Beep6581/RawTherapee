@@ -33,22 +33,22 @@ extern ToneCurveFilterDescriptor toneCurveFilterDescriptor;
 
 class PreToneCurveFilter : public Filter {
 
-        int*   histogram;
+        unsigned int*   histogram;
     public:
         PreToneCurveFilter ();
         ~PreToneCurveFilter ();
         void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
-        int* getHistogram ();
+        unsigned int* getHistogram ();
 };
 
 class ToneCurveFilter : public Filter {
 
-        int* curve;
-        int* bchistogram;
+        unsigned int* curve;
+        unsigned int* bchistogram;
         PreToneCurveFilter* ptcFilter;
 
 	public:
-        ToneCurveFilter ();
+        ToneCurveFilter (PreToneCurveFilter* ptcf);
         ~ToneCurveFilter ();
     	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
 };

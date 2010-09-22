@@ -32,7 +32,7 @@ extern ShadowsHighlightsFilterDescriptor shadowsHighlightsFilterDescriptor;
 
 class PreShadowsHighlightsFilter : public Filter {
 
-        Buffer<unsigned short> map;
+        Buffer<unsigned short>* map;
         unsigned short   max, min, avg;
 
     public:

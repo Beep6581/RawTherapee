@@ -18,6 +18,7 @@
  */
 #include "image8.h"
 #include "rtengine.h"
+#include <string.h>
 
 using namespace rtengine;
 

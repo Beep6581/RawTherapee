@@ -40,7 +40,8 @@ public:
 	bool setDimensions (int w, int h); // sets dimensions without reallocating everything
 	bool copyFrom (MultiImage* other);
 	bool copyFrom (MultiImage* other, int ofsx, int ofsy, int skip);
-	Buffer<unsigned short> getBufferView (unsigned short** channel);
+    Buffer<unsigned short> getBufferView (unsigned short** channel);
+    Buffer<short> getBufferView (short** channel);
 
 	inline bool raw_isRed (int row, int col) {
 		return (rawFilter >> (((row << 1 & 14) + (col & 1)) << 1) & 3)==0;

@@ -18,7 +18,6 @@
  */
 #include "rtengine.h"
 #include "iccstore.h"
-#include "improcfun.h"
 #include "curves.h"
 #include <glibmm.h>
 
@@ -76,7 +75,7 @@ Settings::Settings () {
 
     previewSkip = 16;
 
-    iccStore.parseDir (s->iccDirectory);
+    iccStore.parseDir (iccDirectory);
     CurveFactory::init ();
 }
 

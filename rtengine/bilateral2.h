@@ -22,7 +22,6 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
-#include <alignedbuffer.h>
 #include <mytime.h>
 #include <gauss.h>
 #include <glibmm.h>
@@ -388,6 +387,8 @@ template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, 
 // START OF EXPERIMENTAL CODE: O(1) bilateral box filter
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#undef CLIP
+#undef MAXVAL
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 
@@ -396,10 +397,10 @@ template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, 
 
 template<class T> void bilateral (Buffer<T>* isrc, Buffer<T>* idst, int sigmar, double sigmas, int row_from, int row_to) {
 
-    src = isrc->rows;
-    dst = idst->rows;
-    W = idst->width;
-    H = idst->height;
+    T** src = isrc->rows;
+    T** dst = idst->rows;
+    int W = idst->width;
+    int H = idst->height;
 
     // range weights
     double* ec = new double [0x20000];

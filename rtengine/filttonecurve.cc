@@ -10,6 +10,9 @@
 #include "macros.h"
 #include "iccstore.h"
 #include "improcfuns.h"
+#include <string.h>
+#include "filterchain.h"
+#include "curves.h"
 
 namespace rtengine {
 
@@ -61,7 +64,7 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
 
         // update histogram histogram
         if (!histogram)
-            histogram = new int [65536];
+            histogram = new unsigned int [65536];
 
         TMatrix wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
         int mulr = round(32768.0 * wprof[0][1]);
@@ -89,18 +92,19 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
         targetImage->copyFrom (sourceImage);
 }
 
-int* PreToneCurveFilter::getHistogram () {
+unsigned int* PreToneCurveFilter::getHistogram () {
 
     return histogram;
 }
 
 ToneCurveFilter::ToneCurveFilter (PreToneCurveFilter* ptcf)
-	: Filter (&toneCurveFilterDescriptor), curve (NULL), ptcFilter (ptcf) {
+	: Filter (&toneCurveFilterDescriptor), curve (NULL), ptcFilter (ptcf), bchistogram (NULL) {
 }
 
 ToneCurveFilter::~ToneCurveFilter () {
 
     delete [] curve;
+    delete [] bchistogram;
 }
 
 void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
@@ -108,16 +112,16 @@ void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     Filter* p = getParentFilter ();
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
-    int* myCurve;
+    unsigned int* myCurve;
 
     // curve is only generated once: in the root filter chain
     if (!p) {
         if (!curve) {
-            curve = new int [65536];
-            CurveFactory::complexCurve (procParams->toneCurve.expcomp, procParams->toneCurve.black/65535.0, procParams->toneCurve.hlcompr, procParams->toneCurve.shcompr, procParams->toneCurve.brightness, procParams.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->isRaw() ? 2.2 : 0.0 , true, procParams->toneCurve.curve, ptcFilter->getHistogram(), curve, NULL, getScale ()==1 ? 1 : 16);
+            curve = new unsigned int [65536];
+            CurveFactory::complexCurve (procParams->toneCurve.expcomp, procParams->toneCurve.black/65535.0, procParams->toneCurve.hlcompr, procParams->toneCurve.shcompr, procParams->toneCurve.brightness, procParams->toneCurve.contrast, imgsrc->getDefGain(), imgsrc->isRaw() ? 2.2 : 0.0 , true, procParams->toneCurve.curve, ptcFilter->getHistogram(), curve, NULL, getScale ()==1 ? 1 : 16);
         }
         else if (isTriggerEvent (events) || ptcFilter->isTriggerEvent (events))
-            CurveFactory::complexCurve (procParams->toneCurve.expcomp, procParams->toneCurve.black/65535.0, procParams->toneCurve.hlcompr, procParams->toneCurve.shcompr, procParams->toneCurve.brightness, procParams.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->isRaw() ? 2.2 : 0.0 , true, procParams->toneCurve.curve, ptcFilter->getHistogram(), curve, NULL, getScale ()==1 ? 1 : 16);
+            CurveFactory::complexCurve (procParams->toneCurve.expcomp, procParams->toneCurve.black/65535.0, procParams->toneCurve.hlcompr, procParams->toneCurve.shcompr, procParams->toneCurve.brightness, procParams->toneCurve.contrast, imgsrc->getDefGain(), imgsrc->isRaw() ? 2.2 : 0.0 , true, procParams->toneCurve.curve, ptcFilter->getHistogram(), curve, NULL, getScale ()==1 ? 1 : 16);
         myCurve = curve;
     }
     else {

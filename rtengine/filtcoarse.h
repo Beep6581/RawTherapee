@@ -31,9 +31,9 @@ class CoarseTransformFilter : public Filter {
 
         void vflip (MultiImage* image);
         void hflip (MultiImage* image);
-        void rotate90  (unsigned short** si, unsigned short* ti, int sW, int sH, Buffer<int>* buffer);
-        void rotate180 (unsigned short** si, unsigned short* ti, int sW, int sH, Buffer<int>* buffer);
-        void rotate270 (unsigned short** si, unsigned short* ti, int sW, int sH, Buffer<int>* buffer);
+        void rotate90  (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer);
+        void rotate180 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer);
+        void rotate270 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer);
 
     public:
         CoarseTransformFilter ();

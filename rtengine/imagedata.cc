@@ -26,6 +26,7 @@
 #ifndef GLIBMM_EXCEPTIONS_ENABLED
 #include <memory>
 #endif
+#include <string.h>
 
 using namespace rtengine;
 

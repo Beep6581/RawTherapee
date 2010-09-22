@@ -23,7 +23,7 @@ CoarseTransformFilterDescriptor::CoarseTransformFilterDescriptor ()
 
 void CoarseTransformFilterDescriptor::createAndAddToList (Filter* tail) const {
 
-	tail->addNext (new DemosaicFilter ());
+	tail->addNext (new CoarseTransformFilter ());
 }
 
 CoarseTransformFilter::CoarseTransformFilter ()
@@ -47,7 +47,7 @@ ImageView CoarseTransformFilter::calculateSourceImageView (const ImageView& requ
 void CoarseTransformFilter::getFullImageSize (int& w, int& h) {
 
     int ow, oh;
-    prev->getFullImageSize (ow, oh);
+    getPreviousFilter()->getFullImageSize (ow, oh);
     if (procParams->coarse.rotate==90 || procParams->coarse.rotate==270) {
         w = oh;
         h = ow;
@@ -67,7 +67,7 @@ void CoarseTransformFilter::getReqiredBufferSize (int& w, int& h) {
 void CoarseTransformFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
 
     int ow, oh;
-    prev->getFullImageSize (ow, oh);
+    getPreviousFilter()->getFullImageSize (ow, oh);
 
     int nx = x, ny = y;
     if (procParams->coarse.vflip)
@@ -136,7 +136,7 @@ void CoarseTransformFilter::vflip (MultiImage* image) {
     }
 }
 
-void CoarseTransformFilter::rotate90 (unsigned short** si, unsigned short* ti, int sW, int sH, Buffer<int>* buffer) {
+void CoarseTransformFilter::rotate90 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sW; i++)
@@ -149,7 +149,7 @@ void CoarseTransformFilter::rotate90 (unsigned short** si, unsigned short* ti, i
             ti[i][j] = buffer->rows[i][j];
 }
 
-void CoarseTransformFilter::rotate180 (unsigned short** si, unsigned short* ti, int sW, int sH, Buffer<int>* buffer) {
+void CoarseTransformFilter::rotate180 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sH; i++)
@@ -162,7 +162,7 @@ void CoarseTransformFilter::rotate180 (unsigned short** si, unsigned short* ti, 
             ti[i][j] = buffer->rows[i][j];
 }
 
-void CoarseTransformFilter::rotate270 (unsigned short** si, unsigned short* ti, int sW, int sH, Buffer<int>* buffer) {
+void CoarseTransformFilter::rotate270 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sW; i++)

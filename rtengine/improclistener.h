@@ -1,6 +1,7 @@
 #ifndef _IMPROCLISTENER_H_
 #define _IMPROCLISTENER_H_
 
+#include "rtengine.h"
 #include "imageview.h"
 
 namespace rtengine {

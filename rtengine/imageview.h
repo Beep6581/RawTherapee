@@ -8,11 +8,14 @@ class ImageView {
 public:
 	int x, y, w, h, skip;
 
-	ImageView (int x, int y, int w, int h, int skip=1) : x(x), y(y), w(w), h(h), skip(skip) {}
+    ImageView ();
+    ImageView (int x, int y, int w, int h, int skip=1);
 
-	bool operator== (const ImageView& other) { return x==other.x && y==other.y && w==other.w && h==other.h && skip==other.skip; }
-	int getPixelWidth () { return w >> skip; }
-	int getPixelHeight () { return h >> skip; }
+    bool operator== (const ImageView& other) const;
+    bool operator!= (const ImageView& other) const;
+	int  getPixelWidth () const;
+	int  getPixelHeight () const;
+	bool isPartOf (const ImageView& other) const;
 };
 
 }

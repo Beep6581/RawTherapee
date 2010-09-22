@@ -19,6 +19,7 @@
 #ifndef _RTENGINE_
 #define _RTENGINE_
 
+#include "rawmetadatalocation.h"
 #include "procparams.h"
 #include "procevents.h"
 #include <lcms2.h>
@@ -26,10 +27,11 @@
 #include <glibmm.h>
 #include <time.h>
 #include <rtexif.h>
-#include "rawmetadatalocation.h"
 #include "iimage.h"
 #include "settings.h"
 #include "colortemp.h"
+#include "imageview.h"
+
 /**
  * @file 
  * This file contains the main functionality of the raw therapee engine.
@@ -142,6 +144,10 @@ namespace rtengine {
             static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
     };
 
+    #include "improclistener.h"
+    class PreviewImageListener;
+    class ImProcListener;
+
     /** This is a staged, cached image processing manager with partial image update support.  */
     class InteractiveImageProcessor {
 
@@ -198,7 +204,7 @@ namespace rtengine {
   * @param thumbOffset is the offset of the embedded thumbnail in the raw file
   * @param thumbType is the type of the embedded thumbnail (=0: no thumbnail, =1: jpeg format, =2: simple continuous image data in rgbrgb... order)
   * @return =0 if not supported */
-    int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
+    int getRawFileBasicInfo (const Glib::ustring& fname, RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
 
 /** Returns the available output profile names
   * @return a vector of the available output profile names */

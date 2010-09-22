@@ -29,13 +29,13 @@ extern LumaCurveFilterDescriptor lumaCurveFilterDescriptor;
 
 class LumaCurveFilter : public Filter {
 
-        int* curve;
-        int* histogram;
+        unsigned int* curve;
+        unsigned int* histogram;
 
 	public:
         LumaCurveFilter ();
         ~LumaCurveFilter ();
-    	void process (MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
 };
 
 }

@@ -9,24 +9,24 @@
 #include "multiimage.h"
 #include <algorithm>
 #include "macros.h"
+#include "matrix33.h"
+#include "curves.h"
 
 namespace rtengine {
 
-FilterDescriptor stdImageSourceFilterDescriptor ("ImageSource", MultiImage::Invalid, MultiImage::RGB);
-
 StdImageSource::StdImageSource ()
-	: ImageSource (&stdImageSourceFilterDescriptor), img (NULL), idata (NULL), autoWBComputed (false) {
+	: ImageSource (), img (NULL), idata (NULL), autoWBComputed (false) {
 }
 
-virtual StdImageSource::~StdImageSource () {
+StdImageSource::~StdImageSource () {
 
 	delete img;
 	delete idata;
 }
 
-int StdImageSource::load (const Glib::ustring& fileName, ProgressListener* plistener = NULL) {
+int StdImageSource::load (const Glib::ustring& fileName, ProgressListener* plistener) {
 
-    fileName = fname;
+    this->fileName = fileName;
 
     delete img;
     delete idata;
@@ -40,14 +40,14 @@ int StdImageSource::load (const Glib::ustring& fileName, ProgressListener* plist
         img->setProgressListener (plistener);
     }
 
-    int error = img->load (fname);
+    int error = img->load (fileName);
     if (error) {
         delete img;
         img = NULL;
         return error;
     }
 
-    idata = new ImageData (fname);
+    idata = new ImageData (fileName);
 
     if (plistener) {
         plistener->setProgressStr ("Ready.");
@@ -61,14 +61,12 @@ int StdImageSource::load (const Glib::ustring& fileName, ProgressListener* plist
 
 Matrix33 StdImageSource::getCamToRGBMatrix () {
 
-	double mat[3][3] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
-	return Matrix (mat);
+	return Matrix33 ();
 }
 
 Matrix33 StdImageSource::getRGBToCamMatrix () {
 
-	double mat[3][3] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
-	return Matrix (mat);
+	return Matrix33 ();
 }
 
 cmsHPROFILE StdImageSource::getEmbeddedProfile () {
@@ -108,14 +106,18 @@ ColorTemp StdImageSource::getAutoWB () {
     int upper = minv + (maxv+minv) * 0.98;
     int lower = minv + (maxv+minv) * 0.02;
 
+    int v;
     for (int i=1; i<img->height-1; i++)
         for (int j=1; j<img->width-1; j++) {
             if (img->r[i][j]>upper || img->g[i][j]>upper || img->b[i][j]>upper
             		|| img->r[i][j]<lower || img->g[i][j]<lower || img->b[i][j]<lower)
                 continue;
-            avg_r += intpow((double)img->r[i][j], p);
-            avg_g += intpow((double)img->g[i][j], p);
-            avg_b += intpow((double)img->b[i][j], p);
+            v = 1.0; for (int k=0; k<p; k++) v *= img->r[i][j];
+            avg_r += p;
+            v = 1.0; for (int k=0; k<p; k++) v *= img->g[i][j];
+            avg_g += v;
+            v = 1.0; for (int k=0; k<p; k++) v *= img->b[i][j];
+            avg_b += v;
             n++;
         }
 
@@ -131,17 +133,16 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
     for (int i=0; i<red.size(); i++) {
-        if (red[i].x >= 0 && red[i].y >= 0 && red[i].x < img->width && red[i].y < img->height) {
-            reds += img->r[red[i].y][red[i].x];
+        if (red[i].x >= 0 && red[i].y >= 0 && round(red[i].x) < img->width && round(red[i].y) < img->height) {
+            reds += img->r[(int)round(red[i].y)][(int)round(red[i].x)];
             rn++;
         }
-        if (green[i].x >= 0 && green[i].y >= 0 && green[i].x < img->width && green[i].y < img->height) {
-            greens += img->g[green[i].y][green[i].x];
+        if (green[i].x >= 0 && green[i].y >= 0 && round(green[i].x) < img->width &&round(green[i].y) < img->height) {
+            greens += img->g[(int)round(green[i].y)][(int)round(green[i].x)];
             gn++;
         }
-        transformPixel (blue[i].x, blue[i].y, tran, x, y);
-        if (blue[i].x >= 0 && blue[i].y >= 0 && blue[i].x < img->width && blue[i].y < img->height) {
-            blues += img->b[blue[i].y][blue[i].x];
+        if (blue[i].x >= 0 && blue[i].y >= 0 && round(blue[i].x) < img->width && round(blue[i].y) < img->height) {
+            blues += img->b[(int)round(blue[i].y)][(int)round(blue[i].x)];
             bn++;
         }
     }
@@ -169,9 +170,8 @@ void StdImageSource::getFullImageSize (int& w, int& h) {
 	h = img->height;
 }
 
-void StdImageSource::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void StdImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 
-	ImageView& view = getTargetImageView ();
 	int x = 0, y = 0;
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
 		for (int j=view.x; j<view.x+view.w; j+=view.skip) {

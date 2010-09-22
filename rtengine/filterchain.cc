@@ -2,12 +2,14 @@
 #include "imageview.h"
 #include "settings.h"
 #include "filterfactory.h"
+#include "filtinitial.h"
 
 namespace rtengine {
-using namespace procparams;
 
 FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread)
-	: listener(listener), first(imgSource), last(imgSource), procParams(params), multiThread(multiThread) {
+	: listener(listener), imgSource(imgSource), procParams(params), multiThread(multiThread), invalidated(true) {
+
+    last = first = new InitialFilter (imgSource);
 
 	if (params->filterOrder.custom && !params->filterOrder.filterlist.empty())
 		filterOrder = params->filterOrder.filterlist;
@@ -17,15 +19,19 @@ FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, Proc
 }
 
 FilterChain::FilterChain (ImProcListener* listener, FilterChain* previous)
-	: listener(listener), first(previous->first), last(previous->first), procParams(previous->procParams), multiThread(previous->multiThread) {
+	: listener(listener), imgSource(previous->imgSource),
+	  procParams(previous->procParams), multiThread(previous->multiThread), invalidated(true) {
 
-	filterOrder = previous->filterOrder;
+    last = first = new InitialFilter (imgSource);
+
+    filterOrder = previous->filterOrder;
 	setupChain (previous);
 }
 
 void FilterChain::setupChain (FilterChain* previous) {
 
-	Filter* parent = previous ? previous->first : NULL;
+    // First filter already there, it is the initial filter. We go on from the second one.
+	Filter* parent = previous ? previous->first->next : NULL;
 	for (int i=0; i<filterOrder.size(); i++)
 		if (filterOrder[i] == "--Cache--")
 			last->forceOutputCache = true;
@@ -43,6 +49,16 @@ void FilterChain::setupChain (FilterChain* previous) {
 		}
 }
 
+void FilterChain::setNextChain (FilterChain* other) {
+
+    if (!other)
+        for (Filter* curr = first; curr; curr = curr->next)
+            curr->parent = NULL;
+    else
+        for (Filter *curr = first, *pcurr = other->first; curr; curr = curr->next, pcurr = pcurr->next)
+            curr->parent = pcurr;
+}
+
 FilterChain::~FilterChain () {
 
 	Filter* curr = first;
@@ -55,12 +71,12 @@ FilterChain::~FilterChain () {
 
 void FilterChain::invalidate () {
 
-	// TODO!!! IMPORTANT!!
+    invalidated = true;
 }
 
-void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW, int fullH, int& maxWorkerWidth, int& maxWorkerHeight) {
+void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW, int fullH, int& maxWorkerWidth, int& maxWorkerHeight, bool useShortCut) {
 
-	if (!listener || !first || !last)
+	if (!listener)
 		return;
 
 	// tell the listener the full size of the image with the current settings and let it decide the portion to refresh
@@ -82,17 +98,16 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 
 	// set mandatory cache points
 	first->hasOutputCache = true;
-	for (curr = first->next; curr != last; curr = curr->next)
+	for (curr = first; curr != last; curr = curr->next)
 		if (curr->forceOutputCache || !(curr->sourceImageView == curr->targetImageView) || (curr->next && !(curr->targetImageView == curr->next->sourceImageView)))
 			curr->hasOutputCache = true;
 		else
 			curr->hasOutputCache = false;
-	last->prev->hasOutputCache = true;	// cache is needed in the last phase since output format is different
-	last->hasOutputCache = false;
+	last->hasOutputCache = true;
 
 	// walk further to find first filter that needs to be recalculated
 	for (curr = firstToUpdate; curr; curr = curr->prev)
-		if (curr->isTriggerEvent (events))
+		if (invalidated || curr->isTriggerEvent (events))
 			firstToUpdate = curr;
 
 	// walk further to find closest cache
@@ -102,8 +117,29 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 			break;
 		}
 
+	// detect shortcut possibilities in the filter group
+	if (useShortCut) {
+	    // clear shortcut pointers
+	    for (curr = first; curr; curr = curr->next)
+	        curr->shortCutPrev = NULL;
+	    // find possible shortcut filter
+	    for (curr = last; curr && curr != firstToUpdate; curr = curr->prev) {
+	        Filter* p = curr->prev->parent;
+	        while (p) {
+	            if (p->hasOutputCache && curr->sourceImageView.isPartOf (p->targetImageView)) {
+	                curr->shortCutPrev = p;
+	                firstToUpdate = curr;
+	                break;
+	            }
+	            p = p->parent;
+	        }
+	        if (curr->shortCutPrev)
+	            break;
+	    }
+	}
+
 	// find out the dimensions of the largest worker image necessary
-	for (curr = first->next; curr; curr = curr->next)
+	for (curr = firstToUpdate; curr; curr = curr->next)
 		if (!curr->hasOutputCache) {
 			if (curr->sourceImageView.getPixelWidth() > maxWorkerWidth)
 				maxWorkerWidth = curr->sourceImageView.getPixelWidth ();
@@ -116,21 +152,26 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 		curr->setupCache ();
 }
 
-void FilterChain::process (Buffer<int>* buffer, MultiImage* worker) {
+void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker) {
 
 	for (Filter* curr = firstToUpdate; curr; curr = curr->next) {
 		MultiImage* sourceImage = NULL;
 		MultiImage* targetImage = NULL;
 		if (curr != first) {
-			if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView)
+		    if (curr->shortCutPrev) {
+		        sourceImage = worker;
+                worker->setDimensions (curr->sourceImageView.getPixelWidth(), curr->sourceImageView.getPixelHeight());
+                worker->copyFrom (curr->shortCutPrev->outputCache, curr->sourceImageView.x - curr->shortCutPrev->targetImageView.x, curr->sourceImageView.y - curr->shortCutPrev->targetImageView.y, curr->sourceImageView.skip / curr->shortCutPrev->targetImageView.skip);
+		    }
+		    else if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView)
 				sourceImage = curr->prev->outputCache;
 			else {
 				sourceImage = worker;
 				worker->setDimensions (curr->sourceImageView.getPixelWidth(), curr->sourceImageView.getPixelHeight());
-				if (curr->prev->hasOutputCache) // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
+				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView) // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
 					worker->copyFrom (curr->prev->outputCache, curr->sourceImageView.x - curr->prev->targetImageView.x, curr->sourceImageView.y - curr->prev->targetImageView.y, curr->sourceImageView.skip / curr->prev->targetImageView.skip);
 			}
-			sourceImage->convertTo (curr->inputColorSpace);
+			sourceImage->convertTo (curr->descriptor->getInputColorSpace());
 		}
 		if (curr->hasOutputCache)
 			targetImage = curr->outputCache;
@@ -138,8 +179,9 @@ void FilterChain::process (Buffer<int>* buffer, MultiImage* worker) {
 			worker->setDimensions (curr->targetImageView.getPixelWidth(), curr->targetImageView.getPixelHeight());
 			targetImage = worker;
 		}
-		curr->process (sourceImage, targetImage, buffer);
+		curr->process (events, sourceImage, targetImage, buffer);
 	}
+	invalidated = false;
 }
 
 void FilterChain::getReqiredBufferSize (int& w, int& h) {

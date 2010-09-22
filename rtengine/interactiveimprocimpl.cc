@@ -10,7 +10,8 @@
 namespace rtengine {
 
 PreviewListenerAdapter::PreviewListenerAdapter () : prevListener (NULL) {}
-void PreviewListenerAdapter::setPreviewListener (PreviewListener* prevListener) {
+
+void PreviewListenerAdapter::setPreviewListener (PreviewImageListener* prevListener) {
 
 	this->prevListener = prevListener;
 }
@@ -22,14 +23,14 @@ ImageView PreviewListenerAdapter::getViewToProcess (int fullW, int fullH) {
 
 void PreviewListenerAdapter::imageReady	(IImage8* img, int fullW, int fullH, ImageView view, ProcParams params) {
 
-	if (previewListener)
-		previewListener->imageReady (img, fullW, fullH, view.skip, params);
+	if (prevListener)
+	    prevListener->imageReady (img, fullW, fullH, view.skip, params);
 }
 
 
-static InteractiveImageProcessor* InteractiveImageProcessor::create (InitialImage* initialImage, PreviewImageListener* prevListener) {
+InteractiveImageProcessor* InteractiveImageProcessor::create (InitialImage* initialImage, PreviewImageListener* prevListener) {
 
-	return new InteractiveImProcImpl ((ImageSource*)initialImage);
+	return new InteractiveImProcImpl ((ImageSource*)initialImage, prevListener);
 }
 
 InteractiveImProcImpl::InteractiveImProcImpl (ImageSource* imageSource, PreviewImageListener* prevListener)
@@ -37,7 +38,7 @@ InteractiveImProcImpl::InteractiveImProcImpl (ImageSource* imageSource, PreviewI
 
 	prevListAdapter.setPreviewListener (prevListener);
 	filterChainGroup = new FilterChainGroup (imageSource, &params);
-	filterChainGroup->addNewFilterChain (&prevListener);
+	filterChainGroup->addNewFilterChain (&prevListAdapter);
 }
 
 InteractiveImProcImpl::~InteractiveImProcImpl () {
@@ -109,7 +110,7 @@ void InteractiveImProcImpl::process () {
     if (progressListener)
     	progressListener->setBusyFlag (true);
 
-    std::set<ProcEvent>& events;
+    std::set<ProcEvent> events;
     paramsUpdateMutex.lock ();
     while (!changeSinceLast.empty()) {
         params = nextParams;
@@ -157,7 +158,7 @@ ColorTemp InteractiveImProcImpl::getAutoWB () {
 
 ColorTemp InteractiveImProcImpl::getCamWB () {
 
-    return imageSource->getWB ();
+    return imageSource->getCamWB();
 }
 
 ColorTemp InteractiveImProcImpl::getSpotWB (int x, int y, int rectSize) {

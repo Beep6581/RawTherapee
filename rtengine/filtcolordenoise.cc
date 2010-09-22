@@ -34,9 +34,9 @@ ColorDenoiseFilter::ColorDenoiseFilter ()
 
 void ColorDenoiseFilter::getReqiredBufferSize (int& w, int& h) {
 
-    if (params->colorDenoise.enabled && sourceImage->width>=8 && sourceImage->height>=8) {
-        int sw = getSourceImageView().getPixelWidth ();
-        int sh = getSourceImageView().getPixelHeight ();
+    int sw = getSourceImageView().getPixelWidth ();
+    int sh = getSourceImageView().getPixelHeight ();
+    if (procParams->colorDenoise.enabled && sw >= 8 && sh >= 8) {
         if (sh > sw) {
             w = 2;  // since we need double buffer and rt gives int buffer
             h = sh*omp_get_max_threads();
@@ -54,14 +54,21 @@ void ColorDenoiseFilter::getReqiredBufferSize (int& w, int& h) {
 
 void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
-    if (params->colorDenoise.enabled && sourceImage->width>=8 && sourceImage->height>=8) {
+    int sw = getSourceImageView().getPixelWidth ();
+    int sh = getSourceImageView().getPixelHeight ();
+    if (procParams->colorDenoise.enabled && sw >= 8 && sh >= 8) {
 
         double scale = getScale ();
 
-        gaussHorizontal<short> (&sourceImage->getBufferView(sourceImage->ciea), &targetImage->getBufferView(targetImage->ciea), (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussHorizontal<short> (&sourceImage->getBufferView(sourceImage->cieb), &targetImage->getBufferView(targetImage->cieb), (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussVertical<short>   (&targetImage->getBufferView(targetImage->ciea), &targetImage->getBufferView(targetImage->ciea), (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussVertical<short>   (&targetImage->getBufferView(targetImage->cieb), &targetImage->getBufferView(targetImage->cieb), (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        Buffer<short> ta = targetImage->getBufferView(targetImage->ciea);
+        Buffer<short> tb = targetImage->getBufferView(targetImage->cieb);
+        Buffer<short> sa = sourceImage->getBufferView(targetImage->ciea);
+        Buffer<short> sb = sourceImage->getBufferView(targetImage->cieb);
+
+        gaussHorizontal<short> (&sa, &ta, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussHorizontal<short> (&sb, &tb, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussVertical<short>   (&ta, &ta, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussVertical<short>   (&tb, &tb, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
     }
     else if (sourceImage != targetImage)
         targetImage->copyFrom (sourceImage);

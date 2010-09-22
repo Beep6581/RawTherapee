@@ -8,6 +8,8 @@
 #include "filtlumacurve.h"
 #include "rtengine.h"
 #include "macros.h"
+#include <string.h>
+#include "curves.h"
 
 namespace rtengine {
 
@@ -30,7 +32,7 @@ void LumaCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
 }
 
 LumaCurveFilter::LumaCurveFilter ()
-	: Filter (&toneCurveFilterDescriptor), curve (NULL), histogram (NULL) {
+	: Filter (&lumaCurveFilterDescriptor), curve (NULL), histogram (NULL) {
 }
 
 LumaCurveFilter::~LumaCurveFilter () {
@@ -39,24 +41,24 @@ LumaCurveFilter::~LumaCurveFilter () {
     delete [] histogram;
 }
 
-void LumaCurveFilter::process (MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void LumaCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
     Filter* p = getParentFilter ();
 
-    int* myCurve;
+    unsigned int* myCurve;
 
     // curve and histogram is only generated once: in the root filter chain
     if (!p) {
 
         if (!histogram)
-            histogram = new int [65536];
-        memset (histogram, 0, 65536*sizeof(int));
+            histogram = new unsigned int [65536];
+        memset (histogram, 0, 65536*sizeof(unsigned int));
         for (int i=0; i<sourceImage->height; i++)
             for (int j=0; j<sourceImage->width; j++)
                 histogram[sourceImage->cieL[i][j]]++;
 
         if (!curve) {
-            curve = new int [65536];
+            curve = new unsigned int [65536];
             CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, procParams->lumaCurve.brightness, procParams->lumaCurve.contrast, 0.0, 0.0, false, procParams->lumaCurve.curve, histogram, curve, NULL, getScale ()==1 ? 1 : 16);
         }
         else if (isTriggerEvent (events))

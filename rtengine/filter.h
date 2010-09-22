@@ -6,9 +6,13 @@
 #include "imageview.h"
 #include "multiimage.h"
 #include "buffer.h"
+#include "procevents.h"
+#include "rtengine.h"
+#include "imageview.h"
 
 namespace rtengine {
 
+class Filter;
 class FilterDescriptor {
 
 protected:
@@ -38,6 +42,7 @@ private:
 
 	Filter* next;
 	Filter* prev;
+    Filter* shortCutPrev;
 	Filter* parent;
 	FilterChain* myFilterChain;
 
@@ -59,14 +64,15 @@ protected:
 	ProcParams* procParams;
 	const FilterDescriptor* descriptor;
 
-	const ImageView&    getSourceImageView () { return sourceImageView; }
-	const ImageView&    getTargetImageView () { return targetImageView; }
-	const Filter*	    getParentFilter    () { return parent; }
+	const ImageView&    getSourceImageView () const { return sourceImageView; }
+	const ImageView&    getTargetImageView () const { return targetImageView; }
+    Filter*             getPreviousFilter  () { return prev; }
 	FilterChain*		getFilterChain     () { return myFilterChain; }
     ProgressListener*   getProgressListener() { return plistener; }
 	double              getScale           ();
 
 public:
+    Filter*             getParentFilter    () { return parent; }
 
 	void addNext (Filter* f);
 
@@ -85,7 +91,7 @@ public:
 	// returns true if set "events" contains at least one event that invalidates the result of this filter
 	virtual bool isTriggerEvent (const std::set<ProcEvent>& events);
 	// The main procedure of the filter, it must be overridden
-	virtual void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int> buffer) = 0;
+	virtual void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) = 0;
     // Calculate the image view (rectangle) provided by this filter when the given image view is requested from by the next filter
     // Most filters return "requestedImView" (this is the default implementation).
     // Some filters like demosaicing methods can calculate full image only, thus

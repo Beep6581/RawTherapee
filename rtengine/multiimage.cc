@@ -1,6 +1,7 @@
 #include <multiimage.h>
 #include <string.h>
 #include <iccstore.h>
+#include <math.h>
 
 #undef CLIPTO
 #undef XYZ_MAXVAL
@@ -16,7 +17,7 @@ int* MultiImage::ycache;
 int* MultiImage::xzcache;
 bool MultiImage::labConversionCacheInitialized = false;
 
-MultiImage::MultiImage (int w, int h, ColorSpace cs = RGB)
+MultiImage::MultiImage (int w, int h, ColorSpace cs)
 	: data(NULL), width(w), height(h), colorSpace(cs), allocWidth(w), allocHeight(h) {
 
 	initArrays ();
@@ -25,7 +26,7 @@ MultiImage::MultiImage (int w, int h, ColorSpace cs = RGB)
 }
 
 MultiImage::MultiImage (const MultiImage& other)
-	: data(NULL), width(other.width), height(other.height), colorSpace(other.colorSpace), allocWidth(w), allocHeight(h) {
+	: data(NULL), width(other.width), height(other.height), colorSpace(other.colorSpace), allocWidth(other.allocWidth), allocHeight(other.allocHeight) {
 
 	initArrays ();
 	if (colorSpace==Raw)
@@ -38,19 +39,20 @@ void MultiImage::initArrays () {
 
 	if (colorSpace!=RGB)
 		r = g = b = NULL;
-	if (colorSpace!=Lab)
-		cieL = ciea = cieb = NULL;
+	if (colorSpace!=Lab) {
+		cieL = NULL; ciea = cieb = NULL;
+	}
 	if (colorSpace!=Raw)
 		raw = NULL;
 
 	if (colorSpace==Raw) {
-		data = new unsigned short*[allocWidth*allocHeight*sizeof(unsigned short)];
+		data = new unsigned short[allocWidth*allocHeight*sizeof(unsigned short)];
 		raw = new unsigned short* [allocHeight];
 		for (int i=0; i<allocHeight; i++)
 			raw[i] = data + i*allocWidth;
 	}
 	else if (colorSpace==RGB) {
-		data = new unsigned short*[allocWidth*allocHeight*sizeof(unsigned short)*3];
+		data = new unsigned short[allocWidth*allocHeight*sizeof(unsigned short)*3];
 		r = new unsigned short* [allocHeight];
 		g = new unsigned short* [allocHeight];
 		b = new unsigned short* [allocHeight];
@@ -61,7 +63,7 @@ void MultiImage::initArrays () {
 		}
 	}
 	else if (colorSpace==Lab) {
-		data = new unsigned short*[allocWidth*allocHeight*sizeof(unsigned short)*3];
+		data = new unsigned short[allocWidth*allocHeight*sizeof(unsigned short)*3];
 		cieL = new unsigned short* [allocHeight];
 		ciea = new short* [allocHeight];
 		cieb = new short* [allocHeight];
@@ -140,7 +142,7 @@ bool MultiImage::copyFrom (MultiImage* other, int ofsx, int ofsy, int skip) {
 		delete [] cieb;
 		delete [] raw;
 		r = g = b = NULL;
-		cieL = ciea = cieb = NULL;
+		cieL = NULL; ciea = cieb = NULL;
 		raw = NULL;
 		colorSpace = other->colorSpace;
 		if (colorSpace==Raw) {
@@ -194,9 +196,14 @@ bool MultiImage::copyFrom (MultiImage* other, int ofsx, int ofsy, int skip) {
 }
 
 
-Buffer<unsigned short> getBufferView (unsigned short** channel) {
+Buffer<unsigned short> MultiImage::getBufferView (unsigned short** channel) {
 
     return Buffer<unsigned short> (width, height, data, channel);
+}
+
+Buffer<short> MultiImage::getBufferView (short** channel) {
+
+    return Buffer<short> (width, height, (short*)data, channel);
 }
 
 void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string workingColorSpace) {
@@ -220,21 +227,21 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
 		for (int i=1; i<allocHeight-1; i++)
 			for (int j=1; j<allocWidth-1; j++)
 				if (raw_isRed(i,j)) {
-					r[i][j] = tmpData[i][j];
-					g[i][j] = (tmpData[i-1][j] + tmpData[i+1][j] + tmpData[i][j-1] + tmpData[i][j+1]) >> 2;
-					b[i][j] = (tmpData[i-1][j-1] + tmpData[i+1][j-1] + tmpData[i-1][j+1] + tmpData[i+1][j+1]) >> 2;
+					r[i][j] = raw[i][j];
+					g[i][j] = (raw[i-1][j] + raw[i+1][j] + raw[i][j-1] + raw[i][j+1]) >> 2;
+					b[i][j] = (raw[i-1][j-1] + raw[i+1][j-1] + raw[i-1][j+1] + raw[i+1][j+1]) >> 2;
 				}
 				else if (raw_isBlue(i,j)) {
-					r[i][j] = (tmpData[i-1][j-1] + tmpData[i+1][j-1] + tmpData[i-1][j+1] + tmpData[i+1][j+1]) >> 2;
-					g[i][j] = (tmpData[i-1][j] + tmpData[i+1][j] + tmpData[i][j-1] + tmpData[i][j+1]) >> 2;
-					b[i][j] = tmpData[i][j];
+					r[i][j] = (raw[i-1][j-1] + raw[i+1][j-1] + raw[i-1][j+1] + raw[i+1][j+1]) >> 2;
+					g[i][j] = (raw[i-1][j] + raw[i+1][j] + raw[i][j-1] + raw[i][j+1]) >> 2;
+					b[i][j] = raw[i][j];
 				}
 		#pragma omp parallel for if (multiThread)
 		for (int i=1; i<allocHeight-1; i++)
 			for (int j=1; j<allocWidth-1; j++)
 				if (raw_isGreen(i,j)) {
 					r[i][j] = (r[i-1][j] + r[i+1][j] + r[i][j-1] + r[i][j+1]) >> 2;
-					g[i][j] = tmpData[i][j];
+					g[i][j] = raw[i][j];
 					b[i][j] = (b[i-1][j] + b[i+1][j] + b[i][j-1] + b[i][j+1]) >> 2;
 				}
 		// demosaicing borders less efficiently
@@ -247,39 +254,46 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
 						for (int y=-1; y<=1; y++)
 							if (i+x>=0 && j+y>=0 && i+x<allocHeight && j+y<allocWidth) {
 								if (raw_isRed(i+x,j+y))
-									r_ += tmpData[i+x][j+y], rn++;
+									r_ += raw[i+x][j+y], rn++;
 								else if (raw_isGreen(i+x,j+y))
-									g_ += tmpData[i+x][j+y], gn++;
+									g_ += raw[i+x][j+y], gn++;
 								else if (raw_isBlue(i+x,j+y))
-									b_ += tmpData[i+x][j+y], bn++;
+									b_ += raw[i+x][j+y], bn++;
 							}
 				}
 		delete [] data;
-		data = tmpData;
+        data = tmpData;
+		delete [] raw;
 		raw = NULL;
 		// convert to the desired color space
-		convertTo (cs, workingColorSpace);
+		convertTo (cs, multiThread, workingColorSpace);
 	}
 	else if (cs==Raw) {
 		// convert to rgb first
-		convertTo (RGB, workingColorSpace);
+		convertTo (RGB, multiThread, workingColorSpace);
 		// Do mosaicing
 		unsigned short* tmpData = new unsigned short [allocWidth*allocHeight*sizeof(unsigned short)];
+        raw = new unsigned short* [allocHeight];
+        for (int i=0; i<allocHeight; i++)
+            raw[i] = data + i*allocWidth;
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<allocHeight; i++)
 			for (int j=0; j<allocWidth; j++)
 				if (raw_isRed(i,j))
-					tmpData[i][j] = r[i][j];
+				    raw[i][j] = r[i][j];
 				else if (raw_isGreen(i,j))
-					tmpData[i][j] = g[i][j];
+				    raw[i][j] = g[i][j];
 				else if (raw_isBlue(i,j))
-					tmpData[i][j] = b[i][j];
+				    raw[i][j] = b[i][j];
 		delete [] data;
+        data = tmpData;
+		delete [] r;
+		delete [] g;
+		delete [] b;
 		r = g = b = NULL;
-		raw = data = tmpData;
 	}
 	else if (colorSpace==RGB && cs==Lab) {
-		cieL = r, ciea = (short**)g, cieb = (short**)b;
+		cieL = r; ciea = (short**)g; cieb = (short**)b;
 	    TMatrix wprof = iccStore.workingSpaceMatrix (workingColorSpace);
 	    // calculate white point tristimulus
 	    double xn = wprof[0][0] + wprof[1][0] + wprof[2][0];
@@ -315,7 +329,7 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
         r = g = b = NULL;
 	}
 	else if (colorSpace==Lab && cs==RGB) {
-		r = cieL, g = (unsigned short**)ciea, b = (unsigned short**)cieb;
+		r = cieL; g = (unsigned short**)ciea; b = (unsigned short**)cieb;
 	    TMatrix wprof = iccStore.workingSpaceMatrix (workingColorSpace);
 	    // calculate the white point tristimulus
 	    double xn = wprof[0][0] + wprof[1][0] + wprof[2][0];
@@ -355,7 +369,7 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
 				b[i][j] = CLIPTO(b_,0,65535);
 			}
 		}
-		cieL = ciea = cieb = NULL;
+		cieL = NULL; ciea = cieb = NULL;
 	}
 	colorSpace = cs;
 }

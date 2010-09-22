@@ -12,6 +12,8 @@
 #include "rawimage.h"
 #include "imagedata.h"
 #include "colortemp.h"
+#include "multiimage.h"
+#include "imageview.h"
 
 namespace rtengine {
 
@@ -47,9 +49,8 @@ class RawImageSource : public ImageSource {
         Matrix33	getCamToRGBMatrix ();
         Matrix33	getRGBToCamMatrix ();
 
-        // inherited from Filter
     	void getFullImageSize (int& w, int& h);
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void getImage (const ImageView& targetImageView, MultiImage* targetImage);
 
         bool isRaw () { return false; }
 };
