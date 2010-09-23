@@ -66,7 +66,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         int xpos, ypos, width, height;
         
         // image handling
-        CropHandler cropHandler;
+      
         ImageArea* iarea;
         int cropZoom; // *1000
         
@@ -88,6 +88,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         void        getObservedFrameArea(int& x, int& y, int& w, int& h);
     
     public:
+        CropHandler cropHandler;
         CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_);
         ~CropWindow ();
         
