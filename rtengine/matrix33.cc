@@ -59,4 +59,18 @@ Matrix33 Matrix33::inverse () {
     return res;
 }
 
+void Matrix33::multiply (const double (*m)[3]) {
+
+    Matrix33 r;
+    for (int i=0; i<3; i++)
+        for (int j=0; j<3; j++) {
+            r.data[i][j] = 0.0;
+            for (int k=0; k<3; k++)
+                r.data[i][j] += data[i][k] * m[k][j];
+        }
+    for (int i=0; i<3; i++)
+        for (int j=0; j<3; j++)
+            data[i][j] = r.data[i][j];
+}
+
 }

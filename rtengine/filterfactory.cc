@@ -17,6 +17,8 @@
 #include "filtsh.h"
 #include "filtsharpener.h"
 #include "filtcolorcurve.h"
+#include "filthlrec.h"
+#include "filtcsconv.h"
 
 namespace rtengine {
 
@@ -26,6 +28,8 @@ FilterFactory::FilterFactory() {
 
     registerFilterDescriptor (&whiteBalanceFilterDescriptor);
     registerFilterDescriptor (&demosaicFilterDescriptor);
+    registerFilterDescriptor (&highlightRecoveryFilterDescriptor);
+    registerFilterDescriptor (&colorSpaceConvFilterDescriptor);
     registerFilterDescriptor (&toneCurveFilterDescriptor);
     registerFilterDescriptor (&coarseTransformFilterDescriptor);
     registerFilterDescriptor (&lumaDenoiseFilterDescriptor);

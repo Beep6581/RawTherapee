@@ -39,7 +39,7 @@ void LumaDenoiseFilter::getReqiredBufferSize (int& w, int& h) {
 
 void LumaDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
-    if (procParams->lumaDenoise.enabled && getSourceImageView().getPixelWidth()>=8 && getSourceImageView().getPixelHeight()>=8) {
+    if (procParams->lumaDenoise.enabled && sourceImage->width>=8 && sourceImage->height>=8) {
         bilateral<unsigned short, unsigned int> (sourceImage->cieL, targetImage->cieL, (unsigned short**)(buffer->rows), sourceImage->width, sourceImage->height, procParams->lumaDenoise.radius / getScale(), procParams->lumaDenoise.edgetolerance, multiThread);
     }
     else if (sourceImage != targetImage)

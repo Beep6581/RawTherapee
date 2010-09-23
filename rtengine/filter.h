@@ -46,6 +46,7 @@ private:
 	Filter* parent;
 	FilterChain* myFilterChain;
 
+	bool        valid;
 	bool 		hasOutputCache;
 	bool 		forceOutputCache;
 	MultiImage* outputCache;
@@ -69,7 +70,6 @@ protected:
     Filter*             getPreviousFilter  () { return prev; }
 	FilterChain*		getFilterChain     () { return myFilterChain; }
     ProgressListener*   getProgressListener() { return plistener; }
-	double              getScale           ();
 
 public:
     Filter*             getParentFilter    () { return parent; }
@@ -86,9 +86,10 @@ public:
 	virtual void getReqiredBufferSize (int& w, int& h);
 	// return full image size if this filter was the last one
 	virtual void getFullImageSize (int& w, int& h);
+    virtual double getScale ();
 	// return the coordinates (xv,yv) corresponding to the "source" side given coordinates (x,y) corresponding to the target side
 	virtual void reverseTransPoint (int x, int y, int& xv, int& yv);
-	// returns true if set "events" contains at least one event that invalidates the result of this filter
+    // returns true if set "events" contains at least one event that invalidates the result of this filter
 	virtual bool isTriggerEvent (const std::set<ProcEvent>& events);
 	// The main procedure of the filter, it must be overridden
 	virtual void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) = 0;

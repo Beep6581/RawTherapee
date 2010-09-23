@@ -13,7 +13,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc filter.cc filterchain.c
 		
 set (RTENGINEFILTERFILES filtchmixer.cc filtcoarse.cc filtcolorcurve.cc filtcolordenoise.cc filtdemosaic.cc
 		filtinitial.cc filtlumacurve.cc filtlumadenoise.cc filtsh.cc filtsharpener.cc filttonecurve.cc
-		filtwb.cc)		
+		filtwb.cc filthlrec.cc filtcsconv.cc filtresize.cc)		
 
 add_library (rtengine ${RTENGINESOURCEFILES} ${RTENGINEFILTERFILES})
 

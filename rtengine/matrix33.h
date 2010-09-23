@@ -32,6 +32,9 @@ class Matrix33 {
 
 		// returns inverse of the transformation matrix
 		Matrix33 inverse ();
+
+		// multiplies this matrix from the given one from the right
+		void multiply (const double (*m)[3]);
 };
 
 }

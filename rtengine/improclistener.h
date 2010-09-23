@@ -10,13 +10,13 @@ class ImProcListener {
 
 	public:
 		virtual ImageView 	getViewToProcess 	(int fullW, int fullH) = 0;
-		virtual void		imageReady 			(IImage8* img, int fullW, int fullH, ImageView view, ProcParams params) = 0;
+		virtual void		imageReady 			(IImage8* img, double scale, int fullW, int fullH, ImageView view, ProcParams params) = 0;
 };
 
 class PreviewImageListener {
 
 	public:
-		virtual void imageReady	(IImage8* img, int fullW, int fullH, int skip, ProcParams params) = 0;
+		virtual void imageReady	(IImage8* img, double scale, int fullW, int fullH, ProcParams params) = 0;
 };
 
 }

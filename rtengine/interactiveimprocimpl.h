@@ -28,7 +28,7 @@ class PreviewListenerAdapter : public ImProcListener {
 
 		// implements ImProcListener interface:
 		ImageView 	getViewToProcess 	(int fullW, int fullH);
-		void		imageReady 			(IImage8* img, int fullW, int fullH, ImageView view, ProcParams params);
+		void		imageReady 			(IImage8* img, double scale, int fullW, int fullH, ImageView view, ProcParams params);
 };
 
 class InteractiveImProcImpl : public InteractiveImageProcessor {

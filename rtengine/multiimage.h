@@ -55,6 +55,7 @@ public:
 
 	int getAllocWidth () { return allocWidth; }
 	int getAllocHeight () { return allocHeight; }
+	unsigned short* getData () { return data; }
 };
 }
 #endif

@@ -21,10 +21,10 @@ ImageView PreviewListenerAdapter::getViewToProcess (int fullW, int fullH) {
 	return ImageView (0, 0, fullW, fullH, 16);
 }
 
-void PreviewListenerAdapter::imageReady	(IImage8* img, int fullW, int fullH, ImageView view, ProcParams params) {
+void PreviewListenerAdapter::imageReady	(IImage8* img, double scale, int fullW, int fullH, ImageView view, ProcParams params) {
 
 	if (prevListener)
-	    prevListener->imageReady (img, fullW, fullH, view.skip, params);
+	    prevListener->imageReady (img, scale, fullW, fullH, params);
 }
 
 

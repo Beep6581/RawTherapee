@@ -107,7 +107,7 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 
 	// walk further to find first filter that needs to be recalculated
 	for (curr = firstToUpdate; curr; curr = curr->prev)
-		if (invalidated || curr->isTriggerEvent (events))
+		if (invalidated || !curr->valid || curr->isTriggerEvent (events))
 			firstToUpdate = curr;
 
 	// walk further to find closest cache
@@ -116,6 +116,10 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 			firstToUpdate = curr;
 			break;
 		}
+
+	// set every filter from firstToUpdate to be invalid
+	for (curr = firstToUpdate; curr; curr = curr->next)
+	    curr->valid = false;
 
 	// detect shortcut possibilities in the filter group
 	if (useShortCut) {
@@ -180,6 +184,7 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 			targetImage = worker;
 		}
 		curr->process (events, sourceImage, targetImage, buffer);
+		curr->valid = true;
 	}
 	invalidated = false;
 }
