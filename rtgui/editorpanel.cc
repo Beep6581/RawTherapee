@@ -323,12 +323,11 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
         beforeAfterToggled();
     }
 
-    Gtk::Allocation r;
-    iarea->imageArea->on_resized(r);
-    //iarea->show_all();
-    //hpanedl->show_all();
-    //show_all();
-
+    if (iarea->imageArea->mainCropWindow)
+    {
+        iarea->imageArea->mainCropWindow->cropHandler.newImage(ipc);            
+        iarea->imageArea->mainCropWindow->initialImageArrived();
+    }
 }
 
 void EditorPanel::close () {
@@ -351,8 +350,8 @@ void EditorPanel::close () {
 //        delete beforePreviewHandler;
 //        beforePreviewHandler = NULL;
 
-        delete iarea->imageArea->mainCropWindow;
-        iarea->imageArea->mainCropWindow = NULL;
+      //  delete iarea->imageArea->mainCropWindow;
+       // iarea->imageArea->mainCropWindow = NULL;
 
         rtengine::StagedImageProcessor::destroy (ipc);
         ipc = NULL;
