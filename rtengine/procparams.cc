@@ -606,7 +606,7 @@ if (keyFile.has_group ("Equalizer")) {
 		
 	// load directional pyramid equalizer parameters
 if (keyFile.has_group ("Directional Pyramid Equalizer")) {
-	if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) equalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled");
+	if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled");
 	for(int i = 0; i < 8; i ++)
 	{
 		std::stringstream ss;
