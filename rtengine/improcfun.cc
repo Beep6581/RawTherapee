@@ -390,7 +390,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
         }
     }
     
-    double shift_a = params->colorShift.a * chroma_scale, shift_b = params->colorShift.b * chroma_scale;
+	float eps = 0.001;
+    double shift_a = params->colorShift.a * chroma_scale + eps, shift_b = params->colorShift.b * chroma_scale + eps;
 
     short** oa = lold->a;
     short** ob = lold->b;
