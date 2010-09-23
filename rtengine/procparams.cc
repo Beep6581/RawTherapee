@@ -350,7 +350,7 @@ int ProcParams::save (Glib::ustring fname) const {
     {
         std::stringstream ss;
         ss << "Mult" << i;
-        keyFile.set_integer("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
+        keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
 
     // save exif change list
@@ -611,7 +611,7 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
 	{
 		std::stringstream ss;
 		ss << "Mult" << i;
-		if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) dirpyrequalizer.mult[i] = keyFile.get_integer ("Directional Pyramid Equalizer", ss.str());
+		if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) dirpyrequalizer.mult[i] = keyFile.get_double ("Directional Pyramid Equalizer", ss.str());
 	}
 }
 

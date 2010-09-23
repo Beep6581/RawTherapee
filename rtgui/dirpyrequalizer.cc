@@ -146,7 +146,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->dirpyrequalizer.enabled = enabled->get_active ();
 
     for (int i = 0; i < 8; i++) {
-        pp->dirpyrequalizer.mult[i] = (int) multiplier[i]->getValue();
+        pp->dirpyrequalizer.mult[i] = multiplier[i]->getValue();
     }
 
     if (pedited) {
