@@ -288,8 +288,7 @@ namespace rtengine {
 		int width = data_fine->W;
 		int height = data_fine->H;
 		
-		float Lout, aout, bout;
-		float dirwt, norm;
+
 		
 		//generate domain kernel 
 		int halfwin = 1;//MIN(ceil(2*sig),3);
@@ -304,11 +303,14 @@ namespace rtengine {
 		//float domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,4,2,1},{1,2,2,2,1},{1,1,1,1,1}};
 		
 		//float domker[3][3] = {{1,1,1},{1,2,1},{1,1,1}};
-		
-		
-		for(int i = 0, i1=0; i < height; i+=pitch, i1++) {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+		for(int i = 0; i < height; i+=pitch) { int i1=i/pitch;
 			for(int j = 0, j1=0; j < width; j+=pitch, j1++)
 			{				
+				float Lout, aout, bout;
+				float norm;
 				norm = 0;//if we do want to include the input pixel in the sum
 				Lout = 0;
 				aout = 0;
@@ -316,7 +318,7 @@ namespace rtengine {
 				
 				for(int inbr=MAX(0,i-scalewin); inbr<=MIN(height-1,i+scalewin); inbr+=scale) {
 					for (int jnbr=MAX(0,j-scalewin); jnbr<=MIN(width-1,j+scalewin); jnbr+=scale) {
-						dirwt = DIRWT(inbr, jnbr, i, j);
+						float dirwt = DIRWT(inbr, jnbr, i, j);
 						Lout += dirwt*data_fine->L[inbr][jnbr];
 						aout += dirwt*data_fine->a[inbr][jnbr];
 						bout += dirwt*data_fine->b[inbr][jnbr];
@@ -382,18 +384,21 @@ namespace rtengine {
 		
 		if (pitch==1) {
 			// step (1-2-3-4) 
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 			for(int i = 0; i < height; i++)
 				for(int j = 0; j < width; j++) {
 					
 					//luma
-					hipass[0] = (float)data_fine->L[i][j]-data_coarse->L[i][j];
-					buffer[0][i*scale][j*scale] += hipass[0] * lumamult[level];//*luma;
+					float hipass0 = (float)data_fine->L[i][j]-data_coarse->L[i][j];
+					buffer[0][i*scale][j*scale] += hipass0 * lumamult[level];//*luma;
 					
 					//chroma
-					hipass[1] = data_fine->a[i][j]-data_coarse->a[i][j];
-					hipass[2] = data_fine->b[i][j]-data_coarse->b[i][j];
-					buffer[1][i*scale][j*scale] += hipass[1] * chromamult[level]; //*chroma;
-					buffer[2][i*scale][j*scale] += hipass[2] * chromamult[level]; //*chroma;
+					float hipass1 = data_fine->a[i][j]-data_coarse->a[i][j];
+					float hipass2 = data_fine->b[i][j]-data_coarse->b[i][j];
+					buffer[1][i*scale][j*scale] += hipass1 * chromamult[level]; //*chroma;
+					buffer[2][i*scale][j*scale] += hipass2 * chromamult[level]; //*chroma;
 				}
 			
 		} else {
@@ -402,10 +407,16 @@ namespace rtengine {
 			//if (pitch>1), pitch=2; expand coarse image, fill in missing data
 			
 			LabImage* smooth;
-			
 			smooth = new LabImage(width, height);
-			
-			for(int i = 0, i2=0; i < height; i+=pitch, i2++)
+#ifdef _OPENMP
+#pragma	omp parallel
+#endif
+
+{
+#ifdef _OPENMP
+#pragma omp for
+#endif
+			for(int i = 0; i < height; i+=pitch){ int i2=i/pitch;
 				for(int j = 0, j2=0; j < width; j+=pitch, j2++) {
 					
 					//copy common pixels
@@ -413,9 +424,11 @@ namespace rtengine {
 					smooth->a[i][j] = data_coarse->a[i2][j2];
 					smooth->b[i][j] = data_coarse->b[i2][j2];
 				}
-			//}
+			}
 						
-			
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int i = 0; i < height-1; i+=2)
 				for(int j = 0; j < width-1; j+=2) {
 					//do midpoint first
@@ -440,7 +453,9 @@ namespace rtengine {
 					buffer[1][(i+1)*scale][(j+1)*scale]=wtdsum[4]*norm;
 					buffer[2][(i+1)*scale][(j+1)*scale]=wtdsum[5]*norm;
 				}
-			
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int i = 0; i < height-1; i+=2)
 				for(int j = 0; j < width-1; j+=2) {
 					//now right neighbor
@@ -511,6 +526,9 @@ namespace rtengine {
 			
 			
 			// step (2-3-4) 
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			for(int i = 0; i < height; i++)
 				for(int j = 0; j < width; j++) {
 					
@@ -524,7 +542,7 @@ namespace rtengine {
 					buffer[1][i*scale][j*scale] += hipass[1] * chromamult[level]; //*chroma;
 					buffer[2][i*scale][j*scale] += hipass[2] * chromamult[level]; //*chroma;
 				}
-			
+}	// end parallel		
 			delete smooth;
 			
 		}
