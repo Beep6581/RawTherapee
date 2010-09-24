@@ -24,8 +24,6 @@
 #include <slicer.h>
 #include <gtkmm.h>
 
-using namespace rtengine;
-
 // If no parameter set, everything = 0 -> process all the image
 Block::Block() {
 	posX = 0;
@@ -45,7 +43,7 @@ Block::Block(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
  * Slice a sub-region to process in blocks who's size is given by the number of processor
  * and the number of pixel per block (and hence the memory footprint)
  */
-Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegion, unsigned int pixels, const char* nomFichier) {
+Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegion, unsigned int pixels ) {
 	// If the sub-region has a portrait shape, X and Y coordinates are swapped for better result
 	// It will be swapped back when sending back the block coordinates
 	region.width = !(subRegion->width) ? imageWidth : subRegion->width;

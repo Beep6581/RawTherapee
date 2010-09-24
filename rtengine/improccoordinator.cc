@@ -78,6 +78,10 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     ipf.setScale (scale);
 
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
+    if ( todo & M_PREPROC)
+    	imgsrc->preprocess( params.raw );
+    if( todo & M_RAW)
+    	imgsrc->demosaic( params.raw );
     if (todo & M_INIT) {
         minit.lock ();
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
@@ -104,7 +108,7 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         imgsrc->getFullSize (fw, fh, tr);
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale, true);
-        imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm);
+        imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
         minit.unlock ();
     }
@@ -535,7 +539,9 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
     ppar.hlrecovery.enabled = false;
     ppar.icm.input = "(none)";
     Image16* im = new Image16 (fW, fH);
-    imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm);
+    imgsrc->preprocess( ppar.raw );
+    imgsrc->demosaic( ppar.raw );
+    imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
     im->saveJPEG (fname, 85);
     mProcessing.unlock ();
 }

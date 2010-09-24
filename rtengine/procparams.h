@@ -346,6 +346,30 @@ class EqualizerParams {
 	};
 
 /**
+  * Parameters for RAW demosaicing
+  */
+class RAWParams {
+
+    public:
+		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,
+					numMethods }; // This MUST be the last enum
+		static const char *methodstring[numMethods];
+
+
+
+	    Glib::ustring dark_frame;
+	    bool df_autoselect;
+		bool ca_autocorrect;
+		bool hotdeadpix_filt;
+		int	linenoise;
+		int greenthresh;
+        int ccSteps;
+        Glib::ustring dmethod;
+        int dcb_iterations;
+        bool dcb_enhance;
+};
+
+/**
   * This class holds all the processing parameters applied on the images
   */
 class ProcParams {
@@ -359,8 +383,8 @@ class ProcParams {
         ColorShiftParams        colorShift;     ///< Color shift parameters
         LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
         ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
-		ImpulseDenoiseParams    impulseDenoise; ///< Impulse denoising parameters
-		DirPyrDenoiseParams		dirpyrDenoise;  ///< Directional Pyramid denoising parameters
+	ImpulseDenoiseParams    impulseDenoise; ///< Impulse denoising parameters
+	DirPyrDenoiseParams		dirpyrDenoise;  ///< Directional Pyramid denoising parameters
         SHParams                sh;             ///< Shadow/highlight enhancement parameters
         CropParams              crop;           ///< Crop parameters
         CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
@@ -375,7 +399,8 @@ class ProcParams {
         ResizeParams            resize;         ///< Resize parameters
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         EqualizerParams         equalizer;      ///< wavelet equalizer parameters
-		DirPyrEqualizerParams   dirpyrequalizer;///< directional pyramid equalizer parameters
+        RAWParams               raw;            ///< RAW parameters before demosaicing
+	DirPyrEqualizerParams   dirpyrequalizer;///< directional pyramid equalizer parameters
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
         int version;                            ///< Version of the file from which the parameters have been read

@@ -28,6 +28,8 @@
 namespace rtengine {
 namespace procparams {
 
+const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
+
 ProcParams::ProcParams () { 
 
     setDefaults (); 
@@ -177,7 +179,16 @@ void ProcParams::setDefaults () {
     {
         dirpyrequalizer.mult[i] = 1.0;
     }
-    
+    raw.df_autoselect = false;
+    raw.ca_autocorrect = false;
+    raw.hotdeadpix_filt = false;
+    raw.linenoise = 0;
+    raw.greenthresh = 0;
+    raw.ccSteps = 1;
+    raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
+    raw.dcb_iterations=2;
+    raw.dcb_enhance=false;
+
     exif.clear ();
     iptc.clear ();
     
@@ -352,6 +363,18 @@ int ProcParams::save (Glib::ustring fname) const {
         ss << "Mult" << i;
         keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
+
+    // save RAW parameters
+    keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
+    keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
+    keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+    keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
+    keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
+    keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
+    keyFile.set_string  ("RAW", "Method", raw.dmethod );
+    keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
+    keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
 
     // save exif change list
     for (int i=0; i<(int)exif.size(); i++)
@@ -615,6 +638,20 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
 	}
 }
 
+	// load raw settings
+if (keyFile.has_group ("RAW")) {
+	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
+	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
+	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
+	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" );
+	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
+	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
+	if (keyFile.has_key ("RAW", "CcSteps"))       raw.ccSteps  = keyFile.get_integer ("RAW", "CcSteps");
+	if (keyFile.has_key ("RAW", "Method"))        raw.dmethod = keyFile.get_string ("RAW", "Method");
+	if (keyFile.has_key ("RAW", "DCBIterations")) raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations");
+	if (keyFile.has_key ("RAW", "DCBEnhance"))    raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance");
+}
+
     // load exif change settings
 if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
@@ -770,12 +807,22 @@ bool ProcParams::operator== (const ProcParams& other) {
         && resize.dataspec  == other.resize.dataspec
         && resize.width     == other.resize.width
         && resize.height    == other.resize.height
+        && raw.dark_frame   == other.raw.dark_frame
+        && raw.df_autoselect == other.raw.df_autoselect
+        && raw.dcb_enhance  == other.raw.dcb_enhance
+        && raw.dcb_iterations == other.raw.dcb_iterations
+        && raw.ccSteps      == other.raw.ccSteps
+        && raw.ca_autocorrect == other.raw.ca_autocorrect
+        && raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
+        && raw.dmethod == other.raw.dmethod
+        && raw.greenthresh == other.raw.greenthresh
+        && raw.linenoise == other.raw.linenoise
         && icm.input        == other.icm.input
         && icm.gammaOnInput == other.icm.gammaOnInput
         && icm.working      == other.icm.working
         && icm.output       == other.icm.output
         && equalizer == other.equalizer
-		&& dirpyrequalizer == other.dirpyrequalizer
+	&& dirpyrequalizer == other.dirpyrequalizer
         && exif==other.exif
         && iptc==other.iptc;
 }

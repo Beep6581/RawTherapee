@@ -55,7 +55,8 @@
 #include <lensgeomlistener.h>
 #include <equalizer.h>
 #include <dirpyrequalizer.h>
-
+#include <rawprocess.h>
+#include <preprocess.h>
 
 class ImageEditorCoordinator;
 
@@ -88,12 +89,14 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
-		ImpulseDenoise* impulsedenoise;
-		DirPyrDenoise* dirpyrdenoise;
+	ImpulseDenoise* impulsedenoise;
+	DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
-		DirPyrEqualizer * dirpyrequalizer;
+	DirPyrEqualizer * dirpyrequalizer;
+        RawProcess* rawprocess;
+        PreProcess* preprocess;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -104,6 +107,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::VBox* detailsPanel;
         Gtk::VBox* colorPanel;
         Gtk::VBox* transformPanel;
+        Gtk::VBox* rawPanel;
         Gtk::Notebook* metadataPanel;
         ExifPanel* exifpanel;
         IPTCPanel* iptcpanel;

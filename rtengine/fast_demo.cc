@@ -37,22 +37,7 @@ void RawImageSource::fast_demo() {
 	}
 	float progress = 0.0;
 	
-	//allocate output arrays
 
-	red = new unsigned short*[H];
-	for (int i=0; i<H; i++) {
-		red[i] = new unsigned short[W];
-	}
-	green = new unsigned short* [H];
-	for (int i=0; i<H; i++) {
-		green[i] = new unsigned short[W];
-	}	
-	blue = new unsigned short*[H];
-	for (int i=0; i<H; i++) {
-		blue[i] = new unsigned short[W];
-	}
-
-   	
 #define bord 4
 		
 	int clip_pt = 4*65535*ri->defgain;
@@ -68,23 +53,23 @@ void RawImageSource::fast_demo() {
 				for (int j1=j-1; j1<j+2; j1++) {
 					if ((i1 > -1) && (i1 < H) && (j1 > -1)) {
 						int c = FC(i1,j1);
-						sum[c] += ri->data[i1][j1];
+						sum[c] += rawData[i1][j1];
 						sum[c+3]++;
 					}
 				}
 			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
-				green[i][j]=ri->data[i][j];
+				green[i][j]=rawData[i][j];
 				blue[i][j]=sum[2]/sum[5];
 			} else {
 				green[i][j]=sum[1]/sum[4];
 				if (c==0) {
-					red[i][j]=ri->data[i][j];
+					red[i][j]=rawData[i][j];
 					blue[i][j]=sum[2]/sum[5];
 				} else {
 					red[i][j]=sum[0]/sum[3];
-					blue[i][j]=ri->data[i][j];
+					blue[i][j]=rawData[i][j];
 				}
 			}
 		}//j
@@ -96,23 +81,23 @@ void RawImageSource::fast_demo() {
 				for (int j1=j-1; j1<j+2; j1++) {
 					if ((i1 > -1) && (i1 < H ) && (j1 < W)) {
 						int c = FC(i1,j1);
-						sum[c] += ri->data[i1][j1];
+						sum[c] += rawData[i1][j1];
 						sum[c+3]++;
 					}
 				}
 			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
-				green[i][j]=ri->data[i][j];
+				green[i][j]=rawData[i][j];
 				blue[i][j]=sum[2]/sum[5];
 			} else {
 				green[i][j]=sum[1]/sum[4];
 				if (c==0) {
-					red[i][j]=ri->data[i][j];
+					red[i][j]=rawData[i][j];
 					blue[i][j]=sum[2]/sum[5];
 				} else {
 					red[i][j]=sum[0]/sum[3];
-					blue[i][j]=ri->data[i][j];
+					blue[i][j]=rawData[i][j];
 				}
 			}
 		}//j
@@ -128,23 +113,23 @@ void RawImageSource::fast_demo() {
 				for (int j1=j-1; j1<j+2; j1++) {
 					if ((j1 > -1) && (j1 < W) && (i1 > -1)) {
 						int c = FC(i1,j1);
-						sum[c] += ri->data[i1][j1];
+						sum[c] += rawData[i1][j1];
 						sum[c+3]++;
 					}
 				}
 			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
-				green[i][j]=ri->data[i][j];
+				green[i][j]=rawData[i][j];
 				blue[i][j]=sum[2]/sum[5];
 			} else {
 				green[i][j]=sum[1]/sum[4];
 				if (c==0) {
-					red[i][j]=ri->data[i][j];
+					red[i][j]=rawData[i][j];
 					blue[i][j]=sum[2]/sum[5];
 				} else {
 					red[i][j]=sum[0]/sum[3];
-					blue[i][j]=ri->data[i][j];
+					blue[i][j]=rawData[i][j];
 				}
 			}
 		}//i
@@ -156,23 +141,23 @@ void RawImageSource::fast_demo() {
 				for (int j1=j-1; j1<j+2; j1++) {
 					if  ((j1 > -1) && (j1 < W) && (i1 < H)) {
 						int c = FC(i1,j1);
-						sum[c] += ri->data[i1][j1];
+						sum[c] += rawData[i1][j1];
 						sum[c+3]++;
 					}
 				}
 			int c=FC(i,j);
 			if (c==1) {
 				red[i][j]=sum[0]/sum[3];
-				green[i][j]=ri->data[i][j];
+				green[i][j]=rawData[i][j];
 				blue[i][j]=sum[2]/sum[5];
 			} else {
 				green[i][j]=sum[1]/sum[4];
 				if (c==0) {
-					red[i][j]=ri->data[i][j];
+					red[i][j]=rawData[i][j];
 					blue[i][j]=sum[2]/sum[5];
 				} else {
 					red[i][j]=sum[0]/sum[3];
-					blue[i][j]=ri->data[i][j];
+					blue[i][j]=rawData[i][j];
 				}
 			}
 		}//i
@@ -197,19 +182,19 @@ void RawImageSource::fast_demo() {
 			for (int j=bord; j < W-bord; j++) {
 				
 				if (FC(i,j)==1) {
-					green[i][j] = ri->data[i][j];
+					green[i][j] = rawData[i][j];
 					//red[i][j] = green[i][j];
 					//blue[i][j] = green[i][j];
 					
 				} else {
 					//compute directional weights using image gradients
-					wtu=dirwt[(abs(ri->data[i+1][j]-ri->data[i-1][j])+abs(ri->data[i][j]-ri->data[i-2][j])+abs(ri->data[i-1][j]-ri->data[i-3][j])) >>4];
-					wtd=dirwt[(abs(ri->data[i-1][j]-ri->data[i+1][j])+abs(ri->data[i][j]-ri->data[i+2][j])+abs(ri->data[i+1][j]-ri->data[i+3][j])) >>4];
-					wtl=dirwt[(abs(ri->data[i][j+1]-ri->data[i][j-1])+abs(ri->data[i][j]-ri->data[i][j-2])+abs(ri->data[i][j-1]-ri->data[i][j-3])) >>4];
-					wtr=dirwt[(abs(ri->data[i][j-1]-ri->data[i][j+1])+abs(ri->data[i][j]-ri->data[i][j+2])+abs(ri->data[i][j+1]-ri->data[i][j+3])) >>4];
+					wtu=dirwt[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>4];
+					wtd=dirwt[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>4];
+					wtl=dirwt[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>4];
+					wtr=dirwt[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>4];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
-					green[i][j]=(int)((wtu*ri->data[i-1][j]+wtd*ri->data[i+1][j]+wtl*ri->data[i][j-1]+wtr*ri->data[i][j+1])/(wtu+wtd+wtl+wtr));
+					green[i][j]=(int)((wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1])/(wtu+wtd+wtl+wtr));
 					//red[i][j] = green[i][j];
 					//blue[i][j] = green[i][j];
 					
@@ -229,13 +214,13 @@ void RawImageSource::fast_demo() {
 				//interpolate B/R colors at R/B sites
 				
 				if (c==0) {//R site
-					red[i][j] = ri->data[i][j];
+					red[i][j] = rawData[i][j];
 					blue[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
-																 MIN(clip_pt,ri->data[i-1][j-1]+ri->data[i-1][j+1]+ri->data[i+1][j+1]+ri->data[i+1][j-1]))));
+																 MIN(clip_pt,rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]))));
 				} else {//B site
 					red[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
-															   MIN(clip_pt,ri->data[i-1][j-1]+ri->data[i-1][j+1]+ri->data[i+1][j+1]+ri->data[i+1][j-1]))));
-					blue[i][j] = ri->data[i][j];
+															   MIN(clip_pt,rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]))));
+					blue[i][j] = rawData[i][j];
 				}
 			}
 			//progress+=(double)0.33/(H);

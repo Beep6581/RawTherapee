@@ -246,6 +246,21 @@ public:
 	bool mult[8];
 };
 
+class RAWParamsEdited {
+
+    public:
+        bool ccSteps;
+        bool dmethod;
+        bool dcbIterations;
+        bool dcbEnhance;
+        bool caCorrection;
+        bool greenEq;
+        bool hotDeadPixel;
+        bool linenoise;
+        bool darkFrame;
+        bool dfAuto;
+};
+
 class ExifPairEdited {
 
     public:
@@ -289,7 +304,8 @@ class ParamsEdited {
         ResizeParamsEdited            resize;         
         ColorManagementParamsEdited   icm;            
         EqualizerParamsEdited         equalizer;
-		DirPyrEqualizerParamsEdited   dirpyrequalizer;
+        RAWParamsEdited               raw;
+	DirPyrEqualizerParamsEdited   dirpyrequalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

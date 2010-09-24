@@ -19,11 +19,6 @@
 #ifndef __PROCEVENT__
 #define __PROCEVENT__
 
-#include <rtengine.h>
-
-#define NUMOFEVENTS 94
-
-
 namespace rtengine {
 
 enum ProcEvent {
@@ -113,14 +108,17 @@ enum ProcEvent {
     EvPerspCorr=83,
     EvEqualizer=84,
     EvEqlEnabled=85,
-    EvIDNEnabled=86,
-	EvIDNThresh=87,
-    EvDPDNEnabled=88,
-    EvDPDNLuma=89,
-    EvDPDNChroma=90,
-	EvDPDNGamma=91,
-	EvDirPyrEqualizer=92,
-    EvDirPyrEqlEnabled=93
+    EvDemosaic=86,
+    EvPreProcess=87,
+    EvIDNEnabled=88,
+    EvIDNThresh=89,
+    EvDPDNEnabled=90,
+    EvDPDNLuma=91,
+    EvDPDNChroma=92,
+    EvDPDNGamma=93,
+    EvDirPyrEqualizer=94,
+    EvDirPyrEqlEnabled=95,
+    NUMOFEVENTS=96
 	};
 }    
 #endif    

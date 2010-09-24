@@ -21,6 +21,7 @@
 
 #include <imagesource.h>
 #include <lcms.h>
+
 #define HR_SCALE 2
 
 namespace rtengine {
@@ -53,6 +54,9 @@ class RawImageSource : public ImageSource {
         int W, H;
         ColorTemp wb;
         ProgressListener* plistener;
+        double camwb_red;
+        double camwb_green;
+        double camwb_blue;
         double coeff[3][3];
         double icoeff[3][3];
         double cam[3][3];
@@ -71,13 +75,15 @@ class RawImageSource : public ImageSource {
 		cmsHPROFILE camProfile;
 		cmsHPROFILE embProfile;
 
-        RawImage* ri;
+        RawImage* ri; // Copy of raw pixels
         
         // to accelerate CIELAB conversion:
         double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
         double* cache;
         int threshold;
-       
+
+        unsigned short** rawData;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
+
         // the interpolated green plane:
         unsigned short** green; 
         // the interpolated red plane:
@@ -98,14 +104,18 @@ class RawImageSource : public ImageSource {
         void updateHLRecoveryMap (std::string method, double rm, double gm, double bm);
         void updateHLRecoveryMap_ColorPropagation ();
         void HLRecovery_ColorPropagation (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
-        void interpolate_image(Image16* image,  HRecParams hrp, double rm, double gm, double bm, int skip, int tran, int fw, int imwidth, int imheight, int sx, int sy, int start, int end);
-
+        int  FC(int row, int col){ return (ri->prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3); }
     public:
         RawImageSource ();
         ~RawImageSource ();
     
         int         load        (Glib::ustring fname);
-        void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp);
+        void        preprocess  (const RAWParams &raw);
+        void        demosaic    (const RAWParams &raw);
+        void        copyOriginalPixels( RawImage *ri, RawImage *riDark );
+        void        scaleColors( bool use_auto_wb=true, bool use_camera_wb=false, int highlight=1 );
+        void        preInterpolate(bool force4colors=false);
+        void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
@@ -137,42 +147,42 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb     (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i);
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
-		int	LinEqSolve			(int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
+		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
 		void CA_correct_RT		();					//Emil's pre-demosaic CA correction
-	
-		void cfa_clean (float thresh);				//Emil's hot/dead pixel filter
+		int  cfaCleanFromMap( BYTE* bitmapBads );
+		int  findHotDeadPixel( BYTE *bpMap, float thresh);
 		void ddct8x8s(int isgn, float **a);
 
 		void cfa_linedn (float linenoiselevel);		//Emil's line denoise
 
 		void green_equilibrate	(float greenthresh);//Emil's green equilibration
 
-	
-        void    eahd_demosaic   ();
-        void    hphd_demosaic   ();
-        void    vng4_demosaic   ();
-        void    ppg_demosaic();
-		void	amaze_demosaic_RT	();	//Emil's code for AMaZE
-		void	fast_demo	();			//Emil's fast demosaic
-        void    dcb_demosaic(int iterations, int dcb_enhance);
-        void    ahd_demosaic();
+	void nodemosaic();
+        void eahd_demosaic();
+        void hphd_demosaic();
+        void vng4_demosaic();
+        void ppg_demosaic();
+		void amaze_demosaic_RT();//Emil's code for AMaZE
+		void fast_demo();//Emil's code for fast demosaicing
+        void dcb_demosaic(int iterations, int dcb_enhance);
+        void ahd_demosaic();
         void    bilinear_demosaic();
         void    bilinear_interpolate_block(ushort (*image)[4], int start, int end);
 	void	border_interpolate(int border, ushort (*image)[4], int start = 0, int end = 0);
-	void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
-	void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
-	void fill_border( ushort (*cache )[4], int border, int x0, int y0);
-	void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
-	void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
-	void dcb_color(ushort (*image)[4], int x0, int y0);
-	void dcb_hid2(ushort (*image)[4], int x0, int y0);
-	void dcb_map(ushort (*image)[4], int x0, int y0);
-	void dcb_correction(ushort (*image)[4], int x0, int y0);
-	void dcb_pp(ushort (*image)[4], int x0, int y0);
-	void dcb_correction2(ushort (*image)[4], int x0, int y0);
-	void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
-	void dcb_refinement(ushort (*image)[4], int x0, int y0);
-	void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
+		void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
+		void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
+		void fill_border( ushort (*cache )[4], int border, int x0, int y0);
+		void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
+		void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
+		void dcb_color(ushort (*image)[4], int x0, int y0);
+		void dcb_hid2(ushort (*image)[4], int x0, int y0);
+		void dcb_map(ushort (*image)[4], int x0, int y0);
+		void dcb_correction(ushort (*image)[4], int x0, int y0);
+		void dcb_pp(ushort (*image)[4], int x0, int y0);
+		void dcb_correction2(ushort (*image)[4], int x0, int y0);
+		void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
+		void dcb_refinement(ushort (*image)[4], int x0, int y0);
+		void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
         void    transLine   (unsigned short* red, unsigned short* green, unsigned short* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
         void    hflip       (Image16* im);
