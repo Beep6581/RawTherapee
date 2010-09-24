@@ -107,6 +107,14 @@ TRANSFORM,  //    EvPerspCorr
 EQUALIZER,  // EvEqualizer
 EQUALIZER,   // EvEqlEnabled
 DEMOSAIC, // EvDemosaic
-DARKFRAME //EvPreProcess
+DARKFRAME, //EvPreProcess
+IMPULSEDENOISE,    // EvIDNEnabled,
+IMPULSEDENOISE,    // EvIDNThresh,
+DIRPYRDENOISE,    //  EvDPDNEnabled,
+DIRPYRDENOISE,    //  EvDPDNLuma,
+DIRPYRDENOISE,    //  EvDPDNChroma,
+DIRPYRDENOISE,    //  EvDPDNGamma,
+DIRPYREQUALIZER,  // EvDirPyrEqualizer
+DIRPYREQUALIZER   // EvDirPyrEqlEnabled
 };
 

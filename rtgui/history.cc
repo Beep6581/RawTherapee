@@ -25,7 +25,7 @@ using namespace rtengine::procparams;
 Glib::ustring eventDescrArray[NUMOFEVENTS];
 extern Glib::ustring argv0;
 
-History::History (bool bookmarkSupport) : tpc (NULL), bmnum (1), blistener(NULL) {
+History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1) {
 
     // fill history event message array
     for (int i=0; i<NUMOFEVENTS; i++) 

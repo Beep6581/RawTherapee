@@ -20,7 +20,7 @@
 #include <guiutils.h>
 #include <imagearea.h>
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), isMoving(false),cCropMoving(NULL),cNormal(NULL) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL),cCropMoving(NULL),cNormal(NULL), isMoving(false) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
@@ -39,11 +39,7 @@ void PreviewWindow::on_realize () {
 	Gtk::DrawingArea::on_realize ();
 	add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
 	cCropMoving = new Gdk::Cursor (Gdk::FLEUR);
-#ifdef _WIN32
-	cNormal = new Gdk::Cursor (Gdk::LAST_CURSOR);
-#else
 	cNormal = new Gdk::Cursor (Gdk::ARROW);
-#endif
 }
 
 void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h) {
@@ -175,7 +171,7 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event) {
         get_window()->set_cursor (*cCropMoving);
 	else
         get_window()->set_cursor (*cNormal);
-
+	return true;
 }
 
 bool PreviewWindow::on_button_press_event (GdkEventButton* event) {
@@ -201,6 +197,7 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event) {
     	}
         get_window()->set_cursor (*cCropMoving);
 	}
+	return true;
 }
 
 bool PreviewWindow::on_button_release_event (GdkEventButton* event) {
@@ -213,4 +210,5 @@ bool PreviewWindow::on_button_release_event (GdkEventButton* event) {
 		get_window()->set_cursor (*cNormal);
 		mainCropWin->remoteMoveReady ();
 	}
+	return true;
 }

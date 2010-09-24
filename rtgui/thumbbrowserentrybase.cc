@@ -22,10 +22,10 @@
 #include <mytime.h>
 
 ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) 
-    : filename(fname), selected(false), drawable(false),framed(false), processing(false), 
-        italicstyle(false), preview(NULL), exifline(""), datetimeline(""),
-        buttonSet(NULL), updatepriority(false), redrawRequests(0),
-        parent(NULL), exp_width(0), exp_height(0) {
+    : preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),
+      parent(NULL), filename(fname), exifline(""), datetimeline(""), selected(false),
+      drawable(false),framed(false), processing(false), italicstyle(false),
+      updatepriority(false) {
 
     shortname = Glib::path_get_basename (fname);
     dispname = shortname;

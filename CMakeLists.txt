@@ -124,6 +124,10 @@ if (OPTION_OMP)
 	endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
+if (UNIX)
+    install (PROGRAMS rtstart DESTINATION ${BINDIR})
+endif (UNIX)
+
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)
 add_subdirectory (rtgui)

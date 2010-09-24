@@ -177,7 +177,7 @@ void ColorBoost::adjusterChanged (Adjuster* a, double newval) {
 
 void ColorBoost::setAdjusterBehavior (bool bcbadd) {
 
-    if (!cbAdd && bcbadd || cbAdd && !bcbadd)
+    if ((!cbAdd && bcbadd) || (cbAdd && !bcbadd))
         colorboost->setLimits (-100, 100, 1, 0);
     
     cbAdd = bcbadd;

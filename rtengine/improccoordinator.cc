@@ -28,11 +28,10 @@ namespace rtengine {
 extern Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : ipf(&params, true), allocated(false), scale(-1), pW(-1), pH(-1),
-    plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),
-    resultValid(false), awbComputed(false),
-    changeSinceLast(0), updaterRunning(false), 
-    destroying(false) {
+    : awbComputed(false), ipf(&params, true), scale(-1), allocated(false),
+    pW(-1), pH(-1), plistener(NULL), imageListener(NULL),
+    aeListener(NULL), hListener(NULL), resultValid(false),
+    changeSinceLast(0), updaterRunning(false), destroying(false) {
 }
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -162,10 +161,15 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     if (todo & M_LUMACURVE)
         CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
 
-    if (todo & M_LUMINANCE) {
+/*	
+	if (todo & M_LUMINANCE) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
         ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
         readyphase++;
+		if (scale==1) {
+            progress ("Denoising luminance impulse...",100*readyphase/numofphases);
+            ipf.impulsedenoise (nprevl);
+        }
         if (scale==1) {
             progress ("Denoising luminance...",100*readyphase/numofphases);
             ipf.lumadenoise (nprevl, buffer);
@@ -181,8 +185,8 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         }
         readyphase++;
     }
-
-
+	
+	
     if (todo & M_COLOR) {
         progress ("Applying Color Boost...",100*readyphase/numofphases);
         ipf.colorCurve (oprevl, nprevl);
@@ -191,11 +195,63 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
             progress ("Denoising color...",100*readyphase/numofphases);
             ipf.colordenoise (nprevl, buffer);
         }
+		if (scale==1) {
+            progress ("Denoising luma/chroma...",100*readyphase/numofphases);
+            ipf.dirpyrdenoise (nprevl);
+        }
         if (scale==1) {
             progress ("Wavelet...",100*readyphase/numofphases);
             ipf.waveletEqualizer (nprevl, false, true);
         }
         readyphase++;
+    }
+*/	
+	
+	
+	
+    if (todo & (M_LUMINANCE+M_COLOR) ) {
+        progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+        ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
+        readyphase++;
+		progress ("Applying Color Boost...",100*readyphase/numofphases);
+        ipf.colorCurve (oprevl, nprevl);
+        readyphase++;
+		if (scale==1) {
+            progress ("Denoising luminance impulse...",100*readyphase/numofphases);
+            ipf.impulsedenoise (nprevl);
+        }
+        if (scale==1) {
+            progress ("Denoising luminance...",100*readyphase/numofphases);
+            ipf.lumadenoise (nprevl, buffer);
+        }
+        readyphase++;
+		if (scale==1) {
+            progress ("Denoising color...",100*readyphase/numofphases);
+            ipf.colordenoise (nprevl, buffer);
+        }
+		if (scale==1) {
+            progress ("Denoising luma/chroma...",100*readyphase/numofphases);
+            ipf.dirpyrdenoise (nprevl);
+        }
+		if (scale==1) {
+            progress ("Sharpening...",100*readyphase/numofphases);
+            ipf.sharpening (nprevl, (unsigned short**)buffer);
+        }
+        readyphase++;
+		//if (scale==1) {
+        //    progress ("Denoising luminance impulse...",100*readyphase/numofphases);
+        //    ipf.impulsedenoise (nprevl);
+        //}
+		if (scale==1) {
+            progress ("Pyramid equalizer...",100*readyphase/numofphases);
+            ipf.dirpyrequalizer (nprevl);
+        }
+		if (scale==1) {
+            progress ("Wavelet...",100*readyphase/numofphases);
+            ipf.waveletEqualizer (nprevl, true, true);
+        }
+		
+
     }
 
     // process crop, if needed

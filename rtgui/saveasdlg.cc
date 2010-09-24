@@ -22,6 +22,8 @@
 extern Options options;
 SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
+	set_title(M("GENERAL_SAVE"));
+
     Gtk::VBox* vbox = get_vbox ();
 
     fchooser = new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE);
@@ -41,6 +43,16 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     Gtk::HSeparator* hsep1 = new Gtk::HSeparator ();
     vbox->pack_start (*hsep1, Gtk::PACK_SHRINK, 2);
 
+// Unique filename option
+// ~~~~~~~~~~~~~~~~~~~~~~
+    autoSuffix = new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX"));
+    autoSuffix->set_active(options.autoSuffix);
+
+    vbox->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
+
+    Gtk::HSeparator* hsep2 = new Gtk::HSeparator ();
+    vbox->pack_start (*hsep2, Gtk::PACK_SHRINK, 2);
+
 // Output Options
 // ~~~~~~~~~~~~~~
     formatOpts = new SaveFormatPanel ();
@@ -49,8 +61,8 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     vbox->pack_start (*formatOpts, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HSeparator* hsep2 = new Gtk::HSeparator ();
-    vbox->pack_start (*hsep2, Gtk::PACK_SHRINK, 2);
+    Gtk::HSeparator* hsep3 = new Gtk::HSeparator ();
+    vbox->pack_start (*hsep3, Gtk::PACK_SHRINK, 2);
 
 // queue/immediate
 // ~~~~~~~~~~~~~
@@ -81,6 +93,11 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     set_border_width (4);
     show_all_children ();
+}
+
+bool SaveAsDialog::getAutoSuffix () {
+
+    return autoSuffix->get_active();
 }
 
 bool SaveAsDialog::getImmediately () {

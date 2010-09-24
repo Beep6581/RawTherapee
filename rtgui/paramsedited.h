@@ -105,6 +105,23 @@ class ColorDenoiseParamsEdited {
         bool amount;
 };
 
+class ImpulseDenoiseParamsEdited {
+	
+public:
+	bool enabled;
+	bool thresh;
+
+};
+
+class DirPyrDenoiseParamsEdited {
+	
+public:
+	bool enabled;
+	bool luma;
+	bool chroma;
+	bool gamma;
+};
+
 class SHParamsEdited {
 
     public:
@@ -222,6 +239,13 @@ class EqualizerParamsEdited {
         bool c[8];
 };
 
+class DirPyrEqualizerParamsEdited {
+	
+public:
+	bool enabled;
+	bool mult[8];
+};
+
 class RAWParamsEdited {
 
     public:
@@ -261,7 +285,11 @@ class ParamsEdited {
         WBParamsEdited                wb;             
         ColorShiftParamsEdited        colorShift;     
         LumaDenoiseParamsEdited       lumaDenoise;    
-        ColorDenoiseParamsEdited      colorDenoise;   
+        ColorDenoiseParamsEdited      colorDenoise; 
+	
+	DirPyrDenoiseParamsEdited       dirpyrDenoise;    
+	ImpulseDenoiseParamsEdited       impulseDenoise;    
+
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           
         CoarseTransformParamsEdited   coarse;         
@@ -277,6 +305,7 @@ class ParamsEdited {
         ColorManagementParamsEdited   icm;            
         EqualizerParamsEdited         equalizer;
         RAWParamsEdited               raw;
+	DirPyrEqualizerParamsEdited   dirpyrequalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

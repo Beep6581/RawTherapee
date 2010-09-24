@@ -1,46 +1,38 @@
-﻿#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Deutsch: Deutschland
-# (keenonkites; Aktualisierte Version für 2.3 beta2)
-# (phberlin; basiert auf keenonkites' Erstübersetzung)
-# 08.01.2008/15.01.2008/20.02.2008
-# 19.12.2008: keenonkites, Anpassungen für 2.4beta4
-# 20.12.2007
-# 20.9.2008: keenonkites, Anpassungen für 2.4m2
-# 22.12.2007
-# 4.4.2008: Anpassungen für 2.4
-# Leichte Anpassungen (keenonkites/klonk)
-ADJUSTER_RESET_TO_DEFAULT;Zurück zum Standard
+
+#00 Deutsch
+#01 (keenonkites; Aktualisierte Version für 2.3 beta2)
+#02 (phberlin; basiert auf keenonkites' Erstübersetzung)
+#03 08.01.2008/15.01.2008/20.02.2008
+#04 19.12.2008: keenonkites, Anpassungen für 2.4beta4
+#05 20.12.2007
+#06 20.9.2008: keenonkites, Anpassungen für 2.4m2
+#07 22.12.2007
+#08 4.4.2008: Anpassungen für 2.4
+#09 Leichte Anpassungen (keenonkites/klonk)
+BATCHQUEUE_AUTOSTART;Automatisch starten
+BATCH_PROCESSING;Batch-Verarbeitung
+CURVEEDITOR_CUSTOM;Angepasst
+CURVEEDITOR_DARKS;Tiefen
 CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvendateien
+CURVEEDITOR_HIGHLIGHTS;Spitzlichter
+CURVEEDITOR_LIGHTS;Lichter
 CURVEEDITOR_LINEAR;Linear
 CURVEEDITOR_LOADDLGLABEL;Kurve Laden...
+CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Kurve Speichern...
+CURVEEDITOR_SHADOWS;Schatten
 CURVEEDITOR_TOOLTIPLINEAR;Zurücksetzen der Kurve (linear)
 CURVEEDITOR_TOOLTIPLOAD;Laden einer Kurve
 CURVEEDITOR_TOOLTIPSAVE;Speichern der aktuellen Kurve
+CURVEEDITOR_TYPE;Typ:
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;Exif Filter
 EXIFFILTER_FOCALLEN;Brennweite
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
+EXIFFILTER_METADATAFILTER;Metadaten Filter einschalten
 EXIFFILTER_SHUTTER;Verschlusszeit
 EXIFPANEL_ADDEDIT;Neu/Ändern
 EXIFPANEL_ADDEDITHINT;Hinzufügen eines neuen oder Ändern eines bestehenden Attributs
@@ -56,10 +48,12 @@ EXIFPANEL_RESETALL;Alle zurücksetzen
 EXIFPANEL_RESETALLHINT;Alle Attribute zu den ursrpünglichen Werten zurücksetzen
 EXIFPANEL_RESETHINT;Gewählte Attribute zu den ursprünglich Werten zurücksetzen
 EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
+FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/löschen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_ARRANGEMENTHINT;Wechseln zwischen vertikaler und horizontaler Ausrichtung der Voransichten
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COPYPROFILE;Profil kopieren
+FILEBROWSER_CURRENT_NAME;Aktueller Name:
 FILEBROWSER_DELETEDLGLABEL;Bestätige Löschen von Dateien
 FILEBROWSER_DELETEDLGMSG;Wollen sie wirklich %1 Dateien löschen?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
@@ -69,6 +63,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Ein-/Ausschalten des Exif Filters im Datei-Brows
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGS;Einstellungen
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändern der Einstellungen des Exif Filters
+FILEBROWSER_NEW_NAME;Neuer Name:
 FILEBROWSER_PARTIALPASTEPROFILE;Profil selektiv einfügen
 FILEBROWSER_PASTEPROFILE;Profil einfügen
 FILEBROWSER_POPUPCANCELJOB;Job abbrechen
@@ -92,6 +87,7 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Einstellen von Ausgabeformat und Ausgabeverze
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" nach:
 FILEBROWSER_SHOWDIRHINT;Alle Bilder im Verzeichnis zeigen
+FILEBROWSER_SHOWEXIFINFO;EXIF Info anzeigen
 FILEBROWSER_SHOWQUEUEHINT;Inhalt der Warteschlange zeigen
 FILEBROWSER_SHOWRANK1HINT;Bilder 1 Stern zeigen
 FILEBROWSER_SHOWRANK2HINT;Bilder 2 Stern zeigen
@@ -105,14 +101,19 @@ FILEBROWSER_STARTPROCESSINGHINT;Verarbeitung/Speichern der Bilder in der Wartesc
 FILEBROWSER_STOPPROCESSING;Verarbeitung stoppen
 FILEBROWSER_STOPPROCESSINGHINT;Verarbeitung der Bilder stoppen
 FILEBROWSER_THUMBSIZE;Grösse d. Vorschau
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Bei neuem Job die Verarbeitung automatisch starten
+FILEBROWSER_USETEMPLATE;Vorlage verwenden:
 FILEBROWSER_ZOOMINHINT;Vergrössern der Vorschau
 FILEBROWSER_ZOOMOUTHINT;Verkleinern der Vorschau
 GENERAL_ABOUT;Über
+GENERAL_AFTER;Nachher
+GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbruch
 GENERAL_DISABLE;ausschalten
 GENERAL_DISABLED;ausgeschaltet
 GENERAL_ENABLE;einschalten
 GENERAL_ENABLED;eingeschaltet
+GENERAL_HIGH_QUALITY;Hohe Qualität
 GENERAL_LANDSCAPE;Quer
 GENERAL_LOAD;Laden
 GENERAL_NA;n/a
@@ -120,7 +121,12 @@ GENERAL_NO;Nein
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Hoch
 GENERAL_SAVE;Speichern
+GENERAL_UNCHANGED;(Unverändert)
 GENERAL_YES;Ja
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;G
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Zeigen/Verstecke BLAU-Histogramm
 HISTOGRAM_TOOLTIP_G;Zeigen/Verstecke GRÜN-Histogramm
@@ -276,12 +282,14 @@ IPTCPANEL_TITLEHINT;Kurztitel des Bildes (Object Name).
 IPTCPANEL_TRANSREFERENCE;Übertragungs Referenz
 IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung definiert (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Verlassen
-MAIN_BUTTON_EXIT;Verlassen
+MAIN_BUTTON_FULLSCREEN;Vollbild
 MAIN_BUTTON_PREFERENCES;Einstellungen
+MAIN_BUTTON_PUTTOQUEUE;Auf die Warteschlange
 MAIN_BUTTON_QUEUE;Auf die Warteschlange
 MAIN_BUTTON_SAVE;Bild speichern
 MAIN_BUTTON_SAVEAS;unter...
 MAIN_BUTTON_SENDTOEDITOR;Im Editor laden
+MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
 MAIN_FRAME_BATCHQUEUE;Warteschlange 
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
 MAIN_FRAME_PLACES;Orte
@@ -293,9 +301,12 @@ MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
 MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
 MAIN_MSG_CANNOTSTARTEDITOR;Der Editor kann nicht gestartet werden.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Setzen Sie bitte den richtigen Pfad in den Einstellungen.
+MAIN_MSG_ERRORDURINGIMAGESAVING;Fehler beim Speichern des Bildes
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unverarbeitete Bilder in der Warteschlange gehen beim Verlassen der Anwendung verloren.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schliessen ? Es hat noch unverarbeitete Bilder in der Warteschlange.
 MAIN_MSG_JOBSINQUEUE;Job in Bearbeitung
+MAIN_MSG_NAVIGATOR;Navigator
+MAIN_MSG_PLACES;Orte
 MAIN_MSG_QOVERWRITE;Wollen sie die Datei überschreiben ?
 MAIN_TAB_BASIC;Basis
 MAIN_TAB_COLOR;Farbe
@@ -309,6 +320,7 @@ MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Verändern
+MAIN_TOGGLE_BEFORE_AFTER;V|N
 MAIN_TOOLTIP_HIDEFP;Zeigen/Verstecken von Verzeichnis- und Datei-Browser (Taste F)
 MAIN_TOOLTIP_HIDEHP;Zeigen/Verstecken linke Seite (Abfolge der Änderungen, Taste H)
 MAIN_TOOLTIP_INDCLIPPEDH;zu helle Bereiche blinken
@@ -317,6 +329,20 @@ MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Kurze Info über das Bild
 MAIN_TOOLTIP_SAVE;Speichere Bild im Standard-Verzeichnis
 MAIN_TOOLTIP_SAVEAS;Speichere Bild in anderem Verzeichnis
+MAIN_TOOLTIP_TOGGLE;Vorher/Nachher Ansicht unschalten
+NAVIGATOR_B_NA;B = n/a
+NAVIGATOR_B_VALUE;B = %1
+NAVIGATOR_G_NA;G = n/a
+NAVIGATOR_G_VALUE;G = %1
+NAVIGATOR_H_NA;H = n/a
+NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_R_NA;R = n/a
+NAVIGATOR_R_VALUE;R = %1
+NAVIGATOR_S_NA;S = n/a
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = n/a
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Gruppe Basiseinstellungen
 PARTIALPASTE_CACORRECTION;Farbsaum-Entfernung
 PARTIALPASTE_COARSETRANS;90 Grad Rotieren / Spiegeln
@@ -345,7 +371,10 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENING;Schärfen
 PARTIALPASTE_VIGNETTING;Korrektur Randlichtabfall
 PARTIALPASTE_WHITEBALANCE;Weissabgleich
+PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
+PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
+PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/zu dunkle Bereiche blinken
 PREFERENCES_CACHECLEARALL;Alles Löschen
 PREFERENCES_CACHECLEARPROFILES;Löschen der Profile
@@ -402,6 +431,7 @@ PREFERENCES_OUTDIRFOLDERHINT;Ablegen der gespeicherten Bilder in ein ausgewählt
 PREFERENCES_OUTDIRHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Verwenden einer Vorlage
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
 PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Datei-Typen
 PREFERENCES_PARSEDEXTADD;Datei-Typ hinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Gebe einen Datei-Typ (Extension) ein und drücke diesen Knopf um diesen Typ hinzuzufügen
@@ -412,11 +442,13 @@ PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher (Cache)
 PREFERENCES_PROFILEPRFILE;Bearbeitungsprofile bei der urpsrünglich geladenen Datei
 PREFERENCES_PROFILESAVECACHE;Speichern der Verarbeitungsparameter im Zwischenspeicher (Cache)
 PREFERENCES_PROFILESAVEINPUT;Speichern der Verarbeitungsparameter zusammen mit der ursprünglich geladenen Datei
+PREFERENCES_PROPERTY;Eigenschaft
 PREFERENCES_PSPATH;Adobe Photoshop Installations Verzeichnis
 PREFERENCES_SELECTICCDIRDLG;Wähle ICC-Profile-Verzeichnis...
 PREFERENCES_SELECTLANG;Sprache
 PREFERENCES_SELECTMONITORPROFDLG;Wähle ICC-Profil für den Monitor...
 PREFERENCES_SELECTTHEME;Wähle Oberflächendesign
+PREFERENCES_SET;SETZEN
 PREFERENCES_SHOWBASICEXIF;Zeige grundlegende Exif-Informationen
 PREFERENCES_SHOWDATETIME;Zeige Datum und Zeit
 PREFERENCES_SHOWONLYRAW;Zeige nur Rohdateien (RAW)
@@ -455,6 +487,7 @@ PROGRESSBAR_SAVEPNG;Speichern der PNG Datei...
 PROGRESSBAR_SAVETIFF;Speichern der TIFF Datei...
 PROGRESSDLG_LOADING;Laden der Datei...
 PROGRESSDLG_PROCESSING;Berechnen des Bildes...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde im Browser geändert
 PROGRESSDLG_SAVING;Speichern der Datei...
 QINFO_FOCALLENGTH;Brennweite
 QINFO_ISO;ISO
@@ -521,6 +554,7 @@ TP_CROP_SELECTCROP; Wähle Ausschnitt
 TP_CROP_W;W
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DETAIL_AMOUNT;Menge
 TP_DISTORTION_AMOUNT;Menge
 TP_DISTORTION_LABEL;Entzerrung
 TP_EXPOSURE_AUTOLEVELS;autom.
@@ -566,13 +600,18 @@ TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (Schärfer)
 TP_RESIZE_BILINEAR;Bilinear
+TP_RESIZE_DOWNSCALEB;Verkleinern (besser)
+TP_RESIZE_DOWNSCALEF;Verkleinern (schneller)
 TP_RESIZE_FULLSIZE;Volle Bildgröße:
 TP_RESIZE_H;H:
+TP_RESIZE_HEIGHT;Höhe
 TP_RESIZE_LABEL;Größe ändern
 TP_RESIZE_METHOD;Methode: 
 TP_RESIZE_NEAREST;Nächste
 TP_RESIZE_SCALE;Maßstab
+TP_RESIZE_SPECIFY;Angeben:
 TP_RESIZE_W;W:
+TP_RESIZE_WIDTH;Breite
 TP_ROTATE_AUTOCROP;Auto Ausschnitt
 TP_ROTATE_DEGREE;Grad
 TP_ROTATE_FILL;Füllen
@@ -619,79 +658,55 @@ ZOOMBAR_NORMAL;normal
 ZOOMBAR_PREVIEW;Voransicht
 ZOOMBAR_SCALE;Vergrößerung
 ZOOMBAR_SMALL;klein
-
-GENERAL_HIGH_QUALITY;Hohe Qualität
-GENERAL_UNCHANGED;(Unverändert)
-MAIN_MSG_PLACES;Orte
-GENERAL_BEFORE;Vorher
-GENERAL_AFTER;Nachher
-MAIN_TOOLTIP_TOGGLE;Vorher/Nachher Ansicht unschalten
-MAIN_BUTTON_PUTTOQUEUE;Auf die Warteschlange
-MAIN_MSG_NAVIGATOR;Navigator
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Bei neuem Job die Verarbeitung automatisch starten
-BATCHQUEUE_AUTOSTART;Automatisch starten
-TP_DETAIL_AMOUNT;Menge
-TP_RESIZE_SPECIFY;Angeben:
-TP_RESIZE_SCALE;Maßstab
-TP_RESIZE_WIDTH;Breite
-TP_RESIZE_HEIGHT;Höhe
-MAIN_TOGGLE_BEFORE_AFTER;V|N
-
-
-###
-
-###
-
-EXIFFILTER_METADATAFILTER;Metadaten Filter einschalten
-CURVEEDITOR_PARAMETRIC;Parametrisch
-CURVEEDITOR_CUSTOM;Angepasst
-CURVEEDITOR_TYPE;Typ:
-CURVEEDITOR_HIGHLIGHTS;Spitzlichter
-CURVEEDITOR_LIGHTS;Lichter
-CURVEEDITOR_DARKS;Tiefen
-CURVEEDITOR_SHADOWS;Schatten
-BATCH_PROCESSING;Batch-Verarbeitung
-PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
-PREFERENCES_BEHAVIOR;Verhalten
-PREFERENCES_PROPERTY;Eigenschaft
-PREFERENCES_ADD;HINZU
-PREFERENCES_SET;SETZEN
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde im Browser geändert
-MAIN_MSG_ERRORDURINGIMAGESAVING;Fehler beim Speichern des Bildes
-FILEBROWSER_CURRENT_NAME;Aktueller Name:
-FILEBROWSER_NEW_NAME;Neuer Name:
-FILEBROWSER_USETEMPLATE;Vorlage verwenden:
-FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/löschen...
-ZOOMPANEL_ZOOMIN;Hinein zoomen 
-ZOOMPANEL_ZOOMOUT;Heraus zoomen
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;(Neues) Detailfenster öffnen
 ZOOMPANEL_ZOOM100;Zoom 100%
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen
-ZOOMPANEL_NEWCROPWINDOW;(Neues) Detailfenster öffnen
-ZOOMPANEL_100;(100%)
+ZOOMPANEL_ZOOMIN;Hinein zoomen 
+ZOOMPANEL_ZOOMOUT;Heraus zoomen
+﻿ADJUSTER_RESET_TO_DEFAULT;Zurück zum Standard
 
-###
 
-MAIN_BUTTON_FULLSCREEN;Vollbild
-MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
-PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
 
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
-FILEBROWSER_SHOWEXIFINFO;EXIF Info anzeigen
-TP_RESIZE_DOWNSCALEB;Verkleinern (besser)
-TP_RESIZE_DOWNSCALEF;Verkleinern (schneller)
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_L;L
+
+!ADJUSTER_RESET_TO_DEFAULT;Reset to default
+!CURVEEDITOR_NURBS;Control cage
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_89;Directional pyramid
+!HISTORY_MSG_90;Directional pyramid luminance
+!HISTORY_MSG_91;Directional pyramid chominance
+!HISTORY_MSG_92;Directional pyramid gamma
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!PREFERENCES_CACORRECTION;Apply CA auto correction
+!PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PREFERENCES_LINEDENOISE;Line noise filter
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+!TP_EQUALIZER_FINEST;finest
+!TP_EQUALIZER_LABEL;Wavelet equalizer
+!TP_EQUALIZER_LARGEST;coarsest
+!TP_EQUALIZER_NEUTRAL;Neutral
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_FILL;Auto Fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical

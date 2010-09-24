@@ -85,7 +85,7 @@ void CACorrection::adjusterChanged (Adjuster* a, double newval) {
 
 void CACorrection::setAdjusterBehavior (bool badd) {
 
-    if (!vAdd && badd || vAdd && !badd) {
+    if ((!vAdd && badd) || (vAdd && !badd)) {
         red->setLimits (-0.005, 0.005, 0.0001, 0);
         blue->setLimits (-0.005, 0.005, 0.0001, 0);
     }

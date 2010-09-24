@@ -33,8 +33,8 @@
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
-    : cachemgr(cm), cfs(*cf), pparamsValid(false), fname(fname), 
-        lastImg(NULL), ref(1), enqueueNumber(0), tpp(NULL), needsReProcessing(true) {
+    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
+      pparamsValid(false), needsReProcessing(true), lastImg(NULL) {
 
     mutex = new Glib::Mutex ();
     cfs.load (getCacheFileName ("data")+".txt");
@@ -44,8 +44,8 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : cachemgr(cm), pparamsValid(false), lastImg(NULL), fname(fname),
-        ref(1), enqueueNumber(0), tpp(NULL), needsReProcessing(true) {
+    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
+      needsReProcessing(true), lastImg(NULL) {
 
     mutex = new Glib::Mutex ();
 
@@ -149,11 +149,11 @@ void Thumbnail::loadProcParams () {
         int ppres = pparams.load (fname + paramFileExtension);
         pparamsValid = !ppres && pparams.version>=220;
         if (!pparamsValid) 
-                pparamsValid = !pparams.load (getCacheFileName (options.profilePath)+paramFileExtension);
+                pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
     }
     else {
         // try to load it from cache
-        pparamsValid = !pparams.load (getCacheFileName (options.profilePath)+paramFileExtension);
+        pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
         // if no success, load it from params file next to the image file
         if (!pparamsValid) {
             int ppres = pparams.load (fname + paramFileExtension);
@@ -168,7 +168,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     pparamsValid = false;
     needsReProcessing = true;
     // remove param file from cache
-    Glib::ustring fname_ = getCacheFileName (options.profilePath)+paramFileExtension;
+    Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
     if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
         ::g_remove (fname_.c_str());
     // remove param file located next to the file
@@ -213,7 +213,7 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-    pparams.save (getCacheFileName (options.profilePath)+paramFileExtension);
+    pparams.save (getCacheFileName ("profiles")+paramFileExtension);
 }
 
 void Thumbnail::imageEnqueued () {
@@ -410,7 +410,7 @@ void Thumbnail::updateCache () {
 
     if (pparamsValid) {
         if (options.saveParamsCache)
-            pparams.save (getCacheFileName (options.profilePath)+paramFileExtension);
+            pparams.save (getCacheFileName ("profiles")+paramFileExtension);
         if (options.saveParamsFile)
 //            pparams.save (removeExtension(fname) + paramFileExtension);
             pparams.save (fname + paramFileExtension);

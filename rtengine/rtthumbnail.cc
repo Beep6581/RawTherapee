@@ -150,7 +150,7 @@ unsigned short Thumbnail::igammatab[256];
 unsigned char Thumbnail::gammatab[65536];
 
 Thumbnail::Thumbnail () :
-    embProfile(NULL), camProfile(NULL), aeHistogram(NULL), thumbImg(NULL), embProfileData(NULL) {
+    camProfile(NULL), thumbImg(NULL), aeHistogram(NULL), embProfileData(NULL), embProfile(NULL) {
 
     if (!igammacomputed) {
         for (int i=0; i<256; i++)
@@ -751,6 +751,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         }
         return true;
     }
+    return false;
 }
 
 bool Thumbnail::readData  (const Glib::ustring& fname) {

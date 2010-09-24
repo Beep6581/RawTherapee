@@ -44,7 +44,7 @@ int _directoryUpdater (void* cat) {
 }
 #endif
 
-FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), coarsePanel(cp), filterPanel(NULL), toolBar(tb) {
+FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
 
     previewLoader.setPreviewLoaderListener (this);
     
@@ -57,7 +57,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     // construct trash panel with the extra "empty trash" button
     trashButtonBox = new Gtk::VBox;
     Gtk::Button* emptyT = new Gtk::Button (M("FILEBROWSER_EMPTYTRASH"));
-    emptyT->set_tooltip_text (M("FILEBROWSER_EMPTYTRASHHINT"));
+    emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
     emptyT->set_image (*(new Gtk::Image (Gtk::StockID("gtk-delete"), Gtk::ICON_SIZE_BUTTON)));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));    
     trashButtonBox->pack_start (*emptyT, Gtk::PACK_SHRINK, 4);
@@ -73,7 +73,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bDir->set_active (true);
     bDir->set_image (*(new Gtk::Image (argv0+"/images/folder.png")));
     bDir->set_relief (Gtk::RELIEF_NONE);
-    bDir->set_tooltip_text (M("FILEBROWSER_SHOWDIRHINT"));
+    bDir->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bDir->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     bCateg[0] = bDir->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bDir));    
     buttonBar->pack_start (*bDir, Gtk::PACK_SHRINK);
@@ -83,7 +83,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bUnRanked->set_active (false);
     bUnRanked->set_image (*(new Gtk::Image (argv0+"/images/unrated.png")));
     bUnRanked->set_relief (Gtk::RELIEF_NONE);
-    bUnRanked->set_tooltip_text (M("FILEBROWSER_SHOWUNRANKHINT"));
+    bUnRanked->set_tooltip_markup (M("FILEBROWSER_SHOWUNRANKHINT"));
     bCateg[1] = bUnRanked->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnRanked));    
     buttonBar->pack_start (*bUnRanked, Gtk::PACK_SHRINK);
     bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
@@ -100,11 +100,11 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
         bCateg[i+2] = bRank[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bRank[i]));    
         bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }  
-    bRank[0]->set_tooltip_text (M("FILEBROWSER_SHOWRANK1HINT"));
-    bRank[1]->set_tooltip_text (M("FILEBROWSER_SHOWRANK2HINT"));
-    bRank[2]->set_tooltip_text (M("FILEBROWSER_SHOWRANK3HINT"));
-    bRank[3]->set_tooltip_text (M("FILEBROWSER_SHOWRANK4HINT"));
-    bRank[4]->set_tooltip_text (M("FILEBROWSER_SHOWRANK5HINT"));
+    bRank[0]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK1HINT"));
+    bRank[1]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK2HINT"));
+    bRank[2]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK3HINT"));
+    bRank[3]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK4HINT"));
+    bRank[4]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK5HINT"));
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     iTrashEmpty = new Gtk::Image(argv0+"/images/trash-show-empty.png");
@@ -113,7 +113,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     bTrash = new Gtk::ToggleButton ();
     bTrash->set_image (*iTrashEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
-    bTrash->set_tooltip_text (M("FILEBROWSER_SHOWTRASHHINT"));
+    bTrash->set_tooltip_markup (M("FILEBROWSER_SHOWTRASHHINT"));
     bCateg[7] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash));    
     bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
@@ -129,7 +129,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     exifInfo = Gtk::manage(new Gtk::ToggleButton ());
     exifInfo->set_image (*(new Gtk::Image (argv0+"/images/info.png")));
     exifInfo->set_relief (Gtk::RELIEF_NONE);
-    exifInfo->set_tooltip_text (M("FILEBROWSER_SHOWEXIFINFO"));
+    exifInfo->set_tooltip_markup (M("FILEBROWSER_SHOWEXIFINFO"));
     exifInfo->set_active( options.showFileNames );
     exifInfo->signal_toggled().connect(sigc::mem_fun(*this, &FileCatalog::exifInfoButtonToggled));
     buttonBar->pack_start (*exifInfo, Gtk::PACK_SHRINK);
@@ -140,13 +140,13 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     zoomInButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));    
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
-    zoomInButton->set_tooltip_text (M("FILEBROWSER_ZOOMINHINT"));
+    zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = new Gtk::Button ();
     zoomOutButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));    
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
-    zoomOutButton->set_tooltip_text (M("FILEBROWSER_ZOOMOUTHINT"));
+    zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
     zoomBox->pack_end (*zoomOutButton, Gtk::PACK_SHRINK);   
 
     // add default panel 
@@ -260,9 +260,9 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 		selectedDirectory = dir->get_parse_name();
         fileNameList = getFileList ();
 
-        for (int i=0; i<fileNameList.size(); i++) {
+        for (unsigned int i=0; i<fileNameList.size(); i++) {
             Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
-            if (f->get_parse_name() != openfile) // if we opened a file at the beginning dont add it again
+            if (f->get_parse_name() != openfile) // if we opened a file at the beginning don't add it again
                 checkAndAddFile (f);
         }
 
@@ -326,10 +326,10 @@ void FileCatalog::previewReady (FileBrowserEntry* fdn) {
             dirEFS.shutterFrom = cfs->shutter;
         if (cfs->shutter > dirEFS.shutterTo)
             dirEFS.shutterTo = cfs->shutter;
-        if (cfs->iso>0 && cfs->iso < dirEFS.isoFrom)
-            dirEFS.isoFrom = cfs->iso;
-        if (cfs->iso>0 && cfs->iso > dirEFS.isoTo)
-            dirEFS.isoTo = cfs->iso;
+        if (cfs->iso>0 && (int)cfs->iso < dirEFS.isoFrom)
+            dirEFS.isoFrom = (int)cfs->iso;
+        if (cfs->iso>0 && (int)cfs->iso > dirEFS.isoTo)
+            dirEFS.isoTo = (int)cfs->iso;
         if (cfs->focalLen < dirEFS.focalFrom)
             dirEFS.focalFrom = cfs->focalLen;
         if (cfs->focalLen > dirEFS.focalTo)
@@ -423,7 +423,7 @@ void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
     if (enabled && listener!=NULL) {
         previewLoader.stop ();
         thumbImageUpdater.stop ();
-        for (int i=0; i<tmb.size(); i++) {
+        for (size_t i=0; i<tmb.size(); i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end())
                 listener->fileSelected (tmb[i]);
             tmb[i]->decreaseRef ();
@@ -453,7 +453,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
     FCOIParams* params = new FCOIParams;
     params->catalog = this;
     params->tmb = tmb;
-    for (int i=0; i<tmb.size(); i++)
+    for (size_t i=0; i<tmb.size(); i++)
         tmb[i]->increaseRef ();
     g_idle_add (fcopenimg, params);
 }
@@ -467,7 +467,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
     msd.set_secondary_text(Glib::ustring::compose (M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
 
     if (msd.run()==Gtk::RESPONSE_YES) {
-        for (int i=0; i<tbe.size(); i++) {
+        for (unsigned int i=0; i<tbe.size(); i++) {
             Glib::ustring fname = tbe[i]->filename;
             // remove from browser
             FileBrowserEntry* t = fileBrowser->delEntry (fname);
@@ -492,7 +492,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
         thumbImageUpdater.stop ();
-        for (int i=0; i<tbe.size(); i++) {
+        for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
             double tmpscale;
@@ -519,7 +519,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
     RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
-    for (int i=0; i<tbe.size(); i++) {
+    for (size_t i=0; i<tbe.size(); i++) {
         renameDlg->initName (Glib::path_get_basename (tbe[i]->filename), tbe[i]->thumbnail->getCacheImageData());
 
         Glib::ustring ofname = tbe[i]->filename;
@@ -683,7 +683,7 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 		for (int i=0; i<5; i++) {
 			bool active_now, active_before;
 			active_now = bRank[i]->get_active();
-			active_before = buttons & (1 << i+2);
+			active_before = buttons & (1 << (i+2));
 			if      ( active_now && !active_before) bRank[i]->set_image (*iranked[i]);
 			else if (!active_now &&  active_before) bRank[i]->set_image (*igranked[i]);
 		}
@@ -743,16 +743,16 @@ int FileCatalog::reparseDirectory () {
 	// check if a thumbnailed file has been deleted
 	const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries ();
 	std::vector<Glib::ustring> fileNamesToDel;
-	for (int i=0; i<t.size(); i++) 
+	for (size_t i=0; i<t.size(); i++)
 		if (!Glib::file_test (t[i]->filename, Glib::FILE_TEST_EXISTS))
 			fileNamesToDel.push_back (t[i]->filename);
-	for (int i=0; i<fileNamesToDel.size(); i++) {
+	for (size_t i=0; i<fileNamesToDel.size(); i++) {
 		delete fileBrowser->delEntry (fileNamesToDel[i]);
 		cacheMgr.deleteEntry (fileNamesToDel[i]);
 	}
 
 	// check if a new file has been added
-	for (int i=0; i<nfileNameList.size(); i++) {
+	for (size_t i=0; i<nfileNameList.size(); i++) {
 		bool found = false;
 		for (int j=0; j<fileNameList.size(); j++)
 			if (nfileNameList[i]==fileNameList[j]) {
@@ -799,7 +799,7 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
-        if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+        if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
 						previewLoader.add (DirEntry (file->get_parse_name()));
             previewsToLoad++;
 				}
@@ -817,7 +817,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     if( !info )
     	return;
     int lastdot = info->get_name().find_last_of ('.');
-    if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+    if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
         Thumbnail* tmb = cacheMgr.getEntry (file->get_parse_name());
         if (tmb) {
@@ -837,7 +837,7 @@ void FileCatalog::emptyTrash () {
     
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     std::vector<FileBrowserEntry*> toDel;
-    for (int i=0; i<t.size(); i++)
+    for (size_t i=0; i<t.size(); i++)
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             toDel.push_back (((FileBrowserEntry*)t[i]));
     deleteRequested (toDel);
@@ -846,7 +846,7 @@ void FileCatalog::emptyTrash () {
 
 bool FileCatalog::trashIsEmpty () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
-    for (int i=0; i<t.size(); i++)
+    for (size_t i=0; i<t.size(); i++)
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             return false;
 
@@ -908,3 +908,64 @@ void FileCatalog::trashChanged () {
         bTrash->set_image(*iTrashFull);
     }
 }
+
+bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
+
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    
+    modifierKey = event->state;
+    
+    switch(event->keyval) {
+        case GDK_1:
+            categoryButtonToggled(bRank[0]);
+            return true;
+        case GDK_2:
+            categoryButtonToggled(bRank[1]);
+            return true;
+        case GDK_3:
+            categoryButtonToggled(bRank[2]);
+            return true;
+        case GDK_4:
+            categoryButtonToggled(bRank[3]);
+            return true;
+        case GDK_5:
+            categoryButtonToggled(bRank[4]);
+            return true;
+        case GDK_grave:
+            categoryButtonToggled(bUnRanked);
+            return true;
+        case GDK_d:
+        case GDK_D:
+            categoryButtonToggled(bDir);
+            return true;
+        case GDK_t:
+        case GDK_T:
+            categoryButtonToggled(bTrash);
+            return true;
+    }
+
+    if (!ctrl) {
+        switch(event->keyval) {
+            case GDK_i:
+            case GDK_I:
+                exifInfo->set_active (!exifInfo->get_active());
+                return true;
+            case GDK_plus:
+            case GDK_equal:
+                zoomIn();
+                return true;
+            case GDK_minus:
+            case GDK_underscore:
+                zoomOut();
+                return true;
+        }
+    }
+    else {
+        switch (event->keyval) {
+        }
+    }
+
+    return false;
+}
+

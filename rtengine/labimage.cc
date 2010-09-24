@@ -1,7 +1,7 @@
 #include <labimage.h>
 namespace rtengine {
 
-LabImage::LabImage (int w, int h) : W(w), H(h), fromImage(false) {
+LabImage::LabImage (int w, int h) : fromImage(false), W(w), H(h) {
 
     L = new unsigned short*[H];
     for (int i=0; i<H; i++)

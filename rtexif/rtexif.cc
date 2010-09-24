@@ -37,7 +37,7 @@ StdInterpreter stdInterpreter;
 #define TAG_SUBFILETYPE 0x00fe
 
 TagDirectory::TagDirectory () 
-  : attribs(ifdAttribs), parent(NULL), order(INTEL) {}
+  : attribs(ifdAttribs), order(INTEL), parent(NULL) {}
 
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border) 
     : attribs(ta), order(border), parent(p) {}
@@ -334,12 +334,12 @@ void TagDirectory::applyChange (std::string name, std::string value) {
 }
 
 TagDirectoryTable::TagDirectoryTable ()
-:valuesSize(0),zeroOffset(0)
+:zeroOffset(0),valuesSize(0)
 {
 }
 
 TagDirectoryTable::TagDirectoryTable (TagDirectory* p, unsigned char *v,int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border)
-:TagDirectory(p,ta,border),valuesSize(memsize),zeroOffset(offs),defaultType( type )
+:TagDirectory(p,ta,border),zeroOffset(offs),valuesSize(memsize),defaultType( type )
 {
 	  values = new unsigned char[valuesSize];
 	  memcpy(values,v,valuesSize);
@@ -350,7 +350,7 @@ TagDirectoryTable::TagDirectoryTable (TagDirectory* p, unsigned char *v,int mems
 }
 
 TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border)
-:TagDirectory(p,ta,border),valuesSize(memsize),zeroOffset(offs),defaultType( type )
+:TagDirectory(p,ta,border),zeroOffset(offs),valuesSize(memsize),defaultType( type )
 {
 	  values = new unsigned char[valuesSize];
 	  fread (values, 1, valuesSize, f);
@@ -389,7 +389,7 @@ int TagDirectoryTable::write (int start, unsigned char* buffer) {
 //-----------------------------------------------------------------------------
 
 Tag::Tag (TagDirectory* p, FILE* f, int base) 
-  : parent(p), value(NULL), directory(NULL), count(0), attrib(NULL), type(INVALID),allocOwnMemory(true) {
+  : type(INVALID), count(0), value(NULL), allocOwnMemory(true), attrib(NULL), parent(p), directory(NULL) {
 
   tag   = get2 (f, getOrder());
   type  = (TagType)get2 (f, getOrder());
@@ -722,7 +722,9 @@ int Tag::toInt (int ofs, TagType astype) {
     case RATIONAL: a = (int)sget4 (value+ofs+4, getOrder()); return a==0 ? 0 : (int)sget4 (value+ofs, getOrder()) / a;
     case FLOAT:     return (int)((float) sget4 (value+ofs, getOrder()));
     case UNDEFINED: return 0;
+    default: return 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
+  return 0;
 }
 
 double Tag::toDouble (int ofs) {
@@ -736,10 +738,12 @@ double Tag::toDouble (int ofs) {
     case SLONG:  
     case LONG:  return (double)((int)sget4 (value+ofs, getOrder()));
     case SRATIONAL: 
-    case RATIONAL: ud = (int)sget4 (value+ofs, getOrder()); dd = (int)sget4 (value+ofs+4, getOrder()); return dd==0 ? 0 : (double)ud / (double)dd;
+    case RATIONAL: ud = (int)sget4 (value+ofs, getOrder()); dd = (int)sget4 (value+ofs+4, getOrder()); return dd==0. ? 0. : (double)ud / (double)dd;
     case FLOAT:     return (float) sget4 (value+ofs, getOrder());
-    case UNDEFINED: return 0;
+    case UNDEFINED: return 0.;
+    default: return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
+  return 0.;
 }
 
 void Tag::toRational (int& num, int& denom, int ofs) {
@@ -755,6 +759,7 @@ void Tag::toRational (int& num, int& denom, int ofs) {
     case RATIONAL: num = (int)sget4 (value+ofs, getOrder()); denom = (int)sget4 (value+ofs+4, getOrder()); break;
     case FLOAT:   num = 0; denom = 0; break;
     case UNDEFINED: num = 0; denom = 0; break;
+    default: num = 0; denom = 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
 }
 
@@ -931,23 +936,23 @@ int Tag::write (int offs, int dataOffs, unsigned char* buffer) {
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr)
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(0), valuesize(0), value(NULL), type(INVALID),allocOwnMemory(true) {
+ : tag(attr ? attr->ID : -1), type(INVALID), count(0), value(NULL), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK) {
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, int data, TagType t) 
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(t),allocOwnMemory(true) {
+ : tag(attr ? attr->ID : -1), type(t), count(1), value(NULL), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK) {
 
     initInt (data, t);
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, unsigned char *data, TagType t)
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(t),allocOwnMemory(false) {
+ : tag(attr ? attr->ID : -1), type(t), count(1), value(NULL), valuesize(0), keep(true), allocOwnMemory(false), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK) {
 
     initType (data, t);
 }
 
 Tag::Tag (TagDirectory* p, const TagAttrib* attr, const char* text) 
- : parent(p), attrib(attr), makerNoteKind (NOMK), directory(NULL), keep(true), tag(attr ? attr->ID : -1), count(1), valuesize(0), value(NULL), type(ASCII),allocOwnMemory(true) {
+ : tag(attr ? attr->ID : -1), type(ASCII), count(1), value(NULL), valuesize(0), keep(true), allocOwnMemory(true), attrib(attr), parent(p), directory(NULL), makerNoteKind (NOMK) {
 
     initString (text);
 }
@@ -1035,7 +1040,7 @@ void Tag::initRational (int num, int den) {
 }
 
 //--------------- class IFDParser ---------------------------------------------
-// static functions to read tag directoryes from different kinds of files
+// static functions to read tag directories from different kinds of files
 //-----------------------------------------------------------------------------
 
 
@@ -1044,6 +1049,7 @@ const TagAttrib* lookupAttrib (const TagAttrib* dir, const char* field) {
     for (int i=0; dir[i].ignore!=-1; i++)
         if (!strcmp (dir[i].name, field))
             return &dir[i];
+    return 0;
 }
 
 

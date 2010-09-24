@@ -76,6 +76,8 @@ Curve::~Curve () {
     delete [] x;
     delete [] y;
     delete [] ypp;
+    poly_x.clear();
+    poly_y.clear();
 }
 
 void Curve::spline_cubic_set () {
@@ -104,85 +106,88 @@ void Curve::spline_cubic_set () {
 
 void Curve::NURBS_set () {
 
-    std::vector<double> sc_x;		// X sub-curve points (  XP0,XP1,XP2,  XP2,XP3,XP4,  ...)
-    std::vector<double> sc_y;		// Y sub-curve points (  YP0,YP1,YP2,  YP2,YP3,YP4,  ...)
-    std::vector<double> sc_length;	// Length of the subcurves
-    double total_length=0;
+	int nbSubCurvesPoints = N + (N-3)*2;
+
+    std::vector<double> sc_x(nbSubCurvesPoints);  // X sub-curve points (  XP0,XP1,XP2,  XP2,XP3,XP4,  ...)
+    std::vector<double> sc_y(nbSubCurvesPoints);  // Y sub-curve points (  YP0,YP1,YP2,  YP2,YP3,YP4,  ...)
+    std::vector<double> sc_length(N-2);           // Length of the subcurves
+    double total_length=0.;
 
     // Create the list of Bezier sub-curves
     // NURBS_set is called if N > 2 only
 
+    int j = 0;
+    int k = 0;
     for (int i = 0; i < N-1;) {
         double length;
 
     	// first point (on the curve)
-    	double sc_x2, sc_y2;
     	if (!i) {
-    		sc_x2 = x[i];
-    		sc_y2 = y[i];
-    		i++;
+    		sc_x[j] = x[i];
+    		sc_y[j++] = y[i++];
     	}
     	else {
-    		sc_x2 = (x[i-1] + x[i]) / 2.;
-    		sc_y2 = (y[i-1] + y[i]) / 2.;
+    		sc_x[j] = (x[i-1] + x[i]) / 2.;
+    		sc_y[j++] = (y[i-1] + y[i]) / 2.;
     	}
-		sc_x.push_back(sc_x2);
-		sc_y.push_back(sc_y2);
 
 		// second point (control point)
-		sc_x.push_back(x[i]);
-		sc_y.push_back(y[i]);
-		length = sqrt(pow(x[i] - sc_x2,2) + pow(y[i] - sc_y2,2));
-		i++;
+		sc_x[j] = x[i];
+		sc_y[j] = y[i++];
+		length = sqrt(pow(sc_x[j] - sc_x[j-1],2) + pow(sc_y[j] - sc_y[j-1],2));
+		j++;
 
     	// third point (on the curve)
 		if (i==N-1) {
-			sc_x2 = x[i];
-			sc_y2 = y[i];
-			i++;
+			sc_x[j] = x[i];
+			sc_y[j] = y[i];
 		}
 		else {
-			sc_x2 =  (x[i-1] + x[i]) / 2.;
-			sc_y2 =  (y[i-1] + y[i]) / 2.;
+			sc_x[j] =  (x[i-1] + x[i]) / 2.;
+			sc_y[j] =  (y[i-1] + y[i]) / 2.;
 		}
-		sc_x.push_back(sc_x2);
-		sc_y.push_back(sc_y2);
-		length += sqrt(pow(x[i] - sc_x2,2) + pow(y[i] - sc_y2,2));
+		length += sqrt(pow(sc_x[j] - sc_x[j-1],2) + pow(sc_y[j] - sc_y[j-1],2));
+		j++;
 
 		// Storing the length of all sub-curves and the total length (to have a better distribution
 		// of the points along the curve)
-	    sc_length.push_back(length);
+	    sc_length[k++] = length;
 	    total_length += length;
     }
-    sc_x.begin();
-    sc_y.begin();
-    sc_length.begin();
 
+    unsigned int total_points = 0;
+    for (unsigned int i=0; i < sc_x.size(); i+=3) {
+    	total_points += (int)(((double)ppn+N-2) * sc_length[i/3] / total_length) + (i==0 ? 1 : 0) - 1;
+    }
+   	poly_x.resize(total_points);
+   	poly_y.resize(total_points);
+
+    j = 0;
     // create the polyline with the number of points adapted to the X range of the sub-curve
-    for (int i=0; i < sc_x.size(); i+=3) {
+    for (unsigned int i=0; i < sc_x.size(); i+=3) {
     	// TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
-    	int nbr_points = (int)(((double)ppn+N-2) * sc_length[i/3] / total_length) + (i==0 ? 1 : 0);
+    	int nbr_points = (int)(((double)ppn+N-2) * sc_length[i/3] / total_length);
 
     	// increment along the curve, not along the X axis
     	double increment = 1.0 / (double)(nbr_points-1);
     	if (!i) {
-    		poly_x.push_back(sc_x[i]);
-    		poly_y.push_back(sc_y[i]);
+    		poly_x[j  ] = sc_x[i];
+    		poly_y[j++] = sc_y[i];
     	}
-    	for (int j=1; j<nbr_points-1; j++) {
-    		double t = j*increment;
+    	for (k=1; k<(nbr_points-1); k++) {
+    		double t = k*increment;
     		double t2 = t*t;
     		double tr = 1.-t;
     		double tr2 = tr*tr;
     		double tr2t = tr*2*t;
 
     		// adding a point to the polyline
-    		poly_x.push_back( tr2*sc_x[i] + tr2t*sc_x[i+1] + t2*sc_x[i+2] );
-    		poly_y.push_back( tr2*sc_y[i] + tr2t*sc_y[i+1] + t2*sc_y[i+2] );
+    		poly_x[j  ] = tr2*sc_x[i] + tr2t*sc_x[i+1] + t2*sc_x[i+2];
+    		poly_y[j++] = tr2*sc_y[i] + tr2t*sc_y[i+1] + t2*sc_y[i+2];
     	}
     	// adding the last point of the sub-curve
-		poly_x.push_back(sc_x[i+2]);
-		poly_y.push_back(sc_y[i+2]);
+		poly_x[j  ] = sc_x[i+2];
+		poly_y[j++] = sc_y[i+2];
     }
 }
 
@@ -287,7 +292,7 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 // TODO!!!! can be made much faster!!! Binary search of getVal(double) at each point can be avoided
 
     res.resize (t.size());
-    for (int i=0; i<t.size(); i++)
+    for (unsigned int i=0; i<t.size(); i++)
         res[i] = getVal(t[i]);
 }
 
@@ -359,7 +364,7 @@ void CurveFactory::updateCurve3 (int* curve, int* ohistogram, const std::vector<
         dcurve[i] = val;
     }
     delete tcurve;
-/*            
+/ *
 if (igamma) {
   FILE* f = fopen ("curve.txt","wt");
   for (int i=0; i<65536; i++)
@@ -369,8 +374,7 @@ if (igamma) {
 //    fprintf (f, "%g\t%g\n", i/65535.0, dcurve[i]);
   fclose (f);
 }
-*/
-/*
+* /
     int prev = 0;
     for (int i=1; i<=0xffff-skip; i++) {
         if (i%skip==0) {

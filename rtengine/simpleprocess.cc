@@ -151,7 +151,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, hist16, curve, NULL);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
-    ipf.lumadenoise (labView, buffer);
+  	ipf.impulsedenoise (labView);
+	ipf.lumadenoise (labView, buffer);
     ipf.sharpening (labView, (unsigned short**)buffer);
 
     delete [] curve;
@@ -160,9 +161,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // color processing
     ipf.colorCurve (labView, labView);
     ipf.colordenoise (labView, buffer);
+	ipf.dirpyrdenoise (labView);
 
     // wavelet equalizer
     ipf.waveletEqualizer (labView, true, true);
+	
+	// directional pyramid equalizer
+    ipf.dirpyrequalizer (labView);
 
     for (int i=0; i<fh; i++)
         delete [] buffer[i];

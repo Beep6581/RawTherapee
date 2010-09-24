@@ -91,7 +91,19 @@ class ImProcFunctions {
         void deconvsharpening(LabImage* lab, unsigned short** buffer);
         void waveletEqualizer(Image16 * image);
         void waveletEqualizer(LabImage * image, bool luminance, bool chromaticity);
+	
+	void impulsedenoise (LabImage* lab);//Emil's impulse denoise
+	void dirpyrdenoise (LabImage* lab);//Emil's impulse denoise
+	void dirpyrequalizer (LabImage* lab);//Emil's equalizer
 
+	void dirpyrLab_denoise(LabImage * src, LabImage * dst, int luma, int chroma, float gamma );//Emil's directional pyramid denoise
+	void dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, int * rangefn_L, int * rangefn_ab, int pitch, int scale, const int luma, int chroma );
+	void idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, float * nrwt_l, float * nrwt_ab, int pitch, int scale, const int luma, int chroma );
+		
+	void dirpyrLab_equalizer(LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer
+	void dirpyr_eq(LabImage* data_coarse, LabImage* data_fine, int * rangefn, int level, int pitch, int scale, const double * mult );
+	void idirpyr_eq(LabImage* data_coarse, LabImage* data_fine, int *** buffer, int * irangefn, int level, int pitch, int scale, const double * mult );
+	
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 

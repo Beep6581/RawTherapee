@@ -1,24 +1,7 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# 2009-02-12
-# Translated by Esben L. Kristensen
-# norwegian translation of RawTherapee
+
+#00 Norwegian
+#01 2009-02-12
+#02 Translated by Esben L. Kristensen
 ADJUSTER_RESET_TO_DEFAULT;Tilbake til standard
 CURVEEDITOR_FILEDLGFILTERANY;Hvilken som helst fil
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvefiler
@@ -35,8 +18,8 @@ EXIFFILTER_FOCALLEN;Fokallengde
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_SHUTTER;Lukker
-EXIFPANEL_ADDEDITHINT;Tilføy ny tag eller rediger tag
 EXIFPANEL_ADDEDIT;Tilføy/Rediger
+EXIFPANEL_ADDEDITHINT;Tilføy ny tag eller rediger tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Skriv verdi
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Velg tag
 EXIFPANEL_ADDTAGDLG_TITLE;Tilføy/Rediger Tag
@@ -44,10 +27,10 @@ EXIFPANEL_KEEP;Behold
 EXIFPANEL_KEEPHINT;Behold de utvalgte tags når det skrives output fil
 EXIFPANEL_REMOVE;Fjern
 EXIFPANEL_REMOVEHINT;Fjern de utvalgte tags når det skrives output fil
-EXIFPANEL_RESETALLHINT;Nullstil alle tags til de opprinnelige verdier
-EXIFPANEL_RESETALL;Nullstil alle
-EXIFPANEL_RESETHINT;Nullstil de utvalgte tags til de opprinnelige verdier
 EXIFPANEL_RESET;Nullstil
+EXIFPANEL_RESETALL;Nullstil alle
+EXIFPANEL_RESETALLHINT;Nullstil alle tags til de opprinnelige verdier
+EXIFPANEL_RESETHINT;Nullstil de utvalgte tags til de opprinnelige verdier
 EXIFPANEL_SUBDIRECTORY;Undermappe
 FILEBROWSER_APPLYPROFILE;Legg til profil
 FILEBROWSER_ARRANGEMENTHINT;Bytt mellom vertikal/horisontal oppstilling av thumbnails
@@ -55,13 +38,13 @@ FILEBROWSER_CLEARPROFILE;Slett profil
 FILEBROWSER_COPYPROFILE;Kopier profil
 FILEBROWSER_DELETEDLGLABEL;Bekreft slett fil
 FILEBROWSER_DELETEDLGMSG;Vil du slette valgte %1 filer?
-FILEBROWSER_EMPTYTRASHHINT;Tøm søpla permanent
 FILEBROWSER_EMPTYTRASH;Tøm søpla
-FILEBROWSER_EXIFFILTERAPPLYHINT;Skru på/av exif filter i filleseren
+FILEBROWSER_EMPTYTRASHHINT;Tøm søpla permanent
 FILEBROWSER_EXIFFILTERAPPLY;Legg til
+FILEBROWSER_EXIFFILTERAPPLYHINT;Skru på/av exif filter i filleseren
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Forandre opsettet i exif filteret
 FILEBROWSER_EXIFFILTERSETTINGS;Oppsett
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Forandre opsettet i exif filteret
 FILEBROWSER_PARTIALPASTEPROFILE;Delvis lim inn
 FILEBROWSER_PASTEPROFILE;Lim inn profil
 FILEBROWSER_POPUPCANCELJOB;Avbryt jobben
@@ -80,8 +63,8 @@ FILEBROWSER_POPUPSELECTALL;Velg alt
 FILEBROWSER_POPUPTRASH;Flytt til søpla
 FILEBROWSER_POPUPUNRANK;Fjern rangering
 FILEBROWSER_POPUPUNTRASH;Fjern fra søpla
-FILEBROWSER_PROCESSINGSETTINGSHINT;Sett filformat og folderbane
 FILEBROWSER_PROCESSINGSETTINGS;Innstillinger
+FILEBROWSER_PROCESSINGSETTINGSHINT;Sett filformat og folderbane
 FILEBROWSER_RENAMEDLGLABEL;Bytt filnavn
 FILEBROWSER_RENAMEDLGMSG;Bytt filnavn "%1" til:
 FILEBROWSER_SHOWDIRHINT;Vis alle bildene i folderen
@@ -93,17 +76,17 @@ FILEBROWSER_SHOWRANK4HINT;Vis bilder rangert med 4 stjerne
 FILEBROWSER_SHOWRANK5HINT;Vis bilder rangert med 5 stjerne
 FILEBROWSER_SHOWTRASHHINT;Vis innholdet i søpla
 FILEBROWSER_SHOWUNRANKHINT;Vis unrangerte bilder
-FILEBROWSER_STARTPROCESSINGHINT;Begynn prosessering/lagring av bilder i køen
 FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STOPPROCESSINGHINT;Stopp prosesseringen av bilder
+FILEBROWSER_STARTPROCESSINGHINT;Begynn prosessering/lagring av bilder i køen
 FILEBROWSER_STOPPROCESSING;Stopp prosesseringen
+FILEBROWSER_STOPPROCESSINGHINT;Stopp prosesseringen av bilder
 FILEBROWSER_THUMBSIZE;Thumbnail størrelse
 FILEBROWSER_ZOOMINHINT;Øk thumbnail størrelse
 FILEBROWSER_ZOOMOUTHINT;Reduser thumbnail størrelse
 GENERAL_ABOUT;Om
 GENERAL_CANCEL;Annuller
-GENERAL_DISABLED;Deaktivert
 GENERAL_DISABLE;Deaktiver
+GENERAL_DISABLED;Deaktivert
 GENERAL_ENABLE;Aktiver
 GENERAL_ENABLED;Aktivert
 GENERAL_LANDSCAPE;Landskap
@@ -205,8 +188,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Eksponerings-komprimering
 HISTORY_MSG_9;Høylys-komprimering
-HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt b.m
+HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSSDIALOGLABEL;Navn på bokmerket:
 HISTORY_NEWSSDIALOGTITLE;Opprett nytt bogmerke
 HISTORY_SETTO;Inntil
@@ -226,59 +209,59 @@ ICMPANEL_OUTPUTPROFILE;Utgangsprofil
 ICMPANEL_SAVEREFERENCE;Lagre referansebilde til profil
 ICMPANEL_WORKINGPROFILE;Arbeidsprofil
 IMAGEAREA_DETAILVIEW;Detaljert
-IPTCPANEL_AUTHORHINT;Navnet på oppretteren, f.eks. forfatter, fotograf eller grafiker (By-line).
 IPTCPANEL_AUTHOR;Oppretter
-IPTCPANEL_AUTHORSPOSITIONHINT;Beskrivelse av oppretterens tittel (By-line Title).
+IPTCPANEL_AUTHORHINT;Navnet på oppretteren, f.eks. forfatter, fotograf eller grafiker (By-line).
 IPTCPANEL_AUTHORSPOSITION;Oppretterens tittel
+IPTCPANEL_AUTHORSPOSITIONHINT;Beskrivelse av oppretterens tittel (By-line Title).
 IPTCPANEL_CAPTION;Billdetekst
 IPTCPANEL_CAPTIONHINT;Tekstbeskrivelse av bildets innhold (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITER;Bildetekst forfatter
 IPTCPANEL_CAPTIONWRITERHINT;Navnet på personen som har opprettet, redigert eller korrigeret bildeteksten (Writer - Editor).
-IPTCPANEL_CATEGORYHINT;Brukes til å beskrive innholdet i bildet ifølge kategorien (Category).
 IPTCPANEL_CATEGORY;Kategori
+IPTCPANEL_CATEGORYHINT;Brukes til å beskrive innholdet i bildet ifølge kategorien (Category).
 IPTCPANEL_CITY;By
 IPTCPANEL_CITYHINT;Bildets  opprinnelsesby (City).
 IPTCPANEL_COPYHINT;Kopier IPTC innstillinger til utklippstavlen
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Eventuelle copyright tilføyelser (Copyright Notice).
-IPTCPANEL_COUNTRYHINT;Navnet på landet/primære område hvor bildet er tatt (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;Land
-IPTCPANEL_CREDITHINT;Identifisere oppretteren av bildet, ikke nødvendivis den samme som eieren (Credit).
+IPTCPANEL_COUNTRYHINT;Navnet på landet/primære område hvor bildet er tatt (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Kreditering
-IPTCPANEL_DATECREATEDHINT;Datoen bildet ble tatt; Format: JJJJMMTT (Date Created).
+IPTCPANEL_CREDITHINT;Identifisere oppretteren av bildet, ikke nødvendivis den samme som eieren (Credit).
 IPTCPANEL_DATECREATED;Opptakelsesdato
-IPTCPANEL_EMBEDDEDHINT;Nullstil til de IPTC data som finnes internt i bildefilen
+IPTCPANEL_DATECREATEDHINT;Datoen bildet ble tatt; Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Intern IPTC data
-IPTCPANEL_HEADLINEHINT;En kort beskrivelse av innholdet av bildet (Headline).
+IPTCPANEL_EMBEDDEDHINT;Nullstil til de IPTC data som finnes internt i bildefilen
 IPTCPANEL_HEADLINE;Overskrift
-IPTCPANEL_INSTRUCTIONSHINT;Andre instuksjoner som omhandler bruken av bildet (Special Instructions).
+IPTCPANEL_HEADLINEHINT;En kort beskrivelse av innholdet av bildet (Headline).
 IPTCPANEL_INSTRUCTIONS;Instruksjoner
-IPTCPANEL_KEYWORDSHINT;Brukes til å beskrive spesifikke nøkkelord (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Andre instuksjoner som omhandler bruken av bildet (Special Instructions).
 IPTCPANEL_KEYWORDS;Nøkkelord
+IPTCPANEL_KEYWORDSHINT;Brukes til å beskrive spesifikke nøkkelord (Keywords).
 IPTCPANEL_PASTEHINT;Innsett IPTC innstillinger fra utklipstavlen
-IPTCPANEL_PROVINCEHINT;Billedets opprinnelsesprovins/-stat (Province-State).
 IPTCPANEL_PROVINCE;Provins
-IPTCPANEL_RESETHINT;Nullstil til standard profil
+IPTCPANEL_PROVINCEHINT;Billedets opprinnelsesprovins/-stat (Province-State).
 IPTCPANEL_RESET;Nullstil
-IPTCPANEL_SOURCEHINT;Den originale eier af bildets innhold (Source).
+IPTCPANEL_RESETHINT;Nullstil til standard profil
 IPTCPANEL_SOURCE;Kilde
-IPTCPANEL_SUPPCATEGORIESHINT;Ytterlige beskrivelser av innholdet i bildet (Supplemental Categories).
+IPTCPANEL_SOURCEHINT;Den originale eier af bildets innhold (Source).
 IPTCPANEL_SUPPCATEGORIES;Suppl. kategorier
+IPTCPANEL_SUPPCATEGORIESHINT;Ytterlige beskrivelser av innholdet i bildet (Supplemental Categories).
 IPTCPANEL_TITLE;Bildetittel
 IPTCPANEL_TITLEHINT;En kort beskrivelse av bildet (Object Name).
-IPTCPANEL_TRANSREFERENCEHINT;En kode som representerer stedet for original transmisjon (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;En kode som representerer stedet for original transmisjon (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Innstillinger
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE;Lagre bilde
+MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SENDTOEDITOR;Send til editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Filen eksisterer allerede.
 MAIN_MSG_CANNOTLOAD;Kan ikke åpne bildet
@@ -307,8 +290,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Marker høylys-indikering
 MAIN_TOOLTIP_INDCLIPPEDS;Marker skygge-indikering
 MAIN_TOOLTIP_PREFERENCES;Endre innstillinger
 MAIN_TOOLTIP_QINFO;Hurtig informasjon om bildet
-MAIN_TOOLTIP_SAVEAS;Lagre bildet i en annen mappe
 MAIN_TOOLTIP_SAVE;Lagre bildet i standardmappen
+MAIN_TOOLTIP_SAVEAS;Lagre bildet i en annen mappe
 PARTIALPASTE_BASICGROUP;Basisinnstillinger
 PARTIALPASTE_CACORRECTION;C/A korreksjon
 PARTIALPASTE_COARSETRANS;90° rotasjon/flipping
@@ -386,15 +369,15 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetri
 PREFERENCES_INTENT_SATURATION;Metning
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (tregere)
 PREFERENCES_MONITORICC;Skjermprofil
-PREFERENCES_OUTDIRFOLDERHINT;Send lagrede bilder til valgt folder
+PREFERENCES_OUTDIR;Utmappe
 PREFERENCES_OUTDIRFOLDER;Lagre til folder
+PREFERENCES_OUTDIRFOLDERHINT;Send lagrede bilder til valgt folder
 PREFERENCES_OUTDIRHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nFormateringsstrengene refererer til folderne og understier av stien til RAW-filen.\n\nF. eks., hvis </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>har vært åpnet, vil det bety at formateringsstrengen er:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHvis du vil lagre det prosesserte bildet der originalen er, skriv:\n</i><b>%p1/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i folderen 'converted' under inni originalfolderen, skriv:\n</i><b>%p1/converted/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i '/home/tom/converted' men beholde underfolderens datomerking, skriv:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Bruk mal
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nFormateringsstrengene refererer til folderne og understier av stien til RAW-filen.\n\nF. eks., hvis </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>har vært åpnet, vil det bety at formateringsstrengen er:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nvis du vil lagre det prosesserte bildet der originalen er, skriv:\n</i><b>%p1/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i folderen 'converted' under inni originalfolderen, skriv:\n</i><b>%p1/converted/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i '/home/tom/converted' men beholde underfolderens datomerking, skriv:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIR;Utmappe
-PREFERENCES_PARSEDEXTADDHINT;Skriv inn en utvidelse og trykk på kanppen for å legge til listen
-PREFERENCES_PARSEDEXTADD;Legg til utvidelse
 PREFERENCES_PARSEDEXT;Analyserte utvidelser
+PREFERENCES_PARSEDEXTADD;Legg til utvidelse
+PREFERENCES_PARSEDEXTADDHINT;Skriv inn en utvidelse og trykk på kanppen for å legge til listen
 PREFERENCES_PARSEDEXTDELHINT;Fjern valgte utvidelse fra listen
 PREFERENCES_PROFILEHANDLING;Prosesserer filbehandling
 PREFERENCES_PROFILELOADPR;Profillastingsprioritet
@@ -455,8 +438,8 @@ SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filter
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filter
-SAVEDLG_PUTTOQUEUEHEAD;Sett øverst i prosesseringskøen
 SAVEDLG_PUTTOQUEUE;Sett i prosesseringskø
+SAVEDLG_PUTTOQUEUEHEAD;Sett øverst i prosesseringskøen
 SAVEDLG_PUTTOQUEUETAIL;Sett nederst i prosesseringskøen
 SAVEDLG_SAVEIMMEDIATELY;Lagre med en gang
 SAVEDLG_SAVESPP;Lagre bildebehandlingsparametre med bildene
@@ -583,10 +566,10 @@ TP_SHARPENING_LABEL;Skarphet
 TP_SHARPENING_METHOD;Metode
 TP_SHARPENING_ONLYEDGES;Skarphet kun i kanter
 TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RLD;RL Dekonvolusjon
 TP_SHARPENING_RLD_AMOUNT;Mengde
 TP_SHARPENING_RLD_DAMPING;Demping
 TP_SHARPENING_RLD_ITERATIONS;Gjentakelse
-TP_SHARPENING_RLD;RL Dekonvolusjon
 TP_SHARPENING_THRESHOLD;Terskelverdi
 TP_SHARPENING_USM;Uskarp maske
 TP_VIGNETTING_AMOUNT;Mengde
@@ -609,81 +592,113 @@ ZOOMBAR_PREVIEW;Filgjennomsyn
 ZOOMBAR_SCALE;Skala
 ZOOMBAR_SMALL;Liten
 
-GENERAL_HIGH_QUALITY;High Quality
-GENERAL_UNCHANGED;(Unchanged)
-MAIN_MSG_PLACES;Places
-GENERAL_BEFORE;Before
-GENERAL_AFTER;After
-MAIN_TOOLTIP_TOGGLE;Toggle before/after view
-MAIN_BUTTON_PUTTOQUEUE;Put to queue
-MAIN_MSG_NAVIGATOR;Navigator
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-BATCHQUEUE_AUTOSTART;Auto start
-TP_DETAIL_AMOUNT;Amount
-TP_RESIZE_SPECIFY;Specify:
-TP_RESIZE_SCALE;Scale
-TP_RESIZE_WIDTH;Width
-TP_RESIZE_HEIGHT;Height
-MAIN_TOGGLE_BEFORE_AFTER;B|A
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-###
-
-###
-
-EXIFFILTER_METADATAFILTER;Enable Metadata Filters
-CURVEEDITOR_PARAMETRIC;Parametric
-CURVEEDITOR_CUSTOM;Custom
-CURVEEDITOR_TYPE;Type:
-CURVEEDITOR_HIGHLIGHTS;Highlights
-CURVEEDITOR_LIGHTS;Lights
-CURVEEDITOR_DARKS;Darks
-CURVEEDITOR_SHADOWS;Shadows
-BATCH_PROCESSING;batch processing
-PREFERENCES_BATCH_PROCESSING;batch processing
-PREFERENCES_BEHAVIOR;Behavior
-PREFERENCES_PROPERTY;Property
-PREFERENCES_ADD;ADD
-PREFERENCES_SET;SET
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
-FILEBROWSER_CURRENT_NAME;Current name:
-FILEBROWSER_NEW_NAME;New name:
-FILEBROWSER_USETEMPLATE;Use template:
-FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-ZOOMPANEL_ZOOMIN;Zoom In
-ZOOMPANEL_ZOOMOUT;Zoom Out
-ZOOMPANEL_ZOOM100;Zoom to 100%
-ZOOMPANEL_ZOOMFITSCREEN;Fit to screen
-ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-ZOOMPANEL_100;(100%)
-
-###
-
-MAIN_BUTTON_FULLSCREEN;Fullscreen
-MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
-
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
-FILEBROWSER_SHOWEXIFINFO;Show EXIF info
-TP_RESIZE_DOWNSCALEB;Downscale (Better)
-TP_RESIZE_DOWNSCALEF;Downscale (Faster)
-SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_L;L
-PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!BATCHQUEUE_AUTOSTART;Auto start
+!BATCH_PROCESSING;batch processing
+!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_DARKS;Darks
+!CURVEEDITOR_HIGHLIGHTS;Highlights
+!CURVEEDITOR_LIGHTS;Lights
+!CURVEEDITOR_NURBS;Control cage
+!CURVEEDITOR_PARAMETRIC;Parametric
+!CURVEEDITOR_SHADOWS;Shadows
+!CURVEEDITOR_TYPE;Type:
+!EXIFFILTER_METADATAFILTER;Enable Metadata Filters
+!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+!FILEBROWSER_CURRENT_NAME;Current name:
+!FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
+!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
+!FILEBROWSER_USETEMPLATE;Use template:
+!GENERAL_AFTER;After
+!GENERAL_BEFORE;Before
+!GENERAL_HIGH_QUALITY;High Quality
+!GENERAL_UNCHANGED;(Unchanged)
+!HISTOGRAM_BUTTON_B;B
+!HISTOGRAM_BUTTON_G;G
+!HISTOGRAM_BUTTON_L;L
+!HISTOGRAM_BUTTON_R;R
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_89;Directional pyramid
+!HISTORY_MSG_90;Directional pyramid luminance
+!HISTORY_MSG_91;Directional pyramid chominance
+!HISTORY_MSG_92;Directional pyramid gamma
+!MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_PUTTOQUEUE;Put to queue
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!MAIN_MSG_NAVIGATOR;Navigator
+!MAIN_MSG_PLACES;Places
+!MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
+!NAVIGATOR_B_NA;B = n/a
+!NAVIGATOR_B_VALUE;B = %1
+!NAVIGATOR_G_NA;G = n/a
+!NAVIGATOR_G_VALUE;G = %1
+!NAVIGATOR_H_NA;H = n/a
+!NAVIGATOR_H_VALUE;H = %1
+!NAVIGATOR_R_NA;R = n/a
+!NAVIGATOR_R_VALUE;R = %1
+!NAVIGATOR_S_NA;S = n/a
+!NAVIGATOR_S_VALUE;S = %1
+!NAVIGATOR_V_NA;V = n/a
+!NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PREFERENCES_ADD;ADD
+!PREFERENCES_BATCH_PROCESSING;batch processing
+!PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_CACORRECTION;Apply CA auto correction
+!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
+!PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PREFERENCES_LINEDENOISE;Line noise filter
+!PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_PROPERTY;Property
+!PREFERENCES_SET;SET
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!TP_DETAIL_AMOUNT;Amount
+!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+!TP_EQUALIZER_FINEST;finest
+!TP_EQUALIZER_LABEL;Wavelet equalizer
+!TP_EQUALIZER_LARGEST;coarsest
+!TP_EQUALIZER_NEUTRAL;Neutral
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_FILL;Auto Fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_RESIZE_DOWNSCALEB;Downscale (Better)
+!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_HEIGHT;Height
+!TP_RESIZE_SPECIFY;Specify:
+!TP_RESIZE_WIDTH;Width
+!ZOOMPANEL_100;(100%)
+!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
+!ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
+!ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
+!ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>

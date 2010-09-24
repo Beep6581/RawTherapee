@@ -30,16 +30,19 @@
 #define RGBCURVE       15
 #define LUMINANCECURVE 6
 #define SHARPENING     2
+#define IMPULSEDENOISE 2
 #define LUMADENOISE    2
 #define WHITEBALANCE   255
 #define DEMOSAIC       511
 #define DARKFRAME      1023
 #define COLORBOOST     1
 #define COLORDENOISE   1
+#define DIRPYRDENOISE  3
 #define CROP           16384
 #define EXIF           32768
 #define IPTC           32768
 #define EQUALIZER      3
+#define DIRPYREQUALIZER	3
 #define NONE           0
 
 #define M_PREPROC   512

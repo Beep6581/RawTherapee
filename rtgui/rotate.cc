@@ -101,7 +101,7 @@ void Rotate::setBatchMode (bool batchMode) {
 
 void Rotate::setAdjusterBehavior (bool brotadd) {
 
-    if (!degAdd && brotadd || degAdd && !brotadd)
+    if ((!degAdd && brotadd) || (degAdd && !brotadd))
         degree->setLimits (-45, 45, 0.01, 0);
     
     degAdd = brotadd;

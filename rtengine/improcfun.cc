@@ -27,6 +27,8 @@
 #include <mytime.h>
 #include <glibmm.h>
 #include <iccstore.h>
+#include <impulse_denoise.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -257,15 +259,20 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
 
     TMatrix wprof = iccStore.workingSpaceMatrix (params->icm.working);
     int toxyz[3][3] = {
-        floor(32768.0 * wprof[0][0] / 0.96422), 
-        floor(32768.0 * wprof[0][1]),
-        floor(32768.0 * wprof[0][2] / 0.82521),
-        floor(32768.0 * wprof[1][0] / 0.96422),
-        floor(32768.0 * wprof[1][1]),
-        floor(32768.0 * wprof[1][2] / 0.82521),
-        floor(32768.0 * wprof[2][0] / 0.96422),
-        floor(32768.0 * wprof[2][1]),
-        floor(32768.0 * wprof[2][2] / 0.82521)};
+        {
+        	floor(32768.0 * wprof[0][0] / 0.96422),
+        	floor(32768.0 * wprof[0][1]),
+        	floor(32768.0 * wprof[0][2] / 0.82521)
+        },{
+			floor(32768.0 * wprof[1][0] / 0.96422),
+			floor(32768.0 * wprof[1][1]),
+			floor(32768.0 * wprof[1][2] / 0.82521)
+        },{
+			floor(32768.0 * wprof[2][0] / 0.96422),
+			floor(32768.0 * wprof[2][1]),
+			floor(32768.0 * wprof[2][2] / 0.82521)
+        }
+    };
 
     bool mixchannels = params->chmixer.red[0]!=100 || params->chmixer.red[1]!=0 || params->chmixer.red[2]!=0 || params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || params->chmixer.blue[0]!=0 || params->chmixer.blue[1]!=0 || params->chmixer.blue[2]!=100;
 
@@ -383,7 +390,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
         }
     }
     
-    double shift_a = params->colorShift.a * chroma_scale, shift_b = params->colorShift.b * chroma_scale;
+	float eps = 0.001;
+    double shift_a = params->colorShift.a * chroma_scale + eps, shift_b = params->colorShift.b * chroma_scale + eps;
 
     short** oa = lold->a;
     short** ob = lold->b;
@@ -422,6 +430,28 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
     delete [] cmultiplier;
 }
+	
+	void ImProcFunctions::impulsedenoise (LabImage* lab) {
+		
+		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
+			
+			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 );
+	}
+	
+	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
+		
+		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
+			
+			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise.luma, params->dirpyrDenoise.chroma, params->dirpyrDenoise.gamma/3.0 );
+	}
+	
+	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
+		
+		if (params->dirpyrequalizer.enabled && lab->W>=8 && lab->H>=8) {
+			
+			dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
+		}
+	}
 
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
 

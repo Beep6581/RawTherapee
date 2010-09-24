@@ -20,9 +20,9 @@
 #include <thumbbrowserbase.h>
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thumbnail) 
-    : job(pjob), ThumbBrowserEntryBase(fname), 
-        opreview(previmg), origpw(prevw), origph(prevh), progress(0), thumbnail(thumbnail), 
-        outFileName("") {
+    : ThumbBrowserEntryBase(fname),
+      opreview(previmg), origpw(prevw), origph(prevh), thumbnail(thumbnail),
+      job(pjob), progress(0), outFileName("") {
 
     params = pparams;
 

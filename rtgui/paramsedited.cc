@@ -68,7 +68,13 @@ void ParamsEdited::set (bool v) {
         lumaDenoise.edgetolerance = v;
         colorDenoise.enabled      = v;
         colorDenoise.amount       = v;
-        sh.enabled       = v;
+	impulseDenoise.enabled      = v;
+	impulseDenoise.thresh      = v;
+	dirpyrDenoise.enabled      = v;
+	dirpyrDenoise.luma       = v;
+	dirpyrDenoise.chroma = v;
+	dirpyrDenoise.gamma = v;
+		sh.enabled       = v;
         sh.hq            = v;
         sh.highlights    = v;
         sh.htonalwidth   = v;
@@ -124,9 +130,12 @@ void ParamsEdited::set (bool v) {
         raw.dcbIterations = v;
         raw.dcbEnhance = v;
         equalizer.enabled = v;
+		dirpyrequalizer.enabled = v;
+
         for(int i = 0; i < 8; i++)
         {
             equalizer.c[i] = v;
+			dirpyrequalizer.mult[i] = v;
         }
         exif.clear ();
         iptc.clear ();
@@ -184,6 +193,15 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         lumaDenoise.edgetolerance = lumaDenoise.edgetolerance && p.lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance;
         colorDenoise.enabled = colorDenoise.enabled && p.colorDenoise.enabled == other.colorDenoise.enabled;
         colorDenoise.amount = colorDenoise.amount && p.colorDenoise.amount == other.colorDenoise.amount;
+		
+		impulseDenoise.enabled = impulseDenoise.enabled && p.impulseDenoise.enabled == other.impulseDenoise.enabled;
+		impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
+
+		dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
+        dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
+        dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
+		dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
+
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
         sh.hq = sh.hq && p.sh.hq == other.sh.hq;
         sh.highlights = sh.highlights && p.sh.highlights == other.sh.highlights;
@@ -250,6 +268,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         for(int i = 0; i < 8; i++) {
             equalizer.c[i] = equalizer.c[i] && p.equalizer.c[i] == other.equalizer.c[i];
         }
+		dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
+        for(int i = 0; i < 8; i++) {
+            dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
+        }		
 //        exif = exif && p.exif==other.exif
 //        iptc = other.iptc;
     }
@@ -297,6 +319,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
 	if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
 	if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
+	
+	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
+	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
+
+	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
+	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= mods.dirpyrDenoise.luma;
+	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= mods.dirpyrDenoise.chroma;
+	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= mods.dirpyrDenoise.gamma;
+
 	if (sh.enabled)		    				toEdit.sh.enabled 	    = mods.sh.enabled;
 	if (sh.hq)		        				toEdit.sh.hq     	    = mods.sh.hq;
 	if (sh.highlights)						toEdit.sh.highlights 	= options.baBehav[ADDSET_SH_HIGHLIGHTS] ? toEdit.sh.highlights + mods.sh.highlights : mods.sh.highlights;
@@ -361,6 +392,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
+	}
+	if (dirpyrequalizer.enabled)	    toEdit.dirpyrequalizer.enabled 	= mods.dirpyrequalizer.enabled;
+	for(int i = 0; i < 8; i++) {
+	    if(dirpyrequalizer.mult[i])  toEdit.dirpyrequalizer.mult[i]   = mods.dirpyrequalizer.mult[i];
 	}
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;

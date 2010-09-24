@@ -129,9 +129,9 @@ void LCurve::setBatchMode (bool batchMode) {
 
 void LCurve::setAdjusterBehavior (bool bradd, bool contradd) {
 
-    if (!brAdd && bradd || brAdd && !bradd)
+    if ((!brAdd && bradd) || (brAdd && !bradd))
         brightness->setLimits (-100, 100, 1, 0);
-    if (!contrAdd && contradd || contrAdd && !contradd)
+    if ((!contrAdd && contradd) || (contrAdd && !contradd))
         contrast->setLimits (-100, 100, 1, 0);
     
     brAdd = bradd;

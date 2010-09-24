@@ -38,6 +38,7 @@ PartialPasteDlg::PartialPasteDlg () {
 
     // options in luminance:
     sharpen     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENING")));
+	impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     lumaden     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMADENOISE")));
     lumacurve   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMACURVE")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
@@ -47,6 +48,7 @@ PartialPasteDlg::PartialPasteDlg () {
     colorshift  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORSHIFT")));
     colorboost  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORBOOST")));
     colorden    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORDENOISE")));
+    dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
 
     // options in lens:
     distortion  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DISTORTION")));
@@ -81,6 +83,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*luminance, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*hseps[1], Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
+	vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*lumaden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*lumacurve, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
@@ -91,6 +94,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[2]->pack_start (*colorshift, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colorboost, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colorden, Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
 
 
     vboxes[3]->pack_start (*lens, Gtk::PACK_SHRINK, 2);
@@ -142,6 +146,7 @@ PartialPasteDlg::PartialPasteDlg () {
     hlrecConn       = hlrec->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
 
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
+    impdenConn		= impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     lumadenConn     = lumaden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     lumacurveConn   = lumacurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
@@ -150,6 +155,7 @@ PartialPasteDlg::PartialPasteDlg () {
     colorshiftConn  = colorshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     colorboostConn  = colorboost->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     colordenConn    = colorden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
+    dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
 
     distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
     cacorrConn      = cacorr->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
@@ -191,6 +197,7 @@ void PartialPasteDlg::basicToggled () {
 void PartialPasteDlg::luminanceToggled () {
 
     sharpenConn.block (true);
+	impdenConn.block (true);
     lumadenConn.block (true);
     lumacurveConn.block (true);
     shConn.block (true);
@@ -198,11 +205,13 @@ void PartialPasteDlg::luminanceToggled () {
     luminance->set_inconsistent (false);
 
     sharpen->set_active (luminance->get_active ());
+	impden->set_active (luminance->get_active ());
     lumaden->set_active (luminance->get_active ());
     lumacurve->set_active (luminance->get_active ());
     sh->set_active (luminance->get_active ());
 
     sharpenConn.block (false);
+	impdenConn.block (false);
     lumadenConn.block (false);
     lumacurveConn.block (false);
     shConn.block (false);
@@ -214,6 +223,7 @@ void PartialPasteDlg::colorToggled () {
     colorshiftConn.block (true);
     colorboostConn.block (true);
     colordenConn.block (true);
+    dirpyrdenConn.block (true);
 
     color->set_inconsistent (false);
 
@@ -221,11 +231,13 @@ void PartialPasteDlg::colorToggled () {
     colorshift->set_active (color->get_active ());
     colorboost->set_active (color->get_active ());
     colorden->set_active (color->get_active ());
+    dirpyrden->set_active (color->get_active ());
 
     colormixerConn.block (false);
     colorshiftConn.block (false);
     colorboostConn.block (false);
     colordenConn.block (false);
+	dirpyrdenConn.block (false);
 }
 
 void PartialPasteDlg::lensToggled () {
@@ -290,6 +302,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (hlrec->get_active ())       dst->hlrecovery = src->hlrecovery;
 
     if (sharpen->get_active ())     dst->sharpening = src->sharpening;
+    if (impden->get_active ())		dst->impulseDenoise = src->impulseDenoise;
     if (lumaden->get_active ())     dst->lumaDenoise = src->lumaDenoise;
     if (lumacurve->get_active ())   dst->lumaCurve = src->lumaCurve;
     if (sh->get_active ())          dst->sh = src->sh;
@@ -298,6 +311,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (colorshift->get_active ())  dst->colorShift = src->colorShift;
     if (colorboost->get_active ())  dst->colorBoost = src->colorBoost;
     if (colorden->get_active ())    dst->colorDenoise = src->colorDenoise;
+    if (dirpyrden->get_active ())   dst->dirpyrDenoise = src->dirpyrDenoise;
 
     if (distortion->get_active ())  dst->distortion = src->distortion;
     if (cacorr->get_active ())      dst->cacorrection = src->cacorrection;

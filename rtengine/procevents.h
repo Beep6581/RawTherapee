@@ -110,7 +110,15 @@ enum ProcEvent {
     EvEqlEnabled=85,
     EvDemosaic=86,
     EvPreProcess=87,
-    NUMOFEVENTS=88
+    EvIDNEnabled=88,
+    EvIDNThresh=89,
+    EvDPDNEnabled=90,
+    EvDPDNLuma=91,
+    EvDPDNChroma=92,
+    EvDPDNGamma=93,
+    EvDirPyrEqualizer=94,
+    EvDirPyrEqlEnabled=95,
+    NUMOFEVENTS=96
 	};
 }    
 #endif    

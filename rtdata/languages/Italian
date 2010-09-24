@@ -1,27 +1,10 @@
-#
-#   This file is part of RawTherapee.
-#
-#   Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
-#
-#   RawTherapee is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   RawTherapee is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-#
-#   You should have received a copy of the GNU General Public License
-#   along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
-#
-# italian language file for rawtherapee
-# UTF-8(unix mode) 
-# translated by breek, pantaraf, chelidon, roberto
-# IMPORTANTE: facci sapere sul forum di rawtherapee nella sezione del locale italiano se ci sono errori, qui http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
-# IMPORTANT: post on the italian locale in the rawtherapee if are any errors, here http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
-# 01-11-2008
+
+#00 Italian
+#01 UTF-8(unix mode) 
+#02 translated by breek, pantaraf, chelidon, roberto
+#03 IMPORTANTE: facci sapere sul forum di rawtherapee nella sezione del locale italiano se ci sono errori, qui http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
+#04 IMPORTANT: post on the italian locale in the rawtherapee if are any errors, here http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
+#05 01-11-2008
 ADJUSTER_RESET_TO_DEFAULT;Valori originali
 CURVEEDITOR_FILEDLGFILTERANY;Qualsiasi file
 CURVEEDITOR_FILEDLGFILTERCURVE;File curve
@@ -43,14 +26,14 @@ EXIFPANEL_ADDEDITHINT;Aggiungi un nuovo campo o modificane uno esistente
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Inserisci valore
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Seleziona campo
 EXIFPANEL_ADDTAGDLG_TITLE;Aggiungi/Modifica campo
-EXIFPANEL_KEEPHINT;Mantieni il campo selezionato nel risultato finale
 EXIFPANEL_KEEP;Mantieni
-EXIFPANEL_REMOVEHINT;Rimuovi il campo selezionato dal risultato finale
+EXIFPANEL_KEEPHINT;Mantieni il campo selezionato nel risultato finale
 EXIFPANEL_REMOVE;Rimuovi
-EXIFPANEL_RESETALLHINT;Ripristina tutti i campi al loro valore originario
-EXIFPANEL_RESETALL;Ripristina tutto
-EXIFPANEL_RESETHINT;Ripristina i campi selezionati ai loro valori originari
+EXIFPANEL_REMOVEHINT;Rimuovi il campo selezionato dal risultato finale
 EXIFPANEL_RESET;Ripristina
+EXIFPANEL_RESETALL;Ripristina tutto
+EXIFPANEL_RESETALLHINT;Ripristina tutti i campi al loro valore originario
+EXIFPANEL_RESETHINT;Ripristina i campi selezionati ai loro valori originari
 EXIFPANEL_SUBDIRECTORY;Sottocartella
 FILEBROWSER_APPLYPROFILE;Applica un profilo
 FILEBROWSER_ARRANGEMENTHINT;Commuta fra la disposizione verticale o orizzontale delle miniature
@@ -58,13 +41,13 @@ FILEBROWSER_CLEARPROFILE;Azzera il profilo
 FILEBROWSER_COPYPROFILE;Copia il profilo
 FILEBROWSER_DELETEDLGLABEL;Conferma eliminazione file
 FILEBROWSER_DELETEDLGMSG;Sei certo di voler eliminare i %1 file selezionati?
-FILEBROWSER_EMPTYTRASHHINT;Elimina permanentemente i file dal cestino
 FILEBROWSER_EMPTYTRASH;Svuota cestino
+FILEBROWSER_EMPTYTRASHHINT;Elimina permanentemente i file dal cestino
 FILEBROWSER_EXIFFILTERAPPLY;Applica
 FILEBROWSER_EXIFFILTERAPPLYHINT;Accendi/Spegni il filtro exif nel navigatore
 FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Modifica le impostazioni del filtro exif
 FILEBROWSER_EXIFFILTERSETTINGS;Imposta
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Modifica le impostazioni del filtro exif
 FILEBROWSER_PARTIALPASTEPROFILE;Incolla parzialmente
 FILEBROWSER_PASTEPROFILE;Incolla il profilo
 FILEBROWSER_POPUPCANCELJOB;Cancella compito
@@ -83,8 +66,8 @@ FILEBROWSER_POPUPSELECTALL;Seleziona tutto
 FILEBROWSER_POPUPTRASH;Butta nel cestino
 FILEBROWSER_POPUPUNRANK;Declassifica
 FILEBROWSER_POPUPUNTRASH;Togli dal cestino
-FILEBROWSER_PROCESSINGSETTINGSHINT;Scegli il formato del file e la cartella di destinazione
 FILEBROWSER_PROCESSINGSETTINGS;Impostazioni
+FILEBROWSER_PROCESSINGSETTINGSHINT;Scegli il formato del file e la cartella di destinazione
 FILEBROWSER_RENAMEDLGLABEL;Rinomina il file
 FILEBROWSER_RENAMEDLGMSG;Rinomina il file "%1" in:
 FILEBROWSER_SHOWDIRHINT;Mostra tutte le immagini della cartella
@@ -98,15 +81,15 @@ FILEBROWSER_SHOWTRASHHINT;Mostra il contenuto del cestino
 FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate
 FILEBROWSER_STARTPROCESSING;Comincia a sviluppare
 FILEBROWSER_STARTPROCESSINGHINT;Inizia lo sviluppo o il salvataggio delle immagini in coda
-FILEBROWSER_STOPPROCESSINGHINT;Ferma lo sviluppo delle immagini
 FILEBROWSER_STOPPROCESSING;Smetti di sviluppare
+FILEBROWSER_STOPPROCESSINGHINT;Ferma lo sviluppo delle immagini
 FILEBROWSER_THUMBSIZE;Dimensione miniature
 FILEBROWSER_ZOOMINHINT;Aumenta la dimensione delle miniature
 FILEBROWSER_ZOOMOUTHINT;Diminuisci la dimensione delle miniature
 GENERAL_ABOUT;Informazioni
 GENERAL_CANCEL;Annulla
-GENERAL_DISABLED;Disabilitato
 GENERAL_DISABLE;Disabilita
+GENERAL_DISABLED;Disabilitato
 GENERAL_ENABLE;Abilita
 GENERAL_ENABLED;Abilitato
 GENERAL_LANDSCAPE;Panorama
@@ -231,8 +214,8 @@ ICMPANEL_WORKINGPROFILE;Profilo di lavoro
 IMAGEAREA_DETAILVIEW;Visualizza dettaglio
 IPTCPANEL_AUTHOR;Autore
 IPTCPANEL_AUTHORHINT;Nome del creatore dell'opera, es. scrittore, fotografo o artista grafico (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Titolo lavorativo del creatore o creatori dell'opera (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Qualifica dell'Autore
+IPTCPANEL_AUTHORSPOSITIONHINT;Titolo lavorativo del creatore o creatori dell'opera (By-line Title).
 IPTCPANEL_CAPTION;Didascalia
 IPTCPANEL_CAPTIONHINT;Una descrizione testuale dei dati (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITER;Autore della didascalia
@@ -244,44 +227,44 @@ IPTCPANEL_CITYHINT;Città o luogo di origine dell'immagine (City).
 IPTCPANEL_COPYHINT;Copia le impostazioni IPTC negli appunti
 IPTCPANEL_COPYRIGHT;Diritto d'autore
 IPTCPANEL_COPYRIGHTHINT;Qualsiasi annotazione necessaria riguardante il diritto d'autore (Copyright Notice).
-IPTCPANEL_COUNTRYHINT;Il nome dello stato/confederazione in cui l'immagine è stata creata (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;Stato
-IPTCPANEL_CREDITHINT;Identifica il fornitore dell'immagine, non necessariamente il possessore/creatore (Credit).
+IPTCPANEL_COUNTRYHINT;Il nome dello stato/confederazione in cui l'immagine è stata creata (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Riconoscimento
+IPTCPANEL_CREDITHINT;Identifica il fornitore dell'immagine, non necessariamente il possessore/creatore (Credit).
 IPTCPANEL_DATECREATED;Data di creazione
 IPTCPANEL_DATECREATEDHINT;La data in cui è stato creato il contenuto intellettuale dell'immagine; Formato: AAAAMMTT (Date Created).
-IPTCPANEL_EMBEDDEDHINT;Ripristina i dati IPTC incorporati nel file d'immagine
 IPTCPANEL_EMBEDDED;Incorporato
-IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del contenuto dell'immagine (Headline).
+IPTCPANEL_EMBEDDEDHINT;Ripristina i dati IPTC incorporati nel file d'immagine
 IPTCPANEL_HEADLINE;Intestazione
-IPTCPANEL_INSTRUCTIONSHINT;Altre istruzioni editoriali riguardanti l'uso dell'immagine (Special Instructions).
+IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del contenuto dell'immagine (Headline).
 IPTCPANEL_INSTRUCTIONS;Istruzioni
-IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche per il recupero di informazioni specifiche (Keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Altre istruzioni editoriali riguardanti l'uso dell'immagine (Special Instructions).
 IPTCPANEL_KEYWORDS;Parole Chiave
+IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche per il recupero di informazioni specifiche (Keywords).
 IPTCPANEL_PASTEHINT;Incolla le impostazioni IPTC dagli appunti
-IPTCPANEL_PROVINCEHINT;La provincia/regione da cui l'immagine proviene (Province-State).
 IPTCPANEL_PROVINCE;Provincia
-IPTCPANEL_RESETHINT;Ripristina il profilo predefinito
+IPTCPANEL_PROVINCEHINT;La provincia/regione da cui l'immagine proviene (Province-State).
 IPTCPANEL_RESET;Ripristina
-IPTCPANEL_SOURCEHINT;Il possessore originario del contenuto intellettuale rappresentato nell'immagine (Source).
+IPTCPANEL_RESETHINT;Ripristina il profilo predefinito
 IPTCPANEL_SOURCE;Origine
+IPTCPANEL_SOURCEHINT;Il possessore originario del contenuto intellettuale rappresentato nell'immagine (Source).
 IPTCPANEL_SUPPCATEGORIES;Categorie agg.
 IPTCPANEL_SUPPCATEGORIESHINT;Ulteriore raffinamento del soggetto dell'immagine (Supplemental Categories).
-IPTCPANEL_TITLEHINT;Un breve riferimento per l'immagine (Object Name).
 IPTCPANEL_TITLE;Titolo
-IPTCPANEL_TRANSREFERENCEHINT;Un codice che rappresenta la locazione da cui è avvenuta la trasmissione originaria (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;Un breve riferimento per l'immagine (Object Name).
 IPTCPANEL_TRANSREFERENCE;Riferimento Trasm.
+IPTCPANEL_TRANSREFERENCEHINT;Un codice che rappresenta la locazione da cui è avvenuta la trasmissione originaria (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferenze
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Salva come...
 MAIN_BUTTON_SAVE;Salva immagine
+MAIN_BUTTON_SAVEAS;Salva come...
 MAIN_BUTTON_SENDTOEDITOR;Passa al ritocco
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Il file esiste già!
 MAIN_MSG_CANNOTLOAD;Impossibile caricare l'immagine
@@ -310,8 +293,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate
 MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate
 MAIN_TOOLTIP_PREFERENCES;Imposta preferenze
 MAIN_TOOLTIP_QINFO;Informazioni generali sullo scatto
-MAIN_TOOLTIP_SAVEAS;Salva immagine nella cartella selezionata
 MAIN_TOOLTIP_SAVE;Salva immagine nella cartella predefinita
+MAIN_TOOLTIP_SAVEAS;Salva immagine nella cartella selezionata
 PARTIALPASTE_BASICGROUP;Parametri di base
 PARTIALPASTE_CACORRECTION;Correzione A/C
 PARTIALPASTE_COARSETRANS;Rotazione di 90° / riflessione
@@ -390,15 +373,15 @@ PREFERENCES_INTENT_SATURATION;Saturazione
 PREFERENCES_LIVETHUMBNAILS;Miniature sincronizzate (maggiore lentezza)
 PREFERENCES_MONITORICC;Profilo dello schermo
 PREFERENCES_OUTDIR;Cartella di destinazione
-PREFERENCES_OUTDIRFOLDERHINT;Mette le immagini salvate nella cartella scelta
 PREFERENCES_OUTDIRFOLDER;Salva nella cartella
+PREFERENCES_OUTDIRFOLDERHINT;Mette le immagini salvate nella cartella scelta
 PREFERENCES_OUTDIRHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nQueste stringhe di formattazione si riferiscono alle cartelle e ai percorsi sottostanti la posizione del file raw.\n\nPer esempio, se si è aperto</i> <b>/home/tom/immagini/02-09-2006/dsc0012.nef</b><i>, il senso delle stringhe di formattazione è:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=immagini, ...\n%p1=/home/tom/immagini/02-09-2006, %p2=/home/tom/immagini, p3=/home/tom, ...\n</b><i>\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n</i><b>%p1/%f\n</b><i>\nSe vuoi salvare l'immagine finale in una cartella 'sviluppate' situata nella cartella degli originali, scrivi:\n</i><b>%p1/sviluppate/%f\n</b><i>\nSe intendi salvare l'immagine finale in una cartella '/home/tom/sviluppate' mantenendo la stessa sottocartella della data, scrivi:\n</i><b>%p2/sviluppate/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nQueste stringhe di formattazione si riferiscono alle cartelle e ai percorsi sottostanti la posizione del file raw.\n\nPer esempio, se si è aperto</i> <b>/home/tom/immagini/02-09-2006/dsc0012.nef</b><i>, il senso delle stringhe di formattazione è:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=immagini, ...\n%p1=/home/tom/immagini/02-09-2006, %p2=/home/tom/immagini, p3=/home/tom, ...\n</b><i>\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n</i><b>%p1/%f\n</b><i>\nSe vuoi salvare l'immagine finale in una cartella 'sviluppate' situata nella cartella degli originali, scrivi:\n</i><b>%p1/sviluppate/%f\n</b><i>\nSe intendi salvare l'immagine finale in una cartella '/home/tom/sviluppate' mantenendo la stessa sottocartella della data, scrivi:\n</i><b>%p2/sviluppate/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Usa modello
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nQueste stringhe di formattazione si riferiscono alle cartelle e ai percorsi sottostanti la posizione del file raw.\n\nPer esempio, se si è aperto</i> <b>/home/tom/immagini/02-09-2006/dsc0012.nef</b><i>, il senso delle stringhe di formattazione è:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=immagini, ...\n%p1=/home/tom/immagini/02-09-2006, %p2=/home/tom/immagini, p3=/home/tom, ...\n</b><i>\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n</i><b>%p1/%f\n</b><i>\nSe vuoi salvare l'immagine finale in una cartella 'sviluppate' situata nella cartella degli originali, scrivi:\n</i><b>%p1/sviluppate/%f\n</b><i>\nSe intendi salvare l'immagine finale in una cartella '/home/tom/sviluppate' mantenendo la stessa sottocartella della data, scrivi:\n</i><b>%p2/sviluppate/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Estensioni riconosciute
 PREFERENCES_PARSEDEXTADD;Aggiungi estensione
 PREFERENCES_PARSEDEXTADDHINT;Immetti l'estensione e premi questo tasto per aggiungerla alla lista
 PREFERENCES_PARSEDEXTDELHINT;Rimuovi l'estensione selezionata dalla lista
-PREFERENCES_PARSEDEXT;Estensioni riconosciute
 PREFERENCES_PROFILEHANDLING;Gestione dei profili di elaborazione
 PREFERENCES_PROFILELOADPR;Priorità nel caricamento del profilo
 PREFERENCES_PROFILEPRCACHE;Profilo situato nella memoria del programma
@@ -458,8 +441,8 @@ SAVEDLG_JPEGQUAL;Qualità JPEG
 SAVEDLG_JPGFILTER;file JPEG
 SAVEDLG_PNGCOMPR;Compressione PNG
 SAVEDLG_PNGFILTER;file PNG
-SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di elaborazione
 SAVEDLG_PUTTOQUEUE;Inserisci nella coda di sviluppo
+SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di elaborazione
 SAVEDLG_PUTTOQUEUETAIL;Metti in fondo alla coda di elaborazione
 SAVEDLG_SAVEIMMEDIATELY;Salva subito
 SAVEDLG_SAVESPP;Salva i parametri di elaborazione assieme all'immagine
@@ -586,9 +569,9 @@ TP_SHARPENING_LABEL;Nitidezza
 TP_SHARPENING_METHOD;Metodo
 TP_SHARPENING_ONLYEDGES;Definisci solo i bordi
 TP_SHARPENING_RADIUS;Raggio
+TP_SHARPENING_RLD;Deconvoluzione RL
 TP_SHARPENING_RLD_AMOUNT;Quantità
 TP_SHARPENING_RLD_DAMPING;Smorzamento
-TP_SHARPENING_RLD;Deconvoluzione RL
 TP_SHARPENING_RLD_ITERATIONS;Iterazioni
 TP_SHARPENING_THRESHOLD;Soglia
 TP_SHARPENING_USM;Maschera di Contrasto
@@ -612,81 +595,113 @@ ZOOMBAR_PREVIEW;Anteprima
 ZOOMBAR_SCALE;Scala
 ZOOMBAR_SMALL;Piccola
 
-GENERAL_HIGH_QUALITY;High Quality
-GENERAL_UNCHANGED;(Unchanged)
-MAIN_MSG_PLACES;Places
-GENERAL_BEFORE;Before
-GENERAL_AFTER;After
-MAIN_TOOLTIP_TOGGLE;Toggle before/after view
-MAIN_BUTTON_PUTTOQUEUE;Put to queue
-MAIN_MSG_NAVIGATOR;Navigator
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-BATCHQUEUE_AUTOSTART;Auto start
-TP_DETAIL_AMOUNT;Amount
-TP_RESIZE_SPECIFY;Specify:
-TP_RESIZE_SCALE;Scale
-TP_RESIZE_WIDTH;Width
-TP_RESIZE_HEIGHT;Height
-MAIN_TOGGLE_BEFORE_AFTER;B|A
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-###
-
-###
-
-EXIFFILTER_METADATAFILTER;Enable Metadata Filters
-CURVEEDITOR_PARAMETRIC;Parametric
-CURVEEDITOR_CUSTOM;Custom
-CURVEEDITOR_TYPE;Type:
-CURVEEDITOR_HIGHLIGHTS;Highlights
-CURVEEDITOR_LIGHTS;Lights
-CURVEEDITOR_DARKS;Darks
-CURVEEDITOR_SHADOWS;Shadows
-BATCH_PROCESSING;batch processing
-PREFERENCES_BATCH_PROCESSING;batch processing
-PREFERENCES_BEHAVIOR;Behavior
-PREFERENCES_PROPERTY;Property
-PREFERENCES_ADD;ADD
-PREFERENCES_SET;SET
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
-FILEBROWSER_CURRENT_NAME;Current name:
-FILEBROWSER_NEW_NAME;New name:
-FILEBROWSER_USETEMPLATE;Use template:
-FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-ZOOMPANEL_ZOOMIN;Zoom In
-ZOOMPANEL_ZOOMOUT;Zoom Out
-ZOOMPANEL_ZOOM100;Zoom to 100%
-ZOOMPANEL_ZOOMFITSCREEN;Fit to screen
-ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-ZOOMPANEL_100;(100%)
-
-###
-
-MAIN_BUTTON_FULLSCREEN;Fullscreen
-MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
-
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
-FILEBROWSER_SHOWEXIFINFO;Show EXIF info
-TP_RESIZE_DOWNSCALEB;Downscale (Better)
-TP_RESIZE_DOWNSCALEF;Downscale (Faster)
-SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_L;L
-PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!BATCHQUEUE_AUTOSTART;Auto start
+!BATCH_PROCESSING;batch processing
+!CURVEEDITOR_CUSTOM;Custom
+!CURVEEDITOR_DARKS;Darks
+!CURVEEDITOR_HIGHLIGHTS;Highlights
+!CURVEEDITOR_LIGHTS;Lights
+!CURVEEDITOR_NURBS;Control cage
+!CURVEEDITOR_PARAMETRIC;Parametric
+!CURVEEDITOR_SHADOWS;Shadows
+!CURVEEDITOR_TYPE;Type:
+!EXIFFILTER_METADATAFILTER;Enable Metadata Filters
+!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+!FILEBROWSER_CURRENT_NAME;Current name:
+!FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
+!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
+!FILEBROWSER_USETEMPLATE;Use template:
+!GENERAL_AFTER;After
+!GENERAL_BEFORE;Before
+!GENERAL_HIGH_QUALITY;High Quality
+!GENERAL_UNCHANGED;(Unchanged)
+!HISTOGRAM_BUTTON_B;B
+!HISTOGRAM_BUTTON_G;G
+!HISTOGRAM_BUTTON_L;L
+!HISTOGRAM_BUTTON_R;R
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_89;Directional pyramid
+!HISTORY_MSG_90;Directional pyramid luminance
+!HISTORY_MSG_91;Directional pyramid chominance
+!HISTORY_MSG_92;Directional pyramid gamma
+!MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_PUTTOQUEUE;Put to queue
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!MAIN_MSG_NAVIGATOR;Navigator
+!MAIN_MSG_PLACES;Places
+!MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
+!NAVIGATOR_B_NA;B = n/a
+!NAVIGATOR_B_VALUE;B = %1
+!NAVIGATOR_G_NA;G = n/a
+!NAVIGATOR_G_VALUE;G = %1
+!NAVIGATOR_H_NA;H = n/a
+!NAVIGATOR_H_VALUE;H = %1
+!NAVIGATOR_R_NA;R = n/a
+!NAVIGATOR_R_VALUE;R = %1
+!NAVIGATOR_S_NA;S = n/a
+!NAVIGATOR_S_VALUE;S = %1
+!NAVIGATOR_V_NA;V = n/a
+!NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PREFERENCES_ADD;ADD
+!PREFERENCES_BATCH_PROCESSING;batch processing
+!PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_CACORRECTION;Apply CA auto correction
+!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
+!PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PREFERENCES_LINEDENOISE;Line noise filter
+!PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_PROPERTY;Property
+!PREFERENCES_SET;SET
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!TP_DETAIL_AMOUNT;Amount
+!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_GAMMA;Gamma
+!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+!TP_EQUALIZER_FINEST;finest
+!TP_EQUALIZER_LABEL;Wavelet equalizer
+!TP_EQUALIZER_LARGEST;coarsest
+!TP_EQUALIZER_NEUTRAL;Neutral
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_FILL;Auto Fill
+!TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_PERSPECTIVE_HORIZONTAL;Horizontal
+!TP_PERSPECTIVE_LABEL;Perspective
+!TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_RESIZE_DOWNSCALEB;Downscale (Better)
+!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_HEIGHT;Height
+!TP_RESIZE_SPECIFY;Specify:
+!TP_RESIZE_WIDTH;Width
+!ZOOMPANEL_100;(100%)
+!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
+!ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
+!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
+!ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
+!ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>

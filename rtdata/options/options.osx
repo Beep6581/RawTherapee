@@ -50,7 +50,7 @@ JpegQuality=100
 PngCompression=6
 PngBps=8
 TiffBps=8
-SaveProcParams=false
+SaveProcParams=true
 PathTemplate=%p1/converted/%f
 PathFolder=
 UsePathTemplate=true
@@ -65,11 +65,13 @@ SaveParamsToCache=true
 LoadParamsFromLocation=0
 
 [GUI]
-WindowWidth=1024
-WindowHeight=700
+WindowWidth=1000
+WindowHeight=900
+WindowMaximized=false
 FileBrowserHeight=250
-ToolPanelWidth=270
-HistoryPanelWidth=230
+ToolPanelWidth=300
+BrowserToolPanelWidth=300
+HistoryPanelWidth=200
 LastPreviewScale=5
 LastCropSize=1
 ShowHistory=true

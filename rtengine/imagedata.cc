@@ -19,6 +19,7 @@
 #include <imagedata.h>
 #include <iptcpairs.h>
 #include <glib/gstdio.h>
+#include <safegtk.h>
 #ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
 #endif
@@ -278,27 +279,6 @@ ImageData::~ImageData () {
         iptc_data_free (iptc);
 }
 
-Glib::ustring safe_locale_to_utf8 (const std::string& src)
-{
-	Glib::ustring utf8_str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
-            try {
-                utf8_str = Glib::locale_to_utf8(src);
-            }
-            catch (const Glib::ConvertError& e) {
-                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
-            }
-#else
-						{
-							std::auto_ptr<Glib::Error> error;
-							utf8_str = locale_to_utf8(src, error);
-							if (error.get())
-								utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
-						}
-#endif //GLIBMM_EXCEPTIONS_ENABLED
-	return utf8_str;
-}
-
 const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
 
     std::vector<procparams::IPTCPair> iptcc;
@@ -321,7 +301,7 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
     IptcDataSet* ds = NULL;
     procparams::IPTCPair ickw;
     ickw.field = "Keywords";
-    while (ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS)) {
+    while ((ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS))) {
         iptc_dataset_get_data (ds, buffer, 2100);
         ickw.values.push_back (safe_locale_to_utf8((char*)buffer));
     }
@@ -329,12 +309,13 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
     ds = NULL;
     procparams::IPTCPair icsc;
     icsc.field = "SupplementalCategories";
-    while (ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY)) {
+    while ((ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY))) {
         iptc_dataset_get_data (ds, buffer, 2100);
         icsc.values.push_back (safe_locale_to_utf8((char*)buffer));
         iptc_dataset_unref (ds);
     }
     iptcc.push_back (icsc);
+    return iptcc;
 }
 
 //------inherited functions--------------//

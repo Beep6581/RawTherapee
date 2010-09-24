@@ -38,7 +38,7 @@ void RawImageSource::amaze_demosaic_RT() {
 	int width=W, height=H;
 	
 	
-	static const float clip_pt = 1/ri->defgain; 
+	const float clip_pt = 1/ri->defgain; 
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
 	
@@ -780,15 +780,15 @@ void RawImageSource::amaze_demosaic_RT() {
 					rbvarp = epssq + (gausseven[0]*(Dgrbpsq1[indx-v1]+Dgrbpsq1[indx-1]+Dgrbpsq1[indx+1]+Dgrbpsq1[indx+v1]) + \
 									gausseven[1]*(Dgrbpsq1[indx-v2-1]+Dgrbpsq1[indx-v2+1]+Dgrbpsq1[indx-2-v1]+Dgrbpsq1[indx+2-v1]+ \
 												  Dgrbpsq1[indx-2+v1]+Dgrbpsq1[indx+2+v1]+Dgrbpsq1[indx+v2-1]+Dgrbpsq1[indx+v2+1]));
-					//rbvarp -=  SQR( (gausseven[0]*(Dgrbp1[indx-v1]+Dgrbp1[indx-1]+Dgrbp1[indx+1]+Dgrbp1[indx+v1]) + \
-					gausseven[1]*(Dgrbp1[indx-v2-1]+Dgrbp1[indx-v2+1]+Dgrbp1[indx-2-v1]+Dgrbp1[indx+2-v1]+ \
-					Dgrbp1[indx-2+v1]+Dgrbp1[indx+2+v1]+Dgrbp1[indx+v2-1]+Dgrbp1[indx+v2+1])));
+					/*rbvarp -=  SQR( (gausseven[0]*(Dgrbp1[indx-v1]+Dgrbp1[indx-1]+Dgrbp1[indx+1]+Dgrbp1[indx+v1]) + \
+                        gausseven[1]*(Dgrbp1[indx-v2-1]+Dgrbp1[indx-v2+1]+Dgrbp1[indx-2-v1]+Dgrbp1[indx+2-v1]+ \
+                        Dgrbp1[indx-2+v1]+Dgrbp1[indx+2+v1]+Dgrbp1[indx+v2-1]+Dgrbp1[indx+v2+1])));*/
 					rbvarm = epssq + (gausseven[0]*(Dgrbmsq1[indx-v1]+Dgrbmsq1[indx-1]+Dgrbmsq1[indx+1]+Dgrbmsq1[indx+v1]) + \
 									gausseven[1]*(Dgrbmsq1[indx-v2-1]+Dgrbmsq1[indx-v2+1]+Dgrbmsq1[indx-2-v1]+Dgrbmsq1[indx+2-v1]+ \
 												  Dgrbmsq1[indx-2+v1]+Dgrbmsq1[indx+2+v1]+Dgrbmsq1[indx+v2-1]+Dgrbmsq1[indx+v2+1]));
-					//rbvarm -=  SQR( (gausseven[0]*(Dgrbm1[indx-v1]+Dgrbm1[indx-1]+Dgrbm1[indx+1]+Dgrbm1[indx+v1]) + \
-					gausseven[1]*(Dgrbm1[indx-v2-1]+Dgrbm1[indx-v2+1]+Dgrbm1[indx-2-v1]+Dgrbm1[indx+2-v1]+ \
-					Dgrbm1[indx-2+v1]+Dgrbm1[indx+2+v1]+Dgrbm1[indx+v2-1]+Dgrbm1[indx+v2+1])));
+					/*rbvarm -=  SQR( (gausseven[0]*(Dgrbm1[indx-v1]+Dgrbm1[indx-1]+Dgrbm1[indx+1]+Dgrbm1[indx+v1]) + \
+                        gausseven[1]*(Dgrbm1[indx-v2-1]+Dgrbm1[indx-v2+1]+Dgrbm1[indx-2-v1]+Dgrbm1[indx+2-v1]+ \
+                        Dgrbm1[indx-2+v1]+Dgrbm1[indx+2+v1]+Dgrbm1[indx+v2-1]+Dgrbm1[indx+v2+1])));*/
 
 
 

@@ -29,10 +29,10 @@ namespace rtengine {
 extern Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent)
-    : parent(parent), cropAllocated(false),
+    : resizeCrop(NULL), transCrop(NULL), updating(false),
     cropw(-1), croph(-1), trafw(-1), trafh(-1),
-    cropImageListener(NULL), updating(false),   
-    resizeCrop(NULL), transCrop(NULL), borderRequested(32)
+    borderRequested(32), cropAllocated(false),
+    cropImageListener(NULL), parent(parent)
 {
     parent->crops.push_back (this);
 }
@@ -160,23 +160,23 @@ void Crop::update (int todo, bool internal) {
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve, cshmap);
 
-    // apply luminance operations
-    if (todo & M_LUMINANCE) {
+	
+	// apply luminance operations
+    if (todo & (M_LUMINANCE+M_COLOR)) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
-        if (skip==1) {
-            parent->ipf.lumadenoise (labnCrop, cbuffer);
-            parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
-            parent->ipf.waveletEqualizer(labnCrop, true, false);
-        }
-    }
+		parent->ipf.colorCurve (laboCrop, labnCrop);
 
-    // apply color operations
-    if (todo & M_COLOR) {
-        parent->ipf.colorCurve (laboCrop, labnCrop);
         if (skip==1) {
+			parent->ipf.impulsedenoise (labnCrop);
+            parent->ipf.lumadenoise (labnCrop, cbuffer);
             parent->ipf.colordenoise (labnCrop, cbuffer);
-            parent->ipf.waveletEqualizer(labnCrop, false, true);
+			parent->ipf.dirpyrdenoise (labnCrop);
+			parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
+			//parent->ipf.impulsedenoise (labnCrop);
+			parent->ipf.dirpyrequalizer (labnCrop);
+            parent->ipf.waveletEqualizer(labnCrop, true, true);
         }
+
     }
     
 

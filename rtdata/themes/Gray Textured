@@ -24,6 +24,16 @@
 # Sneaking through the code are we.? ;)
 style "clearlooks-default"
 {
+	#This is actually just a non-existant font to force RT to load
+	# the default system font.  On OSX the GTK default will show some
+	# incorrect ligatures (e.g., fi is interpreted as the double dagger
+	# symbol), but by reverting to system default it works.  You could 
+	# actually use any non-font here and it will work, e.g. "Foo".  To
+	# change it to use an actual font, enter the full name of the font
+	# here, along with optional style and size, e.g. 
+	# "Monaco Bold 15".
+	font_name = "Default"
+
 	GtkRange::trough_border = 0
 	GtkRange::slider_width = 14
 	GtkRange::stepper_size = 10

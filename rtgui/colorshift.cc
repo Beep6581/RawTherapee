@@ -90,10 +90,10 @@ void ColorShift::adjusterChanged (Adjuster* a, double newval) {
 
 void ColorShift::setAdjusterBehavior (bool baadd, bool bbadd) {
 
-    if (!aAdd && baadd || aAdd && !baadd) 
+    if ((!aAdd && baadd) || (aAdd && !baadd))
         ashift->setLimits (-25, 25, 0.1, 0);
 
-    if (!bAdd && bbadd || bAdd && !bbadd) 
+    if ((!bAdd && bbadd) || (bAdd && !bbadd))
         bshift->setLimits (-25, 25, 0.1, 0);
     
     aAdd = baadd;

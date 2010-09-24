@@ -65,6 +65,7 @@ RawImageSource::RawImageSource ()
     hrmap[2] = NULL;
 	needhr = NULL;
     hpmap = NULL;
+	oldmethod = "None";
 	camProfile = NULL;
 	embProfile = NULL;
 }
@@ -253,6 +254,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
                 red[j]  = CLIP(rm*rawData[i][jx*3+0]);
                 grn[j]  = CLIP(gm*rawData[i][jx*3+1]);
                 blue[j] = CLIP(bm*rawData[i][jx*3+2]);
+
             }
         }
                 
@@ -898,7 +900,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
             vng4_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::ahd] )
             ahd_demosaic ();
-		else if (raw.dmethod == RAWParams::methodstring[RAWParams::amaze] )
+	    else if (raw.dmethod == RAWParams::methodstring[RAWParams::amaze] )
             amaze_demosaic_RT ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::dcb] )
             dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance? 1:0);
@@ -907,7 +909,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demo ();
         else
-        	nodemosaic();	// TODO: Should we use "fast" instead of nodemosaic ?
+        	nodemosaic();
         t2.set();
         printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
@@ -1306,7 +1308,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
         TMatrix work = iccStore.workingSpaceInverseMatrix (cmp.working);
-        double mat[3][3] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
@@ -2152,7 +2154,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
 ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
 
     int x; int y;
-    int d[9][2] = {0,0, -1,-1, -1,0, -1,1, 0,-1, 0,1, 1,-1, 1,0, 1,1};
+    int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
     
@@ -2518,13 +2520,14 @@ void RawImageSource::ppg_demosaic()
   free (image);
 }
 
-void RawImageSource::border_interpolate(int border, ushort (*image)[4])
+void RawImageSource::border_interpolate(int border, ushort (*image)[4], int start, int end)
 {
   unsigned row, col, y, x, f, c, sum[8];
   int width=W, height=H;
   int colors = 3;
 
-  for (row=0; row < height; row++)
+  if (end == 0 )end = H;
+  for (row=start; row < end; row++)
     for (col=0; col < width; col++) {
       if (col==border && row >= border && row < height-border)
 	col = width-border;
@@ -2540,6 +2543,114 @@ void RawImageSource::border_interpolate(int border, ushort (*image)[4])
       FORCC if (c != f && sum[c+4])
 	image[row*width+col][c] = sum[c] / sum[c+4];
     }
+}
+
+void RawImageSource::bilinear_interpolate_block(ushort (*image)[4], int start, int end)
+{
+  ushort (*pix);
+  int i, *ip, sum[4];
+  int width=W;
+  int colors = 3;
+
+  for (int row = start; row < end; row++)
+    for (int col=1; col < width-1; col++) {
+      pix = image[row*width+col];
+      ip = blcode[row & 15][col & 15];
+      memset (sum, 0, sizeof sum);
+      for (i=8; i--; ip+=3)
+	sum[ip[2]] += pix[ip[0]] << ip[1];
+      for (i=colors; --i; ip+=2)
+	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
+    }
+    
+
+}
+
+void RawImageSource::bilinear_demosaic()
+{
+  int width=W, height=H;  
+  int *ip, sum[4];
+  int c,  x, y, row, col, shift, color;
+  int colors = 3;
+ 
+  ushort (*image)[4], *pix;
+  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+
+  for (int ii=0; ii<H; ii++)
+    for (int jj=0; jj<W; jj++)
+        image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
+
+  //if (verbose) fprintf (stderr,_("Bilinear interpolation...\n"));
+  if (plistener) {
+        plistener->setProgressStr ("Demosaicing...");
+        plistener->setProgress (0.0);
+    }
+
+  memset(blcode,0,16*16*32);
+  for (row=0; row < 16; row++)
+    for (col=0; col < 16; col++) {
+      ip = blcode[row][col];
+      memset (sum, 0, sizeof sum);
+      for (y=-1; y <= 1; y++)
+	for (x=-1; x <= 1; x++) {
+	  shift = (y==0) + (x==0);
+	  if (shift == 2) continue;
+	  color = fc(row+y,col+x);
+	  *ip++ = (width*y + x)*4 + color;
+	  *ip++ = shift;
+	  *ip++ = color;
+	  sum[color] += 1 << shift;
+	}
+      FORCC
+	if (c != fc(row,col)) {
+	  *ip++ = c;
+	  *ip++ = 256 / sum[c];
+	}
+    }
+  
+#ifdef _OPENMP
+  #pragma omp parallel
+  {
+            int tid = omp_get_thread_num();
+            int nthreads = omp_get_num_threads();
+            int blk = H/nthreads;
+
+            int start = 0;
+            if (tid == 0) start = 1;
+            if (tid<nthreads-1)
+            {
+                border_interpolate(1, image, tid*blk, (tid+1)*blk);
+                bilinear_interpolate_block(image, start+tid*blk, (tid+1)*blk);
+            }
+            else
+            {
+                border_interpolate(1, image, tid*blk, height);
+                bilinear_interpolate_block(image, tid*blk, height-1);
+            }
+  }
+#else
+    border_interpolate(1, image);
+    bilinear_interpolate_block(image, 1, height-1);
+#endif
+
+red = new unsigned short*[H];
+green = new unsigned short*[H];
+blue = new unsigned short*[H];
+
+#pragma omp parallel for
+    for (int i=0; i<H; i++) {
+        red[i] = new unsigned short[W];
+        green[i] = new unsigned short[W];
+        blue[i] = new unsigned short[W];
+        for (int j=0; j<W; j++){
+            red[i][j] = image[i*W+j][0];
+            green[i][j] = image[i*W+j][1];
+            blue[i][j] = image[i*W+j][2];
+        }
+    }
+
+    if(plistener) plistener->setProgress (1.0);
+    free (image);
 }
 
 /*
@@ -3288,11 +3399,11 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's code for AMaZE
+#include "fast_demo.cc"//fast demosaic	
 #include "amaze_interpolate_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's CA auto correction
 #include "green_equil_RT.cc"//Emil's green channel equilibration
-#include "fast_demo.cc"//Fast demosaic
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

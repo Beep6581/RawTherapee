@@ -26,19 +26,18 @@ MultiLangMgr langMgr;
 Glib::ustring M (std::string key) { return langMgr.getStr (key); }
 
 bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb) {
+    FILE *f = g_fopen (fname.c_str(), "rt");
 
     fallBack = fb;
 
-    FILE *f = g_fopen (fname.c_str(), "rt");
-
     if (f==NULL)
         return false;
-    
+   
     transTable.clear ();
-    
+
     char* buffer = new char[2048];
     
-    while (buffer = fgets (buffer, 2048, f)) {
+    while ((buffer = fgets (buffer, 2048, f))) {
         // find separator
         int seppos = 0;
         while (buffer[seppos]!=0 && buffer[seppos]!=';')
@@ -94,5 +93,5 @@ Glib::ustring MultiLangMgr::getStr (std::string key) {
     else if (fallBack)
         return fallBack->getStr (key);
     else
-        return "";
+        return key;
 }

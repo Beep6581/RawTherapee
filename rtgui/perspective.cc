@@ -84,7 +84,7 @@ void PerspCorrection::adjusterChanged (Adjuster* a, double newval) {
 
 void PerspCorrection::setAdjusterBehavior (bool badd) {
 
-    if (!vAdd && badd || vAdd && !badd) {
+    if ((!vAdd && badd) || (vAdd && !badd)) {
 //    	horiz->setLimits (-0.005, 0.005, 0.0001, 0);
 //    	vert->setLimits (-0.005, 0.005, 0.0001, 0);
     }

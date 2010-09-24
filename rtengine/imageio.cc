@@ -19,6 +19,7 @@
 #include <png.h>
 #include <glib/gstdio.h>
 #include <imageio.h>
+#include <safegtk.h>
 #include <tiff.h>
 #include <tiffio.h>
 #include <stdio.h>
@@ -409,7 +410,7 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 
-    FILE* file=g_fopen(fname.c_str (),"wb");
+    FILE* file=g_fopen(safe_locale_from_utf8(fname).c_str (),"wb");
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -493,7 +494,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
 
-	FILE *file = g_fopen (fname.c_str (), "wb");
+	FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -597,7 +598,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     unsigned char* linebuffer = new unsigned char[lineWidth];
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = g_fopen (fname.c_str (), "wb");
+        FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
 
         if (!file)
             return IMIO_CANNOTREADFILE;           
@@ -690,21 +691,22 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 	
         }
 				
-				TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee 3");
+        TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee 3");
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
+        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, height);
         TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
         TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
         TIFFSetField (out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-        TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_LZW);
-        if (!uncompressed) 
-					TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_HORIZONTAL);
-	
-        if (profileData) 
-            TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);   
+        TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_DEFLATE);
+        if (!uncompressed)
+		    TIFFSetField (out, TIFFTAG_PREDICTOR, PREDICTOR_NONE);
+
+        if (profileData)
+            TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
 
         for (int row = 0; row < height; row++) {
             getScanline (row, linebuffer, bps);
@@ -772,6 +774,7 @@ int ImageIO::load (Glib::ustring fname) {
     return loadJPEG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".tif"))
     return loadTIFF (fname);
+  else return IMIO_FILETYPENOTSUPPORTED;
 }
 
 int ImageIO::save (Glib::ustring fname) {
@@ -784,5 +787,6 @@ int ImageIO::save (Glib::ustring fname) {
     return saveJPEG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".tif"))
     return saveTIFF (fname);
+  else return IMIO_FILETYPENOTSUPPORTED;
 }
 

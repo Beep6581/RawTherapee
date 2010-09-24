@@ -69,6 +69,7 @@ class Options {
     int historyPanelWidth;
     int windowWidth;
     int windowHeight;
+    bool windowMaximized;
     int dirBrowserWidth;
     int dirBrowserHeight;
     int lastScale;
@@ -95,6 +96,7 @@ class Options {
     Glib::ustring language;
     Glib::ustring theme;
     static Glib::ustring cacheBaseDir;
+    bool autoSuffix;
     bool saveParamsFile;
     bool saveParamsCache;
     PPLoadLocation paramsLoadLocation;

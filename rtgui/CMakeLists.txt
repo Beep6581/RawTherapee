@@ -8,6 +8,7 @@ set (BASESOURCEFILES
     coarsepanel.cc cacorrection.cc colorshift.cc hlrec.cc chmixer.cc
     colorboost.cc resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     colordenoise.cc
+    impulsedenoise.cc dirpyrdenoise.cc
     exifpanel.cc
     sharpening.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
@@ -24,7 +25,7 @@ set (BASESOURCEFILES
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
-    equalizer.cc)
+    equalizer.cc dirpyrequalizer.cc)
 
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.o)

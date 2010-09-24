@@ -40,6 +40,7 @@ void Options::setDefaults () {
 
     windowWidth = 1000;
     windowHeight = 600;
+    windowMaximized = false;
     firstRun = true;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
@@ -60,8 +61,8 @@ void Options::setDefaults () {
     profilePath = "profiles";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
-    toolPanelWidth = 250;
-    browserToolPanelWidth = 250;
+    toolPanelWidth = 300;
+    browserToolPanelWidth = 300;
     historyPanelWidth = 150;
     lastScale = 4;
     lastCropSize = 1;
@@ -90,6 +91,7 @@ void Options::setDefaults () {
     maxCacheEntries = 10000;
     thumbnailFormat = FT_Custom16;
     thumbInterp = 1;
+    autoSuffix = false;
     saveParamsFile = false;
     saveParamsCache = true;
     paramsLoadLocation = PLL_Cache;
@@ -191,6 +193,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "Path"))             savePathTemplate           = keyFile.get_string ("Output", "Path");
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
     if (keyFile.has_key ("Output", "PathFolder"))       savePathFolder             = keyFile.get_string ("Output", "PathFolder");
+    if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 }
@@ -233,14 +236,15 @@ if (keyFile.has_group ("Clipping Indication")) {
 }
 
 if (keyFile.has_group ("GUI")) { 
-    if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth   = keyFile.get_integer ("GUI", "WindowWidth");
-    if (keyFile.has_key ("GUI", "WindowHeight"))     windowHeight   = keyFile.get_integer ("GUI", "WindowHeight");
-    if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth   = keyFile.get_integer ("GUI", "DirBrowserWidth");
-    if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight  = keyFile.get_integer ("GUI", "DirBrowserHeight");
-    if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))     saveAsDialogWidth   = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
-    if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))     saveAsDialogHeight   = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
-    if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth    = keyFile.get_integer ("GUI", "ToolPanelWidth");
-    if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))browserToolPanelWidth = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
+    if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
+    if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
+    if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
+    if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth         = keyFile.get_integer ("GUI", "DirBrowserWidth");
+    if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight        = keyFile.get_integer ("GUI", "DirBrowserHeight");
+    if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth       = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
+    if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))  saveAsDialogHeight      = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
+    if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth          = keyFile.get_integer ("GUI", "ToolPanelWidth");
+    if (keyFile.has_key ("GUI", "BrowserToolPanelWidth"))browserToolPanelWidth  = keyFile.get_integer ("GUI", "BrowserToolPanelWidth");
     if (keyFile.has_key ("GUI", "HistoryPanelWidth"))   historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
     if (keyFile.has_key ("GUI", "LastPreviewScale"))    lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
     if (keyFile.has_key ("GUI", "LastCropSize"))        lastCropSize      = keyFile.get_integer ("GUI", "LastCropSize");
@@ -343,6 +347,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
     keyFile.set_string ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string ("Output", "PathFolder", savePathFolder);
+    keyFile.set_boolean("Output", "AutoSuffix", autoSuffix);
     keyFile.set_boolean("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string ("Output", "LastSaveAsPath", lastSaveAsPath);
 
@@ -355,6 +360,7 @@ int Options::saveToFile (Glib::ustring fname) {
     
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
+    keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
     keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
@@ -407,6 +413,8 @@ void Options::load () {
     if (options.multiUser) {
         int r = options.readFromFile (rtdir + "/options");
         if (r && !g_mkdir_with_parents (rtdir.c_str(), 511)) {
+            Glib::ustring profdir = rtdir + "/profiles";
+            g_mkdir_with_parents (profdir.c_str(), 511);
             options.saveToFile (rtdir + "/options");
         }
 #ifdef _WIN32
@@ -416,13 +424,38 @@ void Options::load () {
 #endif
     }
 
-    Glib::ustring fname = argv0+"/languages/";
-    fname += (options.language.empty())? DefaultLanguage : options.language;
-			
-    if (!langMgr.load (fname, new MultiLangMgr (argv0+"/languages/"+DefaultLanguage)))
-        langMgr.load (argv0+"/languages/"+DefaultLanguage);
+	//We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
+	// (most likely using simple English).  The next level is the language: for instance, English, French, Chinese, etc.  This file should contain a 
+	// generic translation for all items which differ from default.  Finally there is the locale.  This is region-specific items which differ from the
+	// language file.  These files must be name in the format <Language> (<LC>), where Language is the name of the language which it inherits from,
+	// and LC is the locale code.  Some examples of this would be English (US) (American English), French (FR) (Franch French), French (CA) (Canadian 
+	// French), etc.
+	//
+	// Each level will only contain the differences between itself and its parent translation.  For instance, English (UK) or English (CA) may 
+	// include the translation "HISTORY_MSG_34;Avoid Colour Clipping" where English would translate it as "HISTORY_MSG_34;Avoid Color Clipping" (note
+	// the difference in the spelling of 'colour').
+	//
+	// It is important that when naming the translation files, that you stick to the format <Language> or <Language> (<LC>).  We depend on that to figure 
+	// out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have 
+	// 'French (CA)' unless there is a file 'French'.
 
-    rtengine::init (&options.rtSettings);
+    	Glib::ustring defaultTranslation = argv0 + "/languages/default";
+	Glib::ustring languageTranslation = "";
+	Glib::ustring localeTranslation = "";
+
+	if (!options.language.empty()){
+		std::vector<Glib::ustring> langPortions = Glib::Regex::split_simple(" ", options.language);
+		if (langPortions.size() >= 1){
+			languageTranslation = argv0 + "/languages/" + langPortions.at(0);
+		}
+		if (langPortions.size() >= 2){
+			localeTranslation = argv0 + "/languages/" + options.language;
+		}
+	}
+
+	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
+
+	rtengine::init (&options.rtSettings);
 }
 
 void Options::save () {

@@ -31,30 +31,30 @@ struct ZoomStep {
     int czoom;
 };
 
-ZoomStep zoomSteps[] = {"10%",   0.1,     10,
-                        "12.5%", 0.125,   8,
-                        "16.6%", 1.0/6.0, 6,
-                        "20%",   0.2,     5,
-                        "25%",   0.25,    4,
-                        "33%",   1.0/3.0, 3,
-                        "50%",   0.5,     2,
-                        "100%",  1.0,     1000,
-                        "200%",  2.0,     2000,
-                        "300%",  3.0,     3000,
-                        "400%",  4.0,     4000,
-                        "500%",  5.0,     5000,
-                        "600%",  6.0,     6000,
-                        "700%",  7.0,     7000,
-                        "800%",  8.0,     8000};
+ZoomStep zoomSteps[] = {{" 10%",  0.1,     10},
+                        {"12.5%", 0.125,   8},
+                        {"16.6%", 1.0/6.0, 6},
+                        {" 20%",  0.2,     5},
+                        {" 25%",  0.25,    4},
+                        {" 33%",  1.0/3.0, 3},
+                        {" 50%",  0.5,     2},
+                        {"100%",  1.0,     1000},
+                        {"200%",  2.0,     2000},
+                        {"300%",  3.0,     3000},
+                        {"400%",  4.0,     4000},
+                        {"500%",  5.0,     5000},
+                        {"600%",  6.0,     6000},
+                        {"700%",  7.0,     7000},
+                        {"800%",  8.0,     8000}};
 #define MAXZOOMSTEPS 14
 #define ZOOM11INDEX  7
 
 CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_) 
-    : iarea(parent), cropgl(NULL), xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1),
-    titleHeight(30), sideBorderWidth(3), upperBorderWidth(1), lowerBorderWidth(3), sepWidth(2),
-    cropZoom(ZOOM11INDEX), deleted(false), onResizeArea(false), fitZoom(false),
-    fitZoomEnabled(true), decorated(true), backColor(0), observedCropWin(NULL),
-	pmlistener(NULL)	{
+    : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false),
+    backColor(0), decorated(true), titleHeight(30),
+    sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
+    imgX(0), imgY(0), imgW(1), imgH(1), xpos(30), ypos(30), iarea(parent),
+    cropZoom(ZOOM11INDEX), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       

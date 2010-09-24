@@ -19,7 +19,7 @@
 #include <lwbutton.h>
 
 LWButton::LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip) 
-    : icon(i), actionCode(aCode), actionData(aData), halign(ha), valign(va), state(Normal), toolTip(tooltip), listener(NULL) {
+    : halign(ha), valign(va), icon(i), state(Normal), listener(NULL), actionCode(aCode), actionData(aData), toolTip(tooltip) {
     
     if (i)  {
 			w = i->get_width () + 2;

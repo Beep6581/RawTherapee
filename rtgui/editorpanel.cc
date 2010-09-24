@@ -26,7 +26,7 @@
 
 using namespace rtengine::procparams;
 
-EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHandler(NULL), beforeIpc(NULL) {
+EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -190,8 +190,9 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
     vbfr->add (*editbox);
     hpanedl->pack2(*vbfr, true, true);
 
-    hpanedr->pack1(*hpanedl, true, true);
-    hpanedr->pack2(*vboxright, false, true);
+	hpanedr->pack1(*hpanedl, true, true);
+	hpanedr->pack2(*vboxright, false, true);
+	//hpanedr->set_position(options.toolPanelWidth);
 
     pack_start (*hpanedr);
     show_all ();
@@ -229,12 +230,6 @@ EditorPanel::EditorPanel () : parent(NULL), beforeIarea(NULL), beforePreviewHand
 
 }
 
-bool EditorPanel::beforeClosing () {
-
-    options.toolPanelWidth = vboxright->get_width ();
-    return true;
-}
-
 EditorPanel::~EditorPanel () {
 
     history->setHistoryBeforeLineListener (NULL);
@@ -266,12 +261,6 @@ EditorPanel::~EditorPanel () {
     delete vboxright;
     
     delete saveAsDialog;
-}
-
-void EditorPanel::on_realize () {
-    
-    Gtk::VBox::on_realize ();
-    vboxright->set_size_request (options.toolPanelWidth, -1);
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
@@ -469,12 +458,21 @@ void EditorPanel::info_toggled () {
 
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if (idata && idata->hasExif())
-        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n", 
-            Glib::ustring(idata->getMake()), Glib::ustring(idata->getModel()),
-            Glib::ustring(idata->apertureToString(idata->getFNumber())), Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+//        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n", 
+//            Glib::ustring(idata->getMake()), Glib::ustring(idata->getModel()),
+//            Glib::ustring(idata->apertureToString(idata->getFNumber())), Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+//            M("QINFO_ISO"), idata->getISOSpeed(),
+//            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
+//            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
+        infoString = Glib::ustring::compose (
+            "%1 + %2\n<span size=\"large\">%3</span>s  f/<span size=\"large\">%4</span>  %5<span size=\"large\">%6</span>  f=<span size=\"large\">%7</span>mm",
+            Glib::ustring(idata->getModel()),
+            Glib::ustring(idata->getLens()),
+            Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+            Glib::ustring(idata->apertureToString(idata->getFNumber())),
             M("QINFO_ISO"), idata->getISOSpeed(),
-            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
-            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
+            idata->getFocalLen()
+            );
     else 
         infoString = M("QINFO_NOEXIF");
 
@@ -500,22 +498,6 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
             case GDK_h:
             case GDK_H:
                 hidehp->set_active (!hidehp->get_active());
-                return true;
-            case GDK_w:
-            case GDK_W:
-                tpc->getToolBar()->wb_pressed ();
-                return true;
-            case GDK_c:
-            case GDK_C:
-                tpc->getToolBar()->crop_pressed ();
-                return true;
-            case GDK_s:
-            case GDK_S:
-                tpc->getToolBar()->stra_pressed ();
-                return true;
-            case GDK_n:
-            case GDK_N:
-                tpc->getToolBar()->hand_pressed ();
                 return true;
             case GDK_i:
             case GDK_I:
@@ -561,6 +543,9 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
                 return true;
         }
     }
+    
+    if(tpc->getToolBar()->handleShortcutKey(event))
+        return true;
 
     return false;
 }
@@ -642,7 +627,10 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 		if (sf.saveParams) {
 			rtengine::procparams::ProcParams pparams;
 			ipc->getParams (&pparams);
-			pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
+			// We keep the extension to avoid overwriting the profile when we have
+			// the same output filename with different extension
+			//pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
+			pparams.save (fname + ".out" + paramFileExtension);
 		}
 	}else{
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
@@ -659,51 +647,82 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveAsPressed () {
 
-    // obtaining short name without extension
-    saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
-    saveAsDialog->run ();
-    Glib::ustring fname = saveAsDialog->getFileName ();
-    if (fname=="")
-        return;
+	bool fnameOK = false;
+	Glib::ustring fname;
 
-    options.lastSaveAsPath = saveAsDialog->getDirectory ();
-    options.saveAsDialogWidth = saveAsDialog->get_width();
-    options.saveAsDialogHeight = saveAsDialog->get_height();
+	saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
+	do {
+		saveAsDialog->run ();
+		fname = saveAsDialog->getFileName ();
+		if (fname=="")
+			return;
 
-    SaveFormat sf = saveAsDialog->getFormat ();
-    if (getExtension (fname)!=sf.format)
-        fname = fname + "." + sf.format;
-		
+		options.lastSaveAsPath = saveAsDialog->getDirectory ();
+		options.saveAsDialogWidth = saveAsDialog->get_width();
+		options.saveAsDialogHeight = saveAsDialog->get_height();
+
+		SaveFormat sf = saveAsDialog->getFormat ();
+
 		options.saveFormat = sf;
+		options.autoSuffix = saveAsDialog->getAutoSuffix();
 
-    if (saveAsDialog->getImmediately ()) {
-        // check if it exists
-        if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
-            Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-            Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-            int response = msgd.run ();
-            if (response==Gtk::RESPONSE_NO)
-                return;
-        }
-        // save image 
-        rtengine::procparams::ProcParams pparams;
-        ipc->getParams (&pparams);
-        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
-        fname = removeExtension (fname);
-        ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-        ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
-        		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
-        saveimgas->set_sensitive(false);
-        sendtogimp->set_sensitive(false);
-    }
-    else {
-        BatchQueueEntry* bqe = createBatchQueueEntry ();
-        bqe->outFileName = fname;
-        bqe->saveFormat = saveAsDialog->getFormat ();
-        parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
-    }
-    // ask parent to redraw file browser
-    // ... or does it automatically when the tab is switched to it
+		if (saveAsDialog->getImmediately ()) {
+			// separate filename and the path to the destination directory
+			Glib::ustring dstdir = Glib::path_get_dirname (fname);
+			Glib::ustring dstfname = Glib::path_get_basename (removeExtension(fname));
+
+			if (saveAsDialog->getAutoSuffix()) {
+
+				Glib::ustring fnameTemp;
+				for (int tries=0; tries<100; tries++) {
+					if (tries==0)
+						fnameTemp = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
+					else
+						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, sf.format);
+
+					if (!Glib::file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
+						fname = fnameTemp;
+						fnameOK = true;
+						break;
+					}
+				}
+			}
+			// check if it exists
+			if (!fnameOK) {
+				fname = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
+				if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
+					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
+					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+					int response = msgd.run ();
+					if (response==Gtk::RESPONSE_YES)
+						fnameOK = true;
+				}
+				else fnameOK = true;
+			}
+
+			if (fnameOK) {
+				// save image
+				rtengine::procparams::ProcParams pparams;
+				ipc->getParams (&pparams);
+				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+				fname = removeExtension (fname);
+				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
+				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
+							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
+				saveimgas->set_sensitive(false);
+				sendtogimp->set_sensitive(false);
+			}
+		}
+		else {
+			BatchQueueEntry* bqe = createBatchQueueEntry ();
+			bqe->outFileName = fname;
+			bqe->saveFormat = saveAsDialog->getFormat ();
+			parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
+			fnameOK = true;
+		}
+		// ask parent to redraw file browser
+		// ... or does it automatically when the tab is switched to it
+	} while (!fnameOK);
 }
 
 void EditorPanel::queueImgPressed () {
@@ -832,8 +851,9 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveOptions () {
 
-    options.historyPanelWidth = hpanedl->get_position ();
-    options.toolPanelWidth = vboxright->get_width ();
+    //options.historyPanelWidth = hpanedl->get_position ();//older code
+	//options.toolPanelWidth = vboxright->get_width ();//older code
+    //options.toolPanelWidth = hpanedr->get_position ();//Hombre's change which screws up OSX build
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {

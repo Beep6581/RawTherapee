@@ -47,11 +47,11 @@ FilePanel::FilePanel () : parent(NULL) {
     placespaned->pack1 (*placesBrowser, false, true);
     placespaned->pack2 (*obox, true, true);
 
-    dirpaned->pack1 (*placespaned, Gtk::SHRINK);
+    dirpaned->pack1 (*placespaned, true, true);
 
     tpc = new BatchToolPanelCoordinator (this);
     fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
-    dirpaned->pack2 (*fileCatalog, Gtk::EXPAND|Gtk::SHRINK);
+    dirpaned->pack2 (*fileCatalog, true, true);
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
     recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
@@ -99,7 +99,9 @@ FilePanel::FilePanel () : parent(NULL) {
     rightBox->pack_start (*rightNotebook);
 
     pack1(*dirpaned, true, true);
-    pack2(*rightBox, false, true);
+    pack2(*rightBox, true, true);
+
+    //set_position(options.browserToolPanelWidth);////Hombre's change which screws up OSX build
 
     fileCatalog->setFileSelectionChangeListener (tpc);
 
@@ -107,12 +109,6 @@ FilePanel::FilePanel () : parent(NULL) {
     g_idle_add (fbinit, this);
 
     show_all ();
-}
-
-void FilePanel::on_realize () {
-    
-    Gtk::HPaned::on_realize ();
-    rightBox->set_size_request (options.browserToolPanelWidth, -1);
 }
 
 void FilePanel::init () {
@@ -165,9 +161,9 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 
 void FilePanel::saveOptions () { 
 
-    options.dirBrowserWidth = dirpaned->get_position ();
-    options.dirBrowserHeight = placespaned->get_position ();
-    options.browserToolPanelWidth = rightBox->get_width ();
+    //options.dirBrowserWidth = dirpaned->get_position ();
+    //options.dirBrowserHeight = placespaned->get_position ();
+    //options.browserToolPanelWidth = get_position();
     if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
         options.startupPath = fileCatalog->lastSelectedDir ();
     fileCatalog->closeDir (); 
@@ -193,3 +189,27 @@ void FilePanel::optionsChanged () {
     tpc->optionsChanged ();
     fileCatalog->refreshAll ();
 }
+
+bool FilePanel::handleShortcutKey (GdkEventKey* event) {
+
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    
+    if (!ctrl) {
+        switch(event->keyval) {
+        }
+    }
+    else {
+        switch (event->keyval) {
+        }
+    }
+    
+    if(tpc->getToolBar()->handleShortcutKey(event))
+        return true;
+    
+    if(fileCatalog->handleShortcutKey(event))
+        return true;
+
+    return false;
+}
+

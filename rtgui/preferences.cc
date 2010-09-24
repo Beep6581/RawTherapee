@@ -269,7 +269,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 
     std::vector<Glib::ustring> pnames;
     if (options.multiUser)
-        parseDir (Options::cacheBaseDir + "/" + options.profilePath, pnames, paramFileExtension);
+        parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
     parseDir (argv0 + "/" + options.profilePath, pnames, paramFileExtension);
     for (int i=0; i<pnames.size(); i++) {
         rprofiles->append_text (pnames[i]);
@@ -324,8 +324,11 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
-    for (int i=0; i<langs.size(); i++) 
-        languages->append_text (langs[i]);
+    for (int i=0; i<langs.size(); i++) {
+	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
+  	    languages->append_text (langs[i]);
+	}
+    }
 
     Gtk::Label* langw = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
     hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 4);

@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
+#include <safegtk.h>
 #include <procparams.h>
 #include <glibmm.h>
 #include <sstream>
@@ -86,7 +87,7 @@ void ProcParams::setDefaults () {
     
     colorShift.a    = 0;
     colorShift.b    = 0;
-    
+	    
     lumaDenoise.enabled         = false;
     lumaDenoise.radius          = 1.9;
     lumaDenoise.edgetolerance   = 2000;
@@ -95,6 +96,14 @@ void ProcParams::setDefaults () {
     colorDenoise.edgesensitive  = false;
     colorDenoise.radius         = 1.9;
     colorDenoise.edgetolerance  = 2000;
+	
+	impulseDenoise.enabled      = false;
+	impulseDenoise.thresh		= 50;
+
+	dirpyrDenoise.enabled       = false;
+    dirpyrDenoise.luma          = 10;
+    dirpyrDenoise.chroma		= 10;
+	dirpyrDenoise.gamma			= 2.0;
     
     sh.enabled       = false;
     sh.hq            = false;
@@ -164,6 +173,11 @@ void ProcParams::setDefaults () {
     for(int i = 0; i < 8; i ++)
     {
         equalizer.c[i] = 0;
+    }
+	dirpyrequalizer.enabled = false;    
+    for(int i = 0; i < 8; i ++)
+    {
+        dirpyrequalizer.mult[i] = 1.0;
     }
     raw.df_autoselect = false;
     raw.ca_autocorrect = false;
@@ -246,7 +260,18 @@ int ProcParams::save (Glib::ustring fname) const {
     // save colorShift
     keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
     keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
-    
+	
+	// save impulseDenoise
+    keyFile.set_boolean ("Impulse Denoising", "Enabled",        impulseDenoise.enabled);
+	keyFile.set_integer ("Impulse Denoising", "Threshold",        impulseDenoise.thresh);
+
+	
+	// save dirpyrDenoise
+    keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
+    keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
+    keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
+	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
+
     // save lumaDenoise
     keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
     keyFile.set_double  ("Luminance Denoising", "Radius",         lumaDenoise.radius);
@@ -329,6 +354,15 @@ int ProcParams::save (Glib::ustring fname) const {
         ss << "C" << i;
         keyFile.set_integer("Equalizer", ss.str(), equalizer.c[i]);
     }
+	
+	// save directional pyramid equalizer parameters
+    keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
+    for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Mult" << i;
+        keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
+    }
 
     // save RAW parameters
     keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
@@ -343,16 +377,16 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
 
     // save exif change list
-    for (int i=0; i<exif.size(); i++)
+    for (int i=0; i<(int)exif.size(); i++)
         keyFile.set_string ("Exif", exif[i].field, exif[i].value);
 
     // save iptc change list
-    for (int i=0; i<iptc.size(); i++) {
+    for (int i=0; i<(int)iptc.size(); i++) {
         Glib::ArrayHandle<Glib::ustring> values = iptc[i].values;
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = g_fopen (safe_locale_from_utf8(fname).c_str(), "wt");
     
     if (f==NULL)
         return 1;
@@ -464,6 +498,20 @@ if (keyFile.has_group ("White Balance")) {
 if (keyFile.has_group ("Color Shift")) {    
     if (keyFile.has_key ("Color Shift", "ChannelA")) colorShift.a = keyFile.get_double ("Color Shift", "ChannelA");
     if (keyFile.has_key ("Color Shift", "ChannelB")) colorShift.b = keyFile.get_double ("Color Shift", "ChannelB");
+}
+		
+	// load impulseDenoise
+if (keyFile.has_group ("Impulse Denoising")) {    
+	if (keyFile.has_key ("Impulse Denoising", "Enabled")) impulseDenoise.enabled = keyFile.get_boolean ("Impulse Denoising", "Enabled");
+	if (keyFile.has_key ("Impulse Denoising", "Threshold")) impulseDenoise.thresh = keyFile.get_integer ("Impulse Denoising", "Threshold");
+}
+		
+	// load dirpyrDenoise
+if (keyFile.has_group ("Directional Pyramid Denoising")) {    
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled")) dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
 }
   
     // load lumaDenoise
@@ -578,6 +626,17 @@ if (keyFile.has_group ("Equalizer")) {
         if(keyFile.has_key ("Equalizer", ss.str())) equalizer.c[i] = keyFile.get_integer ("Equalizer", ss.str());
     }
 }
+		
+	// load directional pyramid equalizer parameters
+if (keyFile.has_group ("Directional Pyramid Equalizer")) {
+	if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled");
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Mult" << i;
+		if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) dirpyrequalizer.mult[i] = keyFile.get_double ("Directional Pyramid Equalizer", ss.str());
+	}
+}
 
 	// load raw settings
 if (keyFile.has_group ("RAW")) {
@@ -597,7 +656,7 @@ if (keyFile.has_group ("RAW")) {
 if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
     exif.resize (keys.size());
-    for (int i=0; i<keys.size(); i++) {
+    for (int i=0; i<(int)keys.size(); i++) {
         exif[i].field = keys[i];
         exif[i].value = keyFile.get_string ("Exif", keys[i]);
     }
@@ -607,7 +666,7 @@ if (keyFile.has_group ("Exif")) {
 if (keyFile.has_group ("IPTC")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("IPTC");
     iptc.resize (keys.size());
-    for (int i=0; i<keys.size(); i++) {
+    for (int i=0; i<(int)keys.size(); i++) {
         iptc[i].field = keys[i];
         iptc[i].values = keyFile.get_string_list ("IPTC", keys[i]);
     }
@@ -618,6 +677,7 @@ if (keyFile.has_group ("IPTC")) {
     }
     catch (const Glib::Error& e) {
         printf ("-->%s\n", e.what().c_str());
+        return 1;
     }
     catch (...) {
         printf ("-->unknown exception!\n");
@@ -634,6 +694,17 @@ bool operator==(const EqualizerParams & a, const EqualizerParams & b) {
             return false;
     }
     return true;
+}
+	
+bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b) {
+	if(a.enabled != b.enabled)
+		return false;
+		
+	for(int i = 0; i < 8; i++) {
+		if(a.mult[i] != b.mult[i])
+			return false;
+	}
+	return true;
 }
 
 bool operator==(const ExifPair& a, const ExifPair& b) {
@@ -683,6 +754,12 @@ bool ProcParams::operator== (const ProcParams& other) {
         && wb.temperature   == other.wb.temperature
         && colorShift.a     == other.colorShift.a
         && colorShift.b     == other.colorShift.b
+	&& impulseDenoise.enabled      == other.impulseDenoise.enabled
+	&& impulseDenoise.thresh      == other.impulseDenoise.thresh
+	&& dirpyrDenoise.enabled      == other.dirpyrDenoise.enabled
+	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
+	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
+	&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
         && lumaDenoise.enabled      == other.lumaDenoise.enabled
         && lumaDenoise.radius       == other.lumaDenoise.radius
         && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance
@@ -745,6 +822,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.working      == other.icm.working
         && icm.output       == other.icm.output
         && equalizer == other.equalizer
+	&& dirpyrequalizer == other.dirpyrequalizer
         && exif==other.exif
         && iptc==other.iptc;
 }
