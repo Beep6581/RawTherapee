@@ -22,7 +22,6 @@
 #include <sigc++/sigc++.h>
 #include <gtkmm.h>
 #include <rtengine.h>
-#include <simpleprocess.h>
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -75,52 +74,38 @@ class PLDBridge : public rtengine::ProgressListener {
 };
 
 template<class T>
-class ProgressConnector  {
+class ProgressConnector {
 
         sigc::signal0<T> opStart;
         sigc::signal0<bool> opEnd;
         T retval;
         Glib::Thread *workThread;
-        Glib::Mutex* qMutex;
 
 		static int emitEndSignal (void* data) {
-		//	gdk_threads_enter ();
+			gdk_threads_enter ();
 			sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
 			int r = opEnd->emit ();
 			delete opEnd;
-			//gdk_threads_leave ();
+			gdk_threads_leave ();
 			return r;
 		}
         
         void workingThread () {
-      ///     if (!qMutex)
-         //       qMutex = new Glib::Mutex ();
-
-           // qMutex->lock();
             retval = opStart.emit ();
             g_idle_add (ProgressConnector<T>::emitEndSignal, new sigc::signal0<bool> (opEnd));
-           // workThread = 0;
-           // qMutex->unlock();
+            workThread = 0;
         }
         
     public:
     
-        ProgressConnector ():workThread( 0 ) , qMutex(NULL) { }
+        ProgressConnector ():workThread( 0 ) { }
 
         void startFunc (const sigc::slot0<T>& startHandler, const sigc::slot0<bool>& endHandler ) {
         	if( !workThread ){
 				opStart.connect (startHandler);
 				opEnd.connect (endHandler);
-                  //              rtengine::batchThread->yield();
-                                workingThread();
-		//		workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+				workThread = Glib::Thread::create(sigc::mem_fun(*this, &ProgressConnector<T>::workingThread), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
         	}
-
-                if (qMutex)
-                {
-                    delete qMutex;
-                    qMutex = NULL;
-                }
         }
 
         T returnValue(){
