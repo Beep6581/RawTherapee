@@ -505,6 +505,8 @@ void EditorPanel::error (Glib::ustring descr) {
 
 void EditorPanel::info_toggled () {
 
+    if(!ipc)
+        return;
     Glib::ustring infoString;
 
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
@@ -911,6 +913,9 @@ void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcPara
 }
 
 void EditorPanel::beforeAfterToggled () {
+
+    if(!ipc)
+        return;
 
     removeIfThere (beforeAfterBox,  beforeBox, false);
     removeIfThere (afterBox,  afterLabel, false);
