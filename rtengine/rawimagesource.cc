@@ -331,8 +331,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
  */
 int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 {
-	const int border=4;
-	double eps=1e-10;
+	float eps=1.0;	
 	int bmpW= (W/8+ (W%8?1:0));
 	int counter=0;
 	for( int row = 0; row < H; row++ ){
@@ -342,21 +341,26 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 
 			if( !(bitmapBads[ row *bmpW + col/8] & (1<<col%8)) ) continue;
 
-			double wtdsum=0,norm=0;
+			double wtdsum=0,norm=0,sum=0,tot=0;
 			for( int dy=-2;dy<=2;dy+=2){
 				for( int dx=-2;dx<=2;dx+=2){
 					if (dy==0 && dx==0) continue;
-					if (row+dy<0 || row+dy>=H || col+dx<0 || row+dx>=W ) continue;
+					if (row+dy<0 || row+dy>=H || col+dx<0 || col+dx>=W ) continue;
 					if (bitmapBads[ (row+dy) *bmpW + (col+dx)/8] & (1<<(col+dx)%8)) continue;
+					sum += rawData[row+dy][col+dx];
+					tot++;
+					if (bitmapBads[ (row-dy) *bmpW + (col-dx)/8] & (1<<(col+dx)%8)) continue;
 
-					double dirwt = 1/( ( rawData[row+dy][col+dx]- rawData[row][col])*( rawData[row+dy][col+dx]- rawData[row][col])+eps);
+					double dirwt = 1/( fabs( rawData[row+dy][col+dx]- rawData[row-dy][col-dx])+eps);
 					wtdsum += dirwt* rawData[row+dy][col+dx];
 					norm += dirwt;
 				}
 			}
-			if (norm > 0.){
-				rawData[row][col]= wtdsum / norm;//low pass filter
+			if (norm > 0.0){
+				rawData[row][col]= wtdsum / norm;//gradient weighted average
 				counter++;
+			} else {
+				if (tot > 0) rawData[row][col] = sum/tot;//backup plan -- simple average
 			}
 		}
 	}
@@ -370,7 +374,7 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
 {
 	int bmpW= (W/8+ (W%8?1:0));
-	float eps=1e-10;//tolerance to avoid dividing by zero
+	float eps=1e-3;//tolerance to avoid dividing by zero
     int counter=0;
 	for (int rr=2; rr < H-2; rr++)
 		for (int cc=2; cc < W-2; cc++) {
@@ -821,6 +825,20 @@ void RawImageSource::preprocess  (const RAWParams &raw)
     double tb = icoeff[2][0] * cam_r + icoeff[2][1] * cam_g + icoeff[2][2] * cam_b;
 
     defGain = log(ri->defgain) / log(2.0); //\TODO  ri->defgain should be "costant"
+	
+	
+	if ( raw.hotdeadpix_filt ) {
+		if (plistener) {
+			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
+			plistener->setProgress (0.0);
+		}
+		int nFound =findHotDeadPixel( bitmapBads,0.1 );
+		if( settings->verbose && nFound>0){
+			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
+		}
+	}
+	cfaCleanFromMap( bitmapBads );
+	delete [] bitmapBads;
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->filters) ) {
@@ -854,19 +872,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		}
 		green_equilibrate(0.01*(raw.greenthresh));
     }
-	
-	if ( raw.hotdeadpix_filt ) {
-		if (plistener) {
-			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
-			plistener->setProgress (0.0);
-		}
-		int nFound =findHotDeadPixel( bitmapBads,0.1 );
-		if( settings->verbose && nFound>0){
-			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
-		}
-	}
-	cfaCleanFromMap( bitmapBads );
-	delete [] bitmapBads;
+
 	
 	if ( raw.linenoise >0 ) {
 		if (plistener) {
@@ -899,19 +905,19 @@ void RawImageSource::demosaic(const RAWParams &raw)
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
             vng4_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::ahd] )
-            ahd_demosaic ();
+            ahd_demosaic (0,0,W,H);
 	    else if (raw.dmethod == RAWParams::methodstring[RAWParams::amaze] )
-            amaze_demosaic_RT ();
+            amaze_demosaic_RT (0,0,W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::dcb] )
             dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance? 1:0);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
-            fast_demo ();
+            fast_demo (0,0,W,H);
         else
         	nodemosaic();
         t2.set();
-        printf("Demosaicing: %s - %d �sec\n",raw.dmethod.c_str(), t2.etime(t1));
+        printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
@@ -2662,7 +2668,7 @@ blue = new unsigned short*[H];
 #define FORC3 FORC(3)
 #define SQR(x) ((x)*(x))
 
-void RawImageSource::ahd_demosaic()
+void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 {
     int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
     ushort (*pix)[4], (*rix)[3];
@@ -3225,7 +3231,7 @@ void RawImageSource::dcb_refinement(ushort (*image)[4], int x0, int y0)
 		}
 }
 
-// missing colors are interpolated using high quality algorithm by Luis Sanz Rodríguez
+// missing colors are interpolated using high quality algorithm by Luis Sanz Rodr√≠guez
 void RawImageSource::dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2])
 {
 	const int u=CACHESIZE, v=2*CACHESIZE, w=3*CACHESIZE;
@@ -3400,7 +3406,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's code for AMaZE
 #include "fast_demo.cc"//fast demosaic	
-#include "amaze_interpolate_RT.cc"//AMaZE demosaic	
+#include "amaze_demosaic_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's CA auto correction
 #include "green_equil_RT.cc"//Emil's green channel equilibration

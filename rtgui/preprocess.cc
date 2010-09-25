@@ -36,7 +36,7 @@ PreProcess::PreProcess ()
 	caAutocorrect = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_CACORRECTION"))));
 	hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_HOTDEADPIXFILT"))));
 
-	lineDenoise = Gtk::manage(new Adjuster (M("PREFERENCES_LINEDENOISE"),0,30,1,0));
+	lineDenoise = Gtk::manage(new Adjuster (M("PREFERENCES_LINEDENOISE"),0,1000,1,0));
 	lineDenoise->setAdjusterListener (this);
 	lineDenoise->show();
 

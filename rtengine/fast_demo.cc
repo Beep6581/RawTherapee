@@ -27,9 +27,9 @@
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-void RawImageSource::fast_demo() {
-	int winx=0, winy=0;
-	int winw=W, winh=H;
+void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
+	//int winx=0, winy=0;
+	//int winw=W, winh=H;
 	
 	if (plistener) {
 		plistener->setProgressStr ("Fast demosaicing...");
