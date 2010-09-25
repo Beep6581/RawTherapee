@@ -540,7 +540,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
     ppar.icm.input = "(none)";
     Image16* im = new Image16 (fW, fH);
     imgsrc->preprocess( ppar.raw );
-    imgsrc->demosaic( ppar.raw );
+    imgsrc->demosaic(ppar.raw );
     imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
     im->saveJPEG (fname, 85);
     mProcessing.unlock ();

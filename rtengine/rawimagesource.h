@@ -162,10 +162,10 @@ class RawImageSource : public ImageSource {
         void hphd_demosaic();
         void vng4_demosaic();
         void ppg_demosaic();
-		void amaze_demosaic_RT();//Emil's code for AMaZE
-		void fast_demo();//Emil's code for fast demosaicing
+		void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
+		void fast_demo(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
         void dcb_demosaic(int iterations, int dcb_enhance);
-        void ahd_demosaic();
+        void ahd_demosaic(int winx, int winy, int winw, int winh);
         void    bilinear_demosaic();
         void    bilinear_interpolate_block(ushort (*image)[4], int start, int end);
 	void	border_interpolate(int border, ushort (*image)[4], int start = 0, int end = 0);
