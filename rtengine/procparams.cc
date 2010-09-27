@@ -173,11 +173,12 @@ void ProcParams::setDefaults () {
         equalizer.c[i] = 0;
     }
 	dirpyrequalizer.enabled = false;    
-    for(int i = 0; i < 8; i ++)
+    for(int i = 0; i < 4; i ++)
     {
         dirpyrequalizer.mult[i] = 1.0;
     }
-    
+	dirpyrequalizer.mult[4] = 0.0;
+
     exif.clear ();
     iptc.clear ();
     

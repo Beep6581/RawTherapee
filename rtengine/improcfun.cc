@@ -449,7 +449,9 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->dirpyrequalizer.enabled && lab->W>=8 && lab->H>=8) {
 			
-			dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
+			//dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
+			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult);
+
 		}
 	}
 
