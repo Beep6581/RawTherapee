@@ -60,56 +60,24 @@ DirPyrEqualizer::DirPyrEqualizer () : ToolPanel() {
             ss << " (" << M("TP_DIRPYREQUALIZER_LUMAFINEST") << ")";
         if(i == 3)
             ss << " (" << M("TP_DIRPYREQUALIZER_LUMACOARSEST") << ")";
-        
-        multiplier[i] = new Adjuster (ss.str(), 0, 4, 0.01, 1.0);
+		multiplier[i] = new Adjuster (ss.str(), 0, 4, 0.01, 1.0);
         multiplier[i]->setAdjusterListener(this);
         pack_start(*multiplier[i]);
     }
-
-    show_all_children ();
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
-    
-    Gtk::HBox * buttonBox2 = Gtk::manage (new Gtk::HBox());
-    pack_start(*buttonBox2, Gtk::PACK_SHRINK, 2);
 	
-	Gtk::Button * chromacontrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_CHROMACONTRAST_MINUS")));
-	buttonBox2->pack_start(*chromacontrastMinusButton, Gtk::PACK_SHRINK, 2);
-	chromacontrastMinusPressedConn = chromacontrastMinusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::chromacontrastMinusPressed));
+	std::stringstream ss;
 	
-	Gtk::Button * chromaneutralButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_CHROMANEUTRAL")));
-	buttonBox2->pack_start(*chromaneutralButton, Gtk::PACK_SHRINK, 2);
-	chromaneutralPressedConn = chromaneutralButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::chromaneutralPressed));
-	
-	Gtk::Button * chromacontrastPlusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_CHROMACONTRAST_PLUS")));
-	buttonBox2->pack_start(*chromacontrastPlusButton, Gtk::PACK_SHRINK, 2);
-	chromacontrastPlusPressedConn = chromacontrastPlusButton->signal_pressed().connect( sigc::mem_fun(*this, &DirPyrEqualizer::chromacontrastPlusPressed));
-	
-    buttonBox2->show_all_children();
-	
-    Gtk::HSeparator *separator4 = Gtk::manage (new  Gtk::HSeparator());
-    pack_start(*separator4, Gtk::PACK_SHRINK, 2);
-	
-    for(int i = 0; i < 4; i++)
-    {
-        std::stringstream ss;
-        ss << i;
-        if(i == 0)
-            ss << " (" << M("TP_DIRPYREQUALIZER_CHROMAFINEST") << ")";
-        if(i == 3)
-            ss << " (" << M("TP_DIRPYREQUALIZER_CHROMACOARSEST") << ")";
-        
-        multiplier[i+4] = new Adjuster (ss.str(), 0, 4, 0.01, 1.0);
-        multiplier[i+4]->setAdjusterListener(this);
-        pack_start(*multiplier[i+4]);
-    }
-	
+	ss  << M("TP_DIRPYREQUALIZER_THRESHOLD") ;
+	multiplier[4] = new Adjuster (ss.str(), 0, 1, 0.01, 0.0);
+	multiplier[4]->setAdjusterListener(this);
+	pack_start(*multiplier[4]);
+
     show_all_children ();
 	
-	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 }
 
 DirPyrEqualizer::~DirPyrEqualizer () {
@@ -124,7 +92,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
         enabled->set_inconsistent (!pedited->dirpyrequalizer.enabled);
 
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 5; i++) {
             multiplier[i]->setEditedState (pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
         }
     }
@@ -134,7 +102,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
     enaConn.block (false);
     lastEnabled = pp->dirpyrequalizer.enabled;
     
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 5; i++) {
         multiplier[i]->setValue(pp->dirpyrequalizer.mult[i]);
     }
 
@@ -145,7 +113,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->dirpyrequalizer.enabled = enabled->get_active ();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 5; i++) {
         pp->dirpyrequalizer.mult[i] = multiplier[i]->getValue();
     }
 
@@ -153,7 +121,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
 
         pedited->dirpyrequalizer.enabled =  !enabled->get_inconsistent();
 
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 5; i++) {
             pedited->dirpyrequalizer.mult[i] = multiplier[i]->getEditedState();
         }
     }
@@ -161,17 +129,17 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
 
 void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 5; i++) {
         multiplier[i]->setDefault(defParams->dirpyrequalizer.mult[i]);
     }
     
     if (pedited) {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
         }
     }
     else {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(Irrelevant);
         }
     }
@@ -181,7 +149,7 @@ void DirPyrEqualizer::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
     
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 5; i++) {
         multiplier[i]->showEditedCB();
     }
 }
@@ -192,7 +160,7 @@ void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval) {
         std::stringstream ss;
         ss << "(";
         int i;
-        for (i = 0; i < 8; i++) {
+        for (i = 0; i < 5; i++) {
             if (i > 0) {
                 ss << ", ";
             }
@@ -235,14 +203,6 @@ void DirPyrEqualizer::lumaneutralPressed () {
     }
 }
 
-void DirPyrEqualizer::chromaneutralPressed () {
-	
-    for (int i = 4; i < 8; i++) {
-        multiplier[i]->setValue(1.0);
-        adjusterChanged(multiplier[i], 1.0);
-    }
-}
-
 
 void DirPyrEqualizer::lumacontrastPlusPressed () {
 
@@ -253,14 +213,6 @@ void DirPyrEqualizer::lumacontrastPlusPressed () {
     }
 }
 
-void DirPyrEqualizer::chromacontrastPlusPressed () {
-	
-    for (int i = 4; i < 8; i++) {
-        float inc = 0.05 * (8 - i);
-        multiplier[i]->setValue(multiplier[i]->getValue() + inc);
-        adjusterChanged(multiplier[i], multiplier[i]->getValue());
-    }
-}
 
 void DirPyrEqualizer::lumacontrastMinusPressed () {
 
@@ -271,11 +223,4 @@ void DirPyrEqualizer::lumacontrastMinusPressed () {
     }
 }
 
-void DirPyrEqualizer::chromacontrastMinusPressed () {
-	
-    for (int i = 4; i < 8; i++) {
-        float inc = -0.05 * (8 - i);
-        multiplier[i]->setValue(multiplier[i]->getValue() + inc);
-        adjusterChanged(multiplier[i], multiplier[i]->getValue());
-    }
-}
+

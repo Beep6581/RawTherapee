@@ -30,15 +30,12 @@ class DirPyrEqualizer : public Gtk::VBox, public AdjusterListener, public ToolPa
 protected:
 
     Gtk::CheckButton * enabled;
-    Adjuster* multiplier[8]; 
+    Adjuster* multiplier[5]; 
 
     sigc::connection enaConn;
     sigc::connection lumaneutralPressedConn;
     sigc::connection lumacontrastPlusPressedConn;
     sigc::connection lumacontrastMinusPressedConn;
-	sigc::connection chromaneutralPressedConn;
-    sigc::connection chromacontrastPlusPressedConn;
-    sigc::connection chromacontrastMinusPressedConn;
 	
     bool lastEnabled;
 
@@ -57,9 +54,6 @@ public:
     void lumaneutralPressed ();
     void lumacontrastPlusPressed ();
     void lumacontrastMinusPressed ();
-	void chromaneutralPressed ();
-    void chromacontrastPlusPressed ();
-    void chromacontrastMinusPressed ();
 };
 
 #endif

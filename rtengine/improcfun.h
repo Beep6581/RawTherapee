@@ -104,6 +104,10 @@ class ImProcFunctions {
 	void dirpyr_eq(LabImage* data_coarse, LabImage* data_fine, int * rangefn, int level, int pitch, int scale, const double * mult );
 	void idirpyr_eq(LabImage* data_coarse, LabImage* data_fine, int *** buffer, int * irangefn, int level, int pitch, int scale, const double * mult );
 	
+	void dirpyr_equalizer(unsigned short ** src, unsigned short ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
+	void dirpyr_channel(unsigned short ** data_fine, unsigned short ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  );
+	void idirpyr_eq_channel(unsigned short ** data_coarse, unsigned short ** data_fine, int ** buffer, int width, int height, int level, const double * mult );
+	
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 
