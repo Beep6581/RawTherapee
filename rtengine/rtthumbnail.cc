@@ -121,9 +121,9 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             int ofs = 3*(i*img->width + j);
             if (img->data[ofs]>250 || img->data[ofs+1]>250 || img->data[ofs+2]>250)
                 continue;
-            avg_r += img->data[ofs];
-            avg_g += img->data[ofs+1];
-            avg_b += img->data[ofs+2];
+            avg_r += 256*img->data[ofs];
+            avg_g += 256*img->data[ofs+1];
+            avg_b += 256*img->data[ofs+2];
             n++;
         }
     ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
