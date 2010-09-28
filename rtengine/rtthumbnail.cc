@@ -116,18 +116,17 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     double avg_g = 0;
     double avg_b = 0;
     int n = 0;
-    int p = 6;
     for (int i=1; i<img->height-1; i++)
         for (int j=1; j<img->width-1; j++) {
             int ofs = 3*(i*img->width + j);
             if (img->data[ofs]>250 || img->data[ofs+1]>250 || img->data[ofs+2]>250)
                 continue;
-            avg_r += StdImageSource::intpow((double)img->data[ofs]*256, p);
-            avg_g += StdImageSource::intpow((double)img->data[ofs+1]*256, p);
-            avg_b += StdImageSource::intpow((double)img->data[ofs+2]*256, p);
+            avg_r += img->data[ofs];
+            avg_g += img->data[ofs+1];
+            avg_b += img->data[ofs+2];
             n++;
         }
-    ColorTemp::mul2temp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p), tpp->autowbTemp, tpp->autowbGreen);
+    ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
 
     delete img;
     tpp->init ();
