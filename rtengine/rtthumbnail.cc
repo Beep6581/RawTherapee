@@ -119,14 +119,16 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     for (int i=1; i<img->height-1; i++)
         for (int j=1; j<img->width-1; j++) {
             int ofs = 3*(i*img->width + j);
-            if (img->data[ofs]>250 || img->data[ofs+1]>250 || img->data[ofs+2]>250)
+            int rtmp=img->data[ofs], gtmp=img->data[ofs+1], btmp=img->data[ofs+2];
+            if (rtmp>64000 || gtmp>64000 || btmp>64000)
                 continue;
-            avg_r += 256*img->data[ofs];
-            avg_g += 256*img->data[ofs+1];
-            avg_b += 256*img->data[ofs+2];
+            avg_r += rtmp;
+            avg_g += gtmp;
+            avg_b += btmp;
             n++;
         }
-    ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
+    if (n>0)
+        ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
 
     delete img;
     tpp->init ();
