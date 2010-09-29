@@ -347,7 +347,7 @@ int ProcParams::save (Glib::ustring fname) const {
 	
 	// save directional pyramid equalizer parameters
     keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < 5; i++)
     {
         std::stringstream ss;
         ss << "Mult" << i;
@@ -608,7 +608,7 @@ if (keyFile.has_group ("Equalizer")) {
 	// load directional pyramid equalizer parameters
 if (keyFile.has_group ("Directional Pyramid Equalizer")) {
 	if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled");
-	for(int i = 0; i < 8; i ++)
+	for(int i = 0; i < 5; i ++)
 	{
 		std::stringstream ss;
 		ss << "Mult" << i;
@@ -664,7 +664,7 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
 	if(a.enabled != b.enabled)
 		return false;
 		
-	for(int i = 0; i < 8; i++) {
+	for(int i = 0; i < 5; i++) {
 		if(a.mult[i] != b.mult[i])
 			return false;
 	}
