@@ -29,7 +29,7 @@ ETC=${MACOS}/etc
 LIB=${MACOS}/lib
 SHARE=${MACOS}/share
 RELEASE=release
-DMG=${RELEASE}/rawtherapee_osx105_`date "+%Y-%m-%d"`_release-3.0-a1+`hg log | head -1 | cut -f 4 -d ' ' | sed 's/:/-/g'`.dmg
+DMG=${RELEASE}/rawtherapee_osx105_`date +%F`_`hg parents --template '{latesttag}+{latesttagdistance}-{node|short}'`.dmg
 EXECUTABLE=rt
 
 #Find where MacPorts is installed.  We take a known binary (cmake), which is in <MacPorts>/bin, and 
