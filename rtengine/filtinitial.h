@@ -33,7 +33,7 @@ class InitialFilter : public Filter {
 
     public:
         InitialFilter (ImageSource* imgs);
-        void getFullImageSize (int& w, int& h);
+        Dim  getFullImageSize ();
         void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
 };
 

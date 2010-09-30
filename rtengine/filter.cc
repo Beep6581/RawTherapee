@@ -1,4 +1,5 @@
 #include "filter.h"
+#include <math.h>
 
 namespace rtengine {
 
@@ -33,11 +34,10 @@ void Filter::addNext (Filter* f) {
 }
 
 
-void Filter::getReqiredBufferSize (int& w, int& h) {
+Dim Filter::getReqiredBufferSize () {
 
 	// default implementation: filter does not require any buffer
-	w = 0;
-	h = 0;
+    return Dim ();
 }
 
 void Filter::reverseTransPoint (int x, int y, int& xv, int& yv) {
@@ -57,14 +57,13 @@ ImageView Filter::calculateSourceImageView (const ImageView& requestedImView) {
     return requestedImView;
 }
 
-void Filter::getFullImageSize (int& w, int& h) {
+Dim Filter::getFullImageSize () {
 
 	// default implementation: filter does not change image size
 	if (prev)
-		prev->getFullImageSize (w, h);
-	else {
-		w = -1; h = -1;
-	}
+		return prev->getFullImageSize ();
+	else
+		return Dim (-1, -1);
 }
 
 bool Filter::isTriggerEvent (const std::set<ProcEvent>& events) {
@@ -91,11 +90,11 @@ void Filter::setupCache () {
 		return;
 	}
 
-	if (outputCache && outputCache->width==targetImageView.w && outputCache->height==targetImageView.h)
+	if (outputCache && outputCache->width==targetImageViewPixelSize.width && outputCache->height==targetImageViewPixelSize.height)
 		return;
 
 	delete outputCache;
-	outputCache = new MultiImage (targetImageView.w, targetImageView.h, descriptor->getOutputColorSpace());
+	outputCache = new MultiImage (targetImageViewPixelSize.width, targetImageViewPixelSize.height, descriptor->getOutputColorSpace());
 }
 
 void Filter::setProcParams (ProcParams* pparams) {

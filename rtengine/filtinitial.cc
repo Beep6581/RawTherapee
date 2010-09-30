@@ -26,9 +26,9 @@ void StdInitialFilterDescriptor::createAndAddToList (Filter* tail) const {}
 InitialFilter::InitialFilter (ImageSource* imgs)
     : Filter (imgs->isRaw() ? (FilterDescriptor*)&rawInitialFilterDescriptor : (FilterDescriptor*)&stdInitialFilterDescriptor), imgsrc (imgs) {}
 
-void InitialFilter::getFullImageSize (int& w, int& h) {
+Dim InitialFilter::getFullImageSize () {
 
-    imgsrc->getFullImageSize (w, h);
+    return imgsrc->getFullImageSize ();
 }
 void InitialFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 

@@ -31,10 +31,9 @@ LumaDenoiseFilter::LumaDenoiseFilter ()
 	: Filter (&lumaDenoiseFilterDescriptor) {
 }
 
-void LumaDenoiseFilter::getReqiredBufferSize (int& w, int& h) {
+Dim LumaDenoiseFilter::getReqiredBufferSize () {
 
-    w = getSourceImageView().getPixelWidth();
-    h = getSourceImageView().getPixelHeight();
+    return getTargetImagePixelSize();
 }
 
 void LumaDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {

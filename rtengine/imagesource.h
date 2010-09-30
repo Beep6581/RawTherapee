@@ -34,12 +34,14 @@ class ImageSource : public InitialImage {
         virtual Matrix33	getRGBToCamMatrix ()=0;
 
         virtual bool isRaw () =0;
+        virtual bool isThumbnail () =0;
+        virtual double getScale () =0;
 
         // inherited from InitialImage
         void increaseRef ();
 		void decreaseRef ();
 
-        void getFullImageSize (int& w, int& h);
+		Dim  getFullImageSize ();
         void getImage (const ImageView& targetImageView, MultiImage* targetImage);
 };
 

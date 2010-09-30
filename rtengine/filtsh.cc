@@ -63,9 +63,8 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
 
         // calculate radius (procparams contains relative radius only)
         ImageSource* imgsrc = getFilterChain ()->getImageSource ();
-        int pW, pH;
-        imgsrc->getFullImageSize (pW, pH);
-        double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
+        Dim fsize = imgsrc->getFullImageSize ();
+        double radius = sqrt (double(fsize.width*fsize.width+fsize.height*fsize.height)) / 2.0;
         double shradius = radius / 1800.0 * procParams->sh.radius;
 
         // allocate map
@@ -170,30 +169,21 @@ unsigned short PreShadowsHighlightsFilter::getMapAvg () {
     return avg;
 }
 
-void PreShadowsHighlightsFilter::getReqiredBufferSize (int& w, int& h) {
+Dim PreShadowsHighlightsFilter::getReqiredBufferSize () {
 
     if (procParams->sh.enabled) {
-        int sw = getSourceImageView().getPixelWidth ();
-        int sh = getSourceImageView().getPixelHeight ();
+        Dim sdim = getTargetImagePixelSize ();
         if (!procParams->sh.hq) {
-            if (sh > sw) {
-                w = 2;
-                h = sh*omp_get_max_threads();
-            }
-            else {
-                w = sw*omp_get_max_threads();
-                h = 2;
-            }
+            if (sdim.height > sdim.width)
+                return Dim (2, sdim.height*omp_get_max_threads());
+            else
+                return Dim (sdim.width*omp_get_max_threads(), 2);
         }
-        else {
-            w = sw;
-            h = sh;
-        }
+        else
+            return sdim;
     }
-    else {
-        w = 0;
-        h = 0;
-    }
+    else
+        return Dim ();
 }
 
 ShadowsHighlightsFilter::ShadowsHighlightsFilter (PreShadowsHighlightsFilter* pshf)

@@ -49,10 +49,12 @@ class StdImageSource : public ImageSource {
         Matrix33	getCamToRGBMatrix ()=0;
         Matrix33	getRGBToCamMatrix ()=0;
 
-    	void getFullImageSize (int& w, int& h);
+    	Dim  getFullImageSize ();
     	void getImage (const ImageView& targetImageView, MultiImage* targetImage);
 
-        bool isRaw () { return false; }
+        bool isRaw ()       { return false; }
+        bool isThumbnail () { return false; }
+        double getScale ()  { return 1.0; }
 };
 
 }

@@ -49,10 +49,12 @@ class RawImageSource : public ImageSource {
         Matrix33	getCamToRGBMatrix ();
         Matrix33	getRGBToCamMatrix ();
 
-    	void getFullImageSize (int& w, int& h);
+    	Dim  getFullImageSize ();
     	void getImage (const ImageView& targetImageView, MultiImage* targetImage);
 
-        bool isRaw () { return false; }
+        bool isRaw ()       { return true; }
+        bool isThumbnail () { return false; }
+        double getScale ()  { return 1.0; }
 };
 
 }

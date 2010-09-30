@@ -44,30 +44,25 @@ ImageView CoarseTransformFilter::calculateSourceImageView (const ImageView& requ
     return ImageView (std::min(x1,x2), std::min(y1,y2), ABS(x2-x1)+1, ABS(y2-y1)+1, 1);
 }
 
-void CoarseTransformFilter::getFullImageSize (int& w, int& h) {
+Dim CoarseTransformFilter::getFullImageSize () {
 
     int ow, oh;
-    getPreviousFilter()->getFullImageSize (ow, oh);
-    if (procParams->coarse.rotate==90 || procParams->coarse.rotate==270) {
-        w = oh;
-        h = ow;
-    }
-    else {
-        w = ow;
-        h = oh;
-    }
+    Dim prevd = getPreviousFilter()->getFullImageSize ();
+    if (procParams->coarse.rotate==90 || procParams->coarse.rotate==270)
+        return Dim (prevd.height, prevd.width);
+    else
+        return prevd;
 }
 
-void CoarseTransformFilter::getReqiredBufferSize (int& w, int& h) {
+Dim CoarseTransformFilter::getReqiredBufferSize () {
 
-    w = getTargetImageView().w;
-    h = getTargetImageView().h;
+    return getTargetImagePixelSize();
 }
 
 void CoarseTransformFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
 
-    int ow, oh;
-    getPreviousFilter()->getFullImageSize (ow, oh);
+    Dim pfs = getPreviousFilter()->getFullImageSize ();
+    int ow = pfs.width, oh = pfs.height;
 
     int nx = x, ny = y;
     if (procParams->coarse.vflip)

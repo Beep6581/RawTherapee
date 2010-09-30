@@ -16,15 +16,15 @@ void PreviewListenerAdapter::setPreviewListener (PreviewImageListener* prevListe
 	this->prevListener = prevListener;
 }
 
-ImageView PreviewListenerAdapter::getViewToProcess (int fullW, int fullH) {
+ImageView PreviewListenerAdapter::getViewToProcess (Dim fullSize) {
 
-	return ImageView (0, 0, fullW, fullH, 16);
+	return ImageView (0, 0, fullSize.width, fullSize.height, 16);
 }
 
-void PreviewListenerAdapter::imageReady	(IImage8* img, double scale, int fullW, int fullH, ImageView view, ProcParams params) {
+void PreviewListenerAdapter::imageReady	(IImage8* img, double scale, Dim fullSize, ImageView view, ProcParams params) {
 
 	if (prevListener)
-	    prevListener->imageReady (img, scale, fullW, fullH, params);
+	    prevListener->imageReady (img, scale, fullSize, params);
 }
 
 
@@ -148,6 +148,11 @@ void InteractiveImProcImpl::fullUpdate (ImProcListener* listener) {
     mProcessing.lock();
 	filterChainGroup->update (listener);
     mProcessing.unlock();
+}
+
+double InteractiveImProcImpl::getScale (ImProcListener* listener, int skip) {
+
+    return  filterChainGroup->getScale (listener, skip);
 }
 
 ColorTemp InteractiveImProcImpl::getAutoWB () {

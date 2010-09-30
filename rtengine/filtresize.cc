@@ -8,6 +8,7 @@
 #include "filtresize.h"
 #include "rtengine.h"
 #include "macros.h"
+#include "filterchain.h"
 
 namespace rtengine {
 
@@ -49,23 +50,24 @@ ImageView ResizeFilter::calculateSourceImageView (const ImageView& requestedImVi
 
 double ResizeFilter::getScale () {
 
-    int s = getTargetImageView().skip;
-    if (s > 0)
-        return parent->getScale () / getResizeScale ();
-    else
-        return parent->getScale ();
-}
+    double s = getParentFilter()->getScale();
 
+    // if we are processing a thumbnail, do not apply resize filter, just update the "Scale", that is the
+    // ratio of the image obtained compared to the image requested
+    if (getFilterChain()->getImageSource()->isThumbnail())
+        return s*getResizeScale ();
+    else
+        return s;
+}
 
 double ResizeFilter::getResizeScale () {
 
     if (procParams->resize.enabled) {
-        int ow, oh;
-        getPreviousFilter()->getFullImageSize (ow, oh);
+        Dim pdim = getPreviousFilter()->getFullImageSize ();
         if (procParams->resize.dataspec==1)
-            return procParams->resize.width / ow;
+            return procParams->resize.width / pdim.width;
         else if (procParams->resize.dataspec==2)
-            return procParams->resize.height / oh;
+            return procParams->resize.height / pdim.height;
         else if (procParams->resize.dataspec==0)
             return procParams->resize.scale;
         else
@@ -75,32 +77,21 @@ double ResizeFilter::getResizeScale () {
         return 1.0;
 }
 
-void ResizeFilter::getFullImageSize (int& w, int& h) {
+Dim ResizeFilter::getFullImageSize () {
 
-    int ow, oh;
-    getPreviousFilter()->getFullImageSize (ow, oh);
+    Dim pdim = getPreviousFilter()->getFullImageSize ();
     if (procParams->resize.enabled) {
-        if (procParams->resize.dataspec==1) {
-            w = procParams->resize.width;
-            h = oh * w / ow;
-        }
-        else if (procParams->resize.dataspec==2) {
-            h = procParams->resize.height;
-            w = ow * h / oh;
-        }
-        else if (procParams->resize.dataspec==0) {
-            h = oh * procParams->resize.scale;
-            w = ow * procParams->resize.scale;
-        }
-        else {
-            w = oh;
-            h = ow;
-        }
+        if (procParams->resize.dataspec==1)
+            return Dim (procParams->resize.width, pdim.height * procParams->resize.width / pdim.width);
+        else if (procParams->resize.dataspec==2)
+            return Dim (pdim.width * procParams->resize.height / pdim.height);
+        else if (procParams->resize.dataspec==0)
+            return Dim (pdim.width * procParams->resize.scale, pdim.height * procParams->resize.scale);
+        else
+            return pdim;
     }
-    else {
-        w = ow;
-        h = oh;
-    }
+    else
+        return pdim;
 }
 
 void ResizeFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {

@@ -31,16 +31,19 @@ public:
 	FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread);
 	FilterChain (ImProcListener* listener, FilterChain* previous);
 	~FilterChain ();
-	void getReqiredBufferSize (int& w, int& h);
-	void getFullImageSize (int& w, int& h);
+	Dim getReqiredBufferSize ();
+	Dim getFullImageSize ();
 
-	void setupProcessing (const std::set<ProcEvent>& events, int fullW, int fullH, int& maxWorkerWidth, int& maxWorkerHeight, bool useShortCut = false);
+	double getScale (int skip);
+
+	void setupProcessing (const std::set<ProcEvent>& events, Dim fullSize, Dim& maxWorkerSize, bool useShortCut = false);
 	void process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker);
 
 	ImProcListener* getListener () { return listener; }
 	void invalidate ();
 
 	ImageSource* getImageSource () { return imgSource; }
+
 
 	void setNextChain (FilterChain* other);
 };

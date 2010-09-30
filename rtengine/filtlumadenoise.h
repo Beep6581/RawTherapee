@@ -32,7 +32,7 @@ class LumaDenoiseFilter : public Filter {
 
 	public:
         LumaDenoiseFilter ();
-        void getReqiredBufferSize (int& w, int& h);
+        Dim  getReqiredBufferSize ();
     	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
 };
 

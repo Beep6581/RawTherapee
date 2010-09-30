@@ -164,10 +164,9 @@ void StdImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
         }
 }
 
-void StdImageSource::getFullImageSize (int& w, int& h) {
+Dim StdImageSource::getFullImageSize () {
 
-	w = img->width;
-	h = img->height;
+    return Dim (img->width, img->height);
 }
 
 void StdImageSource::getImage (const ImageView& view, MultiImage* targetImage) {

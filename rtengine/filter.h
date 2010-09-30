@@ -53,6 +53,9 @@ private:
 
 	ImageView   sourceImageView;
 	ImageView   targetImageView;
+    Dim         sourceImageViewPixelSize;
+    Dim         targetImageViewPixelSize;
+
 
 	ProgressListener* plistener;
 
@@ -70,6 +73,9 @@ protected:
     Filter*             getPreviousFilter  () { return prev; }
 	FilterChain*		getFilterChain     () { return myFilterChain; }
     ProgressListener*   getProgressListener() { return plistener; }
+    Dim                 getSourceImagePixelSize () { return sourceImageViewPixelSize; }
+    Dim                 getTargetImagePixelSize () { return targetImageViewPixelSize; }
+
 
 public:
     Filter*             getParentFilter    () { return parent; }
@@ -83,9 +89,9 @@ public:
 
 	// Return the size of the required buffer. One common (shared among all the filters) buffer is maintained and passed
 	// to "process".
-	virtual void getReqiredBufferSize (int& w, int& h);
+	virtual Dim getReqiredBufferSize ();
 	// return full image size if this filter was the last one
-	virtual void getFullImageSize (int& w, int& h);
+	virtual Dim getFullImageSize ();
     virtual double getScale ();
 	// return the coordinates (xv,yv) corresponding to the "source" side given coordinates (x,y) corresponding to the target side
 	virtual void reverseTransPoint (int x, int y, int& xv, int& yv);

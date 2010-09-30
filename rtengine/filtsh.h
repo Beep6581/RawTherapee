@@ -43,7 +43,7 @@ class PreShadowsHighlightsFilter : public Filter {
         unsigned short   getMapMax ();
         unsigned short   getMapMin ();
         unsigned short   getMapAvg ();
-        void getReqiredBufferSize (int& w, int& h);
+        Dim getReqiredBufferSize ();
 };
 
 

@@ -74,13 +74,13 @@ void FilterChain::invalidate () {
     invalidated = true;
 }
 
-void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW, int fullH, int& maxWorkerWidth, int& maxWorkerHeight, bool useShortCut) {
+void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSize, Dim& maxWorkerSize, bool useShortCut) {
 
 	if (!listener)
 		return;
 
 	// tell the listener the full size of the image with the current settings and let it decide the portion to refresh
-	ImageView reqView = listener->getViewToProcess (fullW, fullH);
+	ImageView reqView = listener->getViewToProcess (fullSize);
 
 	// walk through the list and find first filter that needs to be refreshed because of the changed view
 	Filter* curr = last;
@@ -96,10 +96,25 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
         curr = curr->prev;
 	}
 
+	// calculate and set source and target image sizes of the filters
+	for (curr = first; curr; curr = curr->next) {
+        double sscale = curr == first ? imgSource->getScale () : curr->prev->getScale ();
+        Dim newSourceImageViewPixelSize = Dim ((int)round(curr->sourceImageView.w*sscale), (int)round(curr->sourceImageView.h*sscale));
+        double tscale = curr->prev->getScale ();
+        Dim newTargetImageViewPixelSize = Dim ((int)round(curr->targetImageView.w*tscale), (int)round(curr->targetImageView.h*tscale));
+        if (newSourceImageViewPixelSize != curr->sourceImageViewPixelSize || newTargetImageViewPixelSize != curr->targetImageViewPixelSize) {
+            curr->sourceImageViewPixelSize = newSourceImageViewPixelSize;
+            curr->targetImageViewPixelSize = newTargetImageViewPixelSize;
+            curr->valid = false;
+        }
+	}
+
 	// set mandatory cache points
 	first->hasOutputCache = true;
-	for (curr = first; curr != last; curr = curr->next)
-		if (curr->forceOutputCache || !(curr->sourceImageView == curr->targetImageView) || (curr->next && !(curr->targetImageView == curr->next->sourceImageView)))
+	for (curr = first->next; curr != last; curr = curr->next)
+		if (curr->forceOutputCache || curr->sourceImageView != curr->targetImageView
+		        || curr->sourceImageViewPixelSize != curr->targetImageViewPixelSize
+		        || (curr->next && (curr->targetImageView != curr->next->sourceImageView || curr->targetImageViewPixelSize != curr->next->sourceImageViewPixelSize)))
 			curr->hasOutputCache = true;
 		else
 			curr->hasOutputCache = false;
@@ -144,12 +159,8 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, int fullW,
 
 	// find out the dimensions of the largest worker image necessary
 	for (curr = firstToUpdate; curr; curr = curr->next)
-		if (!curr->hasOutputCache) {
-			if (curr->sourceImageView.getPixelWidth() > maxWorkerWidth)
-				maxWorkerWidth = curr->sourceImageView.getPixelWidth ();
-			if (curr->sourceImageView.getPixelHeight() > maxWorkerHeight)
-				maxWorkerHeight = curr->sourceImageView.getPixelHeight ();
-		}
+		if (!curr->hasOutputCache)
+		    maxWorkerSize.setMax (curr->sourceImageViewPixelSize);
 
 	// set up caches
 	for (curr = first; curr; curr = curr->next)
@@ -164,23 +175,24 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 		if (curr != first) {
 		    if (curr->shortCutPrev) {
 		        sourceImage = worker;
-                worker->setDimensions (curr->sourceImageView.getPixelWidth(), curr->sourceImageView.getPixelHeight());
-                worker->copyFrom (curr->shortCutPrev->outputCache, curr->sourceImageView.x - curr->shortCutPrev->targetImageView.x, curr->sourceImageView.y - curr->shortCutPrev->targetImageView.y, curr->sourceImageView.skip / curr->shortCutPrev->targetImageView.skip);
+                worker->setDimensions (curr->sourceImageViewPixelSize.width, curr->sourceImageViewPixelSize.height);
+/*!!!*/                worker->copyFrom (curr->shortCutPrev->outputCache, curr->sourceImageView.x - curr->shortCutPrev->targetImageView.x, curr->sourceImageView.y - curr->shortCutPrev->targetImageView.y, curr->sourceImageView.skip / curr->shortCutPrev->targetImageView.skip);
 		    }
-		    else if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView)
+		    else if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView && curr->prev->targetImageViewPixelSize == curr->sourceImageViewPixelSize)
 				sourceImage = curr->prev->outputCache;
 			else {
 				sourceImage = worker;
-				worker->setDimensions (curr->sourceImageView.getPixelWidth(), curr->sourceImageView.getPixelHeight());
-				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView) // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
-					worker->copyFrom (curr->prev->outputCache, curr->sourceImageView.x - curr->prev->targetImageView.x, curr->sourceImageView.y - curr->prev->targetImageView.y, curr->sourceImageView.skip / curr->prev->targetImageView.skip);
+				worker->setDimensions (curr->sourceImageViewPixelSize.width, curr->sourceImageViewPixelSize.height);
+				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView || curr->prev->targetImageViewPixelSize != curr->sourceImageViewPixelSize)
+				    // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
+/*!!!*/				    worker->copyFrom (curr->prev->outputCache, curr->sourceImageView.x - curr->prev->targetImageView.x, curr->sourceImageView.y - curr->prev->targetImageView.y, curr->sourceImageView.skip / curr->prev->targetImageView.skip);
 			}
 			sourceImage->convertTo (curr->descriptor->getInputColorSpace());
 		}
 		if (curr->hasOutputCache)
 			targetImage = curr->outputCache;
 		else {
-			worker->setDimensions (curr->targetImageView.getPixelWidth(), curr->targetImageView.getPixelHeight());
+			worker->setDimensions (curr->targetImageViewPixelSize.width, curr->targetImageViewPixelSize.height);
 			targetImage = worker;
 		}
 		curr->process (events, sourceImage, targetImage, buffer);
@@ -189,25 +201,24 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 	invalidated = false;
 }
 
-void FilterChain::getReqiredBufferSize (int& w, int& h) {
+Dim FilterChain::getReqiredBufferSize () {
 
-	w = 0;
-	h = 0;
-	for (Filter* curr = first; curr; curr = curr->next) {
-		int wc, hc;
-		curr->getReqiredBufferSize (wc, hc);
-		if (wc > w)
-			w = wc;
-		if (hc > h)
-			h = hc;
-	}
+	Dim bufferSize;
+	for (Filter* curr = first; curr; curr = curr->next)
+		bufferSize.setMax (curr->getReqiredBufferSize ());
 }
 
-void FilterChain::getFullImageSize (int& w, int& h) {
+Dim FilterChain::getFullImageSize () {
 
 	if (!last)
-		return;
+		return Dim();
 	else
-		last->getFullImageSize (w, h);
+		return last->getFullImageSize ();
 }
+
+double FilterChain::getScale (int skip) {
+
+    return last ? last->getScale() : 1.0;
+}
+
 }

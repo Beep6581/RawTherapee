@@ -22,16 +22,6 @@ bool ImageView::operator!= (const ImageView& other) const {
     return !(*this == other);
 }
 
-int ImageView::getPixelWidth () const {
-
-    return w >> skip;
-}
-
-int ImageView::getPixelHeight () const {
-
-    return h >> skip;
-}
-
 bool ImageView::isPartOf (const ImageView& other) const {
 
     return x >= other.x && x+w-1 <= other.x+other.w-1

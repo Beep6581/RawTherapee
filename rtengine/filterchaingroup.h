@@ -18,7 +18,7 @@ class FilterChainGroup {
 	ImageSource* imgSource;
 	bool multiThread;
 
-	void updateBuffer (int w, int h);
+	void updateBuffer (Dim size);
 
 public:
 
@@ -30,6 +30,8 @@ public:
 	void addNewFilterChain (ImProcListener* listener);
 	void removeFilterChain (ImProcListener* listener);
 	void update 		   (ImProcListener* listener);
+
+    double getScale        (ImProcListener* listener, int skip);
 
 };
 

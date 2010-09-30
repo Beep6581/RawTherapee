@@ -35,6 +35,14 @@ void FilterChainGroup::removeFilterChain (ImProcListener* listener) {
 		}
 }
 
+double FilterChainGroup::getScale (ImProcListener* listener, int skip) {
+
+    for (int i = 0; i<filterChains.size(); i++)
+        if (filterChains[i]->getListener() == listener)
+            return filterChains[i]->getScale (skip);
+    return 1.0;
+}
+
 void FilterChainGroup::update (ImProcListener* listener) {
 
 	for (int i=0; i<filterChains.size(); i++)
@@ -56,20 +64,18 @@ void FilterChainGroup::update (ImProcListener* listener) {
 	        }
 	    if (!fChain)
 	        return;
-	    int w, h;
-	    filterChains[0]->getFullImageSize (w, h);
-	    int maxWorkerWidth = -1, maxWorkerHeight = -1;
-        fChain->setupProcessing (ev, w, h, maxWorkerWidth, maxWorkerHeight, true);
-        if (!workerImage || workerImage->getAllocWidth()<maxWorkerWidth || workerImage->getAllocHeight()<maxWorkerHeight) {
+	    Dim fullSize = filterChains[0]->getFullImageSize ();
+	    Dim maxWorkerSize;
+        fChain->setupProcessing (ev, fullSize, maxWorkerSize, true);
+        if (!workerImage || workerImage->getAllocWidth()<maxWorkerSize.width || workerImage->getAllocHeight()<maxWorkerSize.height) {
             delete workerImage;
             workerImage = NULL;
-            if (maxWorkerWidth > 0 && maxWorkerHeight > 0)
-                workerImage = new MultiImage (maxWorkerWidth, maxWorkerHeight);
+            if (maxWorkerSize.width > 0 && maxWorkerSize.height > 0)
+                workerImage = new MultiImage (maxWorkerSize.width, maxWorkerSize.height);
         }
-	    int bw = 0, bh = 0;
-        fChain->getReqiredBufferSize (bw, bh);
-        if (!buffer || bw > buffer->width || bh > buffer->height)
-            updateBuffer (bw, bh);
+        Dim bufferSize = fChain->getReqiredBufferSize ();
+        if (!buffer || bufferSize.width > buffer->width || bufferSize.height > buffer->height)
+            updateBuffer (bufferSize);
         fChain->process (ev, buffer, workerImage);
 	}
 }
@@ -79,43 +85,36 @@ void FilterChainGroup::process (const std::set<ProcEvent>& events) {
 	if (filterChains.size()==0)
 		return;
 
-	int w, h;
-	filterChains[0]->getFullImageSize (w, h);	// calculate it here once, it must be the same for the group
+	Dim fullSize = filterChains[0]->getFullImageSize ();	// calculate it here once, it must be the same for the group
+    Dim maxWorkerSize;
 
 	// set up filter chains
-	int maxWorkerWidth = -1, maxWorkerHeight = -1;
 	for (int i=0; i<filterChains.size(); i++)
-		filterChains[i]->setupProcessing (events, w, h, maxWorkerWidth, maxWorkerHeight, true);
+		filterChains[i]->setupProcessing (events, fullSize, maxWorkerSize, true);
 
 	// re-allocate worker image, if necessary
-	if (!workerImage || workerImage->getAllocWidth()!=maxWorkerWidth || workerImage->getAllocHeight()!=maxWorkerHeight) {
+	if (!workerImage || workerImage->getAllocWidth()!=maxWorkerSize.width || workerImage->getAllocHeight()!=maxWorkerSize.height) {
 		delete workerImage;
 		workerImage = NULL;
-		if (maxWorkerWidth > 0 && maxWorkerHeight > 0)
-			workerImage = new MultiImage (maxWorkerWidth, maxWorkerHeight);
+        if (maxWorkerSize.width > 0 && maxWorkerSize.height > 0)
+            workerImage = new MultiImage (maxWorkerSize.width, maxWorkerSize.height);
 	}
 
 	// calculate common buffer of required size
-	int bw = 0, bh = 0;
-	for (int i=0; i<filterChains.size(); i++) {
-		int wc, hc;
-		filterChains[i]->getReqiredBufferSize (wc, hc);
-		if (wc > bw)
-			bw = wc;
-		if (hc > bh)
-			bh = hc;
-	}
-	updateBuffer (bw, bh);
+	Dim bufferSize;
+	for (int i=0; i<filterChains.size(); i++)
+		bufferSize.setMax (filterChains[i]->getReqiredBufferSize ());
+	updateBuffer (bufferSize);
 
 	// process all filter chains
 	for (int i=0; i<filterChains.size(); i++)
 		filterChains[i]->process (events, buffer, workerImage);
 }
 
-void FilterChainGroup::updateBuffer (int bw, int bh) {
+void FilterChainGroup::updateBuffer (Dim size) {
 
-	bool deleteNeeded = buffer && (bw==0 || bh==0 || buffer->width!=bw || buffer->height!=bh);
-	bool createNeeded = bw>0 && bh>0 && (buffer->width!=bw || buffer->height!=bh);
+	bool deleteNeeded = buffer && (!size.nonZero() || buffer->width!=size.width || buffer->height!=size.height);
+	bool createNeeded = size.nonZero() && (buffer->width!=size.width || buffer->height!=size.height);
 
 	if (deleteNeeded) {
 	    delete buffer;
@@ -123,7 +122,7 @@ void FilterChainGroup::updateBuffer (int bw, int bh) {
 	}
 
 	if (createNeeded)
-	    buffer = new Buffer<int> (bw, bh);
+	    buffer = new Buffer<int> (size.width, size.height);
 }
 
 }

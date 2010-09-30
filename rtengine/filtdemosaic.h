@@ -47,8 +47,8 @@ class DemosaicFilter : public Filter {
     	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
         ImageView calculateTargetImageView (const ImageView& requestedImView);
         ImageView calculateSourceImageView (const ImageView& requestedImView);
-        void      getFullImageSize (int& w, int& h);
-        void      getReqiredBufferSize (int& w, int& h);
+        Dim       getFullImageSize ();
+        Dim       getReqiredBufferSize ();
         void      reverseTransPoint (int x, int y, int& xv, int& yv);
 
 };

@@ -13,8 +13,6 @@ public:
 
     bool operator== (const ImageView& other) const;
     bool operator!= (const ImageView& other) const;
-	int  getPixelWidth () const;
-	int  getPixelHeight () const;
 	bool isPartOf (const ImageView& other) const;
 };
 

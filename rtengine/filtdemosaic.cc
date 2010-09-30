@@ -38,9 +38,9 @@ ImageView DemosaicFilter::calculateTargetImageView (const ImageView& requestedIm
     result.skip = 1;
     result.x = 0;
     result.y = 0;
-    getPreviousFilter()->getFullImageSize (result.w, result.h);
-    result.w -= 2 * border;
-    result.h -= 2 * border;
+    Dim fsize = getPreviousFilter()->getFullImageSize ();
+    result.w = fsize.width - 2 * border;
+    result.h = fsize.height - 2 * border;
 
     return result;
 }
@@ -50,16 +50,15 @@ ImageView DemosaicFilter::calculateSourceImageView (const ImageView& requestedIm
     return calculateTargetImageView (requestedImView);
 }
 
-void DemosaicFilter::getFullImageSize (int& w, int& h) {
+Dim DemosaicFilter::getFullImageSize () {
 
-    getPreviousFilter()->getFullImageSize (w, h);
-    w -= 2 * border;
-    h -= 2 * border;
+    Dim sprev = getPreviousFilter()->getFullImageSize ();
+    return Dim (sprev.width - 2 * border, sprev.height - 2 * border);
 }
 
-void DemosaicFilter::getReqiredBufferSize (int& w, int& h) {
+Dim DemosaicFilter::getReqiredBufferSize () {
 
-    getPreviousFilter()->getFullImageSize (w, h);
+    return getPreviousFilter()->getFullImageSize ();
 }
 
 void DemosaicFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {

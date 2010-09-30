@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "colortemp.h"
 #include "imageview.h"
+#include "dim.h"
 
 /**
  * @file 
@@ -176,6 +177,8 @@ namespace rtengine {
             virtual void		removeView  (ImProcListener* listener) =0;
             /** Performs a full update on the image. If listener!=NULL, then only that image is updated that belongs to the given listener */
             virtual void        fullUpdate (ImProcListener* listener) =0;
+            /** Returns the ratio of the dimensions of the obtained and the original image by using the given "skip" parameter */
+            virtual double      getScale    (ImProcListener* listener, int skip) =0;
 
             virtual ColorTemp   getAutoWB   ();
             virtual ColorTemp   getCamWB    ();

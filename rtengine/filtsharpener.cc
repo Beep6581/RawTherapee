@@ -199,10 +199,9 @@ void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetIm
         delete b3;
 }
 
-void SharpenFilter::getReqiredBufferSize (int& w, int& h) {
+Dim SharpenFilter::getReqiredBufferSize () {
 
-    w = getSourceImageView().getPixelWidth();
-    h = getSourceImageView().getPixelHeight();
+    return getTargetImagePixelSize ();
 }
 
 void SharpenFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {

@@ -32,31 +32,24 @@ ColorDenoiseFilter::ColorDenoiseFilter ()
 	: Filter (&colorDenoiseFilterDescriptor) {
 }
 
-void ColorDenoiseFilter::getReqiredBufferSize (int& w, int& h) {
+Dim ColorDenoiseFilter::getReqiredBufferSize () {
 
-    int sw = getSourceImageView().getPixelWidth ();
-    int sh = getSourceImageView().getPixelHeight ();
-    if (procParams->colorDenoise.enabled && sw >= 8 && sh >= 8) {
-        if (sh > sw) {
-            w = 2;  // since we need double buffer and rt gives int buffer
-            h = sh*omp_get_max_threads();
-        }
-        else {
-            w = sw*omp_get_max_threads();
-            h = 2;
-        }
+    Dim sdim = getTargetImagePixelSize();
+
+    if (procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
+        if (sdim.height > sdim.width)
+            return Dim (2, sdim.height*omp_get_max_threads()); // since we need double buffer and rt gives int buffer
+        else
+            return Dim (sdim.width*omp_get_max_threads(), 2);
     }
-    else {
-        w = sw;
-        h = sh;
-    }
+    else
+        return sdim;
 }
 
 void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
-    int sw = getSourceImageView().getPixelWidth ();
-    int sh = getSourceImageView().getPixelHeight ();
-    if (procParams->colorDenoise.enabled && sw >= 8 && sh >= 8) {
+    Dim sdim = getTargetImagePixelSize();
+    if (procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
 
         double scale = getScale ();
 

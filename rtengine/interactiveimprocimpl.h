@@ -27,8 +27,8 @@ class PreviewListenerAdapter : public ImProcListener {
 		void 		setPreviewListener (PreviewImageListener* prevListener);
 
 		// implements ImProcListener interface:
-		ImageView 	getViewToProcess 	(int fullW, int fullH);
-		void		imageReady 			(IImage8* img, double scale, int fullW, int fullH, ImageView view, ProcParams params);
+		ImageView 	getViewToProcess 	(Dim fullSize);
+		void		imageReady 			(IImage8* img, double scale, Dim fullSize, ImageView view, ProcParams params);
 };
 
 class InteractiveImProcImpl : public InteractiveImageProcessor {
@@ -66,6 +66,7 @@ class InteractiveImProcImpl : public InteractiveImageProcessor {
 		void		createView  (ImProcListener* listener);
 		void		removeView  (ImProcListener* listener);
 		void        fullUpdate  (ImProcListener* listener);
+        double      getScale    (ImProcListener* listener, int skip);
 
 		ColorTemp   getAutoWB   ();
 		ColorTemp   getCamWB    ();

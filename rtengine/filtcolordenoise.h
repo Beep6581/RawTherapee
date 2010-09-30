@@ -32,7 +32,7 @@ class ColorDenoiseFilter : public Filter {
 
 	public:
         ColorDenoiseFilter ();
-        void getReqiredBufferSize (int& w, int& h);
+        Dim  getReqiredBufferSize ();
     	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
 };
 

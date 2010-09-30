@@ -15,7 +15,7 @@ namespace rtengine {
 
 RawImageSource::RawImageSource ()
 	: ImageSource (), img (NULL), idata (NULL), autoWBComputed (false),
-	  embProfile (NULL), border (4) {
+	  embProfile (NULL), border (0) {
 }
 
 RawImageSource::~RawImageSource () {
@@ -285,10 +285,9 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
     }
 }
 
-void RawImageSource::getFullImageSize (int& w, int& h) {
+Dim RawImageSource::getFullImageSize () {
 
-	w = img->width - 2*border;
-	h = img->height - 2*border;
+    return Dim (img->width - 2*border, img->height - 2*border);
 }
 
 // TODO: Fuji/D1X and non-bayer raw files are broken!!!
