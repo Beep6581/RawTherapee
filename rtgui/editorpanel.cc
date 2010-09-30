@@ -187,18 +187,23 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     }
 
     ipc = NULL;
-    btpCoordinator = new BatchToolPanelCoordinator (filePanel);
-    fCatalog =  new FileCatalog (btpCoordinator->coarse, btpCoordinator->getToolBar()); //,  filePanel->fileCatalog->fileBrowser);
-    filePanel->dirBrowser->addDirSelectionListener (fCatalog);
-   // fCatalog->setFilterPanel (filePanel->filterPanel);
-    fCatalog->setImageAreaToolListener (btpCoordinator);
-    fCatalog->setFileSelectionListener (filePanel);
-    fCatalog->setFileSelectionChangeListener (btpCoordinator);
-    fCatalog->setEnabled(true);
+//    btpCoordinator = new BatchToolPanelCoordinator (filePanel);
+//    fCatalog =  new FileCatalog (btpCoordinator->coarse, btpCoordinator->getToolBar()); //,  filePanel->fileCatalog->fileBrowser);
+//    filePanel->dirBrowser->addDirSelectionListener (fCatalog);
+//   // fCatalog->setFilterPanel (filePanel->filterPanel);
+//    fCatalog->setImageAreaToolListener (btpCoordinator);
+//    fCatalog->setFileSelectionListener (filePanel);
+//    fCatalog->setFileSelectionChangeListener (btpCoordinator);
+//    fCatalog->setEnabled(true);
+
+    catalogPane = new Gtk::Paned();
 
     Gtk::VPaned * viewpaned = Gtk::manage (new Gtk::VPaned());
-    viewpaned->pack1(*fCatalog, false, true);
+    viewpaned->pack1(*catalogPane, false, true);
     viewpaned->pack2(*editbox, true, true);
+
+    fPanel = filePanel;
+    fCatalog = filePanel->fileCatalog;
 
     Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
     vbfr->add (*viewpaned);
@@ -274,7 +279,7 @@ EditorPanel::~EditorPanel () {
     delete green;
     delete leftbox;
     delete vboxright;
-
+    delete catalogPane;
     delete saveAsDialog;
 }
 
@@ -975,4 +980,16 @@ void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned
 
     histogramPanel->histogramChanged (rh, gh, bh, lh);
     tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
+}
+
+bool EditorPanel::on_expose_event(GdkEventExpose* event)
+{
+
+    if(catalogPane->get_children().size() ==0 ){
+         fPanel->dirpaned->remove(*fPanel->fileCatalog);
+         catalogPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
+        fCatalog->redrawAll();
+    }
+   return  Gtk::VBox::on_expose_event(event);
 }

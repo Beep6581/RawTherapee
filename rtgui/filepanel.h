@@ -39,7 +39,7 @@ class FilePanel : public Gtk::HPaned,
 
     protected:
         Gtk::Paned* placespaned;
-        Gtk::HPaned* dirpaned;
+       
         //DirBrowser* dirBrowser;
         PlacesBrowser* placesBrowser;
         RecentBrowser* recentBrowser;
@@ -59,6 +59,7 @@ class FilePanel : public Gtk::HPaned,
          DirBrowser* dirBrowser;
         FilterPanel* filterPanel;
         FileCatalog* fileCatalog;
+        Gtk::HPaned* dirpaned;
 
         void setParent (RTWindow* p) { parent = p; }
         void init (); // dont call it directly, the constructor calls it as idle source
@@ -76,6 +77,7 @@ class FilePanel : public Gtk::HPaned,
         bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
 
         bool handleShortcutKey (GdkEventKey* event);
+        bool on_expose_event(GdkEventExpose* event);
 };
 
 #endif
