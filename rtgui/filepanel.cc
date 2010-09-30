@@ -38,7 +38,7 @@ FilePanel::FilePanel () : parent(NULL) {
     placesBrowser = new PlacesBrowser ();
     recentBrowser = new RecentBrowser ();
 
-    placespaned = new Gtk::HPaned ();
+    placespaned = new Gtk::VPaned ();
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
@@ -50,6 +50,20 @@ FilePanel::FilePanel () : parent(NULL) {
 
     dirpaned->pack1 (*placespaned, true, true);
     tpc = new BatchToolPanelCoordinator (this);
+
+    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
+    dirpaned->pack2 (*fileCatalog, true, true);
+    dirBrowser->addDirSelectionListener (fileCatalog);
+    fileCatalog->setFileSelectionListener (this);
+    fileCatalog->setFileSelectionChangeListener (tpc);
+    Gtk::ScrolledWindow* sFilterPanel = new Gtk::ScrolledWindow();
+    filterPanel = new FilterPanel ();
+    sFilterPanel->add (*filterPanel);
+    sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+
+    fileCatalog->setFilterPanel (filterPanel);
+    fileCatalog->setImageAreaToolListener (tpc);
+
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
     recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
@@ -161,5 +175,18 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
         return true;
 
     return false;
+}
+
+bool FilePanel::on_expose_event(GdkEventExpose* event)
+{
+
+    if(dirpaned->get_children().size() ==1 ){
+
+        parent->epanel->catalogPane->remove(*fileCatalog);
+        fileCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Vertical);        
+        dirpaned->pack2(*fileCatalog,true,true);
+        fileCatalog->redrawAll();        
+    }
+   return  Gtk::HPaned::on_expose_event(event);
 }
 

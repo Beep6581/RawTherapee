@@ -84,6 +84,8 @@ class EditorPanel : public Gtk::VBox,
         SaveAsDialog* saveAsDialog;
         BatchToolPanelCoordinator* btpCoordinator;
         FileCatalog* fCatalog;
+        FilePanel* fPanel;
+      
     
         Thumbnail* openThm;
         rtengine::InitialImage* isrc;
@@ -142,6 +144,9 @@ class EditorPanel : public Gtk::VBox,
         bool handleShortcutKey (GdkEventKey* event);
         
         void saveOptions ();
+
+        Gtk::Paned *catalogPane;        
+        bool on_expose_event(GdkEventExpose* event);
 };
 
 #endif
