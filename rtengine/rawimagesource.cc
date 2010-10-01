@@ -724,7 +724,7 @@ void RawImageSource::inverse33 (double (*coeff)[3], double (*icoeff)[3]) {
     icoeff[2][2] = (coeff[0][1]*coeff[1][0]-coeff[0][0]*coeff[1][1]) / nom;
 }
     
-int RawImageSource::load (Glib::ustring fname) {
+int RawImageSource::load (Glib::ustring fname, bool batch) {
 
     fileName = fname;
 
@@ -802,6 +802,7 @@ int RawImageSource::load (Glib::ustring fname) {
         // global correction
         int ng1=0, ng2=0;
         double avgg1=0, avgg2=0;
+#pragma omp parallel for
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) {
@@ -816,6 +817,7 @@ int RawImageSource::load (Glib::ustring fname) {
                 }
         double corrg1 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg1/ng1);
         double corrg2 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg2/ng2);
+#pragma omp parallel for
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) 
@@ -898,23 +900,45 @@ int RawImageSource::load (Glib::ustring fname) {
     	//MyTime t1,t2;
     	//t1.set();
         // demosaic
-        if (settings->demosaicMethod=="hphd")
-            hphd_demosaic ();
-        else if (settings->demosaicMethod=="vng4")
-            vng4_demosaic ();
-        else if (settings->demosaicMethod=="ahd")
+        if(!batch)
+        {
+            if (settings->demosaicMethod=="hphd")
+                hphd_demosaic ();
+            else if (settings->demosaicMethod=="vng4")
+                vng4_demosaic ();
+            else if (settings->demosaicMethod=="ahd")
             //ahd_demosaic ();
 			fast_demo ();
-        else if (settings->demosaicMethod=="bilinear")
-           bilinear_demosaic();
-        //else if (settings->demosaicMethod=="ppg")
-        //    ppg_demosaic ();
-        else if (settings->demosaicMethod=="amaze")
-            amaze_demosaic_RT ();//Emil's code for AMaZE
-        else if (settings->demosaicMethod=="dcb")
-            dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
+            else if (settings->demosaicMethod=="bilinear")
+               bilinear_demosaic();
+            //else if (settings->demosaicMethod=="ppg")
+            //    ppg_demosaic ();
+            else if (settings->demosaicMethod=="amaze")
+                amaze_demosaic_RT ();//Emil's code for AMaZE
+            else if (settings->demosaicMethod=="dcb")
+                dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
+            else
+                eahd_demosaic ();
+        }
         else
-            eahd_demosaic ();
+        {
+            if (settings->demosaicMethodBatch =="hphd")
+                hphd_demosaic ();
+            else if (settings->demosaicMethodBatch=="vng4")
+                vng4_demosaic ();
+            else if (settings->demosaicMethodBatch=="ahd")
+                fast_demo ();
+            else if (settings->demosaicMethodBatch=="bilinear")
+               bilinear_demosaic();
+            //else if (settings->demosaicMethod=="ppg")
+            //    ppg_demosaic ();
+            else if (settings->demosaicMethodBatch=="amaze")
+                amaze_demosaic_RT ();//Emil's code for AMaZE
+            else if (settings->demosaicMethodBatch=="dcb")
+                dcb_demosaic(settings->dcb_iterations, settings->dcb_enhance? 1:0);
+            else
+                eahd_demosaic ();
+        }
         //t2.set();
         //printf("Demosaicing:%d usec\n",t2.etime(t1));
     }
@@ -1155,7 +1179,8 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
                     mat[i][j] += camMatrix[i][k] * work[k][j];
-                    
+
+#pragma omp parallel for
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
 
@@ -1177,7 +1202,8 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
         if (hTransform) {
             if (cmp.gammaOnInput) {
                 double gd = pow (2.0, defgain);
-                defgain = 0.0;                
+                defgain = 0.0;
+#pragma omp parallel for
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
                         im->r[i][j] = CurveFactory::gamma (CLIP(defgain*im->r[i][j]));

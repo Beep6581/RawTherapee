@@ -104,7 +104,7 @@ class RawImageSource : public ImageSource {
         RawImageSource ();
         ~RawImageSource ();
     
-        int         load        (Glib::ustring fname);
+        int         load        (Glib::ustring fname, bool batch = false);
         void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
@@ -138,22 +138,22 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
 		int	LinEqSolve			(int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
-		void CA_correct_RT		();					//Emil's pre-demosaic CA correction
+		void CA_correct_RT		();
 	
-		void cfa_clean (float thresh);				//Emil's hot/dead pixel filter
-		void ddct8x8s(int isgn, float **a);
+		void cfa_clean (float thresh);//Emil's hot/dead pixel filter
+	void ddct8x8s(int isgn, float **a);
 
-		void cfa_linedn (float linenoiselevel);		//Emil's line denoise
+		void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
-		void green_equilibrate	(float greenthresh);//Emil's green equilibration
+		void green_equilibrate		(float greenthresh);//Emil's green equilibration
 
 	
         void    eahd_demosaic   ();
         void    hphd_demosaic   ();
         void    vng4_demosaic   ();
         void    ppg_demosaic();
-		void	amaze_demosaic_RT	();	//Emil's code for AMaZE
-		void	fast_demo	();			//Emil's fast demosaic
+		void	amaze_demosaic_RT	();//Emil's code for AMaZE
+                void    fast_demo ();
         void    dcb_demosaic(int iterations, int dcb_enhance);
         void    ahd_demosaic();
         void    bilinear_demosaic();

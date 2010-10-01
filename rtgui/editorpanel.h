@@ -32,6 +32,7 @@
 #include <thumbnaillistener.h>
 #include <navigator.h>
 #include <progressconnector.h>
+#include <filepanel.h>
 
 class EditorPanel;
 struct EditorPanelIdleHelper {
@@ -81,6 +82,10 @@ class EditorPanel : public Gtk::VBox,
         ToolPanelCoordinator* tpc;
         RTWindow* parent;
         SaveAsDialog* saveAsDialog;
+        BatchToolPanelCoordinator* btpCoordinator;
+        FileCatalog* fCatalog;
+        FilePanel* fPanel;
+      
     
         Thumbnail* openThm;
         rtengine::InitialImage* isrc;
@@ -100,7 +105,7 @@ class EditorPanel : public Gtk::VBox,
         int err;
     public:
 
-        EditorPanel ();
+        EditorPanel (FilePanel* filePanel);
         virtual ~EditorPanel ();
 
         void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
@@ -139,6 +144,9 @@ class EditorPanel : public Gtk::VBox,
         bool handleShortcutKey (GdkEventKey* event);
         
         void saveOptions ();
+
+        Gtk::Paned *catalogPane;        
+        bool on_expose_event(GdkEventExpose* event);
 };
 
 #endif

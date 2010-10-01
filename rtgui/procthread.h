@@ -44,9 +44,10 @@ class ProcessingThread {
     virtual void end () {}
 
     void process () { 
-        if (stopped)
+        if (stopped){
             #undef THREAD_PRIORITY_NORMAL
             thread = Glib::Thread::create(sigc::mem_fun(*this, &ProcessingThread::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        }
     }
     void process_ () { 
         stopped = false;

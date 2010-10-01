@@ -1,6 +1,3 @@
-
-
-
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -419,6 +416,7 @@
 !PREFERENCES_DIRSELECTDLG;Select Image Directory at Startup...
 !PREFERENCES_DIRSOFTWARE;Installation directory
 !PREFERENCES_DMETHOD;Method
+PREFERENCES_DMETHODBATCH;Batch
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FALSECOLOR;False color suppression steps

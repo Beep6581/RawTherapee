@@ -54,13 +54,13 @@ ProcParams* Updater::getParams () {
 
 void Updater::startProcessing () {
 
-    #undef THREAD_PRIORITY_NORMAL
+    #undef THREAD_PRIORITY_LOW
 
     tstart.lock ();
     if (ipc && !running) {
         running = true;
         tstart.unlock ();
-        Glib::Thread::create(sigc::mem_fun(*this, &Updater::process), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);    
+        Glib::Thread::create(sigc::mem_fun(*this, &Updater::process), 0, false, true, Glib::THREAD_PRIORITY_LOW);
     }
     else
         tstart.unlock ();
