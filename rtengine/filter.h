@@ -53,9 +53,8 @@ private:
 
 	ImageView   sourceImageView;
 	ImageView   targetImageView;
-    Dim         sourceImageViewPixelSize;
-    Dim         targetImageViewPixelSize;
-
+    ImageView   scaledSourceImageView;
+    ImageView   scaledTargetImageView;
 
 	ProgressListener* plistener;
 
@@ -73,9 +72,8 @@ protected:
     Filter*             getPreviousFilter  () { return prev; }
 	FilterChain*		getFilterChain     () { return myFilterChain; }
     ProgressListener*   getProgressListener() { return plistener; }
-    Dim                 getSourceImagePixelSize () { return sourceImageViewPixelSize; }
-    Dim                 getTargetImagePixelSize () { return targetImageViewPixelSize; }
-
+    const ImageView&    getScaledSourceImageView () { return scaledSourceImageView; }
+    const ImageView&    getScaledTargetImageView () { return scaledTargetImageView; }
 
 public:
     Filter*             getParentFilter    () { return parent; }
@@ -92,6 +90,7 @@ public:
 	virtual Dim getReqiredBufferSize ();
 	// return full image size if this filter was the last one
 	virtual Dim getFullImageSize ();
+
     virtual double getScale ();
 	// return the coordinates (xv,yv) corresponding to the "source" side given coordinates (x,y) corresponding to the target side
 	virtual void reverseTransPoint (int x, int y, int& xv, int& yv);

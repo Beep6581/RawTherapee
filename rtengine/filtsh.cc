@@ -172,7 +172,7 @@ unsigned short PreShadowsHighlightsFilter::getMapAvg () {
 Dim PreShadowsHighlightsFilter::getReqiredBufferSize () {
 
     if (procParams->sh.enabled) {
-        Dim sdim = getTargetImagePixelSize ();
+        Dim sdim = getScaledTargetImageView().getSize();
         if (!procParams->sh.hq) {
             if (sdim.height > sdim.width)
                 return Dim (2, sdim.height*omp_get_max_threads());

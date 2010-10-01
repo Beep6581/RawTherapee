@@ -98,13 +98,11 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSi
 
 	// calculate and set source and target image sizes of the filters
 	for (curr = first; curr; curr = curr->next) {
-        double sscale = curr == first ? imgSource->getScale () : curr->prev->getScale ();
-        Dim newSourceImageViewPixelSize = Dim ((int)round(curr->sourceImageView.w*sscale), (int)round(curr->sourceImageView.h*sscale));
-        double tscale = curr->prev->getScale ();
-        Dim newTargetImageViewPixelSize = Dim ((int)round(curr->targetImageView.w*tscale), (int)round(curr->targetImageView.h*tscale));
-        if (newSourceImageViewPixelSize != curr->sourceImageViewPixelSize || newTargetImageViewPixelSize != curr->targetImageViewPixelSize) {
-            curr->sourceImageViewPixelSize = newSourceImageViewPixelSize;
-            curr->targetImageViewPixelSize = newTargetImageViewPixelSize;
+        ImageView scSourceIV = curr->sourceImageView.getScaled (first ? imgSource->getScale () : curr->prev->getScale ());
+        ImageView scTargetIV = curr->targetImageView.getScaled (curr->getScale ());
+        if (scSourceIV != curr->scaledSourceImageView || scTargetIV != curr->scaledTargetImageView) {
+            curr->scaledSourceImageView = scSourceIV;
+            curr->scaledTargetImageView = scTargetIV;
             curr->valid = false;
         }
 	}
@@ -113,8 +111,8 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSi
 	first->hasOutputCache = true;
 	for (curr = first->next; curr != last; curr = curr->next)
 		if (curr->forceOutputCache || curr->sourceImageView != curr->targetImageView
-		        || curr->sourceImageViewPixelSize != curr->targetImageViewPixelSize
-		        || (curr->next && (curr->targetImageView != curr->next->sourceImageView || curr->targetImageViewPixelSize != curr->next->sourceImageViewPixelSize)))
+		        || curr->scaledSourceImageView != curr->scaledTargetImageView
+		        || (curr->next && (curr->targetImageView != curr->next->sourceImageView || curr->scaledTargetImageView != curr->next->scaledSourceImageView)))
 			curr->hasOutputCache = true;
 		else
 			curr->hasOutputCache = false;
@@ -145,7 +143,8 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSi
 	    for (curr = last; curr && curr != firstToUpdate; curr = curr->prev) {
 	        Filter* p = curr->prev->parent;
 	        while (p) {
-	            if (p->hasOutputCache && curr->sourceImageView.isPartOf (p->targetImageView)) {
+                double skip = curr->getScale() / p->getScale();
+	            if (p->hasOutputCache && fabs(skip-round(skip))<1e-12 && curr->sourceImageView.isPartOf (p->targetImageView)) {
 	                curr->shortCutPrev = p;
 	                firstToUpdate = curr;
 	                break;
@@ -160,7 +159,7 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSi
 	// find out the dimensions of the largest worker image necessary
 	for (curr = firstToUpdate; curr; curr = curr->next)
 		if (!curr->hasOutputCache)
-		    maxWorkerSize.setMax (curr->sourceImageViewPixelSize);
+		    maxWorkerSize.setMax (curr->scaledSourceImageView.getSize ());
 
 	// set up caches
 	for (curr = first; curr; curr = curr->next)
@@ -175,24 +174,26 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 		if (curr != first) {
 		    if (curr->shortCutPrev) {
 		        sourceImage = worker;
-                worker->setDimensions (curr->sourceImageViewPixelSize.width, curr->sourceImageViewPixelSize.height);
-/*!!!*/                worker->copyFrom (curr->shortCutPrev->outputCache, curr->sourceImageView.x - curr->shortCutPrev->targetImageView.x, curr->sourceImageView.y - curr->shortCutPrev->targetImageView.y, curr->sourceImageView.skip / curr->shortCutPrev->targetImageView.skip);
+                worker->setDimensions (curr->scaledSourceImageView.w, curr->scaledSourceImageView.h);
+                int skip = (int)round (curr->getScale() / curr->shortCutPrev->getScale());
+                worker->copyFrom (curr->shortCutPrev->outputCache, curr->scaledSourceImageView.x - curr->shortCutPrev->scaledTargetImageView.x * skip, curr->scaledSourceImageView.y - curr->shortCutPrev->scaledTargetImageView.y * skip, skip);
 		    }
-		    else if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView && curr->prev->targetImageViewPixelSize == curr->sourceImageViewPixelSize)
+		    else if (curr->prev->hasOutputCache && curr->prev->targetImageView == curr->sourceImageView && curr->prev->scaledTargetImageView == curr->scaledSourceImageView)
 				sourceImage = curr->prev->outputCache;
 			else {
 				sourceImage = worker;
-				worker->setDimensions (curr->sourceImageViewPixelSize.width, curr->sourceImageViewPixelSize.height);
-				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView || curr->prev->targetImageViewPixelSize != curr->sourceImageViewPixelSize)
+				worker->setDimensions (curr->scaledSourceImageView.w, curr->scaledSourceImageView.h);
+                int skip = (int)round (curr->getScale() / curr->shortCutPrev->getScale());
+				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView || curr->prev->scaledTargetImageView != curr->scaledSourceImageView)
 				    // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
-/*!!!*/				    worker->copyFrom (curr->prev->outputCache, curr->sourceImageView.x - curr->prev->targetImageView.x, curr->sourceImageView.y - curr->prev->targetImageView.y, curr->sourceImageView.skip / curr->prev->targetImageView.skip);
+				    worker->copyFrom (curr->prev->outputCache, curr->scaledSourceImageView.x - curr->prev->scaledTargetImageView.x * skip, curr->scaledSourceImageView.y - curr->prev->scaledTargetImageView.y * skip, skip);
 			}
 			sourceImage->convertTo (curr->descriptor->getInputColorSpace());
 		}
 		if (curr->hasOutputCache)
 			targetImage = curr->outputCache;
 		else {
-			worker->setDimensions (curr->targetImageViewPixelSize.width, curr->targetImageViewPixelSize.height);
+			worker->setDimensions (curr->scaledTargetImageView.w, curr->scaledTargetImageView.h);
 			targetImage = worker;
 		}
 		curr->process (events, sourceImage, targetImage, buffer);

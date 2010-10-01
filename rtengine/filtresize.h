@@ -30,6 +30,11 @@ class ResizeFilter : public Filter {
 
         double getResizeScale ();
 
+        void bicubic  (MultiImage* sourceImage, MultiImage* targetImage);
+        void bilinear (MultiImage* sourceImage, MultiImage* targetImage);
+        void average  (MultiImage* sourceImage, MultiImage* targetImage);
+        void nearest  (MultiImage* sourceImage, MultiImage* targetImage);
+
     public:
         ResizeFilter ();
 

@@ -6,6 +6,7 @@
  */
 
 #include "imageview.h"
+#include <math.h>
 
 namespace rtengine {
 
@@ -27,6 +28,16 @@ bool ImageView::isPartOf (const ImageView& other) const {
     return x >= other.x && x+w-1 <= other.x+other.w-1
         && y >= other.y && y+h-1 <= other.y+other.h-1
         && skip >= other.skip && skip%other.skip == 0;
+}
+
+ImageView ImageView::getScaled (double scale) const {
+
+    return ImageView ((int)round (x*scale), (int)round (y*scale), (int)round (w*scale), (int)round (h*scale), 1);
+}
+
+Dim ImageView::getSize () const {
+
+    return Dim (w, h);
 }
 
 }

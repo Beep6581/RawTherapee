@@ -56,7 +56,7 @@ Dim CoarseTransformFilter::getFullImageSize () {
 
 Dim CoarseTransformFilter::getReqiredBufferSize () {
 
-    return getTargetImagePixelSize();
+    return getScaledTargetImageView().getSize();
 }
 
 void CoarseTransformFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {

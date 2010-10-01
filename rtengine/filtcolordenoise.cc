@@ -34,7 +34,7 @@ ColorDenoiseFilter::ColorDenoiseFilter ()
 
 Dim ColorDenoiseFilter::getReqiredBufferSize () {
 
-    Dim sdim = getTargetImagePixelSize();
+    Dim sdim = getScaledTargetImageView().getSize();
 
     if (procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
         if (sdim.height > sdim.width)
@@ -48,8 +48,8 @@ Dim ColorDenoiseFilter::getReqiredBufferSize () {
 
 void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
-    Dim sdim = getTargetImagePixelSize();
-    if (procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
+    Dim sdim = getScaledTargetImageView().getSize();
+    if (getTargetImageView().skip==1 && procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
 
         double scale = getScale ();
 

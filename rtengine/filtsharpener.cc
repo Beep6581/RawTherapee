@@ -201,16 +201,16 @@ void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetIm
 
 Dim SharpenFilter::getReqiredBufferSize () {
 
-    return getTargetImagePixelSize ();
+    return getScaledTargetImageView().getSize();
 }
 
 void SharpenFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
 
-    if (procParams->sharpening.enabled && procParams->sharpening.method=="rld" && procParams->sharpening.deconvamount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
+    if (getTargetImageView().skip==1 && procParams->sharpening.enabled && procParams->sharpening.method=="rld" && procParams->sharpening.deconvamount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
 
         deconvsharpening (sourceImage, targetImage, (Buffer<float>*)buffer);
     }
-    if (procParams->sharpening.enabled && procParams->sharpening.method=="usm" && procParams->sharpening.amount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
+    else if (getTargetImageView().skip==1 && procParams->sharpening.enabled && procParams->sharpening.method=="usm" && procParams->sharpening.amount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
 
         usmsharpening (sourceImage, targetImage, (Buffer<unsigned short>*)buffer);
     }

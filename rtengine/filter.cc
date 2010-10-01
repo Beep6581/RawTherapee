@@ -90,11 +90,11 @@ void Filter::setupCache () {
 		return;
 	}
 
-	if (outputCache && outputCache->width==targetImageViewPixelSize.width && outputCache->height==targetImageViewPixelSize.height)
+	if (outputCache && outputCache->width==scaledTargetImageView.w && outputCache->height==scaledTargetImageView.h)
 		return;
 
 	delete outputCache;
-	outputCache = new MultiImage (targetImageViewPixelSize.width, targetImageViewPixelSize.height, descriptor->getOutputColorSpace());
+	outputCache = new MultiImage (scaledTargetImageView.w, scaledTargetImageView.h, descriptor->getOutputColorSpace());
 }
 
 void Filter::setProcParams (ProcParams* pparams) {
