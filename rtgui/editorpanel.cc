@@ -352,11 +352,6 @@ void EditorPanel::close () {
 
         delete previewHandler;
         previewHandler= NULL;
-//        delete beforePreviewHandler;
-//        beforePreviewHandler = NULL;
-
-      //  delete iarea->imageArea->mainCropWindow;
-       // iarea->imageArea->mainCropWindow = NULL;
 
         rtengine::StagedImageProcessor::destroy (ipc);
         ipc = NULL;
@@ -368,7 +363,6 @@ void EditorPanel::close () {
 
         openThm->removeThumbnailListener (this);
         openThm->decreaseRef ();
-
 
     }
 }
