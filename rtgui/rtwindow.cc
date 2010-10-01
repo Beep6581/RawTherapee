@@ -81,7 +81,7 @@ RTWindow::RTWindow () {
     hbe->set_spacing (2);
     hbe->show_all ();
     mainNB->append_page (*epanel, *hbe);
-    mainNB->set_current_page (mainNB->page_num (*epanel));
+    mainNB->set_current_page (mainNB->page_num (*fpanel));
 
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
@@ -116,6 +116,9 @@ RTWindow::RTWindow () {
 
     add (*mainBox);
     show_all ();
+
+    if(options.tabbedUI)
+        epanel->hide_all();
 }
 
 void RTWindow::on_realize () {
@@ -153,7 +156,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
     epanels[ name ] = ep;
     filesEdited.insert ( name );
-    fpanel->refreshEditedState (filesEdited);
+    fpanel->refreshEditedState (filesEdited);    
 }
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {

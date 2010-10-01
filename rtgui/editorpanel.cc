@@ -26,7 +26,7 @@
 
 using namespace rtengine::procparams;
 
-EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL) {
+EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL), ipc(NULL), catalogPane(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -186,24 +186,16 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
        hpanedl->set_position (options.historyPanelWidth);
     }
 
-    ipc = NULL;
-//    btpCoordinator = new BatchToolPanelCoordinator (filePanel);
-//    fCatalog =  new FileCatalog (btpCoordinator->coarse, btpCoordinator->getToolBar()); //,  filePanel->fileCatalog->fileBrowser);
-//    filePanel->dirBrowser->addDirSelectionListener (fCatalog);
-//   // fCatalog->setFilterPanel (filePanel->filterPanel);
-//    fCatalog->setImageAreaToolListener (btpCoordinator);
-//    fCatalog->setFileSelectionListener (filePanel);
-//    fCatalog->setFileSelectionChangeListener (btpCoordinator);
-//    fCatalog->setEnabled(true);
-
-    catalogPane = new Gtk::Paned();
-
+  
     Gtk::VPaned * viewpaned = Gtk::manage (new Gtk::VPaned());
-    viewpaned->pack1(*catalogPane, false, true);
+    fPanel = filePanel;
+    if(filePanel)
+    {
+        catalogPane = new Gtk::Paned();
+        viewpaned->pack1(*catalogPane, false, true);                    
+    }
     viewpaned->pack2(*editbox, true, true);
 
-    fPanel = filePanel;
-    fCatalog = filePanel->fileCatalog;
 
     Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
     vbfr->add (*viewpaned);
@@ -263,6 +255,7 @@ EditorPanel::~EditorPanel () {
         beforeIpc->setPreviewImageListener (NULL);
 
     delete previewHandler;
+    previewHandler = NULL;
     delete beforePreviewHandler;
 
     if (ipc)
@@ -278,9 +271,10 @@ EditorPanel::~EditorPanel () {
     delete red;
     delete green;
     delete leftbox;
-    delete vboxright;
-    delete catalogPane;
+    delete vboxright;    
     delete saveAsDialog;
+    if(catalogPane)
+        delete catalogPane;
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
@@ -514,8 +508,8 @@ void EditorPanel::info_toggled () {
 //            M("QINFO_ISO"), idata->getISOSpeed(),
 //            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
 //            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
-        infoString = Glib::ustring::compose (
-            "%1 + %2\n<span size=\"xx-large\">%3</span>s  f/<span size=\"xx-large\">%4</span>  %5<span size=\"xx-large\">%6</span>  f=<span size=\"xx-large\">%7</span>mm",
+infoString = Glib::ustring::compose (
+            "%1 + %2\n<span size=\"large\">%3</span>s  f/<span size=\"large\">%4</span>  %5<span size=\"large\">%6</span>  f=<span size=\"large\">%7</span>mm",
             Glib::ustring(idata->getModel()),
             Glib::ustring(idata->getLens()),
             Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
@@ -904,8 +898,8 @@ void EditorPanel::saveOptions () {
 
  //options.historyPanelWidth = hpanedl->get_position ();//older code
 	//options.toolPanelWidth = vboxright->get_width ();//older code
-    if (options.startupDir==STARTUPDIR_LAST && fCatalog->lastSelectedDir ()!="")
-        options.startupPath = fCatalog->lastSelectedDir ();
+    if (options.startupDir==STARTUPDIR_LAST &&  fPanel->fileCatalog->lastSelectedDir ()!="")
+        options.startupPath = fPanel->fileCatalog->lastSelectedDir ();
 }
 
 
@@ -986,9 +980,10 @@ void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned
 bool EditorPanel::on_expose_event(GdkEventExpose* event)
 {
 
-    if(catalogPane->get_children().size() ==0 ){
-         fPanel->dirpaned->remove(*fPanel->fileCatalog);
-         catalogPane->add(*fCatalog);
+    if(!options.tabbedUI && catalogPane->get_children().size() ==0 ){
+        FileCatalog *fCatalog = fPanel->fileCatalog;
+        fPanel->dirpaned->remove(*fCatalog);
+        catalogPane->add(*fCatalog);
         fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
         fCatalog->redrawAll();
     }

@@ -51,7 +51,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     //  construct and initialize thumbnail browsers
         fileBrowser = new FileBrowser();
         fileBrowser->setFileBrowserListener (this);
-        fileBrowser->setArrangement (ThumbBrowserBase::TB_Horizontal);
+        fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
         fileBrowser->show ();
 
     set_size_request(0,250);

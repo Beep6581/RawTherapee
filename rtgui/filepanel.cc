@@ -148,7 +148,17 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc ){
 
 	if (pc->returnValue() && thm) {
-                parent->epanel->open(thm, pc->returnValue() );
+               
+                if (options.tabbedUI)
+                {
+                    EditorPanel* epanel = Gtk::manage (new EditorPanel ());
+                    parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
+                    epanel->open(thm, pc->returnValue() );
+                }
+                else
+                     parent->epanel->open(thm, pc->returnValue() );
+
+
 	}else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
 		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -220,7 +230,7 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
 bool FilePanel::on_expose_event(GdkEventExpose* event)
 {
 
-    if(dirpaned->get_children().size() ==1 ){
+    if(!options.tabbedUI && dirpaned->get_children().size() ==1 ){
 
         parent->epanel->catalogPane->remove(*fileCatalog);
         fileCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Vertical);        

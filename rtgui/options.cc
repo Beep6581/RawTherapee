@@ -116,6 +116,7 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
     showFileNames = true;
+    tabbedUI = false;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
