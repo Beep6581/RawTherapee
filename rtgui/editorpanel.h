@@ -82,8 +82,7 @@ class EditorPanel : public Gtk::VBox,
         ToolPanelCoordinator* tpc;
         RTWindow* parent;
         SaveAsDialog* saveAsDialog;
-        BatchToolPanelCoordinator* btpCoordinator;
-        FileCatalog* fCatalog;
+        BatchToolPanelCoordinator* btpCoordinator;        
         FilePanel* fPanel;
       
     
@@ -105,7 +104,7 @@ class EditorPanel : public Gtk::VBox,
         int err;
     public:
 
-        EditorPanel (FilePanel* filePanel);
+        EditorPanel (FilePanel* filePanel = NULL);
         virtual ~EditorPanel ();
 
         void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
