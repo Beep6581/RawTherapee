@@ -166,6 +166,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // wavelet equalizer
     ipf.waveletEqualizer (labView, true, true);
+	
+	// directional pyramid equalizer
+    ipf.dirpyrequalizer (labView);
 
     for (int i=0; i<fh; i++)
         delete [] buffer[i];

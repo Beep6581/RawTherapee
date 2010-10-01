@@ -22,7 +22,13 @@
 
 namespace rtengine {
 
+ Glib::Mutex* qMutex2 = NULL;
 InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl) {
+
+    if (!qMutex2)
+        qMutex2 = new Glib::Mutex ();
+
+    qMutex2->lock();
 
     ImageSource* isrc;
 
@@ -32,11 +38,16 @@ InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* e
         isrc = new RawImageSource ();
 
     isrc->setProgressListener (pl);
+
+    if(isRaw && pl == NULL)
+        *errorCode = isrc->load (fname, true);
+    else
         *errorCode = isrc->load (fname);
     if (*errorCode) {
         delete isrc;    
         return NULL;
     }
+    qMutex2->unlock();
     return isrc;
 }
 }

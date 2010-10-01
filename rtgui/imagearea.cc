@@ -112,7 +112,8 @@ void ImageArea::setInfoText (Glib::ustring text) {
     fontd.set_weight (Pango::WEIGHT_BOLD);
     fontd.set_size (12*Pango::SCALE);
     context->set_font_description (fontd);
-    ilayout = create_pango_layout(text);
+    ilayout = create_pango_layout("");
+    ilayout->set_markup(text);
     int iw, ih;
     ilayout->get_pixel_size (iw, ih);  
     ipixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, true, 8, iw+8, ih+8);

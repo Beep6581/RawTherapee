@@ -239,6 +239,13 @@ class EqualizerParamsEdited {
         bool c[8];
 };
 
+class DirPyrEqualizerParamsEdited {
+	
+public:
+	bool enabled;
+	bool mult[8];
+};
+
 class ExifPairEdited {
 
     public:
@@ -282,6 +289,7 @@ class ParamsEdited {
         ResizeParamsEdited            resize;         
         ColorManagementParamsEdited   icm;            
         EqualizerParamsEdited         equalizer;
+		DirPyrEqualizerParamsEdited   dirpyrequalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

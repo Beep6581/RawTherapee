@@ -126,9 +126,12 @@ void ParamsEdited::set (bool v) {
         icm.working      = v;
         icm.output       = v;
         equalizer.enabled = v;
-        for(int i = 0; i < 8; i++)
+		dirpyrequalizer.enabled = v;
+
+        for(int i = 0; i < 5; i++)
         {
             equalizer.c[i] = v;
+			dirpyrequalizer.mult[i] = v;
         }
         exif.clear ();
         iptc.clear ();
@@ -250,6 +253,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         for(int i = 0; i < 8; i++) {
             equalizer.c[i] = equalizer.c[i] && p.equalizer.c[i] == other.equalizer.c[i];
         }
+		dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
+        for(int i = 0; i < 8; i++) {
+            dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
+        }		
 //        exif = exif && p.exif==other.exif
 //        iptc = other.iptc;
     }
@@ -360,6 +367,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
+	}
+	if (dirpyrequalizer.enabled)	    toEdit.dirpyrequalizer.enabled 	= mods.dirpyrequalizer.enabled;
+	for(int i = 0; i < 8; i++) {
+	    if(dirpyrequalizer.mult[i])  toEdit.dirpyrequalizer.mult[i]   = mods.dirpyrequalizer.mult[i];
 	}
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;

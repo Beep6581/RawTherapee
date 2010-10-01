@@ -269,9 +269,7 @@ namespace rtengine {
 		int width = data_fine->W;
 		int height = data_fine->H;
 		
-		float dirwt_l, dirwt_ab, norm_l, norm_ab;
-		//float lops,aops,bops;
-		float Lout, aout, bout;
+
 		
 		
 		//generate domain kernel 
@@ -286,7 +284,11 @@ namespace rtengine {
 		 }*/
 		//float domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,4,2,1},{1,2,2,2,1},{1,1,1,1,1}};
 		
-		for(int i = 0, i1=0; i < height; i+=pitch, i1++) {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+ 
+		for(int i = 0; i < height; i+=pitch ) { int i1=i/pitch;
 			for(int j = 0, j1=0; j < width; j+=pitch, j1++)
 			{				
 				//norm = DIRWT(i, j, i, j);
@@ -294,6 +296,9 @@ namespace rtengine {
 				//aout = -norm*data_fine->a[i][j];
 				//bout = -norm*data_fine->b[i][j];
 				//or
+				float dirwt_l, dirwt_ab, norm_l, norm_ab;
+				//float lops,aops,bops;
+				float Lout, aout, bout;
 				norm_l = norm_ab = 0;//if we do want to include the input pixel in the sum
 				Lout = 0;
 				aout = 0;
@@ -339,9 +344,6 @@ namespace rtengine {
 		int height = data_fine->H;
 		
 		//float eps = 0.0;
-		double wtdsum[3], norm;
-		float hipass[3], hpffluct[3], tonefactor, nrfactor;
-		int i1, j1;	
 		
 		// c[0] noise_L
 		// c[1] noise_ab (relative to noise_L)
@@ -366,9 +368,7 @@ namespace rtengine {
 		 }*/
 		//float domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,4,2,1},{1,2,2,2,1},{1,1,1,1,1}};
 		
-		LabImage* smooth;
 		
-		smooth = new LabImage(width, height);
 		
 		// for coarsest level, take non-subsampled lopass image and subtract from lopass_fine to generate hipass image
 		
@@ -386,28 +386,81 @@ namespace rtengine {
 		
 		// step (1)
 		
-		
-		for(int i = 0, i1=0; i < height; i+=pitch, i1++)
-			for(int j = 0, j1=0; j < width; j+=pitch, j1++) {
-				
-				//copy common pixels
-				smooth->L[i][j] = data_coarse->L[i1][j1];
-				smooth->a[i][j] = data_coarse->a[i1][j1];
-				smooth->b[i][j] = data_coarse->b[i1][j1];
-			}
-		
-		if (pitch>1) {//pitch=2; expand coarse image, fill in missing data
+		if (pitch==1) { 
 			
-			for(int i = 0; i < height-1; i+=2)
+			// step (1-2-3-4) 
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+			for(int  i = 0; i < height; i++)
+				for(int  j = 0; j < width; j++) {
+					double wtdsum[3], norm;
+					float hipass[3], hpffluct[3], tonefactor, nrfactor;
+				
+					tonefactor = ((NRWT_L(data_coarse->L[i][j])));
+					
+					//Wiener filter
+					//luma
+					if (level<2) {
+						hipass[0] = data_fine->L[i][j]-data_coarse->L[i][j];
+						hpffluct[0]=SQR(hipass[0])+0.001;
+						hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
+						data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
+					}
+					
+					//chroma
+					hipass[1] = data_fine->a[i][j]-data_coarse->a[i][j];
+					hipass[2] = data_fine->b[i][j]-data_coarse->b[i][j];
+					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
+					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+
+					hipass[1] *= nrfactor;
+					hipass[2] *= nrfactor;
+					
+					data_fine->a[i][j] = hipass[1]+data_coarse->a[i][j];
+					data_fine->b[i][j] = hipass[2]+data_coarse->b[i][j];
+				}
+			
+		} else {
+			
+			LabImage* smooth;
+			
+			smooth = new LabImage(width, height);
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+
+{
+		
+#ifdef _OPENMP
+#pragma omp for
+#endif
+			for(int  i = 0; i < height; i+=pitch)
+			{
+				int ix=i/pitch;
+				for(int  j = 0, jx=0; j < width; j+=pitch, jx++) {
+					
+					//copy common pixels
+					smooth->L[i][j] = data_coarse->L[ix][jx];
+					smooth->a[i][j] = data_coarse->a[ix][jx];
+					smooth->b[i][j] = data_coarse->b[ix][jx];
+				}
+			}
+			//if (pitch>1) {//pitch=2; step (1) expand coarse image, fill in missing data
+#ifdef _OPENMP
+#pragma omp for	
+#endif
+			for(int  i = 0; i < height-1; i+=2)
 				for(int j = 0; j < width-1; j+=2) {
 					//do midpoint first
-					norm=0;
-					wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-					for(i1=i; i1<MIN(height,i+3); i1+=2)
-						for (j1=j; j1<MIN(width,j+3); j1+=2) {
-							wtdsum[0] += smooth->L[i1][j1];
-							wtdsum[1] += smooth->a[i1][j1];
-							wtdsum[2] += smooth->b[i1][j1];
+					double norm=0.0,wtdsum[3]={0.0,0.0,0.0};
+					//wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
+					for(int ix=i; ix<MIN(height,i+3); ix+=2)
+						for (int jx=j; jx<MIN(width,j+3); jx+=2) {
+							wtdsum[0] += smooth->L[ix][jx];
+							wtdsum[1] += smooth->a[ix][jx];
+							wtdsum[2] += smooth->b[ix][jx];
 							norm++;
 						}
 					norm = 1/norm;
@@ -415,23 +468,26 @@ namespace rtengine {
 					smooth->a[i+1][j+1]=wtdsum[1]*norm;
 					smooth->b[i+1][j+1]=wtdsum[2]*norm;
 				}
+#ifdef _OPENMP
+#pragma omp for
+#endif
 			
 			for(int i = 0; i < height-1; i+=2)
 				for(int j = 0; j < width-1; j+=2) {
 					//now right neighbor
 					if (j+1==width) continue;
-					norm=0;
-					wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-					for (j1=j; j1<MIN(width,j+3); j1+=2) {
-						wtdsum[0] += smooth->L[i][j1];
-						wtdsum[1] += smooth->a[i][j1];
-						wtdsum[2] += smooth->b[i][j1];
+					double norm=0.0,wtdsum[3]={0.0,0.0,0.0};
+
+					for (int jx=j; jx<MIN(width,j+3); jx+=2) {
+						wtdsum[0] += smooth->L[i][jx];
+						wtdsum[1] += smooth->a[i][jx];
+						wtdsum[2] += smooth->b[i][jx];
 						norm++;
 					}
-					for (i1=MAX(0,i-1); i1<MIN(height,i+2); i1+=2) {
-						wtdsum[0] += smooth->L[i1][j+1];
-						wtdsum[1] += smooth->a[i1][j+1];
-						wtdsum[2] += smooth->b[i1][j+1];
+					for (int ix=MAX(0,i-1); ix<MIN(height,i+2); ix+=2) {
+						wtdsum[0] += smooth->L[ix][j+1];
+						wtdsum[1] += smooth->a[ix][j+1];
+						wtdsum[2] += smooth->b[ix][j+1];
 						norm++;
 					}
 					norm = 1/norm;
@@ -441,18 +497,17 @@ namespace rtengine {
 					
 					//now down neighbor
 					if (i+1==height) continue;
-					norm=0;
-					wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-					for (i1=i; i1<MIN(height,i+3); i1+=2) {
-						wtdsum[0] += smooth->L[i1][j];
-						wtdsum[1] += smooth->a[i1][j];
-						wtdsum[2] += smooth->b[i1][j];
+					norm=0.0;wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
+					for (int ix=i; ix<MIN(height,i+3); ix+=2) {
+						wtdsum[0] += smooth->L[ix][j];
+						wtdsum[1] += smooth->a[ix][j];
+						wtdsum[2] += smooth->b[ix][j];
 						norm++;
 					}
-					for (j1=j-1; j1<MIN(width,j+2); j1+=2) {
-						wtdsum[0] += smooth->L[i+1][j1];
-						wtdsum[1] += smooth->a[i+1][j1];
-						wtdsum[2] += smooth->b[i+1][j1];
+					for (int jx=MAX(0,j-1); jx<MIN(width,j+2); jx+=2) {
+						wtdsum[0] += smooth->L[i+1][jx];
+						wtdsum[1] += smooth->a[i+1][jx];
+						wtdsum[2] += smooth->b[i+1][jx];
 						norm++;
 					}
 					norm=1/norm;
@@ -461,42 +516,44 @@ namespace rtengine {
 					smooth->b[i+1][j]=wtdsum[2]*norm;
 					
 				}
-		}
+			
+#ifdef _OPENMP
+#pragma omp for	
+#endif
 		
-		// step (2-3-4) 
-		for(int i = 0; i < height; i++)
-			for(int j = 0; j < width; j++) {
-				
-				tonefactor = ((NRWT_L(smooth->L[i][j])));
-				
-				//Wiener filter
-				//luma
-				if (level<2) {
-					hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
-					hpffluct[0]=SQR(hipass[0])+0.001;
-					hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
-					data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
+			// step (2-3-4) 
+			for( int i = 0; i < height; i++)
+				for(int j = 0; j < width; j++) {
+					
+					double tonefactor = ((NRWT_L(smooth->L[i][j])));
+					//double wtdsum[3], norm;
+					float hipass[3], hpffluct[3],  nrfactor;
+					//Wiener filter
+					//luma
+					if (level<2) {
+						hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
+						hpffluct[0]=SQR(hipass[0])+0.001;
+						hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
+						data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
+					}
+					
+					//chroma
+					hipass[1] = data_fine->a[i][j]-smooth->a[i][j];
+					hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
+					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
+					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+
+					hipass[1] *= nrfactor;
+					hipass[2] *= nrfactor;
+					
+					data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
+					data_fine->b[i][j] = hipass[2]+smooth->b[i][j];
 				}
-				
-				//chroma
-				hipass[1] = data_fine->a[i][j]-smooth->a[i][j];
-				hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
-				hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
-				hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-				nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
-				//nrfactor *= resaturate;
-				/*if (level) {
-				 hipass[0] *= recontrast;
-				 nrfactor *= resaturate;
-				 }*/
-				hipass[1] *= nrfactor;
-				hipass[2] *= nrfactor;
-							
-				data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
-				data_fine->b[i][j] = hipass[2]+smooth->b[i][j];
-			}
+}	// end parallel		
+			delete smooth;
+		}//end of pitch>1
 		
-		delete smooth;
 	};
 	
 	

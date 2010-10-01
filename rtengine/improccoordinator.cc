@@ -240,13 +240,13 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
         //    ipf.impulsedenoise (nprevl);
         //}
 		if (scale==1) {
+            progress ("Pyramid equalizer...",100*readyphase/numofphases);
+            ipf.dirpyrequalizer (nprevl);
+        }
+		if (scale==1) {
             progress ("Wavelet...",100*readyphase/numofphases);
             ipf.waveletEqualizer (nprevl, true, true);
         }
-        //if (scale==1) {
-        //    progress ("Wavelet...",100*readyphase/numofphases);
-        //    ipf.waveletEqualizer (nprevl, false, true);
-        //}
 		
 
     }
@@ -460,9 +460,15 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
     if (params.coarse.vflip)       tr |= TR_VFLIP;
     
     ColorTemp ret = imgsrc->getSpotWB (red, green, blue, tr);
+	currWB = ColorTemp (params.wb.temperature, params.wb.green);
     mProcessing.unlock ();
-    temp = ret.getTemp ();
-    tgreen = ret.getGreen ();
+	if (ret.getTemp() > 0) {
+		temp = ret.getTemp ();
+		tgreen = ret.getGreen ();
+	} else {
+		temp = currWB.getTemp ();
+		tgreen = currWB.getGreen ();
+	}
 }
 
 void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &h) {

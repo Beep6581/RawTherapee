@@ -661,29 +661,29 @@
 +                double d = tpp->defGain * image[i* ::width+j][1];
 +                if (d>64000)
 +                    continue;
-+                avg_g += d*d*d*d*d*d;
++                avg_g += d;
 +                gn++;
 +            }
 +            if (FISRED(filter,i,j)) {
 +                double d = tpp->defGain * image[i* ::width+j][0];
 +                if (d>64000)
 +                    continue;
-+                avg_r += d*d*d*d*d*d;
++                avg_r += d;
 +                rn++;
 +            }
 +            if (FISBLUE(filter,i,j)) {
 +                double d = tpp->defGain * image[i* ::width+j][2];
 +                if (d>64000)
 +                    continue;
-+                avg_b += d*d*d*d*d*d;
++                avg_b += d;
 +                bn++;
 +            }
 +        }
 +    }
 +
-+    double reds   = pow (avg_r/rn, 1.0/6.0) * tpp->camwbRed;
-+    double greens = pow (avg_g/gn, 1.0/6.0) * tpp->camwbGreen;
-+    double blues  = pow (avg_b/bn, 1.0/6.0) * tpp->camwbBlue;
++    double reds   = avg_r/rn * tpp->camwbRed;
++    double greens = avg_g/gn * tpp->camwbGreen;
++    double blues  = avg_b/bn * tpp->camwbBlue;
 +    
 +    double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
 +    double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;

@@ -1841,111 +1841,114 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
             }
     }
     return 1;
-}
-
-ColorTemp RawImageSource::getAutoWB () {
-
-    double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
-    int rn = 0, gn = 0, bn = 0;
-
-    if (fuji) {
-        for (int i=32; i<ri->height-32; i++) {
-            int fw = ri->fuji_width;
-            int start = ABS(fw-i) + 32;
-            int end = MIN(ri->height+ri->width-fw-i, fw+i) - 32;
-            for (int j=start; j<end; j++) {
-                if (!ri->filters) {
-                    double d = CLIP(ri->defgain*ri->data[i][3*j]);
-                    if (d>64000)
-                        continue;
-                    avg_r += d*d*d*d*d*d; rn++;
-                    d = CLIP(ri->defgain*ri->data[i][3*j+1]);
-                    if (d>64000)
-                        continue;
-                    avg_g += d*d*d*d*d*d; gn++;
-                    d = CLIP(ri->defgain*ri->data[i][3*j+2]);
-                    if (d>64000)
-                        continue;
-                    avg_b += d*d*d*d*d*d; bn++;
-                }
-                else {
-                    double d = CLIP(ri->defgain*ri->data[i][j]);
-                    if (d>64000)
-                        continue;
-                    double dp = d*d*d*d*d*d;
-                    if (ISRED(ri,i,j)) {
-                        avg_r += dp;
-                        rn++;
-                    }
-                    else if (ISGREEN(ri,i,j)) {
-                        avg_g += dp;
-                        gn++;
-                    }
-                    else if (ISBLUE(ri,i,j)) {
-                        avg_b += dp;
-                        bn++;
-                    }
-                }
-            }
-        }
-    }
-    else {
-        for (int i=32; i<ri->height-32; i++)
-            for (int j=32; j<ri->width-32; j++) {
-                if (!ri->filters) {
-                    double d = CLIP(ri->defgain*ri->data[i][3*j]);
-                    if (d>64000)
-                        continue;
-                    avg_r += d*d*d*d*d*d; rn++;
-                    d = CLIP(ri->defgain*ri->data[i][3*j+1]);
-                    if (d>64000)
-                        continue;
-                    avg_g += d*d*d*d*d*d; gn++;
-                    d = CLIP(ri->defgain*ri->data[i][3*j+2]);
-                    if (d>64000)
-                        continue;
-                    avg_b += d*d*d*d*d*d; bn++;
-                }
-                else {
-                    double d = CLIP(ri->defgain*ri->data[i][j]);
-                    if (d>64000)
-                        continue;
-                    double dp = d*d*d*d*d*d;
-                    if (ISRED(ri,i,j)) {
-                        avg_r += dp;
-                        rn++;
-                    }
-                    else if (ISGREEN(ri,i,j)) {
-                        avg_g += dp;
-                        gn++;
-                    }
-                    else if (ISBLUE(ri,i,j)) {
-                        avg_b += dp;
-                        bn++;
-                    }
-                }
-            }
-    }
-
-    printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
-
-//    double img_r, img_g, img_b;
-//    wb.getMultipliers (img_r, img_g, img_b);
-
-//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
-
-    double reds   = pow (avg_r/rn, 1.0/6.0) * ri->camwb_red;
-    double greens = pow (avg_g/gn, 1.0/6.0) * ri->camwb_green;
-    double blues  = pow (avg_b/bn, 1.0/6.0) * ri->camwb_blue;
-    
-    double rm = coeff[0][0]*reds + coeff[0][1]*greens + coeff[0][2]*blues;
-    double gm = coeff[1][0]*reds + coeff[1][1]*greens + coeff[1][2]*blues;
-    double bm = coeff[2][0]*reds + coeff[2][1]*greens + coeff[2][2]*blues;
-
-    return ColorTemp (rm, gm, bm);
-}
+}	
+	
+	ColorTemp RawImageSource::getAutoWB () {
+		
+		double avg_r = 0;
+		double avg_g = 0;
+		double avg_b = 0;
+		int rn = 0, gn = 0, bn = 0;
+		
+		if (fuji) {
+			for (int i=32; i<ri->height-32; i++) {
+				int fw = ri->fuji_width;
+				int start = ABS(fw-i) + 32;
+				int end = MIN(ri->height+ri->width-fw-i, fw+i) - 32;
+				for (int j=start; j<end; j++) {
+					if (!ri->filters) {
+						double d = CLIP(ri->defgain*ri->data[i][3*j]);
+						if (d>64000)
+							continue;
+						avg_r += d; rn++;
+						d = CLIP(ri->defgain*ri->data[i][3*j+1]);
+						if (d>64000)
+							continue;
+						avg_g += d; gn++;
+						d = CLIP(ri->defgain*ri->data[i][3*j+2]);
+						if (d>64000)
+							continue;
+						avg_b += d; bn++;
+					}
+					else {
+						double d = CLIP(ri->defgain*ri->data[i][j]);
+						if (d>64000)
+							continue;
+						double dp = d;
+						if (ISRED(ri,i,j)) {
+							avg_r += dp;
+							rn++;
+						}
+						else if (ISGREEN(ri,i,j)) {
+							avg_g += dp;
+							gn++;
+						}
+						else if (ISBLUE(ri,i,j)) {
+							avg_b += dp;
+							bn++;
+						}
+					}
+				}
+			}
+		}
+		else {
+			if (!ri->filters) {
+				for (int i=32; i<ri->height-32; i++)
+					for (int j=32; j<ri->width-32; j++) {
+						double dr = CLIP(ri->defgain*ri->data[i][3*j]);
+						double dg = CLIP(ri->defgain*ri->data[i][3*j+1]);
+						double db = CLIP(ri->defgain*ri->data[i][3*j+2]);
+						if (dr>64000 || dg>64000 || db>64000) continue;
+						avg_r += dr; rn++;
+						avg_g += dg; 
+						avg_b += db; 
+					}
+				gn = rn; bn=rn;
+			} else {
+				//determine GRBG coset; (ey,ex) is the offset of the R subarray
+				int ey, ex;
+				if (ISGREEN(ri,0,0)) {//first pixel is G
+					if (ISRED(ri,0,1)) {ey=0; ex=1;} else {ey=1; ex=0;}
+				} else {//first pixel is R or B
+					if (ISRED(ri,0,0)) {ey=0; ex=0;} else {ey=1; ex=1;}
+				}
+				double d[2][2];
+				for (int i=32; i<ri->height-32; i+=2)
+					for (int j=32; j<ri->width-32; j+=2) {
+						//average a Bayer quartet if nobody is clipped
+						d[0][0] = CLIP(ri->defgain*ri->data[i][j]);
+						d[0][1] = CLIP(ri->defgain*ri->data[i][j+1]);
+						d[1][0] = CLIP(ri->defgain*ri->data[i+1][j]);
+						d[1][1] = CLIP(ri->defgain*ri->data[i+1][j+1]);
+						if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
+						avg_r += d[ey][ex];
+						avg_g += d[1-ey][ex] + d[ey][1-ex];
+						avg_b += d[1-ey][1-ex];
+						rn++;
+					}
+				gn = 2*rn;
+				bn = rn;
+			}
+		}
+		
+		printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
+		
+		//    double img_r, img_g, img_b;
+		//    wb.getMultipliers (img_r, img_g, img_b);
+		
+		//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
+		
+		double reds   = avg_r/rn * ri->camwb_red;
+		double greens = avg_g/gn * ri->camwb_green;
+		double blues  = avg_b/bn * ri->camwb_blue;
+		
+		double rm = coeff[0][0]*reds + coeff[0][1]*greens + coeff[0][2]*blues;
+		double gm = coeff[1][0]*reds + coeff[1][1]*greens + coeff[1][2]*blues;
+		double bm = coeff[2][0]*reds + coeff[2][1]*greens + coeff[2][2]*blues;
+		
+		return ColorTemp (rm, gm, bm);
+	}
+	
 
 void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& tty) {
 
@@ -2003,77 +2006,83 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
         tty = ty;
     }
 }
+	
 
 ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
 
     int x; int y;
-    int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
     double reds = 0, greens = 0, blues = 0;
-    int rn = 0, gn = 0, bn = 0;
+    int rn = 0;
     
     if (!ri->filters) {
+		int xmin, xmax, ymin, ymax;
+		int xr, xg, xb, yr, yg, yb;
         for (int i=0; i<red.size(); i++) {
-            transformPosition (red[i].x, red[i].y, tran, x, y);
-            if (x>=0 && y>=0 && x<W && y<H) {
-                reds += ri->data[y][3*x];
-                rn++;
-            }
-            transformPosition (green[i].x, green[i].y, tran, x, y);
-            if (x>=0 && y>=0 && x<W && y<H) {
-                greens += ri->data[y][3*x+1];
-                gn++;
-            }
-            transformPosition (blue[i].x, blue[i].y, tran, x, y);
-            if (x>=0 && y>=0 && x<W && y<H) {
-                blues += ri->data[y][3*x+2];
-                bn++;
+            transformPosition (red[i].x, red[i].y, tran, xr, yr);
+			transformPosition (green[i].x, green[i].y, tran, xg, yg);
+			transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
+			if (ri->defgain*ri->data[y][3*x]>52500 || ri->defgain*ri->data[y][3*x+1]>52500 || ri->defgain*ri->data[y][3*x+2]>52500) continue;
+			xmin = MIN(xr,MIN(xg,xb));
+			xmax = MAX(xr,MAX(xg,xb));
+			ymin = MIN(yr,MIN(yg,yb));
+			ymax = MAX(yr,MAX(yg,yb));
+			if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
+				reds	+= ri->data[yr][3*xr];
+				greens	+= ri->data[yg][3*xg+1];
+				blues	+= ri->data[yb][3*xb+2];
+				rn++;
             }
         }
+		
+    } else {
+		
+		int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
+		int rloc, gloc, bloc, rnbrs, gnbrs, bnbrs;
+		for (int i=0; i<red.size(); i++) {
+			transformPosition (red[i].x, red[i].y, tran, x, y);
+			rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
+			for (int k=0; k<9; k++) {
+				int xv = x + d[k][0];
+				int yv = y + d[k][1];
+				if (ISRED(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
+					rloc += ri->data[yv][xv];
+					rnbrs++;
+					continue;
+				}
+				if (ISGREEN(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
+					gloc += ri->data[yv][xv];
+					gnbrs++;
+					continue;
+				}
+				if (ISBLUE(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
+					bloc += ri->data[yv][xv];
+					bnbrs++;
+					continue;
+				}
+			}
+			rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
+			if (rloc*ri->defgain<64000 && gloc*ri->defgain<64000 && bloc*ri->defgain<64000) {
+				reds += rloc; greens += gloc; blues += bloc; rn++;
+			}
+			//transformPosition (green[i].x, green[i].y, tran, x, y);//these are redundant now ??? if not, repeat for these blocks same as for red[]
+			//transformPosition (blue[i].x, blue[i].y, tran, x, y);
+		}
     }
-    else {
-        for (int i=0; i<red.size(); i++) {
-            transformPosition (red[i].x, red[i].y, tran, x, y);
-            for (int k=0; k<9; k++) {
-                int xv = x + d[k][0];
-                int yv = y + d[k][1];
-                if (ISRED(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
-                    reds += ri->data[yv][xv];
-                    rn++;
-                    break;
-                }
-            }
-            transformPosition (green[i].x, green[i].y, tran, x, y);
-            for (int k=0; k<9; k++) {
-                int xv = x + d[k][0];
-                int yv = y + d[k][1];
-                if (ISGREEN(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
-                    greens += ri->data[yv][xv];
-                    gn++;
-                    break;
-                }
-            }
-            transformPosition (blue[i].x, blue[i].y, tran, x, y);
-            for (int k=0; k<9; k++) {
-                int xv = x + d[k][0];
-                int yv = y + d[k][1];
-                if (ISBLUE(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
-                    blues += ri->data[yv][xv];
-                    bn++;
-                    break;
-                }
-            }
-        }
-    }
-
-    reds = reds/rn * ri->camwb_red;
-    greens = greens/gn * ri->camwb_green;
-    blues = blues/bn * ri->camwb_blue;
-
-    double rm = coeff[0][0]*reds + coeff[0][1]*greens + coeff[0][2]*blues;
-    double gm = coeff[1][0]*reds + coeff[1][1]*greens + coeff[1][2]*blues;
-    double bm = coeff[2][0]*reds + coeff[2][1]*greens + coeff[2][2]*blues;
-
-    return ColorTemp (rm, gm, bm);
+	
+	if (2*rn < red.size()) {
+		return ColorTemp ();
+	}
+	else {
+		reds = reds/rn * ri->camwb_red;
+		greens = greens/rn * ri->camwb_green;
+		blues = blues/rn * ri->camwb_blue;
+		
+		double rm = coeff[0][0]*reds + coeff[0][1]*greens + coeff[0][2]*blues;
+		double gm = coeff[1][0]*reds + coeff[1][1]*greens + coeff[1][2]*blues;
+		double bm = coeff[2][0]*reds + coeff[2][1]*greens + coeff[2][2]*blues;
+		
+		return ColorTemp (rm, gm, bm);
+	}
 }
 
 #define FORCC for (c=0; c < colors; c++)

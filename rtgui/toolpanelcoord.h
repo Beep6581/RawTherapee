@@ -54,6 +54,7 @@
 #include <lensgeom.h>
 #include <lensgeomlistener.h>
 #include <equalizer.h>
+#include <dirpyrequalizer.h>
 
 
 class ImageEditorCoordinator;
@@ -92,6 +93,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
+		DirPyrEqualizer * dirpyrequalizer;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 

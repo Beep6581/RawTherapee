@@ -42,6 +42,8 @@ PartialPasteDlg::PartialPasteDlg () {
     lumaden     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMADENOISE")));
     lumacurve   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMACURVE")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
+    dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
+    waveq       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETEQUALIZER")));
 
     // options in color:
     colormixer  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORMIXER")));
@@ -87,6 +89,8 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*lumaden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*lumacurve, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*waveq, Gtk::PACK_SHRINK, 2);
 
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
@@ -150,6 +154,8 @@ PartialPasteDlg::PartialPasteDlg () {
     lumadenConn     = lumaden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     lumacurveConn   = lumacurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
+    dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
+    waveqConn		= waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
 
     colormixerConn  = colormixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     colorshiftConn  = colorshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
@@ -201,6 +207,8 @@ void PartialPasteDlg::luminanceToggled () {
     lumadenConn.block (true);
     lumacurveConn.block (true);
     shConn.block (true);
+    dirpyreqConn.block (true);
+    waveqConn.block (true);
 
     luminance->set_inconsistent (false);
 
@@ -209,12 +217,16 @@ void PartialPasteDlg::luminanceToggled () {
     lumaden->set_active (luminance->get_active ());
     lumacurve->set_active (luminance->get_active ());
     sh->set_active (luminance->get_active ());
+    dirpyreq->set_active (luminance->get_active ());
+    waveq->set_active (luminance->get_active ());
 
     sharpenConn.block (false);
 	impdenConn.block (false);
     lumadenConn.block (false);
     lumacurveConn.block (false);
     shConn.block (false);
+	dirpyreqConn.block (false);
+    waveqConn.block (false);
 }
 
 void PartialPasteDlg::colorToggled () {
@@ -306,6 +318,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (lumaden->get_active ())     dst->lumaDenoise = src->lumaDenoise;
     if (lumacurve->get_active ())   dst->lumaCurve = src->lumaCurve;
     if (sh->get_active ())          dst->sh = src->sh;
+    if (dirpyreq->get_active ())	dst->dirpyrequalizer = src->dirpyrequalizer;
+    if (waveq->get_active ())		dst->equalizer = src->equalizer;
 
     if (colormixer->get_active ())  dst->chmixer = src->chmixer;
     if (colorshift->get_active ())  dst->colorShift = src->colorShift;
