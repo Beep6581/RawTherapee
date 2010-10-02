@@ -26,7 +26,7 @@
 extern Options options;
 extern Glib::ustring argv0;
 
-Preferences::Preferences (int initialPage)  {  
+Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
   
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
@@ -77,7 +77,7 @@ Preferences::Preferences (int initialPage)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
-    nb->set_current_page (initialPage);
+    nb->set_current_page (0);
 
     fillPreferences ();
 
@@ -395,6 +395,21 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     Gtk::VBox* mvbsd = new Gtk::VBox ();
 
+    Gtk::Frame* fworklflow = new Gtk::Frame (M("PREFERENCES_WORKFLOW"));
+    Gtk::HBox* hbworkflow = new Gtk::HBox ();
+    hbworkflow->set_border_width (4);
+    Gtk::Label* flayoutlab = new Gtk::Label (M("PREFERENCES_EDITORLAYOUT")+":");
+    editorLayout = new Gtk::ComboBoxText ();
+
+    editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
+    editorLayout->append_text (M("PREFERENCES_MULTITAB"));
+    editorLayout->set_active (1);
+
+    hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
+    hbworkflow->pack_start (*editorLayout);
+    fworklflow->add (*hbworkflow);
+    mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
+     
     Gtk::Frame* flang = new Gtk::Frame (M("PREFERENCES_DEFAULTLANG"));
     Gtk::HBox* hblang = new Gtk::HBox ();
     hblang->set_border_width (4);
@@ -540,7 +555,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->set_border_width (4);
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
-
+    
     return mvbsd;
 }
 
@@ -833,6 +848,8 @@ void Preferences::storePreferences () {
     for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
         for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
             moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
+
+    moptions.tabbedUI = (bool)editorLayout->get_active_row_number();
 }
 
 void Preferences::fillPreferences () {
@@ -987,6 +1004,7 @@ void Preferences::okPressed () {
 
     storePreferences ();
     options.copyFrom (&moptions);
+    workflowUpdate();
     hide ();
 }
 
@@ -1065,6 +1083,14 @@ void Preferences::themeChanged () {
 	Gtk::RC::reparse_all (Gtk::Settings::get_default());
 	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
 	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
+}
+
+void Preferences::workflowUpdate (){
+
+    if(moptions.tabbedUI)
+        parent->epanel->hide_all();
+    else
+       parent->epanel->show_all();
 }
 
 void Preferences::addExtPressed () {

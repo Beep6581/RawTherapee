@@ -23,6 +23,7 @@
 #include <adjuster.h>
 #include <options.h>
 #include <vector>
+#include "rtwindow.h"
 
 class Preferences : public Gtk::Dialog {
 
@@ -109,6 +110,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* saveParamsFile;
     Gtk::CheckButton* saveParamsCache;
     Gtk::ComboBoxText* loadParamsPreference;
+    Gtk::ComboBoxText* editorLayout;
+    RTWindow* parent;
 	
     Options moptions;
     sigc::connection dmconn, dmconnBatch, tconn, addc, setc;
@@ -118,7 +121,7 @@ class Preferences : public Gtk::Dialog {
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
     void dmethodChanged ();
     void dmethodBatchChanged ();
-
+    void workflowUpdate();
     void themeChanged ();
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
@@ -130,7 +133,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getBatchProcPanel ();
     
   public:
-         Preferences (int initialPage=0);
+         Preferences (RTWindow *rtwindow);
     
     void savePressed ();
     void loadPressed ();
