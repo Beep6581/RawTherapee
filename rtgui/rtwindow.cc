@@ -47,6 +47,7 @@ RTWindow::RTWindow () {
 
     mainNB = Gtk::manage (new Gtk::Notebook ());
     mainNB->set_scrollable (true);
+    mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
     fpanel = new FilePanel ();
     fpanel->setParent (this);
@@ -108,7 +109,28 @@ void RTWindow::on_realize () {
 
     Gtk::Window::on_realize ();
 
+    fpanel->setAspect();
+
     cursorManager.init (get_window());
+}
+
+bool RTWindow::on_my_window_state_event(GdkEventWindowState* event) {
+	if (!event->new_window_state) {
+		// Window mode
+		options.windowMaximized = false;
+	}
+	else if (event->new_window_state & (GDK_WINDOW_STATE_MAXIMIZED|GDK_WINDOW_STATE_FULLSCREEN)) {
+		// Fullscreen mode
+		options.windowMaximized = true;
+	}
+	return true;
+}
+
+void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
+	if (page_num > 1) {
+		EditorPanel *ep = (EditorPanel *)mainNB->get_nth_page(page_num);
+		ep->setAspect();
+	}
 }
 
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
@@ -133,7 +155,9 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
     hb->pack_end (*closeb);
     hb->set_spacing (2);
     hb->show_all ();
+
     mainNB->append_page (*ep, *hb);
+    //ep->setAspect ();
     mainNB->set_current_page (mainNB->page_num (*ep));
     mainNB->set_tab_reorderable (*ep, true);
 
@@ -144,7 +168,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
 
-	ep->saveOptions ();
+	//ep->saveOptions ();
 	epanels.erase (ep->getFileName());
 	filesEdited.erase (ep->getFileName ());
 	fpanel->refreshEditedState (filesEdited);
@@ -222,14 +246,10 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     options.fbArrangement = fileBrowser->getFileCatalog()->getArrangement ();
     options.firstRun = false;
 */
-    Gdk::WindowState state = get_window()->get_state();
-    if (!(state & (Gdk::WINDOW_STATE_MAXIMIZED | Gdk::WINDOW_STATE_FULLSCREEN))) {
+    if (!options.windowMaximized) {
 		options.windowWidth = get_width();
 		options.windowHeight = get_height();
-		options.windowMaximized = false;
     }
-    else
-		options.windowMaximized = true;
 
     Options::save ();
     hide();

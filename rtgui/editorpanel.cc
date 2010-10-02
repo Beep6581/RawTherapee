@@ -192,7 +192,8 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
 
 	hpanedr->pack1(*hpanedl, true, true);
 	hpanedr->pack2(*vboxright, false, true);
-	//hpanedr->set_position(options.toolPanelWidth);
+	hpanedl->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::leftPaneButtonReleased) );
+	hpanedr->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::rightPaneButtonReleased) );
 
     pack_start (*hpanedr);
     show_all ();
@@ -261,6 +262,40 @@ EditorPanel::~EditorPanel () {
     delete vboxright;
     
     delete saveAsDialog;
+}
+
+void EditorPanel::leftPaneButtonReleased(GdkEventButton *event) {
+	if (event->button == 1) {
+		// Button 1 released : it's a resize
+		options.historyPanelWidth = hpanedl->get_position();
+	}
+	/*else if (event->button == 3) {
+	}*/
+}
+
+void EditorPanel::rightPaneButtonReleased(GdkEventButton *event) {
+	if (event->button == 1) {
+		int winW, winH;
+		parent->get_size(winW, winH);
+		// Button 1 released : it's a resize
+		options.toolPanelWidth = winW - hpanedr->get_position();
+	}
+	/*else if (event->button == 3) {
+	}*/
+}
+
+void EditorPanel::setAspect () {
+	int winW, winH;
+	parent->get_size(winW, winH);
+	hpanedl->set_position(options.historyPanelWidth);
+	hpanedr->set_position(winW - options.toolPanelWidth);
+}
+
+void EditorPanel::on_realize () {
+    
+    Gtk::VBox::on_realize ();
+    // This line is needed to avoid autoexpansion of the window :-/
+    vboxright->set_size_request (options.toolPanelWidth, -1);
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
@@ -849,12 +884,10 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
     return false;
 }
 
+/*
 void EditorPanel::saveOptions () {
-
-    //options.historyPanelWidth = hpanedl->get_position ();//older code
-	//options.toolPanelWidth = vboxright->get_width ();//older code
-    //options.toolPanelWidth = hpanedr->get_position ();//Hombre's change which screws up OSX build
 }
+*/
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
 
