@@ -26,7 +26,7 @@
 
 style "clearlooks-default"
 {
-font_name = "tahoma 8"
+  font_name = "sans 8"
   GtkButton      ::default_border    = { 0, 0, 0, 0 }
   GtkRange       ::trough_border     = 0
   GtkPaned       ::handle_size       = 6

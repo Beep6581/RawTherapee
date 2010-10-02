@@ -45,6 +45,7 @@ class FilePanel : public Gtk::HPaned,
         RecentBrowser* recentBrowser;
         FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
         Gtk::HBox* rightBox;
+        Gtk::VPaned* tpcPaned;
         BatchToolPanelCoordinator* tpc;
         History* history;
 		FilterPanel* filterPanel;
@@ -58,6 +59,7 @@ class FilePanel : public Gtk::HPaned,
 
         void setParent (RTWindow* p) { parent = p; }
         void init (); // dont call it directly, the constructor calls it as idle source
+        void setAspect();
         void open (const Glib::ustring& d); // open a file or a directory
         void refreshEditedState (const std::set<Glib::ustring>& efiles) { fileCatalog->refreshEditedState (efiles); }
         
