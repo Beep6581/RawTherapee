@@ -41,7 +41,8 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool is_fullscreen;
         Gtk::Button * btn_fullscreen;
         
-
+        bool on_expose_event_epanel(GdkEventExpose* event);
+        bool on_expose_event_fpanel(GdkEventExpose* event);
     public:
         RTWindow ();
 

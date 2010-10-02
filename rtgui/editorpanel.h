@@ -145,7 +145,6 @@ class EditorPanel : public Gtk::VBox,
         void saveOptions ();
 
         Gtk::Paned *catalogPane;        
-        bool on_expose_event(GdkEventExpose* event);
 };
 
 #endif

@@ -247,19 +247,13 @@ EditorPanel::~EditorPanel () {
     history->setHistoryBeforeLineListener (NULL);
     // the order is important!
     delete iarea;
+    iarea = NULL;
     delete beforeIarea;
+    beforeIarea = NULL;
 
-    if (ipc)
-        ipc->setPreviewImageListener (NULL);
-    if (beforeIpc)
-        beforeIpc->setPreviewImageListener (NULL);
-
-    delete previewHandler;
-    previewHandler = NULL;
     delete beforePreviewHandler;
-
-    if (ipc)
-        close ();
+    
+    close ();
 
     if (epih->pending)
         epih->destroyed = true;
@@ -350,8 +344,11 @@ void EditorPanel::close () {
         rtengine::StagedImageProcessor::destroy (ipc);
         ipc = NULL;
 
-        iarea->imageArea->setPreviewHandler (NULL);
-        iarea->imageArea->setImProcCoordinator (NULL);
+        if(iarea)
+        {
+            iarea->imageArea->setPreviewHandler (NULL);
+            iarea->imageArea->setImProcCoordinator (NULL);
+        }
         navigator->previewWindow->setPreviewHandler (NULL);
   //      navigator->previewWindow->setImageArea (NULL);
 
@@ -896,10 +893,9 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 
 void EditorPanel::saveOptions () {
 
- //options.historyPanelWidth = hpanedl->get_position ();//older code
+    //options.historyPanelWidth = hpanedl->get_position ();//older code
 	//options.toolPanelWidth = vboxright->get_width ();//older code
-    if (options.startupDir==STARTUPDIR_LAST &&  fPanel->fileCatalog->lastSelectedDir ()!="")
-        options.startupPath = fPanel->fileCatalog->lastSelectedDir ();
+    //options.toolPanelWidth = hpanedr->get_position ();//Hombre's change which screws up OSX build
 }
 
 
@@ -975,17 +971,4 @@ void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned
 
     histogramPanel->histogramChanged (rh, gh, bh, lh);
     tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
-}
-
-bool EditorPanel::on_expose_event(GdkEventExpose* event)
-{
-
-    if(!options.tabbedUI && catalogPane->get_children().size() ==0 ){
-        FileCatalog *fCatalog = fPanel->fileCatalog;
-        fPanel->dirpaned->remove(*fCatalog);
-        catalogPane->add(*fCatalog);
-        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
-        fCatalog->redrawAll();
-    }
-   return  Gtk::VBox::on_expose_event(event);
 }
