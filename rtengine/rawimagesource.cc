@@ -758,6 +758,109 @@ int RawImageSource::load (Glib::ustring fname) {
     camProfile = iccStore.createFromMatrix (cam, false, "Camera");
     inverse33 (cam, icam);
 
+
+    //----------------- scalecolors
+	unsigned  row, col, ur, uc, i, x, y, c, sum[8];
+	int val, dark, sat;
+	double dsum[8], dmin, dmax;
+	float pre_mul[4];
+	bool use_camera_wb=true;
+	bool use_auto_wb=false;
+	bool highlight=true;
+
+
+	for (int c = 0; c < 4; c++){
+		cblack[c] = ri->cblack[c] + ri->black_point;
+		pre_mul[c] = ri->pre_mul[c];
+	}
+	/*
+	if (user_mul[0])
+		memcpy(pre_mul, user_mul, sizeof pre_mul);*/
+	if (use_auto_wb || (use_camera_wb && ri->cam_mul[0] == -1)) {
+		memset(dsum, 0, sizeof dsum);
+		for (row = 0; row < H; row += 8)
+			for (col = 0; col < W; col += 8) {
+				memset(sum, 0, sizeof sum);
+				for (y = row; y < row + 8 && y < H; y++)
+					for (x = col; x < col + 8 && x < W; x++)
+						for (int c = 0; c < 3; c++) {
+							if (ri->filters) {
+								c = FC(y, x);
+								val = ri->data[y][x];
+							} else
+								val = ri->data[y][3*x+c];
+							if (val > ri->maximum - 25)
+								goto skip_block;
+							if ((val -= cblack[c]) < 0)
+								val = 0;
+							sum[c] += val;
+							sum[c + 4]++;
+							if (ri->filters)
+								break;
+						}
+				for (c = 0; c < 8; c++)
+					dsum[c] += sum[c];
+skip_block: ;
+			}
+		for (int c = 0; c < 4; c++)
+			if (dsum[c])
+				pre_mul[c] = dsum[c + 4] / dsum[c];
+	}
+	if (use_camera_wb && ri->cam_mul[0] != -1) {
+		memset(sum, 0, sizeof sum);
+		for (row = 0; row < 8; row++)
+			for (col = 0; col < 8; col++) {
+				int c = FC(row, col);
+				if ((val = ri->white[row][col] - cblack[c]) > 0)
+					sum[c] += val;
+				sum[c + 4]++;
+			}
+		if (sum[0] && sum[1] && sum[2] && sum[3])
+			for (int c = 0; c < 4; c++)
+				pre_mul[c] = (float) sum[c + 4] / sum[c];
+		else if (ri->cam_mul[0] && ri->cam_mul[2])
+			memcpy(pre_mul, ri->cam_mul, sizeof pre_mul);
+		else
+			fprintf(stderr, "Cannot use camera white balance.\n");
+	}
+	if (pre_mul[3] == 0)
+		pre_mul[3] = ri->colors < 4 ? pre_mul[1] : 1;
+	dark = ri->black_point;
+	sat = ri->maximum;
+	sat -= ri->black_point;
+	for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
+		if (dmin > pre_mul[c])
+			dmin = pre_mul[c];
+		if (dmax < pre_mul[c])
+			dmax = pre_mul[c];
+	}
+	if (!highlight)
+		dmax = dmin;
+	for (c = 0; c < 4; c++)
+		scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / sat;
+	if (settings->verbose) {
+		fprintf(stderr,"Scaling with darkness %d, saturation %d, and\nmultipliers", dark, sat);
+		for (c = 0; c < 4; c++)
+			fprintf(stderr, " %f", pre_mul[c]);
+		fputc('\n', stderr);
+	}
+	camwb_red = ri->pre_mul[0] / pre_mul[0];
+	camwb_green = ri->pre_mul[1] / pre_mul[1];
+	camwb_blue = ri->pre_mul[2] / pre_mul[2];
+	ri->defgain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
+
+    double cam_r = coeff[0][0]*camwb_red + coeff[0][1]*camwb_green + coeff[0][2]*camwb_blue;
+    double cam_g = coeff[1][0]*camwb_red + coeff[1][1]*camwb_green + coeff[1][2]*camwb_blue;
+    double cam_b = coeff[2][0]*camwb_red + coeff[2][1]*camwb_green + coeff[2][2]*camwb_blue;
+
+    wb = ColorTemp (cam_r, cam_g, cam_b);
+
+    // ---------------- preinterpolate
+    if (ri->filters && ri->colors == 3) {
+    	ri->prefilters = ri->filters;
+  		ri->filters &= ~((ri->filters & 0x55555555) << 1);
+  	}
+
     //Load complete Exif informations
     RawMetaDataLocation rml;
     rml.exifBase = ri->exifbase;
@@ -811,22 +914,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			printf( "Correcting %u hotpixels from darkframe\n",bp->size());
 		}
 	}
-    preInterpolate(false);
-    scaleColors( false,true);
 
-    double cam_r = coeff[0][0]*camwb_red + coeff[0][1]*camwb_green + coeff[0][2]*camwb_blue;
-    double cam_g = coeff[1][0]*camwb_red + coeff[1][1]*camwb_green + coeff[1][2]*camwb_blue;
-    double cam_b = coeff[2][0]*camwb_red + coeff[2][1]*camwb_green + coeff[2][2]*camwb_blue;
-
-    wb = ColorTemp (cam_r, cam_g, cam_b);
-
-    double tr = icoeff[0][0] * cam_r + icoeff[0][1] * cam_g + icoeff[0][2] * cam_b;
-    double tg = icoeff[1][0] * cam_r + icoeff[1][1] * cam_g + icoeff[1][2] * cam_b;
-    double tb = icoeff[2][0] * cam_r + icoeff[2][1] * cam_g + icoeff[2][2] * cam_b;
+    scaleColors( 0,0, W, H);
 
     defGain = log(ri->defgain) / log(2.0); //\TODO  ri->defgain should be "costant"
-	
-	
+
 	if ( raw.hotdeadpix_filt ) {
 		if (plistener) {
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
@@ -970,102 +1062,13 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 	}
 }
 
-/* Scale original pixels into the range 0 65535 using black offsets and multipliers
- * Calculate camwb_red,camwb_green,camwb_blue
- *
- * Calculate 4 coeff. scale_mul[] and 4 offset cblack[]
- * and reset all pixels
- */
-void RawImageSource::scaleColors(bool use_auto_wb, bool use_camera_wb, int highlight)
+/* Scale original pixels into the range 0 65535 using black offsets and multipliers */
+void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
 {
-	unsigned  row, col, ur, uc, i, x, y, c, sum[8];
-	int val, dark, sat;
-	double dsum[8], dmin, dmax;
-	float pre_mul[4];
-
-	int cblack[4]; // offset calculated
-	float scale_mul[4]; // coeff. calculated to scale
-
-	for (int c = 0; c < 4; c++){
-		cblack[c] = ri->cblack[c] + ri->black_point;
-		pre_mul[c] = ri->pre_mul[c];
-	}
-	/*
-	if (user_mul[0])
-		memcpy(pre_mul, user_mul, sizeof pre_mul);*/
-	if (use_auto_wb || (use_camera_wb && ri->cam_mul[0] == -1)) {
-		memset(dsum, 0, sizeof dsum);
-		for (row = 0; row < H; row += 8)
-			for (col = 0; col < W; col += 8) {
-				memset(sum, 0, sizeof sum);
-				for (y = row; y < row + 8 && y < H; y++)
-					for (x = col; x < col + 8 && x < W; x++)
-						for (int c = 0; c < 3; c++) {
-							if (ri->filters) {
-								c = FC(y, x);
-								val = rawData[y][x];
-							} else
-								val = rawData[y][3*x+c];
-							if (val > ri->maximum - 25)
-								goto skip_block;
-							if ((val -= cblack[c]) < 0)
-								val = 0;
-							sum[c] += val;
-							sum[c + 4]++;
-							if (ri->filters)
-								break;
-						}
-				for (c = 0; c < 8; c++)
-					dsum[c] += sum[c];
-skip_block: ;
-			}
-		for (int c = 0; c < 4; c++)
-			if (dsum[c])
-				pre_mul[c] = dsum[c + 4] / dsum[c];
-	}
-	if (use_camera_wb && ri->cam_mul[0] != -1) {
-		memset(sum, 0, sizeof sum);
-		for (row = 0; row < 8; row++)
-			for (col = 0; col < 8; col++) {
-				int c = FC(row, col);
-				if ((val = ri->white[row][col] - cblack[c]) > 0)
-					sum[c] += val;
-				sum[c + 4]++;
-			}
-		if (sum[0] && sum[1] && sum[2] && sum[3])
-			for (int c = 0; c < 4; c++)
-				pre_mul[c] = (float) sum[c + 4] / sum[c];
-		else if (ri->cam_mul[0] && ri->cam_mul[2])
-			memcpy(pre_mul, ri->cam_mul, sizeof pre_mul);
-		else
-			fprintf(stderr, "Cannot use camera white balance.\n");
-	}
-	if (pre_mul[3] == 0)
-		pre_mul[3] = ri->colors < 4 ? pre_mul[1] : 1;
-	dark = ri->black_point;
-	sat = ri->maximum;
-	sat -= ri->black_point;
-	for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
-		if (dmin > pre_mul[c])
-			dmin = pre_mul[c];
-		if (dmax < pre_mul[c])
-			dmax = pre_mul[c];
-	}
-	if (!highlight)
-		dmax = dmin;
-	for (c = 0; c < 4; c++)
-		scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / sat;
-	if (settings->verbose) {
-		fprintf(stderr,"Scaling with darkness %d, saturation %d, and\nmultipliers", dark, sat);
-		for (c = 0; c < 4; c++)
-			fprintf(stderr, " %f", pre_mul[c]);
-		fputc('\n', stderr);
-	}
-
 	// scale image colors
-	for (row = 0; row < H; row ++){
-		for (col = 0; col < W; col++) {
-			val = rawData[row][col];
+	for (int row = winy; row < winy+winh; row ++){
+		for (int col = winx; col < winx+winw; col++) {
+			int val = rawData[row][col];
 			if (!val)
 				continue;
 			int c = FC(row, col);
@@ -1074,22 +1077,7 @@ skip_block: ;
 			rawData[row][col] = CLIP(val);
 		}
 	}
-	camwb_red = ri->pre_mul[0] / pre_mul[0];
-	camwb_green = ri->pre_mul[1] / pre_mul[1];
-	camwb_blue = ri->pre_mul[2] / pre_mul[2];
-	ri->defgain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
-}
 
-void RawImageSource::preInterpolate(bool force4colors)
-{
-  if (ri->filters && ri->colors == 3) {
-		if (force4colors)
-			ri->colors++;
-		else {
-			ri->prefilters = ri->filters;
-			ri->filters &= ~((ri->filters & 0x55555555) << 1);
-		}
-	}
 }
 
 int RawImageSource::defTransform (int tran) {
@@ -2010,33 +1998,34 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 				int end = MIN(ri->height+ri->width-fw-i, fw+i) - 32;
 				for (int j=start; j<end; j++) {
 					if (!ri->filters) {
-						double d = CLIP(ri->defgain*ri->data[i][3*j]);
+						double d = CLIP(ri->defgain*(ri->data[i][3*j]-cblack[0])*scale_mul[0]);
 						if (d>64000)
 							continue;
 						avg_r += d; rn++;
-						d = CLIP(ri->defgain*ri->data[i][3*j+1]);
+						d = CLIP(ri->defgain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
 						if (d>64000)
 							continue;
 						avg_g += d; gn++;
-						d = CLIP(ri->defgain*ri->data[i][3*j+2]);
+						d = CLIP(ri->defgain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
 						if (d>64000)
 							continue;
 						avg_b += d; bn++;
 					}
 					else {
-						double d = CLIP(ri->defgain*ri->data[i][j]);
+						int c = FC( i, j);
+						double d = CLIP(ri->defgain*(ri->data[i][j]-cblack[c])*scale_mul[c]);
 						if (d>64000)
 							continue;
 						double dp = d;
-						if (ISRED(ri,i,j)) {
+						if (c==0) {
 							avg_r += dp;
 							rn++;
 						}
-						else if (ISGREEN(ri,i,j)) {
+						else if (c==1) {
 							avg_g += dp;
 							gn++;
 						}
-						else if (ISBLUE(ri,i,j)) {
+						else if (c==2) {
 							avg_b += dp;
 							bn++;
 						}
@@ -2048,9 +2037,9 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 			if (!ri->filters) {
 				for (int i=32; i<ri->height-32; i++)
 					for (int j=32; j<ri->width-32; j++) {
-						double dr = CLIP(ri->defgain*ri->data[i][3*j]);
-						double dg = CLIP(ri->defgain*ri->data[i][3*j+1]);
-						double db = CLIP(ri->defgain*ri->data[i][3*j+2]);
+						double dr = CLIP(ri->defgain*(ri->data[i][3*j]  -cblack[0])*scale_mul[0]);
+						double dg = CLIP(ri->defgain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
+						double db = CLIP(ri->defgain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
 						if (dr>64000 || dg>64000 || db>64000) continue;
 						avg_r += dr; rn++;
 						avg_g += dg; 
@@ -2069,10 +2058,10 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 				for (int i=32; i<ri->height-32; i+=2)
 					for (int j=32; j<ri->width-32; j+=2) {
 						//average a Bayer quartet if nobody is clipped
-						d[0][0] = CLIP(ri->defgain*ri->data[i][j]);
-						d[0][1] = CLIP(ri->defgain*ri->data[i][j+1]);
-						d[1][0] = CLIP(ri->defgain*ri->data[i+1][j]);
-						d[1][1] = CLIP(ri->defgain*ri->data[i+1][j+1]);
+						d[0][0] = CLIP(ri->defgain*(ri->data[i][j]    -cblack[FC(i,j)])*scale_mul[FC(i,j)]);
+						d[0][1] = CLIP(ri->defgain*(ri->data[i][j+1]  -cblack[FC(i,j+1)])*scale_mul[FC(i,j+1)]);
+						d[1][0] = CLIP(ri->defgain*(ri->data[i+1][j]  -cblack[FC(i+1,j)])*scale_mul[FC(i+1,j)]);
+						d[1][1] = CLIP(ri->defgain*(ri->data[i+1][j+1]-cblack[FC(i+1,j+1)])*scale_mul[FC(i+1,j+1)]);
 						if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
 						avg_r += d[ey][ex];
 						avg_g += d[1-ey][ex] + d[ey][1-ex];
@@ -2085,9 +2074,6 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 		}
 		
 		printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
-		
-		//    double img_r, img_g, img_b;
-		//    wb.getMultipliers (img_r, img_g, img_b);
 		
 		//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
 		
@@ -2174,15 +2160,17 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
             transformPosition (red[i].x, red[i].y, tran, xr, yr);
 			transformPosition (green[i].x, green[i].y, tran, xg, yg);
 			transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
-			if (ri->defgain*ri->data[y][3*x]>52500 || ri->defgain*ri->data[y][3*x+1]>52500 || ri->defgain*ri->data[y][3*x+2]>52500) continue;
+			if (ri->defgain*(ri->data[yr][3*xr]  -cblack[0])*scale_mul[0]>52500 ||
+				ri->defgain*(ri->data[yg][3*xg+1]-cblack[1])*scale_mul[1]>52500 ||
+				ri->defgain*(ri->data[yb][3*xb+2]-cblack[2])*scale_mul[2]>52500) continue;
 			xmin = MIN(xr,MIN(xg,xb));
 			xmax = MAX(xr,MAX(xg,xb));
 			ymin = MIN(yr,MIN(yg,yb));
 			ymax = MAX(yr,MAX(yg,yb));
 			if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
-				reds	+= ri->data[yr][3*xr];
-				greens	+= ri->data[yg][3*xg+1];
-				blues	+= ri->data[yb][3*xb+2];
+				reds	+= (ri->data[yr][3*xr]  -cblack[0])*scale_mul[0];
+				greens	+= (ri->data[yg][3*xg+1]-cblack[1])*scale_mul[1];
+				blues	+= (ri->data[yb][3*xb+2]-cblack[2])*scale_mul[2];
 				rn++;
             }
         }
@@ -2197,21 +2185,21 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
 			for (int k=0; k<9; k++) {
 				int xv = x + d[k][0];
 				int yv = y + d[k][1];
-				if (ISRED(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
-					rloc += ri->data[yv][xv];
+				int c = FC(yv,xv);
+				if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
+					rloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
 					rnbrs++;
 					continue;
-				}
-				if (ISGREEN(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
-					gloc += ri->data[yv][xv];
+				}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
+					bloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
+					bnbrs++;
+					continue;
+				} else { // GREEN
+					gloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
 					gnbrs++;
 					continue;
 				}
-				if (ISBLUE(ri,yv,xv) && xv>=0 && yv>=0 && xv<W && yv<H) {
-					bloc += ri->data[yv][xv];
-					bnbrs++;
-					continue;
-				}
+
 			}
 			rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
 			if (rloc*ri->defgain<64000 && gloc*ri->defgain<64000 && bloc*ri->defgain<64000) {
