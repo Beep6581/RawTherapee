@@ -26,7 +26,6 @@
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
-    showInfo = false;
     infotext = "";
     cropgl = NULL;
 	pmlistener = NULL;
@@ -121,8 +120,8 @@ void ImageArea::setInfoText (Glib::ustring text) {
 
 void ImageArea::infoEnabled (bool e) {
 
-    if (showInfo!=e) {
-        showInfo = e;
+    if (options.showInfo!=e) {
+    	options.showInfo = e;
         queue_draw ();
     }
 }
@@ -148,7 +147,7 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
     if (mainCropWindow)
         mainCropWindow->expose (cr);
 
-    if (showInfo==true && infotext!="") {
+    if (options.showInfo==true && infotext!="") {
         int fnw, fnh;
         ilayout->get_pixel_size (fnw, fnh);
         window->draw_pixbuf (get_style()->get_base_gc (Gtk::STATE_NORMAL), ipixbuf, 0, 0, 4, 4, fnw+8, fnh+8, Gdk::RGB_DITHER_NONE, 0, 0);  
