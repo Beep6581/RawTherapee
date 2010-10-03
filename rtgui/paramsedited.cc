@@ -132,7 +132,7 @@ void ParamsEdited::set (bool v) {
         equalizer.enabled = v;
 		dirpyrequalizer.enabled = v;
 
-        for(int i = 0; i < 8; i++)
+        for(int i = 0; i < 5; i++)
         {
             equalizer.c[i] = v;
 			dirpyrequalizer.mult[i] = v;

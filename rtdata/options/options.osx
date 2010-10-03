@@ -65,8 +65,8 @@ SaveParamsToCache=true
 LoadParamsFromLocation=0
 
 [GUI]
-WindowWidth=1000
-WindowHeight=900
+WindowWidth=900
+WindowHeight=560
 WindowMaximized=false
 FileBrowserHeight=250
 ToolPanelWidth=300

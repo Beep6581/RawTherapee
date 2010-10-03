@@ -475,7 +475,8 @@ ColorTemp StdImageSource::getAutoWB () {
             avg_b += intpow((double)img->b[i][j], p);
             n++;
         }
-    return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
+	return ColorTemp (avg_r/n, avg_g/n, avg_b/n);
+    //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
 }
 
 void StdImageSource::transformPixel (int x, int y, int tran, int& tx, int& ty) {

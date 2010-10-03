@@ -40,6 +40,7 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     // build left side panel
     leftbox = new Gtk::VBox ();
     leftbox->set_border_width (4);
+    leftbox->set_size_request(100,250);
 
     histogramPanel = Gtk::manage (new HistogramPanel ());
     histogramPanel->set_size_request (-1, 150);
@@ -122,6 +123,8 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
 
     // build right side panel
     vboxright = new Gtk::VBox (false, 0);
+    vboxright->set_size_request(100,250);
+
     vboxright->set_border_width (4);
     vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
     vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
@@ -187,12 +190,14 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     }
 
     Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
+    vbfr->set_size_request(100,250);
     vbfr->add (*editbox);
     hpanedl->pack2(*vbfr, true, true);
 
 	hpanedr->pack1(*hpanedl, true, true);
 	hpanedr->pack2(*vboxright, false, true);
-	//hpanedr->set_position(options.toolPanelWidth);
+	hpanedl->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::leftPaneButtonReleased) );
+	hpanedr->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::rightPaneButtonReleased) );
 
     pack_start (*hpanedr);
     show_all ();
@@ -261,6 +266,43 @@ EditorPanel::~EditorPanel () {
     delete vboxright;
     
     delete saveAsDialog;
+}
+
+void EditorPanel::leftPaneButtonReleased(GdkEventButton *event) {
+	if (event->button == 1) {
+		// Button 1 released : it's a resize
+		options.historyPanelWidth = hpanedl->get_position();
+	}
+	/*else if (event->button == 3) {
+	}*/
+}
+
+void EditorPanel::rightPaneButtonReleased(GdkEventButton *event) {
+	if (event->button == 1) {
+		int winW, winH;
+		parent->get_size(winW, winH);
+		// Button 1 released : it's a resize
+		options.toolPanelWidth = winW - hpanedr->get_position();
+	}
+	/*else if (event->button == 3) {
+	}*/
+}
+
+void EditorPanel::setAspect () {
+	int winW, winH;
+	parent->get_size(winW, winH);
+	hpanedl->set_position(options.historyPanelWidth);
+	hpanedr->set_position(winW - options.toolPanelWidth);
+	// initialize components
+	if (info->get_active() != options.showInfo)
+		info->set_active (options.showInfo);
+}
+
+void EditorPanel::on_realize () {
+    
+    Gtk::VBox::on_realize ();
+    // This line is needed to avoid autoexpansion of the window :-/
+    vboxright->set_size_request (options.toolPanelWidth, -1);
 }
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
@@ -849,12 +891,10 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
     return false;
 }
 
+/*
 void EditorPanel::saveOptions () {
-
-    //options.historyPanelWidth = hpanedl->get_position ();//older code
-	//options.toolPanelWidth = vboxright->get_width ();//older code
-    //options.toolPanelWidth = hpanedr->get_position ();//Hombre's change which screws up OSX build
 }
+*/
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
 
