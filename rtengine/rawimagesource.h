@@ -54,6 +54,8 @@ class RawImageSource : public ImageSource {
         int W, H;
         ColorTemp wb;
         ProgressListener* plistener;
+        int scale_mul[4]; // multiplier for each color
+        int cblack[4];    // black offsets
         double camwb_red;
         double camwb_green;
         double camwb_blue;
@@ -113,8 +115,7 @@ class RawImageSource : public ImageSource {
         void        preprocess  (const RAWParams &raw);
         void        demosaic    (const RAWParams &raw);
         void        copyOriginalPixels( RawImage *ri, RawImage *riDark );
-        void        scaleColors( bool use_auto_wb=true, bool use_camera_wb=false, int highlight=1 );
-        void        preInterpolate(bool force4colors=false);
+        void        scaleColors( int winx,int winy,int winw,int winh );
         void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
