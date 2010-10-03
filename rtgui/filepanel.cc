@@ -38,6 +38,7 @@ FilePanel::FilePanel () : parent(NULL) {
     recentBrowser = new RecentBrowser ();
 
     placespaned = new Gtk::VPaned ();
+    placespaned->set_size_request(50,100);
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
@@ -51,6 +52,7 @@ FilePanel::FilePanel () : parent(NULL) {
 
     tpc = new BatchToolPanelCoordinator (this);
     fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
+    fileCatalog->set_size_request(50,150);
     dirpaned->pack2 (*fileCatalog, true, true);
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
@@ -61,6 +63,7 @@ FilePanel::FilePanel () : parent(NULL) {
     fileCatalog->setFileSelectionListener (this);
     
     rightBox = new Gtk::HBox ();
+    rightBox->set_size_request(50,100);
     rightNotebook = new Gtk::Notebook ();
     Gtk::VBox* taggingBox = new Gtk::VBox ();
     

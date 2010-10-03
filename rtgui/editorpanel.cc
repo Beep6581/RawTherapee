@@ -40,6 +40,7 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     // build left side panel
     leftbox = new Gtk::VBox ();
     leftbox->set_border_width (4);
+    leftbox->set_size_request(100,250);
 
     histogramPanel = Gtk::manage (new HistogramPanel ());
     histogramPanel->set_size_request (-1, 150);
@@ -122,6 +123,8 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
 
     // build right side panel
     vboxright = new Gtk::VBox (false, 0);
+    vboxright->set_size_request(100,250);
+
     vboxright->set_border_width (4);
     vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
     vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
@@ -187,6 +190,7 @@ EditorPanel::EditorPanel () : beforePreviewHandler(NULL), beforeIarea(NULL), par
     }
 
     Gtk::Frame* vbfr = Gtk::manage (new Gtk::Frame ());
+    vbfr->set_size_request(100,250);
     vbfr->add (*editbox);
     hpanedl->pack2(*vbfr, true, true);
 
