@@ -293,6 +293,9 @@ void EditorPanel::setAspect () {
 	parent->get_size(winW, winH);
 	hpanedl->set_position(options.historyPanelWidth);
 	hpanedr->set_position(winW - options.toolPanelWidth);
+	// initialize components
+	if (info->get_active() != options.showInfo)
+		info->set_active (options.showInfo);
 }
 
 void EditorPanel::on_realize () {
