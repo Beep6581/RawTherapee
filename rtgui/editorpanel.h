@@ -104,6 +104,10 @@ class EditorPanel : public Gtk::VBox,
         virtual ~EditorPanel ();
 
         void open (Thumbnail* tmb, rtengine::InitialImage* isrc);
+        void setAspect ();
+        void on_realize ();
+        void leftPaneButtonReleased(GdkEventButton *event);
+        void rightPaneButtonReleased(GdkEventButton *event);
 
         void setParent (RTWindow* p) { parent = p; }
 
@@ -138,7 +142,7 @@ class EditorPanel : public Gtk::VBox,
         Glib::ustring getFileName ();
         bool handleShortcutKey (GdkEventKey* event);
         
-        void saveOptions ();
+        //void saveOptions ();
 };
 
 #endif

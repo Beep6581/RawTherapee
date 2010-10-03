@@ -227,14 +227,16 @@ void RawImageSource::CA_correct_RT() {
 	// block CA shifts
 	blockwt		= (float (*))			(buffer1);
 	blockshifts	= (float (*)[3][2])		(buffer1+(vblsz*hblsz*sizeof(float)));
-	
-	
-	
+		
+	int vctr=0, hctr=0;
 	
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
-	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++)
+	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++) {
+		hctr=0;
+		vctr++;
 		for (left=-border, hblock=1; left < width; left += TS-border2, hblock++) {
+			hctr++;
 			int bottom = MIN( top+TS,height+border);
 			int right  = MIN(left+TS, width+border);
 			int rr1 = bottom - top;
@@ -376,14 +378,14 @@ void RawImageSource::CA_correct_RT() {
 					grblpfh[indx] = glpfh + 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]);
 				}
 			
+			for (c=0;c<3;c++) {areawt[0][c]=areawt[1][c]=0;}
+			
 			// along line segments, find the point along each segment that minimizes the color variance
 			// averaged over the tile; evaluate for up/down and left/right away from R/B grid point 
 			for (rr=8; rr < rr1-8; rr++)
 				for (cc=8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-8; cc+=2, indx+=2) {
 					
 					if (rgb[indx][c]>0.8*clip_pt || Gtmp[indx]>0.8*clip_pt) continue;
-
-					areawt[0][c]=areawt[1][c]=0;
 
 					//in linear interpolation, color differences are a quadratic function of interpolation position;
 					//solve for the interpolation position that minimizes color difference variance over the tile
@@ -393,24 +395,24 @@ void RawImageSource::CA_correct_RT() {
 					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-v4][c]-rgb[indx-v4][1])+(rgb[indx+v4][c]-rgb[indx+v4][1]));
 					
 					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );//*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
-
+					if (gradwt>eps) {
 					coeff[0][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[0][1][c] += gradwt*gdiff*deltgrb;
 					coeff[0][2][c] += gradwt*gdiff*gdiff;
-					areawt[0][c]+=1;
-
+					areawt[0][c]++;
+					}
 					
 					//horizontal
 					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
 					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-4][c]-rgb[indx-4][1])+(rgb[indx+4][c]-rgb[indx+4][1]));
 					
 					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );//*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
-
+					if (gradwt>eps) {
 					coeff[1][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[1][1][c] += gradwt*gdiff*deltgrb;
 					coeff[1][2][c] += gradwt*gdiff*gdiff;
-					areawt[1][c]+=1;
-
+					areawt[1][c]++;
+					}
 					
 					//	In Mathematica,
 					//  f[x_]=Expand[Total[Flatten[
@@ -419,8 +421,8 @@ void RawImageSource::CA_correct_RT() {
 				}
 			for (c=0; c<3; c+=2){
 				for (j=0; j<2; j++) {// vert/hor
-					
-					if (areawt[j][c]>0) {
+					//printf("hblock %d vblock %d j %d c %d areawt %d \n",hblock,vblock,j,c,areawt[j][c]);
+					if (areawt[j][c]>500) {
 						CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
 						blockwt[vblock*hblsz+hblock]= areawt[j][c];//*coeff[j][2][c]/(eps+coeff[j][0][c]) ;
 					} else {
@@ -467,6 +469,7 @@ void RawImageSource::CA_correct_RT() {
 			if(plistener) plistener->setProgress(0.5*fabs((float)top/height));
 
 		}
+	}
 	//end of diagnostic pass
 	
 	for (j=0; j<2; j++)
@@ -541,14 +544,15 @@ void RawImageSource::CA_correct_RT() {
 				if (SQR(blockshifts[(vblock)*hblsz+hblock][c][0])>4.0*blockvar[0][c] || SQR(blockshifts[(vblock)*hblsz+hblock][c][1])>4.0*blockvar[1][c]) continue;
 				numblox[c] += 1;
 				for (dir=0; dir<2; dir++) {
-					for (i=0; i<polyord; i++)
+					for (i=0; i<polyord; i++) {
 						for (j=0; j<polyord; j++) {
 							for (m=0; m<polyord; m++)
 								for (n=0; n<polyord; n++) {
 									polymat[c][dir][numpar*(polyord*i+j)+(polyord*m+n)] += (float)pow((float)vblock,i+m)*pow((float)hblock,j+n)*blockwt[vblock*hblsz+hblock];
 								}
 							shiftmat[c][dir][(polyord*i+j)] += (float)pow((float)vblock,i)*pow((float)hblock,j)*blockshifts[(vblock)*hblsz+hblock][c][dir]*blockwt[vblock*hblsz+hblock];
-						}//monomials	
+						}
+					}//monomials	
 				}//dir 
 				
 			}//c
@@ -733,6 +737,8 @@ void RawImageSource::CA_correct_RT() {
 					//but first we need to interpolate G-R/G-B to grid points...
 					grbdiff[(rr)*TS+cc]=Gint-rgb[(rr)*TS+cc][c];
 					gshift[(rr)*TS+cc]=Gint;
+					float tmp1=grbdiff[(rr)*TS+cc];
+
 				}
 			
 			for (rr=8; rr < rr1-8; rr++)
@@ -741,7 +747,7 @@ void RawImageSource::CA_correct_RT() {
 					//if (rgb[indx][c]>clip_pt || Gtmp[indx]>clip_pt) continue;
 
 					grbdiffold = rgb[indx][1]-rgb[indx][c];
-					
+
 					//interpolate color difference from optical R/B locations to grid locations
 					grbdiffinthfloor=(1-shifthfrac[c]/2)*grbdiff[indx]+(shifthfrac[c]/2)*grbdiff[indx-2*GRBdir[1][c]];
 					grbdiffinthceil=(1-shifthfrac[c]/2)*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+(shifthfrac[c]/2)*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]];
