@@ -21,6 +21,9 @@ HighlightRecoveryFilterDescriptor::HighlightRecoveryFilterDescriptor ()
 	addTriggerEvent (EvHREnabled);
 	addTriggerEvent (EvHRAmount);
 	addTriggerEvent (EvHRMethod);
+
+    applyOnThumbnail = false;
+    applyOnStdImage  = false;
 }
 
 void HighlightRecoveryFilterDescriptor::createAndAddToList (Filter* tail) const {

@@ -19,6 +19,8 @@
 #include "filtcolorcurve.h"
 #include "filthlrec.h"
 #include "filtcsconv.h"
+#include "filtresize.h"
+#include "filttransform.h"
 
 namespace rtengine {
 
@@ -39,6 +41,8 @@ FilterFactory::FilterFactory() {
     registerFilterDescriptor (&shadowsHighlightsFilterDescriptor);
     registerFilterDescriptor (&sharpenFilterDescriptor);
     registerFilterDescriptor (&colorCurveFilterDescriptor);
+    registerFilterDescriptor (&resizeFilterDescriptor);
+    registerFilterDescriptor (&transformFilterDescriptor);
 }
 
 void FilterFactory::registerFilterDescriptor (FilterDescriptor* descr) {
@@ -46,10 +50,8 @@ void FilterFactory::registerFilterDescriptor (FilterDescriptor* descr) {
 	filterDescriptors[descr->getName ()] = descr;
 }
 
-void FilterFactory::createFilterAddToList (const std::string& name, Filter* tail) {
+FilterDescriptor* FilterFactory::getFilterDescriptor(const std::string& name) {
 
-	FilterDescriptor* fDescr = filterDescriptors[name];
-	if (fDescr)
-	    fDescr->createAndAddToList (tail);
+    return filterDescriptors[name];
 }
 }

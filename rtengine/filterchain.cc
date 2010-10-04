@@ -14,7 +14,7 @@ FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, Proc
 	if (params->filterOrder.custom && !params->filterOrder.filterlist.empty())
 		filterOrder = params->filterOrder.filterlist;
 	else
-		filterOrder = imgSource->isRaw() ? Settings::settings->filterListRawImage : Settings::settings->filterListStdImage;
+		filterOrder = Settings::settings->filterList;
 	setupChain (NULL);
 }
 
@@ -36,16 +36,22 @@ void FilterChain::setupChain (FilterChain* previous) {
 		if (filterOrder[i] == "--Cache--")
 			last->forceOutputCache = true;
 		else {
-			filterFactory.createFilterAddToList (filterOrder[i], last);
-			while (last->next) {
-			    last = last->next;
-				if (parent) {
-					parent = parent->next;
-					last->parent = parent;
-				}
-				last->multiThread = multiThread;
-				last->myFilterChain = this;
-			}
+		    FilterDescriptor* fDescr = filterFactory.getFilterDescriptor (filterOrder[i]);
+		    if (fDescr && (
+		            (fDescr->isAppliedOnThumbnail() && imgSource->isThumbnail()) ||
+		            (fDescr->isAppliedOnRawImage() && imgSource->isRaw()) ||
+		            (fDescr->isAppliedOnStdImage() && !imgSource->isRaw()))) {
+                fDescr->createAndAddToList (last);
+                while (last->next) {
+                    last = last->next;
+                    if (parent) {
+                        parent = parent->next;
+                        last->parent = parent;
+                    }
+                    last->multiThread = multiThread;
+                    last->myFilterChain = this;
+                }
+		    }
 		}
 }
 

@@ -20,7 +20,7 @@ class FilterFactory {
 public:
 	FilterFactory();
 	void registerFilterDescriptor (FilterDescriptor* descr);
-	void createFilterAddToList (const std::string& name, Filter* tail); // creates a new filter instance and adds it to the linked list pointed by "tail"
+	FilterDescriptor* getFilterDescriptor (const std::string& name);
 };
 
 extern FilterFactory filterFactory;

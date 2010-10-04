@@ -21,6 +21,8 @@ ColorDenoiseFilterDescriptor::ColorDenoiseFilterDescriptor ()
     addTriggerEvent (EvCDNRadius);
     addTriggerEvent (EvCDNEdgeTolerance);
     addTriggerEvent (EvCDNEdgeSensitive);
+
+    applyOnThumbnail = false;
 }
 
 void ColorDenoiseFilterDescriptor::createAndAddToList (Filter* tail) const {

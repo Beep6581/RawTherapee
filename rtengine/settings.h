@@ -35,8 +35,7 @@ namespace rtengine {
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
             Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
             bool            verbose;
-            std::vector<Glib::ustring> filterListStdImage;
-            std::vector<Glib::ustring> filterListRawImage;
+            std::vector<Glib::ustring> filterList;
             int				previewSkip;
 
             Settings ();

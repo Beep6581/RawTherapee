@@ -20,6 +20,9 @@ protected:
 	std::set<ProcEvent> 	myEvents;
 	bool 		   	  		forceOutCache;
 	MultiImage::ColorSpace 	inputColorSpace, outputColorSpace;
+    bool                    applyOnRawImage;
+    bool                    applyOnStdImage;
+    bool                    applyOnThumbnail;
 
 public:
 	FilterDescriptor (const std::string name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache = false);
@@ -30,6 +33,9 @@ public:
 	MultiImage::ColorSpace  getOutputColorSpace () const { return outputColorSpace; }
 	bool					forceOutputCache ();
 	bool					myTriggerEvent (ProcEvent ev) const;
+    bool                    isAppliedOnRawImage ()  const { return applyOnRawImage; }
+    bool                    isAppliedOnStdImage ()  const { return applyOnStdImage; }
+    bool                    isAppliedOnThumbnail () const { return applyOnThumbnail; }
 	virtual void    		createAndAddToList (Filter* tail) const = 0; // creates a new filter instance and adds it to the linked list pointed by "tail"
 };
 

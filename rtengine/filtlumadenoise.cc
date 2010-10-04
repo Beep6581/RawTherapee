@@ -20,6 +20,8 @@ LumaDenoiseFilterDescriptor::LumaDenoiseFilterDescriptor ()
     addTriggerEvent (EvLDNEnabled);
     addTriggerEvent (EvLDNRadius);
     addTriggerEvent (EvLDNEdgeTolerance);
+
+    applyOnThumbnail = false;
 }
 
 void LumaDenoiseFilterDescriptor::createAndAddToList (Filter* tail) const {

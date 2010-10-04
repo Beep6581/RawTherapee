@@ -21,6 +21,9 @@ DemosaicFilterDescriptor::DemosaicFilterDescriptor ()
 
 	addTriggerEvent (EvDMMethod);
 	addTriggerEvent (EvDMColorCorrSteps);
+
+    applyOnThumbnail = false;
+    applyOnRawImage  = false;
 }
 
 void DemosaicFilterDescriptor::createAndAddToList (Filter* tail) const {

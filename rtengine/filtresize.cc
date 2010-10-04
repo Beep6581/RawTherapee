@@ -34,11 +34,6 @@ ResizeFilter::ResizeFilter ()
 	: Filter (&resizeFilterDescriptor) {
 }
 
-ImageView ResizeFilter::calculateTargetImageView (const ImageView& requestedImView) {
-
-    return requestedImView;
-}
-
 ImageView ResizeFilter::calculateSourceImageView (const ImageView& requestedImView) {
 
     int x1, y1, x2, y2;

@@ -4,7 +4,8 @@
 namespace rtengine {
 
 FilterDescriptor::FilterDescriptor (const std::string name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache)
-	: name(name), inputColorSpace(ics), outputColorSpace(ocs), forceOutCache(forceCache) {
+	: name(name), inputColorSpace(ics), outputColorSpace(ocs), forceOutCache(forceCache),
+	  applyOnRawImage(true), applyOnStdImage(true), applyOnThumbnail(true) {
 }
 
 void FilterDescriptor::addTriggerEvent (ProcEvent ev) {

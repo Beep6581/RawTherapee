@@ -33,6 +33,8 @@ SharpenFilterDescriptor::SharpenFilterDescriptor ()
     addTriggerEvent (EvShrDAmount);
     addTriggerEvent (EvShrDDamping);
     addTriggerEvent (EvShrDIterations);
+
+    applyOnThumbnail = false;
 }
 
 void SharpenFilterDescriptor::createAndAddToList (Filter* tail) const {
