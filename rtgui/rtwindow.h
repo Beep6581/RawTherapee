@@ -53,7 +53,9 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
         bool keyPressed (GdkEventKey* event);
         bool on_delete_event(GdkEventAny* event);
-        
+        bool on_my_window_state_event(GdkEventWindowState* event);
+        void on_mainNB_switch_page(GtkNotebookPage* page, guint page_num);
+
         void imageDeveloped (Glib::ustring fname); // called by the batchqueue when it finishes an image
         void showPreferences ();
         void on_realize ();

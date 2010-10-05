@@ -66,6 +66,7 @@ class Options {
     int saveAsDialogHeight;
     int toolPanelWidth;
     int browserToolPanelWidth;
+    int browserToolPanelHeight;
     int historyPanelWidth;
     int windowWidth;
     int windowHeight;

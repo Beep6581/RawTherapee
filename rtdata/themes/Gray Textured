@@ -32,7 +32,7 @@ style "clearlooks-default"
 	# change it to use an actual font, enter the full name of the font
 	# here, along with optional style and size, e.g. 
 	# "Monaco Bold 15".
-	font_name = "Default"
+	font_name = "sans 10"
 
 	GtkRange::trough_border = 0
 	GtkRange::slider_width = 14
