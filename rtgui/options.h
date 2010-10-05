@@ -68,6 +68,7 @@ class Options {
     int browserToolPanelWidth;
     int browserToolPanelHeight;
     int historyPanelWidth;
+    Glib::ustring font;
     int windowWidth;
     int windowHeight;
     bool windowMaximized;

@@ -92,6 +92,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* intent;
 
     Gtk::ComboBoxText* theme;
+    Gtk::FontButton* fontbutton;
 	
     Gtk::ComboBoxText* cformat;
     Gtk::SpinButton*   maxThumbSize;
@@ -110,14 +111,19 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* loadParamsPreference;
 	
     Options moptions;
-    sigc::connection dmconn, tconn, addc, setc;
+    Glib::ustring initialTheme;
+    Glib::ustring initialFont;
+    sigc::connection dmconn, tconn, fconn, addc, setc;
 
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
     void dmethodChanged ();
 
-    void themeChanged ();
+    void themeChanged  ();
+    void fontChanged   ();
+    void switchThemeTo (Glib::ustring newTheme);
+    void switchFontTo  (Glib::ustring newFont);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 

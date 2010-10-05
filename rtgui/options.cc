@@ -38,6 +38,7 @@ const char *DefaultLanguage = "English (US)";
 
 void Options::setDefaults () {
 
+	font = "sans, 10";
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
@@ -244,6 +245,7 @@ if (keyFile.has_group ("Clipping Indication")) {
 }
 
 if (keyFile.has_group ("GUI")) { 
+    if (keyFile.has_key ("GUI", "Font"))            font            = keyFile.get_string  ("GUI", "Font");
     if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
     if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
@@ -271,12 +273,12 @@ if (keyFile.has_group ("GUI")) {
 if (keyFile.has_group ("Algorithms")) { 
     if (keyFile.has_key ("Algorithms", "DemosaicMethod"))  rtSettings.demosaicMethod       = keyFile.get_string  ("Algorithms", "DemosaicMethod");
     if (keyFile.has_key ("Algorithms", "ColorCorrection")) rtSettings.colorCorrectionSteps = keyFile.get_integer ("Algorithms", "ColorCorrection");
-    if(keyFile.has_key("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
-    if(keyFile.has_key("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
-	if(keyFile.has_key("Algorithms", "CACorrect")) rtSettings.ca_autocorrect = keyFile.get_boolean("Algorithms", "CACorrect");//Emil's CA autocorrect
-    if(keyFile.has_key("Algorithms", "HotDeadPixFilt")) rtSettings.hotdeadpix_filt = keyFile.get_boolean("Algorithms", "HotDeadPixFilt");//Emil's hot/dead pixel filter
-	if(keyFile.has_key("Algorithms", "LineDenoise")) rtSettings.linenoise = keyFile.get_integer("Algorithms", "LineDenoise");//Emil's line denoise
-	if(keyFile.has_key("Algorithms", "GreenEquil")) rtSettings.greenthresh = keyFile.get_integer("Algorithms", "GreenEquil");//Emil's Green equilibration
+    if (keyFile.has_key ("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
+    if (keyFile.has_key ("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
+	if (keyFile.has_key ("Algorithms", "CACorrect")) rtSettings.ca_autocorrect = keyFile.get_boolean("Algorithms", "CACorrect");//Emil's CA autocorrect
+    if (keyFile.has_key ("Algorithms", "HotDeadPixFilt")) rtSettings.hotdeadpix_filt = keyFile.get_boolean("Algorithms", "HotDeadPixFilt");//Emil's hot/dead pixel filter
+	if (keyFile.has_key ("Algorithms", "LineDenoise")) rtSettings.linenoise = keyFile.get_integer("Algorithms", "LineDenoise");//Emil's line denoise
+	if (keyFile.has_key ("Algorithms", "GreenEquil")) rtSettings.greenthresh = keyFile.get_integer("Algorithms", "GreenEquil");//Emil's Green equilibration
 }
 
 if (keyFile.has_group ("Crop Settings")) { 
@@ -309,8 +311,8 @@ int Options::saveToFile (Glib::ustring fname) {
         keyFile.set_string ("General", "StartupDirectory", "custom");
     else if (startupDir==STARTUPDIR_LAST)
         keyFile.set_string ("General", "StartupDirectory", "last");
-    keyFile.set_string ("General", "StartupPath", startupPath);
-    keyFile.set_string ("General", "DateFormat", dateFormat);
+    keyFile.set_string  ("General", "StartupPath", startupPath);
+    keyFile.set_string  ("General", "DateFormat", dateFormat);
     keyFile.set_integer ("General", "AdjusterDelay", Adjuster::delay);
     keyFile.set_boolean ("General", "DualProcSupport", rtSettings.dualThreadEnabled);
     keyFile.set_boolean ("General", "MultiUser", multiUser);
@@ -354,26 +356,27 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
     keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
 
-    keyFile.set_string ("Output", "Format", saveFormat.format);
+    keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
     keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
     keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
     keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
     keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
-    keyFile.set_string ("Output", "PathTemplate", savePathTemplate);
-    keyFile.set_string ("Output", "PathFolder", savePathFolder);
-    keyFile.set_boolean("Output", "AutoSuffix", autoSuffix);
-    keyFile.set_boolean("Output", "UsePathTemplate", saveUsePathTemplate);
-    keyFile.set_string ("Output", "LastSaveAsPath", lastSaveAsPath);
+    keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
+    keyFile.set_string  ("Output", "PathFolder", savePathFolder);
+    keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
+    keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
+    keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
 
-    keyFile.set_string ("Profiles", "Directory", profilePath);
-    keyFile.set_string ("Profiles", "RawDefault", defProfRaw);
-    keyFile.set_string ("Profiles", "ImgDefault", defProfImg);
+    keyFile.set_string  ("Profiles", "Directory", profilePath);
+    keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
+    keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
     keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     
+    keyFile.set_string  ("GUI", "Font", font);
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
@@ -495,8 +498,8 @@ void Options::save () {
 }
 
 bool Options::is_extention_enabled (Glib::ustring ext) {
-		for (int j=0; j<parseExtensions.size(); j++)
+		for (int j=0; j<(int)parseExtensions.size(); j++)
       if (parseExtensions[j].casefold() == ext.casefold())
-				return j>=parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
+				return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
 		return false;
 }

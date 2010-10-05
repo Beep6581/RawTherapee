@@ -104,6 +104,9 @@ int main(int argc, char **argv)
 //   Gtk::RC::add_default_file (argv0+"/themes/"+options.theme);
    std::vector<std::string> rcfiles;
    rcfiles.push_back (argv0+"/themes/"+options.theme);
+   // Set the font face and size
+   Gtk::RC::parse_string (Glib::ustring::compose(
+      "style \"clearlooks-default\" { font_name = \"%1\" } style \"clearlooks-menu-item\" { font_name = \"%1\" }", options.font));
    Gtk::RC::set_default_files (rcfiles);
 
    Gtk::Main m(&argc, &argv);

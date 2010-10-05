@@ -456,6 +456,7 @@ PREFERENCES_SELECTICCDIRDLG;Choix du dossier des profils ICC...
 PREFERENCES_SELECTLANG;Choix de la langue
 PREFERENCES_SELECTMONITORPROFDLG;Choix du profil ICC de l'affichage...
 PREFERENCES_SELECTTHEME;Choisissez un thème
+PREFERENCES_SELECTFONT;Police de caractère
 PREFERENCES_SET;Remplace
 PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure

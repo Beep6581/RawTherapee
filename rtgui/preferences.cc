@@ -411,8 +411,15 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     for (int i=0; i<themes.size(); i++) 
         theme->append_text (themes[i]);
 
+    Gtk::Label* fontlab = new Gtk::Label (M("PREFERENCES_SELECTFONT")+":");
+    fontbutton = new Gtk::FontButton ();
+    fontbutton->set_use_size(true);
+    fontbutton->set_font_name(options.font);
+
     hbtheme->pack_start (*themelab, Gtk::PACK_SHRINK, 4);
     hbtheme->pack_start (*theme);
+    hbtheme->pack_start (*fontlab, Gtk::PACK_SHRINK, 4);
+    hbtheme->pack_start (*fontbutton);
     ftheme->add (*hbtheme);
     mvbsd->pack_start (*ftheme, Gtk::PACK_SHRINK, 4);
   
@@ -523,6 +530,8 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->set_border_width (4);
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
+    fconn = fontbutton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
+
 
     return mvbsd;
 }
@@ -714,6 +723,7 @@ void Preferences::storePreferences () {
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
     moptions.theme           = theme->get_active_text ();
+    moptions.font            = fontbutton->get_font_name();
 #ifdef _WIN32    
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
@@ -807,6 +817,7 @@ void Preferences::fillPreferences () {
 
     dmconn.block (true);
     tconn.block (true);
+    fconn.block (true);
 
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
@@ -819,6 +830,7 @@ void Preferences::fillPreferences () {
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
     theme->set_active_text (moptions.theme);
+    fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
     blinkClipped->set_active (moptions.blinkClipped);
@@ -918,6 +930,7 @@ void Preferences::fillPreferences () {
     
     dmconn.block (false);
     tconn.block (false);
+    fconn.block (false);
 }
 
 void Preferences::loadPressed () {
@@ -942,6 +955,13 @@ void Preferences::okPressed () {
 
 void Preferences::cancelPressed () {
 
+	// set the initial theme back
+	if (theme->get_active_text () != options.theme)
+		switchThemeTo(options.theme);
+
+	// set the initial font back
+	if (fontbutton->get_font_name() != options.font)
+		switchFontTo(options.font);
     hide ();
 }
 
@@ -987,11 +1007,31 @@ void Preferences::aboutPressed () {
     splash->set_modal (true);   
     splash->show ();
 }
+
 void Preferences::themeChanged () {
 
+	switchThemeTo(theme->get_active_text ());
+}
+
+void Preferences::fontChanged () {
+
+	switchFontTo(fontbutton->get_font_name());
+}
+
+void Preferences::switchThemeTo(Glib::ustring newTheme) {
+
 	std::vector<Glib::ustring> files;
-	files.push_back (argv0+"/themes/"+theme->get_active_text ());
+	files.push_back (argv0+"/themes/"+newTheme);
 	Gtk::RC::set_default_files (files);
+	Gtk::RC::reparse_all (Gtk::Settings::get_default());
+	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
+}
+
+void Preferences::switchFontTo(Glib::ustring newFont) {
+
+	Gtk::RC::parse_string (Glib::ustring::compose(
+			"style \"clearlooks-default\" { font_name = \"%1\" } style \"clearlooks-menu-item\" { font_name = \"%1\" }", newFont));
 	Gtk::RC::reparse_all (Gtk::Settings::get_default());
 	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
 	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
