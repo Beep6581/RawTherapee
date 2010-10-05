@@ -1,0 +1,238 @@
+# DarknessReturns GTK+ Theme for Clearlooks GTK Engine
+# 
+# Created for CrunchBang Linux by Philip Newborough
+# http://crunchbang.org/projects/linux/
+# Copyright (C) 2008  Philip Newborough (aka corenominal)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+style "clearlooks-default" {
+
+    font_name = "sans, 10"
+
+    GtkButton      ::default_border    = { 0, 0, 0, 0 }
+    GtkRange       ::trough_border     = 1
+    GtkPaned       ::handle_size       = 6
+    GtkRange       ::slider_width      = 12
+    GtkRange       ::stepper_size      = 12
+    GtkScrollbar   ::min_slider_length = 30
+    GtkCheckButton ::indicator_size    = 13
+    GtkMenuBar     ::internal-padding  = 0
+    GtkTreeView    ::expander_size     = 12
+    GtkExpander    ::expander_size     = 12
+
+    xthickness = 1
+    ythickness = 1
+
+    fg[NORMAL]        = "#101010" 
+    fg[PRELIGHT]      = "#101010" 
+    fg[ACTIVE]        = "#31353A" 
+    fg[SELECTED]      = "#B2B2B2" 
+    fg[INSENSITIVE]   = "#9E9C9E" 
+
+    bg[NORMAL]        = "#A1A1A1" 
+    bg[PRELIGHT]      = "#B2B2B2" 
+    bg[ACTIVE]        = "#B2B2B2" 
+    bg[SELECTED]      = "#31353A" 
+    bg[INSENSITIVE]   = "#B2B2B2" 
+
+    base[NORMAL]      = "#B2B2B2" 
+    base[PRELIGHT]    = "#31353A"
+    base[SELECTED]    = "#31353A" 
+    base[INSENSITIVE] = "#fbf8f1" 
+    base[ACTIVE]      = "#31353A" 
+    base[PRELIGHT]    = "#729fcf"
+
+    text[NORMAL]      = "#101010"
+    text[PRELIGHT]    = "#d0d0d0"
+    text[ACTIVE]      = "#E2E2E2"
+    text[SELECTED]    = "#E2E2E2"
+    text[INSENSITIVE] = "#E2E2E2"
+
+    engine "clearlooks" {
+        menubarstyle = 0
+    }
+}
+
+style "clearlooks-wide" = "clearlooks-default" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "clearlooks-text" = "clearlooks-default" {
+    #base[SELECTED]     = "#fc9747"  # Outline?
+}
+
+style "clearlooks-toolbar" = "clearlooks-default" {
+    bg[NORMAL] = "#A1A1A1"
+}
+
+style "clearlooks-tasklist" = "clearlooks-default" {
+    xthickness = 5
+    ythickness = 3
+}
+
+style "clearlooks-menu" = "clearlooks-default" {
+    xthickness = 2
+    ythickness = 2
+    bg[NORMAL] = "#A1A1A1"
+}
+
+style "clearlooks-menu-item" = "clearlooks-default" {
+    xthickness = 1
+    ythickness = 1
+    fg[PRELIGHT] = "#ffffff"
+    text[PRELIGHT] = "#ffffff"
+    base[PRELIGHT] = "#A1A1A1"
+}
+
+style "clearlooks-menu-itembar" = "clearlooks-default" {
+    xthickness = 0
+    ythickness = 0
+}
+
+style "clearlooks-tree" = "clearlooks-default" {
+    xthickness = 2
+    ythickness = 2
+    GtkTreeView::odd_row_color = "#f7f7ff"
+    GtkTreeView::even_row_color = "#ffffff"
+}
+
+style "clearlooks-frame-title" = "clearlooks-default" {
+    fg[NORMAL] = "#2a2a2a"
+}
+
+style "clearlooks-panel" = "clearlooks-default" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "clearlooks-tooltips" = "clearlooks-default" {
+    xthickness = 4
+    ythickness = 4
+    bg[NORMAL] = { 1.0,1.0,0.75 }
+}
+
+style "clearlooks-progressbar" = "clearlooks-default" {
+    xthickness = 1
+    ythickness = 1
+    fg[PRELIGHT]  = "#ffffff"
+}
+
+style "clearlooks-combo" = "clearlooks-default" {
+    xthickness = 2
+    ythickness = 0
+}
+
+style "clearlooks-button" = "clearlooks-wide" {
+    xthickness = 1
+    ythickness = 1
+    #bg[NORMAL] = "#31353A"
+    #bg[PRELIGHT] = "#555555"
+    #bg[NORMAL] = "#31353A"
+}
+style "clearlooks-check" = "clearlooks-button" {
+}
+
+style "clearlooks-panel" = "clearlooks-default" {
+    xthickness = 3
+    ythickness = 3
+}
+
+style "clearlooks-notebook" = "clearlooks-wide" {
+    base[SELECTED]      = "#A1A1A1"
+    bg[ACTIVE]        = "#A1A1A1"
+    base[PRELIGHT]    = "#A1A1A1"
+    bg[PRELIGHT]      = "#A1A1A1"
+}
+
+style "metacity-frame" {
+  bg[SELECTED]  = "#5c82b5"
+}
+
+style "clearlooks-slab" = "clearlooks-default" {
+    bg[SELECTED] = "#84b0da"
+    bg[NORMAL] = "#fdfbf7"
+    bg[ACTIVE] = "#e9eef5"
+    fg[NORMAL] = "#6a97c5"
+    fg[INSENSITIVE] = "#5c8dbf"
+}
+
+style "clearlooks-slab-group" = "clearlooks-default" {
+    #bg[SELECTED] = "#adc09b"  # Slab group text
+}
+
+style "clearlooks-shell" = "clearlooks-default" {
+    bg[ACTIVE] = "#e9eef5"      # Left side bg color
+    fg[NORMAL] = "#5c8dbf"      # Left side text color
+    fg[INSENSITIVE] = "#bdcce1" # Left side line
+
+    base[NORMAL] = "#fdfbf7"        # Base bg color
+    text[INSENSITIVE] = "#6a97c5"   # Base text color
+}
+
+style "evolution-hack" = "clearlooks-default" {
+    bg[ACTIVE]   = "#96b9d5"
+    bg[SELECTED] = "#6798cb"
+    fg[ACTIVE]   = "#000000"
+    fg[SELECTED] = "#ffffff"
+}
+
+style "clearlooks-shell-highlight" = "clearlooks-default" {
+}
+
+style "rox" = "clearlooks-default" {
+    bg[NORMAL] = "#ffffff"
+    bg[ACTIVE] = "#ffffff"
+    fg[NORMAL] = "#000000"
+    fg[ACTIVE] = "#000000"
+}
+
+class "GtkWidget" style "clearlooks-default"
+class "GtkButton" style "clearlooks-button"
+class "GtkCombo"  style "clearlooks-button"
+class "GtkRange"  style "clearlooks-wide"
+class "GtkFrame"  style "clearlooks-wide"
+class "GtkMenu"   style "clearlooks-menu"
+class "GtkEntry"  style "clearlooks-button"
+class "GtkMenuItem"    style "clearlooks-menu-item"
+class "GtkStatusbar"   style "clearlooks-wide"
+class "GtkNotebook"    style "clearlooks-notebook"
+class "GtkProgressBar" style "clearlooks-progressbar"
+class "GtkCheckButton" style "clearlooks-check"
+class "GtkRadioButton" style "clearlooks-check"
+
+widget_class "*MenuItem.*" style "clearlooks-menu-item"
+widget_class "*.GtkComboBox.GtkButton" style "clearlooks-combo"
+widget_class "*.GtkCombo.GtkButton"    style "clearlooks-combo"
+widget_class "*.tooltips.*.GtkToggleButton" style "clearlooks-tasklist"
+widget "gtk-tooltip" style "clearlooks-tooltips"
+widget_class "*.GtkTreeView.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCTree.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkCList.GtkButton" style "clearlooks-tree"
+widget_class "*.GtkFrame.GtkLabel" style "clearlooks-frame-title"
+widget_class "*.GtkNotebook.*.GtkEventBox" style "clearlooks-notebook"
+widget_class "*.GtkNotebook.*.GtkViewport" style "clearlooks-notebook"
+class "MetaFrames" style "metacity-frame"
+widget_class "BasePWidget.GtkEventBox.GtkTable.GtkFrame" style "clearlooks-panel"
+class "SlabWindow" style "clearlooks-slab"
+class "ShellWindow" style "clearlooks-shell"
+widget_class "ShellWindow.*.GtkEventBox" style "clearlooks-shell-highlight"
+widget_class "*GtkCTree*" style "evolution-hack"
+widget_class "*GtkList*" style "evolution-hack"
+widget_class "*GtkCList*" style "evolution-hack"
+widget_class "*.ETree.*" style "evolution-hack"
+widget_class "*Collection*" style "rox"
+
