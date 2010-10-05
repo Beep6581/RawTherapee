@@ -44,6 +44,7 @@ RTWindow::RTWindow () {
     else
     	unmaximize();
     property_destroy_with_parent().set_value(false);
+    signal_window_state_event().connect( sigc::mem_fun(*this, &RTWindow::on_window_state_event) );
 
     mainNB = Gtk::manage (new Gtk::Notebook ());
     mainNB->set_scrollable (true);
@@ -114,7 +115,7 @@ void RTWindow::on_realize () {
     cursorManager.init (get_window());
 }
 
-bool RTWindow::on_my_window_state_event(GdkEventWindowState* event) {
+bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
 	if (!event->new_window_state) {
 		// Window mode
 		options.windowMaximized = false;
