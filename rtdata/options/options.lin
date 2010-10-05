@@ -1,5 +1,6 @@
 
 [General]
+TabbedEditor=true
 StoreLastProfile=true
 StartupDirectory=last
 StartupPath=

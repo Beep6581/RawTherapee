@@ -298,6 +298,11 @@ void RTWindow::error (Glib::ustring descr){
 	prLabel.set_text ( descr );
 }
 
+void RTWindow::SetEditorCurrent()
+{
+  mainNB->set_current_page (mainNB->page_num (*epanel));
+}
+
 bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
 {
 
