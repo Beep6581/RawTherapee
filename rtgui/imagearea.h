@@ -37,7 +37,6 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
 
   protected:
 
-    bool          showInfo;
     Glib::ustring infotext;
     Glib::RefPtr<Pango::Layout> ilayout;
     Glib::RefPtr<Pango::Layout> deglayout;

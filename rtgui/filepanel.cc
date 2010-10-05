@@ -39,6 +39,7 @@ FilePanel::FilePanel () : parent(NULL) {
     recentBrowser = new RecentBrowser ();
 
     placespaned = new Gtk::VPaned ();
+    placespaned->set_size_request(50,100);
     placespaned->set_position (options.dirBrowserHeight);
 
     Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
@@ -48,12 +49,13 @@ FilePanel::FilePanel () : parent(NULL) {
     placespaned->pack1 (*placesBrowser, false, true);
     placespaned->pack2 (*obox, true, true);
 
-    dirpaned->pack1 (*placespaned, true, true);
+    dirpaned->pack1 (*placespaned, false, true);
 
     tpc = new BatchToolPanelCoordinator (this);
     fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
     ribbonPane = new Gtk::Paned();
     ribbonPane->add(*fileCatalog);
+    ribbonPane->set_size_request(50,150);
     dirpaned->pack2 (*ribbonPane, true, true);
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
@@ -64,6 +66,7 @@ FilePanel::FilePanel () : parent(NULL) {
     fileCatalog->setFileSelectionListener (this);
 
     rightBox = new Gtk::HBox ();
+    rightBox->set_size_request(50,100);
     rightNotebook = new Gtk::Notebook ();
     Gtk::VBox* taggingBox = new Gtk::VBox ();
 
@@ -91,8 +94,8 @@ FilePanel::FilePanel () : parent(NULL) {
     Gtk::Label* tagLab = new Gtk::Label (M("MAIN_TAB_TAGGING"));
     tagLab->set_angle (90);
 
-    Gtk::VPaned* tpcPaned = new Gtk::VPaned ();
-    tpcPaned->pack1 (*tpc->toolPanelNotebook, true, true);
+    tpcPaned = new Gtk::VPaned ();
+    tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, true);
 
     rightNotebook->append_page (*tpcPaned, *devLab);
@@ -102,9 +105,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightBox->pack_start (*rightNotebook);
 
     pack1(*dirpaned, true, true);
-    pack2(*rightBox, true, true);
-
-    //set_position(options.browserToolPanelWidth);////Hombre's change which screws up OSX build
+    pack2(*rightBox, false, true);
 
     fileCatalog->setFileSelectionChangeListener (tpc);
 
@@ -112,6 +113,15 @@ FilePanel::FilePanel () : parent(NULL) {
     g_idle_add (fbinit, this);
 
     show_all ();
+}
+
+void FilePanel::setAspect () {
+	int winW, winH;
+	parent->get_size(winW, winH);
+	placespaned->set_position(options.dirBrowserHeight);
+	dirpaned->set_position(options.dirBrowserWidth);
+	tpcPaned->set_position(options.browserToolPanelHeight);
+	set_position(winW - options.browserToolPanelWidth);
 }
 
 void FilePanel::init () {
@@ -178,9 +188,12 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 
 void FilePanel::saveOptions () { 
 
-    //options.dirBrowserWidth = dirpaned->get_position ();
-    //options.dirBrowserHeight = placespaned->get_position ();
-    //options.browserToolPanelWidth = get_position();
+	int winW, winH;
+	parent->get_size(winW, winH);
+    options.dirBrowserWidth = dirpaned->get_position ();
+    options.dirBrowserHeight = placespaned->get_position ();
+    options.browserToolPanelWidth = winW - get_position();
+    options.browserToolPanelHeight = tpcPaned->get_position ();
      if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
         options.startupPath = fileCatalog->lastSelectedDir ();
     fileCatalog->closeDir ();
