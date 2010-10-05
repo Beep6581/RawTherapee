@@ -161,8 +161,8 @@ int Options::readFromFile (Glib::ustring fname) {
 
     setDefaults ();
     
-if (keyFile.has_group ("General")) { 
-    Glib::ustring stup;
+if (keyFile.has_group ("General")) {
+    if (keyFile.has_key ("General", "TabbedEditor"))    tabbedUI= keyFile.get_boolean ("General", "TabbedEditor");    
     if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "home") 
         startupDir = STARTUPDIR_HOME;
     else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "current") 
@@ -300,7 +300,8 @@ if (keyFile.has_group ("Batch Processing")) {
 int Options::saveToFile (Glib::ustring fname) {
 
     rtengine::SafeKeyFile keyFile;
-    
+    keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
+
     keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
     if (startupDir==STARTUPDIR_HOME)
         keyFile.set_string ("General", "StartupDirectory", "home");

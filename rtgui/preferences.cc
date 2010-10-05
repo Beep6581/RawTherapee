@@ -874,7 +874,7 @@ void Preferences::fillPreferences () {
     blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);
-    
+
     edGimp->set_active (moptions.editorToSendTo==1);
     edOther->set_active (moptions.editorToSendTo==3);
 #ifdef _WIN32    
@@ -967,6 +967,7 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
+    editorLayout->set_active(moptions.tabbedUI);
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {

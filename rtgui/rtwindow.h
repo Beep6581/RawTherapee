@@ -64,6 +64,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void error (Glib::ustring descr);
         rtengine::ProgressListener* getProgressListener () { return pldBridge; }
         EditorPanel*  epanel;
+        void SetEditorCurrent();
 };
 
 #endif

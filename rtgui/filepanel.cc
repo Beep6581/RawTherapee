@@ -151,14 +151,15 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 
 	if (pc->returnValue() && thm) {
                
-                if (options.tabbedUI)
-                {
+                if (options.tabbedUI){
                     EditorPanel* epanel = Gtk::manage (new EditorPanel ());
                     parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
                     epanel->open(thm, pc->returnValue() );
                 }
-                else
-                     parent->epanel->open(thm, pc->returnValue() );
+                else{
+                     parent->SetEditorCurrent();
+                     parent->epanel->open(thm, pc->returnValue() );                     
+                }
 
 
 	}else {
