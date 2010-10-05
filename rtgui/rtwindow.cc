@@ -233,7 +233,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
 
     fpanel->saveOptions ();
     bpanel->saveOptions ();
-    epanel->saveOptions();
+  //  epanel->saveOptions();
 
 /*    if (fileBrowser->getFileCatalog()->getBatchQueue()->hasJobs()) {
         Gtk::MessageDialog msgd (M("MAIN_MSG_EXITJOBSINQUEUEQUEST"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
