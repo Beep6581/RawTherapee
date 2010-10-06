@@ -23,8 +23,6 @@
 
 style "clearlooks-default" {
 
-  font_name = "sans, 10"
-
   GtkButton      ::default_border    = { 0, 0, 0, 0 }
   GtkRange       ::trough_border     = 0
   GtkPaned       ::handle_size       = 6

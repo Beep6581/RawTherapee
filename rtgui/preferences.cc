@@ -1031,7 +1031,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme) {
 void Preferences::switchFontTo(Glib::ustring newFont) {
 
 	Gtk::RC::parse_string (Glib::ustring::compose(
-			"style \"clearlooks-default\" { font_name = \"%1\" } style \"clearlooks-menu-item\" { font_name = \"%1\" }", newFont));
+			"style \"clearlooks-default\" { font_name = \"%1\" }", newFont));
 	Gtk::RC::reparse_all (Gtk::Settings::get_default());
 	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
 	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
