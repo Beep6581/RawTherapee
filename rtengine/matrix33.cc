@@ -6,6 +6,7 @@
  */
 
 #include "matrix33.h"
+#include "macros.h"
 
 namespace rtengine {
 
@@ -34,11 +35,31 @@ void Matrix33::transform (double& r, double& g, double& b) {
 	g = ng;
 	b = nb;
 }
+
+void Matrix33::transform (unsigned short& r, unsigned short& g, unsigned short& b) {
+
+    unsigned short nr, ng, nb;
+    transform (r, g, b, nr, ng, nb);
+    r = nr;
+    g = ng;
+    b = nb;
+}
+
 void Matrix33::transform (double r, double g, double b, double& nr, double& ng, double& nb) {
 
-	nr = data[0][0]*r + data[0][1]*g + data[0][2]*b;
+    nr = data[0][0]*r + data[0][1]*g + data[0][2]*b;
     ng = data[1][0]*r + data[1][1]*g + data[1][2]*b;
     nb = data[2][0]*r + data[2][1]*g + data[2][2]*b;
+}
+
+void Matrix33::transform (unsigned short r, unsigned short g, unsigned short b, unsigned short& nr, unsigned short& ng, unsigned short& nb) {
+
+    double dnr = data[0][0]*(double)r + data[0][1]*(double)g + data[0][2]*(double)b;
+    double dng = data[1][0]*(double)r + data[1][1]*(double)g + data[1][2]*(double)b;
+    double dnb = data[2][0]*(double)r + data[2][1]*(double)g + data[2][2]*(double)b;
+    nr = CLIP((unsigned short)dnr);
+    ng = CLIP((unsigned short)dng);
+    nb = CLIP((unsigned short)dnb);
 }
 
 // returns inverse of the transformation matrix

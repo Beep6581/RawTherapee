@@ -3,6 +3,11 @@
 #include "settings.h"
 #include "filterfactory.h"
 #include "filtinitial.h"
+#include "image16.h"
+#include "image8.h"
+#include "iccstore.h"
+#include "curves.h"
+#include <lcms2.h>
 
 namespace rtengine {
 
@@ -80,12 +85,13 @@ void FilterChain::invalidate () {
     invalidated = true;
 }
 
-void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSize, Dim& maxWorkerSize, bool useShortCut) {
+void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useShortCut) {
 
 	if (!listener)
 		return;
 
 	// tell the listener the full size of the image with the current settings and let it decide the portion to refresh
+	Dim fullSize = getFullImageSize ();
 	ImageView reqView = listener->getViewToProcess (fullSize);
 
 	// walk through the list and find first filter that needs to be refreshed because of the changed view
@@ -162,11 +168,6 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSi
 	    }
 	}
 
-	// find out the dimensions of the largest worker image necessary
-	for (curr = firstToUpdate; curr; curr = curr->next)
-		if (!curr->hasOutputCache)
-		    maxWorkerSize.setMax (curr->scaledSourceImageView.getSize ());
-
 	// set up caches
 	for (curr = first; curr; curr = curr->next)
 		curr->setupCache ();
@@ -175,8 +176,11 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, Dim fullSi
 void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker) {
 
 	for (Filter* curr = firstToUpdate; curr; curr = curr->next) {
-		MultiImage* sourceImage = NULL;
+
+	    MultiImage* sourceImage = NULL;
 		MultiImage* targetImage = NULL;
+
+		// set up source image for the filter
 		if (curr != first) {
 		    if (curr->shortCutPrev) {
 		        sourceImage = worker;
@@ -196,12 +200,17 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 			}
 			sourceImage->convertTo (curr->descriptor->getInputColorSpace());
 		}
+
+		// set up target image for the filter
 		if (curr->hasOutputCache)
 			targetImage = curr->outputCache;
 		else {
 			worker->setDimensions (curr->scaledTargetImageView.w, curr->scaledTargetImageView.h);
 			targetImage = worker;
 		}
+		targetImage->switchTo (curr->descriptor->getOutputColorSpace());
+
+		// apply filter
 		curr->process (events, sourceImage, targetImage, buffer);
 		curr->valid = true;
 	}
@@ -215,6 +224,14 @@ Dim FilterChain::getReqiredBufferSize () {
 		bufferSize.setMax (curr->getReqiredBufferSize ());
 }
 
+Dim FilterChain::getReqiredWorkerSize () {
+
+    Dim workerSize;
+    for (Filter* curr = firstToUpdate; curr; curr = curr->next)
+        if (!curr->hasOutputCache || (curr->prev && (curr->prev->targetImageView != curr->sourceImageView || curr->prev->scaledTargetImageView != curr->scaledSourceImageView)))
+            workerSize.setMax (curr->scaledSourceImageView.getSize ());
+}
+
 Dim FilterChain::getFullImageSize () {
 
 	if (!last)
@@ -223,9 +240,142 @@ Dim FilterChain::getFullImageSize () {
 		return last->getFullImageSize ();
 }
 
+// this method is called by the gui to determine the image view to request from rtengine such that
+// the size of the result is given by a gui window
 double FilterChain::getScale (int skip) {
 
+// TODO bad solution, but no other idea...
+    // problem is that we do not know the scale before the filter chain setup, but this method
+    // is called before it.
+    // This is a temporary solution. In case of thumbnail image sources, where the scale<1 and some scale-changing filters
+    // (resize) are skipped as well, the gui asks for the whole image (thus this method is not required). For
+    // non-thumbnail image sources
+
+    if (imgSource->isThumbnail())
+        return imgSource->getScale();
+    else
+        return 1.0 / skip;
+}
+
+ImageView FilterChain::getLastImageView () {
+
+    if (last)
+        return last->targetImageView;
+    else
+        return ImageView();
+}
+
+double FilterChain::getLastScale () {
+
     return last ? last->getScale() : 1.0;
+}
+
+Image16* FilterChain::getFinalImage () {
+
+    // TODO! we can do better! instead of converting to rgb, let us convert it to xyz
+    last->outputCache->convertTo(MultiImage::RGB, true, procParams->icm.working);
+
+    // calculate crop rectangle
+    int cx = procParams->crop.enabled ? procParams->crop.x : 0;
+    int cy = procParams->crop.enabled ? procParams->crop.y : 0;
+    int cw = procParams->crop.enabled ? procParams->crop.w : last->outputCache->width;
+    int ch = procParams->crop.enabled ? procParams->crop.h : last->outputCache->height;
+
+    // adjust to valid values
+    if (cx<0) cx = 0;
+    if (cy<0) cy = 0;
+    if (cx+cw > last->outputCache->width)  cw = last->outputCache->width - cx;
+    if (cy+ch > last->outputCache->height) ch = last->outputCache->height - cy;
+
+    // obtain cropped image
+    Image16* final = new Image16 (cw, ch);
+    #pragma omp parallel for if (multiThread)
+    for (int i=0; i<ch; i++)
+        for (int j=0; i<cw; j++) {
+            final->r[i][j] = last->outputCache->r[i+cy][j+cx];
+            final->g[i][j] = last->outputCache->g[i+cy][j+cx];
+            final->b[i][j] = last->outputCache->b[i+cy][j+cx];
+        }
+
+    if (procParams->icm.output!="") {
+        // custom output icm profile specified, call lcms
+        cmsHPROFILE oprof = iccStore.getProfile (procParams->icm.output);
+        cmsHPROFILE iprof = iccStore.getProfile (procParams->icm.working);
+// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, 0);
+        cmsDoTransform (hTransform, final->data, final->data, final->planestride/2);
+        cmsDeleteTransform(hTransform);
+        return final;
+    }
+    else if (procParams->icm.working != "sRGB") {
+        // convert it to sRGB
+        Matrix33 m;
+        m.multiply (iccStore.workingSpaceMatrix ("sRGB"));
+        m.multiply (iccStore.workingSpaceInverseMatrix (procParams->icm.working));
+        #pragma omp parallel for if (multiThread)
+        for (int i=0; i<ch; i++)
+            for (int j=0; i<cw; j++)
+                m.transform (final->r[i][j], final->g[i][j], final->b[i][j]);
+    }
+
+    // apply gamma correction
+    #pragma omp parallel for if (multiThread)
+    for (int i=0; i<ch; i++)
+        for (int j=0; i<cw; j++) {
+            final->r[i][j] = CurveFactory::gamma_srgb (final->r[i][j]);
+            final->g[i][j] = CurveFactory::gamma_srgb (final->g[i][j]);
+            final->b[i][j] = CurveFactory::gamma_srgb (final->b[i][j]);
+        }
+    return final;
+}
+
+Image8* FilterChain::getDisplayImage () {
+
+    // TODO! we can do better! instead of converting to rgb, let us convert it to xyz
+    last->outputCache->convertTo(MultiImage::RGB, true, procParams->icm.working);
+
+    // obtain cropped image
+    Image8* final = new Image8 (last->outputCache->width, last->outputCache->height);
+
+    if (Settings::settings->monitorProfile != "") {
+        // custom output icm profile specified, call lcms
+        cmsHPROFILE oprof = iccStore.getProfile (Settings::settings->monitorProfile);
+        cmsHPROFILE iprof = iccStore.getProfile (procParams->icm.working);
+        // TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, 0);
+        cmsDoTransform (hTransform, last->outputCache->getData(), final->data, final->width*final->height);
+        cmsDeleteTransform(hTransform);
+        return final;
+    }
+
+    if (procParams->icm.working == "sRGB") {
+        #pragma omp parallel for if (multiThread)
+        for (int i=0; i<final->height; i++) {
+            int ix = i * final->width * 3;
+            for (int j=0; i<final->width; j++) {
+                final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->r[i][j]) >> 8;
+                final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->g[i][j]) >> 8;
+                final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->b[i][j]) >> 8;
+            }
+        }
+    }
+    else {
+        Matrix33 m;
+        m.multiply (iccStore.workingSpaceMatrix ("sRGB"));
+        m.multiply (iccStore.workingSpaceInverseMatrix (procParams->icm.working));
+        #pragma omp parallel for if (multiThread)
+        for (int i=0; i<final->height; i++) {
+            int ix = i * final->width * 3;
+            for (int j=0; i<final->width; j++) {
+                unsigned short r, g, b;
+                m.transform (last->outputCache->r[i][j], last->outputCache->g[i][j], last->outputCache->b[i][j], r, g, b);
+                final->data[ix++] = CurveFactory::gamma_srgb (r) >> 8;
+                final->data[ix++] = CurveFactory::gamma_srgb (g) >> 8;
+                final->data[ix++] = CurveFactory::gamma_srgb (b) >> 8;
+            }
+        }
+    }
+    return final;
 }
 
 }

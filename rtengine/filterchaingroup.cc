@@ -1,14 +1,15 @@
 #include "filterchaingroup.h"
+#include "improclistener.h"
 
 namespace rtengine {
 
 FilterChainGroup::FilterChainGroup (ImageSource* imgSource, ProcParams* pparams, bool multiThread)
-	: imgSource(imgSource), procParams(pparams), buffer(NULL), workerImage(NULL), multiThread(multiThread) {
+	: imgSource(imgSource), procParams(pparams), buffer(NULL), worker(NULL), multiThread(multiThread) {
 }
 
 FilterChainGroup::~FilterChainGroup () {
 
-	delete workerImage;
+	delete worker;
 	delete buffer;
 	for (int i=0; i<filterChains.size(); i++)
 		delete filterChains[i];
@@ -64,19 +65,12 @@ void FilterChainGroup::update (ImProcListener* listener) {
 	        }
 	    if (!fChain)
 	        return;
-	    Dim fullSize = filterChains[0]->getFullImageSize ();
-	    Dim maxWorkerSize;
-        fChain->setupProcessing (ev, fullSize, maxWorkerSize, true);
-        if (!workerImage || workerImage->getAllocWidth()<maxWorkerSize.width || workerImage->getAllocHeight()<maxWorkerSize.height) {
-            delete workerImage;
-            workerImage = NULL;
-            if (maxWorkerSize.width > 0 && maxWorkerSize.height > 0)
-                workerImage = new MultiImage (maxWorkerSize.width, maxWorkerSize.height);
-        }
-        Dim bufferSize = fChain->getReqiredBufferSize ();
-        if (!buffer || bufferSize.width > buffer->width || bufferSize.height > buffer->height)
-            updateBuffer (bufferSize);
-        fChain->process (ev, buffer, workerImage);
+
+	    fChain->setupProcessing (ev, true);
+        updateBuffer (fChain->getReqiredBufferSize ());
+        updateWorker (fChain->getReqiredWorkerSize ());
+        fChain->process (ev, buffer, worker);
+        notifyListener (fChain);
 	}
 }
 
@@ -85,20 +79,9 @@ void FilterChainGroup::process (const std::set<ProcEvent>& events) {
 	if (filterChains.size()==0)
 		return;
 
-	Dim fullSize = filterChains[0]->getFullImageSize ();	// calculate it here once, it must be the same for the group
-    Dim maxWorkerSize;
-
 	// set up filter chains
 	for (int i=0; i<filterChains.size(); i++)
-		filterChains[i]->setupProcessing (events, fullSize, maxWorkerSize, true);
-
-	// re-allocate worker image, if necessary
-	if (!workerImage || workerImage->getAllocWidth()!=maxWorkerSize.width || workerImage->getAllocHeight()!=maxWorkerSize.height) {
-		delete workerImage;
-		workerImage = NULL;
-        if (maxWorkerSize.width > 0 && maxWorkerSize.height > 0)
-            workerImage = new MultiImage (maxWorkerSize.width, maxWorkerSize.height);
-	}
+		filterChains[i]->setupProcessing (events, true);
 
 	// calculate common buffer of required size
 	Dim bufferSize;
@@ -106,9 +89,19 @@ void FilterChainGroup::process (const std::set<ProcEvent>& events) {
 		bufferSize.setMax (filterChains[i]->getReqiredBufferSize ());
 	updateBuffer (bufferSize);
 
+	// calculate size of the worker image
+    Dim workerSize;
+    for (int i=0; i<filterChains.size(); i++)
+        workerSize.setMax (filterChains[i]->getReqiredWorkerSize ());
+    updateWorker (workerSize);
+
 	// process all filter chains
 	for (int i=0; i<filterChains.size(); i++)
-		filterChains[i]->process (events, buffer, workerImage);
+		filterChains[i]->process (events, buffer, worker);
+
+	// notify listeners
+    for (int i=0; i<filterChains.size(); i++)
+        notifyListener (filterChains[i]);
 }
 
 void FilterChainGroup::updateBuffer (Dim size) {
@@ -123,6 +116,30 @@ void FilterChainGroup::updateBuffer (Dim size) {
 
 	if (createNeeded)
 	    buffer = new Buffer<int> (size.width, size.height);
+}
+
+void FilterChainGroup::updateWorker (Dim size) {
+
+    bool deleteNeeded = worker && (!size.nonZero() || worker->width!=size.width || worker->height!=size.height);
+    bool createNeeded = size.nonZero() && (worker->width!=size.width || worker->height!=size.height);
+
+    if (deleteNeeded) {
+        delete worker;
+        worker = NULL;
+    }
+
+    if (createNeeded)
+        worker = new MultiImage (size.width, size.height);
+}
+
+void FilterChainGroup::notifyListener (FilterChain* chain) {
+
+    ImProcListener* iml = chain->getListener ();
+    if (iml) {
+        Image8* img = chain->getDisplayImage ();
+        iml->imageReady (img, chain->getLastScale(), chain->getFullImageSize(), chain->getLastImageView(), *procParams);
+        delete img;
+    }
 }
 
 }

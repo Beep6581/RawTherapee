@@ -13,12 +13,15 @@ class FilterChainGroup {
 
 	std::vector<FilterChain*> filterChains;
 	Buffer<int>* buffer;
-	MultiImage* workerImage;
+	MultiImage* worker;
 	ProcParams* procParams;
 	ImageSource* imgSource;
 	bool multiThread;
 
-	void updateBuffer (Dim size);
+    void updateBuffer (Dim size);
+    void updateWorker (Dim size);
+
+    void notifyListener (FilterChain* chain);
 
 public:
 

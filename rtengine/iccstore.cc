@@ -307,4 +307,15 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 
     return cmsOpenProfileFromMem (oprof, ntohl(oprof[0]));
 }
+
+std::vector<std::string> getWorkingProfiles () {
+
+    return iccStore.getWorkingProfiles ();
+}
+
+std::vector<std::string> getOutputProfiles () {
+
+    return iccStore.getOutputProfiles ();
+}
+
 }

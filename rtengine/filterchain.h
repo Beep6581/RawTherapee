@@ -7,6 +7,8 @@
 #include "imagesource.h"
 #include "procparams.h"
 #include "filter.h"
+#include "image8.h"
+#include "image16.h"
 
 namespace rtengine {
 
@@ -31,21 +33,24 @@ public:
 	FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread);
 	FilterChain (ImProcListener* listener, FilterChain* previous);
 	~FilterChain ();
-	Dim getReqiredBufferSize ();
-	Dim getFullImageSize ();
-
 	double getScale (int skip);
+    void invalidate ();
+    void setNextChain (FilterChain* other);
 
-	void setupProcessing (const std::set<ProcEvent>& events, Dim fullSize, Dim& maxWorkerSize, bool useShortCut = false);
+	void setupProcessing (const std::set<ProcEvent>& events, bool useShortCut = false);
 	void process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker);
+    Dim  getReqiredBufferSize ();
+    Dim  getReqiredWorkerSize ();
+    Dim  getFullImageSize ();
 
 	ImProcListener* getListener () { return listener; }
-	void invalidate ();
+    ImageSource* getImageSource () { return imgSource; }
 
-	ImageSource* getImageSource () { return imgSource; }
+	ImageView getLastImageView ();
+    double    getLastScale ();
 
-
-	void setNextChain (FilterChain* other);
+    Image16* getFinalImage ();
+    Image8*  getDisplayImage ();
 };
 }
 #endif

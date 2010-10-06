@@ -33,6 +33,8 @@ class ImageSource : public InitialImage {
         virtual Matrix33	getCamToRGBMatrix ()=0;
         virtual Matrix33	getRGBToCamMatrix ()=0;
 
+        ImageSource* getImageSource () { return this; }
+
         virtual bool isRaw () =0;
         virtual bool isThumbnail () =0;
         virtual double getScale () =0;

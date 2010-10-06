@@ -113,7 +113,8 @@ namespace rtengine {
           virtual void progressReady () {}
 
     };
-    
+
+    class ImageSource;
    /**
     * This class represents an image loaded into the memory. It is the basis of further processing.
     * The embedded icc profile and metadata information can be obtained through this class, too.
@@ -135,6 +136,8 @@ namespace rtengine {
           /** This class has manual reference counting. You have to call this function each time to remove a reference 
             * (the last one deletes the instance automatically). */
             virtual void decreaseRef () =0;
+            /** This is a function used for internal purposes only. */
+            virtual ImageSource* getImageSource () =0;
 
           /** Loads an image into the memory. If it is a raw file, is is partially demosaiced (the time consuming part is done)
             * @param fname the name of the file
@@ -217,12 +220,12 @@ namespace rtengine {
   * @return a vector of the available working profile names */
     std::vector<std::string> getWorkingProfiles ();
 
-    /** This class  holds all the necessary informations to accomplish the full processing of the image */
+
+    /** This class describes an image processing job. */
     class ProcessingJob {
 
         public:
-
-    /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
+    /** Creates a processing job with a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately. 
        * @param fname the name of the file
        * @param isRaw shall be true if it is a raw file
@@ -230,46 +233,46 @@ namespace rtengine {
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
         static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const ProcParams& pparams);
    
-    /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
-       * the image thus it returns immediately. This function increases the reference count of the initialImage. If you decide not the process the image you
-       * have to cancel it by calling the member function void cancel(). If the image is processed the reference count of initialImage is decreased automatically, thus the ProcessingJob
-       * instance gets invalid. You can not use a ProcessingJob instance to process an image twice.
+    /** Creates a processing job from a previously loaded file, thus an InitialImage instance.
+       * This function always succeeds. It only stores the data into the ProcessingJob class, it does not do any
+       * specific operation thus it returns immediately.
        * @param initialImage is a loaded and pre-processed initial image
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */   
         static ProcessingJob* create (InitialImage* initialImage, const ProcParams& pparams);
 
-    /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
-      * gets invalid, you must not use it any more. Dont call this function while the job is being processed. 
-      * @param job is the job to destroy */
-        static void destroy (ProcessingJob* job);
+        virtual ~ProcessingJob () {}
     };
 
-/** This function performs all the image processinf steps corresponding to the given ProcessingJob. It returns when it is ready, so it can be slow.
-   * The ProcessingJob passed becomes invalid, you can not use it any more.
-   * @param job the ProcessingJob to cancel. 
-   * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.) 
-   * @param pl is an optional ProgressListener if you want to keep track of the progress
-   * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */  
-    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL);
-
-/** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
-   * image is ready and the next job to process is needed. */
-    class BatchProcessingListener : public ProgressListener {
+    /** This is a listener class that is notified when the SingleImageProcessor finished processing an image.
+     * It supports batch processing by allowing the listener to return an other ProcessingJob instance.
+     */
+    class FinalImageListener {
         public:
-         /** This function is called when an image gets ready during the batch processing. It has to return with the next job, or with NULL if
-                        * there is no jobs left.
-                        * @param img is the result of the last ProcessingJob 
-                        * @return the next ProcessingJob to process */  
+         /** This function is called when processing of a ProcessingJob is ready.
+          * It has to return with the next job, or with NULL if there are no jobs left.
+          * @param img is the result of the last ProcessingJob
+          * @return the next ProcessingJob to process */
             virtual ProcessingJob* imageReady (IImage16* img) =0;
     };
-/** This function performs all the image processing steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
-   * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on 
-   * with processing. If no new job is given, it finishes.
-   * The ProcessingJob passed becomes invalid, you can not use it any more.
-   * @param job the ProcessingJob to cancel. 
-   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener. */  
-    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl);
+
+    /** Through this class it is possible to process a single image without support for interactive editing
+     */
+    class SingleImageProcessor {
+
+        public:
+            /** This function performs the processing of a single ProcessingJob. It has two modes: if the FinalImageListener
+             * passed is NULL, then the call will be synchronous, thus it returns only when the processing is accomplished and
+             * returns the result as a return value. Alternatively, if a non-NULL FinalImageListener is given, it starts the processing
+             * in the background and terminates immediately by returning a NULL.
+             * As soon as the job is ready, the given FinalImageListener is notified.
+             * @param pJob is the ProcessingJob to process
+             * @param pListener a progress listener to follow the progress of the processing of the current image. It can be NULL.
+             * @param fiListener can be NULL if a synchronous call is required and non-NULL is a background processing is initiated.
+             * @param errorCode is returned for example if the image specified by a file name can not be loaded or if it is not supported.
+             */
+            static IImage16* process (ProcessingJob* pJob, ProgressListener* pListener, FinalImageListener* fiListener, int& errorCode);
+    };
 }
 
 #endif

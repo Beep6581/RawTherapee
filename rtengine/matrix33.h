@@ -25,10 +25,12 @@ class Matrix33 {
 
 		// applies transformation on the given (r,g,b) (column) vector
 		// result is written back to the variables passed
-		void transform (double& r, double& g, double& b);
+        void transform (double& r, double& g, double& b);
+        void transform (unsigned short& r, unsigned short& g, unsigned short& b);
 
 		// the same, result is stored separately
-		void transform (double r, double g, double b, double& nr, double& ng, double& nb);
+        void transform (double r, double g, double b, double& nr, double& ng, double& nb);
+        void transform (unsigned short r, unsigned short g, unsigned short b, unsigned short& nr, unsigned short& ng, unsigned short& nb);
 
 		// returns inverse of the transformation matrix
 		Matrix33 inverse ();

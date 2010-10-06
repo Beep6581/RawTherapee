@@ -1,5 +1,6 @@
 #include "filter.h"
 #include <math.h>
+#include "filterchain.h"
 
 namespace rtengine {
 
@@ -78,9 +79,9 @@ bool Filter::isTriggerEvent (const std::set<ProcEvent>& events) {
 double Filter::getScale () {
 
     if (parent)
-        return parent->getScale ();
+        return parent->getScale () * parent->targetImageView.skip / sourceImageView.skip;
     else
-        return 1.0 / targetImageView.skip;     // to be overridden in thumbnail image source to incorporate thumbnail size
+        return getFilterChain()->getImageSource()->getScale() / targetImageView.skip;
 }
 
 void Filter::setupCache () {

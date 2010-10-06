@@ -97,8 +97,9 @@ public:
 	// return full image size if this filter was the last one
 	virtual Dim getFullImageSize ();
 
-    virtual double getScale ();
-	// return the coordinates (xv,yv) corresponding to the "source" side given coordinates (x,y) corresponding to the target side
+    // return the scale factor of the image at the target side of the filter
+	virtual double getScale ();
+	// return scale factor by assuming the given skip
 	virtual void reverseTransPoint (int x, int y, int& xv, int& yv);
     // returns true if set "events" contains at least one event that invalidates the result of this filter
 	virtual bool isTriggerEvent (const std::set<ProcEvent>& events);
