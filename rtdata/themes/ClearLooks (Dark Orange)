@@ -23,8 +23,6 @@
 
 style "clearlooks-default" {
 
-  font_name = "sans, 10"
-
   GtkMenuItem::selected_shadow_type = none
   GtkWidget::interior_focus = 1
   GtkButton::default_border = { 3, 3, 3, 3 }
@@ -86,7 +84,6 @@ engine "clearlooks"
 
 style "clearlooks-wide" = "clearlooks-default"
 {
-  font_name = "arial black, 8"
   xthickness = 2
   ythickness = 2
   bg[NORMAL]			= "#313131"
