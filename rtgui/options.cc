@@ -118,12 +118,14 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
     showFileNames = true;
+    tabbedUI = false;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
-    rtSettings.demosaicMethod = "amaze";//Emil's code for AMaZE
+    rtSettings.demosaicMethod = "hphd";
+    rtSettings.demosaicMethodBatch = "hphd";
 	rtSettings.ca_autocorrect = false;//Emil's CA correction
 	rtSettings.hotdeadpix_filt = true;//Emil's hot/dead pixel filter
 	
@@ -161,8 +163,8 @@ int Options::readFromFile (Glib::ustring fname) {
 
     setDefaults ();
     
-if (keyFile.has_group ("General")) { 
-    Glib::ustring stup;
+if (keyFile.has_group ("General")) {
+    if (keyFile.has_key ("General", "TabbedEditor"))    tabbedUI= keyFile.get_boolean ("General", "TabbedEditor");    
     if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "home") 
         startupDir = STARTUPDIR_HOME;
     else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "current") 
@@ -272,6 +274,7 @@ if (keyFile.has_group ("GUI")) {
 
 if (keyFile.has_group ("Algorithms")) { 
     if (keyFile.has_key ("Algorithms", "DemosaicMethod"))  rtSettings.demosaicMethod       = keyFile.get_string  ("Algorithms", "DemosaicMethod");
+    if (keyFile.has_key ("Algorithms", "DemosaicMethodBatch"))  rtSettings.demosaicMethodBatch       = keyFile.get_string  ("Algorithms", "DemosaicMethodBatch");
     if (keyFile.has_key ("Algorithms", "ColorCorrection")) rtSettings.colorCorrectionSteps = keyFile.get_integer ("Algorithms", "ColorCorrection");
     if (keyFile.has_key ("Algorithms", "DCBIterations")) rtSettings.dcb_iterations = keyFile.get_integer("Algorithms", "DCBIterations");
     if (keyFile.has_key ("Algorithms", "DCBEnhance")) rtSettings.dcb_enhance = keyFile.get_boolean("Algorithms", "DCBEnhance");
@@ -301,7 +304,8 @@ if (keyFile.has_group ("Batch Processing")) {
 int Options::saveToFile (Glib::ustring fname) {
 
     rtengine::SafeKeyFile keyFile;
-    
+    keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
+
     keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
     if (startupDir==STARTUPDIR_HOME)
         keyFile.set_string ("General", "StartupDirectory", "home");
@@ -403,6 +407,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
     keyFile.set_string  ("Algorithms", "DemosaicMethod", rtSettings.demosaicMethod);
+    keyFile.set_string  ("Algorithms", "DemosaicMethodBatch", rtSettings.demosaicMethodBatch);
     keyFile.set_integer ("Algorithms", "ColorCorrection", rtSettings.colorCorrectionSteps);
     keyFile.set_integer ("Algorithms", "DCBIterations", rtSettings.dcb_iterations);
     keyFile.set_boolean ("Algorithms", "DCBEnhance", rtSettings.dcb_enhance);

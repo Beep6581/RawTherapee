@@ -37,6 +37,7 @@ RTWindow::RTWindow () {
     set_title("RawTherapee "+versionString);
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
+    maximize();
     set_modal(false);
     set_resizable(true);
     if (options.windowMaximized)
@@ -60,6 +61,7 @@ RTWindow::RTWindow () {
     hbf->set_spacing (2);
     hbf->show_all ();
     mainNB->append_page (*fpanel, *hbf);
+    fpanel->signal_expose_event().connect( sigc::mem_fun(*this, &RTWindow::on_expose_event_fpanel) );
 
     bpanel = new BatchQueuePanel ();
     bpanel->setParent (this);
@@ -71,6 +73,20 @@ RTWindow::RTWindow () {
     hbb->set_spacing (2);
     hbb->show_all ();
     mainNB->append_page (*bpanel, *hbb);
+    
+    
+    epanel = new EditorPanel (fpanel);
+    epanel->setParent (this);
+    // decorate tab
+    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+    hbe->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)));
+    hbe->pack_start (*Gtk::manage (new Gtk::Label("Editor")));
+    hbe->set_spacing (2);
+    hbe->show_all ();
+    mainNB->append_page (*epanel, *hbe);
+    mainNB->set_current_page (mainNB->page_num (*fpanel));
+    epanel->signal_expose_event().connect( sigc::mem_fun(*this, &RTWindow::on_expose_event_epanel) );
+
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
@@ -104,6 +120,9 @@ RTWindow::RTWindow () {
 
     add (*mainBox);
     show_all ();
+
+    if(options.tabbedUI)
+        epanel->hide_all();
 }
 
 void RTWindow::on_realize () {
@@ -164,7 +183,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
     epanels[ name ] = ep;
     filesEdited.insert ( name );
-    fpanel->refreshEditedState (filesEdited);
+    fpanel->refreshEditedState (filesEdited);    
 }
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
@@ -212,8 +231,10 @@ void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
 
+
     fpanel->saveOptions ();
     bpanel->saveOptions ();
+  //  epanel->saveOptions();
 
 /*    if (fileBrowser->getFileCatalog()->getBatchQueue()->hasJobs()) {
         Gtk::MessageDialog msgd (M("MAIN_MSG_EXITJOBSINQUEUEQUEST"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
@@ -259,7 +280,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
 
 void RTWindow::showPreferences () {
 
-  Preferences *pref = new Preferences ();
+  Preferences *pref = new Preferences (this);
   pref->run ();
   delete pref;
   
@@ -296,4 +317,37 @@ void RTWindow::toggle_fullscreen () {
 
 void RTWindow::error (Glib::ustring descr){
 	prLabel.set_text ( descr );
+}
+
+void RTWindow::SetEditorCurrent()
+{
+  mainNB->set_current_page (mainNB->page_num (*epanel));
+}
+
+bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
+{
+
+    if(!options.tabbedUI &&  epanel->catalogPane->get_children().size() ==0 ){
+        FileCatalog *fCatalog = fpanel->fileCatalog;
+        fpanel->ribbonPane->remove(*fCatalog);
+        epanel->catalogPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
+        fCatalog->redrawAll();
+    }
+   return  false;  // Gtk::VBox::on_expose_event(event);
+}
+
+
+bool RTWindow::on_expose_event_fpanel(GdkEventExpose* event)
+{
+
+    if(!options.tabbedUI && fpanel->ribbonPane->get_children().size() ==0 ){
+        FileCatalog *fCatalog = fpanel->fileCatalog;
+        epanel->catalogPane->remove(*fCatalog);
+        //dirpaned->pack2(*fileCatalog,true,true);
+        fpanel->ribbonPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Vertical);
+        fCatalog->redrawAll();
+    }
+   return false; // Gtk::HPaned::on_expose_event(event);
 }
