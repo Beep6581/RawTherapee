@@ -25,14 +25,14 @@ using namespace rtengine::procparams;
 PreProcess::PreProcess ()
 {
 	hbdf = Gtk::manage(new Gtk::HBox());
-	darkFrameFile = Gtk::manage(new Gtk::FileChooserButton(M("PREFERENCES_DARKFRAME"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-	dfLabel = Gtk::manage(new Gtk::Label("Dark Frame"));
+	darkFrameFile = Gtk::manage(new Gtk::FileChooserButton(M("TP_PREPROCESS_DARKFRAME"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+	dfLabel = Gtk::manage(new Gtk::Label(M("TP_PREPROCESS_DARKFRAME")));
 	btnReset = Gtk::manage(new Gtk::Button());
 	btnReset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
 	hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 4);
 	hbdf->pack_start(*darkFrameFile);
 	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 4);
-	dfAuto = Gtk::manage(new Gtk::CheckButton(("Auto selection")));
+	dfAuto = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_DFAUTOSELECT"))));
 	caAutocorrect = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_CACORRECTION"))));
 	hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_HOTDEADPIXFILT"))));
 
@@ -163,7 +163,7 @@ void PreProcess::caCorrectionChanged()
         lastCA = caAutocorrect->get_active ();
     }
     if (listener)
-        listener->panelChanged (EvPreProcess, Glib::ustring("CA autocorrection ")+ (caAutocorrect->get_active()?"ON":"OFF") );
+        listener->panelChanged (EvPreProcess, Glib::ustring(M("PREFERENCES_CACORRECTION"))+"="+(caAutocorrect->get_active()?"ON":"OFF") );
 }
 
 void PreProcess::dfAutoChanged()
@@ -182,7 +182,7 @@ void PreProcess::dfAutoChanged()
     }
 	hbdf->set_sensitive( !dfAuto->get_active() );
     if (listener)
-        listener->panelChanged (EvPreProcess, Glib::ustring("Dark Frame autoselection")+ (dfAuto->get_active()?"ON":"OFF") );
+        listener->panelChanged (EvPreProcess, Glib::ustring(M("TP_PREPROCESS_DFAUTOSELECT"))+"="+(dfAuto->get_active()?"ON":"OFF") );
 }
 
 void PreProcess::hotDeadPixelChanged ()
@@ -200,13 +200,13 @@ void PreProcess::hotDeadPixelChanged ()
         lastHot = hotDeadPixel->get_active ();
     }
     if (listener)
-        listener->panelChanged (EvPreProcess, Glib::ustring("Hot Dead Pixel ")+(hotDeadPixel->get_active()?"ON":"OFF") );
+        listener->panelChanged (EvPreProcess, Glib::ustring(M("PREFERENCES_HOTDEADPIXFILT"))+"="+(hotDeadPixel->get_active()?"ON":"OFF") );
 }
 void PreProcess::darkFrameChanged()
 {
 	dfChanged=true;
     if (listener)
-        listener->panelChanged (EvPreProcess, Glib::ustring("Dark Framet set to ")+darkFrameFile->get_filename());
+        listener->panelChanged (EvPreProcess, Glib::ustring(M("TP_PREPROCESS_DARKFRAME"))+"="+darkFrameFile->get_filename());
 }
 
 void PreProcess::darkFrameReset()
@@ -215,6 +215,6 @@ void PreProcess::darkFrameReset()
 	darkFrameFile->set_current_name("");
 	darkFrameFile->set_filename ("");
     if (listener)
-        listener->panelChanged (EvPreProcess, Glib::ustring("Dark Framet reset"));
+        listener->panelChanged (EvPreProcess, Glib::ustring(M("TP_PREPROCESS_DARKFRAME"))+"=0" );
 
 }

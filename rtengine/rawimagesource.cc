@@ -349,7 +349,7 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 					if (bitmapBads[ (row+dy) *bmpW + (col+dx)/8] & (1<<(col+dx)%8)) continue;
 					sum += rawData[row+dy][col+dx];
 					tot++;
-					if (bitmapBads[ (row-dy) *bmpW + (col-dx)/8] & (1<<(col+dx)%8)) continue;
+					if (bitmapBads[ (row-dy) *bmpW + (col-dx)/8] & (1<<(col-dx)%8)) continue;
 
 					double dirwt = 1/( fabs( rawData[row+dy][col+dx]- rawData[row-dy][col-dx])+eps);
 					wtdsum += dirwt* rawData[row+dy][col+dx];
@@ -731,8 +731,9 @@ int RawImageSource::load (Glib::ustring fname) {
     int res = ri->loadRaw ();
     if (res)
         return res;
-
-    plistener=NULL; //\TODO must be reintroduced
+    if (plistener) {
+        plistener->setProgress (0.8);
+    }
 /***** Copy once constant data extracted from raw *******/
     W = ri->width;
     H = ri->height;
@@ -764,19 +765,13 @@ int RawImageSource::load (Glib::ustring fname) {
 	int val, dark, sat;
 	double dsum[8], dmin, dmax;
 	float pre_mul[4];
-	bool use_camera_wb=true;
-	bool use_auto_wb=false;
-	bool highlight=true;
-
 
 	for (int c = 0; c < 4; c++){
 		cblack[c] = ri->cblack[c] + ri->black_point;
 		pre_mul[c] = ri->pre_mul[c];
 	}
-	/*
-	if (user_mul[0])
-		memcpy(pre_mul, user_mul, sizeof pre_mul);*/
-	if (use_auto_wb || (use_camera_wb && ri->cam_mul[0] == -1)) {
+
+	if ( ri->cam_mul[0] == -1 ) {
 		memset(dsum, 0, sizeof dsum);
 		for (row = 0; row < H; row += 8)
 			for (col = 0; col < W; col += 8) {
@@ -806,7 +801,7 @@ skip_block: ;
 			if (dsum[c])
 				pre_mul[c] = dsum[c + 4] / dsum[c];
 	}
-	if (use_camera_wb && ri->cam_mul[0] != -1) {
+	if ( ri->cam_mul[0] != -1) {
 		memset(sum, 0, sizeof sum);
 		for (row = 0; row < 8; row++)
 			for (col = 0; col < 8; col++) {
@@ -834,8 +829,7 @@ skip_block: ;
 		if (dmax < pre_mul[c])
 			dmax = pre_mul[c];
 	}
-	if (!highlight)
-		dmax = dmin;
+	dmax = dmin;
 	for (c = 0; c < 4; c++)
 		scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / sat;
 	if (settings->verbose) {
@@ -873,6 +867,10 @@ skip_block: ;
     blue  = allocArray<unsigned short>(W,H);
     hpmap = allocArray<char>(W, H);
 
+    if (plistener) {
+        plistener->setProgress (1.0);
+    }
+    plistener=NULL; // This must be reset, because only load() is called through progressConnector
     return 0; // OK!
 }
 
@@ -894,9 +892,10 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	size_t dimBitmap = widthBitmap*ri->height;
 
 	BYTE *bitmapBads = new BYTE [ dimBitmap ];
+	int totBP=0; // Hold count of bad pixels to correct
 	std::list<badPix> *bp = dfm.getBadPixels( ri->make, ri->model, std::string("") );
 	if( bp ){
-		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++)
+		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
 			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x%8);
 		if( settings->verbose ){
 			printf( "Correcting %u pixels from .badpixels\n",bp->size());
@@ -908,7 +907,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}else if( raw.dark_frame.size()>0 )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
-		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++)
+		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
 			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x%8);
 		if( settings->verbose && bp->size()>0){
 			printf( "Correcting %u hotpixels from darkframe\n",bp->size());
@@ -925,11 +924,13 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgress (0.0);
 		}
 		int nFound =findHotDeadPixel( bitmapBads,0.1 );
+		totBP += nFound;
 		if( settings->verbose && nFound>0){
 			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
 		}
 	}
-	cfaCleanFromMap( bitmapBads );
+	if( totBP )
+	   cfaCleanFromMap( bitmapBads );
 	delete [] bitmapBads;
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors

@@ -59,9 +59,9 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(selectDF = new Gtk::MenuItem ("Select Dark Frame...")), 0, 1, p, p+1); p++;
-    pmenu->attach (*(autoDF = new Gtk::MenuItem ("Auto Dark Frame")), 0, 1, p, p+1); p++;
-    pmenu->attach (*(thisIsDF = new Gtk::MenuItem ("Move to Dark Frames folder")), 0, 1, p, p+1); p++;
+    pmenu->attach (*(selectDF = new Gtk::MenuItem (M("FILEBROWSER_SELECTDARKFRAME"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(thisIsDF = new Gtk::MenuItem (M("FILEBROWSER_MOVETODARKFDIR"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(copyprof = new Gtk::MenuItem (M("FILEBROWSER_COPYPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
