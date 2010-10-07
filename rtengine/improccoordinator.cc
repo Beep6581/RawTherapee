@@ -20,6 +20,7 @@
 #include <curves.h>
 #include <mytime.h>
 #include <refreshmap.h>
+#include <simpleprocess.h>
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
 #define CLIP(a) ((a)<65535 ? (a) : (65535));
 
@@ -258,7 +259,16 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {
         previmg->getMutex().lock();
-        ipf.lab2rgb (nprevl, previmg);
+        try
+        {
+            ipf.lab2rgb (nprevl, previmg);
+        }
+        catch(char * str)
+        {
+           progress ("Error converting file...",0);
+            mProcessing.unlock ();
+            return;
+        }
         previmg->getMutex().unlock();
     }   
     if (!resultValid) {
@@ -566,7 +576,11 @@ void ImProcCoordinator::startProcessing () {
             thread = NULL;
             updaterRunning = true;
             updaterThreadStart.unlock ();
-            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);    
+
+            batchThread->yield(); //the running batch should wait other threads to avoid conflict
+            
+            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+
         }
         else
             updaterThreadStart.unlock ();

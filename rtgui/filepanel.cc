@@ -30,6 +30,7 @@ int fbinit (void* data) {
 
 FilePanel::FilePanel () : parent(NULL) {
 
+    isloading = false;
     dirpaned = new Gtk::HPaned ();
     dirpaned->set_position (options.dirBrowserWidth);
 
@@ -52,8 +53,10 @@ FilePanel::FilePanel () : parent(NULL) {
 
     tpc = new BatchToolPanelCoordinator (this);
     fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
-    fileCatalog->set_size_request(50,150);
-    dirpaned->pack2 (*fileCatalog, true, true);
+    ribbonPane = new Gtk::Paned();
+    ribbonPane->add(*fileCatalog);
+    ribbonPane->set_size_request(50,150);
+    dirpaned->pack2 (*ribbonPane, true, true);
 
     placesBrowser->setDirBrowserRemoteInterface (dirBrowser);
     recentBrowser->setDirBrowserRemoteInterface (dirBrowser);
@@ -61,12 +64,12 @@ FilePanel::FilePanel () : parent(NULL) {
     dirBrowser->addDirSelectionListener (recentBrowser);
     dirBrowser->addDirSelectionListener (placesBrowser);
     fileCatalog->setFileSelectionListener (this);
-    
+
     rightBox = new Gtk::HBox ();
     rightBox->set_size_request(50,100);
     rightNotebook = new Gtk::Notebook ();
     Gtk::VBox* taggingBox = new Gtk::VBox ();
-    
+
     history = new History (false);
 
     tpc->addPParamsChangeListener (history);
@@ -79,11 +82,11 @@ FilePanel::FilePanel () : parent(NULL) {
 
 	fileCatalog->setFilterPanel (filterPanel);
     fileCatalog->setImageAreaToolListener (tpc);
-    
+
     //------------------
 
     rightNotebook->set_tab_pos (Gtk::POS_LEFT);
-    
+
     Gtk::Label* devLab = new Gtk::Label (M("MAIN_TAB_DEVELOP"));
     devLab->set_angle (90);
     Gtk::Label* filtLab = new Gtk::Label (M("MAIN_TAB_FILTER"));
@@ -94,7 +97,7 @@ FilePanel::FilePanel () : parent(NULL) {
     tpcPaned = new Gtk::VPaned ();
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, true);
-    
+
     rightNotebook->append_page (*tpcPaned, *devLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     rightNotebook->append_page (*taggingBox, *tagLab);
@@ -144,7 +147,11 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
         return false;
 
     // try to open the file
-    fileCatalog->setEnabled (false);
+  //  fileCatalog->setEnabled (false);
+    if (isloading)
+        return false;
+
+    isloading = true;
     ProgressConnector<rtengine::InitialImage*> *ld = new ProgressConnector<rtengine::InitialImage*>();
     ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType()==FT_Raw, &error, parent->getProgressListener()),
    		           sigc::bind(sigc::mem_fun(*this,&FilePanel::imageLoaded), thm, ld) );
@@ -153,19 +160,29 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc ){
 
 	if (pc->returnValue() && thm) {
-		EditorPanel* epanel = Gtk::manage (new EditorPanel ());
-		parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
-		epanel->open(thm, pc->returnValue() );
+               
+                if (options.tabbedUI){
+                    EditorPanel* epanel = Gtk::manage (new EditorPanel ());
+                    parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
+                    epanel->open(thm, pc->returnValue() );
+                }
+                else{
+                     parent->SetEditorCurrent();
+                     parent->epanel->open(thm, pc->returnValue() );                     
+                }
+
+
 	}else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
 		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 		msgd.run ();
 	}
 	delete pc;
-
+        
 	parent->setProgress(0.);
 	parent->setProgressStr("");
-	fileCatalog->setEnabled (true);
+        isloading = false;
+
 	return false; // MUST return false from idle function
 }
 
@@ -177,9 +194,9 @@ void FilePanel::saveOptions () {
     options.dirBrowserHeight = placespaned->get_position ();
     options.browserToolPanelWidth = winW - get_position();
     options.browserToolPanelHeight = tpcPaned->get_position ();
-    if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
+     if (options.startupDir==STARTUPDIR_LAST && fileCatalog->lastSelectedDir ()!="")
         options.startupPath = fileCatalog->lastSelectedDir ();
-    fileCatalog->closeDir (); 
+    fileCatalog->closeDir ();
 }
 
 void FilePanel::open (const Glib::ustring& d) {
@@ -225,4 +242,3 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
 
     return false;
 }
-

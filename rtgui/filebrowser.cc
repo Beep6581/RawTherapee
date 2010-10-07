@@ -32,7 +32,7 @@ FileBrowser::FileBrowser ()
     fbih->destroyed = false;
     fbih->pending = 0;
 
-    profileStore.parseProfiles ();
+  //  profileStore.parseProfiles ();
 
     signal_style_changed().connect( sigc::mem_fun(*this, &FileBrowser::styleChanged) );
     

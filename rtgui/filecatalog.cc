@@ -49,11 +49,12 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     previewLoader.setPreviewLoaderListener (this);
     
     //  construct and initialize thumbnail browsers
-    fileBrowser = new FileBrowser();
-    fileBrowser->setFileBrowserListener (this);
-    fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
-    fileBrowser->show ();
-       
+        fileBrowser = new FileBrowser();
+        fileBrowser->setFileBrowserListener (this);
+        fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
+        fileBrowser->show ();
+
+    set_size_request(0,250);
     // construct trash panel with the extra "empty trash" button
     trashButtonBox = new Gtk::VBox;
     Gtk::Button* emptyT = new Gtk::Button (M("FILEBROWSER_EMPTYTRASH"));
@@ -138,13 +139,13 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     Gtk::HBox* zoomBox = new Gtk::HBox ();
     zoomInButton  = new Gtk::Button ();
     zoomInButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-    zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));    
+    zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = new Gtk::Button ();
     zoomOutButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-    zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));    
+    zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
     zoomBox->pack_end (*zoomOutButton, Gtk::PACK_SHRINK);   
@@ -182,7 +183,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     wdMonitor = NULL;
     checkCounter = 2;
     g_timeout_add (CHECKTIME, _directoryUpdater, this);
-#endif
+#endif   
 }
 
 bool FileCatalog::capture_event(GdkEventButton* event){
@@ -268,7 +269,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 
         _refreshProgressBar ();
         previewLoader.process ();
-		
+
 #ifdef _WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
 #elif defined __APPLE__

@@ -1,5 +1,6 @@
 
 [General]
+TabbedEditor=true
 StoreLastProfile=true
 StartupDirectory=last
 StartupPath=
@@ -85,6 +86,7 @@ ToolPanelsExpanded=1;1;0;0;0;1;1;0;0;0;0;1;1;0;0;0;0;0;
 
 [Algorithms]
 DemosaicMethod=hphd
+DemosaicMethodBatch=hphd
 ColorCorrection=1
 
 [Crop Settings]

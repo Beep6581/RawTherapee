@@ -29,6 +29,9 @@
 
 #undef THREAD_PRIORITY_NORMAL
 
+Glib::Thread *batchThread = NULL;
+Glib::Mutex* qMutex = NULL;
+
 namespace rtengine {
 
 IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl) {
@@ -213,6 +216,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl) {
 
+    if (!qMutex)
+        qMutex = new Glib::Mutex ();
+
+    qMutex->lock();
     ProcessingJob* currentJob = job;
     
     while (currentJob) {
@@ -222,12 +229,22 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl) {
             bpl->error ("Can not load input image.");
         currentJob = bpl->imageReady (img);
     }
+    qMutex->unlock();
 }
 
 void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl) {
 
+  
+
     if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);
+        batchThread = Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+    
+    if(qMutex)
+    {
+        delete qMutex;
+        qMutex = NULL;
+    }
+
 }
 
 }

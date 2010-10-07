@@ -26,6 +26,7 @@ namespace rtengine {
         public:
             bool            dualThreadEnabled;      ///< If true, the image processing operations with utilize two processor cores (if possible)
             std::string     demosaicMethod;         ///< The algorithm used for demosaicing. Can be "eahd", "hphd", "ahd",  "vng4", "amaze", "bilinear".
+            std::string     demosaicMethodBatch;    ///< The algorithm used for demosaicing. Can be "eahd", "hphd", "ahd",  "vng4", "amaze", "bilinear".
             int             colorCorrectionSteps;   ///< The number of color correction steps applied right after the demosaicing
             Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions

@@ -19,25 +19,23 @@
 #include <thumbimageupdater.h>
 #include <gtkmm.h>
 
-#define threadNum 4 // IF LCMS GETS THREAD SAFETY WE CAN ENABLE MORE THREADS
+#define threadNum 8
 ThumbImageUpdater thumbImageUpdater;
 
 ThumbImageUpdater::ThumbImageUpdater () 
-    : tostop(false), stopped(true), qMutex(NULL), startMutex(NULL) {
-
-    threadPool = new Glib::Thread* [threadNum];
-
+    : tostop(false), stopped(true), qMutex(NULL), startMutex(NULL), threadPool(NULL) {
+        
 }
 
 ThumbImageUpdater::~ThumbImageUpdater ()
 {
-    delete [] threadPool;
+    delete threadPool;
 }
 
 void ThumbImageUpdater::add (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l) {
 
     if (!qMutex)
-        qMutex = new Glib::Mutex ();    
+        qMutex = new Glib::Mutex ();
     if (!startMutex)
         startMutex = new Glib::Mutex ();
 
@@ -67,9 +65,13 @@ void ThumbImageUpdater::add (Thumbnail* t, const rtengine::procparams::ProcParam
 void ThumbImageUpdater::process () {
 
     if (stopped) {
-        #undef THREAD_PRIORITY_LOW
         stopped = false;
-        thread = Glib::Thread::create(sigc::mem_fun(*this, &ThumbImageUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
+
+        if(!threadPool)
+            threadPool = new Glib::ThreadPool(threadNum,0);
+     
+        //thread = Glib::Thread::create (sigc::mem_fun(*this, &ThumbImageUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+        process_();
     }
 }
 
@@ -78,60 +80,48 @@ void ThumbImageUpdater::process_ () {
     stopped = false;
     tostop = false;
 
-   
     while (!tostop && !jqueue.empty ()) {
 
-        qMutex->lock ();
-        int threads = 0;
-        for (; threads<threadNum && !jqueue.empty (); threads++) {
-            // find first entry having update priority, if any
             std::list<Job>::iterator i;
             for (i=jqueue.begin (); i!=jqueue.end(); i++)
                 if (*(i->priority))
                     break;
+
             if (i==jqueue.end())
                 i = jqueue.begin();
-            Job current = *i;
+
+            Job current = *i;         
+            if (current.listener)                    
+                    threadPool->push(sigc::bind(sigc::mem_fun(*this, &ThumbImageUpdater::processJob), current));
+
             jqueue.erase (i);
-            if (current.listener) 
-                threadPool[threads] = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &ThumbImageUpdater::processJob), current), 0, true, true, Glib::THREAD_PRIORITY_LOW);
-            //else
-              //  threadPool[threads] = NULL;
-        }
-        qMutex->unlock ();
-
-        for (int j=0; j<threads; j++)
-            if (threadPool[j])
-                threadPool[j]->join ();
-
-        for(int j =0; j <threadNum;j++)
-            threadPool[j] = NULL;
     }
+    
     stopped = true;
+    //printf("Threads # %d \n", threadPool->get_num_threads());
+
 }
 
 void ThumbImageUpdater::processJob (Job current) {
- 
+
     if (current.listener) {
         double scale = 1.0;
         rtengine::IImage8* img = current.thumbnail->processThumbImage (current.pparams, current.height, scale);
         if (img)
             current.listener->updateImage (img, scale, current.pparams.crop);
     }
-    
+
 }
 
 void ThumbImageUpdater::stop () {
-
-    if (stopped) {
-        tostop = true; 
-        return; }
         
     gdk_threads_leave(); 
-    tostop = true; 
-    Glib::Thread::self()->yield(); 
-    if (!stopped) 
-        thread->join (); 
+    tostop = true;
+
+    if (threadPool)    {
+        threadPool->shutdown(TRUE);
+        threadPool = NULL;
+    }
     gdk_threads_enter();
 }
 

@@ -70,7 +70,7 @@ StdImageSource::~StdImageSource () {
         freeArray<char>(needhr, img->height);
 }
 
-int StdImageSource::load (Glib::ustring fname) {
+int StdImageSource::load (Glib::ustring fname, bool batch) {
 
     fileName = fname;
 
