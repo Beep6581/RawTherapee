@@ -253,10 +253,10 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     fdp->add (*vbdp);
     mvbpp->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame ("Dark Frame") );
+    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M("PREFERENCES_DARKFRAME")) );
     Gtk::HBox* hb42 = Gtk::manage (new Gtk::HBox ());
-    darkFrameDir = Gtk::manage(new Gtk::FileChooserButton( "Dark frames directory", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    Gtk::Label *dfLab = Gtk::manage(new Gtk::Label("Dark Frames directory"));
+    darkFrameDir = Gtk::manage(new Gtk::FileChooserButton(M("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    Gtk::Label *dfLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DIRDARKFRAMES")));
     hb42->pack_start(*dfLab , Gtk::PACK_SHRINK, 4 );
     hb42->pack_start(*darkFrameDir);
     dfLabel = Gtk::manage(new Gtk::Label("Found:"));

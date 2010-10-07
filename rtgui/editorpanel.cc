@@ -23,6 +23,7 @@
 #include <guiutils.h>
 #include <procparamchangers.h>
 #include <safegtk.h>
+#include <imagesource.h>
 
 using namespace rtengine::procparams;
 
@@ -333,7 +334,8 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
         ldprof = new ProcParams ();
         *ldprof = openThm->getProcParams ();
     }
-
+    rtengine::ImageSource* is=isrc->getImageSource();
+    is->setProgressListener( this );
     // initialize profile
     if (openThm->getType()!=FT_Raw)
         profilep->initProfile (options.defProfImg, ldprof, NULL);
@@ -424,6 +426,48 @@ void EditorPanel::setProgressState (int state) {
     p->state = state;
     p->epih = epih;
     g_idle_add (setprocstate, p);
+}
+
+struct spparams {
+    double val;
+    Glib::ustring str;
+    rtengine::ProgressListener* progListener;
+};
+
+int _setprogress( void *p )
+{
+	spparams *s= (spparams*)p;
+	gdk_threads_enter ();
+	s->progListener->setProgress( s->val );
+	gdk_threads_leave ();
+	delete s;
+	return 0;
+}
+
+int _setprogressStr( void *p )
+{
+	spparams *s= (spparams*)p;
+	gdk_threads_enter ();
+	s->progListener->setProgressStr( s->str );
+	gdk_threads_leave ();
+	delete s;
+	return 0;
+}
+
+void EditorPanel::setProgress (double p)
+{
+	spparams *s=new spparams;
+	s->val = p;
+	s->progListener = parent;
+	g_idle_add (_setprogress, s);
+}
+
+void EditorPanel::setProgressStr (Glib::ustring str)
+{
+	spparams *s=new spparams;
+	s->str = str;
+	s->progListener = parent;
+	g_idle_add (_setprogressStr, s);
 }
 
 void EditorPanel::refreshProcessingState (bool state) {

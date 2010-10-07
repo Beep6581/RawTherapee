@@ -225,13 +225,15 @@ void DFManager::init( Glib::ustring pathname )
     		i.pathNames.push_back( i.pathname );
     		i.pathname.clear();
     	}
-    	if( !i.pathname.empty() )
-    	   printf( "%s:  %s\n",i.key().c_str(),i.pathname.c_str());
-    	else{
-    		printf( "%s: MEAN of \n    ",i.key().c_str());
-    		for( std::list<Glib::ustring>::iterator iter = i.pathNames.begin(); iter != i.pathNames.end();iter++  )
-    			printf( "%s, ", iter->c_str() );
-    		printf("\n");
+    	if( settings->verbose ){
+			if( !i.pathname.empty() )
+			   printf( "%s:  %s\n",i.key().c_str(),i.pathname.c_str());
+			else{
+				printf( "%s: MEAN of \n    ",i.key().c_str());
+				for( std::list<Glib::ustring>::iterator iter = i.pathNames.begin(); iter != i.pathNames.end();iter++  )
+					printf( "%s, ", iter->c_str() );
+				printf("\n");
+			}
     	}
     }
     currentPath = pathname;
