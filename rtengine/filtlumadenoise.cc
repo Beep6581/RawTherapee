@@ -42,6 +42,12 @@ void LumaDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* 
 
     if (getTargetImageView().skip==1 && procParams->lumaDenoise.enabled && sourceImage->width>=8 && sourceImage->height>=8) {
         bilateral<unsigned short, unsigned int> (sourceImage->cieL, targetImage->cieL, (unsigned short**)(buffer->rows), sourceImage->width, sourceImage->height, procParams->lumaDenoise.radius / getScale(), procParams->lumaDenoise.edgetolerance, multiThread);
+        if (sourceImage != targetImage)
+        	for (int i=0; i<targetImage->height; i++)
+        		for (int j=0; j<targetImage->width; j++) {
+        			targetImage->ciea[i][j] = sourceImage->ciea[i][j];
+        			targetImage->cieb[i][j] = sourceImage->cieb[i][j];
+        		}
     }
     else if (sourceImage != targetImage)
         targetImage->copyFrom (sourceImage);

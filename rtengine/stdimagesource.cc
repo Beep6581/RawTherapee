@@ -173,6 +173,7 @@ void StdImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 
 	int x = 0, y = 0;
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
+		x = 0;
 		for (int j=view.x; j<view.x+view.w; j+=view.skip) {
 			targetImage->r[y][x] = img->r[i][j];
 			targetImage->g[y][x] = img->g[i][j];

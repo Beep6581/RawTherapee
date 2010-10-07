@@ -66,7 +66,13 @@ IImage16* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* 
         // perform processing
         fChain->process (ev, buffer, worker);
 
-        return fChain->getFinalImage ();
+        Image16* final = fChain->getFinalImage ();
+
+        delete fChain;
+        delete worker;
+        delete buffer;
+
+        return final;
     }
 }
 }

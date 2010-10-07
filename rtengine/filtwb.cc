@@ -56,7 +56,7 @@ void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage*
 
     // get camera wb and find out how much we have to multiply the channels relative to that
     imgsrc->getCamWB().getMultipliers (r, g, b);
-    imgsrc->getRGBToCamMatrix().transform (r, g, b, rreq, greq, breq);
+    imgsrc->getRGBToCamMatrix().transform (r, g, b, rcam, gcam, bcam);
     r = rcam / rreq;
     g = gcam / greq;
     b = bcam / breq;

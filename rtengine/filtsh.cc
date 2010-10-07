@@ -84,8 +84,9 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
             }
 
         if (!procParams->sh.hq) {
-            gaussHorizontal<unsigned short> (map, map, (double*)(buffer->data), radius, multiThread);
-            gaussVertical<unsigned short>   (map, map, (double*)(buffer->data), radius, multiThread);
+        	Dim size (sourceImage->width, sourceImage->height);
+            gaussHorizontal<unsigned short> (map, map, size, (double*)(buffer->data), radius, multiThread);
+            gaussVertical<unsigned short>   (map, map, size, (double*)(buffer->data), radius, multiThread);
         }
         else {
             #pragma omp parallel if (multiThread)

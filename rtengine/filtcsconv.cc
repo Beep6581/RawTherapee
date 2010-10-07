@@ -65,7 +65,6 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
             inImg = targetImage;
         }
     }
-
     if (!in && !imgsrc->isRaw())
         in = imgsrc->getEmbeddedProfile ();
 

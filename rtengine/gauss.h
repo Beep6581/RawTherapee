@@ -29,11 +29,11 @@ namespace rtengine {
 
 // classical filtering if the support window is small:
 
-template<class T> void gaussHorizontal3 (Buffer<T>* src, Buffer<T>* dst, T* buffer, const float c0, const float c1, bool multiThread) {
+template<class T> void gaussHorizontal3 (Buffer<T>* src, Buffer<T>* dst, Dim size, T* buffer, const float c0, const float c1, bool multiThread) {
 
-	int W = dst->width;
+	int W = size.width;
     #pragma omp parallel for if (multiThread)
-    for (int i=0; i<dst->height; i++) {
+    for (int i=0; i<size.height; i++) {
     	T* temp = buffer + omp_get_thread_num() * W;
         for (int j=1; j<W-1; j++)
             temp[j] = (T)(c1 * (src->rows[i][j-1] + src->rows[i][j+1]) + c0 * src->rows[i][j]);
@@ -43,11 +43,11 @@ template<class T> void gaussHorizontal3 (Buffer<T>* src, Buffer<T>* dst, T* buff
     }
 }
 
-template<class T> void gaussVertical3 (Buffer<T>* src, Buffer<T>* dst, T* buffer, const float c0, const float c1, bool multiThread) {
+template<class T> void gaussVertical3 (Buffer<T>* src, Buffer<T>* dst, Dim size, T* buffer, const float c0, const float c1, bool multiThread) {
     
-    int H = dst->height;
+    int H = size.height;
 	#pragma omp parallel for if (multiThread)
-    for (int i=0; i<dst->width; i++) {
+    for (int i=0; i<size.width; i++) {
     	T* temp = buffer + omp_get_thread_num() * H;
         for (int j = 1; j<H-1; j++) 
         	temp[j] = (T)(c1 * (src->rows[j-1][i] + src->rows[j+1][i]) + c0 * src->rows[j][i]);
@@ -60,12 +60,14 @@ template<class T> void gaussVertical3 (Buffer<T>* src, Buffer<T>* dst, T* buffer
 
 // fast gaussian approximation if the support window is large
 
-template<class T> void gaussHorizontal (Buffer<T>* src, Buffer<T>* dst, double* buffer, double sigma, bool multiThread) {
+template<class T> void gaussHorizontal (Buffer<T>* src, Buffer<T>* dst, Dim size, double* buffer, double sigma, bool multiThread) {
 
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
-            memcpy (dst->data, src->data, dst->width*dst->height*sizeof(T));
+        	for (int i=0; i<size.height; i++)
+        		for (int j=0; j<size.width; j++)
+        			dst->rows[i][j] = src->rows[i][j];
         return;
     }
 
@@ -75,7 +77,7 @@ template<class T> void gaussHorizontal (Buffer<T>* src, Buffer<T>* dst, double* 
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-        gaussHorizontal3<T> (src, dst, (T*)buffer, c0, c1, multiThread);
+        gaussHorizontal3<T> (src, dst, size, (T*)buffer, c0, c1, multiThread);
         return;
     }
 
@@ -108,9 +110,9 @@ template<class T> void gaussHorizontal (Buffer<T>* src, Buffer<T>* dst, double* 
         for (int j=0; j<3; j++)
             M[i][j] /= (1.0+b1-b2+b3)*(1.0+b2+(b1-b3)*b3);
     
-    int W = dst->width;
+    int W = size.width;
 	#pragma omp parallel for if (multiThread)
-    for (int i=0; i<dst->height; i++) {
+    for (int i=0; i<size.height; i++) {
 
         double* temp2 = buffer + omp_get_thread_num() * W;
 
@@ -136,12 +138,14 @@ template<class T> void gaussHorizontal (Buffer<T>* src, Buffer<T>* dst, double* 
     }
 }
 
-template<class T> void gaussVertical (Buffer<T>* src, Buffer<T>* dst, double* buffer, double sigma, bool multiThread) {
+template<class T> void gaussVertical (Buffer<T>* src, Buffer<T>* dst, Dim size, double* buffer, double sigma, bool multiThread) {
 
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
-            memcpy (dst->data, src->data, dst->width*dst->height*sizeof(T));
+        	for (int i=0; i<size.height; i++)
+        		for (int j=0; j<size.width; j++)
+        			dst->rows[i][j] = src->rows[i][j];
         return;
     }
 
@@ -151,7 +155,7 @@ template<class T> void gaussVertical (Buffer<T>* src, Buffer<T>* dst, double* bu
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-        gaussVertical3<T> (src, dst, (T*)buffer, c0, c1, multiThread);
+        gaussVertical3<T> (src, dst, size, (T*)buffer, c0, c1, multiThread);
         return;
     }
 
@@ -184,9 +188,9 @@ template<class T> void gaussVertical (Buffer<T>* src, Buffer<T>* dst, double* bu
         for (int j=0; j<3; j++)
             M[i][j] /= (1.0+b1-b2+b3)*(1.0+b2+(b1-b3)*b3);
 
-    int H = dst->height;
+    int H = size.height;
     #pragma omp parallel for if (multiThread)
-    for (int i=0; i<dst->width; i++) {
+    for (int i=0; i<size.width; i++) {
 
         double* temp2 = buffer + omp_get_thread_num() * H;
 

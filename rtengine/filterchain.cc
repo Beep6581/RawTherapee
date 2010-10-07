@@ -303,7 +303,7 @@ Image16* FilterChain::getFinalImage () {
     Image16* final = new Image16 (cw, ch);
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<ch; i++)
-        for (int j=0; i<cw; j++) {
+        for (int j=0; j<cw; j++) {
             final->r[i][j] = last->outputCache->r[i+cy][j+cx];
             final->g[i][j] = last->outputCache->g[i+cy][j+cx];
             final->b[i][j] = last->outputCache->b[i+cy][j+cx];
@@ -313,11 +313,13 @@ Image16* FilterChain::getFinalImage () {
         // custom output icm profile specified, call lcms
         cmsHPROFILE oprof = iccStore.getProfile (procParams->icm.output);
         cmsHPROFILE iprof = iccStore.getProfile (procParams->icm.working);
-// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, 0);
-        cmsDoTransform (hTransform, final->data, final->data, final->planestride/2);
-        cmsDeleteTransform(hTransform);
-        return final;
+        if (oprof && iprof) {
+        	// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
+        	cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, 0);
+        	cmsDoTransform (hTransform, final->data, final->data, final->planestride/2);
+        	cmsDeleteTransform(hTransform);
+        	return final;
+        }
     }
     else if (procParams->icm.working != "sRGB") {
         // convert it to sRGB
@@ -326,14 +328,14 @@ Image16* FilterChain::getFinalImage () {
         m.multiply (iccStore.workingSpaceInverseMatrix (procParams->icm.working));
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<ch; i++)
-            for (int j=0; i<cw; j++)
+            for (int j=0; j<cw; j++)
                 m.transform (final->r[i][j], final->g[i][j], final->b[i][j]);
     }
 
     // apply gamma correction
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<ch; i++)
-        for (int j=0; i<cw; j++) {
+        for (int j=0; j<cw; j++) {
             final->r[i][j] = CurveFactory::gamma_srgb (final->r[i][j]);
             final->g[i][j] = CurveFactory::gamma_srgb (final->g[i][j]);
             final->b[i][j] = CurveFactory::gamma_srgb (final->b[i][j]);
@@ -353,18 +355,20 @@ Image8* FilterChain::getDisplayImage () {
         // custom output icm profile specified, call lcms
         cmsHPROFILE oprof = iccStore.getProfile (Settings::settings->monitorProfile);
         cmsHPROFILE iprof = iccStore.getProfile (procParams->icm.working);
-        // TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, 0);
-        cmsDoTransform (hTransform, last->outputCache->getData(), final->data, final->width*final->height);
-        cmsDeleteTransform(hTransform);
-        return final;
+        if (oprof && iprof) {
+			// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
+			cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, 0);
+			cmsDoTransform (hTransform, last->outputCache->getData(), final->data, final->width*final->height);
+			cmsDeleteTransform(hTransform);
+			return final;
+        }
     }
 
     if (procParams->icm.working == "sRGB") {
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<final->height; i++) {
             int ix = i * final->width * 3;
-            for (int j=0; i<final->width; j++) {
+            for (int j=0; j<final->width; j++) {
                 final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->r[i][j]) >> 8;
                 final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->g[i][j]) >> 8;
                 final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->b[i][j]) >> 8;
@@ -378,7 +382,7 @@ Image8* FilterChain::getDisplayImage () {
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<final->height; i++) {
             int ix = i * final->width * 3;
-            for (int j=0; i<final->width; j++) {
+            for (int j=0; j<final->width; j++) {
                 unsigned short r, g, b;
                 m.transform (last->outputCache->r[i][j], last->outputCache->g[i][j], last->outputCache->b[i][j], r, g, b);
                 final->data[ix++] = CurveFactory::gamma_srgb (r) >> 8;

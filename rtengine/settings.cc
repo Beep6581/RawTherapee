@@ -43,7 +43,7 @@ Settings::Settings () {
     filterList.push_back ("--Cache--");
     filterList.push_back ("CoarseTrans");
     filterList.push_back ("WhiteBalance");
-    filterList.push_back ("ColorspaceTrans");
+    filterList.push_back ("ColorSpaceConversion");
     filterList.push_back ("--Cache--");
     filterList.push_back ("Transform");
     filterList.push_back ("--Cache--");

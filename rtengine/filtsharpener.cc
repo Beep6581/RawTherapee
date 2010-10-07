@@ -67,6 +67,7 @@ void SharpenFilter::dcdamping (Buffer<float>* aI, MultiImage* aO, float damping)
 void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* b2) {
 
     int W = sourceImage->width, H = sourceImage->height;
+    Dim size (W, H);
     double scale = getScale ();
 
     Buffer<float>* tmpI = new Buffer<float> (W, H);
@@ -83,8 +84,8 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
     for (int k=0; k<procParams->sharpening.deconviter; k++) {
 
         // apply blur function (gaussian blur)
-        gaussHorizontal<float> (tmpI, tmp, buffer, procParams->sharpening.deconvradius / scale, multiThread);
-        gaussVertical<float>   (tmp, tmp,  buffer, procParams->sharpening.deconvradius / scale, multiThread);
+        gaussHorizontal<float> (tmpI, tmp, size, buffer, procParams->sharpening.deconvradius / scale, multiThread);
+        gaussVertical<float>   (tmp, tmp,  size, buffer, procParams->sharpening.deconvradius / scale, multiThread);
 
         if (!needdamp) {
             #pragma omp parallel for if (multiThread)
@@ -96,8 +97,8 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
         else
             dcdamping (tmp, sourceImage, damping);
 
-        gaussHorizontal<float> (tmp, tmp, buffer, procParams->sharpening.deconvradius / scale, multiThread);
-        gaussVertical<float>   (tmp, tmp, buffer, procParams->sharpening.deconvradius / scale, multiThread);
+        gaussHorizontal<float> (tmp, tmp, size, buffer, procParams->sharpening.deconvradius / scale, multiThread);
+        gaussVertical<float>   (tmp, tmp, size, buffer, procParams->sharpening.deconvradius / scale, multiThread);
 
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<H; i++)
@@ -161,6 +162,7 @@ void SharpenFilter::sharpenHaloCtrl (MultiImage* sourceImage, MultiImage* target
 void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetImage, Buffer<unsigned short>* b2) {
 
     int W = sourceImage->width, H = sourceImage->height;
+    Dim size (W, H);
     double scale = getScale ();
 
     Buffer<unsigned short>* b3;
@@ -168,14 +170,14 @@ void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetIm
 
     double* buffer = new double [std::max(W, H) * omp_get_max_threads()];
     if (procParams->sharpening.edgesonly==false) {
-        gaussHorizontal<unsigned short> (&sourceView, b2, buffer, procParams->sharpening.radius / scale, multiThread);
-        gaussVertical<unsigned short>   (b2,          b2, buffer, procParams->sharpening.radius / scale, multiThread);
+        gaussHorizontal<unsigned short> (&sourceView, b2, size, buffer, procParams->sharpening.radius / scale, multiThread);
+        gaussVertical<unsigned short>   (b2,          b2, size, buffer, procParams->sharpening.radius / scale, multiThread);
     }
     else {
         b3 = new Buffer<unsigned short> (W, H);
         bilateral<unsigned short, unsigned int> (sourceImage->cieL, b3->rows, b2->rows, W, H, procParams->sharpening.edges_radius / scale, procParams->sharpening.edges_tolerance, multiThread);
-        gaussHorizontal<unsigned short> (b3, b2, buffer, procParams->sharpening.radius / scale, multiThread);
-        gaussVertical<unsigned short>   (b2, b2, buffer, procParams->sharpening.radius / scale, multiThread);
+        gaussHorizontal<unsigned short> (b3, b2, size, buffer, procParams->sharpening.radius / scale, multiThread);
+        gaussVertical<unsigned short>   (b2, b2, size, buffer, procParams->sharpening.radius / scale, multiThread);
     }
     delete [] buffer;
 
@@ -211,10 +213,24 @@ void SharpenFilter::process (const std::set<ProcEvent>& events, MultiImage* sour
     if (getTargetImageView().skip==1 && procParams->sharpening.enabled && procParams->sharpening.method=="rld" && procParams->sharpening.deconvamount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
 
         deconvsharpening (sourceImage, targetImage, (Buffer<float>*)buffer);
+
+        if (sourceImage != targetImage)
+        	for (int i=0; i<targetImage->height; i++)
+        		for (int j=0; j<targetImage->width; j++) {
+        			targetImage->ciea[i][j] = sourceImage->ciea[i][j];
+        			targetImage->cieb[i][j] = sourceImage->cieb[i][j];
+        		}
     }
     else if (getTargetImageView().skip==1 && procParams->sharpening.enabled && procParams->sharpening.method=="usm" && procParams->sharpening.amount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
 
         usmsharpening (sourceImage, targetImage, (Buffer<unsigned short>*)buffer);
+
+        if (sourceImage != targetImage)
+        	for (int i=0; i<targetImage->height; i++)
+        		for (int j=0; j<targetImage->width; j++) {
+        			targetImage->ciea[i][j] = sourceImage->ciea[i][j];
+        			targetImage->cieb[i][j] = sourceImage->cieb[i][j];
+        		}
     }
     else if (sourceImage != targetImage)
         targetImage->copyFrom (sourceImage);

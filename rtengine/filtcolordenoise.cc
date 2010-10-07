@@ -60,10 +60,15 @@ void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage*
         Buffer<short> sa = sourceImage->getBufferView(targetImage->ciea);
         Buffer<short> sb = sourceImage->getBufferView(targetImage->cieb);
 
-        gaussHorizontal<short> (&sa, &ta, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussHorizontal<short> (&sb, &tb, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussVertical<short>   (&ta, &ta, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussVertical<short>   (&tb, &tb, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussHorizontal<short> (&sa, &ta, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussHorizontal<short> (&sb, &tb, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussVertical<short>   (&ta, &ta, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussVertical<short>   (&tb, &tb, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+
+        if (sourceImage != targetImage)
+        	for (int i=0; i<targetImage->height; i++)
+        		for (int j=0; j<targetImage->width; j++)
+        			targetImage->cieL[i][j] = sourceImage->cieL[i][j];
     }
     else if (sourceImage != targetImage)
         targetImage->copyFrom (sourceImage);
