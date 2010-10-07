@@ -115,7 +115,7 @@ class Preferences : public Gtk::Dialog {
     RTWindow* parent;
 	
     Options moptions;
-    sigc::connection dmconn, dmconnBatch, tconn, addc, setc;
+    sigc::connection dmconn, dmconnBatch, tconn, fconn, addc, setc;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
