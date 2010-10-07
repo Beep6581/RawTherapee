@@ -23,7 +23,7 @@ class ImageSource : public InitialImage {
 	public:
 		ImageSource ();
 
-        virtual int load (const Glib::ustring& fileName, ProgressListener* listener = NULL);
+        virtual int load (const Glib::ustring& fileName, ProgressListener* listener = NULL) =0;
 
         virtual ColorTemp   getCamWB    () =0;
         virtual ColorTemp   getAutoWB   () =0;
@@ -43,8 +43,8 @@ class ImageSource : public InitialImage {
         void increaseRef ();
 		void decreaseRef ();
 
-		Dim  getFullImageSize ();
-        void getImage (const ImageView& targetImageView, MultiImage* targetImage);
+		virtual Dim  getFullImageSize () =0;
+        virtual void getImage (const ImageView& targetImageView, MultiImage* targetImage) =0;
 };
 
 }

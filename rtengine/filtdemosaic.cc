@@ -17,13 +17,13 @@ namespace rtengine {
 DemosaicFilterDescriptor demosaicFilterDescriptor;
 
 DemosaicFilterDescriptor::DemosaicFilterDescriptor ()
-	: FilterDescriptor ("Demosaicing", MultiImage::Raw, MultiImage::RGB) {
+	: FilterDescriptor ("Demosaicing", MultiImage::Raw, MultiImage::RGB, true) {
 
 	addTriggerEvent (EvDMMethod);
 	addTriggerEvent (EvDMColorCorrSteps);
 
     applyOnThumbnail = false;
-    applyOnRawImage  = false;
+    applyOnStdImage  = false;
 }
 
 void DemosaicFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -51,6 +51,11 @@ ImageView DemosaicFilter::calculateTargetImageView (const ImageView& requestedIm
 ImageView DemosaicFilter::calculateSourceImageView (const ImageView& requestedImView) {
 
     return calculateTargetImageView (requestedImView);
+}
+
+int DemosaicFilter::getTargetSkip (int nextInSkip) {
+
+    return 1;   // our result is the whole image (skip=1) whatever skip is requested by the next filter
 }
 
 Dim DemosaicFilter::getFullImageSize () {

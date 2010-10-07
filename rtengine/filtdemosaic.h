@@ -50,7 +50,7 @@ class DemosaicFilter : public Filter {
         Dim       getFullImageSize ();
         Dim       getReqiredBufferSize ();
         void      reverseTransPoint (int x, int y, int& xv, int& yv);
-
+        int       getTargetSkip (int nextInSkip);
 };
 
 }

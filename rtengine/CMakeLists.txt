@@ -9,7 +9,8 @@ link_directories (${CMAKE_CURRENT_SOURCE_DIR}/../rtexif ${EXTRA_LIBDIR} ${GTHREA
 set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc filter.cc filterchain.cc filterchaingroup.cc
 		filterfactory.cc iccjpeg.c iccstore.cc image16.cc image8.cc imagedata.cc imageio.cc imagesource.cc
 		imageview.cc improcfuns.cc interactiveimprocimpl.cc matrix33.cc multiimage.cc myfile.cc procparams.cc
-		rawimage.cc rawimagesource.cc settings.cc stdimagesource.cc processingjob.cc singleimproc.cc)
+		rawimage.cc rawimagesource.cc settings.cc stdimagesource.cc processingjob.cc singleimproc.cc
+		loadinitial.cc jdatasrc.c)
 		
 set (RTENGINEFILTERFILES filtchmixer.cc filtcoarse.cc filtcolorcurve.cc filtcolordenoise.cc filtdemosaic.cc
 		filtinitial.cc filtlumacurve.cc filtlumadenoise.cc filtsh.cc filtsharpener.cc filttonecurve.cc
@@ -27,3 +28,7 @@ set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -ff
 target_link_libraries (rtengine rtexif ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
     ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${LCMS_LIBRARIES} ${IPTCDATA_LIBRARIES}
     ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES} ${ZLIB_LIBRARIES})
+
+add_executable (rtcmd rtcmd.cc)
+target_link_libraries (rtcmd rtengine)
+    

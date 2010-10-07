@@ -122,10 +122,6 @@ ImageIO::~ImageIO () {
     delete profileData;
 }
 
-void png_read_data(png_struct_def  *png_ptr, unsigned char *data, size_t length);
-void png_write_data(png_struct_def *png_ptr, unsigned char *data, size_t length);
-void png_flush(png_struct_def *png_ptr);
-
 int ImageIO::loadPNG  (Glib::ustring fname) {
 
     FILE *file = g_fopen (fname.c_str(),"rb");
@@ -277,7 +273,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
 
     setup_read_icc_profile (&cinfo);
 
-    if (!setjmp(jpeg_jmp_buf)) {
+    if (!setjmp(::jpeg_jmp_buf)) {
     	jpeg_stdio_src(&cinfo,file);
     	jpeg_read_header(&cinfo, TRUE);
 
@@ -730,7 +726,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
 // PNG read and write routines:
 
-void png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
+void ImageIO::png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
    png_size_t check;
 
    /* fread() returns 0 on error, so it is OK to store this in a png_size_t
@@ -744,7 +740,7 @@ void png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
    }
 }
 
-void png_write_data(png_structp png_ptr, png_bytep data, png_size_t length) {
+void ImageIO::png_write_data(png_structp png_ptr, png_bytep data, png_size_t length) {
    png_uint_32 check;
 
    check = fwrite(data, 1, length, (FILE *)(png_ptr->io_ptr));
@@ -754,7 +750,7 @@ void png_write_data(png_structp png_ptr, png_bytep data, png_size_t length) {
    }
 }
 
-void png_flush(png_structp png_ptr) {
+void ImageIO::png_flush(png_structp png_ptr) {
    FILE *io_ptr;
    io_ptr = (FILE *)CVT_PTR((png_ptr->io_ptr));
    if (io_ptr != NULL)

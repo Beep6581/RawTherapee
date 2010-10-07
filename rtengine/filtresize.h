@@ -40,9 +40,9 @@ class ResizeFilter : public Filter {
 
     	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
         double    getScale ();
+        double    getTargetScale (int skip);
         ImageView calculateSourceImageView (const ImageView& requestedImView);
         Dim       getFullImageSize ();
-        Dim       getReqiredBufferSize ();
         void      reverseTransPoint (int x, int y, int& xv, int& yv);
 };
 

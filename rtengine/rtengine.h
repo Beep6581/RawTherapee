@@ -145,7 +145,7 @@ namespace rtengine {
             * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
             * @param pl is a pointer pointing to an object implementing a progress listener. It can be NULL, in this case progress is not reported.
             * @return an object representing the loaded and pre-processed image */
-            static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
+            static InitialImage* load (const Glib::ustring& fname, bool isRaw, int& errorCode, ProgressListener* pl = NULL);
     };
 
     #include "improclistener.h"

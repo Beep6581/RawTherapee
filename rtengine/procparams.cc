@@ -46,7 +46,7 @@ void ProcParams::setDefaults () {
 	filterOrder.custom = false;
 	filterOrder.filterlist.clear ();
 
-	demosaicing.method					= "eahd";
+	demosaicing.method					= "hphd";
 	demosaicing.colorcorrectionsteps	= 2;
 
     toneCurve.autoexp       = false;

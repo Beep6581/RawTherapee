@@ -285,6 +285,11 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
     }
 }
 
+double RawImageSource::getDefGain () {
+
+    return log (img->defgain) / log (2.0);
+}
+
 Dim RawImageSource::getFullImageSize () {
 
     return Dim (img->width - 2*border, img->height - 2*border);
@@ -296,10 +301,12 @@ void RawImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 
 	int x = 0, y = 0;
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
+	    x = 0;
 		for (int j=view.x; j<view.x+view.w; j+=view.skip)
 			targetImage->raw[y][x++] = img->data[i+border][j+border];
 		y++;
 	}
+	targetImage->rawFilter = img->filter;
 }
 
 }

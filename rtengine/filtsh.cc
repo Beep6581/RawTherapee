@@ -45,7 +45,7 @@ void ShadowsHighlightsFilterDescriptor::createAndAddToList (Filter* tail) const 
 
     PreShadowsHighlightsFilter* pshf = new PreShadowsHighlightsFilter ();
     tail->addNext (pshf);
-    tail->addNext (new ShadowsHighlightsFilter (pshf));
+    pshf->addNext (new ShadowsHighlightsFilter (pshf));
 }
 
 PreShadowsHighlightsFilter::PreShadowsHighlightsFilter ()

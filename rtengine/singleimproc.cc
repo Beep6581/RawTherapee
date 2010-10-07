@@ -38,14 +38,13 @@ IImage16* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* 
         // load image, if not loaded so far
         InitialImage* ii = job->initialImage;
         if (!ii) {
-            ii = InitialImage::load (job->fname, job->isRaw, &errorCode);
+            ii = InitialImage::load (job->fname, job->isRaw, errorCode);
             if (errorCode) {
                 ii->decreaseRef ();
                 delete job;
                 return NULL;
             }
         }
-
         // set up filter chain for processing
         FilterChain* fChain = new FilterChain (NULL, ii->getImageSource(), &job->pparams, true);
         std::set<ProcEvent> ev;

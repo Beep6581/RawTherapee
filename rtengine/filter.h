@@ -31,7 +31,7 @@ public:
 	std::string 			getName () const { return name; }
 	MultiImage::ColorSpace  getInputColorSpace () const { return inputColorSpace; }
 	MultiImage::ColorSpace  getOutputColorSpace () const { return outputColorSpace; }
-	bool					forceOutputCache ();
+	bool					forceOutputCache () const { return forceOutCache; }
 	bool					myTriggerEvent (ProcEvent ev) const;
     bool                    isAppliedOnRawImage ()  const { return applyOnRawImage; }
     bool                    isAppliedOnStdImage ()  const { return applyOnStdImage; }
@@ -117,6 +117,14 @@ public:
 
     const FilterDescriptor* getDescriptor () const { return descriptor; }
 
+    // these two functions support scale pre-calculation before imageview setup (to support gui)
+    // filters have to override these when:
+    // a) they override the requested skip (e.g. demosaicing filter that can work only on the whole image (skip=1) whatever skip is requested by the next filter
+    // b) the filter changes the scale of the result image (e.g. the resize filter when it is not applied on thumbnails)
+    // returns target skip parameter assuming the next filter requires "nextInSkip" skip
+    virtual int getTargetSkip (int nextInSkip);
+    // returns target scale assuming the given skip
+    virtual double getTargetScale (int skip);
 };
 
 }

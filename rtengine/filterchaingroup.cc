@@ -1,5 +1,5 @@
-#include "filterchaingroup.h"
 #include "improclistener.h"
+#include "filterchaingroup.h"
 
 namespace rtengine {
 

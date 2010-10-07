@@ -24,7 +24,7 @@
 
 namespace rtengine {
 
-extern FilterFactory filterFactory;
+FilterFactory filterFactory;
 
 FilterFactory::FilterFactory() {
 

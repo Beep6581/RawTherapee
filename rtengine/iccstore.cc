@@ -93,18 +93,18 @@ cmsHPROFILE ProfileContent::toProfile () {
 
 const double (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
 const double (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
-const std::string wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
+const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
 
 ICCStore::ICCStore () {
 
     int N = sizeof(wpnames)/sizeof(wpnames[0]);
+
     for (int i=0; i<N; i++) {
         wProfiles[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i]);
         wProfilesGamma[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i], true);
         wMatrices[wpnames[i]] = wprofiles[i];
         iwMatrices[wpnames[i]] = iwprofiles[i];
     }
-    
     double mat[3][3]={1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0};
     xyz  = createFromMatrix (mat, false, "XYZ");
     srgb = cmsCreate_sRGBProfile ();

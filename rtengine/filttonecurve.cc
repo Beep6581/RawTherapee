@@ -45,7 +45,7 @@ void ToneCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	PreToneCurveFilter* ptcf = new PreToneCurveFilter ();
     tail->addNext (ptcf);
-    tail->addNext (new ToneCurveFilter (ptcf));
+    ptcf->addNext (new ToneCurveFilter (ptcf));
 }
 
 PreToneCurveFilter::PreToneCurveFilter ()

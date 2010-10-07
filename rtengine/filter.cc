@@ -78,21 +78,34 @@ bool Filter::isTriggerEvent (const std::set<ProcEvent>& events) {
 
 double Filter::getScale () {
 
-    if (parent)
-        return parent->getScale () * parent->targetImageView.skip / sourceImageView.skip;
+    if (prev)
+        return prev->getScale () * prev->targetImageView.skip / sourceImageView.skip;
     else
         return getFilterChain()->getImageSource()->getScale() / targetImageView.skip;
 }
 
+int Filter::getTargetSkip (int nextInSkip) {
+
+    return nextInSkip;
+}
+
+double Filter::getTargetScale (int skip) {
+
+    if (prev)
+        return prev->getTargetScale (prev->getTargetSkip (skip)) * prev->getTargetSkip (skip) / skip;
+    else
+        return getFilterChain()->getImageSource()->getScale() / skip;
+}
+
 void Filter::setupCache () {
 
-	if (outputCache && !hasOutputCache) {
+    if (outputCache && !hasOutputCache) {
 		delete outputCache;
 		outputCache = NULL;
 		return;
 	}
 
-	if (outputCache && outputCache->width==scaledTargetImageView.w && outputCache->height==scaledTargetImageView.h)
+    if (outputCache && outputCache->width==scaledTargetImageView.w && outputCache->height==scaledTargetImageView.h)
 		return;
 
 	delete outputCache;

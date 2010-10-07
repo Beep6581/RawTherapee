@@ -31,6 +31,7 @@
 #include <procparams.h>
 #include <libiptcdata/iptc-data.h>
 #include <rtexif.h>
+#include <png.h>
 
 namespace rtengine {
 
@@ -79,6 +80,11 @@ class ImageIO {
 
         void setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc);
         void setOutputProfile  (char* pdata, int plen);
+
+
+        static void png_read_data  (png_structp png_ptr, png_bytep data, png_size_t length);
+        static void png_write_data (png_structp png_ptr, png_bytep data, png_size_t length);
+        static void png_flush      (png_structp png_ptr);
 };
 
 };

@@ -50,7 +50,17 @@ double ResizeFilter::getScale () {
     // if we are processing a thumbnail, do not apply resize filter, just update the "Scale", that is the
     // ratio of the image obtained compared to the image requested
     if (getFilterChain()->getImageSource()->isThumbnail())
-        return s*getResizeScale ();
+        return s / getResizeScale ();
+    else
+        return s;
+}
+
+double ResizeFilter::getTargetScale (int skip) {
+
+    double s = Filter::getTargetScale (skip);
+
+    if (getFilterChain()->getImageSource()->isThumbnail())
+        return s / getResizeScale ();
     else
         return s;
 }

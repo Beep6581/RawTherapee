@@ -3,6 +3,7 @@
 
 #include <string>
 #include "buffer.h"
+#include "image16.h"
 
 namespace rtengine {
 
@@ -18,10 +19,12 @@ class MultiImage {
 	void initLabConversionCache ();
 	void initArrays ();
 
+	unsigned short **ch[3];
+
 public:
 	unsigned rawFilter;
 	int width, height;
-	enum ColorSpace { Invalid, RGB, Lab, Raw } colorSpace;	// RGB: linear, in "working" color space!
+	enum ColorSpace { Invalid, RGB, Lab, XYZ, Raw } colorSpace;	// RGB: linear, in "working" color space!
 
 	unsigned short** r;
 	unsigned short** g;
@@ -29,6 +32,9 @@ public:
 	unsigned short** cieL;		/// stores cieL*655.35
 	short** ciea;				/// stores ciea*16384/500
 	short** cieb;				/// stores cieb*16384/200
+    unsigned short** x;
+    unsigned short** y;
+    unsigned short** z;
 	unsigned short** raw;
 
 	MultiImage (int w, int h, ColorSpace cs = RGB);
@@ -56,6 +62,8 @@ public:
 	int getAllocWidth () { return allocWidth; }
 	int getAllocHeight () { return allocHeight; }
 	unsigned short* getData () { return data; }
+
+	Image16* createImage ();
 };
 }
 #endif

@@ -8,6 +8,7 @@
 #include "iccstore.h"
 #include "curves.h"
 #include <lcms2.h>
+#include <iostream>
 
 namespace rtengine {
 
@@ -58,6 +59,10 @@ void FilterChain::setupChain (FilterChain* previous) {
                 }
 		    }
 		}
+	for (Filter* curr = first; curr; curr = curr->next) {
+	    curr->setProcParams (procParams);
+	    curr->myFilterChain = this;
+	}
 }
 
 void FilterChain::setNextChain (FilterChain* other) {
@@ -87,13 +92,15 @@ void FilterChain::invalidate () {
 
 void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useShortCut) {
 
-	if (!listener)
-		return;
-
 	// tell the listener the full size of the image with the current settings and let it decide the portion to refresh
 	Dim fullSize = getFullImageSize ();
-	ImageView reqView = listener->getViewToProcess (fullSize);
-
+	ImageView reqView;
+	if (listener)
+	    reqView = listener->getViewToProcess (fullSize);
+	else {
+        reqView.w = fullSize.width;
+        reqView.h = fullSize.height;
+	}
 	// walk through the list and find first filter that needs to be refreshed because of the changed view
 	Filter* curr = last;
 	firstToUpdate = last;
@@ -110,7 +117,7 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useSh
 
 	// calculate and set source and target image sizes of the filters
 	for (curr = first; curr; curr = curr->next) {
-        ImageView scSourceIV = curr->sourceImageView.getScaled (first ? imgSource->getScale () : curr->prev->getScale ());
+        ImageView scSourceIV = curr->sourceImageView.getScaled (curr==first ? imgSource->getScale () : curr->prev->getScale ());
         ImageView scTargetIV = curr->targetImageView.getScaled (curr->getScale ());
         if (scSourceIV != curr->scaledSourceImageView || scTargetIV != curr->scaledTargetImageView) {
             curr->scaledSourceImageView = scSourceIV;
@@ -120,7 +127,6 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useSh
 	}
 
 	// set mandatory cache points
-	first->hasOutputCache = true;
 	for (curr = first->next; curr != last; curr = curr->next)
 		if (curr->forceOutputCache || curr->sourceImageView != curr->targetImageView
 		        || curr->scaledSourceImageView != curr->scaledTargetImageView
@@ -175,7 +181,12 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useSh
 
 void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker) {
 
-	for (Filter* curr = firstToUpdate; curr; curr = curr->next) {
+    for (Filter* curr = firstToUpdate; curr; curr = curr->next) {
+
+	    if (Settings::settings->verbose)
+	        std::cout << "Applying filter " << curr->getDescriptor()->getName() << " "
+                << curr->sourceImageView << ", " << curr->targetImageView << " in progress...";
+	    std::flush (std::cout);
 
 	    MultiImage* sourceImage = NULL;
 		MultiImage* targetImage = NULL;
@@ -193,10 +204,11 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 			else {
 				sourceImage = worker;
 				worker->setDimensions (curr->scaledSourceImageView.w, curr->scaledSourceImageView.h);
-                int skip = (int)round (curr->getScale() / curr->shortCutPrev->getScale());
-				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView || curr->prev->scaledTargetImageView != curr->scaledSourceImageView)
+				if (curr->prev->hasOutputCache && curr->prev->targetImageView != curr->sourceImageView || curr->prev->scaledTargetImageView != curr->scaledSourceImageView) {
 				    // There is a cache, but image views do not fit. Assume that sourceImageView is the part of prev->targetImageView.
+                    int skip = (int)round (curr->getScale() / curr->prev->getScale());
 				    worker->copyFrom (curr->prev->outputCache, curr->scaledSourceImageView.x - curr->prev->scaledTargetImageView.x * skip, curr->scaledSourceImageView.y - curr->prev->scaledTargetImageView.y * skip, skip);
+				}
 			}
 			sourceImage->convertTo (curr->descriptor->getInputColorSpace());
 		}
@@ -213,6 +225,9 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffe
 		// apply filter
 		curr->process (events, sourceImage, targetImage, buffer);
 		curr->valid = true;
+
+		if (Settings::settings->verbose)
+            std::cout << "ready." << std::endl;
 	}
 	invalidated = false;
 }
@@ -222,6 +237,8 @@ Dim FilterChain::getReqiredBufferSize () {
 	Dim bufferSize;
 	for (Filter* curr = first; curr; curr = curr->next)
 		bufferSize.setMax (curr->getReqiredBufferSize ());
+
+	return bufferSize;
 }
 
 Dim FilterChain::getReqiredWorkerSize () {
@@ -230,6 +247,8 @@ Dim FilterChain::getReqiredWorkerSize () {
     for (Filter* curr = firstToUpdate; curr; curr = curr->next)
         if (!curr->hasOutputCache || (curr->prev && (curr->prev->targetImageView != curr->sourceImageView || curr->prev->scaledTargetImageView != curr->scaledSourceImageView)))
             workerSize.setMax (curr->scaledSourceImageView.getSize ());
+
+    return workerSize;
 }
 
 Dim FilterChain::getFullImageSize () {
@@ -244,17 +263,10 @@ Dim FilterChain::getFullImageSize () {
 // the size of the result is given by a gui window
 double FilterChain::getScale (int skip) {
 
-// TODO bad solution, but no other idea...
-    // problem is that we do not know the scale before the filter chain setup, but this method
-    // is called before it.
-    // This is a temporary solution. In case of thumbnail image sources, where the scale<1 and some scale-changing filters
-    // (resize) are skipped as well, the gui asks for the whole image (thus this method is not required). For
-    // non-thumbnail image sources
-
-    if (imgSource->isThumbnail())
-        return imgSource->getScale();
+    if (!last)
+        return 1.0;
     else
-        return 1.0 / skip;
+        return last->getTargetScale (skip);
 }
 
 ImageView FilterChain::getLastImageView () {

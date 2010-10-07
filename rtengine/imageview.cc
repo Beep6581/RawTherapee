@@ -7,6 +7,7 @@
 
 #include "imageview.h"
 #include <math.h>
+#include <iostream>
 
 namespace rtengine {
 
@@ -38,6 +39,11 @@ ImageView ImageView::getScaled (double scale) const {
 Dim ImageView::getSize () const {
 
     return Dim (w, h);
+}
+
+std::ostream& operator<< (std::ostream& os, const rtengine::ImageView& iv) {
+
+    os << "(" << iv.x << ", " << iv.y << ", " << iv.w << ", " << iv.h << ")";
 }
 
 }

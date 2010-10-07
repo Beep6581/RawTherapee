@@ -41,13 +41,13 @@ class StdImageSource : public ImageSource {
       // inherited from ImageSource
         int 		load (const Glib::ustring& fileName, ProgressListener* listener = NULL);
 
-        ColorTemp   getCamWB    () =0;
-        ColorTemp   getAutoWB   () =0;
-        ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue) =0;
+        ColorTemp   getCamWB    ();
+        ColorTemp   getAutoWB   ();
+        ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue);
         double      getDefGain  () {return 1.0; }
-        void        getAEHistogram (unsigned int* histogram, int& histcompr) =0;
-        Matrix33	getCamToRGBMatrix ()=0;
-        Matrix33	getRGBToCamMatrix ()=0;
+        void        getAEHistogram (unsigned int* histogram, int& histcompr);
+        Matrix33	getCamToRGBMatrix ();
+        Matrix33	getRGBToCamMatrix ();
 
     	Dim  getFullImageSize ();
     	void getImage (const ImageView& targetImageView, MultiImage* targetImage);
