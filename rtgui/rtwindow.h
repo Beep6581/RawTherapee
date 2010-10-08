@@ -67,6 +67,9 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         rtengine::ProgressListener* getProgressListener () { return pldBridge; }
         EditorPanel*  epanel;
         void SetEditorCurrent();
+        void SetMainCurrent();
+        void MoveFileBrowserToEditor();
+        void MoveFileBrowserToMain();
 };
 
 #endif
