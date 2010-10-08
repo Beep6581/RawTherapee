@@ -1017,8 +1017,8 @@ void Preferences::savePressed () {
 void Preferences::okPressed () {
 
     storePreferences ();
-    options.copyFrom (&moptions);
     workflowUpdate();
+    options.copyFrom (&moptions);   
     hide ();
 }
 
@@ -1119,10 +1119,15 @@ void Preferences::switchThemeTo(Glib::ustring newTheme) {
 
 void Preferences::workflowUpdate (){
 
-    if(moptions.tabbedUI)
-        parent->epanel->hide_all();
-    else
-       parent->epanel->show_all();
+    if(moptions.tabbedUI != options.tabbedUI)
+    {
+        parent->MoveFileBrowserToMain();
+        parent->SetMainCurrent();
+        if(moptions.tabbedUI)
+            parent->epanel->hide_all();
+        else
+           parent->epanel->show_all();
+    }
 }
 
 void Preferences::switchFontTo(Glib::ustring newFont) {
