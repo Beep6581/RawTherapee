@@ -331,25 +331,31 @@ void RTWindow::SetMainCurrent()
 
 void RTWindow::MoveFileBrowserToMain()
 {
-    FileCatalog *fCatalog = fpanel->fileCatalog;
-    epanel->catalogPane->remove(*fCatalog);
-    fpanel->ribbonPane->add(*fCatalog);
-    fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Vertical);
-    fCatalog->redrawAll();
+    if( fpanel->ribbonPane->get_children().size() ==0)
+    {
+        FileCatalog *fCatalog = fpanel->fileCatalog;
+        epanel->catalogPane->remove(*fCatalog);
+        fpanel->ribbonPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Vertical);
+        fCatalog->redrawAll();
+    }
 }
 
 void RTWindow::MoveFileBrowserToEditor()
 {
-    FileCatalog *fCatalog = fpanel->fileCatalog;
-    fpanel->ribbonPane->remove(*fCatalog);
-    epanel->catalogPane->add(*fCatalog);
-    fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
-    fCatalog->redrawAll();
+    if(epanel->catalogPane->get_children().size() ==0 )
+    {
+        FileCatalog *fCatalog = fpanel->fileCatalog;
+        fpanel->ribbonPane->remove(*fCatalog);
+        epanel->catalogPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
+        fCatalog->redrawAll();
+    }
 }
 
 bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
 {
-    if(!options.tabbedUI &&  epanel->catalogPane->get_children().size() ==0 )
+    if(!options.tabbedUI)
         MoveFileBrowserToEditor();
    return  false;  // Gtk::VBox::on_expose_event(event);
 }
@@ -357,8 +363,7 @@ bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
 
 bool RTWindow::on_expose_event_fpanel(GdkEventExpose* event)
 {
-
-    if(!options.tabbedUI && fpanel->ribbonPane->get_children().size() ==0 )
+    if(!options.tabbedUI)
         MoveFileBrowserToMain();
    return false; // Gtk::HPaned::on_expose_event(event);
 }
