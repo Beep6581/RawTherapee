@@ -40,7 +40,7 @@ DirBrowser::DirBrowser () {
    scrolledwindow4->set_flags(Gtk::CAN_FOCUS);
    scrolledwindow4->set_border_width(2);
    scrolledwindow4->set_shadow_type(Gtk::SHADOW_NONE);
-   scrolledwindow4->set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
+   scrolledwindow4->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
    scrolledwindow4->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
    scrolledwindow4->add(*dirtree);
 
