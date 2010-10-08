@@ -71,7 +71,16 @@ int main (int argc, char* argv[]) {
 
     IImage16* img = SingleImageProcessor::process (ProcessingJob::create(iImg, params), NULL, NULL, errorCode);
 
-    img->saveToFile (outFName);
+    if (format=="png")
+        img->saveAsPNG (outFName, -1, 8);
+    else if (format=="png16")
+        img->saveAsPNG (outFName, -1, 16);
+    else if (format=="tif")
+        img->saveAsTIFF (outFName, 8, true);
+    else if (format=="tif16")
+        img->saveAsTIFF (outFName, 16, true);
+    else
+        img->saveAsJPEG (outFName, 100);
 
     if (errorCode) {
         std::cerr << "An error occurred during processing (error code = " << errorCode << ")\n";
