@@ -228,7 +228,7 @@ void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int c
 	double  w2 = (double) oW  / 2.0 - 0.5;
 	double  h2 = (double) oH  / 2.0 - 0.5;
 
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
 
 	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
 	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
@@ -267,7 +267,7 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 
 	// auxiliary variables for vignetting
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
 	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
 	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
 	double mul = (1.0-v) / tanh(b);
@@ -307,7 +307,7 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
             double Dy = x_d * sint + y_d * cost;
 
             // distortion correction
-            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+            double r = sqrt(Dx*Dx + Dy*Dy);
             double s = 1.0 - a + a * r ;
 	        Dx *= s;
             Dy *= s;
@@ -381,7 +381,7 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 
 	// auxiliary variables for vignetting
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
 	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
 	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
 	double mul = (1.0-v) / tanh(b);
@@ -421,7 +421,7 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
             double Dyc = x_d * sint + y_d * cost;
 
             // distortion correction
-            double r = sqrt(Dxc*Dxc + Dyc*Dyc) / maxRadius;
+            double r = sqrt(Dxc*Dxc + Dyc*Dyc);
             double s = 1.0 - a + a * r ;
 
             for (int c=0; c<3; c++) {
@@ -477,7 +477,7 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 
 	// auxiliary variables for vignetting
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
 	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
 	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
 	double mul = (1.0-v) / tanh(b);
@@ -517,7 +517,7 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
             double Dy = x_d * sint + y_d * cost;
 
             // distortion correction
-            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+            double r = sqrt(Dx*Dx + Dy*Dy);
             double s = 1.0 - a + a * r ;
 	        Dx *= s;
             Dy *= s;
