@@ -87,8 +87,8 @@ int main(int argc, char **argv)
         argv1_ = "";
   
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
-   argv0 = Glib::filename_to_utf8 (argv0);
-   argv1 = Glib::filename_to_utf8 (argv1);
+   argv0 = Glib::filename_to_utf8 (argv0_);
+   argv1 = Glib::filename_to_utf8 (argv1_);
 #else
    std::auto_ptr<Glib::Error> error;
    argv0 = Glib::filename_to_utf8 (argv0_, error);
