@@ -307,7 +307,8 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
             double Dy = x_d * sint + y_d * cost;
 
             // distortion correction
-            double r = sqrt(Dx*Dx + Dy*Dy);
+            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+            double r2 = sqrt(Dx*Dx + Dy*Dy);
             double s = 1.0 - a + a * r ;
 	        Dx *= s;
             Dy *= s;
@@ -326,7 +327,7 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
                 // multiplier for vignetting correction
             	double vignmul = 1.0;
                 if (dovign)
-                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
                 if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
                     cubint (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
@@ -421,7 +422,8 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
             double Dyc = x_d * sint + y_d * cost;
 
             // distortion correction
-            double r = sqrt(Dxc*Dxc + Dyc*Dyc);
+            double r = sqrt(Dxc*Dxc + Dyc*Dyc) / maxRadius;
+            double r2 = sqrt(Dxc*Dxc + Dyc*Dyc);
             double s = 1.0 - a + a * r ;
 
             for (int c=0; c<3; c++) {
@@ -443,7 +445,7 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 					// multiplier for vignetting correction
 					double vignmul = 1.0;
 					if (dovign)
-						vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+						vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
                         cubintch (chorig[c], xc-1, yc-1, Dx, Dy, &(chtrans[c][y][x]), vignmul);
@@ -517,7 +519,8 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
             double Dy = x_d * sint + y_d * cost;
 
             // distortion correction
-            double r = sqrt(Dx*Dx + Dy*Dy);
+            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
+            double r2 = sqrt(Dx*Dx + Dy*Dy);
             double s = 1.0 - a + a * r ;
 	        Dx *= s;
             Dy *= s;
@@ -536,7 +539,7 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
                 // multiplier for vignetting correction
             	double vignmul = 1.0;
                 if (dovign)
-                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
                 if (yc < original->height-1 && xc < original->width-1) {  // all interpolation pixels inside image
                     int r = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
