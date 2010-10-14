@@ -452,11 +452,11 @@ PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Ca
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
+PREFERENCES_SELECTFONT;Police de caractère
 PREFERENCES_SELECTICCDIRDLG;Choix du dossier des profils ICC...
 PREFERENCES_SELECTLANG;Choix de la langue
 PREFERENCES_SELECTMONITORPROFDLG;Choix du profil ICC de l'affichage...
 PREFERENCES_SELECTTHEME;Choisissez un thème
-PREFERENCES_SELECTFONT;Police de caractère
 PREFERENCES_SET;Remplace
 PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
@@ -704,3 +704,15 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
+!PREFERENCES_DMETHODBATCH;Batch
+!PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_WORKFLOW;Workflow
+!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
+!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
+!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
+!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
+!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+!TP_DIRPYREQUALIZER_THRESHOLD;Threshold

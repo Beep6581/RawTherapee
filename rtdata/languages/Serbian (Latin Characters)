@@ -1,3 +1,4 @@
+
 #  Serbian translation
 #00 Serbian (Cyrilic)
 #01 by gpopac 2010-09-21
@@ -702,3 +703,16 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
+!PREFERENCES_DMETHODBATCH;Batch
+!PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_SELECTFONT;Select font
+!PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_WORKFLOW;Workflow
+!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
+!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
+!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
+!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
+!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
