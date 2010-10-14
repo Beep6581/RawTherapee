@@ -37,11 +37,7 @@ ThumbBrowserBase::ThumbBrowserBase ()
 
     pack_start (*hb1);
 
-    Gtk::HBox* tmp = new Gtk::HBox ();
     hb2->pack_start (hscroll);
-    Gtk::Requisition vcr = vscroll.size_request ();
-    tmp->set_size_request (vcr.width, vcr.width);
-    hb2->pack_end (*tmp, Gtk::PACK_SHRINK, 0);
 
     pack_start (*hb2,Gtk::PACK_SHRINK, 0);
 
@@ -119,6 +115,16 @@ void ThumbBrowserBase::configScrollBars () {
         vscroll.get_adjustment()->set_page_increment (ih);
         hscroll.get_adjustment()->set_page_size (iw);
         vscroll.get_adjustment()->set_page_size (ih);
+
+        if(iw>=inW)
+            hscroll.hide();
+        else
+            hscroll.show();
+
+        if(ih>=inH)
+            vscroll.hide();
+        else
+            vscroll.show();
     }
 }
 
