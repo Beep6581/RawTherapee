@@ -30,7 +30,7 @@ ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL) {
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ());
     frame->add (*imageArea);
     frame->set_shadow_type (Gtk::SHADOW_IN );
-    hb1->pack_start (*frame);
+    hb1->pack_start (*frame, Gtk::PACK_EXPAND_WIDGET);
     hb1->pack_end (*vscroll, Gtk::PACK_SHRINK, 0);
 
     pack_start (*hb1);
@@ -39,15 +39,10 @@ ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL) {
     imageArea->show ();
     hb1->show ();
 
-    Gtk::HBox* tmp = Gtk::manage (new Gtk::HBox ());
     hb2->pack_start (*hscroll);
-    Gtk::Requisition vcr = vscroll->size_request ();
-    tmp->set_size_request (vcr.width, vcr.width);
-    hb2->pack_end (*tmp, Gtk::PACK_SHRINK, 0);
 
     pack_start (*hb2,Gtk::PACK_SHRINK, 0);
     hscroll->show ();
-    tmp->show ();
     hb2->show ();
 
     hscroll->set_update_policy (Gtk::UPDATE_CONTINUOUS);
@@ -92,6 +87,16 @@ void ImageAreaPanel::configScrollBars () {
         imageArea->getScrollPosition (x, y);
         hscroll->set_value (x);
         vscroll->set_value (y);
+
+        if(iw>=imgw)
+            hscroll->hide();    
+        else
+            hscroll->show();
+
+        if(ih>=imgh)
+            vscroll->hide();
+        else
+            vscroll->show();
 
         if (before && this==after)
             before->synchronize ();
