@@ -120,6 +120,8 @@ void Curve::NURBS_set () {
     int k = 0;
     for (int i = 0; i < N-1;) {
         double length;
+        double dx;
+        double dy;
 
     	// first point (on the curve)
     	if (!i) {
@@ -146,7 +148,9 @@ void Curve::NURBS_set () {
 			sc_x[j] =  (x[i-1] + x[i]) / 2.;
 			sc_y[j] =  (y[i-1] + y[i]) / 2.;
 		}
-		length += sqrt(pow(sc_x[j] - sc_x[j-1],2) + pow(sc_y[j] - sc_y[j-1],2));
+		dx = sc_x[j] - sc_x[j-1];
+		dy = sc_y[j] - sc_y[j-1];
+		length += sqrt(dx*dx + dy*dy);
 		j++;
 
 		// Storing the length of all sub-curves and the total length (to have a better distribution
