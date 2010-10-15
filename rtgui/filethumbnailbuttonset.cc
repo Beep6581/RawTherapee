@@ -43,23 +43,23 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 				iconsLoaded = true;
     }
 
+    add (new LWButton (processIcon, 6, myEntry, LWButton::Left, LWButton::Center, M("FILEBROWSER_POPUPPROCESS")));
     add (new LWButton (unRankIcon, 0, myEntry, LWButton::Left, LWButton::Center, M("FILEBROWSER_POPUPUNRANK")));
     for (int i=0; i<5; i++)
-        add (new LWButton (rankIcon, i+1, myEntry, LWButton::Left));
-    add (new LWButton (processIcon, 6, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_POPUPPROCESS")));
+        add (new LWButton (rankIcon, i+1, myEntry, LWButton::Left));    
     add (new LWButton (trashIcon, 7, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_POPUPTRASH")));
 
-    buttons[1]->setToolTip (M("FILEBROWSER_POPUPRANK1"));
-    buttons[2]->setToolTip (M("FILEBROWSER_POPUPRANK2"));
-    buttons[3]->setToolTip (M("FILEBROWSER_POPUPRANK3"));
-    buttons[4]->setToolTip (M("FILEBROWSER_POPUPRANK4"));
-    buttons[5]->setToolTip (M("FILEBROWSER_POPUPRANK5"));
+    buttons[2]->setToolTip (M("FILEBROWSER_POPUPRANK1"));
+    buttons[3]->setToolTip (M("FILEBROWSER_POPUPRANK2"));
+    buttons[4]->setToolTip (M("FILEBROWSER_POPUPRANK3"));
+    buttons[5]->setToolTip (M("FILEBROWSER_POPUPRANK4"));
+    buttons[6]->setToolTip (M("FILEBROWSER_POPUPRANK5"));
 }
 
 void FileThumbnailButtonSet::setRank (int stars) {
 
     for (int i=1; i<=5; i++)
-        buttons[i]->setIcon (i<=stars ? rankIcon : gRankIcon);
+        buttons[i+1]->setIcon (i<=stars ? rankIcon : gRankIcon);
 }
 
 void FileThumbnailButtonSet::setInTrash (bool inTrash) {

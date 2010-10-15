@@ -10,6 +10,7 @@ DualProcSupport=true
 MultiUser=true
 Language=English (US)
 Theme=Gray Textured
+UseSystemTheme=false
 Version=300
 FirstRun=true
 

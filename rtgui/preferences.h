@@ -94,6 +94,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* intent;
 
     Gtk::ComboBoxText* theme;
+    Gtk::HBox* hbtheme;
+    Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
 	
     Gtk::ComboBoxText* cformat;
@@ -115,7 +117,7 @@ class Preferences : public Gtk::Dialog {
     RTWindow* parent;
 	
     Options moptions;
-    sigc::connection dmconn, dmconnBatch, tconn, fconn, addc, setc;
+    sigc::connection dmconn, dmconnBatch, tconn, fconn, addc, setc, usethcon;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -126,6 +128,7 @@ class Preferences : public Gtk::Dialog {
     void dmethodBatchChanged ();
     void workflowUpdate();
     void themeChanged  ();
+    void useThemeChanged();
     void fontChanged   ();
     void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (Glib::ustring newFont);
