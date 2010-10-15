@@ -47,27 +47,27 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     Gtk::HBox* buttonpanel = Gtk::manage (new Gtk::HBox ());
     mainvb->pack_end (*buttonpanel, Gtk::PACK_SHRINK, 2);
 
-    Gtk::Button* load   = Gtk::manage (new Gtk::Button (M("GENERAL_LOAD")));
-    Gtk::Button* save   = Gtk::manage (new Gtk::Button (M("GENERAL_SAVE")));
+//    Gtk::Button* load   = Gtk::manage (new Gtk::Button (M("GENERAL_LOAD")));
+//    Gtk::Button* save   = Gtk::manage (new Gtk::Button (M("GENERAL_SAVE")));
     Gtk::Button* about  = Gtk::manage (new Gtk::Button (M("GENERAL_ABOUT")));
     Gtk::Button* ok     = Gtk::manage (new Gtk::Button (M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage (new Gtk::Button (M("GENERAL_CANCEL")));
 
-    save->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-    load->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+//    save->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+//    load->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
     about->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/logoicon16.png")));
     ok->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
     cancel->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
 
 
-    load->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::loadPressed) );
-    save->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::savePressed) );
+//    load->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::loadPressed) );
+//    save->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::savePressed) );
     about->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::aboutPressed) );
     ok->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::cancelPressed) );
 
-    buttonpanel->pack_start (*load, Gtk::PACK_SHRINK, 4);
-    buttonpanel->pack_start (*save, Gtk::PACK_SHRINK, 4);
+//    buttonpanel->pack_start (*load, Gtk::PACK_SHRINK, 4);
+//    buttonpanel->pack_start (*save, Gtk::PACK_SHRINK, 4);
     buttonpanel->pack_start (*about, Gtk::PACK_SHRINK, 4);
     buttonpanel->pack_end (*ok, Gtk::PACK_SHRINK, 4);
     buttonpanel->pack_end (*cancel, Gtk::PACK_SHRINK, 4);
@@ -355,7 +355,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     }
 
     dmconn = dmethod->signal_changed().connect( sigc::mem_fun(*this, &Preferences::dmethodChanged) );
-    dmconnBatch = dmethod->signal_changed().connect( sigc::mem_fun(*this, &Preferences::dmethodBatchChanged) );
+    dmconnBatch = dmethod->signal_changed().connect( sigc::mem_fun(*this, &Preferences::dmethodBatchChanged) );    
 
     return mvbpp;
 }
@@ -432,7 +432,16 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->pack_start (*flang, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* ftheme = new Gtk::Frame (M("PREFERENCES_DEFAULTTHEME"));
-    Gtk::HBox* hbtheme = new Gtk::HBox ();
+    Gtk::VBox* vbftheme = new Gtk::VBox ();
+    Gtk::HBox* hbUseSystemTheme = new Gtk::HBox ();
+    hbUseSystemTheme->set_border_width (4);
+    Gtk::Label* useNextStart = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    chUseSystemTheme =  new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME"));
+    hbUseSystemTheme->pack_start(*chUseSystemTheme, Gtk::PACK_SHRINK);
+    hbUseSystemTheme->pack_start (*useNextStart, Gtk::PACK_SHRINK, 4);
+    vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 4);
+
+    hbtheme = new Gtk::HBox ();
     hbtheme->set_border_width (4);
     Gtk::Label* themelab = new Gtk::Label (M("PREFERENCES_SELECTTHEME")+":");
     theme = new Gtk::ComboBoxText ();
@@ -453,7 +462,8 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbtheme->pack_start (*theme);
     hbtheme->pack_start (*fontlab, Gtk::PACK_SHRINK, 4);
     hbtheme->pack_start (*fontbutton);
-    ftheme->add (*hbtheme);
+    vbftheme->pack_end(*hbtheme, Gtk::PACK_SHRINK, 4);
+    ftheme->add (*vbftheme);
     mvbsd->pack_start (*ftheme, Gtk::PACK_SHRINK, 4);
   
 //-----
@@ -564,7 +574,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
     fconn = fontbutton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
-
+    usethcon = chUseSystemTheme->signal_clicked ().connect( sigc::mem_fun(*this, &Preferences::useThemeChanged) );
     
     return mvbsd;
 }
@@ -756,6 +766,7 @@ void Preferences::storePreferences () {
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
     moptions.theme           = theme->get_active_text ();
+    moptions.useSystemTheme  = chUseSystemTheme->get_active ();
     moptions.font            = fontbutton->get_font_name();
 #ifdef _WIN32    
     moptions.gimpDir        = gimpDir->get_filename ();
@@ -881,6 +892,7 @@ void Preferences::fillPreferences () {
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
     theme->set_active_text (moptions.theme);
+    chUseSystemTheme->set_active(moptions.useSystemTheme);
     fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
@@ -1072,22 +1084,22 @@ void Preferences::dmethodChanged () {
 
 void Preferences::dmethodBatchChanged () {
 
-    if (dmethod->get_active_row_number()==0)
-        ccSteps->set_value (2);
-    else if (dmethod->get_active_row_number()==1)
-        ccSteps->set_value (1);
-    else if (dmethod->get_active_row_number()==2)
-        ccSteps->set_value (2);
-
-    if (dmethod->get_active_row_number()==4) {
-        dcbEnhance->set_sensitive(true);
-        dcbIterations->set_sensitive(true);
-        dcbIterationsLabel->set_sensitive(true);
-    } else {
-        dcbEnhance->set_sensitive(false);
-        dcbIterations->set_sensitive(false);
-        dcbIterationsLabel->set_sensitive(false);
-    }
+//    if (dmethod->get_active_row_number()==0)
+//        ccSteps->set_value (2);
+//    else if (dmethod->get_active_row_number()==1)
+//        ccSteps->set_value (1);
+//    else if (dmethod->get_active_row_number()==2)
+//        ccSteps->set_value (2);
+//
+//    if (dmethod->get_active_row_number()==4) {
+//        dcbEnhance->set_sensitive(true);
+//        dcbIterations->set_sensitive(true);
+//        dcbIterationsLabel->set_sensitive(true);
+//    } else {
+//        dcbEnhance->set_sensitive(false);
+//        dcbIterations->set_sensitive(false);
+//        dcbIterationsLabel->set_sensitive(false);
+//    }
 }
 
 void Preferences::aboutPressed () {
@@ -1140,6 +1152,17 @@ void Preferences::switchFontTo(Glib::ustring newFont) {
 	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
+void Preferences::useThemeChanged(){
+
+    if(!chUseSystemTheme->get_active()){
+        hbtheme->set_sensitive(true);
+        fontbutton->set_sensitive(true);  
+    }
+    else{
+        hbtheme->set_sensitive(false);
+        fontbutton->set_sensitive(false);  
+    }
+}
 
 void Preferences::addExtPressed () {
 
