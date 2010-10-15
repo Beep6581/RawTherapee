@@ -97,6 +97,7 @@ class Options {
     int bgcolor;
     Glib::ustring language;
     Glib::ustring theme;
+    bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
     bool saveParamsFile;

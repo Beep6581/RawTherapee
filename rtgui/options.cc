@@ -89,6 +89,7 @@ void Options::setDefaults () {
     language = DefaultLanguage;
     lastSaveAsPath = "";
     theme = "";
+    useSystemTheme = false;
     maxThumbnailHeight = 400;
     maxCacheEntries = 10000;
     thumbnailFormat = FT_Custom16;
@@ -183,6 +184,7 @@ if (keyFile.has_group ("General")) {
 //    if (keyFile.has_key ("General", "Version"))         version         = keyFile.get_integer ("General", "Version");
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
+    if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
 }
 
@@ -322,6 +324,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_string  ("General", "Theme", theme);
+    keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_integer ("General", "Version", 290);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
 
