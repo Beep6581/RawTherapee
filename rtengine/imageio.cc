@@ -410,7 +410,11 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 
-    FILE* file=g_fopen(safe_locale_from_utf8(fname).c_str (),"wb");
+	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
+	Glib::ustring tmpFname=fname;
+	tmpFname.append(".tmp");
+
+	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -477,6 +481,9 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
     delete [] row;
 	fclose (file);
 
+	// Rename temporary filename, practically atomic
+	rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+
     if (pl) {
         pl->setProgressStr ("Ready.");
         pl->setProgress (1.0);
@@ -494,7 +501,11 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
 
-	FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
+	Glib::ustring tmpFname=fname;
+	tmpFname.append(".tmp");
+
+	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -583,6 +594,9 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 
     delete [] row;
 	fclose (file);
+
+	// Rename temporary filename, practically atomic
+	rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
 
     if (pl) {
         pl->setProgressStr ("Ready.");
