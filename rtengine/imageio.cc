@@ -515,8 +515,14 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.input_components = 3;
 	jpeg_set_defaults (&cinfo);
     cinfo.write_JFIF_header = FALSE;
-    
 
+	// compute optimal Huffman coding tables for the image. Bit slower to generate, but size of result image is a bit less (default was FALSE)
+	cinfo.optimize_coding = TRUE;
+
+	// Since math coprocessors are common these days, FLOAT should be a bit more accurate AND fast (default is ISLOW)
+	// (machine dependency is not really an issue, since we all run on x86 and having exactly the same file is not a requirement)
+	cinfo.dct_method = JDCT_FLOAT;
+	
 	if (quality>=0 && quality<=100) 
 	    jpeg_set_quality (&cinfo, quality, true);
 
