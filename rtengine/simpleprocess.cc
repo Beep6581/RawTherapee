@@ -150,8 +150,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             hist16[labView->L[i][j]]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, hist16, curve, NULL);
+    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve, NULL);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve, NULL);
+    ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);    
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve, NULL);
+    ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
+	
   	ipf.impulsedenoise (labView);
 	ipf.lumadenoise (labView, buffer);
     ipf.sharpening (labView, (unsigned short**)buffer);

@@ -81,6 +81,7 @@ class ImProcFunctions {
         void firstAnalysis  (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
         void rgbProc        (Image16* working, LabImage* lab, int* tonecurve, SHMap* shmap);
         void luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to);
+		void chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to);
         void colorCurve     (LabImage* lold, LabImage* lnew);
         void sharpening     (LabImage* lab, unsigned short** buffer);
         void lumadenoise    (LabImage* lab, int** buffer);

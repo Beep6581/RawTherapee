@@ -25,4 +25,6 @@
 
 #define ADDSET_PARAM_NUM		21
 
+#define ADDSET_LC_SATURATION 	22
+
 #endif

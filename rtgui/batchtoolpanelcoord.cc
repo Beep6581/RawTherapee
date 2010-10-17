@@ -121,7 +121,7 @@ void BatchToolPanelCoordinator::initSession () {
         coarse->initBatchBehavior ();
 
         curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL], options.baBehav[ADDSET_TC_CONTRAST]);
-        lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST]);
+        lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_SATURATION]);
         whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
         vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
         rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
@@ -143,9 +143,10 @@ void BatchToolPanelCoordinator::initSession () {
         if (options.baBehav[ADDSET_SH_SHADOWS])  pparams.sh.shadows = 0;
         if (options.baBehav[ADDSET_SH_LOCALCONTRAST])  pparams.sh.localcontrast = 0;
 
-        if (options.baBehav[ADDSET_LC_BRIGHTNESS])  pparams.lumaCurve.brightness = 0;
-        if (options.baBehav[ADDSET_LC_CONTRAST])  pparams.lumaCurve.contrast = 0;
-        
+        if (options.baBehav[ADDSET_LC_BRIGHTNESS])  pparams.labCurve.brightness = 0;
+        if (options.baBehav[ADDSET_LC_CONTRAST])  pparams.labCurve.contrast = 0;
+		if (options.baBehav[ADDSET_LC_SATURATION])  pparams.labCurve.saturation = 0;
+
         if (options.baBehav[ADDSET_SHARP_AMOUNT])  pparams.sharpening.amount = 0;
         if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 

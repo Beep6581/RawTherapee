@@ -351,7 +351,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 
 		int fileExists=Glib::file_test (fname, Glib::FILE_TEST_EXISTS); 
         
-		if (inOverwriteMode && fileExists) {
+		/*if (inOverwriteMode && fileExists) {
 			if (g_remove(safe_locale_from_utf8(fname).c_str ()) == -1)
 				inOverwriteMode = false;  // failed to delete- revert to old naming scheme
 			else
@@ -360,7 +360,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 		
 		if (!fileExists) {
             return fname;
-        }
+        }*/
     }
 }
 

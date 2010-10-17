@@ -344,11 +344,27 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to) {
 
     int W = lold->W;
-    int H = lold->H;
+    //int H = lold->H;
     for (int i=row_from; i<row_to; i++)
         for (int j=0; j<W; j++)
             lnew->L[i][j] = curve[lold->L[i][j]];
 }
+	
+	void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to) {
+		
+		int W = lold->W;
+		//int H = lold->H;
+		if (channel==0) {
+		for (int i=row_from; i<row_to; i++)
+			for (int j=0; j<W; j++)
+				lnew->a[i][j] = curve[lold->a[i][j]+32768]-32768;
+		} 
+		if (channel==1) {
+			for (int i=row_from; i<row_to; i++)
+				for (int j=0; j<W; j++)
+					lnew->b[i][j] = curve[lold->b[i][j]+32768]-32768;
+		}
+	}
 
 #include "cubic.cc"
 

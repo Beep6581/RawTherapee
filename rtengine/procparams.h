@@ -48,9 +48,12 @@ class ToneCurveParams {
 class LCurveParams {
 
     public:
-        std::vector<double>   curve;
+        std::vector<double>   lcurve;
+		std::vector<double>   acurve;
+		std::vector<double>   bcurve;
         int      	brightness;
         int         contrast;
+		int         saturation;
 };
 
 /**
@@ -352,7 +355,7 @@ class ProcParams {
 
     public:
         ToneCurveParams         toneCurve;      ///< Tone curve parameters
-        LCurveParams            lumaCurve;      ///< CIELAB luminance curve parameters
+        LCurveParams            labCurve;      ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;     ///< Sharpening parameters
         ColorBoostParams        colorBoost;     ///< Color boost parameters
         WBParams                wb;             ///< White balance parameters

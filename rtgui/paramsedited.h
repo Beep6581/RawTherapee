@@ -43,7 +43,10 @@ class LCurveParamsEdited {
     public:
         bool brightness;
         bool contrast;
-        bool curve;
+		bool saturation;
+        bool lcurve;
+		bool acurve;
+		bool bcurve;
 };
 
 class SharpeningParamsEdited {
@@ -264,7 +267,7 @@ class ParamsEdited {
 
     public:
         ToneCurveParamsEdited         toneCurve;      
-        LCurveParamsEdited            lumaCurve;      
+        LCurveParamsEdited            labCurve;      
         SharpeningParamsEdited        sharpening;     
         ColorBoostParamsEdited        colorBoost;     
         WBParamsEdited                wb;             

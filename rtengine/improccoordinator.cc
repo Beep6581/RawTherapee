@@ -155,9 +155,13 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     }
     readyphase++;
 
-    if (todo & M_LUMACURVE)
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
-
+    if (todo & M_LUMACURVE) {
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
+	}
+	
+	
 /*	
 	if (todo & M_LUMINANCE) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
@@ -209,9 +213,13 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
         ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
+
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-        ipf.colorCurve (oprevl, nprevl);
+        //ipf.colorCurve (oprevl, nprevl);
+		ipf.chrominanceCurve (oprevl, nprevl, 0, chroma_acurve, 0, pH);
+        ipf.chrominanceCurve (oprevl, nprevl, 1, chroma_bcurve, 0, pH);
+
         readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);

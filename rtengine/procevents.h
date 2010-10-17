@@ -21,7 +21,7 @@
 
 #include <rtengine.h>
 
-#define NUMOFEVENTS 94
+#define NUMOFEVENTS 97
 
 
 namespace rtengine {
@@ -45,7 +45,7 @@ enum ProcEvent {
     EvLBlack=15,
     EvLHLCompr=16,
     EvLSHCompr=17,
-    EvLCurve=18,
+    EvLLCurve=18,
     EvShrEnabled=19,
     EvShrRadius=20,
     EvShrAmount=21,
@@ -120,7 +120,10 @@ enum ProcEvent {
     EvDPDNChroma=90,
 	EvDPDNGamma=91,
 	EvDirPyrEqualizer=92,
-    EvDirPyrEqlEnabled=93
+    EvDirPyrEqlEnabled=93,
+	EvLSaturation=94,
+    EvLaCurve=95,
+    EvLbCurve=96,
 	};
 }    
 #endif    
