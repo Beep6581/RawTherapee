@@ -353,7 +353,8 @@ void EditorPanel::close () {
     // close image processor and the current thumbnail
     tpc->closeImage ();    // this call stops image processing
     tpc->writeOptions ();
-
+    rtengine::ImageSource* is=isrc->getImageSource();
+    is->setProgressListener( NULL );
     if (ipc)
         rtengine::StagedImageProcessor::destroy (ipc);
     if (beforeIpc)
