@@ -209,6 +209,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
+	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -375,6 +376,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
+	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
