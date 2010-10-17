@@ -123,6 +123,7 @@ class Options {
     std::vector<Glib::ustring> favoriteDirs;
     std::vector<Glib::ustring> renameTemplates;
     bool renameUseTemplates;
+	bool overwriteOutputFile;
     
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;

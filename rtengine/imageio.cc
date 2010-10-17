@@ -482,7 +482,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 	fclose (file);
 
 	// Rename temporary filename, practically atomic
-	rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
 
     if (pl) {
         pl->setProgressStr ("Ready.");
@@ -596,7 +596,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	fclose (file);
 
 	// Rename temporary filename, practically atomic
-	rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
 
     if (pl) {
         pl->setProgressStr ("Ready.");

@@ -57,6 +57,7 @@ PathTemplate=%p1/converted/%f
 PathFolder=
 UsePathTemplate=true
 LastSaveAsPath=
+OverwriteOutputFile=false
 
 [Profiles]
 Directory=profiles
