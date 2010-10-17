@@ -15,7 +15,7 @@ set (BASESOURCEFILES
     crophandler.cc curveeditor.cc dirbrowser.cc
     filecatalog.cc
     histogrampanel.cc history.cc  imagearea.cc
-    imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
+    imageareapanel.cc iptcpanel.cc lcurve.cc lumadenoise.cc main.cc
     multilangmgr.cc mycurve.cc options.cc
     preferences.cc profilepanel.cc safegtk.cc saveasdlg.cc
     saveformatpanel.cc splash.cc
