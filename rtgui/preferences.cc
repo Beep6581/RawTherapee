@@ -139,9 +139,10 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_SHADOWSHLIGHTS_LOCALCONTR"), ADDSET_SH_LOCALCONTRAST, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M("TP_LUMACURVE_LABEL"));
-    appendBehavList (mi, M("TP_LUMACURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
-    appendBehavList (mi, M("TP_LUMACURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
+    mi->set_value (behavColumns.label, M("TP_LABCURVE_LABEL"));
+    appendBehavList (mi, M("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
+    appendBehavList (mi, M("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
+	appendBehavList (mi, M("TP_LABCURVE_SATURATION"), ADDSET_LC_SATURATION, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHARPENING_LABEL"));

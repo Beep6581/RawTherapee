@@ -6892,6 +6892,8 @@ void CLASS identify()
   if (height == 3136 && width == 4736)	/* Pentax K-7 */
     { height  = 3122;   width  = 4684;
       top_margin = 2;  filters = 0x16161616; }
+	if (height == 2868 && width == 4352) /* Pentax K-x */
+		width = 4308; 
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
@@ -7439,7 +7441,7 @@ konica_400z:
   } else if (!strcmp(model,"K20D")) {
     filters = 0x16161616;
   } else if (!strcmp(model,"K-x")) {
-    width = 4309;
+    width = 4308;
     filters = 0x16161616;
   } else if (!strcmp(model,"Optio S")) {
     if (fsize == 3178560) {

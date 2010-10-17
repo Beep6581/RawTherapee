@@ -55,9 +55,12 @@ void ProcParams::setDefaults () {
     toneCurve.shcompr       = 85;
     toneCurve.curve.clear ();
     
-    lumaCurve.brightness    = 0;
-    lumaCurve.contrast      = 0;
-    lumaCurve.curve.clear ();
+    labCurve.brightness    = 0;
+    labCurve.contrast      = 0;
+	labCurve.saturation      = 0;
+    labCurve.lcurve.clear ();
+	labCurve.acurve.clear ();
+    labCurve.bcurve.clear ();
     
     sharpening.enabled          = true;
     sharpening.radius           = 1.0;
@@ -212,10 +215,15 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
 
     // save luma curve
-    keyFile.set_integer ("Luminance Curve", "Brightness",      lumaCurve.brightness);
-    keyFile.set_integer ("Luminance Curve", "Contrast",        lumaCurve.contrast);
-    Glib::ArrayHandle<double> lcurve = lumaCurve.curve;
-    keyFile.set_double_list("Luminance Curve", "Curve",        lcurve);
+    keyFile.set_integer ("Luminance Curve", "Brightness",      labCurve.brightness);
+    keyFile.set_integer ("Luminance Curve", "Contrast",        labCurve.contrast);
+	keyFile.set_integer ("Luminance Curve", "Saturation",	   labCurve.saturation);
+    Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
+	Glib::ArrayHandle<double> acurve = labCurve.acurve;
+    Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
+    keyFile.set_double_list("Luminance Curve", "LCurve",        lcurve);
+	keyFile.set_double_list("Luminance Curve", "aCurve",        acurve);
+    keyFile.set_double_list("Luminance Curve", "bCurve",        bcurve);
 
     // save sharpening
     keyFile.set_boolean ("Sharpening", "Enabled",              sharpening.enabled);
@@ -427,10 +435,13 @@ if (keyFile.has_group ("Channel Mixer")) {
 
     // load luma curve
 if (keyFile.has_group ("Luminance Curve")) {    
-    if (keyFile.has_key ("Luminance Curve", "Brightness"))     lumaCurve.brightness = keyFile.get_integer  ("Luminance Curve", "Brightness");
-    if (keyFile.has_key ("Luminance Curve", "Contrast"))       lumaCurve.contrast   = keyFile.get_integer ("Luminance Curve", "Contrast");
+    if (keyFile.has_key ("Luminance Curve", "Brightness"))     labCurve.brightness = keyFile.get_integer  ("Luminance Curve", "Brightness");
+    if (keyFile.has_key ("Luminance Curve", "Contrast"))       labCurve.contrast   = keyFile.get_integer ("Luminance Curve", "Contrast");
+	if (keyFile.has_key ("Luminance Curve", "Saturation"))      labCurve.saturation   = keyFile.get_integer ("Luminance Curve", "Saturation");
     if (version>200)
-	if (keyFile.has_key ("Luminance Curve", "Curve"))          lumaCurve.curve      = keyFile.get_double_list ("Luminance Curve", "Curve");
+	if (keyFile.has_key ("Luminance Curve", "LCurve"))          labCurve.lcurve      = keyFile.get_double_list ("Luminance Curve", "LCurve");
+	if (keyFile.has_key ("Luminance Curve", "aCurve"))          labCurve.acurve      = keyFile.get_double_list ("Luminance Curve", "aCurve");
+	if (keyFile.has_key ("Luminance Curve", "bCurve"))          labCurve.bcurve      = keyFile.get_double_list ("Luminance Curve", "bCurve");
 }
 
     // load sharpening
@@ -692,9 +703,12 @@ bool ProcParams::operator== (const ProcParams& other) {
         && toneCurve.autoexp    == other.toneCurve.autoexp
         && toneCurve.clip       == other.toneCurve.clip
         && toneCurve.expcomp    == other.toneCurve.expcomp
-        && lumaCurve.curve      == other.lumaCurve.curve
-        && lumaCurve.brightness == other.lumaCurve.brightness
-        && lumaCurve.contrast   == other.lumaCurve.contrast
+        && labCurve.lcurve      == other.labCurve.lcurve
+		&& labCurve.acurve      == other.labCurve.acurve
+		&& labCurve.bcurve      == other.labCurve.bcurve
+        && labCurve.brightness == other.labCurve.brightness
+        && labCurve.contrast   == other.labCurve.contrast
+		&& labCurve.saturation == other.labCurve.saturation
         && sharpening.enabled   == other.sharpening.enabled
         && sharpening.radius    == other.sharpening.radius
         && sharpening.amount    == other.sharpening.amount

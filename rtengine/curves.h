@@ -75,7 +75,7 @@ class CurveFactory {
         return 1.0 - cupper(1.0-x, m, sr);
     }
     // tone curve base. a: slope (from exp.comp.), b: black, D: max. x value (can be>1), hr,sr: highlight,shadow recovery
-    static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
+   /* static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
         double m = b+0.5/a<D ? b+0.5/a : D;
         double y = (D-b)*a<0.5 ? (D-b)*a : 0.5;
         if (x<=m)
@@ -84,7 +84,7 @@ class CurveFactory {
             return y+(1.0-y)*cupper((x-m)/(D-m), a*(D-m)/(1.0-y), hr);
         else
             return y+(x-m)*a;
-    }
+    }*/
     // brightness curve at point x, only positive amount it supported
     static inline double brightnessbase (double x, double amount) {
         if (x<0.5)
@@ -101,6 +101,7 @@ class CurveFactory {
         else 
             return 1.0 - brightnessbase (1.0-x, -amount);
     }
+	
 
   public:
 
@@ -128,6 +129,7 @@ class CurveFactory {
   public:
 //    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& cpoints, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip=1);
     static void complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
+	static void complexsgnCurve (double satclip, double satcompr, double saturation, double colormult, const std::vector<double>& curvePoints, int* outCurve, int skip);
 
 };
 
