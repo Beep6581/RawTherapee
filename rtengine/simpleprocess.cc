@@ -152,9 +152,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve, NULL);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve, NULL);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve, 1);
     ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);    
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve, NULL);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve, 1);
     ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
 	
   	ipf.impulsedenoise (labView);

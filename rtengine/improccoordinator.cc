@@ -216,9 +216,9 @@ void ImProcCoordinator::updatePreviewImage (int todo) {
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-        //ipf.colorCurve (oprevl, nprevl);
 		ipf.chrominanceCurve (oprevl, nprevl, 0, chroma_acurve, 0, pH);
         ipf.chrominanceCurve (oprevl, nprevl, 1, chroma_bcurve, 0, pH);
+        ipf.colorCurve (nprevl, nprevl);
 
         readyphase++;
 		if (scale==1) {
