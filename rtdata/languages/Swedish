@@ -292,6 +292,7 @@ MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
+MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen (katalog och filbläddrare, Kortkommando: F)
 MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen (innehåller historiken, Kortkommando: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
@@ -367,6 +368,7 @@ PREFERENCES_CLIPPINGIND;Markeringsindikation
 PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : månad</i>\n<b>%d</b><i> : dag</i>\n<i>\nTill exempel är det svenska datumformatet:</i>-n<b>%y-%m-%d</b>
+PREFERENCES_DCBENHANCE;Applicera DCB-förbättringssteg
 PREFERENCES_DCBITERATIONS;Antal DCB-iterationer
 PREFERENCES_DEFAULTLANG;Förvalt språk
 PREFERENCES_DEFAULTTHEME;Förvalt tema
@@ -377,7 +379,9 @@ PREFERENCES_DIROTHER;Annan
 PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
 PREFERENCES_DIRSOFTWARE;Installationskatalog
 PREFERENCES_DMETHOD;Metod
+PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
+PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
@@ -397,6 +401,7 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_MONITORICC;Skärmprofil
+PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
@@ -416,6 +421,7 @@ PREFERENCES_PROFILESAVECACHE;Spara behandlingsparametrar till cachen
 PREFERENCES_PROFILESAVEINPUT;Spara behandlingsparametrar med indatabildfilen
 PREFERENCES_PROPERTY;Egenskaper
 PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
+PREFERENCES_SELECTFONT;Välj typsnitt
 PREFERENCES_SELECTICCDIRDLG;Välj ICC-profil katalog...
 PREFERENCES_SELECTLANG;Välj språk
 PREFERENCES_SELECTMONITORPROFDLG;Välj ICC-profil för skärmen...
@@ -425,6 +431,7 @@ PREFERENCES_SHOWBASICEXIF;Visa grundlig EXIF-information
 PREFERENCES_SHOWDATETIME;Visa datum och tid
 PREFERENCES_SHOWONLYRAW;Visa bara RAW-filer
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
+PREFERENCES_SINGLETAB;Öppna en bild åt gången
 PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
 PREFERENCES_TAB_BROWSER;Filbläddrare
 PREFERENCES_TAB_COLORMGR;Färghantering
@@ -432,6 +439,7 @@ PREFERENCES_TAB_GENERAL;Allmän
 PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_OUTPUT;Utmatningsinställningar
 PREFERENCES_THUMBSIZE;Miniatyrbildstorlek
+PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
 PROFILEPANEL_FILEDLGFILTERPP;Efterbehandlingsprofiler
 PROFILEPANEL_LABEL;Efterbehandlingsprofiler
@@ -531,10 +539,16 @@ TP_DETAIL_AMOUNT;Mängd
 TP_DIRPYRDENOISE_CHROMA;Krominans
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LUMA;Luminans
+TP_DIRPYREQUALIZER_LUMACOARSEST;Grovast
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Minska kontrasten
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Öka kontrasten
+TP_DIRPYREQUALIZER_LUMAFINEST;Finaste
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutralt
+TP_DIRPYREQUALIZER_THRESHOLD;Tröskelvärde
 TP_DISTORTION_AMOUNT;Mängd
 TP_DISTORTION_LABEL;Distorsion
-TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
-TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
+TP_EQUALIZER_CONTRAST_MINUS;Minska kontrasten
+TP_EQUALIZER_CONTRAST_PLUS;Öka kontrasten
 TP_EQUALIZER_FINEST;Finast
 TP_EQUALIZER_LABEL;Waveletequalizer
 TP_EQUALIZER_LARGEST;Grovast
@@ -568,7 +582,7 @@ TP_ICM_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
 TP_ICM_OUTPUTPROFILE;Utmatningsprofil
 TP_ICM_SAVEREFERENCE;Spara referensbild för profilering
 TP_ICM_WORKINGPROFILE;Arbetsprofil
-TP_IMPULSEDENOISE_LABEL;Impulse brusreducering
+TP_IMPULSEDENOISE_LABEL;Brusreducering, stegsvar
 TP_IMPULSEDENOISE_THRESH;Tröskelvärde
 TP_LENSGEOM_AUTOCROP;Autobeskärning
 TP_LENSGEOM_FILL;Fyll automatiskt
@@ -585,7 +599,7 @@ TP_LUMADENOISE_LABEL;Reducering av luminansbrus
 TP_LUMADENOISE_RADIUS;Radie
 TP_PERSPECTIVE_HORIZONTAL;Horisontell
 TP_PERSPECTIVE_LABEL;Perspektiv
-TP_PERSPECTIVE_VERTICAL;vertikal
+TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
@@ -699,21 +713,14 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 !IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
-!MAIN_TOGGLE_BEFORE_AFTER;B|A
-!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-!PREFERENCES_DMETHODBATCH;Batch
-!PREFERENCES_EDITORLAYOUT;Editor Layout
+!PARTIALPASTE_LABCURVE;Luminance curve
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_LINEDENOISE;Line noise filter
-!PREFERENCES_MULTITAB;Multiple tabs mode
-!PREFERENCES_SELECTFONT;Select font
-!PREFERENCES_SINGLETAB;Single tab mode
-!PREFERENCES_WORKFLOW;Workflow
+!PREFERENCES_USESYSTEMTHEME; Use System Theme
 !TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
 !TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
-!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
-!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
-!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
-!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
-!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
-!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
+!TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_LABEL;Luminance Curve
+!TP_LABCURVE_SATURATION;Saturation

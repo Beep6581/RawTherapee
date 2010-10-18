@@ -687,6 +687,7 @@ ZOOMPANEL_ZOOMOUT;Heraus zoomen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+!PARTIALPASTE_LABCURVE;Luminance curve
 !PREFERENCES_CACORRECTION;Apply CA auto correction
 !PREFERENCES_DMETHODBATCH;Batch
 !PREFERENCES_EDITORLAYOUT;Editor Layout
@@ -696,6 +697,7 @@ ZOOMPANEL_ZOOMOUT;Heraus zoomen
 !PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !TP_DIRPYRDENOISE_CHROMA;Chrominance
@@ -717,6 +719,11 @@ ZOOMPANEL_ZOOMOUT;Heraus zoomen
 !TP_EQUALIZER_NEUTRAL;Neutral
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_LABEL;Luminance Curve
+!TP_LABCURVE_SATURATION;Saturation
 !TP_LENSGEOM_AUTOCROP;Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry

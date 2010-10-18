@@ -1,9 +1,8 @@
 
 #00 English (UK)
-#01 16.01.2009: Richard Regal
+#01 17.10.2010: Richard Regal
 HISTORY_MSG_34;Avoid Colour Clipping
 HISTORY_MSG_37;Colour Boost
-HISTORY_MSG_38;White Balance Method
 HISTORY_MSG_39;Colour Temperature
 HISTORY_MSG_41;Colour Shift "A"
 HISTORY_MSG_42;Colour Shift "B"
@@ -14,6 +13,9 @@ HISTORY_MSG_49;Edge Sensitive Colour Denoising
 HISTORY_MSG_69;Working Colour Space
 HISTORY_MSG_70;Output Colour Space
 HISTORY_MSG_71;Input Colour Space
+IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMMDD (Date Created).
+IPTCPANEL_PROVINCE;County
+IPTCPANEL_PROVINCEHINT;The County where the image originates (County).
 MAIN_TAB_COLOR;Colour
 PARTIALPASTE_COLORBOOST;Colour boost
 PARTIALPASTE_COLORDENOISE;Colour denoise
@@ -36,7 +38,7 @@ TP_HLREC_COLOR;Colour Propagation
 
 !ADJUSTER_RESET_TO_DEFAULT;Reset to default
 !BATCHQUEUE_AUTOSTART;Auto start
-!BATCH_PROCESSING;batch processing
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_FILEDLGFILTERANY;Any files
@@ -192,6 +194,7 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_33;Deconvolution Iterations
 !HISTORY_MSG_35;Saturation Limiter
 !HISTORY_MSG_36;Saturation Limit
+!HISTORY_MSG_38;White Balance Method
 !HISTORY_MSG_40;White Balance Tint
 !HISTORY_MSG_43;Luminance Denoising
 !HISTORY_MSG_44;Lum. Denoising Radius
@@ -278,8 +281,6 @@ TP_HLREC_COLOR;Colour Propagation
 !IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
 !IPTCPANEL_CREDIT;Credit
 !IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-!IPTCPANEL_DATECREATED;Date Created
-!IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
 !IPTCPANEL_EMBEDDED;Embedded
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 !IPTCPANEL_HEADLINE;Headline
@@ -289,8 +290,6 @@ TP_HLREC_COLOR;Colour Propagation
 !IPTCPANEL_KEYWORDS;Keywords
 !IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
 !IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-!IPTCPANEL_PROVINCE;Province
-!IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 !IPTCPANEL_RESET;Reset
 !IPTCPANEL_RESETHINT;Reset to profile default
 !IPTCPANEL_SOURCE;Source
@@ -377,8 +376,8 @@ TP_HLREC_COLOR;Colour Propagation
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IPTCINFO;IPTC info
+!PARTIALPASTE_LABCURVE;Luminance curve
 !PARTIALPASTE_LENSGROUP;Lens related settings
-!PARTIALPASTE_LUMACURVE;Luminance curve
 !PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 !PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
 !PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
@@ -389,7 +388,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WHITEBALANCE;White balance
 !PREFERENCES_ADD;ADD
-!PREFERENCES_APPLNEXTSTARTUP;applied at next startup
+!PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_BATCH_PROCESSING;batch processing
 !PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
@@ -484,6 +483,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_TAB_IMPROC;Image Processing
 !PREFERENCES_TAB_OUTPUT;Output Options
 !PREFERENCES_THUMBSIZE;Thumbnail Size
+!PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROFILEPANEL_FILEDLGFILTERANY;Any files
 !PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
@@ -626,16 +626,14 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_LABEL;Luminance Curve
+!TP_LABCURVE_SATURATION;Saturation
 !TP_LENSGEOM_AUTOCROP;Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LUMACURVE_BLACKLEVEL;Black
-!TP_LUMACURVE_BRIGHTNESS;Brightness
-!TP_LUMACURVE_COMPRHIGHLIGHTS;Highlight compression
-!TP_LUMACURVE_COMPRSHADOWS;Shadow compression
-!TP_LUMACURVE_CONTRAST;Contrast
-!TP_LUMACURVE_CURVEEDITOR;Luminance Curve
-!TP_LUMACURVE_LABEL;Luminance Curve
 !TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 !TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 !TP_LUMADENOISE_RADIUS;Radius

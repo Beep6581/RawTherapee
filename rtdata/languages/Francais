@@ -410,7 +410,6 @@ PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
-PREFERENCES_USESYSTEMTHEME; Utiliser le thème système
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
@@ -480,6 +479,7 @@ PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'Image
 PREFERENCES_TAB_OUTPUT;Options de sortie
 PREFERENCES_THUMBSIZE;Tailles des vignettes
+PREFERENCES_USESYSTEMTHEME; Utiliser le thème système
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
 PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
@@ -709,3 +709,16 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!PARTIALPASTE_LABCURVE;Luminance curve
+!TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_LABEL;Luminance Curve
+!TP_LABCURVE_SATURATION;Saturation
