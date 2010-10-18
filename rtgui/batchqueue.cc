@@ -356,11 +356,11 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 				inOverwriteMode = false;  // failed to delete- revert to old naming scheme
 			else
 				fileExists = false;  // deleted now
-		}
+		}*/
 		
 		if (!fileExists) {
             return fname;
-        }*/
+        }
     }
 }
 
