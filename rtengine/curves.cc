@@ -735,7 +735,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		float shoulderx = toex+(1-toey)/a;//point in x at which line of slope a starting at toe point reaches y=1
 		float shouldery;
 		if (shoulderx<1) {
-			shouldery = MAX(2*toey, 1-(1-shoulderx)*(1-hlcompr/100.0));
+			shouldery = MAX(2*toey, 1-(1-shoulderx)*(hlcompr/200.0));
 			shoulderx = shoulderx - (1-shouldery)/a;
 		} else {
 			shoulderx = 1;
@@ -749,13 +749,14 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		basecurvePoints.push_back(toey); //value at toe point
 		
 		if (toex<1) {
-			basecurvePoints.push_back(0.25*toex+0.75*shoulderx); //toe point
-			basecurvePoints.push_back(0.25*toey+0.75*shouldery); //value at toe point
+			//add a point along the line between the toe point and shoulder point
+			basecurvePoints.push_back(0.25*toex+0.75*shoulderx); //mid point
+			basecurvePoints.push_back(0.25*toey+0.75*shouldery); //value at mid point
 			
 			basecurvePoints.push_back(shoulderx); //shoulder point
 			basecurvePoints.push_back(shouldery); //value at shoulder point
 			if (shoulderx<1) {
-				basecurvePoints.push_back(1); // white point
+				basecurvePoints.push_back(1-0.5*(1-shoulderx)*(1-hlcompr/100.0)); // white point
 				basecurvePoints.push_back(1); // value at white point
 			}
 		}
