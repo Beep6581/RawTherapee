@@ -879,46 +879,69 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
     	                parent->setProgress(0.);
 						bool success=false;
 						Glib::ustring cmdLine;
+						Glib::ustring executable;
 						// start gimp
 						if (options.editorToSendTo==1) {
 #ifdef _WIN32
-								cmdLine = Glib::ustring("\"") + Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote") + "\" gimp-2.4.exe" + " \"" + filename + "\"";
+								executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote");
+								cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" gimp-2.4.exe ") + Glib::ustring("\"") + filename + Glib::ustring("\"");
+								if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+									success = safe_spawn_command_line_async (cmdLine);
+								}
 #else
-								cmdLine = Glib::ustring("gimp-remote ") + " \"" + filename + "\"";
-#endif
+								cmdLine = Glib::ustring("gimp-remote ") + Glib::ustring(" \"") + filename + Glib::ustring("\"");
 								success = safe_spawn_command_line_async (cmdLine);
+#endif
 								if (!success){
 #ifdef _WIN32
 										int ver = 12;
 										while (!success && ver) {
-												cmdLine = Glib::ustring("\"") + Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose("gimp-2.%1.exe",ver)) + "\" \"" + filename + "\"";
+												executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"),ver));
+												if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+													cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
+													success = safe_spawn_command_line_async (cmdLine);
+												}
 												ver--;
-												success = safe_spawn_command_line_async (cmdLine);
 										}
 #elif defined __APPLE__
-										cmdLine = Glib::ustring("gimp ") + " \"" + filename + "\"";
+										cmdLine = Glib::ustring("gimp \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
 #else
-										cmdLine = Glib::ustring("gimp ") + " \"" + filename + "\"";
+										cmdLine = Glib::ustring("gimp \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
 #endif
 								}
 						}
 						else if (options.editorToSendTo==2) {
-#ifdef __APPLE__
-								cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir,"Photoshop.app\' ")  + "\'" + filename + "\'";
+#ifdef _WIN32
+								executable = Glib::build_filename(options.psDir,"Photoshop.exe");
+								if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+										cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
+										success = safe_spawn_command_line_async (cmdLine);
+								}
 #else
-								cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir,"Photoshop.exe") + "\" \"" + filename + "\"";
-#endif
+		#ifdef defined __APPLE__
+								cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir,"Photoshop.app\' ")  + Glib::ustring("\'") + filename + Glib::ustring("\'");
+		#else
+								cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir,"Photoshop.exe") + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
+		#endif
 								success = safe_spawn_command_line_async (cmdLine);
+#endif
 						}
 						else if (options.editorToSendTo==3) {
-#ifdef __APPLE__
-								cmdLine = Glib::ustring("") + options.customEditorProg + filename;
+#ifdef _WIN32
+								if ( Glib::file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+										cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
+										success = safe_spawn_command_line_async (cmdLine);
+								}
 #else
-								cmdLine = Glib::ustring("\"") + options.customEditorProg + "\" \"" + filename + "\"";
-#endif
+		#ifdef __APPLE__
+								cmdLine = options.customEditorProg + filename;
+		#else
+								cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
+		#endif
 								success = safe_spawn_command_line_async (cmdLine);
+#endif
 						}
 
 						if (!success) {
