@@ -6892,13 +6892,8 @@ void CLASS identify()
   if (height == 3136 && width == 4736)	/* Pentax K-7 */
     { height  = 3122;   width  = 4684;
       top_margin = 2;  filters = 0x16161616; }
-<<<<<<< local
-	if (height == 2868 && width == 4352) /* Pentax K-x */
-		width = 4308; 
-=======
   if (height == 2868 && width == 4352)	/* Pentax K-x */
                         width  = 4308;
->>>>>>> other
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
