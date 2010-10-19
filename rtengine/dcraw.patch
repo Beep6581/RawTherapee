@@ -1,5 +1,5 @@
---- dcraw.c	2010-10-18 17:48:44.000000000 -0600
-+++ dcraw.cc	2010-10-18 18:31:30.000000000 -0600
+--- dcraw.c	2010-06-30 10:40:16.000000000 -0600
++++ dcraw.cc	2010-06-30 10:36:00.000000000 -0600
 @@ -1,3 +1,16 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -72,16 +72,7 @@
        filters &= ~((filters & 0x55555555) << 1);
      }
    }
-@@ -4447,7 +4465,7 @@
-     }
-     if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
-       fread (buf97, 1, sizeof buf97, ifp);
--      i = (uchar *) memmem (buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-+      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-       if (i < 70 && buf97[i] < 3)
- 	flip = "065"[buf97[i]]-'0';
-     }
-@@ -4824,7 +4842,7 @@
+@@ -4817,7 +4835,7 @@
    unsigned sony_curve[] = { 0,0,0,0,0,4095 };
    unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
    struct jhead jh;
@@ -90,7 +81,7 @@
  
    if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
      return 1;
-@@ -5235,12 +5253,13 @@
+@@ -5225,12 +5243,13 @@
      fread (buf, sony_length, 1, ifp);
      sony_decrypt (buf, sony_length/4, 1, sony_key);
      sfp = ifp;
@@ -109,16 +100,16 @@
      ifp = sfp;
      free (buf);
    }
-@@ -5265,6 +5284,8 @@
- {
-   int doff;
+@@ -5256,6 +5275,8 @@
+   int doff, max_samp=0, raw=-1, thm=-1, i;
+   struct jhead jh;
  
 +  /*RT*/  exif_base = base;
 +
    fseek (ifp, base, SEEK_SET);
    order = get2();
-   if (order != 0x4949 && order != 0x4d4d) return 0;
-@@ -5439,7 +5460,7 @@
+   if (order != 0x4949 && order != 0x4d4d) return;
+@@ -5424,7 +5445,7 @@
  {
    const char *file, *ext;
    char *jname, *jfile, *jext;
@@ -127,7 +118,7 @@
  
    ext  = strrchr (ifname, '.');
    file = strrchr (ifname, '/');
-@@ -5467,7 +5488,8 @@
+@@ -5452,7 +5473,8 @@
        *jext = '0';
      }
    if (strcmp (jname, ifname)) {
@@ -137,22 +128,19 @@
        if (verbose)
  	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);
        parse_tiff (12);
-@@ -5805,8 +5827,12 @@
+@@ -5790,7 +5812,11 @@
      order = get2();
      hlen  = get4();
      if (get4() == 0x48454150)		/* "HEAP" */
--      parse_ciff (save+hlen, len-hlen);
--    if (parse_tiff (save+6)) apply_tiff();
 +/*RT*/    {
 +/*RT*/      ciff_base = save+hlen;
 +/*RT*/      ciff_len = len-hlen;
-+      	    parse_ciff (save+hlen, len-hlen);
+       parse_ciff (save+hlen, len-hlen);
 +/*RT*/    }
-+	    if (parse_tiff (save+6)) apply_tiff();
+     parse_tiff (save+6);
      fseek (ifp, save+len, SEEK_SET);
    }
-   return 1;
-@@ -6755,6 +6781,12 @@
+@@ -6738,6 +6764,12 @@
    fread (head, 1, 32, ifp);
    fseek (ifp, 0, SEEK_END);
    flen = fsize = ftell(ifp);
@@ -165,16 +153,16 @@
    if ((cp = (char *) memmem (head, 32, "MMMM", 4)) ||
        (cp = (char *) memmem (head, 32, "IIII", 4))) {
      parse_phase_one (cp-head);
-@@ -6762,6 +6794,8 @@
+@@ -6745,6 +6777,8 @@
    } else if (order == 0x4949 || order == 0x4d4d) {
      if (!memcmp (head+6,"HEAPCCDR",8)) {
        data_offset = hlen;
 +/*RT*/      ciff_base = hlen;
 +/*RT*/      ciff_len = fsize - hlen;
        parse_ciff (hlen, flen - hlen);
-     } else if (parse_tiff(0)) apply_tiff();
-   } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
-@@ -8511,13 +8545,13 @@
+     } else {
+       parse_tiff(0);
+@@ -8494,13 +8528,13 @@
  	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
        else FORCC ppm2[col*colors+c] = curve[image[soff][c]];
      if (output_bps == 16 && !output_tiff && htons(0x55aa) != 0x55aa)
@@ -190,7 +178,7 @@
  {
    int arg, status=0;
    int timestamp_only=0, thumbnail_only=0, identify_only=0;
-@@ -8630,7 +8664,7 @@
+@@ -8613,7 +8647,7 @@
        case 'i':  identify_only     = 1;  break;
        case 'c':  write_to_stdout   = 1;  break;
        case 'v':  verbose           = 1;  break;
@@ -199,7 +187,7 @@
        case 'f':  four_color_rgb    = 1;  break;
        case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
        case 'a':  use_auto_wb       = 1;  break;
-@@ -8894,3 +8928,537 @@
+@@ -8877,3 +8911,537 @@
    }
    return status;
  }
@@ -622,7 +610,7 @@
 +
 +    // generate histogram for auto exposure
 +    tpp->aeHistCompression = 3;
-+    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
++    tpp->aeHistogram = new int[65536>>tpp->aeHistCompression];
 +    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
 +    int radd = 4;
 +    int gadd = 2;
