@@ -19,10 +19,18 @@
 #ifndef _CURVELISTENER_
 #define _CURVELISTENER_
 
+class CurveEditor;
+
 class CurveListener {
 
+	private:
+		bool multi;
     public:
         virtual void curveChanged () {}
+        virtual void curveChanged (CurveEditor* ce) {}
+        void setMulti(bool value) { multi = value; }
+        bool isMulti() { return multi; }
+        CurveListener() : multi(false) {}
 };
 
 #endif

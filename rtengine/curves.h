@@ -162,6 +162,6 @@ class Curve {
     double getVal (double x);
     void   getVal (const std::vector<double>& t, std::vector<double>& res);
 };
-};
+}
 
 #endif

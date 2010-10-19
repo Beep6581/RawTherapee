@@ -51,7 +51,8 @@ Curve::Curve (const std::vector<double>& p, int poly_pn) : x(NULL), y(NULL), ypp
             if (kind==Spline)
                 spline_cubic_set ();
             else if (kind==NURBS && N > 2)
-                NURBS_set ();
+						NURBS_set ();
+					else kind=Linear;
         }
         else if (kind==Parametric) {
             if (p.size()!=8 && p.size()!=9)
@@ -110,7 +111,7 @@ void Curve::NURBS_set () {
 
     std::vector<double> sc_x(nbSubCurvesPoints);  // X sub-curve points (  XP0,XP1,XP2,  XP2,XP3,XP4,  ...)
     std::vector<double> sc_y(nbSubCurvesPoints);  // Y sub-curve points (  YP0,YP1,YP2,  YP2,YP3,YP4,  ...)
-    std::vector<double> sc_length(N-2);           // Length of the subcurves
+    std::vector<double> sc_length(N+2);           // Length of the subcurves
     double total_length=0.;
 
     // Create the list of Bezier sub-curves
@@ -159,24 +160,24 @@ void Curve::NURBS_set () {
 	    total_length += length;
     }
 
-    unsigned int total_points = 0;
-    for (unsigned int i=0; i < sc_x.size(); i+=3) {
-    	total_points += (int)(((double)ppn+N-2) * sc_length[i/3] / total_length) + (i==0 ? 1 : 0) - 1;
-    }
-   	poly_x.resize(total_points);
-   	poly_y.resize(total_points);
-
+    poly_x.clear();
+   	poly_y.clear();
+   	unsigned int sc_xsize=j-1;
     j = 0;
     // create the polyline with the number of points adapted to the X range of the sub-curve
-    for (unsigned int i=0; i < sc_x.size(); i+=3) {
+    for (unsigned int i=0; i < sc_xsize /*sc_x.size()*/; i+=3) {
     	// TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
-    	int nbr_points = (int)(((double)ppn+N-2) * sc_length[i/3] / total_length);
-
+    	int nbr_points = (int)(((double)(ppn+N-2) * sc_length[i/3] )/ total_length);
+    	if (nbr_points<0){
+    		for(int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
+    		printf("NURBS: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
+    		exit(0);
+    	}
     	// increment along the curve, not along the X axis
     	double increment = 1.0 / (double)(nbr_points-1);
     	if (!i) {
-    		poly_x[j  ] = sc_x[i];
-    		poly_y[j++] = sc_y[i];
+    		poly_x.push_back( sc_x[i]);
+    		poly_y.push_back(sc_y[i]);
     	}
     	for (k=1; k<(nbr_points-1); k++) {
     		double t = k*increment;
@@ -186,12 +187,12 @@ void Curve::NURBS_set () {
     		double tr2t = tr*2*t;
 
     		// adding a point to the polyline
-    		poly_x[j  ] = tr2*sc_x[i] + tr2t*sc_x[i+1] + t2*sc_x[i+2];
-    		poly_y[j++] = tr2*sc_y[i] + tr2t*sc_y[i+1] + t2*sc_y[i+2];
+    		poly_x.push_back( tr2*sc_x[i] + tr2t*sc_x[i+1] + t2*sc_x[i+2]);
+    		poly_y.push_back( tr2*sc_y[i] + tr2t*sc_y[i+1] + t2*sc_y[i+2]);
     	}
     	// adding the last point of the sub-curve
-		poly_x[j  ] = sc_x[i+2];
-		poly_y[j++] = sc_y[i+2];
+    	poly_x.push_back( sc_x[i+2]);
+    	poly_y.push_back(sc_y[i+2]);
     }
 }
 

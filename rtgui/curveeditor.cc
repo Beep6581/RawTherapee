@@ -412,8 +412,12 @@ void CurveEditor::typeSelectionChanged () {
 
 void CurveEditor::curveChanged () {
 
-    if (cl)
-        cl->curveChanged ();
+    if (cl) {
+    	if (cl->isMulti())
+    		cl->curveChanged (this);
+    	else
+    		cl->curveChanged ();
+    }
 }
 
 void CurveEditor::curveResetPressed () {
