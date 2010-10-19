@@ -1085,22 +1085,22 @@ void Preferences::dmethodChanged () {
 
 void Preferences::dmethodBatchChanged () {
 
-//    if (dmethod->get_active_row_number()==0)
-//        ccSteps->set_value (2);
-//    else if (dmethod->get_active_row_number()==1)
-//        ccSteps->set_value (1);
-//    else if (dmethod->get_active_row_number()==2)
-//        ccSteps->set_value (2);
-//
-//    if (dmethod->get_active_row_number()==4) {
-//        dcbEnhance->set_sensitive(true);
-//        dcbIterations->set_sensitive(true);
-//        dcbIterationsLabel->set_sensitive(true);
-//    } else {
-//        dcbEnhance->set_sensitive(false);
-//        dcbIterations->set_sensitive(false);
-//        dcbIterationsLabel->set_sensitive(false);
-//    }
+    if (dmethod->get_active_row_number()==0)
+        ccSteps->set_value (2);
+    else if (dmethod->get_active_row_number()==1)
+        ccSteps->set_value (1);
+    else if (dmethod->get_active_row_number()==2)
+        ccSteps->set_value (2);
+
+    if (dmethod->get_active_row_number()==4) {
+        dcbEnhance->set_sensitive(true);
+        dcbIterations->set_sensitive(true);
+        dcbIterationsLabel->set_sensitive(true);
+    } else {
+        dcbEnhance->set_sensitive(false);
+        dcbIterations->set_sensitive(false);
+        dcbIterationsLabel->set_sensitive(false);
+    }
 }
 
 void Preferences::aboutPressed () {
