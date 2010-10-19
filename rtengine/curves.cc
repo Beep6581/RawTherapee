@@ -730,12 +730,12 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
-		float toex = black/a;
-		float toey = black*(1-shcompr/100.0);
-		float shoulderx = toex+(1-toey)/a;
+		float toex = MIN(1,black/a);
+		float toey = toex*a*(1-shcompr/100.0);
+		float shoulderx = toex+(1-toey)/a;//point in x at which line of slope a starting at toe point reaches y=1
 		float shouldery;
 		if (shoulderx<1) {
-			shouldery = 1-(1-shoulderx)*(1-hlcompr/100.0);
+			shouldery = MAX(2*toey, 1-(1-shoulderx)*(1-hlcompr/100.0));
 			shoulderx = shoulderx - (1-shouldery)/a;
 		} else {
 			shoulderx = 1;
@@ -748,15 +748,17 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		basecurvePoints.push_back(toex); //toe point
 		basecurvePoints.push_back(toey); //value at toe point
 		
-		basecurvePoints.push_back(0.25*toex+0.75*shoulderx); //toe point
-		basecurvePoints.push_back(0.25*toey+0.75*shouldery); //value at toe point
-				
-		basecurvePoints.push_back(shoulderx); //shoulder point
-		basecurvePoints.push_back(shouldery); //value at shoulder point
-		
-		basecurvePoints.push_back(1); // white point
-		basecurvePoints.push_back(1); // value at white point
-		
+		if (toex<1) {
+			basecurvePoints.push_back(0.25*toex+0.75*shoulderx); //toe point
+			basecurvePoints.push_back(0.25*toey+0.75*shouldery); //value at toe point
+			
+			basecurvePoints.push_back(shoulderx); //shoulder point
+			basecurvePoints.push_back(shouldery); //value at shoulder point
+			if (shoulderx<1) {
+				basecurvePoints.push_back(1); // white point
+				basecurvePoints.push_back(1); // value at white point
+			}
+		}
 		Curve* basecurve = NULL;
 		basecurve = new Curve (basecurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -767,12 +769,19 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		brightcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		brightcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
-		brightcurvePoints.push_back(0.1); //toe point
-		brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+		if(br>0) {
+			brightcurvePoints.push_back(0.1); //toe point
+			brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 		
-		brightcurvePoints.push_back(0.7); //shoulder point
-		brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
-		
+			brightcurvePoints.push_back(0.7); //shoulder point
+			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+		} else {
+			brightcurvePoints.push_back(0.1+br/150.0); //toe point
+			brightcurvePoints.push_back(0.1); //value at toe point
+
+			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //shoulder point
+			brightcurvePoints.push_back(0.7); //value at shoulder point
+		}
 		brightcurvePoints.push_back(1); // white point
 		brightcurvePoints.push_back(1); // value at white point
 		
