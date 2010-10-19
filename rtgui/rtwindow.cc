@@ -37,7 +37,6 @@ RTWindow::RTWindow () {
     set_title("RawTherapee "+versionString);
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
-    maximize();
     set_modal(false);
     set_resizable(true);
     if (options.windowMaximized)
