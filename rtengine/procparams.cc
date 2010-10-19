@@ -108,11 +108,11 @@ void ProcParams::setDefaults () {
     
     sh.enabled       = false;
     sh.hq            = false;
-    sh.highlights    = 10;
+    sh.highlights    = 0;
     sh.htonalwidth   = 80;
-    sh.shadows       = 10;
+    sh.shadows       = 0;
     sh.stonalwidth   = 80;
-    sh.localcontrast = 15;
+    sh.localcontrast = 0;
     sh.radius        = 40;
     
     crop.enabled    = false;
@@ -192,7 +192,7 @@ int ProcParams::save (Glib::ustring fname) const {
 
     SafeKeyFile keyFile;
 
-    keyFile.set_integer ("Version", "Version", 231);
+    keyFile.set_integer ("Version", "Version", 20101019);
 
     // save tonecurve:
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);

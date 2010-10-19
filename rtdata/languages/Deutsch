@@ -9,6 +9,8 @@
 #07 22.12.2007
 #08 4.4.2008: Anpassungen für 2.4
 #09 Leichte Anpassungen (keenonkites/klonk)
+#10 Erweiterung (oduis)
+ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
 CURVEEDITOR_CUSTOM;Angepasst
@@ -16,6 +18,7 @@ CURVEEDITOR_DARKS;Tiefen
 CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvendateien
 CURVEEDITOR_HIGHLIGHTS;Spitzlichter
+CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_LIGHTS;Lichter
 CURVEEDITOR_LINEAR;Linear
 CURVEEDITOR_LOADDLGLABEL;Kurve Laden...
@@ -32,7 +35,7 @@ EXIFFILTER_DIALOGLABEL;Exif Filter
 EXIFFILTER_FOCALLEN;Brennweite
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
-EXIFFILTER_METADATAFILTER;Metadaten Filter einschalten
+EXIFFILTER_METADATAFILTER;Metadaten-Filter einschalten
 EXIFFILTER_SHUTTER;Verschlusszeit
 EXIFPANEL_ADDEDIT;Neu/Ändern
 EXIFPANEL_ADDEDITHINT;Hinzufügen eines neuen oder Ändern eines bestehenden Attributs
@@ -48,14 +51,14 @@ EXIFPANEL_RESETALL;Alle zurücksetzen
 EXIFPANEL_RESETALLHINT;Alle Attribute zu den ursrpünglichen Werten zurücksetzen
 EXIFPANEL_RESETHINT;Gewählte Attribute zu den ursprünglich Werten zurücksetzen
 EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
-FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/löschen...
+FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_ARRANGEMENTHINT;Wechseln zwischen vertikaler und horizontaler Ausrichtung der Voransichten
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COPYPROFILE;Profil kopieren
 FILEBROWSER_CURRENT_NAME;Aktueller Name:
 FILEBROWSER_DELETEDLGLABEL;Bestätige Löschen von Dateien
-FILEBROWSER_DELETEDLGMSG;Wollen sie wirklich %1 Dateien löschen?
+FILEBROWSER_DELETEDLGMSG;Wollen sie wirklich %1 Datei(en) löschen?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
 FILEBROWSER_EMPTYTRASHHINT;Endgültiges Löschen der Dateien im Papierkorb
 FILEBROWSER_EXIFFILTERAPPLY;Anwenden
@@ -109,10 +112,10 @@ GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
 GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbruch
-GENERAL_DISABLE;ausschalten
-GENERAL_DISABLED;ausgeschaltet
-GENERAL_ENABLE;einschalten
-GENERAL_ENABLED;eingeschaltet
+GENERAL_DISABLE;deaktivieren
+GENERAL_DISABLED;deaktiviert
+GENERAL_ENABLE;Aktivieren
+GENERAL_ENABLED;Aktiv
 GENERAL_HIGH_QUALITY;Hohe Qualität
 GENERAL_LANDSCAPE;Quer
 GENERAL_LOAD;Laden
@@ -150,17 +153,17 @@ HISTORY_MSG_19;Luminanz Kurve
 HISTORY_MSG_1;Bild geladen
 HISTORY_MSG_20;Schärfen
 HISTORY_MSG_21;Schärfen Radius
-HISTORY_MSG_22;Schärfen Menge
+HISTORY_MSG_22;Schärfen Stärke
 HISTORY_MSG_23;Schärfen Schwellwert
 HISTORY_MSG_24;Schärfen nur Kanten
 HISTORY_MSG_25;Schärfen Kantensuche Radius
 HISTORY_MSG_26;Schärfen Kanten-Toleranz
 HISTORY_MSG_27;Schärfen Halo-Kontrolle
-HISTORY_MSG_28;Schärfen Halo-Kontrolle Menge
+HISTORY_MSG_28;Schärfen Halo-Kontrolle Stärke
 HISTORY_MSG_29;Schärfen Methode
 HISTORY_MSG_2;Profil geladen
 HISTORY_MSG_30;Dekonvolution Radius
-HISTORY_MSG_31;Dekonvolution Menge
+HISTORY_MSG_31;Dekonvolution Stärke
 HISTORY_MSG_32;Dekonvolution Dämpfung
 HISTORY_MSG_33;Dekonvolution Iterationen
 HISTORY_MSG_34;Verhindere Farbbeschneidungen
@@ -199,13 +202,13 @@ HISTORY_MSG_63;Variante gewählt
 HISTORY_MSG_64;Bild beschneiden
 HISTORY_MSG_65;Farbsaum-Entfernung
 HISTORY_MSG_66;Lichter wiederherstellen
-HISTORY_MSG_67;Lichter wiederherstellen Menge
+HISTORY_MSG_67;Lichter wiederherstellen Stärke
 HISTORY_MSG_68;Lichter wiederherstellen Methode
 HISTORY_MSG_69;Aktueller Farbraum
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Farbraum für Ausgabe
 HISTORY_MSG_71;Farbraum für Eingabe
-HISTORY_MSG_72;Korrektur Randlichtabfall
+HISTORY_MSG_72;Vignettierungs-Korrektur
 HISTORY_MSG_73;Kanal-Mixer
 HISTORY_MSG_74;Änderung Größe - Maßstab
 HISTORY_MSG_75;Änderung Größe - Methode
@@ -216,8 +219,18 @@ HISTORY_MSG_79;Änderung Größe - Breite
 HISTORY_MSG_7;Schwarz
 HISTORY_MSG_80;Änderung Größe - Höhe
 HISTORY_MSG_81;Änderung Größe - eingeschaltet
+HISTORY_MSG_82;Profil geändert
+HISTORY_MSG_83;Schatten/Lichter hohe Qualität
+HISTORY_MSG_84;Perspektivische Korrektur
+HISTORY_MSG_85;Wavelet Koeffizienten
+HISTORY_MSG_86;Wavelet Equalizer
+HISTORY_MSG_87;Impulsrauschfilter
+HISTORY_MSG_89;Gerichtete Pyramide
 HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_9;Lichter-Kompression
+HISTORY_MSG_90;Gerichtete Pyramide Luminanz
+HISTORY_MSG_91;Gerichtete Pyramide Chrominanz
+HISTORY_MSG_92;Gerichtete Pyramide Gamma
 HISTORY_NEWSNAPSHOT;Neue Variante
 HISTORY_NEWSNAPSHOTAS;als...
 HISTORY_NEWSSDIALOGLABEL;Name der Variante:
@@ -231,7 +244,7 @@ ICMPANEL_GAMMABEFOREINPUT;Profil enthält Gammaanpassung
 ICMPANEL_INPUTCAMERA;Kamera-Standard
 ICMPANEL_INPUTCUSTOM;Benutzerdefiniert
 ICMPANEL_INPUTDLGLABEL;Wähle Eingabe-ICC-Profil...
-ICMPANEL_INPUTEMBEDDED;Verwende eingebettetes, wenn möglich
+ICMPANEL_INPUTEMBEDDED;Eingebettetes verwenden, wenn möglich
 ICMPANEL_INPUTPROFILE;Eingabeprofil
 ICMPANEL_NOICM;Kein ICM: sRGB-Ausgabe
 ICMPANEL_OUTPUTDLGLABEL;Wähle Ausgabe-ICC-Profil...
@@ -284,18 +297,21 @@ IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertrag
 MAIN_BUTTON_EXIT;Verlassen
 MAIN_BUTTON_FULLSCREEN;Vollbild
 MAIN_BUTTON_PREFERENCES;Einstellungen
-MAIN_BUTTON_PUTTOQUEUE;Auf die Warteschlange
-MAIN_BUTTON_QUEUE;Auf die Warteschlange
+MAIN_BUTTON_PUTTOQUEUE;In Warteschlange
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Reiht aktuelles Bild in die Warteschlange ein <b>Strg+Q</b>
+MAIN_BUTTON_QUEUE;In die Warteschlange
 MAIN_BUTTON_SAVE;Bild speichern
-MAIN_BUTTON_SAVEAS;unter...
-MAIN_BUTTON_SENDTOEDITOR;Im Editor laden
+MAIN_BUTTON_SAVE_TOOLTIP;Aktuelles Bild speichern <b>Ctrl+S</b>
+MAIN_BUTTON_SAVEAS;Speichern unter...
+MAIN_BUTTON_SENDTOEDITOR;Im Editor öffnen
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Öffnes das aktuelle Bild im externen Editor <b>Strg+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
 MAIN_FRAME_BATCHQUEUE;Warteschlange 
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
-MAIN_FRAME_PLACES;Orte
-MAIN_FRAME_PLACES_ADD;Hinzu
-MAIN_FRAME_PLACES_DEL;Löschen
-MAIN_FRAME_RECENT;Verwendete Ordner
+MAIN_FRAME_PLACES;Favoriten
+MAIN_FRAME_PLACES_ADD;Hinzuf.
+MAIN_FRAME_PLACES_DEL;Entf.
+MAIN_FRAME_RECENT;Zuletzt besucht
 MAIN_MSG_ALREADYEXISTS;Diese Datei existiert schon.
 MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
 MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
@@ -303,11 +319,11 @@ MAIN_MSG_CANNOTSTARTEDITOR;Der Editor kann nicht gestartet werden.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Setzen Sie bitte den richtigen Pfad in den Einstellungen.
 MAIN_MSG_ERRORDURINGIMAGESAVING;Fehler beim Speichern des Bildes
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unverarbeitete Bilder in der Warteschlange gehen beim Verlassen der Anwendung verloren.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schliessen ? Es hat noch unverarbeitete Bilder in der Warteschlange.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schliessen? Es hat noch unverarbeitete Bilder in der Warteschlange.
 MAIN_MSG_JOBSINQUEUE;Job in Bearbeitung
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_PLACES;Orte
-MAIN_MSG_QOVERWRITE;Wollen sie die Datei überschreiben ?
+MAIN_MSG_QOVERWRITE;Wollen sie die Datei überschreiben?
 MAIN_TAB_BASIC;Basis
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_DETAIL;Detail
@@ -317,7 +333,7 @@ MAIN_TAB_EXPOSURE;Belichtung
 MAIN_TAB_FILTER;Metadaten-Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
-MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA;Meta-Daten
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOGGLE_BEFORE_AFTER;V|N
@@ -360,6 +376,7 @@ PARTIALPASTE_EXPOSURE;Belichtung
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_ICMSETTINGS;Einstellungen ICM
 PARTIALPASTE_IPTCINFO;IPTC Informationen
+PARTIALPASTE_LABCURVE;LAB-Kurve
 PARTIALPASTE_LENSGROUP;Gruppe Farbeinstellungen
 PARTIALPASTE_LUMACURVE;Luminanzkurve
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
@@ -369,7 +386,7 @@ PARTIALPASTE_RESIZE;Grösse ändern
 PARTIALPASTE_ROTATION;Drehen
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENING;Schärfen
-PARTIALPASTE_VIGNETTING;Korrektur Randlichtabfall
+PARTIALPASTE_VIGNETTING;Korrektur Vignettierung
 PARTIALPASTE_WHITEBALANCE;Weissabgleich
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
@@ -388,6 +405,7 @@ PREFERENCES_CACHESTRAT2;Priorität auf minimierten Speicherverbrauch (geringere 
 PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format des Zwischenspeichers
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
+PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Abberation
 PREFERENCES_CLEARDLG_LINE1;Löschen des Zwischenspeichers
 PREFERENCES_CLEARDLG_LINE2;Das kann einige Sekunden dauern.
 PREFERENCES_CLEARDLG_TITLE;Bitte warten
@@ -406,25 +424,31 @@ PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
 PREFERENCES_DMETHOD;Methode
+PREFERENCES_DMETHODBATCH;Warteschlange
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
+PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
-PREFERENCES_FALSECOLOR;Stufen zur Unterdrückung von Falschfarben
+PREFERENCES_FALSECOLOR;Stufen Falschfarben-Unterdrückung
 PREFERENCES_FBROWSEROPTS;Datei-Browser-Einstellungen
 PREFERENCES_FILEFORMAT;Datei-Format
 PREFERENCES_FORIMAGE;Für Bild-Dateien
 PREFERENCES_FORRAW;Für RAW-Dateien
-PREFERENCES_GIMPPATH;GIMP Installations Verzeichnis
+PREFERENCES_GIMPPATH;GIMP Installations-Verzeichnis
+PREFERENCES_GREENEQUIL;Grün-Ausgleich
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
+PREFERENCES_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_HLTHRESHOLD;Schwellwert - zu hell
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
 PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
 PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
-PREFERENCES_INTENT_RELATIVE;Relative farbmetrisch
+PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
+PREFERENCES_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_MONITORICC;Monitor-Profil
+PREFERENCES_MULTITAB;Multi-Reiter Modus
 PREFERENCES_OUTDIR;Ausgabe-Verzeichnis
 PREFERENCES_OUTDIRFOLDER;Speichern in Verzeichnis
 PREFERENCES_OUTDIRFOLDERHINT;Ablegen der gespeicherten Bilder in ein ausgewähltes Verzeichnis
@@ -439,20 +463,22 @@ PREFERENCES_PARSEDEXTDELHINT;Lösche den ausgewählten Datei-Typ von der Liste
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher (Cache)
-PREFERENCES_PROFILEPRFILE;Bearbeitungsprofile bei der urpsrünglich geladenen Datei
+PREFERENCES_PROFILEPRFILE;Bearbeitungsprofile bei der ursprünglich geladenen Datei
 PREFERENCES_PROFILESAVECACHE;Speichern der Verarbeitungsparameter im Zwischenspeicher (Cache)
 PREFERENCES_PROFILESAVEINPUT;Speichern der Verarbeitungsparameter zusammen mit der ursprünglich geladenen Datei
 PREFERENCES_PROPERTY;Eigenschaft
-PREFERENCES_PSPATH;Adobe Photoshop Installations Verzeichnis
+PREFERENCES_PSPATH;Adobe Photoshop Installations-Verzeichnis
+PREFERENCES_SELECTFONT;Schriftart
 PREFERENCES_SELECTICCDIRDLG;Wähle ICC-Profile-Verzeichnis...
 PREFERENCES_SELECTLANG;Sprache
 PREFERENCES_SELECTMONITORPROFDLG;Wähle ICC-Profil für den Monitor...
-PREFERENCES_SELECTTHEME;Wähle Oberflächendesign
+PREFERENCES_SELECTTHEME;Oberflächendesign
 PREFERENCES_SET;SETZEN
 PREFERENCES_SHOWBASICEXIF;Zeige grundlegende Exif-Informationen
 PREFERENCES_SHOWDATETIME;Zeige Datum und Zeit
 PREFERENCES_SHOWONLYRAW;Zeige nur Rohdateien (RAW)
 PREFERENCES_SHTHRESHOLD;Schwellwert - zu dunkel
+PREFERENCES_SINGLETAB;Ein-Reiter Modus
 PREFERENCES_STARTUPIMDIR;Bild-Verzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Datei-Browser
 PREFERENCES_TAB_COLORMGR;Farbmanagement
@@ -460,6 +486,8 @@ PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_OUTPUT;Ausgabe
 PREFERENCES_THUMBSIZE;Größe der Vorschau
+PREFERENCES_USESYSTEMTHEME; System-Overfläche verwenden
+PREFERENCES_WORKFLOW;Workflow
 PROFILEPANEL_FILEDLGFILTERANY;Alle Dateien
 PROFILEPANEL_FILEDLGFILTERPP;Bearbeitungsprofile
 PROFILEPANEL_LABEL;Bearbeitungsprofile
@@ -493,6 +521,7 @@ QINFO_FOCALLENGTH;Brennweite
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
 QINFO_NOEXIF;Keine Exif-Daten vorhanden.
+SAVEDLG_AUTOSUFFIX;Suffix an Dateinamen hängen falls schon vorhanden
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_JPEGQUAL;JPEG-Qualität
 SAVEDLG_JPGFILTER;JPEG-Datei
@@ -501,8 +530,8 @@ SAVEDLG_PNGFILTER;PNG-Datei
 SAVEDLG_PUTTOQUEUE;In Warteschlange für Verarbeitung legen
 SAVEDLG_PUTTOQUEUEHEAD;An Anfang der Warteschlange für Verarbeitung legen
 SAVEDLG_PUTTOQUEUETAIL;Ans Ende der Warteschlange für Verarbeitung legen
-SAVEDLG_SAVEIMMEDIATELY;Sofort Speichern
-SAVEDLG_SAVESPP;Speichere die Prozessparameter mit dem Bild
+SAVEDLG_SAVEIMMEDIATELY;Sofort speichern
+SAVEDLG_SAVESPP;Speichere Prozessparameter mit dem Bild
 SAVEDLG_TIFFFILTER;TIFF-Datei
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Auswahl des Ausschnitts (Taste C)
@@ -522,7 +551,7 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;nach links drehen
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;nach rechts drehen
 TP_COARSETRAF_TOOLTIP_VFLIP;vertikal spiegeln
 TP_COLORBOOST_ACHANNEL;Kanal "a"
-TP_COLORBOOST_AMOUNT;Menge
+TP_COLORBOOST_AMOUNT;Stärke
 TP_COLORBOOST_AVOIDCOLORCLIP;Verhindere Übersättigung
 TP_COLORBOOST_BCHANNEL;Kanal "b"
 TP_COLORBOOST_CHAB;a & b
@@ -550,27 +579,44 @@ TP_CROP_GTRULETHIRDS;Goldener Schnitt
 TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;H
 TP_CROP_LABEL;Ausschnitt
-TP_CROP_SELECTCROP; Wähle Ausschnitt
+TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;W
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_DETAIL_AMOUNT;Menge
+TP_DETAIL_AMOUNT;Stärke
+TP_DIRPYRDENOISE_CHROMA;Chrominanz
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Direktionale Pyramiden-Rauschminderung
+TP_DIRPYRDENOISE_LUMA;Luminanz
+TP_DIRPYREQUALIZER_LABEL;Direktionaler Pyramiden-Equalizer
+TP_DIRPYREQUALIZER_LUMACOARSEST;Gröbstes
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
+TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+TP_DIRPYREQUALIZER_THRESHOLD;Schwellwert
 TP_DISTORTION_AMOUNT;Menge
 TP_DISTORTION_LABEL;Entzerrung
-TP_EXPOSURE_AUTOLEVELS;autom.
-TP_EXPOSURE_BLACKLEVEL;schwarz
+TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
+TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
+TP_EQUALIZER_FINEST;Feinstes
+TP_EQUALIZER_LABEL;Wavelet-Equalizer
+TP_EQUALIZER_LARGEST;Gröbstes
+TP_EQUALIZER_NEUTRAL;Neutral
+TP_EXPOSURE_AUTOLEVELS;Auto
+TP_EXPOSURE_BLACKLEVEL;Schwarzpegel
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
-TP_EXPOSURE_CLIP;beschneiden
+TP_EXPOSURE_CLIP;Grenzwert
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichter-Kompression
 TP_EXPOSURE_COMPRSHADOWS;Schatten-Kompression
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
-TP_EXPOSURE_EXPCOMP;Bel.Korrektur
+TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_LABEL;Belichtung
 TP_HLREC_CIELAB;CIELab Überlagerung
 TP_HLREC_COLOR;Farbübertragung
 TP_HLREC_LABEL;Lichter wiederherstellen
-TP_HLREC_LUMINANCE;Luminanz herstellen
+TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode: 
 TP_ICM_FILEDLGFILTERANY;Alle Dateien
 TP_ICM_FILEDLGFILTERICM;ICC-Profildateien
@@ -586,6 +632,16 @@ TP_ICM_OUTPUTDLGLABEL;Wähle Ausgabe-ICC-Profil...
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_SAVEREFERENCE;Speichere Referenzbild für die Profilierung
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
+TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
+TP_IMPULSEDENOISE_THRESH;Schwellwert
+TP_LABCURVE_BRIGHTNESS;Helligkeit
+TP_LABCURVE_CONTRAST;Kontrast
+TP_LABCURVE_CURVEEDITOR;Luminanzkurve
+TP_LABCURVE_LABEL;Luminanzkurve
+TP_LABCURVE_SATURATION;Sättigung
+TP_LENSGEOM_AUTOCROP;Auto-Schneiden
+TP_LENSGEOM_FILL;Auto-Füllen
+TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LUMACURVE_BLACKLEVEL;schwarz
 TP_LUMACURVE_BRIGHTNESS;Helligkeit
 TP_LUMACURVE_COMPRHIGHLIGHTS;Lichter-Kompression
@@ -596,6 +652,9 @@ TP_LUMACURVE_LABEL;Luminanzkurve
 TP_LUMADENOISE_EDGETOLERANCE;Kanten-Toleranz
 TP_LUMADENOISE_LABEL;Luminanz-Rauschfilter
 TP_LUMADENOISE_RADIUS;Radius
+TP_PERSPECTIVE_HORIZONTAL;Horizontal
+TP_PERSPECTIVE_LABEL;Perspektive
+TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (Schärfer)
@@ -624,23 +683,23 @@ TP_SHADOWSHLIGHTS_LOCALCONTR;Lokaler Kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radius
 TP_SHADOWSHLIGHTS_SHADOWS;Schatten
 TP_SHADOWSHLIGHTS_SHTONALW;Farbtonbereich
-TP_SHARPENING_AMOUNT;Menge
+TP_SHARPENING_AMOUNT;Stärke
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kanten-Toleranz
 TP_SHARPENING_HALOCONTROL;Halo-Kontrolle
-TP_SHARPENING_HCAMOUNT;Menge
+TP_SHARPENING_HCAMOUNT;Stärke
 TP_SHARPENING_LABEL;Schärfen
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;nur Kanten schärfen
 TP_SHARPENING_RADIUS;Radius
-TP_SHARPENING_RLD;R-L Bildrestaurierung
-TP_SHARPENING_RLD_AMOUNT;Menge
+TP_SHARPENING_RLD;R-L Deconvolution
+TP_SHARPENING_RLD_AMOUNT;Stärke
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwellwert
-TP_SHARPENING_USM;Unscharf maskieren
-TP_VIGNETTING_AMOUNT;Menge
-TP_VIGNETTING_LABEL;Korrektur Randlichtabfall
+TP_SHARPENING_USM;Unschärfemaske
+TP_VIGNETTING_AMOUNT;Stärke
+TP_VIGNETTING_LABEL;Vignettierungs-Korrektur
 TP_VIGNETTING_RADIUS;Radius
 TP_WBALANCE_AUTO;Automatisch
 TP_WBALANCE_CAMERA;Kamera
@@ -649,7 +708,7 @@ TP_WBALANCE_GREEN;Farbton
 TP_WBALANCE_LABEL;Weißabgleich
 TP_WBALANCE_METHOD;Methode
 TP_WBALANCE_SIZE;Größe:
-TP_WBALANCE_SPOTWB;manuel setzen
+TP_WBALANCE_SPOTWB;Manuell setzen
 TP_WBALANCE_TEMPERATURE;Farbtemperatur
 ZOOMBAR_DETAIL;Detail
 ZOOMBAR_HUGE;riesig
@@ -662,71 +721,15 @@ ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;(Neues) Detailfenster öffnen
 ZOOMPANEL_ZOOM100;Zoom 100%
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen
-ZOOMPANEL_ZOOMIN;Hinein zoomen 
-ZOOMPANEL_ZOOMOUT;Heraus zoomen
-﻿ADJUSTER_RESET_TO_DEFAULT;Zurück zum Standard
-
-
+ZOOMPANEL_ZOOMIN;Hineinzoomen 
+ZOOMPANEL_ZOOMOUT;Herauszoomen
+﻿
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!ADJUSTER_RESET_TO_DEFAULT;Reset to default
-!CURVEEDITOR_NURBS;Control cage
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_89;Directional pyramid
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
-!PARTIALPASTE_LABCURVE;Luminance curve
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_DMETHODBATCH;Batch
-!PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PREFERENCES_LINEDENOISE;Line noise filter
-!PREFERENCES_MULTITAB;Multiple tabs mode
-!PREFERENCES_SELECTFONT;Select font
-!PREFERENCES_SINGLETAB;Single tab mode
-!PREFERENCES_USESYSTEMTHEME; Use System Theme
-!PREFERENCES_WORKFLOW;Workflow
-!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
-!TP_DIRPYRDENOISE_CHROMA;Chrominance
-!TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
-!TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
-!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
-!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
-!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
-!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
-!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
-!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
-!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
-!TP_EQUALIZER_FINEST;finest
-!TP_EQUALIZER_LABEL;Wavelet equalizer
-!TP_EQUALIZER_LARGEST;coarsest
-!TP_EQUALIZER_NEUTRAL;Neutral
-!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
-!TP_IMPULSEDENOISE_THRESH;Threshold
-!TP_LABCURVE_BRIGHTNESS;Brightness
-!TP_LABCURVE_CONTRAST;Contrast
-!TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_LABEL;Luminance Curve
-!TP_LABCURVE_SATURATION;Saturation
-!TP_LENSGEOM_AUTOCROP;Auto Crop
-!TP_LENSGEOM_FILL;Auto Fill
-!TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_PERSPECTIVE_HORIZONTAL;Horizontal
-!TP_PERSPECTIVE_LABEL;Perspective
-!TP_PERSPECTIVE_VERTICAL;Vertical
+
+
+
+
