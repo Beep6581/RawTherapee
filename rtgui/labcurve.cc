@@ -43,47 +43,50 @@ LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-  Gtk::HBox* abox = Gtk::manage (new Gtk::HBox ());
-  abox->set_border_width (2);
+	Gtk::HBox* abox = Gtk::manage (new Gtk::HBox ());
+	abox->set_border_width (2);
 
- // brightness = Gtk::manage (new Adjuster (M("TP_LUMACURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
-  //contrast   = Gtk::manage (new Adjuster (M("TP_LUMACURVE_CONTRAST"), -100, 100, 1, 0));
+	// brightness = Gtk::manage (new Adjuster (M("TP_LUMACURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
+	//contrast   = Gtk::manage (new Adjuster (M("TP_LUMACURVE_CONTRAST"), -100, 100, 1, 0));
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
 	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 0));
 
-  pack_start (*brightness);
-  brightness->show ();
+	pack_start (*brightness);
+	brightness->show ();
 
-  pack_start (*contrast);
-  contrast->show ();
+	pack_start (*contrast);
+	contrast->show ();
 	
 	pack_start (*saturation);
 	saturation->show ();
 
-  Gtk::HSeparator *hsep3 = Gtk::manage (new  Gtk::HSeparator());
-  hsep3->show ();
-  pack_start (*hsep3);
+	Gtk::HSeparator *hsep3 = Gtk::manage (new  Gtk::HSeparator());
+	hsep3->show ();
+	pack_start (*hsep3);
 
-  lshape = Gtk::manage (new CurveEditor ());
-  lshape->show ();
-  lshape->setCurveListener (this);
+	lshape = Gtk::manage (new CurveEditor ());
+	lshape->show ();
+	lshape->setCurveListener (this);
+	CurveListener::setMulti(true);
 	
 	ashape = Gtk::manage (new CurveEditor ());
 	ashape->show ();
 	ashape->setCurveListener (this);
+	CurveListener::setMulti(true);
 	
 	bshape = Gtk::manage (new CurveEditor ());
 	bshape->show ();
 	bshape->setCurveListener (this);
+	CurveListener::setMulti(true);
 
-  pack_start (*lshape, Gtk::PACK_SHRINK, 4);
+	pack_start (*lshape, Gtk::PACK_SHRINK, 4);
 	pack_start (*ashape, Gtk::PACK_SHRINK, 4);
 	pack_start (*bshape, Gtk::PACK_SHRINK, 4);
 
 
-  brightness->setAdjusterListener (this);
-  contrast->setAdjusterListener (this);
+	brightness->setAdjusterListener (this);
+	contrast->setAdjusterListener (this);
 	saturation->setAdjusterListener (this);
 
 	//channel->signal_changed().connect( sigc::mem_fun(*this, &LCurve::channel) );
@@ -158,12 +161,15 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     }
 }
 
-void LCurve::curveChanged () {
+void LCurve::curveChanged (CurveEditor* ce) {
 
     if (listener) {
-        listener->panelChanged (EvLLCurve, M("HISTORY_CUSTOMCURVE"));
-        listener->panelChanged (EvLaCurve, M("HISTORY_CUSTOMCURVE"));
-        listener->panelChanged (EvLbCurve, M("HISTORY_CUSTOMCURVE"));
+    	if (ce == lshape)
+        	listener->panelChanged (EvLLCurve, M("HISTORY_CUSTOMCURVE"));
+    	if (ce == ashape)
+        	listener->panelChanged (EvLaCurve, M("HISTORY_CUSTOMCURVE"));
+    	if (ce == bshape)
+        	listener->panelChanged (EvLbCurve, M("HISTORY_CUSTOMCURVE"));
 	}
 }
 

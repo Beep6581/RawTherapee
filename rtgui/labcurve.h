@@ -49,7 +49,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
     void setBatchMode   (bool batchMode);
     void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);   
 
-    void curveChanged ();
+    void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
     void updateCurveBackgroundHistogram (unsigned* hist);
 };
