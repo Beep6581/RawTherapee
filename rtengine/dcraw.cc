@@ -32,11 +32,11 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.437 $
-   $Date: 2010/06/27 00:23:33 $
+   $Revision: 1.438 $
+   $Date: 2010/07/28 21:18:20 $
  */
 
-#define VERSION "9.03"
+#define VERSION "9.04"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -4463,6 +4463,12 @@ void CLASS parse_makernote (int base, int uptag)
       cam_mul[0] = getreal(type);
       cam_mul[2] = getreal(type);
     }
+    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
+      fread (buf97, 1, sizeof buf97, ifp);
+      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
+      if (i < 70 && buf97[i] < 3)
+	flip = "065"[buf97[i]]-'0';
+    }
     if (tag == 0x10 && type == 4)
       unique_id = get4();
     if (tag == 0x11 && is_raw && !strncmp(make,"NIKON",5)) {
@@ -4648,7 +4654,7 @@ void CLASS parse_exif (int base)
   unsigned kodak, entries, tag, type, len, save, c;
   double expo;
 
-  kodak = !strncmp(make,"EASTMAN",7);
+  kodak = !strncmp(make,"EASTMAN",7) && tiff_nifds < 3;
   entries = get2();
   while (entries--) {
     tiff_get (base, &tag, &type, &len, &save);
@@ -4822,6 +4828,7 @@ void CLASS parse_kodak_ifd (int base)
 }
 
 void CLASS parse_minolta (int base);
+int CLASS parse_tiff (int base);
 
 int CLASS parse_tiff_ifd (int base)
 {
@@ -4902,7 +4909,7 @@ int CLASS parse_tiff_ifd (int base)
 	load_raw = &CLASS panasonic_load_raw;
 	load_flags = 0x2008;
       case 273:				/* StripOffset */
-      case 513:
+      case 513:				/* JpegIFOffset */
       case 61447:
 	tiff_ifd[ifd].offset = get4()+base;
 	if (!tiff_ifd[ifd].bps) {
@@ -4915,6 +4922,9 @@ int CLASS parse_tiff_ifd (int base)
 	    tiff_ifd[ifd].samples = jh.clrs;
 	    if (!(jh.sraw || (jh.clrs & 1)))
 	      tiff_ifd[ifd].width *= jh.clrs;
+	    i = order;
+	    parse_tiff (tiff_ifd[ifd].offset + 12);
+	    order = i;
 	  }
 	}
 	break;
@@ -5270,23 +5280,28 @@ guess_cfa_pc:
   return 0;
 }
 
-void CLASS parse_tiff (int base)
+int CLASS parse_tiff (int base)
 {
-  int doff, max_samp=0, raw=-1, thm=-1, i;
-  struct jhead jh;
+  int doff;
 
   /*RT*/  exif_base = base;
 
   fseek (ifp, base, SEEK_SET);
   order = get2();
-  if (order != 0x4949 && order != 0x4d4d) return;
+  if (order != 0x4949 && order != 0x4d4d) return 0;
   get2();
-  memset (tiff_ifd, 0, sizeof tiff_ifd);
-  tiff_nifds = 0;
   while ((doff = get4())) {
     fseek (ifp, doff+base, SEEK_SET);
     if (parse_tiff_ifd (base)) break;
   }
+  return 1;
+}
+
+void CLASS apply_tiff()
+{
+  int max_samp=0, raw=-1, thm=-1, i;
+  struct jhead jh;
+
   thumb_misc = 16;
   if (thumb_offset) {
     fseek (ifp, thumb_offset, SEEK_SET);
@@ -5313,8 +5328,8 @@ void CLASS parse_tiff (int base)
       raw = i;
     }
   }
-  fuji_width *= (raw_width+1)/2;
-  if (tiff_ifd[0].flip) tiff_flip = tiff_ifd[0].flip;
+  for (i=tiff_nifds; i--; )
+    if (tiff_ifd[i].flip) tiff_flip = tiff_ifd[i].flip;
   if (raw >= 0 && !load_raw)
     switch (tiff_compress) {
       case 0:  case 1:
@@ -5815,9 +5830,9 @@ int CLASS parse_jpeg (int offset)
 /*RT*/    {
 /*RT*/      ciff_base = save+hlen;
 /*RT*/      ciff_len = len-hlen;
-      parse_ciff (save+hlen, len-hlen);
+      	    parse_ciff (save+hlen, len-hlen);
 /*RT*/    }
-    parse_tiff (save+6);
+	    if (parse_tiff (save+6)) apply_tiff();
     fseek (ifp, save+len, SEEK_SET);
   }
   return 1;
@@ -6679,7 +6694,7 @@ void CLASS identify()
     {  6573120, "Canon",    "PowerShot A610"  ,0 },
     {  9219600, "Canon",    "PowerShot A620"  ,0 },
     {  9243240, "Canon",    "PowerShot A470"  ,0 },
-    { 10341600, "Canon",    "PowerShot A720"  ,0 },
+    { 10341600, "Canon",    "PowerShot A720 IS",0 },
     { 10383120, "Canon",    "PowerShot A630"  ,0 },
     { 12945240, "Canon",    "PowerShot A640"  ,0 },
     { 15636240, "Canon",    "PowerShot A650"  ,0 },
@@ -6737,6 +6752,8 @@ void CLASS identify()
   maximum = height = width = top_margin = left_margin = 0;
   cdesc[0] = desc[0] = artist[0] = make[0] = model[0] = model2[0] = 0;
   iso_speed = shutter = aperture = focal_len = unique_id = 0;
+  tiff_nifds = 0;
+  memset (tiff_ifd, 0, sizeof tiff_ifd);
   memset (gpsdata, 0, sizeof gpsdata);
   memset (cblack, 0, sizeof cblack);
   memset (white, 0, sizeof white);
@@ -6773,16 +6790,14 @@ void CLASS identify()
   if ((cp = (char *) memmem (head, 32, "MMMM", 4)) ||
       (cp = (char *) memmem (head, 32, "IIII", 4))) {
     parse_phase_one (cp-head);
-    if (cp-head) parse_tiff(0);
+    if (cp-head && parse_tiff(0)) apply_tiff();
   } else if (order == 0x4949 || order == 0x4d4d) {
     if (!memcmp (head+6,"HEAPCCDR",8)) {
       data_offset = hlen;
 /*RT*/      ciff_base = hlen;
 /*RT*/      ciff_len = fsize - hlen;
       parse_ciff (hlen, flen - hlen);
-    } else {
-      parse_tiff(0);
-    }
+    } else if (parse_tiff(0)) apply_tiff();
   } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
 	     !memcmp (head+6,"Exif",4)) {
     fseek (ifp, 4, SEEK_SET);
@@ -6822,6 +6837,7 @@ void CLASS identify()
     fseek (ifp, 100, SEEK_SET);
     parse_tiff (data_offset = get4());
     parse_tiff (thumb_offset+12);
+    apply_tiff();
   } else if (!memcmp (head,"RIFF",4)) {
     fseek (ifp, 0, SEEK_SET);
     parse_riff();
@@ -6881,6 +6897,7 @@ void CLASS identify()
   if (!height) height = raw_height;
   if (!width)  width  = raw_width;
   if (fuji_width) {
+    fuji_width = (raw_width+1)/2;
     width = height + fuji_width;
     height = width - 1;
     pixel_aspect = 1;
@@ -6892,8 +6909,6 @@ void CLASS identify()
   if (height == 3136 && width == 4736)	/* Pentax K-7 */
     { height  = 3122;   width  = 4684;
       top_margin = 2;  filters = 0x16161616; }
-	if (height == 2868 && width == 4352) /* Pentax K-x */
-		width = 4308; 
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
@@ -7014,7 +7029,7 @@ void CLASS identify()
     top_margin  = 6;
     left_margin = 12;
     goto canon_a5;
-  } else if (!strcmp(model,"PowerShot A720")) {
+  } else if (!strcmp(model,"PowerShot A720 IS")) {
     height = 2472;
     width  = 3298;
     raw_height = 2480;
@@ -7441,7 +7456,7 @@ konica_400z:
   } else if (!strcmp(model,"K20D")) {
     filters = 0x16161616;
   } else if (!strcmp(model,"K-x")) {
-    width = 4308;
+    width = 4309;
     filters = 0x16161616;
   } else if (!strcmp(model,"Optio S")) {
     if (fsize == 3178560) {
