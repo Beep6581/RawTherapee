@@ -75,7 +75,7 @@ class CurveFactory {
         return 1.0 - cupper(1.0-x, m, sr);
     }
     // tone curve base. a: slope (from exp.comp.), b: black, D: max. x value (can be>1), hr,sr: highlight,shadow recovery
-   /* static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
+    static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
         double m = b+0.5/a<D ? b+0.5/a : D;
         double y = (D-b)*a<0.5 ? (D-b)*a : 0.5;
         if (x<=m)
@@ -84,7 +84,7 @@ class CurveFactory {
             return y+(1.0-y)*cupper((x-m)/(D-m), a*(D-m)/(1.0-y), hr);
         else
             return y+(x-m)*a;
-    }*/
+    }
     // brightness curve at point x, only positive amount it supported
     static inline double brightnessbase (double x, double amount) {
         if (x<0.5)
