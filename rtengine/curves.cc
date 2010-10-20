@@ -733,7 +733,16 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		basecurvePoints.push_back((double)((CurveType)NURBS));
 		float toex = MIN(1,black/a);
 		float toey = toex*a*(1-shcompr/100.0);
-		float shoulderx = toex+(1-toey)/a;//point in x at which line of slope a starting at toe point reaches y=1
+		float shoulderx = 1/a;//point in x at which line of slope a starting at toe point reaches y=1
+		float shouldery=1;
+		if (shoulderx<1) {//a>1; positive EC
+			shouldery = MAX(2*toey, 1-(1-shoulderx)*(hlcompr/100.0));
+			shoulderx = shoulderx - (1-shouldery)/a;
+		} else {//a<1; negative EC
+			shoulderx = 1;
+			shouldery = a;
+		}
+		/*float shoulderx = toex+(1-toey)/a;//point in x at which line of slope a starting at toe point reaches y=1
 		float shouldery;
 		if (shoulderx<1) {
 			shouldery = MAX(2*toey, 1-(1-shoulderx)*(hlcompr/200.0));
@@ -741,7 +750,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		} else {
 			shoulderx = 1;
 			shouldery = toey + (1-toex)*a;
-		}
+		}*/
 		
 		basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
@@ -757,7 +766,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			basecurvePoints.push_back(shoulderx); //shoulder point
 			basecurvePoints.push_back(shouldery); //value at shoulder point
 			if (shoulderx<1) {
-				basecurvePoints.push_back(1-0.5*(1-shoulderx)*(1-hlcompr/100.0)); // white point
+				basecurvePoints.push_back(1-0.9*(1-shoulderx)*(1-hlcompr/100.0)); // white point
 				basecurvePoints.push_back(1); // value at white point
 			}
 		}
@@ -778,10 +787,10 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			brightcurvePoints.push_back(0.7); //shoulder point
 			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
 		} else {
-			brightcurvePoints.push_back(0.1+br/150.0); //toe point
+			brightcurvePoints.push_back(0.1-br/150.0); //toe point
 			brightcurvePoints.push_back(0.1); //value at toe point
 
-			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //shoulder point
+			brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); //shoulder point
 			brightcurvePoints.push_back(0.7); //value at shoulder point
 		}
 		brightcurvePoints.push_back(1); // white point
