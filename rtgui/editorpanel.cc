@@ -920,7 +920,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 										success = safe_spawn_command_line_async (cmdLine);
 								}
 #else
-		#ifdef defined __APPLE__
+		#ifdef __APPLE__
 								cmdLine = Glib::ustring("open -a \'") + Glib::build_filename(options.psDir,"Photoshop.app\' ")  + Glib::ustring("\'") + filename + Glib::ustring("\'");
 		#else
 								cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir,"Photoshop.exe") + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
