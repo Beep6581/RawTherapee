@@ -692,18 +692,15 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 	
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
 		
-		printf ("ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
-		
 		double def_mul = pow (2.0, defmul);
-		
+
+		printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
+				
 		// compute parameters of the gamma curve
 		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
 		double slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
 		double mul = 1.099;
 		double add = 0.099;
-		
-		// theoretical maximum of the curve
-		double D =  def_mul;
 		
 		// a: slope of the curve, black: starting point at the x axis
 		double a = pow (2.0, ecomp);
@@ -732,13 +729,17 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
 		float toex = MIN(1,black/a);
-		float toey = toex*a*(1-shcompr/100.0);
-		float shoulderx = 1/a;//point in x at which line of slope a starting at toe point reaches y=1
+		float toey = MAX(0,toex*a*(1-shcompr/100.0));
+		float shoulderx = 1/a;//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
+		/*float toneslope=(shouldery-toey)/(shoulderx-toex);
 		if (shoulderx<1) {//a>1; positive EC
-			shouldery = MAX(2*toey, 1-(1-shoulderx)*(hlcompr/100.0));
-			shoulderx = shoulderx - (1-shouldery)/a;
+			//move shoulder down if there is highlight rolloff
+			shouldery = MAX(0.4*toey+0.6*shouldery, shouldery-(0.8)*(hlcompr/100.0));
+			shoulderx = MAX(0.4*toex+0.6*shoulderx, shoulderx - (1-shouldery)/toneslope);
 		} else {//a<1; negative EC
+		 */
+		if (shoulderx>1) {
 			shoulderx = 1;
 			shouldery = a;
 		}
@@ -760,13 +761,13 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 		if (toex<1) {
 			//add a point along the line between the toe point and shoulder point
-			basecurvePoints.push_back(0.25*toex+0.75*shoulderx); //mid point
-			basecurvePoints.push_back(0.25*toey+0.75*shouldery); //value at mid point
+			basecurvePoints.push_back(0.4*toex+0.6*shoulderx); //mid point
+			basecurvePoints.push_back(0.4*toey+0.6*shouldery); //value at mid point
 			
 			basecurvePoints.push_back(shoulderx); //shoulder point
 			basecurvePoints.push_back(shouldery); //value at shoulder point
 			if (shoulderx<1) {
-				basecurvePoints.push_back(1-0.9*(1-shoulderx)*(1-hlcompr/100.0)); // white point
+				basecurvePoints.push_back(1-0.95*(1-shoulderx)*(1-hlcompr/100.0)); // white point
 				basecurvePoints.push_back(1); // value at white point
 			}
 		}

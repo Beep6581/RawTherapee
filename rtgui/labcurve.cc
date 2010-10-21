@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false) {
+LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*	
