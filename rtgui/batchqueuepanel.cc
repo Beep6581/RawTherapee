@@ -78,7 +78,7 @@ BatchQueuePanel::BatchQueuePanel () {
     saveFormatPanel->init (options.saveFormat);
     outdirTemplate->set_text (options.savePathTemplate);
     if (Glib::file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) 
-        outdirFolder->set_filename (options.savePathFolder);
+        outdirFolder->set_current_folder (options.savePathFolder);
     useTemplate->set_active (options.saveUsePathTemplate);
     useFolder->set_active (!options.saveUsePathTemplate);
 
@@ -259,7 +259,7 @@ void BatchQueuePanel::saveOptions () {
 // since these settings are shared with editorpanel : 
 void BatchQueuePanel::pathFolderChanged () {
     
-    options.savePathFolder      = outdirFolder->get_filename();
+    options.savePathFolder      = outdirFolder->get_current_folder();
 }
 
 void BatchQueuePanel::formatChanged (Glib::ustring f) {
