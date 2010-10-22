@@ -800,10 +800,11 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if (settings->greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && settings->demosaicMethod!="vng4" && ri->filters) ) {
         // global correction
-        int ng1=0, ng2=0;
-        double avgg1=0, avgg2=0;
-//#pragma omp parallel for //TODO This causes grid patterns in some Olympus raw files
-        for (int i=border; i<H-border; i++)
+        int ng1=0, ng2=0, i=0;
+        double avgg1=0., avgg2=0.;
+
+#pragma omp parallel for default(shared) private(i) reduction(+: ng1, ng2, avgg1, avgg2)
+        for (i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) {
                     if (i%2==0) {
@@ -817,13 +818,17 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
                 }
         double corrg1 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg1/ng1);
         double corrg2 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg2/ng2);
-//#pragma omp parallel for //TODO This causes grid patterns in some Olympus raw files
+
+#pragma omp parallel for default(shared)
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
-                if (ISGREEN(ri,i,j)) 
-                        ri->data[i][j] = CLIP(ri->data[i][j] * (i%2 ? corrg2 : corrg1));
+                if (ISGREEN(ri,i,j)) {
+                    unsigned short currData;
+                    currData = (unsigned short)(ri->data[i][j] * (i%2 ? corrg2 : corrg1));
+                    ri->data[i][j] = CLIP(currData);
+                }
 	}
-	
+
 
 	// local correction in a 9x9 box
 	if (settings->greenthresh) {
