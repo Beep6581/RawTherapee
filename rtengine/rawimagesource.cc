@@ -802,7 +802,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
         // global correction
         int ng1=0, ng2=0;
         double avgg1=0, avgg2=0;
-#pragma omp parallel for
+//#pragma omp parallel for //TODO This causes grid patterns in some Olympus raw files
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) {
@@ -817,7 +817,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
                 }
         double corrg1 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg1/ng1);
         double corrg2 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg2/ng2);
-#pragma omp parallel for
+//#pragma omp parallel for //TODO This causes grid patterns in some Olympus raw files
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) 
@@ -827,7 +827,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 
 	// local correction in a 9x9 box
 	if (settings->greenthresh) {
-//Emil's green equilbration		
+//Emil's green equilbration
 		if (plistener) {
 			plistener->setProgressStr ("Green equilibrate...");
 			plistener->setProgress (0.0);
