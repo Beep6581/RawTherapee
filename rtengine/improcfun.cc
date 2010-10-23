@@ -245,7 +245,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     delete [] hist;
 }
 
-void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, SHMap* shmap) {
+void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1, int* tonecurve2, SHMap* shmap) {
 
     int h_th, s_th;
     if (shmap) {
@@ -321,10 +321,23 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
                     b = CLIP((int)(factor*b));
                 }
             }
-            r = tonecurve[r];
+            /*r = tonecurve[r];
             g = tonecurve[g];
-            b = tonecurve[b];
+            b = tonecurve[b];*/
+			//int Y = (int)(0.299*r + 0.587*g + 0.114*b);
+			//float tonefactor = (Y>0 ? (float)tonecurve[Y]/Y : 0);
+			float rtonefactor = (r>0 ? (float)tonecurve1[r]/r : 0);
+			float gtonefactor = (g>0 ? (float)tonecurve1[g]/g : 0);
+			float btonefactor = (b>0 ? (float)tonecurve1[b]/b : 0);
+			float tonefactor = MIN(rtonefactor, MIN(gtonefactor,btonefactor));
 
+			r *= tonefactor;
+			g *= tonefactor;
+			b *= tonefactor;
+			r = tonecurve2[r];
+			g = tonecurve2[g];
+			b = tonecurve2[b];
+			
             int x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) >> 15;
             int y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) >> 15;
             int z = (toxyz[0][2] * r + toxyz[1][2] * g + toxyz[2][2] * b) >> 15;

@@ -158,12 +158,12 @@ void Crop::update (int todo, bool internal) {
 
     // shadows & highlights & tone curve & convert to cielab
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve, cshmap);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve1, parent->tonecurve2, cshmap);
 
 	
 	// apply luminance operations
     if (todo & (M_LUMINANCE+M_COLOR)) {
-        parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
+        parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve2, 0, croph);
 		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 0, parent->chroma_acurve, 0, croph);
 		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 1, parent->chroma_bcurve, 0, croph);
 

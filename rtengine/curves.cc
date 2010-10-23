@@ -690,7 +690,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve1, int* outCurve2, unsigned int* outBeforeCCurveHistogram, int skip) {
 		
 		double def_mul = pow (2.0, defmul);
 
@@ -735,7 +735,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
 		if (shoulderx<1) {//a>1; positive EC
 			//move shoulder down if there is highlight rolloff
-			shouldery = shouldery-(0.3)*(hlcompr/100.0);
+			shouldery = shouldery-(0.2)*(hlcompr/100.0);
 			shoulderx = shoulderx - (1-shouldery)/toneslope;
 		} else {//a<1; negative EC
 		//if (shoulderx>1) {
@@ -814,6 +814,11 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			//val = basecurve (val, a, black, D, hlcompr/100.0, shcompr/100.0);
 			val = basecurve->getVal (val);
 			
+			outCurve1[i] = (int) (65535.0 * CLIPD(val));
+			
+			// change to [0,1] range
+			val = (double)i / 65535.0;
+			
 			// gamma correction
 			if (gamma_>0) 
 				val = gamma (val, gamma_, start, slope, mul, add);
@@ -853,6 +858,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 				prev+=skip;
 				continue;
 			}
+			outCurve1[i] = ( outCurve1[prev] * (skip - i%skip) + outCurve1[prev+skip] * (i%skip) ) / skip;
 			dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
 		}
 		
@@ -899,12 +905,12 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 				double val = contrastcurve->getVal (dcurve[i]);
 				if (igamma && gamma_>0)
 					val = igamma2 (val);
-				outCurve[i] = (int) (65535.0 * CLIPD(val));
+				outCurve2[i] = (int) (65535.0 * CLIPD(val));
 			}
 		}
 		else 
 			for (int i=0; i<=0xffff; i++) 
-				outCurve[i] = (int) (65535.0 * dcurve[i]);
+				outCurve2[i] = (int) (65535.0 * dcurve[i]);
 		delete [] dcurve;
 	}
 	
