@@ -51,20 +51,21 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
 			int val = lumi[0]*img->r[i][j] + lumi[1]*img->g[i][j] + lumi[2]*img->b[i][j];
 			map[i][j] = CLIP(val);
 		}
-
-    if (!hq) {
 #ifdef _OPENMP
-    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
-#else
-    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+#pragma omp parallel
 #endif
+    {
+    if (!hq) {
+    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
     	gaussHorizontal<unsigned short> (map, map, buffer, W, H, radius, multiThread);
 		gaussVertical<unsigned short>   (map, map, buffer, W, H, radius, multiThread);
 
         delete buffer;
     }
     else {
-#ifdef _OPENMP
+#if 0
+// the new OpenMP method does not need thread number specific code.
+//    	#ifdef _OPENMP
 		#pragma omp parallel if (multiThread)
     	{
     		int tid = omp_get_thread_num();
@@ -80,6 +81,9 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
     	bilateral<unsigned short> (map, buffer, W, H, 8000, radius, 0, H);
 #endif
         // anti-alias filtering the result
+#ifdef _OPENMP
+#pragma omp for
+#endif
         for (int i=0; i<H; i++)
             for (int j=0; j<W; j++)
                 if (i>0 && j>0 && i<H-1 && j<W-1)
@@ -87,7 +91,7 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
                 else
                     map[i][j] = buffer[i][j];
     }
-
+    } // end parallel enclosure
     // update average, minimum, maximum
     double _avg = 0;
     int n = 1;
