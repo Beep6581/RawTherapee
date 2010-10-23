@@ -713,6 +713,13 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 !IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+!NAVIGATOR_LAB_A_NA;A = n/a
+!NAVIGATOR_LAB_A_VALUE;A = %1
+!NAVIGATOR_LAB_B_NA;B = n/a
+!NAVIGATOR_LAB_B_VALUE;B = %1
+!NAVIGATOR_LAB_L_NA;L = n/a
+!NAVIGATOR_LAB_L_VALUE;L = %1
+!PARTIALPASTE_LABCURVE;Lab curve
 !PARTIALPASTE_LABCURVE;Luminance curve
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_LINEDENOISE;Line noise filter
@@ -722,5 +729,5 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_LABEL;Luminance Curve
+!TP_LABCURVE_LABEL;Lab Curves
 !TP_LABCURVE_SATURATION;Saturation
