@@ -2,17 +2,32 @@
 Windows
 -------
 
-Requirements:
-- MinGW + MSYS
-- CMake
-- GTK and GTKMM development environments
+	METHOD 1:
+		Requirements:
+		- MinGW + MSYS
+		- CMake
+		- GTK and GTKMM development environments
+		
+		Compile:
+		- Start MSYS
+		- Enter the root directory of the RawTherapee source tree
+		- Type: cmake -G "MSYS Makefiles" .
+		- Type: make install
+		- You find the compiled program in the release directory
 
-Compile:
-- Start MSYS
-- Enter the root directory of the RawTherapee source tree
-- Type: cmake -G "MSYS Makefiles" .
-- Type: make install
-- You find the compiled program in the release directory
+	METHOD 2:
+		Requirements:
+		- tdm-gcc 	(http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
+		- cmake 	(http://www.cmake.org/cmake/resources/software.html)
+		- mercurial (http://mercurial.selenic.com/wiki/WindowsInstall)
+		- gtkmm		(http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
+		
+		Compile:
+		- Enter the root directory of the RawTherapee source tree
+		- Type: cmake -G "MingW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		- Type: mingw32-make.exe install
+		- You find the compiled program in the "release" directory
+
 
 Linux
 -----
