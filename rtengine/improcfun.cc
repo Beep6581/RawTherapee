@@ -475,6 +475,9 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
 
     if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
     	bilateral<unsigned short, unsigned int> (lab->L, lab->L, (unsigned short**)b2, lab->W, lab->H, params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
 }
 
@@ -482,16 +485,17 @@ void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
 
   if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
 #ifdef _OPENMP
-	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H)*omp_get_max_threads());
-#else
-	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
+#pragma omp parallel
 #endif
+	  {
+	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
       gaussHorizontal<short> (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussHorizontal<short> (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussVertical<short>   (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussVertical<short>   (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
 
       delete buffer;
+  }
   }
 }
 

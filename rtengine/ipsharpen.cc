@@ -37,7 +37,9 @@ namespace rtengine {
 
 void ImProcFunctions::dcdamping (float** aI, unsigned short** aO, float damping, int W, int H) {
 
-	#pragma omp parallel for if (multiThread)
+#ifdef _OPENMP
+#pragma omp for
+#endif
 	for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
             float I = aI[i][j];
@@ -69,10 +71,10 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
 
     float** tmp = (float**)b2;
 #ifdef _OPENMP
-    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
-#else
-    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+#pragma omp parallel
 #endif
+    {
+    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
     float damping = params->sharpening.deconvdamping / 5.0;
     bool needdamp = params->sharpening.deconvdamping > 0;
     for (int k=0; k<params->sharpening.deconviter; k++) {
@@ -82,7 +84,9 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
         gaussVertical<float>   (tmp, tmp,  buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
 
     	if (!needdamp) {
-			#pragma omp parallel for if (multiThread)
+#ifdef _OPENMP
+#pragma omp for
+#endif
             for (int i=0; i<H; i++)
                 for (int j=0; j<W; j++)
                     if (tmp[i][j]>0)
@@ -94,16 +98,24 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
         gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
         gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
 
-		#pragma omp parallel for if (multiThread)
+#ifdef _OPENMP
+#pragma omp for
+#endif
         for (int i=0; i<H; i++)
             for (int j=0; j<W; j++)
                 tmpI[i][j] = tmpI[i][j] * tmp[i][j];
-    }
+		} // end for
+    delete buffer;
+    } // end parallel
 
-	#pragma omp parallel for if (multiThread)
+#ifdef _OPENMP
+#pragma omp for
+#endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++)
             lab->L[i][j] = lab->L[i][j]*(100-params->sharpening.deconvamount) / 100 + (int)CLIP(tmpI[i][j])*params->sharpening.deconvamount / 100;
+
+
 
     for (int i=0; i<H; i++)
         delete [] tmpI[i];
@@ -121,12 +133,13 @@ void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
         return;
 
     int W = lab->W, H = lab->H;
-    unsigned short** b3;
 #ifdef _OPENMP
-    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H)*omp_get_max_threads());
-#else
-    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+#pragma omp parallel
 #endif
+    {
+    unsigned short** b3;
+
+    AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
     if (params->sharpening.edgesonly==false) {
 
         gaussHorizontal<unsigned short> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
@@ -148,7 +161,7 @@ void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
         base = b3;
 
     if (params->sharpening.halocontrol==false) {
-		#pragma omp parallel for if (multiThread)
+		#pragma omp for
     	for (int i=0; i<H; i++)
             for (int j=0; j<W; j++) {
                 int diff = base[i][j] - b2[i][j];
@@ -165,6 +178,7 @@ void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
         for (int i=0; i<H; i++)
             delete [] b3[i];
         delete [] b3;
+    }
     }
 }
 

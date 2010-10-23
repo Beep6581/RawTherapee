@@ -164,7 +164,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             // ignore directories
             if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
-                if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
+                if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
 //                    printf ("processing file %s...\n", fname.c_str());
                     Glib::ustring name = sname.substr(0,lastdot);
                     ProfileContent pc (fname);

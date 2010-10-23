@@ -334,9 +334,11 @@ template<class T, class A> void bilateral25 (T** src, T** dst, T** buffer, int W
 
 // main bilateral filter
 template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, int H, double sigma, double sens, bool multiThread) {
-
-    if (sigma<0.45) 
-		#pragma omp parallel for if (multiThread)
+//parallel if (multiThread)
+    if (sigma<0.45)
+#ifdef _OPENMP
+#pragma omp  for
+#endif
     	for (int i=0; i<H; i++) {
             memcpy (buffer[i], src[i], W*sizeof(T));
             memcpy (dst[i], buffer[i], W*sizeof(T));

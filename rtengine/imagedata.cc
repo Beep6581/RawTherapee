@@ -95,7 +95,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             extractInfo ();
         }
     }    
-    else if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
+    else if (dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
         FILE* f = g_fopen (fname.c_str (), "rb");
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
@@ -106,7 +106,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             fclose (ff);
         }
     }    
-    else if ((dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
+    else if ((dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
         FILE* f = g_fopen (fname.c_str (), "rb");
         if (f) {
             root = rtexif::ExifManager::parseTIFF (f);
