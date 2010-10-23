@@ -964,7 +964,9 @@ public:
 		case 2: return "Depth";
 		case 3: return "MTF";
 		}
+		return"Normal";
 	}
+
 };
 PAAFModeInterpreter paAFModeInterpreter;
 
