@@ -46,8 +46,6 @@ LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
 	Gtk::HBox* abox = Gtk::manage (new Gtk::HBox ());
 	abox->set_border_width (2);
 
-	// brightness = Gtk::manage (new Adjuster (M("TP_LUMACURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
-	//contrast   = Gtk::manage (new Adjuster (M("TP_LUMACURVE_CONTRAST"), -100, 100, 1, 0));
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
 	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 0));

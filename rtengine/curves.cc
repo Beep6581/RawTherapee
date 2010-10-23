@@ -694,7 +694,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 		double def_mul = pow (2.0, defmul);
 
-		printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
+		//printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
 				
 		// compute parameters of the gamma curve
 		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
@@ -729,17 +729,16 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
 		float toex = MIN(1,black/a);
-		float toey = MAX(0,toex*a*(1-shcompr/100.0));
+		float toey = toex*a*(1-shcompr/100.0);
 		float shoulderx = 1/a;//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
-		/*float toneslope=(shouldery-toey)/(shoulderx-toex);
+		float toneslope=(shouldery-toey)/(shoulderx-toex);
 		if (shoulderx<1) {//a>1; positive EC
 			//move shoulder down if there is highlight rolloff
-			shouldery = MAX(0.4*toey+0.6*shouldery, shouldery-(0.8)*(hlcompr/100.0));
-			shoulderx = MAX(0.4*toex+0.6*shoulderx, shoulderx - (1-shouldery)/toneslope);
+			shouldery = shouldery-(0.3)*(hlcompr/100.0);
+			shoulderx = shoulderx - (1-shouldery)/toneslope;
 		} else {//a<1; negative EC
-		 */
-		if (shoulderx>1) {
+		//if (shoulderx>1) {
 			shoulderx = 1;
 			shouldery = a;
 		}
@@ -767,7 +766,9 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			basecurvePoints.push_back(shoulderx); //shoulder point
 			basecurvePoints.push_back(shouldery); //value at shoulder point
 			if (shoulderx<1) {
-				basecurvePoints.push_back(1-0.95*(1-shoulderx)*(1-hlcompr/100.0)); // white point
+				basecurvePoints.push_back(1-0.95*(1-shoulderx)*(1-hlcompr/105.0)); // lead into point
+				basecurvePoints.push_back(1); // value near white point
+				basecurvePoints.push_back(1); // white point
 				basecurvePoints.push_back(1); // value at white point
 			}
 		}

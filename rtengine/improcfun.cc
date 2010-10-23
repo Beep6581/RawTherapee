@@ -334,6 +334,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
             z = CLIPTO(z,0,2*65536-1);
 
             int L = cacheL[y];
+			//int L = cacheL[tonecurve[y]];//for luminance tone curve, use this (and comment out rgb tonecurves)
             lab->L[i][j] = L;
             lab->a[i][j] = CLIPC(((cachea[x] - cachea[y]) * chroma_scale) >> 15);
             lab->b[i][j] = CLIPC(((cacheb[y] - cacheb[z]) * chroma_scale) >> 15);
