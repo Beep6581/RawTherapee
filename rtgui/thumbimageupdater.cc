@@ -19,7 +19,7 @@
 #include <thumbimageupdater.h>
 #include <gtkmm.h>
 
-#define threadNum 8
+#define threadNum 1
 ThumbImageUpdater thumbImageUpdater;
 
 ThumbImageUpdater::ThumbImageUpdater () 
@@ -68,7 +68,7 @@ void ThumbImageUpdater::process () {
         stopped = false;
 
         if(!threadPool)
-            threadPool = new Glib::ThreadPool(threadNum,0);
+            threadPool = new Glib::ThreadPool(threadNum,1);
      
         //thread = Glib::Thread::create (sigc::mem_fun(*this, &ThumbImageUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_NORMAL);
         process_();
