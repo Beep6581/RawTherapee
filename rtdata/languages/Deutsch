@@ -18,10 +18,10 @@ CURVEEDITOR_DARKS;Tiefen
 CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvendateien
 CURVEEDITOR_HIGHLIGHTS;Spitzlichter
-CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_LIGHTS;Lichter
 CURVEEDITOR_LINEAR;Linear
 CURVEEDITOR_LOADDLGLABEL;Kurve Laden...
+CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Kurve Speichern...
 CURVEEDITOR_SHADOWS;Schatten
@@ -227,10 +227,10 @@ HISTORY_MSG_86;Wavelet Equalizer
 HISTORY_MSG_87;Impulsrauschfilter
 HISTORY_MSG_89;Gerichtete Pyramide
 HISTORY_MSG_8;Belichtungskorrektur
-HISTORY_MSG_9;Lichter-Kompression
 HISTORY_MSG_90;Gerichtete Pyramide Luminanz
 HISTORY_MSG_91;Gerichtete Pyramide Chrominanz
 HISTORY_MSG_92;Gerichtete Pyramide Gamma
+HISTORY_MSG_9;Lichter-Kompression
 HISTORY_NEWSNAPSHOT;Neue Variante
 HISTORY_NEWSNAPSHOTAS;als...
 HISTORY_NEWSSDIALOGLABEL;Name der Variante:
@@ -301,8 +301,8 @@ MAIN_BUTTON_PUTTOQUEUE;In Warteschlange
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Reiht aktuelles Bild in die Warteschlange ein <b>Strg+Q</b>
 MAIN_BUTTON_QUEUE;In die Warteschlange
 MAIN_BUTTON_SAVE;Bild speichern
-MAIN_BUTTON_SAVE_TOOLTIP;Aktuelles Bild speichern <b>Ctrl+S</b>
 MAIN_BUTTON_SAVEAS;Speichern unter...
+MAIN_BUTTON_SAVE_TOOLTIP;Aktuelles Bild speichern <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Im Editor öffnen
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Öffnes das aktuelle Bild im externen Editor <b>Strg+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
@@ -437,8 +437,8 @@ PREFERENCES_GIMPPATH;GIMP Installations-Verzeichnis
 PREFERENCES_GREENEQUIL;Grün-Ausgleich
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
-PREFERENCES_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_HLTHRESHOLD;Schwellwert - zu hell
+PREFERENCES_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
 PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
@@ -724,12 +724,16 @@ ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen
 ZOOMPANEL_ZOOMIN;Hineinzoomen 
 ZOOMPANEL_ZOOMOUT;Herauszoomen
 ﻿
+
+
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-
-
-
-
+!NAVIGATOR_LAB_A_NA;A = n/a
+!NAVIGATOR_LAB_A_VALUE;A = %1
+!NAVIGATOR_LAB_B_NA;B = n/a
+!NAVIGATOR_LAB_B_VALUE;B = %1
+!NAVIGATOR_LAB_L_NA;L = n/a
+!NAVIGATOR_LAB_L_VALUE;L = %1
