@@ -735,7 +735,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
 		if (shoulderx<1) {//a>1; positive EC
 			//move shoulder down if there is highlight rolloff
-			shouldery = shouldery-(0.2)*(hlcompr/100.0);
+			shouldery = shouldery-(0.3)*(hlcompr/100.0);
 			shoulderx = shoulderx - (1-shouldery)/toneslope;
 		} else {//a<1; negative EC
 		//if (shoulderx>1) {
