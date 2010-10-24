@@ -24,7 +24,7 @@ Windows
 		
 		Compile:
 		- Enter the root directory of the RawTherapee source tree
-		- Type: cmake -G "MingW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		- Type: cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
 		- Type: mingw32-make.exe install
 		- You find the compiled program in the "release" directory
 
