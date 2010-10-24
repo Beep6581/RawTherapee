@@ -324,19 +324,19 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
             /*r = tonecurve[r];
             g = tonecurve[g];
             b = tonecurve[b];*/
-			//int Y = (int)(0.299*r + 0.587*g + 0.114*b);
-			//float tonefactor = (Y>0 ? (float)tonecurve[Y]/Y : 0);
-			float rtonefactor = (r>0 ? (float)tonecurve1[r]/r : 0);
-			float gtonefactor = (g>0 ? (float)tonecurve1[g]/g : 0);
-			float btonefactor = (b>0 ? (float)tonecurve1[b]/b : 0);
-			float tonefactor = MIN(rtonefactor, MIN(gtonefactor,btonefactor));
+			int Y = (int)(0.299*r + 0.587*g + 0.114*b);
+			float tonefactor = (Y>0 ? (float)tonecurve1[Y]/Y : 1);
+			/*float rtonefactor = (r>0 ? (float)tonecurve1[r]/r : 1);
+			float gtonefactor = (g>0 ? (float)tonecurve1[g]/g : 1);
+			float btonefactor = (b>0 ? (float)tonecurve1[b]/b : 1);
+			float tonefactor = MIN(rtonefactor, MIN(gtonefactor,btonefactor));*/
 
 			r *= tonefactor;
 			g *= tonefactor;
 			b *= tonefactor;
-			r = tonecurve2[r];
-			g = tonecurve2[g];
-			b = tonecurve2[b];
+			r = tonecurve2[CLIP(r)];
+			g = tonecurve2[CLIP(g)];
+			b = tonecurve2[CLIP(b)];
 			
             int x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) >> 15;
             int y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) >> 15;
