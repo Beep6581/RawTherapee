@@ -694,7 +694,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 		double def_mul = pow (2.0, defmul);
 
-		//printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
+		printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
 				
 		// compute parameters of the gamma curve
 		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
@@ -724,13 +724,13 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// tone curve base. a: slope (from exp.comp.), b: black, D: max. x value (can be>1), hr,sr: highlight,shadow recovery
+		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
 
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
-		float toex = MIN(1,black/a);
-		float toey = toex*a*(1-shcompr/100.0);
-		float shoulderx = 1/a;//point in x at which line of slope a starting at (0,0) reaches y=1
+		float toex = MIN(1,black/(a*def_mul));
+		float toey = toex*a*def_mul*(1-shcompr/100.0);
+		float shoulderx = 1/(a*def_mul);//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
 		if (shoulderx<1) {//a>1; positive EC
@@ -740,7 +740,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		} else {//a<1; negative EC
 		//if (shoulderx>1) {
 			shoulderx = 1;
-			shouldery = a;
+			shouldery = a*def_mul;
 		}
 		/*float shoulderx = toex+(1-toey)/a;//point in x at which line of slope a starting at toe point reaches y=1
 		float shouldery;
@@ -808,10 +808,10 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			double val = (double)i / 65535.0;
 			
 			// apply default multiplier (that is >1 if highlight recovery is on)
-			val *= def_mul;
+			// val *= def_mul;
 			
 			// apply base curve, thus, exposure compensation and black point with shadow and highlight protection
-			//val = basecurve (val, a, black, D, hlcompr/100.0, shcompr/100.0);
+			//val = basecurve (val, a, black, def_mul, hlcompr/100.0, shcompr/100.0);
 			val = basecurve->getVal (val);
 			
 			outCurve1[i] = (int) (65535.0 * CLIPD(val));
