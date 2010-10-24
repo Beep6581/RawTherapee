@@ -51,7 +51,7 @@ void ProcParams::setDefaults () {
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
     toneCurve.black         = 0;
-    toneCurve.hlcompr       = 85;
+    toneCurve.hlcompr       = 70;
     toneCurve.shcompr       = 85;
     toneCurve.curve.clear ();
     
