@@ -334,8 +334,8 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 	float eps=1.0;	
 	int bmpW= (W/8+ (W%8?1:0));
 	int counter=0;
-	for( int row = 0; row < H; row++ ){
-		for(int col = 0; col <W; col++ ){
+	for( int row = 2; row < H-2; row++ ){
+		for(int col = 2; col <W-2; col++ ){
 
 			if( !bitmapBads[ row *bmpW + col/8] ){ col+=7;continue; } //optimization
 
@@ -345,7 +345,6 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 			for( int dy=-2;dy<=2;dy+=2){
 				for( int dx=-2;dx<=2;dx+=2){
 					if (dy==0 && dx==0) continue;
-					if (row+dy<0 || row+dy>=H || col+dx<0 || col+dx>=W ) continue;
 					if (bitmapBads[ (row+dy) *bmpW + (col+dx)/8] & (1<<(col+dx)%8)) continue;
 					sum += rawData[row+dy][col+dx];
 					tot++;
