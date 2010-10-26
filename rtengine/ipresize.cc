@@ -23,6 +23,8 @@
 #include <omp.h>
 #endif
 
+#include <iostream>
+
 namespace rtengine {
 
 #undef CLIP
@@ -34,6 +36,110 @@ namespace rtengine {
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 
 void ImProcFunctions::resize (Image16* src, Image16* dst) {
+
+    if(true) {
+    //if(params->resize.method == "Lanczos") {
+        double delta = 1.0 / params->resize.scale;
+        const double a = 3.0;
+        const int support = 6;
+        const int kc = 2;
+        
+        Image16 * tmp = new Image16(src->width, dst->height);
+        
+        for (int i = 0; i < tmp->height; i++) {
+            // y coord of the center of pixel on src image
+            double y0 = (i + 0.5) * delta - 0.5;
+            int i0 = floor(y0);
+            
+            // weights for interpolation in y direction
+            double w[support];
+            
+            // sum of weights used for normalization
+            double ww = 0.0;
+
+            int ii0 = std::max(0, i0 - kc);
+            int ii1 = std::min(src->height, i0 - kc + support);
+            
+            // calculate weights
+            for (int ii = ii0; ii < ii1; ii++) {
+                int k = ii - i0 + kc;
+                double z = M_PI * (y0 - (i0 + k - kc));
+                w[k] = sin(z) * sin(a*z) / (a * z * z);
+                ww += w[k];
+            }
+            
+            // normalize weights
+            for (int k = 0; k < support; k++) {
+                w[k] /= ww;
+            }
+            
+            for (int j = 0; j < tmp->width; j++) {
+                
+                double r = 0.0, g = 0.0, b = 0.0;
+                
+                for (int ii = ii0; ii < ii1; ii++) {
+                    int k = ii - i0 + kc;
+                
+                    r += w[k] * src->r[ii][j];
+                    g += w[k] * src->g[ii][j];
+                    b += w[k] * src->b[ii][j];
+                }
+                
+                tmp->r[i][j] = CLIP((int)r);
+                tmp->g[i][j] = CLIP((int)g);
+                tmp->b[i][j] = CLIP((int)b);
+            }
+        }
+        
+        for (int j = 0; j < dst->width; j++) {
+            // y coord of the center of pixel on src image
+            double x0 = (j + 0.5) * delta - 0.5;
+            int j0 = floor(x0);
+
+            // weights for interpolation in y direction
+            double w[support];
+            
+            // sum of weights used for normalization
+            double ww = 0.0;
+
+            int jj0 = std::max(0, j0 - kc);
+            int jj1 = std::min(tmp->width, j0 - kc + support);
+
+            // calculate weights
+            for (int jj = jj0; jj < jj1; jj++) {
+                int k = jj - j0 + kc;
+                double z = M_PI * (x0 - (j0 + k - kc));
+                w[k] = sin(z) * sin(a*z) / (a * z * z);
+                ww += w[k];
+            }
+            
+            // normalize weights
+            for (int k = 0; k < support; k++) {
+                w[k] /= ww;
+            }
+            
+            for (int i = 0; i < dst->height; i++) {
+                
+                double r = 0.0, g = 0.0, b = 0.0;
+                
+                for (int jj = jj0; jj < jj1; jj++) {
+                    int k = jj - j0 + kc;
+                
+                    r += w[k] * tmp->r[i][jj];
+                    g += w[k] * tmp->g[i][jj];
+                    b += w[k] * tmp->b[i][jj];
+                }
+                
+                dst->r[i][j] = CLIP((int)r);
+                dst->g[i][j] = CLIP((int)g);
+                dst->b[i][j] = CLIP((int)b);
+            }
+        }
+        
+        delete tmp;
+    }
+    
+    return;
 
 	if(params->resize.method == "Downscale (Better)") {
         // small-scale algorithm by Ilia
