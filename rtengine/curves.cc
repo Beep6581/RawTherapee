@@ -694,7 +694,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 		double def_mul = pow (2.0, defmul);
 
-		printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
+		//printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
 				
 		// compute parameters of the gamma curve
 		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
