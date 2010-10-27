@@ -64,7 +64,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             for (int ii = ii0; ii < ii1; ii++) {
                 int k = ii - i0 + kc;
                 double z = M_PI * (y0 - (i0 + k - kc));
-                w[k] = sin(z) * sin(a*z) / (a * z * z);
+                if (z * z > 1e-6)
+                    w[k] = sin(z) * sin(a*z) / (a * z * z);
+                else
+                    w[k] = 1.0;
                 ww += w[k];
             }
             
@@ -109,7 +112,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             for (int jj = jj0; jj < jj1; jj++) {
                 int k = jj - j0 + kc;
                 double z = M_PI * (x0 - (j0 + k - kc));
-                w[k] = sin(z) * sin(a*z) / (a * z * z);
+                if (z * z > 1e-6)
+                    w[k] = sin(z) * sin(a*z) / (a * z * z);
+                else
+                    w[k] = 1.0;
                 ww += w[k];
             }
             
