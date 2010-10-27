@@ -621,7 +621,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		std::vector<double> satcurvePoints;
 		satcurvePoints.push_back((double)((CurveType)NURBS));
-		if (saturation>-99.5) {
+		if (saturation>0) {
 			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 			
@@ -635,10 +635,10 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			satcurvePoints.push_back(1); // value at white point
 		} else {
 			satcurvePoints.push_back(0); 
-			satcurvePoints.push_back(0.5); 
+			satcurvePoints.push_back(-0.5*(saturation/100.0)); 
 			
 			satcurvePoints.push_back(1); 
-			satcurvePoints.push_back(0.5); 
+			satcurvePoints.push_back(1+saturation/200.0); 
 		}
 		Curve* satcurve = NULL;
 		satcurve = new Curve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
@@ -729,7 +729,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
 		float toex = MIN(1,black/(a*def_mul));
-		float toey = toex*a*def_mul*(1-shcompr/100.0);
+		float toey = MAX(0,toex*a*def_mul*(1-shcompr/50.0));
 		float shoulderx = 1/(a*def_mul);//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
@@ -752,7 +752,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			shouldery = toey + (1-toex)*a;
 		}*/
 		
-		basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+		basecurvePoints.push_back(MAX(0,0.99*toex*(shcompr/50.0-1))); //black point.  Value in [0 ; 1] range
 		basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
 		basecurvePoints.push_back(toex); //toe point

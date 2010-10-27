@@ -326,10 +326,6 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
             b = tonecurve[b];*/
 			int Y = (int)(0.299*r + 0.587*g + 0.114*b);
 			float tonefactor = (Y>0 ? (float)tonecurve1[Y]/Y : 1);
-			/*float rtonefactor = (r>0 ? (float)tonecurve1[r]/r : 1);
-			float gtonefactor = (g>0 ? (float)tonecurve1[g]/g : 1);
-			float btonefactor = (b>0 ? (float)tonecurve1[b]/b : 1);
-			float tonefactor = MIN(rtonefactor, MIN(gtonefactor,btonefactor));*/
 
 			r *= tonefactor;
 			g *= tonefactor;
@@ -347,7 +343,6 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
             z = CLIPTO(z,0,2*65536-1);
 
             int L = cacheL[y];
-			//int L = cacheL[tonecurve[y]];//for luminance tone curve, use this (and comment out rgb tonecurves)
             lab->L[i][j] = L;
             lab->a[i][j] = CLIPC(((cachea[x] - cachea[y]) * chroma_scale) >> 15);
             lab->b[i][j] = CLIPC(((cacheb[y] - cacheb[z]) * chroma_scale) >> 15);
