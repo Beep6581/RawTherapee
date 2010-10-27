@@ -35,21 +35,35 @@ namespace rtengine {
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 
+double Lanc(double x, double a)
+{
+    if (x * x < 1e-6)
+        return 1.0;
+    else if (x * x > a * a)
+        return 0.0;
+    else {
+        x = M_PI * x;
+        return sin(x) * sin(x / a) / (x * x / a);
+    }
+}
+
 void ImProcFunctions::resize (Image16* src, Image16* dst) {
 
-    if(true) {
-    //if(params->resize.method == "Lanczos") {
-        double delta = 1.0 / params->resize.scale;
+    time_t t1 = clock();
+
+    if(params->resize.method == "Lanczos") {
+    
+        const double delta = 1.0 / params->resize.scale;
         const double a = 3.0;
-        const int support = 6;
-        const int kc = 2;
-        
+        const double sc = std::min(params->resize.scale, 1.0);
+        const int support = (int)(2.0 * a / sc) + 1;
+
         Image16 * tmp = new Image16(src->width, dst->height);
         
+        //#pragma omp parallel for
         for (int i = 0; i < tmp->height; i++) {
             // y coord of the center of pixel on src image
             double y0 = (i + 0.5) * delta - 0.5;
-            int i0 = floor(y0);
             
             // weights for interpolation in y direction
             double w[support];
@@ -57,20 +71,17 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             // sum of weights used for normalization
             double ww = 0.0;
 
-            int ii0 = std::max(0, i0 - kc);
-            int ii1 = std::min(src->height, i0 - kc + support);
+            int ii0 = std::max(0, (int)floor(y0 - a / sc) + 1);
+            int ii1 = std::min(src->height, (int)floor(y0 + a / sc) + 1);
             
             // calculate weights
             for (int ii = ii0; ii < ii1; ii++) {
-                int k = ii - i0 + kc;
-                double z = M_PI * (y0 - (i0 + k - kc));
-                if (z * z > 1e-6)
-                    w[k] = sin(z) * sin(a*z) / (a * z * z);
-                else
-                    w[k] = 1.0;
+                int k = ii - ii0;
+                double z = sc * (y0 - ii);
+                w[k] = Lanc(z, a);
                 ww += w[k];
             }
-            
+
             // normalize weights
             for (int k = 0; k < support; k++) {
                 w[k] /= ww;
@@ -81,7 +92,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
                 double r = 0.0, g = 0.0, b = 0.0;
                 
                 for (int ii = ii0; ii < ii1; ii++) {
-                    int k = ii - i0 + kc;
+                    int k = ii - ii0;
                 
                     r += w[k] * src->r[ii][j];
                     g += w[k] * src->g[ii][j];
@@ -94,10 +105,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             }
         }
         
+        //#pragma omp parallel for
         for (int j = 0; j < dst->width; j++) {
-            // y coord of the center of pixel on src image
+            // x coord of the center of pixel on src image
             double x0 = (j + 0.5) * delta - 0.5;
-            int j0 = floor(x0);
 
             // weights for interpolation in y direction
             double w[support];
@@ -105,17 +116,14 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             // sum of weights used for normalization
             double ww = 0.0;
 
-            int jj0 = std::max(0, j0 - kc);
-            int jj1 = std::min(tmp->width, j0 - kc + support);
+            int jj0 = std::max(0, (int)floor(x0 - a / sc) + 1);
+            int jj1 = std::min(tmp->width, (int)floor(x0 + a / sc) + 1);
 
             // calculate weights
             for (int jj = jj0; jj < jj1; jj++) {
-                int k = jj - j0 + kc;
-                double z = M_PI * (x0 - (j0 + k - kc));
-                if (z * z > 1e-6)
-                    w[k] = sin(z) * sin(a*z) / (a * z * z);
-                else
-                    w[k] = 1.0;
+                int k = jj - jj0;
+                double z = sc * (x0 - jj);
+                w[k] = Lanc(z, a);
                 ww += w[k];
             }
             
@@ -129,7 +137,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
                 double r = 0.0, g = 0.0, b = 0.0;
                 
                 for (int jj = jj0; jj < jj1; jj++) {
-                    int k = jj - j0 + kc;
+                    int k = jj - jj0;
                 
                     r += w[k] * tmp->r[i][jj];
                     g += w[k] * tmp->g[i][jj];
@@ -144,10 +152,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
         
         delete tmp;
     }
-    
-    return;
-
-	if(params->resize.method == "Downscale (Better)") {
+	else if(params->resize.method == "Downscale (Better)") {
         // small-scale algorithm by Ilia
         // provides much better quality on small scales
         // calculates mean value over source pixels which current destination pixel covers
@@ -229,11 +234,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
                 dst->b[i][j] = CLIP((int)b);
             }
         }
-        return;
     }
-
-    if(params->resize.method == "Downscale (Faster)")
-	{
+    else if(params->resize.method == "Downscale (Faster)") {
         // faster version of algo above, does not take into account border pixels,
         // which are summed with non-unity weights in slow algo. So, no need
         // for weights at all
@@ -302,9 +304,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
                 dst->b[i][j] = CLIP( b * k / divider);
             }
         }
-        return;
     }
-    if (params->resize.method.substr(0,7)=="Bicubic") {
+    else if (params->resize.method.substr(0,7)=="Bicubic") {
         double Av = -0.5;
         if (params->resize.method=="Bicubic (Sharper)")
             Av = -0.75;
