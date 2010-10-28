@@ -1190,7 +1190,7 @@ void Preferences::clearProfilesPressed () {
     md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
     md.show_all ();
     while (gtk_events_pending ()) gtk_main_iteration ();
-    cacheMgr.clearProfiles ();
+    cacheMgr->clearProfiles ();
     md.hide ();
 }
 
@@ -1201,7 +1201,7 @@ void Preferences::clearThumbImagesPressed () {
     md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
     md.show_all ();
     while (gtk_events_pending ()) gtk_main_iteration ();
-    cacheMgr.clearThumbImages ();
+    cacheMgr->clearThumbImages ();
     md.hide ();
 }
 
@@ -1212,7 +1212,7 @@ void Preferences::clearAllPressed () {
     md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
     md.show_all ();
     while (gtk_events_pending ()) gtk_main_iteration ();
-    cacheMgr.clearAll ();
+    cacheMgr->clearAll ();
     md.hide ();
 }
 

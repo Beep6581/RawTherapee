@@ -392,7 +392,7 @@ void PreviewLoader::start () {
 void PreviewLoader::process (DirEntry& current) {
 
 	if (Glib::file_test (current.fullName, Glib::FILE_TEST_EXISTS)) {
-	    Thumbnail* tmb = cacheMgr.getEntry (current.fullName);
+	    Thumbnail* tmb = cacheMgr->getEntry (current.fullName);
 	    if (tmb && pl) 
 	  	    pl->previewReady (new FileBrowserEntry (tmb, current.fullName));
 	}
@@ -475,7 +475,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
 //            t->thumbnail->decreaseRef ();
             delete t;
             // remove from cache
-            cacheMgr.deleteEntry (fname);
+            cacheMgr->deleteEntry (fname);
             // delete from file system
             ::g_remove (fname.c_str());
             // delete paramfile if found
@@ -538,7 +538,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 nBaseName += "." + getExtension (baseName);
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
             if (!::g_rename (ofname.c_str(), nfname.c_str())) {
-				cacheMgr.renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
+				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				reparseDirectory ();
             }
             renameDlg->hide ();
@@ -584,7 +584,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
             if (!::g_rename (ofname.c_str(), nfname.c_str())) {
-				cacheMgr.renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
+				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				// the remaining part (removing old and adding new entry) is done by the directory monitor
 				reparseDirectory ();
 //                on_dir_changed (Gio::File::create_for_path (nfname), Gio::File::create_for_path (nfname), Gio::FILE_MONITOR_EVENT_CHANGED, true);
@@ -749,7 +749,7 @@ int FileCatalog::reparseDirectory () {
 			fileNamesToDel.push_back (t[i]->filename);
 	for (size_t i=0; i<fileNamesToDel.size(); i++) {
 		delete fileBrowser->delEntry (fileNamesToDel[i]);
-		cacheMgr.deleteEntry (fileNamesToDel[i]);
+		cacheMgr->deleteEntry (fileNamesToDel[i]);
 	}
 
 	// check if a new file has been added
@@ -820,7 +820,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     int lastdot = info->get_name().find_last_of ('.');
     if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
-        Thumbnail* tmb = cacheMgr.getEntry (file->get_parse_name());
+        Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
   	        previewReady (entry);
