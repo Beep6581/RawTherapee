@@ -36,10 +36,9 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true), lastImg(NULL) {
 
-    mutex = new Glib::Mutex ();
     cfs.load (getCacheFileName ("data")+".txt");
     loadProcParams ();
-    loadThumbnail ();
+    _loadThumbnail ();
     generateExifDateTimeStrings ();
 }
 
@@ -47,18 +46,14 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::s
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
       needsReProcessing(true), lastImg(NULL) {
 
-    mutex = new Glib::Mutex ();
 
     cfs.md5 = md5;
-    generateThumbnailImage ();
+    _generateThumbnailImage ();
     loadProcParams ();
     cfs.recentlySaved = false;
 }
 
-void Thumbnail::generateThumbnailImage (bool internal) {
-
-    if (!internal)
-        mutex->lock ();
+void Thumbnail::_generateThumbnailImage () {
 
 //  delete everything loaded into memory
     delete tpp;
@@ -103,7 +98,7 @@ void Thumbnail::generateThumbnailImage (bool internal) {
     }
     if (tpp) {
         // save thumbnail image to cache
-        saveThumbnail ();
+        _saveThumbnail ();
         cfs.supported = true;
     }
     needsReProcessing = true;
@@ -111,9 +106,11 @@ void Thumbnail::generateThumbnailImage (bool internal) {
     cfs.save (getCacheFileName ("data")+".txt");
 
     generateExifDateTimeStrings ();
-    
-    if (!internal)
-        mutex->unlock ();
+}
+
+void Thumbnail::generateThumbnailImage () {
+	Glib::Mutex::Lock lock(mutex);
+	_generateThumbnailImage();
 }
 
 bool Thumbnail::isSupported () {
@@ -231,8 +228,24 @@ bool Thumbnail::isEnqueued () {
     return enqueueNumber > 0;
 }
 
-void Thumbnail::increaseRef () { ref++; }
-void Thumbnail::decreaseRef () { ref--; if (!ref) cachemgr->closeThumbnail (this); }
+void Thumbnail::increaseRef ()
+{
+	Glib::Mutex::Lock lock(mutex);
+   	++ref;
+}
+
+void Thumbnail::decreaseRef () 
+{
+	Glib::Mutex::Lock lock(mutex);
+	if ( ref != 0 )
+	{
+		--ref;
+		if ( ref == 0 )
+		{
+			cachemgr->closeThumbnail (this); 
+		}
+	}
+}
 
 void Thumbnail::getThumbnailSize (int &w, int &h) {
 
@@ -244,14 +257,13 @@ void Thumbnail::getThumbnailSize (int &w, int &h) {
 
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
 
-    mutex->lock ();
+	Glib::Mutex::Lock lock(mutex);
 
     if (!tpp)
         return NULL;
 
     rtengine::IImage8* res = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
 
-    mutex->unlock ();
     return res;
 }
 
@@ -340,10 +352,7 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
     delete idata;
 }
 
-void Thumbnail::loadThumbnail (bool internal, bool firstTrial) {
-
-    if (!internal)
-        mutex->lock ();
+void Thumbnail::_loadThumbnail(bool firstTrial) {
 
     needsReProcessing = true;
     delete tpp;
@@ -357,9 +366,9 @@ void Thumbnail::loadThumbnail (bool internal, bool firstTrial) {
     succ = succ && tpp->readImage (getCacheFileName ("images"));
 
     if (!succ && firstTrial) {
-        generateThumbnailImage (true);
+        _generateThumbnailImage ();
         if (cfs.supported && firstTrial)
-            loadThumbnail (true, false);
+            _loadThumbnail (false);
     }
     else if (!succ) {
         delete tpp;
@@ -375,11 +384,14 @@ void Thumbnail::loadThumbnail (bool internal, bool firstTrial) {
         tpp->init ();
         
     }
-    if (!internal)
-        mutex->unlock ();
 }
 
-void Thumbnail::saveThumbnail () {
+void Thumbnail::loadThumbnail (bool firstTrial) {
+	Glib::Mutex::Lock lock(mutex);
+	_loadThumbnail(firstTrial);
+}
+
+void Thumbnail::_saveThumbnail () {
 
     if (!tpp)
         return;
@@ -404,6 +416,12 @@ void Thumbnail::saveThumbnail () {
 
     // save supplementary data
     tpp->writeData (getCacheFileName ("data")+".txt");
+}
+
+void Thumbnail::saveThumbnail () 
+{
+   	Glib::Mutex::Lock lock(mutex);
+	_saveThumbnail(); 
 }
 
 void Thumbnail::updateCache () {

@@ -194,7 +194,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
         t->setFileName (newfilename);
         openEntries[newfilename] = t;
         t->updateCache ();
-        t->reSaveThumbnail ();
+        t->saveThumbnail ();
     }
 }
 
