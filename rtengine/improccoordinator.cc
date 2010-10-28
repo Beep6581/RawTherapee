@@ -83,17 +83,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			highDetailNeeded=true;
 			break;
 		}
-
-
+	RAWParams rp = params.raw;
+	if( !highDetailNeeded ){
+		rp.dmethod = RAWParams::methodstring[RAWParams::fast];
+		rp.ca_autocorrect  = false;
+		rp.hotdeadpix_filt = false;
+		rp.ccSteps = 0;
+	}
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC)
-    	imgsrc->preprocess( params.raw );
+    	imgsrc->preprocess( rp );
     if( todo & M_RAW){
-    	RAWParams rp = params.raw;
     	if( !highDetailNeeded ){
-    		rp.dmethod = RAWParams::methodstring[RAWParams::fast];
-    		rp.ca_autocorrect = false;
-    		rp.ccSteps = 0;
     		fineDetailsProcessed = false;
     	}else
     		fineDetailsProcessed = true;
