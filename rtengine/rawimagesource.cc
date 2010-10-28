@@ -719,6 +719,8 @@ void RawImageSource::inverse33 (double (*coeff)[3], double (*icoeff)[3]) {
     
 int RawImageSource::load (Glib::ustring fname) {
 
+	MyTime t1,t2;
+	t1.set();
     fileName = fname;
 
     if (plistener) {
@@ -870,11 +872,17 @@ skip_block: ;
         plistener->setProgress (1.0);
     }
     plistener=NULL; // This must be reset, because only load() is called through progressConnector
+    t2.set();
+    if( settings->verbose )
+       printf("Load %s: %d µsec\n",fname.c_str(), t2.etime(t1));
+
     return 0; // OK!
 }
 
 void RawImageSource::preprocess  (const RAWParams &raw)
 {
+	MyTime t1,t2;
+	t1.set();
 	Glib::ustring newDF = raw.dark_frame;
 	RawImage *rid=NULL;
 	if (!raw.df_autoselect) {
@@ -983,8 +991,9 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		
 		CA_correct_RT();
 	}
-
-
+    t2.set();
+    if( settings->verbose )
+       printf("Preprocessing: %d µsec\n", t2.etime(t1));
     return;
 }
 void RawImageSource::demosaic(const RAWParams &raw)
@@ -1006,10 +1015,13 @@ void RawImageSource::demosaic(const RAWParams &raw)
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demo (0,0,W,H);
+        else if (raw.dmethod == RAWParams::methodstring[RAWParams::bilinear] )
+            bilinear_demosaic();
         else
         	nodemosaic();
         t2.set();
-        printf("Demosaicing: %s - %d Âµsec\n",raw.dmethod.c_str(), t2.etime(t1));
+        if( settings->verbose )
+           printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
