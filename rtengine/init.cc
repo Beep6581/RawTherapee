@@ -32,7 +32,7 @@ Glib::Mutex* lcmsMutex = NULL;
 int init (const Settings* s) {
 
     settings = s;
-    iccStore.parseDir (s->iccDirectory);
+    iccStore->parseDir (s->iccDirectory);
     CurveFactory::init ();
     ImProcFunctions::initCache ();
     delete dcrMutex;

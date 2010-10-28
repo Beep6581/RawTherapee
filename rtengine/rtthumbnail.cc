@@ -143,7 +143,7 @@ void Thumbnail::init () {
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
                 camToD50[i][j] += colorMatrix[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore.createFromMatrix (camToD50, false, "Camera");
+    camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
 }
 
 bool Thumbnail::igammacomputed = false;
