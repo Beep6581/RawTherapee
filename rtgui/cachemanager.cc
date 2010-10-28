@@ -24,9 +24,25 @@
 #include <procparamchangers.h>
 #include <safegtk.h>
 
-CacheManager cacheMgr;
+CacheManager*
+CacheManager::getInstance(void)
+{
+	static CacheManager* instance_ = 0;
+	if ( instance_ == 0 )
+	{
+		static Glib::Mutex smutex_;
+		Glib::Mutex::Lock lock(smutex_);
+		if ( instance_ == 0 )
+		{
+			instance_ = new CacheManager();
+		}
+	}
+	return instance_;
+}
 
 void CacheManager::init () {
+
+    Glib::Mutex::Lock lock(mutex_);
 
     openEntries.clear ();
     baseDir = options.cacheBaseDir;
@@ -49,12 +65,18 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
 
     Thumbnail* res = NULL;
     
-    std::map<std::string, Thumbnail*>::iterator r = openEntries.find (fname);
-    // if it is open, return it
-    if (r!=openEntries.end()) {
-        r->second->increaseRef ();
-        return r->second;
-    }
+    // take manager lock and search for entry, if found return it else release
+    // lock and create it
+	{
+        Glib::Mutex::Lock lock(mutex_);
+
+		string_thumb_map::iterator r = openEntries.find (fname);
+		// if it is open, return it
+		if (r!=openEntries.end()) {
+			r->second->increaseRef ();
+			return r->second;
+		}
+	}
 
     // compute the md5
     std::string md5 = getMD5 (fname);
@@ -78,6 +100,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
     }
     // if not, create a new one
     if (!res) {
+
         res = new Thumbnail (this, fname, md5);
         if (!res->isSupported ()) {
             delete res;
@@ -85,20 +108,45 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
         }
     }
 
+    // retake the lock and see if it was added while we we're unlocked, if it
+    // was use it over our version. if not added we create the cache entry
     if (res)
-        openEntries[fname] = res;
+	{
+		Glib::Mutex::Lock lock(mutex_);
+
+		string_thumb_map::iterator r = openEntries.find (fname);
+		if (r!=openEntries.end()) {
+			delete res;
+			r->second->increaseRef ();
+			return r->second;
+		}
+
+		// it wasn't, create a new entry
+		openEntries[fname] = res;
+	}
+
     return res;
 }
 
 
 void CacheManager::deleteEntry (const Glib::ustring& fname) {
 
+    Glib::Mutex::Lock lock(mutex_);
+
     // check if it is opened
-    std::map<std::string, Thumbnail*>::iterator r = openEntries.find (fname);
+    string_thumb_map::iterator r = openEntries.find (fname);
     // if it is open, dont delete it
     if (r!=openEntries.end()) {
 		std::string md5 = r->second->getMD5 ();
-		r->second->decreaseRef ();
+
+        // decrease reference count; this will call back into CacheManager so
+        // we release the lock for it.
+		{
+            lock.release();
+			r->second->decreaseRef ();
+            lock.acquire();
+		}
+
 		// if in the editor, the thumbnail still exists. If not, delete it:
 		r = openEntries.find (fname);
 	    if (r==openEntries.end() && md5!="") {
@@ -126,6 +174,8 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename) {
 
+    Glib::Mutex::Lock lock(mutex_);
+
     std::string newmd5 = getMD5 (newfilename);
 
     ::g_rename ((getCacheFileName ("profiles", oldfilename, oldmd5) + paramFileExtension).c_str(), (getCacheFileName ("profiles", newfilename, newmd5) + paramFileExtension).c_str());
@@ -136,7 +186,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
     ::g_rename ((getCacheFileName ("data", oldfilename, oldmd5) + ".txt").c_str(), (getCacheFileName ("data", newfilename, newmd5) + ".txt").c_str());
 
     // check if it is opened
-    std::map<std::string, Thumbnail*>::iterator r = openEntries.find (oldfilename);
+    string_thumb_map::iterator r = openEntries.find (oldfilename);
     // if it is open, update md5
     if (r!=openEntries.end()) {
         Thumbnail* t = r->second;
@@ -150,8 +200,10 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
 void CacheManager::closeThumbnail (Thumbnail* t) {
 
+    Glib::Mutex::Lock lock(mutex_);
+
     t->updateCache ();
-    std::map<std::string, Thumbnail*>::iterator r = openEntries.find (t->getFileName());
+    string_thumb_map::iterator r = openEntries.find (t->getFileName());
     if (r!=openEntries.end()) 
         openEntries.erase (r);
     delete t;
@@ -159,10 +211,14 @@ void CacheManager::closeThumbnail (Thumbnail* t) {
 
 void CacheManager::closeCache () {
 
+    Glib::Mutex::Lock lock(mutex_);
+
     applyCacheSizeLimitation ();
 }
 
 void CacheManager::clearAll () {
+
+    Glib::Mutex::Lock lock(mutex_);
 
     deleteDir ("images");
     deleteDir ("aehistograms");
@@ -171,7 +227,7 @@ void CacheManager::clearAll () {
     deleteDir ("data");
     
     // re-generate thumbnail images and clear profiles of open thumbnails
-    std::map<std::string, Thumbnail*>::iterator i;
+    string_thumb_map::iterator i;
     for (i=openEntries.begin(); i!=openEntries.end(); i++) {
         i->second->clearProcParams (CACHEMGR);
         i->second->generateThumbnailImage ();
@@ -180,21 +236,25 @@ void CacheManager::clearAll () {
 }
 void CacheManager::clearThumbImages () {
 
+    Glib::Mutex::Lock lock(mutex_);
+
     deleteDir ("images");
     deleteDir ("aehistograms");
     deleteDir ("embprofiles");
     
     // re-generate thumbnail images of open thumbnails
-    std::map<std::string, Thumbnail*>::iterator i;
+    string_thumb_map::iterator i;
     for (i=openEntries.begin(); i!=openEntries.end(); i++)
         i->second->generateThumbnailImage ();
 }
 
 void CacheManager::clearProfiles () {
 
+    Glib::Mutex::Lock lock(mutex_);
+
     deleteDir ("profiles");
     // clear profiles of open thumbnails
-    std::map<std::string, Thumbnail*>::iterator i;
+    string_thumb_map::iterator i;
     for (i=openEntries.begin(); i!=openEntries.end(); i++)
         i->second->clearProcParams (CACHEMGR);
 }
@@ -234,9 +294,9 @@ void CacheManager::applyCacheSizeLimitation () {
     std::vector<FileMTimeInfo> flist;
     Glib::ustring dataDir = Glib::build_filename (baseDir, "data");
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dataDir);
-    
-		safe_build_file_list (dir, flist);
-								
+
+    safe_build_file_list (dir, flist);
+
     if (flist.size() > options.maxCacheEntries) {
         std::sort (flist.begin(), flist.end());
         while (flist.size() > options.maxCacheEntries) {
@@ -245,7 +305,7 @@ void CacheManager::applyCacheSizeLimitation () {
             ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg").c_str());
             ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname)).c_str());
             ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "embprofiles"), flist.front().fname) + ".icc").c_str());
-//                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "profiles"), flist.front().fname) + paramFileExtension).c_str());
+            //                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "profiles"), flist.front().fname) + paramFileExtension).c_str());
             flist.erase (flist.begin());
         }
     }
