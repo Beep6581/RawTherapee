@@ -324,15 +324,39 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
             /*r = tonecurve[r];
             g = tonecurve[g];
             b = tonecurve[b];*/
-			int Y = (int)(0.299*r + 0.587*g + 0.114*b);
-			float tonefactor = (Y>0 ? (float)tonecurve1[Y]/Y : 1);
+			int Y = (0.299*r + 0.587*g + 0.114*b);
+			int Ynew = tonecurve1[Y];
+			float tonefactor = (Y>0 ? (float)Ynew/Y : 1);
 
 			r *= tonefactor;
 			g *= tonefactor;
 			b *= tonefactor;
+			float maxfactor = 1;
+			if (r>65535) 
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(r-Ynew));
+			if (g>65535)
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(g-Ynew));
+			if (b>65535) 
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(b-Ynew));
+			
+			if (r<0) 
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-r));
+			if (g<0)
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-g));
+			if (b<0) 
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-b));
+			
+			float U = (float)(-0.14713*r - 0.28886*g + 0.436*b)*maxfactor;
+			float V = (float)(0.615*r - 0.51499*g - 0.10001*b)*maxfactor;
+			
+			r = CLIP(Ynew + 1.13983*V);
+			g = CLIP(Ynew - 0.39465*U - 0.58060*V);
+			b = CLIP(Ynew + 2.03211*U);
+			
 			r = tonecurve2[CLIP(r)];
 			g = tonecurve2[CLIP(g)];
 			b = tonecurve2[CLIP(b)];
+
 			
             int x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) >> 15;
             int y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) >> 15;

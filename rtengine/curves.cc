@@ -694,7 +694,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 		double def_mul = pow (2.0, defmul);
 
-		printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
+		//printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
 				
 		// compute parameters of the gamma curve
 		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
@@ -729,7 +729,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
 		float toex = MIN(1,black/(a*def_mul));
-		float toey = MAX(0,toex*a*def_mul*(1-shcompr/50.0));
+		float toey = MAX(0,toex*a*def_mul*(shcompr/25.0-1));
 		float shoulderx = 1/(a*def_mul);//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
@@ -752,7 +752,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			shouldery = toey + (1-toex)*a;
 		}*/
 		
-		basecurvePoints.push_back(MAX(0,0.99*toex*(shcompr/50.0-1))); //black point.  Value in [0 ; 1] range
+		basecurvePoints.push_back(MAX(0,0.99*toex*(1-shcompr/25.0))); //black point.  Value in [0 ; 1] range
 		basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
 		basecurvePoints.push_back(toex); //toe point
