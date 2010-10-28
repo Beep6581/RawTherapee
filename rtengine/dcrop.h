@@ -69,6 +69,7 @@ class Crop : public DetailedCrop {
         void fullUpdate  ();
         void setListener (DetailedCropListener* il);
         void destroy     () { delete this; }
+        int  get_skip    () { return skip;}
 };
 }
 #endif

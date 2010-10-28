@@ -32,7 +32,7 @@ Crop::Crop (ImProcCoordinator* parent)
     : resizeCrop(NULL), transCrop(NULL), updating(false),
     cropw(-1), croph(-1), trafw(-1), trafh(-1),
     borderRequested(32), cropAllocated(false),
-    cropImageListener(NULL), parent(parent)
+    cropImageListener(NULL), parent(parent),skip(10)
 {
     parent->crops.push_back (this);
 }
@@ -78,17 +78,26 @@ void Crop::update (int todo, bool internal) {
     int wx, wy, ww, wh, ws;
     bool overrideWindow = false;
     if (cropImageListener)
-        overrideWindow = cropImageListener->getWindow (wx, wy, ww, wh, ws);    
+        overrideWindow = cropImageListener->getWindow (wx, wy, ww, wh, ws);
+
+    bool regenHighDetail=false;
+    if( ws==1 && skip>1 && !parent->fineDetailsProcessed ){
+    	regenHighDetail=true;
+    }
+
     // re-allocate sub-images and arrays if their dimensions changed
     bool needsinitupdate = false;
     if (!overrideWindow)
         needsinitupdate = setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
     else
-        needsinitupdate = setCropSizes (wx, wy, ww, wh, ws, true);
+        needsinitupdate = setCropSizes (wx, wy, ww, wh, ws, true); // this set skip=ws
     // it something has been reallocated, all processing steps have to be performed
     if (needsinitupdate)
         todo = ALL;
-        
+
+    if( regenHighDetail )
+    	parent->updatePreviewImage (ALL,this); // We have just set skip to 1
+
     if (resizeCrop)
         baseCrop = resizeCrop;
     else
@@ -172,7 +181,6 @@ void Crop::update (int todo, bool internal) {
             parent->ipf.colordenoise (labnCrop, cbuffer);
 			parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.sharpening (labnCrop, (unsigned short**)cbuffer);
-			//parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.dirpyrequalizer (labnCrop);
             parent->ipf.waveletEqualizer(labnCrop, true, true);
         }

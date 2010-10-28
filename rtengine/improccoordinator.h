@@ -57,6 +57,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         ImProcFunctions ipf;
 
         int scale;
+        bool fineDetailsProcessed;
         bool allocated;
         
         void freeAll ();
@@ -88,7 +89,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void reallocAll ();
         void updateHistograms (int x1, int y1, int x2, int y2);
         void setScale (int prevscale, bool internal=false);
-        void updatePreviewImage (int todo);
+        void updatePreviewImage (int todo, Crop* cropCall= NULL);
 
         Glib::Mutex mProcessing;
         ProcParams params;
