@@ -67,6 +67,30 @@ class PreviewLoader : public ProcessingThread<DirEntry> {
     void end ();
 };
 
+// Simple Multithreader: Harnesses two normal loader threads feeded by a round robin
+// Same interface as a normal PreviewLoader to minimize effects on code
+class PreviewMultiLoader {
+protected:
+	PreviewLoader loadA,loadB;
+	int next;
+
+public:
+	PreviewMultiLoader () { next=0; }
+    
+	void setPreviewLoaderListener (PreviewLoaderListener* p);
+
+	void add (DirEntry de);
+
+	void start ();
+    void process ();
+	void remove  (Glib::ustring fname);
+	void end ();
+
+	bool runs ();
+	void terminate ();
+	void stop ();
+};
+
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
@@ -82,7 +106,9 @@ class FileCatalog : public Gtk::VBox,
         Glib::ustring selectedDirectory;
         bool enabled;
         
-        PreviewLoader previewLoader;
+		// Restore PreviewLoader if the new threadsafe is not that threadsafe ;-)
+        //PreviewLoader previewLoader;
+        PreviewMultiLoader previewLoader;
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
         ImageAreaToolListener* iatlistener;
