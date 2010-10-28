@@ -54,7 +54,7 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_)
     backColor(0), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
     imgX(0), imgY(0), imgW(1), imgH(1), xpos(30), ypos(30), iarea(parent),
-    cropZoom(ZOOM11INDEX), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
+    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       
