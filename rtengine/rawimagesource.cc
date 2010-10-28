@@ -782,7 +782,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
                 cam[i][j] += coeff[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore.createFromMatrix (cam, false, "Camera");
+    camProfile = iccStore->createFromMatrix (cam, false, "Camera");
     inverse33 (cam, icam);
 
     if (ri->profile_data)
@@ -1165,7 +1165,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
     else if (inProfile=="(camera)" || inProfile=="")
         in = camprofile;
     else {
-        in = iccStore.getProfile (inProfile);
+        in = iccStore->getProfile (inProfile);
         if (in==NULL)
             inProfile = "(camera)";
     }
@@ -1174,11 +1174,11 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
     if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
         // in this case we avoid using the slllllooooooowwww lcms
     
-//        out = iccStore.workingSpace (wProfile);
+//        out = iccStore->workingSpace (wProfile);
 //        hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
-        TMatrix work = iccStore.workingSpaceInverseMatrix (cmp.working);
+        TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
@@ -1199,8 +1199,8 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
             }
     }
     else {
-        out = iccStore.workingSpace (cmp.working);
-//        out = iccStore.workingSpaceGamma (wProfile);
+        out = iccStore->workingSpace (cmp.working);
+//        out = iccStore->workingSpaceGamma (wProfile);
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
         lcmsMutex->unlock ();

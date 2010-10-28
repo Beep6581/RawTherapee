@@ -54,9 +54,14 @@ class ICCStore {
 
         cmsHPROFILE xyz;
         cmsHPROFILE srgb;
+
+		Glib::Mutex mutex_;
+
+        ICCStore (); 
         
     public:
-        ICCStore (); 
+
+		static ICCStore* getInstance(void);
         
         int     numOfWProfiles ();
         cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");
@@ -74,7 +79,7 @@ class ICCStore {
         std::vector<std::string> getOutputProfiles ();
 };
 
-extern ICCStore iccStore;
+#define iccStore ICCStore::getInstance()
 
 //extern const char* wpnames[];
 }

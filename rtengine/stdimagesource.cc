@@ -256,19 +256,19 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 void StdImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
 
     cmsHPROFILE in;
-    cmsHPROFILE out = iccStore.workingSpace (cmp.working);
+    cmsHPROFILE out = iccStore->workingSpace (cmp.working);
     if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
         if (embedded)
             in = embedded;
         else
-            in = iccStore.getsRGBProfile ();
+            in = iccStore->getsRGBProfile ();
     }
     else if (cmp.input!="(none)") {
-        in = iccStore.getProfile (cmp.input);
+        in = iccStore->getProfile (cmp.input);
         if (in==NULL && embedded)
             in = embedded;
         else if (in==NULL)
-            in = iccStore.getsRGBProfile ();
+            in = iccStore->getsRGBProfile ();
         else if (cmp.gammaOnInput) 
             for (int i=0; i<im->height; i++)
                 for (int j=0; j<im->width; j++) {

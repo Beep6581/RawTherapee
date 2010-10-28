@@ -124,7 +124,7 @@ void ImProcFunctions::setScale (double iscale) {
 
 void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
 
-	TMatrix wprof = iccStore.workingSpaceMatrix (wprofile);
+	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
     int toxyz[3][3];
     toxyz[0][0] = round(32768.0 * wprof[0][0] / 0.96422); 
     toxyz[1][0] = round(32768.0 * wprof[1][0] / 0.96422); 
@@ -184,12 +184,12 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 	if (monitorTransform)
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
-	cmsHPROFILE monitor = iccStore.getProfile ("file:"+settings->monitorProfile);
+	cmsHPROFILE monitor = iccStore->getProfile ("file:"+settings->monitorProfile);
 	if (monitor) {
-        cmsHPROFILE iprof = iccStore.getXYZProfile ();       
-		cmsHPROFILE oprof = iccStore.getProfile (params->icm.output);
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();       
+		cmsHPROFILE oprof = iccStore->getProfile (params->icm.output);
 		if (!oprof)
-			oprof = iccStore.getsRGBProfile ();
+			oprof = iccStore->getsRGBProfile ();
         lcmsMutex->lock ();
 		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();
@@ -257,7 +257,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
     bool processLCE = params->sh.enabled && shmap!=NULL && params->sh.localcontrast>0;
     double lceamount = params->sh.localcontrast / 200.0;
 
-    TMatrix wprof = iccStore.workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
     int toxyz[3][3] = {
         {
         	floor(32768.0 * wprof[0][0] / 0.96422),
