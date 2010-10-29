@@ -71,11 +71,11 @@ class PreviewLoader : public ProcessingThread<DirEntry> {
 // Same interface as a normal PreviewLoader to minimize effects on code
 class PreviewMultiLoader {
 protected:
-	PreviewLoader loadA,loadB;
-	int next;
+	PreviewLoader *loaders;
+	int next,loaderCount;
 
 public:
-	PreviewMultiLoader () { next=0; }
+	PreviewMultiLoader ();
     
 	void setPreviewLoaderListener (PreviewLoaderListener* p);
 

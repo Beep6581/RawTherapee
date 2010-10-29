@@ -27,6 +27,10 @@
 #include <thumbimageupdater.h>
 #include <safegtk.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #define CHECKTIME 2000
 
 extern Glib::ustring argv0;
@@ -970,25 +974,50 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
     return false;
 }
 
-void PreviewMultiLoader::setPreviewLoaderListener (PreviewLoaderListener* p) { 
-	loadA.setPreviewLoaderListener(p); loadB.setPreviewLoaderListener(p);
+PreviewMultiLoader::PreviewMultiLoader () {
+	next=0;
+	loaderCount=1;
+
+	#ifdef _OPENMP
+	loaderCount=omp_get_num_procs();
+	// If there are pleny of processor, spare one for snappy image editing
+	if (loaderCount>3) loaderCount--;
+	#endif
+
+	loaders=new PreviewLoader[loaderCount];
+}
+
+void PreviewMultiLoader::setPreviewLoaderListener (PreviewLoaderListener* p) {
+	for (int i=0;i<loaderCount;i++) loaders[i].setPreviewLoaderListener(p);
 }
 
 // Simple round robin
 void PreviewMultiLoader::add(DirEntry de) {
-	if (next==0) {
-		loadA.add(de);
-		next=1;
-	} else {
-		loadB.add(de);
-		next=0;
-	}
+	loaders[next].add(de);
+	next++;
+	if (next>=loaderCount) next=0;
 }
 
-void PreviewMultiLoader::start () { loadA.start(); loadB.start(); }
-void PreviewMultiLoader::process () { loadA.process (); loadB.process(); }
-void PreviewMultiLoader::remove  (Glib::ustring fname) { loadA.remove(fname); loadB.remove(fname); }
-void PreviewMultiLoader::end () { loadA.end(); loadB.end(); }
-bool PreviewMultiLoader::runs () { return loadA.runs() || loadB.runs(); }
-void PreviewMultiLoader::terminate () { loadA.terminate(); loadB.terminate(); }
-void PreviewMultiLoader::stop () { loadA.stop(); loadB.stop(); }
+void PreviewMultiLoader::start () { 
+	for (int i=0;i<loaderCount;i++) loaders[i].start();
+}
+void PreviewMultiLoader::process () { 
+	for (int i=0;i<loaderCount;i++) loaders[i].process (); 
+}
+void PreviewMultiLoader::remove  (Glib::ustring fname) { 
+	for (int i=0;i<loaderCount;i++) loaders[i].remove(fname); 
+}
+void PreviewMultiLoader::end () { 
+	for (int i=0;i<loaderCount;i++) loaders[i].end();
+}
+bool PreviewMultiLoader::runs () { 
+	for (int i=0;i<loaderCount;i++) if (loaders[i].runs()) return true;
+	
+	return false;
+}
+void PreviewMultiLoader::terminate () { 
+	for (int i=0;i<loaderCount;i++) loaders[i].terminate(); 
+}
+void PreviewMultiLoader::stop () { 
+	for (int i=0;i<loaderCount;i++) loaders[i].stop();
+}
