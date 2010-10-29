@@ -1185,34 +1185,16 @@ void Preferences::delExtPressed () {
 
 void Preferences::clearProfilesPressed () {
 
-    Gtk::MessageDialog md (*this, M("PREFERENCES_CLEARDLG_LINE1"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, true);
-    md.set_secondary_text (M("PREFERENCES_CLEARDLG_LINE2"));
-    md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
-    md.show_all ();
-    while (gtk_events_pending ()) gtk_main_iteration ();
     cacheMgr->clearProfiles ();
-    md.hide ();
 }
 
 void Preferences::clearThumbImagesPressed () {
 
-    Gtk::MessageDialog md (*this, M("PREFERENCES_CLEARDLG_LINE1"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, true);
-    md.set_secondary_text (M("PREFERENCES_CLEARDLG_LINE2"));
-    md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
-    md.show_all ();
-    while (gtk_events_pending ()) gtk_main_iteration ();
     cacheMgr->clearThumbImages ();
-    md.hide ();
 }
 
 void Preferences::clearAllPressed () {
 
-    Gtk::MessageDialog md (*this, M("PREFERENCES_CLEARDLG_LINE1"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, true);
-    md.set_secondary_text (M("PREFERENCES_CLEARDLG_LINE2"));
-    md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
-    md.show_all ();
-    while (gtk_events_pending ()) gtk_main_iteration ();
     cacheMgr->clearAll ();
-    md.hide ();
 }
 
