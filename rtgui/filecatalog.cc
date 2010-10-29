@@ -374,9 +374,13 @@ void FileCatalog::_previewsFinished () {
 		    filterPanel->setFilter ( currentEFS,false );
 	    }
 	}
+ 	// restart anything that might have been loaded low quality
+ 	fileBrowser->refreshQuickThumbImages();
 }
 
 void FileCatalog::previewsFinished (int dir_id) {
+
+ 	GThreadLock lock;
 
 	if ( dir_id != selectedDirectoryId )
 	{

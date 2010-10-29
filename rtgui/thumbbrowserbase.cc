@@ -498,6 +498,12 @@ void ThumbBrowserBase::refreshThumbImages () {
     redraw ();
 }
 
+void ThumbBrowserBase::refreshQuickThumbImages () {
+    for (int i=0; i<fd.size(); ++i){
+		fd[i]->refreshQuickThumbnailImage ();
+    }
+}
+
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
     editedFiles = efiles;

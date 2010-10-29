@@ -9144,6 +9144,69 @@ int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocati
 
 #include <mytime.h>
 
+rtengine::Thumbnail* rtengine::Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
+
+    THREAD_LOCK
+
+	image = NULL;
+	ifname = fname.c_str();
+	exif_base = -1;
+	ciff_base = -1;
+	ciff_len = -1;
+	verbose = settings->verbose;
+	oprof = NULL;
+	ifp = gfopen (fname.c_str());
+	if (!ifp) {
+		printf("DCRAW: failed0\n");
+		return NULL;
+	}
+
+	if (setjmp (failure)) {
+		printf("DCRAW: failed1\n");
+		fclose (ifp);
+		return NULL;
+	}   
+
+	identify ();
+	if (!is_raw || colors>3) {
+		printf("DCRAW: failed2\n");
+		fclose(ifp);
+		return NULL;
+	}
+
+    rml.exifBase = exif_base;
+    rml.ciffBase = ciff_base;
+    rml.ciffLength = ciff_len;
+
+	char thumb_buffer[thumb_length];
+	fseek(ifp,thumb_offset,SEEK_SET);
+	fread(thumb_buffer,1,thumb_length,ifp);
+	fclose(ifp);
+
+	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(thumb_buffer,thumb_length,w,h,fixwh);
+	if ( tpp == 0 )
+	{
+		printf("DCRAW: failed3\n");
+		return NULL;
+	}
+
+	int deg = 0;
+	if (flip==5)
+		deg = 270;
+	else if (flip==3)
+		deg = 180;
+	else if (flip==6)
+		deg = 90;
+
+	if (deg>0) {
+		Image16* rot = tpp->thumbImg->rotate (deg);
+		delete tpp->thumbImg;
+		tpp->thumbImg = rot;
+	}
+
+	return tpp;
+}
+
 rtengine::Thumbnail* rtengine::Thumbnail::loadFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
 
 	THREAD_LOCK

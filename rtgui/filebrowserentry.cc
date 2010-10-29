@@ -77,7 +77,16 @@ void FileBrowserEntry::refreshThumbnailImage () {
     if (!thumbnail)
         return;
 
-    thumbImageUpdater->add (thumbnail, thumbnail->getProcParams(), preh, &updatepriority, this);    
+    thumbImageUpdater->add (thumbnail, thumbnail->getProcParams(), preh, &updatepriority, false, this);    
+}
+
+void FileBrowserEntry::refreshQuickThumbnailImage () {
+
+    if ( thumbnail &&
+			thumbnail->isQuick() )
+	{
+		thumbImageUpdater->add(thumbnail, thumbnail->getProcParams(), preh, &updatepriority, true, this);    
+	}
 }
 
 void FileBrowserEntry::calcThumbnailSize () {
