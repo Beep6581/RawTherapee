@@ -22,7 +22,9 @@
 #include <gtkmm.h>
 #include <guiutils.h>
 
-#define THREAD_NUM 2
+#ifdef _OPENMP
+#include <omp.h>
+#endif 
 
 #define DEBUG(format,args...) 
 //#define DEBUG(format,args...) printf("ThumbImageUpdate::%s: " format "\n", __FUNCTION__, ## args)
@@ -61,10 +63,16 @@ public:
 	typedef std::list<Job> JobList;
 
 	Impl():
-		threadPool_(new Glib::ThreadPool(THREAD_NUM,0)),
 		active_(0),
 		inactive_waiting_(false)
-	{}
+	{
+		int threadCount=1;  
+		#ifdef _OPENMP
+		threadCount=omp_get_num_procs();  
+		#endif 
+		
+		threadPool_=new Glib::ThreadPool(threadCount,0);
+	}
 
 	Glib::ThreadPool* threadPool_;
 

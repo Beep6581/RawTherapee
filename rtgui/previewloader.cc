@@ -21,8 +21,9 @@
 #include <previewloader.h>
 #include <guiutils.h>
 
-
-#define THREAD_NUM 4
+#ifdef _OPENMP
+#include <omp.h>
+#endif 
 
 #define DEBUG(format,args...) 
 //#define DEBUG(format,args...) printf("PreviewLoader::%s: " format "\n", __FUNCTION__, ## args)
@@ -62,9 +63,15 @@ public:
 
 	typedef std::set<Job,JobCompare> JobSet;
 
-	Impl():
-		threadPool_(new Glib::ThreadPool(THREAD_NUM,0))
-	{}
+	Impl()
+	{
+		int threadCount=1;  
+		#ifdef _OPENMP
+		threadCount=omp_get_num_procs();  
+		#endif 
+		
+		threadPool_=new Glib::ThreadPool(threadCount,0);
+	}
 
 	Glib::ThreadPool* threadPool_;
 
