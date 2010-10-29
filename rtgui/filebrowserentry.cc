@@ -81,9 +81,9 @@ void FileBrowserEntry::refreshThumbnailImage () {
 }
 
 void FileBrowserEntry::refreshQuickThumbnailImage () {
-
+	// Only make a (slow) processed preview if the picture has been edited at all
     if ( thumbnail &&
-			thumbnail->isQuick() )
+			thumbnail->isQuick() && thumbnail->isPParamsValid() )
 	{
 		thumbImageUpdater->add(thumbnail, thumbnail->getProcParams(), preh, &updatepriority, true, this);    
 	}

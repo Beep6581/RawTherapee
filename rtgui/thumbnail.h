@@ -85,6 +85,7 @@ class Thumbnail {
         void              loadProcParams ();
 
 		bool              isQuick() { return quick_; }
+		bool              isPParamsValid() { return pparamsValid; }
         bool              isRecentlySaved ();
         void              imageDeveloped ();
         void              imageEnqueued ();
