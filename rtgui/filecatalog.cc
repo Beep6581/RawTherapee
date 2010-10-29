@@ -228,7 +228,7 @@ void FileCatalog::closeDir () {
     previewLoader.terminate ();
 
     // terminate thumbnail updater
-    thumbImageUpdater.terminate ();
+    thumbImageUpdater->removeAllJobs ();
 
     // remove entries
     fileBrowser->close ();  
@@ -427,14 +427,12 @@ void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
 
     if (enabled && listener!=NULL) {
         previewLoader.stop ();
-        thumbImageUpdater.stop ();
         for (size_t i=0; i<tmb.size(); i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end())
                 listener->fileSelected (tmb[i]);
             tmb[i]->decreaseRef ();
         }
         previewLoader.process ();
-        thumbImageUpdater.process ();
     }
 }
 
@@ -496,7 +494,6 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
 void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
-        thumbImageUpdater.stop ();
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
@@ -516,7 +513,6 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
                 listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
             }
         }
-        thumbImageUpdater.process ();
     }
 }
 

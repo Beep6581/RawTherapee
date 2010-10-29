@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __UTILS_
-#define __UTILS_
+#ifndef __GUI_UTILS_
+#define __GUI_UTILS_
 
 #include <gtkmm.h>
 #include <rtengine.h>
@@ -27,5 +27,48 @@ void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, 
 Glib::ustring removeExtension (const Glib::ustring& filename);
 Glib::ustring getExtension (const Glib::ustring& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams);
+
+/** 
+ * @brief Lock GTK for critical section.
+ *
+ * Will unlock on destruction. To use:
+ *
+ *   <code>
+ *     {
+ *       GThreadLock lock;
+ *       // critical code
+ *     }
+ *   </code>
+ */
+class GThreadLock
+{
+public:
+	GThreadLock()
+	{
+		gdk_threads_enter();
+	}
+	~GThreadLock()
+	{
+		gdk_threads_leave();
+	}
+};
+
+/** 
+ * @brief Unlock GTK critical section.
+ *
+ * Will relock on destruction.
+ */
+class GThreadUnLock
+{
+public:
+	GThreadUnLock()
+	{
+		gdk_threads_leave();
+	}
+	~GThreadUnLock()
+	{
+		gdk_threads_enter();
+	}
+};
 
 #endif
