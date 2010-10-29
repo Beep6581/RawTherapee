@@ -40,7 +40,7 @@ typedef my_source_mgr * my_src_ptr;
  * before any data is actually read.
  */
 
-METHODDEF(void)
+static void
 init_source (j_decompress_ptr cinfo)
 {
   /* No work, since jpeg_memory_src set up the buffer pointer and count.
@@ -63,8 +63,8 @@ init_source (j_decompress_ptr cinfo)
  * some sort of output image, no matter how corrupted.
  */
 
-METHODDEF(boolean)
-fill_input_buffer (j_decompress_ptr cinfo)
+static int
+fill_input_buffer(j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
 
@@ -90,7 +90,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
  * skip more than 64K anyway.
  */
 
-METHODDEF(void)
+static void
 skip_input_data (j_decompress_ptr cinfo, long num_bytes)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
@@ -127,7 +127,7 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
  * for error exit.
  */
 
-METHODDEF(void)
+static void
 term_source (j_decompress_ptr cinfo)
 {
   /* no work necessary here */
