@@ -939,28 +939,3 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
     return false;
 }
-
-#if 0
-void PreviewMultiLoader::setPreviewLoaderListener (PreviewLoaderListener* p) { 
-	loadA.setPreviewLoaderListener(p); loadB.setPreviewLoaderListener(p);
-}
-
-// Simple round robin
-void PreviewMultiLoader::add(DirEntry de) {
-	if (next==0) {
-		loadA.add(de);
-		next=1;
-	} else {
-		loadB.add(de);
-		next=0;
-	}
-}
-
-void PreviewMultiLoader::start () { loadA.start(); loadB.start(); }
-void PreviewMultiLoader::process () { loadA.process (); loadB.process(); }
-void PreviewMultiLoader::remove  (Glib::ustring fname) { loadA.remove(fname); loadB.remove(fname); }
-void PreviewMultiLoader::end () { loadA.end(); loadB.end(); }
-bool PreviewMultiLoader::runs () { return loadA.runs() || loadB.runs(); }
-void PreviewMultiLoader::terminate () { loadA.terminate(); loadB.terminate(); }
-void PreviewMultiLoader::stop () { loadA.stop(); loadB.stop(); }
-#endif

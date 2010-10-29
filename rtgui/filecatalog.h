@@ -47,47 +47,6 @@ class DirEntry {
 	}
 };
 
-#if 0
-class PreviewLoader : public ProcessingThread<DirEntry> {
-
-  protected:
-    PreviewLoaderListener* pl;
-
-  public:
-    PreviewLoader () : pl(NULL) { ProcessingThread<DirEntry>(); }
-    void setPreviewLoaderListener (PreviewLoaderListener* p) { pl = p; }
-    void start ();
-    void process () { ProcessingThread<DirEntry>::process (); }
-    void process (DirEntry& current);
-	void remove  (Glib::ustring fname);
-    void end ();
-};
-
-// Simple Multithreader: Harnesses two normal loader threads feeded by a round robin
-// Same interface as a normal PreviewLoader to minimize effects on code
-class PreviewMultiLoader {
-protected:
-	PreviewLoader loadA,loadB;
-	int next;
-
-public:
-	PreviewMultiLoader () { next=0; }
-    
-	void setPreviewLoaderListener (PreviewLoaderListener* p);
-
-	void add (DirEntry de);
-
-	void start ();
-    void process ();
-	void remove  (Glib::ustring fname);
-	void end ();
-
-	bool runs ();
-	void terminate ();
-	void stop ();
-};
-#endif
-
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 

@@ -41,6 +41,9 @@ RenameUseTemplates=false
 ThumbnailZoomRatios=0.2;0.3;0.45;0.6;0.8;1;
 OverlayedFileNames=true
 
+# if TRUE, only fast, internal preview images are taken if the image is not edited yet
+InternalThumbIfUntouched=true
+
 [Clipping Indication]
 HighlightThreshold=253
 ShadowThreshold=8
@@ -57,6 +60,8 @@ PathTemplate=%p1/converted/%f
 PathFolder=
 UsePathTemplate=true
 LastSaveAsPath=
+
+# if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
 OverwriteOutputFile=false
 
 [Profiles]
