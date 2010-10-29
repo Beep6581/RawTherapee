@@ -27,10 +27,6 @@
 #include <thumbimageupdater.h>
 #include <safegtk.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #define CHECKTIME 2000
 
 extern Glib::ustring argv0;
@@ -48,10 +44,8 @@ int _directoryUpdater (void* cat) {
 }
 #endif
 
-FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
+FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1), listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
 
-    previewLoader.setPreviewLoaderListener (this);
-    
     //  construct and initialize thumbnail browsers
         fileBrowser = new FileBrowser();
         fileBrowser->setFileBrowserListener (this);
@@ -224,19 +218,23 @@ void FileCatalog::closeDir () {
         wdMonitor = NULL;
     }
 #endif
+
+	// ignore old requests
+	++selectedDirectoryId;
+
     // terminate thumbnail preview loading
-    previewLoader.terminate ();
+    previewLoader->removeAllJobs ();
 
     // terminate thumbnail updater
     thumbImageUpdater->removeAllJobs ();
 
     // remove entries
+    selectedDirectory = "";
     fileBrowser->close ();  
 	fileNameList.clear ();
 	
     dirEFS.clear ();
     hasValidCurrentEFS = false;
-    selectedDirectory = "";
     redrawAll ();
 }
 
@@ -272,7 +270,6 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         _refreshProgressBar ();
-        previewLoader.process ();
 
 #ifdef _WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
@@ -314,7 +311,14 @@ int refreshpb (void* data) {
     return 0;
 }
 
-void FileCatalog::previewReady (FileBrowserEntry* fdn) {
+void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
+
+    GThreadLock lock;
+	
+	if ( dir_id != selectedDirectoryId )
+	{
+		return;
+	}
 
     // put it into the "full directory" browser
     fdn->setImageAreaToolListener (iatlistener);
@@ -372,40 +376,16 @@ void FileCatalog::_previewsFinished () {
 	}
 }
 
-void FileCatalog::previewsFinished () {
+void FileCatalog::previewsFinished (int dir_id) {
+
+	if ( dir_id != selectedDirectoryId )
+	{
+		return;
+	}
 
     if (!hasValidCurrentEFS) 
         currentEFS = dirEFS;
     g_idle_add (prevfinished, this);
-}
-
-void PreviewLoader::remove (Glib::ustring fname) {
-	std::list<DirEntry>::iterator i;
-	for (i=jqueue.begin(); i!=jqueue.end(); i++) 
-		if (i->fullName==fname)
-			break;
-	if (i!=jqueue.end())
-		jqueue.erase (i);	
-}
-
-void PreviewLoader::start () {
-
-    jqueue.sort ();
-}
-
-void PreviewLoader::process (DirEntry& current) {
-
-	if (Glib::file_test (current.fullName, Glib::FILE_TEST_EXISTS)) {
-	    Thumbnail* tmb = cacheMgr->getEntry (current.fullName);
-	    if (tmb && pl) 
-	  	    pl->previewReady (new FileBrowserEntry (tmb, current.fullName));
-	}
-}
-
-void PreviewLoader::end () {
-
-    if (pl)
-        pl->previewsFinished ();
 }
 
 void FileCatalog::setEnabled (bool e) {
@@ -426,13 +406,11 @@ void FileCatalog::refreshAll () {
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
 
     if (enabled && listener!=NULL) {
-        previewLoader.stop ();
         for (size_t i=0; i<tmb.size(); i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end())
                 listener->fileSelected (tmb[i]);
             tmb[i]->decreaseRef ();
         }
-        previewLoader.process ();
     }
 }
 
@@ -761,10 +739,8 @@ int FileCatalog::reparseDirectory () {
 				break;
 			}
 		if (!found) {
-			previewLoader.stop ();
 			checkAndAddFile (Gio::File::create_for_parse_name (nfileNameList[i]));
             _refreshProgressBar ();
-			previewLoader.process ();
 		}
 	}
 
@@ -801,7 +777,7 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
-						previewLoader.add (DirEntry (file->get_parse_name()));
+						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
 				}
     }
@@ -823,7 +799,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-  	        previewReady (entry);
+  	        previewReady (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
@@ -856,25 +832,15 @@ bool FileCatalog::trashIsEmpty () {
 
 void FileCatalog::zoomIn () {
 
-    bool pLoad = previewLoader.runs();
-    if (pLoad)
-        previewLoader.stop ();
         
     fileBrowser->zoomIn ();
         
-    if (pLoad)
-        previewLoader.process ();
 }
 void FileCatalog::zoomOut () {
 
-    bool pLoad = previewLoader.runs();
-    if (pLoad)
-        previewLoader.stop ();
         
     fileBrowser->zoomOut ();
         
-    if (pLoad)
-        previewLoader.process ();
 }
 void FileCatalog::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
@@ -970,50 +936,27 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
     return false;
 }
 
-PreviewMultiLoader::PreviewMultiLoader () {
-	next=0;
-	loaderCount=1;
-
-	#ifdef _OPENMP
-	loaderCount=omp_get_num_procs();
-	// If there are pleny of processor, spare one for snappy image editing
-	if (loaderCount>3) loaderCount--;
-	#endif
-
-	loaders=new PreviewLoader[loaderCount];
-}
-
-void PreviewMultiLoader::setPreviewLoaderListener (PreviewLoaderListener* p) {
-	for (int i=0;i<loaderCount;i++) loaders[i].setPreviewLoaderListener(p);
+#if 0
+void PreviewMultiLoader::setPreviewLoaderListener (PreviewLoaderListener* p) { 
+	loadA.setPreviewLoaderListener(p); loadB.setPreviewLoaderListener(p);
 }
 
 // Simple round robin
 void PreviewMultiLoader::add(DirEntry de) {
-	loaders[next].add(de);
-	next++;
-	if (next>=loaderCount) next=0;
+	if (next==0) {
+		loadA.add(de);
+		next=1;
+	} else {
+		loadB.add(de);
+		next=0;
+	}
 }
 
-void PreviewMultiLoader::start () { 
-	for (int i=0;i<loaderCount;i++) loaders[i].start();
-}
-void PreviewMultiLoader::process () { 
-	for (int i=0;i<loaderCount;i++) loaders[i].process (); 
-}
-void PreviewMultiLoader::remove  (Glib::ustring fname) { 
-	for (int i=0;i<loaderCount;i++) loaders[i].remove(fname); 
-}
-void PreviewMultiLoader::end () { 
-	for (int i=0;i<loaderCount;i++) loaders[i].end();
-}
-bool PreviewMultiLoader::runs () { 
-	for (int i=0;i<loaderCount;i++) if (loaders[i].runs()) return true;
-	
-	return false;
-}
-void PreviewMultiLoader::terminate () { 
-	for (int i=0;i<loaderCount;i++) loaders[i].terminate(); 
-}
-void PreviewMultiLoader::stop () { 
-	for (int i=0;i<loaderCount;i++) loaders[i].stop();
-}
+void PreviewMultiLoader::start () { loadA.start(); loadB.start(); }
+void PreviewMultiLoader::process () { loadA.process (); loadB.process(); }
+void PreviewMultiLoader::remove  (Glib::ustring fname) { loadA.remove(fname); loadB.remove(fname); }
+void PreviewMultiLoader::end () { loadA.end(); loadB.end(); }
+bool PreviewMultiLoader::runs () { return loadA.runs() || loadB.runs(); }
+void PreviewMultiLoader::terminate () { loadA.terminate(); loadB.terminate(); }
+void PreviewMultiLoader::stop () { loadA.stop(); loadB.stop(); }
+#endif

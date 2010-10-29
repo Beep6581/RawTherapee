@@ -33,12 +33,7 @@
 #include <coarsepanel.h>
 #include <toolbar.h>
 #include <filterpanel.h>
-
-class PreviewLoaderListener {
-  public:
-    virtual void previewReady (FileBrowserEntry* fd) {}
-    virtual void previewsFinished () {}
-};
+#include <previewloader.h>
 
 class DirEntry {
 
@@ -52,6 +47,7 @@ class DirEntry {
 	}
 };
 
+#if 0
 class PreviewLoader : public ProcessingThread<DirEntry> {
 
   protected:
@@ -71,11 +67,11 @@ class PreviewLoader : public ProcessingThread<DirEntry> {
 // Same interface as a normal PreviewLoader to minimize effects on code
 class PreviewMultiLoader {
 protected:
-	PreviewLoader *loaders;
-	int next,loaderCount;
+	PreviewLoader loadA,loadB;
+	int next;
 
 public:
-	PreviewMultiLoader ();
+	PreviewMultiLoader () { next=0; }
     
 	void setPreviewLoaderListener (PreviewLoaderListener* p);
 
@@ -90,6 +86,7 @@ public:
 	void terminate ();
 	void stop ();
 };
+#endif
 
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
@@ -104,11 +101,12 @@ class FileCatalog : public Gtk::VBox,
 
         Gtk::HBox* hBox;
         Glib::ustring selectedDirectory;
+        int selectedDirectoryId;
         bool enabled;
         
 		// Restore PreviewLoader if the new threadsafe is not that threadsafe ;-)
         //PreviewLoader previewLoader;
-        PreviewMultiLoader previewLoader;
+        //PreviewMultiLoader previewLoader;
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
         ImageAreaToolListener* iatlistener;
@@ -177,8 +175,8 @@ class FileCatalog : public Gtk::VBox,
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);
                 
                 // previewloaderlistener interface
-				void previewReady (FileBrowserEntry* fdn);
-				void previewsFinished ();
+				void previewReady (int dir_id, FileBrowserEntry* fdn);
+				void previewsFinished (int dir_id);
                 void _previewsFinished ();
                 void _refreshProgressBar ();
 

@@ -27,37 +27,37 @@
 #define DEBUG(format,args...) 
 //#define DEBUG(format,args...) printf("ThumbImageUpdate::%s: " format "\n", __FUNCTION__, ## args)
 
-struct 
-Job
-{
-	Job(Thumbnail* thumbnail, const rtengine::procparams::ProcParams& pparams,
-				int height, bool* priority,
-				ThumbImageUpdateListener* listener):
-		thumbnail_(thumbnail),
-		pparams_(pparams),
-		height_(height),
-		priority_(priority),
-		listener_(listener)
-	{}
-
-	Job():
-		thumbnail_(0),
-		listener_(0)
-	{}
-
-	Thumbnail* thumbnail_;
-	rtengine::procparams::ProcParams pparams_;
-	int height_;
-	bool* priority_;
-	ThumbImageUpdateListener* listener_;
-};
-
-typedef std::list<Job> JobList;
-
 class
 ThumbImageUpdater::Impl
 {
 public:
+
+	struct Job
+	{
+		Job(Thumbnail* thumbnail, const rtengine::procparams::ProcParams& pparams,
+					int height, bool* priority,
+					ThumbImageUpdateListener* listener):
+			thumbnail_(thumbnail),
+			pparams_(pparams),
+			height_(height),
+			priority_(priority),
+			listener_(listener)
+		{}
+
+		Job():
+			thumbnail_(0),
+			listener_(0)
+		{}
+
+		Thumbnail* thumbnail_;
+		rtengine::procparams::ProcParams pparams_;
+		int height_;
+		bool* priority_;
+		ThumbImageUpdateListener* listener_;
+	};
+
+	typedef std::list<Job> JobList;
+
 	Impl():
 		threadPool_(new Glib::ThreadPool(THREAD_NUM,0)),
 		active_(0),
@@ -176,7 +176,7 @@ ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& par
 	Glib::Mutex::Lock lock(impl_->mutex_);
 
     // look up if an older version is in the queue
-    JobList::iterator i(impl_->jobs_.begin());
+	Impl::JobList::iterator i(impl_->jobs_.begin());
 	for ( ; i != impl_->jobs_.end(); ++i )
 	{
 		if ( i->thumbnail_ == t &&
@@ -193,7 +193,7 @@ ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& par
 
 	// create a new job and append to queue
 	DEBUG("queing job %s",t->getFileName().c_str());
-	impl_->jobs_.push_back(Job(t,params,height,priority,l));
+	impl_->jobs_.push_back(Impl::Job(t,params,height,priority,l));
 
 	DEBUG("adding run request %s",t->getFileName().c_str());
 	impl_->threadPool_->push(sigc::mem_fun(*impl_, &ThumbImageUpdater::Impl::processNextJob));
@@ -207,12 +207,12 @@ ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
 
 	Glib::Mutex::Lock lock(impl_->mutex_);
 
-	for( JobList::iterator i(impl_->jobs_.begin()); i != impl_->jobs_.end(); )
+	for( Impl::JobList::iterator i(impl_->jobs_.begin()); i != impl_->jobs_.end(); )
 	{
 		if (i->listener_ == listener)
 		{
 			DEBUG("erasing specific job");
-			JobList::iterator e(i++);
+			Impl::JobList::iterator e(i++);
 			impl_->jobs_.erase(e);
 		}
 		else
