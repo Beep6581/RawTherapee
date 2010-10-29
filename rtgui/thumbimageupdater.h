@@ -64,7 +64,7 @@ class ThumbImageUpdater {
 	 * @param l listener waiting on update
 	 */
     void add(Thumbnail* t, const rtengine::procparams::ProcParams& params,
-					int height, bool* priority, ThumbImageUpdateListener* l);
+					int height, bool* priority, bool upgrade, ThumbImageUpdateListener* l);
 
 	/** 
 	 * @brief Remove jobs associated with listener \c l.

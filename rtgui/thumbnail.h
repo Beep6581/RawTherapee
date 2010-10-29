@@ -58,6 +58,9 @@ class Thumbnail {
         Glib::ustring   exifString;
         Glib::ustring   dateTimeString;
         
+		bool            initial_;
+		bool            quick_;
+
         // vector of listeners
         std::vector<ThumbnailListener*> listeners;
         
@@ -81,6 +84,7 @@ class Thumbnail {
         void              clearProcParams (int whoClearedIt=-1);
         void              loadProcParams ();
 
+		bool              isQuick() { return quick_; }
         bool              isRecentlySaved ();
         void              imageDeveloped ();
         void              imageEnqueued ();
@@ -89,7 +93,7 @@ class Thumbnail {
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
         rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
-        void            processThumbImage2      (const rtengine::procparams::ProcParams& pparams, int h, rtengine::IImage8*& img, double& scale) { img = processThumbImage(pparams, h, scale); }
+        rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
         void            getThumbnailSize        (int &w, int &h);
         void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h) { if (tpp) tpp->getFinalSize (pparams, w, h); }
 

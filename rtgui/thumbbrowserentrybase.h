@@ -109,6 +109,7 @@ protected:
     bool operator< (ThumbBrowserEntryBase& other) { return shortname.casefold()>other.shortname.casefold(); } 
     
     virtual void refreshThumbnailImage () {}
+    virtual void refreshQuickThumbnailImage () {}
     virtual void calcThumbnailSize () {}
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h) {}

@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include <guiutils.h>
 
-#define THREAD_NUM 4
+#define THREAD_NUM 2
 
 #define DEBUG(format,args...) 
 //#define DEBUG(format,args...) printf("ThumbImageUpdate::%s: " format "\n", __FUNCTION__, ## args)
@@ -35,12 +35,13 @@ public:
 	struct Job
 	{
 		Job(Thumbnail* thumbnail, const rtengine::procparams::ProcParams& pparams,
-					int height, bool* priority,
+					int height, bool* priority, bool upgrade,
 					ThumbImageUpdateListener* listener):
 			thumbnail_(thumbnail),
 			pparams_(pparams),
 			height_(height),
 			priority_(priority),
+			upgrade_(upgrade),
 			listener_(listener)
 		{}
 
@@ -53,6 +54,7 @@ public:
 		rtengine::procparams::ProcParams pparams_;
 		int height_;
 		bool* priority_;
+		bool upgrade_;
 		ThumbImageUpdateListener* listener_;
 	};
 
@@ -103,6 +105,16 @@ public:
 				}
 			}
 
+			// see if any none upgrade jobs exist
+			for ( i = jobs_.begin(); i != jobs_.end(); ++i)
+			{
+				if ( !i->upgrade_ )
+				{
+					DEBUG("processing(not-upgrade) %s",i->thumbnail_->getFileName().c_str());
+					break;
+				}
+			}
+
 			// if none, then use first
 			if ( i == jobs_.end() )
 			{
@@ -123,6 +135,15 @@ public:
 		// unlock and do processing; will relock on block exit, then call listener
 		double scale = 1.0;
 		rtengine::IImage8* img = 0;
+
+		if ( j.upgrade_ )
+		{
+			if ( j.thumbnail_->isQuick() )
+			{
+				img = j.thumbnail_->upgradeThumbImage(j.pparams_, j.height_, scale);
+			}
+		}
+		else
 		{
 			img = j.thumbnail_->processThumbImage(j.pparams_, j.height_, scale);
 		}
@@ -165,7 +186,7 @@ ThumbImageUpdater::ThumbImageUpdater():
 
 void 
 ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& params,
-							int height, bool* priority, ThumbImageUpdateListener* l) 
+							int height, bool* priority, bool upgrade, ThumbImageUpdateListener* l) 
 {
 	// nobody listening?
 	if ( l == 0 )
@@ -180,7 +201,8 @@ ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& par
 	for ( ; i != impl_->jobs_.end(); ++i )
 	{
 		if ( i->thumbnail_ == t &&
-				i->listener_ == l )
+				i->listener_ == l &&
+				i->upgrade_ == upgrade )
 		{
 			DEBUG("updating job %s",t->getFileName().c_str());
 			// we have one, update queue entry, will be picked up by thread when processed
@@ -193,7 +215,7 @@ ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& par
 
 	// create a new job and append to queue
 	DEBUG("queing job %s",t->getFileName().c_str());
-	impl_->jobs_.push_back(Impl::Job(t,params,height,priority,l));
+	impl_->jobs_.push_back(Impl::Job(t,params,height,priority,upgrade,l));
 
 	DEBUG("adding run request %s",t->getFileName().c_str());
 	impl_->threadPool_->push(sigc::mem_fun(*impl_, &ThumbImageUpdater::Impl::processNextJob));
