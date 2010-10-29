@@ -227,12 +227,12 @@ void CacheManager::clearAll () {
     deleteDir ("data");
     
     // re-generate thumbnail images and clear profiles of open thumbnails
-    string_thumb_map::iterator i;
-    for (i=openEntries.begin(); i!=openEntries.end(); i++) {
-        i->second->clearProcParams (CACHEMGR);
-        i->second->generateThumbnailImage ();
-        i->second->updateCache ();
-    }
+    //string_thumb_map::iterator i;
+    //for (i=openEntries.begin(); i!=openEntries.end(); i++) {
+    //    i->second->clearProcParams (CACHEMGR);
+    //    i->second->generateThumbnailImage ();
+    //    i->second->updateCache ();
+    //}
 }
 void CacheManager::clearThumbImages () {
 
@@ -243,9 +243,9 @@ void CacheManager::clearThumbImages () {
     deleteDir ("embprofiles");
     
     // re-generate thumbnail images of open thumbnails
-    string_thumb_map::iterator i;
-    for (i=openEntries.begin(); i!=openEntries.end(); i++)
-        i->second->generateThumbnailImage ();
+    //string_thumb_map::iterator i;
+    //for (i=openEntries.begin(); i!=openEntries.end(); i++)
+    //    i->second->generateThumbnailImage ();
 }
 
 void CacheManager::clearProfiles () {
