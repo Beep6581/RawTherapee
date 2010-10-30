@@ -46,13 +46,13 @@ void ProcParams::destroy (ProcParams* pp) {
 void ProcParams::setDefaults () {
 
     toneCurve.autoexp       = false;
-    toneCurve.clip          = 0.002;
+    toneCurve.clip          = 0.001;
     toneCurve.expcomp       = 0;
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
-    toneCurve.shcompr       = 50;
+    toneCurve.shcompr       = 25;
     toneCurve.curve.clear ();
     
     labCurve.brightness    = 0;
