@@ -167,13 +167,16 @@ void Crop::update (int todo, bool internal) {
 
     // shadows & highlights & tone curve & convert to cielab
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve, cshmap);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->tonecurve1, parent->tonecurve2, cshmap);
 
 	
 	// apply luminance operations
     if (todo & (M_LUMINANCE+M_COLOR)) {
-        parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
-		parent->ipf.colorCurve (laboCrop, labnCrop);
+        parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve2, 0, croph);
+		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 0, parent->chroma_acurve, 0, croph);
+		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 1, parent->chroma_bcurve, 0, croph);
+
+		parent->ipf.colorCurve (labnCrop, labnCrop);
 
         if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
@@ -347,7 +350,9 @@ void Crop::fullUpdate () {
 
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
-        parent->changeSinceLast = 0;
+		// Do NOT reset changes here, since in a long chain of events it will lead to chroma_scale not being updated,
+		// causing ImProcFunctions::lab2rgb to return a black image on some opens
+        //parent->changeSinceLast = 0;
         parent->thread->join ();
     }
 

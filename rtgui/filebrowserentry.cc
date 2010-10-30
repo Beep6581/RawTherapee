@@ -56,14 +56,20 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
 
 FileBrowserEntry::~FileBrowserEntry () {
 
-    thumbImageUpdater.removeJobs (this);
+	// so jobs arriving now do nothing
+    if (feih->pending)
+	{
+        feih->destroyed = true;
+	}
+    else
+	{
+        delete feih;
+		feih = 0;
+	}
+
+    thumbImageUpdater->removeJobs (this);
     if (thumbnail)
         thumbnail->removeThumbnailListener (this);
-
-    if (feih->pending)
-        feih->destroyed = true;
-    else
-        delete feih;
 }
 
 void FileBrowserEntry::refreshThumbnailImage () {
@@ -71,8 +77,16 @@ void FileBrowserEntry::refreshThumbnailImage () {
     if (!thumbnail)
         return;
 
-    thumbImageUpdater.add (thumbnail, thumbnail->getProcParams(), preh, &updatepriority, this);    
-    thumbImageUpdater.process ();
+    thumbImageUpdater->add (thumbnail, thumbnail->getProcParams(), preh, &updatepriority, false, this);    
+}
+
+void FileBrowserEntry::refreshQuickThumbnailImage () {
+	// Only make a (slow) processed preview if the picture has been edited at all
+    if ( thumbnail &&
+			thumbnail->isQuick() && (!options.internalThumbIfUntouched || thumbnail->isPParamsValid()) )
+	{
+		thumbImageUpdater->add(thumbnail, thumbnail->getProcParams(), preh, &updatepriority, true, this);    
+	}
 }
 
 void FileBrowserEntry::calcThumbnailSize () {
@@ -134,9 +148,10 @@ struct tiupdate {
 
 int fbeupdate (void* data) {
     
-    gdk_threads_enter ();
     tiupdate* params = (tiupdate*)data;
     FileBrowserEntryIdleHelper* feih = params->feih;
+
+	GThreadLock lock;
 
     if (feih->destroyed) {
         if (feih->pending == 1)
@@ -145,14 +160,12 @@ int fbeupdate (void* data) {
             feih->pending--;
         params->img->free ();
         delete params;
-        gdk_threads_leave ();
         return 0;
     }
     
     feih->fbentry->_updateImage (params->img, params->scale, params->cropParams);
     feih->pending--;
 
-    gdk_threads_leave ();
     delete params;
     
     return 0;
@@ -160,8 +173,19 @@ int fbeupdate (void* data) {
 
 void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams) {
 
-    redrawRequests++;
-    feih->pending++;
+	{
+		GThreadLock lock;
+
+		if ( feih == 0 ||
+				feih->destroyed )
+		{
+			return;
+		}
+
+		redrawRequests++;
+		feih->pending++;
+	}
+
     tiupdate* param = new tiupdate ();
     param->feih = feih;
     param->img = img;

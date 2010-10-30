@@ -31,7 +31,7 @@
 class CacheManager;
 class Thumbnail {
 
-        Glib::Mutex*    mutex;
+        Glib::Mutex    mutex;
 
         Glib::ustring   fname;              // file name corresponding to the thumbnail
         CacheImageData  cfs;                // cache entry corresponding to the thumbnail
@@ -58,12 +58,17 @@ class Thumbnail {
         Glib::ustring   exifString;
         Glib::ustring   dateTimeString;
         
+		bool            initial_;
+		bool            quick_;
+
         // vector of listeners
         std::vector<ThumbnailListener*> listeners;
         
+        void            _loadThumbnail (bool firstTrial=true);
+        void            _saveThumbnail ();
+        void            _generateThumbnailImage ();
         void            infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml=NULL);
-        void            loadThumbnail (bool internal=false, bool firstTrial=true);
-        void            saveThumbnail ();
+        void            loadThumbnail (bool firstTrial=true);
         void            generateExifDateTimeStrings ();
 
         Glib::ustring    getCacheFileName (Glib::ustring subdir);
@@ -79,6 +84,8 @@ class Thumbnail {
         void              clearProcParams (int whoClearedIt=-1);
         void              loadProcParams ();
 
+		bool              isQuick() { return quick_; }
+		bool              isPParamsValid() { return pparamsValid; }
         bool              isRecentlySaved ();
         void              imageDeveloped ();
         void              imageEnqueued ();
@@ -87,11 +94,11 @@ class Thumbnail {
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
         rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
-        void            processThumbImage2      (const rtengine::procparams::ProcParams& pparams, int h, rtengine::IImage8*& img, double& scale) { img = processThumbImage(pparams, h, scale); }
+        rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
         void            getThumbnailSize        (int &w, int &h);
         void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h) { if (tpp) tpp->getFinalSize (pparams, w, h); }
 
-        void            generateThumbnailImage (bool internal=false);
+        void            generateThumbnailImage ();
 
         const Glib::ustring&  getExifString ();
         const Glib::ustring&  getDateTimeString ();
@@ -122,7 +129,7 @@ class Thumbnail {
         void            decreaseRef ();
         
         void            updateCache ();
-        void            reSaveThumbnail () { mutex->lock (); saveThumbnail(); mutex->unlock(); }
+        void            saveThumbnail ();
 };
 
 

@@ -259,6 +259,75 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 
 extern jmp_buf jpeg_jmp_buf;
 
+extern "C" {
+void jpeg_memory_src (jpeg_decompress_struct* cinfo, const char* buffer, int bufsize);
+}
+
+int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
+{
+    jpeg_decompress_struct cinfo;
+    jpeg_error_mgr jerr;
+    cinfo.err = my_jpeg_std_error(&jerr);
+    jpeg_create_decompress(&cinfo);
+    jpeg_memory_src (&cinfo,buffer,bufsize);
+
+    if (pl) {
+      pl->setProgressStr ("Loading JPEG file...");
+      pl->setProgress (0.0);
+
+    }
+
+    setup_read_icc_profile (&cinfo);
+
+    if (!setjmp(jpeg_jmp_buf)) {
+	jpeg_memory_src (&cinfo,buffer,bufsize);
+    	jpeg_read_header(&cinfo, TRUE);
+
+        unsigned int proflen;    	
+        delete loadedProfileData;
+        loadedProfileData = NULL;
+        bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
+    	if (hasprofile) 
+    	    embProfile = cmsOpenProfileFromMem (loadedProfileData, loadedProfileLength);
+    	else 
+            embProfile = NULL;
+    	
+	    jpeg_start_decompress(&cinfo);
+
+        int width = cinfo.output_width;
+        int height = cinfo.output_height;
+
+        allocate (width, height);
+
+	    unsigned char *row=new unsigned char[width*3];
+	    while (cinfo.output_scanline < height) {
+		    if (jpeg_read_scanlines(&cinfo,&row,1) < 1) {
+  	          jpeg_finish_decompress(&cinfo);
+ 	          jpeg_destroy_decompress(&cinfo);
+ 	          delete [] row;
+              return IMIO_READERROR;
+            }
+            setScanline (cinfo.output_scanline-1, row, 8);
+
+            if (pl && !(cinfo.output_scanline%100))
+              pl->setProgress ((double)(cinfo.output_scanline)/cinfo.output_height);
+	    }
+	    delete [] row;
+
+	    jpeg_finish_decompress(&cinfo);
+	    jpeg_destroy_decompress(&cinfo);
+        if (pl) {
+          pl->setProgressStr ("Ready.");
+          pl->setProgress (1.0);
+        }
+        return IMIO_SUCCESS;
+    }
+    else {
+        jpeg_destroy_decompress(&cinfo);
+        return IMIO_READERROR;
+    }
+}
+
 int ImageIO::loadJPEG (Glib::ustring fname) {
 
 	FILE *file=g_fopen(fname.c_str(),"rb");
@@ -410,7 +479,11 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 
-    FILE* file=g_fopen(safe_locale_from_utf8(fname).c_str (),"wb");
+	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
+	Glib::ustring tmpFname=fname;
+	tmpFname.append(".tmp");
+
+	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -477,6 +550,9 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
     delete [] row;
 	fclose (file);
 
+	// Rename temporary filename, practically atomic
+	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+
     if (pl) {
         pl->setProgressStr ("Ready.");
         pl->setProgress (1.0);
@@ -494,7 +570,11 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
 
-	FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
+	Glib::ustring tmpFname=fname;
+	tmpFname.append(".tmp");
+
+	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -515,8 +595,14 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.input_components = 3;
 	jpeg_set_defaults (&cinfo);
     cinfo.write_JFIF_header = FALSE;
-    
 
+	// compute optimal Huffman coding tables for the image. Bit slower to generate, but size of result image is a bit less (default was FALSE)
+	cinfo.optimize_coding = TRUE;
+
+	// Since math coprocessors are common these days, FLOAT should be a bit more accurate AND fast (default is ISLOW)
+	// (machine dependency is not really an issue, since we all run on x86 and having exactly the same file is not a requirement)
+	cinfo.dct_method = JDCT_FLOAT;
+	
 	if (quality>=0 && quality<=100) 
 	    jpeg_set_quality (&cinfo, quality, true);
 
@@ -577,6 +663,9 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 
     delete [] row;
 	fclose (file);
+
+	// Rename temporary filename, practically atomic
+	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
 
     if (pl) {
         pl->setProgressStr ("Ready.");

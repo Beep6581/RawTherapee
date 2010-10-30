@@ -23,6 +23,7 @@
 #include <adjuster.h>
 #include <options.h>
 #include <vector>
+#include "rtwindow.h"
 
 class Preferences : public Gtk::Dialog {
 
@@ -52,6 +53,7 @@ class Preferences : public Gtk::Dialog {
   protected:
     Gtk::ComboBoxText* rprofiles;
     Gtk::ComboBoxText* iprofiles;
+    Gtk::ComboBoxText* dmethodBatch;
     Gtk::ComboBoxText* languages;
     Gtk::Entry* dateformat;
     Gtk::Entry* startupdir;
@@ -81,6 +83,9 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* intent;
 
     Gtk::ComboBoxText* theme;
+    Gtk::HBox* hbtheme;
+    Gtk::CheckButton* chUseSystemTheme;
+    Gtk::FontButton* fontbutton;
 	
     Gtk::ComboBoxText* cformat;
     Gtk::SpinButton*   maxThumbSize;
@@ -97,15 +102,24 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* saveParamsFile;
     Gtk::CheckButton* saveParamsCache;
     Gtk::ComboBoxText* loadParamsPreference;
+    Gtk::ComboBoxText* editorLayout;
+    RTWindow* parent;
 	
     Options moptions;
-    sigc::connection tconn, addc, setc, dfconn;
+    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
+    Glib::ustring initialTheme;
+    Glib::ustring initialFont;
 
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
     void updateDFinfos ();
-    void themeChanged ();
+    void workflowUpdate();
+    void themeChanged  ();
+    void useThemeChanged();
+    void fontChanged   ();
+    void switchThemeTo (Glib::ustring newTheme);
+    void switchFontTo  (Glib::ustring newFont);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
@@ -116,7 +130,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getBatchProcPanel ();
     
   public:
-         Preferences (int initialPage=0);
+         Preferences (RTWindow *rtwindow);
     
     void savePressed ();
     void loadPressed ();

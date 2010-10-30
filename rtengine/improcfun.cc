@@ -124,7 +124,7 @@ void ImProcFunctions::setScale (double iscale) {
 
 void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
 
-	TMatrix wprof = iccStore.workingSpaceMatrix (wprofile);
+	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
     int toxyz[3][3];
     toxyz[0][0] = round(32768.0 * wprof[0][0] / 0.96422); 
     toxyz[1][0] = round(32768.0 * wprof[1][0] / 0.96422); 
@@ -184,12 +184,12 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 	if (monitorTransform)
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
-	cmsHPROFILE monitor = iccStore.getProfile ("file:"+settings->monitorProfile);
+	cmsHPROFILE monitor = iccStore->getProfile ("file:"+settings->monitorProfile);
 	if (monitor) {
-        cmsHPROFILE iprof = iccStore.getXYZProfile ();       
-		cmsHPROFILE oprof = iccStore.getProfile (params->icm.output);
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();       
+		cmsHPROFILE oprof = iccStore->getProfile (params->icm.output);
 		if (!oprof)
-			oprof = iccStore.getsRGBProfile ();
+			oprof = iccStore->getsRGBProfile ();
         lcmsMutex->lock ();
 		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();
@@ -245,7 +245,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     delete [] hist;
 }
 
-void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, SHMap* shmap) {
+void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1, int* tonecurve2, SHMap* shmap) {
 
     int h_th, s_th;
     if (shmap) {
@@ -257,7 +257,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
     bool processLCE = params->sh.enabled && shmap!=NULL && params->sh.localcontrast>0;
     double lceamount = params->sh.localcontrast / 200.0;
 
-    TMatrix wprof = iccStore.workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
     int toxyz[3][3] = {
         {
         	floor(32768.0 * wprof[0][0] / 0.96422),
@@ -321,10 +321,43 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
                     b = CLIP((int)(factor*b));
                 }
             }
-            r = tonecurve[r];
+            /*r = tonecurve[r];
             g = tonecurve[g];
-            b = tonecurve[b];
+            b = tonecurve[b];*/
+			int Y = (0.299*r + 0.587*g + 0.114*b);
+			int Ynew = tonecurve1[Y];
+			float tonefactor = (Y>0 ? (float)Ynew/Y : 1);
 
+			r *= tonefactor;
+			g *= tonefactor;
+			b *= tonefactor;
+			/*float maxfactor = 1;
+			if (r>65535) 
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(r-Ynew));
+			if (g>65535)
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(g-Ynew));
+			if (b>65535) 
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(b-Ynew));
+			
+			if (r<0) 
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-r));
+			if (g<0)
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-g));
+			if (b<0) 
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-b));
+			
+			float U = (float)(-0.14713*r - 0.28886*g + 0.436*b)*maxfactor;
+			float V = (float)(0.615*r - 0.51499*g - 0.10001*b)*maxfactor;
+			
+			r = CLIP(Ynew + 1.13983*V);
+			g = CLIP(Ynew - 0.39465*U - 0.58060*V);
+			b = CLIP(Ynew + 2.03211*U);*/
+			
+			r = tonecurve2[CLIP(r)];
+			g = tonecurve2[CLIP(g)];
+			b = tonecurve2[CLIP(b)];
+
+			
             int x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) >> 15;
             int y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) >> 15;
             int z = (toxyz[0][2] * r + toxyz[1][2] * g + toxyz[2][2] * b) >> 15;
@@ -344,11 +377,27 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve, 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to) {
 
     int W = lold->W;
-    int H = lold->H;
+    //int H = lold->H;
     for (int i=row_from; i<row_to; i++)
         for (int j=0; j<W; j++)
             lnew->L[i][j] = curve[lold->L[i][j]];
 }
+	
+	void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to) {
+		
+		int W = lold->W;
+		//int H = lold->H;
+		if (channel==0) {
+		for (int i=row_from; i<row_to; i++)
+			for (int j=0; j<W; j++)
+				lnew->a[i][j] = curve[lold->a[i][j]+32768]-32768;
+		} 
+		if (channel==1) {
+			for (int i=row_from; i<row_to; i++)
+				for (int j=0; j<W; j++)
+					lnew->b[i][j] = curve[lold->b[i][j]+32768]-32768;
+		}
+	}
 
 #include "cubic.cc"
 
@@ -458,6 +507,9 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
 
     if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
     	bilateral<unsigned short, unsigned int> (lab->L, lab->L, (unsigned short**)b2, lab->W, lab->H, params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
 }
 
@@ -465,16 +517,17 @@ void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
 
   if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
 #ifdef _OPENMP
-	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H)*omp_get_max_threads());
-#else
-	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
+#pragma omp parallel
 #endif
+	  {
+	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
       gaussHorizontal<short> (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussHorizontal<short> (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussVertical<short>   (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
       gaussVertical<short>   (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
 
       delete buffer;
+  }
   }
 }
 
@@ -506,7 +559,7 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
     double corr = pow(2.0, expcomp);
 
     // black point selection is based on the linear result (yielding better visual results)
-    bl = (int)(shc * corr);
+    bl = (int)(shc /* * corr*/);
     // compute the white point of the exp. compensated gamma corrected image
     double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
 

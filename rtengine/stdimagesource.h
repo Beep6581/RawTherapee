@@ -43,7 +43,7 @@ class StdImageSource : public ImageSource {
         StdImageSource ();
         ~StdImageSource ();
     
-        int         load        (Glib::ustring fname);
+        int         load        (Glib::ustring fname, bool batch = false);
         void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();

@@ -194,7 +194,7 @@ namespace rtengine {
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	};
+	}
 	
 	void ImProcFunctions::dirpyr_channel(unsigned short ** data_fine, unsigned short ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  )
 	{
@@ -220,7 +220,7 @@ namespace rtengine {
 #endif
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++)
-			{				
+			{
 				float val=0;
 				float norm=0;
 				
@@ -238,14 +238,12 @@ namespace rtengine {
 		
 		
 		
-	};
+	}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	void ImProcFunctions::idirpyr_eq_channel(unsigned short ** data_coarse, unsigned short ** data_fine, int ** buffer, int width, int height, int level, const double * mult )
 	{
-		int hipass;
-		
 		float noisehi = 1.33*noise*mult[4]/pow(3,level), noiselo = 0.66*noise*mult[4]/pow(3,level);
 		float * irangefn = new float [0x20000];
 
@@ -265,15 +263,16 @@ namespace rtengine {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for(int i = 0; i < height; i++)
+		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
-				hipass = (data_fine[i][j]-data_coarse[i][j]);
+				int hipass = (data_fine[i][j]-data_coarse[i][j]);
 				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 			}
+		}
 		
 		delete [] irangefn;
 		
-	};
+	}
 	
 	
 #undef DIRWT_L

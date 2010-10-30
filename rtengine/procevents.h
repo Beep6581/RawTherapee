@@ -40,7 +40,7 @@ enum ProcEvent {
     EvLBlack=15,
     EvLHLCompr=16,
     EvLSHCompr=17,
-    EvLCurve=18,
+    EvLLCurve=18,
     EvShrEnabled=19,
     EvShrRadius=20,
     EvShrAmount=21,
@@ -115,10 +115,13 @@ enum ProcEvent {
     EvDPDNEnabled=90,
     EvDPDNLuma=91,
     EvDPDNChroma=92,
-    EvDPDNGamma=93,
-    EvDirPyrEqualizer=94,
+	EvDPDNGamma=93,
+	EvDirPyrEqualizer=94,
     EvDirPyrEqlEnabled=95,
-    NUMOFEVENTS=96
+	EvLSaturation=96,
+    EvLaCurve=97,
+    EvLbCurve=98,
+    NUMOFEVENTS=99
 	};
 }    
 #endif    

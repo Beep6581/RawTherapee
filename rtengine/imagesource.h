@@ -65,7 +65,7 @@ class ImageSource : public InitialImage {
                             ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
 
         virtual ~ImageSource            () {}
-        virtual int         load        (Glib::ustring fname) =0;
+        virtual int         load        (Glib::ustring fname, bool batch = false) =0;
         virtual void        preprocess  (const RAWParams &raw){};
         virtual void        demosaic    (const RAWParams &raw){};
         virtual void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}

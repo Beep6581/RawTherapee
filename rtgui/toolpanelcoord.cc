@@ -69,7 +69,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
-    addPanel (exposurePanel, lcurve,            M("TP_LUMACURVE_LABEL"));      toolPanels.push_back (lcurve);
+    addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));      toolPanels.push_back (lcurve);
 	addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
@@ -263,7 +263,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
 void ToolPanelCoordinator::closeImage () {
 
     if (ipc) {
-        ipc->stopProcessing ();
+        ipc->stopProcessing ();        
         ipc = NULL;
     }
 }

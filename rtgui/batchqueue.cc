@@ -18,10 +18,12 @@
  */
 #include <batchqueue.h>
 #include <glibmm.h>
+#include <glib/gstdio.h>
 #include <multilangmgr.h>
 #include <filecatalog.h>
 #include <batchqueuebuttonset.h>
 #include <guiutils.h>
+#include <safegtk.h>
 
 using namespace rtengine;
 
@@ -335,6 +337,10 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     // create directory, if does not exist
     if (g_mkdir_with_parents (dstdir.c_str(), 0755) ) 
         return "";
+	
+	// In overwrite mode we TRY to delete the old file first.
+	// if that's not possible (e.g. locked by viewer, R/O), we revert to the standard naming scheme
+	bool inOverwriteMode=options.overwriteOutputFile;
 
     for (int tries=0; tries<100; tries++) {
         Glib::ustring fname;
@@ -343,7 +349,17 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
         else
             fname = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, format);
 
-        if (!Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
+		int fileExists=Glib::file_test (fname, Glib::FILE_TEST_EXISTS); 
+        
+		if (inOverwriteMode && fileExists) {
+			// do NOT use g_remove as it has compiler problems on Unix and OSX (GTK namespace problem)
+			if (::remove(safe_locale_from_utf8(fname).c_str ()) == -1)
+				inOverwriteMode = false;  // failed to delete- revert to old naming scheme
+			else
+				fileExists = false;  // deleted now
+		}
+		
+		if (!fileExists) {
             return fname;
         }
     }

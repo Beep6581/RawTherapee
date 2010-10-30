@@ -38,24 +38,29 @@ class FilePanel : public Gtk::HPaned,
 {
 
     protected:
-        Gtk::VPaned* placespaned;
+        Gtk::Paned* placespaned;
         Gtk::HPaned* dirpaned;
-        DirBrowser* dirBrowser;
+        //DirBrowser* dirBrowser;
         PlacesBrowser* placesBrowser;
         RecentBrowser* recentBrowser;
-        FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
+       // FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
         Gtk::HBox* rightBox;
         Gtk::VPaned* tpcPaned;
         BatchToolPanelCoordinator* tpc;
         History* history;
-		FilterPanel* filterPanel;
+		//FilterPanel* filterPanel;
         RTWindow* parent;      
         Gtk::Notebook* rightNotebook;
 
         int error;
-
+        bool isloading;
     public:
         FilePanel ();
+
+         DirBrowser* dirBrowser;
+        FilterPanel* filterPanel;
+        FileCatalog* fileCatalog;
+        Gtk::Paned *ribbonPane;
 
         void setParent (RTWindow* p) { parent = p; }
         void init (); // dont call it directly, the constructor calls it as idle source

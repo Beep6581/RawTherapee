@@ -30,7 +30,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
     private:
         Gtk::Notebook* mainNB;
-        FilePanel* fpanel;
+        FilePanel* fpanel;       
         BatchQueuePanel* bpanel;
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
@@ -41,7 +41,8 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool is_fullscreen;
         Gtk::Button * btn_fullscreen;
         
-
+        bool on_expose_event_epanel(GdkEventExpose* event);
+        bool on_expose_event_fpanel(GdkEventExpose* event);
     public:
         RTWindow ();
 
@@ -52,7 +53,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
         bool keyPressed (GdkEventKey* event);
         bool on_delete_event(GdkEventAny* event);
-        bool on_my_window_state_event(GdkEventWindowState* event);
+        bool on_window_state_event(GdkEventWindowState* event);
         void on_mainNB_switch_page(GtkNotebookPage* page, guint page_num);
 
         void imageDeveloped (Glib::ustring fname); // called by the batchqueue when it finishes an image
@@ -64,6 +65,11 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void setProgressState (int state);
         void error (Glib::ustring descr);
         rtengine::ProgressListener* getProgressListener () { return pldBridge; }
+        EditorPanel*  epanel;
+        void SetEditorCurrent();
+        void SetMainCurrent();
+        void MoveFileBrowserToEditor();
+        void MoveFileBrowserToMain();
 };
 
 #endif

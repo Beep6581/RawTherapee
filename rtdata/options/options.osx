@@ -1,5 +1,6 @@
 
 [General]
+TabbedEditor=true
 StoreLastProfile=true
 StartupDirectory=last
 StartupPath=
@@ -9,6 +10,7 @@ DualProcSupport=true
 MultiUser=true
 Language=English (US)
 Theme=Gray Textured
+UseSystemTheme=false
 Version=300
 FirstRun=true
 
@@ -39,6 +41,9 @@ RenameUseTemplates=false
 ThumbnailZoomRatios=0.2;0.3;0.45;0.6;0.8;1;
 OverlayedFileNames=true
 
+# if TRUE, only fast, internal preview images are taken if the image is not edited yet
+InternalThumbIfUntouched=true
+
 [Clipping Indication]
 HighlightThreshold=253
 ShadowThreshold=8
@@ -55,6 +60,9 @@ PathTemplate=%p1/converted/%f
 PathFolder=
 UsePathTemplate=true
 LastSaveAsPath=
+
+# if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
+OverwriteOutputFile=false
 
 [Profiles]
 Directory=profiles
@@ -85,6 +93,7 @@ ToolPanelsExpanded=1;1;0;0;0;1;1;0;0;0;0;1;1;0;0;0;0;0;
 
 [Algorithms]
 DemosaicMethod=hphd
+DemosaicMethodBatch=hphd
 ColorCorrection=1
 
 [Crop Settings]

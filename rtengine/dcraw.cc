@@ -1,6 +1,5 @@
 /*RT*/#include <glib.h>
 /*RT*/#include <glib/gstdio.h>
-/*RT*/int ciff_base, ciff_len, exif_base, pre_filters;
 /*RT*/#undef MAX
 /*RT*/#undef MIN
 /*RT*/#define NO_LCMS
@@ -111,60 +110,70 @@ typedef unsigned long long UINT64;
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 
+// RT specify thread local storage
+#ifdef __GNUC__
+#define THREAD_LOCAL static __thread
+#define THREAD_LOCK  
+#else
+#define THREAD_LOCAL
+#define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
+#endif
+
 /*
    All global variables are defined here, and all functions that
    access them are prefixed with "CLASS".  Note that a thread-safe
    C++ class cannot have non-const static local variables.
  */
-/*RT*/IMFILE *ifp;
-FILE * ofp;
-short order;
-const char *ifname;
-char *meta_data;
-char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
-float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
-time_t timestamp;
-unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id;
-off_t    strip_offset, data_offset;
-off_t    thumb_offset, meta_offset, profile_offset;
-unsigned thumb_length, meta_length, profile_length;
-unsigned thumb_misc, *oprof, fuji_layout, shot_select=0, multi_out=0;
-unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
-unsigned black, cblack[8], maximum, mix_green, raw_color, zero_is_bad;
-unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
-unsigned tile_width, tile_length, gpsdata[32], load_flags;
-ushort raw_height, raw_width, height, width, top_margin, left_margin;
-ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
-int flip, tiff_flip, colors;
-double pixel_aspect, aber[4]={1,1,1,1}, gamm[6]={ 0.45,4.5,0,0,0,0 };
-ushort (*image)[4], white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
-float bright=1, user_mul[4]={0,0,0,0}, threshold=0;
-int half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
-int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
-int output_color=1, output_bps=8, output_tiff=0, med_passes=0;
-int no_auto_bright=0;
-unsigned greybox[4] = { 0, 0, UINT_MAX, UINT_MAX };
-float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
-const double xyz_rgb[3][3] = {			/* XYZ from RGB */
+/*RT*/THREAD_LOCAL int ciff_base, ciff_len, exif_base, pre_filters;
+/*RT*/THREAD_LOCAL IMFILE *ifp;
+THREAD_LOCAL FILE * ofp;
+THREAD_LOCAL short order;
+THREAD_LOCAL const char *ifname;
+THREAD_LOCAL char *meta_data;
+THREAD_LOCAL char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
+THREAD_LOCAL float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
+THREAD_LOCAL time_t timestamp;
+THREAD_LOCAL unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id;
+THREAD_LOCAL off_t    strip_offset, data_offset;
+THREAD_LOCAL off_t    thumb_offset, meta_offset, profile_offset;
+THREAD_LOCAL unsigned thumb_length, meta_length, profile_length;
+THREAD_LOCAL unsigned thumb_misc, *oprof, fuji_layout, shot_select=0, multi_out=0;
+THREAD_LOCAL unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
+THREAD_LOCAL unsigned black, cblack[8], maximum, mix_green, raw_color, zero_is_bad;
+THREAD_LOCAL unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
+THREAD_LOCAL unsigned tile_width, tile_length, gpsdata[32], load_flags;
+THREAD_LOCAL ushort raw_height, raw_width, height, width, top_margin, left_margin;
+THREAD_LOCAL ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
+THREAD_LOCAL int flip, tiff_flip, colors;
+THREAD_LOCAL double pixel_aspect, aber[4]={1,1,1,1}, gamm[6]={ 0.45,4.5,0,0,0,0 };
+THREAD_LOCAL ushort (*image)[4], white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
+THREAD_LOCAL float bright=1, user_mul[4]={0,0,0,0}, threshold=0;
+THREAD_LOCAL int half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
+THREAD_LOCAL int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
+THREAD_LOCAL int output_color=1, output_bps=8, output_tiff=0, med_passes=0;
+THREAD_LOCAL int no_auto_bright=0;
+THREAD_LOCAL unsigned greybox[4] = { 0, 0, UINT_MAX, UINT_MAX };
+THREAD_LOCAL float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
+static const double xyz_rgb[3][3] = {			/* XYZ from RGB */
   { 0.412453, 0.357580, 0.180423 },
   { 0.212671, 0.715160, 0.072169 },
   { 0.019334, 0.119193, 0.950227 } };
-const float d65_white[3] = { 0.950456, 1, 1.088754 };
-int histogram[4][0x2000];
-void (*write_thumb)(), (*write_fun)();
-void (*load_raw)(), (*thumb_load_raw)();
-jmp_buf failure;
+static const float d65_white[3] = { 0.950456, 1, 1.088754 };
+THREAD_LOCAL int histogram[4][0x2000];
+THREAD_LOCAL void (*write_thumb)(), (*write_fun)();
+THREAD_LOCAL void (*load_raw)(), (*thumb_load_raw)();
+THREAD_LOCAL jmp_buf failure;
 
-struct decode {
+THREAD_LOCAL struct decode {
   struct decode *branch[2];
   int leaf;
 } first_decode[2048], *second_decode, *free_decode;
 
-struct tiff_ifd {
+THREAD_LOCAL struct tiff_ifd {
   int width, height, bps, comp, phint, offset, flip, samples, bytes;
 } tiff_ifd[10];
 
-struct ph1 {
+THREAD_LOCAL struct ph1 {
   int format, key_off, black, black_off, split_col, tag_21a;
   float tag_210;
 } ph1;
@@ -555,8 +564,8 @@ int CLASS canon_s2is()
  */
 unsigned CLASS getbithuff (int nbits, ushort *huff)
 {
-  static unsigned bitbuf=0;
-  static int vbits=0, reset=0;
+  THREAD_LOCAL unsigned bitbuf=0;
+  THREAD_LOCAL int vbits=0, reset=0;
   unsigned c;
 
   if (nbits == -1)
@@ -1577,8 +1586,8 @@ void CLASS phase_one_load_raw()
 
 unsigned CLASS ph1_bithuff (int nbits, ushort *huff)
 {
-  static UINT64 bitbuf=0;
-  static int vbits=0;
+  THREAD_LOCAL UINT64 bitbuf=0;
+  THREAD_LOCAL int vbits=0;
   unsigned c;
 
   if (nbits == -1)
@@ -1840,8 +1849,8 @@ void CLASS nokia_load_raw()
 
 unsigned CLASS pana_bits (int nbits)
 {
-  static uchar buf[0x4000];
-  static int vbits;
+  THREAD_LOCAL uchar buf[0x4000];
+  THREAD_LOCAL int vbits;
   int byte;
 
   if (!nbits) return vbits=0;
@@ -2130,7 +2139,7 @@ void CLASS kodak_jpeg_load_raw() {}
 METHODDEF(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
-  static uchar jpeg_buffer[4096];
+  THREAD_LOCAL uchar jpeg_buffer[4096];
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
@@ -2408,7 +2417,7 @@ void CLASS kodak_thumb_load_raw()
 
 void CLASS sony_decrypt (unsigned *data, int len, int start, int key)
 {
-  static unsigned pad[128], p;
+  THREAD_LOCAL unsigned pad[128], p;
 
   if (start) {
     for (p=0; p < 4; p++)
@@ -2655,7 +2664,7 @@ void CLASS smal_v9_load_raw()
 
 void CLASS foveon_decoder (unsigned size, unsigned code)
 {
-  static unsigned huff[1024];
+  THREAD_LOCAL unsigned huff[1024];
   struct decode *cur;
   int i, len;
 
@@ -6894,6 +6903,8 @@ void CLASS identify()
   if (height == 3136 && width == 4736)	/* Pentax K-7 */
     { height  = 3122;   width  = 4684;
       top_margin = 2;  filters = 0x16161616; }
+  if (height == 2868 && width == 4352)	/* Pentax K-x */
+                        width  = 4308;
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
   if (dng_version) {
@@ -7227,6 +7238,8 @@ canon_cr2:
   } else if (!strcmp(model,"D1X")) {
     width -= 4;
     pixel_aspect = 0.5;
+  } else if (!strcmp(model,"D7000")) {
+    width -= 40;
   } else if (!strcmp(model,"D40X") ||
 	     !strcmp(model,"D60")  ||
 	     !strcmp(model,"D80")  ||
@@ -7441,7 +7454,7 @@ konica_400z:
   } else if (!strcmp(model,"K20D")) {
     filters = 0x16161616;
   } else if (!strcmp(model,"K-x")) {
-    width = 4309;
+    width = 4308;
     filters = 0x16161616;
   } else if (!strcmp(model,"Optio S")) {
     if (fsize == 3178560) {
@@ -8930,6 +8943,7 @@ Glib::Mutex* dcrMutex=NULL;
 int RawImage::loadRaw (bool loadData) {
 
   Glib::Mutex::Lock lock(*dcrMutex); // auto unlock
+  THREAD_LOCK
 
   ifname = fname.c_str();
   image = NULL;
@@ -9073,9 +9087,9 @@ int RawImage::loadRaw (bool loadData) {
 
 int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType) {
 
-  int status=0;
+  THREAD_LOCK
 
-dcrMutex->lock ();
+  int status=0;
 
   exif_base = -1;
   ciff_base = -1;
@@ -9094,14 +9108,12 @@ dcrMutex->lock ();
   ifname = fname.c_str();
   if (!(ifp = gfopen (ifname))) {
     status = 2;
-    dcrMutex->unlock ();
     return status;
   }
   identify ();
   if (!is_raw || colors>3) {
     status = 3;
     fclose (ifp);
-    dcrMutex->unlock ();
     return status;
   }
 
@@ -9133,15 +9145,78 @@ dcrMutex->lock ();
   rml.ciffLength = ciff_len;
 
   fclose (ifp);
-dcrMutex->unlock ();
   return !is_raw;
 }
 
 #include <mytime.h>
 
+rtengine::Thumbnail* rtengine::Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
+
+    THREAD_LOCK
+
+	image = NULL;
+	ifname = fname.c_str();
+	exif_base = -1;
+	ciff_base = -1;
+	ciff_len = -1;
+	verbose = settings->verbose;
+	oprof = NULL;
+	ifp = gfopen (fname.c_str());
+	if (!ifp) {
+		printf("DCRAW: failed0\n");
+		return NULL;
+	}
+
+	if (setjmp (failure)) {
+		printf("DCRAW: failed1\n");
+		fclose (ifp);
+		return NULL;
+	}   
+
+	identify ();
+	if (!is_raw || colors>3) {
+		printf("DCRAW: failed2\n");
+		fclose(ifp);
+		return NULL;
+	}
+
+    rml.exifBase = exif_base;
+    rml.ciffBase = ciff_base;
+    rml.ciffLength = ciff_len;
+
+	char thumb_buffer[thumb_length];
+	fseek(ifp,thumb_offset,SEEK_SET);
+	fread(thumb_buffer,1,thumb_length,ifp);
+	fclose(ifp);
+
+	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(thumb_buffer,thumb_length,w,h,fixwh);
+	if ( tpp == 0 )
+	{
+		printf("DCRAW: failed3\n");
+		return NULL;
+	}
+
+	int deg = 0;
+	if (flip==5)
+		deg = 270;
+	else if (flip==3)
+		deg = 180;
+	else if (flip==6)
+		deg = 90;
+
+	if (deg>0) {
+		Image16* rot = tpp->thumbImg->rotate (deg);
+		delete tpp->thumbImg;
+		tpp->thumbImg = rot;
+	}
+
+	return tpp;
+}
+
 rtengine::Thumbnail* rtengine::Thumbnail::loadFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
 
-dcrMutex->lock ();
+	THREAD_LOCK
+
 MyTime t0, t1, t2, t3, t4, t5, t6;
 t0.set ();
 
@@ -9154,7 +9229,6 @@ t0.set ();
     oprof = NULL;
     ifp = gfopen (fname.c_str());
     if (!ifp) {
-        dcrMutex->unlock ();
         return NULL;
     }
 
@@ -9164,7 +9238,6 @@ t1.set ();
 	if (image)
         free (image);
       fclose (ifp);
-      dcrMutex->unlock ();
       return NULL;
     }   
     
@@ -9176,7 +9249,6 @@ t1.set ();
     use_camera_wb = 1;
     if (!is_raw || colors>3) {
         fclose(ifp);
-        dcrMutex->unlock ();
         return NULL;
     }
 
@@ -9438,8 +9510,6 @@ if (settings->verbose) printf ("0: %d, 1: %d, 2: %d, 3: %d, 4: %d, 5: %d All: %d
     
   free (image);
   
-dcrMutex->unlock ();
-
   return tpp;
 }
 

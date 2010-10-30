@@ -1,16 +1,16 @@
 
 [Version]
-Version=231
+Version=466
 
 [Exposure]
 Auto=false
-Clip=0.01
+Clip=0.001
 Compensation=0
 Brightness=0
 Contrast=0
 Black=0
-HighlightCompr=100
-ShadowCompr=100
+HighlightCompr=70
+ShadowCompr=25
 Curve=1;0;0;1;1;
 
 [Channel Mixer]

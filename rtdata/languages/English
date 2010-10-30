@@ -9,7 +9,7 @@
 
 !ADJUSTER_RESET_TO_DEFAULT;Reset to default
 !BATCHQUEUE_AUTOSTART;Auto start
-!BATCH_PROCESSING;batch processing
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_FILEDLGFILTERANY;Any files
@@ -349,6 +349,12 @@
 !NAVIGATOR_G_VALUE;G = %1
 !NAVIGATOR_H_NA;H = n/a
 !NAVIGATOR_H_VALUE;H = %1
+!NAVIGATOR_LAB_A_NA;A = n/a
+!NAVIGATOR_LAB_A_VALUE;A = %1
+!NAVIGATOR_LAB_B_NA;B = n/a
+!NAVIGATOR_LAB_B_VALUE;B = %1
+!NAVIGATOR_LAB_L_NA;L = n/a
+!NAVIGATOR_LAB_L_VALUE;L = %1
 !NAVIGATOR_R_NA;R = n/a
 !NAVIGATOR_R_VALUE;R = %1
 !NAVIGATOR_S_NA;S = n/a
@@ -373,8 +379,9 @@
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IPTCINFO;IPTC info
+!PARTIALPASTE_LABCURVE;Lab curve
+!PARTIALPASTE_LABCURVE;Luminance curve
 !PARTIALPASTE_LENSGROUP;Lens related settings
-!PARTIALPASTE_LUMACURVE;Luminance curve
 !PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 !PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
 !PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
@@ -385,7 +392,7 @@
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WHITEBALANCE;White balance
 !PREFERENCES_ADD;ADD
-!PREFERENCES_APPLNEXTSTARTUP;applied at next startup
+!PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_BATCH_PROCESSING;batch processing
 !PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
@@ -402,9 +409,6 @@
 !PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 !PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 !PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_CLEARDLG_LINE1;Clearing cache
-!PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
-!PREFERENCES_CLEARDLG_TITLE;Please wait
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
 !PREFERENCES_DATEFORMAT;Date Format
@@ -419,8 +423,10 @@
 !PREFERENCES_DIROTHER;Other
 !PREFERENCES_DIRSELECTDLG;Select Image Directory at Startup...
 !PREFERENCES_DIRSOFTWARE;Installation directory
-!PREFERENCES_DMETHOD;Method
+!PREFERENCES_DMETHOD;Preview
+!PREFERENCES_DMETHODBATCH;Batch
 !PREFERENCES_EDITORCMDLINE;Other command line
+!PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FALSECOLOR;False color suppression steps
 !PREFERENCES_FBROWSEROPTS;File Browser Options
@@ -442,12 +448,13 @@
 !PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_MONITORICC;Monitor Profile
+!PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
-!PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>n<i>nThese formatting strings refer to the directories and sub-paths of the path of the raw file.nnFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, %p3=/home/tom, ...n</b><i>nIf you want to save the output image where the original is, write:n</i><b>%p1/%fn</b><i>nIf you want to save the output image in a directory 'converted' located the directory of the original, write:n</i><b>%p1/converted/%fn</b><i>nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:n</i><b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OUTDIRTEMPLATE;Use Template
-!PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>n<i>nThese formatting strings refer to the directories and sub-paths of the path of the raw file.nnFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, %p3=/home/tom, ...n</b><i>nIf you want to save the output image where the original is, write:n</i><b>%p1/%fn</b><i>nIf you want to save the output image in a directory 'converted' located the directory of the original, write:n</i><b>%p1/converted/%fn</b><i>nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:n</i><b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PARSEDEXTADD;Add Extension
@@ -461,6 +468,7 @@
 !PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PSPATH;Adobe Photoshop installation directory
+!PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SELECTICCDIRDLG;Select ICC Profile Directory...
 !PREFERENCES_SELECTLANG;Select language
 !PREFERENCES_SELECTMONITORPROFDLG;Select ICC Profile of the Display...
@@ -470,6 +478,7 @@
 !PREFERENCES_SHOWDATETIME;Show date and time
 !PREFERENCES_SHOWONLYRAW;Show only RAW files
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_STARTUPIMDIR;Image directory at startup
 !PREFERENCES_TAB_BROWSER;File Browser
 !PREFERENCES_TAB_COLORMGR;Color Management
@@ -477,6 +486,8 @@
 !PREFERENCES_TAB_IMPROC;Image Processing
 !PREFERENCES_TAB_OUTPUT;Output Options
 !PREFERENCES_THUMBSIZE;Thumbnail Size
+!PREFERENCES_USESYSTEMTHEME; Use System Theme
+!PREFERENCES_WORKFLOW;Workflow
 !PROFILEPANEL_FILEDLGFILTERANY;Any files
 !PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
 !PROFILEPANEL_LABEL;Postprocessing Profiles
@@ -575,8 +586,15 @@
 !TP_DETAIL_AMOUNT;Amount
 !TP_DIRPYRDENOISE_CHROMA;Chrominance
 !TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Directional Pyramid Noise Reduction
+!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
 !TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
+!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
+!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
+!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
+!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AMOUNT;Amount
 !TP_DISTORTION_LABEL;Distortion
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
@@ -589,15 +607,15 @@
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
-!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight compression
-!TP_EXPOSURE_COMPRSHADOWS;Shadow compression
+!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery
+!TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
 !TP_EXPOSURE_CONTRAST;Contrast
 !TP_EXPOSURE_CURVEEDITOR;Tone Curve
 !TP_EXPOSURE_EXPCOMP;Exp. Comp.
 !TP_EXPOSURE_LABEL;Exposure
 !TP_HLREC_CIELAB;CIELab Blending
 !TP_HLREC_COLOR;Color Propagation
-!TP_HLREC_LABEL;Highlight Recovery
+!TP_HLREC_LABEL;Highlight Reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
 !TP_HLREC_METHOD;Method:
 !TP_ICM_FILEDLGFILTERANY;Any files
@@ -616,16 +634,14 @@
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_LABEL;Lab Curves
+!TP_LABCURVE_SATURATION;Saturation
 !TP_LENSGEOM_AUTOCROP;Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LUMACURVE_BLACKLEVEL;Black
-!TP_LUMACURVE_BRIGHTNESS;Brightness
-!TP_LUMACURVE_COMPRHIGHLIGHTS;Highlight compression
-!TP_LUMACURVE_COMPRSHADOWS;Shadow compression
-!TP_LUMACURVE_CONTRAST;Contrast
-!TP_LUMACURVE_CURVEEDITOR;Luminance Curve
-!TP_LUMACURVE_LABEL;Luminance Curve
 !TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 !TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 !TP_LUMADENOISE_RADIUS;Radius

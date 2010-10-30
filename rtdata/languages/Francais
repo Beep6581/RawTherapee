@@ -216,7 +216,14 @@ HISTORY_MSG_81;Redimensionnement activé
 HISTORY_MSG_82;Changement de profil
 HISTORY_MSG_83;Ombres/Hautes lumières haute qualité
 HISTORY_MSG_84;Correction de la perspective
+HISTORY_MSG_85;Coefficients d'ondelette
+HISTORY_MSG_86;Égaliseur d'ondelette
+HISTORY_MSG_87;Réduction du bruit d'impulsion
+HISTORY_MSG_89;Réd. du bruit présevant les bords
 HISTORY_MSG_8;Compensation d'exposition
+HISTORY_MSG_90;Réd. de bruit Luminance
+HISTORY_MSG_91;Réd. de bruit Chominance
+HISTORY_MSG_92;Réd. de bruit Gamma
 HISTORY_MSG_9;Compression des hautes lumières
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
@@ -293,7 +300,6 @@ MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
-MAIN_BUTTON_UNFULLSCREEN;Quitter plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
 MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
 MAIN_FRAME_PLACES;Emplacements 
@@ -411,7 +417,9 @@ PREFERENCES_DIROTHER;Autre
 PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
 PREFERENCES_DMETHOD;Méthode
+PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
+PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FALSECOLOR;Itérations pour la suppression des fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
@@ -433,6 +441,7 @@ PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LINEDENOISE;Filtre de bruit de Ligne
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_MONITORICC;Profil du moniteur
+PREFERENCES_MULTITAB;Mode éditeurs multiple
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
@@ -452,6 +461,7 @@ PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Ca
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
+PREFERENCES_SELECTFONT;Police de caractère
 PREFERENCES_SELECTICCDIRDLG;Choix du dossier des profils ICC...
 PREFERENCES_SELECTLANG;Choix de la langue
 PREFERENCES_SELECTMONITORPROFDLG;Choix du profil ICC de l'affichage...
@@ -461,6 +471,7 @@ PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
+PREFERENCES_SINGLETAB;Mode éditeur unique
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
@@ -468,6 +479,8 @@ PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'Image
 PREFERENCES_TAB_OUTPUT;Options de sortie
 PREFERENCES_THUMBSIZE;Tailles des vignettes
+PREFERENCES_USESYSTEMTHEME; Utiliser le thème système
+PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
 PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
 PROFILEPANEL_LABEL;Profils de post-traitement
@@ -568,6 +581,13 @@ TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit présevant les bords
 TP_DIRPYRDENOISE_LUMA;Luminance
+TP_DIRPYREQUALIZER_LABEL;Égaliseur d'amas
+TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contraste-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contraste+
+TP_DIRPYREQUALIZER_LUMAFINEST;les plus petits
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutre
+TP_DIRPYREQUALIZER_THRESHOLD;Seuil
 TP_DISTORTION_AMOUNT;Quantité
 TP_DISTORTION_LABEL;Distorsion
 TP_EQUALIZER_CONTRAST_MINUS;Contraste-
@@ -696,10 +716,16 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_89;Directional pyramid
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
+!NAVIGATOR_LAB_A_NA;A = n/a
+!NAVIGATOR_LAB_A_VALUE;A = %1
+!NAVIGATOR_LAB_B_NA;B = n/a
+!NAVIGATOR_LAB_B_VALUE;B = %1
+!NAVIGATOR_LAB_L_NA;L = n/a
+!NAVIGATOR_LAB_L_VALUE;L = %1
+!PARTIALPASTE_LABCURVE;Lab curve
+!PARTIALPASTE_LABCURVE;Luminance curve
+!TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_CONTRAST;Contrast
+!TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_LABEL;Lab Curves
+!TP_LABCURVE_SATURATION;Saturation

@@ -29,13 +29,20 @@ class Thumbnail;
 
 class CacheManager {
 
-        std::map<std::string, Thumbnail*>   openEntries;
-        Glib::ustring                       baseDir;
+        typedef std::pair<std::string, Thumbnail*> string_thumb_pair;
+        typedef std::map<std::string, Thumbnail*> string_thumb_map;
+
+        string_thumb_map openEntries;
+        Glib::ustring    baseDir;
+		Glib::Mutex      mutex_;
 
         void deleteDir (const Glib::ustring& dirName);
 
-    public:
         CacheManager () {}
+
+    public:
+
+		static CacheManager* getInstance(void);
 
         void        init        ();
         Thumbnail*  getEntry    (const Glib::ustring& fname);
@@ -44,7 +51,7 @@ class CacheManager {
         
         void        closeThumbnail (Thumbnail* t);
         
-        const Glib::ustring& getBaseDir     ()       { return baseDir; }
+        const Glib::ustring& getBaseDir     ()       { Glib::Mutex::Lock lock(mutex_); return baseDir; }
         void  closeCache ();
 
         static std::string getMD5 (const Glib::ustring& fname);
@@ -58,7 +65,7 @@ class CacheManager {
         Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fname, const Glib::ustring& md5);
 };
 
-extern CacheManager cacheMgr;
+#define cacheMgr CacheManager::getInstance()
 
 #endif
 

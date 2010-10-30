@@ -38,6 +38,7 @@ const char *DefaultLanguage = "English (US)";
 
 void Options::setDefaults () {
 
+	font = "sans, 10";
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
@@ -88,6 +89,7 @@ void Options::setDefaults () {
     language = DefaultLanguage;
     lastSaveAsPath = "";
     theme = "";
+    useSystemTheme = false;
     maxThumbnailHeight = 400;
     maxCacheEntries = 10000;
     thumbnailFormat = FT_Custom16;
@@ -117,12 +119,14 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
     showFileNames = true;
+    tabbedUI = false;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
+
     rtSettings.iccDirectory = "/usr/share/color/icc";
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
@@ -151,8 +155,8 @@ int Options::readFromFile (Glib::ustring fname) {
 
     setDefaults ();
     
-if (keyFile.has_group ("General")) { 
-    Glib::ustring stup;
+if (keyFile.has_group ("General")) {
+    if (keyFile.has_key ("General", "TabbedEditor"))    tabbedUI= keyFile.get_boolean ("General", "TabbedEditor");    
     if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "home") 
         startupDir = STARTUPDIR_HOME;
     else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "current") 
@@ -171,6 +175,7 @@ if (keyFile.has_group ("General")) {
 //    if (keyFile.has_key ("General", "Version"))         version         = keyFile.get_integer ("General", "Version");
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
+    if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
 	if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
 	if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
@@ -197,6 +202,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
+	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -228,6 +234,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "ThumbnailZoomRatios"))thumbnailZoomRatios= keyFile.get_double_list ("File Browser", "ThumbnailZoomRatios");
     if (keyFile.has_key ("File Browser", "OverlayedFileNames")) overlayedFileNames = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
     if (keyFile.has_key ("File Browser", "ShowFileNames"))      showFileNames = keyFile.get_boolean ("File Browser", "ShowFileNames");
+    if (keyFile.has_key ("File Browser", "InternalThumbIfUntouched")) internalThumbIfUntouched = keyFile.get_boolean ("File Browser", "InternalThumbIfUntouched");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -237,6 +244,7 @@ if (keyFile.has_group ("Clipping Indication")) {
 }
 
 if (keyFile.has_group ("GUI")) { 
+    if (keyFile.has_key ("GUI", "Font"))            font            = keyFile.get_string  ("GUI", "Font");
     if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
     if (keyFile.has_key ("GUI", "WindowHeight"))    windowHeight    = keyFile.get_integer ("GUI", "WindowHeight");
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
@@ -283,7 +291,8 @@ if (keyFile.has_group ("Batch Processing")) {
 int Options::saveToFile (Glib::ustring fname) {
 
     rtengine::SafeKeyFile keyFile;
-    
+    keyFile.set_boolean ("General", "TabbedEditor", tabbedUI);
+
     keyFile.set_boolean ("General", "StoreLastProfile", savesParamsAtExit);
     if (startupDir==STARTUPDIR_HOME)
         keyFile.set_string ("General", "StartupDirectory", "home");
@@ -293,13 +302,14 @@ int Options::saveToFile (Glib::ustring fname) {
         keyFile.set_string ("General", "StartupDirectory", "custom");
     else if (startupDir==STARTUPDIR_LAST)
         keyFile.set_string ("General", "StartupDirectory", "last");
-    keyFile.set_string ("General", "StartupPath", startupPath);
-    keyFile.set_string ("General", "DateFormat", dateFormat);
+    keyFile.set_string  ("General", "StartupPath", startupPath);
+    keyFile.set_string  ("General", "DateFormat", dateFormat);
     keyFile.set_integer ("General", "AdjusterDelay", Adjuster::delay);
     keyFile.set_boolean ("General", "DualProcSupport", rtSettings.dualThreadEnabled);
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_string  ("General", "Theme", theme);
+    keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_integer ("General", "Version", 290);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
 	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
@@ -335,31 +345,34 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double_list ("File Browser", "ThumbnailZoomRatios", ptzoom);
     keyFile.set_boolean ("File Browser", "OverlayedFileNames", overlayedFileNames);
     keyFile.set_boolean ("File Browser", "ShowFileNames", showFileNames );
-    
+    keyFile.set_boolean ("File Browser", "InternalThumbIfUntouched", internalThumbIfUntouched );
+   
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
     keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
 
-    keyFile.set_string ("Output", "Format", saveFormat.format);
+    keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
     keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
     keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
     keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
     keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
-    keyFile.set_string ("Output", "PathTemplate", savePathTemplate);
-    keyFile.set_string ("Output", "PathFolder", savePathFolder);
-    keyFile.set_boolean("Output", "AutoSuffix", autoSuffix);
-    keyFile.set_boolean("Output", "UsePathTemplate", saveUsePathTemplate);
-    keyFile.set_string ("Output", "LastSaveAsPath", lastSaveAsPath);
+    keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
+    keyFile.set_string  ("Output", "PathFolder", savePathFolder);
+    keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
+    keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
+    keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
+	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
 
-    keyFile.set_string ("Profiles", "Directory", profilePath);
-    keyFile.set_string ("Profiles", "RawDefault", defProfRaw);
-    keyFile.set_string ("Profiles", "ImgDefault", defProfImg);
+    keyFile.set_string  ("Profiles", "Directory", profilePath);
+    keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
+    keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
     keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     
+    keyFile.set_string  ("GUI", "Font", font);
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);
     keyFile.set_integer ("GUI", "WindowHeight", windowHeight);
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
@@ -472,8 +485,8 @@ void Options::save () {
 }
 
 bool Options::is_extention_enabled (Glib::ustring ext) {
-		for (int j=0; j<parseExtensions.size(); j++)
+		for (int j=0; j<(int)parseExtensions.size(); j++)
       if (parseExtensions[j].casefold() == ext.casefold())
-				return j>=parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
+				return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
 		return false;
 }

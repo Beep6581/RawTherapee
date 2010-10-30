@@ -38,6 +38,9 @@ extern const Settings* settings;
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 
+        if (chroma_scale == 0)
+            return;
+
 	if (monitorTransform) {
 	    int ix = 0;
         short* buffer = new short [3*lab->W];
@@ -111,10 +114,10 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
     Image8* image = new Image8 (cw, ch);
 
-    cmsHPROFILE oprof = iccStore.getProfile (profile);
+    cmsHPROFILE oprof = iccStore->getProfile (profile);
 
     if (oprof) {
-        cmsHPROFILE iprof = iccStore.getXYZProfile ();
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_8, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();
@@ -190,7 +193,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
     Image16* image = new Image16 (cw, ch);
 
-    cmsHPROFILE oprof = iccStore.getProfile (profile);
+    cmsHPROFILE oprof = iccStore->getProfile (profile);
 
     if (oprof) {
 		#pragma omp parallel for if (multiThread)
@@ -219,7 +222,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				za[j-cx] = CLIP(z_);
 			}
 		}
-        cmsHPROFILE iprof = iccStore.getXYZProfile ();
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();

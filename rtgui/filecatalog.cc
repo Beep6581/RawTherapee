@@ -44,16 +44,15 @@ int _directoryUpdater (void* cat) {
 }
 #endif
 
-FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
+FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1), listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
 
-    previewLoader.setPreviewLoaderListener (this);
-    
     //  construct and initialize thumbnail browsers
-    fileBrowser = new FileBrowser();
-    fileBrowser->setFileBrowserListener (this);
-    fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
-    fileBrowser->show ();
-       
+        fileBrowser = new FileBrowser();
+        fileBrowser->setFileBrowserListener (this);
+        fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
+        fileBrowser->show ();
+
+    set_size_request(0,250);
     // construct trash panel with the extra "empty trash" button
     trashButtonBox = new Gtk::VBox;
     Gtk::Button* emptyT = new Gtk::Button (M("FILEBROWSER_EMPTYTRASH"));
@@ -138,13 +137,13 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     Gtk::HBox* zoomBox = new Gtk::HBox ();
     zoomInButton  = new Gtk::Button ();
     zoomInButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-    zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));    
+    zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = new Gtk::Button ();
     zoomOutButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
-    zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));    
+    zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
     zoomBox->pack_end (*zoomOutButton, Gtk::PACK_SHRINK);   
@@ -182,7 +181,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : listener(NULL), fslist
     wdMonitor = NULL;
     checkCounter = 2;
     g_timeout_add (CHECKTIME, _directoryUpdater, this);
-#endif
+#endif   
 }
 
 bool FileCatalog::capture_event(GdkEventButton* event){
@@ -219,19 +218,23 @@ void FileCatalog::closeDir () {
         wdMonitor = NULL;
     }
 #endif
+
+	// ignore old requests
+	++selectedDirectoryId;
+
     // terminate thumbnail preview loading
-    previewLoader.terminate ();
+    previewLoader->removeAllJobs ();
 
     // terminate thumbnail updater
-    thumbImageUpdater.terminate ();
+    thumbImageUpdater->removeAllJobs ();
 
     // remove entries
+    selectedDirectory = "";
     fileBrowser->close ();  
 	fileNameList.clear ();
 	
     dirEFS.clear ();
     hasValidCurrentEFS = false;
-    selectedDirectory = "";
     redrawAll ();
 }
 
@@ -267,8 +270,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         _refreshProgressBar ();
-        previewLoader.process ();
-		
+
 #ifdef _WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
 #elif defined __APPLE__
@@ -309,7 +311,14 @@ int refreshpb (void* data) {
     return 0;
 }
 
-void FileCatalog::previewReady (FileBrowserEntry* fdn) {
+void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
+
+    GThreadLock lock;
+	
+	if ( dir_id != selectedDirectoryId )
+	{
+		return;
+	}
 
     // put it into the "full directory" browser
     fdn->setImageAreaToolListener (iatlistener);
@@ -365,42 +374,22 @@ void FileCatalog::_previewsFinished () {
 		    filterPanel->setFilter ( currentEFS,false );
 	    }
 	}
+ 	// restart anything that might have been loaded low quality
+ 	fileBrowser->refreshQuickThumbImages();
 }
 
-void FileCatalog::previewsFinished () {
+void FileCatalog::previewsFinished (int dir_id) {
+
+ 	GThreadLock lock;
+
+	if ( dir_id != selectedDirectoryId )
+	{
+		return;
+	}
 
     if (!hasValidCurrentEFS) 
         currentEFS = dirEFS;
     g_idle_add (prevfinished, this);
-}
-
-void PreviewLoader::remove (Glib::ustring fname) {
-	std::list<DirEntry>::iterator i;
-	for (i=jqueue.begin(); i!=jqueue.end(); i++) 
-		if (i->fullName==fname)
-			break;
-	if (i!=jqueue.end())
-		jqueue.erase (i);	
-}
-
-void PreviewLoader::start () {
-
-    jqueue.sort ();
-}
-
-void PreviewLoader::process (DirEntry& current) {
-
-	if (Glib::file_test (current.fullName, Glib::FILE_TEST_EXISTS)) {
-	    Thumbnail* tmb = cacheMgr.getEntry (current.fullName);
-	    if (tmb && pl) 
-	  	    pl->previewReady (new FileBrowserEntry (tmb, current.fullName));
-	}
-}
-
-void PreviewLoader::end () {
-
-    if (pl)
-        pl->previewsFinished ();
 }
 
 void FileCatalog::setEnabled (bool e) {
@@ -421,15 +410,11 @@ void FileCatalog::refreshAll () {
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
 
     if (enabled && listener!=NULL) {
-        previewLoader.stop ();
-        thumbImageUpdater.stop ();
         for (size_t i=0; i<tmb.size(); i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end())
                 listener->fileSelected (tmb[i]);
             tmb[i]->decreaseRef ();
         }
-        previewLoader.process ();
-        thumbImageUpdater.process ();
     }
 }
 
@@ -474,7 +459,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
 //            t->thumbnail->decreaseRef ();
             delete t;
             // remove from cache
-            cacheMgr.deleteEntry (fname);
+            cacheMgr->deleteEntry (fname);
             // delete from file system
             ::g_remove (fname.c_str());
             // delete paramfile if found
@@ -491,7 +476,6 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
 void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
-        thumbImageUpdater.stop ();
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
@@ -511,7 +495,6 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
                 listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
             }
         }
-        thumbImageUpdater.process ();
     }
 }
 
@@ -537,7 +520,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 nBaseName += "." + getExtension (baseName);
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
             if (!::g_rename (ofname.c_str(), nfname.c_str())) {
-				cacheMgr.renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
+				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				reparseDirectory ();
             }
             renameDlg->hide ();
@@ -583,7 +566,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
             if (!::g_rename (ofname.c_str(), nfname.c_str())) {
-				cacheMgr.renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
+				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				// the remaining part (removing old and adding new entry) is done by the directory monitor
 				reparseDirectory ();
 //                on_dir_changed (Gio::File::create_for_path (nfname), Gio::File::create_for_path (nfname), Gio::FILE_MONITOR_EVENT_CHANGED, true);
@@ -748,7 +731,7 @@ int FileCatalog::reparseDirectory () {
 			fileNamesToDel.push_back (t[i]->filename);
 	for (size_t i=0; i<fileNamesToDel.size(); i++) {
 		delete fileBrowser->delEntry (fileNamesToDel[i]);
-		cacheMgr.deleteEntry (fileNamesToDel[i]);
+		cacheMgr->deleteEntry (fileNamesToDel[i]);
 	}
 
 	// check if a new file has been added
@@ -760,10 +743,8 @@ int FileCatalog::reparseDirectory () {
 				break;
 			}
 		if (!found) {
-			previewLoader.stop ();
 			checkAndAddFile (Gio::File::create_for_parse_name (nfileNameList[i]));
             _refreshProgressBar ();
-			previewLoader.process ();
 		}
 	}
 
@@ -800,7 +781,7 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
-						previewLoader.add (DirEntry (file->get_parse_name()));
+						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
 				}
     }
@@ -819,10 +800,10 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     int lastdot = info->get_name().find_last_of ('.');
     if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
-        Thumbnail* tmb = cacheMgr.getEntry (file->get_parse_name());
+        Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-  	        previewReady (entry);
+  	        previewReady (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
@@ -855,25 +836,15 @@ bool FileCatalog::trashIsEmpty () {
 
 void FileCatalog::zoomIn () {
 
-    bool pLoad = previewLoader.runs();
-    if (pLoad)
-        previewLoader.stop ();
         
     fileBrowser->zoomIn ();
         
-    if (pLoad)
-        previewLoader.process ();
 }
 void FileCatalog::zoomOut () {
 
-    bool pLoad = previewLoader.runs();
-    if (pLoad)
-        previewLoader.stop ();
         
     fileBrowser->zoomOut ();
         
-    if (pLoad)
-        previewLoader.process ();
 }
 void FileCatalog::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
@@ -968,4 +939,3 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
     return false;
 }
-

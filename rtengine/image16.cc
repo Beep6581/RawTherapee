@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <image16.h>
+#include <image8.h>
 #include <string.h>
 #include <rtengine.h>
 
@@ -238,4 +239,20 @@ Image16* Image16::resize (int nw, int nh, TypeInterpolation interp) {
         return res;
     }
     return NULL;
+}
+
+Image8* 
+Image16::to8() const
+{
+	Image8* img8 = new Image8(width,height);
+	for ( int h = 0; h < height; ++h )
+	{
+		for ( int w = 0; w < width; ++w )
+		{
+			img8->r(h,w,r[h][w] >> 8);
+			img8->g(h,w,g[h][w] >> 8);
+			img8->b(h,w,b[h][w] >> 8);
+		}
+	}
+	return img8;
 }

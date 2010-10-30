@@ -21,9 +21,8 @@
 # Created by Richard Stellingwerff, Emil Jacobs and Daniel Borgmann.
 
 
-style "clearlooks-default"
-{
-  font_name = "sans 8"
+style "clearlooks-default" {
+
   GtkButton      ::default_border    = { 0, 0, 0, 0 }
   GtkRange       ::trough_border     = 0
   GtkPaned       ::handle_size       = 6

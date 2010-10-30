@@ -24,15 +24,17 @@
 #include <algorithm>
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Gabor's implementation of bilateral filtering, without input pixel
+// modified version of Gabor's implementation of bilateral filtering, without input pixel
 
 #define NBRWT(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+0x10000])
-#define NORM(a,b) (1 + ec[src[i - a][j - b]-src[i][j]+0x10000])
+#define NORM(a,b) (ec[src[i - a][j - b]-src[i][j]+0x10000])
+
+//ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*rangewidth*rangewidth))*scale); \
 
 #define RB_BEGIN(a,b)   double scale = (a); \
 	int* ec = new int [0x20000]; \
 	for (int i=0; i<0x20000; i++) \
-	ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*rangewidth*rangewidth))*scale); \
+	ec[i] = (int)(1 + 1024/(abs(i-0x10000) + 1)); \
 	int rstart = b; \
 	int rend = H-b; \
 	int cstart = b; \
@@ -97,7 +99,7 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 	//The cleaning algorithm starts here
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// modified bilateral filter for lowpass image, omitting input pixel
+	// modified bilateral filter for lowpass image, omitting input pixel; or Gaussian blur
 	
 	static float eps = 1.0;
 	float wtdsum, dirwt, norm;
@@ -127,7 +129,7 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 			hfnbrave = (hfnbrave-hpfabs)/24;
 			hpfabs>(hfnbrave*(5.5-thresh)) ? impish[i][j]=1 : impish[i][j]=0;
 			
-		}//now impulsive values have been corrected
+		}//now impulsive values have been identified
 	
 	for (int i=0; i < height; i++)
 		for (int j=0; j < width; j++) {

@@ -32,7 +32,11 @@ InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* e
         isrc = new RawImageSource ();
 
     isrc->setProgressListener (pl);
-    *errorCode = isrc->load (fname);
+
+    if(isRaw && pl == NULL)
+        *errorCode = isrc->load (fname, true);
+    else
+        *errorCode = isrc->load (fname);
     if (*errorCode) {
         delete isrc;    
         return NULL;

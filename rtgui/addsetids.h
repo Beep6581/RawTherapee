@@ -22,7 +22,10 @@
 #define ADDSET_PERSPECTIVE		18
 #define ADDSET_CA	 			19
 #define ADDSET_VIGN_AMOUNT 		20
+#define ADDSET_LC_SATURATION 	21
+// When adding items, make sure to update ADDSET_PARAM_NUM
+#define ADDSET_PARAM_NUM		22 // THIS IS USED AS A DELIMITER!!
 
-#define ADDSET_PARAM_NUM		21
+
 
 #endif

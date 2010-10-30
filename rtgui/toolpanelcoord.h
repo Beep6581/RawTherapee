@@ -36,7 +36,7 @@
 #include <impulsedenoise.h>
 #include <dirpyrdenoise.h>
 #include <sharpening.h>
-#include <lcurve.h>
+#include <labcurve.h>
 #include <exifpanel.h>
 #include <iptcpanel.h>
 #include <crop.h>
