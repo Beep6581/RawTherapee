@@ -20,7 +20,7 @@
 #include <guiutils.h>
 #include <imagearea.h>
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL),cCropMoving(NULL),cNormal(NULL), isMoving(false) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL),cCropMoving(NULL),cNormal(NULL), isMoving(false), imageArea(NULL) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }
@@ -81,7 +81,8 @@ void PreviewWindow::updatePreviewImage () {
 void PreviewWindow::setPreviewHandler (PreviewHandler* ph) {
 
     previewHandler = ph;
-    previewHandler->addPreviewImageListener (this);
+    if (previewHandler)
+        previewHandler->addPreviewImageListener (this);
 }
 
 void PreviewWindow::on_resized (Gtk::Allocation& req) {
@@ -98,7 +99,7 @@ bool PreviewWindow::on_expose_event (GdkEventExpose* event) {
         int bufferW, bufferH;
         backBuffer->get_size (bufferW, bufferH);
 
-        if (!mainCropWin) {
+        if (!mainCropWin && imageArea) {
             mainCropWin = imageArea->getMainCropWindow ();
             if (mainCropWin)
                 mainCropWin->addCropWindowListener (this);

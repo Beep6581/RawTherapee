@@ -344,8 +344,8 @@ void ThumbBrowserEntryBase::draw () {
 
     Glib::RefPtr<Gdk::GC> gc_ = Gdk::GC::create (w->get_window());
 
-    Gdk::Color textn = w->get_style()->get_text(Gtk::STATE_NORMAL);
-    Gdk::Color texts = w->get_style()->get_text(Gtk::STATE_SELECTED);
+ //   Gdk::Color textn = w->get_style()->get_text(Gtk::STATE_NORMAL);
+  //  Gdk::Color texts = w->get_style()->get_text(Gtk::STATE_SELECTED);
     Gdk::Color bgn = w->get_style()->get_bg(Gtk::STATE_NORMAL);
     Gdk::Color bgs = w->get_style()->get_bg(Gtk::STATE_SELECTED);   
 

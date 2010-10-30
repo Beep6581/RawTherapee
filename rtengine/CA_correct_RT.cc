@@ -382,8 +382,8 @@ void RawImageSource::CA_correct_RT() {
 			
 			// along line segments, find the point along each segment that minimizes the color variance
 			// averaged over the tile; evaluate for up/down and left/right away from R/B grid point 
-			for (rr=8; rr < rr1-8; rr++)
-				for (cc=8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-8; cc+=2, indx+=2) {
+			for (rr=rrmin+8; rr < rrmax-8; rr++)
+				for (cc=ccmin+8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < ccmax-8; cc+=2, indx+=2) {
 					
 					if (rgb[indx][c]>0.8*clip_pt || Gtmp[indx]>0.8*clip_pt) continue;
 
@@ -422,7 +422,9 @@ void RawImageSource::CA_correct_RT() {
 			for (c=0; c<3; c+=2){
 				for (j=0; j<2; j++) {// vert/hor
 					//printf("hblock %d vblock %d j %d c %d areawt %d \n",hblock,vblock,j,c,areawt[j][c]);
-					if (areawt[j][c]>500) {
+					//printf("hblock %d vblock %d j %d c %d areawt %d ",hblock,vblock,j,c,areawt[j][c]);
+
+					if (areawt[j][c]>0) {
 						CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
 						blockwt[vblock*hblsz+hblock]= areawt[j][c];//*coeff[j][2][c]/(eps+coeff[j][0][c]) ;
 					} else {
@@ -430,6 +432,8 @@ void RawImageSource::CA_correct_RT() {
 						blockwt[vblock*hblsz+hblock]=0;
 					}
 					
+					//printf("%f  \n",CAshift[j][c]);
+
 					//CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
 					//blockwt[vblock*hblsz+hblock] = (float)(rr1-8)*(cc1-8)/4 * coeff[j][2][c]/(eps+coeff[j][0][c]) ;
 					
@@ -482,7 +486,7 @@ void RawImageSource::CA_correct_RT() {
 			}
 		}
 	
-	//if (verbose) fprintf (stderr,_("tile variances %f %f %f %f \n"),blockvar[0][0],blockvar[1][0],blockvar[0][2],blockvar[1][2] );
+	//printf ("tile variances %f %f %f %f \n",blockvar[0][0],blockvar[1][0],blockvar[0][2],blockvar[1][2] );
 	
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

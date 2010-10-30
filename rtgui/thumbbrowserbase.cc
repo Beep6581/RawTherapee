@@ -37,11 +37,7 @@ ThumbBrowserBase::ThumbBrowserBase ()
 
     pack_start (*hb1);
 
-    Gtk::HBox* tmp = new Gtk::HBox ();
     hb2->pack_start (hscroll);
-    Gtk::Requisition vcr = vscroll.size_request ();
-    tmp->set_size_request (vcr.width, vcr.width);
-    hb2->pack_end (*tmp, Gtk::PACK_SHRINK, 0);
 
     pack_start (*hb2,Gtk::PACK_SHRINK, 0);
 
@@ -119,6 +115,16 @@ void ThumbBrowserBase::configScrollBars () {
         vscroll.get_adjustment()->set_page_increment (ih);
         hscroll.get_adjustment()->set_page_size (iw);
         vscroll.get_adjustment()->set_page_size (ih);
+
+        if(iw>=inW)
+            hscroll.hide();
+        else
+            hscroll.show();
+
+        if(ih>=inH)
+            vscroll.hide();
+        else
+            vscroll.show();
     }
 }
 
@@ -138,11 +144,11 @@ void ThumbBrowserBase::arrangeFiles () {
     if (arrangement==TB_Horizontal) {            
 
         int numOfRows = 1;
-        if (rowHeight>0) {
-            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
-            if (numOfRows<1)
-                numOfRows = 1;
-        }
+//        if (rowHeight>0) {
+//            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
+//            if (numOfRows<1)
+//                numOfRows = 1;
+//        }
 
         int ct = 0;
         int currx = 0; int curry = 0;
@@ -401,7 +407,7 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 
     dirty = false;
 
-    Glib::RefPtr<Gdk::Window> window = get_window();    
+    Glib::RefPtr<Gdk::Window> window = get_window();
 
     int w = get_width();
     int h = get_height();
@@ -411,14 +417,14 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
     context->set_font_description (get_style()->get_font());
     for (int i=0; i<parent->fd.size(); i++) {
-        if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h)) 
+        if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h))
             parent->fd[i]->updatepriority = false;
         else {
             parent->fd[i]->updatepriority = true;
             parent->fd[i]->draw ();
         }
     }
-    
+
     return true;
 }
 
@@ -492,6 +498,12 @@ void ThumbBrowserBase::refreshThumbImages () {
     redraw ();
 }
 
+void ThumbBrowserBase::refreshQuickThumbImages () {
+    for (int i=0; i<fd.size(); ++i){
+		fd[i]->refreshQuickThumbnailImage ();
+    }
+}
+
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
     editedFiles = efiles;
@@ -502,7 +514,7 @@ void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles
     
 void ThumbBrowserBase::setArrangement (Arrangement a) {
 
-    arrangement = a;
+    arrangement = a;    
     redraw ();
 }
 

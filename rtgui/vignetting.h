@@ -28,6 +28,9 @@ class Vignetting : public Gtk::VBox, public AdjusterListener, public ToolPanel {
   protected:
     Adjuster* amount;
     Adjuster* radius;
+    Adjuster* strength;
+    Adjuster* centerX;
+    Adjuster* centerY;
     bool      vigAdd;
 
   public:

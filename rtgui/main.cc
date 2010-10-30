@@ -85,9 +85,15 @@ int main(int argc, char **argv)
         argv1_ = argv[1];
     else
         argv1_ = "";
-
+  
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
    argv0 = Glib::filename_to_utf8 (argv0_);
    argv1 = Glib::filename_to_utf8 (argv1_);
+#else
+   std::auto_ptr<Glib::Error> error;
+   argv0 = Glib::filename_to_utf8 (argv0_, error);
+   argv1 = Glib::filename_to_utf8 (argv1_, error);
+#endif //GLIBMM_EXCEPTIONS_ENABLED
 
    Glib::thread_init();
    gdk_threads_init();
@@ -102,10 +108,15 @@ int main(int argc, char **argv)
 #endif
 
 //   Gtk::RC::add_default_file (argv0+"/themes/"+options.theme);
-   std::vector<std::string> rcfiles;
-   rcfiles.push_back (argv0+"/themes/"+options.theme);
-   Gtk::RC::set_default_files (rcfiles);
-
+   if (!options.useSystemTheme)
+   {
+       std::vector<std::string> rcfiles;
+       rcfiles.push_back (argv0+"/themes/"+options.theme);
+       // Set the font face and size
+       Gtk::RC::parse_string (Glib::ustring::compose(
+          "style \"clearlooks-default\" { font_name = \"%1\" }", options.font));
+       Gtk::RC::set_default_files (rcfiles);
+   }
    Gtk::Main m(&argc, &argv);
 //   MainWindow *MainWindow = new class MainWindow();
    RTWindow *rtWindow = new class RTWindow();

@@ -23,7 +23,7 @@
 
 RTWindow::RTWindow () {
 
-    cacheMgr.init ();
+    cacheMgr->init ();
 
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
 		try { set_default_icon_from_file (argv0+"/images/logoicon16.png");
@@ -44,6 +44,7 @@ RTWindow::RTWindow () {
     else
     	unmaximize();
     property_destroy_with_parent().set_value(false);
+    signal_window_state_event().connect( sigc::mem_fun(*this, &RTWindow::on_window_state_event) );
 
     mainNB = Gtk::manage (new Gtk::Notebook ());
     mainNB->set_scrollable (true);
@@ -59,6 +60,7 @@ RTWindow::RTWindow () {
     hbf->set_spacing (2);
     hbf->show_all ();
     mainNB->append_page (*fpanel, *hbf);
+    fpanel->signal_expose_event().connect( sigc::mem_fun(*this, &RTWindow::on_expose_event_fpanel) );
 
     bpanel = new BatchQueuePanel ();
     bpanel->setParent (this);
@@ -70,6 +72,20 @@ RTWindow::RTWindow () {
     hbb->set_spacing (2);
     hbb->show_all ();
     mainNB->append_page (*bpanel, *hbb);
+    
+    
+    epanel = new EditorPanel (fpanel);
+    epanel->setParent (this);
+    // decorate tab
+    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+    hbe->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)));
+    hbe->pack_start (*Gtk::manage (new Gtk::Label("Editor")));
+    hbe->set_spacing (2);
+    hbe->show_all ();
+    mainNB->append_page (*epanel, *hbe);
+    mainNB->set_current_page (mainNB->page_num (*fpanel));
+    epanel->signal_expose_event().connect( sigc::mem_fun(*this, &RTWindow::on_expose_event_epanel) );
+
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
@@ -103,6 +119,9 @@ RTWindow::RTWindow () {
 
     add (*mainBox);
     show_all ();
+
+    if(options.tabbedUI)
+        epanel->hide_all();
 }
 
 void RTWindow::on_realize () {
@@ -114,7 +133,7 @@ void RTWindow::on_realize () {
     cursorManager.init (get_window());
 }
 
-bool RTWindow::on_my_window_state_event(GdkEventWindowState* event) {
+bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
 	if (!event->new_window_state) {
 		// Window mode
 		options.windowMaximized = false;
@@ -163,7 +182,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
     epanels[ name ] = ep;
     filesEdited.insert ( name );
-    fpanel->refreshEditedState (filesEdited);
+    fpanel->refreshEditedState (filesEdited);    
 }
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
@@ -211,8 +230,10 @@ void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
 
+
     fpanel->saveOptions ();
     bpanel->saveOptions ();
+  //  epanel->saveOptions();
 
 /*    if (fileBrowser->getFileCatalog()->getBatchQueue()->hasJobs()) {
         Gtk::MessageDialog msgd (M("MAIN_MSG_EXITJOBSINQUEUEQUEST"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
@@ -227,7 +248,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     if (options.startupDir==STARTUPDIR_LAST && fileBrowser->lastSelectedDir ()!="")
         options.startupPath = fileBrowser->lastSelectedDir ();
     fileBrowser->close ();
-    cacheMgr.closeCache ();
+    cacheMgr->closeCache ();
         
       
     options.lastScale = editorPanel->zoomBar->getScale ();
@@ -258,7 +279,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
 
 void RTWindow::showPreferences () {
 
-  Preferences *pref = new Preferences ();
+  Preferences *pref = new Preferences (this);
   pref->run ();
   delete pref;
   
@@ -295,4 +316,53 @@ void RTWindow::toggle_fullscreen () {
 
 void RTWindow::error (Glib::ustring descr){
 	prLabel.set_text ( descr );
+}
+
+void RTWindow::SetEditorCurrent()
+{
+  mainNB->set_current_page (mainNB->page_num (*epanel));
+}
+
+void RTWindow::SetMainCurrent()
+{
+  mainNB->set_current_page (mainNB->page_num (*fpanel));
+}
+
+void RTWindow::MoveFileBrowserToMain()
+{
+    if( fpanel->ribbonPane->get_children().size() ==0)
+    {
+        FileCatalog *fCatalog = fpanel->fileCatalog;
+        epanel->catalogPane->remove(*fCatalog);
+        fpanel->ribbonPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Vertical);
+        fCatalog->redrawAll();
+    }
+}
+
+void RTWindow::MoveFileBrowserToEditor()
+{
+    if(epanel->catalogPane->get_children().size() ==0 )
+    {
+        FileCatalog *fCatalog = fpanel->fileCatalog;
+        fpanel->ribbonPane->remove(*fCatalog);
+        epanel->catalogPane->add(*fCatalog);
+        fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
+        fCatalog->redrawAll();
+    }
+}
+
+bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
+{
+    if(!options.tabbedUI)
+        MoveFileBrowserToEditor();
+   return  false;  // Gtk::VBox::on_expose_event(event);
+}
+
+
+bool RTWindow::on_expose_event_fpanel(GdkEventExpose* event)
+{
+    if(!options.tabbedUI)
+        MoveFileBrowserToMain();
+   return false; // Gtk::HPaned::on_expose_event(event);
 }

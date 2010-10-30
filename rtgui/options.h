@@ -68,6 +68,7 @@ class Options {
     int browserToolPanelWidth;
     int browserToolPanelHeight;
     int historyPanelWidth;
+    Glib::ustring font;
     int windowWidth;
     int windowHeight;
     bool windowMaximized;
@@ -96,6 +97,7 @@ class Options {
     int bgcolor;
     Glib::ustring language;
     Glib::ustring theme;
+    bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
     bool saveParamsFile;
@@ -121,10 +123,13 @@ class Options {
     std::vector<Glib::ustring> favoriteDirs;
     std::vector<Glib::ustring> renameTemplates;
     bool renameUseTemplates;
-    
+    bool internalThumbIfUntouched;
+    bool overwriteOutputFile;
+
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;
     bool showFileNames;
+    bool tabbedUI;
     
     
                 Options         ();

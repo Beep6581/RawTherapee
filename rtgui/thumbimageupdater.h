@@ -22,47 +22,80 @@
 #include <glibmm.h>
 #include <rtengine.h>
 #include <thumbnail.h>
+#include <glib.h>
 
 class ThumbImageUpdateListener {
 
-    public:
-        virtual void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams) {}
+public:
+
+	/** 
+	 * @brief Called when thumbnail image is update
+	 * 
+	 * @param img new thumbnail image
+	 * @param scale scale (??)
+	 * @param cropParams how it was cropped (??)
+	 *
+	 * @note no locks are held when called back
+	 */
+	virtual void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams) {}
 };
 
 class ThumbImageUpdater {
 
-    struct Job {
-        Thumbnail* thumbnail;
-        rtengine::procparams::ProcParams pparams;
-        int height;
-        bool* priority;
-        ThumbImageUpdateListener* listener;
-    };
-
-  protected:
-    bool tostop;
-    bool stopped;
-    std::list<Job> jqueue;
-    Glib::Thread* thread;
-    Glib::Mutex* qMutex;
-    Glib::Mutex* startMutex;
-    Glib::Thread **threadPool;
-
   public:
-    ThumbImageUpdater ();
-    ~ThumbImageUpdater ();
 
-    void add        (Thumbnail* t, const rtengine::procparams::ProcParams& params, int height, bool* priority, ThumbImageUpdateListener* l);
-    void process    ();
-    void stop       ();
-    void removeJobs ();
-    void removeJobs (ThumbImageUpdateListener* listener);
-    void terminate  ();
+	/** 
+	 * @brief Singleton entry point.
+	 * 
+	 * @return Pointer to thumbnail image updater.
+	 */
+	static ThumbImageUpdater* getInstance(void);
 
-    void process_   ();
-    void processJob (Job current);
+	/** 
+	 * @brief Add an thumbnail image update request.
+	 *
+	 * Code will add the request to the queue and, if needed, start a pool
+	 * thread to process it.
+	 * 
+	 * @param t thumbnail
+	 * @param params processing params (?)
+	 * @param height how big
+	 * @param priority if \c true then run as soon as possible
+	 * @param l listener waiting on update
+	 */
+    void add(Thumbnail* t, const rtengine::procparams::ProcParams& params,
+					int height, bool* priority, bool upgrade, ThumbImageUpdateListener* l);
+
+	/** 
+	 * @brief Remove jobs associated with listener \c l.
+	 * 
+	 * Jobs being processed will be finished. Will not return till all jobs for
+	 * \c l have been completed.
+	 *
+	 * @param listener jobs associated with this will be stopped
+	 */
+    void removeJobs(ThumbImageUpdateListener* listener);
+
+	/** 
+	 * @brief Stop processing and remove all jobs.
+	 *
+	 * Will not return till all running jobs have completed.
+	 */
+    void removeAllJobs(void);
+
+  private:
+
+	ThumbImageUpdater();
+
+	class Impl;
+	Impl* impl_;
 };
 
-extern ThumbImageUpdater thumbImageUpdater;
+/** 
+ * @brief Singleton boiler plate.
+ *
+ * To use: \c thumbImageUpdater->start() ,
+ */
+#define thumbImageUpdater ThumbImageUpdater::getInstance()
 
 #endif

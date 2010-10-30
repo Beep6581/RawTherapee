@@ -40,7 +40,7 @@ PartialPasteDlg::PartialPasteDlg () {
     sharpen     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENING")));
 	impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     lumaden     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMADENOISE")));
-    lumacurve   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMACURVE")));
+    labcurve   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     waveq       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETEQUALIZER")));
@@ -87,7 +87,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
 	vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*lumaden, Gtk::PACK_SHRINK, 2);
-    vboxes[1]->pack_start (*lumacurve, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*labcurve, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*waveq, Gtk::PACK_SHRINK, 2);
@@ -152,7 +152,7 @@ PartialPasteDlg::PartialPasteDlg () {
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     impdenConn		= impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     lumadenConn     = lumaden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
-    lumacurveConn   = lumacurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
+    labcurveConn   = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
     waveqConn		= waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*luminance, &Gtk::CheckButton::set_inconsistent), true));    
@@ -205,7 +205,7 @@ void PartialPasteDlg::luminanceToggled () {
     sharpenConn.block (true);
 	impdenConn.block (true);
     lumadenConn.block (true);
-    lumacurveConn.block (true);
+    labcurveConn.block (true);
     shConn.block (true);
     dirpyreqConn.block (true);
     waveqConn.block (true);
@@ -215,7 +215,7 @@ void PartialPasteDlg::luminanceToggled () {
     sharpen->set_active (luminance->get_active ());
 	impden->set_active (luminance->get_active ());
     lumaden->set_active (luminance->get_active ());
-    lumacurve->set_active (luminance->get_active ());
+    labcurve->set_active (luminance->get_active ());
     sh->set_active (luminance->get_active ());
     dirpyreq->set_active (luminance->get_active ());
     waveq->set_active (luminance->get_active ());
@@ -223,7 +223,7 @@ void PartialPasteDlg::luminanceToggled () {
     sharpenConn.block (false);
 	impdenConn.block (false);
     lumadenConn.block (false);
-    lumacurveConn.block (false);
+    labcurveConn.block (false);
     shConn.block (false);
 	dirpyreqConn.block (false);
     waveqConn.block (false);
@@ -316,7 +316,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (sharpen->get_active ())     dst->sharpening = src->sharpening;
     if (impden->get_active ())		dst->impulseDenoise = src->impulseDenoise;
     if (lumaden->get_active ())     dst->lumaDenoise = src->lumaDenoise;
-    if (lumacurve->get_active ())   dst->lumaCurve = src->lumaCurve;
+    if (labcurve->get_active ())   dst->labCurve = src->labCurve;
     if (sh->get_active ())          dst->sh = src->sh;
     if (dirpyreq->get_active ())	dst->dirpyrequalizer = src->dirpyrequalizer;
     if (waveq->get_active ())		dst->equalizer = src->equalizer;

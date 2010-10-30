@@ -20,6 +20,7 @@
 #include <curves.h>
 #include <mytime.h>
 #include <refreshmap.h>
+#include <simpleprocess.h>
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
 #define CLIP(a) ((a)<65535 ? (a) : (65535));
 
@@ -165,8 +166,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, tonecurve, shmap);
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, tonecurve1, tonecurve2, bcrgbhist, scale==1 ? 1 : 1);
+        ipf.rgbProc (oprevi, oprevl, tonecurve1, tonecurve2, shmap);
 
         // recompute luminance histogram
         memset (lhist16, 0, 65536*sizeof(int));
@@ -176,15 +177,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
     readyphase++;
 
-    if (todo & M_LUMACURVE)
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
-
+    if (todo & M_LUMACURVE) {
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, lumacurve1, lumacurve2, bcLhist, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
+	}
+	
+	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
-        ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
+        ipf.luminanceCurve (oprevl, nprevl, lumacurve2, 0, pH);
+
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-        ipf.colorCurve (oprevl, nprevl);
+		ipf.chrominanceCurve (oprevl, nprevl, 0, chroma_acurve, 0, pH);
+        ipf.chrominanceCurve (oprevl, nprevl, 1, chroma_bcurve, 0, pH);
+        ipf.colorCurve (nprevl, nprevl);
+
         readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
@@ -228,7 +237,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {
         previmg->getMutex().lock();
-        ipf.lab2rgb (nprevl, previmg);
+        try
+        {
+            ipf.lab2rgb (nprevl, previmg);
+        }
+        catch(char * str)
+        {
+           progress ("Error converting file...",0);
+            mProcessing.unlock ();
+            return;
+        }
         previmg->getMutex().unlock();
     }   
     if (!resultValid) {
@@ -538,7 +556,11 @@ void ImProcCoordinator::startProcessing () {
             thread = NULL;
             updaterRunning = true;
             updaterThreadStart.unlock ();
-            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);    
+
+            batchThread->yield(); //the running batch should wait other threads to avoid conflict
+            
+            thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
+
         }
         else
             updaterThreadStart.unlock ();

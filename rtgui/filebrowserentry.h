@@ -76,6 +76,7 @@ public:
     FileThumbnailButtonSet* getThumbButtonSet ();
     
     void refreshThumbnailImage ();
+    void refreshQuickThumbnailImage ();
     void calcThumbnailSize ();
     
     std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();

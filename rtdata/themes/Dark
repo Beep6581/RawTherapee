@@ -23,10 +23,8 @@
 # which is based on Bluecurve
 # Created by Richard Stellingwerff, Emil Jacobs and Daniel Borgmann.
 
+style "clearlooks-default" {
 
-style "clearlooks-default"
-{
-  font_name = "sans 8"
   GtkButton      ::default_border    = { 0, 0, 0, 0 }
   GtkComboBox    ::default_border    = { 0, 0, 0, 0 }
   GtkRange       ::trough_border     = 0

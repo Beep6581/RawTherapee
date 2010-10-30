@@ -621,7 +621,7 @@ void MyCurve::setType (CurveType t) {
 void MyCurve::notifyListener () {
 
     if (listener)
-        listener->curveChanged ();    	      
+        listener->curveChanged ();
 }
 
 void MyCurve::setActiveParam (int ac) {

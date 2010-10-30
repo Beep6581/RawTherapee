@@ -48,6 +48,62 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile);
 
 namespace rtengine {
 
+Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int &h, int fixwh) {
+    Image16* img = new Image16 ();
+    int err = img->loadJPEGFromMemory(image,length);
+    if (err) {
+		printf("loadfromMemory: error\n");
+        delete img;
+        return NULL;
+    }
+
+    Thumbnail* tpp = new Thumbnail ();
+
+    tpp->camwbRed = 1.0;
+    tpp->camwbGreen = 1.0;
+    tpp->camwbBlue = 1.0;
+
+    tpp->embProfileLength = 0;
+    unsigned char* data;
+    img->getEmbeddedProfileData (tpp->embProfileLength, data);
+    if (data && tpp->embProfileLength) {
+        tpp->embProfileData = new unsigned char [tpp->embProfileLength];
+        memcpy (tpp->embProfileData, data, tpp->embProfileLength);
+    }
+    else {
+        tpp->embProfileLength = 0;
+        tpp->embProfileData = NULL;
+    }
+    
+    tpp->redMultiplier = 1.0;
+    tpp->greenMultiplier = 1.0;
+    tpp->blueMultiplier = 1.0;
+
+    tpp->scaleForSave = 8192;
+    tpp->defGain = 1.0;
+    tpp->gammaCorrected = false;
+    tpp->isRaw = 1;
+    memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
+    tpp->colorMatrix[0][0] = 1.0;
+    tpp->colorMatrix[1][1] = 1.0;
+    tpp->colorMatrix[2][2] = 1.0;
+
+    if (fixwh==1) {
+        w = h * img->width / img->height;
+        tpp->scale = (double)img->height / h;
+    }
+    else {
+        h = w * img->height / img->width;
+        tpp->scale = (double)img->width / w;
+    }
+
+    tpp->thumbImg = img->resize (w, h, TI_Nearest);
+    delete img;
+
+    tpp->init ();
+    return tpp;
+}
+
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh) {
 
     Image16* img = new Image16 ();
@@ -143,7 +199,7 @@ void Thumbnail::init () {
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
                 camToD50[i][j] += colorMatrix[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore.createFromMatrix (camToD50, false, "Camera");
+    camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
 }
 
 bool Thumbnail::igammacomputed = false;
@@ -171,6 +227,39 @@ Thumbnail::~Thumbnail () {
         cmsCloseProfile(embProfile);
     if (camProfile)
         cmsCloseProfile(camProfile);
+}
+
+IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
+
+    int rwidth;
+    if (params.coarse.rotate==90 || params.coarse.rotate==270) {
+        rwidth = rheight;
+        rheight = thumbImg->height * rwidth / thumbImg->width;
+    }
+    else 
+        rwidth = thumbImg->width * rheight / thumbImg->height;   
+	Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
+
+    if (params.coarse.rotate) {
+        Image16* tmp = baseImg->rotate (params.coarse.rotate);
+        rwidth = tmp->width;
+        rheight = tmp->height;
+        delete baseImg;
+        baseImg = tmp;
+    }
+    if (params.coarse.hflip) {
+        Image16* tmp = baseImg->hflip ();
+        delete baseImg;
+        baseImg = tmp;
+    }
+    if (params.coarse.vflip) {
+        Image16* tmp = baseImg->vflip ();
+        delete baseImg;
+        baseImg = tmp;
+    }
+	Image8* img8 = baseImg->to8();
+	delete baseImg;
+	return img8;
 }
 
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
@@ -311,11 +400,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
 
-    int* curve = new int [65536];
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve, NULL, 16);
+    int* curve1 = new int [65536];
+	int* curve2 = new int [65536];
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, NULL, 16);
 
     LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve, shmap);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, shmap);
 
     if (shmap)
         delete shmap;
@@ -327,11 +417,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[labView->L[i][j]]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.lumaCurve.brightness, params.lumaCurve.contrast, 0.0, 0.0, false, params.lumaCurve.curve, hist16, curve, NULL, 16);
+    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, NULL, 16);
+    ipf.luminanceCurve (labView, labView, curve2, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve1, 16);
+	ipf.chrominanceCurve (labView, labView, 0, curve1, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve1, 16);
+    ipf.chrominanceCurve (labView, labView, 1, curve1, 0, fh);
 
-    ipf.luminanceCurve (labView, labView, curve, 0, fh);
-
-    delete [] curve;
+    delete [] curve1;
+    delete [] curve2;
     delete [] hist16;
 
     // color processing

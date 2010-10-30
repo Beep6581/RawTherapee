@@ -223,25 +223,42 @@ void ImProcFunctions::transform (Image16* original, Image16* transformed, int cx
 		transformSep (original, transformed, cx, cy, sx, sy, oW, oH);
 }
 
+void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
+{
+	// vignette center is a point with coordinates between -1 and +1
+	double x = vignetting.centerX / 100.0;
+	double y = vignetting.centerY / 100.0;
+
+	// calculate vignette center in pixels 
+	w2 = (double) oW  / 2.0 - 0.5 + x * oW;
+	h2 = (double) oH  / 2.0 - 0.5 + y * oH;
+
+	// max vignette radius in pixels
+	maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2.;
+
+	// vignette variables with applied strength
+	v = 1.0 - vignetting.strength * vignetting.amount * 3.0 / 400.0;
+	b = 1.0 + vignetting.radius * 7.0 / 100.0;
+	mul = (1.0-v) / tanh(b);
+}
+
 void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH) {
 
-	double  w2 = (double) oW  / 2.0 - 0.5;
-	double  h2 = (double) oH  / 2.0 - 0.5;
-
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-
-	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-
-	double mul = (1.0-v) / tanh(b);
+	double vig_w2;
+	double vig_h2;
+	double maxRadius;
+	double v;
+	double b;
+	double mul;
+	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
 	#pragma omp parallel for if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
-		double y_d = (double) (y + cy) - h2 ;
+		double vig_y_d = (double) (y + cy) - vig_h2 ;
 		int val;
 		for (int x=0; x<transformed->width; x++) {
-			double x_d = (double) (x + cx) - w2 ;
-			double r = sqrt(x_d*x_d + y_d*y_d);
+			double vig_x_d = (double) (x + cx) - vig_w2 ;
+			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 			double vign = v + mul * tanh (b*(maxRadius-r) / maxRadius);
 			val = original->r[y][x] / vign;
 			transformed->r[y][x] = CLIP(val);
@@ -255,9 +272,16 @@ void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int c
 
 #include "cubint.cc"
 void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+	double w2 = (double) oW  / 2.0 - 0.5;
+	double h2 = (double) oH  / 2.0 - 0.5;
 
-	double  w2 = (double) oW  / 2.0 - 0.5;
-	double  h2 = (double) oH  / 2.0 - 0.5;
+	double vig_w2;
+	double vig_h2;
+	double maxRadius;
+	double v;
+	double b;
+	double mul;
+	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
 	// auxiliary variables for distortion correction
 	double a = params->distortion.amount;
@@ -266,11 +290,6 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 	double cost = cos(params->rotate.degree * 3.14/180.0);
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 
-	// auxiliary variables for vignetting
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-	double mul = (1.0-v) / tanh(b);
 	bool dovign = params->vignetting.amount != 0;
 
 	// auxiliary variables for vertical perspective correction
@@ -293,6 +312,8 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
         for (int x=0; x<transformed->width; x++) {
             double x_d = ascale * (x + cx - w2);		// centering x coord & scale
             double y_d = ascale * (y + cy - h2);		// centering y coord & scale
+            double vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
+            double vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
 
             // horizontal perspective transformation
             y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
@@ -312,6 +333,10 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 	        Dx *= s;
             Dy *= s;
 
+            double vig_Dx = vig_x_d * cost - vig_y_d * sint;
+            double vig_Dy = vig_x_d * sint + vig_y_d * cost;
+            double r2 = sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
+
             // de-center
             Dx += w2;
             Dy += h2;
@@ -326,7 +351,7 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
                 // multiplier for vignetting correction
             	double vignmul = 1.0;
                 if (dovign)
-                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
                 if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
                     cubint (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
@@ -356,8 +381,16 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 #include "cubintch.cc"
 void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
-	double  w2 = (double) oW  / 2.0 - 0.5;
-	double  h2 = (double) oH  / 2.0 - 0.5;
+	double w2 = (double) oW  / 2.0 - 0.5;
+	double h2 = (double) oH  / 2.0 - 0.5;
+
+	double vig_w2;
+	double vig_h2;
+	double maxRadius;
+	double v;
+	double b;
+	double mul;
+	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
 	// auxiliary variables for c/a correction
     double cdist[3];
@@ -380,11 +413,6 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 	double cost = cos(params->rotate.degree * 3.14/180.0);
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 
-	// auxiliary variables for vignetting
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-	double mul = (1.0-v) / tanh(b);
 	bool dovign = params->vignetting.amount != 0;
 
 	// auxiliary variables for vertical perspective correction
@@ -407,6 +435,8 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
         for (int x=0; x<transformed->width; x++) {
             double x_d = ascale * (x + cx - w2);		// centering x coord & scale
             double y_d = ascale * (y + cy - h2);		// centering y coord & scale
+            double vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
+            double vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
 
             // horizontal perspective transformation
             y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
@@ -423,6 +453,10 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
             // distortion correction
             double r = sqrt(Dxc*Dxc + Dyc*Dyc) / maxRadius;
             double s = 1.0 - a + a * r ;
+
+            double vig_Dx = vig_x_d * cost - vig_y_d * sint;
+            double vig_Dy = vig_x_d * sint + vig_y_d * cost;
+            double r2 = sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
 
             for (int c=0; c<3; c++) {
 
@@ -443,7 +477,7 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 					// multiplier for vignetting correction
 					double vignmul = 1.0;
 					if (dovign)
-						vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+						vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
                         cubintch (chorig[c], xc-1, yc-1, Dx, Dy, &(chtrans[c][y][x]), vignmul);
@@ -466,8 +500,16 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 
 void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
-	double  w2 = (double) oW  / 2.0 - 0.5;
-	double  h2 = (double) oH  / 2.0 - 0.5;
+	double w2 = (double) oW  / 2.0 - 0.5;
+	double h2 = (double) oH  / 2.0 - 0.5;
+
+	double vig_w2;
+	double vig_h2;
+	double maxRadius;
+	double v;
+	double b;
+	double mul;
+	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
 	// auxiliary variables for distortion correction
 	double a = params->distortion.amount;
@@ -476,11 +518,6 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
 	double cost = cos(params->rotate.degree * 3.14/180.0);
 	double sint = sin(params->rotate.degree * 3.14/180.0);
 
-	// auxiliary variables for vignetting
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-	double v = 1.0 - params->vignetting.amount * 3.0 / 400.0;
-	double b = 1.0 + params->vignetting.radius * 7.0 / 100.0;
-	double mul = (1.0-v) / tanh(b);
 	bool dovign = params->vignetting.amount != 0;
 
 	// auxiliary variables for vertical perspective correction
@@ -503,6 +540,8 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
         for (int x=0; x<transformed->width; x++) {
             double y_d = ascale * (y + cy - h2);		// centering y coord & scale
             double x_d = ascale * (x + cx - w2);		// centering x coord & scale
+            double vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
+            double vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
 
             // horizontal perspective transformation
             y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
@@ -522,6 +561,10 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
 	        Dx *= s;
             Dy *= s;
 
+            double vig_Dx = vig_x_d * cost - vig_y_d * sint;
+            double vig_Dy = vig_x_d * sint + vig_y_d * cost;
+            double r2 = sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
+
             // de-center
             Dx += w2;
             Dy += h2;
@@ -536,7 +579,7 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
                 // multiplier for vignetting correction
             	double vignmul = 1.0;
                 if (dovign)
-                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r) / maxRadius));
+                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
                 if (yc < original->height-1 && xc < original->width-1) {  // all interpolation pixels inside image
                     int r = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);

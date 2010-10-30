@@ -27,8 +27,6 @@
 
 namespace rtengine {
 
-ICCStore iccStore;
-
 const double (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
 const double (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};         
@@ -43,10 +41,12 @@ std::vector<std::string> getWorkingProfiles () {
 
 std::vector<std::string> getOutputProfiles () {
 
-    return iccStore.getOutputProfiles ();
+    return iccStore->getOutputProfiles ();
 }
 
 std::vector<std::string> ICCStore::getOutputProfiles () {
+
+	Glib::Mutex::Lock lock(mutex_);
 
     std::vector<std::string> res;
     for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
@@ -55,14 +55,30 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
 }
 
 
-ICCStore::ICCStore () {
+ICCStore*
+ICCStore::getInstance(void)
+{
+	static ICCStore* instance_ = 0;
+	if ( instance_ == 0 )
+	{
+		static Glib::Mutex smutex_;
+		Glib::Mutex::Lock lock(smutex_);
+		if ( instance_ == 0 )
+		{
+			instance_ = new ICCStore();
+		}
+	}
+	return instance_;
+}
 
+ICCStore::ICCStore ()
+{
     cmsErrorAction (LCMS_ERROR_SHOW);
 
     int N = sizeof(wpnames)/sizeof(wpnames[0]);
     for (int i=0; i<N; i++) {
-        wProfiles[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i]);
-        wProfilesGamma[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i], true);
+        wProfiles[wpnames[i]] = createFromMatrix (wprofiles[i]);
+        wProfilesGamma[wpnames[i]] = createFromMatrix (wprofiles[i], true);
         wMatrices[wpnames[i]] = wprofiles[i];
         iwMatrices[wpnames[i]] = iwprofiles[i];
     }
@@ -115,6 +131,7 @@ cmsHPROFILE ICCStore::workingSpaceGamma (Glib::ustring name) {
 
 cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
 
+	Glib::Mutex::Lock lock(mutex_);
 
     std::map<std::string, cmsHPROFILE>::iterator r = fileProfiles.find (name);
     if (r!=fileProfiles.end()) 
@@ -137,10 +154,14 @@ cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
 
 ProfileContent ICCStore::getContent (Glib::ustring name) {
 
+	Glib::Mutex::Lock lock(mutex_);
+
     return fileProfileContents[name];
 }
 
 std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
+
+	Glib::Mutex::Lock lock(mutex_);
 
     fileProfiles.clear ();
     fileProfileContents.clear ();
@@ -164,7 +185,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             // ignore directories
             if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
-                if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
+                if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
 //                    printf ("processing file %s...\n", fname.c_str());
                     Glib::ustring name = sname.substr(0,lastdot);
                     ProfileContent pc (fname);
@@ -309,6 +330,8 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
     strcpy ((char *)oprof+pbody[5]+12, name.c_str());
 
 
-    return cmsOpenProfileFromMem (oprof, ntohl(oprof[0]));
+    cmsHPROFILE p = cmsOpenProfileFromMem (oprof, ntohl(oprof[0]));
+	delete [] oprof;
+	return p;
 }
 }

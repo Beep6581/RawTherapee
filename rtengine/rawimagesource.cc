@@ -717,7 +717,7 @@ void RawImageSource::inverse33 (double (*coeff)[3], double (*icoeff)[3]) {
     icoeff[2][2] = (coeff[0][1]*coeff[1][0]-coeff[0][0]*coeff[1][1]) / nom;
 }
     
-int RawImageSource::load (Glib::ustring fname) {
+int RawImageSource::load (Glib::ustring fname, bool batch) {
 
 	MyTime t1,t2;
 	t1.set();
@@ -757,7 +757,7 @@ int RawImageSource::load (Glib::ustring fname) {
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
                 cam[i][j] += coeff[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore.createFromMatrix (cam, false, "Camera");
+    camProfile = iccStore->createFromMatrix (cam, false, "Camera");
     inverse33 (cam, icam);
 
 
@@ -943,9 +943,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->filters) ) {
         // global correction
-        int ng1=0, ng2=0;
-        double avgg1=0, avgg2=0;
-        for (int i=border; i<H-border; i++)
+        int ng1=0, ng2=0, i=0;
+        double avgg1=0., avgg2=0.;
+
+#pragma omp parallel for default(shared) private(i) reduction(+: ng1, ng2, avgg1, avgg2)
+        for (i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ISGREEN(ri,i,j)) {
                     if (i%2==0) {
@@ -959,12 +961,17 @@ void RawImageSource::preprocess  (const RAWParams &raw)
                 }
         double corrg1 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg1/ng1);
         double corrg2 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg2/ng2);
+
+#pragma omp parallel for default(shared)
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
-                if (ISGREEN(ri,i,j)) 
-                        rawData[i][j] = CLIP(rawData[i][j] * (i%2 ? corrg2 : corrg1));
+                if (ISGREEN(ri,i,j)) {
+                    unsigned short currData;
+                    currData = (unsigned short)(rawData[i][j] * (i%2 ? corrg2 : corrg1));
+                    rawData[i][j] = CLIP(currData);
+                }
 	}
-	
+
 	if ( raw.greenthresh >0) {
 		if (plistener) {
 			plistener->setProgressStr ("Green equilibrate...");
@@ -1002,7 +1009,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
     	MyTime t1,t2;
     	t1.set();
         if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
-            hphd_demosaic ();
+                hphd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
             vng4_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::ahd] )
@@ -1017,7 +1024,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
             fast_demo (0,0,W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::bilinear] )
             bilinear_demosaic();
-        else
+            else
         	nodemosaic();
         t2.set();
         if( settings->verbose )
@@ -1300,7 +1307,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
     else if (inProfile=="(camera)" || inProfile=="")
         in = camprofile;
     else {
-        in = iccStore.getProfile (inProfile);
+        in = iccStore->getProfile (inProfile);
         if (in==NULL)
             inProfile = "(camera)";
     }
@@ -1309,17 +1316,18 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
     if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
         // in this case we avoid using the slllllooooooowwww lcms
     
-//        out = iccStore.workingSpace (wProfile);
+//        out = iccStore->workingSpace (wProfile);
 //        hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
-        TMatrix work = iccStore.workingSpaceInverseMatrix (cmp.working);
+        TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
                     mat[i][j] += camMatrix[i][k] * work[k][j];
-                    
+
+#pragma omp parallel for
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
 
@@ -1333,15 +1341,16 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
             }
     }
     else {
-        out = iccStore.workingSpace (cmp.working);
-//        out = iccStore.workingSpaceGamma (wProfile);
+        out = iccStore->workingSpace (cmp.working);
+//        out = iccStore->workingSpaceGamma (wProfile);
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
         lcmsMutex->unlock ();
         if (hTransform) {
             if (cmp.gammaOnInput) {
                 double gd = pow (2.0, defgain);
-                defgain = 0.0;                
+                defgain = 0.0;
+#pragma omp parallel for
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
                         im->r[i][j] = CurveFactory::gamma (CLIP(defgain*im->r[i][j]));
@@ -1982,14 +1991,14 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
         }
         if (ri->filters)
             for (int j=start; j<end; j++)
-                if (ISGREEN(ri,i,j))
+                /*if (ISGREEN(ri,i,j))
                     histogram[rawData[i][j]>>histcompr]+=2;
-                else
+                else*/
                     histogram[rawData[i][j]>>histcompr]+=4;
         else
             for (int j=start; j<3*end; j++) {
                     histogram[rawData[i][j+0]>>histcompr]++;
-                    histogram[rawData[i][j+1]>>histcompr]++;
+                    histogram[rawData[i][j+1]>>histcompr]+=2;
                     histogram[rawData[i][j+2]>>histcompr]++;
             }
     }

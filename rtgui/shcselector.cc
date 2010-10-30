@@ -120,6 +120,7 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
         cr->fill_preserve ();
         cr->stroke ();
     }
+    return true;
 }
 
 bool SHCSelector::on_button_press_event (GdkEventButton* event) {
@@ -135,6 +136,7 @@ bool SHCSelector::on_button_press_event (GdkEventButton* event) {
             break;
         }
     queue_draw ();
+    return true;
 }
 
 bool SHCSelector::on_button_release_event (GdkEventButton* event) {
@@ -143,6 +145,7 @@ bool SHCSelector::on_button_release_event (GdkEventButton* event) {
         movingPosition = -1;
         queue_draw ();
     }
+    return true;
 }
 
 bool SHCSelector::on_motion_notify_event (GdkEventMotion* event) {
@@ -163,6 +166,7 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event) {
             cl->shcChanged ();
         queue_draw ();
     }
+    return true;
 }
 
 void SHCSelector::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {

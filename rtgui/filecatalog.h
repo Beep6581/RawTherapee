@@ -33,12 +33,7 @@
 #include <coarsepanel.h>
 #include <toolbar.h>
 #include <filterpanel.h>
-
-class PreviewLoaderListener {
-  public:
-    virtual void previewReady (FileBrowserEntry* fd) {}
-    virtual void previewsFinished () {}
-};
+#include <previewloader.h>
 
 class DirEntry {
 
@@ -52,22 +47,7 @@ class DirEntry {
 	}
 };
 
-class PreviewLoader : public ProcessingThread<DirEntry> {
-
-  protected:
-    PreviewLoaderListener* pl;
-
-  public:
-    PreviewLoader () : pl(NULL) { ProcessingThread<DirEntry>(); }
-    void setPreviewLoaderListener (PreviewLoaderListener* p) { pl = p; }
-    void start ();
-    void process () { ProcessingThread<DirEntry>::process (); }
-    void process (DirEntry& current);
-	void remove  (Glib::ustring fname);
-    void end ();
-};
-
-class FileCatalog : public Gtk::VBox, 
+class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
 					public FilterPanelListener,
@@ -77,14 +57,15 @@ class FileCatalog : public Gtk::VBox,
 #endif
  {
 
-        // thumbnail browsers
-        FileBrowser* fileBrowser;
-        
+
         Gtk::HBox* hBox;
         Glib::ustring selectedDirectory;
+        int selectedDirectoryId;
         bool enabled;
         
-        PreviewLoader previewLoader;
+		// Restore PreviewLoader if the new threadsafe is not that threadsafe ;-)
+        //PreviewLoader previewLoader;
+        //PreviewMultiLoader previewLoader;
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
         ImageAreaToolListener* iatlistener;
@@ -141,6 +122,9 @@ class FileCatalog : public Gtk::VBox,
         void trashChanged ();
                
     public:
+            // thumbnail browsers
+            FileBrowser* fileBrowser;
+            
             CoarsePanel* coarsePanel;
             ToolBar* toolBar;
 
@@ -150,8 +134,8 @@ class FileCatalog : public Gtk::VBox,
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);
                 
                 // previewloaderlistener interface
-				void previewReady (FileBrowserEntry* fdn);
-				void previewsFinished ();
+				void previewReady (int dir_id, FileBrowserEntry* fdn);
+				void previewsFinished (int dir_id);
                 void _previewsFinished ();
                 void _refreshProgressBar ();
 

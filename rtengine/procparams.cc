@@ -48,18 +48,21 @@ void ProcParams::destroy (ProcParams* pp) {
 void ProcParams::setDefaults () {
 
     toneCurve.autoexp       = false;
-    toneCurve.clip          = 0.002;
+    toneCurve.clip          = 0.001;
     toneCurve.expcomp       = 0;
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
     toneCurve.black         = 0;
-    toneCurve.hlcompr       = 85;
-    toneCurve.shcompr       = 85;
+    toneCurve.hlcompr       = 70;
+    toneCurve.shcompr       = 25;
     toneCurve.curve.clear ();
     
-    lumaCurve.brightness    = 0;
-    lumaCurve.contrast      = 0;
-    lumaCurve.curve.clear ();
+    labCurve.brightness    = 0;
+    labCurve.contrast      = 0;
+	labCurve.saturation      = 0;
+    labCurve.lcurve.clear ();
+	labCurve.acurve.clear ();
+    labCurve.bcurve.clear ();
     
     sharpening.enabled          = true;
     sharpening.radius           = 1.0;
@@ -107,11 +110,11 @@ void ProcParams::setDefaults () {
     
     sh.enabled       = false;
     sh.hq            = false;
-    sh.highlights    = 10;
+    sh.highlights    = 0;
     sh.htonalwidth   = 80;
-    sh.shadows       = 10;
+    sh.shadows       = 0;
     sh.stonalwidth   = 80;
-    sh.localcontrast = 15;
+    sh.localcontrast = 0;
     sh.radius        = 40;
     
     crop.enabled    = false;
@@ -146,6 +149,9 @@ void ProcParams::setDefaults () {
 
     vignetting.amount = 0;
     vignetting.radius = 50;
+    vignetting.strength = 1;
+    vignetting.centerX = 0;
+    vignetting.centerY = 0;
     
     chmixer.red[0] = 100;
     chmixer.red[1] = 0;
@@ -200,7 +206,7 @@ int ProcParams::save (Glib::ustring fname) const {
 
     SafeKeyFile keyFile;
 
-    keyFile.set_integer ("Version", "Version", 231);
+    keyFile.set_integer ("Version", "Version", 20101019);
 
     // save tonecurve:
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
@@ -223,10 +229,15 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
 
     // save luma curve
-    keyFile.set_integer ("Luminance Curve", "Brightness",      lumaCurve.brightness);
-    keyFile.set_integer ("Luminance Curve", "Contrast",        lumaCurve.contrast);
-    Glib::ArrayHandle<double> lcurve = lumaCurve.curve;
-    keyFile.set_double_list("Luminance Curve", "Curve",        lcurve);
+    keyFile.set_integer ("Luminance Curve", "Brightness",      labCurve.brightness);
+    keyFile.set_integer ("Luminance Curve", "Contrast",        labCurve.contrast);
+	keyFile.set_integer ("Luminance Curve", "Saturation",	   labCurve.saturation);
+    Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
+	Glib::ArrayHandle<double> acurve = labCurve.acurve;
+    Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
+    keyFile.set_double_list("Luminance Curve", "LCurve",        lcurve);
+	keyFile.set_double_list("Luminance Curve", "aCurve",        acurve);
+    keyFile.set_double_list("Luminance Curve", "bCurve",        bcurve);
 
     // save sharpening
     keyFile.set_boolean ("Sharpening", "Enabled",              sharpening.enabled);
@@ -329,6 +340,9 @@ int ProcParams::save (Glib::ustring fname) const {
     // save vignetting correction
     keyFile.set_integer ("Vignetting Correction", "Amount", vignetting.amount);
     keyFile.set_integer ("Vignetting Correction", "Radius", vignetting.radius);
+    keyFile.set_integer ("Vignetting Correction", "Strength", vignetting.strength);
+    keyFile.set_integer ("Vignetting Correction", "CenterX", vignetting.centerX);
+    keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
 
     // save highlight recovery settings
     keyFile.set_boolean ("HLRecovery", "Enabled",  hlrecovery.enabled);
@@ -450,10 +464,13 @@ if (keyFile.has_group ("Channel Mixer")) {
 
     // load luma curve
 if (keyFile.has_group ("Luminance Curve")) {    
-    if (keyFile.has_key ("Luminance Curve", "Brightness"))     lumaCurve.brightness = keyFile.get_integer  ("Luminance Curve", "Brightness");
-    if (keyFile.has_key ("Luminance Curve", "Contrast"))       lumaCurve.contrast   = keyFile.get_integer ("Luminance Curve", "Contrast");
+    if (keyFile.has_key ("Luminance Curve", "Brightness"))     labCurve.brightness = keyFile.get_integer  ("Luminance Curve", "Brightness");
+    if (keyFile.has_key ("Luminance Curve", "Contrast"))       labCurve.contrast   = keyFile.get_integer ("Luminance Curve", "Contrast");
+	if (keyFile.has_key ("Luminance Curve", "Saturation"))      labCurve.saturation   = keyFile.get_integer ("Luminance Curve", "Saturation");
     if (version>200)
-	if (keyFile.has_key ("Luminance Curve", "Curve"))          lumaCurve.curve      = keyFile.get_double_list ("Luminance Curve", "Curve");
+	if (keyFile.has_key ("Luminance Curve", "LCurve"))          labCurve.lcurve      = keyFile.get_double_list ("Luminance Curve", "LCurve");
+	if (keyFile.has_key ("Luminance Curve", "aCurve"))          labCurve.acurve      = keyFile.get_double_list ("Luminance Curve", "aCurve");
+	if (keyFile.has_key ("Luminance Curve", "bCurve"))          labCurve.bcurve      = keyFile.get_double_list ("Luminance Curve", "bCurve");
 }
 
     // load sharpening
@@ -592,6 +609,9 @@ if (keyFile.has_group ("CACorrection")) {
 if (keyFile.has_group ("Vignetting Correction")) {    
     if (keyFile.has_key ("Vignetting Correction", "Amount")) vignetting.amount = keyFile.get_integer ("Vignetting Correction", "Amount");
     if (keyFile.has_key ("Vignetting Correction", "Radius")) vignetting.radius = keyFile.get_integer ("Vignetting Correction", "Radius");
+    if (keyFile.has_key ("Vignetting Correction", "Strength")) vignetting.strength = keyFile.get_integer ("Vignetting Correction", "Strength");
+    if (keyFile.has_key ("Vignetting Correction", "CenterX")) vignetting.centerX = keyFile.get_integer ("Vignetting Correction", "CenterX");
+    if (keyFile.has_key ("Vignetting Correction", "CenterY")) vignetting.centerY = keyFile.get_integer ("Vignetting Correction", "CenterY");
 }
 
     // load highlight recovery settings
@@ -729,9 +749,12 @@ bool ProcParams::operator== (const ProcParams& other) {
         && toneCurve.autoexp    == other.toneCurve.autoexp
         && toneCurve.clip       == other.toneCurve.clip
         && toneCurve.expcomp    == other.toneCurve.expcomp
-        && lumaCurve.curve      == other.lumaCurve.curve
-        && lumaCurve.brightness == other.lumaCurve.brightness
-        && lumaCurve.contrast   == other.lumaCurve.contrast
+        && labCurve.lcurve      == other.labCurve.lcurve
+		&& labCurve.acurve      == other.labCurve.acurve
+		&& labCurve.bcurve      == other.labCurve.bcurve
+        && labCurve.brightness == other.labCurve.brightness
+        && labCurve.contrast   == other.labCurve.contrast
+		&& labCurve.saturation == other.labCurve.saturation
         && sharpening.enabled   == other.sharpening.enabled
         && sharpening.radius    == other.sharpening.radius
         && sharpening.amount    == other.sharpening.amount
@@ -798,6 +821,9 @@ bool ProcParams::operator== (const ProcParams& other) {
         && cacorrection.blue == other.cacorrection.blue
         && vignetting.amount == other.vignetting.amount
         && vignetting.radius == other.vignetting.radius
+        && vignetting.strength == other.vignetting.strength
+        && vignetting.centerX == other.vignetting.centerX
+        && vignetting.centerY == other.vignetting.centerY
         && !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
         && !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
         && !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))

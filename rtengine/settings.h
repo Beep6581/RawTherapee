@@ -25,6 +25,7 @@ namespace rtengine {
     class Settings {
         public:
             bool            dualThreadEnabled;      ///< If true, the image processing operations with utilize two processor cores (if possible)
+            std::string     demosaicMethodBatch;    ///< The algorithm used for demosaicing. Can be "eahd", "hphd", "ahd",  "vng4", "amaze", "bilinear".
             Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
             Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)

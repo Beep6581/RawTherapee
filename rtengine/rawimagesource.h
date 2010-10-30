@@ -111,7 +111,7 @@ class RawImageSource : public ImageSource {
         RawImageSource ();
         ~RawImageSource ();
     
-        int         load        (Glib::ustring fname);
+        int         load        (Glib::ustring fname, bool batch = false);
         void        preprocess  (const RAWParams &raw);
         void        demosaic    (const RAWParams &raw);
         void        copyOriginalPixels( RawImage *ri, RawImage *riDark );
@@ -149,14 +149,14 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
 		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
-		void CA_correct_RT		();					//Emil's pre-demosaic CA correction
+		void CA_correct_RT		();
 		int  cfaCleanFromMap( BYTE* bitmapBads );
 		int  findHotDeadPixel( BYTE *bpMap, float thresh);
-		void ddct8x8s(int isgn, float **a);
+	void ddct8x8s(int isgn, float **a);
 
-		void cfa_linedn (float linenoiselevel);		//Emil's line denoise
+		void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
-		void green_equilibrate	(float greenthresh);//Emil's green equilibration
+		void green_equilibrate		(float greenthresh);//Emil's green equilibration
 
 	void nodemosaic();
         void eahd_demosaic();

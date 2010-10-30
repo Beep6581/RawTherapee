@@ -38,7 +38,7 @@ LUMINANCECURVE, //    EvLContrast,
 LUMINANCECURVE, //    EvLBlack,
 LUMINANCECURVE, //    EvLHLCompr,
 LUMINANCECURVE, //    EvLSHCompr,
-LUMINANCECURVE, //    EvLCurve,
+LUMINANCECURVE, //    EvLLCurve,
 SHARPENING, //    EvShrEnabled,
 SHARPENING, //    EvShrRadius,
 SHARPENING, //    EvShrAmount,
@@ -114,7 +114,10 @@ DIRPYRDENOISE,    //  EvDPDNEnabled,
 DIRPYRDENOISE,    //  EvDPDNLuma,
 DIRPYRDENOISE,    //  EvDPDNChroma,
 DIRPYRDENOISE,    //  EvDPDNGamma,
-DIRPYREQUALIZER,  // EvDirPyrEqualizer
-DIRPYREQUALIZER   // EvDirPyrEqlEnabled
+DIRPYREQUALIZER,  // EvDirPyrEqualizer,
+DIRPYREQUALIZER,   // EvDirPyrEqlEnabled,
+LUMINANCECURVE, //    EvLSaturation,
+LUMINANCECURVE, //    EvLaCurve,
+LUMINANCECURVE, //    EvLbCurve
 };
 

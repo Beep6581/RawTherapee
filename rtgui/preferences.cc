@@ -28,7 +28,7 @@
 extern Options options;
 extern Glib::ustring argv0;
 
-Preferences::Preferences (int initialPage)  {  
+Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
   
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
@@ -49,27 +49,27 @@ Preferences::Preferences (int initialPage)  {
     Gtk::HBox* buttonpanel = Gtk::manage (new Gtk::HBox ());
     mainvb->pack_end (*buttonpanel, Gtk::PACK_SHRINK, 2);
 
-    Gtk::Button* load   = Gtk::manage (new Gtk::Button (M("GENERAL_LOAD")));
-    Gtk::Button* save   = Gtk::manage (new Gtk::Button (M("GENERAL_SAVE")));
+//    Gtk::Button* load   = Gtk::manage (new Gtk::Button (M("GENERAL_LOAD")));
+//    Gtk::Button* save   = Gtk::manage (new Gtk::Button (M("GENERAL_SAVE")));
     Gtk::Button* about  = Gtk::manage (new Gtk::Button (M("GENERAL_ABOUT")));
     Gtk::Button* ok     = Gtk::manage (new Gtk::Button (M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage (new Gtk::Button (M("GENERAL_CANCEL")));
 
-    save->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-    load->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+//    save->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+//    load->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
     about->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/logoicon16.png")));
     ok->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
     cancel->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
 
 
-    load->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::loadPressed) );
-    save->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::savePressed) );
+//    load->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::loadPressed) );
+//    save->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::savePressed) );
     about->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::aboutPressed) );
     ok->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::cancelPressed) );
 
-    buttonpanel->pack_start (*load, Gtk::PACK_SHRINK, 4);
-    buttonpanel->pack_start (*save, Gtk::PACK_SHRINK, 4);
+//    buttonpanel->pack_start (*load, Gtk::PACK_SHRINK, 4);
+//    buttonpanel->pack_start (*save, Gtk::PACK_SHRINK, 4);
     buttonpanel->pack_start (*about, Gtk::PACK_SHRINK, 4);
     buttonpanel->pack_end (*ok, Gtk::PACK_SHRINK, 4);
     buttonpanel->pack_end (*cancel, Gtk::PACK_SHRINK, 4);
@@ -79,7 +79,7 @@ Preferences::Preferences (int initialPage)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
-    nb->set_current_page (initialPage);
+    nb->set_current_page (0);
 
     fillPreferences ();
 
@@ -141,9 +141,10 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_SHADOWSHLIGHTS_LOCALCONTR"), ADDSET_SH_LOCALCONTRAST, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M("TP_LUMACURVE_LABEL"));
-    appendBehavList (mi, M("TP_LUMACURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
-    appendBehavList (mi, M("TP_LUMACURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
+    mi->set_value (behavColumns.label, M("TP_LABCURVE_LABEL"));
+    appendBehavList (mi, M("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
+    appendBehavList (mi, M("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
+	appendBehavList (mi, M("TP_LABCURVE_SATURATION"), ADDSET_LC_SATURATION, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHARPENING_LABEL"));
@@ -316,6 +317,21 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     Gtk::VBox* mvbsd = new Gtk::VBox ();
 
+    Gtk::Frame* fworklflow = new Gtk::Frame (M("PREFERENCES_WORKFLOW"));
+    Gtk::HBox* hbworkflow = new Gtk::HBox ();
+    hbworkflow->set_border_width (4);
+    Gtk::Label* flayoutlab = new Gtk::Label (M("PREFERENCES_EDITORLAYOUT")+":");
+    editorLayout = new Gtk::ComboBoxText ();
+
+    editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
+    editorLayout->append_text (M("PREFERENCES_MULTITAB"));
+    editorLayout->set_active (1);
+
+    hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
+    hbworkflow->pack_start (*editorLayout);
+    fworklflow->add (*hbworkflow);
+    mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
+     
     Gtk::Frame* flang = new Gtk::Frame (M("PREFERENCES_DEFAULTLANG"));
     Gtk::HBox* hblang = new Gtk::HBox ();
     hblang->set_border_width (4);
@@ -338,7 +354,16 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->pack_start (*flang, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* ftheme = new Gtk::Frame (M("PREFERENCES_DEFAULTTHEME"));
-    Gtk::HBox* hbtheme = new Gtk::HBox ();
+    Gtk::VBox* vbftheme = new Gtk::VBox ();
+    Gtk::HBox* hbUseSystemTheme = new Gtk::HBox ();
+    hbUseSystemTheme->set_border_width (4);
+    Gtk::Label* useNextStart = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    chUseSystemTheme =  new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME"));
+    hbUseSystemTheme->pack_start(*chUseSystemTheme, Gtk::PACK_SHRINK);
+    hbUseSystemTheme->pack_start (*useNextStart, Gtk::PACK_SHRINK, 4);
+    vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 4);
+
+    hbtheme = new Gtk::HBox ();
     hbtheme->set_border_width (4);
     Gtk::Label* themelab = new Gtk::Label (M("PREFERENCES_SELECTTHEME")+":");
     theme = new Gtk::ComboBoxText ();
@@ -350,9 +375,17 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     for (int i=0; i<themes.size(); i++) 
         theme->append_text (themes[i]);
 
+    Gtk::Label* fontlab = new Gtk::Label (M("PREFERENCES_SELECTFONT")+":");
+    fontbutton = new Gtk::FontButton ();
+    fontbutton->set_use_size(true);
+    fontbutton->set_font_name(options.font);
+
     hbtheme->pack_start (*themelab, Gtk::PACK_SHRINK, 4);
     hbtheme->pack_start (*theme);
-    ftheme->add (*hbtheme);
+    hbtheme->pack_start (*fontlab, Gtk::PACK_SHRINK, 4);
+    hbtheme->pack_start (*fontbutton);
+    vbftheme->pack_end(*hbtheme, Gtk::PACK_SHRINK, 4);
+    ftheme->add (*vbftheme);
     mvbsd->pack_start (*ftheme, Gtk::PACK_SHRINK, 4);
   
 //-----
@@ -462,7 +495,9 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->set_border_width (4);
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
-
+    fconn = fontbutton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
+    usethcon = chUseSystemTheme->signal_clicked ().connect( sigc::mem_fun(*this, &Preferences::useThemeChanged) );
+    
     return mvbsd;
 }
 
@@ -653,6 +688,8 @@ void Preferences::storePreferences () {
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
     moptions.theme           = theme->get_active_text ();
+    moptions.useSystemTheme  = chUseSystemTheme->get_active ();
+    moptions.font            = fontbutton->get_font_name();
 #ifdef _WIN32    
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
@@ -676,6 +713,21 @@ void Preferences::storePreferences () {
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
 	moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
 	moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
+
+    if (dmethodBatch->get_active_row_number()==0)
+        moptions.rtSettings.demosaicMethodBatch = "eahd";
+    else if (dmethodBatch->get_active_row_number()==1)
+        moptions.rtSettings.demosaicMethodBatch = "hphd";
+    else if (dmethodBatch->get_active_row_number()==2)
+        moptions.rtSettings.demosaicMethodBatch = "vng4";
+    else if (dmethodBatch->get_active_row_number()==3)
+        moptions.rtSettings.demosaicMethodBatch = "amaze";
+    else if (dmethodBatch->get_active_row_number()==4)
+        moptions.rtSettings.demosaicMethodBatch = "dcb";
+    else if (dmethodBatch->get_active_row_number()==5)
+        moptions.rtSettings.demosaicMethodBatch = "ahd";
+    else if (dmethodBatch->get_active_row_number()==6)
+        moptions.rtSettings.demosaicMethodBatch = "bilinear";
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -718,6 +770,8 @@ void Preferences::storePreferences () {
     for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
         for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
             moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
+
+    moptions.tabbedUI = (bool)editorLayout->get_active_row_number();
 }
 
 void Preferences::fillPreferences () {
@@ -735,12 +789,14 @@ void Preferences::fillPreferences () {
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
     theme->set_active_text (moptions.theme);
+    chUseSystemTheme->set_active(moptions.useSystemTheme);
+    fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
     blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);
-    
+
     edGimp->set_active (moptions.editorToSendTo==1);
     edOther->set_active (moptions.editorToSendTo==3);
 #ifdef _WIN32    
@@ -755,6 +811,22 @@ void Preferences::fillPreferences () {
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);
+
+
+    if (moptions.rtSettings.demosaicMethodBatch=="eahd")
+        dmethodBatch->set_active (0);
+    else if (moptions.rtSettings.demosaicMethodBatch=="hphd")
+        dmethodBatch->set_active (1);
+    else if (moptions.rtSettings.demosaicMethodBatch=="vng4")
+        dmethodBatch->set_active (2);
+	else if (moptions.rtSettings.demosaicMethodBatch=="amaze")//Emil's code for AMaZE
+        dmethodBatch->set_active (3);
+    else if (moptions.rtSettings.demosaicMethodBatch=="dcb")
+        dmethodBatch->set_active (4);
+    else if (moptions.rtSettings.demosaicMethodBatch=="ahd")
+        dmethodBatch->set_active (5);
+    else if (moptions.rtSettings.demosaicMethodBatch=="bilinear")
+         dmethodBatch->set_active (6);
 
     if (moptions.startupDir==STARTUPDIR_CURRENT) 
         sdcurrent->set_active ();
@@ -789,6 +861,7 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
+    editorLayout->set_active(moptions.tabbedUI);
     darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     updateDFinfos();
 
@@ -826,12 +899,20 @@ void Preferences::savePressed () {
 void Preferences::okPressed () {
 
     storePreferences ();
-    options.copyFrom (&moptions);
+    workflowUpdate();
+    options.copyFrom (&moptions);   
     hide ();
 }
 
 void Preferences::cancelPressed () {
 
+	// set the initial theme back
+	if (theme->get_active_text () != options.theme)
+		switchThemeTo(options.theme);
+
+	// set the initial font back
+	if (fontbutton->get_font_name() != options.font)
+		switchFontTo(options.font);
     hide ();
 }
 
@@ -857,14 +938,59 @@ void Preferences::aboutPressed () {
     splash->set_modal (true);   
     splash->show ();
 }
+
 void Preferences::themeChanged () {
 
+	switchThemeTo(theme->get_active_text ());
+}
+
+void Preferences::fontChanged () {
+
+	switchFontTo(fontbutton->get_font_name());
+}
+
+void Preferences::switchThemeTo(Glib::ustring newTheme) {
+
 	std::vector<Glib::ustring> files;
-	files.push_back (argv0+"/themes/"+theme->get_active_text ());
+	files.push_back (argv0+"/themes/"+newTheme);
 	Gtk::RC::set_default_files (files);
 	Gtk::RC::reparse_all (Gtk::Settings::get_default());
 	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
 	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
+}
+
+void Preferences::workflowUpdate (){
+
+    if(moptions.tabbedUI != options.tabbedUI)
+    {
+        parent->MoveFileBrowserToMain();
+        parent->SetMainCurrent();
+        if(moptions.tabbedUI)
+            parent->epanel->hide_all();
+        else
+           parent->epanel->show_all();
+    }
+}
+
+void Preferences::switchFontTo(Glib::ustring newFont) {
+
+	Gtk::RC::parse_string (Glib::ustring::compose(
+			"style \"clearlooks-default\" { font_name = \"%1\" }", newFont));
+	Gtk::RC::reparse_all (Gtk::Settings::get_default());
+	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
+}
+
+void Preferences::useThemeChanged(){
+
+    if(!chUseSystemTheme->get_active()){
+        hbtheme->set_sensitive(true);
+        fontbutton->set_sensitive(true);  
+    }
+    else{
+        hbtheme->set_sensitive(false);
+        fontbutton->set_sensitive(false);  
+    }
 }
 
 void Preferences::addExtPressed () {
@@ -887,35 +1013,17 @@ void Preferences::delExtPressed () {
 
 void Preferences::clearProfilesPressed () {
 
-    Gtk::MessageDialog md (*this, M("PREFERENCES_CLEARDLG_LINE1"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, true);
-    md.set_secondary_text (M("PREFERENCES_CLEARDLG_LINE2"));
-    md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
-    md.show_all ();
-    while (gtk_events_pending ()) gtk_main_iteration ();
-    cacheMgr.clearProfiles ();
-    md.hide ();
+    cacheMgr->clearProfiles ();
 }
 
 void Preferences::clearThumbImagesPressed () {
 
-    Gtk::MessageDialog md (*this, M("PREFERENCES_CLEARDLG_LINE1"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, true);
-    md.set_secondary_text (M("PREFERENCES_CLEARDLG_LINE2"));
-    md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
-    md.show_all ();
-    while (gtk_events_pending ()) gtk_main_iteration ();
-    cacheMgr.clearThumbImages ();
-    md.hide ();
+    cacheMgr->clearThumbImages ();
 }
 
 void Preferences::clearAllPressed () {
 
-    Gtk::MessageDialog md (*this, M("PREFERENCES_CLEARDLG_LINE1"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_NONE, true);
-    md.set_secondary_text (M("PREFERENCES_CLEARDLG_LINE2"));
-    md.set_title (M("PREFERENCES_CLEARDLG_TITLE"));
-    md.show_all ();
-    while (gtk_events_pending ()) gtk_main_iteration ();
-    cacheMgr.clearAll ();
-    md.hide ();
+    cacheMgr->clearAll ();
 }
 
 void Preferences::darkFrameChanged ()

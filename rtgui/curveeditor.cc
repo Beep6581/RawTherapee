@@ -412,8 +412,12 @@ void CurveEditor::typeSelectionChanged () {
 
 void CurveEditor::curveChanged () {
 
-    if (cl)
-        cl->curveChanged ();
+    if (cl) {
+    	if (cl->isMulti())
+    		cl->curveChanged (this);
+    	else
+    		cl->curveChanged ();
+    }
 }
 
 void CurveEditor::curveResetPressed () {
@@ -441,15 +445,23 @@ void CurveEditor::curveResetPressed () {
 void CurveEditor::shcChanged () {
 
     paramCurve->setPoints (getCurve());
-    if (cl)
-        cl->curveChanged ();
+    if (cl) {
+    	if (cl->isMulti())
+    		cl->curveChanged (this);
+    	else
+    		cl->curveChanged ();
+    }
 }
 
 void CurveEditor::adjusterChanged (Adjuster* a, double newval) {
 
     paramCurve->setPoints (getCurve());
-    if (cl)
-        cl->curveChanged ();
+    if (cl) {
+    	if (cl->isMulti())
+    		cl->curveChanged (this);
+    	else
+    		cl->curveChanged ();
+    }
 }
 
 bool CurveEditor::adjusterEntered (GdkEventCrossing* ev, int ac) {
