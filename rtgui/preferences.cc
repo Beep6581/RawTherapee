@@ -714,21 +714,6 @@ void Preferences::storePreferences () {
 	moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
 	moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
 
-    if (dmethodBatch->get_active_row_number()==0)
-        moptions.rtSettings.demosaicMethodBatch = "eahd";
-    else if (dmethodBatch->get_active_row_number()==1)
-        moptions.rtSettings.demosaicMethodBatch = "hphd";
-    else if (dmethodBatch->get_active_row_number()==2)
-        moptions.rtSettings.demosaicMethodBatch = "vng4";
-    else if (dmethodBatch->get_active_row_number()==3)
-        moptions.rtSettings.demosaicMethodBatch = "amaze";
-    else if (dmethodBatch->get_active_row_number()==4)
-        moptions.rtSettings.demosaicMethodBatch = "dcb";
-    else if (dmethodBatch->get_active_row_number()==5)
-        moptions.rtSettings.demosaicMethodBatch = "ahd";
-    else if (dmethodBatch->get_active_row_number()==6)
-        moptions.rtSettings.demosaicMethodBatch = "bilinear";
-
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
     else if (sdhome->get_active ()) 
@@ -811,22 +796,6 @@ void Preferences::fillPreferences () {
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);
-
-
-    if (moptions.rtSettings.demosaicMethodBatch=="eahd")
-        dmethodBatch->set_active (0);
-    else if (moptions.rtSettings.demosaicMethodBatch=="hphd")
-        dmethodBatch->set_active (1);
-    else if (moptions.rtSettings.demosaicMethodBatch=="vng4")
-        dmethodBatch->set_active (2);
-	else if (moptions.rtSettings.demosaicMethodBatch=="amaze")//Emil's code for AMaZE
-        dmethodBatch->set_active (3);
-    else if (moptions.rtSettings.demosaicMethodBatch=="dcb")
-        dmethodBatch->set_active (4);
-    else if (moptions.rtSettings.demosaicMethodBatch=="ahd")
-        dmethodBatch->set_active (5);
-    else if (moptions.rtSettings.demosaicMethodBatch=="bilinear")
-         dmethodBatch->set_active (6);
 
     if (moptions.startupDir==STARTUPDIR_CURRENT) 
         sdcurrent->set_active ();

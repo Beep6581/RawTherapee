@@ -53,7 +53,6 @@ class Preferences : public Gtk::Dialog {
   protected:
     Gtk::ComboBoxText* rprofiles;
     Gtk::ComboBoxText* iprofiles;
-    Gtk::ComboBoxText* dmethodBatch;
     Gtk::ComboBoxText* languages;
     Gtk::Entry* dateformat;
     Gtk::Entry* startupdir;

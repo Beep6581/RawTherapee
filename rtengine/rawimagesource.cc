@@ -65,7 +65,6 @@ RawImageSource::RawImageSource ()
     hrmap[2] = NULL;
 	needhr = NULL;
     hpmap = NULL;
-	oldmethod = "None";
 	camProfile = NULL;
 	embProfile = NULL;
 }
