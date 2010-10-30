@@ -732,7 +732,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		//float toey = MAX(0,toex*a*def_mul*(shcompr/25.0-1));
 		float toex = black;
 		float toey = MAX(0,toex*(shcompr/25.0-1));
-		float shoulderx = MIN(black,1/(a*def_mul));//point in x at which line of slope a starting at (0,0) reaches y=1
+		float shoulderx = MAX(black,1/(a*def_mul));//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
 		if (shoulderx<1) {//a>1; positive EC
