@@ -73,7 +73,6 @@ class RawImageSource : public ImageSource {
         double defGain;
         int blcode[16][16][32];
         bool full;
-		Glib::ustring oldmethod;
 		cmsHPROFILE camProfile;
 		cmsHPROFILE embProfile;
 
