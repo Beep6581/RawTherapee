@@ -147,6 +147,9 @@ void ProcParams::setDefaults () {
 
     vignetting.amount = 0;
     vignetting.radius = 50;
+    vignetting.strength = 1;
+    vignetting.centerX = 0;
+    vignetting.centerY = 0;
     
     chmixer.red[0] = 100;
     chmixer.red[1] = 0;
@@ -326,6 +329,9 @@ int ProcParams::save (Glib::ustring fname) const {
     // save vignetting correction
     keyFile.set_integer ("Vignetting Correction", "Amount", vignetting.amount);
     keyFile.set_integer ("Vignetting Correction", "Radius", vignetting.radius);
+    keyFile.set_integer ("Vignetting Correction", "Strength", vignetting.strength);
+    keyFile.set_integer ("Vignetting Correction", "CenterX", vignetting.centerX);
+    keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
 
     // save highlight recovery settings
     keyFile.set_boolean ("HLRecovery", "Enabled",  hlrecovery.enabled);
@@ -580,6 +586,9 @@ if (keyFile.has_group ("CACorrection")) {
 if (keyFile.has_group ("Vignetting Correction")) {    
     if (keyFile.has_key ("Vignetting Correction", "Amount")) vignetting.amount = keyFile.get_integer ("Vignetting Correction", "Amount");
     if (keyFile.has_key ("Vignetting Correction", "Radius")) vignetting.radius = keyFile.get_integer ("Vignetting Correction", "Radius");
+    if (keyFile.has_key ("Vignetting Correction", "Strength")) vignetting.strength = keyFile.get_integer ("Vignetting Correction", "Strength");
+    if (keyFile.has_key ("Vignetting Correction", "CenterX")) vignetting.centerX = keyFile.get_integer ("Vignetting Correction", "CenterX");
+    if (keyFile.has_key ("Vignetting Correction", "CenterY")) vignetting.centerY = keyFile.get_integer ("Vignetting Correction", "CenterY");
 }
 
     // load highlight recovery settings
@@ -775,6 +784,9 @@ bool ProcParams::operator== (const ProcParams& other) {
         && cacorrection.blue == other.cacorrection.blue
         && vignetting.amount == other.vignetting.amount
         && vignetting.radius == other.vignetting.radius
+        && vignetting.strength == other.vignetting.strength
+        && vignetting.centerX == other.vignetting.centerX
+        && vignetting.centerY == other.vignetting.centerY
         && !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
         && !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
         && !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))
