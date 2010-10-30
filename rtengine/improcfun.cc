@@ -331,7 +331,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
 			r *= tonefactor;
 			g *= tonefactor;
 			b *= tonefactor;
-			float maxfactor = 1;
+			/*float maxfactor = 1;
 			if (r>65535) 
 				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(r-Ynew));
 			if (g>65535)
@@ -351,7 +351,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
 			
 			r = CLIP(Ynew + 1.13983*V);
 			g = CLIP(Ynew - 0.39465*U - 0.58060*V);
-			b = CLIP(Ynew + 2.03211*U);
+			b = CLIP(Ynew + 2.03211*U);*/
 			
 			r = tonecurve2[CLIP(r)];
 			g = tonecurve2[CLIP(g)];
@@ -559,7 +559,7 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
     double corr = pow(2.0, expcomp);
 
     // black point selection is based on the linear result (yielding better visual results)
-    bl = (int)(shc * corr);
+    bl = (int)(shc /* * corr*/);
     // compute the white point of the exp. compensated gamma corrected image
     double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
 
