@@ -191,6 +191,9 @@ class VignettingParamsEdited {
     public:
         bool amount;
         bool radius;
+        bool strength;
+        bool centerX;
+        bool centerY;
 };
 
 class ChannelMixerParamsEdited {
