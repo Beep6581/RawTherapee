@@ -47,108 +47,6 @@ inline double Lanc(double x, double a)
     }
 }
 
-void Lanczos1(Image16* src, Image16* dst, double scale)
-{
-    const double delta = 1.0 / scale;
-    const double a = 3.0;
-    const double sc = std::min(scale, 1.0);
-    const int support = (int)(2.0 * a / sc) + 1;
-
-    Image16 * tmp = new Image16(src->width, dst->height);
-    
-    #pragma omp parallel for
-    for (int i = 0; i < tmp->height; i++) {
-        // y coord of the center of pixel on src image
-        double y0 = (i + 0.5) * delta - 0.5;
-        
-        // weights for interpolation in y direction
-        double w[support];
-        
-        // sum of weights used for normalization
-        double ww = 0.0;
-
-        int ii0 = std::max(0, (int)floor(y0 - a / sc) + 1);
-        int ii1 = std::min(src->height, (int)floor(y0 + a / sc) + 1);
-        
-        // calculate weights
-        for (int ii = ii0; ii < ii1; ii++) {
-            int k = ii - ii0;
-            double z = sc * (y0 - ii);
-            w[k] = Lanc(z, a);
-            ww += w[k];
-        }
-
-        // normalize weights
-        for (int k = 0; k < support; k++) {
-            w[k] /= ww;
-        }
-        
-        for (int j = 0; j < tmp->width; j++) {
-            
-            double r = 0.0, g = 0.0, b = 0.0;
-            
-            for (int ii = ii0; ii < ii1; ii++) {
-                int k = ii - ii0;
-            
-                r += w[k] * src->r[ii][j];
-                g += w[k] * src->g[ii][j];
-                b += w[k] * src->b[ii][j];
-            }
-            
-            tmp->r[i][j] = CLIP((int)r);
-            tmp->g[i][j] = CLIP((int)g);
-            tmp->b[i][j] = CLIP((int)b);
-        }
-    }
-    
-    #pragma omp parallel for
-    for (int j = 0; j < dst->width; j++) {
-        // x coord of the center of pixel on src image
-        double x0 = (j + 0.5) * delta - 0.5;
-
-        // weights for interpolation in y direction
-        double w[support];
-        
-        // sum of weights used for normalization
-        double ww = 0.0;
-
-        int jj0 = std::max(0, (int)floor(x0 - a / sc) + 1);
-        int jj1 = std::min(tmp->width, (int)floor(x0 + a / sc) + 1);
-
-        // calculate weights
-        for (int jj = jj0; jj < jj1; jj++) {
-            int k = jj - jj0;
-            double z = sc * (x0 - jj);
-            w[k] = Lanc(z, a);
-            ww += w[k];
-        }
-        
-        // normalize weights
-        for (int k = 0; k < support; k++) {
-            w[k] /= ww;
-        }
-        
-        for (int i = 0; i < dst->height; i++) {
-            
-            double r = 0.0, g = 0.0, b = 0.0;
-            
-            for (int jj = jj0; jj < jj1; jj++) {
-                int k = jj - jj0;
-            
-                r += w[k] * tmp->r[i][jj];
-                g += w[k] * tmp->g[i][jj];
-                b += w[k] * tmp->b[i][jj];
-            }
-            
-            dst->r[i][j] = CLIP((int)r);
-            dst->g[i][j] = CLIP((int)g);
-            dst->b[i][j] = CLIP((int)b);
-        }
-    }
-    
-    delete tmp;
-}
-
 void Lanczos2(Image16* src, Image16* dst, double scale)
 {
     const double delta = 1.0 / scale;
@@ -156,9 +54,12 @@ void Lanczos2(Image16* src, Image16* dst, double scale)
     const double sc = std::min(scale, 1.0);
     const int support = (int)(2.0 * a / sc) + 1;
     
+    // storage for precomputed parameters for horisontal interpolation
     double * wwh = new double[support * dst->width];
     int * jj0 = new int[dst->width];
     int * jj1 = new int[dst->width];
+    
+    // temporal storage for vertically-interpolated row of pixels
     double * lr = new double[src->width];
     double * lg = new double[src->width];
     double * lb = new double[src->width];
@@ -193,7 +94,7 @@ void Lanczos2(Image16* src, Image16* dst, double scale)
         }
     }
     
-    // phase2: do actual interpolation
+    // Phase 2: do actual interpolation
     
     for (int i = 0; i < dst->height; i++) {
         
@@ -209,7 +110,7 @@ void Lanczos2(Image16* src, Image16* dst, double scale)
         int ii0 = std::max(0, (int)floor(y0 - a / sc) + 1);
         int ii1 = std::min(src->height, (int)floor(y0 + a / sc) + 1);
         
-        // calculate weights
+        // calculate weights for vertical interpolation
         for (int ii = ii0; ii < ii1; ii++) {
             int k = ii - ii0;
             double z = sc * (y0 - ii);
@@ -240,7 +141,7 @@ void Lanczos2(Image16* src, Image16* dst, double scale)
             lb[j] = b;
         }
         
-        //Do horisontal interpolation
+        // Do horisontal interpolation
         for(int j = 0; j < dst->width; j++) {
 
             double * wh = wwh + support * j;
