@@ -91,9 +91,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
 
     rtengine::SafeKeyFile keyFile;
     
-    try {
-        keyFile.load_from_file (fname); 
-    } catch (...) {}
+    if (::g_file_test(fname.c_str(),G_FILE_TEST_EXISTS)) keyFile.load_from_file (fname); 
 
     keyFile.set_string  ("General", "MD5", md5);
     keyFile.set_integer ("General", "Version", options.version);
