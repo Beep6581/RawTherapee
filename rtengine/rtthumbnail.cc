@@ -336,7 +336,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 baseImg->b[i][j] = CLIP(val);
         }
 
-    // appy highlight recovery, if needed
+    // apply highlight recovery, if needed
     if (isRaw && params.hlrecovery.enabled) {
         int maxval = 65535 / defGain;
         if (params.hlrecovery.method=="Luminance" || params.hlrecovery.method=="Color") 
@@ -623,6 +623,7 @@ void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty) {
     ty/=scale;
 }
 
+// format: 1=8bit direct, 2=16bit direct, 3=JPG
 bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
 
     if (!thumbImg)
@@ -689,6 +690,14 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
 	        cinfo.input_components = 3;
 	        jpeg_set_defaults (&cinfo);
             cinfo.write_JFIF_header = FALSE;
+			
+            // compute optimal Huffman coding tables for the image. Bit slower to generate, but size of result image is a bit less (default was FALSE)
+            cinfo.optimize_coding = TRUE;
+
+            // Since math coprocessors are common these days, FLOAT should be a bit more accurate AND fast (default is ISLOW)
+            // (machine dependency is not really an issue, since we all run on x86 and having exactly the same file is not a requirement)
+            cinfo.dct_method = JDCT_FLOAT;
+
             jpeg_set_quality (&cinfo, 85, true);
         	jpeg_start_compress(&cinfo, TRUE);
             int rowlen = thumbImg->width*3;
