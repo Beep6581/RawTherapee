@@ -34,86 +34,106 @@ using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
-      pparamsValid(false), needsReProcessing(true), lastImg(NULL) {
+      pparamsValid(false), needsReProcessing(true), lastImg(NULL),
+		quick_(false), initial_(false) {
 
-    mutex = new Glib::Mutex ();
     cfs.load (getCacheFileName ("data")+".txt");
     loadProcParams ();
-    loadThumbnail ();
+    _loadThumbnail ();
     generateExifDateTimeStrings ();
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
-      needsReProcessing(true), lastImg(NULL) {
+      needsReProcessing(true), lastImg(NULL),
+		quick_(false), initial_(true) {
 
-    mutex = new Glib::Mutex ();
 
     cfs.md5 = md5;
-    generateThumbnailImage ();
+    _generateThumbnailImage ();
     loadProcParams ();
     cfs.recentlySaved = false;
+
+	initial_ = false;
 }
 
-void Thumbnail::generateThumbnailImage (bool internal) {
+void Thumbnail::_generateThumbnailImage () {
 
-    if (!internal)
-        mutex->lock ();
+	//  delete everything loaded into memory
+	delete tpp;
+	tpp = NULL;
+	delete [] lastImg;
+	lastImg = NULL;
+	tw = -1;
+	th = options.maxThumbnailHeight;
 
-//  delete everything loaded into memory
-    delete tpp;
-    tpp = NULL;
-    delete [] lastImg;
-    lastImg = NULL;
-    tw = -1;
-    th = options.maxThumbnailHeight;
+	// generate thumbnail image
 
-// generate thumbnail image
+	Glib::ustring ext = getExtension (fname);
+	if (ext=="") 
+		return;
+	cfs.supported = false;
+	cfs.exifValid = false;
+	cfs.timeValid = false;
 
-    Glib::ustring ext = getExtension (fname);
-    if (ext=="") 
-        return;
-    cfs.supported = false;
-    cfs.exifValid = false;
-    cfs.timeValid = false;
-    
-    delete tpp;
-    tpp = NULL;
-    if (ext.lowercase()=="jpg" || ext.lowercase()=="png" || ext.lowercase()=="tif" || ext.lowercase()=="tiff")
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
-    if (tpp) {
-        if (ext.lowercase()=="jpg") {
-            cfs.format = FT_Jpeg;
-            infoFromImage (fname);
-        }
-        else if (ext.lowercase()=="png")
-            cfs.format = FT_Png;
-        else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-            cfs.format = FT_Tiff;
-            infoFromImage (fname);
-        }
-    }
-    else {
-        rtengine::RawMetaDataLocation ri;
-        tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1);
-        if (tpp) {
-            cfs.format = FT_Raw;
-            infoFromImage (fname, &ri);
-        }
-    }
-    if (tpp) {
-        // save thumbnail image to cache
-        saveThumbnail ();
-        cfs.supported = true;
-    }
-    needsReProcessing = true;
+	delete tpp;
+	tpp = NULL;
+	if (ext.lowercase()=="jpg" || ext.lowercase()=="png" || ext.lowercase()=="tif" || ext.lowercase()=="tiff")
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+	if (tpp) {
+		if (ext.lowercase()=="jpg") {
+			cfs.format = FT_Jpeg;
+			infoFromImage (fname);
+		}
+		else if (ext.lowercase()=="png")
+			cfs.format = FT_Png;
+		else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
+			cfs.format = FT_Tiff;
+			infoFromImage (fname);
+		}
+	}
+	else {
+		// RAW works like this:
+		//  1. if we are here it's because we aren't in the cache so load the JPG
+		//     image out of the RAW. Mark as "quick".
+		//  2. if we don't find that then just grab the real image.
+		rtengine::RawMetaDataLocation ri;
+		if ( initial_ )
+		{
+			quick_ = true;
+			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1);
+		}
+		if ( tpp == 0 )
+		{
+			quick_ = false;
+			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1);
+		}
+		if (tpp) {
+			cfs.format = FT_Raw;
+			infoFromImage (fname, &ri);
+		}
+	}
+	if (tpp )
+	{
+		if ( !quick_ )
+		{
+			_saveThumbnail ();
+		}
+		cfs.supported = true;
+	}
+	needsReProcessing = true;
 
-    cfs.save (getCacheFileName ("data")+".txt");
+	if ( !quick_ )
+	{
+		cfs.save (getCacheFileName ("data")+".txt");
+	}
 
-    generateExifDateTimeStrings ();
-    
-    if (!internal)
-        mutex->unlock ();
+	generateExifDateTimeStrings ();
+}
+
+void Thumbnail::generateThumbnailImage () {
+	Glib::Mutex::Lock lock(mutex);
+	_generateThumbnailImage();
 }
 
 bool Thumbnail::isSupported () {
@@ -231,8 +251,24 @@ bool Thumbnail::isEnqueued () {
     return enqueueNumber > 0;
 }
 
-void Thumbnail::increaseRef () { ref++; }
-void Thumbnail::decreaseRef () { ref--; if (!ref) cachemgr->closeThumbnail (this); }
+void Thumbnail::increaseRef ()
+{
+	Glib::Mutex::Lock lock(mutex);
+   	++ref;
+}
+
+void Thumbnail::decreaseRef () 
+{
+	Glib::Mutex::Lock lock(mutex);
+	if ( ref != 0 )
+	{
+		--ref;
+		if ( ref == 0 )
+		{
+			cachemgr->closeThumbnail (this); 
+		}
+	}
+}
 
 void Thumbnail::getThumbnailSize (int &w, int &h) {
 
@@ -244,15 +280,33 @@ void Thumbnail::getThumbnailSize (int &w, int &h) {
 
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
 
-    mutex->lock ();
+	Glib::Mutex::Lock lock(mutex);
 
     if (!tpp)
         return NULL;
 
-    rtengine::IImage8* res = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+	if ( quick_ )
+	{
+		return tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
+	}
+	else
+	{
+		return tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+	}
+}
 
-    mutex->unlock ();
-    return res;
+rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
+
+	Glib::Mutex::Lock lock(mutex);
+
+	if ( !quick_ )
+	{
+		return 0;
+	}
+
+	quick_ = false;
+	_generateThumbnailImage();
+	return tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
 }
 
 void Thumbnail::generateExifDateTimeStrings () {
@@ -340,10 +394,7 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
     delete idata;
 }
 
-void Thumbnail::loadThumbnail (bool internal, bool firstTrial) {
-
-    if (!internal)
-        mutex->lock ();
+void Thumbnail::_loadThumbnail(bool firstTrial) {
 
     needsReProcessing = true;
     delete tpp;
@@ -357,9 +408,9 @@ void Thumbnail::loadThumbnail (bool internal, bool firstTrial) {
     succ = succ && tpp->readImage (getCacheFileName ("images"));
 
     if (!succ && firstTrial) {
-        generateThumbnailImage (true);
+        _generateThumbnailImage ();
         if (cfs.supported && firstTrial)
-            loadThumbnail (true, false);
+            _loadThumbnail (false);
     }
     else if (!succ) {
         delete tpp;
@@ -375,11 +426,14 @@ void Thumbnail::loadThumbnail (bool internal, bool firstTrial) {
         tpp->init ();
         
     }
-    if (!internal)
-        mutex->unlock ();
 }
 
-void Thumbnail::saveThumbnail () {
+void Thumbnail::loadThumbnail (bool firstTrial) {
+	Glib::Mutex::Lock lock(mutex);
+	_loadThumbnail(firstTrial);
+}
+
+void Thumbnail::_saveThumbnail () {
 
     if (!tpp)
         return;
@@ -404,6 +458,12 @@ void Thumbnail::saveThumbnail () {
 
     // save supplementary data
     tpp->writeData (getCacheFileName ("data")+".txt");
+}
+
+void Thumbnail::saveThumbnail () 
+{
+   	Glib::Mutex::Lock lock(mutex);
+	_saveThumbnail(); 
 }
 
 void Thumbnail::updateCache () {

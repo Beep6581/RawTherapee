@@ -48,6 +48,62 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile);
 
 namespace rtengine {
 
+Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int &h, int fixwh) {
+    Image16* img = new Image16 ();
+    int err = img->loadJPEGFromMemory(image,length);
+    if (err) {
+		printf("loadfromMemory: error\n");
+        delete img;
+        return NULL;
+    }
+
+    Thumbnail* tpp = new Thumbnail ();
+
+    tpp->camwbRed = 1.0;
+    tpp->camwbGreen = 1.0;
+    tpp->camwbBlue = 1.0;
+
+    tpp->embProfileLength = 0;
+    unsigned char* data;
+    img->getEmbeddedProfileData (tpp->embProfileLength, data);
+    if (data && tpp->embProfileLength) {
+        tpp->embProfileData = new unsigned char [tpp->embProfileLength];
+        memcpy (tpp->embProfileData, data, tpp->embProfileLength);
+    }
+    else {
+        tpp->embProfileLength = 0;
+        tpp->embProfileData = NULL;
+    }
+    
+    tpp->redMultiplier = 1.0;
+    tpp->greenMultiplier = 1.0;
+    tpp->blueMultiplier = 1.0;
+
+    tpp->scaleForSave = 8192;
+    tpp->defGain = 1.0;
+    tpp->gammaCorrected = false;
+    tpp->isRaw = 1;
+    memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
+    tpp->colorMatrix[0][0] = 1.0;
+    tpp->colorMatrix[1][1] = 1.0;
+    tpp->colorMatrix[2][2] = 1.0;
+
+    if (fixwh==1) {
+        w = h * img->width / img->height;
+        tpp->scale = (double)img->height / h;
+    }
+    else {
+        h = w * img->height / img->width;
+        tpp->scale = (double)img->width / w;
+    }
+
+    tpp->thumbImg = img->resize (w, h, TI_Nearest);
+    delete img;
+
+    tpp->init ();
+    return tpp;
+}
+
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh) {
 
     Image16* img = new Image16 ();
@@ -143,7 +199,7 @@ void Thumbnail::init () {
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
                 camToD50[i][j] += colorMatrix[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore.createFromMatrix (camToD50, false, "Camera");
+    camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
 }
 
 bool Thumbnail::igammacomputed = false;
@@ -171,6 +227,39 @@ Thumbnail::~Thumbnail () {
         cmsCloseProfile(embProfile);
     if (camProfile)
         cmsCloseProfile(camProfile);
+}
+
+IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
+
+    int rwidth;
+    if (params.coarse.rotate==90 || params.coarse.rotate==270) {
+        rwidth = rheight;
+        rheight = thumbImg->height * rwidth / thumbImg->width;
+    }
+    else 
+        rwidth = thumbImg->width * rheight / thumbImg->height;   
+	Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
+
+    if (params.coarse.rotate) {
+        Image16* tmp = baseImg->rotate (params.coarse.rotate);
+        rwidth = tmp->width;
+        rheight = tmp->height;
+        delete baseImg;
+        baseImg = tmp;
+    }
+    if (params.coarse.hflip) {
+        Image16* tmp = baseImg->hflip ();
+        delete baseImg;
+        baseImg = tmp;
+    }
+    if (params.coarse.vflip) {
+        Image16* tmp = baseImg->vflip ();
+        delete baseImg;
+        baseImg = tmp;
+    }
+	Image8* img8 = baseImg->to8();
+	delete baseImg;
+	return img8;
 }
 
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {

@@ -23,7 +23,7 @@
 
 RTWindow::RTWindow () {
 
-    cacheMgr.init ();
+    cacheMgr->init ();
 
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
 		try { set_default_icon_from_file (argv0+"/images/logoicon16.png");
@@ -248,7 +248,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     if (options.startupDir==STARTUPDIR_LAST && fileBrowser->lastSelectedDir ()!="")
         options.startupPath = fileBrowser->lastSelectedDir ();
     fileBrowser->close ();
-    cacheMgr.closeCache ();
+    cacheMgr->closeCache ();
         
       
     options.lastScale = editorPanel->zoomBar->getScale ();

@@ -29,6 +29,8 @@ namespace rtengine {
 
 enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
+class Image8;
+
 class Image16 : public ImageIO, public IImage16 {
 
     private:
@@ -53,6 +55,8 @@ class Image16 : public ImageIO, public IImage16 {
         ~Image16 ();
 
         Image16* copy ();
+
+		Image8* to8() const;
 
         Image16* rotate (int deg);
         Image16* hflip ();

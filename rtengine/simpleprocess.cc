@@ -199,7 +199,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     ProfileContent pc;
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
-        pc = iccStore.getContent (params.icm.output);
+        pc = iccStore->getContent (params.icm.output);
 
     readyImg->setOutputProfile (pc.data, pc.length);
 

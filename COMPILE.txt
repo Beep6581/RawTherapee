@@ -1,3 +1,6 @@
+If you have problems with the compilation, identified the reason and fixed 
+the bug, please send me the updated build scripts (CMakeLists.txt files) to:
+hgabor@rawtherapee.com
 
 Windows
 -------
@@ -28,32 +31,50 @@ Windows
 		- Type: mingw32-make.exe install
 		- You find the compiled program in the "release" directory
 
-
 Linux
 -----
 
-Requirements:
-- CMake
-- GTK and GTKMM development packages
-- libtiff, libpng, libjpeg, lcms, libiptcdata development packages
-- ...did I forget something?
+	Requirements:
+		- CMake
+		- GTK and GTKMM development packages
+		- libtiff, libpng, libjpeg, lcms, libiptcdata development packages
+		- ...did I forget something?
 
-On Ubuntu/Debian the requirements can be installed by running:
-sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev merciurial
+	On Ubuntu/Debian the requirements can be installed by running:
+		sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev merciurial
 
-Compile:
-- Enter the root directory of the RawTherapee source tree
-- Type: cmake -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
-- Type: make install
-- You find the compiled program in the release directory (you can copy it 
-anywhere you want)
+	Compile:
+		- Enter the root directory of the RawTherapee source tree
+		- Type: cmake -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		- Type: make install
+		- You find the compiled program in the release directory (you can copy it 
+		anywhere you want)
 
-(By changing the cmake flags, you can change where the release is.  By removing all flags it should go to the standard system install location).
+	(By changing the cmake flags, you can change where the release is.  By removing all flags it should go to the standard system install location).
 
-...If you have problems with the compilation, identified the reason and fixed 
-the bug, please send me the updated build scripts (CMakeLists.txt files) to:
-hgabor@rawtherapee.com
 
+	Using Eclipse under Linux:
+	
+		Eclipse mercurial plugin:
+			click Help -> Install new Software.
+			The Eclipse Update Site for MercurialEclipse is available at this URL:
+			http://cbes.javaforge.com/update
+					
+		Import the rawtherapee mercurial repository:
+			File->new->'other'->mercurial->Clone existing repository
+			fill in URL: https://rawtherapee.googlecode.com/hg
+			
+		Enter root directory of RawTherapee source tree from a terminal window.
+		configure the source for Eclipse with:
+			cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. -DCMAKE_BUILD_TYPE=Release
+				
+		Eclipse does not do 'make install' but only 'make all' so to get the release there are 2 ways.
+			1. type 'make install' in the console or,
+			2. in 'Project'->'properties'->'C/C++ Make Project'->'Build (incremental build)' change 'all' to 'install'
+
+
+...	
+	  	
 OSX
 ---
 
