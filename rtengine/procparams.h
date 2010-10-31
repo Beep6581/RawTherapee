@@ -249,6 +249,9 @@ class VignettingParams {
     public:
         int  amount;
         int  radius;
+	int  strength;
+	int  centerX;
+	int  centerY;
 };
 
 /**

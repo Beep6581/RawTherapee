@@ -107,6 +107,9 @@ void ParamsEdited::set (bool v) {
         cacorrection.blue = v;
         vignetting.amount = v;
         vignetting.radius = v;
+        vignetting.strength = v;
+        vignetting.centerX = v;
+        vignetting.centerY = v;
         chmixer.red[0] = v;
         chmixer.red[1] = v;
         chmixer.red[2] = v;
@@ -234,6 +237,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         cacorrection.blue = cacorrection.blue && p.cacorrection.blue == other.cacorrection.blue;
         vignetting.amount = vignetting.amount && p.vignetting.amount == other.vignetting.amount;
         vignetting.radius = vignetting.radius && p.vignetting.radius == other.vignetting.radius;
+        vignetting.strength = vignetting.strength && p.vignetting.strength == other.vignetting.strength;
+        vignetting.centerX = vignetting.centerX && p.vignetting.centerX == other.vignetting.centerX;
+        vignetting.centerY = vignetting.centerY && p.vignetting.centerY == other.vignetting.centerY;
         chmixer.red[0] = chmixer.red[0] && p.chmixer.red[0] == other.chmixer.red[0];
         chmixer.red[1] = chmixer.red[1] && p.chmixer.red[1] == other.chmixer.red[1];
         chmixer.red[2] = chmixer.red[2] && p.chmixer.red[2] == other.chmixer.red[2];
@@ -352,6 +358,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (cacorrection.blue)					toEdit.cacorrection.blue 	= options.baBehav[ADDSET_CA] ? toEdit.cacorrection.blue + mods.cacorrection.blue : mods.cacorrection.blue;
 	if (vignetting.amount)					toEdit.vignetting.amount 	= options.baBehav[ADDSET_VIGN_AMOUNT] ? toEdit.vignetting.amount + mods.vignetting.amount : mods.vignetting.amount;
 	if (vignetting.radius)					toEdit.vignetting.radius 	= mods.vignetting.radius;
+	if (vignetting.strength)					toEdit.vignetting.strength 	= mods.vignetting.strength;
+	if (vignetting.centerX)					toEdit.vignetting.centerX 	= mods.vignetting.centerX;
+	if (vignetting.centerY)					toEdit.vignetting.centerY 	= mods.vignetting.centerY;
 	if (chmixer.red[0])		toEdit.chmixer.red[0] 	= mods.chmixer.red[0];
 	if (chmixer.red[1])		toEdit.chmixer.red[1] 	= mods.chmixer.red[1];
 	if (chmixer.red[2])		toEdit.chmixer.red[2] 	= mods.chmixer.red[2];

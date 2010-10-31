@@ -70,9 +70,12 @@ namespace rtengine {
             void init ();
             
             IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
+            IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
             int      getImageWidth  (const procparams::ProcParams& pparams, int rheight);
             void     getFinalSize   (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
             
+            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh);
+            static Thumbnail* loadFromMemory (const char* image, int length, int &w, int &h, int fixwh);
             static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh);
             static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh);           
             

@@ -124,7 +124,7 @@ void ImProcFunctions::setScale (double iscale) {
 
 void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
 
-	TMatrix wprof = iccStore.workingSpaceMatrix (wprofile);
+	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
     int toxyz[3][3];
     toxyz[0][0] = round(32768.0 * wprof[0][0] / 0.96422); 
     toxyz[1][0] = round(32768.0 * wprof[1][0] / 0.96422); 
@@ -184,12 +184,12 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 	if (monitorTransform)
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
-	cmsHPROFILE monitor = iccStore.getProfile ("file:"+settings->monitorProfile);
+	cmsHPROFILE monitor = iccStore->getProfile ("file:"+settings->monitorProfile);
 	if (monitor) {
-        cmsHPROFILE iprof = iccStore.getXYZProfile ();       
-		cmsHPROFILE oprof = iccStore.getProfile (params->icm.output);
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();       
+		cmsHPROFILE oprof = iccStore->getProfile (params->icm.output);
 		if (!oprof)
-			oprof = iccStore.getsRGBProfile ();
+			oprof = iccStore->getsRGBProfile ();
         lcmsMutex->lock ();
 		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();
@@ -257,7 +257,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
     bool processLCE = params->sh.enabled && shmap!=NULL && params->sh.localcontrast>0;
     double lceamount = params->sh.localcontrast / 200.0;
 
-    TMatrix wprof = iccStore.workingSpaceMatrix (params->icm.working);
+    TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
     int toxyz[3][3] = {
         {
         	floor(32768.0 * wprof[0][0] / 0.96422),
@@ -324,19 +324,39 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
             /*r = tonecurve[r];
             g = tonecurve[g];
             b = tonecurve[b];*/
-			int Y = (int)(0.299*r + 0.587*g + 0.114*b);
-			float tonefactor = (Y>0 ? (float)tonecurve1[Y]/Y : 1);
-			/*float rtonefactor = (r>0 ? (float)tonecurve1[r]/r : 1);
-			float gtonefactor = (g>0 ? (float)tonecurve1[g]/g : 1);
-			float btonefactor = (b>0 ? (float)tonecurve1[b]/b : 1);
-			float tonefactor = MIN(rtonefactor, MIN(gtonefactor,btonefactor));*/
+			int Y = (0.299*r + 0.587*g + 0.114*b);
+			int Ynew = tonecurve1[Y];
+			float tonefactor = (Y>0 ? (float)Ynew/Y : 1);
 
 			r *= tonefactor;
 			g *= tonefactor;
 			b *= tonefactor;
+			/*float maxfactor = 1;
+			if (r>65535) 
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(r-Ynew));
+			if (g>65535)
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(g-Ynew));
+			if (b>65535) 
+				maxfactor = MIN(maxfactor, (float)(65535.0f-Ynew)/(b-Ynew));
+			
+			if (r<0) 
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-r));
+			if (g<0)
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-g));
+			if (b<0) 
+				maxfactor = MIN(maxfactor, ((float)Ynew)/(Ynew-b));
+			
+			float U = (float)(-0.14713*r - 0.28886*g + 0.436*b)*maxfactor;
+			float V = (float)(0.615*r - 0.51499*g - 0.10001*b)*maxfactor;
+			
+			r = CLIP(Ynew + 1.13983*V);
+			g = CLIP(Ynew - 0.39465*U - 0.58060*V);
+			b = CLIP(Ynew + 2.03211*U);*/
+			
 			r = tonecurve2[CLIP(r)];
 			g = tonecurve2[CLIP(g)];
 			b = tonecurve2[CLIP(b)];
+
 			
             int x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) >> 15;
             int y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) >> 15;
@@ -347,7 +367,6 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* tonecurve1,
             z = CLIPTO(z,0,2*65536-1);
 
             int L = cacheL[y];
-			//int L = cacheL[tonecurve[y]];//for luminance tone curve, use this (and comment out rgb tonecurves)
             lab->L[i][j] = L;
             lab->a[i][j] = CLIPC(((cachea[x] - cachea[y]) * chroma_scale) >> 15);
             lab->b[i][j] = CLIPC(((cacheb[y] - cacheb[z]) * chroma_scale) >> 15);
@@ -540,7 +559,7 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
     double corr = pow(2.0, expcomp);
 
     // black point selection is based on the linear result (yielding better visual results)
-    bl = (int)(shc * corr);
+    bl = (int)(shc /* * corr*/);
     // compute the white point of the exp. compensated gamma corrected image
     double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
 

@@ -14,6 +14,7 @@ set (BASESOURCEFILES
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
     crophandler.cc curveeditor.cc dirbrowser.cc
     filecatalog.cc
+    previewloader.cc
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
     multilangmgr.cc mycurve.cc options.cc
