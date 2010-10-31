@@ -47,7 +47,7 @@ inline double Lanc(double x, double a)
     }
 }
 
-void Lanczos2(Image16* src, Image16* dst, double scale)
+void Lanczos(const Image16* src, Image16* dst, double scale)
 {
     const double delta = 1.0 / scale;
     const double a = 3.0;
@@ -172,10 +172,10 @@ void Lanczos2(Image16* src, Image16* dst, double scale)
 
 void ImProcFunctions::resize (Image16* src, Image16* dst) {
 
-    time_t t1 = clock();
+    //time_t t1 = clock();
 
     if(params->resize.method == "Lanczos") {
-        Lanczos2(src, dst, params->resize.scale);
+        Lanczos(src, dst, params->resize.scale);
     }
 	else if(params->resize.method == "Downscale (Better)") {
         // small-scale algorithm by Ilia
@@ -429,9 +429,9 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
         }
     }
     
-    time_t t2 = clock();
-    std::cout << "Resize: " << params->resize.method << ": "
-        << (double)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
+    //time_t t2 = clock();
+    //std::cout << "Resize: " << params->resize.method << ": "
+    //    << (double)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
 }
 
 }
