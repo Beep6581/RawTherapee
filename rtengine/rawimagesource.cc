@@ -829,7 +829,7 @@ skip_block: ;
 		if (dmax < pre_mul[c])
 			dmax = pre_mul[c];
 	}
-	dmax = dmin;
+
 	for (c = 0; c < 4; c++)
 		scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / sat;
 	if (settings->verbose) {

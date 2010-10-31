@@ -107,8 +107,9 @@ void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	pp->raw.dcb_iterations = (int)dcbIterations->getValue();
 	pp->raw.dcb_enhance = dcbEnhance->get_active();
 
-	if( dmethod->get_active_row_number() < procparams::RAWParams::numMethods)
-		pp->raw.dmethod = procparams::RAWParams::methodstring[dmethod->get_active_row_number()];
+	int currentRow = dmethod->get_active_row_number();
+	if( currentRow>=0 && currentRow < procparams::RAWParams::numMethods)
+		pp->raw.dmethod = procparams::RAWParams::methodstring[currentRow];
 
 	if (pedited) {
 		pedited->raw.ccSteps = ccSteps->getEditedState ();
