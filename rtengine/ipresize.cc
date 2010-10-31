@@ -23,6 +23,8 @@
 #include <omp.h>
 #endif
 
+#include <iostream>
+
 namespace rtengine {
 
 #undef CLIP
@@ -33,9 +35,149 @@ namespace rtengine {
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 
+inline double Lanc(double x, double a)
+{
+    if (x * x < 1e-6)
+        return 1.0;
+    else if (x * x > a * a)
+        return 0.0;
+    else {
+        x = M_PI * x;
+        return sin(x) * sin(x / a) / (x * x / a);
+    }
+}
+
+void Lanczos(const Image16* src, Image16* dst, double scale)
+{
+    const double delta = 1.0 / scale;
+    const double a = 3.0;
+    const double sc = std::min(scale, 1.0);
+    const int support = (int)(2.0 * a / sc) + 1;
+    
+    // storage for precomputed parameters for horisontal interpolation
+    double * wwh = new double[support * dst->width];
+    int * jj0 = new int[dst->width];
+    int * jj1 = new int[dst->width];
+    
+    // temporal storage for vertically-interpolated row of pixels
+    double * lr = new double[src->width];
+    double * lg = new double[src->width];
+    double * lb = new double[src->width];
+
+    // Phase 1: precompute coefficients for horisontal interpolation
+    
+    for (int j = 0; j < dst->width; j++) {
+    
+        // x coord of the center of pixel on src image
+        double x0 = (j + 0.5) * delta - 0.5;
+
+        // weights for interpolation in horisontal direction
+        double * w = wwh + j * support;
+        
+        // sum of weights used for normalization
+        double ws = 0.0;
+
+        jj0[j] = std::max(0, (int)floor(x0 - a / sc) + 1);
+        jj1[j] = std::min(src->width, (int)floor(x0 + a / sc) + 1);
+
+        // calculate weights
+        for (int jj = jj0[j]; jj < jj1[j]; jj++) {
+            int k = jj - jj0[j];
+            double z = sc * (x0 - jj);
+            w[k] = Lanc(z, a);
+            ws += w[k];
+        }
+        
+        // normalize weights
+        for (int k = 0; k < support; k++) {
+            w[k] /= ws;
+        }
+    }
+    
+    // Phase 2: do actual interpolation
+    
+    for (int i = 0; i < dst->height; i++) {
+        
+        // y coord of the center of pixel on src image
+        double y0 = (i + 0.5) * delta - 0.5;
+        
+        // weights for interpolation in y direction
+        double w[support];
+        
+        // sum of weights used for normalization
+        double ws= 0.0;
+
+        int ii0 = std::max(0, (int)floor(y0 - a / sc) + 1);
+        int ii1 = std::min(src->height, (int)floor(y0 + a / sc) + 1);
+        
+        // calculate weights for vertical interpolation
+        for (int ii = ii0; ii < ii1; ii++) {
+            int k = ii - ii0;
+            double z = sc * (y0 - ii);
+            w[k] = Lanc(z, a);
+            ws += w[k];
+        }
+
+        // normalize weights
+        for (int k = 0; k < support; k++) {
+            w[k] /= ws;
+        }
+        
+        // Do vertical interpolation. Store results.
+        for (int j = 0; j < src->width; j++) {
+            
+            double r = 0.0, g = 0.0, b = 0.0;
+            
+            for (int ii = ii0; ii < ii1; ii++) {
+                int k = ii - ii0;
+            
+                r += w[k] * src->r[ii][j];
+                g += w[k] * src->g[ii][j];
+                b += w[k] * src->b[ii][j];
+            }
+            
+            lr[j] = r;
+            lg[j] = g;
+            lb[j] = b;
+        }
+        
+        // Do horisontal interpolation
+        for(int j = 0; j < dst->width; j++) {
+
+            double * wh = wwh + support * j;
+            
+            double r = 0.0, g = 0.0, b = 0.0;
+            
+            for (int jj = jj0[j]; jj < jj1[j]; jj++) {
+                int k = jj - jj0[j];
+            
+                r += wh[k] * lr[jj];
+                g += wh[k] * lg[jj];
+                b += wh[k] * lb[jj];
+            }
+            
+            dst->r[i][j] = CLIP((int)r);
+            dst->g[i][j] = CLIP((int)g);
+            dst->b[i][j] = CLIP((int)b);
+        }
+    }
+    
+    delete[] wwh;
+    delete[] jj0;
+    delete[] jj1;
+    delete[] lr;
+    delete[] lg;
+    delete[] lb;
+}
+
 void ImProcFunctions::resize (Image16* src, Image16* dst) {
 
-	if(params->resize.method == "Downscale (Better)") {
+    //time_t t1 = clock();
+
+    if(params->resize.method == "Lanczos") {
+        Lanczos(src, dst, params->resize.scale);
+    }
+	else if(params->resize.method == "Downscale (Better)") {
         // small-scale algorithm by Ilia
         // provides much better quality on small scales
         // calculates mean value over source pixels which current destination pixel covers
@@ -117,11 +259,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
                 dst->b[i][j] = CLIP((int)b);
             }
         }
-        return;
     }
-
-    if(params->resize.method == "Downscale (Faster)")
-	{
+    else if(params->resize.method == "Downscale (Faster)") {
         // faster version of algo above, does not take into account border pixels,
         // which are summed with non-unity weights in slow algo. So, no need
         // for weights at all
@@ -190,9 +329,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
                 dst->b[i][j] = CLIP( b * k / divider);
             }
         }
-        return;
     }
-    if (params->resize.method.substr(0,7)=="Bicubic") {
+    else if (params->resize.method.substr(0,7)=="Bicubic") {
         double Av = -0.5;
         if (params->resize.method=="Bicubic (Sharper)")
             Av = -0.75;
@@ -290,6 +428,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             }
         }
     }
+    
+    //time_t t2 = clock();
+    //std::cout << "Resize: " << params->resize.method << ": "
+    //    << (double)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
 }
 
 }
