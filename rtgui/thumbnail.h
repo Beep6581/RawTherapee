@@ -98,8 +98,6 @@ class Thumbnail {
         void            getThumbnailSize        (int &w, int &h);
         void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h) { if (tpp) tpp->getFinalSize (pparams, w, h); }
 
-        void            generateThumbnailImage ();
-
         const Glib::ustring&  getExifString ();
         const Glib::ustring&  getDateTimeString ();
         void                  getCamWB (double& temp, double& green) { if (tpp) tpp->getCamWB (temp, green); }
