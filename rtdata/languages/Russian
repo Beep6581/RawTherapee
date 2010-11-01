@@ -293,47 +293,47 @@ IPTCPANEL_TITLEHINT;Простое описание изображения (Obje
 IPTCPANEL_TITLE;Название
 IPTCPANEL_TRANSREFERENCEHINT;Код, облегчающий отслеживание изображения при передаче в обработку на сторону (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Код поддержки
-MAIN_BUTTON_EXIT;Exit
+MAIN_BUTTON_EXIT;Выход
 MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_PREFERENCES;Настройки
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поставить текущее изображение в очередь на обработку <b>Ctrl+Q</b>
-MAIN_BUTTON_PUTTOQUEUE;Отправить в очередь
-MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Как...
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поместить текущее изображение в очередь на обработку <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE;В очередь
+MAIN_BUTTON_QUEUE;В очередь
+MAIN_BUTTON_SAVEAS;Сохранить как...
 MAIN_BUTTON_SAVE_TOOLTIP;Сохранить текущее изображение <b>Ctrl+S</b>
-MAIN_BUTTON_SAVE;Сохранить изображение
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение в другой программе <b>Ctrl+E</b>
+MAIN_BUTTON_SAVE;Сохранить
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение во внешнем редакторе <b>Ctrl+E</b>
 MAIN_BUTTON_SENDTOEDITOR;Открыть в редакторе
 MAIN_BUTTON_UNFULLSCREEN;Оконный режим
-MAIN_FRAME_BATCHQUEUE;Batch Queue 
-MAIN_FRAME_FILEBROWSER;File Browser 
-MAIN_FRAME_PLACES_ADD;Add
-MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
-MAIN_FRAME_RECENT;Recent Folders 
+MAIN_FRAME_BATCHQUEUE;Очередь обработки
+MAIN_FRAME_FILEBROWSER;Файловый браузер
+MAIN_FRAME_PLACES_ADD;Добавить
+MAIN_FRAME_PLACES_DEL;Удалить
+MAIN_FRAME_PLACES;Закладки
+MAIN_FRAME_RECENT;Недавние папки 
 MAIN_MSG_ALREADYEXISTS;Файл уже существует.
 MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображение
 MAIN_MSG_CANNOTSAVE;Ошибка при сохранении файла
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный путь в диалоге "Настройки".
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный каталог в диалоге "Настройки".
 MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
 MAIN_MSG_ERRORDURINGIMAGESAVING;Ошибка при сохранении изображения
 MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходе из программы.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Вы уверены, что хотите выйти из программы? В очереди остались необработанные изображения.
 MAIN_MSG_JOBSINQUEUE;Идёт обработка
 MAIN_MSG_NAVIGATOR;Навигатор
-MAIN_MSG_PLACES;Места
+MAIN_MSG_PLACES;Закладки
 MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
 MAIN_TAB_BASIC;Основные
 MAIN_TAB_COLOR;Цвет
 MAIN_TAB_DETAIL;Детализация
-MAIN_TAB_DEVELOP;Develop
+MAIN_TAB_DEVELOP;Проявка
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Экспозиция
-MAIN_TAB_FILTER;Filter
+MAIN_TAB_FILTER;Фильтр
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Метаданные
-MAIN_TAB_TAGGING;Tagging
+MAIN_TAB_TAGGING;Метки
 MAIN_TAB_TRANSFORM;Преобразования
 MAIN_TOGGLE_BEFORE_AFTER;Д|П
 MAIN_TOOLTIP_HIDEFP;Показать/скрыть нижнюю панель (каталоги и список файлов, горячая клавиша: F)
@@ -376,7 +376,7 @@ PARTIALPASTE_SHARPENING;Повышение резкости
 PARTIALPASTE_VIGNETTING;Коррекция виньетирования
 PARTIALPASTE_WHITEBALANCE;Баланс белого
 PREFERENCES_ADD;Добавить
-PREFERENCES_APPLNEXTSTARTUP;Нужен перезапуск программы
+PREFERENCES_APPLNEXTSTARTUP;Нужен перезапуск
 PREFERENCES_BATCH_PROCESSING;Пакетная обработка
 PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
@@ -406,7 +406,7 @@ PREFERENCES_DCBITERATIONS;Количество итераций DCB
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
-PREFERENCES_DIRDARKFRAMES;Папка тёмных кадров
+PREFERENCES_DIRDARKFRAMES;Каталог размещения тёмных кадров
 PREFERENCES_DIRHOME;Домашний каталог
 PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
@@ -416,12 +416,12 @@ PREFERENCES_DMETHOD;Метод
 PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
-PREFERENCES_FALSECOLOR;Число шагов для подавления некорректных цветов
+PREFERENCES_FALSECOLOR;Шагов для подавления ложных цветов:
 PREFERENCES_FBROWSEROPTS;Настройки
 PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FORIMAGE;Для изображений
 PREFERENCES_FORRAW;Для RAW файлов
-PREFERENCES_GIMPPATH;Путь установки GIMP
+PREFERENCES_GIMPPATH;Каталог установки GIMP
 PREFERENCES_GREENEQUIL;Выравнивание зелёного
 PREFERENCES_GTKTHEME;GTK по умолчанию
 PREFERENCES_HINT;Подсказка
@@ -455,7 +455,7 @@ PREFERENCES_PROFILEPRFILE;загружать из каталога с файло
 PREFERENCES_PROFILESAVECACHE;Сохранить профиль постобработки в кэше
 PREFERENCES_PROFILESAVEINPUT;Сохранить профиль постобработки в одном каталоге с исходным файлом
 PREFERENCES_PROPERTY;Свойство
-PREFERENCES_PSPATH;Путь установки Adobe Photoshop
+PREFERENCES_PSPATH;Каталог установки Adobe Photoshop
 PREFERENCES_SELECTFONT;Выбрать шрифт
 PREFERENCES_SELECTICCDIRDLG;Выберите каталог для ICC профиля...
 PREFERENCES_SELECTLANG;Выберите язык
@@ -504,7 +504,7 @@ PROGRESSDLG_LOADING;Загрузка файла...
 PROGRESSDLG_PROCESSING;Обработка изображения...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профиль изменён в браузере
 PROGRESSDLG_SAVING;Сохранение файла...
-QINFO_FOCALLENGTH;Focal Lenth
+QINFO_FOCALLENGTH;Фокусное расстояние
 QINFO_ISO;ISO
 QINFO_LENS;Объектив
 QINFO_NOEXIF;Данные Exif недоступны
@@ -524,7 +524,7 @@ SAVEDLG_TIFFFILTER;Файлы TIFF
 SAVEDLG_TIFFUNCOMPRESSED;Несжатый TIFF
 TOOLBAR_TOOLTIP_CROP;Кадрирование (горячая клавиша: C)
 TOOLBAR_TOOLTIP_HAND;Инструмент "Рука" (горячая клавиша: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Установка прямой линии (горячая клавиша: S)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Выравнивание (горячая клавиша: S)
 TOOLBAR_TOOLTIP_WB;Указать белую точку (горячая клавиша: W)
 TP_CACORRECTION_BLUE;Синий
 TP_CACORRECTION_LABEL;Хроматические аберрации
@@ -652,7 +652,7 @@ TP_RESIZE_BILINEAR;Билинейный
 TP_RESIZE_DOWNSCALEB;Уменьшение (качественно)
 TP_RESIZE_DOWNSCALEF;Уменьшение (быстро)
 TP_RESIZE_FULLSIZE;Размер изображения:
-TP_RESIZE_HEIGHT;Высоту
+TP_RESIZE_HEIGHT;высоту
 TP_RESIZE_H;В:
 TP_RESIZE_LABEL;Изменение размера
 TP_RESIZE_LANCZOS;Ланцош
@@ -660,7 +660,7 @@ TP_RESIZE_METHOD;Метод:
 TP_RESIZE_NEAREST;Ближайшие точки
 TP_RESIZE_SCALE;Масштаб
 TP_RESIZE_SPECIFY;Задать:
-TP_RESIZE_WIDTH;Ширину
+TP_RESIZE_WIDTH;ширину
 TP_RESIZE_W;Ш:
 TP_ROTATE_AUTOCROP;Авто-кадрирование
 TP_ROTATE_DEGREE;Угол
