@@ -4,8 +4,8 @@
 #02 2008-01-22
 #03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
-BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
+BATCHQUEUE_AUTOSTART;Autostart
 CURVEEDITOR_CUSTOM;Egen
 CURVEEDITOR_DARKS;Svärta
 CURVEEDITOR_FILEDLGFILTERANY;Vilka filer som helst
@@ -29,18 +29,18 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Använd metadatafilter
 EXIFFILTER_SHUTTER;Slutartid
-EXIFPANEL_ADDEDIT;Lägg till/Redigera
 EXIFPANEL_ADDEDITHINT;Lägg till en ny eller redigera en etikett
+EXIFPANEL_ADDEDIT;Lägg till/Redigera
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ange värde
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Välj etikett
 EXIFPANEL_ADDTAGDLG_TITLE;Lägg till/redigera etikett
 EXIFPANEL_KEEP;Behåll
 EXIFPANEL_KEEPHINT;Behåll de valda etiketterna vid spara
-EXIFPANEL_REMOVE;Ta bort
 EXIFPANEL_REMOVEHINT;Ta bort de valda etiketterna vid spara
-EXIFPANEL_RESET;Återställ
+EXIFPANEL_REMOVE;Ta bort
 EXIFPANEL_RESETALL;Återställ alla
 EXIFPANEL_RESETALLHINT;Återställ alla etiketter till deras originalvärden
+EXIFPANEL_RESET;Återställ
 EXIFPANEL_RESETHINT;Återställ de valda etiketterna till deras originalvärden
 EXIFPANEL_SUBDIRECTORY;Underkatalog
 FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
@@ -51,13 +51,13 @@ FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DELETEDLGLABEL;Bekräftelse vid borttag
 FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
-FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
+FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EXIFFILTERAPPLY;Använd
 FILEBROWSER_EXIFFILTERAPPLYHINT;Visa/dölj EXIF-filtret i filhanteraren
 FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
-FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändra inställningar för EXIF-filtret
+FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_NEW_NAME;Nytt namn:
 FILEBROWSER_PARTIALPASTEPROFILE;Klistra in partiell profil
 FILEBROWSER_PASTEPROFILE;Klistra in profil
@@ -77,8 +77,8 @@ FILEBROWSER_POPUPSELECTALL;Markera allt
 FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
 FILEBROWSER_POPUPUNRANK;Ta bort betyg
 FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
-FILEBROWSER_PROCESSINGSETTINGS;Inställningar
 FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målmapp
+FILEBROWSER_PROCESSINGSETTINGS;Inställningar
 FILEBROWSER_RENAMEDLGLABEL;Byt namn
 FILEBROWSER_RENAMEDLGMSG;Byt namn på "%1" till:
 FILEBROWSER_SHOWDIRHINT;Visa alla bilder i biblioteket
@@ -106,8 +106,8 @@ GENERAL_BEFORE;Före
 GENERAL_CANCEL;Avbryt
 GENERAL_DISABLE;Avaktivera
 GENERAL_DISABLED;Avaktivera
-GENERAL_ENABLE;Verkställ
 GENERAL_ENABLED;Verkställ
+GENERAL_ENABLE;Verkställ
 GENERAL_HIGH_QUALITY;Hög kvalitet
 GENERAL_LANDSCAPE;Landskap
 GENERAL_LOAD;Ladda
@@ -218,8 +218,8 @@ HISTORY_MSG_86;Wavelet equalizer
 HISTORY_MSG_87;Brusreducering mha av stegsvar
 HISTORY_MSG_8;Exponeringskomprimering
 HISTORY_MSG_9;Högdagerkomprimering
-HISTORY_NEWSNAPSHOT;Nytt bokmärke
 HISTORY_NEWSNAPSHOTAS;Som...
+HISTORY_NEWSNAPSHOT;Nytt bokmärke
 HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
 HISTORY_NEWSSDIALOGTITLE;Lägg till nytt bokmärke
 HISTORY_SETTO;Ställ in till
@@ -239,8 +239,8 @@ ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
 ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
 ICMPANEL_WORKINGPROFILE;Arbetsprofil
 IMAGEAREA_DETAILVIEW;Detalj
-IPTCPANEL_AUTHOR;Upphovsman
 IPTCPANEL_AUTHORHINT;Namn på skaparen, t ex skribenten, fotografen eller den grafiska artisten (by-line)
+IPTCPANEL_AUTHOR;Upphovsman
 IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CITY;Stad
 IPTCPANEL_COUNTRY;Land
@@ -257,17 +257,17 @@ MAIN_BUTTON_PREFERENCES;Inställningar
 MAIN_BUTTON_PUTTOQUEUE;Flytta till behandlingskön
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Placera i behandlingskön
-MAIN_BUTTON_SAVE;Spara bild
 MAIN_BUTTON_SAVEAS;Som...
+MAIN_BUTTON_SAVE;Spara bild
 MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Redigera i externt program
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
 MAIN_FRAME_FILEBROWSER;Filhanterare
-MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
 MAIN_FRAME_PLACES_DEL;Ta bort
+MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_RECENT;Nyligen använda mappar
 MAIN_MSG_ALREADYEXISTS;Filen existerar redan.
 MAIN_MSG_CANNOTLOAD;Kan inte ladda bilden
@@ -300,8 +300,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
-MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
 MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
+MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
 MAIN_TOOLTIP_TOGGLE;Växla före/efter vy <b>B</b>
 NAVIGATOR_B_NA;B = -
 NAVIGATOR_B_VALUE;B = %1
@@ -387,8 +387,8 @@ PREFERENCES_DIRLAST;Senaste besökta katalog
 PREFERENCES_DIROTHER;Annan
 PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
 PREFERENCES_DIRSOFTWARE;Installationskatalog
-PREFERENCES_DMETHOD;Metod
 PREFERENCES_DMETHODBATCH;Batch
+PREFERENCES_DMETHOD;Metod
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
 PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
@@ -411,16 +411,16 @@ PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
-PREFERENCES_OUTDIR;Utmatningskatalog
-PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
+PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råfilens sökväg.\n\nTill exempel, om </i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råfilens sökväg.\n\nTill exempel, om</i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen följande:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
-PREFERENCES_PARSEDEXT;Behandlade filtyper
-PREFERENCES_PARSEDEXTADD;Lägg till filtyp
 PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
+PREFERENCES_PARSEDEXTADD;Lägg till filtyp
+PREFERENCES_PARSEDEXT;Behandlade filtyper
 PREFERENCES_PARSEDEXTDELHINT;Ta bort de markerade filändelserna från listan
 PREFERENCES_PROFILEHANDLING;Hantering av bildbehandlingsparametrar
 PREFERENCES_PROFILELOADPR;Laddningsprioritet för profil
@@ -489,8 +489,8 @@ SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filer
-SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
+SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
 SAVEDLG_SAVEIMMEDIATELY;Spara direkt
 SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
@@ -622,8 +622,8 @@ TP_RESIZE_BILINEAR;Bilinjär
 TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
 TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
 TP_RESIZE_FULLSIZE;Full bildstorlek:
-TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höjd
+TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Ändra storlek
 TP_RESIZE_METHOD;Metod: 
 TP_RESIZE_NEAREST;Närmast
@@ -652,10 +652,10 @@ TP_SHARPENING_LABEL;Skärpa
 TP_SHARPENING_METHOD;Metod
 TP_SHARPENING_ONLYEDGES;Skärp bara kanter
 TP_SHARPENING_RADIUS;Radie
-TP_SHARPENING_RLD;RL-dekonvolution
 TP_SHARPENING_RLD_AMOUNT;Mängd
 TP_SHARPENING_RLD_DAMPING;Dämpning
 TP_SHARPENING_RLD_ITERATIONS;Upprepningar
+TP_SHARPENING_RLD;RL-dekonvolution
 TP_SHARPENING_THRESHOLD;Tröskelvärde
 TP_SHARPENING_USM;Oskarp mask
 TP_VIGNETTING_AMOUNT;Mängd
@@ -721,14 +721,15 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 !IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
 !IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-!IPTCPANEL_PROVINCE;Province
 !IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
+!IPTCPANEL_PROVINCE;Province
 !IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 !IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
+!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-!IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+!IPTCPANEL_TRANSREFERENCE;Trans. Reference
+!MAIN_TAB_RAW;RAW
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_GREENEQUIL;Green equilibration
@@ -737,6 +738,8 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RAWPANEL_PREPROCESSING;Preprocessing
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X

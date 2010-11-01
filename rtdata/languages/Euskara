@@ -1,4 +1,5 @@
 
+﻿#
 #00 Euskara (Basque)
 #01 03.03.2008
 #02 Ioritz Ibarguren
@@ -23,14 +24,14 @@ EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEP;Keep
 EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
-EXIFPANEL_REMOVE;Remove
+EXIFPANEL_KEEP;Keep
 EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
-EXIFPANEL_RESET;Reset
-EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_REMOVE;Remove
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_RESET;Reset
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -43,8 +44,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -63,8 +64,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -76,19 +77,19 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
 GENERAL_ABOUT;Honi buruz
 GENERAL_CANCEL;Baztertu
-GENERAL_DISABLE;Ezestatu
 GENERAL_DISABLED;Ezeztatua
-GENERAL_ENABLE;Gaitu
+GENERAL_DISABLE;Ezestatu
 GENERAL_ENABLED;Gaitua
+GENERAL_ENABLE;Gaitu
 GENERAL_LANDSCAPE;Paisaia
 GENERAL_LOAD;Ireki
 GENERAL_NA;n/a
@@ -234,34 +235,34 @@ IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_KEYWORDS;Keywords
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCE;Province
 IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-IPTCPANEL_RESET;Reset
+IPTCPANEL_PROVINCE;Province
 IPTCPANEL_RESETHINT;Reset to profile default
-IPTCPANEL_SOURCE;Source
+IPTCPANEL_RESET;Reset
 IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+IPTCPANEL_SOURCE;Source
 IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_TITLE;Title
+IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TITLE;Title
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Ezarpenak
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVE;Irudia gorde
 MAIN_BUTTON_SAVEAS;Honela...
+MAIN_BUTTON_SAVE;Irudia gorde
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Artxiboa jadanik badago.
 MAIN_MSG_CANNOTLOAD;Ezin dut irudia ireki
@@ -290,8 +291,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Mozturiko argi adierazlea
 MAIN_TOOLTIP_INDCLIPPEDS;Mozturiko itzal adierazlea
 MAIN_TOOLTIP_PREFERENCES;Ezarpenak doitu
 MAIN_TOOLTIP_QINFO; Irudiaren informazio laburra
-MAIN_TOOLTIP_SAVE;Irudia lehenetsiriko karpetara gorde
 MAIN_TOOLTIP_SAVEAS;Irudia hautatutako karpeta batera gorde
+MAIN_TOOLTIP_SAVE;Irudia lehenetsiriko karpetara gorde
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -369,16 +370,16 @@ PREFERENCES_INTENT_RELATIVE;Kolorimetriko erlatiboa
 PREFERENCES_INTENT_SATURATION;Saturazioa
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;Pantaila profilak
-PREFERENCES_OUTDIR;Irteera karpeta
-PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIR;Irteera karpeta
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -438,8 +439,8 @@ SAVEDLG_JPEGQUAL;JPEG kalitatea
 SAVEDLG_JPGFILTER;JPEG artxiboak
 SAVEDLG_PNGCOMPR;PNG konpresioa
 SAVEDLG_PNGFILTER;PNG artxiboak
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Prozesu aldagaiak irudiarekin batera gorde
@@ -566,10 +567,10 @@ TP_SHARPENING_LABEL;Fokatu
 TP_SHARPENING_METHOD;Metodoa
 TP_SHARPENING_ONLYEDGES;Ertzak bakarrik fokatu
 TP_SHARPENING_RADIUS;Erradioa
-TP_SHARPENING_RLD;RL Dekonboluzioa
 TP_SHARPENING_RLD_AMOUNT;Kopurua
 TP_SHARPENING_RLD_DAMPING;Indargetzea
 TP_SHARPENING_RLD_ITERATIONS;Iterazioak
+TP_SHARPENING_RLD;RL Dekonboluzioa
 TP_SHARPENING_THRESHOLD;Muga
 TP_SHARPENING_USM;Defokatze maskara
 TP_VIGNETTING_AMOUNT;Kopurua
@@ -591,7 +592,6 @@ ZOOMBAR_NORMAL;Arrunta
 ZOOMBAR_PREVIEW;Aurrebista
 ZOOMBAR_SCALE;Eskala
 ZOOMBAR_SMALL;Txikia
-﻿#
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -599,8 +599,8 @@ ZOOMBAR_SMALL;Txikia
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
+!BATCHQUEUE_AUTOSTART;Auto start
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -646,6 +646,7 @@ ZOOMBAR_SMALL;Txikia
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
+!MAIN_TAB_RAW;RAW
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
@@ -725,6 +726,8 @@ ZOOMBAR_SMALL;Txikia
 !TP_PERSPECTIVE_VERTICAL;Vertical
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RAWPANEL_PREPROCESSING;Preprocessing
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 !TP_RESIZE_HEIGHT;Height
