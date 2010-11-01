@@ -8942,7 +8942,6 @@ Glib::Mutex* dcrMutex=NULL;
 
 int RawImage::loadRaw (bool loadData) {
 
-  Glib::Mutex::Lock lock(*dcrMutex); // auto unlock
   THREAD_LOCK
 
   ifname = fname.c_str();
