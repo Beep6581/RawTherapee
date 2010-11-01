@@ -80,6 +80,7 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE;Apply profile
 !FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
+!FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_CLEARPROFILE;Clear profile
 !FILEBROWSER_COPYPROFILE;Copy profile
 !FILEBROWSER_CURRENT_NAME;Current name:
@@ -92,6 +93,7 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 !FILEBROWSER_EXIFFILTERSETTINGS;Setup
 !FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_NEW_NAME;New name:
 !FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 !FILEBROWSER_PASTEPROFILE;Paste profile
@@ -115,6 +117,7 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 !FILEBROWSER_RENAMEDLGLABEL;Rename file
 !FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
+!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SHOWDIRHINT;Show all images of the directory <b>D</b>
 !FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 !FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
@@ -414,6 +417,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_CACORRECTION;Apply CA auto correction
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMAT;Date Format
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
@@ -421,6 +425,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_DEFAULTLANG;Default language
 !PREFERENCES_DEFAULTTHEME;Default theme
 !PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
+!PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_DIRHOME;Home directory
 !PREFERENCES_DIRLAST;Last visited directory
 !PREFERENCES_DIROTHER;Other
@@ -643,6 +648,8 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_PREPROCESS_DARKFRAME;Dark frame
+!TP_PREPROCESS_DFAUTOSELECT;Auto selection
 !TP_RESIZE_BICUBIC;Bicubic
 !TP_RESIZE_BICUBICSF;Bicubic (Softer)
 !TP_RESIZE_BICUBICSH;Bicubic (Sharper)
@@ -653,6 +660,7 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_RESIZE_H;H:
 !TP_RESIZE_HEIGHT;Height
 !TP_RESIZE_LABEL;Resize
+!TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_METHOD;Method:
 !TP_RESIZE_NEAREST;Nearest
 !TP_RESIZE_SCALE;Scale
@@ -685,8 +693,12 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_SHARPENING_THRESHOLD;Threshold
 !TP_SHARPENING_USM;Unsharp Mask
 !TP_VIGNETTING_AMOUNT;Amount
+!TP_VIGNETTING_CENTER;Center
+!TP_VIGNETTING_CENTER_X;Center X
+!TP_VIGNETTING_CENTER_Y;Center Y
 !TP_VIGNETTING_LABEL;Vignetting Correction
 !TP_VIGNETTING_RADIUS;Radius
+!TP_VIGNETTING_STRENGTH;Strength
 !TP_WBALANCE_AUTO;Auto
 !TP_WBALANCE_CAMERA;Camera
 !TP_WBALANCE_CUSTOM;Custom

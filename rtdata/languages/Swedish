@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -260,7 +260,7 @@ MAIN_BUTTON_QUEUE;Placera i behandlingskön
 MAIN_BUTTON_SAVE;Spara bild
 MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild <b>Ctrl+S</b>
-MAIN_BUTTON_SENDTOEDITOR;Skicka till externt bildbehandlingsprogram
+MAIN_BUTTON_SENDTOEDITOR;Redigera i externt program
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
@@ -691,6 +691,9 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 
 
 !CURVEEDITOR_NURBS;Control cage
+!FILEBROWSER_AUTODARKFRAME;Auto dark frame
+!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
+!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !HISTORY_MSG_78;Data specified for resize
 !HISTORY_MSG_89;Directional pyramid
 !HISTORY_MSG_90;Directional pyramid luminance
@@ -726,7 +729,16 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 !IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+!PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_LINEDENOISE;Line noise filter
 !TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
 !TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_PREPROCESS_DARKFRAME;Dark frame
+!TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RESIZE_LANCZOS;Lanczos
+!TP_VIGNETTING_CENTER;Center
+!TP_VIGNETTING_CENTER_X;Center X
+!TP_VIGNETTING_CENTER_Y;Center Y
+!TP_VIGNETTING_STRENGTH;Strength
