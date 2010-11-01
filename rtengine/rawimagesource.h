@@ -54,7 +54,7 @@ class RawImageSource : public ImageSource {
         int W, H;
         ColorTemp wb;
         ProgressListener* plistener;
-        int scale_mul[4]; // multiplier for each color
+        float scale_mul[4]; // multiplier for each color
         int cblack[4];    // black offsets
         double camwb_red;
         double camwb_green;
