@@ -39,6 +39,7 @@ Resize::Resize () : maxw(100000), maxh(100000) {
 	method->append_text (M("TP_RESIZE_BICUBICSH"));
 	method->append_text (M("TP_RESIZE_DOWNSCALEB"));
 	method->append_text (M("TP_RESIZE_DOWNSCALEF"));
+	method->append_text (M("TP_RESIZE_LANCZOS"));
 	method->set_active (0);
 
     combos->attach (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"))), 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -130,6 +131,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
         method->set_active (5);
     else if (pp->resize.method == "Downscale (Faster)")
         method->set_active (6);
+    else if (pp->resize.method == "Lanczos")
+        method->set_active (7);
 
     wDirty = false;
     hDirty = false;
@@ -170,6 +173,8 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->resize.method = "Downscale (Better)";
     else if (method->get_active_row_number() == 6) 
         pp->resize.method = "Downscale (Faster)";
+    else if (method->get_active_row_number() == 7) 
+        pp->resize.method = "Lanczos";
         
     pp->resize.dataspec = spec->get_active_row_number();
     pp->resize.width = round (w->get_value ());

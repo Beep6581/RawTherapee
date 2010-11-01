@@ -98,9 +98,9 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
         }
         delete cfs;
     }
-    // if not, create a new one
-    if (!res) {
 
+	// if not, create a new one
+    if (!res) {
         res = new Thumbnail (this, fname, md5);
         if (!res->isSupported ()) {
             delete res;
@@ -241,15 +241,9 @@ void CacheManager::clearThumbImages () {
     deleteDir ("images");
     deleteDir ("aehistograms");
     deleteDir ("embprofiles");
-    
-    // re-generate thumbnail images of open thumbnails
-    //string_thumb_map::iterator i;
-    //for (i=openEntries.begin(); i!=openEntries.end(); i++)
-    //    i->second->generateThumbnailImage ();
 }
 
 void CacheManager::clearProfiles () {
-
     Glib::Mutex::Lock lock(mutex_);
 
     deleteDir ("profiles");

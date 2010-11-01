@@ -131,13 +131,7 @@ void Thumbnail::_generateThumbnailImage () {
 	generateExifDateTimeStrings ();
 }
 
-void Thumbnail::generateThumbnailImage () {
-	Glib::Mutex::Lock lock(mutex);
-	_generateThumbnailImage();
-}
-
 bool Thumbnail::isSupported () {
-
     return cfs.supported;
 }
 
