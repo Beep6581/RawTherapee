@@ -4,9 +4,6 @@
 #02 01.02.2009
 #03 23.10.2010
 #04 (Slapo)
-
-
-
 ADJUSTER_RESET_TO_DEFAULT;Resetovať na predvolené nastavenia
 BATCHQUEUE_AUTOSTART;Auto štart
 BATCH_PROCESSING;Dávkové spracovanie
@@ -132,12 +129,11 @@ HISTOGRAM_TOOLTIP_B;Zobraziť/Schovať MODRÝ histogram
 HISTOGRAM_TOOLTIP_G;Zobraziť/Schovať ZELENÝ histogram
 HISTOGRAM_TOOLTIP_L;Zobraziť/Schovať histogram CIELAB svietivosti
 HISTOGRAM_TOOLTIP_R;Zobraziť/Schovať ČERVENÝ histogram
+HISTORY_CHANGED;Zmenené
 HISTORY_CUSTOMCURVE;Vlastná krivka
 HISTORY_DELSNAPSHOT;Odstrániť Snímok
 HISTORY_FROMCLIPBOARD;Zo schránky
-HISTORY_CHANGED;Zmenené
 HISTORY_LABEL;História
-HISTORY_MSG_1;Fotka načítaná
 HISTORY_MSG_10;Kompresia tieňov
 HISTORY_MSG_11;Krivka tónov
 HISTORY_MSG_12;Auto expozícia
@@ -148,7 +144,7 @@ HISTORY_MSG_16;Čierna svietivosti
 HISTORY_MSG_17;Kompresia najvyšších svetiel v oblasti svietivosti
 HISTORY_MSG_18;Kompresia tieňov v oblasti svietivosti
 HISTORY_MSG_19;Krivka svietivosti
-HISTORY_MSG_2;Profil načítaný
+HISTORY_MSG_1;Fotka načítaná
 HISTORY_MSG_20;Doostrenie
 HISTORY_MSG_21;Polomer doostrenia
 HISTORY_MSG_22;Množstvo doostrenia
@@ -159,7 +155,7 @@ HISTORY_MSG_26;Tolerancia okrajov pri doostrení
 HISTORY_MSG_27;Kontrola svätožiary pri doostrení
 HISTORY_MSG_28;Množstvo kontroly svätožiary
 HISTORY_MSG_29;Doostrovacia metóda
-HISTORY_MSG_3;Profil zmenený
+HISTORY_MSG_2;Profil načítaný
 HISTORY_MSG_30;Polomer dekonvolúcie
 HISTORY_MSG_31;Množstvo dekonvolúcie
 HISTORY_MSG_32;Tlmenie dekonvolúcie
@@ -170,7 +166,7 @@ HISTORY_MSG_36;Hranica sýtosti
 HISTORY_MSG_37;Zosilnenie farieb
 HISTORY_MSG_38;Metóda vyváženia bielej
 HISTORY_MSG_39;Farebná teplota
-HISTORY_MSG_4;História prehliadania
+HISTORY_MSG_3;Profil zmenený
 HISTORY_MSG_40;Nádych vyváženia bielej
 HISTORY_MSG_41;Farebný posun "A"
 HISTORY_MSG_42;Farebný posun "B"
@@ -181,7 +177,7 @@ HISTORY_MSG_46;Farebné odšumenie
 HISTORY_MSG_47;Polomer farebného odšumenia
 HISTORY_MSG_48;Tolerancia okrajov farebného odšumenia
 HISTORY_MSG_49;Citlivosť na okraje pri farebnom odšumení
-HISTORY_MSG_5;Jas
+HISTORY_MSG_4;História prehliadania
 HISTORY_MSG_50;Nástroj Tiene/Najvyššie svetlá
 HISTORY_MSG_51;Zosilnenie najvyšších svetiel
 HISTORY_MSG_52;Zosilnenie tieňov
@@ -192,7 +188,7 @@ HISTORY_MSG_56;Polomer Tiene/Najvyššie svetlá
 HISTORY_MSG_57;Hrubé otočenie
 HISTORY_MSG_58;Horizontálne preklápanie
 HISTORY_MSG_59;Vertikálne preklápanie
-HISTORY_MSG_6;Kontrast
+HISTORY_MSG_5;Jas
 HISTORY_MSG_60;Otočenie
 HISTORY_MSG_61;Otočenie
 HISTORY_MSG_62;Korekcia zakrivenia objektívu
@@ -203,7 +199,7 @@ HISTORY_MSG_66;Obnova najvyšších svetiel
 HISTORY_MSG_67;Množstvo obnovy najvyšších svetiel
 HISTORY_MSG_68;Metóda obnovy najvyšších svetiel
 HISTORY_MSG_69;Pracovný farebný priestor
-HISTORY_MSG_7;Čierna
+HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Výstupný farebný priestor
 HISTORY_MSG_71;Vstupný farebný priestor
 HISTORY_MSG_72;Korekcia vignetácie
@@ -214,7 +210,7 @@ HISTORY_MSG_76;Exif Metadáta
 HISTORY_MSG_77;IPTC Metadáta
 HISTORY_MSG_78;Zadané údaje pre zmenu veľkosti 
 HISTORY_MSG_79;Zmena veľkosti podľa šírky
-HISTORY_MSG_8;Kompenzácia expozície
+HISTORY_MSG_7;Čierna
 HISTORY_MSG_80;Zmena veľkosti podľa výšky
 HISTORY_MSG_81;Zmena veľkosti povolená
 HISTORY_MSG_82;Profil zmenený
@@ -224,10 +220,11 @@ HISTORY_MSG_85;Koeficienty vlnky
 HISTORY_MSG_86;Vyrovnávač vlnky
 HISTORY_MSG_87;Impulzná redukcia šumu
 HISTORY_MSG_89;Smerová pyramída
-HISTORY_MSG_9;Kompresia najvyšších svetiel
+HISTORY_MSG_8;Kompenzácia expozície
 HISTORY_MSG_90;Svietivosť smerovej pyramídy
 HISTORY_MSG_91;Farebnosť smerovej pyramídy
 HISTORY_MSG_92;Gamma smerovej pyramídy
+HISTORY_MSG_9;Kompresia najvyšších svetiel
 HISTORY_NEWSNAPSHOT;Nový Snímok
 HISTORY_NEWSNAPSHOTAS;Ako...
 HISTORY_NEWSSDIALOGLABEL;Menovka snímku:
@@ -298,8 +295,8 @@ MAIN_BUTTON_PUTTOQUEUE;Vložiť do radu
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Vložiť do radu
 MAIN_BUTTON_SAVE;Uložiť obrázok
-MAIN_BUTTON_SAVE_TOOLTIP;Uložiť súčasný obrázok <b>Ctrl+S</b>
 MAIN_BUTTON_SAVEAS;Ako...
+MAIN_BUTTON_SAVE_TOOLTIP;Uložiť súčasný obrázok <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Odoslať do editora
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Upraviť súčasný obrázok v externom editore <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Ukončiť zobrazenie na celú obrazovku
@@ -390,7 +387,6 @@ PREFERENCES_APPLNEXTSTARTUP;Aplikovaný pri ďalšom spustení
 PREFERENCES_BATCH_PROCESSING;dávkové spracovanie
 PREFERENCES_BEHAVIOR;Správanie sa
 PREFERENCES_BLINKCLIPPED;Blikať orezanými miestami
-PREFERENCES_CACORRECTION;Použiť automatickú úpravu CA
 PREFERENCES_CACHECLEARALL;Vyčistiť všetko
 PREFERENCES_CACHECLEARPROFILES;Vyčistiť profily
 PREFERENCES_CACHECLEARTHUMBS;Vyčistiť zmenšeniny
@@ -398,11 +394,12 @@ PREFERENCES_CACHEFORMAT1;Vlastné (rýchlejšie a kvalitnejšie)
 PREFERENCES_CACHEFORMAT2;JPEG (menšia veľkosť na disku)
 PREFERENCES_CACHEMAXENTRIES;Maximálny počet vstupov v cache
 PREFERENCES_CACHEOPTS;Možnosti cache
-PREFERENCES_CACHESTRAT;Stratégia použitia cache
 PREFERENCES_CACHESTRAT1;Uprednostniť rýchlosť pred malou spotrebou pamäte
 PREFERENCES_CACHESTRAT2;Uprednostniť malú spotrebu pamäte pred rýchlosťou
+PREFERENCES_CACHESTRAT;Stratégia použitia cache
 PREFERENCES_CACHETHUMBFORM;Formát zmenšenín pre cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximálna výška zmenšenín
+PREFERENCES_CACORRECTION;Použiť automatickú úpravu CA
 PREFERENCES_CLEARDLG_LINE1;Čistím cache
 PREFERENCES_CLEARDLG_LINE2;Môže to pár sekúnd trvať.
 PREFERENCES_CLEARDLG_TITLE;Prosím, čakajte.
@@ -720,3 +717,28 @@ ZOOMPANEL_ZOOM100;Priblíženie na 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>F</b>
 ZOOMPANEL_ZOOMIN;Priblížiť <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!FILEBROWSER_AUTODARKFRAME;Auto dark frame
+!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
+!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
+!NAVIGATOR_LAB_A_NA;A = n/a
+!NAVIGATOR_LAB_A_VALUE;A = %1
+!NAVIGATOR_LAB_B_NA;B = n/a
+!NAVIGATOR_LAB_B_VALUE;B = %1
+!NAVIGATOR_LAB_L_NA;L = n/a
+!NAVIGATOR_LAB_L_VALUE;L = %1
+!PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_DIRDARKFRAMES;Dark frames directory
+!TP_PREPROCESS_DARKFRAME;Dark frame
+!TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RESIZE_LANCZOS;Lanczos
+!TP_VIGNETTING_CENTER;Center
+!TP_VIGNETTING_CENTER_X;Center X
+!TP_VIGNETTING_CENTER_Y;Center Y
+!TP_VIGNETTING_STRENGTH;Strength
