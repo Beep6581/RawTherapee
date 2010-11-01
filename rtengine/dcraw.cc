@@ -111,17 +111,27 @@ typedef unsigned char uchar;
 typedef unsigned short ushort;
 
 // RT specify thread local storage
-/*#ifdef __GNUC__
+#ifdef __GNUC__
 #define THREAD_LOCAL static __thread
 #define THREAD_LOCK  
 #else
-#define THREAD_LOCAL
+#define THREAD_LOCAL static
 #define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
-#endif*/
+#endif
 
-// use this for gcc<=4.2 on OSX
+// patch for gcc<=4.2 on OSX
+#ifdef __APPLE__
+#define GCC_VERSION (__GNUC__ * 10000 \
+                               + __GNUC_MINOR__ * 100 \
+                               + __GNUC_PATCHLEVEL__)
+#if GCC_VERSION < 40300
+#undef THREAD_LOCAL
+#undef THREAD_LOCK
 #define THREAD_LOCAL static 
 #define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
+#endif
+#endif
+
 
 /*
    All global variables are defined here, and all functions that
@@ -8946,7 +8956,6 @@ Glib::Mutex* dcrMutex=NULL;
 
 int RawImage::loadRaw (bool loadData) {
 
-  Glib::Mutex::Lock lock(*dcrMutex); // auto unlock
   THREAD_LOCK
 
   ifname = fname.c_str();
