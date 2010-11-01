@@ -1,4 +1,3 @@
-
 #00 Deutsch
 #01 (keenonkites; Aktualisierte Version für 2.3 beta2)
 #02 (phberlin; basiert auf keenonkites' Erstübersetzung)
@@ -10,6 +9,7 @@
 #08 4.4.2008: Anpassungen für 2.4
 #09 Leichte Anpassungen (keenonkites/klonk)
 #10 Erweiterung (oduis)
+#11 Erweiterung (oduis)
 ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
@@ -54,6 +54,7 @@ EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
 FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_ARRANGEMENTHINT;Wechseln zwischen vertikaler und horizontaler Ausrichtung der Voransichten
+FILEBROWSER_AUTODARKFRAME;Autom. Dunkelbild
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COPYPROFILE;Profil kopieren
 FILEBROWSER_CURRENT_NAME;Aktueller Name:
@@ -66,6 +67,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Ein-/Ausschalten des Exif Filters im Datei-Brows
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGS;Einstellungen
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändern der Einstellungen des Exif Filters
+FILEBROWSER_MOVETODARKFDIR;In Dunkelbild-Verzeichnis verschieben
 FILEBROWSER_NEW_NAME;Neuer Name:
 FILEBROWSER_PARTIALPASTEPROFILE;Profil selektiv einfügen
 FILEBROWSER_PASTEPROFILE;Profil einfügen
@@ -89,6 +91,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Einstellungen
 FILEBROWSER_PROCESSINGSETTINGSHINT;Einstellen von Ausgabeformat und Ausgabeverzeichnis
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" nach:
+FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
 FILEBROWSER_SHOWDIRHINT;Alle Bilder im Verzeichnis zeigen
 FILEBROWSER_SHOWEXIFINFO;EXIF Info anzeigen
 FILEBROWSER_SHOWQUEUEHINT;Inhalt der Warteschlange zeigen
@@ -346,19 +349,25 @@ MAIN_TOOLTIP_QINFO;Kurze Info über das Bild
 MAIN_TOOLTIP_SAVE;Speichere Bild im Standard-Verzeichnis
 MAIN_TOOLTIP_SAVEAS;Speichere Bild in anderem Verzeichnis
 MAIN_TOOLTIP_TOGGLE;Vorher/Nachher Ansicht unschalten
-NAVIGATOR_B_NA;B = n/a
+NAVIGATOR_B_NA;B = k.a.
 NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = n/a
+NAVIGATOR_G_NA;G = k.a.
 NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = n/a
+NAVIGATOR_H_NA;H = k.a.
 NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_R_NA;R = n/a
+NAVIGATOR_LAB_A_NA;A = k.a.
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = k.a.
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = k.a.
+NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_R_NA;R = k.a.
 NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/a
+NAVIGATOR_S_NA;S = k.a.
 NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/a
+NAVIGATOR_V_NA;V = k.a.
 NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
+NAVIGATOR_XY_NA;x = k.a., y = k.a.
 PARTIALPASTE_BASICGROUP;Gruppe Basiseinstellungen
 PARTIALPASTE_CACORRECTION;Farbsaum-Entfernung
 PARTIALPASTE_COARSETRANS;90 Grad Rotieren / Spiegeln
@@ -411,6 +420,8 @@ PREFERENCES_CLEARDLG_LINE2;Das kann einige Sekunden dauern.
 PREFERENCES_CLEARDLG_TITLE;Bitte warten
 PREFERENCES_CLIPPINGIND;Anzeige zu helle/zu dunkle Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
+PREFERENCES_DARKFRAME;Dunkelbild
+PREFERENCES_DIRDARKFRAMES;Dunkelbild-Verzeichnis
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%y</b><i> : Jahr</i>\n<b>%m</b><i> : Monat</i>\n<b>%d</b><i> : Tag</i>\n<i>\nDas Deutsche Datumsformat zum Beispiel ist:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;DCB Verfeinerungsschritt durchführen
@@ -655,6 +666,8 @@ TP_LUMADENOISE_RADIUS;Radius
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
+TP_PREPROCESS_DARKFRAME;Dunkelbild
+TP_PREPROCESS_DFAUTOSELECT;Autom. Auswahl
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (Schärfer)
@@ -665,6 +678,7 @@ TP_RESIZE_FULLSIZE;Volle Bildgröße:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höhe
 TP_RESIZE_LABEL;Größe ändern
+TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Methode: 
 TP_RESIZE_NEAREST;Nächste
 TP_RESIZE_SCALE;Maßstab
@@ -699,8 +713,12 @@ TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwellwert
 TP_SHARPENING_USM;Unschärfemaske
 TP_VIGNETTING_AMOUNT;Stärke
+TP_VIGNETTING_CENTER;Zentrum
+TP_VIGNETTING_CENTER_X;Zentrum X
+TP_VIGNETTING_CENTER_Y;Zentrum Y
 TP_VIGNETTING_LABEL;Vignettierungs-Korrektur
 TP_VIGNETTING_RADIUS;Radius
+TP_VIGNETTING_STRENGTH;Stärke-Faktor
 TP_WBALANCE_AUTO;Automatisch
 TP_WBALANCE_CAMERA;Kamera
 TP_WBALANCE_CUSTOM;Benutzerdefiniert
@@ -730,22 +748,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!NAVIGATOR_LAB_A_NA;A = n/a
-!NAVIGATOR_LAB_A_VALUE;A = %1
-!NAVIGATOR_LAB_B_NA;B = n/a
-!NAVIGATOR_LAB_B_VALUE;B = %1
-!NAVIGATOR_LAB_L_NA;L = n/a
-!NAVIGATOR_LAB_L_VALUE;L = %1
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RESIZE_LANCZOS;Lanczos
-!TP_VIGNETTING_CENTER;Center
-!TP_VIGNETTING_CENTER_X;Center X
-!TP_VIGNETTING_CENTER_Y;Center Y
-!TP_VIGNETTING_STRENGTH;Strength
