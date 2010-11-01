@@ -475,6 +475,7 @@ PREFERENCES_TAB_IMPROC;Обработка изображения
 PREFERENCES_TAB_OUTPUT;Сохранение
 PREFERENCES_THUMBSIZE;Размер миниатюры
 PREFERENCES_USESYSTEMTHEME;Использовать системную тему оформления
+PREFERENCES_WORKFLOW;Стиль работы
 PROFILEPANEL_FILEDLGFILTERANY;Любые файлы
 PROFILEPANEL_FILEDLGFILTERPP;Профили постобработки
 PROFILEPANEL_LABEL;Профиль постобработки
@@ -645,6 +646,8 @@ TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикальная
 TP_PREPROCESS_DARKFRAME;Темный кадр
 TP_PREPROCESS_DFAUTOSELECT;Автовыбор
+TP_RAWPANEL_DEMOSAICING;Демозаик
+TP_RAWPANEL_PREPROCESSING;Предобработка
 TP_RESIZE_BICUBICSF;Мягкий бикубический
 TP_RESIZE_BICUBICSH;Резкий бикубический
 TP_RESIZE_BICUBIC;Бикубический
@@ -725,6 +728,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!MAIN_TAB_RAW;RAW
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
 !NAVIGATOR_G_NA;G = n/a
@@ -744,4 +748,3 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
-!PREFERENCES_WORKFLOW;Workflow

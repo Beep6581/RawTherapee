@@ -37,8 +37,8 @@ TP_HLREC_COLOR;Colour Propagation
 
 
 !ADJUSTER_RESET_TO_DEFAULT;Reset to default
-!BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
+!BATCHQUEUE_AUTOSTART;Auto start
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_FILEDLGFILTERANY;Any files
@@ -68,14 +68,14 @@ TP_HLREC_COLOR;Colour Propagation
 !EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 !EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 !EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-!EXIFPANEL_KEEP;Keep
 !EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
-!EXIFPANEL_REMOVE;Remove
+!EXIFPANEL_KEEP;Keep
 !EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
-!EXIFPANEL_RESET;Reset
-!EXIFPANEL_RESETALL;Reset All
+!EXIFPANEL_REMOVE;Remove
 !EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+!EXIFPANEL_RESETALL;Reset All
 !EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+!EXIFPANEL_RESET;Reset
 !EXIFPANEL_SUBDIRECTORY;Subdirectory
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE;Apply profile
@@ -91,8 +91,8 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_EXIFFILTERAPPLY;Apply
 !FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 !FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-!FILEBROWSER_EXIFFILTERSETTINGS;Setup
 !FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+!FILEBROWSER_EXIFFILTERSETTINGS;Setup
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_NEW_NAME;New name:
 !FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
@@ -113,8 +113,8 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_POPUPTRASH;Move to trash
 !FILEBROWSER_POPUPUNRANK;Unrank
 !FILEBROWSER_POPUPUNTRASH;Remove from trash
-!FILEBROWSER_PROCESSINGSETTINGS;Settings
 !FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+!FILEBROWSER_PROCESSINGSETTINGS;Settings
 !FILEBROWSER_RENAMEDLGLABEL;Rename file
 !FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
@@ -128,10 +128,10 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star <b>5</b>
 !FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
 !FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>
-!FILEBROWSER_STARTPROCESSING;Start processing
 !FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-!FILEBROWSER_STOPPROCESSING;Stop processing
+!FILEBROWSER_STARTPROCESSING;Start processing
 !FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+!FILEBROWSER_STOPPROCESSING;Stop processing
 !FILEBROWSER_THUMBSIZE;Thumb. size
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 !FILEBROWSER_USETEMPLATE;Use template:
@@ -141,10 +141,10 @@ TP_HLREC_COLOR;Colour Propagation
 !GENERAL_AFTER;After
 !GENERAL_BEFORE;Before
 !GENERAL_CANCEL;Cancel
-!GENERAL_DISABLE;Disable
 !GENERAL_DISABLED;Disabled
-!GENERAL_ENABLE;Enable
+!GENERAL_DISABLE;Disable
 !GENERAL_ENABLED;Enabled
+!GENERAL_ENABLE;Enable
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_LANDSCAPE;Landscape
 !GENERAL_LOAD;Load
@@ -288,38 +288,38 @@ TP_HLREC_COLOR;Colour Propagation
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 !IPTCPANEL_HEADLINE;Headline
 !IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-!IPTCPANEL_INSTRUCTIONS;Instructions
 !IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-!IPTCPANEL_KEYWORDS;Keywords
+!IPTCPANEL_INSTRUCTIONS;Instructions
 !IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+!IPTCPANEL_KEYWORDS;Keywords
 !IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-!IPTCPANEL_RESET;Reset
 !IPTCPANEL_RESETHINT;Reset to profile default
-!IPTCPANEL_SOURCE;Source
+!IPTCPANEL_RESET;Reset
 !IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+!IPTCPANEL_SOURCE;Source
 !IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-!IPTCPANEL_TITLE;Title
+!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-!IPTCPANEL_TRANSREFERENCE;Trans. Reference
+!IPTCPANEL_TITLE;Title
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+!IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !MAIN_BUTTON_EXIT;Exit
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PREFERENCES;Preferences
 !MAIN_BUTTON_PUTTOQUEUE;Put to queue
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_QUEUE;Put to queue
-!MAIN_BUTTON_SAVE;Save Image
 !MAIN_BUTTON_SAVEAS;As...
+!MAIN_BUTTON_SAVE;Save Image
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR;Send to editor
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 !MAIN_FRAME_BATCHQUEUE;Batch Queue
 !MAIN_FRAME_FILEBROWSER;File Browser
-!MAIN_FRAME_PLACES;Places
 !MAIN_FRAME_PLACES_ADD;Add
 !MAIN_FRAME_PLACES_DEL;Del
+!MAIN_FRAME_PLACES;Places
 !MAIN_FRAME_RECENT;Recent Folders
 !MAIN_MSG_ALREADYEXISTS;File already exists.
 !MAIN_MSG_CANNOTLOAD;Cannot load image
@@ -342,6 +342,7 @@ TP_HLREC_COLOR;Colour Propagation
 !MAIN_TAB_ICM;ICM
 !MAIN_TAB_IPTC;IPTC
 !MAIN_TAB_METADATA;Metadata
+!MAIN_TAB_RAW;RAW
 !MAIN_TAB_TAGGING;Tagging
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -351,8 +352,8 @@ TP_HLREC_COLOR;Colour Propagation
 !MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication
 !MAIN_TOOLTIP_PREFERENCES;Set preferences
 !MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
-!MAIN_TOOLTIP_SAVE;Save image to the default folder
 !MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
+!MAIN_TOOLTIP_SAVE;Save image to the default folder
 !MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
@@ -455,17 +456,17 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_MONITORICC;Monitor Profile
 !PREFERENCES_MULTITAB;Multiple tabs mode
-!PREFERENCES_OUTDIR;Output Directory
-!PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
+!PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
-!PREFERENCES_OUTDIRTEMPLATE;Use Template
+!PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRTEMPLATE;Use Template
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
-!PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+!PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -532,8 +533,8 @@ TP_HLREC_COLOR;Colour Propagation
 !SAVEDLG_JPGFILTER;JPEG files
 !SAVEDLG_PNGCOMPR;PNG Compression
 !SAVEDLG_PNGFILTER;PNG files
-!SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+!SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 !SAVEDLG_SAVEIMMEDIATELY;Save immediately
 !SAVEDLG_SAVESPP;Save processing parameters with image
@@ -650,6 +651,8 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_PERSPECTIVE_VERTICAL;Vertical
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RAWPANEL_PREPROCESSING;Preprocessing
 !TP_RESIZE_BICUBIC;Bicubic
 !TP_RESIZE_BICUBICSF;Bicubic (Softer)
 !TP_RESIZE_BICUBICSH;Bicubic (Sharper)
@@ -657,16 +660,16 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 !TP_RESIZE_FULLSIZE;Full Image Size:
-!TP_RESIZE_H;H:
 !TP_RESIZE_HEIGHT;Height
+!TP_RESIZE_H;H:
 !TP_RESIZE_LABEL;Resize
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_METHOD;Method:
 !TP_RESIZE_NEAREST;Nearest
 !TP_RESIZE_SCALE;Scale
 !TP_RESIZE_SPECIFY;Specify:
-!TP_RESIZE_W;W:
 !TP_RESIZE_WIDTH;Width
+!TP_RESIZE_W;W:
 !TP_ROTATE_DEGREE;Degree
 !TP_ROTATE_LABEL;Rotate
 !TP_ROTATE_SELECTLINE;    Select Straight Line
@@ -686,10 +689,10 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_SHARPENING_METHOD;Method
 !TP_SHARPENING_ONLYEDGES;Sharpen only edges
 !TP_SHARPENING_RADIUS;Radius
-!TP_SHARPENING_RLD;RL Deconvolution
 !TP_SHARPENING_RLD_AMOUNT;Amount
 !TP_SHARPENING_RLD_DAMPING;Damping
 !TP_SHARPENING_RLD_ITERATIONS;Iterations
+!TP_SHARPENING_RLD;RL Deconvolution
 !TP_SHARPENING_THRESHOLD;Threshold
 !TP_SHARPENING_USM;Unsharp Mask
 !TP_VIGNETTING_AMOUNT;Amount

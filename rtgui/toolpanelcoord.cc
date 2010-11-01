@@ -84,9 +84,9 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (lensgeom->getPackBox(), distortion,   M("TP_DISTORTION_LABEL"));   toolPanels.push_back (distortion);
     addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL")); toolPanels.push_back (cacorrection);
     addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));   toolPanels.push_back (vignetting);
-    addPanel (colorPanel, icm,                  M("TP_ICM_LABEL"));            toolPanels.push_back (icm);
-    addPanel (rawPanel, rawprocess,             "Demosaicing");                toolPanels.push_back (rawprocess);
-    addPanel (rawPanel, preprocess,             "Pre-processing");             toolPanels.push_back (preprocess);
+    addPanel (colorPanel, icm,                  M("TP_ICM_LABEL"));             toolPanels.push_back (icm);
+    addPanel (rawPanel, rawprocess,             M("TP_RAWPANEL_DEMOSAICING"));  toolPanels.push_back (rawprocess);
+    addPanel (rawPanel, preprocess,             M("TP_RAWPANEL_PREPROCESSING"));toolPanels.push_back (preprocess);
 
     toolPanels.push_back (coarse);
     toolPanels.push_back (exifpanel);
@@ -119,7 +119,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toolPanelNotebook->append_page (*detailsPanelSW,   M("MAIN_TAB_DETAIL"));
     toolPanelNotebook->append_page (*colorPanelSW,     M("MAIN_TAB_COLOR"));
     toolPanelNotebook->append_page (*transformPanelSW, M("MAIN_TAB_TRANSFORM"));
-    toolPanelNotebook->append_page (*rawPanelSW,       "RAW");
+    toolPanelNotebook->append_page (*rawPanelSW,       M("MAIN_TAB_RAW"));
     toolPanelNotebook->append_page (*metadataPanel,    M("MAIN_TAB_METADATA"));
     toolPanelNotebook->set_current_page (0);
 

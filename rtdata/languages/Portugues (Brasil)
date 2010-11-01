@@ -1,4 +1,5 @@
 
+﻿#
 #00 Português Brasileiro
 #01 01.02.2010: Vitor da Silva Gonçalves
 ADJUSTER_RESET_TO_DEFAULT;Restaurar para o padrão
@@ -22,14 +23,14 @@ EXIFPANEL_ADDEDITHINT;Adicionar nova etiqueta ou editá-la
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Entre um valor
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Selecione uma etiqueta
 EXIFPANEL_ADDTAGDLG_TITLE;Adicionar/Editar etiqueta
-EXIFPANEL_KEEP;Manter
 EXIFPANEL_KEEPHINT;Manter as etiquetas selecionadas ao escrever arquivo de saída
-EXIFPANEL_REMOVE;Remover
+EXIFPANEL_KEEP;Manter
 EXIFPANEL_REMOVEHINT;Remover as etiquetas selecionadas ao escrever arquivo de saída
-EXIFPANEL_RESET;Restaurar
-EXIFPANEL_RESETALL;Restaurar Tudo
+EXIFPANEL_REMOVE;Remover
 EXIFPANEL_RESETALLHINT;Restaurar todas as etiquetas a seus valores originais
+EXIFPANEL_RESETALL;Restaurar Tudo
 EXIFPANEL_RESETHINT;Restaurar todas as etiquetas selecionadas a seus valores originais
+EXIFPANEL_RESET;Restaurar
 EXIFPANEL_SUBDIRECTORY;Subdiretório
 FILEBROWSER_APPLYPROFILE;Aplicar Perfil
 FILEBROWSER_ARRANGEMENTHINT;Alternar entre alinhamento vertical/horizontal das miniaturas
@@ -75,19 +76,19 @@ FILEBROWSER_SHOWRANK4HINT;Exibir imagens classificadas como 4 estrelas
 FILEBROWSER_SHOWRANK5HINT;Exibir imagens classificadas como 5 estrelas
 FILEBROWSER_SHOWTRASHHINT;Exibir conteúdo da lixeira
 FILEBROWSER_SHOWUNRANKHINT;Exibir imagens não classificadas
-FILEBROWSER_STARTPROCESSING;Iniciar Processamento
 FILEBROWSER_STARTPROCESSINGHINT;Iniciar processamento/salvar imagens da lista
-FILEBROWSER_STOPPROCESSING;Parar processamento
+FILEBROWSER_STARTPROCESSING;Iniciar Processamento
 FILEBROWSER_STOPPROCESSINGHINT;Para o processamento das imagens
+FILEBROWSER_STOPPROCESSING;Parar processamento
 FILEBROWSER_THUMBSIZE;Tamanho das Miniaturas
 FILEBROWSER_ZOOMINHINT;Aumentar Tamanho das Miniaturas
 FILEBROWSER_ZOOMOUTHINT;Diminuir Tamanho das Miniaturas
 GENERAL_ABOUT;Sobre
 GENERAL_CANCEL;Cancelar
-GENERAL_DISABLE;Desabilitar
 GENERAL_DISABLED;Desabilitado
-GENERAL_ENABLE;Habilitar
+GENERAL_DISABLE;Desabilitar
 GENERAL_ENABLED;Habilitado
+GENERAL_ENABLE;Habilitar
 GENERAL_LANDSCAPE;Paisagem
 GENERAL_LOAD;Carregar
 GENERAL_NA;n/a
@@ -210,10 +211,10 @@ ICMPANEL_WORKINGPROFILE;Prefil de atuação
 IMAGEAREA_DETAILVIEW;visualisação de detalhes
 IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Nome do criador do objeto, escritor, fotógrafo o artista gráfico.
-IPTCPANEL_AUTHORSPOSITION;Posição do autor
 IPTCPANEL_AUTHORSPOSITIONHINT;Título do criador ou criadores do objeto.
-IPTCPANEL_CAPTION;Legenda
+IPTCPANEL_AUTHORSPOSITION;Posição do autor
 IPTCPANEL_CAPTIONHINT;Uma descrição dos dados em forma de texto.
+IPTCPANEL_CAPTION;Legenda
 IPTCPANEL_CAPTIONWRITER;Autor da Legenda
 IPTCPANEL_CAPTIONWRITERHINT;o nome da pessoa envolvida na escrita, edição ou correção da imagem ou legenda/resumo.
 IPTCPANEL_CATEGORY;Categoria
@@ -223,44 +224,44 @@ IPTCPANEL_CITYHINT;Cidade de origem da imagem.
 IPTCPANEL_COPYHINT;Copiar configurações IPTC da área de transferência
 IPTCPANEL_COPYRIGHT;Direios autorais (Copyright).
 IPTCPANEL_COPYRIGHTHINT;qualquer informação necessário sobre os direitos autorais.
-IPTCPANEL_COUNTRY;País
 IPTCPANEL_COUNTRYHINT;O nome do país onde a imagem foi criada.
+IPTCPANEL_COUNTRY;País
 IPTCPANEL_CREDIT;Créditos
 IPTCPANEL_CREDITHINT;Identifica o provedor da imagem, nçao necessariamente o proprietário/criador.
 IPTCPANEL_DATECREATED;Data de criação
 IPTCPANEL_DATECREATEDHINT;A data em que o conteúdo intelectual da imagem foi criado; Formato: AAAAMMDD.
 IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Restaura para IPTC os dados encaixados na imagem
-IPTCPANEL_HEADLINE;Título
 IPTCPANEL_HEADLINEHINT;Uma entrada publicável que com uma sinopse dos conteúdos da imagem.
-IPTCPANEL_INSTRUCTIONS;Instruções
+IPTCPANEL_HEADLINE;Título
 IPTCPANEL_INSTRUCTIONSHINT;Outras instruções editorias sobre o uso da imagem.
-IPTCPANEL_KEYWORDS;Palavras-chave
+IPTCPANEL_INSTRUCTIONS;Instruções
 IPTCPANEL_KEYWORDSHINT;Utilizado para indicar informações especificas.
+IPTCPANEL_KEYWORDS;Palavras-chave
 IPTCPANEL_PASTEHINT;colar configurações IPTC da área de transferência
-IPTCPANEL_PROVINCE;Província
 IPTCPANEL_PROVINCEHINT;o Estado/província de origem da imagem.
-IPTCPANEL_RESET;Restaurar
+IPTCPANEL_PROVINCE;Província
 IPTCPANEL_RESETHINT;Restaurar paara o padrão do perfil
+IPTCPANEL_RESET;Restaurar
 IPTCPANEL_SOURCE;Fonte
 IPTCPANEL_SOURCEHINT;o proprietário original do contepudo intelectual da imagem.
 IPTCPANEL_SUPPCATEGORIES; Categorias Adicionais
 IPTCPANEL_SUPPCATEGORIESHINT;Mais informações sobre o assunto da imagem.
-IPTCPANEL_TITLE;Título
 IPTCPANEL_TITLEHINT;Uma referência rápida da imagem.
-IPTCPANEL_TRANSREFERENCE;Trans. Referência
+IPTCPANEL_TITLE;Título
 IPTCPANEL_TRANSREFERENCEHINT;Um código representando a localização da transmissão original.
+IPTCPANEL_TRANSREFERENCE;Trans. Referência
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferências
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVE;Salvar Imagem
 MAIN_BUTTON_SAVEAS;Como...
+MAIN_BUTTON_SAVE;Salvar Imagem
 MAIN_BUTTON_SENDTOEDITOR;Enviar ao Editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Arquivo Já Existe.
 MAIN_MSG_CANNOTLOAD;Não foi possível carregar a imagem
@@ -289,8 +290,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Indicação de luz recortada
 MAIN_TOOLTIP_INDCLIPPEDS;Indicação de sombra recortada
 MAIN_TOOLTIP_PREFERENCES;Ajustar preferências
 MAIN_TOOLTIP_QINFO;Informações rápidas da imagem
-MAIN_TOOLTIP_SAVE;Salvar imagem na pasta padrão
 MAIN_TOOLTIP_SAVEAS;Salvar imagem em uma pasta selecionada
+MAIN_TOOLTIP_SAVE;Salvar imagem na pasta padrão
 PARTIALPASTE_BASICGROUP;Configurações básicas
 PARTIALPASTE_CACORRECTION;Correção C/A 
 PARTIALPASTE_COARSETRANS;Rotação de 90 graus
@@ -369,15 +370,15 @@ PREFERENCES_INTENT_SATURATION;Saturação
 PREFERENCES_LIVETHUMBNAILS;Miniaturas em tempo real (mais lento)
 PREFERENCES_MONITORICC;Monitorar perfil
 PREFERENCES_OUTDIR;Diretório de Saída
-PREFERENCES_OUTDIRFOLDER;Salvar em folder
 PREFERENCES_OUTDIRFOLDERHINT;Colocar as imagens salvas na pasta selecionada
+PREFERENCES_OUTDIRFOLDER;Salvar em folder
 PREFERENCES_OUTDIRHINT;<i>Você pode utilizar a seguinte formatação:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEsta formatação se refere aos diretórios e subdiretórios do caminho do arquivo raw.\n\nPor exemplo, se </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>foi aberto, significa que a formatação é:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSe você deseja salvar a imagem de saída onde está a original, escreva:\n</i><b>%p1/%f\n</b><i>\nSe você deseja salvar a imagem de saída em um diretório 'convertido' localizado no mesmo diretório que a original, escreva:\n</i><b>%p1/converted/%f\n</b><i>\nSe você deseja salvar a imagem de saída no diretório '/home/tom/converted' mantendo o mesmo subdiretório de datas, escreva:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Usar Template
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Você pode utilizar a seguinte formatação:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEsta formatação se refere aos diretórios e subdiretórios do caminho do arquivo raw.\n\npor exemplo, se </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>foi aberto, significa que a formatação é:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSe você deseja salvar a imagem de saída onde está a original, escreva:\n</i><b>%p1/%f\n</b><i>\nSe você deseja salvar a imagem de saída em um diretório 'convertido' localizado no mesmo diretório que a original, escreva:\n</i><b>%p1/converted/%f\n</b><i>\nSe você deseja salvar a imagem de saída no diretório '/home/tom/converted' mantendo o mesmo subdiretório de datas, escreva:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Extensões analisadas gramaticalmente 
+PREFERENCES_OUTDIRTEMPLATE;Usar Template
 PREFERENCES_PARSEDEXTADD;Adicionar Extensão
 PREFERENCES_PARSEDEXTADDHINT;escreva uma extensão e pressione este botão para adicionar à lista
 PREFERENCES_PARSEDEXTDELHINT;Apagar extensão selecionada da lista
+PREFERENCES_PARSEDEXT;Extensões analisadas gramaticalmente 
 PREFERENCES_PROFILEHANDLING;Manipulação de processamento de perfil
 PREFERENCES_PROFILELOADPR;Prioridade de carregamento de perfil
 PREFERENCES_PROFILEPRCACHE;Perfil no Cache
@@ -565,10 +566,10 @@ TP_SHARPENING_LABEL;Nitidez
 TP_SHARPENING_METHOD;Método
 TP_SHARPENING_ONLYEDGES;tornar nítido somente as bordas
 TP_SHARPENING_RADIUS;Raio
-TP_SHARPENING_RLD;RL Desconvolução
 TP_SHARPENING_RLD_AMOUNT;Quantidade
 TP_SHARPENING_RLD_DAMPING;Umedecimento
 TP_SHARPENING_RLD_ITERATIONS;Iterações
+TP_SHARPENING_RLD;RL Desconvolução
 TP_SHARPENING_THRESHOLD;Limiar
 TP_SHARPENING_USM;Máscara de Nitidez
 TP_VIGNETTING_AMOUNT;Quantidade
@@ -590,7 +591,6 @@ ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Pré-visualisação
 ZOOMBAR_SCALE;Escala
 ZOOMBAR_SMALL;Pequeno
-﻿#
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -598,8 +598,8 @@ ZOOMBAR_SMALL;Pequeno
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
+!BATCHQUEUE_AUTOSTART;Auto start
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -645,6 +645,7 @@ ZOOMBAR_SMALL;Pequeno
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
+!MAIN_TAB_RAW;RAW
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
@@ -724,6 +725,8 @@ ZOOMBAR_SMALL;Pequeno
 !TP_PERSPECTIVE_VERTICAL;Vertical
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RAWPANEL_PREPROCESSING;Preprocessing
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 !TP_RESIZE_HEIGHT;Height

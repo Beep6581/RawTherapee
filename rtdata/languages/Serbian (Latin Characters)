@@ -1,10 +1,9 @@
 
-#  Serbian translation
 #00 Serbian (Cyrilic)
 #01 by gpopac 2010-09-21
 ADJUSTER_RESET_TO_DEFAULT;Vrati na podrazumevano
-BATCHQUEUE_AUTOSTART;Sam započni
 BATCH_PROCESSING;obrada
+BATCHQUEUE_AUTOSTART;Sam započni
 CURVEEDITOR_CUSTOM;Proizvoljno
 CURVEEDITOR_DARKS;Tamno
 CURVEEDITOR_FILEDLGFILTERANY;Sve datoteke
@@ -34,14 +33,14 @@ EXIFPANEL_ADDEDITHINT;Dodaje novu oznaku ili uređuje postojeću
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Unesite vrednost
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Izaberite oznaku
 EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Izmeni oznaku
-EXIFPANEL_KEEP;Zadrži
 EXIFPANEL_KEEPHINT;Zadržava izabrane oznake pri upisu izlazne datoteke
-EXIFPANEL_REMOVE;Ukloni
+EXIFPANEL_KEEP;Zadrži
 EXIFPANEL_REMOVEHINT;Uklanja izabrane oznake pri upisu izlazne datoteke
-EXIFPANEL_RESET;Vrati
-EXIFPANEL_RESETALL;Vrati sve
+EXIFPANEL_REMOVE;Ukloni
 EXIFPANEL_RESETALLHINT;Vraća sve oznake na početne vrednosti
+EXIFPANEL_RESETALL;Vrati sve
 EXIFPANEL_RESETHINT;Vraća izabranu oznaku na početnu vrednosti
+EXIFPANEL_RESET;Vrati
 EXIFPANEL_SUBDIRECTORY;Poddirektorijum
 FILEBROWSER_ADDDELTEMPLATE;Dodaj/ukloni šablone...
 FILEBROWSER_APPLYPROFILE;Primeni profil
@@ -51,13 +50,13 @@ FILEBROWSER_COPYPROFILE;Umnoži profil
 FILEBROWSER_CURRENT_NAME;Trenutno ime:
 FILEBROWSER_DELETEDLGLABEL;Brisanje datoteke
 FILEBROWSER_DELETEDLGMSG;Da li sigurno želite da obrišete %1 datoteka?
-FILEBROWSER_EMPTYTRASH;Izbaci smeće
 FILEBROWSER_EMPTYTRASHHINT;Trajno briše datoteke iz smeća
-FILEBROWSER_EXIFFILTERAPPLY;Primeni
+FILEBROWSER_EMPTYTRASH;Izbaci smeće
 FILEBROWSER_EXIFFILTERAPPLYHINT;Uključuje/isključuje exif filter u razgledaču datoteka
+FILEBROWSER_EXIFFILTERAPPLY;Primeni
 FILEBROWSER_EXIFFILTERLABEL;Exif filter
-FILEBROWSER_EXIFFILTERSETTINGS;Podesi
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Menja podešavanja exif filtera
+FILEBROWSER_EXIFFILTERSETTINGS;Podesi
 FILEBROWSER_NEW_NAME;Novo ime:
 FILEBROWSER_PARTIALPASTEPROFILE;Delimično ubaci
 FILEBROWSER_PASTEPROFILE;Ubaci profil
@@ -77,8 +76,8 @@ FILEBROWSER_POPUPSELECTALL;Izaberi sve
 FILEBROWSER_POPUPTRASH;Premesti u smeće
 FILEBROWSER_POPUPUNRANK;Ukloni ocenu
 FILEBROWSER_POPUPUNTRASH;Ukloni iz smeća
-FILEBROWSER_PROCESSINGSETTINGS;Podešavanja
 FILEBROWSER_PROCESSINGSETTINGSHINT;Postavlja format datoteke i izlazni direktorijum
+FILEBROWSER_PROCESSINGSETTINGS;Podešavanja
 FILEBROWSER_RENAMEDLGLABEL;Preimenuj datoteku
 FILEBROWSER_RENAMEDLGMSG;Preimenuj datoteku „%1“ u:
 FILEBROWSER_SHOWDIRHINT;Prikazuje sve slike iz direktorijuma
@@ -91,10 +90,10 @@ FILEBROWSER_SHOWRANK4HINT;Prikazuje slike ocenjene sa 4 zvezdice
 FILEBROWSER_SHOWRANK5HINT;Prikazuje slike ocenjene sa 5 zvezdica
 FILEBROWSER_SHOWTRASHHINT;Prikazuje slike u smeću
 FILEBROWSER_SHOWUNRANKHINT;Prikaži neocenjene slike
-FILEBROWSER_STARTPROCESSING;Započni obradu
 FILEBROWSER_STARTPROCESSINGHINT;Počinje obradu i čuvanje zakazanih slika
-FILEBROWSER_STOPPROCESSING;Zaustavi obradu
+FILEBROWSER_STARTPROCESSING;Započni obradu
 FILEBROWSER_STOPPROCESSINGHINT;Zaustavlja obradu slika
+FILEBROWSER_STOPPROCESSING;Zaustavi obradu
 FILEBROWSER_THUMBSIZE;Pregled
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Pokreće obradu fotografija kada ih zakažete
 FILEBROWSER_USETEMPLATE;Iskoristi šablon:
@@ -104,10 +103,10 @@ GENERAL_ABOUT;O programu
 GENERAL_AFTER;Posle
 GENERAL_BEFORE;Pre
 GENERAL_CANCEL;Otkaži
-GENERAL_DISABLE;Isključi
 GENERAL_DISABLED;Isključeno
-GENERAL_ENABLE;Uključi
+GENERAL_DISABLE;Isključi
 GENERAL_ENABLED;Uključi
+GENERAL_ENABLE;Uključi
 GENERAL_HIGH_QUALITY;Visok kvalitet
 GENERAL_LANDSCAPE;Položeno
 GENERAL_LOAD;Učitaj
@@ -118,6 +117,7 @@ GENERAL_PORTRAIT;Uspravno
 GENERAL_SAVE;Sačuvaj
 GENERAL_UNCHANGED;(neizmenjeno)
 GENERAL_YES;Da
+﻿HISTOGRAM_BUTTON_B;P
 HISTOGRAM_BUTTON_G;Z
 HISTOGRAM_BUTTON_L;S
 HISTOGRAM_BUTTON_R;C
@@ -215,8 +215,8 @@ HISTORY_MSG_83;Kvalitetno svetlost/senke
 HISTORY_MSG_84;Ispravljanje perspektive
 HISTORY_MSG_8;Kompenzacija ekspozicije
 HISTORY_MSG_9;Sabijanje svetlog
-HISTORY_NEWSNAPSHOT;Dodaj
 HISTORY_NEWSNAPSHOTAS;Kao...
+HISTORY_NEWSNAPSHOT;Dodaj
 HISTORY_NEWSSDIALOGLABEL;Naziv snimka:
 HISTORY_NEWSSDIALOGTITLE;Dodaj novi snimak
 HISTORY_SETTO;Posavi na
@@ -238,14 +238,14 @@ ICMPANEL_WORKINGPROFILE;Radni profil
 IMAGEAREA_DETAILVIEW;Prikaz detalja
 IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Ime autora, npr. pisac, fotograf ili grafički dizajner (jedan po redu).
-IPTCPANEL_AUTHORSPOSITION;Zvanje autora
 IPTCPANEL_AUTHORSPOSITIONHINT;Zvanje jednog ili više autora (jedno po redi).
-IPTCPANEL_CAPTION;Naziv
+IPTCPANEL_AUTHORSPOSITION;Zvanje autora
 IPTCPANEL_CAPTIONHINT;Kratak opis dela (naslov — abstrakt).
-IPTCPANEL_CAPTIONWRITER;Pisac naslova
+IPTCPANEL_CAPTION;Naziv
 IPTCPANEL_CAPTIONWRITERHINT;Ime osobe koje je uključena u pisanje, uređivanje ili ispravljanje slike/nazica/apstrakta (pisac — urednik).
-IPTCPANEL_CATEGORY;Kategorija
+IPTCPANEL_CAPTIONWRITER;Pisac naslova
 IPTCPANEL_CATEGORYHINT;Određuje šta se nalazi na slici (kategorija).
+IPTCPANEL_CATEGORY;Kategorija
 IPTCPANEL_CITY;Grad
 IPTCPANEL_CITYHINT;Grad u kome je slika nastalo (grad).
 IPTCPANEL_COPYHINT;Koppiraj IPTC pšodešavanja u ostavu
@@ -253,48 +253,48 @@ IPTCPANEL_COPYRIGHT;Autorska prava
 IPTCPANEL_COPYRIGHTHINT;Beleška o autorskim pravima nad delom (beleška o autorskim pravima).
 IPTCPANEL_COUNTRY;Država
 IPTCPANEL_COUNTRYHINT;Ime države/osnovnog mesta gde je nastala slika (država — naziv mesta).
-IPTCPANEL_CREDIT;Zasluge
 IPTCPANEL_CREDITHINT;Ukazuje da onaj ko izdaje sliku ne mora biti autor/vlasnik (Zasluge).
+IPTCPANEL_CREDIT;Zasluge
 IPTCPANEL_DATECREATED;Datum nastanka
 IPTCPANEL_DATECREATEDHINT;Datum kada je stavljeno vlasništvo nad intelektualni sadržaj slike; Format: GGGGMMDD (datum nastanka).
-IPTCPANEL_EMBEDDED;Ugnježđeno
 IPTCPANEL_EMBEDDEDHINT;Vrati polja na IPTC podatke ugnježđene u sliku
-IPTCPANEL_HEADLINE;Naslov
+IPTCPANEL_EMBEDDED;Ugnježđeno
 IPTCPANEL_HEADLINEHINT;Naziv koji ukazuje na vezu sa sadržajem slike i pod kojim se ona izdaje (naslov).
-IPTCPANEL_INSTRUCTIONS;Uputstva
+IPTCPANEL_HEADLINE;Naslov
 IPTCPANEL_INSTRUCTIONSHINT;Ostala uputstva urednika vezana za upotrebu slike (specijalna uputstva).
-IPTCPANEL_KEYWORDS;Ključne reči
+IPTCPANEL_INSTRUCTIONS;Uputstva
 IPTCPANEL_KEYWORDSHINT;Reči koje ukazuju na razne podatke o slici (ključne reči).
+IPTCPANEL_KEYWORDS;Ključne reči
 IPTCPANEL_PASTEHINT;Ubaci IPTC podešavanja iz ostave
-IPTCPANEL_PROVINCE;Pokrajina
 IPTCPANEL_PROVINCEHINT;Pokrajina/država gde je nastala slika (provincija — država).
-IPTCPANEL_RESET;Vrati
+IPTCPANEL_PROVINCE;Pokrajina
 IPTCPANEL_RESETHINT;Postavlja podrazumevane vrednosti profila
-IPTCPANEL_SOURCE;Izvor
+IPTCPANEL_RESET;Vrati
 IPTCPANEL_SOURCEHINT;Prvobitni vlasnik inntelektualnog sadržaja na slici (izvor).
+IPTCPANEL_SOURCE;Izvor
 IPTCPANEL_SUPPCATEGORIES;Dop. kategorije
 IPTCPANEL_SUPPCATEGORIESHINT;Dodatno određuje motiv na slici (dodatne kategorije).
-IPTCPANEL_TITLE;Natpis
 IPTCPANEL_TITLEHINT;Kratni naziv slike (ime objekta).
-IPTCPANEL_TRANSREFERENCE;Ref. prenosa
+IPTCPANEL_TITLE;Natpis
 IPTCPANEL_TRANSREFERENCEHINT;Kod kojji predstavlja mesto prvobitnog prenosa (referenca prvog prenosa).
+IPTCPANEL_TRANSREFERENCE;Ref. prenosa
 MAIN_BUTTON_EXIT;Izađi
 MAIN_BUTTON_FULLSCREEN;Ceo ekran
 MAIN_BUTTON_PREFERENCES;Postavke
-MAIN_BUTTON_PUTTOQUEUE;Zakaži
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Dodaje trenutnu sliku u zakazane <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE;Zakaži
 MAIN_BUTTON_QUEUE;Zakaži
-MAIN_BUTTON_SAVE;Sačuvaj
 MAIN_BUTTON_SAVEAS;Kao...
+MAIN_BUTTON_SAVE;Sačuvaj
 MAIN_BUTTON_SAVE_TOOLTIP;Čuva trenutnu sliku <b>Ctrl+S</b>
-MAIN_BUTTON_SENDTOEDITOR;Uredi
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Uređuje trenutnu sliku u spoljnom programu <b>Ctrl+E</b>
+MAIN_BUTTON_SENDTOEDITOR;Uredi
 MAIN_BUTTON_UNFULLSCREEN;Napusti ceo ekran
 MAIN_FRAME_BATCHQUEUE;Zakazane datoteke
 MAIN_FRAME_FILEBROWSER;Razgledač datoteka
-MAIN_FRAME_PLACES;Mesta
 MAIN_FRAME_PLACES_ADD;Dodaj
 MAIN_FRAME_PLACES_DEL;Ukloni
+MAIN_FRAME_PLACES;Mesta
 MAIN_FRAME_RECENT;Recent Fascikle
 MAIN_MSG_ALREADYEXISTS;Datoteka već postoji.
 MAIN_MSG_CANNOTLOAD;Ne mogu da učitam sliku
@@ -327,8 +327,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Prikazuje isečene svetle delove
 MAIN_TOOLTIP_INDCLIPPEDS;Prikazuje isečene tamne delove
 MAIN_TOOLTIP_PREFERENCES;Menja postavke programa
 MAIN_TOOLTIP_QINFO;Osnovni podaci o slici <b>I</b>
-MAIN_TOOLTIP_SAVE;Čuva sliku u podrazumevanu fasciklu
 MAIN_TOOLTIP_SAVEAS;Čuva sliku u izabranu fasciklu
+MAIN_TOOLTIP_SAVE;Čuva sliku u podrazumevanu fasciklu
 MAIN_TOOLTIP_TOGGLE;Prikazuje sliku pre i posle obrade <b>B</b>
 NAVIGATOR_B_NA;P = ○
 NAVIGATOR_B_VALUE;P = %1
@@ -429,17 +429,17 @@ PREFERENCES_INTENT_SATURATION;Zasićeni prikaz
 PREFERENCES_LINEDENOISE;Linijski filter šuma
 PREFERENCES_LIVETHUMBNAILS;„Živi“ prikazi (sporije)
 PREFERENCES_MONITORICC;Profil monitora
-PREFERENCES_OUTDIR;Izlazni direktorijum
-PREFERENCES_OUTDIRFOLDER;Sačuvaj u fasciklu
 PREFERENCES_OUTDIRFOLDERHINT;Stavlja sačuvane slike u 
+PREFERENCES_OUTDIRFOLDER;Sačuvaj u fasciklu
 PREFERENCES_OUTDIRHINT;<i><i>Možete da zadate sledeće skraćenice za formatiranje:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nOvi znakovi za formatiranje se odnose na direktorijume, podputanje putanja do raw datoteke.\n\nNa primer, ukoliko je otvorena slika </i> <b>/home/ivan/slike/02.09.2010/dsc0012.nef</b><i>, skraćenice označavaju:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=slike, ...\n%p1=/home/ivan/slike/02.09.2010, %p2=/home/ivan/slike, %p3=/home/ivan, ...\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku pored originala, unesite:\n</i><b>%p1/%f\n</b><i>\nUkoliko želite da sačuvate izlaznu sliku u direktorijum „razvijene“ koji se nalazi gde i originalna slika, unesite:\n</i><b>%p1/razvijene/%f\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku u direktorijum „/home/ivan/razvijene“, a da struktura poddirektorijuma ostane očuvana, unesite:\n</i><b>%p2/razvijene/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Upotrebi šablon
+PREFERENCES_OUTDIR;Izlazni direktorijum
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Možete da zadate sledeće skraćenice za formatiranje:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nOvi znakovi za formatiranje se odnose na direktorijume, podputanje putanja do raw datoteke.\n\nNa primer, ukoliko je otvorena slika </i> <b>/home/ivan/slike/02.09.2010/dsc0012.nef</b><i>, skraćenice označavaju:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=slike, ...\n%p1=/home/ivan/slike/02.09.2010, %p2=/home/ivan/slike, %p3=/home/ivan, ...\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku pored originala, unesite:\n</i><b>%p1/%f\n</b><i>\nUkoliko želite da sačuvate izlaznu sliku u direktorijum „razvijene“ koji se nalazi gde i originalna slika, unesite:\n</i><b>%p1/razvijene/%f\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku u direktorijum „/home/ivan/razvijene“, a da struktura poddirektorijuma ostane očuvana, unesite:\n</i><b>%p2/razvijene/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Upotrebi šablon
 PREFERENCES_OVERLAY_FILENAMES;Postavi preko umanjenog prikaza
-PREFERENCES_PARSEDEXT;Ekstenzije za prikaz
 PREFERENCES_PARSEDEXTADD;Dodaj ekstenziju
 PREFERENCES_PARSEDEXTADDHINT;Dodaje upisanu ekstenziju na spisak
 PREFERENCES_PARSEDEXTDELHINT;Briše izabranu ekstenziju iz spiska
+PREFERENCES_PARSEDEXT;Ekstenzije za prikaz
 PREFERENCES_PROFILEHANDLING;Rad sa profilima obrade
 PREFERENCES_PROFILELOADPR;Prioritet učitavanja profila
 PREFERENCES_PROFILEPRCACHE;Profil u ostavu
@@ -503,13 +503,14 @@ SAVEDLG_JPEGQUAL;JPEG kvalitet
 SAVEDLG_JPGFILTER;JPEG datoteke
 SAVEDLG_PNGCOMPR;PNG pakovanje
 SAVEDLG_PNGFILTER;PNG datoteke
-SAVEDLG_PUTTOQUEUE;Zakazuje sliku za obradu
 SAVEDLG_PUTTOQUEUEHEAD;Premešta sliku na početak zakazanih
 SAVEDLG_PUTTOQUEUETAIL;Premešta sliku na kraj zakazanih
+SAVEDLG_PUTTOQUEUE;Zakazuje sliku za obradu
 SAVEDLG_SAVEIMMEDIATELY;Odmah sačuvaj
 SAVEDLG_SAVESPP;Sačuvaj parametre obrade uz sliku
 SAVEDLG_TIFFFILTER;TIFF datoteke
 SAVEDLG_TIFFUNCOMPRESSED;Nezapakovani TIFF
+#  Serbian translation
 TOOLBAR_TOOLTIP_CROP;Postavlja okvir za isecanje (prečica: C)
 TOOLBAR_TOOLTIP_HAND;Alat za pomeranje (prečica: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Ispravlja liniju horizonta (prečica: S)
@@ -626,15 +627,15 @@ TP_RESIZE_BILINEAR;Bilinearno
 TP_RESIZE_DOWNSCALEB;Smanjenje razmere (bolje)
 TP_RESIZE_DOWNSCALEF;Smanjenje razmere (brže)
 TP_RESIZE_FULLSIZE;Stvarna veličina slike:
-TP_RESIZE_H;V:
 TP_RESIZE_HEIGHT;Visinu
+TP_RESIZE_H;V:
 TP_RESIZE_LABEL;Veličina slike
 TP_RESIZE_METHOD;Način: 
 TP_RESIZE_NEAREST;Najbliže
 TP_RESIZE_SCALE;Umanjenje
 TP_RESIZE_SPECIFY;Izaberi:
-TP_RESIZE_W;Š:
 TP_RESIZE_WIDTH;Širinu
+TP_RESIZE_W;Š:
 TP_ROTATE_AUTOCROP;Sam iseci
 TP_ROTATE_DEGREE;Stepeni:
 TP_ROTATE_FILL;Popuni
@@ -656,10 +657,10 @@ TP_SHARPENING_LABEL;Oštrenje
 TP_SHARPENING_METHOD;Način
 TP_SHARPENING_ONLYEDGES;Izoštri samo ivice
 TP_SHARPENING_RADIUS;Poluprečnik
-TP_SHARPENING_RLD;RL dekonvolucija
 TP_SHARPENING_RLD_AMOUNT;Količina
 TP_SHARPENING_RLD_DAMPING;Prigušivanje
 TP_SHARPENING_RLD_ITERATIONS;Ponavljanja
+TP_SHARPENING_RLD;RL dekonvolucija
 TP_SHARPENING_THRESHOLD;Prag
 TP_SHARPENING_USM;Oštrina maske
 TP_VIGNETTING_AMOUNT;Količina
@@ -687,7 +688,6 @@ ZOOMPANEL_ZOOM100;Povećava pregled na 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Uklapa sliku u veličinu prozora <b>F</b>
 ZOOMPANEL_ZOOMIN;Uvećava prikaz slike <b>+</b>
 ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
-﻿HISTOGRAM_BUTTON_B;P
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -706,6 +706,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
+!MAIN_TAB_RAW;RAW
 !NAVIGATOR_LAB_A_NA;A = n/a
 !NAVIGATOR_LAB_A_VALUE;A = %1
 !NAVIGATOR_LAB_B_NA;B = n/a
@@ -736,6 +737,8 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_LABCURVE_SATURATION;Saturation
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
+!TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RAWPANEL_PREPROCESSING;Preprocessing
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X
