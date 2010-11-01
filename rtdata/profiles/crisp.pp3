@@ -1,6 +1,6 @@
 
 [Version]
-Version=466
+Version=484
 
 [Exposure]
 Auto=true
@@ -10,7 +10,7 @@ Brightness=0
 Contrast=12
 Black=0
 HighlightCompr=70
-ShadowCompr=25
+ShadowCompr=50
 Curve=1;0;0;1;1;
 
 [Channel Mixer]

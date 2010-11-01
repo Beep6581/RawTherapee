@@ -55,9 +55,9 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   pack_start (*hlcompr);
 
 //----------- Black Level ----------------------------------
-  black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), 0, 16384, 1, 0));
+  black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), 0, 32768, 1, 0));
   pack_start (*black);
-  shcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 25));
+  shcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50));
   pack_start (*shcompr);
 
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));

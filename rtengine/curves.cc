@@ -318,109 +318,6 @@ double CurveFactory::centercontrast (double x, double b, double m) {
       return 2.0*x - m - m * tanh (b*(x-m)/m) / tanh (b);
   }
 }
-/*
-void CurveFactory::updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& points, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip) {
-
-    double def_mul = pow (2.0, defmul);
-
-    // compute parameters of the gamma curve
-    double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
-    double slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
-    double mul = 1.099;
-    double add = 0.099;
-
-    // theoretical maximum of the curve
-    double D = gamma_>0 ? gamma (def_mul, gamma_, start, slope, mul, add) : def_mul;
-
-    double a = pow (2.0, ecomp);
-    double b = black / 65535.0;
-
-    // curve without contrast
-    double* dcurve = new double[65536];
-    
-    bool needcontrast = contr>0.00001 || contr<-0.00001;
-    bool needigamma = !needcontrast && igamma && gamma_>0;
-
-    // create a curve if needed
-    Curve* tcurve = NULL;
-    if (points.size()>0 && points[0]!=0)
-        tcurve = new Curve (points);
-
-    for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
-
-        double val = (double)i / 65535.0;
-        val *= def_mul;
-        if (gamma_>0) 
-            val = gamma (val, gamma_, start, slope, mul, add);
-  
-        val = basecurve (val, a, b, D, hlcompr/100.0, shcompr/100.0);
-        val = brightness (val, br/100.0);
-        
-        if (tcurve) 
-            val = tcurve->getVal (val);
-
-	    if (needigamma)
-            val = igamma2 (val);
-
-        if (val>1.0)
-            val = 1.0;
-        else if (val<0.0)
-            val = 0.0;
-        dcurve[i] = val;
-    }
-    delete tcurve;
-/ *
-if (igamma) {
-  FILE* f = fopen ("curve.txt","wt");
-  for (int i=0; i<65536; i++)
-//    fprintf (f, "%g\t%g\n", i/65535.0, basel(i/65535.0, 2, 0));
-    fprintf (f, "%g\t%g\n", i/65535.0, clower(i/65535.0, 0.500015/0.5, 1.5));
-//    fprintf (f, "%g\t%g\n", i/65535.0, basecurve(i/65535.0, 1.25701, 0, 1.47694, 1.0, 1.0));
-//    fprintf (f, "%g\t%g\n", i/65535.0, dcurve[i]);
-  fclose (f);
-}
-* /
-    int prev = 0;
-    for (int i=1; i<=0xffff-skip; i++) {
-        if (i%skip==0) {
-            prev+=skip;
-            continue;
-        }
-        dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
-    }
-
-    if (needcontrast) {  
-        // compute mean luminance of the image with the curve applied
-        int sum = 0;
-        double avg = 0;
-        for (int i=0; i<=0xffff; i++) {
-          avg += dcurve[i] * ohistogram[i];
-          sum += ohistogram[i];
-        }
-        avg /= sum;
-
-        // compute contrast parameter
-        double contr_b = contr / 20;
-        if (contr_b>=0 && contr_b < 0.00001)
-          contr_b = 0.00001;
-        else if (contr_b<0 && contr_b > -0.00001)
-          contr_b = -0.00001;
-
-        // apply contrast enhancement
-        for (int i=0; i<=0xffff; i++) {
-          double val = centercontrast (dcurve[i], contr_b, avg);
-          if (igamma && gamma_>0)
-            val = igamma2 (val);
-          if (val>1.0) val = 1.0;
-          if (val<0.0) val = 0.0;
-          curve[i] = (int) (65535.0 * val);
-        }
-    }
-    else 
-        for (int i=0; i<=0xffff; i++) 
-            curve[i] = (int) (65535.0 * dcurve[i]);
-    delete [] dcurve;
-}*/
 
 /*
 void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
@@ -728,13 +625,13 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
 		std::vector<double> basecurvePoints;
 		basecurvePoints.push_back((double)((CurveType)NURBS));
-		//float toex = MIN(1,black/(a*def_mul));
-		//float toey = MAX(0,toex*a*def_mul*(shcompr/25.0-1));
-		float toex = black;
-		float toey = MAX(0,toex*(shcompr/25.0-1));
+		float toex = MIN(1,black/(a*def_mul));
+		float toey = 0;//MAX(0,toex*a*def_mul*(shcompr/50.0-1));
 		float shoulderx = MAX(black,1/(a*def_mul));//point in x at which line of slope a starting at (0,0) reaches y=1
 		float shouldery=1;
 		float toneslope=(shouldery-toey)/(shoulderx-toex);
+		toey = toey + 0.25*(shcompr/100.0);
+		toex = toex + toey/toneslope;
 		if (shoulderx<1) {//a>1; positive EC
 			//move shoulder down if there is highlight rolloff
 			shouldery = shouldery-(0.3)*(hlcompr/100.0);
@@ -754,7 +651,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			shouldery = toey + (1-toex)*a;
 		}*/
 		
-		basecurvePoints.push_back(MAX(0,0.99*toex*(1-shcompr/25.0))); //black point.  Value in [0 ; 1] range
+		basecurvePoints.push_back(MAX(0,0.99*toex*(1-shcompr/33.0))); //black point.  Value in [0 ; 1] range
 		basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
 		basecurvePoints.push_back(toex); //toe point
@@ -774,8 +671,8 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 				basecurvePoints.push_back(1); // value at white point
 			}
 		}
-		Curve* basecurve = NULL;
-		basecurve = new Curve (basecurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+		Curve* basecurvenew = NULL;
+		basecurvenew = new Curve (basecurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		std::vector<double> brightcurvePoints;
@@ -813,8 +710,8 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// val *= def_mul;
 			
 			// apply base curve, thus, exposure compensation and black point with shadow and highlight protection
-			//val = basecurve (val, a, black, def_mul, hlcompr/100.0, shcompr/100.0);
-			val = basecurve->getVal (val);
+			//val = basecurve (val*def_mul, a, black, def_mul, hlcompr/70.0, shcompr/70.0);
+			val = basecurvenew->getVal (val);
 			
 			outCurve1[i] = (int) (65535.0 * CLIPD(val));
 			
@@ -850,7 +747,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		}
 		delete tcurve;
 		
-		delete basecurve; // ...when you don't need it anymore
+		delete basecurvenew; // ...when you don't need it anymore
 		delete brightcurve; 
 		
 		// if skip>1, let apply linear interpolation in the skipped points of the curve

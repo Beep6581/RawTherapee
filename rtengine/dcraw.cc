@@ -111,13 +111,17 @@ typedef unsigned char uchar;
 typedef unsigned short ushort;
 
 // RT specify thread local storage
-#ifdef __GNUC__
+/*#ifdef __GNUC__
 #define THREAD_LOCAL static __thread
 #define THREAD_LOCK  
 #else
 #define THREAD_LOCAL
 #define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
-#endif
+#endif*/
+
+// use this for gcc<=4.2 on OSX
+#define THREAD_LOCAL static 
+#define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
 
 /*
    All global variables are defined here, and all functions that
