@@ -195,7 +195,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         fname = autoCompleteFileName (removeExtension(processing->outFileName), getExtension(processing->outFileName));
         saveFormat = processing->saveFormat;
     }
-    printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
+    //printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
     if (img && fname!="") {
         int err = 0;
         if (saveFormat.format=="tif")
@@ -205,14 +205,16 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         else if (saveFormat.format=="jpg")
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality);
         img->free ();
-        if (!err && saveFormat.saveParams)
+
+		if (err) throw "Unable to save output file";
+
+        if (saveFormat.saveParams) {
 			// We keep the extension to avoid overwriting the profile when we have
 			// the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
             processing->params.save (fname + paramFileExtension);
-        else {
-        	printf("Unable to process or save %s\n", fname.c_str());
         }
+
         if (processing->thumbnail) {
             processing->thumbnail->imageDeveloped ();
             processing->thumbnail->imageRemovedFromQueue ();
