@@ -5,49 +5,66 @@
 #03 20.07.2008: Denis Artemov
 #04 16.02.2009: Kvark
 #05 26.02.2010: Sergey Smirnov AKA smiserg
+#06 01.11.2010: Ilia Popov <ilia_popov@rambler.ru>
 ADJUSTER_RESET_TO_DEFAULT;По умолчанию
+BATCH_PROCESSING;Пакетная обработка
+BATCHQUEUE_AUTOSTART;Автостарт
+CURVEEDITOR_CUSTOM;Произвольный
+CURVEEDITOR_DARKS;Темные тона
 CURVEEDITOR_FILEDLGFILTERANY;Любые файлы
 CURVEEDITOR_FILEDLGFILTERCURVE;Файлы тоновых кривых
+CURVEEDITOR_HIGHLIGHTS;Света
+CURVEEDITOR_LIGHTS;Светлые тона
 CURVEEDITOR_LINEAR;Линейная
 CURVEEDITOR_LOADDLGLABEL;Считать кривую...
+CURVEEDITOR_NURBS;Control cage
+CURVEEDITOR_PARAMETRIC;Параметрический
 CURVEEDITOR_SAVEDLGLABEL;Сохранить кривую...
+CURVEEDITOR_SHADOWS;Тени
 CURVEEDITOR_TOOLTIPLINEAR;Выставить линейную тоновую кривую
 CURVEEDITOR_TOOLTIPLOAD;Загрузить тоновую кривую
 CURVEEDITOR_TOOLTIPSAVE;Сохранить тоновую кривую
+CURVEEDITOR_TYPE;Тип:
 EXIFFILTER_APERTURE;Диафрагма
 EXIFFILTER_CAMERA;Камера
 EXIFFILTER_DIALOGLABEL;Фильтр Exif
 EXIFFILTER_FOCALLEN;Фокусное расстояние
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Объектив
+EXIFFILTER_METADATAFILTER;Включть фильтры метаданных
 EXIFFILTER_SHUTTER;Выдержка
-EXIFPANEL_ADDEDIT;Добавить/редактировать
 EXIFPANEL_ADDEDITHINT;Добавить новый тэг или редактировать тег
+EXIFPANEL_ADDEDIT;Добавить/редактировать
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ввести значение
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Выбрать тег
 EXIFPANEL_ADDTAGDLG_TITLE;Добавить/редактировать тег
-EXIFPANEL_KEEP;Сохранить
 EXIFPANEL_KEEPHINT;Сохранять выбранные теги при записи файла
-EXIFPANEL_REMOVE;Удалить
+EXIFPANEL_KEEP;Сохранить
 EXIFPANEL_REMOVEHINT;Удалять выбранные теги при записи файла
-EXIFPANEL_RESET;Сбросить
-EXIFPANEL_RESETALL;Сбросить все
+EXIFPANEL_REMOVE;Удалить
 EXIFPANEL_RESETALLHINT;Сбросить все теги в первоначальные значения
+EXIFPANEL_RESETALL;Сбросить все
 EXIFPANEL_RESETHINT;Сбросить выбранные теги в первоначальные значения
+EXIFPANEL_RESET;Сбросить
 EXIFPANEL_SUBDIRECTORY;Подкаталог
+FILEBROWSER_ADDDELTEMPLATE;Добавить/удалить шаблоны...
 FILEBROWSER_APPLYPROFILE;Применить профиль
 FILEBROWSER_ARRANGEMENTHINT;Вертикальное/горизонтальное расположение эскизов
+FILEBROWSER_AUTODARKFRAME;Автоматический темный кадр
 FILEBROWSER_CLEARPROFILE;Удалить профиль
 FILEBROWSER_COPYPROFILE;Скопировать профиль
+FILEBROWSER_CURRENT_NAME;Текущее имя:
 FILEBROWSER_DELETEDLGLABEL;Подтверждение удаления файла
 FILEBROWSER_DELETEDLGMSG;Вы уверены, что хотите удалить %1 выбранный(ых) файл(ов)?
-FILEBROWSER_EMPTYTRASH;Очистить корзину
 FILEBROWSER_EMPTYTRASHHINT;Удалить файлы из корзины без возможности восстановления
-FILEBROWSER_EXIFFILTERAPPLY;Применить
+FILEBROWSER_EMPTYTRASH;Очистить корзину
 FILEBROWSER_EXIFFILTERAPPLYHINT;Включение/выключения фильтра Exif в браузере
+FILEBROWSER_EXIFFILTERAPPLY;Применить
 FILEBROWSER_EXIFFILTERLABEL;Фильтр Exif
-FILEBROWSER_EXIFFILTERSETTINGS;Настройка
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Настройка параметров фильтра Exif
+FILEBROWSER_EXIFFILTERSETTINGS;Настройка
+FILEBROWSER_MOVETODARKFDIR;Переместить в папку темных кадров
+FILEBROWSER_NEW_NAME;Новое имя:
 FILEBROWSER_PARTIALPASTEPROFILE;Частичная вставка
 FILEBROWSER_PASTEPROFILE;Вставка профиля
 FILEBROWSER_POPUPCANCELJOB;Отменить задание
@@ -66,11 +83,13 @@ FILEBROWSER_POPUPSELECTALL;Выбрать все
 FILEBROWSER_POPUPTRASH;Удалить в корзину
 FILEBROWSER_POPUPUNRANK;Снять рейтинг
 FILEBROWSER_POPUPUNTRASH;Удалить из корзины
-FILEBROWSER_PROCESSINGSETTINGS;Параметры
 FILEBROWSER_PROCESSINGSETTINGSHINT;Задать формат файла и выходной каталог
+FILEBROWSER_PROCESSINGSETTINGS;Параметры
 FILEBROWSER_RENAMEDLGLABEL;Переименовать файл
 FILEBROWSER_RENAMEDLGMSG;Переименовать файл "%1" в:
+FILEBROWSER_SELECTDARKFRAME;Выбрать темный кадр...
 FILEBROWSER_SHOWDIRHINT;Показать все изображения в каталоге
+FILEBROWSER_SHOWEXIFINFO;Показать EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Показать содержимое очереди на обработку
 FILEBROWSER_SHOWRANK1HINT;Показать изображения с рейтингом 1
 FILEBROWSER_SHOWRANK2HINT;Показать изображения с рейтингом 2
@@ -79,19 +98,24 @@ FILEBROWSER_SHOWRANK4HINT;Показать изображения с рейти�
 FILEBROWSER_SHOWRANK5HINT;Показать изображения с рейтингом 5
 FILEBROWSER_SHOWTRASHHINT;Показать содержимое корзины
 FILEBROWSER_SHOWUNRANKHINT;Показать изображения без рейтинга
-FILEBROWSER_STARTPROCESSING;Начать обработку
 FILEBROWSER_STARTPROCESSINGHINT;Запуск обработки/сохранения помещенных в очередь изображений
-FILEBROWSER_STOPPROCESSING;Остановить обработку
+FILEBROWSER_STARTPROCESSING;Начать обработку
 FILEBROWSER_STOPPROCESSINGHINT;Отмена обработки изображений
+FILEBROWSER_STOPPROCESSING;Остановить обработку
 FILEBROWSER_THUMBSIZE;Размер эскиза
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Автоматически запускать обработку если есть что обрабатывать
+FILEBROWSER_USETEMPLATE;Использовать шаблон:
 FILEBROWSER_ZOOMINHINT;Увеличить размер эскиза
 FILEBROWSER_ZOOMOUTHINT;Уменьшить размер эскиза
 GENERAL_ABOUT;О программе
+GENERAL_AFTER;После
+GENERAL_BEFORE;До
 GENERAL_CANCEL;Отмена
-GENERAL_DISABLE;Выключить
 GENERAL_DISABLED;Выключено
-GENERAL_ENABLE;Включить
+GENERAL_DISABLE;Выключить
 GENERAL_ENABLED;Включено
+GENERAL_ENABLE;Включить
+GENERAL_HIGH_QUALITY;Высокое качество
 GENERAL_LANDSCAPE;Альбомный
 GENERAL_LOAD;Загрузить
 GENERAL_NA;Н/Д
@@ -99,7 +123,12 @@ GENERAL_NO;Нет
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Портретный
 GENERAL_SAVE;Сохранить
+GENERAL_UNCHANGED;(не менялось)
 GENERAL_YES;Да
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;G
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Гистограмма
 HISTOGRAM_TOOLTIP_B;Показать/скрыть СИНИЙ канал гистограммы
 HISTOGRAM_TOOLTIP_G;Показать/скрыть ЗЕЛЁНЫЙ канал гистограммы
@@ -189,15 +218,25 @@ HISTORY_MSG_79;Ширина изменения размеров
 HISTORY_MSG_7;Уровень чёрного
 HISTORY_MSG_80;Высота изменения размеров
 HISTORY_MSG_81;Изменение размеров включено
+HISTORY_MSG_82;Изменён профиль
+HISTORY_MSG_83;Высококачественные тени/света
+HISTORY_MSG_84;Коррекция перспективы
+HISTORY_MSG_85;Вейвлет коэффициенты
+HISTORY_MSG_86;Вейвлет эквалайзер
+HISTORY_MSG_87;Подаление импульсного шума
+HISTORY_MSG_89;Направленная пирамида
 HISTORY_MSG_8;Компенсация экспозиции
+HISTORY_MSG_90;Направленная пирамида яркость
+HISTORY_MSG_91;Направленная пирамида цветность
+HISTORY_MSG_92;Направленная пирамида гамма
 HISTORY_MSG_9;Сжатие светов
-HISTORY_NEWSNAPSHOT;Новый снимок
 HISTORY_NEWSNAPSHOTAS;Как...
+HISTORY_NEWSNAPSHOT;Новый снимок
 HISTORY_NEWSSDIALOGLABEL;Название снимка:
 HISTORY_NEWSSDIALOGTITLE;Добавить снимок
 HISTORY_SETTO;Установить в
-HISTORY_SNAPSHOT;Снимок
 HISTORY_SNAPSHOTS;Снимки
+HISTORY_SNAPSHOT;Снимок
 ICMPANEL_FILEDLGFILTERANY;Любые файлы
 ICMPANEL_FILEDLGFILTERICM;Файлы ICC профилей
 ICMPANEL_GAMMABEFOREINPUT;Применять гамму для профиля
@@ -212,68 +251,77 @@ ICMPANEL_OUTPUTPROFILE;Выходной профиль
 ICMPANEL_SAVEREFERENCE;Сохранить исходное изображение для профилирования
 ICMPANEL_WORKINGPROFILE;Рабочий профиль
 IMAGEAREA_DETAILVIEW;Детальный просмотр
-IPTCPANEL_AUTHOR;Автор
 IPTCPANEL_AUTHORHINT;Имя создателя объекта (писателя, фотографа или художника) (By-line)
-IPTCPANEL_AUTHORSPOSITION;Позиция автора
 IPTCPANEL_AUTHORSPOSITIONHINT;Название автора или авторов объекта (By-line Title).
-IPTCPANEL_CAPTION;Подпись
+IPTCPANEL_AUTHORSPOSITION;Позиция автора
+IPTCPANEL_AUTHOR;Автор
 IPTCPANEL_CAPTIONHINT;Текстовое описание данных (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Автор подписи
 IPTCPANEL_CAPTIONWRITERHINT;Имя человека, участвовавшего в создании, изменении или редактировании изображения либо подписи (Writer - Editor).
-IPTCPANEL_CATEGORY;Категория
+IPTCPANEL_CAPTIONWRITER;Автор подписи
+IPTCPANEL_CAPTION;Подпись
 IPTCPANEL_CATEGORYHINT;Устанавливает тему изображения (Category)
-IPTCPANEL_CITY;Город
+IPTCPANEL_CATEGORY;Категория
 IPTCPANEL_CITYHINT;Город (City).
+IPTCPANEL_CITY;Город
 IPTCPANEL_COPYHINT;Копировать данные IPTC в буфер обмена
-IPTCPANEL_COPYRIGHT;Авторские права
 IPTCPANEL_COPYRIGHTHINT;Любые предупреждения об авторских правах (Copyright Notice).
-IPTCPANEL_COUNTRY;Страна
+IPTCPANEL_COPYRIGHT;Авторские права
 IPTCPANEL_COUNTRYHINT;Название страны/начального местоположения (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Поддержка
+IPTCPANEL_COUNTRY;Страна
 IPTCPANEL_CREDITHINT;Лица и организации, осуществляющие какую либо поддержку изображения (Credit).
-IPTCPANEL_DATECREATED;Дата создания
+IPTCPANEL_CREDIT;Поддержка
 IPTCPANEL_DATECREATEDHINT;Дата создания интеллектуального содержания изображения; Формат: ГГГГММДД (Date Created).
-IPTCPANEL_EMBEDDED;Встроенный
+IPTCPANEL_DATECREATED;Дата создания
 IPTCPANEL_EMBEDDEDHINT;Сбросить данные IPTC, встроенные в файл изображения
-IPTCPANEL_HEADLINE;Заголовок
+IPTCPANEL_EMBEDDED;Встроенный
 IPTCPANEL_HEADLINEHINT;Подходящий для публикации краткий обзор содержимого изображения (Headline).
-IPTCPANEL_INSTRUCTIONS;Инструкции
+IPTCPANEL_HEADLINE;Заголовок
 IPTCPANEL_INSTRUCTIONSHINT;Прочие редакторские инструкции об использовании изображения (Special Instructions).
-IPTCPANEL_KEYWORDS;Ключевые слова
+IPTCPANEL_INSTRUCTIONS;Инструкции
 IPTCPANEL_KEYWORDSHINT;Ключевые слова, используемые для поиска (Keywords).
+IPTCPANEL_KEYWORDS;Ключевые слова
 IPTCPANEL_PASTEHINT;Вставить данные IPTC из буфера обмена
-IPTCPANEL_PROVINCE;Провинция
 IPTCPANEL_PROVINCEHINT;Провинция/штат (Province-State).
-IPTCPANEL_RESET;Сбросить
+IPTCPANEL_PROVINCE;Провинция
 IPTCPANEL_RESETHINT;Сбросить профиль на значения по умолчанию
-IPTCPANEL_SOURCE;Источник
+IPTCPANEL_RESET;Сбросить
 IPTCPANEL_SOURCEHINT;Первоначальный владелец интеллектуального содержания изображения (Source).
-IPTCPANEL_SUPPCATEGORIES;Доп. категории
+IPTCPANEL_SOURCE;Источник
 IPTCPANEL_SUPPCATEGORIESHINT;Дополнительные уточнения темы изображения (Supplemental Categories).
-IPTCPANEL_TITLE;Название
+IPTCPANEL_SUPPCATEGORIES;Доп. категории
 IPTCPANEL_TITLEHINT;Простое описание изображения (Object Name).
-IPTCPANEL_TRANSREFERENCE;Код поддержки
+IPTCPANEL_TITLE;Название
 IPTCPANEL_TRANSREFERENCEHINT;Код, облегчающий отслеживание изображения при передаче в обработку на сторону (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Код поддержки
 MAIN_BUTTON_EXIT;Exit
+MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_PREFERENCES;Настройки
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поставить текущее изображение в очередь на обработку <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE;Отправить в очередь
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVE;Сохранить изображение
 MAIN_BUTTON_SAVEAS;Как...
+MAIN_BUTTON_SAVE_TOOLTIP;Сохранить текущее изображение <b>Ctrl+S</b>
+MAIN_BUTTON_SAVE;Сохранить изображение
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение в другой программе <b>Ctrl+E</b>
 MAIN_BUTTON_SENDTOEDITOR;Открыть в редакторе
+MAIN_BUTTON_UNFULLSCREEN;Оконный режим
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Файл уже существует.
 MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображение
 MAIN_MSG_CANNOTSAVE;Ошибка при сохранении файла
-MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный путь в диалоге "Настройки".
+MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
+MAIN_MSG_ERRORDURINGIMAGESAVING;Ошибка при сохранении изображения
 MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходе из программы.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Вы уверены, что хотите выйти из программы? В очереди остались необработанные изображения.
 MAIN_MSG_JOBSINQUEUE;Идёт обработка
+MAIN_MSG_NAVIGATOR;Навигатор
+MAIN_MSG_PLACES;Места
 MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
 MAIN_TAB_BASIC;Основные
 MAIN_TAB_COLOR;Цвет
@@ -287,14 +335,16 @@ MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Метаданные
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Преобразования
+MAIN_TOGGLE_BEFORE_AFTER;Д|П
 MAIN_TOOLTIP_HIDEFP;Показать/скрыть нижнюю панель (каталоги и список файлов, горячая клавиша: F)
 MAIN_TOOLTIP_HIDEHP;Показать/скрыть левую панель (включая историю, горячая клавиша: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Индикатор пересветов
 MAIN_TOOLTIP_INDCLIPPEDS;Индикатор затемнений
 MAIN_TOOLTIP_PREFERENCES;задать настройки
 MAIN_TOOLTIP_QINFO;Информация об изображении
-MAIN_TOOLTIP_SAVE;Сохранить изображение в каталог по умолчанию
 MAIN_TOOLTIP_SAVEAS;Сохранить изображение в...
+MAIN_TOOLTIP_SAVE;Сохранить изображение в каталог по умолчанию
+MAIN_TOOLTIP_TOGGLE;Включить режим "до/после" <b>B</b>
 PARTIALPASTE_BASICGROUP;Базовые настройки
 PARTIALPASTE_CACORRECTION;Коррекция C/A
 PARTIALPASTE_COARSETRANS;поворот на 90 гр. / отражение
@@ -312,6 +362,8 @@ PARTIALPASTE_EXPOSURE;Экспозиция
 PARTIALPASTE_HLRECOVERY;Восстановление светов
 PARTIALPASTE_ICMSETTINGS;Параметры ICM
 PARTIALPASTE_IPTCINFO;Данные IPTC
+PARTIALPASTE_LABCURVE;Кривая яркости
+PARTIALPASTE_LABCURVE;Кривые в пространстве Lab
 PARTIALPASTE_LENSGROUP;Параметры съемки
 PARTIALPASTE_LUMACURVE;Кривая яркости
 PARTIALPASTE_LUMADENOISE;Удаление яркостного шума
@@ -323,7 +375,10 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Тени/света
 PARTIALPASTE_SHARPENING;Повышение резкости
 PARTIALPASTE_VIGNETTING;Коррекция виньетирования
 PARTIALPASTE_WHITEBALANCE;Баланс белого
+PREFERENCES_ADD;Добавить
 PREFERENCES_APPLNEXTSTARTUP;Нужен перезапуск программы
+PREFERENCES_BATCH_PROCESSING;Пакетная обработка
+PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
 PREFERENCES_CACHECLEARALL;Удалить все
 PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
@@ -337,16 +392,21 @@ PREFERENCES_CACHESTRAT2;Меньше расход памяти - скорост�
 PREFERENCES_CACHESTRAT;Стратегия кэширования
 PREFERENCES_CACHETHUMBFORM;Формат кэширования эскизов
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
+PREFERENCES_CACORRECTION;Применить автоматическую коррекцию ХА
 PREFERENCES_CLEARDLG_LINE1;Очистка кэша
 PREFERENCES_CLEARDLG_LINE2;Это может занять несколько секунд.
 PREFERENCES_CLEARDLG_TITLE;Пожалуйста, подождите
 PREFERENCES_CLIPPINGIND;Индикация пересветов/затемнений
 PREFERENCES_CMETRICINTENT;Колориметрическое преобразование
-PREFERENCES_DATEFORMAT;Формат даты
+PREFERENCES_DARKFRAME;Тёмный кадр
 PREFERENCES_DATEFORMATHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%y</b><i> : год</i>\n<b>%m</b><i> : месяц</i>\n<b>%d</b><i> : день</i>\n<i>\nНапример, венгерский формат даты такой:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Формат даты
+PREFERENCES_DCBENHANCE;Применить шаг улучшения DCB
+PREFERENCES_DCBITERATIONS;Количество итераций DCB
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
+PREFERENCES_DIRDARKFRAMES;Папка тёмных кадров
 PREFERENCES_DIRHOME;Домашний каталог
 PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
@@ -354,6 +414,7 @@ PREFERENCES_DIRSELECTDLG;Выберите каталог для хранения
 PREFERENCES_DIRSOFTWARE;Каталог установки
 PREFERENCES_DMETHOD;Метод
 PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
+PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
 PREFERENCES_FALSECOLOR;Число шагов для подавления некорректных цветов
 PREFERENCES_FBROWSEROPTS;Настройки
@@ -361,42 +422,51 @@ PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FORIMAGE;Для изображений
 PREFERENCES_FORRAW;Для RAW файлов
 PREFERENCES_GIMPPATH;Путь установки GIMP
+PREFERENCES_GREENEQUIL;Выравнивание зелёного
 PREFERENCES_GTKTHEME;GTK по умолчанию
 PREFERENCES_HINT;Подсказка
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
+PREFERENCES_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
 PREFERENCES_ICCDIR;Каталог ICC профилей
 PREFERENCES_IMPROCPARAMS;Параметры обработки по умолчанию
 PREFERENCES_INTENT_ABSOLUTE;Абсолютное
 PREFERENCES_INTENT_PERCEPTUAL;Перцепционное
 PREFERENCES_INTENT_RELATIVE;Относительное
 PREFERENCES_INTENT_SATURATION;По насыщенности
+PREFERENCES_LINEDENOISE;Фильтр линейного шума
 PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MONITORICC;Профиль монитора
-PREFERENCES_OUTDIR;Каталог
-PREFERENCES_OUTDIRFOLDER;Каталог для сохранения изображений
+PREFERENCES_MULTITAB;Много вкладок
 PREFERENCES_OUTDIRFOLDERHINT;Сохранение изображений в выбранный каталог
+PREFERENCES_OUTDIRFOLDER;Каталог для сохранения изображений
 PREFERENCES_OUTDIRHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если путь к файлу - </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут следующими:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в один каталог с оригиналом, введите строку:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в подкаталог "converted" в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений в каталог "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если был открыт каталог </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут выглядеть так:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге с оригиналом, введите:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге "converted", расположенной в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений папке в "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Расширения для предпросмотра
-PREFERENCES_PARSEDEXTADD;Добавить
+PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
+PREFERENCES_OUTDIR;Каталог
+PREFERENCES_OVERLAY_FILENAMES;Показывать имена файлов поверх миниатюр
 PREFERENCES_PARSEDEXTADDHINT;Введите расширение и нажмите на эту кнопку, чтобы добавить его в список
+PREFERENCES_PARSEDEXTADD;Добавить
 PREFERENCES_PARSEDEXTDELHINT;Удаление выбранных расширений из списка
+PREFERENCES_PARSEDEXT;Расширения для предпросмотра
 PREFERENCES_PROFILEHANDLING;Профиль постобработки
 PREFERENCES_PROFILELOADPR;Приоритет загрузки профиля постобработки
 PREFERENCES_PROFILEPRCACHE;загружать из кэша
 PREFERENCES_PROFILEPRFILE;загружать из каталога с файлом
 PREFERENCES_PROFILESAVECACHE;Сохранить профиль постобработки в кэше
 PREFERENCES_PROFILESAVEINPUT;Сохранить профиль постобработки в одном каталоге с исходным файлом
+PREFERENCES_PROPERTY;Свойство
 PREFERENCES_PSPATH;Путь установки Adobe Photoshop
+PREFERENCES_SELECTFONT;Выбрать шрифт
 PREFERENCES_SELECTICCDIRDLG;Выберите каталог для ICC профиля...
 PREFERENCES_SELECTLANG;Выберите язык
 PREFERENCES_SELECTMONITORPROFDLG;Выберите каталог для ICC профиля монитора...
 PREFERENCES_SELECTTHEME;Выбрать тему
+PREFERENCES_SET;Установить
 PREFERENCES_SHOWBASICEXIF;Показывать основные Exif данные
 PREFERENCES_SHOWDATETIME;Показывать дату и время
 PREFERENCES_SHOWONLYRAW;Показывать только RAW-файлы
 PREFERENCES_SHTHRESHOLD;Порог срабатывания затемнений
+PREFERENCES_SINGLETAB;Одна вкладка
 PREFERENCES_STARTUPIMDIR;Каталог изображений при запуске
 PREFERENCES_TAB_BROWSER;Браузер файлов
 PREFERENCES_TAB_COLORMGR;Управления цветом
@@ -404,6 +474,7 @@ PREFERENCES_TAB_GENERAL;Основные
 PREFERENCES_TAB_IMPROC;Обработка изображения
 PREFERENCES_TAB_OUTPUT;Сохранение
 PREFERENCES_THUMBSIZE;Размер миниатюры
+PREFERENCES_USESYSTEMTHEME;Использовать системную тему оформления
 PROFILEPANEL_FILEDLGFILTERANY;Любые файлы
 PROFILEPANEL_FILEDLGFILTERPP;Профили постобработки
 PROFILEPANEL_LABEL;Профиль постобработки
@@ -431,22 +502,26 @@ PROGRESSBAR_SAVEPNG;Сохранение PNG файла...
 PROGRESSBAR_SAVETIFF;Сохранение TIFF файла...
 PROGRESSDLG_LOADING;Загрузка файла...
 PROGRESSDLG_PROCESSING;Обработка изображения...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Профиль изменён в браузере
 PROGRESSDLG_SAVING;Сохранение файла...
 QINFO_FOCALLENGTH;Focal Lenth
 QINFO_ISO;ISO
 QINFO_LENS;Объектив
 QINFO_NOEXIF;Данные Exif недоступны
+﻿# Russian
+SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс если файл существует
 SAVEDLG_FILEFORMAT;Формат файла
 SAVEDLG_JPEGQUAL;Качество JPEG
 SAVEDLG_JPGFILTER;Файлы JPEG
 SAVEDLG_PNGCOMPR;Сжатие PNG
 SAVEDLG_PNGFILTER;Файлы PNG
-SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
 SAVEDLG_PUTTOQUEUEHEAD;Поместить в начало очереди на обработку
 SAVEDLG_PUTTOQUEUETAIL;Поместить в конец очереди на обработку
+SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
 SAVEDLG_SAVEIMMEDIATELY;Сохранить сейчас
 SAVEDLG_SAVESPP;Сохранять параметры обработки вместе с изображением
 SAVEDLG_TIFFFILTER;Файлы TIFF
+SAVEDLG_TIFFUNCOMPRESSED;Несжатый TIFF
 TOOLBAR_TOOLTIP_CROP;Кадрирование (горячая клавиша: C)
 TOOLBAR_TOOLTIP_HAND;Инструмент "Рука" (горячая клавиша: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Установка прямой линии (горячая клавиша: S)
@@ -496,8 +571,26 @@ TP_CROP_SELECTCROP; Вкл. режим обрезки
 TP_CROP_W;Ш
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DETAIL_AMOUNT;Степень
+TP_DIRPYRDENOISE_CHROMA;Цветность
+TP_DIRPYRDENOISE_GAMMA;Гамма
+TP_DIRPYRDENOISE_LABEL;Пирамидальное подавление шума
+TP_DIRPYRDENOISE_LUMA;Яркость
+TP_DIRPYREQUALIZER_LABEL;Пирамидальный эквалайзер
+TP_DIRPYREQUALIZER_LUMACOARSEST;Крупные
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Контраст-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Контраст+
+TP_DIRPYREQUALIZER_LUMAFINEST;Мелкие
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Нейтральн
+TP_DIRPYREQUALIZER_THRESHOLD;Порог
 TP_DISTORTION_AMOUNT;Величина
 TP_DISTORTION_LABEL;Дисторсия
+TP_EQUALIZER_CONTRAST_MINUS;Контраст-
+TP_EQUALIZER_CONTRAST_PLUS;Контраст+
+TP_EQUALIZER_FINEST;Мелкие
+TP_EQUALIZER_LABEL;Вейвлет эквалайзер
+TP_EQUALIZER_LARGEST;Крупные
+TP_EQUALIZER_NEUTRAL;Нейтрально
 TP_EXPOSURE_AUTOLEVELS;Автоматические уровни
 TP_EXPOSURE_BLACKLEVEL;Уровень чёрного
 TP_EXPOSURE_BRIGHTNESS;Яркость
@@ -527,6 +620,16 @@ TP_ICM_OUTPUTDLGLABEL;Выберите выходной ICC профиль...
 TP_ICM_OUTPUTPROFILE;Выходной профиль
 TP_ICM_SAVEREFERENCE;Сохранить исходное изображение для профилирования
 TP_ICM_WORKINGPROFILE;Рабочий профиль
+TP_IMPULSEDENOISE_LABEL;Подавление импульсного шума
+TP_IMPULSEDENOISE_THRESH;Порог
+TP_LABCURVE_BRIGHTNESS;Яркость
+TP_LABCURVE_CONTRAST;Контраст
+TP_LABCURVE_CURVEEDITOR;Кривая яркости
+TP_LABCURVE_LABEL;Кривые Lab
+TP_LABCURVE_SATURATION;Насыщенность
+TP_LENSGEOM_AUTOCROP;Автокадрирование
+TP_LENSGEOM_FILL;Автозаполнение
+TP_LENSGEOM_LABEL;Геометрия
 TP_LUMACURVE_BLACKLEVEL;Уровень чёрного
 TP_LUMACURVE_BRIGHTNESS;Яркость
 TP_LUMACURVE_COMPRHIGHLIGHTS;Сжатие светов
@@ -537,16 +640,27 @@ TP_LUMACURVE_LABEL;Кривая яркости
 TP_LUMADENOISE_EDGETOLERANCE;Устойчивость к границам
 TP_LUMADENOISE_LABEL;Удаление шума
 TP_LUMADENOISE_RADIUS;радиус
-TP_RESIZE_BICUBIC;Бикубический
+TP_PERSPECTIVE_HORIZONTAL;Горизонтальная
+TP_PERSPECTIVE_LABEL;Перспектива
+TP_PERSPECTIVE_VERTICAL;Вертикальная
+TP_PREPROCESS_DARKFRAME;Темный кадр
+TP_PREPROCESS_DFAUTOSELECT;Автовыбор
 TP_RESIZE_BICUBICSF;Мягкий бикубический
 TP_RESIZE_BICUBICSH;Резкий бикубический
+TP_RESIZE_BICUBIC;Бикубический
 TP_RESIZE_BILINEAR;Билинейный
+TP_RESIZE_DOWNSCALEB;Уменьшение (качественно)
+TP_RESIZE_DOWNSCALEF;Уменьшение (быстро)
 TP_RESIZE_FULLSIZE;Размер изображения:
+TP_RESIZE_HEIGHT;Высоту
 TP_RESIZE_H;В:
 TP_RESIZE_LABEL;Изменение размера
+TP_RESIZE_LANCZOS;Ланцош
 TP_RESIZE_METHOD;Метод:
 TP_RESIZE_NEAREST;Ближайшие точки
 TP_RESIZE_SCALE;Масштаб
+TP_RESIZE_SPECIFY;Задать:
+TP_RESIZE_WIDTH;Ширину
 TP_RESIZE_W;Ш:
 TP_ROTATE_AUTOCROP;Авто-кадрирование
 TP_ROTATE_DEGREE;Угол
@@ -569,15 +683,19 @@ TP_SHARPENING_LABEL;Резкость
 TP_SHARPENING_METHOD;Метод
 TP_SHARPENING_ONLYEDGES;Только границы
 TP_SHARPENING_RADIUS;Радиус
-TP_SHARPENING_RLD;Обращённая свёртка RL
 TP_SHARPENING_RLD_AMOUNT;Величина
 TP_SHARPENING_RLD_DAMPING;Ослабление
 TP_SHARPENING_RLD_ITERATIONS;Повторений
+TP_SHARPENING_RLD;Обращённая свёртка RL
 TP_SHARPENING_THRESHOLD;Порог
 TP_SHARPENING_USM;Маска размытия
 TP_VIGNETTING_AMOUNT;Величина
+TP_VIGNETTING_CENTER_X;Центр X
+TP_VIGNETTING_CENTER_Y;Центр Y
+TP_VIGNETTING_CENTER;Центр
 TP_VIGNETTING_LABEL;Виньетирование
 TP_VIGNETTING_RADIUS;Радиус
+TP_VIGNETTING_STRENGTH;Степень
 TP_WBALANCE_AUTO;Автоматический
 TP_WBALANCE_CAMERA;Камера
 TP_WBALANCE_CUSTOM;Пользовательский
@@ -594,7 +712,12 @@ ZOOMBAR_NORMAL;Среднее
 ZOOMBAR_PREVIEW;Предпросмотр
 ZOOMBAR_SCALE;Масштаб
 ZOOMBAR_SMALL;Минимальное
-﻿# Russian
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Новое окно детального просмотра
+ZOOMPANEL_ZOOM100;Масштаб 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;По размерам окна <b>F</b>
+ZOOMPANEL_ZOOMIN;Приблизить <b>+</b>
+ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -602,55 +725,6 @@ ZOOMBAR_SMALL;Минимальное
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!BATCHQUEUE_AUTOSTART;Auto start
-!BATCH_PROCESSING;Batch processing
-!CURVEEDITOR_CUSTOM;Custom
-!CURVEEDITOR_DARKS;Darks
-!CURVEEDITOR_HIGHLIGHTS;Highlights
-!CURVEEDITOR_LIGHTS;Lights
-!CURVEEDITOR_NURBS;Control cage
-!CURVEEDITOR_PARAMETRIC;Parametric
-!CURVEEDITOR_SHADOWS;Shadows
-!CURVEEDITOR_TYPE;Type:
-!EXIFFILTER_METADATAFILTER;Enable Metadata Filters
-!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_CURRENT_NAME;Current name:
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_NEW_NAME;New name:
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
-!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-!FILEBROWSER_USETEMPLATE;Use template:
-!GENERAL_AFTER;After
-!GENERAL_BEFORE;Before
-!GENERAL_HIGH_QUALITY;High Quality
-!GENERAL_UNCHANGED;(Unchanged)
-!HISTOGRAM_BUTTON_B;B
-!HISTOGRAM_BUTTON_G;G
-!HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_R;R
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_89;Directional pyramid
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
-!MAIN_BUTTON_FULLSCREEN;Fullscreen
-!MAIN_BUTTON_PUTTOQUEUE;Put to queue
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
-!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
-!MAIN_MSG_NAVIGATOR;Navigator
-!MAIN_MSG_PLACES;Places
-!MAIN_TOGGLE_BEFORE_AFTER;B|A
-!MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
 !NAVIGATOR_G_NA;G = n/a
@@ -670,77 +744,4 @@ ZOOMBAR_SMALL;Минимальное
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
-!PARTIALPASTE_LABCURVE;Lab curve
-!PARTIALPASTE_LABCURVE;Luminance curve
-!PREFERENCES_ADD;ADD
-!PREFERENCES_BATCH_PROCESSING;batch processing
-!PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-!PREFERENCES_DCBITERATIONS;Number of DCB iterations
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PREFERENCES_LINEDENOISE;Line noise filter
-!PREFERENCES_MULTITAB;Multiple tabs mode
-!PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
-!PREFERENCES_PROPERTY;Property
-!PREFERENCES_SELECTFONT;Select font
-!PREFERENCES_SET;SET
-!PREFERENCES_SINGLETAB;Single tab mode
-!PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
-!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
-!SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-!TP_DETAIL_AMOUNT;Amount
-!TP_DIRPYRDENOISE_CHROMA;Chrominance
-!TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
-!TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
-!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
-!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
-!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
-!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
-!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
-!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
-!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
-!TP_EQUALIZER_FINEST;finest
-!TP_EQUALIZER_LABEL;Wavelet equalizer
-!TP_EQUALIZER_LARGEST;coarsest
-!TP_EQUALIZER_NEUTRAL;Neutral
-!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
-!TP_IMPULSEDENOISE_THRESH;Threshold
-!TP_LABCURVE_BRIGHTNESS;Brightness
-!TP_LABCURVE_CONTRAST;Contrast
-!TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_LABEL;Lab Curves
-!TP_LABCURVE_SATURATION;Saturation
-!TP_LENSGEOM_AUTOCROP;Auto Crop
-!TP_LENSGEOM_FILL;Auto Fill
-!TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_PERSPECTIVE_HORIZONTAL;Horizontal
-!TP_PERSPECTIVE_LABEL;Perspective
-!TP_PERSPECTIVE_VERTICAL;Vertical
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RESIZE_DOWNSCALEB;Downscale (Better)
-!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
-!TP_RESIZE_HEIGHT;Height
-!TP_RESIZE_LANCZOS;Lanczos
-!TP_RESIZE_SPECIFY;Specify:
-!TP_RESIZE_WIDTH;Width
-!TP_VIGNETTING_CENTER;Center
-!TP_VIGNETTING_CENTER_X;Center X
-!TP_VIGNETTING_CENTER_Y;Center Y
-!TP_VIGNETTING_STRENGTH;Strength
-!ZOOMPANEL_100;(100%)
-!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-!ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
-!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
-!ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
-!ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
