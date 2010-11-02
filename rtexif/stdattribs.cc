@@ -431,6 +431,9 @@ const TagAttrib exifAttribs[] = {
  {0, 1, 0, 0, 0xA40B, "DeviceSettingDescription", &stdInterpreter},
  {0, 1, 0, 0, 0xA40C, "SubjectDistanceRange", &stdInterpreter},
  {0, 1, 0, 0, 0xA420, "ImageUniqueID", &stdInterpreter},
+ {0, 1, 0, 0, 0xa432, "LensInfo", &stdInterpreter},
+ {0, 1, 0, 0, 0xa434, "LensModel", &stdInterpreter},
+ {0, 1, 0, 0, 0xc630, "DNGLensInfo", &stdInterpreter},
  {-1, 0, 0, 0, 0, "", NULL }};
 
 
