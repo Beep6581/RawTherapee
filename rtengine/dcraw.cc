@@ -9197,7 +9197,7 @@ rtengine::Thumbnail* rtengine::Thumbnail::loadQuickFromRaw (const Glib::ustring&
     rml.ciffBase = ciff_base;
     rml.ciffLength = ciff_len;
 
-	char *thumb_buffer = malloc(thumb_length+64); // malloc instead of on the stack.
+	char *thumb_buffer = (char *)malloc(thumb_length+64); // malloc instead of on the stack.
 	if ( thumb_buffer == NULL )
 	{
 		printf("DCRAW: failed3\n");
