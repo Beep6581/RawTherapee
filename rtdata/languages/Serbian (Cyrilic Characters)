@@ -1,9 +1,10 @@
 
+#  Serbian translation
 #00 Serbian (Cyrilic)
 #01 by gpopac 2010-09-21
 ADJUSTER_RESET_TO_DEFAULT;Врати на подразумевано
-BATCH_PROCESSING;обрада
 BATCHQUEUE_AUTOSTART;Сам започни
+BATCH_PROCESSING;обрада
 CURVEEDITOR_CUSTOM;Произвољно
 CURVEEDITOR_DARKS;Тамно
 CURVEEDITOR_FILEDLGFILTERANY;Све датотеке
@@ -28,19 +29,19 @@ EXIFFILTER_ISO;ИСО
 EXIFFILTER_LENS;Објектив
 EXIFFILTER_METADATAFILTER;Филтрирај метаподатке
 EXIFFILTER_SHUTTER;Експозиција
-EXIFPANEL_ADDEDITHINT;Додаје нову ознаку или уређује постојећу
 EXIFPANEL_ADDEDIT;Додај/Измени
+EXIFPANEL_ADDEDITHINT;Додаје нову ознаку или уређује постојећу
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Унесите вредност
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Изаберите ознаку
 EXIFPANEL_ADDTAGDLG_TITLE;Додај/Измени ознаку
-EXIFPANEL_KEEPHINT;Задржава изабране ознаке при упису излазне датотеке
 EXIFPANEL_KEEP;Задржи
-EXIFPANEL_REMOVEHINT;Уклања изабране ознаке при упису излазне датотеке
+EXIFPANEL_KEEPHINT;Задржава изабране ознаке при упису излазне датотеке
 EXIFPANEL_REMOVE;Уклони
-EXIFPANEL_RESETALLHINT;Враћа све ознаке на почетне вредности
-EXIFPANEL_RESETALL;Врати све
-EXIFPANEL_RESETHINT;Враћа изабрану ознаку на почетну вредности
+EXIFPANEL_REMOVEHINT;Уклања изабране ознаке при упису излазне датотеке
 EXIFPANEL_RESET;Врати
+EXIFPANEL_RESETALL;Врати све
+EXIFPANEL_RESETALLHINT;Враћа све ознаке на почетне вредности
+EXIFPANEL_RESETHINT;Враћа изабрану ознаку на почетну вредности
 EXIFPANEL_SUBDIRECTORY;Поддиректоријум
 FILEBROWSER_ADDDELTEMPLATE;Додај/уклони шаблоне...
 FILEBROWSER_APPLYPROFILE;Примени профил
@@ -50,13 +51,13 @@ FILEBROWSER_COPYPROFILE;Умножи профил
 FILEBROWSER_CURRENT_NAME;Тренутно име:
 FILEBROWSER_DELETEDLGLABEL;Брисање датотеке
 FILEBROWSER_DELETEDLGMSG;Да ли сигурно желите да обришете %1 датотека?
-FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
 FILEBROWSER_EMPTYTRASH;Избаци смеће
-FILEBROWSER_EXIFFILTERAPPLYHINT;Укључује/искључује exif филтер у разгледачу датотека
+FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
 FILEBROWSER_EXIFFILTERAPPLY;Примени
+FILEBROWSER_EXIFFILTERAPPLYHINT;Укључује/искључује exif филтер у разгледачу датотека
 FILEBROWSER_EXIFFILTERLABEL;Exif филтер
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Мења подешавања exif филтера
 FILEBROWSER_EXIFFILTERSETTINGS;Подеси
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Мења подешавања exif филтера
 FILEBROWSER_NEW_NAME;Ново име:
 FILEBROWSER_PARTIALPASTEPROFILE;Делимично убаци
 FILEBROWSER_PASTEPROFILE;Убаци профил
@@ -76,8 +77,8 @@ FILEBROWSER_POPUPSELECTALL;Изабери све
 FILEBROWSER_POPUPTRASH;Премести у смеће
 FILEBROWSER_POPUPUNRANK;Уклони оцену
 FILEBROWSER_POPUPUNTRASH;Уклони из смећа
-FILEBROWSER_PROCESSINGSETTINGSHINT;Поставља формат датотеке и излазни директоријум
 FILEBROWSER_PROCESSINGSETTINGS;Подешавања
+FILEBROWSER_PROCESSINGSETTINGSHINT;Поставља формат датотеке и излазни директоријум
 FILEBROWSER_RENAMEDLGLABEL;Преименуј датотеку
 FILEBROWSER_RENAMEDLGMSG;Преименуј датотеку „%1“ у:
 FILEBROWSER_SHOWDIRHINT;Приказује све слике из директоријума
@@ -90,10 +91,10 @@ FILEBROWSER_SHOWRANK4HINT;Приказује слике оцењене са 4 з
 FILEBROWSER_SHOWRANK5HINT;Приказује слике оцењене са 5 звездица
 FILEBROWSER_SHOWTRASHHINT;Приказује слике у смећу
 FILEBROWSER_SHOWUNRANKHINT;Прикажи неоцењене слике
-FILEBROWSER_STARTPROCESSINGHINT;Почиње обраду и чување заказаних слика
 FILEBROWSER_STARTPROCESSING;Започни обраду
-FILEBROWSER_STOPPROCESSINGHINT;Зауставља обраду слика
+FILEBROWSER_STARTPROCESSINGHINT;Почиње обраду и чување заказаних слика
 FILEBROWSER_STOPPROCESSING;Заустави обраду
+FILEBROWSER_STOPPROCESSINGHINT;Зауставља обраду слика
 FILEBROWSER_THUMBSIZE;Преглед
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Покреће обраду фотографија када их закажете
 FILEBROWSER_USETEMPLATE;Искористи шаблон:
@@ -103,10 +104,10 @@ GENERAL_ABOUT;О програму
 GENERAL_AFTER;После
 GENERAL_BEFORE;Пре
 GENERAL_CANCEL;Откажи
-GENERAL_DISABLED;Искључено
 GENERAL_DISABLE;Искључи
-GENERAL_ENABLED;Укључи
+GENERAL_DISABLED;Искључено
 GENERAL_ENABLE;Укључи
+GENERAL_ENABLED;Укључи
 GENERAL_HIGH_QUALITY;Висок квалитет
 GENERAL_LANDSCAPE;Положено
 GENERAL_LOAD;Учитај
@@ -117,7 +118,6 @@ GENERAL_PORTRAIT;Усправно
 GENERAL_SAVE;Сачувај
 GENERAL_UNCHANGED;(неизмењено)
 GENERAL_YES;Да
-﻿HISTOGRAM_BUTTON_B;П
 HISTOGRAM_BUTTON_G;З
 HISTOGRAM_BUTTON_L;С
 HISTOGRAM_BUTTON_R;Ц
@@ -215,13 +215,13 @@ HISTORY_MSG_83;Квалитетно светлост/сенке
 HISTORY_MSG_84;Исправљање перспективе
 HISTORY_MSG_8;Компензација експозиције
 HISTORY_MSG_9;Сабијање светлог
-HISTORY_NEWSNAPSHOTAS;Као...
 HISTORY_NEWSNAPSHOT;Додај
+HISTORY_NEWSNAPSHOTAS;Као...
 HISTORY_NEWSSDIALOGLABEL;Назив снимка:
 HISTORY_NEWSSDIALOGTITLE;Додај нови снимак
 HISTORY_SETTO;Посави на
-HISTORY_SNAPSHOTS;Снимак
 HISTORY_SNAPSHOT;Снимак
+HISTORY_SNAPSHOTS;Снимак
 ICMPANEL_FILEDLGFILTERANY;Све датотеке
 ICMPANEL_FILEDLGFILTERICM;ИЦЦ профили
 ICMPANEL_GAMMABEFOREINPUT;Гама профили
@@ -236,71 +236,71 @@ ICMPANEL_OUTPUTPROFILE;Излазни профил
 ICMPANEL_SAVEREFERENCE;Сачувај слику као референцу за профил
 ICMPANEL_WORKINGPROFILE;Радни профил
 IMAGEAREA_DETAILVIEW;Приказ детаља
-IPTCPANEL_AUTHORHINT;Име аутора, нпр. писац, фотограф или графички дизајнер (један по реду).
-IPTCPANEL_AUTHORSPOSITIONHINT;Звање једног или више аутора (једно по реди).
-IPTCPANEL_AUTHORSPOSITION;Звање аутора
 IPTCPANEL_AUTHOR;Аутор
-IPTCPANEL_CAPTIONHINT;Кратак опис дела (наслов — абстракт).
-IPTCPANEL_CAPTIONWRITERHINT;Име особе које је укључена у писање, уређивање или исправљање слике/назица/апстракта (писац — уредник).
-IPTCPANEL_CAPTIONWRITER;Писац наслова
+IPTCPANEL_AUTHORHINT;Име аутора, нпр. писац, фотограф или графички дизајнер (један по реду).
+IPTCPANEL_AUTHORSPOSITION;Звање аутора
+IPTCPANEL_AUTHORSPOSITIONHINT;Звање једног или више аутора (једно по реди).
 IPTCPANEL_CAPTION;Назив
-IPTCPANEL_CATEGORYHINT;Одређује шта се налази на слици (категорија).
+IPTCPANEL_CAPTIONHINT;Кратак опис дела (наслов — абстракт).
+IPTCPANEL_CAPTIONWRITER;Писац наслова
+IPTCPANEL_CAPTIONWRITERHINT;Име особе које је укључена у писање, уређивање или исправљање слике/назица/апстракта (писац — уредник).
 IPTCPANEL_CATEGORY;Категорија
-IPTCPANEL_CITYHINT;Град у коме је слика настало (град).
+IPTCPANEL_CATEGORYHINT;Одређује шта се налази на слици (категорија).
 IPTCPANEL_CITY;Град
+IPTCPANEL_CITYHINT;Град у коме је слика настало (град).
 IPTCPANEL_COPYHINT;Коппирај ИПТЦ пшодешавања у оставу
-IPTCPANEL_COPYRIGHTHINT;Белешка о ауторским правима над делом (белешка о ауторским правима).
 IPTCPANEL_COPYRIGHT;Ауторска права
-IPTCPANEL_COUNTRYHINT;Име државе/основног места где је настала слика (држава — назив места).
+IPTCPANEL_COPYRIGHTHINT;Белешка о ауторским правима над делом (белешка о ауторским правима).
 IPTCPANEL_COUNTRY;Држава
-IPTCPANEL_CREDITHINT;Указује да онај ко издаје слику не мора бити аутор/власник (Заслуге).
+IPTCPANEL_COUNTRYHINT;Име државе/основног места где је настала слика (држава — назив места).
 IPTCPANEL_CREDIT;Заслуге
-IPTCPANEL_DATECREATEDHINT;Датум када је стављено власништво над интелектуални садржај слике; Формат: ГГГГММДД (датум настанка).
+IPTCPANEL_CREDITHINT;Указује да онај ко издаје слику не мора бити аутор/власник (Заслуге).
 IPTCPANEL_DATECREATED;Датум настанка
-IPTCPANEL_EMBEDDEDHINT;Врати поља на ИПТЦ податке угњежђене у слику
+IPTCPANEL_DATECREATEDHINT;Датум када је стављено власништво над интелектуални садржај слике; Формат: ГГГГММДД (датум настанка).
 IPTCPANEL_EMBEDDED;Угњежђено
-IPTCPANEL_HEADLINEHINT;Назив који указује на везу са садржајем слике и под којим се она издаје (наслов).
+IPTCPANEL_EMBEDDEDHINT;Врати поља на ИПТЦ податке угњежђене у слику
 IPTCPANEL_HEADLINE;Наслов
-IPTCPANEL_INSTRUCTIONSHINT;Остала упутства уредника везана за употребу слике (специјална упутства).
+IPTCPANEL_HEADLINEHINT;Назив који указује на везу са садржајем слике и под којим се она издаје (наслов).
 IPTCPANEL_INSTRUCTIONS;Упутства
-IPTCPANEL_KEYWORDSHINT;Речи које указују на разне податке о слици (кључне речи).
+IPTCPANEL_INSTRUCTIONSHINT;Остала упутства уредника везана за употребу слике (специјална упутства).
 IPTCPANEL_KEYWORDS;Кључне речи
+IPTCPANEL_KEYWORDSHINT;Речи које указују на разне податке о слици (кључне речи).
 IPTCPANEL_PASTEHINT;Убаци ИПТЦ подешавања из оставе
-IPTCPANEL_PROVINCEHINT;Покрајина/држава где је настала слика (провинција — држава).
 IPTCPANEL_PROVINCE;Покрајина
-IPTCPANEL_RESETHINT;Поставља подразумеване вредности профила
+IPTCPANEL_PROVINCEHINT;Покрајина/држава где је настала слика (провинција — држава).
 IPTCPANEL_RESET;Врати
-IPTCPANEL_SOURCEHINT;Првобитни власник иннтелектуалног садржаја на слици (извор).
+IPTCPANEL_RESETHINT;Поставља подразумеване вредности профила
 IPTCPANEL_SOURCE;Извор
-IPTCPANEL_SUPPCATEGORIESHINT;Додатно одређује мотив на слици (додатне категорије).
+IPTCPANEL_SOURCEHINT;Првобитни власник иннтелектуалног садржаја на слици (извор).
 IPTCPANEL_SUPPCATEGORIES;Доп. категорије
-IPTCPANEL_TITLEHINT;Кратни назив слике (име објекта).
+IPTCPANEL_SUPPCATEGORIESHINT;Додатно одређује мотив на слици (додатне категорије).
 IPTCPANEL_TITLE;Натпис
-IPTCPANEL_TRANSREFERENCEHINT;Код којји представља место првобитног преноса (референца првог преноса).
+IPTCPANEL_TITLEHINT;Кратни назив слике (име објекта).
 IPTCPANEL_TRANSREFERENCE;Реф. преноса
+IPTCPANEL_TRANSREFERENCEHINT;Код којји представља место првобитног преноса (референца првог преноса).
 MAIN_BUTTON_EXIT;Изађи
 MAIN_BUTTON_FULLSCREEN;Цео екран
 MAIN_BUTTON_PREFERENCES;Поставке
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+Q</b>
 MAIN_BUTTON_PUTTOQUEUE;Закажи
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Закажи
+MAIN_BUTTON_SAVE;Сачувај
 MAIN_BUTTON_SAVEAS;Као...
 MAIN_BUTTON_SAVE_TOOLTIP;Чува тренутну слику <b>Ctrl+С</b>
-MAIN_BUTTON_SAVE;Сачувај
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Уређује тренутну слику у спољном програму <b>Ctrl+Е</b>
 MAIN_BUTTON_SENDTOEDITOR;Уреди
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Уређује тренутну слику у спољном програму <b>Ctrl+Е</b>
 MAIN_BUTTON_UNFULLSCREEN;Напусти цео екран
 MAIN_FRAME_BATCHQUEUE;Заказане датотеке
 MAIN_FRAME_FILEBROWSER;Разгледач датотека
+MAIN_FRAME_PLACES;Места
 MAIN_FRAME_PLACES_ADD;Додај
 MAIN_FRAME_PLACES_DEL;Уклони
-MAIN_FRAME_PLACES;Места
 MAIN_FRAME_RECENT;Recent Фасцикле
 MAIN_MSG_ALREADYEXISTS;Датотека већ постоји.
 MAIN_MSG_CANNOTLOAD;Не могу да учитам слику
 MAIN_MSG_CANNOTSAVE;Грешка при чувању датотеке
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Изаберите исправну путању у „Поставкама“.
 MAIN_MSG_CANNOTSTARTEDITOR;Не могу да покренем програм за уређивање.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Изаберите исправну путању у „Поставкама“.
 MAIN_MSG_ERRORDURINGIMAGESAVING;Грешка прилоком чувања слике
 MAIN_MSG_EXITJOBSINQUEUEINFO;Заказане слике неће бити обрађене.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Да ли заиста желите да изађете? Неке слике су још увек заказане за обраду.
@@ -327,8 +327,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Приказује исечене светле дело
 MAIN_TOOLTIP_INDCLIPPEDS;Приказује исечене тамне делове
 MAIN_TOOLTIP_PREFERENCES;Мења поставке програма
 MAIN_TOOLTIP_QINFO;Основни подаци о слици <b>И</б>
-MAIN_TOOLTIP_SAVEAS;Чува слику у изабрану фасциклу
 MAIN_TOOLTIP_SAVE;Чува слику у подразумевану фасциклу
+MAIN_TOOLTIP_SAVEAS;Чува слику у изабрану фасциклу
 MAIN_TOOLTIP_TOGGLE;Приказује слику пре и после обраде <b>Б</b>
 NAVIGATOR_B_NA;П = ○
 NAVIGATOR_B_VALUE;П = %1
@@ -394,8 +394,8 @@ PREFERENCES_CLEARDLG_LINE2;Ово може да потраје неколико 
 PREFERENCES_CLEARDLG_TITLE;Сачекајте
 PREFERENCES_CLIPPINGIND;Показивачи одсечених делова
 PREFERENCES_CMETRICINTENT;Колориметријска намера
-PREFERENCES_DATEFORMATHINT;<i>Можете задати следеће формате:</i>\n<b>%y</b><i> :година</i>\n<b>%m</b><i> : месец</i>\n<b>%d</b><i> : дан</i>\n<i>\nУ Србији се највише користи:</i>\n<b>%d.%m.%y</b>
 PREFERENCES_DATEFORMAT;Формат датума
+PREFERENCES_DATEFORMATHINT;<i>Можете задати следеће формате:</i>\n<b>%y</b><i> :година</i>\n<b>%m</b><i> : месец</i>\n<b>%d</b><i> : дан</i>\n<i>\nУ Србији се највише користи:</i>\n<b>%d.%m.%y</b>
 PREFERENCES_DCBENHANCE;Примени ДЦБ побољшање
 PREFERENCES_DCBITERATIONS;Број ДЦБ пролаза
 PREFERENCES_DEFAULTLANG;Језик програма
@@ -429,17 +429,17 @@ PREFERENCES_INTENT_SATURATION;Засићени приказ
 PREFERENCES_LINEDENOISE;Линијски филтер шума
 PREFERENCES_LIVETHUMBNAILS;„Живи“ прикази (спорије)
 PREFERENCES_MONITORICC;Профил монитора
-PREFERENCES_OUTDIRFOLDERHINT;Ставља сачуване слике у 
-PREFERENCES_OUTDIRFOLDER;Сачувај у фасциклу
-PREFERENCES_OUTDIRHINT;<i><i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
 PREFERENCES_OUTDIR;Излазни директоријум
+PREFERENCES_OUTDIRFOLDER;Сачувај у фасциклу
+PREFERENCES_OUTDIRFOLDERHINT;Ставља сачуване слике у 
+PREFERENCES_OUTDIRHINT;<i><i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Можете да задате следеће скраћенице за форматирање:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nОви знакови за форматирање се односе на директоријуме, подпутање путања до raw датотеке.\n\nНа пример, уколико је отворена слика </i> <b>/home/ivan/слике/02.09.2010/dsc0012.nef</b><i>, скраћенице означавају:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=слике, ...\n%p1=/home/ivan/слике/02.09.2010, %p2=/home/ivan/слике, %p3=/home/ivan, ...\n</b><i>\nУколико желите да сачувате развијену слику поред оригинала, унесите:\n</i><b>%p1/%f\n</b><i>\nУколико желите да сачувате излазну слику у директоријум „развијене“ који се налази где и оригинална слика, унесите:\n</i><b>%p1/развијене/%f\n</b><i>\nУколико желите да сачувате развијену слику у директоријум „/home/ivan/развијене“, а да структура поддиректоријума остане очувана, унесите:\n</i><b>%p2/развијене/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Постави преко умањеног приказа
-PREFERENCES_PARSEDEXTADDHINT;Додаје уписану екстензију на списак
-PREFERENCES_PARSEDEXTADD;Додај екстензију
-PREFERENCES_PARSEDEXTDELHINT;Брише изабрану екстензију из списка
 PREFERENCES_PARSEDEXT;Екстензије за приказ
+PREFERENCES_PARSEDEXTADD;Додај екстензију
+PREFERENCES_PARSEDEXTADDHINT;Додаје уписану екстензију на списак
+PREFERENCES_PARSEDEXTDELHINT;Брише изабрану екстензију из списка
 PREFERENCES_PROFILEHANDLING;Рад са профилима обраде
 PREFERENCES_PROFILELOADPR;Приоритет учитавања профила
 PREFERENCES_PROFILEPRCACHE;Профил у оставу
@@ -503,14 +503,13 @@ SAVEDLG_JPEGQUAL;JPEG квалитет
 SAVEDLG_JPGFILTER;JPEG датотеке
 SAVEDLG_PNGCOMPR;PNG паковање
 SAVEDLG_PNGFILTER;PNG датотеке
+SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_PUTTOQUEUEHEAD;Премешта слику на почетак заказаних
 SAVEDLG_PUTTOQUEUETAIL;Премешта слику на крај заказаних
-SAVEDLG_PUTTOQUEUE;Заказује слику за обраду
 SAVEDLG_SAVEIMMEDIATELY;Одмах сачувај
 SAVEDLG_SAVESPP;Сачувај параметре обраде уз слику
 SAVEDLG_TIFFFILTER;TIFF датотеке
 SAVEDLG_TIFFUNCOMPRESSED;Незапаковани TIFF
-#  Serbian translation
 TOOLBAR_TOOLTIP_CROP;Поставља оквир за исецање (пречица: Ц)
 TOOLBAR_TOOLTIP_HAND;Алат за померање (пречица: Н)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Исправља линију хоризонта (пречица: С)
@@ -620,22 +619,22 @@ TP_LUMADENOISE_RADIUS;Полупречник
 TP_PERSPECTIVE_HORIZONTAL;Хоризонтална
 TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикална
+TP_RESIZE_BICUBIC;Бикубично
 TP_RESIZE_BICUBICSF;Бикубично (мекше)
 TP_RESIZE_BICUBICSH;Бикубично (оштрије)
-TP_RESIZE_BICUBIC;Бикубично
 TP_RESIZE_BILINEAR;Билинеарно
 TP_RESIZE_DOWNSCALEB;Смањење размере (боље)
 TP_RESIZE_DOWNSCALEF;Смањење размере (брже)
 TP_RESIZE_FULLSIZE;Стварна величина слике:
-TP_RESIZE_HEIGHT;Висину
 TP_RESIZE_H;В:
+TP_RESIZE_HEIGHT;Висину
 TP_RESIZE_LABEL;Величина слике
 TP_RESIZE_METHOD;Начин: 
 TP_RESIZE_NEAREST;Најближе
 TP_RESIZE_SCALE;Умањење
 TP_RESIZE_SPECIFY;Изабери:
-TP_RESIZE_WIDTH;Ширину
 TP_RESIZE_W;Ш:
+TP_RESIZE_WIDTH;Ширину
 TP_ROTATE_AUTOCROP;Сам исеци
 TP_ROTATE_DEGREE;Степени:
 TP_ROTATE_FILL;Попуни
@@ -657,10 +656,10 @@ TP_SHARPENING_LABEL;Оштрење
 TP_SHARPENING_METHOD;Начин
 TP_SHARPENING_ONLYEDGES;Изоштри само ивице
 TP_SHARPENING_RADIUS;Полупречник
+TP_SHARPENING_RLD;RL деконволуција
 TP_SHARPENING_RLD_AMOUNT;Количина
 TP_SHARPENING_RLD_DAMPING;Пригушивање
 TP_SHARPENING_RLD_ITERATIONS;Понављања
-TP_SHARPENING_RLD;RL деконволуција
 TP_SHARPENING_THRESHOLD;Праг
 TP_SHARPENING_USM;Оштрина маске
 TP_VIGNETTING_AMOUNT;Количина
@@ -688,6 +687,7 @@ ZOOMPANEL_ZOOM100;Повећава преглед на 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозора <b>Ф</b>
 ZOOMPANEL_ZOOMIN;Увећава приказ слике <b>+</b>
 ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
+﻿HISTOGRAM_BUTTON_B;П
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!

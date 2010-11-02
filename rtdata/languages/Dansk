@@ -2,7 +2,6 @@
 #00 Danish
 #01 Translated by krengbo
 #02 2009-06-27
-﻿ADJUSTER_RESET_TO_DEFAULT;Nulstil til standard
 ADJUSTER_RESET_TO_DEFAULT;Nulstil til standard
 CURVEEDITOR_FILEDLGFILTERANY;Alle filer
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurve-filer
@@ -19,8 +18,8 @@ EXIFFILTER_FOCALLEN;Brændvidde
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_SHUTTER;Lukkertid
-EXIFPANEL_ADDEDITHINT;Tilføj nyt tags eller rediger tags
 EXIFPANEL_ADDEDIT;Tilføj/Rediger
+EXIFPANEL_ADDEDITHINT;Tilføj nyt tags eller rediger tags
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Indtast værdi
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Vælg tags
 EXIFPANEL_ADDTAGDLG_TITLE;Tilføj/Rediger tags
@@ -28,9 +27,9 @@ EXIFPANEL_KEEP;Bevar
 EXIFPANEL_KEEPHINT;Bevar de valgte tags under skrivning af fil
 EXIFPANEL_REMOVE;Fjern
 EXIFPANEL_REMOVEHINT;Fjern de valgte tags under skrivning af fil
+EXIFPANEL_RESET;Gendan
 EXIFPANEL_RESETALL;Gendan alt
 EXIFPANEL_RESETALLHINT;Gendan alle tags til de oprindelige værdier
-EXIFPANEL_RESET;Gendan
 EXIFPANEL_RESETHINT;Gendan valgte tags til de oprindelige værdier
 EXIFPANEL_SUBDIRECTORY;Undermappe
 FILEBROWSER_APPLYPROFILE;Anvend profil
@@ -39,13 +38,13 @@ FILEBROWSER_CLEARPROFILE;Ryd profil
 FILEBROWSER_COPYPROFILE;Kopier profil
 FILEBROWSER_DELETEDLGLABEL;Bekræft sletning af fil
 FILEBROWSER_DELETEDLGMSG;Er du sikker på, at du vil slette de %1 valgte filer?
-FILEBROWSER_EMPTYTRASHHINT;Slet filerne i papirkurv permanent
 FILEBROWSER_EMPTYTRASH;Tøm papirkurv
+FILEBROWSER_EMPTYTRASHHINT;Slet filerne i papirkurv permanent
 FILEBROWSER_EXIFFILTERAPPLY;Anvend
 FILEBROWSER_EXIFFILTERAPPLYHINT;Slå exif filter til eller fra i filbrowseren
 FILEBROWSER_EXIFFILTERLABEL;Exif filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Skift indstillinger på exif filteret
 FILEBROWSER_EXIFFILTERSETTINGS;Indstillinger
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Skift indstillinger på exif filteret
 FILEBROWSER_PARTIALPASTEPROFILE;Indsæt delvist
 FILEBROWSER_PASTEPROFILE;Indsæt profil
 FILEBROWSER_POPUPCANCELJOB;Annuler opgave
@@ -64,8 +63,8 @@ FILEBROWSER_POPUPSELECTALL;Vælg alt
 FILEBROWSER_POPUPTRASH;Flyt til papirkurv
 FILEBROWSER_POPUPUNRANK;Fjern vurdering
 FILEBROWSER_POPUPUNTRASH;Fjern fra papirkurv
-FILEBROWSER_PROCESSINGSETTINGSHINT;Vælg filformat og destinationsmappe
 FILEBROWSER_PROCESSINGSETTINGS;Indstillinger
+FILEBROWSER_PROCESSINGSETTINGSHINT;Vælg filformat og destinationsmappe
 FILEBROWSER_RENAMEDLGLABEL;Omdøb fil
 FILEBROWSER_RENAMEDLGMSG;Omdøb filen "%1" til:
 FILEBROWSER_SHOWDIRHINT;Vis alle billeder i mappen
@@ -79,17 +78,17 @@ FILEBROWSER_SHOWTRASHHINT;Vis indhold i papirkurven
 FILEBROWSER_SHOWUNRANKHINT;Vis billeder uden vurdering
 FILEBROWSER_STARTPROCESSING;Begynd bearbejdning
 FILEBROWSER_STARTPROCESSINGHINT;Begynd at bearbejde/gemme billeder i køen
-FILEBROWSER_STOPPROCESSINGHINT;Stop bearbejdningen af billeder
 FILEBROWSER_STOPPROCESSING;Stop bearbejdning
+FILEBROWSER_STOPPROCESSINGHINT;Stop bearbejdningen af billeder
 FILEBROWSER_THUMBSIZE;Miniaturestr.
 FILEBROWSER_ZOOMINHINT;Gør miniaturer større
 FILEBROWSER_ZOOMOUTHINT;Gør miniaturer mindre
 GENERAL_ABOUT;Om
 GENERAL_CANCEL;Annuler
-GENERAL_DISABLED;Fravalgt
 GENERAL_DISABLE;Fravælg
-GENERAL_ENABLED;Valgt
+GENERAL_DISABLED;Fravalgt
 GENERAL_ENABLE;Vælg
+GENERAL_ENABLED;Valgt
 GENERAL_LANDSCAPE;Bredformat
 GENERAL_LOAD;Indlæs
 GENERAL_NA;Ikke muligt
@@ -189,8 +188,8 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Eksponeringskompensation
 HISTORY_MSG_9;Kompensation af højlys
-HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Tilføj...
+HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSSDIALOGLABEL;Mærke på snapshot:
 HISTORY_NEWSSDIALOGTITLE;Tilføj nyt snapshot
 HISTORY_SETTO;Sæt til
@@ -216,53 +215,53 @@ IPTCPANEL_AUTHORSPOSITION;Forfatterens stilling
 IPTCPANEL_AUTHORSPOSITIONHINT;Stillingsbetegnelse for skaberen eller skaberne af objektet (byline titel).
 IPTCPANEL_CAPTION;Billedtekst
 IPTCPANEL_CAPTIONHINT;En beskrivelse af informationerne i tekstform.
-IPTCPANEL_CAPTIONWRITERHINT;Navnet på den person, der har været indblandet i at skrive, redigere eller korrekturlæse billedet eller billedteksten.
 IPTCPANEL_CAPTIONWRITER;Skribent på billedtekst
-IPTCPANEL_CATEGORYHINT;Identificerer billedets emne efter skaberens mening.
+IPTCPANEL_CAPTIONWRITERHINT;Navnet på den person, der har været indblandet i at skrive, redigere eller korrekturlæse billedet eller billedteksten.
 IPTCPANEL_CATEGORY;Kategori
+IPTCPANEL_CATEGORYHINT;Identificerer billedets emne efter skaberens mening.
 IPTCPANEL_CITY;By
 IPTCPANEL_CITYHINT;Byen, hvor billedet er taget..
 IPTCPANEL_COPYHINT;Kopier IPTC-indstillinger til udklipsholder.
 IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Enhver nødvendig copyright-oplysning.
-IPTCPANEL_COUNTRYHINT;Navnet på det land, hvor billedet blev taget.
 IPTCPANEL_COUNTRY;Land
+IPTCPANEL_COUNTRYHINT;Navnet på det land, hvor billedet blev taget.
 IPTCPANEL_CREDIT;Anerkendelse
 IPTCPANEL_CREDITHINT;Identificerer den, der stiller billedet til rådighed, ikke nødvendigvis ejeren/skaberen.
 IPTCPANEL_DATECREATED;Dato skabt
 IPTCPANEL_DATECREATEDHINT;Den dato, hvor det intellektuelle indhold i billedet blev skabt; Format: ÅÅÅÅMMDD (Date Created).
-IPTCPANEL_EMBEDDEDHINT;Genskab til indlejrede IPTC-data i billedfilen
 IPTCPANEL_EMBEDDED;Indlejret
-IPTCPANEL_HEADLINEHINT;En indførsel, som kan udgives og giver en opsummering af billedets indhold.
+IPTCPANEL_EMBEDDEDHINT;Genskab til indlejrede IPTC-data i billedfilen
 IPTCPANEL_HEADLINE;Overskrift
-IPTCPANEL_INSTRUCTIONSHINT;Andre redaktionelle instruktioner angående billedets brug.
+IPTCPANEL_HEADLINEHINT;En indførsel, som kan udgives og giver en opsummering af billedets indhold.
 IPTCPANEL_INSTRUCTIONS;Instruktioner
-IPTCPANEL_KEYWORDSHINT;Bruges til at angive særlige søgbare ord.
+IPTCPANEL_INSTRUCTIONSHINT;Andre redaktionelle instruktioner angående billedets brug.
 IPTCPANEL_KEYWORDS;Søgeord
+IPTCPANEL_KEYWORDSHINT;Bruges til at angive særlige søgbare ord.
 IPTCPANEL_PASTEHINT;Indsæt IPTC-indstillinger fra udklipsholder
-IPTCPANEL_PROVINCEHINT;Provinsen/delstaten, hvor billedet stammer fra.
 IPTCPANEL_PROVINCE;Provins
+IPTCPANEL_PROVINCEHINT;Provinsen/delstaten, hvor billedet stammer fra.
 IPTCPANEL_RESET;Genskab
 IPTCPANEL_RESETHINT;Genskab til profilstandard
-IPTCPANEL_SOURCEHINT;Den originale ejer af billedets intellektuelle indhold.
 IPTCPANEL_SOURCE;Kilde
-IPTCPANEL_SUPPCATEGORIESHINT;Yderligere angivelse af billedets emne.
+IPTCPANEL_SOURCEHINT;Den originale ejer af billedets intellektuelle indhold.
 IPTCPANEL_SUPPCATEGORIES;Suppl. katergorier
-IPTCPANEL_TITLEHINT;En kort beskrivelse af billedet.
+IPTCPANEL_SUPPCATEGORIESHINT;Yderligere angivelse af billedets emne.
 IPTCPANEL_TITLE;Titel
-IPTCPANEL_TRANSREFERENCEHINT;En kode, der repræsenterer placeringen for den originale overlevering.
+IPTCPANEL_TITLEHINT;En kort beskrivelse af billedet.
 IPTCPANEL_TRANSREFERENCE;Overleveringsreference
+IPTCPANEL_TRANSREFERENCEHINT;En kode, der repræsenterer placeringen for den originale overlevering.
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Indstillinger
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE;Gem billede
+MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SENDTOEDITOR;Send til redigeringsprogram
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Filen eksisterer allerede.
 MAIN_MSG_CANNOTLOAD;Kan ikke indlæse billede
@@ -291,8 +290,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Markér udbrændte højlys
 MAIN_TOOLTIP_INDCLIPPEDS;Markér udbrændte skygger
 MAIN_TOOLTIP_PREFERENCES;Vælg indstillinger
 MAIN_TOOLTIP_QINFO;Udvalgte oplysninger om billedet
-MAIN_TOOLTIP_SAVEAS;Gem billedet i en valgfri mappe
 MAIN_TOOLTIP_SAVE;Gem billedet i standardmappen
+MAIN_TOOLTIP_SAVEAS;Gem billedet i en valgfri mappe
 PARTIALPASTE_BASICGROUP;Grundlæggende indstillinger
 PARTIALPASTE_CACORRECTION;Kromatisk aberration
 PARTIALPASTE_COARSETRANS;Drej/vend 90 grader
@@ -370,16 +369,16 @@ PREFERENCES_INTENT_RELATIVE;Relativ Colorimetrisk
 PREFERENCES_INTENT_SATURATION;Mætning
 PREFERENCES_LIVETHUMBNAILS;Opdaterede miniaturer (langsommere)
 PREFERENCES_MONITORICC;Skærmprofil
+PREFERENCES_OUTDIR;Output-mappe
 PREFERENCES_OUTDIRFOLDER;Gem i mappe
 PREFERENCES_OUTDIRFOLDERHINT;Læg det gemte billede i den valgte mappe
 PREFERENCES_OUTDIRHINT;<i>Du kan benytte følgende formatstrenge:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDisse formatstrenge henviser til mapperne og undermapperne for RAW-filens sti.\n\nFx, hvis filen </i> <b>/Users\Peter\Pictures/02-09-2006/dsc0012.nef</b><i>er blevet åbnet, er betydningen af formatstrengen:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/Users\Peter\Pictures/02-09-2006, %p2=/Users\Peter\Pictures, p3=/Users\Peter\Pictures, ...\n</b><i>\nhvis du vil gemme output-billedet i samme mappe som originalen, skal du skrive:\n</i><b>%p1/%f\n</b><i>\nHvis du vil gemme output-billedet i en mappe, der hedder 'konverteret', som er placeret i originalens mappe, skal du skrive:\n</i><b>%p1/konverteret/%f\n</b><i>\nHvis du vil gemme output-billedet i mappen Users\Peter\Pictures\konverteret og beholde den samme undermappe med dato, skal du skrive:\n</i><b>%p2/konverteret/%d1/%f</b>
-PREFERENCES_OUTDIR;Output-mappe
 PREFERENCES_OUTDIRTEMPLATE;Brug skabelon
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan benytte følgende formatstrenge:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDisse formatstrenge henviser til mapperne og undermapperne for RAW-filens sti.\n\nFx, hvis filen </i> <b>/Users\Peter\Pictures/02-09-2006/dsc0012.nef</b><i>er blevet åbnet, er betydningen af formatstrengen:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/Users\Peter\Pictures/02-09-2006, %p2=/Users\Peter\Pictures, p3=/Users\Peter\Pictures, ...\n</b><i>\nhvis du vil gemme output-billedet i samme mappe som originalen, skal du skrive:\n</i><b>%p1/%f\n</b><i>\nHvis du vil gemme output-billedet i en mappe, der hedder 'konverteret', som er placeret i originalens mappe, skal du skrive:\n</i><b>%p1/konverteret/%f\n</b><i>\nHvis du vil gemme output-billedet i mappen Users\Peter\Pictures\konverteret og beholde den samme undermappe med dato, skal du skrive:\n</i><b>%p2/konverteret/%d1/%f</b>
-PREFERENCES_PARSEDEXTADDHINT;Indtast en filendelse, og klik her for at tilføje til listen
-PREFERENCES_PARSEDEXTADD;Tilføj filtype
-PREFERENCES_PARSEDEXTDELHINT;Slet valgte filtype fra listen
 PREFERENCES_PARSEDEXT;Indlæste filtyper
+PREFERENCES_PARSEDEXTADD;Tilføj filtype
+PREFERENCES_PARSEDEXTADDHINT;Indtast en filendelse, og klik her for at tilføje til listen
+PREFERENCES_PARSEDEXTDELHINT;Slet valgte filtype fra listen
 PREFERENCES_PROFILEHANDLING;Bearbejder profilbehandling
 PREFERENCES_PROFILELOADPR;Profilindlæsningsrækkefølge
 PREFERENCES_PROFILEPRCACHE;Profil i cache
@@ -439,8 +438,8 @@ SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filer
-SAVEDLG_PUTTOQUEUEHEAD;Sæt i begyndelsen af bearbejdningskøen
 SAVEDLG_PUTTOQUEUE;Sæt i bearbejdningskø
+SAVEDLG_PUTTOQUEUEHEAD;Sæt i begyndelsen af bearbejdningskøen
 SAVEDLG_PUTTOQUEUETAIL;Sæt i enden af bearbejdningskøen
 SAVEDLG_SAVEIMMEDIATELY;Gem med det samme
 SAVEDLG_SAVESPP;Gem bearbejdningsparametre med billede
@@ -567,10 +566,10 @@ TP_SHARPENING_LABEL;Skarphed
 TP_SHARPENING_METHOD;Metode
 TP_SHARPENING_ONLYEDGES;Gør kun kanter skarpere
 TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RLD;RL Udfoldning
 TP_SHARPENING_RLD_AMOUNT;Mængde
 TP_SHARPENING_RLD_DAMPING;Dæmpning
 TP_SHARPENING_RLD_ITERATIONS;Gentagelser
-TP_SHARPENING_RLD;RL Udfoldning
 TP_SHARPENING_THRESHOLD;Tærskel
 TP_SHARPENING_USM;Uskarp maske
 TP_VIGNETTING_AMOUNT;Mængde
@@ -592,6 +591,7 @@ ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Forhåndsvisning
 ZOOMBAR_SCALE;Skalér
 ZOOMBAR_SMALL;Lille
+﻿ADJUSTER_RESET_TO_DEFAULT;Nulstil til standard
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -599,8 +599,8 @@ ZOOMBAR_SMALL;Lille
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!BATCH_PROCESSING;Batch processing
 !BATCHQUEUE_AUTOSTART;Auto start
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights

@@ -4,8 +4,8 @@
 #02 updated to RT2.4-RC by paul.matthijsse
 #03 2010-10-24 updated to RT3.0 alpha 1 by A3novy
 ADJUSTER_RESET_TO_DEFAULT;リセット初期化
-BATCH_PROCESSING;バッチ処理
 BATCHQUEUE_AUTOSTART;オートスタート
+BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_CUSTOM;カスタム
 CURVEEDITOR_DARKS;ダーク
 CURVEEDITOR_FILEDLGFILTERANY;すべてのファイル
@@ -30,8 +30,8 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;レンズ
 EXIFFILTER_METADATAFILTER;メタデータフィルタ適応
 EXIFFILTER_SHUTTER;シャッター
-EXIFPANEL_ADDEDITHINT;新しいタグを追加、またはタグの編集
 EXIFPANEL_ADDEDIT;追加/編集
+EXIFPANEL_ADDEDITHINT;新しいタグを追加、またはタグの編集
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;値 入力
 EXIFPANEL_ADDTAGDLG_SELECTTAG;タグ選択
 EXIFPANEL_ADDTAGDLG_TITLE;追加/タグ編集
@@ -52,10 +52,10 @@ FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;カーブ名:
 FILEBROWSER_DELETEDLGLABEL;ファイル削除確認
 FILEBROWSER_DELETEDLGMSG;%1 を削除してもいいですか？
-FILEBROWSER_EMPTYTRASHHINT;ゴミ箱を完全に空にする
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
-FILEBROWSER_EXIFFILTERAPPLYHINT;ファイルブラウザのExifフィルターのon/off
+FILEBROWSER_EMPTYTRASHHINT;ゴミ箱を完全に空にする
 FILEBROWSER_EXIFFILTERAPPLY;適応
+FILEBROWSER_EXIFFILTERAPPLYHINT;ファイルブラウザのExifフィルターのon/off
 FILEBROWSER_EXIFFILTERLABEL;Exifフィルター
 FILEBROWSER_EXIFFILTERSETTINGS;セットアップ
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Exifフィルターの設定を変える
@@ -78,8 +78,8 @@ FILEBROWSER_POPUPSELECTALL;全選択
 FILEBROWSER_POPUPTRASH;ゴミ箱へ移動
 FILEBROWSER_POPUPUNRANK;格付けなし
 FILEBROWSER_POPUPUNTRASH;ゴミ箱から移動
-FILEBROWSER_PROCESSINGSETTINGSHINT;ファイル形式と出力ディレクトリを設定
 FILEBROWSER_PROCESSINGSETTINGS;設定
+FILEBROWSER_PROCESSINGSETTINGSHINT;ファイル形式と出力ディレクトリを設定
 FILEBROWSER_RENAMEDLGLABEL;ファイル名変更
 FILEBROWSER_RENAMEDLGMSG;"%1" にファイル名変更:
 FILEBROWSER_SHOWDIRHINT;ディレクトリのすべての画像を表示
@@ -92,10 +92,10 @@ FILEBROWSER_SHOWRANK4HINT;４つ星ランクを表示
 FILEBROWSER_SHOWRANK5HINT;５つ星ランクを表示
 FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示
 FILEBROWSER_SHOWUNRANKHINT;格付けなしを表示
-FILEBROWSER_STARTPROCESSINGHINT;処理開始/キュー画像の保存
 FILEBROWSER_STARTPROCESSING;処理開始
-FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
+FILEBROWSER_STARTPROCESSINGHINT;処理開始/キュー画像の保存
 FILEBROWSER_STOPPROCESSING;処理中止
+FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
 FILEBROWSER_THUMBSIZE;サムネイル.サイズ
 FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいジョブがきたら自動的に処理を開始します
 FILEBROWSER_USETEMPLATE;テンプレート使用:
@@ -105,10 +105,10 @@ GENERAL_ABOUT;RawTherapeeについて..
 GENERAL_AFTER;補正後
 GENERAL_BEFORE;補正前
 GENERAL_CANCEL;キャンセル
-GENERAL_DISABLED;無効
 GENERAL_DISABLE;無効
-GENERAL_ENABLED;有効
+GENERAL_DISABLED;無効
 GENERAL_ENABLE;有効
+GENERAL_ENABLED;有効
 GENERAL_HIGH_QUALITY;高画質
 GENERAL_LANDSCAPE;横
 GENERAL_LOAD;読み込み
@@ -188,7 +188,6 @@ HISTORY_MSG_57;90度 回転
 HISTORY_MSG_58;水平に反転
 HISTORY_MSG_59;垂直に反転
 HISTORY_MSG_5;明るさ
-HISTORY_MSG_6;コントラスト
 HISTORY_MSG_60;回転
 HISTORY_MSG_61;回転
 HISTORY_MSG_62;歪曲収差補正
@@ -199,6 +198,7 @@ HISTORY_MSG_66;ハイライト修復
 HISTORY_MSG_67;ハイライト修復 量
 HISTORY_MSG_68;ハイライト修復 方式
 HISTORY_MSG_69;作業カラースペース
+HISTORY_MSG_6;コントラスト
 HISTORY_MSG_70;出力カラースペース
 HISTORY_MSG_71;入力カラースペース
 HISTORY_MSG_72;周辺光量補正
@@ -229,8 +229,8 @@ HISTORY_MSG_95;Lab 彩度
 HISTORY_MSG_96;Lab aカーブ
 HISTORY_MSG_97;Lab bカーブ
 HISTORY_MSG_9;ハイライト補正
-HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
+HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSSDIALOGLABEL;スナップのラベル:
 HISTORY_NEWSSDIALOGTITLE;新規スナップ追加
 HISTORY_SETTO;設定: 
@@ -250,72 +250,71 @@ ICMPANEL_OUTPUTPROFILE;出力プロファイル
 ICMPANEL_SAVEREFERENCE;プロファイリングの参照する画像を保存
 ICMPANEL_WORKINGPROFILE;作業プロファイル
 IMAGEAREA_DETAILVIEW;詳細
-IPTCPANEL_AUTHORHINT;作成者の名前、たとえば筆者、カメラマン、グラフィックス作成者(作成者).
-IPTCPANEL_AUTHORSPOSITIONHINT;作成者の肩書か作品の作成者達(作成者 肩書).
-IPTCPANEL_AUTHORSPOSITION;作成者の肩書
 IPTCPANEL_AUTHOR;作成者
-IPTCPANEL_CAPTIONHINT;データの本文の記述(説明--要約)
-IPTCPANEL_CAPTIONWRITERHINT;画像を編集修正する、または説明/要約の執筆にかかわる人の名前 (記入者--編集者).
-IPTCPANEL_CAPTIONWRITER;説明記入者
+IPTCPANEL_AUTHORHINT;作成者の名前、たとえば筆者、カメラマン、グラフィックス作成者(作成者).
+IPTCPANEL_AUTHORSPOSITION;作成者の肩書
+IPTCPANEL_AUTHORSPOSITIONHINT;作成者の肩書か作品の作成者達(作成者 肩書).
 IPTCPANEL_CAPTION;説明
+IPTCPANEL_CAPTIONHINT;データの本文の記述(説明--要約)
+IPTCPANEL_CAPTIONWRITER;説明記入者
+IPTCPANEL_CAPTIONWRITERHINT;画像を編集修正する、または説明/要約の執筆にかかわる人の名前 (記入者--編集者).
 IPTCPANEL_CATEGORY;カテゴリ
 IPTCPANEL_CATEGORYHINT;画像の主題を識別する3文字コード (カテゴリ).
-IPTCPANEL_CITYHINT;撮影された市町村 (市町村).
 IPTCPANEL_CITY;市町村
+IPTCPANEL_CITYHINT;撮影された市町村 (市町村).
 IPTCPANEL_COPYHINT;IPTC設定をクリップボードにコピー
-IPTCPANEL_COPYRIGHTHINT;著作権情報に必要な事柄 (著作権情報).
 IPTCPANEL_COPYRIGHT;著作権
-IPTCPANEL_COUNTRYHINT;国名、/画像が撮影・作成された国 (国--撮影国).
+IPTCPANEL_COPYRIGHTHINT;著作権情報に必要な事柄 (著作権情報).
 IPTCPANEL_COUNTRY;国
+IPTCPANEL_COUNTRYHINT;国名、/画像が撮影・作成された国 (国--撮影国).
 IPTCPANEL_CREDIT;クレジット
 IPTCPANEL_CREDITHINT;画像の提供元の識別, 必ずしも所有者/作成者ではない (クレジット).
-IPTCPANEL_DATECREATEDHINT;画像の知的内容が作成された日付; フォーマット: JJJJMMTT (作成日).
 IPTCPANEL_DATECREATED;作成日
-IPTCPANEL_EMBEDDEDHINT;画像に埋め込まれたIPTCデータにリセット
+IPTCPANEL_DATECREATEDHINT;画像の知的内容が作成された日付; フォーマット: JJJJMMTT (作成日).
 IPTCPANEL_EMBEDDED;埋め込み
-IPTCPANEL_HEADLINEHINT;画像の内容の概要を示す記入項目 (見出し).
+IPTCPANEL_EMBEDDEDHINT;画像に埋め込まれたIPTCデータにリセット
 IPTCPANEL_HEADLINE;見出し
-IPTCPANEL_INSTRUCTIONSHINT;画像の使用に関するその他の特記事項 (編集注記).
+IPTCPANEL_HEADLINEHINT;画像の内容の概要を示す記入項目 (見出し).
 IPTCPANEL_INSTRUCTIONS;編集注記
+IPTCPANEL_INSTRUCTIONSHINT;画像の使用に関するその他の特記事項 (編集注記).
 IPTCPANEL_KEYWORDS;キーワード
 IPTCPANEL_KEYWORDSHINT;情報検索に使用する単語 (キーワード).
 IPTCPANEL_PASTEHINT;IPTC設定をクリップボードから貼り付け
-IPTCPANEL_PROVINCEHINT;撮影された地域/州・県(地域--州・県).
 IPTCPANEL_PROVINCE;州・都道府県
+IPTCPANEL_PROVINCEHINT;撮影された地域/州・県(地域--州・県).
 IPTCPANEL_RESET;リセット
 IPTCPANEL_RESETHINT;デフォルトのプロファイルにリセット
 IPTCPANEL_SOURCE;ソース
 IPTCPANEL_SOURCEHINT;画像の著作権保有者 (ソース).
-IPTCPANEL_SUPPCATEGORIESHINT;さらに細かく画像の主題 (カテゴリ補助).
 IPTCPANEL_SUPPCATEGORIES;カテゴリ補助
+IPTCPANEL_SUPPCATEGORIESHINT;さらに細かく画像の主題 (カテゴリ補助).
 IPTCPANEL_TITLE;タイトル
 IPTCPANEL_TITLEHINT;画像の表題を簡略に (タイトル).
-IPTCPANEL_TRANSREFERENCEHINT;オリジナルの送信証明の位置を表すコード (オリジナル 送信証明).
 IPTCPANEL_TRANSREFERENCE;送信証明
-﻿# Japanese translation of RawTherapee
+IPTCPANEL_TRANSREFERENCEHINT;オリジナルの送信証明の位置を表すコード (オリジナル 送信証明).
 MAIN_BUTTON_EXIT;終了
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_PREFERENCES;環境設定
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に加える <b>Ctrl+Q</b>
 MAIN_BUTTON_PUTTOQUEUE;キューに追加
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に加える <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;キューに追加
+MAIN_BUTTON_SAVE;画像の保存
 MAIN_BUTTON_SAVEAS;別途保存
 MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存 <b>Ctrl+S</b>
-MAIN_BUTTON_SAVE;画像の保存
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディターで編集 <b>Ctrl+E</b>
 MAIN_BUTTON_SENDTOEDITOR;エディタに送る
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディターで編集 <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
 MAIN_FRAME_BATCHQUEUE;バッチ キュー 
 MAIN_FRAME_FILEBROWSER;ファイルブラウザ
+MAIN_FRAME_PLACES;場所 
 MAIN_FRAME_PLACES_ADD;追加
 MAIN_FRAME_PLACES_DEL;削除
-MAIN_FRAME_PLACES;場所 
 MAIN_FRAME_RECENT;最近開いたフォルダ 
 MAIN_MSG_ALREADYEXISTS;ファイルはすでに存在します
 MAIN_MSG_CANNOTLOAD;画像を読み込みできません
 MAIN_MSG_CANNOTSAVE;ファイル保存エラー
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;"環境設定"の正しいパスを設定してください
 MAIN_MSG_CANNOTSTARTEDITOR;エディタを開始することができません.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;"環境設定"の正しいパスを設定してください
 MAIN_MSG_ERRORDURINGIMAGESAVING;画像の保存中にエラー
 MAIN_MSG_EXITJOBSINQUEUEINFO;未処理画像の順番は終了時に失われます
 MAIN_MSG_EXITJOBSINQUEUEQUEST;キュー待ちの画像がありますが、終了しますか？
@@ -342,8 +341,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示
 MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示
 MAIN_TOOLTIP_PREFERENCES;設定する
 MAIN_TOOLTIP_QINFO;画像の情報
-MAIN_TOOLTIP_SAVEAS;フォルダを選択して保存
 MAIN_TOOLTIP_SAVE;デフォルトのフォルダに保存
+MAIN_TOOLTIP_SAVEAS;フォルダを選択して保存
 MAIN_TOOLTIP_TOGGLE;補正前/補正後 切り替え
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
@@ -427,8 +426,8 @@ PREFERENCES_DIRLAST;最近参照したディレクトリ
 PREFERENCES_DIROTHER;他
 PREFERENCES_DIRSELECTDLG;起動時の画像・ディレクトリ選択...
 PREFERENCES_DIRSOFTWARE;インストール・ディレクトリ
-PREFERENCES_DMETHODBATCH;バッチ
 PREFERENCES_DMETHOD;方法
+PREFERENCES_DMETHODBATCH;バッチ
 PREFERENCES_EDITORCMDLINE;その他・コマンド入力
 PREFERENCES_EDITORLAYOUT;エディタ レイアウト
 PREFERENCES_EXTERNALEDITOR;外部エディタ
@@ -453,17 +452,17 @@ PREFERENCES_LINEDENOISE;ライン ノイズフィルタ
 PREFERENCES_LIVETHUMBNAILS;ライブ・サムネイル (遅い)
 PREFERENCES_MONITORICC;モニタープロファイル
 PREFERENCES_MULTITAB;マルチ タブモード
-PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
-PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRHINT;<i>次の書式を使用することができます:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nこれらの書式はディレクトリとrawファイルのサブパスを示します.\n\n例えば, </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>\nこの書式文字の意味は:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n同じ場所に出力画像を保存するには, このように記述します:\n</i><b>%p1/%f\n</b><i>\n同じ場所にサブ・ディレクトリ'converted'を作成し、その中に出力画像を保存するには, このように記述します:\n</i><b>%p1/converted/%f\n</b><i>\n一つ上のディレクトリ'/home/tom/'にサブ・ディレクトリ'converted'を作成し'02-09-2006'の中に保存するには, このように記述します:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>次の書式を使用することができます:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nこれらの書式はディレクトリとrawファイルのサブパスを示します.\n\n例えば, </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>\nこの書式文字の意味は:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n同じ場所に出力画像を保存するには, このように記述します:\n</i><b>%p1/%f\n</b><i>\n同じ場所にサブ・ディレクトリ'converted'を作成し、その中に出力画像を保存するには, このように記述します:\n</i><b>%p1/converted/%f\n</b><i>\n一つ上のディレクトリ'/home/tom/'にサブ・ディレクトリ'converted'を作成し'02-09-2006'の中に保存するには, このように記述します:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
 PREFERENCES_OUTDIR;出力ディレクトリ
+PREFERENCES_OUTDIRFOLDER;フォルダに保存
+PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
+PREFERENCES_OUTDIRHINT;<i>次の書式を使用することができます:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nこれらの書式はディレクトリとrawファイルのサブパスを示します.\n\n例えば, </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>\nこの書式文字の意味は:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n同じ場所に出力画像を保存するには, このように記述します:\n</i><b>%p1/%f\n</b><i>\n同じ場所にサブ・ディレクトリ'converted'を作成し、その中に出力画像を保存するには, このように記述します:\n</i><b>%p1/converted/%f\n</b><i>\n一つ上のディレクトリ'/home/tom/'にサブ・ディレクトリ'converted'を作成し'02-09-2006'の中に保存するには, このように記述します:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>次の書式を使用することができます:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nこれらの書式はディレクトリとrawファイルのサブパスを示します.\n\n例えば, </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>\nこの書式文字の意味は:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n同じ場所に出力画像を保存するには, このように記述します:\n</i><b>%p1/%f\n</b><i>\n同じ場所にサブ・ディレクトリ'converted'を作成し、その中に出力画像を保存するには, このように記述します:\n</i><b>%p1/converted/%f\n</b><i>\n一つ上のディレクトリ'/home/tom/'にサブ・ディレクトリ'converted'を作成し'02-09-2006'の中に保存するには, このように記述します:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;サムネイル上でファイル名を透過表示する
-PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
-PREFERENCES_PARSEDEXTADD;拡張子の追加
-PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PARSEDEXT;拡張子
+PREFERENCES_PARSEDEXTADD;拡張子の追加
+PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
+PREFERENCES_PARSEDEXTDELHINT;選択した拡張子をリストから削除します
 PREFERENCES_PROFILEHANDLING;処理プロファイルの取扱い
 PREFERENCES_PROFILELOADPR;プロファイル読み込みの優先権
 PREFERENCES_PROFILEPRCACHE;キャッシュのプロファイル
@@ -531,9 +530,9 @@ SAVEDLG_JPEGQUAL;JPEG 品質
 SAVEDLG_JPGFILTER;JPEG ファイル
 SAVEDLG_PNGCOMPR;PNG 圧縮
 SAVEDLG_PNGFILTER;PNG ファイル
+SAVEDLG_PUTTOQUEUE;キュー処理に追加
 SAVEDLG_PUTTOQUEUEHEAD;キュー処理の最初に追加
 SAVEDLG_PUTTOQUEUETAIL;キュー処理の最後に追加
-SAVEDLG_PUTTOQUEUE;キュー処理に追加
 SAVEDLG_SAVEIMMEDIATELY;すぐに保存
 SAVEDLG_SAVESPP;設定値も保存する
 SAVEDLG_TIFFFILTER;TIFF ファイル
@@ -660,15 +659,15 @@ TP_RESIZE_BILINEAR;バイリニア
 TP_RESIZE_DOWNSCALEB;ダウンスケール (良質)
 TP_RESIZE_DOWNSCALEF;ダウンスケール (速い)
 TP_RESIZE_FULLSIZE;フル 画像 サイズ:
-TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_H;H:
+TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_LABEL;リサイズ
 TP_RESIZE_METHOD;方式: 
 TP_RESIZE_NEAREST;ニアリスト
 TP_RESIZE_SCALE;スケール
 TP_RESIZE_SPECIFY;指定:
-TP_RESIZE_WIDTH;幅
 TP_RESIZE_W;W:
+TP_RESIZE_WIDTH;幅
 TP_ROTATE_AUTOCROP;自動的に切り抜き選択
 TP_ROTATE_DEGREE;度
 TP_ROTATE_FILL;塗り
@@ -690,10 +689,10 @@ TP_SHARPENING_LABEL;シャープ化
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;エッジのみ
 TP_SHARPENING_RADIUS;半径
+TP_SHARPENING_RLD;RL デコンボリューション
 TP_SHARPENING_RLD_AMOUNT;量
 TP_SHARPENING_RLD_DAMPING;減衰
 TP_SHARPENING_RLD_ITERATIONS;繰返し
-TP_SHARPENING_RLD;RL デコンボリューション
 TP_SHARPENING_THRESHOLD;しきい値
 TP_SHARPENING_USM;アンシャープマスク
 TP_VIGNETTING_AMOUNT;量
@@ -721,6 +720,7 @@ ZOOMPANEL_ZOOM100;100%にズーム
 ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる
 ZOOMPANEL_ZOOMIN;ズームイン
 ZOOMPANEL_ZOOMOUT;ズームアウト
+﻿# Japanese translation of RawTherapee
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
