@@ -5,8 +5,8 @@
 #03 27.10.2008: Hombre: updates for 2.4b1
 #04 18.11.2008: Hombre: updates for 2.4b2
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
-BATCH_PROCESSING;Traitement par lot
 BATCHQUEUE_AUTOSTART;Démarrage auto
+BATCH_PROCESSING;Traitement par lot
 CURVEEDITOR_CUSTOM;Personnalisé
 CURVEEDITOR_DARKS;Zones sombres
 CURVEEDITOR_FILEDLGFILTERANY;Tous les fichiers
@@ -38,12 +38,12 @@ EXIFPANEL_ADDTAGDLG_SELECTTAG;Choisissez une donnée
 EXIFPANEL_ADDTAGDLG_TITLE;Ajouter/Éditer une donnée
 EXIFPANEL_KEEP;Conserver
 EXIFPANEL_KEEPHINT;Conserve les données sélectionnés lors de l'écriture du fichier de sortie
-EXIFPANEL_REMOVEHINT;Retire les données sélectionnés lors de l'écriture du fichier de sortie
 EXIFPANEL_REMOVE;Retirer
-EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
-EXIFPANEL_RESETALL;Réinitialiser tout
-EXIFPANEL_RESETHINT;Réinitialise les données séléctionnés à la valeur initiale
+EXIFPANEL_REMOVEHINT;Retire les données sélectionnés lors de l'écriture du fichier de sortie
 EXIFPANEL_RESET;Réinitialiser
+EXIFPANEL_RESETALL;Réinitialiser tout
+EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
+EXIFPANEL_RESETHINT;Réinitialise les données séléctionnés à la valeur initiale
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
@@ -53,13 +53,13 @@ FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
 FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
-FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
+FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EXIFFILTERAPPLY;Appliquer
 FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigateur de fichier
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
@@ -79,8 +79,8 @@ FILEBROWSER_POPUPSELECTALL;Sélectionner tout
 FILEBROWSER_POPUPTRASH;Déplacer dans la corbeille
 FILEBROWSER_POPUPUNRANK;Effacer le rang
 FILEBROWSER_POPUPUNTRASH;Retirer de la corbeille
-FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_PROCESSINGSETTINGS;Réglages
+FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
@@ -106,8 +106,8 @@ GENERAL_ABOUT;À propos
 GENERAL_AFTER;Après
 GENERAL_BEFORE;Avant
 GENERAL_CANCEL;Annuler
-GENERAL_DISABLED;Désactivé
 GENERAL_DISABLE;Désactiver
+GENERAL_DISABLED;Désactivé
 GENERAL_ENABLE;Activer
 GENERAL_ENABLED;Activé
 GENERAL_HIGH_QUALITY;Qualité élevée
@@ -248,63 +248,63 @@ ICMPANEL_WORKINGPROFILE;Profil de travail
 IMAGEAREA_DETAILVIEW;Vue de détail
 IPTCPANEL_AUTHOR;Auteur
 IPTCPANEL_AUTHORHINT;Nom du créateur de l'objet, p.ex. le rédacteur, le photographe ou le graphiste (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Statut du ou des créateurs de l'objet (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Statut de l'auteur
-IPTCPANEL_CAPTIONHINT;Une description explicite de la donnée (Légende - Résumé)
+IPTCPANEL_AUTHORSPOSITIONHINT;Statut du ou des créateurs de l'objet (By-line Title).
 IPTCPANEL_CAPTION;Légende
+IPTCPANEL_CAPTIONHINT;Une description explicite de la donnée (Légende - Résumé)
 IPTCPANEL_CAPTIONWRITER;Auteur de la légende
 IPTCPANEL_CAPTIONWRITERHINT;Le nom de la personne ayant rédigé, édité ou corrigé l'image ou la légende/résumé (Auteur - Editeur).
 IPTCPANEL_CATEGORY;Catégorie
 IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'avis du fournisseur (Catégorie).
-IPTCPANEL_CITYHINT;Ville d'origine de l'image (Ville).
 IPTCPANEL_CITY;Ville
+IPTCPANEL_CITYHINT;Ville d'origine de l'image (Ville).
 IPTCPANEL_COPYHINT;Copie les réglages IPTC dans le presse-papier
 IPTCPANEL_COPYRIGHT;Droit de copie
 IPTCPANEL_COPYRIGHTHINT;Toute remarque nécessaire de droit de copie (Remarque droit de copie).
-IPTCPANEL_COUNTRYHINT;Le nom du pays de la ville principale où l'image a été créée (Pays - Nom de la ville principale).
 IPTCPANEL_COUNTRY;Pays
+IPTCPANEL_COUNTRYHINT;Le nom du pays de la ville principale où l'image a été créée (Pays - Nom de la ville principale).
 IPTCPANEL_CREDIT;Crédit
 IPTCPANEL_CREDITHINT;Identifie le fournisseur de l'image, pas nécessairement le propriétaire/créateur (Crédit).
 IPTCPANEL_DATECREATED;Date de création
 IPTCPANEL_DATECREATEDHINT;La date de création du contenu intellectuel de l'image; Format: AAAAMMJJ (Date de création).
-IPTCPANEL_EMBEDDEDHINT;Réinitialise selon les données IPTC incorporées dans le fichier image
 IPTCPANEL_EMBEDDED;Incorporés
-IPTCPANEL_HEADLINEHINT;Une entrée publiable fournissant un synopsis du contenu de l'image (Titre).
+IPTCPANEL_EMBEDDEDHINT;Réinitialise selon les données IPTC incorporées dans le fichier image
 IPTCPANEL_HEADLINE;Titre
-IPTCPANEL_INSTRUCTIONSHINT;Autres instructions éditoriales concernant l'utilisation de l'image (Instructions spéciales).
+IPTCPANEL_HEADLINEHINT;Une entrée publiable fournissant un synopsis du contenu de l'image (Titre).
 IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Utilisé pour spécifier des mots clés de recherches (Mots clés).
+IPTCPANEL_INSTRUCTIONSHINT;Autres instructions éditoriales concernant l'utilisation de l'image (Instructions spéciales).
 IPTCPANEL_KEYWORDS;Mots clés
+IPTCPANEL_KEYWORDSHINT;Utilisé pour spécifier des mots clés de recherches (Mots clés).
 IPTCPANEL_PASTEHINT;Colle les réglages IPTC du presse-papier
-IPTCPANEL_PROVINCEHINT;La province/état d'où est issue l'image (Province-Etat).
 IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Réinitialise selon le profil par défaut
+IPTCPANEL_PROVINCEHINT;La province/état d'où est issue l'image (Province-Etat).
 IPTCPANEL_RESET;Réinitialisation
-IPTCPANEL_SOURCEHINT;Le propriétaire intellectuel du contenu de l'image (Source).
+IPTCPANEL_RESETHINT;Réinitialise selon le profil par défaut
 IPTCPANEL_SOURCE;Source
+IPTCPANEL_SOURCEHINT;Le propriétaire intellectuel du contenu de l'image (Source).
 IPTCPANEL_SUPPCATEGORIES;Catégories suppl.
 IPTCPANEL_SUPPCATEGORIESHINT;Précise un peu plus le sujet de l'image (Catégories supplémentaires).
-IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
 IPTCPANEL_TITLE;Titre
-IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
+IPTCPANEL_TITLEHINT;Raccourcis de référence de l'image (Nom de l'objet).
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
+IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission initiale (Référence de transmission initiale).
 MAIN_BUTTON_EXIT;Sortie
 MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_PREFERENCES;Préférences
 MAIN_BUTTON_PUTTOQUEUE;Envoyer dans la file
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Envoyer dans la file
-MAIN_BUTTON_SAVEAS;Sous...
 MAIN_BUTTON_SAVE;Enregistrer l'image
+MAIN_BUTTON_SAVEAS;Sous...
 MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
 MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
+MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_PLACES_ADD;Ajouter
 MAIN_FRAME_PLACES_DEL;Supprimer
-MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_RECENT;Fichiers récents 
 MAIN_MSG_ALREADYEXISTS;Le fichier existe déjà.
 MAIN_MSG_CANNOTLOAD;Impossible de charger l'image
@@ -337,8 +337,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine
 MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine
 MAIN_TOOLTIP_PREFERENCES;Régler les préférences
 MAIN_TOOLTIP_QINFO;Montrer les infos EXIF <b>I</b>
-MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
+MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
 NAVIGATOR_B_NA;B = n/d
 NAVIGATOR_B_VALUE;B = %1
@@ -416,8 +416,8 @@ PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
 PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
-PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_DMETHOD;Méthode
+PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
@@ -446,13 +446,13 @@ PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
 PREFERENCES_OUTDIRHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatés se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
+PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
 PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
-PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -520,8 +520,8 @@ SAVEDLG_JPEGQUAL;Qualité JPEG
 SAVEDLG_JPGFILTER;Fichiers JPEG
 SAVEDLG_PNGCOMPR;Compression PNG
 SAVEDLG_PNGFILTER;Fichiers PNG
-SAVEDLG_PUTTOQUEUEHEAD;Placer au début de la file de traitement
 SAVEDLG_PUTTOQUEUE;Placer dans la file de traitement
+SAVEDLG_PUTTOQUEUEHEAD;Placer au début de la file de traitement
 SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
 SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
@@ -650,15 +650,15 @@ TP_RESIZE_BILINEAR;Bilinéaire
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
-TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_H;H:
+TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_LABEL;Redimensionnement
 TP_RESIZE_METHOD;Méthode: 
 TP_RESIZE_NEAREST;Au plus proche
 TP_RESIZE_SCALE;Échelle
 TP_RESIZE_SPECIFY;Préciser:
-TP_RESIZE_WIDTH;Largeur
 TP_RESIZE_W;L:
+TP_RESIZE_WIDTH;Largeur
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
 TP_ROTATE_SELECTLINE;Choisir la ligne d'horizon
@@ -678,9 +678,9 @@ TP_SHARPENING_LABEL;Netteté
 TP_SHARPENING_METHOD;Méthode
 TP_SHARPENING_ONLYEDGES;Améliorer seulement les bords
 TP_SHARPENING_RADIUS;Rayon
+TP_SHARPENING_RLD;Déconvolution de Richardson–Lucy
 TP_SHARPENING_RLD_AMOUNT;Quantité
 TP_SHARPENING_RLD_DAMPING;Amortissement
-TP_SHARPENING_RLD;Déconvolution de Richardson–Lucy
 TP_SHARPENING_RLD_ITERATIONS;Itérations
 TP_SHARPENING_THRESHOLD;Seuil
 TP_SHARPENING_USM;Masque flou

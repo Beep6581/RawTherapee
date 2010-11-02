@@ -25,14 +25,14 @@ EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
 EXIFPANEL_KEEP;Keep
-EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
+EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
 EXIFPANEL_REMOVE;Remove
-EXIFPANEL_RESETALLHINT;Reset all tags to their original values
-EXIFPANEL_RESETALL;Reset All
-EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
 EXIFPANEL_RESET;Reset
+EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETHINT;Reset the selected tags to their original values
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -45,8 +45,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_EXIFFILTERSETTINGS;Setup
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -65,8 +65,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -78,10 +78,10 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STARTPROCESSING;Start Processing
-FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
@@ -90,10 +90,10 @@ GENERAL_ABOUT;關於
 GENERAL_AFTER;After
 GENERAL_BEFORE;Before
 GENERAL_CANCEL;取消
-GENERAL_DISABLED;已關閉
 GENERAL_DISABLE;關閉
-GENERAL_ENABLED;已開啟
+GENERAL_DISABLED;已關閉
 GENERAL_ENABLE;啟用
+GENERAL_ENABLED;已開啟
 GENERAL_HIGH_QUALITY;High Quality
 GENERAL_LANDSCAPE;橫向
 GENERAL_LOAD;載入
@@ -195,13 +195,13 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;曝光補償
 HISTORY_MSG_9;亮部壓縮
-HISTORY_NEWSNAPSHOTAS;為...
 HISTORY_NEWSNAPSHOT;新建快照
+HISTORY_NEWSNAPSHOTAS;為...
 HISTORY_NEWSSDIALOGLABEL;快照標籤:
 HISTORY_NEWSSDIALOGTITLE;添加新快照
 HISTORY_SETTO;設置為
-HISTORY_SNAPSHOTS;系列快照
 HISTORY_SNAPSHOT;快照
+HISTORY_SNAPSHOTS;系列快照
 ICMPANEL_FILEDLGFILTERANY;任意文件
 ICMPANEL_FILEDLGFILTERICM;ICC配置檔
 ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
@@ -241,35 +241,35 @@ IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (keywords).
+IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (keywords).
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
 IPTCPANEL_RESET;Reset
-IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
+IPTCPANEL_RESETHINT;Reset to profile default
 IPTCPANEL_SOURCE;Source
-IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
+IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
+IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
 IPTCPANEL_TITLE;Title
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;參數設置
 MAIN_BUTTON_PUTTOQUEUE;Put to queue
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;為...
 MAIN_BUTTON_SAVE;儲存圖片
+MAIN_BUTTON_SAVEAS;為...
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;該文件已存在.
 MAIN_MSG_CANNOTLOAD;無法載入圖片
@@ -301,8 +301,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;高光溢出提示
 MAIN_TOOLTIP_INDCLIPPEDS;暗部不足提示
 MAIN_TOOLTIP_PREFERENCES;設置參數
 MAIN_TOOLTIP_QINFO;圖片快捷資訊
-MAIN_TOOLTIP_SAVEAS;圖片存於指定檔夾
 MAIN_TOOLTIP_SAVE;圖片存於預設檔夾
+MAIN_TOOLTIP_SAVEAS;圖片存於指定檔夾
 MAIN_TOOLTIP_TOGGLE;Toggle before/after view
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
@@ -351,8 +351,8 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;高光提示
 PREFERENCES_CMETRICINTENT;色彩模式
-PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;日期格式
+PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;預設語言
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;解拼演算法
@@ -381,16 +381,16 @@ PREFERENCES_INTENT_RELATIVE;相對色彩模式
 PREFERENCES_INTENT_SATURATION;飽和度
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;顯示器配置
-PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
-PREFERENCES_OUTDIRFOLDER;Save to folder
-PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIR;輸出路徑
+PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
-PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -450,8 +450,8 @@ SAVEDLG_JPEGQUAL;JPEG品質
 SAVEDLG_JPGFILTER;JPEG文件
 SAVEDLG_PNGCOMPR;PNG壓縮
 SAVEDLG_PNGFILTER;PNG文件
-SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;隨圖片儲存處理參數
@@ -547,21 +547,21 @@ TP_LUMACURVE_LABEL;亮度曲線
 TP_LUMADENOISE_EDGETOLERANCE;邊緣容差
 TP_LUMADENOISE_LABEL;亮度噪點抑制
 TP_LUMADENOISE_RADIUS;半徑
+TP_RESIZE_BICUBIC;雙三次
 TP_RESIZE_BICUBICSF;雙三次 (柔化)
 TP_RESIZE_BICUBICSH;雙三次 (銳化)
-TP_RESIZE_BICUBIC;雙三次
 TP_RESIZE_BILINEAR;雙線性
 TP_RESIZE_FULLSIZE;全照片尺寸:
-TP_RESIZE_HEIGHT;Height
 TP_RESIZE_H;高:
+TP_RESIZE_HEIGHT;Height
 TP_RESIZE_LABEL;調整大小
 TP_RESIZE_METHOD;方式: 
 TP_RESIZE_NEAREST;最近點
 TP_RESIZE_SCALE;Scale
 TP_RESIZE_SCALE;比例
 TP_RESIZE_SPECIFY;Specify:
-TP_RESIZE_WIDTH;Width
 TP_RESIZE_W;寬:
+TP_RESIZE_WIDTH;Width
 TP_ROTATE_AUTOCROP;自動剪裁
 TP_ROTATE_DEGREE;角度
 TP_ROTATE_FILL;填充
@@ -583,10 +583,10 @@ TP_SHARPENING_LABEL;銳化
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;僅銳化邊緣
 TP_SHARPENING_RADIUS;半徑
+TP_SHARPENING_RLD;左右重疊
 TP_SHARPENING_RLD_AMOUNT;程度
 TP_SHARPENING_RLD_DAMPING;衰減
 TP_SHARPENING_RLD_ITERATIONS;迭代
-TP_SHARPENING_RLD;左右重疊
 TP_SHARPENING_THRESHOLD;闕值
 TP_SHARPENING_USM;銳化
 TP_VIGNETTING_AMOUNT;程度
