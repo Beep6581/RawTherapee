@@ -7254,6 +7254,8 @@ canon_cr2:
     pixel_aspect = 0.5;
   } else if (!strcmp(model,"D7000")) {
     width -= 40;
+  } else if (!strcmp(model,"D3000")) {
+    width -= 20;
   } else if (!strcmp(model,"D40X") ||
 	     !strcmp(model,"D60")  ||
 	     !strcmp(model,"D80")  ||
