@@ -414,6 +414,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["54 44 5C 7C 34 3C 58 02"] = "AF Zoom-Micro Nikkor 70-180mm f/4.5-5.6D ED";
             lenses["56 3C 5C 8E 30 3C 1C 02"] = "Sigma 70-300mm F4-5.6 APO Macro Super II";
             lenses["56 48 5C 8E 30 3C 5A 02"] = "AF Zoom-Nikkor 70-300mm f/4-5.6D ED";
+            lenses["56 9C 54 56 56 24 24 06"] = "AF-S Micro Nikkor 60mm f/2.8G ED";
             lenses["59 48 98 98 24 24 5D 02"] = "AF-S Nikkor 400mm f/2.8D IF-ED";
             lenses["59 48 98 98 24 24 E1 02"] = "AF-S Nikkor 400mm f/2.8D IF-ED + TC-17E";
             lenses["59 48 98 98 24 24 F1 02"] = "AF-S Nikkor 400mm f/2.8D IF-ED + TC-14E";
@@ -498,6 +499,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["A2 48 5C 80 24 24 A4 0E"] = "AF-S Nikkor 70-200mm f/2.8G ED VR II";
             lenses["A5 40 2D 88 2C 40 4B 0E"] = "Sigma 18-250mm F3.5-6.3 DC OS HSM";
             lenses["A6 48 37 5C 24 24 4B 06"] = "Sigma 24-70mm F2.8 IF EX DG HSM";
+            lenses["AA 3C 37 6E 30 30 AC 0E"] = "AF-S Nikkor 24-120mm f/4G ED VR";
             lenses["B6 48 37 56 24 24 1C 02"] = "Sigma 24-60mm F2.8 EX DG";
             lenses["CD 3D 2D 70 2E 3C 4B 0E"] = "Sigma 18-125mm F3.8-5.6 DC OS HSM";
             lenses["CE 34 76 A0 38 40 4B 0E"] = "Sigma 150-500mm F5-6.3 DG OS APO HSM";
