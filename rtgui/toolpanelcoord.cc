@@ -275,8 +275,8 @@ void ToolPanelCoordinator::readOptions () {
         if (i<expList.size())
             expList[i]->set_expanded (options.tpOpen[i]);
 
-    if (options.crvOpen.size()>1)
-        curve->expandCurve (options.crvOpen[0]);
+    //if (options.crvOpen.size()>1)
+    //    curve->expandCurve (options.crvOpen[0]);
 }
 
 void ToolPanelCoordinator::writeOptions () { 
@@ -286,8 +286,8 @@ void ToolPanelCoordinator::writeOptions () {
     for (int i=0; i<expList.size(); i++)
         options.tpOpen.push_back (expList[i]->get_expanded ());
 
-    options.crvOpen.clear ();
-    options.crvOpen.push_back (curve->isCurveExpanded());
+    //options.crvOpen.clear ();
+    //options.crvOpen.push_back (curve->isCurveExpanded());
 }
 
 

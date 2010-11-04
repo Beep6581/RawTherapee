@@ -3,6 +3,8 @@
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 BATCHQUEUE_AUTOSTART;Auto start
 BATCH_PROCESSING;Batch processing
+CURVEEDITOR_CURVE;Curve
+CURVEEDITOR_CURVES;Curves
 CURVEEDITOR_CUSTOM;Custom
 CURVEEDITOR_DARKS;Darks
 CURVEEDITOR_FILEDLGFILTERANY;Any files
@@ -223,6 +225,8 @@ HISTORY_MSG_8;Exposure Compensation
 HISTORY_MSG_90;Directional pyramid luminance
 HISTORY_MSG_91;Directional pyramid chominance
 HISTORY_MSG_92;Directional pyramid gamma
+HISTORY_MSG_93;Contrast by detail levels parameter
+HISTORY_MSG_94;Contrast by detail levels
 HISTORY_MSG_9;Highlight Compression
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...

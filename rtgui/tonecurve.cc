@@ -72,12 +72,17 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
 //----------- Curve ------------------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  shape = Gtk::manage (new CurveEditor ());
-  shape->setCurveListener (this);
-  curvexp = Gtk::manage (new Gtk::Expander (M("TP_EXPOSURE_CURVEEDITOR")));
-  curvexp->add (*shape);
+  curveEditorG = new CurveEditorGroup (M("TP_EXPOSURE_CURVEEDITOR"));
+  curveEditorG->setCurveListener (this);
 
-  pack_start (*curvexp, Gtk::PACK_SHRINK, 4);
+  shape = curveEditorG->addCurve();
+
+  // This will add the reset button at the end of the curveType buttons
+  curveEditorG->curveListComplete();
+
+  pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+
+  //curveEditorG->show();
 
 // --------- Set Up Listeners -------------
   expcomp->setAdjusterListener (this);
@@ -267,7 +272,7 @@ void ToneCurve::waitForAutoExp () {
     hlcompr->setEnabled (false);
     shcompr->setEnabled (false);
     contrast->setEnabled (false);
-    shape->set_sensitive (false);
+    curveEditorG->set_sensitive (false);
 }
 
 int aexpcomputed (void* data) {
@@ -296,7 +301,7 @@ void ToneCurve::enableAll () {
     hlcompr->setEnabled (true);
     shcompr->setEnabled (true);
     contrast->setEnabled (true);
-     shape->set_sensitive (true);
+    curveEditorG->set_sensitive (true);
 }
 
 bool ToneCurve::autoExpComputed_ () {
@@ -309,17 +314,6 @@ bool ToneCurve::autoExpComputed_ () {
 
     return false;
 }
-
-void ToneCurve::expandCurve (bool isExpanded) {
-
-    curvexp->set_expanded (isExpanded);
-}
-
-bool ToneCurve::isCurveExpanded () {
-
-    return curvexp->get_expanded ();
-}
-
 
 void ToneCurve::setBatchMode (bool batchMode) {
 
@@ -336,7 +330,7 @@ void ToneCurve::setBatchMode (bool batchMode) {
     brightness->showEditedCB ();
     contrast->showEditedCB ();
     
-    shape->setBatchMode (batchMode);
+    curveEditorG->setBatchMode (batchMode);
 }
 
 void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, bool contradd) {

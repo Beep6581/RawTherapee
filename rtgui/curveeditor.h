@@ -20,65 +20,51 @@
 #define _CURVEEDITOR_
 
 #include <gtkmm.h>
+#include <popuptogglebutton.h>
+#include <curveeditorgroup.h>
 #include <mycurve.h>
-#include <shcselector.h>
-#include <adjuster.h>
 
-class CurveEditor : public Gtk::VBox, public CurveListener, public SHCListener, public AdjusterListener {
+class CurveEditorGroup;
 
-        Gtk::ComboBoxText* curveType;
-        Gtk::Button* curve_reset;
-        Gtk::VBox* paramCurveBox;
-        Gtk::VBox* customCurveBox;
-        Gtk::VBox* NURBSCurveBox;
+/*
+ * This class is an interface between RT and the curve editor group ; it handles the methods
+ * related to a specific curve. It is created by CurveEditorGroup::addCurve
+ */
+class CurveEditor {
 
-        MyCurve* customCurve;
-        MyCurve* NURBSCurve;
-        MyCurve* paramCurve;
-        SHCSelector* shcSelector;
+private:
 
-        Adjuster* highlights;
-        Adjuster* lights;
-        Adjuster* darks;
-        Adjuster* shadows;
+	/*
+	 * The curve editor contains only one widget (the curve type button) to receive the signals
+	 * but it's co-handled by the CurveEditorGroup too
+	*/
 
-        Gtk::Button* saveCustom;
-        Gtk::Button* loadCustom;
-        Gtk::Button* saveNURBS;
-        Gtk::Button* loadNURBS;
+	// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
+    CurveType selected;
 
-        CurveListener* cl;
+    PopUpToggleButton* curveType;
+    unsigned int histogram[256];	// histogram values
+    bool bgHistValid;
 
-        bool realized;
-        std::vector<double> tmpCurve;
-        CurveType curveTypeIx;
+	CurveEditorGroup* group;
+	std::vector<double> tempCurve;
+	std::vector<double> customCurveEd;
+	std::vector<double> paramCurveEd;
+	std::vector<double> NURBSCurveEd;
+	sigc::connection typeconn;
 
-        int activeParamControl;
+public:
 
-        sigc::connection typeconn;
-
-    public:
-
-        CurveEditor ();
-        virtual ~CurveEditor ();
-        void setBatchMode (bool batchMode);
-        bool isUnChanged ();
-        void setUnChanged (bool uc);
-        
-        void on_realize ();
-        void setCurveListener (CurveListener* l) { cl = l; }
-        void savePressed ();
-        void loadPressed ();
-        void typeSelectionChanged ();
-        void setCurve (const std::vector<double>& c);
-        std::vector<double> getCurve ();
-        void curveChanged ();
-        void curveResetPressed ();
-        void shcChanged ();
-        void adjusterChanged (Adjuster* a, double newval);
-        bool adjusterEntered (GdkEventCrossing* ev, int ac);
-        bool adjusterLeft (GdkEventCrossing* ev, int ac);
-        void updateBackgroundHistogram (unsigned int* hist);
+	friend class CurveEditorGroup;
+	CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup);
+	//~CurveEditor ();
+	void typeSelectionChanged (int n);
+	void curveTypeToggled();
+	void setCurve (const std::vector<double>& p);
+	std::vector<double> getCurve ();
+	bool isUnChanged ();
+	void setUnChanged (bool uc);
+	void updateBackgroundHistogram (unsigned int* hist);
 };
 
 

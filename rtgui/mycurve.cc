@@ -36,10 +36,10 @@ MyCurve::MyCurve () : listener(NULL), activeParam(-1), bghistvalid(false) {
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
     signal_event().connect( sigc::mem_fun(*this, &MyCurve::handleEvents) );
 
-    curve.x.push_back(0);
-    curve.y.push_back(0);
-    curve.x.push_back(1);
-    curve.y.push_back(1);
+    curve.x.push_back(0.);
+    curve.y.push_back(0.);
+    curve.x.push_back(1.);
+    curve.y.push_back(1.);
     curve.type = Spline;
 
     mcih = new MyCurveIdleHelper;
@@ -54,8 +54,8 @@ MyCurve::~MyCurve () {
         mcih->destroyed = true;
     else
         delete mcih;
-    curve.x.empty();
-    curve.y.empty();
+    //curve.x.clear();
+    //curve.y.clear();
 }
 
 std::vector<double> MyCurve::get_vector (int veclen) {
@@ -563,12 +563,12 @@ void MyCurve::findClosestPoint() {
 }
 
 std::vector<double> MyCurve::getPoints () {
-
     std::vector<double> result;
     if (curve.type==Parametric) {
         result.push_back ((double)(Parametric));
-        for (int i=0; i<(int)curve.x.size(); i++)
+        for (int i=0; i<(int)curve.x.size(); i++) {
             result.push_back (curve.x[i]);
+        }
     }
     else {
     	// the first value gives the type of the curve
@@ -579,17 +579,17 @@ std::vector<double> MyCurve::getPoints () {
         else if (curve.type==NURBS)
             result.push_back ((double)(NURBS));
         // then we push all the points coordinate
-        for (int i=0; i<(int)curve.x.size(); i++)
+        for (int i=0; i<(int)curve.x.size(); i++) {
             if (curve.x[i]>=0) {
                 result.push_back (curve.x[i]);
                 result.push_back (curve.y[i]);
             }
+        }
     }
     return result;
 }
 
 void MyCurve::setPoints (const std::vector<double>& p) {
-
     int ix = 0;
     CurveType t = (CurveType)p[ix++];
     curve.type = t;

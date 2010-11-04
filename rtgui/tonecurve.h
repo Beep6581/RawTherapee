@@ -23,6 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 #include <curveeditor.h>
+#include <curveeditorgroup.h>
 #include <mycurve.h>
 
 class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, public rtengine::AutoExpListener, public CurveListener {
@@ -39,8 +40,8 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, p
     Adjuster* contrast;
     bool expAdd, blackAdd, brAdd, contrAdd, clipDirty, lastAuto;
     sigc::connection autoconn;
+    CurveEditorGroup* curveEditorG;
     CurveEditor* shape;
-    Gtk::Expander* curvexp;
     double nextBr;
     int nextBl;
   

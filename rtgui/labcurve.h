@@ -30,6 +30,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
   protected:
 	Gtk::ComboBoxText* channel;
 
+	CurveEditorGroup* curveEditorG;
     Adjuster* brightness;
     Adjuster* contrast;
 	Adjuster* saturation;
@@ -42,6 +43,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
   public:
 
     LCurve ();
+    ~LCurve ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
