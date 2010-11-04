@@ -728,6 +728,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...

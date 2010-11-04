@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -46,6 +46,7 @@ EXIFPANEL_SUBDIRECTORY;Underkatalog
 FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av miniatyrbilder
+FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
 FILEBROWSER_CLEARPROFILE;Återställ profilen
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
@@ -58,6 +59,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Visa/dölj EXIF-filtret i filhanteraren
 FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
 FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändra inställningar för EXIF-filtret
+FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
 FILEBROWSER_NEW_NAME;Nytt namn:
 FILEBROWSER_PARTIALPASTEPROFILE;Klistra in partiell profil
 FILEBROWSER_PASTEPROFILE;Klistra in profil
@@ -81,6 +83,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Inställningar
 FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målmapp
 FILEBROWSER_RENAMEDLGLABEL;Byt namn
 FILEBROWSER_RENAMEDLGMSG;Byt namn på "%1" till:
+FILEBROWSER_SELECTDARKFRAME;Välj svartbild... 
 FILEBROWSER_SHOWDIRHINT;Visa alla bilder i biblioteket
 FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information
 FILEBROWSER_SHOWQUEUEHINT;Visa innehållet i behandlingskön
@@ -91,15 +94,15 @@ FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4
 FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5
 FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
 FILEBROWSER_SHOWUNRANKHINT;Visa icke-betygsatta bilder
-FILEBROWSER_STARTPROCESSING;Börja behandlingen
-FILEBROWSER_STARTPROCESSINGHINT;Börja behandlingen och spara bilderna i behandlingskön
+FILEBROWSER_STARTPROCESSING;Starta behandlingen
+FILEBROWSER_STARTPROCESSINGHINT;Starta behandlingen och spara bilderna i behandlingskön
 FILEBROWSER_STOPPROCESSING;Avbryt behandlingen
 FILEBROWSER_STOPPROCESSINGHINT;Avbryt behandlingen av bilderna
 FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Påbörja behandling automatiskt när ett nytt objekt kommer in
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Starta behandlingen automatiskt när en ny bild kommer in
 FILEBROWSER_USETEMPLATE;Använd förinställning:
-FILEBROWSER_ZOOMINHINT;Öka miniatyrbildernas storlek
-FILEBROWSER_ZOOMOUTHINT;Minska miniatyrbildernas storlek
+FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna
+FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna
 GENERAL_ABOUT;Om
 GENERAL_AFTER;Efter
 GENERAL_BEFORE;Före
@@ -125,7 +128,7 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
-HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB Luminans histogram
+HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
 HISTORY_CHANGED;Ändrad
 HISTORY_CUSTOMCURVE;Egen kurva
@@ -158,7 +161,7 @@ HISTORY_MSG_30;Deconvolution-radie
 HISTORY_MSG_31;Deconvolution-storlek
 HISTORY_MSG_32;Deconvolution-dämpning
 HISTORY_MSG_33;Deconvolution-upprepning
-HISTORY_MSG_34;Undvik färgmarkeringar
+HISTORY_MSG_34;Undvik att färgen klipper
 HISTORY_MSG_35;Mättnadsbegränsning
 HISTORY_MSG_36;Mättnadsgräns
 HISTORY_MSG_37;Färgförstärkning
@@ -168,7 +171,7 @@ HISTORY_MSG_3;Profil ändrad
 HISTORY_MSG_40;Färgton
 HISTORY_MSG_41;Färgskiftning "A"
 HISTORY_MSG_42;Färgskiftning "B"
-HISTORY_MSG_43;Luminans brusborttagning
+HISTORY_MSG_43;Reducering av luminansbrus
 HISTORY_MSG_44;Borttagningsradie för luminansbrusreducering
 HISTORY_MSG_45;Kanttolerans för luminansbrusreducering
 HISTORY_MSG_46;Färgbrusborttagning
@@ -196,7 +199,7 @@ HISTORY_MSG_65;Korrigera kromatiska abberationer
 HISTORY_MSG_66;Högdagerförbättring
 HISTORY_MSG_67;Mängd på högdagerförbättringen
 HISTORY_MSG_68;Metod för högdagerförbättring
-HISTORY_MSG_69;Arbetsfärgrymd
+HISTORY_MSG_69;Färgrymd
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Utmatningsfärgrymd
 HISTORY_MSG_71;Inmatningsfärgrymd
@@ -206,6 +209,7 @@ HISTORY_MSG_74;Ändra storleksskala
 HISTORY_MSG_75;Ändra storleksmetod
 HISTORY_MSG_76;EXIF Metadata
 HISTORY_MSG_77;IPTC Metadata
+HISTORY_MSG_78;Data som ska ändra storlek
 HISTORY_MSG_79;Storleksförändring, bredd
 HISTORY_MSG_7;Svärta
 HISTORY_MSG_80;Storleksförändring, höjd
@@ -237,28 +241,41 @@ ICMPANEL_NOICM;Ingen ICM: sRGB-utmatning
 ICMPANEL_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
 ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
 ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
-ICMPANEL_WORKINGPROFILE;Arbetsprofil
+ICMPANEL_WORKINGPROFILE;Färgrymd
 IMAGEAREA_DETAILVIEW;Detalj
 IPTCPANEL_AUTHOR;Upphovsman
 IPTCPANEL_AUTHORHINT;Namn på skaparen, t ex skribenten, fotografen eller den grafiska artisten (by-line)
 IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
+IPTCPANEL_AUTHORSPOSITIONHINT;Titeln på upphovsmannen/männen (byline)
 IPTCPANEL_CAPTIONHINT;En beskrivning av informationen
+IPTCPANEL_CAPTIONWRITERHINT;Namnet på den person som är involverad i att skapa eller redigera eller korrigera bilden
 IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CITY;Stad
 IPTCPANEL_CITYHINT;Staden där bilden togs
+IPTCPANEL_COPYHINT;Kopiera IPTC-inställningarna till klippbordet
 IPTCPANEL_COPYRIGHT;Upphovsrätt
 IPTCPANEL_COPYRIGHTHINT;Nödvändig upphovsrättslig information
 IPTCPANEL_COUNTRY;Land
 IPTCPANEL_COUNTRYHINT;Namnet på landet/platsen där bilden togs
+IPTCPANEL_CREDIT;Erkännande
+IPTCPANEL_CREDITHINT;Identifierar tillhandahållaren av bilden, inte nödvändigtvis upphovsmannen
 IPTCPANEL_DATECREATED;Skapad datum
+IPTCPANEL_DATECREATEDHINT;Datumet då innehållet av bilden skapades. Format: ÅÅÅÅMMDD.
 IPTCPANEL_EMBEDDED;Inbäddad
+IPTCPANEL_EMBEDDEDHINT;Återställ IPTC-informationen till innehållet i bildfilen.
+IPTCPANEL_HEADLINE;Rubrik
+IPTCPANEL_HEADLINEHINT;En sammanfattning av vad bilden innehåller.
 IPTCPANEL_INSTRUCTIONS;Instruktioner
+IPTCPANEL_INSTRUCTIONSHINT;Andra instruktioner som rör användandet av bilden.
 IPTCPANEL_KEYWORDS;Nyckelord
+IPTCPANEL_KEYWORDSHINT;Indikerar nyckelord
 IPTCPANEL_PASTEHINT;Klistra in IPTC-inställningar från klippbordet
 IPTCPANEL_PROVINCE;Provins
+IPTCPANEL_PROVINCEHINT;Den provins eller stat från vilken bilden härrör. 
 IPTCPANEL_RESET;Återställ
 IPTCPANEL_RESETHINT;Återställ till standardprofilen
 IPTCPANEL_SOURCE;Källa
+IPTCPANEL_SOURCEHINT;Den ursprungliga ägaren av innehållet.
 IPTCPANEL_TITLE;Titel
 MAIN_BUTTON_EXIT;Avsluta
 MAIN_BUTTON_FULLSCREEN;Helskärm
@@ -300,7 +317,7 @@ MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
-MAIN_TAB_RAW;Råfil
+MAIN_TAB_RAW;Råbild
 MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -379,7 +396,7 @@ PREFERENCES_CACHESTRAT2;Föredra låg minnesanvändning framför hastighet
 PREFERENCES_CACHESTRAT;Cachestrategi
 PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
-PREFERENCES_CACORRECTION;Använd autoreducering av kromatiska abberationer (CA)
+PREFERENCES_CACORRECTION;Reducera kromatiska abberationer
 PREFERENCES_CLEARDLG_LINE1;Rensa cache
 PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
 PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
@@ -408,27 +425,28 @@ PREFERENCES_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
 PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FORIMAGE;För bildfiler
-PREFERENCES_FORRAW;För råfiler
+PREFERENCES_FORRAW;För råbilder
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
 PREFERENCES_GTKTHEME;GTK standard
 PREFERENCES_HINT;Tips
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
-PREFERENCES_HOTDEADPIXFILT;Applicera het/död-pixelfilter
+PREFERENCES_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
 PREFERENCES_ICCDIR;Katalog för ICC-profiler
 PREFERENCES_IMPROCPARAMS;Standardprofiler
 PREFERENCES_INTENT_ABSOLUTE;Totalkolorimetrisk
 PREFERENCES_INTENT_PERCEPTUAL;Upplevd
 PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
+PREFERENCES_LINEDENOISE;Linjärt brusfilter
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
-PREFERENCES_OUTDIRHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råfilens sökväg.\n\nTill exempel, om </i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om </i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råfilens sökväg.\n\nTill exempel, om</i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen följande:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om</i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen följande:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
 PREFERENCES_PARSEDEXT;Behandlade filtyper
 PREFERENCES_PARSEDEXTADD;Lägg till filtyp
@@ -473,10 +491,10 @@ PROFILEPANEL_PLASTSAVED;Senast sparad
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Spara efterbehandlingsparametrar...
 PROFILEPANEL_TOOLTIPCOPY;Kopiera nuvarande profil till klippbordet
-PROFILEPANEL_TOOLTIPLOAD;Ladda profil från fil
+PROFILEPANEL_TOOLTIPLOAD;Ladda profil
 PROFILEPANEL_TOOLTIPPASTE; Klistra in profil från klippbordet
 PROFILEPANEL_TOOLTIPSAVE;Spara nuvarande profil
-PROGRESSBAR_DECODING;Avkodar råfil...
+PROGRESSBAR_DECODING;Avkodar råbild...
 PROGRESSBAR_DEMOSAICING;Demosaicing...
 PROGRESSBAR_LOADING;Laddar bild...
 PROGRESSBAR_LOADJPEG;Laddar JPEG-fil...
@@ -510,7 +528,7 @@ SAVEDLG_TIFFFILTER;TIFF-filer
 SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
 TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde (Kortkommando: C)
 TOOLBAR_TOOLTIP_HAND;Handverktyg (Kortkommando: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Räta ut (Kortkommando: S)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp (Kortkommando: S)
 TOOLBAR_TOOLTIP_WB;Egen vitbalans (Kortkommando: W)
 TP_CACORRECTION_BLUE;Blå
 TP_CACORRECTION_LABEL;Korrigera kromatiska abberationer
@@ -531,7 +549,7 @@ TP_COLORBOOST_BCHANNEL;Kanal "b"
 TP_COLORBOOST_CHAB;a & b
 TP_COLORBOOST_CHANNEL;Kanal
 TP_COLORBOOST_CHSEPARATE;Separat
-TP_COLORBOOST_ENABLESATLIMITER;Verkställ mättnadsgräns
+TP_COLORBOOST_ENABLESATLIMITER;Mättnadsbegränsning
 TP_COLORBOOST_LABEL;Färgförstärkning
 TP_COLORBOOST_SATLIMIT;Mättnadsgräns
 TP_COLORDENOISE_EDGESENSITIVE;Kantkänslighet
@@ -542,7 +560,7 @@ TP_COLORSHIFT_BLUEYELLOW;Blå-Gul
 TP_COLORSHIFT_GREENMAGENTA;Grön-Magenta
 TP_COLORSHIFT_LABEL;Färgskiftningar
 TP_CROP_DPI;DPI=
-TP_CROP_FIXRATIO;Fix proportion
+TP_CROP_FIXRATIO;Fast proportion
 TP_CROP_GTDIAGONALS;Diagonalregeln
 TP_CROP_GTHARMMEANS1;Harmoniskt medel 1
 TP_CROP_GTHARMMEANS2;Harmoniskt medel 2
@@ -603,8 +621,8 @@ TP_ICM_NOICM;Ingen ICM: sRGB-utmatning
 TP_ICM_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
 TP_ICM_OUTPUTPROFILE;Utmatningsprofil
 TP_ICM_SAVEREFERENCE;Spara referensbild för profilering
-TP_ICM_WORKINGPROFILE;Arbetsprofil
-TP_IMPULSEDENOISE_LABEL;Brusreducering, stegsvar
+TP_ICM_WORKINGPROFILE;Färgrymd
+TP_IMPULSEDENOISE_LABEL;Brusreducering mha av stegsvar
 TP_IMPULSEDENOISE_THRESH;Tröskelvärde
 TP_LABCURVE_BRIGHTNESS;Ljushet
 TP_LABCURVE_CONTRAST;Kontrast
@@ -628,9 +646,9 @@ TP_PERSPECTIVE_HORIZONTAL;Horisontell
 TP_PERSPECTIVE_LABEL;Perspektiv
 TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_PREPROCESS_DARKFRAME;Svartbild
-TP_PREPROCESS_DFAUTOSELECT;Automatiskt val
+TP_PREPROCESS_DFAUTOSELECT;Välj svartbild automatiskt
 TP_RAWPANEL_DEMOSAICING;Demosaicing
-TP_RAWPANEL_PREPROCESSING;Förbehandlar
+TP_RAWPANEL_PREPROCESSING;Förbehandling
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
@@ -651,7 +669,7 @@ TP_RESIZE_WIDTH;Bredd
 TP_ROTATE_AUTOCROP;Autobeskär
 TP_ROTATE_DEGREE;Antal grader
 TP_ROTATE_FILL;Fyll
-TP_ROTATE_LABEL;Räta ut
+TP_ROTATE_LABEL;Räta upp
 TP_ROTATE_SELECTLINE;Välj rak linje
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
@@ -700,10 +718,11 @@ ZOOMBAR_SCALE;Skala
 ZOOMBAR_SMALL;Liten
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster
-ZOOMPANEL_ZOOM100;Zooma till 100% <b>1</b>
+ZOOMPANEL_ZOOM100;Förstora till 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen<b>F</b>
-ZOOMPANEL_ZOOMIN;Zooma in <b>+</b>
-ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
+ZOOMPANEL_ZOOMIN;Förstora<b>+</b>
+ZOOMPANEL_ZOOMOUT;Förminska<b>-</b>
+﻿
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -711,36 +730,21 @@ ZOOMPANEL_ZOOMOUT;Zooma ut <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_NURBS;Control cage
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!HISTORY_MSG_78;Data specified for resize
 !HISTORY_MSG_89;Directional pyramid
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
-!IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-!IPTCPANEL_CAPTIONWRITER;Caption Writer
-!IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-!IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
-!IPTCPANEL_CREDIT;Credit
-!IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-!IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
-!IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-!IPTCPANEL_HEADLINE;Headline
-!IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-!IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-!IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
-!IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-!IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 !IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 !IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 !IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 !PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_LINEDENOISE;Line noise filter
 !TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
 !TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer

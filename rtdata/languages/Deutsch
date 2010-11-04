@@ -753,6 +753,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-
-
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels

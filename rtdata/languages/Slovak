@@ -724,9 +724,13 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_LAB_A_NA;A = n/a
 !NAVIGATOR_LAB_A_VALUE;A = %1
