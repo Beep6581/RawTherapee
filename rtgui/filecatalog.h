@@ -134,6 +134,7 @@ class FileCatalog : public Gtk::VBox,
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);
                 
                 // previewloaderlistener interface
+				void _previewReady (int dir_id, FileBrowserEntry* fdn);
 				void previewReady (int dir_id, FileBrowserEntry* fdn);
 				void previewsFinished (int dir_id);
                 void _previewsFinished ();
