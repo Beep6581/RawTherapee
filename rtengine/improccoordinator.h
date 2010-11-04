@@ -62,11 +62,11 @@ class ImProcCoordinator : public StagedImageProcessor {
         
         void freeAll ();
 
-        int tonecurve1 [65536];
-		int tonecurve2 [65536];
+		int hltonecurve [65536];
+        int shtonecurve [65536];
+		int tonecurve [65536];
 
-        int lumacurve1 [65536];
-		int lumacurve2 [65536];
+		int lumacurve [65536];
 		int chroma_acurve [65536];
 		int chroma_bcurve [65536];
         

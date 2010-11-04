@@ -79,7 +79,7 @@ class ImProcFunctions {
         bool needsTransform ();
 
         void firstAnalysis  (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
-        void rgbProc        (Image16* working, LabImage* lab, int* tonecurve1, int* tonecurve2, SHMap* shmap);
+        void rgbProc        (Image16* working, LabImage* lab, int* hltonecurve, int* shtonecurve, int* tonecurve, SHMap* shmap);
         void luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to);
         void colorCurve     (LabImage* lold, LabImage* lnew);
