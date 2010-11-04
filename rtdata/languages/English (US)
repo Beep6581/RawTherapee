@@ -232,6 +232,8 @@
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels
 !HISTORY_MSG_9;Highlight Compression
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOTAS;As...

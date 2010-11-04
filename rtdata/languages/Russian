@@ -728,6 +728,10 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1

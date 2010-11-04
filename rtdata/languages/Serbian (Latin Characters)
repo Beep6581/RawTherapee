@@ -695,6 +695,8 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
@@ -706,6 +708,8 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_LAB_A_NA;A = n/a
 !NAVIGATOR_LAB_A_VALUE;A = %1

@@ -665,6 +665,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_CURVE;Curve
+!CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_NURBS;Control cage
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
@@ -683,6 +685,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTORY_MSG_90;Directional pyramid luminance
 !HISTORY_MSG_91;Directional pyramid chominance
 !HISTORY_MSG_92;Directional pyramid gamma
+!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_94;Contrast by detail levels
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
