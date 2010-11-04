@@ -130,11 +130,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     int* curve1 = new int [65536];
     int* curve2 = new int [65536];
-
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, NULL);
+	int* curve = new int [65536];
+	
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
 
     LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, shmap);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap);
 
     if (shmap)
         delete shmap;
@@ -150,8 +151,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             hist16[labView->L[i][j]]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, NULL);
-    ipf.luminanceCurve (labView, labView, curve2, 0, fh);
+    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL);
+    ipf.luminanceCurve (labView, labView, curve, 0, fh);
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve1, 1);
     ipf.chrominanceCurve (labView, labView, 0, curve1, 0, fh);    
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve1, 1);
@@ -163,6 +164,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     delete [] curve1;
 	delete [] curve2;
+	delete [] curve;
     delete [] hist16;
 
     // color processing

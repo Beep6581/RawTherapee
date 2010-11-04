@@ -166,8 +166,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, tonecurve1, tonecurve2, bcrgbhist, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, tonecurve1, tonecurve2, shmap);
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
+        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap);
 
         // recompute luminance histogram
         memset (lhist16, 0, 65536*sizeof(int));
@@ -178,7 +178,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, lumacurve1, lumacurve2, bcLhist, scale==1 ? 1 : 16);
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, chroma_acurve, chroma_bcurve, lumacurve, bcLhist, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
@@ -186,7 +186,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
-        ipf.luminanceCurve (oprevl, nprevl, lumacurve2, 0, pH);
+        ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);

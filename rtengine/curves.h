@@ -74,16 +74,25 @@ class CurveFactory {
     static inline double clower (double x, double m, double sr) {
         return 1.0 - cupper(1.0-x, m, sr);
     }
+	// convex curve between (0,0) and (1,1) with slope m at (0,0). hr controls the highlight recovery 
+    static inline double cupper2 (double x, double m, double hr) {
+        double x1 = (1.0-hr)/m;
+        double x2 = x1 + hr;
+        if (x>=x2) return 1.0;
+        if (x<x1) return x*m;
+        return 1.0 - hr + hr*baseu((x-x1)/hr, m, 0.3*hr);
+    }
     // tone curve base. a: slope (from exp.comp.), b: black, D: max. x value (can be>1), hr,sr: highlight,shadow recovery
     static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
-        double m = b+0.5/a<D ? b+0.5/a : D;
-        double y = (D-b)*a<0.5 ? (D-b)*a : 0.5;
+        double m = a>1 ? b+0.25*(1-b)/a : b+(1-b)/4;
+        double y = a>1 ? 0.25 : 0.25*a;
+		double slope = a/(1-b);
         if (x<=m)
-            return b==0 ? x*a : clower (x/m, a*m/y, sr) * y;
-        else if (b+1.0/a<D)
-            return y+(1.0-y)*cupper((x-m)/(D-m), a*(D-m)/(1.0-y), hr);
+            return b==0 ? x*a : clower (x/m, slope*m/y, sr) * y;
+        else if (a>1)
+            return y+(1.0-y)*cupper2((x-m)/(1-m), slope*(1-m)/(1.0-y), hr);
         else
-            return y+(x-m)*a;
+            return y+(x-m)*slope;
     }
     // brightness curve at point x, only positive amount it supported
     static inline double brightnessbase (double x, double amount) {
@@ -128,7 +137,7 @@ class CurveFactory {
 
   public:
 //    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& cpoints, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip=1);
-    static void complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* outCurve1, int* outCurve2, unsigned int* outBeforeCCurveHistogram, int skip=1);
+    static void complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* hlCurve, int* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
 	static void complexsgnCurve (double satclip, double satcompr, double saturation, double colormult, const std::vector<double>& curvePoints, int* outCurve, int skip=1);
 
 };
