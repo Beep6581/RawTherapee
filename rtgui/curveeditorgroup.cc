@@ -728,6 +728,5 @@ void CurveEditorGroup::updateBackgroundHistogram (CurveEditor* ce) {
 		paramCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
 		customCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
 		NURBSCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
-		printf(" - fait! (ce==displayedCurve)");
 	}
 }
