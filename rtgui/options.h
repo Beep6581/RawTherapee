@@ -116,7 +116,7 @@ class Options {
     std::vector<Glib::ustring> parseExtensions;
     std::vector<int> parseExtensionsEnabled;
     std::vector<int> tpOpen;
-    std::vector<int> crvOpen;
+    //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
     

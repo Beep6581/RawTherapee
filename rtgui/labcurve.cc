@@ -23,28 +23,6 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*	
-	Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-	hb->set_border_width (4);
-	hb->show ();
-	Gtk::Label* labchan = Gtk::manage (new Gtk::Label (M("TP_LABCURVE_CHANNEL")+":"));
-	labchan->show ();
-	channel = Gtk::manage (new Gtk::ComboBoxText ());
-	channel->append_text (M("TP_LCURVE"));
-	channel->append_text (M("TP_ACURVE"));
-	channel->append_text (M("TP_BCURVE"));
-	channel->show ();
-	hb->pack_start(*labchan, Gtk::PACK_SHRINK, 4);
-	hb->pack_start(*channel);  
-	pack_start (*hb);
-*/	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-	Gtk::HBox* abox = Gtk::manage (new Gtk::HBox ());
-	abox->set_border_width (2);
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
@@ -55,7 +33,7 @@ LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
 
 	pack_start (*contrast);
 	contrast->show ();
-	
+
 	pack_start (*saturation);
 	saturation->show ();
 
@@ -63,25 +41,19 @@ LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
 	hsep3->show ();
 	pack_start (*hsep3);
 
-	lshape = Gtk::manage (new CurveEditor ());
-	lshape->show ();
-	lshape->setCurveListener (this);
-	CurveListener::setMulti(true);
-	
-	ashape = Gtk::manage (new CurveEditor ());
-	ashape->show ();
-	ashape->setCurveListener (this);
-	CurveListener::setMulti(true);
-	
-	bshape = Gtk::manage (new CurveEditor ());
-	bshape->show ();
-	bshape->setCurveListener (this);
-	CurveListener::setMulti(true);
+	curveEditorG = new CurveEditorGroup ();
+	curveEditorG->setCurveListener (this);
 
-	pack_start (*lshape, Gtk::PACK_SHRINK, 4);
-	pack_start (*ashape, Gtk::PACK_SHRINK, 4);
-	pack_start (*bshape, Gtk::PACK_SHRINK, 4);
+	lshape = curveEditorG->addCurve("L");
+	ashape = curveEditorG->addCurve("a");
+	bshape = curveEditorG->addCurve("b");
 
+	// This will add the reset button at the end of the curveType buttons
+	curveEditorG->curveListComplete();
+
+	pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+
+	//curveEditorG->show();
 
 	brightness->setAdjusterListener (this);
 	contrast->setAdjusterListener (this);
@@ -90,6 +62,10 @@ LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
 	//channel->signal_changed().connect( sigc::mem_fun(*this, &LCurve::channel) );
 
 
+}
+
+LCurve::~LCurve () {
+	delete curveEditorG;
 }
 
 void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -159,6 +135,12 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
     }
 }
 
+/*
+ * Curve listener
+ *
+ * If more than one curve has been added, the curve listener is automatically
+ * set to 'multi=true', and send a pointer of the modified curve in a parameter
+ */
 void LCurve::curveChanged (CurveEditor* ce) {
 
     if (listener) {
@@ -217,9 +199,7 @@ void LCurve::setBatchMode (bool batchMode) {
     contrast->showEditedCB ();
 	saturation->showEditedCB ();
 
-    lshape->setBatchMode (batchMode);
-	ashape->setBatchMode (batchMode);
-    bshape->setBatchMode (batchMode);
+    curveEditorG->setBatchMode (batchMode);
 }
 
 void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {

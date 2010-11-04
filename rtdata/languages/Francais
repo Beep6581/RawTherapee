@@ -7,6 +7,8 @@
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCH_PROCESSING;Traitement par lot
+CURVEEDITOR_CURVE;Courbe
+CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CUSTOM;Personnalisé
 CURVEEDITOR_DARKS;Zones sombres
 CURVEEDITOR_FILEDLGFILTERANY;Tous les fichiers
@@ -224,6 +226,8 @@ HISTORY_MSG_8;Compensation d'exposition
 HISTORY_MSG_90;Réd. de bruit Luminance
 HISTORY_MSG_91;Réd. de bruit Chominance
 HISTORY_MSG_92;Réd. de bruit Gamma
+HISTORY_MSG_93;Param. de contraste
+HISTORY_MSG_94;Contraste par niveau de détail
 HISTORY_MSG_9;Compression des hautes lumières
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...

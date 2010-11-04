@@ -105,7 +105,7 @@ void Options::setDefaults () {
     editorToSendTo = 1;
     liveThumbnails = true;
     tpOpen.clear ();
-    crvOpen.clear ();
+    //crvOpen.clear ();
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
     renameUseTemplates = false;
@@ -266,7 +266,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "FrameColor"))          bgcolor           = keyFile.get_integer ("GUI", "FrameColor");
     if (keyFile.has_key ("GUI", "ProcessingQueueEnbled"))procQueueEnabled = keyFile.get_boolean ("GUI", "ProcessingQueueEnbled");
     if (keyFile.has_key ("GUI", "ToolPanelsExpanded"))  tpOpen            = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
-    if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
+    //if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
 }
 
 
@@ -395,8 +395,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
     Glib::ArrayHandle<int> tpopen = tpOpen;
     keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
-    Glib::ArrayHandle<int> crvopen = crvOpen;
-    keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
+    //Glib::ArrayHandle<int> crvopen = crvOpen;
+    //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
     keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
 

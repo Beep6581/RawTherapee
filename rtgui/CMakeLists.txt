@@ -12,7 +12,7 @@ set (BASESOURCEFILES
     exifpanel.cc
     sharpening.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
-    crophandler.cc curveeditor.cc dirbrowser.cc
+    crophandler.cc curveeditorgroup.cc curveeditor.cc dirbrowser.cc
     filecatalog.cc
     previewloader.cc
     histogrampanel.cc history.cc  imagearea.cc
@@ -26,7 +26,8 @@ set (BASESOURCEFILES
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
-    equalizer.cc dirpyrequalizer.cc)
+    equalizer.cc dirpyrequalizer.cc
+    popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.o)
