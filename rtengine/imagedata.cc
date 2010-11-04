@@ -181,13 +181,8 @@ void ImageData::extractInfo () {
     lens = "Unknown";
 
 	// Sometimes (e.g. DNG) EXIF already contains lens data
-	if (exif->getTag ("LensModel")) {
-		lens = exif->getTag ("LensModel")->valueToString ();
-	} else if (exif->getTag ("LensInfo")) {
-		lens = exif->getTag ("LensInfo")->valueToString ();
-	} else if (exif->getTag ("DNGLensInfo")) {
-		lens = exif->getTag ("DNGLensInfo")->valueToString ();
-	} else if (exif->getTag ("MakerNote")) {
+	
+	if (exif->getTag ("MakerNote")) {
         rtexif::TagDirectory* mnote = exif->getTag ("MakerNote")->getDirectory();
         if (mnote && !make.compare (0, 5, "NIKON")) {
             bool lensOk = false;
@@ -275,6 +270,12 @@ void ImageData::extractInfo () {
                     lens = eq->getTag ("LensType")->valueToString ();
             }
         }
+    } else if (exif->getTag ("DNGLensInfo")) {
+		lens = exif->getTag ("DNGLensInfo")->valueToString ();
+    } if (exif->getTag ("LensModel")) {
+		lens = exif->getTag ("LensModel")->valueToString ();
+	} else if (exif->getTag ("LensInfo")) {
+		lens = exif->getTag ("LensInfo")->valueToString ();
     }
   }
 }
