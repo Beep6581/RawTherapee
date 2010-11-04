@@ -253,15 +253,18 @@ void Thumbnail::increaseRef ()
 
 void Thumbnail::decreaseRef () 
 {
-	Glib::Mutex::Lock lock(mutex);
-	if ( ref != 0 )
 	{
-		--ref;
+		Glib::Mutex::Lock lock(mutex);
 		if ( ref == 0 )
 		{
-			cachemgr->closeThumbnail (this); 
+			return;
+		}
+		if ( --ref != 0 )
+		{
+			return;
 		}
 	}
+	cachemgr->closeThumbnail (this); 
 }
 
 void Thumbnail::getThumbnailSize (int &w, int &h) {
