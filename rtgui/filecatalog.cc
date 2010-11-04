@@ -312,9 +312,11 @@ int refreshpb (void* data) {
 }
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
-
     GThreadLock lock;
-	
+	_previewReady (dir_id,fdn);
+}
+void FileCatalog::_previewReady (int dir_id, FileBrowserEntry* fdn) {
+
 	if ( dir_id != selectedDirectoryId )
 	{
 		return;
@@ -803,7 +805,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-  	        previewReady (selectedDirectoryId,entry);
+			_previewReady (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
