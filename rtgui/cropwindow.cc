@@ -97,6 +97,8 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_)
     cropHandler.setPosition (0,0);
     cropHandler.setEnabled (true);
     cropHandler.setCropHandlerListener (this);
+
+    zoom11();
     state = SNormal;
 }
 

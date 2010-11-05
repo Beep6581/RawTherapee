@@ -14,6 +14,8 @@
 ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
+CURVEEDITOR_CURVE;Kurve
+CURVEEDITOR_CURVES;Kurven
 CURVEEDITOR_CUSTOM;Angepasst
 CURVEEDITOR_DARKS;Tiefen
 CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
@@ -234,6 +236,8 @@ HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_90;Gerichtete Pyramide Luminanz
 HISTORY_MSG_91;Gerichtete Pyramide Chrominanz
 HISTORY_MSG_92;Gerichtete Pyramide Gamma
+HISTORY_MSG_93;Kontrast nach Detailebene-Parameter
+HISTORY_MSG_94;Kontrast nach Detailebenen
 HISTORY_MSG_9;Lichter-Kompression
 HISTORY_NEWSNAPSHOT;Neue Variante
 HISTORY_NEWSNAPSHOTAS;als...
@@ -399,6 +403,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENING;Schärfen
 PARTIALPASTE_VIGNETTING;Korrektur Vignettierung
 PARTIALPASTE_WHITEBALANCE;Weissabgleich
+POPUPBUTTON_SELECTOPTIONHINT;Rechter Mausklick zum Ändern
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
 PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
@@ -752,9 +757,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-!CURVEEDITOR_CURVE;Curve
-!CURVEEDITOR_CURVES;Curves
-!HISTORY_MSG_93;Contrast by detail levels parameter
-!HISTORY_MSG_94;Contrast by detail levels
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
