@@ -35,7 +35,7 @@ using namespace rtengine::procparams;
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true), lastImg(NULL),
-		quick_(false), initial_(false) {
+		initial_(false) {
 
     cfs.load (getCacheFileName ("data")+".txt");
     loadProcParams ();
@@ -46,7 +46,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
       needsReProcessing(true), lastImg(NULL),
-		quick_(false), initial_(true) {
+		initial_(true) {
 
 
     cfs.md5 = md5;
@@ -97,36 +97,32 @@ void Thumbnail::_generateThumbnailImage () {
 		//  1. if we are here it's because we aren't in the cache so load the JPG
 		//     image out of the RAW. Mark as "quick".
 		//  2. if we don't find that then just grab the real image.
+		bool quick = false;
 		rtengine::RawMetaDataLocation ri;
 		if ( initial_ )
 		{
-			quick_ = true;
+			quick = true;
 			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1);
 		}
 		if ( tpp == 0 )
 		{
-			quick_ = false;
+			quick = false;
 			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1);
 		}
 		if (tpp) {
 			cfs.format = FT_Raw;
+			cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
 			infoFromImage (fname, &ri);
 		}
 	}
 	if (tpp )
 	{
-		if ( !quick_ )
-		{
-			_saveThumbnail ();
-		}
+		_saveThumbnail ();
 		cfs.supported = true;
 	}
 	needsReProcessing = true;
 
-	if ( !quick_ )
-	{
-		cfs.save (getCacheFileName ("data")+".txt");
-	}
+	cfs.save (getCacheFileName ("data")+".txt");
 
 	generateExifDateTimeStrings ();
 }
@@ -282,7 +278,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
     if (!tpp)
         return NULL;
 
-	if ( quick_ )
+	if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL )
 	{
 		return tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
 	}
@@ -296,12 +292,11 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
 	Glib::Mutex::Lock lock(mutex);
 
-	if ( !quick_ )
+	if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL )
 	{
 		return 0;
 	}
 
-	quick_ = false;
 	_generateThumbnailImage();
 	return tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
 }
@@ -413,7 +408,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
         delete tpp;
         tpp = NULL;
     }
-    else {
+    else if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
         // load aehistogram
         tpp->readAEHistogram (getCacheFileName ("aehistograms"));
 

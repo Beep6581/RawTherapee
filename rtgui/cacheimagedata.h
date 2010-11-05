@@ -59,6 +59,12 @@ class CacheImageData {
         int   thumbImgType;
         int   thumbOffset;
 
+		enum
+		{
+			FULL_THUMBNAIL = 0,  // was the thumbnail generated from whole file
+			QUICK_THUMBNAIL = 1, // was rhe thumbnail generated from embedded jpeg
+		};
+
         CacheImageData ();
         
         int load (const Glib::ustring& fname);
