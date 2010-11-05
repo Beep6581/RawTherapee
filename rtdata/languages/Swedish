@@ -745,6 +745,7 @@ ZOOMPANEL_ZOOMOUT;Förminska<b>-</b>
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 !IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_GREENEQUIL;Green equilibration
 !TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
 !TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
