@@ -385,6 +385,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
+POPUPBUTTON_SELECTOPTIONHINT;'Menu contextuel' pour changer d'option
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
@@ -713,7 +714,7 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-POPUPBUTTON_SELECTOPTIONHINT;'Menu contextuel' pour changer d'option
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
