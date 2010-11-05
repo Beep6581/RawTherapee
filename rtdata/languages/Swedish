@@ -132,7 +132,7 @@ HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
 HISTORY_CHANGED;Ändrad
 HISTORY_CUSTOMCURVE;Egen kurva
-HISTORY_DELSNAPSHOT;Ta bort bokmärke
+HISTORY_DELSNAPSHOT;Ta bort
 HISTORY_FROMCLIPBOARD;Från klippbordet
 HISTORY_LABEL;Historia
 HISTORY_MSG_10;Skuggkomprimering
@@ -222,7 +222,7 @@ HISTORY_MSG_86;Wavelet equalizer
 HISTORY_MSG_87;Brusreducering mha av stegsvar
 HISTORY_MSG_8;Exponeringskomprimering
 HISTORY_MSG_9;Högdagerkomprimering
-HISTORY_NEWSNAPSHOT;Nytt bokmärke
+HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
 HISTORY_NEWSSDIALOGTITLE;Lägg till nytt bokmärke
@@ -276,18 +276,22 @@ IPTCPANEL_RESET;Återställ
 IPTCPANEL_RESETHINT;Återställ till standardprofilen
 IPTCPANEL_SOURCE;Källa
 IPTCPANEL_SOURCEHINT;Den ursprungliga ägaren av innehållet.
+IPTCPANEL_SUPPCATEGORIES;Övriga kategorier
+IPTCPANEL_SUPPCATEGORIESHINT;Ytterligare beskrivning av bilden
 IPTCPANEL_TITLE;Titel
+IPTCPANEL_TRANSREFERENCE;Överföringsreferens
+IPTCPANEL_TRANSREFERENCEHINT;En kod som representerar platsen för överföring
 MAIN_BUTTON_EXIT;Avsluta
 MAIN_BUTTON_FULLSCREEN;Helskärm
 MAIN_BUTTON_PREFERENCES;Inställningar
-MAIN_BUTTON_PUTTOQUEUE;Flytta till behandlingskön
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE;Behandla
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+Q
 MAIN_BUTTON_QUEUE;Placera i behandlingskön
-MAIN_BUTTON_SAVE;Spara bild
+MAIN_BUTTON_SAVE;Spara
 MAIN_BUTTON_SAVEAS;Som...
-MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild <b>Ctrl+S</b>
-MAIN_BUTTON_SENDTOEDITOR;Redigera i externt program
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram <b>Ctrl+E</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. Kortkommando: Ctrl+S
+MAIN_BUTTON_SENDTOEDITOR;Redigera
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
 MAIN_FRAME_FILEBROWSER;Filhanterare
@@ -321,15 +325,15 @@ MAIN_TAB_RAW;Råbild
 MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TOGGLE_BEFORE_AFTER;B|A
-MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen (katalog och filbläddrare, Kortkommando: F)
-MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen (innehåller historiken, Kortkommando: H)
+MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: F
+MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: H
 MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
 MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
 MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
-MAIN_TOOLTIP_TOGGLE;Växla före/efter vy <b>B</b>
+MAIN_TOOLTIP_TOGGLE;Växla före/efter vy. Kortkommando: B
 NAVIGATOR_B_NA;B = -
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = -
@@ -526,10 +530,10 @@ SAVEDLG_SAVEIMMEDIATELY;Spara direkt
 SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
 SAVEDLG_TIFFFILTER;TIFF-filer
 SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
-TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde (Kortkommando: C)
-TOOLBAR_TOOLTIP_HAND;Handverktyg (Kortkommando: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp (Kortkommando: S)
-TOOLBAR_TOOLTIP_WB;Egen vitbalans (Kortkommando: W)
+TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde. Kortkommando: C
+TOOLBAR_TOOLTIP_HAND;Handverktyg. Kortkommando: N
+TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. Kortkommando: S
+TOOLBAR_TOOLTIP_WB;Egen vitbalans. Kortkommando: 
 TP_CACORRECTION_BLUE;Blå
 TP_CACORRECTION_LABEL;Korrigera kromatiska abberationer
 TP_CACORRECTION_RED;Röd
@@ -717,11 +721,11 @@ ZOOMBAR_PREVIEW;Förhandsvisning
 ZOOMBAR_SCALE;Skala
 ZOOMBAR_SMALL;Liten
 ZOOMPANEL_100;(100%)
-ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster
-ZOOMPANEL_ZOOM100;Förstora till 100% <b>1</b>
-ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen<b>F</b>
-ZOOMPANEL_ZOOMIN;Förstora<b>+</b>
-ZOOMPANEL_ZOOMOUT;Förminska<b>-</b>
+ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster.
+ZOOMPANEL_ZOOM100;Förstora till 100%. Kortkommando: 1
+ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. Kortkommando: F
+ZOOMPANEL_ZOOMIN;Förstora. Kortkommando: +
+ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 ﻿
 
 
@@ -740,11 +744,7 @@ ZOOMPANEL_ZOOMOUT;Förminska<b>-</b>
 !HISTORY_MSG_93;Contrast by detail levels parameter
 !HISTORY_MSG_94;Contrast by detail levels
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-!IPTCPANEL_TRANSREFERENCE;Trans. Reference
-!IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_GREENEQUIL;Green equilibration
 !TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
