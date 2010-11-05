@@ -59,6 +59,7 @@ private:
 	int selected;
 	bool hasText;
 	bool imageRight;
+	bool hasMenu;
 
 	void showMenu(GdkEventButton* event);
 	void entrySelected (int i);
