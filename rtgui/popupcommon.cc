@@ -19,11 +19,13 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
+#include <multilangmgr.h>
 #include <popupcommon.h>
 #include <safegtk.h>
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label, bool imgRight) {
 	button = thisButton;
+	hasMenu = false;
 	if (label.size()) {
 		hasText = true;
 		button->set_label(label + " ");
@@ -91,6 +93,7 @@ bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
 		// When there is at least 2 choice, we add the RMB connector
 		if (images.size() == 2) {
 			button->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
+			hasMenu = true;
 		}
 		// The item has been created
 		added = true;
@@ -129,7 +132,9 @@ void PopUpCommon::show() {
 }
 
 void PopUpCommon::setButtonHint() {
-	button->set_tooltip_text(buttonHint.size() ? buttonHint + " : " + sItems.at(selected) : sItems.at(selected));
+	Glib::ustring hint = buttonHint.size() ? buttonHint + " : " + sItems.at(selected) : sItems.at(selected);
+	if (hasMenu) hint += "\n(" + M("POPUPBUTTON_SELECTOPTIONHINT") + ")";
+	button->set_tooltip_text(hint);
 }
 
 void PopUpCommon::showMenu(GdkEventButton* event) {
