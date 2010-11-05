@@ -248,13 +248,14 @@ void FileBrowser::close () {
     fbih->pending = 0;
 
     for (int i=0; i<fd.size(); i++)
+    {
+        ((FileBrowserEntry*)fd[i])->thumbnail->decreaseRef ();
         delete fd[i];
+    }
     fd.clear ();
     selected.clear ();
     notifySelectionListener ();
     lastClicked = NULL;
-    for (int i=0; i<fd.size(); i++)
-        ((FileBrowserEntry*)fd[i])->thumbnail->decreaseRef ();
 }
 
 void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
