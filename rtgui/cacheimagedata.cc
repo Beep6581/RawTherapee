@@ -23,7 +23,7 @@
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rank(0), inTrash(false), recentlySaved(false),
-    timeValid(false), exifValid(false) {
+    timeValid(false), exifValid(false), thumbImgType(0) {
 }
 
 int CacheImageData::load (const Glib::ustring& fname) {

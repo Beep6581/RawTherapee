@@ -59,7 +59,6 @@ class Thumbnail {
         Glib::ustring   dateTimeString;
         
 		bool            initial_;
-		bool            quick_;
 
         // vector of listeners
         std::vector<ThumbnailListener*> listeners;
@@ -84,7 +83,7 @@ class Thumbnail {
         void              clearProcParams (int whoClearedIt=-1);
         void              loadProcParams ();
 
-		bool              isQuick() { return quick_; }
+		bool              isQuick() { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
 		bool              isPParamsValid() { return pparamsValid; }
         bool              isRecentlySaved ();
         void              imageDeveloped ();

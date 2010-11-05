@@ -136,7 +136,14 @@ FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet () {
 
 void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
-    refreshThumbnailImage ();
+	if ( thumbnail->isQuick() )
+	{
+		refreshQuickThumbnailImage ();
+	}
+	else
+	{
+		refreshThumbnailImage ();
+	}
 }
 
 struct tiupdate {
