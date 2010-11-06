@@ -212,6 +212,7 @@ if (keyFile.has_group ("Profiles")) {
     if (keyFile.has_key ("Profiles", "SaveParamsWithFile")) saveParamsFile  = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
     if (keyFile.has_key ("Profiles", "SaveParamsToCache"))  saveParamsCache = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
     if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
+    if (keyFile.has_key ("Profiles", "CustomProfileBuilder"))   customProfileBuilder = keyFile.get_string  ("Profiles", "CustomProfileBuilder");
 }
 
 if (keyFile.has_group ("File Browser")) { 
@@ -371,6 +372,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
+    keyFile.set_string  ("Profiles", "CustomProfileBuilder", customProfileBuilder);
     
     keyFile.set_string  ("GUI", "Font", font);
     keyFile.set_integer ("GUI", "WindowWidth", windowWidth);

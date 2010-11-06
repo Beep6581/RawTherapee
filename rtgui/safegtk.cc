@@ -187,3 +187,24 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 #endif
 		return success;
 }
+
+bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
+{
+		std::string cmd;
+        std::string stdOut;
+        std::string stdErr;
+
+		bool success = false;
+
+		int exitStatus=-1;
+        try {
+		    cmd = Glib::filename_from_utf8(cmd_utf8);
+		    printf ("command line: |%s|\n", cmd.c_str());
+
+            // if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory 
+		    Glib::spawn_command_line_sync (cmd,NULL,NULL, &exitStatus);
+        } catch (Glib::Exception& ex) {
+				printf ("%s\n", ex.what().c_str());
+		}
+        return (exitStatus==0);
+}
