@@ -107,6 +107,7 @@ class Options {
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
+    Glib::ustring customProfileBuilder;
     int editorToSendTo;   
     int maxThumbnailHeight;
     int maxCacheEntries;

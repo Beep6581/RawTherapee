@@ -24,6 +24,7 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
 void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &subDirs, bool add_hidden);
 
 bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8);
+bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8);
 
 Glib::ustring safe_locale_to_utf8 (const std::string& src); // from rtengine
 std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str);
