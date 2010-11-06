@@ -1084,15 +1084,40 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
 {
 	// scale image colors
-	for (int row = winy; row < winy+winh; row ++){
-		for (int col = winx; col < winx+winw; col++) {
-			int val = rawData[row][col];
-			if (!val)
-				continue;
-			int c = FC(row, col);
-			val -= cblack[c];
-			val *= scale_mul[c];
-			rawData[row][col] = CLIP(val);
+	if( ri->filters ){
+		for (int row = winy; row < winy+winh; row ++){
+			for (int col = winx; col < winx+winw; col++) {
+				int val = rawData[row][col];
+				if (!val)
+					continue;
+				int c = FC(row, col);
+				val -= cblack[c];
+				val *= scale_mul[c];
+				rawData[row][col] = CLIP(val);
+			}
+		}
+	}else{
+		for (int row = winy; row < winy+winh; row ++){
+			for (int col = winx; col < winx+winw; col++) {
+				int val = rawData[row][3*col+0];
+				if (val){
+					val -= cblack[0];
+					val *= scale_mul[0];
+					rawData[row][3*col+0] = CLIP(val);
+				}
+				val = rawData[row][3*col+1];
+				if (val){
+					val -= cblack[1];
+					val *= scale_mul[1];
+					rawData[row][3*col+1] = CLIP(val);
+				}
+				val = rawData[row][3*col+2];
+				if (val){
+					val -= cblack[2];
+					val *= scale_mul[2];
+					rawData[row][3*col+2] = CLIP(val);
+				}
+			}
 		}
 	}
 
