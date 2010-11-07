@@ -144,7 +144,7 @@ HISTORY_MSG_15;Luminance Contrast
 HISTORY_MSG_16;Luminance Black
 HISTORY_MSG_17;Luminance Highlight Compr.
 HISTORY_MSG_18;Luminance Shadow Compr.
-HISTORY_MSG_19;Luminance Curve
+HISTORY_MSG_19;'L' Curve
 HISTORY_MSG_1;Photo Loaded
 HISTORY_MSG_20;Sharpening
 HISTORY_MSG_21;Sharpening Radius
@@ -219,14 +219,20 @@ HISTORY_MSG_83;High quality shadows/highlights
 HISTORY_MSG_84;Perspective correction
 HISTORY_MSG_85;Wavelet coefficients
 HISTORY_MSG_86;Wavelet equalizer
-HISTORY_MSG_87;Impulse noise reduction
-HISTORY_MSG_89;Directional pyramid
+HISTORY_MSG_87;Spot noise reduction
+HISTORY_MSG_88;Spot NR threshold
+HISTORY_MSG_89;Noise reduction
 HISTORY_MSG_8;Exposure Compensation
-HISTORY_MSG_90;Directional pyramid luminance
-HISTORY_MSG_91;Directional pyramid chominance
-HISTORY_MSG_92;Directional pyramid gamma
-HISTORY_MSG_93;Contrast by detail levels parameter
+HISTORY_MSG_90;NR - luminance
+HISTORY_MSG_91;NR - chrominance
+HISTORY_MSG_92;NR - gamma
+HISTORY_MSG_93;Contrast by detail levels value
 HISTORY_MSG_94;Contrast by detail levels
+HISTORY_MSG_95;Saturation
+HISTORY_MSG_96;'a' curve
+HISTORY_MSG_97;'b' curve
+HISTORY_MSG_98;Demozaicing
+HISTORY_MSG_99;Preprocessing
 HISTORY_MSG_9;Highlight Compression
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
@@ -589,9 +595,9 @@ TP_CROP_Y;y
 TP_DETAIL_AMOUNT;Amount
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
+TP_DIRPYRDENOISE_LABEL;Noise reduction
 TP_DIRPYRDENOISE_LUMA;Luminance
-TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
@@ -635,7 +641,7 @@ TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;Working Profile
-TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_BRIGHTNESS;Brightness
 TP_LABCURVE_CONTRAST;Contrast

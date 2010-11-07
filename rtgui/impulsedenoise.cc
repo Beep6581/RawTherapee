@@ -29,7 +29,7 @@ ImpulseDenoise::ImpulseDenoise () : ToolPanel() {
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 
-	thresh = Gtk::manage (new Adjuster (M("TP_DETAIL_AMOUNT"), 0, 100, 1, 10));
+	thresh = Gtk::manage (new Adjuster (M("TP_IMPULSEDENOISE_THRESH"), 0, 100, 1, 10));
 
 	pack_start (*enabled);
 	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
@@ -86,7 +86,7 @@ void ImpulseDenoise::adjusterChanged (Adjuster* a, double newval) {
 
     if (listener && enabled->get_active()) {
 
-        listener->panelChanged (EvCDNRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
+        listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }
 }
 
