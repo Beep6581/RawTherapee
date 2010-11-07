@@ -8,15 +8,18 @@ using System.Globalization;
 // Raw Therapee sample Custom Profile builder (version 2010-11-06)
 //
 // How to use:
-// 1. Modify the GetCorrectedSettings function below according to your needs.
-// 2. Download and install Microsoft .Net Runtime (latest version is 4.0 as of writing).
+// 1. In RT, build a profile with the static settings (e.g. Photographers name) and set it as default in the options dialog
+// 2. Modify the GetCorrectedSettings function below according to your needs.
+// 3. Download and install Microsoft .Net Runtime (latest version is 4.0 as of writing).
 //    You can get it for free via Windows Update or from microsoft.com. No need for Visual Studio etc.
-// 3. Open a command line and compile this CS-File using the C# 32bit compiler. It is usually installed somewhere here:
+// 4. Open a command line and compile this CS-File using the C# 32bit compiler. It is usually installed somewhere here:
 //    C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe
-//    Call csc.exe with your .CS file as parameter. CSC will compile it and emit an EXE.
-// 4. Open your RT options files and find the entry [Profiles]/CustomProfileBuilder
-// 5. Enter the path to your newly built exe here. On Windows, don't forget double slashes (e.g. "C:\\MyDir\\Mybuilder.exe")
-// And you're done! The EXE is only called on opening the image editor and there is no PP3 already
+//    Call csc.exe with your .CS file as parameter. CSC will compile it and generate an EXE.
+// 5. Open your RT options files and find the entry [Profiles]/CustomProfileBuilder.
+//    On Win7/Vista it's usually located in C:\Users\<Login>\AppData\Roaming\RawTherapeeAlpha
+// 6. Enter the path to your newly built exe here. On Windows, don't forget double slashes (e.g. "C:\\MyDir\\Mybuilder.exe")
+//
+// And you're done! The EXE is only called on opening the image editor and there is no PP3 yet
 // This description is for Windows. The C# code does not use anything fancy, will probably work with MONO on Linux/OSX, too
 
 namespace RTProfilerBuilder {
@@ -38,6 +41,7 @@ namespace RTProfilerBuilder {
 				switch (sectionEntry) {
 					// Here is the place to adjust your settings
 					// Pretty simple: "SectionName/EntryName" in options file
+					// For static parameters it's easier to update the default profile in RT
 
 					case "Vignetting Correction/Amount":
 						value = (fNumber < 8 && focalLength < 30) ? "30" : "0";

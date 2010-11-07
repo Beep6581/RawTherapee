@@ -1,4 +1,3 @@
-
 #00 Deutsch
 #01 (keenonkites; Aktualisierte Version für 2.3 beta2)
 #02 (phberlin; basiert auf keenonkites' Erstübersetzung)
@@ -11,6 +10,7 @@
 #09 Leichte Anpassungen (keenonkites/klonk)
 #10 Erweiterung (oduis)
 #11 Erweiterung (oduis)
+#12 Erweiterung (oduis)
 ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
@@ -230,7 +230,8 @@ HISTORY_MSG_83;Schatten/Lichter hohe Qualität
 HISTORY_MSG_84;Perspektivische Korrektur
 HISTORY_MSG_85;Wavelet Koeffizienten
 HISTORY_MSG_86;Wavelet Equalizer
-HISTORY_MSG_87;Impulsrauschfilter
+HISTORY_MSG_87;Fleckrauschfilter
+HISTORY_MSG_88;Fleckrauschf. Schwelle
 HISTORY_MSG_89;Gerichtete Pyramide
 HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_90;Gerichtete Pyramide Luminanz
@@ -238,6 +239,11 @@ HISTORY_MSG_91;Gerichtete Pyramide Chrominanz
 HISTORY_MSG_92;Gerichtete Pyramide Gamma
 HISTORY_MSG_93;Kontrast nach Detailebene-Parameter
 HISTORY_MSG_94;Kontrast nach Detailebenen
+HISTORY_MSG_95;Sättigung
+HISTORY_MSG_96;'a'-Kurve
+HISTORY_MSG_97;'b'-Kurve
+HISTORY_MSG_98;Entrasterung
+HISTORY_MSG_99;Vorverarbeitung
 HISTORY_MSG_9;Lichter-Kompression
 HISTORY_NEWSNAPSHOT;Neue Variante
 HISTORY_NEWSNAPSHOTAS;als...
@@ -650,7 +656,7 @@ TP_ICM_OUTPUTDLGLABEL;Wähle Ausgabe-ICC-Profil...
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_SAVEREFERENCE;Speichere Referenzbild für die Profilierung
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
-TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
+TP_IMPULSEDENOISE_LABEL;Fleckrauschminderung
 TP_IMPULSEDENOISE_THRESH;Schwellwert
 TP_LABCURVE_BRIGHTNESS;Helligkeit
 TP_LABCURVE_CONTRAST;Kontrast
@@ -758,9 +764,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_88;Spot NR threshold
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demozaicing
-!HISTORY_MSG_99;Preprocessing
+
