@@ -133,6 +133,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_EXPOSURE_BRIGHTNESS"), ADDSET_TC_BRIGHTNESS, false);
     appendBehavList (mi, M("TP_EXPOSURE_BLACKLEVEL"), ADDSET_TC_BLACKLEVEL, false);
     appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), ADDSET_TC_CONTRAST, false);
+    appendBehavList (mi, M("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));

@@ -31,7 +31,8 @@ class ToneCurveParamsEdited {
         bool brightness;
         bool black;
         bool contrast;
-        bool shcompr;
+		bool saturation;
+		bool shcompr;
         bool hlcompr;
         bool autoexp;
         bool clip;

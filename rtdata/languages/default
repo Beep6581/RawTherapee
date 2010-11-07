@@ -219,8 +219,8 @@ HISTORY_MSG_83;High quality shadows/highlights
 HISTORY_MSG_84;Perspective correction
 HISTORY_MSG_85;Wavelet coefficients
 HISTORY_MSG_86;Wavelet equalizer
-HISTORY_MSG_87;Spot noise reduction
-HISTORY_MSG_88;Spot NR threshold
+HISTORY_MSG_87;Salt&pepper noise reduction
+HISTORY_MSG_88;Salt&pepper NR threshold
 HISTORY_MSG_89;Noise reduction
 HISTORY_MSG_8;Exposure Compensation
 HISTORY_MSG_90;NR - luminance
@@ -234,6 +234,7 @@ HISTORY_MSG_97;'b' curve
 HISTORY_MSG_98;Demozaicing
 HISTORY_MSG_99;Preprocessing
 HISTORY_MSG_9;Highlight Compression
+HISTORY_MSG_100;RGB saturation
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -622,6 +623,7 @@ TP_EXPOSURE_CONTRAST;Contrast
 TP_EXPOSURE_CURVEEDITOR;Tone Curve
 TP_EXPOSURE_EXPCOMP;Exp. Comp.
 TP_EXPOSURE_LABEL;Exposure
+TP_EXPOSURE_SATURATION;Saturation
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
 TP_HLREC_LABEL;Highlight Reconstruction

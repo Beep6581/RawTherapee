@@ -32,6 +32,7 @@ void ParamsEdited::set (bool v) {
         toneCurve.brightness = v;
         toneCurve.black      = v;
         toneCurve.contrast   = v;
+		toneCurve.saturation   = v;
         toneCurve.shcompr    = v;
         toneCurve.hlcompr    = v;
         toneCurve.autoexp    = v;
@@ -163,7 +164,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;
         toneCurve.black = toneCurve.black && p.toneCurve.black == other.toneCurve.black;
         toneCurve.contrast = toneCurve.contrast && p.toneCurve.contrast == other.toneCurve.contrast;
-        toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
+		toneCurve.saturation = toneCurve.saturation && p.toneCurve.saturation == other.toneCurve.saturation;
+		toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
         toneCurve.hlcompr = toneCurve.hlcompr && p.toneCurve.hlcompr == other.toneCurve.hlcompr;
         toneCurve.autoexp = toneCurve.autoexp && p.toneCurve.autoexp == other.toneCurve.autoexp;
         toneCurve.clip = toneCurve.clip && p.toneCurve.clip == other.toneCurve.clip;
@@ -295,6 +297,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (toneCurve.brightness)	toEdit.toneCurve.brightness = options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
 	if (toneCurve.black)		toEdit.toneCurve.black 	    = options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
 	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;
+	if (toneCurve.saturation)	toEdit.toneCurve.saturation 	= options.baBehav[ADDSET_TC_SATURATION] ? toEdit.toneCurve.saturation + mods.toneCurve.saturation : mods.toneCurve.saturation;
 	if (toneCurve.shcompr)		toEdit.toneCurve.shcompr 	= mods.toneCurve.shcompr;
 	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= mods.toneCurve.hlcompr;
 	if (toneCurve.autoexp)		toEdit.toneCurve.autoexp 	= mods.toneCurve.autoexp;

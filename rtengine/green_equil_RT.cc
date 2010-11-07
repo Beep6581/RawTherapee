@@ -1,31 +1,18 @@
 // CFA pixel cleaning via directional average
-// by Emil Martinec
+// © Emil Martinec
 // 2/18/2010
 #define TS 256	 // Tile size
 
-#define CLASS
-/*#define ushort UshORt
- typedef unsigned char uchar;
- typedef unsigned short ushort;*/
-
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <float.h>
-#include <limits.h>
 #include <math.h>
-#include <setjmp.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
 
 #define SQR(x) ((x)*(x))
 
 
-//void CLASS green_equilibrate()//for dcraw implementation
-void CLASS RawImageSource::green_equilibrate(float thresh)
+//void green_equilibrate()//for dcraw implementation
+void RawImageSource::green_equilibrate(float thresh)
 {  
 	// local variables
 	static const int border=8;

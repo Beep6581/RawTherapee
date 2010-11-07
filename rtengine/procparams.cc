@@ -52,6 +52,7 @@ void ProcParams::setDefaults () {
     toneCurve.expcomp       = 0;
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
+	toneCurve.saturation    = 0;
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
     toneCurve.shcompr       = 25;
@@ -214,6 +215,7 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_double  ("Exposure", "Compensation",    toneCurve.expcomp);
     keyFile.set_integer ("Exposure", "Brightness",      toneCurve.brightness);
     keyFile.set_integer ("Exposure", "Contrast",        toneCurve.contrast);
+	keyFile.set_integer ("Exposure", "Saturation",      toneCurve.saturation);
     keyFile.set_integer ("Exposure", "Black",           toneCurve.black);
     keyFile.set_integer ("Exposure", "HighlightCompr",  toneCurve.hlcompr);
     keyFile.set_integer ("Exposure", "ShadowCompr",     toneCurve.shcompr);
@@ -443,7 +445,8 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "Compensation"))   toneCurve.expcomp       = keyFile.get_double  ("Exposure", "Compensation");
     if (keyFile.has_key ("Exposure", "Brightness"))     toneCurve.brightness    = keyFile.get_integer ("Exposure", "Brightness");
     if (keyFile.has_key ("Exposure", "Contrast"))       toneCurve.contrast      = keyFile.get_integer ("Exposure", "Contrast");
-    if (keyFile.has_key ("Exposure", "Black"))          toneCurve.black         = keyFile.get_integer ("Exposure", "Black");
+	if (keyFile.has_key ("Exposure", "Saturation"))     toneCurve.saturation    = keyFile.get_integer ("Exposure", "Saturation");
+	if (keyFile.has_key ("Exposure", "Black"))          toneCurve.black         = keyFile.get_integer ("Exposure", "Black");
     if (keyFile.has_key ("Exposure", "HighlightCompr")) toneCurve.hlcompr       = keyFile.get_integer ("Exposure", "HighlightCompr");
     if (toneCurve.hlcompr > 100) toneCurve.hlcompr = 100; // older pp3 files can have values above 100.
     if (keyFile.has_key ("Exposure", "ShadowCompr"))    toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr");
@@ -746,6 +749,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && toneCurve.brightness == other.toneCurve.brightness
         && toneCurve.black      == other.toneCurve.black
         && toneCurve.contrast   == other.toneCurve.contrast
+		&& toneCurve.saturation == other.toneCurve.saturation
         && toneCurve.shcompr    == other.toneCurve.shcompr
         && toneCurve.hlcompr    == other.toneCurve.hlcompr
         && toneCurve.autoexp    == other.toneCurve.autoexp

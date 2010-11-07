@@ -38,6 +38,7 @@ class ToneCurveParams {
         int         brightness;
         int         black;
         int         contrast;
+		int         saturation;
         int         shcompr;
         int         hlcompr;
 };
