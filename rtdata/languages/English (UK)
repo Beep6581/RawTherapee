@@ -204,7 +204,6 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_43;Luminance Denoising
 !HISTORY_MSG_44;Lum. Denoising Radius
 !HISTORY_MSG_45;Lum. Denoising Edge Tolerance
-!HISTORY_MSG_4;History Browsing
 !HISTORY_MSG_50;Shadow/Highlight tool
 !HISTORY_MSG_51;Highlight boost
 !HISTORY_MSG_52;Shadow Boost
@@ -225,7 +224,6 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_66;Highlight Recovery
 !HISTORY_MSG_67;Highlight Recovery Amount
 !HISTORY_MSG_68;Highlight Recovery Method
-!HISTORY_MSG_6;Contrast
 !HISTORY_MSG_72;Vignetting Correction
 !HISTORY_MSG_73;Channel Mixer
 !HISTORY_MSG_74;Resize Scale
@@ -234,7 +232,6 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_77;IPTC Metadata
 !HISTORY_MSG_78;Data specified for resize
 !HISTORY_MSG_79;Resize width
-!HISTORY_MSG_7;Black
 !HISTORY_MSG_80;Resize height
 !HISTORY_MSG_81;Resize enabled
 !HISTORY_MSG_82;Profile Changed
@@ -297,7 +294,6 @@ TP_HLREC_COLOR;Colour Propagation
 !IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
 !IPTCPANEL_CREDIT;Credit
 !IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-!IPTCPANEL_DATECREATED;Date Created
 !IPTCPANEL_EMBEDDED;Embedded
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 !IPTCPANEL_HEADLINE;Headline
@@ -435,7 +431,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMAT;Date Format
-!PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
+!PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
 !PREFERENCES_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DEFAULTLANG;Default language
@@ -474,9 +470,9 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
-!PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OUTDIRTEMPLATE;Use Template
-!PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PARSEDEXTADD;Add Extension

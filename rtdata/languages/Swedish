@@ -737,15 +737,21 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_NURBS;Control cage
-!HISTORY_MSG_89;Directional pyramid
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
-!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_88;Spot NR threshold
+!HISTORY_MSG_89;Noise reduction
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_99;Preprocessing
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_GREENEQUIL;Green equilibration
-!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
-!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_DIRPYRDENOISE_LABEL;Noise reduction
+!TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels

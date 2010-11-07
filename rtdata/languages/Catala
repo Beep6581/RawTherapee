@@ -632,13 +632,19 @@ ZOOMBAR_SMALL;Petit
 !HISTORY_MSG_84;Perspective correction
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_89;Directional pyramid
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
-!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_87;Spot noise reduction
+!HISTORY_MSG_88;Spot NR threshold
+!HISTORY_MSG_89;Noise reduction
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_99;Preprocessing
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE;Put to queue
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
@@ -699,9 +705,9 @@ ZOOMBAR_SMALL;Petit
 !TP_DETAIL_AMOUNT;Amount
 !TP_DIRPYRDENOISE_CHROMA;Chrominance
 !TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
+!TP_DIRPYRDENOISE_LABEL;Noise reduction
 !TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 !TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 !TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
@@ -714,7 +720,7 @@ ZOOMBAR_SMALL;Petit
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
