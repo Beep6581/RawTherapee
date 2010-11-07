@@ -118,6 +118,7 @@ DIRPYREQUALIZER,  // EvDirPyrEqualizer,
 DIRPYREQUALIZER,   // EvDirPyrEqlEnabled,
 LUMINANCECURVE, //    EvLSaturation,
 LUMINANCECURVE, //    EvLaCurve,
-LUMINANCECURVE, //    EvLbCurve
+LUMINANCECURVE, //    EvLbCurve,
+RGBCURVE,   //    EvSaturation,
 };
 

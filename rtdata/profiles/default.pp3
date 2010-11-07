@@ -4,10 +4,11 @@ Version=484
 
 [Exposure]
 Auto=true
-Clip=0.001
+Clip=0.01
 Compensation=0
 Brightness=0
 Contrast=0
+Saturation=0
 Black=0
 HighlightCompr=70
 ShadowCompr=50

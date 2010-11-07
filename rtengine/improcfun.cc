@@ -245,7 +245,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     delete [] hist;
 }
 
-void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve, int* shtonecurve, int* tonecurve, SHMap* shmap) {
+void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve, int* shtonecurve, int* tonecurve, SHMap* shmap, int sat) {
 
     int h_th, s_th;
     if (shmap) {
@@ -281,6 +281,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve
     int tW = working->width;
     int tH = working->height;
     int r, g, b;
+	float h, s, v;
 		#pragma omp parallel for  private(r, g, b,factor,mapval) if (multiThread)
     for (int i=0; i<tH; i++) {
 
@@ -349,6 +350,16 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve
 			r = tonecurve[r];
 			g = tonecurve[g];
 			b = tonecurve[b];
+
+			if (abs(sat)>0.5) {
+				rgb2hsv(r,g,b,h,s,v);
+				if (sat>0) {
+					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-s)));
+				} else {
+					s *= 1+(float)sat/100;	
+				}
+				hsv2rgb(h,s,v,r,g,b);
+			}
 			
             int x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) >> 15;
             int y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) >> 15;
@@ -574,5 +585,61 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
     if (br<0)
         br = 0;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void ImProcFunctions::rgb2hsv (int r, int g, int b, float &h, float &s, float &v) {
+	
+	double var_R = r / 65535.0;
+	double var_G = g / 65535.0;
+	double var_B = b / 65535.0;
+	
+	double var_Min = MIN(MIN(var_R,var_G),var_B);
+	double var_Max = MAX(MAX(var_R,var_G),var_B);
+	double del_Max = var_Max - var_Min;
+	v = var_Max;
+	if (fabs(del_Max)<0.00001) {
+		h = 0;
+		s = 0;
+	}
+	else {
+		s = del_Max/var_Max;
+		
+		if      ( var_R == var_Max ) h = (var_G - var_B)/del_Max; 
+		else if ( var_G == var_Max ) h = 2.0 + (var_B - var_R)/del_Max; 
+		else if ( var_B == var_Max ) h = 4.0 + (var_R - var_G)/del_Max; 
+		h /= 6.0;
+		
+		if ( h < 0 )  h += 1;
+		if ( h > 1 )  h -= 1;
+	}
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void ImProcFunctions::hsv2rgb (float h, float s, float v, int &r, int &g, int &b) {
+	
+	float h1 = h*6; // sector 0 to 5
+	int i = floor( h1 );
+	float f = h1 - i; // fractional part of h
+	
+	float p = v * ( 1 - s );
+	float q = v * ( 1 - s * f );
+	float t = v * ( 1 - s * ( 1 - f ) );
+	
+	float r1,g1,b1;
+	
+	if (i==0) {r1 = v;  g1 = t;  b1 = p;}
+	if (i==1) {r1 = q;  g1 = v;  b1 = p;}
+	if (i==2) {r1 = p;  g1 = v;  b1 = t;}
+	if (i==3) {r1 = p;  g1 = q;  b1 = v;}
+	if (i==4) {r1 = t;  g1 = p;  b1 = v;}
+	if (i==5) {r1 = v;  g1 = p;  b1 = q;}
+	
+	r = (int)((r1)*65535);
+	g = (int)((g1)*65535);
+	b = (int)((b1)*65535);
+}
+	
 }
 
