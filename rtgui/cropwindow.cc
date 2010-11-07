@@ -93,7 +93,6 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_)
     minWidth = bsw + iw + 2*sideBorderWidth;
     
     setSize (100, 100);
-    zoom11();
     cropHandler.newImage (ipc_);
     cropHandler.setPosition (0,0);
     cropHandler.setEnabled (true);

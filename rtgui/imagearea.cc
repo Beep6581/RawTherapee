@@ -231,6 +231,7 @@ void ImageArea::unGrabFocus () {
 void ImageArea::addCropWindow () { 
     
     CropWindow* cw = new CropWindow (this, ipc);
+    cw->zoom11();
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
     cropWins.push_front (cw);
@@ -248,10 +249,13 @@ void ImageArea::addCropWindow () {
         cw->setPosition (col*get_width()/K + hBorder/2 + layer*30, row*get_height()/K + vBorder/2 + layer*30);
     }
     else {
-        cw->setSize (lastClosedX, lastClosedY);
-        cw->setPosition (lastClosedW, lastClosedH);
+        cw->setPosition (lastClosedX, lastClosedY);
+        cw->setSize(lastClosedW, lastClosedH);
     }
-
+    int x0,y0,w,h,wc,hc;
+    mainCropWindow->getCropRectangle(x0,y0,w,h );
+    cw->getCropSize(wc,hc);
+    cw->setCropPosition(x0+w/2-wc/2,y0+h/2-hc/2);
     mainCropWindow->setObservedCropWin (cropWins.front());
     queue_draw (); 
 }
