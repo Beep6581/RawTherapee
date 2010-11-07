@@ -730,8 +730,14 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
-!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_88;Spot NR threshold
+!HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_99;Preprocessing
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1

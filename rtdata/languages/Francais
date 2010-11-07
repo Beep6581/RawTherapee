@@ -50,6 +50,7 @@ EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
+FILEBROWSER_AUTODARKFRAME;Soustraction d'image noire automatique
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -62,6 +63,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
+FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images noires
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
@@ -85,6 +87,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
+FILEBROWSER_SELECTDARKFRAME;Choisir une image noire...
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
@@ -338,6 +341,7 @@ MAIN_TAB_FILTER;Filtrer
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
@@ -356,6 +360,12 @@ NAVIGATOR_G_NA;V = n/d
 NAVIGATOR_G_VALUE;V = %1
 NAVIGATOR_H_NA;T = n/d
 NAVIGATOR_H_VALUE;T = %1
+NAVIGATOR_LAB_A_NA;a = n/d
+NAVIGATOR_LAB_A_VALUE;a = %1
+NAVIGATOR_LAB_B_NA;b = n/d
+NAVIGATOR_LAB_B_VALUE;b = %1
+NAVIGATOR_LAB_L_NA;L = n/d
+NAVIGATOR_LAB_L_VALUE;L = %1
 NAVIGATOR_R_NA;R = n/d
 NAVIGATOR_R_VALUE;R = %1
 NAVIGATOR_S_NA;S = n/d
@@ -380,6 +390,8 @@ PARTIALPASTE_EXPOSURE;Exposition
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
 PARTIALPASTE_IPTCINFO;Infos IPTC
+PARTIALPASTE_LABCURVE;Courbe de luminance
+PARTIALPASTE_LABCURVE;Courebes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LUMACURVE;Courbe de luminance
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
@@ -415,6 +427,7 @@ PREFERENCES_CLEARDLG_LINE2;Ceci peut prendre plusieurs secondes.
 PREFERENCES_CLEARDLG_TITLE;Veuillez patienter
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
+PREFERENCES_DARKFRAME;Soustraction d'image noire
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
@@ -422,6 +435,7 @@ PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
+PREFERENCES_DIRDARKFRAMES;Dossier d'images noires
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
@@ -638,6 +652,11 @@ TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
+TP_LABCURVE_BRIGHTNESS;Luminosité
+TP_LABCURVE_CONTRAST;Contraste
+TP_LABCURVE_CURVEEDITOR;Courbe de luminance
+TP_LABCURVE_LABEL;Courbes Lab
+TP_LABCURVE_SATURATION;Saturation
 TP_LENSGEOM_AUTOCROP;Rognage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
@@ -654,6 +673,10 @@ TP_LUMADENOISE_RADIUS;Rayon
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PREPROCESS_DARKFRAME;Image noire
+TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
+TP_RAWPANEL_DEMOSAICING;Dématriçage
+TP_RAWPANEL_PREPROCESSING;Pre-traitement
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)
@@ -664,6 +687,7 @@ TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_LABEL;Redimensionnement
+TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Méthode: 
 TP_RESIZE_NEAREST;Au plus proche
 TP_RESIZE_SCALE;Échelle
@@ -696,8 +720,12 @@ TP_SHARPENING_RLD_ITERATIONS;Itérations
 TP_SHARPENING_THRESHOLD;Seuil
 TP_SHARPENING_USM;Masque flou
 TP_VIGNETTING_AMOUNT;Quantité
+TP_VIGNETTING_CENTER;Centre
+TP_VIGNETTING_CENTER_X;Centre X
+TP_VIGNETTING_CENTER_Y;Centre Y
 TP_VIGNETTING_LABEL;Correction vignettage
 TP_VIGNETTING_RADIUS;Rayon
+TP_VIGNETTING_STRENGTH;Force
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Appareil photo
 TP_WBALANCE_CUSTOM;Personnalisé
@@ -720,31 +748,10 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-FILEBROWSER_AUTODARKFRAME;Soustraction d'image noire automatique
-FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images noires
-FILEBROWSER_SELECTDARKFRAME;Choisir une image noire...
-MAIN_TAB_RAW;RAW
-NAVIGATOR_LAB_A_NA;a = n/d
-NAVIGATOR_LAB_A_VALUE;a = %1
-NAVIGATOR_LAB_B_NA;b = n/d
-NAVIGATOR_LAB_B_VALUE;b = %1
-NAVIGATOR_LAB_L_NA;L = n/d
-NAVIGATOR_LAB_L_VALUE;L = %1
-PARTIALPASTE_LABCURVE;Courebes Lab
-PARTIALPASTE_LABCURVE;Courbe de luminance
-PREFERENCES_DARKFRAME;Soustraction d'image noire
-PREFERENCES_DIRDARKFRAMES;Dossier d'images noires
-TP_LABCURVE_BRIGHTNESS;Luminosité
-TP_LABCURVE_CONTRAST;Contraste
-TP_LABCURVE_CURVEEDITOR;Courbe de luminance
-TP_LABCURVE_LABEL;Courbes Lab
-TP_LABCURVE_SATURATION;Saturation
-TP_PREPROCESS_DARKFRAME;Image noire
-TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
-TP_RAWPANEL_DEMOSAICING;Dématriçage
-TP_RAWPANEL_PREPROCESSING;Pre-traitement
-TP_RESIZE_LANCZOS;Lanczos
-TP_VIGNETTING_CENTER;Centre
-TP_VIGNETTING_CENTER_X;Centre X
-TP_VIGNETTING_CENTER_Y;Centre Y
-TP_VIGNETTING_STRENGTH;Force
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
