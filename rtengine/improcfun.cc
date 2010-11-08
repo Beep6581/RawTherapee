@@ -281,7 +281,6 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve
     int tW = working->width;
     int tH = working->height;
     int r, g, b;
-	float h, s, v;
 		#pragma omp parallel for  private(r, g, b,factor,mapval) if (multiThread)
     for (int i=0; i<tH; i++) {
 
@@ -352,6 +351,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve
 			b = tonecurve[b];
 
 			if (abs(sat)>0.5) {
+				float h, s, v;
 				rgb2hsv(r,g,b,h,s,v);
 				if (sat>0) {
 					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-s)));
