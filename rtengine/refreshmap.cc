@@ -106,8 +106,6 @@ RETINEX,    //    EvShrHighQuality
 TRANSFORM,  //    EvPerspCorr
 EQUALIZER,  // EvEqualizer
 EQUALIZER,   // EvEqlEnabled
-DEMOSAIC, // EvDemosaic
-DARKFRAME, //EvPreProcess
 IMPULSEDENOISE,    // EvIDNEnabled,
 IMPULSEDENOISE,    // EvIDNThresh,
 DIRPYRDENOISE,    //  EvDPDNEnabled,
@@ -119,6 +117,8 @@ DIRPYREQUALIZER,   // EvDirPyrEqlEnabled,
 LUMINANCECURVE, //    EvLSaturation,
 LUMINANCECURVE, //    EvLaCurve,
 LUMINANCECURVE, //    EvLbCurve,
+DEMOSAIC, // EvDemosaic
+DARKFRAME, //EvPreProcess
 RGBCURVE,   //    EvSaturation,
 };
 
