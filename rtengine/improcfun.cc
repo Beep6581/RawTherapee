@@ -346,9 +346,9 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, int* hltonecurve
 			b *= tonefactor;
 			
 			//brightness/contrast and user tone curve
-			r = tonecurve[r];
-			g = tonecurve[g];
-			b = tonecurve[b];
+			r = tonecurve[CLIP(r)];
+			g = tonecurve[CLIP(g)];
+			b = tonecurve[CLIP(b)];
 
 			if (abs(sat)>0.5) {
 				float h, s, v;
