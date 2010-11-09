@@ -400,8 +400,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
 
-	int* curve1 = new int [65536];
-    int* curve2 = new int [65536];
+	float* curve1 = new float [65536];
+    float* curve2 = new float [65536];
 	int* curve = new int [65536];
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
@@ -420,10 +420,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve1, 16);
-	ipf.chrominanceCurve (labView, labView, 0, curve1, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve1, 16);
-    ipf.chrominanceCurve (labView, labView, 1, curve1, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve, 16);
+	ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve, 16);
+    ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
 
 	delete [] curve1;
     delete [] curve2;

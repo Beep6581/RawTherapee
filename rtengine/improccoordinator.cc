@@ -178,7 +178,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, chroma_acurve, chroma_bcurve, lumacurve, bcLhist, scale==1 ? 1 : 16);
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
