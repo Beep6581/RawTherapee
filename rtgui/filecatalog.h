@@ -148,6 +148,7 @@ class FileCatalog : public Gtk::VBox,
 
                 void redrawAll ();
                 void refreshAll ();
+                void refreshHeight ();
                 
                 void openRequested          (std::vector<Thumbnail*> tbe);
                 void deleteRequested        (std::vector<FileBrowserEntry*> tbe);
@@ -179,6 +180,8 @@ class FileCatalog : public Gtk::VBox,
                 void openPrevImage () { fileBrowser->openPrevImage(); }               
 
                 bool handleShortcutKey (GdkEventKey* event);
+
+
 };
 
 #endif

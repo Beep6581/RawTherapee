@@ -349,6 +349,7 @@ void RTWindow::MoveFileBrowserToEditor()
         epanel->catalogPane->add(*fCatalog);
         fCatalog->fileBrowser->setArrangement(ThumbBrowserBase::TB_Horizontal);
         fCatalog->redrawAll();
+        fCatalog->refreshHeight();
     }
 }
 

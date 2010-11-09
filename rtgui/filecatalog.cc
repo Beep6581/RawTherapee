@@ -409,6 +409,11 @@ void FileCatalog::refreshAll () {
     fileBrowser->refreshThumbImages ();
 }
 
+void FileCatalog::refreshHeight () {
+    int newHeight=fileBrowser->getEffectiveHeight();
+    set_size_request(0, newHeight);
+}
+
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
 
     if (enabled && listener!=NULL) {
@@ -838,14 +843,14 @@ bool FileCatalog::trashIsEmpty () {
 
 void FileCatalog::zoomIn () {
 
-        
     fileBrowser->zoomIn ();
+    refreshHeight();
         
 }
 void FileCatalog::zoomOut () {
 
-        
     fileBrowser->zoomOut ();
+    refreshHeight();
         
 }
 void FileCatalog::refreshEditedState (const std::set<Glib::ustring>& efiles) {
