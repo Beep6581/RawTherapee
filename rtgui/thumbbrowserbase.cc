@@ -534,6 +534,14 @@ void ThumbBrowserBase::setScrollPosition (double h, double v) {
     vscroll.set_value (v>vscroll.get_adjustment()->get_upper() ? vscroll.get_adjustment()->get_upper() : v);
 }
 
+// needed for auto-height in single tab
+int ThumbBrowserBase::getEffectiveHeight() { 
+    int h=0;
+    if (fd.size()>0) h=fd[0]->getEffectiveHeight();
+    return h;
+}  
+
+
 /*void PreviewImgUpdater::processCustomOrder () {
 
     // find first filtered entry, if any
