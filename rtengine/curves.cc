@@ -587,7 +587,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* hlCurve, int* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
 		
 		double def_mul = pow (2.0, defmul);
 
@@ -732,7 +732,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
 				if (outBeforeCCurveHistogram) {
-					double hval = brightcurve->getVal (shCurve[hlCurve[(int)val]]);
+					double hval = brightcurve->getVal ((int)shCurve[(int)hlCurve[(int)val]]);
 					//if (needigamma)
 					//	hval = igamma2 (hval);
 					int hi = (int)(255.0*CLIPD(hval));
@@ -769,7 +769,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			double avg = 0; 
 			//double sqavg = 0;
 			for (int i=0; i<=0xffff; i++) {
-				avg += dcurve[shCurve[hlCurve[i]]] * histogram[i];
+				avg += dcurve[(int)shCurve[(int)hlCurve[i]]] * histogram[i];
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
 				sum += histogram[i];
 			}
