@@ -26,7 +26,7 @@ class FileSelectionListener {
 
   public:
     virtual bool fileSelected           (Thumbnail* thm) =0;
-    virtual bool addBatchQueueJob       (BatchQueueEntry* bqe) =0;
+    virtual bool addBatchQueueJobs      ( std::vector<BatchQueueEntry*> &entries ) =0;
 };
 
 #endif

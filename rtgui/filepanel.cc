@@ -208,10 +208,10 @@ void FilePanel::open (const Glib::ustring& d) {
         dirBrowser->open (Glib::path_get_dirname(d), Glib::path_get_basename(d));
 }
 
-bool FilePanel::addBatchQueueJob (BatchQueueEntry* bqe) {
+bool FilePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries ) {
 
     if (parent)
-        parent->addBatchQueueJob (bqe);
+        parent->addBatchQueueJobs (entries);
 	return true;
 }
 

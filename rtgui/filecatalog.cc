@@ -483,6 +483,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
 void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
+    	std::vector<BatchQueueEntry*> entries;
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
@@ -494,14 +495,15 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
                 guint8* prev = new guint8 [pw*ph*3];
                 memcpy (prev, img->getData (), pw*ph*3);
                 img->free();
-                listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
+                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
             }
             else {
                 int pw, ph;
                 tbe[i]->thumbnail->getThumbnailSize (pw, ph);
-                listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
+                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
             }
         }
+        listener->addBatchQueueJobs( entries );
     }
 }
 
