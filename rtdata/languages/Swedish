@@ -753,5 +753,7 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 
 
 !CURVEEDITOR_NURBS;Control cage
+!HISTORY_MSG_100;RGB saturation
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_GREENEQUIL;Green equilibration
+!TP_EXPOSURE_SATURATION;Saturation

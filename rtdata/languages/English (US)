@@ -142,6 +142,7 @@
 !HISTORY_DELSNAPSHOT;Del
 !HISTORY_FROMCLIPBOARD;From clipboard
 !HISTORY_LABEL;History
+!HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_10;Shadow Compression
 !HISTORY_MSG_11;Tone Curve
 !HISTORY_MSG_12;Auto Exposure
@@ -226,8 +227,8 @@
 !HISTORY_MSG_84;Perspective correction
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Spot noise reduction
-!HISTORY_MSG_88;Spot NR threshold
+!HISTORY_MSG_87;Salt&pepper noise reduction
+!HISTORY_MSG_88;Salt&pepper NR threshold
 !HISTORY_MSG_89;Noise reduction
 !HISTORY_MSG_8;Exposure Compensation
 !HISTORY_MSG_90;NR - luminance
@@ -629,6 +630,7 @@
 !TP_EXPOSURE_CURVEEDITOR;Tone Curve
 !TP_EXPOSURE_EXPCOMP;Exp. Comp.
 !TP_EXPOSURE_LABEL;Exposure
+!TP_EXPOSURE_SATURATION;Saturation
 !TP_HLREC_CIELAB;CIELab Blending
 !TP_HLREC_COLOR;Color Propagation
 !TP_HLREC_LABEL;Highlight Reconstruction
