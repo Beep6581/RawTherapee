@@ -89,7 +89,7 @@ struct RawImage {
   int profile_len;
   char* profile_data; // Embedded ICC color profile
 
-  RawImage(  const Glib::ustring name):allocation(NULL),data(NULL),profile_data(NULL),fname(name)
+  RawImage(  const Glib::ustring name):allocation(NULL),data(NULL),profile_data(NULL),fname(name),make(0),model(0)
   {
   }
   ~RawImage()
