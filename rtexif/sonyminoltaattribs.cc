@@ -229,6 +229,8 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(57, "Sony AF DT 50mm f/1.8 SAM"));
             choices.insert(p_t(58, "Sony AF DT 30mm f/2.8 SAM Macro"));
             choices.insert(p_t(59, "Sony AF 28-75mm f/2.8 SAM"));
+            choices.insert(p_t(60, "Carl Zeiss Distagon T* 24mm f/2 ZA SSM"));
+            choices.insert(p_t(61, "Sony AF 85mm f/2.8 SAM"));
             choices.insert(p_t(128, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF)"));
             choices.insert(p_t(128, "Tamron AF 28-300mm f/3.5-6.3"));
             choices.insert(p_t(128, "Tamron AF 28-200mm f/3.8-5.6 XR Di Aspherical (IF) Macro "));
