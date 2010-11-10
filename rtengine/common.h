@@ -97,6 +97,8 @@ struct RawImage {
 	  if(allocation){ delete [] allocation; allocation=NULL;}
 	  if(data){ delete [] data; data=NULL;}
 	  if(profile_data){ delete [] profile_data; profile_data=NULL;}
+	  if ( make ) free(make);
+	  if ( model ) free(model);
   }
 
   int loadRaw (bool loadData=true);
