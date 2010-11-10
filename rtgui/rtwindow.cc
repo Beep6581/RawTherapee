@@ -224,7 +224,15 @@ void RTWindow::imageDeveloped (Glib::ustring fname) {
 
 void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
 
-    bpanel->addBatchQueueJob (bqe, head);
+	std::vector<BatchQueueEntry*> entries;
+	entries.push_back(bqe);
+    bpanel->addBatchQueueJobs (entries, head);
+    fpanel->queue_draw ();
+}
+
+void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries) {
+
+    bpanel->addBatchQueueJobs (entries, false);
     fpanel->queue_draw ();
 }
 

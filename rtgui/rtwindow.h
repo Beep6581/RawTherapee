@@ -50,6 +50,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void remEditorPanel (EditorPanel* ep);
 
         void addBatchQueueJob       (BatchQueueEntry* bqe, bool head=false);
+        void addBatchQueueJobs      (std::vector<BatchQueueEntry*> &entries);
 
         bool keyPressed (GdkEventKey* event);
         bool on_delete_event(GdkEventAny* event);

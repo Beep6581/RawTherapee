@@ -59,7 +59,7 @@ class BatchQueuePanel : public Gtk::VBox,
         void setParent (RTWindow* p) { parent = p; }
         void arrangementButtonPressed ();
 
-        void addBatchQueueJob (BatchQueueEntry* bqe, bool head=false);
+        void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head=false);
 
         // batchqueuelistener interface
         void queueSizeChanged     (int qsize);
