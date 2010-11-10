@@ -37,7 +37,7 @@ bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb) {
 
     char* buffer = new char[2048];
     
-    while ((buffer = fgets (buffer, 2048, f))) {
+    while (fgets (buffer, 2048, f) != 0) {
         // find separator
         int seppos = 0;
         while (buffer[seppos]!=0 && buffer[seppos]!=';')

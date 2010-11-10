@@ -9096,6 +9096,10 @@ int RawImage::loadRaw (bool loadData) {
 	  }
 	  free(image); // we don't need this anymore
   }
+  else
+  {
+	  fclose(ifp);
+  }
   return 0;
 }
 
