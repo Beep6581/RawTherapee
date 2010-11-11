@@ -229,7 +229,8 @@ void ImageArea::unGrabFocus () {
 }
 
 void ImageArea::addCropWindow () { 
-    
+    if (!mainCropWindow) return;  // if called but no image is loaded, it would crash
+
     CropWindow* cw = new CropWindow (this, ipc);
     cw->zoom11();
     cw->setCropGUIListener (cropgl);
