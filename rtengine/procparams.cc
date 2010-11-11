@@ -187,6 +187,13 @@ void ProcParams::setDefaults () {
         dirpyrequalizer.mult[i] = 1.0;
     }
 	dirpyrequalizer.mult[4] = 0.0;
+	hsvequalizer.enabled = false;    
+    for(int i = 0; i < 8; i ++)
+    {
+        hsvequalizer.sat[i] = 0;
+		hsvequalizer.val[i] = 0;
+        hsvequalizer.hue[i] = 0;
+    }
     raw.df_autoselect = false;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
@@ -379,6 +386,28 @@ int ProcParams::save (Glib::ustring fname) const {
         std::stringstream ss;
         ss << "Mult" << i;
         keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
+    }
+	
+	// save hsv equalizer parameters
+    keyFile.set_boolean ("HSV Equalizer", "Enabled", hsvequalizer.enabled);
+	keyFile.set_string  ("HSV Equalizer", "Channel", hsvequalizer.hsvchannel);
+    for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Sat" << i;
+        keyFile.set_double("HSV Equalizer", ss.str(), hsvequalizer.sat[i]);
+    }
+	for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Val" << i;
+        keyFile.set_double("HSV Equalizer", ss.str(), hsvequalizer.val[i]);
+    }
+	for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Hue" << i;
+        keyFile.set_double("HSV Equalizer", ss.str(), hsvequalizer.hue[i]);
     }
 
     // save RAW parameters
@@ -663,6 +692,29 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
 		if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) dirpyrequalizer.mult[i] = keyFile.get_double ("Directional Pyramid Equalizer", ss.str());
 	}
 }
+		
+	// load wavelet equalizer parameters
+if (keyFile.has_group ("HSV Equalizer")) {
+	if (keyFile.has_key ("HSV Equalizer", "Enabled")) hsvequalizer.enabled = keyFile.get_boolean ("HSV Equalizer", "Enabled");
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Sat" << i;
+		if(keyFile.has_key ("HSV Equalizer", ss.str())) hsvequalizer.sat[i] = keyFile.get_double ("HSV Equalizer", ss.str());
+	}
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Val" << i;
+		if(keyFile.has_key ("HSV Equalizer", ss.str())) hsvequalizer.val[i] = keyFile.get_double ("HSV Equalizer", ss.str());
+	}
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Hue" << i;
+		if(keyFile.has_key ("HSV Equalizer", ss.str())) hsvequalizer.hue[i] = keyFile.get_double ("HSV Equalizer", ss.str());
+	}
+}
 
 	// load raw settings
 if (keyFile.has_group ("RAW")) {
@@ -733,6 +785,17 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
 	return true;
 }
 
+bool operator==(const HSVEqualizerParams & a, const HSVEqualizerParams & b) {
+	if(a.enabled != b.enabled)
+		return false;
+	
+	for(int i = 0; i < 8; i++) {
+		if(a.sat[i] != b.sat[i] && a.val[i] != b.val[i] && a.hue[i] != b.hue[i])
+			return false;
+	}
+	return true;
+}
+	
 bool operator==(const ExifPair& a, const ExifPair& b) {
 
     return a.field == b.field && a.value == b.value;
@@ -856,6 +919,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.output       == other.icm.output
         && equalizer == other.equalizer
 	&& dirpyrequalizer == other.dirpyrequalizer
+	&& hsvequalizer == other.hsvequalizer
         && exif==other.exif
         && iptc==other.iptc;
 }

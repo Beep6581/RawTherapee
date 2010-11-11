@@ -120,5 +120,9 @@ LUMINANCECURVE, //    EvLbCurve,
 DEMOSAIC, // EvDemosaic
 DARKFRAME, //EvPreProcess
 RGBCURVE,   //    EvSaturation,
+RGBCURVE, //    EvHSVEqualizerH,
+RGBCURVE, //    EvHSVEqualizerS,
+RGBCURVE, //    EvHSVEqualizerV,
+RGBCURVE, //    EvHSVEqEnabled,
 };
 

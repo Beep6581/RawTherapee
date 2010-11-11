@@ -55,6 +55,7 @@
 #include <lensgeomlistener.h>
 #include <equalizer.h>
 #include <dirpyrequalizer.h>
+#include <hsvequalizer.h>
 #include <rawprocess.h>
 #include <preprocess.h>
 
@@ -95,6 +96,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         LCurve* lcurve;
         Equalizer * equalizer;
 	DirPyrEqualizer * dirpyrequalizer;
+	HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
 

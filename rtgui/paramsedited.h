@@ -253,6 +253,16 @@ public:
 	bool mult[8];
 };
 
+class HSVEqualizerParamsEdited {
+	
+public:
+	bool enabled;
+	bool sat[6];
+	bool val[6];
+	bool hue[6];
+	int	hsvchannel;
+};
+
 class RAWParamsEdited {
 
     public:
@@ -313,6 +323,7 @@ class ParamsEdited {
         EqualizerParamsEdited         equalizer;
         RAWParamsEdited               raw;
 	DirPyrEqualizerParamsEdited   dirpyrequalizer;
+	HSVEqualizerParamsEdited         hsvequalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         
