@@ -1,0 +1,124 @@
+
+[Version]
+Version=231
+
+[Exposure]
+Auto=false
+Clip=0.002
+Compensation=0
+Brightness=0
+Contrast=0
+Black=0
+HighlightCompr=85
+ShadowCompr=85
+Curve=
+
+[Channel Mixer]
+Red=100;0;0;
+Green=0;100;0;
+Blue=0;0;100;
+
+[Luminance Curve]
+Brightness=0
+Contrast=0
+Black=0
+HighlightCompr=0
+ShadowCompr=0
+Curve=
+
+[Sharpening]
+Enabled=true
+Method=usm
+Radius=1
+Amount=90
+Threshold=768
+OnlyEdges=false
+EdgedetectionRadius=3
+EdgeTolerance=1000
+HalocontrolEnabled=false
+HalocontrolAmount=85
+DeconvRadius=0.75
+DeconvAmount=75
+DeconvDamping=20
+DeconvIterations=30
+
+[Color Boost]
+ChannelA=0
+ChannelB=0
+AvoidColorClipping=false
+SaturationLimiter=false
+SaturationLimit=50
+
+[White Balance]
+Setting=Camera
+Temperature=6504
+Green=1.0009615390996527
+
+[Color Shift]
+ChannelA=0
+ChannelB=0
+
+[Luminance Denoising]
+Enabled=false
+Radius=1.8999999999999999
+EdgeTolerance=2000
+
+[Chrominance Denoising]
+Enabled=false
+EdgeSensitive=false
+Radius=1.8999999999999999
+EdgeTolerance=2000
+
+[Shadows & Highlights]
+Enabled=false
+Highlights=10
+HighlightTonalWidth=80
+Shadows=10
+ShadowTonalWidth=80
+LocalContrast=15
+Radius=40
+
+[Crop]
+Enabled=false
+X=-1
+Y=-1
+W=15000
+H=15000
+FixedRatio=false
+Ratio=3:2
+Orientation=Landscape
+Guide=None
+
+[Coarse Transformation]
+Rotate=0
+HorizontalFlip=false
+VerticalFlip=false
+
+[Rotation]
+Degree=0
+Fill=1
+
+[Distortion]
+Amount=0
+
+[CACorrection]
+Red=0
+Blue=0
+
+[Vignetting Correction]
+Amount=0
+Radius=50
+
+[HLRecovery]
+Enabled=false
+Method=Luminance
+
+[Resize]
+Scale=1
+Method=Bicubic
+
+[Color Management]
+InputProfile=
+ApplyGammaBeforeInputProfile=false
+WorkingProfile=sRGB
+OutputProfile=sRGB
