@@ -145,10 +145,12 @@ HSVEqualizer::HSVEqualizer () : ToolPanel () {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 HSVEqualizer::~HSVEqualizer () {
-	
-    delete hue;
-    delete val;
-    delete sat;
+	for (int i=0;i<8;i++)
+	{
+		delete hue[i];
+		delete val[i];
+		delete sat[i];
+	}
 }
 
 
