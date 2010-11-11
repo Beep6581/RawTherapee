@@ -904,7 +904,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
 			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x%8);
 		if( settings->verbose ){
-			printf( "Correcting %u pixels from .badpixels\n",bp->size());
+			printf( "Correcting %zu pixels from .badpixels\n",bp->size());
 		}
 	}
 	bp = 0;
@@ -916,7 +916,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
 			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x%8);
 		if( settings->verbose && bp->size()>0){
-			printf( "Correcting %u hotpixels from darkframe\n",bp->size());
+			printf( "Correcting %zu hotpixels from darkframe\n",bp->size());
 		}
 	}
 

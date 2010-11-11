@@ -189,7 +189,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
 			}
 	}
 	if( settings->verbose ){
-		printf( "Extracted %u pixels from darkframe %s\n", badPixels.size(),df->fname.c_str() );
+		printf( "Extracted %zu pixels from darkframe %s\n", badPixels.size(),df->fname.c_str() );
 	}
 }
 
