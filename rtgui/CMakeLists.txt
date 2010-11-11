@@ -26,7 +26,7 @@ set (BASESOURCEFILES
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
-    equalizer.cc dirpyrequalizer.cc
+    equalizer.cc dirpyrequalizer.cc hsvequalizer.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 
 if (WIN32)

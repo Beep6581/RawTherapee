@@ -704,7 +704,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			//val = basecurve (val*def_mul, a, black, def_mul, hlcompr/100.0, 1.5*shcompr/100.0);
 			//val = basecurvenew->getVal (val);
 			
-			hlCurve[i] = (int) (65535.0 * CLIPD(val));
+			hlCurve[i] = (65535.0 * CLIPD(val));
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// change to [0,1] range
@@ -712,7 +712,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			
 			val = basecurve (val, 1, black, def_mul, 1, 1.5*shcompr/100.0);
 			
-			shCurve[i] = (int) (65535.0 * CLIPD(val));
+			shCurve[i] = (65535.0 * CLIPD(val));
 		}
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -720,6 +720,8 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
 			// change to [0,1] range
 			double val = (double)i / 65535.0;
+			float val0 = val;
+			float cum = (int)shCurve[(int)(hlCurve[i])];
 			
 			// gamma correction
 			if (gamma_>0) 
@@ -732,7 +734,8 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
 				if (outBeforeCCurveHistogram) {
-					double hval = brightcurve->getVal ((int)shCurve[(int)hlCurve[(int)val]]);
+					cum *= (float)val/val0;
+					float hval = brightcurve->getVal (cum);
 					//if (needigamma)
 					//	hval = igamma2 (hval);
 					int hi = (int)(255.0*CLIPD(hval));

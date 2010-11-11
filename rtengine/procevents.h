@@ -122,7 +122,11 @@ enum ProcEvent {
     EvDemosaic=97,
     EvPreProcess=98,
 	EvSaturation=99,
-    NUMOFEVENTS=100
+	EvHSVEqualizerH=100,
+	EvHSVEqualizerS=101,
+	EvHSVEqualizerV=102,
+	EvHSVEqEnabled=103,
+    NUMOFEVENTS=104
 	};
 }    
 #endif    

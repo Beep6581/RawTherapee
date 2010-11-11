@@ -138,12 +138,18 @@ void ParamsEdited::set (bool v) {
         raw.dcbEnhance = v;
         equalizer.enabled = v;
 		dirpyrequalizer.enabled = v;
-
-        for(int i = 0; i < 5; i++)
-        {
+		hsvequalizer.enabled = v;
+        for(int i = 0; i < 8; i++) {
             equalizer.c[i] = v;
-			dirpyrequalizer.mult[i] = v;
         }
+	for(int i = 0; i < 5; i++) {
+		dirpyrequalizer.mult[i] = v;
+	}
+	for(int i = 0; i < 8; i++) {
+		hsvequalizer.sat[i] = v;
+		hsvequalizer.val[i] = v;
+		hsvequalizer.hue[i] = v;
+	}
         exif.clear ();
         iptc.clear ();
 }
@@ -286,6 +292,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         for(int i = 0; i < 8; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
         }		
+		hsvequalizer.enabled = hsvequalizer.enabled && p.hsvequalizer.enabled == other.hsvequalizer.enabled;
+        for(int i = 0; i < 8; i++) {
+            hsvequalizer.sat[i] = hsvequalizer.sat[i] && p.hsvequalizer.sat[i] == other.hsvequalizer.sat[i];
+			hsvequalizer.val[i] = hsvequalizer.val[i] && p.hsvequalizer.val[i] == other.hsvequalizer.val[i];
+            hsvequalizer.hue[i] = hsvequalizer.hue[i] && p.hsvequalizer.hue[i] == other.hsvequalizer.hue[i];
+        }
 //        exif = exif && p.exif==other.exif
 //        iptc = other.iptc;
     }
@@ -415,8 +427,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
 	}
 	if (dirpyrequalizer.enabled)	    toEdit.dirpyrequalizer.enabled 	= mods.dirpyrequalizer.enabled;
-	for(int i = 0; i < 8; i++) {
+	for(int i = 0; i < 5; i++) {
 	    if(dirpyrequalizer.mult[i])  toEdit.dirpyrequalizer.mult[i]   = mods.dirpyrequalizer.mult[i];
+	}
+	if (hsvequalizer.enabled)	    toEdit.hsvequalizer.enabled 	= mods.hsvequalizer.enabled;
+	for(int i = 0; i < 8; i++) {
+	    if(hsvequalizer.sat[i])  toEdit.hsvequalizer.sat[i]   = mods.hsvequalizer.sat[i];
+		if(hsvequalizer.val[i])  toEdit.hsvequalizer.val[i]   = mods.hsvequalizer.val[i];
+	    if(hsvequalizer.hue[i])  toEdit.hsvequalizer.hue[i]   = mods.hsvequalizer.hue[i];
 	}
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;

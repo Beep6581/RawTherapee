@@ -281,7 +281,17 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
     int tW = working->width;
     int tH = working->height;
     int r, g, b;
-		#pragma omp parallel for  private(r, g, b,factor,mapval) if (multiThread)
+	float h, s, v;
+	float satparam,valparam;
+	int hue, hueband, hueres, nbrband;
+	double pi = M_PI;
+	
+	float* cossq = new float [8093];
+	for (int i=0; i<8093; i++) 
+		cossq[i] = SQR(cos(pi*(float)i/16384));
+	
+	
+#pragma omp parallel for  private(r, g, b,factor,mapval,h,s,v,hue,hueband,hueres,nbrband,satparam,valparam) if (multiThread)
     for (int i=0; i<tH; i++) {
 
         for (int j=0; j<tW; j++) {
@@ -344,17 +354,56 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 			b *= tonefactor;
 			
 			//brightness/contrast and user tone curve
+			//Y = (int)(0.299*r + 0.587*g + 0.114*b);
+			//tonefactor = (Y>0 ? (float)tonecurve[Y]/Y : 1);
+			//r *= tonefactor;
+			//g *= tonefactor;
+			//b *= tonefactor;
 			r = tonecurve[CLIP(r)];
 			g = tonecurve[CLIP(g)];
 			b = tonecurve[CLIP(b)];
 
-			if (abs(sat)>0.5) {
-				float h, s, v;
+			if (abs(sat)>0.5 || params->hsvequalizer.enabled) {
 				rgb2hsv(r,g,b,h,s,v);
-				if (sat>0) {
+				if (sat > 0.5) {
 					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-s)));
 				} else {
-					s *= 1+(float)sat/100;	
+					if (sat < -0.5)
+						s *= 1+(float)sat/100;	
+				}
+				//HSV equalizer
+				if (params->hsvequalizer.enabled) {
+					hue = (int)(65535*h);
+					hueres = hue & 8091;//location of hue within a band
+					hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
+					nbrband = (hueband+1)&7;
+					
+					//shift hue
+					h = fmod(h + 0.0025*(params->hsvequalizer.hue[hueband] * cossq[hueres] + params->hsvequalizer.hue[nbrband] * (1-cossq[hueres])),1);
+					if (h<0) h +=1;
+					hue = (int)(65535*h);
+					hueres = hue & 8091;//location of hue within a band
+					hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
+					nbrband = (hueband+1)&7;
+
+					//change saturation
+					satparam = 0.01*(params->hsvequalizer.sat[hueband] * cossq[hueres] + params->hsvequalizer.sat[nbrband] * (1-cossq[hueres]));
+					if (satparam > 0.00001) {
+						s = (1-satparam)*s+satparam*(1-SQR(1-s));
+					} else {
+						if (satparam < -0.00001)
+							s *= 1+satparam;	
+					}
+					
+					//change value
+					valparam = 0.005*(params->hsvequalizer.val[hueband] * cossq[hueres] + params->hsvequalizer.val[nbrband] * (1-cossq[hueres]));
+					valparam *= (1-SQR(SQR(1-s)));
+					if (valparam > 0.00001) {
+						v = (1-valparam)*v+valparam*(1-SQR(1-v));
+					} else {
+						if (valparam < -0.00001)
+							v *= (1+valparam);	
+					}
 				}
 				hsv2rgb(h,s,v,r,g,b);
 			}
@@ -375,6 +424,9 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
             lab->b[i][j] = CLIPC(((cacheb[y] - cacheb[z]) * chroma_scale) >> 15);
         }
     }
+	
+	delete [] cossq;
+
  }
 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to) {
@@ -385,22 +437,23 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve
         for (int j=0; j<W; j++)
             lnew->L[i][j] = curve[lold->L[i][j]];
 }
-	
-	void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to) {
 		
-		int W = lold->W;
-		//int H = lold->H;
-		if (channel==0) {
+	
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to) {
+	
+	int W = lold->W;
+	//int H = lold->H;
+	if (channel==0) {
+	for (int i=row_from; i<row_to; i++)
+		for (int j=0; j<W; j++)
+			lnew->a[i][j] = curve[lold->a[i][j]+32768]-32768;
+	} 
+	if (channel==1) {
 		for (int i=row_from; i<row_to; i++)
 			for (int j=0; j<W; j++)
-				lnew->a[i][j] = curve[lold->a[i][j]+32768]-32768;
-		} 
-		if (channel==1) {
-			for (int i=row_from; i<row_to; i++)
-				for (int j=0; j<W; j++)
-					lnew->b[i][j] = curve[lold->b[i][j]+32768]-32768;
-		}
+				lnew->b[i][j] = curve[lold->b[i][j]+32768]-32768;
 	}
+}
 
 #include "cubic.cc"
 
