@@ -1,5 +1,5 @@
---- dcraw.c	2010-10-29 15:11:49.000000000 +0200
-+++ dcraw.cc	2010-11-02 19:02:54.000000000 +0100
+--- dcraw.c	2010-10-25 21:57:05.000000000 -0600
++++ dcraw.cc	2010-11-10 07:55:20.000000000 -0700
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -358,16 +358,19 @@
    if (height == 3014 && width == 4096)	/* Ricoh GX200 */
  			width  = 4014;
    if (dng_version) {
-@@ -7191,6 +7252,8 @@
+@@ -7191,6 +7252,11 @@
    } else if (!strcmp(model,"D1X")) {
      width -= 4;
      pixel_aspect = 0.5;
 +  } else if (!strcmp(model,"D7000")) {
 +    width -= 40;
++  } else if (!strcmp(model,"D3100")) {
++    width -= 24;
++    left_margin = 4;
    } else if (!strcmp(model,"D40X") ||
  	     !strcmp(model,"D60")  ||
  	     !strcmp(model,"D80")  ||
-@@ -7405,7 +7468,7 @@
+@@ -7405,7 +7471,7 @@
    } else if (!strcmp(model,"K20D")) {
      filters = 0x16161616;
    } else if (!strcmp(model,"K-x")) {
@@ -376,7 +379,7 @@
      filters = 0x16161616;
    } else if (!strcmp(model,"Optio S")) {
      if (fsize == 3178560) {
-@@ -8494,13 +8557,13 @@
+@@ -8494,13 +8560,13 @@
  	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
        else FORCC ppm2[col*colors+c] = curve[image[soff][c]];
      if (output_bps == 16 && !output_tiff && htons(0x55aa) != 0x55aa)
@@ -392,7 +395,7 @@
  {
    int arg, status=0;
    int timestamp_only=0, thumbnail_only=0, identify_only=0;
-@@ -8613,7 +8676,7 @@
+@@ -8613,7 +8679,7 @@
        case 'i':  identify_only     = 1;  break;
        case 'c':  write_to_stdout   = 1;  break;
        case 'v':  verbose           = 1;  break;
@@ -401,7 +404,7 @@
        case 'f':  four_color_rgb    = 1;  break;
        case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
        case 'a':  use_auto_wb       = 1;  break;
-@@ -8877,3 +8940,598 @@
+@@ -8877,3 +8943,602 @@
    }
    return status;
  }
@@ -557,6 +560,10 @@
 +				}
 +	  }
 +	  free(image); // we don't need this anymore
++  }
++  else
++  {
++	  fclose(ifp);
 +  }
 +  return 0;
 +}
