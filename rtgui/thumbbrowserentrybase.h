@@ -102,7 +102,7 @@ protected:
     int getMinimalHeight    () { return height; }
     int getMinimalWidth     () { return width; }
 
-    int getEffectiveHeight  () { return fnlabh+dtlabh+upperMargin+lowerMargin+textGap+height; }
+    int getEffectiveHeight  () { return fnlabh+dtlabh+exlabh+textGap+exp_height; }
 
     bool inside             (int x, int y);
     bool insideWindow       (int x, int y, int w, int h);
