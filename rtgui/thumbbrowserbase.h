@@ -55,6 +55,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     Gtk::VScrollbar vscroll;
     
     int inW, inH;
+
+    bool inTabMode;  // Tab mode has e.g. different preview heights
     
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
@@ -105,6 +107,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void setScrollPosition (double h, double v);
      
     void setArrangement (Arrangement a);
+    void enableTabMode(bool enable);  // set both thumb sizes and arrangements
+
     virtual bool checkFilter (ThumbBrowserEntryBase* entry) { return true; }
     virtual void rightClicked (ThumbBrowserEntryBase* entry) {}
     virtual void doubleClicked (ThumbBrowserEntryBase* entry) {}

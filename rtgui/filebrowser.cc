@@ -202,7 +202,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
     while (i!=fd.end() && *entry < *((FileBrowserEntry*)*i))
         i++;
         
-    fd.insert (i, entry);    
+    fd.insert (i, entry);
 
     initEntry (entry);
     redraw ();

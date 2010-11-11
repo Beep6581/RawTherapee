@@ -76,6 +76,7 @@ void Options::setDefaults () {
     multiUser = false;
     version = 290;
     thumbSize = 80;
+    thumbSizeTab = 80;
     showHistory = true;
     showFilePanelState = 0;
     showInfo = false;
@@ -217,6 +218,7 @@ if (keyFile.has_group ("Profiles")) {
 
 if (keyFile.has_group ("File Browser")) { 
     if (keyFile.has_key ("File Browser", "ThumbnailSize"))      thumbSize          = keyFile.get_integer ("File Browser", "ThumbnailSize");
+    if (keyFile.has_key ("File Browser", "ThumbnailSizeTab"))      thumbSizeTab    = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
     if (keyFile.has_key ("File Browser", "BrowseOnlyRaw"))      fbOnlyRaw          = keyFile.get_boolean ("File Browser", "BrowseOnlyRaw");
     if (keyFile.has_key ("File Browser", "BrowserShowsDate"))   fbShowDateTime     = keyFile.get_boolean ("File Browser", "BrowserShowsDate");
     if (keyFile.has_key ("File Browser", "BrowserShowsExif"))   fbShowBasicExif    = keyFile.get_boolean ("File Browser", "BrowserShowsExif");
@@ -327,6 +329,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "BrowserShowsExif", fbShowBasicExif);
     keyFile.set_boolean ("File Browser", "BrowserShowsHidden", fbShowHidden);
     keyFile.set_integer ("File Browser", "ThumbnailSize", thumbSize);
+    keyFile.set_integer ("File Browser", "ThumbnailSizeTab", thumbSizeTab);
     keyFile.set_integer ("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
     keyFile.set_integer ("File Browser", "MaxCacheEntries", maxCacheEntries);
     keyFile.set_integer ("File Browser", "ThumbnailFormat", (int)thumbnailFormat);

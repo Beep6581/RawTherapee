@@ -24,7 +24,7 @@
 
 ThumbBrowserBase::ThumbBrowserBase () 
     : lastClicked(NULL), previewHeight(options.thumbSize) {
-
+    inTabMode=false;  // corresponding to take thumbSize
     inW = -1; inH = -1;
 
     Gtk::HBox* hb1 = new Gtk::HBox ();
@@ -467,19 +467,22 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 
     int newHeight;
     int i=0;
+    int optThumbSize=inTabMode ? options.thumbSizeTab : options.thumbSize;
     if (zoomIn)
         for (i=0; i<options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
-            if (newHeight > options.thumbSize)
+            if (newHeight > optThumbSize)
                 break;
         }
     else
         for (i=options.thumbnailZoomRatios.size()-1; i>=0; i--) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
-            if (newHeight < options.thumbSize)
+            if (newHeight < optThumbSize)
                 break;
         }
-    previewHeight = options.thumbSize = newHeight;
+    previewHeight = newHeight;
+    if (inTabMode) options.thumbSizeTab = newHeight; else options.thumbSize = newHeight;
+
     for (int i=0; i<fd.size(); i++) 
         fd[i]->resize (previewHeight);
     redraw ();
@@ -490,7 +493,7 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 void ThumbBrowserBase::refreshThumbImages () {
 
     for (int i=0; i<fd.size(); i++){
-    	previewHeight = options.thumbSize;
+    	previewHeight = inTabMode ? options.thumbSizeTab : options.thumbSize;
     	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
         fd[i]->refreshThumbnailImage ();
     }
@@ -516,6 +519,16 @@ void ThumbBrowserBase::setArrangement (Arrangement a) {
 
     arrangement = a;    
     redraw ();
+}
+
+void ThumbBrowserBase::enableTabMode(bool enable) {
+    inTabMode = enable;
+    arrangement = inTabMode ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
+    
+    if (options.thumbSizeTab!=options.thumbSize)
+        refreshThumbImages();
+    else
+        redraw();
 }
 
 void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry) {
