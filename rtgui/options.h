@@ -84,7 +84,7 @@ class Options {
     bool multiUser;
     static Glib::ustring rtdir;
     int version;
-    int thumbSize;
+    int thumbSize,thumbSizeTab;
     bool showHistory;
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
     bool showInfo;
@@ -131,6 +131,7 @@ class Options {
     bool overlayedFileNames;
     bool showFileNames;
     bool tabbedUI;
+    int previewSizeTab,previewSizeBrowser;
     
     
                 Options         ();
