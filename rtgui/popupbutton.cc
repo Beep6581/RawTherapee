@@ -28,10 +28,8 @@
  *
  * Parameters:
  * 		label = label displayed in the button
- * 		imRight = 0: the image is displayed at the left of the label (default)
- * 				  1: the image is displayed at the right of the label
  */
-PopUpButton::PopUpButton (const Glib::ustring& label, bool imgRight) : Gtk::Button(), PopUpCommon(this, label, imgRight) { }
+PopUpButton::PopUpButton (const Glib::ustring& label) : Gtk::Button(), PopUpCommon(this, label) { }
 
 void PopUpButton::show() {
 	PopUpCommon::show();

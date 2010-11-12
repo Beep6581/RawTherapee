@@ -23,15 +23,18 @@
 #include <popupcommon.h>
 #include <safegtk.h>
 
-PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label, bool imgRight) {
+extern Glib::ustring argv0;
+
+PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 	button = thisButton;
 	hasMenu = false;
+	menuSymbol = 0;
+	imageContainer = Gtk::manage( new Gtk::HBox());
+	button->add(*imageContainer);
 	if (label.size()) {
-		hasText = true;
-		button->set_label(label + " ");
+		Gtk::Label* buttonLabel = Gtk::manage ( new Gtk::Label(label + " ") );
+		imageContainer->pack_start(*buttonLabel, Gtk::PACK_SHRINK, 0);
 	}
-	else
-		hasText = false;
 	// Create the list entry
 	imagePaths.clear();
 	images.clear();
@@ -41,7 +44,6 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label, b
 	menu = 0;
 	buttonImage = 0;
 	buttonHint = "";
-	imageRight = imgRight; // By default, image is on the left in the menu
 }
 
 PopUpCommon::~PopUpCommon () {
@@ -54,6 +56,7 @@ PopUpCommon::~PopUpCommon () {
         delete *i;
     }
     if (menu) delete menu;
+    if (menuSymbol) delete menuSymbol;
     if (buttonImage) delete buttonImage;
 }
 
@@ -79,13 +82,7 @@ bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
 			// Create the image for the button
 			buttonImage = new Gtk::Image(imagePath);
 			// Use the first image by default
-			if (hasText) {
-				button->set_image_position(imageRight ? Gtk::POS_RIGHT : Gtk::POS_LEFT);
-				button->set_image(*buttonImage);
-			}
-			else {
-				button->add(*buttonImage);
-			}
+			imageContainer->pack_start(*buttonImage,Gtk::PACK_EXPAND_WIDGET);
 			selected = 0;
 		}
 		newItem->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &PopUpCommon::entrySelected), currPos-1));
@@ -93,6 +90,8 @@ bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
 		// When there is at least 2 choice, we add the RMB connector
 		if (images.size() == 2) {
 			button->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
+			menuSymbol = new Gtk::Image(safe_locale_from_utf8(argv0+"/images/menuSymbol.png"));
+			imageContainer->pack_start(*menuSymbol,Gtk::PACK_SHRINK, 2);
 			hasMenu = true;
 		}
 		// The item has been created
@@ -128,7 +127,7 @@ void PopUpCommon::show() {
 	menu->reposition();
 	setButtonHint();
 	menu->show_all();
-	button->show();
+	button->show_all();
 }
 
 void PopUpCommon::setButtonHint() {
