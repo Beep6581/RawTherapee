@@ -140,6 +140,10 @@ HISTORY_DELSNAPSHOT;Supprimer
 HISTORY_FROMCLIPBOARD;Du presse-papier
 HISTORY_LABEL;Historique
 HISTORY_MSG_100;Saturation RVB
+HISTORY_MSG_101;Ég. TSL - Teinte
+HISTORY_MSG_102;Ég. TSL - Saturation
+HISTORY_MSG_103;Ég. TSL - Valeur
+HISTORY_MSG_104;Égaliseur TSL
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -239,10 +243,6 @@ HISTORY_MSG_97;Courbe 'b'
 HISTORY_MSG_98;Dématriçage
 HISTORY_MSG_99;Pre-traitement
 HISTORY_MSG_9;Compression des hautes lumières
-HISTORY_MSG_101;Ég. TSL - Teinte
-HISTORY_MSG_102;Ég. TSL - Saturation
-HISTORY_MSG_103;Ég. TSL - Valeur
-HISTORY_MSG_104;Égaliseur TSL
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -756,3 +756,10 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
