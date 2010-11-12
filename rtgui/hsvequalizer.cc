@@ -251,8 +251,12 @@ void HSVEqualizer::adjusterChanged (Adjuster* a, double newval) {
 				if (i > 0) {
 					ss << ", ";
 				}
+				if (i == 4) {
+					ss << "\n";
+				}
 				ss << static_cast<int>(sat[i]->getValue());
 			}
+			ss << ")";
 			listener->panelChanged (EvHSVEqualizerS, ss.str());
 		} 
 		else if (hsvchannel->get_active_row_number()==1) {
@@ -260,8 +264,12 @@ void HSVEqualizer::adjusterChanged (Adjuster* a, double newval) {
 				if (i > 0) {
 					ss << ", ";
 				}
+				if (i == 4) {
+					ss << "\n";
+				}
 				ss << static_cast<int>(val[i]->getValue());
 			}
+			ss << ")";
 			listener->panelChanged (EvHSVEqualizerV, ss.str());
 		}
 		else if (hsvchannel->get_active_row_number()==2) {
@@ -269,12 +277,15 @@ void HSVEqualizer::adjusterChanged (Adjuster* a, double newval) {
 				if (i > 0) {
 					ss << ", ";
 				}
+				if (i == 4) {
+					ss << "\n";
+				}
 				ss << static_cast<int>(hue[i]->getValue());
 			}
+			ss << ")";
 			listener->panelChanged (EvHSVEqualizerH, ss.str());
 		}
 		
-		ss << ")";
 		//listener->panelChanged (EvHSVEqualizer, ss.str());
 	}
 }
@@ -316,14 +327,6 @@ void HSVEqualizer::hsvchannelChanged () {
 	else if (hsvchannel->get_active_row_number()==2) 
 		pack_start (*huebox);
 	
-	if (listener && enabled->get_active ()) {
-		if (hsvchannel->get_active_row_number()==0) 
-			listener->panelChanged (EvHSVEqualizerS, hsvchannel->get_active_text ());
-		else if (hsvchannel->get_active_row_number()==1) 
-			listener->panelChanged (EvHSVEqualizerV, hsvchannel->get_active_text ());
-		else if (hsvchannel->get_active_row_number()==2) 
-			listener->panelChanged (EvHSVEqualizerH, hsvchannel->get_active_text ());
-	}
 }
 
 void HSVEqualizer::setBatchMode (bool batchMode) {
