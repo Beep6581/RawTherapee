@@ -139,6 +139,7 @@ HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_DELSNAPSHOT;Supprimer
 HISTORY_FROMCLIPBOARD;Du presse-papier
 HISTORY_LABEL;Historique
+HISTORY_MSG_100;Saturation RVB
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -238,6 +239,10 @@ HISTORY_MSG_97;Courbe 'b'
 HISTORY_MSG_98;Dématriçage
 HISTORY_MSG_99;Pre-traitement
 HISTORY_MSG_9;Compression des hautes lumières
+HISTORY_MSG_101;Ég. TSL - Teinte
+HISTORY_MSG_102;Ég. TSL - Saturation
+HISTORY_MSG_103;Ég. TSL - Valeur
+HISTORY_MSG_104;Égaliseur TSL
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -393,7 +398,6 @@ PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbe de luminance
 PARTIALPASTE_LABCURVE;Courebes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
-PARTIALPASTE_LUMACURVE;Courbe de luminance
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
@@ -422,9 +426,6 @@ PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CACORRECTION;Correction automatique de\nl'aberration chromatique
-PREFERENCES_CLEARDLG_LINE1;Nettoyage du Cache
-PREFERENCES_CLEARDLG_LINE2;Ceci peut prendre plusieurs secondes.
-PREFERENCES_CLEARDLG_TITLE;Veuillez patienter
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_DARKFRAME;Soustraction d'image noire
@@ -442,7 +443,6 @@ PREFERENCES_DIROTHER;Autre
 PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
 PREFERENCES_DMETHOD;Méthode
-PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
@@ -631,11 +631,26 @@ TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Courbe tonale
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_LABEL;Exposition
+TP_EXPOSURE_SATURATION;Saturation
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
 TP_HLREC_LABEL;Récupération des hautes lumières
 TP_HLREC_LUMINANCE;Récupération de la luminance
 TP_HLREC_METHOD;Méthode: 
+TP_HSVEQUALIZER1;Rouge
+TP_HSVEQUALIZER2;Orange
+TP_HSVEQUALIZER3;Jaune
+TP_HSVEQUALIZER4;Vert
+TP_HSVEQUALIZER5;Cyan
+TP_HSVEQUALIZER6;Bleu
+TP_HSVEQUALIZER7;Violet
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;Canal
+TP_HSVEQUALIZER_HUE;Teinte
+TP_HSVEQUALIZER_LABEL;Égaliseur TSL
+TP_HSVEQUALIZER_NEUTRAL;Neutre
+TP_HSVEQUALIZER_SAT;Saturation
+TP_HSVEQUALIZER_VAL;Valeur
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
@@ -660,13 +675,6 @@ TP_LABCURVE_SATURATION;Saturation
 TP_LENSGEOM_AUTOCROP;Rognage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
-TP_LUMACURVE_BLACKLEVEL;Noir
-TP_LUMACURVE_BRIGHTNESS;Luminosité
-TP_LUMACURVE_COMPRHIGHLIGHTS;Compression hautes lumières
-TP_LUMACURVE_COMPRSHADOWS;Compression des ombres
-TP_LUMACURVE_CONTRAST;Contraste
-TP_LUMACURVE_CURVEEDITOR;Courbe de luminance
-TP_LUMACURVE_LABEL;Courbe de luminance
 TP_LUMADENOISE_EDGETOLERANCE;Tolérance des bords
 TP_LUMADENOISE_LABEL;Réduction du bruit de luminance
 TP_LUMADENOISE_RADIUS;Rayon
@@ -748,12 +756,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!HISTORY_MSG_100;RGB saturation
-!TP_EXPOSURE_SATURATION;Saturation
