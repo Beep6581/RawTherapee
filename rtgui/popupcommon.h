@@ -32,7 +32,7 @@ public:
 	typedef sigc::signal<void, int> type_signal_changed;
 	type_signal_changed signal_changed();
 
-	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "", bool imgRight=false);
+	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
 	~PopUpCommon ();
 	bool addEntry (Glib::ustring imagePath, Glib::ustring label);
 	bool setSelected (int entryNum);
@@ -54,11 +54,11 @@ private:
 	std::vector<Gtk::ImageMenuItem*> items;
 	Glib::ustring buttonHint;
 	Gtk::Image* buttonImage;
+	Gtk::Image* menuSymbol;
+	Gtk::HBox* imageContainer;
 	Gtk::Menu* menu;
 	Gtk::Button* button;
 	int selected;
-	bool hasText;
-	bool imageRight;
 	bool hasMenu;
 
 	void showMenu(GdkEventButton* event);
