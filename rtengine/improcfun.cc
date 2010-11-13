@@ -615,7 +615,7 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
     double corr = pow(2.0, expcomp);
 
     // black point selection is based on the linear result (yielding better visual results)
-    bl = (int)(shc /* * corr*/);
+    bl = (int)(shc * corr);
     // compute the white point of the exp. compensated gamma corrected image
     double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
 
@@ -624,17 +624,17 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
     for (int i=0; i<65536>>histcompr; i++) 
         gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
 
-    
     if (bl < gavg) {
         int maxaw = (gavg - bl) * 4 / 3 + bl; // dont let aw be such large that the histogram average goes above 3/4
-        double mavg = 65536.0 / (awg-bl) * (gavg - bl);
+        //double mavg = 65536.0 / (awg-bl) * (gavg - bl);
         if (awg < maxaw)
             awg = maxaw;
     }
 	
 	awg = CurveFactory::igamma2 ((float)(awg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
 
-    br = log(65535.0 / (awg-bl)) / log(2.0);   
+	bl = (int)((65535*bl)/awg);
+    br = log(65535.0 / (awg)) / log(2.0);   
     if (br<0)
         br = 0;
 }

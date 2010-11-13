@@ -4,7 +4,7 @@ Version=20101111
 
 [Exposure]
 Auto=true
-Clip=0.01
+Clip=0.0001
 Compensation=0
 Brightness=0
 Contrast=12

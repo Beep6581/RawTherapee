@@ -734,8 +734,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
 				if (outBeforeCCurveHistogram) {
-					cum *= (float)val/val0;
-					float hval = brightcurve->getVal (cum);
+					float hval = shCurve[(int)(hlCurve[i])]*(float)val/(65535*val0);
 					//if (needigamma)
 					//	hval = igamma2 (hval);
 					int hi = (int)(255.0*CLIPD(hval));
