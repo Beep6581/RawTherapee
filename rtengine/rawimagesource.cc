@@ -2014,17 +2014,21 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
             end = ri->width-border;
         }
         if (ri->filters)
-            for (int j=start; j<end; j++)
-                /*if (ISGREEN(ri,i,j))
-                    histogram[rawData[i][j]>>histcompr]+=2;
-                else*/
-                    histogram[rawData[i][j]>>histcompr]+=4;
-        else
-            for (int j=start; j<3*end; j++) {
-                    histogram[rawData[i][j+0]>>histcompr]++;
-                    histogram[rawData[i][j+1]>>histcompr]+=2;
-                    histogram[rawData[i][j+2]>>histcompr]++;
-            }
+            for (int j=start; j<end; j++) {
+                if (ISGREEN(ri,i,j))
+                    histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
+                else if (ISRED(ri,i,j)) 
+					histogram[CLIP((int)(camwb_red*rawData[i][j]))>>histcompr]+=4;
+				else if (ISBLUE(ri,i,j)) 
+					histogram[CLIP((int)(camwb_blue*rawData[i][j]))>>histcompr]+=4;
+			} else {
+				for (int j=start; j<3*end; j++) {
+                    histogram[CLIP((int)(rawData[i][j+0]>>histcompr))]++;
+                    histogram[CLIP((int)(rawData[i][j+1]>>histcompr))]+=2;
+                    histogram[CLIP((int)(rawData[i][j+2]>>histcompr))]++;
+				}
+			}
+		
     }
     return 1;
 }	

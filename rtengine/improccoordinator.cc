@@ -389,6 +389,15 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) 
             Lhist[nprevl->L[i][j]/256]++;
+	
+	/*for (int i=0; i<256; i++) {
+		Lhist[i] = (int)(256*sqrt(Lhist[i]));
+		rhist[i] = (int)(256*sqrt(rhist[i]));
+		ghist[i] = (int)(256*sqrt(ghist[i]));
+		bhist[i] = (int)(256*sqrt(bhist[i]));
+		bcrgbhist[i] = (int)(256*sqrt(bcrgbhist[i]));
+		bcLhist[i] = (int)(256*sqrt(bcLhist[i]));
+	}*/
 }
 
 void ImProcCoordinator::progress (Glib::ustring str, int pr) {
