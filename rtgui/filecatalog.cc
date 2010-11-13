@@ -45,6 +45,7 @@ int _directoryUpdater (void* cat) {
 #endif
 
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1), listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
+    inTabMode=false;
 
     //  construct and initialize thumbnail browsers
         fileBrowser = new FileBrowser();
@@ -285,22 +286,29 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
     }
 }
 
-void FileCatalog::_refreshProgressBar () {
+void FileCatalog::enableTabMode(bool enable) {
+    inTabMode = enable;
 
-    // check if progress bar is visible
-/*    Glib::ListHandle<Gtk::Widget*> list = buttonBar2->get_children ();
-    Glib::ListHandle<Gtk::Widget*>::iterator i = list.begin ();
-    for (; i!=list.end() && *i!=progressBar; i++);
-    if (i==list.end()) {
-        buttonBar2->pack_start (*progressBar, Gtk::PACK_SHRINK, 4);
-        buttonBar2->reorder_child (*progressBar, 2);
+    if (!inTabMode) progressBar->hide ();  // just needed once
+    
+    fileBrowser->enableTabMode(inTabMode);
+
+    redrawAll();
+}
+
+void FileCatalog::_refreshProgressBar () {
+    // In tab mode, no progress bar at all
+    // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
+    // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
+    if (!inTabMode) {
+        if (previewsToLoad>0) {
+            progressBar->set_fraction ((double)previewsLoaded / previewsToLoad);
+            progressBar->show ();
+        } else {
+            progressBar->set_fraction (1.0);
+            progressBar->hide ();
+        }
     }
-*/
-    progressBar->show ();    
-    if (previewsToLoad>0)
-        progressBar->set_fraction ((double)previewsLoaded / previewsToLoad);
-    else
-        progressBar->set_fraction (1.0);
 }
 
 int refreshpb (void* data) {
@@ -365,8 +373,8 @@ void FileCatalog::_previewsFinished () {
     redrawAll ();
     previewsToLoad = 0;
     previewsLoaded = 0;
-//    removeIfThere (buttonBar2, progressBar);
     progressBar->hide ();
+
 	if (filterPanel) {
 		filterPanel->set_sensitive (true);
 	    if ( !hasValidCurrentEFS ){
