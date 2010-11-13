@@ -873,7 +873,7 @@ skip_block: ;
     plistener=NULL; // This must be reset, because only load() is called through progressConnector
     t2.set();
     if( settings->verbose )
-       printf("Load %s: %d �sec\n",fname.c_str(), t2.etime(t1));
+       printf("Load %s: %d µsec\n",fname.c_str(), t2.etime(t1));
 
     return 0; // OK!
 }
@@ -999,7 +999,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}
     t2.set();
     if( settings->verbose )
-       printf("Preprocessing: %d �sec\n", t2.etime(t1));
+       printf("Preprocessing: %d µsec\n", t2.etime(t1));
     return;
 }
 void RawImageSource::demosaic(const RAWParams &raw)
@@ -1027,7 +1027,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         	nodemosaic();
         t2.set();
         if( settings->verbose )
-           printf("Demosaicing: %s - %d �sec\n",raw.dmethod.c_str(), t2.etime(t1));
+           printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
@@ -2023,9 +2023,9 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 					histogram[CLIP((int)(camwb_blue*rawData[i][j]))>>histcompr]+=4;
 			} else {
 				for (int j=start; j<3*end; j++) {
-                    histogram[CLIP((int)(rawData[i][j+0]>>histcompr))]++;
-                    histogram[CLIP((int)(rawData[i][j+1]>>histcompr))]+=2;
-                    histogram[CLIP((int)(rawData[i][j+2]>>histcompr))]++;
+                    histogram[CLIP((int)(camwb_red*rawData[i][j+0]))>>histcompr]++;
+                    histogram[CLIP((int)(camwb_green*rawData[i][j+1]))>>histcompr]+=2;
+                    histogram[CLIP((int)(camwb_blue*rawData[i][j+2]))>>histcompr]++;
 				}
 			}
 		
@@ -3277,7 +3277,7 @@ void RawImageSource::dcb_refinement(ushort (*image)[4], int x0, int y0)
 		}
 }
 
-// missing colors are interpolated using high quality algorithm by Luis Sanz Rodr√≠guez
+// missing colors are interpolated using high quality algorithm by Luis Sanz Rodr‚àö‚â†guez
 void RawImageSource::dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2])
 {
 	const int u=CACHESIZE, v=2*CACHESIZE, w=3*CACHESIZE;
