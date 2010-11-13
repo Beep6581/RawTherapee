@@ -343,8 +343,7 @@ void RTWindow::MoveFileBrowserToMain()
         FileCatalog *fCatalog = fpanel->fileCatalog;
         epanel->catalogPane->remove(*fCatalog);
         fpanel->ribbonPane->add(*fCatalog);
-        fCatalog->fileBrowser->enableTabMode(false);
-        fCatalog->redrawAll();
+        fCatalog->enableTabMode(false);
     }
 }
 
@@ -355,8 +354,7 @@ void RTWindow::MoveFileBrowserToEditor()
         FileCatalog *fCatalog = fpanel->fileCatalog;
         fpanel->ribbonPane->remove(*fCatalog);
         epanel->catalogPane->add(*fCatalog);
-        fCatalog->fileBrowser->enableTabMode(true);
-        fCatalog->redrawAll();
+        fCatalog->enableTabMode(true);
         fCatalog->refreshHeight();
     }
 }

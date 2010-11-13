@@ -62,10 +62,8 @@ class FileCatalog : public Gtk::VBox,
         Glib::ustring selectedDirectory;
         int selectedDirectoryId;
         bool enabled;
-        
-		// Restore PreviewLoader if the new threadsafe is not that threadsafe ;-)
-        //PreviewLoader previewLoader;
-        //PreviewMultiLoader previewLoader;
+        bool inTabMode;  // Tab mode has e.g. different progress bar handling
+
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
         ImageAreaToolListener* iatlistener;
@@ -145,6 +143,7 @@ class FileCatalog : public Gtk::VBox,
 				
        Glib::ustring lastSelectedDir () { return selectedDirectory; }
                 void setEnabled (bool e);   // if not enabled, it does not open image
+                void enableTabMode(bool enable);  // sets progress bar
 
                 void redrawAll ();
                 void refreshAll ();
