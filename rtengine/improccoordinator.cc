@@ -375,10 +375,15 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (rhist, 0, 256*sizeof(int));
     memset (ghist, 0, 256*sizeof(int));
     memset (bhist, 0, 256*sizeof(int));
+	
+	memset (bcrgbhist, 0, 256*sizeof(int));
+	memset (bcLhist, 0, 256*sizeof(int));
 
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
+			int Y = CLIPTO((299*previmg->data[ofs]+587*previmg->data[ofs+1]+114*previmg->data[ofs+2]),0,255000)/1000;
+			bcrgbhist[Y]++;
             rhist[previmg->data[ofs++]]++;
             ghist[previmg->data[ofs++]]++;
             bhist[previmg->data[ofs++]]++;
@@ -387,8 +392,10 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 
     memset (Lhist, 0, 256*sizeof(int));
     for (int i=y1; i<y2; i++)
-        for (int j=x1; j<x2; j++) 
+        for (int j=x1; j<x2; j++) {
             Lhist[nprevl->L[i][j]/256]++;
+			bcLhist[nprevl->L[i][j]/256]++;
+		}
 	
 	/*for (int i=0; i<256; i++) {
 		Lhist[i] = (int)(256*sqrt(Lhist[i]));
