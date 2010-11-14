@@ -104,7 +104,7 @@ class CurveFactory {
 				return y*clower2(x/m, slope*m/y, 2.0-sr);
 		} else {
 			double slope = a/(1-b);
-			double m = a*D>1 ? b/a+(0.25+0.75*(1-1/D))/slope : b+(1-b)/4;
+			double m = a*D>1 ? b/a+(0.25)/slope : b+(1-b)/4;
 			double y = a*D>1 ? 0.25 : (m-b/a)*slope;
 			if (x<=m)
 				return b==0 ? x*slope : clower (x/m, slope*m/y, sr) * y;
