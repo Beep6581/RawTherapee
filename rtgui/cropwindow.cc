@@ -637,9 +637,22 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     t3.set ();
 			bool showcs = iarea->indClippedPanel->showClippedShadows();
 			bool showch = iarea->indClippedPanel->showClippedHighlights();
+
+            // If ALT was pressed, auto-enable highlight and shadow
+            // TODO: Add linux/MacOS specific functions for alternative
+            #ifdef WIN32
+            if (GetKeyState(VK_MENU)<0) {
+                showcs=true; showch=true;
+            }
+            #endif
+
 			if (showcs || showch) {
 				Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
 				guint8* pix = tmp->get_pixels();
+
+                #ifdef _OPENMP
+                #pragma omp for
+                #endif
 				for (int i=0; i<tmp->get_height(); i++)
 					for (int j=0; j<tmp->get_width(); j++) {
 						guint8* curr = pix + i*tmp->get_rowstride () + j*3;
