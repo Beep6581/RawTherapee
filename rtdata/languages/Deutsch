@@ -148,6 +148,11 @@ HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
 HISTORY_DELSNAPSHOT;Variante löschen
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Abfolge der Änderungen
+HISTORY_MSG_100;RGB Sättigung
+HISTORY_MSG_101;HSV EQ -- Farbton
+HISTORY_MSG_102;HSV EQ -- Sättigung
+HISTORY_MSG_103;HSV EQ -- Hellwert
+HISTORY_MSG_104;HSV Mixer
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
@@ -247,11 +252,6 @@ HISTORY_MSG_97;'b'-Kurve
 HISTORY_MSG_98;Entrasterung
 HISTORY_MSG_99;Vorverarbeitung
 HISTORY_MSG_9;Lichter-Kompression
-HISTORY_MSG_100;RGB Sättigung
-HISTORY_MSG_101;HSV EQ -- Farbton
-HISTORY_MSG_102;HSV EQ -- Sättigung
-HISTORY_MSG_103;HSV EQ -- Hellwert
-HISTORY_MSG_104;HSV Mixer
 HISTORY_NEWSNAPSHOT;Neue Variante
 HISTORY_NEWSNAPSHOTAS;als...
 HISTORY_NEWSSDIALOGLABEL;Name der Variante:
@@ -784,8 +784,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
 
 
