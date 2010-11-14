@@ -529,6 +529,12 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
         refreshThumbImages();
     else
         redraw();
+
+    // Scroll to selected position if going into ribbon mode
+    if (inTabMode && !selected.empty()) {
+        int h=selected[0]->getStartX();
+        hscroll.set_value (MIN(h, hscroll.get_adjustment()->get_upper()));
+    }
 }
 
 void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry) {
