@@ -103,13 +103,13 @@ class CurveFactory {
 			else 
 				return y*clower2(x/m, slope*m/y, 2.0-sr);
 		} else {
-			double m = a>1 ? b+0.25*(1-b)/a : b+(1-b)/4;
-			double y = a>1 ? 0.25 : 0.25*a;
 			double slope = a/(1-b);
+			double m = a*D>1 ? b/a+(0.25+0.75*(1-1/D))/slope : b+(1-b)/4;
+			double y = a*D>1 ? 0.25 : (m-b/a)*slope;
 			if (x<=m)
-				return b==0 ? x*a : clower (x/m, slope*m/y, sr) * y;
-			else if (a>1)
-				return y+(1.0-y)*cupper2((x-m)/(1-m), slope*(1-m)/(1.0-y), hr);
+				return b==0 ? x*slope : clower (x/m, slope*m/y, sr) * y;
+			else if (a*D>1)
+				return y+(1.0-y)*cupper2((x-m)/(D-m), slope*(D-m)/(1.0-y), hr);
 			else
 				return y+(x-m)*slope;
 		}

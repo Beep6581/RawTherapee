@@ -622,47 +622,6 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
-		/*
-		 std::vector<double> basecurvePoints;
-		 basecurvePoints.push_back((double)((CurveType)NURBS));
-		 float blackx = MIN(1,black/(a*def_mul));
-		 float whitex = 1/(a*def_mul);//point in x at which line of slope a*def_mul starting at (0,0) reaches y=1
-		 float toneslope=(1-0)/(shoulderx-toex);
-		 toey = 0.01 + 0.3*(MAX(0,shcompr/100.0-0.25));
-		 toex = blackx + toey/toneslope;
-		 if (whitex<1) {//a>1; positive EC
-		 //move shoulder down if there is highlight rolloff
-		 shouldery = 1-(0.3)*(MAX(0,hlcompr/100.0-0.25));
-		 shoulderx = whitex - (1-shouldery)/toneslope;
-		 } else {//a<1; negative EC
-		 //if (shoulderx>1) {
-		 shoulderx = 1;
-		 shouldery = a*def_mul;
-		 }
-		 
-		 basecurvePoints.push_back(MAX(0,blackx*(1-shcompr/25.0))); //black point.  Value in [0 ; 1] range
-		 basecurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-		 
-		 basecurvePoints.push_back(toex); //toe point
-		 basecurvePoints.push_back(toey); //value at toe point
-		 
-		 if (toex<1) {
-		 //add a point along the line between the toe point and shoulder point
-		 basecurvePoints.push_back(0.4*toex+0.6*shoulderx); //mid point
-		 basecurvePoints.push_back(0.4*toey+0.6*shouldery); //value at mid point
-		 
-		 basecurvePoints.push_back(shoulderx); //shoulder point
-		 basecurvePoints.push_back(shouldery); //value at shoulder point
-		 if (shoulderx<1) {
-		 basecurvePoints.push_back(MIN(0.99,whitex+0.01+(1-whitex-0.01)*(hlcompr/70.0)); // lead into white point
-		 basecurvePoints.push_back(1); // value near white point
-		 basecurvePoints.push_back(1); // white point
-		 basecurvePoints.push_back(1); // value at white point
-		 }
-		 }
-		 Curve* basecurve = NULL;
-		 basecurve = new Curve (basecurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
-		 */
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		std::vector<double> brightcurvePoints;
@@ -702,7 +661,6 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// apply base curve, thus, exposure compensation and black point with shadow and highlight protection
 			val = basecurve (val*def_mul, a, 0, def_mul, hlcompr/100.0, 0);
 			//val = basecurve (val*def_mul, a, black, def_mul, hlcompr/100.0, 1.5*shcompr/100.0);
-			//val = basecurvenew->getVal (val);
 			
 			hlCurve[i] = (65535.0 * CLIPD(val));
 			
@@ -710,7 +668,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// change to [0,1] range
 			val = (double)i / 65535.0;
 			
-			val = basecurve (val, 1, black, def_mul, 1, 1.5*shcompr/100.0);
+			val = basecurve (val, 1, black, 1, 0, 1.5*shcompr/100.0);
 			
 			shCurve[i] = (65535.0 * CLIPD(val));
 		}
@@ -721,7 +679,6 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			// change to [0,1] range
 			double val = (double)i / 65535.0;
 			float val0 = val;
-			float cum = (int)shCurve[(int)(hlCurve[i])];
 			
 			// gamma correction
 			if (gamma_>0) 
@@ -751,8 +708,6 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 			dcurve[i] = CLIPD(val);
 		}
 		delete tcurve;
-		
-		//delete basecurvenew; // ...when you don't need it anymore
 		delete brightcurve; 
 		
 		// if skip>1, let apply linear interpolation in the skipped points of the curve
