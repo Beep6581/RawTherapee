@@ -638,8 +638,8 @@ TP_HLREC_LABEL;Récupération des hautes lumières
 TP_HLREC_LUMINANCE;Récupération de la luminance
 TP_HLREC_METHOD;Méthode: 
 TP_HSVEQUALIZER1;Rouge
-TP_HSVEQUALIZER2;Jaune
-TP_HSVEQUALIZER3;Citron vert
+TP_HSVEQUALIZER2;Orange
+TP_HSVEQUALIZER3;Vert citron
 TP_HSVEQUALIZER4;Vert
 TP_HSVEQUALIZER5;Cyan
 TP_HSVEQUALIZER6;Bleu
@@ -691,6 +691,7 @@ TP_RESIZE_BICUBICSH;Bicubique (Plus net)
 TP_RESIZE_BILINEAR;Bilinéaire
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
+TP_RESIZE_FITBOX;Contenu dans une boîte
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hauteur
