@@ -34,7 +34,8 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 
     moptions.copyFrom (&options);
 
-    set_size_request (650, 650);
+    // Do not increase height, since it's not visible on e.g. smaller netbook screens
+    set_size_request (650, 600);
     set_border_width (4);
 
     Gtk::VBox* mainvb = get_vbox ();
