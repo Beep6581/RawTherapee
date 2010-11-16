@@ -48,6 +48,7 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
         editedIcon = safe_create_from_file (argv0+"/images/edited.png");
         recentlySavedIcon = safe_create_from_file (argv0+"/images/saved.png");
         enqueuedIcon = safe_create_from_file (argv0+"/images/processing.png");
+        iconsLoaded = true;
     }
     
     if (thm)
@@ -68,8 +69,10 @@ FileBrowserEntry::~FileBrowserEntry () {
 	}
 
     thumbImageUpdater->removeJobs (this);
-    if (thumbnail)
+    if (thumbnail){
         thumbnail->removeThumbnailListener (this);
+        thumbnail->decreaseRef ();
+    }
 }
 
 void FileBrowserEntry::refreshThumbnailImage () {
@@ -186,6 +189,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
 		if ( feih == 0 ||
 				feih->destroyed )
 		{
+			img->free();
 			return;
 		}
 

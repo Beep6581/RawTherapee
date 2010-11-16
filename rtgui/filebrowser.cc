@@ -249,7 +249,6 @@ void FileBrowser::close () {
 
     for (int i=0; i<fd.size(); i++)
     {
-        ((FileBrowserEntry*)fd[i])->thumbnail->decreaseRef ();
         delete fd[i];
     }
     fd.clear ();

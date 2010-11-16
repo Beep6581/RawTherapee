@@ -98,6 +98,9 @@ Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int
     }
 
     tpp->thumbImg = img->resize (w, h, TI_Nearest);
+
+    tpp->autowbTemp=2700;
+    tpp->autowbGreen=1.0;
     delete img;
 
     tpp->init ();
