@@ -489,13 +489,16 @@ void Thumbnail::setFileName (const Glib::ustring fn) {
 
 void Thumbnail::addThumbnailListener (ThumbnailListener* tnl) {
 
+    increaseRef();
     listeners.push_back (tnl);
 }
 
 void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl) {
 
     std::vector<ThumbnailListener*>::iterator f = std::find (listeners.begin(), listeners.end(), tnl);
-    if (f!=listeners.end())
+    if (f!=listeners.end()) {
         listeners.erase (f);
+        decreaseRef();
+	}
 }
 
