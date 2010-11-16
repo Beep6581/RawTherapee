@@ -86,6 +86,10 @@ inline int fread (void* dst, int es, int count, IMFILE* f) {
 	}
 }
 
+inline char* fdata(int offset, IMFILE* f) {
+	return f->data + offset;
+}
+
 int fscanf (IMFILE* f, const char* s ...);
 char* fgets (char* s, int n, IMFILE* f);
 #endif

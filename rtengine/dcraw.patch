@@ -1,5 +1,5 @@
---- dcraw.c	2010-11-11 08:44:21.000000000 -0700
-+++ dcraw.cc	2010-11-11 08:33:51.000000000 -0700
+--- dcraw.c	2010-11-11 20:35:59.000000000 -0500
++++ dcraw.cc	2010-11-15 21:14:19.000000000 -0500
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -405,7 +405,7 @@
        case 'f':  four_color_rgb    = 1;  break;
        case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
        case 'a':  use_auto_wb       = 1;  break;
-@@ -8943,3 +9007,602 @@
+@@ -8943,3 +9007,594 @@
    }
    return status;
  }
@@ -670,18 +670,10 @@
 +    rml.ciffBase = ciff_base;
 +    rml.ciffLength = ciff_len;
 +
-+	char *thumb_buffer = (char *)malloc(thumb_length+64); // malloc instead of on the stack.
-+	if ( thumb_buffer == NULL )
-+	{
-+		printf("DCRAW: failed3\n");
-+		return NULL;
-+	}
-+	fseek(ifp,thumb_offset,SEEK_SET);
-+	fread(thumb_buffer,1,thumb_length,ifp);
++	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(fdata(thumb_offset,ifp),thumb_length,w,h,fixwh);
++
 +	fclose(ifp);
 +
-+	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(thumb_buffer,thumb_length,w,h,fixwh);
-+	free(thumb_buffer);
 +	if ( tpp == 0 )
 +	{
 +		printf("DCRAW: failed4\n");

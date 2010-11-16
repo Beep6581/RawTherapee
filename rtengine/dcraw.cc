@@ -9268,18 +9268,10 @@ rtengine::Thumbnail* rtengine::Thumbnail::loadQuickFromRaw (const Glib::ustring&
     rml.ciffBase = ciff_base;
     rml.ciffLength = ciff_len;
 
-	char *thumb_buffer = (char *)malloc(thumb_length+64); // malloc instead of on the stack.
-	if ( thumb_buffer == NULL )
-	{
-		printf("DCRAW: failed3\n");
-		return NULL;
-	}
-	fseek(ifp,thumb_offset,SEEK_SET);
-	fread(thumb_buffer,1,thumb_length,ifp);
+	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(fdata(thumb_offset,ifp),thumb_length,w,h,fixwh);
+
 	fclose(ifp);
 
-	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(thumb_buffer,thumb_length,w,h,fixwh);
-	free(thumb_buffer);
 	if ( tpp == 0 )
 	{
 		printf("DCRAW: failed4\n");
