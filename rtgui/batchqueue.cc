@@ -156,6 +156,7 @@ bool BatchQueue::loadBatchQueue( )
     	    }
     	}
     }
+    fclose(f);
     arrangeFiles ();
     queue_draw ();
     return numLoaded > 0;
@@ -352,9 +353,18 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         // remove button set
         next->removeButtonSet ();
     }
-    if( saveBatchQueue( ) )
+    if( saveBatchQueue( ) ){
        ::remove( safe_locale_from_utf8(processedParams).c_str () );
-
+       // Delete all files in directory \batch when finished, just to be sure to remove zombies
+       if( fd.size()==0 ){
+    	    std::vector<Glib::ustring> names;
+    	    Glib::ustring batchdir = options.rtdir+"/batch/";
+    	    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
+    		safe_build_file_list (dir, names, batchdir);
+    		for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
+    			::remove( safe_locale_from_utf8(*iter).c_str () );
+       }
+    }
     redraw ();
     notifyListener ();
     gdk_threads_leave ();
