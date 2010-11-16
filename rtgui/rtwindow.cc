@@ -96,9 +96,8 @@ RTWindow::RTWindow () {
 
     // filling bottom box
     Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
-    Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")));
+    Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
     preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
-    preferences->set_relief (Gtk::RELIEF_NONE);
     preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
     is_fullscreen = false;
     btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
@@ -115,7 +114,6 @@ RTWindow::RTWindow () {
     style->set_xthickness (0);
     style->set_ythickness (0);    
     rtWeb->modify_style (style);
-    preferences->modify_style (style);
 
     add (*mainBox);
     show_all ();
