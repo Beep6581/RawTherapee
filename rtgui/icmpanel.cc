@@ -37,6 +37,9 @@ ICMPanel::ICMPanel () : ToolPanel(), iunchanged(NULL), icmplistener(NULL) {
     ilab->set_markup (Glib::ustring("<b>") + M("TP_ICM_INPUTPROFILE") + "</b>");
     pack_start (*ilab, Gtk::PACK_SHRINK, 4);
     
+    inone = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTNONE")));
+    pack_start (*inone, Gtk::PACK_SHRINK, 4);
+
     iembedded = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTEMBEDDED")));
     pack_start (*iembedded, Gtk::PACK_SHRINK, 4);
 
@@ -53,6 +56,7 @@ ICMPanel::ICMPanel () : ToolPanel(), iunchanged(NULL), icmplistener(NULL) {
     opts = icamera->get_group();
     iembedded->set_group (opts);
     ifromfile->set_group (opts);
+    inone->set_group (opts);
 
     igamma = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_GAMMABEFOREINPUT")));
     igamma->set_sensitive (false);
@@ -137,7 +141,11 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     disableListener ();
 
     ipc.block (true);
-    if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
+    if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
+        inone->set_active (true);
+        igamma->set_sensitive (false);
+    }
+    else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active (true);
         igamma->set_sensitive (false);
     }
@@ -179,7 +187,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    if (iembedded->get_active ())
+    if (inone->get_active())
+        pp->icm.input = "(none)";
+    else if (iembedded->get_active ())
         pp->icm.input = "(embedded)";
     else if (icamera->get_active ())
         pp->icm.input = "(camera)";
@@ -211,7 +221,11 @@ void ICMPanel::wpChanged () {
 void ICMPanel::ipChanged () {
 
     std::string profname;
-    if (iembedded->get_active ()) {
+    if (inone->get_active()) {
+        profname = "(none)";
+        igamma->set_sensitive (false);
+    }
+    else if (iembedded->get_active ()) {
         profname = "(embedded)";
         igamma->set_sensitive (false);
     }
