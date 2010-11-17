@@ -661,6 +661,7 @@
 !TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
 !TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
+!TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTPROFILE;Input Profile
 !TP_ICM_LABEL;ICM
 !TP_ICM_NOICM;No ICM: sRGB output
