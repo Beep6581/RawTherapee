@@ -30,7 +30,8 @@ class ICMPanelListener {
 
 class ICMPanel : public Gtk::VBox, public ToolPanel {
 
-    private: 
+    private:
+        Gtk::RadioButton*  inone;
         Gtk::RadioButton*  iembedded;
         Gtk::RadioButton*  icamera;
         Gtk::RadioButton*  ifromfile;
