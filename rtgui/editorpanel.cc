@@ -907,6 +907,8 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
         SaveFormat sf;
         sf.format = "tif";
         sf.tiffBits = 16;
+        sf.tiffUncompressed = true;
+        sf.saveParams = true;
 
         Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
 
