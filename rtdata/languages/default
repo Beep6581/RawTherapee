@@ -406,7 +406,7 @@ PARTIALPASTE_WHITEBALANCE;White balance
 POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 PREFERENCES_ADD;ADD
 PREFERENCES_APPLNEXTSTARTUP;restart required
-PREFERENCES_BATCH_PROCESSING;batch processing
+PREFERENCES_BATCH_PROCESSING;Batch Processing
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BLINKCLIPPED;Blink clipped areas
 PREFERENCES_CACHECLEARALL;Clear All
@@ -470,6 +470,7 @@ PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>,
 PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
