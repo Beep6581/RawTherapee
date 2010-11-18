@@ -162,30 +162,31 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     // histogram computation
     tpp->aeHistCompression = 3;
     tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
-    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
-    int ix = 0;
-    for (int i=0; i<img->height*img->width; i++) {
-            tpp->aeHistogram[CurveFactory::igamma_srgb (img->data[ix++])>>tpp->aeHistCompression]++;
-            tpp->aeHistogram[CurveFactory::igamma_srgb (img->data[ix++])>>tpp->aeHistCompression]++;
-            tpp->aeHistogram[CurveFactory::igamma_srgb (img->data[ix++])>>tpp->aeHistCompression]++;
-    }
-
-    // autowb computation
-    double avg_r = 0;
+	
+	double avg_r = 0;
     double avg_g = 0;
     double avg_b = 0;
     int n = 0;
-    for (int i=1; i<img->height-1; i++)
-        for (int j=1; j<img->width-1; j++) {
-            int ofs = 3*(i*img->width + j);
-            int rtmp=img->data[ofs], gtmp=img->data[ofs+1], btmp=img->data[ofs+2];
-            if (rtmp>64000 || gtmp>64000 || btmp>64000)
-                continue;
-            avg_r += rtmp;
+	
+    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
+    int ix = 0;
+    for (int i=0; i<img->height*img->width; i++) {
+		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		int gtmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		int btmp=CurveFactory::igamma_srgb (img->data[ix++]);
+
+		if (rtmp<64000 && gtmp<64000 && btmp<64000) {
+			// autowb computation
+			avg_r += rtmp;
             avg_g += gtmp;
             avg_b += btmp;
             n++;
-        }
+		}
+            tpp->aeHistogram[rtmp>>tpp->aeHistCompression]++;
+            tpp->aeHistogram[gtmp>>tpp->aeHistCompression]++;
+            tpp->aeHistogram[btmp>>tpp->aeHistCompression]++;
+    }
+
     if (n>0)
         ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
 
