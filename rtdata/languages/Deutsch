@@ -487,6 +487,7 @@ PREFERENCES_OUTDIRHINT;<i>Die folgenden Variablen können verwendet werden:</i>\
 PREFERENCES_OUTDIRTEMPLATE;Verwenden einer Vorlage
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
+PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabe-Dateien überschreiben
 PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Datei-Typen
 PREFERENCES_PARSEDEXTADD;Datei-Typ hinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Gebe einen Datei-Typ (Extension) ein und drücke diesen Knopf um diesen Typ hinzuzufügen

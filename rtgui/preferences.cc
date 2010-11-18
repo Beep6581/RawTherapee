@@ -96,8 +96,8 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     behscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     Gtk::Frame* behFrame = Gtk::manage (new Gtk::Frame (M("PREFERENCES_BEHAVIOR")));
     behFrame->add (*behscrollw);
-    mvbpp->pack_start (*behFrame);
-//    mvbpp->pack_start (*behFrame, Gtk::PACK_SHRINK, 2);
+    //mvbpp->pack_start (*behFrame);
+    mvbpp->pack_start (*behFrame, Gtk::PACK_EXPAND_WIDGET, 4);
     Gtk::TreeView* behTreeView = Gtk::manage (new Gtk::TreeView ());
     behscrollw->add (*behTreeView);
 
@@ -191,6 +191,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_VIGNETTING_AMOUNT"), ADDSET_VIGN_AMOUNT, false);
 
     behTreeView->expand_all ();
+
+    chOverwriteOutputFile =  new Gtk::CheckButton (M("PREFERENCES_OVERWRITEOUTPUTFILE"));
+    mvbpp->pack_start(*chOverwriteOutputFile, Gtk::PACK_SHRINK, 4);
 
     return mvbpp;
 }
@@ -759,6 +762,8 @@ void Preferences::storePreferences () {
             moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
 
     moptions.tabbedUI = (bool)editorLayout->get_active_row_number();
+
+    moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 }
 
 void Preferences::fillPreferences () {
@@ -852,6 +857,8 @@ void Preferences::fillPreferences () {
     setc.block (false);
     tconn.block (false);
     dfconn.block (false);
+
+    chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 }
 
 void Preferences::loadPressed () {

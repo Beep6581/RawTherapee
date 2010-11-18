@@ -98,6 +98,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::Button*    delExt;
     Gtk::CheckButton* overlayedFileNames;
 
+    Gtk::CheckButton* chOverwriteOutputFile;
+
     Gtk::CheckButton* saveParamsFile;
     Gtk::CheckButton* saveParamsCache;
     Gtk::ComboBoxText* loadParamsPreference;
