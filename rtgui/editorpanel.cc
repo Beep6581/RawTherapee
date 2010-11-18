@@ -379,14 +379,14 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     // If in single tab mode, the main crop window is not constructed the very first time
     // since there was no resize event
-    if (!iarea->imageArea->mainCropWindow) 
+    if (iarea->imageArea->mainCropWindow)
     {
+    	iarea->imageArea->mainCropWindow->cropHandler.newImage(ipc);
+        iarea->imageArea->mainCropWindow->initialImageArrived();
+    } else {
         Gtk::Allocation alloc;
         iarea->imageArea->on_resized(alloc);
     }
-
-    iarea->imageArea->mainCropWindow->cropHandler.newImage(ipc);            
-    iarea->imageArea->mainCropWindow->initialImageArrived();
 }
 
 void EditorPanel::close () {
