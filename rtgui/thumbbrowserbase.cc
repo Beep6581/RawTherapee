@@ -495,7 +495,7 @@ void ThumbBrowserBase::refreshThumbImages () {
     for (int i=0; i<fd.size(); i++){
     	previewHeight = inTabMode ? options.thumbSizeTab : options.thumbSize;
     	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
-        fd[i]->refreshThumbnailImage ();
+        fd[i]->refreshThumbnailImage ();  // TODO: This might cause crashes on some installations
     }
 
     redraw ();
@@ -525,10 +525,12 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     inTabMode = enable;
     arrangement = inTabMode ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
     
-    if (options.thumbSizeTab!=options.thumbSize)
-        refreshThumbImages();
-    else
-        redraw();
+    if (options.thumbSizeTab!=options.thumbSize) {
+        for (int i=0; i<fd.size(); i++) 
+            fd[i]->resize (inTabMode ? options.thumbSizeTab : options.thumbSize);
+    }
+
+    redraw ();
 
     // Scroll to selected position if going into ribbon mode
     if (inTabMode && !selected.empty()) {
