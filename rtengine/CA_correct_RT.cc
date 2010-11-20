@@ -103,7 +103,7 @@ void RawImageSource::CA_correct_RT() {
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	#define SQR(x) ((x)*(x))
 
-	const float clip_pt = ri->defgain; 
+	const float clip_pt = initialGain;
 		
 	// local variables
 	int width=W, height=H;

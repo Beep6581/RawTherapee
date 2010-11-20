@@ -65,17 +65,17 @@ inline void RawImageSource::convert_to_cielab_row (unsigned short* ar, unsigned 
 	if (y>threshold)
       oL[j] = 300.0*cache[(int)y];
     else
-      oL[j] = 300.0 * 903.3 * y / CMAXVAL;
+      oL[j] = 300.0 * 903.3 * y / MAXVAL;
 
-    oa[j] = 32.0 * 500.0 * ((x>threshold ? cache[(int)x] : 7.787*x/CMAXVAL+16.0/116.0) - (y>threshold ? cache[(int)y] : 7.787*y/CMAXVAL+16.0/116.0));
-    ob[j] = 32.0 * 200.0 * ((y>threshold ? cache[(int)y] : 7.787*y/CMAXVAL+16.0/116.0) - (z>threshold ? cache[(int)z] : 7.787*z/CMAXVAL+16.0/116.0));
+    oa[j] = 32.0 * 500.0 * ((x>threshold ? cache[(int)x] : 7.787*x/MAXVAL+16.0/116.0) - (y>threshold ? cache[(int)y] : 7.787*y/MAXVAL+16.0/116.0));
+    ob[j] = 32.0 * 200.0 * ((y>threshold ? cache[(int)y] : 7.787*y/MAXVAL+16.0/116.0) - (z>threshold ? cache[(int)z] : 7.787*z/MAXVAL+16.0/116.0));
   }
 }
 
 inline void RawImageSource::interpolate_row_g (unsigned short* agh, unsigned short* agv, int i) {
 
   for (int j=0; j<W; j++) {
-    if (ISGREEN(ri,i,j)) {
+    if (ri->ISGREEN(i,j)) {
       agh[j] = rawData[i][j];
       agv[j] = rawData[i][j];
     }
@@ -125,10 +125,10 @@ inline void RawImageSource::interpolate_row_g (unsigned short* agh, unsigned sho
 }
 
 inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i) {
-  if (ISRED(ri,i,0) || ISRED(ri,i,1)) {
+  if (ri->ISRED(i,0) || ri->ISRED(i,1)) {
     // RGRGR or GRGRGR line
     for (int j=0; j<W; j++) {
-      if (ISRED(ri,i,j)) {
+      if (ri->ISRED(i,j)) {
          // red is simple
          ar[j] = rawData[i][j];
          // blue: cross interpolation
@@ -178,7 +178,7 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
   else {
     // BGBGB or GBGBGB line
     for (int j=0; j<W; j++) {
-      if (ISBLUE(ri,i,j)) {
+      if (ri->ISBLUE(i,j)) {
          // red is simple
          ab[j] = rawData[i][j];
          // blue: cross interpolation
@@ -230,10 +230,10 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
 
 inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip) {
 
-  if (ISRED(ri,i,0) || ISRED(ri,i,1)) {
+  if (ri->ISRED(i,0) || ri->ISRED(i,1)) {
     // RGRGR or GRGRGR line
     for (int j=x1, jx=0; jx<width; j+=skip, jx++) {
-      if (ISRED(ri,i,j)) {
+      if (ri->ISRED(i,j)) {
          // red is simple
          ar[jx] = CLIP(r_mul * rawData[i][j]);
          // blue: cross interpolation
@@ -283,7 +283,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsig
   else {
     // BGBGB or GBGBGB line
     for (int j=x1, jx=0; jx<width; j+=skip, jx++) {
-      if (ISBLUE(ri,i,j)) {
+      if (ri->ISBLUE(i,j)) {
          // red is simple
          ab[jx] = CLIP(b_mul*rawData[i][j]);
          // blue: cross interpolation

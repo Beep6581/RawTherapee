@@ -38,7 +38,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	int width=winw, height=winh;
 	
 	
-	const float clip_pt = 1/ri->defgain; 
+	const float clip_pt = 1/initialGain;
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
 	

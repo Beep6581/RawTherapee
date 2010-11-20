@@ -47,7 +47,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 
 #define bord 4
 		
-	int clip_pt = 4*65535*ri->defgain;
+	int clip_pt = 4*65535*initialGain;
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #pragma omp parallel

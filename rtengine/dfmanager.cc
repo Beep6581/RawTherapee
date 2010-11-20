@@ -107,6 +107,8 @@ std::list<badPix>& dfInfo::getHotPixels()
  */
 void dfInfo::updateRawImage()
 {
+	int H = ri->get_height();
+	int W = ri->get_width();
 	typedef unsigned int acc_t;
 	if( pathNames.size() >0 ){
 		std::list<Glib::ustring>::iterator iName = pathNames.begin();
@@ -115,14 +117,14 @@ void dfInfo::updateRawImage()
 			delete ri;
 			ri=NULL;
 		}else{
-
-			acc_t **acc = new acc_t*[ri->height];
-			for( int row=0; row<ri->height;row++)
-				acc[row] = new acc_t[ri->width*(ri->filters?1:3)];
+            int rSize = W*(ri->isBayer()?1:3);
+			acc_t **acc = new acc_t*[H];
+			for( int row=0; row<H;row++)
+				acc[row] = new acc_t[rSize ];
 
 			// copy first image into accumulators
-			for (int row = 0; row < ri->height; row++)
-				for (int col = 0; col < ri->width * (ri->filters ? 1 : 3); col++)
+			for (int row = 0; row < H; row++)
+				for (int col = 0; col < rSize; col++)
 					acc[row][col] = ri->data[row][col];
 			int nFiles = 1; // First file data already loaded
 
@@ -130,14 +132,14 @@ void dfInfo::updateRawImage()
 				RawImage* temp = new RawImage(*iName);
 				if( !temp->loadRaw(true)){
 					nFiles++;
-					if( ri->filters ){
-						for( int row=0; row<ri->height;row++){
-							for( int col=0; col < ri->width;col++)
+					if( ri->isBayer() ){
+						for( int row=0; row<H;row++){
+							for( int col=0; col < W;col++)
 								acc[row][col] += temp->data[row][col];
 						}
 					}else{
-						for( int row=0; row<ri->height;row++){
-							for( int col=0; col < ri->width;col++){
+						for( int row=0; row<H;row++){
+							for( int col=0; col < W;col++){
 								acc[row][3*col+0] += temp->data[row][3*col+0];
 								acc[row][3*col+1] += temp->data[row][3*col+1];
 								acc[row][3*col+2] += temp->data[row][3*col+2];
@@ -147,8 +149,8 @@ void dfInfo::updateRawImage()
 				}
 				delete temp;
 			}
-			for (int row = 0; row < ri->height; row++){
-				for (int col = 0; col < ri->width * (ri->filters ? 1 : 3); col++)
+			for (int row = 0; row < H; row++){
+				for (int col = 0; col < rSize; col++)
 					ri->data[row][col] = acc[row][col] / nFiles;
 				delete [] acc[row];
 			}
@@ -166,9 +168,9 @@ void dfInfo::updateRawImage()
 void dfInfo::updateBadPixelList( RawImage *df )
 {
 	const int threshold=10;
-	if( df->filters ){
-		for( int row=2; row<df->height-2; row++)
-			for( int col=2; col < df->width-2; col++){
+	if( df->isBayer() ){
+		for( int row=2; row<df->get_height()-2; row++)
+			for( int col=2; col < df->get_width()-2; col++){
 				int m =	(df->data[row-2][col-2] + df->data[row-2][col] + df->data[row-2][col+2]+
 						df->data[row][col-2] + df->data[row][col+2]+
 						df->data[row+2][col-2] + df->data[row+2][col] + df->data[row+2][col+2])/8;
@@ -176,8 +178,8 @@ void dfInfo::updateBadPixelList( RawImage *df )
 					badPixels.push_back( badPix(col,row) );
 			}
 	}else{
-		for( int row=1; row<df->height-1; row++)
-			for( int col=1; col < df->width-1; col++){
+		for( int row=1; row<df->get_height()-1; row++)
+			for( int col=1; col < df->get_width()-1; col++){
 			   int m[3];
 			   for( int c=0; c<3;c++){
 				    m[c] =	(df->data[row-1][3*(col-1)+c] + df->data[row-1][3*col+c] + df->data[row-1][3*(col+1)+c]+
@@ -189,7 +191,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
 			}
 	}
 	if( settings->verbose ){
-		printf( "Extracted %zu pixels from darkframe %s\n", badPixels.size(),df->fname.c_str() );
+		printf( "Extracted %zu pixels from darkframe %s\n", badPixels.size(),df->get_filename().c_str() );
 	}
 }
 
@@ -255,19 +257,19 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
         	int res = ri.loadRaw(false); // Read informations about shot
         	if( !res ){
          	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
-        	   std::string key( dfInfo::key(ri.make, ri.model,(int)ri.iso_speed,ri.shutter) );
+        	   std::string key( dfInfo::key(ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter()) );
         	   dfList_t::iterator iter = dfList.find( key );
         	   if( iter == dfList.end() ){
-				   dfInfo n(filename, ri.make, ri.model,(int)ri.iso_speed,ri.shutter,ri.timestamp);
+				   dfInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_timestamp());
 				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         	   }else{
-        		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.timestamp) >60*60*6 ) // 6 hour difference
+        		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) >60*60*6 ) // 6 hour difference
         			   iter++;
 
         		   if( iter != dfList.end() )
         		      iter->second.pathNames.push_back( filename );
         		   else{
-    				   dfInfo n(filename, ri.make, ri.model,(int)ri.iso_speed,ri.shutter,ri.timestamp);
+    				   dfInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_timestamp());
     				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         		   }
         	   }

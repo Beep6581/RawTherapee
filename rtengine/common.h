@@ -19,22 +19,6 @@
 #ifndef _COMMON_
 #define _COMMON_
 
-#define ISRED(image,row,col) \
-	((image->filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0)
-#define ISGREEN(image,row,col) \
-	((image->filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1)
-#define ISBLUE(image,row,col) \
-	((image->filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2)
-
-#define FISRED(filter,row,col) \
-	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
-#define FISGREEN(filter,row,col) \
-	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
-#define FISBLUE(filter,row,col) \
-	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
-
-#define CMAXVAL 65535
-
 #include <time.h>
 #include <glibmm.h>
 
@@ -49,81 +33,73 @@ struct badPix
 
 struct RawImage {
 
-  Glib::ustring fname; // complete filename
+  unsigned filters; // \TODO problem in pre_interpolate()
+  int prefilters;
+
+  unsigned short** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
+
+protected:
+  Glib::ustring filename; // complete filename
   int width;  // with of the image as reported by dcraw
   int height; // height of the image as reported by dcraw
-
-  unsigned filters; // sequence of Bayer filter colors: 2bit for each of 2x8 pixels grid indicate 0=Red,1=Green1,2=Blue,(3=green2)
+  int fuji_width;
   int colors; // Number of colors of bayer filter (3 or 4)
-
-  int black_point; // Black offset taken from dslr info by dcraw
+  int black; // Black offset taken from dslr info by dcraw
   int cblack[4]; // Black for each color.
+  int maximum; // White (maximum) point taken from dslr info
+  int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
+  double iso_speed;
+  double shutter;
+  time_t timestamp;
+  char *make, *model;
   unsigned short white[8][8]; // square of white registered by camera
   float cam_mul[4]; // Camera color multiplier taken from exif by dcraw
   float pre_mul[4];
-  int maximum; // White (maximum) point taken from dslr info
-  int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
-  int fuji_width;
-  
-  double defgain;
-  double iso_speed;
-  double shutter;
-  double aperture;
-  double focal_len;
-  time_t timestamp;
-  char *make, *model;
+  float coeff[3][3]; // rgb_cam coeff.
 
-  int exifbase, prefilters, ciff_base, ciff_len;
-  int thumbLength;
-  int thumbOffset;
-  int thumbType;
-  int thumbWidth;
-  int thumbHeight;
-
-  unsigned short* allocation;
-  unsigned short** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
-
-  float coeff[3][3];
-  float icoeff[3][3];
-  
+  int exifbase, ciff_base, ciff_len;
   int profile_len;
   char* profile_data; // Embedded ICC color profile
 
-  RawImage(  const Glib::ustring name):allocation(NULL),data(NULL),profile_data(NULL),fname(name),make(0),model(0)
-  {
-  }
-  ~RawImage()
-  {
-	  if(allocation){ delete [] allocation; allocation=NULL;}
-	  if(data){ delete [] data; data=NULL;}
-	  if(profile_data){ delete [] profile_data; profile_data=NULL;}
-	  if ( make ) free(make);
-	  if ( model ) free(model);
-  }
-
+  unsigned short* allocation; // pointer to allocated memory
+public:
+  RawImage(  const Glib::ustring name);
+  ~RawImage();
   int loadRaw (bool loadData=true);
+  void allocData();
+  std::string get_filename() const { return filename;}
+  int get_width()  const { return width; }
+  int get_height() const { return height; }
+  int get_FujiWidth() const { return fuji_width; }
+  bool isBayer() const { return filters!=0; }
+  int get_colors() const { return colors;}
+  int get_black()  const { return black;}
+  int get_cblack(int i) const {return cblack[i];}
+  int get_white() const { return maximum;}
+  unsigned short get_whiteSample( int r, int c ) const { return white[r][c];}
 
-  void allocData()
-  {
-	  if (filters) {
-		if (!allocation) {
-				allocation = new unsigned short[height * width];
-				data = new unsigned short*[height];
-				for (int i = 0; i < height; i++)
-					data[i] = allocation + i * width;
-		}
-	  }else{
-		if (!allocation) {
-				allocation = new unsigned short[3 * height * width];
-				data = new unsigned short*[height];
-				for (int i = 0; i < height; i++)
-					data[i] = allocation + 3 * i * width;
-		}
-	  }
-	  if(profile_len)
-		  profile_data = new char[profile_len];
-  }
+  double get_ISOspeed() const {return iso_speed;}
+  double get_shutter()  const {return shutter; }
+  time_t get_timestamp() const { return timestamp;}
+  int get_rotateDegree() const { return rotate_deg;}
+  const std::string get_maker() const { return std::string(make); }
+  const std::string get_model() const { return std::string(model); }
 
+  float get_cam_mul(int c )const {return cam_mul[c];}
+  float get_pre_mul(int c )const {return pre_mul[c];}
+  float get_rgb_cam( int r, int c) const { return coeff[r][c];}
+
+  int get_exifBase()  const {return exifbase; }
+  int get_ciffBase() const {return ciff_base; }
+  int get_ciffLen()  const {return ciff_len; }
+
+  int get_profileLen() const {return profile_len;}
+  char* get_profile() const { return profile_data;}
+
+public:
+  bool ISRED  (unsigned row, unsigned col) const { return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0);}
+  bool ISGREEN(unsigned row, unsigned col) const { return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1);}
+  bool ISBLUE (unsigned row, unsigned col) const { return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2);}
 };
 
 }

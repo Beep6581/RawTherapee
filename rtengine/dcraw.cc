@@ -111,7 +111,7 @@ typedef unsigned char uchar;
 typedef unsigned short ushort;
 
 // RT specify thread local storage
-#ifdef __GNUC__
+#ifdef __XXXGNUC__
 #define THREAD_LOCAL static __thread
 #define THREAD_LOCK  
 #else
@@ -9025,7 +9025,7 @@ int RawImage::loadRaw (bool loadData) {
 
   THREAD_LOCK
 
-  ifname = fname.c_str();
+  ifname = get_filename().c_str();
   image = NULL;
   exif_base = -1;
   ciff_base = -1;
@@ -9033,7 +9033,7 @@ int RawImage::loadRaw (bool loadData) {
   verbose = settings->verbose;
   oprof = NULL;
 
-  ifp = gfopen (fname.c_str());
+  ifp = gfopen (filename.c_str());
   if (!ifp)
     return 3;
 
@@ -9076,31 +9076,16 @@ int RawImage::loadRaw (bool loadData) {
   this->model = strdup (::model);
   this->iso_speed = ::iso_speed;
   this->shutter = ::shutter;
-  this->aperture = ::aperture;
-  this->focal_len = ::focal_len;
   this->timestamp = ::timestamp;
   this->exifbase = ::exif_base;
   this->ciff_base = ::ciff_base;
   this->ciff_len = ::ciff_len;
-  this->thumbOffset = ::thumb_offset;
-  this->thumbLength = ::thumb_length;
-  this->thumbHeight = ::thumb_height;
-  this->thumbWidth = ::thumb_width;
-  if (!thumb_load_raw && thumb_offset && write_thumb == jpeg_thumb)
-     this->thumbType = 1;
-  else if (!thumb_load_raw && thumb_offset && write_thumb == ppm_thumb)
-     this->thumbType = 2;
-  else {
-	 this->thumbType = 0;
-	 this->thumbWidth = ::width;
-	 this->thumbHeight = ::height;
-  }
 
   if( loadData ){
 	  allocData();
 	  use_camera_wb = 1;
 	  shrink = 0;
-	  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname.c_str());
+	  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, filename.c_str());
 	  iheight = height;
 	  iwidth  = width;
 
@@ -9128,7 +9113,7 @@ int RawImage::loadRaw (bool loadData) {
 	  }
 	  fclose(ifp);
 
-	  // Setting the black_point and cblack
+	  // Setting the black and cblack
 	  int i = ::cblack[3];
 	  for (int c=0; c <3; c++)
 		  if (i > ::cblack[c])
@@ -9143,7 +9128,7 @@ int RawImage::loadRaw (bool loadData) {
 			for (int b = 0; b < 3; b++)
 				this->coeff[a][b] = ::rgb_cam[a][b];
 
-	  this->black_point = ::black;
+	  this->black = ::black;
 
 	  // copy pixel raw data: the compressed format earns space
 	  if (this->filters) {
@@ -9294,6 +9279,13 @@ rtengine::Thumbnail* rtengine::Thumbnail::loadQuickFromRaw (const Glib::ustring&
 
 	return tpp;
 }
+
+#define FISRED(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
+#define FISGREEN(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
+#define FISBLUE(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
 rtengine::Thumbnail* rtengine::Thumbnail::loadFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
 
@@ -9594,7 +9586,9 @@ if (settings->verbose) printf ("0: %d, 1: %d, 2: %d, 3: %d, 4: %d, 5: %d All: %d
   
   return tpp;
 }
-
+#undef FISRED
+#undef FISGREEN
+#undef FISBLUE
 
 }
 
