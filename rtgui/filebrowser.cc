@@ -195,7 +195,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
     entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
     entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage()==1);
     entry->getThumbButtonSet()->setButtonListener (this);
-    entry->resize (options.thumbSize);
+    entry->resize (getCurrentThumbSize());
 
     // find place in abc order
     std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
