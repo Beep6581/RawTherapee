@@ -57,7 +57,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     int inW, inH;
 
     bool inTabMode;  // Tab mode has e.g. different preview heights
-    
+    int getCurrentThumbSize();  // depending on filmstrip/file browser mode
+
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
     void buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh);

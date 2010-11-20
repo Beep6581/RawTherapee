@@ -467,7 +467,7 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 
     int newHeight;
     int i=0;
-    int optThumbSize=inTabMode ? options.thumbSizeTab : options.thumbSize;
+    int optThumbSize=getCurrentThumbSize();
     if (zoomIn)
         for (i=0; i<options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
@@ -490,10 +490,13 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
     gdk_window_process_updates (get_window()->gobj(), true);
 #endif    
 }
+
+int ThumbBrowserBase::getCurrentThumbSize() { return inTabMode ? options.thumbSizeTab : options.thumbSize; }
+
 void ThumbBrowserBase::refreshThumbImages () {
 
     for (int i=0; i<fd.size(); i++){
-    	previewHeight = inTabMode ? options.thumbSizeTab : options.thumbSize;
+    	previewHeight = getCurrentThumbSize();
     	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
         fd[i]->refreshThumbnailImage ();  // TODO: This might cause crashes on some installations
     }
@@ -527,7 +530,7 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     
     if (options.thumbSizeTab!=options.thumbSize) {
         for (int i=0; i<fd.size(); i++) 
-            fd[i]->resize (inTabMode ? options.thumbSizeTab : options.thumbSize);
+            fd[i]->resize (getCurrentThumbSize());
     }
 
     redraw ();
