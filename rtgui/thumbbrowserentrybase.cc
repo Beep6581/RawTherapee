@@ -273,7 +273,7 @@ void ThumbBrowserEntryBase::resize (int h) {
         preh -= infoh + textGap;
 
         // If the text size was selected very high in preferences this may go negative
-        if (preh<0) preh=0;
+        if (preh<0) preh=30;
     }
 
     calcThumbnailSize ();
