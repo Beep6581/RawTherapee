@@ -775,4 +775,5 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 
 
 !PREFERENCES_GREENEQUIL;Green equilibration
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !TP_ICM_INPUTNONE;No profile
