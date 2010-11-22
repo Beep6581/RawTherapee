@@ -132,6 +132,7 @@ class Options {
     bool showFileNames;
     bool tabbedUI;
     int previewSizeTab,previewSizeBrowser;
+    int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     
     
                 Options         ();

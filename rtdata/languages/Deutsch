@@ -34,6 +34,7 @@ CURVEEDITOR_TOOLTIPLINEAR;Zurücksetzen der Kurve (linear)
 CURVEEDITOR_TOOLTIPLOAD;Laden einer Kurve
 CURVEEDITOR_TOOLTIPSAVE;Speichern der aktuellen Kurve
 CURVEEDITOR_TYPE;Typ:
+EDITWINDOW_TITLE;Bildbearbeitung
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;Exif Filter
@@ -480,6 +481,7 @@ PREFERENCES_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
+PREFERENCES_MULTITABDUALMON;Multi-Reiter Modus, auf zweitem Monitor wenn verfügbar
 PREFERENCES_OUTDIR;Ausgabe-Verzeichnis
 PREFERENCES_OUTDIRFOLDER;Speichern in Verzeichnis
 PREFERENCES_OUTDIRFOLDERHINT;Ablegen der gespeicherten Bilder in ein ausgewähltes Verzeichnis
