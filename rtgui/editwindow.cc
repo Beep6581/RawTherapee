@@ -19,7 +19,7 @@
 #include <options.h>
 #include <preferences.h>
 #include <cursormanager.h>
-#include <gtk\gtkwidget.h>
+#include <gtk/gtkwidget.h>
 
 static EditWindow* editWnd = NULL;
 
