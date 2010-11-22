@@ -20,6 +20,7 @@
 #include <options.h>
 #include <preferences.h>
 #include <cursormanager.h>
+#include <editwindow.h>
 
 RTWindow::RTWindow () {
 
@@ -118,7 +119,7 @@ RTWindow::RTWindow () {
     add (*mainBox);
     show_all ();
 
-    if(options.tabbedUI)
+    if(options.tabbedUI || EditWindow::isMultiDisplayEnabled())
         epanel->hide_all();
 }
 
@@ -151,50 +152,59 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 }
 
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
+    if (EditWindow::isMultiDisplayEnabled()) {
+        EditWindow * wndEdit = EditWindow::getInstance(this);
+        wndEdit->show_all();
+        wndEdit->addEditorPanel(ep,name);
+    } else {
+        ep->setParent (this);
 
-    ep->setParent (this);
+        // construct closeable tab for the image
+        Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+        hb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FILE, Gtk::ICON_SIZE_MENU)));
+        hb->pack_start (*Gtk::manage (new Gtk::Label (name)));
+        Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
+        closeb->set_image (*Gtk::manage(new Gtk::Image (Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU)));
+        closeb->set_relief (Gtk::RELIEF_NONE);
+        closeb->set_focus_on_click (false);
+        // make the button as small as possible
+        Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
+        style->set_xthickness (0);
+        style->set_ythickness (0);    
 
-    // construct closeable tab for the image
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FILE, Gtk::ICON_SIZE_MENU)));
-    hb->pack_start (*Gtk::manage (new Gtk::Label (name)));
-    Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-    closeb->set_image (*Gtk::manage(new Gtk::Image (Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU)));
-    closeb->set_relief (Gtk::RELIEF_NONE);
-    closeb->set_focus_on_click (false);
-    // make the button as small as possible
-    Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
-    style->set_xthickness (0);
-    style->set_ythickness (0);    
+        closeb->modify_style (style);
+        closeb->signal_clicked().connect( sigc::bind (sigc::mem_fun(*this, &RTWindow::remEditorPanel) , ep));
+        hb->pack_end (*closeb);
+        hb->set_spacing (2);
+        hb->show_all ();
 
-    closeb->modify_style (style);
-    closeb->signal_clicked().connect( sigc::bind (sigc::mem_fun(*this, &RTWindow::remEditorPanel) , ep));
-    hb->pack_end (*closeb);
-    hb->set_spacing (2);
-    hb->show_all ();
+        mainNB->append_page (*ep, *hb);
+        //ep->setAspect ();
+        mainNB->set_current_page (mainNB->page_num (*ep));
+        mainNB->set_tab_reorderable (*ep, true);
 
-    mainNB->append_page (*ep, *hb);
-    //ep->setAspect ();
-    mainNB->set_current_page (mainNB->page_num (*ep));
-    mainNB->set_tab_reorderable (*ep, true);
-
-    epanels[ name ] = ep;
-    filesEdited.insert ( name );
-    fpanel->refreshEditedState (filesEdited);    
+        epanels[ name ] = ep;
+        filesEdited.insert ( name );
+        fpanel->refreshEditedState (filesEdited);
+    }
 }
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
+    if (EditWindow::isMultiDisplayEnabled()) {
+        EditWindow * wndEdit = EditWindow::getInstance(this);
+        wndEdit->remEditorPanel(ep);
+    } else {
+	    //ep->saveOptions ();
+	    epanels.erase (ep->getShortName());
+	    filesEdited.erase (ep->getShortName ());
+	    fpanel->refreshEditedState (filesEdited);
 
-	//ep->saveOptions ();
-	epanels.erase (ep->getFileName());
-	filesEdited.erase (ep->getFileName ());
-	fpanel->refreshEditedState (filesEdited);
+	    mainNB->remove_page (*ep);
 
-	mainNB->remove_page (*ep);
-
-	if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
-		mainNB->set_current_page (mainNB->page_num (*fpanel));
-    // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
+	    if (mainNB->get_current_page () == mainNB->page_num (*bpanel))
+		    mainNB->set_current_page (mainNB->page_num (*fpanel));
+        // TODO: ask what to do: close & apply, close & apply selection, close & revert, cancel
+    }
 }
 
 bool RTWindow::keyPressed (GdkEventKey* event) {
@@ -359,15 +369,15 @@ void RTWindow::MoveFileBrowserToEditor()
 
 bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
 {
-    if(!options.tabbedUI)
+    if(!options.tabbedUI && !EditWindow::isMultiDisplayEnabled())
         MoveFileBrowserToEditor();
-   return  false;  // Gtk::VBox::on_expose_event(event);
+   return false;  // Gtk::VBox::on_expose_event(event);
 }
 
 
 bool RTWindow::on_expose_event_fpanel(GdkEventExpose* event)
 {
-    if(!options.tabbedUI)
+    if(!options.tabbedUI && !EditWindow::isMultiDisplayEnabled())
         MoveFileBrowserToMain();
    return false; // Gtk::HPaned::on_expose_event(event);
 }

@@ -162,18 +162,16 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 
 	if (pc->returnValue() && thm) {
                
-                if (options.tabbedUI){
-                    EditorPanel* epanel = Gtk::manage (new EditorPanel ());
-                    parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
-                    epanel->open(thm, pc->returnValue() );
-                }
-                else{
-                     parent->SetEditorCurrent();
-                     parent->epanel->open(thm, pc->returnValue() );                     
-                }
+        if (options.tabbedUI) {
+            EditorPanel* epanel = Gtk::manage (new EditorPanel ());
+            parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
+            epanel->open(thm, pc->returnValue() );
+        } else {
+            parent->SetEditorCurrent();
+            parent->epanel->open(thm, pc->returnValue() );                     
+        }
 
-
-	}else {
+	} else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
 		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 		msgd.run ();

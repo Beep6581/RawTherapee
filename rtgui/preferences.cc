@@ -330,6 +330,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
     editorLayout->append_text (M("PREFERENCES_MULTITAB"));
+    editorLayout->append_text (M("PREFERENCES_MULTITABDUALMON"));
     editorLayout->set_active (1);
 
     hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
@@ -761,7 +762,9 @@ void Preferences::storePreferences () {
         for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
             moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
 
-    moptions.tabbedUI = (bool)editorLayout->get_active_row_number();
+    int editorMode=editorLayout->get_active_row_number();
+    moptions.tabbedUI = (editorMode>0);
+    moptions.multiDisplayMode = editorMode==2 ? 1:0;
 
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 }
@@ -837,7 +840,11 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
-    editorLayout->set_active(moptions.tabbedUI);
+    if (!moptions.tabbedUI)
+        editorLayout->set_active(0);
+    else 
+        editorLayout->set_active(moptions.multiDisplayMode ? 2 : 1);
+
     darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     updateDFinfos();
 
