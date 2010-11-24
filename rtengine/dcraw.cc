@@ -9488,7 +9488,7 @@ t4.set ();
     tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
     memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
     int radd = 4;
-    int gadd = 2;
+    int gadd = 4;
     int badd = 4;
     if (!filter)
         radd = gadd = badd = 1;
@@ -9505,11 +9505,11 @@ t4.set ();
         }
         for (int j=start; j<end; j++) 
             if (FISGREEN(filter,i,j))
-                tpp->aeHistogram[image[i* ::width+j][1]>>tpp->aeHistCompression]+=gadd;
+                tpp->aeHistogram[CLIP((int)(tpp->camwbGreen*image[i* ::width+j][1]))>>tpp->aeHistCompression]+=gadd;
             else if (FISRED(filter,i,j))
-                tpp->aeHistogram[image[i* ::width+j][0]>>tpp->aeHistCompression]+=radd;
+                tpp->aeHistogram[CLIP((int)(tpp->camwbRed*image[i* ::width+j][0]))>>tpp->aeHistCompression]+=radd;
             else if (FISBLUE(filter,i,j))
-                tpp->aeHistogram[image[i* ::width+j][2]>>tpp->aeHistCompression]+=badd;
+                tpp->aeHistogram[CLIP((int)(tpp->camwbBlue*image[i* ::width+j][2]))>>tpp->aeHistCompression]+=badd;
     }
                 
 t5.set ();
