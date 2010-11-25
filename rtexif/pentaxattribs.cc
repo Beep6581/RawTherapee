@@ -232,6 +232,7 @@ class PAFNumberInterpreter: public Interpreter {
 public:
 	PAFNumberInterpreter () {}
     virtual std::string toString (Tag* t) {
+    	char buffer[32];
         sprintf (buffer, "%0.1f", t->toDouble()/10);
         return buffer;
     }
@@ -389,6 +390,7 @@ public:
         		s << "\n1/3 EV steps";
             return s.str();
         }else {
+        	char buffer[1024];
             t->toString (buffer);
             return std::string (buffer);
         }
@@ -694,6 +696,7 @@ class PAMaxApertureInterpreter: public Interpreter {
     	   int a = t->toInt(0,BYTE);
     	   a &= 0x7F;
     	   if(a>1){
+    		  char buffer[32];
               sprintf (buffer, "%0.1f", pow(2.0, (a-1)/32.0));
               return buffer;
     	   }else
@@ -706,6 +709,7 @@ class PANominalMinMaxApertureInterpreter: public Interpreter {
 public:
 	PANominalMinMaxApertureInterpreter(){}
     virtual std::string toString (Tag* t){
+       char buffer[1024];
  	   int a = t->toInt(0,BYTE);
  	   int mina = a & 0x0F;
  	   int maxa = (a & 0xF0)>>4;
@@ -804,6 +808,7 @@ class PAExternalFlashGNInterpreter: public Interpreter {
 	public:
 	PAExternalFlashGNInterpreter(){}
 	virtual std::string toString (Tag* t) {
+		   char buffer[32];
 	       int b = t->toInt(0,BYTE) & 0x1F;
 	       sprintf (buffer, "%0.0f", pow(2.,b/16.+4) );
 	       return buffer;
@@ -871,10 +876,10 @@ public:
 		if (r!=choices.end())
 			return r->second;
 		else {
+			char buffer[1024];
 			t->toString (buffer);
 			return std::string (buffer);
 		}
-		return buffer;
 	}
 };
 PAFlashOptionInterpreter paFlashOptionInterpreter;
