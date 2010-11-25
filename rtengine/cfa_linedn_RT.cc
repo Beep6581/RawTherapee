@@ -64,7 +64,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	int ex, ey; 
 	int verbose=1;
 	
-	const float clip_pt = 0.8*initialGain;
+	const float clip_pt = 0.8*initialGain* 65535.0;
 	
 	float eps=1e-5;			//tolerance to avoid dividing by zero
 	

@@ -20,7 +20,7 @@
 #define __IMAGEDATA_H__
 
 #include <stdio.h>
-#include <common.h>
+#include <rawimage.h>
 #include <string>
 #include <glibmm.h>
 #include <rtexif.h>
