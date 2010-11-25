@@ -19,7 +19,7 @@
 #include <rawimagesource.h>
 #include <rawimagesource_i.h>
 #include <median.h>
-#include <common.h>
+#include <rawimage.h>
 #include <math.h>
 #include <mytime.h>
 #include <iccmatrices.h>
@@ -731,6 +731,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     int res = ri->loadRaw ();
     if (res)
         return res;
+    ri->compress_image();
     if (plistener) {
         plistener->setProgress (0.8);
     }
@@ -851,11 +852,7 @@ skip_block: ;
 
     wb = ColorTemp (cam_r, cam_g, cam_b);
 
-    // ---------------- preinterpolate
-    if (ri->isBayer() && ri->get_colors() == 3) {
-    	ri->prefilters = ri->filters;
-  		ri->filters &= ~((ri->filters & 0x55555555) << 1);
-  	}
+    ri->set_prefilters();
 
     //Load complete Exif informations
     RawMetaDataLocation rml;
@@ -2469,15 +2466,11 @@ void RawImageSource::vng4_demosaic () {
   free (image);
 }
 
-//#define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-//#define MAX(a,b) ((a) > (b) ? (a) : (b))
-//#define LIM(x,min,max) MAX(min,MIN(x,max))
-//#define CLIP(x) LIM(x,0,65535)
-#undef fc
+
+/*#undef fc
 #define fc(row,col) \
 	(ri->filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-#define FC(x,y) fc(x,y)
+#define FC(x,y) fc(x,y)*/
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 

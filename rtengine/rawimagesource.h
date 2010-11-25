@@ -106,7 +106,7 @@ class RawImageSource : public ImageSource {
         void updateHLRecoveryMap (std::string method, double rm, double gm, double bm);
         void updateHLRecoveryMap_ColorPropagation ();
         void HLRecovery_ColorPropagation (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
-        int  FC(int row, int col){ return (ri->prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3); }
+        unsigned FC(int row, int col){ return ri->FC(row,col); }
     public:
         RawImageSource ();
         ~RawImageSource ();

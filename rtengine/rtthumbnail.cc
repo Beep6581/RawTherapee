@@ -33,6 +33,7 @@
 #include <glib/gstdio.h>
 #include <setjmp.h>
 #include <safekeyfile.h>
+#include <rawimage.h>
 
 extern "C" {
 #include <jpeglib.h>
@@ -194,6 +195,288 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     tpp->init ();
     return tpp;
 }
+
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
+{
+	RawImage *ri= new RawImage(fname);
+	int r = ri->loadRaw(false,false);
+	if( r ) return NULL;
+
+    rml.exifBase = ri->get_exifBase();
+    rml.ciffBase = ri->get_ciffBase();
+    rml.ciffLength = ri->get_ciffLen();
+
+	Thumbnail* tpp = Thumbnail::loadFromMemory(fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),w,h,fixwh);
+
+	if ( tpp == 0 )
+	{
+		printf("DCRAW: failed4\n");
+		return NULL;
+	}
+
+	if (ri->get_rotateDegree() > 0) {
+		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+		delete tpp->thumbImg;
+		tpp->thumbImg = rot;
+	}
+
+	delete ri;
+
+	return tpp;
+}
+
+#define FISRED(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
+#define FISGREEN(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
+#define FISBLUE(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
+
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
+{
+	RawImage *ri= new RawImage (fname);
+	int r = ri->loadRaw();
+	if( r ){
+		delete ri;
+		return NULL;
+	}
+	int width = ri->get_width();
+	int height = ri->get_height();
+	rtengine::Thumbnail* tpp = new rtengine::Thumbnail;
+
+	tpp->isRaw = true;
+	tpp->embProfile = NULL;
+	tpp->embProfileData = NULL;
+	tpp->embProfileLength = ri->get_profileLen();
+	if (ri->get_profileLen())
+		tpp->embProfile = cmsOpenProfileFromMem(ri->get_profile(),
+				ri->get_profileLen()); //\ TODO check if mutex is needed
+
+	tpp->redMultiplier = ri->get_pre_mul(0);
+	tpp->greenMultiplier = ri->get_pre_mul(1);
+	tpp->blueMultiplier = ri->get_pre_mul(2);
+
+	float pre_mul[4], scale_mul[4];
+	int cblack[4];
+
+	ri->scale_colors();
+	ri->pre_interpolate();
+
+	rml.exifBase = ri->get_exifBase();
+	rml.ciffBase = ri->get_ciffBase();
+	rml.ciffLength = ri->get_ciffLen();
+
+	tpp->camwbRed = tpp->redMultiplier / ri->get_pre_mul(0);
+	tpp->camwbGreen = tpp->greenMultiplier / ri->get_pre_mul(1);
+	tpp->camwbBlue = tpp->blueMultiplier / ri->get_pre_mul(2);
+	tpp->defGain= 1.0/ MIN(MIN(ri->get_pre_mul(0),ri->get_pre_mul(1)),ri->get_pre_mul(2));
+	tpp->gammaCorrected = true;
+
+	unsigned filter = ri->get_filters();
+	int firstgreen = 1;
+	// locate first green location in the first row
+	while (!FISGREEN(filter,1,firstgreen))
+		firstgreen++;
+
+	int skip = 1;
+	if (fixwh == 1) // fix height, scale width
+		skip = (ri->get_height() - firstgreen - 1) / h;
+	else
+		skip = (ri->get_width() - firstgreen - 1) / w;
+	if (skip % 2)
+		skip--;
+	if (skip < 1)
+		skip = 1;
+
+	int hskip = skip, vskip = skip;
+	if (!ri->get_model().compare("D1X"))
+		hskip *= 2;
+
+	int ix = 0;
+	int rofs = 0;
+	int tmpw = (width - 2) / hskip;
+	int tmph = (height - 2) / vskip;
+
+	DCraw::dcrawImage_t image = ri->get_image();
+
+	Image16* tmpImg = new Image16(tmpw, tmph);
+	if (ri->isBayer()) {
+		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+			rofs = row * width;
+			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col+= hskip, x++) {
+				int ofs = rofs + col;
+				int g = image[ofs][1];
+				int r, b;
+				if (FISRED(filter,row,col+1)) {
+					r = (image[ofs + 1][0] + image[ofs - 1][0]) >> 1;
+					b = (image[ofs + width][2] + image[ofs - width][2]) >> 1;
+				} else {
+					b = (image[ofs + 1][2] + image[ofs - 1][2]) >> 1;
+					r = (image[ofs + width][0] + image[ofs - width][0]) >> 1;
+				}
+				tmpImg->r[y][x] = r;
+				tmpImg->g[y][x] = g;
+				tmpImg->b[y][x] = b;
+			}
+		}
+	} else {
+		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+			rofs = row * width;
+			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col
+					+= hskip, x++) {
+				int ofs = rofs + col;
+				tmpImg->r[y][x] = image[ofs][0];
+				tmpImg->g[y][x] = image[ofs][1];
+				tmpImg->b[y][x] = image[ofs][2];
+			}
+		}
+	}
+
+	if (ri->get_FujiWidth() != 0) {
+		int fw = ri->get_FujiWidth() / hskip;
+		double step = sqrt(0.5);
+		int wide = fw / step;
+		int high = (tmph - fw) / step;
+		Image16* fImg = new Image16(wide, high);
+		float r, c;
+
+		for (int row = 0; row < high; row++)
+			for (int col = 0; col < wide; col++) {
+				unsigned ur = r = fw + (row - col) * step;
+				unsigned uc = c = (row + col) * step;
+				if (ur > tmph - 2 || uc > tmpw - 2)
+					continue;
+				double fr = r - ur;
+				double fc = c - uc;
+				int oofs = (ur * tmpw + uc) * 3;
+				int fofs = (row * wide + col) * 3;
+				fImg->r[row][col] = (tmpImg->r[ur][uc] * (1 - fc)
+						+ tmpImg->r[ur][uc + 1] * fc) * (1 - fr)
+						+ (tmpImg->r[ur + 1][uc] * (1 - fc)
+								+ tmpImg->r[ur + 1][uc + 1] * fc) * fr;
+				fImg->g[row][col] = (tmpImg->g[ur][uc] * (1 - fc)
+						+ tmpImg->g[ur][uc + 1] * fc) * (1 - fr)
+						+ (tmpImg->g[ur + 1][uc] * (1 - fc)
+								+ tmpImg->g[ur + 1][uc + 1] * fc) * fr;
+				fImg->b[row][col] = (tmpImg->b[ur][uc] * (1 - fc)
+						+ tmpImg->b[ur][uc + 1] * fc) * (1 - fr)
+						+ (tmpImg->b[ur + 1][uc] * (1 - fc)
+								+ tmpImg->b[ur + 1][uc + 1] * fc) * fr;
+			}
+		delete tmpImg;
+		tmpImg = fImg;
+	}
+
+	if (fixwh == 1) // fix height, scale width
+		w = tmpw * h / tmph;
+	else
+		h = tmph * w / tmpw;
+
+	tpp->thumbImg = tmpImg->resize(w, h, TI_Bilinear);
+	delete tmpImg;
+
+	if (ri->get_FujiWidth() != 0)
+		tpp->scale = (double) (height - ri->get_FujiWidth()) / sqrt(0.5) / h;
+	else
+		tpp->scale = (double) height / h;
+
+	// generate histogram for auto exposure
+	tpp->aeHistCompression = 3;
+	tpp->aeHistogram = new unsigned int[65536 >> tpp->aeHistCompression];
+	memset(tpp->aeHistogram, 0, (65536 >> tpp->aeHistCompression) * sizeof(int));
+	int radd = 4;
+	int gadd = 2;
+	int badd = 4;
+	if (!filter)
+		radd = gadd = badd = 1;
+	for (int i = 8; i < height - 8; i++) {
+		int start, end;
+		if (ri->get_FujiWidth() != 0) {
+			int fw = ri->get_FujiWidth();
+			start = ABS(fw-i) + 8;
+			end = MIN( height + width-fw-i, fw+i) - 8;
+		} else {
+			start = 8;
+			end = width - 8;
+		}
+		for (int j = start; j < end; j++)
+			if (FISGREEN(filter,i,j))
+				tpp->aeHistogram[image[i * width + j][1] >> tpp->aeHistCompression] += gadd;
+			else if (FISRED(filter,i,j))
+				tpp->aeHistogram[image[i * width + j][0] >> tpp->aeHistCompression] += radd;
+			else if (FISBLUE(filter,i,j))
+				tpp->aeHistogram[image[i * width + j][2] >> tpp->aeHistCompression] += badd;
+	}
+
+	// generate autoWB
+	double avg_r = 0;
+	double avg_g = 0;
+	double avg_b = 0;
+	int rn = 0, gn = 0, bn = 0;
+
+	for (int i = 32; i < height - 32; i++) {
+		int start, end;
+		if (ri->get_FujiWidth() != 0) {
+			int fw = ri->get_FujiWidth();
+			start = ABS(fw-i) + 32;
+			end = MIN( height + width-fw-i, fw+i) - 32;
+		} else {
+			start = 32;
+			end = width - 32;
+		}
+		for (int j = start; j < end; j++) {
+			if (FISGREEN(filter,i,j)) {
+				double d = tpp->defGain * image[i * width + j][1];
+				if (d > 64000)
+					continue;
+				avg_g += d;
+				gn++;
+			}
+			if (FISRED(filter,i,j)) {
+				double d = tpp->defGain * image[i * width + j][0];
+				if (d > 64000)
+					continue;
+				avg_r += d;
+				rn++;
+			}
+			if (FISBLUE(filter,i,j)) {
+				double d = tpp->defGain * image[i * width + j][2];
+				if (d > 64000)
+					continue;
+				avg_b += d;
+				bn++;
+			}
+		}
+	}
+
+	double reds = avg_r / rn * tpp->camwbRed;
+	double greens = avg_g / gn * tpp->camwbGreen;
+	double blues = avg_b / bn * tpp->camwbBlue;
+
+	double rm = ri->get_rgb_cam(0, 0) * reds + ri->get_rgb_cam(0, 1) * greens + ri->get_rgb_cam(0, 2) * blues;
+	double gm = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
+	double bm = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
+
+	ColorTemp::mul2temp(rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
+
+	if (ri->get_rotateDegree() > 0) {
+		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+		delete tpp->thumbImg;
+		tpp->thumbImg = rot;
+	}
+
+	for (int a = 0; a < 3; a++)
+		for (int b = 0; b < 3; b++)
+			tpp->colorMatrix[a][b] = ri->get_rgb_cam(a, b);
+
+	tpp->init();
+	delete ri;
+	return tpp;
+}
+#undef FISRED
+#undef FISGREEN
+#undef FISBLUE
+
 
 void Thumbnail::init () {
 

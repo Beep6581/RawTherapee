@@ -21,7 +21,7 @@
 #include <giomm.h>
 #include <guiutils.h>
 #include <safegtk.h>
-#include <common.h>
+#include <rawimage.h>
 #include <sstream>
 #include <stdio.h>
 
@@ -117,6 +117,7 @@ void dfInfo::updateRawImage()
 			delete ri;
 			ri=NULL;
 		}else{
+			ri->compress_image();
             int rSize = W*(ri->isBayer()?1:3);
 			acc_t **acc = new acc_t*[H];
 			for( int row=0; row<H;row++)
@@ -131,6 +132,7 @@ void dfInfo::updateRawImage()
 			for( iName++; iName != pathNames.end(); iName++){
 				RawImage* temp = new RawImage(*iName);
 				if( !temp->loadRaw(true)){
+					temp->compress_image();		//\ TODO would be better working on original, because is temporary
 					nFiles++;
 					if( ri->isBayer() ){
 						for( int row=0; row<H;row++){
@@ -161,7 +163,8 @@ void dfInfo::updateRawImage()
 		if( ri->loadRaw(true)){
 			delete ri;
 			ri=NULL;
-		}
+		}else
+			ri->compress_image();
 	}
 }
 
