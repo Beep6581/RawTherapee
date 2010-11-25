@@ -204,8 +204,6 @@ class ExifManager {
 };
 
 class Interpreter {
-    protected:
-        char buffer[1024];
     public:
         Interpreter () {}
         virtual std::string toString (Tag* t) { return ""; }
@@ -216,6 +214,7 @@ class StdInterpreter : public Interpreter {
     public:
         StdInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[1024];
             t->toString (buffer);
             std::string s(buffer);
             std::string::size_type p1 = s.find_first_not_of(' ');
@@ -242,6 +241,7 @@ class ChoiceInterpreter : public Interpreter {
             if (r!=choices.end())
                 return r->second;
             else {
+            	char buffer[1024];
                 t->toString (buffer);
                 return std::string (buffer);
             }
