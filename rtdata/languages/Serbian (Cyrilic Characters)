@@ -775,5 +775,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!EDITWINDOW_TITLE;Image Edit
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !TP_ICM_INPUTNONE;No profile
