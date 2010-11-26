@@ -34,6 +34,7 @@
 #include <lumadenoise.h>
 #include <colordenoise.h>
 #include <impulsedenoise.h>
+#include <defringe.h>
 #include <dirpyrdenoise.h>
 #include <sharpening.h>
 #include <labcurve.h>
@@ -90,6 +91,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
+	Defringe* defringe;
 	ImpulseDenoise* impulsedenoise;
 	DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;

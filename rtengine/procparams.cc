@@ -103,6 +103,10 @@ void ProcParams::setDefaults () {
 	
 	impulseDenoise.enabled      = false;
 	impulseDenoise.thresh		= 50;
+	
+	defringe.enabled			= false;
+    defringe.radius				= 2.0;
+    defringe.threshold			= 25;
 
 	dirpyrDenoise.enabled       = false;
     dirpyrDenoise.luma          = 10;
@@ -286,6 +290,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Impulse Denoising", "Enabled",        impulseDenoise.enabled);
 	keyFile.set_integer ("Impulse Denoising", "Threshold",        impulseDenoise.thresh);
 
+	// save defringe
+    keyFile.set_boolean ("Defringing", "Enabled",        defringe.enabled);
+    keyFile.set_double  ("Defringing", "Radius",         defringe.radius);
+    keyFile.set_integer ("Defringing", "Threshold",		defringe.threshold);
 	
 	// save dirpyrDenoise
     keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
@@ -550,6 +558,13 @@ if (keyFile.has_group ("White Balance")) {
 if (keyFile.has_group ("Color Shift")) {    
     if (keyFile.has_key ("Color Shift", "ChannelA")) colorShift.a = keyFile.get_double ("Color Shift", "ChannelA");
     if (keyFile.has_key ("Color Shift", "ChannelB")) colorShift.b = keyFile.get_double ("Color Shift", "ChannelB");
+}
+		
+// load defringe
+if (keyFile.has_group ("Defringing")) {    
+	if (keyFile.has_key ("Defringing", "Enabled"))        defringe.enabled       = keyFile.get_boolean ("Defringing", "Enabled");
+	if (keyFile.has_key ("Defringing", "Radius"))         defringe.radius        = keyFile.get_double  ("Defringing", "Radius");
+	if (keyFile.has_key ("Defringing", "Threshold"))  defringe.threshold = keyFile.get_integer ("Defringing", "Threshold");
 }
 		
 	// load impulseDenoise
@@ -853,6 +868,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
 	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 	&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
+	&& defringe.enabled      == other.defringe.enabled
+	&& defringe.radius       == other.defringe.radius
+	&& defringe.threshold == other.defringe.threshold
         && lumaDenoise.enabled      == other.lumaDenoise.enabled
         && lumaDenoise.radius       == other.lumaDenoise.radius
         && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance

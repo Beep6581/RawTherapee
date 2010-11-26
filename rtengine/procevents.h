@@ -126,7 +126,10 @@ enum ProcEvent {
 	EvHSVEqualizerS=101,
 	EvHSVEqualizerV=102,
 	EvHSVEqEnabled=103,
-    NUMOFEVENTS=104
+	EvDefringeEnabled=104,
+	EvDefringeRadius=105,
+	EvDefringeThreshold=106,
+    NUMOFEVENTS=107
 	};
 }    
 #endif    

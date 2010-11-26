@@ -31,6 +31,7 @@
 #define LUMINANCECURVE 6
 #define SHARPENING     2
 #define IMPULSEDENOISE 2
+#define DEFRINGE       2
 #define LUMADENOISE    2
 #define WHITEBALANCE   255
 #define DEMOSAIC       511

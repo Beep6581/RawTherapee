@@ -159,6 +159,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
 	
   	ipf.impulsedenoise (labView);
+	ipf.defringe (labView);
 	ipf.lumadenoise (labView, buffer);
     ipf.sharpening (labView, (unsigned short**)buffer);
 

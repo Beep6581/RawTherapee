@@ -124,5 +124,8 @@ RGBCURVE, //    EvHSVEqualizerH,
 RGBCURVE, //    EvHSVEqualizerS,
 RGBCURVE, //    EvHSVEqualizerV,
 RGBCURVE, //    EvHSVEqEnabled,
+DEFRINGE, //    EvDefringeEnabled,
+DEFRINGE, //    EvDefringeRadius,
+DEFRINGE, //    EvDefringeThreshold,
 };
 

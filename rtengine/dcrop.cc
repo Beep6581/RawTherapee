@@ -180,6 +180,7 @@ void Crop::update (int todo, bool internal) {
 
         if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
+			parent->ipf.defringe (labnCrop);
             parent->ipf.lumadenoise (labnCrop, cbuffer);
             parent->ipf.colordenoise (labnCrop, cbuffer);
 			parent->ipf.dirpyrdenoise (labnCrop);
