@@ -37,6 +37,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
 	impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
+	defringe			= Gtk::manage (new Defringe ());
 	dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
     lcurve              = Gtk::manage (new LCurve ());
@@ -76,6 +77,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
 	addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
+	addPanel (detailsPanel, defringe,			M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);
 	addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
     addPanel (detailsPanel, equalizer,          M("TP_EQUALIZER_LABEL"));      toolPanels.push_back (equalizer);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);

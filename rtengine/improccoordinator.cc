@@ -199,6 +199,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
             ipf.impulsedenoise (nprevl);
         }
+		if (scale==1) {
+			progress ("Defringing...",100*readyphase/numofphases);
+            ipf.defringe (nprevl);
+		}
         if (scale==1) {
             progress ("Denoising luminance...",100*readyphase/numofphases);
             ipf.lumadenoise (nprevl, buffer);

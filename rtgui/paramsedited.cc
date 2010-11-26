@@ -72,6 +72,9 @@ void ParamsEdited::set (bool v) {
         lumaDenoise.edgetolerance = v;
         colorDenoise.enabled      = v;
         colorDenoise.amount       = v;
+	defringe.enabled      = v;
+	defringe.radius       = v;
+	defringe.threshold = v;
 	impulseDenoise.enabled      = v;
 	impulseDenoise.thresh      = v;
 	dirpyrDenoise.enabled      = v;
@@ -210,6 +213,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         lumaDenoise.edgetolerance = lumaDenoise.edgetolerance && p.lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance;
         colorDenoise.enabled = colorDenoise.enabled && p.colorDenoise.enabled == other.colorDenoise.enabled;
         colorDenoise.amount = colorDenoise.amount && p.colorDenoise.amount == other.colorDenoise.amount;
+		defringe.enabled = defringe.enabled && p.defringe.enabled == other.defringe.enabled;
+        defringe.radius = defringe.radius && p.defringe.radius == other.defringe.radius;
+        defringe.threshold = defringe.threshold && p.defringe.threshold == other.defringe.threshold;
 		
 		impulseDenoise.enabled = impulseDenoise.enabled && p.impulseDenoise.enabled == other.impulseDenoise.enabled;
 		impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
@@ -349,6 +355,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
 	if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
 	if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
+	
+	if (defringe.enabled)					toEdit.defringe.enabled 	= mods.defringe.enabled;
+	if (defringe.radius)					toEdit.defringe.radius 	= mods.defringe.radius;	
+	if (defringe.threshold)					toEdit.defringe.threshold 	= mods.defringe.threshold;
 	
 	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
