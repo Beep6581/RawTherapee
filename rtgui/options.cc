@@ -121,6 +121,10 @@ void Options::setDefaults () {
     overlayedFileNames = true;
     showFileNames = true;
     tabbedUI = false;
+    multiDisplayMode = 0;
+
+    cutOverlayBrush = std::vector<double> (4);
+    cutOverlayBrush[3] = 0.667;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -269,7 +273,9 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "FrameColor"))          bgcolor           = keyFile.get_integer ("GUI", "FrameColor");
     if (keyFile.has_key ("GUI", "ProcessingQueueEnbled"))procQueueEnabled = keyFile.get_boolean ("GUI", "ProcessingQueueEnbled");
     if (keyFile.has_key ("GUI", "ToolPanelsExpanded"))  tpOpen            = keyFile.get_integer_list ("GUI", "ToolPanelsExpanded");
+    if (keyFile.has_key ("GUI", "MultiDisplayMode"))    multiDisplayMode  = keyFile.get_integer ("GUI", "MultiDisplayMode");
     //if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
+    if (keyFile.has_key ("GUI", "CutOverlayBrush"))     cutOverlayBrush   = keyFile.get_double_list ("GUI", "CutOverlayBrush");
 }
 
 
@@ -400,6 +406,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "ProcessingQueueEnbled", procQueueEnabled);
     Glib::ArrayHandle<int> tpopen = tpOpen;
     keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
+    keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
+    keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
+
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
@@ -460,7 +469,7 @@ void Options::load () {
 	// out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have 
 	// 'French (CA)' unless there is a file 'French'.
 
-    	Glib::ustring defaultTranslation = argv0 + "/languages/default";
+    Glib::ustring defaultTranslation = argv0 + "/languages/default";
 	Glib::ustring languageTranslation = "";
 	Glib::ustring localeTranslation = "";
 

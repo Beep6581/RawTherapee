@@ -109,6 +109,14 @@ class ColorDenoiseParamsEdited {
         bool amount;
 };
 
+class DefringeParamsEdited {
+	
+public:
+	bool enabled;
+	bool radius;
+	bool threshold;
+};
+
 class ImpulseDenoiseParamsEdited {
 	
 public:
@@ -304,8 +312,9 @@ class ParamsEdited {
         LumaDenoiseParamsEdited       lumaDenoise;    
         ColorDenoiseParamsEdited      colorDenoise; 
 	
+	DefringeParamsEdited			defringe;    
 	DirPyrDenoiseParamsEdited       dirpyrDenoise;    
-	ImpulseDenoiseParamsEdited       impulseDenoise;    
+	ImpulseDenoiseParamsEdited		impulseDenoise;    
 
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           

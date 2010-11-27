@@ -549,8 +549,8 @@ int CLASS canon_s2is()
  */
 unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 {
-//  static unsigned bitbuf=0;
-//  static int vbits=0, reset=0;
+/*RT static unsigned bitbuf=0; */
+/*RT static int vbits=0, reset=0; */
   unsigned c;
 
   if (nbits == -1)
@@ -1297,7 +1297,7 @@ void CLASS fuji_load_raw()
   free (pixel);
 }
 
-//void CLASS jpeg_thumb();
+/*RT  void CLASS jpeg_thumb(); */
 
 void CLASS ppm_thumb()
 {
@@ -1574,8 +1574,8 @@ void CLASS phase_one_load_raw()
 
 unsigned CLASS ph1_bithuff_t::operator() (int nbits, ushort *huff)
 {
-//  static UINT64 bitbuf=0;
-//  static int vbits=0;
+/*RT  static UINT64 bitbuf=0; */
+/*RT  static int vbits=0; */
   unsigned c;
 
   if (nbits == -1)
@@ -1701,7 +1701,7 @@ void CLASS leaf_hdr_load_raw()
   }
 }
 
-//void CLASS unpacked_load_raw();
+/*RT void CLASS unpacked_load_raw(); */
 
 void CLASS sinar_4shot_load_raw()
 {
@@ -1839,8 +1839,8 @@ void CLASS nokia_load_raw()
 
 unsigned CLASS pana_bits_t::operator() (int nbits)
 {
-//  static uchar buf[0x4000];
-//  static int vbits;
+/*RT  static uchar buf[0x4000]; */
+/*RT  static int vbits;*/
   int byte;
 
   if (!nbits) return vbits=0;
@@ -2129,11 +2129,11 @@ void CLASS kodak_jpeg_load_raw() {}
 METHODDEF(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
-  static uchar jpeg_buffer[4096];
+/*RT  static uchar jpeg_buffer[4096]; */
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
-  swab (jpeg_buffer, jpeg_buffer, nbytes);
+  swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
   cinfo->src->next_input_byte = jpeg_buffer;
   cinfo->src->bytes_in_buffer = nbytes;
   return TRUE;
@@ -2407,7 +2407,7 @@ void CLASS kodak_thumb_load_raw()
 
 void CLASS sony_decrypt_t::operator()(unsigned *data, int len, int start, int key)
 {
-//  static unsigned pad[128], p;
+/*RT  static unsigned pad[128], p;*/
 
   if (start) {
     for (p=0; p < 4; p++)
@@ -2654,7 +2654,7 @@ void CLASS smal_v9_load_raw()
 
 void CLASS foveon_decoder (unsigned size, unsigned code)
 {
-  //static unsigned huff[1024];
+/*RT  static unsigned huff[1024];*/
   struct decode *cur;
   int i, len;
 
@@ -4338,7 +4338,7 @@ void CLASS parse_thumb_note (int base, unsigned toff, unsigned tlen)
   }
 }
 
-//int CLASS parse_tiff_ifd (int base);
+/*RT int CLASS parse_tiff_ifd (int base);*/
 
 void CLASS parse_makernote (int base, int uptag)
 {
@@ -4463,7 +4463,7 @@ void CLASS parse_makernote (int base, int uptag)
     }
     if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
       fread (buf97, 1, sizeof buf97, ifp);
-      i = (uchar *) memmem ( (char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
+      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
       if (i < 70 && buf97[i] < 3)
 	flip = "065"[buf97[i]]-'0';
     }
@@ -4832,8 +4832,8 @@ void CLASS parse_kodak_ifd (int base)
   }
 }
 
-//void CLASS parse_minolta (int base);
-//int CLASS parse_tiff (int base);
+/*RT void CLASS parse_minolta (int base); */
+/*RT int CLASS parse_tiff (int base);*/
 
 int CLASS parse_tiff_ifd (int base)
 {
@@ -5296,7 +5296,7 @@ int CLASS parse_tiff (int base)
 {
   int doff;
 
-  /*RT*/ if( exif_base ==-1 ) exif_base = base;
+  /*RT*/  if (exif_base == -1) exif_base = base;
 
   fseek (ifp, base, SEEK_SET);
   order = get2();
@@ -5839,11 +5839,11 @@ int CLASS parse_jpeg (int offset)
     order = get2();
     hlen  = get4();
     if (get4() == 0x48454150)		/* "HEAP" */
-    /*RT*/    {
-    /*RT*/      ciff_base = save+hlen;
-    /*RT*/      ciff_len = len-hlen;
-      parse_ciff (save+hlen, len-hlen);
-    /*RT*/    }
+/*RT*/    {
+/*RT*/      ciff_base = save+hlen;
+/*RT*/      ciff_len = len-hlen;
+        parse_ciff (save+hlen, len-hlen);
+/*RT*/    }
     if (parse_tiff (save+6)) apply_tiff();
     fseek (ifp, save+len, SEEK_SET);
   }
@@ -6877,8 +6877,8 @@ void CLASS identify()
   } else if (order == 0x4949 || order == 0x4d4d) {
     if (!memcmp (head+6,"HEAPCCDR",8)) {
       data_offset = hlen;
-      /*RT*/      ciff_base = hlen;
-      /*RT*/      ciff_len = fsize - hlen;
+/*RT*/      ciff_base = hlen;
+/*RT*/      ciff_len = fsize - hlen;
       parse_ciff (hlen, flen - hlen);
     } else if (parse_tiff(0)) apply_tiff();
   } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
@@ -8598,7 +8598,7 @@ void CLASS write_ppm_tiff()
   free (ppm);
 }
 
-int CLASS main (int argc, const char **argv)
+/*int CLASS main (int argc, const char **argv)
 {
   int arg, status=0;
   int timestamp_only=0, thumbnail_only=0, identify_only=0;
@@ -8711,7 +8711,7 @@ int CLASS main (int argc, const char **argv)
       case 'i':  identify_only     = 1;  break;
       case 'c':  write_to_stdout   = 1;  break;
       case 'v':  verbose           = 1;  break;
-      case 'h':  half_size         = 1;		/* "-h" implies "-f" */
+      case 'h':  half_size         = 1;		// "-h" implies "-f"
       case 'f':  four_color_rgb    = 1;  break;
       case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
       case 'a':  use_auto_wb       = 1;  break;
@@ -8755,13 +8755,13 @@ int CLASS main (int argc, const char **argv)
     meta_data = ofname = 0;
     ofp = stdout;
     if (setjmp (failure)) {
-      //if (fileno(ifp) > 2) fclose(ifp);
-      //if (fileno(ofp) > 2) fclose(ofp);
+      if (fileno(ifp) > 2) fclose(ifp);
+      if (fileno(ofp) > 2) fclose(ofp);
       status = 1;
       goto cleanup;
     }
     ifname = argv[arg];
-    if (!(ifp = fopen (ifname))) {
+    if (!(ifp = fopen (ifname, "rb"))) {
       perror (ifname);
       continue;
     }
@@ -8892,7 +8892,7 @@ next:
       fprintf (stderr,_("%s: \"-s %d\" requests a nonexistent image!\n"),
 	ifname, shot_select);
     fseeko (ifp, data_offset, SEEK_SET);
-    (  this->*load_raw)();
+    (*load_raw)();
     if (zero_is_bad) remove_zeroes();
     bad_pixels (bpfile);
     if (dark_frame) subtract (dark_frame);
@@ -8960,7 +8960,7 @@ thumbnail:
     }
     if (verbose)
       fprintf (stderr,_("Writing data to %s ...\n"), ofname);
-    (this->*write_fun)();
+    (*write_fun)();
     fclose(ifp);
     if (ofp != stdout) fclose(ofp);
 cleanup:
@@ -8975,3 +8975,4 @@ cleanup:
   }
   return status;
 }
+*/

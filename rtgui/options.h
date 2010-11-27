@@ -132,9 +132,10 @@ class Options {
     bool showFileNames;
     bool tabbedUI;
     int previewSizeTab,previewSizeBrowser;
+    int multiDisplayMode;  // 0=none, 1=Edit panels on other display
+    std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     
-    
-                Options         ();
+    Options ();
 
     Options*    copyFrom        (Options* other);
     void        setDefaults     ();

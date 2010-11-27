@@ -543,6 +543,13 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 );
 	}
 	
+	void ImProcFunctions::defringe (LabImage* lab) {
+		
+		if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
+			
+			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold, false /*edges only*/ );
+	}
+	
 	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
 		
 		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
@@ -634,7 +641,7 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
 	awg = CurveFactory::igamma2 ((float)(awg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
 
 	bl = (int)((65535*bl)/awg);
-    br = log(65535.0 / (awg)) / log(2.0);   
+    br = log(65535.0 / (awg)) / log(2.0);
     if (br<0)
         br = 0;
 }

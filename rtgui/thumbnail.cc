@@ -99,7 +99,7 @@ void Thumbnail::_generateThumbnailImage () {
 		//  2. if we don't find that then just grab the real image.
 		bool quick = false;
 		rtengine::RawMetaDataLocation ri;
-		if ( initial_ )
+		if ( initial_ && options.internalThumbIfUntouched)
 		{
 			quick = true;
 			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1);

@@ -675,6 +675,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_NURBS;Control cage
+!EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
@@ -735,7 +736,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET

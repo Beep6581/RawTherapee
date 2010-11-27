@@ -109,6 +109,9 @@ class ImProcFunctions {
 	void dirpyr_channel(unsigned short ** data_fine, unsigned short ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  );
 	void idirpyr_eq_channel(unsigned short ** data_coarse, unsigned short ** data_fine, int ** buffer, int width, int height, int level, const double * mult );
 	
+	void defringe (LabImage* lab);
+	void PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh, bool edges);  
+	
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 
