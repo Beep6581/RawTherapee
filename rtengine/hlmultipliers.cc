@@ -248,9 +248,9 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
     for (int i=32; i<H-32; i++) {
         interpolate_row_rb (red, blue, green[i-1], green[i], green[i+1], i);
         for (int j=32; j<W-32; j++) {
-            if ((ISRED(ri,i,j) || !ri->filters) && red[j] > maxr) maxr = red[j];
-            if ((ISGREEN(ri,i,j) || !ri->filters) && green[i][j] > maxg) maxg = green[i][j];
-            if ((ISBLUE(ri,i,j) || !ri->filters) && blue[j] > maxb) maxb = blue[j];
+            if ((ri->ISRED(i,j)   || !ri->isBayer()) && red[j] > maxr) maxr = red[j];
+            if ((ri->ISGREEN(i,j) || !ri->isBayer()) && green[i][j] > maxg) maxg = green[i][j];
+            if ((ri->ISBLUE(i,j)  || !ri->isBayer()) && blue[j] > maxb) maxb = blue[j];
 		}
     }
     delete [] red;

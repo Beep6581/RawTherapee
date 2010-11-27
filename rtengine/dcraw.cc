@@ -6,9 +6,6 @@
 /*RT*/#define NO_JPEG
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
-/*RT*/#include <rtthumbnail.h>
-
-#include "myfile.h"
 
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
@@ -58,9 +55,7 @@
    NO_LCMS disables the "-p" option.
  */
 #ifndef NO_JPEG
-/*RT*/extern "C" {
-/*RT*/#include <jpeglib.h>
-/*RT*/}
+#include <jpeglib.h>
 #endif
 #ifndef NO_LCMS
 #include <lcms.h>
@@ -110,89 +105,65 @@ typedef unsigned long long UINT64;
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 
-// RT specify thread local storage
-#ifdef __GNUC__
-#define THREAD_LOCAL static __thread
-#define THREAD_LOCK  
-#else
-#define THREAD_LOCAL static
-#define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
-#endif
-
-// patch for gcc<=4.2 on OSX
-#ifdef __APPLE__
-#define GCC_VERSION (__GNUC__ * 10000 \
-                               + __GNUC_MINOR__ * 100 \
-                               + __GNUC_PATCHLEVEL__)
-#if GCC_VERSION < 40300
-#undef THREAD_LOCAL
-#undef THREAD_LOCK
-#define THREAD_LOCAL static 
-#define THREAD_LOCK  Glib::Mutex::Lock locker(*dcrMutex);
-#endif
-#endif
-
-
+#include "dcraw.h"
 /*
    All global variables are defined here, and all functions that
    access them are prefixed with "CLASS".  Note that a thread-safe
    C++ class cannot have non-const static local variables.
- */
-/*RT*/THREAD_LOCAL int ciff_base, ciff_len, exif_base, pre_filters;
-/*RT*/THREAD_LOCAL IMFILE *ifp;
-THREAD_LOCAL FILE * ofp;
-THREAD_LOCAL short order;
-THREAD_LOCAL const char *ifname;
-THREAD_LOCAL char *meta_data;
-THREAD_LOCAL char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
-THREAD_LOCAL float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
-THREAD_LOCAL time_t timestamp;
-THREAD_LOCAL unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id;
-THREAD_LOCAL off_t    strip_offset, data_offset;
-THREAD_LOCAL off_t    thumb_offset, meta_offset, profile_offset;
-THREAD_LOCAL unsigned thumb_length, meta_length, profile_length;
-THREAD_LOCAL unsigned thumb_misc, *oprof, fuji_layout, shot_select=0, multi_out=0;
-THREAD_LOCAL unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
-THREAD_LOCAL unsigned black, cblack[8], maximum, mix_green, raw_color, zero_is_bad;
-THREAD_LOCAL unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
-THREAD_LOCAL unsigned tile_width, tile_length, gpsdata[32], load_flags;
-THREAD_LOCAL ushort raw_height, raw_width, height, width, top_margin, left_margin;
-THREAD_LOCAL ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
-THREAD_LOCAL int flip, tiff_flip, colors;
-THREAD_LOCAL double pixel_aspect, aber[4]={1,1,1,1}, gamm[6]={ 0.45,4.5,0,0,0,0 };
-THREAD_LOCAL ushort (*image)[4], white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
-THREAD_LOCAL float bright=1, user_mul[4]={0,0,0,0}, threshold=0;
-THREAD_LOCAL int half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
-THREAD_LOCAL int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
-THREAD_LOCAL int output_color=1, output_bps=8, output_tiff=0, med_passes=0;
-THREAD_LOCAL int no_auto_bright=0;
-THREAD_LOCAL unsigned greybox[4] = { 0, 0, UINT_MAX, UINT_MAX };
-THREAD_LOCAL float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
-static const double xyz_rgb[3][3] = {			/* XYZ from RGB */
+
+FILE *ifp, *ofp;
+short order;
+const char *ifname;
+char *meta_data;
+char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
+float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
+time_t timestamp;
+unsigned shot_order, kodak_cbpp, filters, exif_cfa, unique_id;
+off_t    strip_offset, data_offset;
+off_t    thumb_offset, meta_offset, profile_offset;
+unsigned thumb_length, meta_length, profile_length;
+unsigned thumb_misc, *oprof, fuji_layout, shot_select=0, multi_out=0;
+unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
+unsigned black, cblack[8], maximum, mix_green, raw_color, zero_is_bad;
+unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
+unsigned tile_width, tile_length, gpsdata[32], load_flags;
+ushort raw_height, raw_width, height, width, top_margin, left_margin;
+ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
+int flip, tiff_flip, colors;
+double pixel_aspect, aber[4]={1,1,1,1}, gamm[6]={ 0.45,4.5,0,0,0,0 };
+ushort (*image)[4], white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
+float bright=1, user_mul[4]={0,0,0,0}, threshold=0;
+int half_size=0, four_color_rgb=0, document_mode=0, highlight=0;
+int verbose=0, use_auto_wb=0, use_camera_wb=0, use_camera_matrix=-1;
+int output_color=1, output_bps=8, output_tiff=0, med_passes=0;
+int no_auto_bright=0;
+unsigned greybox[4] = { 0, 0, UINT_MAX, UINT_MAX };
+float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];*/
+const double xyz_rgb[3][3] = {			// XYZ from RGB
   { 0.412453, 0.357580, 0.180423 },
   { 0.212671, 0.715160, 0.072169 },
   { 0.019334, 0.119193, 0.950227 } };
-static const float d65_white[3] = { 0.950456, 1, 1.088754 };
-THREAD_LOCAL int histogram[4][0x2000];
-THREAD_LOCAL void (*write_thumb)(), (*write_fun)();
-THREAD_LOCAL void (*load_raw)(), (*thumb_load_raw)();
-THREAD_LOCAL jmp_buf failure;
+const float d65_white[3] = { 0.950456, 1, 1.088754 };
+/*int histogram[4][0x2000];
+void (*write_thumb)(), (*write_fun)();
+void (*load_raw)(), (*thumb_load_raw)();
+jmp_buf failure;
 
-THREAD_LOCAL struct decode {
+struct decode {
   struct decode *branch[2];
   int leaf;
 } first_decode[2048], *second_decode, *free_decode;
 
-THREAD_LOCAL struct tiff_ifd {
+struct tiff_ifd {
   int width, height, bps, comp, phint, offset, flip, samples, bytes;
 } tiff_ifd[10];
 
-THREAD_LOCAL struct ph1 {
+struct ph1 {
   int format, key_off, black, black_off, split_col, tag_21a;
   float tag_210;
 } ph1;
-
-#define CLASS
+*/
+#define CLASS DCraw::
 
 #define FORC(cnt) for (c=0; c < cnt; c++)
 #define FORC3 FORC(3)
@@ -576,10 +547,10 @@ int CLASS canon_s2is()
    getbits(-1) initializes the buffer
    getbits(n) where 0 <= n <= 25 returns an n-bit integer
  */
-unsigned CLASS getbithuff (int nbits, ushort *huff)
+unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
 {
-  THREAD_LOCAL unsigned bitbuf=0;
-  THREAD_LOCAL int vbits=0, reset=0;
+/*RT static unsigned bitbuf=0; */
+/*RT static int vbits=0, reset=0; */
   unsigned c;
 
   if (nbits == -1)
@@ -1326,7 +1297,7 @@ void CLASS fuji_load_raw()
   free (pixel);
 }
 
-void CLASS jpeg_thumb();
+/*RT  void CLASS jpeg_thumb(); */
 
 void CLASS ppm_thumb()
 {
@@ -1601,10 +1572,10 @@ void CLASS phase_one_load_raw()
   phase_one_correct();
 }
 
-unsigned CLASS ph1_bithuff (int nbits, ushort *huff)
+unsigned CLASS ph1_bithuff_t::operator() (int nbits, ushort *huff)
 {
-  THREAD_LOCAL UINT64 bitbuf=0;
-  THREAD_LOCAL int vbits=0;
+/*RT  static UINT64 bitbuf=0; */
+/*RT  static int vbits=0; */
   unsigned c;
 
   if (nbits == -1)
@@ -1730,7 +1701,7 @@ void CLASS leaf_hdr_load_raw()
   }
 }
 
-void CLASS unpacked_load_raw();
+/*RT void CLASS unpacked_load_raw(); */
 
 void CLASS sinar_4shot_load_raw()
 {
@@ -1866,10 +1837,10 @@ void CLASS nokia_load_raw()
   maximum = 0x3ff;
 }
 
-unsigned CLASS pana_bits (int nbits)
+unsigned CLASS pana_bits_t::operator() (int nbits)
 {
-  THREAD_LOCAL uchar buf[0x4000];
-  THREAD_LOCAL int vbits;
+/*RT  static uchar buf[0x4000]; */
+/*RT  static int vbits;*/
   int byte;
 
   if (!nbits) return vbits=0;
@@ -2158,7 +2129,7 @@ void CLASS kodak_jpeg_load_raw() {}
 METHODDEF(boolean)
 fill_input_buffer (j_decompress_ptr cinfo)
 {
-  THREAD_LOCAL uchar jpeg_buffer[4096];
+/*RT  static uchar jpeg_buffer[4096]; */
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
@@ -2434,9 +2405,9 @@ void CLASS kodak_thumb_load_raw()
   maximum = (1 << (thumb_misc & 31)) - 1;
 }
 
-void CLASS sony_decrypt (unsigned *data, int len, int start, int key)
+void CLASS sony_decrypt_t::operator()(unsigned *data, int len, int start, int key)
 {
-  THREAD_LOCAL unsigned pad[128], p;
+/*RT  static unsigned pad[128], p;*/
 
   if (start) {
     for (p=0; p < 4; p++)
@@ -2683,7 +2654,7 @@ void CLASS smal_v9_load_raw()
 
 void CLASS foveon_decoder (unsigned size, unsigned code)
 {
-  THREAD_LOCAL unsigned huff[1024];
+/*RT  static unsigned huff[1024];*/
   struct decode *cur;
   int i, len;
 
@@ -3805,18 +3776,15 @@ void CLASS pre_interpolate()
     }
   }
   if (filters && colors == 3) {
-		if ((mix_green = four_color_rgb))
-			colors++;
-		else {
-			for (row = FC(1,0) >> 1; row < height; row += 2)
-				for (col = FC(row,1) & 1; col < width; col += 2)
-					image[row * width + col][1] = image[row * width + col][3];
-			/*RT*/	pre_filters = filters;
-			filters &= ~((filters & 0x55555555) << 1);
-		}
-	}
-	if (half_size)
-		filters = 0;
+    if ((mix_green = four_color_rgb)) colors++;
+    else {
+      for (row = FC(1,0) >> 1; row < height; row+=2)
+	for (col = FC(row,1) & 1; col < width; col+=2)
+	  image[row*width+col][1] = image[row*width+col][3];
+      filters &= ~((filters & 0x55555555) << 1);
+    }
+  }
+  if (half_size) filters = 0;
 }
 
 void CLASS border_interpolate (int border)
@@ -4370,7 +4338,7 @@ void CLASS parse_thumb_note (int base, unsigned toff, unsigned tlen)
   }
 }
 
-int CLASS parse_tiff_ifd (int base);
+/*RT int CLASS parse_tiff_ifd (int base);*/
 
 void CLASS parse_makernote (int base, int uptag)
 {
@@ -4864,8 +4832,8 @@ void CLASS parse_kodak_ifd (int base)
   }
 }
 
-void CLASS parse_minolta (int base);
-int CLASS parse_tiff (int base);
+/*RT void CLASS parse_minolta (int base); */
+/*RT int CLASS parse_tiff (int base);*/
 
 int CLASS parse_tiff_ifd (int base)
 {
@@ -8743,7 +8711,7 @@ void CLASS write_ppm_tiff()
       case 'i':  identify_only     = 1;  break;
       case 'c':  write_to_stdout   = 1;  break;
       case 'v':  verbose           = 1;  break;
-      case 'h':  half_size         = 1;		/* "-h" implies "-f" *//*
+      case 'h':  half_size         = 1;		// "-h" implies "-f"
       case 'f':  four_color_rgb    = 1;  break;
       case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
       case 'a':  use_auto_wb       = 1;  break;
@@ -9008,593 +8976,3 @@ cleanup:
   return status;
 }
 */
-
-#include <common.h>
-#include <rawmetadatalocation.h>
-#include <utils.h>
-#include <colortemp.h>
-#include <settings.h>
-
-namespace rtengine {
-
-extern Settings* settings;
-
-Glib::Mutex* dcrMutex=NULL;
-
-int RawImage::loadRaw (bool loadData) {
-
-  THREAD_LOCK
-
-  ifname = fname.c_str();
-  image = NULL;
-  exif_base = -1;
-  ciff_base = -1;
-  ciff_len = -1;
-  verbose = settings->verbose;
-  oprof = NULL;
-
-  ifp = gfopen (fname.c_str());
-  if (!ifp)
-    return 3;
-
-  thumb_length = 0;
-  thumb_offset = 0;
-  thumb_load_raw = 0;
-  use_camera_wb = 0;
-  highlight = 1;
-  half_size = 0;
-
-  //***************** Read ALL raw file info
-  identify ();
-  if (!is_raw) {
-    fclose(ifp);
-    return 2;
-  }
-  this->filters = ::filters;
-  this->height = ::height;
-  this->width = ::width;
-  this->colors = ::colors;
-  this->profile_len = ::profile_length;
-
-  this->maximum = ::maximum;
-  this->fuji_width = ::fuji_width;
-
-  for(int i=0; i<8;i++)
-	  for(int j=0;j<8;j++)
-		  this->white[i][j] = ::white[i][j];
-
-  if (flip==5)
-     this->rotate_deg = 270;
-  else if (flip==3)
-     this->rotate_deg = 180;
-  else if (flip==6)
-     this->rotate_deg = 90;
-  else
-     this->rotate_deg = 0;
-
-  this->make = strdup (::make);
-  this->model = strdup (::model);
-  this->iso_speed = ::iso_speed;
-  this->shutter = ::shutter;
-  this->aperture = ::aperture;
-  this->focal_len = ::focal_len;
-  this->timestamp = ::timestamp;
-  this->exifbase = ::exif_base;
-  this->ciff_base = ::ciff_base;
-  this->ciff_len = ::ciff_len;
-  this->thumbOffset = ::thumb_offset;
-  this->thumbLength = ::thumb_length;
-  this->thumbHeight = ::thumb_height;
-  this->thumbWidth = ::thumb_width;
-  if (!thumb_load_raw && thumb_offset && write_thumb == jpeg_thumb)
-     this->thumbType = 1;
-  else if (!thumb_load_raw && thumb_offset && write_thumb == ppm_thumb)
-     this->thumbType = 2;
-  else {
-	 this->thumbType = 0;
-	 this->thumbWidth = ::width;
-	 this->thumbHeight = ::height;
-  }
-
-  if( loadData ){
-	  allocData();
-	  use_camera_wb = 1;
-	  shrink = 0;
-	  if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname.c_str());
-	  iheight = height;
-	  iwidth  = width;
-
-	  // dcraw needs this global variable to hold pixel data
-	  image = (UshORt (*)[4])calloc (height*width*sizeof *image + meta_length, 1);
-	  meta_data = (char *) (image + height*width);
-	  if(!image)
-		  return 200;
-
-	  if (setjmp (failure)) {
-		  if (image)
-			free (image);
-		  fclose (ifp);
-		  return 100;
-	  }
-
-	  // Load raw pixels data
-	  fseek (ifp, data_offset, SEEK_SET);
-	  (*load_raw)();
-
-	  // Load embedded profile
-	  if (profile_length) {
-		fseek (ifp, profile_offset, SEEK_SET);
-		fread ( this->profile_data, 1, this->profile_len, ifp);
-	  }
-	  fclose(ifp);
-
-	  // Setting the black_point and cblack
-	  int i = ::cblack[3];
-	  for (int c=0; c <3; c++)
-		  if (i > ::cblack[c])
-			  i = ::cblack[c];
-	  for (int c=0; c < 4; c++)
-		  ::cblack[c] -= i;
-	  ::black += i;
-	  for (int c=0; c < 4; c++) this->cblack[c] = ::cblack[c];
-	  for (int c=0; c < 4; c++) this->cam_mul[c] = ::cam_mul[c];
-	  for (int c=0; c < 4; c++) this->pre_mul[c] = ::pre_mul[c];
-	  for (int a = 0; a < 3; a++)
-			for (int b = 0; b < 3; b++)
-				this->coeff[a][b] = ::rgb_cam[a][b];
-
-	  this->black_point = ::black;
-
-	  // copy pixel raw data: the compressed format earns space
-	  if (this->filters) {
-			for (int row = 0; row < height; row++)
-				for (int col = 0; col < width; col++)
-					this->data[row][col] = image[row * width + col][FC(row,col)];
-	  } else {
-			for (int row = 0; row < height; row++)
-				for (int col = 0; col < width; col++) {
-					this->data[row][3 * col + 0] = image[row * width + col][0];
-					this->data[row][3 * col + 1] = image[row * width + col][1];
-					this->data[row][3 * col + 2] = image[row * width + col][2];
-				}
-	  }
-	  free(image); // we don't need this anymore
-  }
-  else
-  {
-	  fclose(ifp);
-  }
-  return 0;
-}
-
-
-
-int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType) {
-
-  THREAD_LOCK
-
-  int status=0;
-
-  exif_base = -1;
-  ciff_base = -1;
-  ciff_len = -1;
-  
-  half_size = 1;
-  bright = 1.0;
-  verbose = settings->verbose;
-  use_camera_wb = 1;
-
-  thumb_length = 0;
-  thumb_offset = 0;
-  thumb_load_raw = 0;
-  status = 1;
-
-  ifname = fname.c_str();
-  if (!(ifp = gfopen (ifname))) {
-    status = 2;
-    return status;
-  }
-  identify ();
-  if (!is_raw || colors>3) {
-    status = 3;
-    fclose (ifp);
-    return status;
-  }
-
-  thumbOffset = thumb_offset;
-
-  if (flip==5)
-    rotation = 270;
-  else if (flip==3)
-    rotation = 180;
-  else if (flip==6)
-    rotation = 90;
-  else
-    rotation = 0;
-
-  thumbWidth = thumb_width;
-  thumbHeight = thumb_height;
-  if (!thumb_load_raw && thumb_offset && write_thumb == jpeg_thumb)
-    thumbType = 1;
-  else if (!thumb_load_raw && thumb_offset && write_thumb == ppm_thumb)
-    thumbType = 2;
-  else {
-    thumbType = 0;
-    thumbWidth = width;
-    thumbHeight = height;
-  }
-
-  rml.exifBase = exif_base;
-  rml.ciffBase = ciff_base;
-  rml.ciffLength = ciff_len;
-
-  fclose (ifp);
-  return !is_raw;
-}
-
-#include <mytime.h>
-
-rtengine::Thumbnail* rtengine::Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
-
-    THREAD_LOCK
-
-	image = NULL;
-	ifname = fname.c_str();
-	exif_base = -1;
-	ciff_base = -1;
-	ciff_len = -1;
-	verbose = settings->verbose;
-	oprof = NULL;
-	ifp = gfopen (fname.c_str());
-	if (!ifp) {
-		printf("DCRAW: failed0\n");
-		return NULL;
-	}
-
-	if (setjmp (failure)) {
-		printf("DCRAW: failed1\n");
-		fclose (ifp);
-		return NULL;
-	}   
-
-	identify ();
-	if (!is_raw || colors>3) {
-		printf("DCRAW: failed2\n");
-		fclose(ifp);
-		return NULL;
-	}
-
-    rml.exifBase = exif_base;
-    rml.ciffBase = ciff_base;
-    rml.ciffLength = ciff_len;
-
-	rtengine::Thumbnail* tpp = rtengine::Thumbnail::loadFromMemory(fdata(thumb_offset,ifp),thumb_length,w,h,fixwh);
-
-	fclose(ifp);
-
-	if ( tpp == 0 )
-	{
-		printf("DCRAW: failed4\n");
-		return NULL;
-	}
-
-	int deg = 0;
-	if (flip==5)
-		deg = 270;
-	else if (flip==3)
-		deg = 180;
-	else if (flip==6)
-		deg = 90;
-
-	if (deg>0) {
-		Image16* rot = tpp->thumbImg->rotate (deg);
-		delete tpp->thumbImg;
-		tpp->thumbImg = rot;
-	}
-
-	return tpp;
-}
-
-rtengine::Thumbnail* rtengine::Thumbnail::loadFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh) {
-
-	THREAD_LOCK
-
-MyTime t0, t1, t2, t3, t4, t5, t6;
-t0.set ();
-
-    image = NULL;
-    ifname = fname.c_str();
-    exif_base = -1;
-    ciff_base = -1;
-    ciff_len = -1;
-    verbose = settings->verbose;
-    oprof = NULL;
-    ifp = gfopen (fname.c_str());
-    if (!ifp) {
-        return NULL;
-    }
-
-t1.set ();
-
-    if (setjmp (failure)) {
-	if (image)
-        free (image);
-      fclose (ifp);
-      return NULL;
-    }   
-    
-    use_camera_wb = 0;
-    highlight = 1;
-    half_size = 0;
-    shrink = 0;
-    identify ();
-    use_camera_wb = 1;
-    if (!is_raw || colors>3) {
-        fclose(ifp);
-        return NULL;
-    }
-
-t2.set();
-  
-    iheight = ::height;
-    iwidth  = ::width;
-
-    image = (UshORt (*)[4])calloc (::height*::width*sizeof *image + meta_length, 1);
-    meta_data = (char *) (image + ::height*::width);
-
-    if (settings->verbose) printf ("Loading %s %s image from %s...\n", make, model, fname.c_str());
-    fseek (ifp, data_offset, SEEK_SET);
-    (*load_raw)();
-    if (zero_is_bad) remove_zeroes();
-
-  rtengine::Thumbnail* tpp = new rtengine::Thumbnail;
-  
-    tpp->isRaw = true;
-    tpp->embProfileLength = 0;
-    if (profile_length) {
-        tpp->embProfileLength = profile_length;
-        tpp->embProfileData = new unsigned char[profile_length];
-        fseek (ifp, profile_offset, SEEK_SET);
-        fread (tpp->embProfileData, 1, profile_length, ifp);
-        tpp->embProfile = cmsOpenProfileFromMem (tpp->embProfileData, tpp->embProfileLength);
-    }
-    else {
-        tpp->embProfile = NULL;
-        tpp->embProfileData = NULL;
-    }
-        
-    fclose(ifp);
-    tpp->redMultiplier = pre_mul[0];
-    tpp->greenMultiplier = pre_mul[1];
-    tpp->blueMultiplier = pre_mul[2];
-  
-t3.set ();
-
-    scale_colors();
-    pre_interpolate ();
-
-    unsigned filter = filters;
-    int firstgreen = 1;
-    // locate first green location in the first row
-    while (!FISGREEN(filter,1,firstgreen)) 
-        firstgreen++;
-
-    int skip = 1;
-    if (fixwh==1) // fix height, scale width
-        skip = (::height-firstgreen-1) / h;
-    else 
-        skip = (::width-firstgreen-1) / w;
-    if (skip%2)
-        skip--;
-    if (skip<1)
-        skip = 1;
-
-    int hskip = skip, vskip = skip;
-    if (!strcmp (model, "D1X"))
-        hskip *=2;
-        
-    rml.exifBase = exif_base;
-    rml.ciffBase = ciff_base;
-    rml.ciffLength = ciff_len;
-    tpp->camwbRed = tpp->redMultiplier / pre_mul[0];
-    tpp->camwbGreen = tpp->greenMultiplier / pre_mul[1];
-    tpp->camwbBlue = tpp->blueMultiplier / pre_mul[2];
-
-    tpp->defGain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);  
-    tpp->gammaCorrected = true;
-
-    int ix = 0;
-    int rofs = 0;
-    int tmpw = (::width-2)/hskip;
-    int tmph = (::height-2)/vskip;
-    Image16* tmpImg = new Image16 (tmpw, tmph);
-    if (filter) {
-        for (int row=1, y=0; row< ::height-1 && y<tmph; row+=vskip, y++) {
-            rofs = row*::width;
-            for (int col=firstgreen,x=0; col< ::width-1 && x<tmpw; col+=hskip, x++) {
-                int ofs = rofs+col;
-                int g = image[ofs][1];
-                int r, b;
-                if (FISRED(filter,row,col+1)) {
-                    r = (image[ofs+1][0] + image[ofs-1][0]) >> 1;
-                    b = (image[ofs+::width][2] + image[ofs-::width][2]) >> 1;
-                }
-                else {
-                    b = (image[ofs+1][2] + image[ofs-1][2]) >> 1;
-                    r = (image[ofs+::width][0] + image[ofs-::width][0]) >> 1;
-                }
-                tmpImg->r[y][x] = r;
-                tmpImg->g[y][x] = g;
-                tmpImg->b[y][x] = b;
-            }
-        }       
-    }
-    else {
-        for (int row=1, y=0; row< ::height-1 && y<tmph; row+=vskip, y++) {
-            rofs = row*::width;
-            for (int col=firstgreen,x=0; col< ::width-1 && x<tmpw; col+=hskip, x++) {
-                int ofs = rofs+col;
-                tmpImg->r[y][x] = image[ofs][0];
-                tmpImg->g[y][x] = image[ofs][1];
-                tmpImg->b[y][x] = image[ofs][2];
-            }
-        }       
-    }
-        
-    if (fuji_width) {
-        int fw = fuji_width / hskip;
-        double step = sqrt(0.5);
-        int wide = fw / step;
-        int high = (tmph - fw) / step;
-        Image16* fImg = new Image16 (wide, high);
-        float r, c;
-
-        for (int row=0; row < high; row++)
-            for (int col=0; col < wide; col++) {
-                unsigned ur = r = fw + (row-col)*step;
-                unsigned uc = c = (row+col)*step;
-                if (ur > tmph-2 || uc > tmpw-2) 
-                    continue;
-                double fr = r - ur;
-                double fc = c - uc;
-                int oofs = (ur*tmpw + uc)*3;
-                int fofs = (row*wide+col)*3;
-                fImg->r[row][col] = (tmpImg->r[ur][uc] * (1-fc) + tmpImg->r[ur][uc+1] * fc) * (1-fr) + (tmpImg->r[ur+1][uc] * (1-fc) + tmpImg->r[ur+1][uc+1] * fc) * fr;
-                fImg->g[row][col] = (tmpImg->g[ur][uc] * (1-fc) + tmpImg->g[ur][uc+1] * fc) * (1-fr) + (tmpImg->g[ur+1][uc] * (1-fc) + tmpImg->g[ur+1][uc+1] * fc) * fr;
-                fImg->b[row][col] = (tmpImg->b[ur][uc] * (1-fc) + tmpImg->b[ur][uc+1] * fc) * (1-fr) + (tmpImg->b[ur+1][uc] * (1-fc) + tmpImg->b[ur+1][uc+1] * fc) * fr;
-            }
-        delete tmpImg;
-        tmpImg = fImg;
-    }
-    
-    
-    if (fixwh==1) // fix height, scale width
-        w = tmpw * h / tmph;
-    else
-        h = tmph * w / tmpw;
-        
-    tpp->thumbImg = tmpImg->resize (w, h, TI_Bilinear);
-    delete tmpImg;
-
-    if (fuji_width)
-        tpp->scale = (double)(::height - fuji_width) / sqrt(0.5) / h;
-    else
-        tpp->scale = (double)::height / h;      
-    
-t4.set ();  
-
-    // generate histogram for auto exposure
-    tpp->aeHistCompression = 3;
-    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
-    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
-    int radd = 4;
-    int gadd = 4;
-    int badd = 4;
-    if (!filter)
-        radd = gadd = badd = 1;
-    for (int i=8; i< ::height-8; i++) {
-        int start, end;
-        if (fuji_width) {
-            int fw = fuji_width;
-            start = ABS(fw-i) + 8;
-            end = MIN( ::height+ ::width-fw-i, fw+i) - 8;
-        }
-        else {
-            start = 8;
-            end = ::width-8;
-        }
-        for (int j=start; j<end; j++) 
-            if (FISGREEN(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbGreen*image[i* ::width+j][1]))>>tpp->aeHistCompression]+=gadd;
-            else if (FISRED(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbRed*image[i* ::width+j][0]))>>tpp->aeHistCompression]+=radd;
-            else if (FISBLUE(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbBlue*image[i* ::width+j][2]))>>tpp->aeHistCompression]+=badd;
-    }
-                
-t5.set ();
-
-    // generate autoWB
-    double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
-    int rn = 0, gn = 0, bn = 0;
-
-    for (int i=32; i< ::height-32; i++) {
-        int start, end;
-        if (fuji_width) {
-            int fw = fuji_width;
-            start = ABS(fw-i) + 32;
-            end = MIN( ::height+ ::width-fw-i, fw+i) - 32;
-        }
-        else {
-            start = 32;
-            end = ::width-32;
-        }
-        for (int j=start; j<end; j++) {            
-            if (FISGREEN(filter,i,j)) {
-                double d = tpp->defGain * image[i* ::width+j][1];
-                if (d>64000)
-                    continue;
-                avg_g += d;
-                gn++;
-            }
-            if (FISRED(filter,i,j)) {
-                double d = tpp->defGain * image[i* ::width+j][0];
-                if (d>64000)
-                    continue;
-                avg_r += d;
-                rn++;
-            }
-            if (FISBLUE(filter,i,j)) {
-                double d = tpp->defGain * image[i* ::width+j][2];
-                if (d>64000)
-                    continue;
-                avg_b += d;
-                bn++;
-            }
-        }
-    }
-
-    double reds   = avg_r/rn * tpp->camwbRed;
-    double greens = avg_g/gn * tpp->camwbGreen;
-    double blues  = avg_b/bn * tpp->camwbBlue;
-    
-    double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
-    double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
-    double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
-
-    ColorTemp::mul2temp (rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
-
-t6.set ();
-
-if (settings->verbose) printf ("0: %d, 1: %d, 2: %d, 3: %d, 4: %d, 5: %d All: %d\n", t1.etime(t0), t2.etime(t1), t3.etime(t2), t4.etime(t3), t5.etime(t4), t6.etime(t5), t6.etime(t0));    
-
-    int deg = 0;
-    if (flip==5)
-        deg = 270;
-    else if (flip==3)
-        deg = 180;
-    else if (flip==6)
-        deg = 90;
-
-    if (deg>0) {
-        Image16* rot = tpp->thumbImg->rotate (deg);
-        delete tpp->thumbImg;
-        tpp->thumbImg = rot;
-    }
-
-    for (int a=0; a < 3; a++)
-      for (int b=0; b < 3; b++)
-        tpp->colorMatrix[a][b] = rgb_cam[a][b];
-
-    tpp->init ();
-    
-  free (image);
-  
-  return tpp;
-}
-
-
-}
-
