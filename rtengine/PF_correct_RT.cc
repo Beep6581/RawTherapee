@@ -27,7 +27,6 @@
 
 //#include <rtengine.h>
 //#include <math.h>
-//#include <colorclip.h>
 #include <gauss.h>
 //#include <bilateral2.h>
 #include <improcfun.h>
@@ -49,7 +48,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 		
 	// local variables
 	int width=src->W, height=src->H;
-	//temporary array to store simple interpolation of G
+	//temporary array to store chromaticity
 	int (*fringe);
 	fringe = (int (*)) calloc ((height)*(width), sizeof *fringe);
 	
@@ -93,8 +92,10 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 		for(int j = 0; j < width; j++) {
 			tmp1->a[i][j] = src->a[i][j];
 			tmp1->b[i][j] = src->b[i][j];
-			//test for pixel darker than some fraction of neighborhood ave, and near an edge
-			if (100*tmp1->L[i][j]>thresh*src->L[i][j] && 100*abs(tmp1->L[i][j]-src->L[i][j])>0.1*(tmp1->L[i][j]+src->L[i][j])) {
+			//test for pixel darker than some fraction of neighborhood ave, near an edge, more saturated than average
+			/*if (100*tmp1->L[i][j]>50*src->L[i][j] && \*/
+				/*1000*abs(tmp1->L[i][j]-src->L[i][j])>thresh*(tmp1->L[i][j]+src->L[i][j]) && \*/
+			if (33*fringe[i*width+j]>thresh*chromave) {
 				float atot=0;
 				float btot=0;
 				float norm=0;
