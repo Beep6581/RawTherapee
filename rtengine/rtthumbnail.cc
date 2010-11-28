@@ -920,30 +920,58 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
     
     if (format==1 || format==3) {
         // to utilize the 8 bit color range of the thumbnail we brighten it and apply gamma correction
-        int max = 0;
-        for (int row=0; row<thumbImg->height; row++)
-            for (int col=0; col<thumbImg->width; col++) {
-                if (thumbImg->r[row][col]>max)
-                    max = thumbImg->r[row][col];
-                if (thumbImg->g[row][col]>max)
-                    max = thumbImg->g[row][col];
-                if (thumbImg->b[row][col]>max)
-                    max = thumbImg->b[row][col];
-            }
-        if (max < 16384)
-            max = 16384;
-        scaleForSave = 65535*8192 / max;
         unsigned char* tmpdata = new unsigned char[thumbImg->height*thumbImg->width*3];
-        int ix = 0;
+        int ix = 0,max;
+
         if (gammaCorrected) {
+            // if it's gamma correct (usually a RAW), we have the problem that there is a lot noise etc. that makes the maximum way too high.
+            // Strategy is limit a certain percent of pixels so the overall picture quality when scaling to 8 bit is way better
+            const double BurnOffPct=0.03;  // *100 = percent pixels that may be clipped
+
+            // Calc the histogram
+            unsigned int* hist16 = new unsigned int [65536];
+            memset(hist16,0,sizeof(int)*65536);
+
+            for (int row=0; row<thumbImg->height; row++)
+                for (int col=0; col<thumbImg->width; col++) {
+                    hist16[thumbImg->r[row][col]]++;
+                    hist16[thumbImg->g[row][col]]+=2;  // Bayer 2x green correction
+                    hist16[thumbImg->b[row][col]]++;
+                }
+
+            // Go down till we cut off that many pixels
+            unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
+
+            int max; unsigned long sum=0;
+            for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+
+            delete[] hist16;
+
+            scaleForSave = 65535*8192 / max;
+
+            // Correction and gamma to 8 Bit
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
-                    tmpdata[ix++] = gammatab[thumbImg->r[i][j]*scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[thumbImg->g[i][j]*scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[thumbImg->b[i][j]*scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
                 }
         }
         else {
+            // If it's not gamma corrected (usually a JPG) we take the normal maximum
+            max=0;
+
+            for (int row=0; row<thumbImg->height; row++)
+                for (int col=0; col<thumbImg->width; col++) {
+                    if (thumbImg->r[row][col]>max) max = thumbImg->r[row][col];
+                    if (thumbImg->g[row][col]>max) max = thumbImg->g[row][col];
+                    if (thumbImg->b[row][col]>max) max = thumbImg->b[row][col];
+                }
+            
+            if (max < 16384) max = 16384;
+            scaleForSave = 65535*8192 / max;
+
+            // Correction and gamma to 8 Bit
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
                     tmpdata[ix++] = thumbImg->r[i][j]*scaleForSave >> 21;
@@ -951,6 +979,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
                     tmpdata[ix++] = thumbImg->b[i][j]*scaleForSave >> 21;
                 }
         }
+
         if (format==1) {
             FILE* f = g_fopen (fname.c_str(), "wb");
             if (!f) {
@@ -987,7 +1016,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             // (machine dependency is not really an issue, since we all run on x86 and having exactly the same file is not a requirement)
             cinfo.dct_method = JDCT_FLOAT;
 
-            jpeg_set_quality (&cinfo, 85, true);
+            jpeg_set_quality (&cinfo, 87, true);
         	jpeg_start_compress(&cinfo, TRUE);
             int rowlen = thumbImg->width*3;
         	while (cinfo.next_scanline < cinfo.image_height) {
