@@ -243,6 +243,7 @@ class FNumberInterpreter : public Interpreter {
     public:
         FNumberInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             sprintf (buffer, "%0.1f", t->toDouble());
             return buffer;
         }
@@ -253,6 +254,7 @@ class ApertureInterpreter : public Interpreter {
     public:
         ApertureInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             sprintf (buffer, "%0.1f", pow(2.0, t->toDouble()/2.0));
             return buffer;
         }
@@ -263,6 +265,7 @@ class ExposureBiasInterpreter : public Interpreter {
     public:
         ExposureBiasInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             sprintf (buffer, "%+0.2f", t->toDouble());
             return buffer;
         }
@@ -273,6 +276,7 @@ class ShutterSpeedInterpreter : public Interpreter {
     public:
         ShutterSpeedInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             double d = pow (2.0, -t->toDouble());
             if (d > 0.0 && d < 0.9)
                 sprintf (buffer, "1/%0.0f", 1.0 / d);
@@ -287,6 +291,7 @@ class ExposureTimeInterpreter : public Interpreter {
     public:
         ExposureTimeInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             double d = t->toDouble();
             if (d > 0.0 && d < 0.9)
                 sprintf (buffer, "1/%0.0f", 1.0 / d);
@@ -301,6 +306,7 @@ class FocalLengthInterpreter : public Interpreter {
     public:
         FocalLengthInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             sprintf (buffer, "%0.1f", t->toDouble());
             return buffer;
         }
@@ -311,6 +317,7 @@ class UserCommentInterpreter : public Interpreter {
     public:
         UserCommentInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[1024];
             if (!strncmp((char*)t->getValue(), "ASCII\0\0\0",8))
                 strncpy (buffer, (char*)t->getValue()+8, t->getCount()-8);
             else
@@ -318,6 +325,7 @@ class UserCommentInterpreter : public Interpreter {
             return buffer;
         }
         virtual void fromString (Tag* t, const std::string& value) {
+        	char buffer[1024];
             memcpy (buffer, "ASCII\0\0\0", 8);
             strcpy (buffer+8, value.c_str());
             t->fromString (buffer, value.size() + 9);
@@ -330,6 +338,7 @@ public:
 	CFAInterpreter(){}
 	virtual std::string toString (Tag* t) {
 		char colors[]="RGB";
+		char buffer[1024];
 		for( int i=0; i< t->getCount();i++){
 			unsigned char c = t->toInt(i,BYTE);
 			buffer[i]= c<3 ?colors[c]:' ';

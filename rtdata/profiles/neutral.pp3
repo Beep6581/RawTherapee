@@ -1,5 +1,5 @@
 [Version]
-Version=20101019
+Version=20101111
 
 [Exposure]
 Auto=false
@@ -163,8 +163,8 @@ Mult1=1
 Mult2=1
 Mult3=1
 Mult4=0
- 
-[RAW] 
+
+[RAW]
 DarkFrame=
 DarkFrameAuto=false
 CA=false

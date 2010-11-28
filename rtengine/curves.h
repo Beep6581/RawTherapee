@@ -27,6 +27,8 @@
 
 #define CURVES_MIN_POLY_POINTS  1000
 
+#define SQR(x) ((x)*(x))
+
 namespace rtengine {
 
 class CurveFactory {
@@ -82,17 +84,35 @@ class CurveFactory {
         if (x<x1) return x*m;
         return 1.0 - hr + hr*baseu((x-x1)/hr, m, 0.3*hr);
     }
+	static inline double clower2 (double x, double m, double sr) {
+		float x1 = sr/1.5 + 0.00001;
+		float y1 = 1-(1-x1)*m;
+		if (x>x1 || sr<0.001) 
+			return 1-(1-x)*m;
+		else
+			return y1+m*(x-x1)-(1-m)*SQR(SQR(1-x/x1));
+	}
     // tone curve base. a: slope (from exp.comp.), b: black, D: max. x value (can be>1), hr,sr: highlight,shadow recovery
     static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
-        double m = a>1 ? b+0.25*(1-b)/a : b+(1-b)/4;
-        double y = a>1 ? 0.25 : 0.25*a;
-		double slope = a/(1-b);
-        if (x<=m)
-            return b==0 ? x*a : clower (x/m, slope*m/y, sr) * y;
-        else if (a>1)
-            return y+(1.0-y)*cupper2((x-m)/(1-m), slope*(1-m)/(1.0-y), hr);
-        else
-            return y+(x-m)*slope;
+        if (b<0) {
+			double m = 0.5;
+			double slope = 1+b;
+			double y = -b+m*slope;
+			if (x>m) 
+				return y + (x - m)*slope;
+			else 
+				return y*clower2(x/m, slope*m/y, 2.0-sr);
+		} else {
+			double slope = a/(1-b);
+			double m = a*D>1 ? b/a+(0.25)/slope : b+(1-b)/4;
+			double y = a*D>1 ? 0.25 : (m-b/a)*slope;
+			if (x<=m)
+				return b==0 ? x*slope : clower (x/m, slope*m/y, sr) * y;
+			else if (a*D>1)
+				return y+(1.0-y)*cupper2((x-m)/(D-m), slope*(D-m)/(1.0-y), hr);
+			else
+				return y+(x-m)*slope;
+		}
     }
     // brightness curve at point x, only positive amount it supported
     static inline double brightnessbase (double x, double amount) {
@@ -137,7 +157,7 @@ class CurveFactory {
 
   public:
 //    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& cpoints, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip=1);
-    static void complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, int* hlCurve, int* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
+    static void complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
 	static void complexsgnCurve (double satclip, double satcompr, double saturation, double colormult, const std::vector<double>& curvePoints, int* outCurve, int skip=1);
 
 };

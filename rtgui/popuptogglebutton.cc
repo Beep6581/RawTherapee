@@ -28,10 +28,8 @@
  *
  * Parameters:
  * 		label = label displayed in the button
- * 		imRight = 0: the image is displayed at the left of the label (default)
- * 				  1: the image is displayed at the right of the label
  */
-PopUpToggleButton::PopUpToggleButton (const Glib::ustring& label, bool imgRight) : Gtk::ToggleButton(), PopUpCommon(this, label, imgRight) { }
+PopUpToggleButton::PopUpToggleButton (const Glib::ustring& label) : Gtk::ToggleButton(), PopUpCommon(this, label) { }
 
 void PopUpToggleButton::show() {
 	PopUpCommon::show();

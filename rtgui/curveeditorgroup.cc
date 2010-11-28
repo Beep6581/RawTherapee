@@ -210,7 +210,6 @@ void CurveEditorGroup::newLine() {
 			curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
 
 			headerBox->pack_end (*curve_reset, Gtk::PACK_SHRINK, 0);
-			curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
 		}
 
 		int j = numberOfPackedCurve;

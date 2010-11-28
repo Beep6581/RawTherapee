@@ -53,7 +53,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
 
         // decoration
         Cairo::RefPtr<Cairo::ImageSurface> resizeSurface;
-        LWButton *bZoomIn, *bZoomOut, *bZoom100, *bZoomFit, *bClose;
+        LWButton *bZoomIn, *bZoomOut, *bZoom100, /**bZoomFit,*/ *bClose;
         LWButtonSet buttonSet;
         Glib::ustring cropLabel;
         int backColor;

@@ -55,7 +55,10 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     Gtk::VScrollbar vscroll;
     
     int inW, inH;
-    
+
+    bool inTabMode;  // Tab mode has e.g. different preview heights
+    int getCurrentThumbSize();  // depending on filmstrip/file browser mode
+
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
     void buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh);
@@ -90,6 +93,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
 
     void zoomIn ()  { zoomChanged (true); }
     void zoomOut () { zoomChanged (false); }
+    int getEffectiveHeight ();
     
     const std::vector<ThumbBrowserEntryBase*>& getEntries () { return fd; }
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
@@ -104,6 +108,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void setScrollPosition (double h, double v);
      
     void setArrangement (Arrangement a);
+    void enableTabMode(bool enable);  // set both thumb sizes and arrangements
+
     virtual bool checkFilter (ThumbBrowserEntryBase* entry) { return true; }
     virtual void rightClicked (ThumbBrowserEntryBase* entry) {}
     virtual void doubleClicked (ThumbBrowserEntryBase* entry) {}

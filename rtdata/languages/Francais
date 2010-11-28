@@ -50,6 +50,7 @@ EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
+FILEBROWSER_AUTODARKFRAME;Soustraction d'image noire automatique
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -62,6 +63,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
+FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images noires
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
@@ -85,6 +87,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
+FILEBROWSER_SELECTDARKFRAME;Choisir une image noire...
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
@@ -136,6 +139,11 @@ HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_DELSNAPSHOT;Supprimer
 HISTORY_FROMCLIPBOARD;Du presse-papier
 HISTORY_LABEL;Historique
+HISTORY_MSG_100;Saturation RVB
+HISTORY_MSG_101;Ég. TSV - Teinte
+HISTORY_MSG_102;Ég. TSV - Saturation
+HISTORY_MSG_103;Ég. TSV - Valeur
+HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -145,7 +153,7 @@ HISTORY_MSG_15;Luminance - Contraste
 HISTORY_MSG_16;Luminance - Noir
 HISTORY_MSG_17;Luminance - Compression Hautes lumières
 HISTORY_MSG_18;Luminance - Compression des Ombres
-HISTORY_MSG_19;Luminance - Courbe
+HISTORY_MSG_19;Courbe 'L'
 HISTORY_MSG_1;Photo chargée
 HISTORY_MSG_20;Netteté
 HISTORY_MSG_21;Netteté - Rayon
@@ -221,6 +229,7 @@ HISTORY_MSG_84;Correction de la perspective
 HISTORY_MSG_85;Coefficients d'ondelette
 HISTORY_MSG_86;Égaliseur d'ondelette
 HISTORY_MSG_87;Réduction du bruit d'impulsion
+HISTORY_MSG_88;Seuil de réduction de bruit
 HISTORY_MSG_89;Réd. du bruit présevant les bords
 HISTORY_MSG_8;Compensation d'exposition
 HISTORY_MSG_90;Réd. de bruit Luminance
@@ -228,6 +237,11 @@ HISTORY_MSG_91;Réd. de bruit Chominance
 HISTORY_MSG_92;Réd. de bruit Gamma
 HISTORY_MSG_93;Param. de contraste
 HISTORY_MSG_94;Contraste par niveau de détail
+HISTORY_MSG_95;Saturation
+HISTORY_MSG_96;Courbe 'a'
+HISTORY_MSG_97;Courbe 'b'
+HISTORY_MSG_98;Dématriçage
+HISTORY_MSG_99;Pre-traitement
 HISTORY_MSG_9;Compression des hautes lumières
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
@@ -332,6 +346,7 @@ MAIN_TAB_FILTER;Filtrer
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
@@ -350,6 +365,12 @@ NAVIGATOR_G_NA;V = n/d
 NAVIGATOR_G_VALUE;V = %1
 NAVIGATOR_H_NA;T = n/d
 NAVIGATOR_H_VALUE;T = %1
+NAVIGATOR_LAB_A_NA;a = n/d
+NAVIGATOR_LAB_A_VALUE;a = %1
+NAVIGATOR_LAB_B_NA;b = n/d
+NAVIGATOR_LAB_B_VALUE;b = %1
+NAVIGATOR_LAB_L_NA;L = n/d
+NAVIGATOR_LAB_L_VALUE;L = %1
 NAVIGATOR_R_NA;R = n/d
 NAVIGATOR_R_VALUE;R = %1
 NAVIGATOR_S_NA;S = n/d
@@ -374,8 +395,9 @@ PARTIALPASTE_EXPOSURE;Exposition
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
 PARTIALPASTE_IPTCINFO;Infos IPTC
+PARTIALPASTE_LABCURVE;Courbe de luminance
+PARTIALPASTE_LABCURVE;Courebes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
-PARTIALPASTE_LUMACURVE;Courbe de luminance
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
@@ -403,12 +425,10 @@ PREFERENCES_CACHESTRAT2;Optimiser la consommation mémoire au détriment de la v
 PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
-PREFERENCES_CACORRECTION;Appliquer la correction auto. de l'aberration chromatique
-PREFERENCES_CLEARDLG_LINE1;Nettoyage du Cache
-PREFERENCES_CLEARDLG_LINE2;Ceci peut prendre plusieurs secondes.
-PREFERENCES_CLEARDLG_TITLE;Veuillez patienter
+PREFERENCES_CACORRECTION;Correction automatique de\nl'aberration chromatique
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
+PREFERENCES_DARKFRAME;Soustraction d'image noire
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
@@ -416,17 +436,17 @@ PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
+PREFERENCES_DIRDARKFRAMES;Dossier d'images noires
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
 PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
 PREFERENCES_DMETHOD;Méthode
-PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
-PREFERENCES_FALSECOLOR;Itérations pour la suppression des fausses couleurs
+PREFERENCES_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FORIMAGE;Pour les fichiers images
@@ -436,7 +456,7 @@ PREFERENCES_GREENEQUIL;Équilibrage du vert
 PREFERENCES_GTKTHEME;GTK par défaut
 PREFERENCES_HINT;Conseil
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
-PREFERENCES_HOTDEADPIXFILT;Appliquer le filtre des pixels chauds/morts
+PREFERENCES_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
 PREFERENCES_ICCDIR;Dossier des profils ICC
 PREFERENCES_IMPROCPARAMS;Paramètres de traitement d'image par défaut
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrie absolue
@@ -586,7 +606,7 @@ TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit présevant les bords
 TP_DIRPYRDENOISE_LUMA;Luminance
-TP_DIRPYREQUALIZER_LABEL;Égaliseur d'amas
+TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contraste-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contraste+
@@ -611,11 +631,26 @@ TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Courbe tonale
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_LABEL;Exposition
+TP_EXPOSURE_SATURATION;Saturation
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
 TP_HLREC_LABEL;Récupération des hautes lumières
 TP_HLREC_LUMINANCE;Récupération de la luminance
 TP_HLREC_METHOD;Méthode: 
+TP_HSVEQUALIZER1;Rouge
+TP_HSVEQUALIZER2;Orange
+TP_HSVEQUALIZER3;Vert citron
+TP_HSVEQUALIZER4;Vert
+TP_HSVEQUALIZER5;Cyan
+TP_HSVEQUALIZER6;Bleu
+TP_HSVEQUALIZER7;Violet
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;Canal
+TP_HSVEQUALIZER_HUE;Teinte
+TP_HSVEQUALIZER_LABEL;Égaliseur TSV
+TP_HSVEQUALIZER_NEUTRAL;Neutre
+TP_HSVEQUALIZER_SAT;Saturation
+TP_HSVEQUALIZER_VAL;Valeur
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
@@ -632,32 +667,36 @@ TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
+TP_LABCURVE_BRIGHTNESS;Luminosité
+TP_LABCURVE_CONTRAST;Contraste
+TP_LABCURVE_CURVEEDITOR;Courbe de luminance
+TP_LABCURVE_LABEL;Courbes Lab
+TP_LABCURVE_SATURATION;Saturation
 TP_LENSGEOM_AUTOCROP;Rognage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
-TP_LUMACURVE_BLACKLEVEL;Noir
-TP_LUMACURVE_BRIGHTNESS;Luminosité
-TP_LUMACURVE_COMPRHIGHLIGHTS;Compression hautes lumières
-TP_LUMACURVE_COMPRSHADOWS;Compression des ombres
-TP_LUMACURVE_CONTRAST;Contraste
-TP_LUMACURVE_CURVEEDITOR;Courbe de luminance
-TP_LUMACURVE_LABEL;Courbe de luminance
 TP_LUMADENOISE_EDGETOLERANCE;Tolérance des bords
 TP_LUMADENOISE_LABEL;Réduction du bruit de luminance
 TP_LUMADENOISE_RADIUS;Rayon
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PREPROCESS_DARKFRAME;Image noire
+TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
+TP_RAWPANEL_DEMOSAICING;Dématriçage
+TP_RAWPANEL_PREPROCESSING;Pre-traitement
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)
 TP_RESIZE_BILINEAR;Bilinéaire
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
+TP_RESIZE_FITBOX;Contenu dans une boîte
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_LABEL;Redimensionnement
+TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Méthode: 
 TP_RESIZE_NEAREST;Au plus proche
 TP_RESIZE_SCALE;Échelle
@@ -690,8 +729,12 @@ TP_SHARPENING_RLD_ITERATIONS;Itérations
 TP_SHARPENING_THRESHOLD;Seuil
 TP_SHARPENING_USM;Masque flou
 TP_VIGNETTING_AMOUNT;Quantité
+TP_VIGNETTING_CENTER;Centre
+TP_VIGNETTING_CENTER_X;Centre X
+TP_VIGNETTING_CENTER_Y;Centre Y
 TP_VIGNETTING_LABEL;Correction vignettage
 TP_VIGNETTING_RADIUS;Rayon
+TP_VIGNETTING_STRENGTH;Force
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Appareil photo
 TP_WBALANCE_CUSTOM;Personnalisé
@@ -721,31 +764,7 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!MAIN_TAB_RAW;RAW
-!NAVIGATOR_LAB_A_NA;A = n/a
-!NAVIGATOR_LAB_A_VALUE;A = %1
-!NAVIGATOR_LAB_B_NA;B = n/a
-!NAVIGATOR_LAB_B_VALUE;B = %1
-!NAVIGATOR_LAB_L_NA;L = n/a
-!NAVIGATOR_LAB_L_VALUE;L = %1
-!PARTIALPASTE_LABCURVE;Lab curve
-!PARTIALPASTE_LABCURVE;Luminance curve
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!TP_LABCURVE_BRIGHTNESS;Brightness
-!TP_LABCURVE_CONTRAST;Contrast
-!TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_LABEL;Lab Curves
-!TP_LABCURVE_SATURATION;Saturation
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
-!TP_RESIZE_LANCZOS;Lanczos
-!TP_VIGNETTING_CENTER;Center
-!TP_VIGNETTING_CENTER_X;Center X
-!TP_VIGNETTING_CENTER_Y;Center Y
-!TP_VIGNETTING_STRENGTH;Strength
+!EDITWINDOW_TITLE;Image Edit
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!TP_ICM_INPUTNONE;No profile

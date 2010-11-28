@@ -52,6 +52,7 @@ void ProcParams::setDefaults () {
     toneCurve.expcomp       = 0;
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
+	toneCurve.saturation    = 0;
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
     toneCurve.shcompr       = 25;
@@ -102,6 +103,10 @@ void ProcParams::setDefaults () {
 	
 	impulseDenoise.enabled      = false;
 	impulseDenoise.thresh		= 50;
+	
+	defringe.enabled			= false;
+    defringe.radius				= 2.0;
+    defringe.threshold			= 25;
 
 	dirpyrDenoise.enabled       = false;
     dirpyrDenoise.luma          = 10;
@@ -186,6 +191,13 @@ void ProcParams::setDefaults () {
         dirpyrequalizer.mult[i] = 1.0;
     }
 	dirpyrequalizer.mult[4] = 0.0;
+	hsvequalizer.enabled = false;    
+    for(int i = 0; i < 8; i ++)
+    {
+        hsvequalizer.sat[i] = 0;
+		hsvequalizer.val[i] = 0;
+        hsvequalizer.hue[i] = 0;
+    }
     raw.df_autoselect = false;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
@@ -214,6 +226,7 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_double  ("Exposure", "Compensation",    toneCurve.expcomp);
     keyFile.set_integer ("Exposure", "Brightness",      toneCurve.brightness);
     keyFile.set_integer ("Exposure", "Contrast",        toneCurve.contrast);
+	keyFile.set_integer ("Exposure", "Saturation",      toneCurve.saturation);
     keyFile.set_integer ("Exposure", "Black",           toneCurve.black);
     keyFile.set_integer ("Exposure", "HighlightCompr",  toneCurve.hlcompr);
     keyFile.set_integer ("Exposure", "ShadowCompr",     toneCurve.shcompr);
@@ -277,6 +290,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Impulse Denoising", "Enabled",        impulseDenoise.enabled);
 	keyFile.set_integer ("Impulse Denoising", "Threshold",        impulseDenoise.thresh);
 
+	// save defringe
+    keyFile.set_boolean ("Defringing", "Enabled",        defringe.enabled);
+    keyFile.set_double  ("Defringing", "Radius",         defringe.radius);
+    keyFile.set_integer ("Defringing", "Threshold",		defringe.threshold);
 	
 	// save dirpyrDenoise
     keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
@@ -378,6 +395,28 @@ int ProcParams::save (Glib::ustring fname) const {
         ss << "Mult" << i;
         keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
+	
+	// save hsv equalizer parameters
+    keyFile.set_boolean ("HSV Equalizer", "Enabled", hsvequalizer.enabled);
+	keyFile.set_string  ("HSV Equalizer", "Channel", hsvequalizer.hsvchannel);
+    for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Sat" << i;
+        keyFile.set_double("HSV Equalizer", ss.str(), hsvequalizer.sat[i]);
+    }
+	for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Val" << i;
+        keyFile.set_double("HSV Equalizer", ss.str(), hsvequalizer.val[i]);
+    }
+	for(int i = 0; i < 8; i++)
+    {
+        std::stringstream ss;
+        ss << "Hue" << i;
+        keyFile.set_double("HSV Equalizer", ss.str(), hsvequalizer.hue[i]);
+    }
 
     // save RAW parameters
     keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
@@ -443,7 +482,8 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "Compensation"))   toneCurve.expcomp       = keyFile.get_double  ("Exposure", "Compensation");
     if (keyFile.has_key ("Exposure", "Brightness"))     toneCurve.brightness    = keyFile.get_integer ("Exposure", "Brightness");
     if (keyFile.has_key ("Exposure", "Contrast"))       toneCurve.contrast      = keyFile.get_integer ("Exposure", "Contrast");
-    if (keyFile.has_key ("Exposure", "Black"))          toneCurve.black         = keyFile.get_integer ("Exposure", "Black");
+	if (keyFile.has_key ("Exposure", "Saturation"))     toneCurve.saturation    = keyFile.get_integer ("Exposure", "Saturation");
+	if (keyFile.has_key ("Exposure", "Black"))          toneCurve.black         = keyFile.get_integer ("Exposure", "Black");
     if (keyFile.has_key ("Exposure", "HighlightCompr")) toneCurve.hlcompr       = keyFile.get_integer ("Exposure", "HighlightCompr");
     if (toneCurve.hlcompr > 100) toneCurve.hlcompr = 100; // older pp3 files can have values above 100.
     if (keyFile.has_key ("Exposure", "ShadowCompr"))    toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr");
@@ -518,6 +558,13 @@ if (keyFile.has_group ("White Balance")) {
 if (keyFile.has_group ("Color Shift")) {    
     if (keyFile.has_key ("Color Shift", "ChannelA")) colorShift.a = keyFile.get_double ("Color Shift", "ChannelA");
     if (keyFile.has_key ("Color Shift", "ChannelB")) colorShift.b = keyFile.get_double ("Color Shift", "ChannelB");
+}
+		
+// load defringe
+if (keyFile.has_group ("Defringing")) {    
+	if (keyFile.has_key ("Defringing", "Enabled"))        defringe.enabled       = keyFile.get_boolean ("Defringing", "Enabled");
+	if (keyFile.has_key ("Defringing", "Radius"))         defringe.radius        = keyFile.get_double  ("Defringing", "Radius");
+	if (keyFile.has_key ("Defringing", "Threshold"))  defringe.threshold = keyFile.get_integer ("Defringing", "Threshold");
 }
 		
 	// load impulseDenoise
@@ -660,6 +707,29 @@ if (keyFile.has_group ("Directional Pyramid Equalizer")) {
 		if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) dirpyrequalizer.mult[i] = keyFile.get_double ("Directional Pyramid Equalizer", ss.str());
 	}
 }
+		
+	// load wavelet equalizer parameters
+if (keyFile.has_group ("HSV Equalizer")) {
+	if (keyFile.has_key ("HSV Equalizer", "Enabled")) hsvequalizer.enabled = keyFile.get_boolean ("HSV Equalizer", "Enabled");
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Sat" << i;
+		if(keyFile.has_key ("HSV Equalizer", ss.str())) hsvequalizer.sat[i] = keyFile.get_double ("HSV Equalizer", ss.str());
+	}
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Val" << i;
+		if(keyFile.has_key ("HSV Equalizer", ss.str())) hsvequalizer.val[i] = keyFile.get_double ("HSV Equalizer", ss.str());
+	}
+	for(int i = 0; i < 8; i ++)
+	{
+		std::stringstream ss;
+		ss << "Hue" << i;
+		if(keyFile.has_key ("HSV Equalizer", ss.str())) hsvequalizer.hue[i] = keyFile.get_double ("HSV Equalizer", ss.str());
+	}
+}
 
 	// load raw settings
 if (keyFile.has_group ("RAW")) {
@@ -730,6 +800,17 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
 	return true;
 }
 
+bool operator==(const HSVEqualizerParams & a, const HSVEqualizerParams & b) {
+	if(a.enabled != b.enabled)
+		return false;
+	
+	for(int i = 0; i < 8; i++) {
+		if(a.sat[i] != b.sat[i] && a.val[i] != b.val[i] && a.hue[i] != b.hue[i])
+			return false;
+	}
+	return true;
+}
+	
 bool operator==(const ExifPair& a, const ExifPair& b) {
 
     return a.field == b.field && a.value == b.value;
@@ -746,6 +827,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && toneCurve.brightness == other.toneCurve.brightness
         && toneCurve.black      == other.toneCurve.black
         && toneCurve.contrast   == other.toneCurve.contrast
+		&& toneCurve.saturation == other.toneCurve.saturation
         && toneCurve.shcompr    == other.toneCurve.shcompr
         && toneCurve.hlcompr    == other.toneCurve.hlcompr
         && toneCurve.autoexp    == other.toneCurve.autoexp
@@ -786,6 +868,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
 	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 	&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
+	&& defringe.enabled      == other.defringe.enabled
+	&& defringe.radius       == other.defringe.radius
+	&& defringe.threshold == other.defringe.threshold
         && lumaDenoise.enabled      == other.lumaDenoise.enabled
         && lumaDenoise.radius       == other.lumaDenoise.radius
         && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance
@@ -852,6 +937,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.output       == other.icm.output
         && equalizer == other.equalizer
 	&& dirpyrequalizer == other.dirpyrequalizer
+	&& hsvequalizer == other.hsvequalizer
         && exif==other.exif
         && iptc==other.iptc;
 }

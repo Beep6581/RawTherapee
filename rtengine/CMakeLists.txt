@@ -7,13 +7,14 @@ link_directories (${CMAKE_CURRENT_SOURCE_DIR}/../rtexif ${EXTRA_LIBDIR} ${GTHREA
     ${GOBJECT_LIBRARY_DIRS} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
     ${IPTCDATA_LIBRARY_DIRS} ${LCMS_LIBRARY_DIRS})
 
-set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc iccstore.cc dfmanager.cc
+set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc iccstore.cc dfmanager.cc rawimage.cc
     image8.cc image16.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc
 	jpeg_memsrc.c 
+	PF_correct_RT.cc
     wavelet_dec.cc ipequalizer.cc dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc)
 
 add_library (rtengine ${RTENGINESOURCEFILES})

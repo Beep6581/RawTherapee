@@ -27,7 +27,7 @@
 class PopUpToggleButton : public Gtk::ToggleButton, public PopUpCommon {
 
 public:
-	PopUpToggleButton (const Glib::ustring& label = "", bool imgRight=false);
+	PopUpToggleButton (const Glib::ustring& label = "");
 	void show ();
 	void set_tooltip_text (const Glib::ustring &text);
 };

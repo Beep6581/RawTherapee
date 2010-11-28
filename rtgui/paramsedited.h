@@ -31,7 +31,8 @@ class ToneCurveParamsEdited {
         bool brightness;
         bool black;
         bool contrast;
-        bool shcompr;
+		bool saturation;
+		bool shcompr;
         bool hlcompr;
         bool autoexp;
         bool clip;
@@ -106,6 +107,14 @@ class ColorDenoiseParamsEdited {
     public:
         bool enabled;
         bool amount;
+};
+
+class DefringeParamsEdited {
+	
+public:
+	bool enabled;
+	bool radius;
+	bool threshold;
 };
 
 class ImpulseDenoiseParamsEdited {
@@ -252,6 +261,16 @@ public:
 	bool mult[8];
 };
 
+class HSVEqualizerParamsEdited {
+	
+public:
+	bool enabled;
+	bool sat[6];
+	bool val[6];
+	bool hue[6];
+	int	hsvchannel;
+};
+
 class RAWParamsEdited {
 
     public:
@@ -293,8 +312,9 @@ class ParamsEdited {
         LumaDenoiseParamsEdited       lumaDenoise;    
         ColorDenoiseParamsEdited      colorDenoise; 
 	
+	DefringeParamsEdited			defringe;    
 	DirPyrDenoiseParamsEdited       dirpyrDenoise;    
-	ImpulseDenoiseParamsEdited       impulseDenoise;    
+	ImpulseDenoiseParamsEdited		impulseDenoise;    
 
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           
@@ -312,6 +332,7 @@ class ParamsEdited {
         EqualizerParamsEdited         equalizer;
         RAWParamsEdited               raw;
 	DirPyrEqualizerParamsEdited   dirpyrequalizer;
+	HSVEqualizerParamsEdited         hsvequalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

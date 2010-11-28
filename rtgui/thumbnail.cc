@@ -99,7 +99,7 @@ void Thumbnail::_generateThumbnailImage () {
 		//  2. if we don't find that then just grab the real image.
 		bool quick = false;
 		rtengine::RawMetaDataLocation ri;
-		if ( initial_ )
+		if ( initial_ && options.internalThumbIfUntouched)
 		{
 			quick = true;
 			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1);
@@ -489,13 +489,16 @@ void Thumbnail::setFileName (const Glib::ustring fn) {
 
 void Thumbnail::addThumbnailListener (ThumbnailListener* tnl) {
 
+    increaseRef();
     listeners.push_back (tnl);
 }
 
 void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl) {
 
     std::vector<ThumbnailListener*>::iterator f = std::find (listeners.begin(), listeners.end(), tnl);
-    if (f!=listeners.end())
+    if (f!=listeners.end()) {
         listeners.erase (f);
+        decreaseRef();
+	}
 }
 

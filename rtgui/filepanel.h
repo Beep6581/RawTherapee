@@ -73,7 +73,7 @@ class FilePanel : public Gtk::HPaned,
         
         // interface fileselectionlistener
         bool fileSelected           (Thumbnail* thm);
-        bool addBatchQueueJob       (BatchQueueEntry* bqe);
+        bool addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries );
 
         void optionsChanged         ();
         bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );

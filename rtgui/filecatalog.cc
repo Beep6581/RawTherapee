@@ -45,6 +45,7 @@ int _directoryUpdater (void* cat) {
 #endif
 
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1), listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
+    inTabMode=false;
 
     //  construct and initialize thumbnail browsers
         fileBrowser = new FileBrowser();
@@ -285,22 +286,29 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
     }
 }
 
-void FileCatalog::_refreshProgressBar () {
+void FileCatalog::enableTabMode(bool enable) {
+    inTabMode = enable;
 
-    // check if progress bar is visible
-/*    Glib::ListHandle<Gtk::Widget*> list = buttonBar2->get_children ();
-    Glib::ListHandle<Gtk::Widget*>::iterator i = list.begin ();
-    for (; i!=list.end() && *i!=progressBar; i++);
-    if (i==list.end()) {
-        buttonBar2->pack_start (*progressBar, Gtk::PACK_SHRINK, 4);
-        buttonBar2->reorder_child (*progressBar, 2);
+    if (!inTabMode) progressBar->hide ();  // just needed once
+    
+    fileBrowser->enableTabMode(inTabMode);
+
+    redrawAll();
+}
+
+void FileCatalog::_refreshProgressBar () {
+    // In tab mode, no progress bar at all
+    // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
+    // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
+    if (!inTabMode) {
+        if (previewsToLoad>0) {
+            progressBar->set_fraction ((double)previewsLoaded / previewsToLoad);
+            progressBar->show ();
+        } else {
+            progressBar->set_fraction (1.0);
+            progressBar->hide ();
+        }
     }
-*/
-    progressBar->show ();    
-    if (previewsToLoad>0)
-        progressBar->set_fraction ((double)previewsLoaded / previewsToLoad);
-    else
-        progressBar->set_fraction (1.0);
 }
 
 int refreshpb (void* data) {
@@ -365,8 +373,8 @@ void FileCatalog::_previewsFinished () {
     redrawAll ();
     previewsToLoad = 0;
     previewsLoaded = 0;
-//    removeIfThere (buttonBar2, progressBar);
     progressBar->hide ();
+
 	if (filterPanel) {
 		filterPanel->set_sensitive (true);
 	    if ( !hasValidCurrentEFS ){
@@ -407,6 +415,11 @@ void FileCatalog::redrawAll () {
 void FileCatalog::refreshAll () {
 
     fileBrowser->refreshThumbImages ();
+}
+
+void FileCatalog::refreshHeight () {
+    int newHeight=fileBrowser->getEffectiveHeight();
+    set_size_request(0, newHeight);
 }
 
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
@@ -478,6 +491,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
 void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
+    	std::vector<BatchQueueEntry*> entries;
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
@@ -489,14 +503,15 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
                 guint8* prev = new guint8 [pw*ph*3];
                 memcpy (prev, img->getData (), pw*ph*3);
                 img->free();
-                listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
+                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
             }
             else {
                 int pw, ph;
                 tbe[i]->thumbnail->getThumbnailSize (pw, ph);
-                listener->addBatchQueueJob (new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
+                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
             }
         }
+        listener->addBatchQueueJobs( entries );
     }
 }
 
@@ -838,14 +853,14 @@ bool FileCatalog::trashIsEmpty () {
 
 void FileCatalog::zoomIn () {
 
-        
     fileBrowser->zoomIn ();
+    refreshHeight();
         
 }
 void FileCatalog::zoomOut () {
 
-        
     fileBrowser->zoomOut ();
+    refreshHeight();
         
 }
 void FileCatalog::refreshEditedState (const std::set<Glib::ustring>& efiles) {

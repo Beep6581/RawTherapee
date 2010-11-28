@@ -42,7 +42,7 @@ BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
     cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));    
     head->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::headItems), &selected));    
     tail->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::tailItems), &selected));    
-    selall->signal_activate().connect (sigc::mem_fun(*this, &BatchQueue::selectAll));    
+    selall->signal_activate().connect (sigc::mem_fun(*this, &BatchQueue::selectAll));
 }
 
 void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
@@ -50,39 +50,138 @@ void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
     pmenu->popup (3, 0);
 }
 
-void BatchQueue::addEntry (BatchQueueEntry* entry, bool head) {
+void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
+{
+	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
+		(*entry)->setParent (this);
+		(*entry)->resize (options.thumbSize);
+		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
 
-    entry->setParent (this);
-    entry->resize (options.thumbSize);
+		// recovery save
+		if( !(*entry)->params.save( tempFile ) )
+		   (*entry)->savedParamsFile = tempFile;
 
-    entry->selected = false;       
-    if (!head)
-        fd.push_back (entry);
-    else {
-        std::vector<ThumbBrowserEntryBase*>::iterator pos;
-        for (pos=fd.begin(); pos!=fd.end(); pos++)
-            if (!(*pos)->processing) {
-                fd.insert (pos, entry);
-                break;
-            }
-        if (pos==fd.end())
-            fd.push_back (entry);
-    }
-    
-    if (entry->thumbnail)
-        entry->thumbnail->imageEnqueued ();
+		(*entry)->selected = false;
+		if (!head)
+			fd.push_back (*entry);
+		else {
+			std::vector<ThumbBrowserEntryBase*>::iterator pos;
+			for (pos=fd.begin(); pos!=fd.end(); pos++)
+				if (!(*pos)->processing) {
+					fd.insert (pos, *entry);
+					break;
+				}
+			if (pos==fd.end())
+				fd.push_back (*entry);
+		}
+		if ((*entry)->thumbnail)
+			(*entry)->thumbnail->imageEnqueued ();
 
-    BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (entry);
-    bqbs->setButtonListener (this);
-    entry->addButtonSet (bqbs);
-
+		BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (*entry);
+		bqbs->setButtonListener (this);
+		(*entry)->addButtonSet (bqbs);
+	}
+    saveBatchQueue( );
     arrangeFiles ();
     queue_draw ();
     notifyListener ();
 }
 
-int deleteitem (void* data) {
+bool BatchQueue::saveBatchQueue( )
+{
+    Glib::ustring savedQueueFile;
+    savedQueueFile = options.rtdir+"/batch/queue";
+    FILE *f = g_fopen (safe_locale_from_utf8(savedQueueFile).c_str(), "wt");
 
+    if (f==NULL)
+        return false;
+
+    for (std::vector<ThumbBrowserEntryBase*>::iterator pos=fd.begin(); pos!=fd.end(); pos++){
+    	BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
+    	fprintf(f,"%s;%s\n", bqe->filename.c_str(),bqe->savedParamsFile.c_str() );
+    }
+    fclose (f);
+    return true;
+}
+
+bool BatchQueue::loadBatchQueue( )
+{
+    Glib::ustring savedQueueFile;
+    savedQueueFile = options.rtdir+"/batch/queue";
+    FILE *f = g_fopen (safe_locale_from_utf8(savedQueueFile).c_str(), "rt");
+
+    if (f==NULL)
+        return false;
+    char buffer[1024];
+    unsigned numLoaded=0;
+    while (fgets (buffer, sizeof(buffer), f)){
+    	char *p = strchr(buffer,';' );
+    	if( p ){
+            char *le = buffer + strlen(buffer);
+            while( --le > buffer && (*le == '\n' || *le == '\r') );
+    	    Glib::ustring source(buffer, p-buffer );
+    	    Glib::ustring paramsFile(p+1, (le +1)- (p+1) );
+
+    	    rtengine::procparams::ProcParams pparams;
+    	    if( pparams.load( paramsFile ) )
+    	    	continue;
+
+    	    ::Thumbnail *thumb = cacheMgr->getEntry( source );
+    	    if( thumb ){
+    	        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
+
+				int prevh = options.maxThumbnailHeight;
+				int prevw = prevh;
+				guint8* prev = NULL;
+				double tmpscale;
+				rtengine::IImage8* img = thumb->processThumbImage(pparams, options.maxThumbnailHeight, tmpscale);
+				if (img) {
+					prevw = img->getWidth();
+					prevh = img->getHeight();
+					prev = new guint8[prevw * prevh * 3];
+					memcpy(prev, img->getData(), prevw * prevh * 3);
+					img->free();
+				}
+				BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prev, prevw, prevh, thumb);
+				entry->setParent(this);
+				entry->resize(options.thumbSize);
+				entry->savedParamsFile = paramsFile;
+				entry->selected = false;
+				fd.push_back(entry);
+
+				BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
+				bqbs->setButtonListener(this);
+				entry->addButtonSet(bqbs);
+				numLoaded++;
+    	    }
+    	}
+    }
+    fclose(f);
+    arrangeFiles ();
+    queue_draw ();
+    return numLoaded > 0;
+}
+
+Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
+{
+    time_t rawtime;
+    struct tm *timeinfo;
+    char stringTimestamp [80];
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    strftime (stringTimestamp,sizeof(stringTimestamp),"_%Y%m%d%H%M%S_",timeinfo);
+    Glib::ustring savedParamPath;
+    savedParamPath = options.rtdir+"/batch/";
+    g_mkdir_with_parents (savedParamPath.c_str(), 0755);
+    savedParamPath += Glib::path_get_basename (filename);
+    savedParamPath += stringTimestamp;
+    savedParamPath += paramFileExtension;
+    return savedParamPath;
+}
+
+int deleteitem (void* data)
+{
+	::remove( safe_locale_from_utf8( ((BatchQueueEntry*)data)->savedParamsFile).c_str () );
     gdk_threads_enter ();
     delete (BatchQueueEntry*)data;
     gdk_threads_leave ();
@@ -108,6 +207,9 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
         fd[i]->selected = false;
     lastClicked = NULL;
     selected.clear ();
+
+    saveBatchQueue( );
+
     redraw ();
     notifyListener ();
 }
@@ -129,6 +231,7 @@ void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
                 }
         }
     }
+    saveBatchQueue( );
     redraw ();
 }
 
@@ -144,6 +247,7 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
             fd.push_back (entry);
         }
     }
+    saveBatchQueue( );
     redraw ();
 }
    
@@ -222,6 +326,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
                 listener->imageProcessingReady (processing->filename);
         }
     }
+    // save temporary params file name: delete as last thing
+    Glib::ustring processedParams = processing->savedParamsFile;
     
     // delete from the queue
     delete processing;
@@ -246,6 +352,18 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         }
         // remove button set
         next->removeButtonSet ();
+    }
+    if( saveBatchQueue( ) ){
+       ::remove( safe_locale_from_utf8(processedParams).c_str () );
+       // Delete all files in directory \batch when finished, just to be sure to remove zombies
+       if( fd.size()==0 ){
+    	    std::vector<Glib::ustring> names;
+    	    Glib::ustring batchdir = options.rtdir+"/batch/";
+    	    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
+    		safe_build_file_list (dir, names, batchdir);
+    		for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
+    			::remove( safe_locale_from_utf8(*iter).c_str () );
+       }
     }
     redraw ();
     notifyListener ();

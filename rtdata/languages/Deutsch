@@ -11,9 +11,13 @@
 #09 Leichte Anpassungen (keenonkites/klonk)
 #10 Erweiterung (oduis)
 #11 Erweiterung (oduis)
+#12 Erweiterung (oduis)
+#13 Erweiterung (oduis)
 ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
+CURVEEDITOR_CURVE;Kurve
+CURVEEDITOR_CURVES;Kurven
 CURVEEDITOR_CUSTOM;Angepasst
 CURVEEDITOR_DARKS;Tiefen
 CURVEEDITOR_FILEDLGFILTERANY;Alle Dateien
@@ -30,6 +34,7 @@ CURVEEDITOR_TOOLTIPLINEAR;Zurücksetzen der Kurve (linear)
 CURVEEDITOR_TOOLTIPLOAD;Laden einer Kurve
 CURVEEDITOR_TOOLTIPSAVE;Speichern der aktuellen Kurve
 CURVEEDITOR_TYPE;Typ:
+EDITWINDOW_TITLE;Bildbearbeitung
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;Exif Filter
@@ -144,6 +149,11 @@ HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
 HISTORY_DELSNAPSHOT;Variante löschen
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Abfolge der Änderungen
+HISTORY_MSG_100;RGB Sättigung
+HISTORY_MSG_101;HSV EQ -- Farbton
+HISTORY_MSG_102;HSV EQ -- Sättigung
+HISTORY_MSG_103;HSV EQ -- Hellwert
+HISTORY_MSG_104;HSV Mixer
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
@@ -227,13 +237,21 @@ HISTORY_MSG_82;Profil geändert
 HISTORY_MSG_83;Schatten/Lichter hohe Qualität
 HISTORY_MSG_84;Perspektivische Korrektur
 HISTORY_MSG_85;Wavelet Koeffizienten
-HISTORY_MSG_86;Wavelet Equalizer
-HISTORY_MSG_87;Impulsrauschfilter
+HISTORY_MSG_86;Wavelet Mixer
+HISTORY_MSG_87;Fleckrauschfilter
+HISTORY_MSG_88;Fleckrauschf. Schwelle
 HISTORY_MSG_89;Gerichtete Pyramide
 HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_90;Gerichtete Pyramide Luminanz
 HISTORY_MSG_91;Gerichtete Pyramide Chrominanz
 HISTORY_MSG_92;Gerichtete Pyramide Gamma
+HISTORY_MSG_93;Kontrast nach Detailebene-Parameter
+HISTORY_MSG_94;Kontrast nach Detailebenen
+HISTORY_MSG_95;Sättigung
+HISTORY_MSG_96;'a'-Kurve
+HISTORY_MSG_97;'b'-Kurve
+HISTORY_MSG_98;Entrasterung
+HISTORY_MSG_99;Vorverarbeitung
 HISTORY_MSG_9;Lichter-Kompression
 HISTORY_NEWSNAPSHOT;Neue Variante
 HISTORY_NEWSNAPSHOTAS;als...
@@ -399,6 +417,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENING;Schärfen
 PARTIALPASTE_VIGNETTING;Korrektur Vignettierung
 PARTIALPASTE_WHITEBALANCE;Weissabgleich
+POPUPBUTTON_SELECTOPTIONHINT;Rechter Mausklick zum Ändern
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
 PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
@@ -462,6 +481,7 @@ PREFERENCES_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
+PREFERENCES_MULTITABDUALMON;Multi-Reiter Modus, auf zweitem Monitor wenn verfügbar
 PREFERENCES_OUTDIR;Ausgabe-Verzeichnis
 PREFERENCES_OUTDIRFOLDER;Speichern in Verzeichnis
 PREFERENCES_OUTDIRFOLDERHINT;Ablegen der gespeicherten Bilder in ein ausgewähltes Verzeichnis
@@ -469,6 +489,7 @@ PREFERENCES_OUTDIRHINT;<i>Die folgenden Variablen können verwendet werden:</i>\
 PREFERENCES_OUTDIRTEMPLATE;Verwenden einer Vorlage
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
+PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabe-Dateien überschreiben
 PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Datei-Typen
 PREFERENCES_PARSEDEXTADD;Datei-Typ hinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Gebe einen Datei-Typ (Extension) ein und drücke diesen Knopf um diesen Typ hinzuzufügen
@@ -601,7 +622,7 @@ TP_DIRPYRDENOISE_CHROMA;Chrominanz
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Direktionale Pyramiden-Rauschminderung
 TP_DIRPYRDENOISE_LUMA;Luminanz
-TP_DIRPYREQUALIZER_LABEL;Direktionaler Pyramiden-Equalizer
+TP_DIRPYREQUALIZER_LABEL;Direktionaler Pyramiden-Mixer
 TP_DIRPYREQUALIZER_LUMACOARSEST;Gröbstes
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
@@ -613,7 +634,7 @@ TP_DISTORTION_LABEL;Entzerrung
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;Feinstes
-TP_EQUALIZER_LABEL;Wavelet-Equalizer
+TP_EQUALIZER_LABEL;Wavelet-Mixer
 TP_EQUALIZER_LARGEST;Gröbstes
 TP_EQUALIZER_NEUTRAL;Neutral
 TP_EXPOSURE_AUTOLEVELS;Auto
@@ -626,14 +647,29 @@ TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_LABEL;Belichtung
+TP_EXPOSURE_SATURATION;Sättigung
 TP_HLREC_CIELAB;CIELab Überlagerung
 TP_HLREC_COLOR;Farbübertragung
 TP_HLREC_LABEL;Lichter wiederherstellen
 TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode: 
+TP_HSVEQUALIZER1;Rot
+TP_HSVEQUALIZER2;Orange
+TP_HSVEQUALIZER3;Gelb
+TP_HSVEQUALIZER4;Grün
+TP_HSVEQUALIZER5;Aquamarin
+TP_HSVEQUALIZER6;Blau
+TP_HSVEQUALIZER7;Violett
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;HSV Kanal
+TP_HSVEQUALIZER_HUE;Farbton
+TP_HSVEQUALIZER_LABEL;HSV Mixer
+TP_HSVEQUALIZER_NEUTRAL;Neutral
+TP_HSVEQUALIZER_SAT;Sättigung
+TP_HSVEQUALIZER_VAL;Hellwert
 TP_ICM_FILEDLGFILTERANY;Alle Dateien
 TP_ICM_FILEDLGFILTERICM;ICC-Profildateien
-TP_ICM_GAMMABEFOREINPUT;Profil enthält Gammaanpassung
+TP_ICM_GAMMABEFOREINPUT;Profil enthält Gamma-Anpassung
 TP_ICM_INPUTCAMERA;Kamera-Standard
 TP_ICM_INPUTCUSTOM;Benutzerdefiniert
 TP_ICM_INPUTDLGLABEL;Wähle Eingabe-ICC-Profil...
@@ -645,7 +681,7 @@ TP_ICM_OUTPUTDLGLABEL;Wähle Ausgabe-ICC-Profil...
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_SAVEREFERENCE;Speichere Referenzbild für die Profilierung
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
-TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
+TP_IMPULSEDENOISE_LABEL;Fleckrauschminderung
 TP_IMPULSEDENOISE_THRESH;Schwellwert
 TP_LABCURVE_BRIGHTNESS;Helligkeit
 TP_LABCURVE_CONTRAST;Kontrast
@@ -753,8 +789,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!CURVEEDITOR_CURVE;Curve
-!CURVEEDITOR_CURVES;Curves
-!HISTORY_MSG_93;Contrast by detail levels parameter
-!HISTORY_MSG_94;Contrast by detail levels
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
+!TP_ICM_INPUTNONE;No profile

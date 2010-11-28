@@ -1,4 +1,4 @@
 #!/bin/bash
 RT_BINDIR=`dirname "$0"`
 export LD_LIBRARY_PATH=${RT_BINDIR}
-cd "${RT_BINDIR}" && ./rt
+cd "${RT_BINDIR}" && ./rt "$@"

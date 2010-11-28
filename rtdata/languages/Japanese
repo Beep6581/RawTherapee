@@ -1,11 +1,14 @@
 
+# Japanese translation of RawTherapee
 #00 Japanese
 #01 2009-02-18 by A3novy
 #02 updated to RT2.4-RC by paul.matthijsse
-#03 2010-10-24 updated to RT3.0 alpha 1 by A3novy
+#03 2010-11-014 updated to RT3.0 alpha 1 by A3novy
 ADJUSTER_RESET_TO_DEFAULT;リセット初期化
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCH_PROCESSING;バッチ処理
+CURVEEDITOR_CURVE;カーブ
+CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CUSTOM;カスタム
 CURVEEDITOR_DARKS;ダーク
 CURVEEDITOR_FILEDLGFILTERANY;すべてのファイル
@@ -47,6 +50,7 @@ EXIFPANEL_SUBDIRECTORY;サブディレクトリ
 FILEBROWSER_ADDDELTEMPLATE;テンプレートの追加/削除...
 FILEBROWSER_APPLYPROFILE;プロファイルの適応
 FILEBROWSER_ARRANGEMENTHINT;サムネイル整列 縦/横
+FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_CLEARPROFILE;プロファイルの削除
 FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;カーブ名:
@@ -55,10 +59,11 @@ FILEBROWSER_DELETEDLGMSG;%1 を削除してもいいですか？
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
 FILEBROWSER_EMPTYTRASHHINT;ゴミ箱を完全に空にする
 FILEBROWSER_EXIFFILTERAPPLY;適応
-FILEBROWSER_EXIFFILTERAPPLYHINT;ファイルブラウザのExifフィルターのon/off
-FILEBROWSER_EXIFFILTERLABEL;Exifフィルター
+FILEBROWSER_EXIFFILTERAPPLYHINT;ファイルブラウザのExifフィルタのon/off
+FILEBROWSER_EXIFFILTERLABEL;Exifフィルタ
 FILEBROWSER_EXIFFILTERSETTINGS;セットアップ
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Exifフィルターの設定を変える
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Exifフィルタの設定を変える
+FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
 FILEBROWSER_NEW_NAME;新規名称:
 FILEBROWSER_PARTIALPASTEPROFILE;部分的に貼り付け
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
@@ -82,6 +87,7 @@ FILEBROWSER_PROCESSINGSETTINGS;設定
 FILEBROWSER_PROCESSINGSETTINGSHINT;ファイル形式と出力ディレクトリを設定
 FILEBROWSER_RENAMEDLGLABEL;ファイル名変更
 FILEBROWSER_RENAMEDLGMSG;"%1" にファイル名変更:
+FILEBROWSER_SELECTDARKFRAME;ダークフレーム 選択...
 FILEBROWSER_SHOWDIRHINT;ディレクトリのすべての画像を表示
 FILEBROWSER_SHOWEXIFINFO;EXIF 情報表示
 FILEBROWSER_SHOWQUEUEHINT;キューの内容を表示
@@ -133,16 +139,21 @@ HISTORY_CUSTOMCURVE;カスタムカーブ
 HISTORY_DELSNAPSHOT;削除
 HISTORY_FROMCLIPBOARD;クリップボードから
 HISTORY_LABEL;履歴
-HISTORY_MSG_10;シャドウ補正
+HISTORY_MSG_100;RGB 彩度
+HISTORY_MSG_101;HSV EQ -- 色相
+HISTORY_MSG_102;HSV EQ -- 彩度
+HISTORY_MSG_103;HSV EQ -- 明度
+HISTORY_MSG_104;HSV イコライザ
+HISTORY_MSG_10;シャドウ復元
 HISTORY_MSG_11;トーンカーブ
 HISTORY_MSG_12;露出 オート
 HISTORY_MSG_13;露出 クリッピング
 HISTORY_MSG_14;Lab 明るさ
 HISTORY_MSG_15;Lab コントラスト
 HISTORY_MSG_16;輝度 黒レベル
-HISTORY_MSG_17;輝度 ハイライト圧縮
-HISTORY_MSG_18;輝度 シャドウ圧縮
-HISTORY_MSG_19;Lab 輝度カーブ
+HISTORY_MSG_17;輝度 ハイライト復元
+HISTORY_MSG_18;輝度 シャドウ復元
+HISTORY_MSG_19;'L'カーブ
 HISTORY_MSG_1;写真を読み込みました
 HISTORY_MSG_20;シャープ
 HISTORY_MSG_21;シャープ 半径
@@ -173,7 +184,7 @@ HISTORY_MSG_43;輝度ノイズ除去
 HISTORY_MSG_44;輝度ノイズ除去 半径
 HISTORY_MSG_45;輝度ノイズ除去 エッジの許容度
 HISTORY_MSG_46;カラー ノイズ除去
-HISTORY_MSG_47;カラー ノイズ除去 半径
+HISTORY_MSG_47;ノイズ除去 半径
 HISTORY_MSG_48;カラー ノイズ除去 エッジの許容度
 HISTORY_MSG_49;カラー ノイズ除去 エッジの感度
 HISTORY_MSG_4;履歴ブラウジング
@@ -194,9 +205,9 @@ HISTORY_MSG_62;歪曲収差補正
 HISTORY_MSG_63;スナップショット選択
 HISTORY_MSG_64;写真切り抜き
 HISTORY_MSG_65;色収差補正
-HISTORY_MSG_66;ハイライト修復
-HISTORY_MSG_67;ハイライト修復 量
-HISTORY_MSG_68;ハイライト修復 方式
+HISTORY_MSG_66;ハイライト復元
+HISTORY_MSG_67;ハイライト復元 量
+HISTORY_MSG_68;ハイライト復元 方式
 HISTORY_MSG_69;作業カラースペース
 HISTORY_MSG_6;コントラスト
 HISTORY_MSG_70;出力カラースペース
@@ -217,18 +228,21 @@ HISTORY_MSG_83;高画質 シャドウ/ハイライト
 HISTORY_MSG_84;パースペクティブ コレクション
 HISTORY_MSG_85;ウェーブレット係数
 HISTORY_MSG_86;ウェーブレット イコライザ
-HISTORY_MSG_87;インパルス ノイズ除去
-HISTORY_MSG_89;指向性ピラミッド
+HISTORY_MSG_87;スポット ノイズ除去
+HISTORY_MSG_88;スポット NR 閾値
+HISTORY_MSG_89;ノイズ除去
 HISTORY_MSG_8;露出補正
-HISTORY_MSG_90;指向性ピラミッド 輝度
-HISTORY_MSG_91;指向性ピラミッド 色度
-HISTORY_MSG_92;指向性ピラミッド ガンマ
-HISTORY_MSG_93;指向性ピラミッド係数
-HISTORY_MSG_94;指向性ピラミッド イコライザ
-HISTORY_MSG_95;Lab 彩度
-HISTORY_MSG_96;Lab aカーブ
-HISTORY_MSG_97;Lab bカーブ
-HISTORY_MSG_9;ハイライト補正
+HISTORY_MSG_90;NR - 輝度
+HISTORY_MSG_91;NR - 色度
+HISTORY_MSG_92;NR - ガンマ
+HISTORY_MSG_93;ディテールのコントラスト係数
+HISTORY_MSG_94;ディテールのコントラスト
+HISTORY_MSG_95;彩度
+HISTORY_MSG_96;'a' カーブ 
+HISTORY_MSG_97;'b' カーブ
+HISTORY_MSG_98;デモザイク
+HISTORY_MSG_99;前処理
+HISTORY_MSG_9;ハイライト復元
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSSDIALOGLABEL;スナップのラベル:
@@ -249,7 +263,7 @@ ICMPANEL_OUTPUTDLGLABEL;出力 ICC プロファイルを選択...
 ICMPANEL_OUTPUTPROFILE;出力プロファイル
 ICMPANEL_SAVEREFERENCE;プロファイリングの参照する画像を保存
 ICMPANEL_WORKINGPROFILE;作業プロファイル
-IMAGEAREA_DETAILVIEW;詳細
+IMAGEAREA_DETAILVIEW;ディテール
 IPTCPANEL_AUTHOR;作成者
 IPTCPANEL_AUTHORHINT;作成者の名前、たとえば筆者、カメラマン、グラフィックス作成者(作成者).
 IPTCPANEL_AUTHORSPOSITION;作成者の肩書
@@ -332,6 +346,7 @@ MAIN_TAB_FILTER;フィルタ
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;メタデータ
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;タグ付け
 MAIN_TAB_TRANSFORM;変形
 MAIN_TOGGLE_BEFORE_AFTER;補正 前|後
@@ -377,7 +392,7 @@ PARTIALPASTE_DIALOGLABEL;処理済みプロファイルの部分ペースト
 PARTIALPASTE_DISTORTION;歪曲補正
 PARTIALPASTE_EXIFCHANGES;exifデータを変える
 PARTIALPASTE_EXPOSURE;露出
-PARTIALPASTE_HLRECOVERY;ハイライト修復
+PARTIALPASTE_HLRECOVERY;ハイライト復元
 PARTIALPASTE_ICMSETTINGS;ICM 設定
 PARTIALPASTE_IPTCINFO;IPTC 情報
 PARTIALPASTE_LABCURVE;Lab カーブ
@@ -391,6 +406,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
 PARTIALPASTE_SHARPENING;シャープ化
 PARTIALPASTE_VIGNETTING;周辺光量補正
 PARTIALPASTE_WHITEBALANCE;ホワイトバランス
+POPUPBUTTON_SELECTOPTIONHINT;右ボタンでオプション変更
 PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;次の起動時に適応
 PREFERENCES_BATCH_PROCESSING;バッチ処理
@@ -409,18 +425,17 @@ PREFERENCES_CACHESTRAT;キャッシュ運用の方針
 PREFERENCES_CACHETHUMBFORM;キャッシュのサムネイル形式
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
 PREFERENCES_CACORRECTION;色収差補正を適応
-PREFERENCES_CLEARDLG_LINE1;キャッシュの削除
-PREFERENCES_CLEARDLG_LINE2;数秒掛かるかも・・
-PREFERENCES_CLEARDLG_TITLE;ちょっと待って・・
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
-PREFERENCES_DATEFORMAT;データフォーマット
-PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DARKFRAME;ダークフレーム
+PREFERENCES_DATEFORMAT;日付の形式
+PREFERENCES_DATEFORMATHINT;<i>次の書式文字を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法の日付:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DCBENHANCE;DCB拡張ステップの適応
 PREFERENCES_DCBITERATIONS;DCB繰り返しの数
 PREFERENCES_DEFAULTLANG;デフォルトの言語
 PREFERENCES_DEFAULTTHEME;デフォルト テーマ
 PREFERENCES_DEMOSAICINGALGO;デモザイク処理
+PREFERENCES_DIRDARKFRAMES;ダークフレーム・ディレクトリ
 PREFERENCES_DIRHOME;ホーム・ディレクトリ
 PREFERENCES_DIRLAST;最近参照したディレクトリ
 PREFERENCES_DIROTHER;他
@@ -441,7 +456,7 @@ PREFERENCES_GREENEQUIL;グリーン 平衡化
 PREFERENCES_GTKTHEME;GTK デフォルト
 PREFERENCES_HINT;ヒント
 PREFERENCES_HLTHRESHOLD;ハイライト・クリッピング領域のしきい値
-PREFERENCES_HOTDEADPIXFILT;ホット/デッド ピクセル・フィルターを適応
+PREFERENCES_HOTDEADPIXFILT;ホット/デッド ピクセル・フィルタを適応
 PREFERENCES_ICCDIR;ICCプロファイルのディレクトリ
 PREFERENCES_IMPROCPARAMS;画像処理の規定値
 PREFERENCES_INTENT_ABSOLUTE;絶対的な色域を維持
@@ -455,9 +470,9 @@ PREFERENCES_MULTITAB;マルチ タブモード
 PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
-PREFERENCES_OUTDIRHINT;<i>次の書式を使用することができます:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nこれらの書式はディレクトリとrawファイルのサブパスを示します.\n\n例えば, </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>\nこの書式文字の意味は:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n同じ場所に出力画像を保存するには, このように記述します:\n</i><b>%p1/%f\n</b><i>\n同じ場所にサブ・ディレクトリ'converted'を作成し、その中に出力画像を保存するには, このように記述します:\n</i><b>%p1/converted/%f\n</b><i>\n一つ上のディレクトリ'/home/tom/'にサブ・ディレクトリ'converted'を作成し'02-09-2006'の中に保存するには, このように記述します:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分を参照します\n\n例えば、次の画像を処理中の場合は:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>次の書式を使用することができます:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nこれらの書式はディレクトリとrawファイルのサブパスを示します.\n\n例えば, </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>\nこの書式文字の意味は:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n同じ場所に出力画像を保存するには, このように記述します:\n</i><b>%p1/%f\n</b><i>\n同じ場所にサブ・ディレクトリ'converted'を作成し、その中に出力画像を保存するには, このように記述します:\n</i><b>%p1/converted/%f\n</b><i>\n一つ上のディレクトリ'/home/tom/'にサブ・ディレクトリ'converted'を作成し'02-09-2006'の中に保存するには, このように記述します:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分を参照します\n\n例えば、次の画像を処理中の場合は:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;サムネイル上でファイル名を透過表示する
 PREFERENCES_PARSEDEXT;拡張子
 PREFERENCES_PARSEDEXTADD;拡張子の追加
@@ -512,7 +527,7 @@ PROGRESSBAR_LOADJPEG;JPEGファイル読み込み中...
 PROGRESSBAR_LOADPNG;;PNGファイル読み込み中...
 PROGRESSBAR_LOADTIFF;TIFFファイル読み込み中...
 PROGRESSBAR_PROCESSING;画像処理中...
-PROGRESSBAR_READY;準備ができました
+PROGRESSBAR_READY;準備が整いました.
 PROGRESSBAR_SAVEJPEG;JPEGファイル保存中...
 PROGRESSBAR_SAVEPNG;PNGファイル保存中...
 PROGRESSBAR_SAVETIFF;TIFFファイル保存中...
@@ -589,20 +604,20 @@ TP_CROP_Y;y
 TP_DETAIL_AMOUNT;量
 TP_DIRPYRDENOISE_CHROMA;色度
 TP_DIRPYRDENOISE_GAMMA;ガンマ
-TP_DIRPYRDENOISE_LABEL;指向性ピラミッド ノイズ除去
+TP_DIRPYRDENOISE_LABEL;ノイズ除去
 TP_DIRPYRDENOISE_LUMA;輝度
-TP_DIRPYREQUALIZER_LABEL;指向性ピラミッド イコライザ
+TP_DIRPYREQUALIZER_LABEL;ディテールのコントラスト
 TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト－
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト＋
-TP_DIRPYREQUALIZER_LUMAFINEST;細い
+TP_DIRPYREQUALIZER_LUMAFINEST;細かい
 TP_DIRPYREQUALIZER_LUMANEUTRAL;ニュートラル
 TP_DIRPYREQUALIZER_THRESHOLD;しきい値
 TP_DISTORTION_AMOUNT;量
 TP_DISTORTION_LABEL;歪曲収差補正
 TP_EQUALIZER_CONTRAST_MINUS;コントラスト－
 TP_EQUALIZER_CONTRAST_PLUS;コントラスト＋
-TP_EQUALIZER_FINEST;細い
+TP_EQUALIZER_FINEST;細かい
 TP_EQUALIZER_LABEL;ウェーブレット イコライザ
 TP_EQUALIZER_LARGEST;粗い
 TP_EQUALIZER_NEUTRAL;ニュートラル
@@ -610,17 +625,32 @@ TP_EXPOSURE_AUTOLEVELS;オートレベル
 TP_EXPOSURE_BLACKLEVEL;黒レベル
 TP_EXPOSURE_BRIGHTNESS;明るさ
 TP_EXPOSURE_CLIP;クリップ
-TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト圧縮
-TP_EXPOSURE_COMPRSHADOWS;シャドウ圧縮
+TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト復元
+TP_EXPOSURE_COMPRSHADOWS;シャドウ復元
 TP_EXPOSURE_CONTRAST;コントラスト
 TP_EXPOSURE_CURVEEDITOR;トーンカーブ
 TP_EXPOSURE_EXPCOMP;露出補正
 TP_EXPOSURE_LABEL;露出
+TP_EXPOSURE_SATURATION;彩度
 TP_HLREC_CIELAB;CIELab ブレンディング
 TP_HLREC_COLOR;色の波及
-TP_HLREC_LABEL;ハイライト修復
-TP_HLREC_LUMINANCE;輝度修復
+TP_HLREC_LABEL;ハイライト復元
+TP_HLREC_LUMINANCE;輝度復元
 TP_HLREC_METHOD;方式: 
+TP_HSVEQUALIZER1;レッド
+TP_HSVEQUALIZER2;イエロー
+TP_HSVEQUALIZER3;ライム
+TP_HSVEQUALIZER4;グリーン
+TP_HSVEQUALIZER5;アクア
+TP_HSVEQUALIZER6;ブルー
+TP_HSVEQUALIZER7;パープル
+TP_HSVEQUALIZER8;マゼンタ
+TP_HSVEQUALIZER_CHANNEL;HSV チャンネル
+TP_HSVEQUALIZER_HUE;色相
+TP_HSVEQUALIZER_LABEL;HSV イコライザ
+TP_HSVEQUALIZER_NEUTRAL;ニュートラル
+TP_HSVEQUALIZER_SAT;彩度
+TP_HSVEQUALIZER_VAL;明度
 TP_ICM_FILEDLGFILTERANY;すべてのファイル
 TP_ICM_FILEDLGFILTERICM;ICCプロファイル ファイル
 TP_ICM_GAMMABEFOREINPUT;プロファイルにガンマ適応
@@ -635,7 +665,7 @@ TP_ICM_OUTPUTDLGLABEL;出力 ICC プロファイルを選択...
 TP_ICM_OUTPUTPROFILE;出力プロファイル
 TP_ICM_SAVEREFERENCE;プロファイリングの参照する画像を保存
 TP_ICM_WORKINGPROFILE;作業プロファイル
-TP_IMPULSEDENOISE_LABEL;インパルス ノイズ除去
+TP_IMPULSEDENOISE_LABEL;スポット ノイズ除去
 TP_IMPULSEDENOISE_THRESH;しきい値
 TP_LABCURVE_BRIGHTNESS;明るさ
 TP_LABCURVE_CONTRAST;コントラスト
@@ -652,6 +682,10 @@ TP_LUMADENOISE_RADIUS;半径
 TP_PERSPECTIVE_HORIZONTAL;水平
 TP_PERSPECTIVE_LABEL;パースペクティブ
 TP_PERSPECTIVE_VERTICAL;垂直
+TP_PREPROCESS_DARKFRAME;ダークフレーム
+TP_PREPROCESS_DFAUTOSELECT;自動選択
+TP_RAWPANEL_DEMOSAICING;デモザイク
+TP_RAWPANEL_PREPROCESSING;前処理
 TP_RESIZE_BICUBIC;バイキュービック
 TP_RESIZE_BICUBICSF;バイキュービック (ソフトに)
 TP_RESIZE_BICUBICSH;バイキュービック (シャープに)
@@ -662,6 +696,7 @@ TP_RESIZE_FULLSIZE;フル 画像 サイズ:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_LABEL;リサイズ
+TP_RESIZE_LANCZOS;ランチョス
 TP_RESIZE_METHOD;方式: 
 TP_RESIZE_NEAREST;ニアリスト
 TP_RESIZE_SCALE;スケール
@@ -696,8 +731,12 @@ TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
 TP_SHARPENING_USM;アンシャープマスク
 TP_VIGNETTING_AMOUNT;量
+TP_VIGNETTING_CENTER;中心
+TP_VIGNETTING_CENTER_X;中心 X
+TP_VIGNETTING_CENTER_Y;中心 Y
 TP_VIGNETTING_LABEL;周辺光量補正
 TP_VIGNETTING_RADIUS;半径
+TP_VIGNETTING_STRENGTH;強度
 TP_WBALANCE_AUTO;オート
 TP_WBALANCE_CAMERA;カメラ
 TP_WBALANCE_CUSTOM;カスタム
@@ -720,7 +759,6 @@ ZOOMPANEL_ZOOM100;100%にズーム
 ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる
 ZOOMPANEL_ZOOMIN;ズームイン
 ZOOMPANEL_ZOOMOUT;ズームアウト
-﻿# Japanese translation of RawTherapee
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -728,21 +766,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!CURVEEDITOR_CURVE;Curve
-!CURVEEDITOR_CURVES;Curves
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!MAIN_TAB_RAW;RAW
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
-!TP_RESIZE_LANCZOS;Lanczos
-!TP_VIGNETTING_CENTER;Center
-!TP_VIGNETTING_CENTER_X;Center X
-!TP_VIGNETTING_CENTER_Y;Center Y
-!TP_VIGNETTING_STRENGTH;Strength
+!EDITWINDOW_TITLE;Image Edit
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!TP_ICM_INPUTNONE;No profile

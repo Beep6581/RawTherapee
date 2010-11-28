@@ -51,6 +51,7 @@ PartialPasteDlg::PartialPasteDlg () {
     colorboost  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORBOOST")));
     colorden    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORDENOISE")));
     dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
+    hsveq		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HSVEQUALIZER")));
 
     // options in lens:
     distortion  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DISTORTION")));
@@ -97,6 +98,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[2]->pack_start (*colormixer, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colorshift, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colorboost, Gtk::PACK_SHRINK, 2);
+	vboxes[2]->pack_start (*hsveq, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colorden, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
 
@@ -160,7 +162,8 @@ PartialPasteDlg::PartialPasteDlg () {
     colormixerConn  = colormixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     colorshiftConn  = colorshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     colorboostConn  = colorboost->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
-    colordenConn    = colorden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
+	hsveqConn		= hsveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
+	colordenConn    = colorden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
 
     distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
@@ -242,6 +245,7 @@ void PartialPasteDlg::colorToggled () {
     colormixer->set_active (color->get_active ());
     colorshift->set_active (color->get_active ());
     colorboost->set_active (color->get_active ());
+	hsveq->set_active (color->get_active ());
     colorden->set_active (color->get_active ());
     dirpyrden->set_active (color->get_active ());
 
@@ -324,6 +328,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (colormixer->get_active ())  dst->chmixer = src->chmixer;
     if (colorshift->get_active ())  dst->colorShift = src->colorShift;
     if (colorboost->get_active ())  dst->colorBoost = src->colorBoost;
+	if (hsveq->get_active ())		dst->hsvequalizer = src->hsvequalizer;
     if (colorden->get_active ())    dst->colorDenoise = src->colorDenoise;
     if (dirpyrden->get_active ())   dst->dirpyrDenoise = src->dirpyrDenoise;
 

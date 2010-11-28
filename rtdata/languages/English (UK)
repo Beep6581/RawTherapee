@@ -57,6 +57,7 @@ TP_HLREC_COLOR;Colour Propagation
 !CURVEEDITOR_TOOLTIPLOAD;Load a curve from file
 !CURVEEDITOR_TOOLTIPSAVE;Save current curve
 !CURVEEDITOR_TYPE;Type:
+!EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_APERTURE;Aperture
 !EXIFFILTER_CAMERA;Camera
 !EXIFFILTER_DIALOGLABEL;Exif Filter
@@ -171,6 +172,11 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_DELSNAPSHOT;Del
 !HISTORY_FROMCLIPBOARD;From clipboard
 !HISTORY_LABEL;History
+!HISTORY_MSG_100;RGB saturation
+!HISTORY_MSG_101;HSV EQ -- Hue
+!HISTORY_MSG_102;HSV EQ -- Saturation
+!HISTORY_MSG_103;HSV EQ -- Value
+!HISTORY_MSG_104;HSV Equalizer
 !HISTORY_MSG_10;Shadow Compression
 !HISTORY_MSG_11;Tone Curve
 !HISTORY_MSG_12;Auto Exposure
@@ -180,7 +186,7 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
-!HISTORY_MSG_19;Luminance Curve
+!HISTORY_MSG_19;'L' Curve
 !HISTORY_MSG_1;Photo Loaded
 !HISTORY_MSG_20;Sharpening
 !HISTORY_MSG_21;Sharpening Radius
@@ -239,14 +245,20 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_84;Perspective correction
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_89;Directional pyramid
+!HISTORY_MSG_87;Salt&pepper noise reduction
+!HISTORY_MSG_88;Salt&pepper NR threshold
+!HISTORY_MSG_89;Noise reduction
 !HISTORY_MSG_8;Exposure Compensation
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
-!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_99;Preprocessing
 !HISTORY_MSG_9;Highlight Compression
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOTAS;As...
@@ -405,7 +417,7 @@ TP_HLREC_COLOR;Colour Propagation
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_ADD;ADD
 !PREFERENCES_APPLNEXTSTARTUP;restart required
-!PREFERENCES_BATCH_PROCESSING;batch processing
+!PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
 !PREFERENCES_CACHECLEARALL;Clear All
@@ -461,6 +473,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_MONITORICC;Monitor Profile
 !PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
@@ -468,6 +481,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_OUTDIRTEMPLATE;Use Template
 !PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
@@ -593,9 +607,9 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_DETAIL_AMOUNT;Amount
 !TP_DIRPYRDENOISE_CHROMA;Chrominance
 !TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
+!TP_DIRPYRDENOISE_LABEL;Noise reduction
 !TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
+!TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 !TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 !TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
@@ -620,10 +634,25 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_EXPOSURE_CURVEEDITOR;Tone Curve
 !TP_EXPOSURE_EXPCOMP;Exp. Comp.
 !TP_EXPOSURE_LABEL;Exposure
+!TP_EXPOSURE_SATURATION;Saturation
 !TP_HLREC_CIELAB;CIELab Blending
 !TP_HLREC_LABEL;Highlight Reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
 !TP_HLREC_METHOD;Method:
+!TP_HSVEQUALIZER1;Red
+!TP_HSVEQUALIZER2;Yellow
+!TP_HSVEQUALIZER3;Lime
+!TP_HSVEQUALIZER4;Green
+!TP_HSVEQUALIZER5;Aqua
+!TP_HSVEQUALIZER6;Blue
+!TP_HSVEQUALIZER7;Purple
+!TP_HSVEQUALIZER8;Magenta
+!TP_HSVEQUALIZER_CHANNEL;HSV Channel
+!TP_HSVEQUALIZER_HUE;Hue
+!TP_HSVEQUALIZER_LABEL;HSV Equalizer
+!TP_HSVEQUALIZER_NEUTRAL;Neutral
+!TP_HSVEQUALIZER_SAT;Saturation
+!TP_HSVEQUALIZER_VAL;Value
 !TP_ICM_FILEDLGFILTERANY;Any files
 !TP_ICM_FILEDLGFILTERICM;ICC Profile Files
 !TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
@@ -631,6 +660,7 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
 !TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
+!TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTPROFILE;Input Profile
 !TP_ICM_LABEL;ICM
 !TP_ICM_NOICM;No ICM: sRGB output
@@ -638,7 +668,7 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_ICM_OUTPUTPROFILE;Output Profile
 !TP_ICM_SAVEREFERENCE;Save reference image for profiling
 !TP_ICM_WORKINGPROFILE;Working Profile
-!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
@@ -679,12 +709,12 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_ROTATE_LABEL;Rotate
 !TP_ROTATE_SELECTLINE;    Select Straight Line
 !TP_SHADOWSHLIGHTS_HIGHLIGHTS;Highlights
-!TP_SHADOWSHLIGHTS_HLTONALW;Tonal Width
+!TP_SHADOWSHLIGHTS_HLTONALW;Tonal Width for Highlights
 !TP_SHADOWSHLIGHTS_LABEL;Shadows/Highlights
 !TP_SHADOWSHLIGHTS_LOCALCONTR;Local Contrast
 !TP_SHADOWSHLIGHTS_RADIUS;Radius
 !TP_SHADOWSHLIGHTS_SHADOWS;Shadows
-!TP_SHADOWSHLIGHTS_SHTONALW;Tonal Width
+!TP_SHADOWSHLIGHTS_SHTONALW;Tonal Width for Shadows
 !TP_SHARPENING_AMOUNT;Amount
 !TP_SHARPENING_EDRADIUS;Radius
 !TP_SHARPENING_EDTOLERANCE;Edge tolerance

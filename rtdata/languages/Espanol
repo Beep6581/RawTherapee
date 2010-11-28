@@ -8,15 +8,26 @@
 #06 09.06.2008: Ramon, Adaptions regarding 2.4m1 and others
 #07 20.09.2008: keenonkites, first version for 2.4m2
 #08 19.12.2008: keenonkites, first version for 2.4beta4
+#09 07.12.2010: rickydh, some translations of untranslated keys for 3.0 alpha1
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
+BATCHQUEUE_AUTOSTART;Inicio automático
+BATCH_PROCESSING;Proceso por lotes
+CURVEEDITOR_CURVE;Curva
+CURVEEDITOR_CURVES;Curvas
+CURVEEDITOR_CUSTOM;Personalizado
 CURVEEDITOR_FILEDLGFILTERANY;Cuaquier archivo
 CURVEEDITOR_FILEDLGFILTERCURVE;Archivos de curvas
+CURVEEDITOR_HIGHLIGHTS;Luces altas
+CURVEEDITOR_LIGHTS;Luces
 CURVEEDITOR_LINEAR;Lineal
 CURVEEDITOR_LOADDLGLABEL;Cargar curva...
+CURVEEDITOR_PARAMETRIC;Parametrica
 CURVEEDITOR_SAVEDLGLABEL;Guardar curva...
+CURVEEDITOR_SHADOWS;Sombras
 CURVEEDITOR_TOOLTIPLINEAR;Restablece la curva a lineal
 CURVEEDITOR_TOOLTIPLOAD;Abre una curva desde un archivo
 CURVEEDITOR_TOOLTIPSAVE;Guarda curva actual
+CURVEEDITOR_TYPE;Tipo:
 EXIFFILTER_APERTURE;Diafragma
 EXIFFILTER_CAMERA;Cámera
 EXIFFILTER_DIALOGLABEL;Filtro Exif
@@ -38,10 +49,12 @@ EXIFPANEL_RESETALL;Reiniciar todo
 EXIFPANEL_RESETALLHINT;Reiniciar todos los atributos a los valores originales
 EXIFPANEL_RESETHINT;Reiniciar atributos seleccionados a los valores originales
 EXIFPANEL_SUBDIRECTORY;Subcarpeta
+FILEBROWSER_ADDDELTEMPLATE;Añadir/Borrar plantillas...
 FILEBROWSER_APPLYPROFILE;Aplicar perfil
 FILEBROWSER_ARRANGEMENTHINT;Cambiar disposición de las miniaturas entre horizontal y vertical
 FILEBROWSER_CLEARPROFILE;Borrar perfil
 FILEBROWSER_COPYPROFILE;Copiar perfil
+FILEBROWSER_CURRENT_NAME;Nombre actual:
 FILEBROWSER_DELETEDLGLABEL;Confirmacion de borrar archivos
 FILEBROWSER_DELETEDLGMSG;¿Seguro que quieres borrar los %1 archivos seleccionados?
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
@@ -51,6 +64,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activar/desactivar filtro exif en el explorador 
 FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
 FILEBROWSER_EXIFFILTERSETTINGS;Ajuste
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Cambiar ajustes del filtro exif
+FILEBROWSER_NEW_NAME;Nuevo nombre:
 FILEBROWSER_PARTIALPASTEPROFILE;Pegar perfil parcialmente
 FILEBROWSER_PASTEPROFILE;Pegar perfil
 FILEBROWSER_POPUPCANCELJOB;Cancelar trabajo
@@ -74,6 +88,7 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Ajustar formato de archivo y carpeta de salid
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RENAMEDLGMSG;Renombrar archive "%1"a:
 FILEBROWSER_SHOWDIRHINT;Mostrar todas imagenes de la carpeta
+FILEBROWSER_SHOWEXIFINFO;Mostrar información EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Mostrar contenido de la cola de procesamiento
 FILEBROWSER_SHOWRANK1HINT;Mostrar imagenes con 1 estrella
 FILEBROWSER_SHOWRANK2HINT;Mostrar imagenes con 2 estrellas
@@ -87,14 +102,18 @@ FILEBROWSER_STARTPROCESSINGHINT;Iniciar procesamiento de imagenes en la cola
 FILEBROWSER_STOPPROCESSING;Parar procesamiento
 FILEBROWSER_STOPPROCESSINGHINT;Parar procesamiento de imagenes en la cola
 FILEBROWSER_THUMBSIZE;Tamaño miniatura
+FILEBROWSER_USETEMPLATE;Utilizar plantilla:
 FILEBROWSER_ZOOMINHINT;Agrandar miniatura
 FILEBROWSER_ZOOMOUTHINT;Reducir miniatura
 GENERAL_ABOUT;Acerca de
+GENERAL_AFTER;Despues
+GENERAL_BEFORE;Antes
 GENERAL_CANCEL;Cancelar
 GENERAL_DISABLE;Desactivar
 GENERAL_DISABLED;Desactivado
 GENERAL_ENABLE;Activar
 GENERAL_ENABLED;Activado
+GENERAL_HIGH_QUALITY;Alta Calidad
 GENERAL_LANDSCAPE;Paisaje
 GENERAL_LOAD;Abrir
 GENERAL_NA;n/a
@@ -102,6 +121,7 @@ GENERAL_NO;No
 GENERAL_OK;Aceptar
 GENERAL_PORTRAIT;Retrato
 GENERAL_SAVE;Guardar
+GENERAL_UNCHANGED;(Sin cambios)
 GENERAL_YES;Sí
 HISTOGRAM_LABEL;Histograma
 HISTOGRAM_TOOLTIP_B;Mostrar/Ocultar histograma AZUL
@@ -192,7 +212,14 @@ HISTORY_MSG_79;Resize width
 HISTORY_MSG_7;Negro
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
+HISTORY_MSG_82;Perfil Cambiado
+HISTORY_MSG_83;Alta Calidad Sombras/Luces Altas
+HISTORY_MSG_84;Corrección de Perspectiva
+HISTORY_MSG_89;Reducción de ruido
 HISTORY_MSG_8;Compensación de Exposición
+HISTORY_MSG_95;Saturacion
+HISTORY_MSG_96;Curva 'a'
+HISTORY_MSG_97;Curva 'b'
 HISTORY_MSG_9;Compresión de Luces Altas
 HISTORY_NEWSNAPSHOT;Instantánea nueva
 HISTORY_NEWSNAPSHOTAS;Como...
@@ -259,10 +286,14 @@ IPTCPANEL_TRANSREFERENCE;Ref. trans. original
 IPTCPANEL_TRANSREFERENCEHINT;Un código que representa el lugar de la transmisión original (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Preferencias
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Añadir imagen actual a la cola de procesamiento <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVE;Guardar Imagen
 MAIN_BUTTON_SAVEAS;Como...
+MAIN_BUTTON_SAVE_TOOLTIP;Guardar imagen actual <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Abrir con editor
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar imagen actual en editor externo <b>Ctrl+E</b>
+MAIN_BUTTON_UNFULLSCREEN;Salir de Pantalla Completa
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
 MAIN_FRAME_PLACES;Places 
@@ -274,6 +305,7 @@ MAIN_MSG_CANNOTLOAD;No se puede abrir imagen
 MAIN_MSG_CANNOTSAVE;Error al guardar archivo
 MAIN_MSG_CANNOTSTARTEDITOR;Problema abriendo con editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Porfavor ajusten las preferencias.
+MAIN_MSG_ERRORDURINGIMAGESAVING;Error al guardar imagen
 MAIN_MSG_EXITJOBSINQUEUEINFO;Saliendo del programa imagenes no terminados en la cola son perdidos.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Estas seguro de salis ? Hay imagenes no terminados en la cola.
 MAIN_MSG_JOBSINQUEUE;trabajo(s) en cola
@@ -288,6 +320,7 @@ MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;GIC
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transformar
 MAIN_TOOLTIP_HIDEFP;Mostrar/Ocultar panel inferior (explorador carpetas y arch. tecla F)
@@ -315,6 +348,8 @@ PARTIALPASTE_EXPOSURE;Exposición
 PARTIALPASTE_HLRECOVERY;Recuperación de Luces Altas
 PARTIALPASTE_ICMSETTINGS;Ajustes GIC
 PARTIALPASTE_IPTCINFO;Informaciones IPTC
+PARTIALPASTE_LABCURVE;Curva Lab
+PARTIALPASTE_LABCURVE;Curva de Luminancia
 PARTIALPASTE_LENSGROUP;Ajustes al respecto del objetivo
 PARTIALPASTE_LUMACURVE;Curva de Luminancia
 PARTIALPASTE_LUMADENOISE;Reducción de Ruido de Luminancia
@@ -326,7 +361,10 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Sombras/Luces Altas
 PARTIALPASTE_SHARPENING;Enfoque
 PARTIALPASTE_VIGNETTING;Corrección de viñeteo
 PARTIALPASTE_WHITEBALANCE;Equilibrio de Blancos
+PREFERENCES_ADD;Añadir
 PREFERENCES_APPLNEXTSTARTUP;aplicado al próximo arranque
+PREFERENCES_BATCH_PROCESSING;Proceso por lotes
+PREFERENCES_BEHAVIOR;Comportamiento
 PREFERENCES_BLINKCLIPPED;Parpadear áreas cortadas
 PREFERENCES_CACHECLEARALL;Borrar todo
 PREFERENCES_CACHECLEARPROFILES;Borrar perfiles
@@ -439,6 +477,7 @@ QINFO_FOCALLENGTH;Longitud Focal
 QINFO_ISO;ISO
 QINFO_LENS;Objetivo
 QINFO_NOEXIF;No hay datos EXIF.
+SAVEDLG_AUTOSUFFIX;Añade un sufijo automáticamente si el archivo existe
 SAVEDLG_FILEFORMAT;Formato de archivo
 SAVEDLG_JPEGQUAL;Calidad JPEG 
 SAVEDLG_JPGFILTER;Archivos JPEG
@@ -499,8 +538,20 @@ TP_CROP_SELECTCROP;    Seleccionar Recorte
 TP_CROP_W;An
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DETAIL_AMOUNT;Cantidad
+TP_DIRPYRDENOISE_CHROMA;Crominancia
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Reducción de ruido
+TP_DIRPYRDENOISE_LUMA;Luminancia
+TP_DIRPYREQUALIZER_LABEL;Contraste mediante niveles de detalle
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contraste-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contraste+
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutro
 TP_DISTORTION_AMOUNT;Cantidad
 TP_DISTORTION_LABEL;Distorsión
+TP_EQUALIZER_CONTRAST_MINUS;Contraste-
+TP_EQUALIZER_CONTRAST_PLUS;Contraste+
+TP_EQUALIZER_NEUTRAL;Neutro
 TP_EXPOSURE_AUTOLEVELS;Niveles Automáticos
 TP_EXPOSURE_BLACKLEVEL;Negro
 TP_EXPOSURE_BRIGHTNESS;Brillo
@@ -530,6 +581,12 @@ TP_ICM_OUTPUTDLGLABEL;Seleccionar perfil ICC de salida...
 TP_ICM_OUTPUTPROFILE;Perfil de Salida
 TP_ICM_SAVEREFERENCE;Guardar imagen de referencia para el perfilado
 TP_ICM_WORKINGPROFILE;Perfil de Trabajo
+TP_LABCURVE_BRIGHTNESS;Brillo
+TP_LABCURVE_CONTRAST;Contraste
+TP_LABCURVE_CURVEEDITOR;Curva de Luminancia
+TP_LABCURVE_LABEL;Curvas Lab
+TP_LABCURVE_SATURATION;Saturación
+TP_LENSGEOM_LABEL;Objetivo / Geometría
 TP_LUMACURVE_BLACKLEVEL;Negro
 TP_LUMACURVE_BRIGHTNESS;Brillo
 TP_LUMACURVE_COMPRHIGHLIGHTS;Compresión de Luces Altas
@@ -540,6 +597,11 @@ TP_LUMACURVE_LABEL;Curva de Luminancia
 TP_LUMADENOISE_EDGETOLERANCE;Tolerancia de bordes
 TP_LUMADENOISE_LABEL;Reducción de Ruido de Luminancia
 TP_LUMADENOISE_RADIUS;Radio
+TP_PERSPECTIVE_HORIZONTAL;Horizontal
+TP_PERSPECTIVE_LABEL;Perspectiva
+TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PREPROCESS_DFAUTOSELECT;Selección automática
+TP_RAWPANEL_PREPROCESSING;Preprocesando
 TP_RESIZE_BICUBIC;Bicúbica
 TP_RESIZE_BICUBICSF;Bicúbica (Más suave)
 TP_RESIZE_BICUBICSH;Bicúbica (Más enfocado)
@@ -597,6 +659,12 @@ ZOOMBAR_NORMAL;Normal
 ZOOMBAR_PREVIEW;Previsualización
 ZOOMBAR_SCALE;Escala
 ZOOMBAR_SMALL;Pequeño
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Abrir (nueva) ventana de detalle
+ZOOMPANEL_ZOOM100;Zoom al 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla <b>F</b>
+ZOOMPANEL_ZOOMIN;Aumentar Zoom <b>+</b>
+ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 ﻿#
 
 
@@ -605,58 +673,37 @@ ZOOMBAR_SMALL;Pequeño
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!BATCHQUEUE_AUTOSTART;Auto start
-!BATCH_PROCESSING;Batch processing
-!CURVEEDITOR_CURVE;Curve
-!CURVEEDITOR_CURVES;Curves
-!CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
-!CURVEEDITOR_HIGHLIGHTS;Highlights
-!CURVEEDITOR_LIGHTS;Lights
 !CURVEEDITOR_NURBS;Control cage
-!CURVEEDITOR_PARAMETRIC;Parametric
-!CURVEEDITOR_SHADOWS;Shadows
-!CURVEEDITOR_TYPE;Type:
+!EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
-!FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_NEW_NAME;New name:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-!FILEBROWSER_USETEMPLATE;Use template:
-!GENERAL_AFTER;After
-!GENERAL_BEFORE;Before
-!GENERAL_HIGH_QUALITY;High Quality
-!GENERAL_UNCHANGED;(Unchanged)
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
 !HISTOGRAM_BUTTON_L;L
 !HISTOGRAM_BUTTON_R;R
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_100;RGB saturation
+!HISTORY_MSG_101;HSV EQ -- Hue
+!HISTORY_MSG_102;HSV EQ -- Saturation
+!HISTORY_MSG_103;HSV EQ -- Value
+!HISTORY_MSG_104;HSV Equalizer
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_89;Directional pyramid
-!HISTORY_MSG_90;Directional pyramid luminance
-!HISTORY_MSG_91;Directional pyramid chominance
-!HISTORY_MSG_92;Directional pyramid gamma
-!HISTORY_MSG_93;Contrast by detail levels parameter
+!HISTORY_MSG_87;Salt&pepper noise reduction
+!HISTORY_MSG_88;Salt&pepper NR threshold
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_99;Preprocessing
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
-!MAIN_BUTTON_PUTTOQUEUE;Put to queue
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
-!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
-!MAIN_TAB_RAW;RAW
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
@@ -678,12 +725,7 @@ ZOOMBAR_SMALL;Pequeño
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
-!PARTIALPASTE_LABCURVE;Lab curve
-!PARTIALPASTE_LABCURVE;Luminance curve
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_ADD;ADD
-!PREFERENCES_BATCH_PROCESSING;batch processing
-!PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_CACORRECTION;Apply CA auto correction
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
@@ -694,7 +736,9 @@ ZOOMBAR_SMALL;Pequeño
 !PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
@@ -702,43 +746,35 @@ ZOOMBAR_SMALL;Pequeño
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-!TP_DETAIL_AMOUNT;Amount
-!TP_DIRPYRDENOISE_CHROMA;Chrominance
-!TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Directional pyramid noise reduction
-!TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Directional pyramid equalizer
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
-!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
-!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
 !TP_DIRPYREQUALIZER_LUMAFINEST;Finest
-!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
-!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
-!TP_EQUALIZER_NEUTRAL;Neutral
-!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_EXPOSURE_SATURATION;Saturation
+!TP_HSVEQUALIZER1;Red
+!TP_HSVEQUALIZER2;Yellow
+!TP_HSVEQUALIZER3;Lime
+!TP_HSVEQUALIZER4;Green
+!TP_HSVEQUALIZER5;Aqua
+!TP_HSVEQUALIZER6;Blue
+!TP_HSVEQUALIZER7;Purple
+!TP_HSVEQUALIZER8;Magenta
+!TP_HSVEQUALIZER_CHANNEL;HSV Channel
+!TP_HSVEQUALIZER_HUE;Hue
+!TP_HSVEQUALIZER_LABEL;HSV Equalizer
+!TP_HSVEQUALIZER_NEUTRAL;Neutral
+!TP_HSVEQUALIZER_SAT;Saturation
+!TP_HSVEQUALIZER_VAL;Value
+!TP_ICM_INPUTNONE;No profile
+!TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
-!TP_LABCURVE_BRIGHTNESS;Brightness
-!TP_LABCURVE_CONTRAST;Contrast
-!TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_LABEL;Lab Curves
-!TP_LABCURVE_SATURATION;Saturation
 !TP_LENSGEOM_AUTOCROP;Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
-!TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_PERSPECTIVE_HORIZONTAL;Horizontal
-!TP_PERSPECTIVE_LABEL;Perspective
-!TP_PERSPECTIVE_VERTICAL;Vertical
 !TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
 !TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 !TP_RESIZE_HEIGHT;Height
@@ -749,9 +785,3 @@ ZOOMBAR_SMALL;Pequeño
 !TP_VIGNETTING_CENTER_X;Center X
 !TP_VIGNETTING_CENTER_Y;Center Y
 !TP_VIGNETTING_STRENGTH;Strength
-!ZOOMPANEL_100;(100%)
-!ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-!ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
-!ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
-!ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
-!ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>

@@ -97,7 +97,7 @@ public:
 			// nothing to do; could be jobs have been removed
 			if ( jobs_.empty() )
 			{
-				DEBUG("processing: nothing to do (%d,%d)",paused_,jobs_.empty());
+				DEBUG("processing: nothing to do (%d)",jobs_.empty());
 				return;
 			}
 
@@ -114,12 +114,15 @@ public:
 			}
 
 			// see if any none upgrade jobs exist
-			for ( i = jobs_.begin(); i != jobs_.end(); ++i)
+			if ( i == jobs_.end() )
 			{
-				if ( !i->upgrade_ )
+				for ( i = jobs_.begin(); i != jobs_.end(); ++i)
 				{
-					DEBUG("processing(not-upgrade) %s",i->thumbnail_->getFileName().c_str());
-					break;
+					if ( !i->upgrade_ )
+					{
+						DEBUG("processing(not-upgrade) %s",i->thumbnail_->getFileName().c_str());
+						break;
+					}
 				}
 			}
 

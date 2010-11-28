@@ -34,6 +34,7 @@
 #include <lumadenoise.h>
 #include <colordenoise.h>
 #include <impulsedenoise.h>
+#include <defringe.h>
 #include <dirpyrdenoise.h>
 #include <sharpening.h>
 #include <labcurve.h>
@@ -55,6 +56,7 @@
 #include <lensgeomlistener.h>
 #include <equalizer.h>
 #include <dirpyrequalizer.h>
+#include <hsvequalizer.h>
 #include <rawprocess.h>
 #include <preprocess.h>
 
@@ -89,12 +91,14 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
+	Defringe* defringe;
 	ImpulseDenoise* impulsedenoise;
 	DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
 	DirPyrEqualizer * dirpyrequalizer;
+	HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
 

@@ -33,6 +33,7 @@
 #include <glib/gstdio.h>
 #include <setjmp.h>
 #include <safekeyfile.h>
+#include <rawimage.h>
 
 extern "C" {
 #include <jpeglib.h>
@@ -98,6 +99,9 @@ Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int
     }
 
     tpp->thumbImg = img->resize (w, h, TI_Nearest);
+
+    tpp->autowbTemp=2700;
+    tpp->autowbGreen=1.0;
     delete img;
 
     tpp->init ();
@@ -159,30 +163,31 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     // histogram computation
     tpp->aeHistCompression = 3;
     tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
-    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
-    int ix = 0;
-    for (int i=0; i<img->height*img->width; i++) {
-            tpp->aeHistogram[CurveFactory::igamma_srgb (img->data[ix++])>>tpp->aeHistCompression]++;
-            tpp->aeHistogram[CurveFactory::igamma_srgb (img->data[ix++])>>tpp->aeHistCompression]++;
-            tpp->aeHistogram[CurveFactory::igamma_srgb (img->data[ix++])>>tpp->aeHistCompression]++;
-    }
-
-    // autowb computation
-    double avg_r = 0;
+	
+	double avg_r = 0;
     double avg_g = 0;
     double avg_b = 0;
     int n = 0;
-    for (int i=1; i<img->height-1; i++)
-        for (int j=1; j<img->width-1; j++) {
-            int ofs = 3*(i*img->width + j);
-            int rtmp=img->data[ofs], gtmp=img->data[ofs+1], btmp=img->data[ofs+2];
-            if (rtmp>64000 || gtmp>64000 || btmp>64000)
-                continue;
-            avg_r += rtmp;
+	
+    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
+    int ix = 0;
+    for (int i=0; i<img->height*img->width; i++) {
+		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		int gtmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		int btmp=CurveFactory::igamma_srgb (img->data[ix++]);
+
+		if (rtmp<64000 && gtmp<64000 && btmp<64000) {
+			// autowb computation
+			avg_r += rtmp;
             avg_g += gtmp;
             avg_b += btmp;
             n++;
-        }
+		}
+            tpp->aeHistogram[rtmp>>tpp->aeHistCompression]++;
+            tpp->aeHistogram[gtmp>>tpp->aeHistCompression]++;
+            tpp->aeHistogram[btmp>>tpp->aeHistCompression]++;
+    }
+
     if (n>0)
         ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
 
@@ -190,6 +195,288 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     tpp->init ();
     return tpp;
 }
+
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
+{
+	RawImage *ri= new RawImage(fname);
+	int r = ri->loadRaw(false,false);
+	if( r ) return NULL;
+
+    rml.exifBase = ri->get_exifBase();
+    rml.ciffBase = ri->get_ciffBase();
+    rml.ciffLength = ri->get_ciffLen();
+
+	Thumbnail* tpp = Thumbnail::loadFromMemory(fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),w,h,fixwh);
+
+	if ( tpp == 0 )
+	{
+		printf("DCRAW: failed4\n");
+		return NULL;
+	}
+
+	if (ri->get_rotateDegree() > 0) {
+		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+		delete tpp->thumbImg;
+		tpp->thumbImg = rot;
+	}
+
+	delete ri;
+
+	return tpp;
+}
+
+#define FISRED(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
+#define FISGREEN(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
+#define FISBLUE(filter,row,col) \
+	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
+
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
+{
+	RawImage *ri= new RawImage (fname);
+	int r = ri->loadRaw();
+	if( r ){
+		delete ri;
+		return NULL;
+	}
+	int width = ri->get_width();
+	int height = ri->get_height();
+	rtengine::Thumbnail* tpp = new rtengine::Thumbnail;
+
+	tpp->isRaw = true;
+	tpp->embProfile = NULL;
+	tpp->embProfileData = NULL;
+	tpp->embProfileLength = ri->get_profileLen();
+	if (ri->get_profileLen())
+		tpp->embProfile = cmsOpenProfileFromMem(ri->get_profile(),
+				ri->get_profileLen()); //\ TODO check if mutex is needed
+
+	tpp->redMultiplier = ri->get_pre_mul(0);
+	tpp->greenMultiplier = ri->get_pre_mul(1);
+	tpp->blueMultiplier = ri->get_pre_mul(2);
+
+	float pre_mul[4], scale_mul[4];
+	int cblack[4];
+
+	ri->scale_colors();
+	ri->pre_interpolate();
+
+	rml.exifBase = ri->get_exifBase();
+	rml.ciffBase = ri->get_ciffBase();
+	rml.ciffLength = ri->get_ciffLen();
+
+	tpp->camwbRed = tpp->redMultiplier / ri->get_pre_mul(0);
+	tpp->camwbGreen = tpp->greenMultiplier / ri->get_pre_mul(1);
+	tpp->camwbBlue = tpp->blueMultiplier / ri->get_pre_mul(2);
+	tpp->defGain= 1.0/ MIN(MIN(ri->get_pre_mul(0),ri->get_pre_mul(1)),ri->get_pre_mul(2));
+	tpp->gammaCorrected = true;
+
+	unsigned filter = ri->get_filters();
+	int firstgreen = 1;
+	// locate first green location in the first row
+	while (!FISGREEN(filter,1,firstgreen))
+		firstgreen++;
+
+	int skip = 1;
+	if (fixwh == 1) // fix height, scale width
+		skip = (ri->get_height() - firstgreen - 1) / h;
+	else
+		skip = (ri->get_width() - firstgreen - 1) / w;
+	if (skip % 2)
+		skip--;
+	if (skip < 1)
+		skip = 1;
+
+	int hskip = skip, vskip = skip;
+	if (!ri->get_model().compare("D1X"))
+		hskip *= 2;
+
+	int ix = 0;
+	int rofs = 0;
+	int tmpw = (width - 2) / hskip;
+	int tmph = (height - 2) / vskip;
+
+	DCraw::dcrawImage_t image = ri->get_image();
+
+	Image16* tmpImg = new Image16(tmpw, tmph);
+	if (ri->isBayer()) {
+		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+			rofs = row * width;
+			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col+= hskip, x++) {
+				int ofs = rofs + col;
+				int g = image[ofs][1];
+				int r, b;
+				if (FISRED(filter,row,col+1)) {
+					r = (image[ofs + 1][0] + image[ofs - 1][0]) >> 1;
+					b = (image[ofs + width][2] + image[ofs - width][2]) >> 1;
+				} else {
+					b = (image[ofs + 1][2] + image[ofs - 1][2]) >> 1;
+					r = (image[ofs + width][0] + image[ofs - width][0]) >> 1;
+				}
+				tmpImg->r[y][x] = r;
+				tmpImg->g[y][x] = g;
+				tmpImg->b[y][x] = b;
+			}
+		}
+	} else {
+		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
+			rofs = row * width;
+			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col
+					+= hskip, x++) {
+				int ofs = rofs + col;
+				tmpImg->r[y][x] = image[ofs][0];
+				tmpImg->g[y][x] = image[ofs][1];
+				tmpImg->b[y][x] = image[ofs][2];
+			}
+		}
+	}
+
+	if (ri->get_FujiWidth() != 0) {
+		int fw = ri->get_FujiWidth() / hskip;
+		double step = sqrt(0.5);
+		int wide = fw / step;
+		int high = (tmph - fw) / step;
+		Image16* fImg = new Image16(wide, high);
+		float r, c;
+
+		for (int row = 0; row < high; row++)
+			for (int col = 0; col < wide; col++) {
+				unsigned ur = r = fw + (row - col) * step;
+				unsigned uc = c = (row + col) * step;
+				if (ur > tmph - 2 || uc > tmpw - 2)
+					continue;
+				double fr = r - ur;
+				double fc = c - uc;
+				int oofs = (ur * tmpw + uc) * 3;
+				int fofs = (row * wide + col) * 3;
+				fImg->r[row][col] = (tmpImg->r[ur][uc] * (1 - fc)
+						+ tmpImg->r[ur][uc + 1] * fc) * (1 - fr)
+						+ (tmpImg->r[ur + 1][uc] * (1 - fc)
+								+ tmpImg->r[ur + 1][uc + 1] * fc) * fr;
+				fImg->g[row][col] = (tmpImg->g[ur][uc] * (1 - fc)
+						+ tmpImg->g[ur][uc + 1] * fc) * (1 - fr)
+						+ (tmpImg->g[ur + 1][uc] * (1 - fc)
+								+ tmpImg->g[ur + 1][uc + 1] * fc) * fr;
+				fImg->b[row][col] = (tmpImg->b[ur][uc] * (1 - fc)
+						+ tmpImg->b[ur][uc + 1] * fc) * (1 - fr)
+						+ (tmpImg->b[ur + 1][uc] * (1 - fc)
+								+ tmpImg->b[ur + 1][uc + 1] * fc) * fr;
+			}
+		delete tmpImg;
+		tmpImg = fImg;
+	}
+
+	if (fixwh == 1) // fix height, scale width
+		w = tmpw * h / tmph;
+	else
+		h = tmph * w / tmpw;
+
+	tpp->thumbImg = tmpImg->resize(w, h, TI_Bilinear);
+	delete tmpImg;
+
+	if (ri->get_FujiWidth() != 0)
+		tpp->scale = (double) (height - ri->get_FujiWidth()) / sqrt(0.5) / h;
+	else
+		tpp->scale = (double) height / h;
+
+	// generate histogram for auto exposure
+	tpp->aeHistCompression = 3;
+	tpp->aeHistogram = new unsigned int[65536 >> tpp->aeHistCompression];
+	memset(tpp->aeHistogram, 0, (65536 >> tpp->aeHistCompression) * sizeof(int));
+	int radd = 4;
+	int gadd = 4;
+	int badd = 4;
+	if (!filter)
+		radd = gadd = badd = 1;
+	for (int i = 8; i < height - 8; i++) {
+		int start, end;
+		if (ri->get_FujiWidth() != 0) {
+			int fw = ri->get_FujiWidth();
+			start = ABS(fw-i) + 8;
+			end = MIN( height + width-fw-i, fw+i) - 8;
+		} else {
+			start = 8;
+			end = width - 8;
+		}
+		for (int j = start; j < end; j++)
+			if (FISGREEN(filter,i,j))
+                tpp->aeHistogram[CLIP((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
+			else if (FISRED(filter,i,j))
+                tpp->aeHistogram[CLIP((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
+			else if (FISBLUE(filter,i,j))
+                tpp->aeHistogram[CLIP((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+	}
+
+	// generate autoWB
+	double avg_r = 0;
+	double avg_g = 0;
+	double avg_b = 0;
+	int rn = 0, gn = 0, bn = 0;
+
+	for (int i = 32; i < height - 32; i++) {
+		int start, end;
+		if (ri->get_FujiWidth() != 0) {
+			int fw = ri->get_FujiWidth();
+			start = ABS(fw-i) + 32;
+			end = MIN( height + width-fw-i, fw+i) - 32;
+		} else {
+			start = 32;
+			end = width - 32;
+		}
+		for (int j = start; j < end; j++) {
+			if (FISGREEN(filter,i,j)) {
+				double d = tpp->defGain * image[i * width + j][1];
+				if (d > 64000)
+					continue;
+				avg_g += d;
+				gn++;
+			}
+			if (FISRED(filter,i,j)) {
+				double d = tpp->defGain * image[i * width + j][0];
+				if (d > 64000)
+					continue;
+				avg_r += d;
+				rn++;
+			}
+			if (FISBLUE(filter,i,j)) {
+				double d = tpp->defGain * image[i * width + j][2];
+				if (d > 64000)
+					continue;
+				avg_b += d;
+				bn++;
+			}
+		}
+	}
+
+	double reds = avg_r / rn * tpp->camwbRed;
+	double greens = avg_g / gn * tpp->camwbGreen;
+	double blues = avg_b / bn * tpp->camwbBlue;
+
+	double rm = ri->get_rgb_cam(0, 0) * reds + ri->get_rgb_cam(0, 1) * greens + ri->get_rgb_cam(0, 2) * blues;
+	double gm = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
+	double bm = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
+
+	ColorTemp::mul2temp(rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
+
+	if (ri->get_rotateDegree() > 0) {
+		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+		delete tpp->thumbImg;
+		tpp->thumbImg = rot;
+	}
+
+	for (int a = 0; a < 3; a++)
+		for (int b = 0; b < 3; b++)
+			tpp->colorMatrix[a][b] = ri->get_rgb_cam(a, b);
+
+	tpp->init();
+	delete ri;
+	return tpp;
+}
+#undef FISRED
+#undef FISGREEN
+#undef FISBLUE
+
 
 void Thumbnail::init () {
 
@@ -400,13 +687,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
 
-	int* curve1 = new int [65536];
-    int* curve2 = new int [65536];
+	float* curve1 = new float [65536];
+    float* curve2 = new float [65536];
 	int* curve = new int [65536];
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
     LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
@@ -420,10 +707,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve1, 16);
-	ipf.chrominanceCurve (labView, labView, 0, curve1, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve1, 16);
-    ipf.chrominanceCurve (labView, labView, 1, curve1, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve, 16);
+	ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve, 16);
+    ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
 
 	delete [] curve1;
     delete [] curve2;
@@ -633,30 +920,58 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
     
     if (format==1 || format==3) {
         // to utilize the 8 bit color range of the thumbnail we brighten it and apply gamma correction
-        int max = 0;
-        for (int row=0; row<thumbImg->height; row++)
-            for (int col=0; col<thumbImg->width; col++) {
-                if (thumbImg->r[row][col]>max)
-                    max = thumbImg->r[row][col];
-                if (thumbImg->g[row][col]>max)
-                    max = thumbImg->g[row][col];
-                if (thumbImg->b[row][col]>max)
-                    max = thumbImg->b[row][col];
-            }
-        if (max < 16384)
-            max = 16384;
-        scaleForSave = 65535*8192 / max;
         unsigned char* tmpdata = new unsigned char[thumbImg->height*thumbImg->width*3];
-        int ix = 0;
+        int ix = 0,max;
+
         if (gammaCorrected) {
+            // if it's gamma correct (usually a RAW), we have the problem that there is a lot noise etc. that makes the maximum way too high.
+            // Strategy is limit a certain percent of pixels so the overall picture quality when scaling to 8 bit is way better
+            const double BurnOffPct=0.03;  // *100 = percent pixels that may be clipped
+
+            // Calc the histogram
+            unsigned int* hist16 = new unsigned int [65536];
+            memset(hist16,0,sizeof(int)*65536);
+
+            for (int row=0; row<thumbImg->height; row++)
+                for (int col=0; col<thumbImg->width; col++) {
+                    hist16[thumbImg->r[row][col]]++;
+                    hist16[thumbImg->g[row][col]]+=2;  // Bayer 2x green correction
+                    hist16[thumbImg->b[row][col]]++;
+                }
+
+            // Go down till we cut off that many pixels
+            unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
+
+            int max; unsigned long sum=0;
+            for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+
+            delete[] hist16;
+
+            scaleForSave = 65535*8192 / max;
+
+            // Correction and gamma to 8 Bit
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
-                    tmpdata[ix++] = gammatab[thumbImg->r[i][j]*scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[thumbImg->g[i][j]*scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[thumbImg->b[i][j]*scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
                 }
         }
         else {
+            // If it's not gamma corrected (usually a JPG) we take the normal maximum
+            max=0;
+
+            for (int row=0; row<thumbImg->height; row++)
+                for (int col=0; col<thumbImg->width; col++) {
+                    if (thumbImg->r[row][col]>max) max = thumbImg->r[row][col];
+                    if (thumbImg->g[row][col]>max) max = thumbImg->g[row][col];
+                    if (thumbImg->b[row][col]>max) max = thumbImg->b[row][col];
+                }
+            
+            if (max < 16384) max = 16384;
+            scaleForSave = 65535*8192 / max;
+
+            // Correction and gamma to 8 Bit
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
                     tmpdata[ix++] = thumbImg->r[i][j]*scaleForSave >> 21;
@@ -664,6 +979,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
                     tmpdata[ix++] = thumbImg->b[i][j]*scaleForSave >> 21;
                 }
         }
+
         if (format==1) {
             FILE* f = g_fopen (fname.c_str(), "wb");
             if (!f) {
@@ -700,7 +1016,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             // (machine dependency is not really an issue, since we all run on x86 and having exactly the same file is not a requirement)
             cinfo.dct_method = JDCT_FLOAT;
 
-            jpeg_set_quality (&cinfo, 85, true);
+            jpeg_set_quality (&cinfo, 87, true);
         	jpeg_start_compress(&cinfo, TRUE);
             int rowlen = thumbImg->width*3;
         	while (cinfo.next_scanline < cinfo.image_height) {

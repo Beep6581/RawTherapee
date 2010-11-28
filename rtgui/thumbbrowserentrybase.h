@@ -101,6 +101,10 @@ protected:
     void addButtonSet       (LWButtonSet* bs);
     int getMinimalHeight    () { return height; }
     int getMinimalWidth     () { return width; }
+
+    int getEffectiveHeight  () { return fnlabh+dtlabh+exlabh+textGap+exp_height; }
+    int getStartX           () { return startx; }
+
     bool inside             (int x, int y);
     bool insideWindow       (int x, int y, int w, int h);
     void setPosition        (int x, int y, int w, int h);

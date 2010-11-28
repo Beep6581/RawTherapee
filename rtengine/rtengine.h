@@ -304,17 +304,6 @@ namespace rtengine {
   * @param s is a struct of basic settings */
     int init (const Settings* s);
 
-/** Checks if a raw file is supported
-  * @param fname the name of the file
-  * @param rml is a struct constaining informations on the location of the metadata in the raw file
-  * @param rotation is the default angle of rotation (0, 90, 180, 270)
-  * @param thumbWidth is the width of the embedded thumbnail file
-  * @param thumbHeight is the height of the embedded thumbnail file
-  * @param thumbOffset is the offset of the embedded thumbnail in the raw file
-  * @param thumbType is the type of the embedded thumbnail (=0: no thumbnail, =1: jpeg format, =2: simple continuous image data in rgbrgb... order)
-  * @return =0 if not supported */
-    int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
-
 /** Returns the available output profile names
   * @return a vector of the available output profile names */
     std::vector<std::string> getOutputProfiles ();

@@ -68,10 +68,7 @@ DirPyrEqualizer::DirPyrEqualizer () : ToolPanel() {
 	Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
 	
-	std::stringstream ss;
-	
-	ss  << M("TP_DIRPYREQUALIZER_THRESHOLD") ;
-	multiplier[4] = new Adjuster (ss.str(), 0, 1, 0.01, 0.0);
+	multiplier[4] = new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.0);
 	multiplier[4]->setAdjusterListener(this);
 	pack_start(*multiplier[4]);
 
