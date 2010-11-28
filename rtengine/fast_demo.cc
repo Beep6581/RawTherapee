@@ -25,7 +25,14 @@
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+static	float dirwt[0x10000];
 
+static void __attribute__((constructor)) setup_dirwt()
+{
+	//set up directional weight function
+	for (int i=0; i<0x10000; i++)
+		dirwt[i] = 1.0/SQR(1.0+i);
+}
 
 void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	//int winx=0, winy=0;
@@ -40,10 +47,12 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 
 #define bord 4
 		
-	int clip_pt = 4*65535*ri->defgain;
+	int clip_pt = 4*65535*initialGain;
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
+#pragma omp parallel
+	{
+#pragma omp for
 	//first, interpolate borders using bilinear
 	for (int i=0; i<H; i++) {
 		for (int j=0; j<bord; j++) {//first few columns
@@ -104,7 +113,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	}//i
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
+#pragma omp for
 	for (int j=bord; j<W-bord; j++) {
 		for (int i=0; i<bord; i++) {//first few rows
 			unsigned int sum[6];
@@ -166,14 +175,8 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	if(plistener) plistener->setProgress(0.05);
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	float * dirwt = new float [0x20000];
+
 		
-	//set up directional weight function
-	for (int i=0; i<0x10000; i++) 
-		dirwt[i] = 1.0/SQR(1.0+i); 
-		
-#pragma omp parallel 
-	{		
 
 #pragma omp for 
 		// interpolate G using gradient weights

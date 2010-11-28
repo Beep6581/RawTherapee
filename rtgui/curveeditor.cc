@@ -40,11 +40,10 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup) {
 	group = ceGroup;
 
     if (group && text.size())
-    	curveType = Gtk::manage (new PopUpToggleButton(text + ":", true));
+    	curveType = Gtk::manage (new PopUpToggleButton(text + ":"));
     else
     	curveType = Gtk::manage (new PopUpToggleButton());
 
-    curveType->set_image_position(Gtk::POS_RIGHT);
     // Order set in the same order than "enum CurveType". Shouldn't change, for compatibility reason
     curveType->addEntry(argv0+"/images/curveType-linear.png", M("CURVEEDITOR_LINEAR"));			// 0 Linear
     curveType->addEntry(argv0+"/images/curveType-spline.png", M("CURVEEDITOR_CUSTOM"));			// 1 Spline

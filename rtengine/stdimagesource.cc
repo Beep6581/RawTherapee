@@ -464,18 +464,22 @@ ColorTemp StdImageSource::getAutoWB () {
     double avg_g = 0;
     double avg_b = 0;
     int n = 0;
-    int p = 6;
+    //int p = 6;
 
     for (int i=1; i<img->height-1; i++)
         for (int j=1; j<img->width-1; j++) {
             if (img->r[i][j]>64000 || img->g[i][j]>64000 || img->b[i][j]>64000)
                 continue;
-            avg_r += intpow((double)img->r[i][j], p);
+			avg_r += SQR((double)img->r[i][j]);
+            avg_g += SQR((double)img->g[i][j]);
+            avg_b += SQR((double)img->b[i][j]);			
+            /*avg_r += intpow((double)img->r[i][j], p);
             avg_g += intpow((double)img->g[i][j], p);
-            avg_b += intpow((double)img->b[i][j], p);
+            avg_b += intpow((double)img->b[i][j], p);*/
+			
             n++;
         }
-	return ColorTemp (avg_r/n, avg_g/n, avg_b/n);
+	return ColorTemp (sqrt(avg_r/n), sqrt(avg_g/n), sqrt(avg_b/n));
     //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
 }
 

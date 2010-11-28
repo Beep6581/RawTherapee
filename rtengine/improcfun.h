@@ -79,7 +79,7 @@ class ImProcFunctions {
         bool needsTransform ();
 
         void firstAnalysis  (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
-        void rgbProc        (Image16* working, LabImage* lab, int* hltonecurve, int* shtonecurve, int* tonecurve, SHMap* shmap);
+        void rgbProc        (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, int sat);
         void luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to);
         void colorCurve     (LabImage* lold, LabImage* lnew);
@@ -109,6 +109,9 @@ class ImProcFunctions {
 	void dirpyr_channel(unsigned short ** data_fine, unsigned short ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  );
 	void idirpyr_eq_channel(unsigned short ** data_coarse, unsigned short ** data_fine, int ** buffer, int width, int height, int level, const double * mult );
 	
+	void defringe (LabImage* lab);
+	void PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh, bool edges);  
+	
         Image8*     lab2rgb     (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
         Image16*    lab2rgb16   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 
@@ -116,6 +119,9 @@ class ImProcFunctions {
         bool transCoord     (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
         void getAutoExp  	(unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
         double getTransformAutoFill (int oW, int oH);
+	
+	void rgb2hsv (int r, int g, int b, float &h, float &s, float &v); 
+	void hsv2rgb (float h, float s, float v, int &r, int &g, int &b); 
 };
 }
 #endif

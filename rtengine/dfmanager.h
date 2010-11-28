@@ -20,7 +20,7 @@
 #include <glibmm/ustring.h>
 #include <map>
 #include <math.h>
-#include <common.h>
+#include <rawimage.h>
 
 namespace rtengine{
 

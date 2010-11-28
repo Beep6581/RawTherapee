@@ -24,11 +24,6 @@
 #include <tiffio.h>
 #include <stdio.h>
 #include <string.h>
-extern "C" {
-#include "jdatasrc.c"
-#include <jpeglib.h>
-#include <iccjpeg.h>
-}
 #ifdef WIN32
 #include <winsock2.h>
 #else
@@ -36,6 +31,11 @@ extern "C" {
 #endif
 #include <iptcpairs.h>
 #include <libiptcdata/iptc-jpeg.h>
+extern "C" {
+#include "jdatasrc.c"
+#include <jpeglib.h>
+#include <iccjpeg.h>
+}
 
 Glib::ustring safe_locale_to_utf8 (const std::string& src);
 

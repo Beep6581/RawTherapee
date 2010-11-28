@@ -33,6 +33,7 @@ class NAISOInterpreter : public Interpreter {
     public:
         NAISOInterpreter () {}
         virtual std::string toString (Tag* t) {
+        	char buffer[32];
             sprintf (buffer, "%d", t->toInt(2));
             return buffer;
         }

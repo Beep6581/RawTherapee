@@ -19,6 +19,8 @@
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
 
+#include <stdint.h>
+
 template <class T> class AlignedBuffer {
 
     private:

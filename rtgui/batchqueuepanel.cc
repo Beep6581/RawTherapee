@@ -148,6 +148,8 @@ BatchQueuePanel::BatchQueuePanel () {
     batchQueue->setBatchQueueListener (this);
 
     show_all ();
+    batchQueue->loadBatchQueue ();
+    batchQueue->notifyListener ();
 }
 
 void BatchQueuePanel::arrangementButtonPressed () {
@@ -222,9 +224,9 @@ void BatchQueuePanel::stopBatchProc () {
     updateTab (batchQueue->getEntries().size());
 }
 
-void BatchQueuePanel::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
+void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries, bool head) {
 
-    batchQueue->addEntry (bqe, head);
+    batchQueue->addEntries (entries, head);
     
     if (stop->get_active () && autoStart->get_active ())
         startBatchProc ();

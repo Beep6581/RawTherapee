@@ -34,7 +34,8 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 
     moptions.copyFrom (&options);
 
-    set_size_request (650, 650);
+    // Do not increase height, since it's not visible on e.g. smaller netbook screens
+    set_size_request (650, 600);
     set_border_width (4);
 
     Gtk::VBox* mainvb = get_vbox ();
@@ -95,8 +96,8 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     behscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     Gtk::Frame* behFrame = Gtk::manage (new Gtk::Frame (M("PREFERENCES_BEHAVIOR")));
     behFrame->add (*behscrollw);
-    mvbpp->pack_start (*behFrame);
-//    mvbpp->pack_start (*behFrame, Gtk::PACK_SHRINK, 2);
+    //mvbpp->pack_start (*behFrame);
+    mvbpp->pack_start (*behFrame, Gtk::PACK_EXPAND_WIDGET, 4);
     Gtk::TreeView* behTreeView = Gtk::manage (new Gtk::TreeView ());
     behscrollw->add (*behTreeView);
 
@@ -133,6 +134,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_EXPOSURE_BRIGHTNESS"), ADDSET_TC_BRIGHTNESS, false);
     appendBehavList (mi, M("TP_EXPOSURE_BLACKLEVEL"), ADDSET_TC_BLACKLEVEL, false);
     appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), ADDSET_TC_CONTRAST, false);
+    appendBehavList (mi, M("TP_EXPOSURE_SATURATION"), ADDSET_TC_SATURATION, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHADOWSHLIGHTS_LABEL"));
@@ -189,6 +191,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_VIGNETTING_AMOUNT"), ADDSET_VIGN_AMOUNT, false);
 
     behTreeView->expand_all ();
+
+    chOverwriteOutputFile =  new Gtk::CheckButton (M("PREFERENCES_OVERWRITEOUTPUTFILE"));
+    mvbpp->pack_start(*chOverwriteOutputFile, Gtk::PACK_SHRINK, 4);
 
     return mvbpp;
 }
@@ -325,6 +330,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
     editorLayout->append_text (M("PREFERENCES_MULTITAB"));
+    editorLayout->append_text (M("PREFERENCES_MULTITABDUALMON"));
     editorLayout->set_active (1);
 
     hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
@@ -756,7 +762,11 @@ void Preferences::storePreferences () {
         for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
             moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
 
-    moptions.tabbedUI = (bool)editorLayout->get_active_row_number();
+    int editorMode=editorLayout->get_active_row_number();
+    moptions.tabbedUI = (editorMode>0);
+    moptions.multiDisplayMode = editorMode==2 ? 1:0;
+
+    moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 }
 
 void Preferences::fillPreferences () {
@@ -830,7 +840,11 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
-    editorLayout->set_active(moptions.tabbedUI);
+    if (!moptions.tabbedUI)
+        editorLayout->set_active(0);
+    else 
+        editorLayout->set_active(moptions.multiDisplayMode ? 2 : 1);
+
     darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     updateDFinfos();
 
@@ -850,6 +864,8 @@ void Preferences::fillPreferences () {
     setc.block (false);
     tconn.block (false);
     dfconn.block (false);
+
+    chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 }
 
 void Preferences::loadPressed () {

@@ -32,6 +32,7 @@ void ParamsEdited::set (bool v) {
         toneCurve.brightness = v;
         toneCurve.black      = v;
         toneCurve.contrast   = v;
+		toneCurve.saturation   = v;
         toneCurve.shcompr    = v;
         toneCurve.hlcompr    = v;
         toneCurve.autoexp    = v;
@@ -71,6 +72,9 @@ void ParamsEdited::set (bool v) {
         lumaDenoise.edgetolerance = v;
         colorDenoise.enabled      = v;
         colorDenoise.amount       = v;
+	defringe.enabled      = v;
+	defringe.radius       = v;
+	defringe.threshold = v;
 	impulseDenoise.enabled      = v;
 	impulseDenoise.thresh      = v;
 	dirpyrDenoise.enabled      = v;
@@ -137,12 +141,18 @@ void ParamsEdited::set (bool v) {
         raw.dcbEnhance = v;
         equalizer.enabled = v;
 		dirpyrequalizer.enabled = v;
-
-        for(int i = 0; i < 5; i++)
-        {
+		hsvequalizer.enabled = v;
+        for(int i = 0; i < 8; i++) {
             equalizer.c[i] = v;
-			dirpyrequalizer.mult[i] = v;
         }
+	for(int i = 0; i < 5; i++) {
+		dirpyrequalizer.mult[i] = v;
+	}
+	for(int i = 0; i < 8; i++) {
+		hsvequalizer.sat[i] = v;
+		hsvequalizer.val[i] = v;
+		hsvequalizer.hue[i] = v;
+	}
         exif.clear ();
         iptc.clear ();
 }
@@ -163,7 +173,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;
         toneCurve.black = toneCurve.black && p.toneCurve.black == other.toneCurve.black;
         toneCurve.contrast = toneCurve.contrast && p.toneCurve.contrast == other.toneCurve.contrast;
-        toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
+		toneCurve.saturation = toneCurve.saturation && p.toneCurve.saturation == other.toneCurve.saturation;
+		toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
         toneCurve.hlcompr = toneCurve.hlcompr && p.toneCurve.hlcompr == other.toneCurve.hlcompr;
         toneCurve.autoexp = toneCurve.autoexp && p.toneCurve.autoexp == other.toneCurve.autoexp;
         toneCurve.clip = toneCurve.clip && p.toneCurve.clip == other.toneCurve.clip;
@@ -202,6 +213,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         lumaDenoise.edgetolerance = lumaDenoise.edgetolerance && p.lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance;
         colorDenoise.enabled = colorDenoise.enabled && p.colorDenoise.enabled == other.colorDenoise.enabled;
         colorDenoise.amount = colorDenoise.amount && p.colorDenoise.amount == other.colorDenoise.amount;
+		defringe.enabled = defringe.enabled && p.defringe.enabled == other.defringe.enabled;
+        defringe.radius = defringe.radius && p.defringe.radius == other.defringe.radius;
+        defringe.threshold = defringe.threshold && p.defringe.threshold == other.defringe.threshold;
 		
 		impulseDenoise.enabled = impulseDenoise.enabled && p.impulseDenoise.enabled == other.impulseDenoise.enabled;
 		impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
@@ -284,6 +298,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         for(int i = 0; i < 8; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
         }		
+		hsvequalizer.enabled = hsvequalizer.enabled && p.hsvequalizer.enabled == other.hsvequalizer.enabled;
+        for(int i = 0; i < 8; i++) {
+            hsvequalizer.sat[i] = hsvequalizer.sat[i] && p.hsvequalizer.sat[i] == other.hsvequalizer.sat[i];
+			hsvequalizer.val[i] = hsvequalizer.val[i] && p.hsvequalizer.val[i] == other.hsvequalizer.val[i];
+            hsvequalizer.hue[i] = hsvequalizer.hue[i] && p.hsvequalizer.hue[i] == other.hsvequalizer.hue[i];
+        }
 //        exif = exif && p.exif==other.exif
 //        iptc = other.iptc;
     }
@@ -295,6 +315,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (toneCurve.brightness)	toEdit.toneCurve.brightness = options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
 	if (toneCurve.black)		toEdit.toneCurve.black 	    = options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
 	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;
+	if (toneCurve.saturation)	toEdit.toneCurve.saturation 	= options.baBehav[ADDSET_TC_SATURATION] ? toEdit.toneCurve.saturation + mods.toneCurve.saturation : mods.toneCurve.saturation;
 	if (toneCurve.shcompr)		toEdit.toneCurve.shcompr 	= mods.toneCurve.shcompr;
 	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= mods.toneCurve.hlcompr;
 	if (toneCurve.autoexp)		toEdit.toneCurve.autoexp 	= mods.toneCurve.autoexp;
@@ -334,6 +355,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
 	if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
 	if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
+	
+	if (defringe.enabled)					toEdit.defringe.enabled 	= mods.defringe.enabled;
+	if (defringe.radius)					toEdit.defringe.radius 	= mods.defringe.radius;	
+	if (defringe.threshold)					toEdit.defringe.threshold 	= mods.defringe.threshold;
 	
 	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
@@ -412,8 +437,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
 	}
 	if (dirpyrequalizer.enabled)	    toEdit.dirpyrequalizer.enabled 	= mods.dirpyrequalizer.enabled;
-	for(int i = 0; i < 8; i++) {
+	for(int i = 0; i < 5; i++) {
 	    if(dirpyrequalizer.mult[i])  toEdit.dirpyrequalizer.mult[i]   = mods.dirpyrequalizer.mult[i];
+	}
+	if (hsvequalizer.enabled)	    toEdit.hsvequalizer.enabled 	= mods.hsvequalizer.enabled;
+	for(int i = 0; i < 8; i++) {
+	    if(hsvequalizer.sat[i])  toEdit.hsvequalizer.sat[i]   = mods.hsvequalizer.sat[i];
+		if(hsvequalizer.val[i])  toEdit.hsvequalizer.val[i]   = mods.hsvequalizer.val[i];
+	    if(hsvequalizer.hue[i])  toEdit.hsvequalizer.hue[i]   = mods.hsvequalizer.hue[i];
 	}
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;

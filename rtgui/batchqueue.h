@@ -56,12 +56,13 @@ class BatchQueue  : public ThumbBrowserBase,
 
     Glib::ustring obtainFileName (const Glib::ustring& origFileName);
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
+    Glib::ustring getTempFilenameForParams( const Glib::ustring filename );
+    bool saveBatchQueue( );
 
   public:
     BatchQueue ();
 
-    void addEntry (BatchQueueEntry* entry, bool head=false);
-    
+    void addEntries (std::vector<BatchQueueEntry*> &entries, bool head=false);
     void cancelItems (std::vector<ThumbBrowserEntryBase*>* items);
     void headItems (std::vector<ThumbBrowserEntryBase*>* items);
     void tailItems (std::vector<ThumbBrowserEntryBase*>* items);
@@ -79,6 +80,7 @@ class BatchQueue  : public ThumbBrowserBase,
     
     void setBatchQueueListener (BatchQueueListener* l) { listener = l; }
     void notifyListener ();
+    bool loadBatchQueue ();
 };
 
 #endif

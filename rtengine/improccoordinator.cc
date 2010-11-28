@@ -167,7 +167,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap);
+        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
 
         // recompute luminance histogram
         memset (lhist16, 0, 65536*sizeof(int));
@@ -178,7 +178,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, chroma_acurve, chroma_bcurve, lumacurve, bcLhist, scale==1 ? 1 : 16);
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
@@ -199,6 +199,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
             ipf.impulsedenoise (nprevl);
         }
+		if (scale==1) {
+			progress ("Defringing...",100*readyphase/numofphases);
+            ipf.defringe (nprevl);
+		}
         if (scale==1) {
             progress ("Denoising luminance...",100*readyphase/numofphases);
             ipf.lumadenoise (nprevl, buffer);
@@ -375,7 +379,7 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (rhist, 0, 256*sizeof(int));
     memset (ghist, 0, 256*sizeof(int));
     memset (bhist, 0, 256*sizeof(int));
-
+	
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
@@ -387,8 +391,18 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 
     memset (Lhist, 0, 256*sizeof(int));
     for (int i=y1; i<y2; i++)
-        for (int j=x1; j<x2; j++) 
+        for (int j=x1; j<x2; j++) {
             Lhist[nprevl->L[i][j]/256]++;
+		}
+	
+	/*for (int i=0; i<256; i++) {
+		Lhist[i] = (int)(256*sqrt(Lhist[i]));
+		rhist[i] = (int)(256*sqrt(rhist[i]));
+		ghist[i] = (int)(256*sqrt(ghist[i]));
+		bhist[i] = (int)(256*sqrt(bhist[i]));
+		bcrgbhist[i] = (int)(256*sqrt(bcrgbhist[i]));
+		bcLhist[i] = (int)(256*sqrt(bcLhist[i]));
+	}*/
 }
 
 void ImProcCoordinator::progress (Glib::ustring str, int pr) {

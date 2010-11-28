@@ -42,6 +42,7 @@ public:
     Thumbnail* thumbnail;
     rtengine::ProcessingJob* job;
     rtengine::procparams::ProcParams params;
+    Glib::ustring savedParamsFile;
     double progress;
     Glib::ustring outFileName;
     SaveFormat saveFormat;

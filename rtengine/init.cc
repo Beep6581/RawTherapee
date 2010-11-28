@@ -36,8 +36,6 @@ int init (const Settings* s) {
     iccStore->parseDir (s->iccDirectory);
     CurveFactory::init ();
     ImProcFunctions::initCache ();
-    delete dcrMutex;
-    dcrMutex = new Glib::Mutex;
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
     dfm.init( s->darkFramesPath );

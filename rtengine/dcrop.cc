@@ -167,7 +167,7 @@ void Crop::update (int todo, bool internal) {
 
     // shadows & highlights & tone curve & convert to cielab
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, params.toneCurve.saturation);
 
 	
 	// apply luminance operations
@@ -180,6 +180,7 @@ void Crop::update (int todo, bool internal) {
 
         if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
+			parent->ipf.defringe (labnCrop);
             parent->ipf.lumadenoise (labnCrop, cbuffer);
             parent->ipf.colordenoise (labnCrop, cbuffer);
 			parent->ipf.dirpyrdenoise (labnCrop);

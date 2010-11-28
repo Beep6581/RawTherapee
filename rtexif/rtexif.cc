@@ -1263,7 +1263,7 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root) 
 }
 
 TagDirectory* ExifManager::parse (FILE* f, int base) {
-
+  setlocale(LC_NUMERIC, "C"); // to set decimal point in sscanf
   // read tiff header
   fseek (f, base, SEEK_SET);
   unsigned short bo; 
@@ -1562,37 +1562,22 @@ bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, d
 	 maxFocal=0.0;
 	 maxApertureAtMinFocal=0.0;
 	 maxApertureAtMaxFocal=0.0;
-
-	 int iAperture = fullname.find("f/");
-	 if( iAperture != std::string::npos ){
-		 char meno;
-		 std::istringstream apertures( std::string(fullname,iAperture+2) );
-			 apertures >> maxApertureAtMinFocal;
-			 if( !apertures.eof())
-				apertures >> meno;
-			 if( !apertures.eof())
-				apertures >> maxApertureAtMaxFocal;
+	 char buffer[1024];
+	 strcpy(buffer,fullname.c_str());
+	 char *pF = strstr(buffer,"f/" );
+	 if( pF ){
+		 sscanf(pF+2,"%lf-%lf",&maxApertureAtMinFocal,&maxApertureAtMaxFocal);
 		 if(maxApertureAtMinFocal >0. && maxApertureAtMaxFocal==0.)
 			 maxApertureAtMaxFocal= maxApertureAtMinFocal;
 
-		 int eFocal = fullname.rfind("mm",iAperture);
-		 if( eFocal != -1 ){
-			 int iFocal = fullname.rfind(' ',eFocal); // find first space leading focal length
-			 if( iFocal == std::string::npos )
-				 iFocal = 0;
-
-			 std::istringstream focals( std::string(fullname,iFocal,eFocal-iFocal) );
-			 focals >> minFocal;
-			 if( !focals.eof())
-				focals >> meno;
-			 if( !focals.eof())
-				focals >> maxFocal;
-			 if(minFocal >0. && maxFocal==0.0)
-				 maxFocal=minFocal;
-
-			 return true;
+		 char *pMM = pF-3;
+		 while( pMM[0]!= 'm' && pMM[1]!= 'm' && pMM>buffer) pMM--;
+		 if( pMM[0]== 'm' && pMM[1]== 'm' ){
+		    char *sp=pMM;
+		    while( *sp != ' ' && sp > buffer )sp--;
+		    sscanf(sp+1,"%lf-%lf",&minFocal,&maxFocal);
+		    return true;
 		 }
-		 return false;
 	 }
      return false;
 }

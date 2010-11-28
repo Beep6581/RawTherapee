@@ -37,6 +37,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
 	impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
+	defringe			= Gtk::manage (new Defringe ());
 	dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
     lcurve              = Gtk::manage (new LCurve ());
@@ -58,6 +59,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     equalizer           = Gtk::manage (new Equalizer ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
+	hsvequalizer        = Gtk::manage (new HSVEqualizer ());
     rawprocess          = Gtk::manage (new RawProcess ());
     preprocess          = Gtk::manage (new PreProcess ());
 
@@ -69,11 +71,13 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
-    addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));      toolPanels.push_back (lcurve);
+	addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
+	addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
 	addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
 	addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
+	addPanel (detailsPanel, defringe,			M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);
 	addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
     addPanel (detailsPanel, equalizer,          M("TP_EQUALIZER_LABEL"));      toolPanels.push_back (equalizer);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);

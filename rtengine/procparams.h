@@ -38,6 +38,7 @@ class ToneCurveParams {
         int         brightness;
         int         black;
         int         contrast;
+		int         saturation;
         int         shcompr;
         int         hlcompr;
 };
@@ -135,6 +136,18 @@ class ColorDenoiseParams {
         bool    edgesensitive;
         int		amount;
 };
+	
+	/**
+	 * Parameters of defringing
+	 */
+	class DefringeParams {
+		
+    public:
+        bool    enabled;
+        double  radius;
+        int     threshold;
+	};
+	
 	
 	/**
 	 * Parameters of impulse denoising
@@ -342,14 +355,27 @@ class EqualizerParams {
 };
 	
 /**
-	* Directional pyramid equalizer params
-	*/
-	class DirPyrEqualizerParams {
-		
-    public:
-        bool enabled;
-        double mult[8];
-	};
+* Directional pyramid equalizer params
+*/
+class DirPyrEqualizerParams {
+	
+	public:
+		bool enabled;
+		double mult[8];
+};
+	
+/**
+ * Wavelet equalizer params
+ */
+class HSVEqualizerParams {
+	
+	public:
+		bool enabled;
+		Glib::ustring hsvchannel;
+		int sat[8];
+		int val[8];
+		int hue[8];
+};
 
 /**
   * Parameters for RAW demosaicing
@@ -389,6 +415,7 @@ class ProcParams {
         ColorShiftParams        colorShift;     ///< Color shift parameters
         LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
         ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
+	DefringeParams			defringe; ///< Impulse denoising parameters
 	ImpulseDenoiseParams    impulseDenoise; ///< Impulse denoising parameters
 	DirPyrDenoiseParams		dirpyrDenoise;  ///< Directional Pyramid denoising parameters
         SHParams                sh;             ///< Shadow/highlight enhancement parameters
@@ -406,7 +433,8 @@ class ProcParams {
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         EqualizerParams         equalizer;      ///< wavelet equalizer parameters
         RAWParams               raw;            ///< RAW parameters before demosaicing
-	DirPyrEqualizerParams   dirpyrequalizer;///< directional pyramid equalizer parameters
+	DirPyrEqualizerParams   dirpyrequalizer;	///< directional pyramid equalizer parameters
+	HSVEqualizerParams         hsvequalizer;      ///< hsv equalizer parameters
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
         int version;                            ///< Version of the file from which the parameters have been read

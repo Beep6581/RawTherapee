@@ -24,7 +24,7 @@
 
 ThumbBrowserBase::ThumbBrowserBase () 
     : lastClicked(NULL), previewHeight(options.thumbSize) {
-
+    inTabMode=false;  // corresponding to take thumbSize
     inW = -1; inH = -1;
 
     Gtk::HBox* hb1 = new Gtk::HBox ();
@@ -467,19 +467,22 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 
     int newHeight;
     int i=0;
+    int optThumbSize=getCurrentThumbSize();
     if (zoomIn)
         for (i=0; i<options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
-            if (newHeight > options.thumbSize)
+            if (newHeight > optThumbSize)
                 break;
         }
     else
         for (i=options.thumbnailZoomRatios.size()-1; i>=0; i--) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
-            if (newHeight < options.thumbSize)
+            if (newHeight < optThumbSize)
                 break;
         }
-    previewHeight = options.thumbSize = newHeight;
+    previewHeight = newHeight;
+    if (inTabMode) options.thumbSizeTab = newHeight; else options.thumbSize = newHeight;
+
     for (int i=0; i<fd.size(); i++) 
         fd[i]->resize (previewHeight);
     redraw ();
@@ -487,12 +490,15 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
     gdk_window_process_updates (get_window()->gobj(), true);
 #endif    
 }
+
+int ThumbBrowserBase::getCurrentThumbSize() { return inTabMode ? options.thumbSizeTab : options.thumbSize; }
+
 void ThumbBrowserBase::refreshThumbImages () {
 
     for (int i=0; i<fd.size(); i++){
-    	previewHeight = options.thumbSize;
+    	previewHeight = getCurrentThumbSize();
     	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
-        fd[i]->refreshThumbnailImage ();
+        fd[i]->refreshThumbnailImage ();  // TODO: This might cause crashes on some installations
     }
 
     redraw ();
@@ -518,6 +524,24 @@ void ThumbBrowserBase::setArrangement (Arrangement a) {
     redraw ();
 }
 
+void ThumbBrowserBase::enableTabMode(bool enable) {
+    inTabMode = enable;
+    arrangement = inTabMode ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
+    
+    if (options.thumbSizeTab!=options.thumbSize) {
+        for (int i=0; i<fd.size(); i++) 
+            fd[i]->resize (getCurrentThumbSize());
+    }
+
+    redraw ();
+
+    // Scroll to selected position if going into ribbon mode
+    if (inTabMode && !selected.empty()) {
+        int h=selected[0]->getStartX();
+        hscroll.set_value (MIN(h, hscroll.get_adjustment()->get_upper()));
+    }
+}
+
 void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry) {
 
         entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
@@ -533,6 +557,14 @@ void ThumbBrowserBase::setScrollPosition (double h, double v) {
     hscroll.set_value (h>hscroll.get_adjustment()->get_upper() ? hscroll.get_adjustment()->get_upper() : h);
     vscroll.set_value (v>vscroll.get_adjustment()->get_upper() ? vscroll.get_adjustment()->get_upper() : v);
 }
+
+// needed for auto-height in single tab
+int ThumbBrowserBase::getEffectiveHeight() { 
+    int h=0;
+    if (fd.size()>0) h=fd[0]->getEffectiveHeight();
+    return h;
+}  
+
 
 /*void PreviewImgUpdater::processCustomOrder () {
 

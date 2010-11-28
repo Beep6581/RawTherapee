@@ -30,7 +30,6 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
     private:
         Gtk::Notebook* mainNB;
-        FilePanel* fpanel;       
         BatchQueuePanel* bpanel;
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
@@ -50,6 +49,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void remEditorPanel (EditorPanel* ep);
 
         void addBatchQueueJob       (BatchQueueEntry* bqe, bool head=false);
+        void addBatchQueueJobs      (std::vector<BatchQueueEntry*> &entries);
 
         bool keyPressed (GdkEventKey* event);
         bool on_delete_event(GdkEventAny* event);
@@ -65,7 +65,10 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void setProgressState (int state);
         void error (Glib::ustring descr);
         rtengine::ProgressListener* getProgressListener () { return pldBridge; }
+        
         EditorPanel*  epanel;
+        FilePanel* fpanel;
+
         void SetEditorCurrent();
         void SetMainCurrent();
         void MoveFileBrowserToEditor();

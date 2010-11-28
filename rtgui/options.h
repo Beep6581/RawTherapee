@@ -84,7 +84,7 @@ class Options {
     bool multiUser;
     static Glib::ustring rtdir;
     int version;
-    int thumbSize;
+    int thumbSize,thumbSizeTab;
     bool showHistory;
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
     bool showInfo;
@@ -107,6 +107,7 @@ class Options {
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
+    Glib::ustring customProfileBuilder;
     int editorToSendTo;   
     int maxThumbnailHeight;
     int maxCacheEntries;
@@ -130,9 +131,11 @@ class Options {
     bool overlayedFileNames;
     bool showFileNames;
     bool tabbedUI;
+    int previewSizeTab,previewSizeBrowser;
+    int multiDisplayMode;  // 0=none, 1=Edit panels on other display
+    std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     
-    
-                Options         ();
+    Options ();
 
     Options*    copyFrom        (Options* other);
     void        setDefaults     ();
