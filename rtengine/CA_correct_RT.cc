@@ -5,7 +5,7 @@
 //		copyright (c) 2008-2010  Emil Martinec <ejmartin@uchicago.edu>
 //
 //
-// code dated: June 14, 2010
+// code dated: November 26, 2010
 //
 //	CA_correct_RT.cc is free software: you can redistribute it and/or modify
 //	it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ int RawImageSource::LinEqSolve(int nDim, float* pfMatr, float* pfVect, float* pf
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-void RawImageSource::CA_correct_RT() { 
+void RawImageSource::CA_correct_RT(double cared, double cablue) { 
 
 #define TS 256		// Tile size
 //#define border 8
@@ -136,7 +136,7 @@ void RawImageSource::CA_correct_RT() {
 	//shifts to location of vertical and diagonal neighbors
 	const int v1=TS, v2=2*TS, /* v3=3*TS,*/ v4=4*TS;//, p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
 	
-	float eps=1e-5;			//tolerance to avoid dividing by zero
+	float eps=1e-5, eps2=1e-10;			//tolerance to avoid dividing by zero
 	
 	//adaptive weights for green interpolation
 	float	wtu, wtd, wtl, wtr;
@@ -230,6 +230,7 @@ void RawImageSource::CA_correct_RT() {
 		
 	int vctr=0, hctr=0;
 	
+	if (cared==0 && cablue==0) {
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
 	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++) {
@@ -424,28 +425,21 @@ void RawImageSource::CA_correct_RT() {
 					//printf("hblock %d vblock %d j %d c %d areawt %d \n",hblock,vblock,j,c,areawt[j][c]);
 					//printf("hblock %d vblock %d j %d c %d areawt %d ",hblock,vblock,j,c,areawt[j][c]);
 
-					if (areawt[j][c]>0) {
+					if (areawt[j][c]>0 && coeff[j][2][c]>eps2) {
 						CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
 						blockwt[vblock*hblsz+hblock]= areawt[j][c];//*coeff[j][2][c]/(eps+coeff[j][0][c]) ;
 					} else {
 						CAshift[j][c]=17.0;
 						blockwt[vblock*hblsz+hblock]=0;
 					}
-					
+					//if (c==0 && j==0) printf("vblock= %d hblock= %d denom= %f areawt= %d \n",vblock,hblock,coeff[j][2][c],areawt[j][c]);
+
 					//printf("%f  \n",CAshift[j][c]);
 
-					//CAshift[j][c]=coeff[j][1][c]/coeff[j][2][c];
-					//blockwt[vblock*hblsz+hblock] = (float)(rr1-8)*(cc1-8)/4 * coeff[j][2][c]/(eps+coeff[j][0][c]) ;
-					
 					//data structure = CAshift[vert/hor][color]
 					//j=0=vert, 1=hor
 					
-					
-					if ((CAshift[j][c])<0) {
-						GRBdir[j][c]=-1;
-					} else {
-						GRBdir[j][c]=1;
-					}	
+						
 					offset[j][c]=floor(CAshift[j][c]);
 					//offset gives NW corner of square containing the min; j=0=vert, 1=hor
 					
@@ -468,8 +462,9 @@ void RawImageSource::CA_correct_RT() {
 				blockshifts[(vblock)*hblsz+hblock][c][0]=(CAshift[0][c]); //vert CA shift for R/B
 				blockshifts[(vblock)*hblsz+hblock][c][1]=(CAshift[1][c]); //hor CA shift for R/B
 				//data structure: blockshifts[blocknum][R/B][v/h]
+				//if (c==0) printf("vblock= %d hblock= %d blockshiftsmedian= %f \n",vblock,hblock,blockshifts[(vblock)*hblsz+hblock][c][0]);
 			}
-			
+
 			if(plistener) plistener->setProgress(0.5*fabs((float)top/height));
 
 		}
@@ -481,7 +476,7 @@ void RawImageSource::CA_correct_RT() {
 			if (blockdenom[j][c]) {
 				blockvar[j][c] = blocksqave[j][c]/blockdenom[j][c]-SQR(blockave[j][c]/blockdenom[j][c]);
 			} else {
-				fprintf (stderr,"blockdenom vanishes");
+				printf ("blockdenom vanishes \n");
 				return;
 			}
 		}
@@ -537,7 +532,7 @@ void RawImageSource::CA_correct_RT() {
 					PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]);
 					PIX_SORT(p[4],p[2]);
 					blockshifts[(vblock)*hblsz+hblock][c][dir] = p[4];
-					if (p[4]<0) {GRBdir[dir][c]=-1;} else {GRBdir[dir][c]=1;}
+					//if (c==0 && dir==0) printf("vblock= %d hblock= %d blockshiftsmedian= %f \n",vblock,hblock,p[4]);
 				}
 				
 				
@@ -556,6 +551,7 @@ void RawImageSource::CA_correct_RT() {
 								}
 							shiftmat[c][dir][(polyord*i+j)] += (float)pow((float)vblock,i)*pow((float)hblock,j)*blockshifts[(vblock)*hblsz+hblock][c][dir]*blockwt[vblock*hblsz+hblock];
 						}
+						//if (c==0 && dir==0) {printf("i= %d j= %d shiftmat= %f \n",i,j,shiftmat[c][dir][(polyord*i+j)]);}
 					}//monomials	
 				}//dir 
 				
@@ -567,7 +563,7 @@ void RawImageSource::CA_correct_RT() {
 	if (numblox[1]<32) {
 		polyord=2; numpar=4;
 		if (numblox[1]< 10) {
-			fprintf (stderr,("numblox = %d \n"),numblox[1]);
+			printf ("numblox = %d \n",numblox[1]);
 			return;
 		}
 	}
@@ -577,14 +573,14 @@ void RawImageSource::CA_correct_RT() {
 		for (dir=0; dir<2; dir++) {
 			res = LinEqSolve(numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir]);
 			if (res) {
-				fprintf (stderr,("CA correction pass failed -- can't solve linear equations for color %d direction %d...\n"),c,dir);
+				printf ("CA correction pass failed -- can't solve linear equations for color %d direction %d...\n",c,dir);
 				return;
 			}
 		}
 	//fitparams[polyord*i+j] gives the coefficients of (vblock^i hblock^j) in a polynomial fit for i,j<=4
-	
+	} 
 	//end of initialization for CA correction pass
-	
+	//only executed if cared and cablue are zero
 	
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
@@ -700,20 +696,51 @@ void RawImageSource::CA_correct_RT() {
 			//end of border fill
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 			
-			blockshifts[(vblock)*hblsz+hblock][0][0] = blockshifts[(vblock)*hblsz+hblock][0][1] = 0;
-			blockshifts[(vblock)*hblsz+hblock][2][0] = blockshifts[(vblock)*hblsz+hblock][2][1] = 0;
-			for (i=0; i<polyord; i++)
-				for (j=0; j<polyord; j++) {
-					blockshifts[(vblock)*hblsz+hblock][0][0] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[0][0][polyord*i+j];
-					blockshifts[(vblock)*hblsz+hblock][0][1] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[0][1][polyord*i+j];
-					blockshifts[(vblock)*hblsz+hblock][2][0] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[2][0][polyord*i+j];
-					blockshifts[(vblock)*hblsz+hblock][2][1] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[2][1][polyord*i+j];
-				}
-			blockshifts[(vblock)*hblsz+hblock][0][0] = LIM(blockshifts[(vblock)*hblsz+hblock][0][0], -bslim, bslim);
-			blockshifts[(vblock)*hblsz+hblock][0][1] = LIM(blockshifts[(vblock)*hblsz+hblock][0][1], -bslim, bslim);
-			blockshifts[(vblock)*hblsz+hblock][2][0] = LIM(blockshifts[(vblock)*hblsz+hblock][2][0], -bslim, bslim);
-			blockshifts[(vblock)*hblsz+hblock][2][1] = LIM(blockshifts[(vblock)*hblsz+hblock][2][1], -bslim, bslim);
+			if (cared || cablue) {
+				//manual CA correction; use red/blue slider values to set CA shift parameters
+				for (rr=3; rr < rr1-3; rr++)
+					for (row=rr+top, cc=3, indx=rr*TS+cc; cc < cc1-3; cc++, indx++) {
+						col = cc+left;
+						c = FC(rr,cc);
+						
+						if (c!=1) {
+							//compute directional weights using image gradients
+							wtu=1/SQR(eps+fabs(rgb[(rr+1)*TS+cc][1]-rgb[(rr-1)*TS+cc][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr-2)*TS+cc][c])+fabs(rgb[(rr-1)*TS+cc][1]-rgb[(rr-3)*TS+cc][1]));
+							wtd=1/SQR(eps+fabs(rgb[(rr-1)*TS+cc][1]-rgb[(rr+1)*TS+cc][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr+2)*TS+cc][c])+fabs(rgb[(rr+1)*TS+cc][1]-rgb[(rr+3)*TS+cc][1]));
+							wtl=1/SQR(eps+fabs(rgb[(rr)*TS+cc+1][1]-rgb[(rr)*TS+cc-1][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr)*TS+cc-2][c])+fabs(rgb[(rr)*TS+cc-1][1]-rgb[(rr)*TS+cc-3][1]));
+							wtr=1/SQR(eps+fabs(rgb[(rr)*TS+cc-1][1]-rgb[(rr)*TS+cc+1][1])+fabs(rgb[(rr)*TS+cc][c]-rgb[(rr)*TS+cc+2][c])+fabs(rgb[(rr)*TS+cc+1][1]-rgb[(rr)*TS+cc+3][1]));
+							
+							//store in rgb array the interpolated G value at R/B grid points using directional weighted average
+							rgb[indx][1]=(wtu*rgb[indx-v1][1]+wtd*rgb[indx+v1][1]+wtl*rgb[indx-1][1]+wtr*rgb[indx+1][1])/(wtu+wtd+wtl+wtr);
+						}
+						if (row>-1 && row<height && col>-1 && col<width)
+							Gtmp[row*width + col] = rgb[indx][1];
+					}
+				float hfrac = -((float)(hblock-0.5)/(hblsz-2) - 0.5);
+				float vfrac = -((float)(vblock-0.5)/(vblsz-2) - 0.5)*height/width;
+				blockshifts[(vblock)*hblsz+hblock][0][0] = 2*vfrac*cared;
+				blockshifts[(vblock)*hblsz+hblock][0][1] = 2*hfrac*cared;
+				blockshifts[(vblock)*hblsz+hblock][2][0] = 2*vfrac*cablue;
+				blockshifts[(vblock)*hblsz+hblock][2][1] = 2*hfrac*cablue;
+			} else {
+				//CA auto correction; use CA diagnostic pass to set shift parameters
+				blockshifts[(vblock)*hblsz+hblock][0][0] = blockshifts[(vblock)*hblsz+hblock][0][1] = 0;
+				blockshifts[(vblock)*hblsz+hblock][2][0] = blockshifts[(vblock)*hblsz+hblock][2][1] = 0;
+				for (i=0; i<polyord; i++)
+					for (j=0; j<polyord; j++) {
+						//printf("i= %d j= %d polycoeff= %f \n",i,j,fitparams[0][0][polyord*i+j]);
+						blockshifts[(vblock)*hblsz+hblock][0][0] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[0][0][polyord*i+j];
+						blockshifts[(vblock)*hblsz+hblock][0][1] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[0][1][polyord*i+j];
+						blockshifts[(vblock)*hblsz+hblock][2][0] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[2][0][polyord*i+j];
+						blockshifts[(vblock)*hblsz+hblock][2][1] += (float)pow((float)vblock,i)*pow((float)hblock,j)*fitparams[2][1][polyord*i+j];
+					}
+				blockshifts[(vblock)*hblsz+hblock][0][0] = LIM(blockshifts[(vblock)*hblsz+hblock][0][0], -bslim, bslim);
+				blockshifts[(vblock)*hblsz+hblock][0][1] = LIM(blockshifts[(vblock)*hblsz+hblock][0][1], -bslim, bslim);
+				blockshifts[(vblock)*hblsz+hblock][2][0] = LIM(blockshifts[(vblock)*hblsz+hblock][2][0], -bslim, bslim);
+				blockshifts[(vblock)*hblsz+hblock][2][1] = LIM(blockshifts[(vblock)*hblsz+hblock][2][1], -bslim, bslim);
+			}//end of setting CA shift parameters
 			
+			//printf("vblock= %d hblock= %d vshift= %f hshift= %f \n",vblock,hblock,blockshifts[(vblock)*hblsz+hblock][0][0],blockshifts[(vblock)*hblsz+hblock][0][1]);
 			
 			for (c=0; c<3; c+=2) {
 				
@@ -725,6 +752,19 @@ void RawImageSource::CA_correct_RT() {
 				shifthfloor[c]=floor((float)blockshifts[(vblock)*hblsz+hblock][c][1]);
 				shifthceil[c]=ceil((float)blockshifts[(vblock)*hblsz+hblock][c][1]);
 				shifthfrac[c]=blockshifts[(vblock)*hblsz+hblock][c][1]-shifthfloor[c];
+				
+				
+				if (blockshifts[(vblock)*hblsz+hblock][c][0]>0) {
+					GRBdir[0][c] = 1;
+				} else {
+					GRBdir[0][c] = -1;
+				}
+				if (blockshifts[(vblock)*hblsz+hblock][c][1]>0) {
+					GRBdir[1][c] = 1;
+				} else {
+					GRBdir[1][c] = -1;
+				}
+				
 			}
 			
 			
@@ -741,8 +781,6 @@ void RawImageSource::CA_correct_RT() {
 					//but first we need to interpolate G-R/G-B to grid points...
 					grbdiff[(rr)*TS+cc]=Gint-rgb[(rr)*TS+cc][c];
 					gshift[(rr)*TS+cc]=Gint;
-					float tmp1=grbdiff[(rr)*TS+cc];
-
 				}
 			
 			for (rr=8; rr < rr1-8; rr++)

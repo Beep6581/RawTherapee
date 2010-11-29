@@ -35,6 +35,8 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
     Gtk::Label *dfLabel;
     bool dfChanged;
 
+	Adjuster* caRed;
+    Adjuster* caBlue;
     Adjuster* lineDenoise;
     Adjuster* greenEqThreshold;
     Gtk::CheckButton* caAutocorrect;
