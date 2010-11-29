@@ -175,6 +175,10 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
 		int gtmp=CurveFactory::igamma_srgb (img->data[ix++]);
 		int btmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		
+		tpp->aeHistogram[rtmp>>tpp->aeHistCompression]++;
+		tpp->aeHistogram[gtmp>>tpp->aeHistCompression]+=2;
+		tpp->aeHistogram[btmp>>tpp->aeHistCompression]++;
 
 		if (rtmp<64000 && gtmp<64000 && btmp<64000) {
 			// autowb computation
@@ -183,9 +187,6 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             avg_b += btmp;
             n++;
 		}
-            tpp->aeHistogram[rtmp>>tpp->aeHistCompression]++;
-            tpp->aeHistogram[gtmp>>tpp->aeHistCompression]++;
-            tpp->aeHistogram[btmp>>tpp->aeHistCompression]++;
     }
 
     if (n>0)

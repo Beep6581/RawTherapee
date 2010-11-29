@@ -199,6 +199,8 @@ void ProcParams::setDefaults () {
         hsvequalizer.hue[i] = 0;
     }
     raw.df_autoselect = false;
+    raw.cared = 0;
+	raw.cablue = 0;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
     raw.linenoise = 0;
@@ -422,6 +424,8 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
     keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
     keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+	keyFile.set_double	("RAW", "CARed", raw.cared );
+    keyFile.set_double	("RAW", "CABlue", raw.cablue );
     keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
     keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
     keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
@@ -736,6 +740,8 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
 	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
+	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_boolean ("RAW", "CARed" );
+	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_boolean ("RAW", "CABlue" );
 	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" );
 	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
 	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
@@ -927,6 +933,8 @@ bool ProcParams::operator== (const ProcParams& other) {
         && raw.dcb_iterations == other.raw.dcb_iterations
         && raw.ccSteps      == other.raw.ccSteps
         && raw.ca_autocorrect == other.raw.ca_autocorrect
+	&& raw.cared == other.raw.cared
+	&& raw.cablue == other.raw.cablue
         && raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
         && raw.dmethod == other.raw.dmethod
         && raw.greenthresh == other.raw.greenthresh

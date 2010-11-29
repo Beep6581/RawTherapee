@@ -984,17 +984,17 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgressStr ("Line Denoise...");
 			plistener->setProgress (0.0);
 		}
-		
+
 		cfa_linedn(0.00002*(raw.linenoise));
 	}
 	
-	if ( raw.ca_autocorrect ) {
+	if ( raw.ca_autocorrect || raw.cared || raw.cablue ) {
 		if (plistener) {
 			plistener->setProgressStr ("CA Auto Correction...");
 			plistener->setProgress (0.0);
 		}
 		
-		CA_correct_RT();
+		CA_correct_RT(raw.cared, raw.cablue);
 	}
     t2.set();
     if( settings->verbose )
