@@ -780,4 +780,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 
 
 !EDITWINDOW_TITLE;Image Edit
+!PREFERENCES_CABLUE;Blue CA manual correction
+!PREFERENCES_CABLUE;CA Blue manual correction
+!PREFERENCES_CARED;CA Red manual correction
+!PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
