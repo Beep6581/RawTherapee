@@ -11,6 +11,7 @@ endif (APPLE)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
+option (WITH_MYFILE_MMAP "Build using memory mapped file" OFF)
 option (OPTION_OMP "Build with OpenMP support" ON)
 
 # set install directories
@@ -122,6 +123,10 @@ if (WITH_RAWZOR)
         endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
     endif (WIN32)
 endif (WITH_RAWZOR)
+
+if (WITH_MYFILE_MMAP)
+	add_definitions (-DMYFILE_MMAP)
+endif (WITH_MYFILE_MMAP)
 
 if (OPTION_OMP)
 	find_package(OpenMP)
