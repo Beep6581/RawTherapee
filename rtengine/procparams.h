@@ -392,6 +392,8 @@ class RAWParams {
 	    Glib::ustring dark_frame;
 	    bool df_autoselect;
 		bool ca_autocorrect;
+		double cared;
+		double cablue;
 		bool hotdeadpix_filt;
 		int	linenoise;
 		int greenthresh;

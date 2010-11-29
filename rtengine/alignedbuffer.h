@@ -18,6 +18,7 @@
  */
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
+#include <stdint.h>
 
 #include <stdint.h>
 

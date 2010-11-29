@@ -149,7 +149,7 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
 		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
-		void CA_correct_RT		();
+		void CA_correct_RT	(double cared, double cablue);
 		int  cfaCleanFromMap( BYTE* bitmapBads );
 		int  findHotDeadPixel( BYTE *bpMap, float thresh);
 	void ddct8x8s(int isgn, float **a);

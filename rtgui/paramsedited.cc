@@ -284,6 +284,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
         raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
+		raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
+        raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
@@ -427,6 +429,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.dcbIterations)      toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
     if (raw.dcbEnhance)         toEdit.raw.dcb_enhance  = mods.raw.dcb_enhance;
     if (raw.caCorrection)       toEdit.raw.ca_autocorrect = mods.raw.ca_autocorrect;
+	if (raw.caRed)				toEdit.raw.cared    = mods.raw.cared;
+    if (raw.caBlue)				toEdit.raw.cablue    = mods.raw.cablue;
     if (raw.greenEq)            toEdit.raw.greenthresh  = mods.raw.greenthresh;
     if (raw.hotDeadPixel)       toEdit.raw.hotdeadpix_filt= mods.raw.hotdeadpix_filt;
     if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
