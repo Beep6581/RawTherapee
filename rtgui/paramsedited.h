@@ -279,6 +279,8 @@ class RAWParamsEdited {
         bool dcbIterations;
         bool dcbEnhance;
         bool caCorrection;
+		bool caRed;
+		bool caBlue;
         bool greenEq;
         bool hotDeadPixel;
         bool linenoise;
