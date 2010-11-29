@@ -751,10 +751,17 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !NAVIGATOR_LAB_L_NA;L = n/a
 !NAVIGATOR_LAB_L_VALUE;L = %1
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
+!PREFERENCES_CABLUE;Blue CA manual correction
+!PREFERENCES_CABLUE;CA Blue manual correction
+!PREFERENCES_CARED;CA Red manual correction
+!PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
