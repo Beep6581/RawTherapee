@@ -789,4 +789,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!PREFERENCES_CABLUE;Blue CA manual correction
+!PREFERENCES_CABLUE;CA Blue manual correction
+!PREFERENCES_CARED;CA Red manual correction
+!PREFERENCES_CARED;Red CA manual correction
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
 !TP_ICM_INPUTNONE;No profile
