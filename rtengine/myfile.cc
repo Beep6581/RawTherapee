@@ -23,6 +23,85 @@
 #include <rwz_sdk.h>
 #endif
 
+// get mmap() sorted out
+#ifdef MYFILE_MMAP
+
+#ifdef WIN32
+
+#include <fcntl.h>
+#include <ddk/ntifs.h>
+
+// dummy values
+#define MAP_PRIVATE 1
+#define PROT_READ 1
+
+void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)
+{
+	HANDLE handle = CreateFileMapping((HANDLE)_get_osfhandle(fd), NULL, PAGE_WRITECOPY, 0, 0, NULL);
+
+	if (handle != NULL) {
+		start = MapViewOfFile(handle, FILE_MAP_COPY, 0, offset, length);
+		CloseHandle(handle);
+	}
+
+	return start;
+}
+
+int munmap(void *start, size_t length)
+{
+	UnmapViewOfFile(start);
+	return 0;
+}
+
+#else // WIN32
+
+#include <fcntl.h>
+#include <sys/mman.h>
+
+#endif // WIN32
+#endif // MYFILE_MMAP
+
+#ifdef MYFILE_MMAP
+
+IMFILE* fopen (const char* fname)
+{
+	int fd = ::open(fname,O_RDONLY);
+	if ( fd < 0 )
+		return 0;
+
+	struct stat stat_buffer;
+	if ( fstat(fd,&stat_buffer) < 0 )
+	{
+		printf("no stat\n");
+		close(fd);
+		return 0;
+	}
+
+	void* data = mmap(0,stat_buffer.st_size,PROT_READ,MAP_PRIVATE,fd,0);
+	if ( data == 0 )
+	{
+		printf("no mmap\n");
+		close(fd);
+		return 0;
+	}
+
+	IMFILE* mf = new IMFILE;
+
+	mf->fd = fd;
+	mf->pos = 0;
+	mf->size = stat_buffer.st_size;
+	mf->data = (char*)data;
+	mf->eof = false;
+
+	return mf;
+}
+
+IMFILE* gfopen (const char* fname)
+{
+	return fopen(fname);
+}
+#else
+
 IMFILE* fopen (const char* fname) {
 
 	FILE* f = fopen (fname, "rb");
@@ -98,21 +177,34 @@ IMFILE* gfopen (const char* fname) {
 #endif
 	return mf;
 }
+#endif //MYFILE_MMAP
 
 IMFILE* fopen (unsigned* buf, int size) {
 
 	IMFILE* mf = new IMFILE;
+	mf->fd = -1;
 	mf->size = size;
 	mf->data = new char [mf->size];
-	memcpy (mf->data, buf, size);
+	memcpy ((void*)mf->data, buf, size);
 	mf->pos = 0;
 	mf->eof = false;
 	return mf;
 }
 
 void fclose (IMFILE* f) {
-
+#ifdef MYFILE_MMAP
+	if ( f->fd == -1 )
+	{
+		delete [] f->data;
+	}
+	else
+	{
+		munmap((void*)f->data,f->size);
+		close(f->fd);
+	}
+#else
 	delete [] f->data;
+#endif
 	delete f;
 }
 

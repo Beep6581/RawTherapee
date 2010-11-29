@@ -207,7 +207,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
 
-	Thumbnail* tpp = Thumbnail::loadFromMemory(fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),w,h,fixwh);
+	Thumbnail* tpp = Thumbnail::loadFromMemory((const char*)fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),w,h,fixwh);
 
 	if ( tpp == 0 )
 	{

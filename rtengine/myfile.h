@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 struct IMFILE {
-
+	int fd;
 	int pos;
 	int size;
 	char* data;
@@ -86,8 +86,8 @@ inline int fread (void* dst, int es, int count, IMFILE* f) {
 	}
 }
 
-inline char* fdata(int offset, IMFILE* f) {
-	return f->data + offset;
+inline unsigned char* fdata(int offset, IMFILE* f) {
+	return (unsigned char*)f->data + offset;
 }
 
 int fscanf (IMFILE* f, const char* s ...);
