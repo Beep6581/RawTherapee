@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -24,6 +24,7 @@ CURVEEDITOR_TOOLTIPLINEAR;Återställ kurva till linjär
 CURVEEDITOR_TOOLTIPLOAD;Ladda kurva från fil
 CURVEEDITOR_TOOLTIPSAVE;Spara nuvarande kurva
 CURVEEDITOR_TYPE;Typ:
+EDITWINDOW_TITLE;Bildredigering
 EXIFFILTER_APERTURE;Bländare
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;EXIF-filter
@@ -454,6 +455,7 @@ PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FORIMAGE;För bildfiler
 PREFERENCES_FORRAW;För råbilder
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
+PREFERENCES_GREENEQUIL;Grönbalansering
 PREFERENCES_GTKTHEME;GTK standard
 PREFERENCES_HINT;Tips
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
@@ -468,6 +470,7 @@ PREFERENCES_LINEDENOISE;Linjärt brusfilter
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
+PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerfliksläge
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
@@ -475,6 +478,7 @@ PREFERENCES_OUTDIRHINT;<i>Du kan använda de följande formatteringssträngarna:
 PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om</i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen följande:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
+PREFERENCES_OVERWRITEOUTPUTFILE;Skriv över existerande utfiler
 PREFERENCES_PARSEDEXT;Behandlade filtyper
 PREFERENCES_PARSEDEXTADD;Lägg till filtyp
 PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
@@ -659,6 +663,7 @@ TP_ICM_INPUTCAMERA;Kameraval
 TP_ICM_INPUTCUSTOM;Egen
 TP_ICM_INPUTDLGLABEL;Välj inmatnings ICC-profil...
 TP_ICM_INPUTEMBEDDED;Använd inbäddad, om möjligt
+TP_ICM_INPUTNONE;Ingen profil
 TP_ICM_INPUTPROFILE;Inmatningsprofil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Ingen ICM: sRGB-utmatning
@@ -774,15 +779,10 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EDITWINDOW_TITLE;Image Edit
 !PREFERENCES_CABLUE;Blue CA manual correction
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
-!PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
-!TP_ICM_INPUTNONE;No profile
