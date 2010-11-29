@@ -4,9 +4,12 @@
 #02 14.03.2008: updated by reggybe
 #03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
 #04 02-05-2010: updated to rt3a1 by paul.matthijsse
+#05 29-11-2010: updated by paul.matthijsse
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batch-verwerking
+CURVEEDITOR_CURVE;Curve
+CURVEEDITOR_CURVES;Curves
 CURVEEDITOR_CUSTOM;Handmatig
 CURVEEDITOR_DARKS;Schaduwen
 CURVEEDITOR_FILEDLGFILTERANY;Alle bestanden
@@ -15,6 +18,7 @@ CURVEEDITOR_HIGHLIGHTS;Hoge lichten
 CURVEEDITOR_LIGHTS;Lichten
 CURVEEDITOR_LINEAR;Lineair
 CURVEEDITOR_LOADDLGLABEL;Laad curve...
+CURVEEDITOR_NURBS;Kooicurve
 CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Bewaar curve...
 CURVEEDITOR_SHADOWS;Diepe schaduwen
@@ -22,6 +26,7 @@ CURVEEDITOR_TOOLTIPLINEAR;Maak curve lineair
 CURVEEDITOR_TOOLTIPLOAD;Laad curve uit bestand
 CURVEEDITOR_TOOLTIPSAVE;Bewaar huidige curve
 CURVEEDITOR_TYPE;Type:
+EDITWINDOW_TITLE;Bewerk afbeelding
 EXIFFILTER_APERTURE;Diafragma
 EXIFFILTER_CAMERA;Camera
 EXIFFILTER_DIALOGLABEL;Exif-filter
@@ -47,6 +52,7 @@ EXIFPANEL_SUBDIRECTORY;Submap
 FILEBROWSER_ADDDELTEMPLATE;Voeg sjablonen toe of verwijder...
 FILEBROWSER_APPLYPROFILE;Pas profiel toe
 FILEBROWSER_ARRANGEMENTHINT;Verticale/horizontale uitlijning miniaturen
+FILEBROWSER_AUTODARKFRAME;Automatisch dark-frame
 FILEBROWSER_CLEARPROFILE;Verwijder profiel
 FILEBROWSER_COPYPROFILE;Kopieer profiel
 FILEBROWSER_CURRENT_NAME;Huidige naam:
@@ -59,6 +65,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Pas Exif-filter toe op bestandsnavigator
 FILEBROWSER_EXIFFILTERLABEL;Exif-filter
 FILEBROWSER_EXIFFILTERSETTINGS;Stel in
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Stel Exif-filter in
+FILEBROWSER_MOVETODARKFDIR;Verplaats naar dark-frames map
 FILEBROWSER_NEW_NAME;Nieuwe naam:
 FILEBROWSER_PARTIALPASTEPROFILE;Gedeeltelijk plakken
 FILEBROWSER_PASTEPROFILE;Plak profiel
@@ -82,6 +89,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Instellingen
 FILEBROWSER_PROCESSINGSETTINGSHINT;Kies bestandsformaat en doelmap
 FILEBROWSER_RENAMEDLGLABEL;Hernoem bestand
 FILEBROWSER_RENAMEDLGMSG;Hernoem bestand "%1" naar:
+FILEBROWSER_SELECTDARKFRAME;Selecteer dark-frame...
 FILEBROWSER_SHOWDIRHINT;Toon alle foto's in map
 FILEBROWSER_SHOWEXIFINFO;Toon EXIF-info
 FILEBROWSER_SHOWQUEUEHINT;Toon inhoud verwerkingsrij
@@ -119,6 +127,10 @@ GENERAL_PORTRAIT;Portret
 GENERAL_SAVE;Opslaan
 GENERAL_UNCHANGED;(Onveranderd)
 GENERAL_YES;Ja
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;G
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Toon/verberg blauw histogram
 HISTOGRAM_TOOLTIP_G;Toon/verberg groen histogram
@@ -129,12 +141,17 @@ HISTORY_CUSTOMCURVE;Handmatig
 HISTORY_DELSNAPSHOT;Wis
 HISTORY_FROMCLIPBOARD;Van klembord
 HISTORY_LABEL;Geschiedenis
+HISTORY_MSG_100;RGB-verzadiging
+HISTORY_MSG_101;HSV EQ: tint
+HISTORY_MSG_102;HSV EQ: verzadiging
+HISTORY_MSG_103;HSV EQ: waarde
+HISTORY_MSG_104;HSV-equalizer
 HISTORY_MSG_10;Schaduwcompressie
 HISTORY_MSG_11;Tooncurve
 HISTORY_MSG_12;Automatische belichting
 HISTORY_MSG_13;Drempel
-HISTORY_MSG_14;Lum: helderheid
-HISTORY_MSG_15;Lum: contrast
+HISTORY_MSG_14;LAB: helderheid
+HISTORY_MSG_15;LAB: contrast
 HISTORY_MSG_16;Lum: schaduwen
 HISTORY_MSG_17;Lum: compr. hoge lichten
 HISTORY_MSG_18;Lum: schaduwcompressie
@@ -205,10 +222,28 @@ HISTORY_MSG_76;Exif-metadata
 HISTORY_MSG_77;IPTC-metadata
 HISTORY_MSG_78;Schalen
 HISTORY_MSG_79;Schalen: breedte
-HISTORY_MSG_7;Schaduwen versterken
+HISTORY_MSG_7;Schaduwen
 HISTORY_MSG_80;Schalen: hoogte
 HISTORY_MSG_81;Schalen geactiveerd
+HISTORY_MSG_82;Profiel veranderd
+HISTORY_MSG_83;Hoge kwaliteit schaduwen/hoge lichten
+HISTORY_MSG_84;Perspectiefcorrectie
+HISTORY_MSG_85;Waveletcoëfficienten
+HISTORY_MSG_86;Wavelet-equalizer
+HISTORY_MSG_87;Zout&peper-ruisreductie
+HISTORY_MSG_88;Zout&peper-drempel
+HISTORY_MSG_89;Ruisreductie
 HISTORY_MSG_8;Belichtingscompensatie
+HISTORY_MSG_90;Luminantie
+HISTORY_MSG_91;Chrominantie
+HISTORY_MSG_92;Gamma
+HISTORY_MSG_93;Detailcontrast waarde
+HISTORY_MSG_94;Detailcontrast 
+HISTORY_MSG_95;LAB: verzadiging
+HISTORY_MSG_96;'a'-curve
+HISTORY_MSG_97;'b'-curve
+HISTORY_MSG_98;Demozaïekproces
+HISTORY_MSG_99;Voorbewerking
 HISTORY_MSG_9;Compressie hoge lichten
 HISTORY_NEWSNAPSHOT;Nieuw
 HISTORY_NEWSNAPSHOTAS;Als...
@@ -277,10 +312,13 @@ MAIN_BUTTON_EXIT;Afsluiten
 MAIN_BUTTON_FULLSCREEN;Volledig scherm
 MAIN_BUTTON_PREFERENCES;Voorkeuren
 MAIN_BUTTON_PUTTOQUEUE;Plaats in verwerkingsrij
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Plaats huidige foto in verwerkingsrij <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Plaats in verwerkingsrij
 MAIN_BUTTON_SAVE;Bewaar foto
 MAIN_BUTTON_SAVEAS;Als...
+MAIN_BUTTON_SAVE_TOOLTIP;Bewaar huidige foto <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Stuur naar fotoprogramma
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Stuur huidige foto naar extern fotobewerkingsprogramma <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Verlaat volledig scherm
 MAIN_FRAME_BATCHQUEUE;Verwerkingsrij 
 MAIN_FRAME_FILEBROWSER;Bestandsnavigator 
@@ -310,6 +348,7 @@ MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Tags
 MAIN_TAB_TRANSFORM;Transformeer
 MAIN_TOGGLE_BEFORE_AFTER;V-N
@@ -328,6 +367,12 @@ NAVIGATOR_G_NA;G = n/b
 NAVIGATOR_G_VALUE;G = %1
 NAVIGATOR_H_NA;H = n/b
 NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_LAB_A_NA;A = n/b
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = n/b
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = n/b
+NAVIGATOR_LAB_L_VALUE;L = %1
 NAVIGATOR_R_NA;R = n/b
 NAVIGATOR_R_VALUE;R = %1
 NAVIGATOR_S_NA;S = n/b
@@ -352,6 +397,8 @@ PARTIALPASTE_EXPOSURE;Belichting
 PARTIALPASTE_HLRECOVERY;Repareer hoge lichten
 PARTIALPASTE_ICMSETTINGS;ICM-instellingen
 PARTIALPASTE_IPTCINFO;IPTC-informatie
+PARTIALPASTE_LABCURVE;LAB-curve
+PARTIALPASTE_LABCURVE;Luminantiecurve
 PARTIALPASTE_LENSGROUP;Lensgerelateerde instellingen
 PARTIALPASTE_LUMACURVE;Luminantiecurve
 PARTIALPASTE_LUMADENOISE;Ruisreductie luminantie
@@ -363,11 +410,12 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schaduwen/hoge lichten
 PARTIALPASTE_SHARPENING;Verscherping
 PARTIALPASTE_VIGNETTING;Vignetteringscorrectie
 PARTIALPASTE_WHITEBALANCE;Witbalans
+POPUPBUTTON_SELECTOPTIONHINT;Rechtsklik om optie te wijzigen
 PREFERENCES_ADD;Voeg toe
 PREFERENCES_APPLNEXTSTARTUP;Opnieuw opstarten vereist
 PREFERENCES_BATCH_PROCESSING;Batch-verwerking
 PREFERENCES_BEHAVIOR;Gedrag
-PREFERENCES_BLINKCLIPPED;Knipper bij over/onderbelichting
+PREFERENCES_BLINKCLIPPED;Knipper bij over-/onderbelichting
 PREFERENCES_CACHECLEARALL;Wis alles
 PREFERENCES_CACHECLEARPROFILES;Wis profielen
 PREFERENCES_CACHECLEARTHUMBS;Wis miniaturen
@@ -380,11 +428,13 @@ PREFERENCES_CACHESTRAT2;Langzamer, minder geheugenbeslag
 PREFERENCES_CACHESTRAT;Cache-strategie
 PREFERENCES_CACHETHUMBFORM;Miniatuurformaat cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
+PREFERENCES_CACORRECTION;Automatische CA-correctie
 PREFERENCES_CLEARDLG_LINE1;Cache legen...
 PREFERENCES_CLEARDLG_LINE2;Dit kan even duren.
 PREFERENCES_CLEARDLG_TITLE;Momentje svp.
-PREFERENCES_CLIPPINGIND;Indicatie over/onderbelichting
+PREFERENCES_CLIPPINGIND;Indicatie over-/onderbelichting
 PREFERENCES_CMETRICINTENT;Bedoelde colorimetrie
+PREFERENCES_DARKFRAME;Dark-frame
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Pas DCB-verbetering toe
@@ -392,6 +442,7 @@ PREFERENCES_DCBITERATIONS;Aantal DCB-herhalingen
 PREFERENCES_DEFAULTLANG;Standaardtaal
 PREFERENCES_DEFAULTTHEME;Standaardthema
 PREFERENCES_DEMOSAICINGALGO;Demozaïek-algoritme
+PREFERENCES_DIRDARKFRAMES;Map met dark-frames
 PREFERENCES_DIRHOME;Standaardmap
 PREFERENCES_DIRLAST;Laatst bezochte map
 PREFERENCES_DIROTHER;Anders
@@ -399,6 +450,7 @@ PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
 PREFERENCES_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
+PREFERENCES_EDITORLAYOUT;Bewerkingsvenster 
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
@@ -406,17 +458,22 @@ PREFERENCES_FILEFORMAT;Bestandstype
 PREFERENCES_FORIMAGE;Voor niet-RAW-bestanden
 PREFERENCES_FORRAW;Voor RAW-bestanden
 PREFERENCES_GIMPPATH;Installatiemap GIMP
+PREFERENCES_GREENEQUIL;Groenbalans
 PREFERENCES_GTKTHEME;GTK standaard
 PREFERENCES_HINT;Voorbeeld
 PREFERENCES_HLTHRESHOLD;Grenswaarde overbelichting
+PREFERENCES_HOTDEADPIXFILT;Filter hete/dode pixels
 PREFERENCES_ICCDIR;Map met ICC-profielen
 PREFERENCES_IMPROCPARAMS;Standaardprofiel
 PREFERENCES_INTENT_ABSOLUTE;Absolute colorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Waargenomen colorimetrie
 PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
+PREFERENCES_LINEDENOISE;Lijnruisfilter
 PREFERENCES_LIVETHUMBNAILS;Live-miniaturen (langzamer)
 PREFERENCES_MONITORICC;Monitorprofiel
+PREFERENCES_MULTITAB;Multi-tab-modus
+PREFERENCES_MULTITABDUALMON;Multi-tab-modus, indien beschikbaar op tweede monitor
 PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OUTDIRFOLDER;Sla op in map
 PREFERENCES_OUTDIRFOLDERHINT;Sla foto's op in andere map
@@ -424,6 +481,7 @@ PREFERENCES_OUTDIRHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%f, %d1
 PREFERENCES_OUTDIRTEMPLATE;Gebruik sjabloon
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDeze formaten hebben betrekking op de mappen en submappen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Toon bestandsnamen over miniaturen
+PREFERENCES_OVERWRITEOUTPUTFILE;Overschrijf bestaande output-bestanden
 PREFERENCES_PARSEDEXT;Toon extensies
 PREFERENCES_PARSEDEXTADD;Voeg extensie toe
 PREFERENCES_PARSEDEXTADDHINT;Typ nieuwe extensie en druk op knop om aan lijst toe te voegen
@@ -436,6 +494,7 @@ PREFERENCES_PROFILESAVECACHE;Bewaar profiel in cache
 PREFERENCES_PROFILESAVEINPUT;Bewaar profiel bij RAW-bestand
 PREFERENCES_PROPERTY;Eigenschap
 PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
+PREFERENCES_SELECTFONT;Kies lettertype
 PREFERENCES_SELECTICCDIRDLG;Selecteer ICC-profielmap...
 PREFERENCES_SELECTLANG;Selecteer taal
 PREFERENCES_SELECTMONITORPROFDLG;Selecteer ICC-profielmap van de monitor...
@@ -445,6 +504,7 @@ PREFERENCES_SHOWBASICEXIF;Toon standaard Exif-info
 PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWONLYRAW;Toon alleen RAW-bestanden
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
+PREFERENCES_SINGLETAB;Eén-tab-modus
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
@@ -452,6 +512,8 @@ PREFERENCES_TAB_GENERAL;Algemeen
 PREFERENCES_TAB_IMPROC;Beeldverwerking
 PREFERENCES_TAB_OUTPUT;Uitvoeropties
 PREFERENCES_THUMBSIZE;Miniatuurgrootte
+PREFERENCES_USESYSTEMTHEME; Gebruik systeemthema
+PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_FILEDLGFILTERANY;Alle bestanden
 PROFILEPANEL_FILEDLGFILTERPP;Profielen
 PROFILEPANEL_LABEL;Profielen
@@ -485,6 +547,7 @@ QINFO_FOCALLENGTH;Brandpuntsafstand
 QINFO_ISO;ISO
 QINFO_LENS;Objectief
 QINFO_NOEXIF;Exif-gegevens niet beschikbaar.
+SAVEDLG_AUTOSUFFIX;Voeg automatisch ophogend nummer (-1, -2..) toe als bestand al bestaat
 SAVEDLG_FILEFORMAT;Bestandstype
 SAVEDLG_JPEGQUAL;JPEG-kwaliteit
 SAVEDLG_JPGFILTER;JPEG-bestanden
@@ -547,8 +610,25 @@ TP_CROP_W;B
 TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DETAIL_AMOUNT;Hoeveelheid
+TP_DIRPYRDENOISE_CHROMA;Chrominantie
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Ruisonderdrukking
+TP_DIRPYRDENOISE_LUMA;Luminantie
+TP_DIRPYREQUALIZER_LABEL;Detailcontrast
+TP_DIRPYREQUALIZER_LUMACOARSEST;grofste
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
+TP_DIRPYREQUALIZER_LUMAFINEST;Fijnste
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutraal
+TP_DIRPYREQUALIZER_THRESHOLD;Drempel
 TP_DISTORTION_AMOUNT;Hoeveelheid
 TP_DISTORTION_LABEL;Corrigeer lensvervorming
+TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+TP_EQUALIZER_FINEST;fijnste
+TP_EQUALIZER_LABEL;Wavelet-equalizer
+TP_EQUALIZER_LARGEST;grofste
+TP_EQUALIZER_NEUTRAL;Neutraal
 TP_EXPOSURE_AUTOLEVELS;Autom. niveaus
 TP_EXPOSURE_BLACKLEVEL;Schaduwen
 TP_EXPOSURE_BRIGHTNESS;Helderheid
@@ -559,11 +639,26 @@ TP_EXPOSURE_CONTRAST;Contrast
 TP_EXPOSURE_CURVEEDITOR;Tooncurve
 TP_EXPOSURE_EXPCOMP;Belichtingscompensatie
 TP_EXPOSURE_LABEL;Belichting
+TP_EXPOSURE_SATURATION;Verzadiging
 TP_HLREC_CIELAB;CIELab-blending
 TP_HLREC_COLOR;Kleurherstel
 TP_HLREC_LABEL;Repareer hoge lichten
 TP_HLREC_LUMINANCE;Lichtherstel
 TP_HLREC_METHOD;Methode:
+TP_HSVEQUALIZER1;Rood
+TP_HSVEQUALIZER2;Geel
+TP_HSVEQUALIZER3;Limoen
+TP_HSVEQUALIZER4;Groen
+TP_HSVEQUALIZER5;Lichtblauw
+TP_HSVEQUALIZER6;Blauw
+TP_HSVEQUALIZER7;Paars
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;HSV-kanaal
+TP_HSVEQUALIZER_HUE;Tint
+TP_HSVEQUALIZER_LABEL;HSV-equalizer
+TP_HSVEQUALIZER_NEUTRAL;Neutraal
+TP_HSVEQUALIZER_SAT;Verzadiging
+TP_HSVEQUALIZER_VAL;Waarde
 TP_ICM_FILEDLGFILTERANY;Alle bestanden
 TP_ICM_FILEDLGFILTERICM;ICC-profielbestanden
 TP_ICM_GAMMABEFOREINPUT;Profiel past gamma toe
@@ -571,6 +666,7 @@ TP_ICM_INPUTCAMERA;Camera
 TP_ICM_INPUTCUSTOM;Handmatig
 TP_ICM_INPUTDLGLABEL;Selecteer invoer-ICC-profiel...
 TP_ICM_INPUTEMBEDDED;Gebruik ingebed profiel, indien mogelijk
+TP_ICM_INPUTNONE;Geen profiel
 TP_ICM_INPUTPROFILE;Invoerprofiel
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Geen ICM: sRGB-uitvoer
@@ -578,6 +674,16 @@ TP_ICM_OUTPUTDLGLABEL;Selecteer uitvoer-ICC-profiel...
 TP_ICM_OUTPUTPROFILE;Uitvoerprofiel
 TP_ICM_SAVEREFERENCE;Bewaar referentiefoto tbv. profiling
 TP_ICM_WORKINGPROFILE;Werkprofiel
+TP_IMPULSEDENOISE_LABEL;Spot-ruisonderdrukking
+TP_IMPULSEDENOISE_THRESH;Drempel
+TP_LABCURVE_BRIGHTNESS;Helderheid
+TP_LABCURVE_CONTRAST;Contrast
+TP_LABCURVE_CURVEEDITOR;Luminantiecurve
+TP_LABCURVE_LABEL;LAB-curves
+TP_LABCURVE_SATURATION;Verzadiging
+TP_LENSGEOM_AUTOCROP;Automatisch bijsnijden
+TP_LENSGEOM_FILL;Automatisch uitvullen
+TP_LENSGEOM_LABEL;Objectief / Geometrie
 TP_LUMACURVE_BLACKLEVEL;Schaduwen
 TP_LUMACURVE_BRIGHTNESS;Helderheid
 TP_LUMACURVE_COMPRHIGHLIGHTS;Hoge lichten comprimeren
@@ -588,6 +694,13 @@ TP_LUMACURVE_LABEL;Luminantiecurve
 TP_LUMADENOISE_EDGETOLERANCE;Randtolerantie
 TP_LUMADENOISE_LABEL;Ruisonderdrukking op luminantie
 TP_LUMADENOISE_RADIUS;Straal
+TP_PERSPECTIVE_HORIZONTAL;Horizontaal
+TP_PERSPECTIVE_LABEL;Perspectief
+TP_PERSPECTIVE_VERTICAL;Verticaal
+TP_PREPROCESS_DARKFRAME;Dark-frame
+TP_PREPROCESS_DFAUTOSELECT;Automatische selectie
+TP_RAWPANEL_DEMOSAICING;Demozaïekproces
+TP_RAWPANEL_PREPROCESSING;Voorbewerking
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (zachter)
 TP_RESIZE_BICUBICSH;Bikubisch (scherper)
@@ -598,6 +711,7 @@ TP_RESIZE_FULLSIZE;Volledige beeldgrootte:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hoogte
 TP_RESIZE_LABEL;Grootte aanpassen
+TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Methode:
 TP_RESIZE_NEAREST;Dichtstbij
 TP_RESIZE_SCALE;Schaal
@@ -633,8 +747,12 @@ TP_SHARPENING_RLD_ITERATIONS;Herhaling
 TP_SHARPENING_THRESHOLD;Drempel
 TP_SHARPENING_USM;Onscherpmasker
 TP_VIGNETTING_AMOUNT;Hoeveelheid
+TP_VIGNETTING_CENTER;Centrum
+TP_VIGNETTING_CENTER_X;Centrum X
+TP_VIGNETTING_CENTER_Y;Centrum Y
 TP_VIGNETTING_LABEL;Corrigeer vignettering
 TP_VIGNETTING_RADIUS;Straal
+TP_VIGNETTING_STRENGTH;Kracht
 TP_WBALANCE_AUTO;Automatisch
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CUSTOM;Handmatig
@@ -665,120 +783,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!CURVEEDITOR_CURVE;Curve
-!CURVEEDITOR_CURVES;Curves
-!CURVEEDITOR_NURBS;Control cage
-!EDITWINDOW_TITLE;Image Edit
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
-!FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!HISTOGRAM_BUTTON_B;B
-!HISTOGRAM_BUTTON_G;G
-!HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_R;R
-!HISTORY_MSG_100;RGB saturation
-!HISTORY_MSG_101;HSV EQ -- Hue
-!HISTORY_MSG_102;HSV EQ -- Saturation
-!HISTORY_MSG_103;HSV EQ -- Value
-!HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Salt&pepper noise reduction
-!HISTORY_MSG_88;Salt&pepper NR threshold
-!HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demozaicing
-!HISTORY_MSG_99;Preprocessing
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
-!MAIN_TAB_RAW;RAW
-!NAVIGATOR_LAB_A_NA;A = n/a
-!NAVIGATOR_LAB_A_VALUE;A = %1
-!NAVIGATOR_LAB_B_NA;B = n/a
-!NAVIGATOR_LAB_B_VALUE;B = %1
-!NAVIGATOR_LAB_L_NA;L = n/a
-!NAVIGATOR_LAB_L_VALUE;L = %1
-!PARTIALPASTE_LABCURVE;Lab curve
-!PARTIALPASTE_LABCURVE;Luminance curve
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PREFERENCES_LINEDENOISE;Line noise filter
-!PREFERENCES_MULTITAB;Multiple tabs mode
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_SELECTFONT;Select font
-!PREFERENCES_SINGLETAB;Single tab mode
-!PREFERENCES_USESYSTEMTHEME; Use System Theme
-!PREFERENCES_WORKFLOW;Workflow
-!SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
-!TP_DIRPYRDENOISE_CHROMA;Chrominance
-!TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Noise reduction
-!TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
-!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
-!TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
-!TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
-!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
-!TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
-!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_EQUALIZER_CONTRAST_MINUS;Contrast-
-!TP_EQUALIZER_CONTRAST_PLUS;Contrast+
-!TP_EQUALIZER_FINEST;finest
-!TP_EQUALIZER_LABEL;Wavelet equalizer
-!TP_EQUALIZER_LARGEST;coarsest
-!TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSURE_SATURATION;Saturation
-!TP_HSVEQUALIZER1;Red
-!TP_HSVEQUALIZER2;Yellow
-!TP_HSVEQUALIZER3;Lime
-!TP_HSVEQUALIZER4;Green
-!TP_HSVEQUALIZER5;Aqua
-!TP_HSVEQUALIZER6;Blue
-!TP_HSVEQUALIZER7;Purple
-!TP_HSVEQUALIZER8;Magenta
-!TP_HSVEQUALIZER_CHANNEL;HSV Channel
-!TP_HSVEQUALIZER_HUE;Hue
-!TP_HSVEQUALIZER_LABEL;HSV Equalizer
-!TP_HSVEQUALIZER_NEUTRAL;Neutral
-!TP_HSVEQUALIZER_SAT;Saturation
-!TP_HSVEQUALIZER_VAL;Value
-!TP_ICM_INPUTNONE;No profile
-!TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
-!TP_IMPULSEDENOISE_THRESH;Threshold
-!TP_LABCURVE_BRIGHTNESS;Brightness
-!TP_LABCURVE_CONTRAST;Contrast
-!TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_LABEL;Lab Curves
-!TP_LABCURVE_SATURATION;Saturation
-!TP_LENSGEOM_AUTOCROP;Auto Crop
-!TP_LENSGEOM_FILL;Auto Fill
-!TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_PERSPECTIVE_HORIZONTAL;Horizontal
-!TP_PERSPECTIVE_LABEL;Perspective
-!TP_PERSPECTIVE_VERTICAL;Vertical
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
-!TP_RESIZE_LANCZOS;Lanczos
-!TP_VIGNETTING_CENTER;Center
-!TP_VIGNETTING_CENTER_X;Center X
-!TP_VIGNETTING_CENTER_Y;Center Y
-!TP_VIGNETTING_STRENGTH;Strength
+!PREFERENCES_CABLUE;Blue CA manual correction
+!PREFERENCES_CABLUE;CA Blue manual correction
+!PREFERENCES_CARED;CA Red manual correction
+!PREFERENCES_CARED;Red CA manual correction
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
