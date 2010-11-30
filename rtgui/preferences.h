@@ -85,6 +85,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::HBox* hbtheme;
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
+    Gtk::ColorButton* butCropCol;
 	
     Gtk::ComboBoxText* cformat;
     Gtk::SpinButton*   maxThumbSize;
