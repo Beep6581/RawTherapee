@@ -412,6 +412,7 @@ PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
 PREFERENCES_BEHAVIOR;Uppträdande
 PREFERENCES_BLINKCLIPPED;Blinka markerade områden
+PREFERENCES_CABLUE;Blå CA manuell korrigering
 PREFERENCES_CACHECLEARALL;Återställ alla
 PREFERENCES_CACHECLEARPROFILES;Återställ profiler
 PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
@@ -425,6 +426,7 @@ PREFERENCES_CACHESTRAT;Cachestrategi
 PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
 PREFERENCES_CACORRECTION;Reducera kromatiska abberationer
+PREFERENCES_CARED;Röd CA manuell korrigering
 PREFERENCES_CLEARDLG_LINE1;Rensa cache
 PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
 PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
@@ -562,7 +564,7 @@ TOOLBAR_TOOLTIP_HAND;Handverktyg. Kortkommando: N
 TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. Kortkommando: S
 TOOLBAR_TOOLTIP_WB;Egen vitbalans. Kortkommando: 
 TP_CACORRECTION_BLUE;Blå
-TP_CACORRECTION_LABEL;Korrigera kromatiska abberationer
+TP_CACORRECTION_LABEL;Reducera kromatiska abberationer
 TP_CACORRECTION_RED;Röd
 TP_CHMIXER_BLUE;Blå
 TP_CHMIXER_GREEN;Grön
@@ -606,6 +608,9 @@ TP_CROP_SELECTCROP;Välj beskärningsområde
 TP_CROP_W;B
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DEFRINGE_LABEL;Fyll ut överstrålning
+TP_DEFRINGE_RADIUS;Radie
+TP_DEFRINGE_THRESHOLD;Tröskelvärde
 TP_DETAIL_AMOUNT;Mängd
 TP_DIRPYRDENOISE_CHROMA;Krominans
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -779,10 +784,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
-!PREFERENCES_CARED;Red CA manual correction
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
