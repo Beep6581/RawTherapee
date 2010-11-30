@@ -363,10 +363,17 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     Gtk::VBox* vbftheme = new Gtk::VBox ();
     Gtk::HBox* hbUseSystemTheme = new Gtk::HBox ();
     hbUseSystemTheme->set_border_width (4);
-    Gtk::Label* useNextStart = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
     chUseSystemTheme =  new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME"));
+    Gtk::Label* useNextStart = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+
+    Gtk::Label* cutOverlayLabel = new Gtk::Label (M("PREFERENCES_CUTOVERLAYBRUSH") + ":");
+    butCropCol=new Gtk::ColorButton();
+    butCropCol->set_use_alpha(true);
+
     hbUseSystemTheme->pack_start(*chUseSystemTheme, Gtk::PACK_SHRINK);
     hbUseSystemTheme->pack_start (*useNextStart, Gtk::PACK_SHRINK, 4);
+    hbUseSystemTheme->pack_start (*cutOverlayLabel, Gtk::PACK_SHRINK, 36);
+    hbUseSystemTheme->pack_start (*butCropCol, Gtk::PACK_SHRINK);
     vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 4);
 
     hbtheme = new Gtk::HBox ();
@@ -695,6 +702,13 @@ void Preferences::storePreferences () {
     moptions.language        = languages->get_active_text ();
     moptions.theme           = theme->get_active_text ();
     moptions.useSystemTheme  = chUseSystemTheme->get_active ();
+     
+    Gdk::Color cropCol=butCropCol->get_color();
+    moptions.cutOverlayBrush[0]=cropCol.get_red_p();
+    moptions.cutOverlayBrush[1]=cropCol.get_green_p();
+    moptions.cutOverlayBrush[2]=cropCol.get_blue_p();
+    moptions.cutOverlayBrush[3]=butCropCol->get_alpha()/65535.0;
+
     moptions.font            = fontbutton->get_font_name();
 #ifdef _WIN32    
     moptions.gimpDir        = gimpDir->get_filename ();
@@ -785,6 +799,12 @@ void Preferences::fillPreferences () {
     languages->set_active_text (moptions.language);
     theme->set_active_text (moptions.theme);
     chUseSystemTheme->set_active(moptions.useSystemTheme);
+
+    Gdk::Color cropCol;
+    cropCol.set_rgb_p(moptions.cutOverlayBrush[0],moptions.cutOverlayBrush[1],moptions.cutOverlayBrush[2]);
+    butCropCol->set_color(cropCol);
+    butCropCol->set_alpha ( (unsigned short)(moptions.cutOverlayBrush[3]*65535.0));
+
     fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
