@@ -34,6 +34,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 	//#define CLIP(x) LIM(x,0,65535)
+#define HCLIP(x) MIN(clip_pt,x);
 
 	int width=winw, height=winh;
 	
@@ -463,10 +464,10 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					crl = cfa[indx-1]*(dirwts[indx-2][1]+dirwts[indx][1])/(dirwts[indx-2][1]*(eps+cfa[indx])+dirwts[indx][1]*(eps+cfa[indx-2]));
 					crr = cfa[indx+1]*(dirwts[indx+2][1]+dirwts[indx][1])/(dirwts[indx+2][1]*(eps+cfa[indx])+dirwts[indx][1]*(eps+cfa[indx+2]));
 
-					guha=cfa[indx-v1]+0.5*(cfa[indx]-cfa[indx-v2]);
-					gdha=cfa[indx+v1]+0.5*(cfa[indx]-cfa[indx+v2]);
-					glha=cfa[indx-1]+0.5*(cfa[indx]-cfa[indx-2]);
-					grha=cfa[indx+1]+0.5*(cfa[indx]-cfa[indx+2]);
+					guha=HCLIP(cfa[indx-v1])+0.5*(cfa[indx]-cfa[indx-v2]);
+					gdha=HCLIP(cfa[indx+v1])+0.5*(cfa[indx]-cfa[indx+v2]);
+					glha=HCLIP(cfa[indx-1])+0.5*(cfa[indx]-cfa[indx-2]);
+					grha=HCLIP(cfa[indx+1])+0.5*(cfa[indx]-cfa[indx+2]);
 
 					if (fabs(1-cru)<arthresh) {guar=cfa[indx]*cru;} else {guar=guha;}
 					if (fabs(1-crd)<arthresh) {gdar=cfa[indx]*crd;} else {gdar=gdha;}
@@ -519,9 +520,9 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					//choose the smallest variance; this yields a smoother interpolation
 					if (hcdaltvar<hcdvar) hcd[indx]=hcdalt[indx];
 					if (vcdaltvar<vcdvar) vcd[indx]=vcdalt[indx];
-
+					
 					//bound the interpolation in regions of high saturation
-					if (c&1) {
+					if (c&1) {//G site
 						Ginth = -hcd[indx]+cfa[indx];//R or B
 						Gintv = -vcd[indx]+cfa[indx];//B or R
 
@@ -547,7 +548,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 						//if (Ginth > pre_mul[c]) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for dcraw implementation
 						//if (Gintv > pre_mul[c]) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
 
-					} else {
+					} else {//R or B site
 
 						Ginth = hcd[indx]+cfa[indx];//interpolated G
 						Gintv = vcd[indx]+cfa[indx];
@@ -574,7 +575,8 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 						//if (Ginth > pre_mul[c]) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for dcraw implementation
 						//if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
 					}
-
+					
+					
 					vcdsq[indx] = SQR(vcd[indx]);
 					hcdsq[indx] = SQR(hcd[indx]);
 					cddiffsq[indx] = SQR(vcd[indx]-hcd[indx]);
@@ -865,7 +867,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 			for (rr=12; rr<rr1-12; rr++)
 				for (cc=12+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-12; cc+=2,indx+=2) {	
-
+						
 					if (fabs(0.5-pmwt[indx])<fabs(0.5-hvwt[indx]) ) continue;
 
 					//now interpolate G vertically/horizontally using R+B values
