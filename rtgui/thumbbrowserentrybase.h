@@ -104,6 +104,7 @@ protected:
 
     int getEffectiveHeight  () { return fnlabh+dtlabh+exlabh+textGap+exp_height; }
     int getStartX           () { return startx; }
+    int getStartY           () { return starty; }
 
     bool inside             (int x, int y);
     bool insideWindow       (int x, int y, int w, int h);

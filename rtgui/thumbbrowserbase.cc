@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -269,23 +267,19 @@ ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(
 }
 
 void ThumbBrowserBase::Internal::setParent (ThumbBrowserBase* p) {
-
     parent = p;
 }
 
 void ThumbBrowserBase::Internal::setPosition (int x, int y) {
-
     ofsX = x;
     ofsY = y;
 }
 
 bool ThumbBrowserBase::Internal::on_key_press_event (GdkEventKey* event) {
-
     return parent->keyPressed (event);
 }
 
 bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event) {
-
     grab_focus ();
 
     parent->eventTime = event->time;
@@ -300,11 +294,11 @@ bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event) {
 
     gdk_window_invalidate_rect (window->gobj(), &rect, true);
     gdk_window_process_updates (window->gobj(), true);
+
     return true;
 }
 
 void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh) {
-
     ThumbBrowserEntryBase* fileDescr = NULL;
     bool handled = false;
     for (int i=0; i<fd.size(); i++) 
@@ -535,25 +529,31 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
 
     redraw ();
 
-    // Scroll to selected position if going into ribbon mode
-    if (inTabMode && !selected.empty()) {
-        int h=selected[0]->getStartX();
-        hscroll.set_value (MIN(h, hscroll.get_adjustment()->get_upper()));
+    // Scroll to selected position if going into ribbon mode or back
+    // Tab mode is horizontal, file browser is vertical
+    if (!selected.empty()) {
+        if (inTabMode) {
+            int h=selected[0]->getStartX();
+            hscroll.set_value (MIN(h, hscroll.get_adjustment()->get_upper()));
+        } else {
+            int v=selected[0]->getStartY();
+            vscroll.set_value (MIN(v, vscroll.get_adjustment()->get_upper()));
+        }
     }
+
+ 
 }
 
 void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry) {
-
-        entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
+    entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
 }
-void ThumbBrowserBase::getScrollPosition (double& h, double& v) {
 
+void ThumbBrowserBase::getScrollPosition (double& h, double& v) {
     h = hscroll.get_value ();
     v = vscroll.get_value ();
 }
 
 void ThumbBrowserBase::setScrollPosition (double h, double v) {
-
     hscroll.set_value (h>hscroll.get_adjustment()->get_upper() ? hscroll.get_adjustment()->get_upper() : h);
     vscroll.set_value (v>vscroll.get_adjustment()->get_upper() ? vscroll.get_adjustment()->get_upper() : v);
 }
@@ -566,27 +566,4 @@ int ThumbBrowserBase::getEffectiveHeight() {
 }  
 
 
-/*void PreviewImgUpdater::processCustomOrder () {
-
-    // find first filtered entry, if any
-    std::list<ThumbBrowserEntryBase*>::iterator i;
-    for (i=jqueue.begin (); i!=jqueue.end(); i++)
-        if (!(*i)->filtered)
-            break;
-    if (i==jqueue.end())
-        i = jqueue.begin();
-
-    ThumbBrowserEntryBase* current = *i;
-    jqueue.erase (i);
-
-    current->updateImg ();
-    if (parent) {
-        gdk_threads_enter ();
-        parent->queue_draw ();
-        if (parent->get_window())
-            gdk_window_process_updates (parent->get_window()->gobj(), true);
-        gdk_threads_leave ();
-    }
-}
-*/
 

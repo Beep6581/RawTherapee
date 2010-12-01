@@ -61,7 +61,6 @@ RTWindow::RTWindow () {
     hbf->set_spacing (2);
     hbf->show_all ();
     mainNB->append_page (*fpanel, *hbf);
-    fpanel->signal_expose_event().connect( sigc::mem_fun(*this, &RTWindow::on_expose_event_fpanel) );
 
     bpanel = new BatchQueuePanel ();
     bpanel->setParent (this);
@@ -85,8 +84,6 @@ RTWindow::RTWindow () {
     hbe->show_all ();
     mainNB->append_page (*epanel, *hbe);
     mainNB->set_current_page (mainNB->page_num (*fpanel));
-    epanel->signal_expose_event().connect( sigc::mem_fun(*this, &RTWindow::on_expose_event_epanel) );
-
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
@@ -124,7 +121,6 @@ RTWindow::RTWindow () {
 }
 
 void RTWindow::on_realize () {
-
     Gtk::Window::on_realize ();
 
     fpanel->setAspect();
@@ -145,10 +141,16 @@ bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
 }
 
 void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
+    bool singleTabMode = !options.tabbedUI && !EditWindow::isMultiDisplayEnabled();
+
 	if (page_num > 1) {
+        if (singleTabMode) MoveFileBrowserToEditor();
+
 		EditorPanel *ep = (EditorPanel *)mainNB->get_nth_page(page_num);
 		ep->setAspect();
-	}
+	} else {
+        if (singleTabMode) MoveFileBrowserToMain();
+    }
 }
 
 void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
@@ -367,17 +369,3 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
-bool RTWindow::on_expose_event_epanel(GdkEventExpose* event)
-{
-    if(!options.tabbedUI && !EditWindow::isMultiDisplayEnabled())
-        MoveFileBrowserToEditor();
-   return false;  // Gtk::VBox::on_expose_event(event);
-}
-
-
-bool RTWindow::on_expose_event_fpanel(GdkEventExpose* event)
-{
-    if(!options.tabbedUI && !EditWindow::isMultiDisplayEnabled())
-        MoveFileBrowserToMain();
-   return false; // Gtk::HPaned::on_expose_event(event);
-}
