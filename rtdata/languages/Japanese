@@ -3,7 +3,7 @@
 #00 Japanese
 #01 2009-02-18 by A3novy
 #02 updated to RT2.4-RC by paul.matthijsse
-#03 2010-11-014 updated to RT3.0 alpha 1 by A3novy
+#03 2010-12-02 updated to RT3.0 alpha 1 by A3novy
 ADJUSTER_RESET_TO_DEFAULT;リセット初期化
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCH_PROCESSING;バッチ処理
@@ -25,6 +25,7 @@ CURVEEDITOR_TOOLTIPLINEAR;リニアにリセット
 CURVEEDITOR_TOOLTIPLOAD;ファイルから読み込み
 CURVEEDITOR_TOOLTIPSAVE;カーブ保存
 CURVEEDITOR_TYPE;タイプ:
+EDITWINDOW_TITLE;画像 編集
 EXIFFILTER_APERTURE;絞り
 EXIFFILTER_CAMERA;カメラ
 EXIFFILTER_DIALOGLABEL;Exif情報
@@ -412,6 +413,7 @@ PREFERENCES_APPLNEXTSTARTUP;次の起動時に適応
 PREFERENCES_BATCH_PROCESSING;バッチ処理
 PREFERENCES_BEHAVIOR;ビヘイビア
 PREFERENCES_BLINKCLIPPED;クリッピング領域の点滅
+PREFERENCES_CABLUE;色収差 ブルー 手動補正
 PREFERENCES_CACHECLEARALL;すべて削除
 PREFERENCES_CACHECLEARPROFILES;プロファイルの削除
 PREFERENCES_CACHECLEARTHUMBS;サムネイルの削除
@@ -425,8 +427,10 @@ PREFERENCES_CACHESTRAT;キャッシュ運用の方針
 PREFERENCES_CACHETHUMBFORM;キャッシュのサムネイル形式
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
 PREFERENCES_CACORRECTION;色収差補正を適応
+PREFERENCES_CARED;色収差 レッド 手動補正
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
+PREFERENCES_CUTOVERLAYBRUSH;切り抜き オーバーレイ 背景色
 PREFERENCES_DARKFRAME;ダークフレーム
 PREFERENCES_DATEFORMAT;日付の形式
 PREFERENCES_DATEFORMATHINT;<i>次の書式文字を使用することができます:</i>\n<b>%y</b><i> : 年</i>\n<b>%m</b><i> : 月</i>\n<b>%d</b><i> : 日</i>\n<i>\n例として, ハンガリアン記法の日付:</i>\n<b>%y/%m/%d</b>
@@ -467,6 +471,7 @@ PREFERENCES_LINEDENOISE;ライン ノイズフィルタ
 PREFERENCES_LIVETHUMBNAILS;ライブ・サムネイル (遅い)
 PREFERENCES_MONITORICC;モニタープロファイル
 PREFERENCES_MULTITAB;マルチ タブモード
+PREFERENCES_MULTITABDUALMON;マルチ タブモード, セカンド・モニタ使用可能な場合
 PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
@@ -474,6 +479,7 @@ PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n
 PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
 PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分を参照します\n\n例えば、次の画像を処理中の場合は:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;サムネイル上でファイル名を透過表示する
+PREFERENCES_OVERWRITEOUTPUTFILE;既存ファイルを上書き
 PREFERENCES_PARSEDEXT;拡張子
 PREFERENCES_PARSEDEXTADD;拡張子の追加
 PREFERENCES_PARSEDEXTADDHINT;拡張子を記入し このボタンでリストに追加します
@@ -601,6 +607,9 @@ TP_CROP_SELECTCROP; 選択範囲切り抜き
 TP_CROP_W;W
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DEFRINGE_LABEL;デフリンジ
+TP_DEFRINGE_RADIUS;半径
+TP_DEFRINGE_THRESHOLD;しきい値
 TP_DETAIL_AMOUNT;量
 TP_DIRPYRDENOISE_CHROMA;色度
 TP_DIRPYRDENOISE_GAMMA;ガンマ
@@ -658,6 +667,7 @@ TP_ICM_INPUTCAMERA;カメラの設定値
 TP_ICM_INPUTCUSTOM;カスタム
 TP_ICM_INPUTDLGLABEL;入力 ICC プロファイルを選択...
 TP_ICM_INPUTEMBEDDED;埋め込み使用, 可能なら
+TP_ICM_INPUTNONE;プロファイルなし
 TP_ICM_INPUTPROFILE;入力プロファイル
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB 出力
@@ -766,14 +776,3 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EDITWINDOW_TITLE;Image Edit
-!PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
-!PREFERENCES_CARED;Red CA manual correction
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
-!TP_ICM_INPUTNONE;No profile
