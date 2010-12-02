@@ -476,6 +476,31 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
     return IMIO_SUCCESS;
 }
 
+int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool swap, int bps)
+{
+    allocate (width, height);
+
+    int line_length(width * 3 * (bps/8));
+
+    if ( swap && bps > 8 )
+    {
+        char swapped[line_length];
+        for ( int row = 0; row < height; ++row )
+        {
+            ::swab(((char*)buffer) + (row * line_length),swapped,line_length);
+            setScanline(row,(unsigned char*)&swapped[0],bps);
+        }
+    }
+    else
+    {
+        for ( int row = 0; row < height; ++row )
+        {
+            setScanline(row,((unsigned char*)buffer) + (row * line_length),bps);
+        }
+    }
+
+    return IMIO_SUCCESS;
+}
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 

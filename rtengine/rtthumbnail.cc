@@ -49,9 +49,20 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile);
 
 namespace rtengine {
 
-Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int &h, int fixwh) {
+Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int &h, int fixwh,
+											bool swap_order, int bps) {
     Image16* img = new Image16 ();
-    int err = img->loadJPEGFromMemory(image,length);
+    int err = 1;
+
+    if ( (unsigned char)image[1] == 0xd8 )
+    {
+        err = img->loadJPEGFromMemory(image,length);
+    }
+    else
+    {
+        err = img->loadPPMFromMemory(image,w,h,swap_order,bps);
+    }
+
     if (err) {
 		printf("loadfromMemory: error\n");
         delete img;
@@ -201,16 +212,31 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 {
 	RawImage *ri= new RawImage(fname);
 	int r = ri->loadRaw(false,false);
-	if( r ) return NULL;
+	if( r )
+    {
+        delete ri;
+        return NULL;
+    }
 
     rml.exifBase = ri->get_exifBase();
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
 
-	Thumbnail* tpp = Thumbnail::loadFromMemory((const char*)fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),w,h,fixwh);
+    rtengine::Thumbnail* tpp = 0;
+
+    // see if it is something we support
+    if ( ri->is_supportedThumb() )
+    {
+        w = ri->get_thumbWidth();
+        h = ri->get_thumbHeight();
+        tpp = rtengine::Thumbnail::loadFromMemory((const char*)fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),
+                w,h,fixwh,
+                ri->get_thumbSwap(),ri->get_thumbBPS());
+    }
 
 	if ( tpp == 0 )
 	{
+		delete ri;
 		printf("DCRAW: failed4\n");
 		return NULL;
 	}

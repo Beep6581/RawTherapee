@@ -88,7 +88,12 @@ public:
   int get_profileLen() const {return profile_length;}
   char* get_profile() const { return profile_data;}
   IMFILE *get_file() { return ifp; }
+  bool is_supportedThumb() const ;
   int get_thumbOffset(){ return int(thumb_offset);}
+  int get_thumbWidth(){ return int(thumb_width);}
+  int get_thumbHeight(){ return int(thumb_height);}
+  int get_thumbBPS(){ return thumb_load_raw ? 16 : 8; }
+  bool get_thumbSwap() const;
   unsigned get_thumbLength(){ return thumb_length;}
 public:
   // dcraw functions
