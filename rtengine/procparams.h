@@ -417,7 +417,7 @@ class ProcParams {
         ColorShiftParams        colorShift;     ///< Color shift parameters
         LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
         ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
-	DefringeParams			defringe; ///< Impulse denoising parameters
+	DefringeParams			defringe; ///< Defringing parameters
 	ImpulseDenoiseParams    impulseDenoise; ///< Impulse denoising parameters
 	DirPyrDenoiseParams		dirpyrDenoise;  ///< Directional Pyramid denoising parameters
         SHParams                sh;             ///< Shadow/highlight enhancement parameters
