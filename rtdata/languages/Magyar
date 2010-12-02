@@ -777,6 +777,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
+!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor

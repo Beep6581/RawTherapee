@@ -780,6 +780,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
+!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !TP_DEFRINGE_LABEL;Defringe
