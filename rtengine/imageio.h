@@ -73,6 +73,7 @@ class ImageIO {
         int loadTIFF (Glib::ustring fname);
 
         int loadJPEGFromMemory (const char* buffer, int bufsize);
+        int loadPPMFromMemory(const char* buffer,int width,int height, bool swap, int bps);
 
         int savePNG  (Glib::ustring fname, int compression = -1, int bps = -1);
         int saveJPEG (Glib::ustring fname, int quality = 100);

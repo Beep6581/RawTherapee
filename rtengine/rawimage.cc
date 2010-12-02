@@ -8,6 +8,11 @@
 #include <settings.h>
 #include <colortemp.h>
 #include <utils.h>
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#include <netinet/in.h>
+#endif
 
 
 namespace rtengine{
@@ -240,6 +245,21 @@ unsigned short** RawImage::compress_image()
     free(image); // we don't need this anymore
     image=NULL;
     return data;
+}
+
+bool 
+RawImage::is_supportedThumb() const 
+{
+    return ( (thumb_width * thumb_height) > 0 &&
+    		   ( write_thumb == &rtengine::RawImage::jpeg_thumb ||
+                 write_thumb == &rtengine::RawImage::ppm_thumb ||
+                 thumb_load_raw == &rtengine::RawImage::kodak_thumb_load_raw ));
+}
+
+bool 
+RawImage::get_thumbSwap() const
+{
+    return ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) ? true : false; 
 }
 
 }; //namespace rtengine
