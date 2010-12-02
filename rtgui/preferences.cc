@@ -888,6 +888,7 @@ void Preferences::fillPreferences () {
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 }
 
+/*
 void Preferences::loadPressed () {
 
     moptions.copyFrom (&options);
@@ -900,12 +901,14 @@ void Preferences::savePressed () {
     options.copyFrom (&moptions);
     Options::save ();
 }
+*/
 
 void Preferences::okPressed () {
 
     storePreferences ();
     workflowUpdate();
     options.copyFrom (&moptions);   
+    Options::save ();
     hide ();
 }
 
