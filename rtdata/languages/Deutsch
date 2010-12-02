@@ -425,8 +425,6 @@ PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/zu dunkle Bereiche blinken
 PREFERENCES_CABLUE;Blau CA manuelle Korrektur
 PREFERENCES_CABLUE;CA Blau manuelle Korrektur
-PREFERENCES_CARED;CA Rot manuelle Korrektur
-PREFERENCES_CARED;Rot CA manuelle Korrektur
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Löschen der Profile
 PREFERENCES_CACHECLEARTHUMBS;Löschen der Voransichten
@@ -440,6 +438,8 @@ PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format des Zwischenspeichers
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Abberation
+PREFERENCES_CARED;CA Rot manuelle Korrektur
+PREFERENCES_CARED;Rot CA manuelle Korrektur
 PREFERENCES_CLEARDLG_LINE1;Löschen des Zwischenspeichers
 PREFERENCES_CLEARDLG_LINE2;Das kann einige Sekunden dauern.
 PREFERENCES_CLEARDLG_TITLE;Bitte warten
@@ -796,3 +796,5 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
+
+

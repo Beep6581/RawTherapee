@@ -755,6 +755,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
+!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
