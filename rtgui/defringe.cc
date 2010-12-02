@@ -103,9 +103,9 @@ void Defringe::adjusterChanged (Adjuster* a, double newval) {
     if (listener && enabled->get_active()) {
         
         if (a==radius)
-            listener->panelChanged (EvLDNRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
+            listener->panelChanged (EvDefringeRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
         else if (a==threshold) 
-            listener->panelChanged (EvLDNEdgeTolerance, Glib::ustring::format ((int)a->getValue()));
+            listener->panelChanged (EvDefringeThreshold, Glib::ustring::format ((int)a->getValue()));
     }
 }
 
@@ -126,9 +126,9 @@ void Defringe::enabledChanged () {
 
     if (listener) {
         if (enabled->get_active ())
-            listener->panelChanged (EvLDNEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (EvDefringeEnabled, M("GENERAL_ENABLED"));
         else
-            listener->panelChanged (EvLDNEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (EvDefringeEnabled, M("GENERAL_DISABLED"));
     }  
 }
 
