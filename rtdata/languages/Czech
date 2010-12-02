@@ -26,6 +26,7 @@ CURVEEDITOR_TOOLTIPLINEAR;Vrátit se k lineární křivce
 CURVEEDITOR_TOOLTIPLOAD;Načíst křivku ze souboru
 CURVEEDITOR_TOOLTIPSAVE;Uložit současnou křivku
 CURVEEDITOR_TYPE;Typ:
+EDITWINDOW_TITLE;Editace obrázku
 EXIFFILTER_APERTURE;Clona
 EXIFFILTER_CAMERA;Aparát
 EXIFFILTER_DIALOGLABEL;Filtruj dle Exif
@@ -415,6 +416,7 @@ PREFERENCES_APPLNEXTSTARTUP;Projeví se při dalším spuštění
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
+PREFERENCES_CABLUE;Manuální korekce modré CA
 PREFERENCES_CACHECLEARALL;Vymaž vše
 PREFERENCES_CACHECLEARPROFILES;Vymaž profily
 PREFERENCES_CACHECLEARTHUMBS;Vymaž náhledy
@@ -428,6 +430,7 @@ PREFERENCES_CACHESTRAT;Strategie cache
 PREFERENCES_CACHETHUMBFORM;Formát náhledů v cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximální velikost náhledu
 PREFERENCES_CACORRECTION;Aplikovat automatickou korekci chromatické aberace
+PREFERENCES_CARED;Manuální korekce červené CA
 PREFERENCES_CLEARDLG_LINE1;Čištění cache
 PREFERENCES_CLEARDLG_LINE2;může trvat několik sekund.
 PREFERENCES_CLEARDLG_TITLE;Prosím počkejte.
@@ -472,6 +475,7 @@ PREFERENCES_LINEDENOISE;Filtrovat linkové rušení
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
 PREFERENCES_MONITORICC;Profil monitoru
 PREFERENCES_MULTITAB;Mód více karet
+PREFERENCES_MULTITABDUALMON;Mód více karet; pouze pokud je dostupný druhý monitor
 PREFERENCES_OUTDIR;Výstupní složka
 PREFERENCES_OUTDIRFOLDER;Ulož do souboru
 PREFERENCES_OUTDIRFOLDERHINT;Uloží obrázky do vybraného adresáře
@@ -607,6 +611,9 @@ TP_CROP_SELECTCROP;    Označení výřezu
 TP_CROP_W;Š
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DEFRINGE_LABEL;Odstranění lemu
+TP_DEFRINGE_RADIUS;Poloměr
+TP_DEFRINGE_THRESHOLD;Práh
 TP_DETAIL_AMOUNT;Míra
 TP_DIRPYRDENOISE_CHROMA;Barevnost
 TP_DIRPYRDENOISE_GAMMA;Gama
@@ -779,12 +786,3 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EDITWINDOW_TITLE;Image Edit
-!PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
-!PREFERENCES_CARED;Red CA manual correction
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
