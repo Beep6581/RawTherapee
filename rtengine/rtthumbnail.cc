@@ -49,76 +49,6 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile);
 
 namespace rtengine {
 
-Thumbnail* Thumbnail::loadFromMemory (const char* image, int length, int &w, int &h, int fixwh,
-											bool swap_order, int bps) {
-    Image16* img = new Image16 ();
-    int err = 1;
-
-    if ( (unsigned char)image[1] == 0xd8 )
-    {
-        err = img->loadJPEGFromMemory(image,length);
-    }
-    else
-    {
-        err = img->loadPPMFromMemory(image,w,h,swap_order,bps);
-    }
-
-    if (err) {
-		printf("loadfromMemory: error\n");
-        delete img;
-        return NULL;
-    }
-
-    Thumbnail* tpp = new Thumbnail ();
-
-    tpp->camwbRed = 1.0;
-    tpp->camwbGreen = 1.0;
-    tpp->camwbBlue = 1.0;
-
-    tpp->embProfileLength = 0;
-    unsigned char* data;
-    img->getEmbeddedProfileData (tpp->embProfileLength, data);
-    if (data && tpp->embProfileLength) {
-        tpp->embProfileData = new unsigned char [tpp->embProfileLength];
-        memcpy (tpp->embProfileData, data, tpp->embProfileLength);
-    }
-    else {
-        tpp->embProfileLength = 0;
-        tpp->embProfileData = NULL;
-    }
-    
-    tpp->redMultiplier = 1.0;
-    tpp->greenMultiplier = 1.0;
-    tpp->blueMultiplier = 1.0;
-
-    tpp->scaleForSave = 8192;
-    tpp->defGain = 1.0;
-    tpp->gammaCorrected = false;
-    tpp->isRaw = 1;
-    memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
-    tpp->colorMatrix[0][0] = 1.0;
-    tpp->colorMatrix[1][1] = 1.0;
-    tpp->colorMatrix[2][2] = 1.0;
-
-    if (fixwh==1) {
-        w = h * img->width / img->height;
-        tpp->scale = (double)img->height / h;
-    }
-    else {
-        h = w * img->height / img->width;
-        tpp->scale = (double)img->width / w;
-    }
-
-    tpp->thumbImg = img->resize (w, h, TI_Nearest);
-
-    tpp->autowbTemp=2700;
-    tpp->autowbGreen=1.0;
-    delete img;
-
-    tpp->init ();
-    return tpp;
-}
-
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh) {
 
     Image16* img = new Image16 ();
@@ -222,34 +152,80 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
 
-    rtengine::Thumbnail* tpp = 0;
+    Image16* img = new Image16 ();
 
     // see if it is something we support
     if ( ri->is_supportedThumb() )
     {
-        w = ri->get_thumbWidth();
-        h = ri->get_thumbHeight();
-        tpp = rtengine::Thumbnail::loadFromMemory((const char*)fdata(ri->get_thumbOffset(),ri->get_file()),ri->get_thumbLength(),
-                w,h,fixwh,
-                ri->get_thumbSwap(),ri->get_thumbBPS());
+        int err = 1;
+
+        const char* data((const char*)fdata(ri->get_thumbOffset(),ri->get_file()));
+        if ( (unsigned char)data[1] == 0xd8 )
+        {
+            err = img->loadJPEGFromMemory(data,ri->get_thumbLength());
+        }
+        else
+        {
+            err = img->loadPPMFromMemory(data,ri->get_thumbWidth(),ri->get_thumbHeight(),ri->get_thumbSwap(),ri->get_thumbBPS());
+        }
+
+        if ( err ) 
+        {
+            printf("loadfromMemory: error\n");
+            delete img;
+            delete ri;
+            return NULL;
+        }
     }
 
-	if ( tpp == 0 )
-	{
-		delete ri;
-		printf("DCRAW: failed4\n");
-		return NULL;
-	}
+    Thumbnail* tpp = new Thumbnail ();
 
-	if (ri->get_rotateDegree() > 0) {
-		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
-		delete tpp->thumbImg;
-		tpp->thumbImg = rot;
-	}
+    tpp->camwbRed = 1.0;
+    tpp->camwbGreen = 1.0;
+    tpp->camwbBlue = 1.0;
 
-	delete ri;
+    tpp->embProfileLength = 0;
+	tpp->embProfile = NULL;
+    tpp->embProfileData = NULL;
 
-	return tpp;
+    tpp->redMultiplier = 1.0;
+    tpp->greenMultiplier = 1.0;
+    tpp->blueMultiplier = 1.0;
+
+    tpp->scaleForSave = 8192;
+    tpp->defGain = 1.0;
+    tpp->gammaCorrected = false;
+    tpp->isRaw = 1;
+    memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
+    tpp->colorMatrix[0][0] = 1.0;
+    tpp->colorMatrix[1][1] = 1.0;
+    tpp->colorMatrix[2][2] = 1.0;
+
+    if (fixwh==1) {
+        w = h * img->width / img->height;
+        tpp->scale = (double)img->height / h;
+    }
+    else {
+        h = w * img->height / img->width;
+        tpp->scale = (double)img->width / w;
+    }
+
+    tpp->thumbImg = img->resize (w, h, TI_Nearest);
+    delete img;
+
+    tpp->autowbTemp=2700;
+    tpp->autowbGreen=1.0;
+
+    if (ri->get_rotateDegree() > 0) {
+        Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+        delete tpp->thumbImg;
+        tpp->thumbImg = rot;
+    }
+
+    tpp->init ();
+    delete ri;
+
+    return tpp;
 }
 
 #define FISRED(filter,row,col) \
@@ -1298,7 +1274,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
 
 bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
     
-    if (embProfileLength) {
+    if (embProfileData) {
         FILE* f = fopen (fname.c_str(), "wb");
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
