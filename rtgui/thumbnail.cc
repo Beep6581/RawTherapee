@@ -78,19 +78,20 @@ void Thumbnail::_generateThumbnailImage () {
 
 	delete tpp;
 	tpp = NULL;
-	if (ext.lowercase()=="jpg" || ext.lowercase()=="png" || ext.lowercase()=="tif" || ext.lowercase()=="tiff")
-		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
-	if (tpp) {
-		if (ext.lowercase()=="jpg") {
-			cfs.format = FT_Jpeg;
-			infoFromImage (fname);
-		}
-		else if (ext.lowercase()=="png")
-			cfs.format = FT_Png;
-		else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-			cfs.format = FT_Tiff;
-			infoFromImage (fname);
-		}
+	if (ext.lowercase()=="jpg" || ext.lowercase()=="png" || ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+			if (tpp) {
+				if (ext.lowercase()=="jpg") {
+					cfs.format = FT_Jpeg;
+					infoFromImage (fname);
+				}
+				else if (ext.lowercase()=="png")
+					cfs.format = FT_Png;
+				else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
+					cfs.format = FT_Tiff;
+					infoFromImage (fname);
+					}
+			}
 	}
 	else {
 		// RAW works like this:
