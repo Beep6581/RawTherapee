@@ -148,6 +148,9 @@
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !HISTORY_MSG_10;Shadow Compression
 !HISTORY_MSG_11;Tone Curve
 !HISTORY_MSG_12;Auto Exposure
@@ -232,8 +235,8 @@
 !HISTORY_MSG_84;Perspective correction
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Salt&pepper noise reduction
-!HISTORY_MSG_88;Salt&pepper NR threshold
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_89;Noise reduction
 !HISTORY_MSG_8;Exposure Compensation
 !HISTORY_MSG_90;NR - luminance
@@ -679,8 +682,8 @@
 !TP_ICM_OUTPUTPROFILE;Output Profile
 !TP_ICM_SAVEREFERENCE;Save reference image for profiling
 !TP_ICM_WORKINGPROFILE;Working Profile
-!TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
-!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+!TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve

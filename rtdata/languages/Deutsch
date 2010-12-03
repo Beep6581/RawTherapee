@@ -609,7 +609,7 @@ TP_CROP_GTHARMMEANS2;Harmonischer Schnitt 2
 TP_CROP_GTHARMMEANS3;Harmonischer Schnitt 3
 TP_CROP_GTHARMMEANS4;Harmonischer Schnitt 4
 TP_CROP_GTNONE;Keine
-TP_CROP_GTRULETHIRDS;Goldener Schnitt
+TP_CROP_GTRULETHIRDS;Drittelregel
 TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;H
 TP_CROP_LABEL;Ausschnitt
@@ -654,12 +654,12 @@ TP_HLREC_LABEL;Lichter wiederherstellen
 TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode: 
 TP_HSVEQUALIZER1;Rot
-TP_HSVEQUALIZER2;Orange
-TP_HSVEQUALIZER3;Gelb
+TP_HSVEQUALIZER2;Gelb
+TP_HSVEQUALIZER3;Gelbgrün
 TP_HSVEQUALIZER4;Grün
 TP_HSVEQUALIZER5;Aquamarin
 TP_HSVEQUALIZER6;Blau
-TP_HSVEQUALIZER7;Violett
+TP_HSVEQUALIZER7;Purpur
 TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;HSV Kanal
 TP_HSVEQUALIZER_HUE;Farbton
@@ -789,6 +789,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !PREFERENCES_CABLUE;Blue CA manual correction
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction

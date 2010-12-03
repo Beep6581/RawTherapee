@@ -749,6 +749,9 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !HISTOGRAM_BUTTON_B;B
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
 !MAIN_TAB_RAW;RAW

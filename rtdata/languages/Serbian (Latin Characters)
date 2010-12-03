@@ -776,6 +776,9 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 
 
 !EDITWINDOW_TITLE;Image Edit
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !PREFERENCES_CABLUE;Blue CA manual correction
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
