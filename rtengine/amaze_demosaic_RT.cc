@@ -34,7 +34,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 	//#define CLIP(x) LIM(x,0,65535)
-#define HCLIP(x) MIN(clip_pt,x);
+#define HCLIP(x) MIN(clip_pt,x)
 
 	int width=winw, height=winh;
 	
