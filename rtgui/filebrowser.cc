@@ -392,6 +392,11 @@ void FileBrowser::partPasteProfile () {
     partialPasteDlg.hide ();
 }
 
+void FileBrowser::openBatchResultDefaultViewer () {
+    if (selected.size()==1)
+        ((FileBrowserEntry*)selected[0])->thumbnail->openBatchResultDefaultViewer();
+}
+
 bool FileBrowser::keyPressed (GdkEventKey* event) {
 
     if ((event->keyval==GDK_C || event->keyval==GDK_c) && event->state & GDK_CONTROL_MASK) {
@@ -420,6 +425,10 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
     }
     else if ((event->keyval==GDK_A || event->keyval==GDK_a) && event->state & GDK_CONTROL_MASK) {
         menuItemActivated (selall);
+        return true;
+    }
+    else if (event->keyval==GDK_F5) {
+        openBatchResultDefaultViewer ();
         return true;
     }
         
