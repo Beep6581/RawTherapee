@@ -423,8 +423,6 @@ PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
 PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/zu dunkle Bereiche blinken
-PREFERENCES_CABLUE;Blau CA manuelle Korrektur
-PREFERENCES_CABLUE;CA Blau manuelle Korrektur
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Löschen der Profile
 PREFERENCES_CACHECLEARTHUMBS;Löschen der Voransichten
@@ -438,14 +436,11 @@ PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format des Zwischenspeichers
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Abberation
-PREFERENCES_CARED;CA Rot manuelle Korrektur
-PREFERENCES_CARED;Rot CA manuelle Korrektur
 PREFERENCES_CLEARDLG_LINE1;Löschen des Zwischenspeichers
 PREFERENCES_CLEARDLG_LINE2;Das kann einige Sekunden dauern.
 PREFERENCES_CLEARDLG_TITLE;Bitte warten
 PREFERENCES_CLIPPINGIND;Anzeige zu helle/zu dunkle Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
-PREFERENCES_CUTOVERLAYBRUSH;Zuschnitt Abdeckfarbe
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%y</b><i> : Jahr</i>\n<b>%m</b><i> : Monat</i>\n<b>%d</b><i> : Tag</i>\n<i>\nDas Deutsche Datumsformat zum Beispiel ist:</i>\n<b>%d/%m/%y</b>
@@ -614,7 +609,7 @@ TP_CROP_GTHARMMEANS2;Harmonischer Schnitt 2
 TP_CROP_GTHARMMEANS3;Harmonischer Schnitt 3
 TP_CROP_GTHARMMEANS4;Harmonischer Schnitt 4
 TP_CROP_GTNONE;Keine
-TP_CROP_GTRULETHIRDS;Goldener Schnitt
+TP_CROP_GTRULETHIRDS;Drittelregel
 TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;H
 TP_CROP_LABEL;Ausschnitt
@@ -622,9 +617,6 @@ TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;W
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_DEFRINGE_LABEL;Farbrandkorrekur
-TP_DEFRINGE_RADIUS;Radius
-TP_DEFRINGE_THRESHOLD;Schwelle
 TP_DETAIL_AMOUNT;Stärke
 TP_DIRPYRDENOISE_CHROMA;Chrominanz
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -662,12 +654,12 @@ TP_HLREC_LABEL;Lichter wiederherstellen
 TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode: 
 TP_HSVEQUALIZER1;Rot
-TP_HSVEQUALIZER2;Orange
-TP_HSVEQUALIZER3;Gelb
+TP_HSVEQUALIZER2;Gelb
+TP_HSVEQUALIZER3;Gelbgrün
 TP_HSVEQUALIZER4;Grün
 TP_HSVEQUALIZER5;Aquamarin
 TP_HSVEQUALIZER6;Blau
-TP_HSVEQUALIZER7;Violett
+TP_HSVEQUALIZER7;Purpur
 TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;HSV Kanal
 TP_HSVEQUALIZER_HUE;Farbton
@@ -682,7 +674,6 @@ TP_ICM_INPUTCAMERA;Kamera-Standard
 TP_ICM_INPUTCUSTOM;Benutzerdefiniert
 TP_ICM_INPUTDLGLABEL;Wähle Eingabe-ICC-Profil...
 TP_ICM_INPUTEMBEDDED;Verwende eingebettetes, wenn möglich
-TP_ICM_INPUTNONE;Kein Profil
 TP_ICM_INPUTPROFILE;Eingabeprofil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
@@ -798,3 +789,12 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!PREFERENCES_CABLUE;Blue CA manual correction
+!PREFERENCES_CABLUE;CA Blue manual correction
+!PREFERENCES_CARED;CA Red manual correction
+!PREFERENCES_CARED;Red CA manual correction
+!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
+!TP_ICM_INPUTNONE;No profile
