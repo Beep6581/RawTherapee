@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -54,7 +53,6 @@ class BatchQueue  : public ThumbBrowserBase,
 
     BatchQueueListener* listener;
 
-    Glib::ustring obtainFileName (const Glib::ustring& origFileName);
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring filename );
     bool saveBatchQueue( );
@@ -81,6 +79,8 @@ class BatchQueue  : public ThumbBrowserBase,
     void setBatchQueueListener (BatchQueueListener* l) { listener = l; }
     void notifyListener ();
     bool loadBatchQueue ();
+
+    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName);
 };
 
 #endif

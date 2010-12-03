@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +28,7 @@
 #include <glib/gstdio.h>
 #include <guiutils.h>
 #include <profilestore.h>
+#include <batchqueue.h>
 
 using namespace rtengine::procparams;
 
@@ -503,3 +503,27 @@ void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl) {
 	}
 }
 
+// Calculates the standard filename for the automatically named batch result 
+// and opens it in OS default viewer
+// Return: Success?
+bool Thumbnail::openBatchResultDefaultViewer() {
+    Glib::ustring openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+
+    printf ("Try opening %s\n", openFName.c_str());
+
+    if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
+
+#ifdef WIN32
+        ShellExecute(NULL, "open", openFName.c_str(), NULL, NULL, SW_SHOWMAXIMIZED);
+        return true;
+#else
+        // TODO: Add more OSes here
+        printf("Automatic opening not supported on this OS\n");
+        return false;
+#endif
+
+    } else {
+        printf("File not found\n");
+        return false;
+    }
+}

@@ -672,6 +672,10 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
             case GDK_F:
                 iarea->imageArea->zoomPanel->zoomFitClicked();
                 return true;
+
+            case GDK_F5:
+                openThm->openBatchResultDefaultViewer();
+                return true;
         }
     }
     else {

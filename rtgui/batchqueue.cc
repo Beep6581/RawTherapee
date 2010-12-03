@@ -292,7 +292,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     Glib::ustring fname;
     SaveFormat saveFormat;
     if (processing->outFileName=="") {   // auto file name
-        fname = obtainFileName (processing->filename);
+        Glib::ustring s = calcAutoFileNameBase (processing->filename);
+        fname = autoCompleteFileName (s, options.saveFormat.format);
         saveFormat = options.saveFormat;
     }
     else {  // use the save-as filename with automatic completion for uniqueness
@@ -300,6 +301,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         saveFormat = processing->saveFormat;
     }
     //printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
+
     if (img && fname!="") {
         int err = 0;
         if (saveFormat.format=="tif")
@@ -333,6 +335,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     delete processing;
     processing = NULL;
     fd.erase (fd.begin());
+
     // return next job
     if (fd.size()==0) {
         if (listener)
@@ -371,7 +374,9 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     return processing ? processing->job : NULL;
 }
 
-Glib::ustring BatchQueue::obtainFileName (const Glib::ustring& origFileName) {
+// Calculates automatic filename of processed batch entry, but just the base name
+// example output: "c:\out\converted\dsc0121"
+Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName) {
 
     std::vector<Glib::ustring> pa;
     std::vector<Glib::ustring> da;
@@ -445,7 +450,7 @@ Glib::ustring BatchQueue::obtainFileName (const Glib::ustring& origFileName) {
     else
         path = Glib::build_filename (options.savePathFolder, filename);
 
-    return autoCompleteFileName (path, options.saveFormat.format);
+    return path;
 }
 
 Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format) {
