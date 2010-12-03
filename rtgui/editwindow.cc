@@ -150,6 +150,7 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
     epanels[ name ] = ep;
     filesEdited.insert ( name );
     parent->fpanel->refreshEditedState (filesEdited);
+    ep->setAspect();
 }
 
 void EditWindow::remEditorPanel (EditorPanel* ep) {
