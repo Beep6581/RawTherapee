@@ -310,7 +310,7 @@ void Thumbnail::generateExifDateTimeStrings () {
     if (!cfs.exifValid)
         return;
 
-    exifString = Glib::ustring::compose ("f/%1 %2s %3%4", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso);
+    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, cfs.focalLen);
 
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
