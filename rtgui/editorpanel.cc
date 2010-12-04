@@ -644,6 +644,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
     bool shift = event->state & GDK_SHIFT_MASK;
 
     if (!ctrl) {
+        // Normal
         switch(event->keyval) {
             case GDK_h:
             case GDK_H:
@@ -674,11 +675,12 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
                 return true;
 
             case GDK_F5:
-                openThm->openBatchResultDefaultViewer();
+                openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
                 return true;
         }
     }
     else {
+        // With control
         switch (event->keyval) {
             case GDK_s:
                 saveAsPressed();
@@ -695,6 +697,10 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
             case GDK_Z:
                 history->redo ();
                 return true;
+            case GDK_F5:
+                openThm->openDefaultViewer(3);
+                return true;
+
         }
     }
 

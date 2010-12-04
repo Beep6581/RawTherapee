@@ -128,7 +128,7 @@ class Thumbnail {
         void            updateCache ();
         void            saveThumbnail ();
 
-        bool            openBatchResultDefaultViewer();
+        bool            openDefaultViewer(int destination);
 };
 
 

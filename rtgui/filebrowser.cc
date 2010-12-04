@@ -392,9 +392,9 @@ void FileBrowser::partPasteProfile () {
     partialPasteDlg.hide ();
 }
 
-void FileBrowser::openBatchResultDefaultViewer () {
+void FileBrowser::openDefaultViewer (int destination) {
     if (selected.size()==1)
-        ((FileBrowserEntry*)selected[0])->thumbnail->openBatchResultDefaultViewer();
+        ((FileBrowserEntry*)selected[0])->thumbnail->openDefaultViewer(destination);
 }
 
 bool FileBrowser::keyPressed (GdkEventKey* event) {
@@ -428,7 +428,13 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         return true;
     }
     else if (event->keyval==GDK_F5) {
-        openBatchResultDefaultViewer ();
+        int dest = 1;
+        if (event->state & GDK_SHIFT_MASK)
+            dest = 2;
+        else if (event->state & GDK_CONTROL_MASK)
+            dest = 3;
+
+        openDefaultViewer (dest);
         return true;
     }
         

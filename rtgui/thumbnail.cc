@@ -505,25 +505,58 @@ void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl) {
 
 // Calculates the standard filename for the automatically named batch result 
 // and opens it in OS default viewer
+// destination: 1=Batch conf. file; 2=batch out dir; 3=RAW dir
 // Return: Success?
-bool Thumbnail::openBatchResultDefaultViewer() {
-    Glib::ustring openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+bool Thumbnail::openDefaultViewer(int destination) {
 
-    printf ("Try opening %s\n", openFName.c_str());
+#ifdef WIN32 
+    Glib::ustring openFName;
+  
+    if (destination==1) {
+            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+            if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
+              ShellExecute(NULL, "open", openFName.c_str(), NULL, NULL, SW_SHOWMAXIMIZED );
+            } else {
+                printf("File not found\n");
+                return false;
+            }
+    } else {
+        openFName = destination == 3 ? fname
+            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
 
-    if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
+        printf("Opening %s\n", openFName.c_str());
 
-#ifdef WIN32
-        ShellExecute(NULL, "open", openFName.c_str(), NULL, NULL, SW_SHOWMAXIMIZED);
-        return true;
+        if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
+            // Output file exists, so open explorer and select output file
+            const char* org=Glib::ustring::compose("/select,\"%1\"", openFName).c_str();
+            char* par=new char[strlen(org)+1];
+            strcpy(par, org);
+
+            // In this case the / disturbs
+            char* p = par+1;  // skip the first backslash
+            while (*p!=0) {
+                if (*p=='/') *p='\\';
+                p++;
+            }
+
+            ShellExecute(NULL, "open", "explorer.exe", par, NULL, SW_SHOWNORMAL );
+
+            delete[] par;
+        } else if (Glib::file_test (Glib::path_get_dirname(openFName), Glib::FILE_TEST_EXISTS)) {
+            // Out file does not exist, but directory
+            ShellExecute(NULL, "explore", Glib::path_get_dirname(openFName).c_str(), NULL, NULL, SW_SHOWNORMAL );
+        } else {
+            printf("File and dir not found\n");
+            return false;
+        }
+    }
+
+    return true;
+
 #else
         // TODO: Add more OSes here
         printf("Automatic opening not supported on this OS\n");
         return false;
 #endif
 
-    } else {
-        printf("File not found\n");
-        return false;
-    }
 }
