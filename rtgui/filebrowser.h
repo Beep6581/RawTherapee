@@ -113,7 +113,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void pasteProfile ();
     void partPasteProfile ();
 
-    void openBatchResultDefaultViewer ();
+    void openDefaultViewer (int destination);
 
     void redrawNeeded (ThumbBrowserEntryBase* entry);
     void thumbRearrangementNeeded ();
