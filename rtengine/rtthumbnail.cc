@@ -154,11 +154,11 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     Image16* img = new Image16 ();
 
+    int err = 1;
+
     // see if it is something we support
     if ( ri->is_supportedThumb() )
     {
-        int err = 1;
-
         const char* data((const char*)fdata(ri->get_thumbOffset(),ri->get_file()));
         if ( (unsigned char)data[1] == 0xd8 )
         {
@@ -168,14 +168,15 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         {
             err = img->loadPPMFromMemory(data,ri->get_thumbWidth(),ri->get_thumbHeight(),ri->get_thumbSwap(),ri->get_thumbBPS());
         }
+    }
 
-        if ( err ) 
-        {
-            printf("loadfromMemory: error\n");
-            delete img;
-            delete ri;
-            return NULL;
-        }
+    // did we succeed?
+    if ( err ) 
+    {
+        printf("loadfromMemory: error\n");
+        delete img;
+        delete ri;
+        return NULL;
     }
 
     Thumbnail* tpp = new Thumbnail ();
