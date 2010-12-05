@@ -769,8 +769,6 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 !HISTORY_MSG_106;Defringing radius
 !HISTORY_MSG_107;Defringing threshold
 !PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files

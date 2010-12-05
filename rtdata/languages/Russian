@@ -769,8 +769,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files

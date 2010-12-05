@@ -730,9 +730,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
