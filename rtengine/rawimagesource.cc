@@ -760,87 +760,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     camProfile = iccStore->createFromMatrix (cam, false, "Camera");
     inverse33 (cam, icam);
 
-
-    //----------------- scalecolors
-	unsigned  row, col, ur, uc, i, x, y, c, sum[8];
-	int val, dark, sat;
-	double dsum[8], dmin, dmax;
 	float pre_mul[4];
+	ri->get_colorsCoeff( pre_mul, scale_mul, cblack  );
 
-	for (int c = 0; c < 4; c++){
-		cblack[c] = ri->get_cblack(c) + ri->get_black();
-		pre_mul[c] = ri->get_pre_mul(c);
-	}
-
-	if ( ri->get_cam_mul(0) == -1 ) {
-		memset(dsum, 0, sizeof dsum);
-		for (row = 0; row < H; row += 8)
-			for (col = 0; col < W; col += 8) {
-				memset(sum, 0, sizeof sum);
-				for (y = row; y < row + 8 && y < H; y++)
-					for (x = col; x < col + 8 && x < W; x++)
-						for (int c = 0; c < 3; c++) {
-							if (ri->isBayer()) {
-								c = FC(y, x);
-								val = ri->data[y][x];
-							} else
-								val = ri->data[y][3*x+c];
-							if (val > ri->get_white() - 25)
-								goto skip_block;
-							if ((val -= cblack[c]) < 0)
-								val = 0;
-							sum[c] += val;
-							sum[c + 4]++;
-							if (ri->isBayer())
-								break;
-						}
-				for (c = 0; c < 8; c++)
-					dsum[c] += sum[c];
-skip_block: ;
-			}
-		for (int c = 0; c < 4; c++)
-			if (dsum[c])
-				pre_mul[c] = dsum[c + 4] / dsum[c];
-	}else{
-		memset(sum, 0, sizeof sum);
-		for (row = 0; row < 8; row++)
-			for (col = 0; col < 8; col++) {
-				int c = FC(row, col);
-				if ((val = ri->get_whiteSample(row,col) - cblack[c]) > 0)
-					sum[c] += val;
-				sum[c + 4]++;
-			}
-		if (sum[0] && sum[1] && sum[2] && sum[3])
-			for (int c = 0; c < 4; c++)
-				pre_mul[c] = (float) sum[c + 4] / sum[c];
-		else if (ri->get_cam_mul(0) && ri->get_cam_mul(2)){
-			pre_mul[0] = ri->get_cam_mul(0);
-			pre_mul[1] = ri->get_cam_mul(1);
-			pre_mul[2] = ri->get_cam_mul(2);
-			pre_mul[3] = ri->get_cam_mul(3);
-		}else
-			fprintf(stderr, "Cannot use camera white balance.\n");
-	}
-	if (pre_mul[3] == 0)
-		pre_mul[3] = ri->get_colors() < 4 ? pre_mul[1] : 1;
-	dark = ri->get_black();
-	sat = ri->get_white();
-	sat -= ri->get_black();
-	for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
-		if (dmin > pre_mul[c])
-			dmin = pre_mul[c];
-		if (dmax < pre_mul[c])
-			dmax = pre_mul[c];
-	}
-
-	for (c = 0; c < 4; c++)
-		scale_mul[c] = (pre_mul[c] /= dmax) * 65535.0 / sat;
-	if (settings->verbose) {
-		fprintf(stderr,"Scaling with darkness %d, saturation %d, and\nmultipliers", dark, sat);
-		for (c = 0; c < 4; c++)
-			fprintf(stderr, " %f", pre_mul[c]);
-		fputc('\n', stderr);
-	}
 	camwb_red = ri->get_pre_mul(0) / pre_mul[0];
 	camwb_green = ri->get_pre_mul(1) / pre_mul[1];
 	camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
