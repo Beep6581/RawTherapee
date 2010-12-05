@@ -764,6 +764,7 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
 
 !EDITWINDOW_TITLE;Image Edit
+!EXIFFILTER_FILETYPE;File Type
 !HISTORY_MSG_105;Defringing enabled
 !HISTORY_MSG_106;Defringing radius
 !HISTORY_MSG_107;Defringing threshold
