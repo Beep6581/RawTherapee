@@ -53,6 +53,7 @@ class CacheImageData {
         unsigned iso;
         Glib::ustring lens;
         Glib::ustring camera;
+        Glib::ustring filetype;
 
         // additional info on raw images
         int   rotate;

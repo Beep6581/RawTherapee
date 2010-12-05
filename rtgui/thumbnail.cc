@@ -384,6 +384,12 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
         cfs.lens     = "Unknown";
         cfs.camera   = "Unknown";
 	}
+		// get image filetype
+    std::string::size_type idx;
+		idx = fname.rfind('.');
+		if(idx != std::string::npos){cfs.filetype = fname.substr(idx+1);}
+		else {cfs.filetype="";}
+	
     delete idata;
 }
 

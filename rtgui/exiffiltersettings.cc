@@ -34,6 +34,7 @@ void ExifFilterSettings::clear () {
     focalTo = 0;
     lenses.clear ();
     cameras.clear ();
+    filetypes.clear ();
 	
 	filterFNumber = false;
 	filterShutter = false;
@@ -41,4 +42,5 @@ void ExifFilterSettings::clear () {
 	filterISO = false;
 	filterCamera = false;
 	filterLens = false;
+	filterFiletype = false;
 }
