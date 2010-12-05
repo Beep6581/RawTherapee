@@ -786,4 +786,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush

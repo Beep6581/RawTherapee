@@ -635,13 +635,16 @@ ZOOMBAR_SMALL;Küçük
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Salt&pepper noise reduction
-!HISTORY_MSG_88;Salt&pepper NR threshold
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_89;Noise reduction
 !HISTORY_MSG_90;NR - luminance
 !HISTORY_MSG_91;NR - chrominance
@@ -690,11 +693,9 @@ ZOOMBAR_SMALL;Küçük
 !PREFERENCES_ADD;ADD
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CABLUE;Blue CA manual correction
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CACORRECTION;Apply CA auto correction
 !PREFERENCES_CARED;CA Red manual correction
-!PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
@@ -753,7 +754,7 @@ ZOOMBAR_SMALL;Küçük
 !TP_HSVEQUALIZER_SAT;Saturation
 !TP_HSVEQUALIZER_VAL;Value
 !TP_ICM_INPUTNONE;No profile
-!TP_IMPULSEDENOISE_LABEL;Spot Noise Reduction
+!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
