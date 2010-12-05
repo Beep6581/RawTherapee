@@ -13,6 +13,7 @@
 #11 Erweiterung (oduis)
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
+#14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
 ADJUSTER_RESET_TO_DEFAULT;Standard wiederherstellen
 BATCHQUEUE_AUTOSTART;Automatisch starten
 BATCH_PROCESSING;Batch-Verarbeitung
@@ -154,6 +155,9 @@ HISTORY_MSG_101;HSV EQ -- Farbton
 HISTORY_MSG_102;HSV EQ -- Sättigung
 HISTORY_MSG_103;HSV EQ -- Hellwert
 HISTORY_MSG_104;HSV Mixer
+HISTORY_MSG_105;Defringing aktiv
+HISTORY_MSG_106;Defringing Radius
+HISTORY_MSG_107;Defringing Schwellwert
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
@@ -423,8 +427,7 @@ PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
 PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/zu dunkle Bereiche blinken
-PREFERENCES_CABLUE;Blau CA manuelle Korrektur
-PREFERENCES_CABLUE;CA Blau manuelle Korrektur 
+PREFERENCES_CABLUE;CA blau manuelle Korr.
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Löschen der Profile
 PREFERENCES_CACHECLEARTHUMBS;Löschen der Voransichten
@@ -437,15 +440,13 @@ PREFERENCES_CACHESTRAT2;Priorität auf minimierten Speicherverbrauch (geringere 
 PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format des Zwischenspeichers
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
-PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Abberation
-PREFERENCES_CARED;CA Rot manuelle Korrektur
-PREFERENCES_CARED;Rot CA manuelle Korrektur 
+PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Aberration
+PREFERENCES_CARED;CA rot manuelle Korr.
 PREFERENCES_CLEARDLG_LINE1;Löschen des Zwischenspeichers
 PREFERENCES_CLEARDLG_LINE2;Das kann einige Sekunden dauern.
 PREFERENCES_CLEARDLG_TITLE;Bitte warten
 PREFERENCES_CLIPPINGIND;Anzeige zu helle/zu dunkle Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
-PREFERENCES_CUTOVERLAYBRUSH;Zuschnitt Abdeckfarbe
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%y</b><i> : Jahr</i>\n<b>%m</b><i> : Monat</i>\n<b>%d</b><i> : Tag</i>\n<i>\nDas Deutsche Datumsformat zum Beispiel ist:</i>\n<b>%d/%m/%y</b>
@@ -622,9 +623,9 @@ TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;W
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_DEFRINGE_LABEL;Farbrandkorrektur
+TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
-TP_DEFRINGE_THRESHOLD;Schwelle
+TP_DEFRINGE_THRESHOLD;Schwelwert
 TP_DETAIL_AMOUNT;Stärke
 TP_DIRPYRDENOISE_CHROMA;Chrominanz
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -798,4 +799,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-
+!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush

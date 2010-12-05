@@ -735,7 +735,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_88;Salt&pepper NR threshold
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
+!HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
 !HISTORY_MSG_95;Saturation
@@ -751,10 +754,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !NAVIGATOR_LAB_L_NA;L = n/a
 !NAVIGATOR_LAB_L_VALUE;L = %1
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_CABLUE;Blue CA manual correction
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
-!PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory

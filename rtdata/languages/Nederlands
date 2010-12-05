@@ -783,10 +783,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!PREFERENCES_CABLUE;Blue CA manual correction
+!HISTORY_MSG_105;Defringing enabled
+!HISTORY_MSG_106;Defringing radius
+!HISTORY_MSG_107;Defringing threshold
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
-!PREFERENCES_CARED;Red CA manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
