@@ -701,7 +701,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_92;NR - gamma
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_98;Demosaicing
 !HISTORY_MSG_99;Preprocessing
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_MSG_NAVIGATOR;Navigator
