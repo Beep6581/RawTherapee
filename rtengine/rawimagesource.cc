@@ -2389,10 +2389,9 @@ void RawImageSource::vng4_demosaic () {
 }
 
 
-/*#undef fc
+#undef fc
 #define fc(row,col) \
-	(ri->filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-#define FC(x,y) fc(x,y)*/
+	(ri->get_filters() >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 
