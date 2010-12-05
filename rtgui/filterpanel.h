@@ -31,6 +31,7 @@ class FilterPanelListener {
 class FilterPanel : public Gtk::VBox {
 
 	protected:
+		Gtk::ListViewText*      filetype;
         Gtk::ListViewText*      camera;
         Gtk::ListViewText*      lens;
         Gtk::Entry* fnumberFrom;
@@ -48,6 +49,7 @@ class FilterPanel : public Gtk::VBox {
 		Gtk::CheckButton* enaISO;
 		Gtk::CheckButton* enaCamera;
 		Gtk::CheckButton* enaLens;
+		Gtk::CheckButton* enaFiletype;
 
 		int conns;
 		sigc::connection sChange[20];

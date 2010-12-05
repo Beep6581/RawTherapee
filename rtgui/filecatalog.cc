@@ -354,6 +354,7 @@ void FileCatalog::_previewReady (int dir_id, FileBrowserEntry* fdn) {
         if (cfs->focalLen > dirEFS.focalTo)
             dirEFS.focalTo = cfs->focalLen;
     }
+    dirEFS.filetypes.insert (cfs->filetype);
     dirEFS.cameras.insert (cfs->camera);
     dirEFS.lenses.insert (cfs->lens);
     previewsLoaded++;

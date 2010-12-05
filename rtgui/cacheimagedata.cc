@@ -72,6 +72,11 @@ int CacheImageData::load (const Glib::ustring& fname) {
 			if (keyFile.has_key ("ExifInfo", "Camera"))     camera      = keyFile.get_string ("ExifInfo", "Camera");
 		}
 		
+		if (keyFile.has_group ("FileInfo")) {
+			if (keyFile.has_key ("FileInfo", "Filetype"))   filetype    = keyFile.get_string ("FileInfo", "Filetype");
+		}
+			
+			
         if (format==FT_Raw && keyFile.has_group ("ExtraRawInfo")) {
             if (keyFile.has_key ("ExtraRawInfo", "ThumbImageType"))     thumbImgType    = keyFile.get_integer ("ExtraRawInfo", "ThumbImageType");
             if (keyFile.has_key ("ExtraRawInfo", "ThumbImageOffset"))   thumbOffset     = keyFile.get_integer ("ExtraRawInfo", "ThumbImageOffset");
@@ -120,6 +125,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
     }
     keyFile.set_string  ("ExifInfo", "Lens", lens);
     keyFile.set_string  ("ExifInfo", "Camera", camera);
+    keyFile.set_string  ("FileInfo", "Filetype", filetype);
 
     if (format==FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);

@@ -100,6 +100,17 @@ FilterPanel::FilterPanel () : listener (NULL) {
 	lvb->pack_start (*slens, Gtk::PACK_SHRINK, 0);
 	pack_start (*lvb, Gtk::PACK_SHRINK, 4);
 	
+	enaFiletype = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_FILETYPE")+":"));
+	Gtk::VBox* ftvb = Gtk::manage(new Gtk::VBox ());
+	ftvb->pack_start (*enaFiletype, Gtk::PACK_SHRINK, 0);
+	filetype = Gtk::manage(new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
+	filetype->set_headers_visible (false);
+	Gtk::ScrolledWindow* sfiletype = Gtk::manage(new Gtk::ScrolledWindow());
+	sfiletype->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+	sfiletype->add(*filetype);
+	ftvb->pack_start (*sfiletype, Gtk::PACK_SHRINK, 0);
+	pack_start (*ftvb, Gtk::PACK_SHRINK, 4);
+
 	conns = 0;
 	sChange[conns++] = fnumberFrom->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));
 	sChange[conns++] = fnumberTo->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));
@@ -109,6 +120,7 @@ FilterPanel::FilterPanel () : listener (NULL) {
 	sChange[conns++] = isoTo->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));
 	sChange[conns++] = focalFrom->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));
 	sChange[conns++] = focalTo->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));
+		sChange[conns++] = filetype->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &FilterPanel::valueChanged));
     sChange[conns++] = camera->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &FilterPanel::valueChanged));
     sChange[conns++] = lens->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &FilterPanel::valueChanged));
     sChange[conns++] = enaFNumber->signal_toggled().connect( sigc::mem_fun(*this, &FilterPanel::valueChanged) );
@@ -118,7 +130,8 @@ FilterPanel::FilterPanel () : listener (NULL) {
     sChange[conns++] = enaCamera->signal_toggled().connect( sigc::mem_fun(*this, &FilterPanel::valueChanged) );
     sChange[conns++] = enaLens->signal_toggled().connect( sigc::mem_fun(*this, &FilterPanel::valueChanged) );
     sChange[conns++] = enabled->signal_toggled().connect( sigc::mem_fun(*this, &FilterPanel::valueChanged) );
-	
+    sChange[conns++] = enaFiletype->signal_toggled().connect( sigc::mem_fun(*this, &FilterPanel::valueChanged) );
+
 	set_size_request (0, -1);
 	
 	show_all ();
@@ -154,6 +167,9 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists) {
     focalTo->set_text (Glib::ustring::format (defefs.focalTo));
     curefs.focalTo = defefs.focalTo;
 
+//	enaFiletype->set_active (curefs.filterFiletype);
+	Glib::RefPtr<Gtk::TreeSelection> ftselection = filetype->get_selection ();
+
 //	enaCamera->set_active (curefs.filterCamera);
     Glib::RefPtr<Gtk::TreeSelection> cselection = camera->get_selection ();
 
@@ -175,6 +191,14 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists) {
        		curefs.cameras.insert(*i);
        	}
        	cselection->select_all();
+
+       	filetype->clear_items();
+       	curefs.filetypes.clear();
+       	for (std::set<std::string>::iterator i = defefs.filetypes.begin(); i!=defefs.filetypes.end(); i++) {
+       		filetype->append_text(*i);
+       		curefs.filetypes.insert(*i);
+       	}
+       	ftselection->select_all();
     }else{
     	for( Gtk::TreeModel::Children::iterator iter = lens->get_model()->children().begin(); iter != lens->get_model()->children().end();iter++){
     		Glib::ustring v;
@@ -191,6 +215,14 @@ void FilterPanel::setFilter (ExifFilterSettings& defefs, bool updateLists) {
     			cselection->select(iter);
     		else
     			cselection->unselect(iter);
+    	}
+    	for( Gtk::TreeModel::Children::iterator iter = filetype->get_model()->children().begin(); iter != filetype->get_model()->children().end();iter++){
+    	    		Glib::ustring v;
+    	    		iter->get_value(0,v);
+    	    		if( defefs.filetypes.find( v ) != defefs.filetypes.end() )
+    	    			ftselection->select(iter);
+    	    		else
+    	    			ftselection->unselect(iter);
     	}
     }
 
@@ -223,6 +255,7 @@ ExifFilterSettings FilterPanel::getFilter () {
 	efs.filterISO      = enaISO->get_active ();
 	efs.filterCamera   = enaCamera->get_active ();
 	efs.filterLens     = enaLens->get_active ();
+	efs.filterFiletype = enaFiletype->get_active ();
 	
     std::vector<int> sel = camera->get_selected ();
     for (int i=0; i<sel.size(); i++) 
@@ -230,6 +263,9 @@ ExifFilterSettings FilterPanel::getFilter () {
     sel = lens->get_selected ();
     for (int i=0; i<sel.size(); i++)
         efs.lenses.insert (lens->get_text (sel[i]));
+    sel = filetype->get_selected ();
+    for (int i=0; i<sel.size(); i++)
+        efs.filetypes.insert (filetype->get_text (sel[i]));
 
     return efs;
 }
