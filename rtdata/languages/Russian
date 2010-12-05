@@ -744,7 +744,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_95;Saturation
 !HISTORY_MSG_96;'a' curve
 !HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_98;Demosaicing
 !HISTORY_MSG_99;Preprocessing
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_B_NA;B = n/a
