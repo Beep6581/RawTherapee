@@ -88,6 +88,7 @@ class Options {
     bool showHistory;
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
     bool showInfo;
+    bool mainNBVertical;  // main notebook vertical tabs?
     int cropDPI;
     bool showClippedHighlights;
     bool showClippedShadows;

@@ -329,12 +329,16 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     editorLayout = new Gtk::ComboBoxText ();
 
     editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
+    editorLayout->append_text (M("PREFERENCES_SINGLETABVERTAB"));
     editorLayout->append_text (M("PREFERENCES_MULTITAB"));
     editorLayout->append_text (M("PREFERENCES_MULTITABDUALMON"));
-    editorLayout->set_active (1);
+    editorLayout->set_active (2);
 
     hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
     hbworkflow->pack_start (*editorLayout);
+    Gtk::Label* lNextStart = new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    hbworkflow->pack_end (*lNextStart, Gtk::PACK_SHRINK, 4);
+
     fworklflow->add (*hbworkflow);
     mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
      
@@ -352,7 +356,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 	}
     }
 
-    Gtk::Label* langw = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    Gtk::Label* langw = new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
     hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 4);
     hblang->pack_start (*languages);
     hblang->pack_end (*langw, Gtk::PACK_SHRINK, 4);
@@ -777,8 +781,9 @@ void Preferences::storePreferences () {
             moptions.baBehav[adjs->get_value (behavColumns.addsetid)] = adjs->get_value (behavColumns.badd);
 
     int editorMode=editorLayout->get_active_row_number();
-    moptions.tabbedUI = (editorMode>0);
-    moptions.multiDisplayMode = editorMode==2 ? 1:0;
+    moptions.tabbedUI = (editorMode>1);
+    moptions.multiDisplayMode = editorMode==3 ? 1:0;
+    moptions.mainNBVertical = editorMode==1;
 
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 }
@@ -861,9 +866,9 @@ void Preferences::fillPreferences () {
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
     if (!moptions.tabbedUI)
-        editorLayout->set_active(0);
+        editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);
     else 
-        editorLayout->set_active(moptions.multiDisplayMode ? 2 : 1);
+        editorLayout->set_active(moptions.multiDisplayMode ? 3 : 2);
 
     darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     updateDFinfos();
