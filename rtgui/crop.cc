@@ -145,6 +145,7 @@ Crop::Crop () {
   guide->append_text (M("TP_CROP_GTHARMMEANS2"));
   guide->append_text (M("TP_CROP_GTHARMMEANS3"));
   guide->append_text (M("TP_CROP_GTHARMMEANS4"));
+  guide->append_text (M("TP_CROP_GTGRID"));
   guide->set_active (0);
 
   w->set_range (0, maxw);
@@ -249,6 +250,8 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         guide->set_active (5);
     else if (pp->crop.guide == "Harmonic means 4")
         guide->set_active (6);
+    else if (pp->crop.guide == "Grid")
+        guide->set_active (7);
 
     x->set_value (pp->crop.x);
     y->set_value (pp->crop.y);
@@ -334,6 +337,8 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->crop.guide = "Harmonic means 3";
   else if (guide->get_active_row_number()==6)
     pp->crop.guide = "Harmonic means 4";
+  else if (guide->get_active_row_number()==7)
+    pp->crop.guide = "Grid";
 
     if (pedited) {
         pedited->crop.enabled       = !enabled->get_inconsistent();
