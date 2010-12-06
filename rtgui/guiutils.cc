@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -65,7 +64,7 @@ Glib::ustring getExtension (const Glib::ustring& filename) {
 
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams) {
 
-    cr->set_line_width (1.0);
+    cr->set_line_width (0.7);
     cr->rectangle (imx+0.5, imy+0.5, imw, imh);
     cr->clip ();
 
@@ -136,11 +135,30 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             else if (cparams.guide=="Harmonic means 4") {
                 horiz_ratios.push_back (0.618);
                 vert_ratios.push_back (0.618);
-            }
-            for (int i=0; i<vert_ratios.size(); i++) {
+            } 
+            else if (cparams.guide=="Grid") {
+                // To have even distribution, normalize it a bit
+                const int longSideNumLines=10;
+
+                int w=rectx2-rectx1, h=recty2-recty1, shortSideNumLines;
+                if (w>longSideNumLines && h>longSideNumLines) {
+                    if (w>h) {
+                        for (int i=1;i<longSideNumLines;i++) vert_ratios.push_back ((double)i/longSideNumLines);
+                    
+                        shortSideNumLines=(int)round(h*(double)longSideNumLines/w);
+                        for (int i=1;i<shortSideNumLines;i++) horiz_ratios.push_back ((double)i/shortSideNumLines);
+                    } else {
+                        for (int i=1;i<longSideNumLines;i++) horiz_ratios.push_back ((double)i/longSideNumLines);
+                    
+                        shortSideNumLines=(int)round(w*(double)longSideNumLines/h);
+                        for (int i=1;i<shortSideNumLines;i++) vert_ratios.push_back ((double)i/shortSideNumLines);
+                    }
+                }
+            }   
+
+            // Horizontals
+            for (int i=0; i<horiz_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
-                cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
-                cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
                 cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
                 cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
                 cr->stroke ();
@@ -148,10 +166,24 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 std::valarray<double> ds (1);
                 ds[0] = 4;
                 cr->set_dash (ds, 0);
-                cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
-                cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
                 cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
                 cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
+                cr->stroke ();
+                ds.resize (0);
+                cr->set_dash (ds, 0);
+            }
+            // Verticals
+            for (int i=0; i<vert_ratios.size(); i++) {
+                cr->set_source_rgb (1.0, 1.0, 1.0);
+                cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
+                cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
+                cr->stroke ();
+                cr->set_source_rgb (0.0, 0.0, 0.0);
+                std::valarray<double> ds (1);
+                ds[0] = 4;
+                cr->set_dash (ds, 0);
+                cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
+                cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
                 cr->stroke ();
                 ds.resize (0);
                 cr->set_dash (ds, 0);
