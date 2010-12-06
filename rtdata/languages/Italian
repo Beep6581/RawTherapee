@@ -604,11 +604,11 @@ TP_CROP_GTRULETHIRDS;Regola dei terzi
 TP_CROP_GUIDETYPE;Tipo di guida:
 TP_CROP_H;A
 TP_CROP_LABEL;Ritaglia
-TP_CROP_SELECTCROP;    Seleziona Area
+TP_CROP_SELECTCROP;Seleziona Area
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_DEFRINGE_LABEL;Elimina margine
+TP_DEFRINGE_LABEL;Rimozione margini colorati
 TP_DEFRINGE_RADIUS;Raggio
 TP_DEFRINGE_THRESHOLD;Soglia
 TP_DETAIL_AMOUNT;Quantità
@@ -783,10 +783,10 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EXIFFILTER_FILETYPE;File Type
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
-!PARTIALPASTE_LABCURVE;Lab curve
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
+EXIFFILTER_FILETYPE;Tipo file
+HISTORY_MSG_105;Rimozione margini colorati
+HISTORY_MSG_106;Raggio rimozione margini
+HISTORY_MSG_107;Soglia rimozione margini
+PARTIALPASTE_LABCURVE;Curva Lab
+PREFERENCES_CABLUE;Correzione AC blu manuale
+PREFERENCES_CARED;Correzione AC rossa manuale
