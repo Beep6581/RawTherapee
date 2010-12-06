@@ -109,7 +109,7 @@ void ImageArea::setInfoText (Glib::ustring text) {
     Glib::RefPtr<Pango::Context> context = get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (12*Pango::SCALE);
+    fontd.set_size (9*Pango::SCALE);
     context->set_font_description (fontd);
     ilayout = create_pango_layout("");
     ilayout->set_markup(text);

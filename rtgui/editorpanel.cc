@@ -615,13 +615,14 @@ void EditorPanel::info_toggled () {
 //            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
 //            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
 infoString = Glib::ustring::compose (
-            "%1 + %2\n<span size=\"large\">%3</span>s  f/<span size=\"large\">%4</span>  %5<span size=\"large\">%6</span>  f=<span size=\"large\">%7</span>mm",
+            "%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>\n<span size=\"small\">%8</span>",
             Glib::ustring(idata->getModel()),
             Glib::ustring(idata->getLens()),
-            Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
             Glib::ustring(idata->apertureToString(idata->getFNumber())),
+            Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
             M("QINFO_ISO"), idata->getISOSpeed(),
-            idata->getFocalLen()
+            idata->getFocalLen(),
+            openThm->getFileName ()
             );
     else
         infoString = M("QINFO_NOEXIF");
