@@ -167,20 +167,42 @@ void BatchQueuePanel::arrangementButtonPressed () {
 void BatchQueuePanel::updateTab (int qsize)
 {
     Gtk::Notebook *nb =(Gtk::Notebook *)(this->get_parent());
-    Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
-    if(!qsize ){
-        hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing.png")));
-        hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )));
-    }else if( start->get_active () ){
-        hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-play.png")));
-        hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
-    }else{
-        hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-pause.png")));
-        hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
+
+    if (options.mainNBVertical) {
+        Gtk::VBox* vbb = Gtk::manage (new Gtk::VBox ());
+        Gtk::Label* l;
+
+        if(!qsize ){
+            vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing.png")));
+            l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE"));
+        } else if( start->get_active () ){
+            vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-play.png")));
+            l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]");
+        } else {
+            vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-pause.png")));
+            l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" );
+        }
+        l->set_angle (90);
+        vbb->pack_start (*l);
+        vbb->set_spacing (2);
+        vbb->show_all ();
+        nb->set_tab_label(*this,*vbb);
+    } else {
+        Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
+        if (!qsize ) {
+            hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing.png")));
+            hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )));
+        } else if ( start->get_active () ){
+            hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-play.png")));
+            hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
+        } else {
+            hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-pause.png")));
+            hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
+        }
+        hbb->set_spacing (2);
+        hbb->show_all ();
+        nb->set_tab_label(*this,*hbb);
     }
-    hbb->set_spacing (2);
-    hbb->show_all ();
-    nb->set_tab_label(*this,*hbb);
 }
 
 void BatchQueuePanel::queueSizeChanged (int qsize)

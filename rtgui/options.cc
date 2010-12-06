@@ -268,6 +268,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "ShowHistory"))         showHistory       = keyFile.get_boolean ("GUI", "ShowHistory");
     if (keyFile.has_key ("GUI", "ShowFilePanelState"))  showFilePanelState= keyFile.get_integer ("GUI", "ShowFilePanelState");
     if (keyFile.has_key ("GUI", "ShowInfo"))            showInfo          = keyFile.get_boolean ("GUI", "ShowInfo");
+    if (keyFile.has_key ("GUI", "MainNBVertical"))      mainNBVertical    = keyFile.get_boolean ("GUI", "MainNBVertical");
     if (keyFile.has_key ("GUI", "ShowClippedHighlights"))showClippedHighlights = keyFile.get_boolean ("GUI", "ShowClippedHighlights");
     if (keyFile.has_key ("GUI", "ShowClippedShadows"))  showClippedShadows= keyFile.get_boolean ("GUI", "ShowClippedShadows");
     if (keyFile.has_key ("GUI", "FrameColor"))          bgcolor           = keyFile.get_integer ("GUI", "FrameColor");
@@ -400,6 +401,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "ShowHistory", showHistory);
     keyFile.set_integer ("GUI", "ShowFilePanelState", showFilePanelState);
     keyFile.set_boolean ("GUI", "ShowInfo", showInfo);
+    keyFile.set_boolean ("GUI", "MainNBVertical", mainNBVertical);
     keyFile.set_boolean ("GUI", "ShowClippedHighlights", showClippedHighlights);
     keyFile.set_boolean ("GUI", "ShowClippedShadows", showClippedShadows);
     keyFile.set_integer ("GUI", "FrameColor", bgcolor);

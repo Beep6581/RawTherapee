@@ -55,34 +55,56 @@ RTWindow::RTWindow () {
     fpanel->setParent (this);
 
     // decorate tab
-    Gtk::HBox* hbf = Gtk::manage (new Gtk::HBox ());
-    hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-    hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
-    hbf->set_spacing (2);
-    hbf->show_all ();
-    mainNB->append_page (*fpanel, *hbf);
+    if (options.mainNBVertical) {
+        mainNB->set_tab_pos (Gtk::POS_LEFT);
+
+        Gtk::VBox* vbf = Gtk::manage (new Gtk::VBox ());
+        vbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+        Gtk::Label* l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_FILEBROWSER"));
+        l->set_angle (90);
+        vbf->pack_start (*l);
+        vbf->set_spacing (2);
+        vbf->show_all ();
+        mainNB->append_page (*fpanel, *vbf);
+     } else {
+        Gtk::HBox* hbf = Gtk::manage (new Gtk::HBox ());
+        hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+        hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
+        hbf->set_spacing (2);
+        hbf->show_all ();
+        mainNB->append_page (*fpanel, *hbf);
+    }
 
     bpanel = new BatchQueuePanel ();
     bpanel->setParent (this);
 
-    // decorate tab
-    Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
-    hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)));
-    hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"))));
-    hbb->set_spacing (2);
-    hbb->show_all ();
-    mainNB->append_page (*bpanel, *hbb);
-    
+    // decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
+    Gtk::Label* lbq = new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"));
+    mainNB->append_page (*bpanel, *lbq);
     
     epanel = new EditorPanel (fpanel);
     epanel->setParent (this);
+
     // decorate tab
-    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
-    hbe->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)));
-    hbe->pack_start (*Gtk::manage (new Gtk::Label("Editor")));
-    hbe->set_spacing (2);
-    hbe->show_all ();
-    mainNB->append_page (*epanel, *hbe);
+    if (options.mainNBVertical) {
+        Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
+        vbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
+        Gtk::Label* l=new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") );
+        //l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
+        l->set_angle (90);
+        vbe->pack_start (*l);
+        vbe->set_spacing (2);
+        vbe->show_all ();
+        mainNB->append_page (*epanel, *vbe);
+    } else {
+        Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+        hbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
+        hbe->pack_start (*Gtk::manage (new Gtk::Label(M("MAIN_FRAME_EDITOR"))));
+        hbe->set_spacing (2);
+        hbe->show_all ();
+        mainNB->append_page (*epanel, *hbe);
+    }
+
     mainNB->set_current_page (mainNB->page_num (*fpanel));
 
     signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
