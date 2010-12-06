@@ -144,6 +144,9 @@ HISTORY_MSG_101;HSV EQ - Nyans
 HISTORY_MSG_102;HSV EQ - Mättnad
 HISTORY_MSG_103;HSV EQ - Värde
 HISTORY_MSG_104;HSV Equalizer
+HISTORY_MSG_105;Reducering av överstrålning
+HISTORY_MSG_106;Radie för reducering av överstrålning
+HISTORY_MSG_107;Tröskelvärde för reducering av överstrålning
 HISTORY_MSG_10;Skuggkomprimering
 HISTORY_MSG_11;Tonkurva
 HISTORY_MSG_12;Autoexponering
@@ -431,6 +434,7 @@ PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
 PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
 PREFERENCES_CLIPPINGIND;Markeringsindikation
 PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
+PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
 PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : månad</i>\n<b>%d</b><i> : dag</i>\n<i>\nTill exempel är det svenska datumformatet:</i>-n<b>%y-%m-%d</b>
@@ -784,7 +788,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 
 
 !EXIFFILTER_FILETYPE;File Type
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
-!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
