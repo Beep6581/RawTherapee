@@ -25,6 +25,7 @@ CURVEEDITOR_TOOLTIPLINEAR;Réinitialise la courbe en linéaire
 CURVEEDITOR_TOOLTIPLOAD;Charger une courbe depuis un fichier
 CURVEEDITOR_TOOLTIPSAVE;Enregistrer la courbe actuelle
 CURVEEDITOR_TYPE;Type:
+EDITWINDOW_TITLE;Edition d'Image
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
@@ -33,6 +34,7 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objectif
 EXIFFILTER_METADATAFILTER;Activer les filtres sur les Métadonnées
 EXIFFILTER_SHUTTER;Obturateur
+EXIFFILTER_FILETYPE;Type de fichier
 EXIFPANEL_ADDEDIT;Ajouter/Éditer
 EXIFPANEL_ADDEDITHINT;Ajoute ou édite une donnée
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Saisissez une valeur
@@ -144,6 +146,11 @@ HISTORY_MSG_101;Ég. TSV - Teinte
 HISTORY_MSG_102;Ég. TSV - Saturation
 HISTORY_MSG_103;Ég. TSV - Valeur
 HISTORY_MSG_104;Égaliseur TSV
+HISTORY_MSG_105;Corr. aberr. chromatique
+HISTORY_MSG_106;Corr. a.c. - Rayon
+HISTORY_MSG_107;Corr. a.c. - Seuil
+HISTORY_MSG_108;Redim. - boîte englobante
+HISTORY_MSG_109;Redim. s'applique à
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -203,7 +210,7 @@ HISTORY_MSG_60;Rotation
 HISTORY_MSG_61;Rotation
 HISTORY_MSG_62;Correction de la distorsion
 HISTORY_MSG_63;Signet sélectionné
-HISTORY_MSG_64;Rognage de la Photo
+HISTORY_MSG_64;Recadrage de la Photo
 HISTORY_MSG_65;Correction de l'aberration chromatique
 HISTORY_MSG_66;Récup. Hautes lumières
 HISTORY_MSG_67;Récup. Hautes lumières - Quantité
@@ -214,14 +221,14 @@ HISTORY_MSG_70;Espace de couleur de sortie
 HISTORY_MSG_71;Espace de couleur d'entrée
 HISTORY_MSG_72;Correction du vignetage
 HISTORY_MSG_73;Mixage des canaux
-HISTORY_MSG_74;Échelle de redimensionnement
+HISTORY_MSG_74;Redim. - échelle
 HISTORY_MSG_75;Méthode de redimensionnement
 HISTORY_MSG_76;Métadonnées EXIF
 HISTORY_MSG_77;Métadonnées IPTC
-HISTORY_MSG_78;Données spécifiées pour redimensionnement
-HISTORY_MSG_79;Redimensionner la largeur
+HISTORY_MSG_78;Type de redimensionnement
+HISTORY_MSG_79;Redim. - largeur
 HISTORY_MSG_7;Noir
-HISTORY_MSG_80;Redimensionner la hauteur
+HISTORY_MSG_80;Redim. - hauteur
 HISTORY_MSG_81;Redimensionnement activé
 HISTORY_MSG_82;Changement de profil
 HISTORY_MSG_83;Ombres/Hautes lumières haute qualité
@@ -387,7 +394,7 @@ PARTIALPASTE_COLORGROUP;Réglages couleurs
 PARTIALPASTE_COLORMIXER;Mixage couleur
 PARTIALPASTE_COLORSHIFT;Décalage couleur
 PARTIALPASTE_COMPOSITIONGROUP;Réglages de la composition
-PARTIALPASTE_CROP;Rognage
+PARTIALPASTE_CROP;Recadrage
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
 PARTIALPASTE_DISTORTION;Correction de distortion
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
@@ -395,7 +402,7 @@ PARTIALPASTE_EXPOSURE;Exposition
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
 PARTIALPASTE_IPTCINFO;Infos IPTC
-PARTIALPASTE_LABCURVE;Courebes Lab
+PARTIALPASTE_LABCURVE;Courbes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
@@ -425,8 +432,11 @@ PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CACORRECTION;Correction automatique de\nl'aberration chromatique
+PREFERENCES_CARED;Correction manuelle de\nl'aberration chromatique rouge
+PREFERENCES_CABLUE;Correction manuelle de\nl'aberration chromatique bleue
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
+PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_DARKFRAME;Soustraction d'image noire
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
@@ -466,6 +476,7 @@ PREFERENCES_LINEDENOISE;Filtre de bruit de Ligne
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_MULTITAB;Mode éditeurs multiple
+PREFERENCES_MULTITABDUALMON;Mode éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
@@ -473,6 +484,7 @@ PREFERENCES_OUTDIRHINT;<i>Vous pouvez utiliser les paramètres de chaîne format
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
+PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
 PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
@@ -551,7 +563,7 @@ SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
 SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
-TOOLBAR_TOOLTIP_CROP;Sélection du rognage <b>C</b>
+TOOLBAR_TOOLTIP_CROP;Sélection du recadrage <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
 TOOLBAR_TOOLTIP_WB;Choix du point déterminant la balance des blancs <b>W</b>
@@ -595,11 +607,14 @@ TP_CROP_GTNONE;Aucun
 TP_CROP_GTRULETHIRDS;Règle des tiers
 TP_CROP_GUIDETYPE;Type de guide:
 TP_CROP_H;H
-TP_CROP_LABEL;Rognage
-TP_CROP_SELECTCROP;    Sélection du rognage
+TP_CROP_LABEL;Recadrage
+TP_CROP_SELECTCROP;    Sélection du recadrage
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DEFRINGE_LABEL;Suppression de l'aberr. chromatique
+TP_DEFRINGE_RADIUS;Rayon
+TP_DEFRINGE_THRESHOLD;Seuil
 TP_DETAIL_AMOUNT;Quantité
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -657,6 +672,7 @@ TP_ICM_INPUTCAMERA;Celui de l'appareil photo
 TP_ICM_INPUTCUSTOM;Personnel
 TP_ICM_INPUTDLGLABEL;Choix du profil ICC d'entrée...
 TP_ICM_INPUTEMBEDDED;Utiliser celui inclus, si possible
+TP_ICM_INPUTNONE;Sans profile
 TP_ICM_INPUTPROFILE;Profil d'entrée
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Pas d'ICM: sortie sRGB
@@ -671,7 +687,7 @@ TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
 TP_LABCURVE_LABEL;Courbes Lab
 TP_LABCURVE_SATURATION;Saturation
-TP_LENSGEOM_AUTOCROP;Rognage auto
+TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
 TP_LUMADENOISE_EDGETOLERANCE;Tolérance des bords
@@ -690,7 +706,6 @@ TP_RESIZE_BICUBICSH;Bicubique (Plus net)
 TP_RESIZE_BILINEAR;Bilinéaire
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
-TP_RESIZE_FITBOX;Contenu dans une boîte
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hauteur
@@ -706,12 +721,12 @@ TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
 TP_ROTATE_SELECTLINE;Choisir la ligne d'horizon
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Hautes lumières
-TP_SHADOWSHLIGHTS_HLTONALW;Amplitude tonale
+TP_SHADOWSHLIGHTS_HLTONALW;Amplitude tonale des hautes lumières
 TP_SHADOWSHLIGHTS_LABEL;Ombres/Hautes lumières
 TP_SHADOWSHLIGHTS_LOCALCONTR;Contraste local
 TP_SHADOWSHLIGHTS_RADIUS;Rayon
 TP_SHADOWSHLIGHTS_SHADOWS;Ombres
-TP_SHADOWSHLIGHTS_SHTONALW;Amplitude tonale
+TP_SHADOWSHLIGHTS_SHTONALW;Amplitude tonale des ombres
 TP_SHARPENING_AMOUNT;Quantité
 TP_SHARPENING_EDRADIUS;Rayon
 TP_SHARPENING_EDTOLERANCE;Tolérance des bords
@@ -756,22 +771,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!EDITWINDOW_TITLE;Image Edit
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
-!PREFERENCES_CABLUE;Blue CA manual correction
-!PREFERENCES_CARED;Red CA manual correction
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
-!TP_ICM_INPUTNONE;No profile
