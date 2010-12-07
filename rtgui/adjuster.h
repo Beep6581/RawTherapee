@@ -50,6 +50,7 @@ class Adjuster : public Gtk::VBox {
     int digits;
     Gtk::CheckButton* editedCheckBox;
 	bool afterReset;
+    bool blocked;
 
     double shapeValue (double a);
     void   refreshLabelStyle ();
@@ -71,6 +72,7 @@ class Adjuster : public Gtk::VBox {
     EditedState getEditedState ();
     void setDefaultEditedState (EditedState eState);
     void showEditedCB ();
+    void block(bool isBlocked) { blocked = isBlocked; }
     
 
     void spinChanged ();
