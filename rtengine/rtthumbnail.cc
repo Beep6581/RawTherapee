@@ -34,15 +34,7 @@
 #include <setjmp.h>
 #include <safekeyfile.h>
 #include <rawimage.h>
-
-extern "C" {
-#include <jpeglib.h>
-extern jmp_buf jpeg_jmp_buf;
-extern GLOBAL(struct jpeg_error_mgr *)
-my_jpeg_std_error (struct jpeg_error_mgr * err);
-extern GLOBAL(void)
-my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile);
-}
+#include "jpeg.h"
 
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
@@ -1130,10 +1122,11 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
             return false;
         struct jpeg_decompress_struct cinfo;
         struct jpeg_error_mgr jerr;
-        if (!setjmp(jpeg_jmp_buf)) {
-            cinfo.err = my_jpeg_std_error (&jerr);
-            jpeg_create_decompress (&cinfo);
-            my_jpeg_stdio_src (&cinfo,f);
+        cinfo.err = my_jpeg_std_error (&jerr);
+        jpeg_create_decompress (&cinfo);
+        my_jpeg_stdio_src (&cinfo,f);
+		if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+        {
             jpeg_read_header (&cinfo, TRUE);
             int width, height;
             width = cinfo.image_width;

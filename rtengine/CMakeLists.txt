@@ -13,7 +13,7 @@ set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc iccstore.cc dfmanager.c
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc
-	jpeg_memsrc.c 
+	jpeg_memsrc.c jdatasrc.c
 	PF_correct_RT.cc
     wavelet_dec.cc ipequalizer.cc dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc)
 

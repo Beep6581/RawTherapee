@@ -1,7 +1,10 @@
 #ifndef WIN32
 #define jboolean boolean
 #endif
-#include <setjmp.h>
+#include <stdio.h>
+#include <jpeglib.h>
+#include <jerror.h>
+#include "jpeg.h"
 
 /*
  * jdatasrc.c
@@ -21,9 +24,6 @@
 
 /* this is not a core library module, so it doesn't define JPEG_INTERNALS */
 //#include "jinclude.h"
-#include <stdio.h>
-#include <jpeglib.h>
-#include <jerror.h>
 
 #define JFREAD(file,buf,sizeofbuf)  \
   ((size_t) fread((void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
@@ -37,6 +37,7 @@
 
 typedef struct {
   struct jpeg_source_mgr pub;	/* public fields */
+  jmp_buf error_jmp_buf; /* error handler for this instance */
 
   FILE * infile;		/* source stream */
   JOCTET * buffer;		/* start of buffer */
@@ -227,8 +228,6 @@ my_jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
   src->pub.next_input_byte = NULL; /* until buffer loaded */
 }
 
-jmp_buf jpeg_jmp_buf;
-
 METHODDEF(void)
 my_error_exit (j_common_ptr cinfo)
 {
@@ -236,9 +235,10 @@ my_error_exit (j_common_ptr cinfo)
   (*cinfo->err->output_message) (cinfo);
 
   /* Let the memory manager delete any temp files before we die */
-  jpeg_destroy(cinfo);
+  //jpeg_destroy(cinfo);
 
-  longjmp (jpeg_jmp_buf, 1);
+  j_decompress_ptr dinfo = (j_decompress_ptr)cinfo;
+  longjmp (((rt_jpeg_error_mgr*)(dinfo->src))->error_jmp_buf, 1);
 }
 
 

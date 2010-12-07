@@ -22,12 +22,14 @@
 #include <stdio.h>
 #include <jpeglib.h>
 #include <jerror.h>
+#include "jpeg.h"
 
 
 /* Expanded data source object for memory input */
 
 typedef struct {
-  struct jpeg_source_mgr pub;	/* public fields */
+  struct jpeg_source_mgr pub; /* public fields */
+  jmp_buf error_jmp_buf;      /* error handler for this instance */
 
   JOCTET eoi_buffer[2];		/* a place to put a dummy EOI */
 } my_source_mgr;
