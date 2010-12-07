@@ -21,41 +21,49 @@
 
 #include <glibmm.h>
 
+// Use M_VOID is you wish to update the proc params without updating the preview at all !
+#define M_VOID       (1<<15)
+// Use M_MINUPDATE if you you wish to update the preview without modifying the image (think about it like a "refreshPreview")
+#define M_MINUPDATE  (1<<14)
 
-#define FIRST          65535
-#define ALL            65535
-#define TRANSFORM      127
-#define RETINEX        63
-#define AUTOEXP        31
-#define RGBCURVE       15
-#define LUMINANCECURVE 6
-#define SHARPENING     2
-#define IMPULSEDENOISE 2
-#define DEFRINGE       2
-#define LUMADENOISE    2
-#define WHITEBALANCE   255
-#define DEMOSAIC       511
-#define DARKFRAME      1023
-#define COLORBOOST     1
-#define COLORDENOISE   1
-#define DIRPYRDENOISE  3
-#define CROP           16384
-#define EXIF           32768
-#define IPTC           32768
-#define EQUALIZER      3
-#define DIRPYREQUALIZER	3
-#define NONE           0
+// Elementary functions that can be done to
+// the preview image when an event occurs
+#define M_PREPROC    (1<<9)
+#define M_RAW        (1<<8)
+#define M_INIT       (1<<7)
+#define M_TRANSFORM  (1<<6)
+#define M_BLURMAP    (1<<5)
+#define M_AUTOEXP    (1<<4)
+#define M_RGBCURVE   (1<<3)
+#define M_LUMACURVE  (1<<2)
+#define M_LUMINANCE  (1<<1)
+#define M_COLOR      (1<<0)
 
-#define M_PREPROC   512
-#define M_RAW       256
-#define M_INIT      128
-#define M_TRANSFORM 64
-#define M_BLURMAP   32
-#define M_AUTOEXP   16
-#define M_RGBCURVE   8
-#define M_LUMACURVE  4
-#define M_LUMINANCE  2
-#define M_COLOR      1
+// Bitfield of functions to do to the preview image when an event occurs
+// Use those or create new ones for your new events
+#define FIRST           65535
+#define ALL             65535
+#define TRANSFORM       (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define RETINEX         (M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define AUTOEXP         (M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define RGBCURVE        (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define LUMINANCECURVE  (M_LUMACURVE|M_LUMINANCE)
+#define SHARPENING       M_LUMINANCE
+#define IMPULSEDENOISE   M_LUMINANCE
+#define DEFRINGE         M_LUMINANCE
+#define LUMADENOISE      M_LUMINANCE
+#define WHITEBALANCE    (M_INIT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define DEMOSAIC        (M_RAW|M_INIT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define DARKFRAME       (M_PREPROC|M_RAW|M_INIT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define COLORBOOST       M_COLOR
+#define COLORDENOISE     M_COLOR
+#define DIRPYRDENOISE   (M_COLOR|M_LUMINANCE)
+#define CROP             M_MINUPDATE
+#define EXIF             M_VOID
+#define IPTC             M_VOID
+#define EQUALIZER       (M_COLOR|M_LUMINANCE)
+#define DIRPYREQUALIZER	(M_COLOR|M_LUMINANCE)
+#define NONE             0
 
 extern int refreshmap[];
 #endif    
