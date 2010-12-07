@@ -30,6 +30,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
   adjusterListener = NULL;
   afterReset = false;
+  blocked = false;
 
   set_border_width (2);
 
@@ -149,7 +150,7 @@ void Adjuster::spinChanged () {
   sliderChange.block (false);
 
   if (delay==0) {
-    if (adjusterListener!=NULL)
+    if (adjusterListener!=NULL && !blocked)
         adjusterListener->adjusterChanged (this, spin->get_value ());
   }
   else
@@ -177,7 +178,7 @@ void Adjuster::sliderChanged () {
   spinChange.block (false);
 
   if (delay==0) {
-    if (adjusterListener)
+    if (adjusterListener && !blocked)
         adjusterListener->adjusterChanged (this, spin->get_value ());
   }
   else
@@ -213,12 +214,11 @@ double Adjuster::getValue () {
 
 bool Adjuster::notifyListener () {
 
-  gdk_threads_enter();
-  
-  if (adjusterListener!=NULL)
-    adjusterListener->adjusterChanged (this, spin->get_value ());
-  gdk_threads_leave();
-
+  if (adjusterListener!=NULL  && !blocked) {
+	  gdk_threads_enter();
+	  adjusterListener->adjusterChanged (this, spin->get_value ());
+	  gdk_threads_leave();
+  }
   return false;
 }
 
@@ -269,6 +269,6 @@ void Adjuster::refreshLabelStyle () {
 
 void Adjuster::editedToggled () {
 	
-    if (adjusterListener)
+    if (adjusterListener && !blocked)
         adjusterListener->adjusterChanged (this, spin->get_value ());
 }

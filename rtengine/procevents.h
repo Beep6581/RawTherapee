@@ -129,7 +129,9 @@ enum ProcEvent {
 	EvDefringeEnabled=104,
 	EvDefringeRadius=105,
 	EvDefringeThreshold=106,
-    NUMOFEVENTS=107
+    EvResizeBoundingBox=107,
+    EvResizeAppliesTo=108,
+    NUMOFEVENTS=109
 	};
 }    
 #endif    
