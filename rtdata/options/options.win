@@ -9,7 +9,7 @@ AdjusterDelay=0
 DualProcSupport=true
 MultiUser=true
 Language=English (US)
-Theme=Gray
+Theme=Focus
 UseSystemTheme=false
 Version=300
 FirstRun=true
@@ -17,7 +17,7 @@ FirstRun=true
 [External Editor]
 EditorKind=1
 GimpDir=C:\\Program Files\\GIMP-2.0
-PhotoshopDir=C:\\Program Files\\Adobe\\Adobe Photoshop CS3
+PhotoshopDir=C:\\Program Files\\Adobe\\Adobe Photoshop CS5
 CustomEditor=start
 
 [File Browser]
