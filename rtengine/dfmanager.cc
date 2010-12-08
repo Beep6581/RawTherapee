@@ -107,8 +107,6 @@ std::list<badPix>& dfInfo::getHotPixels()
  */
 void dfInfo::updateRawImage()
 {
-	int H = ri->get_height();
-	int W = ri->get_width();
 	typedef unsigned int acc_t;
 	if( pathNames.size() >0 ){
 		std::list<Glib::ustring>::iterator iName = pathNames.begin();
@@ -117,6 +115,8 @@ void dfInfo::updateRawImage()
 			delete ri;
 			ri=NULL;
 		}else{
+			int H = ri->get_height();
+			int W = ri->get_width();
 			ri->compress_image();
             int rSize = W*(ri->isBayer()?1:3);
 			acc_t **acc = new acc_t*[H];
