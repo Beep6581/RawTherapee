@@ -45,7 +45,7 @@ Linux
 
 	Compile:
 		- Enter the root directory of the RawTherapee source tree
-		- Type: cmake -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		- Type: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
 		- Type: make install
 		- You find the compiled program in the release directory (you can copy it 
 		anywhere you want)

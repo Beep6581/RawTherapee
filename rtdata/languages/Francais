@@ -149,6 +149,8 @@ HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
+HISTORY_MSG_108;Redim. - boîte englobante
+HISTORY_MSG_109;Redim. s'applique à
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
