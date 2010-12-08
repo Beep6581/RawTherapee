@@ -492,7 +492,8 @@ void ThumbBrowserBase::refreshThumbImages () {
     for (int i=0; i<fd.size(); i++){
     	previewHeight = getCurrentThumbSize();
     	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
-        fd[i]->refreshThumbnailImage ();  // TODO: This might cause crashes on some installations
+		/* called if necessary by resize()
+        fd[i]->refreshThumbnailImage ();  TODO: This might cause crashes on some installations */
     }
 
     redraw ();
