@@ -1030,7 +1030,7 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_95;Saturation
 !HISTORY_MSG_96;'a' curve
 !HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demozaicing
+!HISTORY_MSG_98;Demosaicing
 !HISTORY_MSG_99;Preprocessing
 !HISTORY_MSG_9;Highlight Compression
 !HISTORY_NEWSNAPSHOT;Add
@@ -1447,7 +1447,7 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_ICM_SAVEREFERENCE;Save reference image for profiling
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
-!TP_IMPULSEDENOISE_THRESH;Threshold
+!TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve

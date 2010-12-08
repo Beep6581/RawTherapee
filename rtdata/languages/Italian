@@ -293,7 +293,7 @@ IPTCPANEL_HEADLINE;Intestazione
 IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del contenuto dell'immagine (Headline).
 IPTCPANEL_INSTRUCTIONS;Istruzioni
 IPTCPANEL_INSTRUCTIONSHINT;Altre istruzioni editoriali riguardanti l'uso dell'immagine (Special Instructions).
-IPTCPANEL_KEYWORDS;Parole Chiave
+IPTCPANEL_KEYWORDS;Parole ChiaveSchwellwert
 IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche per il recupero di informazioni specifiche (Keywords).
 IPTCPANEL_PASTEHINT;Incolla le impostazioni IPTC dagli appunti
 IPTCPANEL_PROVINCE;Provincia
