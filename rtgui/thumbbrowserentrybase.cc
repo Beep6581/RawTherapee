@@ -22,7 +22,7 @@
 #include <mytime.h>
 
 ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) 
-    : preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),
+    : preh(0), preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),
       parent(NULL), filename(fname), exifline(""), datetimeline(""), selected(false),
       drawable(false),framed(false), processing(false), italicstyle(false),
       updatepriority(false) {
@@ -255,9 +255,8 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
 
 void ThumbBrowserEntryBase::resize (int h) {
     
-    delete [] preview;
-    preview = NULL;
     height = h;
+    int old_preh = preh;
 
     // dimensions of the button set
     int bsw=0, bsh=0;
@@ -285,9 +284,17 @@ void ThumbBrowserEntryBase::resize (int h) {
         if (width < bsw + 2*sideMargin + 2*borderWidth)
             width = bsw + 2*sideMargin + 2*borderWidth;
     }
-//    updateBackBuffer ();
 
-    refreshThumbnailImage ();
+    if ( preh == old_preh )
+    {
+        updateBackBuffer ();
+    }
+    else
+    {
+        delete [] preview;
+        preview = NULL;
+        refreshThumbnailImage ();
+    }
     drawable = true;
 }
 
