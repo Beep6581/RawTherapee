@@ -1,70 +1,38 @@
 
-
 #00 English (UK)
-#00 English (UK)
-#01 05.12.2010: Richard Regal
+#01 08.12.2010: Richard Regal
 #01 17.10.2010: Richard Regal
-<<<<<<< local
->>>>>>> other
-HISTORY_MSG_34;Avoid Colour Clipping
 HISTORY_MSG_34;Avoid Colour Clipping
 HISTORY_MSG_37;Colour Boost
-HISTORY_MSG_37;Colour Boost
-HISTORY_MSG_39;Colour Temperature
 HISTORY_MSG_39;Colour Temperature
 HISTORY_MSG_41;Colour Shift "A"
-HISTORY_MSG_41;Colour Shift "A"
-HISTORY_MSG_42;Colour Shift "B"
 HISTORY_MSG_42;Colour Shift "B"
 HISTORY_MSG_46;Colour Denoising
-HISTORY_MSG_46;Colour Denoising
-HISTORY_MSG_47;Colour Denoising Radius
 HISTORY_MSG_47;Colour Denoising Radius
 HISTORY_MSG_48;Colour Denoising Edge Tolerance
-HISTORY_MSG_48;Colour Denoising Edge Tolerance
-HISTORY_MSG_49;Edge Sensitive Colour Denoising
 HISTORY_MSG_49;Edge Sensitive Colour Denoising
 HISTORY_MSG_69;Working Colour Space
-HISTORY_MSG_69;Working Colour Space
 HISTORY_MSG_70;Output Colour Space
-HISTORY_MSG_70;Output Colour Space
-HISTORY_MSG_71;Input Colour Space
 HISTORY_MSG_71;Input Colour Space
 HISTORY_MSG_98;Demosaicing
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMMDD (Date Created).
-IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMMDD (Date Created).
-IPTCPANEL_PROVINCE;County
 IPTCPANEL_PROVINCE;County
 IPTCPANEL_PROVINCEHINT;The County where the image originates (County).
-IPTCPANEL_PROVINCEHINT;The County where the image originates (County).
-MAIN_TAB_COLOR;Colour
 MAIN_TAB_COLOR;Colour
 PARTIALPASTE_COLORBOOST;Colour boost
-PARTIALPASTE_COLORBOOST;Colour boost
-PARTIALPASTE_COLORDENOISE;Colour denoise
 PARTIALPASTE_COLORDENOISE;Colour denoise
 PARTIALPASTE_COLORGROUP;Colour related settings
-PARTIALPASTE_COLORGROUP;Colour related settings
-PARTIALPASTE_COLORMIXER;Colour mixer
 PARTIALPASTE_COLORMIXER;Colour mixer
 PARTIALPASTE_COLORSHIFT;Colour shift
-PARTIALPASTE_COLORSHIFT;Colour shift
-PREFERENCES_BEHAVIOR;Behavior
-PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
-PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-PREFERENCES_FALSECOLOR;False colour suppression steps
+PREFERENCES_BEHAVIOR;Behaviour
+PREFERENCES_CACHEMAXENTRIES;Maximum Number of Cache Entries
+PREFERENCES_CACHETHUMBHEIGHT;Maximum Thumbnail Height
 PREFERENCES_FALSECOLOR;False colour suppression steps
 PREFERENCES_TAB_COLORMGR;Colour Management
-PREFERENCES_TAB_COLORMGR;Colour Management
-TP_COLORBOOST_AVOIDCOLORCLIP;Avoid colour clipping
 TP_COLORBOOST_AVOIDCOLORCLIP;Avoid colour clipping
 TP_COLORBOOST_LABEL;Colour Boost
-TP_COLORBOOST_LABEL;Colour Boost
-TP_COLORDENOISE_LABEL;Colour Noise Reduction
 TP_COLORDENOISE_LABEL;Colour Noise Reduction
 TP_COLORSHIFT_LABEL;Colour Shift
-TP_COLORSHIFT_LABEL;Colour Shift
-TP_HLREC_COLOR;Colour Propagation
 TP_HLREC_COLOR;Colour Propagation
 
 
