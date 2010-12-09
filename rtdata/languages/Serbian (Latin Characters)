@@ -1,0 +1,793 @@
+
+#  Serbian translation
+#00 Serbian (Cyrilic)
+#01 by gpopac 2010-11-16
+ADJUSTER_RESET_TO_DEFAULT;Vrati na podrazumevano
+BATCHQUEUE_AUTOSTART;Sam započni
+BATCH_PROCESSING;obrada
+CURVEEDITOR_CURVE;Krivulja
+CURVEEDITOR_CURVES;Krivulje
+CURVEEDITOR_CUSTOM;Proizvoljno
+CURVEEDITOR_DARKS;Tamno
+CURVEEDITOR_FILEDLGFILTERANY;Sve datoteke
+CURVEEDITOR_FILEDLGFILTERCURVE;Datoteke sa krivama
+CURVEEDITOR_HIGHLIGHTS;Presvetlo
+CURVEEDITOR_LIGHTS;Svetlo
+CURVEEDITOR_LINEAR;Linearno
+CURVEEDITOR_LOADDLGLABEL;Učitaj krivu...
+CURVEEDITOR_NURBS;Sa kavezom
+CURVEEDITOR_PARAMETRIC;Parametarski
+CURVEEDITOR_SAVEDLGLABEL;Sačuvaj krivu...
+CURVEEDITOR_SHADOWS;Senke
+CURVEEDITOR_TOOLTIPLINEAR;Vraća krivu na linearnu
+CURVEEDITOR_TOOLTIPLOAD;Učitava krivulju iz datoteke
+CURVEEDITOR_TOOLTIPSAVE;Čuva trenutnu krivulju
+CURVEEDITOR_TYPE;Vrsta:
+EXIFFILTER_APERTURE;Otvor blende
+EXIFFILTER_CAMERA;Foto aparat
+EXIFFILTER_DIALOGLABEL;Exif filter
+EXIFFILTER_FOCALLEN;Žižna daljina
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Objektiv
+EXIFFILTER_METADATAFILTER;Filtriraj metapodatke
+EXIFFILTER_SHUTTER;Ekspozicija
+EXIFPANEL_ADDEDIT;Dodaj/Izmeni
+EXIFPANEL_ADDEDITHINT;Dodaje novu oznaku ili uređuje postojeću
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Unesite vrednost
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Izaberite oznaku
+EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Izmeni oznaku
+EXIFPANEL_KEEP;Zadrži
+EXIFPANEL_KEEPHINT;Zadržava izabrane oznake pri upisu izlazne datoteke
+EXIFPANEL_REMOVE;Ukloni
+EXIFPANEL_REMOVEHINT;Uklanja izabrane oznake pri upisu izlazne datoteke
+EXIFPANEL_RESET;Vrati
+EXIFPANEL_RESETALL;Vrati sve
+EXIFPANEL_RESETALLHINT;Vraća sve oznake na početne vrednosti
+EXIFPANEL_RESETHINT;Vraća izabranu oznaku na početnu vrednosti
+EXIFPANEL_SUBDIRECTORY;Poddirektorijum
+FILEBROWSER_ADDDELTEMPLATE;Dodaj/ukloni šablone...
+FILEBROWSER_APPLYPROFILE;Primeni profil
+FILEBROWSER_ARRANGEMENTHINT;Razmenjuje vertikalni i horizontalni raspored umanjenih prikaza
+FILEBROWSER_AUTODARKFRAME;Sam odredi tamni kadar
+FILEBROWSER_CLEARPROFILE;Obriši profil
+FILEBROWSER_COPYPROFILE;Umnoži profil
+FILEBROWSER_CURRENT_NAME;Trenutno ime:
+FILEBROWSER_DELETEDLGLABEL;Brisanje datoteke
+FILEBROWSER_DELETEDLGMSG;Da li sigurno želite da obrišete %1 datoteka?
+FILEBROWSER_EMPTYTRASH;Izbaci smeće
+FILEBROWSER_EMPTYTRASHHINT;Trajno briše datoteke iz smeća
+FILEBROWSER_EXIFFILTERAPPLY;Primeni
+FILEBROWSER_EXIFFILTERAPPLYHINT;Uključuje/isključuje exif filter u razgledaču datoteka
+FILEBROWSER_EXIFFILTERLABEL;Exif filter
+FILEBROWSER_EXIFFILTERSETTINGS;Podesi
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Menja podešavanja exif filtera
+FILEBROWSER_MOVETODARKFDIR;Prebaci u fasciklu sa tamnim kadrovima
+FILEBROWSER_NEW_NAME;Novo ime:
+FILEBROWSER_PARTIALPASTEPROFILE;Delimično ubaci
+FILEBROWSER_PASTEPROFILE;Ubaci profil
+FILEBROWSER_POPUPCANCELJOB;Otkaži zadatak
+FILEBROWSER_POPUPMOVEEND;Premesti na kraj zakazanih
+FILEBROWSER_POPUPMOVEHEAD;Premesti na početak zakazanih
+FILEBROWSER_POPUPOPEN;Otvori
+FILEBROWSER_POPUPPROCESS;Zakaži za obradu
+FILEBROWSER_POPUPRANK1;Oceni sa 1
+FILEBROWSER_POPUPRANK2;Oceni sa 2
+FILEBROWSER_POPUPRANK3;Oceni sa 3
+FILEBROWSER_POPUPRANK4;Oceni sa 4
+FILEBROWSER_POPUPRANK5;Oceni sa 5
+FILEBROWSER_POPUPREMOVE;Ukloni iz sistema datoteka
+FILEBROWSER_POPUPRENAME;Preimenuj
+FILEBROWSER_POPUPSELECTALL;Izaberi sve
+FILEBROWSER_POPUPTRASH;Premesti u smeće
+FILEBROWSER_POPUPUNRANK;Ukloni ocenu
+FILEBROWSER_POPUPUNTRASH;Ukloni iz smeća
+FILEBROWSER_PROCESSINGSETTINGS;Podešavanja
+FILEBROWSER_PROCESSINGSETTINGSHINT;Postavlja format datoteke i izlazni direktorijum
+FILEBROWSER_RENAMEDLGLABEL;Preimenuj datoteku
+FILEBROWSER_RENAMEDLGMSG;Preimenuj datoteku „%1“ u:
+FILEBROWSER_SELECTDARKFRAME;Izaberi tamni kadar...
+FILEBROWSER_SHOWDIRHINT;Prikazuje sve slike iz direktorijuma
+FILEBROWSER_SHOWEXIFINFO;Prikazuje EXIF podatke <b>i</b>
+FILEBROWSER_SHOWQUEUEHINT;Prikazuje slike zakazane za obradu
+FILEBROWSER_SHOWRANK1HINT;Prikazuje slike ocenjene sa 1 zvezdicom
+FILEBROWSER_SHOWRANK2HINT;Prikazuje slike ocenjene sa 2 zvezdice
+FILEBROWSER_SHOWRANK3HINT;Prikazuje slike ocenjene sa 3 zvezdice
+FILEBROWSER_SHOWRANK4HINT;Prikazuje slike ocenjene sa 4 zvezdice
+FILEBROWSER_SHOWRANK5HINT;Prikazuje slike ocenjene sa 5 zvezdica
+FILEBROWSER_SHOWTRASHHINT;Prikazuje slike u smeću
+FILEBROWSER_SHOWUNRANKHINT;Prikaži neocenjene slike
+FILEBROWSER_STARTPROCESSING;Započni obradu
+FILEBROWSER_STARTPROCESSINGHINT;Počinje obradu i čuvanje zakazanih slika
+FILEBROWSER_STOPPROCESSING;Zaustavi obradu
+FILEBROWSER_STOPPROCESSINGHINT;Zaustavlja obradu slika
+FILEBROWSER_THUMBSIZE;Pregled
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Pokreće obradu fotografija kada ih zakažete
+FILEBROWSER_USETEMPLATE;Iskoristi šablon:
+FILEBROWSER_ZOOMINHINT;Uvećava pregled
+FILEBROWSER_ZOOMOUTHINT;Umanjuje pregled
+GENERAL_ABOUT;O programu
+GENERAL_AFTER;Posle
+GENERAL_BEFORE;Pre
+GENERAL_CANCEL;Otkaži
+GENERAL_DISABLE;Isključi
+GENERAL_DISABLED;Isključeno
+GENERAL_ENABLE;Uključi
+GENERAL_ENABLED;Uključi
+GENERAL_HIGH_QUALITY;Visok kvalitet
+GENERAL_LANDSCAPE;Položeno
+GENERAL_LOAD;Učitaj
+GENERAL_NA;nema
+GENERAL_NO;Ne
+GENERAL_OK;U redu
+GENERAL_PORTRAIT;Uspravno
+GENERAL_SAVE;Sačuvaj
+GENERAL_UNCHANGED;(neizmenjeno)
+GENERAL_YES;Da
+HISTOGRAM_BUTTON_B;P
+HISTOGRAM_BUTTON_G;Z
+HISTOGRAM_BUTTON_L;S
+HISTOGRAM_BUTTON_R;C
+HISTOGRAM_LABEL;Histogram
+HISTOGRAM_TOOLTIP_B;Prikazuje plavi histogram
+HISTOGRAM_TOOLTIP_G;Prikazuje zeleni histogram
+HISTOGRAM_TOOLTIP_L;Prikazuje CieLab hitogram
+HISTOGRAM_TOOLTIP_R;Prikazuje crveni histogram
+HISTORY_CHANGED;Izmenjeno
+HISTORY_CUSTOMCURVE;Proizvoljna kriva
+HISTORY_DELSNAPSHOT;Ukloni
+HISTORY_FROMCLIPBOARD;Iz ostave
+HISTORY_LABEL;Istorijat
+HISTORY_MSG_100;RGB zasićenost
+HISTORY_MSG_101;HSV EQ — Nijansa
+HISTORY_MSG_102;HSV EQ — Zasićenost
+HISTORY_MSG_103;HSV EQ — Vrednsot
+HISTORY_MSG_104;Ujednačenje HSV
+HISTORY_MSG_10;Sabijanje senki
+HISTORY_MSG_11;Kriva nijansi
+HISTORY_MSG_12;Auto ekspozicija
+HISTORY_MSG_13;Odsecanje ekspozicije
+HISTORY_MSG_14;Svetlina luminanse
+HISTORY_MSG_15;Kontrast luminanse
+HISTORY_MSG_16;Crna luminanse
+HISTORY_MSG_17;Sabijanje senki l.
+HISTORY_MSG_18;Sabijanje svetlog l.
+HISTORY_MSG_19;Kriva luminanse
+HISTORY_MSG_1;Slika je učitana
+HISTORY_MSG_20;Oštrenje
+HISTORY_MSG_21;Poluprečnik oštrenja
+HISTORY_MSG_22;Količina oštrenja
+HISTORY_MSG_23;Prag oštrenja
+HISTORY_MSG_24;Izoštri samo ivice
+HISTORY_MSG_25;Poluprečnik za nalaženje ivica
+HISTORY_MSG_26;Tolerancija za nalaženje ivica
+HISTORY_MSG_27;Kontrola areola oštrenja
+HISTORY_MSG_28;Količina kontrole areala
+HISTORY_MSG_29;Način oštrenja
+HISTORY_MSG_2;Profil je učitan
+HISTORY_MSG_30;Poluprečnik dekonvolucije
+HISTORY_MSG_31;Količina dekonvolucije
+HISTORY_MSG_32;Prigušivanje dekonvolucije
+HISTORY_MSG_33;Ponavljanja dekonvolucije
+HISTORY_MSG_34;Izbegni odsecanje boja
+HISTORY_MSG_35;Graničnik zasićenja
+HISTORY_MSG_36;Ograniči zasićenje
+HISTORY_MSG_37;Pojačanje boja
+HISTORY_MSG_38;Način balansiranja bele
+HISTORY_MSG_39;Temperatura boje
+HISTORY_MSG_3;Izmena profila
+HISTORY_MSG_40;Zalenilo boje
+HISTORY_MSG_41;Pomeraj boje „A“
+HISTORY_MSG_42;Pomeraj boje „B“
+HISTORY_MSG_43;Uklanjanje svetlosnog šuma
+HISTORY_MSG_44;Radijus ukl. svetlosnog šuma
+HISTORY_MSG_45;Tolerancija ivice ukl. s. šuma
+HISTORY_MSG_46;Uklanjanje kolornog šuma
+HISTORY_MSG_47;Poluprečnik ukl. kolornog šuma
+HISTORY_MSG_48;Tolerancija ivice ukl. k. šuma
+HISTORY_MSG_49;Osetljivost ivice ukl. k. šuma
+HISTORY_MSG_4;Razgledanje istorijata
+HISTORY_MSG_50;Alat za senke/svetlo
+HISTORY_MSG_51;Pojačavanje svetline
+HISTORY_MSG_52;Pojačavanje senki
+HISTORY_MSG_53;Širina tonova za svetlo
+HISTORY_MSG_54;Širina tonova za senke
+HISTORY_MSG_55;Likalni kontrast
+HISTORY_MSG_56;Poluprečnik senki/svetlog
+HISTORY_MSG_57;Gruba rotacija
+HISTORY_MSG_58;Horizontalno izvrtanje
+HISTORY_MSG_59;Vertikalno izvrtanje
+HISTORY_MSG_5;Osvetljenost
+HISTORY_MSG_60;Rotacija
+HISTORY_MSG_61;Rotacija
+HISTORY_MSG_62;Ispravljanje izobličenja sočiva
+HISTORY_MSG_63;Ibor snimka
+HISTORY_MSG_64;Iseci fotografiju
+HISTORY_MSG_65;Ispravljanje hr. aberacija
+HISTORY_MSG_66;Čupanje svetla
+HISTORY_MSG_67;Količina čupanja svetla
+HISTORY_MSG_68;Način čupanja svetla
+HISTORY_MSG_69;Radni prostor boja
+HISTORY_MSG_6;Kontrast
+HISTORY_MSG_70;Izlazni prostor boja
+HISTORY_MSG_71;Ulazni profil boja
+HISTORY_MSG_72;Ispravljanje vinjetarenja
+HISTORY_MSG_73;Mešanje kanala
+HISTORY_MSG_74;Promena veličine
+HISTORY_MSG_75;Način promene veličine
+HISTORY_MSG_76;Exif metapodaci
+HISTORY_MSG_77;IPTC metapodaci
+HISTORY_MSG_78;Podaci za promeni veličine
+HISTORY_MSG_79;Širina pri promeni veličine
+HISTORY_MSG_7;Crna
+HISTORY_MSG_80;Visina pri promeni veličine
+HISTORY_MSG_81;Uključena promena veličina
+HISTORY_MSG_82;Profil je izmenjen
+HISTORY_MSG_83;Kvalitetno svetlost/senke
+HISTORY_MSG_84;Ispravljanje perspektive
+HISTORY_MSG_85;Taloasni koeficijenti
+HISTORY_MSG_86;Talasno ujednačenje
+HISTORY_MSG_87;Uklanjanje šuma „biber i so“
+HISTORY_MSG_88;Prag uklanjanja šuma za „biber i so“
+HISTORY_MSG_89;Uklanjanje šuma
+HISTORY_MSG_8;Kompenzacija ekspozicije
+HISTORY_MSG_90;Šum — osvetljenost
+HISTORY_MSG_91;Šum — boje
+HISTORY_MSG_92;Šum — gama
+HISTORY_MSG_93;Kontrast detanjnom vrednošću nivoa
+HISTORY_MSG_94;Detanjni nivo kontrasta
+HISTORY_MSG_95;Zasićenost
+HISTORY_MSG_96;„a“ kriva
+HISTORY_MSG_97;„b“ kriva
+HISTORY_MSG_98;Rastavljam mozaik
+HISTORY_MSG_99;Obrađujem
+HISTORY_MSG_9;Sabijanje svetlog
+HISTORY_NEWSNAPSHOT;Dodaj
+HISTORY_NEWSNAPSHOTAS;Kao...
+HISTORY_NEWSSDIALOGLABEL;Naziv snimka:
+HISTORY_NEWSSDIALOGTITLE;Dodaj novi snimak
+HISTORY_SETTO;Posavi na
+HISTORY_SNAPSHOT;Snimak
+HISTORY_SNAPSHOTS;Snimak
+ICMPANEL_FILEDLGFILTERANY;Sve datoteke
+ICMPANEL_FILEDLGFILTERICM;ICC profili
+ICMPANEL_GAMMABEFOREINPUT;Gama profili
+ICMPANEL_INPUTCAMERA;Podrazumevano iz aparata
+ICMPANEL_INPUTCUSTOM;Proizvoljno
+ICMPANEL_INPUTDLGLABEL;Izaberite ulazni profil...
+ICMPANEL_INPUTEMBEDDED;Koristi umetnuti ukoliko je moguće
+ICMPANEL_INPUTPROFILE;Ulazni profil
+ICMPANEL_NOICM;No ICM: sRGB izlaz
+ICMPANEL_OUTPUTDLGLABEL;Izaberite izlazni ICC profil...
+ICMPANEL_OUTPUTPROFILE;Izlazni profil
+ICMPANEL_SAVEREFERENCE;Sačuvaj sliku kao referencu za profil
+ICMPANEL_WORKINGPROFILE;Radni profil
+IMAGEAREA_DETAILVIEW;Prikaz detalja
+IPTCPANEL_AUTHOR;Autor
+IPTCPANEL_AUTHORHINT;Ime autora, npr. pisac, fotograf ili grafički dizajner (jedan po redu).
+IPTCPANEL_AUTHORSPOSITION;Zvanje autora
+IPTCPANEL_AUTHORSPOSITIONHINT;Zvanje jednog ili više autora (jedno po redi).
+IPTCPANEL_CAPTION;Naziv
+IPTCPANEL_CAPTIONHINT;Kratak opis dela (naslov — abstrakt).
+IPTCPANEL_CAPTIONWRITER;Pisac naslova
+IPTCPANEL_CAPTIONWRITERHINT;Ime osobe koje je uključena u pisanje, uređivanje ili ispravljanje slike/nazica/apstrakta (pisac — urednik).
+IPTCPANEL_CATEGORY;Kategorija
+IPTCPANEL_CATEGORYHINT;Određuje šta se nalazi na slici (kategorija).
+IPTCPANEL_CITY;Grad
+IPTCPANEL_CITYHINT;Grad u kome je slika nastalo (grad).
+IPTCPANEL_COPYHINT;Koppiraj IPTC pšodešavanja u ostavu
+IPTCPANEL_COPYRIGHT;Autorska prava
+IPTCPANEL_COPYRIGHTHINT;Beleška o autorskim pravima nad delom (beleška o autorskim pravima).
+IPTCPANEL_COUNTRY;Država
+IPTCPANEL_COUNTRYHINT;Ime države/osnovnog mesta gde je nastala slika (država — naziv mesta).
+IPTCPANEL_CREDIT;Zasluge
+IPTCPANEL_CREDITHINT;Ukazuje da onaj ko izdaje sliku ne mora biti autor/vlasnik (Zasluge).
+IPTCPANEL_DATECREATED;Datum nastanka
+IPTCPANEL_DATECREATEDHINT;Datum kada je stavljeno vlasništvo nad intelektualni sadržaj slike; Format: GGGGMMDD (datum nastanka).
+IPTCPANEL_EMBEDDED;Ugnježđeno
+IPTCPANEL_EMBEDDEDHINT;Vrati polja na IPTC podatke ugnježđene u sliku
+IPTCPANEL_HEADLINE;Naslov
+IPTCPANEL_HEADLINEHINT;Naziv koji ukazuje na vezu sa sadržajem slike i pod kojim se ona izdaje (naslov).
+IPTCPANEL_INSTRUCTIONS;Uputstva
+IPTCPANEL_INSTRUCTIONSHINT;Ostala uputstva urednika vezana za upotrebu slike (specijalna uputstva).
+IPTCPANEL_KEYWORDS;Ključne reči
+IPTCPANEL_KEYWORDSHINT;Reči koje ukazuju na razne podatke o slici (ključne reči).
+IPTCPANEL_PASTEHINT;Ubaci IPTC podešavanja iz ostave
+IPTCPANEL_PROVINCE;Pokrajina
+IPTCPANEL_PROVINCEHINT;Pokrajina/država gde je nastala slika (provincija — država).
+IPTCPANEL_RESET;Vrati
+IPTCPANEL_RESETHINT;Postavlja podrazumevane vrednosti profila
+IPTCPANEL_SOURCE;Izvor
+IPTCPANEL_SOURCEHINT;Prvobitni vlasnik inntelektualnog sadržaja na slici (izvor).
+IPTCPANEL_SUPPCATEGORIES;Dop. kategorije
+IPTCPANEL_SUPPCATEGORIESHINT;Dodatno određuje motiv na slici (dodatne kategorije).
+IPTCPANEL_TITLE;Natpis
+IPTCPANEL_TITLEHINT;Kratni naziv slike (ime objekta).
+IPTCPANEL_TRANSREFERENCE;Ref. prenosa
+IPTCPANEL_TRANSREFERENCEHINT;Kod kojji predstavlja mesto prvobitnog prenosa (referenca prvog prenosa).
+MAIN_BUTTON_EXIT;Izađi
+MAIN_BUTTON_FULLSCREEN;Ceo ekran
+MAIN_BUTTON_PREFERENCES;Postavke
+MAIN_BUTTON_PUTTOQUEUE;Zakaži
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Dodaje trenutnu sliku u zakazane <b>Ctrl+Q</b>
+MAIN_BUTTON_QUEUE;Zakaži
+MAIN_BUTTON_SAVE;Sačuvaj
+MAIN_BUTTON_SAVEAS;Kao...
+MAIN_BUTTON_SAVE_TOOLTIP;Čuva trenutnu sliku <b>Ctrl+S</b>
+MAIN_BUTTON_SENDTOEDITOR;Uredi
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Uređuje trenutnu sliku u spoljnom programu <b>Ctrl+E</b>
+MAIN_BUTTON_UNFULLSCREEN;Napusti ceo ekran
+MAIN_FRAME_BATCHQUEUE;Zakazane datoteke
+MAIN_FRAME_FILEBROWSER;Razgledač datoteka
+MAIN_FRAME_PLACES;Mesta
+MAIN_FRAME_PLACES_ADD;Dodaj
+MAIN_FRAME_PLACES_DEL;Ukloni
+MAIN_FRAME_RECENT;Recent Fascikle
+MAIN_MSG_ALREADYEXISTS;Datoteka već postoji.
+MAIN_MSG_CANNOTLOAD;Ne mogu da učitam sliku
+MAIN_MSG_CANNOTSAVE;Greška pri čuvanju datoteke
+MAIN_MSG_CANNOTSTARTEDITOR;Ne mogu da pokrenem program za uređivanje.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Izaberite ispravnu putanju u „Postavkama“.
+MAIN_MSG_ERRORDURINGIMAGESAVING;Greška prilokom čuvanja slike
+MAIN_MSG_EXITJOBSINQUEUEINFO;Zakazane slike neće biti obrađene.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Da li zaista želite da izađete? Neke slike su još uvek zakazane za obradu.
+MAIN_MSG_JOBSINQUEUE;slika(e) u zakazanim.
+MAIN_MSG_NAVIGATOR;Navigator
+MAIN_MSG_PLACES;Mesta
+MAIN_MSG_QOVERWRITE;Da li želite da prepišete?
+MAIN_TAB_BASIC;Osnovno
+MAIN_TAB_COLOR;Boja
+MAIN_TAB_DETAIL;Detalji
+MAIN_TAB_DEVELOP;Razvijanje
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPOSURE;Svetlost
+MAIN_TAB_FILTER;Filter
+MAIN_TAB_ICM;ICM
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metapodaci
+MAIN_TAB_RAW;RAW
+MAIN_TAB_TAGGING;Oznake
+MAIN_TAB_TRANSFORM;Ispravke
+MAIN_TOGGLE_BEFORE_AFTER;B|A
+MAIN_TOOLTIP_HIDEFP;Prikazuje/sakriva donju površ, direktorijume i razgledač datoteka (prečica: F)
+MAIN_TOOLTIP_HIDEHP;Prikazuje/sakriva levu površ, zajedno sa istorijatom (prečica: H)
+MAIN_TOOLTIP_INDCLIPPEDH;Prikazuje isečene svetle delove
+MAIN_TOOLTIP_INDCLIPPEDS;Prikazuje isečene tamne delove
+MAIN_TOOLTIP_PREFERENCES;Menja postavke programa
+MAIN_TOOLTIP_QINFO;Osnovni podaci o slici <b>I</b>
+MAIN_TOOLTIP_SAVE;Čuva sliku u podrazumevanu fasciklu
+MAIN_TOOLTIP_SAVEAS;Čuva sliku u izabranu fasciklu
+MAIN_TOOLTIP_TOGGLE;Prikazuje sliku pre i posle obrade <b>B</b>
+NAVIGATOR_B_NA;P = ○
+NAVIGATOR_B_VALUE;P = %1
+NAVIGATOR_G_NA;Z = ○
+NAVIGATOR_G_VALUE;Z = %1
+NAVIGATOR_H_NA;H = ○
+NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_LAB_A_NA;A = ○
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = ○
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = ○
+NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_R_NA;C = ○
+NAVIGATOR_R_VALUE;C = %1
+NAVIGATOR_S_NA;S = ○
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = ○
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = ○, y = ○
+PARTIALPASTE_BASICGROUP;Osnovna podešavanja
+PARTIALPASTE_CACORRECTION;Ispravljanje aberacija
+PARTIALPASTE_COARSETRANS;Rotacija za 90˚ / izvrtanje
+PARTIALPASTE_COLORBOOST;Pojačanje boja
+PARTIALPASTE_COLORDENOISE;Uklanjanje kolornog šuma
+PARTIALPASTE_COLORGROUP;Podešavanje boja
+PARTIALPASTE_COLORMIXER;Mešanje boja
+PARTIALPASTE_COLORSHIFT;Pomeraj boja
+PARTIALPASTE_COMPOSITIONGROUP;Podešavanje kompozicije
+PARTIALPASTE_CROP;Iseci
+PARTIALPASTE_DIALOGLABEL;Delimočno ubacuje profil za obradu
+PARTIALPASTE_DISTORTION;Ispravljanje izobličenja
+PARTIALPASTE_EXIFCHANGES;Izmene exif podataka
+PARTIALPASTE_EXPOSURE;Ekspozicija
+PARTIALPASTE_HLRECOVERY;Čuanje svetlih delova
+PARTIALPASTE_ICMSETTINGS;ICM podešavanja
+PARTIALPASTE_IPTCINFO;IPTC podavi
+PARTIALPASTE_LABCURVE;Lab kriva
+PARTIALPASTE_LENSGROUP;Podešavanja objektiva
+PARTIALPASTE_LUMACURVE;Kriva luminase
+PARTIALPASTE_LUMADENOISE;Uklanjanje svetlosnog šuma
+PARTIALPASTE_LUMINANCEGROUP;Podešavanja luminanse
+PARTIALPASTE_METAICMGROUP;Metapodaci/ICM podešavanja
+PARTIALPASTE_RESIZE;Promena veličine
+PARTIALPASTE_ROTATION;Rotacija
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Senke/Svetlost
+PARTIALPASTE_SHARPENING;Oštrenje
+PARTIALPASTE_VIGNETTING;Ispravljanje vinjetarenja
+PARTIALPASTE_WHITEBALANCE;Balans bele
+POPUPBUTTON_SELECTOPTIONHINT;RMB za izmenu opcije
+PREFERENCES_ADD;Dodaj
+PREFERENCES_APPLNEXTSTARTUP;primenjuje se nakon ponovnog pokretanja
+PREFERENCES_BATCH_PROCESSING;Obrada zakzanog
+PREFERENCES_BEHAVIOR;Ponašanje
+PREFERENCES_BLINKCLIPPED;Pokaži pretamne/presvetle delove
+PREFERENCES_CACHECLEARALL;Obriši sve
+PREFERENCES_CACHECLEARPROFILES;Obriši profile
+PREFERENCES_CACHECLEARTHUMBS;Obriši prikaze
+PREFERENCES_CACHEFORMAT1;Vlasnički (brže i bolje)
+PREFERENCES_CACHEFORMAT2;JPEG (manje mesta na disku)
+PREFERENCES_CACHEMAXENTRIES;Najveći broj mest u ostavi
+PREFERENCES_CACHEOPTS;Podešavanje ostave
+PREFERENCES_CACHESTRAT1;Brži rad uz upotrebu više memorije
+PREFERENCES_CACHESTRAT2;Mala zauzetost memorije, uz sporiji rad
+PREFERENCES_CACHESTRAT;Ostava
+PREFERENCES_CACHETHUMBFORM;Format umanjenih prikaza
+PREFERENCES_CACHETHUMBHEIGHT;Najveća visina prikaza
+PREFERENCES_CACORRECTION;Ispravi hromatske aberacije
+PREFERENCES_CLEARDLG_LINE1;Čišćenje ostave
+PREFERENCES_CLEARDLG_LINE2;Ovo može da potraje nekoliko sekundi.
+PREFERENCES_CLEARDLG_TITLE;Sačekajte
+PREFERENCES_CLIPPINGIND;Pokazivači odsečenih delova
+PREFERENCES_CMETRICINTENT;Kolorimetrijska namera
+PREFERENCES_DARKFRAME;Tamni kadar
+PREFERENCES_DATEFORMAT;Format datuma
+PREFERENCES_DATEFORMATHINT;<i>Možete zadati sledeće formate:</i>\n<b>%y</b><i> :godina</i>\n<b>%m</b><i> : mesec</i>\n<b>%d</b><i> : dan</i>\n<i>\nU Srbiji se najviše koristi:</i>\n<b>%d.%m.%y</b>
+PREFERENCES_DCBENHANCE;Primeni DCB poboljšanje
+PREFERENCES_DCBITERATIONS;Broj DCB prolaza
+PREFERENCES_DEFAULTLANG;Jezik programa
+PREFERENCES_DEFAULTTHEME;Tema programa
+PREFERENCES_DEMOSAICINGALGO;Algoritam za sklapanje
+PREFERENCES_DIRDARKFRAMES;Direktorijum tamnog kadra
+PREFERENCES_DIRHOME;Lični direktorijum
+PREFERENCES_DIRLAST;Poslednji direktorijum
+PREFERENCES_DIROTHER;Neki drugi
+PREFERENCES_DIRSELECTDLG;Bira određeni direktorijum sa slikama...
+PREFERENCES_DIRSOFTWARE;Direktorijum sa instalacijom
+PREFERENCES_DMETHOD;Način
+PREFERENCES_EDITORCMDLINE;Proizvoljna naredba
+PREFERENCES_EDITORLAYOUT;Razmeštaj programa
+PREFERENCES_EXTERNALEDITOR;Spoljni uređivač
+PREFERENCES_FALSECOLOR;Koraci za prigušivanje lažne boje
+PREFERENCES_FBROWSEROPTS;Opcije razgledača datoteke
+PREFERENCES_FILEFORMAT;Format datoteke
+PREFERENCES_FORIMAGE;Za datoteke sa slikama
+PREFERENCES_FORRAW;Za RAW datoteke
+PREFERENCES_GIMPPATH;Direktorijum sa instaliranim Gimpom
+PREFERENCES_GREENEQUIL;Kalibracija zelene boje
+PREFERENCES_GTKTHEME;GTK tema
+PREFERENCES_HINT;Savet
+PREFERENCES_HLTHRESHOLD;Prag za odsečene svetle delove
+PREFERENCES_HOTDEADPIXFILT;Izbaci pregorele i mrtve piksele
+PREFERENCES_ICCDIR;ICC direktorijum
+PREFERENCES_IMPROCPARAMS;Podrazumevani parametri za obradu slika
+PREFERENCES_INTENT_ABSOLUTE;Apsolutno kolorimetrijski
+PREFERENCES_INTENT_PERCEPTUAL;Perceptualno
+PREFERENCES_INTENT_RELATIVE;Relativno kolorimetrijski
+PREFERENCES_INTENT_SATURATION;Zasićeni prikaz
+PREFERENCES_LINEDENOISE;Linijski filter šuma
+PREFERENCES_LIVETHUMBNAILS;„Živi“ prikazi (sporije)
+PREFERENCES_MONITORICC;Profil monitora
+PREFERENCES_MULTITAB;Režim u više listova
+PREFERENCES_OUTDIR;Izlazni direktorijum
+PREFERENCES_OUTDIRFOLDER;Sačuvaj u fasciklu
+PREFERENCES_OUTDIRFOLDERHINT;Stavlja sačuvane slike u 
+PREFERENCES_OUTDIRHINT;<i><i>Možete da zadate sledeće skraćenice za formatiranje:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nOvi znakovi za formatiranje se odnose na direktorijume, podputanje putanja do raw datoteke.\n\nNa primer, ukoliko je otvorena slika </i> <b>/home/ivan/slike/02.09.2010/dsc0012.nef</b><i>, skraćenice označavaju:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=slike, ...\n%p1=/home/ivan/slike/02.09.2010, %p2=/home/ivan/slike, %p3=/home/ivan, ...\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku pored originala, unesite:\n</i><b>%p1/%f\n</b><i>\nUkoliko želite da sačuvate izlaznu sliku u direktorijum „razvijene“ koji se nalazi gde i originalna slika, unesite:\n</i><b>%p1/razvijene/%f\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku u direktorijum „/home/ivan/razvijene“, a da struktura poddirektorijuma ostane očuvana, unesite:\n</i><b>%p2/razvijene/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Upotrebi šablon
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Možete da zadate sledeće skraćenice za formatiranje:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nOvi znakovi za formatiranje se odnose na direktorijume, podputanje putanja do raw datoteke.\n\nNa primer, ukoliko je otvorena slika </i> <b>/home/ivan/slike/02.09.2010/dsc0012.nef</b><i>, skraćenice označavaju:\n</i><b>%f=dsc0012, %d1=02.09.2010, %d2=slike, ...\n%p1=/home/ivan/slike/02.09.2010, %p2=/home/ivan/slike, %p3=/home/ivan, ...\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku pored originala, unesite:\n</i><b>%p1/%f\n</b><i>\nUkoliko želite da sačuvate izlaznu sliku u direktorijum „razvijene“ koji se nalazi gde i originalna slika, unesite:\n</i><b>%p1/razvijene/%f\n</b><i>\nUkoliko želite da sačuvate razvijenu sliku u direktorijum „/home/ivan/razvijene“, a da struktura poddirektorijuma ostane očuvana, unesite:\n</i><b>%p2/razvijene/%d1/%f</b>
+PREFERENCES_OVERLAY_FILENAMES;Postavi preko umanjenog prikaza
+PREFERENCES_PARSEDEXT;Ekstenzije za prikaz
+PREFERENCES_PARSEDEXTADD;Dodaj ekstenziju
+PREFERENCES_PARSEDEXTADDHINT;Dodaje upisanu ekstenziju na spisak
+PREFERENCES_PARSEDEXTDELHINT;Briše izabranu ekstenziju iz spiska
+PREFERENCES_PROFILEHANDLING;Rad sa profilima obrade
+PREFERENCES_PROFILELOADPR;Prioritet učitavanja profila
+PREFERENCES_PROFILEPRCACHE;Profil u ostavu
+PREFERENCES_PROFILEPRFILE;Profil uz ulaznu datoteku
+PREFERENCES_PROFILESAVECACHE;Sačuvaj rapametre obrade u ostavu
+PREFERENCES_PROFILESAVEINPUT;Sačuvaj paramtre obrade pored ulazne datoteke
+PREFERENCES_PROPERTY;Osobina
+PREFERENCES_PSPATH;Direktorijum sa instaliranim Adobe Fotošopom
+PREFERENCES_SELECTFONT;Izaberite font
+PREFERENCES_SELECTICCDIRDLG;Izaberite direktorijum sa ICC profilima...
+PREFERENCES_SELECTLANG;Jezik
+PREFERENCES_SELECTMONITORPROFDLG;Izaberite ICC profil ekrana...
+PREFERENCES_SELECTTHEME;Tema
+PREFERENCES_SET;Postavi
+PREFERENCES_SHOWBASICEXIF;Prikaži osnovne Exif podatke
+PREFERENCES_SHOWDATETIME;Prikaži datum i vreme
+PREFERENCES_SHOWONLYRAW;Prikaži samo RAW datoteke
+PREFERENCES_SHTHRESHOLD;Prag za odsečene tamne delove
+PREFERENCES_SINGLETAB;Režim u jednom listu
+PREFERENCES_STARTUPIMDIR;Direktorijum po pokretanju
+PREFERENCES_TAB_BROWSER;Pregled datoteka
+PREFERENCES_TAB_COLORMGR;Upravljanje bojama
+PREFERENCES_TAB_GENERAL;Opšte
+PREFERENCES_TAB_IMPROC;Obrada slike
+PREFERENCES_TAB_OUTPUT;Opcije na izlazu
+PREFERENCES_THUMBSIZE;Veličina umanjenog prikaza
+PREFERENCES_USESYSTEMTHEME; Koristi sistemsku temu
+PREFERENCES_WORKFLOW;Tok obrade
+PROFILEPANEL_FILEDLGFILTERANY;Sve datoteke
+PROFILEPANEL_FILEDLGFILTERPP;Profili za obradu
+PROFILEPANEL_LABEL;Profili obrade
+PROFILEPANEL_LOADDLGLABEL;Učitaj profil za obradu...
+PROFILEPANEL_PCUSTOM;Proizvoljno
+PROFILEPANEL_PFILE;Iz datoteke
+PROFILEPANEL_PLASTPHOTO;Iz poslednje slike
+PROFILEPANEL_PLASTSAVED;Od poslednjeg čuvanja
+PROFILEPANEL_PROFILE;Profil
+PROFILEPANEL_SAVEDLGLABEL;Čuva parametre za obradu...
+PROFILEPANEL_TOOLTIPCOPY;Kopira trenutni profil u ostavu
+PROFILEPANEL_TOOLTIPLOAD;Učitava profil iz datoteke
+PROFILEPANEL_TOOLTIPPASTE; Učitava profil iz 
+PROFILEPANEL_TOOLTIPSAVE;Čuva trenutni profil
+PROGRESSBAR_DECODING;Učitavam podatke iz raw datoteke...
+PROGRESSBAR_DEMOSAICING;Sklapam sliku...
+PROGRESSBAR_LOADING;Učitavam sliku...
+PROGRESSBAR_LOADJPEG;Učitavam JPEG datoteku...
+PROGRESSBAR_LOADPNG;Učitavam PNG datoteku...
+PROGRESSBAR_LOADTIFF;Učitavam TIFF datoteku...
+PROGRESSBAR_PROCESSING;Obrađujem sliku...
+PROGRESSBAR_READY;Čekam.
+PROGRESSBAR_SAVEJPEG;Čuvam JPEG datoteku...
+PROGRESSBAR_SAVEPNG;Čuvam PNG datoteku...
+PROGRESSBAR_SAVETIFF;Čuvam TIFF datoteku...
+PROGRESSDLG_LOADING;Učitavam datoteku...
+PROGRESSDLG_PROCESSING;Obrađujem sliku...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil izmenjen u razgledaču
+PROGRESSDLG_SAVING;Čuvam datoteku...
+QINFO_FOCALLENGTH;Žižna dužina
+QINFO_ISO;ISO
+QINFO_LENS;Objektiv
+QINFO_NOEXIF;Nisu dostupni Exif podaci.
+SAVEDLG_AUTOSUFFIX;Sam dodaj sufiks ukoliko datoteka već postoji
+SAVEDLG_FILEFORMAT;Format datoteke
+SAVEDLG_JPEGQUAL;JPEG kvalitet
+SAVEDLG_JPGFILTER;JPEG datoteke
+SAVEDLG_PNGCOMPR;PNG pakovanje
+SAVEDLG_PNGFILTER;PNG datoteke
+SAVEDLG_PUTTOQUEUE;Zakazuje sliku za obradu
+SAVEDLG_PUTTOQUEUEHEAD;Premešta sliku na početak zakazanih
+SAVEDLG_PUTTOQUEUETAIL;Premešta sliku na kraj zakazanih
+SAVEDLG_SAVEIMMEDIATELY;Odmah sačuvaj
+SAVEDLG_SAVESPP;Sačuvaj parametre obrade uz sliku
+SAVEDLG_TIFFFILTER;TIFF datoteke
+SAVEDLG_TIFFUNCOMPRESSED;Nezapakovani TIFF
+TOOLBAR_TOOLTIP_CROP;Postavlja okvir za isecanje (prečica: C)
+TOOLBAR_TOOLTIP_HAND;Alat za pomeranje (prečica: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Ispravlja liniju horizonta (prečica: S)
+TOOLBAR_TOOLTIP_WB;Određuje balans bele iz tačke (prečica: W)
+TP_CACORRECTION_BLUE;Plava
+TP_CACORRECTION_LABEL;Hromatke aberacije
+TP_CACORRECTION_RED;Crvena
+TP_CHMIXER_BLUE;Plava
+TP_CHMIXER_GREEN;Zelena
+TP_CHMIXER_LABEL;Mešanje kanala
+TP_CHMIXER_RED;Crvena
+TP_COARSETRAF_DEGREE;stepeni:
+TP_COARSETRAF_TOOLTIP_HFLIP;Izvrće sliku horizontalno
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Okreće sliku ulevo
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Okreće sliku udesno
+TP_COARSETRAF_TOOLTIP_VFLIP;Izvrće sliku vertikalno
+TP_COLORBOOST_ACHANNEL;Kanal „a“
+TP_COLORBOOST_AMOUNT;Količina
+TP_COLORBOOST_AVOIDCOLORCLIP;Izbegni odsecanje boja
+TP_COLORBOOST_BCHANNEL;Kanal „b“
+TP_COLORBOOST_CHAB;a i b
+TP_COLORBOOST_CHANNEL;Kanal
+TP_COLORBOOST_CHSEPARATE;razdvoji
+TP_COLORBOOST_ENABLESATLIMITER;Omogući ograničenje zasićenosti
+TP_COLORBOOST_LABEL;Pojačanje boja
+TP_COLORBOOST_SATLIMIT;Granica za zasićenost
+TP_COLORDENOISE_EDGESENSITIVE;Osetljivo na ivice
+TP_COLORDENOISE_EDGETOLERANCE;Tolerancija ivice
+TP_COLORDENOISE_LABEL;Uklaljanje kolornog šuma
+TP_COLORDENOISE_RADIUS;Poluprečnik
+TP_COLORSHIFT_BLUEYELLOW;Plava-Žuta
+TP_COLORSHIFT_GREENMAGENTA;Zelena-Magneta
+TP_COLORSHIFT_LABEL;Pomeraj boja
+TP_CROP_DPI;TPI=
+TP_CROP_FIXRATIO;Srazmerno:
+TP_CROP_GTDIAGONALS;Pravilo dijagonala
+TP_CROP_GTHARMMEANS1;Zlatni presek 1
+TP_CROP_GTHARMMEANS2;Zlatni presek 2
+TP_CROP_GTHARMMEANS3;Zlatni presek 3
+TP_CROP_GTHARMMEANS4;Zlatni presek 4
+TP_CROP_GTNONE;Ništa
+TP_CROP_GTRULETHIRDS;Pravilo trećina
+TP_CROP_GUIDETYPE;Vođice:
+TP_CROP_H;V
+TP_CROP_LABEL;Isecanje
+TP_CROP_SELECTCROP;    Izaberi oblast
+TP_CROP_W;Š
+TP_CROP_X;x
+TP_CROP_Y;y
+TP_DETAIL_AMOUNT;Količina
+TP_DIRPYRDENOISE_CHROMA;Boja
+TP_DIRPYRDENOISE_GAMMA;Gama
+TP_DIRPYRDENOISE_LABEL;Direkciono piramidno uklanjanje šuma
+TP_DIRPYRDENOISE_LUMA;Luminansa
+TP_DIRPYREQUALIZER_LABEL;Detaljni nivo kontrasta
+TP_DIRPYREQUALIZER_LUMACOARSEST;grubo
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
+TP_DIRPYREQUALIZER_LUMAFINEST;fino
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutralno
+TP_DIRPYREQUALIZER_THRESHOLD;Prag
+TP_DISTORTION_AMOUNT;Količina
+TP_DISTORTION_LABEL;Izobličenja
+TP_EQUALIZER_CONTRAST_MINUS;Kontrast -
+TP_EQUALIZER_CONTRAST_PLUS;Kontrast +
+TP_EQUALIZER_FINEST;najfinije
+TP_EQUALIZER_LABEL;Talasno ujednačenje
+TP_EQUALIZER_LARGEST;najgrublje
+TP_EQUALIZER_NEUTRAL;Neutralno
+TP_EXPOSURE_AUTOLEVELS;Auto-nivoi
+TP_EXPOSURE_BLACKLEVEL;Crna
+TP_EXPOSURE_BRIGHTNESS;Osvetljenost
+TP_EXPOSURE_CLIP;Odseci
+TP_EXPOSURE_COMPRHIGHLIGHTS;Sabijanje svetlog
+TP_EXPOSURE_COMPRSHADOWS;Sabijanje senki
+TP_EXPOSURE_CONTRAST;Kontrast
+TP_EXPOSURE_CURVEEDITOR;Kriva nijansi
+TP_EXPOSURE_EXPCOMP;Kompenzacija
+TP_EXPOSURE_LABEL;Ekspozicija
+TP_EXPOSURE_SATURATION;Zasićenost
+TP_HLREC_CIELAB;CieLab stapanje
+TP_HLREC_COLOR;Propaginacija boje
+TP_HLREC_LABEL;Čupanje svetlih delova
+TP_HLREC_LUMINANCE;Izvlačenje luminanse
+TP_HLREC_METHOD;Način: 
+TP_HSVEQUALIZER1;Crvena
+TP_HSVEQUALIZER2;Žuta
+TP_HSVEQUALIZER3;Limun
+TP_HSVEQUALIZER4;Zelena
+TP_HSVEQUALIZER5;Vodena
+TP_HSVEQUALIZER6;Plava
+TP_HSVEQUALIZER7;Ljubičasta
+TP_HSVEQUALIZER8;Magneta
+TP_HSVEQUALIZER_CHANNEL;HSV kanal
+TP_HSVEQUALIZER_HUE;Nijansa
+TP_HSVEQUALIZER_LABEL;Ujednačenje HSV kanala
+TP_HSVEQUALIZER_NEUTRAL;Neutralno
+TP_HSVEQUALIZER_SAT;Zasićenost
+TP_HSVEQUALIZER_VAL;Vrednost
+TP_ICM_FILEDLGFILTERANY;Bilo koja datoteka
+TP_ICM_FILEDLGFILTERICM;ICC profili
+TP_ICM_GAMMABEFOREINPUT;Profil za primenu Game
+TP_ICM_INPUTCAMERA;Podrazumevano iz aparata
+TP_ICM_INPUTCUSTOM;Proizvoljno
+TP_ICM_INPUTDLGLABEL;Izaberite ulazni ICC profil...
+TP_ICM_INPUTEMBEDDED;Ugnježđeno, ukoliko je moguće
+TP_ICM_INPUTPROFILE;Ulazni profil
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;No ICM: sRGB izlaz
+TP_ICM_OUTPUTDLGLABEL;Izaberite izlazni ICC profil...
+TP_ICM_OUTPUTPROFILE;Izlazni profil
+TP_ICM_SAVEREFERENCE;Sačuvaj sliku kao referencu za profil
+TP_ICM_WORKINGPROFILE;Radni profil
+TP_IMPULSEDENOISE_LABEL;Impulsno uklanjanje šuma
+TP_IMPULSEDENOISE_THRESH;Prag
+TP_LABCURVE_BRIGHTNESS;Osvetljenost
+TP_LABCURVE_CONTRAST;Kontrast
+TP_LABCURVE_CURVEEDITOR;Kriva svetlosti
+TP_LABCURVE_LABEL;Lab kriva
+TP_LABCURVE_SATURATION;Zasićenost
+TP_LENSGEOM_AUTOCROP;Sam iseci
+TP_LENSGEOM_FILL;Sam popuni
+TP_LENSGEOM_LABEL;Objektiv i geometrija
+TP_LUMACURVE_BLACKLEVEL;Crna
+TP_LUMACURVE_BRIGHTNESS;Osvetljenje
+TP_LUMACURVE_COMPRHIGHLIGHTS;Sabijanje svetlog
+TP_LUMACURVE_COMPRSHADOWS;Sabijanje senki
+TP_LUMACURVE_CONTRAST;Kontrast
+TP_LUMACURVE_CURVEEDITOR;Kriva liminanse
+TP_LUMACURVE_LABEL;Kriva luminanse
+TP_LUMADENOISE_EDGETOLERANCE;Tolerancija ivice
+TP_LUMADENOISE_LABEL;Uklanjanje svetlosnog šuma
+TP_LUMADENOISE_RADIUS;Poluprečnik
+TP_PERSPECTIVE_HORIZONTAL;Horizontalna
+TP_PERSPECTIVE_LABEL;Perspektiva
+TP_PERSPECTIVE_VERTICAL;Vertikalna
+TP_PREPROCESS_DARKFRAME;Tamni kadar
+TP_PREPROCESS_DFAUTOSELECT;Sam izaberi
+TP_RAWPANEL_DEMOSAICING;Rasklapanje mozaika
+TP_RAWPANEL_PREPROCESSING;Predobrada
+TP_RESIZE_BICUBIC;Bikubično
+TP_RESIZE_BICUBICSF;Bikubično (mekše)
+TP_RESIZE_BICUBICSH;Bikubično (oštrije)
+TP_RESIZE_BILINEAR;Bilinearno
+TP_RESIZE_DOWNSCALEB;Smanjenje razmere (bolje)
+TP_RESIZE_DOWNSCALEF;Smanjenje razmere (brže)
+TP_RESIZE_FULLSIZE;Stvarna veličina slike:
+TP_RESIZE_H;V:
+TP_RESIZE_HEIGHT;Visinu
+TP_RESIZE_LABEL;Veličina slike
+TP_RESIZE_LANCZOS;Lanhoz
+TP_RESIZE_METHOD;Način: 
+TP_RESIZE_NEAREST;Najbliže
+TP_RESIZE_SCALE;Umanjenje
+TP_RESIZE_SPECIFY;Izaberi:
+TP_RESIZE_W;Š:
+TP_RESIZE_WIDTH;Širinu
+TP_ROTATE_AUTOCROP;Sam iseci
+TP_ROTATE_DEGREE;Stepeni:
+TP_ROTATE_FILL;Popuni
+TP_ROTATE_LABEL;Rotacija
+TP_ROTATE_SELECTLINE;    Postavi pravu liniju
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Svetlo
+TP_SHADOWSHLIGHTS_HLTONALW;Širina tonova
+TP_SHADOWSHLIGHTS_LABEL;Senke/Svetlo
+TP_SHADOWSHLIGHTS_LOCALCONTR;Lokalni kontrast
+TP_SHADOWSHLIGHTS_RADIUS;Poluprečnik
+TP_SHADOWSHLIGHTS_SHADOWS;Senke
+TP_SHADOWSHLIGHTS_SHTONALW;Širina tonova
+TP_SHARPENING_AMOUNT;Količina
+TP_SHARPENING_EDRADIUS;Poluprečnik
+TP_SHARPENING_EDTOLERANCE;Tolerancija ivice
+TP_SHARPENING_HALOCONTROL;Ukloni oreol
+TP_SHARPENING_HCAMOUNT;Količina
+TP_SHARPENING_LABEL;Oštrenje
+TP_SHARPENING_METHOD;Način
+TP_SHARPENING_ONLYEDGES;Izoštri samo ivice
+TP_SHARPENING_RADIUS;Poluprečnik
+TP_SHARPENING_RLD;RL dekonvolucija
+TP_SHARPENING_RLD_AMOUNT;Količina
+TP_SHARPENING_RLD_DAMPING;Prigušivanje
+TP_SHARPENING_RLD_ITERATIONS;Ponavljanja
+TP_SHARPENING_THRESHOLD;Prag
+TP_SHARPENING_USM;Oštrina maske
+TP_VIGNETTING_AMOUNT;Količina
+TP_VIGNETTING_CENTER;Centar
+TP_VIGNETTING_CENTER_X;Centar X
+TP_VIGNETTING_CENTER_Y;Centar Y
+TP_VIGNETTING_LABEL;Vinjetarenje
+TP_VIGNETTING_RADIUS;Poluprečnik
+TP_VIGNETTING_STRENGTH;Jačina
+TP_WBALANCE_AUTO;Sam odredi
+TP_WBALANCE_CAMERA;Iz aparata
+TP_WBALANCE_CUSTOM;Proizvoljno
+TP_WBALANCE_GREEN;Zelenilo
+TP_WBALANCE_LABEL;Balans bele
+TP_WBALANCE_METHOD;Način:
+TP_WBALANCE_SIZE;Veličina:
+TP_WBALANCE_SPOTWB;Iz tačke
+TP_WBALANCE_TEMPERATURE;Temperatura
+ZOOMBAR_DETAIL;Detalji
+ZOOMBAR_HUGE;Najveće
+ZOOMBAR_LARGE;Veliko
+ZOOMBAR_NORMAL;Normalno
+ZOOMBAR_PREVIEW;Pregled
+ZOOMBAR_SCALE;Umanjeno
+ZOOMBAR_SMALL;Malo
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Otvara novi prozor sa detaljima
+ZOOMPANEL_ZOOM100;Povećava pregled na 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Uklapa sliku u veličinu prozora <b>F</b>
+ZOOMPANEL_ZOOMIN;Uvećava prikaz slike <b>+</b>
+ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
+﻿HISTOGRAM_BUTTON_B;P
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!EDITWINDOW_TITLE;Image Edit
+!EXIFFILTER_FILETYPE;File Type
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
+!MAIN_FRAME_EDITOR;Editor
+!PREFERENCES_CABLUE;CA Blue manual correction
+!PREFERENCES_CARED;CA Red manual correction
+!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CROP_GTGRID;Grid
+!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_RADIUS;Radius
+!TP_DEFRINGE_THRESHOLD;Threshold
+!TP_ICM_INPUTNONE;No profile
