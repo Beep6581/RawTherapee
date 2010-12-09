@@ -645,9 +645,9 @@ ZOOMBAR_SMALL;小
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
@@ -671,6 +671,7 @@ ZOOMBAR_SMALL;小
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+!MAIN_FRAME_EDITOR;Editor
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_B_NA;B = n/a
@@ -717,11 +718,13 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold

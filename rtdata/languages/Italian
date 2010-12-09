@@ -30,6 +30,7 @@ EDITWINDOW_TITLE;Modifica immagine
 EXIFFILTER_APERTURE;Diaframma
 EXIFFILTER_CAMERA;Fotocamera
 EXIFFILTER_DIALOGLABEL;Filtro Exif
+EXIFFILTER_FILETYPE;Tipo file
 EXIFFILTER_FOCALLEN;Lunghezza focale
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Obiettivo
@@ -146,6 +147,9 @@ HISTORY_MSG_101;HSV EQ -- Colore
 HISTORY_MSG_102;HSV EQ -- Saturazione
 HISTORY_MSG_103;HSV EQ -- Valore
 HISTORY_MSG_104;Equalizzatore HSV
+HISTORY_MSG_105;Rimozione margini colorati
+HISTORY_MSG_106;Raggio rimozione margini
+HISTORY_MSG_107;Soglia rimozione margini
 HISTORY_MSG_10;Compressione ombre
 HISTORY_MSG_11;Curva di tono
 HISTORY_MSG_12;Esposizione automatica
@@ -397,6 +401,7 @@ PARTIALPASTE_EXPOSURE;Esposizione
 PARTIALPASTE_HLRECOVERY;Recupero alteluci
 PARTIALPASTE_ICMSETTINGS;Parametri ICM
 PARTIALPASTE_IPTCINFO;Informazioni IPTC
+PARTIALPASTE_LABCURVE;Curva Lab
 PARTIALPASTE_LENSGROUP;Parametri correlati all'ottica
 PARTIALPASTE_LUMACURVE;Curva di luminanza
 PARTIALPASTE_LUMADENOISE;Riduzione rumore di luminanza
@@ -414,6 +419,7 @@ PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
 PREFERENCES_BATCH_PROCESSING;Elaborazione batch
 PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BLINKCLIPPED;Lampeggia le aree tosate
+PREFERENCES_CABLUE;Correzione AC blu manuale
 PREFERENCES_CACHECLEARALL;Ripulisci tutto
 PREFERENCES_CACHECLEARPROFILES;Ripulisci i profili
 PREFERENCES_CACHECLEARTHUMBS;Ripulisci le miniature
@@ -427,6 +433,7 @@ PREFERENCES_CACHESTRAT;Strategia di precaricamento
 PREFERENCES_CACHETHUMBFORM;Formato delle miniature precaricate
 PREFERENCES_CACHETHUMBHEIGHT;Massima quantità di miniature
 PREFERENCES_CACORRECTION;Correzione AC automatica
+PREFERENCES_CARED;Correzione AC rossa manuale
 PREFERENCES_CLEARDLG_LINE1;Ripulitura dati in memoria
 PREFERENCES_CLEARDLG_LINE2;Questa operazione potrebbe impiegare alcuni secondi.
 PREFERENCES_CLEARDLG_TITLE;Prego attendere
@@ -783,10 +790,6 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-EXIFFILTER_FILETYPE;Tipo file
-HISTORY_MSG_105;Rimozione margini colorati
-HISTORY_MSG_106;Raggio rimozione margini
-HISTORY_MSG_107;Soglia rimozione margini
-PARTIALPASTE_LABCURVE;Curva Lab
-PREFERENCES_CABLUE;Correzione AC blu manuale
-PREFERENCES_CARED;Correzione AC rossa manuale
+!MAIN_FRAME_EDITOR;Editor
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CROP_GTGRID;Grid

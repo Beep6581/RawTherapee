@@ -29,12 +29,12 @@ EDITWINDOW_TITLE;Edition d'Image
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
+EXIFFILTER_FILETYPE;Type de fichier
 EXIFFILTER_FOCALLEN;Longueur focale
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objectif
 EXIFFILTER_METADATAFILTER;Activer les filtres sur les Métadonnées
 EXIFFILTER_SHUTTER;Obturateur
-EXIFFILTER_FILETYPE;Type de fichier
 EXIFPANEL_ADDEDIT;Ajouter/Éditer
 EXIFPANEL_ADDEDITHINT;Ajoute ou édite une donnée
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Saisissez une valeur
@@ -417,6 +417,7 @@ PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
+PREFERENCES_CABLUE;Correction manuelle de\nl'aberration chromatique bleue
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
 PREFERENCES_CACHECLEARTHUMBS;Nettoyer les vignettes
@@ -431,7 +432,6 @@ PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CACORRECTION;Correction automatique de\nl'aberration chromatique
 PREFERENCES_CARED;Correction manuelle de\nl'aberration chromatique rouge
-PREFERENCES_CABLUE;Correction manuelle de\nl'aberration chromatique bleue
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
@@ -769,3 +769,13 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!MAIN_FRAME_EDITOR;Editor
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CROP_GTGRID;Grid

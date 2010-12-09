@@ -690,9 +690,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
 !HISTORY_MSG_87;Impulse noise reduction
@@ -705,6 +705,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_98;Demosaicing
 !HISTORY_MSG_99;Preprocessing
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_FRAME_EDITOR;Editor
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -749,10 +750,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold

@@ -149,9 +149,9 @@
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_10;Shadow Compression
 !HISTORY_MSG_11;Tone Curve
 !HISTORY_MSG_12;Auto Exposure
@@ -327,6 +327,7 @@
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 !MAIN_FRAME_BATCHQUEUE;Batch Queue
+!MAIN_FRAME_EDITOR;Editor
 !MAIN_FRAME_FILEBROWSER;File Browser
 !MAIN_FRAME_PLACES;Places
 !MAIN_FRAME_PLACES_ADD;Add
@@ -509,6 +510,7 @@
 !PREFERENCES_SHOWONLYRAW;Show only RAW files
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 !PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_STARTUPIMDIR;Image directory at startup
 !PREFERENCES_TAB_BROWSER;File Browser
 !PREFERENCES_TAB_COLORMGR;Color Management
@@ -600,6 +602,7 @@
 !TP_CROP_DPI;DPI=
 !TP_CROP_FIXRATIO;Fix Ratio:
 !TP_CROP_GTDIAGONALS;Rule of diagonals
+!TP_CROP_GTGRID;Grid
 !TP_CROP_GTHARMMEANS1;Harmonic means 1
 !TP_CROP_GTHARMMEANS2;Harmonic means 2
 !TP_CROP_GTHARMMEANS3;Harmonic means 3
