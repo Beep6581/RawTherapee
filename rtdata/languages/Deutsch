@@ -366,8 +366,8 @@ MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOGGLE_BEFORE_AFTER;V|N
 MAIN_TOOLTIP_HIDEFP;Zeigen/Verstecken von Verzeichnis- und Datei-Browser (Taste F)
 MAIN_TOOLTIP_HIDEHP;Zeigen/Verstecken linke Seite (Abfolge der Änderungen, Taste H)
-MAIN_TOOLTIP_INDCLIPPEDH;zu helle Bereiche blinken
-MAIN_TOOLTIP_INDCLIPPEDS;zu dunkle Bereiche blinken
+MAIN_TOOLTIP_INDCLIPPEDH;zu helle Bereiche blinken (Taste <)
+MAIN_TOOLTIP_INDCLIPPEDS;zu dunkle Bereiche blinken (Taste >)
 MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Kurze Info über das Bild
 MAIN_TOOLTIP_SAVE;Speichere Bild im Standard-Verzeichnis

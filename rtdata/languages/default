@@ -354,8 +354,8 @@ MAIN_TAB_TRANSFORM;Transform
 MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>H</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication
-MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication
+MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
+MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
 MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVE;Save image to the default folder

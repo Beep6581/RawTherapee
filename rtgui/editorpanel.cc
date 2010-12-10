@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -673,6 +672,13 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
             case GDK_f:
             case GDK_F:
                 iarea->imageArea->zoomPanel->zoomFitClicked();
+                return true;
+
+            case GDK_less:
+                iarea->imageArea->indClippedPanel->toggleClipped(true);
+                return true;
+            case GDK_greater:
+                iarea->imageArea->indClippedPanel->toggleClipped(false);
                 return true;
 
             case GDK_F5:
