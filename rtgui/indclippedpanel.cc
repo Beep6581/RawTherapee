@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -45,7 +44,14 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia) {
 	show_all ();
 }
 
-void IndicateClippedPanel::buttonToggled () {
+// inverts a toggle programmatically
+void IndicateClippedPanel::toggleClipped (bool highlights) {
+    if (highlights)
+        indclippedh->set_active(!indclippedh->get_active());
+    else
+        indclippeds->set_active(!indclippeds->get_active());
+}
 
+void IndicateClippedPanel::buttonToggled () {
 	imageArea->queue_draw ();
 }
