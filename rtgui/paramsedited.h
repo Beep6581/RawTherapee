@@ -265,9 +265,9 @@ class HSVEqualizerParamsEdited {
 	
 public:
 	bool enabled;
-	bool sat[6];
-	bool val[6];
-	bool hue[6];
+	bool sat[8];
+	bool val[8];
+	bool hue[8];
 	int	hsvchannel;
 };
 
