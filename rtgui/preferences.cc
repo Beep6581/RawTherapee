@@ -735,7 +735,7 @@ void Preferences::storePreferences () {
 
 
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
-	moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
+	moptions.rtSettings.iccDirectory        = iccDir->get_current_folder ();
 	moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
 
     if (sdcurrent->get_active ()) 
@@ -799,7 +799,7 @@ void Preferences::fillPreferences () {
     if (Glib::file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
-        iccDir->set_filename (moptions.rtSettings.iccDirectory);
+        iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
     theme->set_active_text (moptions.theme);
