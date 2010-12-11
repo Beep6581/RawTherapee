@@ -740,8 +740,8 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
 	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
-	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_boolean ("RAW", "CARed" );
-	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_boolean ("RAW", "CABlue" );
+	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_double ("RAW", "CARed" );
+	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_double ("RAW", "CABlue" );
 	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" );
 	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
 	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
