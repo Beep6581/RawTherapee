@@ -215,7 +215,7 @@ void CurveEditorGroup::newLine() {
 		int j = numberOfPackedCurve;
 		for (int i = (int)(curveEditors.size())-1; i >= j; i--)
 		{
-			headerBox->pack_end (*curveEditors[i]->curveType, Gtk::PACK_EXPAND_WIDGET, 2);
+			headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, Gtk::PACK_EXPAND_WIDGET, 2);
 			numberOfPackedCurve++;
 		}
 
