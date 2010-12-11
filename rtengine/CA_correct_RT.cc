@@ -153,9 +153,9 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	//temporary parameters for tile CA evaluation
 	float	gdiff, deltgrb;
 	//interpolated G at edge of plaquette
-	float	Ginthfloor, Ginthceil, Gint, RBint, gradwt;
+	float	Ginthfloor, Ginthceil, Gint, gradwt;
 	//interpolated color difference at edge of plaquette
-	float	grbdiffinthfloor, grbdiffinthceil, grbdiffint, grbdiffold;
+	float	grbdiffint, grbdiffold;
 	//data for evaluation of block CA shift variance
 	float	blockave[2][3]={{0,0,0},{0,0,0}}, blocksqave[2][3]={{0,0,0},{0,0,0}}, blockdenom[2][3]={{0,0,0},{0,0,0}}, blockvar[2][3];
 	//low and high pass 1D filters of G in vertical/horizontal directions
@@ -790,35 +790,20 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 
 					grbdiffold = rgb[indx][1]-rgb[indx][c];
 
-					//interpolate color difference from optical R/B locations to grid locations
-					grbdiffinthfloor=(1-shifthfrac[c]/2)*grbdiff[indx]+(shifthfrac[c]/2)*grbdiff[indx-2*GRBdir[1][c]];
-					grbdiffinthceil=(1-shifthfrac[c]/2)*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+(shifthfrac[c]/2)*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]];
-					//grbdiffint is bilinear interpolation of G-R/G-B at grid point
-					grbdiffint=(1-shiftvfrac[c]/2)*grbdiffinthfloor+(shiftvfrac[c]/2)*grbdiffinthceil;
+					//gradient weights using difference from G at CA shift points and G at grid points
+					p[0]=1/(eps+fabs(rgb[indx][1]-gshift[indx]));
+					p[1]=1/(eps+fabs(rgb[indx][1]-gshift[indx-2*GRBdir[1][c]]));
+					p[2]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc]));
+					p[3]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]]));
+					
+					grbdiffint = (p[0]*grbdiff[indx]+p[1]*grbdiff[indx-2*GRBdir[1][c]]+ \
+								  p[2]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+p[3]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]])/(p[0]+p[1]+p[2]+p[3]);
 					
 					//now determine R/B at grid points using interpolated color differences and interpolated G value at grid point
-					RBint=rgb[indx][1]-grbdiffint;
-					
-					if (fabs(RBint-rgb[indx][c])<0.25*(RBint+rgb[indx][c])) {
-						if (fabs(grbdiffold)>fabs(grbdiffint) ) {
-							rgb[indx][c]=RBint;
-						}
-					} else {
-						
-						//gradient weights using difference from G at CA shift points and G at grid points
-						p[0]=1/(eps+fabs(rgb[indx][1]-gshift[indx]));
-						p[1]=1/(eps+fabs(rgb[indx][1]-gshift[indx-2*GRBdir[1][c]]));
-						p[2]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc]));
-						p[3]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]]));
-						
-						grbdiffint = (p[0]*grbdiff[indx]+p[1]*grbdiff[indx-2*GRBdir[1][c]]+ \
-									  p[2]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+p[3]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]])/(p[0]+p[1]+p[2]+p[3]);
-						
-						//now determine R/B at grid points using interpolated color differences and interpolated G value at grid point
-						if (fabs(grbdiffold)>fabs(grbdiffint) ) {
-							rgb[indx][c]=rgb[indx][1]-grbdiffint;
-						}
+					if (fabs(grbdiffold)>fabs(grbdiffint) ) {
+						rgb[indx][c]=rgb[indx][1]-grbdiffint;
 					}
+					
 					
 					//if color difference interpolation overshot the correction, just desaturate
 					if (grbdiffold*grbdiffint<0) {
