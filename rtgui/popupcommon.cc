@@ -28,13 +28,17 @@ extern Glib::ustring argv0;
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 	button = thisButton;
 	hasMenu = false;
-	menuSymbol = 0;
-	imageContainer = Gtk::manage( new Gtk::HBox());
+	imageContainer = Gtk::manage( new Gtk::HBox(false, 0));
+	button->set_relief (Gtk::RELIEF_NORMAL);
+	button->set_border_width (0);
 	button->add(*imageContainer);
 	if (label.size()) {
 		Gtk::Label* buttonLabel = Gtk::manage ( new Gtk::Label(label + " ") );
 		imageContainer->pack_start(*buttonLabel, Gtk::PACK_SHRINK, 0);
 	}
+	// Create the global container and put the button in it
+	buttonGroup = Gtk::manage( new Gtk::HBox(false, 0));
+	buttonGroup->pack_start(*button, Gtk::PACK_EXPAND_WIDGET, 0);
 	// Create the list entry
 	imagePaths.clear();
 	images.clear();
@@ -56,7 +60,6 @@ PopUpCommon::~PopUpCommon () {
         delete *i;
     }
     if (menu) delete menu;
-    if (menuSymbol) delete menuSymbol;
     if (buttonImage) delete buttonImage;
 }
 
@@ -85,15 +88,19 @@ bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
 			imageContainer->pack_start(*buttonImage,Gtk::PACK_EXPAND_WIDGET);
 			selected = 0;
 		}
-		newItem->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &PopUpCommon::entrySelected), currPos-1));
-		menu->attach (*newItem, 0, 1, currPos-1, currPos);
-		// When there is at least 2 choice, we add the RMB connector
-		if (images.size() == 2) {
-			button->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
-			menuSymbol = new Gtk::Image(safe_locale_from_utf8(argv0+"/images/menuSymbol.png"));
-			imageContainer->pack_start(*menuSymbol,Gtk::PACK_SHRINK, 2);
+		// When there is at least 1 choice, we add the arrow button
+		if (images.size() == 1) {
+			Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
+			Gtk::Arrow* arrowObject = Gtk::manage( new Gtk::Arrow(Gtk::ARROW_DOWN, Gtk::SHADOW_NONE) );
+			arrowButton->add(*arrowObject); //menuSymbol);
+			arrowButton->set_relief (Gtk::RELIEF_NONE);
+			arrowButton->set_border_width (0);
+			buttonGroup->pack_start(*arrowButton,Gtk::PACK_SHRINK, 0);
+			arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
 			hasMenu = true;
 		}
+		newItem->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &PopUpCommon::entrySelected), currPos-1));
+		menu->attach (*newItem, 0, 1, currPos-1, currPos);
 		// The item has been created
 		added = true;
 	}
@@ -127,7 +134,7 @@ void PopUpCommon::show() {
 	menu->reposition();
 	setButtonHint();
 	menu->show_all();
-	button->show_all();
+	buttonGroup->show_all();
 }
 
 void PopUpCommon::setButtonHint() {
@@ -137,7 +144,7 @@ void PopUpCommon::setButtonHint() {
 }
 
 void PopUpCommon::showMenu(GdkEventButton* event) {
-	if (event->button == 3)	menu->popup(event->button, event->time);
+	if (event->button == 1)	menu->popup(event->button, event->time);
 }
 
 void PopUpCommon::set_tooltip_text (const Glib::ustring &text) {
