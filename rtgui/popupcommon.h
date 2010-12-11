@@ -31,6 +31,7 @@ class PopUpCommon {
 public:
 	typedef sigc::signal<void, int> type_signal_changed;
 	type_signal_changed signal_changed();
+	Gtk::HBox* buttonGroup;		// this is the widget to be packed
 
 	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
 	~PopUpCommon ();
@@ -45,7 +46,7 @@ private:
 	type_signal_changed message;
 
 	/*
-	   TODO: MenuItem::get_label() seems to be buggy : it doesn't return any string, or an empty string !?
+	   TODO: MenuItem::get_label() doesn't return any string, or an empty string !?
 	   That's why we store entries strings in sItems, but it would be nice to get ride of it...
 	*/
 	std::vector<Glib::ustring> sItems;
@@ -54,7 +55,6 @@ private:
 	std::vector<Gtk::ImageMenuItem*> items;
 	Glib::ustring buttonHint;
 	Gtk::Image* buttonImage;
-	Gtk::Image* menuSymbol;
 	Gtk::HBox* imageContainer;
 	Gtk::Menu* menu;
 	Gtk::Button* button;
