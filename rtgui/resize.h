@@ -29,12 +29,14 @@ class Resize : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
     Gtk::CheckButton*  enabled;
     Adjuster*          scale;
     Gtk::VBox*         sizeBox;
+    Gtk::ComboBoxText* appliesTo;
     Gtk::ComboBoxText* method;
     Gtk::ComboBoxText* spec;
     Gtk::SpinButton*   w;
     Gtk::SpinButton*   h;
     int                maxw, maxh;
-    sigc::connection   wconn, hconn, enaConn;
+    int                cropw, croph;
+    sigc::connection   sconn, aconn, wconn, hconn, enaConn;
     bool               wDirty, hDirty, lastEnabled;
 
   public:
@@ -47,14 +49,24 @@ class Resize : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
 
-    void adjusterChanged (Adjuster* a, double newval);
-    void entryWChanged   ();
-    void entryHChanged   ();
-    void methodChanged   ();
-    void specChanged     ();
-    void sizeChanged     (int w, int h, int ow, int oh);
-    void setDimensions   (int w, int h, int ow, int oh);
-    void enabledToggled  ();
+    void adjusterChanged  (Adjuster* a, double newval);
+    void entryWChanged    ();
+    void entryHChanged    ();
+    void appliesToChanged ();
+    void methodChanged    ();
+    void specChanged      ();
+    void update           (bool isCropped, int cw, int ch, int ow=0, int oh=0);
+    void setGUIFromCrop   (bool isCropped, int cw, int ch);
+    void sizeChanged      (int w, int h, int ow, int oh);
+    void setDimensions    ();
+    void enabledToggled   ();
+
+  private:
+    void fitBoxScale ();
+    int getComputedWidth ();
+   	int getComputedHeight ();
+   	void notifyBBox ();
+    void updateGUI ();
 };
 
 #endif

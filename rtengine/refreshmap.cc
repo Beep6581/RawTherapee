@@ -93,14 +93,14 @@ ALL,              // EvOProfile,
 ALL,              // EvIProfile,
 TRANSFORM,        // EvVignetting,
 RGBCURVE,         // EvChMixer,
-ALL,              // EvResizeScale,
-ALL,              // EvResizeMethod,
+RESIZE,           // EvResizeScale,
+RESIZE,           // EvResizeMethod,
 EXIF,             // EvExif,
 IPTC,             // EvIPTC
-ALL,              // EvResizeSpec,
-ALL,              // EvResizeWidth
-ALL,              // EvResizeHeight
-ALL,              // EvResizeEnabled
+RESIZE,           // EvResizeSpec,
+RESIZE,           // EvResizeWidth
+RESIZE,           // EvResizeHeight
+RESIZE,           // EvResizeEnabled
 ALL,              // EvProfileChangeNotification
 RETINEX,          // EvShrHighQuality
 TRANSFORM,        // EvPerspCorr
@@ -127,5 +127,6 @@ RGBCURVE,         // EvHSVEqEnabled,
 DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
+RESIZE,           // EvResizeBoundingBox
+RESIZE            // EvResizeAppliesTo
 };
-

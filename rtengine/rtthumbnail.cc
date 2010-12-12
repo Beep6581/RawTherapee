@@ -728,14 +728,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     else
         myscale = scale * thumbImg->height / fh;
 
-    if (params.resize.enabled) {
-        if (params.resize.dataspec==0)
-            myscale *= params.resize.scale;
-        else if (params.resize.dataspec==1)
-            myscale *= (double)params.resize.width / (params.coarse.rotate==90 || params.coarse.rotate==270 ? thumbImg->height : thumbImg->width) / scale;
-        else if (params.resize.dataspec==2)
-            myscale *= (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? thumbImg->width : thumbImg->height) / scale;
-    }
     myscale = 1.0 / myscale;
 
 /*    // apply crop
@@ -767,6 +759,7 @@ int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight)
 
 void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& params, int& fullw, int& fullh) {
 
+    // WARNING: When downscaled, the ratio have loosed a lot of precision, so we can't get back the exact initial dimensions
     double fw = thumbImg->width*scale;
     double fh = thumbImg->height*scale;
     
@@ -778,17 +771,9 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& params, in
         fullw = fw;
         fullh = fh;
     }
-    else if (params.resize.dataspec==0) {
-        fullw = fw*params.resize.scale;
-        fullh = fh*params.resize.scale;
-    }
-    else if (params.resize.dataspec==1) {
-        fullw = params.resize.width;
-        fullh = (double)fh*params.resize.width/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
-    }
-    else if (params.resize.dataspec==2) {
-        fullw = (double)fw*params.resize.height/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
-        fullh = params.resize.height;
+    else {
+        fullw = (int)((double)fw+0.5);
+        fullh = (int)((double)fh+0.5);
     }
 }
 

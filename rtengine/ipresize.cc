@@ -170,12 +170,12 @@ void Lanczos(const Image16* src, Image16* dst, double scale)
     delete[] lb;
 }
 
-void ImProcFunctions::resize (Image16* src, Image16* dst) {
+void ImProcFunctions::resize (Image16* src, Image16* dst, double dScale) {
 
     //time_t t1 = clock();
 
     if(params->resize.method == "Lanczos") {
-        Lanczos(src, dst, params->resize.scale);
+        Lanczos(src, dst, dScale);
     }
 	else if(params->resize.method == "Downscale (Better)") {
         // small-scale algorithm by Ilia
@@ -187,8 +187,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
         // this algorithm is much slower on small factors than others, because it uses all pixels of the SOURCE image
         // Ilia Popov ilia_popov@rambler.ru 2010
 
-        double delta = 1.0 / params->resize.scale;
-        double k = params->resize.scale * params->resize.scale;
+        double delta = 1.0 / dScale;
+        double k = dScale * dScale;
 
 		#pragma omp parallel for if (multiThread)
         for(int i = 0; i < dst->height; i++) {
@@ -266,7 +266,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
         // for weights at all
         // Ilia Popov ilia_popov@rambler.ru 5.04.2010
 
-        double delta = 1.0 / params->resize.scale;
+        double delta = 1.0 / dScale;
 
         int p = (int) delta;
 
@@ -339,7 +339,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             double wx[4], wy[4];
-            double Dy = i / params->resize.scale;
+            double Dy = i / dScale;
             int yc  =  (int) Dy; Dy -= (double)yc;
             int ys = yc - 1; // smallest y-index used for interpolation
             // compute vertical weights
@@ -350,7 +350,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
             wy[1] = -t1y*Dy + 1.0 - t2y;
             wy[0] = -t1y*(Dy-1.0);
             for (int j=0; j<dst->width; j++) {
-                double Dx = j / params->resize.scale;
+                double Dx = j / dScale;
                 int xc  =  (int) Dx; Dx -= (double)xc;
                 int xs = xc - 1; // smallest x-index used for interpolation
                 if (ys >= 0 && ys <src->height-3 && xs >= 0 && xs <= src->width-3) {
@@ -395,16 +395,16 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
     else if (params->resize.method=="Bilinear") {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
-            int sy = i/params->resize.scale;
+            int sy = i/dScale;
             sy = CLIPTO(sy, 0, src->height-1);
-            double dy = i/params->resize.scale - sy;
+            double dy = i/dScale - sy;
             int ny = sy+1;
             if (ny>=src->height)
                 ny = sy;
             for (int j=0; j<dst->width; j++) {
-                int sx = j/params->resize.scale;
+                int sx = j/dScale;
                 sx = CLIPTO(sx, 0, src->width-1);
-                double dx = j/params->resize.scale - sx;
+                double dx = j/dScale - sx;
                 int nx = sx+1;
                 if (nx>=src->width)
                     nx = sx;
@@ -417,10 +417,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst) {
     else {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
-            int sy = i/params->resize.scale;
+            int sy = i/dScale;
             sy = CLIPTO(sy, 0, src->height-1);
             for (int j=0; j<dst->width; j++) {
-                int sx = j/params->resize.scale;
+                int sx = j/dScale;
                 sx = CLIPTO(sx, 0, src->width-1);
                 dst->r[i][j] = src->r[sy][sx];
                 dst->g[i][j] = src->g[sy][sx];

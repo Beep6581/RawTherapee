@@ -51,7 +51,6 @@ class Crop : public Gtk::VBox, public CropGUIListener, public ToolPanel, public 
     Gtk::VBox* dpibox;
     int maxw, maxh;
     int nx, ny, nw, nh;
-    double nsx, nsy, nsw, nsh, lastScale;
     int lastRotationDeg;
     sigc::connection xconn, yconn, wconn, hconn, econn, fconn, rconn, oconn, gconn;
     bool wDirty, hDirty, xDirty, yDirty, lastEnabled, lastAspect;
@@ -67,7 +66,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public ToolPanel, public 
     void ratioChanged   ();
     void refreshSize    ();
     void selectPressed  ();
-    void setDimensions  (int mw, int mh);
+    void setDimensions   (int mw, int mh);
     void enabledChanged ();
     void positionChanged ();
     void widthChanged   ();
@@ -75,6 +74,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public ToolPanel, public 
     bool refreshSpins   (bool notify=false);
     void notifyListener ();
     void sizeChanged    (int w, int h, int ow, int oh);
+    void trim           (rtengine::procparams::ProcParams* pp, int ow, int oh);
     
     void readOptions    ();
     void writeOptions   ();

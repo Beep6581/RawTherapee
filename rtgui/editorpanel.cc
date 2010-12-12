@@ -246,8 +246,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
 
 }
 
-
-
 EditorPanel::~EditorPanel () {
 
     history->setHistoryBeforeLineListener (NULL);
@@ -389,15 +387,15 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 }
 
 void EditorPanel::close () {
-
     if (ipc)
     {
         saveProfile ();
         // close image processor and the current thumbnail
         tpc->closeImage ();    // this call stops image processing
         tpc->writeOptions ();
-    rtengine::ImageSource* is=isrc->getImageSource();
-    is->setProgressListener( NULL );
+        rtengine::ImageSource* is=isrc->getImageSource();
+        is->setProgressListener( NULL );
+
         if (ipc)
             ipc->setPreviewImageListener (NULL);
 
@@ -425,9 +423,8 @@ void EditorPanel::close () {
 }
 
 void EditorPanel::saveProfile () {
+    if (!ipc) return;
 
-    if (!ipc)
-        return;
     ProcParams params;
     ipc->getParams (&params);
 
@@ -894,7 +891,6 @@ void EditorPanel::saveAsPressed () {
 }
 
 void EditorPanel::queueImgPressed () {
-
     saveProfile ();
     parent->addBatchQueueJob (createBatchQueueEntry ());
 }
@@ -1041,11 +1037,6 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 
     return false;
 }
-
-/*
-void EditorPanel::saveOptions () {
-}
-*/
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
 
