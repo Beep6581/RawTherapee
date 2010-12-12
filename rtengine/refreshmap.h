@@ -59,6 +59,7 @@
 #define COLORDENOISE     M_COLOR
 #define DIRPYRDENOISE   (M_COLOR|M_LUMINANCE)
 #define CROP             M_MINUPDATE
+#define RESIZE           M_VOID
 #define EXIF             M_VOID
 #define IPTC             M_VOID
 #define EQUALIZER       (M_COLOR|M_LUMINANCE)

@@ -149,6 +149,8 @@ HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
+HISTORY_MSG_108;Redim. - boîte englobante
+HISTORY_MSG_109;Redim. s'applique à
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -698,12 +700,16 @@ TP_PREPROCESS_DARKFRAME;Image noire
 TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
 TP_RAWPANEL_DEMOSAICING;Dématriçage
 TP_RAWPANEL_PREPROCESSING;Pre-traitement
+TP_RESIZE_APPLIESTO;S'applique à:
+TP_RESIZE_FULLIMAGE;L'image entière
+TP_RESIZE_CROPPEDAREA;La zone recadrée
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)
 TP_RESIZE_BILINEAR;Bilinéaire
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
+TP_RESIZE_FITBOX;Boîte englobante
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hauteur
