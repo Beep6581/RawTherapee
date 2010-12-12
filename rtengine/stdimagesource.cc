@@ -182,12 +182,22 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     unsigned short* grn  = new unsigned short[imwidth];
     unsigned short* blue = new unsigned short[imwidth];
         
+	float rtot,gtot,btot;
+	int boxarea=SQR(pp.skip);
     for (int i=istart; i<iend; i+=skip, ix++) {
-    for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-            red[j]  = img->r[i][jx];
-            grn[j]  = img->g[i][jx];
-            blue[j] = img->b[i][jx];
-        }        
+		for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+			rtot=gtot=btot=0;
+			for (int m=0; m<pp.skip; m++)
+				for (int n=0; n<pp.skip; n++) {
+					rtot += img->r[i+m][jx+n];
+					gtot += img->g[i+m][jx+n];
+					btot += img->b[i+m][jx+n];
+				}
+			
+			red[j]  = round(rtot/boxarea);
+            grn[j]  = round(gtot/boxarea);
+            blue[j] = round(btot/boxarea);
+		}        
 //        if (hrp.enabled)
 //            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
     

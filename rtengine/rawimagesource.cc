@@ -241,19 +241,35 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     unsigned short* grn  = new unsigned short[imwidth];
     unsigned short* blue = new unsigned short[imwidth];
 
+	float rtot,gtot,btot;
+	int boxarea=SQR(pp.skip);
     for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
         if (ri->isBayer()) {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j] = CLIP(rm*this->red[i][jx]);
-                grn[j] = CLIP(gm*this->green[i][jx]);
-                blue[j] = CLIP(bm*this->blue[i][jx]);
+				rtot=gtot=btot=0;
+				for (int m=0; m<pp.skip; m++)
+					for (int n=0; n<pp.skip; n++) {
+						rtot += this->red[i+m][jx+n];
+						gtot += this->green[i+m][jx+n];
+						btot += this->blue[i+m][jx+n];
+					}
+                red[j] = CLIP(rm*rtot/boxarea);
+                grn[j] = CLIP(gm*gtot/boxarea);
+                blue[j] = CLIP(bm*btot/boxarea);
             }
         } else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j]  = CLIP(rm*rawData[i][jx*3+0]);
-                grn[j]  = CLIP(gm*rawData[i][jx*3+1]);
-                blue[j] = CLIP(bm*rawData[i][jx*3+2]);
-
+				rtot=gtot=btot=0;
+				for (int m=0; m<pp.skip; m++)
+					for (int n=0; n<pp.skip; n++) {
+						rtot += rawData[i+m][(jx+n)*3+0];
+						gtot += rawData[i+m][(jx+n)*3+1];
+						btot += rawData[i+m][(jx+n)*3+2];
+					}				
+                red[j] = CLIP(rm*rtot/boxarea);
+                grn[j] = CLIP(gm*gtot/boxarea);
+                blue[j] = CLIP(bm*btot/boxarea);
+				
             }
         }
                 
