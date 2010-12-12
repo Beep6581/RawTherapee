@@ -68,13 +68,7 @@ extern void setup_read_icc_profile JPP((j_decompress_ptr cinfo));
  * will prefer to have the data stick around after decompression finishes.)
  */
 
-#ifdef WIN32
-extern jboolean read_icc_profile JPP((j_decompress_ptr cinfo,
-				     JOCTET **icc_data_ptr,
-				     unsigned int *icc_data_len));
-#else
 extern boolean read_icc_profile JPP((j_decompress_ptr cinfo,
 				     JOCTET **icc_data_ptr,
 				     unsigned int *icc_data_len));
-#endif
 
