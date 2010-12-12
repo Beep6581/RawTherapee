@@ -189,9 +189,10 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
 	int maxx=img->width,maxy=img->height;
 	int b_ix=ix;
 #ifdef _OPENMP
-#pragma omp for
+#pragma omp for private(ix)
 #endif
-    for (int i=istart; i<iend; i+=skip) { ix=b_ix+i/skip;
+    for (int i=istart; i<iend; i+=skip)
+    if ((ix=b_ix+(i-istart)/skip )<image->width){
 		for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
 			float rtot,gtot,btot;
 			rtot=gtot=btot=0;
