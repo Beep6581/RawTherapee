@@ -178,22 +178,33 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     int mtran = tran;
     int skip = pp.skip;
 
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+#endif
     unsigned short* red  = new unsigned short[imwidth];
     unsigned short* grn  = new unsigned short[imwidth];
     unsigned short* blue = new unsigned short[imwidth];
         
-	float rtot,gtot,btot;
-	int boxarea=SQR(pp.skip);
-    for (int i=istart; i<iend; i+=skip, ix++) {
+	int maxx=img->width,maxy=img->height;
+	int b_ix=ix;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+    for (int i=istart; i<iend; i+=skip) { ix=b_ix+i/skip;
 		for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+			float rtot,gtot,btot;
 			rtot=gtot=btot=0;
+			int boxarea=0;
 			for (int m=0; m<pp.skip; m++)
-				for (int n=0; n<pp.skip; n++) {
+				for (int n=0; n<pp.skip; n++)
+					if ((i+m<maxy)&&(jx+n<maxx)){
 					rtot += img->r[i+m][jx+n];
 					gtot += img->g[i+m][jx+n];
 					btot += img->b[i+m][jx+n];
-				}
-			
+					boxarea++;
+					}
+			if (boxarea<1) boxarea=1;
 			red[j]  = round(rtot/boxarea);
             grn[j]  = round(gtot/boxarea);
             blue[j] = round(btot/boxarea);
@@ -231,7 +242,11 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     delete [] red;
     delete [] grn;
     delete [] blue;
+#ifdef _OPENMP
+    }
+#endif
 }
+
 
 void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
 

@@ -235,36 +235,52 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
         imwidth = maximwidth;
     if (!fuji && imheight>maximheight)
         imheight = maximheight;
-       
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+#endif
     // render the requested image part
     unsigned short* red  = new unsigned short[imwidth];
     unsigned short* grn  = new unsigned short[imwidth];
     unsigned short* blue = new unsigned short[imwidth];
 
-	float rtot,gtot,btot;
-	int boxarea=SQR(pp.skip);
-    for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
+
+    int maxx=this->W,maxy=this->H;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int ix=0; ix<imheight; ix++) { int i=sy1+pp.skip*ix;
         if (ri->isBayer()) {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-				rtot=gtot=btot=0;
+            	float rtot,gtot,btot;
+            	rtot=gtot=btot=0;
+            	int boxarea=0;
 				for (int m=0; m<pp.skip; m++)
-					for (int n=0; n<pp.skip; n++) {
+					for (int n=0; n<pp.skip; n++)
+						if ((i+m<maxy)&&(jx+n<maxx))
+					{
 						rtot += this->red[i+m][jx+n];
 						gtot += this->green[i+m][jx+n];
 						btot += this->blue[i+m][jx+n];
+						boxarea++;
 					}
+				if (boxarea<1) boxarea=1;
                 red[j] = CLIP(rm*rtot/boxarea);
                 grn[j] = CLIP(gm*gtot/boxarea);
                 blue[j] = CLIP(bm*btot/boxarea);
             }
         } else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-				rtot=gtot=btot=0;
+            	float rtot,gtot,btot;
+            	rtot=gtot=btot=0;
+            	int boxarea=0;
 				for (int m=0; m<pp.skip; m++)
-					for (int n=0; n<pp.skip; n++) {
+					for (int n=0; n<pp.skip; n++)
+						if ((i+m<maxy)&&(jx+n<maxx)) {
 						rtot += rawData[i+m][(jx+n)*3+0];
 						gtot += rawData[i+m][(jx+n)*3+1];
 						btot += rawData[i+m][(jx+n)*3+2];
+						boxarea++;
 					}				
                 red[j] = CLIP(rm*rtot/boxarea);
                 grn[j] = CLIP(gm*gtot/boxarea);
@@ -282,7 +298,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     delete [] red;
     delete [] grn;
     delete [] blue;
-          
+#ifdef _OPENMP
+    }
+#endif
     if (fuji) {   
         int a = ((tran & TR_ROT) == TR_R90 && image->width%2==0) || ((tran & TR_ROT) == TR_R180 && image->height%2+image->width%2==1) || ((tran & TR_ROT) == TR_R270 && image->height%2==0);
         // first row
