@@ -231,14 +231,17 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(59, "Sony AF 28-75mm f/2.8 SAM"));
             choices.insert(p_t(60, "Carl Zeiss Distagon T* 24mm f/2 ZA SSM"));
             choices.insert(p_t(61, "Sony AF 85mm f/2.8 SAM"));
+            choices.insert(p_t(62, "Sony DT 35mm f/1.8 SAM"));
             choices.insert(p_t(128, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF)"));
             choices.insert(p_t(128, "Tamron AF 28-300mm f/3.5-6.3"));
             choices.insert(p_t(128, "Tamron AF 28-200mm f/3.8-5.6 XR Di Aspherical (IF) Macro "));
             choices.insert(p_t(128, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"));
+            choices.insert(p_t(128, "Sigma AF 50-150mm f/2.8 EX DC APO HSM II"));
             choices.insert(p_t(128, "Sigma 10-20mm f/3.5 EX DC"));
             choices.insert(p_t(128, "Sigma 70-200mm f/2.8 II EX DG APO Macro"));
             choices.insert(p_t(129, "Tamron 200-400mm f/5.6 LD (IF)"));
             choices.insert(p_t(129, "Tamron 70-300mm f/4-5.6 LD"));
+            choices.insert(p_t(131, "Tamron 20-40mm f/2.7-3.5 SP Aspherical IF"));
             choices.insert(p_t(135, "Vivitar 28-210mm f/3.5-5.6"));
             choices.insert(p_t(136, "Tokina EMZ M100 AF 100mm f/3.5"));
             choices.insert(p_t(137, "Cosina 70-210mm f/2.8-4 AF"));
@@ -309,6 +312,7 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(2581, "Sigma 180mm f/5.6 Macro"));
             choices.insert(p_t(2581, "Tamron AF 90mm f/2.8 Macro"));
             choices.insert(p_t(2585, "Minolta AF 35-105mm f/3.5-4.5 New"));
+            choices.insert(p_t(2585, "Beroflex 35-135mm f/3.5-4.5"));
             choices.insert(p_t(2585, "Tamron AF 24-135mm f/3.5-5.6"));
             choices.insert(p_t(2588, "Minolta AF 70-210mm f/3.5-4.5"));
             choices.insert(p_t(2589, "Minolta AF 80-200 f/2.8 APO"));
