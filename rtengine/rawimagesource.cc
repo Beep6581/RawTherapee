@@ -30,7 +30,6 @@
 #include <slicer.h>
 
 
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -235,69 +234,71 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
         imwidth = maximwidth;
     if (!fuji && imheight>maximheight)
         imheight = maximheight;
+    int maxx=this->W,maxy=this->H,skip=pp.skip;
+
+    if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
+    double area=skip*skip;
+    rm/=area;
+    gm/=area;
+    bm/=area;
+
 #ifdef _OPENMP
 #pragma omp parallel
     {
 #endif
     // render the requested image part
-    unsigned short* red  = new unsigned short[imwidth];
-    unsigned short* grn  = new unsigned short[imwidth];
-    unsigned short* blue = new unsigned short[imwidth];
+    unsigned short* line_red  = new unsigned short [imwidth];
+    unsigned short* line_grn  = new unsigned short [imwidth];
+    unsigned short* line_blue = new unsigned short [imwidth];
 
 
-    int maxx=this->W,maxy=this->H;
+
 #ifdef _OPENMP
 #pragma omp for
 #endif
-	for (int ix=0; ix<imheight; ix++) { int i=sy1+pp.skip*ix;
-        if (ri->isBayer()) {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
+		if (ri->isBayer()) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
-            	int boxarea=0;
-				for (int m=0; m<pp.skip; m++)
-					for (int n=0; n<pp.skip; n++)
-						if ((i+m<maxy)&&(jx+n<maxx))
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
 					{
-						rtot += this->red[i+m][jx+n];
-						gtot += this->green[i+m][jx+n];
-						btot += this->blue[i+m][jx+n];
-						boxarea++;
+						rtot += red[i+m][jx+n];
+						gtot += green[i+m][jx+n];
+						btot += blue[i+m][jx+n];
 					}
-				if (boxarea<1) boxarea=1;
-                red[j] = CLIP(rm*rtot/boxarea);
-                grn[j] = CLIP(gm*gtot/boxarea);
-                blue[j] = CLIP(bm*btot/boxarea);
+				line_red[j] = CLIP(rm*rtot);
+				line_grn[j] = CLIP(gm*gtot);
+				line_blue[j] = CLIP(bm*btot);
             }
         } else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
-            	int boxarea=0;
-				for (int m=0; m<pp.skip; m++)
-					for (int n=0; n<pp.skip; n++)
-						if ((i+m<maxy)&&(jx+n<maxx)) {
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
+					{
 						rtot += rawData[i+m][(jx+n)*3+0];
 						gtot += rawData[i+m][(jx+n)*3+1];
 						btot += rawData[i+m][(jx+n)*3+2];
-						boxarea++;
 					}				
-                red[j] = CLIP(rm*rtot/boxarea);
-                grn[j] = CLIP(gm*gtot/boxarea);
-                blue[j] = CLIP(bm*btot/boxarea);
+				line_red[j] = CLIP(rm*rtot);
+				line_grn[j] = CLIP(gm*gtot);
+				line_blue[j] = CLIP(bm*btot);
 				
             }
         }
                 
         if (hrp.enabled)
-            hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, pp.skip);
+            hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip);
 
-        transLine (red, grn, blue, ix, image, tran, imwidth, imheight, fw);
+        transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
     }
 
-    delete [] red;
-    delete [] grn;
-    delete [] blue;
+    delete [] line_red;
+    delete [] line_grn;
+    delete [] line_blue;
 #ifdef _OPENMP
     }
 #endif
