@@ -581,6 +581,12 @@ class NALensDataInterpreter : public Interpreter {
             if (model.substr(0,10)=="NIKON D100" || model.substr(0,9)=="NIKON D1X") {
                  lidoffs = 0;
                  d100 = true;
+            }else if( ver<204){
+                lidoffs = 7;
+                d100 = false;
+            }else{
+                lidoffs = 8;
+                d100 = false;
             }
 
             unsigned char buffer[15];
@@ -606,14 +612,22 @@ class NALensDataInterpreter : public Interpreter {
                     buffer[i] ^= (cj += ci * ck++);
             }
                 
-            if (!d100) {
-                ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
-                ld << "AFAperture = "        << (int) buffer[1] << std::endl;
-                ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
-                ld << "FocusDistance = "     << (int) buffer[5] << std::endl;
-                ld << "FocalLength = "       << (int) buffer[6] << std::endl;
-                ld << "EffectiveMaxAperture = "  << (int) buffer[14] << std::endl;
-            }
+            if (!d100)
+               if( ver<204 ){
+					ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
+					ld << "AFAperture = "        << (int) buffer[1] << std::endl;
+					ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
+					ld << "FocusDistance = "     << (int) buffer[5] << std::endl;
+					ld << "FocalLength = "       << (int) buffer[6] << std::endl;
+					ld << "EffectiveMaxAperture = "  << (int) buffer[14] << std::endl;
+				}else{
+					ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
+					ld << "AFAperture = "        << (int) buffer[1] << std::endl;
+					ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
+					ld << "FocusDistance = "     << (int) buffer[6] << std::endl;
+					ld << "FocalLength = "       << (int) buffer[7] << std::endl;
+					ld << "EffectiveMaxAperture = "  << (int) buffer[15] << std::endl;
+				}
                 
             for (int i=0; i<7; i++)
                  lid << std::setw(2) << std::setfill('0') << (int)buffer[lidoffs+i] << ' ';
