@@ -247,10 +247,6 @@ void CacheManager::clearProfiles () {
     Glib::Mutex::Lock lock(mutex_);
 
     deleteDir ("profiles");
-    // clear profiles of open thumbnails
-    string_thumb_map::iterator i;
-    for (i=openEntries.begin(); i!=openEntries.end(); i++)
-        i->second->clearProcParams (CACHEMGR);
 }
 
 void CacheManager::deleteDir (const Glib::ustring& dirName) {
