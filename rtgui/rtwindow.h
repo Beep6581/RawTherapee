@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,6 +24,7 @@
 #include <batchqueuepanel.h>
 #include <set>
 #include <progressconnector.h>
+#include <editwindow.h>
 
 class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
@@ -40,8 +40,11 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool is_fullscreen;
         Gtk::Button * btn_fullscreen;
         
+        bool isSingleTabMode() { return !options.tabbedUI && !EditWindow::isMultiDisplayEnabled(); };
+
         bool on_expose_event_epanel(GdkEventExpose* event);
         bool on_expose_event_fpanel(GdkEventExpose* event);
+
     public:
         RTWindow ();
 
