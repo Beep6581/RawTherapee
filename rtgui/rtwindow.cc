@@ -1,7 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,7 +19,7 @@
 #include <options.h>
 #include <preferences.h>
 #include <cursormanager.h>
-#include <editwindow.h>
+
 
 RTWindow::RTWindow () {
 
@@ -82,6 +81,7 @@ RTWindow::RTWindow () {
     Gtk::Label* lbq = new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"));
     mainNB->append_page (*bpanel, *lbq);
     
+    // epanel is only for single tab mode
     epanel = new EditorPanel (fpanel);
     epanel->setParent (this);
 
@@ -138,8 +138,7 @@ RTWindow::RTWindow () {
     add (*mainBox);
     show_all ();
 
-    if(options.tabbedUI || EditWindow::isMultiDisplayEnabled())
-        epanel->hide_all();
+    if (!isSingleTabMode()) epanel->hide_all();
 }
 
 void RTWindow::on_realize () {
@@ -163,15 +162,19 @@ bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
 }
 
 void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
-    bool singleTabMode = !options.tabbedUI && !EditWindow::isMultiDisplayEnabled();
-
 	if (page_num > 1) {
-        if (singleTabMode) MoveFileBrowserToEditor();
+        if (isSingleTabMode()) MoveFileBrowserToEditor();
 
 		EditorPanel *ep = (EditorPanel *)mainNB->get_nth_page(page_num);
 		ep->setAspect();
 	} else {
-        if (singleTabMode) MoveFileBrowserToMain();
+        if (isSingleTabMode()) {
+            // Save profile on leaving the editor pane
+            EditorPanel* ep = (EditorPanel*)mainNB->get_nth_page (mainNB->get_current_page());
+            ep->saveProfile();
+
+            MoveFileBrowserToMain();
+        }
     }
 }
 
@@ -218,7 +221,6 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->remEditorPanel(ep);
     } else {
-	    //ep->saveOptions ();
 	    epanels.erase (ep->getShortName());
 	    filesEdited.erase (ep->getShortName ());
 	    fpanel->refreshEditedState (filesEdited);
@@ -273,40 +275,13 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
 
     fpanel->saveOptions ();
     bpanel->saveOptions ();
-  //  epanel->saveOptions();
+  
+    if (isSingleTabMode()) epanel->saveProfile();
+    
+    cacheMgr->closeCache ();  // also makes cleanup if too large
 
-/*    if (fileBrowser->getFileCatalog()->getBatchQueue()->hasJobs()) {
-        Gtk::MessageDialog msgd (M("MAIN_MSG_EXITJOBSINQUEUEQUEST"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
-        msgd.set_secondary_text (M("MAIN_MSG_EXITJOBSINQUEUEINFO"));
-        int response = msgd.run ();
-        if (response==Gtk::RESPONSE_NO)
-            return true;
-    }
-
-    editCoord->close ();
-
-    if (options.startupDir==STARTUPDIR_LAST && fileBrowser->lastSelectedDir ()!="")
-        options.startupPath = fileBrowser->lastSelectedDir ();
-    fileBrowser->close ();
-    cacheMgr->closeCache ();
-        
-      
-    options.lastScale = editorPanel->zoomBar->getScale ();
-    options.lastCropSize = editorPanel->zoomBar->getCropSize ();
-    if (options.showFilePanelState==0 || options.showFilePanelState==2)
-        options.fileBrowserHeight = fileBrowser->get_height ();
-    options.historyPanelWidth = ppaned->get_position ();
-    options.toolPanelWidth = vboxright->get_width();//hpaned->get_width() - hpaned->get_position ();
-    options.showHistory  = editorPanel->hidehp->get_active ();
-    options.showInfo = editorPanel->info->get_active ();
-    options.showClippedHighlights = editorPanel->indclippedh->get_active ();
-    options.showClippedShadows = editorPanel->indclippeds->get_active ();
-    options.bgcolor = editorPanel->iarea->imageArea->getBGColor ();
-    options.lastSaveAsPath = saveAsDialog->getDirectory ();
-    options.procQueueEnabled = fileBrowser->getFileCatalog()->getBatchQueue()->isEnabled();
-    options.fbArrangement = fileBrowser->getFileCatalog()->getArrangement ();
     options.firstRun = false;
-*/
+
     if (!options.windowMaximized) {
 		options.windowWidth = get_width();
 		options.windowHeight = get_height();
@@ -318,36 +293,37 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
 }
 
 void RTWindow::showPreferences () {
-
   Preferences *pref = new Preferences (this);
   pref->run ();
   delete pref;
   
   fpanel->optionsChanged ();
 }
-void RTWindow::setProgress (double p){
+
+void RTWindow::setProgress (double p) {
 	prProgBar.set_fraction (p);
 }
-void RTWindow::setProgressStr (Glib::ustring str){
+
+void RTWindow::setProgressStr (Glib::ustring str) {
 	prLabel.set_text ( str );
 }
-void RTWindow::setProgressState (int state){
-	if(state){
+
+void RTWindow::setProgressState (int state) {
+	if (state) {
 		prProgBar.show();
 		prLabel.show();
-	}else{
+	} else {
 		prProgBar.hide();
 		prLabel.hide();
 	}
 }
 		
 void RTWindow::toggle_fullscreen () {
-    if(is_fullscreen){
+    if (is_fullscreen) {
         unfullscreen();
         is_fullscreen = false;
         btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
-    }
-    else {
+    } else {
         fullscreen();
         is_fullscreen = true;
         btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
