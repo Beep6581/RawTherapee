@@ -423,14 +423,14 @@ void EditorPanel::close () {
 }
 
 void EditorPanel::saveProfile () {
-    if (!ipc) return;
+    if (!ipc || !openThm) return;
 
     ProcParams params;
     ipc->getParams (&params);
 
     if (options.saveParamsFile)
         params.save (openThm->getFileName() + paramFileExtension);
-    if (openThm && options.saveParamsCache)
+    if (options.saveParamsCache)
         openThm->setProcParams (params, EDITOR);
 }
 
