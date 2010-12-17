@@ -693,6 +693,8 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Resize bounding box
+!HISTORY_MSG_109;Resizing applies to
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
 !HISTORY_MSG_87;Impulse noise reduction
@@ -787,8 +789,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_HEIGHT;Height
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:
