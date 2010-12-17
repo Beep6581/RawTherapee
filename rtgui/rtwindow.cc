@@ -170,8 +170,7 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 	} else {
         if (isSingleTabMode()) {
             // Save profile on leaving the editor pane
-            EditorPanel* ep = (EditorPanel*)mainNB->get_nth_page (mainNB->get_current_page());
-            ep->saveProfile();
+            epanel->saveProfile();
 
             MoveFileBrowserToMain();
         }
