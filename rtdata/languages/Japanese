@@ -782,3 +782,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!HISTORY_MSG_108;Resize bounding box
+!HISTORY_MSG_109;Resizing applies to
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image

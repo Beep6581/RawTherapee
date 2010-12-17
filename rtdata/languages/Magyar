@@ -752,6 +752,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Resize bounding box
+!HISTORY_MSG_109;Resizing applies to
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
 !MAIN_FRAME_EDITOR;Editor
@@ -789,4 +791,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_SPECIFY;Specify:

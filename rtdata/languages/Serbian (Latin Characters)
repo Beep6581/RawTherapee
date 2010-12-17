@@ -779,6 +779,8 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Resize bounding box
+!HISTORY_MSG_109;Resizing applies to
 !MAIN_FRAME_EDITOR;Editor
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
@@ -791,3 +793,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_ICM_INPUTNONE;No profile
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image
