@@ -26,7 +26,7 @@ MultiLangMgr langMgr;
 Glib::ustring M (std::string key) { return langMgr.getStr (key); }
 
 bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb) {
-    FILE *f = g_fopen (fname.c_str(), "rt");
+    FILE *f = safe_g_fopen (fname, "rt");
 
     fallBack = fb;
 
@@ -72,7 +72,7 @@ bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb) {
 
 bool MultiLangMgr::save (Glib::ustring fname) {
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     
     if (f==NULL)
         return false;

@@ -13,7 +13,7 @@
 #else
 #include <netinet/in.h>
 #endif
-
+#include <safegtk.h>
 
 namespace rtengine{
 
@@ -128,12 +128,12 @@ skip_block: ;
 
 int RawImage::loadRaw (bool loadData, bool closeFile)
 {
-  ifname = filename.c_str();
+  ifname = safe_locale_from_utf8(filename).c_str();
   image = NULL;
   verbose = settings->verbose;
   oprof = NULL;
 
-  ifp = gfopen (filename.c_str());
+  ifp = gfopen (ifname);
   if (!ifp)
     return 3;
 

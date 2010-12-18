@@ -446,7 +446,7 @@ int ProcParams::save (Glib::ustring fname) const {
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = g_fopen (safe_locale_from_utf8(fname).c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     
     if (f==NULL)
         return 1;
@@ -463,7 +463,7 @@ int ProcParams::load (Glib::ustring fname) {
     try {
         setDefaults ();
 
-        FILE* f = g_fopen (fname.c_str(), "rt");
+        FILE* f = safe_g_fopen (fname, "rt");
         if (!f)
             return 1;
         char* buffer = new char[1024];

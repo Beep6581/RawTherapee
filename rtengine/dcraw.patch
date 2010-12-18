@@ -427,7 +427,7 @@
 +
 +  THREAD_LOCK
 +
-+  ifname = fname.c_str();
++  ifname = safe_locale_from_utf8(fname).c_str();
 +  image = NULL;
 +  exif_base = -1;
 +  ciff_base = -1;
@@ -435,7 +435,7 @@
 +  verbose = settings->verbose;
 +  oprof = NULL;
 +
-+  ifp = gfopen (fname.c_str());
++  ifp = gfopen (ifname);
 +  if (!ifp)
 +    return 3;
 +
@@ -641,13 +641,13 @@
 +    THREAD_LOCK
 +
 +	image = NULL;
-+	ifname = fname.c_str();
++	ifname = safe_locale_from_utf8(fname).c_str();
 +	exif_base = -1;
 +	ciff_base = -1;
 +	ciff_len = -1;
 +	verbose = settings->verbose;
 +	oprof = NULL;
-+	ifp = gfopen (fname.c_str());
++	ifp = gfopen (ifname);
 +	if (!ifp) {
 +		printf("DCRAW: failed0\n");
 +		return NULL;
@@ -705,13 +705,13 @@
 +t0.set ();
 +
 +    image = NULL;
-+    ifname = fname.c_str();
++    ifname = safe_locale_from_utf8(fname).c_str();
 +    exif_base = -1;
 +    ciff_base = -1;
 +    ciff_len = -1;
 +    verbose = settings->verbose;
 +    oprof = NULL;
-+    ifp = gfopen (fname.c_str());
++    ifp = gfopen (ifname);
 +    if (!ifp) {
 +        return NULL;
 +    }

@@ -19,6 +19,8 @@
 #include <preprocess.h>
 #include <options.h>
 #include <guiutils.h>
+#include <safegtk.h>
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -90,7 +92,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	   greenEqThreshold->setEditedState( pedited->raw.greenEq ? Edited : UnEdited );
    }
 
-   if (Glib::file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
+   if (safe_file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
       darkFrameFile->set_filename (pp->raw.dark_frame);
    else if( !options.rtSettings.darkFramesPath.empty() )
 	   darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );

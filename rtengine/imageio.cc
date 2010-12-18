@@ -130,7 +130,7 @@ void png_flush(png_struct_def *png_ptr);
 
 int ImageIO::loadPNG  (Glib::ustring fname) {
 
-    FILE *file = g_fopen (fname.c_str(),"rb");
+    FILE *file = safe_g_fopen (fname,"rb");
     if (!file) 
       return IMIO_CANNOTREADFILE;
 
@@ -325,7 +325,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (Glib::ustring fname) {
 
-	FILE *file=g_fopen(fname.c_str(),"rb");
+	FILE *file=safe_g_fopen(fname,"rb");
 	if (!file) 
         return IMIO_CANNOTREADFILE;
 
@@ -505,7 +505,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 	Glib::ustring tmpFname=fname;
 	tmpFname.append(".tmp");
 
-	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
+	FILE *file = safe_g_fopen (tmpFname, "wb");
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -573,7 +573,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 	fclose (file);
 
 	// Rename temporary filename, practically atomic
-	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+	safe_g_rename(tmpFname,fname);
 
     if (pl) {
         pl->setProgressStr ("Ready.");
@@ -596,7 +596,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	Glib::ustring tmpFname=fname;
 	tmpFname.append(".tmp");
 
-	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
+	FILE *file = safe_g_fopen (tmpFname, "wb");
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -687,7 +687,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	fclose (file);
 
 	// Rename temporary filename, practically atomic
-	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+	safe_g_rename(tmpFname,fname);
 
     if (pl) {
         pl->setProgressStr ("Ready.");
@@ -709,7 +709,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     unsigned char* linebuffer = new unsigned char[lineWidth];
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+        FILE *file = safe_g_fopen (fname, "wb");
 
         if (!file)
             return IMIO_CANNOTREADFILE;           

@@ -18,7 +18,7 @@ set (BASESOURCEFILES
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
     multilangmgr.cc mycurve.cc options.cc
-    preferences.cc profilepanel.cc safegtk.cc saveasdlg.cc
+    preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc
     guiutils.cc zoompanel.cc toolpanelcoord.cc

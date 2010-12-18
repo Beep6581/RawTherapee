@@ -20,6 +20,7 @@
 #include <set>
 #include <previewloader.h>
 #include <guiutils.h>
+#include <safegtk.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -104,7 +105,7 @@ public:
 		// if something got
 		Thumbnail* tmb = 0;
 		{
-			if (Glib::file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS)) 
+			if (safe_file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS)) 
 			{
 				tmb = cacheMgr->getEntry(j.dir_entry_);
 			}
