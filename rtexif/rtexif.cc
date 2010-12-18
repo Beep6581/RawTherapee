@@ -580,6 +580,30 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 			default:
 				goto defsubdirs;
 			}
+        }else if (!strncmp(make, "Canon", 5)) {
+			switch( tag ){
+			case 0x0001:
+			case 0x0002:
+			case 0x0004:
+			case 0x0005:
+			case 0x0093:
+			case 0x0098:
+			case 0x00a0:
+		        directory = new TagDirectory*[2];
+		        directory[1] = NULL;
+		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SSHORT , attrib->subdirAttribs, getOrder());
+		        makerNoteKind = TABLESUBDIR;
+				break;
+			case 0x009a:
+			case 0x4013:
+		        directory = new TagDirectory*[2];
+		        directory[1] = NULL;
+		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, getOrder());
+		        makerNoteKind = TABLESUBDIR;
+				break;
+			default:
+				goto defsubdirs;
+			}
         }else if(type==UNDEFINED){
             count = 1;
             type = LONG;

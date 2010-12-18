@@ -28,6 +28,18 @@
 
 namespace rtexif {
 
+class CAOnOffInterpreter : public Interpreter {
+public:
+    virtual std::string toString (Tag* t)
+    {
+    	int n = t->toInt();
+    	if( n==0 ) return "OFF";
+    	else if( n == 1) return "ON";
+    	else return "undef";
+    }
+};
+CAOnOffInterpreter caOnOffInterpreter;
+
 class CAIntSerNumInterpreter : public Interpreter {
     public:
         CAIntSerNumInterpreter () {}
@@ -36,183 +48,361 @@ class CAIntSerNumInterpreter : public Interpreter {
 
 CAIntSerNumInterpreter caIntSerNumInterpreter;
 
-class CAFocalLengthInterpreter : public Interpreter {
+class CAApertureInterpreter : public Interpreter {
     public:
-        CAFocalLengthInterpreter () {}
+        CAApertureInterpreter () {}
         virtual std::string toString (Tag* t) {
-            std::ostringstream str;
-            str << "FocalType  = " << t->toInt(0,SHORT) << std::endl;
-            str << "FocalLength = " << t->toInt(2,SHORT) << std::endl;
-            str << "FocalPlaneXSize = " << t->toInt(4,SHORT) << std::endl;
-            str << "FocalPlaneYSize = " << t->toInt(6,SHORT);
-            return str.str();
+        	char buffer[32];
+            sprintf (buffer, "%0.1f", pow(2.0, t->toDouble()/64.0));
+            return buffer;
         }
 };
-CAFocalLengthInterpreter caFocalLengthInterpreter;
+CAApertureInterpreter caApertureInterpreter;
 
+class CAMacroModeInterpreter : public ChoiceInterpreter {
+public:
+	CAMacroModeInterpreter(){
+        choices[1] = "Macro";
+        choices[2] = "Normal";
+	}
+};
+CAMacroModeInterpreter caMacroModeInterpreter;
 
-class CACameraSettingsInterpreter : public Interpreter {
-        std::map<int,std::string> machoices;
-        std::map<int,std::string> qlchoices;
-        std::map<int,std::string> fmchoices;
-        std::map<int,std::string> cdchoices;
-        std::map<int,std::string> fochoices;
-        std::map<int,std::string> rmchoices;
-        std::map<int,std::string> ischoices;
-        std::map<int,std::string> mmchoices;
-        std::map<int,std::string> dzchoices;
-        std::map<int,std::string> emchoices;
-        std::map<int,std::string> frchoices;
-        std::map<int,std::string> afchoices;
-        std::map<int,std::string> exchoices;
-        std::map<int,std::string> fcchoices;
-        std::map<int,std::string> aechoices;
-        std::map<int,std::string> stchoices;
-        std::map<int,std::string> smchoices;
-        std::map<int,std::string> pechoices;
-        std::map<int,std::string> mfchoices;
-        std::map<int,std::string> choices;
+class CASelfTimerInterpreter : public Interpreter {
+public:
+    virtual std::string toString (Tag* t) {
+    	int sec = t->toInt(0,SHORT);
+    	if( !sec ) return "OFF";
+    	char buffer[32];
+        sprintf (buffer, "%0.1fs %s", sec/10., sec&0x4000?",Custom":"");
+        return buffer;
+    }
+};
+CASelfTimerInterpreter caSelfTimerInterpreter;
+
+class CAQualityInterpreter : public ChoiceInterpreter {
+public:
+	CAQualityInterpreter(){
+        choices[1] = "Economy";
+        choices[2] = "Normal";
+        choices[3] = "Fine";
+        choices[4] = "RAW";
+        choices[5] = "Superfine";
+	}
+};
+CAQualityInterpreter caQualityInterpreter;
+
+class CAFlashModeInterpreter : public ChoiceInterpreter {
+public:
+	CAFlashModeInterpreter(){
+        choices[0] = "Off";
+        choices[1] = "Auto";
+        choices[2] = "On";
+        choices[3] = "Red-eye reduction";
+        choices[4] = "Slow-sync";
+        choices[5] = "Red-eye reduction (Auto)";
+        choices[6] = "Red-eye reduction (On)";
+        choices[16]= "External flash";
+	}
+};
+CAFlashModeInterpreter caFlashModeInterpreter;
+
+class CAContinuousDriveInterpreter : public ChoiceInterpreter {
+public:
+	CAContinuousDriveInterpreter(){
+        choices[0] = "Single";
+        choices[1] = "Continuous";
+        choices[2] = "Movie";
+        choices[3] = "Continuous, Speed Priority";
+        choices[4] = "Continuous, Low";
+        choices[5] = "Continuous, High";
+	}
+};
+CAContinuousDriveInterpreter caContinuousDriveInterpreter;
+
+class CAFocusModeInterpreter : public ChoiceInterpreter {
+public:
+	CAFocusModeInterpreter(){
+        choices[0] = "One-shot AF";
+        choices[1] = "AI Servo AF";
+        choices[2] = "AI Focus AF";
+        choices[3] = "Manual Focus";
+        choices[4] = "Single";
+        choices[5] = "Continuous";
+        choices[6] = "Manual Focus";
+        choices[16] = "Pan Focus";
+	}
+};
+CAFocusModeInterpreter caFocusModeInterpreter;
+
+class CARecordModeInterpreter : public ChoiceInterpreter {
+public:
+	CARecordModeInterpreter(){
+        choices[1] = "JPEG";
+        choices[2] = "CRW+THM";
+        choices[3] = "AVI+THM";
+        choices[4] = "TIF";
+        choices[5] = "TIF+JPEG";
+        choices[6] = "CR2";
+        choices[7] = "CR2+JPEG";
+        choices[9] = "Video";
+	}
+};
+CARecordModeInterpreter caRecordModeInterpreter;
+
+class CAImageSizeInterpreter : public ChoiceInterpreter {
+public:
+	CAImageSizeInterpreter (){
+        choices[0] = "Large";
+        choices[1] = "Medium";
+        choices[2] = "Small";
+        choices[5] = "Medium 1";
+        choices[6] = "Medium 2";
+        choices[7] = "Medium 3";
+        choices[8] = "Postcard";
+        choices[9] = "Widescreen";
+        choices[10] = "Medium Widescreen";
+        choices[128] = "640x480 Movie";
+        choices[129] = "Medium Movie";
+        choices[130] = "Small Movie";
+        choices[137] = "1280x720 Movie";
+        choices[142] = "1920x1080 Movie";
+	}
+};
+CAImageSizeInterpreter caImageSizeInterpreter;
+
+class CAEasyModeInterpreter : public ChoiceInterpreter {
+public:
+	CAEasyModeInterpreter (){
+        choices[0] = "Full auto ";
+        choices[1] = "Manual ";
+        choices[2] = "Landscape ";
+        choices[3] = "Fast shutter ";
+        choices[4] = "Slow shutter ";
+        choices[5] = "Night ";
+        choices[6] = "Gray Scale ";
+        choices[7] = "Sepia ";
+        choices[8] = "Portrait ";
+        choices[9] = "Sports ";
+        choices[10] = "Macro ";
+        choices[11] = "Black & White";
+        choices[12] = "Pan focus";
+        choices[13] = "Vivid";
+        choices[14] = "Neutral";
+        choices[15] = "Flash Off";
+        choices[16] = "Long Shutter";
+        choices[17] = "Super Macro";
+        choices[18] = "Foliage";
+        choices[19] = "Indoor";
+        choices[20] = "Fireworks";
+        choices[21] = "Beach";
+        choices[22] = "Underwater";
+        choices[23] = "Snow";
+        choices[24] = "Kids & Pets";
+        choices[25] = "Night Snapshot";
+        choices[26] = "Digital Macro";
+        choices[27] = "My Colors";
+        choices[28] = "Still Image";
+        choices[30] = "Color Accent";
+        choices[31] = "Color Swap";
+        choices[32] = "Aquarium";
+        choices[33] = "ISO 3200";
+        choices[38] = "Creative Auto";
+        choices[42] = "Super Vivid";
+        choices[43] = "Poster";
+        choices[47] = "Fisheye";
+        choices[48] = "Miniature";
+        choices[261]= "Sunset";
+	}
+};
+CAEasyModeInterpreter caEasyModeInterpreter;
+
+class CADigitalZoomInterpreter : public ChoiceInterpreter {
+public:
+	CADigitalZoomInterpreter(){
+        choices[0] = "None";
+        choices[1] = "2x";
+        choices[2] = "4x";
+        choices[3] = "Other";
+	}
+};
+CADigitalZoomInterpreter caDigitalZoomInterpreter;
+
+class CAMeteringModeInterpreter : public ChoiceInterpreter {
+public:
+	CAMeteringModeInterpreter(){
+        choices[0] = "Default";
+        choices[1] = "Spot";
+        choices[2] = "Average";
+        choices[3] = "Evaluative";
+        choices[4] = "Partial";
+        choices[5] = "Center-weighted averaging";
+	}
+};
+CAMeteringModeInterpreter caMeteringModeInterpreter;
+
+class CAFocusRangeInterpreter : public ChoiceInterpreter {
+public:
+	CAFocusRangeInterpreter(){
+        choices[0] = "Manual";
+        choices[1] = "Auto";
+        choices[2] = "Not Known";
+        choices[3] = "Macro";
+        choices[4] = "Very Close";
+        choices[5] = "Close";
+        choices[6] = "Middle Range";
+        choices[7] = "Far Range";
+        choices[8] = "Pan Focus";
+        choices[9] = "Super Macro";
+        choices[10] = "Infinity";
+	}
+};
+CAFocusRangeInterpreter caFocusRangeInterpreter;
+
+class CAAFPointInterpreter : public ChoiceInterpreter {
+public:
+	CAAFPointInterpreter(){
+        choices[0x2005] = "Manual AF point selection ";
+        choices[0x3000] = "None (MF)";
+        choices[0x3001] = "Auto AF point selection ";
+        choices[0x3002] = "Right ";
+        choices[0x3003] = "Center ";
+        choices[0x3004] = "Left ";
+        choices[0x4001] = "Auto AF point selection ";
+        choices[0x4006] = "Face Detect";
+	}
+};
+CAAFPointInterpreter caAFPointInterpreter;
+
+class CAExposureModeInterpreter : public ChoiceInterpreter {
+public:
+	CAExposureModeInterpreter(){
+        choices[0] = "Easy";
+        choices[1] = "Program AE";
+        choices[2] = "Shutter speed priority AE";
+        choices[3] = "Aperture-priority AE";
+        choices[4] = "Manual";
+        choices[5] = "Depth-of-field AE";
+        choices[6] = "M-Dep";
+        choices[7] = "Bulb";
+	}
+};
+CAExposureModeInterpreter caExposureModeInterpreter;
+
+class CAFlashBitsInterpreter : public Interpreter {
+public:
+    virtual std::string toString (Tag* t) {
+    	std::ostringstream s;
+    	unsigned bits = t->toInt(0,SHORT);
+        if( bits & 0x0001 ) s << "Manual ";
+        if( bits & 0x0002 ) s << "TTL ";
+        if( bits & 0x0004 ) s << "A-TTL ";
+        if( bits & 0x0008 ) s << "E-TTL ";
+        if( bits & 0x0010 ) s << "FP sync enabled ";
+        if( bits & 0x0080 ) s << "2nd curtain ";
+        if( bits & 0x0800 ) s << "FP sync used ";
+        if( bits & 0x2000 ) s << "Built-in ";
+        if( bits & 0x4000 ) s << "External ";
+        return s.str();
+    }
+};
+CAFlashBitsInterpreter caFlashBitsInterpreter;
+
+class CAFocusContinuousInterpreter : public ChoiceInterpreter {
+public:
+	CAFocusContinuousInterpreter(){
+        choices[0] = "Single";
+        choices[1] = "Continuous";
+        choices[8] = "Manual";
+	}
+};
+CAFocusContinuousInterpreter caFocusContinuousInterpreter;
+
+class CAAESettingsInterpreter : public ChoiceInterpreter {
+public:
+	CAAESettingsInterpreter(){
+        choices[0] = "Normal AE";
+        choices[1] = "Exposure Compensation";
+        choices[2] = "AE Lock";
+        choices[3] = "AE Lock + Exposure Comp.";
+        choices[4] = "No AE";
+	}
+};
+CAAESettingsInterpreter caAESettingsInterpreter;
+
+class CAStabilizationInterpreter : public ChoiceInterpreter {
+public:
+	CAStabilizationInterpreter(){
+        choices[0] = "Off";
+        choices[1] = "On";
+        choices[2] = "On, Shot Only";
+        choices[3] = "On, Panning";
+        choices[4] = "On, Video";
+	}
+};
+CAStabilizationInterpreter caStabilizationInterpreter;
+
+class CASpotMeteringInterpreter : public ChoiceInterpreter {
+public:
+	CASpotMeteringInterpreter(){
+        choices[0] = "Center";
+        choices[1] = "AF Point";
+	}
+};
+CASpotMeteringInterpreter caSpotMeteringInterpreter;
+
+class CAPhotoEffectInterpreter : public ChoiceInterpreter {
+public:
+	CAPhotoEffectInterpreter(){
+        choices[0] = "Off";
+        choices[1] = "Vivid";
+        choices[2] = "Neutral";
+        choices[3] = "Smooth";
+        choices[4] = "Sepia";
+        choices[5] = "B&W";
+        choices[6] = "Custom";
+        choices[100] = "My Color Data";
+	}
+};
+CAPhotoEffectInterpreter caPhotoEffectInterpreter;
+
+class CAManualFlashInterpreter : public ChoiceInterpreter {
+public:
+	CAManualFlashInterpreter(){
+        choices[0] = "N/A";
+        choices[0x500] = "Full";
+        choices[0x502] = "Medium";
+        choices[0x504] = "Low";
+        choices[0x7fff] = "N/A";
+	}
+};
+CAManualFlashInterpreter caManualFlashInterpreter;
+
+class CARAWQualityInterpreter : public ChoiceInterpreter {
+public:
+	CARAWQualityInterpreter(){
+        choices[0] = "N/A";
+        choices[1] = "sRAW1 (mRAW)";
+        choices[2] = "sRAW2 (sRAW)";
+	}
+};
+CARAWQualityInterpreter caRAWQualityInterpreter;
+
+class CAFocalInterpreter : public Interpreter {
+public:
+    virtual std::string toString (Tag* t) {
+    	Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
+    	double unit = unitTag->toDouble();
+    	char buffer[32];
+        sprintf (buffer, "%0.1fmm", (unit>0. ? t->toDouble()/unit : t->toDouble()));
+        return buffer;
+    }
+};
+CAFocalInterpreter caFocalInterpreter;
+
+class CALensInterpreter : public ChoiceInterpreter {
     public:
-        CACameraSettingsInterpreter () {
-            machoices[1] = "Macro";
-            machoices[2] = "Normal";
-            qlchoices[1] = "Economy";
-            qlchoices[2] = "Normal";
-            qlchoices[3] = "Fine";
-            qlchoices[4] = "RAW";
-            qlchoices[5] = "Superfine";
-            fmchoices[0] = "Off";
-            fmchoices[1] = "Auto";
-            fmchoices[2] = "On";
-            fmchoices[3] = "Red-eye reduction";
-            fmchoices[4] = "Slow-sync";
-            fmchoices[5] = "Red-eye reduction (Auto)";
-            fmchoices[6] = "Red-eye reduction (On)";
-            fmchoices[16] = "External flash";
-            cdchoices[0] = "Single";
-            cdchoices[1] = "Continuous";
-            cdchoices[2] = "Movie";
-            cdchoices[3] = "Continuous, Speed Priority";
-            cdchoices[4] = "Continuous, Low";
-            cdchoices[5] = "Continuous, High";
-            fochoices[0] = "One-shot AF";
-            fochoices[1] = "AI Servo AF";
-            fochoices[2] = "AI Focus AF";
-            fochoices[3] = "Manual Focus";
-            fochoices[4] = "Single";
-            fochoices[5] = "Continuous";
-            fochoices[6] = "Manual Focus";
-            fochoices[16] = "Pan Focus";
-            rmchoices[1] = "JPEG";
-            rmchoices[2] = "CRW+THM";
-            rmchoices[3] = "AVI+THM";
-            rmchoices[4] = "TIF";
-            rmchoices[5] = "TIF+JPEG";
-            rmchoices[6] = "CR2";
-            rmchoices[7] = "CR2+JPEG";
-            ischoices[0] = "Large";
-            ischoices[1] = "Medium";
-            ischoices[2] = "Small";
-            ischoices[5] = "Medium 1";
-            ischoices[6] = "Medium 2";
-            ischoices[7] = "Medium 3";
-            ischoices[8] = "Postcard";
-            ischoices[9] = "Widescreen";
-            emchoices[0] = "Full auto ";
-            emchoices[1] = "Manual ";
-            emchoices[2] = "Landscape ";
-            emchoices[3] = "Fast shutter ";
-            emchoices[4] = "Slow shutter ";
-            emchoices[5] = "Night ";
-            emchoices[6] = "Gray Scale ";
-            emchoices[7] = "Sepia ";
-            emchoices[8] = "Portrait ";
-            emchoices[9] = "Sports ";
-            emchoices[10] = "Macro ";
-            emchoices[11] = "Black & White";
-            emchoices[12] = "Pan focus";
-            emchoices[13] = "Vivid";
-            emchoices[14] = "Neutral";
-            emchoices[15] = "Flash Off";
-            emchoices[16] = "Long Shutter";
-            emchoices[17] = "Super Macro";
-            emchoices[18] = "Foliage";
-            emchoices[19] = "Indoor";
-            emchoices[20] = "Fireworks";
-            emchoices[21] = "Beach";
-            emchoices[22] = "Underwater";
-            emchoices[23] = "Snow";
-            emchoices[24] = "Kids & Pets";
-            emchoices[25] = "Night Snapshot";
-            emchoices[26] = "Digital Macro";
-            emchoices[27] = "My Colors";
-            emchoices[28] = "Still Image";
-            emchoices[30] = "Color Accent";
-            emchoices[31] = "Color Swap";
-            emchoices[32] = "Aquarium";
-            emchoices[33] = "ISO 3200";
-            dzchoices[0] = "None";
-            dzchoices[1] = "2x";
-            dzchoices[2] = "4x";
-            dzchoices[3] = "Other";
-            mmchoices[0] = "Default";
-            mmchoices[1] = "Spot";
-            mmchoices[2] = "Average";
-            mmchoices[3] = "Evaluative";
-            mmchoices[4] = "Partial";
-            mmchoices[5] = "Center-weighted averaging";
-            frchoices[0] = "Manual";
-            frchoices[1] = "Auto";
-            frchoices[2] = "Not Known";
-            frchoices[3] = "Macro";
-            frchoices[4] = "Very Close";
-            frchoices[5] = "Close";
-            frchoices[6] = "Middle Range";
-            frchoices[7] = "Far Range";
-            frchoices[8] = "Pan Focus";
-            frchoices[9] = "Super Macro";
-            frchoices[10] = "Infinity";
-            afchoices[0x2005] = "Manual AF point selection ";
-            afchoices[0x3000] = "None (MF)";
-            afchoices[0x3001] = "Auto AF point selection ";
-            afchoices[0x3002] = "Right ";
-            afchoices[0x3003] = "Center ";
-            afchoices[0x3004] = "Left ";
-            afchoices[0x4001] = "Auto AF point selection ";
-            afchoices[0x4006] = "Face Detect";
-            exchoices[0] = "Easy";
-            exchoices[1] = "Program AE";
-            exchoices[2] = "Shutter speed priority AE";
-            exchoices[3] = "Aperture-priority AE";
-            exchoices[4] = "Manual";
-            exchoices[5] = "Depth-of-field AE";
-            exchoices[6] = "M-Dep";
-            fcchoices[0] = "Single";
-            fcchoices[1] = "Continuous";
-            aechoices[0] = "Normal AE";
-            aechoices[1] = "Exposure Compensation";
-            aechoices[2] = "AE Lock";
-            aechoices[3] = "AE Lock + Exposure Comp.";
-            aechoices[4] = "No AE";
-            stchoices[0] = "Off";
-            stchoices[1] = "On";
-            stchoices[2] = "On, Shot Only";
-            stchoices[3] = "On, Panning";
-            smchoices[0] = "Center";
-            smchoices[1] = "AF Point";
-            pechoices[0] = "Off";
-            pechoices[1] = "Vivid";
-            pechoices[2] = "Neutral";
-            pechoices[3] = "Smooth";
-            pechoices[4] = "Sepia";
-            pechoices[5] = "B&W";
-            pechoices[6] = "Custom";
-            pechoices[100] = "My Color Data";
-            mfchoices[0] = "N/A";
-            mfchoices[0x500] = "Full";
-            mfchoices[0x502] = "Medium";
-            mfchoices[0x504] = "Low";
-            mfchoices[0x7fff] = "N/A";
+	    CALensInterpreter () {
             choices[1] = "Canon EF 50mm f/1.8";
             choices[2] = "Canon EF 28mm f/2.8";
             choices[3] = "Canon EF 135mm f/2.8 Soft";
@@ -371,312 +561,321 @@ class CACameraSettingsInterpreter : public Interpreter {
             choices[248] = "Canon EF 200mm f/2L IS";
             choices[249] = "Canon EF 800mm f/5.6L IS";
             choices[250] = "Canon EF 24 f/1.4L II";
+            choices[251] = "Canon EF 70-200mm f/2.8L IS II USM";
             choices[254] = "Canon EF 100mm f/2.8L Macro IS USM";
             choices[488] = "Canon EF-S 15-85mm f/3.5-5.6 IS USM";
         }
-        virtual std::string toString (Tag* t) {
-            std::ostringstream str;
-            str << "MacroMode = " << machoices[t->toInt(2,SHORT)] << std::endl;
-            str << "Self-timer = " << t->toInt(4,SHORT) << std::endl;
-            str << "Quality = " << qlchoices[t->toInt(6,SHORT)] << std::endl;
-            str << "CanonFlashMode = " << fmchoices[t->toInt(8,SHORT)] << std::endl;
-            str << "ContinuousDrive = " << cdchoices[t->toInt(10,SHORT)] << std::endl;
-            str << "FocusMode = " << fochoices[t->toInt(14,SHORT)] << std::endl;
-            str << "RecordMode = " << rmchoices[t->toInt(18,SHORT)] << std::endl;
-            str << "CanonImageSize = " << ischoices[t->toInt(20,SHORT)] << std::endl;
-            str << "EasyMode = " << emchoices[t->toInt(22,SHORT)] << std::endl;
-            str << "DigitalZoom = " << dzchoices[t->toInt(24,SHORT)] << std::endl;
-            str << "Contrast = " << t->toInt(26,SHORT) << std::endl;
-            str << "Saturation = " << t->toInt(28,SHORT) << std::endl;
-            str << "Sharpness = " << t->toInt(30,SHORT) << std::endl;
-            str << "CameraISO = " << t->toInt(32,SHORT) << std::endl;
-            str << "MeteringMode = " << mmchoices[t->toInt(34,SHORT)] << std::endl;
-            str << "FocusRange = " << frchoices[t->toInt(36,SHORT)] << std::endl;
-            str << "AFPoint = " << afchoices[t->toInt(38,SHORT)] << std::endl;
-            str << "CanonExposureMode = " << exchoices[t->toInt(40,SHORT)] << std::endl;
-            str << "LensType = " << choices[t->toInt(44,SHORT)] << " (" << t->toInt(44,SHORT) << ")" << std::endl;
-            str << "LongFocal = " << (double)t->toInt(46,SHORT)/t->toInt(50,SHORT) << " mm" << std::endl;
-            str << "ShortFocal = " << (double)t->toInt(48,SHORT)/t->toInt(50,SHORT) << " mm" << std::endl;
-            str << "FocalUnits = " << t->toInt(50,SHORT) << std::endl;
-            str << "MaxAperture = " << pow (2, t->toInt(52,SHORT)/64.0) << std::endl;
-            str << "MinAperture = " << pow (2, t->toInt(54,SHORT)/64.0) << std::endl;
-            str << "FlashActivity = " << t->toInt(56,SHORT) << std::endl;
-            str << "FlashBits = ";
-            int f = t->toInt(58,SHORT);
-            if (f&1)
-                str << "Manual ";
-            if (f&2)
-                str << "TTL ";
-            if (f&4)
-                str << "A-TTL ";
-            if (f&8)
-                str << "E-TTL ";
-            if (f&16)
-                str << "FP sync enabled ";
-            if (f&(1<<7))
-                str << "2nd-curtain sync used ";
-            if (f&(1<<11))
-                str << "FP sync used ";
-            if (f&(1<<13))
-                str << "Built-in ";
-            if (f&(1<<14))
-                str << "External ";
-            str << std::endl;
-            str << "FocusContinuous = " << fcchoices[t->toInt(64,SHORT)] << std::endl;
-            str << "AESetting = " << aechoices[t->toInt(66,SHORT)] << std::endl;
-            str << "ImageStabilization = " << stchoices[t->toInt(68,SHORT)] << " (" << t->toInt(68,SHORT) << ")" << std::endl;
-            str << "DisplayAperture = " << t->toInt(70,SHORT) << std::endl;
-            str << "ZoomSourceWidth = " << t->toInt(72,SHORT) << std::endl;
-            str << "ZoomTargetWidth = " << t->toInt(74,SHORT) << std::endl;
-            str << "SpotMeteringMode = " << smchoices[t->toInt(78,SHORT)] << std::endl;
-            str << "PhotoEffect = " << pechoices[t->toInt(80,SHORT)] << std::endl;
-            str << "ManualFlashOutput = " << mfchoices[t->toInt(82,SHORT)] << std::endl;
-            str << "ColorTone = " << t->toInt(84,SHORT);
-            return str.str();
-        }
 };
-CACameraSettingsInterpreter caCameraSettingsInterpreter;
+CALensInterpreter caLensInterpreter;
 
-
-class CAProcessingInfoInterpreter : public Interpreter {
-        std::map<int,std::string> tcchoices;
-        std::map<int,std::string> sfchoices;
-        std::map<int,std::string> wbchoices;
-        std::map<int,std::string> pschoices;
-    public:
-        CAProcessingInfoInterpreter () {
-            tcchoices[0] = "Standard";
-            tcchoices[1] = "Manual";
-            tcchoices[2] = "Custom";
-            sfchoices[0] = "N/A";
-            sfchoices[1] = "Lowest";
-            sfchoices[2] = "Low";
-            sfchoices[3] = "Standard";
-            sfchoices[4] = "High";
-            sfchoices[5] = "Highest";
-            wbchoices[0] = "Auto";
-            wbchoices[1] = "Daylight";
-            wbchoices[2] = "Cloudy";
-            wbchoices[3] = "Tungsten";
-            wbchoices[4] = "Fluorescent";
-            wbchoices[5] = "Flash";
-            wbchoices[6] = "Custom";
-            wbchoices[7] = "Black & White";
-            wbchoices[8] = "Shade";
-            wbchoices[9] = "Manual Temperature (Kelvin)";
-            wbchoices[10] = "PC Set1";
-            wbchoices[11] = "PC Set2";
-            wbchoices[12] = "PC Set3";
-            wbchoices[14] = "Daylight Fluorescent";
-            wbchoices[15] = "Custom 1";
-            wbchoices[16] = "Custom 2";
-            wbchoices[17] = "Underwater";
-            pschoices[0] = "None";
-            pschoices[1] = "Standard ";
-            pschoices[2] = "Set 1";
-            pschoices[3] = "Set 2";
-            pschoices[4] = "Set 3";
-            pschoices[0x21] = "User Def. 1";
-            pschoices[0x22] = "User Def. 2";
-            pschoices[0x23] = "User Def. 3";
-            pschoices[0x41] = "External 1";
-            pschoices[0x42] = "External 2";
-            pschoices[0x43] = "External 3";
-            pschoices[0x81] = "Standard";
-            pschoices[0x82] = "Portrait";
-            pschoices[0x83] = "Landscape";
-            pschoices[0x84] = "Neutral";
-            pschoices[0x85] = "Faithful";
-            pschoices[0x86] = "Monochrome";
-        }
-        virtual std::string toString (Tag* t) {
-            std::ostringstream str;
-            str << "ToneCurve = " << tcchoices[t->toInt(2,SHORT)] << std::endl;
-            str << "Sharpness = " << t->toInt(4,SHORT) << std::endl;
-            str << "SharpnessFrequency = " << sfchoices[t->toInt(6,SHORT)] << std::endl;
-            str << "SensorRedLevel = " << t->toInt(8,SHORT) << std::endl;
-            str << "SensorBlueLevel = " << t->toInt(10,SHORT) << std::endl;
-            str << "WhiteBalanceRed = " << t->toInt(12,SHORT) << std::endl;
-            str << "WhiteBalanceBlue = " << t->toInt(14,SHORT) << std::endl;
-            str << "WhiteBalance = " << wbchoices[t->toInt(16,SHORT)] << std::endl;
-            str << "ColorTemperature = " << t->toInt(18,SHORT) << std::endl;
-            str << "PictureStyle = " << pschoices[t->toInt(20,SHORT)] << std::endl;
-            str << "DigitalGain = " << t->toInt(22,SHORT) << std::endl;
-            str << "WBShiftAB = " << t->toInt(24,SHORT) << std::endl;
-            str << "WBShiftGM = " << t->toInt(26,SHORT);
-            return str.str();
-        }
+class CAFocalTypeInterpreter : public ChoiceInterpreter {
+public:
+	CAFocalTypeInterpreter(){
+		choices[0] = "undef";
+		choices[1] = "Fixed";
+		choices[2] = "Zoom";
+	}
 };
-CAProcessingInfoInterpreter caProcessingInfoInterpreter;
+CAFocalTypeInterpreter caFocalTypeInterpreter;
 
-class CAShotInfoInterpreter : public Interpreter {
-        std::map<short,std::string> sschoices;
-        std::map<short,std::string> afchoices;
-        std::map<short,std::string> aechoices;
-        std::map<short,std::string> wbchoices;
-        std::map<short,std::string> ctchoices;
-        std::map<short,std::string> cmchoices;
-        std::map<short,std::string> archoices;
-        std::map<short,std::string> ndchoices;
-    public:
-        CAShotInfoInterpreter () {
-            sschoices[0] = "Off";
-            sschoices[1] = "Night Scene";
-            sschoices[2] = "On";
-            sschoices[3] = "None";
-            afchoices[0x3000] = "None (MF)";
-            afchoices[0x3001] = "Right";
-            afchoices[0x3002] = "Center";
-            afchoices[0x3003] = "Center+Right";
-            afchoices[0x3004] = "Left";
-            afchoices[0x3005] = "Left+Right";
-            afchoices[0x3006] = "Left+Center";
-            afchoices[0x3007] = "All";
-            wbchoices[0] = "Auto";
-            wbchoices[1] = "Daylight";
-            wbchoices[2] = "Cloudy";
-            wbchoices[3] = "Tungsten";
-            wbchoices[4] = "Fluorescent";
-            wbchoices[5] = "Flash";
-            wbchoices[6] = "Custom";
-            wbchoices[7] = "Black & White";
-            wbchoices[8] = "Shade";
-            wbchoices[9] = "Manual Temperature (Kelvin)";
-            wbchoices[10] = "PC Set1";
-            wbchoices[11] = "PC Set2";
-            wbchoices[12] = "PC Set3";
-            wbchoices[14] = "Daylight Fluorescent";
-            wbchoices[15] = "Custom 1";
-            wbchoices[16] = "Custom 2";
-            wbchoices[17] = "Underwater";
-            aechoices[-1] = "On ";
-            aechoices[0] = "Off ";
-            aechoices[1] = "On (shot 1)";
-            aechoices[2] = "On (shot 2)";
-            aechoices[3] = "On (shot 3)";
-            cmchoices[0] = "n/a";
-            cmchoices[1] = "Camera Local Control";
-            cmchoices[3] = "Computer Remote Control";
-            ctchoices[248] = "EOS High-end";
-            ctchoices[250] = "Compact";
-            ctchoices[252] = "EOS Mid-end";
-            ctchoices[255] = "DV Camera";
-            ctchoices[0x23] = "User Def. 3";
-            archoices[-1] = "Rotated by Software";
-            archoices[0] = "None";
-            archoices[1] = "Rotate 90 CW";
-            archoices[2] = "Rotate 180";
-            archoices[3] = "Rotate 270 CW";
-            ndchoices[0] = "Off";
-            ndchoices[1] = "On";
-        }
-        virtual std::string toString (Tag* t) {
-            std::ostringstream str;
-            str << "AutoISO = " << t->toInt(2,SHORT) << std::endl;
-            str << "BaseISO = " << pow (2, t->toInt(4,SHORT)/32.0 - 4) * 50 << std::endl;
-            str << "MeasuredEV = " << t->toInt(6,SHORT) << std::endl;
-            str << "TargetAperture = " << pow (2, t->toInt(8,SHORT)/64.0) << std::endl;
-            str << "TargetExposureTime = " << pow (2, -t->toInt(10,SHORT)/32.0) << std::endl;
-            str << "ExposureCompensation = " << t->toInt(12,SHORT)/32.0 << std::endl;
-            str << "WhiteBalance = " << wbchoices[t->toInt(14,SHORT)] << std::endl;
-            str << "SlowShutter = " << sschoices[t->toInt(16,SHORT)] << std::endl;
-            str << "SequenceNumber = " << t->toInt(18,SHORT) << std::endl;
-            str << "OpticalZoomCode = " << t->toInt(20,SHORT) << std::endl;
-            str << "FlashGuideNumber = " << t->toInt(26,SHORT) << std::endl;
-            str << "AFPointsInFocus = " << afchoices[t->toInt(28,SHORT)] << std::endl;
-            str << "FlashExposureComp = " << t->toInt(30,SHORT) << std::endl;
-            str << "AutoExposureBracketing = " << afchoices[t->toInt(32,SHORT)] << std::endl;
-            str << "AEBBracketValue = " << t->toInt(34,SHORT) << std::endl;
-            str << "ControlMode = " << cmchoices[t->toInt(36,SHORT)] << std::endl;
-            str << "FocusDistanceUpper = " << t->toInt(38,SHORT) << std::endl;
-            str << "FocusDistanceLower = " << t->toInt(40,SHORT) << std::endl;
-            str << "FNumber = " << pow (2, t->toInt(42,SHORT)/64.0) << std::endl;
-            str << "ExposureTime = " << pow (2, -t->toInt(44,SHORT)/32.0) << std::endl;
-            str << "BulbDuration = " << t->toInt(48,SHORT) << std::endl;
-            str << "CameraType = " << ctchoices[t->toInt(52,SHORT)] << std::endl;
-            str << "AutoRotate = " << archoices[t->toInt(54,SHORT)] << std::endl;
-            str << "NDFilter = " << ndchoices[t->toInt(56,SHORT)] << std::endl;
-            str << "Self-timer2 = " << t->toInt(58,SHORT) << std::endl;
-            str << "FlashOutput = " << t->toInt(66,SHORT);
-            return str.str();
-        }
+class CAFocalPlaneInterpreter : public Interpreter {
+public:
+	virtual std::string toString (Tag* t) {
+		int val = t->toInt();
+		if( val <40 ) return "undef";
+    	char buffer[32];
+        sprintf (buffer, "%0.2fmm", val *25.4 / 1000);
+        return buffer;
+	}
 };
-CAShotInfoInterpreter caShotInfoInterpreter;
+CAFocalPlaneInterpreter caFocalPlaneInterpreter;
 
-
-class CAFileInfoInterpreter : public Interpreter {
-        std::map<int,std::string> bmchoices;
-        std::map<int,std::string> rjqchoices;
-        std::map<int,std::string> rjschoices;
-        std::map<int,std::string> nrchoices;
-        std::map<int,std::string> wbchoices;
-        std::map<int,std::string> fechoices;
-        std::map<int,std::string> techoices;
-    public:
-        CAFileInfoInterpreter () {
-            bmchoices[0] = "Off";
-            bmchoices[1] = "AEB";
-            bmchoices[2] = "FEB";
-            bmchoices[3] = "ISO";
-            bmchoices[4] = "WB";
-            
-            rjqchoices[1] = "Economy";
-            rjqchoices[2] = "Normal";
-            rjqchoices[3] = "Fine";
-            rjqchoices[4] = "RAW";
-            rjqchoices[5] = "Superfine";
-
-            rjschoices[0] = "Large";
-            rjschoices[1] = "Medium";
-            rjschoices[2] = "Small";
-            rjschoices[5] = "Medium 1";
-            rjschoices[6] = "Medium 2";
-            rjschoices[7] = "Medium 3";
-            rjschoices[8] = "Postcard";
-            rjschoices[9] = "Widescreen";
-            
-            nrchoices[0] = "Off";
-            nrchoices[1] = "On (mode 1)";
-            nrchoices[2] = "On (mode 2)";
-            nrchoices[3] = "On (mode 3)";
-            nrchoices[4] = "On (mode 4)";
-
-            wbchoices[0] = "Off";
-            wbchoices[1] = "On (shift AB)";
-            wbchoices[2] = "On (shift GM)";
-
-            fechoices[0] = "None";
-            fechoices[1] = "Yellow";
-            fechoices[2] = "Orange";
-            fechoices[3] = "Red";
-            fechoices[4] = "Green";
-
-            techoices[0] = "None";
-            techoices[1] = "Sepia";
-            techoices[2] = "Blue";
-            techoices[3] = "Purple";
-            techoices[4] = "Green";
-
-        }
-        virtual std::string toString (Tag* t) {
-
-            std::ostringstream str;
-            str << "FileNumber  = " << t->toInt(1,SHORT) << std::endl;
-            str << "ShutterCount = " << t->toInt(0,LONG) << std::endl;
-            str << "BracketMode = " << bmchoices[t->toInt(6,SHORT)] << std::endl;
-            str << "BracketValue = " << t->toInt(8,SHORT) << std::endl;
-            str << "BracketShotNumber = " << t->toInt(10,SHORT) << std::endl;
-            str << "RawJpgQuality = " << rjqchoices[t->toInt(12,SHORT)] << std::endl;
-            str << "RawJpgSize = " << rjschoices[t->toInt(14,SHORT)] << std::endl;
-            str << "NoiseReduction = " << nrchoices[t->toInt(16,SHORT)] << std::endl;
-            str << "WBBracketMode = " << t->toInt(18,SHORT) << std::endl;
-            str << "WBBracketValueAB = " << t->toInt(24,SHORT) << std::endl;
-            str << "FilterEffect = " << fechoices[t->toInt(26,SHORT)] << std::endl;
-            str << "ToningEffect = " << techoices[t->toInt(30,SHORT)];
-            return str.str();
-        }
+class CAExposureTimeInterpreter : public Interpreter {
+public:
+	virtual std::string toString (Tag* t) {
+    	char buffer[32];
+        sprintf (buffer, "%0.3f", pow (2, - t->toInt()/32.0) );
+        return buffer;
+	}
 };
-CAFileInfoInterpreter caFileInfoInterpreter;
+CAExposureTimeInterpreter caExposureTimeInterpreter;
+
+class CAEVInterpreter : public Interpreter {
+	virtual std::string toString (Tag* t) {
+    	char buffer[32];
+        sprintf (buffer, "%0.1f", t->toDouble()/32.0  );
+        return buffer;
+	}
+};
+CAEVInterpreter caEVInterpreter;
+
+class CABaseISOInterpreter : public Interpreter {
+public:
+	virtual std::string toString (Tag* t) {
+    	char buffer[32];
+        sprintf (buffer, "%0.0f", pow (2, t->toInt()/32.0 - 4) * 50 );
+        return buffer;
+	}
+};
+CABaseISOInterpreter caBaseISOInterpreter;
+
+class CAToneCurveInterpreter : public ChoiceInterpreter {
+public:
+	CAToneCurveInterpreter(){
+        choices[0] = "Standard";
+        choices[1] = "Manual";
+        choices[2] = "Custom";
+	}
+};
+CAToneCurveInterpreter caToneCurveInterpreter;
+
+class CASharpnessFrequencyInterpreter : public ChoiceInterpreter {
+public:
+	CASharpnessFrequencyInterpreter(){
+        choices[0] = "N/A";
+        choices[1] = "Lowest";
+        choices[2] = "Low";
+        choices[3] = "Standard";
+        choices[4] = "High";
+        choices[5] = "Highest";
+	}
+};
+CASharpnessFrequencyInterpreter caSharpnessFrequencyInterpreter;
+
+class CAWhiteBalanceInterpreter : public ChoiceInterpreter {
+public:
+	CAWhiteBalanceInterpreter(){
+        choices[0] = "Auto";
+        choices[1] = "Daylight";
+        choices[2] = "Cloudy";
+        choices[3] = "Tungsten";
+        choices[4] = "Fluorescent";
+        choices[5] = "Flash";
+        choices[6] = "Custom";
+        choices[7] = "Black & White";
+        choices[8] = "Shade";
+        choices[9] = "Manual Temperature (Kelvin)";
+        choices[10] = "PC Set1";
+        choices[11] = "PC Set2";
+        choices[12] = "PC Set3";
+        choices[14] = "Daylight Fluorescent";
+        choices[15] = "Custom 1";
+        choices[16] = "Custom 2";
+        choices[17] = "Underwater";
+	}
+};
+CAWhiteBalanceInterpreter caWhiteBalanceInterpreter;
+
+class CAPictureStyleInterpreter : public ChoiceInterpreter {
+public:
+	CAPictureStyleInterpreter(){
+        choices[0] = "None";
+        choices[1] = "Standard ";
+        choices[2] = "Set 1";
+        choices[3] = "Set 2";
+        choices[4] = "Set 3";
+        choices[0x21] = "User Def. 1";
+        choices[0x22] = "User Def. 2";
+        choices[0x23] = "User Def. 3";
+        choices[0x41] = "External 1";
+        choices[0x42] = "External 2";
+        choices[0x43] = "External 3";
+        choices[0x81] = "Standard";
+        choices[0x82] = "Portrait";
+        choices[0x83] = "Landscape";
+        choices[0x84] = "Neutral";
+        choices[0x85] = "Faithful";
+        choices[0x86] = "Monochrome";
+	}
+};
+CAPictureStyleInterpreter caPictureStyleInterpreter;
+
+class CASlowShutterInterpreter : public ChoiceInterpreter {
+public:
+	CASlowShutterInterpreter(){
+        choices[0] = "Off";
+        choices[1] = "Night Scene";
+        choices[2] = "On";
+        choices[3] = "None";
+	}
+};
+CASlowShutterInterpreter caSlowShutterInterpreter;
+
+class CAFlashGuideNumberInterpreter : public Interpreter{
+public:
+	virtual std::string toString (Tag* t) {
+		int n= t->toInt();
+		if( n==-1) return "undef";
+	    char buffer[32];
+        sprintf (buffer, "%0.f", n/32. );
+        return buffer;
+	}
+};
+CAFlashGuideNumberInterpreter caFlashGuideNumberInterpreter;
+
+class CAAFPointsInFocusInterpreter : public ChoiceInterpreter {
+public:
+	CAAFPointsInFocusInterpreter(){
+        choices[0x3000] = "None (MF)";
+        choices[0x3001] = "Right";
+        choices[0x3002] = "Center";
+        choices[0x3003] = "Center+Right";
+        choices[0x3004] = "Left";
+        choices[0x3005] = "Left+Right";
+        choices[0x3006] = "Left+Center";
+        choices[0x3007] = "All";
+	}
+};
+CAAFPointsInFocusInterpreter caAFPointsInFocusInterpreter;
+
+class CAAutoExposureBracketingInterpreter : public ChoiceInterpreter {
+public:
+	CAAutoExposureBracketingInterpreter(){
+        choices[-1] = "On ";
+        choices[0] = "Off ";
+        choices[1] = "On (shot 1)";
+        choices[2] = "On (shot 2)";
+        choices[3] = "On (shot 3)";
+	}
+};
+CAAutoExposureBracketingInterpreter caAutoExposureBracketingInterpreter;
+
+class CAControModeInterpreter : public ChoiceInterpreter {
+public:
+	CAControModeInterpreter(){
+        choices[0] = "n/a";
+        choices[1] = "Camera Local Control";
+        choices[3] = "Computer Remote Control";
+	}
+};
+CAControModeInterpreter caControModeInterpreter;
+
+class CAFocusDistanceInterpreter : public Interpreter {
+public:
+	virtual std::string toString (Tag* t) {
+    	char buffer[32];
+        sprintf (buffer, "%0.2f", t->toDouble()/100 );
+        return buffer;
+	}
+};
+CAFocusDistanceInterpreter caFocusDistanceInterpreter;
+
+class CAMeasuredEVInterpreter : public Interpreter {
+public:
+	virtual std::string toString (Tag* t) {
+    	char buffer[32];
+        sprintf (buffer, "%0.1f", t->toDouble()/8 - 6 );
+        return buffer;
+	}
+};
+CAMeasuredEVInterpreter caMeasuredEVInterpreter;
+
+class CACameraTypeInterpreter : public ChoiceInterpreter {
+public:
+	CACameraTypeInterpreter(){
+		choices[248] = "EOS High-end";
+		choices[250] = "Compact";
+		choices[252] = "EOS Mid-end";
+		choices[255] = "DV Camera";
+	}
+};
+CACameraTypeInterpreter caCameraTypeInterpreter;
+
+class CAAutoRotateInterpreter : public ChoiceInterpreter {
+public:
+	CAAutoRotateInterpreter(){
+        choices[-1] = "Rotated by Software";
+        choices[0] = "None";
+        choices[1] = "Rotate 90 CW";
+        choices[2] = "Rotate 180";
+        choices[3] = "Rotate 270 CW";
+	}
+};
+CAAutoRotateInterpreter caAutoRotateInterpreter;
+
+class CABracketModeInterpreter : public ChoiceInterpreter {
+public:
+	CABracketModeInterpreter(){
+        choices[0] = "Off";
+        choices[1] = "AEB";
+        choices[2] = "FEB";
+        choices[3] = "ISO";
+        choices[4] = "WB";
+	}
+};
+CABracketModeInterpreter caBracketModeInterpreter;
+
+class CARAWJpegQualityInterpreter : public ChoiceInterpreter {
+public:
+	CARAWJpegQualityInterpreter(){
+        choices[1] = "Economy";
+        choices[2] = "Normal";
+        choices[3] = "Fine";
+        choices[4] = "RAW";
+        choices[5] = "Superfine";
+	}
+};
+CARAWJpegQualityInterpreter caRAWJpegQualityInterpreter;
+
+class CAJpegSizeInterpreter : public ChoiceInterpreter {
+public:
+	CAJpegSizeInterpreter(){
+        choices[0] = "Large";
+        choices[1] = "Medium";
+        choices[2] = "Small";
+        choices[5] = "Medium 1";
+        choices[6] = "Medium 2";
+        choices[7] = "Medium 3";
+        choices[8] = "Postcard";
+        choices[9] = "Widescreen";
+	}
+};
+CAJpegSizeInterpreter caJpegSizeInterpreter;
+
+class CAWBBracketModeInterpreter : public ChoiceInterpreter {
+public:
+	CAWBBracketModeInterpreter(){
+	    choices[0] = "Off";
+	    choices[1] = "Shift AB";
+	    choices[2] = "shift GM";
+	}
+};
+CAWBBracketModeInterpreter caWBBracketModeInterpreter;
+
+class CAFilterEffectInterpreter : public ChoiceInterpreter {
+public:
+	CAFilterEffectInterpreter(){
+        choices[0] = "None";
+        choices[1] = "Yellow";
+        choices[2] = "Orange";
+        choices[3] = "Red";
+        choices[4] = "Green";
+	}
+};
+CAFilterEffectInterpreter caFilterEffectInterpreter;
+
+class CAToningEffectInterpreter : public ChoiceInterpreter {
+public:
+	CAToningEffectInterpreter(){
+        choices[0] = "None";
+        choices[1] = "Sepia";
+        choices[2] = "Blue";
+        choices[3] = "Purple";
+        choices[4] = "Green";
+	}
+};
+CAToningEffectInterpreter caToningEffectInterpreter;
+
+class CAFileNumberInterpreter : public Interpreter {
+public:
+	virtual std::string toString (Tag* t) {
+	    unsigned long val = t->toInt(0,LONG);
+    	char buffer[32];
+        sprintf (buffer, "%ld", ((val&0xffc0)>>6)*10000+((val>>16)&0xff)+((val&0x3f)<<8) );
+        return buffer;
+	}
+};
+CAFileNumberInterpreter caFileNumberInterpreter;
 
 class CAModelIDInterpreter : public ChoiceInterpreter {
     public:
@@ -769,12 +968,77 @@ class CAModelIDInterpreter : public ChoiceInterpreter {
             choices[0x2290000] = "PowerShot SX100 IS";
             choices[0x2300000] = "PowerShot SD950 IS / Digital IXUS 960 IS / IXY Digital 2000 IS";
             choices[0x2310000] = "PowerShot SD870 IS / Digital IXUS 860 IS / IXY Digital 910 IS";
+            choices[0x2320000] = "PowerShot SD890 IS / Digital IXUS 970 IS / IXY Digital 820 IS";
+            choices[0x2360000] = "PowerShot SD790 IS / Digital IXUS 90 IS / IXY Digital 95 IS";
+            choices[0x2370000] = "PowerShot SD770 IS / Digital IXUS 85 IS / IXY Digital 25 IS";
+            choices[0x2380000] = "PowerShot A590 IS";
+            choices[0x2390000] = "PowerShot A580";
+            choices[0x2420000] = "PowerShot A470";
+            choices[0x2430000] = "PowerShot SD1100 IS / Digital IXUS 80 IS / IXY Digital 20 IS";
+            choices[0x2460000] = "PowerShot SX1 IS";
+            choices[0x2470000] = "PowerShot SX10 IS";
+            choices[0x2480000] = "PowerShot A1000 IS";
+            choices[0x2490000] = "PowerShot G10";
+            choices[0x2510000] = "PowerShot A2000 IS";
+            choices[0x2520000] = "PowerShot SX110 IS";
+            choices[0x2530000] = "PowerShot SD990 IS / Digital IXUS 980 IS / IXY Digital 3000 IS";
+            choices[0x2540000] = "PowerShot SD880 IS / Digital IXUS 870 IS / IXY Digital 920 IS";
+            choices[0x2550000] = "PowerShot E1";
+            choices[0x2560000] = "PowerShot D10";
+            choices[0x2570000] = "PowerShot SD960 IS / Digital IXUS 110 IS / IXY Digital 510 IS";
+            choices[0x2580000] = "PowerShot A2100 IS";
+            choices[0x2590000] = "PowerShot A480";
+            choices[0x2600000] = "PowerShot SX200 IS";
+            choices[0x2610000] = "PowerShot SD970 IS / Digital IXUS 990 IS / IXY Digital 830 IS";
+            choices[0x2620000] = "PowerShot SD780 IS / Digital IXUS 100 IS / IXY Digital 210 IS";
+            choices[0x2630000] = "PowerShot A1100 IS";
+            choices[0x2640000] = "PowerShot SD1200 IS / Digital IXUS 95 IS / IXY Digital 110 IS";
+            choices[0x2700000] = "PowerShot G11";
+            choices[0x2710000] = "PowerShot SX120 IS";
+            choices[0x2720000] = "PowerShot S90";
+            choices[0x2750000] = "PowerShot SX20 IS";
+            choices[0x2760000] = "PowerShot SD980 IS / Digital IXUS 200 IS / IXY Digital 930 IS";
+            choices[0x2770000] = "PowerShot SD940 IS / Digital IXUS 120 IS / IXY Digital 220 IS";
+            choices[0x2800000] = "PowerShot A495";
+            choices[0x2810000] = "PowerShot A490";
+            choices[0x2820000] = "PowerShot A3100 IS";
+            choices[0x2830000] = "PowerShot A3000 IS";
+            choices[0x2840000] = "PowerShot SD1400 IS / IXUS 130 / IXY 400F";
+            choices[0x2850000] = "PowerShot SD1300 IS / IXUS 105 / IXY 200F";
+            choices[0x2860000] = "PowerShot SD3500 IS / IXUS 210 / IXY 10S";
+            choices[0x2870000] = "PowerShot SX210 IS";
+            choices[0x2880000] = "PowerShot SD4000 IS / IXUS 300 HS / IXY 30S";
+            choices[0x2890000] = "PowerShot SD4500 IS / IXUS 1000 HS / IXY 50S";
+            choices[0x2920000] = "PowerShot G12";
+            choices[0x2930000] = "PowerShot SX30 IS";
+            choices[0x2940000] = "PowerShot SX130 IS";
+            choices[0x2950000] = "PowerShot S95";
             choices[0x3010000] = "PowerShot Pro90 IS";
             choices[0x4040000] = "PowerShot G1";
             choices[0x6040000] = "PowerShot S100 / Digital IXUS / IXY Digital";
-            choices[0x4007d675] = "HV10";
-            choices[0x4007d777] = "iVIS DC50";
-            choices[0x4007d778] = "iVIS HV20";
+            choices[0x4007d673]	= "DC19 / DC21 / DC22";
+            choices[0x4007d674]	= "XH A1";
+            choices[0x4007d675]	= "HV10";
+            choices[0x4007d676]	= "MD130 / MD140 / MD150 / MD160";
+            choices[0x4007d777]	= "iVIS DC50";
+            choices[0x4007d778]	= "iVIS HV20";
+            choices[0x4007d779]	= "DC211";
+            choices[0x4007d77a]	= "HG10";
+            choices[0x4007d77b]	= "iVIS HR10";
+            choices[0x4007d878]	= "HV30";
+            choices[0x4007d87e]	= "DC301 / DC310 / DC311 / DC320 / DC330";
+            choices[0x4007d87f]	= "FS100";
+            choices[0x4007d880]	= "iVIS HF10";
+            choices[0x4007d882]	= "HG20 / HG21 / VIXIA HG21";
+            choices[0x4007d925]	= "LEGRIA HF21";
+            choices[0x4007d978]	= "LEGRIA HV40";
+            choices[0x4007d987]	= "DC410 / DC420";
+            choices[0x4007d988]	= "LEGRIA FS19 / FS20 / FS21 / FS22 / FS200";
+            choices[0x4007d989]	= "LEGRIA HF20 / HF200";
+            choices[0x4007d98a]	= "VIXIA HF S10 / S100";
+            choices[0x4007da8e]	= "LEGRIA HF R16 / R17 / R106";
+            choices[0x4007da90]	= "LEGRIA HF S21 / VIXIA HF S200";
+            choices[0x4007da92]	= "LEGRIA FS36 / FS305 / FS306 / FS307";
             choices[0x80000001] = "EOS-1D";
             choices[0x80000167] = "EOS-1DS";
             choices[0x80000168] = "EOS 10D";
@@ -782,28 +1046,198 @@ class CAModelIDInterpreter : public ChoiceInterpreter {
             choices[0x80000170] = "EOS Digital Rebel / 300D / Kiss Digital";
             choices[0x80000174] = "EOS-1D Mark II";
             choices[0x80000175] = "EOS 20D";
+            choices[0x80000176] = "EOS Digital Rebel XSi / 450D / Kiss X2";
             choices[0x80000188] = "EOS-1Ds Mark II";
             choices[0x80000189] = "EOS Digital Rebel XT / 350D / Kiss Digital N";
             choices[0x80000190] = "EOS 40D";
             choices[0x80000213] = "EOS 5D";
             choices[0x80000215] = "EOS-1Ds Mark III";
+            choices[0x80000218] = "EOS 5D Mark II";
             choices[0x80000232] = "EOS-1D Mark II N";
             choices[0x80000234] = "EOS 30D";
             choices[0x80000236] = "EOS Digital Rebel XTi / 400D / Kiss Digital X";
+            choices[0x80000250] = "EOS 7D";
+            choices[0x80000252] = "EOS Rebel T1i / 500D / Kiss X3";
             choices[0x80000254] = "EOS Rebel XS / 1000D / Kiss F";
             choices[0x80000261] = "EOS 50D";
+            choices[0x80000270] = "EOS Rebel T2i / 550D / Kiss X4";
+            choices[0x80000281] = "EOS-1D Mark IV";
+            choices[0x80000287] = "EOS 60D";
         }
 };
-
 CAModelIDInterpreter caModelIDInterpreter;
 
+class CAPanoramaDirectionInterpreter : public ChoiceInterpreter {
+public:
+	CAPanoramaDirectionInterpreter(){
+		choices[0] = "Left to Right";
+		choices[1] = "Right to Left";
+		choices[2] = "Bottom to Top";
+		choices[3] = "Top to Bottom";
+		choices[4] = "2x2 Matrix (Clockwise)";
+	}
+};
+CAPanoramaDirectionInterpreter caPanoramaDirectionInterpreter;
+
+class CAAspectRatioInterpreter : public ChoiceInterpreter {
+public:
+	CAAspectRatioInterpreter(){
+		choices[0] = "3:2";
+		choices[1] = "1:1";
+		choices[2] = "4:3";
+		choices[7] = "16:9";
+	}
+
+};
+CAAspectRatioInterpreter caAspectRatioInterpreter;
+
+const TagAttrib canonCameraSettingsAttribs[] = {
+ {0, 1, 0, 0,  1, "MacroMode", &caMacroModeInterpreter},
+ {0, 1, 0, 0,  2, "SelfTimer", &caSelfTimerInterpreter},
+ {0, 1, 0, 0,  3, "Quality", &caQualityInterpreter},
+ {0, 1, 0, 0,  4, "CanonFlashMode", &caFlashModeInterpreter},
+ {0, 1, 0, 0,  5, "ContinuousDrive", &caContinuousDriveInterpreter},
+ {0, 1, 0, 0,  7, "FocusMode", &caFocusModeInterpreter},
+ {0, 1, 0, 0,  9, "RecordMode", &caRecordModeInterpreter},
+ {0, 1, 0, 0, 10, "CanonImageSize", &caImageSizeInterpreter},
+ {0, 1, 0, 0, 11, "EasyMode", &caEasyModeInterpreter},
+ {0, 1, 0, 0, 12, "DigitalZoom", &caDigitalZoomInterpreter},
+ {0, 1, 0, 0, 13, "Contrast", &stdInterpreter},
+ {0, 1, 0, 0, 14, "Saturation", &stdInterpreter},
+ {0, 1, 0, 0, 15, "Sharpness", &stdInterpreter},
+ {0, 1, 0, 0, 16, "CameraISO", &stdInterpreter},
+ {0, 1, 0, 0, 17, "MeteringMode", &caMeteringModeInterpreter},
+ {0, 1, 0, 0, 18, "FocusRange", &caFocusRangeInterpreter},
+ {0, 1, 0, 0, 19, "AFPoint", &caAFPointInterpreter},
+ {0, 1, 0, 0, 20, "CanonExposureMode", &caExposureModeInterpreter},
+ {0, 1, 0, 0, 22, "LensID", &caLensInterpreter},
+ {0, 1, 0, 0, 23, "LongFocal", &caFocalInterpreter},
+ {0, 1, 0, 0, 24, "ShortFocal", &caFocalInterpreter},
+ {0, 1, 0, 0, 25, "FocalUnits", &stdInterpreter},
+ {0, 1, 0, 0, 26, "MaxAperture", &caApertureInterpreter},
+ {0, 1, 0, 0, 27, "MinAperture", &caApertureInterpreter},
+ {0, 1, 0, 0, 28, "FlashActivity", &stdInterpreter},
+ {0, 1, 0, 0, 29, "FlashBits", &caFlashBitsInterpreter},
+ {0, 1, 0, 0, 32, "FocusContinuous", &caFocusContinuousInterpreter},
+ {0, 1, 0, 0, 33, "AESetting", &caAESettingsInterpreter},
+ {0, 1, 0, 0, 34, "ImageStabilization", &caStabilizationInterpreter},
+ {0, 1, 0, 0, 35, "DisplayAperture", &stdInterpreter},
+ {0, 1, 0, 0, 36, "ZoomSourceWidth", &stdInterpreter},
+ {0, 1, 0, 0, 37, "ZoomTargetWidth", &stdInterpreter},
+ {0, 1, 0, 0, 39, "SpotMeteringMode", &caSpotMeteringInterpreter},
+ {0, 1, 0, 0, 40, "PhotoEffect", &caPhotoEffectInterpreter},
+ {0, 1, 0, 0, 41, "ManualFlashOutput", &caManualFlashInterpreter},
+ {0, 1, 0, 0, 42, "ColorTone", &stdInterpreter},
+ {0, 1, 0, 0, 46, "SRAWQuality", &caRAWQualityInterpreter},
+ {-1, 0, 0,  0, 0, "", NULL}
+};
+
+const TagAttrib canonFocalLengthAttribs[] = {
+ {0, 1, 0, 0, 0, "FocalType", &caFocalTypeInterpreter},
+ {0, 1, 0, 0, 1, "FocalLength", &caFocalInterpreter},
+ {0, 1, 0, 0, 2, "FocalPlaneXSize", &caFocalPlaneInterpreter},
+ {0, 1, 0, 0, 3, "FocalPlaneYSize", &caFocalPlaneInterpreter},
+ {-1, 0, 0,  0, 0, "", NULL}
+};
+
+const TagAttrib canonShotInfoAttribs[] = {
+ {0, 1, 0, 0, 1, "AutoISO", &stdInterpreter},
+ {0, 1, 0, 0, 2, "BaseISO" ,&caBaseISOInterpreter},
+ {0, 1, 0, 0, 3, "MeasuredEV", &stdInterpreter},
+ {0, 1, 0, 0, 4, "TargetAperture", &caApertureInterpreter},
+ {0, 1, 0, 0, 5, "TargetExposureTime",&caExposureTimeInterpreter},
+ {0, 1, 0, 0, 6, "ExposureCompensation",&caEVInterpreter},
+ {0, 1, 0, 0, 7, "WhiteBalance",&caWhiteBalanceInterpreter},
+ {0, 1, 0, 0, 8, "SlowShutter",&caSlowShutterInterpreter},
+ {0, 1, 0, 0, 9, "SequenceNumber", &stdInterpreter},
+ {0, 1, 0, 0,10, "OpticalZoomCode", &stdInterpreter},
+ {0, 1, 0, 0,13, "FlashGuideNumber" , &caFlashGuideNumberInterpreter},
+ {0, 1, 0, 0,14, "AFPointsInFocus", &caAFPointsInFocusInterpreter},
+ {0, 1, 0, 0,15, "FlashExposureComp", &stdInterpreter},
+ {0, 1, 0, 0,16, "AutoExposureBracketing",&caAutoExposureBracketingInterpreter},
+ {0, 1, 0, 0,17, "AEBBracketValue", &stdInterpreter},
+ {0, 1, 0, 0,18, "ControlMode", &caControModeInterpreter},
+ {0, 1, 0, 0,19, "FocusDistanceUpper", &caFocusDistanceInterpreter},
+ {0, 1, 0, 0,20, "FocusDistanceLower", &caFocusDistanceInterpreter},
+ {0, 1, 0, 0,21, "FNumber" ,&caApertureInterpreter},
+ {0, 1, 0, 0,22, "ExposureTime",&caExposureTimeInterpreter},
+ {0, 1, 0, 0,24, "BulbDuration", &stdInterpreter},
+ {0, 1, 0, 0,24, "MeasuredEV2", &caMeasuredEVInterpreter},
+ {0, 1, 0, 0,26, "CameraType", &caCameraTypeInterpreter},
+ {0, 1, 0, 0,27, "AutoRotate",&caAutoRotateInterpreter},
+ {0, 1, 0, 0,28, "NDFilter",&caOnOffInterpreter},
+ {0, 1, 0, 0,29, "Self-timer2", &stdInterpreter},
+ {0, 1, 0, 0,33, "FlashOutput", &stdInterpreter},
+ {-1, 0, 0, 0, 0, "", NULL},
+};
+
+const TagAttrib canonFileInfoAttribs[] = {
+ {0, 1, 0, 0, 1, "FileNumber",  &caFileNumberInterpreter},
+ {0, 1, 0, 0, 3, "BracketMode", &caBracketModeInterpreter},
+ {0, 1, 0, 0, 4, "BracketValue", &stdInterpreter},
+ {0, 1, 0, 0, 5, "BracketShotNumber", &stdInterpreter},
+ {0, 1, 0, 0, 6, "RawJpgQuality",&caRAWJpegQualityInterpreter},
+ {0, 1, 0, 0, 7, "RawJpgSize",&caJpegSizeInterpreter},
+ {0, 1, 0, 0, 8, "NoiseReduction",&stdInterpreter},
+ {0, 1, 0, 0, 9, "WBBracketMode" ,&caWBBracketModeInterpreter},
+ {0, 1, 0, 0,12, "WBBracketValueAB", &stdInterpreter},
+ {0, 1, 0, 0,13, "WBBracketValueGM", &stdInterpreter},
+ {0, 1, 0, 0,14, "FilterEffect" ,&caFilterEffectInterpreter},
+ {0, 1, 0, 0,15, "ToningEffect" ,&caToningEffectInterpreter},
+ {0, 1, 0, 0,19, "LiveViewShooting" ,&caOnOffInterpreter},
+ {0, 1, 0, 0,25, "FlashExposureLock" ,&caOnOffInterpreter},
+ {-1,0, 0, 0, 0, "", NULL},
+};
+
+const TagAttrib canonProcessingInfoAttribs[] = {
+ {0, 1, 0, 0, 1,"ToneCurve", &caToneCurveInterpreter},
+ {0, 1, 0, 0, 2,"Sharpness", &stdInterpreter},
+ {0, 1, 0, 0, 3,"SharpnessFrequency", &caSharpnessFrequencyInterpreter},
+ {0, 1, 0, 0, 4,"SensorRedLevel", &stdInterpreter},
+ {0, 1, 0, 0, 5,"SensorBlueLevel", &stdInterpreter},
+ {0, 1, 0, 0, 6,"WhiteBalanceRed", &stdInterpreter},
+ {0, 1, 0, 0, 7,"WhiteBalanceBlue", &stdInterpreter},
+ {0, 1, 0, 0, 8,"WhiteBalance", &caWhiteBalanceInterpreter},
+ {0, 1, 0, 0, 9,"ColorTemperature", &stdInterpreter},
+ {0, 1, 0, 0,10,"PictureStyle", &caPictureStyleInterpreter},
+ {0, 1, 0, 0,11,"DigitalGain", &stdInterpreter},
+ {0, 1, 0, 0,12,"WBShiftAB", &stdInterpreter},
+ {0, 1, 0, 0,13,"WBShiftGM", &stdInterpreter},
+ {-1,0, 0, 0, 0, "", NULL},
+};
+
+const TagAttrib canonPanoramaInfoAttribs[] = {
+ {0, 1, 0, 0, 2,"PanoramaFrameNumber", &stdInterpreter},
+ {0, 1, 0, 0, 5,"PanoramaDirection", &caPanoramaDirectionInterpreter},
+ {-1,0, 0, 0, 0, "", NULL},
+};
+
+const TagAttrib canonCropInfoAttribs[] = {
+ {0, 1, 0, 0, 0,"CropLeftMargin", &stdInterpreter},
+ {0, 1, 0, 0, 1,"CropRightMargin", &stdInterpreter},
+ {0, 1, 0, 0, 2,"CropTopMargin", &stdInterpreter},
+ {0, 1, 0, 0, 3,"CropBottomMargin", &stdInterpreter},
+ {-1,0, 0, 0, 0, "", NULL},
+};
+
+const TagAttrib canonAspectInfoAttribs[] = {
+ {0, 1, 0, 0, 0,"AspectRatio", &caAspectRatioInterpreter},
+ {0, 1, 0, 0, 1,"CroppedImageWidth", &stdInterpreter},
+ {0, 1, 0, 0, 2,"CroppedImageHeight", &stdInterpreter},
+ {-1,0, 0, 0, 0, "", NULL},
+};
+
+const TagAttrib canonMicroAdjustAttrib[] = {
+ {0, 1, 0, 0, 1,"AFMicroAdjActive", &caOnOffInterpreter},
+ {-1,0, 0, 0, 2,"AFMicroAdjValue", &stdInterpreter},
+};
 
 const TagAttrib canonAttribs[] = {
- {0, 1, 0, 0, 0x0001, "CanonCameraSettings", &caCameraSettingsInterpreter},
- {0, 1, 0, 0, 0x0002, "CanonFocalLength", &caFocalLengthInterpreter},
+ {0, 1, 0, canonCameraSettingsAttribs, 0x0001, "CanonCameraSettings", &stdInterpreter},
+ {0, 1, 0, canonFocalLengthAttribs, 0x0002, "CanonFocalLength", &stdInterpreter},
  {0, 1, 0, 0, 0x0003, "CanonFlashInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0004, "CanonShotInfo", &caShotInfoInterpreter},
- {0, 1, 0, 0, 0x0005, "CanonPanorama", &stdInterpreter},
+ {0, 1, 0, canonShotInfoAttribs, 0x0004, "CanonShotInfo", &stdInterpreter},
+ {0, 1, 0, canonPanoramaInfoAttribs, 0x0005, "CanonPanorama", &stdInterpreter},
  {0, 1, 0, 0, 0x0006, "CanonImageType", &stdInterpreter},
  {0, 1, 0, 0, 0x0007, "CanonFirmwareVersion", &stdInterpreter},
  {0, 1, 0, 0, 0x0008, "FileNumber", &stdInterpreter},
@@ -826,18 +1260,21 @@ const TagAttrib canonAttribs[] = {
  {0, 1, 0, 0, 0x0090, "CustomFunctions1D", &stdInterpreter},
  {0, 1, 0, 0, 0x0091, "PersonalFunctions", &stdInterpreter},
  {0, 1, 0, 0, 0x0092, "PersonalFunctionValues", &stdInterpreter},
- {0, 1, 0, 0, 0x0093, "CanonFileInfo", &caFileInfoInterpreter},
+ {0, 1, 0, canonFileInfoAttribs, 0x0093, "CanonFileInfo", &stdInterpreter},
  {0, 1, 0, 0, 0x0094, "AFPointsInFocus1D", &stdInterpreter},
  {0, 1, 0, 0, 0x0095, "LensType", &stdInterpreter},
  {0, 1, 0, 0, 0x0096, "InternalSerialNumber", &caIntSerNumInterpreter},
  {0, 1, 0, 0, 0x0097, "DustRemovalData", &stdInterpreter},
+ {0, 1, 0, canonCropInfoAttribs, 0x0098, "CropInfo", &stdInterpreter},
  {0, 1, 0, 0, 0x0099, "CustomFunctions2", &stdInterpreter},
- {0, 1, 0, 0, 0x00a0, "ProccessingInfo", &caProcessingInfoInterpreter},
+ {0, 1, 0, canonAspectInfoAttribs, 0x009a, "AspectInfo", &stdInterpreter},
+ {0, 1, 0, canonProcessingInfoAttribs, 0x00a0, "ProcessingInfo", &stdInterpreter},
  {0, 1, 0, 0, 0x00a1, "ToneCurveTable", &stdInterpreter},
  {0, 1, 0, 0, 0x00a2, "SharpnessTable", &stdInterpreter},
  {0, 1, 0, 0, 0x00a3, "SharpnessFreqTable", &stdInterpreter},
  {0, 1, 0, 0, 0x00a4, "WhiteBalanceTable", &stdInterpreter},
  {0, 1, 0, 0, 0x00a9, "ColorBalance", &stdInterpreter},
+ {0, 1, 0, 0, 0x00aa, "MeasuredColor", &stdInterpreter},
  {0, 1, 0, 0, 0x00ae, "ColorTemperature", &stdInterpreter},
  {0, 3, 0, 0, 0x00b0, "CanonFlags", &stdInterpreter},
  {0, 1, 0, 0, 0x00b1, "ModifiedInfo", &stdInterpreter},
@@ -852,8 +1289,8 @@ const TagAttrib canonAttribs[] = {
  {0, 1, 0, 0, 0x4003, "ColorInfo", &stdInterpreter},
  {1, 1, 0, 0, 0x4005, "UnknownBlock2", &stdInterpreter},
  {1, 1, 0, 0, 0x4008, "BlackLevel", &stdInterpreter},
+ {1, 1, 0, canonMicroAdjustAttrib, 0x4013, "AFMicroAdj", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
-
 };
 #endif
 
