@@ -219,40 +219,24 @@ void ImageData::extractInfo () {
             }
         }
         else if (mnote && !make.compare (0, 5, "Canon")) {
-            bool lensOk = false;
-            if (mnote->getTag ("LensType")) {
-                std::string ldata = mnote->getTag ("LensType")->valueToString ();
+        	int found=false;
+        	// canon EXIF have a string for lens model
+        	rtexif::Tag *lt = mnote->getTag("LensType");
+            if ( lt ) {
+                std::string ldata = lt->valueToString ();
                 if (ldata.size()>1) {
-                    lens = ldata;
-                    lensOk = true;
+                	found=true;
+                    lens = "Canon " + ldata;
                 }
             }
-            if (!lensOk && mnote->getTag ("CanonCameraSettings")) {
-                std::string ccs = mnote->getTag ("CanonCameraSettings")->valueToString ();
-                int i = ccs.find ("LongFocal = ");
-                double a = 0;
-                if (i!=ccs.npos) {
-                    i += 12;
-                    int j = i;
-                    while (j!=ccs.npos && ccs[j]!='\n' && ccs[j]!=' ') j++;
-                    a = atof (ccs.substr (i, j-i).c_str());
+            if( !found ){
+            	lt = mnote->findTag("LensID");
+                if ( lt ) {
+                    std::string ldata = lt->valueToString ();
+                    if (ldata.size()>1) {
+                    	lens = ldata;
+                    }
                 }
-                i = ccs.find ("ShortFocal = ");
-                double b = 0;
-                if (i!=ccs.npos) {
-                    i += 13;
-                    int j = i;
-                    while (j!=ccs.npos && ccs[j]!='\n' && ccs[j]!=' ') j++;
-                    b = atof (ccs.substr (i, j-i).c_str());
-                }
-                if (a>0 && b>0) {
-                    std::ostringstream str;
-                    if (a==b)
-                        str << "Unknown " << a << "mm";
-                    else 
-                        str << "Unknown " << b << "-" << a << "mm";
-                    lens = str.str();
-                }                
             }
         }
         else if (mnote && !make.compare (0, 6, "PENTAX")) {
