@@ -103,8 +103,8 @@ int main(int argc, char **argv)
 
 #ifndef _WIN32
    // Move the old path to the new one if the new does not exist
-   if (Glib::file_test(Glib::build_filename(options.rtdir,"cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR))
-       ::g_rename(Glib::build_filename(options.rtdir,"cache").c_str(), options.cacheBaseDir.c_str());
+   if (safe_file_test(Glib::build_filename(options.rtdir,"cache"), Glib::FILE_TEST_IS_DIR) && !safe_file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR))
+       safe_g_rename(Glib::build_filename(options.rtdir,"cache"), options.cacheBaseDir);
 #endif
 
 //   Gtk::RC::add_default_file (argv0+"/themes/"+options.theme);

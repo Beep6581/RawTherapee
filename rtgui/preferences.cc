@@ -24,6 +24,7 @@
 #include <addsetids.h>
 #include <dfmanager.h>
 #include <sstream>
+#include <safegtk.h>
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -687,7 +688,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
       Glib::ustring fname = dirname + *i;
       Glib::ustring sname = *i;
       // ignore directories
-      if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
+      if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
             items.push_back (sname.substr(0,sname.size()-ext.size()));
     }
     delete dir;
@@ -796,9 +797,9 @@ void Preferences::fillPreferences () {
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
     dateformat->set_text (moptions.dateFormat);
-    if (Glib::file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
+    if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
-    if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
@@ -821,13 +822,13 @@ void Preferences::fillPreferences () {
     edOther->set_active (moptions.editorToSendTo==3);
 #ifdef _WIN32    
     edPS->set_active (moptions.editorToSendTo==2);
-    if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
         gimpDir->set_filename (moptions.gimpDir);
-    if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
         psDir->set_filename (moptions.psDir);
 #elif defined __APPLE__
   edPS->set_active (moptions.editorToSendTo==2);
-  if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
+  if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);

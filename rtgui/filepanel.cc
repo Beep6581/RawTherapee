@@ -19,6 +19,7 @@
  */
 #include <filepanel.h>
 #include <rtwindow.h>
+#include <safegtk.h>
 
 int fbinit (void* data) {
 
@@ -200,9 +201,9 @@ void FilePanel::saveOptions () {
 
 void FilePanel::open (const Glib::ustring& d) {
 
-    if (Glib::file_test (d, Glib::FILE_TEST_IS_DIR))
+    if (safe_file_test (d, Glib::FILE_TEST_IS_DIR))
         dirBrowser->open (d.c_str());
-    else if (Glib::file_test (d, Glib::FILE_TEST_EXISTS))
+    else if (safe_file_test (d, Glib::FILE_TEST_EXISTS))
         dirBrowser->open (Glib::path_get_dirname(d), Glib::path_get_basename(d));
 }
 

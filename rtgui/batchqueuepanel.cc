@@ -21,6 +21,7 @@
 #include <preferences.h>
 #include <multilangmgr.h>
 #include <rtwindow.h>
+#include <safegtk.h>
 
 BatchQueuePanel::BatchQueuePanel () {
 
@@ -77,7 +78,7 @@ BatchQueuePanel::BatchQueuePanel () {
 
     saveFormatPanel->init (options.saveFormat);
     outdirTemplate->set_text (options.savePathTemplate);
-    if (Glib::file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) 
         outdirFolder->set_current_folder (options.savePathFolder);
     useTemplate->set_active (options.saveUsePathTemplate);
     useFolder->set_active (!options.saveUsePathTemplate);

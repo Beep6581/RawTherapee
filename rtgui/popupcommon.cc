@@ -69,7 +69,7 @@ PopUpCommon::type_signal_changed PopUpCommon::signal_changed() {
 
 bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
 	bool added = false;
-	if ( Glib::file_test(safe_locale_from_utf8(imagePath), Glib::FILE_TEST_EXISTS) && label.size() ) {
+	if ( safe_file_test(imagePath, Glib::FILE_TEST_EXISTS) && label.size() ) {
 		imagePaths.push_back(imagePath);
 		sItems.push_back(label);
 		// Create the image

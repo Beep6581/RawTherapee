@@ -214,7 +214,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     show_all ();
 
     // save as dialog
-    if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
+    if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
     else
         saveAsDialog = new SaveAsDialog (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
@@ -763,7 +763,7 @@ int EditorPanel::saveImage (rtengine::IImage16* img, Glib::ustring& fname, SaveF
     Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
     if (findNewNameIfNeeded) {
         int tries = 1;
-        while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
+        while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
             fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
             tries++;
         }
@@ -845,7 +845,7 @@ void EditorPanel::saveAsPressed () {
 					else
 						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, sf.format);
 
-					if (!Glib::file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
+					if (!safe_file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
 						fname = fnameTemp;
 						fnameOK = true;
 						break;
@@ -855,7 +855,7 @@ void EditorPanel::saveAsPressed () {
 			// check if it exists
 			if (!fnameOK) {
 				fname = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
-				if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
+				if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
 					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
 					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 					int response = msgd.run ();
@@ -926,7 +926,7 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
         Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
 
 				int tries = 1;
-				while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
+				while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
 					fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
 					tries++;
 				}
@@ -966,7 +966,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 #ifdef _WIN32
 								executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote");
 								cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" gimp-2.4.exe ") + Glib::ustring("\"") + filename + Glib::ustring("\"");
-								if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 									success = safe_spawn_command_line_async (cmdLine);
 								}
 #else
@@ -978,7 +978,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 										int ver = 12;
 										while (!success && ver) {
 												executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"),ver));
-												if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+												if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 													cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 													success = safe_spawn_command_line_async (cmdLine);
 												}
@@ -996,7 +996,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 						else if (options.editorToSendTo==2) {
 #ifdef _WIN32
 								executable = Glib::build_filename(options.psDir,"Photoshop.exe");
-								if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 										cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
 								}
@@ -1011,7 +1011,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 						}
 						else if (options.editorToSendTo==3) {
 #ifdef _WIN32
-								if ( Glib::file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+								if ( safe_file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 										cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
 								}
