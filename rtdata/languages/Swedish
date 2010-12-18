@@ -148,6 +148,8 @@ HISTORY_MSG_104;HSV Equalizer
 HISTORY_MSG_105;Reducering av överstrålning
 HISTORY_MSG_106;Radie för reducering av överstrålning
 HISTORY_MSG_107;Tröskelvärde för reducering av överstrålning
+HISTORY_MSG_108;Storleksförändring på avgränsad yta
+HISTORY_MSG_109;Storleksförändring tillämpas på
 HISTORY_MSG_10;Skuggkomprimering
 HISTORY_MSG_11;Tonkurva
 HISTORY_MSG_12;Autoexponering
@@ -710,12 +712,16 @@ TP_PREPROCESS_DARKFRAME;Svartbild
 TP_PREPROCESS_DFAUTOSELECT;Välj svartbild automatiskt
 TP_RAWPANEL_DEMOSAICING;Demosaicing
 TP_RAWPANEL_PREPROCESSING;Förbehandling
+TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
 TP_RESIZE_BILINEAR;Bilinjär
+TP_RESIZE_CROPPEDAREA;Beskuren yta
 TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
 TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
+TP_RESIZE_FITBOX;Begränsad yta
+TP_RESIZE_FULLIMAGE;Hela bilden
 TP_RESIZE_FULLSIZE;Full bildstorlek:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höjd
@@ -791,9 +797,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_108;Resize bounding box
-!HISTORY_MSG_109;Resizing applies to
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
