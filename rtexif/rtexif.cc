@@ -824,10 +824,10 @@ void Tag::toString (char* buffer, int ofs) {
     switch (type) {
         case UNDEFINED: 
         case BYTE:  sprintf (b, "%d", value[i+ofs]); break;
-        case SSHORT: 
-        case SHORT: sprintf (b, "%d", toInt(2*i+ofs)); break; 
-        case SLONG:  
-        case LONG:  sprintf (b, "%d", toInt(4*i+ofs)); break; 
+        case SSHORT: sprintf (b, "%d", toInt(2*i+ofs)); break;
+        case SHORT: sprintf (b, "%u", toInt(2*i+ofs)); break;
+        case SLONG: sprintf (b, "%ld", toInt(4*i+ofs)); break;
+        case LONG:  sprintf (b, "%lu", toInt(4*i+ofs)); break;
         case SRATIONAL: 
         case RATIONAL: sprintf (b, "%d/%d", (int)sget4 (value+8*i+ofs, getOrder()), (int)sget4 (value+8*i+ofs+4, getOrder())); break; 
         case FLOAT:    sprintf (b, "%g", toDouble(8*i+ofs)); break;
