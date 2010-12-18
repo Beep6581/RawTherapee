@@ -168,8 +168,9 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 		EditorPanel *ep = (EditorPanel *)mainNB->get_nth_page(page_num);
 		ep->setAspect();
 	} else {
-        if (isSingleTabMode()) {
-            // Save profile on leaving the editor pane
+        // in single tab mode with command line filename epanel does not exist yet
+        if (isSingleTabMode() && epanel) {
+            // Save profile on leaving the editor panel
             epanel->saveProfile();
 
             MoveFileBrowserToMain();
