@@ -5,135 +5,177 @@ http://www.rawtherapee.com/forum/viewforum.php?f=10
 Windows
 -------
 
+	The toolchain:
+
+		There is 2 method to compile RawTherapee, and they each rely on different and common packages. They are
+		now referred to METHOD 1 and METHOD 2.
+		Of course, you'll have to install the package for the build method explained later in this document.
+
+		The rest of this document assumes that you've installed MinGW, MSYS and Gtkmm respectively to "C:\mingw",
+		"C:\msys" and "C:\Gtkmm". 
+		This tutorial assume that you've installed the packages in a paths THAT DOES NOT CONTAIN SPACES.
+
+		METHOD 1:
+			- MinGW-TDM (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
+			- MSYS      (http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe)
+			            If you have some trouble installing MSYS, see here : http://www.mingw.org/wiki/MSYS
+			- CMake     (http://www.cmake.org/cmake/resources/software.html)
+			- Gtkmm2.22 (http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
+
+		METHOD 2:
+			- MinGW-TDM (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
+			- CMake     (http://www.cmake.org/cmake/resources/software.html)
+			- Gtkmm2.22 (http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
+
+		Additionnal steps:
+			When all the packages of your preferred method are installed:
+			- set the GTKMM_BASEPATH user or system environment variable to the installation directory of Gtkmm
+			  (the Gtkmm's installer can do it for you)
+			- set the MINGW_BASEPATH user or system environment variable to the installation directory of MinGW32
+			  You have to restart the console to take this new variables into account
+			- Copy the "Win32CMakeOptions-sample.txt" file located in the root directory of RT's source tree, to "cmo.txt" (e.g.)
+			  You can edit that copy to change the compilation flags to your needs, but the default values should be fine.
+
 	Dependancies:
 
-		This section explain how to build the libraries needed by RawTherapee, and not provided in other packages.
-		For your convenience, those libraries has been precompiled and are downloadable at :
+		RawTherapee rely on libraries that may not be part of the Gtkmm or MinGW package. There is two ways of installing
+		thoses libraries.
 
-			http://www.rawtherapee.com/releases_head/windows/dependancies/
+		The simple way:
 
-		If you don't find a suitable package for your toolchain, build it yourself if you can or ask a developer
-		to do it for you.
-		
-		Just unpack the content of this archive to the base installation dir of MinGW, and everything
-		should work fine.
+			For your convenience, those libraries has been precompiled and are downloadable at :
 
-		Requirements:
-		- MinGW + MSYS
-		  Let's say that you have intalled them respectively to "C:\mingw" and "C:\msys".
-		  This tutorial assume that you've installed MinGW and MSYS in a path that does not contain spaces
+			         http://www.rawtherapee.com/releases_head/windows/dependancies/
 
-		Open an MSYS console and compile the dependancies in that order:
+			If you don't find a suitable package for your toolchain, take the DIY way or ask a developer
+			to build them for you.
 
-		zlib:
-		If you have Gtkmm2.22 installed, you can skip this section
-		- download: http://zlib.net/
-		- how to build:
-		  cd to the unarchiving directory of zlib-1.2.5
-			make -f win32/Makefile.gcc
+			Just unpack the content of this archive to the base installation dir of MinGW, and everything
+			should work fine.
 
-			Then, manually copy the files as follows:
+		The "Do It Yourself" way:
 
-			cp -iv zlib1.dll /mingw/bin
-			cp -iv zconf.h zlib.h /mingw/include
-			cp -iv libz.a /mingw/lib
-			cp -iv libzdll.a /mingw/lib/libz.dll.a
+			The MSYS package is required to build the libraries. See above for the download link.
 
-		libpng:
-		If you have Gtkmm2.22 installed, you can skip this section
-		- download:     http://sourceforge.net/projects/libpng/files/
-		                (please note that libpng 1.5 has not been tested yet)
-		- how to build:
-		  cd to the unarchiving directory of lpng144
-			
-			There's two options to build libpng :
-			1. gtkmm doesn't provide zlib so i've compiled it myself
-			   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_BUILD_TYPE:STRING=Release
-			2. gtkmm provide zlib and i want to reuse it (so we're assuming that you didn't compiled zlib like explained here above)
-			   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_PREFIX_PATH:PATH=C:/gtkmm2.22 -DCMAKE_BUILD_TYPE:STRING=Release
+			Before building them, look if they are already installed in your Gtkmm and MinGW directories. There should be
+			two versions of the same library in different place.
 
-			Then build and install:
-			   make
-				 make install
+			Open an MSYS console, that will create a Linux environment, and compile the dependancies in that order:
 
-		libjpeg:
-		- download:     http://www.ijg.org/
-		- how to build:
-		  cd to the unarchiving directory of jpeg-8b
-		  ./configure --prefix=/mingw
-		  copy the content of jconfig.txt to jconfig.h (overwrite the existing file)
-		  make
-		  make install
+			zlib:
+			If you have Gtkmm2.22 installed, you can skip this section
+			- download: http://zlib.net/
+			- how to build:
+			  cd to the unarchiving directory of zlib-1.2.5
+			  make -f win32/Makefile.gcc
 
-		libtiff:
-		- download:     ftp://ftp.remotesensing.org/pub/libtiff/
-		- how to build:
-		  ./configure --prefix=/mingw
-		  make
-		  cd libtiff
-		  make install
+				Then, manually copy the files as follows:
 
-		libiptcdata:
-		- download:     http://libiptcdata.sourceforge.net/
-		- how to build:
-		  ./configure --prefix=/mingw
-		  edit iptc\main.c and comment out lines 830 up to 859 (libiptcdata-1.0.4)
-		  make
-		  make install
+				cp -iv zlib1.dll /mingw/bin
+				cp -iv zconf.h zlib.h /mingw/include
+				cp -iv libz.a /mingw/lib
+				cp -iv libzdll.a /mingw/lib/libz.dll.a
 
-		lcms:
-		- download v1.x (2.x is not implemented yet): http://sourceforge.net/projects/lcms/files/
-		- how to build:		
-		  ./configure --prefix=/mingw
-		  make
-		  make install
+			libpng:
+			If you have Gtkmm2.22 installed, you can skip this section
+			- download:     http://sourceforge.net/projects/libpng/files/
+			                (please note that libpng 1.5 has not been tested yet)
+			- how to build:
+			  cd to the unarchiving directory of lpng144
 
-		Rawzor:
-		provided in RT's source tree (downloaded from http://www.rawzor.com/developers/)
+				There's two options to build libpng :
+				1. gtkmm doesn't provide zlib so i've compiled it myself
+				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_BUILD_TYPE:STRING=Release
+				2. gtkmm provide zlib and i want to reuse it (so we're assuming that you didn't compiled zlib like explained here above)
+				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_PREFIX_PATH:PATH=C:/gtkmm2.22 -DCMAKE_BUILD_TYPE:STRING=Release
 
-		IMPORTANT:
-		1. When all the compilations are done (or even before), don't forget to set the PKG_CONFIG_PATH
-		   environment variable to the location of the pkgconfig dir, usually c:\mingw\lib\pkgconfig
-		2. Make sure that the *.pc files of the dependancies, located in the pkgconfig dir, has the first
-		   line like this : prefix=/mingw
+				Then build and install:
+				   make
+				   make install
 
-		If everything is well installed, you should see the following lines when running the cmake command (see below) :
-				-- checking for module 'libiptcdata'
-				--   found libiptcdata, version 1.0.4
-				-- checking for module 'lcms<=1.99'
-				--   found lcms, version 1.19
-				-- Found JPEG: C:/mingw/lib/libjpeg.dll.a
-				-- Found ZLIB: C:/gtkmm2.22/lib/libz.dll.a
-				-- Found PNG: C:/gtkmm2.22/lib/libpng.lib
-				-- Found TIFF: C:/mingw/lib/libtiff.dll.a
+			libjpeg:
+			- download:     http://www.ijg.org/
+			- how to build:
+			  cd to the unarchiving directory of jpeg-8b
+			  ./configure --prefix=/mingw
+			  copy the content of jconfig.txt to jconfig.h (overwrite the existing file)
+			  make
+			  make install
+
+			libtiff:
+			- download:     ftp://ftp.remotesensing.org/pub/libtiff/
+			- how to build:
+			  ./configure --prefix=/mingw
+			  make
+			  cd libtiff
+			  make install
+
+			libiptcdata:
+			- download:     http://libiptcdata.sourceforge.net/
+			- how to build:
+			  ./configure --prefix=/mingw
+
+			  Edit the "Makefile" file from the root dir of libiptcdata, and search for "DIST_SUBDIRS ="
+			  and "SUBDIRS =". You should only find one line for each search. From those lines, remove "iptc", then
+
+			  make
+			  make install
+
+			lcms:
+			- download v1.x (v2.x is not supported yet): http://sourceforge.net/projects/lcms/files/
+			- how to build:
+			  ./configure --prefix=/mingw
+			  make
+			  make install
+
+			Rawzor:
+			provided in RT's source tree (downloaded from http://www.rawzor.com/developers/)
+
+			IMPORTANT:
+			1. When all the compilations are done (or even before), don't forget to set the PKG_CONFIG_PATH
+			   user or system environment variable to the location of the pkgconfig dir, usually c:\mingw\lib\pkgconfig
+			   You have to restart the console to take this new variable into account
+			2. Make sure that the *.pc files of the dependancies, located in the pkgconfig dir, has the first
+			   line like this : prefix=/mingw
+
+			If everything is well installed, you should see the following lines when running the cmake command (see "Building RT" below) :
+					-- checking for module 'libiptcdata'
+					--   found libiptcdata, version 1.0.4
+					-- checking for module 'lcms<=1.99'
+					--   found lcms, version 1.19
+					-- Found JPEG: C:/mingw/lib/libjpeg.dll.a
+					-- Found ZLIB: C:/gtkmm2.22/lib/libz.dll.a
+					-- Found PNG: C:/gtkmm2.22/lib/libpng.lib
+					-- Found TIFF: C:/mingw/lib/libtiff.dll.a
 
 	Building RT:
 
 		METHOD 1:
 			Requirements:
-			- MinGW + MSYS
+			- MinGW + MSYS (FIXME: Do we talk
 			- CMake
 			- GTK and GTKMM development environments
-			
+
 			Compile:
-			- Start MSYS
-			- Enter the root directory of the RawTherapee source tree
-			- Type: cmake -G "MSYS Makefiles" .
+			- Start an MSYS command line interface
+			- Enter the root directory of the RawTherapee source tree (type: cd "/C/Absolute/Path/To/RawTherapee_sourceTree")
+			- Type: cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt .
 			- Type: make install
-			- You find the compiled program in the release directory
-	
+			- You'll find the compiled program in the subdirectory named like the value of CMAKE_BUILD_TYPE ("Release" in this example)
+
 		METHOD 2:
 			Requirements:
-			- tdm-gcc   (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
-			- cmake     (http://www.cmake.org/cmake/resources/software.html)
-			- mercurial (http://mercurial.selenic.com/wiki/WindowsInstall)
-			- gtkmm     (http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
-			
+			- MinGW-TDM (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
+			- CMake     (http://www.cmake.org/cmake/resources/software.html)
+			- Mercurial (http://mercurial.selenic.com/wiki/WindowsInstall)
+			- Gtkmm     (http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
+
 			Compile:
-			- Enter the root directory of the RawTherapee source tree
-			- Type: cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+			- Start a standard DOS command line interface (WIN + "R" -> "cmd")
+			- Enter the root directory of the RawTherapee source tree (type: cd C:\Absolute\Path\To\RawTherapee_sourceTree)
+			- Type: cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt .
 			- Type: mingw32-make.exe install
-			- You find the compiled program in the "release" directory
+			- You'll find the compiled program in the subdirectory named like the value of CMAKE_BUILD_TYPE ("Release" in this example)
 
 Linux
 -----
@@ -145,7 +187,7 @@ Linux
 		- ...did I forget something?
 
 	On Ubuntu/Debian the requirements can be installed by running:
-		sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev merciurial
+		sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev mercurial
 
 	Compile:
 		- Enter the root directory of the RawTherapee source tree
