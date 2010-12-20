@@ -107,6 +107,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
 	
+    Gtk::Entry* txtSndBatchQueueDone;
+	
     Options moptions;
     sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
     Glib::ustring initialTheme;
@@ -130,6 +132,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getFileBrowserPanel ();
     Gtk::Widget* getGeneralPanel ();
     Gtk::Widget* getBatchProcPanel ();
+    Gtk::Widget* getSoundPanel ();
     
   public:
          Preferences (RTWindow *rtwindow);

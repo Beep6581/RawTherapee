@@ -296,6 +296,10 @@ if (keyFile.has_group ("Batch Processing")) {
     if (keyFile.has_key ("Batch Processing", "AdjusterBehavior")) baBehav = keyFile.get_integer_list ("Batch Processing", "AdjusterBehavior");
 }
 
+if (keyFile.has_group ("Sounds")) { 
+    if (keyFile.has_key ("Sounds", "BatchQueueDone")) sndBatchQueueDone = keyFile.get_string ("Sounds", "BatchQueueDone");
+}
+
         return 0;
 }
 
@@ -423,6 +427,8 @@ int Options::saveToFile (Glib::ustring fname) {
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
+
+    keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
 
 
     FILE *f = safe_g_fopen (fname, "wt");
