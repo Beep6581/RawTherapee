@@ -104,7 +104,7 @@ IMFILE* gfopen (const char* fname)
 
 IMFILE* fopen (const char* fname) {
 
-	FILE* f = fopen (fname, "rb");
+	FILE* f = g_fopen (fname, "rb");
     if (!f)
         return NULL;
     IMFILE* mf = new IMFILE;

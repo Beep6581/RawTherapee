@@ -1255,7 +1255,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
 bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
     
     if (embProfileData) {
-        FILE* f = fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen(fname, "wb");
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
             fclose (f);
@@ -1267,7 +1267,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
 
 bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 
-    FILE* f = fopen (fname.c_str(), "rb");
+    FILE* f = safe_g_fopen (fname, "rb");
     if (!f) 
         aeHistogram = NULL;
     else {
@@ -1282,7 +1282,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 bool Thumbnail::writeAEHistogram (const Glib::ustring& fname) {
 
     if (aeHistogram) {
-        FILE* f = fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen (fname, "wb");
         if (f) {
             fwrite (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
             fclose (f);
