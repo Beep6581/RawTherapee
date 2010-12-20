@@ -57,7 +57,7 @@ Windows
 
 			The MSYS package is required to build the libraries. See above for the download link.
 
-			Before building them, look if they are already installed in your Gtkmm and MinGW directories. There should be
+			Before building them, look if they are already installed in your Gtkmm and MinGW directories. There shouldn't be
 			two versions of the same library in different place.
 
 			Open an MSYS console, that will create a Linux environment, and compile the dependancies in that order:
