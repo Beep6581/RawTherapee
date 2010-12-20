@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>, Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -81,6 +81,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
+    nb->append_page (*getSoundPanel(),          M("PREFERENCES_TAB_SOUND"));
     nb->set_current_page (0);
 
     fillPreferences ();
@@ -673,6 +674,27 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     return mvbfb;
 }
 
+Gtk::Widget* Preferences::getSoundPanel () {
+    Gtk::VBox* pSnd = new Gtk::VBox ();
+
+    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP")));
+    pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
+
+    Gtk::HBox* pBatchQueueDone = new Gtk::HBox();
+
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring(":")));
+    pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 12);
+    
+    txtSndBatchQueueDone =  Gtk::manage (new Gtk::Entry());
+    pBatchQueueDone->pack_end (*txtSndBatchQueueDone, Gtk::PACK_EXPAND_WIDGET, 4);
+    
+    pSnd->pack_start (*pBatchQueueDone, Gtk::PACK_SHRINK, 4);
+
+    pSnd->set_border_width (4);
+
+    return pSnd;
+}
+
 void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext) {
 
     // process directory
@@ -787,6 +809,8 @@ void Preferences::storePreferences () {
     moptions.mainNBVertical = editorMode==1;
 
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
+
+    moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text ();
 }
 
 void Preferences::fillPreferences () {
@@ -892,6 +916,8 @@ void Preferences::fillPreferences () {
     dfconn.block (false);
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
+
+    txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
 }
 
 /*

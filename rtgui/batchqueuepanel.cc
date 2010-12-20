@@ -21,7 +21,8 @@
 #include <preferences.h>
 #include <multilangmgr.h>
 #include <rtwindow.h>
-#include <safegtk.h>
+#include <soundman.h>
+
 
 BatchQueuePanel::BatchQueuePanel () {
 
@@ -260,6 +261,8 @@ void BatchQueuePanel::queueEmpty () {
     stopBatchProc ();
     fdir->set_sensitive (true);
     fformat->set_sensitive (true);
+
+    SoundManager::playSoundAsync(options.sndBatchQueueDone);
 }
 
 bool BatchQueuePanel::canStartNext () {

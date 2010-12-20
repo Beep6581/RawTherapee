@@ -136,6 +136,9 @@ class Options {
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     
+    Glib::ustring sndBatchQueueDone;
+
+
     Options ();
 
     Options*    copyFrom        (Options* other);
