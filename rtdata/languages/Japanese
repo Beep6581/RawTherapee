@@ -776,6 +776,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 
 
 !EXIFFILTER_FILETYPE;File Type
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
+!MAIN_FRAME_EDITOR;Editor
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CROP_GTGRID;Grid

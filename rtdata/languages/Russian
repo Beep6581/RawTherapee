@@ -736,9 +736,9 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing enabled
-!HISTORY_MSG_106;Defringing radius
-!HISTORY_MSG_107;Defringing threshold
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
@@ -747,6 +747,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_97;'b' curve
 !HISTORY_MSG_98;Demosaicing
 !HISTORY_MSG_99;Preprocessing
+!MAIN_FRAME_EDITOR;Editor
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
@@ -773,6 +774,8 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
