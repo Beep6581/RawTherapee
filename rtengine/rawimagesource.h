@@ -162,7 +162,6 @@ class RawImageSource : public ImageSource {
         void eahd_demosaic();
         void hphd_demosaic();
         void vng4_demosaic();
-        void ppg_demosaic();
 		void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
 		void fast_demo(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
         void dcb_demosaic(int iterations, int dcb_enhance);

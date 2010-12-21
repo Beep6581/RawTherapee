@@ -276,10 +276,17 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		firstgreen++;
 
 	int skip = 1;
+	if (ri->get_FujiWidth() != 0){
+		if (fixwh == 1) // fix height, scale width
+			skip = ((ri->get_height() - ri->get_FujiWidth()) / sqrt(0.5) - firstgreen - 1) / h;
+		else
+			skip = (ri->get_FujiWidth()/sqrt(0.5) - firstgreen - 1) / w;
+	}else{
 	if (fixwh == 1) // fix height, scale width
 		skip = (ri->get_height() - firstgreen - 1) / h;
 	else
 		skip = (ri->get_width() - firstgreen - 1) / w;
+	}
 	if (skip % 2)
 		skip--;
 	if (skip < 1)
@@ -362,6 +369,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			}
 		delete tmpImg;
 		tmpImg = fImg;
+		tmpw = wide;
+		tmph = high;
 	}
 
 	if (fixwh == 1) // fix height, scale width

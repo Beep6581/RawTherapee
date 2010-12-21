@@ -743,8 +743,8 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
 	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
-	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_boolean ("RAW", "CARed" );
-	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_boolean ("RAW", "CABlue" );
+	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_double ("RAW", "CARed" );
+	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_double ("RAW", "CABlue" );
 	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" );
 	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
 	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
@@ -831,128 +831,128 @@ bool operator==(const IPTCPair& a, const IPTCPair& b) {
 }
 bool ProcParams::operator== (const ProcParams& other) {
 
-	return
-		toneCurve.curve == other.toneCurve.curve
-		&& toneCurve.brightness == other.toneCurve.brightness
-		&& toneCurve.black == other.toneCurve.black
-		&& toneCurve.contrast == other.toneCurve.contrast
+    return 
+           toneCurve.curve      == other.toneCurve.curve
+        && toneCurve.brightness == other.toneCurve.brightness
+        && toneCurve.black      == other.toneCurve.black
+        && toneCurve.contrast   == other.toneCurve.contrast
 		&& toneCurve.saturation == other.toneCurve.saturation
-		&& toneCurve.shcompr == other.toneCurve.shcompr
-		&& toneCurve.hlcompr == other.toneCurve.hlcompr
-		&& toneCurve.autoexp == other.toneCurve.autoexp
-		&& toneCurve.clip == other.toneCurve.clip
-		&& toneCurve.expcomp == other.toneCurve.expcomp
-		&& labCurve.lcurve == other.labCurve.lcurve
-		&& labCurve.acurve == other.labCurve.acurve
-		&& labCurve.bcurve == other.labCurve.bcurve
-		&& labCurve.brightness == other.labCurve.brightness
-		&& labCurve.contrast == other.labCurve.contrast
+        && toneCurve.shcompr    == other.toneCurve.shcompr
+        && toneCurve.hlcompr    == other.toneCurve.hlcompr
+        && toneCurve.autoexp    == other.toneCurve.autoexp
+        && toneCurve.clip       == other.toneCurve.clip
+        && toneCurve.expcomp    == other.toneCurve.expcomp
+        && labCurve.lcurve      == other.labCurve.lcurve
+		&& labCurve.acurve      == other.labCurve.acurve
+		&& labCurve.bcurve      == other.labCurve.bcurve
+        && labCurve.brightness == other.labCurve.brightness
+        && labCurve.contrast   == other.labCurve.contrast
 		&& labCurve.saturation == other.labCurve.saturation
-		&& sharpening.enabled == other.sharpening.enabled
-		&& sharpening.radius == other.sharpening.radius
-		&& sharpening.amount == other.sharpening.amount
-		&& sharpening.threshold == other.sharpening.threshold
-		&& sharpening.edgesonly == other.sharpening.edgesonly
-		&& sharpening.edges_radius == other.sharpening.edges_radius
-		&& sharpening.edges_tolerance == other.sharpening.edges_tolerance
-		&& sharpening.halocontrol == other.sharpening.halocontrol
-		&& sharpening.halocontrol_amount== other.sharpening.halocontrol_amount
-		&& sharpening.method == other.sharpening.method
-		&& sharpening.deconvamount == other.sharpening.deconvamount
-		&& sharpening.deconvradius == other.sharpening.deconvradius
-		&& sharpening.deconviter == other.sharpening.deconviter
-		&& sharpening.deconvdamping == other.sharpening.deconvdamping
-		&& colorBoost.amount == other.colorBoost.amount
-		&& colorBoost.avoidclip == other.colorBoost.avoidclip
-		&& colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter
-		&& colorBoost.saturationlimit == other.colorBoost.saturationlimit
-		&& wb.method == other.wb.method
-		&& wb.green == other.wb.green
-		&& wb.temperature == other.wb.temperature
-		&& colorShift.a == other.colorShift.a
-		&& colorShift.b == other.colorShift.b
-		&& impulseDenoise.enabled == other.impulseDenoise.enabled
-		&& impulseDenoise.thresh == other.impulseDenoise.thresh
-		&& dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
-		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
-		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
-		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
-		&& defringe.enabled == other.defringe.enabled
-		&& defringe.radius == other.defringe.radius
-		&& defringe.threshold == other.defringe.threshold
-		&& lumaDenoise.enabled == other.lumaDenoise.enabled
-		&& lumaDenoise.radius == other.lumaDenoise.radius
-		&& lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance
-		&& colorDenoise.enabled == other.colorDenoise.enabled
-		&& colorDenoise.radius == other.colorDenoise.radius
-		&& colorDenoise.edgetolerance == other.colorDenoise.edgetolerance
-		&& colorDenoise.edgesensitive == other.colorDenoise.edgesensitive
-		&& sh.enabled == other.sh.enabled
-		&& sh.hq == other.sh.hq
-		&& sh.highlights == other.sh.highlights
-		&& sh.htonalwidth == other.sh.htonalwidth
-		&& sh.shadows == other.sh.shadows
-		&& sh.stonalwidth == other.sh.stonalwidth
-		&& sh.localcontrast == other.sh.localcontrast
-		&& sh.radius == other.sh.radius
-		&& crop.enabled == other.crop.enabled
-		&& crop.x == other.crop.x
-		&& crop.y == other.crop.y
-		&& crop.w == other.crop.w
-		&& crop.h == other.crop.h
-		&& crop.fixratio == other.crop.fixratio
-		&& crop.ratio == other.crop.ratio
-		&& crop.orientation == other.crop.orientation
-		&& crop.guide == other.crop.guide
-		&& coarse.rotate == other.coarse.rotate
-		&& coarse.hflip == other.coarse.hflip
-		&& coarse.vflip == other.coarse.vflip
-		&& rotate.degree == other.rotate.degree
-		&& commonTrans.autofill == other.commonTrans.autofill
-		&& distortion.uselensfun == other.distortion.uselensfun
-		&& distortion.amount == other.distortion.amount
-		&& perspective.horizontal == other.perspective.horizontal
-		&& perspective.vertical == other.perspective.vertical
-		&& cacorrection.red == other.cacorrection.red
-		&& cacorrection.blue == other.cacorrection.blue
-		&& vignetting.amount == other.vignetting.amount
-		&& vignetting.radius == other.vignetting.radius
-		&& vignetting.strength == other.vignetting.strength
-		&& vignetting.centerX == other.vignetting.centerX
-		&& vignetting.centerY == other.vignetting.centerY
-		&& !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
-		&& !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
-		&& !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))
-		&& hlrecovery.enabled == other.hlrecovery.enabled
-		&& hlrecovery.method == other.hlrecovery.method
-		&& resize.scale == other.resize.scale
+        && sharpening.enabled   == other.sharpening.enabled
+        && sharpening.radius    == other.sharpening.radius
+        && sharpening.amount    == other.sharpening.amount
+        && sharpening.threshold     == other.sharpening.threshold
+        && sharpening.edgesonly     == other.sharpening.edgesonly
+        && sharpening.edges_radius  == other.sharpening.edges_radius
+        && sharpening.edges_tolerance   == other.sharpening.edges_tolerance
+        && sharpening.halocontrol   == other.sharpening.halocontrol
+        && sharpening.halocontrol_amount== other.sharpening.halocontrol_amount
+        && sharpening.method        == other.sharpening.method
+        && sharpening.deconvamount  == other.sharpening.deconvamount
+        && sharpening.deconvradius  == other.sharpening.deconvradius
+        && sharpening.deconviter    == other.sharpening.deconviter
+        && sharpening.deconvdamping == other.sharpening.deconvdamping
+        && colorBoost.amount        == other.colorBoost.amount
+        && colorBoost.avoidclip == other.colorBoost.avoidclip
+        && colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter
+        && colorBoost.saturationlimit == other.colorBoost.saturationlimit
+        && wb.method        == other.wb.method
+        && wb.green         == other.wb.green
+        && wb.temperature   == other.wb.temperature
+        && colorShift.a     == other.colorShift.a
+        && colorShift.b     == other.colorShift.b
+	&& impulseDenoise.enabled      == other.impulseDenoise.enabled
+	&& impulseDenoise.thresh      == other.impulseDenoise.thresh
+	&& dirpyrDenoise.enabled      == other.dirpyrDenoise.enabled
+	&& dirpyrDenoise.luma       == other.dirpyrDenoise.luma
+	&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
+	&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
+	&& defringe.enabled      == other.defringe.enabled
+	&& defringe.radius       == other.defringe.radius
+	&& defringe.threshold == other.defringe.threshold
+        && lumaDenoise.enabled      == other.lumaDenoise.enabled
+        && lumaDenoise.radius       == other.lumaDenoise.radius
+        && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance
+        && colorDenoise.enabled      == other.colorDenoise.enabled
+        && colorDenoise.radius       == other.colorDenoise.radius
+        && colorDenoise.edgetolerance == other.colorDenoise.edgetolerance
+        && colorDenoise.edgesensitive == other.colorDenoise.edgesensitive
+        && sh.enabled       == other.sh.enabled
+        && sh.hq            == other.sh.hq
+        && sh.highlights    == other.sh.highlights
+        && sh.htonalwidth   == other.sh.htonalwidth
+        && sh.shadows       == other.sh.shadows
+        && sh.stonalwidth   == other.sh.stonalwidth
+        && sh.localcontrast == other.sh.localcontrast
+        && sh.radius        == other.sh.radius
+        && crop.enabled == other.crop.enabled
+        && crop.x       == other.crop.x
+        && crop.y       == other.crop.y
+        && crop.w       == other.crop.w
+        && crop.h       == other.crop.h
+        && crop.fixratio == other.crop.fixratio
+        && crop.ratio   == other.crop.ratio
+        && crop.orientation == other.crop.orientation
+        && crop.guide   == other.crop.guide
+        && coarse.rotate == other.coarse.rotate
+        && coarse.hflip == other.coarse.hflip
+        && coarse.vflip == other.coarse.vflip
+        && rotate.degree == other.rotate.degree
+        && commonTrans.autofill == other.commonTrans.autofill
+        && distortion.uselensfun == other.distortion.uselensfun
+        && distortion.amount == other.distortion.amount
+        && perspective.horizontal == other.perspective.horizontal
+        && perspective.vertical == other.perspective.vertical
+        && cacorrection.red == other.cacorrection.red
+        && cacorrection.blue == other.cacorrection.blue
+        && vignetting.amount == other.vignetting.amount
+        && vignetting.radius == other.vignetting.radius
+        && vignetting.strength == other.vignetting.strength
+        && vignetting.centerX == other.vignetting.centerX
+        && vignetting.centerY == other.vignetting.centerY
+        && !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
+        && !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
+        && !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))
+        && hlrecovery.enabled   == other.hlrecovery.enabled
+        && hlrecovery.method    == other.hlrecovery.method
+        && resize.scale     == other.resize.scale
 		&& resize.appliesTo == other.resize.appliesTo
-		&& resize.method == other.resize.method
-		&& resize.dataspec == other.resize.dataspec
-		&& resize.width == other.resize.width
-		&& resize.height == other.resize.height
-		&& raw.dark_frame == other.raw.dark_frame
-		&& raw.df_autoselect == other.raw.df_autoselect
-		&& raw.dcb_enhance == other.raw.dcb_enhance
-		&& raw.dcb_iterations == other.raw.dcb_iterations
-		&& raw.ccSteps == other.raw.ccSteps
-		&& raw.ca_autocorrect == other.raw.ca_autocorrect
-		&& raw.cared == other.raw.cared
-		&& raw.cablue == other.raw.cablue
-		&& raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
-		&& raw.dmethod == other.raw.dmethod
-		&& raw.greenthresh == other.raw.greenthresh
-		&& raw.linenoise == other.raw.linenoise
-		&& icm.input == other.icm.input
-		&& icm.gammaOnInput == other.icm.gammaOnInput
-		&& icm.working == other.icm.working
-		&& icm.output == other.icm.output
-		&& equalizer == other.equalizer
-		&& dirpyrequalizer == other.dirpyrequalizer
-		&& hsvequalizer == other.hsvequalizer
-		&& exif==other.exif
-		&& iptc==other.iptc;
-	}
+        && resize.method    == other.resize.method
+        && resize.dataspec  == other.resize.dataspec
+        && resize.width     == other.resize.width
+        && resize.height    == other.resize.height
+        && raw.dark_frame   == other.raw.dark_frame
+        && raw.df_autoselect == other.raw.df_autoselect
+        && raw.dcb_enhance  == other.raw.dcb_enhance
+        && raw.dcb_iterations == other.raw.dcb_iterations
+        && raw.ccSteps      == other.raw.ccSteps
+        && raw.ca_autocorrect == other.raw.ca_autocorrect
+	&& raw.cared == other.raw.cared
+	&& raw.cablue == other.raw.cablue
+        && raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
+        && raw.dmethod == other.raw.dmethod
+        && raw.greenthresh == other.raw.greenthresh
+        && raw.linenoise == other.raw.linenoise
+        && icm.input        == other.icm.input
+        && icm.gammaOnInput == other.icm.gammaOnInput
+        && icm.working      == other.icm.working
+        && icm.output       == other.icm.output
+        && equalizer == other.equalizer
+	&& dirpyrequalizer == other.dirpyrequalizer
+	&& hsvequalizer == other.hsvequalizer
+        && exif==other.exif
+        && iptc==other.iptc;
+}
 
 bool ProcParams::operator!= (const ProcParams& other) {
 
