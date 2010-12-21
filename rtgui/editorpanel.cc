@@ -1,6 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>, Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
 #include <procparamchangers.h>
 #include <safegtk.h>
 #include <imagesource.h>
+#include <soundman.h>
 
 using namespace rtengine::procparams;
 
@@ -32,6 +34,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     epih->epanel = this;
     epih->destroyed = false;
     epih->pending = 0;
+
+    processingStartedTime = 0;
 
 // construct toolpanelcoordinator
     tpc = new ToolPanelCoordinator ();
@@ -530,10 +534,10 @@ void EditorPanel::setProgressStr (Glib::ustring str)
 	g_idle_add (_setprogressStr, s);
 }
 
-void EditorPanel::refreshProcessingState (bool state) {
+void EditorPanel::refreshProcessingState (bool inProcessing) {
 
     // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
-    if (ipc && openThm && !state && tpc->getChangedState()) {
+    if (ipc && openThm && !inProcessing && tpc->getChangedState()) {
         rtengine::procparams::ProcParams pparams;
         ipc->getParams (&pparams);
         openThm->setProcParams (pparams, EDITOR, false);
@@ -546,10 +550,23 @@ void EditorPanel::refreshProcessingState (bool state) {
         if (wlast)
             statusBox->remove (*wlast);
     }
-    if (state)
+
+
+    if (inProcessing) {
+        if (processingStartedTime==0) processingStartedTime = ::time(NULL);
+
         statusBox->pack_end (*red, Gtk::PACK_SHRINK, 4);
-    else
+    } else {
+        if (processingStartedTime!=0) {
+            time_t curTime= ::time(NULL);
+            if (::difftime(curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) 
+                SoundManager::playSoundAsync(options.sndLngEditProcDone);
+
+            processingStartedTime = 0;
+        }
+
         statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
+}
 }
 
 struct errparams {

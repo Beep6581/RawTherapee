@@ -102,6 +102,9 @@ class EditorPanel : public Gtk::VBox,
         bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc);
         bool                idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring filename);
         int err;
+
+        time_t processingStartedTime;
+
     public:
 
         EditorPanel (FilePanel* filePanel = NULL);
@@ -120,8 +123,8 @@ class EditorPanel : public Gtk::VBox,
         void setProgressStr (Glib::ustring str);
         void setProgressState (int state);
         void error (Glib::ustring descr);
-        void refreshProcessingState (bool state); // this is called by setProcessingState in the gtk thread
         void displayError (Glib::ustring descr);  // this is called by error in the gtk thread
+        void refreshProcessingState (bool inProcessing); // this is called by setProcessingState in the gtk thread
         
         // PParamsChangeListener interface
         void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);
@@ -148,8 +151,6 @@ class EditorPanel : public Gtk::VBox,
         Glib::ustring getFileName ();
         bool handleShortcutKey (GdkEventKey* event);
         
-        //void saveOptions ();
-
         Gtk::Paned *catalogPane;        
 };
 
