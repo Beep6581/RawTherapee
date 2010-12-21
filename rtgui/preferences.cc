@@ -680,6 +680,7 @@ Gtk::Widget* Preferences::getSoundPanel () {
     Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP")));
     pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
 
+    // BatchQueueDone
     Gtk::HBox* pBatchQueueDone = new Gtk::HBox();
 
     Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring(":")));
@@ -689,6 +690,26 @@ Gtk::Widget* Preferences::getSoundPanel () {
     pBatchQueueDone->pack_end (*txtSndBatchQueueDone, Gtk::PACK_EXPAND_WIDGET, 4);
     
     pSnd->pack_start (*pBatchQueueDone, Gtk::PACK_SHRINK, 4);
+
+    // LngEditProcDone
+    Gtk::HBox* pSndLngEditProcDone = new Gtk::HBox();
+
+    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring(":")));
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 12);
+    
+    txtSndLngEditProcDone =  Gtk::manage (new Gtk::Entry());
+    pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
+
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring(":")));
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
+ 
+    spbSndLngEditProcDoneSecs = new Gtk::SpinButton ();
+    spbSndLngEditProcDoneSecs->set_digits (1);
+    spbSndLngEditProcDoneSecs->set_increments (0.5, 1);
+    spbSndLngEditProcDoneSecs->set_range (0, 10);
+    pSndLngEditProcDone->pack_end (*spbSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 4);
+
+    pSnd->pack_start (*pSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
 
     pSnd->set_border_width (4);
 
@@ -810,7 +831,10 @@ void Preferences::storePreferences () {
 
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 
+    // Sounds
     moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text ();
+    moptions.sndLngEditProcDone     = txtSndLngEditProcDone->get_text ();
+    moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
 }
 
 void Preferences::fillPreferences () {
@@ -917,7 +941,10 @@ void Preferences::fillPreferences () {
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 
+    // Sounds
     txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
+    txtSndLngEditProcDone->set_text (moptions.sndLngEditProcDone);
+    spbSndLngEditProcDoneSecs->set_value (moptions.sndLngEditProcDoneSecs);
 }
 
 /*

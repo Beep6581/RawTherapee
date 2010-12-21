@@ -137,6 +137,8 @@ class Options {
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     
     Glib::ustring sndBatchQueueDone;
+    Glib::ustring sndLngEditProcDone;
+    double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
 
 
     Options ();

@@ -127,6 +127,8 @@ void Options::setDefaults () {
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;
 
+    sndLngEditProcDoneSecs=3.0;
+
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -298,6 +300,8 @@ if (keyFile.has_group ("Batch Processing")) {
 
 if (keyFile.has_group ("Sounds")) { 
     if (keyFile.has_key ("Sounds", "BatchQueueDone")) sndBatchQueueDone = keyFile.get_string ("Sounds", "BatchQueueDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDone"))     sndLngEditProcDone     = keyFile.get_string ("Sounds", "LngEditProcDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
 }
 
         return 0;
@@ -429,6 +433,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
     keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
+    keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
+    keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
 
 
     FILE *f = safe_g_fopen (fname, "wt");

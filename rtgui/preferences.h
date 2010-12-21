@@ -108,6 +108,8 @@ class Preferences : public Gtk::Dialog {
     RTWindow* parent;
 	
     Gtk::Entry* txtSndBatchQueueDone;
+    Gtk::Entry* txtSndLngEditProcDone;
+	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
 	
     Options moptions;
     sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
