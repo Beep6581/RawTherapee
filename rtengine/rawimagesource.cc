@@ -30,7 +30,6 @@
 #include <slicer.h>
 
 
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -235,38 +234,74 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
         imwidth = maximwidth;
     if (!fuji && imheight>maximheight)
         imheight = maximheight;
-       
-    // render the requested image part
-    unsigned short* red  = new unsigned short[imwidth];
-    unsigned short* grn  = new unsigned short[imwidth];
-    unsigned short* blue = new unsigned short[imwidth];
+    int maxx=this->W,maxy=this->H,skip=pp.skip;
 
-    for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
-        if (ri->isBayer()) {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j] = CLIP(rm*this->red[i][jx]);
-                grn[j] = CLIP(gm*this->green[i][jx]);
-                blue[j] = CLIP(bm*this->blue[i][jx]);
+    if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
+    double area=skip*skip;
+    rm/=area;
+    gm/=area;
+    bm/=area;
+
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+#endif
+    // render the requested image part
+    unsigned short* line_red  = new unsigned short [imwidth];
+    unsigned short* line_grn  = new unsigned short [imwidth];
+    unsigned short* line_blue = new unsigned short [imwidth];
+
+
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
+		if (ri->isBayer()) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+            	float rtot,gtot,btot;
+            	rtot=gtot=btot=0;
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
+					{
+						rtot += red[i+m][jx+n];
+						gtot += green[i+m][jx+n];
+						btot += blue[i+m][jx+n];
+					}
+				line_red[j] = CLIP(rm*rtot);
+				line_grn[j] = CLIP(gm*gtot);
+				line_blue[j] = CLIP(bm*btot);
             }
         } else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j]  = CLIP(rm*rawData[i][jx*3+0]);
-                grn[j]  = CLIP(gm*rawData[i][jx*3+1]);
-                blue[j] = CLIP(bm*rawData[i][jx*3+2]);
-
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+            	float rtot,gtot,btot;
+            	rtot=gtot=btot=0;
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
+					{
+						rtot += rawData[i+m][(jx+n)*3+0];
+						gtot += rawData[i+m][(jx+n)*3+1];
+						btot += rawData[i+m][(jx+n)*3+2];
+					}				
+				line_red[j] = CLIP(rm*rtot);
+				line_grn[j] = CLIP(gm*gtot);
+				line_blue[j] = CLIP(bm*btot);
+				
             }
         }
                 
         if (hrp.enabled)
-            hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, pp.skip);
+            hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip);
 
-        transLine (red, grn, blue, ix, image, tran, imwidth, imheight, fw);
+        transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
     }
 
-    delete [] red;
-    delete [] grn;
-    delete [] blue;
-          
+    delete [] line_red;
+    delete [] line_grn;
+    delete [] line_blue;
+#ifdef _OPENMP
+    }
+#endif
     if (fuji) {   
         int a = ((tran & TR_ROT) == TR_R90 && image->width%2==0) || ((tran & TR_ROT) == TR_R180 && image->height%2+image->width%2==1) || ((tran & TR_ROT) == TR_R270 && image->height%2==0);
         // first row
@@ -2394,99 +2429,6 @@ void RawImageSource::vng4_demosaic () {
 	(ri->get_filters() >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-
-/*
-   Patterned Pixel Grouping Interpolation by Alain Desbiolles
-*/
-void RawImageSource::ppg_demosaic()
-{
-  int width=W, height=H;
-  int dir[5] = { 1, width, -1, -width, 1 };
-  int row, col, diff[2], guess[2], c, d, i;
-  ushort (*pix)[4];
-
-  ushort (*image)[4];
-  int colors = 3;
-
-  if (plistener) {
-    plistener->setProgressStr ("Demosaicing...");
-    plistener->setProgress (0.0);
-  }
-  
-  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
-  for (int ii=0; ii<H; ii++)
-    for (int jj=0; jj<W; jj++)
-        image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
-
-  border_interpolate(3, image);
-
-/*  Fill in the green layer with gradients and pattern recognition: */
-  for (row=3; row < height-3; row++) {
-    for (col=3+(FC(row,3) & 1), c=FC(row,col); col < width-3; col+=2) {
-      pix = image + row*width+col;
-      for (i=0; (d=dir[i]) > 0; i++) {
-	guess[i] = (pix[-d][1] + pix[0][c] + pix[d][1]) * 2
-		      - pix[-2*d][c] - pix[2*d][c];
-	diff[i] = ( ABS(pix[-2*d][c] - pix[ 0][c]) +
-		    ABS(pix[ 2*d][c] - pix[ 0][c]) +
-		    ABS(pix[  -d][1] - pix[ d][1]) ) * 3 +
-		  ( ABS(pix[ 3*d][1] - pix[ d][1]) +
-		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
-      }
-      d = dir[i = diff[0] > diff[1]];
-      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
-    }
-    if(plistener) plistener->setProgress(0.33*row/(height-3));
-  }
-/*  Calculate red and blue for each green pixel:		*/
-  for (row=1; row < height-1; row++) {
-    for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
-      pix = image + row*width+col;
-      for (i=0; (d=dir[i]) > 0; c=2-c, i++)
-	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
-			- pix[-d][1] - pix[d][1]) >> 1);
-    }
-    if(plistener) plistener->setProgress(0.33 + 0.33*row/(height-1));
-  }
-/*  Calculate blue for red pixels and vice versa:		*/
-  for (row=1; row < height-1; row++) {
-    for (col=1+(FC(row,1) & 1), c=2-FC(row,col); col < width-1; col+=2) {
-      pix = image + row*width+col;
-      for (i=0; (d=dir[i]+dir[i+1]) > 0; i++) {
-	diff[i] = ABS(pix[-d][c] - pix[d][c]) +
-		  ABS(pix[-d][1] - pix[0][1]) +
-		  ABS(pix[ d][1] - pix[0][1]);
-	guess[i] = pix[-d][c] + pix[d][c] + 2*pix[0][1]
-		 - pix[-d][1] - pix[d][1];
-      }
-      if (diff[0] != diff[1])
-	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
-      else
-	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
-    }
-    if(plistener) plistener->setProgress(0.67 + 0.33*row/(height-1));
-  }
-
-  red = new unsigned short*[H];
-  for (int i=0; i<H; i++) {
-    red[i] = new unsigned short[W];
-    for (int j=0; j<W; j++)
-        red[i][j] = image[i*W+j][0];
-  }
-  green = new unsigned short*[H];
-  for (int i=0; i<H; i++) {
-    green[i] = new unsigned short[W];
-    for (int j=0; j<W; j++)
-        green[i][j] = image[i*W+j][1];
-  }
-  blue = new unsigned short*[H];
-  for (int i=0; i<H; i++) {
-    blue[i] = new unsigned short[W];
-    for (int j=0; j<W; j++)
-        blue[i][j] = image[i*W+j][2];
-  }
-  free (image);
-}
 
 void RawImageSource::border_interpolate(int border, ushort (*image)[4], int start, int end)
 {

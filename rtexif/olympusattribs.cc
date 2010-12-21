@@ -65,52 +65,80 @@ class OLApertureInterpreter : public Interpreter {
 OLApertureInterpreter olApertureInterpreter;    
 
 class OLLensTypeInterpreter : public Interpreter {
-        std::map<int, std::string> lenses;
+        std::map<std::string, std::string> lenses;
     public:
         OLLensTypeInterpreter () {
-            lenses[1] = "Zuiko Digital ED 50mm F2.0 Macro";
-            lenses[1 +65536] = "Zuiko Digital 40-150mm F3.5-4.5"; 
-            lenses[2] = "Zuiko Digital ED 150mm F2.0";
-            lenses[3] = "Zuiko Digital ED 300mm F2.8";
-            lenses[5] = "Zuiko Digital 14-54mm F2.8-3.5";
-            lenses[5 +65536] = "Zuiko Digital Pro ED 90-250mm F2.8"; 
-            lenses[6] = "Zuiko Digital ED 50-200mm F2.8-3.5";
-            lenses[6 +65536] = "Zuiko Digital ED 8mm F3.5 Fisheye"; 
-            lenses[7] = "Zuiko Digital 11-22mm F2.8-3.5";
-            lenses[7 +65536] = "Zuiko Digital 18-180mm F3.5-6.3"; 
-            lenses[8] = "Zuiko Digital 70-300mm F4.0-5.6"; 
-            lenses[21] = "Zuiko Digital ED 7-14mm F4.0";
-            lenses[23] = "Zuiko Digital Pro ED 35-100mm F2.0"; 
-            lenses[24] = "Zuiko Digital 14-45mm F3.5-5.6";
-            lenses[32] = "Zuiko Digital 35mm F3.5 Macro"; 
-            lenses[34] = "Zuiko Digital 17.5-45mm F3.5-5.6"; 
-            lenses[35] = "Zuiko Digital ED 14-42mm F3.5-5.6"; 
-            lenses[36] = "Zuiko Digital ED 40-150mm F4.0-5.6"; 
-            lenses[48] = "Zuiko Digital ED 50-200mm SWD F2.8-3.5"; 
-            lenses[49] = "Zuiko Digital ED 12-60mm SWD F2.8-4.0"; 
-            lenses[256+ 1] = "18-50mm F3.5-5.6"; 
-            lenses[256+ 2] = "55-200mm F4.0-5.6 DC";
-            lenses[256+ 3] = "18-125mm F3.5-5.6 DC";
-            lenses[256+ 4] = "18-125mm F3.5-5.6"; 
-            lenses[256+ 5] = "30mm F1.4"; 
-            lenses[256+ 6] = "50-500mm F4.0-6.3 EX DG APO HSM RF"; 
-            lenses[256+ 7] = "105mm F2.8 DG"; 
-            lenses[256+ 8] = "150mm F2.8 DG HSM";
-            lenses[256+ 17] = "135-400mm F4.5-5.6 DG ASP APO RF";
-            lenses[256+ 18] = "300-800mm F5.6 EX DG APO";
-            lenses[512+ 1] = "D Vario Elmarit 14-50mm, F2.8-3.5 Asph.";
-            lenses[512+ 2] = "D Summilux 25mm, F1.4 Asph.";
-            lenses[512+ 4] = "Vario Elmar 14-150mm f3.5-5.6";
-            lenses[768+ 1] = "D Vario Elmarit 14-50mm, F2.8-3.5 Asph.";
-            lenses[768+ 2] = "D Summilux 25mm, F1.4 Asph.";
+        	// exadecimal bytes
+            lenses["00 01 00"] = "Zuiko Digital ED 50mm f/2 Macro";
+            lenses["00 01 01"] = "Zuiko Digital 40-150mm f/3.5-4.5";
+            lenses["00 01 10"] = "Zuiko Digital ED 14-42mm f/3.5-5.6";
+            lenses["00 02 00"] = "Zuiko Digital ED 150mm f/2";
+            lenses["00 02 10"] = "Zuiko Digital 17mm f/2.8 Pancake";
+            lenses["00 03 00"] = "Zuiko Digital ED 300mm f/2.8";
+            lenses["00 03 10"] = "Zuiko Digital ED 14-150mm f/4-5.6";
+            lenses["00 04 10"] = "Zuiko Digital ED 9-18mm f/4-5.6";
+            lenses["00 05 00"] = "Zuiko Digital 14-54mm f/2.8-3.5";
+            lenses["00 05 01"] = "Zuiko Digital Pro ED 90-250mm f/2.8";
+            lenses["00 05 10"] = "Zuiko Digital ED 14-42mm f/3.5-5.6 ";
+            lenses["00 06 00"] = "Zuiko Digital ED 50-200mm f/2.8-3.5";
+            lenses["00 06 01"] = "Zuiko Digital ED 8mm f/3.5 Fisheye";
+            lenses["00 07 00"] = "Zuiko Digital 11-22mm f/2.8-3.5";
+            lenses["00 07 01"] = "Zuiko Digital 18-180mm f/3.5-6.3";
+            lenses["00 08 01"] = "Zuiko Digital 70-300mm f/4-5.6";
+            lenses["00 15 00"] = "Zuiko Digital ED 7-14mm f/4";
+            lenses["00 17 00"] = "Zuiko Digital Pro ED 35-100mm f/2";
+            lenses["00 18 00"] = "Zuiko Digital 14-45mm f/3.5-5.6";
+            lenses["00 20 00"] = "Zuiko Digital 35mm f/3.5 Macro";
+            lenses["00 22 00"] = "Zuiko Digital 17.5-45mm f/3.5-5.6";
+            lenses["00 23 00"] = "Zuiko Digital ED 14-42mm f/3.5-5.6";
+            lenses["00 24 00"] = "Zuiko Digital ED 40-150mm f/4-5.6";
+            lenses["00 30 00"] = "Zuiko Digital ED 50-200mm f/2.8-3.5 SWD";
+            lenses["00 31 00"] = "Zuiko Digital ED 12-60mm f/2.8-4 SWD";
+            lenses["00 32 00"] = "Zuiko Digital ED 14-35mm f/2 SWD";
+            lenses["00 33 00"] = "Zuiko Digital 25mm f/2.8";
+            lenses["00 34 00"] = "Zuiko Digital ED 9-18mm f/4-5.6";
+            lenses["00 35 00"] = "Zuiko Digital 14-54mm f/2.8-3.5 II";
+            lenses["01 01 00"] = "Sigma 18-50mm f/3.5-5.6";
+            lenses["01 02 00"] = "Sigma 55-200mm f/4-5.6 DC";
+            lenses["01 03 00"] = "Sigma 18-125mm f/3.5-5.6 DC";
+            lenses["01 04 00"] = "Sigma 18-125mm f/3.5-5.6";
+            lenses["01 05 00"] = "Sigma 30mm f/1.4 DC";
+            lenses["01 06 00"] = "Sigma 50-500mm f/4-6.3 EX DG APO HSM RF";
+            lenses["01 07 00"] = "Sigma 105mm f/2.8 DG";
+            lenses["01 08 00"] = "Sigma 150mm f/2.8 DG HSM";
+            lenses["01 10 00"] = "Sigma 24mm f/1.8 EX DG Aspherical Macro";
+            lenses["01 11 00"] = "Sigma 135-400mm f/4.5-5.6 DG ASP APO RF";
+            lenses["01 12 00"] = "Sigma 300-800mm f/5.6 EX DG APO";
+            lenses["01 14 00"] = "Sigma 50-500mm f/4-6.3 EX DG APO HSM RF";
+            lenses["01 15 00"] = "Sigma 10-20mm f/4-5.6 EX DC HSM";
+            lenses["01 16 00"] = "Sigma 70-200mm f/2.8 EX DG Macro HSM II";
+            lenses["01 17 00"] = "Sigma 50mm f/1.4 EX DG HSM";
+            lenses["02 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
+            lenses["02 01 10"] = "Lumix G Vario 14-45mm f/3.5-5.6 Asph. Mega OIS";
+            lenses["02 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
+            lenses["02 02 10"] = "Lumix G Vario 45-200mm f/4-5.6 Mega OIS";
+            lenses["02 03 01"] = "Leica D Vario Elmar 14-50mm f/3.8-5.6 Asph.";
+            lenses["02 03 10"] = "Lumix G Vario HD 14-140mm f(4-5.8 Asph. Mega OIS ";
+            lenses["02 04 00"] = "Leica D Vario Elmar 14-150mm f/3.5-5.6";
+            lenses["02 04 10"] = "Lumix G Vario 7-14mm f/4 Asph.";
+            lenses["02 05 10"] = "Lumix G 20mm f/1.7 Asph.";
+            lenses["02 08 10"] = "Lumix G Fisheye 8mm f/3.5 ";
+            lenses["03 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
+            lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         }
         virtual std::string toString (Tag* t) {
-            int make = t->toInt(0);
-            int model = t->toInt(2);
-            int add = 0;
-            if (make==0 && (model==1 || model==5 || model==7 || model==6))
-                add += 65536 * t->toInt(3);
-            return lenses [256 * make + model + add];
+            std::ostringstream lid;
+            lid.setf (std::ios_base::hex, std::ios_base::basefield);
+            lid.setf (std::ios_base::uppercase);
+            lid << std::setw(2) << std::setfill('0') << t->toInt(0)<< ' '; //maker
+            lid << std::setw(2) << std::setfill('0') << t->toInt(2)<< ' '; //model
+            lid << std::setw(2) << std::setfill('0') << t->toInt(3); // submodel
+
+            std::map<std::string,std::string>::iterator r = lenses.find (lid.str());
+            if (r!=lenses.end())
+                return r->second;
+            else
+            	return "Unknown";
         }
 };
 OLLensTypeInterpreter olLensTypeInterpreter;    

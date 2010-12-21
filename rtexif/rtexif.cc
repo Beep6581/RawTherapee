@@ -580,6 +580,30 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 			default:
 				goto defsubdirs;
 			}
+        }else if (!strncmp(make, "Canon", 5)) {
+			switch( tag ){
+			case 0x0001:
+			case 0x0002:
+			case 0x0004:
+			case 0x0005:
+			case 0x0093:
+			case 0x0098:
+			case 0x00a0:
+		        directory = new TagDirectory*[2];
+		        directory[1] = NULL;
+		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SSHORT , attrib->subdirAttribs, getOrder());
+		        makerNoteKind = TABLESUBDIR;
+				break;
+			case 0x009a:
+			case 0x4013:
+		        directory = new TagDirectory*[2];
+		        directory[1] = NULL;
+		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, getOrder());
+		        makerNoteKind = TABLESUBDIR;
+				break;
+			default:
+				goto defsubdirs;
+			}
         }else if(type==UNDEFINED){
             count = 1;
             type = LONG;
@@ -800,10 +824,10 @@ void Tag::toString (char* buffer, int ofs) {
     switch (type) {
         case UNDEFINED: 
         case BYTE:  sprintf (b, "%d", value[i+ofs]); break;
-        case SSHORT: 
-        case SHORT: sprintf (b, "%d", toInt(2*i+ofs)); break; 
-        case SLONG:  
-        case LONG:  sprintf (b, "%d", toInt(4*i+ofs)); break; 
+        case SSHORT: sprintf (b, "%d", toInt(2*i+ofs)); break;
+        case SHORT: sprintf (b, "%u", toInt(2*i+ofs)); break;
+        case SLONG: sprintf (b, "%ld", toInt(4*i+ofs)); break;
+        case LONG:  sprintf (b, "%lu", toInt(4*i+ofs)); break;
         case SRATIONAL: 
         case RATIONAL: sprintf (b, "%d/%d", (int)sget4 (value+8*i+ofs, getOrder()), (int)sget4 (value+8*i+ofs+4, getOrder())); break; 
         case FLOAT:    sprintf (b, "%g", toDouble(8*i+ofs)); break;

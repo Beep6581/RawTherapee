@@ -157,71 +157,96 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
 
     int sx1, sy1, sx2, sy2;
     transform (pp, tran, sx1, sy1, sx2, sy2);
-    
+/*   the sizes are already known: image->width and image->height
     int imwidth  = (sx2 - sx1) / pp.skip + ((sx2 - sx1) % pp.skip > 0);
     int imheight = (sy2 - sy1) / pp.skip + ((sy2 - sy1) % pp.skip > 0);
-
-    int istart = sy1, iend = sy2, ix = 0;
-    if (first) {
-        iend = istart;
-        while (iend<(sy1+sy2)/2) {
-            iend+=pp.skip;
-        }
-    }
-    else {
-        while (istart<(sy1+sy2)/2) {
-            ix++;
-            istart+=pp.skip;
-        }
-    }
-
+*/
+    int imwidth=image->width,imheight=image->height;
+    int istart = sy1;
+    int maxx=img->width,maxy=img->height;
     int mtran = tran;
     int skip = pp.skip;
 
-    unsigned short* red  = new unsigned short[imwidth];
-    unsigned short* grn  = new unsigned short[imwidth];
-    unsigned short* blue = new unsigned short[imwidth];
-        
-    for (int i=istart; i<iend; i+=skip, ix++) {
-    for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-            red[j]  = img->r[i][jx];
-            grn[j]  = img->g[i][jx];
-            blue[j] = img->b[i][jx];
-        }        
+    if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
+
+    // improve speed by integrating the area division into the multipliers
+    // switched to using ints for the red/green/blue channel buffer.
+    // Incidentally this improves accuracy too.
+    double area=skip*skip;
+    rm/=area;
+    gm/=area;
+    bm/=area;
+
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+#endif
+    int *line_red  = new int[imwidth];
+    int *line_green  = new int[imwidth];
+    int *line_blue = new int[imwidth];
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+    for (int ix=0;ix<imheight;ix++) {
+    	int i=istart+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
+		for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+			int rtot,gtot,btot;
+			rtot=gtot=btot=0;
+
+			for (int m=0; m<skip; m++)
+				for (int n=0; n<skip; n++)
+					{
+					rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
+					gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
+					btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
+					}
+			line_red[j]  = rtot;
+            line_green[j]  = gtot;
+            line_blue[j] = btot;
+		}
+
+// covert back to gamma and clip
+#define GCLIP( x ) CurveFactory::gamma_srgb(CLIP(x))
+
 //        if (hrp.enabled)
 //            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
     
         if ((mtran & TR_ROT) == TR_R180) 
             for (int j=0; j<imwidth; j++) {
-                image->r[imheight-1-ix][imwidth-1-j] = (int)CLIP(rm*red[j]);
-                image->g[imheight-1-ix][imwidth-1-j] = (int)CLIP(gm*grn[j]);
-                image->b[imheight-1-ix][imwidth-1-j] = (int)CLIP(bm*blue[j]);
+                image->r[imheight-1-ix][imwidth-1-j] = (int)GCLIP(rm*line_red[j]);
+                image->g[imheight-1-ix][imwidth-1-j] = (int)GCLIP(gm*line_green[j]);
+                image->b[imheight-1-ix][imwidth-1-j] = (int)GCLIP(bm*line_blue[j]);
             }
         else if ((mtran & TR_ROT) == TR_R90) 
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[j][imheight-1-ix] = (int)CLIP(rm*red[j]);
-                image->g[j][imheight-1-ix] = (int)CLIP(gm*grn[j]);
-                image->b[j][imheight-1-ix] = (int)CLIP(bm*blue[j]);
+                image->r[j][imheight-1-ix] = (int)GCLIP(rm*line_red[j]);
+                image->g[j][imheight-1-ix] = (int)GCLIP(gm*line_green[j]);
+                image->b[j][imheight-1-ix] = (int)GCLIP(bm*line_blue[j]);
         }
         else if ((mtran & TR_ROT) == TR_R270) 
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[imwidth-1-j][ix] = (int)CLIP(rm*red[j]);
-                image->g[imwidth-1-j][ix] = (int)CLIP(gm*grn[j]);
-                image->b[imwidth-1-j][ix] = (int)CLIP(bm*blue[j]);
+                image->r[imwidth-1-j][ix] = (int)GCLIP(rm*line_red[j]);
+                image->g[imwidth-1-j][ix] = (int)GCLIP(gm*line_green[j]);
+                image->b[imwidth-1-j][ix] = (int)GCLIP(bm*line_blue[j]);
             }
         else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[ix][j] = (int)CLIP(rm*red[j]);
-                image->g[ix][j] = (int)CLIP(gm*grn[j]);
-                image->b[ix][j] = (int)CLIP(bm*blue[j]);
+                image->r[ix][j] = (int)GCLIP(rm*line_red[j]);
+                image->g[ix][j] = (int)GCLIP(gm*line_green[j]);
+                image->b[ix][j] = (int)GCLIP(bm*line_blue[j]);
             }
         }
     }
-    
-    delete [] red;
-    delete [] grn;
-    delete [] blue;
+#undef GCLIP
+    delete [] line_red;
+    delete [] line_green;
+    delete [] line_blue;
+#ifdef _OPENMP
+    }
+#endif
 }
+
 
 void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
 
@@ -231,16 +256,8 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 
 //    if (hrp.enabled==true && hrmap[0]==NULL) 
 //        updateHLRecoveryMap ();
-    if (settings->dualThreadEnabled) {
-        Glib::Thread *thread1 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &StdImageSource::getImage_), ctemp, tran, image, pp, true, hrp), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-        Glib::Thread *thread2 = Glib::Thread::create(sigc::bind(sigc::mem_fun(*this, &StdImageSource::getImage_), ctemp, tran, image, pp, false, hrp), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
-        thread1->join ();
-        thread2->join ();
-    }
-    else {
-        getImage_ (ctemp, tran, image, pp, true, hrp);
-        getImage_ (ctemp, tran, image, pp, false, hrp);
-    }
+    // the code will use OpenMP as of now.
+    getImage_ (ctemp, tran, image, pp, true, hrp);
 
     colorSpaceConversion (image, cmp, embProfile);
     

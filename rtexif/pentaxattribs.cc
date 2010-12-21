@@ -601,6 +601,8 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*6+ 14, "smc PENTAX-FA* MACRO 200mm f/4 ED[IF]"));
             choices.insert(p_t(256*7+ 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
             choices.insert(p_t(256*7+ 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
+            choices.insert(p_t(256*7+ 214, "smc PENTAX-DA 35mm f/2.4 AL"));
+            choices.insert(p_t(256*7+ 216, "smc PENTAX-DA L 55-300mm f/4-5.8 ED"));
             choices.insert(p_t(256*7+ 217, "smc PENTAX-DA 50-200mm f/4-5.6 ED WR"));
             choices.insert(p_t(256*7+ 218, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL WR"));
             choices.insert(p_t(256*7+ 220, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical [IF]"));
@@ -608,6 +610,8 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*7+ 223, "Samsung D-XENON 18-55mm f/3.5-5.6 II"));
             choices.insert(p_t(256*7+ 224, "smc PENTAX-DA 15mm f/4 ED AL Limited"));
             choices.insert(p_t(256*7+ 225, "Samsung D-XENON 18-250mm f/3.5-6.3"));
+            choices.insert(p_t(256*7+ 226, "smc PENTAX-DA* 55mm f/1.4 SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 227, "smc PENTAX DA* 60-250mm f/4 [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*7+ 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
             choices.insert(p_t(256*7+ 230, "Tamron AF 17-50mm f/2.8 XR Di-II LD (Model A16)"));
             choices.insert(p_t(256*7+ 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
@@ -620,6 +624,8 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*7+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*7+ 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
             choices.insert(p_t(256*7+ 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+            choices.insert(p_t(256*8+  14, "Sigma 17-70mm f/2.8-4.0 DC Macro OS HSM"));
+            choices.insert(p_t(256*8+ 215, "smc PENTAX-DA 18-135mm f/3.5-5.6 ED AL [IF] DC WR"));
             choices.insert(p_t(256*8+ 226, "smc PENTAX-DA* 55mm f/1.4 SDM"));
             choices.insert(p_t(256*8+ 227, "smc PENTAX DA* 60-250mm f/4 [IF] SDM"));
             choices.insert(p_t(256*8+ 232, "smc PENTAX-DA 17-70mm f/4 AL [IF] SDM"));
@@ -629,6 +635,11 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*8+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM"));
             choices.insert(p_t(256*8+ 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
             choices.insert(p_t(256*8+ 255, "Sigma APO 150-500mm f/5-6.3 DG OS HSM"));
+            choices.insert(p_t(256*11+  4, "smc PENTAX-FA 645 45-85mm f/4.5"));
+            choices.insert(p_t(256*11+  8, "smc PENTAX-FA 645 80-160mm f/4.5"));
+            choices.insert(p_t(256*11+ 11, "smc PENTAX-FA 645 35mm f/3.5 AL [IF]"));
+            choices.insert(p_t(256*11+ 17, "smc PENTAX-FA 645 150-300mm f/5.6 ED [IF]"));
+            choices.insert(p_t(256*13+ 18, "smc PENTAX-D FA 645 55mm f/2.8 AL [IF] SDM AW"));
         }
         virtual std::string toString (Tag* t) {
        	   double maxApertureAtFocal = 0;

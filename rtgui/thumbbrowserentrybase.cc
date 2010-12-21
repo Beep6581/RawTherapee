@@ -1,6 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -264,14 +265,18 @@ void ThumbBrowserEntryBase::resize (int h) {
     
     // calculate the height remaining for the thumbnail image
     preh = height - upperMargin - 2*borderWidth - lowerMargin - bsh;
-    int infow, infoh;
+    int infow=0;
+    int infoh=0;
     if (options.showFileNames && !options.overlayedFileNames) {
         // dimensions of the info text
         getTextSizes (infow, infoh);
-        preh -= infoh + textGap;
-
-        // If the text size was selected very high in preferences this may go negative
-        if (preh<0) preh=30;
+        infoh += textGap;
+        preh -= infoh;
+    }
+    // Minimum size for thumbs
+    if (preh<24){
+    	preh=24;
+    	height = preh + (upperMargin + 2*borderWidth + lowerMargin)+ bsh + infoh;
     }
 
     calcThumbnailSize ();
@@ -280,9 +285,9 @@ void ThumbBrowserEntryBase::resize (int h) {
         width = prew + 2*sideMargin + 2*borderWidth;
         if (width<infow + 2*sideMargin + 2*borderWidth)
             width = infow + 2*sideMargin + 2*borderWidth;
+    }
         if (width < bsw + 2*sideMargin + 2*borderWidth)
             width = bsw + 2*sideMargin + 2*borderWidth;
-    }
 
     if ( preh == old_preh )
     {

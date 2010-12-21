@@ -6920,6 +6920,7 @@ void CLASS identify()
     fseek (ifp, 100, SEEK_SET);
     parse_tiff (data_offset = get4());
     parse_tiff (thumb_offset+12);
+/*RT*/    exif_base = thumb_offset+12;
     apply_tiff();
   } else if (!memcmp (head,"RIFF",4)) {
     fseek (ifp, 0, SEEK_SET);
