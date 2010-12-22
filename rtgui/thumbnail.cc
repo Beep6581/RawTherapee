@@ -522,7 +522,9 @@ bool Thumbnail::openDefaultViewer(int destination) {
     if (destination==1) {
             openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
             if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
-              ShellExecute(NULL, "open", openFName.c_str(), NULL, NULL, SW_SHOWMAXIMIZED );
+              wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (openFName.c_str(), -1, NULL, NULL, NULL);
+              ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
+              g_free(wfilename);
             } else {
                 printf("File not found\n");
                 return false;
@@ -535,23 +537,26 @@ bool Thumbnail::openDefaultViewer(int destination) {
 
         if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
             // Output file exists, so open explorer and select output file
-            const char* org=Glib::ustring::compose("/select,\"%1\"", openFName).c_str();
-            char* par=new char[strlen(org)+1];
-            strcpy(par, org);
+            wchar_t* org=(wchar_t*)g_utf8_to_utf16 (Glib::ustring::compose("/select,\"%1\"", openFName).c_str(), -1, NULL, NULL, NULL);
+            wchar_t* par=new wchar_t[wcslen(org)+1];
+            wcscpy(par, org);
 
             // In this case the / disturbs
-            char* p = par+1;  // skip the first backslash
+            wchar_t* p = par+1;  // skip the first backslash
             while (*p!=0) {
-                if (*p=='/') *p='\\';
+                if (*p==L'/') *p=L'\\';
                 p++;
             }
 
-            ShellExecute(NULL, "open", "explorer.exe", par, NULL, SW_SHOWNORMAL );
+            ShellExecuteW(NULL, L"open", L"explorer.exe", par, NULL, SW_SHOWNORMAL );
 
             delete[] par;
+            g_free(org);
         } else if (safe_file_test (Glib::path_get_dirname(openFName), Glib::FILE_TEST_EXISTS)) {
             // Out file does not exist, but directory
-            ShellExecute(NULL, "explore", Glib::path_get_dirname(openFName).c_str(), NULL, NULL, SW_SHOWNORMAL );
+            wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (Glib::path_get_dirname(openFName).c_str(), -1, NULL, NULL, NULL);
+            ShellExecuteW(NULL, L"explore", wfilename, NULL, NULL, SW_SHOWNORMAL );
+            g_free(wfilename);
         } else {
             printf("File and dir not found\n");
             return false;

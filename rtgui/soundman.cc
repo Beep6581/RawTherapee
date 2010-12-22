@@ -42,7 +42,9 @@ void SoundManager::playSoundAsync(const Glib::ustring &sound)
         sndParam|=SND_ALIAS;
     }
 
-    PlaySound(safe_filename_from_utf8(sound).c_str(), NULL, sndParam);
+    wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (sound.c_str(), -1, NULL, NULL, NULL);
+    PlaySoundW(wfilename, NULL, sndParam);
+    g_free( wfilename );
 #else
     // TODO: Add code for other OSes here
     printf("Sound not supported on your OS (yet)\n");

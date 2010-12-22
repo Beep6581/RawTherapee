@@ -162,27 +162,6 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
 	return str;
 }
 
-std::string safe_filename_from_utf8 (const Glib::ustring& utf8_str)
-{
-		std::string str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
-		try {
-            str = Glib::filename_from_utf8 (utf8_str);
-        }
-        catch (const Glib::ConvertError& e) {
-            //str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?");
-        }
-#else
-        {
-            std::auto_ptr<Glib::Error> error;
-            str = Glib::filename_from_utf8 (utf8_str, error);
-            /*if (error.get())
-                {str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?", error);}*/
-        }
-#endif //GLIBMM_EXCEPTIONS_ENABLED
-	return str;
-}
-
 bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 {
 		std::string cmd;
@@ -191,7 +170,7 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 		try {
 				cmd = Glib::filename_from_utf8(cmd_utf8);
 				printf ("command line: |%s|\n", cmd.c_str());
-				Glib::spawn_command_line_async (cmd);
+				Glib::spawn_command_line_async (cmd.c_str());
 				success = true;
 		} catch (Glib::Exception& ex) {
 				printf ("%s\n", ex.what().c_str());
@@ -221,11 +200,11 @@ bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 
 		int exitStatus=-1;
         try {
-		    cmd = Glib::filename_from_utf8(cmd_utf8);
-		    printf ("command line: |%s|\n", cmd.c_str());
+		    //cmd = Glib::filename_from_utf8(cmd_utf8);
+		    printf ("command line: |%s|\n", cmd_utf8.c_str());
 
             // if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory 
-		    Glib::spawn_command_line_sync (cmd,NULL,NULL, &exitStatus);
+		    Glib::spawn_command_line_sync (cmd_utf8, NULL, NULL, &exitStatus);
         } catch (Glib::Exception& ex) {
 				printf ("%s\n", ex.what().c_str());
 		}
@@ -234,25 +213,25 @@ bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 
 FILE * safe_g_fopen(const Glib::ustring& src,const gchar *mode)
 { 
-    return g_fopen(safe_filename_from_utf8(src).c_str(),mode); 
+    return g_fopen(src.c_str(),mode); 
 }
 
 bool safe_file_test (const Glib::ustring& filename, Glib::FileTest test)
 {
-    return Glib::file_test (safe_filename_from_utf8(filename), test);
+    return Glib::file_test (filename, test);
 }
 
 int safe_g_remove(const Glib::ustring& filename)
 {
-   return ::g_remove(safe_filename_from_utf8(filename).c_str());
+   return ::g_remove(filename.c_str());
 }
 
 int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFilename)
 {
-   return ::g_rename(safe_filename_from_utf8(oldFilename).c_str(), safe_filename_from_utf8(newFilename).c_str());
+   return ::g_rename(oldFilename.c_str(), newFilename.c_str());
 }
 
 int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 {
-    return ::g_mkdir_with_parents(safe_filename_from_utf8(dirName).c_str(), mode);
+    return ::g_mkdir_with_parents(dirName.c_str(), mode);
 }
