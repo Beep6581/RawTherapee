@@ -346,14 +346,17 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     const CacheImageData* cfs=openThm->getCacheImageData();
     if (!options.customProfileBuilder.empty() && !openThm->hasProcParams() && cfs && cfs->exifValid) {
+        // For the filename etc. do NOT use streams, since they are not UTF8 safe
+        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + openThm->getFileName() + Glib::ustring("\" \"")
+        + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
+
+        // ustring doesn't know int etc formatting, so take these via (unsafe) stream
         std::ostringstream strm;
-        strm << Glib::ustring("\"") << options.customProfileBuilder << Glib::ustring("\" \"") << openThm->getFileName() << Glib::ustring("\" \"");
-        strm << options.rtdir << Glib::ustring("/") << options.profilePath << Glib::ustring("/") << defProf << Glib::ustring(".pp3");
-        strm << Glib::ustring("\" ") << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
+        strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
         strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
         strm << cfs->lens << Glib::ustring("\" \"") << cfs->camera << Glib::ustring("\"");
  
-        bool success = safe_spawn_command_line_sync (strm.str());
+        bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
 
         // Now they SHOULD be there, so try to load them
         if (success) openThm->loadProcParams();

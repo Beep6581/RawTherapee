@@ -128,7 +128,7 @@ skip_block: ;
 
 int RawImage::loadRaw (bool loadData, bool closeFile)
 {
-  ifname = safe_locale_from_utf8(filename).c_str();
+  ifname = filename.c_str();
   image = NULL;
   verbose = settings->verbose;
   oprof = NULL;
