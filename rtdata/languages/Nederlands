@@ -792,6 +792,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
+!PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_TAB_SOUND;Sounds
 !TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius

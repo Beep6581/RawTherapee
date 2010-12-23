@@ -797,3 +797,8 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
+!PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_TAB_SOUND;Sounds

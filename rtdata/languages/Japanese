@@ -3,7 +3,7 @@
 #00 Japanese
 #01 2009-02-18 by A3novy
 #02 updated to RT2.4-RC by paul.matthijsse
-#03 2010-12-11 updated to RT3.0 alpha 1 by A3novy
+#03 2010-12-23 updated to RT3.0 alpha 1 by A3novy
 ADJUSTER_RESET_TO_DEFAULT;リセット初期化
 BATCHQUEUE_AUTOSTART;オートスタート
 BATCH_PROCESSING;バッチ処理
@@ -149,6 +149,8 @@ HISTORY_MSG_104;HSV イコライザ
 HISTORY_MSG_105;デフリンジ
 HISTORY_MSG_106;デフリンジ 半径
 HISTORY_MSG_107;デフリンジ　しきい値
+HISTORY_MSG_108;リサイズ バウンディング・ボックス
+HISTORY_MSG_109;リサイズ適応
 HISTORY_MSG_10;シャドウ復元
 HISTORY_MSG_11;トーンカーブ
 HISTORY_MSG_12;露出 オート
@@ -702,12 +704,16 @@ TP_PREPROCESS_DARKFRAME;ダークフレーム
 TP_PREPROCESS_DFAUTOSELECT;自動選択
 TP_RAWPANEL_DEMOSAICING;デモザイク
 TP_RAWPANEL_PREPROCESSING;前処理
+TP_RESIZE_APPLIESTO;適応 :
 TP_RESIZE_BICUBIC;バイキュービック
 TP_RESIZE_BICUBICSF;バイキュービック (ソフトに)
 TP_RESIZE_BICUBICSH;バイキュービック (シャープに)
 TP_RESIZE_BILINEAR;バイリニア
+TP_RESIZE_CROPPEDAREA;切り抜き領域
 TP_RESIZE_DOWNSCALEB;ダウンスケール (良質)
 TP_RESIZE_DOWNSCALEF;ダウンスケール (速い)
+TP_RESIZE_FITBOX;バウンディング・ボックス
+TP_RESIZE_FULLIMAGE;フル・イメージ
 TP_RESIZE_FULLSIZE;フル 画像 サイズ:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;高さ
@@ -782,9 +788,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_108;Resize bounding box
-!HISTORY_MSG_109;Resizing applies to
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
+!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
+!PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_TAB_SOUND;Sounds
