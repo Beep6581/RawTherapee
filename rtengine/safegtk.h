@@ -31,6 +31,7 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str);
 std::string safe_filename_from_utf8 (const Glib::ustring& utf8_str);
 
 FILE * safe_g_fopen(const Glib::ustring& src,const gchar *mode);
+FILE * safe_g_fopen_WriteBinLock(const Glib::ustring& fname);
 bool safe_file_test (const Glib::ustring& filename, Glib::FileTest test);
 int safe_g_remove(const Glib::ustring& filename);
 int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFilename);
