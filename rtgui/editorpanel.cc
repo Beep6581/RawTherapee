@@ -1,7 +1,8 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>, Oliver Duis <www.oliverduis.de>
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -323,6 +324,8 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     openThm = tmb;
     openThm->increaseRef ();
 
+    fname=openThm->getFileName();
+
     previewHandler = new PreviewHandler ();
 
     this->isrc = isrc;
@@ -347,7 +350,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     const CacheImageData* cfs=openThm->getCacheImageData();
     if (!options.customProfileBuilder.empty() && !openThm->hasProcParams() && cfs && cfs->exifValid) {
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
-        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + openThm->getFileName() + Glib::ustring("\" \"")
+        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
         + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
 
         // ustring doesn't know int etc formatting, so take these via (unsafe) stream
@@ -421,17 +424,20 @@ void EditorPanel::close () {
             iarea->imageArea->setImProcCoordinator (NULL);
         }
         navigator->previewWindow->setPreviewHandler (NULL);
-  //      navigator->previewWindow->setImageArea (NULL);
 
+        // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
+        if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
         openThm->removeThumbnailListener (this);
         openThm->decreaseRef ();
-
+        }
     }
 }
 
 void EditorPanel::saveProfile () {
     if (!ipc || !openThm) return;
 
+    // If the file was deleted, do not generate ghost entries
+    if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
     ProcParams params;
     ipc->getParams (&params);
 
@@ -439,6 +445,7 @@ void EditorPanel::saveProfile () {
         params.save (openThm->getFileName() + paramFileExtension);
     if (options.saveParamsCache)
         openThm->setProcParams (params, EDITOR);
+}
 }
 
 Glib::ustring EditorPanel::getShortName () {

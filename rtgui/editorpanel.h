@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -86,7 +87,9 @@ class EditorPanel : public Gtk::VBox,
         FilePanel* fPanel;
       
     
-        Thumbnail* openThm;
+        Thumbnail* openThm;  // may get invalid on external delete event
+        Glib::ustring fname;  // must be safed seperately
+
         rtengine::InitialImage* isrc;
         rtengine::StagedImageProcessor* ipc;
         rtengine::StagedImageProcessor* beforeIpc;    // for the before-after view
