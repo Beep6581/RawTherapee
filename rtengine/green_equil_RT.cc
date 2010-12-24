@@ -29,14 +29,27 @@ void RawImageSource::green_equilibrate(float thresh)
 	// G1-G2 differences larger than this will be assumed to be Nyquist texture, and left untouched
 	static const float diffthresh=0.25; //threshold for texture, not to be equilibrated
 
-	/*double dt;
-	clock_t t1, t2;
+#pragma omp parallel
+{		
+	int top,left;
+			char		*buffer;			// TS*TS*16
+			float         (*cfa);		// TS*TS*4
+			float         (*checker);			// TS*TS*4
+			float         (*gvar);			// TS*TS*4
+			float         (*gdiffv);			// TS*TS*4
+			float         (*gdiffh);			// TS*TS*4
+			
+			/* assign working space */
+			buffer = (char *) malloc(5*sizeof(float)*TS*TS);
+			//merror(buffer,"green_equil()");
+			//memset(buffer,0,5*sizeof(float)*TS*TS);
+			
+			cfa         = (float (*))		buffer;
+			checker		= (float (*))			(buffer +	sizeof(float)*TS*TS);
+			gvar		= (float (*))			(buffer +	2*sizeof(float)*TS*TS);
+			gdiffv		= (float (*))			(buffer +	3*sizeof(float)*TS*TS);
+			gdiffh		= (float (*))			(buffer +	4*sizeof(float)*TS*TS);
 	
-	//clock_t t1_main,       t2_main       = 0;
-	
-	// start
-	if (verbose) fprintf (stderr,_("Green equilibration ...\n"));
-	t1 = clock();*/
 	
 	
 
@@ -45,7 +58,7 @@ void RawImageSource::green_equilibrate(float thresh)
 	
 	// Fill G interpolated values with border interpolation and input values
 	// Main algorithm: Tile loop
-//#pragma omp parallel for shared(image,height,width) private(top,left) schedule(dynamic)
+#pragma omp for schedule(dynamic) nowait
 
 	for (top=0; top < height-border; top += TS-border2)
 		for (left=0; left < width-border; left += TS-border2) {
@@ -65,30 +78,6 @@ void RawImageSource::green_equilibrate(float thresh)
 			float mcorr, pcorr;
 			float ginterp;
 			float diffvarh, diffvarv, hvwt;
-			
-			char		*buffer;			// TS*TS*16
-			float         (*cfa);		// TS*TS*4
-			float         (*checker);			// TS*TS*4
-			float         (*gvar);			// TS*TS*4
-			float         (*gdiffv);			// TS*TS*4
-			float         (*gdiffh);			// TS*TS*4
-			
-			/* assign working space */
-			buffer = (char *) malloc(5*sizeof(float)*TS*TS);
-			//merror(buffer,"green_equil()");
-			memset(buffer,0,5*sizeof(float)*TS*TS);
-			
-			cfa         = (float (*))		buffer;
-			checker		= (float (*))			(buffer +	sizeof(float)*TS*TS);
-			gvar		= (float (*))			(buffer +	2*sizeof(float)*TS*TS);
-			gdiffv		= (float (*))			(buffer +	3*sizeof(float)*TS*TS);
-			gdiffh		= (float (*))			(buffer +	4*sizeof(float)*TS*TS);
-			
-			/*float	cfa[TS*TS];
-			float	checker[TS*TS];  //this memory allocation crashes RT
-			float	gvar[TS*TS];
-			
-			memset( (void *)&cfa[0], 0 ,sizeof(cfa) );*/
 			
 			// rgb from input CFA data
 			/* rgb values should be floating point number between 0 and 1 
@@ -181,6 +170,7 @@ void RawImageSource::green_equilibrate(float thresh)
 				} 
 
 			// clean up
+			}
 			free(buffer);
 		
 		}
