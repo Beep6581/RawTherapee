@@ -22,6 +22,10 @@
 #include <safegtk.h>
 #include <guiutils.h>
 #include <glib/gstdio.h>
+#ifdef WIN32
+#include <windows.h>
+#include <fcntl.h>
+#endif
 
 
 Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename)
@@ -169,7 +173,7 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 #ifdef GLIBMM_EXCEPTIONS_ENABLED        
 		try {
 				cmd = Glib::filename_from_utf8(cmd_utf8);
-				printf ("command line: |%s|\n", cmd.c_str());
+				printf ("command line: %s\n", cmd.c_str());
 				Glib::spawn_command_line_async (cmd.c_str());
 				success = true;
 		} catch (Glib::Exception& ex) {
@@ -179,7 +183,7 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 		std::auto_ptr<Glib::Error> error;
 		cmd = Glib::filename_from_utf8(cmd_utf8, error);
 		if (!error.get())	{
-				printf ("command line: |%s|\n", cmd.c_str());
+				printf ("command line: %s\n", cmd.c_str());
 				Glib::spawn_command_line_async (cmd, error);
 			}
 		if (error.get())
@@ -201,7 +205,7 @@ bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 		int exitStatus=-1;
         try {
 		    //cmd = Glib::filename_from_utf8(cmd_utf8);
-		    printf ("command line: |%s|\n", cmd_utf8.c_str());
+		    printf ("command line: %s\n", cmd_utf8.c_str());
 
             // if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory 
 		    Glib::spawn_command_line_sync (cmd_utf8, NULL, NULL, &exitStatus);
@@ -209,6 +213,29 @@ bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 				printf ("%s\n", ex.what().c_str());
 		}
         return (exitStatus==0);
+}
+
+// Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
+// (Important on Windows to prevent Explorer to crash RT when parallel scanning e.g. a currently written image file)
+FILE * safe_g_fopen_WriteBinLock(const Glib::ustring& fname) {
+    FILE* f=NULL;
+
+#ifdef WIN32
+    // g_fopen just uses _wfopen internally on Windows, does not lock access and has no options to set this
+    // so use a native function to work around this problem
+    wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
+    HANDLE hFile = CreateFileW(wFname, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    g_free(wFname);
+
+    if (hFile==INVALID_HANDLE_VALUE)
+        f=NULL;
+    else
+        f=_fdopen( _open_osfhandle((intptr_t)hFile, 0) , "wb");
+#else
+    f = safe_g_fopen(fname, "wb");
+#endif
+
+    return f;
 }
 
 FILE * safe_g_fopen(const Glib::ustring& src,const gchar *mode)
