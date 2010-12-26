@@ -17,6 +17,9 @@ Windows
 
 		METHOD 1:
 			- MinGW-TDM (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
+			            OpenMP seems to be broken in TDM-GCC4.5.1, so when MinGW has been installed, download and install
+			            libgomp form tdm-gcc-4.5.0
+			            (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%204.5%20series/Previous/4.5.0-tdm-1%20SJLJ/gcc-4.5.0-tdm-1-openmp.zip/download)
 			- MSYS      (http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe)
 			            If you have some trouble installing MSYS, see here : http://www.mingw.org/wiki/MSYS
 			- CMake     (http://www.cmake.org/cmake/resources/software.html)
@@ -32,6 +35,8 @@ Windows
 			- set the GTKMM_BASEPATH user or system environment variable to the installation directory of Gtkmm
 			  (the Gtkmm's installer can do it for you)
 			- set the MINGW_BASEPATH user or system environment variable to the installation directory of MinGW32
+			- set the PKG_CONFIG_PATH user or system environment variable to the location of the pkgconfig directories:
+			      c:\mingw\lib\pkgconfig;c:\gtkmm\lib\pkgconfig
 			  You have to restart the console to take this new variables into account
 			- Copy the "Win32CMakeOptions-sample.txt" file located in the root directory of RT's source tree, to "cmo.txt" (e.g.)
 			  You can edit that copy to change the compilation flags to your needs, but the default values should be fine.
@@ -45,7 +50,7 @@ Windows
 
 			For your convenience, those libraries has been precompiled and are downloadable at :
 
-			         http://www.rawtherapee.com/releases_head/windows/dependancies/
+			         http://www.rawtherapee.com/releases_head/windows/dependencies_for_creating_builds/
 
 			If you don't find a suitable package for your toolchain, take the DIY way or ask a developer
 			to build them for you.
@@ -87,7 +92,7 @@ Windows
 				1. gtkmm doesn't provide zlib so i've compiled it myself
 				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_BUILD_TYPE:STRING=Release
 				2. gtkmm provide zlib and i want to reuse it (so we're assuming that you didn't compiled zlib like explained here above)
-				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_PREFIX_PATH:PATH=C:/gtkmm2.22 -DCMAKE_BUILD_TYPE:STRING=Release
+				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_PREFIX_PATH:PATH=C:/gtkmm -DCMAKE_BUILD_TYPE:STRING=Release
 
 				Then build and install:
 				   make
@@ -132,10 +137,7 @@ Windows
 			provided in RT's source tree (downloaded from http://www.rawzor.com/developers/)
 
 			IMPORTANT:
-			1. When all the compilations are done (or even before), don't forget to set the PKG_CONFIG_PATH
-			   user or system environment variable to the location of the pkgconfig dir, usually c:\mingw\lib\pkgconfig
-			   You have to restart the console to take this new variable into account
-			2. Make sure that the *.pc files of the dependancies, located in the pkgconfig dir, has the first
+			   Make sure that the lcms.pc and libiptcdata.pc files located in the pkgconfig dir has the first
 			   line like this : prefix=/mingw
 
 			If everything is well installed, you should see the following lines when running the cmake command (see "Building RT" below) :
@@ -144,8 +146,8 @@ Windows
 					-- checking for module 'lcms<=1.99'
 					--   found lcms, version 1.19
 					-- Found JPEG: C:/mingw/lib/libjpeg.dll.a
-					-- Found ZLIB: C:/gtkmm2.22/lib/libz.dll.a
-					-- Found PNG: C:/gtkmm2.22/lib/libpng.lib
+					-- Found ZLIB: C:/gtkmm/lib/libz.dll.a
+					-- Found PNG: C:/gtkmm/lib/libpng.lib
 					-- Found TIFF: C:/mingw/lib/libtiff.dll.a
 
 	Building RT:
