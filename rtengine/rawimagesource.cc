@@ -77,13 +77,13 @@ RawImageSource::~RawImageSource () {
     }
 
     if (green)
-        freeArray<unsigned short>(green, H);
+        freeArray<float>(green, H);
     if (red)
-        freeArray<unsigned short>(red, H);
+        freeArray<float>(red, H);
     if (blue)
-        freeArray<unsigned short>(blue, H);
+        freeArray<float>(blue, H);
     if(rawData)
-    	freeArray<unsigned short>(rawData, H);
+    	freeArray<float>(rawData, H);
     if( cache )
         delete [] cache;
     if (hrmap[0]!=NULL) {
@@ -237,9 +237,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
         imheight = maximheight;
        
     // render the requested image part
-    unsigned short* red  = new unsigned short[imwidth];
-    unsigned short* grn  = new unsigned short[imwidth];
-    unsigned short* blue = new unsigned short[imwidth];
+    float* red  = new float[imwidth];
+    float* grn  = new float[imwidth];
+    float* blue = new float[imwidth];
 
     for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
         if (ri->isBayer()) {
@@ -391,7 +391,7 @@ int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
 }
 	
 
-void RawImageSource::rotateLine (unsigned short* line, unsigned short** channel, int tran, int i, int w, int h) {
+void RawImageSource::rotateLine (float* line, unsigned short** channel, int tran, int i, int w, int h) {
 
     if ((tran & TR_ROT) == TR_R180) 
         for (int j=0; j<w; j++) 
@@ -405,10 +405,12 @@ void RawImageSource::rotateLine (unsigned short* line, unsigned short** channel,
         for (int j=0; j<w; j++) 
             channel[w-1-j][i] = line[j];
     else 
-        memcpy (channel[i], line,  w*sizeof(unsigned short));
+        //memcpy (channel[i], line,  w*sizeof(float));	
+		for (int j=0; j<w; j++) 
+			channel[i][j] = line[j];
 }
 
-void RawImageSource::transLine (unsigned short* red, unsigned short* green, unsigned short* blue, int i, Image16* image, int tran, int imwidth, int imheight, int fw) {
+void RawImageSource::transLine (float* red, float* green, float* blue, int i, Image16* image, int tran, int imwidth, int imheight, int fw) {
 
   // Fuji SuperCCD rotation + coarse rotation
   if (fuji) {
@@ -479,25 +481,25 @@ void RawImageSource::transLine (unsigned short* red, unsigned short* green, unsi
         int row = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = (red[j] + image->r[row+1][col]) >> 1;
-          image->g[row][col] = (green[j] + image->g[row+1][col]) >> 1;
-          image->b[row][col] = (blue[j] + image->b[row+1][col]) >> 1;
+          image->r[row][col] = (red[j] + image->r[row+1][col]) /2;
+          image->g[row][col] = (green[j] + image->g[row+1][col]) /2;
+          image->b[row][col] = (blue[j] + image->b[row+1][col]) /2;
         }
       }
       else if (i==imheight-1) {
         int row = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = (red[j] + image->r[row+1][col]) >> 1;
-          image->g[row][col] = (green[j] + image->g[row+1][col]) >> 1;
-          image->b[row][col] = (blue[j] + image->b[row+1][col]) >> 1;
+          image->r[row][col] = (red[j] + image->r[row+1][col]) /2;
+          image->g[row][col] = (green[j] + image->g[row+1][col]) /2;
+          image->b[row][col] = (blue[j] + image->b[row+1][col]) /2;
         }
         row = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = (red[j] + image->r[row+1][col]) >> 1;
-          image->g[row][col] = (green[j] + image->g[row+1][col]) >> 1;
-          image->b[row][col] = (blue[j] + image->b[row+1][col]) >> 1;
+          image->r[row][col] = (red[j] + image->r[row+1][col]) /2;
+          image->g[row][col] = (green[j] + image->g[row+1][col]) /2;
+          image->b[row][col] = (blue[j] + image->b[row+1][col]) /2;
         }
       }
       else if (i>2 && i<imheight-1) { // vertical bicubic interpolationi
@@ -519,23 +521,23 @@ void RawImageSource::transLine (unsigned short* red, unsigned short* green, unsi
       if (i==1 || i==2) { // linear interpolation
         int col = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = (red[j] + image->r[j][col+1]) >> 1;
-          image->g[j][col] = (green[j] + image->g[j][col+1]) >> 1;
-          image->b[j][col] = (blue[j] + image->b[j][col+1]) >> 1;
+          image->r[j][col] = (red[j] + image->r[j][col+1]) /2;
+          image->g[j][col] = (green[j] + image->g[j][col+1]) /2;
+          image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
         }
       }
       else if (i==imheight-1) {
         int col = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = (red[j] + image->r[j][col+1]) >> 1;
-          image->g[j][col] = (green[j] + image->g[j][col+1]) >> 1;
-          image->b[j][col] = (blue[j] + image->b[j][col+1]) >> 1;
+          image->r[j][col] = (red[j] + image->r[j][col+1]) /2;
+          image->g[j][col] = (green[j] + image->g[j][col+1]) /2;
+          image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
         }
         col = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = (red[j] + image->r[j][col+1]) >> 1;
-          image->g[j][col] = (green[j] + image->g[j][col+1]) >> 1;
-          image->b[j][col] = (blue[j] + image->b[j][col+1]) >> 1;
+          image->r[j][col] = (red[j] + image->r[j][col+1]) /2;
+          image->g[j][col] = (green[j] + image->g[j][col+1]) /2;
+          image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
         }
       }
       else if (i>2 && i<imheight-1) { // vertical bicubic interpolationi
@@ -556,20 +558,20 @@ void RawImageSource::transLine (unsigned short* red, unsigned short* green, unsi
       if (i==1 || i==2) { // linear interpolation
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) >> 1;
-          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) >> 1;
-          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) >> 1;
+          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) /2;
+          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) /2;
+          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) /2;
         }
       }
       else if (i==imheight-1) {
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) >> 1;
-          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) >> 1;
-          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) >> 1;
-          image->r[row][2*i-3] = (image->r[row][2*i-2] + image->r[row][2*i-4]) >> 1;
-          image->g[row][2*i-3] = (image->g[row][2*i-2] + image->g[row][2*i-4]) >> 1;
-          image->b[row][2*i-3] = (image->b[row][2*i-2] + image->b[row][2*i-4]) >> 1;
+          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) /2;
+          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) /2;
+          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) /2;
+          image->r[row][2*i-3] = (image->r[row][2*i-2] + image->r[row][2*i-4]) /2;
+          image->g[row][2*i-3] = (image->g[row][2*i-2] + image->g[row][2*i-4]) /2;
+          image->b[row][2*i-3] = (image->b[row][2*i-2] + image->b[row][2*i-4]) /2;
         }
       }
       else if (i>0 && i<imheight-1) { // vertical bicubic interpolationi
@@ -588,19 +590,19 @@ void RawImageSource::transLine (unsigned short* red, unsigned short* green, unsi
 
       if (i==1 || i==2) { // linear interpolation
         for (int j=0; j<imwidth; j++) {
-          image->r[2*i-1][j] = (red[j] + image->r[2*i-2][j]) >> 1;
-          image->g[2*i-1][j] = (green[j] + image->g[2*i-2][j]) >> 1;
-          image->b[2*i-1][j] = (blue[j] + image->b[2*i-2][j]) >> 1;
+          image->r[2*i-1][j] = (red[j] + image->r[2*i-2][j]) /2;
+          image->g[2*i-1][j] = (green[j] + image->g[2*i-2][j]) /2;
+          image->b[2*i-1][j] = (blue[j] + image->b[2*i-2][j]) /2;
         }
       }
       else if (i==imheight-1) {
             for (int j=0; j<imwidth; j++) {
-              image->r[2*i-3][j] = (image->r[2*i-4][j] + image->r[2*i-2][j]) >> 1;
-              image->g[2*i-3][j] = (image->g[2*i-4][j] + image->g[2*i-2][j]) >> 1;
-              image->b[2*i-3][j] = (image->b[2*i-4][j] + image->b[2*i-2][j]) >> 1;
-              image->r[2*i-1][j] = (red[j] + image->r[2*i-2][j]) >> 1;
-              image->g[2*i-1][j] = (green[j] + image->g[2*i-2][j]) >> 1;
-              image->b[2*i-1][j] = (blue[j] + image->b[2*i-2][j]) >> 1;
+              image->r[2*i-3][j] = (image->r[2*i-4][j] + image->r[2*i-2][j]) /2;
+              image->g[2*i-3][j] = (image->g[2*i-4][j] + image->g[2*i-2][j]) /2;
+              image->b[2*i-3][j] = (image->b[2*i-4][j] + image->b[2*i-2][j]) /2;
+              image->r[2*i-1][j] = (red[j] + image->r[2*i-2][j]) /2;
+              image->g[2*i-1][j] = (green[j] + image->g[2*i-2][j]) /2;
+              image->b[2*i-1][j] = (blue[j] + image->b[2*i-2][j]) /2;
             }
       }
       else if (i>2 && i<imheight-1) { // vertical bicubic interpolationi
@@ -666,18 +668,18 @@ void RawImageSource::hflip (Image16* image) {
     int width  = image->width;
     int height = image->height;
 
-    unsigned short* rowr = new unsigned short[width];
-    unsigned short* rowg = new unsigned short[width];
-    unsigned short* rowb = new unsigned short[width];
+    float* rowr = new float[width];
+    float* rowg = new float[width];
+    float* rowb = new float[width];
     for (int i=0; i<height; i++) {
       for (int j=0; j<width; j++) {
         rowr[j] = image->r[i][width-1-j];
         rowg[j] = image->g[i][width-1-j];
         rowb[j] = image->b[i][width-1-j];
       }
-      memcpy (image->r[i], rowr, width*sizeof(unsigned short));
-      memcpy (image->g[i], rowg, width*sizeof(unsigned short));
-      memcpy (image->b[i], rowb, width*sizeof(unsigned short));
+      memcpy (image->r[i], rowr, width*sizeof(float));
+      memcpy (image->g[i], rowg, width*sizeof(float));
+      memcpy (image->b[i], rowb, width*sizeof(float));
     }
     delete [] rowr;
     delete [] rowg;
@@ -688,7 +690,7 @@ void RawImageSource::vflip (Image16* image) {
     int width  = image->width;
     int height = image->height;
 
-    register unsigned short tmp;
+    register float tmp;
     for (int i=0; i<height/2; i++) 
       for (int j=0; j<width; j++) {
         tmp = image->r[i][j]; 
@@ -783,9 +785,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     rml.ciffLength = ri->get_ciffLen();
     idata = new ImageData (fname, &rml);
 
-    green = allocArray<unsigned short>(W,H);
-    red   = allocArray<unsigned short>(W,H);
-    blue  = allocArray<unsigned short>(W,H);
+    green = allocArray<float>(W,H);
+    red   = allocArray<float>(W,H);
+    blue  = allocArray<float>(W,H);
     hpmap = allocArray<char>(W, H);
 
     if (plistener) {
@@ -886,8 +888,8 @@ void RawImageSource::preprocess  (const RAWParams &raw)
         for (int i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ri->ISGREEN(i,j)) {
-                    unsigned short currData;
-                    currData = (unsigned short)(rawData[i][j] * (i%2 ? corrg2 : corrg1));
+                    float currData;
+                    currData = (float)(rawData[i][j] * (i%2 ? corrg2 : corrg1));
                     rawData[i][j] = CLIP(currData);
                 }
 	}
@@ -964,7 +966,7 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 {
 	if (ri->isBayer()) {
 		if (!rawData)
-			rawData = allocArray< unsigned short >(W,H);
+			rawData = allocArray<float>(W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
@@ -980,7 +982,7 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 		}
 	}else{
 		if (!rawData)
-			rawData = allocArray< unsigned short >(3*W,H);
+			rawData = allocArray< float >(3*W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
@@ -1073,33 +1075,33 @@ void RawImageSource::correction_YIQ_LQ_  (Image16* im, int row_from, int row_to)
  
   int W = im->width;
 
-  int** rbconv_Y = new int*[3];
-  int** rbconv_I = new int*[3];
-  int** rbconv_Q = new int*[3];
-  int** rbout_I = new int*[3];
-  int** rbout_Q = new int*[3];
+  float** rbconv_Y = new float*[3];
+  float** rbconv_I = new float*[3];
+  float** rbconv_Q = new float*[3];
+  float** rbout_I = new float*[3];
+  float** rbout_Q = new float*[3];
   for (int i=0; i<3; i++) {
-    rbconv_Y[i] = new int[W];
-    rbconv_I[i] = new int[W];
-    rbconv_Q[i] = new int[W];
-    rbout_I[i] = new int[W];
-    rbout_Q[i] = new int[W];
+    rbconv_Y[i] = new float[W];
+    rbconv_I[i] = new float[W];
+    rbconv_Q[i] = new float[W];
+    rbout_I[i] = new float[W];
+    rbout_Q[i] = new float[W];
   }
 
-  int* row_I = new int[W];
-  int* row_Q = new int[W];
+  float* row_I = new float[W];
+  float* row_Q = new float[W];
 
-  int* pre1_I = new int[3];
-  int* pre2_I = new int[3];
-  int* post1_I = new int[3];
-  int* post2_I = new int[3];
-  int middle_I[6];
-  int* pre1_Q = new int[3];
-  int* pre2_Q = new int[3];
-  int* post1_Q = new int[3];
-  int* post2_Q = new int[3];
-  int middle_Q[6];
-  int* tmp;
+  float* pre1_I = new float[3];
+  float* pre2_I = new float[3];
+  float* post1_I = new float[3];
+  float* post2_I = new float[3];
+  float middle_I[6];
+  float* pre1_Q = new float[3];
+  float* pre2_Q = new float[3];
+  float* post1_Q = new float[3];
+  float* post2_Q = new float[3];
+  float middle_Q[6];
+  float* tmp;
 
   int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
   
@@ -1186,11 +1188,11 @@ void RawImageSource::correction_YIQ_LQ_  (Image16* im, int row_from, int row_to)
     row_Q[W-1] = rbout_Q[cx][W-1];
     convert_row_to_RGB (im->r[row_to-1], im->g[row_to-1], im->b[row_to-1], rbconv_Y[cx], row_I, row_Q, W);
 
-  freeArray<int>(rbconv_Y, 3);
-  freeArray<int>(rbconv_I, 3);
-  freeArray<int>(rbconv_Q, 3);
-  freeArray<int>(rbout_I, 3);
-  freeArray<int>(rbout_Q, 3);
+  freeArray<float>(rbconv_Y, 3);
+  freeArray<float>(rbconv_I, 3);
+  freeArray<float>(rbconv_Q, 3);
+  freeArray<float>(rbout_I, 3);
+  freeArray<float>(rbout_Q, 3);
   delete [] row_I;
   delete [] row_Q;
   delete [] pre1_I;
@@ -1345,39 +1347,39 @@ void RawImageSource::eahd_demosaic () {
   
   // end of cielab preparation
 
-  unsigned short* rh[3];
-  unsigned short* gh[4];
-  unsigned short* bh[3];
-  unsigned short* rv[3];
-  unsigned short* gv[4];
-  unsigned short* bv[3];
-  short* lLh[3];
-  short* lah[3];
-  short* lbh[3];
-  short* lLv[3];
-  short* lav[3];
-  short* lbv[3];
-  unsigned short* homh[3];
-  unsigned short* homv[3];
+  float* rh[3];
+  float* gh[4];
+  float* bh[3];
+  float* rv[3];
+  float* gv[4];
+  float* bv[3];
+  float* lLh[3];
+  float* lah[3];
+  float* lbh[3];
+  float* lLv[3];
+  float* lav[3];
+  float* lbv[3];
+  float* homh[3];
+  float* homv[3];
 
   for (int i=0; i<4; i++) {
-    gh[i] = new unsigned short[W];  
-    gv[i] = new unsigned short[W];  
+    gh[i] = new float[W];  
+    gv[i] = new float[W];  
   }
 
   for (int i=0; i<3; i++) {
-    rh[i] = new unsigned short[W];  
-    bh[i] = new unsigned short[W];  
-    rv[i] = new unsigned short[W];  
-    bv[i] = new unsigned short[W];  
-    lLh[i] = new short[W];  
-    lah[i] = new short[W];  
-    lbh[i] = new short[W];  
-    lLv[i] = new short[W];  
-    lav[i] = new short[W];  
-    lbv[i] = new short[W];  
-    homh[i] = new unsigned short[W];
-    homv[i] = new unsigned short[W];
+    rh[i] = new float[W];  
+    bh[i] = new float[W];  
+    rv[i] = new float[W];  
+    bv[i] = new float[W];  
+    lLh[i] = new float[W];  
+    lah[i] = new float[W];  
+    lbh[i] = new float[W];  
+    lLv[i] = new float[W];  
+    lav[i] = new float[W];  
+    lbv[i] = new float[W];  
+    homh[i] = new float[W];
+    homv[i] = new float[W];
   }   
 
   // interpolate first two lines
@@ -1552,20 +1554,20 @@ void RawImageSource::eahd_demosaic () {
         green[i-1][j] = (gh[(i-1)%4][j] + gv[(i-1)%4][j]) / 2;
     }
     
-    freeArray2<unsigned short>(rh, 3);
-    freeArray2<unsigned short>(gh, 4);
-    freeArray2<unsigned short>(bh, 3);
-    freeArray2<unsigned short>(rv, 3);
-    freeArray2<unsigned short>(gv, 4);
-    freeArray2<unsigned short>(bv, 3);
-    freeArray2<short>(lLh, 3);
-    freeArray2<short>(lah, 3);
-    freeArray2<short>(lbh, 3);
-    freeArray2<unsigned short>(homh, 3);
-    freeArray2<short>(lLv, 3);
-    freeArray2<short>(lav, 3);
-    freeArray2<short>(lbv, 3);
-    freeArray2<unsigned short>(homv, 3);
+    freeArray2<float>(rh, 3);
+    freeArray2<float>(gh, 4);
+    freeArray2<float>(bh, 3);
+    freeArray2<float>(rv, 3);
+    freeArray2<float>(gv, 4);
+    freeArray2<float>(bv, 3);
+    freeArray2<float>(lLh, 3);
+    freeArray2<float>(lah, 3);
+    freeArray2<float>(lbh, 3);
+    freeArray2<float>(homh, 3);
+    freeArray2<float>(lLv, 3);
+    freeArray2<float>(lav, 3);
+    freeArray2<float>(lbv, 3);
+    freeArray2<float>(homv, 3);
 
     // Interpolate R and B
     for (int i=0; i<H; i++) {
@@ -1668,81 +1670,81 @@ void RawImageSource::hphd_green () {
         green[i][j] = rawData[i][j];
       else {
         if (this->hpmap[i][j]==1) { 
-            int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) >> 1);
-            int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) >> 1);
+            int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) /2);
+            int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) /2);
 
             int dx = rawData[i][j+1] - rawData[i][j-1];
             int d1 = rawData[i][j+3] - rawData[i][j+1];
             int d2 = rawData[i][j+2] - rawData[i][j];
-            int d3 = (rawData[i-1][j+2] - rawData[i-1][j]) >> 1;
-            int d4 = (rawData[i+1][j+2] - rawData[i+1][j]) >> 1;
+            int d3 = (rawData[i-1][j+2] - rawData[i-1][j]) /2;
+            int d4 = (rawData[i+1][j+2] - rawData[i+1][j]) /2;
         
             double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
         
             d1 = rawData[i][j-3] - rawData[i][j-1];
             d2 = rawData[i][j-2] - rawData[i][j];
-            d3 = (rawData[i-1][j-2] - rawData[i-1][j]) >> 1;
-            d4 = (rawData[i+1][j-2] - rawData[i+1][j]) >> 1;
+            d3 = (rawData[i-1][j-2] - rawData[i-1][j]) /2;
+            d4 = (rawData[i+1][j-2] - rawData[i+1][j]) /2;
         
             double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             green[i][j] = CLIP((e2 * g2 + e4 * g4) / (e2 + e4));
         }
         else if (this->hpmap[i][j]==2) { 
-            int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) >> 1);
-            int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) >> 1);
+            int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) /2);
+            int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) /2);
 
             int dy = rawData[i+1][j] - rawData[i-1][j];
             int d1 = rawData[i-1][j] - rawData[i-3][j];
             int d2 = rawData[i][j] - rawData[i-2][j];
-            int d3 = (rawData[i][j-1] - rawData[i-2][j-1]) >> 1;
-            int d4 = (rawData[i][j+1] - rawData[i-2][j+1]) >> 1;
+            int d3 = (rawData[i][j-1] - rawData[i-2][j-1]) /2;
+            int d4 = (rawData[i][j+1] - rawData[i-2][j+1]) /2;
         
             double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
         
             d1 = rawData[i+1][j] - rawData[i+3][j];
             d2 = rawData[i][j] - rawData[i+2][j];
-            d3 = (rawData[i][j-1] - rawData[i+2][j-1]) >> 1;
-            d4 = (rawData[i][j+1] - rawData[i+2][j+1]) >> 1;
+            d3 = (rawData[i][j-1] - rawData[i+2][j-1]) /2;
+            d4 = (rawData[i][j+1] - rawData[i+2][j+1]) /2;
         
             double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
         
             green[i][j] = CLIP((e1 * g1 + e3 * g3) / (e1 + e3));
         }
         else {
-            int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) >> 1);
-            int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) >> 1);
-            int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) >> 1);
-            int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) >> 1);
+            int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) /2);
+            int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) /2);
+            int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) /2);
+            int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) /2);
         
             int dx = rawData[i][j+1] - rawData[i][j-1];
             int dy = rawData[i+1][j] - rawData[i-1][j];
 
             int d1 = rawData[i-1][j] - rawData[i-3][j];
             int d2 = rawData[i][j] - rawData[i-2][j];
-            int d3 = (rawData[i][j-1] - rawData[i-2][j-1]) >> 1;
-            int d4 = (rawData[i][j+1] - rawData[i-2][j+1]) >> 1;
+            int d3 = (rawData[i][j-1] - rawData[i-2][j-1]) /2;
+            int d4 = (rawData[i][j+1] - rawData[i-2][j+1]) /2;
         
             double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             d1 = rawData[i][j+3] - rawData[i][j+1];
             d2 = rawData[i][j+2] - rawData[i][j];
-            d3 = (rawData[i-1][j+2] - rawData[i-1][j]) >> 1;
-            d4 = (rawData[i+1][j+2] - rawData[i+1][j]) >> 1;
+            d3 = (rawData[i-1][j+2] - rawData[i-1][j]) /2;
+            d4 = (rawData[i+1][j+2] - rawData[i+1][j]) /2;
         
             double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             d1 = rawData[i+1][j] - rawData[i+3][j];
             d2 = rawData[i][j] - rawData[i+2][j];
-            d3 = (rawData[i][j-1] - rawData[i+2][j-1]) >> 1;
-            d4 = (rawData[i][j+1] - rawData[i+2][j+1]) >> 1;
+            d3 = (rawData[i][j-1] - rawData[i+2][j-1]) /2;
+            d4 = (rawData[i][j+1] - rawData[i+2][j+1]) /2;
         
             double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
             
             d1 = rawData[i][j-3] - rawData[i][j-1];
             d2 = rawData[i][j-2] - rawData[i][j];
-            d3 = (rawData[i-1][j-2] - rawData[i-1][j]) >> 1;
-            d4 = (rawData[i+1][j-2] - rawData[i+1][j]) >> 1;
+            d3 = (rawData[i-1][j-2] - rawData[i-1][j]) /2;
+            d4 = (rawData[i+1][j-2] - rawData[i+1][j]) /2;
         
             double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));            
 
@@ -1824,7 +1826,7 @@ void RawImageSource::hphd_demosaic () {
     plistener->setProgress (1.0);
 }
 
-void RawImageSource::HLRecovery_Luminance (unsigned short* rin, unsigned short* gin, unsigned short* bin, unsigned short* rout, unsigned short* gout, unsigned short* bout, int width, int maxval) {
+void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval) {
 
     for (int i=0; i<width; i++) {
         int r = rin[i], g = gin[i], b = bin[i];
@@ -1857,7 +1859,7 @@ void RawImageSource::HLRecovery_Luminance (unsigned short* rin, unsigned short* 
     }
 }
 
-void RawImageSource::HLRecovery_CIELab (unsigned short* rin, unsigned short* gin, unsigned short* bin, unsigned short* rout, unsigned short* gout, unsigned short* bout, int width, int maxval, double cam[3][3], double icam[3][3]) {
+void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval, double cam[3][3], double icam[3][3]) {
 
     static bool crTableReady = false;
     static double fv[0x10000];
@@ -1907,7 +1909,7 @@ void RawImageSource::HLRecovery_CIELab (unsigned short* rin, unsigned short* gin
     }
 }
 
-void RawImageSource::hlRecovery (std::string method, unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip) {
+void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip) {
 
     if (method=="Luminance")
         HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535 / initialGain);
@@ -2467,21 +2469,21 @@ void RawImageSource::ppg_demosaic()
     if(plistener) plistener->setProgress(0.67 + 0.33*row/(height-1));
   }
 
-  red = new unsigned short*[H];
+  red = new float*[H];
   for (int i=0; i<H; i++) {
-    red[i] = new unsigned short[W];
+    red[i] = new float[W];
     for (int j=0; j<W; j++)
         red[i][j] = image[i*W+j][0];
   }
-  green = new unsigned short*[H];
+  green = new float*[H];
   for (int i=0; i<H; i++) {
-    green[i] = new unsigned short[W];
+    green[i] = new float[W];
     for (int j=0; j<W; j++)
         green[i][j] = image[i*W+j][1];
   }
-  blue = new unsigned short*[H];
+  blue = new float*[H];
   for (int i=0; i<H; i++) {
-    blue[i] = new unsigned short[W];
+    blue[i] = new float[W];
     for (int j=0; j<W; j++)
         blue[i][j] = image[i*W+j][2];
   }
@@ -2601,15 +2603,15 @@ void RawImageSource::bilinear_demosaic()
     bilinear_interpolate_block(image, 1, height-1);
 #endif
 
-red = new unsigned short*[H];
-green = new unsigned short*[H];
-blue = new unsigned short*[H];
+red = new float*[H];
+green = new float*[H];
+blue = new float*[H];
 
 #pragma omp parallel for
     for (int i=0; i<H; i++) {
-        red[i] = new unsigned short[W];
-        green[i] = new unsigned short[W];
-        blue[i] = new unsigned short[W];
+        red[i] = new float[W];
+        green[i] = new float[W];
+        blue[i] = new float[W];
         for (int j=0; j<W; j++){
             red[i][j] = image[i*W+j][0];
             green[i][j] = image[i*W+j][1];
@@ -2801,13 +2803,13 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 
 void RawImageSource::nodemosaic()
 {
-    red = new unsigned short*[H];
-    green = new unsigned short*[H];
-    blue = new unsigned short*[H];
+    red = new float*[H];
+    green = new float*[H];
+    blue = new float*[H];
     for (int i=0; i<H; i++) {
-        red[i] = new unsigned short[W];
-        green[i] = new unsigned short[W];
-        blue[i] = new unsigned short[W];
+        red[i] = new float[W];
+        green[i] = new float[W];
+        blue[i] = new float[W];
         for (int j=0; j<W; j++){
         	switch( FC(i,j)){
         	case 0: red[i][j] = rawData[i][j]; break;
@@ -2869,7 +2871,7 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
 	if( x0+TILESIZE+TILEBORDER >= W-border) colMax = TILEBORDER+W-border-x0;
 }
 
-void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData)
+void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, float** rawData)
 {
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,0);

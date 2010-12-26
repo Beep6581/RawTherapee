@@ -32,26 +32,26 @@
 
 namespace rtengine {
 
-inline void RawImageSource::convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W) {
+inline void RawImageSource::convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W) {
   for (int j=0; j<W; j++) {
-    Y[j] = 299 * r[j] + 587 * g[j] + 114 * b[j];
-    I[j] = 596 * r[j] - 275 * g[j] - 321 * b[j];
-    Q[j] = 212 * r[j] - 523 * g[j] + 311 * b[j];
+    Y[j] = .299 * r[j] + .587 * g[j] + .114 * b[j];
+    I[j] = .596 * r[j] - .275 * g[j] - .321 * b[j];
+    Q[j] = .212 * r[j] - .523 * g[j] + .311 * b[j];
   }
 }
 
-inline void RawImageSource::convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W) {
+inline void RawImageSource::convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W) {
   for (int j=1; j<W-1; j++) {
-    int ir = Y[j]/1000 + 0.956*I[j]/1000 + 0.621*Q[j]/1000;
-    int ig = Y[j]/1000 - 0.272*I[j]/1000 - 0.647*Q[j]/1000;
-    int ib = Y[j]/1000 - 1.105*I[j]/1000 + 1.702*Q[j]/1000;
+    int ir = Y[j] + 0.956*I[j] + 0.621*Q[j];
+    int ig = Y[j] - 0.272*I[j] - 0.647*Q[j];
+    int ib = Y[j] - 1.105*I[j] + 1.702*Q[j];
     r[j] = CLIP(ir);
     g[j] = CLIP(ig);
     b[j] = CLIP(ib);
   }
 }
 
-inline void RawImageSource::convert_to_cielab_row (unsigned short* ar, unsigned short* ag, unsigned short* ab, short* oL, short* oa, short* ob) {
+inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob) {
 
   for (int j=0; j<W; j++) {
     double r = ar[j];
@@ -72,7 +72,7 @@ inline void RawImageSource::convert_to_cielab_row (unsigned short* ar, unsigned 
   }
 }
 
-inline void RawImageSource::interpolate_row_g (unsigned short* agh, unsigned short* agv, int i) {
+inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i) {
 
   for (int j=0; j<W; j++) {
     if (ri->ISGREEN(i,j)) {
@@ -124,7 +124,7 @@ inline void RawImageSource::interpolate_row_g (unsigned short* agh, unsigned sho
   }
 }
 
-inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i) {
+inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg, float* cg, float* ng, int i) {
   if (ri->ISRED(i,0) || ri->ISRED(i,1)) {
     // RGRGR or GRGRGR line
     for (int j=0; j<W; j++) {
@@ -228,7 +228,7 @@ inline void RawImageSource::interpolate_row_rb (unsigned short* ar, unsigned sho
   }
 }
 
-inline void RawImageSource::interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip) {
+inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip) {
 
   if (ri->ISRED(i,0) || ri->ISRED(i,1)) {
     // RGRGR or GRGRGR line

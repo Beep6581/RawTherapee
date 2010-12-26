@@ -619,8 +619,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 val = baseImg->b[i][j]*bmi>>10;
                 baseImg->b[i][j] = CLIP(val);
         }
-
-    // apply highlight recovery, if needed
+/*
+    // apply highlight recovery, if needed		-- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES; DO WE CARE???
     if (isRaw && params.hlrecovery.enabled) {
         int maxval = 65535 / defGain;
         if (params.hlrecovery.method=="Luminance" || params.hlrecovery.method=="Color") 
@@ -633,7 +633,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 RawImageSource::HLRecovery_CIELab (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval, camToD50, icamToD50);
         }
     }
-
+*/
     // perform color space transformation
     if (isRaw)
         RawImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, camProfile, camToD50, logDefGain);

@@ -215,7 +215,7 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
             }
 }
 
-void RawImageSource::HLRecovery_ColorPropagation (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip) {
+void RawImageSource::HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip) {
 
     int blr = (i+HR_SCALE/2) / HR_SCALE - 1;
     if (blr<0 || blr>=H/HR_SCALE-2)
@@ -242,8 +242,8 @@ void RawImageSource::HLRecovery_ColorPropagation (unsigned short* red, unsigned 
 void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
 
     // detect maximal pixel values
-    unsigned short* red = new unsigned short[W];
-    unsigned short* blue = new unsigned short[W];
+    float* red = new float[W];
+    float* blue = new float[W];
     int maxr = 0, maxg = 0, maxb = 0;
     for (int i=32; i<H-32; i++) {
         interpolate_row_rb (red, blue, green[i-1], green[i], green[i+1], i);
@@ -273,11 +273,11 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
     for (int i=0; i<3; i++)
         rec[i] = allocArray<int> (dw, dh);
 
-    unsigned short* reds[HR_SCALE]; 
-    unsigned short* blues[HR_SCALE];
+    float* reds[HR_SCALE]; 
+    float* blues[HR_SCALE];
     for (int i=0; i<HR_SCALE; i++) {
-        reds[i] = new unsigned short[W];
-        blues[i] = new unsigned short[W];
+        reds[i] = new float[W];
+        blues[i] = new float[W];
     }
 
 	if (needhr)

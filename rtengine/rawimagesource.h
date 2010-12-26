@@ -84,28 +84,28 @@ class RawImageSource : public ImageSource {
         double* cache;
         int threshold;
 
-        unsigned short** rawData;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
+        float** rawData;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
-        unsigned short** green; 
+        float** green; 
         // the interpolated red plane:
-        unsigned short** red;
+        float** red;
         // the interpolated blue plane:
-        unsigned short** blue;
+        float** blue;
     
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
         void hphd_green          ();
         void correction_YIQ_LQ_  (Image16* im, int row_from, int row_to);
-        void hlRecovery          (std::string method, unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
+        void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         int  defTransform        (int tran);
-        void rotateLine          (unsigned short* line, unsigned short** channel, int tran, int i, int w, int h);
+        void rotateLine          (float* line, unsigned short** channel, int tran, int i, int w, int h);
         void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
         void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
         void updateHLRecoveryMap (std::string method, double rm, double gm, double bm);
         void updateHLRecoveryMap_ColorPropagation ();
-        void HLRecovery_ColorPropagation (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int width, int skip);
+        void HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         unsigned FC(int row, int col){ return ri->FC(row,col); }
     public:
         RawImageSource ();
@@ -134,19 +134,19 @@ class RawImageSource : public ImageSource {
         static void colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
-        static void HLRecovery_Luminance (unsigned short* rin, unsigned short* gin, unsigned short* bin, unsigned short* rout, unsigned short* gout, unsigned short* bout, int width, int maxval);
-        static void HLRecovery_CIELab (unsigned short* rin, unsigned short* gin, unsigned short* bin, unsigned short* rout, unsigned short* gout, unsigned short* bout, int width, int maxval, double cam[3][3], double icam[3][3]);
+        static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval);
+        static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval, double cam[3][3], double icam[3][3]);
 
     protected:
         typedef unsigned short ushort;
                 void correction_YIQ_LQ  (Image16* i, int times);
-        inline  void convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W);
-        inline  void convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W);
+        inline  void convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W);
+        inline  void convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W);
 
-        inline  void convert_to_cielab_row  (unsigned short* ar, unsigned short* ag, unsigned short* ab, short* oL, short* oa, short* ob);
-        inline  void interpolate_row_g      (unsigned short* agh, unsigned short* agv, int i);
-        inline  void interpolate_row_rb     (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i);
-        inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
+        inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
+        inline  void interpolate_row_g      (float* agh, float* agv, int i);
+        inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
+        inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
 		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
 		void CA_correct_RT	(double cared, double cablue);
@@ -171,7 +171,7 @@ class RawImageSource : public ImageSource {
         void    bilinear_interpolate_block(ushort (*image)[4], int start, int end);
 	void	border_interpolate(int border, ushort (*image)[4], int start = 0, int end = 0);
 		void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
-		void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
+		void fill_raw( ushort (*cache )[4], int x0, int y0, float** rawData);
 		void fill_border( ushort (*cache )[4], int border, int x0, int y0);
 		void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
 		void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
@@ -185,7 +185,7 @@ class RawImageSource : public ImageSource {
 		void dcb_refinement(ushort (*image)[4], int x0, int y0);
 		void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
-        void    transLine   (unsigned short* red, unsigned short* green, unsigned short* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
+        void    transLine   (float* red, float* green, float* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
         void    hflip       (Image16* im);
         void    vflip       (Image16* im);      
         
