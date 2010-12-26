@@ -29,9 +29,9 @@ class LabImage {
 
     public:
         int W, H;
-        unsigned short** L;
-        short** a;
-        short** b;
+        float** L;
+        float** a;
+        float** b;
 
      LabImage (int w, int h);
      LabImage (Image16* im);

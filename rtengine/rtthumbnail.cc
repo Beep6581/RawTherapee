@@ -689,8 +689,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	int* curve = new int [65536];
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
-    LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
+    //LabImage* labView = new LabImage (baseImg);//this is broken!!!???
+	LabImage* labView = new LabImage (fw,fh);
+
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, logDefGain, params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
@@ -699,7 +701,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     memset (hist16, 0, 65536*sizeof(int));
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[labView->L[i][j]]++;
+            hist16[CLIP((int)labView->L[i][j])]++;
 
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
@@ -716,6 +718,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // color processing
     ipf.colorCurve (labView, labView);
+
+	//delete [] hist16;//testing only!!!???
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);

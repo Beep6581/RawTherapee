@@ -53,7 +53,7 @@ namespace rtengine {
 	//scale is spacing of directional averaging weights
 	
 	
-	void ImProcFunctions :: dirpyr_equalizer(unsigned short ** src, unsigned short ** dst, int srcwidth, int srcheight, const double * mult )
+	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, const double * mult )
 	{
 		int lastlevel=maxlevel;
 		
@@ -100,12 +100,12 @@ namespace rtengine {
 		
 		
 		int level;
-		int ** buffer;
+		float ** buffer;
 		
-		unsigned short ** dirpyrlo[maxlevel]; 
+		float ** dirpyrlo[maxlevel]; 
 
 		
-		buffer = allocArray<int> (srcwidth, srcheight);
+		buffer = allocArray<float> (srcwidth, srcheight);
 		
 		for (int i=0; i<srcheight; i++)
 			for (int j=0; j<srcwidth; j++) {
@@ -117,7 +117,7 @@ namespace rtengine {
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
 		
-		dirpyrlo[0] = allocArray<unsigned short> (srcwidth, srcheight);
+		dirpyrlo[0] = allocArray<float> (srcwidth, srcheight);
 		
 		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, rangefn, 0, scale, mult );
 		
@@ -127,7 +127,7 @@ namespace rtengine {
 		{
 			scale = scales[level];
 			
-			dirpyrlo[level] = allocArray<unsigned short>(srcwidth, srcheight);
+			dirpyrlo[level] = allocArray<float>(srcwidth, srcheight);
 			
 			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, rangefn, level, scale, mult );
 			
@@ -185,10 +185,10 @@ namespace rtengine {
 		
 		for(int i = 0; i < lastlevel; i++)
 		{
-			freeArray<unsigned short>(dirpyrlo[i], srcheight);
+			freeArray<float>(dirpyrlo[i], srcheight);
 		}
 		
-		freeArray<int>(buffer, srcheight);
+		freeArray<float>(buffer, srcheight);
 		
 		delete [] rangefn;
 		
@@ -196,7 +196,7 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	}
 	
-	void ImProcFunctions::dirpyr_channel(unsigned short ** data_fine, unsigned short ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  )
+	void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  )
 	{
 		//scale is spacing of directional averaging weights
 		
@@ -242,7 +242,7 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::idirpyr_eq_channel(unsigned short ** data_coarse, unsigned short ** data_fine, int ** buffer, int width, int height, int level, const double * mult )
+	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult )
 	{
 		float noisehi = 1.33*noise*mult[4]/pow(3,level), noiselo = 0.66*noise*mult[4]/pow(3,level);
 		float * irangefn = new float [0x20000];

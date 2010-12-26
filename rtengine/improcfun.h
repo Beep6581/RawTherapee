@@ -32,13 +32,13 @@ using namespace procparams;
 
 class ImProcFunctions {
 
-		static int* cacheL;
-		static int* cachea;
-		static int* cacheb;
-		static int* xcache;
-		static int* ycache;
-		static int* zcache;
-		static unsigned short gamma2curve[65536];
+		static float* cacheL;
+		static float* cachea;
+		static float* cacheb;
+		static float* xcache;
+		static float* ycache;
+		static float* zcache;
+		static float* gamma2curve;
 
 		cmsHTRANSFORM monitorTransform;
 
@@ -53,9 +53,9 @@ class ImProcFunctions {
 		void vignetting         (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH);
 		void transformNonSep    (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void transformSep       (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
-		void sharpenHaloCtrl    (LabImage* lab, unsigned short** blurmap, unsigned short** base, int W, int H);
+		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
 		void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to);
-		void dcdamping          (float** aI, unsigned short** aO, float damping, int W, int H);
+		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
 		bool needsCA            ();
 		bool needsDistortion    ();
@@ -79,17 +79,17 @@ class ImProcFunctions {
 		bool needsTransform   ();
 
 		void firstAnalysis    (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
-		void rgbProc          (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, int sat);
+		void rgbProc          (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, float defmul, int sat);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to);
 		void colorCurve       (LabImage* lold, LabImage* lnew);
-		void sharpening       (LabImage* lab, unsigned short** buffer);
+		void sharpening       (LabImage* lab, float** buffer);
 		void lumadenoise      (LabImage* lab, int** buffer);
 		void colordenoise     (LabImage* lab, int** buffer);
 		void transform        (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void lab2rgb          (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, double dScale);
-		void deconvsharpening (LabImage* lab, unsigned short** buffer);
+		void deconvsharpening (LabImage* lab, float** buffer);
 		void waveletEqualizer (Image16 * image);
 		void waveletEqualizer (LabImage * image, bool luminance, bool chromaticity);
 
@@ -105,9 +105,9 @@ class ImProcFunctions {
 		void dirpyr_eq           (LabImage* data_coarse, LabImage* data_fine, int * rangefn, int level, int pitch, int scale, const double * mult );
 		void idirpyr_eq          (LabImage* data_coarse, LabImage* data_fine, int *** buffer, int * irangefn, int level, int pitch, int scale, const double * mult );
 
-		void dirpyr_equalizer    (unsigned short ** src, unsigned short ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
-		void dirpyr_channel      (unsigned short ** data_fine, unsigned short ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  );
-		void idirpyr_eq_channel  (unsigned short ** data_coarse, unsigned short ** data_fine, int ** buffer, int width, int height, int level, const double * mult );
+		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
+		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  );
+		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
 
 		void defringe         (LabImage* lab);
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh, bool edges);

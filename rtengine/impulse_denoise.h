@@ -26,8 +26,8 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // modified version of Gabor's implementation of bilateral filtering, without input pixel
 
-#define NBRWT(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+0x10000])
-#define NORM(a,b) (ec[src[i - a][j - b]-src[i][j]+0x10000])
+#define NBRWT(a,b) (src[i - a][j - b] * ec[((int)(src[i - a][j - b]-src[i][j]+0x10000))])
+#define NORM(a,b) (ec[((int)(src[i - a][j - b]-src[i][j]+0x10000))])
 
 //ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*rangewidth*rangewidth))*scale); \
 
@@ -83,16 +83,16 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 	float hpfabs, hfnbrave;
 	
 	// buffer for the lowpass image
-    unsigned short ** lpf = new unsigned short *[height];
+    float ** lpf = new float *[height];
     for (int i=0; i<height; i++) {
-        lpf[i] = new unsigned short [width];
+        lpf[i] = new float [width];
         //memset (lpf[i], 0, width*sizeof(float));
     }
 	
 	// buffer for the highpass image
-    unsigned short ** impish = new unsigned short *[height];
+    float ** impish = new float *[height];
 	 for (int i=0; i<height; i++) {
-	 impish[i] = new unsigned short [width];
+	 impish[i] = new float [width];
 	 //memset (impish[i], 0, width*sizeof(unsigned short));
 	 }
 	
@@ -109,8 +109,8 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 	
 	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
 
-	gaussHorizontal<unsigned short> (src, lpf, buffer, width, height, 2.0, false /*multiThread*/);
-	gaussVertical<unsigned short>   (lpf, lpf, buffer, width, height, 2.0, false);
+	gaussHorizontal<float> (src, lpf, buffer, width, height, 2.0, false /*multiThread*/);
+	gaussVertical<float>   (lpf, lpf, buffer, width, height, 2.0, false);
 
 	delete buffer;
 
