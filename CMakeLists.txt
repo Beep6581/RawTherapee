@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
 
+# The following line set special compilation flags for RTEngine, and will be added to CMAKE_CXX_FLAGS
+# It were moved away from rtengine/CMakefiles.txt, because some users may want to remove -ffast_math :
+# this flag speeds up the floating-point operations, but with a little bite less precisions. This default value
+# gives the same result/behaviour as before.
+set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
+
 if (APPLE)
 #    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;" )
 #    SET (CMAKE_TRY_COMPILE_OSX_ARCHITECTURES "i386;x86_64;" )

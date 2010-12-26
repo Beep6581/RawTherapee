@@ -9,7 +9,7 @@ set(DATADIR . CACHE PATH "Datas installation path")
 set(BINDIR . CACHE PATH "Binaries installation path")
 set(LIBDIR . CACHE PATH "Libraries installation path")
 
-set(CMAKE_PREFIX_PATH $ENV{GTKMM_BASEPATH} $ENV{MINGW_BASEPATH} CACHE STRING "Additional search paths")
+set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
 
 set(BUILD_SHARED OFF CACHE BOOL "Should RT generate shared libraries")
 set(WITH_RAWZOR ON CACHE BOOL "With Rawzor")
@@ -23,6 +23,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g2" CACHE STRING "Compiler options for C++ sourc
 set(CMAKE_CXX_FLAGS_RELEASE "-mwindows -DNDEBUG -O2" CACHE STRING "Compiler options for C++ source files and Release target")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-mwindows -DNDEBUG -Os" CACHE STRING "Compiler options for C++ source files and MinSizeRel target")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C++ source files and RelWithDebInfo target")
+
+# Uncomment the next line and set the right value to override the default value
+#set(RTENGINE_CXX_FLAGS "-funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
 
 set(CMAKE_C_FLAGS "-mwin32 -mthreads -march=native" CACHE STRING "Compiler options for C source files")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g2" CACHE STRING "Compiler options for C source files and Debug target")
