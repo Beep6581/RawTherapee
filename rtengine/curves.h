@@ -29,6 +29,8 @@
 
 #define SQR(x) ((x)*(x))
 
+#define CLIPI(a) ((a)<65534 ? (a) : (65534))
+
 namespace rtengine {
 
 class CurveFactory {
@@ -133,6 +135,24 @@ class CurveFactory {
 	
 
   public:
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// accurately determine value from integer array with float as index
+	static inline float interp(int *array,float f)
+	{
+		int index = CLIPI(floor(f));
+		float part = (float)((f)-index)*(float)(array[index+1]-array[index]);
+		return (float)array[index]+part;
+	}
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// accurately determine value from float array with float as index
+	static inline float flinterp(float *array,float f)
+	{
+		int index = CLIPI(floor(f));
+		float part = ((f)-(float)index)*(array[index+1]-array[index]);
+		return array[index]+part;
+	}
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     static void init ();
 

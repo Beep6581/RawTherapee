@@ -160,13 +160,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
+        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, imgsrc->getDefGain(), params.toneCurve.saturation);
 
         // recompute luminance histogram
         memset (lhist16, 0, 65536*sizeof(int));
         for (int i=0; i<pH; i++)
             for (int j=0; j<pW; j++)
-                lhist16[oprevl->L[i][j]]++;
+                lhist16[CLIPTO((int)(oprevl->L[i][j]),0,65535)]++;
     }
     readyphase++;
 
@@ -211,7 +211,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
 		if (scale==1) {
             progress ("Sharpening...",100*readyphase/numofphases);
-            ipf.sharpening (nprevl, (unsigned short**)buffer);
+            ipf.sharpening (nprevl, (float**)buffer);
         }
         readyphase++;
 		if (scale==1) {
@@ -371,7 +371,7 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (Lhist, 0, 256*sizeof(int));
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) {
-            Lhist[nprevl->L[i][j]/256]++;
+            Lhist[CLIPTO((int)(nprevl->L[i][j]/256),0,255)]++;
 		}
 	
 	/*for (int i=0; i<256; i++) {

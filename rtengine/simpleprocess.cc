@@ -147,7 +147,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
 
     LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, imgsrc->getDefGain(),  params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
@@ -160,7 +160,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     memset (hist16, 0, 65536*sizeof(int));
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[labView->L[i][j]]++;
+            hist16[(int)labView->L[i][j]]++;
 
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL);
@@ -173,7 +173,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
 	ipf.lumadenoise (labView, buffer);
-    ipf.sharpening (labView, (unsigned short**)buffer);
+    ipf.sharpening (labView, (float**)buffer);
 
     delete [] curve1;
 	delete [] curve2;

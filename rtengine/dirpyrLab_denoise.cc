@@ -111,7 +111,7 @@ namespace rtengine {
 		//#pragma omp parallel for if (multiThread)
 		for (int i=0; i<src->H; i++) {
 			for (int j=0; j<src->W; j++) {
-				src->L[i][j] = gamcurve[src->L[i][j] ];
+				src->L[i][j] = gamcurve[CLIP((int)src->L[i][j]) ];
 			}
 		}
 		
@@ -245,7 +245,7 @@ namespace rtengine {
 		for (int i=0; i<dst->H; i++) 
 			for (int j=0; j<dst->W; j++) {
 				
-				dst->L[i][j] = gamcurve[CLIP(dst->L[i][j]) ];
+				dst->L[i][j] = gamcurve[CLIP((int)dst->L[i][j]) ];
 				
 			}
 		
@@ -387,7 +387,7 @@ namespace rtengine {
 					
 					float hipass[3], hpffluct[3], tonefactor;//, nrfactor;
 				
-					tonefactor = ((NRWT_L(data_coarse->L[i][j])));
+					tonefactor = ((NRWT_L(CLIP((int)data_coarse->L[i][j]) )));
 					
 					//Wiener filter
 					//luma
@@ -560,7 +560,7 @@ namespace rtengine {
 			
 			float hipass[3], hpffluct[3], tonefactor;//, nrfactor;
 			
-			tonefactor = (NRWT_L(smooth->L[i][j]));
+			tonefactor = (NRWT_L(CLIP((int)smooth->L[i][j]) ));
 			
 			//Wiener filter
 			//luma
