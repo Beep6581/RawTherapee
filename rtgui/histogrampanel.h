@@ -44,10 +44,10 @@ class HistogramArea : public Gtk::DrawingArea {
     Gdk::Color lgray;
     Gdk::Color mgray;
     Gdk::Color dgray;
-    unsigned int lhist[256];
-    unsigned int rhist[256];
-    unsigned int ghist[256];
-    unsigned int bhist[256];
+    unsigned int* lhist;
+    unsigned int* rhist;
+    unsigned int* ghist;
+    unsigned int* bhist;
     bool valid;
     bool showFull;
     int oldwidth, oldheight;

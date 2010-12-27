@@ -38,7 +38,7 @@ class ImProcFunctions {
 		static int* xcache;
 		static int* ycache;
 		static int* zcache;
-		static unsigned short gamma2curve[65536];
+		static unsigned short* gamma2curve;
 
 		cmsHTRANSFORM monitorTransform;
 
@@ -69,6 +69,7 @@ class ImProcFunctions {
 		double lumimul[3];
 
 		static void initCache ();
+		static void cleanupCache ();
 
 		ImProcFunctions       (const ProcParams* iparams, bool imultiThread=true)
 			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
