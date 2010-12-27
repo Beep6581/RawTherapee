@@ -956,16 +956,20 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 		
 	}
 
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
 
-int CurveFactory::gammatab [65536];
-int CurveFactory::igammatab_srgb [65536];
-int CurveFactory::gammatab_srgb [65536];
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+int *CurveFactory::gammatab = 0;
+int *CurveFactory::igammatab_srgb = 0;
+int *CurveFactory::gammatab_srgb = 0;
 
 void CurveFactory::init () {
+
+  gammatab = new int[65536];
+  igammatab_srgb = new int[65536];
+  gammatab_srgb = new int[65536];
 
   for (int i=0; i<65536; i++)
     gammatab_srgb[i] = (int)(65535 * gamma2 (i/65535.0));
@@ -980,5 +984,11 @@ void CurveFactory::init () {
     fclose (f);*/
 }
 
+void CurveFactory::cleanup () {
+
+  delete [] gammatab;
+  delete [] igammatab_srgb;
+  delete [] gammatab_srgb;
 }
 
+}

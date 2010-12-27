@@ -112,9 +112,9 @@ bool BatchQueue::loadBatchQueue( )
 
     if (f==NULL)
         return false;
-    char buffer[1024];
+    char *buffer = new char[1024];
     unsigned numLoaded=0;
-    while (fgets (buffer, sizeof(buffer), f)){
+    while (fgets (buffer, 1024, f)){
     	char *p = strchr(buffer,';' );
     	if( p ){
             char *le = buffer + strlen(buffer);
@@ -156,6 +156,7 @@ bool BatchQueue::loadBatchQueue( )
     	    }
     	}
     }
+    delete [] buffer;
     fclose(f);
     arrangeFiles ();
     queue_draw ();

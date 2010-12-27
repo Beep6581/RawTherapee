@@ -84,7 +84,7 @@ class MyCurve : public Gtk::DrawingArea {
         std::vector<Gdk::Point> upoint;
         std::vector<Gdk::Point> lpoint;
         int activeParam;
-        unsigned int bghist[256];	// histogram values
+        unsigned int* bghist;	// histogram values
         bool bghistvalid;
         bool buttonPressed;
         MyCurveIdleHelper* mcih;
