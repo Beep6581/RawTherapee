@@ -20,6 +20,7 @@
 #include <toolpanelcoord.h>
 #include <ilabel.h>
 #include <options.h>
+#include <imagesource.h>
 
 using namespace rtengine::procparams;
 
@@ -217,12 +218,21 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
 void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
+	int fw, fh, tr;
+
     if (!ipc) return;
     ProcParams *params = ipc->getParamsForUpdate (event);
     *params = *nparams;
 
+    tr = TR_NONE;
+    if (params->coarse.rotate==90)  tr |= TR_R90;
+    if (params->coarse.rotate==180) tr |= TR_R180;
+    if (params->coarse.rotate==270) tr |= TR_R270;
+
     // trimming overflowing cropped area
-    crop->trim(params, ipc->getFullWidth(), ipc->getFullHeight());
+    rtengine::ImageSource *ii = (rtengine::ImageSource*)ipc->getInitialImage();
+    ii->getFullSize (fw, fh, tr);
+    crop->trim(params, fw, fh);
 
     // updating the GUI with updated values
     for (unsigned int i=0; i<toolPanels.size(); i++)

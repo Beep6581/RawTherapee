@@ -352,11 +352,6 @@ void Crop::trim (ProcParams* pp, int ow, int oh) {
 	int xmin = pp->crop.x;
 	int ymin = pp->crop.y;
 
-	if (pp->coarse.rotate == 90 || pp->coarse.rotate == 270) {
-		int tmp = oh;
-		oh = ow;
-		ow = tmp;
-	}
 	if (xmin > ow || ymin > oh) {
 		// the crop is completely out of the image, so we disable the crop
 		pp->crop.enabled = false;
