@@ -1,9 +1,25 @@
-Gabor Horvath <hgabor@rawtherapee.com>
+Project initiator:
 
-Contributors (ideas, mockups, testing, forum activity, etc.):
+	Gabor Horvath <hgabor@rawtherapee.com>
 
-Patrik Brunner
-Maciek Dworak
-David M. Gyurko
-Arturs Jekabsons
-Karl Loncarek
+Developement contributors, in last name alphabetical order:
+
+	Oliver Duis
+	Jean-Christophe Frisch
+	Steve Herell
+	Emil Martinec
+	Jan Rinze
+	Andrey Skv
+	Fabio Suprani
+
+Other contributors (ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
+
+	Patrik Brunner
+	Maciek Dworak
+	Michael Ezra
+	David M. Gyurko
+	Arturs Jekabsons
+	Karl Loncarek
+	Paul Matthijsse
+	Wyatt Olson
+	Ilia Popov
