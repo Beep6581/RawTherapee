@@ -62,8 +62,6 @@ class ImProcCoordinator : public StagedImageProcessor {
         
         void freeAll ();
 
-	float dummy1 [65536];
-	float dummy2 [65536];
 		float hltonecurve [65536];
         float shtonecurve [65536];
 		int tonecurve [65536];

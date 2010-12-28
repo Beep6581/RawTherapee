@@ -99,21 +99,7 @@ void ImProcFunctions::initCache () {
             //cachea[i] = 327.68*(500.0 * (kappa*i/MAXVAL+16.0)/116.0);
             //cacheb[i] = 327.68*(200.0 * (kappa*i/MAXVAL+16.0)/116.0);
         }
-		if (i%100 == 0) printf(" cachef[%d]=%f ",i,cachef[i]);
 	}
-	
-	/*for (int i=0; i<0x20000; i++)
-        ycache[i] = CLIP(ycache[i]);
-    xcache = new float[369621];
-    for (int i=-141556; i<228064; i++)
-        xcache[i+141556] = (65536.0 * (i > 15728 ? ((double)i/76021)*((double)i/76021)*((double)i/76021)*D50x : (1.2841854934601665e-1*(double)i/76021-1.7712903358071262e-2)*D50x));
-    for (int i=0; i<369620; i++)
-        xcache[i] = CLIP(xcache[i]);
-    zcache = new float[825747];
-    for (int i=-369619; i<456128; i++)
-        zcache[i+369619] = (65536.0 * (i > 15728 ? ((double)i/76021)*((double)i/76021)*((double)i/76021)*D50z : (1.2841854934601665e-1*(double)i/76021-1.7712903358071262e-2)*D50z));
-    for (int i=0; i<825747; i++)
-        zcache[i] = CLIP(zcache[i]);*/
 
 	for (int i=0; i<65536; i++) {
 		gamma2curve[i] = (CurveFactory::gamma2(i/65535.0) * 65535.0);
@@ -130,19 +116,9 @@ void ImProcFunctions::setScale (double iscale) {
 	scale = iscale;
 }
 
-void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
+void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to) {
 
 	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
-    float toxyz[3][3];
-    toxyz[0][0] = wprof[0][0] / D50x; 
-    toxyz[1][0] = wprof[1][0] / D50x; 
-    toxyz[2][0] = wprof[2][0] / D50x; 
-    toxyz[0][1] = wprof[0][1]; 
-    toxyz[1][1] = wprof[1][1]; 
-    toxyz[2][1] = wprof[2][1]; 
-    toxyz[0][2] = wprof[0][2] / D50z; 
-    toxyz[1][2] = wprof[1][2] / D50z; 
-    toxyz[2][2] = wprof[2][2] / D50z; 
 
 	lumimul[0] = wprof[0][1];
 	lumimul[1] = wprof[1][1];
@@ -157,32 +133,13 @@ void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile,
             int g = original->g[i][j];
             int b = original->b[i][j];
 
-            //int x = (int)(toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) ;
-            int y = (int)(toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) ;
-            //int z = (int)(toxyz[0][2] * r + toxyz[1][2] * g + toxyz[2][2] * b) ;
+            int y = CLIP((int)(lumimul[0] * r + lumimul[1] * g + lumimul[2] * b)) ;
 
-            //x = CLIP(x);
-            y = CLIP(y);
-            //z = CLIP(z);
-
-            /*int oa = cachea[x] - cachea[y];
-            int ob = cacheb[y] - cacheb[z];
-
-            if (oa<0) oa = -oa;
-            if (ob<0) ob = -ob;
-
-            if (oa > cradius)
-                cradius = oa;
-            if (ob > cradius)
-                cradius = ob;*/
-
-            if (histogram) {
-                int hval = CLIP(y); //(306 * original->r[i][j] + 601 * original->g[i][j] + 117 * original->b[i][j]) >> 10;
-                histogram[hval]++;
+            if (histogram) { 
+                histogram[y]++;
             }
         }
     }
-    //*chroma_radius = cradius;
 }
 
 void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params, unsigned int* histogram, double gamma) {
@@ -202,8 +159,10 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();
 	}
+	
+	//chroma_scale = 1;
 
-	// calculate chroma radius and histogram of the y channel needed for exposure curve calculation
+	// calculate histogram of the y channel needed for contrast curve calculation in exposure adjustments
 
 #ifdef _OPENMP
     int T = omp_get_max_threads();
@@ -211,10 +170,8 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     int T = 1;
 #endif
 
-	int* cr = new int [T];
     unsigned int** hist = new unsigned int* [T];
     for (int i=0; i<T; i++) {
-		cr[i] = 0;
 		hist[i] = new unsigned int[65536];
 		memset (hist[i], 0, 65536*sizeof(int));
     }
@@ -228,30 +185,23 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 		int blk = H/nthreads;
 
 		if (tid<nthreads-1)
-			firstAnalysis_ (original, wprofile, hist[tid], &cr[tid], tid*blk, (tid+1)*blk);
+			firstAnalysis_ (original, wprofile, hist[tid], tid*blk, (tid+1)*blk);
 		else
-			firstAnalysis_ (original, wprofile, hist[tid], &cr[tid], tid*blk, H);
+			firstAnalysis_ (original, wprofile, hist[tid], tid*blk, H);
     }
 #else
-    firstAnalysis_ (original, wprofile, hist[0], &cr[0], 0, original->height);
+    firstAnalysis_ (original, wprofile, hist[0], 0, original->height);
 #endif
-	
-    /*chroma_radius = cr[0];
-    for (int i=0; i<T; i++)
-    	if (cr[i]>chroma_radius)
-    		chroma_radius = cr[i];
  
 	memset (histogram, 0, 65536*sizeof(int));
     for (int i=0; i<65536; i++)
     	for (int j=0; j<T; j++)
-    		histogram[i] += hist[j][i];*/
+    		histogram[i] += hist[j][i];
 
-    chroma_scale = 1;//32768*32768 / (3*chroma_radius);
-
-    delete [] cr;
     for (int i=0; i<T; i++)
     	delete [] hist[i];
     delete [] hist;
+
 }
 
 void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, float defmul, int sat) {
@@ -339,10 +289,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
                 }
             }
 
-			//float rtonefactor = (r>0 ? (float)hltonecurve[r]/r : (float)hltonecurve[1]);
-			//float gtonefactor = (g>0 ? (float)hltonecurve[g]/g : (float)hltonecurve[1]);
-			//float btonefactor = (b>0 ? (float)hltonecurve[b]/b : (float)hltonecurve[1]);
-			//float tonefactor = (rtonefactor+gtonefactor+btonefactor)/3;
+
 			//float tonefactor = (0.299*rtonefactor+0.587*gtonefactor+0.114*btonefactor);
 			float tonefactor=(CurveFactory::flinterp(hltonecurve,r)+CurveFactory::flinterp(hltonecurve,g)+CurveFactory::flinterp(hltonecurve,b))/3;
 
@@ -477,7 +424,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
     if (params->colorBoost.enable_saturationlimiter && c>1) {
         // re-generate color multiplier lookup table
-        double d = params->colorBoost.saturationlimit * chroma_scale  / 3.0;
+        double d = params->colorBoost.saturationlimit / 3.0;
         double alpha = 0.5;
         double threshold1 = alpha * d;
         double threshold2 = c*d*(alpha+1.0) - d;
@@ -495,7 +442,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
     }
     
 	float eps = 0.001;
-    double shift_a = params->colorShift.a * chroma_scale + eps, shift_b = params->colorShift.b * chroma_scale + eps;
+    double shift_a = params->colorShift.a + eps, shift_b = params->colorShift.b + eps;
 
     float** oa = lold->a;
     float** ob = lold->b;
@@ -513,9 +460,9 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
             double real_c = wanted_c;
             if (wanted_c >= 1.0 && params->colorBoost.avoidclip) {
                 double cclip = 100000;
-                double cr = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)/chroma_scale*amul, (double)(ob[i][j]+shift_b)/chroma_scale*bmul, 3.079935, -1.5371515, -0.54278342);
-                double cg = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)/chroma_scale*amul, (double)(ob[i][j]+shift_b)/chroma_scale*bmul, -0.92123418, 1.87599, 0.04524418);
-                double cb = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)/chroma_scale*amul, (double)(ob[i][j]+shift_b)/chroma_scale*bmul, 0.052889682, -0.20404134, 1.15115166);
+                double cr = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, 3.079935, -1.5371515, -0.54278342);
+                double cg = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, -0.92123418, 1.87599, 0.04524418);
+                double cb = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa[i][j]+shift_a)*amul, (double)(ob[i][j]+shift_b)*bmul, 0.052889682, -0.20404134, 1.15115166);
                 if (cr>1.0 && cr<cclip) cclip = cr;
                 if (cg>1.0 && cg<cclip) cclip = cg;
                 if (cb>1.0 && cb<cclip) cclip = cb;

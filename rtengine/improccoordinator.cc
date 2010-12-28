@@ -165,7 +165,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 									vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
         ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, imgsrc->getDefGain(), params.toneCurve.saturation);
 
-        // recompute luminance histogram
+        // compute L channel histogram
         memset (lhist16, 0, 65536*sizeof(int));
         for (int i=0; i<pH; i++)
             for (int j=0; j<pW; j++)
@@ -174,10 +174,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, \
-									false, params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
-		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
-		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
+        CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
 	
 	
@@ -362,17 +361,19 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (rhist, 0, 256*sizeof(int));
     memset (ghist, 0, 256*sizeof(int));
     memset (bhist, 0, 256*sizeof(int));
+	memset (bcrgbhist, 0, 256*sizeof(int));
 	
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
-			int r=previmg->data[ofs];
-			int g=previmg->data[ofs+1];
-			int b=previmg->data[ofs+2];
+			int r=previmg->data[ofs++];
+			int g=previmg->data[ofs++];
+			int b=previmg->data[ofs++];
 
-            rhist[previmg->data[ofs++]]++;
-            ghist[previmg->data[ofs++]]++;
-            bhist[previmg->data[ofs++]]++;
+			bcrgbhist[(int)(0.299*r + 0.587*g + 0.114*b)]++;
+            rhist[r]++;
+            ghist[g]++;
+            bhist[b]++;
         }
     }
 

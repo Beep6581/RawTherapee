@@ -43,9 +43,6 @@ class ImProcFunctions {
 
 		cmsHTRANSFORM monitorTransform;
 
-		int chroma_scale;
-		int chroma_radius;
-
 		const ProcParams* params;
 		double scale;
 		bool multiThread;
@@ -55,7 +52,7 @@ class ImProcFunctions {
 		void transformNonSep    (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void transformSep       (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
-		void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to);
+		void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
 		bool needsCA            ();

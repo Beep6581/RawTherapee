@@ -321,10 +321,8 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, double colormult, const std::vector<double>& curvePoints, int* outCurve, int skip) {
-		
-		//colormult = chroma_scale for Lab manipulations
-		
+	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, int* outCurve, int skip) {
+				
 		// check if contrast curve is needed
 		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
 		
@@ -366,9 +364,6 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			// change to [0,1] range
 			double val = (double)i / 65535.0;
-			
-			// apply default multiplier (that is >1 if highlight recovery is on)
-			val *= colormult;
 			
 			// apply saturation curve
 			if (needsaturation)
@@ -610,6 +605,146 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		
 	}
 
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
+									 unsigned int* histogram, int* outCurve, \
+									 unsigned int* outBeforeCCurveHistogram, int skip) {
+		
+		// curve without contrast
+		float* dcurve = new float[2*65536];
+		
+		// check if contrast curve is needed
+		bool needcontrast = contr>0.00001 || contr<-0.00001;
+		
+		// create a curve if needed
+		Curve* tcurve = NULL;
+		if (curvePoints.size()>0 && curvePoints[0]!=0)
+			tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+		
+		// clear array that stores histogram valid before applying the custom curve
+		if (outBeforeCCurveHistogram)
+			memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		std::vector<double> brightcurvePoints;
+		brightcurvePoints.push_back((double)((CurveType)NURBS));
+		
+		brightcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+		brightcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+		
+		if(br>0) {
+			brightcurvePoints.push_back(0.1); //toe point
+			brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+			
+			brightcurvePoints.push_back(0.7); //shoulder point
+			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+		} else {
+			brightcurvePoints.push_back(0.1-br/150.0); //toe point
+			brightcurvePoints.push_back(0.1); //value at toe point
+			
+			brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); //shoulder point
+			brightcurvePoints.push_back(0.7); //value at shoulder point
+		}
+		brightcurvePoints.push_back(1); // white point
+		brightcurvePoints.push_back(1); // value at white point
+		
+		Curve* brightcurve = NULL;
+		brightcurve = new Curve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		for (int i=0; i<0x10000; i++) {
+			
+			// change to [0,1] range
+			double val = (double)i / 65535.0;
+			
+			// apply brightness curve
+			val = brightcurve->getVal (val);
+			
+			// store result in a temporary array
+			dcurve[i] = CLIPD(val);
+		}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		if (needcontrast) {  
+			// compute mean luminance of the image with the curve applied
+			int sum = 0;
+			double avg = 0; 
+			//double sqavg = 0;
+			for (int i=0; i<0x10000; i++) {
+				avg += dcurve[i] * histogram[i];
+				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
+				sum += histogram[i];
+			}
+			avg /= sum;
+			//sqavg /= sum;
+			//double stddev = sqrt(sqavg-avg*avg);
+			
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			std::vector<double> contrastcurvePoints;
+			contrastcurvePoints.push_back((double)((CurveType)NURBS));
+			
+			contrastcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+			contrastcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+			
+			contrastcurvePoints.push_back(avg-avg*(0.6-contr/250.0)); //toe point
+			contrastcurvePoints.push_back(avg-avg*(0.6+contr/250.0)); //value at toe point
+			
+			contrastcurvePoints.push_back(avg+(1-avg)*(0.6-contr/250.0)); //shoulder point
+			contrastcurvePoints.push_back(avg+(1-avg)*(0.6+contr/250.0)); //value at shoulder point
+			
+			contrastcurvePoints.push_back(1); // white point
+			contrastcurvePoints.push_back(1); // value at white point
+			
+			Curve* contrastcurve = NULL;
+			contrastcurve = new Curve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			// apply contrast enhancement
+			for (int i=0; i<0x10000; i++) {
+				dcurve[i]  = contrastcurve->getVal (dcurve[i]);
+			}
+			delete contrastcurve;
+		}
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		for (int i=0; i<0x10000; i++) {
+			float val;
+			
+			// apply custom/parametric/NURBS curve, if any
+			if (tcurve) {
+				if (outBeforeCCurveHistogram) {
+					float hval = dcurve[i];
+					int hi = (int)(255.0*CLIPD(hval));
+					outBeforeCCurveHistogram[hi]+=histogram[i] ;
+				}
+				val = tcurve->getVal (dcurve[i]);
+			} else {
+				val = (dcurve[i]);
+			}
+			
+			outCurve[i] = (int) (65535.0 * val + 0.5);
+		}
+		
+		
+		delete [] dcurve;
+		delete tcurve;
+		delete brightcurve; 
+		if (outBeforeCCurveHistogram) {
+			//for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
+		}
+		
+	}
+	
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	

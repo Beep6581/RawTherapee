@@ -48,9 +48,6 @@ extern const Settings* settings;
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 
-	if (chroma_scale == 0)
-		return;
-
 	if (monitorTransform) {
 	    int ix = 0;
 		float g;
@@ -69,17 +66,6 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float x_ = 65535*Lab2xyz(fx)*D50x;
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
-
-                /*int y_ = rL[j];
-                int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
-                int z_ = rL[j]+10486-rb[j]*380/chroma_scale+369619;
-
-                x_ = CLIPTO(x_,0,369820);
-                y_ = CLIPTO(y_,0,825745);
-
-                y_ = ycache[y_];
-				x_ = xcache[x_];
-				z_ = zcache[z_];*/
 
                 buffer[iy++] = CLIP(x_);
                 buffer[iy++] = CLIP(y_);
@@ -110,22 +96,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-                /*int y_ = rL[j];
-                int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
-                int z_ = rL[j]+10486-rb[j]*380/chroma_scale+369619;
-
-                x_ = CLIPTO(x_,0,369820);
-                y_ = CLIPTO(y_,0,825745);
-
-                y_ = ycache[y_];
-				x_ = xcache[x_];
-				z_ = zcache[z_];*/
-
 				/* XYZ-D50 to RGB */
-				//int R = (int)(25689*x_-13261*y_-4022*z_) >> 13;
-				//int G = (int)(-8017*x_+15697*y_+274*z_) >> 13;
-				//int B = (int)(590*x_-1877*y_+11517*z_) >> 13;
-				
 				int R = (int)( 3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
 				int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
 				int B = (int)( 0.0719453*x_ - 0.2289914*y_ + 1.4052427*z_);
@@ -178,17 +149,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-                /*int y_ = rL[j];
-                int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
-                int z_ = rL[j]+10486-rb[j]*380/chroma_scale+369619;
-
-                x_ = CLIPTO(x_,0,369820);
-                y_ = CLIPTO(y_,0,825745);
-
-                y_ = ycache[y_];
-				x_ = xcache[x_];
-				z_ = zcache[z_];*/
-
                 buffer[iy++] = CLIP((int)x_);
                 buffer[iy++] = CLIP((int)y_);
                 buffer[iy++] = CLIP((int)z_);
@@ -217,22 +177,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-                /*int y_ = rL[j];
-                int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
-                int z_ = rL[j]+10486-rb[j]*380/chroma_scale+369619;
-
-                x_ = CLIPTO(x_,0,369820);
-                y_ = CLIPTO(y_,0,825745);
-
-                y_ = ycache[y_];
-				x_ = xcache[x_];
-				z_ = zcache[z_];*/
-
 				/* XYZ-D50 to RGB */
-				//int R = (int)(25689*x_-13261*y_-4022*z_) >> 13;
-				//int G = (int)(-8017*x_+15697*y_+274*z_) >> 13;
-				//int B = (int)(590*x_-1877*y_+11517*z_) >> 13;
-				
 				int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
 				int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
 				int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
@@ -277,17 +222,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-                /*int y_ = rL[j];
-                int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
-                int z_ = rL[j]+10486-rb[j]*380/chroma_scale+369619;
-
-                x_ = CLIPTO(x_,0,369820);
-                y_ = CLIPTO(y_,0,825745);
-
-                y_ = ycache[y_];
-				x_ = xcache[x_];
-				z_ = zcache[z_];*/
-
 				xa[j-cx] = CLIP((int)x_);
 				ya[j-cx] = CLIP((int)y_);
 				za[j-cx] = CLIP((int)z_);
@@ -317,22 +251,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-                /*int y_ = rL[j];
-                int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
-                int z_ = rL[j]+10486-rb[j]*380/chroma_scale+369619;
-
-                x_ = CLIPTO(x_,0,369820);
-                y_ = CLIPTO(y_,0,825745);
-
-                y_ = ycache[y_];
-				x_ = xcache[x_];
-				z_ = zcache[z_];*/
-
 				/* XYZ-D50 to RGB */
-				//int R = (int)(25689*x_-13261*y_-4022*z_) >> 13;
-				//int G = (int)(-8017*x_+15697*y_+274*z_) >> 13;
-				//int B = (int)(590*x_-1877*y_+11517*z_) >> 13;
-				
 				int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
 				int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
 				int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);

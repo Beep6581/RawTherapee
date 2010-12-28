@@ -33,19 +33,19 @@
 #define SQR(x) ((x)*(x))
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP(a) (CLIPTO(a,0,65535))
+#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
 
 
-#define DIRWT_L(i1,j1,i,j) (rangefn_L[(int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000)] )
+#define DIRWT_L(i1,j1,i,j) (rangefn_L[CLIPTO((int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000),0,0x1ffff)] )
 
-#define DIRWT_AB(i1,j1,i,j) (rangefn_ab[(int)(data_fine->a[i1][j1]-data_fine->a[i][j]+0x10000)] *  \
-rangefn_ab[(int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000)] * \
-rangefn_ab[(int)(data_fine->b[i1][j1]-data_fine->b[i][j]+0x10000)] )
+#define DIRWT_AB(i1,j1,i,j) (rangefn_ab[CLIPTO((int)(data_fine->a[i1][j1]-data_fine->a[i][j]+0x10000),0,0x1ffff)] *  \
+rangefn_ab[CLIPTO((int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000),0,0x1ffff)] * \
+rangefn_ab[CLIPTO((int)(data_fine->b[i1][j1]-data_fine->b[i][j]+0x10000),0,0x1ffff)] )
 
 #define NRWT_L(a) (nrwt_l[a] )
 
-#define NRWT_AB (nrwt_ab[(int)((hipass[1]+0x10000))] * nrwt_ab[(int)((hipass[2]+0x10000))])
+#define NRWT_AB (nrwt_ab[CLIPTO((int)((hipass[1]+0x10000)),0,0x1ffff)] * nrwt_ab[CLIPTO((int)((hipass[2]+0x10000)),0,0x1ffff)])
 
 #define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 
@@ -100,11 +100,9 @@ namespace rtengine {
 		//float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-		unsigned short gamcurve[65536];
+		float * gamcurve = new float[65536];
 		for (int i=0; i<65536; i++) {
-			int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
-			//if (i<500)  printf("%d %d \n",i,g);
-			gamcurve[i] = CLIP(g);
+			gamcurve[i] = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
 		}
 		
 		
@@ -261,6 +259,7 @@ namespace rtengine {
 		delete [] rangefn_ab;
 		delete [] nrwt_l;
 		delete [] nrwt_ab;
+		delete [] gamcurve;
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	};

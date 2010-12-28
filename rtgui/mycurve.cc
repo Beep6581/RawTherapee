@@ -659,6 +659,9 @@ void MyCurve::updateBackgroundHistogram (unsigned int* hist) {
     if (hist!=NULL) {
         memcpy (bghist, hist, 256*sizeof(unsigned int));
         bghistvalid = true;
+		
+		for (int i=0; i<256; i++)
+			printf(" hist[%d]=%d ",i,hist[i]);
     }
     else
         bghistvalid = false;

@@ -110,6 +110,9 @@ void CurveEditor::updateBackgroundHistogram (unsigned int* hist) {
 	if (hist!=NULL) {
 		memcpy (histogram, hist, 256*sizeof(unsigned int));
 		bgHistValid = true;
+		
+		for (int i=0; i<256; i++)
+			printf(" hist[%d]=%d ",i,hist[i]);
 	}
 	else
 		bgHistValid = false;
