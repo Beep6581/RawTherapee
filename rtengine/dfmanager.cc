@@ -23,6 +23,7 @@
 #include <safegtk.h>
 #include <rawimage.h>
 #include <sstream>
+#include <iostream>
 #include <stdio.h>
 
 namespace rtengine{
@@ -194,7 +195,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
 			}
 	}
 	if( settings->verbose ){
-		printf( "Extracted %zu pixels from darkframe %s\n", badPixels.size(),df->get_filename().c_str() );
+		std::cout << "Extracted " << badPixels.size() << " pixels from darkframe:" << df->get_filename().c_str() << std::endl;
 	}
 }
 
