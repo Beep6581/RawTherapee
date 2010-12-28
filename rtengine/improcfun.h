@@ -32,12 +32,13 @@ using namespace procparams;
 
 class ImProcFunctions {
 
-		static float* cacheL;
-		static float* cachea;
-		static float* cacheb;
-		static float* xcache;
-		static float* ycache;
-		static float* zcache;
+		static float* cachef;
+		//static float* cacheL;
+		//static float* cachea;
+		//static float* cacheb;
+		//static float* xcache;
+		//static float* ycache;
+		//static float* zcache;
 		static float* gamma2curve;
 
 		cmsHTRANSFORM monitorTransform;

@@ -61,39 +61,46 @@ using namespace procparams;
 	
 #define D50x 0.96422
 #define D50z 0.82521
+	
+#define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
+#define kappa	903.29630 //24389.0/27.0;
 
 extern const Settings* settings;
 
-float* ImProcFunctions::cacheL;
+float* ImProcFunctions::cachef;
+/*float* ImProcFunctions::cacheL;
 float* ImProcFunctions::cachea;
 float* ImProcFunctions::cacheb;
 float* ImProcFunctions::xcache;
 float* ImProcFunctions::ycache;
-float* ImProcFunctions::zcache;
+float* ImProcFunctions::zcache;*/
 //unsigned short ImProcFunctions::gamma2curve[65536];
 float* ImProcFunctions::gamma2curve;
 
 void ImProcFunctions::initCache () {
 
     int maxindex = 65536;
-    cacheL = new float[maxindex];
-    cachea = new float[maxindex];
-    cacheb = new float[maxindex];
+	cachef = new float[maxindex];
+    //cacheL = new float[maxindex];
+    //cachea = new float[maxindex];
+    //cacheb = new float[maxindex];
 	gamma2curve = new float[maxindex];
 
-    float epsilon = (CMAXVAL* 216.0f/24389.0);
-	float kappa = 24389.0/27.0;
-    for (int i=0; i<maxindex; i++)
-        if (i>epsilon) {
-            cacheL[i] = 327.68*((116.0 * exp(1.0/3.0 * log((double)i / CMAXVAL)) - 16.0));
-            cachea[i] = 327.68*(500.0 * exp(1.0/3.0 * log((double)i / CMAXVAL)));
-            cacheb[i] = 327.68*(200.0 * exp(1.0/3.0 * log((double)i / CMAXVAL)));
+    for (int i=0; i<maxindex; i++) {
+        if (i>eps_max) {
+			cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
+            //cacheL[i] = 327.68*((116.0 * exp(1.0/3.0 * log((double)i / MAXVAL)) - 16.0));
+            //cachea[i] = 327.68*(500.0 * exp(1.0/3.0 * log((double)i / MAXVAL)));
+            //cacheb[i] = 327.68*(200.0 * exp(1.0/3.0 * log((double)i / MAXVAL)));
         }
         else {
-            cacheL[i] = 327.68*((kappa * i/CMAXVAL+16.0)/116.0); // assuming CMAXVAL = 65535
-            cachea[i] = 327.68*(500.0 * (kappa*i/CMAXVAL+16.0)/116.0);
-            cacheb[i] = 327.68*(200.0 * (kappa*i/CMAXVAL+16.0)/116.0);
+			cachef[i] = 327.68*((kappa*i/MAXVAL+16.0)/116.0);
+            //cacheL[i] = 327.68*((kappa * i/MAXVAL)/116.0); // assuming CMAXVAL = 65535
+            //cachea[i] = 327.68*(500.0 * (kappa*i/MAXVAL+16.0)/116.0);
+            //cacheb[i] = 327.68*(200.0 * (kappa*i/MAXVAL+16.0)/116.0);
         }
+		if (i%100 == 0) printf(" cachef[%d]=%f ",i,cachef[i]);
+	}
 	
 	/*for (int i=0; i<0x20000; i++)
         ycache[i] = CLIP(ycache[i]);
@@ -228,6 +235,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 #else
     firstAnalysis_ (original, wprofile, hist[0], &cr[0], 0, original->height);
 #endif
+	
     /*chroma_radius = cr[0];
     for (int i=0; i<T; i++)
     	if (cr[i]>chroma_radius)
@@ -238,7 +246,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     	for (int j=0; j<T; j++)
     		histogram[i] += hist[j][i];*/
 
-    chroma_scale = 320;//32768*32768 / (3*chroma_radius);
+    chroma_scale = 1;//32768*32768 / (3*chroma_radius);
 
     delete [] cr;
     for (int i=0; i<T; i++)
@@ -404,11 +412,15 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
             float x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) ;
             float y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) ;
             float z = (toxyz[0][2] * r + toxyz[1][2] * g + toxyz[2][2] * b) ;
+			
+			lab->L[i][j] = 116.0 * (CurveFactory::flinterp(cachef,y)) - 5242.88; //5242.88=16.0*327.68;
+            lab->a[i][j] = 500.0 * (((CurveFactory::flinterp(cachef,x) - CurveFactory::flinterp(cachef,y)) ) );
+            lab->b[i][j] = 200.0 * (((CurveFactory::flinterp(cachef,y) - CurveFactory::flinterp(cachef,z)) ) );
 
-            lab->L[i][j] = (CurveFactory::flinterp(cacheL,y));
-            lab->a[i][j] = (((CurveFactory::flinterp(cachea,x) - CurveFactory::flinterp(cachea,y)) ) );
-            lab->b[i][j] = (((CurveFactory::flinterp(cacheb,y) - CurveFactory::flinterp(cacheb,z)) ) );
-
+			//float L1 = lab->L[i][j];//for testing
+			//float a1 = lab->a[i][j];
+			//float b1 = lab->b[i][j];
+			//float xxx=1;
         }
     }
 	
@@ -690,3 +702,5 @@ void ImProcFunctions::hsv2rgb (float h, float s, float v, int &r, int &g, int &b
 	
 }
 
+#undef eps_max
+#undef kappa

@@ -68,6 +68,8 @@ RawImageSource::RawImageSource ()
 	camProfile = NULL;
 	embProfile = NULL;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 RawImageSource::~RawImageSource () {
 
@@ -101,6 +103,8 @@ RawImageSource::~RawImageSource () {
     if (embProfile)
         cmsCloseProfile (embProfile);
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw) {
 
@@ -164,6 +168,7 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 
     if (fuji) {
         // atszamoljuk a koordinatakat fuji-ra:
+		// recalculate the coordinates fuji-ra:
         ssx1 = (sx1+sy1) / 2;
         ssy1 = (sy1 - sx2 ) / 2 + ri->get_FujiWidth();
         int ssx2 = (sx2+sy2) / 2 + 1;
@@ -179,6 +184,8 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
         height = (sy2 - sy1) / pp.skip + ((sy2 - sy1) % pp.skip > 0); 
     }      
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
 {
@@ -201,14 +208,16 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     gm /= mul_lum;
     bm /= mul_lum;    
 
-    if (hrp.enabled) 
-        defGain = log(initialGain) / log(2.0);
-    else {
+	// in floating point, should keep white point fixed and recover higher values with exposure slider
+    //if (hrp.enabled) 
+    //    defGain = log(initialGain) / log(2.0);
+    //else {
         defGain = 0.0;
         rm *= initialGain;
         gm *= initialGain;
         bm *= initialGain;
-    }
+    //}
+	//defGain = 0.0;//no need now for making headroom for highlights???
 
 	if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
         updateHLRecoveryMap_ColorPropagation ();
@@ -242,24 +251,42 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     float* blue = new float[imwidth];
 
     for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
-        if (ri->isBayer()) {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j] = CLIP(rm*this->red[i][jx]);
-                grn[j] = CLIP(gm*this->green[i][jx]);
-                blue[j] = CLIP(bm*this->blue[i][jx]);
-            }
-        } else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-                red[j]  = CLIP(rm*rawData[i][jx*3+0]);
-                grn[j]  = CLIP(gm*rawData[i][jx*3+1]);
-                blue[j] = CLIP(bm*rawData[i][jx*3+2]);
+		if (hrp.enabled) {//do highlight recovery; don't clip data until after recovery
+			if (ri->isBayer()) {
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+					red[j] = (rm*this->red[i][jx]);
+					grn[j] = (gm*this->green[i][jx]);
+					blue[j] = (bm*this->blue[i][jx]);
+				}
+			} else {
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+					red[j]  = (rm*rawData[i][jx*3+0]);
+					grn[j]  = (gm*rawData[i][jx*3+1]);
+					blue[j] = (bm*rawData[i][jx*3+2]);
+					
+				}
+			}
+			
+			hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, pp.skip);
 
-            }
-        }
-                
-        if (hrp.enabled)
-            hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, pp.skip);
-
+		} else {
+			
+			if (ri->isBayer()) {
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+					red[j] = CLIP(rm*this->red[i][jx]);
+					grn[j] = CLIP(gm*this->green[i][jx]);
+					blue[j] = CLIP(bm*this->blue[i][jx]);
+				}
+			} else {
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
+					red[j]  = CLIP(rm*rawData[i][jx*3+0]);
+					grn[j]  = CLIP(gm*rawData[i][jx*3+1]);
+					blue[j] = CLIP(bm*rawData[i][jx*3+2]);
+					
+				}
+			}
+		}
+		
         transLine (red, grn, blue, ix, image, tran, imwidth, imheight, fw);
     }
 
@@ -324,6 +351,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 
     isrcMutex.unlock ();
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* cfaCleanFromMap: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
@@ -364,6 +393,8 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
 	}
 	return counter;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /*  Search for hot or dead pixels in the image and update the map
  *  For each pixel compare its value to the average of similar color surrounding
@@ -389,7 +420,8 @@ int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
 		}
 	return counter;
 }
-	
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::rotateLine (float* line, unsigned short** channel, int tran, int i, int w, int h) {
 
@@ -405,10 +437,11 @@ void RawImageSource::rotateLine (float* line, unsigned short** channel, int tran
         for (int j=0; j<w; j++) 
             channel[w-1-j][i] = line[j];
     else 
-        //memcpy (channel[i], line,  w*sizeof(float));	
 		for (int j=0; j<w; j++) 
 			channel[i][j] = line[j];
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::transLine (float* red, float* green, float* blue, int i, Image16* image, int tran, int imwidth, int imheight, int fw) {
 
@@ -621,6 +654,8 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
     rotateLine (blue, image->b, tran, i, imwidth, imheight);
   }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::getFullSize (int& w, int& h, int tr) {
 
@@ -647,6 +682,8 @@ void RawImageSource::getFullSize (int& w, int& h, int tr) {
     w -= 2 * border;
     h -= 2 * border;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
 
@@ -663,6 +700,8 @@ void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
         h = pp.h / pp.skip + (pp.h % pp.skip > 0);
 //    }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hflip (Image16* image) {
     int width  = image->width;
@@ -685,6 +724,8 @@ void RawImageSource::hflip (Image16* image) {
     delete [] rowg;
     delete [] rowb;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::vflip (Image16* image) {
     int width  = image->width;
@@ -704,6 +745,8 @@ void RawImageSource::vflip (Image16* image) {
         image->b[height-1-i][j] = tmp;
       }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::inverse33 (double (*coeff)[3], double (*icoeff)[3]) {
     double nom = coeff[0][2]*coeff[1][1]*coeff[2][0] - coeff[0][1]*coeff[1][2]*coeff[2][0] - coeff[0][2]*coeff[1][0]*coeff[2][1] + coeff[0][0]*coeff[1][2]*coeff[2][1] + coeff[0][1]*coeff[1][0]*coeff[2][2] - coeff[0][0]*coeff[1][1]*coeff[2][2];
@@ -717,6 +760,8 @@ void RawImageSource::inverse33 (double (*coeff)[3], double (*icoeff)[3]) {
     icoeff[2][1] = -(coeff[0][1]*coeff[2][0]-coeff[0][0]*coeff[2][1]) / nom;
     icoeff[2][2] = (coeff[0][1]*coeff[1][0]-coeff[0][0]*coeff[1][1]) / nom;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 int RawImageSource::load (Glib::ustring fname, bool batch) {
 
@@ -800,6 +845,8 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 
     return 0; // OK!
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::preprocess  (const RAWParams &raw)
 {
@@ -845,7 +892,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 
     scaleColors( 0,0, W, H);
 
-    defGain = log(initialGain) / log(2.0);
+    defGain = 0.0;//log(initialGain) / log(2.0);
 
 	if ( raw.hotdeadpix_filt ) {
 		if (plistener) {
@@ -872,7 +919,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
         for (i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ri->ISGREEN(i,j)) {
-                    if (i%2==0) {
+                    if (i&1==0) {
                         avgg1 += rawData[i][j];
                         ng1++;
                     }
@@ -889,7 +936,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
             for (int j=border; j<W-border; j++)
                 if (ri->ISGREEN(i,j)) {
                     float currData;
-                    currData = (float)(rawData[i][j] * (i%2 ? corrg2 : corrg1));
+                    currData = (float)(rawData[i][j] * (i&1 ? corrg2 : corrg1));
                     rawData[i][j] = CLIP(currData);
                 }
 	}
@@ -925,6 +972,9 @@ void RawImageSource::preprocess  (const RAWParams &raw)
        printf("Preprocessing: %d µsec\n", t2.etime(t1));
     return;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
 void RawImageSource::demosaic(const RAWParams &raw)
 {
     if (ri->isBayer()) {
@@ -944,8 +994,6 @@ void RawImageSource::demosaic(const RAWParams &raw)
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demo (0,0,W,H);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::bilinear] )
-            bilinear_demosaic();
             else
         	nodemosaic();
         t2.set();
@@ -958,6 +1006,8 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image
@@ -1002,6 +1052,8 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 		}
 	}
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* Scale original pixels into the range 0 65535 using black offsets and multipliers */
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
@@ -1016,7 +1068,7 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
 				int c = FC(row, col);
 				val -= cblack[c];
 				val *= scale_mul[c];
-				rawData[row][col] = CLIP(val);
+				rawData[row][col] = (val);
 			}
 		}
 	}else{
@@ -1026,25 +1078,27 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
 				if (val){
 					val -= cblack[0];
 					val *= scale_mul[0];
-					rawData[row][3*col+0] = CLIP(val);
+					rawData[row][3*col+0] = (val);
 				}
 				val = rawData[row][3*col+1];
 				if (val){
 					val -= cblack[1];
 					val *= scale_mul[1];
-					rawData[row][3*col+1] = CLIP(val);
+					rawData[row][3*col+1] = (val);
 				}
 				val = rawData[row][3*col+2];
 				if (val){
 					val -= cblack[2];
 					val *= scale_mul[2];
-					rawData[row][3*col+2] = CLIP(val);
+					rawData[row][3*col+2] = (val);
 				}
 			}
 		}
 	}
 
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int RawImageSource::defTransform (int tran) {
 
@@ -1070,6 +1124,8 @@ int RawImageSource::defTransform (int tran) {
         ret |= TR_VFLIP;
     return ret;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::correction_YIQ_LQ_  (Image16* im, int row_from, int row_to) {
  
@@ -1204,6 +1260,8 @@ void RawImageSource::correction_YIQ_LQ_  (Image16* im, int row_from, int row_to)
   delete [] post1_Q;
   delete [] post2_Q;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
@@ -1229,6 +1287,8 @@ void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
 #endif
     }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], double& defgain) {
@@ -1318,6 +1378,8 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
         t3.set ();
 //        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::eahd_demosaic () {
 
@@ -1326,7 +1388,7 @@ void RawImageSource::eahd_demosaic () {
     plistener->setProgress (0.0);
   }
 
-  // prepare chache and constants for cielab conversion
+  // prepare cache and constants for cielab conversion
   lc00 = (0.412453 * coeff[0][0] + 0.357580 * coeff[1][0] + 0.180423 * coeff[2][0]) / 0.950456;
   lc01 = (0.412453 * coeff[0][1] + 0.357580 * coeff[1][1] + 0.180423 * coeff[2][1]) / 0.950456;
   lc02 = (0.412453 * coeff[0][2] + 0.357580 * coeff[1][2] + 0.180423 * coeff[2][2]) / 0.950456;
@@ -1582,6 +1644,8 @@ void RawImageSource::eahd_demosaic () {
 
     }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_vertical (float** hpmap, int col_from, int col_to) {
 
@@ -1618,6 +1682,8 @@ void RawImageSource::hphd_vertical (float** hpmap, int col_from, int col_to) {
   delete [] avg;
   delete [] dev;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
 
@@ -1660,6 +1726,8 @@ void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
   delete [] avg;
   delete [] dev;
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_green () {
 
@@ -1754,6 +1822,8 @@ void RawImageSource::hphd_green () {
     }
   }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_demosaic () {
 
@@ -1825,6 +1895,8 @@ void RawImageSource::hphd_demosaic () {
   if (plistener) 
     plistener->setProgress (1.0);
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval) {
 
@@ -1852,43 +1924,49 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
 			bout[i] = CLIP(br);
 		}
         else {
-            rout[i] = rin[i];
-            gout[i] = gin[i];
-            bout[i] = bin[i];
+            rout[i] = CLIP(rin[i]);
+            gout[i] = CLIP(gin[i]);
+            bout[i] = CLIP(bin[i]);
         }
     }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval, double cam[3][3], double icam[3][3]) {
 
     static bool crTableReady = false;
-    static double fv[0x10000];
+	
+	// lookup table for Lab conversion
+	// perhaps should be centralized, universally defined so we don't keep remaking it???
+    static float fv[0x10000];
     if (!crTableReady) {
     	for (int ix=0; ix < 0x10000; ix++) {
-    	    double rx = ix / 65535.0;
+    	    float rx = ix / 65535.0;
         	fv[ix] = rx > 0.008856 ? exp(1.0/3 * log(rx)) : 7.787*rx + 16/116.0;
     	}
     	crTableReady = true;
     }
 
     for (int i=0; i<width; i++) {
-        int r = rin[i], g = gin[i], b = bin[i];
+        float r = rin[i], g = gin[i], b = bin[i];
 		if (r>maxval || g>maxval || b>maxval) {
-		    int ro = MIN (r, maxval);
-		    int go = MIN (g, maxval);
-		    int bo = MIN (b, maxval);
-            double yy = cam[0][1]*r + cam[1][1]*g + cam[2][1]*b;
-            double fy = fv[CLIP((int)yy)];
+		    float ro = MIN (r, maxval);
+		    float go = MIN (g, maxval);
+		    float bo = MIN (b, maxval);
+            float yy = cam[0][1]*r + cam[1][1]*g + cam[2][1]*b;
+            float fy = CurveFactory::flinterp(fv,yy);
             // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
-            double x = cam[0][0]*ro + cam[1][0]*go + cam[2][0]*bo;
-            double y = cam[0][1]*ro + cam[1][1]*go + cam[2][1]*bo;
-            double z = cam[0][2]*ro + cam[1][2]*go + cam[2][2]*bo;
-            x = fv[CLIP((int)x)];
-            y = fv[CLIP((int)y)];
-            z = fv[CLIP((int)z)];
+            float x = cam[0][0]*ro + cam[1][0]*go + cam[2][0]*bo;
+            float y = cam[0][1]*ro + cam[1][1]*go + cam[2][1]*bo;
+            float z = cam[0][2]*ro + cam[1][2]*go + cam[2][2]*bo;
+            x = CurveFactory::flinterp(fv,x);
+            y = CurveFactory::flinterp(fv,y);
+            z = CurveFactory::flinterp(fv,z);
             // convert back to rgb
             double fz = fy - y + z;
             double fx = fy + x - y;
+			// again shouldn't this be a universal, centrally defined function???
             double zr = (fz<=0.206893) ? ((116.0*fz-16.0)/903.3) : (fz * fz * fz);
             double xr = (fx<=0.206893) ? ((116.0*fx-16.0)/903.3) : (fx * fx * fx);
             x = xr*65535.0 - 0.5;
@@ -1902,12 +1980,14 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 			bout[i] = CLIP(br);
 		}
         else {
-            rout[i] = rin[i];
-            gout[i] = gin[i];
-            bout[i] = bin[i];
+            rout[i] = CLIP(rin[i]);
+            gout[i] = CLIP(gin[i]);
+            bout[i] = CLIP(bin[i]);
         }
     }
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip) {
 
@@ -1918,6 +1998,8 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
     else if (method=="Color")
         HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 
@@ -1954,112 +2036,115 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 		
     }
     return 1;
-}	
+}
 	
-	ColorTemp RawImageSource::getAutoWB () {
-		
-		double avg_r = 0;
-		double avg_g = 0;
-		double avg_b = 0;
-		int rn = 0, gn = 0, bn = 0;
-		
-		if (fuji) {
-			for (int i=32; i<H-32; i++) {
-				int fw = ri->get_FujiWidth();
-				int start = ABS(fw-i) + 32;
-				int end = MIN(H+W-fw-i, fw+i) - 32;
-				for (int j=start; j<end; j++) {
-					if (!ri->isBayer()) {
-						double d = CLIP(initialGain*(ri->data[i][3*j]-cblack[0])*scale_mul[0]);
-						if (d>64000)
-							continue;
-						avg_r += d; rn++;
-						d = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
-						if (d>64000)
-							continue;
-						avg_g += d; gn++;
-						d = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
-						if (d>64000)
-							continue;
-						avg_b += d; bn++;
-					}
-					else {
-						int c = FC( i, j);
-						double d = CLIP(initialGain*(ri->data[i][j]-cblack[c])*scale_mul[c]);
-						if (d>64000)
-							continue;
-						double dp = d;
-						if (c==0) {
-							avg_r += dp;
-							rn++;
-						}
-						else if (c==1) {
-							avg_g += dp;
-							gn++;
-						}
-						else if (c==2) {
-							avg_b += dp;
-							bn++;
-						}
-					}
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+ColorTemp RawImageSource::getAutoWB () {
+	
+	double avg_r = 0;
+	double avg_g = 0;
+	double avg_b = 0;
+	int rn = 0, gn = 0, bn = 0;
+	
+	if (fuji) {
+		for (int i=32; i<H-32; i++) {
+			int fw = ri->get_FujiWidth();
+			int start = ABS(fw-i) + 32;
+			int end = MIN(H+W-fw-i, fw+i) - 32;
+			for (int j=start; j<end; j++) {
+				if (!ri->isBayer()) {
+					double d = CLIP(initialGain*(ri->data[i][3*j]-cblack[0])*scale_mul[0]);
+					if (d>64000)
+						continue;
+					avg_r += d; rn++;
+					d = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
+					if (d>64000)
+						continue;
+					avg_g += d; gn++;
+					d = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
+					if (d>64000)
+						continue;
+					avg_b += d; bn++;
 				}
-			}
-		}
-		else {
-			if (!ri->isBayer()) {
-				for (int i=32; i<H-32; i++)
-					for (int j=32; j<W-32; j++) {
-						double dr = CLIP(initialGain*(ri->data[i][3*j]  -cblack[0])*scale_mul[0]);
-						double dg = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
-						double db = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
-						if (dr>64000 || dg>64000 || db>64000) continue;
-						avg_r += dr; rn++;
-						avg_g += dg; 
-						avg_b += db; 
-					}
-				gn = rn; bn=rn;
-			} else {
-				//determine GRBG coset; (ey,ex) is the offset of the R subarray
-				int ey, ex;
-				if (ri->ISGREEN(0,0)) {//first pixel is G
-					if (ri->ISRED(0,1)) {ey=0; ex=1;} else {ey=1; ex=0;}
-				} else {//first pixel is R or B
-					if (ri->ISRED(0,0)) {ey=0; ex=0;} else {ey=1; ex=1;}
-				}
-				double d[2][2];
-				for (int i=32; i<H-32; i+=2)
-					for (int j=32; j<W-32; j+=2) {
-						//average a Bayer quartet if nobody is clipped
-						d[0][0] = CLIP(initialGain*(ri->data[i][j]    -cblack[FC(i,j)])*scale_mul[FC(i,j)]);
-						d[0][1] = CLIP(initialGain*(ri->data[i][j+1]  -cblack[FC(i,j+1)])*scale_mul[FC(i,j+1)]);
-						d[1][0] = CLIP(initialGain*(ri->data[i+1][j]  -cblack[FC(i+1,j)])*scale_mul[FC(i+1,j)]);
-						d[1][1] = CLIP(initialGain*(ri->data[i+1][j+1]-cblack[FC(i+1,j+1)])*scale_mul[FC(i+1,j+1)]);
-						if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
-						avg_r += d[ey][ex];
-						avg_g += d[1-ey][ex] + d[ey][1-ex];
-						avg_b += d[1-ey][1-ex];
+				else {
+					int c = FC( i, j);
+					double d = CLIP(initialGain*(ri->data[i][j]-cblack[c])*scale_mul[c]);
+					if (d>64000)
+						continue;
+					double dp = d;
+					if (c==0) {
+						avg_r += dp;
 						rn++;
 					}
-				gn = 2*rn;
-				bn = rn;
+					else if (c==1) {
+						avg_g += dp;
+						gn++;
+					}
+					else if (c==2) {
+						avg_b += dp;
+						bn++;
+					}
+				}
 			}
 		}
-		
-		printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
-		
-		//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
-		
-		double reds   = avg_r/rn * camwb_red;
-		double greens = avg_g/gn * camwb_green;
-		double blues  = avg_b/bn * camwb_blue;
-		
-		double rm = coeff[0][0]*reds + coeff[0][1]*greens + coeff[0][2]*blues;
-		double gm = coeff[1][0]*reds + coeff[1][1]*greens + coeff[1][2]*blues;
-		double bm = coeff[2][0]*reds + coeff[2][1]*greens + coeff[2][2]*blues;
-		
-		return ColorTemp (rm, gm, bm);
+	}
+	else {
+		if (!ri->isBayer()) {
+			for (int i=32; i<H-32; i++)
+				for (int j=32; j<W-32; j++) {
+					double dr = CLIP(initialGain*(ri->data[i][3*j]  -cblack[0])*scale_mul[0]);
+					double dg = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
+					double db = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
+					if (dr>64000 || dg>64000 || db>64000) continue;
+					avg_r += dr; rn++;
+					avg_g += dg; 
+					avg_b += db; 
+				}
+			gn = rn; bn=rn;
+		} else {
+			//determine GRBG coset; (ey,ex) is the offset of the R subarray
+			int ey, ex;
+			if (ri->ISGREEN(0,0)) {//first pixel is G
+				if (ri->ISRED(0,1)) {ey=0; ex=1;} else {ey=1; ex=0;}
+			} else {//first pixel is R or B
+				if (ri->ISRED(0,0)) {ey=0; ex=0;} else {ey=1; ex=1;}
+			}
+			double d[2][2];
+			for (int i=32; i<H-32; i+=2)
+				for (int j=32; j<W-32; j+=2) {
+					//average a Bayer quartet if nobody is clipped
+					d[0][0] = CLIP(initialGain*(ri->data[i][j]    -cblack[FC(i,j)])*scale_mul[FC(i,j)]);
+					d[0][1] = CLIP(initialGain*(ri->data[i][j+1]  -cblack[FC(i,j+1)])*scale_mul[FC(i,j+1)]);
+					d[1][0] = CLIP(initialGain*(ri->data[i+1][j]  -cblack[FC(i+1,j)])*scale_mul[FC(i+1,j)]);
+					d[1][1] = CLIP(initialGain*(ri->data[i+1][j+1]-cblack[FC(i+1,j+1)])*scale_mul[FC(i+1,j+1)]);
+					if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
+					avg_r += d[ey][ex];
+					avg_g += d[1-ey][ex] + d[ey][1-ex];
+					avg_b += d[1-ey][1-ex];
+					rn++;
+				}
+			gn = 2*rn;
+			bn = rn;
+		}
 	}
 	
+	printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
+	
+	//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
+	
+	double reds   = avg_r/rn * camwb_red;
+	double greens = avg_g/gn * camwb_green;
+	double blues  = avg_b/bn * camwb_blue;
+	
+	double rm = coeff[0][0]*reds + coeff[0][1]*greens + coeff[0][2]*blues;
+	double gm = coeff[1][0]*reds + coeff[1][1]*greens + coeff[1][2]*blues;
+	double bm = coeff[2][0]*reds + coeff[2][1]*greens + coeff[2][2]*blues;
+	
+	return ColorTemp (rm, gm, bm);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& tty) {
 
@@ -2118,6 +2203,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
     }
 }
 	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
 
@@ -2197,6 +2283,8 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
 		return ColorTemp (rm, gm, bm);
 	}
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #define FORCC for (c=0; c < colors; c++)
 #define fc(row,col) \
@@ -2405,9 +2493,9 @@ void RawImageSource::ppg_demosaic()
   int width=W, height=H;
   int dir[5] = { 1, width, -1, -width, 1 };
   int row, col, diff[2], guess[2], c, d, i;
-  ushort (*pix)[4];
+  float (*pix)[4];
 
-  ushort (*image)[4];
+  float (*image)[4];
   int colors = 3;
 
   if (plistener) {
@@ -2415,7 +2503,7 @@ void RawImageSource::ppg_demosaic()
     plistener->setProgress (0.0);
   }
   
-  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+  image = (float (*)[4]) calloc (H*W, sizeof *image);
   for (int ii=0; ii<H; ii++)
     for (int jj=0; jj<W; jj++)
         image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
@@ -2445,8 +2533,8 @@ void RawImageSource::ppg_demosaic()
     for (col=1+(FC(row,2) & 1), c=FC(row,col+1); col < width-1; col+=2) {
       pix = image + row*width+col;
       for (i=0; (d=dir[i]) > 0; c=2-c, i++)
-	pix[0][c] = CLIP((pix[-d][c] + pix[d][c] + 2*pix[0][1]
-			- pix[-d][1] - pix[d][1]) >> 1);
+	pix[0][c] = CLIP(0.5*(pix[-d][c] + pix[d][c] + 2*pix[0][1]
+			- pix[-d][1] - pix[d][1]) );
     }
     if(plistener) plistener->setProgress(0.33 + 0.33*row/(height-1));
   }
@@ -2490,7 +2578,7 @@ void RawImageSource::ppg_demosaic()
   free (image);
 }
 
-void RawImageSource::border_interpolate(int border, ushort (*image)[4], int start, int end)
+void RawImageSource::border_interpolate(int border, float (*image)[4], int start, int end)
 {
   unsigned row, col, y, x, f, c, sum[8];
   int width=W, height=H;
@@ -2515,113 +2603,6 @@ void RawImageSource::border_interpolate(int border, ushort (*image)[4], int star
     }
 }
 
-void RawImageSource::bilinear_interpolate_block(ushort (*image)[4], int start, int end)
-{
-  ushort (*pix);
-  int i, *ip, sum[4];
-  int width=W;
-  int colors = 3;
-
-  for (int row = start; row < end; row++)
-    for (int col=1; col < width-1; col++) {
-      pix = image[row*width+col];
-      ip = blcode[row & 15][col & 15];
-      memset (sum, 0, sizeof sum);
-      for (i=8; i--; ip+=3)
-	sum[ip[2]] += pix[ip[0]] << ip[1];
-      for (i=colors; --i; ip+=2)
-	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
-    }
-    
-
-}
-
-void RawImageSource::bilinear_demosaic()
-{
-  int width=W, height=H;  
-  int *ip, sum[4];
-  int c,  x, y, row, col, shift, color;
-  int colors = 3;
- 
-  ushort (*image)[4], *pix;
-  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
-
-  for (int ii=0; ii<H; ii++)
-    for (int jj=0; jj<W; jj++)
-        image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
-
-  //if (verbose) fprintf (stderr,_("Bilinear interpolation...\n"));
-  if (plistener) {
-        plistener->setProgressStr ("Demosaicing...");
-        plistener->setProgress (0.0);
-    }
-
-  memset(blcode,0,16*16*32);
-  for (row=0; row < 16; row++)
-    for (col=0; col < 16; col++) {
-      ip = blcode[row][col];
-      memset (sum, 0, sizeof sum);
-      for (y=-1; y <= 1; y++)
-	for (x=-1; x <= 1; x++) {
-	  shift = (y==0) + (x==0);
-	  if (shift == 2) continue;
-	  color = fc(row+y,col+x);
-	  *ip++ = (width*y + x)*4 + color;
-	  *ip++ = shift;
-	  *ip++ = color;
-	  sum[color] += 1 << shift;
-	}
-      FORCC
-	if (c != fc(row,col)) {
-	  *ip++ = c;
-	  *ip++ = 256 / sum[c];
-	}
-    }
-  
-#ifdef _OPENMP
-  #pragma omp parallel
-  {
-            int tid = omp_get_thread_num();
-            int nthreads = omp_get_num_threads();
-            int blk = H/nthreads;
-
-            int start = 0;
-            if (tid == 0) start = 1;
-            if (tid<nthreads-1)
-            {
-                border_interpolate(1, image, tid*blk, (tid+1)*blk);
-                bilinear_interpolate_block(image, start+tid*blk, (tid+1)*blk);
-            }
-            else
-            {
-                border_interpolate(1, image, tid*blk, height);
-                bilinear_interpolate_block(image, tid*blk, height-1);
-            }
-  }
-#else
-    border_interpolate(1, image);
-    bilinear_interpolate_block(image, 1, height-1);
-#endif
-
-red = new float*[H];
-green = new float*[H];
-blue = new float*[H];
-
-#pragma omp parallel for
-    for (int i=0; i<H; i++) {
-        red[i] = new float[W];
-        green[i] = new float[W];
-        blue[i] = new float[W];
-        for (int j=0; j<W; j++){
-            red[i][j] = image[i*W+j][0];
-            green[i][j] = image[i*W+j][1];
-            blue[i][j] = image[i*W+j][2];
-        }
-    }
-
-    if(plistener) plistener->setProgress (1.0);
-    free (image);
-}
 
 /*
    Adaptive Homogeneity-Directed interpolation is based on
@@ -2635,16 +2616,18 @@ blue = new float*[H];
 void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 {
     int i, j, k, top, left, row, col, tr, tc, c, d, val, hm[2];
-    ushort (*pix)[4], (*rix)[3];
+    float (*pix)[4], (*rix)[3];
     static const int dir[4] = { -1, 1, -TS, TS };
-    unsigned ldiff[2][4], abdiff[2][4], leps, abeps;
-    float r, cbrt[0x10000], xyz[3], xyz_cam[3][4];
-    ushort (*rgb)[TS][TS][3];
-    short (*lab)[TS][TS][3], (*lix)[3];
+    float ldiff[2][4], abdiff[2][4], leps, abeps;
+    float r, xyz[3], xyz_cam[3][4];
+	float (*cbrt);
+    float (*rgb)[TS][TS][3];
+    float (*lab)[TS][TS][3];
+	float (*lix)[3];
     char (*homo)[TS][TS], *buffer;
 
     int width=W, height=H;
-    ushort (*image)[4];
+    float (*image)[4];
     int colors = 3;
 
     const double xyz_rgb[3][3] = {			/* XYZ from RGB */
@@ -2654,17 +2637,19 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     };
     
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
+	const float d50_white[3] = { 0.96422,  1, 0.82521  };
 
     if (plistener) {
-        plistener->setProgressStr ("Demosaicing...");
+        plistener->setProgressStr ("AHD Demosaicing...");
         plistener->setProgress (0.0);
     }
   
-    image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+    image = (float (*)[4]) calloc (H*W, sizeof *image);
     for (int ii=0; ii<H; ii++)
         for (int jj=0; jj<W; jj++)
             image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
 
+	cbrt = (float (*)) calloc (0x10000, sizeof *cbrt);
     for (i=0; i < 0x10000; i++) {
         r = i / 65535.0;
         cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
@@ -2676,11 +2661,11 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 	            xyz_cam[i][j] += xyz_rgb[i][k] * coeff[k][j] / d65_white[i];
 
     border_interpolate(5, image);
-    buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
+    buffer = (char *) malloc (13*TS*TS*sizeof(float));		/* 1664 kB */
     //merror (buffer, "ahd_interpolate()");
-    rgb  = (ushort(*)[TS][TS][3]) buffer;
-    lab  = (short (*)[TS][TS][3])(buffer + 12*TS*TS);
-    homo = (char  (*)[TS][TS])   (buffer + 24*TS*TS);
+    rgb  = (float(*)[TS][TS][3]) buffer;
+    lab  = (float(*)[TS][TS][3])(buffer + 6*TS*TS*sizeof(float));
+    homo = (char (*)[TS][TS])   (buffer + 12*TS*TS*sizeof(float));
     
     // helper variables for progress indication
     int n_tiles = ((height-7 + (TS-7))/(TS-6)) * ((width-7 + (TS-7))/(TS-6));
@@ -2693,12 +2678,12 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
             for (row = top; row < top+TS && row < height-2; row++) {
 	            col = left + (FC(row,left) & 1);
 	            for (c = FC(row,col); col < left+TS && col < width-2; col+=2) {
-	                pix = image + row*width+col;
-	                val = ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
-		                  - pix[-2][c] - pix[2][c]) >> 2;
+	                pix = image + (row*width+col);
+	                val = 0.25*((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
+		                  - pix[-2][c] - pix[2][c]) ;
 	                rgb[0][row-top][col-left][1] = ULIM(val,pix[-1][1],pix[1][1]);
-	                val = ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
-		                  - pix[-2*width][c] - pix[2*width][c]) >> 2;
+	                val = 0.25*((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
+		                  - pix[-2*width][c] - pix[2*width][c]) ;
 	                rgb[1][row-top][col-left][1] = ULIM(val,pix[-width][1],pix[width][1]);
 	            }
             }
@@ -2707,21 +2692,21 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
             for (d=0; d < 2; d++)
 	            for (row=top+1; row < top+TS-1 && row < height-3; row++)
 	                for (col=left+1; col < left+TS-1 && col < width-3; col++) {
-	                    pix = image + row*width+col;
+	                    pix = image + (row*width+col);
 	                    rix = &rgb[d][row-top][col-left];
 	                    lix = &lab[d][row-top][col-left];
 	                    if ((c = 2 - FC(row,col)) == 1) {
 	                        c = FC(row+1,col);
-	                        val = pix[0][1] + (( pix[-1][2-c] + pix[1][2-c]
-				                  - rix[-1][1] - rix[1][1] ) >> 1);
+	                        val = pix[0][1] + (0.5*( pix[-1][2-c] + pix[1][2-c]
+				                  - rix[-1][1] - rix[1][1] ) );
 	                        rix[0][2-c] = CLIP(val);
-	                        val = pix[0][1] + (( pix[-width][c] + pix[width][c]
-				                  - rix[-TS][1] - rix[TS][1] ) >> 1);
+	                        val = pix[0][1] + (0.5*( pix[-width][c] + pix[width][c]
+				                  - rix[-TS][1] - rix[TS][1] ) );
 	                    } else
-	                        val = rix[0][1] + (( pix[-width-1][c] + pix[-width+1][c]
+	                        val = rix[0][1] + (0.25*( pix[-width-1][c] + pix[-width+1][c]
 				                  + pix[+width-1][c] + pix[+width+1][c]
 				                  - rix[-TS-1][1] - rix[-TS+1][1]
-				                  - rix[+TS-1][1] - rix[+TS+1][1] + 1) >> 2);
+				                  - rix[+TS-1][1] - rix[+TS+1][1] + 1) );
 	                    rix[0][c] = CLIP(val);
 	                    c = FC(row,col);
 	                    rix[0][c] = pix[0][c];
@@ -2731,12 +2716,18 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 	                        xyz[1] += xyz_cam[1][c] * rix[0][c];
 	                        xyz[2] += xyz_cam[2][c] * rix[0][c];
 	                    }
-	                    xyz[0] = cbrt[CLIP((int) xyz[0])];
-	                    xyz[1] = cbrt[CLIP((int) xyz[1])];
-	                    xyz[2] = cbrt[CLIP((int) xyz[2])];
-	                    lix[0][0] = 64 * (116 * xyz[1] - 16);
-	                    lix[0][1] = 64 * 500 * (xyz[0] - xyz[1]);
-	                    lix[0][2] = 64 * 200 * (xyz[1] - xyz[2]);
+						
+						xyz[0] = CurveFactory::flinterp(cbrt,xyz[0]);
+	                    xyz[1] = CurveFactory::flinterp(cbrt,xyz[1]);
+	                    xyz[2] = CurveFactory::flinterp(cbrt,xyz[2]);
+						
+						//xyz[0] = xyz[0] > 0.008856 ? pow(xyz[0],1/3.0) : 7.787*xyz[0] + 16/116.0;
+						//xyz[1] = xyz[1] > 0.008856 ? pow(xyz[1],1/3.0) : 7.787*xyz[1] + 16/116.0;
+						//xyz[2] = xyz[2] > 0.008856 ? pow(xyz[2],1/3.0) : 7.787*xyz[2] + 16/116.0;
+
+	                    lix[0][0] = (116 * xyz[1] - 16);
+	                    lix[0][1] = 500 * (xyz[0] - xyz[1]);
+	                    lix[0][2] = 200 * (xyz[1] - xyz[2]);
 	                }
 
             /*  Build homogeneity maps from the CIELab images:		*/
@@ -2777,7 +2768,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
                         FORC3 image[row*width+col][c] = rgb[hm[1] > hm[0]][tr][tc][c];
                     else
                         FORC3 image[row*width+col][c] =
-                            (rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) >> 1;
+                            0.5*(rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) ;
                 }
             }
             
@@ -2798,6 +2789,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     }
 
     free (image);
+	free (cbrt);
 }
 #undef TS
 

@@ -22,7 +22,7 @@
 #include <refreshmap.h>
 #include <simpleprocess.h>
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)<65535 ? (a) : (65535));
+#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
 namespace rtengine {
 
@@ -159,19 +159,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, \
+									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
+									imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, \
+									vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
         ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, imgsrc->getDefGain(), params.toneCurve.saturation);
 
         // recompute luminance histogram
         memset (lhist16, 0, 65536*sizeof(int));
         for (int i=0; i<pH; i++)
             for (int j=0; j<pW; j++)
-                lhist16[CLIPTO((int)(oprevl->L[i][j]),0,65535)]++;
+                lhist16[CLIP((int)(2*(oprevl->L[i][j])))]++;
     }
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, \
+									false, params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
@@ -362,6 +366,10 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
+			int r=previmg->data[ofs];
+			int g=previmg->data[ofs+1];
+			int b=previmg->data[ofs+2];
+
             rhist[previmg->data[ofs++]]++;
             ghist[previmg->data[ofs++]]++;
             bhist[previmg->data[ofs++]]++;
@@ -371,7 +379,7 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (Lhist, 0, 256*sizeof(int));
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) {
-            Lhist[CLIPTO((int)(nprevl->L[i][j]/256),0,255)]++;
+            Lhist[CLIPTO((int)(nprevl->L[i][j]/128),0,255)]++;
 		}
 	
 	/*for (int i=0; i<256; i++) {

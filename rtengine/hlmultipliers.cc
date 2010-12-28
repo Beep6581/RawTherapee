@@ -235,7 +235,11 @@ void RawImageSource::HLRecovery_ColorPropagation (float* red, float* green, floa
             red[jx] = CLIP(red[jx] * mulr);
             green[jx] = CLIP(green[jx] * mulg);
             blue[jx] = CLIP(blue[jx] * mulb);
-        }
+        } else {
+			red[jx] = CLIP(red[jx]);
+            green[jx] = CLIP(green[jx]);
+            blue[jx] = CLIP(blue[jx]);
+		}
     }
 }
 

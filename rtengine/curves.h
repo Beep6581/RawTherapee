@@ -213,4 +213,6 @@ class Curve {
 };
 }
 
+#undef CLIPI
+
 #endif

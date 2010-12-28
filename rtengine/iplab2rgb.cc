@@ -37,10 +37,9 @@ namespace rtengine {
 	
 #define epsilon 0.00885645 //216/24389
 #define kappa 903.2963 //24389/27
-#define kappainv 0.00110706 //invers of kappa
+#define kappainv 0.00110706 //inverse of kappa
 #define kapeps 8 // kappa*epsilon
-#define L2y(f) (( (g=116*f-16) > kapeps) ? f*f*f : g*kappainv)
-#define Lab2xz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
+#define Lab2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
 	
 #define D50x 0.96422
 #define D50z 0.82521
@@ -49,8 +48,8 @@ extern const Settings* settings;
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 
-        if (chroma_scale == 0)
-            return;
+	if (chroma_scale == 0)
+		return;
 
 	if (monitorTransform) {
 	    int ix = 0;
@@ -67,9 +66,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xz(fx)*D50x;
-				float y_ = 65535*L2y(fy);
-				float z_ = 65535*Lab2xz(fz)*D50z;
+				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float y_ = 65535*Lab2xyz(fy);
+				float z_ = 65535*Lab2xyz(fz)*D50z;
 
                 /*int y_ = rL[j];
                 int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
@@ -107,9 +106,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xz(fx)*D50x;
-				float y_ = 65535*L2y(fy);
-				float z_ = 65535*Lab2xz(fz)*D50z;
+				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float y_ = 65535*Lab2xyz(fy);
+				float z_ = 65535*Lab2xyz(fz)*D50z;
 
                 /*int y_ = rL[j];
                 int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
@@ -175,9 +174,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xz(fx)*D50x;
-				float y_ = 65535*L2y(fy);
-				float z_ = 65535*Lab2xz(fz)*D50z;
+				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float y_ = 65535*Lab2xyz(fy);
+				float z_ = 65535*Lab2xyz(fz)*D50z;
 
                 /*int y_ = rL[j];
                 int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
@@ -214,9 +213,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xz(fx)*D50x;
-				float y_ = 65535*L2y(fy);
-				float z_ = 65535*Lab2xz(fz)*D50z;
+				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float y_ = 65535*Lab2xyz(fy);
+				float z_ = 65535*Lab2xyz(fz)*D50z;
 
                 /*int y_ = rL[j];
                 int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
@@ -274,9 +273,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xz(fx)*D50x;
-				float y_ = 65535*L2y(fy);
-				float z_ = 65535*Lab2xz(fz)*D50z;
+				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float y_ = 65535*Lab2xyz(fy);
+				float z_ = 65535*Lab2xyz(fz)*D50z;
 
                 /*int y_ = rL[j];
                 int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;
@@ -314,9 +313,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xz(fx)*D50x;
-				float y_ = 65535*L2y(fy);
-				float z_ = 65535*Lab2xz(fz)*D50z;
+				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float y_ = 65535*Lab2xyz(fy);
+				float z_ = 65535*Lab2xyz(fz)*D50z;
 
                 /*int y_ = rL[j];
                 int x_ = rL[j]+10486+ra[j]*152/chroma_scale+141556;

@@ -405,11 +405,16 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, \
+									 double br, double contr, double defmul, double gamma_, bool igamma, \
+									 const std::vector<double>& curvePoints, unsigned int* histogram, \
+									 float* hlCurve, float* shCurve, int* outCurve, \
+									 unsigned int* outBeforeCCurveHistogram, int skip) {
 		
 		double def_mul = pow (2.0, defmul);
 		
-		//printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);
+		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  \
+				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
 		
 		// compute parameters of the gamma curve
 		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));

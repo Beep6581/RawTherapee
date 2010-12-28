@@ -701,7 +701,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     memset (hist16, 0, 65536*sizeof(int));
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[CLIP((int)labView->L[i][j])]++;
+            hist16[CLIP((int)(2*(labView->L[i][j])))]++;
 
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
