@@ -110,6 +110,9 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
     Glib::RefPtr<Gio::FileEnumerator> dirList;
     if (dir)
     {
+        // CD-ROMs with no drive inserted are reported, but do not exist, causing RT to crash
+         if (!Glib::file_test(dir->get_path(),Glib::FILE_TEST_EXISTS)) return;
+
 				SAFE_ENUMERATOR_CODE_START
 						if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || add_hidden))
 								subDirs.push_back (info->get_name());
