@@ -18,6 +18,7 @@ Developement contributors, in last name alphabetical order:
 Other contributors (ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
 
 	Patrik Brunner
+	Fernando Carello
 	Maciek Dworak
 	Michael Ezra
 	David M. Gyurko
