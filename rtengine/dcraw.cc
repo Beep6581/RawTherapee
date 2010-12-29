@@ -7359,8 +7359,6 @@ canon_cr2:
   } else if (!strcmp(model,"D1X")) {
     width -= 4;
     pixel_aspect = 0.5;
-  } else if (!strcmp(model,"D7000")) {
-    width -= 40;
   } else if (!strcmp(model,"D3100")) {
     width -= 24;
     left_margin = 4;
