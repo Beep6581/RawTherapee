@@ -871,7 +871,8 @@ void png_flush(png_structp png_ptr) {
 int ImageIO::load (Glib::ustring fname) {
 
   int lastdot = fname.find_last_of ('.');
-
+  if( Glib::ustring::npos == lastdot )
+    return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return loadPNG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
@@ -884,7 +885,8 @@ int ImageIO::load (Glib::ustring fname) {
 int ImageIO::save (Glib::ustring fname) {
 
   int lastdot = fname.find_last_of ('.');
-
+  if( Glib::ustring::npos == lastdot )
+    return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return savePNG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
