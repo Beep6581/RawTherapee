@@ -6,10 +6,13 @@ Developement contributors, in last name alphabetical order:
 
 	Oliver Duis
 	Jean-Christophe Frisch
-	Steve Herell
+	Steve Herrell
 	Emil Martinec
+	Jacek Poplawski
+	Ilia Popov
+	Philip Rinn
 	Jan Rinze
-	Andrey Skv
+	Andrey Skvortsov
 	Fabio Suprani
 
 Other contributors (ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
@@ -22,4 +25,4 @@ Other contributors (ideas, mockups, testing, forum activity, translations, etc.)
 	Karl Loncarek
 	Paul Matthijsse
 	Wyatt Olson
-	Ilia Popov
+	Alberto Righetto
