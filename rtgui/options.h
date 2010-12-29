@@ -156,6 +156,7 @@ class Options {
 extern Options options;
 extern Glib::ustring argv0;
 extern Glib::ustring argv1;
+extern bool simpleEditor;
 extern Glib::ustring versionString;
 extern Glib::ustring paramFileExtension;
 

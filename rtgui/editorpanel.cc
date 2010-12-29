@@ -161,7 +161,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
 
     iops->pack_start (*saveimgas, Gtk::PACK_SHRINK);
-    iops->pack_start (*queueimg, Gtk::PACK_SHRINK);
+    if(!simpleEditor)
+       iops->pack_start (*queueimg, Gtk::PACK_SHRINK);
     iops->pack_start (*sendtogimp, Gtk::PACK_SHRINK);
 
     // Status box

@@ -131,7 +131,7 @@ void FilePanel::init () {
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (argv1!="")
+    if (argv1!="" && safe_file_test (argv1, Glib::FILE_TEST_IS_DIR))
         dirBrowser->open (argv1);
     else {
         if (options.startupDir==STARTUPDIR_HOME) 
