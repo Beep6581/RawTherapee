@@ -148,41 +148,39 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb     (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i);
         inline  void interpolate_row_rb_mul_pp (unsigned short* ar, unsigned short* ab, unsigned short* pg, unsigned short* cg, unsigned short* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
-		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
-		void CA_correct_RT	(double cared, double cablue);
-		int  cfaCleanFromMap( BYTE* bitmapBads );
-		int  findHotDeadPixel( BYTE *bpMap, float thresh);
-	void ddct8x8s(int isgn, float **a);
+        int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
+        void CA_correct_RT	(double cared, double cablue);
+        int  cfaCleanFromMap( BYTE* bitmapBads );
+        int  findHotDeadPixel( BYTE *bpMap, float thresh);
+        void ddct8x8s(int isgn, float **a);
 
-		void cfa_linedn (float linenoiselevel);//Emil's line denoise
+        void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
-		void green_equilibrate		(float greenthresh);//Emil's green equilibration
+        void green_equilibrate		(float greenthresh);//Emil's green equilibration
 
 	void nodemosaic();
         void eahd_demosaic();
         void hphd_demosaic();
         void vng4_demosaic();
-		void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
-		void fast_demo(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
+        void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
+        void fast_demo(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
         void dcb_demosaic(int iterations, int dcb_enhance);
         void ahd_demosaic(int winx, int winy, int winw, int winh);
-        void    bilinear_demosaic();
-        void    bilinear_interpolate_block(ushort (*image)[4], int start, int end);
-	void	border_interpolate(int border, ushort (*image)[4], int start = 0, int end = 0);
-		void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
-		void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
-		void fill_border( ushort (*cache )[4], int border, int x0, int y0);
-		void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
-		void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
-		void dcb_color(ushort (*image)[4], int x0, int y0);
-		void dcb_hid2(ushort (*image)[4], int x0, int y0);
-		void dcb_map(ushort (*image)[4], int x0, int y0);
-		void dcb_correction(ushort (*image)[4], int x0, int y0);
-		void dcb_pp(ushort (*image)[4], int x0, int y0);
-		void dcb_correction2(ushort (*image)[4], int x0, int y0);
-		void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
-		void dcb_refinement(ushort (*image)[4], int x0, int y0);
-		void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
+        void border_interpolate(int border, ushort (*image)[4], int start = 0, int end = 0);
+        void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
+        void fill_raw( ushort (*cache )[4], int x0, int y0, ushort** rawData);
+        void fill_border( ushort (*cache )[4], int border, int x0, int y0);
+        void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
+        void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
+        void dcb_color(ushort (*image)[4], int x0, int y0);
+        void dcb_hid2(ushort (*image)[4], int x0, int y0);
+        void dcb_map(ushort (*image)[4], int x0, int y0);
+        void dcb_correction(ushort (*image)[4], int x0, int y0);
+        void dcb_pp(ushort (*image)[4], int x0, int y0);
+        void dcb_correction2(ushort (*image)[4], int x0, int y0);
+        void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
+        void dcb_refinement(ushort (*image)[4], int x0, int y0);
+        void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
         void    transLine   (unsigned short* red, unsigned short* green, unsigned short* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
         void    hflip       (Image16* im);

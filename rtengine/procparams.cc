@@ -28,7 +28,7 @@
 namespace rtengine {
 namespace procparams {
 
-const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast", "bilinear" };
+const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
 
 ProcParams::ProcParams () { 
 

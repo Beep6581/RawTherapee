@@ -383,7 +383,7 @@ class HSVEqualizerParams {
 class RAWParams {
 
     public:
-		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,bilinear,
+		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,
 					numMethods }; // This MUST be the last enum
 		static const char *methodstring[numMethods];
 

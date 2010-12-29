@@ -977,8 +977,6 @@ void RawImageSource::demosaic(const RAWParams &raw)
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demo (0,0,W,H);
-        else if (raw.dmethod == RAWParams::methodstring[RAWParams::bilinear] )
-            bilinear_demosaic();
             else
         	nodemosaic();
         t2.set();
@@ -2453,114 +2451,6 @@ void RawImageSource::border_interpolate(int border, ushort (*image)[4], int star
       FORCC if (c != f && sum[c+4])
 	image[row*width+col][c] = sum[c] / sum[c+4];
     }
-}
-
-void RawImageSource::bilinear_interpolate_block(ushort (*image)[4], int start, int end)
-{
-  ushort (*pix);
-  int i, *ip, sum[4];
-  int width=W;
-  int colors = 3;
-
-  for (int row = start; row < end; row++)
-    for (int col=1; col < width-1; col++) {
-      pix = image[row*width+col];
-      ip = blcode[row & 15][col & 15];
-      memset (sum, 0, sizeof sum);
-      for (i=8; i--; ip+=3)
-	sum[ip[2]] += pix[ip[0]] << ip[1];
-      for (i=colors; --i; ip+=2)
-	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
-    }
-    
-
-}
-
-void RawImageSource::bilinear_demosaic()
-{
-  int width=W, height=H;  
-  int *ip, sum[4];
-  int c,  x, y, row, col, shift, color;
-  int colors = 3;
- 
-  ushort (*image)[4], *pix;
-  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
-
-  for (int ii=0; ii<H; ii++)
-    for (int jj=0; jj<W; jj++)
-        image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
-
-  //if (verbose) fprintf (stderr,_("Bilinear interpolation...\n"));
-  if (plistener) {
-        plistener->setProgressStr ("Demosaicing...");
-        plistener->setProgress (0.0);
-    }
-
-  memset(blcode,0,16*16*32);
-  for (row=0; row < 16; row++)
-    for (col=0; col < 16; col++) {
-      ip = blcode[row][col];
-      memset (sum, 0, sizeof sum);
-      for (y=-1; y <= 1; y++)
-	for (x=-1; x <= 1; x++) {
-	  shift = (y==0) + (x==0);
-	  if (shift == 2) continue;
-	  color = fc(row+y,col+x);
-	  *ip++ = (width*y + x)*4 + color;
-	  *ip++ = shift;
-	  *ip++ = color;
-	  sum[color] += 1 << shift;
-	}
-      FORCC
-	if (c != fc(row,col)) {
-	  *ip++ = c;
-	  *ip++ = 256 / sum[c];
-	}
-    }
-  
-#ifdef _OPENMP
-  #pragma omp parallel
-  {
-            int tid = omp_get_thread_num();
-            int nthreads = omp_get_num_threads();
-            int blk = H/nthreads;
-
-            int start = 0;
-            if (tid == 0) start = 1;
-            if (tid<nthreads-1)
-            {
-                border_interpolate(1, image, tid*blk, (tid+1)*blk);
-                bilinear_interpolate_block(image, start+tid*blk, (tid+1)*blk);
-            }
-            else
-            {
-                border_interpolate(1, image, tid*blk, height);
-                bilinear_interpolate_block(image, tid*blk, height-1);
-            }
-  }
-#else
-    border_interpolate(1, image);
-    bilinear_interpolate_block(image, 1, height-1);
-#endif
-
-red = new unsigned short*[H];
-green = new unsigned short*[H];
-blue = new unsigned short*[H];
-
-#pragma omp parallel for
-    for (int i=0; i<H; i++) {
-        red[i] = new unsigned short[W];
-        green[i] = new unsigned short[W];
-        blue[i] = new unsigned short[W];
-        for (int j=0; j<W; j++){
-            red[i][j] = image[i*W+j][0];
-            green[i][j] = image[i*W+j][1];
-            blue[i][j] = image[i*W+j][2];
-        }
-    }
-
-    if(plistener) plistener->setProgress (1.0);
-    free (image);
 }
 
 /*
