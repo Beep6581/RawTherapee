@@ -919,13 +919,13 @@ void RawImageSource::preprocess  (const RAWParams &raw)
         for (i=border; i<H-border; i++)
             for (int j=border; j<W-border; j++)
                 if (ri->ISGREEN(i,j)) {
-                    if (i&1==0) {
-                        avgg1 += rawData[i][j];
-                        ng1++;
+                    if (i&1) {
+						avgg2 += rawData[i][j];
+                        ng2++;
                     }
                     else {
-                        avgg2 += rawData[i][j];
-                        ng2++;
+                        avgg1 += rawData[i][j];
+                        ng1++;
                     }
                 }
         double corrg1 = ((double)avgg1/ng1 + (double)avgg2/ng2) / 2.0 / ((double)avgg1/ng1);
@@ -936,7 +936,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
             for (int j=border; j<W-border; j++)
                 if (ri->ISGREEN(i,j)) {
                     float currData;
-                    currData = (float)(rawData[i][j] * (i&1 ? corrg2 : corrg1));
+                    currData = (float)(rawData[i][j] * ((i&1) ? corrg2 : corrg1));
                     rawData[i][j] = CLIP(currData);
                 }
 	}

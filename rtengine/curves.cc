@@ -321,13 +321,13 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, int* outCurve, int skip) {
+	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, float* outCurve, int skip) {
 				
 		// check if contrast curve is needed
 		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
 		
 		// curve without contrast
-		double* dcurve = new double[65536];
+		float* dcurve = new float[65536];
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		std::vector<double> satcurvePoints;
@@ -363,7 +363,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
 			
 			// change to [0,1] range
-			double val = (double)i / 65535.0;
+			float val = (float)i / 65535.0;
 			
 			// apply saturation curve
 			if (needsaturation)
@@ -375,7 +375,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			}
 			
 			// store result in a temporary array
-			dcurve[i] = CLIPD(val);
+			dcurve[i] = (val);
 		}
 		delete tcurve;
 		
@@ -390,7 +390,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		}
 		 
 		for (int i=0; i<=0xffff; i++) 
-			outCurve[i] = (int) (65535.0 * dcurve[i]);
+			outCurve[i] = (65535.0 * dcurve[i]);
 		delete [] dcurve;
 		delete satcurve;
 	}
@@ -403,10 +403,10 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, \
 									 double br, double contr, double defmul, double gamma_, bool igamma, \
 									 const std::vector<double>& curvePoints, unsigned int* histogram, \
-									 float* hlCurve, float* shCurve, int* outCurve, \
+									 float* hlCurve, float* shCurve, float* outCurve, \
 									 unsigned int* outBeforeCCurveHistogram, int skip) {
 		
-		double def_mul = pow (2.0, defmul);
+		//double def_mul = pow (2.0, defmul);
 		
 		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  \
 				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
@@ -477,7 +477,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		for (int i=0; i<0x10000; i++) {
 			
 			// change to [0,1] range
-			double val = (double)i / 65535.0;
+			float val = (float)i / 65535.0;
 			
 			// apply default multiplier (that is >1 if highlight recovery is on)
 			// val *= def_mul;
@@ -531,7 +531,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		if (needcontrast) {  
 			// compute mean luminance of the image with the curve applied
 			int sum = 0;
-			double avg = 0; 
+			float avg = 0; 
 			//double sqavg = 0;
 			for (int i=0; i<=0xffff; i++) {
 				avg += dcurve[(int)shCurve[(int)hlCurve[i]]] * histogram[i];
@@ -592,7 +592,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			if (needigamma)
 				val = igamma2 (val);
 			
-			outCurve[i] = (int) (65535.0 * val + 0.5);
+			outCurve[i] = (65535.0 * val);
 		}
 		
 		
@@ -611,7 +611,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
-									 unsigned int* histogram, int* outCurve, \
+									 unsigned int* histogram, float* outCurve, \
 									 unsigned int* outBeforeCCurveHistogram, int skip) {
 		
 		// curve without contrast
@@ -662,7 +662,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		for (int i=0; i<0x10000; i++) {
 			
 			// change to [0,1] range
-			double val = (double)i / 65535.0;
+			float val = (float)i / 65535.0;
 			
 			// apply brightness curve
 			val = brightcurve->getVal (val);
@@ -678,8 +678,8 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		if (needcontrast) {  
 			// compute mean luminance of the image with the curve applied
 			int sum = 0;
-			double avg = 0; 
-			//double sqavg = 0;
+			float avg = 0; 
+			//float sqavg = 0;
 			for (int i=0; i<0x10000; i++) {
 				avg += dcurve[i] * histogram[i];
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
@@ -687,7 +687,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			}
 			avg /= sum;
 			//sqavg /= sum;
-			//double stddev = sqrt(sqavg-avg*avg);
+			//float stddev = sqrt(sqavg-avg*avg);
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			std::vector<double> contrastcurvePoints;
@@ -732,7 +732,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 				val = (dcurve[i]);
 			}
 			
-			outCurve[i] = (int) (65535.0 * val + 0.5);
+			outCurve[i] = (65535.0 * val);
 		}
 		
 		

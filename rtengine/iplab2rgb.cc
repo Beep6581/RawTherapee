@@ -86,7 +86,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 			int ix = 3*i*lab->W;
 			for (int j=0; j<lab->W; j++) {
 				
-				float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
+				//float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 				
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;

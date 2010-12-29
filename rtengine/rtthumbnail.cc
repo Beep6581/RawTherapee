@@ -686,7 +686,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 	float* curve1 = new float [65536];
     float* curve2 = new float [65536];
-	int* curve = new int [65536];
+	float* curve = new float [65536];
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
     //LabImage* labView = new LabImage (baseImg);//this is broken!!!???
@@ -704,7 +704,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[CLIP((int)(2*(labView->L[i][j])))]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, NULL, 16);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve, 16);
 	ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);

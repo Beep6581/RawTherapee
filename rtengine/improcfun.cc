@@ -204,7 +204,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 
 }
 
-void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, float defmul, int sat) {
+void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, float defmul, int sat) {
 
     int h_th, s_th;
     if (shmap) {
@@ -305,9 +305,9 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 			b *= tonefactor;
 			
 			//brightness/contrast and user tone curve
-			r = CurveFactory::interp(tonecurve,r);
-			g = CurveFactory::interp(tonecurve,g);
-			b = CurveFactory::interp(tonecurve,b);
+			r = CurveFactory::flinterp(tonecurve,r);
+			g = CurveFactory::flinterp(tonecurve,g);
+			b = CurveFactory::flinterp(tonecurve,b);
 
 			if (abs(sat)>0.5 || params->hsvequalizer.enabled) {
 				rgb2hsv(r,g,b,h,s,v);
@@ -375,24 +375,24 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 	//delete [] my_tonecurve;
  }
 
-void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to) {
+void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, float* curve, int row_from, int row_to) {
 
     int W = lold->W;
     //int H = lold->H;
     for (int i=row_from; i<row_to; i++)
         for (int j=0; j<W; j++)
-            lnew->L[i][j] = curve[(int)CLIP(lold->L[i][j])];
+            lnew->L[i][j] = CurveFactory::flinterp(curve,lold->L[i][j]);
 }
 		
 	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to) {
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, float* curve, int row_from, int row_to) {
 	
 	int W = lold->W;
 	//int H = lold->H;
 	if (channel==0) {
-	for (int i=row_from; i<row_to; i++)
-		for (int j=0; j<W; j++)
-			lnew->a[i][j] = curve[CLIP((int)lold->a[i][j]+32768)]-32768;
+		for (int i=row_from; i<row_to; i++)
+			for (int j=0; j<W; j++)
+				lnew->a[i][j] = curve[CLIP((int)lold->a[i][j]+32768)]-32768;
 	} 
 	if (channel==1) {
 		for (int i=row_from; i<row_to; i++)
