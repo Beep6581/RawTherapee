@@ -132,6 +132,8 @@ if (UNIX)
     install (PROGRAMS rtstart DESTINATION ${BINDIR})
 endif (UNIX)
 
+install (FILES AUTHORS.txt LICENSE.txt DESTINATION ${BINDIR})
+
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)
 add_subdirectory (rtgui)
