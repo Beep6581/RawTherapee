@@ -8,6 +8,7 @@ Developement contributors, in last name alphabetical order:
 	Jean-Christophe Frisch
 	Steve Herrell
 	Emil Martinec
+	Wyatt Olson
 	Jacek Poplawski
 	Ilia Popov
 	Philip Rinn
@@ -25,5 +26,4 @@ Other contributors (ideas, mockups, testing, forum activity, translations, etc.)
 	Arturs Jekabsons
 	Karl Loncarek
 	Paul Matthijsse
-	Wyatt Olson
 	Alberto Righetto
