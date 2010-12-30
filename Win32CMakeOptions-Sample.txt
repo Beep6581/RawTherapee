@@ -4,7 +4,7 @@
 # Use the 'MinSizeRel'     build type to have the smallest possible, without debugging information, console free executable
 #set(CMAKE_BUILD_TYPE Release CACHE STRING "Between: None Debug Release RelWithDebInfo MinSizeRel.")
 
-set(CMAKE_PREFIX_PATH ./Builds/${CMAKE_BUILD_TYPE} CACHE PATH "Libraries installation path")
+set(CMAKE_INSTALL_PREFIX ./Builds/${CMAKE_BUILD_TYPE} CACHE PATH "Libraries installation path")
 set(DATADIR . CACHE PATH "Datas installation path")
 set(BINDIR . CACHE PATH "Binaries installation path")
 set(LIBDIR . CACHE PATH "Libraries installation path")
