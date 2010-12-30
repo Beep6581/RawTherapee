@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.6)
 
 set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
 
+if (WIN32)
+    set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
+endif (WIN32)
+
 if (APPLE)
 #    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;" )
 #    SET (CMAKE_TRY_COMPILE_OSX_ARCHITECTURES "i386;x86_64;" )
