@@ -9,8 +9,6 @@ set(DATADIR . CACHE PATH "Datas installation path")
 set(BINDIR . CACHE PATH "Binaries installation path")
 set(LIBDIR . CACHE PATH "Libraries installation path")
 
-set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
-
 set(BUILD_SHARED OFF CACHE BOOL "Should RT generate shared libraries")
 set(WITH_RAWZOR ON CACHE BOOL "With Rawzor")
 set(OPTION_OMP ON CACHE BOOL "Use OpenMP to speedup the preview and batch processing")
