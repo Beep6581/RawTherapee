@@ -286,8 +286,8 @@ void ThumbBrowserEntryBase::resize (int h) {
         if (width<infow + 2*sideMargin + 2*borderWidth)
             width = infow + 2*sideMargin + 2*borderWidth;
     }
-        if (width < bsw + 2*sideMargin + 2*borderWidth)
-            width = bsw + 2*sideMargin + 2*borderWidth;
+    if (width < bsw + 2*sideMargin + 2*borderWidth)
+        width = bsw + 2*sideMargin + 2*borderWidth;
 
     if ( preh == old_preh )
     {

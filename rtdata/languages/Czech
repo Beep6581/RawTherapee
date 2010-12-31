@@ -30,6 +30,7 @@ EDITWINDOW_TITLE;Editace obrázku
 EXIFFILTER_APERTURE;Clona
 EXIFFILTER_CAMERA;Aparát
 EXIFFILTER_DIALOGLABEL;Filtruj dle Exif
+EXIFFILTER_FILETYPE;Typ souboru
 EXIFFILTER_FOCALLEN;Ohnisková vzdálenost
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
@@ -146,6 +147,9 @@ HISTORY_MSG_101;HSV korekce -- Odstín
 HISTORY_MSG_102;HSV korekce -- Sytost
 HISTORY_MSG_103;HSV korekce -- Hodnota
 HISTORY_MSG_104;HSV korekce
+HISTORY_MSG_105;Odstranění lemu
+HISTORY_MSG_106;Odstranění lemu poloměr
+HISTORY_MSG_107;Odstranění lemu práh
 HISTORY_MSG_10;Komprese stínů
 HISTORY_MSG_11;Tónová křivka
 HISTORY_MSG_12;Automatická expozice
@@ -230,8 +234,8 @@ HISTORY_MSG_83;Vysoká kvalita světel/stínů
 HISTORY_MSG_84;Korekce perspektivy
 HISTORY_MSG_85;Vlnkové koeficienty
 HISTORY_MSG_86;Vlnková korekce
-HISTORY_MSG_87;Sůl a pepř redukce šumu
-HISTORY_MSG_88;Sůl a pepř redukce šumu - práh
+HISTORY_MSG_87;Redukce impulzního šumu
+HISTORY_MSG_88;Redukce impulzního šumu - práh
 HISTORY_MSG_89;Redukce šumu
 HISTORY_MSG_8;Expoziční korekce
 HISTORY_MSG_90;Redukce šumu - jas
@@ -435,6 +439,7 @@ PREFERENCES_CLEARDLG_LINE2;může trvat několik sekund.
 PREFERENCES_CLEARDLG_TITLE;Prosím počkejte.
 PREFERENCES_CLIPPINGIND;Zvýraznění oříznutých jasů či stínů
 PREFERENCES_CMETRICINTENT;Kolorimetrická metoda
+PREFERENCES_CUTOVERLAYBRUSH;Štětec přesahu
 PREFERENCES_DARKFRAME;Tmavé snímky
 PREFERENCES_DATEFORMAT;Formát data
 PREFERENCES_DATEFORMATHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%y</b><i> : rok (year)</i>\n<b>%m</b><i> : měsíc (month)</i>\n<b>%d</b><i> : den (day)</i>\n<i>\nNapříklad český formát data:</i>\n<b>%d. %m. %y</b>
@@ -506,6 +511,7 @@ PREFERENCES_SHOWDATETIME;Zobrazovat datum a čas
 PREFERENCES_SHOWONLYRAW;Zobrazovat pouze soubory RAW
 PREFERENCES_SHTHRESHOLD;Práh pro oříznuté stíny
 PREFERENCES_SINGLETAB;Mód jedné karty
+PREFERENCES_SINGLETABVERTAB;Mód jedné karty, svislé karty
 PREFERENCES_STARTUPIMDIR;Složka s obrázky při spuštění
 PREFERENCES_TAB_BROWSER;Prohlížeč souborů
 PREFERENCES_TAB_COLORMGR;Správa barev
@@ -678,7 +684,7 @@ TP_ICM_OUTPUTDLGLABEL;Vyber výstupní ICC profil...
 TP_ICM_OUTPUTPROFILE;Výstupní barevný prostor
 TP_ICM_SAVEREFERENCE;Uložit referenční obrázek pro profilování
 TP_ICM_WORKINGPROFILE;Pracovní barevný prostor
-TP_IMPULSEDENOISE_LABEL;Redukce bodového šumu
+TP_IMPULSEDENOISE_LABEL;Redukce impulzního šumu
 TP_IMPULSEDENOISE_THRESH;Práh
 TP_LABCURVE_BRIGHTNESS;Jasnost
 TP_LABCURVE_CONTRAST;Kontrast
@@ -785,14 +791,13 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EXIFFILTER_FILETYPE;File Type
+!MAIN_FRAME_EDITOR;Editor
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Resize bounding box
 !HISTORY_MSG_109;Resizing applies to
 !MAIN_FRAME_EDITOR;Editor
-!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.

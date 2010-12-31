@@ -134,8 +134,11 @@ void Options::setDefaults () {
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
-
+#ifdef WIN32
+    rtSettings.iccDirectory = "C:/WINDOWS/System32/spool/drivers/color";
+#else
     rtSettings.iccDirectory = "/usr/share/color/icc";
+#endif
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
     rtSettings.verbose = false;

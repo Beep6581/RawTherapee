@@ -28,7 +28,7 @@
 #include <curves.h>
 #include <dfmanager.h>
 #include <slicer.h>
-
+#include <iostream>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -860,7 +860,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
 			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x%8);
 		if( settings->verbose ){
-			printf( "Correcting %zu pixels from .badpixels\n",bp->size());
+			std::cout << "Correcting " << bp->size() << " pixels from .badpixels" << std::endl;
 		}
 	}
 	bp = 0;
@@ -872,7 +872,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
 			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x%8);
 		if( settings->verbose && bp->size()>0){
-			printf( "Correcting %zu hotpixels from darkframe\n",bp->size());
+			std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
 		}
 	}
 
