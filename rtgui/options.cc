@@ -24,6 +24,7 @@
 #include <multilangmgr.h>
 #include <safekeyfile.h>
 #include <addsetids.h>
+#include <safegtk.h>
 
 Options options;
 Glib::ustring versionString      = "v3.0 alpha 1";
@@ -126,6 +127,8 @@ void Options::setDefaults () {
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;
 
+    sndLngEditProcDoneSecs=3.0;
+
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -152,7 +155,7 @@ int Options::readFromFile (Glib::ustring fname) {
     rtengine::SafeKeyFile keyFile;
 
     try {
-    	if( !Glib::file_test(fname,Glib::FILE_TEST_EXISTS))
+    	if( !safe_file_test(fname,Glib::FILE_TEST_EXISTS))
     		return 1;
         if (!keyFile.load_from_file (fname)) 
             return 1;
@@ -298,6 +301,12 @@ if (keyFile.has_group ("Batch Processing")) {
     if (keyFile.has_key ("Batch Processing", "AdjusterBehavior")) baBehav = keyFile.get_integer_list ("Batch Processing", "AdjusterBehavior");
 }
 
+if (keyFile.has_group ("Sounds")) { 
+    if (keyFile.has_key ("Sounds", "BatchQueueDone")) sndBatchQueueDone = keyFile.get_string ("Sounds", "BatchQueueDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDone"))     sndLngEditProcDone     = keyFile.get_string ("Sounds", "LngEditProcDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
+}
+
         return 0;
 }
 
@@ -426,8 +435,12 @@ int Options::saveToFile (Glib::ustring fname) {
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
+    keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
+    keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
+    keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+
+    FILE *f = safe_g_fopen (fname, "wt");
     if (f==NULL)
         return 1;
     else {
@@ -447,9 +460,9 @@ void Options::load () {
     cacheBaseDir = argv0 + "/cache";
     if (options.multiUser) {
         int r = options.readFromFile (rtdir + "/options");
-        if (r && !g_mkdir_with_parents (rtdir.c_str(), 511)) {
+        if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
             Glib::ustring profdir = rtdir + "/profiles";
-            g_mkdir_with_parents (profdir.c_str(), 511);
+            safe_g_mkdir_with_parents (profdir, 511);
             options.saveToFile (rtdir + "/options");
         }
 #ifdef _WIN32

@@ -24,6 +24,7 @@
 #endif
 #include <iccmatrices.h>
 #include <glib/gstdio.h>
+#include <safegtk.h>
 
 namespace rtengine {
 
@@ -137,7 +138,7 @@ cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
     if (r!=fileProfiles.end()) 
         return r->second;
     else {
-        if (!name.compare (0, 5, "file:") && Glib::file_test (name.substr(5), Glib::FILE_TEST_EXISTS) && !Glib::file_test (name.substr(5), Glib::FILE_TEST_IS_DIR)) {
+        if (!name.compare (0, 5, "file:") && safe_file_test (name.substr(5), Glib::FILE_TEST_EXISTS) && !safe_file_test (name.substr(5), Glib::FILE_TEST_IS_DIR)) {
             ProfileContent pc (name.substr(5));
             if (pc.data) {
                 cmsHPROFILE profile = pc.toProfile ();
@@ -171,7 +172,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
         Glib::ustring dirname = pdir;
         Glib::Dir* dir = NULL;
         try {
-	    if (!Glib::file_test (dirname, Glib::FILE_TEST_IS_DIR))
+	    if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR))
                 return result;
             dir = new Glib::Dir (dirname);
         }
@@ -183,7 +184,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             Glib::ustring fname = dirname + *i;
             Glib::ustring sname = *i;
             // ignore directories
-            if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+            if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
                 if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
 //                    printf ("processing file %s...\n", fname.c_str());
@@ -208,7 +209,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
 ProfileContent::ProfileContent (Glib::ustring fileName) {
 
     data = NULL;
-    FILE* f = g_fopen (fileName.c_str(), "rb");
+    FILE* f = safe_g_fopen (fileName, "rb");
     if (!f)
         return;
     fseek (f, 0, SEEK_END);

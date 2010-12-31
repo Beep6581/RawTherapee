@@ -22,9 +22,12 @@
 #include <cursormanager.h>
 
 
-RTWindow::RTWindow () {
-
-    epanel=NULL;  // to prevent eventing errors
+RTWindow::RTWindow ()
+:fpanel(NULL)
+,epanel(NULL)
+,bpanel(NULL)
+,mainNB(NULL)
+{
 
     cacheMgr->init ();
 
@@ -49,105 +52,122 @@ RTWindow::RTWindow () {
     property_destroy_with_parent().set_value(false);
     signal_window_state_event().connect( sigc::mem_fun(*this, &RTWindow::on_window_state_event) );
 
-    mainNB = Gtk::manage (new Gtk::Notebook ());
-    mainNB->set_scrollable (true);
-    mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
+    if(simpleEditor)
+    {
+		epanel = new EditorPanel (NULL);
+		epanel->setParent (this);
+    	add (*epanel);
+    	show_all ();
 
-    fpanel = new FilePanel ();
-    fpanel->setParent (this);
+    	CacheManager* cm = CacheManager::getInstance();
+    	Thumbnail* thm= cm->getEntry( argv1 );
+    	if(thm){
+    		int error;
+    		rtengine::InitialImage *ii= rtengine::InitialImage::load(argv1,thm->getType() == FT_Raw,&error,NULL);
+    		epanel->open( thm, ii );
+    	}
+	}else{
+		mainNB = Gtk::manage (new Gtk::Notebook ());
+		mainNB->set_scrollable (true);
+		mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
-    // decorate tab
-    if (options.mainNBVertical) {
-        mainNB->set_tab_pos (Gtk::POS_LEFT);
+		fpanel = new FilePanel ();
+		fpanel->setParent (this);
 
-        Gtk::VBox* vbf = Gtk::manage (new Gtk::VBox ());
-        vbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-        Gtk::Label* l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_FILEBROWSER"));
-        l->set_angle (90);
-        vbf->pack_start (*l);
-        vbf->set_spacing (2);
-        vbf->show_all ();
-        mainNB->append_page (*fpanel, *vbf);
-     } else {
-        Gtk::HBox* hbf = Gtk::manage (new Gtk::HBox ());
-        hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-        hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
-        hbf->set_spacing (2);
-        hbf->show_all ();
-        mainNB->append_page (*fpanel, *hbf);
+		// decorate tab
+		if (options.mainNBVertical) {
+			mainNB->set_tab_pos (Gtk::POS_LEFT);
+
+			Gtk::VBox* vbf = Gtk::manage (new Gtk::VBox ());
+			vbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+			Gtk::Label* l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_FILEBROWSER"));
+			l->set_angle (90);
+			vbf->pack_start (*l);
+			vbf->set_spacing (2);
+			vbf->show_all ();
+			mainNB->append_page (*fpanel, *vbf);
+		 } else {
+			Gtk::HBox* hbf = Gtk::manage (new Gtk::HBox ());
+			hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+			hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
+			hbf->set_spacing (2);
+			hbf->show_all ();
+			mainNB->append_page (*fpanel, *hbf);
+		}
+
+		bpanel = new BatchQueuePanel ();
+		bpanel->setParent (this);
+
+		// decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
+		Gtk::Label* lbq = new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"));
+		mainNB->append_page (*bpanel, *lbq);
+
+		// epanel is only for single tab mode
+		epanel = new EditorPanel (fpanel);
+		epanel->setParent (this);
+
+		// decorate tab
+		if (options.mainNBVertical) {
+			Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
+			vbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
+			Gtk::Label* l=new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") );
+			//l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
+			l->set_angle (90);
+			vbe->pack_start (*l);
+			vbe->set_spacing (2);
+			vbe->show_all ();
+			mainNB->append_page (*epanel, *vbe);
+		} else {
+			Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+			hbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
+			hbe->pack_start (*Gtk::manage (new Gtk::Label(M("MAIN_FRAME_EDITOR"))));
+			hbe->set_spacing (2);
+			hbe->show_all ();
+			mainNB->append_page (*epanel, *hbe);
+		}
+
+		mainNB->set_current_page (mainNB->page_num (*fpanel));
+
+		signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
+
+		Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
+		mainBox->pack_start (*mainNB);
+		Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
+		mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
+
+		// filling bottom box
+		Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
+		Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
+		preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
+		preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
+		is_fullscreen = false;
+		btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
+		btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
+		bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
+		bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 4);
+		bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
+		bottomBox->pack_start (prLabel );
+		prLabel.set_alignment(Gtk::ALIGN_RIGHT);
+		bottomBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 4);
+
+		pldBridge = new PLDBridge(&prLabel,&prProgBar);
+
+		Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
+		style->set_xthickness (0);
+		style->set_ythickness (0);
+		rtWeb->modify_style (style);
+
+		add (*mainBox);
+		show_all ();
     }
-
-    bpanel = new BatchQueuePanel ();
-    bpanel->setParent (this);
-
-    // decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
-    Gtk::Label* lbq = new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"));
-    mainNB->append_page (*bpanel, *lbq);
-    
-    // epanel is only for single tab mode
-    epanel = new EditorPanel (fpanel);
-    epanel->setParent (this);
-
-    // decorate tab
-    if (options.mainNBVertical) {
-        Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
-        vbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
-        Gtk::Label* l=new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") );
-        //l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
-        l->set_angle (90);
-        vbe->pack_start (*l);
-        vbe->set_spacing (2);
-        vbe->show_all ();
-        mainNB->append_page (*epanel, *vbe);
-    } else {
-        Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
-        hbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
-        hbe->pack_start (*Gtk::manage (new Gtk::Label(M("MAIN_FRAME_EDITOR"))));
-        hbe->set_spacing (2);
-        hbe->show_all ();
-        mainNB->append_page (*epanel, *hbe);
-    }
-
-    mainNB->set_current_page (mainNB->page_num (*fpanel));
-
-    signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
-
-    Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
-    mainBox->pack_start (*mainNB);   
-    Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
-    mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
-
-    // filling bottom box
-    Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
-    Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
-    preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
-    preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
-    is_fullscreen = false;
-    btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
-    btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
-    bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
-    bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 4);
-    bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
-    bottomBox->pack_start (prLabel );
-    prLabel.set_alignment(Gtk::ALIGN_RIGHT);
-    bottomBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 4);
-    pldBridge = new PLDBridge(&prLabel,&prProgBar);
-
-    Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
-    style->set_xthickness (0);
-    style->set_ythickness (0);    
-    rtWeb->modify_style (style);
-
-    add (*mainBox);
-    show_all ();
-
-    if (!isSingleTabMode()) epanel->hide_all();
+    if (!isSingleTabMode()&& !simpleEditor) epanel->hide_all();
 }
 
 void RTWindow::on_realize () {
     Gtk::Window::on_realize ();
 
-    fpanel->setAspect();
+    if( fpanel )
+       fpanel->setAspect();
 
     cursorManager.init (get_window());
 }
@@ -275,11 +295,13 @@ void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries) {
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
 
-
-    fpanel->saveOptions ();
-    bpanel->saveOptions ();
+    if( fpanel )
+       fpanel->saveOptions ();
+    if( bpanel )
+       bpanel->saveOptions ();
   
-    if (isSingleTabMode()) epanel->saveProfile();
+    if (isSingleTabMode() || simpleEditor)
+       epanel->saveProfile();
     
     cacheMgr->closeCache ();  // also makes cleanup if too large
 

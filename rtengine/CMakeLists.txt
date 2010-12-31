@@ -7,7 +7,7 @@ link_directories (${CMAKE_CURRENT_SOURCE_DIR}/../rtexif ${EXTRA_LIBDIR} ${GTHREA
     ${GOBJECT_LIBRARY_DIRS} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
     ${IPTCDATA_LIBRARY_DIRS} ${LCMS_LIBRARY_DIRS})
 
-set (RTENGINESOURCEFILES colortemp.cc curves.cc dcraw.cc iccstore.cc dfmanager.cc rawimage.cc
+set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc dcraw.cc iccstore.cc dfmanager.cc rawimage.cc
     image8.cc image16.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
@@ -23,7 +23,7 @@ IF (BUILD_SHARED_LIBS)
     install (TARGETS rtengine DESTINATION ${LIBDIR})
 ENDIF (BUILD_SHARED_LIBS)
 
-set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -ffast-math -funroll-loops")
+set_target_properties (rtengine PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} ${RTENGINE_CXX_FLAGS}")
 
 target_link_libraries (rtengine rtexif ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
     ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${LCMS_LIBRARIES} ${IPTCDATA_LIBRARIES}

@@ -20,6 +20,7 @@
 #include <toolpanelcoord.h>
 #include <ilabel.h>
 #include <options.h>
+#include <imagesource.h>
 
 using namespace rtengine::procparams;
 
@@ -36,19 +37,19 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
-	impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
-	defringe			= Gtk::manage (new Defringe ());
-	dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
+    impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
+    defringe            = Gtk::manage (new Defringe ());
+    dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
     lcurve              = Gtk::manage (new LCurve ());
     colorboost          = Gtk::manage (new ColorBoost ());
     colorshift          = Gtk::manage (new ColorShift ());
-    lensgeom			= Gtk::manage (new LensGeometry ());
+    lensgeom            = Gtk::manage (new LensGeometry ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
-    perspective			= Gtk::manage (new PerspCorrection ());
+    perspective         = Gtk::manage (new PerspCorrection ());
     cacorrection        = Gtk::manage (new CACorrection ());
     hlrecovery          = Gtk::manage (new HLRecovery ());
     chmixer             = Gtk::manage (new ChMixer ());
@@ -59,7 +60,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     equalizer           = Gtk::manage (new Equalizer ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
-	hsvequalizer        = Gtk::manage (new HSVEqualizer ());
+    hsvequalizer        = Gtk::manage (new HSVEqualizer ());
     rawprocess          = Gtk::manage (new RawProcess ());
     preprocess          = Gtk::manage (new PreProcess ());
 
@@ -71,14 +72,14 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
-	addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
-	addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
-	addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
+    addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
+    addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
+    addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
-	addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
-	addPanel (detailsPanel, defringe,			M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);
-	addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
+    addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
+    addPanel (detailsPanel, defringe,           M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);
+    addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
     addPanel (detailsPanel, equalizer,          M("TP_EQUALIZER_LABEL"));      toolPanels.push_back (equalizer);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);
     addPanel (transformPanel, resize,           M("TP_RESIZE_LABEL"));         toolPanels.push_back (resize);
@@ -188,11 +189,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         toolPanels[i]->write (params);
 
     // some transformations make the crop change for convenience
-    if (event==rtengine::EvResizeScale) {
-        crop->resizeScaleChanged (params->resize.scale);
-        crop->write (params);
-    }
-    else if (event==rtengine::EvCTHFlip) {
+    if (event==rtengine::EvCTHFlip) {
         crop->hFlipCrop ();
         crop->write (params);
     }
@@ -203,6 +200,12 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     else if (event==rtengine::EvCTRotate) {
         crop->rotateCrop (params->coarse.rotate);
         crop->write (params);
+        resize->update (params->crop.enabled, params->crop.w, params->crop.h, ipc->getFullWidth(), ipc->getFullHeight());
+        resize->write (params);
+    }
+    else if (event==rtengine::EvCrop) {
+        resize->update (params->crop.enabled, params->crop.w, params->crop.h);
+        resize->write (params);
     }
 
     ipc->paramsUpdateReady ();
@@ -215,11 +218,25 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
 void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
+	int fw, fh, tr;
+
     if (!ipc) return;
-    ProcParams* params = ipc->getParamsForUpdate (event);
+    ProcParams *params = ipc->getParamsForUpdate (event);
     *params = *nparams;
-    for (int i=0; i<toolPanels.size(); i++) 
-        toolPanels[i]->read (nparams);
+
+    tr = TR_NONE;
+    if (params->coarse.rotate==90)  tr |= TR_R90;
+    if (params->coarse.rotate==180) tr |= TR_R180;
+    if (params->coarse.rotate==270) tr |= TR_R270;
+
+    // trimming overflowing cropped area
+    rtengine::ImageSource *ii = (rtengine::ImageSource*)ipc->getInitialImage();
+    ii->getFullSize (fw, fh, tr);
+    crop->trim(params, fw, fh);
+
+    // updating the GUI with updated values
+    for (unsigned int i=0; i<toolPanels.size(); i++)
+        toolPanels[i]->read (params);
 
     ipc->paramsUpdateReady ();
 

@@ -400,7 +400,7 @@ template<class T> void bilateral (T** src, int** dst, int W, int H, int sigmar, 
   // exponential lookup table
   int scale = (2.0*sigmar*sigmar) / scaleg;
   int scalem = 65535/((1+2*r)*(1+2*r));
-  int ec[256000];
+  int *ec = new int[256000];
   for (int i=0; i<256000; i++)
     ec[i] = exp (-i/scaleg) * scalem;
 
@@ -425,6 +425,7 @@ template<class T> void bilateral (T** src, int** dst, int W, int H, int sigmar, 
     }
   }
   delete [] kernel;
+  delete [] ec;
 
   time_t t2 = clock ();
   printf ("bilateral: %d\n", t2-t1);

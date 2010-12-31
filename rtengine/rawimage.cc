@@ -13,7 +13,7 @@
 #else
 #include <netinet/in.h>
 #endif
-
+#include <safegtk.h>
 
 namespace rtengine{
 
@@ -133,7 +133,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
   verbose = settings->verbose;
   oprof = NULL;
 
-  ifp = gfopen (filename.c_str());
+  ifp = gfopen (ifname);
   if (!ifp)
     return 3;
 

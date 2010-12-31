@@ -1,37 +1,42 @@
 # Set GtkSettings color scheme property.
 # This can be overriden (via an xsetting) with eg. the gnome-appearance-properties.
-gtk_color_scheme = "fg_color:#0A0A0A\nbg_color:#A1A1A1\nbase_color:#dddddd\ntext_color:#000\nselected_bg_color:#95B0DB\nselected_fg_color:#fff\ntooltip_bg_color:#F5F5B5\ntooltip_fg_color:#000"
+gtk_color_scheme = "fg_color:#0A0A0A\nbg_color:#A1A1A1\nbase_color:#dddddd\ntext_color:#000\nselected_bg_color:#666\nselected_fg_color:#fff\ntooltip_bg_color:#F5F5B5\ntooltip_fg_color:#000"
 
 style "clearlooks-default"
 {
 	########
 	# Style Properties
 	########
+	GtkFrame       ::shadow-type          = 2
+	
 	GtkButton      ::child-displacement-x = 1
 	GtkButton      ::child-displacement-y = 1
 	GtkButton      ::default-border       = { 0, 0, 0, 0 }
-	GtkCheckButton ::indicator-size       = 14
+	GtkCheckButton ::indicator-size       = 12
 
-	GtkPaned       ::handle-size          = 6
+	GtkPaned       ::handle-size          = 3
 
 	GtkRange       ::trough-border        = 0
-	GtkRange       ::slider-width         = 15
-	GtkRange       ::stepper-size         = 15
+	GtkRange       ::slider-width         = 8
+	GtkRange       ::stepper-size         = 12
 
 	GtkScale       ::slider-width         = 6
 	GtkScale       ::slider-length        = 15
 	GtkScale       ::trough-side-details  = 1
 	GtkScrollbar   ::min-slider-length    = 30
+	GtkScrollbar   ::slider-width         = 12
 
 	GtkMenuBar     ::internal-padding     = 0
-	GtkExpander    ::expander-size        = 14
-	GtkToolbar     ::internal-padding     = 1
-	GtkTreeView    ::expander-size        = 12
+	GtkExpander    ::expander-size        = 11
+	GtkToolbar     ::internal-padding     = 0
+	GtkTreeView    ::expander-size        = 10
 	GtkTreeView    ::vertical-separator   = 0
 
 	GtkMenu        ::horizontal-padding   = 0
 	GtkMenu        ::vertical-padding     = 0
 
+	GtkNotebook    ::tab-curvature        = 0
+	
 	# Glow the tasklist by changing the color, instead of overlaying it with a rectangle
 	WnckTasklist   ::fade-overlay-rect    = 0
 
@@ -46,8 +51,8 @@ style "clearlooks-default"
 	fg[INSENSITIVE]   = darker (@bg_color)
 
 	bg[NORMAL]        = @bg_color
-	bg[PRELIGHT]      = shade (1.02, @bg_color)
-	bg[SELECTED]	  = @selected_bg_color
+	bg[PRELIGHT]      = shade (0.88, @bg_color)#shade (1.02, @bg_color)
+	bg[SELECTED]	    = @selected_bg_color
 	bg[INSENSITIVE]   = @bg_color
 	bg[ACTIVE]        = shade (0.9, @bg_color)
 
@@ -92,8 +97,8 @@ style "clearlooks-wider"
 
 style "clearlooks-button"
 {
-	xthickness   = 3
-	ythickness   = 3
+	xthickness   = 1
+	ythickness   = 1
 
 	bg[NORMAL]   = shade (1.07, @bg_color)
 	bg[PRELIGHT] = shade (1.09, @bg_color)
@@ -114,8 +119,8 @@ style "clearlooks-notebook-bg"
 
 style "clearlooks-notebook" = "clearlooks-notebook-bg"
 {
-	xthickness = 3
-	ythickness = 3
+	xthickness = 1
+	ythickness = 1
 }
 
 style "clearlooks-tasklist"
@@ -184,6 +189,12 @@ style "clearlooks-frame-title"
 	fg[NORMAL] = lighter (@fg_color)
 }
 
+style "clearlooks-panel" = "clearlooks-default"
+{
+  xthickness = 3
+  ythickness = 3
+}
+
 style "clearlooks-tooltips"
 {
 	xthickness = 4
@@ -239,6 +250,8 @@ style "clearlooks-spinbutton"
 
 style "clearlooks-scale-bg"
 {
+	xthickness = 3
+	ythickness = 3
 	bg[NORMAL]   = shade (1.07, @bg_color)
 	bg[PRELIGHT] = shade (1.09, @bg_color)
 }
@@ -326,10 +339,10 @@ class "GtkWidget"    style "clearlooks-default"
 
 # Increase the x/ythickness in some widgets
 class "GtkToolbar"   style "clearlooks-toolbar" 
-class "GtkRange"     style "clearlooks-wide"
-class "GtkFrame"     style "clearlooks-wide"
-class "GtkSeparator" style "clearlooks-wide"
-class "GtkEntry"     style "clearlooks-wider"
+#class "GtkRange"     style "clearlooks-wide"
+#class "GtkFrame"     style "clearlooks-wide"
+#class "GtkSeparator" style "clearlooks-wide"
+#class "GtkEntry"     style "clearlooks-wider"
 
 class "GtkSpinButton"  style "clearlooks-spinbutton"
 class "GtkScale"       style "clearlooks-scale"

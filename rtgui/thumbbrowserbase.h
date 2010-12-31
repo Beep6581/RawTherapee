@@ -69,6 +69,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void configScrollBars ();
     void scrollChanged ();
     void scroll (int direction);
+    void scrollPage (int direction);
 
   protected:
 

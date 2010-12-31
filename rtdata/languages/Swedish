@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -28,6 +28,7 @@ EDITWINDOW_TITLE;Bildredigering
 EXIFFILTER_APERTURE;Bländare
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;EXIF-filter
+EXIFFILTER_FILETYPE;Filtyp
 EXIFFILTER_FOCALLEN;Brännvidd
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
@@ -147,6 +148,8 @@ HISTORY_MSG_104;HSV Equalizer
 HISTORY_MSG_105;Reducering av överstrålning
 HISTORY_MSG_106;Radie för reducering av överstrålning
 HISTORY_MSG_107;Tröskelvärde för reducering av överstrålning
+HISTORY_MSG_108;Storleksförändring på avgränsad yta
+HISTORY_MSG_109;Storleksförändring tillämpas på
 HISTORY_MSG_10;Skuggkomprimering
 HISTORY_MSG_11;Tonkurva
 HISTORY_MSG_12;Autoexponering
@@ -320,6 +323,7 @@ MAIN_BUTTON_SENDTOEDITOR;Redigera
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
+MAIN_FRAME_EDITOR;Redigering
 MAIN_FRAME_FILEBROWSER;Filhanterare
 MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
@@ -408,7 +412,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Skuggor/Högdagrar
 PARTIALPASTE_SHARPENING;Skärpa
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
 PARTIALPASTE_WHITEBALANCE;Vitbalans
-POPUPBUTTON_SELECTOPTIONHINT;Högerklicka för att ändra
+POPUPBUTTON_SELECTOPTIONHINT;Ändra genom att klicka på pilen till höger
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
@@ -507,12 +511,18 @@ PREFERENCES_SHOWDATETIME;Visa datum och tid
 PREFERENCES_SHOWONLYRAW;Visa bara RAW-filer
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETAB;Öppna en bild åt gången
+PREFERENCES_SINGLETABVERTAB;En-fliksläge med vertikala flikar
+PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
+PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud. I Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.
+PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
+PREFERENCES_SND_TRESHOLDSECS;Ljudet kommer efter så här många sekunder
 PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
 PREFERENCES_TAB_BROWSER;Filbläddrare
 PREFERENCES_TAB_COLORMGR;Färghantering
 PREFERENCES_TAB_GENERAL;Allmän
 PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_OUTPUT;Utmatningsinställningar
+PREFERENCES_TAB_SOUND;Ljud
 PREFERENCES_THUMBSIZE;Miniatyrbildstorlek
 PREFERENCES_USESYSTEMTHEME;Använd systemtema
 PREFERENCES_WORKFLOW;Arbetsflöde
@@ -598,6 +608,7 @@ TP_COLORSHIFT_LABEL;Färgskiftningar
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Fast proportion
 TP_CROP_GTDIAGONALS;Diagonalregeln
+TP_CROP_GTGRID;Rutnät
 TP_CROP_GTHARMMEANS1;Harmoniskt medel 1
 TP_CROP_GTHARMMEANS2;Harmoniskt medel 2
 TP_CROP_GTHARMMEANS3;Harmoniskt medel 3
@@ -706,12 +717,16 @@ TP_PREPROCESS_DARKFRAME;Svartbild
 TP_PREPROCESS_DFAUTOSELECT;Välj svartbild automatiskt
 TP_RAWPANEL_DEMOSAICING;Demosaicing
 TP_RAWPANEL_PREPROCESSING;Förbehandling
+TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
 TP_RESIZE_BILINEAR;Bilinjär
+TP_RESIZE_CROPPEDAREA;Beskuren yta
 TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
 TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
+TP_RESIZE_FITBOX;Begränsad yta
+TP_RESIZE_FULLIMAGE;Hela bilden
 TP_RESIZE_FULLSIZE;Full bildstorlek:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höjd
@@ -787,7 +802,6 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EXIFFILTER_FILETYPE;File Type
 !MAIN_FRAME_EDITOR;Editor
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !TP_CROP_GTGRID;Grid

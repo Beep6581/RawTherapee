@@ -638,6 +638,8 @@ ZOOMBAR_SMALL;Pequeno
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Resize bounding box
+!HISTORY_MSG_109;Resizing applies to
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
@@ -714,6 +716,11 @@ ZOOMBAR_SMALL;Pequeno
 !PREFERENCES_SET;SET
 !PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
+!PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
@@ -774,8 +781,12 @@ ZOOMBAR_SMALL;Pequeno
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
 !TP_RAWPANEL_DEMOSAICING;Demosaicing
 !TP_RAWPANEL_PREPROCESSING;Preprocessing
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_HEIGHT;Height
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:

@@ -157,7 +157,7 @@ namespace rtengine {
             /** With this member function the staged processor notifies the listener that it allocated a new
              * image to store the end result of the processing. It can be used in a shared manner. 
              * @param img is a pointer to the image
-             * @param scale describes the current scaling applied compared to the 100% size (preview scale + resize scale) 
+             * @param scale describes the current scaling applied compared to the 100% size (preview scale)
              * @param cp holds the coordinates of the current crop rectangle */
             virtual void setImage   (IImage8* img, double scale, procparams::CropParams cp) {}
             /** With this member function the staged processor notifies the listener that the image passed as parameter
@@ -303,6 +303,9 @@ namespace rtengine {
   *  Initializes the RT engine
   * @param s is a struct of basic settings */
     int init (const Settings* s);
+
+/** Cleanup the RT engine (static variables) */
+    void cleanup ();
 
 /** Returns the available output profile names
   * @return a vector of the available output profile names */

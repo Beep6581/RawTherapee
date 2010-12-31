@@ -170,6 +170,7 @@ void ProcParams::setDefaults () {
     
     resize.enabled = false;
     resize.scale  = 1.0;
+    resize.appliesTo = "Cropped area";
     resize.method = "Bicubic";
     resize.dataspec = 0;
     resize.width = 800;
@@ -369,6 +370,7 @@ int ProcParams::save (Glib::ustring fname) const {
 
     keyFile.set_boolean ("Resize", "Enabled",resize.enabled);
     keyFile.set_double  ("Resize", "Scale",  resize.scale);
+    keyFile.set_string  ("Resize", "AppliesTo", resize.appliesTo);
     keyFile.set_string  ("Resize", "Method", resize.method);
     keyFile.set_integer ("Resize", "DataSpecified",  resize.dataspec);
     keyFile.set_integer ("Resize", "Width",  resize.width);
@@ -444,7 +446,7 @@ int ProcParams::save (Glib::ustring fname) const {
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = g_fopen (safe_locale_from_utf8(fname).c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     
     if (f==NULL)
         return 1;
@@ -461,7 +463,7 @@ int ProcParams::load (Glib::ustring fname) {
     try {
         setDefaults ();
 
-        FILE* f = g_fopen (fname.c_str(), "rt");
+        FILE* f = safe_g_fopen (fname, "rt");
         if (!f)
             return 1;
         char* buffer = new char[1024];
@@ -676,6 +678,7 @@ if (keyFile.has_group ("HLRecovery")) {
 if (keyFile.has_group ("Resize")) {    
     if (keyFile.has_key ("Resize", "Enabled")) resize.enabled = keyFile.get_boolean ("Resize", "Enabled");
     if (keyFile.has_key ("Resize", "Scale"))  resize.scale  = keyFile.get_double ("Resize", "Scale");
+    if (keyFile.has_key ("Resize", "AppliesTo")) resize.appliesTo = keyFile.get_string ("Resize", "AppliesTo");
     if (keyFile.has_key ("Resize", "Method")) resize.method = keyFile.get_string ("Resize", "Method");
     if (keyFile.has_key ("Resize", "DataSpecified")) resize.dataspec = keyFile.get_integer ("Resize", "DataSpecified");
     if (keyFile.has_key ("Resize", "Width"))  resize.width  = keyFile.get_integer ("Resize", "Width");
@@ -923,6 +926,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && hlrecovery.enabled   == other.hlrecovery.enabled
         && hlrecovery.method    == other.hlrecovery.method
         && resize.scale     == other.resize.scale
+		&& resize.appliesTo == other.resize.appliesTo
         && resize.method    == other.resize.method
         && resize.dataspec  == other.resize.dataspec
         && resize.width     == other.resize.width

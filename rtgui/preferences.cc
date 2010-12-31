@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>, Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <addsetids.h>
 #include <dfmanager.h>
 #include <sstream>
+#include <safegtk.h>
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -80,6 +81,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
+    nb->append_page (*getSoundPanel(),          M("PREFERENCES_TAB_SOUND"));
     nb->set_current_page (0);
 
     fillPreferences ();
@@ -672,6 +674,48 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     return mvbfb;
 }
 
+Gtk::Widget* Preferences::getSoundPanel () {
+    Gtk::VBox* pSnd = new Gtk::VBox ();
+
+    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP")));
+    pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
+
+    // BatchQueueDone
+    Gtk::HBox* pBatchQueueDone = new Gtk::HBox();
+
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring(":")));
+    pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 12);
+    
+    txtSndBatchQueueDone =  Gtk::manage (new Gtk::Entry());
+    pBatchQueueDone->pack_end (*txtSndBatchQueueDone, Gtk::PACK_EXPAND_WIDGET, 4);
+    
+    pSnd->pack_start (*pBatchQueueDone, Gtk::PACK_SHRINK, 4);
+
+    // LngEditProcDone
+    Gtk::HBox* pSndLngEditProcDone = new Gtk::HBox();
+
+    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring(":")));
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 12);
+    
+    txtSndLngEditProcDone =  Gtk::manage (new Gtk::Entry());
+    pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
+
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring(":")));
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
+ 
+    spbSndLngEditProcDoneSecs = new Gtk::SpinButton ();
+    spbSndLngEditProcDoneSecs->set_digits (1);
+    spbSndLngEditProcDoneSecs->set_increments (0.5, 1);
+    spbSndLngEditProcDoneSecs->set_range (0, 10);
+    pSndLngEditProcDone->pack_end (*spbSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 4);
+
+    pSnd->pack_start (*pSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
+
+    pSnd->set_border_width (4);
+
+    return pSnd;
+}
+
 void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext) {
 
     // process directory
@@ -687,7 +731,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
       Glib::ustring fname = dirname + *i;
       Glib::ustring sname = *i;
       // ignore directories
-      if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
+      if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
             items.push_back (sname.substr(0,sname.size()-ext.size()));
     }
     delete dir;
@@ -786,6 +830,11 @@ void Preferences::storePreferences () {
     moptions.mainNBVertical = editorMode==1;
 
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
+
+    // Sounds
+    moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text ();
+    moptions.sndLngEditProcDone     = txtSndLngEditProcDone->get_text ();
+    moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
 }
 
 void Preferences::fillPreferences () {
@@ -796,9 +845,9 @@ void Preferences::fillPreferences () {
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
     dateformat->set_text (moptions.dateFormat);
-    if (Glib::file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
+    if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
-    if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
@@ -821,13 +870,13 @@ void Preferences::fillPreferences () {
     edOther->set_active (moptions.editorToSendTo==3);
 #ifdef _WIN32    
     edPS->set_active (moptions.editorToSendTo==2);
-    if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
         gimpDir->set_filename (moptions.gimpDir);
-    if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
         psDir->set_filename (moptions.psDir);
 #elif defined __APPLE__
   edPS->set_active (moptions.editorToSendTo==2);
-  if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
+  if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);
@@ -891,6 +940,11 @@ void Preferences::fillPreferences () {
     dfconn.block (false);
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
+
+    // Sounds
+    txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
+    txtSndLngEditProcDone->set_text (moptions.sndLngEditProcDone);
+    spbSndLngEditProcDoneSecs->set_value (moptions.sndLngEditProcDoneSecs);
 }
 
 /*

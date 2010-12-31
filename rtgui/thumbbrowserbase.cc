@@ -68,11 +68,17 @@ void ThumbBrowserBase::scrollChanged () {
 }
 
 void ThumbBrowserBase::scroll (int direction) {
-
     if (arrangement==TB_Vertical)
         vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_step_increment());
     else
         hscroll.set_value (hscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_step_increment());
+}
+
+void ThumbBrowserBase::scrollPage (int direction) {
+    if (arrangement==TB_Vertical)
+        vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
+    else
+        hscroll.set_value (hscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment());
 }
 
 void ThumbBrowserBase::resizeThumbnailArea (int w, int h) {

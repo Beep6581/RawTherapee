@@ -19,6 +19,7 @@
 #include <icmpanel.h>
 #include <options.h>
 #include <guiutils.h>
+#include <safegtk.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -118,7 +119,7 @@ ICMPanel::ICMPanel () : ToolPanel(), iunchanged(NULL), icmplistener(NULL) {
     opDialog->add_filter (filter_icc);
     opDialog->add_filter (filter_any);
 
-    if (Glib::file_test (options.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) {
+    if (safe_file_test (options.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) {
         ipDialog->set_current_folder (options.rtSettings.iccDirectory);
         opDialog->set_current_folder (options.rtSettings.iccDirectory);
     }    

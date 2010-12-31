@@ -30,9 +30,31 @@ extern Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
-    pW(-1), pH(-1), plistener(NULL), imageListener(NULL),fineDetailsProcessed(false),
-    aeListener(NULL), hListener(NULL), resultValid(false),
+    pW(-1), pH(-1), plistener(NULL),fineDetailsProcessed(false),
+    imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
     changeSinceLast(0), updaterRunning(false), destroying(false) {
+
+	dummy1        = new float[65536];
+    dummy2        = new float[65536];
+    hltonecurve   = new float[65536];
+    shtonecurve   = new float[65536];
+    tonecurve     = new int[65536];
+
+    lumacurve     = new int[65536];
+    chroma_acurve = new int[65536];
+    chroma_bcurve = new int[65536];
+
+    vhist16 = new unsigned int[65536];
+    lhist16 = new unsigned int[65536];
+
+    rhist     = new unsigned int[256];
+    ghist     = new unsigned int[256];
+    bhist     = new unsigned int[256];
+    Lhist     = new unsigned int[256];
+    bcrgbhist = new unsigned int[256];
+    bcLhist   = new unsigned int[256];
+    bcabhist  = new unsigned int[256];
+
 }
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -53,6 +75,27 @@ ImProcCoordinator::~ImProcCoordinator () {
     for (int i=0; i<toDel.size(); i++)
         delete toDel[i];
 
+    delete [] dummy1;
+    delete [] dummy2;
+    delete [] hltonecurve;
+    delete [] shtonecurve;
+    delete [] tonecurve;
+
+    delete [] lumacurve;
+    delete [] chroma_acurve;
+    delete [] chroma_bcurve;
+
+    delete [] vhist16;
+    delete [] lhist16;
+
+    delete [] rhist;
+    delete [] ghist;
+    delete [] bhist;
+    delete [] Lhist;
+    delete [] bcrgbhist;
+    delete [] bcLhist;
+    delete [] bcabhist;
+
     imgsrc->decreaseRef ();
     updaterThreadStart.unlock ();
 }
@@ -68,13 +111,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     int numofphases = 10;
     int readyphase = 0;
-
-    if (!params.resize.enabled)
-        params.resize.scale = 1.0;
-    else if (params.resize.dataspec==1)
-        params.resize.scale = (double)params.resize.width / (params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
-    else if (params.resize.dataspec==2)
-        params.resize.scale = (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
 
     ipf.setScale (scale);
 
@@ -156,11 +192,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
-            unsigned int aehist[65536]; int aehistcompr;
+            unsigned int *aehist = new unsigned int[65536]; int aehistcompr;
             imgsrc->getAEHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
             if (aeListener)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.black);
+            delete [] aehist;
         }
     }
 
@@ -256,7 +293,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (!resultValid) {
         resultValid = true;
         if (imageListener)
-            imageListener->setImage (previmg, scale*params.resize.scale, params.crop);
+            imageListener->setImage (previmg, scale, params.crop);
     }
     if (imageListener)
         imageListener->imageReady (params.crop);
@@ -347,22 +384,8 @@ if (settings->verbose) printf ("setscale before lock\n");
     
     scale = prevscale;
     resultValid = false;
-    if (!params.resize.enabled) {
-        fullw = fw;
-        fullh = fh;
-    }
-    else if (params.resize.dataspec==0) {
-        fullw = fw*params.resize.scale;
-        fullh = fh*params.resize.scale;
-    }
-    else if (params.resize.dataspec==1) {
-        fullw = params.resize.width;
-        fullh = (double)fh*params.resize.width/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
-    }
-    else if (params.resize.dataspec==2) {
-        fullw = (double)fw*params.resize.height/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
-        fullh = params.resize.height;
-    }
+    fullw = fw;
+    fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
     if (sizeListeners.size()>0)
         for (int i=0; i<sizeListeners.size(); i++)

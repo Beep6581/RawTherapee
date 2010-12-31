@@ -437,6 +437,14 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         openDefaultViewer (dest);
         return true;
     }
+    else if (event->keyval==GDK_Page_Up) {
+        scrollPage(GDK_SCROLL_UP);
+        return true;
+    }
+    else if (event->keyval==GDK_Page_Down) {
+        scrollPage(GDK_SCROLL_DOWN);
+        return true;
+    }
         
     return false;
 }

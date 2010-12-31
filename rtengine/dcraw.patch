@@ -1,5 +1,5 @@
---- dcraw.c	Thu Nov 11 21:29:28 2010
-+++ dcraw.cc	Wed Dec 08 22:47:21 2010
+--- dcraw.c	Sun Dec 12 19:32:29 2010
++++ dcraw.cc	Fri Dec 31 12:10:25 2010
 @@ -1,5 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -381,14 +381,24 @@
    } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
  	     !memcmp (head+6,"Exif",4)) {
      fseek (ifp, 4, SEEK_SET);
-@@ -7329,10 +7356,15 @@
+@@ -6891,10 +6918,11 @@
+ 	parse_fuji (i);
+     }
+     fseek (ifp, 100, SEEK_SET);
+     parse_tiff (data_offset = get4());
+     parse_tiff (thumb_offset+12);
++/*RT*/    exif_base = thumb_offset+12;
+     apply_tiff();
+   } else if (!memcmp (head,"RIFF",4)) {
+     fseek (ifp, 0, SEEK_SET);
+     parse_riff();
+   } else if (!memcmp (head,"\0\001\0\001\0@",6)) {
+@@ -7329,10 +7357,13 @@
      cam_mul[0] *= 256/527.0;
      cam_mul[2] *= 256/317.0;
    } else if (!strcmp(model,"D1X")) {
      width -= 4;
      pixel_aspect = 0.5;
-+  } else if (!strcmp(model,"D7000")) {
-+    width -= 40;
 +  } else if (!strcmp(model,"D3100")) {
 +    width -= 24;
 +    left_margin = 4;
@@ -397,7 +407,7 @@
  	     !strcmp(model,"D80")  ||
  	     !strcmp(model,"D3000")) {
      height -= 3;
-@@ -7546,11 +7578,11 @@
+@@ -7546,11 +7577,11 @@
    } else if (!strcmp(model,"*ist D")) {
      data_error = -1;
    } else if (!strcmp(model,"*ist DS")) {
@@ -410,7 +420,7 @@
      if (fsize == 3178560) {
        height = 1540;
        width  = 2064;
-@@ -8558,17 +8590,17 @@
+@@ -8558,17 +8589,17 @@
      for (col=0; col < width; col++, soff += cstep)
        if (output_bps == 8)
  	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
@@ -430,7 +440,7 @@
    int timestamp_only=0, thumbnail_only=0, identify_only=0;
    int user_qual=-1, user_black=-1, user_sat=-1, user_flip=-1;
    int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;
-@@ -8677,11 +8709,11 @@
+@@ -8677,11 +8708,11 @@
        case 'z':  timestamp_only    = 1;  break;
        case 'e':  thumbnail_only    = 1;  break;
        case 'i':  identify_only     = 1;  break;
@@ -443,7 +453,7 @@
        case 'a':  use_auto_wb       = 1;  break;
        case 'w':  use_camera_wb     = 1;  break;
        case 'M':  use_camera_matrix = (opm == '+');  break;
-@@ -8941,5 +8973,6 @@
+@@ -8941,5 +8972,6 @@
        else shot_select = 0;
      }
    }

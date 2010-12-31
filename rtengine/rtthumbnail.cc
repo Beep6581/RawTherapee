@@ -33,6 +33,7 @@
 #include <glib/gstdio.h>
 #include <setjmp.h>
 #include <safekeyfile.h>
+#include <safegtk.h>
 #include <rawimage.h>
 #include "jpeg.h"
 
@@ -483,6 +484,23 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 #undef FISBLUE
 
 
+unsigned short *Thumbnail::igammatab = 0;
+unsigned char  *Thumbnail::gammatab  = 0;
+
+void Thumbnail::initGamma () {
+    igammatab = new unsigned short[256];
+    gammatab = new unsigned char[65536];
+    for (int i=0; i<256; i++)
+        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,1.0/0.45));
+    for (int i=0; i<65536; i++)
+        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,0.45));
+}
+
+void Thumbnail::cleanupGamma () {
+    delete [] igammatab;
+    delete [] gammatab;
+}
+
 void Thumbnail::init () {
 
     RawImageSource::inverse33 (colorMatrix, iColorMatrix);
@@ -494,20 +512,8 @@ void Thumbnail::init () {
     camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
 }
 
-bool Thumbnail::igammacomputed = false;
-unsigned short Thumbnail::igammatab[256];
-unsigned char Thumbnail::gammatab[65536];
-
 Thumbnail::Thumbnail () :
     camProfile(NULL), thumbImg(NULL), aeHistogram(NULL), embProfileData(NULL), embProfile(NULL) {
-
-    if (!igammacomputed) {
-        for (int i=0; i<256; i++)
-            igammatab[i] = (unsigned short)(255.0*pow(i/255.0,1.0/0.45));
-        for (int i=0; i<65536; i++)
-            gammatab[i] = (unsigned char)(255.0*pow(i/65535.0,0.45));
-        igammacomputed = true;
-    }
 }
 
 Thumbnail::~Thumbnail () {
@@ -737,14 +743,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     else
         myscale = scale * thumbImg->height / fh;
 
-    if (params.resize.enabled) {
-        if (params.resize.dataspec==0)
-            myscale *= params.resize.scale;
-        else if (params.resize.dataspec==1)
-            myscale *= (double)params.resize.width / (params.coarse.rotate==90 || params.coarse.rotate==270 ? thumbImg->height : thumbImg->width) / scale;
-        else if (params.resize.dataspec==2)
-            myscale *= (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? thumbImg->width : thumbImg->height) / scale;
-    }
     myscale = 1.0 / myscale;
 
 /*    // apply crop
@@ -776,6 +774,7 @@ int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight)
 
 void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& params, int& fullw, int& fullh) {
 
+    // WARNING: When downscaled, the ratio have loosed a lot of precision, so we can't get back the exact initial dimensions
     double fw = thumbImg->width*scale;
     double fh = thumbImg->height*scale;
     
@@ -787,17 +786,9 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& params, in
         fullw = fw;
         fullh = fh;
     }
-    else if (params.resize.dataspec==0) {
-        fullw = fw*params.resize.scale;
-        fullh = fh*params.resize.scale;
-    }
-    else if (params.resize.dataspec==1) {
-        fullw = params.resize.width;
-        fullh = (double)fh*params.resize.width/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
-    }
-    else if (params.resize.dataspec==2) {
-        fullw = (double)fw*params.resize.height/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
-        fullh = params.resize.height;
+    else {
+        fullw = (int)((double)fw+0.5);
+        fullh = (int)((double)fh+0.5);
     }
 }
 
@@ -986,7 +977,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
         }
 
         if (format==1) {
-            FILE* f = g_fopen (fname.c_str(), "wb");
+            FILE* f = safe_g_fopen (fname, "wb");
             if (!f) {
                 delete [] tmpdata;
                 return false;
@@ -997,7 +988,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             fclose (f);
         }
         else if (format==3) {
-            FILE* f = g_fopen (fname.c_str(), "wb");
+            FILE* f = safe_g_fopen (fname, "wb");
             if (!f) {
                 delete [] tmpdata;
                 return false;
@@ -1042,7 +1033,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
         return true;
     }
     else if (format==2) {
-        FILE* f = g_fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen (fname, "wb");
         if (!f)
             return false;
         fwrite (&thumbImg->width, 1, sizeof (int), f);
@@ -1066,17 +1057,17 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
     thumbImg = NULL;
 
     int imgType = 0;
-    if (Glib::file_test (fname+".cust16", Glib::FILE_TEST_EXISTS))
+    if (safe_file_test (fname+".cust16", Glib::FILE_TEST_EXISTS))
         imgType = 2;
-    if (Glib::file_test (fname+".cust", Glib::FILE_TEST_EXISTS))
+    if (safe_file_test (fname+".cust", Glib::FILE_TEST_EXISTS))
         imgType = 1;
-    else if (Glib::file_test (fname+".jpg", Glib::FILE_TEST_EXISTS))
+    else if (safe_file_test (fname+".jpg", Glib::FILE_TEST_EXISTS))
         imgType = 3;
 
     if (!imgType) 
         return false;
     else if (imgType==1) {
-        FILE* f = g_fopen ((fname+".cust").c_str(), "rb");
+        FILE* f = safe_g_fopen (fname+".cust", "rb");
         if (!f)
             return false;
         int width, height;
@@ -1109,7 +1100,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         return true;
     }
     else if (imgType==2) {
-        FILE* f = g_fopen ((fname+".cust16").c_str(), "rb");
+        FILE* f = safe_g_fopen (fname+".cust16", "rb");
         if (!f)
             return false;
         int width, height;
@@ -1126,7 +1117,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         return true;
     }
     else if (imgType==3) {
-        FILE* f = g_fopen ((fname+".jpg").c_str(), "rb");
+        FILE* f = safe_g_fopen (fname+".jpg", "rb");
         if (!f) 
             return false;
         struct jpeg_decompress_struct cinfo;
@@ -1224,7 +1215,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     SafeKeyFile keyFile;
 
     try {
-    if( Glib::file_test(fname,Glib::FILE_TEST_EXISTS) )
+    if( safe_file_test(fname,Glib::FILE_TEST_EXISTS) )
         keyFile.load_from_file (fname); 
     } catch (...) {}
 
@@ -1244,7 +1235,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
     keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     if (!f)
         return false;
     else {
@@ -1278,7 +1269,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
 bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
     
     if (embProfileData) {
-        FILE* f = fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen(fname, "wb");
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
             fclose (f);
@@ -1290,7 +1281,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
 
 bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 
-    FILE* f = fopen (fname.c_str(), "rb");
+    FILE* f = safe_g_fopen (fname, "rb");
     if (!f) 
         aeHistogram = NULL;
     else {
@@ -1305,7 +1296,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 bool Thumbnail::writeAEHistogram (const Glib::ustring& fname) {
 
     if (aeHistogram) {
-        FILE* f = fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen (fname, "wb");
         if (f) {
             fwrite (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
             fclose (f);

@@ -235,8 +235,8 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
     while (change) {
         change = false;
         for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end(); it++)
-            if (!Glib::file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS) 
-             || !Glib::file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
+            if (!safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS) 
+             || !safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
                 dirTreeModel->erase (it);
                 change = true;
                 break;
@@ -272,7 +272,7 @@ void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustri
 void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column) {
 
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
-    if (Glib::file_test (dname, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (dname, Glib::FILE_TEST_IS_DIR)) 
         for (int i=0; i<dllisteners.size(); i++)
             dllisteners[i]->dirSelected (dname);
 }
@@ -352,7 +352,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName) {
 
-    if (!file || !Glib::file_test (dirName, Glib::FILE_TEST_IS_DIR) || event_type==Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED) 
+    if (!file || !safe_file_test (dirName, Glib::FILE_TEST_IS_DIR) || event_type==Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED) 
         return;
 
     gdk_threads_enter();
