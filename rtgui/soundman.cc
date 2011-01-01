@@ -25,6 +25,12 @@
 #include <mmsystem.h>
 #endif
 
+// TODO: On Windows Vista/7 RT should register with the OS sound system, so it can enjoy application specific
+// volume, safed, process independent etc. from the start.
+// Function call is IAudioClient::Initialize
+// Unfortunately MinGW does not support this yet. If audioclient.h is available, add an Init
+// called once on program start.
+
 // Plays a sound in async mode to not block the main thread
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
