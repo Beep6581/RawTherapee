@@ -244,56 +244,74 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
         imwidth = maximwidth;
     if (!fuji && imheight>maximheight)
         imheight = maximheight;
-       
+    int maxx=this->W,maxy=this->H,skip=pp.skip;
+
+    if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
+    double area=skip*skip;
+    rm/=area;
+    gm/=area;
+    bm/=area;
+
+#ifdef _OPENMP
+#pragma omp parallel
+    {
+#endif
     // render the requested image part
-    float* red  = new float[imwidth];
-    float* grn  = new float[imwidth];
-    float* blue = new float[imwidth];
+    float* line_red  = new float[imwidth];
+    float* line_grn  = new float[imwidth];
+    float* line_blue = new float[imwidth];
 
-    for (int i=sy1,ix=0; ix<imheight; i+=pp.skip, ix++) {
-		if (hrp.enabled) {//do highlight recovery; don't clip data until after recovery
-			if (ri->isBayer()) {
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-					red[j] = (rm*this->red[i][jx]);
-					grn[j] = (gm*this->green[i][jx]);
-					blue[j] = (bm*this->blue[i][jx]);
-				}
-			} else {
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-					red[j]  = (rm*rawData[i][jx*3+0]);
-					grn[j]  = (gm*rawData[i][jx*3+1]);
-					blue[j] = (bm*rawData[i][jx*3+2]);
-					
-				}
-			}
-			
-			hlRecovery (hrp.method, red, grn, blue, i, sx1, imwidth, pp.skip);
 
-		} else {
-			
-			if (ri->isBayer()) {
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-					red[j] = CLIP(rm*this->red[i][jx]);
-					grn[j] = CLIP(gm*this->green[i][jx]);
-					blue[j] = CLIP(bm*this->blue[i][jx]);
-				}
-			} else {
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=pp.skip) {
-					red[j]  = CLIP(rm*rawData[i][jx*3+0]);
-					grn[j]  = CLIP(gm*rawData[i][jx*3+1]);
-					blue[j] = CLIP(bm*rawData[i][jx*3+2]);
-					
-				}
-			}
-		}
-		
-        transLine (red, grn, blue, ix, image, tran, imwidth, imheight, fw);
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
+		if (ri->isBayer()) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+            	float rtot,gtot,btot;
+            	rtot=gtot=btot=0;
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
+					{
+						rtot += red[i+m][jx+n];
+						gtot += green[i+m][jx+n];
+						btot += blue[i+m][jx+n];
+					}
+				line_red[j] = CLIP(rm*rtot);
+				line_grn[j] = CLIP(gm*gtot);
+				line_blue[j] = CLIP(bm*btot);
+            }
+        } else {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+            	float rtot,gtot,btot;
+            	rtot=gtot=btot=0;
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
+					{
+						rtot += rawData[i+m][(jx+n)*3+0];
+						gtot += rawData[i+m][(jx+n)*3+1];
+						btot += rawData[i+m][(jx+n)*3+2];
+					}				
+				line_red[j] = CLIP(rm*rtot);
+				line_grn[j] = CLIP(gm*gtot);
+				line_blue[j] = CLIP(bm*btot);
+				
+            }
+        }
+                
+        if (hrp.enabled)
+            hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip);
+
+        transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
     }
 
-    delete [] red;
-    delete [] grn;
-    delete [] blue;
-          
+    delete [] line_red;
+    delete [] line_grn;
+    delete [] line_blue;
+#ifdef _OPENMP
+    }
+#endif
     if (fuji) {   
         int a = ((tran & TR_ROT) == TR_R90 && image->width%2==0) || ((tran & TR_ROT) == TR_R180 && image->height%2+image->width%2==1) || ((tran & TR_ROT) == TR_R270 && image->height%2==0);
         // first row
@@ -524,8 +542,8 @@ int RawImageSource::findHotDeadPixel( unsigned char *bpMap, float thresh)
 	}
 	free (cfablur);
 	free (cfahist);
-#undef range;
-#undef range2;
+#undef range
+#undef range2
 
 	return counter;
 }
@@ -977,8 +995,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	size_t widthBitmap = (W/8+ ((W&7)?1:0));
 	size_t dimBitmap = widthBitmap*H;
 
-	unsigned char *bitmapBads = new unsigned char [ dimBitmap ];
-	for (int i=0; i<dimBitmap; i++) bitmapBads[i]=0;
+	unsigned char (*bitmapBads);
+	bitmapBads = (unsigned char (*)) calloc (dimBitmap, sizeof *bitmapBads);
+	//unsigned char *bitmapBads = new unsigned char [ dimBitmap ];
+	//for (int i=0; i<dimBitmap; i++) bitmapBads[i]=0;
+	
 	int totBP=0; // Hold count of bad pixels to correct
 	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
 	if( bp ){
@@ -1019,7 +1040,8 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}
 	if( totBP )
 	   cfaCleanFromMap( bitmapBads );
-	delete [] bitmapBads;
+	//delete [] bitmapBads;
+	free (bitmapBads);
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
