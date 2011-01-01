@@ -631,7 +631,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	jpeg_start_compress(&cinfo, TRUE);
 
     // buffer for exif and iptc markers
-    unsigned char buffer[165535];
+	unsigned char* buffer = new unsigned char[165535];	//TODO: Is it really 165535... or 65535 ?
     unsigned int size;
     // assemble and write exif marker
    if (exifRoot) {
@@ -684,6 +684,8 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	jpeg_destroy_compress (&cinfo);
 
     delete [] row;
+    delete [] buffer;
+
 	fclose (file);
 
 	// Rename temporary filename, practically atomic
@@ -720,7 +722,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         }
         
         // buffer for the exif and iptc
-        unsigned char buffer[165535];
+        unsigned char* buffer = new unsigned char[165535];	//TODO: Is it really 165535... or 65535 ?
         unsigned char* iptcdata = NULL;
         unsigned int iptclen = 0;
         if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
@@ -730,6 +732,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer);
         if (iptcdata) 
             iptc_data_free_buf (iptc, iptcdata);
+
+        // The maximum lenght is strangely not the same than for the JPEG file...
+        // Which maximum length is the good one ?
         if (size>0 && size<165530)
             fwrite (buffer, size, 1, file);
 
@@ -747,6 +752,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
             if (pl && !(i%100))
                 pl->setProgress ((double)(i+1)/height);
         }
+        delete [] buffer;
         
         fclose (file);
     }

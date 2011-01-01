@@ -43,7 +43,7 @@ private:
     CurveType selected;
 
     PopUpToggleButton* curveType;
-    unsigned int histogram[256];	// histogram values
+    unsigned int* histogram;	// histogram values
     bool bgHistValid;
 
 	CurveEditorGroup* group;
@@ -57,7 +57,7 @@ public:
 
 	friend class CurveEditorGroup;
 	CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup);
-	//~CurveEditor ();
+	~CurveEditor ();
 	void typeSelectionChanged (int n);
 	void curveTypeToggled();
 	void setCurve (const std::vector<double>& p);
