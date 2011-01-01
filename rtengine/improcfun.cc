@@ -67,7 +67,7 @@ using namespace procparams;
 
 extern const Settings* settings;
 
-float* ImProcFunctions::cachef;
+float* ImProcFunctions::cachef = 0;
 /*float* ImProcFunctions::cacheL;
 float* ImProcFunctions::cachea;
 float* ImProcFunctions::cacheb;
@@ -75,7 +75,7 @@ float* ImProcFunctions::xcache;
 float* ImProcFunctions::ycache;
 float* ImProcFunctions::zcache;*/
 //unsigned short ImProcFunctions::gamma2curve[65536];
-float* ImProcFunctions::gamma2curve;
+float* ImProcFunctions::gamma2curve = 0;
 
 void ImProcFunctions::initCache () {
 
@@ -89,21 +89,21 @@ void ImProcFunctions::initCache () {
     for (int i=0; i<maxindex; i++) {
         if (i>eps_max) {
 			cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
-            //cacheL[i] = 327.68*((116.0 * exp(1.0/3.0 * log((double)i / MAXVAL)) - 16.0));
-            //cachea[i] = 327.68*(500.0 * exp(1.0/3.0 * log((double)i / MAXVAL)));
-            //cacheb[i] = 327.68*(200.0 * exp(1.0/3.0 * log((double)i / MAXVAL)));
         }
         else {
 			cachef[i] = 327.68*((kappa*i/MAXVAL+16.0)/116.0);
-            //cacheL[i] = 327.68*((kappa * i/MAXVAL)/116.0); // assuming CMAXVAL = 65535
-            //cachea[i] = 327.68*(500.0 * (kappa*i/MAXVAL+16.0)/116.0);
-            //cacheb[i] = 327.68*(200.0 * (kappa*i/MAXVAL+16.0)/116.0);
         }
 	}
 
 	for (int i=0; i<65536; i++) {
 		gamma2curve[i] = (CurveFactory::gamma2(i/65535.0) * 65535.0);
 	}
+}
+
+void ImProcFunctions::cleanupCache () {
+
+	delete [] cachef;
+	delete [] gamma2curve;
 }
 
 ImProcFunctions::~ImProcFunctions () {

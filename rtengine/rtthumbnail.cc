@@ -475,6 +475,23 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 #undef FISBLUE
 
 
+unsigned short *Thumbnail::igammatab = 0;
+unsigned char  *Thumbnail::gammatab  = 0;
+
+void Thumbnail::initGamma () {
+    igammatab = new unsigned short[256];
+    gammatab = new unsigned char[65536];
+    for (int i=0; i<256; i++)
+        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,1.0/0.45));
+    for (int i=0; i<65536; i++)
+        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,0.45));
+}
+
+void Thumbnail::cleanupGamma () {
+    delete [] igammatab;
+    delete [] gammatab;
+}
+
 void Thumbnail::init () {
 
     RawImageSource::inverse33 (colorMatrix, iColorMatrix);
@@ -486,20 +503,8 @@ void Thumbnail::init () {
     camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
 }
 
-bool Thumbnail::igammacomputed = false;
-unsigned short Thumbnail::igammatab[256];
-unsigned char Thumbnail::gammatab[65536];
-
 Thumbnail::Thumbnail () :
     camProfile(NULL), thumbImg(NULL), aeHistogram(NULL), embProfileData(NULL), embProfile(NULL) {
-
-    if (!igammacomputed) {
-        for (int i=0; i<256; i++)
-            igammatab[i] = (unsigned short)(255.0*pow(i/255.0,1.0/0.45));
-        for (int i=0; i<65536; i++)
-            gammatab[i] = (unsigned char)(255.0*pow(i/65535.0,0.45));
-        igammacomputed = true;
-    }
 }
 
 Thumbnail::~Thumbnail () {

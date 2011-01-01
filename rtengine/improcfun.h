@@ -67,6 +67,7 @@ class ImProcFunctions {
 		double lumimul[3];
 
 		static void initCache ();
+		static void cleanupCache ();
 
 		ImProcFunctions       (const ProcParams* iparams, bool imultiThread=true)
 			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
@@ -96,7 +97,7 @@ class ImProcFunctions {
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
 
 		void dirpyrLab_denoise(LabImage * src, LabImage * dst, int luma, int chroma, float gamma );//Emil's directional pyramid denoise
-		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, int * rangefn_L, int * rangefn_ab, int pitch, int scale, const int luma, int chroma );
+		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, float * rangefn_L, float * rangefn_ab, int pitch, int scale, const int luma, int chroma );
 		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, float * nrwt_l, float * nrwt_ab, int pitch, int scale, const int luma, int chroma );
 
 		void dirpyrLab_equalizer (LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer

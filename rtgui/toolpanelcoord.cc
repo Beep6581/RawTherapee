@@ -385,10 +385,6 @@ int ToolPanelCoordinator::getSpotWBRectSize () {
 }
 
 void ToolPanelCoordinator::updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl) {
-	for (int i=0; i<256; i++)
-		printf(" histrgb[%d]=%d ",i,histrgb[i]);
-	for (int i=0; i<256; i++)
-		printf(" histl[%d]=%d ",i,histl[i]);
 
     curve->updateCurveBackgroundHistogram (histrgb);
     lcurve->updateCurveBackgroundHistogram (histl);

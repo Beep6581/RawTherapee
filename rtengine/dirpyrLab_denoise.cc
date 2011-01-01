@@ -24,7 +24,6 @@
 #include <curves.h>
 #include <labimage.h>
 #include <improcfun.h>
-#include <gauss.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -33,31 +32,19 @@
 #define SQR(x) ((x)*(x))
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
+#define CLIP(a) (CLIPTO(a,0,65535))
 
 
 
-#define DIRWT_L(i1,j1,i,j) (rangefn_L[CLIPTO((int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000),0,0x1ffff)] )
+#define DIRWT_L(i1,j1,i,j) (  rangefn_L[CLIP((int)(data_fine->L[i1][j1]-data_fine->L[i][j]+32768))] )
 
-#define DIRWT_AB(i1,j1,i,j) (rangefn_ab[CLIPTO((int)(data_fine->a[i1][j1]-data_fine->a[i][j]+0x10000),0,0x1ffff)] *  \
-rangefn_ab[CLIPTO((int)(data_fine->L[i1][j1]-data_fine->L[i][j]+0x10000),0,0x1ffff)] * \
-rangefn_ab[CLIPTO((int)(data_fine->b[i1][j1]-data_fine->b[i][j]+0x10000),0,0x1ffff)] )
+#define DIRWT_AB(i1,j1,i,j) (  rangefn_ab[CLIP((int)(data_fine->a[i1][j1]-data_fine->a[i][j]+32768))] *  \
+rangefn_ab[CLIP((int)(data_fine->L[i1][j1]-data_fine->L[i][j]+32768))] * \
+rangefn_ab[CLIP((int)(data_fine->b[i1][j1]-data_fine->b[i][j]+32768))] )
 
-#define NRWT_L(a) (nrwt_l[a] )
+#define NRWT_L(a) (nrwt_l[CLIP((int)a)] )
 
-#define NRWT_AB (nrwt_ab[CLIPTO((int)((hipass[1]+0x10000)),0,0x1ffff)] * nrwt_ab[CLIPTO((int)((hipass[2]+0x10000)),0,0x1ffff)])
-
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-
-#define med3x3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
-p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; p[5]=a5; p[6]=a6; p[7]=a7; p[8]=a8; \
-PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
-PIX_SORT(p[0],p[1]); PIX_SORT(p[3],p[4]); PIX_SORT(p[6],p[7]); \
-PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
-PIX_SORT(p[0],p[3]); PIX_SORT(p[5],p[8]); PIX_SORT(p[4],p[7]); \
-PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); \
-PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
-PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
+#define NRWT_AB (nrwt_ab[CLIP((int)((hipass[1]+32768)))] * nrwt_ab[CLIP((int)((hipass[2]+32768)))])
 
 
 
@@ -100,16 +87,17 @@ namespace rtengine {
 		//float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-		float * gamcurve = new float[65536];
+		float * gamcurve = new float [65536];
 		for (int i=0; i<65536; i++) {
-			gamcurve[i] = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
+			gamcurve[i] = (CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
+			//if (i<500)  printf("%d %d \n",i,gamcurve[i]);
 		}
 		
 		
 		//#pragma omp parallel for if (multiThread)
 		for (int i=0; i<src->H; i++) {
 			for (int j=0; j<src->W; j++) {
-				src->L[i][j] = gamcurve[CLIP((int)src->L[i][j]) ];
+				src->L[i][j] = CurveFactory::flinterp(gamcurve,src->L[i][j]);
 			}
 		}
 		
@@ -117,12 +105,12 @@ namespace rtengine {
 		
 		
 		
-		int * rangefn_L = new int [0x20000];
-		float * nrwt_l = new float [0x10000];
+		float * rangefn_L = new float [65536];
+		float * nrwt_l = new float [65536];
 		
 		
-		int * rangefn_ab = new int [0x20000];
-		float * nrwt_ab = new float [0x20000];
+		float * rangefn_ab = new float [65536];
+		float * nrwt_ab = new float [65536];
 		
 		int intfactor = 1024;//16384;
 		
@@ -132,7 +120,7 @@ namespace rtengine {
 		//gamma correction for chroma in shadows
 		float nrwtl_norm = ((CurveFactory::gamma((double)65535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) - \
 							(CurveFactory::gamma((double)75535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)));
-		for (int i=0; i<0x10000; i++) {
+		for (int i=0; i<65536; i++) {
 			nrwt_l[i] = ((CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) - \
 						  CurveFactory::gamma((double)(i+10000)/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) )/nrwtl_norm;
 			//if (i % 100 ==0) printf("%d %f \n",i,nrwt_l[i]);
@@ -148,14 +136,14 @@ namespace rtengine {
 		
 		
 		//set up range functions
-		for (int i=0; i<0x20000; i++) 
-			rangefn_L[i] = (int)(( exp(-(double)fabs(i-0x10000) * tonefactor / (1+3*noise_L)) * noisevar_L/((double)(i-0x10000)*(double)(i-0x10000) + noisevar_L))*intfactor); 
-		for (int i=0; i<0x20000; i++) 
-			rangefn_ab[i] = (int)(( exp(-(double)fabs(i-0x10000) * tonefactor / (1+3*noise_ab)) * noisevar_ab/((double)(i-0x10000)*(double)(i-0x10000) + noisevar_ab))*intfactor); 
+		for (int i=0; i<65536; i++) 
+			rangefn_L[i] = (( exp(-(double)fabs(i-32768) * tonefactor / (1+3*noise_L)) * noisevar_L/((double)(i-32768)*(double)(i-32768) + noisevar_L))*intfactor); 
+		for (int i=0; i<65536; i++) 
+			rangefn_ab[i] = (( exp(-(double)fabs(i-32768) * tonefactor / (1+3*noise_ab)) * noisevar_ab/((double)(i-32768)*(double)(i-32768) + noisevar_ab))*intfactor); 
 		
 		
-		for (int i=0; i<0x20000; i++) 
-			nrwt_ab[i] = ((1+abs(i-0x10000)/(1+8*noise_ab)) * exp(-(double)fabs(i-0x10000)/ (1+8*noise_ab) ) );
+		for (int i=0; i<65536; i++) 
+			nrwt_ab[i] = ((1+abs(i-32768)/(1+8*noise_ab)) * exp(-(double)fabs(i-32768)/ (1+8*noise_ab) ) );
 		
 		
 		//for (int i=0; i<65536; i+=100)  printf("%d %d \n",i,gamcurve[i]);
@@ -235,15 +223,14 @@ namespace rtengine {
 		float igamthresh = gamthresh*gamslope;
 		float igamslope = 1/gamslope;
 		for (int i=0; i<65536; i++) {
-			int g = (int)(CurveFactory::gamma((float)i/65535.0, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0);
-			gamcurve[i] = CLIP(g);
+			gamcurve[i] = (CurveFactory::gamma((float)i/65535.0, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0);
 		}
 		
 		
 		for (int i=0; i<dst->H; i++) 
 			for (int j=0; j<dst->W; j++) {
 				
-				dst->L[i][j] = gamcurve[CLIP((int)dst->L[i][j]) ];
+				dst->L[i][j] = CurveFactory::flinterp(gamcurve,dst->L[i][j]);
 				
 			}
 		
@@ -264,7 +251,7 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	};
 	
-	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, int * rangefn_L, int * rangefn_ab, int pitch, int scale, const int luma, const int chroma )
+	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, float * rangefn_L, float * rangefn_ab, int pitch, int scale, const int luma, const int chroma )
 	{
 		
 		//pitch is spacing of subsampling
@@ -281,9 +268,20 @@ namespace rtengine {
 		int width = data_fine->W;
 		int height = data_fine->H;
 		
+
+		
+		
+		//generate domain kernel 
 		int halfwin = 3;//MIN(ceil(2*sig),3);
 		int scalewin = halfwin*scale;
-
+		//int intfactor = 16384;
+		
+		/*float domker[7][7];
+		 for (int i=-halfwin; i<=halfwin; i++)
+		 for (int j=-halfwin; j<=halfwin; j++) {
+		 domker[i+halfwin][j+halfwin] = (int)(exp(-(i*i+j*j)/(2*sig*sig))*intfactor); //or should we use a value that depends on sigma???
+		 }*/
+		//float domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,4,2,1},{1,2,2,2,1},{1,1,1,1,1}};
 		
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -292,12 +290,19 @@ namespace rtengine {
 		for(int i = 0; i < height; i+=pitch ) { int i1=i/pitch;
 			for(int j = 0, j1=0; j < width; j+=pitch, j1++)
 			{				
+				//norm = DIRWT(i, j, i, j);
+				//Lout = -norm*data_fine->L[i][j];//if we don't want to include the input pixel in the sum
+				//aout = -norm*data_fine->a[i][j];
+				//bout = -norm*data_fine->b[i][j];
+				//or
 				float dirwt_l, dirwt_ab, norm_l, norm_ab;
+				//float lops,aops,bops;
 				float Lout, aout, bout;
 				norm_l = norm_ab = 0;//if we do want to include the input pixel in the sum
 				Lout = 0;
 				aout = 0;
 				bout = 0;
+				//normab = 0;
 				
 				for(int inbr=MAX(0,i-scalewin); inbr<=MIN(height-1,i+scalewin); inbr+=scale) {
 					for (int jnbr=MAX(0,j-scalewin); jnbr<=MIN(width-1,j+scalewin); jnbr+=scale) {
@@ -310,7 +315,14 @@ namespace rtengine {
 						norm_ab += dirwt_ab;
 					}
 				}
-
+				//lops = Lout/norm;//diagnostic
+				//aops = aout/normab;//diagnostic
+				//bops = bout/normab;//diagnostic
+				
+				//data_coarse->L[i1][j1]=0.5*(data_fine->L[i][j]+Lout/norm_l);//low pass filter
+				//data_coarse->a[i1][j1]=0.5*(data_fine->a[i][j]+aout/norm_ab);
+				//data_coarse->b[i1][j1]=0.5*(data_fine->b[i][j]+bout/norm_ab);
+				//or
 				data_coarse->L[i1][j1]=Lout/norm_l;//low pass filter
 				data_coarse->a[i1][j1]=aout/norm_ab;
 				data_coarse->b[i1][j1]=bout/norm_ab;
@@ -330,9 +342,6 @@ namespace rtengine {
 		int width = data_fine->W;
 		int height = data_fine->H;
 		
-		float radius = 1.5;
-		float temp, median;
-		
 		//float eps = 0.0;
 		
 		// c[0] noise_L
@@ -344,21 +353,10 @@ namespace rtengine {
 		float noisevar_L = 4*SQR(25.0 * luma);
 		float noisevar_ab = 2*SQR(100.0 * chroma);
 		float scalefactor = 1.0/pow(2.0,(level+1)*2);//change the last 2 to 1 for longer tail of higher scale NR
+		//float recontrast = (1+((float)(c[6])/100.0));
+		//float resaturate = 10*(1+((float)(c[7])/100.0));
 		noisevar_L *= scalefactor;
-		
-		//temporary array to store NR factors
-		float** nrfactorL = new float*[height];
-		float** nrfactorab = new float*[height];
-		for (int i=0; i<height; i++) {
-			nrfactorL[i] = new float[width];
-			nrfactorab[i] = new float[width];
-		}
-		/*float (*nrfactorL);
-		float (*nrfactorab);
-
-		nrfactorL = (float (*)) calloc ((height)*(width), sizeof(float));
-		nrfactorab = (float (*)) calloc ((height)*(width), sizeof(float));*/
-		
+				
 		// for coarsest level, take non-subsampled lopass image and subtract from lopass_fine to generate hipass image
 		
 		// denoise hipass image, add back into lopass_fine to generate denoised image at fine scale
@@ -375,27 +373,26 @@ namespace rtengine {
 		
 		// step (1)
 		
-		if (pitch==1) {// step (1) not needed
+		if (pitch==1) { 
 			
-			// step (2-3-4) 
+			// step (1-2-3-4) 
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 			for(int  i = 0; i < height; i++)
 				for(int  j = 0; j < width; j++) {
-					
-					float hipass[3], hpffluct[3], tonefactor;//, nrfactor;
+					double wtdsum[3], norm;
+					float hipass[3], hpffluct[3], tonefactor, nrfactor;
 				
-					tonefactor = ((NRWT_L(CLIP((int)data_coarse->L[i][j]) )));
+					tonefactor = ((NRWT_L(data_coarse->L[i][j])));
 					
 					//Wiener filter
 					//luma
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-data_coarse->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+0.001;
-						nrfactorL[i][j] = hpffluct[0]/(hpffluct[0]+noisevar_L);
-						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
-						//data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
+						hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
+						data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
 					}
 					
 					//chroma
@@ -403,62 +400,20 @@ namespace rtengine {
 					hipass[2] = data_fine->b[i][j]-data_coarse->b[i][j];
 					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
 					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-					nrfactorab[i][j] = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
-					/*nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
 
 					hipass[1] *= nrfactor;
 					hipass[2] *= nrfactor;
 					
 					data_fine->a[i][j] = hipass[1]+data_coarse->a[i][j];
-					data_fine->b[i][j] = hipass[2]+data_coarse->b[i][j];*/
-				}
-			
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-			{
-				AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
-				//gaussHorizontal<float> (nrfactorL, nrfactorL, buffer, width, height, radius, multiThread);
-				gaussHorizontal<float> (nrfactorab, nrfactorab, buffer, width, height, radius, multiThread);
-				//gaussVertical<float>   (nrfactorL, nrfactorL, buffer, width, height, radius, multiThread);
-				gaussVertical<float>   (nrfactorab, nrfactorab, buffer, width, height, radius, multiThread);
-				delete buffer;
-			}
-			
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-			for(int  i = 0; i < height; i++)
-				for(int  j = 0; j < width; j++) {
-					float hipass[3],p[9];
-					
-					//luma
-					if (level<2) {
-						if (i>0 && i<height-1 && j>0 && j<width-1) {
-							med3x3(nrfactorL[i-1][j-1], nrfactorL[i-1][j], nrfactorL[i-1][j+1], \
-								   nrfactorL[i][j-1], nrfactorL[i][j], nrfactorL[i][j+1], \
-								   nrfactorL[i+1][j-1], nrfactorL[i+1][j], nrfactorL[i+1][j+1], median);
-						} else {
-							median = nrfactorL[i][j];
-						}
-						hipass[0] = median*(data_fine->L[i][j]-data_coarse->L[i][j]);
-						//hipass[0] = nrfactorL[i][j]*(data_fine->L[i][j]-data_coarse->L[i][j]);
-						data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
-					}
-					
-					//chroma
-					hipass[1] = nrfactorab[i][j]*(data_fine->a[i][j]-data_coarse->a[i][j]);
-					hipass[2] = nrfactorab[i][j]*(data_fine->b[i][j]-data_coarse->b[i][j]);
-					 
-					data_fine->a[i][j] = hipass[1]+data_coarse->a[i][j];
 					data_fine->b[i][j] = hipass[2]+data_coarse->b[i][j];
 				}
 			
-		} else {//pitch >1; need to fill in data by upsampling
+		} else {
 			
 			LabImage* smooth;
-			smooth = new LabImage(width, height);
 			
+			smooth = new LabImage(width, height);
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
@@ -548,96 +503,43 @@ namespace rtengine {
 					smooth->b[i+1][j]=wtdsum[2]*norm;
 					
 				}
+			
+#ifdef _OPENMP
+#pragma omp for	
+#endif
 		
-	
-	// step (2-3-4) 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-	for(int  i = 0; i < height; i++)
-		for(int  j = 0; j < width; j++) {
-			
-			float hipass[3], hpffluct[3], tonefactor;//, nrfactor;
-			
-			tonefactor = (NRWT_L(CLIP((int)smooth->L[i][j]) ));
-			
-			//Wiener filter
-			//luma
-			if (level<2) {
-				hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
-				hpffluct[0]=SQR(hipass[0])+0.001;
-				nrfactorL[i][j] = hpffluct[0]/(hpffluct[0]+noisevar_L);
-				//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
-				//data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
-			}
-			
-			//chroma
-			hipass[1] = data_fine->a[i][j]-smooth->a[i][j];
-			hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
-			hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
-			hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-			nrfactorab[i][j] = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
-			/*nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
-			 
-			 hipass[1] *= nrfactor;
-			 hipass[2] *= nrfactor;
-			 
-			 data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
-			 data_fine->b[i][j] = hipass[2]+smooth->b[i][j];*/
-		}
-	
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-	{
-		AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
-		//gaussHorizontal<float> (nrfactorL, nrfactorL, buffer, width, height, radius, multiThread);
-		gaussHorizontal<float> (nrfactorab, nrfactorab, buffer, width, height, radius, multiThread);
-		//gaussVertical<float>   (nrfactorL, nrfactorL, buffer, width, height, radius, multiThread);
-		gaussVertical<float>   (nrfactorab, nrfactorab, buffer, width, height, radius, multiThread);
-		delete buffer;
-	}
-	
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-	for(int  i = 0; i < height; i++)
-		for(int  j = 0; j < width; j++) {
-			float hipass[3],p[9];
-			
-			//luma
-			if (level<2) {
-				if (i>0 && i<height-1 && j>0 && j<width-1) {
-					med3x3(nrfactorL[i-1][j-1], nrfactorL[i-1][j], nrfactorL[i-1][j+1], \
-						   nrfactorL[i][j-1], nrfactorL[i][j], nrfactorL[i][j+1], \
-						   nrfactorL[i+1][j-1], nrfactorL[i+1][j], nrfactorL[i+1][j+1], median);
-				} else {
-					median = nrfactorL[i][j];
+			// step (2-3-4) 
+			for( int i = 0; i < height; i++)
+				for(int j = 0; j < width; j++) {
+					
+					double tonefactor = ((NRWT_L(smooth->L[i][j])));
+					//double wtdsum[3], norm;
+					float hipass[3], hpffluct[3],  nrfactor;
+					//Wiener filter
+					//luma
+					if (level<2) {
+						hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
+						hpffluct[0]=SQR(hipass[0])+0.001;
+						hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
+						data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
+					}
+					
+					//chroma
+					hipass[1] = data_fine->a[i][j]-smooth->a[i][j];
+					hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
+					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
+					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+
+					hipass[1] *= nrfactor;
+					hipass[2] *= nrfactor;
+					
+					data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
+					data_fine->b[i][j] = hipass[2]+smooth->b[i][j];
 				}
-				hipass[0] = median*(data_fine->L[i][j]-smooth->L[i][j]);
-				//hipass[0] = nrfactorL[i][j]*(data_fine->L[i][j]-smooth->L[i][j]);
-				data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
-			}
-			
-			//chroma
-			hipass[1] = nrfactorab[i][j]*(data_fine->a[i][j]-smooth->a[i][j]);
-			hipass[2] = nrfactorab[i][j]*(data_fine->b[i][j]-smooth->b[i][j]);
-			
-			data_fine->a[i][j] = hipass[1]+smooth->a[i][j];
-			data_fine->b[i][j] = hipass[2]+smooth->b[i][j];
-		}
-	
-	
 }	// end parallel		
 			delete smooth;
 		}//end of pitch>1
-		
-		for (int i=0; i<height; i++) {
-			delete [] nrfactorL[i];
-			delete [] nrfactorab[i];
-		}
-		delete [] nrfactorL;
-		delete [] nrfactorab;
 		
 	};
 	

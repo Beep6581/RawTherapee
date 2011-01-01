@@ -304,6 +304,9 @@ namespace rtengine {
   * @param s is a struct of basic settings */
     int init (const Settings* s);
 
+/** Cleanup the RT engine (static variables) */
+    void cleanup ();
+
 /** Returns the available output profile names
   * @return a vector of the available output profile names */
     std::vector<std::string> getOutputProfiles ();

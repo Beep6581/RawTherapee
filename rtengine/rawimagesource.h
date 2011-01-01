@@ -72,7 +72,7 @@ class RawImageSource : public ImageSource {
         int max[3];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;
-        int blcode[16][16][32];
+        //int blcode[16][16][32];  // Looks like it's an unused variable...
         bool full;
 		cmsHPROFILE camProfile;
 		cmsHPROFILE embProfile;
@@ -92,6 +92,7 @@ class RawImageSource : public ImageSource {
         float** red;
         // the interpolated blue plane:
         float** blue;
+	
     
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
@@ -150,9 +151,11 @@ class RawImageSource : public ImageSource {
 
 		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
 		void CA_correct_RT	(double cared, double cablue);
+		void ddct8x8s(int isgn, float **a);
+
 		int  cfaCleanFromMap( BYTE* bitmapBads );
 		int  findHotDeadPixel( BYTE *bpMap, float thresh);
-	void ddct8x8s(int isgn, float **a);
+	void cfaboxdata(float** rawData, float* cfablur, float* cfasqblur, int BS);
 
 		void cfa_linedn (float linenoiselevel);//Emil's line denoise
 

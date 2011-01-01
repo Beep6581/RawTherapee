@@ -62,18 +62,18 @@ class ImProcCoordinator : public StagedImageProcessor {
         
         void freeAll ();
 
-		float hltonecurve [65536];
-        float shtonecurve [65536];
-		float tonecurve [65536];
-
-		float lumacurve [65536];
-		float chroma_acurve [65536];
-		float chroma_bcurve [65536];
+		float *hltonecurve;
+		float *shtonecurve;
+		float *tonecurve;
+	
+		float *lumacurve;
+		float *chroma_acurve;
+		float *chroma_bcurve;
         
-        unsigned int vhist16[65536];
-        unsigned int lhist16[65536];
-
-        unsigned int rhist[256], ghist[256], bhist[256], Lhist[256], bcrgbhist[256], bcLhist[256], bcabhist[256];
+		unsigned int *vhist16;
+		unsigned int *lhist16;
+	
+		unsigned int *rhist, *ghist, *bhist, *Lhist, *bcrgbhist, *bcLhist, *bcabhist;
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

@@ -37,6 +37,8 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup) {
 	bgHistValid = false;
 	selected = Linear;
 
+    histogram = new unsigned int[256];	// histogram values
+
 	group = ceGroup;
 
     if (group && text.size())
@@ -58,11 +60,11 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup) {
     curveType->show();
 }
 
-/*
 CurveEditor::~CurveEditor () {
 
+	delete [] histogram;
 }
-*/
+
 
 void CurveEditor::setCurve (const std::vector<double>& p) {
 	tempCurve = p;
@@ -110,9 +112,6 @@ void CurveEditor::updateBackgroundHistogram (unsigned int* hist) {
 	if (hist!=NULL) {
 		memcpy (histogram, hist, 256*sizeof(unsigned int));
 		bgHistValid = true;
-		
-		for (int i=0; i<256; i++)
-			printf(" hist[%d]=%d ",i,hist[i]);
 	}
 	else
 		bgHistValid = false;

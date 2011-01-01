@@ -29,7 +29,8 @@
 
 #define SQR(x) ((x)*(x))
 
-#define CLIPI(a) ((a)<65534 ? (a) : (65534))
+#define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
 
 namespace rtengine {
 
@@ -40,11 +41,11 @@ class CurveFactory {
   protected:
 
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
-    static int igammatab_srgb[65536];
-    static int gammatab_srgb[65536];
+    static int *igammatab_srgb;
+    static int *gammatab_srgb;
     // look-up tables for the simple exponential gamma
-    static int gammatab[65536];
-    
+    static int *gammatab;
+
     // functions calculating the parameters of the contrast curve based on the desired slope at the center
     static double solve_upper (double m, double c, double deriv);
     static double solve_lower (double m, double c, double deriv);
@@ -155,6 +156,7 @@ class CurveFactory {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     static void init ();
+    static void cleanup ();
 
     static inline double centercontrast   (double x, double b, double m);
     

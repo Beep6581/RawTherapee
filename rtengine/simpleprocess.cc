@@ -49,7 +49,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (!ii) {
         ii = InitialImage::load (job->fname, job->isRaw, &errorCode);
         if (errorCode) {
-            ii->decreaseRef ();
             delete job;
             return NULL;
         }
@@ -138,9 +137,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int    bl = params.toneCurve.black;
 
     if (params.toneCurve.autoexp) {
-        unsigned int aehist[65536]; int aehistcompr;
+        unsigned int* aehist = new unsigned int [65536]; int aehistcompr;
         imgsrc->getAEHistogram (aehist, aehistcompr);
         ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
+        delete [] aehist;
     }
 
     float* curve1 = new float [65536];

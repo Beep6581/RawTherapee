@@ -57,7 +57,7 @@ int main(int argc, char **argv)
    std::string argv0_, argv1_;
    
 #ifdef WIN32
-   char exname[512];
+   char *exname = new char[512];
    GetModuleFileName (NULL, exname, 512);
    argv0_ = exname;
    // get the path where the rawtherapee is stored
@@ -124,6 +124,8 @@ int main(int argc, char **argv)
    m.run(*rtWindow);
    gdk_threads_leave ();
    delete rtWindow;
+   rtengine::cleanup();
+   //delete [] exname;
    return 0;
 }
 

@@ -66,7 +66,7 @@ namespace rtengine {
 		/*float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
 		 float gamthresh = 0.03;
 		 float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-		 unsigned short gamcurve[65536];
+		 unsigned short *gamcurve = new unsigned short[65536];
 		 for (int i=0; i<65536; i++) {
 		 int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
 		 //if (i<500)  printf("%d %d \n",i,g);
@@ -191,6 +191,7 @@ namespace rtengine {
 		freeArray<float>(buffer, srcheight);
 		
 		delete [] rangefn;
+		//delete [] gamcurve;
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
