@@ -357,7 +357,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 /* cfaCleanFromMap: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
-int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
+int RawImageSource::cfaCleanFromMap( unsigned char * bitmapBads )
 {
 	float eps=1.0;	
 	int bmpW= (W/8+ ((W&7)?1:0));
@@ -400,133 +400,136 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
  *  For each pixel compare its value to the average of similar color surrounding
  *  (Taken from Emil Martinec idea)
  */
-int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
+int RawImageSource::findHotDeadPixel( unsigned char *bpMap, float thresh)
 {
 	int bmpW= (W/8+ ((W&7)?1:0));
-	const float eps=1e-3;//tolerance to avoid dividing by zero
     int counter=0;
+#define range 4
+#define range2 8
 	
-	/*float (*cfablur);
-	cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
-	float (*cfasqblur);
-	cfasqblur = (float (*)) calloc (H*W, sizeof *cfasqblur);
+	double (*cfahist);
+	cfahist = (double (*)) calloc (32*W, sizeof *cfahist);
+	float (*cfablur);
+	cfablur = (float (*)) calloc (32*W, sizeof *cfablur);
 	
-	int BS=4;
+	//initialize first (32-range) rows 
+	//compute cumulative histogram of RGGB channels
+	//which is the sum of all pixels of that channel above and left of current pixel
+	//box blur is linear combination of histograms at the four corners of the box
+	cfahist[0]=cfahist[1]=cfahist[W]=cfahist[W+1]=0;
+	for (int cc=2; cc<H; cc++) {//initialize first two rows
+		cfahist[0*W+cc] = cfahist[0*W+cc-2] + rawData[0][cc];
+		cfahist[1*W+cc] = cfahist[1*W+cc-2] + rawData[1][cc];
+	}
+	for (int rr=2; rr < 32; rr++) {
+		double rowcum[2]={rawData[rr][0],rawData[rr][1]};
+		cfahist[rr*W+0]=cfahist[(rr-2)*W+0] + rowcum[0];
+		cfahist[rr*W+1]=cfahist[(rr-2)*W+1] + rowcum[1];
+		for (int cc=2; cc < W; cc++) {
+			//compute cumulative histogram
+			rowcum[cc&1] += rawData[rr][cc];
+			cfahist[rr*W+cc] = cfahist[(rr-2)*W+cc] + rowcum[cc&1];
+			//compute box blur
+			if (rr>=range && cc>=range) {
+				int top = MAX(0,(rr-range2));
+				int left = MAX(0,(cc-range2));
+				cfablur[(rr-range)*W+cc-range] = (cfahist[rr*W+cc] - cfahist[top*W+cc] - \
+												  cfahist[rr*W+left] + cfahist[top*W+left])/((rr-top+1)*(cc-left+1));
+			}
+			if (rr>=range && cc>=(W-range)) {//take care of rightmost columns in the row
+				int top = MAX(0,(rr-range2));
+				int right = MIN(cc+range,W-1);
+				cfablur[(rr-range)*W+cc] = (cfahist[rr*W+right] - cfahist[top*W+right] - \
+												  cfahist[rr*W+cc-range] + cfahist[top*W+cc-range])/((rr-top+1)*(right-cc+range+1));
+			}
+		}
+	}//end of histogram and blur initialization
 	
-	cfaboxdata(rawData, cfablur, cfasqblur, BS);*/
-	
-	for (int rr=4; rr < H-4; rr++)
-		for (int cc=4; cc < W-4; cc++) {
-
-			/*float locave=0,locsqave=0;
-			for (int mm=-4; mm<=4; mm+=2)
-				for(int nn=-4; nn<=4; nn+=2) {
-					if (mm==0 && nn==0) continue;
-					//locdev += SQR(SQR(BS+1)*rawData[rr+mm][cc+nn]-cfablur[(rr+mm)*W+cc+nn])/(SQR(BS+1)*cfasqblur[(rr+mm)*W+cc+nn]-SQR(cfablur[(rr+mm)*W+cc+nn])+8);
-				
-					locave += rawData[rr+mm][cc+nn];
-					locsqave += SQR(rawData[rr+mm][cc+nn]);
-				
-				}*/
+	//cfa pixel heat/death evaluation
+	for (int rr=0; rr < H; rr++) {
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		//now compute next row in the histogram, and cfa box blur
+		int top, bottom, left, right;
+		int rr_hist = rr&31;//next row in cyclic storage of histogram data
+		
+		if (rr+32<H) {
+			int rr_cfa = rr+32;//next row in the cfa
+			int rr_prev = (rr-2)&31;//previous row in cyclic storage of histogram data
+			top = (rr-range2)&31;
 			
-			float locave = (rawData[rr-4][cc-4] + rawData[rr-4][cc-2] + rawData[rr-4][cc] + rawData[rr-4][cc+2] + rawData[rr-4][cc+4] + \
-							rawData[rr-2][cc-4] + rawData[rr-2][cc-2] + rawData[rr-2][cc] + rawData[rr-2][cc+2] + rawData[rr-2][cc+4] + \
-							rawData[rr-4][cc-4] + rawData[rr-4][cc-2] + rawData[rr-4][cc+2] + rawData[rr-4][cc+4] + \
-							rawData[rr+2][cc-4] + rawData[rr+2][cc-2] + rawData[rr+2][cc] + rawData[rr+2][cc+2] + rawData[rr+2][cc+4] + \
-							rawData[rr+4][cc-4] + rawData[rr+4][cc-2] + rawData[rr+4][cc] + rawData[rr+4][cc+2] + rawData[rr+4][cc+4])/24;
+			double rowcum[2]={rawData[rr_cfa][0],rawData[rr_cfa][1]};
+			cfahist[rr_hist*W+0]=cfahist[rr_prev*W+0] + rowcum[0];
+			cfahist[rr_hist*W+1]=cfahist[rr_prev*W+1] + rowcum[1];
+			for (int cc=2; cc < W; cc++) {
+				//compute cumulative histogram
+				rowcum[cc&1] += rawData[rr_cfa][cc];
+				cfahist[rr_hist*W+cc] = cfahist[rr_prev*W+cc] + rowcum[cc&1];
+				//compute box blur
+				if (cc>=range) {
+					left = MAX(0,(cc-range2));
+					cfablur[((rr-range)&31)*W+cc-range] = (cfahist[rr_hist*W+cc] - cfahist[top*W+cc] - \
+														   cfahist[rr_hist*W+left] + cfahist[top*W+left])/((range2+1)*(cc-left+1));
+				}
+				if (cc>=(W-range)) {//take care of rightmost columns in the row
+					right = MIN(cc+range,W-1);
+					cfablur[((rr-range)&31)*W+cc] = (cfahist[rr_hist*W+right] - cfahist[top*W+right] - \
+													 cfahist[rr_hist*W+cc-range] + cfahist[top*W+cc-range])/((range2+1)*(right-cc+range+1));
+				}
+			}
+		} else {//clean up; compute cfa box blur for last few rows
+			for (int cc=2; cc < W; cc++) {
+				top = (rr-range)&31;
+				bottom = (H-1)&31;
+				//compute box blur
+				if (cc>=range) {
+					left = MAX(0,(cc-range2));
+					cfablur[rr_hist*W+cc-range] = (cfahist[bottom*W+cc] - cfahist[top*W+cc] - \
+												   cfahist[bottom*W+left] + cfahist[top*W+left])/((bottom-top+1)*(cc-left+1));
+				}
+				if (cc>=(W-range)) {//take care of rightmost columns in the row
+					right = MIN(cc+range,W-1);
+					cfablur[rr_hist*W+cc] = (cfahist[bottom*W+right] - cfahist[top*W+right] - \
+											 cfahist[bottom*W+cc-range] + cfahist[top*W+cc-range])/((bottom-top+1)*(right-cc+range+1));
+				}
+			}
+		}//end of cfa box blur update
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		for (int cc=0; cc < W; cc++) {
 			
-			float locsqave = (SQR(rawData[rr-4][cc-4]) + SQR(rawData[rr-4][cc-2]) + SQR(rawData[rr-4][cc]) + SQR(rawData[rr-4][cc+2]) + SQR(rawData[rr-4][cc+4]) + \
-							  SQR(rawData[rr-2][cc-4]) + SQR(rawData[rr-2][cc-2]) + SQR(rawData[rr-2][cc]) + SQR(rawData[rr-2][cc+2]) + SQR(rawData[rr-2][cc+4]) + \
-							  SQR(rawData[rr-4][cc-4]) + SQR(rawData[rr-4][cc-2]) + SQR(rawData[rr-4][cc+2]) + SQR(rawData[rr-4][cc+4]) + \
-							  SQR(rawData[rr+2][cc-4]) + SQR(rawData[rr+2][cc-2]) + SQR(rawData[rr+2][cc]) + SQR(rawData[rr+2][cc+2]) + SQR(rawData[rr+2][cc+4]) + \
-							  SQR(rawData[rr+4][cc-4]) + SQR(rawData[rr+4][cc-2]) + SQR(rawData[rr+4][cc]) + SQR(rawData[rr+4][cc+2]) + SQR(rawData[rr+4][cc+4]))/24;
-						
-			float pixdev = SQR(rawData[rr][cc]-locave);
-			float locdev = locsqave-SQR(locave)+1;
+			//evaluate pixel for heat/death
+			float pixdev = fabs(rawData[rr][cc]-cfablur[(rr&31)*W+cc]);
+			float hfnbrave=0;
+			top=MAX(0,rr-2);
+			bottom=MIN(H-1,rr+2);
+			left=MAX(0,cc-2);
+			right=MIN(W-1,cc+2);
+			for (int mm=top; mm<=bottom; mm++)
+				for (int nn=left; nn<=right; nn++) {
+					hfnbrave += fabs(rawData[mm][nn]-cfablur[(mm&31)*W+nn]);
+				}
+			hfnbrave = (hfnbrave-pixdev)/((bottom-top+1)*(right-left+1)-1);
 			
-			if ((pixdev > thresh*locdev) & (SQR(locave) > thresh*locdev)) {
+			if (pixdev > thresh*hfnbrave) {
 				// mark the pixel as "bad"
 				bpMap[rr*bmpW+cc/8 ] |= 1<<(cc&7);
 				counter++;
 			}
-		}
-	//free (cfablur);
-	//free (cfasqblur);
+		}//end of pixel evaluation
+		
+		
+	}
+	free (cfablur);
+	free (cfahist);
+#undef range;
+#undef range2;
+
 	return counter;
 }
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	void RawImageSource::cfaboxdata(float** rawData, float* cfablur, float* cfasqblur, int BS) {
-		
-		float (*temp);
-		temp = (float (*)) calloc (H*W, sizeof *temp);
-		float (*tempsq);
-		tempsq = (float (*)) calloc (H*W, sizeof *tempsq);
-				
-		//box blur cfa image; box size = BS (must be even)
-		//horizontal blur
-		for (int row = 0; row < H; row++) {
-			int len = BS/2 + 1;
-			temp[row*W+0] = rawData[row][0]/len;
-			temp[row*W+1] = rawData[row][1]/len;
-			tempsq[row*W+0] = SQR(rawData[row][0])/len;
-			tempsq[row*W+1] = SQR(rawData[row][1])/len;
-			for (int j=2; j<BS+2; j+=2) {
-				temp[row*W+0] += rawData[row][j]/len;
-				temp[row*W+1] += rawData[row][j+1]/len;
-				tempsq[row*W+0] += SQR(rawData[row][j])/len;
-				tempsq[row*W+1] += SQR(rawData[row][j+1])/len;
-			}
-			for (int col=2; col<BS+2; col++) {
-				temp[row*W+col] = (temp[row*W+col-2]*len + rawData[row][col+BS])/(len+1);
-				tempsq[row*W+col] = (tempsq[row*W+col-2]*len + SQR(rawData[row][col+BS]))/(len+1);
-				len += col&1;
-			}
-			for (int col = BS+2; col < W-BS; col++) {
-				temp[row*W+col] = temp[row*W+col-2] + (rawData[row][col+BS] - rawData[row][col-BS-2])/len;
-				tempsq[row*W+col] = temp[row*W+col-2] + (SQR(rawData[row][col+BS]) - SQR(rawData[row][col-BS-2]))/len;
-			}
-			for (int col=W-BS; col<W; col++) {
-				temp[row*W+col] = (temp[row*W+col-2]*len - rawData[row][col-BS-2])/(len-1);
-				tempsq[row*W+col] = (tempsq[row*W+col-2]*len - SQR(rawData[row][col-BS-2]))/(len-1);
-				len -= (W-col)&1;
-			}
-		}
-		
-		//vertical blur
-		for (int col = 0; col < W; col++) {
-			int len = BS/2 + 1;
-			cfablur[0*W+col] = temp[0*W+col]/len;
-			cfablur[1*W+col] = temp[1*W+col]/len;
-			cfasqblur[0*W+col] = tempsq[0*W+col]/len;
-			cfasqblur[1*W+col] = tempsq[1*W+col]/len;
-			for (int i=2; i<BS+2; i+=2) {
-				cfablur[0*W+col] += temp[i*W+col]/len;
-				cfablur[1*W+col] += temp[(i+1)*W+col]/len;
-				cfasqblur[0*W+col] += tempsq[i*W+col]/len;
-				cfasqblur[1*W+col] += tempsq[(i+1)*W+col]/len;
-			}
-			for (int row=2; row<BS+2; row++) {
-				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len + temp[(row+BS)*W+col])/(len+1);
-				cfasqblur[row*W+col] = (cfasqblur[(row-2)*W+col]*len + tempsq[(row+BS)*W+col])/(len+1);
-				len += row&1;
-			}
-			for (int row = BS+2; row < H-BS; row++) {
-				cfablur[row*W+col] = cfablur[(row-2)*W+col] + (temp[(row+BS)*W+col] - temp[(row-BS-2)*W+col])/len;
-				cfasqblur[row*W+col] = cfasqblur[(row-2)*W+col] + (tempsq[(row+BS)*W+col] - tempsq[(row-BS-2)*W+col])/len;
-			}
-			for (int row=H-BS; row<H; row++) {
-				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - temp[(row-BS-2)*W+col])/(len-1);
-				cfasqblur[row*W+col] = (cfasqblur[(row-2)*W+col]*len - tempsq[(row-BS-2)*W+col])/(len-1);
-				len -= (H-row)&1;
-			}
-		}
-		free (temp);
-		free (tempsq);
 
-	}
-	
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -974,7 +977,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	size_t widthBitmap = (W/8+ ((W&7)?1:0));
 	size_t dimBitmap = widthBitmap*H;
 
-	BYTE *bitmapBads = new BYTE [ dimBitmap ];
+	unsigned char *bitmapBads = new unsigned char [ dimBitmap ];
 	for (int i=0; i<dimBitmap; i++) bitmapBads[i]=0;
 	int totBP=0; // Hold count of bad pixels to correct
 	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
@@ -1007,7 +1010,8 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
 		}
-		int nFound =findHotDeadPixel( bitmapBads,25 /*0.1*/ );
+		float varthresh = (10*(1-(float)raw.hotdeadpix_filt/100.0) + 1.0 ); 
+		int nFound =findHotDeadPixel( bitmapBads, varthresh );
 		totBP += nFound;
 		if( settings->verbose && nFound>0){
 			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );

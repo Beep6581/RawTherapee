@@ -203,7 +203,8 @@ void ProcParams::setDefaults () {
     raw.cared = 0;
 	raw.cablue = 0;
     raw.ca_autocorrect = false;
-    raw.hotdeadpix_filt = false;
+    //raw.hotdeadpix_filt = false;
+	raw.hotdeadpix_filt = 0;
     raw.linenoise = 0;
     raw.greenthresh = 0;
     raw.ccSteps = 1;
@@ -428,7 +429,7 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
 	keyFile.set_double	("RAW", "CARed", raw.cared );
     keyFile.set_double	("RAW", "CABlue", raw.cablue );
-    keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+	keyFile.set_integer ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
     keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
     keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
     keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
@@ -745,7 +746,7 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
 	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_boolean ("RAW", "CARed" );
 	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_boolean ("RAW", "CABlue" );
-	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" );
+	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_integer ("RAW", "HotDeadPixels" );
 	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
 	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
 	if (keyFile.has_key ("RAW", "CcSteps"))       raw.ccSteps  = keyFile.get_integer ("RAW", "CcSteps");

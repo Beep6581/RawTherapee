@@ -462,7 +462,7 @@ PREFERENCES_GREENEQUIL;Green equilibration
 PREFERENCES_GTKTHEME;GTK default
 PREFERENCES_HINT;Hint
 PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
-PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+PREFERENCES_HOTDEADPIXFILT;Hot/dead pixel filter
 PREFERENCES_ICCDIR;Directory of ICC profiles
 PREFERENCES_IMPROCPARAMS;Default image processing parameters
 PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
