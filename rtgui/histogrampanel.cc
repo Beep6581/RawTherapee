@@ -77,6 +77,11 @@ void HistogramPanel::rgbv_toggled () {
 HistogramArea::HistogramArea () : 
       valid(false), showFull(true), oldwidth(-1), needVal(true), needRed(true), needGreen(true), needBlue(true) {
 
+    lhist = new unsigned int[256];
+    rhist = new unsigned int[256];
+    ghist = new unsigned int[256];
+    bhist = new unsigned int[256];
+
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
     haih->destroyed = false;
@@ -91,6 +96,11 @@ HistogramArea::~HistogramArea () {
         haih->destroyed = true;
     else
         delete haih;
+
+    delete [] lhist;
+    delete [] rhist;
+    delete [] ghist;
+    delete [] bhist;
 }
 
 void HistogramArea::updateOptions (bool r, bool g, bool b, bool v) {

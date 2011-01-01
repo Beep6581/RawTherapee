@@ -36,9 +36,8 @@ namespace rtengine {
 
             void transformPixel (int x, int y, int tran, int& tx, int& ty);
 
-            static bool igammacomputed;
-            static unsigned short igammatab[256];
-            static unsigned char gammatab[65536];
+            static unsigned short *igammatab;
+            static unsigned char *gammatab;
 
             Image16* thumbImg; 
             double camwbRed;
@@ -67,6 +66,8 @@ namespace rtengine {
             ~Thumbnail ();
             Thumbnail ();
             
+            static void initGamma ();
+            static void cleanupGamma ();
             void init ();
             
             IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);

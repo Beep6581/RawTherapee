@@ -124,6 +124,7 @@ int main(int argc, char **argv)
    m.run(*rtWindow);
    gdk_threads_leave ();
    delete rtWindow;
+   rtengine::cleanup();
    return 0;
 }
 

@@ -61,20 +61,21 @@ using namespace procparams;
 
 extern const Settings* settings;
 
-int* ImProcFunctions::cacheL;
-int* ImProcFunctions::cachea;
-int* ImProcFunctions::cacheb;
-int* ImProcFunctions::xcache;
-int* ImProcFunctions::ycache;
-int* ImProcFunctions::zcache;
-unsigned short ImProcFunctions::gamma2curve[65536];
+int* ImProcFunctions::cacheL = 0;
+int* ImProcFunctions::cachea = 0;
+int* ImProcFunctions::cacheb = 0;
+int* ImProcFunctions::xcache = 0;
+int* ImProcFunctions::ycache = 0;
+int* ImProcFunctions::zcache = 0;
+unsigned short* ImProcFunctions::gamma2curve = 0;
 
 void ImProcFunctions::initCache () {
 
-    int maxindex = 2*65536;
+    const int maxindex = 2*65536;
     cacheL = new int[maxindex];
     cachea = new int[maxindex];
     cacheb = new int[maxindex];
+    gamma2curve = new unsigned short[65536];
 
     int threshold = (int)(0.008856*CMAXVAL);
     for (int i=0; i<maxindex; i++)
@@ -110,6 +111,17 @@ void ImProcFunctions::initCache () {
 		int g = (int)(CurveFactory::gamma2(i/65535.0) * 65535.0);
 		gamma2curve[i] = CLIP(g);
 	}
+}
+
+void ImProcFunctions::cleanupCache () {
+
+	delete [] cacheL;
+	delete [] cachea;
+	delete [] cacheb;
+	delete [] xcache;
+	delete [] ycache;
+	delete [] zcache;
+	delete [] gamma2curve;
 }
 
 ImProcFunctions::~ImProcFunctions () {
