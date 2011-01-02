@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30, 2011-01-02 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -323,6 +323,7 @@ MAIN_BUTTON_SENDTOEDITOR;Redigera
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
+MAIN_FRAME_EDITOR;Redigerfönster
 MAIN_FRAME_EDITOR;Redigering
 MAIN_FRAME_FILEBROWSER;Filhanterare
 MAIN_FRAME_PLACES;Platser
@@ -512,6 +513,7 @@ PREFERENCES_SHOWONLYRAW;Visa bara RAW-filer
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETAB;Öppna en bild åt gången
 PREFERENCES_SINGLETABVERTAB;En-fliksläge med vertikala flikar
+PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
 PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
 PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud. I Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.
 PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
@@ -802,6 +804,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!MAIN_FRAME_EDITOR;Editor
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!TP_CROP_GTGRID;Grid
