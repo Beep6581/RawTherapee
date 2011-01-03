@@ -571,6 +571,8 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 					int offsetFirst = 4;
 					if( strstr(model, "*ist") || strstr(model, "GX-1") || strstr(model, "K100D") || strstr(model, "K110D") )
 						offsetFirst = 3;
+					if( strstr(model, "K-5") || strstr(model, "K-r") )
+						offsetFirst = 12;
 			        directory = new TagDirectory*[2];
 			        directory[1] = NULL;
 					directory[0] = new TagDirectoryTable (parent, f, valuesize,offsetFirst,BYTE , attrib->subdirAttribs, getOrder());

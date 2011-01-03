@@ -600,6 +600,7 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*6+ 13, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
             choices.insert(p_t(256*6+ 14, "smc PENTAX-FA* MACRO 200mm f/4 ED[IF]"));
             choices.insert(p_t(256*7+ 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+            choices.insert(p_t(256*7+ 58, "smc PENTAX-D FA MACRO 100mm f/2.8 WR"));
             choices.insert(p_t(256*7+ 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
             choices.insert(p_t(256*7+ 214, "smc PENTAX-DA 35mm f/2.4 AL"));
             choices.insert(p_t(256*7+ 216, "smc PENTAX-DA L 55-300mm f/4-5.8 ED"));
