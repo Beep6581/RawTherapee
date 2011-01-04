@@ -458,6 +458,7 @@
 !PREFERENCES_DMETHOD;Method
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FALSECOLOR;False color suppression steps
 !PREFERENCES_FBROWSEROPTS;File Browser Options
@@ -493,6 +494,7 @@
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in Cache

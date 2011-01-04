@@ -470,6 +470,7 @@ PREFERENCES_DIRSOFTWARE;Carpeta de instalación
 PREFERENCES_DMETHOD;Método
 PREFERENCES_EDITORCMDLINE;Otro mandato
 PREFERENCES_EDITORLAYOUT;Aspecto del editor
+PREFERENCES_EXPOS;Exposición antes de interpolación:\n corrección (lin)
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FALSECOLOR;Pasos de supresión de colores falsos
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos
@@ -505,6 +506,7 @@ PREFERENCES_PARSEDEXT;Extensiones analizadas
 PREFERENCES_PARSEDEXTADD;Agregar extensión
 PREFERENCES_PARSEDEXTADDHINT;Entra una extensión y pulsa este botón para agregar a la lista
 PREFERENCES_PARSEDEXTDELHINT;Borrar extensión de la lista
+PREFERENCES_PRESER;Exposición antes de interpolación:\n preservar luces altas (EV)
 PREFERENCES_PROFILEHANDLING;Tratamiento de perfiles de procesamiento
 PREFERENCES_PROFILELOADPR;Prioridad de perfiles cuando se abre imagen
 PREFERENCES_PROFILEPRCACHE;Perfil en memoria intermedia

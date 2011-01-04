@@ -783,8 +783,10 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done

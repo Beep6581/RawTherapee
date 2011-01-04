@@ -705,6 +705,7 @@ ZOOMBAR_SMALL;Pieni
 !PREFERENCES_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PREFERENCES_LINEDENOISE;Line noise filter
@@ -712,6 +713,7 @@ ZOOMBAR_SMALL;Pieni
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET

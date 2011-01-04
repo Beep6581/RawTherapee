@@ -794,6 +794,8 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !HISTORY_MSG_108;Resize bounding box
 !HISTORY_MSG_109;Resizing applies to
 !MAIN_FRAME_EDITOR;Editor
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
