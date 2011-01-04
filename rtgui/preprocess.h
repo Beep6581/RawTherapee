@@ -37,6 +37,8 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
 
 	Adjuster* caRed;
     Adjuster* caBlue;
+	Adjuster* exPos;
+	Adjuster* exPreser;
     Adjuster* lineDenoise;
     Adjuster* greenEqThreshold;
     Gtk::CheckButton* caAutocorrect;

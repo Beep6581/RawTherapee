@@ -150,6 +150,8 @@ class RawImageSource : public ImageSource {
 
         int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
         void CA_correct_RT	(double cared, double cablue);
+		void exp_bef (float expos, float preser);//exposi
+		
         int  cfaCleanFromMap( BYTE* bitmapBads );
         int  findHotDeadPixel( BYTE *bpMap, float thresh);
         void ddct8x8s(int isgn, float **a);
