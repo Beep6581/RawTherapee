@@ -139,6 +139,7 @@ class CurveFactory {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// accurately determine value from integer array with float as index
+	//linearly interpolate from ends of range if arg is out of bounds
 	static inline float interp(int *array,float f)
 	{
 		int index = CLIPI(floor(f));
@@ -147,6 +148,7 @@ class CurveFactory {
 	}
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// accurately determine value from float array with float as index
+	//linearly interpolate from ends of range if arg is out of bounds
 	static inline float flinterp(float *array,float f)
 	{
 		int index = CLIPI(floor(f));

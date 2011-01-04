@@ -534,7 +534,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			float avg = 0; 
 			//double sqavg = 0;
 			for (int i=0; i<=0xffff; i++) {
-				avg += dcurve[(int)shCurve[(int)hlCurve[i]]] * histogram[i];
+				avg += dcurve[(int)shCurve[(int)hlCurve[i]*i]] * histogram[i];
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
 				sum += histogram[i];
 			}

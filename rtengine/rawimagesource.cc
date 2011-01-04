@@ -458,7 +458,7 @@ int RawImageSource::findHotDeadPixel( unsigned char *bpMap, float thresh)
 				int top = MAX(0,(rr-range2));
 				int right = MIN(cc+range,W-1);
 				cfablur[(rr-range)*W+cc] = (cfahist[rr*W+right] - cfahist[top*W+right] - \
-												  cfahist[rr*W+cc-range] + cfahist[top*W+cc-range])/((rr-top+1)*(right-cc+range+1));
+											cfahist[rr*W+cc-range] + cfahist[top*W+cc-range])/((rr-top+1)*(right-cc+range+1));
 			}
 		}
 	}//end of histogram and blur initialization
@@ -2785,7 +2785,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 
 	cbrt = (float (*)) calloc (0x10000, sizeof *cbrt);
     for (i=0; i < 0x10000; i++) {
-        r = i / 65535.0;
+        r = (double)i / 65535.0;
         cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
     }
   
@@ -2844,7 +2844,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 	                    rix[0][c] = CLIP(val);
 	                    c = FC(row,col);
 	                    rix[0][c] = pix[0][c];
-	                    xyz[0] = xyz[1] = xyz[2] = 0.5;
+	                    xyz[0] = xyz[1] = xyz[2] = 0.0;
 	                    FORCC {
 	                        xyz[0] += xyz_cam[0][c] * rix[0][c];
 	                        xyz[1] += xyz_cam[1][c] * rix[0][c];
@@ -2855,9 +2855,9 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 	                    xyz[1] = CurveFactory::flinterp(cbrt,xyz[1]);
 	                    xyz[2] = CurveFactory::flinterp(cbrt,xyz[2]);
 						
-						//xyz[0] = xyz[0] > 0.008856 ? pow(xyz[0],1/3.0) : 7.787*xyz[0] + 16/116.0;
-						//xyz[1] = xyz[1] > 0.008856 ? pow(xyz[1],1/3.0) : 7.787*xyz[1] + 16/116.0;
-						//xyz[2] = xyz[2] > 0.008856 ? pow(xyz[2],1/3.0) : 7.787*xyz[2] + 16/116.0;
+						//xyz[0] = xyz[0] > 0.008856 ? pow(xyz[0]/65535,1/3.0) : 7.787*xyz[0] + 16/116.0;
+						//xyz[1] = xyz[1] > 0.008856 ? pow(xyz[1]/65535,1/3.0) : 7.787*xyz[1] + 16/116.0;
+						//xyz[2] = xyz[2] > 0.008856 ? pow(xyz[2]/65535,1/3.0) : 7.787*xyz[2] + 16/116.0;
 
 	                    lix[0][0] = (116 * xyz[1] - 16);
 	                    lix[0][1] = 500 * (xyz[0] - xyz[1]);

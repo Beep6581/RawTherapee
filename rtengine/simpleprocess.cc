@@ -149,7 +149,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
 
-    LabImage* labView = new LabImage (baseImg);
+	LabImage* labView = new LabImage (fw,fh);
+
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, imgsrc->getDefGain(),  params.toneCurve.saturation);
 
     if (shmap)

@@ -694,7 +694,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	float* curve = new float [65536];
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
-    //LabImage* labView = new LabImage (baseImg);//this is broken!!!???
 	LabImage* labView = new LabImage (fw,fh);
 
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, logDefGain, params.toneCurve.saturation);
@@ -723,8 +722,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // color processing
     ipf.colorCurve (labView, labView);
-
-	//delete [] hist16;//testing only!!!???
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);
