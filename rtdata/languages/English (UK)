@@ -1,4 +1,5 @@
 
+
 #00 English (UK)
 #01 08.12.2010: Richard Regal
 #01 17.10.2010: Richard Regal
@@ -461,6 +462,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_DMETHOD;Method
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FBROWSEROPTS;File Browser Options
 !PREFERENCES_FILEFORMAT;File format
@@ -495,6 +497,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in Cache
