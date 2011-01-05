@@ -24,6 +24,7 @@
 #endif
 #include <iccmatrices.h>
 #include <glib/gstdio.h>
+#include <options.h>
 
 namespace rtengine {
 
@@ -186,7 +187,8 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
                 if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-//                    printf ("processing file %s...\n", fname.c_str());
+                	if( options.rtSettings.verbose )
+                       printf ("Processing ICC file: %s...\n", fname.c_str());
                     Glib::ustring name = sname.substr(0,lastdot);
                     ProfileContent pc (fname);
                     if (pc.data) {

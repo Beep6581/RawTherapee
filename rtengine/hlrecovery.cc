@@ -51,8 +51,8 @@ void RawImageSource::updateHLRecoveryMap (bool needred, bool needgreen, bool nee
     max[0] = maxr;
     max[1] = maxg;
     max[2] = maxb;
-    
-    printf ("Maximum: R: %d, G: %d, B: %d\n", maxr, maxg, maxb);
+    if( options.rtSettings.verbose )
+       printf ("HLRecoveryMap Maximum: R: %d, G: %d, B: %d\n", maxr, maxg, maxb);
 
     // downscale image
     int dw = W/SCALE;
