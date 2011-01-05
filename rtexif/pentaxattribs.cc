@@ -1033,7 +1033,7 @@ public:
 PADriveMode2Interpreter paDriveMode2Interpreter;
 
 const TagAttrib pentaxAttribs[] = {
- {0, 1, 0, 0, 0x0001, "PentaxVersion", &stdInterpreter},
+ {0, 1, 0, 0, 0x0000, "PentaxVersion", &stdInterpreter},
  {0, 1, 0, 0, 0x0001, "PentaxModelType", &stdInterpreter},
  {0, 2, 0, 0, 0x0002, "PreviewImageSize", &stdInterpreter},
  {0, 2, 0, 0, 0x0003, "PreviewImageLength", &stdInterpreter},
