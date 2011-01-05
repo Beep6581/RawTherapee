@@ -49,6 +49,30 @@ if (NOT DEFINED LIBDIR)
     endif (WIN32 OR APPLE)
 endif (NOT DEFINED LIBDIR)
 
+if (NOT DEFINED DOCDIR)
+    if (WIN32 OR APPLE)
+        set (DOCDIR ${CMAKE_CURRENT_SOURCE_DIR}/release/doc)
+    else (WIN32 OR APPLE)
+        set (DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED DOCDIR)
+
+if (NOT DEFINED CREDITSDIR)
+    if (WIN32 OR APPLE)
+        set (CREDITSDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (CREDITSDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED CREDITSDIR)
+
+if (NOT DEFINED LICENCEDIR)
+    if (WIN32 OR APPLE)
+        set (LICENCEDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (LICENCEDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED LICENCEDIR)
+
 # check for libraries
 find_package(PkgConfig)
 pkg_check_modules (GTK     REQUIRED gtk+-2.0>=2.12)
@@ -136,9 +160,8 @@ if (UNIX)
     install (PROGRAMS rtstart DESTINATION ${BINDIR})
 endif (UNIX)
 
-install (FILES AUTHORS.txt LICENSE.txt DESTINATION ${BINDIR})
-
-install (FILES AUTHORS.txt LICENSE.txt DESTINATION ${BINDIR})
+install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
+install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
 
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)
