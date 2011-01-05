@@ -1,6 +1,6 @@
-# Use the 'Debug'          build type to have a non optimzed,        with    debugging information, with a console executable
-# Use the 'Release'        build type to have an    optimzed,        without debugging information, console free executable
-# Use the 'RelWithDebInfo' build type to have an    optimzed,        without debugging information, with a console executable
+# Use the 'Debug'          build type to have a non optimized,        with    debugging information, with a console executable
+# Use the 'Release'        build type to have an    optimized,        without debugging information, console free executable
+# Use the 'RelWithDebInfo' build type to have an    optimized,        without debugging information, with a console executable
 # Use the 'MinSizeRel'     build type to have the smallest possible, without debugging information, console free executable
 #set(CMAKE_BUILD_TYPE Release CACHE STRING "Between: None Debug Release RelWithDebInfo MinSizeRel.")
 
@@ -8,11 +8,14 @@ set(CMAKE_INSTALL_PREFIX ./Builds/${CMAKE_BUILD_TYPE} CACHE PATH "Libraries inst
 set(DATADIR . CACHE PATH "Datas installation path")
 set(BINDIR . CACHE PATH "Binaries installation path")
 set(LIBDIR . CACHE PATH "Libraries installation path")
+set(DOCDIR ./doc CACHE PATH "Documentation installation path")
+set(CREDITSDIR . CACHE PATH "Credit file installation path")
+set(LICENCEDIR . CACHE PATH "Licence file installation path")
 
 set(BUILD_SHARED OFF CACHE BOOL "Should RT generate shared libraries")
 set(WITH_RAWZOR ON CACHE BOOL "With Rawzor")
 set(OPTION_OMP ON CACHE BOOL "Use OpenMP to speedup the preview and batch processing")
-# set WITH_MYFILE_MMAP to OFF if you experience crash whith thumbnail creation (it should be slower, but more reliable)
+# set WITH_MYFILE_MMAP to OFF if you experience crash with thumbnail creation (it should be slower, but more reliable)
 set(WITH_MYFILE_MMAP ON CACHE BOOL "Use the MMAP mechanism to speedup thumbnail creations")
 
 # Tune the build to your CPU and its instruction set
