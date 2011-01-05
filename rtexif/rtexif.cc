@@ -208,6 +208,11 @@ Tag* TagDirectory::findTag (const char* name) const {
 	  return NULL;
 }
 
+void TagDirectory::keepTag (int ID) {
+    for (int i=0; i<tags.size(); i++) 
+        if (tags[i]->getID()==ID) tags[i]->setKeep(true);
+}
+
 int TagDirectory::calculateSize () {
 
   int size = 2; // space to store the number of tags

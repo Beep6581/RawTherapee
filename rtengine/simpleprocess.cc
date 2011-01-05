@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c)      2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,7 +32,8 @@
 
 namespace rtengine {
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl) {
+// tunnelMetaData copies IPTC and XMP untouched to output
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
 
     errorCode = 0;
 
@@ -275,11 +277,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	    }
 	}
 
+    if (tunnelMetaData)
+        readyImg->setMetadata (ii->getMetaData()->getExifData ());
+    else
+        readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 
     if (pl) 
         pl->setProgress (1.0);
-
-    readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 
     ProfileContent pc;
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
@@ -302,23 +306,23 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     return readyImg;
 }
 
-void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl) {
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     ProcessingJob* currentJob = job;
     
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl);
+        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
         if (errorCode) 
             bpl->error ("Can not load input image.");
         currentJob = bpl->imageReady (img);
     }
 }
 
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl) {
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     
 }
 

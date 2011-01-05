@@ -472,6 +472,7 @@ PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LINEDENOISE;Line noise filter
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Monitor Profile
 PREFERENCES_MULTITAB;Multiple tabs mode
 PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
@@ -490,10 +491,10 @@ PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 PREFERENCES_PRESER;Exposure before interpolation\n :preserve highlights (EV)
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
-PREFERENCES_PROFILEPRCACHE;Profile in Cache
-PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
-PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
-PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
+PREFERENCES_PROFILEPRCACHE;Profile in cache
+PREFERENCES_PROFILEPRFILE;Profile next to the input file
+PREFERENCES_PROFILESAVECACHE;Save processing parameters to the cache
+PREFERENCES_PROFILESAVEINPUT;Save processing parameters next to the input file
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_SELECTFONT;Select font
@@ -520,6 +521,7 @@ PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_OUTPUT;Output Options
 PREFERENCES_TAB_SOUND;Sounds
 PREFERENCES_THUMBSIZE;Thumbnail Size
+PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
 PREFERENCES_USESYSTEMTHEME; Use System Theme
 PREFERENCES_WORKFLOW;Workflow
 PROFILEPANEL_FILEDLGFILTERANY;Any files

@@ -349,7 +349,7 @@ int processLineParams( int argc, char **argv )
 		}
 
 		// Process image
-		rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, NULL);
+		rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, NULL, options.tunnelMetaData);
         if( !resultImage ){
         	errors++;
         	std::cerr << "Error processing:"<< inputFile << std::endl;
