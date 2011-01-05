@@ -139,7 +139,7 @@ class Options {
     Glib::ustring sndBatchQueueDone;
     Glib::ustring sndLngEditProcDone;
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
-
+    bool tunnelMetaData;  // Pass through IPTC and XMP unchanged
 
     Options ();
 

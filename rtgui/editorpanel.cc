@@ -900,7 +900,7 @@ void EditorPanel::saveAsPressed () {
 				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 				fname = removeExtension (fname);
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
+				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
 							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
@@ -929,7 +929,7 @@ void EditorPanel::sendToGimpPressed () {
     ipc->getParams (&pparams);
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
+    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
     saveimgas->set_sensitive(false);
     sendtogimp->set_sensitive(false);

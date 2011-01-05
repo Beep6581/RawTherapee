@@ -111,6 +111,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::Entry* txtSndLngEditProcDone;
 	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
 	
+    Gtk::CheckButton* ckbTunnelMetaData;
+
     Options moptions;
     sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
     Glib::ustring initialTheme;

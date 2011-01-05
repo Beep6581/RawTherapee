@@ -45,6 +45,22 @@ using namespace rtengine::procparams;
 
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
+// For only copying the raw input data
+void ImageIO::setMetadata (const rtexif::TagDirectory* eroot) {
+    if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
+    
+    if (eroot) {
+        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (NULL);
+
+        // make IPTC and XMP pass through
+        td->keepTag(0x83bb);  // IPTC
+        td->keepTag(0x02bc);  // XMP
+
+        exifRoot=td;
+    }
+}
+
+// For merging with RT specific data
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {
 
     // store exif info
@@ -53,15 +69,13 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<
         exifChange[i].first  = exif[i].field;
         exifChange[i].second = exif[i].value;
     }
-    delete exifRoot;
 
-    exifRoot = NULL;
+    if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
+    
     if (eroot)
         exifRoot = ((rtexif::TagDirectory*)eroot)->clone (NULL);
 
-    if (iptc) 
-        iptc_data_free (iptc);
-    iptc = NULL;        
+    if (iptc!=NULL) { iptc_data_free (iptc); iptc = NULL; }
     
     // build iptc structures for libiptcdata
     if (iptcc.size()==0)

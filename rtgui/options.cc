@@ -123,6 +123,7 @@ void Options::setDefaults () {
     showFileNames = true;
     tabbedUI = false;
     multiDisplayMode = 0;
+    tunnelMetaData = false;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;
@@ -214,6 +215,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
+	if (keyFile.has_key ("Output", "TunnelMetaData"))   tunnelMetaData             = keyFile.get_boolean("Output", "TunnelMetaData");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -387,6 +389,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
 	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
+    keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
