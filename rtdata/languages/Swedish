@@ -458,6 +458,7 @@ PREFERENCES_DMETHOD;Metod
 PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
 PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
+PREFERENCES_EXPOS;Exponering före interpolering: Korrigering (lin)
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
@@ -493,6 +494,7 @@ PREFERENCES_PARSEDEXT;Behandlade filtyper
 PREFERENCES_PARSEDEXTADD;Lägg till filtyp
 PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
 PREFERENCES_PARSEDEXTDELHINT;Ta bort de markerade filändelserna från listan
+PREFERENCES_PRESER;Exponering före interpolering: Bevara högdagrar (EV)
 PREFERENCES_PROFILEHANDLING;Hantering av bildbehandlingsparametrar
 PREFERENCES_PROFILELOADPR;Laddningsprioritet för profil
 PREFERENCES_PROFILEPRCACHE;Profil i cache
@@ -804,5 +806,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
