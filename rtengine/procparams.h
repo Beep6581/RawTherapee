@@ -396,7 +396,6 @@ class RAWParams {
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
-	//	bool expos_correc;
 		double expos;
 		double preser; // expos
 		bool hotdeadpix_filt;
