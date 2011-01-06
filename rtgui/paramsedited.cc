@@ -290,7 +290,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
 		raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
-	//	raw.exCorrection = raw.exCorrection && p.raw.expos_correc == other.raw.expos_correc;
 		raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
 		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser; //exposi
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;

@@ -441,8 +441,7 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_string  ("RAW", "Method", raw.dmethod );
     keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
     keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
-	//exposition
-//	keyFile.set_boolean ("RAW", "PreExpo", raw.expos_correc );
+	//exposure
     keyFile.set_double ("RAW", "PreExposure", raw.expos );
     keyFile.set_double ("RAW", "PrePreserv", raw.preser );
 
@@ -765,7 +764,6 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "Method"))        raw.dmethod = keyFile.get_string ("RAW", "Method");
 	if (keyFile.has_key ("RAW", "DCBIterations")) raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations");
 	if (keyFile.has_key ("RAW", "DCBEnhance"))    raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance");
-//	if (keyFile.has_key ("RAW", "PreExpo"))   		  raw.expos_correc =keyFile.get_boolean("RAW", "PreExpo");//exposi
 	if (keyFile.has_key ("RAW", "PreExposure"))   	  raw.expos =keyFile.get_double("RAW", "PreExposure");
 	if (keyFile.has_key ("RAW", "PrePreserv"))   	  raw.preser =keyFile.get_double("RAW", "PrePreserv");
 	
