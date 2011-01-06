@@ -11,6 +11,7 @@ Contrast=0
 Saturation=0
 Black=0
 HighlightCompr=70
+HighlightComprThreshold=0
 ShadowCompr=50
 Curve=0;
 
