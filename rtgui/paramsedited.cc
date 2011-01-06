@@ -35,6 +35,7 @@ void ParamsEdited::set (bool v) {
 		toneCurve.saturation   = v;
         toneCurve.shcompr    = v;
         toneCurve.hlcompr    = v;
+        toneCurve.hlcomprthresh = v;
         toneCurve.autoexp    = v;
         toneCurve.clip       = v;
         toneCurve.expcomp    = v;
@@ -176,6 +177,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 		toneCurve.saturation = toneCurve.saturation && p.toneCurve.saturation == other.toneCurve.saturation;
 		toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
         toneCurve.hlcompr = toneCurve.hlcompr && p.toneCurve.hlcompr == other.toneCurve.hlcompr;
+        toneCurve.hlcomprthresh = toneCurve.hlcomprthresh && p.toneCurve.hlcomprthresh == other.toneCurve.hlcomprthresh;
         toneCurve.autoexp = toneCurve.autoexp && p.toneCurve.autoexp == other.toneCurve.autoexp;
         toneCurve.clip = toneCurve.clip && p.toneCurve.clip == other.toneCurve.clip;
         toneCurve.expcomp = toneCurve.expcomp && p.toneCurve.expcomp == other.toneCurve.expcomp;
@@ -317,12 +319,13 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (toneCurve.brightness)	toEdit.toneCurve.brightness = options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
 	if (toneCurve.black)		toEdit.toneCurve.black 	    = options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
 	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;
-	if (toneCurve.saturation)	toEdit.toneCurve.saturation 	= options.baBehav[ADDSET_TC_SATURATION] ? toEdit.toneCurve.saturation + mods.toneCurve.saturation : mods.toneCurve.saturation;
-	if (toneCurve.shcompr)		toEdit.toneCurve.shcompr 	= mods.toneCurve.shcompr;
-	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= mods.toneCurve.hlcompr;
+	if (toneCurve.saturation)	toEdit.toneCurve.saturation = options.baBehav[ADDSET_TC_SATURATION] ? toEdit.toneCurve.saturation + mods.toneCurve.saturation : mods.toneCurve.saturation;
+	if (toneCurve.shcompr)		toEdit.toneCurve.shcompr 	= options.baBehav[ADDSET_TC_SHCOMP] ? toEdit.toneCurve.shcompr + mods.toneCurve.shcompr : mods.toneCurve.shcompr;
 	if (toneCurve.autoexp)		toEdit.toneCurve.autoexp 	= mods.toneCurve.autoexp;
 	if (toneCurve.clip)		    toEdit.toneCurve.clip 	    = mods.toneCurve.clip;
 	if (toneCurve.expcomp)		toEdit.toneCurve.expcomp 	= options.baBehav[ADDSET_TC_EXPCOMP] ? toEdit.toneCurve.expcomp + mods.toneCurve.expcomp : mods.toneCurve.expcomp;
+	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= options.baBehav[ADDSET_TC_HLCOMPAMOUNT] ? toEdit.toneCurve.hlcompr + mods.toneCurve.hlcompr : mods.toneCurve.hlcompr;
+	if (toneCurve.hlcomprthresh) toEdit.toneCurve.hlcomprthresh	= options.baBehav[ADDSET_TC_HLCOMPTHRESH] ? toEdit.toneCurve.hlcomprthresh + mods.toneCurve.hlcomprthresh : mods.toneCurve.hlcomprthresh;
 	if (labCurve.lcurve)		toEdit.labCurve.lcurve 	    = mods.labCurve.lcurve;
 	if (labCurve.acurve)		toEdit.labCurve.acurve 	    = mods.labCurve.acurve;
 	if (labCurve.bcurve)		toEdit.labCurve.bcurve 	    = mods.labCurve.bcurve;
