@@ -257,7 +257,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     delete [] hist;
 }
 
-void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, int sat) {
+void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, int* tonecurve, SHMap* shmap, /*float defmul,*/ int sat) {
 
     int h_th, s_th;
     if (shmap) {
@@ -343,34 +343,28 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
                     b = CLIP((int)(factor*b));
                 }
             }
-			//float h, s, v;
-			//rgb2hsv(r,g,b,h,s,v);
-			//highlight tone curve
-			//v = (float)hltonecurve[(int)(65535*v)]/65535;
 
-			float rtonefactor = (r>0 ? (float)hltonecurve[r]/r : (float)hltonecurve[1]);
-			float gtonefactor = (g>0 ? (float)hltonecurve[g]/g : (float)hltonecurve[1]);
-			float btonefactor = (b>0 ? (float)hltonecurve[b]/b : (float)hltonecurve[1]);
-			//float tonefactor = MIN(rtonefactor, MIN(gtonefactor,btonefactor));
-			float tonefactor = (rtonefactor+gtonefactor+btonefactor)/3;
+			//float rtonefactor = (r>0 ? (float)hltonecurve[r]/r : (float)hltonecurve[1]);
+			//float gtonefactor = (g>0 ? (float)hltonecurve[g]/g : (float)hltonecurve[1]);
+			//float btonefactor = (b>0 ? (float)hltonecurve[b]/b : (float)hltonecurve[1]);
+			//float tonefactor = (rtonefactor+gtonefactor+btonefactor)/3;
 			//float tonefactor = (0.299*rtonefactor+0.587*gtonefactor+0.114*btonefactor);
-			r = CLIP(r*tonefactor);
-			g = CLIP(g*tonefactor);
-			b = CLIP(b*tonefactor);
+			
+			//float tonefactor=(my_tonecurve[r]+my_tonecurve[g]+my_tonecurve[b])/3;
+			float tonefactor=(hltonecurve[r]+hltonecurve[g]+hltonecurve[b])/3;
+
+			r = (r*tonefactor);
+			g = (g*tonefactor);
+			b = (b*tonefactor);
 			
 			//shadow tone curve
-			int Y = (int)(0.299*r + 0.587*g + 0.114*b);
+			int Y = CLIP((int)(0.299*r + 0.587*g + 0.114*b));
 			tonefactor = (Y>0 ? (float)shtonecurve[Y]/Y : 1);
 			r *= tonefactor;
 			g *= tonefactor;
 			b *= tonefactor;
 			
 			//brightness/contrast and user tone curve
-			//Y = (int)(0.299*r + 0.587*g + 0.114*b);
-			//tonefactor = (Y>0 ? (float)tonecurve[Y]/Y : 1);
-			//r *= tonefactor;
-			//g *= tonefactor;
-			//b *= tonefactor;
 			r = tonecurve[CLIP(r)];
 			g = tonecurve[CLIP(g)];
 			b = tonecurve[CLIP(b)];
@@ -438,7 +432,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
     }
 	
 	delete [] cossq;
-
+	//delete [] my_tonecurve;
  }
 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to) {

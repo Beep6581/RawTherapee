@@ -34,6 +34,7 @@ class ToneCurveParamsEdited {
 		bool saturation;
 		bool shcompr;
         bool hlcompr;
+        bool hlcomprthresh;
         bool autoexp;
         bool clip;
         bool expcomp;
