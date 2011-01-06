@@ -36,11 +36,12 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, p
     Adjuster* brightness;
     Adjuster* black;
     Adjuster* hlcompr;
+    Adjuster* hlcomprthresh;
     Adjuster* shcompr;
     Adjuster* contrast;
 	Adjuster* saturation;
 
-    bool expAdd, blackAdd, brAdd, contrAdd, satAdd, clipDirty, lastAuto;
+    bool expAdd,hlcompAdd,hlcompthreshAdd, blackAdd, shcompAdd, brAdd, contrAdd, satAdd, clipDirty, lastAuto;
     sigc::connection autoconn;
     CurveEditorGroup* curveEditorG;
     CurveEditor* shape;
@@ -55,7 +56,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, p
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
-    void setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, bool contradd, bool satadd);   
+    void setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd);
 
     void adjusterChanged (Adjuster* a, double newval);
     void autolevels_toggled ();

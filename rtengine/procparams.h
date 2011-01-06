@@ -41,6 +41,7 @@ class ToneCurveParams {
 		int         saturation;
         int         shcompr;
         int         hlcompr;
+        int         hlcomprthresh;
 };
 
 /**

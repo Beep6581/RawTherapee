@@ -120,7 +120,7 @@ void BatchToolPanelCoordinator::initSession () {
         pparams = selected[0]->getProcParams ();
         coarse->initBatchBehavior ();
 
-        curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
+        curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
         lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_SATURATION]);
         whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
         vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
@@ -135,8 +135,11 @@ void BatchToolPanelCoordinator::initSession () {
         shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
         
         if (options.baBehav[ADDSET_TC_EXPCOMP])  pparams.toneCurve.expcomp = 0;
+        if (options.baBehav[ADDSET_TC_HLCOMPAMOUNT])  pparams.toneCurve.hlcompr = 0;
+        if (options.baBehav[ADDSET_TC_HLCOMPTHRESH])  pparams.toneCurve.hlcomprthresh = 0;
         if (options.baBehav[ADDSET_TC_BRIGHTNESS])  pparams.toneCurve.brightness = 0;
         if (options.baBehav[ADDSET_TC_BLACKLEVEL])  pparams.toneCurve.black = 0;
+        if (options.baBehav[ADDSET_TC_SHCOMP])  pparams.toneCurve.shcompr = 0;
         if (options.baBehav[ADDSET_TC_CONTRAST])  pparams.toneCurve.contrast = 0;
 
         if (options.baBehav[ADDSET_SH_HIGHLIGHTS])  pparams.sh.highlights = 0;
