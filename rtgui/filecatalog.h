@@ -22,6 +22,7 @@
 #ifdef _WIN32
 #include <windirmonitor.h>
 #endif
+#include <dirbrowserremoteinterface.h>
 #include <dirselectionlistener.h>
 #include <filebrowser.h>
 #include <procthread.h>
@@ -34,6 +35,8 @@
 #include <toolbar.h>
 #include <filterpanel.h>
 #include <previewloader.h>
+#include <multilangmgr.h>
+
 
 class DirEntry {
 
@@ -46,7 +49,7 @@ class DirEntry {
 		return fullName.casefold() < other.fullName.casefold();
 	}
 };
-
+class FilePanel;
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
@@ -57,7 +60,7 @@ class FileCatalog : public Gtk::VBox,
 #endif
  {
 
-
+        FilePanel* filepanel;
         Gtk::HBox* hBox;
         Glib::ustring selectedDirectory;
         int selectedDirectoryId;
@@ -67,9 +70,12 @@ class FileCatalog : public Gtk::VBox,
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
         ImageAreaToolListener* iatlistener;
+        DirBrowserRemoteInterface*   dirlistener;
 
         Gtk::HBox* buttonBar;
         Gtk::HBox* buttonBar2;
+        Gtk::ToggleButton* tbLeftPanel_1;
+        bool tbLeftPanel_1_Active;
         Gtk::ToggleButton* bDir;
         Gtk::ToggleButton* bUnRanked;
         Gtk::ToggleButton* bRank[5];
@@ -78,7 +84,10 @@ class FileCatalog : public Gtk::VBox,
         Gtk::ToggleButton* exifInfo;
         sigc::connection bCateg[8];
         Gtk::Image* iranked[5], *igranked[5];
-        Gtk::Image *iTrashEmpty, *iTrashFull;
+        Gtk::Image *iTrashEmpty, *iTrashFull, *iRightArrow_red, *iRightArrow, *iLeftPanel_1_Show, *iLeftPanel_1_Hide;
+        Gtk::Entry* BrowsePath;
+        Gtk::Button* buttonBrowsePath;
+        sigc::connection BrowsePathconn;
         
         double hScrollPos[8];
         double vScrollPos[8];
@@ -118,7 +127,7 @@ class FileCatalog : public Gtk::VBox,
         std::vector<Glib::ustring> getFileList ();
         BrowserFilter getFilter ();
         void trashChanged ();
-               
+
     public:
             // thumbnail browsers
             FileBrowser* fileBrowser;
@@ -126,7 +135,7 @@ class FileCatalog : public Gtk::VBox,
             CoarsePanel* coarsePanel;
             ToolBar* toolBar;
 
-                     FileCatalog (CoarsePanel* cp, ToolBar* tb);
+                     FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel);
                 void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
                 void closeDir    ();
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);
@@ -160,6 +169,8 @@ class FileCatalog : public Gtk::VBox,
                 void setFileSelectionListener (FileSelectionListener* l) { listener = l; }
                 void setFileSelectionChangeListener (FileSelectionChangeListener* l) { fslistener = l; }
                 void setImageAreaToolListener (ImageAreaToolListener* l) { iatlistener = l; }
+                void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l) { dirlistener = l; }
+
 				void setFilterPanel (FilterPanel* fpanel);
 				void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
@@ -174,6 +185,10 @@ class FileCatalog : public Gtk::VBox,
                 
                 void zoomIn ();
                 void zoomOut ();
+
+                void buttonBrowsePathPressed ();
+                void tbLeftPanel_1_Activated ();
+                void tbLeftPanel_1_visible (bool visible);
 
                 void openNextImage () { fileBrowser->openNextImage(); }
                 void openPrevImage () { fileBrowser->openPrevImage(); }               

@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <filecatalog.h>
+#include <filepanel.h>
 #include <options.h>
 #include <cachemanager.h>
 #include <multilangmgr.h>
@@ -26,6 +27,7 @@
 #include <renamedlg.h>
 #include <thumbimageupdater.h>
 #include <safegtk.h>
+
 
 #define CHECKTIME 2000
 
@@ -44,7 +46,17 @@ int _directoryUpdater (void* cat) {
 }
 #endif
 
-FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1), listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
+FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
+		selectedDirectoryId(1),
+		listener(NULL),
+		fslistener(NULL),
+		dirlistener(NULL),
+		hasValidCurrentEFS(false),
+		filterPanel(NULL),
+		coarsePanel(cp),
+		toolBar(tb),
+		filepanel(filepanel) {
+
     inTabMode=false;
 
     //  construct and initialize thumbnail browsers
@@ -69,9 +81,22 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
     
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+
+    tbLeftPanel_1 = new Gtk::ToggleButton ();
+    iLeftPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    iLeftPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_left.png");
+
+    tbLeftPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbLeftPanel_1->set_active (true);
+    tbLeftPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDELP1"));
+    tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
+    tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_Activated) );
+    buttonBar->pack_start (*tbLeftPanel_1, Gtk::PACK_SHRINK);
+
+    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
     bDir = new Gtk::ToggleButton ();
     bDir->set_active (true);
-    bDir->set_image (*(new Gtk::Image (argv0+"/images/folder.png")));
+    bDir->set_image (*(new Gtk::Image (argv0+"/images/folder_bw.png")));
     bDir->set_relief (Gtk::RELIEF_NONE);
     bDir->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bDir->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
@@ -162,7 +187,26 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     buttonBar2->pack_start (*progressBar, Gtk::PACK_SHRINK, 4);
     progressBar->set_size_request (-1, 16);
 
-    buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);   
+    buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);
+
+    // add browserPath
+    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+
+    iRightArrow = new Gtk::Image(argv0+"/images/right.png");
+    iRightArrow_red = new Gtk::Image(argv0+"/images/right_red.png");
+
+    BrowsePath = new Gtk::Entry ();
+    BrowsePath->set_width_chars (50); // !!! add this value to options
+    BrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHHINT"));
+    Gtk::HBox* hbBrowsePath = new Gtk::HBox ();
+    buttonBrowsePath = new Gtk::Button ();
+    buttonBrowsePath->set_image (*iRightArrow);
+    buttonBrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHBUTTONHINT"));
+    buttonBrowsePath->set_relief (Gtk::RELIEF_NONE);
+    hbBrowsePath->pack_start (*BrowsePath);
+    hbBrowsePath->pack_start (*buttonBrowsePath,Gtk::PACK_SHRINK, 4);
+    buttonBar->pack_start (*hbBrowsePath, Gtk::PACK_EXPAND_WIDGET,4);
+    buttonBrowsePath->signal_clicked().connect( sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed) );
 
     buttonBar->pack_end (*coarsePanel, Gtk::PACK_SHRINK);   
     buttonBar->pack_end (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
@@ -262,6 +306,8 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
             addAndOpenFile (openfile);
 
 		selectedDirectory = dir->get_parse_name();
+		BrowsePath->set_text (selectedDirectory);
+		buttonBrowsePath->set_image (*iRightArrow);
         fileNameList = getFileList ();
 
         for (unsigned int i=0; i<fileNameList.size(); i++) {
@@ -898,6 +944,38 @@ void FileCatalog::trashChanged () {
     }
 }
 
+void FileCatalog::buttonBrowsePathPressed () {
+	Glib::ustring sel = BrowsePath->get_text();
+	// validate the path
+	if (safe_file_test(sel, Glib::FILE_TEST_IS_DIR) && dirlistener){
+		dirlistener->selectDir (sel);
+	}
+	else
+		// error, likely path not found: show red arrow
+		buttonBrowsePath->set_image (*iRightArrow_red);
+}
+
+void FileCatalog::tbLeftPanel_1_visible (bool visible){
+	if (visible)
+		tbLeftPanel_1->show();
+	else
+		tbLeftPanel_1->hide();
+}
+void FileCatalog::tbLeftPanel_1_Activated () {
+    removeIfThere (filepanel->dirpaned, filepanel->placespaned, false);
+    if (tbLeftPanel_1->get_active())
+    	filepanel->dirpaned->pack1 (*filepanel->placespaned, false, true);
+
+	tbLeftPanel_1_Active = tbLeftPanel_1->get_active();
+
+    if (tbLeftPanel_1_Active){
+    	tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
+    }
+    else {
+    	tbLeftPanel_1->set_image (*iLeftPanel_1_Show);
+    }
+
+}
 bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
@@ -932,14 +1010,31 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         case GDK_T:
             categoryButtonToggled(bTrash);
             return true;
+        case GDK_Return:
+        case GDK_KP_Enter:
+            FileCatalog::buttonBrowsePathPressed ();
+            return true;
     }
 
     if (!ctrl) {
         switch(event->keyval) {
+
+			case GDK_bracketright:
+				coarsePanel->rotateRight();
+				return true;
+			case GDK_bracketleft:
+				coarsePanel->rotateLeft();
+				return true;
+
+            case GDK_h:
+            case GDK_H:
+            	tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active());
+            	return true;
             case GDK_i:
             case GDK_I:
                 exifInfo->set_active (!exifInfo->get_active());
                 return true;
+
             case GDK_plus:
             case GDK_equal:
                 zoomIn();

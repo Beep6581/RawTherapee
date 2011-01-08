@@ -38,8 +38,6 @@ class FilePanel : public Gtk::HPaned,
 {
 
     protected:
-        Gtk::Paned* placespaned;
-        Gtk::HPaned* dirpaned;
         //DirBrowser* dirBrowser;
         PlacesBrowser* placesBrowser;
         RecentBrowser* recentBrowser;
@@ -56,6 +54,9 @@ class FilePanel : public Gtk::HPaned,
         bool isloading;
     public:
         FilePanel ();
+
+        Gtk::Paned* placespaned;
+        Gtk::HPaned* dirpaned;
 
          DirBrowser* dirBrowser;
         FilterPanel* filterPanel;

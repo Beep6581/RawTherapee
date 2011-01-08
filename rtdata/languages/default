@@ -49,6 +49,8 @@ FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 FILEBROWSER_AUTODARKFRAME;Auto dark frame
+FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
+FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_CURRENT_NAME;Current name:
@@ -322,8 +324,11 @@ MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b> 
 MAIN_FRAME_EDITOR;Editor 
+MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
 MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
@@ -363,6 +368,7 @@ MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
 MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -585,8 +591,8 @@ TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXER_RED;Red
 TP_COARSETRAF_DEGREE;degree:
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
 TP_COLORBOOST_ACHANNEL;Channel "a"
 TP_COLORBOOST_AMOUNT;Amount

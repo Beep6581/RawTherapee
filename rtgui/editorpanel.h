@@ -60,6 +60,7 @@ class EditorPanel : public Gtk::VBox,
         Gtk::HBox* statusBox;
         Gtk::Image* red;
         Gtk::Image* green;
+        Gtk::Image *iHistoryShow, *iHistoryHide;
         Gtk::VBox* leftbox, *vboxright;
 
         Gtk::Button* queueimg;
