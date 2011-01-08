@@ -25,7 +25,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(false), contrAdd(false) {
+ToneCurve::ToneCurve () : ToolPanel(), expAdd(false),hlcompAdd(false),hlcompthreshAdd(false), blackAdd(false), shcompAdd(false), brAdd(false), contrAdd(false) {
 
 //----------- Auto Levels ----------------------------------
   abox = Gtk::manage (new Gtk::HBox ());
@@ -53,6 +53,8 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   pack_start (*expcomp);
   hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 100, 1, 70));
   pack_start (*hlcompr);
+  hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 0));
+  pack_start (*hlcomprthresh);
 
 //----------- Black Level ----------------------------------
   black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 1, 0));
@@ -90,6 +92,7 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false), blackAdd(false), brAdd(fal
   brightness->setAdjusterListener (this);
   black->setAdjusterListener (this);
   hlcompr->setAdjusterListener (this);
+  hlcomprthresh->setAdjusterListener (this);
   shcompr->setAdjusterListener (this);
   contrast->setAdjusterListener (this);
 	saturation->setAdjusterListener (this);
@@ -103,6 +106,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
         black->setEditedState (pedited->toneCurve.black ? Edited : UnEdited);
         hlcompr->setEditedState (pedited->toneCurve.hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setEditedState (pedited->toneCurve.hlcomprthresh ? Edited : UnEdited);
         shcompr->setEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
         brightness->setEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
         contrast->setEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
@@ -121,6 +125,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     expcomp->setValue (pp->toneCurve.expcomp);
     black->setValue (pp->toneCurve.black);
     hlcompr->setValue (pp->toneCurve.hlcompr);
+    hlcomprthresh->setValue (pp->toneCurve.hlcomprthresh);
     shcompr->setValue (pp->toneCurve.shcompr);
     brightness->setValue (pp->toneCurve.brightness);
     contrast->setValue (pp->toneCurve.contrast);
@@ -137,6 +142,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->toneCurve.expcomp = expcomp->getValue ();
     pp->toneCurve.black = (int)black->getValue ();
     pp->toneCurve.hlcompr = (int)hlcompr->getValue ();
+    pp->toneCurve.hlcomprthresh = (int)hlcomprthresh->getValue ();
     pp->toneCurve.shcompr = (int)shcompr->getValue ();
     pp->toneCurve.brightness = (int)brightness->getValue ();
     pp->toneCurve.contrast = (int)contrast->getValue ();
@@ -147,6 +153,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.expcomp = expcomp->getEditedState ();
         pedited->toneCurve.black   = black->getEditedState ();
         pedited->toneCurve.hlcompr = hlcompr->getEditedState ();
+        pedited->toneCurve.hlcomprthresh = hlcomprthresh->getEditedState ();
         pedited->toneCurve.shcompr = shcompr->getEditedState ();
         pedited->toneCurve.brightness = brightness->getEditedState ();
         pedited->toneCurve.contrast = contrast->getEditedState ();
@@ -163,6 +170,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
     brightness->setDefault (defParams->toneCurve.brightness);
     black->setDefault (defParams->toneCurve.black);
     hlcompr->setDefault (defParams->toneCurve.hlcompr);
+    hlcomprthresh->setDefault (defParams->toneCurve.hlcomprthresh);
     shcompr->setDefault (defParams->toneCurve.shcompr);
     contrast->setDefault (defParams->toneCurve.contrast);
     saturation->setDefault (defParams->toneCurve.saturation);
@@ -171,6 +179,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
         expcomp->setDefaultEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
         black->setDefaultEditedState (pedited->toneCurve.black ? Edited : UnEdited);
         hlcompr->setDefaultEditedState (pedited->toneCurve.hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setDefaultEditedState (pedited->toneCurve.hlcomprthresh ? Edited : UnEdited);
         shcompr->setDefaultEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
         brightness->setDefaultEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
         contrast->setDefaultEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
@@ -180,6 +189,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
         expcomp->setDefaultEditedState (Irrelevant);
         black->setDefaultEditedState (Irrelevant);
         hlcompr->setDefaultEditedState (Irrelevant);
+        hlcomprthresh->setDefaultEditedState (Irrelevant);
         shcompr->setDefaultEditedState (Irrelevant);
         brightness->setDefaultEditedState (Irrelevant);
         contrast->setDefaultEditedState (Irrelevant);
@@ -196,7 +206,7 @@ void ToneCurve::curveChanged () {
 
 void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
-    if (autolevels->get_active() && (a==expcomp || a==black || a==hlcompr || a==shcompr)) {
+    if (autolevels->get_active() && (a==expcomp || a==black || a==hlcompr || a==hlcomprthresh || a==shcompr)) {
         autolevels->set_active (false);
         autolevels->set_inconsistent (false);
     }
@@ -220,8 +230,8 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvContrast, costr);
 	else if (a==saturation)
         listener->panelChanged (EvSaturation, costr);
-    else if (a==hlcompr)
-        listener->panelChanged (EvHLCompr, costr);
+    else if (a==hlcompr || a==hlcomprthresh)
+        listener->panelChanged (EvHLCompr, Glib::ustring::compose ("%1=%2\n%3=%4",M("TP_EXPOSURE_COMPRHIGHLIGHTS"),(int)hlcompr->getValue(),M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"),(int)hlcomprthresh->getValue()));
     else if (a==shcompr)
         listener->panelChanged (EvSHCompr, costr);
 }
@@ -281,6 +291,7 @@ void ToneCurve::waitForAutoExp () {
     brightness->setEnabled (false);
     black->setEnabled (false);
     hlcompr->setEnabled (false);
+    hlcomprthresh->setEnabled (false);
     shcompr->setEnabled (false);
     contrast->setEnabled (false);
 	saturation->setEnabled (false);
@@ -311,6 +322,7 @@ void ToneCurve::enableAll () {
     brightness->setEnabled (true);
     black->setEnabled (true);
     hlcompr->setEnabled (true);
+    hlcomprthresh->setEnabled (true);
     shcompr->setEnabled (true);
     contrast->setEnabled (true);
 	saturation->setEnabled (true);
@@ -339,6 +351,7 @@ void ToneCurve::setBatchMode (bool batchMode) {
     expcomp->showEditedCB ();
     black->showEditedCB ();
     hlcompr->showEditedCB ();
+    hlcomprthresh->showEditedCB ();
     shcompr->showEditedCB ();
     brightness->showEditedCB ();
     contrast->showEditedCB ();
@@ -347,14 +360,20 @@ void ToneCurve::setBatchMode (bool batchMode) {
     curveEditorG->setBatchMode (batchMode);
 }
 
-void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, bool contradd, bool satadd) {
+void ToneCurve::setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd) {
 
     if ((!expAdd && expadd) || (expAdd && !expadd))
         expcomp->setLimits (-5, 5, 0.01, 0);
+    if ((!hlcompAdd && hlcompadd) || (hlcompAdd && !hlcompadd))
+    	hlcompr->setLimits (0, 100, 1, 0);
+    if ((!hlcompthreshAdd && hlcompthreshadd) || (hlcompthreshAdd && !hlcompthreshadd))
+        hlcomprthresh->setLimits (0, 100, 1, 0);
     if (!blackAdd && blackadd)
         black->setLimits (0, 16384, 1, 0);
     else if (blackAdd && !blackadd)
         black->setLimits (0, 32768, 1, 0);
+    if ((!shcompAdd && shcompadd) || (shcompAdd && !shcompadd))
+    	shcompr->setLimits (0, 100, 1, 0);
     if ((!brAdd && bradd) || (brAdd && !bradd))
         brightness->setLimits (-100, 100, 1, 0);
     if ((!contrAdd && contradd) || (contrAdd && !contradd))
@@ -363,7 +382,10 @@ void ToneCurve::setAdjusterBehavior (bool expadd, bool bradd, bool blackadd, boo
         saturation->setLimits (-100, 100, 1, 0);
 
     expAdd = expadd;
+    hlcompAdd = hlcompadd;
+    hlcompthreshAdd = hlcompthreshadd;
     blackAdd = blackadd;
+    shcompAdd = shcompadd;
     brAdd = bradd;
     contrAdd = contradd;
 	satAdd = satadd;

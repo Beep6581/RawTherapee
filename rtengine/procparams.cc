@@ -55,6 +55,7 @@ void ProcParams::setDefaults () {
 	toneCurve.saturation    = 0;
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
+    toneCurve.hlcomprthresh = 0;
     toneCurve.shcompr       = 25;
     toneCurve.curve.clear ();
     
@@ -233,6 +234,7 @@ int ProcParams::save (Glib::ustring fname) const {
 	keyFile.set_integer ("Exposure", "Saturation",      toneCurve.saturation);
     keyFile.set_integer ("Exposure", "Black",           toneCurve.black);
     keyFile.set_integer ("Exposure", "HighlightCompr",  toneCurve.hlcompr);
+    keyFile.set_integer ("Exposure", "HighlightComprThreshold",  toneCurve.hlcomprthresh);
     keyFile.set_integer ("Exposure", "ShadowCompr",     toneCurve.shcompr);
     Glib::ArrayHandle<double> tcurve = toneCurve.curve;
     keyFile.set_double_list("Exposure", "Curve",        tcurve);
@@ -493,6 +495,7 @@ if (keyFile.has_group ("Exposure")) {
 	if (keyFile.has_key ("Exposure", "Black"))          toneCurve.black         = keyFile.get_integer ("Exposure", "Black");
     if (keyFile.has_key ("Exposure", "HighlightCompr")) toneCurve.hlcompr       = keyFile.get_integer ("Exposure", "HighlightCompr");
     if (toneCurve.hlcompr > 100) toneCurve.hlcompr = 100; // older pp3 files can have values above 100.
+    if (keyFile.has_key ("Exposure", "HighlightComprThreshold")) toneCurve.hlcomprthresh = keyFile.get_integer ("Exposure", "HighlightComprThreshold");
     if (keyFile.has_key ("Exposure", "ShadowCompr"))    toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr");
     if (toneCurve.shcompr > 100) toneCurve.shcompr = 100; // older pp3 files can have values above 100.
     if (version>200)
@@ -744,8 +747,8 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
 	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
-	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_boolean ("RAW", "CARed" );
-	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_boolean ("RAW", "CABlue" );
+	if (keyFile.has_key ("RAW", "CARed"))         raw.cared = keyFile.get_double ("RAW", "CARed" );
+	if (keyFile.has_key ("RAW", "CABlue"))        raw.cablue = keyFile.get_double ("RAW", "CABlue" );
 	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_integer ("RAW", "HotDeadPixels" );
 	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
 	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
@@ -840,6 +843,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& toneCurve.saturation == other.toneCurve.saturation
 		&& toneCurve.shcompr == other.toneCurve.shcompr
 		&& toneCurve.hlcompr == other.toneCurve.hlcompr
+		&& toneCurve.hlcomprthresh == other.toneCurve.hlcomprthresh
 		&& toneCurve.autoexp == other.toneCurve.autoexp
 		&& toneCurve.clip == other.toneCurve.clip
 		&& toneCurve.expcomp == other.toneCurve.expcomp

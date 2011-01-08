@@ -692,7 +692,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	float* curve1 = new float [65536];
     float* curve2 = new float [65536];
 	float* curve = new float [65536];
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
 	LabImage* labView = new LabImage (fw,fh);
 

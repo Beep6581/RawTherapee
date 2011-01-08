@@ -1026,7 +1026,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 
     defGain = 0.0;//log(initialGain) / log(2.0);
 
-	if ( raw.hotdeadpix_filt ) {
+	if ( raw.hotdeadpix_filt>0 ) {
 		if (plistener) {
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);

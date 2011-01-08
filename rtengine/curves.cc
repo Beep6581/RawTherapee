@@ -400,8 +400,8 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, \
-									 double br, double contr, double defmul, double gamma_, bool igamma, \
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
+									 double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, \
 									 const std::vector<double>& curvePoints, unsigned int* histogram, \
 									 float* hlCurve, float* shCurve, float* outCurve, \
 									 unsigned int* outBeforeCCurveHistogram, int skip) {
@@ -471,7 +471,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		float exp_scale = a;
 		float scale = 65536.0;
 		float comp = (ecomp)*hlcompr/100.0;
-		int shoulder = round((scale/exp_scale)*(shcompr/100.0));
+		int shoulder = round((scale/exp_scale)*(hlcomprthresh/200.0));
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
 		for (int i=0; i<0x10000; i++) {

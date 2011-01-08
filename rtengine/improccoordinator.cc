@@ -120,7 +120,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	if( !highDetailNeeded ){
 		rp.dmethod = RAWParams::methodstring[RAWParams::fast];
 		rp.ca_autocorrect  = false;
-		rp.hotdeadpix_filt = false;
+		//rp.hotdeadpix_filt = false;
 		rp.ccSteps = 0;
 	}
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
@@ -199,7 +199,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, \
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
+									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
 									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
 									imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, \
 									vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
