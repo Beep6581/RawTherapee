@@ -21,7 +21,7 @@
 #include <mytime.h>
 #include <refreshmap.h>
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)<65535 ? (a) : (65535));
+#define CLIP(a) ((a)<65535 ? (a) : (65535))
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
 namespace rtengine {

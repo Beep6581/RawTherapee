@@ -24,8 +24,8 @@
 #include <mytime.h>
 #include <string.h>
 
-#undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
+#define CLIP(a) ((a)<65535 ? (a) : (65535))
 
 
 namespace rtengine {
@@ -537,7 +537,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			double avg = 0; 
 			//double sqavg = 0;
 			for (int i=0; i<=0xffff; i++) {
-				avg += dcurve[(int)shCurve[(int)hlCurve[i]*i]] * histogram[i];
+				avg += dcurve[(int)shCurve[CLIP((int)hlCurve[i]*i)]] * histogram[i];
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
 				sum += histogram[i];
 			}
