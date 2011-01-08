@@ -84,6 +84,7 @@ RTWindow::RTWindow ()
 			l->set_angle (90);
 			vbf->pack_start (*l);
 			vbf->set_spacing (2);
+			vbf->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
 			vbf->show_all ();
 			mainNB->append_page (*fpanel, *vbf);
 		 } else {
@@ -91,6 +92,7 @@ RTWindow::RTWindow ()
 			hbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
 			hbf->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER"))));
 			hbf->set_spacing (2);
+			hbf->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
 			hbf->show_all ();
 			mainNB->append_page (*fpanel, *hbf);
 		}
@@ -115,6 +117,7 @@ RTWindow::RTWindow ()
 			l->set_angle (90);
 			vbe->pack_start (*l);
 			vbe->set_spacing (2);
+			vbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
 			vbe->show_all ();
 			mainNB->append_page (*epanel, *vbe);
 		} else {
@@ -122,6 +125,7 @@ RTWindow::RTWindow ()
 			hbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
 			hbe->pack_start (*Gtk::manage (new Gtk::Label(M("MAIN_FRAME_EDITOR"))));
 			hbe->set_spacing (2);
+			hbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
 			hbe->show_all ();
 			mainNB->append_page (*epanel, *hbe);
 		}
@@ -257,6 +261,26 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
 }
 
 bool RTWindow::keyPressed (GdkEventKey* event) {
+
+	bool ctrl = event->state & GDK_CONTROL_MASK;
+	bool shift = event->state & GDK_SHIFT_MASK;
+
+	if (ctrl) {
+		switch(event->keyval) {
+			case GDK_F2: // file browser panel
+				mainNB->set_current_page (mainNB->page_num (*fpanel));
+				return true;
+			case GDK_F3: // batch queue panel
+				mainNB->set_current_page (mainNB->page_num (*bpanel));
+				return true;
+			case GDK_F4: //single tab mode, editor panel
+				if (isSingleTabMode() && epanel) {
+				    mainNB->set_current_page (mainNB->page_num (*epanel));
+				}
+				return true;
+		}
+	}
+
     if(event->keyval == GDK_F11) {
         toggle_fullscreen();
     }
@@ -377,6 +401,7 @@ void RTWindow::MoveFileBrowserToMain()
         epanel->catalogPane->remove(*fCatalog);
         fpanel->ribbonPane->add(*fCatalog);
         fCatalog->enableTabMode(false);
+        fCatalog->tbLeftPanel_1_visible(true);
     }
 }
 
@@ -389,6 +414,7 @@ void RTWindow::MoveFileBrowserToEditor()
         epanel->catalogPane->add(*fCatalog);
         fCatalog->enableTabMode(true);
         fCatalog->refreshHeight();
+        fCatalog->tbLeftPanel_1_visible(false);
     }
 }
 

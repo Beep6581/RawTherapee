@@ -51,8 +51,8 @@ CoarsePanel::CoarsePanel () : ToolPanel () {
     vflip->set_relief(Gtk::RELIEF_NONE);
     pack_start (*vflip);
     
-    rotate_left->set_tooltip_text (M("TP_COARSETRAF_TOOLTIP_ROTLEFT"));
-    rotate_right->set_tooltip_text (M("TP_COARSETRAF_TOOLTIP_ROTRIGHT"));
+    rotate_left->set_tooltip_markup (M("TP_COARSETRAF_TOOLTIP_ROTLEFT"));
+    rotate_right->set_tooltip_markup (M("TP_COARSETRAF_TOOLTIP_ROTRIGHT"));
     vflip->set_tooltip_text (M("TP_COARSETRAF_TOOLTIP_VFLIP"));
     hflip->set_tooltip_text (M("TP_COARSETRAF_TOOLTIP_HFLIP"));
 

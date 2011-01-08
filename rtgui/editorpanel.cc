@@ -88,16 +88,19 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     Gtk::VSeparator* vseph = Gtk::manage (new Gtk::VSeparator ());
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Label* hidehpLabel = Gtk::manage (new Gtk::Label ());
-    hidehpLabel->set_markup ("<b>H</b>");
-    Gtk::Image* hpimg = Gtk::manage (new Gtk::Image (argv0+"/images/left.png"));
-    Gtk::HBox* hidehpBox = Gtk::manage (new Gtk::HBox ());
-    hidehpBox->pack_start (*hpimg, Gtk::PACK_SHRINK, 2);
-    hidehpBox->pack_start (*hidehpLabel, Gtk::PACK_SHRINK, 2);
-    hidehp->add (*hidehpBox);
+
+    iHistoryShow = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    iHistoryHide = new Gtk::Image(argv0+"/images/panel_to_left.png");
+
     hidehp->set_relief(Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
     hidehp->set_tooltip_markup (M("MAIN_TOOLTIP_HIDEHP"));
+    if (options.showHistory){
+    	hidehp->set_image (*iHistoryHide);
+    }
+    else {
+    	hidehp->set_image (*iHistoryShow);
+    }
 
     Gtk::VSeparator* vsepcl = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
@@ -661,6 +664,13 @@ void EditorPanel::hideHistoryActivated () {
     if (hidehp->get_active())
         hpanedl->pack1 (*leftbox, false, true);
     options.showHistory = hidehp->get_active();
+
+    if (options.showHistory){
+    	hidehp->set_image (*iHistoryHide);
+    }
+    else {
+    	hidehp->set_image (*iHistoryShow);
+    }
 }
 
 bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
@@ -671,6 +681,13 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
     if (!ctrl) {
         // Normal
         switch(event->keyval) {
+			case GDK_bracketright:
+				tpc->coarse->rotateRight();
+				return true;
+			case GDK_bracketleft:
+				tpc->coarse->rotateLeft();
+				return true;
+
             case GDK_h:
             case GDK_H:
                 hidehp->set_active (!hidehp->get_active());
