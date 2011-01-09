@@ -729,6 +729,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_FILETYPE;File Type
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !HISTORY_MSG_100;RGB saturation
@@ -749,14 +751,20 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_97;'b' curve
 !HISTORY_MSG_98;Demosaicing
 !HISTORY_MSG_99;Preprocessing
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
 !MAIN_TAB_RAW;RAW
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
 !NAVIGATOR_LAB_A_NA;A = n/a
 !NAVIGATOR_LAB_A_VALUE;A = %1
 !NAVIGATOR_LAB_B_NA;B = n/a
 !NAVIGATOR_LAB_B_VALUE;B = %1
 !NAVIGATOR_LAB_L_NA;L = n/a
 !NAVIGATOR_LAB_L_VALUE;L = %1
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
@@ -764,6 +772,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
+!PREFERENCES_METADATA;Metadata
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
@@ -773,10 +782,12 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
 !TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow

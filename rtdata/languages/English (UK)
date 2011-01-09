@@ -91,6 +91,8 @@ TP_HLREC_COLOR;Colour Propagation
 !FILEBROWSER_APPLYPROFILE;Apply profile
 !FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
 !FILEBROWSER_CLEARPROFILE;Clear profile
 !FILEBROWSER_COPYPROFILE;Copy profile
 !FILEBROWSER_CURRENT_NAME;Current name:
@@ -342,8 +344,11 @@ TP_HLREC_COLOR;Colour Propagation
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 !MAIN_FRAME_BATCHQUEUE;Batch Queue
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
 !MAIN_FRAME_FILEBROWSER;File Browser
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
 !MAIN_FRAME_PLACES;Places
 !MAIN_FRAME_PLACES_ADD;Add
 !MAIN_FRAME_PLACES_DEL;Del
@@ -381,6 +386,7 @@ TP_HLREC_COLOR;Colour Propagation
 !MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 !MAIN_TOOLTIP_SAVE;Save image to the default folder
 !MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
 !MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
@@ -411,6 +417,8 @@ TP_HLREC_COLOR;Colour Propagation
 !PARTIALPASTE_EXIFCHANGES;Changes to exif data
 !PARTIALPASTE_EXPOSURE;Exposure
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IPTCINFO;IPTC info
 !PARTIALPASTE_LABCURVE;Lab curve
@@ -482,6 +490,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_INTENT_SATURATION;Saturation
 !PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+!PREFERENCES_METADATA;Metadata
 !PREFERENCES_MONITORICC;Monitor Profile
 !PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
@@ -500,10 +509,10 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
-!PREFERENCES_PROFILEPRCACHE;Profile in Cache
-!PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
-!PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
-!PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
+!PREFERENCES_PROFILEPRCACHE;Profile in cache
+!PREFERENCES_PROFILEPRFILE;Profile next to the input file
+!PREFERENCES_PROFILESAVECACHE;Save processing parameters to the cache
+!PREFERENCES_PROFILESAVEINPUT;Save processing parameters next to the input file
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PSPATH;Adobe Photoshop installation directory
 !PREFERENCES_SELECTFONT;Select font
@@ -529,6 +538,7 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_TAB_OUTPUT;Output Options
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THUMBSIZE;Thumbnail Size
+!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROFILEPANEL_FILEDLGFILTERANY;Any files
@@ -590,8 +600,8 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_CHMIXER_RED;Red
 !TP_COARSETRAF_DEGREE;degree:
 !TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
-!TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left
-!TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right
+!TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left <b>[</b>
+!TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right <b>]</b>
 !TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
 !TP_COLORBOOST_ACHANNEL;Channel "a"
 !TP_COLORBOOST_AMOUNT;Amount
@@ -650,7 +660,8 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
-!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery
+!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
 !TP_EXPOSURE_CONTRAST;Contrast
 !TP_EXPOSURE_CURVEEDITOR;Tone Curve

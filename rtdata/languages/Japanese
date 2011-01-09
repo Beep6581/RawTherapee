@@ -788,10 +788,21 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
+!PREFERENCES_METADATA;Metadata
 !PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold

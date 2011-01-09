@@ -49,8 +49,8 @@ FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 FILEBROWSER_AUTODARKFRAME;Auto dark frame
-FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
 FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_CURRENT_NAME;Current name:
@@ -367,8 +367,8 @@ MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
-MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
+MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -460,7 +460,6 @@ PREFERENCES_DMETHOD;Method
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EDITORLAYOUT;Editor Layout
 PREFERENCES_EXPOS;Exposure before interpolation\n :correction (lin)
-PREFERENCES_PRESER;Exposure before interpolation\n :preserve highlights (EV)
 PREFERENCES_EXTERNALEDITOR;External editor
 PREFERENCES_FALSECOLOR;False color suppression steps
 PREFERENCES_FBROWSEROPTS;File Browser Options
