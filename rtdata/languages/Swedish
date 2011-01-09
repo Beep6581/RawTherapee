@@ -806,3 +806,14 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
+!PREFERENCES_METADATA;Metadata
+!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold

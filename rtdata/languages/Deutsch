@@ -39,6 +39,7 @@ EDITWINDOW_TITLE;Bildbearbeitung
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;Exif Filter
+EXIFFILTER_FILETYPE;Dateityp
 EXIFFILTER_FOCALLEN;Brennweite
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
@@ -157,7 +158,7 @@ HISTORY_MSG_103;HSV EQ -- Hellwert
 HISTORY_MSG_104;HSV Mixer
 HISTORY_MSG_105;Defringing aktiv
 HISTORY_MSG_106;Defringing Radius
-HISTORY_MSG_107;Defringing Schwellwert
+HISTORY_MSG_107;Defringing Schwellenwert
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
@@ -172,7 +173,7 @@ HISTORY_MSG_1;Bild geladen
 HISTORY_MSG_20;Schärfen
 HISTORY_MSG_21;Schärfen Radius
 HISTORY_MSG_22;Schärfen Stärke
-HISTORY_MSG_23;Schärfen Schwellwert
+HISTORY_MSG_23;Schärfen Schwellenwert
 HISTORY_MSG_24;Schärfen nur Kanten
 HISTORY_MSG_25;Schärfen Kantensuche Radius
 HISTORY_MSG_26;Schärfen Kanten-Toleranz
@@ -333,6 +334,7 @@ MAIN_BUTTON_SENDTOEDITOR;Im Editor öffnen
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Öffnes das aktuelle Bild im externen Editor <b>Strg+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
 MAIN_FRAME_BATCHQUEUE;Warteschlange 
+MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
 MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzuf.
@@ -476,7 +478,7 @@ PREFERENCES_GIMPPATH;GIMP Installations-Verzeichnis
 PREFERENCES_GREENEQUIL;Grün-Ausgleich
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
-PREFERENCES_HLTHRESHOLD;Schwellwert - zu hell
+PREFERENCES_HLTHRESHOLD;Schwellenwert - zu hell
 PREFERENCES_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
@@ -497,10 +499,10 @@ PREFERENCES_OUTDIRTEMPLATE;Verwenden einer Vorlage
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabe-Dateien überschreiben
-PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Datei-Typen
-PREFERENCES_PARSEDEXTADD;Datei-Typ hinzufügen
-PREFERENCES_PARSEDEXTADDHINT;Gebe einen Datei-Typ (Extension) ein und drücke diesen Knopf um diesen Typ hinzuzufügen
-PREFERENCES_PARSEDEXTDELHINT;Lösche den ausgewählten Datei-Typ von der Liste
+PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Dateitypen
+PREFERENCES_PARSEDEXTADD;Dateityp hinzufügen
+PREFERENCES_PARSEDEXTADDHINT;Gebe einen Dateityp (Extension) ein und drücke diesen Knopf um diesen Typ hinzuzufügen
+PREFERENCES_PARSEDEXTDELHINT;Lösche den ausgewählten Dateityp von der Liste
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher (Cache)
@@ -518,7 +520,7 @@ PREFERENCES_SET;SETZEN
 PREFERENCES_SHOWBASICEXIF;Zeige grundlegende Exif-Informationen
 PREFERENCES_SHOWDATETIME;Zeige Datum und Zeit
 PREFERENCES_SHOWONLYRAW;Zeige nur Rohdateien (RAW)
-PREFERENCES_SHTHRESHOLD;Schwellwert - zu dunkel
+PREFERENCES_SHTHRESHOLD;Schwellenwert - zu dunkel
 PREFERENCES_SINGLETAB;Ein-Reiter Modus
 PREFERENCES_STARTUPIMDIR;Bild-Verzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Datei-Browser
@@ -626,7 +628,7 @@ TP_CROP_X;x
 TP_CROP_Y;y
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
-TP_DEFRINGE_THRESHOLD;Schwellwert
+TP_DEFRINGE_THRESHOLD;Schwellenwert
 TP_DETAIL_AMOUNT;Stärke
 TP_DIRPYRDENOISE_CHROMA;Chrominanz
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -638,7 +640,7 @@ TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
 TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
-TP_DIRPYREQUALIZER_THRESHOLD;Schwellwert
+TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Menge
 TP_DISTORTION_LABEL;Entzerrung
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
@@ -693,7 +695,7 @@ TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_SAVEREFERENCE;Speichere Referenzbild für die Profilierung
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
 TP_IMPULSEDENOISE_LABEL;Fleckrauschminderung
-TP_IMPULSEDENOISE_THRESH;Schwellwert
+TP_IMPULSEDENOISE_THRESH;Schwellenwert
 TP_LABCURVE_BRIGHTNESS;Helligkeit
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanzkurve
@@ -761,7 +763,7 @@ TP_SHARPENING_RLD;R-L Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Stärke
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
-TP_SHARPENING_THRESHOLD;Schwellwert
+TP_SHARPENING_THRESHOLD;Schwellenwert
 TP_SHARPENING_USM;Unschärfemaske
 TP_VIGNETTING_AMOUNT;Stärke
 TP_VIGNETTING_CENTER;Zentrum
@@ -800,11 +802,18 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EXIFFILTER_FILETYPE;File Type
+!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
 !HISTORY_MSG_108;Resize bounding box
 !HISTORY_MSG_109;Resizing applies to
-!MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
+!PREFERENCES_METADATA;Metadata
 !PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
@@ -812,7 +821,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
 !TP_CROP_GTGRID;Grid
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
