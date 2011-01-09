@@ -690,6 +690,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
     delete [] row;
     delete [] buffer;
 
+
 	fclose (file);
 
     if (pl) {

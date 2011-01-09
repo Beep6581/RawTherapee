@@ -859,7 +859,10 @@ void Preferences::fillPreferences () {
     dateformat->set_text (moptions.dateFormat);
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
-    if (safe_file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
+    if (moptions.rtSettings.monitorProfile.empty())
+    	monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
+
+    if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);

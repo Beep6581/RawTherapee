@@ -64,8 +64,8 @@ Glib::ustring getExtension (const Glib::ustring& filename) {
 
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams) {
 
-    cr->set_line_width (0.7);
-    cr->rectangle (imx+0.5, imy+0.5, imw, imh);
+    cr->set_line_width (0.);
+    cr->rectangle (imx, imy, imw, imh);
     cr->clip ();
 
     double c1x = (cparams.x-startx)*scale;
@@ -76,10 +76,10 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
 
     // TODO: not sure if this is right. Seems to leave a thin border on the left/top, but might be bug in calling code
-    cr->rectangle (imx+0.5, imy+0.5, imw, c1y);
-    cr->rectangle (imx+0.5, imy+0.5+c2y, imw, imh-c2y);
-    cr->rectangle (imx+0.5, imy+0.5+c1y, c1x, c2y-c1y+1);
-    cr->rectangle (imx+0.5+c2x, imy+0.5+c1y, imw-c2x, c2y-c1y+1);
+    cr->rectangle (imx, imy, imw, c1y);
+    cr->rectangle (imx, imy+c2y, imw, imh-c2y);
+    cr->rectangle (imx, imy+c1y, c1x, c2y-c1y+1);
+    cr->rectangle (imx+c2x, imy+c1y, imw-c2x, c2y-c1y+1);
     cr->fill ();
 
     // rectangle around the cropped area and guides

@@ -245,7 +245,9 @@ class FNumberInterpreter : public Interpreter {
         FNumberInterpreter () {}
         virtual std::string toString (Tag* t) {
         	char buffer[32];
-            sprintf (buffer, "%0.1f", t->toDouble());
+        	double v = t->toDouble();
+        	if( v < 0. || v > 1000. ) return "undef";
+            sprintf (buffer, "%0.1f", v);
             return buffer;
         }
 };
@@ -256,7 +258,9 @@ class ApertureInterpreter : public Interpreter {
         ApertureInterpreter () {}
         virtual std::string toString (Tag* t) {
         	char buffer[32];
-            sprintf (buffer, "%0.1f", pow(2.0, t->toDouble()/2.0));
+        	double v = pow(2.0, t->toDouble()/2.0);
+        	if( v < 0. || v > 1000. ) return "undef";
+            sprintf (buffer, "%.1f", v );
             return buffer;
         }
 };
@@ -267,7 +271,9 @@ class ExposureBiasInterpreter : public Interpreter {
         ExposureBiasInterpreter () {}
         virtual std::string toString (Tag* t) {
         	char buffer[32];
-            sprintf (buffer, "%+0.2f", t->toDouble());
+        	double v = t->toDouble();
+        	if( v < -1000. || v > 1000. ) return "undef";
+            sprintf (buffer, "%+0.2f", v );
             return buffer;
         }
 };
@@ -277,12 +283,12 @@ class ShutterSpeedInterpreter : public Interpreter {
     public:
         ShutterSpeedInterpreter () {}
         virtual std::string toString (Tag* t) {
-        	char buffer[32];
+        	char buffer[1024];
             double d = pow (2.0, -t->toDouble());
             if (d > 0.0 && d < 0.9)
-                sprintf (buffer, "1/%0.0f", 1.0 / d);
+                sprintf (buffer, "1/%.0f", 1.0 / d);
             else
-                sprintf (buffer, "%0.1f", d);
+                sprintf (buffer, "%.1f", d);
             return buffer;
         }
 };
@@ -292,12 +298,12 @@ class ExposureTimeInterpreter : public Interpreter {
     public:
         ExposureTimeInterpreter () {}
         virtual std::string toString (Tag* t) {
-        	char buffer[32];
+        	char buffer[1024];
             double d = t->toDouble();
             if (d > 0.0 && d < 0.9)
-                sprintf (buffer, "1/%0.0f", 1.0 / d);
+                sprintf (buffer, "1/%.0f", 1.0 / d);
             else
-                sprintf (buffer, "%0.1f", d);
+                sprintf (buffer, "%.1f", d);
             return buffer;
         }
 };
@@ -308,7 +314,9 @@ class FocalLengthInterpreter : public Interpreter {
         FocalLengthInterpreter () {}
         virtual std::string toString (Tag* t) {
         	char buffer[32];
-            sprintf (buffer, "%0.1f", t->toDouble());
+        	double v = t->toDouble();
+        	if( v>1000000. || v<0 ) return "undef";
+            sprintf (buffer, "%.1f", v );
             return buffer;
         }
 };

@@ -53,7 +53,9 @@ class CAApertureInterpreter : public Interpreter {
         CAApertureInterpreter () {}
         virtual std::string toString (Tag* t) {
         	char buffer[32];
-            sprintf (buffer, "%0.1f", pow(2.0, t->toDouble()/64.0));
+        	double v = pow(2.0, t->toDouble()/64.0);
+        	if( v<0. || v> 1000.) return "undef";
+            sprintf (buffer, "%.1f",v );
             return buffer;
         }
 };
@@ -74,7 +76,7 @@ public:
     	int sec = t->toInt(0,SHORT);
     	if( !sec ) return "OFF";
     	char buffer[32];
-        sprintf (buffer, "%0.1fs %s", sec/10., sec&0x4000?",Custom":"");
+        sprintf (buffer, "%.1fs %s", sec/10., sec&0x4000?",Custom":"");
         return buffer;
     }
 };
@@ -392,9 +394,11 @@ class CAFocalInterpreter : public Interpreter {
 public:
     virtual std::string toString (Tag* t) {
     	Tag *unitTag = t->getParent()->getRoot()->findTag("FocalUnits");
-    	double unit = unitTag->toDouble();
+    	double v = unitTag?unitTag->toDouble():1.;
+    	v = (v>0. ? t->toDouble()/v : t->toDouble());
+    	if( v <0. || v>1000000.) return "undef";
     	char buffer[32];
-        sprintf (buffer, "%0.1f", (unit>0. ? t->toDouble()/unit : t->toDouble()));
+        sprintf (buffer, "%.1f", v );
         return buffer;
     }
 };
@@ -741,8 +745,8 @@ public:
 	virtual std::string toString (Tag* t) {
 		int val = t->toInt();
 		if( val <40 ) return "undef";
-    	char buffer[32];
-        sprintf (buffer, "%0.2fmm", val *25.4 / 1000);
+    	char buffer[1024];
+        sprintf (buffer, "%.2fmm", val *25.4 / 1000);
         return buffer;
 	}
 };
@@ -751,8 +755,9 @@ CAFocalPlaneInterpreter caFocalPlaneInterpreter;
 class CAExposureTimeInterpreter : public Interpreter {
 public:
 	virtual std::string toString (Tag* t) {
-    	char buffer[32];
-        sprintf (buffer, "%0.3f", pow (2, - t->toInt()/32.0) );
+    	char buffer[1024];
+    	double d = pow (2, - t->toInt()/32.0);
+        sprintf (buffer, "%.3f", d);
         return buffer;
 	}
 };
@@ -760,8 +765,8 @@ CAExposureTimeInterpreter caExposureTimeInterpreter;
 
 class CAEVInterpreter : public Interpreter {
 	virtual std::string toString (Tag* t) {
-    	char buffer[32];
-        sprintf (buffer, "%0.1f", t->toDouble()/32.0  );
+    	char buffer[1024];
+        sprintf (buffer, "%.1f", t->toDouble()/32.0  );
         return buffer;
 	}
 };
@@ -770,8 +775,8 @@ CAEVInterpreter caEVInterpreter;
 class CABaseISOInterpreter : public Interpreter {
 public:
 	virtual std::string toString (Tag* t) {
-    	char buffer[32];
-        sprintf (buffer, "%0.0f", pow (2, t->toInt()/32.0 - 4) * 50 );
+    	char buffer[1024];
+        sprintf (buffer, "%.0f", pow (2, t->toInt()/32.0 - 4) * 50 );
         return buffer;
 	}
 };
@@ -865,7 +870,7 @@ public:
 		int n= t->toInt();
 		if( n==-1) return "undef";
 	    char buffer[32];
-        sprintf (buffer, "%0.f", n/32. );
+        sprintf (buffer, "%.0f", n/32. );
         return buffer;
 	}
 };
@@ -911,8 +916,8 @@ CAControModeInterpreter caControModeInterpreter;
 class CAFocusDistanceInterpreter : public Interpreter {
 public:
 	virtual std::string toString (Tag* t) {
-    	char buffer[32];
-        sprintf (buffer, "%0.2f", t->toDouble()/100 );
+    	char buffer[1024];
+        sprintf (buffer, "%.2f", t->toDouble()/100 );
         return buffer;
 	}
 };
@@ -921,8 +926,8 @@ CAFocusDistanceInterpreter caFocusDistanceInterpreter;
 class CAMeasuredEVInterpreter : public Interpreter {
 public:
 	virtual std::string toString (Tag* t) {
-    	char buffer[32];
-        sprintf (buffer, "%0.1f", t->toDouble()/8 - 6 );
+    	char buffer[1024];
+        sprintf (buffer, "%.1f", t->toDouble()/8 - 6 );
         return buffer;
 	}
 };

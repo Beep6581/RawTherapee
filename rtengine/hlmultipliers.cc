@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <rawimagesource.h>
 #include <rawimagesource_i.h>
+#include <options.h>
 
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
@@ -194,15 +195,17 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
                 }
         if (!change && phase<4) {
             phase++;
-            printf ("phc %d: %d\n", phase, k);
+            if( options.rtSettings.verbose )
+               printf ("phc %d: %d\n", phase, k);
         }
         else if (!change) 
             break;
             
-        if (k%20 == 0)
+        if (k%20 == 0 && options.rtSettings.verbose )
             printf ("changed %d\n", changed);
     }
-    printf ("Highlight recovery ends in %d iterations\n", k);
+    if( options.rtSettings.verbose )
+       printf ("Highlight recovery ends in %d iterations\n", k);
 
     int maxval = MAX(MAX(max[0], max[1]), max[2]);    
     for (int i=0; i<dh; i++)
