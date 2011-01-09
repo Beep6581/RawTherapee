@@ -233,7 +233,9 @@ public:
 	PAFNumberInterpreter () {}
     virtual std::string toString (Tag* t) {
     	char buffer[32];
-        sprintf (buffer, "%0.1f", t->toDouble()/10);
+    	double v = t->toDouble()/10;
+    	if( v < 0. || v > 1000. ) return "undef";
+        sprintf (buffer, "%.1f", v );
         return buffer;
     }
 };
@@ -600,6 +602,7 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*6+ 13, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
             choices.insert(p_t(256*6+ 14, "smc PENTAX-FA* MACRO 200mm f/4 ED[IF]"));
             choices.insert(p_t(256*7+ 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
+            choices.insert(p_t(256*7+ 58, "smc PENTAX-D FA MACRO 100mm f/2.8 WR"));
             choices.insert(p_t(256*7+ 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
             choices.insert(p_t(256*7+ 214, "smc PENTAX-DA 35mm f/2.4 AL"));
             choices.insert(p_t(256*7+ 216, "smc PENTAX-DA L 55-300mm f/4-5.8 ED"));
@@ -708,7 +711,9 @@ class PAMaxApertureInterpreter: public Interpreter {
     	   a &= 0x7F;
     	   if(a>1){
     		  char buffer[32];
-              sprintf (buffer, "%0.1f", pow(2.0, (a-1)/32.0));
+    		  double v = pow(2.0, (a-1)/32.0);
+    		  if( v < 0. || v > 1000. ) return "undef";
+              sprintf (buffer, "%.1f", v );
               return buffer;
     	   }else
     		  return "n/a";
@@ -724,7 +729,7 @@ public:
  	   int a = t->toInt(0,BYTE);
  	   int mina = a & 0x0F;
  	   int maxa = (a & 0xF0)>>4;
-       sprintf (buffer, "%0.1f - %0.0f", pow(2.0, maxa/4.0), pow(2.0, (mina+10)/4.0));
+       sprintf (buffer, "%.1f - %.0f", pow(2.0, maxa/4.0), pow(2.0, (mina+10)/4.0));
        return buffer;
 
     }
@@ -819,9 +824,9 @@ class PAExternalFlashGNInterpreter: public Interpreter {
 	public:
 	PAExternalFlashGNInterpreter(){}
 	virtual std::string toString (Tag* t) {
-		   char buffer[32];
+		   char buffer[1024];
 	       int b = t->toInt(0,BYTE) & 0x1F;
-	       sprintf (buffer, "%0.0f", pow(2.,b/16.+4) );
+	       sprintf (buffer, "%.0f", pow(2.,b/16.+4) );
 	       return buffer;
 	}
 };
@@ -1032,7 +1037,7 @@ public:
 PADriveMode2Interpreter paDriveMode2Interpreter;
 
 const TagAttrib pentaxAttribs[] = {
- {0, 1, 0, 0, 0x0001, "PentaxVersion", &stdInterpreter},
+ {0, 1, 0, 0, 0x0000, "PentaxVersion", &stdInterpreter},
  {0, 1, 0, 0, 0x0001, "PentaxModelType", &stdInterpreter},
  {0, 2, 0, 0, 0x0002, "PreviewImageSize", &stdInterpreter},
  {0, 2, 0, 0, 0x0003, "PreviewImageLength", &stdInterpreter},

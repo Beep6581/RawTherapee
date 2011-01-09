@@ -152,8 +152,8 @@ class RawImageSource : public ImageSource {
         void CA_correct_RT	(double cared, double cablue);
 		void exp_bef (float expos, float preser);//exposi
 		
-        int  cfaCleanFromMap( BYTE* bitmapBads );
-        int  findHotDeadPixel( BYTE *bpMap, float thresh);
+        int  cfaCleanFromMap( PixelsMap &bitmapBads );
+        int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
         void ddct8x8s(int isgn, float **a);
 
         void cfa_linedn (float linenoiselevel);//Emil's line denoise

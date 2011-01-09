@@ -363,26 +363,28 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 /* cfaCleanFromMap: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
-int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
+int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
 {
 	float eps=1.0;	
-	int bmpW= (W/8+ (W%8?1:0));
 	int counter=0;
 	for( int row = 2; row < H-2; row++ ){
 		for(int col = 2; col <W-2; col++ ){
-
-			if( !bitmapBads[ row *bmpW + col/8] ){ col+=7;continue; } //optimization
-
-			if( !(bitmapBads[ row *bmpW + col/8] & (1<<col%8)) ) continue;
+			int sk = bitmapBads.skipIfZero(col,row); //optimization for a stripe all zero
+			if( sk ){
+				col +=sk-1; //-1 is because of col++ in cycle
+				continue;
+			}
+			if( ! bitmapBads.get(col,row ) )
+				continue;
 
 			double wtdsum=0,norm=0,sum=0,tot=0;
 			for( int dy=-2;dy<=2;dy+=2){
 				for( int dx=-2;dx<=2;dx+=2){
 					if (dy==0 && dx==0) continue;
-					if (bitmapBads[ (row+dy) *bmpW + (col+dx)/8] & (1<<(col+dx)%8)) continue;
+					if( bitmapBads.get(col+dx,row+dy) ) continue;
 					sum += rawData[row+dy][col+dx];
 					tot++;
-					if (bitmapBads[ (row-dy) *bmpW + (col-dx)/8] & (1<<(col-dx)%8)) continue;
+					if (bitmapBads.get(col-dx,row-dy)) continue;
 
 					double dirwt = 1/( fabs( rawData[row+dy][col+dx]- rawData[row-dy][col-dx])+eps);
 					wtdsum += dirwt* rawData[row+dy][col+dx];
@@ -404,9 +406,8 @@ int RawImageSource::cfaCleanFromMap( BYTE* bitmapBads )
  *  For each pixel compare its value to the average of similar color surrounding
  *  (Taken from Emil Martinec idea)
  */
-int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
+int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 {
-	int bmpW= (W/8+ (W%8?1:0));
 	float eps=1e-3;//tolerance to avoid dividing by zero
     int counter=0;
 	for (int rr=2; rr < H-2; rr++)
@@ -419,7 +420,7 @@ int RawImageSource::findHotDeadPixel( BYTE *bpMap, float thresh)
 			if (pixratio > thresh) continue;
 
 			// mark the pixel as "bad"
-			bpMap[rr*bmpW+cc/8 ] |= 1<<(cc%8);
+			bpMap.set(cc,rr );
 			counter++;
 		}
 	return counter;
@@ -829,7 +830,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     plistener=NULL; // This must be reset, because only load() is called through progressConnector
     t2.set();
     if( settings->verbose )
-       printf("Load %s: %d µsec\n",fname.c_str(), t2.etime(t1));
+       printf("Load %s: %d usec\n",fname.c_str(), t2.etime(t1));
 
     return 0; // OK!
 }
@@ -850,27 +851,26 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
 	}
 	copyOriginalPixels(ri, rid);
-	size_t widthBitmap = (W/8+ (W%8?1:0));
-	size_t dimBitmap = widthBitmap*H;
-
-	BYTE *bitmapBads = new BYTE [ dimBitmap ];
+	PixelsMap bitmapBads(W,H);
 	int totBP=0; // Hold count of bad pixels to correct
+
+	// Always correct camera badpixels
 	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
 	if( bp ){
-		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
-			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x%8);
+		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose ){
 			std::cout << "Correcting " << bp->size() << " pixels from .badpixels" << std::endl;
 		}
 	}
+
+	// If darkframe selected, correct hotpixels found on darkframe
 	bp = 0;
 	if( raw.df_autoselect ){
 		bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
 	}else if( raw.dark_frame.size()>0 )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
-		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
-			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x%8);
+		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose && bp->size()>0){
 			std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
 		}
@@ -893,7 +893,6 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}
 	if( totBP )
 	   cfaCleanFromMap( bitmapBads );
-	delete [] bitmapBads;
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
@@ -965,7 +964,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	
     t2.set();
     if( settings->verbose )
-       printf("Preprocessing: %d µsec\n", t2.etime(t1));
+       printf("Preprocessing: %d usec\n", t2.etime(t1));
     return;
 }
 void RawImageSource::demosaic(const RAWParams &raw)
@@ -991,7 +990,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         	nodemosaic();
         t2.set();
         if( settings->verbose )
-           printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
+           printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
@@ -2085,8 +2084,8 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 				bn = rn;
 			}
 		}
-		
-		printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
+		if( settings->verbose )
+		   printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
 		
 		//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
 		
