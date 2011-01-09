@@ -28,8 +28,8 @@
 
 namespace rtengine {
 
-const double (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
-const double (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
+const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
+const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};         
 
 std::vector<std::string> getWorkingProfiles () {

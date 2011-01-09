@@ -121,6 +121,8 @@ class ImProcFunctions {
 
 		void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
 		void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
+		void xyz2srgb (float x, float y, float z, int &r, int &g, int &b);
+
 };
 }
 #endif

@@ -495,12 +495,13 @@ void Thumbnail::cleanupGamma () {
 void Thumbnail::init () {
 
     RawImageSource::inverse33 (colorMatrix, iColorMatrix);
-    memset (camToD50, 0, sizeof(camToD50));
+	//colorMatrix is rgb_cam
+    memset (cam2xyz, 0, sizeof(cam2xyz));
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
-                camToD50[i][j] += colorMatrix[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
+                cam2xyz[i][j] += xyz_sRGB[i][k] * colorMatrix[k][j];
+    camProfile = iccStore->createFromMatrix (cam2xyz, false, "Camera");
 }
 
 Thumbnail::Thumbnail () :
@@ -556,6 +557,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
     if (params.wb.method=="Camera") {
+		//recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0]*camwbRed + colorMatrix[0][1]*camwbGreen + colorMatrix[0][2]*camwbBlue;
         double cam_g = colorMatrix[1][0]*camwbRed + colorMatrix[1][1]*camwbGreen + colorMatrix[1][2]*camwbBlue;
         double cam_b = colorMatrix[2][0]*camwbRed + colorMatrix[2][1]*camwbGreen + colorMatrix[2][2]*camwbBlue;
@@ -565,6 +567,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         currWB = ColorTemp (autowbTemp, autowbGreen);
     double r, g, b;
     currWB.getMultipliers (r, g, b);
+	//iColorMatrix is cam_rgb
     double rm = iColorMatrix[0][0]*r + iColorMatrix[0][1]*g + iColorMatrix[0][2]*b;
     double gm = iColorMatrix[1][0]*r + iColorMatrix[1][1]*g + iColorMatrix[1][2]*b;
     double bm = iColorMatrix[2][0]*r + iColorMatrix[2][1]*g + iColorMatrix[2][2]*b;
@@ -633,15 +636,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 RawImageSource::HLRecovery_Luminance (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval);
         else if (params.hlrecovery.method=="CIELab blending") {
             double icamToD50[3][3];
-            RawImageSource::inverse33 (camToD50, icamToD50);
+            RawImageSource::inverse33 (cam2xyz, icamToD50);
             for (int i=0; i<rheight; i++)
-                RawImageSource::HLRecovery_CIELab (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval, camToD50, icamToD50);
+                RawImageSource::HLRecovery_CIELab (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval, cam2xyz, icamToD50);
         }
     }
 */
     // perform color space transformation
     if (isRaw)
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, camProfile, camToD50, logDefGain);
+        RawImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, camProfile, cam2xyz, logDefGain);
     else
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile);
         

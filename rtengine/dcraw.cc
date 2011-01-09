@@ -139,11 +139,17 @@ int output_color=1, output_bps=8, output_tiff=0, med_passes=0;
 int no_auto_bright=0;
 unsigned greybox[4] = { 0, 0, UINT_MAX, UINT_MAX };
 float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];*/
-const double xyz_rgb[3][3] = {			// XYZ from RGB
+
+/*const double xyz_rgb[3][3] = {			// XYZ from RGB
   { 0.412453, 0.357580, 0.180423 },
   { 0.212671, 0.715160, 0.072169 },
-  { 0.019334, 0.119193, 0.950227 } };
+  { 0.019334, 0.119193, 0.950227 } };*/
 const float d65_white[3] = { 0.950456, 1, 1.088754 };
+const double xyz_rgb[3][3] = {	// XYZ from RGB, Bradford adapted D50
+	{0.4360747,  0.3850649,  0.1430804},
+	{0.2225045,  0.7168786,  0.0606169},
+	{0.0139322,  0.0971045,  0.7141733} };
+const float d50_white[3] = { 0.96422,  1, 0.82521  };
 /*int histogram[4][0x2000];
 void (*write_thumb)(), (*write_fun)();
 void (*load_raw)(), (*thumb_load_raw)();
@@ -4066,7 +4072,7 @@ void CLASS ahd_interpolate()
   for (i=0; i < 3; i++)
     for (j=0; j < colors; j++)
       for (xyz_cam[i][j] = k=0; k < 3; k++)
-	xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
+		  xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
 
   border_interpolate(5);
   buffer = (char *) malloc (26*TS*TS);		/* 1664 kB */
@@ -5230,7 +5236,8 @@ guess_cfa_pc:
 	xyz[0] = getreal(type);
 	xyz[1] = getreal(type);
 	xyz[2] = 1 - xyz[0] - xyz[1];
-	FORC3 xyz[c] /= d65_white[c];
+			FORC3 xyz[c] /= d50_white[c];
+			//FORC3 xyz[c] /= d65_white[c];
 	break;
       case 50740:			/* DNGPrivateData */
 	if (dng_version) break;

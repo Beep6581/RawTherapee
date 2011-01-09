@@ -27,6 +27,7 @@
 #include <mytime.h>
 #include <glibmm.h>
 #include <iccstore.h>
+#include <iccmatrices.h>
 #include <impulse_denoise.h>
 
 #ifdef _OPENMP
@@ -59,8 +60,8 @@ using namespace procparams;
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 	
-#define D50x 0.96422
-#define D50z 0.82521
+#define D50x 1.0 //0.96422
+#define D50z 1.0 //0.82521
 	
 #define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
 #define kappa	903.29630 //24389.0/27.0;
@@ -120,9 +121,9 @@ void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile,
 
 	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
 
-	lumimul[0] = wprof[0][1];
+	lumimul[0] = wprof[1][0];
 	lumimul[1] = wprof[1][1];
-	lumimul[2] = wprof[2][1];
+	lumimul[2] = wprof[1][2];
 	
     int W = original->width;
     //int cradius = 1;
@@ -356,9 +357,9 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 			//hsv2rgb(h,s,v,r,g,b);
 			 
 			
-            float x = (toxyz[0][0] * r + toxyz[1][0] * g + toxyz[2][0] * b) ;
-            float y = (toxyz[0][1] * r + toxyz[1][1] * g + toxyz[2][1] * b) ;
-            float z = (toxyz[0][2] * r + toxyz[1][2] * g + toxyz[2][2] * b) ;
+            float x = (toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b) ;
+            float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b) ;
+            float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b) ;
 			
 			lab->L[i][j] = 116.0 * (CurveFactory::flinterp(cachef,y)) - 5242.88; //5242.88=16.0*327.68;
             lab->a[i][j] = 500.0 * (((CurveFactory::flinterp(cachef,x) - CurveFactory::flinterp(cachef,y)) ) );
@@ -645,6 +646,13 @@ void ImProcFunctions::hsv2rgb (float h, float s, float v, int &r, int &g, int &b
 	r = (int)((r1)*65535);
 	g = (int)((g1)*65535);
 	b = (int)((b1)*65535);
+}
+	
+void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &b) {
+	
+	r = sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z ;
+	g = sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z ;
+	b = sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z ;
 }
 	
 }

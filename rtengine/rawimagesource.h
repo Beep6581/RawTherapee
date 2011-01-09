@@ -59,10 +59,10 @@ class RawImageSource : public ImageSource {
         double camwb_red;
         double camwb_green;
         double camwb_blue;
-        double coeff[3][3];
-        double icoeff[3][3];
-        double cam[3][3];
-        double icam[3][3];
+        double rgb_cam[3][3];
+        double cam_rgb[3][3];
+        double xyz_cam[3][3];
+        double cam_xyz[3][3];
         bool fuji;
         bool d1x;
         int border;

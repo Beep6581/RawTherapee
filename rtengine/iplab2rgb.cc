@@ -20,6 +20,7 @@
 #include <improcfun.h>
 #include <glibmm.h>
 #include <iccstore.h>
+#include <iccmatrices.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -41,10 +42,12 @@ namespace rtengine {
 #define kapeps 8 // kappa*epsilon
 #define Lab2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
 	
-#define D50x 0.96422
-#define D50z 0.82521
+#define D50x 1.0 //0.96422
+#define D50z 1.0 //0.82521
 
 extern const Settings* settings;
+	
+
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 
@@ -80,6 +83,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
 			float g;
+			int R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -97,9 +101,10 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
 				/* XYZ-D50 to RGB */
-				int R = (int)( 3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
-				int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
-				int B = (int)( 0.0719453*x_ - 0.2289914*y_ + 1.4052427*z_);
+				//int R = (int)( 3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
+				//int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
+				//int B = (int)( 0.0719453*x_ - 0.2289914*y_ + 1.4052427*z_);
+				xyz2srgb(x_,y_,z_,R,G,B);
 				
 				// XYZ-D65 to RGB 
 				//3.2404542 -1.5371385 -0.4985314
@@ -163,6 +168,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
 			float g;
+			int R,G,B;
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
@@ -178,9 +184,10 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
 				/* XYZ-D50 to RGB */
-				int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
-				int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
-				int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
+				//int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
+				//int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
+				//int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
+				xyz2srgb(x_,y_,z_,R,G,B);
 
                 image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
                 image->data[ix++] = (int)gamma2curve[CLIP(G)] >> 8;
@@ -238,6 +245,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
 			float g;
+			int R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -252,9 +260,10 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
 				/* XYZ-D50 to RGB */
-				int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
-				int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
-				int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
+				//int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
+				//int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
+				//int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
+				xyz2srgb(x_,y_,z_,R,G,B);
 
 				image->r[i-cy][j-cx] = gamma2curve[CLIP(R)];
 				image->g[i-cy][j-cx] = gamma2curve[CLIP(G)];

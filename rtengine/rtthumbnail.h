@@ -31,7 +31,7 @@ namespace rtengine {
 
             cmsHPROFILE camProfile;
             double iColorMatrix[3][3];
-            double camToD50[3][3];
+            double cam2xyz[3][3];
 
 
             void transformPixel (int x, int y, int tran, int& tx, int& ty);
