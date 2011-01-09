@@ -809,7 +809,7 @@ void Tag::toString (char* buffer, int ofs) {
       }
   }
   else if (type==ASCII) {
-    sprintf (buffer, "%s", value+ofs);
+    sprintf (buffer, "%.64s", value+ofs);
     return; 
   }
 
@@ -828,8 +828,8 @@ void Tag::toString (char* buffer, int ofs) {
         case BYTE:  sprintf (b, "%d", value[i+ofs]); break;
         case SSHORT: sprintf (b, "%d", toInt(2*i+ofs)); break;
         case SHORT: sprintf (b, "%u", toInt(2*i+ofs)); break;
-        case SLONG: sprintf (b, "%ld", toInt(4*i+ofs)); break;
-        case LONG:  sprintf (b, "%lu", toInt(4*i+ofs)); break;
+        case SLONG: sprintf (b, "%ld", (long)toInt(4*i+ofs)); break;
+        case LONG:  sprintf (b, "%lu", (unsigned long)toInt(4*i+ofs)); break;
         case SRATIONAL: 
         case RATIONAL: sprintf (b, "%d/%d", (int)sget4 (value+8*i+ofs, getOrder()), (int)sget4 (value+8*i+ofs+4, getOrder())); break; 
         case FLOAT:    sprintf (b, "%g", toDouble(8*i+ofs)); break;
@@ -841,7 +841,7 @@ void Tag::toString (char* buffer, int ofs) {
 
 std::string Tag::nameToString (int i) {
 
-    static char buffer[1024];
+    char buffer[1024];
     if (attrib) 
         strcpy (buffer, attrib->name);
     else 
@@ -853,7 +853,7 @@ std::string Tag::nameToString (int i) {
 
 std::string Tag::valueToString () {
 
-    static char buffer[1024];
+    char buffer[1024];
     if (attrib && attrib->interpreter) 
         return attrib->interpreter->toString (this);
     else {
@@ -1107,7 +1107,7 @@ Tag* ExifManager::saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const cha
 
 void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root) {
 
-  static char buffer[1024];
+  char buffer[1024];
   Tag* t;
 
   fseek (f, base+length-4, SEEK_SET);

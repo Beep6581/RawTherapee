@@ -233,7 +233,9 @@ public:
 	PAFNumberInterpreter () {}
     virtual std::string toString (Tag* t) {
     	char buffer[32];
-        sprintf (buffer, "%0.1f", t->toDouble()/10);
+    	double v = t->toDouble()/10;
+    	if( v < 0. || v > 1000. ) return "undef";
+        sprintf (buffer, "%.1f", v );
         return buffer;
     }
 };
@@ -709,7 +711,9 @@ class PAMaxApertureInterpreter: public Interpreter {
     	   a &= 0x7F;
     	   if(a>1){
     		  char buffer[32];
-              sprintf (buffer, "%0.1f", pow(2.0, (a-1)/32.0));
+    		  double v = pow(2.0, (a-1)/32.0);
+    		  if( v < 0. || v > 1000. ) return "undef";
+              sprintf (buffer, "%.1f", v );
               return buffer;
     	   }else
     		  return "n/a";
@@ -725,7 +729,7 @@ public:
  	   int a = t->toInt(0,BYTE);
  	   int mina = a & 0x0F;
  	   int maxa = (a & 0xF0)>>4;
-       sprintf (buffer, "%0.1f - %0.0f", pow(2.0, maxa/4.0), pow(2.0, (mina+10)/4.0));
+       sprintf (buffer, "%.1f - %.0f", pow(2.0, maxa/4.0), pow(2.0, (mina+10)/4.0));
        return buffer;
 
     }
@@ -820,9 +824,9 @@ class PAExternalFlashGNInterpreter: public Interpreter {
 	public:
 	PAExternalFlashGNInterpreter(){}
 	virtual std::string toString (Tag* t) {
-		   char buffer[32];
+		   char buffer[1024];
 	       int b = t->toInt(0,BYTE) & 0x1F;
-	       sprintf (buffer, "%0.0f", pow(2.,b/16.+4) );
+	       sprintf (buffer, "%.0f", pow(2.,b/16.+4) );
 	       return buffer;
 	}
 };
