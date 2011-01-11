@@ -701,7 +701,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
           image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
         }
       }
-      else if (i>2 && i<imheight-1) { // vertical bicubic interpolationi
+      else if (i>2 && i<imheight-1) { // vertical bicubic interpolation
         int col = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
           image->r[j][col] = CLIP((int)(-0.0625*red[j] + 0.5625*image->r[j][col-1] + 0.5625*image->r[j][col+1] - 0.0625*image->r[j][col+3]));
@@ -904,6 +904,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
         for (int j=0; j<3; j++)
             rgb_cam[i][j] = ri->get_rgb_cam(i,j);
     // compute inverse of the color transformation matrix
+	// first arg is matrix, second arg is inverse
     inverse33 (rgb_cam, cam_rgb);
 
     d1x  = ! ri->get_model().compare("D1X");
@@ -917,7 +918,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
-                xyz_cam[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j]; //xyz_cam
+                xyz_cam[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j]; 
     camProfile = iccStore->createFromMatrix (xyz_cam, false, "Camera");
     inverse33 (xyz_cam, cam_xyz);
 
@@ -1079,7 +1080,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		cfa_linedn(0.00002*(raw.linenoise));
 	}
 	
-	if ( raw.ca_autocorrect || raw.cared || raw.cablue ) {
+	if ( raw.ca_autocorrect || fabs(raw.cared)>0.001 || fabs(raw.cablue)>0.001 ) {
 		if (plistener) {
 			plistener->setProgressStr ("CA Auto Correction...");
 			plistener->setProgress (0.0);
