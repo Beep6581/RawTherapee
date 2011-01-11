@@ -428,7 +428,7 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (rhist, 0, 256*sizeof(int));
     memset (ghist, 0, 256*sizeof(int));
     memset (bhist, 0, 256*sizeof(int));
-	memset (bcrgbhist, 0, 256*sizeof(int));
+	//memset (bcrgbhist, 0, 256*sizeof(int));
 
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
@@ -437,7 +437,7 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 			int g=previmg->data[ofs++];
 			int b=previmg->data[ofs++];
 			
-			bcrgbhist[(int)(0.299*r + 0.587*g + 0.114*b)]++;
+			//bcrgbhist[(int)(0.299*r + 0.587*g + 0.114*b)]++;
             rhist[r]++;
             ghist[g]++;
             bhist[b]++;
