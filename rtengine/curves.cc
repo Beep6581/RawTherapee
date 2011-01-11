@@ -602,9 +602,9 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		delete [] dcurve;
 		delete tcurve;
 		delete brightcurve; 
-		if (outBeforeCCurveHistogram) {
-			//for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
-		}
+		/*if (outBeforeCCurveHistogram) {
+			for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
+		}*/
 		
 	}
 
