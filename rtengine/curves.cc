@@ -580,7 +580,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
 				if (outBeforeCCurveHistogram) {
-					float hval = dcurve[(int)shCurve[(int)(hlCurve[i])]];
+					float hval = dcurve[(int)shCurve[CLIP((int)(hlCurve[i]*i))]];
 					//if (needigamma)
 					//	hval = igamma2 (hval);
 					int hi = (int)(255.0*CLIPD(hval));

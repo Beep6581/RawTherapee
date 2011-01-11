@@ -53,7 +53,7 @@ ImProcCoordinator::ImProcCoordinator ()
     Lhist     = new unsigned int[256];
     bcrgbhist = new unsigned int[256];
     bcLhist   = new unsigned int[256];
-    bcabhist  = new unsigned int[256];
+    //bcabhist  = new unsigned int[256];
 
 }
 
@@ -94,7 +94,7 @@ ImProcCoordinator::~ImProcCoordinator () {
     delete [] Lhist;
     delete [] bcrgbhist;
     delete [] bcLhist;
-    delete [] bcabhist;
+    //delete [] bcabhist;
 
     imgsrc->decreaseRef ();
     updaterThreadStart.unlock ();
@@ -210,7 +210,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
     if (todo & M_RGBCURVE) {
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
+									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
+									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
+									imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, vhist16, \
+									hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
         ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
 
         // recompute luminance histogram
@@ -222,7 +226,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
+        CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, \
+									params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
@@ -423,13 +428,19 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     memset (rhist, 0, 256*sizeof(int));
     memset (ghist, 0, 256*sizeof(int));
     memset (bhist, 0, 256*sizeof(int));
-	
+	memset (bcrgbhist, 0, 256*sizeof(int));
+
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
-            rhist[previmg->data[ofs++]]++;
-            ghist[previmg->data[ofs++]]++;
-            bhist[previmg->data[ofs++]]++;
+			int r=previmg->data[ofs++];
+			int g=previmg->data[ofs++];
+			int b=previmg->data[ofs++];
+			
+			bcrgbhist[(int)(0.299*r + 0.587*g + 0.114*b)]++;
+            rhist[r]++;
+            ghist[g]++;
+            bhist[b]++;
         }
     }
 
