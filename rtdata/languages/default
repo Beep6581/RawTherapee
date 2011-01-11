@@ -453,6 +453,8 @@ PREFERENCES_DIRSOFTWARE;Installation directory
 PREFERENCES_DMETHOD;Method
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EDITORLAYOUT;Editor Layout
+PREFERENCES_EXPOS;Exposure before interpolation\n :correction (lin)
+PREFERENCES_PRESER;Exposure before interpolation\n :preserve highlights (EV)
 PREFERENCES_EXTERNALEDITOR;External editor
 PREFERENCES_FALSECOLOR;False color suppression steps
 PREFERENCES_FBROWSEROPTS;File Browser Options
