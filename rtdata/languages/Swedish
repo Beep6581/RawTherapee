@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30, 2011-01-02 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30, 2011-01-02, 2011-01-13 update by Johan Andersson
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -52,6 +52,8 @@ FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av miniatyrbilder
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
+FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren)
 FILEBROWSER_CLEARPROFILE;Återställ profilen
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
@@ -211,9 +213,9 @@ HISTORY_MSG_62;Korrigering av objektivdistorsion
 HISTORY_MSG_63;Valt bokmärke
 HISTORY_MSG_64;Beskär foto
 HISTORY_MSG_65;Korrigera kromatiska abberationer
-HISTORY_MSG_66;Högdagerförbättring
-HISTORY_MSG_67;Mängd på högdagerförbättringen
-HISTORY_MSG_68;Metod för högdagerförbättring
+HISTORY_MSG_66;Högdageråterställning
+HISTORY_MSG_67;Mängd på högdageråterställning
+HISTORY_MSG_68;Metod för högdageråterställning
 HISTORY_MSG_69;Färgrymd
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Utmatningsfärgrymd
@@ -230,7 +232,7 @@ HISTORY_MSG_7;Svärta
 HISTORY_MSG_80;Storleksförändring, höjd
 HISTORY_MSG_81;Storleksförändring aktiverad
 HISTORY_MSG_82;Profilen har ändrats
-HISTORY_MSG_83;Högkvalitet Skuggor/högdager
+HISTORY_MSG_83;Högkvalitet Skuggor/högdagrar
 HISTORY_MSG_84;Korrigering av perspektiv
 HISTORY_MSG_85;Waveletkoefficienter
 HISTORY_MSG_86;Waveletequalizer
@@ -248,7 +250,7 @@ HISTORY_MSG_96;'a'-kurvan
 HISTORY_MSG_97;'b'-kurvan
 HISTORY_MSG_98;Demozaicing
 HISTORY_MSG_99;Förbehandling
-HISTORY_MSG_9;Högdagerkomprimering
+HISTORY_MSG_9;Högdageråterställning
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
@@ -323,9 +325,12 @@ MAIN_BUTTON_SENDTOEDITOR;Redigera
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Redigerfönster
 MAIN_FRAME_EDITOR;Redigering
+MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Filhanterare
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
 MAIN_FRAME_PLACES_DEL;Ta bort
@@ -364,6 +369,7 @@ MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
 MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
 MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
+MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>H</b>
 MAIN_TOOLTIP_TOGGLE;Växla före/efter vy. Kortkommando: B
 NAVIGATOR_B_NA;B = -
 NAVIGATOR_B_VALUE;B = %1
@@ -398,7 +404,9 @@ PARTIALPASTE_DIALOGLABEL;Partiell inklistring av processprofiler
 PARTIALPASTE_DISTORTION;Distortionsrättning
 PARTIALPASTE_EXIFCHANGES;Förändringar i EXIF-informationen
 PARTIALPASTE_EXPOSURE;Exponering
-PARTIALPASTE_HLRECOVERY;Högdageråterskapning
+PARTIALPASTE_HLRECOVERY;Högdageråterställning
+PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
 PARTIALPASTE_ICMSETTINGS;ICM-inställningar
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LABCURVE;Labkurva
@@ -479,6 +487,7 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_LINEDENOISE;Linjärt brusfilter
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
+PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerfliksläge
@@ -528,6 +537,7 @@ PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_OUTPUT;Utmatningsinställningar
 PREFERENCES_TAB_SOUND;Ljud
 PREFERENCES_THUMBSIZE;Miniatyrbildstorlek
+PREFERENCES_TUNNELMETADATA;Tunnla oförändrad IPTC/XMP till utfilen
 PREFERENCES_USESYSTEMTHEME;Använd systemtema
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
@@ -653,8 +663,9 @@ TP_EXPOSURE_AUTOLEVELS;Autonivåer
 TP_EXPOSURE_BLACKLEVEL;Svärta
 TP_EXPOSURE_BRIGHTNESS;Ljusstyrka
 TP_EXPOSURE_CLIP;Klippnivå
-TP_EXPOSURE_COMPRHIGHLIGHTS;Högdagerkomprimering
-TP_EXPOSURE_COMPRSHADOWS;Skuggkomprimering
+TP_EXPOSURE_COMPRHIGHLIGHTS;Högdageråterställning
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Högdageråterställning, tröskelvärde
+TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR;Tonkurva
 TP_EXPOSURE_EXPCOMP;Exponeringskompensation
@@ -662,7 +673,7 @@ TP_EXPOSURE_LABEL;Exponering
 TP_EXPOSURE_SATURATION;Mättnad
 TP_HLREC_CIELAB;CIELab mix
 TP_HLREC_COLOR;Färgspridning
-TP_HLREC_LABEL;Högdagerförbättring
+TP_HLREC_LABEL;Högdageråterställning
 TP_HLREC_LUMINANCE;Bättring av luminans
 TP_HLREC_METHOD;Metod: 
 TP_HSVEQUALIZER1;Röd
@@ -706,8 +717,8 @@ TP_LENSGEOM_FILL;Fyll automatiskt
 TP_LENSGEOM_LABEL;Geometri- och distorsionskorrigering
 TP_LUMACURVE_BLACKLEVEL;Svärta
 TP_LUMACURVE_BRIGHTNESS;Ljusstyrka
-TP_LUMACURVE_COMPRHIGHLIGHTS;Högdagerkomprimering
-TP_LUMACURVE_COMPRSHADOWS;Skuggkomprimering
+TP_LUMACURVE_COMPRHIGHLIGHTS;Högdageråterställning
+TP_LUMACURVE_COMPRSHADOWS;Skuggåterställning
 TP_LUMACURVE_CONTRAST;Kontrast
 TP_LUMACURVE_CURVEEDITOR;Luminanskurva
 TP_LUMACURVE_LABEL;Luminanskurva
@@ -806,14 +817,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PREFERENCES_METADATA;Metadata
-!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
