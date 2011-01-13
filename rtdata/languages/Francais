@@ -248,7 +248,7 @@ HISTORY_MSG_95;Saturation
 HISTORY_MSG_96;Courbe 'a'
 HISTORY_MSG_97;Courbe 'b'
 HISTORY_MSG_98;Dématriçage
-HISTORY_MSG_99;Pre-traitement
+HISTORY_MSG_99;Traitement pre-dématriçage
 HISTORY_MSG_9;Compression des hautes lumières
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
@@ -419,7 +419,7 @@ PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
-PREFERENCES_CABLUE;Correction manuelle de\nl'aberration chromatique bleue
+PREFERENCES_CABLUE;Correct. manuelle de\nl'aberr. chrom. bleue
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
 PREFERENCES_CACHECLEARTHUMBS;Nettoyer les vignettes
@@ -433,7 +433,7 @@ PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CACORRECTION;Correction automatique de\nl'aberration chromatique
-PREFERENCES_CARED;Correction manuelle de\nl'aberration chromatique rouge
+PREFERENCES_CARED;Correct. manuelle de\nl'aberr. chrom. rouge
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
@@ -699,7 +699,7 @@ TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PREPROCESS_DARKFRAME;Image noire
 TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
 TP_RAWPANEL_DEMOSAICING;Dématriçage
-TP_RAWPANEL_PREPROCESSING;Pre-traitement
+TP_RAWPANEL_PREPROCESSING;Traitement pre-dématriçage
 TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
@@ -776,30 +776,24 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR;Editor
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_METADATA;Metadata
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
-!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
-!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
-!PREFERENCES_SND_TRESHOLDSECS;after secs
-!PREFERENCES_TAB_SOUND;Sounds
-!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
-!TP_CROP_GTGRID;Grid
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
+FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (Ctrl-Entrée dans le Navigateur de Fichier)
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; File de traitement  <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;Éditeur
+MAIN_FRAME_EDITOR_TOOLTIP; Éditeur  <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de Fichier  <b>Ctrl-F2</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Montre/Cache le panneau gauche <b>H</b>
+PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récupération des hautes lumières
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
+PREFERENCES_EXPOS;Facteur de correct.\nd'expo. linéaire
+PREFERENCES_METADATA;Metadonnées
+PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
+PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
+PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
+PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
+PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
+PREFERENCES_SND_TRESHOLDSECS;après (s)
+PREFERENCES_TAB_SOUND;Sons
+PREFERENCES_TUNNELMETADATA;Utiliser le tunnel pour sortir les données IPTC/XMP inchangées\npar-rapport au fichier d'entrée
+TP_CROP_GTGRID;Grille
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de récupération des hautes lumières
