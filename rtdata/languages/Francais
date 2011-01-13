@@ -1,9 +1,5 @@
-
 #00 Français
-#01 1.3.2008: Hombre
-#02 1.5.2008: Hombre: updates for 2.4m1
-#03 27.10.2008: Hombre: updates for 2.4b1
-#04 18.11.2008: Hombre: updates for 2.4b2
+#01 1.3.2008: Initial translation by Hombre
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCH_PROCESSING;Traitement par lot
@@ -149,8 +145,6 @@ HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
-HISTORY_MSG_108;Redim. - boîte englobante
-HISTORY_MSG_109;Redim. s'applique à
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -326,6 +320,7 @@ MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
+MAIN_FRAME_EDITOR;Éditeur
 MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
 MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_PLACES_ADD;Ajouter
@@ -400,6 +395,8 @@ PARTIALPASTE_DISTORTION;Correction de distortion
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
 PARTIALPASTE_EXPOSURE;Exposition
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
+PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
 PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbes Lab
@@ -419,7 +416,7 @@ PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
-PREFERENCES_CABLUE;Correction manuelle de\nl'aberration chromatique bleue
+PREFERENCES_CABLUE;Correct. manuelle de\nl'aberr. chrom. bleue
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
 PREFERENCES_CACHECLEARTHUMBS;Nettoyer les vignettes
@@ -433,7 +430,7 @@ PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CACORRECTION;Correction automatique de\nl'aberration chromatique
-PREFERENCES_CARED;Correction manuelle de\nl'aberration chromatique rouge
+PREFERENCES_CARED;Correct. manuelle de\nl'aberr. chrom. rouge
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
@@ -454,6 +451,8 @@ PREFERENCES_DIRSOFTWARE;Dossier d'installation
 PREFERENCES_DMETHOD;Méthode
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
+PREFERENCES_EXPOS;Facteur de correction\nd'exposition (linéaire)
+PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
@@ -508,6 +507,7 @@ PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Mode éditeur unique
+PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
@@ -599,6 +599,7 @@ TP_COLORSHIFT_LABEL;Décalage couleur
 TP_CROP_DPI;PPP=
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
+TP_CROP_GTGRID;Grille
 TP_CROP_GTHARMMEANS1;Manière harmonique 1
 TP_CROP_GTHARMMEANS2;Manière harmonique 2
 TP_CROP_GTHARMMEANS3;Manière harmonique 3
@@ -640,6 +641,7 @@ TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
 TP_EXPOSURE_CLIP;Rognage
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de récupération\ndes hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
 TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Courbe tonale
@@ -721,7 +723,7 @@ TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
 TP_ROTATE_SELECTLINE;Choisir la ligne d'horizon
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Hautes lumières
-TP_SHADOWSHLIGHTS_HLTONALW;Amplitude tonale des hautes lumières
+TP_SHADOWSHLIGHTS_HLTONALW;Amplitude tonale des\nhautes lumières
 TP_SHADOWSHLIGHTS_LABEL;Ombres/Hautes lumières
 TP_SHADOWSHLIGHTS_LOCALCONTR;Contraste local
 TP_SHADOWSHLIGHTS_RADIUS;Rayon
@@ -771,7 +773,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-MAIN_FRAME_EDITOR;Éditeur
-PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
-TP_CROP_GTGRID;Grille
