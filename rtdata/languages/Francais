@@ -1,3 +1,4 @@
+
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
@@ -49,6 +50,8 @@ FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
 FILEBROWSER_AUTODARKFRAME;Soustraction d'image noire automatique
+FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
+FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (Ctrl-Entrée dans le Navigateur de Fichier)
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -322,8 +325,11 @@ MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; File de traitement  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Éditeur
+MAIN_FRAME_EDITOR_TOOLTIP; Éditeur  <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de Fichier  <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_PLACES_ADD;Ajouter
 MAIN_FRAME_PLACES_DEL;Supprimer
@@ -362,6 +368,7 @@ MAIN_TOOLTIP_PREFERENCES;Régler les préférences
 MAIN_TOOLTIP_QINFO;Montrer les infos EXIF <b>I</b>
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
 MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
+MAIN_TOOLTIP_SHOWHIDELP1;Montre/Cache le panneau gauche <b>H</b>
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
 NAVIGATOR_B_NA;B = n/d
 NAVIGATOR_B_VALUE;B = %1
@@ -454,7 +461,6 @@ PREFERENCES_DMETHOD;Méthode
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPOS;Facteur de correction\nd'exposition (linéaire)
-PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
@@ -475,6 +481,7 @@ PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LINEDENOISE;Filtre de bruit de Ligne
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
+PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_MULTITAB;Mode éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Mode éditeurs multiple, si possible sur un second moniteur
@@ -490,6 +497,7 @@ PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
 PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
+PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -510,13 +518,19 @@ PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Mode éditeur unique
 PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
+PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
+PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
+PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
+PREFERENCES_SND_TRESHOLDSECS;après (s)
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
 PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'Image
 PREFERENCES_TAB_OUTPUT;Options de sortie
+PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THUMBSIZE;Tailles des vignettes
+PREFERENCES_TUNNELMETADATA;Utiliser le tunnel pour sortir les données IPTC/XMP inchangées\npar-rapport au fichier d'entrée
 PREFERENCES_USESYSTEMTHEME; Utiliser le thème système
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
@@ -780,16 +794,9 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
-FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (Ctrl-Entrée dans le Navigateur de Fichier)
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; File de traitement  <b>Ctrl-F3</b>
-MAIN_FRAME_EDITOR_TOOLTIP; Éditeur  <b>Ctrl-F4</b>
-MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de Fichier  <b>Ctrl-F2</b>
-MAIN_TOOLTIP_SHOWHIDELP1;Montre/Cache le panneau gauche <b>H</b>
-PREFERENCES_METADATA;Metadonnées
-PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
-PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
-PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
-PREFERENCES_SND_TRESHOLDSECS;après (s)
-PREFERENCES_TAB_SOUND;Sons
-PREFERENCES_TUNNELMETADATA;Utiliser le tunnel pour sortir les données IPTC/XMP inchangées\npar-rapport au fichier d'entrée
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
