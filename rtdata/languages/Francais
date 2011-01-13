@@ -248,7 +248,7 @@ HISTORY_MSG_95;Saturation
 HISTORY_MSG_96;Courbe 'a'
 HISTORY_MSG_97;Courbe 'b'
 HISTORY_MSG_98;Dématriçage
-HISTORY_MSG_99;Pre-traitement
+HISTORY_MSG_99;Traitement pre-dématriçage
 HISTORY_MSG_9;Compression des hautes lumières
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
@@ -699,7 +699,7 @@ TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PREPROCESS_DARKFRAME;Image noire
 TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
 TP_RAWPANEL_DEMOSAICING;Dématriçage
-TP_RAWPANEL_PREPROCESSING;Pre-traitement
+TP_RAWPANEL_PREPROCESSING;Traitement pre-dématriçage
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)
@@ -772,12 +772,6 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!MAIN_FRAME_EDITOR;Editor
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!TP_CROP_GTGRID;Grid
+MAIN_FRAME_EDITOR;Éditeur
+PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
+TP_CROP_GTGRID;Grille
