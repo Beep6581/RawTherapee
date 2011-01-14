@@ -63,6 +63,8 @@ FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_ARRANGEMENTHINT;Wechseln zwischen vertikaler und horizontaler Ausrichtung der Voransichten
 FILEBROWSER_AUTODARKFRAME;Autom. Dunkelbild
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klicken um angegebenen Pfad zu durchsuchen
+FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (Strg+Eingabe im Dateimanager)
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COPYPROFILE;Profil kopieren
 FILEBROWSER_CURRENT_NAME;Aktueller Name:
@@ -334,8 +336,11 @@ MAIN_BUTTON_SENDTOEDITOR;Im Editor öffnen
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Öffnes das aktuelle Bild im externen Editor <b>Strg+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
 MAIN_FRAME_BATCHQUEUE;Warteschlange 
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Warteschlange  <b>Strg+F3</b>
 MAIN_FRAME_EDITOR;Editor
+MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Strg+F4</b>
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Dateimanager  <b>Strg+F2</b>
 MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzuf.
 MAIN_FRAME_PLACES_DEL;Entf.
@@ -374,6 +379,7 @@ MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Kurze Info über das Bild
 MAIN_TOOLTIP_SAVE;Speichere Bild im Standard-Verzeichnis
 MAIN_TOOLTIP_SAVEAS;Speichere Bild in anderem Verzeichnis
+MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden <b>H</b>
 MAIN_TOOLTIP_TOGGLE;Vorher/Nachher Ansicht unschalten
 NAVIGATOR_B_NA;B = k.a.
 NAVIGATOR_B_VALUE;B = %1
@@ -409,6 +415,8 @@ PARTIALPASTE_DISTORTION;Entzerrung
 PARTIALPASTE_EXIFCHANGES;Exifdaten Änderungen
 PARTIALPASTE_EXPOSURE;Belichtung
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
+PARTIALPASTE_HLRECOVERYAMOUNT;Highlight Recovery Umfang
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight Recovery Schwellenwert
 PARTIALPASTE_ICMSETTINGS;Einstellungen ICM
 PARTIALPASTE_IPTCINFO;IPTC Informationen
 PARTIALPASTE_LABCURVE;LAB-Kurve
@@ -488,6 +496,7 @@ PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
+PREFERENCES_METADATA;Metadaten
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
 PREFERENCES_MULTITABDUALMON;Multi-Reiter Modus, auf zweitem Monitor wenn verfügbar
@@ -522,13 +531,19 @@ PREFERENCES_SHOWDATETIME;Zeige Datum und Zeit
 PREFERENCES_SHOWONLYRAW;Zeige nur Rohdateien (RAW)
 PREFERENCES_SHTHRESHOLD;Schwellenwert - zu dunkel
 PREFERENCES_SINGLETAB;Ein-Reiter Modus
+PREFERENCES_SINGLETABVERTAB;Ein-Reiter Modus, vertikale Reiter
+PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
+PREFERENCES_SND_HELP;Entweder Dateipfad eingeben oder nichts (falls kein Systemklang gewünscht). Unter Windows "SystemDefault", "SystemAsterisk" usw. für Systemklänge verwenden.
+PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
 PREFERENCES_STARTUPIMDIR;Bild-Verzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Datei-Browser
 PREFERENCES_TAB_COLORMGR;Farbmanagement
 PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_OUTPUT;Ausgabe
+PREFERENCES_TAB_SOUND;Systemklänge
 PREFERENCES_THUMBSIZE;Größe der Vorschau
+PREFERENCES_TUNNELMETADATA;IPTC/XMP unverändert in Ausgabedatei hineinleiten
 PREFERENCES_USESYSTEMTHEME; System-Overfläche verwenden
 PREFERENCES_WORKFLOW;Workflow
 PROFILEPANEL_FILEDLGFILTERANY;Alle Dateien
@@ -613,6 +628,7 @@ TP_COLORSHIFT_LABEL;Farbverschiebung
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Festes Format:
 TP_CROP_GTDIAGONALS;Diagonale
+TP_CROP_GTGRID;Gitternetz
 TP_CROP_GTHARMMEANS1;Harmonischer Schnitt 1
 TP_CROP_GTHARMMEANS2;Harmonischer Schnitt 2
 TP_CROP_GTHARMMEANS3;Harmonischer Schnitt 3
@@ -654,6 +670,7 @@ TP_EXPOSURE_BLACKLEVEL;Schwarzpegel
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
 TP_EXPOSURE_CLIP;Grenzwert
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichter-Kompression
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Recovery Schwellenwert
 TP_EXPOSURE_COMPRSHADOWS;Schatten-Kompression
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
@@ -802,28 +819,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
 !HISTORY_MSG_108;Resize bounding box
 !HISTORY_MSG_109;Resizing applies to
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>H</b>
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_METADATA;Metadata
 !PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
-!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
-!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
-!PREFERENCES_TAB_SOUND;Sounds
-!PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
-!TP_CROP_GTGRID;Grid
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
