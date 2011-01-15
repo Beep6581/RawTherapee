@@ -25,6 +25,7 @@
 #include <shmap.h>
 #include <coord2d.h>
 #include <labimage.h>
+#include <iccstore.h>
 
 namespace rtengine {
 
@@ -54,7 +55,7 @@ class ImProcFunctions {
         void transformNonSep    (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
         void transformSep    	(Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
         void sharpenHaloCtrl    (LabImage* lab, unsigned short** blurmap, unsigned short** base, int W, int H);
-        void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to);
+        void firstAnalysis_     (Image16* original, const TMatrix &wprof, unsigned int* histogram, int* chroma_radius, int row_from, int row_to);
         void dcdamping          (float** aI, unsigned short** aO, float damping, int W, int H);
 
         bool needsCA			();
