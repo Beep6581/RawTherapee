@@ -598,7 +598,7 @@ void EditorPanel::error (Glib::ustring descr) {
 void EditorPanel::info_toggled () {
 
     Glib::ustring infoString;
-
+    if (!ipc || !openThm) return;
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if (idata && idata->hasExif())
 //        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n",
@@ -801,7 +801,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 }
 
 void EditorPanel::saveAsPressed () {
-
+	if (!ipc || !openThm) return;
 	bool fnameOK = false;
 	Glib::ustring fname;
 
@@ -881,12 +881,13 @@ void EditorPanel::saveAsPressed () {
 }
 
 void EditorPanel::queueImgPressed () {
-
+	if (!ipc || !openThm) return;
     saveProfile ();
     parent->addBatchQueueJob (createBatchQueueEntry ());
 }
 
 void EditorPanel::sendToGimpPressed () {
+	if (!ipc || !openThm) return;
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
