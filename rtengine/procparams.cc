@@ -212,11 +212,7 @@ void ProcParams::setDefaults () {
     raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
-	//exposition
-raw.expos=1.0;
-raw.preser=0.0;
-//raw.expos_correc=false;
-// expos
+
     exif.clear ();
     iptc.clear ();
     
@@ -442,11 +438,6 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_string  ("RAW", "Method", raw.dmethod );
     keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
     keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
-	//exposure
-    keyFile.set_double ("RAW", "PreExposure", raw.expos );
-    keyFile.set_double ("RAW", "PrePreserv", raw.preser );
-
-	// exposition
 
     // save exif change list
     for (int i=0; i<(int)exif.size(); i++)
@@ -765,10 +756,6 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "Method"))        raw.dmethod = keyFile.get_string ("RAW", "Method");
 	if (keyFile.has_key ("RAW", "DCBIterations")) raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations");
 	if (keyFile.has_key ("RAW", "DCBEnhance"))    raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance");
-	if (keyFile.has_key ("RAW", "PreExposure"))   	  raw.expos =keyFile.get_double("RAW", "PreExposure");
-	if (keyFile.has_key ("RAW", "PrePreserv"))   	  raw.preser =keyFile.get_double("RAW", "PrePreserv");
-	
-
 }
 
     // load exif change settings
@@ -957,9 +944,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& raw.ca_autocorrect == other.raw.ca_autocorrect
 		&& raw.cared == other.raw.cared
 		&& raw.cablue == other.raw.cablue
-		&& raw.expos==other.raw.expos  // exposi
-		&& raw.preser==other.raw.preser
-		
 		&& raw.hotdeadpix_filt == other.raw.hotdeadpix_filt
 		&& raw.dmethod == other.raw.dmethod
 		&& raw.greenthresh == other.raw.greenthresh

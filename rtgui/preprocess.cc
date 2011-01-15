@@ -43,20 +43,6 @@ PreProcess::PreProcess ()
 	caBlue = Gtk::manage(new Adjuster (M("PREFERENCES_CABLUE"),-4.0,4.0,0.1,0));
 	caBlue->setAdjusterListener (this);
 	caBlue->show();
-//exposi
-	/*exPos = Gtk::manage(new Adjuster (M("PREFERENCES_EXPOS"),0.2,4.0,0.1,1));
-	exPos->setAdjusterListener (this);
-	exPos->show();
-	exPreser = Gtk::manage(new Adjuster (M("PREFERENCES_PRESER"),0,2.5,0.1,0));
-	exPreser->setAdjusterListener (this);
-	exPreser->show();*/
-	PexPos = Gtk::manage(new Adjuster (M("PREFERENCES_EXPOS"),0.2,4.0,0.1,1));
-	PexPos->setAdjusterListener (this);
-	PexPos->show();
-	PexPreser = Gtk::manage(new Adjuster (M("PREFERENCES_PRESER"),0,2.5,0.1,0));
-	PexPreser->setAdjusterListener (this);
-	PexPreser->show();
-
 	
 	//hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_HOTDEADPIXFILT"))));
 	hotDeadPixel = Gtk::manage(new Adjuster (M("PREFERENCES_HOTDEADPIXFILT"),0,100,1,0));
@@ -79,9 +65,6 @@ PreProcess::PreProcess ()
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
 	pack_start( *caRed, Gtk::PACK_SHRINK, 4);
     pack_start( *caBlue, Gtk::PACK_SHRINK, 4);
-	pack_start( *PexPos, Gtk::PACK_SHRINK, 4);//exposi
-    pack_start( *PexPreser, Gtk::PACK_SHRINK, 4);
-	
     pack_start( *Gtk::manage (new  Gtk::HSeparator()));
     pack_start( *lineDenoise, Gtk::PACK_SHRINK, 4);
     pack_start( *Gtk::manage (new  Gtk::HSeparator()));
@@ -107,9 +90,6 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	   caAutocorrect->set_inconsistent(!pedited->raw.caCorrection);
 	   caRed->setEditedState( pedited->raw.caRed ? Edited : UnEdited );
 	   caBlue->setEditedState( pedited->raw.caBlue ? Edited : UnEdited );
-	   PexPos->setEditedState( pedited->raw.exPos ? Edited : UnEdited );
-	   PexPreser->setEditedState( pedited->raw.exPreser ? Edited : UnEdited );
-	   
 	   //hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixel);
 	   hotDeadPixel->setEditedState( pedited->raw.hotDeadPixel ? Edited : UnEdited );
 	   lineDenoise->setEditedState( pedited->raw.linenoise ? Edited : UnEdited );
@@ -129,9 +109,6 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    caAutocorrect->set_active(pp->raw.ca_autocorrect);
 	caRed->setValue (pp->raw.cared);
 	caBlue->setValue (pp->raw.cablue);
-	PexPos->setValue (pp->raw.expos);
-	PexPreser->setValue (pp->raw.preser);//exposi
-	
    //hotDeadPixel->set_active (pp->raw.hotdeadpix_filt);
 	hotDeadPixel->setValue (pp->raw.hotdeadpix_filt);
    lineDenoise->setValue (pp->raw.linenoise);
@@ -154,9 +131,6 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	pp->raw.ca_autocorrect = caAutocorrect->get_active();
 	pp->raw.cared = (double)caRed->getValue();
 	pp->raw.cablue = (double)caBlue->getValue();
-	pp->raw.expos = (double)PexPos->getValue();
-	pp->raw.preser = (double)PexPreser->getValue();//exposi
-	
 	//pp->raw.hotdeadpix_filt = hotDeadPixel->get_active();
 	pp->raw.hotdeadpix_filt = (int)hotDeadPixel->getValue();
 	pp->raw.linenoise = (int)lineDenoise->getValue();
@@ -170,9 +144,6 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 		pedited->raw.caCorrection = !caAutocorrect->get_inconsistent();
 		pedited->raw.caRed = caRed->getEditedState ();
 		pedited->raw.caBlue = caBlue->getEditedState ();
-		pedited->raw.exPos = PexPos->getEditedState ();
-		pedited->raw.exPreser = PexPreser->getEditedState ();//exposi
-		
 		//pedited->raw.hotDeadPixel = !hotDeadPixel->get_inconsistent();
 		pedited->raw.hotDeadPixel= hotDeadPixel->getEditedState ();
 	}
@@ -189,9 +160,6 @@ void PreProcess::setBatchMode(bool batchMode)
    ToolPanel::setBatchMode (batchMode);
 	caRed->showEditedCB ();
 	caBlue->showEditedCB ();
-	PexPos->showEditedCB ();
-	PexPreser->showEditedCB ();//exposi
-	
    lineDenoise->showEditedCB ();
    greenEqThreshold->showEditedCB ();
 	hotDeadPixel->showEditedCB ();
@@ -202,27 +170,18 @@ void PreProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, 
 	lineDenoise->setDefault( defParams->raw.linenoise);
 	caRed->setDefault( defParams->raw.cared);
 	caBlue->setDefault( defParams->raw.cablue);
-	PexPos->setDefault( defParams->raw.expos);
-	PexPreser->setDefault( defParams->raw.preser);
-	
 	greenEqThreshold->setDefault (defParams->raw.greenthresh);
 	hotDeadPixel->setDefault (defParams->raw.hotdeadpix_filt);
 	if (pedited) {
 		lineDenoise->setDefaultEditedState( pedited->raw.linenoise ? Edited : UnEdited);
 		caRed->setDefaultEditedState( pedited->raw.caRed ? Edited : UnEdited);
 		caBlue->setDefaultEditedState( pedited->raw.caBlue ? Edited : UnEdited);
-		PexPos->setDefaultEditedState( pedited->raw.exPos ? Edited : UnEdited);
-		PexPreser->setDefaultEditedState( pedited->raw.exPreser ? Edited : UnEdited);
-		
 		greenEqThreshold->setDefaultEditedState(pedited->raw.greenEq ? Edited : UnEdited);
 		hotDeadPixel->setDefaultEditedState(pedited->raw.hotDeadPixel ? Edited : UnEdited);
 	}else{
 		lineDenoise->setDefaultEditedState( Irrelevant );
 		caRed->setDefaultEditedState( Irrelevant );
 		caBlue->setDefaultEditedState( Irrelevant );
-		PexPos->setDefaultEditedState( Irrelevant );
-		PexPreser->setDefaultEditedState( Irrelevant );
-		
 		greenEqThreshold->setDefaultEditedState(Irrelevant );
 		hotDeadPixel->setDefaultEditedState(Irrelevant );
 	}

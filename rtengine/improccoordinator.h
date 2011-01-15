@@ -73,7 +73,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 		unsigned int *vhist16;
 		unsigned int *lhist16;
 	
-		unsigned int *rhist, *ghist, *bhist, *Lhist, *Yhist;
+		unsigned int *rhist, *ghist, *bhist, *Lhist, *bcrgbhist, *bcLhist, *bcabhist;
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

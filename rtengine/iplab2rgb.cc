@@ -42,8 +42,8 @@ namespace rtengine {
 #define kapeps 8 // kappa*epsilon
 #define Lab2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
 	
-#define D50x 1.0 //0.96422
-#define D50z 1.0 //0.82521
+#define D50x 0.96422
+#define D50z 0.82521
 
 extern const Settings* settings;
 	

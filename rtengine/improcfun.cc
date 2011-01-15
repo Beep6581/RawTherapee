@@ -60,8 +60,8 @@ using namespace procparams;
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 	
-#define D50x 1.0 //0.96422
-#define D50z 1.0 //0.82521
+#define D50x 0.96422
+#define D50z 0.82521
 	
 #define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
 #define kappa	903.29630 //24389.0/27.0;
@@ -650,9 +650,22 @@ void ImProcFunctions::hsv2rgb (float h, float s, float v, int &r, int &g, int &b
 	
 void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &b) {
 	
+	/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
+	float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
+	float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
+	
+	r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
+	g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
+	b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
+	 
+	/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
+	g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
+	b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
+	
 	r = sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z ;
 	g = sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z ;
 	b = sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z ;
+
 }
 	
 }

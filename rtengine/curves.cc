@@ -404,7 +404,8 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
 									 double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, \
 									 const std::vector<double>& curvePoints, unsigned int* histogram, \
-									 float* hlCurve, float* shCurve, float* outCurve, int skip) {
+									 float* hlCurve, float* shCurve, float* outCurve, \
+									 unsigned int* outBeforeCCurveHistogram, int skip) {
 		
 		//double def_mul = pow (2.0, defmul);
 		
@@ -434,6 +435,9 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		if (curvePoints.size()>0 && curvePoints[0]!=0)
 			tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		
+		// clear array that stores histogram valid before applying the custom curve
+		if (outBeforeCCurveHistogram)
+			memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
@@ -573,6 +577,13 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
+				if (outBeforeCCurveHistogram) {
+					float hval = dcurve[(int)shCurve[CLIP((int)(hlCurve[i]*i))]];
+					//if (needigamma)
+					//	hval = igamma2 (hval);
+					int hi = (int)(255.0*CLIPD(hval));
+					outBeforeCCurveHistogram[hi]+=histogram[i] ;
+				}
 				val = tcurve->getVal (dcurve[i]);
 			} else {
 				val = (dcurve[i]);
@@ -589,6 +600,9 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		delete [] dcurve;
 		delete tcurve;
 		delete brightcurve; 
+		/*if (outBeforeCCurveHistogram) {
+			for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
+		}*/
 		
 	}
 
@@ -598,7 +612,8 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
-									 unsigned int* histogram, float* outCurve, int skip) {
+									 unsigned int* histogram, float* outCurve, \
+									 unsigned int* outBeforeCCurveHistogram, int skip) {
 		
 		// curve without contrast
 		float* dcurve = new float[65536];
@@ -611,6 +626,10 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		if (curvePoints.size()>0 && curvePoints[0]!=0)
 			tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 
+		
+		// clear array that stores histogram valid before applying the custom curve
+		if (outBeforeCCurveHistogram)
+			memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
@@ -705,6 +724,11 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
+				if (outBeforeCCurveHistogram) {
+					float hval = dcurve[i];
+					int hi = (int)(255.0*CLIPD(hval));
+					outBeforeCCurveHistogram[hi]+=histogram[i] ;
+				}
 				val = tcurve->getVal (dcurve[i]);
 			} else {
 				val = (dcurve[i]);
@@ -717,7 +741,10 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		
 		delete [] dcurve;
 		delete tcurve;
-		delete brightcurve;
+		delete brightcurve; 
+		/*if (outBeforeCCurveHistogram) {
+			for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
+		}*/
 		
 	}
 	

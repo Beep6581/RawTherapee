@@ -288,9 +288,6 @@ class RAWParamsEdited {
         bool linenoise;
         bool darkFrame;
         bool dfAuto;
-		bool exCorrection;
-		bool exPos;
-		bool exPreser;
 };
 
 class ExifPairEdited {

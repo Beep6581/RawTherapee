@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <colortemp.h>
+#include <iccmatrices.h>
 
 using namespace rtengine;
 
@@ -72,10 +73,10 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
     double X = xD/yD;
     double Y = 1.0;
     double Z = (1.0-xD-yD)/yD;
-
-    rmul = X * 3.24071 - Y * 1.53726 - Z * 0.498571;
-    gmul = - X * 0.969258 + Y * 1.87599 + Z * 0.0415557;
-    bmul = X * 0.0556352 - Y * 0.203996 + Z * 1.05707;
+	
+	rmul = sRGB_xyz[0][0]*X + sRGB_xyz[0][1]*Y + sRGB_xyz[0][2]*Z; 
+	gmul = sRGB_xyz[1][0]*X + sRGB_xyz[1][1]*Y + sRGB_xyz[1][2]*Z; 
+	bmul = sRGB_xyz[2][0]*X + sRGB_xyz[2][1]*Y + sRGB_xyz[2][2]*Z; 
     gmul /= green;
 
     double max = rmul;
