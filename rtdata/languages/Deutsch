@@ -53,18 +53,18 @@ EXIFPANEL_ADDTAGDLG_TITLE;Attribut hinzufügen/ändern
 EXIFPANEL_KEEP;Behalten
 EXIFPANEL_KEEPHINT;Behalten der gewählten Attribute beim Erzeugen des Bildes
 EXIFPANEL_REMOVE;Entfernen
-EXIFPANEL_REMOVEHINT;Entfernen der gewählten Attributen beim Erzeugen des Bildes
+EXIFPANEL_REMOVEHINT;Entfernen der gewählten Attribute beim Erzeugen des Bildes
 EXIFPANEL_RESET;Zurücksetzen
 EXIFPANEL_RESETALL;Alle zurücksetzen
-EXIFPANEL_RESETALLHINT;Alle Attribute zu den ursrpünglichen Werten zurücksetzen
-EXIFPANEL_RESETHINT;Gewählte Attribute zu den ursprünglich Werten zurücksetzen
+EXIFPANEL_RESETALLHINT;Alle Attribute zu den ursprünglichen Werten zurücksetzen
+EXIFPANEL_RESETHINT;Gewählte Attribute zu den ursprünglichen Werten zurücksetzen
 EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
 FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_ARRANGEMENTHINT;Wechseln zwischen vertikaler und horizontaler Ausrichtung der Voransichten
 FILEBROWSER_AUTODARKFRAME;Autom. Dunkelbild
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicken um angegebenen Pfad zu durchsuchen
-FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (Strg+Eingabe im Dateimanager)
+FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (Strg+Eingabe in Dateiverwaltung)
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COPYPROFILE;Profil kopieren
 FILEBROWSER_CURRENT_NAME;Aktueller Name:
@@ -116,10 +116,10 @@ FILEBROWSER_STARTPROCESSING;Verarbeitung starten
 FILEBROWSER_STARTPROCESSINGHINT;Verarbeitung/Speichern der Bilder in der Warteschlange starten
 FILEBROWSER_STOPPROCESSING;Verarbeitung stoppen
 FILEBROWSER_STOPPROCESSINGHINT;Verarbeitung der Bilder stoppen
-FILEBROWSER_THUMBSIZE;Grösse d. Vorschau
+FILEBROWSER_THUMBSIZE;Größe der Vorschau
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Bei neuem Job die Verarbeitung automatisch starten
 FILEBROWSER_USETEMPLATE;Vorlage verwenden:
-FILEBROWSER_ZOOMINHINT;Vergrössern der Vorschau
+FILEBROWSER_ZOOMINHINT;Vergrößern der Vorschau
 FILEBROWSER_ZOOMOUTHINT;Verkleinern der Vorschau
 GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
@@ -143,14 +143,14 @@ HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_B;Zeigen/Verstecke BLAU-Histogramm
-HISTOGRAM_TOOLTIP_G;Zeigen/Verstecke GRÜN-Histogramm
-HISTOGRAM_TOOLTIP_L;Zeigen/Verstecke CIELAB-Luminanz-Histogramm
-HISTOGRAM_TOOLTIP_R;Zeigen/Verstecke ROT-Histogramm
+HISTOGRAM_LABEL;Histogramm
+HISTOGRAM_TOOLTIP_B;BLAU-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_G;GRÜN-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_L;CIELAB-Luminanz-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_R;ROT-Histogramm ein-/ausblenden
 HISTORY_CHANGED;Verändert
 HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
-HISTORY_DELSNAPSHOT;Variante löschen
+HISTORY_DELSNAPSHOT;Entf.
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Abfolge der Änderungen
 HISTORY_MSG_100;RGB Sättigung
@@ -260,7 +260,7 @@ HISTORY_MSG_97;'b'-Kurve
 HISTORY_MSG_98;Entrasterung
 HISTORY_MSG_99;Vorverarbeitung
 HISTORY_MSG_9;Lichter-Kompression
-HISTORY_NEWSNAPSHOT;Neue Variante
+HISTORY_NEWSNAPSHOT;Hinzuf.
 HISTORY_NEWSNAPSHOTAS;als...
 HISTORY_NEWSSDIALOGLABEL;Name der Variante:
 HISTORY_NEWSSDIALOGTITLE;Variante hinzufügen
@@ -301,7 +301,7 @@ IPTCPANEL_COUNTRYHINT;Aufnahmeort: Land (Country - Primary Location Name).
 IPTCPANEL_CREDIT;Bildrechte
 IPTCPANEL_CREDITHINT;Identifiziert den Anbieter des Bildes, es muss nicht der Eigentümer sein (Credit).
 IPTCPANEL_DATECREATED;Erstellt am
-IPTCPANEL_DATECREATEDHINT;Das Datum an dem der Inhalt des Bildes kreiert wurde; Format: JJJJMMTT (Date Created).
+IPTCPANEL_DATECREATEDHINT;Erstellungsdatum des Bildes; Format: JJJJMMTT (Date Created).
 IPTCPANEL_EMBEDDED;Eingebettete
 IPTCPANEL_EMBEDDEDHINT;Zu den im Bild eingebetteten Werten zurücksetzen.
 IPTCPANEL_HEADLINE;Bildtitel
@@ -310,7 +310,7 @@ IPTCPANEL_INSTRUCTIONS;Hinweise
 IPTCPANEL_INSTRUCTIONSHINT;Besondere Hinweise bezüglich der Verwendung des Bildes (Special Instructions).
 IPTCPANEL_KEYWORDS;Schlagwörter
 IPTCPANEL_KEYWORDSHINT;Stichwörter für das spätere Wiederfinden der Bilder (Keywords).
-IPTCPANEL_PASTEHINT;Einfügen der IPTC Werte aus der Zwischenablage
+IPTCPANEL_PASTEHINT;IPTC Werte aus der Zwischenablage einfügen
 IPTCPANEL_PROVINCE;Provinz
 IPTCPANEL_PROVINCEHINT;Aufnahmeort: Provinz (Province-State).
 IPTCPANEL_RESET;Zurücksetzen
@@ -333,14 +333,14 @@ MAIN_BUTTON_SAVE;Bild speichern
 MAIN_BUTTON_SAVEAS;Speichern unter...
 MAIN_BUTTON_SAVE_TOOLTIP;Aktuelles Bild speichern <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Im Editor öffnen
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Öffnes das aktuelle Bild im externen Editor <b>Strg+E</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Öffnet das aktuelle Bild im externen Editor <b>Strg+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
 MAIN_FRAME_BATCHQUEUE;Warteschlange 
 MAIN_FRAME_BATCHQUEUE_TOOLTIP; Warteschlange  <b>Strg+F3</b>
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Strg+F4</b>
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung  
-MAIN_FRAME_FILEBROWSER_TOOLTIP; Dateimanager  <b>Strg+F2</b>
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Dateiverwaltung  <b>Strg+F2</b>
 MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzuf.
 MAIN_FRAME_PLACES_DEL;Entf.
@@ -352,7 +352,7 @@ MAIN_MSG_CANNOTSTARTEDITOR;Der Editor kann nicht gestartet werden.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Setzen Sie bitte den richtigen Pfad in den Einstellungen.
 MAIN_MSG_ERRORDURINGIMAGESAVING;Fehler beim Speichern des Bildes
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unverarbeitete Bilder in der Warteschlange gehen beim Verlassen der Anwendung verloren.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schliessen? Es hat noch unverarbeitete Bilder in der Warteschlange.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schließen? Es sind noch unverarbeitete Bilder in der Warteschlange.
 MAIN_MSG_JOBSINQUEUE;Job in Bearbeitung
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_PLACES;Orte
@@ -366,13 +366,13 @@ MAIN_TAB_EXPOSURE;Belichtung
 MAIN_TAB_FILTER;Metadaten-Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
-MAIN_TAB_METADATA;Meta-Daten
+MAIN_TAB_METADATA;Metadaten
 MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOGGLE_BEFORE_AFTER;V|N
-MAIN_TOOLTIP_HIDEFP;Zeigen/Verstecken von Verzeichnis- und Datei-Browser (Taste F)
-MAIN_TOOLTIP_HIDEHP;Zeigen/Verstecken linke Seite (Abfolge der Änderungen, Taste H)
+MAIN_TOOLTIP_HIDEFP;Verzeichnis- und Datei-Browser ein-/ausblenden (Taste F)
+MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (Abfolge der Änderungen, Taste H)
 MAIN_TOOLTIP_INDCLIPPEDH;zu helle Bereiche blinken (Taste <)
 MAIN_TOOLTIP_INDCLIPPEDS;zu dunkle Bereiche blinken (Taste >)
 MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
@@ -380,7 +380,7 @@ MAIN_TOOLTIP_QINFO;Kurze Info über das Bild
 MAIN_TOOLTIP_SAVE;Speichere Bild im Standard-Verzeichnis
 MAIN_TOOLTIP_SAVEAS;Speichere Bild in anderem Verzeichnis
 MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden <b>H</b>
-MAIN_TOOLTIP_TOGGLE;Vorher/Nachher Ansicht unschalten
+MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht umschalten
 NAVIGATOR_B_NA;B = k.a.
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = k.a.
@@ -412,10 +412,10 @@ PARTIALPASTE_COMPOSITIONGROUP;Gruppe Gestaltungseinstellungen
 PARTIALPASTE_CROP;Ausschnitt
 PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofiles
 PARTIALPASTE_DISTORTION;Entzerrung
-PARTIALPASTE_EXIFCHANGES;Exifdaten Änderungen
+PARTIALPASTE_EXIFCHANGES;Exif-Daten Änderungen
 PARTIALPASTE_EXPOSURE;Belichtung
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
-PARTIALPASTE_HLRECOVERYAMOUNT;Highlight Recovery Umfang
+PARTIALPASTE_HLRECOVERYAMOUNT;Highlight Recovery Stärke
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight Recovery Schwellenwert
 PARTIALPASTE_ICMSETTINGS;Einstellungen ICM
 PARTIALPASTE_IPTCINFO;IPTC Informationen
@@ -425,24 +425,24 @@ PARTIALPASTE_LUMACURVE;Luminanzkurve
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
 PARTIALPASTE_LUMINANCEGROUP;Gruppe Luminanzeinstellungen
 PARTIALPASTE_METAICMGROUP;Gruppe Einstellungen Metadaten/ICM
-PARTIALPASTE_RESIZE;Grösse ändern
+PARTIALPASTE_RESIZE;Größe ändern
 PARTIALPASTE_ROTATION;Drehen
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENING;Schärfen
 PARTIALPASTE_VIGNETTING;Korrektur Vignettierung
-PARTIALPASTE_WHITEBALANCE;Weissabgleich
+PARTIALPASTE_WHITEBALANCE;Weißabgleich
 POPUPBUTTON_SELECTOPTIONHINT;Rechter Mausklick zum Ändern
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;beim nächsten Programmstart aktiv
 PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
-PREFERENCES_BLINKCLIPPED;Zu helle/zu dunkle Bereiche blinken
+PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche blinken
 PREFERENCES_CABLUE;CA blau manuelle Korr.
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Löschen der Profile
 PREFERENCES_CACHECLEARTHUMBS;Löschen der Voransichten
 PREFERENCES_CACHEFORMAT1;Proprietär (schneller und höhere Qualität)
-PREFERENCES_CACHEFORMAT2;JPEG (geringerer Diskplatz)
+PREFERENCES_CACHEFORMAT2;JPEG (geringerer Speicherplatzbedarf)
 PREFERENCES_CACHEMAXENTRIES;Maximale Anzahl der Einträge im Zwischenspeicher
 PREFERENCES_CACHEOPTS;Einstellungen des Zwischenspeichers für die Voransichten (Cache)
 PREFERENCES_CACHESTRAT1;Priorität auf Geschwindigkeit (erhöhter Speicherverbrauch)
@@ -455,7 +455,7 @@ PREFERENCES_CARED;CA rot manuelle Korr.
 PREFERENCES_CLEARDLG_LINE1;Löschen des Zwischenspeichers
 PREFERENCES_CLEARDLG_LINE2;Das kann einige Sekunden dauern.
 PREFERENCES_CLEARDLG_TITLE;Bitte warten
-PREFERENCES_CLIPPINGIND;Anzeige zu helle/zu dunkle Bereiche
+PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
 PREFERENCES_CUTOVERLAYBRUSH;Zuschnitt Abdeckfarbe
 PREFERENCES_DARKFRAME;Dunkelbild
@@ -502,15 +502,15 @@ PREFERENCES_MULTITAB;Multi-Reiter Modus
 PREFERENCES_MULTITABDUALMON;Multi-Reiter Modus, auf zweitem Monitor wenn verfügbar
 PREFERENCES_OUTDIR;Ausgabe-Verzeichnis
 PREFERENCES_OUTDIRFOLDER;Speichern in Verzeichnis
-PREFERENCES_OUTDIRFOLDERHINT;Ablegen der gespeicherten Bilder in ein ausgewähltes Verzeichnis
-PREFERENCES_OUTDIRHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRFOLDERHINT;Ablegen der zu speichernden Bilder in ein ausgewähltes Verzeichnis
+PREFERENCES_OUTDIRHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades, in welchem das RAW liegt.\n\nWenn zum Beispiel</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b> <i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, dann wählen Sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnispfad '/home/tom/converted' speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Verwenden einer Vorlage
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades in dem das RAW liegt.\n\nWenn zum Beispiele</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in das selbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, wählen sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnis '/home/tom/converted' unter beibehaltung des letzen Verzeichnisses wo das RAW lag, dann wählen sie:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades, in welchem das RAW liegt.\n\nWenn zum Beispiel</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b> <i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, dann wählen Sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnispfad '/home/tom/converted' speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabe-Dateien überschreiben
 PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp hinzufügen
-PREFERENCES_PARSEDEXTADDHINT;Gebe einen Dateityp (Extension) ein und drücke diesen Knopf um diesen Typ hinzuzufügen
+PREFERENCES_PARSEDEXTADDHINT;Gebe einen Dateityp (Extension) ein und drücke diesen Knopf zum Hinzufügen
 PREFERENCES_PARSEDEXTDELHINT;Lösche den ausgewählten Dateityp von der Liste
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
@@ -544,7 +544,7 @@ PREFERENCES_TAB_OUTPUT;Ausgabe
 PREFERENCES_TAB_SOUND;Systemklänge
 PREFERENCES_THUMBSIZE;Größe der Vorschau
 PREFERENCES_TUNNELMETADATA;IPTC/XMP unverändert in Ausgabedatei hineinleiten
-PREFERENCES_USESYSTEMTHEME; System-Overfläche verwenden
+PREFERENCES_USESYSTEMTHEME; Systemoberfläche verwenden
 PREFERENCES_WORKFLOW;Workflow
 PROFILEPANEL_FILEDLGFILTERANY;Alle Dateien
 PROFILEPANEL_FILEDLGFILTERPP;Bearbeitungsprofile
@@ -558,7 +558,7 @@ PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Speichere Bearbeitungsprofil...
 PROFILEPANEL_TOOLTIPCOPY;Kopiere aktuelles Profil in Zwischenablage
 PROFILEPANEL_TOOLTIPLOAD;Lade Profil aus Datei
-PROFILEPANEL_TOOLTIPPASTE; Einfügen von Profil aus Zwischenablage
+PROFILEPANEL_TOOLTIPPASTE; Füge Profil aus Zwischenablage ein
 PROFILEPANEL_TOOLTIPSAVE;Speichere aktuelles Profil
 PROGRESSBAR_DECODING;Dekodierung der Rohdatei (RAW)...
 PROGRESSBAR_DEMOSAICING;Entrasterung...
@@ -595,7 +595,7 @@ SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Auswahl des Ausschnitts (Taste C)
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug (Taste N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Auswahl einer Leitlinie (Taste S)
-TOOLBAR_TOOLTIP_WB;Weißabgleich manuel setzen (Taste W)
+TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen (Taste W)
 TP_CACORRECTION_BLUE;Blau
 TP_CACORRECTION_LABEL;Farbsaum-Entfernung
 TP_CACORRECTION_RED;Rot
@@ -639,7 +639,7 @@ TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;H
 TP_CROP_LABEL;Ausschnitt
 TP_CROP_SELECTCROP;Ausschnitt wählen
-TP_CROP_W;W
+TP_CROP_W;B
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DEFRINGE_LABEL;Defringe
@@ -657,7 +657,7 @@ TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
 TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
-TP_DISTORTION_AMOUNT;Menge
+TP_DISTORTION_AMOUNT;Stärke
 TP_DISTORTION_LABEL;Entzerrung
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
@@ -752,8 +752,8 @@ TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Methode: 
 TP_RESIZE_NEAREST;Nächste
 TP_RESIZE_SCALE;Maßstab
-TP_RESIZE_SPECIFY;Angeben:
-TP_RESIZE_W;W:
+TP_RESIZE_SPECIFY;Eingabe:
+TP_RESIZE_W;B:
 TP_RESIZE_WIDTH;Breite
 TP_ROTATE_AUTOCROP;Auto Ausschnitt
 TP_ROTATE_DEGREE;Grad
