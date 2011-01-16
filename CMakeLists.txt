@@ -45,7 +45,12 @@ if (NOT DEFINED LIBDIR)
     if (WIN32 OR APPLE)
         set (LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
     else (WIN32 OR APPLE)
-        set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+        # Respect CMAKE_INSTALL_LIBDIR if set
+        if (DEFINED CMAKE_INSTALL_LIBDIR)
+            set (LIBDIR ${CMAKE_INSTALL_LIBDIR})
+        else (DEFINED CMAKE_INSTALL_LIBDIR)
+            set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+        endif (DEFINED CMAKE_INSTALL_LIBDIR)
     endif (WIN32 OR APPLE)
 endif (NOT DEFINED LIBDIR)
 
