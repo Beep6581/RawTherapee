@@ -161,6 +161,8 @@ HISTORY_MSG_104;HSV Mixer
 HISTORY_MSG_105;Defringing aktiv
 HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Schwellenwert
+HISTORY_MSG_108;Größenänderung Begrenzungsrahmen
+HISTORY_MSG_109;Größenänderung gilt für
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
@@ -476,6 +478,7 @@ PREFERENCES_DMETHOD;Methode
 PREFERENCES_DMETHODBATCH;Warteschlange
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
+PREFERENCES_EXPOS;Belichtung vor der Interpolation: Korrektur (lin)
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FALSECOLOR;Stufen Falschfarben-Unterdrückung
 PREFERENCES_FBROWSEROPTS;Datei-Browser-Einstellungen
@@ -503,15 +506,16 @@ PREFERENCES_MULTITABDUALMON;Multi-Reiter Modus, auf zweitem Monitor wenn verfüg
 PREFERENCES_OUTDIR;Ausgabe-Verzeichnis
 PREFERENCES_OUTDIRFOLDER;Speichern in Verzeichnis
 PREFERENCES_OUTDIRFOLDERHINT;Ablegen der zu speichernden Bilder in ein ausgewähltes Verzeichnis
-PREFERENCES_OUTDIRHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades, in welchem das RAW liegt.\n\nWenn zum Beispiel</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b> <i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, dann wählen Sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnispfad '/home/tom/converted' speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;Die folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades, in welchem das RAW liegt.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Verwenden einer Vorlage
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades, in welchem das RAW liegt.\n\nWenn zum Beispiel</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b> <i>geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n</i><b>%p1/%f\n</b><i>\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen 'konvertiert' schreiben wollen, dann wählen Sie:\n</i><b>%p1/konvertiert/%f\n</b><i>\nWenn Sie die Ausgabedatei im Verzeichnispfad '/home/tom/converted' speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Die folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen referenzieren die Verzeichnisse und Unterverzeichnisse des Pfades, in welchem das RAW liegt.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das RAW speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Dateinamen auf Vorschaubildern anzeigen
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabe-Dateien überschreiben
 PREFERENCES_PARSEDEXT;Im Datei-Browser angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp hinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Gebe einen Dateityp (Extension) ein und drücke diesen Knopf zum Hinzufügen
 PREFERENCES_PARSEDEXTDELHINT;Lösche den ausgewählten Dateityp von der Liste
+PREFERENCES_PRESER;Belichtung vor der Interpolation: Highlights beibehalten (EV)
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher (Cache)
@@ -535,6 +539,7 @@ PREFERENCES_SINGLETABVERTAB;Ein-Reiter Modus, vertikale Reiter
 PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Entweder Dateipfad eingeben oder nichts (falls kein Systemklang gewünscht). Unter Windows "SystemDefault", "SystemAsterisk" usw. für Systemklänge verwenden.
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
+PREFERENCES_SND_TRESHOLDSECS;nach (s)
 PREFERENCES_STARTUPIMDIR;Bild-Verzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Datei-Browser
 PREFERENCES_TAB_COLORMGR;Farbmanagement
@@ -738,12 +743,16 @@ TP_PREPROCESS_DARKFRAME;Dunkelbild
 TP_PREPROCESS_DFAUTOSELECT;Autom. Auswahl
 TP_RAWPANEL_DEMOSAICING;Demosaic
 TP_RAWPANEL_PREPROCESSING;Vorverarbeitung
+TP_RESIZE_APPLIESTO;Gilt für:
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (Schärfer)
 TP_RESIZE_BILINEAR;Bilinear
+TP_RESIZE_CROPPEDAREA;Ausschnitt
 TP_RESIZE_DOWNSCALEB;Verkleinern (besser)
 TP_RESIZE_DOWNSCALEF;Verkleinern (schneller)
+TP_RESIZE_FITBOX;Begrenzungsrahmen
+TP_RESIZE_FULLIMAGE;Ganzes Bild
 TP_RESIZE_FULLSIZE;Volle Bildgröße:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höhe
@@ -819,12 +828,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_108;Resize bounding box
-!HISTORY_MSG_109;Resizing applies to
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
-!PREFERENCES_SND_TRESHOLDSECS;after secs
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
