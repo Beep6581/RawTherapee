@@ -44,7 +44,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
 // build GUI
     // build left side panel
     leftbox = new Gtk::VBox ();
-    leftbox->set_border_width (4);
+    leftbox->set_border_width (2);
     leftbox->set_size_request(100,250);
 
     histogramPanel = Gtk::manage (new HistogramPanel ());
@@ -59,7 +59,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
 
     navigator = Gtk::manage (new Navigator ());
     navigator->previewWindow->set_size_request (-1, 150);
-    leftbox->pack_start (*navigator, Gtk::PACK_SHRINK, 4);
+    leftbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
     leftbox->pack_start (*history);
@@ -86,6 +86,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepi = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vseph = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
 
@@ -102,8 +103,25 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     	hidehp->set_image (*iHistoryShow);
     }
 
+    tbTopPanel_1 = new Gtk::ToggleButton ();
+    iTopPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_bottom.png");
+    iTopPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_top.png");
+    tbTopPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbTopPanel_1->set_active (true);
+    tbTopPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDETP1"));
+    tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+
+    tbRightPanel_1 = new Gtk::ToggleButton ();
+    iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
+    iRightPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbRightPanel_1->set_active (true);
+    tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
+    tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+
     Gtk::VSeparator* vsepcl = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsepz3 = Gtk::manage (new Gtk::VSeparator ());
 
     iarea = new ImageAreaPanel ();
 
@@ -115,8 +133,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     toolBarPanel->pack_start (*vsepi, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_start (*tpc->getToolBar(), Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vsept, Gtk::PACK_SHRINK, 2);
-    toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 4);
-    toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 4);
+    
+    toolBarPanel->pack_end   (*tbTopPanel_1, Gtk::PACK_SHRINK, 1);
+    toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
+    toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
+    toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*iarea->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz, Gtk::PACK_SHRINK, 2);
 
@@ -126,16 +147,16 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     beforeAfterBox = Gtk::manage (new Gtk::HBox());
     beforeAfterBox->pack_start (*afterBox);
 
-    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK);
+    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK,0);
     editbox->pack_start (*beforeAfterBox);
 
     // build right side panel
     vboxright = new Gtk::VBox (false, 0);
     vboxright->set_size_request(100,250);
 
-    vboxright->set_border_width (4);
-    vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
-    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
+    vboxright->set_border_width (2);
+    vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
@@ -176,16 +197,28 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     green = new Gtk::Image (argv0+"/images/green.png");
     red->show ();
     green->show ();
-    statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
-    iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 4);
+    statusBox->pack_end (*green, Gtk::PACK_SHRINK, 2);
+    iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 2);
+
+    // tbRightPanel_1
+    iops->pack_end (*tbRightPanel_1, Gtk::PACK_SHRINK,0);
+
+	// ShowHideSidePanels
+    tbShowHideSidePanels = new Gtk::ToggleButton ();
+    iShowHideSidePanels = new Gtk::Image(argv0+"/images/crossed_arrows_out_45_02.png");
+    tbShowHideSidePanels->set_relief(Gtk::RELIEF_NONE);
+    tbShowHideSidePanels->set_active (false);
+    tbShowHideSidePanels->set_tooltip_markup (M("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
+    tbShowHideSidePanels->set_image (*iShowHideSidePanels);
+    iops->pack_end (*tbShowHideSidePanels, Gtk::PACK_SHRINK,0);
+	iops->pack_end (*vsepz2, Gtk::PACK_SHRINK,1);
 
     // Zoom panel
     iops->pack_end (*iarea->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
-    iops->pack_end (*vsepz2, Gtk::PACK_SHRINK, 2);
+    iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
-
-    editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4);
-    editbox->pack_start (*iops, Gtk::PACK_SHRINK, 4);
+    editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
+    editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
 
     // build screen
@@ -249,10 +282,12 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     info->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::info_toggled) );
     beforeAfter->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::beforeAfterToggled) );
     hidehp->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::hideHistoryActivated) );
+    tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
+    tbRightPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbRightPanel_1_toggled) );
     saveimgas->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::queueImgPressed) );
     sendtogimp->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::sendToGimpPressed) );
-
+    ShowHideSidePanelsconn = tbShowHideSidePanels->signal_toggled().connect ( sigc::mem_fun(*this, &EditorPanel::toggleSidePanels), true);
 }
 
 EditorPanel::~EditorPanel () {
@@ -569,7 +604,7 @@ void EditorPanel::refreshProcessingState (bool inProcessing) {
     if (inProcessing) {
         if (processingStartedTime==0) processingStartedTime = ::time(NULL);
 
-        statusBox->pack_end (*red, Gtk::PACK_SHRINK, 4);
+        statusBox->pack_end (*red, Gtk::PACK_SHRINK, 2);
     } else {
         if (processingStartedTime!=0) {
             time_t curTime= ::time(NULL);
@@ -579,7 +614,7 @@ void EditorPanel::refreshProcessingState (bool inProcessing) {
             processingStartedTime = 0;
         }
 
-        statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
+        statusBox->pack_end (*green, Gtk::PACK_SHRINK, 2);
 }
 }
 
@@ -671,12 +706,96 @@ void EditorPanel::hideHistoryActivated () {
     else {
     	hidehp->set_image (*iHistoryShow);
     }
+
+    tbShowHideSidePanels_managestate();
+}
+
+
+void EditorPanel::tbRightPanel_1_toggled () {
+/*
+    removeIfThere (hpanedr, vboxright, false);
+    if (tbRightPanel_1->get_active()){
+        hpanedr->pack2(*vboxright, false, true);
+    	tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    }
+    else {
+    	tbRightPanel_1->set_image (*iRightPanel_1_Show);
+    }
+    tbShowHideSidePanels_managestate();
+    */
+	if (vboxright){
+		if (tbRightPanel_1->get_active()){
+			vboxright->show();
+			tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+		}
+		else{
+			vboxright->hide();
+			tbRightPanel_1->set_image (*iRightPanel_1_Show);
+		}
+		tbShowHideSidePanels_managestate();
+	}
+}
+
+void EditorPanel::tbTopPanel_1_visible (bool visible){
+	if (visible)
+		tbTopPanel_1->show();
+	else
+		tbTopPanel_1->hide();
+}
+
+void EditorPanel::tbTopPanel_1_toggled () {
+
+	if (catalogPane){ // catalogPane does not exist in multitab mode
+		tbTopPanel_1_Active = tbTopPanel_1->get_active();
+
+		if (tbTopPanel_1_Active){
+			catalogPane->show();
+			tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+		}
+		else {
+			catalogPane->hide();
+			tbTopPanel_1->set_image (*iTopPanel_1_Show);
+		}
+
+		tbShowHideSidePanels_managestate();
+	}
 }
 
 bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
+
+
+    // Editor Layout
+    switch(event->keyval) {
+        case GDK_L:
+		    tbTopPanel_1->set_active (!tbTopPanel_1->get_active()); // toggle top panel
+		    if (ctrl) hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
+			if (alt) tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
+			return true;
+    	case GDK_l:
+    		if (!shift && !alt /*&& !ctrl*/){
+    			hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
+    		    return true;
+    		}
+			if (alt && !ctrl){ // toggle right panel
+				tbRightPanel_1->set_active (!tbRightPanel_1->get_active());
+				return true;
+			}
+			if (alt && ctrl){ // toggle left and right panels
+				hidehp->set_active (!hidehp->get_active());
+				tbRightPanel_1->set_active (!tbRightPanel_1->get_active());
+				return true;
+			}
+        case GDK_m: // Maximize preview panel: hide top AND right AND history panels
+        	if (!ctrl) toggleSidePanels();
+        	return true;
+        case GDK_M: // Maximize preview panel: hide top AND right AND history panels AND (fit image preview)
+        	if (!ctrl) toggleSidePanelsZoomFit();
+        	return true;
+    }
 
     if (!ctrl) {
         // Normal
@@ -688,10 +807,6 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				tpc->coarse->rotateLeft();
 				return true;
 
-            case GDK_h:
-            case GDK_H:
-                hidehp->set_active (!hidehp->get_active());
-                return true;
             case GDK_i:
             case GDK_I:
                 info->set_active (!info->get_active());
@@ -711,11 +826,10 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
             case GDK_1:
                 iarea->imageArea->zoomPanel->zoom11Clicked();
                 return true;
+
             case GDK_f:
-            case GDK_F:
                 iarea->imageArea->zoomPanel->zoomFitClicked();
                 return true;
-
             case GDK_less:
                 iarea->imageArea->indClippedPanel->toggleClipped(true);
                 return true;
@@ -1155,4 +1269,40 @@ void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned
 
     histogramPanel->histogramChanged (rh, gh, bh, lh);
     tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
+}
+
+bool EditorPanel::CheckSidePanelsVisibility(){
+	if(tbTopPanel_1->get_active()==false && tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
+		return false;
+	else
+		return true;
+}
+void EditorPanel::toggleSidePanels(){
+	// Maximize preview panel:
+	// toggle top AND right AND history panels
+
+	bool bAllSidePanelsVisible;
+	bAllSidePanelsVisible= CheckSidePanelsVisibility();
+
+	tbTopPanel_1->set_active (!bAllSidePanelsVisible);
+	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
+	hidehp->set_active (!bAllSidePanelsVisible);
+}
+
+void EditorPanel::toggleSidePanelsZoomFit(){
+	toggleSidePanels();
+
+	// fit image preview
+	// !!! TODO this does not want to work... seems to have an effect on a subsequent key press
+	// iarea->imageArea->zoomPanel->zoomFitClicked();
+}
+
+void EditorPanel::tbShowHideSidePanels_managestate(){
+	bool bAllSidePanelsVisible;
+	bAllSidePanelsVisible = CheckSidePanelsVisibility();
+	ShowHideSidePanelsconn.block (true);
+
+	tbShowHideSidePanels->set_active (!bAllSidePanelsVisible);
+
+	ShowHideSidePanelsconn.block (false);
 }

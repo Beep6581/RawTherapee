@@ -90,7 +90,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     tbLeftPanel_1->set_active (true);
     tbLeftPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDELP1"));
     tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
-    tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_Activated) );
+    tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_toggled) );
     buttonBar->pack_start (*tbLeftPanel_1, Gtk::PACK_SHRINK);
 
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
@@ -207,6 +207,17 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hbBrowsePath->pack_start (*buttonBrowsePath,Gtk::PACK_SHRINK, 4);
     buttonBar->pack_start (*hbBrowsePath, Gtk::PACK_EXPAND_WIDGET,4);
     buttonBrowsePath->signal_clicked().connect( sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed) );
+
+    tbRightPanel_1 = new Gtk::ToggleButton ();
+    iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
+    iRightPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_right.png");
+
+    tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbRightPanel_1->set_active (true);
+    tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
+    tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    tbRightPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbRightPanel_1_toggled) );
+    buttonBar->pack_end (*tbRightPanel_1, Gtk::PACK_SHRINK);
 
     buttonBar->pack_end (*coarsePanel, Gtk::PACK_SHRINK);   
     buttonBar->pack_end (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
@@ -961,28 +972,73 @@ void FileCatalog::tbLeftPanel_1_visible (bool visible){
 	else
 		tbLeftPanel_1->hide();
 }
-void FileCatalog::tbLeftPanel_1_Activated () {
+void FileCatalog::tbRightPanel_1_visible (bool visible){
+	if (visible)
+		tbRightPanel_1->show();
+	else
+		tbRightPanel_1->hide();
+}
+void FileCatalog::tbLeftPanel_1_toggled () {
     removeIfThere (filepanel->dirpaned, filepanel->placespaned, false);
-    if (tbLeftPanel_1->get_active())
+    if (tbLeftPanel_1->get_active()){
     	filepanel->dirpaned->pack1 (*filepanel->placespaned, false, true);
-
-	tbLeftPanel_1_Active = tbLeftPanel_1->get_active();
-
-    if (tbLeftPanel_1_Active){
-    	tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
+        tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
     }
     else {
     	tbLeftPanel_1->set_image (*iLeftPanel_1_Show);
     }
-
 }
+
+void FileCatalog::tbRightPanel_1_toggled () {
+    if (tbRightPanel_1->get_active()){
+    	filepanel->rightBox->show();
+    	tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    }
+    else{
+    	filepanel->rightBox->hide();
+    	tbRightPanel_1->set_image (*iRightPanel_1_Show);
+    }
+}
+
+bool FileCatalog::CheckSidePanelsVisibility(){
+	if(tbLeftPanel_1->get_active()==false && tbRightPanel_1->get_active()==false)
+		return false;
+	else
+		return true;
+}
+void FileCatalog::toggleSidePanels(){
+	// toggle left AND right panels
+
+	bool bAllSidePanelsVisible;
+	bAllSidePanelsVisible= CheckSidePanelsVisibility();
+
+	tbLeftPanel_1->set_active (!bAllSidePanelsVisible);
+	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
+}
+
 bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
     
     modifierKey = event->state;
     
+    // GUI Layout
+    switch(event->keyval) {
+        case GDK_l:
+        	if (!alt)tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active()); // toggle left panel
+			if (alt && !ctrl) tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
+			if (alt && ctrl) {
+				tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active()); // toggle left panel
+				tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
+			}
+			return true;
+        case GDK_m:
+        	if (!ctrl) toggleSidePanels();
+			return true;
+    }
+
     switch(event->keyval) {
         case GDK_1:
             categoryButtonToggled(bRank[0]);
@@ -1025,11 +1081,6 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 			case GDK_bracketleft:
 				coarsePanel->rotateLeft();
 				return true;
-
-            case GDK_h:
-            case GDK_H:
-            	tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active());
-            	return true;
             case GDK_i:
             case GDK_I:
                 exifInfo->set_active (!exifInfo->get_active());

@@ -54,6 +54,12 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Label *progressLabel;
         Gtk::ToggleButton* info;
         Gtk::ToggleButton* hidehp;
+        Gtk::ToggleButton* tbShowHideSidePanels;
+        Gtk::ToggleButton* tbTopPanel_1;
+        Gtk::ToggleButton* tbRightPanel_1;
+        bool tbTopPanel_1_Active;
+        bool tbRightPanel_1_Active;
+        //bool bAllSidePanelsVisible;
         Gtk::ToggleButton* beforeAfter;
         Gtk::HPaned* hpanedl;
         Gtk::HPaned* hpanedr;
@@ -61,6 +67,9 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Image* red;
         Gtk::Image* green;
         Gtk::Image *iHistoryShow, *iHistoryHide;
+        Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
+        Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
+        Gtk::Image *iShowHideSidePanels;
         Gtk::VBox* leftbox, *vboxright;
 
         Gtk::Button* queueimg;
@@ -109,6 +118,8 @@ class EditorPanel : public Gtk::VBox,
 
         time_t processingStartedTime;
 
+        sigc::connection ShowHideSidePanelsconn;
+
     public:
 
         EditorPanel (FilePanel* filePanel = NULL);
@@ -145,10 +156,18 @@ class EditorPanel : public Gtk::VBox,
         // event handlers
         void info_toggled ();
         void hideHistoryActivated ();
+        void tbRightPanel_1_toggled ();
+        void tbTopPanel_1_toggled ();
         void beforeAfterToggled ();
         void saveAsPressed ();
         void queueImgPressed ();
         void sendToGimpPressed ();
+
+        void tbTopPanel_1_visible (bool visible);
+        bool CheckSidePanelsVisibility();
+        void tbShowHideSidePanels_managestate();
+        void toggleSidePanels();
+        void toggleSidePanelsZoomFit();
 
         void saveProfile ();
         Glib::ustring getShortName ();

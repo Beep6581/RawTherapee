@@ -119,6 +119,7 @@ RTWindow::RTWindow ()
 			vbe->set_spacing (2);
 			vbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
 			vbe->show_all ();
+			epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
 			mainNB->append_page (*epanel, *vbe);
 		} else {
 			Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
@@ -127,6 +128,7 @@ RTWindow::RTWindow ()
 			hbe->set_spacing (2);
 			hbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
 			hbe->show_all ();
+			epanel->tbTopPanel_1_visible(true); //show the toggle Top Panel button
 			mainNB->append_page (*epanel, *hbe);
 		}
 
@@ -140,19 +142,27 @@ RTWindow::RTWindow ()
 		mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
 
 		// filling bottom box
+		iFullScreen = new Gtk::Image(argv0+"/images/fullscreen.png");
+		iFullScreen_exit = new Gtk::Image(argv0+"/images/fullscreen_exit.png");
+
 		Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
-		Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
+		//Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
+		Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
 		preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
+		preferences->set_tooltip_markup (M("MAIN_BUTTON_PREFERENCES"));
 		preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
 		is_fullscreen = false;
-		btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
+		//btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
+		btn_fullscreen = Gtk::manage( new Gtk::Button());
+		btn_fullscreen->set_tooltip_markup (M("MAIN_BUTTON_FULLSCREEN"));
+		btn_fullscreen->set_image (*iFullScreen);
 		btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
 		bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
-		bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 4);
-		bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 4);
+		bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 1);
+		bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 1);
 		bottomBox->pack_start (prLabel );
 		prLabel.set_alignment(Gtk::ALIGN_RIGHT);
-		bottomBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 4);
+		bottomBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 1);
 
 		pldBridge = new PLDBridge(&prLabel,&prProgBar);
 
@@ -240,6 +250,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
         epanels[ name ] = ep;
         filesEdited.insert ( name );
         fpanel->refreshEditedState (filesEdited);
+        ep->tbTopPanel_1_visible(false); //hide the toggle Top Panel button
     }
 }
 
@@ -371,11 +382,15 @@ void RTWindow::toggle_fullscreen () {
     if (is_fullscreen) {
         unfullscreen();
         is_fullscreen = false;
-        btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
+        //btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
+        btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_FULLSCREEN"));
+        btn_fullscreen->set_image (*iFullScreen);
     } else {
         fullscreen();
         is_fullscreen = true;
-        btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
+        //btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
+        btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_UNFULLSCREEN"));
+        btn_fullscreen->set_image (*iFullScreen_exit);
     }
 }
 
@@ -402,6 +417,7 @@ void RTWindow::MoveFileBrowserToMain()
         fpanel->ribbonPane->add(*fCatalog);
         fCatalog->enableTabMode(false);
         fCatalog->tbLeftPanel_1_visible(true);
+        fCatalog->tbRightPanel_1_visible(true);
     }
 }
 
@@ -415,6 +431,7 @@ void RTWindow::MoveFileBrowserToEditor()
         fCatalog->enableTabMode(true);
         fCatalog->refreshHeight();
         fCatalog->tbLeftPanel_1_visible(false);
+        fCatalog->tbRightPanel_1_visible(false);
     }
 }
 
