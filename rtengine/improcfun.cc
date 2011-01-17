@@ -236,14 +236,14 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 
     bool mixchannels = params->chmixer.red[0]!=100 || params->chmixer.red[1]!=0 || params->chmixer.red[2]!=0 || params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || params->chmixer.blue[0]!=0 || params->chmixer.blue[1]!=0 || params->chmixer.blue[2]!=100;
 
-    int mapval;
-    double factor;
+//    int mapval;
+//    double factor;
     int tW = working->width;
     int tH = working->height;
-    int r, g, b;
-	float h, s, v;
-	float satparam,valparam;
-	int hue, hueband, hueres, nbrband;
+//    int r, g, b;
+//	float h, s, v;
+//	float satparam,valparam;
+//	int hue, hueband, hueres, nbrband;
 	double pi = M_PI;
 	
 	float* cossq = new float [8192];
@@ -251,14 +251,14 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 		cossq[i] = SQR(cos(pi*(float)i/16384));
 	
 	
-#pragma omp parallel for  private(r, g, b,factor,mapval,h,s,v,hue,hueband,hueres,nbrband,satparam,valparam) if (multiThread)
+#pragma omp parallel for if (multiThread)
     for (int i=0; i<tH; i++) {
 
         for (int j=0; j<tW; j++) {
 
-            r = working->r[i][j];
-            g = working->g[i][j];
-            b = working->b[i][j];
+            int r = working->r[i][j];
+            int g = working->g[i][j];
+            int b = working->b[i][j];
 
             if (mixchannels) {
                 r = (r*params->chmixer.red[0]   + g*params->chmixer.red[1]   + b*params->chmixer.red[2]) / 100;
@@ -268,8 +268,8 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
             }
 
             if (processSH || processLCE) {
-                mapval = shmap->map[i][j];
-                factor = 1.0;
+                double mapval = shmap->map[i][j];
+                double factor = 1.0;
                 
                 if (processSH) {
                     if (mapval > h_th) 
@@ -299,7 +299,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 			b = (b*tonefactor);
 			
 			//shadow tone curve
-			int Y = (int)(0.299*r + 0.587*g + 0.114*b);
+			float Y = (0.299*r + 0.587*g + 0.114*b);
 			tonefactor = (Y>0 ? CurveFactory::flinterp(shtonecurve,Y)/Y : 1);
 			r *= tonefactor;
 			g *= tonefactor;
@@ -311,6 +311,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 			b = CurveFactory::flinterp(tonecurve,b);
 
 			if (abs(sat)>0.5 || params->hsvequalizer.enabled) {
+				float h,s,v;
 				rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
 					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-s)));
@@ -320,21 +321,21 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 				}
 				//HSV equalizer
 				if (params->hsvequalizer.enabled) {
-					hue = (int)(65535*h);
-					hueres = hue & 8191;//location of hue within a band
-					hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
-					nbrband = (hueband+1)&7;
+					int hue = (int)(65535*h);
+					int hueres = hue & 8191;//location of hue within a band
+					int hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
+					int nbrband = (hueband+1)&7;
 					
 					//shift hue
 					h = fmod(h + 0.0025*(params->hsvequalizer.hue[hueband] * cossq[hueres] + params->hsvequalizer.hue[nbrband] * (1-cossq[hueres])),1);
 					if (h<0) h +=1;
-					hue = (int)(65535*h);
+					hue = (int)round(65535*h);
 					hueres = hue & 8191;//location of hue within a band
 					hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
 					nbrband = (hueband+1)&7;
 
 					//change saturation
-					satparam = 0.01*(params->hsvequalizer.sat[hueband] * cossq[hueres] + params->hsvequalizer.sat[nbrband] * (1-cossq[hueres]));
+					float satparam = 0.01*(params->hsvequalizer.sat[hueband] * cossq[hueres] + params->hsvequalizer.sat[nbrband] * (1-cossq[hueres]));
 					if (satparam > 0.00001) {
 						s = (1-satparam)*s+satparam*(1-SQR(1-s));
 					} else {
@@ -343,7 +344,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 					}
 					
 					//change value
-					valparam = 0.005*(params->hsvequalizer.val[hueband] * cossq[hueres] + params->hsvequalizer.val[nbrband] * (1-cossq[hueres]));
+					float valparam = 0.005*(params->hsvequalizer.val[hueband] * cossq[hueres] + params->hsvequalizer.val[nbrband] * (1-cossq[hueres]));
 					valparam *= (1-SQR(SQR(1-s)));
 					if (valparam > 0.00001) {
 						v = (1-valparam)*v+valparam*(1-SQR(1-v));
