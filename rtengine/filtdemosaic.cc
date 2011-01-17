@@ -385,7 +385,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                         r += si->raw[i+1][j+1] - ti->g[ix+1][jx+1];
                         n++;
                     }
-                    r = ti->g[ix][jx]; + r / n;
+                    r = ti->g[ix][jx] + r / n;
                     ti->r[ix][jx] = CLIP(r);
                 }
                 else {
