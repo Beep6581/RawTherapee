@@ -75,7 +75,7 @@ class FileCatalog : public Gtk::VBox,
         Gtk::HBox* buttonBar;
         Gtk::HBox* buttonBar2;
         Gtk::ToggleButton* tbLeftPanel_1;
-        bool tbLeftPanel_1_Active;
+        Gtk::ToggleButton* tbRightPanel_1;
         Gtk::ToggleButton* bDir;
         Gtk::ToggleButton* bUnRanked;
         Gtk::ToggleButton* bRank[5];
@@ -84,7 +84,9 @@ class FileCatalog : public Gtk::VBox,
         Gtk::ToggleButton* exifInfo;
         sigc::connection bCateg[8];
         Gtk::Image* iranked[5], *igranked[5];
-        Gtk::Image *iTrashEmpty, *iTrashFull, *iRightArrow_red, *iRightArrow, *iLeftPanel_1_Show, *iLeftPanel_1_Hide;
+        Gtk::Image *iTrashEmpty, *iTrashFull;
+        Gtk::Image *iRightArrow_red, *iRightArrow;
+        Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;
         Gtk::Entry* BrowsePath;
         Gtk::Button* buttonBrowsePath;
         sigc::connection BrowsePathconn;
@@ -187,15 +189,19 @@ class FileCatalog : public Gtk::VBox,
                 void zoomOut ();
 
                 void buttonBrowsePathPressed ();
-                void tbLeftPanel_1_Activated ();
+
+                void tbLeftPanel_1_toggled ();
                 void tbLeftPanel_1_visible (bool visible);
+                void tbRightPanel_1_toggled ();
+                void tbRightPanel_1_visible (bool visible);
 
                 void openNextImage () { fileBrowser->openNextImage(); }
                 void openPrevImage () { fileBrowser->openPrevImage(); }               
 
                 bool handleShortcutKey (GdkEventKey* event);
 
-
+                bool CheckSidePanelsVisibility();
+                void toggleSidePanels();
 };
 
 #endif

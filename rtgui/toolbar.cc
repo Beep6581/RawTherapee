@@ -213,8 +213,8 @@ bool ToolBar::handleShortcutKey (GdkEventKey* event) {
             case GDK_S:
                 stra_pressed ();
                 return true;
-            case GDK_n:
-            case GDK_N:
+            case GDK_h:
+            case GDK_H:
                 hand_pressed ();
                 return true;
         }

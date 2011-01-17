@@ -40,6 +40,8 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool is_fullscreen;
         Gtk::Button * btn_fullscreen;
         
+        Gtk::Image *iFullScreen, *iFullScreen_exit;
+
         bool isSingleTabMode() { return !options.tabbedUI && !EditWindow::isMultiDisplayEnabled(); };
 
         bool on_expose_event_epanel(GdkEventExpose* event);
