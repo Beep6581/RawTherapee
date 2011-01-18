@@ -389,10 +389,19 @@ class RAWParams {
 					numMethods }; // This MUST be the last enum
 		static const char *methodstring[numMethods];
 
-
+		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
+								numFlatFileBlurTypes }; // This MUST be the last enum
+		static const char *ff_BlurTypestring[numFlatFileBlurTypes];
+	
 
 	    Glib::ustring dark_frame;
 	    bool df_autoselect;
+	
+		Glib::ustring ff_file;
+		bool ff_AutoSelect;
+		int ff_BlurRadius;
+		Glib::ustring ff_BlurType;
+	
 		bool ca_autocorrect;
 		double cared;
 		double cablue;

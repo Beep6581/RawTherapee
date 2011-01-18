@@ -25,6 +25,8 @@
 class PartialPasteDlg : public Gtk::Dialog {
 
     public:
+    		Gtk::CheckButton* everything;
+    		
         // main groups:
         Gtk::CheckButton* basic;
         Gtk::CheckButton* luminance;
@@ -32,6 +34,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* lens;
         Gtk::CheckButton* composition;
         Gtk::CheckButton* metaicm;
+        Gtk::CheckButton* raw;
 
         // options in basic:
         Gtk::CheckButton* wb;
@@ -40,20 +43,20 @@ class PartialPasteDlg : public Gtk::Dialog {
 
         // options in luminance:
         Gtk::CheckButton* sharpen;
-		Gtk::CheckButton* impden;
+        Gtk::CheckButton* impden;
         Gtk::CheckButton* lumaden;
         Gtk::CheckButton* labcurve;
         Gtk::CheckButton* sh;
-		Gtk::CheckButton* dirpyreq;
-		Gtk::CheckButton* waveq;
+        Gtk::CheckButton* dirpyreq;
+        Gtk::CheckButton* waveq;
 
         // options in color:
         Gtk::CheckButton* colormixer;
         Gtk::CheckButton* colorshift;
         Gtk::CheckButton* colorboost;
-		Gtk::CheckButton* hsveq;
+        Gtk::CheckButton* hsveq;
         Gtk::CheckButton* colorden;
-		Gtk::CheckButton* dirpyrden;
+        Gtk::CheckButton* dirpyrden;
 
 
         // options in lens:
@@ -72,13 +75,23 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* iptc;
         Gtk::CheckButton* icm;
 
-        sigc::connection basicConn, luminanceConn, colorConn, lensConn, compositionConn, metaicmConn;
+        // options in raw:
+        Gtk::CheckButton* df_file;
+        Gtk::CheckButton* df_AutoSelect;                                                                             
+        Gtk::CheckButton* ff_file;
+        Gtk::CheckButton* ff_AutoSelect;
+        Gtk::CheckButton* ff_BlurRadius;
+        Gtk::CheckButton* ff_BlurType;
+                                                                                                      
+        sigc::connection everythingConn, basicConn, luminanceConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
+
         sigc::connection wbConn, exposureConn, hlrecConn;
         sigc::connection sharpenConn, impdenConn, lumadenConn, labcurveConn, shConn, dirpyreqConn, waveqConn, hsveqConn;
         sigc::connection colormixerConn, colorshiftConn, colorboostConn, colordenConn, dirpyrdenConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn;
         sigc::connection exifchConn, iptcConn, icmConn;
+        sigc::connection df_fileConn, df_AutoSelectConn,ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
 
 
         public:
@@ -86,12 +99,14 @@ class PartialPasteDlg : public Gtk::Dialog {
 
             void applyPaste (rtengine::procparams::ProcParams* dst, const rtengine::procparams::ProcParams* src);
 
+            void everythingToggled ();
             void basicToggled ();
             void luminanceToggled ();
             void colorToggled ();
             void lensToggled ();
             void compositionToggled ();
             void metaicmToggled ();
+            void rawToggled ();
 };
 
 #endif

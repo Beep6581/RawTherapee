@@ -21,6 +21,8 @@
 #include <ilabel.h>
 #include <options.h>
 #include <imagesource.h>
+#include <dfmanager.h>
+#include <ffmanager.h>
 
 using namespace rtengine::procparams;
 
@@ -136,6 +138,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
     whitebalance->setWBProvider (this);
     whitebalance->setSpotWBListener (this);
+    preprocess->setDFProvider (this);
+    preprocess->setFFProvider (this);
     lensgeom->setLensGeomListener (this);
     rotate->setLensGeomListener (this);
     crop->setCropPanelListener (this);
@@ -359,6 +363,42 @@ void ToolPanelCoordinator::autoCropRequested () {
     crop->cropManipReady ();
 }
 
+rtengine::RawImage* ToolPanelCoordinator::getDF()
+{
+    if (!ipc)
+        return NULL;
+    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    if(imd){
+      int iso = imd->getISOSpeed();
+      double shutter = imd->getShutterSpeed();
+      std::string maker( imd->getMake()  );
+      std::string model( imd->getModel() );
+      tm t =imd->getDateTime();
+      time_t timestamp = mktime(&t);
+
+      return rtengine::dfm.searchDarkFrame( maker,model,iso,shutter, timestamp);
+    }
+    return NULL;
+}
+
+rtengine::RawImage* ToolPanelCoordinator::getFF()
+{
+    if (!ipc)
+        return NULL;
+    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    if(imd){
+      int iso = imd->getISOSpeed();
+      double shutter = imd->getShutterSpeed();
+      double aperture = imd->getFNumber();
+      std::string maker( imd->getMake()  );
+      std::string model( imd->getModel() );
+      tm t =imd->getDateTime();
+      time_t timestamp = mktime(&t);
+
+      return rtengine::ffm.searchFlatField( maker,model,iso,shutter,aperture,timestamp);
+    }
+    return NULL;
+}
 void ToolPanelCoordinator::straightenRequested () {
 
     if (!ipc)

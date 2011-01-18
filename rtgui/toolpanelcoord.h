@@ -65,6 +65,8 @@ class ImageEditorCoordinator;
 class ToolPanelCoordinator :    public ToolPanelListener, 
                                 public ProfileChangeListener, 
                                 public WBProvider,
+                                public DFProvider,
+                                public FFProvider,
                                 public LensGeomListener,
                                 public SpotWBListener,
                                 public CropPanelListener,
@@ -91,14 +93,14 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
-	Defringe* defringe;
-	ImpulseDenoise* impulsedenoise;
-	DirPyrDenoise* dirpyrdenoise;
+        Defringe* defringe;
+        ImpulseDenoise* impulsedenoise;
+        DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
-	DirPyrEqualizer * dirpyrequalizer;
-	HSVEqualizer * hsvequalizer;
+        DirPyrEqualizer * dirpyrequalizer;
+        HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
 
@@ -158,6 +160,12 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         // wbprovider interface
         void getAutoWB (double& temp, double& green) { if (ipc) ipc->getAutoWB (temp, green); }
         void getCamWB (double& temp, double& green)  { if (ipc) ipc->getCamWB (temp, green); }
+
+        //DFProvider interface
+        rtengine::RawImage* getDF();
+
+        //FFProvider interface
+        rtengine::RawImage* getFF();
 
         // rotatelistener interface
         void straightenRequested ();
