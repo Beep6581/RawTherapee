@@ -20,6 +20,7 @@
 #include <options.h>
 #include <guiutils.h>
 #include <safegtk.h>
+#include <sstream>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -35,7 +36,31 @@ PreProcess::PreProcess ()
 	hbdf->pack_start(*darkFrameFile);
 	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 4);
 	dfAuto = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_DFAUTOSELECT"))));
+	dfInfo = Gtk::manage(new Gtk::Label("."));
+	dfInfo->set_alignment(0,0); //left align
 	
+	hbff = Gtk::manage(new Gtk::HBox()); 
+	flatFieldFile = Gtk::manage(new Gtk::FileChooserButton(M("TP_PREPROCESS_FLATFIELDFILE"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+	ffLabel = Gtk::manage(new Gtk::Label(M("TP_PREPROCESS_FLATFIELDFILE"))); 
+	flatFieldFileReset = Gtk::manage(new Gtk::Button()); 
+	flatFieldFileReset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON))); 
+	hbff->pack_start(*ffLabel, Gtk::PACK_SHRINK, 4); 
+	hbff->pack_start(*flatFieldFile); 
+	hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK, 4); 
+	flatFieldAutoSelect = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_FLATFIELDAUTOSELECT"))));
+	ffInfo = Gtk::manage(new Gtk::Label("."));
+	ffInfo->set_alignment(0,0); //left align
+	flatFieldBlurRadius = Gtk::manage(new Adjuster (M("PREFERENCES_FLATFIELDBLURRADIUS"),0,200,2,32)); 
+	flatFieldBlurRadius->setAdjusterListener (this); 
+	flatFieldBlurRadius->show(); 
+	 
+	Gtk::HBox* hbffbt = Gtk::manage (new Gtk::HBox ()); 
+	hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("PREFERENCES_FLATFIELDBLURTYPE") +": "))); 
+	flatFieldBlurType = Gtk::manage (new Gtk::ComboBoxText ()); 
+	for( size_t i=0; i< procparams::RAWParams::numFlatFileBlurTypes;i++) 
+	flatFieldBlurType->append_text(procparams::RAWParams::ff_BlurTypestring[i]); 
+	flatFieldBlurType->set_active(0); 
+
 	caAutocorrect = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_CACORRECTION"))));
 	caRed = Gtk::manage(new Adjuster (M("PREFERENCES_CARED"),-4.0,4.0,0.1,0));
 	caRed->setAdjusterListener (this);
@@ -70,11 +95,21 @@ PreProcess::PreProcess ()
 
     pack_start( *hbdf, Gtk::PACK_SHRINK, 4);
     pack_start( *dfAuto, Gtk::PACK_SHRINK, 4);
-    pack_start( *Gtk::manage (new  Gtk::HSeparator()));
+    pack_start( *dfInfo, Gtk::PACK_SHRINK, 4);
+    pack_start( *Gtk::manage (new  Gtk::HSeparator())); 
+
+    pack_start( *hbff, Gtk::PACK_SHRINK, 4);               
+    pack_start( *flatFieldAutoSelect, Gtk::PACK_SHRINK, 4);
+    pack_start( *ffInfo, Gtk::PACK_SHRINK, 4);
+    hbffbt->pack_end (*flatFieldBlurType);                 
+    pack_start( *hbffbt, Gtk::PACK_SHRINK, 4);             
+    pack_start( *flatFieldBlurRadius, Gtk::PACK_SHRINK, 4);
+    pack_start( *Gtk::manage (new  Gtk::HSeparator()));    
+
     pack_start( *hotDeadPixel, Gtk::PACK_SHRINK, 4);
     pack_start( *Gtk::manage (new  Gtk::HSeparator()));
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
-	pack_start( *caRed, Gtk::PACK_SHRINK, 4);
+    pack_start( *caRed, Gtk::PACK_SHRINK, 4);
     pack_start( *caBlue, Gtk::PACK_SHRINK, 4);
 	pack_start( *PexPos, Gtk::PACK_SHRINK, 4);//exposi
     pack_start( *PexPreser, Gtk::PACK_SHRINK, 4);
@@ -89,6 +124,10 @@ PreProcess::PreProcess ()
    hdpixelconn = hotDeadPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::hotDeadPixelChanged), true);
    dfFile = darkFrameFile->signal_file_set().connect ( sigc::mem_fun(*this, &PreProcess::darkFrameChanged), true);
    btnReset->signal_clicked().connect( sigc::mem_fun(*this, &PreProcess::darkFrameReset), true );
+   flatFieldFileconn = flatFieldFile->signal_file_set().connect ( sigc::mem_fun(*this, &PreProcess::flatFieldFileChanged), true);
+   flatFieldFileReset->signal_clicked().connect( sigc::mem_fun(*this, &PreProcess::flatFieldFile_Reset), true );                                  
+   flatFieldAutoSelectconn = flatFieldAutoSelect->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::flatFieldAutoSelectChanged), true);
+   flatFieldBlurTypeconn = flatFieldBlurType->signal_changed().connect( sigc::mem_fun(*this, &PreProcess::flatFieldBlurTypeChanged) );            
 }
 
 
@@ -98,6 +137,9 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    caacsconn.block (true);
    dfautoconn.block(true);
    hdpixelconn.block (true);
+   flatFieldAutoSelectconn.block (true);
+   flatFieldBlurTypeconn.block (true);  
+
 
    if(pedited ){
 	   dfAuto->set_inconsistent(!pedited->raw.dfAuto );
@@ -111,16 +153,63 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	   hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixel);
 	   lineDenoise->setEditedState( pedited->raw.linenoise ? Edited : UnEdited );
 	   greenEqThreshold->setEditedState( pedited->raw.greenEq ? Edited : UnEdited );
+	   flatFieldAutoSelect->set_inconsistent (!pedited->raw.ff_AutoSelect);
+	   flatFieldBlurRadius->setEditedState( pedited->raw.ff_BlurRadius ? Edited : UnEdited );
+	   if( !pedited->raw.ff_BlurType )
+		   flatFieldBlurType->set_active(procparams::RAWParams::numFlatFileBlurTypes); // No name
    }
 
    if (safe_file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
       darkFrameFile->set_filename (pp->raw.dark_frame);
    else if( !options.rtSettings.darkFramesPath.empty() )
 	   darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );
+	hbdf->set_sensitive( !pp->raw.df_autoselect );
+	
+	if (safe_file_test (pp->raw.ff_file, Glib::FILE_TEST_EXISTS))
+		flatFieldFile->set_filename (pp->raw.ff_file);
+	else if( !options.rtSettings.flatFieldsPath.empty() )
+		flatFieldFile->set_current_folder( options.rtSettings.flatFieldsPath );
+	hbff->set_sensitive( !pp->raw.ff_AutoSelect );
+	
 
    lastCA  = pp->raw.ca_autocorrect;
    lastHot = pp->raw.hotdeadpix_filt;
    lastDFauto = pp->raw.df_autoselect;
+	
+	if( pp->raw.df_autoselect  && dfp){
+		// retrieve the auto-selected df filename
+		rtengine::RawImage *img = dfp->getDF();
+		if( img ){
+			std::ostringstream s;
+			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+			dfInfo->set_text( s.str() );
+		}
+	}
+	else dfInfo->set_text("");
+	
+	lastFFAutoSelect = pp->raw.ff_AutoSelect;
+	if( pp->raw.ff_AutoSelect  && ffp){
+		// retrieve the auto-selected ff filename
+		rtengine::RawImage *img = ffp->getFF();
+		if( img ){
+			std::ostringstream s;
+			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+			ffInfo->set_text( s.str() );
+		}
+	}
+	else ffInfo->set_text("");
+	
+	flatFieldAutoSelect ->set_active(pp->raw.ff_AutoSelect);
+	flatFieldBlurRadius->setValue (pp->raw.ff_BlurRadius);
+	flatFieldBlurType->set_active(procparams::RAWParams::numFlatFileBlurTypes);
+	
+	//flatFieldBlurType
+	for( size_t i=0; i< procparams::RAWParams::numFlatFileBlurTypes;i++)
+		if( pp->raw.ff_BlurType == procparams::RAWParams::ff_BlurTypestring[i]){
+			flatFieldBlurType->set_active(i);
+			break;
+		}
+	
 
    dfAuto->set_active( pp->raw.df_autoselect );
    caAutocorrect->set_active(pp->raw.ca_autocorrect);
@@ -133,12 +222,19 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    lineDenoise->setValue (pp->raw.linenoise);
    greenEqThreshold->setValue (pp->raw.greenthresh);
 
+	flatFieldAutoSelect->set_active (pp->raw.ff_AutoSelect);
+	flatFieldBlurRadius->setValue (pp->raw.ff_BlurRadius);
+
    dfChanged = false;
+	ffChanged = false;
 
 
    caacsconn.block (false);
    dfautoconn.block(false);
    hdpixelconn.block (false);
+	flatFieldAutoSelectconn.block (false);
+	flatFieldBlurTypeconn.block (false);
+	
 
    enableListener ();
 }
@@ -147,6 +243,14 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 {
 	pp->raw.dark_frame = darkFrameFile->get_filename();
 	pp->raw.df_autoselect = dfAuto->get_active();
+	pp->raw.ff_file = flatFieldFile->get_filename();                              
+	pp->raw.ff_AutoSelect = flatFieldAutoSelect->get_active();                    
+	pp->raw.ff_BlurRadius = (int)flatFieldBlurRadius->getValue();                                                                         
+	                                                                              
+	int currentRow = flatFieldBlurType->get_active_row_number();                  
+	if( currentRow>=0 && currentRow < procparams::RAWParams::numFlatFileBlurTypes)
+		pp->raw.ff_BlurType = procparams::RAWParams::ff_BlurTypestring[currentRow]; 
+	                                                                              
 	pp->raw.ca_autocorrect = caAutocorrect->get_active();
 	pp->raw.cared = (double)caRed->getValue();
 	pp->raw.cablue = (double)caBlue->getValue();
@@ -160,6 +264,10 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	if (pedited) {
 		pedited->raw.darkFrame = dfChanged;
 		pedited->raw.dfAuto = !dfAuto->get_inconsistent();
+		pedited->raw.ff_file = ffChanged;                                                                                    
+		pedited->raw.ff_AutoSelect = !flatFieldAutoSelect->get_inconsistent();                                                
+		pedited->raw.ff_BlurRadius = flatFieldBlurRadius->getEditedState ();                                                 
+		pedited->raw.ff_BlurType = flatFieldBlurType->get_active_row_number() != procparams::RAWParams::numFlatFileBlurTypes;
 		pedited->raw.linenoise = lineDenoise->getEditedState ();
 		pedited->raw.greenEq= greenEqThreshold->getEditedState ();
 		pedited->raw.caCorrection = !caAutocorrect->get_inconsistent();
@@ -188,6 +296,9 @@ void PreProcess::setBatchMode(bool batchMode)
 	
    lineDenoise->showEditedCB ();
    greenEqThreshold->showEditedCB ();
+	
+	flatFieldBlurRadius->showEditedCB ();
+
 }
 
 void PreProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
@@ -199,6 +310,8 @@ void PreProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, 
 	PexPreser->setDefault( defParams->raw.preser);
 	
 	greenEqThreshold->setDefault (defParams->raw.greenthresh);
+	flatFieldBlurRadius->setDefault( defParams->raw.ff_BlurRadius);
+
 	if (pedited) {
 		lineDenoise->setDefaultEditedState( pedited->raw.linenoise ? Edited : UnEdited);
 		caRed->setDefaultEditedState( pedited->raw.caRed ? Edited : UnEdited);
@@ -207,6 +320,7 @@ void PreProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, 
 		PexPreser->setDefaultEditedState( pedited->raw.exPreser ? Edited : UnEdited);
 		
 		greenEqThreshold->setDefaultEditedState(pedited->raw.greenEq ? Edited : UnEdited);
+		flatFieldBlurRadius->setDefaultEditedState( pedited->raw.ff_BlurRadius ? Edited : UnEdited);
 	}else{
 		lineDenoise->setDefaultEditedState( Irrelevant );
 		caRed->setDefaultEditedState( Irrelevant );
@@ -215,6 +329,7 @@ void PreProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, 
 		PexPreser->setDefaultEditedState( Irrelevant );
 		
 		greenEqThreshold->setDefaultEditedState(Irrelevant );
+		flatFieldBlurRadius->setDefaultEditedState( Irrelevant );
 	}
 }
 
@@ -250,6 +365,18 @@ void PreProcess::dfAutoChanged()
 
         lastDFauto = dfAuto->get_active ();
     }
+
+    if(dfAuto->get_active() && dfp){
+ 	 // retrieve the auto-selected df filename
+      rtengine::RawImage *img = dfp->getDF();
+      if( img ){
+        std::ostringstream s;
+        s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+        dfInfo->set_text( s.str() );
+      }
+    }
+    else{dfInfo->set_text("");}
+
 	hbdf->set_sensitive( !dfAuto->get_active() );
     if (listener)
         listener->panelChanged (EvPreProcess, Glib::ustring(M("TP_PREPROCESS_DFAUTOSELECT"))+"="+(dfAuto->get_active()?"ON":"OFF") );
@@ -282,9 +409,87 @@ void PreProcess::darkFrameChanged()
 void PreProcess::darkFrameReset()
 {
 	dfChanged=true;
-	darkFrameFile->set_current_name("");
+	//darkFrameFile->set_current_name("");
 	darkFrameFile->set_filename ("");
+	
+		if( !options.rtSettings.darkFramesPath.empty() )
+	  	darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );
+
+	dfInfo->set_text("");
     if (listener)
         listener->panelChanged (EvPreProcess, Glib::ustring(M("TP_PREPROCESS_DARKFRAME"))+"=0" );
 
+}
+
+void PreProcess::flatFieldFileChanged()
+{
+	ffChanged=true;
+    if (listener)
+        listener->panelChanged (EvFlatFieldFile, Glib::ustring(M("TP_PREPROCESS_FLATFIELDFILE"))+"="+flatFieldFile->get_filename());
+}
+
+void PreProcess::flatFieldFile_Reset()
+{
+	ffChanged=true;
+	//flatFieldFile->set_current_name("");
+	flatFieldFile->set_filename ("");
+	
+		if( !options.rtSettings.flatFieldsPath.empty() )
+	  	flatFieldFile->set_current_folder( options.rtSettings.flatFieldsPath );
+	  
+	ffInfo->set_text("");
+    if (listener)
+        //listener->panelChanged (EvFlatFieldFile, Glib::ustring(M("TP_PREPROCESS_FLATFIELDFILE"))+"=None" );
+        listener->panelChanged (EvFlatFieldFile, "None" );
+}
+
+void PreProcess::flatFieldBlurTypeChanged ()
+{
+	int  curSelection = flatFieldBlurType->get_active_row_number();
+	
+	Glib::ustring s="";
+	if( curSelection>=0 && curSelection < procparams::RAWParams::numFlatFileBlurTypes)
+	    s = procparams::RAWParams::ff_BlurTypestring[curSelection];
+
+    if (listener)
+        //listener->panelChanged (EvFlatFieldBlurType, Glib::ustring(M("TP_PREPROCESS_FLATFIELDBLURTYPE"))+ "="+ s);
+        listener->panelChanged (EvFlatFieldBlurType, s);
+}
+
+void PreProcess::flatFieldAutoSelectChanged()
+{
+    if (batchMode) {
+        if (flatFieldAutoSelect->get_inconsistent()) {
+        	flatFieldAutoSelect->set_inconsistent (false);
+        	flatFieldAutoSelectconn.block (true);
+        	flatFieldAutoSelect->set_active (false);
+        	flatFieldAutoSelectconn.block (false);
+        }
+        else if (lastFFAutoSelect)
+        	flatFieldAutoSelect->set_inconsistent (true);
+
+        lastFFAutoSelect = flatFieldAutoSelect->get_active ();
+    }
+	hbff->set_sensitive( !flatFieldAutoSelect->get_active() );
+
+    if( flatFieldAutoSelect->get_active()  && ffp){
+ 	  // retrieve the auto-selected ff filename
+       rtengine::RawImage *img = ffp->getFF();
+      if( img ){
+        std::ostringstream s;
+        s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+        ffInfo->set_text( s.str() );
+      }
+    }
+    else{ffInfo->set_text("");}
+
+    if (listener)
+        //listener->panelChanged (EvFlatFieldAutoSelect, Glib::ustring(M("TP_PREPROCESS_FLATFIELDAUTOSELECT"))+"="+(flatFieldAutoSelect->get_active()?"ON":"OFF") );
+        listener->panelChanged (EvFlatFieldAutoSelect, (flatFieldAutoSelect->get_active()?"ON":"OFF") );
+        
+}
+
+void PreProcess::flatFieldBlurRadiusChanged()
+{
+//EvFlatFieldBlurRadius
 }

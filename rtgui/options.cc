@@ -135,6 +135,7 @@ void Options::setDefaults () {
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
+	rtSettings.flatFieldsPath = "";
 #ifdef WIN32
     rtSettings.iccDirectory = "C:/WINDOWS/System32/spool/drivers/color";
 #else
@@ -189,8 +190,9 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
-	if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
-	if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
+    if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
+		if( keyFile.has_key ("General", "FlatFieldsPath"))   rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
+    if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
 }
 
 if (keyFile.has_group ("External Editor")) { 
@@ -336,8 +338,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_integer ("General", "Version", 290);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
-	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
-	keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
+    keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+    keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
+    keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
 
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);

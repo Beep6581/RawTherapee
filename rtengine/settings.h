@@ -29,7 +29,8 @@ namespace rtengine {
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
             Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
             bool            verbose;
-			Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
+            Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
+            Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
 
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

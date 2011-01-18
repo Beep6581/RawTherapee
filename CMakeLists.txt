@@ -21,7 +21,7 @@ endif (APPLE)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
-option (WITH_MYFILE_MMAP "Build using memory mapped file" OFF)
+option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
 
 # set install directories

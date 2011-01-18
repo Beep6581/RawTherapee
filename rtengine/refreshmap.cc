@@ -128,5 +128,11 @@ DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
 RESIZE,           // EvResizeBoundingBox
-RESIZE            // EvResizeAppliesTo
+RESIZE,            // EvResizeAppliesTo  
+FLATFIELD,        // EvFlatFieldFile,      
+FLATFIELD,        // EvFlatFieldAutoSelect,
+FLATFIELD,        // EvFlatFieldBlurRadius,
+FLATFIELD        // EvFlatFieldBlurType,  
+
 };
+

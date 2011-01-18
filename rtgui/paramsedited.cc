@@ -140,7 +140,11 @@ void ParamsEdited::set (bool v) {
 	raw.ccSteps = v;
 	raw.dmethod = v;
 	raw.dcbIterations = v;
-	raw.dcbEnhance = v;
+	raw.dcbEnhance = v;      
+	raw.ff_file = v;
+	raw.ff_AutoSelect = v;
+	raw.ff_BlurRadius = v;
+	raw.ff_BlurType = v;
 	equalizer.enabled = v;
 	dirpyrequalizer.enabled = v;
 	hsvequalizer.enabled = v;
@@ -294,6 +298,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser; //exposi
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
+        raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;                        
+        raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
+        raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
+        raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;        
         raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
         raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
         raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
@@ -446,6 +454,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
     if (raw.darkFrame)          toEdit.raw.dark_frame   = mods.raw.dark_frame;
     if (raw.dfAuto)             toEdit.raw.df_autoselect= mods.raw.df_autoselect;
+
+    if (raw.ff_file)            toEdit.raw.ff_file= mods.raw.ff_file;         
+    if (raw.ff_AutoSelect)      toEdit.raw.ff_AutoSelect= mods.raw.ff_AutoSelect;
+    if (raw.ff_BlurRadius)      toEdit.raw.ff_BlurRadius= mods.raw.ff_BlurRadius;
+    if (raw.ff_BlurType)        toEdit.raw.ff_BlurType= mods.raw.ff_BlurType;      
+
 	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
