@@ -288,6 +288,10 @@ class RAWParamsEdited {
         bool linenoise;
         bool darkFrame;
         bool dfAuto;
+		bool ff_file;
+		bool ff_AutoSelect;
+		bool ff_BlurRadius;
+		bool ff_BlurType;	
 };
 
 class ExifPairEdited {

@@ -32,6 +32,57 @@ struct badPix
 	badPix(	int xc, int yc ):x(xc),y(yc){}
 };
 
+class PixelsMap{
+	int w; // line width in base_t units
+	int h; // height
+	typedef unsigned long base_t;
+	static const size_t base_t_size=sizeof(base_t);
+	base_t *pm;
+
+public:
+	PixelsMap(int width, int height )
+	:h(height){
+	    w = (width+base_t_size-1) /base_t_size;
+		pm = new base_t [h * w ];
+		memset(pm,0,h * w *base_t_size );
+	}
+	~PixelsMap(){
+		delete [] pm;
+	}
+	int width() const { return w; }
+	int height() const { return h; }
+
+	// if a pixel is set returns true
+	bool get(int x, int y)
+	{
+		return (pm[y*w+ x/(base_t_size*8) ] & (base_t)1<<(x%(base_t_size*8)) )!=0;
+	}
+
+	// set a pixel
+	void set(int x, int y)
+	{
+		pm[y*w+ x/(base_t_size*8) ] |= (base_t)1<<(x%(base_t_size*8)) ;
+	}
+
+	// set pixels from a list
+	int set( std::list<badPix> &bp)
+	{
+		int totSet=0;
+		for(std::list<badPix>::iterator iter = bp.begin(); iter != bp.end(); iter++,totSet++)
+			set( iter->x,iter->y);
+		return totSet;
+	}
+
+	void clear(){
+		memset(pm,0,h * w *base_t_size );
+	}
+	// return 0 if at least one pixel in the word(base_t) is set, otherwise return the number of pixels to skip to the next word base_t
+	int skipIfZero(int x, int y){
+		return pm[y*w+ x/(base_t_size*8) ]==0 ? base_t_size*8 -x%(base_t_size*8):0;
+	}
+};
+
+
 class RawImage: public DCraw
 {
 public:
@@ -72,6 +123,7 @@ public:
 
   double get_ISOspeed() const {return iso_speed;}
   double get_shutter()  const {return shutter; }
+  double get_aperture()  const {return aperture; }
   time_t get_timestamp() const { return timestamp;}
   int get_rotateDegree() const { return rotate_deg;}
   const std::string get_maker() const { return std::string(make); }

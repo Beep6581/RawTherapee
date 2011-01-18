@@ -24,6 +24,7 @@
 #include <profilestore.h>
 #include <procparamchangers.h>
 #include <dfmanager.h>
+#include <ffmanager.h>
 
 extern Options options;
 
@@ -63,6 +64,10 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(thisIsDF = new Gtk::MenuItem (M("FILEBROWSER_MOVETODARKFDIR"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*(selectFF = new Gtk::MenuItem (M("FILEBROWSER_SELECTFLATFIELD"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(autoFF = new Gtk::MenuItem (M("FILEBROWSER_AUTOFLATFIELD"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(thisIsFF = new Gtk::MenuItem (M("FILEBROWSER_MOVETOFLATFIELDDIR"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(copyprof = new Gtk::MenuItem (M("FILEBROWSER_COPYPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
@@ -94,6 +99,9 @@ FileBrowser::FileBrowser ()
     selectDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectDF));
     autoDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoDF));
     thisIsDF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated),thisIsDF ));
+    selectFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selectFF));
+    autoFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), autoFF));
+    thisIsFF->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated),thisIsFF ));
     copyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), copyprof));    
     pasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), pasteprof));    
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
@@ -336,7 +344,49 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			// Reinit cache
 			rtengine::dfm.init( options.rtSettings.darkFramesPath );
     	}
-    }else if (m==copyprof)
+    }
+    else if (m==autoFF){
+		for (int i=0; i<mselected.size(); i++){
+			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+			pp.raw.ff_AutoSelect= true;
+			pp.raw.ff_file.clear();
+			mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+		}
+    }
+    else if (m==selectFF){
+    	if( mselected.size() > 0 ){
+    		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
+    		Gtk::FileChooserDialog fc("Flat Field",Gtk::FILE_CHOOSER_ACTION_OPEN );
+    		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    		fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+    		if( pp.raw.ff_file.empty())
+    		   fc.set_current_folder( options.rtSettings.flatFieldsPath );
+    		else
+    		   fc.set_filename( pp.raw.ff_file );
+    		if( fc.run() == Gtk::RESPONSE_APPLY ){
+    			for (int i=0; i<mselected.size(); i++){
+    				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+					pp.raw.ff_file= fc.get_filename();
+					pp.raw.ff_AutoSelect= false;
+					mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+				  }
+			  }
+    	}
+    }
+    else if( m==thisIsFF){
+    	if( options.rtSettings.flatFieldsPath.size() >0 && Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
+			for (int i=0; i<mselected.size(); i++){
+				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+				if( !file )continue;
+				Glib::ustring destName = options.rtSettings.flatFieldsPath+ "/" + file->get_basename();
+				Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+				file->move(  dest );
+			}
+			// Reinit cache
+			rtengine::ffm.init( options.rtSettings.flatFieldsPath );
+    	}
+    }
+    else if (m==copyprof)
         copyProfile ();
     else if (m==pasteprof) 
         pasteProfile ();

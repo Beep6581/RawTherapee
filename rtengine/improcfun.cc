@@ -488,7 +488,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
-			impulse_nr (lab->L, lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 );
+			impulse_nr (lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 );
 	}
 	
 	void ImProcFunctions::defringe (LabImage* lab) {

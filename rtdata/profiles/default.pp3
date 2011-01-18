@@ -169,6 +169,10 @@ Mult4=0
 [RAW]
 DarkFrame=
 DarkFrameAuto=false
+FlatFieldFile=
+FlatFieldAutoSelect=false
+FlatFieldBlurRadius=32
+FlatFieldBlurType=Area Flatfield
 CA=false
 HotDeadPixels=0
 LineDenoise=0

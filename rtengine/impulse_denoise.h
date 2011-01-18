@@ -73,7 +73,7 @@ template<class T, class A> void rangeblur (T** src, T** dst, T** buffer, int W, 
 
 
 
-template<class T> void impulse_nr (T** src, T** dst, int width, int height, double thresh) {
+template<class T> void impulse_nr (T** src, int width, int height, double thresh) {
 	
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,17 +84,15 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 	
 	// buffer for the lowpass image
     float ** lpf = new float *[height];
+	// buffer for the highpass image
+    float ** impish = new float *[height];
     for (int i=0; i<height; i++) {
         lpf[i] = new float [width];
         //memset (lpf[i], 0, width*sizeof(float));
+		impish[i] = new float [width];
+		//memset (impish[i], 0, width*sizeof(unsigned short));
     }
-	
-	// buffer for the highpass image
-    float ** impish = new float *[height];
-	 for (int i=0; i<height; i++) {
-	 impish[i] = new float [width];
-	 //memset (impish[i], 0, width*sizeof(unsigned short));
-	 }
+
 	
 	//The cleaning algorithm starts here
 	
@@ -151,12 +149,11 @@ template<class T> void impulse_nr (T** src, T** dst, int width, int height, doub
 			
 		}//now impulsive values have been corrected
 	
-    for (int i=0; i<height; i++) 
+    for (int i=0; i<height; i++) {
         delete [] lpf[i];
+		delete [] impish[i];
+	}
 	delete [] lpf;
-	
-	for (int i=0; i<height; i++) 
-        delete [] impish[i];
 	delete [] impish;
 	
 }

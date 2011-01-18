@@ -67,7 +67,9 @@ class Preferences : public Gtk::Dialog {
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
     Gtk::FileChooserButton* darkFrameDir;
+    Gtk::FileChooserButton* flatFieldDir;
     Gtk::Label *dfLabel;
+    Gtk::Label *ffLabel;
 
     Gtk::CheckButton* showDateTime;
     Gtk::CheckButton* showBasicExif;
@@ -110,7 +112,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Entry* txtSndBatchQueueDone;
 	
     Options moptions;
-    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
+    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn, ffconn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -118,6 +120,7 @@ class Preferences : public Gtk::Dialog {
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
     void updateDFinfos ();
+    void updateFFinfos ();
     void workflowUpdate();
     void themeChanged  ();
     void useThemeChanged();
@@ -147,6 +150,7 @@ class Preferences : public Gtk::Dialog {
     void addExtPressed ();
     void delExtPressed ();
     void darkFrameChanged ();
+    void flatFieldChanged ();
     void clearProfilesPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();

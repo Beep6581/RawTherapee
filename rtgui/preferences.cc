@@ -23,6 +23,7 @@
 #include <cachemanager.h>
 #include <addsetids.h>
 #include <dfmanager.h>
+#include <ffmanager.h>
 #include <sstream>
 #include <safegtk.h>
 
@@ -278,6 +279,26 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     mvbpp->pack_start ( *fdf , Gtk::PACK_SHRINK, 4);
     mvbpp->set_border_width (4);
 
+    //dfconn = darkFrameDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
+
+    // FLATFIELD
+    Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FLATFIELD")) );
+    Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
+    flatFieldDir = Gtk::manage(new Gtk::FileChooserButton(M("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    Gtk::Label *ffLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_FLATFIELDSDIR")));
+    hb43->pack_start(*ffLab , Gtk::PACK_SHRINK, 4 );
+    hb43->pack_start(*flatFieldDir);
+    ffLabel = Gtk::manage(new Gtk::Label("Found:"));
+    Gtk::VBox* vbff = Gtk::manage (new Gtk::VBox ());
+    vbff->pack_start( *hb43, Gtk::PACK_SHRINK, 4);
+    vbff->pack_start( *ffLabel, Gtk::PACK_SHRINK, 4 );
+    fff->add( *vbff );
+    mvbpp->pack_start ( *fff , Gtk::PACK_SHRINK, 4);
+    mvbpp->set_border_width (4);
+
+    //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+    ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+	
     std::vector<Glib::ustring> pnames;
     if (options.multiUser)
         parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
@@ -799,6 +820,7 @@ void Preferences::storePreferences () {
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
     moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
+    moptions.rtSettings.flatFieldsPath =   flatFieldDir->get_filename();
 
     int i = 0;
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
@@ -820,6 +842,7 @@ void Preferences::fillPreferences () {
 
     tconn.block (true);
     dfconn.block (true);
+    ffconn.block (true);
 
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
@@ -898,8 +921,15 @@ void Preferences::fillPreferences () {
     else 
         editorLayout->set_active(moptions.multiDisplayMode ? 3 : 2);
 
-    darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
-    updateDFinfos();
+    //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
+    //updateDFinfos();
+    darkFrameDir->set_current_folder( moptions.rtSettings.darkFramesPath );
+    darkFrameChanged ();
+    
+    //flatFieldDir->set_filename( moptions.rtSettings.flatFieldsPath );
+    //updateFFinfos();
+    flatFieldDir->set_current_folder( moptions.rtSettings.flatFieldsPath );
+    flatFieldChanged ();
 
     addc.block (true);
     setc.block (true);
@@ -917,6 +947,7 @@ void Preferences::fillPreferences () {
     setc.block (false);
     tconn.block (false);
     dfconn.block (false);
+    ffconn.block (false);
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 
@@ -1071,17 +1102,38 @@ void Preferences::clearAllPressed () {
 
 void Preferences::darkFrameChanged ()
 {
-	Glib::ustring s(darkFrameDir->get_filename());
-	if( s.compare( rtengine::dfm.getPathname()) !=0 ){
+	//Glib::ustring s(darkFrameDir->get_filename());
+	Glib::ustring s(darkFrameDir->get_current_folder());
+	//if( s.compare( rtengine::dfm.getPathname()) !=0 ){
 	   rtengine::dfm.init( s );
 	   updateDFinfos();
-	}
+	//}
 }
+
+void Preferences::flatFieldChanged ()
+{
+	//Glib::ustring s(flatFieldDir->get_filename());
+	Glib::ustring s(flatFieldDir->get_current_folder());
+	//if( s.compare( rtengine::ffm.getPathname()) !=0 ){
+	   rtengine::ffm.init( s );
+	   updateFFinfos();
+	//}
+}
+
 void Preferences::updateDFinfos()
 {
     int t1,t2;
     rtengine::dfm.getStat(t1,t2);
     std::ostringstream s;
-    s << "Found: "<< t1 << " shots, " << t2 << " templates";
+    s << M("PREFERENCES_DARKFRAMEFOUND")<<": "<< t1 << " "<<M("PREFERENCES_DARKFRAMESHOTS")<<", " << t2 << " "<<M("PREFERENCES_DARKFRAMETEMPLATES");
     dfLabel->set_text(s.str());
+}
+
+void Preferences::updateFFinfos()
+{
+    int t1,t2;
+    rtengine::ffm.getStat(t1,t2);
+    std::ostringstream s;
+    s << M("PREFERENCES_FLATFIELDFOUND")<<": "<< t1 << " "<<M("PREFERENCES_FLATFIELDSHOTS")<<", " << t2 << " "<<M("PREFERENCES_FLATFIELDTEMPLATES");
+    ffLabel->set_text(s.str());
 }

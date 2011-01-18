@@ -27,7 +27,9 @@
 #include <image8.h>
 #include <curves.h>
 #include <dfmanager.h>
+#include <ffmanager.h>
 #include <slicer.h>
+#include <iostream>
 
 
 
@@ -388,26 +390,28 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 /* cfaCleanFromMap: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
-int RawImageSource::cfaCleanFromMap( unsigned char * bitmapBads )
+int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
 {
 	float eps=1.0;	
-	int bmpW= (W/8+ ((W&7)?1:0));
 	int counter=0;
 	for( int row = 2; row < H-2; row++ ){
 		for(int col = 2; col <W-2; col++ ){
-			//rawData[row][col] = 4000*(bitmapBads[ row *bmpW + col/8]& (1<<(col&7)));//for testing
-			if( !bitmapBads[ row *bmpW + col/8] ){ col+=7;continue; } //optimization
-
-			if( !(bitmapBads[ row *bmpW + col/8] & (1<<(col&7))) ) continue;
+			int sk = bitmapBads.skipIfZero(col,row); //optimization for a stripe all zero
+			if( sk ){
+				col +=sk-1; //-1 is because of col++ in cycle
+				continue;
+			}
+			if( ! bitmapBads.get(col,row ) )
+				continue;
 
 			double wtdsum=0,norm=0,sum=0,tot=0;
 			for( int dy=-2;dy<=2;dy+=2){
 				for( int dx=-2;dx<=2;dx+=2){
 					if (dy==0 && dx==0) continue;
-					if (bitmapBads[ (row+dy) *bmpW + (col+dx)/8] & (1<<((col+dx)&7))) continue;
+					if( bitmapBads.get(col+dx,row+dy) ) continue;
 					sum += rawData[row+dy][col+dx];
 					tot++;
-					if (bitmapBads[ (row-dy) *bmpW + (col-dx)/8] & (1<<((col-dx)&7))) continue;
+					if (bitmapBads.get(col-dx,row-dy)) continue;
 
 					double dirwt = 1/( fabs( rawData[row+dy][col+dx]- rawData[row-dy][col-dx])+eps);
 					wtdsum += dirwt* rawData[row+dy][col+dx];
@@ -441,53 +445,53 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 	int iprev,inext,jprev,jnext;
 	int p[9],temp;
 	int top, bottom, left, right;
-	
+
 #pragma omp parallel
 	{
 #pragma omp for
-		for (int i=0; i<H; i++) {
-			if (i<2) {iprev=i+2;} else {iprev=i-2;}
-			if (i>H-3) {inext=i-2;} else {inext=i+2;}
-			for (int j=0; j<W; j++) {
-				if (j<2) {jprev=i+2;} else {jprev=i-2;}
-				if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-				med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
-					   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
-					   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfablur[i*W+j]);
-			}
+	for (int i=0; i<H; i++) {
+		if (i<2) {iprev=i+2;} else {iprev=i-2;}
+		if (i>H-3) {inext=i-2;} else {inext=i+2;}
+		for (int j=0; j<W; j++) {
+			if (j<2) {jprev=i+2;} else {jprev=i-2;}
+			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
+			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
+				   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
+				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfablur[i*W+j]);
 		}
-		
+	}
+	
 #pragma omp  for
-		//cfa pixel heat/death evaluation
-		for (int rr=0; rr < H; rr++) {
-			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			
-			for (int cc=0; cc < W; cc++) {
-				//rawData[rr][cc] = cfablur[rr*W+cc];//diagnostic
-				
-				//evaluate pixel for heat/death
-				float pixdev = fabs(rawData[rr][cc]-cfablur[rr*W+cc]);
-				float hfnbrave=0;
-				top=MAX(0,rr-2);
-				bottom=MIN(H-1,rr+2);
-				left=MAX(0,cc-2);
-				right=MIN(W-1,cc+2);
-				for (int mm=top; mm<=bottom; mm++)
-					for (int nn=left; nn<=right; nn++) {
-						hfnbrave += fabs(rawData[mm][nn]-cfablur[mm*W+nn]);
-					}
-				hfnbrave = (hfnbrave-pixdev)/((bottom-top+1)*(right-left+1)-1);
-				
-				if (pixdev > thresh*hfnbrave) {
-					// mark the pixel as "bad"
-					bpMap.set(cc,rr );
-					counter++;
+	//cfa pixel heat/death evaluation
+	for (int rr=0; rr < H; rr++) {
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		for (int cc=0; cc < W; cc++) {
+			//rawData[rr][cc] = cfablur[rr*W+cc];//diagnostic
+
+			//evaluate pixel for heat/death
+			float pixdev = fabs(rawData[rr][cc]-cfablur[rr*W+cc]);
+			float hfnbrave=0;
+			top=MAX(0,rr-2);
+			bottom=MIN(H-1,rr+2);
+			left=MAX(0,cc-2);
+			right=MIN(W-1,cc+2);
+			for (int mm=top; mm<=bottom; mm++)
+				for (int nn=left; nn<=right; nn++) {
+					hfnbrave += fabs(rawData[mm][nn]-cfablur[mm*W+nn]);
 				}
-			}//end of pixel evaluation
+			hfnbrave = (hfnbrave-pixdev)/((bottom-top+1)*(right-left+1)-1);
 			
-			
-		}
+			if (pixdev > thresh*hfnbrave) {
+				// mark the pixel as "bad"
+				bpMap.set(cc,rr );
+				counter++;
+			}
+		}//end of pixel evaluation
+		
+		
+	}
 	}//end pragma
 	free (cfablur);
 	
@@ -917,41 +921,54 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	RawImage *rid=NULL;
 	if (!raw.df_autoselect) {
 		if( raw.dark_frame.size()>0)
-		   rid = dfm.searchDarkFrame( raw.dark_frame );
-	}else{
+			rid = dfm.searchDarkFrame( raw.dark_frame );
+	} else {
 		rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
 	}
 	if( rid && settings->verbose){
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
 	}
-	copyOriginalPixels(ri, rid);
-	size_t widthBitmap = (W/8+ ((W&7)?1:0));
-	size_t dimBitmap = widthBitmap*H;
-
-	unsigned char (*bitmapBads);
-	bitmapBads = (unsigned char (*)) calloc (dimBitmap, sizeof *bitmapBads);
-	//unsigned char *bitmapBads = new unsigned char [ dimBitmap ];
-	//for (int i=0; i<dimBitmap; i++) bitmapBads[i]=0;
+	//copyOriginalPixels(ri, rid);
 	
+	//FLATFIELD start
+	Glib::ustring newFF = raw.ff_file;
+	RawImage *rif=NULL;
+	if (!raw.ff_AutoSelect) {
+		if( raw.ff_file.size()>0)
+			rif = ffm.searchFlatField( raw.ff_file );
+	} else {
+		rif = ffm.searchFlatField( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_aperture(), ri->get_timestamp());
+	}
+	if( rif && settings->verbose) {
+		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());
+	}
+	copyOriginalPixels(raw, ri, rid, rif);
+	//FLATFIELD end
+	
+	
+	
+	PixelsMap bitmapBads(W,H);
 	int totBP=0; // Hold count of bad pixels to correct
+
+	// Always correct camera badpixels
 	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
 	if( bp ){
-		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
-			bitmapBads[ widthBitmap * (iter->y) + (iter->x)/8] |= 1<<(iter->x&7);
+		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose ){
-			printf( "Correcting %zu pixels from .badpixels\n",bp->size());
+			std::cout << "Correcting " << bp->size() << " pixels from .badpixels" << std::endl;
 		}
 	}
+
+	// If darkframe selected, correct hotpixels found on darkframe
 	bp = 0;
 	if( raw.df_autoselect ){
 		bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
 	}else if( raw.dark_frame.size()>0 )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
-		for(std::list<badPix>::iterator iter = bp->begin(); iter != bp->end(); iter++,totBP++)
-			bitmapBads[ widthBitmap *iter->y + iter->x/8] |= 1<<(iter->x&7);
+		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose && bp->size()>0){
-			printf( "Correcting %zu hotpixels from darkframe\n",bp->size());
+			std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
 		}
 	}
 
@@ -973,8 +990,6 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}
 	if( totBP )
 	   cfaCleanFromMap( bitmapBads );
-	//delete [] bitmapBads;
-	free (bitmapBads);
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
     if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
@@ -1036,7 +1051,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	}
     t2.set();
     if( settings->verbose )
-       printf("Preprocessing: %d µsec\n", t2.etime(t1));
+       printf("Preprocessing: %d usec\n", t2.etime(t1));
     return;
 }
 
@@ -1065,7 +1080,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         	nodemosaic();
         t2.set();
         if( settings->verbose )
-           printf("Demosaicing: %s - %d µsec\n",raw.dmethod.c_str(), t2.etime(t1));
+           printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
@@ -1077,9 +1092,9 @@ void RawImageSource::demosaic(const RAWParams &raw)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* Copy original pixel data and
- * subtract dark frame (if present) from current image
+ * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
 	if (ri->isBayer()) {
 		if (!rawData)
@@ -1097,30 +1112,137 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 				}
 			}
 		}
-	}else{
-		if (!rawData)
-			rawData = allocArray< float >(3*W,H);
-		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
-			for (int row = 0; row < H; row++) {
-				for (int col = 0; col < W; col++) {
-					rawData[row][3*col+0] = MAX (src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = MAX (src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = MAX (src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
+		
+		
+		if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
+			
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			float (*cfablur);
+			cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
+//#define BS 32	
+			int BS = raw.ff_BlurRadius;
+			if (BS&1) BS++;
+			
+			//function call to cfabloxblur 
+			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff])
+				cfaboxblur(riFlatFile, cfablur, 2*BS, 0);
+			else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff])
+				cfaboxblur(riFlatFile, cfablur, 0, 2*BS);
+			else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
+				//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+				cfaboxblur(riFlatFile, cfablur, BS, BS);//first do area blur to correct vignette
+			else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
+				cfaboxblur(riFlatFile, cfablur, BS, BS);
+			
+			float refctrval,reflocval,refcolor[2][2],vignettecorr,colorcastcorr;
+			//find center ave values by channel
+			for (int m=0; m<2; m++)
+				for (int n=0; n<2; n++) {
+					refcolor[m][n] = MAX(0,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
 				}
-			}
-		}else{
-			for (int row = 0; row < H; row++) {
-				for (int col = 0; col < W; col++) {
-					rawData[row][3*col+0] = src->data[row][3*col+0];
-					rawData[row][3*col+1] = src->data[row][3*col+1];
-					rawData[row][3*col+2] = src->data[row][3*col+2];
+			
+			for (int m=0; m<2; m++)
+				for (int n=0; n<2; n++) {
+					for (int row = 0; row+m < H; row+=2) 
+						for (int col = 0; col+n < W; col+=2) {
+							
+							vignettecorr = ( refcolor[m][n]/MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black()) );
+							rawData[row+m][col+n] = (rawData[row+m][col+n] * vignettecorr); 	
+						}
 				}
+			
+			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
+				float (*cfablur1);
+				cfablur1 = (float (*)) calloc (H*W, sizeof *cfablur1);
+				float (*cfablur2);
+				cfablur2 = (float (*)) calloc (H*W, sizeof *cfablur2);
+				//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+				cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
+				cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
+				
+				float vlinecorr, hlinecorr;
+				
+				for (int m=0; m<2; m++)
+					for (int n=0; n<2; n++) {
+						for (int row = 0; row+m < H; row+=2) 
+							for (int col = 0; col+n < W; col+=2) {
+								hlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
+								vlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
+								rawData[row+m][col+n] = (rawData[row+m][col+n] * hlinecorr * vlinecorr); 
+							}
+					}
+				free (cfablur1);
+				free (cfablur2);
 			}
+			
+			free (cfablur);
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//#undef BS
+			
+
 		}
 	}
 }
 	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW ) {
+
+		float (*temp);
+		temp = (float (*)) calloc (H*W, sizeof *temp);
+		
+		//box blur cfa image; box size = BS
+		//horizontal blur
+		for (int row = 0; row < H; row++) {
+			int len = boxW/2 + 1;
+			temp[row*W+0] = (float)riFlatFile->data[row][0]/len;
+			temp[row*W+1] = (float)riFlatFile->data[row][1]/len;
+			for (int j=2; j<=boxW; j+=2) {
+				temp[row*W+0] += (float)riFlatFile->data[row][j]/len;
+				temp[row*W+1] += (float)riFlatFile->data[row][j+1]/len;
+			}
+			for (int col=2; col<=boxW; col+=2) {
+				temp[row*W+col] = (temp[row*W+col-2]*len + riFlatFile->data[row][col+boxW])/(len+1);
+				temp[row*W+col+1] = (temp[row*W+col-1]*len + riFlatFile->data[row][col+boxW+1])/(len+1);
+				len ++;
+			}
+			for (int col = boxW+2; col < W-boxW; col++) {
+				temp[row*W+col] = temp[row*W+col-2] + ((float)(riFlatFile->data[row][col+boxW] - riFlatFile->data[row][col-boxW-2]))/len;
+			}
+			for (int col=W-boxW; col<W; col+=2) {
+				temp[row*W+col] = (temp[row*W+col-2]*len - riFlatFile->data[row][col-boxW-2])/(len-1);
+				if ((W&1)==0) 
+					temp[row*W+col+1] = (temp[row*W+col-1]*len - riFlatFile->data[row][col-boxW-1])/(len-1);
+				len --;
+			}
+		}
+
+		//vertical blur
+		for (int col = 0; col < W; col++) {
+			int len = boxH/2 + 1;
+			cfablur[0*W+col] = temp[0*W+col]/len;
+			cfablur[1*W+col] = temp[1*W+col]/len;
+			for (int i=2; i<boxH+2; i+=2) {
+				cfablur[0*W+col] += temp[i*W+col]/len;
+				cfablur[1*W+col] += temp[(i+1)*W+col]/len;
+			}
+			for (int row=2; row<boxH+2; row+=2) {
+				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len + temp[(row+boxH)*W+col])/(len+1);
+				cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len + temp[(row+boxH+1)*W+col])/(len+1);
+				len ++;
+			}
+			for (int row = boxH+2; row < H-boxH; row++) {
+				cfablur[row*W+col] = cfablur[(row-2)*W+col] + (temp[(row+boxH)*W+col] - temp[(row-boxH-2)*W+col])/len;
+			}
+			for (int row=H-boxH; row<H; row+=2) {
+				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - temp[(row-boxH-2)*W+col])/(len-1);
+				if ((H&1)==0) 
+					cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - temp[(row-boxH-1)*W+col])/(len-1);
+				len --;
+			}
+		}
+		free (temp);
+		
+	}
+	
 
 /* Scale original pixels into the range 0 65535 using black offsets and multipliers */
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
@@ -1872,4 +1994,6 @@ void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
 
 } /* namespace */
 
+#undef PIX_SORT
+#undef med3x3
 
