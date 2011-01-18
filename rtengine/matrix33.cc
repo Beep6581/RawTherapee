@@ -27,9 +27,9 @@ Matrix33::Matrix33 () {
 
 // applies transformation on the given (r,g,b) (column) vector
 // result is written back to the variables passed
-void Matrix33::transform (double& r, double& g, double& b) {
+void Matrix33::transform (float& r, float& g, float& b) {
 
-	double nr, ng, nb;
+	float nr, ng, nb;
 	transform (r, g, b, nr, ng, nb);
 	r = nr;
 	g = ng;
@@ -45,7 +45,7 @@ void Matrix33::transform (unsigned short& r, unsigned short& g, unsigned short& 
     b = nb;
 }
 
-void Matrix33::transform (double r, double g, double b, double& nr, double& ng, double& nb) {
+void Matrix33::transform (float r, float g, float b, float& nr, float& ng, float& nb) {
 
     nr = data[0][0]*r + data[0][1]*g + data[0][2]*b;
     ng = data[1][0]*r + data[1][1]*g + data[1][2]*b;
@@ -54,9 +54,9 @@ void Matrix33::transform (double r, double g, double b, double& nr, double& ng, 
 
 void Matrix33::transform (unsigned short r, unsigned short g, unsigned short b, unsigned short& nr, unsigned short& ng, unsigned short& nb) {
 
-    double dnr = data[0][0]*(double)r + data[0][1]*(double)g + data[0][2]*(double)b;
-    double dng = data[1][0]*(double)r + data[1][1]*(double)g + data[1][2]*(double)b;
-    double dnb = data[2][0]*(double)r + data[2][1]*(double)g + data[2][2]*(double)b;
+	float dnr = data[0][0]*(float)r + data[0][1]*(float)g + data[0][2]*(float)b;
+	float dng = data[1][0]*(float)r + data[1][1]*(float)g + data[1][2]*(float)b;
+	float dnb = data[2][0]*(float)r + data[2][1]*(float)g + data[2][2]*(float)b;
     nr = CLIP((unsigned short)dnr);
     ng = CLIP((unsigned short)dng);
     nb = CLIP((unsigned short)dnb);
@@ -66,7 +66,7 @@ void Matrix33::transform (unsigned short r, unsigned short g, unsigned short b, 
 Matrix33 Matrix33::inverse () {
 
 	Matrix33 res;
-    double nom = data[0][2]*data[1][1]*data[2][0] - data[0][1]*data[1][2]*data[2][0] - data[0][2]*data[1][0]*data[2][1] + data[0][0]*data[1][2]*data[2][1] + data[0][1]*data[1][0]*data[2][2] - data[0][0]*data[1][1]*data[2][2];
+	float nom = data[0][2]*data[1][1]*data[2][0] - data[0][1]*data[1][2]*data[2][0] - data[0][2]*data[1][0]*data[2][1] + data[0][0]*data[1][2]*data[2][1] + data[0][1]*data[1][0]*data[2][2] - data[0][0]*data[1][1]*data[2][2];
     res.data[0][0] = (data[1][2]*data[2][1]-data[1][1]*data[2][2]) / nom;
     res.data[0][1] = -(data[0][2]*data[2][1]-data[0][1]*data[2][2]) / nom;
     res.data[0][2] = (data[0][2]*data[1][1]-data[0][1]*data[1][2]) / nom;
@@ -80,7 +80,7 @@ Matrix33 Matrix33::inverse () {
     return res;
 }
 
-void Matrix33::multiply (const double (*m)[3]) {
+void Matrix33::multiply (const float (*m)[3]) {
 
     Matrix33 r;
     for (int i=0; i<3; i++)

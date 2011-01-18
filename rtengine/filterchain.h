@@ -38,7 +38,7 @@ public:
     void setNextChain (FilterChain* other);
 
 	void setupProcessing (const std::set<ProcEvent>& events, bool useShortCut = false);
-	void process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker);
+	void process (const std::set<ProcEvent>& events, Buffer<float>* buffer, MultiImage* worker);
     Dim  getReqiredBufferSize ();
     Dim  getReqiredWorkerSize ();
     Dim  getFullImageSize ();

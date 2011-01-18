@@ -104,7 +104,7 @@ public:
     // returns true if set "events" contains at least one event that invalidates the result of this filter
 	virtual bool isTriggerEvent (const std::set<ProcEvent>& events);
 	// The main procedure of the filter, it must be overridden
-	virtual void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) = 0;
+	virtual void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) = 0;
     // Calculate the image view (rectangle) provided by this filter when the given image view is requested from by the next filter
     // Most filters return "requestedImView" (this is the default implementation).
     // Some filters like demosaicing methods can calculate full image only, thus

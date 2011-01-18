@@ -28,7 +28,6 @@ class ImageSource : public InitialImage {
         virtual ColorTemp   getCamWB    () =0;
         virtual ColorTemp   getAutoWB   () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue) =0;
-        virtual double      getDefGain  () =0;
         virtual void        getAEHistogram (unsigned int* histogram, int& histcompr) =0;
         virtual Matrix33	getCamToRGBMatrix ()=0;
         virtual Matrix33	getRGBToCamMatrix ()=0;

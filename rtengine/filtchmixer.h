@@ -32,7 +32,7 @@ class ColorMixerFilter : public Filter {
 
 	public:
         ColorMixerFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

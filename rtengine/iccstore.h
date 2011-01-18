@@ -26,7 +26,7 @@
 
 namespace rtengine {
 
-typedef const double (*TMatrix)[3];
+typedef const float (*TMatrix)[3];
 
 class ProfileContent {
 
@@ -65,7 +65,7 @@ class ICCStore {
         TMatrix workingSpaceMatrix (Glib::ustring name);		/// returns the transformation matrix belonging to the given working profile
         TMatrix workingSpaceInverseMatrix (Glib::ustring name); /// returns the inverse transformation matrix belonging to the given working profile
 
-        cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");	/// create profile from matrix
+        cmsHPROFILE createFromMatrix (const float matrix[3][3], bool gamma=false, Glib::ustring name="");	/// create profile from matrix
 
         std::vector<std::string> parseDir     (Glib::ustring pdir);		/// parse the given directory and load all icc files found
         std::vector<std::string> getOutputProfiles ();					/// returns the list of names of all icc profiles loaded

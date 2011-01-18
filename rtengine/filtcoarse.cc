@@ -94,7 +94,7 @@ void CoarseTransformFilter::hflip (MultiImage* image) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<height; i++) {
-        unsigned short v;
+        float v;
         for (int j=0; j<width; j++) {
             v = image->r[i][width-1-j];
             image->r[i][width-1-j] = image->r[i][j];
@@ -116,7 +116,7 @@ void CoarseTransformFilter::vflip (MultiImage* image) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<height/2; i++) {
-        unsigned short v;
+        float v;
         for (int j=0; j<width; j++) {
             v = image->r[i][j];
             image->r[i][j] = image->r[height-1-i][j];
@@ -131,7 +131,7 @@ void CoarseTransformFilter::vflip (MultiImage* image) {
     }
 }
 
-void CoarseTransformFilter::rotate90 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer) {
+void CoarseTransformFilter::rotate90 (float** si, float** ti, int sW, int sH, Buffer<float>* buffer) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sW; i++)
@@ -144,7 +144,7 @@ void CoarseTransformFilter::rotate90 (unsigned short** si, unsigned short** ti, 
             ti[i][j] = buffer->rows[i][j];
 }
 
-void CoarseTransformFilter::rotate180 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer) {
+void CoarseTransformFilter::rotate180 (float** si, float** ti, int sW, int sH, Buffer<float>* buffer) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sH; i++)
@@ -157,7 +157,7 @@ void CoarseTransformFilter::rotate180 (unsigned short** si, unsigned short** ti,
             ti[i][j] = buffer->rows[i][j];
 }
 
-void CoarseTransformFilter::rotate270 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer) {
+void CoarseTransformFilter::rotate270 (float** si, float** ti, int sW, int sH, Buffer<float>* buffer) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sW; i++)
@@ -171,7 +171,7 @@ void CoarseTransformFilter::rotate270 (unsigned short** si, unsigned short** ti,
 }
 
 
-void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
     if (procParams->coarse.rotate==90) {
         rotate90 (sourceImage->r, targetImage->r, sourceImage->width, sourceImage->height, buffer);

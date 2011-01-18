@@ -30,7 +30,7 @@ Dim InitialFilter::getFullImageSize () {
 
     return imgsrc->getFullImageSize ();
 }
-void InitialFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void InitialFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
     imgsrc->getImage (getTargetImageView (), targetImage);
 }

@@ -12,7 +12,7 @@ namespace rtengine {
 class FilterChainGroup {
 
 	std::vector<FilterChain*> filterChains;
-	Buffer<int>* buffer;
+	Buffer<float>* buffer;
 	MultiImage* worker;
 	ProcParams* procParams;
 	ImageSource* imgSource;

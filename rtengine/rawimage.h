@@ -41,7 +41,7 @@ class RawImage {
 		int rotateDeg;				// degree of rotation (as recorded in the exif)
 		int fujiWidth;				// if this is a fuji image, this is the de-rotated width of the image. Otherwise 0.
   
-		double defgain;				// this is the multiplier by which each pixel values shall be multiplied to get the image without HL recovery
+		float defgain;				// this is the multiplier by which each pixel values shall be multiplied to get the image without HL recovery
 
 		Glib::ustring make, model;	// content of the exif fields "make" and "model"
 

@@ -84,9 +84,9 @@ ColorTemp StdImageSource::getAutoWB () {
 	if (autoWBComputed)
 		return autoWB;
 
-	double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
+	float avg_r = 0;
+    float avg_g = 0;
+    float avg_b = 0;
     int n = 0;
     int p = 6;
 
@@ -130,7 +130,7 @@ ColorTemp StdImageSource::getAutoWB () {
 ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue) {
 
     int x; int y;
-    double reds = 0, greens = 0, blues = 0;
+    float reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
     for (int i=0; i<red.size(); i++) {
         if (red[i].x >= 0 && red[i].y >= 0 && round(red[i].x) < img->width && round(red[i].y) < img->height) {

@@ -115,7 +115,7 @@ void FilterChainGroup::updateBuffer (Dim size) {
 	}
 
 	if (createNeeded)
-	    buffer = new Buffer<int> (size.width, size.height);
+	    buffer = new Buffer<float> (size.width, size.height);
 }
 
 void FilterChainGroup::updateWorker (Dim size) {

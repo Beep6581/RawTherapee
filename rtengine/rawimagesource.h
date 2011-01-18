@@ -44,7 +44,6 @@ class RawImageSource : public ImageSource {
         ColorTemp   getCamWB    ();
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue);
-        double      getDefGain  ();
         void        getAEHistogram (unsigned int* histogram, int& histcompr);
         Matrix33	getCamToRGBMatrix ();
         Matrix33	getRGBToCamMatrix ();

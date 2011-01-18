@@ -9,33 +9,32 @@ namespace rtengine {
 
 class MultiImage {
 
-	static int *cacheL, *cacheab;
-    static int *ycache, *xzcache;
+	static float* xyz2labCache;
 	static bool labConversionCacheInitialized;
 
-	unsigned short* data;
+	float* data;
 	int allocWidth, allocHeight;
 
 	void initLabConversionCache ();
 	void initArrays ();
 
-	unsigned short **ch[3];
+	float **ch[3];
 
 public:
 	unsigned rawFilter;
 	int width, height;
 	enum ColorSpace { Invalid, RGB, Lab, XYZ, Raw } colorSpace;	// RGB: linear, in "working" color space!
 
-	unsigned short** r;
-	unsigned short** g;
-	unsigned short** b;
-	unsigned short** cieL;		/// stores cieL*655.35
-	short** ciea;				/// stores ciea*16384/500
-	short** cieb;				/// stores cieb*16384/200
-    unsigned short** x;
-    unsigned short** y;
-    unsigned short** z;
-	unsigned short** raw;
+	float** r;
+	float** g;
+	float** b;
+	float** cieL;		/// stores cieL*655.35
+	float** ciea;		/// stores ciea*16384/500
+	float** cieb;		/// stores cieb*16384/200
+	float** x;
+	float** y;
+	float** z;
+	float** raw;
 
 	MultiImage (int w, int h, ColorSpace cs = RGB);
 	MultiImage (const MultiImage& other);
@@ -46,8 +45,7 @@ public:
 	bool setDimensions (int w, int h); // sets dimensions without reallocating everything
 	bool copyFrom (MultiImage* other);
 	bool copyFrom (MultiImage* other, int ofsx, int ofsy, int skip);
-    Buffer<unsigned short> getBufferView (unsigned short** channel);
-    Buffer<short> getBufferView (short** channel);
+    Buffer<float> getBufferView (float** channel);
 
 	inline bool raw_isRed (int row, int col) {
 		return (rawFilter >> (((row << 1 & 14) + (col & 1)) << 1) & 3)==0;
@@ -59,9 +57,9 @@ public:
 		return (rawFilter >> (((row << 1 & 14) + (col & 1)) << 1) & 3)==2;
 	}
 
-	int getAllocWidth () { return allocWidth; }
-	int getAllocHeight () { return allocHeight; }
-	unsigned short* getData () { return data; }
+	int getAllocWidth ()	{ return allocWidth; }
+	int getAllocHeight () 	{ return allocHeight; }
+	float* getData () 		{ return data; }
 
 	Image16* createImage ();
 };

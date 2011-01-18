@@ -91,8 +91,8 @@ cmsHPROFILE ProfileContent::toProfile () {
 // Members belonging to ICCStore
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-const double (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
-const double (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
+const float (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
+const float (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
 
 ICCStore::ICCStore () {
@@ -105,7 +105,7 @@ ICCStore::ICCStore () {
         wMatrices[wpnames[i]] = wprofiles[i];
         iwMatrices[wpnames[i]] = iwprofiles[i];
     }
-    double mat[3][3]={1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0};
+    float mat[3][3]={1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0};
     xyz  = createFromMatrix (mat, false, "XYZ");
     srgb = cmsCreate_sRGBProfile ();
 }
@@ -234,7 +234,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
 }
 
 
-cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, Glib::ustring name) {
+cmsHPROFILE ICCStore::createFromMatrix (const float matrix[3][3], bool gamma, Glib::ustring name) {
 
     static const unsigned phead[] =
         { 1024, 0, 0x2100000, 0x6d6e7472, 0x52474220, 0x58595a20, 0, 0, 0,

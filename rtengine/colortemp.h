@@ -31,24 +31,24 @@ namespace rtengine {
 class ColorTemp {
 
     private:
-        double temp;
-        double green;
+        float temp;
+        float green;
 
-        static void clip (double &temp, double &green);
+        static void clip (float &temp, float &green);
         
     public:
     
         ColorTemp () : temp(-1), green(-1) {}
-        ColorTemp (double t, double g);
-        ColorTemp (double mulr, double mulg, double mulb) { mul2temp (mulr, mulg, mulb, temp, green); }
+        ColorTemp (float t, float g);
+        ColorTemp (float mulr, float mulg, float mulb) { mul2temp (mulr, mulg, mulb, temp, green); }
         
-        inline double getTemp ()    { return temp;  }
-        inline double getGreen ()   { return green; }
+        inline float getTemp ()    { return temp;  }
+        inline float getGreen ()   { return green; }
         
-        void   getMultipliers (double &mulr, double &mulg, double &mulb) { temp2mul (temp, green, mulr, mulg, mulb); }
+        void   getMultipliers (float &mulr, float &mulg, float &mulb) { temp2mul (temp, green, mulr, mulg, mulb); }
 
-  static void mul2temp (double rmul, double gmul, double bmul, double& temp, double& green);
-  static void temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul);
+  static void mul2temp (float rmul, float gmul, float bmul, float& temp, float& green);
+  static void temp2mul (float temp, float green, float& rmul, float& gmul, float& bmul);
 
         bool operator== (const ColorTemp& other) { return fabs(temp-other.temp)<1e-10 && fabs(green-other.green)<1e-10; }
         bool operator!= (const ColorTemp& other) { return !(*this==other); }

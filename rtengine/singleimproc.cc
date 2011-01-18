@@ -52,10 +52,10 @@ IImage16* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* 
         fChain->setupProcessing (ev, true);
 
         // create buffer, if necessary
-        Buffer<int>* buffer = NULL;
+        Buffer<float>* buffer = NULL;
         Dim bSize = fChain->getReqiredBufferSize ();
         if (bSize.nonZero())
-            buffer = new Buffer<int> (bSize.width, bSize.height);
+            buffer = new Buffer<float> (bSize.width, bSize.height);
 
         // create worker image
         MultiImage* worker = NULL;

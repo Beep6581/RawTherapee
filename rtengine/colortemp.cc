@@ -20,12 +20,12 @@
 
 using namespace rtengine;
 
-ColorTemp::ColorTemp (double t, double g) : temp(t), green(g) {
+ColorTemp::ColorTemp (float t, float g) : temp(t), green(g) {
 
     clip (temp, green);
 }
 
-void ColorTemp::clip (double &temp, double &green) {
+void ColorTemp::clip (float &temp, float &green) {
 
     if (temp < MINTEMP)
         temp = MINTEMP;
@@ -38,10 +38,10 @@ void ColorTemp::clip (double &temp, double &green) {
         green = MAXGREEN;
 }
 
-void ColorTemp::mul2temp (double rmul, double gmul, double bmul, double& temp, double& green) {
+void ColorTemp::mul2temp (float rmul, float gmul, float bmul, float& temp, float& green) {
 
-    double maxtemp=20000, mintemp=1000;
-    double tmpr, tmpg, tmpb;
+    float maxtemp=20000, mintemp=1000;
+    float tmpr, tmpg, tmpb;
     temp=(maxtemp+mintemp)/2;
     while (maxtemp-mintemp>1) {
 	temp2mul (temp, 1.0, tmpr, tmpg, tmpb);
@@ -55,7 +55,7 @@ void ColorTemp::mul2temp (double rmul, double gmul, double bmul, double& temp, d
    clip (temp, green);
 }
 
-void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul) {
+void ColorTemp::temp2mul (float temp, float green, float& rmul, float& gmul, float& bmul) {
 
    clip (temp, green);
 
@@ -78,7 +78,7 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
     bmul = X * 0.0556352 - Y * 0.203996 + Z * 1.05707;
     gmul /= green;
 
-    double max = rmul;
+    float max = rmul;
     if (gmul>max) max = gmul;
     if (bmul>max) max = bmul;
     rmul /= max;

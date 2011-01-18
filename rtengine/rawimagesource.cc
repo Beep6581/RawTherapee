@@ -97,9 +97,9 @@ ColorTemp RawImageSource::getAutoWB () {
 	if (autoWBComputed)
 		return autoWB;
 
-	double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
+	float avg_r = 0;
+	float avg_g = 0;
+	float avg_b = 0;
     int n = 0;
     int p = 6;
 
@@ -122,7 +122,7 @@ ColorTemp RawImageSource::getAutoWB () {
     for (int i=32; i<img->height-32; i++)
         for (int j=32; j<img->width-32; j++) {
             if (!img->filter) {
-                double d = CLIP(img->defgain*img->data[i][3*j]);
+            	float d = CLIP(img->defgain*img->data[i][3*j]);
                 if (d>upper || d < lower)
                     continue;
                 avg_r += d*d*d*d*d*d; rn++;
@@ -136,10 +136,10 @@ ColorTemp RawImageSource::getAutoWB () {
                 avg_b += d*d*d*d*d*d; bn++;
             }
             else {
-                double d = CLIP(img->defgain*img->data[i][j]);
+            	float d = CLIP(img->defgain*img->data[i][j]);
                 if (d>upper || d < lower)
                     continue;
-                double dp = d*d*d*d*d*d;
+                float dp = d*d*d*d*d*d;
                 if (img->isRed (i,j)) {
                     avg_r += dp;
                     rn++;
@@ -156,14 +156,13 @@ ColorTemp RawImageSource::getAutoWB () {
         }
 
     //TODO: CAN BE SIMPLIFIED: matrix multiplication can be avoided by using rgbSpaceTemp instead of camSpaceTemp
-    double camwb_red, camwb_green, camwb_blue;
+    float camwb_red, camwb_green, camwb_blue;
     img->camSpaceTemp.getMultipliers (camwb_red, camwb_green, camwb_blue);
 
-    double reds   = pow (avg_r/rn, 1.0/6.0) * camwb_red;
-    double greens = pow (avg_g/gn, 1.0/6.0) * camwb_green;
-    double blues  = pow (avg_b/bn, 1.0/6.0) * camwb_blue;
+    float reds   = pow (avg_r/rn, 1.0/6.0) * camwb_red;
+    float greens = pow (avg_g/gn, 1.0/6.0) * camwb_green;
+    float blues  = pow (avg_b/bn, 1.0/6.0) * camwb_blue;
 
-    double rm, gm, bm;
     img->cam_srgb.transform (reds, greens, blues);
 
     autoWB = ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
@@ -176,7 +175,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
 
     int x; int y;
     int d[9][2] = {0,0, -1,-1, -1,0, -1,1, 0,-1, 0,1, 1,-1, 1,0, 1,1};
-    double reds = 0, greens = 0, blues = 0;
+    float reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
 
     if (!img->filter) {
@@ -240,17 +239,16 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
     }
 
     //TODO: CAN BE SIMPLIFIED: matrix multiplication can be avoided by using rgbSpaceTemp instead of camSpaceTemp
-    double camwb_red, camwb_green, camwb_blue;
+    float camwb_red, camwb_green, camwb_blue;
     img->camSpaceTemp.getMultipliers (camwb_red, camwb_green, camwb_blue);
 
     reds = reds/rn * camwb_red;
     greens = greens/gn * camwb_green;
     blues = blues/bn * camwb_blue;
 
-    double rm, gm, bm;
     img->cam_srgb.transform (reds, greens, blues);
 
-    return ColorTemp (rm, gm, bm);
+    return ColorTemp (reds, greens, blues);
 }
 
 void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
@@ -285,11 +283,6 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
     }
 }
 
-double RawImageSource::getDefGain () {
-
-    return log (img->defgain) / log (2.0);
-}
-
 Dim RawImageSource::getFullImageSize () {
 
     return Dim (img->width - 2*border, img->height - 2*border);
@@ -303,7 +296,7 @@ void RawImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
 	    x = 0;
 		for (int j=view.x; j<view.x+view.w; j+=view.skip)
-			targetImage->raw[y][x++] = img->data[i+border][j+border];
+			targetImage->raw[y][x++] = img->defgain * img->data[i+border][j+border];
 		y++;
 	}
 	targetImage->rawFilter = img->filter;

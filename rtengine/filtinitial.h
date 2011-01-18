@@ -34,7 +34,7 @@ class InitialFilter : public Filter {
     public:
         InitialFilter (ImageSource* imgs);
         Dim  getFullImageSize ();
-        void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+        void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

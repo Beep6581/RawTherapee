@@ -179,7 +179,7 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useSh
 		curr->setupCache ();
 }
 
-void FilterChain::process (const std::set<ProcEvent>& events, Buffer<int>* buffer, MultiImage* worker) {
+void FilterChain::process (const std::set<ProcEvent>& events, Buffer<float>* buffer, MultiImage* worker) {
 
     for (Filter* curr = firstToUpdate; curr; curr = curr->next) {
 

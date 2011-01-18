@@ -9065,7 +9065,7 @@ int RawImage::load (const Glib::ustring& fname) {
 	cam_srgb = Matrix33 (rgb_cam);
     srgb_cam = cam_srgb.inverse ();
 
-    double cam_r, cam_g, cam_b;
+    float cam_r, cam_g, cam_b;
     cam_srgb.transform (camwb_red, camwb_green, camwb_blue, cam_r, cam_g, cam_b);
 
     rgbSpaceTemp = ColorTemp (cam_r, cam_g, cam_b);

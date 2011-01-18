@@ -31,14 +31,14 @@ class CoarseTransformFilter : public Filter {
 
         void vflip (MultiImage* image);
         void hflip (MultiImage* image);
-        void rotate90  (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer);
-        void rotate180 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer);
-        void rotate270 (unsigned short** si, unsigned short** ti, int sW, int sH, Buffer<int>* buffer);
+        void rotate90  (float** si, float** ti, int sW, int sH, Buffer<float>* buffer);
+        void rotate180 (float** si, float** ti, int sW, int sH, Buffer<float>* buffer);
+        void rotate270 (float** si, float** ti, int sW, int sH, Buffer<float>* buffer);
 
     public:
         CoarseTransformFilter ();
 
-    	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
         ImageView calculateTargetImageView (const ImageView& requestedImView);
         ImageView calculateSourceImageView (const ImageView& requestedImView);
         Dim       getFullImageSize ();
