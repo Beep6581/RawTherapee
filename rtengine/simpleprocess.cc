@@ -211,6 +211,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
 
+    // we can now safely delete labView
+    delete labView;
+
     if (pl)
         pl->setProgress (0.85);
 
