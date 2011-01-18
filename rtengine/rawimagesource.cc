@@ -1133,119 +1133,116 @@ void RawImageSource::demosaic(const RAWParams &raw)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
+	
 	if (ri->isBayer()) {
 		if (!rawData)
 			rawData = allocArray< unsigned short >(W,H);
-		
-		if (ri->isBayer()) {
-			if (!rawData)
-				rawData = allocArray< unsigned short >(W,H);
-			if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
-				for (int row = 0; row < H; row++) {
-					for (int col = 0; col < W; col++) {
-						rawData[row][col]	= MAX (src->data[row][col]+ri->get_black() - riDark->data[row][col], 0);
-					}
-				}
-			}else{
-				for (int row = 0; row < H; row++) {
-					for (int col = 0; col < W; col++) {
-						rawData[row][col]	= src->data[row][col];
-					}
+		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][col]	= MAX (src->data[row][col]+ri->get_black() - riDark->data[row][col], 0);
 				}
 			}
 		}else{
-			if (!rawData)
-				rawData = allocArray< unsigned short >(3*W,H);
-			if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
-				for (int row = 0; row < H; row++) {
-					for (int col = 0; col < W; col++) {
-						rawData[row][3*col+0] = MAX (src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
-						rawData[row][3*col+1] = MAX (src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
-						rawData[row][3*col+2] = MAX (src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
-					}
-				}
-			}else{
-				for (int row = 0; row < H; row++) {
-					for (int col = 0; col < W; col++) {
-						rawData[row][3*col+0] = src->data[row][3*col+0];
-						rawData[row][3*col+1] = src->data[row][3*col+1];
-						rawData[row][3*col+2] = src->data[row][3*col+2];
-					}
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][col]	= src->data[row][col];
 				}
 			}
 		}
-		
-		
-		if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			float (*cfablur);
-			cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
-//#define BS 32	
-			int BS = raw.ff_BlurRadius;
-			if (BS&1) BS++;
-			
-			//function call to cfabloxblur 
-			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff])
-				cfaboxblur(riFlatFile, cfablur, 2*BS, 0);
-			else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff])
-				cfaboxblur(riFlatFile, cfablur, 0, 2*BS);
-			else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
-				//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-				cfaboxblur(riFlatFile, cfablur, BS, BS);//first do area blur to correct vignette
-			else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
-				cfaboxblur(riFlatFile, cfablur, BS, BS);
-			
-			float refctrval,reflocval,refcolor[2][2],vignettecorr,colorcastcorr;
-			//find center ave values by channel
-			for (int m=0; m<2; m++)
-				for (int n=0; n<2; n++) {
-					refcolor[m][n] = MAX(0,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
+	}else{
+		if (!rawData)
+			rawData = allocArray< unsigned short >(3*W,H);
+		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][3*col+0] = MAX (src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
+					rawData[row][3*col+1] = MAX (src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
+					rawData[row][3*col+2] = MAX (src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
 				}
+			}
+		}else{
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][3*col+0] = src->data[row][3*col+0];
+					rawData[row][3*col+1] = src->data[row][3*col+1];
+					rawData[row][3*col+2] = src->data[row][3*col+2];
+				}
+			}
+		}
+	}
+	
+	
+	if (ri->isBayer() && riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
+		//TODO: flat field correction for non-Bayer raw data
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		float (*cfablur);
+		cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
+		//#define BS 32	
+		int BS = raw.ff_BlurRadius;
+		if (BS&1) BS++;
+		
+		//function call to cfabloxblur 
+		if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff])
+			cfaboxblur(riFlatFile, cfablur, 2*BS, 0);
+		else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff])
+			cfaboxblur(riFlatFile, cfablur, 0, 2*BS);
+		else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
+			//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+			cfaboxblur(riFlatFile, cfablur, BS, BS);//first do area blur to correct vignette
+		else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
+			cfaboxblur(riFlatFile, cfablur, BS, BS);
+		
+		float refctrval,reflocval,refcolor[2][2],vignettecorr,colorcastcorr;
+		//find center ave values by channel
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++) {
+				refcolor[m][n] = MAX(0,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
+			}
+		
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++) {
+				for (int row = 0; row+m < H; row+=2) 
+					for (int col = 0; col+n < W; col+=2) {
+						
+						vignettecorr = ( refcolor[m][n]/MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black()) );
+						rawData[row+m][col+n] = CLIP(round(rawData[row+m][col+n] * vignettecorr)); 	
+						//would rather not clip, but this is the restriction of ushort
+					}
+			}
+		
+		if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
+			float (*cfablur1);
+			cfablur1 = (float (*)) calloc (H*W, sizeof *cfablur1);
+			float (*cfablur2);
+			cfablur2 = (float (*)) calloc (H*W, sizeof *cfablur2);
+			//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+			cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
+			cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
+			
+			float vlinecorr, hlinecorr;
 			
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
 					for (int row = 0; row+m < H; row+=2) 
 						for (int col = 0; col+n < W; col+=2) {
-							
-							vignettecorr = ( refcolor[m][n]/MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black()) );
-							rawData[row+m][col+n] = CLIP(round(rawData[row+m][col+n] * vignettecorr)); 	
+							hlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
+							vlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
+							rawData[row+m][col+n] = CLIP(round(rawData[row+m][col+n] * hlinecorr * vlinecorr)); 
 							//would rather not clip, but this is the restriction of ushort
 						}
 				}
-			
-			if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
-				float (*cfablur1);
-				cfablur1 = (float (*)) calloc (H*W, sizeof *cfablur1);
-				float (*cfablur2);
-				cfablur2 = (float (*)) calloc (H*W, sizeof *cfablur2);
-				//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
-				cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
-				cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
-				
-				float vlinecorr, hlinecorr;
-				
-				for (int m=0; m<2; m++)
-					for (int n=0; n<2; n++) {
-						for (int row = 0; row+m < H; row+=2) 
-							for (int col = 0; col+n < W; col+=2) {
-								hlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
-								vlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
-								rawData[row+m][col+n] = CLIP(round(rawData[row+m][col+n] * hlinecorr * vlinecorr)); 
-								//would rather not clip, but this is the restriction of ushort
-							}
-					}
-				free (cfablur1);
-				free (cfablur2);
-			}
-			
-			free (cfablur);
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//#undef BS
-			
-
+			free (cfablur1);
+			free (cfablur2);
 		}
+		
+		free (cfablur);
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//#undef BS
+		
+		
 	}
+	
 }
 	
 	void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW ) {
