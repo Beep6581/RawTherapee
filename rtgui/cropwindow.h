@@ -59,11 +59,15 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         int backColor;
         bool decorated;
         
-        // sizes, positions
+        // crop frame description
         int titleHeight, sideBorderWidth, lowerBorderWidth, upperBorderWidth, sepWidth, minWidth;
-        int imgAreaX, imgAreaY, imgAreaW, imgAreaH;
-        int imgX, imgY, imgW, imgH;
+        // size & position of the crop relative to the top left corner
+        // of the main preview area (to be confirmed)
         int xpos, ypos, width, height;
+        // size & pos of the drawable area relative to the top left corner of the crop
+        int imgAreaX, imgAreaY, imgAreaW, imgAreaH;
+        // size & pos of the piece of preview image relative to the top left corner of the crop
+        int imgX, imgY, imgW, imgH;
         
         // image handling
       
@@ -72,7 +76,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         
         // crop gui listener
         CropGUIListener* cropgl;
-		PointerMotionListener* pmlistener;
+        PointerMotionListener* pmlistener;
         std::list<CropWindowListener*> listeners;
         
         CropWindow* observedCropWin;
@@ -82,10 +86,10 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         void        drawDecoration      (Cairo::RefPtr<Cairo::Context> cr);
         void        drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr);
         void        drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr);
-        void        drawObservedFrame   (Cairo::RefPtr<Cairo::Context> cr);
+        void        drawObservedFrame   (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
         void        translateCoord      (int phyx, int phyy, int& imgx, int& imgy);
         void        changeZoom          (int zoom, bool notify=true, int centerx=-1, int centery=-1); 
-        void        getObservedFrameArea(int& x, int& y, int& w, int& h);
+        void        getObservedFrameArea(int& x, int& y, int& w, int& h, int rw=0, int rh=0);
     
     public:
         CropHandler cropHandler;

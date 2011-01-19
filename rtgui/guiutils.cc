@@ -75,7 +75,6 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
 
     cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
 
-    // TODO: not sure if this is right. Seems to leave a thin border on the left/top, but might be bug in calling code
     cr->rectangle (imx, imy, imw, c1y);
     cr->rectangle (imx, imy+c2y, imw, imh-c2y);
     cr->rectangle (imx, imy+c1y, c1x, c2y-c1y+1);
