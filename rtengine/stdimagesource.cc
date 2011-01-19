@@ -140,6 +140,8 @@ void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, i
         sy2 = sy1 + pp.w;
     }   
     printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
+    if (sx1<0)sx1=0;
+    if (sy1<0)sy1=0;
 }
 
 void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, bool first, HRecParams hrp) {
@@ -156,12 +158,22 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     bm /= mul_lum;    
 
     int sx1, sy1, sx2, sy2;
+
     transform (pp, tran, sx1, sy1, sx2, sy2);
+    // printf(" sx1:%d sy1:%d sx2:%d sy2:%d\n",sx1, sy1, sx2, sy2);
 /*   the sizes are already known: image->width and image->height
     int imwidth  = (sx2 - sx1) / pp.skip + ((sx2 - sx1) % pp.skip > 0);
     int imheight = (sy2 - sy1) / pp.skip + ((sy2 - sy1) % pp.skip > 0);
 */
     int imwidth=image->width,imheight=image->height;
+    // printf("1: imw=%d imh=%d\n",imwidth,imheight);
+    if (((tran & TR_ROT) == TR_R90)||((tran & TR_ROT) == TR_R270))
+    {
+    	int swap = imwidth;
+    	imwidth=imheight;
+    	imheight=swap;
+    }
+    // printf("2: imw=%d imh=%d\n",imwidth,imheight);
     int istart = sy1;
     int maxx=img->width,maxy=img->height;
     int mtran = tran;
