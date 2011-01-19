@@ -119,6 +119,12 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         IPTCPanel* iptcpanel;
         ToolBar* toolBar;
 
+        Gtk::ScrolledWindow* exposurePanelSW;
+        Gtk::ScrolledWindow* detailsPanelSW;
+        Gtk::ScrolledWindow* colorPanelSW;
+        Gtk::ScrolledWindow* transformPanelSW;
+        Gtk::ScrolledWindow* rawPanelSW;
+
         std::vector<Gtk::Expander*> expList;
         
         bool hasChanged;
@@ -187,6 +193,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ToolBar* getToolBar () { return toolBar; }
         int  getSpotWBRectSize ();
         CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return crop; }
+
+        bool handleShortcutKey (GdkEventKey* event);
 };
 
 #endif

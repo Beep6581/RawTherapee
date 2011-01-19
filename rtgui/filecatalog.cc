@@ -1035,7 +1035,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 			}
 			return true;
         case GDK_m:
-        	if (!ctrl) toggleSidePanels();
+        	if (!ctrl && !alt) toggleSidePanels();
 			return true;
     }
 
@@ -1058,18 +1058,24 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         case GDK_grave:
             categoryButtonToggled(bUnRanked);
             return true;
-        case GDK_d:
-        case GDK_D:
-            categoryButtonToggled(bDir);
-            return true;
-        case GDK_t:
-        case GDK_T:
-            categoryButtonToggled(bTrash);
-            return true;
+
         case GDK_Return:
         case GDK_KP_Enter:
             FileCatalog::buttonBrowsePathPressed ();
             return true;
+    }
+
+    if (!ctrl && !alt) {
+        switch(event->keyval) {
+			case GDK_d:
+			case GDK_D:
+				categoryButtonToggled(bDir);
+				return true;
+			case GDK_t:
+			case GDK_T:
+				categoryButtonToggled(bTrash);
+				return true;
+        }
     }
 
     if (!ctrl) {
@@ -1096,8 +1102,14 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
                 return true;
         }
     }
-    else {
+    else { // with Ctrl
         switch (event->keyval) {
+			case GDK_o:
+				if (!alt){
+					BrowsePath->select_region(0, BrowsePath->get_text_length());
+					BrowsePath->grab_focus();
+					return true;
+				}
         }
     }
 
