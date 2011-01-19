@@ -4,7 +4,7 @@
  *  Created on: Aug 18, 2010
  *      Author: gabor
  */
-
+#include "procparams.h"
 #include "filterfactory.h"
 #include "filtwb.h"
 #include "filtdemosaic.h"
@@ -48,6 +48,7 @@ FilterFactory::FilterFactory() {
 void FilterFactory::registerFilterDescriptor (FilterDescriptor* descr) {
 
 	filterDescriptors[descr->getName ()] = descr;
+	descr->getDefaultParameters (defaultProcParams);
 }
 
 FilterDescriptor* FilterFactory::getFilterDescriptor(const std::string& name) {

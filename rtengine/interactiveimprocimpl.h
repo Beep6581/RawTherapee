@@ -73,7 +73,7 @@ class InteractiveImProcImpl : public InteractiveImageProcessor {
 		ColorTemp   getSpotWB   (int x, int y, int rectSize);
 		void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
 
-		void        saveInputICCReference (const Glib::ustring& fname);
+		void        saveInputICCReference (const String& fname);
 
 		void        setProgressListener     (ProgressListener* l);
 };

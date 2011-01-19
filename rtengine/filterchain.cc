@@ -17,8 +17,8 @@ FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, Proc
 
     last = first = new InitialFilter (imgSource);
 
-	if (params->filterOrder.custom && !params->filterOrder.filterlist.empty())
-		filterOrder = params->filterOrder.filterlist;
+	if (params->getBoolean ("FilterOrderCustom") && !params->getStringList ("FilterOrderFilterList").empty())
+		filterOrder = params->getStringList ("FilterOrderFilterList");
 	else
 		filterOrder = Settings::settings->filterList;
 	setupChain (NULL);

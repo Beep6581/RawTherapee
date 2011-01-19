@@ -12,7 +12,6 @@
 #include "image16.h"
 #include "imagedata.h"
 #include "colortemp.h"
-#include <glibmm.h>
 #include "imageview.h"
 #include "multiimage.h"
 
@@ -21,7 +20,7 @@ namespace rtengine {
 class StdImageSource : public ImageSource {
 
     private:
-        Glib::ustring fileName;
+        String fileName;
         Image16* img;
         ImageData* idata;
         ColorTemp autoWB;
@@ -34,12 +33,12 @@ class StdImageSource : public ImageSource {
         virtual ~StdImageSource ();
 
 		// inherited from InitialImage
-		Glib::ustring 		 getFileName () { return fileName; }
+		String		 		 getFileName () { return fileName; }
 		cmsHPROFILE 		 getEmbeddedProfile ();
 		const ImageMetaData* getMetaData () { return idata; }
 
       // inherited from ImageSource
-        int 		load (const Glib::ustring& fileName, ProgressListener* listener = NULL);
+        int 		load (const String& fileName, ProgressListener* listener = NULL);
 
         ColorTemp   getCamWB    ();
         ColorTemp   getAutoWB   ();

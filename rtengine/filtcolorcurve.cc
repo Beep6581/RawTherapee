@@ -9,6 +9,10 @@
 #include "rtengine.h"
 #include "macros.h"
 #include "colorclip.h"
+#include "util.h"
+
+#define CURVE_LUTSIZE 50000
+#define CURVE_LUTSCALE 100.0
 
 namespace rtengine {
 
@@ -25,6 +29,16 @@ ColorCurveFilterDescriptor::ColorCurveFilterDescriptor ()
     addTriggerEvent (EvCShiftB);
 }
 
+void ColorCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setInteger ("ColorBoostAmount", 0);
+	defProcParams.setBoolean ("ColorBoostAvoidClip", false);
+	defProcParams.setBoolean ("ColorBoostEnableSatLimiter", false);
+	defProcParams.setDouble  ("ColorBoostSaturationLimit",  50);
+	defProcParams.setDouble  ("ColorShiftCieaChannel",  0.0);
+	defProcParams.setDouble  ("ColorShiftCiebChannel",  0.0);
+}
+
 void ColorCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new ColorCurveFilter ());
@@ -39,23 +53,21 @@ ColorCurveFilter::~ColorCurveFilter () {
     delete [] curve;
 }
 
-void ColorCurveFilter::generateCurve () {
+void ColorCurveFilter::generateCurve (float boost, float limit) {
 
     if (!curve)
-        curve = new double [107701];
+        curve = new float [CURVE_LUTSIZE];
 
     // generate color multiplier lookup table
-    double boost_a = (procParams->colorBoost.amount + 100.0) / 100.0;
-    double boost_b = (procParams->colorBoost.amount + 100.0) / 100.0;
-    double c = std::max (boost_a, boost_b);
 
-    double d = 1077 * procParams->colorBoost.saturationlimit / 100.0;
-    double alpha = 0.5;
-    double threshold1 = alpha * d;
-    double threshold2 = c*d*(alpha+1.0) - d;
+    float c = boost;
+    float d = limit;
+    float alpha = 0.5;
+    float threshold1 = alpha * d;
+    float threshold2 = c*d*(alpha+1.0) - d;
     #pragma omp parallel for if (multiThread)
-    for (int i=0; i<107700; i++) { // lookup table stores multipliers with a 0.25 chrominance resolution
-        double chrominance = (double)i/1000;
+    for (int i=0; i<CURVE_LUTSIZE; i++) { // lookup table stores multipliers with a 0.25 chrominance resolution
+        double chrominance = (double)i/CURVE_LUTSCALE;
         if (chrominance < threshold1)
             curve[i] = c;
         else if (chrominance < d)
@@ -67,30 +79,22 @@ void ColorCurveFilter::generateCurve () {
     }
 }
 
-void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    double* myCurve;
+	float boost =  (procParams->getInteger ("ColorBoostAmount") + 100.0) / 100.0;
+	float shift_a = procParams->getDouble  ("ColorShiftCieaChannel");
+	float shift_b = procParams->getDouble  ("ColorShiftCiebChannel");
+	float satlimit = procParams->getDouble  ("ColorBoostSaturationLimit");
+	bool  enalimiter = procParams->getBoolean ("ColorBoostEnableSatLimiter");
+	bool  avoidclip = procParams->getBoolean ("ColorBoostAvoidClip");
 
-    // apply color curve on the image
-    double boost_a = (procParams->colorBoost.amount + 100.0) / 100.0;
-    double boost_b = (procParams->colorBoost.amount + 100.0) / 100.0;
-    double cmul, amul = 1.0, bmul = 1.0;
-    if (boost_a > boost_b) {
-        cmul = boost_a;
-        if (boost_a > 0)
-            bmul = boost_b / boost_a;
-    }
-    else {
-        cmul = boost_b;
-        if (boost_b > 0)
-            amul = boost_a / boost_b;
-    }
+	float* myCurve;
 
     // curve is only generated once: in the root filter chain
-    if (procParams->colorBoost.enable_saturationlimiter && cmul > 1) {
+    if (enalimiter && boost > 1) {
         Filter* p = getParentFilter ();
         if (!p) {
-            generateCurve ();
+            generateCurve (boost, satlimit);
             myCurve = curve;
         }
         else {
@@ -101,45 +105,37 @@ void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* s
         }
     }
 
-    double shift_a = procParams->colorShift.a * 16384 / 500;
-    double shift_b = procParams->colorShift.b * 16384 / 200;
-
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
 
-            int oL = sourceImage->cieL[i][j];
-		    int oa = sourceImage->ciea[i][j];
-            int ob = sourceImage->cieb[i][j];
+            float oL = sourceImage->cieL[i][j];
+		    float oa = sourceImage->ciea[i][j] + shift_a;
+            float ob = sourceImage->cieb[i][j] + shift_b;
 
-            double allowed_cmul = cmul;
-            if (procParams->colorBoost.enable_saturationlimiter && cmul > 1) {
-                double sa = (oa + shift_a)*500/16384;
-                double sb = (ob + shift_b)*200/16384;
-                int chroma = (int)(1000.0 * sqrt(sa*sa + sb*sb));
-                allowed_cmul = curve [MIN(chroma,107700)];
+            float allowed_mul = boost;
+            if (enalimiter && boost > 1) {
+                float chroma = CURVE_LUTSCALE * sqrt(oa*oa + ob*ob);
+                allowed_mul =  lutInterp<float,CURVE_LUTSIZE>(curve, chroma);
             }
 
-            if (allowed_cmul >= 1.0 && procParams->colorBoost.avoidclip) {
-                double cclip = 100000;
-                double cr = tightestroot ((double)oL/655.35, (double)(oa + shift_a)*500/16384*amul, (double)(ob + shift_b)*200/16384*bmul, 3.079935, -1.5371515, -0.54278342);
-                double cg = tightestroot ((double)oL/655.35, (double)(oa + shift_a)*500/16384*amul, (double)(ob + shift_b)*200/16384*bmul, -0.92123418, 1.87599, 0.04524418);
-                double cb = tightestroot ((double)oL/655.35, (double)(oa + shift_a)*500/16384*amul, (double)(ob + shift_b)*200/16384*bmul, 0.052889682, -0.20404134, 1.15115166);
+            if (allowed_mul >= 1.0 && procParams->colorBoost.avoidclip) {
+                float cclip = FLT_MAX;
+                float cr = tightestroot (oL, oa, ob, 3.079935, -1.5371515, -0.54278342);
+                float cg = tightestroot (oL, oa, ob, -0.92123418, 1.87599, 0.04524418);
+                float cb = tightestroot (oL, oa, ob, 0.052889682, -0.20404134, 1.15115166);
                 if (cr>1.0 && cr<cclip) cclip = cr;
                 if (cg>1.0 && cg<cclip) cclip = cg;
                 if (cb>1.0 && cb<cclip) cclip = cb;
-                if (cclip<100000) {
-                    allowed_cmul = -cclip + 2.0*cclip / (1.0+exp(-2.0*allowed_cmul/cclip));
-                    if (allowed_cmul<1.0)
-                        allowed_cmul = 1.0;
+                if (cclip<FLT_MAX) {
+                    allowed_mul = -cclip + 2.0*cclip / (1.0+exp(-2.0*allowed_mul/cclip));
+                    if (allowed_mul<1.0)
+                        allowed_mul = 1.0;
                 }
             }
 
-            int nna = (int)((oa + shift_a) * allowed_cmul * amul);
-            int nnb = (int)((ob + shift_b) * allowed_cmul * bmul);
-
-            targetImage->ciea[i][j] = CLIPTO(nna,-32768,32767);
-            targetImage->cieb[i][j] = CLIPTO(nnb,-32768,32767);
+            targetImage->ciea[i][j] = oa * allowed_mul;
+            targetImage->cieb[i][j] = ob * allowed_mul;
             targetImage->cieL[i][j] = sourceImage->cieL[i][j];
         }
 	}

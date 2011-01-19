@@ -19,6 +19,18 @@ ColorMixerFilterDescriptor::ColorMixerFilterDescriptor ()
 	addTriggerEvent (EvChMixer);
 }
 
+void ColorMixerFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	IntList r(3), g(3), b(3);
+	r[0] = 100; r[1] = 0;   r[2] = 0;
+	g[0] = 0;   g[1] = 100; g[2] = 0;
+	b[0] = 0;   b[1] = 0;   b[2] = 100;
+
+	defProcParams.setIntegerList ("ChMixerRed",   r);
+	defProcParams.setIntegerList ("ChMixerGreen", g);
+	defProcParams.setIntegerList ("ChMixerBlue",  b);
+}
+
 void ColorMixerFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new ColorMixerFilter ());
@@ -30,9 +42,13 @@ ColorMixerFilter::ColorMixerFilter ()
 
 void ColorMixerFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    bool mixchannels = procParams->chmixer.red[0]!=100 || procParams->chmixer.red[1]!=0     || procParams->chmixer.red[2]!=0
-                    || procParams->chmixer.green[0]!=0 || procParams->chmixer.green[1]!=100 || procParams->chmixer.green[2]!=0
-                    || procParams->chmixer.blue[0]!=0  || procParams->chmixer.blue[1]!=0    || procParams->chmixer.blue[2]!=100;
+	IntList& red   = procParams->getIntegerList ("ChMixerRed");
+	IntList& green = procParams->getIntegerList ("ChMixerGreen");
+	IntList& blue  = procParams->getIntegerList ("ChMixerBlue");
+
+    bool mixchannels = red[0]!=100 || red[1]!=0     || red[2]!=0
+                    || green[0]!=0 || green[1]!=100 || green[2]!=0
+                    || blue[0]!=0  || blue[1]!=0    || blue[2]!=100;
 
     if (mixchannels)
         #pragma omp parallel for if (multiThread)
@@ -41,9 +57,9 @@ void ColorMixerFilter::process (const std::set<ProcEvent>& events, MultiImage* s
                 float r = sourceImage->r[i][j];
                 float g = sourceImage->g[i][j];
                 float b = sourceImage->b[i][j];
-                targetImage->r[i][j] = (r*procParams->chmixer.red[0]   + g*procParams->chmixer.red[1]   + b*procParams->chmixer.red[2]) / 100.0;
-                targetImage->g[i][j] = (r*procParams->chmixer.green[0] + g*procParams->chmixer.green[1] + b*procParams->chmixer.green[2]) / 100.0;
-                targetImage->b[i][j] = (r*procParams->chmixer.blue[0]  + g*procParams->chmixer.blue[1]  + b*procParams->chmixer.blue[2]) / 100.0;
+                targetImage->r[i][j] = (r*red[0]   + g*red[1]   + b*red[2])   / 100.0;
+                targetImage->g[i][j] = (r*green[0] + g*green[1] + b*green[2]) / 100.0;
+                targetImage->b[i][j] = (r*blue[0]  + g*blue[1]  + b*blue[2])  / 100.0;
             }
     else if (sourceImage != targetImage)
         targetImage->copyFrom (sourceImage);

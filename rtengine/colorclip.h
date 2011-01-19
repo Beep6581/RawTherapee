@@ -20,7 +20,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-inline double tightestroot (double L, double a, double b, double r1, double r2, double r3);
+inline float tightestroot (float L, float a, float b, float r1, float r2, float r3);
 
 #ifndef __COLORCLIP__
 #define __COLORCLIP__
@@ -30,23 +30,23 @@ inline double tightestroot (double L, double a, double b, double r1, double r2, 
 
 // gives back the tightest >0 amplification by which color clipping occures
 
-inline double tightestroot (double L, double a, double b, double r1, double r2, double r3) {
+inline float tightestroot (float L, float a, float b, float r1, float r2, float r3) {
   
-  register double an = a/500.0, bn = b/200.0, p = (L+16.0)/116.0;
+  register float an = a/500.0, bn = b/200.0, p = (L+16.0)/116.0;
 
-  double coeff3 = r1*an*an*an - r3*bn*bn*bn;
-  double coeff2 = 3.0 * p * (r1*an*an + r3*bn*bn);
-  double coeff1 = 3.0 * p*p * (r1*an - r3*bn);
-  double coeff0 = p*p*p*(r1+r2+r3) - 1.0;
+  float coeff3 = r1*an*an*an - r3*bn*bn*bn;
+  float coeff2 = 3.0 * p * (r1*an*an + r3*bn*bn);
+  float coeff1 = 3.0 * p*p * (r1*an - r3*bn);
+  float coeff0 = p*p*p*(r1+r2+r3) - 1.0;
 
-  double a1 = coeff2 / coeff3;
-  double a2 = coeff1 / coeff3;
-  double a3 = coeff0 / coeff3;
+  float a1 = coeff2 / coeff3;
+  float a2 = coeff1 / coeff3;
+  float a3 = coeff0 / coeff3;
 
-  double Q = (a1 * a1 - 3.0 * a2) / 9.0;
-  double R = (2.0 * a1 * a1 * a1 - 9.0 * a1 * a2 + 27.0 * a3) / 54.0;
-  double Qcubed = Q * Q * Q;
-  double d = Qcubed - R * R;
+  float Q = (a1 * a1 - 3.0 * a2) / 9.0;
+  float R = (2.0 * a1 * a1 * a1 - 9.0 * a1 * a2 + 27.0 * a3) / 54.0;
+  float Qcubed = Q * Q * Q;
+  float d = Qcubed - R * R;
 
 //  printf ("input L=%g, a=%g, b=%g\n", L, a, b);
 //  printf ("c1=%g, c2=%g, c3=%g, c4=%g\n", coeff3, coeff2, coeff1, coeff0);
@@ -54,11 +54,11 @@ inline double tightestroot (double L, double a, double b, double r1, double r2, 
 
   /* Three real roots */
   if (d >= 0) {
-    double theta = acos(R / sqrt(Qcubed));
-    double sqrtQ = sqrt(Q);
-    double x0 = -2.0 * sqrtQ * cos( theta               / 3.0) - a1 / 3.0;
-    double x1 = -2.0 * sqrtQ * cos((theta + 2.0 * M_PI) / 3.0) - a1 / 3.0;
-    double x2 = -2.0 * sqrtQ * cos((theta + 4.0 * M_PI) / 3.0) - a1 / 3.0;
+	  float theta = acos(R / sqrt(Qcubed));
+	  float sqrtQ = sqrt(Q);
+	  float x0 = -2.0 * sqrtQ * cos( theta               / 3.0) - a1 / 3.0;
+	  float x1 = -2.0 * sqrtQ * cos((theta + 2.0 * M_PI) / 3.0) - a1 / 3.0;
+	  float x2 = -2.0 * sqrtQ * cos((theta + 4.0 * M_PI) / 3.0) - a1 / 3.0;
     
 //    printf ("3 roots: %g, %g, %g\n", x0, x1, x2);
 

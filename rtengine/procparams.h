@@ -21,18 +21,21 @@
 
 #include <glibmm.h>
 #include <vector>
+#include "rtcommon.h"
+#include <map>
+#include <vector>
 
 namespace rtengine {
 
-/**
-  * Parameters on what order the image processing functions are applied
-  */
-class FilterOrderParams {
-
-	public:
-		bool					 custom;
-		std::vector<Glib::ustring> filterlist;
-};
+///**
+//  * Parameters on what order the image processing functions are applied
+//  */
+//class FilterOrderParams {
+//
+//	public:
+//		bool					 custom;
+//		std::vector<Glib::ustring> filterlist;
+//};
 
 /**
   * Parameters of the demosaicing
@@ -244,16 +247,16 @@ class VignettingParams {
         int  radius;
 };
 
-/**
-  * Parameters of the color mixer
-  */
-class ChannelMixerParams {
-
-    public:
-        int red[3];
-        int green[3];
-        int blue[3];
-};
+///**
+//  * Parameters of the color mixer
+//  */
+//class ChannelMixerParams {
+//
+//    public:
+//        int red[3];
+//        int green[3];
+//        int blue[3];
+//};
 
 /**
   * Parameters of the c/a correction
@@ -324,11 +327,44 @@ class IPTCPair {
 /**
   * This class holds all the processing parameters applied on the images
   */
+
 class ProcParams {
 
+		std::map<String,double> doubleParams;
+		std::map<String,int> 	 intParams;
+		std::map<String,bool> 	 boolParams;
+		std::map<String,String> stringParams;
+		std::map<String,DoubleList> doubleListParams;
+		std::map<String,IntList> intListParams;
+		std::map<String,StringList> stringListParams;
+
     public:
+
+		void   setDouble  (const String& key, double value);
+		double getDouble  (const String& key);
+
+		void   setInteger (const String& key, int value);
+		int    getInteger (const String& key);
+
+		void   setBoolean (const String& key, bool value);
+		bool   getBoolean (const String& key);
+
+		void   setString  (const String& key, const String& value);
+		String getString  (const String& key);
+
+		void   		setDoubleList (const String& key, const DoubleList& value);
+		DoubleList& getDoubleList (const String& key);
+
+		void   		setIntegerList (const String& key, const IntList& value);
+		IntList& 	getIntegerList (const String& key);
+
+		void   		setStringList (const String& key, const StringList& value);
+		StringList& getStringList (const String& key);
+
+		// --------------8<------------------ to be removed when all filters are rewritten ------
+
 		DemosaicingParams		demosaicing;	///< Demosaicing parameters
-		FilterOrderParams		filterOrder;	///< Order of image processing functions
+//		FilterOrderParams		filterOrder;	///< Order of image processing functions
 		ToneCurveParams         toneCurve;      ///< Tone curve parameters
         LCurveParams            lumaCurve;      ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;     ///< Sharpening parameters
@@ -346,7 +382,7 @@ class ProcParams {
         PerspectiveParams       perspective;    ///< Perspective correction parameters
         CACorrParams            cacorrection;   ///< Lens c/a correction parameters
         VignettingParams        vignetting;     ///< Lens vignetting correction parameters
-        ChannelMixerParams      chmixer;        ///< Channel mixer parameters
+//        ChannelMixerParams      chmixer;        ///< Channel mixer parameters
         HRecParams              hlrecovery;     ///< Highlight recovery parameters
         ResizeParams            resize;         ///< Resize parameters
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
@@ -386,5 +422,7 @@ class ProcParams {
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);
 };
+
+extern ProcParams defaultProcParams;
 }
 #endif

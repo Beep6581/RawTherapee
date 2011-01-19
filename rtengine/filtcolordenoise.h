@@ -23,6 +23,7 @@ class ColorDenoiseFilterDescriptor : public FilterDescriptor {
 
 	public:
         ColorDenoiseFilterDescriptor ();
+		void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -33,7 +34,7 @@ class ColorDenoiseFilter : public Filter {
 	public:
         ColorDenoiseFilter ();
         Dim  getReqiredBufferSize ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

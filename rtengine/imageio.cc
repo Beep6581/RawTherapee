@@ -40,7 +40,7 @@ Glib::ustring safe_locale_to_utf8 (const std::string& src);
 
 namespace rtengine {
 
-Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
+String ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {
 
@@ -122,7 +122,7 @@ ImageIO::~ImageIO () {
     delete profileData;
 }
 
-int ImageIO::loadPNG  (Glib::ustring fname) {
+int ImageIO::loadPNG  (const String& fname) {
 
     FILE *file = g_fopen (fname.c_str(),"rb");
     if (!file) 
@@ -253,7 +253,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 
 extern jmp_buf jpeg_jmp_buf;
 
-int ImageIO::loadJPEG (Glib::ustring fname) {
+int ImageIO::loadJPEG (const String& fname) {
 
 	FILE *file=g_fopen(fname.c_str(),"rb");
 	if (!file) 
@@ -323,7 +323,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     }
 }
 
-int ImageIO::loadTIFF (Glib::ustring fname) {
+int ImageIO::loadTIFF (const String& fname) {
 
 #ifdef WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
@@ -402,7 +402,7 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 }
 
 
-int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
+int ImageIO::savePNG  (const String& fname, int compression, int bps) {
 
     FILE* file=g_fopen(fname.c_str (),"wb");
 
@@ -480,7 +480,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 }
 
 
-int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
+int ImageIO::saveJPEG (const String& fname, int quality) {
 
 	jpeg_compress_struct cinfo;
 	jpeg_error_mgr jerr;
@@ -580,7 +580,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
     return IMIO_SUCCESS;
 }
 
-int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
+int ImageIO::saveTIFF (const String& fname, int bps, bool uncompressed) {
 
 	int width = getW ();
     int height = getH ();
@@ -757,7 +757,7 @@ void ImageIO::png_flush(png_structp png_ptr) {
       fflush(io_ptr);
 }
 
-int ImageIO::load (Glib::ustring fname) {
+int ImageIO::load (const String& fname) {
 
   int lastdot = fname.find_last_of ('.');
 
@@ -769,7 +769,7 @@ int ImageIO::load (Glib::ustring fname) {
     return loadTIFF (fname);
 }
 
-int ImageIO::save (Glib::ustring fname) {
+int ImageIO::save (const String& fname) {
 
   int lastdot = fname.find_last_of ('.');
 

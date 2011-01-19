@@ -6,8 +6,8 @@
 #include "image16.h"
 #include "util.h"
 
-#undef XYZ_MAXVAL
-#define XYZ_MAXVAL 2*65536-1
+#define XYZ2LAB_LUTSIZE 2*65536-1
+#define XYZ2LAB_LUTSCALE 65535
 
 #define epsilon 0.00885645 //216/24389
 #define kappa 903.2963 //24389/27
@@ -209,61 +209,57 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
 		convertTo (RGB, multiThread, workingColorSpace);
 	}
     else if (colorSpace==RGB && cs==XYZ) {
-	    TMatrix wprof = iccStore.workingSpaceMatrix (workingColorSpace);
+	    Matrix33 wprof = iccStore.workingSpaceMatrix (workingColorSpace);
 		#pragma omp parallel for if (multiThread)
 	    for (int i=0; i<height; i++)
         	for (int j=0; j<width; j++) {
         		float r_ = r[i][j], g_ = g[i][j], b_ = b[i][j];
-        		x[i][j] = wprof[0][0] * r_ + wprof[1][0] * g_ + wprof[2][0] * b_;
-        		y[i][j] = wprof[0][1] * r_ + wprof[1][1] * g_ + wprof[2][1] * b_;
-        		z[i][j] = wprof[0][2] * r_ + wprof[1][2] * g_ + wprof[2][2] * b_;
+        		wprof.transform (r_, g_, b_, x[i][j], y[i][j], z[i][j]);
             }
     }
     else if (colorSpace==XYZ && cs==RGB) {
-        TMatrix iwprof = iccStore.workingSpaceInverseMatrix (workingColorSpace);
+    	Matrix33 iwprof = iccStore.workingSpaceInverseMatrix (workingColorSpace);
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<height; i++) {
             for (int j=0; j<width; j++) {
             	float x_ = x[i][j], y_ = y[i][j], z_ = y[i][j];
-                r[i][j] = iwprof[0][0] * x_ + iwprof[1][0] * y_ + iwprof[2][0] * z_;
-                g[i][j] = iwprof[0][1] * x_ + iwprof[1][1] * y_ + iwprof[2][1] * z_;
-                b[i][j] = iwprof[0][2] * x_ + iwprof[1][2] * y_ + iwprof[2][2] * z_;
+        		iwprof.transform (x_, y_, z_, r[i][j], g[i][j], b[i][j]);
             }
         }
     }
     else if (colorSpace==Lab && cs==XYZ) {
 	    // calculate white point tristimulus
-	    TMatrix wprof = iccStore.workingSpaceMatrix (workingColorSpace);
-	    float xn = wprof[0][0] + wprof[1][0] + wprof[2][0];
-	    float yn = wprof[0][1] + wprof[1][1] + wprof[2][1];
-	    float zn = wprof[0][2] + wprof[1][2] + wprof[2][2];
+    	Matrix33 wprof = iccStore.workingSpaceMatrix (workingColorSpace);
+	    float xn = wprof.rowsum (0);
+	    float yn = wprof.rowsum (1);
+	    float zn = wprof.rowsum (2);
 
 	    #pragma omp parallel for if (multiThread)
         for (int i=0; i<height; i++) {
         	int g;
             for (int j=0; j<width; j++) {
             	float fy = (cieL[i][j] + 16.0) / 116.0; // (L+16)/116
-				y[i][j] = 65535.0 * Lab2xyz(1.0) * yn;
-            	x[i][j] = 65535.0 * Lab2xyz(fy + ciea[i][j]/500.0) * xn;
-				z[i][j] = 65535.0 * Lab2xyz(cieb[i][j]/200.0 - fy) * zn;
+				y[i][j] = Lab2xyz(1.0) * yn;
+            	x[i][j] = Lab2xyz(fy + ciea[i][j]/500.0) * xn;
+				z[i][j] = Lab2xyz(cieb[i][j]/200.0 - fy) * zn;
             }
         }
     }
     else if (colorSpace==XYZ && cs==Lab) {
 	    // calculate white point tristimulus
-	    TMatrix wprof = iccStore.workingSpaceMatrix (workingColorSpace);
-	    float xn = wprof[0][0] + wprof[1][0] + wprof[2][0];
-	    float yn = wprof[0][1] + wprof[1][1] + wprof[2][1];
-	    float zn = wprof[0][2] + wprof[1][2] + wprof[2][2];
+    	Matrix33 wprof = iccStore.workingSpaceMatrix (workingColorSpace);
+	    float xn = wprof.rowsum (0);
+	    float yn = wprof.rowsum (1);
+	    float zn = wprof.rowsum (2);
 
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<height; i++)
 			for (int j=0; j<width; j++) {
-				float x_ = x[i][j] / xn, y_ = y[i][j] / yn, z_ = z[i][j] / yn;
-				float cy = lutInterp (xyz2labCache, y_, XYZ_MAXVAL);
+				float x_ = x[i][j] * XYZ2LAB_LUTSCALE / xn, y_ = y[i][j] * XYZ2LAB_LUTSCALE / yn, z_ = z[i][j] * XYZ2LAB_LUTSCALE / yn;
+				float cy = lutInterp<float,XYZ2LAB_LUTSIZE>(xyz2labCache, y_);
 				cieL[i][j] = 116.0 * cy - 16.0;
-				ciea[i][j] = 500.0 * (lutInterp (xyz2labCache, x_, XYZ_MAXVAL) - cy);
-				cieb[i][j] = 200.0 * (cy - lutInterp (xyz2labCache, z_, XYZ_MAXVAL));
+				ciea[i][j] = 500.0 * (lutInterp<float,XYZ2LAB_LUTSIZE>(xyz2labCache, x_) - cy);
+				cieb[i][j] = 200.0 * (cy - lutInterp<float,XYZ2LAB_LUTSIZE>(xyz2labCache, z_));
 			}
     }
 
@@ -280,14 +276,14 @@ void MultiImage::switchTo  (ColorSpace cs) {
 
 void MultiImage::initLabConversionCache () {
 
-    xyz2labCache = new float[XYZ_MAXVAL+1];
+    xyz2labCache = new float[XYZ2LAB_LUTSIZE];
 
-    const int threshold = (int)(epsilon*65535);
-    for (int i=0; i<XYZ_MAXVAL; i++)
+    const int threshold = (int)(epsilon*XYZ2LAB_LUTSCALE);
+    for (int i=0; i<XYZ2LAB_LUTSIZE; i++)
         if (i>threshold)
-        	xyz2labCache[i] = exp(1.0/3.0 * log(i/65535.0));
+        	xyz2labCache[i] = exp(1.0/3.0 * log((double)i/XYZ2LAB_LUTSCALE));
         else
-        	xyz2labCache[i] = (kappa * i/65535.0 + 16.0) / 116.0;
+        	xyz2labCache[i] = (kappa * (double)i/XYZ2LAB_LUTSCALE + 16.0) / 116.0;
 
 	labConversionCacheInitialized = true;
 }
@@ -298,9 +294,9 @@ Image16* MultiImage::createImage () {
         Image16* img = new Image16 (width, height);
         for (int i=0; i<height; i++) {
         	for (int j=0; j<width; j++) {
-        		img->r[i][j] = CLIP(r[i][j]);
-    			img->g[i][j] = CLIP(g[i][j]);
-    			img->b[i][j] = CLIP(b[i][j]);
+        		img->r[i][j] = CLIP(r[i][j]*65535.0);
+    			img->g[i][j] = CLIP(g[i][j]*65535.0);
+    			img->b[i][j] = CLIP(b[i][j]*65535.0);
         	}
         }
         return img;

@@ -16,27 +16,34 @@ namespace rtengine {
 // color (r,g,b) triplets between different color spaces
 class Matrix33 {
 
+	public:
+
 		float data[3][3];
 
-	public:
 		// initializes the matrix with the array passed
         Matrix33 (float (*values)[4]);
+        Matrix33 (float (*values)[3]);
+        Matrix33 (float d00, float d01, float d02, float d10, float d11, float d12, float d20, float d21, float d22);
         Matrix33 ();
 
 		// applies transformation on the given (r,g,b) (column) vector
 		// result is written back to the variables passed
-        void transform (float& r, float& g, float& b);
-        void transform (unsigned short& r, unsigned short& g, unsigned short& b);
+        void transform (float& r, float& g, float& b) const;
+        void transform (unsigned short& r, unsigned short& g, unsigned short& b) const;
 
 		// the same, result is stored separately
-        void transform (float r, float g, float b, float& nr, float& ng, float& nb);
-        void transform (unsigned short r, unsigned short g, unsigned short b, unsigned short& nr, unsigned short& ng, unsigned short& nb);
+        void transform (float r, float g, float b, float& nr, float& ng, float& nb) const;
+        void transform (unsigned short r, unsigned short g, unsigned short b, unsigned short& nr, unsigned short& ng, unsigned short& nb) const;
 
 		// returns inverse of the transformation matrix
-		Matrix33 inverse ();
+		Matrix33 inverse () const;
 
 		// multiplies this matrix from the given one from the right
-		void multiply (const float (*m)[3]);
+		void multiply (const Matrix33& other);
+
+		// gives back the sum of the elements of the ith row
+		float rowsum (int i) const;
+
 };
 
 }

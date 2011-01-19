@@ -23,6 +23,7 @@ class ColorCurveFilterDescriptor : public FilterDescriptor {
 
 	public:
         ColorCurveFilterDescriptor ();
+		void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -30,14 +31,14 @@ extern ColorCurveFilterDescriptor colorCurveFilterDescriptor;
 
 class ColorCurveFilter : public Filter {
 
-        double* curve;
+        float* curve;
 
-        void generateCurve ();
+        void generateCurve (float boost, float limit);
 
 	public:
         ColorCurveFilter ();
         ~ColorCurveFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

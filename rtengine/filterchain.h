@@ -23,7 +23,7 @@ protected:
 	ImProcListener* listener;
 	Filter* firstToUpdate;
 	ProcParams* procParams;
-	std::vector<Glib::ustring> filterOrder;
+	std::vector<String> filterOrder;
 	bool invalidated;
 
 	void setupChain (FilterChain* previous);

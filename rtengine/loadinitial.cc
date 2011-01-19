@@ -22,7 +22,7 @@
 
 namespace rtengine {
 
-InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int& errorCode, ProgressListener* pl) {
+InitialImage* InitialImage::load (const String& fname, bool isRaw, int& errorCode, ProgressListener* pl) {
 
     ImageSource* isrc;
 

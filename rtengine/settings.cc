@@ -19,6 +19,7 @@
 #include "rtengine.h"
 #include "iccstore.h"
 #include "curves.h"
+#include "procparams.h"
 #include <glibmm.h>
 
 namespace rtengine {
@@ -61,6 +62,9 @@ Settings::Settings () {
 
     iccStore.parseDir (iccDirectory);
     CurveFactory::init ();
+
+    defaultProcParams.setBoolean ("FilterOrderCustom", false);
+    defaultProcParams.setStringList ("FilterOrderFilterList", filterList);
 }
 
 

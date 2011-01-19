@@ -26,6 +26,12 @@ DemosaicFilterDescriptor::DemosaicFilterDescriptor ()
     applyOnStdImage  = false;
 }
 
+void DemosaicFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setString  ("DemosaicMethod", "hphd");
+	defProcParams.setInteger ("DemosaicColorCorrectionSteps",  2);
+}
+
 void DemosaicFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new DemosaicFilter ());
@@ -92,7 +98,7 @@ void DemosaicFilter::hphd_vertical (MultiImage* si, Buffer<float>* hpmap, int co
         for (int i=5; i<H-5; i++) {
             temp[i] = (si->raw[i-5][k] - 8*si->raw[i-4][k] + 27*si->raw[i-3][k] - 48*si->raw[i-2][k] + 42*si->raw[i-1][k] -
                     (si->raw[i+5][k] - 8*si->raw[i+4][k] + 27*si->raw[i+3][k] - 48*si->raw[i+2][k] + 42*si->raw[i+1][k])) / 100.0;
-            temp[i] = ABS(temp[i]);
+            temp[i] = fabs(temp[i]);
         }
         for (int j=4; j<H-4; j++) {
             float avgL = (temp[j-4] + temp[j-3] + temp[j-2] + temp[j-1] + temp[j] + temp[j+1] + temp[j+2] + temp[j+3] + temp[j+4]) / 9.0;
@@ -132,7 +138,7 @@ void DemosaicFilter::hphd_horizontal (MultiImage* si, Buffer<float>* hpmap, int 
         for (int j=5; j<W-5; j++) {
             temp[j] = (si->raw[i][j-5] - 8*si->raw[i][j-4] + 27*si->raw[i][j-3] - 48*si->raw[i][j-2] + 42*si->raw[i][j-1] -
                     (si->raw[i][j+5] - 8*si->raw[i][j+4] + 27*si->raw[i][j+3] - 48*si->raw[i][j+2] + 42*si->raw[i][j+1])) / 100;
-            temp[j] = ABS(temp[j]);
+            temp[j] = fabs(temp[j]);
         }
         for (int j=4; j<W-4; j++) {
             float avgL = (temp[j-4] + temp[j-3] + temp[j-2] + temp[j-1] + temp[j] + temp[j+1] + temp[j+2] + temp[j+3] + temp[j+4]) / 9.0;
@@ -148,11 +154,11 @@ void DemosaicFilter::hphd_horizontal (MultiImage* si, Buffer<float>* hpmap, int 
             float devR = dev[j+1];
             float hpv = avgL + (avgR - avgL) * devL / (devL + devR);
             if (hpmap->rows[i][j] < 0.8*hpv)
-                *(int*)(&(hpmap->rows[i][j])) = 2;
+            	hpmap->rows[i][j] = -1.0;
             else if (hpv < 0.8*hpmap->rows[i][j])
-                *(int*)(&(hpmap->rows[i][j])) = 1;
+                hpmap->rows[i][j] = 1.0;
             else
-                *(int*)(&(hpmap->rows[i][j])) = 0;
+                hpmap->rows[i][j] = 0.0;
         }
     }
 
@@ -161,7 +167,7 @@ void DemosaicFilter::hphd_horizontal (MultiImage* si, Buffer<float>* hpmap, int 
     delete [] dev;
 }
 
-void DemosaicFilter::hphd_green (MultiImage* si, MultiImage* ti, Buffer<int>* hpmap) {
+void DemosaicFilter::hphd_green (MultiImage* si, MultiImage* ti, Buffer<float>* hpmap) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=border; i<si->height-border; i++) {
@@ -169,93 +175,93 @@ void DemosaicFilter::hphd_green (MultiImage* si, MultiImage* ti, Buffer<int>* hp
             if (si->raw_isGreen(i,j))
                 ti->g[i-border][j-border] = si->raw[i][j];
             else {
-                if (hpmap->rows[i][j]==1) {
-                    int g2 = si->raw[i][j+1] + ((si->raw[i][j] - si->raw[i][j+2]) >> 1);
-                    int g4 = si->raw[i][j-1] + ((si->raw[i][j] - si->raw[i][j-2]) >> 1);
+                if (hpmap->rows[i][j]>0) {
+                    float g2 = si->raw[i][j+1] + ((si->raw[i][j] - si->raw[i][j+2]) / 2.0);
+                    float g4 = si->raw[i][j-1] + ((si->raw[i][j] - si->raw[i][j-2]) / 2.0);
 
-                    int dx = si->raw[i][j+1] - si->raw[i][j-1];
-                    int d1 = si->raw[i][j+3] - si->raw[i][j+1];
-                    int d2 = si->raw[i][j+2] - si->raw[i][j];
-                    int d3 = (si->raw[i-1][j+2] - si->raw[i-1][j]) >> 1;
-                    int d4 = (si->raw[i+1][j+2] - si->raw[i+1][j]) >> 1;
+                    float dx = si->raw[i][j+1] - si->raw[i][j-1];
+                    float d1 = si->raw[i][j+3] - si->raw[i][j+1];
+                    float d2 = si->raw[i][j+2] - si->raw[i][j];
+                    float d3 = (si->raw[i-1][j+2] - si->raw[i-1][j]) / 2.0;
+                    float d4 = (si->raw[i+1][j+2] - si->raw[i+1][j]) / 2.0;
 
-                    double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    float e2 = 1.0 / (1.0 + fabs(dx) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
                     d1 = si->raw[i][j-3] - si->raw[i][j-1];
                     d2 = si->raw[i][j-2] - si->raw[i][j];
-                    d3 = (si->raw[i-1][j-2] - si->raw[i-1][j]) >> 1;
-                    d4 = (si->raw[i+1][j-2] - si->raw[i+1][j]) >> 1;
+                    d3 = (si->raw[i-1][j-2] - si->raw[i-1][j]) / 2.0;
+                    d4 = (si->raw[i+1][j-2] - si->raw[i+1][j]) / 2.0;
 
-                    double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    float e4 = 1.0 / (1.0 + fabs(dx) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
-                    ti->g[i-border][j-border] = CLIP((e2 * g2 + e4 * g4) / (e2 + e4));
+                    ti->g[i-border][j-border] = (e2 * g2 + e4 * g4) / (e2 + e4);
                 }
-                else if (hpmap->rows[i][j]==2) {
-                    int g1 = si->raw[i-1][j] + ((si->raw[i][j] - si->raw[i-2][j]) >> 1);
-                    int g3 = si->raw[i+1][j] + ((si->raw[i][j] - si->raw[i+2][j]) >> 1);
+                else if (hpmap->rows[i][j]<0) {
+                	float g1 = si->raw[i-1][j] + ((si->raw[i][j] - si->raw[i-2][j]) / 2.0);
+                	float g3 = si->raw[i+1][j] + ((si->raw[i][j] - si->raw[i+2][j]) / 2.0);
 
-                    int dy = si->raw[i+1][j] - si->raw[i-1][j];
-                    int d1 = si->raw[i-1][j] - si->raw[i-3][j];
-                    int d2 = si->raw[i][j] - si->raw[i-2][j];
-                    int d3 = (si->raw[i][j-1] - si->raw[i-2][j-1]) >> 1;
-                    int d4 = (si->raw[i][j+1] - si->raw[i-2][j+1]) >> 1;
+                	float dy = si->raw[i+1][j] - si->raw[i-1][j];
+                	float d1 = si->raw[i-1][j] - si->raw[i-3][j];
+                	float d2 = si->raw[i][j] - si->raw[i-2][j];
+                	float d3 = (si->raw[i][j-1] - si->raw[i-2][j-1]) / 2.0;
+                	float d4 = (si->raw[i][j+1] - si->raw[i-2][j+1]) / 2.0;
 
-                    double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                	float e1 = 1.0 / (1.0 + fabs(dy) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
                     d1 = si->raw[i+1][j] - si->raw[i+3][j];
                     d2 = si->raw[i][j] - si->raw[i+2][j];
-                    d3 = (si->raw[i][j-1] - si->raw[i+2][j-1]) >> 1;
-                    d4 = (si->raw[i][j+1] - si->raw[i+2][j+1]) >> 1;
+                    d3 = (si->raw[i][j-1] - si->raw[i+2][j-1]) / 2.0;
+                    d4 = (si->raw[i][j+1] - si->raw[i+2][j+1]) / 2.0;
 
-                    double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    float e3 = 1.0 / (1.0 + fabs(dy) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
-                    ti->g[i-border][j-border] = CLIP((e1 * g1 + e3 * g3) / (e1 + e3));
+                    ti->g[i-border][j-border] = (e1 * g1 + e3 * g3) / (e1 + e3);
                 }
                 else {
-                    int g1 = si->raw[i-1][j] + ((si->raw[i][j] - si->raw[i-2][j]) >> 1);
-                    int g2 = si->raw[i][j+1] + ((si->raw[i][j] - si->raw[i][j+2]) >> 1);
-                    int g3 = si->raw[i+1][j] + ((si->raw[i][j] - si->raw[i+2][j]) >> 1);
-                    int g4 = si->raw[i][j-1] + ((si->raw[i][j] - si->raw[i][j-2]) >> 1);
+                	float g1 = si->raw[i-1][j] + ((si->raw[i][j] - si->raw[i-2][j]) / 2.0);
+                	float g2 = si->raw[i][j+1] + ((si->raw[i][j] - si->raw[i][j+2]) / 2.0);
+                	float g3 = si->raw[i+1][j] + ((si->raw[i][j] - si->raw[i+2][j]) / 2.0);
+                	float g4 = si->raw[i][j-1] + ((si->raw[i][j] - si->raw[i][j-2]) / 2.0);
 
-                    int dx = si->raw[i][j+1] - si->raw[i][j-1];
-                    int dy = si->raw[i+1][j] - si->raw[i-1][j];
+                	float dx = si->raw[i][j+1] - si->raw[i][j-1];
+                	float dy = si->raw[i+1][j] - si->raw[i-1][j];
 
-                    int d1 = si->raw[i-1][j] - si->raw[i-3][j];
-                    int d2 = si->raw[i][j] - si->raw[i-2][j];
-                    int d3 = (si->raw[i][j-1] - si->raw[i-2][j-1]) >> 1;
-                    int d4 = (si->raw[i][j+1] - si->raw[i-2][j+1]) >> 1;
+                	float d1 = si->raw[i-1][j] - si->raw[i-3][j];
+                	float d2 = si->raw[i][j] - si->raw[i-2][j];
+                	float d3 = (si->raw[i][j-1] - si->raw[i-2][j-1]) / 2.0;
+                	float d4 = (si->raw[i][j+1] - si->raw[i-2][j+1]) / 2.0;
 
-                    double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                	float e1 = 1.0 / (1.0 + fabs(dy) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
                     d1 = si->raw[i][j+3] - si->raw[i][j+1];
                     d2 = si->raw[i][j+2] - si->raw[i][j];
-                    d3 = (si->raw[i-1][j+2] - si->raw[i-1][j]) >> 1;
-                    d4 = (si->raw[i+1][j+2] - si->raw[i+1][j]) >> 1;
+                    d3 = (si->raw[i-1][j+2] - si->raw[i-1][j]) / 2.0;
+                    d4 = (si->raw[i+1][j+2] - si->raw[i+1][j]) / 2.0;
 
-                    double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    float e2 = 1.0 / (1.0 + fabs(dx) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
                     d1 = si->raw[i+1][j] - si->raw[i+3][j];
                     d2 = si->raw[i][j] - si->raw[i+2][j];
-                    d3 = (si->raw[i][j-1] - si->raw[i+2][j-1]) >> 1;
-                    d4 = (si->raw[i][j+1] - si->raw[i+2][j+1]) >> 1;
+                    d3 = (si->raw[i][j-1] - si->raw[i+2][j-1]) / 2.0;
+                    d4 = (si->raw[i][j+1] - si->raw[i+2][j+1]) / 2.0;
 
-                    double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    float e3 = 1.0 / (1.0 + fabs(dy) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
                     d1 = si->raw[i][j-3] - si->raw[i][j-1];
                     d2 = si->raw[i][j-2] - si->raw[i][j];
-                    d3 = (si->raw[i-1][j-2] - si->raw[i-1][j]) >> 1;
-                    d4 = (si->raw[i+1][j-2] - si->raw[i+1][j]) >> 1;
+                    d3 = (si->raw[i-1][j-2] - si->raw[i-1][j]) / 2.0;
+                    d4 = (si->raw[i+1][j-2] - si->raw[i+1][j]) / 2.0;
 
-                    double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
+                    float e4 = 1.0 / (1.0 + fabs(dx) + fabs(d1) + fabs(d2) + fabs(d3) + fabs(d4));
 
-                    ti->g[i-border][j-border] = CLIP((e1*g1 + e2*g2 + e3*g3 + e4*g4) / (e1 + e2 + e3 + e4));
+                    ti->g[i-border][j-border] = (e1*g1 + e2*g2 + e3*g3 + e4*g4) / (e1 + e2 + e3 + e4);
                 }
             }
         }
     }
 }
 
-void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<int>* hpmap) {
+void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<float>* hpmap) {
 
     if (getProgressListener()) {
         getProgressListener()->startTimeConsumingOperation ();
@@ -272,9 +278,9 @@ void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<int>*
         int blk = si->width/nthreads;
 
         if (tid<nthreads-1)
-            hphd_vertical (si, (Buffer<float>*)hpmap, tid*blk, (tid+1)*blk);
+            hphd_vertical (si, hpmap, tid*blk, (tid+1)*blk);
         else
-            hphd_vertical (si, (Buffer<float>*)hpmap, tid*blk, si->width);
+            hphd_vertical (si, hpmap, tid*blk, si->width);
     }
 
     if (getProgressListener())
@@ -287,9 +293,9 @@ void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<int>*
         int blk = si->height/nthreads;
 
         if (tid<nthreads-1)
-            hphd_horizontal (si, (Buffer<float>*)hpmap, tid*blk, (tid+1)*blk);
+            hphd_horizontal (si, hpmap, tid*blk, (tid+1)*blk);
         else
-            hphd_horizontal (si, (Buffer<float>*)hpmap, tid*blk, si->height);
+            hphd_horizontal (si, hpmap, tid*blk, si->height);
     }
 
     if (getProgressListener())
@@ -417,35 +423,35 @@ void DemosaicFilter::correction_YIQ_LQ_  (MultiImage* im, int row_from, int row_
 
     int W = im->width;
 
-    int** rbconv_Y = new int*[3];
-    int** rbconv_I = new int*[3];
-    int** rbconv_Q = new int*[3];
-    int** rbout_I = new int*[3];
-    int** rbout_Q = new int*[3];
+    float** rbconv_Y = new float*[3];
+    float** rbconv_I = new float*[3];
+    float** rbconv_Q = new float*[3];
+    float** rbout_I = new float*[3];
+    float** rbout_Q = new float*[3];
     for (int i=0; i<3; i++) {
-        rbconv_Y[i] = new int[W];
-        rbconv_I[i] = new int[W];
-        rbconv_Q[i] = new int[W];
-        rbout_I[i] = new int[W];
-        rbout_Q[i] = new int[W];
+        rbconv_Y[i] = new float[W];
+        rbconv_I[i] = new float[W];
+        rbconv_Q[i] = new float[W];
+        rbout_I[i] = new float[W];
+        rbout_Q[i] = new float[W];
     }
 
-  int* row_I = new int[W];
-  int* row_Q = new int[W];
+    float* row_I = new float[W];
+    float* row_Q = new float[W];
 
-  int* pre1_I = new int[3];
-  int* pre2_I = new int[3];
-  int* post1_I = new int[3];
-  int* post2_I = new int[3];
-  int middle_I[6];
-  int* pre1_Q = new int[3];
-  int* pre2_Q = new int[3];
-  int* post1_Q = new int[3];
-  int* post2_Q = new int[3];
-  int middle_Q[6];
-  int* tmp;
+	float* pre1_I = new float[3];
+	float* pre2_I = new float[3];
+	float* post1_I = new float[3];
+	float* post2_I = new float[3];
+	float middle_I[6];
+	float* pre1_Q = new float[3];
+	float* pre2_Q = new float[3];
+	float* post1_Q = new float[3];
+	float* post2_Q = new float[3];
+	float middle_Q[6];
+	float* tmp;
 
-  int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
+	int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
 
     convert_row_to_YIQ (im->r[row_from-1], im->g[row_from-1], im->b[row_from-1], rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
     convert_row_to_YIQ (im->r[row_from], im->g[row_from], im->b[row_from], rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
@@ -530,50 +536,47 @@ void DemosaicFilter::correction_YIQ_LQ_  (MultiImage* im, int row_from, int row_
     row_Q[W-1] = rbout_Q[cx][W-1];
     convert_row_to_RGB (im->r[row_to-1], im->g[row_to-1], im->b[row_to-1], rbconv_Y[cx], row_I, row_Q, W);
 
-  for (int i=0; i<3; i++)
-      delete [] rbconv_Y[i];
-  delete [] rbconv_Y;
-  for (int i=0; i<3; i++)
-      delete [] rbconv_I[i];
-  delete [] rbconv_I;
-  for (int i=0; i<3; i++)
-      delete [] rbconv_Q[i];
-  delete [] rbconv_Q;
-  for (int i=0; i<3; i++)
-      delete [] rbout_I[i];
-  delete [] rbout_I;
-  for (int i=0; i<3; i++)
-      delete [] rbout_Q[i];
-  delete [] rbout_Q;
-  delete [] row_I;
-  delete [] row_Q;
-  delete [] pre1_I;
-  delete [] pre2_I;
-  delete [] post1_I;
-  delete [] post2_I;
-  delete [] pre1_Q;
-  delete [] pre2_Q;
-  delete [] post1_Q;
-  delete [] post2_Q;
+	for (int i=0; i<3; i++)
+		delete [] rbconv_Y[i];
+	delete [] rbconv_Y;
+	for (int i=0; i<3; i++)
+		delete [] rbconv_I[i];
+	delete [] rbconv_I;
+	for (int i=0; i<3; i++)
+		delete [] rbconv_Q[i];
+	delete [] rbconv_Q;
+	for (int i=0; i<3; i++)
+		delete [] rbout_I[i];
+	delete [] rbout_I;
+	for (int i=0; i<3; i++)
+		delete [] rbout_Q[i];
+	delete [] rbout_Q;
+	delete [] row_I;
+	delete [] row_Q;
+	delete [] pre1_I;
+	delete [] pre2_I;
+	delete [] post1_I;
+	delete [] post2_I;
+	delete [] pre1_Q;
+	delete [] pre2_Q;
+	delete [] post1_Q;
+	delete [] post2_Q;
 }
 
-void DemosaicFilter::convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W) {
+void DemosaicFilter::convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
   for (int j=0; j<W; j++) {
-    Y[j] = 299 * r[j] + 587 * g[j] + 114 * b[j];
-    I[j] = 596 * r[j] - 275 * g[j] - 321 * b[j];
-    Q[j] = 212 * r[j] - 523 * g[j] + 311 * b[j];
+    Y[j] = 0.299 * r[j] + 0.587 * g[j] + 0.114 * b[j];
+    I[j] = 0.596 * r[j] - 0.275 * g[j] - 0.321 * b[j];
+    Q[j] = 0.212 * r[j] - 0.523 * g[j] + 0.311 * b[j];
   }
 }
 
 
-void DemosaicFilter::convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, int* Y, int* I, int* Q, int W) {
+void DemosaicFilter::convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
   for (int j=1; j<W-1; j++) {
-    int ir = Y[j]/1000 + 0.956*I[j]/1000 + 0.621*Q[j]/1000;
-    int ig = Y[j]/1000 - 0.272*I[j]/1000 - 0.647*Q[j]/1000;
-    int ib = Y[j]/1000 - 1.105*I[j]/1000 + 1.702*Q[j]/1000;
-    r[j] = CLIP(ir);
-    g[j] = CLIP(ig);
-    b[j] = CLIP(ib);
+    r[j] = Y[j] + 0.956*I[j] + 0.621*Q[j];
+    g[j] = Y[j] - 0.272*I[j] - 0.647*Q[j];
+    b[j] = Y[j] - 1.105*I[j] + 1.702*Q[j];
   }
 }
 
@@ -597,13 +600,15 @@ void DemosaicFilter::correction_YIQ_LQ  (MultiImage* im, int times) {
     }
 }
 
-void DemosaicFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void DemosaicFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    if (procParams->demosaicing.method == "hphd")
+	String method = procParams->getString  ("DemosaicMethod");
+
+	if (procParams->demosaicing.method == "hphd")
         hphd_demosaic (sourceImage, targetImage, buffer);
 
     interpolate_rb_bilinear (sourceImage, targetImage);
-    correction_YIQ_LQ (targetImage, procParams->demosaicing.colorcorrectionsteps);
+    correction_YIQ_LQ (targetImage, procParams->getInteger("DemosaicColorCorrectionSteps"));
 }
 
 }

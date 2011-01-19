@@ -21,6 +21,13 @@ CoarseTransformFilterDescriptor::CoarseTransformFilterDescriptor ()
     addTriggerEvent (EvCTVFlip);
 }
 
+void CoarseTransformFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setInteger("CoarseTransformRotate", 0);
+	defProcParams.setBoolean("CoarseTransformHFlip", false);
+	defProcParams.setBoolean("CoarseTransformVFlip", false);
+}
+
 void CoarseTransformFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new CoarseTransformFilter ());
@@ -173,17 +180,19 @@ void CoarseTransformFilter::rotate270 (float** si, float** ti, int sW, int sH, B
 
 void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    if (procParams->coarse.rotate==90) {
+	int rotateDeg = procParams->getInteger("CoarseTransformRotate");
+
+    if (rotateDeg==90) {
         rotate90 (sourceImage->r, targetImage->r, sourceImage->width, sourceImage->height, buffer);
         rotate90 (sourceImage->g, targetImage->g, sourceImage->width, sourceImage->height, buffer);
         rotate90 (sourceImage->b, targetImage->b, sourceImage->width, sourceImage->height, buffer);
     }
-    else if (procParams->coarse.rotate==180) {
+    else if (rotateDeg==180) {
         rotate180 (sourceImage->r, targetImage->r, sourceImage->width, sourceImage->height, buffer);
         rotate180 (sourceImage->g, targetImage->g, sourceImage->width, sourceImage->height, buffer);
         rotate180 (sourceImage->b, targetImage->b, sourceImage->width, sourceImage->height, buffer);
     }
-    else if (procParams->coarse.rotate==270) {
+    else if (rotateDeg==270) {
         rotate270 (sourceImage->r, targetImage->r, sourceImage->width, sourceImage->height, buffer);
         rotate270 (sourceImage->g, targetImage->g, sourceImage->width, sourceImage->height, buffer);
         rotate270 (sourceImage->b, targetImage->b, sourceImage->width, sourceImage->height, buffer);
@@ -191,9 +200,9 @@ void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiIma
     else if (targetImage!=sourceImage)
         targetImage->copyFrom (sourceImage);
 
-    if (procParams->coarse.hflip)
+    if (procParams->getBoolean("CoarseTransformHFlip"))
         hflip (targetImage);
-    if (procParams->coarse.vflip)
+    if (procParams->getBoolean("CoarseTransformVFlip"))
         vflip (targetImage);
 }
 

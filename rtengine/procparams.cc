@@ -26,6 +26,100 @@
 
 namespace rtengine {
 
+ProcParams defaultProcParams;
+
+void ProcParams::setDouble (const String& key, double value) {
+
+	doubleParams[key] = value;
+}
+
+double ProcParams::getDouble (const String& key) {
+
+	if (doubleParams.count (key))
+		return doubleParams[key];
+	else
+		return defaultProcParams.doubleParams[key];
+}
+
+void ProcParams::setInteger (const String& key, int value) {
+
+	intParams[key] = value;
+}
+
+int ProcParams::getInteger (const String& key) {
+
+	if (intParams.count (key))
+		return intParams[key];
+	else
+		return defaultProcParams.intParams[key];
+}
+
+void ProcParams::setBoolean (const String& key, bool value) {
+
+	boolParams[key] = value;
+}
+
+bool ProcParams::getBoolean (const String& key) {
+
+	if (boolParams.count (key))
+		return boolParams[key];
+	else
+		return defaultProcParams.boolParams[key];
+}
+
+void ProcParams::setString  (const String& key, const String& value) {
+
+	stringParams[key] = value;
+}
+
+String ProcParams::getString  (const String& key) {
+
+	if (stringParams.count (key))
+		return stringParams[key];
+	else
+		return defaultProcParams.stringParams[key];
+}
+
+void ProcParams::setDoubleList (const String& key, const DoubleList& value) {
+
+	doubleListParams[key] = value;
+}
+
+DoubleList& ProcParams::getDoubleList (const String& key) {
+
+	if (doubleListParams.count (key))
+		return doubleListParams[key];
+	else
+		return defaultProcParams.doubleListParams[key];
+}
+
+void ProcParams::setIntegerList (const String& key, const IntList& value) {
+
+	intListParams[key] = value;
+}
+
+IntList& ProcParams::getIntegerList (const String& key) {
+
+	if (intListParams.count (key))
+		return intListParams[key];
+	else
+		return defaultProcParams.intListParams[key];
+}
+
+void ProcParams::setStringList (const String& key, const StringList& value) {
+
+	stringListParams[key] = value;
+}
+
+StringList& ProcParams::getStringList (const String& key) {
+
+	if (stringListParams.count (key))
+		return stringListParams[key];
+	else
+		return defaultProcParams.stringListParams[key];
+}
+
+
 ProcParams::ProcParams () { 
 
     setDefaults (); 
@@ -43,7 +137,7 @@ void ProcParams::destroy (ProcParams* pp) {
 
 void ProcParams::setDefaults () {
 
-	filterOrder.custom = false;
+/*	filterOrder.custom = false;
 	filterOrder.filterlist.clear ();
 
 	demosaicing.method					= "hphd";
@@ -166,12 +260,12 @@ void ProcParams::setDefaults () {
     exif.clear ();
     iptc.clear ();
     
-    version = 249;
+    version = 249;*/
 }
 
 int ProcParams::save (Glib::ustring fname) const {
 
-    SafeKeyFile keyFile;
+/*    SafeKeyFile keyFile;
 
     keyFile.set_integer ("Version", "Version", 231);
 
@@ -336,12 +430,12 @@ int ProcParams::save (Glib::ustring fname) const {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);
         return 0;
-    }
+    }*/
 }
 
 int ProcParams::load (Glib::ustring fname) {
 
-    SafeKeyFile keyFile;
+/*    SafeKeyFile keyFile;
     try {
         setDefaults ();
 
@@ -584,7 +678,7 @@ if (keyFile.has_group ("IPTC")) {
     catch (...) {
         printf ("-->unknown exception!\n");
         return 1;
-    }
+    }*/
 }
 
 bool operator==(const ExifPair& a, const ExifPair& b) {
@@ -598,6 +692,8 @@ bool operator==(const IPTCPair& a, const IPTCPair& b) {
 }
 bool ProcParams::operator== (const ProcParams& other) {
 
+	return false;
+/*
     return 
            toneCurve.curve      == other.toneCurve.curve
         && toneCurve.brightness == other.toneCurve.brightness
@@ -686,7 +782,7 @@ bool ProcParams::operator== (const ProcParams& other) {
         && icm.working      == other.icm.working
         && icm.output       == other.icm.output
         && exif==other.exif
-        && iptc==other.iptc;
+        && iptc==other.iptc;*/
 }
 
 bool ProcParams::operator!= (const ProcParams& other) {

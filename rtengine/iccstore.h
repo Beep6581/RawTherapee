@@ -20,13 +20,14 @@
 #define __ICCSTORE__
 
 #include <lcms2.h>
-#include <glibmm.h>
+#include <rtengine.h>
 #include <map>
 #include <string>
+#include "matrix33.h"
 
 namespace rtengine {
 
-typedef const float (*TMatrix)[3];
+//typedef const float (*TMatrix)[3];
 
 class ProfileContent {
 
@@ -35,7 +36,7 @@ class ProfileContent {
         int   length;
 
         ProfileContent (): data(NULL), length(0) {}
-        ProfileContent (Glib::ustring fileName);
+        ProfileContent (const String& fileName);
         ProfileContent (const ProfileContent& other);       
         ~ProfileContent ();
         ProfileContent& operator= (const ProfileContent other);
@@ -46,8 +47,8 @@ class ICCStore {
 
         std::map<std::string, cmsHPROFILE> wProfiles;
         std::map<std::string, cmsHPROFILE> wProfilesGamma;
-        std::map<std::string, TMatrix> wMatrices;
-        std::map<std::string, TMatrix> iwMatrices;
+        std::map<std::string, Matrix33> wMatrices;
+        std::map<std::string, Matrix33> iwMatrices;
         
         std::map<std::string, cmsHPROFILE>    fileProfiles;
         std::map<std::string, ProfileContent> fileProfileContents;
@@ -60,17 +61,17 @@ class ICCStore {
         ICCStore (); 
         
         std::vector<std::string> getWorkingProfiles ();			/// returns the vector of names of the working profiles available
-        cmsHPROFILE workingSpace (Glib::ustring name);			/// returns the profile corresponding to the given working color space
-        cmsHPROFILE workingSpaceGamma (Glib::ustring name); 	/// returns the profile corresponding to the given working color space, with gamma correction
-        TMatrix workingSpaceMatrix (Glib::ustring name);		/// returns the transformation matrix belonging to the given working profile
-        TMatrix workingSpaceInverseMatrix (Glib::ustring name); /// returns the inverse transformation matrix belonging to the given working profile
+        cmsHPROFILE workingSpace (const String& name);			/// returns the profile corresponding to the given working color space
+        cmsHPROFILE workingSpaceGamma (const String& name); 	/// returns the profile corresponding to the given working color space, with gamma correction
+        Matrix33 workingSpaceMatrix (const String& name);		/// returns the transformation matrix belonging to the given working profile
+        Matrix33 workingSpaceInverseMatrix (const String& name); /// returns the inverse transformation matrix belonging to the given working profile
 
-        cmsHPROFILE createFromMatrix (const float matrix[3][3], bool gamma=false, Glib::ustring name="");	/// create profile from matrix
+        cmsHPROFILE createFromMatrix (const Matrix33& matrix, bool gamma=false, const String& name="");	/// create profile from matrix
 
-        std::vector<std::string> parseDir     (Glib::ustring pdir);		/// parse the given directory and load all icc files found
+        std::vector<std::string> parseDir     (const String& pdir);		/// parse the given directory and load all icc files found
         std::vector<std::string> getOutputProfiles ();					/// returns the list of names of all icc profiles loaded
-        cmsHPROFILE              getProfile   (Glib::ustring name);		/// returns profile corresponding to the given name
-        ProfileContent           getContent   (Glib::ustring name);		/// returns the content corresponding to profile "name" (can be used to attach to image files)
+        cmsHPROFILE              getProfile   (const String& name);		/// returns profile corresponding to the given name
+        ProfileContent           getContent   (const String& name);		/// returns the content corresponding to profile "name" (can be used to attach to image files)
 
         cmsHPROFILE getXYZProfile ()  { return xyz;  }	/// return identity transform
         cmsHPROFILE getsRGBProfile () { return srgb; }  /// return standard srgb transform

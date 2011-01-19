@@ -20,7 +20,7 @@
 #define _IIMAGE_
 
 #include <lcms2.h>
-#include <glibmm.h>
+#include "rtcommon.h"
 
 namespace rtengine {
 
@@ -42,23 +42,23 @@ namespace rtengine {
         /** Saves the image to file. It autodetects the format (jpg, tif, png are supported).
           * @param fname is the name of the file 
             @return the error code, 0 if none */
-            virtual int saveToFile (Glib::ustring fname)=0;
+            virtual int saveToFile (const String& fname)=0;
         /** Saves the image to file in a png format.
           * @param fname is the name of the file 
           * @param compression is the amount of compression (0-6), -1 corresponds to the default
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
             @return the error code, 0 if none */
-            virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1)=0;
+            virtual int saveAsPNG  (const String& fname, int compression = -1, int bps = -1)=0;
         /** Saves the image to file in a jpg format.
           * @param fname is the name of the file 
           * @param quality is the quality of the jpeg (0...100), set it to -1 to use default
             @return the error code, 0 if none */
-            virtual int saveAsJPEG (Glib::ustring fname, int quality = 100)=0;
+            virtual int saveAsJPEG (const String& fname, int quality = 100)=0;
         /** Saves the image to file in a tif format.
           * @param fname is the name of the file 
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
             @return the error code, 0 if none */
-            virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false)=0;
+            virtual int saveAsTIFF (const String& fname, int bps = -1, bool uncompressed = false)=0;
         /** Sets the progress listener if you want to follow the progress of the image saving operations (optional).
           * @param pl is the pointer to the class implementing the ProgressListener interface */
             virtual void setSaveProgressListener (ProgressListener* pl)=0;

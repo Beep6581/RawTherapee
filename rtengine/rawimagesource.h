@@ -21,7 +21,7 @@ class RawImageSource : public ImageSource {
 
     private:
 	 	int border;
-        Glib::ustring fileName;
+        String fileName;
         RawImage* img;
         ImageData* idata;
         ColorTemp autoWB;
@@ -34,12 +34,12 @@ class RawImageSource : public ImageSource {
         virtual ~RawImageSource ();
 
 		// inherited from InitialImage
-		Glib::ustring 		 getFileName () { return fileName; }
+		String 		 		 getFileName () { return fileName; }
 		cmsHPROFILE 		 getEmbeddedProfile ();
 		const ImageMetaData* getMetaData () { return idata; }
 
       // inherited from ImageSource
-        int 		load (const Glib::ustring& fileName, ProgressListener* listener = NULL);
+        int 		load (const String& fileName, ProgressListener* listener = NULL);
 
         ColorTemp   getCamWB    ();
         ColorTemp   getAutoWB   ();

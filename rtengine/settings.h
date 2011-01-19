@@ -19,7 +19,7 @@
 #ifndef _RTSETTINGS_H_
 #define _RTSETTINGS_H_
 
-#include <glibmm.h>
+#include "rtcommon.h"
 #include <vector>
 
 namespace rtengine {
@@ -31,11 +31,11 @@ namespace rtengine {
 
     		static Settings* settings;
 
-    		Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
+    		String   		iccDirectory;           ///< The directory containing the possible output icc profiles
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
-            Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
+            String   		monitorProfile;         ///< ICC profile of the monitor (full path recommended)
             bool            verbose;
-            std::vector<Glib::ustring> filterList;
+            StringList		filterList;
             int				previewSkip;
 
             Settings ();

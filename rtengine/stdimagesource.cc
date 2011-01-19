@@ -175,9 +175,9 @@ void StdImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
 		x = 0;
 		for (int j=view.x; j<view.x+view.w; j+=view.skip) {
-			targetImage->r[y][x] = img->r[i][j];
-			targetImage->g[y][x] = img->g[i][j];
-			targetImage->b[y][x] = img->b[i][j];
+			targetImage->r[y][x] = img->r[i][j] / 65535.0;
+			targetImage->g[y][x] = img->g[i][j] / 65535.0;
+			targetImage->b[y][x] = img->b[i][j] / 65535.0;
 			x++;
 		}
 		y++;

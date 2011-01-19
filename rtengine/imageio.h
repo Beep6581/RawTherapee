@@ -27,7 +27,6 @@
 #define IMIO_VARIANTNOTSUPPORTED   5
 
 #include <rtengine.h>
-#include <glibmm.h>
 #include <procparams.h>
 #include <libiptcdata/iptc-data.h>
 #include <rtexif.h>
@@ -64,16 +63,16 @@ class ImageIO {
         virtual void    getScanline     (int row, unsigned char* buffer, int bps) {}
         virtual void    setScanline     (int row, unsigned char* buffer, int bps) {}
 
-        int load (Glib::ustring fname);
-        int save (Glib::ustring fname);
+        int load (const String& fname);
+        int save (const String& fname);
 
-        int loadPNG  (Glib::ustring fname);
-        int loadJPEG (Glib::ustring fname);
-        int loadTIFF (Glib::ustring fname);
+        int loadPNG  (const String& fname);
+        int loadJPEG (const String& fname);
+        int loadTIFF (const String& fname);
 
-        int savePNG  (Glib::ustring fname, int compression = -1, int bps = -1);
-        int saveJPEG (Glib::ustring fname, int quality = 100);
-        int saveTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false);
+        int savePNG  (const String& fname, int compression = -1, int bps = -1);
+        int saveJPEG (const String& fname, int quality = 100);
+        int saveTIFF (const String& fname, int bps = -1, bool uncompressed = false);
         
         cmsHPROFILE getEmbeddedProfile () { return embProfile; }
         void        getEmbeddedProfileData (int& length, unsigned char*& pdata) { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }

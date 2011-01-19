@@ -25,6 +25,12 @@ ColorDenoiseFilterDescriptor::ColorDenoiseFilterDescriptor ()
     applyOnThumbnail = false;
 }
 
+void ColorDenoiseFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setBoolean ("ColorDenoiseEnabled", false);
+	defProcParams.setDouble  ("ColorDenoiseAmount",  50);
+}
+
 void ColorDenoiseFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new ColorDenoiseFilter ());
@@ -40,7 +46,7 @@ Dim ColorDenoiseFilter::getReqiredBufferSize () {
 
     if (procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
         if (sdim.height > sdim.width)
-            return Dim (2, sdim.height*omp_get_max_threads()); // since we need double buffer and rt gives int buffer
+            return Dim (2, sdim.height*omp_get_max_threads()); // since we need double buffer and rt gives float buffer
         else
             return Dim (sdim.width*omp_get_max_threads(), 2);
     }
@@ -48,22 +54,23 @@ Dim ColorDenoiseFilter::getReqiredBufferSize () {
         return sdim;
 }
 
-void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
     Dim sdim = getScaledTargetImageView().getSize();
-    if (getTargetImageView().skip==1 && procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
+    if (getTargetImageView().skip==1 && procParams->getBoolean ("ColorDenoiseEnabled") && sdim.width >= 8 && sdim.height >= 8) {
 
         double scale = getScale ();
+    	double radius = procParams->getDouble  ("ColorDenoiseAmount") / 10.0 / scale;
 
-        Buffer<short> ta = targetImage->getBufferView(targetImage->ciea);
-        Buffer<short> tb = targetImage->getBufferView(targetImage->cieb);
-        Buffer<short> sa = sourceImage->getBufferView(targetImage->ciea);
-        Buffer<short> sb = sourceImage->getBufferView(targetImage->cieb);
+        Buffer<float> ta = targetImage->getBufferView(targetImage->ciea);
+        Buffer<float> tb = targetImage->getBufferView(targetImage->cieb);
+        Buffer<float> sa = sourceImage->getBufferView(targetImage->ciea);
+        Buffer<float> sb = sourceImage->getBufferView(targetImage->cieb);
 
-        gaussHorizontal<short> (&sa, &ta, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussHorizontal<short> (&sb, &tb, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussVertical<short>   (&ta, &ta, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
-        gaussVertical<short>   (&tb, &tb, sdim, (double*)buffer->data, procParams->colorDenoise.amount / 10.0 / scale, multiThread);
+        gaussHorizontal<float> (&sa, &ta, sdim, (double*)buffer->data, radius, multiThread);
+        gaussHorizontal<float> (&sb, &tb, sdim, (double*)buffer->data, radius, multiThread);
+        gaussVertical<float>   (&ta, &ta, sdim, (double*)buffer->data, radius, multiThread);
+        gaussVertical<float>   (&tb, &tb, sdim, (double*)buffer->data, radius, multiThread);
 
         if (sourceImage != targetImage)
         	for (int i=0; i<targetImage->height; i++)

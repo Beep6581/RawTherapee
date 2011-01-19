@@ -296,7 +296,7 @@ void RawImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
 	    x = 0;
 		for (int j=view.x; j<view.x+view.w; j+=view.skip)
-			targetImage->raw[y][x++] = img->defgain * img->data[i+border][j+border];
+			targetImage->raw[y][x++] = img->defgain * img->data[i+border][j+border] / 65535.0;
 		y++;
 	}
 	targetImage->rawFilter = img->filter;

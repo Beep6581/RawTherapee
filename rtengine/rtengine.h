@@ -32,6 +32,7 @@
 #include "colortemp.h"
 #include "imageview.h"
 #include "dim.h"
+#include "rtcommon.h"
 
 /**
  * @file 
@@ -90,7 +91,7 @@ namespace rtengine {
             * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
             * of jpgs and tiffs pass a NULL pointer. 
             * @return The metadata */
-            static ImageMetaData* fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml);
+            static ImageMetaData* fromFile (const String& fname, RawMetaDataLocation* rml);
     };
 
   /** This listener interface is used to indicate the progress of time consuming operations */
@@ -102,13 +103,13 @@ namespace rtengine {
           virtual void setProgress (double p) {}
         /** This member function is called when a textual information corresponding to the progress has been changed.
           * @param str is the textual information corresponding to the progress */
-          virtual void setProgressStr (Glib::ustring str) {}
+          virtual void setProgressStr (String str) {}
         /** This member function is called when the state of the processing has been changed.
           * @param busy =true if the processing has been started, =false if it has been finished */
           virtual void setBusyFlag (bool busy) {}
         /** This member function is called when an error occurs during the operation.
           * @param descr is the error message */
-          virtual void error (Glib::ustring descr) {}
+          virtual void error (String descr) {}
           virtual void startTimeConsumingOperation () {}
           virtual void progressReady () {}
 
@@ -124,7 +125,7 @@ namespace rtengine {
         public:
           /** Returns the file name of the image.
             * @return The file name of the image */
-            virtual Glib::ustring getFileName () =0;
+            virtual String getFileName () =0;
           /** Returns the embedded icc profile of the image.
             * @return The handle of the embedded profile */
             virtual cmsHPROFILE getEmbeddedProfile () =0;
@@ -145,7 +146,7 @@ namespace rtengine {
             * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
             * @param pl is a pointer pointing to an object implementing a progress listener. It can be NULL, in this case progress is not reported.
             * @return an object representing the loaded and pre-processed image */
-            static InitialImage* load (const Glib::ustring& fname, bool isRaw, int& errorCode, ProgressListener* pl = NULL);
+            static InitialImage* load (const String& fname, bool isRaw, int& errorCode, ProgressListener* pl = NULL);
     };
 
     #include "improclistener.h"
@@ -188,7 +189,7 @@ namespace rtengine {
             virtual ColorTemp   getSpotWB  (int x, int y, int rectSize) =0;
             virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) =0;
 
-            virtual void        saveInputICCReference (const Glib::ustring& fname) =0;
+            virtual void        saveInputICCReference (const String& fname) =0;
 
             virtual void        setProgressListener     (ProgressListener* l) =0;
 
@@ -210,7 +211,7 @@ namespace rtengine {
   * @param thumbOffset is the offset of the embedded thumbnail in the raw file
   * @param thumbType is the type of the embedded thumbnail (=0: no thumbnail, =1: jpeg format, =2: simple continuous image data in rgbrgb... order)
   * @return =0 if not supported */
-    int getRawFileBasicInfo (const Glib::ustring& fname, RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
+    int getRawFileBasicInfo (const String& fname, RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
 
 /** Returns the available output profile names
   * @return a vector of the available output profile names */
@@ -231,7 +232,7 @@ namespace rtengine {
        * @param isRaw shall be true if it is a raw file
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const ProcParams& pparams);
+        static ProcessingJob* create (const String& fname, bool isRaw, const ProcParams& pparams);
    
     /** Creates a processing job from a previously loaded file, thus an InitialImage instance.
        * This function always succeeds. It only stores the data into the ProcessingJob class, it does not do any

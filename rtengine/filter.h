@@ -28,6 +28,8 @@ public:
 	FilterDescriptor (const std::string name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache = false);
 	void addTriggerEvent (ProcEvent ev);
 
+	virtual void			getDefaultParameters (ProcParams& defProcParams) const {}
+
 	std::string 			getName () const { return name; }
 	MultiImage::ColorSpace  getInputColorSpace () const { return inputColorSpace; }
 	MultiImage::ColorSpace  getOutputColorSpace () const { return outputColorSpace; }

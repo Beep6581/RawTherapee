@@ -23,7 +23,7 @@ class ImageSource : public InitialImage {
 	public:
 		ImageSource ();
 
-        virtual int load (const Glib::ustring& fileName, ProgressListener* listener = NULL) =0;
+        virtual int load (const String& fileName, ProgressListener* listener = NULL) =0;
 
         virtual ColorTemp   getCamWB    () =0;
         virtual ColorTemp   getAutoWB   () =0;

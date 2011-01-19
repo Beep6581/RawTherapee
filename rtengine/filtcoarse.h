@@ -22,6 +22,7 @@ class CoarseTransformFilterDescriptor : public FilterDescriptor {
 
 	public:
         CoarseTransformFilterDescriptor ();
+		void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 

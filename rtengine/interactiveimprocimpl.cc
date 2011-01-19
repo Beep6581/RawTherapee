@@ -176,7 +176,7 @@ void InteractiveImProcImpl::getAutoCrop (double ratio, int &x, int &y, int &w, i
 	// TODO
 }
 
-void InteractiveImProcImpl::saveInputICCReference (const Glib::ustring& fname) {
+void InteractiveImProcImpl::saveInputICCReference (const String& fname) {
 
 	// TODO
 }
