@@ -790,84 +790,91 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				return true;
 			}
         case GDK_m: // Maximize preview panel: hide top AND right AND history panels
-        	if (!ctrl) toggleSidePanels();
-        	return true;
+        	if (!ctrl && !alt) {
+        		toggleSidePanels();
+        		return true;
+        	}
         case GDK_M: // Maximize preview panel: hide top AND right AND history panels AND (fit image preview)
-        	if (!ctrl) toggleSidePanelsZoomFit();
-        	return true;
+        	if (!ctrl && !alt) {
+        		toggleSidePanelsZoomFit();
+        		return true;
+        	}
     }
 
-    if (!ctrl) {
-        // Normal
-        switch(event->keyval) {
-			case GDK_bracketright:
-				tpc->coarse->rotateRight();
-				return true;
-			case GDK_bracketleft:
-				tpc->coarse->rotateLeft();
-				return true;
+    if (!alt){
+		if (!ctrl) {
+			// Normal
+			switch(event->keyval) {
+				case GDK_bracketright:
+					tpc->coarse->rotateRight();
+					return true;
+				case GDK_bracketleft:
+					tpc->coarse->rotateLeft();
+					return true;
 
-            case GDK_i:
-            case GDK_I:
-                info->set_active (!info->get_active());
-                return true;
-            case GDK_b:
-            case GDK_B:
-                beforeAfter->set_active (!beforeAfter->get_active());
-                return true;
-            case GDK_plus:
-            case GDK_equal:
-                iarea->imageArea->zoomPanel->zoomInClicked();
-                return true;
-            case GDK_minus:
-            case GDK_underscore:
-                iarea->imageArea->zoomPanel->zoomOutClicked();
-                return true;
-            case GDK_1:
-                iarea->imageArea->zoomPanel->zoom11Clicked();
-                return true;
+				case GDK_i:
+				case GDK_I:
+					info->set_active (!info->get_active());
+					return true;
+				case GDK_b:
+				case GDK_B:
+					beforeAfter->set_active (!beforeAfter->get_active());
+					return true;
+				case GDK_plus:
+				case GDK_equal:
+					iarea->imageArea->zoomPanel->zoomInClicked();
+					return true;
+				case GDK_minus:
+				case GDK_underscore:
+					iarea->imageArea->zoomPanel->zoomOutClicked();
+					return true;
+				case GDK_1:
+					iarea->imageArea->zoomPanel->zoom11Clicked();
+					return true;
 
-            case GDK_f:
-                iarea->imageArea->zoomPanel->zoomFitClicked();
-                return true;
-            case GDK_less:
-                iarea->imageArea->indClippedPanel->toggleClipped(true);
-                return true;
-            case GDK_greater:
-                iarea->imageArea->indClippedPanel->toggleClipped(false);
-                return true;
+				case GDK_f:
+					iarea->imageArea->zoomPanel->zoomFitClicked();
+					return true;
+				case GDK_less:
+					iarea->imageArea->indClippedPanel->toggleClipped(true);
+					return true;
+				case GDK_greater:
+					iarea->imageArea->indClippedPanel->toggleClipped(false);
+					return true;
 
-            case GDK_F5:
-                openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
-                return true;
-        }
-    }
-    else {
-        // With control
-        switch (event->keyval) {
-            case GDK_s:
-                saveAsPressed();
-                return true;
-            case GDK_q:
-                queueImgPressed();
-                return true;
-            case GDK_e:
-                sendToGimpPressed();
-                return true;
-            case GDK_z:
-                history->undo ();
-                return true;
-            case GDK_Z:
-                history->redo ();
-                return true;
-            case GDK_F5:
-                openThm->openDefaultViewer(3);
-                return true;
-
-        }
-    }
+				case GDK_F5:
+					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
+					return true;
+			}
+		}
+		else {
+			// With control
+			switch (event->keyval) {
+				case GDK_s:
+					saveAsPressed();
+					return true;
+				case GDK_q:
+					queueImgPressed();
+					return true;
+				case GDK_e:
+					sendToGimpPressed();
+					return true;
+				case GDK_z:
+					history->undo ();
+					return true;
+				case GDK_Z:
+					history->redo ();
+					return true;
+				case GDK_F5:
+					openThm->openDefaultViewer(3);
+					return true;
+			}
+		} //if (!ctrl)
+    } //if (!alt)
 
     if(tpc->getToolBar()->handleShortcutKey(event))
+        return true;
+    if(tpc->handleShortcutKey(event))
         return true;
 
     return false;

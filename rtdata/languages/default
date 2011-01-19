@@ -51,7 +51,7 @@ FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thum
 FILEBROWSER_AUTODARKFRAME;Auto dark frame
 FILEBROWSER_AUTOFLATFIELD;Auto flat field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-FILEBROWSER_BROWSEPATHHINT;Type path to browse (Ctrl-Enter in File Browser)
+FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser)
 FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_CURRENT_NAME;Current name:
@@ -355,17 +355,23 @@ MAIN_MSG_PLACES;Places
 MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
 MAIN_TAB_BASIC;Basic
 MAIN_TAB_COLOR;Color
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DEVELOP;Develop
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transform
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>

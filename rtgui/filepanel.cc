@@ -238,6 +238,9 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
     if(tpc->getToolBar()->handleShortcutKey(event))
         return true;
     
+    if(tpc->handleShortcutKey(event))
+        return true;
+
     if(fileCatalog->handleShortcutKey(event))
         return true;
 

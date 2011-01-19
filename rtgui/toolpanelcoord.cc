@@ -105,11 +105,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
     metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
 
-    Gtk::ScrolledWindow* exposurePanelSW    = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* detailsPanelSW     = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* colorPanelSW       = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* transformPanelSW   = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* rawPanelSW         = Gtk::manage (new Gtk::ScrolledWindow ());
+    exposurePanelSW    = Gtk::manage (new Gtk::ScrolledWindow ());
+    detailsPanelSW     = Gtk::manage (new Gtk::ScrolledWindow ());
+    colorPanelSW       = Gtk::manage (new Gtk::ScrolledWindow ());
+    transformPanelSW   = Gtk::manage (new Gtk::ScrolledWindow ());
+    rawPanelSW         = Gtk::manage (new Gtk::ScrolledWindow ());
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -122,12 +122,47 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     transformPanelSW->add (*transformPanel);
     rawPanelSW->add       (*rawPanel);
 
-    toolPanelNotebook->append_page (*exposurePanelSW,  M("MAIN_TAB_EXPOSURE"));
-    toolPanelNotebook->append_page (*detailsPanelSW,   M("MAIN_TAB_DETAIL"));
-    toolPanelNotebook->append_page (*colorPanelSW,     M("MAIN_TAB_COLOR"));
-    toolPanelNotebook->append_page (*transformPanelSW, M("MAIN_TAB_TRANSFORM"));
-    toolPanelNotebook->append_page (*rawPanelSW,       M("MAIN_TAB_RAW"));
-    toolPanelNotebook->append_page (*metadataPanel,    M("MAIN_TAB_METADATA"));
+    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+	hbe->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_EXPOSURE"))));
+	hbe->set_spacing (2);
+	hbe->set_tooltip_markup (M("MAIN_TAB_EXPOSURE_TOOLTIP"));
+	hbe->show_all ();
+    toolPanelNotebook->append_page (*exposurePanelSW,  *hbe);
+
+    Gtk::HBox* hbd = Gtk::manage (new Gtk::HBox ());
+	hbd->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_DETAIL"))));
+	hbd->set_spacing (2);
+	hbd->set_tooltip_markup (M("MAIN_TAB_DETAIL_TOOLTIP"));
+	hbd->show_all ();
+    toolPanelNotebook->append_page (*detailsPanelSW,   *hbd);
+
+    Gtk::HBox* hbc = Gtk::manage (new Gtk::HBox ());
+	hbc->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_COLOR"))));
+	hbc->set_spacing (2);
+	hbc->set_tooltip_markup (M("MAIN_TAB_COLOR_TOOLTIP"));
+	hbc->show_all ();
+    toolPanelNotebook->append_page (*colorPanelSW,     *hbc);
+
+    Gtk::HBox* hbt = Gtk::manage (new Gtk::HBox ());
+	hbt->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_TRANSFORM"))));
+	hbt->set_spacing (2);
+	hbt->set_tooltip_markup (M("MAIN_TAB_TRANSFORM_TOOLTIP"));
+	hbt->show_all ();
+    toolPanelNotebook->append_page (*transformPanelSW, *hbt);
+
+    Gtk::HBox* hbr = Gtk::manage (new Gtk::HBox ());
+	hbr->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_RAW"))));
+	hbr->set_spacing (2);
+	hbr->set_tooltip_markup (M("MAIN_TAB_RAW_TOOLTIP"));
+	hbr->show_all ();
+    toolPanelNotebook->append_page (*rawPanelSW,       *hbr);
+
+    Gtk::HBox* hbm = Gtk::manage (new Gtk::HBox ());
+	hbm->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_METADATA"))));
+	hbm->set_spacing (2);
+	hbm->set_tooltip_markup (M("MAIN_TAB_METADATA_TOOLTIP"));
+	hbm->show_all ();
+    toolPanelNotebook->append_page (*metadataPanel,    *hbm);
     toolPanelNotebook->set_current_page (0);
 
     toolPanelNotebook->set_scrollable ();
@@ -438,4 +473,39 @@ void ToolPanelCoordinator::updateCurveBackgroundHistogram (unsigned* histrgb, un
 
     curve->updateCurveBackgroundHistogram (histrgb);
     lcurve->updateCurveBackgroundHistogram (histl);
+}
+
+bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
+
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
+
+    if (alt){
+		switch(event->keyval) {
+			case GDK_e:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exposurePanelSW));
+				return true;
+			case GDK_d:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*detailsPanelSW));
+				return true;
+			case GDK_c:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*colorPanelSW));
+				return true;
+			case GDK_t:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*transformPanelSW));
+				return true;
+			case GDK_r:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
+				return true;
+			case GDK_m:
+				// !!! this should be improved by detecting if metadataPanel is present,
+				// as this page is removed in BatchToolPanelCoordinator::BatchToolPanelCoordinator
+				if (toolPanelNotebook->get_n_pages()==6){
+					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
+					return true;
+				}
+		}
+    }
+    return false;
 }
