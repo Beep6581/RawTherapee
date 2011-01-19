@@ -134,9 +134,8 @@ void ImProcFunctions::setScale (double iscale) {
 	scale = iscale;
 }
 
-void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
+void ImProcFunctions::firstAnalysis_ (Image16* original, const TMatrix &wprof, unsigned int* histogram, int* chroma_radius, int row_from, int row_to) {
 
-	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
     int toxyz[3][3];
     toxyz[0][0] = round(32768.0 * wprof[0][0] / 0.96422); 
     toxyz[1][0] = round(32768.0 * wprof[1][0] / 0.96422); 
@@ -192,7 +191,7 @@ void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile,
 void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params, unsigned int* histogram, double gamma) {
 
 	// set up monitor transform
-	Glib::ustring wprofile = params->icm.working;
+	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
 	if (monitorTransform)
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
@@ -232,12 +231,12 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 		int blk = H/nthreads;
 
 		if (tid<nthreads-1)
-			firstAnalysis_ (original, wprofile, hist[tid], &cr[tid], tid*blk, (tid+1)*blk);
+			firstAnalysis_ (original, wprof, hist[tid], &cr[tid], tid*blk, (tid+1)*blk);
 		else
-			firstAnalysis_ (original, wprofile, hist[tid], &cr[tid], tid*blk, H);
+			firstAnalysis_ (original, wprof, hist[tid], &cr[tid], tid*blk, H);
     }
 #else
-    firstAnalysis_ (original, wprofile, hist[0], &cr[0], 0, original->height);
+    firstAnalysis_ (original, wprof, hist[0], &cr[0], 0, original->height);
 #endif
     chroma_radius = cr[0];
     for (int i=0; i<T; i++)

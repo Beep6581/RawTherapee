@@ -163,25 +163,19 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     // Save buttons
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
 
-    Gtk::HBox * saveButtonBox = Gtk::manage(new Gtk::HBox());
-    saveButtonBox->pack_start(*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)), Gtk::PACK_SHRINK, 2);
-    saveButtonBox->pack_start(*Gtk::manage (new Gtk::Label (M("MAIN_BUTTON_SAVE"))), Gtk::PACK_SHRINK, 2);
+    Gtk::Image *saveButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON));
     saveimgas = Gtk::manage (new Gtk::Button ());
-    saveimgas->add(*saveButtonBox);
+    saveimgas->add(*saveButtonImage);
     saveimgas->set_tooltip_markup(M("MAIN_BUTTON_SAVE_TOOLTIP"));
 
-    Gtk::HBox * queueButtonBox = Gtk::manage(new Gtk::HBox());
-    queueButtonBox->pack_start(*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-execute"), Gtk::ICON_SIZE_BUTTON)), Gtk::PACK_SHRINK, 2);
-    queueButtonBox->pack_start(*Gtk::manage (new Gtk::Label (M("MAIN_BUTTON_PUTTOQUEUE"))), Gtk::PACK_SHRINK, 2);
+    Gtk::Image *queueButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-execute"), Gtk::ICON_SIZE_BUTTON));
     queueimg = Gtk::manage (new Gtk::Button ());
-    queueimg->add(*queueButtonBox);
+    queueimg->add(*queueButtonImage);
     queueimg->set_tooltip_markup(M("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
 
-    Gtk::HBox * sendToEditorButtonBox = Gtk::manage(new Gtk::HBox());
-    sendToEditorButtonBox->pack_start(*Gtk::manage (new Gtk::Image (argv0+"/images/gimp.png")), Gtk::PACK_SHRINK, 2);
-    sendToEditorButtonBox->pack_start(*Gtk::manage (new Gtk::Label (M("MAIN_BUTTON_SENDTOEDITOR"))), Gtk::PACK_SHRINK, 2);
+    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new Gtk::Image (argv0+"/images/gimp.png"));
     sendtogimp = Gtk::manage (new Gtk::Button ());
-    sendtogimp->add(*sendToEditorButtonBox);
+    sendtogimp->add(*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
 
     iops->pack_start (*saveimgas, Gtk::PACK_SHRINK);
@@ -454,14 +448,13 @@ void EditorPanel::close () {
         delete previewHandler;
         previewHandler= NULL;
 
-        rtengine::StagedImageProcessor::destroy (ipc);
-        ipc = NULL;
-
         if(iarea)
         {
             iarea->imageArea->setPreviewHandler (NULL);
             iarea->imageArea->setImProcCoordinator (NULL);
         }
+        rtengine::StagedImageProcessor::destroy (ipc);
+        ipc = NULL;
         navigator->previewWindow->setPreviewHandler (NULL);
 
         // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
@@ -667,7 +660,7 @@ void EditorPanel::error (Glib::ustring descr) {
 void EditorPanel::info_toggled () {
 
     Glib::ustring infoString;
-
+    if (!ipc || !openThm) return;
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if (idata && idata->hasExif())
 //        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n",
@@ -977,7 +970,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 }
 
 void EditorPanel::saveAsPressed () {
-
+	if (!ipc || !openThm) return;
 	bool fnameOK = false;
 	Glib::ustring fname;
 
@@ -1057,11 +1050,13 @@ void EditorPanel::saveAsPressed () {
 }
 
 void EditorPanel::queueImgPressed () {
+	if (!ipc || !openThm) return;
     saveProfile ();
     parent->addBatchQueueJob (createBatchQueueEntry ());
 }
 
 void EditorPanel::sendToGimpPressed () {
+	if (!ipc || !openThm) return;
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);

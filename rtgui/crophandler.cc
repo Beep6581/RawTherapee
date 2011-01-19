@@ -153,6 +153,9 @@ void CropHandler::getPosition (int& x, int& y) {
 }
 
 
+/*
+ * Create the piece of preview image that will be integrally copied in the preview area
+ */
 int createpixbufs (void* data) {
 
     gdk_threads_enter ();
@@ -191,9 +194,13 @@ int createpixbufs (void* data) {
             if (imh>ch->wh)
                 imh = ch->wh;
 
+            // Create a temporary pixbuf to copy the piece of the full size image
             Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (ch->cropimg, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, ch->cropimg_height, 3*ch->cropimg_width);
+            // Create the real preview image
             ch->cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+            // Rescale the piece of the full size image and put it in the preview image
             tmpPixbuf->scale (ch->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom/1000.0, czoom/1000.0, Gdk::INTERP_NEAREST);
+            // Delete the temporary pixbuf
             tmpPixbuf.clear ();
         }
         delete [] ch->cropimg;

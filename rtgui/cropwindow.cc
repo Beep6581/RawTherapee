@@ -53,7 +53,7 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_)
     : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false),
     backColor(options.bgcolor), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
-    imgX(0), imgY(0), imgW(1), imgH(1), xpos(30), ypos(30), iarea(parent),
+    xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
     cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
@@ -307,6 +307,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
         else if (iarea->getToolMode () == TMCropSelect && cropgl) {
             state = SCropSelecting;
             translateCoord (x, y, press_x, press_y);
+            cropHandler.cropParams.enabled = true;
             cropHandler.cropParams.x = press_x;
             cropHandler.cropParams.y = press_y;
             cropHandler.cropParams.w = cropHandler.cropParams.h = 1;
@@ -588,16 +589,16 @@ void CropWindow::updateCursor (int x, int y) {
 
 void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 
-    MyTime t1, t2, t3, t4;
+    //MyTime t1, t2, t3, t4;
     
-    t1.set ();
+    //t1.set ();
 
     if (decorated)
         drawDecoration (cr);
 
     int x = xpos, y = ypos, h = height, w = width;
  
-    // draw border
+    // draw the background
     if (backColor==0) {
         Gdk::Color cback = iarea->get_style()->get_bg(Gtk::STATE_NORMAL);
         cr->set_source_rgb (cback.get_red_p(), cback.get_green_p(), cback.get_blue_p());
@@ -606,8 +607,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
         cr->set_source_rgb (0,0,0);
     else if (backColor==2)
         cr->set_source_rgb (1,1,1);
-        
-    cr->rectangle (x+imgAreaX+0.5, y+imgAreaY+0.5, imgAreaW, imgAreaH);
+
+    cr->set_line_width (0.);
+    cr->rectangle (x+imgAreaX, y+imgAreaY, imgAreaW, imgAreaH);
     cr->stroke_preserve ();
     cr->fill ();
 
@@ -624,18 +626,20 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
         Glib::RefPtr<Gdk::Pixbuf> rough = iarea->getPreviewHandler()->getRoughImage (cropX, cropY, imgAreaW, imgAreaH, zoomSteps[cropZoom].zoom);
         if (rough) {
             iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, -1, -1, Gdk::RGB_DITHER_NORMAL, 0, 0);  
-//            if (cropHandler.cropParams.enabled) 
+//            if (cropHandler.cropParams.enabled)
 //                drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
         }
+        if (observedCropWin)
+            drawObservedFrame (cr);
     }
-    else {         
+    else {
         if (cropHandler.cropPixbuf) {
             imgW = cropHandler.cropPixbuf->get_width ();
             imgH = cropHandler.cropPixbuf->get_height ();
             imgX = imgAreaX + (imgAreaW-imgW)/2;
             imgY = imgAreaY + (imgAreaH-imgH)/2;
 // PERFORMANCE BOTTLENECK STARTS HERE
-    t3.set ();
+    //t3.set ();
 			bool showcs = iarea->indClippedPanel->showClippedShadows();
 			bool showch = iarea->indClippedPanel->showClippedHighlights();
 
@@ -662,35 +666,35 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 						else if (showcs && (curr[0]<=options.shadowThreshold || curr[1]<=options.shadowThreshold || curr[2]<=options.shadowThreshold))
 							curr[0] = curr[1] = curr[2] = 255;
 					}
-				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);  
+				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
 			}
 			else
-				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), cropHandler.cropPixbuf, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);  
-    t4.set ();
+				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), cropHandler.cropPixbuf, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
+    //t4.set ();
 // END OF BOTTLENECK
             if (cropHandler.cropParams.enabled) {
                 int cropX, cropY;
                 cropHandler.getPosition (cropX, cropY);
                 drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
             }
+            if (observedCropWin)
+                drawObservedFrame (cr);
         }
         else {
+        	// cropHandler.cropPixbuf is null
             int cropX, cropY;
             cropHandler.getPosition (cropX, cropY);
             Glib::RefPtr<Gdk::Pixbuf> rough = iarea->getPreviewHandler()->getRoughImage (cropX, cropY, imgAreaW, imgAreaH, zoomSteps[cropZoom].zoom);
             if (rough) {
                 iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), rough, 0, 0, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, -1, -1, Gdk::RGB_DITHER_NORMAL, 0, 0);  
                 if (cropHandler.cropParams.enabled) {
-                    int cropX, cropY;
-                    cropHandler.getPosition (cropX, cropY);
-                    drawCrop (cr, x+imgX, y+imgY, imgW, imgH, cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
+                    drawCrop (cr, x+imgAreaX+(imgAreaW-rough->get_width())/2, y+imgAreaY+(imgAreaH-rough->get_height())/2, rough->get_width(), rough->get_height(), cropX, cropY, zoomSteps[cropZoom].zoom, cropHandler.cropParams);
                 }
+				if (observedCropWin)
+					drawObservedFrame (cr, rough->get_width(), rough->get_height());
             }
         }
     }
-
-    if (observedCropWin)
-        drawObservedFrame (cr);
 
     // if cursor stays above resize area, draw the icon
     if (decorated && (state==SCropWinResize || onResizeArea)) {
@@ -713,7 +717,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     if (state==SNormal && iarea->getToolMode () == TMSpotWB)
         drawSpotWBRectangle (cr);
 
-    t2.set ();
+    //t2.set ();
     cropHandler.cimg.unlock ();
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
@@ -792,11 +796,15 @@ void CropWindow::redrawNeeded (LWButton* button) {
 
 void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery) {
 
-    cropZoom = zoom;
-    if (cropZoom<0)
-        cropZoom = 0;
-    else if (cropZoom>MAXZOOMSTEPS)
-        cropZoom = MAXZOOMSTEPS;
+    if (zoom<0)
+        zoom = 0;
+    else if (zoom>MAXZOOMSTEPS)
+        zoom = MAXZOOMSTEPS;
+    if (cropZoom == zoom)
+    	// We are already at the start/end of the zoom range, so we do nothing
+    	return;
+    else
+    	cropZoom = zoom;
 
     cropLabel = zoomSteps[cropZoom].label;
     cropHandler.setZoom (zoomSteps[cropZoom].czoom, centerx, centery);
@@ -968,24 +976,30 @@ void CropWindow::drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr) {
     cr->reset_clip ();
 }
 
-void CropWindow::getObservedFrameArea (int& x, int& y, int& w, int& h) {
-    
+void CropWindow::getObservedFrameArea (int& x, int& y, int& w, int& h, int rw, int rh) {
+
     int cropX, cropY, cropW, cropH;
     observedCropWin->getCropRectangle (cropX, cropY, cropW, cropH);
     int myCropX, myCropY, myCropW, myCropH;
     getCropRectangle (myCropX, myCropY, myCropW, myCropH);
     
     // translate it to screen coordinates
-    x = xpos + imgX + (cropX-myCropX)*zoomSteps[cropZoom].zoom;
-    y = ypos + imgY + (cropY-myCropY)*zoomSteps[cropZoom].zoom;
+    if (rw) {
+		x = xpos + imgAreaX+(imgAreaW-rw)/2 + (cropX-myCropX)*zoomSteps[cropZoom].zoom;
+		y = ypos + imgAreaY+(imgAreaH-rh)/2 + (cropY-myCropY)*zoomSteps[cropZoom].zoom;
+    }
+    else {
+		x = xpos + imgX + (cropX-myCropX)*zoomSteps[cropZoom].zoom;
+		y = ypos + imgY + (cropY-myCropY)*zoomSteps[cropZoom].zoom;
+    }
     w = cropW * zoomSteps[cropZoom].zoom;
     h = cropH * zoomSteps[cropZoom].zoom;
 }
 
-void CropWindow::drawObservedFrame (Cairo::RefPtr<Cairo::Context> cr) {
-    
+void CropWindow::drawObservedFrame (Cairo::RefPtr<Cairo::Context> cr, int rw, int rh) {
+
     int x, y, w, h;
-    getObservedFrameArea (x, y, w, h);
+    getObservedFrameArea (x, y, w, h, rw, rh);
 
     cr->set_source_rgb (1.0, 1.0, 1.0);
     cr->set_line_width (4);

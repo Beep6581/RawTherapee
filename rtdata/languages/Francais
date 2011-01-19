@@ -1,4 +1,3 @@
-
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
@@ -148,8 +147,6 @@ HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
-HISTORY_MSG_108;Redim. - boîte englobante
-HISTORY_MSG_109;Redim. s'applique à
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -461,6 +458,7 @@ PREFERENCES_DMETHOD;Méthode
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPOS;Facteur de correction\nd'exposition (linéaire)
+PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
