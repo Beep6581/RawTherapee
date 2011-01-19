@@ -402,14 +402,13 @@ void EditorPanel::close () {
         delete previewHandler;
         previewHandler= NULL;
 
-        rtengine::StagedImageProcessor::destroy (ipc);
-        ipc = NULL;
-
         if(iarea)
         {
             iarea->imageArea->setPreviewHandler (NULL);
             iarea->imageArea->setImProcCoordinator (NULL);
         }
+        rtengine::StagedImageProcessor::destroy (ipc);
+        ipc = NULL;
         navigator->previewWindow->setPreviewHandler (NULL);
   //      navigator->previewWindow->setImageArea (NULL);
 

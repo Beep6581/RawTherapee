@@ -76,8 +76,22 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 }
 
 void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_) {
+    if( !ipc_ ){
+        focusGrabber = NULL;
+        std::list<CropWindow*>::iterator i = cropWins.begin();
+        if( i!=cropWins.end() ){
+            (*i)->getPosition (lastClosedX, lastClosedY);
+            (*i)->getSize (lastClosedW, lastClosedH);
+        }
+        for( ;i!=cropWins.end();i++ ){
+        	delete *i;
+        }
+        cropWins.clear();
 
+        mainCropWindow->setObservedCropWin (NULL);
+    }
     ipc = ipc_;
+
 }
 
 void ImageArea::setPreviewHandler (PreviewHandler* ph) { 
