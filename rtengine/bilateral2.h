@@ -43,9 +43,9 @@
                         int rend = H-b; \
                         int cstart = b; \
                         int cend = W-b;
-                            
-#define BL_END(b)       buffer[i][j] = v; }} delete [] ec; \
-                        for (int i=0; i<H; i++)  \
+
+#define BL_FREE 		buffer[i][j] = v; }} delete [] ec;
+#define BL_END(b)       for (int i=0; i<H; i++)  \
                             for (int j=0; j<W; j++)  \
                                 if (i<rstart || j<cstart || i>=rend || j>=cend) \
                                     dst[i][j] = src[i][j]; \
@@ -147,8 +147,10 @@
 template<class T, class A> void bilateral05 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
     
     BL_BEGIN(318,1)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER3(1,7,7,55)
+    BL_FREE
+#pragma omp for
     BL_END(1)
 }
 
@@ -156,8 +158,10 @@ template<class T, class A> void bilateral05 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral06 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
     
     BL_BEGIN(768,1)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER3(1,4,4,16)
+    BL_FREE
+#pragma omp for
     BL_END(1)
 }
 
@@ -165,8 +169,10 @@ template<class T, class A> void bilateral06 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral07 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
     
     BL_BEGIN(366,2)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER5(0,0,1,0,8,21,1,21,59)
+    BL_FREE
+#pragma omp for
     BL_END(2)
 }
 
@@ -174,8 +180,10 @@ template<class T, class A> void bilateral07 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral08 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
     
     BL_BEGIN(753,2)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER5(0,0,1,0,5,10,1,10,23)
+    BL_FREE
+#pragma omp for
     BL_END(2)
 }
 
@@ -183,8 +191,10 @@ template<class T, class A> void bilateral08 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral09 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(595,2)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER5(0,1,2,1,6,12,2,12,22)
+    BL_FREE
+#pragma omp for
     BL_END(2)
 }
 
@@ -192,8 +202,10 @@ template<class T, class A> void bilateral09 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral10 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
     BL_BEGIN(910,2)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER5(0,1,2,1,4,7,2,7,12)
+    BL_FREE
+#pragma omp for
     BL_END(2)
 }
 
@@ -201,8 +213,10 @@ template<class T, class A> void bilateral10 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral11 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(209,3)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER7(0,0,1,1,0,2,5,8,1,5,18,27,1,8,27,41)
+    BL_FREE
+#pragma omp for
     BL_END(3)
 }
 
@@ -210,8 +224,10 @@ template<class T, class A> void bilateral11 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral12 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(322,3)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER7(0,0,1,1,0,1,4,6,1,4,11,16,1,6,16,23)
+    BL_FREE
+#pragma omp for
     BL_END(3)
 }
 
@@ -219,8 +235,10 @@ template<class T, class A> void bilateral12 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral13 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(336,3)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER7(0,0,1,1,0,2,4,6,1,4,11,14,1,6,14,19)
+    BL_FREE
+#pragma omp for
     BL_END(3)
 }
 
@@ -228,8 +246,10 @@ template<class T, class A> void bilateral13 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral14 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(195,3)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER7(0,1,2,3,1,4,8,10,2,8,17,21,3,10,21,28)
+    BL_FREE
+#pragma omp for
     BL_END(3)   
 }
 
@@ -237,8 +257,10 @@ template<class T, class A> void bilateral14 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral15 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(132,4)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER9(0,0,0,1,1,0,1,2,4,5,0,2,6,12,14,1,4,12,22,28,1,5,14,28,35)
+    BL_FREE
+#pragma omp for
     BL_END(4)   
 }
 
@@ -246,8 +268,10 @@ template<class T, class A> void bilateral15 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral16 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(180,4)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER9(0,0,0,1,1,0,1,2,3,4,0,2,5,9,10,1,3,9,15,19,1,4,10,19,23)
+    BL_FREE
+#pragma omp for
     BL_END(4)   
 }
 
@@ -255,8 +279,10 @@ template<class T, class A> void bilateral16 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral17 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(195,4)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER9(0,0,1,1,1,0,1,2,3,4,1,2,5,8,9,1,3,8,13,16,1,4,9,16,19)
+    BL_FREE
+#pragma omp for
     BL_END(4)   
 }
 
@@ -264,8 +290,10 @@ template<class T, class A> void bilateral17 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral18 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(151,4)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER9(0,0,1,2,2,0,1,3,5,5,1,3,6,10,12,2,5,10,16,19,2,5,12,19,22)
+    BL_FREE
+#pragma omp for
     BL_END(4)   
 }
 
@@ -273,8 +301,10 @@ template<class T, class A> void bilateral18 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral19 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
    
     BL_BEGIN(151,4)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER9(0,0,1,2,2,0,1,3,4,5,1,3,5,8,9,2,4,8,12,14,2,5,9,14,16)
+    BL_FREE
+#pragma omp for
     BL_END(4)   
 }
 
@@ -282,8 +312,10 @@ template<class T, class A> void bilateral19 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral20 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
     BL_BEGIN(116,5)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER11(0,0,0,1,1,1,0,0,1,2,3,3,0,1,2,4,7,7,1,2,4,8,12,14,1,3,7,12,18,20,1,3,7,14,20,23)
+    BL_FREE
+#pragma omp for
     BL_END(5)   
 }
 
@@ -291,8 +323,10 @@ template<class T, class A> void bilateral20 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral21 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
     BL_BEGIN(127,5)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER11(0,0,0,1,1,1,0,0,1,2,3,3,0,1,2,4,6,7,1,2,4,8,11,12,1,3,6,11,15,17,1,3,7,12,17,19)
+    BL_FREE
+#pragma omp for
     BL_END(5)
 }
 
@@ -300,8 +334,10 @@ template<class T, class A> void bilateral21 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral22 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
     BL_BEGIN(109,5)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER11(0,0,0,1,1,2,0,1,2,3,3,4,1,2,3,5,7,8,1,3,5,9,12,13,1,3,7,12,16,18,2,4,8,13,18,20)
+    BL_FREE
+#pragma omp for
     BL_END(5)
 }
 
@@ -309,8 +345,10 @@ template<class T, class A> void bilateral22 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral23 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
     BL_BEGIN(132,5)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER11(0,0,1,1,1,1,0,1,1,2,3,3,1,1,3,5,6,7,1,2,5,7,10,11,1,3,6,10,13,14,1,3,7,11,14,16)
+    BL_FREE
+#pragma omp for
     BL_END(5)
 }
 
@@ -318,8 +356,10 @@ template<class T, class A> void bilateral23 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral24 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
     BL_BEGIN(156,5)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER11(0,0,1,1,1,1,0,1,1,2,3,3,1,1,3,4,5,6,1,2,4,6,8,9,1,3,5,8,10,11,1,3,6,9,11,12)
+    BL_FREE
+#pragma omp for
     BL_END(5)
 }
 
@@ -327,8 +367,10 @@ template<class T, class A> void bilateral24 (T** src, T** dst, T** buffer, int W
 template<class T, class A> void bilateral25 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
 
 	BL_BEGIN(173,5)
-	#pragma omp parallel for if (multiThread)
+	#pragma omp for
     BL_OPER11(0,0,1,1,1,1,0,1,1,2,3,3,1,1,2,4,5,5,1,2,4,5,7,7,1,3,5,7,9,9,1,3,5,7,9,10)
+    BL_FREE
+#pragma omp for
     BL_END(5)
 }
 
