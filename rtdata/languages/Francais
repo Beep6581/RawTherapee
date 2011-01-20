@@ -48,7 +48,7 @@ EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
-FILEBROWSER_AUTODARKFRAME;Soustraction d'image noire automatique
+FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -61,7 +61,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
-FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images noires
+FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
@@ -85,7 +85,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
-FILEBROWSER_SELECTDARKFRAME;Choisir une image noire...
+FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
@@ -145,6 +145,7 @@ HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
+HISTORY_MSG_108;Seuil de compr. des hautes lumières
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -310,13 +311,9 @@ IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission i
 MAIN_BUTTON_EXIT;Sortie
 MAIN_BUTTON_FULLSCREEN;Plein écran
 MAIN_BUTTON_PREFERENCES;Préférences
-MAIN_BUTTON_PUTTOQUEUE;Envoyer dans la file
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Envoyer dans la file
-MAIN_BUTTON_SAVE;Enregistrer l'image
-MAIN_BUTTON_SAVEAS;Sous...
 MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
-MAIN_BUTTON_SENDTOEDITOR;Envoyer vers l'éditeur
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
@@ -434,7 +431,10 @@ PREFERENCES_CARED;Correct. manuelle de\nl'aberr. chrom. rouge
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
-PREFERENCES_DARKFRAME;Soustraction d'image noire
+PREFERENCES_DARKFRAME;Soustraction de Trame Noire
+PREFERENCES_DARKFRAMEFOUND;Trouvé
+PREFERENCES_DARKFRAMESHOTS;image(s)
+PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
@@ -442,7 +442,7 @@ PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
-PREFERENCES_DIRDARKFRAMES;Dossier d'images noires
+PREFERENCES_DIRDARKFRAMES;Dossier des images de Trame Noire
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
@@ -641,7 +641,7 @@ TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
 TP_EXPOSURE_CLIP;Rognage
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de récupération\ndes hautes lumières
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
 TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Courbe tonale
@@ -698,7 +698,7 @@ TP_LUMADENOISE_RADIUS;Rayon
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
-TP_PREPROCESS_DARKFRAME;Image noire
+TP_PREPROCESS_DARKFRAME;Trame noire
 TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
 TP_RAWPANEL_DEMOSAICING;Dématriçage
 TP_RAWPANEL_PREPROCESSING;Traitement pre-dématriçage
