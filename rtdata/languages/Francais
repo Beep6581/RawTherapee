@@ -1,5 +1,9 @@
+
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Crédits
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCH_PROCESSING;Traitement par lot
@@ -48,9 +52,9 @@ EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
-FILEBROWSER_AUTODARKFRAME;Soustraction d'image noire automatique
+FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
 FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
-FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (Ctrl-Entrée dans le Navigateur de Fichier)
+FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (<b>Ctrl-o</b> place le focus,<b>Ctrl-Entrée</b> pour naviguer dans le Navigateur de Fichier)
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
@@ -63,7 +67,7 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
-FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images noires
+FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
@@ -87,7 +91,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
-FILEBROWSER_SELECTDARKFRAME;Choisir une image noire...
+FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
@@ -147,6 +151,13 @@ HISTORY_MSG_104;Égaliseur TSV
 HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
+HISTORY_MSG_108;Redim. - boîte englobante
+HISTORY_MSG_109;Redim. s'applique à
+HISTORY_MSG_110;Champ Uniforme - Fichier
+HISTORY_MSG_111;Champ Uniforme - Auto sélection
+HISTORY_MSG_112;Champ Uniforme - Rayon
+HISTORY_MSG_113;Champ Uniforme - Type de floutage
+HISTORY_MSG_114;Seuil de compr. des hautes lumières
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
@@ -440,7 +451,19 @@ PREFERENCES_CARED;Correct. manuelle de\nl'aberr. chrom. rouge
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
-PREFERENCES_DARKFRAME;Soustraction d'image noire
+PREFERENCES_DARKFRAME;Soustraction de Trame Noire
+PREFERENCES_DARKFRAMEFOUND;Trouvé
+PREFERENCES_DARKFRAMESHOTS;image(s)
+PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
+PREFERENCES_FLATFIELD;Champ Uniforme
+PREFERENCES_FLATFIELDFOUND;Trouvé
+PREFERENCES_FLATFIELDSHOTS;image(s)
+PREFERENCES_FLATFIELDTEMPLATES;modèle(s)
+PREFERENCES_FLATFIELDFILE;Fichier de Champ Uniforme
+PREFERENCES_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
+PREFERENCES_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
+PREFERENCES_FLATFIELDAUTOSELECT;Sélection auto. du Champ Uniforme
+PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
@@ -448,7 +471,7 @@ PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
-PREFERENCES_DIRDARKFRAMES;Dossier d'images noires
+PREFERENCES_DIRDARKFRAMES;Dossier des images de Trame Noire
 PREFERENCES_DIRHOME;Racine de mes documents personnels
 PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
@@ -655,7 +678,7 @@ TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
 TP_EXPOSURE_CLIP;Rognage
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de récupération\ndes hautes lumières
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
 TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Courbe tonale
@@ -712,7 +735,7 @@ TP_LUMADENOISE_RADIUS;Rayon
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
-TP_PREPROCESS_DARKFRAME;Image noire
+TP_PREPROCESS_DARKFRAME;Trame noire
 TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
 TP_RAWPANEL_DEMOSAICING;Dématriçage
 TP_RAWPANEL_PREPROCESSING;Traitement pre-dématriçage
@@ -791,10 +814,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-

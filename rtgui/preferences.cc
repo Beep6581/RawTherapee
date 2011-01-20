@@ -1164,16 +1164,14 @@ void Preferences::updateDFinfos()
 {
     int t1,t2;
     rtengine::dfm.getStat(t1,t2);
-    std::ostringstream s;
-    s << M("PREFERENCES_DARKFRAMEFOUND")<<": "<< t1 << " "<<M("PREFERENCES_DARKFRAMESHOTS")<<", " << t2 << " "<<M("PREFERENCES_DARKFRAMETEMPLATES");
-    dfLabel->set_text(s.str());
+    Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_DARKFRAMEFOUND"), t1, M("PREFERENCES_DARKFRAMESHOTS"), t2, M("PREFERENCES_DARKFRAMETEMPLATES"));
+    dfLabel->set_text(s);
 }
 
 void Preferences::updateFFinfos()
 {
     int t1,t2;
     rtengine::ffm.getStat(t1,t2);
-    std::ostringstream s;
-    s << M("PREFERENCES_FLATFIELDFOUND")<<": "<< t1 << " "<<M("PREFERENCES_FLATFIELDSHOTS")<<", " << t2 << " "<<M("PREFERENCES_FLATFIELDTEMPLATES");
-    ffLabel->set_text(s.str());
+    Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_FLATFIELDFOUND"), t1, M("PREFERENCES_FLATFIELDSHOTS"), t2, M("PREFERENCES_FLATFIELDTEMPLATES"));
+    ffLabel->set_text(s);
 }

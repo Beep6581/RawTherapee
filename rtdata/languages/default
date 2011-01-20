@@ -1,5 +1,8 @@
 #00 default translation file 
 #01 Developers should add translations to this file and then run 'generateDifferences.sh' script to update other locales.
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Credits
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 BATCHQUEUE_AUTOSTART;Auto start
 BATCH_PROCESSING;Batch processing
@@ -155,7 +158,8 @@ HISTORY_MSG_109;Resizing applies to
 HISTORY_MSG_110;Flat Field File
 HISTORY_MSG_111;Flat Field Auto Select
 HISTORY_MSG_112;Flat Field Blur Radius
-HISTORY_MSG_113;Flat Field Blur Type 
+HISTORY_MSG_113;Flat Field Blur Type
+HISTORY_MSG_114;Highlight Compr. Threshold
 HISTORY_MSG_10;Shadow Compression
 HISTORY_MSG_11;Tone Curve
 HISTORY_MSG_12;Auto Exposure

@@ -230,8 +230,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvContrast, costr);
 	else if (a==saturation)
         listener->panelChanged (EvSaturation, costr);
-    else if (a==hlcompr || a==hlcomprthresh)
-        listener->panelChanged (EvHLCompr, Glib::ustring::compose ("%1=%2\n%3=%4",M("TP_EXPOSURE_COMPRHIGHLIGHTS"),(int)hlcompr->getValue(),M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"),(int)hlcomprthresh->getValue()));
+    else if (a==hlcompr)
+        listener->panelChanged (EvHLCompr, costr);
+    else if (a==hlcomprthresh)
+        listener->panelChanged (EvHLComprThreshold, costr);
     else if (a==shcompr)
         listener->panelChanged (EvSHCompr, costr);
 }
