@@ -28,17 +28,17 @@ namespace rtengine {
 
 ProcParams defaultProcParams;
 
-void ProcParams::setDouble (const String& key, double value) {
+void ProcParams::setFloat  (const String& key, float value) {
 
-	doubleParams[key] = value;
+	floatParams[key] = value;
 }
 
-double ProcParams::getDouble (const String& key) {
+float ProcParams::getFloat (const String& key) {
 
-	if (doubleParams.count (key))
-		return doubleParams[key];
+	if (floatParams.count (key))
+		return floatParams[key];
 	else
-		return defaultProcParams.doubleParams[key];
+		return defaultProcParams.floatParams[key];
 }
 
 void ProcParams::setInteger (const String& key, int value) {
@@ -80,17 +80,17 @@ String ProcParams::getString  (const String& key) {
 		return defaultProcParams.stringParams[key];
 }
 
-void ProcParams::setDoubleList (const String& key, const DoubleList& value) {
+void ProcParams::setFloatList (const String& key, const FloatList& value) {
 
-	doubleListParams[key] = value;
+	floatListParams[key] = value;
 }
 
-DoubleList& ProcParams::getDoubleList (const String& key) {
+FloatList& ProcParams::getFloatList (const String& key) {
 
-	if (doubleListParams.count (key))
-		return doubleListParams[key];
+	if (floatListParams.count (key))
+		return floatListParams[key];
 	else
-		return defaultProcParams.doubleListParams[key];
+		return defaultProcParams.floatListParams[key];
 }
 
 void ProcParams::setIntegerList (const String& key, const IntList& value) {

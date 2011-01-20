@@ -40,13 +40,13 @@ namespace rtengine {
 /**
   * Parameters of the demosaicing
   */
-class DemosaicingParams {
+/*class DemosaicingParams {
 
 	public:
 		Glib::ustring method;
 		int			  colorcorrectionsteps;
 };
-
+*/
 /**
   * Parameters of the tone curve 
   */
@@ -67,14 +67,14 @@ class ToneCurveParams {
 /**
   * Parameters of the luminance curve
   */
-class LCurveParams {
+/*class LCurveParams {
 
     public:
         std::vector<double>   curve;
         int      	brightness;
         int         contrast;
 };
-
+*/
 /**
   * Parameters of the sharpening
   */
@@ -101,7 +101,7 @@ class SharpeningParams {
 /**
   * Parameters of the color boost
   */
-class ColorBoostParams {
+/*class ColorBoostParams {
 
     public: 
         int     amount;
@@ -109,7 +109,7 @@ class ColorBoostParams {
         bool    enable_saturationlimiter;
         double  saturationlimit;
 };
-
+*/
 /**
   * Parameters of the white balance adjustments
   */
@@ -124,28 +124,28 @@ class WBParams {
 /**
   * Parameters of the color shift
   */
-class ColorShiftParams {
+/*class ColorShiftParams {
 
     public:
         double  a;
         double  b;
 };
-
+*/
 /**
   * Parameters of the luminance denoising
   */
-class LumaDenoiseParams {
+/*class LumaDenoiseParams {
 
     public:
         bool    enabled;
         double  radius;
         int     edgetolerance;
-};
+};*/
 
 /**
   * Parameters of the color denoising
   */
-class ColorDenoiseParams {
+/*class ColorDenoiseParams {
 
     public:
         bool    enabled;
@@ -154,7 +154,7 @@ class ColorDenoiseParams {
         bool    edgesensitive;
         int		amount;
 };
-
+*/
 /**
   * Parameters of the shadow/highlight enhancement
   */
@@ -191,14 +191,14 @@ class CropParams {
 /**
   * Parameters of the coarse transformations like 90 deg rotations and h/v flipping
   */
-class CoarseTransformParams {
+/*class CoarseTransformParams {
 
     public:
         int     rotate;
         bool    hflip;
         bool    vflip;
 };
-
+*/
 /**
   * Common transformation parameters
   */
@@ -330,18 +330,18 @@ class IPTCPair {
 
 class ProcParams {
 
-		std::map<String,double> doubleParams;
+		std::map<String,double> floatParams;
 		std::map<String,int> 	 intParams;
 		std::map<String,bool> 	 boolParams;
 		std::map<String,String> stringParams;
-		std::map<String,DoubleList> doubleListParams;
+		std::map<String,FloatList> floatListParams;
 		std::map<String,IntList> intListParams;
 		std::map<String,StringList> stringListParams;
 
     public:
 
-		void   setDouble  (const String& key, double value);
-		double getDouble  (const String& key);
+		void   setFloat   (const String& key, float value);
+		float  getFloat   (const String& key);
 
 		void   setInteger (const String& key, int value);
 		int    getInteger (const String& key);
@@ -352,8 +352,8 @@ class ProcParams {
 		void   setString  (const String& key, const String& value);
 		String getString  (const String& key);
 
-		void   		setDoubleList (const String& key, const DoubleList& value);
-		DoubleList& getDoubleList (const String& key);
+		void   		setFloatList (const String& key, const FloatList& value);
+		FloatList&  getFloatList (const String& key);
 
 		void   		setIntegerList (const String& key, const IntList& value);
 		IntList& 	getIntegerList (const String& key);
@@ -363,19 +363,19 @@ class ProcParams {
 
 		// --------------8<------------------ to be removed when all filters are rewritten ------
 
-		DemosaicingParams		demosaicing;	///< Demosaicing parameters
+//		DemosaicingParams		demosaicing;	///< Demosaicing parameters
 //		FilterOrderParams		filterOrder;	///< Order of image processing functions
 		ToneCurveParams         toneCurve;      ///< Tone curve parameters
-        LCurveParams            lumaCurve;      ///< CIELAB luminance curve parameters
+//        LCurveParams            lumaCurve;      ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;     ///< Sharpening parameters
-        ColorBoostParams        colorBoost;     ///< Color boost parameters
+//        ColorBoostParams        colorBoost;     ///< Color boost parameters
         WBParams                wb;             ///< White balance parameters
-        ColorShiftParams        colorShift;     ///< Color shift parameters
-        LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
-        ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
+//        ColorShiftParams        colorShift;     ///< Color shift parameters
+//        LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
+//        ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
         SHParams                sh;             ///< Shadow/highlight enhancement parameters
         CropParams              crop;           ///< Crop parameters
-        CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
+//        CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
         CommonTransformParams	commonTrans;	///< Common transformation parameters (autofill)
         RotateParams            rotate;         ///< Rotation parameters
         DistortionParams        distortion;     ///< Lens distortion correction parameters

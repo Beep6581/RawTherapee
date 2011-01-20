@@ -55,7 +55,9 @@ Dim CoarseTransformFilter::getFullImageSize () {
 
     int ow, oh;
     Dim prevd = getPreviousFilter()->getFullImageSize ();
-    if (procParams->coarse.rotate==90 || procParams->coarse.rotate==270)
+
+	int rotateDeg = procParams->getInteger("CoarseTransformRotate");
+	if (rotateDeg==90 || rotateDeg==270)
         return Dim (prevd.height, prevd.width);
     else
         return prevd;
@@ -71,20 +73,21 @@ void CoarseTransformFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
     Dim pfs = getPreviousFilter()->getFullImageSize ();
     int ow = pfs.width, oh = pfs.height;
 
+	int rotateDeg = procParams->getInteger("CoarseTransformRotate");
     int nx = x, ny = y;
-    if (procParams->coarse.vflip)
+    if (procParams->getBoolean("CoarseTransformVFlip"))
         ny = oh - 1 - ny;
-    if (procParams->coarse.hflip)
+    if (procParams->getBoolean("CoarseTransformHFlip"))
         nx = ow - 1 - nx;
-    if (procParams->coarse.rotate == 90) {
+    if (rotateDeg == 90) {
         xv = ny;
         yv = oh - nx;
     }
-    else if (procParams->coarse.rotate == 180) {
+    else if (rotateDeg == 180) {
         xv = ow - nx;
         yv = oh - ny;
     }
-    else if (procParams->coarse.rotate == 270) {
+    else if (rotateDeg == 270) {
         xv = ow - ny;
         yv = nx;
     }

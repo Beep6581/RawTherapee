@@ -24,6 +24,13 @@ LumaDenoiseFilterDescriptor::LumaDenoiseFilterDescriptor ()
     applyOnThumbnail = false;
 }
 
+void LumaDenoiseFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setFloat   ("LumaDenoiseRadius", 1.9);
+	defProcParams.setFloat   ("LumaDenoiseEdgeTolerance", 3.0);
+	defProcParams.setBoolean ("LumaDenoiseEnabled", false);
+}
+
 void LumaDenoiseFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new LumaDenoiseFilter ());
@@ -38,11 +45,16 @@ Dim LumaDenoiseFilter::getReqiredBufferSize () {
     return getScaledTargetImageView().getSize();
 }
 
-void LumaDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void LumaDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    if (getTargetImageView().skip==1 && procParams->lumaDenoise.enabled && sourceImage->width>=8 && sourceImage->height>=8) {
-        bilateral<unsigned short, unsigned int> (sourceImage->cieL, targetImage->cieL, (unsigned short**)(buffer->rows), sourceImage->width, sourceImage->height, procParams->lumaDenoise.radius / getScale(), procParams->lumaDenoise.edgetolerance, multiThread);
-        if (sourceImage != targetImage)
+	bool enabled = procParams->getBoolean ("LumaDenoiseEnabled");
+    if (getTargetImageView().skip==1 && enabled && sourceImage->width>=8 && sourceImage->height>=8) {
+    	float radius = procParams->getFloat ("LumaDenoiseRadius");
+    	float etol = procParams->getFloat   ("LumaDenoiseEdgeTolerance");
+
+    	bilateral (sourceImage->cieL, targetImage->cieL, buffer->rows, sourceImage->width, sourceImage->height, radius / getScale(), etol, multiThread);
+
+    	if (sourceImage != targetImage)
         	for (int i=0; i<targetImage->height; i++)
         		for (int j=0; j<targetImage->width; j++) {
         			targetImage->ciea[i][j] = sourceImage->ciea[i][j];

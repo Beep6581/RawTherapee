@@ -604,7 +604,7 @@ void DemosaicFilter::process (const std::set<ProcEvent>& events, MultiImage* sou
 
 	String method = procParams->getString  ("DemosaicMethod");
 
-	if (procParams->demosaicing.method == "hphd")
+	if (method == "hphd")
         hphd_demosaic (sourceImage, targetImage, buffer);
 
     interpolate_rb_bilinear (sourceImage, targetImage);

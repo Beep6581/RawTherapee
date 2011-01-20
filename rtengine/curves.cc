@@ -16,13 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <glib.h>
-#include <glib/gstdio.h>
-#include <curves.h>
+#include "curves.h"
 #include <math.h>
-#include <vector>
-#include <mytime.h>
 #include <string.h>
+#include "mytime.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
@@ -30,7 +27,7 @@
 
 namespace rtengine {
 
-Curve::Curve (const std::vector<double>& p) : x(NULL), y(NULL), ypp(NULL) {
+Curve::Curve (const FloatList& p) : x(NULL), y(NULL), ypp(NULL) {
 
     if (p.size()<3) {
         kind = 0;
@@ -39,8 +36,8 @@ Curve::Curve (const std::vector<double>& p) : x(NULL), y(NULL), ypp(NULL) {
         kind = p[0];
         if (kind==-1 || kind==1) {
             N = (p.size()-1)/2;
-            x = new double[N];
-            y = new double[N];
+            x = new float[N];
+            y = new float[N];
             int ix = 1;
             for (int i=0; i<N; i++) {
                 x[i] = p[ix++];
@@ -53,7 +50,7 @@ Curve::Curve (const std::vector<double>& p) : x(NULL), y(NULL), ypp(NULL) {
             if (p.size()!=8 && p.size()!=9)
                 kind = 0;
             else {
-                x = new double[9];
+                x = new float[9];
                 for (int i=0; i<4; i++)
                     x[i] = p[i];
                 for (int i=4; i<8; i++)
@@ -76,15 +73,15 @@ Curve::~Curve () {
 
 void Curve::spline_cubic_set () {
 
-    double* u = new double[N-1];
+    float* u = new float[N-1];
     delete [] ypp;
-    ypp = new double [N];
+    ypp = new float [N];
 
     ypp[0] = u[0] = 0.0;	/* set lower boundary condition to "natural" */
 
     for (int i = 1; i < N - 1; ++i) {
-        double sig = (x[i] - x[i - 1]) / (x[i + 1] - x[i - 1]);
-        double p = sig * ypp[i - 1] + 2.0;
+        float sig = (x[i] - x[i - 1]) / (x[i + 1] - x[i - 1]);
+        float p = sig * ypp[i - 1] + 2.0;
         ypp[i] = (sig - 1.0) / p;
         u[i] = ((y[i + 1] - y[i])
           / (x[i + 1] - x[i]) - (y[i] - y[i - 1]) / (x[i] - x[i - 1]));
@@ -98,7 +95,7 @@ void Curve::spline_cubic_set () {
     delete [] u;
 }
 
-double Curve::getVal (double t) {
+float Curve::getVal (float t) {
 
     if (!kind)
         return t;
@@ -107,27 +104,27 @@ double Curve::getVal (double t) {
         
         if (t<=1e-14)
             return 0.0;
-        double c = -log(2.0)/log(x[2]);
-        double tv = exp(c*log(t));
-        double base = pfull (tv, x[8], x[6], x[5]);
-        double stretched = base<=1e-14 ? 0.0 : exp(log(base)/c);
+        float c = -log(2.0)/log(x[2]);
+        float tv = exp(c*log(t));
+        float base = pfull (tv, x[8], x[6], x[5]);
+        float stretched = base<=1e-14 ? 0.0 : exp(log(base)/c);
         
         base = pfull (0.5, x[8], x[6], x[5]);   
-        double fc = base<=1e-14 ? 0.0 : exp(log(base)/c);   // value of the curve at the center point
+        float fc = base<=1e-14 ? 0.0 : exp(log(base)/c);   // value of the curve at the center point
         if (t<x[2]) {
             // add shadows effect:
-            double sc = -log(2.0)/log(x[1]/x[2]);
-            double stv = exp(sc*log(stretched/fc));
-            double sbase = pfull (stv, x[8], x[7], 0.5);
-            double sstretched = fc*(sbase<=1e-14 ? 0.0 : exp(log(sbase)/sc));
+            float sc = -log(2.0)/log(x[1]/x[2]);
+            float stv = exp(sc*log(stretched/fc));
+            float sbase = pfull (stv, x[8], x[7], 0.5);
+            float sstretched = fc*(sbase<=1e-14 ? 0.0 : exp(log(sbase)/sc));
             return sstretched;
         }
         else {
             // add highlights effect:
-            double hc = -log(2.0)/log((x[3]-x[2])/(1-x[2]));
-            double htv = exp(hc*log((stretched-fc)/(1-fc)));
-            double hbase = pfull (htv, x[8], 0.5, x[4]);
-            double hstretched = fc + (1-fc)*(hbase<=1e-14 ? 0.0 : exp(log(hbase)/hc));
+            float hc = -log(2.0)/log((x[3]-x[2])/(1-x[2]));
+            float htv = exp(hc*log((stretched-fc)/(1-fc)));
+            float hbase = pfull (htv, x[8], 0.5, x[4]);
+            float hstretched = fc + (1-fc)*(hbase<=1e-14 ? 0.0 : exp(log(hbase)/hc));
             return hstretched;
         }
     }
@@ -147,13 +144,13 @@ double Curve::getVal (double t) {
                 k_lo = k;
         }
 
-        double h = x[k_hi] - x[k_lo];
+        float h = x[k_hi] - x[k_lo];
         if (kind==-1)
             return y[k_lo] + (t - x[k_lo]) * ( y[k_hi] - y[k_lo] ) / h;
         else if (kind==1) {
-            double a = (x[k_hi] - t) / h;
-            double b = (t - x[k_lo]) / h;
-            double r = a*y[k_lo] + b*y[k_hi] + ((a*a*a - a)*ypp[k_lo] + (b*b*b - b)*ypp[k_hi]) * (h*h)/6.0;
+            float a = (x[k_hi] - t) / h;
+            float b = (t - x[k_lo]) / h;
+            float r = a*y[k_lo] + b*y[k_hi] + ((a*a*a - a)*ypp[k_lo] + (b*b*b - b)*ypp[k_hi]) * (h*h)/6.0;
    	        if (r < 0.0) return 0.0;
 	        if (r > 1.0) return 1.0;
             return r;
@@ -163,16 +160,16 @@ double Curve::getVal (double t) {
     }
 }
 
-void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
+void Curve::getVal (const FloatList& t, FloatList& res) {
     
-// TODO!!!! can be made much faster!!! Binary search of getVal(double) at each point can be avoided
+// TODO!!!! can be made much faster!!! Binary search of getVal(float) at each point can be avoided
 
     res.resize (t.size());
     for (int i=0; i<t.size(); i++)
         res[i] = getVal(t[i]);
 }
 
-double CurveFactory::centercontrast (double x, double b, double m) {
+float CurveFactory::centercontrast (float x, float b, float m) {
 
   if (b==0)
     return x;
@@ -189,129 +186,23 @@ double CurveFactory::centercontrast (double x, double b, double m) {
       return 2.0*x - m - m * tanh (b*(x-m)/m) / tanh (b);
   }
 }
-/*
-void CurveFactory::updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& points, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip) {
 
-    double def_mul = pow (2.0, defmul);
+void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
 
     // compute parameters of the gamma curve
-    double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
-    double slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
-    double mul = 1.099;
-    double add = 0.099;
+    float start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
+    float slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
+    float mul = 1.099;
+    float add = 0.099;
 
     // theoretical maximum of the curve
-    double D = gamma_>0 ? gamma (def_mul, gamma_, start, slope, mul, add) : def_mul;
-
-    double a = pow (2.0, ecomp);
-    double b = black / 65535.0;
-
-    // curve without contrast
-    double* dcurve = new double[65536];
-    
-    bool needcontrast = contr>0.00001 || contr<-0.00001;
-    bool needigamma = !needcontrast && igamma && gamma_>0;
-
-    // create a curve if needed
-    Curve* tcurve = NULL;
-    if (points.size()>0 && points[0]!=0)
-        tcurve = new Curve (points);
-
-    for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
-
-        double val = (double)i / 65535.0;
-        val *= def_mul;
-        if (gamma_>0) 
-            val = gamma (val, gamma_, start, slope, mul, add);
-  
-        val = basecurve (val, a, b, D, hlcompr/100.0, shcompr/100.0);
-        val = brightness (val, br/100.0);
-        
-        if (tcurve) 
-            val = tcurve->getVal (val);
-
-	    if (needigamma)
-            val = igamma2 (val);
-
-        if (val>1.0)
-            val = 1.0;
-        else if (val<0.0)
-            val = 0.0;
-        dcurve[i] = val;
-    }
-    delete tcurve;
-/*            
-if (igamma) {
-  FILE* f = fopen ("curve.txt","wt");
-  for (int i=0; i<65536; i++)
-//    fprintf (f, "%g\t%g\n", i/65535.0, basel(i/65535.0, 2, 0));
-    fprintf (f, "%g\t%g\n", i/65535.0, clower(i/65535.0, 0.500015/0.5, 1.5));
-//    fprintf (f, "%g\t%g\n", i/65535.0, basecurve(i/65535.0, 1.25701, 0, 1.47694, 1.0, 1.0));
-//    fprintf (f, "%g\t%g\n", i/65535.0, dcurve[i]);
-  fclose (f);
-}
-*/
-/*
-    int prev = 0;
-    for (int i=1; i<=0xffff-skip; i++) {
-        if (i%skip==0) {
-            prev+=skip;
-            continue;
-        }
-        dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
-    }
-
-    if (needcontrast) {  
-        // compute mean luminance of the image with the curve applied
-        int sum = 0;
-        double avg = 0;
-        for (int i=0; i<=0xffff; i++) {
-          avg += dcurve[i] * ohistogram[i];
-          sum += ohistogram[i];
-        }
-        avg /= sum;
-
-        // compute contrast parameter
-        double contr_b = contr / 20;
-        if (contr_b>=0 && contr_b < 0.00001)
-          contr_b = 0.00001;
-        else if (contr_b<0 && contr_b > -0.00001)
-          contr_b = -0.00001;
-
-        // apply contrast enhancement
-        for (int i=0; i<=0xffff; i++) {
-          double val = centercontrast (dcurve[i], contr_b, avg);
-          if (igamma && gamma_>0)
-            val = igamma2 (val);
-          if (val>1.0) val = 1.0;
-          if (val<0.0) val = 0.0;
-          curve[i] = (int) (65535.0 * val);
-        }
-    }
-    else 
-        for (int i=0; i<=0xffff; i++) 
-            curve[i] = (int) (65535.0 * dcurve[i]);
-    delete [] dcurve;
-}*/
-
-void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, unsigned int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
-
-    double def_mul = pow (2.0, defmul);
-
-    // compute parameters of the gamma curve
-    double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
-    double slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
-    double mul = 1.099;
-    double add = 0.099;
-
-    // theoretical maximum of the curve
-    double D = gamma_>0 ? gamma (def_mul, gamma_, start, slope, mul, add) : def_mul;
+    float D = gamma_>0 ? gamma (1.0, gamma_, start, slope, mul, add) : 1.0;
 
     // a: slope of the curve, black: starting point at the x axis
-    double a = pow (2.0, ecomp);
+    float a = pow (2.0, ecomp);
 
     // curve without contrast
-    double* dcurve = new double[65536];
+    float* dcurve = new float[65536];
     
     // check if contrast curve is needed
     bool needcontrast = contr>0.00001 || contr<-0.00001;
@@ -331,11 +222,8 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
 
         // change to [0,1] rage
-        double val = (double)i / 65535.0;
+        float val = (float)i / 65535.0;
 
-        // apply default multiplier (that is >1 if highlight recovery is on)
-        val *= def_mul;
-        
         // gamma correction
         if (gamma_>0) 
             val = gamma (val, gamma_, start, slope, mul, add);
@@ -349,7 +237,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         // apply custom/parametric curve, if any
         if (tcurve) {
             if (outBeforeCCurveHistogram) {
-                double hval = val;
+                float hval = val;
 //                if (needigamma)
 //                    hval = igamma2 (hval);
                 int hi = (int)(255.0*CLIPD(hval));
@@ -380,7 +268,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     if (needcontrast) {  
         // compute mean luminance of the image with the curve applied
         int sum = 0;
-        double avg = 0;
+        float avg = 0;
         for (int i=0; i<=0xffff; i++) {
           avg += dcurve[i] * histogram[i];
           sum += histogram[i];
@@ -388,7 +276,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         avg /= sum;
 
         // compute contrast parameter
-        double contr_b = contr / 20;
+        float contr_b = contr / 20;
         if (contr_b>=0 && contr_b < 0.00001)
           contr_b = 0.00001;
         else if (contr_b<0 && contr_b > -0.00001)
@@ -396,15 +284,15 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         // apply contrast enhancement
         for (int i=0; i<=0xffff; i++) {
-          double val = centercontrast (dcurve[i], contr_b, avg);
+          float val = centercontrast (dcurve[i], contr_b, avg);
           if (igamma && gamma_>0)
             val = igamma2 (val);
-          outCurve[i] = (int) (65535.0 * CLIPD(val));
+          outCurve[i] = val;
         }
     }
     else 
         for (int i=0; i<=0xffff; i++) 
-            outCurve[i] = (int) (65535.0 * dcurve[i]);
+            outCurve[i] = dcurve[i];
     delete [] dcurve;
 }
 

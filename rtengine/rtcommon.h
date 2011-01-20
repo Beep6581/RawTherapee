@@ -15,7 +15,7 @@ namespace rtengine {
 
 typedef Glib::ustring String;
 
-typedef std::vector<double> DoubleList;
+typedef std::vector<float> 	FloatList;
 typedef std::vector<int> 	IntList;
 typedef std::vector<String> StringList;
 

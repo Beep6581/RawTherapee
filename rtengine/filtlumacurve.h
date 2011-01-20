@@ -21,7 +21,8 @@ namespace rtengine {
 class LumaCurveFilterDescriptor : public FilterDescriptor {
 
 	public:
-    LumaCurveFilterDescriptor ();
+    	LumaCurveFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -29,13 +30,13 @@ extern LumaCurveFilterDescriptor lumaCurveFilterDescriptor;
 
 class LumaCurveFilter : public Filter {
 
-        unsigned int* curve;
+        float* curve;
         unsigned int* histogram;
 
 	public:
         LumaCurveFilter ();
         ~LumaCurveFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

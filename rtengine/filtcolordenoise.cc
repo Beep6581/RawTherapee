@@ -28,7 +28,7 @@ ColorDenoiseFilterDescriptor::ColorDenoiseFilterDescriptor ()
 void ColorDenoiseFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
 	defProcParams.setBoolean ("ColorDenoiseEnabled", false);
-	defProcParams.setDouble  ("ColorDenoiseAmount",  50);
+	defProcParams.setFloat   ("ColorDenoiseAmount",  50);
 }
 
 void ColorDenoiseFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -44,7 +44,7 @@ Dim ColorDenoiseFilter::getReqiredBufferSize () {
 
     Dim sdim = getScaledTargetImageView().getSize();
 
-    if (procParams->colorDenoise.enabled && sdim.width >= 8 && sdim.height >= 8) {
+    if (procParams->getBoolean ("ColorDenoiseEnabled") && sdim.width >= 8 && sdim.height >= 8) {
         if (sdim.height > sdim.width)
             return Dim (2, sdim.height*omp_get_max_threads()); // since we need double buffer and rt gives float buffer
         else
@@ -60,7 +60,7 @@ void ColorDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage*
     if (getTargetImageView().skip==1 && procParams->getBoolean ("ColorDenoiseEnabled") && sdim.width >= 8 && sdim.height >= 8) {
 
         double scale = getScale ();
-    	double radius = procParams->getDouble  ("ColorDenoiseAmount") / 10.0 / scale;
+    	float radius = procParams->getFloat  ("ColorDenoiseAmount") / 10.0 / scale;
 
         Buffer<float> ta = targetImage->getBufferView(targetImage->ciea);
         Buffer<float> tb = targetImage->getBufferView(targetImage->cieb);

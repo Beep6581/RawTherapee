@@ -22,21 +22,28 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
-#include <mytime.h>
-#include <gauss.h>
-#include <glibmm.h>
+#include "mytime.h"
+#include "gauss.h"
 #include <omp.h>
-#include <buffer.h>
+#include "buffer.h"
 
 // This seems ugly, but way faster than any other solutions I tried
 
-#define ELEM(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+0x10000])
-#define SULY(a,b) (ec[src[i - a][j - b]-src[i][j]+0x10000])
+#define ELEM(a,b) (src[i - a][j - b] * ec[(int)((src[i - a][j - b]-src[i][j])*scale)+0x10000])
+#define SULY(a,b) (ec[(int)((src[i - a][j - b]-src[i][j])*scale)+0x10000])
 
-#define BL_BEGIN(a,b)   double scale = (a); \
-                        int* ec = new int [0x20000]; \
+#define BL_BEGIN(a,b)   float min = FLT_MAX, max = FLT_MIN; \
+						for (int i=0; i<H; i++) \
+							for (int j=0; j<W; j++) { \
+								if (src[i][j]<min) \
+									min = src[i][j]; \
+								if (src[i][j]>max) \
+									max = src[i][j]; \
+							} \
+						float scale = 0x20000 / (max-min) / 2; \
+                        float* ec = new float [0x20000]; \
                         for (int i=0; i<0x20000; i++) \
-                            ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sens*sens))*scale); \
+                            ec[i] = exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sens*sens) / (scale*scale)); \
                         int rstart = b; \
                         int rend = H-b; \
                         int cstart = b; \
@@ -52,7 +59,7 @@
 
 #define BL_OPER3(a11,a12,a21,a22) for (int i=rstart; i<rend; i++) { \
 									for (int j=cstart; j<cend; j++) { \
-								   A v = a11*ELEM(-1,-1) + a12*ELEM(-1,0) + a11*ELEM(-1,1) + \
+								   float v = a11*ELEM(-1,-1) + a12*ELEM(-1,0) + a11*ELEM(-1,1) + \
                                         a21*ELEM(0,-1) + a22*ELEM(0,0) + a21*ELEM(0,1) + \
                                         a11*ELEM(1,-1) + a12*ELEM(1,0) + a11*ELEM(1,1); \
                                    v /= a11*SULY(-1,-1) + a12*SULY(-1,0) + a11*SULY(-1,1) + \
@@ -62,7 +69,7 @@
 
 #define BL_OPER5(a11,a12,a13,a21,a22,a23,a31,a32,a33) for (int i=rstart; i<rend; i++) { \
 														for (int j=cstart; j<cend; j++) { \
-													   A v = a11*ELEM(-2,-2) + a12*ELEM(-2,-1) + a13*ELEM(-2,0) + a12*ELEM(-2,1) + a11*ELEM(-2,2) + \
+													   float v = a11*ELEM(-2,-2) + a12*ELEM(-2,-1) + a13*ELEM(-2,0) + a12*ELEM(-2,1) + a11*ELEM(-2,2) + \
                                                             a21*ELEM(-1,-2) + a22*ELEM(-1,-1) + a23*ELEM(-1,0) + a22*ELEM(-1,1) + a21*ELEM(-1,2) + \
                                                             a31*ELEM(0,-2) + a32*ELEM(0,-1) + a33*ELEM(0,0) + a32*ELEM(0,1) + a31*ELEM(0,2) + \
                                                             a21*ELEM(1,-2) + a22*ELEM(1,-1) + a23*ELEM(1,0) + a22*ELEM(1,1) + a21*ELEM(1,2) + \
@@ -76,7 +83,7 @@
 #define BL_OPER7(a11,a12,a13,a14,a21,a22,a23,a24,a31,a32,a33,a34,a41,a42,a43,a44) \
                                                       for (int i=rstart; i<rend; i++) { \
                                                     	  for (int j=cstart; j<cend; j++) { \
-													   A v = a11*ELEM(-3,-3) + a12*ELEM(-3,-2) + a13*ELEM(-3,-1) + a14*ELEM(-3,0) + a13*ELEM(-3,1) + a12*ELEM(-3,2) + a11*ELEM(-3,3) + \
+													   float v = a11*ELEM(-3,-3) + a12*ELEM(-3,-2) + a13*ELEM(-3,-1) + a14*ELEM(-3,0) + a13*ELEM(-3,1) + a12*ELEM(-3,2) + a11*ELEM(-3,3) + \
                                                             a21*ELEM(-2,-3) + a22*ELEM(-2,-2) + a23*ELEM(-2,-1) + a24*ELEM(-2,0) + a23*ELEM(-2,1) + a22*ELEM(-2,2) + a21*ELEM(-2,3) + \
                                                             a31*ELEM(-1,-3) + a32*ELEM(-1,-2) + a33*ELEM(-1,-1) + a34*ELEM(-1,0) + a33*ELEM(-1,1) + a32*ELEM(-1,2) + a31*ELEM(-1,3) + \
                                                             a41*ELEM(0,-3) + a42*ELEM(0,-2) + a43*ELEM(0,-1) + a44*ELEM(0,0) + a43*ELEM(0,1) + a42*ELEM(0,2) + a41*ELEM(0,3) + \
@@ -95,7 +102,7 @@
 #define BL_OPER9(a11,a12,a13,a14,a15,a21,a22,a23,a24,a25,a31,a32,a33,a34,a35,a41,a42,a43,a44,a45,a51,a52,a53,a54,a55) \
                                                       for (int i=rstart; i<rend; i++) { \
                                                     	  for (int j=cstart; j<cend; j++) { \
-                                                      A v = a11*ELEM(-4,-4) + a12*ELEM(-4,-3) + a13*ELEM(-4,-2) + a14*ELEM(-4,-1) + a15*ELEM(-4,0) + a14*ELEM(-4,1) + a13*ELEM(-4,2) + a12*ELEM(-4,3) + a11*ELEM(-4,4) + \
+                                                      float v = a11*ELEM(-4,-4) + a12*ELEM(-4,-3) + a13*ELEM(-4,-2) + a14*ELEM(-4,-1) + a15*ELEM(-4,0) + a14*ELEM(-4,1) + a13*ELEM(-4,2) + a12*ELEM(-4,3) + a11*ELEM(-4,4) + \
                                                             a21*ELEM(-3,-4) + a22*ELEM(-3,-3) + a23*ELEM(-3,-2) + a24*ELEM(-3,-1) + a25*ELEM(-3,0) + a24*ELEM(-3,1) + a23*ELEM(-3,2) + a22*ELEM(-3,3) + a21*ELEM(-3,4) + \
                                                             a31*ELEM(-2,-4) + a32*ELEM(-2,-3) + a33*ELEM(-2,-2) + a34*ELEM(-2,-1) + a35*ELEM(-2,0) + a34*ELEM(-2,1) + a33*ELEM(-2,2) + a32*ELEM(-2,3) + a31*ELEM(-2,4) + \
                                                             a41*ELEM(-1,-4) + a42*ELEM(-1,-3) + a43*ELEM(-1,-2) + a44*ELEM(-1,-1) + a45*ELEM(-1,0) + a44*ELEM(-1,1) + a43*ELEM(-1,2) + a42*ELEM(-1,3) + a41*ELEM(-1,4) + \
@@ -117,7 +124,7 @@
 #define BL_OPER11(a11,a12,a13,a14,a15,a16,a21,a22,a23,a24,a25,a26,a31,a32,a33,a34,a35,a36,a41,a42,a43,a44,a45,a46,a51,a52,a53,a54,a55,a56,a61,a62,a63,a64,a65,a66) \
                                                       for (int i=rstart; i<rend; i++) { \
 														for (int j=cstart; j<cend; j++) { \
-                                                      A v = a11*ELEM(-5,-5) + a12*ELEM(-5,-4) + a13*ELEM(-5,-3) + a14*ELEM(-5,-2) + a15*ELEM(-5,-1) + a16*ELEM(-5,0) + a15*ELEM(-5,1) + a14*ELEM(-5,2) + a13*ELEM(-5,3) + a12*ELEM(-5,4) + a11*ELEM(-5,5) + \
+                                                      float v = a11*ELEM(-5,-5) + a12*ELEM(-5,-4) + a13*ELEM(-5,-3) + a14*ELEM(-5,-2) + a15*ELEM(-5,-1) + a16*ELEM(-5,0) + a15*ELEM(-5,1) + a14*ELEM(-5,2) + a13*ELEM(-5,3) + a12*ELEM(-5,4) + a11*ELEM(-5,5) + \
                                                             a21*ELEM(-4,-5) + a22*ELEM(-4,-4) + a23*ELEM(-4,-3) + a24*ELEM(-4,-2) + a25*ELEM(-4,-1) + a26*ELEM(-4,0) + a25*ELEM(-4,1) + a24*ELEM(-4,2) + a23*ELEM(-4,3) + a22*ELEM(-4,4) + a21*ELEM(-4,5) + \
                                                             a31*ELEM(-3,-5) + a32*ELEM(-3,-4) + a33*ELEM(-3,-3) + a34*ELEM(-3,-2) + a35*ELEM(-3,-1) + a36*ELEM(-3,0) + a35*ELEM(-3,1) + a34*ELEM(-3,2) + a33*ELEM(-3,3) + a32*ELEM(-3,4) + a31*ELEM(-3,5) + \
                                                             a41*ELEM(-2,-5) + a42*ELEM(-2,-4) + a43*ELEM(-2,-3) + a44*ELEM(-2,-2) + a45*ELEM(-2,-1) + a46*ELEM(-2,0) + a45*ELEM(-2,1) + a44*ELEM(-2,2) + a43*ELEM(-2,3) + a42*ELEM(-2,4) + a41*ELEM(-4,5) + \
@@ -143,7 +150,7 @@
 namespace rtengine {
 
 // sigma = 0.5
-template<class T, class A> void bilateral05 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral05 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
     
     BL_BEGIN(318,1)
 	#pragma omp parallel for if (multiThread)
@@ -152,7 +159,7 @@ template<class T, class A> void bilateral05 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 0.6
-template<class T, class A> void bilateral06 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral06 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
     
     BL_BEGIN(768,1)
 	#pragma omp parallel for if (multiThread)
@@ -161,7 +168,7 @@ template<class T, class A> void bilateral06 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 0.7
-template<class T, class A> void bilateral07 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral07 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
     
     BL_BEGIN(366,2)
 	#pragma omp parallel for if (multiThread)
@@ -170,7 +177,7 @@ template<class T, class A> void bilateral07 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 0.8
-template<class T, class A> void bilateral08 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral08 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
     
     BL_BEGIN(753,2)
 	#pragma omp parallel for if (multiThread)
@@ -179,7 +186,7 @@ template<class T, class A> void bilateral08 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 0.9
-template<class T, class A> void bilateral09 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral09 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(595,2)
 	#pragma omp parallel for if (multiThread)
@@ -188,7 +195,7 @@ template<class T, class A> void bilateral09 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.0
-template<class T, class A> void bilateral10 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral10 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
     BL_BEGIN(910,2)
 	#pragma omp parallel for if (multiThread)
@@ -197,7 +204,7 @@ template<class T, class A> void bilateral10 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.1
-template<class T, class A> void bilateral11 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral11 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(209,3)
 	#pragma omp parallel for if (multiThread)
@@ -206,7 +213,7 @@ template<class T, class A> void bilateral11 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.2
-template<class T, class A> void bilateral12 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral12 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(322,3)
 	#pragma omp parallel for if (multiThread)
@@ -215,7 +222,7 @@ template<class T, class A> void bilateral12 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.3
-template<class T, class A> void bilateral13 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral13 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(336,3)
 	#pragma omp parallel for if (multiThread)
@@ -224,7 +231,7 @@ template<class T, class A> void bilateral13 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.4
-template<class T, class A> void bilateral14 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral14 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(195,3)
 	#pragma omp parallel for if (multiThread)
@@ -233,7 +240,7 @@ template<class T, class A> void bilateral14 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.5
-template<class T, class A> void bilateral15 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral15 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(132,4)
 	#pragma omp parallel for if (multiThread)
@@ -242,7 +249,7 @@ template<class T, class A> void bilateral15 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.6
-template<class T, class A> void bilateral16 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral16 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(180,4)
 	#pragma omp parallel for if (multiThread)
@@ -251,7 +258,7 @@ template<class T, class A> void bilateral16 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.7
-template<class T, class A> void bilateral17 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral17 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(195,4)
 	#pragma omp parallel for if (multiThread)
@@ -260,7 +267,7 @@ template<class T, class A> void bilateral17 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.8
-template<class T, class A> void bilateral18 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral18 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(151,4)
 	#pragma omp parallel for if (multiThread)
@@ -269,7 +276,7 @@ template<class T, class A> void bilateral18 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 1.9
-template<class T, class A> void bilateral19 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral19 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
    
     BL_BEGIN(151,4)
 	#pragma omp parallel for if (multiThread)
@@ -278,7 +285,7 @@ template<class T, class A> void bilateral19 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 2
-template<class T, class A> void bilateral20 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral20 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
     BL_BEGIN(116,5)
 	#pragma omp parallel for if (multiThread)
@@ -287,7 +294,7 @@ template<class T, class A> void bilateral20 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 2.1
-template<class T, class A> void bilateral21 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral21 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
     BL_BEGIN(127,5)
 	#pragma omp parallel for if (multiThread)
@@ -296,7 +303,7 @@ template<class T, class A> void bilateral21 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 2.2
-template<class T, class A> void bilateral22 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral22 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
     BL_BEGIN(109,5)
 	#pragma omp parallel for if (multiThread)
@@ -305,7 +312,7 @@ template<class T, class A> void bilateral22 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 2.3
-template<class T, class A> void bilateral23 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral23 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
     BL_BEGIN(132,5)
 	#pragma omp parallel for if (multiThread)
@@ -314,7 +321,7 @@ template<class T, class A> void bilateral23 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 2.4
-template<class T, class A> void bilateral24 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral24 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
     BL_BEGIN(156,5)
 	#pragma omp parallel for if (multiThread)
@@ -323,7 +330,7 @@ template<class T, class A> void bilateral24 (T** src, T** dst, T** buffer, int W
 }
 
 // sigma = 2.5
-template<class T, class A> void bilateral25 (T** src, T** dst, T** buffer, int W, int H, double sens, bool multiThread) {
+void bilateral25 (float** src, float** dst, float** buffer, int W, int H, float sens, bool multiThread) {
 
 	BL_BEGIN(173,5)
 	#pragma omp parallel for if (multiThread)
@@ -332,56 +339,56 @@ template<class T, class A> void bilateral25 (T** src, T** dst, T** buffer, int W
 }
 
 // main bilateral filter
-template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, int H, double sigma, double sens, bool multiThread) {
+void bilateral (float** src, float** dst, float** buffer, int W, int H, float sigma, float sens, bool multiThread) {
 
     if (sigma<0.45) 
 		#pragma omp parallel for if (multiThread)
     	for (int i=0; i<H; i++) {
-            memcpy (buffer[i], src[i], W*sizeof(T));
-            memcpy (dst[i], buffer[i], W*sizeof(T));
+            memcpy (buffer[i], src[i], W*sizeof(float));
+            memcpy (dst[i], buffer[i], W*sizeof(float));
         }
     else if (sigma<0.55)
-        bilateral05<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral05 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<0.65)
-        bilateral06<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral06 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<0.75)
-        bilateral07<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral07 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<0.85)
-        bilateral08<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral08 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<0.95)
-        bilateral09<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral09 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.05)
-        bilateral10<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral10 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.15)
-        bilateral11<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral11 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.25)
-        bilateral12<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral12 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.35)
-        bilateral13<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral13 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.45)
-        bilateral14<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral14 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.55)
-        bilateral15<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral15 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.65)
-        bilateral16<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral16 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.75)
-        bilateral17<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral17 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.85)
-        bilateral18<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral18 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<1.95)
-        bilateral19<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral19 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<2.05)
-        bilateral20<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral20 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<2.15)
-        bilateral21<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral21 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<2.25)
-        bilateral22<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral22 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<2.35)
-        bilateral23<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral23 (src, dst, buffer, W, H, sens, multiThread);
     else if (sigma<2.45)
-        bilateral24<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral24 (src, dst, buffer, W, H, sens, multiThread);
     else 
-        bilateral25<T,A> (src, dst, buffer, W, H, sens, multiThread);
+        bilateral25 (src, dst, buffer, W, H, sens, multiThread);
 }
 
 // START OF EXPERIMENTAL CODE: O(1) bilateral box filter

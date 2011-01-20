@@ -22,7 +22,8 @@ namespace rtengine {
 class LumaDenoiseFilterDescriptor : public FilterDescriptor {
 
 	public:
-    LumaDenoiseFilterDescriptor ();
+    	LumaDenoiseFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -33,7 +34,7 @@ class LumaDenoiseFilter : public Filter {
 	public:
         LumaDenoiseFilter ();
         Dim  getReqiredBufferSize ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

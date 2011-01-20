@@ -34,9 +34,9 @@ void ColorCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams
 	defProcParams.setInteger ("ColorBoostAmount", 0);
 	defProcParams.setBoolean ("ColorBoostAvoidClip", false);
 	defProcParams.setBoolean ("ColorBoostEnableSatLimiter", false);
-	defProcParams.setDouble  ("ColorBoostSaturationLimit",  50);
-	defProcParams.setDouble  ("ColorShiftCieaChannel",  0.0);
-	defProcParams.setDouble  ("ColorShiftCiebChannel",  0.0);
+	defProcParams.setFloat   ("ColorBoostSaturationLimit",  50);
+	defProcParams.setFloat   ("ColorShiftCieaChannel",  0.0);
+	defProcParams.setFloat   ("ColorShiftCiebChannel",  0.0);
 }
 
 void ColorCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -82,9 +82,9 @@ void ColorCurveFilter::generateCurve (float boost, float limit) {
 void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
 	float boost =  (procParams->getInteger ("ColorBoostAmount") + 100.0) / 100.0;
-	float shift_a = procParams->getDouble  ("ColorShiftCieaChannel");
-	float shift_b = procParams->getDouble  ("ColorShiftCiebChannel");
-	float satlimit = procParams->getDouble  ("ColorBoostSaturationLimit");
+	float shift_a = procParams->getFloat  ("ColorShiftCieaChannel");
+	float shift_b = procParams->getFloat  ("ColorShiftCiebChannel");
+	float satlimit = procParams->getFloat  ("ColorBoostSaturationLimit");
 	bool  enalimiter = procParams->getBoolean ("ColorBoostEnableSatLimiter");
 	bool  avoidclip = procParams->getBoolean ("ColorBoostAvoidClip");
 
@@ -119,7 +119,7 @@ void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* s
                 allowed_mul =  lutInterp<float,CURVE_LUTSIZE>(curve, chroma);
             }
 
-            if (allowed_mul >= 1.0 && procParams->colorBoost.avoidclip) {
+            if (allowed_mul >= 1.0 && avoidclip) {
                 float cclip = FLT_MAX;
                 float cr = tightestroot (oL, oa, ob, 3.079935, -1.5371515, -0.54278342);
                 float cg = tightestroot (oL, oa, ob, -0.92123418, 1.87599, 0.04524418);
