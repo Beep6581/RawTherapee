@@ -29,7 +29,7 @@
 #define NBRWT(a,b) (src[i - a][j - b] * ec[((int)(src[i - a][j - b]-src[i][j]+0x10000))])
 #define NORM(a,b) (ec[((int)(src[i - a][j - b]-src[i][j]+0x10000))])
 
-//ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*rangewidth*rangewidth))*scale); \
+//ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*rangewidth*rangewidth))*scale); 
 
 #define RB_BEGIN(a,b)   double scale = (a); \
 	int* ec = new int [0x20000]; \
@@ -157,6 +157,12 @@ template<class T> void impulse_nr (T** src, int width, int height, double thresh
 	delete [] impish;
 	
 }
+
+#undef NBRWT
+#undef NORM
+#undef RB_BEGIN
+#undef RB_END
+#undef RB_OPER5
 
 
 
