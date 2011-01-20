@@ -145,6 +145,7 @@ HISTORY_MSG_104;HSV Equalizer
 HISTORY_MSG_105;Defringing
 HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Threshold
+HISTORY_MSG_108;Highlight Compr. Threshold
 HISTORY_MSG_10;Shadow Compression
 HISTORY_MSG_11;Tone Curve
 HISTORY_MSG_12;Auto Exposure
@@ -310,13 +311,9 @@ IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transm
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_PREFERENCES;Preferences
-MAIN_BUTTON_PUTTOQUEUE;Put to queue
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVE;Save Image
-MAIN_BUTTON_SAVEAS;As...
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
@@ -435,6 +432,9 @@ PREFERENCES_CLIPPINGIND;Clipping indication
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
 PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 PREFERENCES_DARKFRAME;Dark frame
+PREFERENCES_DARKFRAMEFOUND;Found
+PREFERENCES_DARKFRAMESHOTS;shots
+PREFERENCES_DARKFRAMETEMPLATES;templates
 PREFERENCES_DATEFORMAT;Date Format
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DCBENHANCE;Apply DCB enhancement step

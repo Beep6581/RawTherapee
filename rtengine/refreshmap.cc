@@ -127,5 +127,6 @@ RGBCURVE,         // EvHSVEqEnabled,
 DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
+RGBCURVE,         // EvHLComprThreshold,
 };
 

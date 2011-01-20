@@ -89,10 +89,10 @@ enum ProcEvent {
     EvCACorr=64,
     EvHREnabled=65,
     EvHRAmount=66,
-	EvHRMethod=67,
-	EvWProfile=68,
-	EvOProfile=69,
-	EvIProfile=70,
+    EvHRMethod=67,
+    EvWProfile=68,
+    EvOProfile=69,
+    EvIProfile=70,
     EvVignetting=71,
     EvChMixer=72,
     EvResizeScale=73,
@@ -113,23 +113,25 @@ enum ProcEvent {
     EvDPDNEnabled=88,
     EvDPDNLuma=89,
     EvDPDNChroma=90,
-	EvDPDNGamma=91,
-	EvDirPyrEqualizer=92,
+    EvDPDNGamma=91,
+    EvDirPyrEqualizer=92,
     EvDirPyrEqlEnabled=93,
-	EvLSaturation=94,
+    EvLSaturation=94,
     EvLaCurve=95,
     EvLbCurve=96,
     EvDemosaic=97,
     EvPreProcess=98,
-	EvSaturation=99,
-	EvHSVEqualizerH=100,
-	EvHSVEqualizerS=101,
-	EvHSVEqualizerV=102,
-	EvHSVEqEnabled=103,
-	EvDefringeEnabled=104,
-	EvDefringeRadius=105,
-	EvDefringeThreshold=106,
-    NUMOFEVENTS=107
-	};
-}    
-#endif    
+    EvSaturation=99,
+    EvHSVEqualizerH=100,
+    EvHSVEqualizerS=101,
+    EvHSVEqualizerV=102,
+    EvHSVEqEnabled=103,
+    EvDefringeEnabled=104,
+    EvDefringeRadius=105,
+    EvDefringeThreshold=106,
+    EvHLComprThreshold=107,
+
+    NUMOFEVENTS=108
+    };
+}
+#endif

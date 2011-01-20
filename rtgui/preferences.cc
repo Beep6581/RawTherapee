@@ -1053,11 +1053,11 @@ void Preferences::darkFrameChanged ()
 	   updateDFinfos();
 	}
 }
+
 void Preferences::updateDFinfos()
 {
     int t1,t2;
     rtengine::dfm.getStat(t1,t2);
-    std::ostringstream s;
-    s << "Found: "<< t1 << " shots, " << t2 << " templates";
-    dfLabel->set_text(s.str());
+    Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_DARKFRAMEFOUND"), t1, M("PREFERENCES_DARKFRAMESHOTS"), t2, M("PREFERENCES_DARKFRAMETEMPLATES"));
+    dfLabel->set_text(s);
 }
