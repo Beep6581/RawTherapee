@@ -49,7 +49,7 @@ ToneCurve::ToneCurve () : ToolPanel(), expAdd(false),hlcompAdd(false),hlcompthre
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
 //----------- Exposure Compensation ------------------------
-  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 5, 0.01, 0));
+  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.01, 0));
   pack_start (*expcomp);
   hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 100, 1, 70));
   pack_start (*hlcompr);
