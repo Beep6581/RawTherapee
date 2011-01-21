@@ -26,6 +26,7 @@ class ToneCurveFilterDescriptor : public FilterDescriptor {
 
 	public:
         ToneCurveFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -37,20 +38,20 @@ class PreToneCurveFilter : public Filter {
     public:
         PreToneCurveFilter ();
         ~PreToneCurveFilter ();
-        void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+        void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
         unsigned int* getHistogram ();
 };
 
 class ToneCurveFilter : public Filter {
 
-        unsigned int* curve;
+        float* curve;
         unsigned int* bchistogram;
         PreToneCurveFilter* ptcFilter;
 
 	public:
         ToneCurveFilter (PreToneCurveFilter* ptcf);
         ~ToneCurveFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

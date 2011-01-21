@@ -22,6 +22,13 @@ WhiteBalanceFilterDescriptor::WhiteBalanceFilterDescriptor ()
 	addTriggerEvent (EvWBGreen);
 }
 
+void WhiteBalanceFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setString ("WhiteBalanceMethod", "Camera");
+	defProcParams.setFloat  ("WhiteBalanceTemperature", 6504);
+	defProcParams.setFloat  ("WhiteBalanceGreen", 1.00102);
+}
+
 void WhiteBalanceFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new WhiteBalanceFilter ());
@@ -31,25 +38,29 @@ WhiteBalanceFilter::WhiteBalanceFilter ()
 	: Filter (&whiteBalanceFilterDescriptor) {
 }
 
-void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
+
+	String method = procParams->getString ("WhiteBalanceMethod");
+	float temp    = procParams->getFloat ("WhiteBalanceTemperature");
+	float green   = procParams->getFloat ("WhiteBalanceGreen");
 
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
 	// determine which color temperature to use
 	ColorTemp wb;
-    if (procParams->wb.method=="Camera")
+    if (method=="Camera")
         wb = imgsrc->getCamWB ();
-    else if (procParams->wb.method=="Auto")
+    else if (method=="Auto")
         wb = imgsrc->getAutoWB ();
     else
-    	wb = ColorTemp (procParams->wb.temperature, procParams->wb.green);
+    	wb = ColorTemp (temp, green);
 
     // write back actual values so gui can read it out
-    procParams->wb.temperature = wb.getTemp ();
-    procParams->wb.green = wb.getGreen ();
+    procParams->setFloat ("WhiteBalanceTemperature", wb.getTemp ());
+    procParams->setFloat ("WhiteBalanceGreen", wb.getGreen ());
 
     // compute channel multipliers
-    double r, g, b, rreq, greq, breq, rcam, gcam, bcam;
+    float r, g, b, rreq, greq, breq, rcam, gcam, bcam;
     // wb multipliers are available now in rgb space. transform it back to camera space
     wb.getMultipliers (r, g, b);
     imgsrc->getRGBToCamMatrix().transform (r, g, b, rreq, greq, breq);
@@ -62,7 +73,7 @@ void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage*
     b = bcam / breq;
 
     // ensure that the luminance is not changed (approximately) when applying the channel multipliers
-    double mul_lum = 0.299*r + 0.587*g + 0.114*b;
+    float mul_lum = 0.299*r + 0.587*g + 0.114*b;
     r /= mul_lum;
     g /= mul_lum;
     b /= mul_lum;
@@ -71,9 +82,9 @@ void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage*
     #pragma omp parallel for if (multiThread)
 	for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
-			targetImage->r[i][j] = CLIP (r * sourceImage->r[i][j]);
-			targetImage->g[i][j] = CLIP (g * sourceImage->g[i][j]);
-			targetImage->b[i][j] = CLIP (b * sourceImage->b[i][j]);
+			targetImage->r[i][j] = r * sourceImage->r[i][j];
+			targetImage->g[i][j] = g * sourceImage->g[i][j];
+			targetImage->b[i][j] = b * sourceImage->b[i][j];
 		}
 	}
 }

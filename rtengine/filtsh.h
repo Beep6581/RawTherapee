@@ -25,6 +25,7 @@ class ShadowsHighlightsFilterDescriptor : public FilterDescriptor {
 
 	public:
         ShadowsHighlightsFilterDescriptor ();
+		void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -32,17 +33,17 @@ extern ShadowsHighlightsFilterDescriptor shadowsHighlightsFilterDescriptor;
 
 class PreShadowsHighlightsFilter : public Filter {
 
-        Buffer<unsigned short>* map;
-        unsigned short   max, min, avg;
+        Buffer<float>* map;
+        float   max, min, avg;
 
     public:
         PreShadowsHighlightsFilter ();
         ~PreShadowsHighlightsFilter ();
-        void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
-        unsigned short** getSHMap ();
-        unsigned short   getMapMax ();
-        unsigned short   getMapMin ();
-        unsigned short   getMapAvg ();
+        void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
+        float** getSHMap ();
+        float   getMapMax ();
+        float   getMapMin ();
+        float   getMapAvg ();
         Dim getReqiredBufferSize ();
 };
 
@@ -53,7 +54,7 @@ class ShadowsHighlightsFilter : public Filter {
 
 	public:
         ShadowsHighlightsFilter (PreShadowsHighlightsFilter* pshf);
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

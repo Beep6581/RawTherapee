@@ -25,6 +25,7 @@ class HighlightRecoveryFilterDescriptor : public FilterDescriptor {
 
 	public:
         HighlightRecoveryFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -32,12 +33,12 @@ extern HighlightRecoveryFilterDescriptor highlightRecoveryFilterDescriptor;
 
 class HighlightRecoveryFilter : public Filter {
 
-        void luminance (MultiImage* sourceImage, MultiImage* targetImage, int maxval);
-        void cieblend (MultiImage* sourceImage, MultiImage* targetImage, int maxval, Matrix33 cam);
+        void luminance (MultiImage* sourceImage, MultiImage* targetImage);
+        void cieblend (MultiImage* sourceImage, MultiImage* targetImage, Matrix33 cam);
 
 	public:
         HighlightRecoveryFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

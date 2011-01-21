@@ -24,6 +24,7 @@ class WhiteBalanceFilterDescriptor : public FilterDescriptor {
 
 	public:
 		WhiteBalanceFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -33,7 +34,7 @@ class WhiteBalanceFilter : public Filter {
 
 	public:
 		WhiteBalanceFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

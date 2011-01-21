@@ -22,7 +22,8 @@ namespace rtengine {
 class SharpenFilterDescriptor : public FilterDescriptor {
 
 	public:
-    SharpenFilterDescriptor ();
+    	SharpenFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -32,13 +33,13 @@ class SharpenFilter : public Filter {
 
         void dcdamping (Buffer<float>* aI, MultiImage* aO, float damping);
         void deconvsharpening (MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* b2);
-        void sharpenHaloCtrl (MultiImage* sourceImage, MultiImage* targetImage, Buffer<unsigned short>* blurmap, Buffer<unsigned short>* base);
-        void usmsharpening (MultiImage* sourceImage, MultiImage* targetImage, Buffer<unsigned short>* b2);
+        void sharpenHaloCtrl (MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* blurmap, Buffer<float>* base);
+        void usmsharpening (MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* b2);
 
 	public:
         SharpenFilter ();
         Dim  getReqiredBufferSize ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

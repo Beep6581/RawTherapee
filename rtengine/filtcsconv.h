@@ -24,7 +24,7 @@ namespace rtengine {
 class ColorSpaceConvFilterDescriptor : public FilterDescriptor {
 
 	public:
-        ColorSpaceConvFilterDescriptor ();
+        	 ColorSpaceConvFilterDescriptor ();
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -39,7 +39,7 @@ class ColorSpaceConvFilter : public Filter {
 	public:
         ColorSpaceConvFilter ();
         ~ColorSpaceConvFilter ();
-    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
 };
 
 }

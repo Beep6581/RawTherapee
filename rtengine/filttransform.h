@@ -21,7 +21,8 @@ namespace rtengine {
 class TransformFilterDescriptor : public FilterDescriptor {
 
 	public:
-        TransformFilterDescriptor ();
+        	 TransformFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -48,8 +49,8 @@ class TransformFilter : public Filter {
         void vignetting         (MultiImage* sourceImage, MultiImage* targetImage);
         void transformNonSep    (MultiImage* sourceImage, MultiImage* targetImage);
         void transformSep       (MultiImage* sourceImage, MultiImage* targetImage);
-        inline void cubintch    (unsigned short** src, int xs, int ys, double Dx, double Dy, unsigned short *r, double mul);
-        inline void cubint      (MultiImage* src, int xs, int ys, double Dx, double Dy, unsigned short *r, unsigned short *g, unsigned short *b, double mul);
+        inline void cubintch    (float** src, int xs, int ys, double Dx, double Dy, float *r, double mul);
+        inline void cubint      (MultiImage* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul);
         bool transCoord         (Dim fullSize, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
         bool transCoord         (Dim fullSize, ImageView target, ImageView& source, double ascaleDef = -1);
         double getTransformAutoFill ();
@@ -57,7 +58,7 @@ class TransformFilter : public Filter {
     public:
         TransformFilter ();
 
-    	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
         ImageView calculateSourceImageView (const ImageView& requestedImView);
         void      reverseTransPoint (int x, int y, int& xv, int& yv);
 };

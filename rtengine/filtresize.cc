@@ -25,6 +25,16 @@ ResizeFilterDescriptor::ResizeFilterDescriptor ()
     addTriggerEvent (EvResizeEnabled);
 }
 
+void ResizeFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setBoolean ("ResizeEnabled", false);
+	defProcParams.setString  ("ResizeMethod", "Bicubic (Sharper)");
+	defProcParams.setFloat   ("ResizeScale", 1.0);
+	defProcParams.setInteger ("ResizeSizeSpec", 0);
+	defProcParams.setInteger ("ResizeWidth", 800);
+	defProcParams.setInteger ("ResizeHeight", 600);
+}
+
 void ResizeFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new ResizeFilter ());
@@ -67,14 +77,20 @@ double ResizeFilter::getTargetScale (int skip) {
 
 double ResizeFilter::getResizeScale () {
 
-    if (procParams->resize.enabled) {
+	bool enabled = procParams->getBoolean ("ResizeEnabled");
+
+    if (enabled) {
+    	float scale  = procParams->getFloat ("ResizeScale");
+    	int dataspec = procParams->getInteger ("ResizeSizeSpec");
+    	int width    = procParams->getInteger ("ResizeWidth");
+    	int height   = procParams->getInteger ("ResizeHeight");
         Dim pdim = getPreviousFilter()->getFullImageSize ();
-        if (procParams->resize.dataspec==1)
-            return procParams->resize.width / pdim.width;
-        else if (procParams->resize.dataspec==2)
-            return procParams->resize.height / pdim.height;
-        else if (procParams->resize.dataspec==0)
-            return procParams->resize.scale;
+        if (dataspec==1)
+            return width / pdim.width;
+        else if (dataspec==2)
+            return height / pdim.height;
+        else if (dataspec==0)
+            return scale;
         else
            return 1.0;
     }
@@ -84,14 +100,19 @@ double ResizeFilter::getResizeScale () {
 
 Dim ResizeFilter::getFullImageSize () {
 
+	bool enabled = procParams->getBoolean ("ResizeEnabled");
     Dim pdim = getPreviousFilter()->getFullImageSize ();
-    if (procParams->resize.enabled) {
-        if (procParams->resize.dataspec==1)
-            return Dim (procParams->resize.width, pdim.height * procParams->resize.width / pdim.width);
-        else if (procParams->resize.dataspec==2)
-            return Dim (pdim.width * procParams->resize.height / pdim.height);
-        else if (procParams->resize.dataspec==0)
-            return Dim (pdim.width * procParams->resize.scale, pdim.height * procParams->resize.scale);
+    if (enabled) {
+    	float scale  = procParams->getFloat ("ResizeScale");
+    	int dataspec = procParams->getInteger ("ResizeSizeSpec");
+    	int width    = procParams->getInteger ("ResizeWidth");
+    	int height   = procParams->getInteger ("ResizeHeight");
+        if (dataspec==1)
+            return Dim (width, pdim.height * width / pdim.width);
+        else if (dataspec==2)
+            return Dim (pdim.width * height / pdim.height, height);
+        else if (dataspec==0)
+            return Dim (pdim.width * scale, pdim.height * scale);
         else
             return pdim;
     }
@@ -105,14 +126,16 @@ void ResizeFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
     yv = y / getResizeScale ();
 }
 
-void ResizeFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void ResizeFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    if (!getFilterChain()->getImageSource()->isThumbnail() && fabs(getResizeScale()-1.0) > 1e-12) {
-        if (procParams->resize.method.substr(0,7)=="Bicubic")
+	String method = procParams->getString  ("ResizeMethod");
+
+	if (!getFilterChain()->getImageSource()->isThumbnail() && fabs(getResizeScale()-1.0) > 1e-12) {
+        if (method.substr(0,7)=="Bicubic")
             bicubic (sourceImage, targetImage);
-        else if (procParams->resize.method.substr(0,7)=="Bilinear")
+        else if (method.substr(0,7)=="Bilinear")
             bilinear (sourceImage, targetImage);
-        else if (procParams->resize.method.substr(0,7)=="Average")
+        else if (method.substr(0,7)=="Average")
             average (sourceImage, targetImage);
         else
             nearest (sourceImage, targetImage);
@@ -123,11 +146,13 @@ void ResizeFilter::process (const std::set<ProcEvent>& events, MultiImage* sourc
 
 void ResizeFilter::bicubic (MultiImage* sourceImage, MultiImage* targetImage) {
 
+	String method = procParams->getString  ("ResizeMethod");
+
     double scale = getResizeScale ();
     double Av = -0.5;
-    if (procParams->resize.method=="Bicubic (Sharper)")
+    if (method=="Bicubic (Sharper)")
         Av = -0.75;
-    else if (procParams->resize.method=="Bicubic (Softer)")
+    else if (method=="Bicubic (Softer)")
         Av = -0.25;
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<targetImage->height; i++) {
@@ -165,9 +190,9 @@ void ResizeFilter::bicubic (MultiImage* sourceImage, MultiImage* targetImage) {
                         g += w*sourceImage->g[ys+y][xs+x];
                         b += w*sourceImage->b[ys+y][xs+x];
                     }
-                targetImage->r[i][j] = CLIP(r);
-                targetImage->g[i][j] = CLIP(g);
-                targetImage->b[i][j] = CLIP(b);
+                targetImage->r[i][j] = r;
+                targetImage->g[i][j] = g;
+                targetImage->b[i][j] = b;
             }
             else {
                 xc = CLIPTO(xc, 0, sourceImage->width-1);
@@ -290,9 +315,9 @@ void ResizeFilter::average (MultiImage* sourceImage, MultiImage* targetImage) {
             g *= k;
             b *= k;
 
-            targetImage->r[i][j] = CLIP((int)r);
-            targetImage->g[i][j] = CLIP((int)g);
-            targetImage->b[i][j] = CLIP((int)b);
+            targetImage->r[i][j] = r;
+            targetImage->g[i][j] = g;
+            targetImage->b[i][j] = b;
         }
     }
 }

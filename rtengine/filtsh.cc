@@ -19,11 +19,11 @@ namespace rtengine {
 
 class PreShadowsHighlightsFilterDescriptor : public FilterDescriptor {
     public:
-    PreShadowsHighlightsFilterDescriptor ()
-            : FilterDescriptor ("PreShadowsHighlights", MultiImage::RGB, MultiImage::RGB) {
-            addTriggerEvent (EvSHEnabled);
-            addTriggerEvent (EvSHRadius);
-        }
+		PreShadowsHighlightsFilterDescriptor ()
+				: FilterDescriptor ("PreShadowsHighlights", MultiImage::RGB, MultiImage::RGB) {
+				addTriggerEvent (EvSHEnabled);
+				addTriggerEvent (EvSHRadius);
+			}
         void createAndAddToList (Filter* tail) const {}
 };
 
@@ -39,6 +39,18 @@ ShadowsHighlightsFilterDescriptor::ShadowsHighlightsFilterDescriptor ()
     addTriggerEvent (EvSHHLTonalW);
     addTriggerEvent (EvSHSHTonalW);
     addTriggerEvent (EvSHLContrast);
+}
+
+void ShadowsHighlightsFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setBoolean ("ShadowsHighlightsEnabled", false);
+	defProcParams.setBoolean ("ShadowsHighlightsHQ", false);
+	defProcParams.setFloat   ("ShadowsHighlightsHighlights", 10);
+	defProcParams.setFloat   ("ShadowsHighlightsShadows", 10);
+	defProcParams.setFloat   ("ShadowsHighlightsHTonalWidth", 80);
+	defProcParams.setFloat   ("ShadowsHighlightsSTonalWIdth", 80);
+	defProcParams.setFloat   ("ShadowsHighlightsLocalContrast", 0);
+	defProcParams.setFloat   ("ShadowsHighlightsRadius", 40);
 }
 
 void ShadowsHighlightsFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -57,79 +69,55 @@ PreShadowsHighlightsFilter::~PreShadowsHighlightsFilter () {
     delete map;
 }
 
-void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    if (procParams->sh.enabled) {
+	bool enabled = procParams->getBoolean ("ShadowsHighlightsEnabled");
+
+    if (enabled) {
+
+    	float shradius 	= procParams->getFloat ("ShadowsHighlightsRadius");
+    	bool shhq 		= procParams->getFloat ("ShadowsHighlightsHQ");
 
         // calculate radius (procparams contains relative radius only)
         ImageSource* imgsrc = getFilterChain ()->getImageSource ();
         Dim fsize = imgsrc->getFullImageSize ();
-        double radius = sqrt (double(fsize.width*fsize.width+fsize.height*fsize.height)) / 2.0;
-        double shradius = radius / 1800.0 * procParams->sh.radius;
+        float radius = sqrt ((float)(fsize.width*fsize.width+fsize.height*fsize.height)) / 2.0 / 1800.0 * shradius;
 
         // allocate map
         delete map;
-        map = new Buffer<unsigned short> (sourceImage->width, sourceImage->height);
+        map = new Buffer<float> (sourceImage->width, sourceImage->height);
 
         // fill with luminance
-        TMatrix wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
-        double lumimulr = wprof[0][1];
-        double lumimulg = wprof[1][1];
-        double lumimulb = wprof[2][1];
+        Matrix33 wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
+        float lumimulr = wprof.data[1][0];
+        float lumimulg = wprof.data[1][1];
+        float lumimulb = wprof.data[1][2];
 
         for (int i=0; i<map->height; i++)
-            for (int j=0; j<map->width; j++) {
-                int val = lumimulr*sourceImage->r[i][j] + lumimulg*sourceImage->g[i][j] + lumimulb*sourceImage->b[i][j];
-                map->rows[i][j] = CLIP(val);
-            }
+            for (int j=0; j<map->width; j++)
+            	map->rows[i][j] = lumimulr*sourceImage->r[i][j] + lumimulg*sourceImage->g[i][j] + lumimulb*sourceImage->b[i][j];
 
-        if (!procParams->sh.hq) {
-        	Dim size (sourceImage->width, sourceImage->height);
-            gaussHorizontal<unsigned short> (map, map, size, (double*)(buffer->data), radius, multiThread);
-            gaussVertical<unsigned short>   (map, map, size, (double*)(buffer->data), radius, multiThread);
-        }
-        else {
-            #pragma omp parallel if (multiThread)
-            {
-                int tid = omp_get_thread_num();
-                int nthreads = omp_get_num_threads();
-                int blk = map->height/nthreads;
-
-                if (tid<nthreads-1)
-                    bilateral<unsigned short> (map, map, 8000, radius, tid*blk, (tid+1)*blk);
-                else
-                    bilateral<unsigned short> (map, map, 8000, radius, tid*blk, map->height);
-            }
-            // anti-alias filtering the result
-            for (int i=0; i<map->height; i++)
-                for (int j=0; j<map->width; j++)
-                    if (i>0 && j>0 && i<map->height-1 && j<map->width-1)
-                        buffer->rows[i][j] = (map->rows[i-1][j-1]+map->rows[i-1][j]+map->rows[i-1][j+1]+map->rows[i][j-1]+map->rows[i][j]+map->rows[i][j+1]+map->rows[i+1][j-1]+map->rows[i+1][j]+map->rows[i+1][j+1])/9;
-                    else
-                        buffer->rows[i][j] = map->rows[i][j];
-            for (int i=0; i<map->height; i++)
-                for (int j=0; j<map->width; j++)
-                    map->rows[i][j] = buffer->rows[i][j];
-        }
+		Dim size (sourceImage->width, sourceImage->height);
+		gaussHorizontal<float> (map, map, size, (double*)(buffer->data), radius, multiThread);
+		gaussVertical<float>   (map, map, size, (double*)(buffer->data), radius, multiThread);
 
         // update average, minimum, maximum
         Filter* p = getParentFilter ();
         if (!p) {
-            double _avg = 0;
+            avg = 0;
             int n = 1;
-            min = 65535;
+            min = FLT_MAX;
             max = 0;
             for (int i=32; i<map->height-32; i++)
                 for (int j=32; j<map->width-32; j++) {
-                    int val = map->rows[i][j];
+                    float val = map->rows[i][j];
                     if (val < min)
                         min = val;
                     if (val > max)
                         max = val;
-                    _avg = 1.0/n * val + (1.0 - 1.0/n) * _avg;
+                    avg = 1.0/n * val + (1.0 - 1.0/n) * avg;
                     n++;
                 }
-            avg = (int) _avg;
         }
         else {
             Filter* root = p;
@@ -150,31 +138,32 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
         targetImage->copyFrom (sourceImage);
 }
 
-unsigned short** PreShadowsHighlightsFilter::getSHMap () {
+float** PreShadowsHighlightsFilter::getSHMap () {
 
     return map->rows;
 }
 
-unsigned short PreShadowsHighlightsFilter::getMapMax () {
+float PreShadowsHighlightsFilter::getMapMax () {
 
     return max;
 }
 
-unsigned short PreShadowsHighlightsFilter::getMapMin () {
+float PreShadowsHighlightsFilter::getMapMin () {
 
     return min;
 }
 
-unsigned short PreShadowsHighlightsFilter::getMapAvg () {
+float PreShadowsHighlightsFilter::getMapAvg () {
 
     return avg;
 }
 
 Dim PreShadowsHighlightsFilter::getReqiredBufferSize () {
 
-    if (procParams->sh.enabled) {
+    if (procParams->getBoolean ("ShadowsHighlightsEnabled")) {
         Dim sdim = getScaledTargetImageView().getSize();
-        if (!procParams->sh.hq) {
+    	bool shhq = procParams->getFloat ("ShadowsHighlightsHQ");
+        if (!shhq) {
             if (sdim.height > sdim.width)
                 return Dim (2, sdim.height*omp_get_max_threads());
             else
@@ -191,52 +180,60 @@ ShadowsHighlightsFilter::ShadowsHighlightsFilter (PreShadowsHighlightsFilter* ps
 	: Filter (&shadowsHighlightsFilterDescriptor), pshFilter (pshf) {
 }
 
-void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
     // apply filter
-    bool processSH  = procParams->sh.enabled && (procParams->sh.highlights>0 || procParams->sh.shadows>0);
-    bool processLCE = procParams->sh.enabled && procParams->sh.localcontrast>0;
-    double lceamount = procParams->sh.localcontrast / 200.0;
+	bool enabled 	 = procParams->getBoolean ("ShadowsHighlightsEnabled");
+	float highlights = procParams->getFloat ("ShadowsHighlightsHighlights");
+	float shadows    = procParams->getFloat ("ShadowsHighlightsShadows");
+	float lce        = procParams->getFloat ("ShadowsHighlightsLocalContrast");
+
+	bool processSH  = enabled && (highlights>0 || shadows>0);
+    bool processLCE = enabled && lce>0;
+    double lceamount = lce / 200.0;
 
     if (processSH || processLCE) {
 
-        unsigned short** shmap = pshFilter->getSHMap ();
+    	float htonalwidth = procParams->getFloat ("ShadowsHighlightsHTonalWidth");
+    	float stonalwidth = procParams->getFloat ("ShadowsHighlightsSTonalWidth");
 
-        int h_th, s_th;
+        float** shmap = pshFilter->getSHMap ();
+
+        float h_th, s_th;
         if (shmap) {
-            h_th = pshFilter->getMapMax() - procParams->sh.htonalwidth * (pshFilter->getMapMax() - pshFilter->getMapAvg()) / 100;
-            s_th = procParams->sh.stonalwidth * (pshFilter->getMapAvg() - pshFilter->getMapMin()) / 100;
+            h_th = pshFilter->getMapMax() - htonalwidth * (pshFilter->getMapMax() - pshFilter->getMapAvg()) / 100.0;
+            s_th = stonalwidth * (pshFilter->getMapAvg() - pshFilter->getMapMin()) / 100.0;
         }
 
-        TMatrix wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
-        double lumimulr = wprof[0][1];
-        double lumimulg = wprof[1][1];
-        double lumimulb = wprof[2][1];
+        Matrix33 wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
+        float lumimulr = wprof.rowsum(0);
+        float lumimulg = wprof.rowsum(1);
+        float lumimulb = wprof.rowsum(2);
 
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<sourceImage->height; i++) {
             for (int j=0; j<sourceImage->width; j++) {
-                int r = sourceImage->r[i][j];
-                int g = sourceImage->g[i][j];
-                int b = sourceImage->b[i][j];
-                int mapval = shmap[i][j];
+                float r = sourceImage->r[i][j];
+                float g = sourceImage->g[i][j];
+                float b = sourceImage->b[i][j];
+                float mapval = shmap[i][j];
                 double factor = 1.0;
                 if (processSH) {
                     if (mapval > h_th)
-                        factor = (h_th + (100.0 - procParams->sh.highlights) * (mapval - h_th) / 100.0) / mapval;
+                        factor = (h_th + (100.0 - highlights) * (mapval - h_th) / 100.0) / mapval;
                     else if (mapval < s_th)
-                        factor = (s_th - (100.0 - procParams->sh.shadows) * (s_th - mapval) / 100.0) / mapval;
+                        factor = (s_th - (100.0 - shadows) * (s_th - mapval) / 100.0) / mapval;
                 }
                 if (processLCE) {
                     double sub = lceamount*(mapval-factor*(r*lumimulr + g*lumimulg + b*lumimulb));
-                    r = CLIP((int)(factor*r-sub));
-                    g = CLIP((int)(factor*g-sub));
-                    b = CLIP((int)(factor*b-sub));
+                    r = factor*r-sub;
+                    g = factor*g-sub;
+                    b = factor*b-sub;
                 }
                 else {
-                    r = CLIP((int)(factor*r));
-                    g = CLIP((int)(factor*g));
-                    b = CLIP((int)(factor*b));
+                    r *= factor;
+                    g *= factor;
+                    b *= factor;
                 }
                 targetImage->r[i][j] = r;
                 targetImage->g[i][j] = g;

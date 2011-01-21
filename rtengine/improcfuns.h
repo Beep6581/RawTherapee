@@ -13,7 +13,7 @@ namespace rtengine {
 class ImProcFunctions {
 
     public:
-        static void calcAutoExp (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
+        static void calcAutoExp (unsigned int* histogram, int histcompr, float clip, float& br, float& bl);
 
 };
 

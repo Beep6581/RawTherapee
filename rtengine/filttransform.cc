@@ -641,11 +641,11 @@ bool TransformFilter::needsTransform () {
 }
 
 #define A   (-0.85)
-void TransformFilter::cubintch (unsigned short** src, int xs, int ys, double Dx, double Dy, unsigned short *r, double mul) {
+void TransformFilter::cubintch (float** src, int xs, int ys, double Dx, double Dy, float *r, double mul) {
 
-  double w[4];
+	float w[4];
 
-  { double t1, t2;
+  { float t1, t2;
   t1 = -A*(Dx-1.0)*Dx;
   t2 = (3.0-2.0*Dx)*Dx*Dx;
   w[3] = t1*Dx;
@@ -654,8 +654,8 @@ void TransformFilter::cubintch (unsigned short** src, int xs, int ys, double Dx,
   w[0] = -t1*(Dx-1.0);
   }
 
-  double rd;
-  double yr[4];
+  float rd;
+  float yr[4];
 
   for (int k=ys, kx=0; k<ys+4; k++, kx++) {
     rd = 0.0;
@@ -666,7 +666,7 @@ void TransformFilter::cubintch (unsigned short** src, int xs, int ys, double Dx,
   }
 
 
-  { double t1, t2;
+  { float t1, t2;
   t1 = -A*(Dy-1.0)*Dy;
   t2 = (3.0-2.0*Dy)*Dy*Dy;
   w[3] = t1*Dy;
@@ -681,14 +681,14 @@ void TransformFilter::cubintch (unsigned short** src, int xs, int ys, double Dx,
 
   rd*=mul;
 
-  *r = (int)CLIP(rd);
+  *r = rd;
 }
 
-void TransformFilter::cubint (MultiImage* src, int xs, int ys, double Dx, double Dy, unsigned short *r, unsigned short *g, unsigned short *b, double mul) {
+void TransformFilter::cubint (MultiImage* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
 
-  double w[4];
+  float w[4];
 
-  { double t1, t2;
+  { float t1, t2;
   t1 = -A*(Dx-1.0)*Dx;
   t2 = (3.0-2.0*Dx)*Dx*Dx;
   w[3] = t1*Dx;
@@ -697,8 +697,8 @@ void TransformFilter::cubint (MultiImage* src, int xs, int ys, double Dx, double
   w[0] = -t1*(Dx-1.0);
   }
 
-  double rd, gd, bd;
-  double yr[4], yg[4], yb[4];
+  float rd, gd, bd;
+  float yr[4], yg[4], yb[4];
 
   for (int k=ys, kx=0; k<ys+4; k++, kx++) {
     rd = gd = bd = 0.0;
@@ -711,7 +711,7 @@ void TransformFilter::cubint (MultiImage* src, int xs, int ys, double Dx, double
   }
 
 
-  { double t1, t2;
+  { float t1, t2;
   t1 = -A*(Dy-1.0)*Dy;
   t2 = (3.0-2.0*Dy)*Dy*Dy;
   w[3] = t1*Dy;
@@ -731,9 +731,9 @@ void TransformFilter::cubint (MultiImage* src, int xs, int ys, double Dx, double
   gd*=mul;
   bd*=mul;
 
-  *r = (int)CLIP(rd);
-  *g = (int)CLIP(gd);
-  *b = (int)CLIP(bd);
+  *r = rd;
+  *g = gd;
+  *b = bd;
 }
 
 

@@ -21,6 +21,7 @@ class ResizeFilterDescriptor : public FilterDescriptor {
 
 	public:
         ResizeFilterDescriptor ();
+    	void getDefaultParameters (ProcParams& defProcParams) const;
 		void createAndAddToList (Filter* tail) const;
 };
 
@@ -38,7 +39,7 @@ class ResizeFilter : public Filter {
     public:
         ResizeFilter ();
 
-    	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer);
+    	void      process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer);
         double    getScale ();
         double    getTargetScale (int skip);
         ImageView calculateSourceImageView (const ImageView& requestedImView);

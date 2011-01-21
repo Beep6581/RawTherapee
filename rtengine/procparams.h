@@ -27,149 +27,6 @@
 
 namespace rtengine {
 
-///**
-//  * Parameters on what order the image processing functions are applied
-//  */
-//class FilterOrderParams {
-//
-//	public:
-//		bool					 custom;
-//		std::vector<Glib::ustring> filterlist;
-//};
-
-/**
-  * Parameters of the demosaicing
-  */
-/*class DemosaicingParams {
-
-	public:
-		Glib::ustring method;
-		int			  colorcorrectionsteps;
-};
-*/
-/**
-  * Parameters of the tone curve 
-  */
-class ToneCurveParams {
-
-    public:
-        bool        autoexp;
-        double      clip;
-        double      expcomp;
-        std::vector<double>   curve;
-        int         brightness;
-        int         black;
-        int         contrast;
-        int         shcompr;
-        int         hlcompr;
-};
-
-/**
-  * Parameters of the luminance curve
-  */
-/*class LCurveParams {
-
-    public:
-        std::vector<double>   curve;
-        int      	brightness;
-        int         contrast;
-};
-*/
-/**
-  * Parameters of the sharpening
-  */
-class SharpeningParams {
-
-    public:
-        bool    enabled;
-        double  radius;
-        int     amount;
-        int     threshold;
-        bool    edgesonly;
-        double  edges_radius;
-        int     edges_tolerance;
-        bool    halocontrol;
-        int     halocontrol_amount;
-        
-        Glib::ustring method;
-        int     deconvamount;
-        double  deconvradius;
-        int     deconviter;
-        int     deconvdamping;
-};
-
-/**
-  * Parameters of the color boost
-  */
-/*class ColorBoostParams {
-
-    public: 
-        int     amount;
-        bool    avoidclip;
-        bool    enable_saturationlimiter;
-        double  saturationlimit;
-};
-*/
-/**
-  * Parameters of the white balance adjustments
-  */
-class WBParams {
-
-    public:
-        Glib::ustring   	method;
-        int             temperature;
-        double          green;
-};
-
-/**
-  * Parameters of the color shift
-  */
-/*class ColorShiftParams {
-
-    public:
-        double  a;
-        double  b;
-};
-*/
-/**
-  * Parameters of the luminance denoising
-  */
-/*class LumaDenoiseParams {
-
-    public:
-        bool    enabled;
-        double  radius;
-        int     edgetolerance;
-};*/
-
-/**
-  * Parameters of the color denoising
-  */
-/*class ColorDenoiseParams {
-
-    public:
-        bool    enabled;
-        double  radius;
-        int     edgetolerance;
-        bool    edgesensitive;
-        int		amount;
-};
-*/
-/**
-  * Parameters of the shadow/highlight enhancement
-  */
-class SHParams {
-
-    public:
-        bool    enabled;
-        bool    hq;
-        int     highlights;
-        int     htonalwidth;
-        int     shadows;
-        int     stonalwidth;
-        int     localcontrast;
-        int     radius;
-};
 
 /**
   * Parameters of the cropping
@@ -188,17 +45,6 @@ class CropParams {
         Glib::ustring   guide;
 };
 
-/**
-  * Parameters of the coarse transformations like 90 deg rotations and h/v flipping
-  */
-/*class CoarseTransformParams {
-
-    public:
-        int     rotate;
-        bool    hflip;
-        bool    vflip;
-};
-*/
 /**
   * Common transformation parameters
   */
@@ -247,17 +93,6 @@ class VignettingParams {
         int  radius;
 };
 
-///**
-//  * Parameters of the color mixer
-//  */
-//class ChannelMixerParams {
-//
-//    public:
-//        int red[3];
-//        int green[3];
-//        int blue[3];
-//};
-
 /**
   * Parameters of the c/a correction
   */
@@ -266,30 +101,6 @@ class CACorrParams {
     public:
         double red;
         double blue;
-};
-
-/**
-  * Parameters of the highlight recovery
-  */
-class HRecParams {
-
-    public:
-        bool enabled;
-        Glib::ustring method;
-};
-
-/**
-  * Parameters of the resizing
-  */
-class ResizeParams {
-
-    public:
-        bool enabled;
-        double scale;
-        Glib::ustring method;
-        int dataspec;
-        int width;
-        int height;
 };
 
 /**
@@ -363,28 +174,14 @@ class ProcParams {
 
 		// --------------8<------------------ to be removed when all filters are rewritten ------
 
-//		DemosaicingParams		demosaicing;	///< Demosaicing parameters
-//		FilterOrderParams		filterOrder;	///< Order of image processing functions
-		ToneCurveParams         toneCurve;      ///< Tone curve parameters
-//        LCurveParams            lumaCurve;      ///< CIELAB luminance curve parameters
-        SharpeningParams        sharpening;     ///< Sharpening parameters
-//        ColorBoostParams        colorBoost;     ///< Color boost parameters
-        WBParams                wb;             ///< White balance parameters
-//        ColorShiftParams        colorShift;     ///< Color shift parameters
-//        LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
-//        ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
-        SHParams                sh;             ///< Shadow/highlight enhancement parameters
         CropParams              crop;           ///< Crop parameters
-//        CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
         CommonTransformParams	commonTrans;	///< Common transformation parameters (autofill)
         RotateParams            rotate;         ///< Rotation parameters
         DistortionParams        distortion;     ///< Lens distortion correction parameters
         PerspectiveParams       perspective;    ///< Perspective correction parameters
         CACorrParams            cacorrection;   ///< Lens c/a correction parameters
         VignettingParams        vignetting;     ///< Lens vignetting correction parameters
-//        ChannelMixerParams      chmixer;        ///< Channel mixer parameters
-        HRecParams              hlrecovery;     ///< Highlight recovery parameters
-        ResizeParams            resize;         ///< Resize parameters
+
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image

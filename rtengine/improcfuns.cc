@@ -11,7 +11,7 @@
 
 namespace rtengine {
 
-void ImProcFunctions::calcAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
+void ImProcFunctions::calcAutoExp  (unsigned int* histogram, int histcompr, float clip, float& br, float& bl) {
 
     double sum = 0;
     for (int i=0; i<65536>>histcompr; i++)
@@ -36,10 +36,11 @@ void ImProcFunctions::calcAutoExp  (unsigned int* histogram, int histcompr, doub
     aw <<= histcompr;
     shc <<= histcompr;
 
-    double corr = pow(2.0, expcomp);
+    double corr = 1.0; // we have to find out something better when there is a gui and we can play with the parameters
+//    double corr = pow(2.0, expcomp);
 
     // black point selection is based on the linear result (yielding better visual results)
-    bl = (int)(shc * corr);
+    bl = shc * corr;
     // compute the white point of the exp. compensated gamma corrected image
     double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
 
@@ -59,5 +60,7 @@ void ImProcFunctions::calcAutoExp  (unsigned int* histogram, int histcompr, doub
     br = log(65535.0 / (awg-bl)) / log(2.0);
     if (br<0)
         br = 0;
+
+    bl /= 65535.0;
 }
 }

@@ -8,8 +8,9 @@
 #include "filthlrec.h"
 #include "rtengine.h"
 #include "macros.h"
-#include "iccmatrices.h"
+#include "iccstore.h"
 #include "filterchain.h"
+#include "util.h"
 
 namespace rtengine {
 
@@ -26,6 +27,12 @@ HighlightRecoveryFilterDescriptor::HighlightRecoveryFilterDescriptor ()
     applyOnStdImage  = false;
 }
 
+void HighlightRecoveryFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setString  ("HighlightRecoveryMethod", "Luminance");
+	defProcParams.setBoolean ("HighlightRecoveryEnabled", true);
+}
+
 void HighlightRecoveryFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new HighlightRecoveryFilter ());
@@ -35,32 +42,32 @@ HighlightRecoveryFilter::HighlightRecoveryFilter ()
 	: Filter (&highlightRecoveryFilterDescriptor) {
 }
 
-void HighlightRecoveryFilter::luminance (MultiImage* sourceImage, MultiImage* targetImage, int maxval) {
+void HighlightRecoveryFilter::luminance (MultiImage* sourceImage, MultiImage* targetImage) {
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sourceImage->height; i++)
         for (int j=0; j<sourceImage->width; j++) {
-            int r = sourceImage->r[i][j], g = sourceImage->g[i][j], b = sourceImage->b[i][j];
-            if (r>maxval || g>maxval || b>maxval) {
-                int ro = MIN (r, maxval);
-                int go = MIN (g, maxval);
-                int bo = MIN (b, maxval);
-                double L = r + g + b;
-                double C = 1.732050808 * (r - g);
-                double H = 2 * b - r - g;
-                double Co = 1.732050808 * (ro - go);
-                double Ho = 2 * bo - ro - go;
+            float r = sourceImage->r[i][j], g = sourceImage->g[i][j], b = sourceImage->b[i][j];
+            if (r>1.0 || g>1.0 || b>1.0) {
+            	float ro = MIN (r, 1.0);
+            	float go = MIN (g, 1.0);
+            	float bo = MIN (b, 1.0);
+            	float L = r + g + b;
+            	float C = 1.732050808 * (r - g);
+            	float H = 2 * b - r - g;
+            	float Co = 1.732050808 * (ro - go);
+            	float Ho = 2 * bo - ro - go;
                 if (r!=g && g!=b) {
-                    double ratio = sqrt ((Co*Co+Ho*Ho) / (C*C+H*H));
+                	float ratio = sqrt ((Co*Co+Ho*Ho) / (C*C+H*H));
                     C *= ratio;
                     H *= ratio;
                 }
-                int rr = L / 3.0 - H / 6.0 + C / 3.464101615;
-                int gr = L / 3.0 - H / 6.0 - C / 3.464101615;
-                int br = L / 3.0 + H / 3.0;
-                targetImage->r[i][j] = CLIP(rr);
-                targetImage->g[i][j] = CLIP(gr);
-                targetImage->b[i][j] = CLIP(br);
+                float rr = L / 3.0 - H / 6.0 + C / 3.464101615;
+                float gr = L / 3.0 - H / 6.0 - C / 3.464101615;
+                float br = L / 3.0 + H / 3.0;
+                targetImage->r[i][j] = rr;
+                targetImage->g[i][j] = gr;
+                targetImage->b[i][j] = br;
             }
             else {
                 targetImage->r[i][j] = r;
@@ -70,51 +77,51 @@ void HighlightRecoveryFilter::luminance (MultiImage* sourceImage, MultiImage* ta
         }
 }
 
-void HighlightRecoveryFilter::cieblend (MultiImage* sourceImage, MultiImage* targetImage, int maxval, Matrix33 cam) {
+void HighlightRecoveryFilter::cieblend (MultiImage* sourceImage, MultiImage* targetImage, Matrix33 cam) {
 
     static bool crTableReady = false;
-    static double fv[0x10000];
+    static float fv[0x20000];
     if (!crTableReady) {
-        for (int ix=0; ix < 0x10000; ix++) {
-            double rx = ix / 65535.0;
+        for (int ix=0; ix < 0x20000; ix++) {
+        	float rx = ix / 65535.0;
             fv[ix] = rx > 0.008856 ? exp(1.0/3 * log(rx)) : 7.787*rx + 16/116.0;
         }
         crTableReady = true;
     }
 
-    cam.multiply (sRGB_d50);
+    cam.multiply (iccStore.workingSpaceMatrix("sRGB"));
     Matrix33 icam = cam.inverse ();
 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sourceImage->height; i++)
         for (int j=0; j<sourceImage->width; j++) {
-            int r = sourceImage->r[i][j], g = sourceImage->g[i][j], b = sourceImage->b[i][j];
-            if (r>maxval || g>maxval || b>maxval) {
-                int ro = MIN (r, maxval);
-                int go = MIN (g, maxval);
-                int bo = MIN (b, maxval);
-                double xx, yy, zz;
+            float r = sourceImage->r[i][j], g = sourceImage->g[i][j], b = sourceImage->b[i][j];
+            if (r>1.0 || g>1.0 || b>1.0) {
+            	float ro = MIN (r, 1.0);
+            	float go = MIN (g, 1.0);
+            	float bo = MIN (b, 1.0);
+            	float xx, yy, zz;
                 cam.transform (r, g, b, xx, yy, zz);
-                double fy = fv[CLIP((int)yy)];
+                float fy = lutInterp<float,0x20000>(fv, 65535.0*yy);
                 // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
-                double x, y, z;
+                float x, y, z;
                 cam.transform (ro, go, bo, x, y, z);
-                x = fv[CLIP((int)x)];
-                y = fv[CLIP((int)y)];
-                z = fv[CLIP((int)z)];
+                x = lutInterp<float,0x20000>(fv, 65535.0*x);
+                y = lutInterp<float,0x20000>(fv, 65535.0*y);
+                z = lutInterp<float,0x20000>(fv, 65535.0*z);
                 // convert back to rgb
-                double fz = fy - y + z;
-                double fx = fy + x - y;
-                double zr = (fz<=0.206893) ? ((116.0*fz-16.0)/903.3) : (fz * fz * fz);
-                double xr = (fx<=0.206893) ? ((116.0*fx-16.0)/903.3) : (fx * fx * fx);
-                x = xr*65535.0 - 0.5;
+                float fz = fy - y + z;
+                float fx = fy + x - y;
+                float zr = (fz<=0.206893) ? ((116.0*fz-16.0)/903.3) : (fz * fz * fz);
+                float xr = (fx<=0.206893) ? ((116.0*fx-16.0)/903.3) : (fx * fx * fx);
+                x = xr;
                 y = yy;
-                z = zr*65535.0 - 0.5;
-                double rr, gr, br;
+                z = zr;
+                float rr, gr, br;
                 icam.transform (x, y, z, rr, gr, br);
-                targetImage->r[i][j] = CLIP(rr);
-                targetImage->g[i][j] = CLIP(gr);
-                targetImage->b[i][j] = CLIP(br);
+                targetImage->r[i][j] = rr;
+                targetImage->g[i][j] = gr;
+                targetImage->b[i][j] = br;
             }
             else {
                 targetImage->r[i][j] = r;
@@ -124,14 +131,17 @@ void HighlightRecoveryFilter::cieblend (MultiImage* sourceImage, MultiImage* tar
         }
 }
 
-void HighlightRecoveryFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void HighlightRecoveryFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
+
+	String method = procParams->getString ("HighlightRecoveryMethod");
+	bool enabled  = procParams->getBoolean ("HighlightRecoveryEnabled");
 
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
-    if (imgsrc->isRaw() && procParams->hlrecovery.enabled && procParams->hlrecovery.method == "Luminance")
-        luminance (sourceImage, targetImage, 65535.0 / imgsrc->getDefGain());
-    else if (imgsrc->isRaw() && procParams->hlrecovery.enabled && procParams->hlrecovery.method == "CIELab blending")
-        cieblend (sourceImage, targetImage, 65535.0 / imgsrc->getDefGain(), imgsrc->getCamToRGBMatrix());
+    if (imgsrc->isRaw() && enabled && method == "Luminance")
+        luminance (sourceImage, targetImage);
+    else if (imgsrc->isRaw() && enabled && method == "CIELab blending")
+        cieblend (sourceImage, targetImage, imgsrc->getCamToRGBMatrix());
     else if (sourceImage!=targetImage)
         targetImage->copyFrom (sourceImage);
 }
