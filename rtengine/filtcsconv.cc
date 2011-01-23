@@ -44,7 +44,7 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
     cmsHPROFILE in  = NULL;
-    cmsHPROFILE out = iccStore.workingSpace (procParams->icm.working);;
+    cmsHPROFILE out = iccStore->workingSpace (procParams->icm.working);;
 
     bool done = false;
 
@@ -53,7 +53,7 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
     if (procParams->icm.input == "(embedded)")
         in = imgsrc->getEmbeddedProfile ();
     else if (procParams->icm.input != "" && procParams->icm.input != "(camera)" && procParams->icm.input != "(none)") {
-        in = iccStore.getProfile (procParams->icm.input);
+        in = iccStore->getProfile (procParams->icm.input);
         if (in && procParams->icm.gammaOnInput) {
             for (int i=0; i<sourceImage->height; i++)
                 for (int j=0; j<sourceImage->width; j++) {
@@ -70,9 +70,9 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
     if (!in) {
         if (imgsrc->isRaw()) {
             // do the color transform "by hand" to avoid calling slow lcms2
-            Matrix33 working = iccStore.workingSpaceInverseMatrix (procParams->icm.working);
+            Matrix33 working = iccStore->workingSpaceInverseMatrix (procParams->icm.working);
             Matrix33 mat = imgsrc->getCamToRGBMatrix();
-            mat.multiply (iccStore.workingSpaceMatrix("sRGB"));
+            mat.multiply (iccStore->workingSpaceMatrix("sRGB"));
             mat.multiply (working);
             #pragma omp parallel for if (multiThread)
             for (int i=0; i<sourceImage->height; i++)

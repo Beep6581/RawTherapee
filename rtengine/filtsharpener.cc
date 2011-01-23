@@ -260,7 +260,7 @@ void SharpenFilter::process (const std::set<ProcEvent>& events, MultiImage* sour
     }
     else if (getTargetImageView().skip==1 && enabled && method=="usm" && uamount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
 
-        usmsharpening (sourceImage, targetImage, (Buffer<float>*)buffer);
+    	usmsharpening (sourceImage, targetImage, (Buffer<float>*)buffer);
 
         if (sourceImage != targetImage)
         	for (int i=0; i<targetImage->height; i++)

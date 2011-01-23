@@ -20,6 +20,7 @@
 #include "iccstore.h"
 #include "curves.h"
 #include "procparams.h"
+#include "filterfactory.h"
 #include <glibmm.h>
 
 namespace rtengine {
@@ -34,6 +35,8 @@ Settings::Settings () {
 		delete settings;
 	settings = this;
 
+	filterFactory = new FilterFactory ();
+
 	delete dcrMutex;
 	dcrMutex = new Glib::Mutex ();
 
@@ -41,17 +44,17 @@ Settings::Settings () {
 	verbose = true;
     filterList.push_back ("Demosaicing");
     filterList.push_back ("HighlightRecovery");
-    filterList.push_back ("--Cache--");
+//    filterList.push_back ("--Cache--");
     filterList.push_back ("CoarseTrans");
     filterList.push_back ("WhiteBalance");
     filterList.push_back ("ColorSpaceConversion");
-    filterList.push_back ("--Cache--");
+//    filterList.push_back ("--Cache--");
     filterList.push_back ("Transform");
-    filterList.push_back ("--Cache--");
+//    filterList.push_back ("--Cache--");
     filterList.push_back ("ColorMixer");
     filterList.push_back ("ShadowsHighlights");
     filterList.push_back ("ToneCurve");
-    filterList.push_back ("--Cache--");
+//    filterList.push_back ("--Cache--");
     filterList.push_back ("LuminanceDenoiser");
     filterList.push_back ("ColorDenoiser");
     filterList.push_back ("Sharpener");
@@ -60,7 +63,8 @@ Settings::Settings () {
 
     previewSkip = 16;
 
-    iccStore.parseDir (iccDirectory);
+    iccStore = new ICCStore ();
+    iccStore->parseDir (iccDirectory);
     CurveFactory::init ();
 
     defaultProcParams.setBoolean ("FilterOrderCustom", false);

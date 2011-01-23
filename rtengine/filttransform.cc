@@ -24,6 +24,20 @@ TransformFilterDescriptor::TransformFilterDescriptor ()
     addTriggerEvent (EvCACorr);
 }
 
+void TransformFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
+
+	defProcParams.setBoolean ("TransformAutoFill", true);
+	defProcParams.setFloat   ("RotationDegree", 0.0);
+	defProcParams.setFloat   ("LensDistortionAmount", 0.0);
+	defProcParams.setBoolean ("LensDistortionUseLensfun", false);
+	defProcParams.setFloat   ("PerspectiveCorrectionHorizontal", 0.0);
+	defProcParams.setFloat   ("PerspectiveCorrectionVertical", 0.0);
+	defProcParams.setFloat   ("VignettingCorrectionAmount", 0.0);
+	defProcParams.setFloat   ("VignettingCorrectionRadius", 50.0);
+	defProcParams.setFloat   ("CACorrectionRed", 0.0);
+	defProcParams.setFloat   ("CACorrectionBlue", 0.0);
+}
+
 void TransformFilterDescriptor::createAndAddToList (Filter* tail) const {
 
 	tail->addNext (new TransformFilter ());
@@ -50,7 +64,7 @@ void TransformFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
     yv = g[0].y;
 }
 
-void TransformFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<int>* buffer) {
+void TransformFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
     if (!needsTransform()) {
         if (targetImage != sourceImage)
@@ -72,6 +86,16 @@ void TransformFilter::process (const std::set<ProcEvent>& events, MultiImage* so
 
 void TransformFilter::transformSep (MultiImage* sourceImage, MultiImage* targetImage) {
 
+	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
+	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+	float cacorrectionred      	= procParams->getFloat   ("CACorrectionRed");
+	float cacorrectionblue 		= procParams->getFloat   ("CACorrectionBlue");
+
     Dim fsize = getFullImageSize ();
     double scale = getScale ();
 
@@ -89,45 +113,45 @@ void TransformFilter::transformSep (MultiImage* sourceImage, MultiImage* targetI
 
     // auxiliary variables for c/a correction
     double cdist[3];
-    cdist[0] = procParams->cacorrection.red;
+    cdist[0] = cacorrectionred;
     cdist[1] = 0.0;
-    cdist[2] = procParams->cacorrection.blue;
-    unsigned short** chorig[3];
+    cdist[2] = cacorrectionblue;
+    float** chorig[3];
     chorig[0] = sourceImage->r;
     chorig[1] = sourceImage->g;
     chorig[2] = sourceImage->b;
-    unsigned short** chtrans[3];
+    float** chtrans[3];
     chtrans[0] = targetImage->r;
     chtrans[1] = targetImage->g;
     chtrans[2] = targetImage->b;
 
     // auxiliary variables for distortion correction
-    double a = procParams->distortion.amount;
+    double a = distortionamount;
 
     // auxiliary variables for rotation
-    double cost = cos(procParams->rotate.degree * 3.14/180.0);
-    double sint = sin(procParams->rotate.degree * 3.14/180.0);
+    double cost = cos(rotatedegree * 3.14/180.0);
+    double sint = sin(rotatedegree * 3.14/180.0);
 
     // auxiliary variables for vignetting
     double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-    double v = 1.0 - procParams->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + procParams->vignetting.radius * 7.0 / 100.0;
+    double v = 1.0 - vignettingamount * 3.0 / 400.0;
+    double b = 1.0 + vignettingradius * 7.0 / 100.0;
     double mul = (1.0-v) / tanh(b);
-    bool dovign = procParams->vignetting.amount != 0;
+    bool dovign = fabs(vignettingamount) > 1e-15;
 
     // auxiliary variables for vertical perspective correction
-    double vpdeg = procParams->perspective.vertical / 100.0 * 45.0;
+    double vpdeg = perspectivevertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
     double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
-    double hpdeg = procParams->perspective.horizontal / 100.0 * 45.0;
+    double hpdeg = perspectivehorizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
     double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = procParams->commonTrans.autofill ? getTransformAutoFill () : 1.0;
+    double ascale = autofill ? getTransformAutoFill () : 1.0;
 
     // main cycle
     #pragma omp parallel for if (multiThread)
@@ -194,7 +218,17 @@ void TransformFilter::transformSep (MultiImage* sourceImage, MultiImage* targetI
 
 void TransformFilter::transformNonSep (MultiImage* sourceImage, MultiImage* targetImage) {
 
-    Dim fsize = getFullImageSize ();
+	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
+	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+	float cacorrectionred      	= procParams->getFloat   ("CACorrectionRed");
+	float cacorrectionblue 		= procParams->getFloat   ("CACorrectionBlue");
+
+	Dim fsize = getFullImageSize ();
     double scale = getScale ();
 
     int oW = (int)round (fsize.width * scale);
@@ -210,32 +244,32 @@ void TransformFilter::transformNonSep (MultiImage* sourceImage, MultiImage* targ
     double  h2 = (double) oH  / 2.0 - 0.5;
 
     // auxiliary variables for distortion correction
-    double a = procParams->distortion.amount;
+    double a = distortionamount;
 
     // auxiliary variables for rotation
-    double cost = cos(procParams->rotate.degree * 3.14/180.0);
-    double sint = sin(procParams->rotate.degree * 3.14/180.0);
+    double cost = cos(rotatedegree * 3.14/180.0);
+    double sint = sin(rotatedegree * 3.14/180.0);
 
     // auxiliary variables for vignetting
     double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-    double v = 1.0 - procParams->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + procParams->vignetting.radius * 7.0 / 100.0;
+    double v = 1.0 - vignettingamount * 3.0 / 400.0;
+    double b = 1.0 + vignettingradius * 7.0 / 100.0;
     double mul = (1.0-v) / tanh(b);
-    bool dovign = procParams->vignetting.amount != 0;
+    bool dovign = fabs(vignettingamount) > 1e-15;
 
     // auxiliary variables for vertical perspective correction
-    double vpdeg = procParams->perspective.vertical / 100.0 * 45.0;
+    double vpdeg = perspectivevertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
     double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
-    double hpdeg = procParams->perspective.horizontal / 100.0 * 45.0;
+    double hpdeg = perspectivehorizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
     double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = procParams->commonTrans.autofill ? getTransformAutoFill () : 1.0;
+    double ascale = autofill ? getTransformAutoFill () : 1.0;
 
     // main cycle
     #pragma omp parallel for if (multiThread)
@@ -305,6 +339,14 @@ void TransformFilter::transformNonSep (MultiImage* sourceImage, MultiImage* targ
 
 void TransformFilter::simpltransform (MultiImage* sourceImage, MultiImage* targetImage) {
 
+	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
+	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+
     Dim fsize = getFullImageSize ();
     double scale = getScale ();
 
@@ -321,32 +363,32 @@ void TransformFilter::simpltransform (MultiImage* sourceImage, MultiImage* targe
     double  h2 = (double) oH  / 2.0 - 0.5;
 
     // auxiliary variables for distortion correction
-    double a = procParams->distortion.amount;
+    double a = distortionamount;
 
     // auxiliary variables for rotation
-    double cost = cos(procParams->rotate.degree * 3.14/180.0);
-    double sint = sin(procParams->rotate.degree * 3.14/180.0);
+    double cost = cos(rotatedegree * 3.14/180.0);
+    double sint = sin(rotatedegree * 3.14/180.0);
 
     // auxiliary variables for vignetting
     double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-    double v = 1.0 - procParams->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + procParams->vignetting.radius * 7.0 / 100.0;
+    double v = 1.0 - vignettingamount * 3.0 / 400.0;
+    double b = 1.0 + vignettingradius * 7.0 / 100.0;
     double mul = (1.0-v) / tanh(b);
-    bool dovign = procParams->vignetting.amount != 0;
+    bool dovign = fabs(vignettingamount) > 1e-15;
 
     // auxiliary variables for vertical perspective correction
-    double vpdeg = procParams->perspective.vertical / 100.0 * 45.0;
+    double vpdeg = perspectivevertical / 100.0 * 45.0;
     double vpalpha = (90 - vpdeg) / 180.0 * 3.14;
     double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
     // auxiliary variables for horizontal perspective correction
-    double hpdeg = procParams->perspective.horizontal / 100.0 * 45.0;
+    double hpdeg = perspectivehorizontal / 100.0 * 45.0;
     double hpalpha = (90 - hpdeg) / 180.0 * 3.14;
     double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = procParams->commonTrans.autofill ? getTransformAutoFill () : 1.0;
+    double ascale = autofill ? getTransformAutoFill () : 1.0;
 
     // main cycle
     #pragma omp parallel for if (multiThread)
@@ -422,6 +464,9 @@ void TransformFilter::simpltransform (MultiImage* sourceImage, MultiImage* targe
 
 void TransformFilter::vignetting (MultiImage* sourceImage, MultiImage* targetImage) {
 
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+
     Dim fsize = getFullImageSize ();
     double scale = getScale ();
 
@@ -436,8 +481,8 @@ void TransformFilter::vignetting (MultiImage* sourceImage, MultiImage* targetIma
 
     double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
 
-    double v = 1.0 - procParams->vignetting.amount * 3.0 / 400.0;
-    double b = 1.0 + procParams->vignetting.radius * 7.0 / 100.0;
+    double v = 1.0 - vignettingamount * 3.0 / 400.0;
+    double b = 1.0 + vignettingradius * 7.0 / 100.0;
 
     double mul = (1.0-v) / tanh(b);
 
@@ -546,6 +591,16 @@ bool TransformFilter::transCoord (Dim fullSize, ImageView target, ImageView& sou
 
 bool TransformFilter::transCoord (Dim fullSize, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
 
+	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
+	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+	float cacorrectionred      	= procParams->getFloat   ("CACorrectionRed");
+	float cacorrectionblue 		= procParams->getFloat   ("CACorrectionBlue");
+
     bool clipresize = true;
     bool clipped = false;
 
@@ -566,20 +621,20 @@ bool TransformFilter::transCoord (Dim fullSize, std::vector<Coord2D> &src, std::
     int oH = fullSize.height;
     double w2 = (double) oW  / 2.0 - 0.5;
     double h2 = (double) oH  / 2.0 - 0.5;
-    double a = procParams->distortion.amount;
-    double cost = cos(procParams->rotate.degree * 3.14/180.0);
-    double sint = sin(procParams->rotate.degree * 3.14/180.0);
+    double a = distortionamount;
+    double cost = cos(rotatedegree * 3.14/180.0);
+    double sint = sin(rotatedegree * 3.14/180.0);
     double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
-    double vpdeg = procParams->perspective.vertical / 100.0 * 45.0;
+    double vpdeg = perspectivevertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
     double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
-    double hpdeg = procParams->perspective.horizontal / 100.0 * 45.0;
+    double hpdeg = perspectivehorizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
     double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-    double ascale = ascaleDef>0 ? ascaleDef : (procParams->commonTrans.autofill ? getTransformAutoFill () : 1.0);
+    double ascale = ascaleDef>0 ? ascaleDef : (autofill ? getTransformAutoFill () : 1.0);
 
     for (int i=0; i<src.size(); i++) {
 
@@ -598,9 +653,9 @@ bool TransformFilter::transCoord (Dim fullSize, std::vector<Coord2D> &src, std::
         double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
         double s = 1.0 - a + a * r ;
 
-        red.push_back   (Coord2D(Dx*(s+procParams->cacorrection.red)+w2, Dy*(s+procParams->cacorrection.red)+h2));
+        red.push_back   (Coord2D(Dx*(s+cacorrectionred)+w2, Dy*(s+cacorrectionred)+h2));
         green.push_back (Coord2D(Dx*s+w2, Dy*s+h2));
-        blue.push_back  (Coord2D(Dx*(s+procParams->cacorrection.blue)+w2, Dy*(s+procParams->cacorrection.blue)+h2));
+        blue.push_back  (Coord2D(Dx*(s+cacorrectionblue)+w2, Dy*(s+cacorrectionblue)+h2));
     }
 
     for (int i=0; i<src.size(); i++) {
@@ -617,23 +672,23 @@ bool TransformFilter::transCoord (Dim fullSize, std::vector<Coord2D> &src, std::
 
 bool TransformFilter::needsCA () {
 
-    return fabs (procParams->cacorrection.red) > 1e-15 || fabs (procParams->cacorrection.blue) > 1e-15;
+	return fabs(procParams->getFloat ("CACorrectionRed")) > 1e-15 || fabs(procParams->getFloat ("CACorrectionBlue")) > 1e-15;
 }
 bool TransformFilter::needsDistortion () {
 
-    return fabs (procParams->distortion.amount) > 1e-15;
+    return fabs(procParams->getFloat ("LensDistortionAmount")) > 1e-15 || procParams->getBoolean ("LensDistortionUseLensfun");
 }
 bool TransformFilter::needsRotation () {
 
-    return fabs (procParams->rotate.degree) > 1e-15;
+    return fabs (procParams->getFloat ("RotationDegree")) > 1e-15;
 }
 bool TransformFilter::needsPerspective () {
 
-    return procParams->perspective.horizontal || procParams->perspective.vertical;
+	return fabs(procParams->getFloat ("PerspectiveCorrectionHorizontal")) > 1e-15 || fabs(procParams->getFloat ("PerspectiveCorrectionVertical")) > 1e-15;
 }
 bool TransformFilter::needsVignetting () {
 
-    return procParams->vignetting.amount;
+    return fabs(procParams->getFloat ("VignettingCorrectionAmount")) > 1e-15;
 }
 bool TransformFilter::needsTransform () {
 

@@ -23,6 +23,6 @@ public:
 	FilterDescriptor* getFilterDescriptor (const std::string& name);
 };
 
-extern FilterFactory filterFactory;
+extern FilterFactory* filterFactory;
 }
 #endif /* FILTERFACTORY_H_ */

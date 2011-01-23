@@ -8,7 +8,8 @@
 #include "filtcolordenoise.h"
 #include "rtengine.h"
 #include "macros.h"
-#include "bilateral2.h"
+#include "gauss.h"
+#include <omp.h>
 
 namespace rtengine {
 

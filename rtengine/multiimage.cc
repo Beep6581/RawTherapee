@@ -13,7 +13,7 @@
 #define kappa 903.2963 //24389/27
 #define kappainv 0.00110706 //inverse of kappa
 #define kapeps 8 // kappa*epsilon
-#define Lab2xyz(f) (( (g=(f)*(f)*(f)) > epsilon) ? g : (116*(f)-16)*kappainv)
+#define Lab2xyz(f) (( (g=(f)*(f)*(f)) > epsilon) ? (g) : (116*(f)-16)*kappainv)
 
 namespace rtengine {
 
@@ -209,7 +209,7 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
 		convertTo (RGB, multiThread, workingColorSpace);
 	}
     else if (colorSpace==RGB && cs==XYZ) {
-	    Matrix33 wprof = iccStore.workingSpaceMatrix (workingColorSpace);
+	    Matrix33 wprof = iccStore->workingSpaceMatrix (workingColorSpace);
 		#pragma omp parallel for if (multiThread)
 	    for (int i=0; i<height; i++)
         	for (int j=0; j<width; j++) {
@@ -218,36 +218,38 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
             }
     }
     else if (colorSpace==XYZ && cs==RGB) {
-    	Matrix33 iwprof = iccStore.workingSpaceInverseMatrix (workingColorSpace);
+    	Matrix33 iwprof = iccStore->workingSpaceInverseMatrix (workingColorSpace);
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<height; i++) {
             for (int j=0; j<width; j++) {
-            	float x_ = x[i][j], y_ = y[i][j], z_ = y[i][j];
+            	float x_ = x[i][j], y_ = y[i][j], z_ = z[i][j];
         		iwprof.transform (x_, y_, z_, r[i][j], g[i][j], b[i][j]);
             }
         }
     }
     else if (colorSpace==Lab && cs==XYZ) {
 	    // calculate white point tristimulus
-    	Matrix33 wprof = iccStore.workingSpaceMatrix (workingColorSpace);
+    	Matrix33 wprof = iccStore->workingSpaceMatrix (workingColorSpace);
 	    float xn = wprof.rowsum (0);
 	    float yn = wprof.rowsum (1);
 	    float zn = wprof.rowsum (2);
 
 	    #pragma omp parallel for if (multiThread)
         for (int i=0; i<height; i++) {
-        	int g;
+        	float g;
             for (int j=0; j<width; j++) {
             	float fy = (cieL[i][j] + 16.0) / 116.0; // (L+16)/116
-				y[i][j] = Lab2xyz(1.0) * yn;
-            	x[i][j] = Lab2xyz(fy + ciea[i][j]/500.0) * xn;
-				z[i][j] = Lab2xyz(cieb[i][j]/200.0 - fy) * zn;
+            	float fx = fy + ciea[i][j] / 500.0;
+            	float fz = fy - cieb[i][j] / 200.0;
+				y[i][j] = Lab2xyz(fy) * yn;
+            	x[i][j] = Lab2xyz(fx) * xn;
+				z[i][j] = Lab2xyz(fz) * zn;
             }
         }
     }
     else if (colorSpace==XYZ && cs==Lab) {
 	    // calculate white point tristimulus
-    	Matrix33 wprof = iccStore.workingSpaceMatrix (workingColorSpace);
+    	Matrix33 wprof = iccStore->workingSpaceMatrix (workingColorSpace);
 	    float xn = wprof.rowsum (0);
 	    float yn = wprof.rowsum (1);
 	    float zn = wprof.rowsum (2);
@@ -255,7 +257,7 @@ void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string working
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<height; i++)
 			for (int j=0; j<width; j++) {
-				float x_ = x[i][j] * XYZ2LAB_LUTSCALE / xn, y_ = y[i][j] * XYZ2LAB_LUTSCALE / yn, z_ = z[i][j] * XYZ2LAB_LUTSCALE / yn;
+				float x_ = x[i][j] * XYZ2LAB_LUTSCALE / xn, y_ = y[i][j] * XYZ2LAB_LUTSCALE / yn, z_ = z[i][j] * XYZ2LAB_LUTSCALE / zn;
 				float cy = lutInterp<float,XYZ2LAB_LUTSIZE>(xyz2labCache, y_);
 				cieL[i][j] = 116.0 * cy - 16.0;
 				ciea[i][j] = 500.0 * (lutInterp<float,XYZ2LAB_LUTSIZE>(xyz2labCache, x_) - cy);
@@ -290,13 +292,24 @@ void MultiImage::initLabConversionCache () {
 
 Image16* MultiImage::createImage () {
 
-    if (colorSpace == RGB) {
+    if (colorSpace == RGB || colorSpace == XYZ) {
         Image16* img = new Image16 (width, height);
         for (int i=0; i<height; i++) {
         	for (int j=0; j<width; j++) {
-        		img->r[i][j] = CLIP(r[i][j]*65535.0);
-    			img->g[i][j] = CLIP(g[i][j]*65535.0);
-    			img->b[i][j] = CLIP(b[i][j]*65535.0);
+        		img->r[i][j] = CLIP((int)(r[i][j]*65535.0));
+    			img->g[i][j] = CLIP((int)(g[i][j]*65535.0));
+    			img->b[i][j] = CLIP((int)(b[i][j]*65535.0));
+        	}
+        }
+        return img;
+    }
+    else if (colorSpace == Lab) {
+        Image16* img = new Image16 (width, height);
+        for (int i=0; i<height; i++) {
+        	for (int j=0; j<width; j++) {
+        		img->r[i][j] = CLIP((int)(r[i][j]/100*65535));
+    			img->g[i][j] = CLIP((int)(g[i][j]/500*65535.0));
+    			img->b[i][j] = CLIP((int)(b[i][j]/200*65535.0));
         	}
         }
         return img;

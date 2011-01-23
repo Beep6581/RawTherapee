@@ -44,7 +44,7 @@ ToneCurveFilterDescriptor::ToneCurveFilterDescriptor ()
 
 void ToneCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setBoolean ("ToneCurveAutoExp", false);
+	defProcParams.setBoolean ("ToneCurveAutoExp", true);
 	defProcParams.setFloat   ("ToneCurveClip", 0.002);
 	defProcParams.setFloat   ("ToneCurveExpComp", 0);
 	defProcParams.setFloat   ("ToneCurveBrightness", 0);
@@ -81,7 +81,7 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
         if (!histogram)
             histogram = new unsigned int [65536];
 
-        Matrix33 wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
+        Matrix33 wprof = iccStore->workingSpaceMatrix (procParams->icm.working);
         float mulr = wprof.data[1][0];
         float mulg = wprof.data[1][1];
         float mulb = wprof.data[1][2];
@@ -103,6 +103,7 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
             imgsrc->getAEHistogram (aehist, aehistcompr);
             float expcomp, black;
             ImProcFunctions::calcAutoExp (aehist, aehistcompr, clip, expcomp, black);
+            std::cout << "autoexp: " << expcomp << ", black: " << black << std::endl;
         	procParams->setFloat ("ToneCurveExpComp", expcomp);
         	procParams->setFloat ("ToneCurveBlack", black*100.0);
         }
@@ -164,9 +165,9 @@ void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     #pragma omp parallel for if (multiThread)
 	for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
-			targetImage->r[i][j] = lutInterp<float,65536> (myCurve, 655.35*sourceImage->r[i][j]);
-			targetImage->g[i][j] = lutInterp<float,65536> (myCurve, 655.35*sourceImage->g[i][j]);
-			targetImage->b[i][j] = lutInterp<float,65536> (myCurve, 655.35*sourceImage->b[i][j]);
+			targetImage->r[i][j] = lutInterp<float,65536> (myCurve, 65535*sourceImage->r[i][j]);
+			targetImage->g[i][j] = lutInterp<float,65536> (myCurve, 65535*sourceImage->g[i][j]);
+			targetImage->b[i][j] = lutInterp<float,65536> (myCurve, 65535*sourceImage->b[i][j]);
 		}
 	}
 }

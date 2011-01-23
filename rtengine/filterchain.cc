@@ -42,7 +42,7 @@ void FilterChain::setupChain (FilterChain* previous) {
 		if (filterOrder[i] == "--Cache--")
 			last->forceOutputCache = true;
 		else {
-		    FilterDescriptor* fDescr = filterFactory.getFilterDescriptor (filterOrder[i]);
+		    FilterDescriptor* fDescr = filterFactory->getFilterDescriptor (filterOrder[i]);
 		    if (fDescr && (
 		            (fDescr->isAppliedOnThumbnail() && imgSource->isThumbnail()) ||
 		            (fDescr->isAppliedOnRawImage() && imgSource->isRaw()) ||
@@ -287,6 +287,15 @@ Image16* FilterChain::getFinalImage () {
     // TODO! we can do better! instead of converting to rgb, let us convert it to xyz
     last->outputCache->convertTo(MultiImage::RGB, true, procParams->icm.working);
 
+    // TEMPORARY SOLUTION!!!
+    for (int i=0; i<last->outputCache->height; i++)
+    	for (int j=0; j<last->outputCache->width; j++) {
+    		last->outputCache->r[i][j] = CurveFactory::gamma2(last->outputCache->r[i][j]);
+    		last->outputCache->g[i][j] = CurveFactory::gamma2(last->outputCache->g[i][j]);
+    		last->outputCache->b[i][j] = CurveFactory::gamma2(last->outputCache->b[i][j]);
+    	}
+    return last->outputCache->createImage();
+
     // calculate crop rectangle
     int cx = procParams->crop.enabled ? procParams->crop.x : 0;
     int cy = procParams->crop.enabled ? procParams->crop.y : 0;
@@ -311,8 +320,8 @@ Image16* FilterChain::getFinalImage () {
 
     if (procParams->icm.output!="") {
         // custom output icm profile specified, call lcms
-        cmsHPROFILE oprof = iccStore.getProfile (procParams->icm.output);
-        cmsHPROFILE iprof = iccStore.getProfile (procParams->icm.working);
+        cmsHPROFILE oprof = iccStore->getProfile (procParams->icm.output);
+        cmsHPROFILE iprof = iccStore->getProfile (procParams->icm.working);
         if (oprof && iprof) {
         	// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
         	cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, 0);
@@ -324,8 +333,8 @@ Image16* FilterChain::getFinalImage () {
     else if (procParams->icm.working != "sRGB") {
         // convert it to sRGB
         Matrix33 m;
-        m.multiply (iccStore.workingSpaceMatrix ("sRGB"));
-        m.multiply (iccStore.workingSpaceInverseMatrix (procParams->icm.working));
+        m.multiply (iccStore->workingSpaceMatrix ("sRGB"));
+        m.multiply (iccStore->workingSpaceInverseMatrix (procParams->icm.working));
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<ch; i++)
             for (int j=0; j<cw; j++)
@@ -353,8 +362,8 @@ Image8* FilterChain::getDisplayImage () {
 
     if (Settings::settings->monitorProfile != "") {
         // custom output icm profile specified, call lcms
-        cmsHPROFILE oprof = iccStore.getProfile (Settings::settings->monitorProfile);
-        cmsHPROFILE iprof = iccStore.getProfile (procParams->icm.working);
+        cmsHPROFILE oprof = iccStore->getProfile (Settings::settings->monitorProfile);
+        cmsHPROFILE iprof = iccStore->getProfile (procParams->icm.working);
         if (oprof && iprof) {
 			// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
 			cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, 0);
@@ -377,8 +386,8 @@ Image8* FilterChain::getDisplayImage () {
     }
     else {
         Matrix33 m;
-        m.multiply (iccStore.workingSpaceMatrix ("sRGB"));
-        m.multiply (iccStore.workingSpaceInverseMatrix (procParams->icm.working));
+        m.multiply (iccStore->workingSpaceMatrix ("sRGB"));
+        m.multiply (iccStore->workingSpaceInverseMatrix (procParams->icm.working));
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<final->height; i++) {
             int ix = i * final->width * 3;

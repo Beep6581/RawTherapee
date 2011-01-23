@@ -47,6 +47,13 @@ Matrix33::Matrix33 () {
             data[i][j] = i==j ? 1.0 : 0.0;
 }
 
+Matrix33::Matrix33 (const Matrix33& other) {
+
+	for (int i=0; i<3; i++)
+		for (int j=0; j<3; j++)
+			data[i][j] = other.data[i][j];
+}
+
 // applies transformation on the given (r,g,b) (column) vector
 // result is written back to the variables passed
 void Matrix33::transform (float& r, float& g, float& b) const {
@@ -123,6 +130,14 @@ float Matrix33::rowsum (int i) const {
 		r += data[i][j];
 
 	return r;
+}
+
+std::ostream& operator<< (std::ostream& os, const Matrix33& m) {
+
+	os << "[ " << m.data[0][0] << "  " << m.data[0][1] << "  " << m.data[0][2] << "; "
+			   << m.data[1][0] << "  " << m.data[1][1] << "  " << m.data[1][2] << "; "
+			   << m.data[2][0] << "  " << m.data[2][1] << "  " << m.data[2][2] << " ]";
+	return os;
 }
 
 }

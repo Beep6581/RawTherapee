@@ -28,7 +28,7 @@
 
 namespace rtengine {
 
-ICCStore iccStore;
+ICCStore* iccStore;
 
 // Members belonging to ProfileContent
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,7 +98,8 @@ const Matrix33 bruce_d50 (0.4941607255908, 0.3204990468435, 0.1495612990809, 0.2
 const Matrix33 beta_d50 (0.671254, 0.174583, 0.118383, 0.303273, 0.663786, 0.0329413, 0.000000, 0.040701, 0.784509);
 const Matrix33 best_d50 (0.632670, 0.204556, 0.126995, 0.228457, 0.737352, 0.0341908, 0.000000, 0.00951424, 0.815696);
 
-const Matrix33 wprofiles[] = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
+
+Matrix33 wprofiles[] = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
 
 ICCStore::ICCStore () {
@@ -107,9 +108,9 @@ ICCStore::ICCStore () {
 
     for (int i=0; i<N; i++) {
         wMatrices[wpnames[i]] = wprofiles[i];
-        wProfiles[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i]);
+        wProfiles[wpnames[i]] = createFromMatrix (wprofiles[i]);
         iwMatrices[wpnames[i]] = wprofiles[i].inverse ();
-        wProfilesGamma[wpnames[i]] = iccStore.createFromMatrix (wprofiles[i].inverse (), true);
+        wProfilesGamma[wpnames[i]] = createFromMatrix (wprofiles[i].inverse (), true);
     }
     float mat[3][3]={1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0};
     xyz  = createFromMatrix (mat, false, "XYZ");
@@ -316,12 +317,12 @@ cmsHPROFILE ICCStore::createFromMatrix (const Matrix33& matrix, bool gamma, cons
 
 std::vector<std::string> getWorkingProfiles () {
 
-    return iccStore.getWorkingProfiles ();
+    return iccStore->getWorkingProfiles ();
 }
 
 std::vector<std::string> getOutputProfiles () {
 
-    return iccStore.getOutputProfiles ();
+    return iccStore->getOutputProfiles ();
 }
 
 }

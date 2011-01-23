@@ -9,6 +9,7 @@
 #define MATRIX33_H_
 
 #include <string.h>
+#include <iostream>
 
 namespace rtengine {
 
@@ -25,6 +26,7 @@ class Matrix33 {
         Matrix33 (float (*values)[3]);
         Matrix33 (float d00, float d01, float d02, float d10, float d11, float d12, float d20, float d21, float d22);
         Matrix33 ();
+        Matrix33 (const Matrix33& other);
 
 		// applies transformation on the given (r,g,b) (column) vector
 		// result is written back to the variables passed
@@ -45,6 +47,8 @@ class Matrix33 {
 		float rowsum (int i) const;
 
 };
+
+std::ostream& operator<< (std::ostream& os, const Matrix33& m);
 
 }
 

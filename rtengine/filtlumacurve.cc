@@ -88,7 +88,7 @@ void LumaCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     #pragma omp parallel for if (multiThread)
 	for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
-			targetImage->cieL[i][j] = lutInterp<float,65536> (myCurve, 655.35*sourceImage->cieL[i][j]);
+			targetImage->cieL[i][j] = 100.0 * lutInterp<float,65536> (myCurve, 655.35*sourceImage->cieL[i][j]);
 			targetImage->ciea[i][j] = sourceImage->ciea[i][j];
 			targetImage->cieb[i][j] = sourceImage->cieb[i][j];
 		}

@@ -77,7 +77,7 @@ class ICCStore {
         cmsHPROFILE getsRGBProfile () { return srgb; }  /// return standard srgb transform
 };
 
-extern ICCStore iccStore;
+extern ICCStore* iccStore;
 }
 #endif
                                                       

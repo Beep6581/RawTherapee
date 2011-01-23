@@ -48,60 +48,6 @@ class CropParams {
 /**
   * Common transformation parameters
   */
-class CommonTransformParams {
-
-	public:
-		bool autofill;
-};
-
-/**
-  * Parameters of the rotation
-  */
-class RotateParams {
-    
-    public:
-        double  degree;
-};
-
-/**
-  * Parameters of the distortion correction
-  */
-class DistortionParams {
-
-    public:
-		bool    uselensfun;
-        double  amount;
-};
-
-/**
-  * Parameters of the perspective correction
-  */
-class PerspectiveParams {
-
-    public:
-		int  horizontal;
-		int  vertical;
-};
-
-/**
-  * Parameters of the vignetting correction
-  */
-class VignettingParams {
-
-    public:
-        int  amount;
-        int  radius;
-};
-
-/**
-  * Parameters of the c/a correction
-  */
-class CACorrParams {
-
-    public:
-        double red;
-        double blue;
-};
 
 /**
   * Parameters of the color spaces used during the processing
@@ -121,8 +67,8 @@ class ColorManagementParams {
 class ExifPair {
 
     public:
-		Glib::ustring field;
-		Glib::ustring value;
+		String field;
+		String value;
 };
 
 /**
@@ -131,8 +77,8 @@ class ExifPair {
 class IPTCPair {
 
     public:
-		Glib::ustring field;
-        std::vector<Glib::ustring> values;
+		String field;
+        StringList values;
 };
 
 /**
@@ -175,12 +121,6 @@ class ProcParams {
 		// --------------8<------------------ to be removed when all filters are rewritten ------
 
         CropParams              crop;           ///< Crop parameters
-        CommonTransformParams	commonTrans;	///< Common transformation parameters (autofill)
-        RotateParams            rotate;         ///< Rotation parameters
-        DistortionParams        distortion;     ///< Lens distortion correction parameters
-        PerspectiveParams       perspective;    ///< Perspective correction parameters
-        CACorrParams            cacorrection;   ///< Lens c/a correction parameters
-        VignettingParams        vignetting;     ///< Lens vignetting correction parameters
 
         ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image

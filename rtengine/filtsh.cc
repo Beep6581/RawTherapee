@@ -88,7 +88,7 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
         map = new Buffer<float> (sourceImage->width, sourceImage->height);
 
         // fill with luminance
-        Matrix33 wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
+        Matrix33 wprof = iccStore->workingSpaceMatrix (procParams->icm.working);
         float lumimulr = wprof.data[1][0];
         float lumimulg = wprof.data[1][1];
         float lumimulb = wprof.data[1][2];
@@ -205,7 +205,7 @@ void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiI
             s_th = stonalwidth * (pshFilter->getMapAvg() - pshFilter->getMapMin()) / 100.0;
         }
 
-        Matrix33 wprof = iccStore.workingSpaceMatrix (procParams->icm.working);
+        Matrix33 wprof = iccStore->workingSpaceMatrix (procParams->icm.working);
         float lumimulr = wprof.rowsum(0);
         float lumimulg = wprof.rowsum(1);
         float lumimulb = wprof.rowsum(2);

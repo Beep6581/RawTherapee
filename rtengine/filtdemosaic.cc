@@ -323,7 +323,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                     // red is simple
                     ti->r[ix][jx] = si->raw[i][j];
                     // blue: cross interpolation
-                    int b = 0;
+                    float b = 0;
                     int n = 0;
                     if (ix>0 && jx>0) {
                         b += si->raw[i-1][j-1] - ti->g[ix-1][jx-1];
@@ -346,7 +346,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                 }
                 else {
                     // linear R-G interp. horizontally
-                    int r;
+                    float r;
                     if (jx==0)
                         r = ti->g[ix][0] + si->raw[i][1] - ti->g[ix][1];
                     else if (jx==W-1)
@@ -355,7 +355,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                         r = ti->g[ix][jx] + (si->raw[i][j-1] - ti->g[ix][jx-1] + si->raw[i][j+1] - ti->g[ix][jx+1]) / 2;
                     ti->r[ix][jx] = CLIP(r);
                     // linear B-G interp. vertically
-                    int b;
+                    float b;
                     if (ix==0)
                         b = ti->g[ix+1][jx] + si->raw[1][j] - ti->g[ix][jx];
                     else if (ix==H-1)
@@ -373,7 +373,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                     // blue is simple
                     ti->b[ix][jx] = si->raw[i][j];
                     // red: cross interpolation
-                    int r = 0;
+                    float r = 0;
                     int n = 0;
                     if (ix>0 && jx>0) {
                         r += si->raw[i-1][j-1] - ti->g[ix-1][jx-1];
@@ -396,7 +396,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                 }
                 else {
                     // linear B-G interp. horizontally
-                    int b;
+                    float b;
                     if (jx==0)
                         b = ti->g[ix][0] + si->raw[i][1] - ti->g[ix][1];
                     else if (jx==W-1)
@@ -405,7 +405,7 @@ void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
                         b = ti->g[ix][jx] + (si->raw[i][j-1] - ti->g[ix][jx-1] + si->raw[i][j+1] - ti->g[ix][jx+1]) / 2;
                     ti->b[ix][jx] = CLIP(b);
                     // linear R-G interp. vertically
-                    int r;
+                    float r;
                     if (ix==0)
                         r = ti->g[ix+1][jx] + si->raw[1][j] - ti->g[ix][jx];
                     else if (ix==H-1)
@@ -607,7 +607,8 @@ void DemosaicFilter::process (const std::set<ProcEvent>& events, MultiImage* sou
 	if (method == "hphd")
         hphd_demosaic (sourceImage, targetImage, buffer);
 
-    interpolate_rb_bilinear (sourceImage, targetImage);
+	interpolate_rb_bilinear (sourceImage, targetImage);
+
     correction_YIQ_LQ (targetImage, procParams->getInteger("DemosaicColorCorrectionSteps"));
 }
 

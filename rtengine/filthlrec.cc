@@ -89,7 +89,7 @@ void HighlightRecoveryFilter::cieblend (MultiImage* sourceImage, MultiImage* tar
         crTableReady = true;
     }
 
-    cam.multiply (iccStore.workingSpaceMatrix("sRGB"));
+    cam.multiply (iccStore->workingSpaceMatrix("sRGB"));
     Matrix33 icam = cam.inverse ();
 
     #pragma omp parallel for if (multiThread)
