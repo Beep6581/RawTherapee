@@ -153,12 +153,12 @@ HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
 HISTORY_MSG_108;Seuil de compr. des hautes lumières
 HISTORY_MSG_109;Redim. - boîte englobante
+HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_110;Redim. s'applique à
 HISTORY_MSG_111;Champ Uniforme - Fichier
 HISTORY_MSG_112;Champ Uniforme - Auto sélection
 HISTORY_MSG_113;Champ Uniforme - Rayon
 HISTORY_MSG_114;Champ Uniforme - Type de floutage
-HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
 HISTORY_MSG_13;Rognage de l'exposition
@@ -455,15 +455,6 @@ PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMEFOUND;Trouvé
 PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
-PREFERENCES_FLATFIELD;Champ Uniforme
-PREFERENCES_FLATFIELDFOUND;Trouvé
-PREFERENCES_FLATFIELDSHOTS;image(s)
-PREFERENCES_FLATFIELDTEMPLATES;modèle(s)
-PREFERENCES_FLATFIELDFILE;Fichier de Champ Uniforme
-PREFERENCES_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
-PREFERENCES_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
-PREFERENCES_FLATFIELDAUTOSELECT;Sélection auto. du Champ Uniforme
-PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
@@ -481,11 +472,19 @@ PREFERENCES_DMETHOD;Méthode
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPOS;Facteur de correction\nd'exposition (linéaire)
-PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
 PREFERENCES_FILEFORMAT;Format du fichier
+PREFERENCES_FLATFIELD;Champ Uniforme
+PREFERENCES_FLATFIELDAUTOSELECT;Sélection auto. du Champ Uniforme
+PREFERENCES_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
+PREFERENCES_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
+PREFERENCES_FLATFIELDFILE;Fichier de Champ Uniforme
+PREFERENCES_FLATFIELDFOUND;Trouvé
+PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
+PREFERENCES_FLATFIELDSHOTS;image(s)
+PREFERENCES_FLATFIELDTEMPLATES;modèle(s)
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
@@ -814,3 +813,34 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!FILEBROWSER_AUTOFLATFIELD;Auto flat field
+!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+!FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
+!MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+!MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+!MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+!MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+!MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+!MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+!MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
+!MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
+!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
+!PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
+!PARTIALPASTE_EVERYTHING;Everything
+!PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
+!PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
+!PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
+!PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
+!PARTIALPASTE_RAWGROUP;Raw settings
+!TP_PREPROCESS_FLATFIELDAUTOSELECT;Flat Field Auto Select
+!TP_PREPROCESS_FLATFIELDBLURRADIUS;Flat Field Blur Radius
+!TP_PREPROCESS_FLATFIELDBLURTYPE;Flat Field Blur Type
+!TP_PREPROCESS_FLATFIELDFILE;Flat Field File
