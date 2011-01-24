@@ -182,11 +182,11 @@ void MyCurve::draw (int handle) {
     c = style->get_dark (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
-    for (int i = 0; i < 5; i++) {
-        cr->move_to (RADIUS, MAX(0,i * innerHeight / 4 - 1) + RADIUS);
-        cr->line_to (innerWidth + RADIUS, MAX(0,i * innerHeight / 4 - 1) + RADIUS);
-        cr->move_to (MAX(0,i * innerWidth / 4 - 1) + RADIUS, RADIUS);
-        cr->line_to (MAX(0,i * innerWidth / 4 - 1) + RADIUS, innerHeight + RADIUS);
+    for (int i = 0; i < 5; i++) { // + 0.5 to align well with f(x)=x so it will cut through the center
+        cr->move_to (RADIUS, MAX(0,i * (innerHeight + 0.5) / 4) + RADIUS);
+        cr->line_to (innerWidth + RADIUS, MAX(0,i * (innerHeight + 0.5) / 4) + RADIUS);
+        cr->move_to (MAX(0,i * innerWidth / 4) + RADIUS, RADIUS);
+        cr->line_to (MAX(0,i * innerWidth / 4) + RADIUS, innerHeight + RADIUS);
     }
     cr->stroke ();
 
@@ -199,7 +199,6 @@ void MyCurve::draw (int handle) {
     cr->line_to (innerWidth + RADIUS, RADIUS);
     cr->stroke ();
     cr->unset_dash ();
-
 
     cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
     cr->set_line_width (1.0);

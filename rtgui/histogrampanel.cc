@@ -387,10 +387,12 @@ void HistogramArea::renderHistogram () {
 
   bgc->set_line_attributes (1, Gdk::LINE_ON_OFF_DASH, Gdk::CAP_NOT_LAST, Gdk::JOIN_MITER);
 
-  backBuffer->draw_line (bgc, winw/3, 0, winw/3, winh-1);
-  backBuffer->draw_line (bgc, 2*winw/3, 0, 2*winw/3, winh-1);
-  backBuffer->draw_line (bgc, 0, winh/3, winw-1, winh/3);
-  backBuffer->draw_line (bgc, 0, 2*winh/3, winw-1, 2*winh/3);
+  backBuffer->draw_line (bgc, winw/4, 0, winw/4, winh);
+  backBuffer->draw_line (bgc, 2*winw/4, 0, 2*winw/4, winh);
+  backBuffer->draw_line (bgc, 3*winw/4, 0, 3*winw/4, winh);
+  backBuffer->draw_line (bgc, 0, winh/4, winw, winh/4);
+  backBuffer->draw_line (bgc, 0, 2*winh/4, winw, 2*winh/4);
+  backBuffer->draw_line (bgc, 0, 3*winh/4, winw, 3*winh/4);
 
   bgc->set_line_attributes (1, Gdk::LINE_SOLID, Gdk::CAP_NOT_LAST, Gdk::JOIN_MITER);
 
