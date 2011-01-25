@@ -279,10 +279,10 @@ void ICMPanel::saveReferencePressed () {
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
 
-    Gtk::FileFilter filter_jpg;
-    filter_jpg.set_name(M("SAVEDLG_JPGFILTER"));
-    filter_jpg.add_pattern("*.jpg");
-    dialog.add_filter(filter_jpg);
+    Gtk::FileFilter filter_tif;
+    filter_tif.set_name(M("SAVEDLG_TIFFFILTER"));
+    filter_tif.add_pattern("*.tif");
+    dialog.add_filter(filter_tif);
 
     dialog.set_do_overwrite_confirmation (true);
 
