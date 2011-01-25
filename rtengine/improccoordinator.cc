@@ -601,7 +601,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
     imgsrc->preprocess( ppar.raw );
     imgsrc->demosaic(ppar.raw );
     imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
-    im->saveJPEG (fname, 85);
+    im->saveTIFF (fname,16,true);
     mProcessing.unlock ();
 }
 
