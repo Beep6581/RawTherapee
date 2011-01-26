@@ -9,11 +9,12 @@
 #include "curves.h"
 #include <lcms2.h>
 #include <iostream>
+#include "macros.h"
 
 namespace rtengine {
 
-FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread)
-	: listener(listener), imgSource(imgSource), procParams(params), multiThread(multiThread), invalidated(true) {
+FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread, bool oneShot)
+	: listener(listener), imgSource(imgSource), procParams(params), multiThread(multiThread), invalidated(true), oneShot(oneShot) {
 
     last = first = new InitialFilter (imgSource);
 
@@ -39,7 +40,7 @@ void FilterChain::setupChain (FilterChain* previous) {
     // First filter already there, it is the initial filter. We go on from the second one.
 	Filter* parent = previous ? previous->first->next : NULL;
 	for (int i=0; i<filterOrder.size(); i++)
-		if (filterOrder[i] == "--Cache--")
+		if (!oneShot && filterOrder[i] == "--Cache--")
 			last->forceOutputCache = true;
 		else {
 		    FilterDescriptor* fDescr = filterFactory->getFilterDescriptor (filterOrder[i]);
@@ -284,23 +285,20 @@ double FilterChain::getLastScale () {
 
 Image16* FilterChain::getFinalImage () {
 
-    // TODO! we can do better! instead of converting to rgb, let us convert it to xyz
-    last->outputCache->convertTo(MultiImage::RGB, true, procParams->icm.working);
+	String outputProfile  = procParams->getString ("ColorManagementOutputProfile");
+	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
 
-    // TEMPORARY SOLUTION!!!
-    for (int i=0; i<last->outputCache->height; i++)
-    	for (int j=0; j<last->outputCache->width; j++) {
-    		last->outputCache->r[i][j] = CurveFactory::gamma2(last->outputCache->r[i][j]);
-    		last->outputCache->g[i][j] = CurveFactory::gamma2(last->outputCache->g[i][j]);
-    		last->outputCache->b[i][j] = CurveFactory::gamma2(last->outputCache->b[i][j]);
-    	}
-    return last->outputCache->createImage();
+    last->outputCache->convertTo (MultiImage::RGB, true, workingProfile);
 
     // calculate crop rectangle
-    int cx = procParams->crop.enabled ? procParams->crop.x : 0;
-    int cy = procParams->crop.enabled ? procParams->crop.y : 0;
-    int cw = procParams->crop.enabled ? procParams->crop.w : last->outputCache->width;
-    int ch = procParams->crop.enabled ? procParams->crop.h : last->outputCache->height;
+	int cx = 0, cy = 0, cw = last->outputCache->width, ch = last->outputCache->height;
+	bool crenabled = procParams->getBoolean ("CropEnabled");
+	if (crenabled) {
+		cx = procParams->getInteger ("CropRectX");
+		cy = procParams->getInteger ("CropRectY");
+		cw = procParams->getInteger ("CropRectW");
+		ch = procParams->getInteger ("CropRectH");
+	}
 
     // adjust to valid values
     if (cx<0) cx = 0;
@@ -310,52 +308,59 @@ Image16* FilterChain::getFinalImage () {
 
     // obtain cropped image
     Image16* final = new Image16 (cw, ch);
-    #pragma omp parallel for if (multiThread)
-    for (int i=0; i<ch; i++)
-        for (int j=0; j<cw; j++) {
-            final->r[i][j] = last->outputCache->r[i+cy][j+cx];
-            final->g[i][j] = last->outputCache->g[i+cy][j+cx];
-            final->b[i][j] = last->outputCache->b[i+cy][j+cx];
-        }
 
-    if (procParams->icm.output!="") {
+    if (outputProfile!="") {
         // custom output icm profile specified, call lcms
-        cmsHPROFILE oprof = iccStore->getProfile (procParams->icm.output);
-        cmsHPROFILE iprof = iccStore->getProfile (procParams->icm.working);
+        cmsHPROFILE oprof = iccStore->getProfile (outputProfile);
+        cmsHPROFILE iprof = iccStore->getProfile (workingProfile);
         if (oprof && iprof) {
+			#pragma omp parallel for if (multiThread)
+			for (int i=0; i<ch; i++)
+				for (int j=0; j<cw; j++) {
+					final->r[i][j] = CLIP (65535.0 * last->outputCache->r[i+cy][j+cx]);
+					final->g[i][j] = CLIP (65535.0 * last->outputCache->g[i+cy][j+cx]);
+					final->b[i][j] = CLIP (65535.0 * last->outputCache->b[i+cy][j+cx]);
+				}
         	// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
-        	cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, 0);
+        	cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, cmsFLAGS_NOCACHE);
         	cmsDoTransform (hTransform, final->data, final->data, final->planestride/2);
         	cmsDeleteTransform(hTransform);
         	return final;
         }
     }
-    else if (procParams->icm.working != "sRGB") {
+    if (workingProfile != "sRGB") {
         // convert it to sRGB
         Matrix33 m;
         m.multiply (iccStore->workingSpaceMatrix ("sRGB"));
-        m.multiply (iccStore->workingSpaceInverseMatrix (procParams->icm.working));
+        m.multiply (iccStore->workingSpaceInverseMatrix (workingProfile));
         #pragma omp parallel for if (multiThread)
-        for (int i=0; i<ch; i++)
-            for (int j=0; j<cw; j++)
-                m.transform (final->r[i][j], final->g[i][j], final->b[i][j]);
+        for (int i=0; i<ch; i++) {
+			float r, g, b;
+            for (int j=0; j<cw; j++) {
+                m.transform (last->outputCache->r[i+cy][j+cx], last->outputCache->g[i+cy][j+cx], last->outputCache->b[i+cy][j+cx], r, g, b);
+				final->r[i][j] = CLIP (65535.0 * CurveFactory::gamma2(r));
+				final->g[i][j] = CLIP (65535.0 * CurveFactory::gamma2(g));
+				final->b[i][j] = CLIP (65535.0 * CurveFactory::gamma2(b));
+			}
+		}
     }
-
-    // apply gamma correction
-    #pragma omp parallel for if (multiThread)
-    for (int i=0; i<ch; i++)
-        for (int j=0; j<cw; j++) {
-            final->r[i][j] = CurveFactory::gamma_srgb (final->r[i][j]);
-            final->g[i][j] = CurveFactory::gamma_srgb (final->g[i][j]);
-            final->b[i][j] = CurveFactory::gamma_srgb (final->b[i][j]);
-        }
+	else {
+		#pragma omp parallel for if (multiThread)
+		for (int i=0; i<ch; i++)
+			for (int j=0; j<cw; j++) {
+				final->r[i][j] = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->r[i+cy][j+cx]));
+				final->g[i][j] = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->g[i+cy][j+cx]));
+				final->b[i][j] = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->b[i+cy][j+cx]));
+			}
+	}
     return final;
 }
 
 Image8* FilterChain::getDisplayImage () {
 
-    // TODO! we can do better! instead of converting to rgb, let us convert it to xyz
-    last->outputCache->convertTo(MultiImage::RGB, true, procParams->icm.working);
+	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+
+    last->outputCache->convertTo(MultiImage::RGB, true, workingProfile);
 
     // obtain cropped image
     Image8* final = new Image8 (last->outputCache->width, last->outputCache->height);
@@ -363,40 +368,40 @@ Image8* FilterChain::getDisplayImage () {
     if (Settings::settings->monitorProfile != "") {
         // custom output icm profile specified, call lcms
         cmsHPROFILE oprof = iccStore->getProfile (Settings::settings->monitorProfile);
-        cmsHPROFILE iprof = iccStore->getProfile (procParams->icm.working);
+        cmsHPROFILE iprof = iccStore->getProfile (workingProfile);
         if (oprof && iprof) {
 			// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
-			cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, 0);
+			cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, cmsFLAGS_NOCACHE);
 			cmsDoTransform (hTransform, last->outputCache->getData(), final->data, final->width*final->height);
 			cmsDeleteTransform(hTransform);
 			return final;
         }
     }
-
-    if (procParams->icm.working == "sRGB") {
+    
+    if (workingProfile == "sRGB") {
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<final->height; i++) {
             int ix = i * final->width * 3;
             for (int j=0; j<final->width; j++) {
-                final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->r[i][j]) >> 8;
-                final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->g[i][j]) >> 8;
-                final->data[ix++] = CurveFactory::gamma_srgb (last->outputCache->b[i][j]) >> 8;
+                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->r[i][j]) * 255.0, 0, 255);
+                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->g[i][j]) * 255.0, 0, 255);
+                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->b[i][j]) * 255.0, 0, 255);
             }
         }
     }
     else {
         Matrix33 m;
         m.multiply (iccStore->workingSpaceMatrix ("sRGB"));
-        m.multiply (iccStore->workingSpaceInverseMatrix (procParams->icm.working));
+        m.multiply (iccStore->workingSpaceInverseMatrix (workingProfile));
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<final->height; i++) {
             int ix = i * final->width * 3;
+			float r, g, b;
             for (int j=0; j<final->width; j++) {
-                unsigned short r, g, b;
                 m.transform (last->outputCache->r[i][j], last->outputCache->g[i][j], last->outputCache->b[i][j], r, g, b);
-                final->data[ix++] = CurveFactory::gamma_srgb (r) >> 8;
-                final->data[ix++] = CurveFactory::gamma_srgb (g) >> 8;
-                final->data[ix++] = CurveFactory::gamma_srgb (b) >> 8;
+                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (r) * 255.0, 0, 255);
+                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (g) * 255.0, 0, 255);
+                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (b) * 255.0, 0, 255);
             }
         }
     }

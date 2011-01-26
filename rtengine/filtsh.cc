@@ -77,6 +77,8 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
 
     	float shradius 	= procParams->getFloat ("ShadowsHighlightsRadius");
     	bool shhq 		= procParams->getFloat ("ShadowsHighlightsHQ");
+    	
+    	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
 
         // calculate radius (procparams contains relative radius only)
         ImageSource* imgsrc = getFilterChain ()->getImageSource ();
@@ -88,7 +90,7 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
         map = new Buffer<float> (sourceImage->width, sourceImage->height);
 
         // fill with luminance
-        Matrix33 wprof = iccStore->workingSpaceMatrix (procParams->icm.working);
+        Matrix33 wprof = iccStore->workingSpaceMatrix (workingProfile);
         float lumimulr = wprof.data[1][0];
         float lumimulg = wprof.data[1][1];
         float lumimulb = wprof.data[1][2];
@@ -197,6 +199,8 @@ void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiI
     	float htonalwidth = procParams->getFloat ("ShadowsHighlightsHTonalWidth");
     	float stonalwidth = procParams->getFloat ("ShadowsHighlightsSTonalWidth");
 
+    	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+
         float** shmap = pshFilter->getSHMap ();
 
         float h_th, s_th;
@@ -205,7 +209,7 @@ void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiI
             s_th = stonalwidth * (pshFilter->getMapAvg() - pshFilter->getMapMin()) / 100.0;
         }
 
-        Matrix33 wprof = iccStore->workingSpaceMatrix (procParams->icm.working);
+        Matrix33 wprof = iccStore->workingSpaceMatrix (workingProfile);
         float lumimulr = wprof.rowsum(0);
         float lumimulg = wprof.rowsum(1);
         float lumimulb = wprof.rowsum(2);

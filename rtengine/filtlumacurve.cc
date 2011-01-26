@@ -12,6 +12,9 @@
 #include "curves.h"
 #include "util.h"
 
+#define LC_LUTSIZE 	2*65536
+#define LC_LUTSCALE 65536
+
 namespace rtengine {
 
 LumaCurveFilterDescriptor lumaCurveFilterDescriptor;
@@ -59,22 +62,22 @@ void LumaCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     // curve and histogram is only generated once: in the root filter chain
     if (!p) {
     	if (!histogram)
-            histogram = new unsigned int [65536];
-        memset (histogram, 0, 65536*sizeof(unsigned int));
+            histogram = new unsigned int [LC_LUTSIZE];
+        memset (histogram, 0, LC_LUTSIZE*sizeof(unsigned int));
         for (int i=0; i<sourceImage->height; i++)
             for (int j=0; j<sourceImage->width; j++)
-                histogram[CLIP((int)(655.35*sourceImage->cieL[i][j]))]++;
+                histogram[CLIPTO((int)(LC_LUTSCALE*sourceImage->cieL[i][j]/100.0),0,LC_LUTSIZE-1)]++;
 
     	float brightness  = procParams->getFloat  ("LumaCurveBrightness");
     	float contrast    = procParams->getFloat  ("LumaCurveContrast");
     	FloatList& ccurve = procParams->getFloatList ("LumaCurveCustomCurve");
 
     	if (!curve) {
-            curve = new float [65536];
-            CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, brightness, contrast, 0.0, false, ccurve, histogram, curve, NULL, getScale ()==1 ? 1 : 16);
+            curve = new float [LC_LUTSIZE];
+            CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, brightness, contrast, 0.0, false, ccurve, histogram, LC_LUTSIZE, LC_LUTSCALE, curve, NULL, getScale ()==1 ? 1 : 16);
         }
         else if (isTriggerEvent (events))
-            CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, brightness, contrast, 0.0, false, ccurve, histogram, curve, NULL, getScale ()==1 ? 1 : 16);
+            CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, brightness, contrast, 0.0, false, ccurve, histogram, LC_LUTSIZE, LC_LUTSCALE, curve, NULL, getScale ()==1 ? 1 : 16);
         myCurve = curve;
     }
     else {
@@ -88,7 +91,7 @@ void LumaCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     #pragma omp parallel for if (multiThread)
 	for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
-			targetImage->cieL[i][j] = 100.0 * lutInterp<float,65536> (myCurve, 655.35*sourceImage->cieL[i][j]);
+			targetImage->cieL[i][j] = 100.0 * lutInterp<float,LC_LUTSIZE> (myCurve, LC_LUTSCALE*sourceImage->cieL[i][j]/100.0);
 			targetImage->ciea[i][j] = sourceImage->ciea[i][j];
 			targetImage->cieb[i][j] = sourceImage->cieb[i][j];
 		}

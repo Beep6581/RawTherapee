@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2011 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,40 +26,6 @@
 #include <vector>
 
 namespace rtengine {
-
-
-/**
-  * Parameters of the cropping
-  */
-class CropParams {
-
-    public:
-        bool    enabled;
-        int     x;
-        int     y;
-        int     w;
-        int     h;
-        bool    fixratio;
-        Glib::ustring   ratio;
-        Glib::ustring   orientation;
-        Glib::ustring   guide;
-};
-
-/**
-  * Common transformation parameters
-  */
-
-/**
-  * Parameters of the color spaces used during the processing
-  */
-class ColorManagementParams {
-
-    public:
-		Glib::ustring input;
-        bool        gammaOnInput;
-        Glib::ustring working;
-        Glib::ustring output;
-};
 
 /**
   * A class representing a key/value for the exif metadata information
@@ -120,9 +86,6 @@ class ProcParams {
 
 		// --------------8<------------------ to be removed when all filters are rewritten ------
 
-        CropParams              crop;           ///< Crop parameters
-
-        ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
         std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
         int version;                            ///< Version of the file from which the parameters have been read

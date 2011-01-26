@@ -43,18 +43,22 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
 
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
+	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+	String inputProfile   = procParams->getString ("ColorManagementInputProfile");
+	bool gammaOnInput     = procParams->getBoolean ("ColorManagementGammaOnInput");
+
     cmsHPROFILE in  = NULL;
-    cmsHPROFILE out = iccStore->workingSpace (procParams->icm.working);;
+    cmsHPROFILE out = iccStore->workingSpace (workingProfile);
 
     bool done = false;
 
     MultiImage* inImg = sourceImage;
 
-    if (procParams->icm.input == "(embedded)")
+    if (inputProfile == "(embedded)")
         in = imgsrc->getEmbeddedProfile ();
-    else if (procParams->icm.input != "" && procParams->icm.input != "(camera)" && procParams->icm.input != "(none)") {
-        in = iccStore->getProfile (procParams->icm.input);
-        if (in && procParams->icm.gammaOnInput) {
+    else if (inputProfile != "" && inputProfile != "(camera)" && inputProfile != "(none)") {
+        in = iccStore->getProfile (inputProfile);
+        if (in && gammaOnInput) {
             for (int i=0; i<sourceImage->height; i++)
                 for (int j=0; j<sourceImage->width; j++) {
                     targetImage->r[i][j] = CurveFactory::gamma (sourceImage->r[i][j]);
@@ -70,7 +74,7 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
     if (!in) {
         if (imgsrc->isRaw()) {
             // do the color transform "by hand" to avoid calling slow lcms2
-            Matrix33 working = iccStore->workingSpaceInverseMatrix (procParams->icm.working);
+            Matrix33 working = iccStore->workingSpaceInverseMatrix (workingProfile);
             Matrix33 mat = imgsrc->getCamToRGBMatrix();
             mat.multiply (iccStore->workingSpaceMatrix("sRGB"));
             mat.multiply (working);

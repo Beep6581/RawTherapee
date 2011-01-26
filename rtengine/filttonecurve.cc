@@ -15,6 +15,9 @@
 #include "curves.h"
 #include "util.h"
 
+#define TC_LUTSIZE 	2*65536
+#define TC_LUTSCALE 65536
+
 namespace rtengine {
 
 class PreToneCurveFilterDescriptor : public FilterDescriptor {
@@ -45,13 +48,13 @@ ToneCurveFilterDescriptor::ToneCurveFilterDescriptor ()
 void ToneCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
 	defProcParams.setBoolean ("ToneCurveAutoExp", true);
-	defProcParams.setFloat   ("ToneCurveClip", 0.002);
+	defProcParams.setFloat   ("ToneCurveClip", 0.001);
 	defProcParams.setFloat   ("ToneCurveExpComp", 0);
 	defProcParams.setFloat   ("ToneCurveBrightness", 0);
 	defProcParams.setFloat   ("ToneCurveContrast", 0);
 	defProcParams.setFloat   ("ToneCurveBlack", 0);
-	defProcParams.setFloat   ("ToneCurveHLCompr", 85);
-	defProcParams.setFloat   ("ToneCurveSHCompr", 85);
+	defProcParams.setFloat   ("ToneCurveHLCompr", 100);
+	defProcParams.setFloat   ("ToneCurveSHCompr", 100);
 	FloatList tcurve;
 	defProcParams.setFloatList ("ToneCurveCustomCurve", tcurve);
 }
@@ -79,18 +82,20 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
 
         // update histogram histogram
         if (!histogram)
-            histogram = new unsigned int [65536];
+            histogram = new unsigned int [TC_LUTSIZE];
 
-        Matrix33 wprof = iccStore->workingSpaceMatrix (procParams->icm.working);
+    	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+
+        Matrix33 wprof = iccStore->workingSpaceMatrix (workingProfile);
         float mulr = wprof.data[1][0];
         float mulg = wprof.data[1][1];
         float mulb = wprof.data[1][2];
 
-        memset (histogram, 0, 65536*sizeof(int));
+        memset (histogram, 0, TC_LUTSIZE*sizeof(int));
         for (int i=0; i<sourceImage->height; i++)
             for (int j=0; j<sourceImage->width; j++) {
-                int y = 65535.0 * (mulr * sourceImage->r[i][j] + mulg * sourceImage->g[i][j] + mulb * sourceImage->b[i][j]);
-                histogram[CLIP(y)]++;
+                int y = TC_LUTSCALE * (mulr * sourceImage->r[i][j] + mulg * sourceImage->g[i][j] + mulb * sourceImage->b[i][j]);
+                histogram[CLIPTO(y,0,TC_LUTSIZE-1)]++;
             }
 
     	bool autoexp = procParams->getBoolean ("ToneCurveAutoExp");
@@ -103,7 +108,6 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
             imgsrc->getAEHistogram (aehist, aehistcompr);
             float expcomp, black;
             ImProcFunctions::calcAutoExp (aehist, aehistcompr, clip, expcomp, black);
-            std::cout << "autoexp: " << expcomp << ", black: " << black << std::endl;
         	procParams->setFloat ("ToneCurveExpComp", expcomp);
         	procParams->setFloat ("ToneCurveBlack", black*100.0);
         }
@@ -147,11 +151,11 @@ void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     	FloatList tcurve = procParams->getFloatList ("ToneCurveCustomCurve");
 
     	if (!curve) {
-            curve = new float [65536];
-            CurveFactory::complexCurve (expcomp, black/100.0, hlcompr, shcompr, brightness, contrast, imgsrc->isRaw() ? 2.2 : 0.0 , true, tcurve, ptcFilter->getHistogram(), curve, NULL, getScale ()==1 ? 1 : 16);
+            curve = new float [TC_LUTSIZE];
+            CurveFactory::complexCurve (expcomp, black/100.0, hlcompr, shcompr, brightness, contrast, imgsrc->isRaw() ? 2.2 : 0.0 , true, tcurve, ptcFilter->getHistogram(), TC_LUTSIZE, TC_LUTSCALE, curve, NULL, getScale ()==1 ? 1 : 16);
         }
         else if (isTriggerEvent (events) || ptcFilter->isTriggerEvent (events))
-            CurveFactory::complexCurve (expcomp, black/100.0, hlcompr, shcompr, brightness, contrast, imgsrc->isRaw() ? 2.2 : 0.0 , true, tcurve, ptcFilter->getHistogram(), curve, NULL, getScale ()==1 ? 1 : 16);
+            CurveFactory::complexCurve (expcomp, black/100.0, hlcompr, shcompr, brightness, contrast, imgsrc->isRaw() ? 2.2 : 0.0 , true, tcurve, ptcFilter->getHistogram(), TC_LUTSIZE, TC_LUTSCALE, curve, NULL, getScale ()==1 ? 1 : 16);
         myCurve = curve;
     }
     else {
@@ -165,9 +169,9 @@ void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     #pragma omp parallel for if (multiThread)
 	for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
-			targetImage->r[i][j] = lutInterp<float,65536> (myCurve, 65535*sourceImage->r[i][j]);
-			targetImage->g[i][j] = lutInterp<float,65536> (myCurve, 65535*sourceImage->g[i][j]);
-			targetImage->b[i][j] = lutInterp<float,65536> (myCurve, 65535*sourceImage->b[i][j]);
+			targetImage->r[i][j] = lutInterp<float,TC_LUTSIZE> (myCurve, TC_LUTSCALE*sourceImage->r[i][j]);
+			targetImage->g[i][j] = lutInterp<float,TC_LUTSIZE> (myCurve, TC_LUTSCALE*sourceImage->g[i][j]);
+			targetImage->b[i][j] = lutInterp<float,TC_LUTSIZE> (myCurve, TC_LUTSCALE*sourceImage->b[i][j]);
 		}
 	}
 }

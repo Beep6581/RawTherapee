@@ -271,14 +271,14 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
         if (img->filter)
             for (int j=start; j<end; j++)
                 if (img->isGreen(i,j))
-                    histogram[img->data[i][j]>>histcompr]+=2;
+                    histogram[(int)CLIP(img->defgain*img->data[i][j])>>histcompr]+=2;
                 else
-                    histogram[img->data[i][j]>>histcompr]+=4;
+                    histogram[(int)CLIP(img->defgain*img->data[i][j])>>histcompr]+=4;
         else
             for (int j=start; j<3*end; j++) {
-                    histogram[img->data[i][j+0]>>histcompr]++;
-                    histogram[img->data[i][j+1]>>histcompr]++;
-                    histogram[img->data[i][j+2]>>histcompr]++;
+                    histogram[(int)CLIP(img->defgain*img->data[i][j+0])>>histcompr]++;
+                    histogram[(int)CLIP(img->defgain*img->data[i][j+1])>>histcompr]++;
+                    histogram[(int)CLIP(img->defgain*img->data[i][j+2])>>histcompr]++;
             }
     }
 }

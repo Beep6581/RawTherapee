@@ -117,14 +117,14 @@ class CurveFactory {
 
     // gamma functions on [0,65535] based on look-up tables
     static inline int    gamma_srgb       (int x) { return gammatab_srgb[x]; }
-    static inline int    gamma            (int x) { return gammatab[x]; }
     static inline int    igamma_srgb      (int x) { return igammatab_srgb[x]; }
 
     static inline int    gamma            (float x) { return exp(0.454545*log(x)); }
 
   public:
-//    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<float>& cpoints, float defmul, float ecomp, int black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, int skip=1);
-    static void complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
+	// curveSize: number of values to be computed (= the size of the input histogram and = the size of outCurve)
+	// curveScale: the number of discrete values to cover to 0...1 range. 
+    static void complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, int curveSize, int curveScale, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
 
 };
 

@@ -20,6 +20,8 @@
 #include <math.h>
 #include <string.h>
 #include "mytime.h"
+#include <iostream>
+#include <stdio.h>
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
@@ -187,7 +189,7 @@ float CurveFactory::centercontrast (float x, float b, float m) {
   }
 }
 
-void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
+void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, int curveSize, int curveScale, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
 
     // compute parameters of the gamma curve
     float start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
@@ -195,14 +197,19 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
     float mul = 1.099;
     float add = 0.099;
 
-    // theoretical maximum of the curve
-    float D = gamma_>0 ? gamma (1.0, gamma_, start, slope, mul, add) : 1.0;
+    // theoretical maximum of the curve. A bit different than before, result is a bit different! (Brighter.)
+    int maxVal = curveSize-1;
+    while (maxVal>curveScale && histogram[maxVal]==0)
+		maxVal--;
+    double def_mul = (double) maxVal / curveScale;
+    float D = gamma_>0 ? gamma (def_mul, gamma_, start, slope, mul, add) : def_mul;
 
     // a: slope of the curve, black: starting point at the x axis
     float a = pow (2.0, ecomp);
 
     // curve without contrast
-    float* dcurve = new float[65536];
+    float* dcurve = new float[curveSize];
+    memset (dcurve, 0, curveSize*sizeof(float));
     
     // check if contrast curve is needed
     bool needcontrast = contr>0.00001 || contr<-0.00001;
@@ -219,10 +226,10 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
     if (outBeforeCCurveHistogram)
         memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
 
-    for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
+    for (int i=0; i<=maxVal; i+= i<maxVal-skip ? skip : 1 ) {
 
         // change to [0,1] rage
-        float val = (float)i / 65535.0;
+        float val = (float)i / curveScale;
 
         // gamma correction
         if (gamma_>0) 
@@ -257,7 +264,7 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
     
     // if skip>1, let apply linear interpolation in the skipped points of the curve
     int prev = 0;
-    for (int i=1; i<=0xffff-skip; i++) {
+    for (int i=1; i<=maxVal-skip; i++) {
         if (i%skip==0) {
             prev+=skip;
             continue;
@@ -265,11 +272,12 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
         dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
     }
 
+    memset (outCurve, 0, curveSize*sizeof(float));
     if (needcontrast) {  
         // compute mean luminance of the image with the curve applied
         int sum = 0;
         float avg = 0;
-        for (int i=0; i<=0xffff; i++) {
+        for (int i=0; i<=maxVal; i++) {
           avg += dcurve[i] * histogram[i];
           sum += histogram[i];
         }
@@ -283,7 +291,7 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
           contr_b = -0.00001;
 
         // apply contrast enhancement
-        for (int i=0; i<=0xffff; i++) {
+        for (int i=0; i<=maxVal; i++) {
           float val = centercontrast (dcurve[i], contr_b, avg);
           if (igamma && gamma_>0)
             val = igamma2 (val);
@@ -291,13 +299,19 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
         }
     }
     else 
-        for (int i=0; i<=0xffff; i++) 
+        for (int i=0; i<=maxVal; i++) 
             outCurve[i] = dcurve[i];
     delete [] dcurve;
+/*
+if (gamma_>0) {    
+    FILE* f = fopen ("c2.txt", "wt");
+    for (int i=0; i<maxVal; i++)
+        fprintf (f, "%g %g\n", (float)i/curveScale, outCurve[i]);
+    fclose (f);
+}*/
 }
 
 
-int CurveFactory::gammatab [65536];
 int CurveFactory::igammatab_srgb [65536];
 int CurveFactory::gammatab_srgb [65536];
 
@@ -307,9 +321,7 @@ void CurveFactory::init () {
     gammatab_srgb[i] = (int)(65535 * gamma2 (i/65535.0));
   for (int i=0; i<65536; i++)
     igammatab_srgb[i] = (int)(65535 * igamma2 (i/65535.0));
-  for (int i=0; i<65536; i++)
-    gammatab[i] = (int)(65535 * pow (i/65535.0, 0.454545));
-    
+
 /*    FILE* f = fopen ("c.txt", "wt");
     for (int i=0; i<256; i++)
         fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));

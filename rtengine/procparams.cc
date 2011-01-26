@@ -122,6 +122,21 @@ StringList& ProcParams::getStringList (const String& key) {
 
 ProcParams::ProcParams () { 
 
+	defaultProcParams.setBoolean ("CropEnabled", false);
+	defaultProcParams.setInteger ("CropRectX", 0);
+	defaultProcParams.setInteger ("CropRectY", 0);
+	defaultProcParams.setInteger ("CropRectW", 100000);
+	defaultProcParams.setInteger ("CropRectH", 100000);
+	defaultProcParams.setBoolean ("CropFixRectRatio", true);
+	defaultProcParams.setString  ("CropRectRatio", "3:2");
+	defaultProcParams.setString  ("CropRectOrientation", "Landscape");
+	defaultProcParams.setString  ("CropGuide", "None");
+
+	defaultProcParams.setString  ("ColorManagementInputProfile", "");
+	defaultProcParams.setBoolean ("ColorManagementGammaOnInput", false);
+	defaultProcParams.setString  ("ColorManagementWorkingProfile", "sRGB");
+	defaultProcParams.setString  ("ColorManagementOutputProfile", "sRGB");
+
     setDefaults (); 
 }       
 
@@ -137,6 +152,13 @@ void ProcParams::destroy (ProcParams* pp) {
 
 void ProcParams::setDefaults () {
 
+	floatParams = defaultProcParams.floatParams;
+	intParams = defaultProcParams.intParams;
+	boolParams = defaultProcParams.boolParams;
+	stringParams = defaultProcParams.stringParams;
+	floatListParams = defaultProcParams.floatListParams;
+	intListParams = defaultProcParams.intListParams;
+	stringListParams = defaultProcParams.stringListParams;
 }
 
 int ProcParams::save (Glib::ustring fname) const {
@@ -160,97 +182,13 @@ bool operator==(const IPTCPair& a, const IPTCPair& b) {
 }
 bool ProcParams::operator== (const ProcParams& other) {
 
-	return false;
-/*
-    return 
-           toneCurve.curve      == other.toneCurve.curve
-        && toneCurve.brightness == other.toneCurve.brightness
-        && toneCurve.black      == other.toneCurve.black
-        && toneCurve.contrast   == other.toneCurve.contrast
-        && toneCurve.shcompr    == other.toneCurve.shcompr
-        && toneCurve.hlcompr    == other.toneCurve.hlcompr
-        && toneCurve.autoexp    == other.toneCurve.autoexp
-        && toneCurve.clip       == other.toneCurve.clip
-        && toneCurve.expcomp    == other.toneCurve.expcomp
-        && lumaCurve.curve      == other.lumaCurve.curve
-        && lumaCurve.brightness == other.lumaCurve.brightness
-        && lumaCurve.contrast   == other.lumaCurve.contrast
-        && sharpening.enabled   == other.sharpening.enabled
-        && sharpening.radius    == other.sharpening.radius
-        && sharpening.amount    == other.sharpening.amount
-        && sharpening.threshold     == other.sharpening.threshold
-        && sharpening.edgesonly     == other.sharpening.edgesonly
-        && sharpening.edges_radius  == other.sharpening.edges_radius
-        && sharpening.edges_tolerance   == other.sharpening.edges_tolerance
-        && sharpening.halocontrol   == other.sharpening.halocontrol
-        && sharpening.halocontrol_amount== other.sharpening.halocontrol_amount
-        && sharpening.method        == other.sharpening.method
-        && sharpening.deconvamount  == other.sharpening.deconvamount
-        && sharpening.deconvradius  == other.sharpening.deconvradius
-        && sharpening.deconviter    == other.sharpening.deconviter
-        && sharpening.deconvdamping == other.sharpening.deconvdamping
-        && colorBoost.amount        == other.colorBoost.amount
-        && colorBoost.avoidclip == other.colorBoost.avoidclip
-        && colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter
-        && colorBoost.saturationlimit == other.colorBoost.saturationlimit
-        && wb.method        == other.wb.method
-        && wb.green         == other.wb.green
-        && wb.temperature   == other.wb.temperature
-        && colorShift.a     == other.colorShift.a
-        && colorShift.b     == other.colorShift.b
-        && lumaDenoise.enabled      == other.lumaDenoise.enabled
-        && lumaDenoise.radius       == other.lumaDenoise.radius
-        && lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance
-        && colorDenoise.enabled      == other.colorDenoise.enabled
-        && colorDenoise.radius       == other.colorDenoise.radius
-        && colorDenoise.edgetolerance == other.colorDenoise.edgetolerance
-        && colorDenoise.edgesensitive == other.colorDenoise.edgesensitive
-        && sh.enabled       == other.sh.enabled
-        && sh.hq            == other.sh.hq
-        && sh.highlights    == other.sh.highlights
-        && sh.htonalwidth   == other.sh.htonalwidth
-        && sh.shadows       == other.sh.shadows
-        && sh.stonalwidth   == other.sh.stonalwidth
-        && sh.localcontrast == other.sh.localcontrast
-        && sh.radius        == other.sh.radius
-        && crop.enabled == other.crop.enabled
-        && crop.x       == other.crop.x
-        && crop.y       == other.crop.y
-        && crop.w       == other.crop.w
-        && crop.h       == other.crop.h
-        && crop.fixratio == other.crop.fixratio
-        && crop.ratio   == other.crop.ratio
-        && crop.orientation == other.crop.orientation
-        && crop.guide   == other.crop.guide
-        && coarse.rotate == other.coarse.rotate
-        && coarse.hflip == other.coarse.hflip
-        && coarse.vflip == other.coarse.vflip
-        && rotate.degree == other.rotate.degree
-        && commonTrans.autofill == other.commonTrans.autofill
-        && distortion.uselensfun == other.distortion.uselensfun
-        && distortion.amount == other.distortion.amount
-        && perspective.horizontal == other.perspective.horizontal
-        && perspective.vertical == other.perspective.vertical
-        && cacorrection.red == other.cacorrection.red
-        && cacorrection.blue == other.cacorrection.blue
-        && vignetting.amount == other.vignetting.amount
-        && vignetting.radius == other.vignetting.radius
-        && !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
-        && !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
-        && !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))
-        && hlrecovery.enabled   == other.hlrecovery.enabled
-        && hlrecovery.method    == other.hlrecovery.method
-        && resize.scale     == other.resize.scale
-        && resize.method    == other.resize.method
-        && resize.dataspec  == other.resize.dataspec
-        && resize.width     == other.resize.width
-        && resize.height    == other.resize.height
-        && icm.input        == other.icm.input
-        && icm.gammaOnInput == other.icm.gammaOnInput
-        && icm.working      == other.icm.working
-        && icm.output       == other.icm.output
-        && exif==other.exif
-        && iptc==other.iptc;*/
+	return floatParams == other.floatParams
+		&& intParams == other.intParams
+		&& boolParams == other.boolParams
+		&& stringParams == other.stringParams
+		&& floatListParams == other.floatListParams
+		&& intListParams == other.intListParams
+		&& stringListParams == other.stringListParams;
 }
 
 bool ProcParams::operator!= (const ProcParams& other) {

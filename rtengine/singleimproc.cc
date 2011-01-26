@@ -45,8 +45,8 @@ IImage16* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* 
                 return NULL;
             }
         }
-        // set up filter chain for processing
-        FilterChain* fChain = new FilterChain (NULL, ii->getImageSource(), &job->pparams, true);
+        // set up filter chain for processing (oneShot mode, for moderate memory consumption)
+        FilterChain* fChain = new FilterChain (NULL, ii->getImageSource(), &job->pparams, true, true);
         std::set<ProcEvent> ev;
         ev.insert (EvAll);
         fChain->setupProcessing (ev, true);

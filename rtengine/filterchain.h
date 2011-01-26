@@ -25,12 +25,13 @@ protected:
 	ProcParams* procParams;
 	std::vector<String> filterOrder;
 	bool invalidated;
+	bool oneShot;
 
 	void setupChain (FilterChain* previous);
 
 public:
 
-	FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread);
+	FilterChain (ImProcListener* listener, ImageSource* imgSource, ProcParams* params, bool multiThread, bool oneShot=false);
 	FilterChain (ImProcListener* listener, FilterChain* previous);
 	~FilterChain ();
 	double getScale (int skip);
