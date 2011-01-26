@@ -19,8 +19,9 @@
 #include <glib/gstdio.h>
 #include "procparams.h"
 #include <glibmm.h>
-#include <sstream>
+#include <fstream>
 #include <string.h>
+#include <exiv2/exiv2.hpp>
 
 #include <safekeyfile.h>
 
@@ -140,16 +141,6 @@ ProcParams::ProcParams () {
     setDefaults (); 
 }       
 
-ProcParams* ProcParams::create () {
-
-    return new ProcParams();
-}
-
-void ProcParams::destroy (ProcParams* pp) {
-
-    delete pp;
-}
-
 void ProcParams::setDefaults () {
 
 	floatParams = defaultProcParams.floatParams;
@@ -161,13 +152,141 @@ void ProcParams::setDefaults () {
 	stringListParams = defaultProcParams.stringListParams;
 }
 
-int ProcParams::save (Glib::ustring fname) const {
+int ProcParams::save (const String& fname) const {
+	
+	try {
+		// create xmp data and register our namespace
+		Exiv2::XmpData xmpData;
+		Exiv2::XmpProperties::registerNs("RawTherapee/", "rt");
 
+		// save float parameters. An "F" is appended to the end of the keys to indicate that these are floats.
+		for (std::map<String,float>::const_iterator i=floatParams.begin(); i!=floatParams.end(); i++)
+			xmpData[Glib::ustring::compose("Xmp.rt.%1F", i->first)] = Glib::ustring::format (i->second);
+
+		// save integer parameters. An "I" is appended to the end of the keys to indicate that these are integers.
+		for (std::map<String,int>::const_iterator i=intParams.begin(); i!=intParams.end(); i++)
+			xmpData[Glib::ustring::compose("Xmp.rt.%1I", i->first)] = Glib::ustring::format (i->second);
+			
+		// save boolean parameters. A "B" is appended to the end of the keys to indicate that these are booleans.
+		for (std::map<String,bool>::const_iterator i=boolParams.begin(); i!=boolParams.end(); i++)
+			xmpData[Glib::ustring::compose("Xmp.rt.%1B", i->first)] = i->second ? "true" : "false";
+
+		// save float list parameters. An "FL" is appended to the end of the keys to indicate that these are floatlists.
+		for (std::map<String,FloatList>::const_iterator i=floatListParams.begin(); i!=floatListParams.end(); i++) {
+			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
+			for (int j=0; j<i->second.size(); j++)
+				arr->read (Glib::ustring::format (i->second[j]));
+			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1FL", i->first)), arr.get());
+		}
+
+		// save int list parameters. An "IL" is appended to the end of the keys to indicate that these are intlists.
+		for (std::map<String,IntList>::const_iterator i=intListParams.begin(); i!=intListParams.end(); i++) {
+			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
+			for (int j=0; j<i->second.size(); j++)
+				arr->read (Glib::ustring::format (i->second[j]));
+			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1IL", i->first)), arr.get());
+		}
+
+		// save string list parameters. An "SL" is appended to the end of the keys to indicate that these are stringlists.
+		for (std::map<String,StringList>::const_iterator i=stringListParams.begin(); i!=stringListParams.end(); i++) {
+			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
+			for (int j=0; j<i->second.size(); j++)
+				arr->read (i->second[j]);
+			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1SL", i->first)), arr.get());
+		}
+		
+		// sort and create xmp packet
+		xmpData.sortByKey ();
+		std::string xmpPacket;
+		if (Exiv2::XmpParser::encode(xmpPacket, xmpData)) 
+			return 1;
+
+		// save to file
+		std::ofstream f (fname.c_str ());
+		if (f.is_open ()) {
+			f << xmpPacket;
+			f.close ();
+		}
+		else
+			return 2;
+	}
+	catch (Exiv2::AnyError& e) {
+		return 3;
+	}
 	return 0;
 }
 
-int ProcParams::load (Glib::ustring fname) {
+int ProcParams::load (const String& fname) {
 
+	try {
+		// open file and read content
+		std::ifstream f (fname.c_str ());
+		std::string xmpPacket;
+		if (f.is_open ()) {
+			xmpPacket = std::string (std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
+			f.close ();
+		}
+		else
+			return 2;
+			
+		// create xmp data and register our namespace
+		Exiv2::XmpData xmpData;
+		Exiv2::XmpProperties::registerNs("RawTherapee/", "rt");
+		if (Exiv2::XmpParser::decode(xmpData, xmpPacket)) 
+			return 1;
+			
+		// read all values
+		for (Exiv2::XmpData::const_iterator i=xmpData.begin(); i!=xmpData.end(); i++) {
+			std::string key = i->key ();
+			if (key.size()>=9) {
+				// find out type of the item
+				char last = key[key.size()-1];
+				std::string typeID;
+				std::string propName;
+				if (last=='L') {
+					typeID = std::string (key, key.size()-2, 2);
+					propName = std::string (key, 7, key.size()-9);
+				}
+				else {
+					typeID = std::string (&last, 1);
+					propName = std::string (key, 7, key.size()-8);
+				}
+				// store values
+				if (typeID == "F")
+					setFloat (propName, i->toFloat());
+				else if (typeID == "I")
+					setInteger (propName, i->toLong());
+				else if (typeID == "S")
+					setString (propName, i->toString());
+				else if (typeID == "B")
+					setBoolean (propName, i->toString()=="true");
+				else if (typeID == "FL") {
+					FloatList arr;
+					arr.resize (i->count ());
+					for (int j=0; j<arr.size(); j++)
+						arr[j] = i->toFloat (j);
+					setFloatList (propName, arr);
+				}
+				else if (typeID == "IL") {
+					IntList arr;
+					arr.resize (i->count ());
+					for (int j=0; j<arr.size(); j++)
+						arr[j] = i->toLong (j);
+					setIntegerList (propName, arr);
+				}
+				else if (typeID == "SL") {
+					StringList arr;
+					arr.resize (i->count ());
+					for (int j=0; j<arr.size(); j++)
+						arr[j] = i->toString (j);
+					setStringList (propName, arr);
+				}
+			}
+		}
+	}
+	catch (Exiv2::AnyError& e) {
+		return 3;
+	}
 	return 0;
 }
 

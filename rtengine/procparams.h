@@ -53,7 +53,7 @@ class IPTCPair {
 
 class ProcParams {
 
-		std::map<String,double> floatParams;
+		std::map<String,float>   floatParams;
 		std::map<String,int> 	 intParams;
 		std::map<String,bool> 	 boolParams;
 		std::map<String,String> stringParams;
@@ -103,21 +103,13 @@ class ProcParams {
         * @param fname the name of the file
         * @return Error code (=0 if no error)
         */
-        int     save        (Glib::ustring fname) const;
+        int     save        (const String& fname) const;
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file
         * @return Error code (=0 if no error)
         */
-        int     load        (Glib::ustring fname);
-
-      /** Creates a new instance of ProcParams.
-        * @return a pointer to the new ProcParams instance. */
-        static ProcParams* create  ();
-
-      /** Destroys an instance of ProcParams.
-        * @param pp a pointer to the ProcParams instance to destroy. */
-        static void        destroy (ProcParams* pp);
+        int     load        (const String& fname);
 
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);

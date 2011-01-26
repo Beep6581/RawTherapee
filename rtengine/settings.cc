@@ -22,6 +22,7 @@
 #include "procparams.h"
 #include "filterfactory.h"
 #include <glibmm.h>
+#include <exiv2/exiv2.hpp>
 
 namespace rtengine {
 
@@ -61,14 +62,15 @@ Settings::Settings () {
     filterList.push_back ("LuminanceCurve");
     filterList.push_back ("ColorCurve");
 
+    defaultProcParams.setBoolean ("FilterOrderCustom", false);
+    defaultProcParams.setStringList ("FilterOrderFilterList", filterList);
+
     previewSkip = 16;
 
     iccStore = new ICCStore ();
     iccStore->parseDir (iccDirectory);
     CurveFactory::init ();
-
-    defaultProcParams.setBoolean ("FilterOrderCustom", false);
-    defaultProcParams.setStringList ("FilterOrderFilterList", filterList);
+    Exiv2::XmpParser::initialize ();
 }
 
 

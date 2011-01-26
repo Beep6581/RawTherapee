@@ -21,7 +21,8 @@ bool FilterDescriptor::myTriggerEvent (ProcEvent ev) const {
 
 Filter::Filter (FilterDescriptor* descr)
 	: descriptor(descr), next(NULL), prev(NULL), shortCutPrev(NULL), parent(NULL),
-	  outputCache(NULL), forceOutputCache(descr->forceOutputCache()), valid(false) {
+	  outputCache(NULL), forceOutputCache(descr->forceOutputCache()), valid(false),
+	  plistener(NULL) {
 }
 
 Filter::~Filter () {

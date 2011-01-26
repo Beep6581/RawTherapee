@@ -1,0 +1,151 @@
+<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0-Exiv2">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:rt="RawTherapee/"
+   rt:CACorrectionBlueF="0"
+   rt:CACorrectionRedF="0"
+   rt:CoarseTransformHFlipB="false"
+   rt:CoarseTransformRotateI="0"
+   rt:CoarseTransformVFlipB="false"
+   rt:ColorBoostAmountI="0"
+   rt:ColorBoostAvoidClipB="false"
+   rt:ColorBoostEnableSatLimiterB="false"
+   rt:ColorBoostSaturationLimitF="50"
+   rt:ColorDenoiseAmountF="50"
+   rt:ColorDenoiseEnabledB="false"
+   rt:ColorManagementGammaOnInputB="false"
+   rt:ColorShiftCieaChannelF="0"
+   rt:ColorShiftCiebChannelF="0"
+   rt:CropEnabledB="false"
+   rt:CropFixRectRatioB="true"
+   rt:CropRectHI="100000"
+   rt:CropRectWI="100000"
+   rt:CropRectXI="0"
+   rt:CropRectYI="0"
+   rt:DemosaicColorCorrectionStepsI="2"
+   rt:FilterOrderCustomB="false"
+   rt:HighlightRecoveryEnabledB="true"
+   rt:LensDistortionAmountF="0"
+   rt:LensDistortionUseLensfunB="false"
+   rt:LumaCurveBrightnessF="0"
+   rt:LumaCurveContrastF="0"
+   rt:LumaDenoiseEdgeToleranceF="3"
+   rt:LumaDenoiseEnabledB="false"
+   rt:LumaDenoiseRadiusF="1.9"
+   rt:PerspectiveCorrectionHorizontalF="0"
+   rt:PerspectiveCorrectionVerticalF="0"
+   rt:ResizeEnabledB="false"
+   rt:ResizeHeightI="600"
+   rt:ResizeScaleF="1"
+   rt:ResizeSizeSpecI="0"
+   rt:ResizeWidthI="800"
+   rt:RotationDegreeF="0"
+   rt:ShadowsHighlightsEnabledB="false"
+   rt:ShadowsHighlightsHQB="false"
+   rt:ShadowsHighlightsHTonalWidthF="80"
+   rt:ShadowsHighlightsHighlightsF="10"
+   rt:ShadowsHighlightsLocalContrastF="0"
+   rt:ShadowsHighlightsRadiusF="40"
+   rt:ShadowsHighlightsSTonalWIdthF="80"
+   rt:ShadowsHighlightsShadowsF="10"
+   rt:SharpeningAmountF="90"
+   rt:SharpeningDeconvAmountF="75"
+   rt:SharpeningDeconvDampingF="20"
+   rt:SharpeningDeconvIterI="30"
+   rt:SharpeningDeconvRadiusF="0.75"
+   rt:SharpeningEdgesOnlyB="false"
+   rt:SharpeningEdgesRadiusF="3"
+   rt:SharpeningEdgesToleranceF="1.5"
+   rt:SharpeningEnabledB="true"
+   rt:SharpeningHaloControlAmountF="85"
+   rt:SharpeningHaloControlB="false"
+   rt:SharpeningRadiusF="1"
+   rt:SharpeningThresholdF="1.5"
+   rt:ToneCurveAutoExpB="true"
+   rt:ToneCurveBlackF="0"
+   rt:ToneCurveBrightnessF="0"
+   rt:ToneCurveClipF="0.001"
+   rt:ToneCurveContrastF="0"
+   rt:ToneCurveExpCompF="0"
+   rt:ToneCurveHLComprF="100"
+   rt:ToneCurveSHComprF="100"
+   rt:TransformAutoFillB="true"
+   rt:VignettingCorrectionAmountF="0"
+   rt:VignettingCorrectionRadiusF="50"
+   rt:WhiteBalanceGreenF="1.00102"
+   rt:WhiteBalanceTemperatureF="6504">
+   <rt:ChMixerBlueIL>
+    <rdf:Seq>
+     <rdf:li>0</rdf:li>
+     <rdf:li>0</rdf:li>
+     <rdf:li>100</rdf:li>
+    </rdf:Seq>
+   </rt:ChMixerBlueIL>
+   <rt:ChMixerGreenIL>
+    <rdf:Seq>
+     <rdf:li>0</rdf:li>
+     <rdf:li>100</rdf:li>
+     <rdf:li>0</rdf:li>
+    </rdf:Seq>
+   </rt:ChMixerGreenIL>
+   <rt:ChMixerRedIL>
+    <rdf:Seq>
+     <rdf:li>100</rdf:li>
+     <rdf:li>0</rdf:li>
+     <rdf:li>0</rdf:li>
+    </rdf:Seq>
+   </rt:ChMixerRedIL>
+   <rt:FilterOrderFilterListSL>
+    <rdf:Seq>
+     <rdf:li>Demosaicing</rdf:li>
+     <rdf:li>HighlightRecovery</rdf:li>
+     <rdf:li>--Cache--</rdf:li>
+     <rdf:li>CoarseTrans</rdf:li>
+     <rdf:li>WhiteBalance</rdf:li>
+     <rdf:li>ColorSpaceConversion</rdf:li>
+     <rdf:li>--Cache--</rdf:li>
+     <rdf:li>Transform</rdf:li>
+     <rdf:li>--Cache--</rdf:li>
+     <rdf:li>ColorMixer</rdf:li>
+     <rdf:li>ShadowsHighlights</rdf:li>
+     <rdf:li>ToneCurve</rdf:li>
+     <rdf:li>--Cache--</rdf:li>
+     <rdf:li>LuminanceDenoiser</rdf:li>
+     <rdf:li>ColorDenoiser</rdf:li>
+     <rdf:li>Sharpener</rdf:li>
+     <rdf:li>LuminanceCurve</rdf:li>
+     <rdf:li>ColorCurve</rdf:li>
+    </rdf:Seq>
+   </rt:FilterOrderFilterListSL>
+   <rt:LumaCurveCustomCurveFL>
+    <rdf:Seq/>
+   </rt:LumaCurveCustomCurveFL>
+   <rt:ToneCurveCustomCurveFL>
+    <rdf:Seq/>
+   </rt:ToneCurveCustomCurveFL>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                           
+<?xpacket end="w"?>
