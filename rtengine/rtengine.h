@@ -19,7 +19,6 @@
 #ifndef _RTENGINE_
 #define _RTENGINE_
 
-#include "rawmetadatalocation.h"
 #include "procparams.h"
 #include "procevents.h"
 #include <lcms2.h>
@@ -33,6 +32,7 @@
 #include "imageview.h"
 #include "dim.h"
 #include "rtcommon.h"
+#include <exiv2/exiv2.hpp>
 
 /**
  * @file 
@@ -49,49 +49,44 @@ namespace rtengine {
     class ImageMetaData {
 
         public:
-          /** Checks the availability of exif metadata tags.
-            * @return Returns true if image contains exif metadata tags */
-            virtual bool hasExif () const =0;        
-          /** Returns the directory of exif metadata tags.
-            * @return The directory of exif metadata tags */
-            virtual const rtexif::TagDirectory* getExifData () const =0;
-          /** Checks the availability of IPTC tags.
-            * @return Returns true if image contains IPTC tags */
-            virtual bool hasIPTC () const =0;
-          /** Returns the directory of IPTC tags.
-            * @return The directory of IPTC tags */
-            virtual const std::vector<IPTCPair> getIPTCData () const =0;
+			virtual const Exiv2::ExifData& 	getExifData () const = 0;
+			virtual const Exiv2::IptcData& 	getIptcData () const = 0;
+			virtual const Exiv2::XmpData& 	getXmpData () const = 0;
+
           /** @return a struct containing the date and time of the image */
             virtual struct tm   getDateTime () const =0;
           /** @return the ISO of the image */
-            virtual int         getISOSpeed () const =0;
+            virtual int         getISO () const =0;
           /** @return the F number of the image */
-            virtual double      getFNumber  () const =0;
+            virtual float       getFNumber  () const =0;
           /** @return the focal length used at the exposure */
-            virtual double      getFocalLen () const =0;
+            virtual float       getFocalLen () const =0;
           /** @return the shutter speed */
-            virtual double      getShutterSpeed () const =0;
+            virtual Exiv2::Rational getExposureTime () const =0;
           /** @return the maker of the camera */
             virtual std::string getMake     () const =0;
           /** @return the model of the camera */
             virtual std::string getModel    () const =0;
           /** @return the lens on the camera  */
             virtual std::string getLens     () const =0;
+            
+            virtual int			getDefaultRotation () const=0;
+            
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string apertureToString (double aperture);
+            static std::string fNumberToString (float fNumber);
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string shutterToString (double shutter);
+            static std::string exposureTimeToString (Exiv2::Rational expTime);
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static double apertureFromString (std::string shutter);
+            static float fNumberFromString (const std::string& fNumber);
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static double shutterFromString (std::string shutter);
+            static Exiv2::Rational exposureTimeFromString (const std::string& expTime);
             
           /** Reads metadata from file.
             * @param fname is the name of the file
             * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
             * of jpgs and tiffs pass a NULL pointer. 
             * @return The metadata */
-            static ImageMetaData* fromFile (const String& fname, RawMetaDataLocation* rml);
+            static ImageMetaData* fromFile (const String& fname);
     };
 
   /** This listener interface is used to indicate the progress of time consuming operations */
@@ -211,7 +206,7 @@ namespace rtengine {
   * @param thumbOffset is the offset of the embedded thumbnail in the raw file
   * @param thumbType is the type of the embedded thumbnail (=0: no thumbnail, =1: jpeg format, =2: simple continuous image data in rgbrgb... order)
   * @return =0 if not supported */
-    int getRawFileBasicInfo (const String& fname, RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
+    int getRawFileBasicInfo (const String& fname, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType);
 
 /** Returns the available output profile names
   * @return a vector of the available output profile names */

@@ -22,8 +22,10 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <math.h>
-#include <omp.h>
 #include <buffer.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 namespace rtengine {
 
@@ -34,7 +36,11 @@ template<class T> void gaussHorizontal3 (Buffer<T>* src, Buffer<T>* dst, Dim siz
 	int W = size.width;
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<size.height; i++) {
+		#ifdef _OPENMP
     	T* temp = buffer + omp_get_thread_num() * W;
+    	#else
+    	T* temp = buffer + W;
+    	#endif
         for (int j=1; j<W-1; j++)
             temp[j] = (T)(c1 * (src->rows[i][j-1] + src->rows[i][j+1]) + c0 * src->rows[i][j]);
         dst->rows[i][0] = src->rows[i][0];
@@ -48,7 +54,11 @@ template<class T> void gaussVertical3 (Buffer<T>* src, Buffer<T>* dst, Dim size,
     int H = size.height;
 	#pragma omp parallel for if (multiThread)
     for (int i=0; i<size.width; i++) {
+		#ifdef _OPENMP
     	T* temp = buffer + omp_get_thread_num() * H;
+    	#else
+    	T* temp = buffer + H;
+    	#endif
         for (int j = 1; j<H-1; j++) 
         	temp[j] = (T)(c1 * (src->rows[j-1][i] + src->rows[j+1][i]) + c0 * src->rows[j][i]);
         dst->rows[0][i] = src->rows[0][i];
@@ -114,7 +124,11 @@ template<class T> void gaussHorizontal (Buffer<T>* src, Buffer<T>* dst, Dim size
 	#pragma omp parallel for if (multiThread)
     for (int i=0; i<size.height; i++) {
 
+		#ifdef _OPENMP
         double* temp2 = buffer + omp_get_thread_num() * W;
+        #else
+        double* temp2 = buffer + W;
+        #endif
 
         temp2[0] = B * src->rows[i][0] + b1*src->rows[i][0] + b2*src->rows[i][0] + b3*src->rows[i][0];
         temp2[1] = B * src->rows[i][1] + b1*temp2[0]  + b2*src->rows[i][0] + b3*src->rows[i][0];
@@ -192,7 +206,11 @@ template<class T> void gaussVertical (Buffer<T>* src, Buffer<T>* dst, Dim size, 
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<size.width; i++) {
 
+		#ifdef _OPENMP
         double* temp2 = buffer + omp_get_thread_num() * H;
+        #else
+        double* temp2 = buffer + H;
+        #endif
 
     	temp2[0] = B * src->rows[0][i] + b1*src->rows[0][i] + b2*src->rows[0][i] + b3*src->rows[0][i];
         temp2[1] = B * src->rows[1][i] + b1*temp2[0]  + b2*src->rows[0][i] + b3*src->rows[0][i];

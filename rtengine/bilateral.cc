@@ -19,7 +19,6 @@
 
 #include <math.h>
 #include "mytime.h"
-#include <omp.h>
 #include "buffer.h"
 #include <float.h>
 #include <string.h>

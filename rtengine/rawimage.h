@@ -20,7 +20,6 @@
 #define _RAWIMAGE_H__
 
 #include <glibmm.h>
-#include "rawmetadatalocation.h"
 #include "matrix33.h"
 #include "colortemp.h"
 
@@ -45,7 +44,6 @@ class RawImage {
 
 		Glib::ustring make, model;	// content of the exif fields "make" and "model"
 
-		RawMetaDataLocation rml;	// start of the exif or ciff data inside the raw file
 		int prefilters;				// ?? used by vng4 demosaic
 
 		unsigned short* allocation;	// the array that holds pixel values

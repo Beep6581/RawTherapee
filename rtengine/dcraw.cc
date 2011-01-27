@@ -8914,7 +8914,6 @@ cleanup:
 */
 
 #include "rawimage.h"
-#include "rawmetadatalocation.h"
 #include <glibmm.h>
 #include "colortemp.h"
 #include "settings.h"
@@ -9047,10 +9046,6 @@ int RawImage::load (const Glib::ustring& fname) {
 	make = ::make;
 	model = ::model;
 
-	rml.exifBase = exif_base;
-	rml.ciffBase = ciff_base;
-	rml.ciffLength = ciff_len;
-
 	prefilters = pre_filters;
 
 	double camwb_red   = red_multiplier / pre_mul[0];
@@ -9075,7 +9070,7 @@ int RawImage::load (const Glib::ustring& fname) {
     return 0;
 }
 
-int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType) {
+int getRawFileBasicInfo (const Glib::ustring& fname, int& rotation, int& thumbWidth, int& thumbHeight, int& thumbOffset, int& thumbType) {
 
 	int status=0;
 
@@ -9131,10 +9126,6 @@ int getRawFileBasicInfo (const Glib::ustring& fname, rtengine::RawMetaDataLocati
 		thumbWidth = width;
 		thumbHeight = height;
 	}
-
-	rml.exifBase = exif_base;
-	rml.ciffBase = ciff_base;
-	rml.ciffLength = ciff_len;
 
 	fclose (ifp);
 	dcrMutex->unlock ();

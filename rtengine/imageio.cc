@@ -36,14 +36,14 @@ extern "C" {
 #include "iptcpairs.h"
 #include <libiptcdata/iptc-jpeg.h>
 
-Glib::ustring safe_locale_to_utf8 (const std::string& src);
+//Glib::ustring safe_locale_to_utf8 (const std::string& src);
 
 namespace rtengine {
 
 String ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {
-
+/*
     // store exif info
     exifChange.resize (exif.size());
     for (int i=0; i<exif.size(); i++) {
@@ -98,7 +98,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<
                 iptc_dataset_unref (ds);
             }
     }
-    iptc_data_sort (iptc);
+    iptc_data_sort (iptc);*/
 }
 
 void ImageIO::setOutputProfile  (char* pdata, int plen) {

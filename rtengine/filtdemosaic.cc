@@ -9,7 +9,9 @@
 #include "rtengine.h"
 #include "macros.h"
 #include <string.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include "median.h"
 
 namespace rtengine {
@@ -273,8 +275,14 @@ void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<float
 
     #pragma omp parallel if (multiThread)
     {
+		#ifdef _OPENMP
         int tid = omp_get_thread_num();
         int nthreads = omp_get_num_threads();
+        #else
+        int tid = 0;
+        int nthreads = 1;
+        #endif
+
         int blk = si->width/nthreads;
 
         if (tid<nthreads-1)
@@ -288,8 +296,14 @@ void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<float
 
     #pragma omp parallel if (multiThread)
     {
+		#ifdef _OPENMP
         int tid = omp_get_thread_num();
         int nthreads = omp_get_num_threads();
+        #else
+        int tid = 0;
+        int nthreads = 1;
+        #endif
+
         int blk = si->height/nthreads;
 
         if (tid<nthreads-1)
@@ -588,8 +602,14 @@ void DemosaicFilter::correction_YIQ_LQ  (MultiImage* im, int times) {
     for (int t=0; t<times; t++) {
         #pragma omp parallel
         {
-            int tid = omp_get_thread_num();
-            int nthreads = omp_get_num_threads();
+			#ifdef _OPENMP
+			int tid = omp_get_thread_num();
+			int nthreads = omp_get_num_threads();
+			#else
+			int tid = 0;
+			int nthreads = 1;
+			#endif
+
             int blk = (im->height-2)/nthreads;
 
             if (tid<nthreads-1)

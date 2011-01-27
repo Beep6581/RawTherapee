@@ -102,7 +102,11 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
 
     Buffer<float>* tmp = b2;
 
+    #ifdef _OPENMP
     double* buffer = new double [std::max(W,H)*omp_get_max_threads()];
+	#else
+    double* buffer = new double [std::max(W,H)];
+	#endif
 
     bool needdamp = damping > 0;
     for (int k=0; k<iter; k++) {
@@ -202,7 +206,12 @@ void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetIm
     Buffer<float>* b3;
     Buffer<float> sourceView = sourceImage->getBufferView (sourceImage->cieL);
 
-    double* buffer = new double [std::max(W, H) * omp_get_max_threads()];
+    #ifdef _OPENMP
+    double* buffer = new double [std::max(W,H)*omp_get_max_threads()];
+	#else
+    double* buffer = new double [std::max(W,H)];
+	#endif
+
     if (!edgesonly) {
         gaussHorizontal<float> (&sourceView, b2, size, buffer, radius, multiThread);
         gaussVertical<float>   (b2,          b2, size, buffer, radius, multiThread);

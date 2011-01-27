@@ -19,26 +19,27 @@
 #ifndef __IMAGEDATA_H__
 #define __IMAGEDATA_H__
 
-#include <stdio.h>
+#include <time.h>
 #include <string>
-#include <glibmm.h>
-#include <rtexif.h>
-#include <libiptcdata/iptc-data.h>
 #include "rtengine.h"
+#include <exiv2/exiv2.hpp>
 
 namespace rtengine {
 
 class ImageData : public ImageMetaData {
 
   protected:
-    rtexif::TagDirectory* root;
-    IptcData* iptc;
+	Exiv2::ExifData exifData;
+	Exiv2::IptcData iptcData;
+	Exiv2::XmpData  xmpData;
 
     struct tm time;
-    int iso_speed;
-    double aperture;
-    double focal_len;
-    double shutter;
+    int iso;
+    float fNumber;
+    float focalLen;
+    int defRot;
+    Exiv2::Rational expTime;
+    
     std::string make, model;
     std::string lens;
 
@@ -46,23 +47,23 @@ class ImageData : public ImageMetaData {
     
   public:
 
-    ImageData (Glib::ustring fname, RawMetaDataLocation* rml=NULL);
-    ~ImageData ();
+    ImageData (const String& fname);
 
-    const rtexif::TagDirectory*   getExifData () const { return root; }
-    const std::vector<IPTCPair> getIPTCData () const;
+	const Exiv2::ExifData& 	getExifData () const { return exifData; }
+	const Exiv2::IptcData& 	getIptcData () const { return iptcData; }
+	const Exiv2::XmpData& 	getXmpData () const  { return xmpData; }
 
-    bool hasExif () const { return root && root->getCount(); }
-    bool hasIPTC () const { return iptc; }
+    struct tm   	getDateTime () const { return time;      }
+    int         	getISO 		() const { return iso; }
+    float       	getFNumber  () const { return fNumber;  }
+    float       	getFocalLen () const { return focalLen;   }
+    Exiv2::Rational getExposureTime () const { return expTime;   }
+    int				getDefaultRotation () const { return defRot; }
 
-    struct tm   getDateTime () const { return time;      }
-    int         getISOSpeed () const { return iso_speed; }
-    double      getFNumber  () const { return aperture;  }
-    double      getFocalLen () const { return focal_len;   }
-    double      getShutterSpeed () const { return shutter;   }
     std::string getMake     () const { return make;      }
     std::string getModel    () const { return model;     }
     std::string getLens     () const { return lens;      }
+    
 };
 };
 #endif

@@ -49,7 +49,7 @@ int RawImageSource::load (const Glib::ustring& fileName, ProgressListener* plist
         return error;
     }
 
-    idata = new ImageData (fileName, &img->rml);
+    idata = new ImageData (fileName);
 
     if (img->profileData)
         embProfile = cmsOpenProfileFromMem (img->profileData, img->profileLength);

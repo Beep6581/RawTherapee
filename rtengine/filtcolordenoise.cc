@@ -9,7 +9,10 @@
 #include "rtengine.h"
 #include "macros.h"
 #include "gauss.h"
+#ifdef _OPENMP
 #include <omp.h>
+#endif
+
 
 namespace rtengine {
 
@@ -46,10 +49,17 @@ Dim ColorDenoiseFilter::getReqiredBufferSize () {
     Dim sdim = getScaledTargetImageView().getSize();
 
     if (procParams->getBoolean ("ColorDenoiseEnabled") && sdim.width >= 8 && sdim.height >= 8) {
+		#ifdef _OPENMP
         if (sdim.height > sdim.width)
             return Dim (2, sdim.height*omp_get_max_threads()); // since we need double buffer and rt gives float buffer
         else
             return Dim (sdim.width*omp_get_max_threads(), 2);
+        #else
+        if (sdim.height > sdim.width)
+            return Dim (2, sdim.height); // since we need double buffer and rt gives float buffer
+        else
+            return Dim (sdim.width, 2);
+        #endif
     }
     else
         return sdim;
