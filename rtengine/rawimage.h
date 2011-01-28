@@ -32,19 +32,14 @@ class RawImage {
 		int width;					// width of the image
 		int height;					// height of the image
 
+		int fujiWidth;			
+
 		unsigned filter;			// Bayer pattern
 
 		ColorTemp camSpaceTemp;		// color temperature in camera color space
 		ColorTemp rgbSpaceTemp;		// color temperature in srgb D50 color space ??? (Warning! These 2 member variables do not make sense. I'm not good in color theory, however this does what it should for sure.
-
-		int rotateDeg;				// degree of rotation (as recorded in the exif)
-		int fujiWidth;				// if this is a fuji image, this is the de-rotated width of the image. Otherwise 0.
   
 		float defgain;				// this is the multiplier by which each pixel values shall be multiplied to get the image without HL recovery
-
-		Glib::ustring make, model;	// content of the exif fields "make" and "model"
-
-		int prefilters;				// ?? used by vng4 demosaic
 
 		unsigned short* allocation;	// the array that holds pixel values
 		unsigned short** data;      // pointer array pointing to the rows

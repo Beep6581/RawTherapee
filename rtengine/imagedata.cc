@@ -38,7 +38,7 @@ ImageData::ImageData (const String& fname)
 		iptcData = image->iptcData ();
 		xmpData = image->xmpData ();
 		extractInfo ();
-		std::cout << "Make: " << make << std::endl;
+/*		std::cout << "Make: " << make << std::endl;
 		std::cout << "Model: " << model << std::endl;
 		std::cout << "Focal: " << focalLen << std::endl;
 		std::cout << "ISO: " << iso << std::endl;
@@ -46,7 +46,7 @@ ImageData::ImageData (const String& fname)
 		std::cout << "FNumber: " << fNumberToString(fNumber) << std::endl;
 		std::cout << "Rotation: " << defRot << std::endl;
 		std::cout << "Lens: " << lens << std::endl;
-		std::cout << "Time: " << asctime (&time) << std::endl;
+		std::cout << "Time: " << asctime (&time) << std::endl;*/
 	}
 	catch (Exiv2::Error& e) {
 	}

@@ -135,7 +135,7 @@ ToneCurveFilter::~ToneCurveFilter () {
 
 void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-    Filter* p = getParentFilter ();
+	Filter* p = getParentFilter ();
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
     float* myCurve;

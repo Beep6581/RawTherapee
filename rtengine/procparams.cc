@@ -157,7 +157,6 @@ int ProcParams::save (const String& fname) const {
 	try {
 		// create xmp data and register our namespace
 		Exiv2::XmpData xmpData;
-		Exiv2::XmpProperties::registerNs("RawTherapee/", "rt");
 
 		// save float parameters. An "F" is appended to the end of the keys to indicate that these are floats.
 		for (std::map<String,float>::const_iterator i=floatParams.begin(); i!=floatParams.end(); i++)
@@ -170,6 +169,10 @@ int ProcParams::save (const String& fname) const {
 		// save boolean parameters. A "B" is appended to the end of the keys to indicate that these are booleans.
 		for (std::map<String,bool>::const_iterator i=boolParams.begin(); i!=boolParams.end(); i++)
 			xmpData[Glib::ustring::compose("Xmp.rt.%1B", i->first)] = i->second ? "true" : "false";
+
+		// save string parameters. An "S" is appended to the end of the keys to indicate that these are strings.
+		for (std::map<String,String>::const_iterator i=stringParams.begin(); i!=stringParams.end(); i++)
+			xmpData[Glib::ustring::compose("Xmp.rt.%1S", i->first)] = i->second;
 
 		// save float list parameters. An "FL" is appended to the end of the keys to indicate that these are floatlists.
 		for (std::map<String,FloatList>::const_iterator i=floatListParams.begin(); i!=floatListParams.end(); i++) {
@@ -231,7 +234,6 @@ int ProcParams::load (const String& fname) {
 			
 		// create xmp data and register our namespace
 		Exiv2::XmpData xmpData;
-		Exiv2::XmpProperties::registerNs("RawTherapee/", "rt");
 		if (Exiv2::XmpParser::decode(xmpData, xmpPacket)) 
 			return 1;
 			

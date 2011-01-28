@@ -628,7 +628,6 @@ void DemosaicFilter::process (const std::set<ProcEvent>& events, MultiImage* sou
         hphd_demosaic (sourceImage, targetImage, buffer);
 
 	interpolate_rb_bilinear (sourceImage, targetImage);
-
     correction_YIQ_LQ (targetImage, procParams->getInteger("DemosaicColorCorrectionSteps"));
 }
 

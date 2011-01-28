@@ -28,8 +28,6 @@ namespace rtengine {
 
 Settings* Settings::settings = NULL;
 
-extern Glib::Mutex* dcrMutex;
-
 Settings::Settings () {
 
 	if (settings)
@@ -37,9 +35,6 @@ Settings::Settings () {
 	settings = this;
 
 	filterFactory = new FilterFactory ();
-
-	delete dcrMutex;
-	dcrMutex = new Glib::Mutex ();
 
 	colorimetricIntent = 1;
 	verbose = true;
@@ -71,6 +66,7 @@ Settings::Settings () {
     iccStore->parseDir (iccDirectory);
     CurveFactory::init ();
     Exiv2::XmpParser::initialize ();
+	Exiv2::XmpProperties::registerNs("RawTherapee/", "rt");
 }
 
 
