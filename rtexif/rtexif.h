@@ -355,6 +355,7 @@ extern const TagAttrib pentaxCameraSettingsAttribs[];
 extern const TagAttrib pentaxFlashInfoAttribs[];
 extern const TagAttrib pentaxSRInfoAttribs[];
 extern const TagAttrib pentaxBatteryInfoAttribs[];
+extern const TagAttrib pentaxCameraInfoAttribs[];
 extern const TagAttrib fujiAttribs[];
 extern const TagAttrib minoltaAttribs[];
 extern const TagAttrib sonyAttribs[];
