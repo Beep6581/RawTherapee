@@ -571,6 +571,12 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
 		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , attrib->subdirAttribs, getOrder());
 		        makerNoteKind = TABLESUBDIR;
 				break;
+			case 0x0215:
+		        directory = new TagDirectory*[2];
+		        directory[1] = NULL;
+		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, getOrder());
+		        makerNoteKind = TABLESUBDIR;
+				break;
 			case 0x0207:
 				{   // There are 2 format pentaxLensDataAttribs
 					int offsetFirst = 4;

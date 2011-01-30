@@ -24,6 +24,7 @@
 #include <rawimage.h>
 #include <sstream>
 #include <stdio.h>
+#include <imagedata.h>
 
 namespace rtengine{
 
@@ -214,11 +215,16 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename )
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
         	if( !res ){
+         	   RawMetaDataLocation rml;
+         	   rml.exifBase = ri.get_exifBase();
+         	   rml.ciffBase = ri.get_ciffBase();
+         	   rml.ciffLength = ri.get_ciffLen();
+         	   ImageData idata(filename, &rml);
          	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
-        	   std::string key( ffInfo::key(ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_aperture()) );
+        	   std::string key( ffInfo::key(idata.getMake(),idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getFNumber()) );
         	   ffList_t::iterator iter = ffList.find( key );
         	   if( iter == ffList.end() ){
-				   ffInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_aperture(),ri.get_timestamp());
+				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getFNumber(),idata.getDateTimeAsTS());
 				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         	   }else{
         		   while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) >60*60*6 ) // 6 hour difference
@@ -227,7 +233,7 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename )
         		   if( iter != ffList.end() )
         		      iter->second.pathNames.push_back( filename );
         		   else{
-    				   ffInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_aperture(),ri.get_timestamp());
+    				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getFNumber(),idata.getDateTimeAsTS());
     				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         		   }
         	   }
@@ -285,7 +291,7 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, int iso
         	   bestMatch = iter;
            }
 		}
-		return &(bestMatch->second);
+		return bestD != INFINITY ? &(bestMatch->second) : 0 ;
 	}
 }
 

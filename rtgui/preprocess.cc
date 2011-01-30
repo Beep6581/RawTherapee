@@ -36,7 +36,7 @@ PreProcess::PreProcess ()
 	hbdf->pack_start(*darkFrameFile);
 	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 4);
 	dfAuto = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_DFAUTOSELECT"))));
-	dfInfo = Gtk::manage(new Gtk::Label("."));
+	dfInfo = Gtk::manage(new Gtk::Label(""));
 	dfInfo->set_alignment(0,0); //left align
 	
 	hbff = Gtk::manage(new Gtk::HBox()); 
@@ -48,7 +48,7 @@ PreProcess::PreProcess ()
 	hbff->pack_start(*flatFieldFile); 
 	hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK, 4); 
 	flatFieldAutoSelect = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_FLATFIELDAUTOSELECT"))));
-	ffInfo = Gtk::manage(new Gtk::Label("."));
+	ffInfo = Gtk::manage(new Gtk::Label(""));
 	ffInfo->set_alignment(0,0); //left align
 	flatFieldBlurRadius = Gtk::manage(new Adjuster (M("PREFERENCES_FLATFIELDBLURRADIUS"),0,200,2,32)); 
 	flatFieldBlurRadius->setAdjusterListener (this); 
@@ -176,25 +176,29 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    lastHot = pp->raw.hotdeadpix_filt;
    lastDFauto = pp->raw.df_autoselect;
 	
-	if( pp->raw.df_autoselect  && dfp){
+	if( pp->raw.df_autoselect  && dfp && !batchMode){
 		// retrieve the auto-selected df filename
 		rtengine::RawImage *img = dfp->getDF();
 		if( img ){
 			std::ostringstream s;
 			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
 			dfInfo->set_text( s.str() );
+		}else{
+			dfInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
 		}
 	}
 	else dfInfo->set_text("");
 	
 	lastFFAutoSelect = pp->raw.ff_AutoSelect;
-	if( pp->raw.ff_AutoSelect  && ffp){
+	if( pp->raw.ff_AutoSelect  && ffp && !batchMode){
 		// retrieve the auto-selected ff filename
 		rtengine::RawImage *img = ffp->getFF();
 		if( img ){
 			std::ostringstream s;
-			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO f/" << img->get_aperture();
 			ffInfo->set_text( s.str() );
+		}else{
+			ffInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
 		}
 	}
 	else ffInfo->set_text("");
@@ -366,14 +370,16 @@ void PreProcess::dfAutoChanged()
         lastDFauto = dfAuto->get_active ();
     }
 
-    if(dfAuto->get_active() && dfp){
+    if(dfAuto->get_active() && dfp && !batchMode){
  	 // retrieve the auto-selected df filename
       rtengine::RawImage *img = dfp->getDF();
       if( img ){
         std::ostringstream s;
         s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
         dfInfo->set_text( s.str() );
-      }
+      }else{
+		dfInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
+	  }
     }
     else{dfInfo->set_text("");}
 
@@ -472,13 +478,15 @@ void PreProcess::flatFieldAutoSelectChanged()
     }
 	hbff->set_sensitive( !flatFieldAutoSelect->get_active() );
 
-    if( flatFieldAutoSelect->get_active()  && ffp){
+    if( flatFieldAutoSelect->get_active()  && ffp && !batchMode){
  	  // retrieve the auto-selected ff filename
        rtengine::RawImage *img = ffp->getFF();
       if( img ){
         std::ostringstream s;
         s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
         ffInfo->set_text( s.str() );
+      }else{
+    	  ffInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
       }
     }
     else{ffInfo->set_text("");}

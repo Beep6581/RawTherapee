@@ -955,12 +955,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		if( raw.dark_frame.size()>0)
 			rid = dfm.searchDarkFrame( raw.dark_frame );
 	} else {
-		rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+		rid = dfm.searchDarkFrame( idata->getMake(), idata->getModel(),idata->getISOSpeed(),idata->getShutterSpeed(),idata->getDateTimeAsTS());
 	}
 	if( rid && settings->verbose){
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
 	}
-	//copyOriginalPixels(ri, rid);
 	
 	//FLATFIELD start
 	Glib::ustring newFF = raw.ff_file;
@@ -969,7 +968,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		if( raw.ff_file.size()>0)
 			rif = ffm.searchFlatField( raw.ff_file );
 	} else {
-		rif = ffm.searchFlatField( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_aperture(), ri->get_timestamp());
+		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getISOSpeed(),idata->getShutterSpeed(), idata->getFNumber(), idata->getDateTimeAsTS());
 	}
 	if( rif && settings->verbose) {
 		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());
@@ -978,12 +977,13 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	//FLATFIELD end
 	
 	
-	
 	PixelsMap bitmapBads(W,H);
 	int totBP=0; // Hold count of bad pixels to correct
 
 	// Always correct camera badpixels
-	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
+	std::list<badPix> *bp = dfm.getBadPixels( idata->getMake(), idata->getModel(), idata->getSerialNumber() );
+	if( !bp && !idata->getSerialNumber().empty() )
+		bp = dfm.getBadPixels( idata->getMake(), idata->getModel(), "" ); // 2nd try without serial number
 	if( bp ){
 		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose ){
@@ -994,7 +994,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	// If darkframe selected, correct hotpixels found on darkframe
 	bp = 0;
 	if( raw.df_autoselect ){
-		bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+		bp = dfm.getHotPixels( idata->getMake(), idata->getModel(),idata->getISOSpeed(),idata->getShutterSpeed(), idata->getDateTimeAsTS() );
 	}else if( raw.dark_frame.size()>0 )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
