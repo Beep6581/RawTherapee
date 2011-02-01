@@ -405,7 +405,8 @@ class RAWParams {
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
-		int hotdeadpix_filt;
+		bool hotdeadpix_filt;
+		int hotdeadpix_thresh;
 		int	linenoise;
 		int greenthresh;
         int ccSteps;

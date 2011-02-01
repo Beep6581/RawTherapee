@@ -208,8 +208,8 @@ void ProcParams::setDefaults () {
     raw.cared = 0;
 	raw.cablue = 0;
     raw.ca_autocorrect = false;
-    //raw.hotdeadpix_filt = false;
-	raw.hotdeadpix_filt = 0;
+    raw.hotdeadpix_filt = false;
+	raw.hotdeadpix_thresh = 40;
     raw.linenoise = 0;
     raw.greenthresh = 0;
     raw.ccSteps = 1;

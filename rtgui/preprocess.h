@@ -62,9 +62,9 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
     Adjuster* caBlue;
     Adjuster* lineDenoise;
     Adjuster* greenEqThreshold;
-	Adjuster* hotDeadPixel;
+	Adjuster* hotDeadPixelThresh;
 
-    //Gtk::CheckButton* hotDeadPixel;
+    Gtk::CheckButton* hotDeadPixel;
 	Gtk::CheckButton* caAutocorrect;
     Gtk::CheckButton* dfAuto;
 	bool lastCA,lastHot,lastDFauto, lastFFAutoSelect;
@@ -72,7 +72,7 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
 	DFProvider *dfp;
 	FFProvider *ffp;
 	
-	sigc::connection caacsconn,dfautoconn,/*hdpixelconn,*/dfFile,flatFieldFileconn,flatFieldAutoSelectconn,flatFieldBlurTypeconn;
+	sigc::connection caacsconn,dfautoconn,hdpixelconn,dfFile,flatFieldFileconn,flatFieldAutoSelectconn,flatFieldBlurTypeconn;
 
   public:
 
@@ -85,7 +85,7 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
 
     void adjusterChanged     (Adjuster* a, double newval);
     void caCorrectionChanged();
-    //void hotDeadPixelChanged();
+    void hotDeadPixelChanged();
     void darkFrameChanged();
     void darkFrameReset();
     void dfAutoChanged();

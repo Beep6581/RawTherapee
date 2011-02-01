@@ -69,10 +69,10 @@ PreProcess::PreProcess ()
 	caBlue->setAdjusterListener (this);
 	caBlue->show();
 	
-	//hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_HOTDEADPIXFILT"))));
-	hotDeadPixel = Gtk::manage(new Adjuster (M("PREFERENCES_HOTDEADPIXFILT"),0,100,1,0));
-	hotDeadPixel->setAdjusterListener (this);
-	hotDeadPixel->show();
+	hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("PREFERENCES_HOTDEADPIXFILT"))));
+	hotDeadPixelThresh = Gtk::manage(new Adjuster (M("PREFERENCES_HOTDEADPIXTHRESH"),0,100,1,50));
+	hotDeadPixelThresh->setAdjusterListener (this);
+	hotDeadPixelThresh->show();
 	
 	lineDenoise = Gtk::manage(new Adjuster (M("PREFERENCES_LINEDENOISE"),0,1000,1,0));
 	lineDenoise->setAdjusterListener (this);
@@ -96,6 +96,7 @@ PreProcess::PreProcess ()
     pack_start( *Gtk::manage (new  Gtk::HSeparator()));    
 
     pack_start( *hotDeadPixel, Gtk::PACK_SHRINK, 4);
+	pack_start( *hotDeadPixelThresh, Gtk::PACK_SHRINK, 4);
     pack_start( *Gtk::manage (new  Gtk::HSeparator()));
     pack_start( *caAutocorrect, Gtk::PACK_SHRINK, 4);
     pack_start( *caRed, Gtk::PACK_SHRINK, 4);
@@ -107,7 +108,7 @@ PreProcess::PreProcess ()
 
    caacsconn = caAutocorrect->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::caCorrectionChanged), true);
    dfautoconn = dfAuto->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::dfAutoChanged), true);
-   //hdpixelconn = hotDeadPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::hotDeadPixelChanged), true);
+   hdpixelconn = hotDeadPixel->signal_toggled().connect ( sigc::mem_fun(*this, &PreProcess::hotDeadPixelChanged), true);
    dfFile = darkFrameFile->signal_file_set().connect ( sigc::mem_fun(*this, &PreProcess::darkFrameChanged), true);
    btnReset->signal_clicked().connect( sigc::mem_fun(*this, &PreProcess::darkFrameReset), true );
    flatFieldFileconn = flatFieldFile->signal_file_set().connect ( sigc::mem_fun(*this, &PreProcess::flatFieldFileChanged), true);
@@ -122,7 +123,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    disableListener ();
    caacsconn.block (true);
    dfautoconn.block(true);
-   //hdpixelconn.block (true);
+   hdpixelconn.block (true);
 	flatFieldAutoSelectconn.block (true);
 	flatFieldBlurTypeconn.block (true);
 
@@ -132,8 +133,8 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	   caAutocorrect->set_inconsistent(!pedited->raw.caCorrection);
 	   caRed->setEditedState( pedited->raw.caRed ? Edited : UnEdited );
 	   caBlue->setEditedState( pedited->raw.caBlue ? Edited : UnEdited );
-	   //hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixel);
-	   hotDeadPixel->setEditedState( pedited->raw.hotDeadPixel ? Edited : UnEdited );
+	   hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixel);
+	   hotDeadPixelThresh->setEditedState( pedited->raw.hotDeadPixelThresh ? Edited : UnEdited );
 	   lineDenoise->setEditedState( pedited->raw.linenoise ? Edited : UnEdited );
 	   greenEqThreshold->setEditedState( pedited->raw.greenEq ? Edited : UnEdited );
 	   flatFieldAutoSelect->set_inconsistent (!pedited->raw.ff_AutoSelect);
@@ -198,8 +199,8 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    caAutocorrect->set_active(pp->raw.ca_autocorrect);
 	caRed->setValue (pp->raw.cared);
 	caBlue->setValue (pp->raw.cablue);
-   //hotDeadPixel->set_active (pp->raw.hotdeadpix_filt);
-	hotDeadPixel->setValue (pp->raw.hotdeadpix_filt);
+   hotDeadPixel->set_active (pp->raw.hotdeadpix_filt);
+	hotDeadPixelThresh->setValue (pp->raw.hotdeadpix_thresh);
    lineDenoise->setValue (pp->raw.linenoise);
    greenEqThreshold->setValue (pp->raw.greenthresh);
 
@@ -211,7 +212,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	
    caacsconn.block (false);
    dfautoconn.block(false);
-   //hdpixelconn.block (false);
+   hdpixelconn.block (false);
 	flatFieldAutoSelectconn.block (false);
 	flatFieldBlurTypeconn.block (false);
 
@@ -234,8 +235,8 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	pp->raw.ca_autocorrect = caAutocorrect->get_active();
 	pp->raw.cared = (double)caRed->getValue();
 	pp->raw.cablue = (double)caBlue->getValue();
-	//pp->raw.hotdeadpix_filt = hotDeadPixel->get_active();
-	pp->raw.hotdeadpix_filt = (int)hotDeadPixel->getValue();
+	pp->raw.hotdeadpix_filt = hotDeadPixel->get_active();
+	pp->raw.hotdeadpix_thresh = (int)hotDeadPixelThresh->getValue();
 	pp->raw.linenoise = (int)lineDenoise->getValue();
 	pp->raw.greenthresh = (int)greenEqThreshold->getValue();
 
@@ -251,8 +252,8 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 		pedited->raw.caCorrection = !caAutocorrect->get_inconsistent();
 		pedited->raw.caRed = caRed->getEditedState ();
 		pedited->raw.caBlue = caBlue->getEditedState ();
-		//pedited->raw.hotDeadPixel = !hotDeadPixel->get_inconsistent();
-		pedited->raw.hotDeadPixel= hotDeadPixel->getEditedState ();
+		pedited->raw.hotDeadPixel = !hotDeadPixel->get_inconsistent();
+		pedited->raw.hotDeadPixelThresh= hotDeadPixelThresh->getEditedState ();
 	}
 }
 
@@ -269,7 +270,7 @@ void PreProcess::setBatchMode(bool batchMode)
 	caBlue->showEditedCB ();
    lineDenoise->showEditedCB ();
    greenEqThreshold->showEditedCB ();
-	hotDeadPixel->showEditedCB ();
+	hotDeadPixelThresh->showEditedCB ();
 	flatFieldBlurRadius->showEditedCB ();
 
 }
@@ -280,21 +281,21 @@ void PreProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, 
 	caRed->setDefault( defParams->raw.cared);
 	caBlue->setDefault( defParams->raw.cablue);
 	greenEqThreshold->setDefault (defParams->raw.greenthresh);
-	hotDeadPixel->setDefault (defParams->raw.hotdeadpix_filt);
+	hotDeadPixelThresh->setDefault (defParams->raw.hotdeadpix_thresh);
 	flatFieldBlurRadius->setDefault( defParams->raw.ff_BlurRadius);
 	if (pedited) {
 		lineDenoise->setDefaultEditedState( pedited->raw.linenoise ? Edited : UnEdited);
 		caRed->setDefaultEditedState( pedited->raw.caRed ? Edited : UnEdited);
 		caBlue->setDefaultEditedState( pedited->raw.caBlue ? Edited : UnEdited);
 		greenEqThreshold->setDefaultEditedState(pedited->raw.greenEq ? Edited : UnEdited);
-		hotDeadPixel->setDefaultEditedState(pedited->raw.hotDeadPixel ? Edited : UnEdited);
+		hotDeadPixelThresh->setDefaultEditedState(pedited->raw.hotDeadPixelThresh ? Edited : UnEdited);
 		flatFieldBlurRadius->setDefaultEditedState( pedited->raw.ff_BlurRadius ? Edited : UnEdited);
 	}else{
 		lineDenoise->setDefaultEditedState( Irrelevant );
 		caRed->setDefaultEditedState( Irrelevant );
 		caBlue->setDefaultEditedState( Irrelevant );
 		greenEqThreshold->setDefaultEditedState(Irrelevant );
-		hotDeadPixel->setDefaultEditedState(Irrelevant );
+		hotDeadPixelThresh->setDefaultEditedState(Irrelevant );
 		flatFieldBlurRadius->setDefaultEditedState( Irrelevant );
 	}
 }
@@ -348,7 +349,7 @@ void PreProcess::dfAutoChanged()
         listener->panelChanged (EvPreProcess, Glib::ustring(M("TP_PREPROCESS_DFAUTOSELECT"))+"="+(dfAuto->get_active()?"ON":"OFF") );
 }
 
-/*void PreProcess::hotDeadPixelChanged ()
+void PreProcess::hotDeadPixelChanged ()
 {
     if (batchMode) {
         if (hotDeadPixel->get_inconsistent()) {
@@ -364,7 +365,7 @@ void PreProcess::dfAutoChanged()
     }
     if (listener)
         listener->panelChanged (EvPreProcess, Glib::ustring(M("PREFERENCES_HOTDEADPIXFILT"))+"="+(hotDeadPixel->get_active()?"ON":"OFF") );
-}*/
+}
 
 void PreProcess::darkFrameChanged()
 {

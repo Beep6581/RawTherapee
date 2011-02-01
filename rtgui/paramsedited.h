@@ -285,6 +285,7 @@ class RAWParamsEdited {
 		bool caBlue;
         bool greenEq;
         bool hotDeadPixel;
+		bool hotDeadPixelThresh;
         bool linenoise;
         bool darkFrame;
         bool dfAuto;

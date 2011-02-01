@@ -302,7 +302,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;        
         raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
         raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
-        raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
+		raw.hotDeadPixelThresh = raw.hotDeadPixelThresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
+		raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
 
         equalizer.enabled = equalizer.enabled && p.equalizer.enabled == other.equalizer.enabled;
         for(int i = 0; i < 8; i++) {
@@ -447,7 +448,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.caBlue)				toEdit.raw.cablue    = mods.raw.cablue;
     if (raw.greenEq)            toEdit.raw.greenthresh  = mods.raw.greenthresh;
     if (raw.hotDeadPixel)       toEdit.raw.hotdeadpix_filt= mods.raw.hotdeadpix_filt;
-    if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
+	if (raw.hotDeadPixelThresh) toEdit.raw.hotdeadpix_thresh= mods.raw.hotdeadpix_thresh;
+	if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
     if (raw.darkFrame)          toEdit.raw.dark_frame   = mods.raw.dark_frame;
     if (raw.dfAuto)             toEdit.raw.df_autoselect= mods.raw.df_autoselect;
 
