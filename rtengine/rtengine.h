@@ -21,7 +21,7 @@
 
 #include <procparams.h>
 #include <procevents.h>
-#include <lcms.h>
+#include <lcms2.h>
 #include <string>
 #include <glibmm.h>
 #include <time.h>

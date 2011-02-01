@@ -74,7 +74,7 @@ ICCStore::getInstance(void)
 
 ICCStore::ICCStore ()
 {
-    cmsErrorAction (LCMS_ERROR_SHOW);
+    //cmsErrorAction (LCMS_ERROR_SHOW);
 
     int N = sizeof(wpnames)/sizeof(wpnames[0]);
     for (int i=0; i<N; i++) {

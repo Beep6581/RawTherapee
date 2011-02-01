@@ -20,7 +20,7 @@
 #define _RAWIMAGESOURCE_
 
 #include <imagesource.h>
-#include <lcms.h>
+#include <lcms2.h>
 
 #define HR_SCALE 2
 

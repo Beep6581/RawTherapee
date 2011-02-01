@@ -590,8 +590,8 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
 
 	bl = (int)((65535*bl)/awg);
     br = log(65535.0 / (awg)) / log(2.0);
-    if (br<0)
-        br = 0;
+    if (br<0)	br = 0;
+	if (br>10)	br=10;
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

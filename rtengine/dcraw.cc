@@ -58,7 +58,7 @@
 #include <jpeglib.h>
 #endif
 #ifndef NO_LCMS
-#include <lcms.h>
+#include <lcms2.h>
 #endif
 #ifdef LOCALEDIR
 #include <libintl.h>

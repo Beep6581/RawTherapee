@@ -19,7 +19,7 @@
 #include <rtengine.h>
 #include <rtthumbnail.h>
 #include <image8.h>
-#include <lcms.h>
+#include <lcms2.h>
 #include <curves.h>
 #include <glibmm.h>
 #include <improcfun.h>

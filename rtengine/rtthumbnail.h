@@ -22,7 +22,7 @@
 #include <rawmetadatalocation.h>
 #include <procparams.h>
 #include <glibmm.h>
-#include <lcms.h>
+#include <lcms2.h>
 #include <image16.h>
 
 namespace rtengine {
