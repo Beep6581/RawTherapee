@@ -26,7 +26,7 @@ class Buffer {
             rows = new T* [height];
             for (int i=0; i<height; i++)
                 rows[i] = data + i*width;
-        }
+		}
         Buffer (int W, int H, T* d, T** r)
             : width(W), height(H), data(d), rows(r), owner(false) {}
         ~Buffer () {

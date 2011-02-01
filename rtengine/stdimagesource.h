@@ -9,7 +9,7 @@
 #define STDIMAGESOURCE_H_
 
 #include "imagesource.h"
-#include "image16.h"
+#include "image.h"
 #include "imagedata.h"
 #include "colortemp.h"
 #include "imageview.h"
@@ -21,11 +21,11 @@ class StdImageSource : public ImageSource {
 
     private:
         String fileName;
-        Image16* img;
+        Image* img;
         ImageData* idata;
         ColorTemp autoWB;
         bool autoWBComputed;
-
+        cmsHPROFILE embProfile;
 
 	public:
 

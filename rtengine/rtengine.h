@@ -26,12 +26,12 @@
 #include <glibmm.h>
 #include <time.h>
 #include <rtexif.h>
-#include "iimage.h"
 #include "settings.h"
 #include "colortemp.h"
 #include "imageview.h"
 #include "dim.h"
 #include "rtcommon.h"
+#include "image.h"
 #include <exiv2/exiv2.hpp>
 
 /**
@@ -249,7 +249,7 @@ namespace rtengine {
           * It has to return with the next job, or with NULL if there are no jobs left.
           * @param img is the result of the last ProcessingJob
           * @return the next ProcessingJob to process */
-            virtual ProcessingJob* imageReady (IImage16* img) =0;
+            virtual ProcessingJob* imageReady (Image* img) =0;
     };
 
     /** Through this class it is possible to process a single image without support for interactive editing
@@ -267,7 +267,7 @@ namespace rtengine {
              * @param fiListener can be NULL if a synchronous call is required and non-NULL is a background processing is initiated.
              * @param errorCode is returned for example if the image specified by a file name can not be loaded or if it is not supported.
              */
-            static IImage16* process (ProcessingJob* pJob, ProgressListener* pListener, FinalImageListener* fiListener, int& errorCode);
+            static Image* process (ProcessingJob* pJob, ProgressListener* pListener, FinalImageListener* fiListener, int& errorCode);
     };
 }
 

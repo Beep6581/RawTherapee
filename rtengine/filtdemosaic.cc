@@ -58,7 +58,15 @@ ImageView DemosaicFilter::calculateTargetImageView (const ImageView& requestedIm
 
 ImageView DemosaicFilter::calculateSourceImageView (const ImageView& requestedImView) {
 
-    return calculateTargetImageView (requestedImView);
+    ImageView result;
+    result.skip = 1;
+    result.x = 0;
+    result.y = 0;
+    Dim fsize = getPreviousFilter()->getFullImageSize ();
+    result.w = fsize.width;
+    result.h = fsize.height;
+
+    return result;
 }
 
 int DemosaicFilter::getTargetSkip (int nextInSkip) {
@@ -116,7 +124,7 @@ void DemosaicFilter::hphd_vertical (MultiImage* si, Buffer<float>* hpmap, int co
             float devR = dev[j+1];
             hpmap->rows[j][k] = avgL + (avgR - avgL) * devL / (devL + devR);
         }
-    }
+	}
 
     delete [] temp;
     delete [] avg;
@@ -325,8 +333,8 @@ void DemosaicFilter::hphd_demosaic (MultiImage* si, MultiImage* ti, Buffer<float
 
 void DemosaicFilter::interpolate_rb_bilinear (MultiImage* si, MultiImage* ti) {
 
-    int W = si->width;
-    int H = si->height;
+    int W = ti->width;
+    int H = ti->height;
     #pragma omp parallel for if (multiThread)
     for (int i=border; i<si->height-border; i++) {
         int ix = i-border;

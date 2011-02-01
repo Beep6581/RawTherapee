@@ -24,6 +24,7 @@
 #include "rtcommon.h"
 #include <map>
 #include <vector>
+#include <exiv2/exiv2.hpp>
 
 namespace rtengine {
 
@@ -110,6 +111,8 @@ class ProcParams {
         * @return Error code (=0 if no error)
         */
         int     load        (const String& fname);
+
+		void 	addToXmp 	(Exiv2::XmpData& xmpData) const;
 
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);

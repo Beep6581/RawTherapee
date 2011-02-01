@@ -3,7 +3,7 @@
 
 #include <string>
 #include "buffer.h"
-#include "image16.h"
+#include "image.h"
 
 namespace rtengine {
 
@@ -61,7 +61,7 @@ public:
 	int getAllocHeight () 	{ return allocHeight; }
 	float* getData () 		{ return data; }
 
-	Image16* createImage ();
+	Image* createImage ();
 };
 }
 #endif

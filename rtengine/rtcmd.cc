@@ -57,6 +57,8 @@ int main (int argc, char* argv[]) {
 
     int errorCode = 0;
     InitialImage* iImg = InitialImage::load (inFName, true, errorCode);
+	if (errorCode)
+		iImg = InitialImage::load (inFName, false, errorCode);
 
     if (errorCode) {
         std::cerr << "Could not load image (error code = " << errorCode << ")\n";
@@ -69,24 +71,25 @@ int main (int argc, char* argv[]) {
         exit(2);
     }
 
-    IImage16* img = SingleImageProcessor::process (ProcessingJob::create(iImg, params), NULL, NULL, errorCode);
-
-    if (format=="png")
-        img->saveAsPNG (outFName, -1, 8);
-    else if (format=="png16")
-        img->saveAsPNG (outFName, -1, 16);
-    else if (format=="tif")
-        img->saveAsTIFF (outFName, 8, true);
-    else if (format=="tif16")
-        img->saveAsTIFF (outFName, 16, true);
-    else
-        img->saveAsJPEG (outFName, 100);
-
+    Image* img = SingleImageProcessor::process (ProcessingJob::create(iImg, params), NULL, NULL, errorCode);
+    
     if (errorCode) {
         std::cerr << "An error occurred during processing (error code = " << errorCode << ")\n";
         exit(2);
     }
 
+    if (format=="png")
+        errorCode = img->saveAsPNG (outFName, Image::PNGZBestCompression, false);
+    else if (format=="png16")
+        errorCode = img->saveAsPNG (outFName, Image::PNGZBestCompression, true);
+    else if (format=="tif")
+        errorCode = img->saveAsTIFF (outFName, Image::TIFFLZWCompression, false);
+    else if (format=="tif16")
+        errorCode = img->saveAsTIFF (outFName, Image::TIFFLZWCompression, true);
+    else
+        errorCode = img->saveAsJPEG (outFName, 100, Image::JPEGSubSampling_444);
+
+	delete img;
 
 }
 

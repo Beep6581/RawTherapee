@@ -21,7 +21,7 @@ ImageView PreviewListenerAdapter::getViewToProcess (Dim fullSize) {
 	return ImageView (0, 0, fullSize.width, fullSize.height, 16);
 }
 
-void PreviewListenerAdapter::imageReady	(IImage8* img, double scale, Dim fullSize, ImageView view, ProcParams params) {
+void PreviewListenerAdapter::imageReady	(const DisplayImage& img, double scale, Dim fullSize, ImageView view, ProcParams params) {
 
 	if (prevListener)
 	    prevListener->imageReady (img, scale, fullSize, params);

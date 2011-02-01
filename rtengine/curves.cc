@@ -226,7 +226,7 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
     if (outBeforeCCurveHistogram)
         memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
 
-    for (int i=0; i<=curveSize; i+= i<curveSize-skip ? skip : 1 ) {
+    for (int i=0; i<curveSize; i+= i<curveSize-skip ? skip : 1 ) {
 
         // change to [0,1] rage
         float val = (float)i / curveScale;
@@ -291,7 +291,7 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
           contr_b = -0.00001;
 
         // apply contrast enhancement
-        for (int i=0; i<=curveSize; i++) {
+        for (int i=0; i<curveSize; i++) {
           float val = centercontrast (dcurve[i], contr_b, avg);
           if (igamma && gamma_>0)
             val = igamma2 (val);
@@ -299,7 +299,7 @@ void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float 
         }
     }
     else 
-        for (int i=0; i<=curveSize; i++) 
+        for (int i=0; i<curveSize; i++) 
             outCurve[i] = dcurve[i];
     delete [] dcurve;
 /*

@@ -48,7 +48,7 @@ ImageData::ImageData (const String& fname)
 		std::cout << "Lens: " << lens << std::endl;
 		std::cout << "Time: " << asctime (&time) << std::endl;*/
 	}
-	catch (Exiv2::Error& e) {
+	catch (const Exiv2::Error& e) {
 	}
 }
 
@@ -151,3 +151,42 @@ float ImageMetaData::fNumberFromString (const std::string& s) {
     return atof (s.c_str());
 }
 
+std::string ImageData::getIptcKey (const std::string& rtIptcKey) {
+
+	if (rtIptcKey == "Caption") 
+		return String ("Iptc.Application2.Caption");
+	else if (rtIptcKey == "CaptionWriter")
+		return String ("Iptc.Application2.Writer");
+	else if (rtIptcKey == "Headline") 
+		return String ("Iptc.Application2.Headline");
+	else if (rtIptcKey == "Instructions")
+		return String ("Iptc.Application2.SpecialInstructions");
+	else if (rtIptcKey == "Keywords") 
+		return String ("Iptc.Application2.Keywords");
+	else if (rtIptcKey == "Category")
+		return String ("Iptc.Application2.Category");
+	else if (rtIptcKey == "SupplementalCategories") 
+		return String ("Iptc.Application2.SuppCategory");
+	else if (rtIptcKey == "Author")
+		return String ("Iptc.Application2.Byline");
+	else if (rtIptcKey == "AuthorsPosition")
+		return String ("Iptc.Application2.BylineTitle");
+	else if (rtIptcKey == "Credit")
+		return String ("Iptc.Application2.Credit");
+	else if (rtIptcKey == "Source")
+		return String ("Iptc.Application2.Source");
+	else if (rtIptcKey == "Copyright")
+		return String ("Iptc.Application2.Copyright");
+	else if (rtIptcKey == "City")
+		return String ("Iptc.Application2.City");
+	else if (rtIptcKey == "Province")
+		return String ("Iptc.Application2.ProvinceState");
+	else if (rtIptcKey == "Country")
+		return String ("Iptc.Application2.CountryName");
+	else if (rtIptcKey == "Title")
+		return String ("Iptc.Application2.ObjectName");
+	else if (rtIptcKey == "DateCreated")
+		return String ("Iptc.Application2.DateCreated");
+	else if (rtIptcKey == "TransReference")
+		return String ("Iptc.Application2.TransmissionReference");
+}

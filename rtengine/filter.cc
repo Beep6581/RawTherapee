@@ -4,7 +4,7 @@
 
 namespace rtengine {
 
-FilterDescriptor::FilterDescriptor (const std::string name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache)
+FilterDescriptor::FilterDescriptor (const std::string& name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache)
 	: name(name), inputColorSpace(ics), outputColorSpace(ocs), forceOutCache(forceCache),
 	  applyOnRawImage(true), applyOnStdImage(true), applyOnThumbnail(true) {
 }
@@ -100,7 +100,7 @@ double Filter::getTargetScale (int skip) {
 
 void Filter::setupCache () {
 
-    if (outputCache && !hasOutputCache) {
+    if (!hasOutputCache) {
 		delete outputCache;
 		outputCache = NULL;
 		return;

@@ -32,7 +32,7 @@ namespace rtengine {
 class ProfileContent {
 
     public:
-        char* data;
+        unsigned char* data;
         int   length;
 
         ProfileContent (): data(NULL), length(0) {}

@@ -15,46 +15,42 @@
 namespace rtengine {
 
 StdImageSource::StdImageSource ()
-	: ImageSource (), img (NULL), idata (NULL), autoWBComputed (false) {
+	: ImageSource (), img (NULL), idata (NULL), autoWBComputed (false), embProfile (NULL) {
 }
 
 StdImageSource::~StdImageSource () {
 
 	delete img;
 	delete idata;
+    if (embProfile)
+        cmsCloseProfile(embProfile);
 }
 
-int StdImageSource::load (const Glib::ustring& fileName, ProgressListener* plistener) {
+int StdImageSource::load (const String& fileName, ProgressListener* plistener) {
 
     this->fileName = fileName;
 
     delete img;
     delete idata;
+    if (embProfile)
+        cmsCloseProfile(embProfile);
     img = NULL;
     idata = NULL;
+    embProfile = NULL;
 
-    img = new Image16 ();
-    if (plistener) {
-        plistener->setProgressStr ("Loading...");
-        plistener->setProgress (0.0);
-        img->setProgressListener (plistener);
-    }
-
-    int error = img->load (fileName);
-    if (error) {
-        delete img;
-        img = NULL;
-        return error;
-    }
+    img = Image::load (fileName);
+    if (!img)
+        return 1;
 
     idata = new ImageData (fileName);
 
-    if (plistener) {
-        plistener->setProgressStr ("Ready.");
-        plistener->setProgress (1.0);
-    }
-
     autoWBComputed = false;
+
+	unsigned char* profileData = NULL;
+	int profileLength = 0;
+	img->getEmbeddedICCProfile (profileLength, profileData);
+	if (profileData)
+		embProfile = cmsOpenProfileFromMem (profileData, profileLength);
 
     return 0;
 }
@@ -71,7 +67,7 @@ Matrix33 StdImageSource::getRGBToCamMatrix () {
 
 cmsHPROFILE StdImageSource::getEmbeddedProfile () {
 
-	return img->getEmbeddedProfile ();
+	return embProfile;
 }
 
 ColorTemp StdImageSource::getCamWB () {
@@ -90,36 +86,44 @@ ColorTemp StdImageSource::getAutoWB () {
     int n = 0;
     int p = 6;
 
+	unsigned char* idata = img->getData ();
+	int pitch = img->getScanLineSize ();
+	int height = img->getHeight (), width = img->getWidth ();
+
     // detect tonal range
     int minv = 0xffff;
     int maxv = 0;
-    for (int i=1; i<img->height-1; i++)
-        for (int j=1; j<img->width-1; j++) {
-        	maxv = MAX(maxv, img->r[i][j]);
-        	maxv = MAX(maxv, img->g[i][j]);
-        	maxv = MAX(maxv, img->b[i][j]);
-        	minv = MAX(minv, img->r[i][j]);
-        	minv = MAX(minv, img->g[i][j]);
-        	minv = MAX(minv, img->b[i][j]);
+    for (int i=1; i<height-1; i++) {
+		FIRGB16* pixel = (FIRGB16*)(idata + (height-i-1)*pitch);
+        for (int j=1; j<width-1; j++) {
+        	maxv = MAX(maxv, pixel[j].red);
+        	maxv = MAX(maxv, pixel[j].green);
+        	maxv = MAX(maxv, pixel[j].blue);
+        	minv = MAX(minv, pixel[j].red);
+        	minv = MAX(minv, pixel[j].green);
+        	minv = MAX(minv, pixel[j].blue);
         }
+	}
     // adjust to to 2%
     int upper = minv + (maxv+minv) * 0.98;
     int lower = minv + (maxv+minv) * 0.02;
 
     int v;
-    for (int i=1; i<img->height-1; i++)
-        for (int j=1; j<img->width-1; j++) {
-            if (img->r[i][j]>upper || img->g[i][j]>upper || img->b[i][j]>upper
-            		|| img->r[i][j]<lower || img->g[i][j]<lower || img->b[i][j]<lower)
+    for (int i=1; i<height-1; i++) {
+		FIRGB16* pixel = (FIRGB16*)(idata + (height-i-1)*pitch);
+        for (int j=1; j<width-1; j++) {
+            if (pixel[j].red>upper || pixel[j].green>upper || pixel[j].blue>upper
+            		|| pixel[j].red<lower || pixel[j].green<lower || pixel[j].blue<lower)
                 continue;
-            v = 1.0; for (int k=0; k<p; k++) v *= img->r[i][j];
+            v = 1.0; for (int k=0; k<p; k++) v *= pixel[j].red;
             avg_r += p;
-            v = 1.0; for (int k=0; k<p; k++) v *= img->g[i][j];
+            v = 1.0; for (int k=0; k<p; k++) v *= pixel[j].green;
             avg_g += v;
-            v = 1.0; for (int k=0; k<p; k++) v *= img->b[i][j];
+            v = 1.0; for (int k=0; k<p; k++) v *= pixel[j].blue;
             avg_b += v;
             n++;
         }
+	}
 
     autoWB = ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
     autoWBComputed = true;
@@ -132,17 +136,28 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
     int x; int y;
     float reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
+    
+	unsigned char* idata = img->getData ();
+	int pitch = img->getScanLineSize ();
+	int height = img->getHeight (), width = img->getWidth ();
+
     for (int i=0; i<red.size(); i++) {
-        if (red[i].x >= 0 && red[i].y >= 0 && round(red[i].x) < img->width && round(red[i].y) < img->height) {
-            reds += img->r[(int)round(red[i].y)][(int)round(red[i].x)];
+        if (red[i].x >= 0 && red[i].y >= 0 && round(red[i].x) < width && round(red[i].y) < height) {
+			x = (int)round(red[i].x);
+			y = (int)round(red[i].y);
+			reds += ((FIRGB16*)(idata + (height-y-1)*pitch))[x].red;
             rn++;
         }
-        if (green[i].x >= 0 && green[i].y >= 0 && round(green[i].x) < img->width &&round(green[i].y) < img->height) {
-            greens += img->g[(int)round(green[i].y)][(int)round(green[i].x)];
+        if (green[i].x >= 0 && green[i].y >= 0 && round(green[i].x) < width &&round(green[i].y) < height) {
+			x = (int)round(green[i].x);
+			y = (int)round(green[i].y);
+			greens += ((FIRGB16*)(idata + (height-y-1)*pitch))[x].green;
             gn++;
         }
-        if (blue[i].x >= 0 && blue[i].y >= 0 && round(blue[i].x) < img->width && round(blue[i].y) < img->height) {
-            blues += img->b[(int)round(blue[i].y)][(int)round(blue[i].x)];
+        if (blue[i].x >= 0 && blue[i].y >= 0 && round(blue[i].x) < width && round(blue[i].y) < height) {
+			x = (int)round(blue[i].x);
+			y = (int)round(blue[i].y);
+			blues += ((FIRGB16*)(idata + (height-y-1)*pitch))[x].blue;
             bn++;
         }
     }
@@ -156,28 +171,40 @@ void StdImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 
     memset (histogram, 0, (65536>>histcompr)*sizeof(int));
 
-    for (int i=0; i<img->height; i++)
-        for (int j=0; j<img->width; j++) {
-            histogram[CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
-            histogram[CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
-            histogram[CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
+	unsigned char* idata = img->getData ();
+	int pitch = img->getScanLineSize ();
+	int height = img->getHeight (), width = img->getWidth ();
+    
+    for (int i=0; i<height; i++) {
+		FIRGB16* pixel = (FIRGB16*)(idata + (height-i-1)*pitch);
+        for (int j=0; j<width; j++) {
+            histogram[CurveFactory::igamma_srgb (pixel[j].red)>>histcompr]++;
+            histogram[CurveFactory::igamma_srgb (pixel[j].green)>>histcompr]++;
+            histogram[CurveFactory::igamma_srgb (pixel[j].blue)>>histcompr]++;
         }
+	}
 }
 
 Dim StdImageSource::getFullImageSize () {
 
-    return Dim (img->width, img->height);
+    return Dim (img->getWidth(), img->getHeight());
 }
 
 void StdImageSource::getImage (const ImageView& view, MultiImage* targetImage) {
 
 	int x = 0, y = 0;
+
+	unsigned char* idata = img->getData ();
+	int pitch = img->getScanLineSize ();
+	int height = img->getHeight (), width = img->getWidth ();
+    
 	for (int i=view.y; i<view.y+view.h; i+=view.skip) {
 		x = 0;
+		FIRGB16* pixel = (FIRGB16*)(idata + (height-i-1)*pitch);
 		for (int j=view.x; j<view.x+view.w; j+=view.skip) {
-			targetImage->r[y][x] = img->r[i][j] / 65535.0;
-			targetImage->g[y][x] = img->g[i][j] / 65535.0;
-			targetImage->b[y][x] = img->b[i][j] / 65535.0;
+			targetImage->r[y][x] = pixel[j].red / 65535.0;
+			targetImage->g[y][x] = pixel[j].green / 65535.0;
+			targetImage->b[y][x] = pixel[j].blue / 65535.0;
 			x++;
 		}
 		y++;

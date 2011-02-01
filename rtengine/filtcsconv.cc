@@ -53,7 +53,6 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
     bool done = false;
 
     MultiImage* inImg = sourceImage;
-
     if (inputProfile == "(embedded)")
         in = imgsrc->getEmbeddedProfile ();
     else if (inputProfile != "" && inputProfile != "(camera)" && inputProfile != "(none)") {
@@ -72,7 +71,7 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
         in = imgsrc->getEmbeddedProfile ();
 
     if (!in) {
-        if (imgsrc->isRaw()) {
+		if (imgsrc->isRaw()) {
             // do the color transform "by hand" to avoid calling slow lcms2
             Matrix33 working = iccStore->workingSpaceInverseMatrix (workingProfile);
             Matrix33 mat = imgsrc->getCamToRGBMatrix();
@@ -88,6 +87,8 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
             targetImage->copyFrom (sourceImage);
             return;
         }
+        else
+			return;
     }
 
     if (hTransform && (trIn!=in || trOut!=out)) {

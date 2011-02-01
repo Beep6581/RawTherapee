@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
 
 if (APPLE)
 #    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;" )
@@ -10,7 +11,6 @@ if (APPLE)
 endif (APPLE)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
-option (WITH_RAWZOR "Build with Rawzor support" OFF)
 option (OPTION_OMP "Build with OpenMP support" ON)
 
 # set install directories
@@ -40,17 +40,20 @@ endif (NOT DEFINED LIBDIR)
 
 # check for libraries
 find_package(PkgConfig)
+find_package(FreeImage)
 pkg_check_modules (GTK     REQUIRED gtk+-2.0>=2.12)
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.16)
 pkg_check_modules (GLIBMM  REQUIRED glibmm-2.4>=2.16)
 pkg_check_modules (GTKMM   REQUIRED gtkmm-2.4>=2.12)
 pkg_check_modules (GIO     REQUIRED gio-2.0>=2.16)
 pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.12)
+pkg_check_modules (CAIROMM REQUIRED cairomm-1.0>=1.8)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.16)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.16)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0)
 pkg_check_modules (EXIV2   REQUIRED exiv2>=0.21)
 pkg_check_modules (LIBRAW  REQUIRED libraw_r>=0.13)
+
 # NOTE: dependencies should be handled by pkg_check_modules and FIND_PACKAGE
 # on windows too but I don't want to break current build chain
 if (WIN32)
@@ -72,53 +75,6 @@ else (WIN32)
     find_package (ZLIB REQUIRED)
 endif (WIN32)
 
-# link rawzor
-if (WITH_RAWZOR)
-    if (WIN32)
-        set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win")
-        set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win")
-        set (EXTRA_LIB ${EXTRA_LIB} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win/rwz_sdk_s.a")
-        add_definitions (-DRAWZOR_SUPPORT)
-        install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win/rwz_sdk_s.dll DESTINATION ${BINDIR}
-            PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-    elseif (APPLE)
-        set (EXTRA_INCDIR "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac")
-        set (EXTRA_LIBDIR "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac")
-        set (EXTRA_LIB "-lrwz_sdk_64")
-        add_definitions (-DRAWZOR_SUPPORT)
-        install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac/librwz_sdk_64.dylib DESTINATION ${BINDIR}
-            PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk_64.dylib)
-        if (BUILD_SHARED)
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac/librwz_sdk_64.dylib DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk_64.dylib)
-        endif (BUILD_SHARED)
-    else (WIN32)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32")
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32")
-            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            add_definitions (-DRAWZOR_SUPPORT)
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32/librwz_sdk.so DESTINATION ${BINDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            if (BUILD_SHARED)
-                install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32/librwz_sdk.so DESTINATION ${LIBDIR}
-                    PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            endif (BUILD_SHARED)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64")
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64")
-            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            add_definitions (-DRAWZOR_SUPPORT)
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64/librwz_sdk.so DESTINATION ${BINDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            if (BUILD_SHARED)
-                install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64/librwz_sdk.so DESTINATION ${LIBDIR}
-                    PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            endif (BUILD_SHARED)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    endif (WIN32)
-endif (WITH_RAWZOR)
-
 if (OPTION_OMP)
 	find_package(OpenMP)
 	if (OPENMP_FOUND)
@@ -130,7 +86,6 @@ if (UNIX)
     install (PROGRAMS rtstart DESTINATION ${BINDIR})
 endif (UNIX)
 
-add_subdirectory (rtexif)
 add_subdirectory (rtengine)
 add_subdirectory (rtgui)
 add_subdirectory (rtdata)

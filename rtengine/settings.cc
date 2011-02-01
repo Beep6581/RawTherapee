@@ -23,6 +23,7 @@
 #include "filterfactory.h"
 #include <glibmm.h>
 #include <exiv2/exiv2.hpp>
+#include <FreeImage.h>
 
 namespace rtengine {
 
@@ -67,6 +68,7 @@ Settings::Settings () {
     CurveFactory::init ();
     Exiv2::XmpParser::initialize ();
 	Exiv2::XmpProperties::registerNs("RawTherapee/", "rt");
+	FreeImage_Initialise (false);
 }
 
 

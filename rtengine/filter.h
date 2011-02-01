@@ -25,7 +25,7 @@ protected:
     bool                    applyOnThumbnail;
 
 public:
-	FilterDescriptor (const std::string name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache = false);
+	FilterDescriptor (const std::string& name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache = false);
 	void addTriggerEvent (ProcEvent ev);
 
 	virtual void			getDefaultParameters (ProcParams& defProcParams) const {}

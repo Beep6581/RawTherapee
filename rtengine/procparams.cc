@@ -16,14 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <glib/gstdio.h>
 #include "procparams.h"
 #include <glibmm.h>
 #include <fstream>
 #include <string.h>
-#include <exiv2/exiv2.hpp>
-
-#include <safekeyfile.h>
 
 namespace rtengine {
 
@@ -152,12 +148,9 @@ void ProcParams::setDefaults () {
 	stringListParams = defaultProcParams.stringListParams;
 }
 
-int ProcParams::save (const String& fname) const {
-	
-	try {
-		// create xmp data and register our namespace
-		Exiv2::XmpData xmpData;
+void ProcParams::addToXmp (Exiv2::XmpData& xmpData) const {
 
+	try {
 		// save float parameters. An "F" is appended to the end of the keys to indicate that these are floats.
 		for (std::map<String,float>::const_iterator i=floatParams.begin(); i!=floatParams.end(); i++)
 			xmpData[Glib::ustring::compose("Xmp.rt.%1F", i->first)] = Glib::ustring::format (i->second);
@@ -197,6 +190,18 @@ int ProcParams::save (const String& fname) const {
 				arr->read (i->second[j]);
 			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1SL", i->first)), arr.get());
 		}
+	}
+	catch (Exiv2::AnyError& e) {
+	}
+}
+
+
+int ProcParams::save (const String& fname) const {
+	
+	try {
+		// create xmp data
+		Exiv2::XmpData xmpData;
+		addToXmp (xmpData);
 		
 		// sort and create xmp packet
 		xmpData.sortByKey ();

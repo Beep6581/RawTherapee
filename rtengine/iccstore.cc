@@ -42,7 +42,7 @@ ProfileContent::ProfileContent (const String& fileName) {
     fseek (f, 0, SEEK_END);
     length = ftell (f);
     fseek (f, 0, SEEK_SET);
-    data = new char[length+1];
+    data = new unsigned char[length+1];
     fread (data, length, 1, f);
 	data[length] = 0;
     fclose (f);
@@ -52,7 +52,7 @@ ProfileContent::ProfileContent (const ProfileContent& other) {
 
     length = other.length;
     if (other.data) {
-        data = new char[length+1];
+        data = new unsigned char[length+1];
         memcpy (data, other.data, length+1);
     }
     else
@@ -65,7 +65,7 @@ ProfileContent& ProfileContent::operator= (const ProfileContent other) {
     if (data)
         delete [] data;
     if (other.data) {
-        data = new char[length+1];
+        data = new unsigned char[length+1];
         memcpy (data, other.data, length+1);
     }
     else

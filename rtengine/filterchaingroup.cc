@@ -136,9 +136,8 @@ void FilterChainGroup::notifyListener (FilterChain* chain) {
 
     ImProcListener* iml = chain->getListener ();
     if (iml) {
-        Image8* img = chain->getDisplayImage ();
+        DisplayImage img = chain->getDisplayImage ();
         iml->imageReady (img, chain->getLastScale(), chain->getFullImageSize(), chain->getLastImageView(), *procParams);
-        delete img;
     }
 }
 

@@ -64,6 +64,8 @@ class ImageData : public ImageMetaData {
     std::string getModel    () const { return model;     }
     std::string getLens     () const { return lens;      }
     
+    static std::string getIptcKey (const std::string& rtIptcKey);
+    
 };
 };
 #endif

@@ -3,8 +3,6 @@
 #include "settings.h"
 #include "filterfactory.h"
 #include "filtinitial.h"
-#include "image16.h"
-#include "image8.h"
 #include "iccstore.h"
 #include "curves.h"
 #include <lcms2.h>
@@ -23,6 +21,8 @@ FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, Proc
 	else
 		filterOrder = Settings::settings->filterList;
 	setupChain (NULL);
+	
+	imgSource->increaseRef ();
 }
 
 FilterChain::FilterChain (ImProcListener* listener, FilterChain* previous)
@@ -33,6 +33,8 @@ FilterChain::FilterChain (ImProcListener* listener, FilterChain* previous)
 
     filterOrder = previous->filterOrder;
 	setupChain (previous);
+	
+	imgSource->increaseRef ();
 }
 
 void FilterChain::setupChain (FilterChain* previous) {
@@ -84,6 +86,7 @@ FilterChain::~FilterChain () {
 		curr = curr->next;
 		delete tmp;
 	}
+	imgSource->decreaseRef ();
 }
 
 void FilterChain::invalidate () {
@@ -128,6 +131,7 @@ void FilterChain::setupProcessing (const std::set<ProcEvent>& events, bool useSh
 	}
 
 	// set mandatory cache points
+	first->hasOutputCache = false;
 	for (curr = first->next; curr != last; curr = curr->next)
 		if (curr->forceOutputCache || curr->sourceImageView != curr->targetImageView
 		        || curr->scaledSourceImageView != curr->scaledTargetImageView
@@ -283,7 +287,7 @@ double FilterChain::getLastScale () {
     return last ? last->getScale() : 1.0;
 }
 
-Image16* FilterChain::getFinalImage () {
+Image* FilterChain::getFinalImage () {
 
 	String outputProfile  = procParams->getString ("ColorManagementOutputProfile");
 	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
@@ -307,63 +311,81 @@ Image16* FilterChain::getFinalImage () {
     if (cy+ch > last->outputCache->height) ch = last->outputCache->height - cy;
 
     // obtain cropped image
-    Image16* final = new Image16 (cw, ch);
+    Image* final = new Image (cw, ch);
+    unsigned char* idata = final->getData ();
+    int pitch = final->getScanLineSize ();
 
+	bool ready = false;
     if (outputProfile!="") {
         // custom output icm profile specified, call lcms
         cmsHPROFILE oprof = iccStore->getProfile (outputProfile);
         cmsHPROFILE iprof = iccStore->getProfile (workingProfile);
         if (oprof && iprof) {
-			#pragma omp parallel for if (multiThread)
-			for (int i=0; i<ch; i++)
-				for (int j=0; j<cw; j++) {
-					final->r[i][j] = CLIP (65535.0 * last->outputCache->r[i+cy][j+cx]);
-					final->g[i][j] = CLIP (65535.0 * last->outputCache->g[i+cy][j+cx]);
-					final->b[i][j] = CLIP (65535.0 * last->outputCache->b[i+cy][j+cx]);
-				}
         	// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
-        	cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, Settings::settings->colorimetricIntent, cmsFLAGS_NOCACHE);
-        	cmsDoTransform (hTransform, final->data, final->data, final->planestride/2);
+        	cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_16, Settings::settings->colorimetricIntent, cmsFLAGS_NOCACHE);
+			#pragma omp parallel for if (multiThread)
+			for (int i=0; i<ch; i++) {
+				FIRGB16* pixel  = (FIRGB16*)(idata + (ch-i-1)*pitch);
+				for (int j=0; j<cw; j++) {
+					pixel[j].red   = CLIP (65535.0 * last->outputCache->r[i+cy][j+cx]);
+					pixel[j].green = CLIP (65535.0 * last->outputCache->r[i+cy][j+cx]);
+					pixel[j].blue  = CLIP (65535.0 * last->outputCache->r[i+cy][j+cx]);
+				}
+				cmsDoTransform (hTransform, pixel, pixel, cw);
+			}
         	cmsDeleteTransform(hTransform);
-        	return final;
+        	ready = true;
+			ProfileContent outProfileContent = iccStore->getContent (outputProfile);
+			final->setEmbeddedICCProfile (outProfileContent.length, outProfileContent.data);
         }
     }
-    if (workingProfile != "sRGB") {
+    if (!ready && workingProfile != "sRGB") {
         // convert it to sRGB
         Matrix33 m;
         m.multiply (iccStore->workingSpaceMatrix ("sRGB"));
         m.multiply (iccStore->workingSpaceInverseMatrix (workingProfile));
         #pragma omp parallel for if (multiThread)
         for (int i=0; i<ch; i++) {
+			FIRGB16* pixel  = (FIRGB16*)(idata + (ch-i-1)*pitch);
 			float r, g, b;
             for (int j=0; j<cw; j++) {
                 m.transform (last->outputCache->r[i+cy][j+cx], last->outputCache->g[i+cy][j+cx], last->outputCache->b[i+cy][j+cx], r, g, b);
-				final->r[i][j] = CLIP (65535.0 * CurveFactory::gamma2(r));
-				final->g[i][j] = CLIP (65535.0 * CurveFactory::gamma2(g));
-				final->b[i][j] = CLIP (65535.0 * CurveFactory::gamma2(b));
+				pixel[j].red   = CLIP (65535.0 * CurveFactory::gamma2(r));
+				pixel[j].green = CLIP (65535.0 * CurveFactory::gamma2(g));
+				pixel[j].blue  = CLIP (65535.0 * CurveFactory::gamma2(b));
 			}
 		}
     }
 	else {
 		#pragma omp parallel for if (multiThread)
-		for (int i=0; i<ch; i++)
+		for (int i=0; i<ch; i++) {
+			FIRGB16* pixel  = (FIRGB16*)(idata + (ch-i-1)*pitch);
 			for (int j=0; j<cw; j++) {
-				final->r[i][j] = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->r[i+cy][j+cx]));
-				final->g[i][j] = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->g[i+cy][j+cx]));
-				final->b[i][j] = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->b[i+cy][j+cx]));
+				pixel[j].red   = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->r[i+cy][j+cx]));
+				pixel[j].green = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->g[i+cy][j+cx]));
+				pixel[j].blue  = CLIP (65535.0 * CurveFactory::gamma2(last->outputCache->b[i+cy][j+cx]));
 			}
+		}
 	}
+	// set metadata
+	Exiv2::ExifData ed;
+	Exiv2::IptcData id;
+	Exiv2::XmpData xd;
+	getMetadataToSave (ed, id, xd);
+	final->setMetadata (ed, id, xd);
+	
     return final;
 }
 
-Image8* FilterChain::getDisplayImage () {
+DisplayImage FilterChain::getDisplayImage () {
 
 	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
 
     last->outputCache->convertTo(MultiImage::RGB, true, workingProfile);
 
-    // obtain cropped image
-    Image8* final = new Image8 (last->outputCache->width, last->outputCache->height);
+    DisplayImage final = Cairo::ImageSurface::create (Cairo::FORMAT_RGB24, last->outputCache->width, last->outputCache->height);
+    unsigned char* idata = final->get_data ();
+    int pitch = final->get_stride ();
 
     if (Settings::settings->monitorProfile != "") {
         // custom output icm profile specified, call lcms
@@ -371,8 +393,18 @@ Image8* FilterChain::getDisplayImage () {
         cmsHPROFILE iprof = iccStore->getProfile (workingProfile);
         if (oprof && iprof) {
 			// TODO: do not create cmstransform every time, store it and re-create it only when it has been changed
-			cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, cmsFLAGS_NOCACHE);
-			cmsDoTransform (hTransform, last->outputCache->getData(), final->data, final->width*final->height);
+			cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_8, oprof, TYPE_RGB_8, Settings::settings->colorimetricIntent, cmsFLAGS_NOCACHE);
+			// TODO: do not convert to 8 bit before color space transformation for higher accuracy
+			#pragma omp parallel for if (multiThread)
+			for (int i=0; i<last->outputCache->height; i++) {
+				int ix = i*pitch;
+				for (int j=0; j<last->outputCache->width; j++) {
+					idata[ix++] = CLIP (255.0 * last->outputCache->r[i][j]);
+					idata[ix++] = CLIP (255.0 * last->outputCache->r[i][j]);
+					idata[ix++] = CLIP (255.0 * last->outputCache->r[i][j]);
+				}
+				cmsDoTransform (hTransform, idata+ix, idata+ix, last->outputCache->width);
+			}
 			cmsDeleteTransform(hTransform);
 			return final;
         }
@@ -380,12 +412,12 @@ Image8* FilterChain::getDisplayImage () {
     
     if (workingProfile == "sRGB") {
         #pragma omp parallel for if (multiThread)
-        for (int i=0; i<final->height; i++) {
-            int ix = i * final->width * 3;
-            for (int j=0; j<final->width; j++) {
-                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->r[i][j]) * 255.0, 0, 255);
-                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->g[i][j]) * 255.0, 0, 255);
-                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->b[i][j]) * 255.0, 0, 255);
+        for (int i=0; i<last->outputCache->height; i++) {
+            int ix = i * pitch;
+            for (int j=0; j<last->outputCache->width; j++) {
+                idata[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->r[i][j]) * 255.0, 0, 255);
+                idata[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->g[i][j]) * 255.0, 0, 255);
+                idata[ix++] = CLIPTO (CurveFactory::gamma2 (last->outputCache->b[i][j]) * 255.0, 0, 255);
             }
         }
     }
@@ -394,18 +426,71 @@ Image8* FilterChain::getDisplayImage () {
         m.multiply (iccStore->workingSpaceMatrix ("sRGB"));
         m.multiply (iccStore->workingSpaceInverseMatrix (workingProfile));
         #pragma omp parallel for if (multiThread)
-        for (int i=0; i<final->height; i++) {
-            int ix = i * final->width * 3;
+        for (int i=0; i<last->outputCache->height; i++) {
+            int ix = i * pitch;
 			float r, g, b;
-            for (int j=0; j<final->width; j++) {
+            for (int j=0; j<last->outputCache->width; j++) {
                 m.transform (last->outputCache->r[i][j], last->outputCache->g[i][j], last->outputCache->b[i][j], r, g, b);
-                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (r) * 255.0, 0, 255);
-                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (g) * 255.0, 0, 255);
-                final->data[ix++] = CLIPTO (CurveFactory::gamma2 (b) * 255.0, 0, 255);
+                idata[ix++] = CLIPTO (CurveFactory::gamma2 (r) * 255.0, 0, 255);
+                idata[ix++] = CLIPTO (CurveFactory::gamma2 (g) * 255.0, 0, 255);
+                idata[ix++] = CLIPTO (CurveFactory::gamma2 (b) * 255.0, 0, 255);
             }
         }
     }
     return final;
 }
+
+void FilterChain::getMetadataToSave (Exiv2::ExifData& ed, Exiv2::IptcData& id, Exiv2::XmpData& xd) {
+
+	if (imgSource->getMetaData()) {
+		ed.clear (); 
+		id.clear ();
+		xd.clear ();
+		
+		// Assemble exif data. All tags belonging to image and subimage sections are deleted. (The tags describing the image representation
+		// will be added by freeimage)
+		for (Exiv2::ExifData::const_iterator it = imgSource->getMetaData()->getExifData().begin(); it!= imgSource->getMetaData()->getExifData().end (); it++)
+			if (it->key () == "Exif.Image.ExifTag" || (it->groupName() != "Image" && it->groupName() != "SubImage1" && it->groupName() != "SubImage2"))
+				ed.add (*it);
+
+		// Add essential data to Image IFD
+		Exiv2::ExifData::const_iterator it;
+		if ((it=imgSource->getMetaData()->getExifData().findKey (Exiv2::ExifKey ("Exif.Image.Make"))) != imgSource->getMetaData()->getExifData().end())
+			ed.add (*it);
+		if ((it=imgSource->getMetaData()->getExifData().findKey (Exiv2::ExifKey ("Exif.Image.Model"))) != imgSource->getMetaData()->getExifData().end())
+			ed.add (*it);
+		if ((it=imgSource->getMetaData()->getExifData().findKey (Exiv2::ExifKey ("Exif.Image.DateTime"))) != imgSource->getMetaData()->getExifData().end())
+			ed.add (*it);
+		if ((it=imgSource->getMetaData()->getExifData().findKey (Exiv2::ExifKey ("Exif.Image.DateTimeOriginal"))) != imgSource->getMetaData()->getExifData().end())
+			ed.add (*it);
+	
+		Exiv2::AsciiValue soft ("RawTherapee");
+		ed.add (Exiv2::Exifdatum (Exiv2::ExifKey ("Exif.Image.Software"), &soft));
+
+		// Apply changes requested by the GUI
+		for (int i=0; i<procParams->exif.size (); i++) {
+			if (procParams->exif[i].value == "#delete") {
+				Exiv2::ExifData::iterator it = ed.findKey (Exiv2::ExifKey (procParams->exif[i].field));
+				if (it != ed.end())
+					ed.erase (it);
+			}
+			else {
+				Exiv2::AsciiValue nValue (procParams->exif[i].value);
+				ed.add (Exiv2::Exifdatum (Exiv2::ExifKey (procParams->exif[i].field), &nValue));
+			}
+		}
+		
+		// Assemble IPTC data
+        for (int i=0; i<procParams->iptc.size (); i++)
+			for (int j=0; j<procParams->iptc[i].values.size(); j++) {
+				Exiv2::StringValue value (procParams->iptc[i].values[j]);
+				id.add (Exiv2::IptcKey (procParams->iptc[i].field), &value);
+			}
+
+		// Assemble XMP data
+		procParams->addToXmp (xd);
+	}
+}
+
 
 }

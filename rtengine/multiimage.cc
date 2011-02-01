@@ -3,7 +3,6 @@
 #include "iccstore.h"
 #include <math.h>
 #include "macros.h"
-#include "image16.h"
 #include "util.h"
 
 #define XYZ2LAB_LUTSIZE 2*65536-1
@@ -290,26 +289,32 @@ void MultiImage::initLabConversionCache () {
 	labConversionCacheInitialized = true;
 }
 
-Image16* MultiImage::createImage () {
+Image* MultiImage::createImage () {
 
     if (colorSpace == RGB || colorSpace == XYZ) {
-        Image16* img = new Image16 (width, height);
+        Image* img = new Image (width, height);
+		unsigned char* idata = img->getData ();
+		int pitch = img->getScanLineSize ();
         for (int i=0; i<height; i++) {
+			FIRGB16* pixel  = (FIRGB16*)(idata + (height-i-1)*pitch);
         	for (int j=0; j<width; j++) {
-        		img->r[i][j] = CLIP((int)(r[i][j]*65535.0));
-    			img->g[i][j] = CLIP((int)(g[i][j]*65535.0));
-    			img->b[i][j] = CLIP((int)(b[i][j]*65535.0));
+        		pixel[j].red = CLIP((int)(r[i][j]*65535.0));
+    			pixel[j].green = CLIP((int)(g[i][j]*65535.0));
+    			pixel[j].blue = CLIP((int)(b[i][j]*65535.0));
         	}
         }
         return img;
     }
     else if (colorSpace == Lab) {
-        Image16* img = new Image16 (width, height);
+        Image* img = new Image (width, height);
+		unsigned char* idata = img->getData ();
+		int pitch = img->getScanLineSize ();
         for (int i=0; i<height; i++) {
+			FIRGB16* pixel  = (FIRGB16*)(idata + (height-i-1)*pitch);
         	for (int j=0; j<width; j++) {
-        		img->r[i][j] = CLIP((int)(r[i][j]/100*65535));
-    			img->g[i][j] = CLIP((int)(g[i][j]/500*65535.0));
-    			img->b[i][j] = CLIP((int)(b[i][j]/200*65535.0));
+        		pixel[j].red = CLIP((int)(r[i][j]/100*65535));
+    			pixel[j].green = CLIP((int)(g[i][j]/500*65535.0));
+    			pixel[j].blue = CLIP((int)(b[i][j]/200*65535.0));
         	}
         }
         return img;
