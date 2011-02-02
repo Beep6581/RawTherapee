@@ -50,8 +50,14 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
 	Glib::Mutex::Lock lock(mutex_);
 
     std::vector<std::string> res;
-    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
-        res.push_back (i->first);
+    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++){
+    	std::string name(i->first);
+    	std::string::size_type  i = name.find_last_of('/');
+    	if( i == std::string::npos )
+    		i = name.find_last_of('\\');
+    	if( i == std::string::npos )
+            res.push_back ( name ); // list only profiles inside selected profiles directory
+    }
     return res;
 }
 
