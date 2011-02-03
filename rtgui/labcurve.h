@@ -37,6 +37,15 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
     CurveEditor* lshape;
 	CurveEditor* ashape;
     CurveEditor* bshape;
+	
+	//%%%%%%%%%%%%%%%%
+	Gtk::CheckButton* avoidclip;  
+    Gtk::CheckButton* enablelimiter;  
+    Adjuster* saturationlimiter;
+    bool cbAdd;
+    sigc::connection  acconn, elconn;
+    bool lastACVal, lastELVal;
+	//%%%%%%%%%%%%%%%%
 
     bool brAdd, contrAdd, satAdd;
 
@@ -53,6 +62,8 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
 
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
+	void avoidclip_toggled ();
+    void enablelimiter_toggled ();
     void updateCurveBackgroundHistogram (unsigned* hist);
 };
 
