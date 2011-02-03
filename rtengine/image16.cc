@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <image16.h>
+#include <imagefloat.h>
 #include <image8.h>
 #include <string.h>
 #include <rtengine.h>
@@ -255,4 +256,20 @@ Image16::to8() const
 		}
 	}
 	return img8;
+}
+
+Imagefloat* 
+Image16::tofloat() const
+{
+	Imagefloat* imgfloat = new Imagefloat(width,height);
+	for ( int h = 0; h < height; ++h )
+	{
+		for ( int w = 0; w < width; ++w )
+		{
+			imgfloat->r[h][w] = ((float)r[h][w]) ;
+			imgfloat->g[h][w] = ((float)g[h][w]) ;
+			imgfloat->b[h][w] = ((float)b[h][w]) ;
+		}
+	}
+	return imgfloat;
 }

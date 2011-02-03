@@ -31,9 +31,9 @@ extern const Settings* settings;
 
 SHMap::SHMap (int w, int h, bool multiThread) : W(w), H(h), multiThread(multiThread) {
 
-    map = new unsigned short*[H];
+    map = new float*[H];
     for (int i=0; i<H; i++)
-        map[i] = new unsigned short[W];
+        map[i] = new float[W];
 }
 
 SHMap::~SHMap () {
@@ -43,7 +43,7 @@ SHMap::~SHMap () {
     delete [] map;
 }
 
-void SHMap::update (Image16* img, unsigned short** buffer, double radius, double lumi[3], bool hq) {
+void SHMap::update (Imagefloat* img, float** buffer, double radius, double lumi[3], bool hq) {
 
     // fill with luminance
     for (int i=0; i<H; i++)
@@ -57,8 +57,8 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
     {
     if (!hq) {
     	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
-    	gaussHorizontal<unsigned short> (map, map, buffer, W, H, radius, multiThread);
-		gaussVertical<unsigned short>   (map, map, buffer, W, H, radius, multiThread);
+    	gaussHorizontal<float> (map, map, buffer, W, H, radius, multiThread);
+		gaussVertical<float>   (map, map, buffer, W, H, radius, multiThread);
 
         delete buffer;
     }
@@ -73,12 +73,12 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
     		int blk = H/nthreads;
 
     		if (tid<nthreads-1)
-    			bilateral<unsigned short> (map, buffer, W, H, 8000, radius, tid*blk, (tid+1)*blk);
+    			bilateral<float> (map, buffer, W, H, 8000, radius, tid*blk, (tid+1)*blk);
     		else
-    			bilateral<unsigned short> (map, buffer, W, H, 8000, radius, tid*blk, H);
+    			bilateral<float> (map, buffer, W, H, 8000, radius, tid*blk, H);
 		}
 #else
-    	bilateral<unsigned short> (map, buffer, W, H, 8000, radius, 0, H);
+    	bilateral<float> (map, buffer, W, H, 8000, radius, 0, H);
 #endif
         // anti-alias filtering the result
 #ifdef _OPENMP
@@ -110,7 +110,7 @@ void SHMap::update (Image16* img, unsigned short** buffer, double radius, double
     avg = (int) _avg;
 }
 
-void SHMap::forceStat (unsigned short max_, unsigned short min_, unsigned short avg_) {
+void SHMap::forceStat (float max_, float min_, float avg_) {
 
     max = max_;
     min = min_;

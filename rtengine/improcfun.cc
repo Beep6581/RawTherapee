@@ -117,7 +117,7 @@ void ImProcFunctions::setScale (double iscale) {
 	scale = iscale;
 }
 
-void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to) {
+void ImProcFunctions::firstAnalysis_ (Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to) {
 
 	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
 
@@ -143,7 +143,7 @@ void ImProcFunctions::firstAnalysis_ (Image16* original, Glib::ustring wprofile,
     }
 }
 
-void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params, unsigned int* histogram, double gamma) {
+void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, unsigned int* histogram, double gamma) {
 
 	// set up monitor transform
 	Glib::ustring wprofile = params->icm.working;
@@ -205,7 +205,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 
 }
 
-void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, float defmul, int sat) {
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, float defmul, int sat) {
 
     int h_th, s_th;
     if (shmap) {
@@ -218,7 +218,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
     double lceamount = params->sh.localcontrast / 200.0;
 
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-    float toxyz[3][3] = {
+    /*float toxyz[3][3] = {
         {
         	( wprof[0][0] / D50x),
         	( wprof[0][1]		),
@@ -230,6 +230,21 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
         },{
 			( wprof[2][0] / D50x),
 			( wprof[2][1]		),
+			( wprof[2][2] / D50z)
+        }
+    };*/
+	float toxyz[3][3] = {
+        {
+        	( wprof[0][0] / D50x),
+        	( wprof[0][1] / D50x),
+        	( wprof[0][2] / D50x)
+        },{
+			( wprof[1][0]		),
+			( wprof[1][1]		),
+			( wprof[1][2]		)
+        },{
+			( wprof[2][0] / D50z),
+			( wprof[2][1] / D50z),
 			( wprof[2][2] / D50z)
         }
     };

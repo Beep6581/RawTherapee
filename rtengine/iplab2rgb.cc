@@ -21,6 +21,9 @@
 #include <glibmm.h>
 #include <iccstore.h>
 #include <iccmatrices.h>
+
+//#include <sRGBgamutbdy.h>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -50,6 +53,8 @@ extern const Settings* settings;
 
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
+	
+	//gamutmap(lab);
 
 	if (monitorTransform) {
 	    int ix = 0;
@@ -122,6 +127,8 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 
 Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile) {
 
+	//gamutmap(lab);
+	
     if (cx<0) cx = 0;
     if (cy<0) cy = 0;
     if (cx+cw>lab->W) cw = lab->W-cx;
@@ -199,6 +206,8 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 }
 
 Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile) {
+	
+	//gamutmap(lab);
 
     if (cx<0) cx = 0;
     if (cy<0) cy = 0;
@@ -273,5 +282,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 	}
     return image;
 }
+	
+#include "sRGBgamutbdy.cc"
 
 }

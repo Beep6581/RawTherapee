@@ -26,7 +26,7 @@
 
 namespace rtengine {
 
-void ImProcFunctions :: waveletEqualizer(Image16 * image) {
+void ImProcFunctions :: waveletEqualizer(Imagefloat * image) {
 
     if (!params->equalizer.enabled) {
         return;

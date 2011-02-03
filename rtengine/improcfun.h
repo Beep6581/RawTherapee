@@ -19,6 +19,7 @@
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
 
+#include <imagefloat.h>
 #include <image16.h>
 #include <image8.h>
 #include <procparams.h>
@@ -47,12 +48,12 @@ class ImProcFunctions {
 		double scale;
 		bool multiThread;
 
-		void simpltransform     (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
-		void vignetting         (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH);
-		void transformNonSep    (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
-		void transformSep       (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void simpltransform     (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void vignetting         (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
+		void transformNonSep    (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void transformSep       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
-		void firstAnalysis_     (Image16* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
+		void firstAnalysis_     (Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
 		bool needsCA            ();
@@ -77,19 +78,19 @@ class ImProcFunctions {
 
 		bool needsTransform   ();
 
-		void firstAnalysis    (Image16* working, const ProcParams* params, unsigned int* vhist16, double gamma);
-		void rgbProc          (Image16* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, float defmul, int sat);
+		void firstAnalysis    (Imagefloat* working, const ProcParams* params, unsigned int* vhist16, double gamma);
+		void rgbProc          (Imagefloat* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, float defmul, int sat);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, float* curve, int row_from, int row_to);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, float* curve, int row_from, int row_to);
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void lumadenoise      (LabImage* lab, int** buffer);
 		void colordenoise     (LabImage* lab, int** buffer);
-		void transform        (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void lab2rgb          (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, double dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);
-		void waveletEqualizer (Image16 * image);
+		void waveletEqualizer (Imagefloat * image);
 		void waveletEqualizer (LabImage * image, bool luminance, bool chromaticity);
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
@@ -122,6 +123,8 @@ class ImProcFunctions {
 		void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
 		void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 		void xyz2srgb (float x, float y, float z, int &r, int &g, int &b);
+	
+	void gamutmap(LabImage* );
 
 };
 }

@@ -8,7 +8,7 @@ link_directories (${CMAKE_CURRENT_SOURCE_DIR}/../rtexif ${EXTRA_LIBDIR} ${GTHREA
     ${IPTCDATA_LIBRARY_DIRS} ${LCMS_LIBRARY_DIRS})
 
 set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc dcraw.cc iccstore.cc dfmanager.cc ffmanager.cc rawimage.cc
-    image8.cc image16.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
+    image8.cc image16.cc imagefloat.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc

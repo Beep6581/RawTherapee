@@ -183,7 +183,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     return result;
 }
 
-void ImProcFunctions::transform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
 	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective()) && needsVignetting())
 		vignetting (original, transformed, cx, cy, oW, oH);
@@ -216,7 +216,7 @@ void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, do
 	mul = (1.0-v) / tanh(b);
 }
 
-void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH) {
+void ImProcFunctions::vignetting (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
 
 	double vig_w2;
 	double vig_h2;
@@ -245,7 +245,7 @@ void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int c
 }
 
 #include "cubint.cc"
-void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transformNonSep (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
 
@@ -353,7 +353,7 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 }
 
 #include "cubintch.cc"
-void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
@@ -371,11 +371,11 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
     cdist[0] = params->cacorrection.red;
     cdist[1] = 0.0;
     cdist[2] = params->cacorrection.blue;
-    unsigned short** chorig[3];
+    float** chorig[3];
     chorig[0] = original->r;
     chorig[1] = original->g;
     chorig[2] = original->b;
-    unsigned short** chtrans[3];
+    float** chtrans[3];
     chtrans[0] = transformed->r;
     chtrans[1] = transformed->g;
     chtrans[2] = transformed->b;
@@ -472,7 +472,7 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
     }
 }
 
-void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;

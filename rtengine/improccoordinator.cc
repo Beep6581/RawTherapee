@@ -172,7 +172,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         oprevi = orig_prev;
     }
     if (needstransform && orig_prev==oprevi)
-        oprevi = new Image16 (pW, pH);
+        oprevi = new Imagefloat (pW, pH);
     if ((todo & M_TRANSFORM) && needstransform)
     	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH);
 
@@ -182,7 +182,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
-        shmap->update (oprevi, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
+        shmap->update (oprevi, (float**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }
     readyphase++;
 
@@ -229,7 +229,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
 		ipf.chrominanceCurve (oprevl, nprevl, 0, chroma_acurve, 0, pH);
         ipf.chrominanceCurve (oprevl, nprevl, 1, chroma_bcurve, 0, pH);
-        ipf.colorCurve (nprevl, nprevl);
+        //ipf.colorCurve (nprevl, nprevl);
 
         readyphase++;
 		if (scale==1) {
@@ -240,7 +240,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			progress ("Defringing...",100*readyphase/numofphases);
             ipf.defringe (nprevl);
 		}
-        if (scale==1) {
+        /*if (scale==1) {
             progress ("Denoising luminance...",100*readyphase/numofphases);
             ipf.lumadenoise (nprevl, buffer);
         }
@@ -248,7 +248,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		if (scale==1) {
             progress ("Denoising color...",100*readyphase/numofphases);
             ipf.colordenoise (nprevl, buffer);
-        }
+        }*/
 		if (scale==1) {
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
             ipf.dirpyrdenoise (nprevl);
@@ -369,7 +369,7 @@ if (settings->verbose) printf ("setscale before lock\n");
         pW = nW;
         pH = nH;
         
-        orig_prev = new Image16 (pW, pH);
+        orig_prev = new Imagefloat (pW, pH);
         oprevi = orig_prev;
         oprevl = new LabImage (pW, pH);    
         nprevl = new LabImage (pW, pH);    
@@ -571,7 +571,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
     ProcParams ppar = params;
     ppar.hlrecovery.enabled = false;
     ppar.icm.input = "(none)";
-    Image16* im = new Image16 (fW, fH);
+    Imagefloat* im = new Imagefloat (fW, fH);
     imgsrc->preprocess( ppar.raw );
     imgsrc->demosaic(ppar.raw );
     imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);

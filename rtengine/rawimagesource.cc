@@ -202,7 +202,7 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
+void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
 {
 
     isrcMutex.lock ();
@@ -501,7 +501,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::rotateLine (float* line, unsigned short** channel, int tran, int i, int w, int h) {
+void RawImageSource::rotateLine (float* line, float** channel, int tran, int i, int w, int h) {
 
     if ((tran & TR_ROT) == TR_R180) 
         for (int j=0; j<w; j++) 
@@ -521,7 +521,7 @@ void RawImageSource::rotateLine (float* line, unsigned short** channel, int tran
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::transLine (float* red, float* green, float* blue, int i, Image16* image, int tran, int imwidth, int imheight, int fw) {
+void RawImageSource::transLine (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imwidth, int imheight, int fw) {
 
   // Fuji SuperCCD rotation + coarse rotation
   if (fuji) {
@@ -781,7 +781,7 @@ void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hflip (Image16* image) {
+void RawImageSource::hflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
@@ -805,7 +805,7 @@ void RawImageSource::hflip (Image16* image) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::vflip (Image16* image) {
+void RawImageSource::vflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
@@ -1316,7 +1316,7 @@ int RawImageSource::defTransform (int tran) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::correction_YIQ_LQ_  (Image16* im, int row_from, int row_to) {
+void RawImageSource::correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_to) {
  
   int W = im->width;
 
@@ -1453,7 +1453,7 @@ void RawImageSource::correction_YIQ_LQ_  (Image16* im, int row_from, int row_to)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
+void RawImageSource::correction_YIQ_LQ  (Imagefloat* im, int times) {
 
     if (im->height<4)
         return;
@@ -1480,7 +1480,7 @@ void RawImageSource::correction_YIQ_LQ  (Image16* im, int times) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], double& defgain) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], double& defgain) {
 
 	//camMatrix is cam2xyz = xyz_cam
 	
@@ -1515,7 +1515,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
         // in this case we avoid using the slllllooooooowwww lcms
     
 //        out = iccStore->workingSpace (wProfile);
-//        hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
+//        hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1529,20 +1529,20 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
 
-                int newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
-                int newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
-                int newb = mat[2][0]*im->r[i][j] + mat[2][1]*im->g[i][j] + mat[2][2]*im->b[i][j];
+                float newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
+                float newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
+                float newb = mat[2][0]*im->r[i][j] + mat[2][1]*im->g[i][j] + mat[2][2]*im->b[i][j];
 
-                im->r[i][j] = CLIP(newr);
-                im->g[i][j] = CLIP(newg);
-                im->b[i][j] = CLIP(newb);
+                im->r[i][j] = (newr);
+                im->g[i][j] = (newg);
+                im->b[i][j] = (newb);
             }
     }
     else {
         out = iccStore->workingSpace (cmp.working);
 //        out = iccStore->workingSpaceGamma (wProfile);
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 0);    
         lcmsMutex->unlock ();
         if (hTransform) {
             if (cmp.gammaOnInput) {
@@ -1560,7 +1560,7 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
         }
         else {
           lcmsMutex->lock ();
-          hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
+          hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 0);    
           lcmsMutex->unlock ();
           cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
         }
@@ -1571,6 +1571,99 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], double& defgain) {
+	
+	//camMatrix is cam2xyz = xyz_cam
+	
+	if (cmp.input == "(none)")
+		return;
+	
+	MyTime t1, t2, t3;
+	
+	t1.set ();
+	
+	cmsHPROFILE in;
+	cmsHPROFILE out;
+	
+	Glib::ustring inProfile = cmp.input;
+	
+	if (inProfile=="(embedded)") {
+		if (embedded)
+			in = embedded;
+		else
+			in = camprofile;
+	}
+	else if (inProfile=="(camera)" || inProfile=="")
+		in = camprofile;
+	else {
+		in = iccStore->getProfile (inProfile);
+		if (in==NULL)
+			inProfile = "(camera)";
+	}
+	
+	
+	if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
+		// in this case we avoid using the slllllooooooowwww lcms
+		
+		//        out = iccStore->workingSpace (wProfile);
+		//        hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
+		//        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+		//        cmsDeleteTransform(hTransform);
+		TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
+		double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+		for (int i=0; i<3; i++)
+			for (int j=0; j<3; j++) 
+				for (int k=0; k<3; k++) 
+					mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * xyz_cam
+		
+#pragma omp parallel for
+		for (int i=0; i<im->height; i++)
+			for (int j=0; j<im->width; j++) {
+				
+				float newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
+				float newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
+				float newb = mat[2][0]*im->r[i][j] + mat[2][1]*im->g[i][j] + mat[2][2]*im->b[i][j];
+				
+				im->r[i][j] = CLIP(newr);
+				im->g[i][j] = CLIP(newg);
+				im->b[i][j] = CLIP(newb);
+			}
+	}
+	else {
+		out = iccStore->workingSpace (cmp.working);
+		//        out = iccStore->workingSpaceGamma (wProfile);
+		lcmsMutex->lock ();
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
+		lcmsMutex->unlock ();
+		if (hTransform) {
+			if (cmp.gammaOnInput) {
+				double gd = pow (2.0, defgain);
+				defgain = 0.0;
+#pragma omp parallel for
+				for (int i=0; i<im->height; i++)
+					for (int j=0; j<im->width; j++) {
+						im->r[i][j] = CurveFactory::gamma (CLIP(defgain*im->r[i][j]));
+						im->g[i][j] = CurveFactory::gamma (CLIP(defgain*im->g[i][j]));
+						im->b[i][j] = CurveFactory::gamma (CLIP(defgain*im->b[i][j]));
+					}
+			}
+			cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+		}
+		else {
+			lcmsMutex->lock ();
+			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
+			lcmsMutex->unlock ();
+			cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+		}
+		cmsDeleteTransform(hTransform);
+	}
+	t3.set ();
+	//        printf ("ICM TIME: %d\n", t3.etime(t1));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
 
 void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval) {
 

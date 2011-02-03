@@ -296,7 +296,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 	DCraw::dcrawImage_t image = ri->get_image();
 
-	Image16* tmpImg = new Image16(tmpw, tmph);
+	Imagefloat* tmpImg = new Imagefloat(tmpw, tmph);
 	if (ri->isBayer()) {
 		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
 			rofs = row * width;
@@ -334,7 +334,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		double step = sqrt(0.5);
 		int wide = fw / step;
 		int high = (tmph - fw) / step;
-		Image16* fImg = new Image16(wide, high);
+		Imagefloat* fImg = new Imagefloat(wide, high);
 		float r, c;
 
 		for (int row = 0; row < high; row++)
@@ -368,8 +368,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		w = tmpw * h / tmph;
 	else
 		h = tmph * w / tmpw;
-
-	tpp->thumbImg = tmpImg->resize(w, h, TI_Bilinear);
+	
+	Image16* resImg = new Image16(tmpw, tmph);
+	resImg = tmpImg->to16();
+	tpp->thumbImg = resImg->resize(w, h, TI_Bilinear);
+	delete resImg;
 	delete tmpImg;
 
 	if (ri->get_FujiWidth() != 0)
@@ -528,22 +531,23 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
     }
     else 
         rwidth = thumbImg->width * rheight / thumbImg->height;   
-	Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
+	Image16* tmp = thumbImg->resize (rwidth, rheight, interp);
+	Imagefloat* baseImg =  tmp->tofloat();
 
     if (params.coarse.rotate) {
-        Image16* tmp = baseImg->rotate (params.coarse.rotate);
+        Imagefloat* tmp = baseImg->rotate (params.coarse.rotate);
         rwidth = tmp->width;
         rheight = tmp->height;
         delete baseImg;
         baseImg = tmp;
     }
     if (params.coarse.hflip) {
-        Image16* tmp = baseImg->hflip ();
+        Imagefloat* tmp = baseImg->hflip ();
         delete baseImg;
         baseImg = tmp;
     }
     if (params.coarse.vflip) {
-        Image16* tmp = baseImg->vflip ();
+        Imagefloat* tmp = baseImg->vflip ();
         delete baseImg;
         baseImg = tmp;
     }
@@ -597,36 +601,40 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     else 
         rwidth = thumbImg->width * rheight / thumbImg->height;   
 
-    Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
-    
+    Image16* resImg = thumbImg->resize (rwidth, rheight, interp);
+	//Imagefloat* baseImg = resImg->tofloat();
+	//Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
+
+
     if (params.coarse.rotate) {
-        Image16* tmp = baseImg->rotate (params.coarse.rotate);
+        Image16* tmp = resImg->rotate (params.coarse.rotate);
         rwidth = tmp->width;
         rheight = tmp->height;
-        delete baseImg;
-        baseImg = tmp;
+        delete resImg;
+        resImg = tmp;
     }
     if (params.coarse.hflip) {
-        Image16* tmp = baseImg->hflip ();
-        delete baseImg;
-        baseImg = tmp;
+        Image16* tmp = resImg->hflip ();
+        delete resImg;
+        resImg = tmp;
     }
     if (params.coarse.vflip) {
-        Image16* tmp = baseImg->vflip ();
-        delete baseImg;
-        baseImg = tmp;
+        Image16* tmp = resImg->vflip ();
+        delete resImg;
+        resImg = tmp;
     }
     // apply white balance
     int val;
     for (int i=0; i<rheight; i++)
         for (int j=0; j<rwidth; j++) {
-                val = baseImg->r[i][j]*rmi>>10;
-                baseImg->r[i][j] = CLIP(val);
-                val = baseImg->g[i][j]*gmi>>10;
-                baseImg->g[i][j] = CLIP(val);
-                val = baseImg->b[i][j]*bmi>>10;
-                baseImg->b[i][j] = CLIP(val);
+                val = ((int)resImg->r[i][j]*rmi)>>10;
+                resImg->r[i][j] = CLIP(val);
+                val = ((int)resImg->g[i][j]*gmi)>>10;
+                resImg->g[i][j] = CLIP(val);
+                val = ((int)resImg->b[i][j]*bmi)>>10;
+                resImg->b[i][j] = CLIP(val);
         }
+		
 /*
     // apply highlight recovery, if needed		-- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES; DO WE CARE???
     if (isRaw && params.hlrecovery.enabled) {
@@ -644,9 +652,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 */
     // perform color space transformation
     if (isRaw)
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, camProfile, cam2xyz, logDefGain);
+        RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, logDefGain);
     else
-        StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile);
+        StdImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile);
+	
+	Imagefloat* baseImg = resImg->tofloat();
         
     int fw = baseImg->width;
     int fh = baseImg->height;
@@ -659,7 +669,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // perform transform
     if (ipf.needsTransform()) {
-        Image16* trImg = new Image16 (fw, fh);
+        Imagefloat* trImg = new Imagefloat (fw, fh);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
@@ -668,11 +678,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // update blurmap
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
-        unsigned short** buffer = NULL;
+        float** buffer = NULL;
         if (params.sh.hq) {
-            buffer = new unsigned short*[fh];
+            buffer = new float*[fh];
             for (int i=0; i<fh; i++)
-                buffer[i] = new unsigned short[fw];
+                buffer[i] = new float[fw];
         }
         shmap = new SHMap (fw, fh, false);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
@@ -724,7 +734,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     delete [] hist16;
 
     // color processing
-    ipf.colorCurve (labView, labView);
+    //ipf.colorCurve (labView, labView);
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);

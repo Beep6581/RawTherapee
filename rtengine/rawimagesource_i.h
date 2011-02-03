@@ -32,7 +32,7 @@
 
 namespace rtengine {
 
-inline void RawImageSource::convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W) {
+inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
   for (int j=0; j<W; j++) {
     Y[j] = .299 * r[j] + .587 * g[j] + .114 * b[j];
     I[j] = .596 * r[j] - .275 * g[j] - .321 * b[j];
@@ -40,7 +40,7 @@ inline void RawImageSource::convert_row_to_YIQ (unsigned short* r, unsigned shor
   }
 }
 
-inline void RawImageSource::convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W) {
+inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
   for (int j=1; j<W-1; j++) {
     int ir = Y[j] + 0.956*I[j] + 0.621*Q[j];
     int ig = Y[j] - 0.272*I[j] - 0.647*Q[j];

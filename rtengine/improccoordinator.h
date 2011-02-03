@@ -38,8 +38,8 @@ class ImProcCoordinator : public StagedImageProcessor {
     friend class Crop;
 
     protected:
-        Image16 *orig_prev;
-        Image16 *oprevi;
+        Imagefloat *orig_prev;
+        Imagefloat *oprevi;
         LabImage *oprevl;    
         LabImage *nprevl;    
         Image8 *previmg;

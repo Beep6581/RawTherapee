@@ -420,7 +420,7 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
     memset (rhist, 0, (1<<BINBIT)*sizeof(unsigned short));
     for (int x = MAX(0,row_from-r-1); x<row_from+r; x++)
         for (int y = 0; y<r; y++)
-            rhist[src[x][y]>>TRANSBIT]++;
+            rhist[((int)src[x][y])>>TRANSBIT]++;
 
     sigmar*=2;
 
@@ -429,10 +429,10 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
         // calculate histogram at the beginning of the row
         if (i>r)
             for (int x = 0; x<r; x++) 
-                rhist[src[i-r-1][x]>>TRANSBIT]--;
+                rhist[((int)src[i-r-1][x])>>TRANSBIT]--;
         if (i<H-r)
             for (int x = 0; x<r; x++) 
-                rhist[src[i+r][x]>>TRANSBIT]++;
+                rhist[((int)src[i+r][x])>>TRANSBIT]++;
             
         memcpy (hist, rhist, (1<<BINBIT)*sizeof(unsigned short));
         for (int j=0; j<W; j++) {
@@ -440,16 +440,16 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
             // substract pixels at the left and add pixels at the right
             if (j>r)
                 for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
-                    hist[src[x][j-r-1]>>TRANSBIT]--;
+                    hist[(int)(src[x][j-r-1])>>TRANSBIT]--;
             if (j<W-r)
                 for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
-                    hist[src[x][j+r]>>TRANSBIT]++;
+                    hist[((int)src[x][j+r])>>TRANSBIT]++;
 
             // calculate pixel value
             float weight = 0.0;
             for (int k=0; k<=(sigmar>>TRANSBIT); k++) {               
                 float w = 1.0 - (double)k/(sigmar>>TRANSBIT);
-                int v = src[i][j]>>TRANSBIT;
+                int v = (int)(src[i][j])>>TRANSBIT;
                 if (v-k >= 0) {
                     weight += hist [v-k] * w;
                     buff_final[i][j] += hist [v-k] * w * (src[i][j]-(k<<TRANSBIT));

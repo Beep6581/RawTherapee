@@ -118,7 +118,7 @@ void Crop::update (int todo, bool internal) {
         transCrop = NULL;
     }
     if (needstransform && !transCrop)
-        transCrop = new Image16 (cropw, croph);
+        transCrop = new Imagefloat (cropw, croph);
     if ((todo & M_TRANSFORM) && needstransform)
     	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
     if (transCrop)
@@ -128,7 +128,7 @@ void Crop::update (int todo, bool internal) {
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
-        cshmap->update (baseCrop, (unsigned short**)cbuffer, shradius, parent->ipf.lumimul, params.sh.hq);
+        cshmap->update (baseCrop, (float**)cbuffer, shradius, parent->ipf.lumimul, params.sh.hq);
         cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);
     }
 
@@ -143,17 +143,17 @@ void Crop::update (int todo, bool internal) {
 		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 0, parent->chroma_acurve, 0, croph);
 		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 1, parent->chroma_bcurve, 0, croph);
 
-		parent->ipf.colorCurve (labnCrop, labnCrop);
+		//parent->ipf.colorCurve (labnCrop, labnCrop);
 
         if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
-            parent->ipf.lumadenoise (labnCrop, cbuffer);
-            parent->ipf.colordenoise (labnCrop, cbuffer);
+            //parent->ipf.lumadenoise (labnCrop, cbuffer);
+            //parent->ipf.colordenoise (labnCrop, cbuffer);
 			parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.sharpening (labnCrop, (float**)cbuffer);
 			parent->ipf.dirpyrequalizer (labnCrop);
-            parent->ipf.waveletEqualizer(labnCrop, true, true);
+            //parent->ipf.waveletEqualizer(labnCrop, true, true);
         }
 
     }
@@ -276,7 +276,7 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         trafw = orW;
         trafh = orH;
 
-        origCrop = new Image16 (trafw, trafh);
+        origCrop = new Imagefloat (trafw, trafh);
         laboCrop = new LabImage (cropw, croph);    
         labnCrop = new LabImage (cropw, croph);    
         cropImg = new Image8 (cropw, croph);

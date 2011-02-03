@@ -259,7 +259,7 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
     // the code will use OpenMP as of now.
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
-    colorSpaceConversion (image, cmp, embProfile);
+    colorSpaceConversion16 (image, cmp, embProfile);
     
     // Flip if needed
     if (tran & TR_HFLIP)
@@ -269,8 +269,43 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 
     t2.set ();
 }
+	
+void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
+	
+	cmsHPROFILE in;
+	cmsHPROFILE out = iccStore->workingSpace (cmp.working);
+	if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
+		if (embedded)
+			in = embedded;
+		else
+			in = iccStore->getsRGBProfile ();
+	}
+	else if (cmp.input!="(none)") {
+		in = iccStore->getProfile (cmp.input);
+		if (in==NULL && embedded)
+			in = embedded;
+		else if (in==NULL)
+			in = iccStore->getsRGBProfile ();
+		else if (cmp.gammaOnInput) 
+			for (int i=0; i<im->height; i++)
+				for (int j=0; j<im->width; j++) {
+					im->r[i][j] = CurveFactory::gamma (im->r[i][j]);
+					im->g[i][j] = CurveFactory::gamma (im->g[i][j]);
+					im->b[i][j] = CurveFactory::gamma (im->b[i][j]);
+				}
+	}
+	
+	if (cmp.input!="(none)") {
+		lcmsMutex->lock ();
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 0);
+		lcmsMutex->unlock ();
+		cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+		cmsDeleteTransform(hTransform);
+	}
+}
+	
 
-void StdImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
+void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
 
     cmsHPROFILE in;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);

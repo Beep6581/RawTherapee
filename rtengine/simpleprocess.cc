@@ -98,11 +98,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else if (params.wb.method=="Auto")
         currWB = imgsrc->getAutoWB ();
 
-    Image16* baseImg;
+    Imagefloat* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw );
     imgsrc->demosaic( params.raw );
-    baseImg = new Image16 (fw, fh);
+    baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) 
         pl->setProgress (0.25);
@@ -113,7 +113,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
-        Image16* trImg = new Image16 (fw, fh);
+        Imagefloat* trImg = new Imagefloat (fw, fh);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
@@ -129,7 +129,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         shmap = new SHMap (fw, fh, true);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
-        shmap->update (baseImg, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
+        shmap->update (baseImg, (float**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }
     // RGB processing
 //!!!// auto exposure!!!
@@ -185,12 +185,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] hist16;
 
     // color processing
-    ipf.colorCurve (labView, labView);
+    /*ipf.colorCurve (labView, labView);
     ipf.colordenoise (labView, buffer);
-	ipf.dirpyrdenoise (labView);
+	ipf.dirpyrdenoise (labView);*/
 
     // wavelet equalizer
-    ipf.waveletEqualizer (labView, true, true);
+    //ipf.waveletEqualizer (labView, true, true);
 	
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);

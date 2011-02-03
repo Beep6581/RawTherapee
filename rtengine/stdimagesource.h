@@ -59,7 +59,8 @@ class StdImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
-        static void colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded);
+		static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 
 
         static inline double intpow (double a, int b) { double r = 1.0; for (int i=0; i<b; i++) r *= a; return r; }

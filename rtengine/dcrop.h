@@ -36,7 +36,8 @@ class ImProcCoordinator;
 class Crop : public DetailedCrop {
 
     protected:
-        Image16* origCrop, *resizeCrop, *transCrop, *baseCrop;
+		Imagefloat* origCrop, *baseCrop;
+        Imagefloat* *resizeCrop, *transCrop;
         LabImage *laboCrop, *labnCrop;
         Image8 *cropImg;
 

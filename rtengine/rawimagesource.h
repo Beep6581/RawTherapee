@@ -97,10 +97,10 @@ class RawImageSource : public ImageSource {
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
         void hphd_green          ();
-        void correction_YIQ_LQ_  (Image16* im, int row_from, int row_to);
+        void correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_to);
         void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         int  defTransform        (int tran);
-        void rotateLine          (float* line, unsigned short** channel, int tran, int i, int w, int h);
+        void rotateLine          (float* line, float** channel, int tran, int i, int w, int h);
         void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
         void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
@@ -118,7 +118,7 @@ class RawImageSource : public ImageSource {
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
 		void		cfaboxblur	(RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
 		void        scaleColors	(int winx,int winy,int winw,int winh );
-        void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
+        void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
@@ -133,17 +133,18 @@ class RawImageSource : public ImageSource {
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
         int         getAEHistogram (unsigned int* histogram, int& histcompr);
 
-        static void colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
-        static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
+        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
+		static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
+		static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval, double cam[3][3], double icam[3][3]);
 
     protected:
         typedef unsigned short ushort;
-                void correction_YIQ_LQ  (Image16* i, int times);
-        inline  void convert_row_to_YIQ (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W);
-        inline  void convert_row_to_RGB (unsigned short* r, unsigned short* g, unsigned short* b, float* Y, float* I, float* Q, int W);
+                void correction_YIQ_LQ  (Imagefloat* i, int times);
+        inline  void convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
+        inline  void convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
 
         inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
         inline  void interpolate_row_g      (float* agh, float* agv, int i);
@@ -186,9 +187,9 @@ class RawImageSource : public ImageSource {
 		void dcb_refinement(ushort (*image)[4], int x0, int y0);
 		void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
-        void    transLine   (float* red, float* green, float* blue, int i, Image16* image, int tran, int imw, int imh, int fw);
-        void    hflip       (Image16* im);
-        void    vflip       (Image16* im);      
+        void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw);
+        void    hflip       (Imagefloat* im);
+        void    vflip       (Imagefloat* im);      
         
 };
 };

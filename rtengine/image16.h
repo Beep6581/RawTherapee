@@ -24,6 +24,7 @@
 
 #include <imageio.h>
 #include <rtengine.h>
+#include <imagefloat.h>
 
 namespace rtengine {
 
@@ -57,6 +58,7 @@ class Image16 : public ImageIO, public IImage16 {
         Image16* copy ();
 
 		Image8* to8() const;
+	Imagefloat* tofloat() const;
 
         Image16* rotate (int deg);
         Image16* hflip ();

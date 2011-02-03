@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline void cubintch (unsigned short** src, int xs, int ys, double Dx, double Dy, unsigned short *r, double mul) {
+inline void cubintch (float** src, int xs, int ys, double Dx, double Dy, float *r, double mul) {
 
   register double w[4];
 
