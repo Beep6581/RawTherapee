@@ -136,8 +136,6 @@ class CurveFactory {
 
     static void init ();
     static void cleanup ();
-
-    static inline double centercontrast   (double x, double b, double m);
     
     // standard srgb gamma and its inverse
     static inline double gamma2            (double x) {
@@ -159,7 +157,7 @@ class CurveFactory {
   public:
 //    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& cpoints, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip=1);
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
-	static void complexsgnCurve (double satclip, double satcompr, double saturation, double colormult, const std::vector<double>& curvePoints, int* outCurve, int skip=1);
+	static void complexsgnCurve (double saturation, const std::vector<double>& curvePoints, float* outCurve, int skip=1);
 
 };
 

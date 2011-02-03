@@ -69,8 +69,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         int   *tonecurve;
 
         int *lumacurve;
-        int *chroma_acurve;
-        int *chroma_bcurve;
+        float *chroma_acurve;
+        float *chroma_bcurve;
         
         unsigned int *vhist16;
         unsigned int *lhist16;

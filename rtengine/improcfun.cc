@@ -249,6 +249,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     		histogram[i] += hist[j][i];
 
     chroma_scale = 32768*32768 / (3*chroma_radius);
+	//printf ("chroma_radius= %d   chroma_scale= %d\n",chroma_radius,chroma_scale);
 
     delete [] cr;
     for (int i=0; i<T; i++)
@@ -343,13 +344,7 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
                 }
             }
 
-			//float rtonefactor = (r>0 ? (float)hltonecurve[r]/r : (float)hltonecurve[1]);
-			//float gtonefactor = (g>0 ? (float)hltonecurve[g]/g : (float)hltonecurve[1]);
-			//float btonefactor = (b>0 ? (float)hltonecurve[b]/b : (float)hltonecurve[1]);
-			//float tonefactor = (rtonefactor+gtonefactor+btonefactor)/3;
-			//float tonefactor = (0.299*rtonefactor+0.587*gtonefactor+0.114*btonefactor);
-			
-			//float tonefactor=(my_tonecurve[r]+my_tonecurve[g]+my_tonecurve[b])/3;
+
 			float tonefactor=(hltonecurve[r]+hltonecurve[g]+hltonecurve[b])/3;
 
 			r = (r*tonefactor);
@@ -434,30 +429,102 @@ void ImProcFunctions::rgbProc (Image16* working, LabImage* lab, float* hltonecur
 	//delete [] my_tonecurve;
  }
 
-void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve, int row_from, int row_to) {
+void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, int* curve) {
 
     int W = lold->W;
-    //int H = lold->H;
-    for (int i=row_from; i<row_to; i++)
+    int H = lold->H;
+    for (int i=0; i<H; i++)
         for (int j=0; j<W; j++)
             lnew->L[i][j] = curve[lold->L[i][j]];
 }
 		
 	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, int* curve, int row_from, int row_to) {
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, float* acurve, float* bcurve) {
 	
 	int W = lold->W;
-	//int H = lold->H;
-	if (channel==0) {
-	for (int i=row_from; i<row_to; i++)
-		for (int j=0; j<W; j++)
-			lnew->a[i][j] = curve[lold->a[i][j]+32768]-32768;
-	} 
-	if (channel==1) {
-		for (int i=row_from; i<row_to; i++)
-			for (int j=0; j<W; j++)
-				lnew->b[i][j] = curve[lold->b[i][j]+32768]-32768;
-	}
+	int H = lold->H;
+	/*for (int i=0; i<H; i++)
+		for (int j=0; j<W; j++) {
+			lnew->a[i][j] = acurve[lold->a[i][j]+32768]-32768;
+			lnew->b[i][j] = bcurve[lold->b[i][j]+32768]-32768;
+	}*/
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
+    double* cmultiplier = new double [181021];
+	
+    double c = (0.5+2*params->labCurve.saturation/500.0) / (0.5-2*params->labCurve.saturation/500.0);
+
+	
+    if (params->labCurve.enable_saturationlimiter && c>1) {
+        // re-generate color multiplier lookup table
+        double d = params->labCurve.saturationlimit * chroma_scale  / 3.0;
+        double alpha = 0.5;
+        double threshold1 = alpha * d;
+        double threshold2 = c*d*(alpha+1.0) - d;
+        for (int i=0; i<=181020; i++) { // lookup table stores multipliers with a 0.25 chrominance resolution
+            double chrominance = (double)i/4;
+            if (chrominance < threshold1)
+                cmultiplier[i] = c;
+            else if (chrominance < d)
+                cmultiplier[i] = (c / (2.0*d*(alpha-1.0)) * (chrominance-d)*(chrominance-d) + c*d/2.0 * (alpha+1.0) ) / chrominance;
+            else if (chrominance < threshold2) 
+                cmultiplier[i] = (1.0 / (2.0*d*(c*(alpha+1.0)-2.0)) * (chrominance-d)*(chrominance-d) + c*d/2.0 * (alpha+1.0) ) / chrominance;
+            else
+                cmultiplier[i] = 1.0;
+        }
+    }
+    	
+	
+#pragma omp parallel for if (multiThread)
+    for (int i=0; i<H; i++)
+        for (int j=0; j<W; j++) {
+			
+			int oa = lold->a[i][j];
+			int ob = lold->b[i][j];
+			
+			int atmp = (int)acurve[oa+32768]-32768;
+			int btmp = (int)bcurve[ob+32768]-32768;
+			
+			int chroma = (int)(4.0 * sqrt(SQR(oa) + SQR(ob)));
+            double wanted_c = c;
+            if (params->labCurve.enable_saturationlimiter && c>1) {
+                wanted_c = cmultiplier [MIN(chroma,181020)];
+            }
+			
+            double real_c = wanted_c;
+            if (wanted_c >= 1.0 && params->labCurve.avoidclip) {
+                double cclip = 100000;
+                double cr = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa)/chroma_scale, (double)(ob)/chroma_scale, 3.079935, -1.5371515, -0.54278342);
+                double cg = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa)/chroma_scale, (double)(ob)/chroma_scale, -0.92123418, 1.87599, 0.04524418);
+                double cb = tightestroot ((double)lnew->L[i][j]/655.35, (double)(oa)/chroma_scale, (double)(ob)/chroma_scale, 0.052889682, -0.20404134, 1.15115166);
+                if (cr>1.0 && cr<cclip) cclip = cr;
+                if (cg>1.0 && cg<cclip) cclip = cg;
+                if (cb>1.0 && cb<cclip) cclip = cb;
+                if (cclip<100000) {
+                    real_c = -cclip + 2.0*cclip / (1.0+exp(-2.0*wanted_c/cclip));
+                    if (real_c<1.0)
+                        real_c = 1.0;
+                }
+            }
+            
+            int nna = (int)((oa) * real_c );
+            int nnb = (int)((ob) * real_c );
+			if (4.0*sqrt(SQR(atmp)+SQR(btmp)) > chroma) {
+				lnew->a[i][j] = CLIPTO(nna,-32000,32000);
+				lnew->b[i][j] = CLIPTO(nnb,-32000,32000);
+			} else {
+				lnew->a[i][j] = CLIPTO(atmp,-32000,32000);
+				lnew->b[i][j] = CLIPTO(btmp,-32000,32000);
+			}
+        }
+	
+    delete [] cmultiplier;
+	 
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
 }
 
 #include "cubic.cc"

@@ -716,11 +716,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // luminance processing
     CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
-    ipf.luminanceCurve (labView, labView, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, curve, 16);
-	ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, curve, 16);
-    ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
+    ipf.luminanceCurve (labView, labView, curve);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.acurve, curve1, 16);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.bcurve, curve2, 16);
+    ipf.chrominanceCurve (labView, labView, curve1, curve2);
 
 	delete [] curve1;
     delete [] curve2;

@@ -301,104 +301,84 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
         res[i] = getVal(t[i]);
 }
 
-double CurveFactory::centercontrast (double x, double b, double m) {
 
-  if (b==0)
-    return x;
-  if (b>0) {
-    if (x>m) 
-      return m + (1.0-m) * tanh (b*(x-m)/(1.0-m)) / tanh (b);
-    else
-      return m + m * tanh (b*(x-m)/m) / tanh (b);
-  }
-  else {
-    if (x>m) 
-      return 2.0*x - m - (1.0-m) * tanh (b*(x-m)/(1.0-m)) / tanh (b);
-    else
-      return 2.0*x - m - m * tanh (b*(x-m)/m) / tanh (b);
-  }
-}
-
-
-
-	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, double colormult, const std::vector<double>& curvePoints, int* outCurve, int skip) {
+void CurveFactory::complexsgnCurve (double saturation, const std::vector<double>& curvePoints, float* outCurve, int skip) {
+	
+	//colormult = chroma_scale for Lab manipulations
+	
+	// check if contrast curve is needed
+	bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
+	
+	// curve without contrast
+	double* dcurve = new double[65536];
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	std::vector<double> satcurvePoints;
+	satcurvePoints.push_back((double)((CurveType)NURBS));
+	if (saturation>0) {
+		satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+		satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
-		//colormult = chroma_scale for Lab manipulations
+		satcurvePoints.push_back(0.25+saturation/500.0); //toe point
+		satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
 		
-		// check if contrast curve is needed
-		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
+		satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
+		satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
 		
-		// curve without contrast
-		double* dcurve = new double[65536];
+		satcurvePoints.push_back(1); // white point
+		satcurvePoints.push_back(1); // value at white point
+	} else {
+		satcurvePoints.push_back(0); 
+		satcurvePoints.push_back(-(saturation/200.0)); 
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		std::vector<double> satcurvePoints;
-		satcurvePoints.push_back((double)((CurveType)NURBS));
-		if (saturation>0) {
-			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-			
-			satcurvePoints.push_back(0.25+saturation/500.0); //toe point
-			satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
-			
-			satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
-			satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
-			
-			satcurvePoints.push_back(1); // white point
-			satcurvePoints.push_back(1); // value at white point
-		} else {
-			satcurvePoints.push_back(0); 
-			satcurvePoints.push_back(-0.5*(saturation/100.0)); 
-			
-			satcurvePoints.push_back(1); 
-			satcurvePoints.push_back(1+saturation/200.0); 
-		}
-		Curve* satcurve = NULL;
-		satcurve = new Curve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		// create a curve if needed
-		Curve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0)
-			tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-		
-		for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
-			
-			// change to [0,1] range
-			double val = (double)i / 65535.0;
-			
-			// apply default multiplier (that is >1 if highlight recovery is on)
-			val *= colormult;
-			
-			// apply saturation curve
-			if (needsaturation)
-				val = satcurve->getVal (val);
-			
-			// apply custom/parametric/NURBS curve, if any
-			if (tcurve) {
-				val = tcurve->getVal (val);
-			}
-			
-			// store result in a temporary array
-			dcurve[i] = CLIPD(val);
-		}
-		delete tcurve;
-		
-		// if skip>1, let apply linear interpolation in the skipped points of the curve
-		int prev = 0;
-		for (int i=1; i<=0xffff-skip; i++) {
-			if (i%skip==0) {
-				prev+=skip;
-				continue;
-			}
-			dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
-		}
-		 
-		for (int i=0; i<=0xffff; i++) 
-			outCurve[i] = (int) (65535.0 * dcurve[i]);
-		delete [] dcurve;
-		delete satcurve;
+		satcurvePoints.push_back(1); 
+		satcurvePoints.push_back(1+saturation/200.0); 
 	}
+	Curve* satcurve = NULL;
+	satcurve = new Curve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	// create a curve if needed
+	Curve* tcurve = NULL;
+	if (curvePoints.size()>0 && curvePoints[0]!=0)
+		tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+	
+	for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
+		
+		// change to [0,1] range
+		double val = (double)i / 65535.0;
+		
+		// apply saturation curve
+		if (needsaturation)
+			val = satcurve->getVal (val);
+		
+		// apply custom/parametric/NURBS curve, if any
+		if (tcurve) {
+			val = tcurve->getVal (val);
+		}
+		
+		// store result in a temporary array
+		dcurve[i] = CLIPD(val);
+	}
+	delete tcurve;
+	
+	// if skip>1, let apply linear interpolation in the skipped points of the curve
+	int prev = 0;
+	for (int i=1; i<=0xffff-skip; i++) {
+		if (i%skip==0) {
+			prev+=skip;
+			continue;
+		}
+		dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
+	}
+	 
+	for (int i=0; i<=0xffff; i++) { 
+		outCurve[i] = (65535.0 * dcurve[i]);
+		//if (i%1000==0) printf("satcurve[%d]= %f\n",i,outCurve[i]);
+	}
+	delete [] dcurve;
+	delete satcurve;
+}
 
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,7 +547,6 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			// apply contrast enhancement
 			for (int i=0; i<=0xffff; i++) {
-				//double val = centercontrast (dcurve[i], contr_b, avg);
 				dcurve[i]  = contrastcurve->getVal (dcurve[i]);
 			}
 			delete contrastcurve;

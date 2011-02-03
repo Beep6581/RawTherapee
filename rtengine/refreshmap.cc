@@ -128,5 +128,8 @@ DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
 RGBCURVE,         // EvHLComprThreshold,
+LUMINANCECURVE,   // EvCBAvoidClip,
+LUMINANCECURVE,   // EvCBSatLimiter,
+LUMINANCECURVE,   // EvCBSatLimit,
 };
 

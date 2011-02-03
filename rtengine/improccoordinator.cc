@@ -41,8 +41,8 @@ ImProcCoordinator::ImProcCoordinator ()
     tonecurve     = new int[65536];
 
     lumacurve     = new int[65536];
-    chroma_acurve = new int[65536];
-    chroma_bcurve = new int[65536];
+    chroma_acurve = new float[65536];
+    chroma_bcurve = new float[65536];
 
     vhist16 = new unsigned int[65536];
     lhist16 = new unsigned int[65536];
@@ -228,19 +228,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo & M_LUMACURVE) {
         CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, \
 									params.labCurve.lcurve, lhist16, dummy1, dummy2, lumacurve, bcLhist, scale==1 ? 1 : 16);
-		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
-		CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, 1.0, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
 	}
 	
 	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
-        ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
+        ipf.luminanceCurve (oprevl, nprevl, lumacurve);
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chrominanceCurve (oprevl, nprevl, 0, chroma_acurve, 0, pH);
-        ipf.chrominanceCurve (oprevl, nprevl, 1, chroma_bcurve, 0, pH);
+        ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve);
         ipf.colorCurve (nprevl, nprevl);
 
         readyphase++;
