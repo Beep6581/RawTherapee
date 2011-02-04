@@ -27,6 +27,7 @@
 #include <renamedlg.h>
 #include <thumbimageupdater.h>
 #include <safegtk.h>
+#include <batchqueue.h>
 
 
 #define CHECKTIME 2000
@@ -516,13 +517,13 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
     g_idle_add (fcopenimg, params);
 }
 
-void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
+void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {
 
     if (tbe.size()==0)
         return;
 
     Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
-    msd.set_secondary_text(Glib::ustring::compose (M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
+    msd.set_secondary_text(Glib::ustring::compose ( inclBatchProcessed ? M("FILEBROWSER_DELETEDLGMSGINCLPROC") : M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
 
     if (msd.run()==Gtk::RESPONSE_YES) {
         for (unsigned int i=0; i<tbe.size(); i++) {
@@ -541,6 +542,11 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
             // delete .thm file
             safe_g_remove (Glib::ustring(removeExtension(fname)+".thm"));
             safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
+
+			if (inclBatchProcessed) {
+			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
+			}
         }
         redrawAll ();    
     }
@@ -896,7 +902,7 @@ void FileCatalog::emptyTrash () {
     for (size_t i=0; i<t.size(); i++)
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             toDel.push_back (((FileBrowserEntry*)t[i]));
-    deleteRequested (toDel);
+    deleteRequested (toDel, false);
     trashChanged();
 }
 
