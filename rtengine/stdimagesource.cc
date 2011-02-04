@@ -142,7 +142,7 @@ void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, i
     printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
 }
 
-void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, bool first, HRecParams hrp) {
+void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp) {
 
     // compute channel multipliers
     double rm, gm, bm;
@@ -196,11 +196,11 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
 
 			for (int m=0; m<skip; m++)
 				for (int n=0; n<skip; n++)
-					{
+				{
 					rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
 					gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
 					btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
-					}
+				}
 			line_red[j]  = rtot;
             line_green[j]  = gtot;
             line_blue[j] = btot;
@@ -214,27 +214,27 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     
         if ((mtran & TR_ROT) == TR_R180) 
             for (int j=0; j<imwidth; j++) {
-                image->r[imheight-1-ix][imwidth-1-j] = (int)CLIP(rm*line_red[j]);
-                image->g[imheight-1-ix][imwidth-1-j] = (int)CLIP(gm*line_green[j]);
-                image->b[imheight-1-ix][imwidth-1-j] = (int)CLIP(bm*line_blue[j]);
+                image->r[imheight-1-ix][imwidth-1-j] = CLIP(rm*line_red[j])/65535.0;
+                image->g[imheight-1-ix][imwidth-1-j] = CLIP(gm*line_green[j])/65535.0;
+                image->b[imheight-1-ix][imwidth-1-j] = CLIP(bm*line_blue[j])/65535.0;
             }
         else if ((mtran & TR_ROT) == TR_R90) 
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[j][imheight-1-ix] = (int)CLIP(rm*line_red[j]);
-                image->g[j][imheight-1-ix] = (int)CLIP(gm*line_green[j]);
-                image->b[j][imheight-1-ix] = (int)CLIP(bm*line_blue[j]);
+                image->r[j][imheight-1-ix] = CLIP(rm*line_red[j])/65535.0;
+                image->g[j][imheight-1-ix] = CLIP(gm*line_green[j])/65535.0;
+                image->b[j][imheight-1-ix] = CLIP(bm*line_blue[j])/65535.0;
         }
         else if ((mtran & TR_ROT) == TR_R270) 
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[imwidth-1-j][ix] = (int)CLIP(rm*line_red[j]);
-                image->g[imwidth-1-j][ix] = (int)CLIP(gm*line_green[j]);
-                image->b[imwidth-1-j][ix] = (int)CLIP(bm*line_blue[j]);
+                image->r[imwidth-1-j][ix] = CLIP(rm*line_red[j])/65535.0;
+                image->g[imwidth-1-j][ix] = CLIP(gm*line_green[j])/65535.0;
+                image->b[imwidth-1-j][ix] = CLIP(bm*line_blue[j])/65535.0;
             }
         else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[ix][j] = (int)CLIP(rm*line_red[j]);
-                image->g[ix][j] = (int)CLIP(gm*line_green[j]);
-                image->b[ix][j] = (int)CLIP(bm*line_blue[j]);
+                image->r[ix][j] = CLIP(rm*line_red[j])/65535.0;
+                image->g[ix][j] = CLIP(gm*line_green[j])/65535.0;
+                image->b[ix][j] = CLIP(bm*line_blue[j])/65535.0;
             }
         }
     }
@@ -248,7 +248,7 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
 }
 
 
-void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
+void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
 
     MyTime t1,t2;
 
@@ -257,16 +257,25 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 //    if (hrp.enabled==true && hrmap[0]==NULL) 
 //        updateHLRecoveryMap ();
     // the code will use OpenMP as of now.
+	//Image16* tmpim = new Image16 (image->width,image->height);
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
-    colorSpaceConversion16 (image, cmp, embProfile);
-    
+    //colorSpaceConversion16 (tmpim, cmp, embProfile);//float conversion currently broken???
+	colorSpaceConversion (image, cmp, embProfile);//float conversion currently broken???
+
     // Flip if needed
     if (tran & TR_HFLIP)
         hflip (image);
     if (tran & TR_VFLIP)
         vflip (image);
-
+	
+	for ( int h = 0; h < image->height; ++h )
+		for ( int w = 0; w < image->width; ++w ) {
+			image->r[h][w] *= 65535.0 ;
+			image->g[h][w] *= 65535.0 ;
+			image->b[h][w] *= 65535.0 ;
+		}
+	
     t2.set ();
 }
 	
@@ -279,27 +288,29 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 			in = embedded;
 		else
 			in = iccStore->getsRGBProfile ();
-	}
-	else if (cmp.input!="(none)") {
-		in = iccStore->getProfile (cmp.input);
-		if (in==NULL && embedded)
-			in = embedded;
-		else if (in==NULL)
-			in = iccStore->getsRGBProfile ();
-		else if (cmp.gammaOnInput) 
-			for (int i=0; i<im->height; i++)
-				for (int j=0; j<im->width; j++) {
-					im->r[i][j] = CurveFactory::gamma (im->r[i][j]);
-					im->g[i][j] = CurveFactory::gamma (im->g[i][j]);
-					im->b[i][j] = CurveFactory::gamma (im->b[i][j]);
-				}
+	} else {
+		if (cmp.input!="(none)") {
+			in = iccStore->getProfile (cmp.input);
+			if (in==NULL && embedded)
+				in = embedded;
+			else if (in==NULL)
+				in = iccStore->getsRGBProfile ();
+			else if (cmp.gammaOnInput) 
+				for (int i=0; i<im->height; i++)
+					for (int j=0; j<im->width; j++) {
+						im->r[i][j] = CurveFactory::gamma (im->r[i][j]);
+						im->g[i][j] = CurveFactory::gamma (im->g[i][j]);
+						im->b[i][j] = CurveFactory::gamma (im->b[i][j]);
+					}
+		}
 	}
 	
 	if (cmp.input!="(none)") {
 		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 0);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
+		// could we use TYPE_RGB_FLT???  seems to give corrupted results
 		lcmsMutex->unlock ();
-		cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+		cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
 		cmsDeleteTransform(hTransform);
 	}
 }
@@ -355,7 +366,7 @@ void StdImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
     h = pp.h / pp.skip + (pp.h % pp.skip > 0);
 }
 
-void StdImageSource::hflip (Image16* image) {
+void StdImageSource::hflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
@@ -377,7 +388,7 @@ void StdImageSource::hflip (Image16* image) {
     delete [] rowb;
 }
 
-void StdImageSource::vflip (Image16* image) {
+void StdImageSource::vflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 

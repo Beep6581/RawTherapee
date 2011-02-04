@@ -283,6 +283,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     return image;
 }
 	
-#include "sRGBgamutbdy.cc"
+//#include "sRGBgamutbdy.cc"
 
 }

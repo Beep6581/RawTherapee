@@ -553,6 +553,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
     }
 	Image8* img8 = baseImg->to8();
 	delete baseImg;
+	delete tmp;
 	return img8;
 }
 
@@ -612,16 +613,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         rheight = tmp->height;
         delete resImg;
         resImg = tmp;
+		delete tmp;
     }
     if (params.coarse.hflip) {
         Image16* tmp = resImg->hflip ();
         delete resImg;
         resImg = tmp;
+		delete tmp;
     }
     if (params.coarse.vflip) {
         Image16* tmp = resImg->vflip ();
         delete resImg;
         resImg = tmp;
+		delete tmp;
     }
     // apply white balance
     int val;

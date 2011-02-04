@@ -381,7 +381,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
  
     // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
-
+	
     isrcMutex.unlock ();
 }
 	
@@ -1539,10 +1539,17 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
             }
     }
     else {
+		
+		for ( int h = 0; h < im->height; ++h )
+			for ( int w = 0; w < im->width; ++w ) {
+				im->r[h][w] /= 65535.0 ;
+				im->g[h][w] /= 65535.0 ;
+				im->b[h][w] /= 65535.0 ;
+			}
         out = iccStore->workingSpace (cmp.working);
 //        out = iccStore->workingSpaceGamma (wProfile);
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 0);    
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 0);    
         lcmsMutex->unlock ();
         if (hTransform) {
             if (cmp.gammaOnInput) {
@@ -1557,13 +1564,18 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                     }
             }
             cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
-        }
-        else {
+        } else {
           lcmsMutex->lock ();
-          hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 0);    
+          hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);    
           lcmsMutex->unlock ();
-          cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+          cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
         }
+		for ( int h = 0; h < im->height; ++h )
+			for ( int w = 0; w < im->width; ++w ) {
+				im->r[h][w] *= 65535.0 ;
+				im->g[h][w] *= 65535.0 ;
+				im->b[h][w] *= 65535.0 ;
+			}
         cmsDeleteTransform(hTransform);
     }
         t3.set ();
