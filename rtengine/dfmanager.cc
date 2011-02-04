@@ -246,7 +246,7 @@ void DFManager::init( Glib::ustring pathname )
     return;
 }
 
-dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
+dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
 {
 	Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filename);
     if (!file )
@@ -260,9 +260,15 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
         	if( !res ){
+        	   dfList_t::iterator iter;
+        	   if(!pool){
+        	      dfInfo n(filename,"","",0,0,0);
+        	      iter = dfList.insert(std::pair< std::string,dfInfo>( "", n ) );
+        		  return &(iter->second);
+        	   }
          	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
         	   std::string key( dfInfo::key(ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter()) );
-        	   dfList_t::iterator iter = dfList.find( key );
+        	   iter = dfList.find( key );
         	   if( iter == dfList.end() ){
 				   dfInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_timestamp());
 				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
@@ -331,7 +337,7 @@ dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int iso
         	   bestMatch = iter;
            }
 		}
-		return &(bestMatch->second);
+		return bestD != INFINITY ? &(bestMatch->second) : 0 ;
 	}
 }
 
@@ -350,7 +356,7 @@ RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
 		if( iter->second.pathname.compare( filename )==0  )
 			return iter->second.getRawImage();
 	}
-	dfInfo *df = addFileInfo( filename );
+	dfInfo *df = addFileInfo( filename, false );
 	if(df)
 		return df->getRawImage();
 	return 0;
@@ -399,6 +405,7 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
     int numPixels = bp.size();
     if( numPixels >0 )
     	bpList[ makmodel ] = bp;
+    fclose(file);
 	return numPixels;
 }
 
