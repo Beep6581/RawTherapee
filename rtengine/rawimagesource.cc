@@ -968,7 +968,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		if( raw.ff_file.size()>0)
 			rif = ffm.searchFlatField( raw.ff_file );
 	} else {
-		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getISOSpeed(),idata->getShutterSpeed(), idata->getFNumber(), idata->getDateTimeAsTS());
+		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
 	}
 	if( rif && settings->verbose) {
 		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());

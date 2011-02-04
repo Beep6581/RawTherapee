@@ -36,8 +36,9 @@ inline ffInfo& ffInfo::operator =(const ffInfo &o){
 	pathname = o.pathname;
 	maker = o.maker;
 	model = o.model;
-	iso = o.iso;
+	lens = o.lens;
 	shutter = o.shutter;
+	focallength = o.focallength;
 	timestamp = o.timestamp;
 	if( ri ){
 		delete ri;
@@ -52,37 +53,39 @@ bool ffInfo::operator <(const ffInfo &e2) const
 		return false;
 	if( this->model.compare( e2.model) >=0 )
 		return false;
-	if( this->iso >= e2.iso )
+	if( this->lens.compare( e2.lens) >=0 )
 		return false;
-	if( this->shutter >= e2.shutter )
+	if( this->focallength >= e2.focallength )
 		return false;
 	if( this->timestamp >= e2.timestamp )
 		return false;
 	return true;
 }
 
-std::string ffInfo::key(const std::string &mak, const std::string &mod, int iso, double shut, double apert )
+std::string ffInfo::key(const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert )
 {
 	std::ostringstream s;
 	s << mak << " " << mod << " ";
 	s.width(5);
-	s << iso << "ISO ";
+	s << len << " ";
 	s.precision( 2 );
 	s.width(4);
-	s << shut << "s";
+	s << focal << "mm F" << apert;
 	return s.str();
 }
 
-double ffInfo::distance(const std::string &mak, const std::string &mod, int iso, double shutter, double aperture) const
+double ffInfo::distance(const std::string &mak, const std::string &mod, const std::string &len, double focallength, double aperture) const
 {
 	if( this->maker.compare( mak) != 0 )
 		return INFINITY;
 	if( this->model.compare( mod) != 0 )
 		return INFINITY;
+	if( this->lens.compare( len) != 0 )
+			return INFINITY;
 	double dAperture = 2*(log(this->aperture) - log(aperture))/log(2);//more important for vignette
-    double dISO = (log(this->iso/100.) - log(iso/100.))/log(2);//more important for PRNU
-    //double dShutter = (log(this->shutter) - log(shutter))/log(2);
-    return sqrt( dISO*dISO + dAperture*dAperture);
+    double dfocallength = (log(this->focallength/100.) - log(focallength/100.))/log(2);//more important for PRNU
+
+    return sqrt( dfocallength*dfocallength + dAperture*dAperture);
 }
 
 RawImage* ffInfo::getRawImage()
@@ -101,6 +104,8 @@ RawImage* ffInfo::getRawImage()
 void ffInfo::updateRawImage()
 {
 	typedef unsigned int acc_t;
+	// averaging of flatfields if more than one is found matching the same key.
+	// this may not be necessary, as flatfield is further blurred before being applied to the processed image.
 	if( pathNames.size() >0 ){
 		std::list<Glib::ustring>::iterator iName = pathNames.begin();
 		ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
@@ -201,7 +206,7 @@ void FFManager::init( Glib::ustring pathname )
     return;
 }
 
-ffInfo *FFManager::addFileInfo(const Glib::ustring &filename )
+ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
 {
 	Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filename);
     if (!file )
@@ -215,16 +220,22 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename )
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
         	if( !res ){
+        	   ffList_t::iterator iter;
+        	   if(!pool){
+        		   ffInfo n(filename,"","","",0,0,0);
+        		   iter = ffList.insert(std::pair< std::string,ffInfo>( "", n ) );
+        		   return &(iter->second);
+        	   }
          	   RawMetaDataLocation rml;
          	   rml.exifBase = ri.get_exifBase();
          	   rml.ciffBase = ri.get_ciffBase();
          	   rml.ciffLength = ri.get_ciffLen();
          	   ImageData idata(filename, &rml);
-         	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
-        	   std::string key( ffInfo::key(idata.getMake(),idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getFNumber()) );
-        	   ffList_t::iterator iter = ffList.find( key );
+         	   /* Files are added in the map, divided by same maker/model,lens and aperture*/
+        	   std::string key( ffInfo::key(idata.getMake(),idata.getModel(),idata.getLens(),idata.getFocalLen(),idata.getFNumber()) );
+        	   iter = ffList.find( key );
         	   if( iter == ffList.end() ){
-				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getFNumber(),idata.getDateTimeAsTS());
+				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getLens(),idata.getFocalLen(),idata.getFNumber(),idata.getDateTimeAsTS());
 				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         	   }else{
         		   while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) >60*60*6 ) // 6 hour difference
@@ -233,7 +244,7 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename )
         		   if( iter != ffList.end() )
         		      iter->second.pathNames.push_back( filename );
         		   else{
-    				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getFNumber(),idata.getDateTimeAsTS());
+    				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getLens(),idata.getFocalLen(),idata.getFNumber(),idata.getDateTimeAsTS());
     				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         		   }
         	   }
@@ -259,14 +270,14 @@ void FFManager::getStat( int &totFiles, int &totTemplates)
 }
 
 /*  The search for the best match is twofold:
- *  if perfect matches for iso and aperture are found, then the list is scanned for lesser distance in time
- *  otherwise if no match is found, the whole list is searched for lesser distance in iso and aperture
+ *  if perfect matches for make and model are found, then the list is scanned for lesser distance in time
+ *  otherwise if no match is found, the whole list is searched for lesser distance in lens and aperture
  */
-ffInfo* FFManager::find( const std::string &mak, const std::string &mod, int isospeed, double shut, double apert, time_t t )
+ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t )
 {
 	if( ffList.size() == 0 )
 		return 0;
-	std::string key( ffInfo::key(mak,mod,isospeed,shut,apert) );
+	std::string key( ffInfo::key(mak,mod,len,focal,apert) );
 	ffList_t::iterator iter = ffList.find( key );
 
 	if(  iter != ffList.end() ){
@@ -283,9 +294,9 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, int iso
 	}else{
 		iter = ffList.begin();
 		ffList_t::iterator bestMatch = iter;
-		double bestD = iter->second.distance(  mak, mod, isospeed, shut, apert );
+		double bestD = iter->second.distance(  mak, mod, len, focal, apert );
 		for( iter++; iter != ffList.end();iter++ ){
-           double d = iter->second.distance(  mak, mod, isospeed, shut, apert );
+           double d = iter->second.distance(  mak, mod, len, focal, apert );
            if( d < bestD ){
         	   bestD = d;
         	   bestMatch = iter;
@@ -295,9 +306,9 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, int iso
 	}
 }
 
-RawImage* FFManager::searchFlatField( const std::string &mak, const std::string &mod, int iso, double shut, double apert, time_t t )
+RawImage* FFManager::searchFlatField( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t )
 {
-   ffInfo *ff = find( mak, mod, iso, shut, apert, t );
+   ffInfo *ff = find( mak, mod, len, focal, apert, t );
    if( ff )
       return ff->getRawImage();
    else
@@ -310,7 +321,7 @@ RawImage* FFManager::searchFlatField( const Glib::ustring filename )
 		if( iter->second.pathname.compare( filename )==0  )
 			return iter->second.getRawImage();
 	}
-	ffInfo *ff = addFileInfo( filename );
+	ffInfo *ff = addFileInfo( filename , false);
 	if(ff)
 		return ff->getRawImage();
 	return 0;
