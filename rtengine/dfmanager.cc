@@ -247,7 +247,7 @@ void DFManager::init( Glib::ustring pathname )
     return;
 }
 
-dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
+dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
 {
 	Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filename);
     if (!file )
@@ -261,6 +261,12 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
         	if( !res ){
+        	   dfList_t::iterator iter;
+         	   if(!pool){
+         		   dfInfo n(filename,"","",0,0,0);
+         		   iter = dfList.insert(std::pair< std::string,dfInfo>( "", n ) );
+         		   return &(iter->second);
+         	   }
         	   RawMetaDataLocation rml;
         	   rml.exifBase = ri.get_exifBase();
         	   rml.ciffBase = ri.get_ciffBase();
@@ -268,7 +274,7 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename )
         	   ImageData idata(filename, &rml);
          	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
         	   std::string key( dfInfo::key(idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed()) );
-        	   dfList_t::iterator iter = dfList.find( key );
+        	   iter = dfList.find( key );
         	   if( iter == dfList.end() ){
 				   dfInfo n(filename, idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(), idata.getDateTimeAsTS() );
 				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
@@ -356,7 +362,7 @@ RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
 		if( iter->second.pathname.compare( filename )==0  )
 			return iter->second.getRawImage();
 	}
-	dfInfo *df = addFileInfo( filename );
+	dfInfo *df = addFileInfo( filename, false );
 	if(df)
 		return df->getRawImage();
 	return 0;

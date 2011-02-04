@@ -424,11 +424,13 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
       int iso = imd->getISOSpeed();
       double shutter = imd->getShutterSpeed();
       double aperture = imd->getFNumber();
+      double focallength = imd->getFocalLen();
       std::string maker( imd->getMake()  );
       std::string model( imd->getModel() );
+      std::string lens(  imd->getLens()  );
       time_t timestamp = imd->getDateTimeAsTS();
 
-      return rtengine::ffm.searchFlatField( maker,model,iso,shutter,aperture,timestamp);
+      return rtengine::ffm.searchFlatField( maker,model,lens,focallength,aperture,timestamp);
     }
     return NULL;
 }

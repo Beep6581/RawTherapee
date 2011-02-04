@@ -32,17 +32,19 @@ public:
 	std::list<Glib::ustring> pathNames; // other similar dark frames, used for average
 	std::string maker;  ///< manufacturer
 	std::string model;  ///< model
-	int iso;      ///< ISO (gain)
+	std::string lens;   ///< lens
+	int iso;            ///< ISO (gain)
 	double shutter;     ///< shutter or exposure time in sec
 	double aperture;	///< aperture in stops
+	double focallength; ///< focal length in mm
 	time_t timestamp;   ///< seconds since 1 Jan 1970
 
 
-	ffInfo(const Glib::ustring &name, const std::string &mak, const std::string &mod,int iso,double shut,double apert,time_t t)
-	:pathname(name),maker(mak),model(mod),iso(iso),shutter(shut),aperture(apert),timestamp(t),ri(NULL){}
+	ffInfo(const Glib::ustring &name, const std::string &mak, const std::string &mod,const std::string & len,double focal,double apert,time_t t)
+	:pathname(name),maker(mak),model(mod),lens(len),focallength(focal),aperture(apert),timestamp(t),ri(NULL){}
 
 	ffInfo( const ffInfo &o)
-	:pathname(o.pathname),maker(o.maker),model(o.model),iso(o.iso),shutter(o.shutter),aperture(o.aperture),timestamp(o.timestamp),ri(NULL){}
+	:pathname(o.pathname),maker(o.maker),model(o.model),lens(o.lens),focallength(o.focallength),aperture(o.aperture),timestamp(o.timestamp),ri(NULL){}
 	~ffInfo() { if( ri ) delete ri; }
 
 	
@@ -50,10 +52,10 @@ public:
 	bool operator <(const ffInfo &e2) const;
 
 	// Calculate virtual distance between two shots; different model return infinite
-	double distance(const std::string &mak, const std::string &mod, int iso, double shutter, double aperture) const;
+	double distance(const std::string &mak, const std::string &mod, const std::string &lens, double focallength, double aperture) const;
 
-	static std::string key(const std::string &mak, const std::string &mod, int iso, double shut, double apert );
-	std::string key(){ return key( maker,model,iso,shutter,aperture); }
+	static std::string key(const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert );
+	std::string key(){ return key( maker,model,lens,focallength,aperture); }
 
 	RawImage *getRawImage();
 
@@ -69,7 +71,7 @@ public:
 	void init( Glib::ustring pathname );
 	Glib::ustring getPathname(){ return currentPath; };
 	void getStat( int &totFiles, int &totTemplate);
-	RawImage *searchFlatField( const std::string &mak, const std::string &mod, int iso, double shut, double apert, time_t t );
+	RawImage *searchFlatField( const std::string &mak, const std::string &mod, const std::string &len, double focallength, double apert, time_t t );
 	RawImage *searchFlatField( const Glib::ustring filename );
 
 protected:
@@ -78,8 +80,8 @@ protected:
 	ffList_t ffList;
 	bool initialized;
 	Glib::ustring currentPath;
-	ffInfo *addFileInfo(const Glib::ustring &filename );
-	ffInfo *find( const std::string &mak, const std::string &mod, int isospeed, double shut, double apert, time_t t );
+	ffInfo *addFileInfo(const Glib::ustring &filename, bool pool=true );
+	ffInfo *find( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t );
 };
 
 extern FFManager ffm;

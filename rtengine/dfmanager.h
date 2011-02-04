@@ -84,7 +84,7 @@ protected:
 	bpList_t bpList;
 	bool initialized;
 	Glib::ustring currentPath;
-	dfInfo *addFileInfo(const Glib::ustring &filename );
+	dfInfo *addFileInfo(const Glib::ustring &filename, bool pool=true );
 	dfInfo *find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t );
 	int scanBadPixelsFile( Glib::ustring filename );
 };

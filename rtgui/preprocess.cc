@@ -181,7 +181,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 		rtengine::RawImage *img = dfp->getDF();
 		if( img ){
 			std::ostringstream s;
-			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+			s << Glib::path_get_basename(img->get_filename()) << ": " <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
 			dfInfo->set_text( s.str() );
 		}else{
 			dfInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
@@ -195,7 +195,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 		rtengine::RawImage *img = ffp->getFF();
 		if( img ){
 			std::ostringstream s;
-			s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO f/" << img->get_aperture();
+			s << Glib::path_get_basename(img->get_filename()) << ": " << "f/" << img->get_aperture(); // !!! need to add focallength in mm and format aperture to ##.#
 			ffInfo->set_text( s.str() );
 		}else{
 			ffInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
@@ -375,7 +375,7 @@ void PreProcess::dfAutoChanged()
       rtengine::RawImage *img = dfp->getDF();
       if( img ){
         std::ostringstream s;
-        s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+        s << Glib::path_get_basename(img->get_filename()) << ": " <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
         dfInfo->set_text( s.str() );
       }else{
 		dfInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
@@ -483,7 +483,7 @@ void PreProcess::flatFieldAutoSelectChanged()
        rtengine::RawImage *img = ffp->getFF();
       if( img ){
         std::ostringstream s;
-        s << Glib::path_get_basename(img->get_filename()) << ":" <<img->get_ISOspeed() << "ISO " << img->get_shutter() << "s";
+        s << Glib::path_get_basename(img->get_filename()) << ": " << "f/" << img->get_aperture(); // !!! need to add focallength in mm and format aperture to ##.#
         ffInfo->set_text( s.str() );
       }else{
     	  ffInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
