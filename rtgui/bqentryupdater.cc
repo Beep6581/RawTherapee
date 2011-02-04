@@ -69,12 +69,20 @@ void BatchQueueEntryUpdater::process_ () {
     tostop = false;
 
 // TODO: process visible jobs first
-    while (!tostop && !jqueue.empty ()) {
+	bool isEmpty=false;
+
+    while (!tostop && !isEmpty) {
+
         qMutex->lock ();
-        Job current = jqueue.front ();
+			isEmpty=jqueue.empty ();  // do NOT put into while() since it must be within mutex section
+			Job current;
+			if (!isEmpty) {
+				current = jqueue.front ();
         jqueue.pop_front ();
+			}
         qMutex->unlock ();
-        if (current.listener) {
+
+        if (!isEmpty && current.listener) {
             int neww = current.newh * current.ow / current.oh;
             guint8* img = new guint8 [current.newh*neww*3];
             thumbInterp (current.oimg, current.ow, current.oh, img, neww, current.newh);
