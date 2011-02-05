@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2011 Michael Ezra <www.michaelezra.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -655,6 +656,18 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
         }
     }
     */
+}
+
+void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {
+
+	 if (tbe.size()==0)
+	        return;
+
+	 for (unsigned int i=0; i<tbe.size(); i++) {
+		 Glib::ustring fname = tbe[i]->filename;
+		 // remove from cache
+		 cacheMgr->clearFromCache (fname,leavenotrace);
+	 }
 }
 
 void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {

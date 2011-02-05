@@ -152,6 +152,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 	    if (r==openEntries.end() && md5!="") {
 			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
 			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+			safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
 			safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
 			safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
 			safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
@@ -163,6 +164,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 	    if (md5!="") {
 	        safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
 	        safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
 	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
 	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
 	        safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
@@ -171,6 +173,20 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 	}
 }
 
+void CacheManager::clearFromCache (const Glib::ustring& fname, bool leavenotrace) {
+	std::string md5 = getMD5 (fname);
+	if (md5!="") {
+		if (leavenotrace){
+			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
+			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+		}
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
+		safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
+		safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
+	}
+}
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename) {
 
@@ -179,6 +195,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
     std::string newmd5 = getMD5 (newfilename);
 
     safe_g_rename (getCacheFileName ("profiles", oldfilename, oldmd5) + paramFileExtension, (getCacheFileName ("profiles", newfilename, newmd5) + paramFileExtension).c_str());
+    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".cust16", getCacheFileName ("images", newfilename, newmd5) + ".cust16");
     safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".cust", getCacheFileName ("images", newfilename, newmd5) + ".cust");
     safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".jpg", getCacheFileName ("images", newfilename, newmd5) + ".jpg");
     safe_g_rename (getCacheFileName ("aehistograms", oldfilename, oldmd5), getCacheFileName ("aehistograms", newfilename, newmd5));
@@ -291,6 +308,7 @@ void CacheManager::applyCacheSizeLimitation () {
         std::sort (flist.begin(), flist.end());
         while (flist.size() > options.maxCacheEntries) {
             safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "data"), flist.front().fname) + ".txt");
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust16");
             safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust");
             safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg");
             safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname));
