@@ -37,11 +37,12 @@ class ImageData : public ImageMetaData {
     IptcData* iptc;
 
     struct tm time;
+    time_t timeStamp;
     int iso_speed;
     double aperture;
     double focal_len;
     double shutter;
-    std::string make, model;
+    std::string make, model, serial;
     std::string lens;
 
     void extractInfo ();
@@ -58,6 +59,7 @@ class ImageData : public ImageMetaData {
     bool hasIPTC () const { return iptc; }
 
     struct tm   getDateTime () const { return time;      }
+    time_t      getDateTimeAsTS() const { return timeStamp; }
     int         getISOSpeed () const { return iso_speed; }
     double      getFNumber  () const { return aperture;  }
     double      getFocalLen () const { return focal_len;   }
@@ -65,6 +67,7 @@ class ImageData : public ImageMetaData {
     std::string getMake     () const { return make;      }
     std::string getModel    () const { return model;     }
     std::string getLens     () const { return lens;      }
+    std::string getSerialNumber () const { return serial;}
 };
 };
 #endif

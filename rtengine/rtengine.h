@@ -60,6 +60,8 @@ namespace rtengine {
             virtual const std::vector<procparams::IPTCPair> getIPTCData () const =0;
           /** @return a struct containing the date and time of the image */
             virtual struct tm   getDateTime () const =0;
+          /** @return a timestamp containing the date and time of the image */
+            virtual time_t   getDateTimeAsTS() const =0;
           /** @return the ISO of the image */
             virtual int         getISOSpeed () const =0;
           /** @return the F number of the image */
