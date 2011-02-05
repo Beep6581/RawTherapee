@@ -152,6 +152,7 @@
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_10;Shadow Compression
 !HISTORY_MSG_11;Tone Curve
 !HISTORY_MSG_12;Auto Exposure
@@ -317,13 +318,9 @@
 !MAIN_BUTTON_EXIT;Exit
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PREFERENCES;Preferences
-!MAIN_BUTTON_PUTTOQUEUE;Put to queue
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_QUEUE;Put to queue
-!MAIN_BUTTON_SAVE;Save Image
-!MAIN_BUTTON_SAVEAS;As...
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-!MAIN_BUTTON_SENDTOEDITOR;Send to editor
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 !MAIN_FRAME_BATCHQUEUE;Batch Queue
@@ -402,6 +399,8 @@
 !PARTIALPASTE_EXIFCHANGES;Changes to exif data
 !PARTIALPASTE_EXPOSURE;Exposure
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IPTCINFO;IPTC info
 !PARTIALPASTE_LABCURVE;Lab curve
@@ -440,6 +439,9 @@
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_DARKFRAMEFOUND;Found
+!PREFERENCES_DARKFRAMESHOTS;shots
+!PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DATEFORMAT;Date Format
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
@@ -456,6 +458,7 @@
 !PREFERENCES_DMETHOD;Method
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FALSECOLOR;False color suppression steps
 !PREFERENCES_FBROWSEROPTS;File Browser Options
@@ -491,6 +494,7 @@
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -643,7 +647,8 @@
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
-!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery
+!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
 !TP_EXPOSURE_CONTRAST;Contrast
 !TP_EXPOSURE_CURVEEDITOR;Tone Curve
@@ -686,10 +691,13 @@
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_LABEL;Lab Curves
+!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_LABCURVE_SATURATION;Saturation
 !TP_LENSGEOM_AUTOCROP;Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
