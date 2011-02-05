@@ -62,28 +62,32 @@ class ProcParams {
 		std::map<String,IntList> intListParams;
 		std::map<String,StringList> stringListParams;
 
+		String getKey   (const String& skey) const;
+		String getGroup (const String& skey) const;
+		String removeQualifier (const String& skey) const;
+
     public:
 
-		void   setFloat   (const String& key, float value);
-		float  getFloat   (const String& key);
+		void   setFloat   (const String& group, const String& key, float value);
+		float  getFloat   (const String& group, const String& key);
 
-		void   setInteger (const String& key, int value);
-		int    getInteger (const String& key);
+		void   setInteger (const String& group, const String& key, int value);
+		int    getInteger (const String& group, const String& key);
 
-		void   setBoolean (const String& key, bool value);
-		bool   getBoolean (const String& key);
+		void   setBoolean (const String& group, const String& key, bool value);
+		bool   getBoolean (const String& group, const String& key);
 
-		void   setString  (const String& key, const String& value);
-		String getString  (const String& key);
+		void   setString  (const String& group, const String& key, const String& value);
+		String getString  (const String& group, const String& key);
 
-		void   		setFloatList (const String& key, const FloatList& value);
-		FloatList&  getFloatList (const String& key);
+		void   		setFloatList (const String& group, const String& key, const FloatList& value);
+		FloatList&  getFloatList (const String& group, const String& key);
 
-		void   		setIntegerList (const String& key, const IntList& value);
-		IntList& 	getIntegerList (const String& key);
+		void   		setIntegerList (const String& group, const String& key, const IntList& value);
+		IntList& 	getIntegerList (const String& group, const String& key);
 
-		void   		setStringList (const String& key, const StringList& value);
-		StringList& getStringList (const String& key);
+		void   		setStringList (const String& group, const String& key, const StringList& value);
+		StringList& getStringList (const String& group, const String& key);
 
 		// --------------8<------------------ to be removed when all filters are rewritten ------
 

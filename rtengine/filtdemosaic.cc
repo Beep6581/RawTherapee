@@ -30,8 +30,8 @@ DemosaicFilterDescriptor::DemosaicFilterDescriptor ()
 
 void DemosaicFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setString  ("DemosaicMethod", "hphd");
-	defProcParams.setInteger ("DemosaicColorCorrectionSteps",  2);
+	defProcParams.setString  ("Demosaic", "Method", "hphd");
+	defProcParams.setInteger ("Demosaic", "ColorCorrectionSteps",  2);
 }
 
 void DemosaicFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -630,13 +630,13 @@ void DemosaicFilter::correction_YIQ_LQ  (MultiImage* im, int times) {
 
 void DemosaicFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	String method = procParams->getString  ("DemosaicMethod");
+	String method = procParams->getString  ("Demosaic", "Method");
 
 	if (method == "hphd")
         hphd_demosaic (sourceImage, targetImage, buffer);
 
 	interpolate_rb_bilinear (sourceImage, targetImage);
-    correction_YIQ_LQ (targetImage, procParams->getInteger("DemosaicColorCorrectionSteps"));
+    correction_YIQ_LQ (targetImage, procParams->getInteger("Demosaic", "ColorCorrectionSteps"));
 }
 
 }

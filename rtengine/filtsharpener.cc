@@ -39,20 +39,20 @@ SharpenFilterDescriptor::SharpenFilterDescriptor ()
 
 void SharpenFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setBoolean ("SharpeningEnabled", true);
-	defProcParams.setFloat   ("SharpeningRadius", 1.0);
-	defProcParams.setFloat   ("SharpeningAmount", 90);
-	defProcParams.setFloat   ("SharpeningThreshold", 1.5);
-	defProcParams.setBoolean ("SharpeningEdgesOnly", false);
-	defProcParams.setFloat   ("SharpeningEdgesRadius", 3);
-	defProcParams.setFloat   ("SharpeningEdgesTolerance", 1.5);
-	defProcParams.setBoolean ("SharpeningHaloControl", false);
-	defProcParams.setFloat   ("SharpeningHaloControlAmount", 85);
-	defProcParams.setString  ("SharpeningMethod", "usm");
-	defProcParams.setFloat   ("SharpeningDeconvAmount", 75);
-	defProcParams.setFloat   ("SharpeningDeconvRadius", 0.75);
-	defProcParams.setInteger ("SharpeningDeconvIter", 30);
-	defProcParams.setFloat   ("SharpeningDeconvDamping", 20);
+	defProcParams.setBoolean ("Sharpening", "Enabled", true);
+	defProcParams.setFloat   ("Sharpening", "Radius", 1.0);
+	defProcParams.setFloat   ("Sharpening", "Amount", 90);
+	defProcParams.setFloat   ("Sharpening", "Threshold", 1.5);
+	defProcParams.setBoolean ("Sharpening", "EdgesOnly", false);
+	defProcParams.setFloat   ("Sharpening", "EdgesRadius", 3);
+	defProcParams.setFloat   ("Sharpening", "EdgesTolerance", 1.5);
+	defProcParams.setBoolean ("Sharpening", "HaloControl", false);
+	defProcParams.setFloat   ("Sharpening", "HaloControlAmount", 85);
+	defProcParams.setString  ("Sharpening", "Method", "usm");
+	defProcParams.setFloat   ("Sharpening", "DeconvAmount", 75);
+	defProcParams.setFloat   ("Sharpening", "DeconvRadius", 0.75);
+	defProcParams.setInteger ("Sharpening", "DeconvIter", 30);
+	defProcParams.setFloat   ("Sharpening", "DeconvDamping", 20);
 }
 
 void SharpenFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -88,10 +88,10 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
     Dim size (W, H);
     double scale = getScale ();
 
-	float amount = procParams->getFloat ("SharpeningDeconvAmount") / 100.0;
-	float radius = procParams->getFloat ("SharpeningDeconvRadius") / scale;
-	int   iter   = procParams->getInteger ("SharpeningDeconvIter");
-	float damping = procParams->getFloat ("SharpeningDeconvDamping") / 5.0;
+	float amount = procParams->getFloat ("Sharpening", "DeconvAmount") / 100.0;
+	float radius = procParams->getFloat ("Sharpening", "DeconvRadius") / scale;
+	int   iter   = procParams->getInteger ("Sharpening", "DeconvIter");
+	float damping = procParams->getFloat ("Sharpening", "DeconvDamping") / 5.0;
 
 
 
@@ -147,9 +147,9 @@ void SharpenFilter::deconvsharpening (MultiImage* sourceImage, MultiImage* targe
 
 void SharpenFilter::sharpenHaloCtrl (MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* blurmap, Buffer<float>* base) {
 
-	float amount    = procParams->getFloat ("SharpeningAmount") / 100;
-	float threshold = procParams->getFloat ("SharpeningThreshold") / 100;
-	float scale     = 1.0 - procParams->getFloat ("SharpeningHaloControlAmount") / 100;
+	float amount    = procParams->getFloat ("Sharpening", "Amount") / 100;
+	float threshold = procParams->getFloat ("Sharpening", "Threshold") / 100;
+	float scale     = 1.0 - procParams->getFloat ("Sharpening", "HaloControlAmount") / 100;
 
     float** nL = base->rows;
     int W = blurmap->width;
@@ -195,13 +195,13 @@ void SharpenFilter::usmsharpening (MultiImage* sourceImage, MultiImage* targetIm
     Dim size (W, H);
     double scale = getScale ();
 
-	float amount     = procParams->getFloat ("SharpeningAmount") / 100;
-	float threshold  = procParams->getFloat ("SharpeningThreshold") / 100;
-	bool edgesonly   = procParams->getBoolean ("SharpeningEdgesOnly");
-	float radius     = procParams->getFloat ("SharpeningRadius") / scale;
-	bool halocontrol = procParams->getBoolean ("SharpeningHaloControl");
-	float eradius    = procParams->getFloat ("SharpeningEdgesRadius") / scale;
-	float etolerance = procParams->getFloat   ("SharpeningEdgesTolerance") / 100;
+	float amount     = procParams->getFloat ("Sharpening", "Amount") / 100;
+	float threshold  = procParams->getFloat ("Sharpening", "Threshold") / 100;
+	bool edgesonly   = procParams->getBoolean ("Sharpening", "EdgesOnly");
+	float radius     = procParams->getFloat ("Sharpening", "Radius") / scale;
+	bool halocontrol = procParams->getBoolean ("Sharpening", "HaloControl");
+	float eradius    = procParams->getFloat ("Sharpening", "EdgesRadius") / scale;
+	float etolerance = procParams->getFloat   ("Sharpening", "EdgesTolerance") / 100;
 
     Buffer<float>* b3;
     Buffer<float> sourceView = sourceImage->getBufferView (sourceImage->cieL);
@@ -251,10 +251,10 @@ Dim SharpenFilter::getReqiredBufferSize () {
 
 void SharpenFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	bool enabled  = procParams->getBoolean ("SharpeningEnabled");
-	String method = procParams->getString ("SharpeningMethod");
-	float uamount = procParams->getFloat ("SharpeningAmount");
-	float damount = procParams->getFloat ("SharpeningDeconvAmount");
+	bool enabled  = procParams->getBoolean ("Sharpening", "Enabled");
+	String method = procParams->getString ("Sharpening", "Method");
+	float uamount = procParams->getFloat ("Sharpening", "Amount");
+	float damount = procParams->getFloat ("Sharpening", "DeconvAmount");
 
     if (getTargetImageView().skip==1 && enabled && method=="rld" && damount>0 && sourceImage->width>=8 && sourceImage->height>=8) {
 

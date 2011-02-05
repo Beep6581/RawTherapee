@@ -23,13 +23,14 @@
 #define _IMAGE_
 
 #include "rtcommon.h"
+#include "finalimage16.h"
 #include <lcms2.h>
 #include <FreeImage.h>
 #include <exiv2/exiv2.hpp>
 
 namespace rtengine {
 
-class Image {
+class Image : public FinalImage16 {
 
 		Exiv2::ExifData exifData;
 		Exiv2::IptcData iptcData;
@@ -43,31 +44,25 @@ class Image {
 
 	public:
 	
-		enum ErrorCodes {NoError=0, InvalidImage=1, UnknownFileExtension=2, LoadFailed=3, SaveFailed=4};
-		enum JPEGSubSampling {JPEGSubSampling_411=1, JPEGSubSampling_420=2, JPEGSubSampling_422=3, JPEGSubSampling_444=4};
-		enum PNGCompression {PNGDefault=1, PNGZBestSpeed=2, PNGZDefaultCompression=3, PNGZBestCompression=4, PNGZNoCompression=5};
-		enum TIFFCompression {TIFFNoCompression=1, TIFFLZWCompression=2, TIFFDeflateCompression=3};
-	
 		Image (int width, int height);
 		~Image ();
 
         void getEmbeddedICCProfile (int& length, unsigned char*& pdata);
         void setEmbeddedICCProfile (int length, unsigned char* pdata);
         
-        unsigned char* getData ();
-
-        virtual int getWidth ();
-        virtual int getHeight ();
-        virtual int getScanLineSize ();
-		
-        int save (const String& fname);
-        virtual int saveAsPNG  (const String& fname, PNGCompression compr = PNGZDefaultCompression, bool bps16=true);
-        virtual int saveAsJPEG (const String& fname, int quality = -1, JPEGSubSampling ss = JPEGSubSampling_420);
-        virtual int saveAsTIFF (const String& fname, TIFFCompression compr = TIFFLZWCompression, bool bps16=true);
-
         static Image* load (const String& fname, bool fast=false);
+        int save (const String& fname);
         
         void setMetadata (const Exiv2::ExifData& ed, const Exiv2::IptcData& id, const Exiv2::XmpData& xd);
+
+        // Implementing FinalImage16 interface
+        int getWidth ();
+        int getHeight ();
+        int getScanLineSize ();
+        unsigned char* getData ();
+        int saveAsPNG  (const String& fname, PNGCompression compr = PNGZDefaultCompression, bool bps16=true);
+        int saveAsJPEG (const String& fname, int quality = -1, JPEGSubSampling ss = JPEGSubSampling_420);
+        int saveAsTIFF (const String& fname, TIFFCompression compr = TIFFLZWCompression, bool bps16=true);
 };
 
 };

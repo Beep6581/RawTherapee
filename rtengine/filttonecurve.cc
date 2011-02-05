@@ -47,16 +47,16 @@ ToneCurveFilterDescriptor::ToneCurveFilterDescriptor ()
 
 void ToneCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setBoolean ("ToneCurveAutoExp", true);
-	defProcParams.setFloat   ("ToneCurveClip", 0.001);
-	defProcParams.setFloat   ("ToneCurveExpComp", 0);
-	defProcParams.setFloat   ("ToneCurveBrightness", 0);
-	defProcParams.setFloat   ("ToneCurveContrast", 0);
-	defProcParams.setFloat   ("ToneCurveBlack", 0);
-	defProcParams.setFloat   ("ToneCurveHLCompr", 100);
-	defProcParams.setFloat   ("ToneCurveSHCompr", 100);
+	defProcParams.setBoolean ("ToneCurve", "AutoExp", true);
+	defProcParams.setFloat   ("ToneCurve", "Clip", 0.001);
+	defProcParams.setFloat   ("ToneCurve", "ExpComp", 0);
+	defProcParams.setFloat   ("ToneCurve", "Brightness", 0);
+	defProcParams.setFloat   ("ToneCurve", "Contrast", 0);
+	defProcParams.setFloat   ("ToneCurve", "Black", 0);
+	defProcParams.setFloat   ("ToneCurve", "HLCompr", 100);
+	defProcParams.setFloat   ("ToneCurve", "SHCompr", 100);
 	FloatList tcurve;
-	defProcParams.setFloatList ("ToneCurveCustomCurve", tcurve);
+	defProcParams.setFloatList ("ToneCurve", "CustomCurve", tcurve);
 }
 
 void ToneCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -84,7 +84,7 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
         if (!histogram)
             histogram = new unsigned int [TC_LUTSIZE];
 
-    	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+    	String workingProfile = procParams->getString ("ColorManagement", "WorkingProfile");
 
         Matrix33 wprof = iccStore->workingSpaceMatrix (workingProfile);
         float mulr = wprof.data[1][0];
@@ -98,8 +98,8 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
                 histogram[CLIPTO(y,0,TC_LUTSIZE-1)]++;
             }
 
-    	bool autoexp = procParams->getBoolean ("ToneCurveAutoExp");
-    	float clip   = procParams->getFloat ("ToneCurveClip");
+    	bool autoexp = procParams->getBoolean ("ToneCurve", "AutoExp");
+    	float clip   = procParams->getFloat ("ToneCurve", "Clip");
 
     	// calculate auto exposure parameters
         if (autoexp) {
@@ -108,8 +108,8 @@ void PreToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage*
             imgsrc->getAEHistogram (aehist, aehistcompr);
             float expcomp, black;
             ImProcFunctions::calcAutoExp (aehist, aehistcompr, clip, expcomp, black);
-        	procParams->setFloat ("ToneCurveExpComp", expcomp);
-        	procParams->setFloat ("ToneCurveBlack", black*100.0);
+        	procParams->setFloat ("ToneCurve", "ExpComp", expcomp);
+        	procParams->setFloat ("ToneCurve", "Black", black*100.0);
         }
     }
 
@@ -142,13 +142,13 @@ void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
 
     // curve is only generated once: in the root filter chain
     if (!p) {
-    	float expcomp = procParams->getFloat ("ToneCurveExpComp");
-    	float brightness = procParams->getFloat ("ToneCurveBrightness");
-    	float contrast = procParams->getFloat ("ToneCurveContrast");
-    	float black = procParams->getFloat ("ToneCurveBlack");
-    	float hlcompr = procParams->getFloat ("ToneCurveHLCompr");
-    	float shcompr = procParams->getFloat ("ToneCurveSHCompr");
-    	FloatList tcurve = procParams->getFloatList ("ToneCurveCustomCurve");
+    	float expcomp = procParams->getFloat ("ToneCurve", "ExpComp");
+    	float brightness = procParams->getFloat ("ToneCurve", "Brightness");
+    	float contrast = procParams->getFloat ("ToneCurve", "Contrast");
+    	float black = procParams->getFloat ("ToneCurve", "Black");
+    	float hlcompr = procParams->getFloat ("ToneCurve", "HLCompr");
+    	float shcompr = procParams->getFloat ("ToneCurve", "SHCompr");
+    	FloatList tcurve = procParams->getFloatList ("ToneCurve", "CustomCurve");
 
     	if (!curve) {
             curve = new float [TC_LUTSIZE];

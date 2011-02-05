@@ -58,8 +58,8 @@ Settings::Settings () {
     filterList.push_back ("LuminanceCurve");
     filterList.push_back ("ColorCurve");
 
-    defaultProcParams.setBoolean ("FilterOrderCustom", false);
-    defaultProcParams.setStringList ("FilterOrderFilterList", filterList);
+    defaultProcParams.setBoolean ("FilterOrder", "Custom", false);
+    defaultProcParams.setStringList ("FilterOrder", "FilterList", filterList);
 
     previewSkip = 16;
 

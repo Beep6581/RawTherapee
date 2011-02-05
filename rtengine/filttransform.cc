@@ -26,16 +26,16 @@ TransformFilterDescriptor::TransformFilterDescriptor ()
 
 void TransformFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setBoolean ("TransformAutoFill", true);
-	defProcParams.setFloat   ("RotationDegree", 0.0);
-	defProcParams.setFloat   ("LensDistortionAmount", 0.0);
-	defProcParams.setBoolean ("LensDistortionUseLensfun", false);
-	defProcParams.setFloat   ("PerspectiveCorrectionHorizontal", 0.0);
-	defProcParams.setFloat   ("PerspectiveCorrectionVertical", 0.0);
-	defProcParams.setFloat   ("VignettingCorrectionAmount", 0.0);
-	defProcParams.setFloat   ("VignettingCorrectionRadius", 50.0);
-	defProcParams.setFloat   ("CACorrectionRed", 0.0);
-	defProcParams.setFloat   ("CACorrectionBlue", 0.0);
+	defProcParams.setBoolean ("Transform", "AutoFill", true);
+	defProcParams.setFloat   ("Rotation", "Degree", 0.0);
+	defProcParams.setFloat   ("LensDistortion", "Amount", 0.0);
+	defProcParams.setBoolean ("LensDistortion", "UseLensfun", false);
+	defProcParams.setFloat   ("PerspectiveCorrection", "Horizontal", 0.0);
+	defProcParams.setFloat   ("PerspectiveCorrection", "Vertical", 0.0);
+	defProcParams.setFloat   ("VignettingCorrection", "Amount", 0.0);
+	defProcParams.setFloat   ("VignettingCorrection", "Radius", 50.0);
+	defProcParams.setFloat   ("CACorrection", "Red", 0.0);
+	defProcParams.setFloat   ("CACorrection", "Blue", 0.0);
 }
 
 void TransformFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -86,15 +86,15 @@ void TransformFilter::process (const std::set<ProcEvent>& events, MultiImage* so
 
 void TransformFilter::transformSep (MultiImage* sourceImage, MultiImage* targetImage) {
 
-	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
-	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
-	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
-	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
-	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
-	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
-	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
-	float cacorrectionred      	= procParams->getFloat   ("CACorrectionRed");
-	float cacorrectionblue 		= procParams->getFloat   ("CACorrectionBlue");
+	bool autofill 				= procParams->getBoolean ("Transform", "AutoFill");
+	float rotatedegree 			= procParams->getFloat   ("Rotation", "Degree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortion", "Amount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrection", "Horizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrection", "Vertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrection", "Amount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrection", "Radius");
+	float cacorrectionred      	= procParams->getFloat   ("CACorrection", "Red");
+	float cacorrectionblue 		= procParams->getFloat   ("CACorrection", "Blue");
 
     Dim fsize = getFullImageSize ();
     double scale = getScale ();
@@ -218,15 +218,15 @@ void TransformFilter::transformSep (MultiImage* sourceImage, MultiImage* targetI
 
 void TransformFilter::transformNonSep (MultiImage* sourceImage, MultiImage* targetImage) {
 
-	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
-	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
-	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
-	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
-	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
-	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
-	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
-	float cacorrectionred      	= procParams->getFloat   ("CACorrectionRed");
-	float cacorrectionblue 		= procParams->getFloat   ("CACorrectionBlue");
+	bool autofill 				= procParams->getBoolean ("Transform", "AutoFill");
+	float rotatedegree 			= procParams->getFloat   ("Rotation", "Degree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortion", "Amount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrection", "Horizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrection", "Vertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrection", "Amount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrection", "Radius");
+	float cacorrectionred      	= procParams->getFloat   ("CACorrection", "Red");
+	float cacorrectionblue 		= procParams->getFloat   ("CACorrection", "Blue");
 
 	Dim fsize = getFullImageSize ();
     double scale = getScale ();
@@ -339,13 +339,13 @@ void TransformFilter::transformNonSep (MultiImage* sourceImage, MultiImage* targ
 
 void TransformFilter::simpltransform (MultiImage* sourceImage, MultiImage* targetImage) {
 
-	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
-	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
-	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
-	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
-	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
-	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
-	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+	bool autofill 				= procParams->getBoolean ("Transform", "AutoFill");
+	float rotatedegree 			= procParams->getFloat   ("Rotation", "Degree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortion", "Amount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrection", "Horizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrection", "Vertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrection", "Amount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrection", "Radius");
 
     Dim fsize = getFullImageSize ();
     double scale = getScale ();
@@ -464,8 +464,8 @@ void TransformFilter::simpltransform (MultiImage* sourceImage, MultiImage* targe
 
 void TransformFilter::vignetting (MultiImage* sourceImage, MultiImage* targetImage) {
 
-	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
-	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrection", "Amount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrection", "Radius");
 
     Dim fsize = getFullImageSize ();
     double scale = getScale ();
@@ -591,15 +591,15 @@ bool TransformFilter::transCoord (Dim fullSize, ImageView target, ImageView& sou
 
 bool TransformFilter::transCoord (Dim fullSize, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
 
-	bool autofill 				= procParams->getBoolean ("TransformAutoFill");
-	float rotatedegree 			= procParams->getFloat   ("RotationDegree");
-	float distortionamount 		= procParams->getFloat   ("LensDistortionAmount");
-	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrectionHorizontal");
-	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrectionVertical");
-	float vignettingamount 		= procParams->getFloat   ("VignettingCorrectionAmount");
-	float vignettingradius 		= procParams->getFloat   ("VignettingCorrectionRadius");
-	float cacorrectionred      	= procParams->getFloat   ("CACorrectionRed");
-	float cacorrectionblue 		= procParams->getFloat   ("CACorrectionBlue");
+	bool autofill 				= procParams->getBoolean ("Transform", "AutoFill");
+	float rotatedegree 			= procParams->getFloat   ("Rotation", "Degree");
+	float distortionamount 		= procParams->getFloat   ("LensDistortion", "Amount");
+	float perspectivevertical 	= procParams->getFloat   ("PerspectiveCorrection", "Horizontal");
+	float perspectivehorizontal = procParams->getFloat   ("PerspectiveCorrection", "Vertical");
+	float vignettingamount 		= procParams->getFloat   ("VignettingCorrection", "Amount");
+	float vignettingradius 		= procParams->getFloat   ("VignettingCorrection", "Radius");
+	float cacorrectionred      	= procParams->getFloat   ("CACorrection", "Red");
+	float cacorrectionblue 		= procParams->getFloat   ("CACorrection", "Blue");
 
     bool clipresize = true;
     bool clipped = false;
@@ -672,23 +672,23 @@ bool TransformFilter::transCoord (Dim fullSize, std::vector<Coord2D> &src, std::
 
 bool TransformFilter::needsCA () {
 
-	return fabs(procParams->getFloat ("CACorrectionRed")) > 1e-15 || fabs(procParams->getFloat ("CACorrectionBlue")) > 1e-15;
+	return fabs(procParams->getFloat ("CACorrection", "Red")) > 1e-15 || fabs(procParams->getFloat ("CACorrection", "Blue")) > 1e-15;
 }
 bool TransformFilter::needsDistortion () {
 
-    return fabs(procParams->getFloat ("LensDistortionAmount")) > 1e-15 || procParams->getBoolean ("LensDistortionUseLensfun");
+    return fabs(procParams->getFloat ("LensDistortion", "Amount")) > 1e-15 || procParams->getBoolean ("LensDistortion", "UseLensfun");
 }
 bool TransformFilter::needsRotation () {
 
-    return fabs (procParams->getFloat ("RotationDegree")) > 1e-15;
+    return fabs (procParams->getFloat ("Rotation", "Degree")) > 1e-15;
 }
 bool TransformFilter::needsPerspective () {
 
-	return fabs(procParams->getFloat ("PerspectiveCorrectionHorizontal")) > 1e-15 || fabs(procParams->getFloat ("PerspectiveCorrectionVertical")) > 1e-15;
+	return fabs(procParams->getFloat ("PerspectiveCorrection", "Horizontal")) > 1e-15 || fabs(procParams->getFloat ("PerspectiveCorrection", "Vertical")) > 1e-15;
 }
 bool TransformFilter::needsVignetting () {
 
-    return fabs(procParams->getFloat ("VignettingCorrectionAmount")) > 1e-15;
+    return fabs(procParams->getFloat ("VignettingCorrection", "Amount")) > 1e-15;
 }
 bool TransformFilter::needsTransform () {
 

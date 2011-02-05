@@ -43,14 +43,14 @@ ShadowsHighlightsFilterDescriptor::ShadowsHighlightsFilterDescriptor ()
 
 void ShadowsHighlightsFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setBoolean ("ShadowsHighlightsEnabled", false);
-	defProcParams.setBoolean ("ShadowsHighlightsHQ", false);
-	defProcParams.setFloat   ("ShadowsHighlightsHighlights", 10);
-	defProcParams.setFloat   ("ShadowsHighlightsShadows", 10);
-	defProcParams.setFloat   ("ShadowsHighlightsHTonalWidth", 80);
-	defProcParams.setFloat   ("ShadowsHighlightsSTonalWIdth", 80);
-	defProcParams.setFloat   ("ShadowsHighlightsLocalContrast", 0);
-	defProcParams.setFloat   ("ShadowsHighlightsRadius", 40);
+	defProcParams.setBoolean ("ShadowsHighlights", "Enabled", false);
+	defProcParams.setBoolean ("ShadowsHighlights", "HQ", false);
+	defProcParams.setFloat   ("ShadowsHighlights", "Highlights", 10);
+	defProcParams.setFloat   ("ShadowsHighlights", "Shadows", 10);
+	defProcParams.setFloat   ("ShadowsHighlights", "HTonalWidth", 80);
+	defProcParams.setFloat   ("ShadowsHighlights", "STonalWIdth", 80);
+	defProcParams.setFloat   ("ShadowsHighlights", "LocalContrast", 0);
+	defProcParams.setFloat   ("ShadowsHighlights", "Radius", 40);
 }
 
 void ShadowsHighlightsFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -71,14 +71,14 @@ PreShadowsHighlightsFilter::~PreShadowsHighlightsFilter () {
 
 void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	bool enabled = procParams->getBoolean ("ShadowsHighlightsEnabled");
+	bool enabled = procParams->getBoolean ("ShadowsHighlights", "Enabled");
 
     if (enabled) {
 
-    	float shradius 	= procParams->getFloat ("ShadowsHighlightsRadius");
-    	bool shhq 		= procParams->getFloat ("ShadowsHighlightsHQ");
+    	float shradius 	= procParams->getFloat ("ShadowsHighlights", "Radius");
+    	bool shhq 		= procParams->getFloat ("ShadowsHighlights", "HQ");
     	
-    	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+    	String workingProfile = procParams->getString ("ColorManagement", "WorkingProfile");
 
         // calculate radius (procparams contains relative radius only)
         ImageSource* imgsrc = getFilterChain ()->getImageSource ();
@@ -162,9 +162,9 @@ float PreShadowsHighlightsFilter::getMapAvg () {
 
 Dim PreShadowsHighlightsFilter::getReqiredBufferSize () {
 
-    if (procParams->getBoolean ("ShadowsHighlightsEnabled")) {
+    if (procParams->getBoolean ("ShadowsHighlights", "Enabled")) {
         Dim sdim = getScaledTargetImageView().getSize();
-    	bool shhq = procParams->getFloat ("ShadowsHighlightsHQ");
+    	bool shhq = procParams->getFloat ("ShadowsHighlights", "HQ");
         if (!shhq) {
 			#ifdef _OPENMP
 			if (sdim.height > sdim.width)
@@ -192,10 +192,10 @@ ShadowsHighlightsFilter::ShadowsHighlightsFilter (PreShadowsHighlightsFilter* ps
 void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
     // apply filter
-	bool enabled 	 = procParams->getBoolean ("ShadowsHighlightsEnabled");
-	float highlights = procParams->getFloat ("ShadowsHighlightsHighlights");
-	float shadows    = procParams->getFloat ("ShadowsHighlightsShadows");
-	float lce        = procParams->getFloat ("ShadowsHighlightsLocalContrast");
+	bool enabled 	 = procParams->getBoolean ("ShadowsHighlights", "Enabled");
+	float highlights = procParams->getFloat ("ShadowsHighlights", "Highlights");
+	float shadows    = procParams->getFloat ("ShadowsHighlights", "Shadows");
+	float lce        = procParams->getFloat ("ShadowsHighlights", "LocalContrast");
 
 	bool processSH  = enabled && (highlights>0 || shadows>0);
     bool processLCE = enabled && lce>0;
@@ -203,10 +203,10 @@ void ShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, MultiI
 
     if (processSH || processLCE) {
 
-    	float htonalwidth = procParams->getFloat ("ShadowsHighlightsHTonalWidth");
-    	float stonalwidth = procParams->getFloat ("ShadowsHighlightsSTonalWidth");
+    	float htonalwidth = procParams->getFloat ("ShadowsHighlights", "HTonalWidth");
+    	float stonalwidth = procParams->getFloat ("ShadowsHighlights", "STonalWidth");
 
-    	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+    	String workingProfile = procParams->getString ("ColorManagement", "WorkingProfile");
 
         float** shmap = pshFilter->getSHMap ();
 

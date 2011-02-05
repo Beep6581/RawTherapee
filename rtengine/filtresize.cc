@@ -27,12 +27,12 @@ ResizeFilterDescriptor::ResizeFilterDescriptor ()
 
 void ResizeFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setBoolean ("ResizeEnabled", false);
-	defProcParams.setString  ("ResizeMethod", "Bicubic (Sharper)");
-	defProcParams.setFloat   ("ResizeScale", 1.0);
-	defProcParams.setInteger ("ResizeSizeSpec", 0);
-	defProcParams.setInteger ("ResizeWidth", 800);
-	defProcParams.setInteger ("ResizeHeight", 600);
+	defProcParams.setBoolean ("Resize", "Enabled", false);
+	defProcParams.setString  ("Resize", "Method", "Bicubic (Sharper)");
+	defProcParams.setFloat   ("Resize", "Scale", 1.0);
+	defProcParams.setInteger ("Resize", "SizeSpec", 0);
+	defProcParams.setInteger ("Resize", "Width", 800);
+	defProcParams.setInteger ("Resize", "Height", 600);
 }
 
 void ResizeFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -77,13 +77,13 @@ double ResizeFilter::getTargetScale (int skip) {
 
 double ResizeFilter::getResizeScale () {
 
-	bool enabled = procParams->getBoolean ("ResizeEnabled");
+	bool enabled = procParams->getBoolean ("Resize", "Enabled");
 
     if (enabled) {
-    	float scale  = procParams->getFloat ("ResizeScale");
-    	int dataspec = procParams->getInteger ("ResizeSizeSpec");
-    	int width    = procParams->getInteger ("ResizeWidth");
-    	int height   = procParams->getInteger ("ResizeHeight");
+    	float scale  = procParams->getFloat ("Resize", "Scale");
+    	int dataspec = procParams->getInteger ("Resize", "SizeSpec");
+    	int width    = procParams->getInteger ("Resize", "Width");
+    	int height   = procParams->getInteger ("Resize", "Height");
         Dim pdim = getPreviousFilter()->getFullImageSize ();
         if (dataspec==1)
             return width / pdim.width;
@@ -100,13 +100,13 @@ double ResizeFilter::getResizeScale () {
 
 Dim ResizeFilter::getFullImageSize () {
 
-	bool enabled = procParams->getBoolean ("ResizeEnabled");
+	bool enabled = procParams->getBoolean ("Resize", "Enabled");
     Dim pdim = getPreviousFilter()->getFullImageSize ();
     if (enabled) {
-    	float scale  = procParams->getFloat ("ResizeScale");
-    	int dataspec = procParams->getInteger ("ResizeSizeSpec");
-    	int width    = procParams->getInteger ("ResizeWidth");
-    	int height   = procParams->getInteger ("ResizeHeight");
+    	float scale  = procParams->getFloat ("Resize", "Scale");
+    	int dataspec = procParams->getInteger ("Resize", "SizeSpec");
+    	int width    = procParams->getInteger ("Resize", "Width");
+    	int height   = procParams->getInteger ("Resize", "Height");
         if (dataspec==1)
             return Dim (width, pdim.height * width / pdim.width);
         else if (dataspec==2)
@@ -128,7 +128,7 @@ void ResizeFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
 
 void ResizeFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	String method = procParams->getString  ("ResizeMethod");
+	String method = procParams->getString  ("Resize", "Method");
 
 	if (!getFilterChain()->getImageSource()->isThumbnail() && fabs(getResizeScale()-1.0) > 1e-12) {
         if (method.substr(0,7)=="Bicubic")
@@ -146,7 +146,7 @@ void ResizeFilter::process (const std::set<ProcEvent>& events, MultiImage* sourc
 
 void ResizeFilter::bicubic (MultiImage* sourceImage, MultiImage* targetImage) {
 
-	String method = procParams->getString  ("ResizeMethod");
+	String method = procParams->getString  ("Resize", "Method");
 
     double scale = getResizeScale ();
     double Av = -0.5;

@@ -71,7 +71,7 @@ int main (int argc, char* argv[]) {
         exit(2);
     }
 
-    Image* img = SingleImageProcessor::process (ProcessingJob::create(iImg, params), NULL, NULL, errorCode);
+    FinalImage16* img = SingleImageProcessor::process (ProcessingJob::create(iImg, params), NULL, NULL, errorCode);
     
     if (errorCode) {
         std::cerr << "An error occurred during processing (error code = " << errorCode << ")\n";
@@ -79,15 +79,15 @@ int main (int argc, char* argv[]) {
     }
 
     if (format=="png")
-        errorCode = img->saveAsPNG (outFName, Image::PNGZBestCompression, false);
+        errorCode = img->saveAsPNG (outFName, FinalImage16::PNGZBestCompression, false);
     else if (format=="png16")
-        errorCode = img->saveAsPNG (outFName, Image::PNGZBestCompression, true);
+        errorCode = img->saveAsPNG (outFName, FinalImage16::PNGZBestCompression, true);
     else if (format=="tif")
-        errorCode = img->saveAsTIFF (outFName, Image::TIFFLZWCompression, false);
+        errorCode = img->saveAsTIFF (outFName, FinalImage16::TIFFLZWCompression, false);
     else if (format=="tif16")
-        errorCode = img->saveAsTIFF (outFName, Image::TIFFLZWCompression, true);
+        errorCode = img->saveAsTIFF (outFName, FinalImage16::TIFFLZWCompression, true);
     else
-        errorCode = img->saveAsJPEG (outFName, 100, Image::JPEGSubSampling_444);
+        errorCode = img->saveAsJPEG (outFName, 100, FinalImage16::JPEGSubSampling_444);
 
 	delete img;
 

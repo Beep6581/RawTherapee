@@ -43,9 +43,9 @@ void ColorSpaceConvFilter::process (const std::set<ProcEvent>& events, MultiImag
 
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
-	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
-	String inputProfile   = procParams->getString ("ColorManagementInputProfile");
-	bool gammaOnInput     = procParams->getBoolean ("ColorManagementGammaOnInput");
+	String workingProfile = procParams->getString ("ColorManagement", "WorkingProfile");
+	String inputProfile   = procParams->getString ("ColorManagement", "InputProfile");
+	bool gammaOnInput     = procParams->getBoolean ("ColorManagement", "GammaOnInput");
 
     cmsHPROFILE in  = NULL;
     cmsHPROFILE out = iccStore->workingSpace (workingProfile);

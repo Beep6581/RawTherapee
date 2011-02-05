@@ -16,8 +16,8 @@ FilterChain::FilterChain (ImProcListener* listener, ImageSource* imgSource, Proc
 
     last = first = new InitialFilter (imgSource);
 
-	if (params->getBoolean ("FilterOrderCustom") && !params->getStringList ("FilterOrderFilterList").empty())
-		filterOrder = params->getStringList ("FilterOrderFilterList");
+	if (params->getBoolean ("FilterOrder", "Custom") && !params->getStringList ("FilterOrder", "FilterList").empty())
+		filterOrder = params->getStringList ("FilterOrder", "FilterList");
 	else
 		filterOrder = Settings::settings->filterList;
 	setupChain (NULL);
@@ -287,21 +287,21 @@ double FilterChain::getLastScale () {
     return last ? last->getScale() : 1.0;
 }
 
-Image* FilterChain::getFinalImage () {
+FinalImage16* FilterChain::getFinalImage () {
 
-	String outputProfile  = procParams->getString ("ColorManagementOutputProfile");
-	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+	String outputProfile  = procParams->getString ("ColorManagement", "OutputProfile");
+	String workingProfile = procParams->getString ("ColorManagement", "WorkingProfile");
 
     last->outputCache->convertTo (MultiImage::RGB, true, workingProfile);
 
     // calculate crop rectangle
 	int cx = 0, cy = 0, cw = last->outputCache->width, ch = last->outputCache->height;
-	bool crenabled = procParams->getBoolean ("CropEnabled");
+	bool crenabled = procParams->getBoolean ("Crop", "Enabled");
 	if (crenabled) {
-		cx = procParams->getInteger ("CropRectX");
-		cy = procParams->getInteger ("CropRectY");
-		cw = procParams->getInteger ("CropRectW");
-		ch = procParams->getInteger ("CropRectH");
+		cx = procParams->getInteger ("Crop", "RectX");
+		cy = procParams->getInteger ("Crop", "RectY");
+		cw = procParams->getInteger ("Crop", "RectW");
+		ch = procParams->getInteger ("Crop", "RectH");
 	}
 
     // adjust to valid values
@@ -379,7 +379,7 @@ Image* FilterChain::getFinalImage () {
 
 DisplayImage FilterChain::getDisplayImage () {
 
-	String workingProfile = procParams->getString ("ColorManagementWorkingProfile");
+	String workingProfile = procParams->getString ("ColorManagement", "WorkingProfile");
 
     last->outputCache->convertTo(MultiImage::RGB, true, workingProfile);
 

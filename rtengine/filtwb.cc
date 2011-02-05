@@ -24,9 +24,9 @@ WhiteBalanceFilterDescriptor::WhiteBalanceFilterDescriptor ()
 
 void WhiteBalanceFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setString ("WhiteBalanceMethod", "Camera");
-	defProcParams.setFloat  ("WhiteBalanceTemperature", 6504);
-	defProcParams.setFloat  ("WhiteBalanceGreen", 1.00102);
+	defProcParams.setString ("WhiteBalance", "Method", "Camera");
+	defProcParams.setFloat  ("WhiteBalance", "Temperature", 6504);
+	defProcParams.setFloat  ("WhiteBalance", "Green", 1.00102);
 }
 
 void WhiteBalanceFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -40,9 +40,9 @@ WhiteBalanceFilter::WhiteBalanceFilter ()
 
 void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	String method = procParams->getString ("WhiteBalanceMethod");
-	float temp    = procParams->getFloat ("WhiteBalanceTemperature");
-	float green   = procParams->getFloat ("WhiteBalanceGreen");
+	String method = procParams->getString ("WhiteBalance", "Method");
+	float temp    = procParams->getFloat ("WhiteBalance", "Temperature");
+	float green   = procParams->getFloat ("WhiteBalance", "Green");
 
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 
@@ -56,8 +56,8 @@ void WhiteBalanceFilter::process (const std::set<ProcEvent>& events, MultiImage*
     	wb = ColorTemp (temp, green);
 
     // write back actual values so gui can read it out
-    procParams->setFloat ("WhiteBalanceTemperature", wb.getTemp ());
-    procParams->setFloat ("WhiteBalanceGreen", wb.getGreen ());
+    procParams->setFloat ("WhiteBalance", "Temperature", wb.getTemp ());
+    procParams->setFloat ("WhiteBalance", "Green", wb.getGreen ());
 
     // compute channel multipliers
     float r, g, b, rreq, greq, breq, rcam, gcam, bcam;

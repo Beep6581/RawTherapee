@@ -32,10 +32,10 @@ LumaCurveFilterDescriptor::LumaCurveFilterDescriptor ()
 
 void LumaCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setFloat   ("LumaCurveBrightness", 0);
-	defProcParams.setFloat   ("LumaCurveContrast", 0);
+	defProcParams.setFloat   ("LumaCurve", "Brightness", 0);
+	defProcParams.setFloat   ("LumaCurve", "Contrast", 0);
 	FloatList lcurve;
-	defProcParams.setFloatList ("LumaCurveCustomCurve",  lcurve);
+	defProcParams.setFloatList ("LumaCurve", "CustomCurve",  lcurve);
 }
 
 void LumaCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -68,9 +68,9 @@ void LumaCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
             for (int j=0; j<sourceImage->width; j++)
                 histogram[CLIPTO((int)(LC_LUTSCALE*sourceImage->cieL[i][j]/100.0),0,LC_LUTSIZE-1)]++;
 
-    	float brightness  = procParams->getFloat  ("LumaCurveBrightness");
-    	float contrast    = procParams->getFloat  ("LumaCurveContrast");
-    	FloatList& ccurve = procParams->getFloatList ("LumaCurveCustomCurve");
+    	float brightness  = procParams->getFloat  ("LumaCurve", "Brightness");
+    	float contrast    = procParams->getFloat  ("LumaCurve", "Contrast");
+    	FloatList& ccurve = procParams->getFloatList ("LumaCurve", "CustomCurve");
 
     	if (!curve) {
             curve = new float [LC_LUTSIZE];

@@ -29,8 +29,8 @@ HighlightRecoveryFilterDescriptor::HighlightRecoveryFilterDescriptor ()
 
 void HighlightRecoveryFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setString  ("HighlightRecoveryMethod", "Luminance");
-	defProcParams.setBoolean ("HighlightRecoveryEnabled", true);
+	defProcParams.setString  ("HighlightRecovery", "Method", "Luminance");
+	defProcParams.setBoolean ("HighlightRecovery", "Enabled", true);
 }
 
 void HighlightRecoveryFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -133,8 +133,8 @@ void HighlightRecoveryFilter::cieblend (MultiImage* sourceImage, MultiImage* tar
 
 void HighlightRecoveryFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	String method = procParams->getString ("HighlightRecoveryMethod");
-	bool enabled  = procParams->getBoolean ("HighlightRecoveryEnabled");
+	String method = procParams->getString ("HighlightRecovery", "Method");
+	bool enabled  = procParams->getBoolean ("HighlightRecovery", "Enabled");
 
     ImageSource* imgsrc = getFilterChain ()->getImageSource ();
 

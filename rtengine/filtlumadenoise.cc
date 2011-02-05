@@ -26,9 +26,9 @@ LumaDenoiseFilterDescriptor::LumaDenoiseFilterDescriptor ()
 
 void LumaDenoiseFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setFloat   ("LumaDenoiseRadius", 1.9);
-	defProcParams.setFloat   ("LumaDenoiseEdgeTolerance", 3.0);
-	defProcParams.setBoolean ("LumaDenoiseEnabled", false);
+	defProcParams.setFloat   ("LumaDenoise", "Radius", 1.9);
+	defProcParams.setFloat   ("LumaDenoise", "EdgeTolerance", 3.0);
+	defProcParams.setBoolean ("LumaDenoise", "Enabled", false);
 }
 
 void LumaDenoiseFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -47,10 +47,10 @@ Dim LumaDenoiseFilter::getReqiredBufferSize () {
 
 void LumaDenoiseFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	bool enabled = procParams->getBoolean ("LumaDenoiseEnabled");
+	bool enabled = procParams->getBoolean ("LumaDenoise", "Enabled");
     if (getTargetImageView().skip==1 && enabled && sourceImage->width>=8 && sourceImage->height>=8) {
-    	float radius = procParams->getFloat ("LumaDenoiseRadius");
-    	float etol = procParams->getFloat   ("LumaDenoiseEdgeTolerance");
+    	float radius = procParams->getFloat ("LumaDenoise", "Radius");
+    	float etol = procParams->getFloat   ("LumaDenoise", "EdgeTolerance");
 
     	bilateral (sourceImage->cieL, targetImage->cieL, buffer->rows, sourceImage->width, sourceImage->height, radius / getScale(), etol, multiThread);
 

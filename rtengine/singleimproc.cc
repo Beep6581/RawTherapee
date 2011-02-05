@@ -13,14 +13,14 @@
 
 namespace rtengine {
 
-Image* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* pListener, FinalImageListener* fiListener, int& errorCode) {
+FinalImage16* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* pListener, FinalImageListener* fiListener, int& errorCode) {
 
     if (fiListener) {
         ProcessingJob* currentJob = pJob;
 
         while (currentJob) {
             int errorCode;
-            Image* img = SingleImageProcessor::process (currentJob, pListener, NULL, errorCode);
+            FinalImage16* img = SingleImageProcessor::process (currentJob, pListener, NULL, errorCode);
             if (errorCode && pListener)
                 pListener->error ("Can not load input image.");
             currentJob = fiListener->imageReady (img);
@@ -66,7 +66,7 @@ Image* SingleImageProcessor::process (ProcessingJob* pJob, ProgressListener* pLi
         // perform processing
         fChain->process (ev, buffer, worker);
 
-        Image* final = fChain->getFinalImage ();
+        FinalImage16* final = fChain->getFinalImage ();
 
         delete fChain;
         delete worker;

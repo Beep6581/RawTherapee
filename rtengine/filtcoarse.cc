@@ -23,9 +23,9 @@ CoarseTransformFilterDescriptor::CoarseTransformFilterDescriptor ()
 
 void CoarseTransformFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setInteger("CoarseTransformRotate", 0);
-	defProcParams.setBoolean("CoarseTransformHFlip", false);
-	defProcParams.setBoolean("CoarseTransformVFlip", false);
+	defProcParams.setInteger("CoarseTransform", "Rotate", 0);
+	defProcParams.setBoolean("CoarseTransform", "HFlip", false);
+	defProcParams.setBoolean("CoarseTransform", "VFlip", false);
 }
 
 void CoarseTransformFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -56,7 +56,7 @@ Dim CoarseTransformFilter::getFullImageSize () {
     int ow, oh;
     Dim prevd = getPreviousFilter()->getFullImageSize ();
 
-	int rotateDeg = procParams->getInteger("CoarseTransformRotate");
+	int rotateDeg = procParams->getInteger("CoarseTransform", "Rotate");
 	if (rotateDeg==90 || rotateDeg==270)
         return Dim (prevd.height, prevd.width);
     else
@@ -73,11 +73,11 @@ void CoarseTransformFilter::reverseTransPoint (int x, int y, int& xv, int& yv) {
     Dim pfs = getPreviousFilter()->getFullImageSize ();
     int ow = pfs.width, oh = pfs.height;
 
-	int rotateDeg = procParams->getInteger("CoarseTransformRotate");
+	int rotateDeg = procParams->getInteger("CoarseTransform", "Rotate");
     int nx = x, ny = y;
-    if (procParams->getBoolean("CoarseTransformVFlip"))
+    if (procParams->getBoolean("CoarseTransform", "VFlip"))
         ny = oh - 1 - ny;
-    if (procParams->getBoolean("CoarseTransformHFlip"))
+    if (procParams->getBoolean("CoarseTransform", "HFlip"))
         nx = ow - 1 - nx;
     if (rotateDeg == 90) {
         xv = ny;
@@ -183,7 +183,7 @@ void CoarseTransformFilter::rotate270 (float** si, float** ti, int sW, int sH, B
 
 void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	int rotateDeg = procParams->getInteger("CoarseTransformRotate");
+	int rotateDeg = procParams->getInteger("CoarseTransform", "Rotate");
 
     if (rotateDeg==90) {
         rotate90 (sourceImage->r, targetImage->r, sourceImage->width, sourceImage->height, buffer);
@@ -203,9 +203,9 @@ void CoarseTransformFilter::process (const std::set<ProcEvent>& events, MultiIma
     else if (targetImage!=sourceImage)
         targetImage->copyFrom (sourceImage);
 
-    if (procParams->getBoolean("CoarseTransformHFlip"))
+    if (procParams->getBoolean("CoarseTransform", "HFlip"))
         hflip (targetImage);
-    if (procParams->getBoolean("CoarseTransformVFlip"))
+    if (procParams->getBoolean("CoarseTransform", "VFlip"))
         vflip (targetImage);
 }
 

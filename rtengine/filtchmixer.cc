@@ -26,9 +26,9 @@ void ColorMixerFilterDescriptor::getDefaultParameters (ProcParams& defProcParams
 	g[0] = 0;   g[1] = 100; g[2] = 0;
 	b[0] = 0;   b[1] = 0;   b[2] = 100;
 
-	defProcParams.setIntegerList ("ChMixerRed",   r);
-	defProcParams.setIntegerList ("ChMixerGreen", g);
-	defProcParams.setIntegerList ("ChMixerBlue",  b);
+	defProcParams.setIntegerList ("ChMixer", "Red",   r);
+	defProcParams.setIntegerList ("ChMixer", "Green", g);
+	defProcParams.setIntegerList ("ChMixer", "Blue",  b);
 }
 
 void ColorMixerFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -42,9 +42,9 @@ ColorMixerFilter::ColorMixerFilter ()
 
 void ColorMixerFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	IntList& red   = procParams->getIntegerList ("ChMixerRed");
-	IntList& green = procParams->getIntegerList ("ChMixerGreen");
-	IntList& blue  = procParams->getIntegerList ("ChMixerBlue");
+	IntList& red   = procParams->getIntegerList ("ChMixer", "Red");
+	IntList& green = procParams->getIntegerList ("ChMixer", "Green");
+	IntList& blue  = procParams->getIntegerList ("ChMixer", "Blue");
 
     bool mixchannels = red[0]!=100 || red[1]!=0     || red[2]!=0
                     || green[0]!=0 || green[1]!=100 || green[2]!=0

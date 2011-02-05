@@ -31,12 +31,12 @@ ColorCurveFilterDescriptor::ColorCurveFilterDescriptor ()
 
 void ColorCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	defProcParams.setInteger ("ColorBoostAmount", 0);
-	defProcParams.setBoolean ("ColorBoostAvoidClip", false);
-	defProcParams.setBoolean ("ColorBoostEnableSatLimiter", false);
-	defProcParams.setFloat   ("ColorBoostSaturationLimit",  50);
-	defProcParams.setFloat   ("ColorShiftCieaChannel",  0.0);
-	defProcParams.setFloat   ("ColorShiftCiebChannel",  0.0);
+	defProcParams.setInteger ("ColorBoost", "Amount", 0);
+	defProcParams.setBoolean ("ColorBoost", "AvoidClip", false);
+	defProcParams.setBoolean ("ColorBoost", "EnableSatLimiter", false);
+	defProcParams.setFloat   ("ColorBoost", "SaturationLimit",  50);
+	defProcParams.setFloat   ("ColorShift", "CieaChannel",  0.0);
+	defProcParams.setFloat   ("ColorShift", "CiebChannel",  0.0);
 }
 
 void ColorCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -81,12 +81,12 @@ void ColorCurveFilter::generateCurve (float boost, float limit) {
 
 void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	float boost =  (procParams->getInteger ("ColorBoostAmount") + 100.0) / 100.0;
-	float shift_a = procParams->getFloat  ("ColorShiftCieaChannel");
-	float shift_b = procParams->getFloat  ("ColorShiftCiebChannel");
-	float satlimit = procParams->getFloat  ("ColorBoostSaturationLimit");
-	bool  enalimiter = procParams->getBoolean ("ColorBoostEnableSatLimiter");
-	bool  avoidclip = procParams->getBoolean ("ColorBoostAvoidClip");
+	float boost =  (procParams->getInteger ("ColorBoost", "Amount") + 100.0) / 100.0;
+	float shift_a = procParams->getFloat  ("ColorShift", "CieaChannel");
+	float shift_b = procParams->getFloat  ("ColorShift", "CiebChannel");
+	float satlimit = procParams->getFloat  ("ColorBoost", "SaturationLimit");
+	bool  enalimiter = procParams->getBoolean ("ColorBoost", "EnableSatLimiter");
+	bool  avoidclip = procParams->getBoolean ("ColorBoost", "AvoidClip");
 
 	float* myCurve;
 

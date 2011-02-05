@@ -8,6 +8,7 @@
 #include "procparams.h"
 #include "filter.h"
 #include "rtcommon.h"
+#include "finalimage16.h"
 
 namespace rtengine {
 
@@ -49,7 +50,7 @@ public:
 	ImageView getLastImageView ();
     double    getLastScale ();
 
-    Image*   	 getFinalImage ();
+    FinalImage16*  getFinalImage ();
     DisplayImage getDisplayImage ();
     
     void 	 getMetadataToSave (Exiv2::ExifData& ed, Exiv2::IptcData& id, Exiv2::XmpData& xd);

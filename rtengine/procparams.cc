@@ -25,114 +25,128 @@ namespace rtengine {
 
 ProcParams defaultProcParams;
 
-void ProcParams::setFloat  (const String& key, float value) {
+void ProcParams::setFloat  (const String& group, const String& key, float value) {
 
-	floatParams[key] = value;
+	String key_ = group + '/' + key;
+	floatParams[key_] = value;
 }
 
-float ProcParams::getFloat (const String& key) {
+float ProcParams::getFloat (const String& group, const String& key) {
 
-	if (floatParams.count (key))
-		return floatParams[key];
+	String key_ = group + '/' + key;
+	if (floatParams.count (key_))
+		return floatParams[key_];
 	else
-		return defaultProcParams.floatParams[key];
+		return defaultProcParams.floatParams[key_];
 }
 
-void ProcParams::setInteger (const String& key, int value) {
+void ProcParams::setInteger (const String& group, const String& key, int value) {
 
-	intParams[key] = value;
+	String key_ = group + '/' + key;
+	intParams[key_] = value;
 }
 
-int ProcParams::getInteger (const String& key) {
+int ProcParams::getInteger (const String& group, const String& key) {
 
-	if (intParams.count (key))
-		return intParams[key];
+	String key_ = group + '/' + key;
+	if (intParams.count (key_))
+		return intParams[key_];
 	else
-		return defaultProcParams.intParams[key];
+		return defaultProcParams.intParams[key_];
 }
 
-void ProcParams::setBoolean (const String& key, bool value) {
+void ProcParams::setBoolean (const String& group, const String& key, bool value) {
 
-	boolParams[key] = value;
+	String key_ = group + '/' + key;
+	boolParams[key_] = value;
 }
 
-bool ProcParams::getBoolean (const String& key) {
+bool ProcParams::getBoolean (const String& group, const String& key) {
 
-	if (boolParams.count (key))
-		return boolParams[key];
+	String key_ = group + '/' + key;
+	if (boolParams.count (key_))
+		return boolParams[key_];
 	else
-		return defaultProcParams.boolParams[key];
+		return defaultProcParams.boolParams[key_];
 }
 
-void ProcParams::setString  (const String& key, const String& value) {
+void ProcParams::setString  (const String& group, const String& key, const String& value) {
 
-	stringParams[key] = value;
+	String key_ = group + '/' + key;
+	stringParams[key_] = value;
 }
 
-String ProcParams::getString  (const String& key) {
+String ProcParams::getString  (const String& group, const String& key) {
 
-	if (stringParams.count (key))
-		return stringParams[key];
+	String key_ = group + '/' + key;
+	if (stringParams.count (key_))
+		return stringParams[key_];
 	else
-		return defaultProcParams.stringParams[key];
+		return defaultProcParams.stringParams[key_];
 }
 
-void ProcParams::setFloatList (const String& key, const FloatList& value) {
+void ProcParams::setFloatList (const String& group, const String& key, const FloatList& value) {
 
-	floatListParams[key] = value;
+	String key_ = group + '/' + key;
+	floatListParams[key_] = value;
 }
 
-FloatList& ProcParams::getFloatList (const String& key) {
+FloatList& ProcParams::getFloatList (const String& group, const String& key) {
 
-	if (floatListParams.count (key))
-		return floatListParams[key];
+	String key_ = group + '/' + key;
+	if (floatListParams.count (key_))
+		return floatListParams[key_];
 	else
-		return defaultProcParams.floatListParams[key];
+		return defaultProcParams.floatListParams[key_];
 }
 
-void ProcParams::setIntegerList (const String& key, const IntList& value) {
+void ProcParams::setIntegerList (const String& group, const String& key, const IntList& value) {
 
-	intListParams[key] = value;
+	String key_ = group + '/' + key;
+	intListParams[key_] = value;
 }
 
-IntList& ProcParams::getIntegerList (const String& key) {
+IntList& ProcParams::getIntegerList (const String& group, const String& key) {
 
-	if (intListParams.count (key))
-		return intListParams[key];
+	String key_ = group + '/' + key;
+	if (intListParams.count (key_))
+		return intListParams[key_];
 	else
-		return defaultProcParams.intListParams[key];
+		return defaultProcParams.intListParams[key_];
 }
 
-void ProcParams::setStringList (const String& key, const StringList& value) {
+void ProcParams::setStringList (const String& group, const String& key, const StringList& value) {
 
-	stringListParams[key] = value;
+	String key_ = group + '/' + key;
+	stringListParams[key_] = value;
 }
 
-StringList& ProcParams::getStringList (const String& key) {
+StringList& ProcParams::getStringList (const String& group, const String& key) {
 
-	if (stringListParams.count (key))
-		return stringListParams[key];
+	String key_ = group + '/' + key;
+	if (stringListParams.count (key_))
+		return stringListParams[key_];
 	else
-		return defaultProcParams.stringListParams[key];
+		return defaultProcParams.stringListParams[key_];
 }
 
 
 ProcParams::ProcParams () { 
 
-	defaultProcParams.setBoolean ("CropEnabled", false);
-	defaultProcParams.setInteger ("CropRectX", 0);
-	defaultProcParams.setInteger ("CropRectY", 0);
-	defaultProcParams.setInteger ("CropRectW", 100000);
-	defaultProcParams.setInteger ("CropRectH", 100000);
-	defaultProcParams.setBoolean ("CropFixRectRatio", true);
-	defaultProcParams.setString  ("CropRectRatio", "3:2");
-	defaultProcParams.setString  ("CropRectOrientation", "Landscape");
-	defaultProcParams.setString  ("CropGuide", "None");
+	defaultProcParams.setBoolean ("Crop", "Enabled", false);
+	defaultProcParams.setInteger ("Crop", "RectX", 0);
+	defaultProcParams.setInteger ("Crop", "RectY", 0);
+	defaultProcParams.setInteger ("Crop", "RectW", 100000);
+	defaultProcParams.setInteger ("Crop", "RectH", 100000);
+	defaultProcParams.setBoolean ("Crop", "FixRectRatio", true);
+	defaultProcParams.setString  ("Crop", "RectRatio", "3:2");
+	defaultProcParams.setString  ("Crop", "RectOrientation", "Landscape");
+	defaultProcParams.setString  ("Crop", "Guide", "None");
 
-	defaultProcParams.setString  ("ColorManagementInputProfile", "");
-	defaultProcParams.setBoolean ("ColorManagementGammaOnInput", false);
-	defaultProcParams.setString  ("ColorManagementWorkingProfile", "sRGB");
-	defaultProcParams.setString  ("ColorManagementOutputProfile", "sRGB");
+	defaultProcParams.setString  ("ColorManagement", "InputProfile", "");
+	defaultProcParams.setBoolean ("ColorManagement", "GammaOnInput", false);
+	defaultProcParams.setString  ("ColorManagement", "WorkingProfile", "sRGB");
+	defaultProcParams.setString  ("ColorManagement", "OutputProfile", "sRGB");
 
     setDefaults (); 
 }       
@@ -148,31 +162,57 @@ void ProcParams::setDefaults () {
 	stringListParams = defaultProcParams.stringListParams;
 }
 
+String ProcParams::getKey (const String& skey) const {
+
+	int pos = skey.find ('/');
+	if (pos!=String::npos)
+		return skey.substr (pos+1);
+	else
+		return String ("");
+}
+
+String ProcParams::getGroup (const String& skey) const{
+
+	int pos = skey.find ('/');
+	if (pos!=String::npos)
+		return skey.substr (0, pos);
+	else
+		return String ("");
+}
+
+String ProcParams::removeQualifier (const String& skey) const {
+
+	if (skey.size() > 3)
+		return skey.substr (3);
+	else
+		return String ("");
+}
+
 void ProcParams::addToXmp (Exiv2::XmpData& xmpData) const {
 
 	try {
-		// save float parameters. An "F" is appended to the end of the keys to indicate that these are floats.
+		// save float paramereplaceters. An "F" is appended to the end of the keys to indicate that these are floats.
 		for (std::map<String,float>::const_iterator i=floatParams.begin(); i!=floatParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1F", i->first)] = Glib::ustring::format (i->second);
+			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2F", getGroup (i->first), getKey (i->first))] = Glib::ustring::format (i->second);
 
 		// save integer parameters. An "I" is appended to the end of the keys to indicate that these are integers.
 		for (std::map<String,int>::const_iterator i=intParams.begin(); i!=intParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1I", i->first)] = Glib::ustring::format (i->second);
+			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2I", getGroup (i->first), getKey (i->first))] = Glib::ustring::format (i->second);
 			
 		// save boolean parameters. A "B" is appended to the end of the keys to indicate that these are booleans.
 		for (std::map<String,bool>::const_iterator i=boolParams.begin(); i!=boolParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1B", i->first)] = i->second ? "true" : "false";
+			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2B", getGroup (i->first), getKey (i->first))] = i->second ? "true" : "false";
 
 		// save string parameters. An "S" is appended to the end of the keys to indicate that these are strings.
 		for (std::map<String,String>::const_iterator i=stringParams.begin(); i!=stringParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1S", i->first)] = i->second;
+			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2S", getGroup (i->first), getKey (i->first))] = i->second;
 
 		// save float list parameters. An "FL" is appended to the end of the keys to indicate that these are floatlists.
 		for (std::map<String,FloatList>::const_iterator i=floatListParams.begin(); i!=floatListParams.end(); i++) {
 			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
 			for (int j=0; j<i->second.size(); j++)
 				arr->read (Glib::ustring::format (i->second[j]));
-			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1FL", i->first)), arr.get());
+			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1/rt:%2FL", getGroup (i->first), getKey (i->first))), arr.get());
 		}
 
 		// save int list parameters. An "IL" is appended to the end of the keys to indicate that these are intlists.
@@ -180,7 +220,7 @@ void ProcParams::addToXmp (Exiv2::XmpData& xmpData) const {
 			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
 			for (int j=0; j<i->second.size(); j++)
 				arr->read (Glib::ustring::format (i->second[j]));
-			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1IL", i->first)), arr.get());
+			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1/rt:%2IL", getGroup (i->first), getKey (i->first))), arr.get());
 		}
 
 		// save string list parameters. An "SL" is appended to the end of the keys to indicate that these are stringlists.
@@ -188,7 +228,7 @@ void ProcParams::addToXmp (Exiv2::XmpData& xmpData) const {
 			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
 			for (int j=0; j<i->second.size(); j++)
 				arr->read (i->second[j]);
-			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1SL", i->first)), arr.get());
+			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1/rt:%2SL", getGroup (i->first), getKey (i->first))), arr.get());
 		}
 	}
 	catch (Exiv2::AnyError& e) {
@@ -260,33 +300,33 @@ int ProcParams::load (const String& fname) {
 				}
 				// store values
 				if (typeID == "F")
-					setFloat (propName, i->toFloat());
+					setFloat (getGroup (propName), removeQualifier (getKey (propName)), i->toFloat());
 				else if (typeID == "I")
-					setInteger (propName, i->toLong());
+					setInteger (getGroup (propName), removeQualifier (getKey (propName)), i->toLong());
 				else if (typeID == "S")
-					setString (propName, i->toString());
+					setString (getGroup (propName), removeQualifier (getKey (propName)), i->toString());
 				else if (typeID == "B")
-					setBoolean (propName, i->toString()=="true");
+					setBoolean (getGroup (propName), removeQualifier (getKey (propName)), i->toString()=="true");
 				else if (typeID == "FL") {
 					FloatList arr;
 					arr.resize (i->count ());
 					for (int j=0; j<arr.size(); j++)
 						arr[j] = i->toFloat (j);
-					setFloatList (propName, arr);
+					setFloatList (getGroup (propName), removeQualifier (getKey (propName)), arr);
 				}
 				else if (typeID == "IL") {
 					IntList arr;
 					arr.resize (i->count ());
 					for (int j=0; j<arr.size(); j++)
 						arr[j] = i->toLong (j);
-					setIntegerList (propName, arr);
+					setIntegerList (getGroup (propName), removeQualifier (getKey (propName)), arr);
 				}
 				else if (typeID == "SL") {
 					StringList arr;
 					arr.resize (i->count ());
 					for (int j=0; j<arr.size(); j++)
 						arr[j] = i->toString (j);
-					setStringList (propName, arr);
+					setStringList (getGroup (propName), removeQualifier (getKey (propName)), arr);
 				}
 			}
 		}
