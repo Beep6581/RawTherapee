@@ -74,9 +74,15 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
     double Y = 1.0;
     double Z = (1.0-xD-yD)/yD;
 	
-	rmul = sRGB_xyz[0][0]*X + sRGB_xyz[0][1]*Y + sRGB_xyz[0][2]*Z; 
-	gmul = sRGB_xyz[1][0]*X + sRGB_xyz[1][1]*Y + sRGB_xyz[1][2]*Z; 
-	bmul = sRGB_xyz[2][0]*X + sRGB_xyz[2][1]*Y + sRGB_xyz[2][2]*Z; 
+	/*if (isRaw) {
+		rmul = sRGB_xyz[0][0]*X + sRGB_xyz[0][1]*Y + sRGB_xyz[0][2]*Z; 
+		gmul = sRGB_xyz[1][0]*X + sRGB_xyz[1][1]*Y + sRGB_xyz[1][2]*Z; 
+		bmul = sRGB_xyz[2][0]*X + sRGB_xyz[2][1]*Y + sRGB_xyz[2][2]*Z;
+	} else {*/
+		rmul = sRGBd65_xyz[0][0]*X + sRGBd65_xyz[0][1]*Y + sRGBd65_xyz[0][2]*Z; 
+		gmul = sRGBd65_xyz[1][0]*X + sRGBd65_xyz[1][1]*Y + sRGBd65_xyz[1][2]*Z; 
+		bmul = sRGBd65_xyz[2][0]*X + sRGBd65_xyz[2][1]*Y + sRGBd65_xyz[2][2]*Z; 
+	//};
     gmul /= green;
 
     double max = rmul;

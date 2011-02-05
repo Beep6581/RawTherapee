@@ -96,7 +96,11 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
         plistener->setProgress (1.0);
     }
 
-    wb = ColorTemp (1.0, 1.0, 1.0);
+	wb = ColorTemp (1.0,1.0,1.0);
+    //wb = ColorTemp (6504,1.0);
+	//wb = ColorTemp (0.995701, 1.00266, 1.32172); 
+	//modification for D50 working space -- Bradford chromatic adaptation of (1,1,1) in D65
+	//this is probably a mistake if embedded profile is not D65
 
     return 0;
 }
@@ -139,7 +143,7 @@ void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, i
         sx2 = sx1 + pp.h;
         sy2 = sy1 + pp.w;
     }   
-    printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
+    //printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
 }
 
 void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp) {
@@ -235,6 +239,8 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
                 image->r[ix][j] = CLIP(rm*line_red[j])/65535.0;
                 image->g[ix][j] = CLIP(gm*line_green[j])/65535.0;
                 image->b[ix][j] = CLIP(bm*line_blue[j])/65535.0;
+				//if (ix==100 && j==100) printf("stdimsrc before R= %f  G= %f  B= %f  \n",65535*image->r[ix][j],65535*image->g[ix][j],65535*image->b[ix][j]);
+
             }
         }
     }
@@ -257,11 +263,12 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 //    if (hrp.enabled==true && hrmap[0]==NULL) 
 //        updateHLRecoveryMap ();
     // the code will use OpenMP as of now.
+	
 	//Image16* tmpim = new Image16 (image->width,image->height);
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
-    //colorSpaceConversion16 (tmpim, cmp, embProfile);//float conversion currently broken???
-	colorSpaceConversion (image, cmp, embProfile);//float conversion currently broken???
+    //colorSpaceConversion16 (tmpim, cmp, embProfile);
+	colorSpaceConversion (image, cmp, embProfile);
 
     // Flip if needed
     if (tran & TR_HFLIP)
@@ -274,6 +281,7 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 			image->r[h][w] *= 65535.0 ;
 			image->g[h][w] *= 65535.0 ;
 			image->b[h][w] *= 65535.0 ;
+			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
 		}
 	
     t2.set ();

@@ -37,6 +37,7 @@ const double sRGBd65_xyz[3][3] = {{ 3.2404542, -1.5371385, -0.4985314},
 									{-0.9692660,  1.8760108,  0.0415560},
 									{0.0556434, -0.2040259,  1.0572252}};
 
+
 // Color space conversion to/from XYZ; color spaces adapted to D50 using Bradford transform
 const double xyz_sRGB[3][3] = {{0.4360747,  0.3850649,  0.1430804},
 								{0.2225045,  0.7168786,  0.0606169},

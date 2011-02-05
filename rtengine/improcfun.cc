@@ -126,7 +126,6 @@ void ImProcFunctions::firstAnalysis_ (Imagefloat* original, Glib::ustring wprofi
 	lumimul[2] = wprof[1][2];
 	
     int W = original->width;
-    //int cradius = 1;
     for (int i=row_from; i<row_to; i++) {
         for (int j=0; j<W; j++) {
       
@@ -218,21 +217,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
     double lceamount = params->sh.localcontrast / 200.0;
 
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-    /*float toxyz[3][3] = {
-        {
-        	( wprof[0][0] / D50x),
-        	( wprof[0][1]		),
-        	( wprof[0][2] / D50z)
-        },{
-			( wprof[1][0] / D50x),
-			( wprof[1][1]		),
-			( wprof[1][2] / D50z)
-        },{
-			( wprof[2][0] / D50x),
-			( wprof[2][1]		),
-			( wprof[2][2] / D50z)
-        }
-    };*/
+
 	float toxyz[3][3] = {
         {
         	( wprof[0][0] / D50x),
@@ -249,7 +234,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
         }
     };
 
-    bool mixchannels = params->chmixer.red[0]!=100 || params->chmixer.red[1]!=0 || params->chmixer.red[2]!=0 || params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || params->chmixer.blue[0]!=0 || params->chmixer.blue[1]!=0 || params->chmixer.blue[2]!=100;
+
+    bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   || \
+						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || \
+						params->chmixer.blue[0]!=0	|| params->chmixer.blue[1]!=0    || params->chmixer.blue[2]!=100);
 
 //    int mapval;
 //    double factor;
@@ -307,7 +295,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
 
 
 			//float tonefactor = (0.299*rtonefactor+0.587*gtonefactor+0.114*btonefactor);
-			float tonefactor=(CurveFactory::flinterp(hltonecurve,r)+CurveFactory::flinterp(hltonecurve,g)+CurveFactory::flinterp(hltonecurve,b))/3;
+			float tonefactor=(CurveFactory::flinterp(hltonecurve,r) + CurveFactory::flinterp(hltonecurve,g) + CurveFactory::flinterp(hltonecurve,b))/3;
 
 			r = (r*tonefactor);
 			g = (g*tonefactor);

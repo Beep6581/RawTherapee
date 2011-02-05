@@ -1539,7 +1539,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
             }
     }
     else {
-		
+		//color space transform is expecting data in the range (0,1)
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
 				im->r[h][w] /= 65535.0 ;
@@ -1554,7 +1554,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         if (hTransform) {
             if (cmp.gammaOnInput) {
                 double gd = pow (2.0, defgain);
-                defgain = 0.0;
+                defgain = 0.0;//TODO: THIS MAKES NO SENSE!!!??? SETS IMAGE TO ZERO...
 #pragma omp parallel for
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
@@ -1570,6 +1570,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
           lcmsMutex->unlock ();
           cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
         }
+		//restore normalization to the range (0,65535)
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
 				im->r[h][w] *= 65535.0 ;

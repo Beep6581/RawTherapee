@@ -71,7 +71,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;
+				float x_ = 65535*Lab2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
@@ -141,7 +141,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
     if (oprof) {
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_8, settings->colorimetricIntent, 0);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_8, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
         int ix = 0;
 		float g;
@@ -245,7 +245,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 		}
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
 		cmsDoTransform (hTransform, image->data, image->data, image->planestride/2);
 		cmsDeleteTransform(hTransform);

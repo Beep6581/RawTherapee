@@ -314,7 +314,7 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 //    pseudoinverse ((double (*)[3]) out_rgb[output_color-1], inverse, 3);
     for (int i=0; i < 3; i++)
       for (int j=0; j < 3; j++) {
-        oprof[pbody[j*3+23]/4+i+2] = matrix[j][i] * 0x10000 + 0.5;
+        oprof[pbody[j*3+23]/4+i+2] = matrix[i][j] * 0x10000 + 0.5;
 //    	for (num = k=0; k < 3; k++)
 //    	  num += xyzd50_srgb[i][k] * inverse[j][k];
       }
