@@ -693,6 +693,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
 !HISTORY_MSG_87;Impulse noise reduction
@@ -729,16 +730,22 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CACORRECTION;Apply CA auto correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_DARKFRAMEFOUND;Found
+!PREFERENCES_DARKFRAMESHOTS;shots
+!PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DCBENHANCE;Apply DCB enhancement step
 !PREFERENCES_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PREFERENCES_LINEDENOISE;Line noise filter
@@ -746,6 +753,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
@@ -765,6 +773,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
@@ -783,6 +792,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_ICM_INPUTNONE;No profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_LENSGEOM_AUTOCROP;Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_PREPROCESS_DARKFRAME;Dark frame

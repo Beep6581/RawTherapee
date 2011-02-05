@@ -752,6 +752,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
 !MAIN_FRAME_EDITOR;Editor
@@ -776,17 +777,28 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_DARKFRAMEFOUND;Found
+!PREFERENCES_DARKFRAMESHOTS;shots
+!PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_RESIZE_SPECIFY;Specify:

@@ -739,6 +739,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
@@ -768,17 +769,25 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+!PREFERENCES_DARKFRAMEFOUND;Found
+!PREFERENCES_DARKFRAMESHOTS;shots
+!PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
@@ -795,3 +804,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_HSVEQUALIZER_SAT;Saturation
 !TP_HSVEQUALIZER_VAL;Value
 !TP_ICM_INPUTNONE;No profile
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit

@@ -452,7 +452,6 @@ PREFERENCES_DMETHOD;Méthode
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXPOS;Facteur de correction\nd'exposition (linéaire)
-PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
@@ -488,6 +487,7 @@ PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
 PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
+PREFERENCES_PRESER;Correct. d'expo. préservant\nles hautes lumières (EV)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -773,3 +773,13 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit

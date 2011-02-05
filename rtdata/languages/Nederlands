@@ -785,12 +785,24 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
 !MAIN_FRAME_EDITOR;Editor
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+!PREFERENCES_DARKFRAMEFOUND;Found
+!PREFERENCES_DARKFRAMESHOTS;shots
+!PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
+!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !TP_CROP_GTGRID;Grid
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit
