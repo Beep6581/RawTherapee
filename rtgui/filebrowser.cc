@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *  Copyright (c) 2011 Oliver Duis <www.oliverduis.de>
+ *  Copyright (c) 2011 Michael Ezra <www.michaelezra.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -75,6 +76,8 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(applyprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(cachemenu = new Gtk::MenuItem (M("FILEBROWSER_CACHE"))), 0, 1, p, p+1); p++;
+
     pmenu->show_all ();
 
     pmaccelgroup = Gtk::AccelGroup::create ();
@@ -109,7 +112,8 @@ FileBrowser::FileBrowser ()
     pasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), pasteprof));    
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
     applyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applyprof));    
-    clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));    
+    clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));
+    cachemenu->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), cachemenu));
 }
 
 void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
@@ -142,6 +146,16 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
         mi->show ();
     }
     applyprof->set_submenu (*applmenu);    
+
+    // build cache sub menu
+    p = 0;
+	Gtk::Menu* cachesubmenu = Gtk::manage (new Gtk::Menu ());
+	cachesubmenu->attach (*(clearFromCache = new Gtk::MenuItem (M("FILEBROWSER_CACHECLEARFROMPARTIAL"))), 0, 1, p, p+1); p++;
+	cachesubmenu->attach (*(clearFromCacheFull = new Gtk::MenuItem (M("FILEBROWSER_CACHECLEARFROMFULL"))), 0, 1, p, p+1); p++;
+    clearFromCache->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearFromCache));
+    clearFromCacheFull->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearFromCacheFull));
+    cachesubmenu->show_all ();
+    cachemenu->set_submenu (*cachesubmenu);
 
     pmenu->popup (3, this->eventTime);
 }
@@ -401,6 +415,16 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         for (int i=0; i<mselected.size(); i++) 
             mselected[i]->thumbnail->clearProcParams (FILEBROWSER);
         queue_draw ();
+    }
+	else if (m==clearFromCache) {
+		for (int i=0; i<mselected.size(); i++)
+			tbl->clearFromCacheRequested (mselected, false);
+		//queue_draw ();
+    }
+	else if (m==clearFromCacheFull) {
+		for (int i=0; i<mselected.size(); i++)
+			tbl->clearFromCacheRequested (mselected, true);
+		//queue_draw ();
     }
 }
 

@@ -164,6 +164,7 @@ class FileCatalog : public Gtk::VBox,
                 void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed);
                 void developRequested       (std::vector<FileBrowserEntry*> tbe);
                 void renameRequested        (std::vector<FileBrowserEntry*> tbe);
+                void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace);
                 void selectionChanged       (std::vector<Thumbnail*> tbe);
                 void emptyTrash ();
                 bool trashIsEmpty ();
