@@ -23,12 +23,8 @@ using namespace rtengine::procparams;
 
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentContainer(NULL), exp(NULL) {
 
-	// Gtk::Expander* exp = new Gtk::Expander ();
-	// exp->set_label_widget (*(new ILabel (Glib::ustring("<b>") + label + "</b>")));
 	exp = Gtk::manage (new Gtk::Expander ());
 	exp->set_border_width (4);
-	//Glib::RefPtr<Gtk::Style> *style = new Gtk::Style();
-	//exp->set_style()
 	exp->set_use_markup (true);
 	exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
 
