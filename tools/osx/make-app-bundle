@@ -88,6 +88,8 @@ cp tools/osx/start ${MACOS}
 echo "Recursively copying libraries referenced by executable..."
 checkLink "${MACOS}/${EXECUTABLE}"
 
+ADDITIONAL_LIB=`find /opt/local/lib /usr/lib -name "gdk-pixbuf-2.0"`
+cp -R ${ADDITIONAL_LIB} ${LIB}
 
 #Make a .dmg for distribution and delete the .app
 echo "Creating distribution .dmg..."
