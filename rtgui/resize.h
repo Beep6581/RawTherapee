@@ -23,7 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class Resize : public Gtk::VBox, public AdjusterListener, public ToolPanel, public rtengine::SizeListener {
+class Resize : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
 
   protected:
     Gtk::CheckButton*  enabled;

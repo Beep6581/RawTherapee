@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrDenoise::DirPyrDenoise () : ToolPanel ()  {
+DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 	
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);

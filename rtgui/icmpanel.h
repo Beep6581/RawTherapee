@@ -28,7 +28,7 @@ class ICMPanelListener {
         virtual void saveInputICCReference (Glib::ustring fname) {}
 };
 
-class ICMPanel : public Gtk::VBox, public ToolPanel {
+class ICMPanel : public Gtk::VBox, public FoldableToolPanel {
 
     private:
         Gtk::RadioButton*  inone;

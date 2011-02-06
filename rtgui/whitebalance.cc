@@ -29,7 +29,7 @@ extern Glib::ustring argv0;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-WhiteBalance::WhiteBalance () : ToolPanel(), wbp(NULL), wblistener(NULL), tempAdd(false), greenAdd (false) {
+WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL), wblistener(NULL), tempAdd(false), greenAdd (false) {
 
   Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
   hbox->show ();

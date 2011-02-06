@@ -36,7 +36,7 @@ class FFProvider {
     // add other info here
 };
 
-class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
+class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel{
 
   protected:
 

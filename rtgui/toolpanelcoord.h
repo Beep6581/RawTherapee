@@ -129,7 +129,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         
         bool hasChanged;
 
-        void addPanel (Gtk::Box* where, Gtk::Container* panel, Glib::ustring label);
+        void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label);
+        void foldThemAll (GdkEventButton* event);
 
     public:
     
@@ -141,6 +142,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
 
         bool getChangedState                ()                                      { return hasChanged; }
         void updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl);
+        void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
         void addPParamsChangeListener   (PParamsChangeListener* pp) { paramcListeners.push_back (pp); }

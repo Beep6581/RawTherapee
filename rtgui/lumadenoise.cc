@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LumaDenoise::LumaDenoise () : ToolPanel ()  {
+LumaDenoise::LumaDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 
   enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
   enabled->set_active (false);

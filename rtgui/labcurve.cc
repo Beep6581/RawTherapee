@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false), satAdd(false) {
+LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd(false), satAdd(false) {
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));

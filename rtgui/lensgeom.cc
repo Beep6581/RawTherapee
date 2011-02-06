@@ -24,7 +24,7 @@ extern Glib::ustring argv0;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensGeometry::LensGeometry () : ToolPanel(), rlistener(NULL) {
+LensGeometry::LensGeometry () : Gtk::VBox(), FoldableToolPanel(this), rlistener(NULL) {
 
   fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
   pack_start (*fill);

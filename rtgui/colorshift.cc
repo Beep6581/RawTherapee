@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ColorShift::ColorShift () : ToolPanel(), aAdd(false), bAdd(false) {
+ColorShift::ColorShift () : Gtk::VBox(), FoldableToolPanel(this), aAdd(false), bAdd(false) {
 
   ashift   = Gtk::manage (new Adjuster (M("TP_COLORSHIFT_GREENMAGENTA"), -25, 25, 0.1, 0));
   pack_start (*ashift);
