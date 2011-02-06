@@ -83,8 +83,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
             ix += 3*lab->W;
 		}
         delete [] buffer;
-	}
-	else {
+	} else {
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
 			float g;
@@ -170,8 +169,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         }
         delete [] buffer;
         cmsDeleteTransform(hTransform);
-    }
-    else {
+    } else {
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
 			float g;
@@ -249,8 +247,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
         lcmsMutex->unlock ();
 		cmsDoTransform (hTransform, image->data, image->data, image->planestride/2);
 		cmsDeleteTransform(hTransform);
-	}
-	else {
+	} else {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
 			float g;

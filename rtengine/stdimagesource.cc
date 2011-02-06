@@ -218,27 +218,27 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
     
         if ((mtran & TR_ROT) == TR_R180) 
             for (int j=0; j<imwidth; j++) {
-                image->r[imheight-1-ix][imwidth-1-j] = CLIP(rm*line_red[j])/65535.0;
-                image->g[imheight-1-ix][imwidth-1-j] = CLIP(gm*line_green[j])/65535.0;
-                image->b[imheight-1-ix][imwidth-1-j] = CLIP(bm*line_blue[j])/65535.0;
+                image->r[imheight-1-ix][imwidth-1-j] = GCLIP(rm*line_red[j])/65535.0;
+                image->g[imheight-1-ix][imwidth-1-j] = GCLIP(gm*line_green[j])/65535.0;
+                image->b[imheight-1-ix][imwidth-1-j] = GCLIP(bm*line_blue[j])/65535.0;
             }
         else if ((mtran & TR_ROT) == TR_R90) 
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[j][imheight-1-ix] = CLIP(rm*line_red[j])/65535.0;
-                image->g[j][imheight-1-ix] = CLIP(gm*line_green[j])/65535.0;
-                image->b[j][imheight-1-ix] = CLIP(bm*line_blue[j])/65535.0;
+                image->r[j][imheight-1-ix] = GCLIP(rm*line_red[j])/65535.0;
+                image->g[j][imheight-1-ix] = GCLIP(gm*line_green[j])/65535.0;
+                image->b[j][imheight-1-ix] = GCLIP(bm*line_blue[j])/65535.0;
         }
         else if ((mtran & TR_ROT) == TR_R270) 
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[imwidth-1-j][ix] = CLIP(rm*line_red[j])/65535.0;
-                image->g[imwidth-1-j][ix] = CLIP(gm*line_green[j])/65535.0;
-                image->b[imwidth-1-j][ix] = CLIP(bm*line_blue[j])/65535.0;
+                image->r[imwidth-1-j][ix] = GCLIP(rm*line_red[j])/65535.0;
+                image->g[imwidth-1-j][ix] = GCLIP(gm*line_green[j])/65535.0;
+                image->b[imwidth-1-j][ix] = GCLIP(bm*line_blue[j])/65535.0;
             }
         else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[ix][j] = CLIP(rm*line_red[j])/65535.0;
-                image->g[ix][j] = CLIP(gm*line_green[j])/65535.0;
-                image->b[ix][j] = CLIP(bm*line_blue[j])/65535.0;
+                image->r[ix][j] = GCLIP(rm*line_red[j])/65535.0;
+                image->g[ix][j] = GCLIP(gm*line_green[j])/65535.0;
+                image->b[ix][j] = GCLIP(bm*line_blue[j])/65535.0;
 				//if (ix==100 && j==100) printf("stdimsrc before R= %f  G= %f  B= %f  \n",65535*image->r[ix][j],65535*image->g[ix][j],65535*image->b[ix][j]);
 
             }
@@ -267,14 +267,7 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 	//Image16* tmpim = new Image16 (image->width,image->height);
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
-    //colorSpaceConversion16 (tmpim, cmp, embProfile);
 	colorSpaceConversion (image, cmp, embProfile);
-
-    // Flip if needed
-    if (tran & TR_HFLIP)
-        hflip (image);
-    if (tran & TR_VFLIP)
-        vflip (image);
 	
 	for ( int h = 0; h < image->height; ++h )
 		for ( int w = 0; w < image->width; ++w ) {
@@ -283,6 +276,13 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 			image->b[h][w] *= 65535.0 ;
 			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
 		}
+	
+    // Flip if needed
+    if (tran & TR_HFLIP)
+	 hflip (image);
+	 if (tran & TR_VFLIP)
+	 vflip (image);
+	
 	
     t2.set ();
 }

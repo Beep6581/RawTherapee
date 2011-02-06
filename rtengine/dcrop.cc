@@ -108,6 +108,9 @@ void Crop::update (int todo, bool internal) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
+		
+		//if (origCrop->height>100 & origCrop->width>100)
+		//	printf("dcrop init R= %f  G= %f  B= %f  \n",origCrop->r[100][100],origCrop->g[100][100],origCrop->b[100][100]);
 
         parent->minit.unlock ();
     }
@@ -161,6 +164,12 @@ void Crop::update (int todo, bool internal) {
 
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
+	
+	/*if (cropImg->height>100 & cropImg->width>100)
+		printf("dcrop final R= %d  G= %d  B= %d  \n", \
+			   cropImg->data[3*100*(cropImg->width+1)], \
+			   cropImg->data[3*100*(cropImg->width+1)+1], \
+			   cropImg->data[3*100*(cropImg->width+1)+2]);*/
 
     if (cropImageListener) {
         int finalW = rqcropw;

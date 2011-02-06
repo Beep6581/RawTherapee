@@ -276,7 +276,9 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 	    0x7258595a, 0, 20,	/* rXYZ */
 	    0x6758595a, 0, 20,	/* gXYZ */
 	    0x6258595a, 0, 20 };	/* bXYZ */
-    static const unsigned pwhite[] = { 0xf351, 0x10000, 0x116cc };
+    static const unsigned pwhite[] = { 0xf351, 0x10000, 0x116cc };//D65
+	//static const unsigned pwhite[] = { 0xf6d6, 0x10000, 0xd340 };//D50
+
     // 0x63757276 : curveType, 0 : reserved, 1 : entries (1=gamma, 0=identity), 0x1000000=1.0 
     unsigned pcurve[] = { 0x63757276, 0, 0, 0x1000000 };
 //    unsigned pcurve[] = { 0x63757276, 0, 1, 0x1000000 };

@@ -259,9 +259,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
 
         for (int j=0; j<tW; j++) {
 
-            int r = working->r[i][j];
-            int g = working->g[i][j];
-            int b = working->b[i][j];
+            float r = working->r[i][j];
+            float g = working->g[i][j];
+            float b = working->b[i][j];
+			
+			//if (i==100 & j==100) printf("rgbProc input R= %f  G= %f  B= %f  \n",r,g,b);
 
             if (mixchannels) {
                 r = (r*params->chmixer.red[0]   + g*params->chmixer.red[1]   + b*params->chmixer.red[2]) / 100;
@@ -599,7 +601,7 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void ImProcFunctions::rgb2hsv (int r, int g, int b, float &h, float &s, float &v) {
+void ImProcFunctions::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {
 	
 	double var_R = r / 65535.0;
 	double var_G = g / 65535.0;
@@ -628,7 +630,7 @@ void ImProcFunctions::rgb2hsv (int r, int g, int b, float &h, float &s, float &v
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void ImProcFunctions::hsv2rgb (float h, float s, float v, int &r, int &g, int &b) {
+void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 	
 	float h1 = h*6; // sector 0 to 5
 	int i = floor( h1 );
@@ -653,6 +655,8 @@ void ImProcFunctions::hsv2rgb (float h, float s, float v, int &r, int &g, int &b
 }
 	
 void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &b) {
+	
+	//Transform to output color.  Standard sRGB is D65, so we use the default D65 adapted matrices
 	
 	/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
 	float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;

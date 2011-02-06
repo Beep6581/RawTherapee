@@ -120,8 +120,8 @@ class ImProcFunctions {
 		void getAutoExp       (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
 		double getTransformAutoFill (int oW, int oH);
 
-		void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
-		void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
+		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
+		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 		void xyz2srgb (float x, float y, float z, int &r, int &g, int &b);
 	
 	void gamutmap(LabImage* );
