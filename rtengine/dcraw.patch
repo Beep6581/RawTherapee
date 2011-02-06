@@ -1,5 +1,5 @@
---- dcraw.c	2010-11-11 20:35:59.000000000 -0500
-+++ dcraw.cc	2010-11-15 21:14:19.000000000 -0500
+--- dcraw.c	2011-02-06 09:04:19.000000000 -0600
++++ dcraw.cc	2011-02-06 09:02:49.000000000 -0600
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -177,7 +177,7 @@
    unsigned c;
  
    if (nbits == -1)
-@@ -1563,8 +1603,8 @@
+@@ -1564,8 +1604,8 @@
  
  unsigned CLASS ph1_bithuff (int nbits, ushort *huff)
  {
@@ -188,7 +188,7 @@
    unsigned c;
  
    if (nbits == -1)
-@@ -1828,8 +1868,8 @@
+@@ -1834,8 +1874,8 @@
  
  unsigned CLASS pana_bits (int nbits)
  {
@@ -199,7 +199,7 @@
    int byte;
  
    if (!nbits) return vbits=0;
-@@ -2118,11 +2158,11 @@
+@@ -2124,11 +2164,11 @@
  METHODDEF(boolean)
  fill_input_buffer (j_decompress_ptr cinfo)
  {
@@ -213,7 +213,7 @@
    cinfo->src->next_input_byte = jpeg_buffer;
    cinfo->src->bytes_in_buffer = nbytes;
    return TRUE;
-@@ -2396,7 +2436,7 @@
+@@ -2402,7 +2442,7 @@
  
  void CLASS sony_decrypt (unsigned *data, int len, int start, int key)
  {
@@ -222,7 +222,7 @@
  
    if (start) {
      for (p=0; p < 4; p++)
-@@ -2643,7 +2683,7 @@
+@@ -2649,7 +2689,7 @@
  
  void CLASS foveon_decoder (unsigned size, unsigned code)
  {
@@ -231,7 +231,7 @@
    struct decode *cur;
    int i, len;
  
-@@ -3765,15 +3805,18 @@
+@@ -3771,15 +3811,18 @@
      }
    }
    if (filters && colors == 3) {
@@ -259,7 +259,7 @@
  }
  
  void CLASS border_interpolate (int border)
-@@ -4452,7 +4495,7 @@
+@@ -4461,7 +4504,7 @@
      }
      if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
        fread (buf97, 1, sizeof buf97, ifp);
@@ -268,7 +268,7 @@
        if (i < 70 && buf97[i] < 3)
  	flip = "065"[buf97[i]]-'0';
      }
-@@ -4836,7 +4879,7 @@
+@@ -4859,7 +4902,7 @@
    unsigned sony_curve[] = { 0,0,0,0,0,4095 };
    unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
    struct jhead jh;
@@ -277,7 +277,7 @@
  
    if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
      return 1;
-@@ -5254,12 +5297,13 @@
+@@ -5274,12 +5317,13 @@
      fread (buf, sony_length, 1, ifp);
      sony_decrypt (buf, sony_length/4, 1, sony_key);
      sfp = ifp;
@@ -296,7 +296,7 @@
      ifp = sfp;
      free (buf);
    }
-@@ -5284,6 +5328,8 @@
+@@ -5304,6 +5348,8 @@
  {
    int doff;
  
@@ -305,7 +305,7 @@
    fseek (ifp, base, SEEK_SET);
    order = get2();
    if (order != 0x4949 && order != 0x4d4d) return 0;
-@@ -5458,7 +5504,7 @@
+@@ -5478,7 +5524,7 @@
  {
    const char *file, *ext;
    char *jname, *jfile, *jext;
@@ -314,7 +314,7 @@
  
    ext  = strrchr (ifname, '.');
    file = strrchr (ifname, '/');
-@@ -5486,7 +5532,8 @@
+@@ -5506,7 +5552,8 @@
        *jext = '0';
      }
    if (strcmp (jname, ifname)) {
@@ -324,7 +324,7 @@
        if (verbose)
  	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);
        parse_tiff (12);
-@@ -5824,7 +5871,11 @@
+@@ -5844,7 +5891,11 @@
      order = get2();
      hlen  = get4();
      if (get4() == 0x48454150)		/* "HEAP" */
@@ -337,7 +337,7 @@
      if (parse_tiff (save+6)) apply_tiff();
      fseek (ifp, save+len, SEEK_SET);
    }
-@@ -6845,6 +6896,12 @@
+@@ -6879,6 +6930,12 @@
    fread (head, 1, 32, ifp);
    fseek (ifp, 0, SEEK_END);
    flen = fsize = ftell(ifp);
@@ -350,7 +350,7 @@
    if ((cp = (char *) memmem (head, 32, "MMMM", 4)) ||
        (cp = (char *) memmem (head, 32, "IIII", 4))) {
      parse_phase_one (cp-head);
-@@ -6852,6 +6909,8 @@
+@@ -6886,6 +6943,8 @@
    } else if (order == 0x4949 || order == 0x4d4d) {
      if (!memcmp (head+6,"HEAPCCDR",8)) {
        data_offset = hlen;
@@ -359,7 +359,16 @@
        parse_ciff (hlen, flen - hlen);
      } else if (parse_tiff(0)) apply_tiff();
    } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
-@@ -7331,6 +7390,11 @@
+@@ -7009,7 +7068,7 @@
+   if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
+     { height  = 3124;   width  = 4688; filters = 0x16161616; }
+   if (!strcmp(model,"K-r") || !strcmp(model,"K-x"))
+-    {			width  = 4309; filters = 0x16161616; }
++    {			width  = 4308; filters = 0x16161616; }
+   if (!strcmp(model,"K-5"))
+     { left_margin = 10; width  = 4950; filters = 0x16161616; }
+   if (!strcmp(model,"K-7"))
+@@ -7365,6 +7424,11 @@
    } else if (!strcmp(model,"D1X")) {
      width -= 4;
      pixel_aspect = 0.5;
@@ -371,16 +380,7 @@
    } else if (!strcmp(model,"D40X") ||
  	     !strcmp(model,"D60")  ||
  	     !strcmp(model,"D80")  ||
-@@ -7548,7 +7612,7 @@
-   } else if (!strcmp(model,"*ist DS")) {
-     height -= 2;
-   } else if (!strcmp(model,"K-x")) {
--    width = 4309;
-+    width = 4308;
-     filters = 0x16161616;
-   } else if (!strcmp(model,"Optio S")) {
-     if (fsize == 3178560) {
-@@ -8560,13 +8624,13 @@
+@@ -8591,13 +8655,13 @@
  	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
        else FORCC ppm2[col*colors+c] = curve[image[soff][c]];
      if (output_bps == 16 && !output_tiff && htons(0x55aa) != 0x55aa)
@@ -396,7 +396,7 @@
  {
    int arg, status=0;
    int timestamp_only=0, thumbnail_only=0, identify_only=0;
-@@ -8679,7 +8743,7 @@
+@@ -8710,7 +8774,7 @@
        case 'i':  identify_only     = 1;  break;
        case 'c':  write_to_stdout   = 1;  break;
        case 'v':  verbose           = 1;  break;
@@ -405,7 +405,7 @@
        case 'f':  four_color_rgb    = 1;  break;
        case 'A':  FORC4 greybox[c]  = atoi(argv[arg++]);
        case 'a':  use_auto_wb       = 1;  break;
-@@ -8943,3 +9007,594 @@
+@@ -8973,3 +9037,594 @@
    }
    return status;
  }
