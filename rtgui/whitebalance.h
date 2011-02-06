@@ -30,7 +30,7 @@ class SpotWBListener {
         virtual void spotWBRequested (int size) {}
 };
 
-class WhiteBalance : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Gtk::ComboBoxText* method;

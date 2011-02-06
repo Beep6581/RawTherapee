@@ -21,7 +21,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PerspCorrection::PerspCorrection () : vAdd(false) {
+PerspCorrection::PerspCorrection () : Gtk::VBox(), FoldableToolPanel(this), vAdd(false) {
 
 	horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 1, 0));
 	horiz->setAdjusterListener (this);

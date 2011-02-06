@@ -25,7 +25,7 @@ extern Glib::ustring argv0;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Rotate::Rotate () : ToolPanel (), degAdd(false) {
+Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this), degAdd(false) {
 
   rlistener = NULL;
 

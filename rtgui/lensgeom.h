@@ -23,7 +23,7 @@
 #include <toolpanel.h>
 #include <lensgeomlistener.h>
 
-class LensGeometry : public Gtk::VBox, public ToolPanel {
+class LensGeometry : public Gtk::VBox, public FoldableToolPanel {
 
   protected:
     Gtk::Button*        autoCrop;

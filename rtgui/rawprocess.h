@@ -24,7 +24,7 @@
 #include <toolpanel.h>
 
 
-class RawProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
+class RawProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel{
 
   protected:
 

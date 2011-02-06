@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : ToolPanel(), brAdd(false), contrAdd(false) {
+LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd(false) {
 
   Gtk::HBox* abox = Gtk::manage (new Gtk::HBox ());
   abox->set_border_width (2);

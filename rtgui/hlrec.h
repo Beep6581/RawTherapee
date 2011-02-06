@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include <toolpanel.h>
 
-class HLRecovery : public Gtk::VBox, public ToolPanel {
+class HLRecovery : public Gtk::VBox, public FoldableToolPanel {
 
   protected:
     Gtk::CheckButton*   enabled;

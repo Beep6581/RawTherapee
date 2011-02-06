@@ -34,7 +34,7 @@ class RefreshSpinHelper {
             : crop(_crop), notify(_notify) {}
 };
 
-Crop::Crop () {
+Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
   clistener = NULL;
 

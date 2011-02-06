@@ -23,7 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class LumaDenoise : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class LumaDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* radius;
