@@ -20,6 +20,7 @@
 #include <imagefloat.h>
 #include <image8.h>
 #include <string.h>
+#include <stdio.h>
 #include <rtengine.h>
 
 using namespace rtengine;

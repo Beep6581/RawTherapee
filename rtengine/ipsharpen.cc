@@ -106,7 +106,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
                 tmpI[i][j] = tmpI[i][j] * tmp[i][j];
 		} // end for
     delete buffer;
-    } // end parallel
+
 
 #ifdef _OPENMP
 #pragma omp for
@@ -115,7 +115,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
         for (int j=0; j<W; j++)
             lab->L[i][j] = lab->L[i][j]*(100-params->sharpening.deconvamount) / 100 + (int)CLIP(tmpI[i][j])*params->sharpening.deconvamount / 100;
 
-
+} // end parallel
 
     for (int i=0; i<H; i++)
         delete [] tmpI[i];
@@ -133,11 +133,18 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
         return;
 
     int W = lab->W, H = lab->H;
+    float** b3;
+    if (params->sharpening.edgesonly)
+    {
+    	b3 = new float*[H];
+    	for (int i=0; i<H; i++)
+    	   b3[i] = new float[W];
+    }
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
     {
-    float** b3;
+
 
     AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
     if (params->sharpening.edgesonly==false) {
@@ -146,11 +153,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
         gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
     }
     else {
-        b3 = new float*[H];
-        for (int i=0; i<H; i++)
-            b3[i] = new float[W];
-
-		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
+  		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
 		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
 		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
     }
@@ -173,12 +176,12 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
     }
     else
 		sharpenHaloCtrl (lab, b2, base, W, H);
+    } // end parallel
 
     if (params->sharpening.edgesonly) {
         for (int i=0; i<H; i++)
             delete [] b3[i];
         delete [] b3;
-    }
     }
 }
 

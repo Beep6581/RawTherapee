@@ -69,6 +69,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
+#pragma omp for
             for (int i = 0; i<H; i++)
                 memcpy (dst[i], src[i], W*sizeof(T));
         return;
@@ -143,6 +144,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
+#pragma omp for
             for (int i = 0; i<H; i++)
                 memcpy (dst[i], src[i], W*sizeof(T));
         return;
