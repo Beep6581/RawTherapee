@@ -143,32 +143,17 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toolBar = new ToolBar ();
 }
 
-void ToolPanelCoordinator::addPanel (Gtk::Box* where, Gtk::Container* panel, Glib::ustring label) {
+void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label) {
 
     Gtk::HSeparator *hsep = Gtk::manage (new  Gtk::HSeparator());
     where->pack_start(*hsep, Gtk::PACK_SHRINK, 0);
     hsep->show();
 
-//    Gtk::Expander* exp = new Gtk::Expander ();
-//    exp->set_label_widget (*(new ILabel (Glib::ustring("<b>") + label + "</b>")));
-    Gtk::Expander* exp = Gtk::manage (new Gtk::Expander (Glib::ustring("<b>") + label + "</b>"));
-    exp->set_border_width (4);
-    exp->set_use_markup (true);
-    expList.push_back (exp);
-    
-    Gtk::Frame* pframe = Gtk::manage (new Gtk::Frame ());
+    panel->setParent(where);
+    panel->setLabel(label);
 
-    pframe->set_name ("ToolPanel");
-
-    pframe->add (*panel);
-    panel->show ();
-
-    exp->add (*pframe);
-    pframe->set_shadow_type (Gtk::SHADOW_ETCHED_IN);
-    pframe->show ();
-    exp->show ();
-
-    where->pack_start(*exp, false, false);
+	expList.push_back (panel->exp);
+    where->pack_start(*panel->exp, false, false);
 }
 
 ToolPanelCoordinator::~ToolPanelCoordinator () {
@@ -381,4 +366,23 @@ void ToolPanelCoordinator::updateCurveBackgroundHistogram (unsigned* histrgb, un
 
     curve->updateCurveBackgroundHistogram (histrgb);
     lcurve->updateCurveBackgroundHistogram (histl);
+}
+
+void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection) {
+
+	FoldableToolPanel* currentTP;
+
+    for (int i=0; i<toolPanels.size(); i++) {
+        currentTP = (FoldableToolPanel*)toolPanels[i];
+        if (currentTP->getParent() == parent) {
+            // Section in the same tab, we unfold it if it's not the one that has been clicked
+            if (currentTP != openedSection) {
+                currentTP->exp->set_expanded(false);
+            }
+            else {
+                if (!currentTP->exp->get_expanded())
+                    currentTP->exp->set_expanded(true);
+            }
+        }
+    }
 }

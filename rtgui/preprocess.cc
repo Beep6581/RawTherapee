@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreProcess::PreProcess ()
+PreProcess::PreProcess (): Gtk::VBox(), FoldableToolPanel(this)
 {
 	hbdf = Gtk::manage(new Gtk::HBox());
 	darkFrameFile = Gtk::manage(new Gtk::FileChooserButton(M("TP_PREPROCESS_DARKFRAME"), Gtk::FILE_CHOOSER_ACTION_OPEN));

@@ -25,7 +25,7 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel () : ToolPanel(), iunchanged(NULL), icmplistener(NULL) {
+ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL) {
 
 //    set_border_width (4);
 

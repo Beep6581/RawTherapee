@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RawProcess::RawProcess ()
+RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
 {
    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("PREFERENCES_DMETHOD") +": ")));

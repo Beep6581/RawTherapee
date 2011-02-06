@@ -24,7 +24,7 @@
 #include <toolpanel.h>
 #include <lensgeomlistener.h>
 
-class Rotate : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class Rotate : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster*           degree;

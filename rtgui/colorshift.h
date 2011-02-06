@@ -23,7 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class ColorShift : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class ColorShift : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* ashift;

@@ -23,7 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class ShadowsHighlights : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class ShadowsHighlights : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* highlights;

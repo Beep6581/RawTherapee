@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CACorrection::CACorrection () : vAdd(false) {
+CACorrection::CACorrection () : Gtk::VBox(), FoldableToolPanel(this), vAdd(false) {
 
     red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0));
     red->setAdjusterListener (this); 
