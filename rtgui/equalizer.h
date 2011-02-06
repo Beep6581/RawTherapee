@@ -24,7 +24,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class Equalizer : public Gtk::VBox, public AdjusterListener, public ToolPanel 
+class Equalizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel
 {
 
 protected:

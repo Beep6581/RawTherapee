@@ -23,7 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 
-class CACorrection : public Gtk::VBox, public AdjusterListener, public ToolPanel {
+class CACorrection : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     Adjuster* red;

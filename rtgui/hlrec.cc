@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-HLRecovery::HLRecovery () : ToolPanel() {
+HLRecovery::HLRecovery () : Gtk::VBox(), FoldableToolPanel(this) {
 
     enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLE")));
     enabled->set_active (false);

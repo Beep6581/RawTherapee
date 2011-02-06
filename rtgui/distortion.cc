@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion () {
+Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0));
     distor->setAdjusterListener (this); 

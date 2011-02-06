@@ -30,7 +30,7 @@ class CropPanelListener {
 };
 
 
-class Crop : public Gtk::VBox, public CropGUIListener, public ToolPanel, public rtengine::SizeListener {
+class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener {
 
   protected:
     Gtk::CheckButton* enabled;

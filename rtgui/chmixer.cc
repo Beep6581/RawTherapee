@@ -21,7 +21,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ChMixer::ChMixer () {
+ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
 
     Gtk::Label* rlabel = Gtk::manage (new Gtk::Label ());
     rlabel->set_markup (Glib::ustring("<span foreground=\"red\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));
