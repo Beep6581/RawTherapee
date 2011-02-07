@@ -657,7 +657,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 
     maxThumbSize->set_digits (0);
     maxThumbSize->set_increments (1, 10);
-    maxThumbSize->set_range (40, 400);
+    maxThumbSize->set_range (40, 800);
     vbc->pack_start (*hb3, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* hb4 = new Gtk::HBox ();
