@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>, Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@
 #include <cachemanager.h>
 #include <addsetids.h>
 #include <dfmanager.h>
+#include <ffmanager.h>
 #include <sstream>
+#include <safegtk.h>
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -80,6 +82,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
+    nb->append_page (*getSoundPanel(),          M("PREFERENCES_TAB_SOUND"));
     nb->set_current_page (0);
 
     fillPreferences ();
@@ -276,6 +279,27 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     mvbpp->pack_start ( *fdf , Gtk::PACK_SHRINK, 4);
     mvbpp->set_border_width (4);
 
+    //dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
+    dfconn = darkFrameDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
+
+    // FLATFIELD
+    Gtk::Frame* fff = Gtk::manage (new Gtk::Frame (M("PREFERENCES_FLATFIELD")) );
+    Gtk::HBox* hb43 = Gtk::manage (new Gtk::HBox ());
+    flatFieldDir = Gtk::manage(new Gtk::FileChooserButton(M("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    Gtk::Label *ffLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_FLATFIELDSDIR")));
+    hb43->pack_start(*ffLab , Gtk::PACK_SHRINK, 4 );
+    hb43->pack_start(*flatFieldDir);
+    ffLabel = Gtk::manage(new Gtk::Label("Found:"));
+    Gtk::VBox* vbff = Gtk::manage (new Gtk::VBox ());
+    vbff->pack_start( *hb43, Gtk::PACK_SHRINK, 4);
+    vbff->pack_start( *ffLabel, Gtk::PACK_SHRINK, 4 );
+    fff->add( *vbff );
+    mvbpp->pack_start ( *fff , Gtk::PACK_SHRINK, 4);
+    mvbpp->set_border_width (4);
+
+    //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+    ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
+	
     std::vector<Glib::ustring> pnames;
     if (options.multiUser)
         parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
@@ -285,7 +309,12 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
         iprofiles->append_text (pnames[i]);
     }
 
-    dfconn = darkFrameDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::darkFrameChanged), true);
+    Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M("PREFERENCES_METADATA")));
+    Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
+    ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_TUNNELMETADATA")));
+    vbmd->pack_start (*ckbTunnelMetaData, Gtk::PACK_SHRINK, 4);
+    fmd->add (*vbmd);
+    mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
 
     return mvbpp;
 }
@@ -628,7 +657,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 
     maxThumbSize->set_digits (0);
     maxThumbSize->set_increments (1, 10);
-    maxThumbSize->set_range (40, 400);
+    maxThumbSize->set_range (40, 800);
     vbc->pack_start (*hb3, Gtk::PACK_SHRINK, 0);
 
     Gtk::HBox* hb4 = new Gtk::HBox ();
@@ -675,6 +704,48 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     return mvbfb;
 }
 
+Gtk::Widget* Preferences::getSoundPanel () {
+    Gtk::VBox* pSnd = new Gtk::VBox ();
+
+    Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP")));
+    pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
+
+    // BatchQueueDone
+    Gtk::HBox* pBatchQueueDone = new Gtk::HBox();
+
+    Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring(":")));
+    pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 12);
+    
+    txtSndBatchQueueDone =  Gtk::manage (new Gtk::Entry());
+    pBatchQueueDone->pack_end (*txtSndBatchQueueDone, Gtk::PACK_EXPAND_WIDGET, 4);
+    
+    pSnd->pack_start (*pBatchQueueDone, Gtk::PACK_SHRINK, 4);
+
+    // LngEditProcDone
+    Gtk::HBox* pSndLngEditProcDone = new Gtk::HBox();
+
+    Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring(":")));
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 12);
+    
+    txtSndLngEditProcDone =  Gtk::manage (new Gtk::Entry());
+    pSndLngEditProcDone->pack_start (*txtSndLngEditProcDone, Gtk::PACK_EXPAND_WIDGET, 4);
+
+    Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring(":")));
+    pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
+ 
+    spbSndLngEditProcDoneSecs = new Gtk::SpinButton ();
+    spbSndLngEditProcDoneSecs->set_digits (1);
+    spbSndLngEditProcDoneSecs->set_increments (0.5, 1);
+    spbSndLngEditProcDoneSecs->set_range (0, 10);
+    pSndLngEditProcDone->pack_end (*spbSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 4);
+
+    pSnd->pack_start (*pSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
+
+    pSnd->set_border_width (4);
+
+    return pSnd;
+}
+
 void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext) {
 
     // process directory
@@ -690,7 +761,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
       Glib::ustring fname = dirname + *i;
       Glib::ustring sname = *i;
       // ignore directories
-      if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
+      if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
             items.push_back (sname.substr(0,sname.size()-ext.size()));
     }
     delete dir;
@@ -775,7 +846,10 @@ void Preferences::storePreferences () {
     moptions.saveParamsCache = saveParamsCache->get_active ();
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
+    moptions.tunnelMetaData = ckbTunnelMetaData->get_active ();
+
     moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
+    moptions.rtSettings.flatFieldsPath =   flatFieldDir->get_filename();
 
     int i = 0;
     moptions.baBehav.resize (ADDSET_PARAM_NUM);
@@ -789,17 +863,23 @@ void Preferences::storePreferences () {
     moptions.mainNBVertical = editorMode==1;
 
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
+
+    // Sounds
+    moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text ();
+    moptions.sndLngEditProcDone     = txtSndLngEditProcDone->get_text ();
+    moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
 }
 
 void Preferences::fillPreferences () {
 
     tconn.block (true);
     dfconn.block (true);
+    ffconn.block (true);
 
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
     dateformat->set_text (moptions.dateFormat);
-    if (Glib::file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
+    if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (moptions.rtSettings.monitorProfile.empty())
     	monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
@@ -827,13 +907,13 @@ void Preferences::fillPreferences () {
     edOther->set_active (moptions.editorToSendTo==3);
 #ifdef _WIN32    
     edPS->set_active (moptions.editorToSendTo==2);
-    if (Glib::file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
         gimpDir->set_filename (moptions.gimpDir);
-    if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
+    if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR)) 
         psDir->set_filename (moptions.psDir);
 #elif defined __APPLE__
   edPS->set_active (moptions.editorToSendTo==2);
-  if (Glib::file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
+  if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);
@@ -871,13 +951,22 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     loadParamsPreference->set_active (moptions.paramsLoadLocation);    
 
+    ckbTunnelMetaData->set_active (moptions.tunnelMetaData); 
+
     if (!moptions.tabbedUI)
         editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);
     else 
         editorLayout->set_active(moptions.multiDisplayMode ? 3 : 2);
 
-    darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
-    updateDFinfos();
+    //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
+    //updateDFinfos();
+    darkFrameDir->set_current_folder( moptions.rtSettings.darkFramesPath );
+    darkFrameChanged ();
+    
+    //flatFieldDir->set_filename( moptions.rtSettings.flatFieldsPath );
+    //updateFFinfos();
+    flatFieldDir->set_current_folder( moptions.rtSettings.flatFieldsPath );
+    flatFieldChanged ();
 
     addc.block (true);
     setc.block (true);
@@ -895,8 +984,14 @@ void Preferences::fillPreferences () {
     setc.block (false);
     tconn.block (false);
     dfconn.block (false);
+    ffconn.block (false);
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
+
+    // Sounds
+    txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
+    txtSndLngEditProcDone->set_text (moptions.sndLngEditProcDone);
+    spbSndLngEditProcDoneSecs->set_value (moptions.sndLngEditProcDoneSecs);
 }
 
 /*
@@ -1047,11 +1142,22 @@ void Preferences::clearAllPressed () {
 
 void Preferences::darkFrameChanged ()
 {
-	Glib::ustring s(darkFrameDir->get_filename());
-	if( s.compare( rtengine::dfm.getPathname()) !=0 ){
+	//Glib::ustring s(darkFrameDir->get_filename());
+	Glib::ustring s(darkFrameDir->get_current_folder());
+	//if( s.compare( rtengine::dfm.getPathname()) !=0 ){
 	   rtengine::dfm.init( s );
 	   updateDFinfos();
-	}
+	//}
+}
+
+void Preferences::flatFieldChanged ()
+{
+	//Glib::ustring s(flatFieldDir->get_filename());
+	Glib::ustring s(flatFieldDir->get_current_folder());
+	//if( s.compare( rtengine::ffm.getPathname()) !=0 ){
+	   rtengine::ffm.init( s );
+	   updateFFinfos();
+	//}
 }
 
 void Preferences::updateDFinfos()
@@ -1060,4 +1166,12 @@ void Preferences::updateDFinfos()
     rtengine::dfm.getStat(t1,t2);
     Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_DARKFRAMEFOUND"), t1, M("PREFERENCES_DARKFRAMESHOTS"), t2, M("PREFERENCES_DARKFRAMETEMPLATES"));
     dfLabel->set_text(s);
+}
+
+void Preferences::updateFFinfos()
+{
+    int t1,t2;
+    rtengine::ffm.getStat(t1,t2);
+    Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_FLATFIELDFOUND"), t1, M("PREFERENCES_FLATFIELDSHOTS"), t2, M("PREFERENCES_FLATFIELDTEMPLATES"));
+    ffLabel->set_text(s);
 }

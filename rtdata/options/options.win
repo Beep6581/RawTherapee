@@ -110,3 +110,8 @@ DPI=600
 ICCDirectory=C:\\WINDOWS\\System32\\spool\\drivers\\color
 MonitorProfile=
 Intent=1
+
+[Sounds]
+BatchQueueDone=sounds\\BatchComplete.wav
+LngEditProcDone=sounds\\ProcessComplete.wav
+LngEditProcDoneSecs=3

@@ -21,6 +21,7 @@
 #include <profilestore.h>
 #include <clipboard.h>
 #include <multilangmgr.h>
+#include <safegtk.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -158,7 +159,7 @@ void ProfilePanel::save_clicked () {
         if (!hasext) 
             fname = fname + paramFileExtension;
 
-        if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
+        if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
           Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
           Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
           int response = msgd.run ();

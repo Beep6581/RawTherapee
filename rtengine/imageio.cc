@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,6 +45,22 @@ using namespace rtengine::procparams;
 
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
+// For only copying the raw input data
+void ImageIO::setMetadata (const rtexif::TagDirectory* eroot) {
+    if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
+    
+    if (eroot) {
+        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (NULL);
+
+        // make IPTC and XMP pass through
+        td->keepTag(0x83bb);  // IPTC
+        td->keepTag(0x02bc);  // XMP
+
+        exifRoot=td;
+    }
+}
+
+// For merging with RT specific data
 void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {
 
     // store exif info
@@ -52,15 +69,13 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<
         exifChange[i].first  = exif[i].field;
         exifChange[i].second = exif[i].value;
     }
-    delete exifRoot;
 
-    exifRoot = NULL;
+    if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
+    
     if (eroot)
         exifRoot = ((rtexif::TagDirectory*)eroot)->clone (NULL);
 
-    if (iptc) 
-        iptc_data_free (iptc);
-    iptc = NULL;        
+    if (iptc!=NULL) { iptc_data_free (iptc); iptc = NULL; }
     
     // build iptc structures for libiptcdata
     if (iptcc.size()==0)
@@ -130,7 +145,7 @@ void png_flush(png_struct_def *png_ptr);
 
 int ImageIO::loadPNG  (Glib::ustring fname) {
 
-    FILE *file = g_fopen (fname.c_str(),"rb");
+    FILE *file = safe_g_fopen (fname,"rb");
     if (!file) 
       return IMIO_CANNOTREADFILE;
 
@@ -325,7 +340,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (Glib::ustring fname) {
 
-	FILE *file=g_fopen(fname.c_str(),"rb");
+	FILE *file=safe_g_fopen(fname,"rb");
 	if (!file) 
         return IMIO_CANNOTREADFILE;
 
@@ -501,11 +516,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 
-	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
-	Glib::ustring tmpFname=fname;
-	tmpFname.append(".tmp");
-
-	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
+	FILE *file = safe_g_fopen_WriteBinLock (fname);
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -572,9 +583,6 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
     delete [] row;
 	fclose (file);
 
-	// Rename temporary filename, practically atomic
-	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
-
     if (pl) {
         pl->setProgressStr ("Ready.");
         pl->setProgress (1.0);
@@ -592,11 +600,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
 
-	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
-	Glib::ustring tmpFname=fname;
-	tmpFname.append(".tmp");
-
-	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
+	FILE *file = safe_g_fopen_WriteBinLock (fname);
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -686,10 +690,8 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
     delete [] row;
     delete [] buffer;
 
-	fclose (file);
 
-	// Rename temporary filename, practically atomic
-	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
+	fclose (file);
 
     if (pl) {
         pl->setProgressStr ("Ready.");
@@ -711,7 +713,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     unsigned char* linebuffer = new unsigned char[lineWidth];
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+        FILE *file = safe_g_fopen_WriteBinLock (fname);
 
         if (!file)
             return IMIO_CANNOTREADFILE;           
@@ -884,7 +886,8 @@ void png_flush(png_structp png_ptr) {
 int ImageIO::load (Glib::ustring fname) {
 
   int lastdot = fname.find_last_of ('.');
-
+  if( Glib::ustring::npos == lastdot )
+    return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return loadPNG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
@@ -897,7 +900,8 @@ int ImageIO::load (Glib::ustring fname) {
 int ImageIO::save (Glib::ustring fname) {
 
   int lastdot = fname.find_last_of ('.');
-
+  if( Glib::ustring::npos == lastdot )
+    return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return savePNG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".jpg"))

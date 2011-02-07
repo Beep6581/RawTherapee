@@ -2,7 +2,10 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29 update by Johan Andersson
+#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30, 2011-01-02, 2011-01-13 update by Johan Andersson
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Erkännande
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -28,6 +31,7 @@ EDITWINDOW_TITLE;Bildredigering
 EXIFFILTER_APERTURE;Bländare
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;EXIF-filter
+EXIFFILTER_FILETYPE;Filtyp
 EXIFFILTER_FOCALLEN;Brännvidd
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
@@ -51,6 +55,8 @@ FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av miniatyrbilder
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
+FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren)
 FILEBROWSER_CLEARPROFILE;Återställ profilen
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
@@ -147,7 +153,10 @@ HISTORY_MSG_104;HSV Equalizer
 HISTORY_MSG_105;Reducering av överstrålning
 HISTORY_MSG_106;Radie för reducering av överstrålning
 HISTORY_MSG_107;Tröskelvärde för reducering av överstrålning
+HISTORY_MSG_108;Storleksförändring på avgränsad yta
+HISTORY_MSG_109;Storleksförändring tillämpas på
 HISTORY_MSG_10;Skuggkomprimering
+HISTORY_MSG_110;Storleksförändring tillämpas på
 HISTORY_MSG_11;Tonkurva
 HISTORY_MSG_12;Autoexponering
 HISTORY_MSG_13;Exponeringsmarkering
@@ -208,9 +217,9 @@ HISTORY_MSG_62;Korrigering av objektivdistorsion
 HISTORY_MSG_63;Valt bokmärke
 HISTORY_MSG_64;Beskär foto
 HISTORY_MSG_65;Korrigera kromatiska abberationer
-HISTORY_MSG_66;Högdagerförbättring
-HISTORY_MSG_67;Mängd på högdagerförbättringen
-HISTORY_MSG_68;Metod för högdagerförbättring
+HISTORY_MSG_66;Högdageråterställning
+HISTORY_MSG_67;Mängd på högdageråterställning
+HISTORY_MSG_68;Metod för högdageråterställning
 HISTORY_MSG_69;Färgrymd
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Utmatningsfärgrymd
@@ -227,7 +236,7 @@ HISTORY_MSG_7;Svärta
 HISTORY_MSG_80;Storleksförändring, höjd
 HISTORY_MSG_81;Storleksförändring aktiverad
 HISTORY_MSG_82;Profilen har ändrats
-HISTORY_MSG_83;Högkvalitet Skuggor/högdager
+HISTORY_MSG_83;Högkvalitet Skuggor/högdagrar
 HISTORY_MSG_84;Korrigering av perspektiv
 HISTORY_MSG_85;Waveletkoefficienter
 HISTORY_MSG_86;Waveletequalizer
@@ -245,7 +254,7 @@ HISTORY_MSG_96;'a'-kurvan
 HISTORY_MSG_97;'b'-kurvan
 HISTORY_MSG_98;Demozaicing
 HISTORY_MSG_99;Förbehandling
-HISTORY_MSG_9;Högdagerkomprimering
+HISTORY_MSG_9;Högdageråterställning
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
@@ -318,9 +327,15 @@ MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. Kortkommando: Ctrl+S
 MAIN_BUTTON_SENDTOEDITOR;Redigera
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Visa/dölj alla sidopaneler <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
 MAIN_FRAME_BATCHQUEUE;Batchkö
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;Redigerfönster
+MAIN_FRAME_EDITOR;Redigering
+MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Filhanterare
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
 MAIN_FRAME_PLACES_DEL;Ta bort
@@ -339,17 +354,23 @@ MAIN_MSG_PLACES;Platser
 MAIN_MSG_QOVERWRITE;Vill du skriva över den?
 MAIN_TAB_BASIC;Grund
 MAIN_TAB_COLOR;Färger
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Detaljer
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 MAIN_TAB_DEVELOP;Framkalla
 MAIN_TAB_EXIF;EXIF
 MAIN_TAB_EXPOSURE;Exponering
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_RAW;Råbild
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: F
 MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: H
@@ -359,6 +380,9 @@ MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
 MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
 MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
+MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>H</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
 MAIN_TOOLTIP_TOGGLE;Växla före/efter vy. Kortkommando: B
 NAVIGATOR_B_NA;B = -
 NAVIGATOR_B_VALUE;B = %1
@@ -389,11 +413,16 @@ PARTIALPASTE_COLORMIXER;Färgmixer
 PARTIALPASTE_COLORSHIFT;Färgskift
 PARTIALPASTE_COMPOSITIONGROUP;Komponeringsinställningar
 PARTIALPASTE_CROP;Beskär
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatiskt val av svartbild
+PARTIALPASTE_DARKFRAMEFILE;Svartbildsfil
 PARTIALPASTE_DIALOGLABEL;Partiell inklistring av processprofiler
 PARTIALPASTE_DISTORTION;Distortionsrättning
+PARTIALPASTE_EVERYTHING;Allt
 PARTIALPASTE_EXIFCHANGES;Förändringar i EXIF-informationen
 PARTIALPASTE_EXPOSURE;Exponering
-PARTIALPASTE_HLRECOVERY;Högdageråterskapning
+PARTIALPASTE_HLRECOVERY;Högdageråterställning
+PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
 PARTIALPASTE_ICMSETTINGS;ICM-inställningar
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LABCURVE;Labkurva
@@ -402,13 +431,14 @@ PARTIALPASTE_LUMACURVE;Luminanskurva
 PARTIALPASTE_LUMADENOISE;Reducera luminansbrus
 PARTIALPASTE_LUMINANCEGROUP;Luminansrelaterade inställningar
 PARTIALPASTE_METAICMGROUP;Metadata/ICM inställningar
+PARTIALPASTE_RAWGROUP;Råinställningar
 PARTIALPASTE_RESIZE;Ändra storlek
 PARTIALPASTE_ROTATION;Rotering
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Skuggor/Högdagrar
 PARTIALPASTE_SHARPENING;Skärpa
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
 PARTIALPASTE_WHITEBALANCE;Vitbalans
-POPUPBUTTON_SELECTOPTIONHINT;Högerklicka för att ändra
+POPUPBUTTON_SELECTOPTIONHINT;Ändra genom att klicka på pilen till höger
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
@@ -436,6 +466,9 @@ PREFERENCES_CLIPPINGIND;Markeringsindikation
 PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
 PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
 PREFERENCES_DARKFRAME;Svartbild
+PREFERENCES_DARKFRAMEFOUND;Hittade
+PREFERENCES_DARKFRAMESHOTS;bilder
+PREFERENCES_DARKFRAMETEMPLATES;mallar
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : månad</i>\n<b>%d</b><i> : dag</i>\n<i>\nTill exempel är det svenska datumformatet:</i>-n<b>%y-%m-%d</b>
 PREFERENCES_DCBENHANCE;Applicera DCB-förbättringssteg
@@ -453,10 +486,14 @@ PREFERENCES_DMETHOD;Metod
 PREFERENCES_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
 PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
+PREFERENCES_EXPOS;Exponering före interpolering: Korrigering (lin)
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
 PREFERENCES_FILEFORMAT;Filformat
+PREFERENCES_FLATFIELDFOUND;Hittade
+PREFERENCES_FLATFIELDSHOTS;bilder
+PREFERENCES_FLATFIELDTEMPLATES;mallar
 PREFERENCES_FORIMAGE;För bildfiler
 PREFERENCES_FORRAW;För råbilder
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
@@ -473,6 +510,7 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_LINEDENOISE;Linjärt brusfilter
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
+PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerfliksläge
@@ -488,6 +526,7 @@ PREFERENCES_PARSEDEXT;Behandlade filtyper
 PREFERENCES_PARSEDEXTADD;Lägg till filtyp
 PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
 PREFERENCES_PARSEDEXTDELHINT;Ta bort de markerade filändelserna från listan
+PREFERENCES_PRESER;Exponering före interpolering: Bevara högdagrar (EV)
 PREFERENCES_PROFILEHANDLING;Hantering av bildbehandlingsparametrar
 PREFERENCES_PROFILELOADPR;Laddningsprioritet för profil
 PREFERENCES_PROFILEPRCACHE;Profil i cache
@@ -507,13 +546,21 @@ PREFERENCES_SHOWDATETIME;Visa datum och tid
 PREFERENCES_SHOWONLYRAW;Visa bara RAW-filer
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETAB;Öppna en bild åt gången
+PREFERENCES_SINGLETABVERTAB;En-fliksläge med vertikala flikar
+PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
+PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
+PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud. I Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.
+PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
+PREFERENCES_SND_TRESHOLDSECS;Ljudet kommer efter så här många sekunder
 PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
 PREFERENCES_TAB_BROWSER;Filbläddrare
 PREFERENCES_TAB_COLORMGR;Färghantering
 PREFERENCES_TAB_GENERAL;Allmän
 PREFERENCES_TAB_IMPROC;Bildbehandling
 PREFERENCES_TAB_OUTPUT;Utmatningsinställningar
+PREFERENCES_TAB_SOUND;Ljud
 PREFERENCES_THUMBSIZE;Miniatyrbildstorlek
+PREFERENCES_TUNNELMETADATA;Tunnla oförändrad IPTC/XMP till utfilen
 PREFERENCES_USESYSTEMTHEME;Använd systemtema
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
@@ -598,6 +645,7 @@ TP_COLORSHIFT_LABEL;Färgskiftningar
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Fast proportion
 TP_CROP_GTDIAGONALS;Diagonalregeln
+TP_CROP_GTGRID;Rutnät
 TP_CROP_GTHARMMEANS1;Harmoniskt medel 1
 TP_CROP_GTHARMMEANS2;Harmoniskt medel 2
 TP_CROP_GTHARMMEANS3;Harmoniskt medel 3
@@ -638,8 +686,9 @@ TP_EXPOSURE_AUTOLEVELS;Autonivåer
 TP_EXPOSURE_BLACKLEVEL;Svärta
 TP_EXPOSURE_BRIGHTNESS;Ljusstyrka
 TP_EXPOSURE_CLIP;Klippnivå
-TP_EXPOSURE_COMPRHIGHLIGHTS;Högdagerkomprimering
-TP_EXPOSURE_COMPRSHADOWS;Skuggkomprimering
+TP_EXPOSURE_COMPRHIGHLIGHTS;Högdageråterställning
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Högdageråterställning, tröskelvärde
+TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR;Tonkurva
 TP_EXPOSURE_EXPCOMP;Exponeringskompensation
@@ -647,7 +696,7 @@ TP_EXPOSURE_LABEL;Exponering
 TP_EXPOSURE_SATURATION;Mättnad
 TP_HLREC_CIELAB;CIELab mix
 TP_HLREC_COLOR;Färgspridning
-TP_HLREC_LABEL;Högdagerförbättring
+TP_HLREC_LABEL;Högdageråterställning
 TP_HLREC_LUMINANCE;Bättring av luminans
 TP_HLREC_METHOD;Metod: 
 TP_HSVEQUALIZER1;Röd
@@ -691,8 +740,8 @@ TP_LENSGEOM_FILL;Fyll automatiskt
 TP_LENSGEOM_LABEL;Geometri- och distorsionskorrigering
 TP_LUMACURVE_BLACKLEVEL;Svärta
 TP_LUMACURVE_BRIGHTNESS;Ljusstyrka
-TP_LUMACURVE_COMPRHIGHLIGHTS;Högdagerkomprimering
-TP_LUMACURVE_COMPRSHADOWS;Skuggkomprimering
+TP_LUMACURVE_COMPRHIGHLIGHTS;Högdageråterställning
+TP_LUMACURVE_COMPRSHADOWS;Skuggåterställning
 TP_LUMACURVE_CONTRAST;Kontrast
 TP_LUMACURVE_CURVEEDITOR;Luminanskurva
 TP_LUMACURVE_LABEL;Luminanskurva
@@ -704,14 +753,19 @@ TP_PERSPECTIVE_LABEL;Perspektiv
 TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_PREPROCESS_DARKFRAME;Svartbild
 TP_PREPROCESS_DFAUTOSELECT;Välj svartbild automatiskt
+TP_PREPROCESS_NO_FOUND;Inga hittade
 TP_RAWPANEL_DEMOSAICING;Demosaicing
 TP_RAWPANEL_PREPROCESSING;Förbehandling
+TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
 TP_RESIZE_BILINEAR;Bilinjär
+TP_RESIZE_CROPPEDAREA;Beskuren yta
 TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
 TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
+TP_RESIZE_FITBOX;Begränsad yta
+TP_RESIZE_FULLIMAGE;Hela bilden
 TP_RESIZE_FULLSIZE;Full bildstorlek:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höjd
@@ -787,19 +841,23 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EXIFFILTER_FILETYPE;File Type
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!MAIN_FRAME_EDITOR;Editor
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PREFERENCES_DARKFRAMEFOUND;Found
-!PREFERENCES_DARKFRAMESHOTS;shots
-!PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!TP_CROP_GTGRID;Grid
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
-!TP_LABCURVE_SATLIMIT;Saturation limit
+!FILEBROWSER_AUTOFLATFIELD;Auto flat field
+!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+!FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!HISTORY_MSG_111;Flat Field File
+!HISTORY_MSG_112;Flat Field Auto Select
+!HISTORY_MSG_113;Flat Field Blur Radius
+!HISTORY_MSG_114;Flat Field Blur Type
+!PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
+!PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
+!PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
+!PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
+!PREFERENCES_FLATFIELDAUTOSELECT;Flat Field Auto Select
+!PREFERENCES_FLATFIELDBLURRADIUS;Flat Field Blur Radius
+!PREFERENCES_FLATFIELDBLURTYPE;Flat Field Blur Type
+!PREFERENCES_FLATFIELDFILE;Flat Field File
+!PREFERENCES_FLATFIELDSDIR;Flat Fields directory
+!TP_PREPROCESS_FLATFIELDAUTOSELECT;Flat Field Auto Select
+!TP_PREPROCESS_FLATFIELDBLURRADIUS;Flat Field Blur Radius
+!TP_PREPROCESS_FLATFIELDBLURTYPE;Flat Field Blur Type
+!TP_PREPROCESS_FLATFIELDFILE;Flat Field File

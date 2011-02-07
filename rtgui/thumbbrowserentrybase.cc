@@ -420,9 +420,20 @@ bool ThumbBrowserEntryBase::releaseNotify (int button, int type, int bstate, int
 
     return buttonSet ? buttonSet->releaseNotify (x, y) : false;
 }
-Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) {
 
-    return buttonSet ? buttonSet->getToolTip (x, y) : "";
+Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) {
+    Glib::ustring tooltip = "";
+    
+    if (buttonSet) tooltip = buttonSet->getToolTip (x, y);
+
+    // if the fileinfo is not shown anyway, make a tooltip with the info
+    if (!options.showFileNames && inside(x,y) && tooltip.empty()) {
+        tooltip = dispname;
+        if (options.fbShowDateTime && datetimeline!="") tooltip += Glib::ustring("\n") + datetimeline;
+        if (options.fbShowBasicExif && exifline!="") tooltip += Glib::ustring("\n") + exifline;
+    }
+
+    return tooltip;
 }
 
 

@@ -60,6 +60,8 @@ namespace rtengine {
             virtual const std::vector<procparams::IPTCPair> getIPTCData () const =0;
           /** @return a struct containing the date and time of the image */
             virtual struct tm   getDateTime () const =0;
+          /** @return a timestamp containing the date and time of the image */
+            virtual time_t   getDateTimeAsTS() const =0;
           /** @return the ISO of the image */
             virtual int         getISOSpeed () const =0;
           /** @return the F number of the image */
@@ -157,7 +159,7 @@ namespace rtengine {
             /** With this member function the staged processor notifies the listener that it allocated a new
              * image to store the end result of the processing. It can be used in a shared manner. 
              * @param img is a pointer to the image
-             * @param scale describes the current scaling applied compared to the 100% size (preview scale + resize scale) 
+             * @param scale describes the current scaling applied compared to the 100% size (preview scale)
              * @param cp holds the coordinates of the current crop rectangle */
             virtual void setImage   (IImage8* img, double scale, procparams::CropParams cp) {}
             /** With this member function the staged processor notifies the listener that the image passed as parameter
@@ -348,8 +350,9 @@ namespace rtengine {
    * @param job the ProcessingJob to cancel. 
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.) 
    * @param pl is an optional ProgressListener if you want to keep track of the progress
+   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */  
-    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL);
+    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL, bool tunnelMetaData=false);
 
 /** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
    * image is ready and the next job to process is needed. */
@@ -366,8 +369,9 @@ namespace rtengine {
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel. 
-   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener. */  
-    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl);
+   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
+   * @param tunnelMetaData tunnels IPTC and XMP to output without change */  
+    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
 
     
     extern Glib::Mutex* lcmsMutex;

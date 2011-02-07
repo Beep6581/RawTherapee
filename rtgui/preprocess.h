@@ -22,7 +22,19 @@
 #include <gtkmm.h>
 #include <adjuster.h>
 #include <toolpanel.h>
+#include <rawimage.h>
 
+class DFProvider {
+  public:
+    virtual rtengine::RawImage* getDF() {}
+    // add other info here
+};
+
+class FFProvider {
+  public:
+    virtual rtengine::RawImage* getFF() {}
+    // add other info here
+};
 
 class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel{
 
@@ -33,7 +45,18 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Gtk::HBox *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;
+	Gtk::Label *dfInfo;
     bool dfChanged;
+	
+	Gtk::FileChooserButton *flatFieldFile;
+	Gtk::Label *ffLabel;
+	Gtk::Label *ffInfo;
+	Gtk::Button *flatFieldFileReset; 
+	Gtk::CheckButton* flatFieldAutoSelect;
+	Adjuster* flatFieldBlurRadius; 
+	Gtk::ComboBoxText* flatFieldBlurType; 
+	Gtk::HBox *hbff; 
+	bool ffChanged; 
 
 	Adjuster* caRed;
     Adjuster* caBlue;
@@ -45,9 +68,13 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Gtk::CheckButton* caAutocorrect;
     Gtk::CheckButton* hotDeadPixel;
     Gtk::CheckButton* dfAuto;
-    bool lastCA,lastHot,lastDFauto;
+	bool lastCA,lastHot,lastDFauto, lastFFAutoSelect;
+	
+	DFProvider *dfp;
+	FFProvider *ffp;
 
-    sigc::connection caacsconn,dfautoconn,hdpixelconn,dfFile;
+	sigc::connection caacsconn,dfautoconn,hdpixelconn,dfFile,flatFieldFileconn,flatFieldAutoSelectconn,flatFieldBlurTypeconn;
+
   public:
 
     PreProcess ();
@@ -63,6 +90,15 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void darkFrameChanged();
     void darkFrameReset();
     void dfAutoChanged();
+    
+    void flatFieldFileChanged();      
+    void flatFieldFile_Reset();       
+    void flatFieldAutoSelectChanged();
+    void flatFieldBlurRadiusChanged();
+    void flatFieldBlurTypeChanged();
+
+    void setDFProvider (DFProvider* p) { dfp = p; };
+    void setFFProvider (FFProvider* p) { ffp = p; };
 };
 
 #endif

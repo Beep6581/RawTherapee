@@ -24,6 +24,7 @@
 #include <multilangmgr.h>
 #include <safekeyfile.h>
 #include <addsetids.h>
+#include <safegtk.h>
 
 Options options;
 Glib::ustring versionString      = "v3.0 alpha 1";
@@ -122,15 +123,19 @@ void Options::setDefaults () {
     showFileNames = true;
     tabbedUI = false;
     multiDisplayMode = 0;
+    tunnelMetaData = false;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;
+
+    sndLngEditProcDoneSecs=3.0;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
+	rtSettings.flatFieldsPath = "";
 #ifdef WIN32
     rtSettings.iccDirectory = "C:/WINDOWS/System32/spool/drivers/color";
 #else
@@ -152,7 +157,7 @@ int Options::readFromFile (Glib::ustring fname) {
     rtengine::SafeKeyFile keyFile;
 
     try {
-    	if( !Glib::file_test(fname,Glib::FILE_TEST_EXISTS))
+    	if( !safe_file_test(fname,Glib::FILE_TEST_EXISTS))
     		return 1;
         if (!keyFile.load_from_file (fname)) 
             return 1;
@@ -185,8 +190,9 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
-	if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
-	if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
+    if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
+		if( keyFile.has_key ("General", "FlatFieldsPath"))   rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
+    if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
 }
 
 if (keyFile.has_group ("External Editor")) { 
@@ -211,6 +217,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
+	if (keyFile.has_key ("Output", "TunnelMetaData"))   tunnelMetaData             = keyFile.get_boolean("Output", "TunnelMetaData");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -298,6 +305,12 @@ if (keyFile.has_group ("Batch Processing")) {
     if (keyFile.has_key ("Batch Processing", "AdjusterBehavior")) baBehav = keyFile.get_integer_list ("Batch Processing", "AdjusterBehavior");
 }
 
+if (keyFile.has_group ("Sounds")) { 
+    if (keyFile.has_key ("Sounds", "BatchQueueDone")) sndBatchQueueDone = keyFile.get_string ("Sounds", "BatchQueueDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDone"))     sndLngEditProcDone     = keyFile.get_string ("Sounds", "LngEditProcDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
+}
+
         return 0;
 }
 
@@ -325,8 +338,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_integer ("General", "Version", 290);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
-	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
-	keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
+    keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+    keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
+    keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
 
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);
@@ -378,6 +392,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
 	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
+    keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
@@ -426,8 +441,12 @@ int Options::saveToFile (Glib::ustring fname) {
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
+    keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
+    keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
+    keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+
+    FILE *f = safe_g_fopen (fname, "wt");
     if (f==NULL)
         return 1;
     else {
@@ -447,9 +466,9 @@ void Options::load () {
     cacheBaseDir = argv0 + "/cache";
     if (options.multiUser) {
         int r = options.readFromFile (rtdir + "/options");
-        if (r && !g_mkdir_with_parents (rtdir.c_str(), 511)) {
+        if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
             Glib::ustring profdir = rtdir + "/profiles";
-            g_mkdir_with_parents (profdir.c_str(), 511);
+            safe_g_mkdir_with_parents (profdir, 511);
             options.saveToFile (rtdir + "/options");
         }
 #ifdef _WIN32

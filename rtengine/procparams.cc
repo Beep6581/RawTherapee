@@ -29,6 +29,7 @@ namespace rtengine {
 namespace procparams {
 
 const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
+const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 
 ProcParams::ProcParams () { 
 
@@ -174,6 +175,7 @@ void ProcParams::setDefaults () {
     
     resize.enabled = false;
     resize.scale  = 1.0;
+    resize.appliesTo = "Cropped area";
     resize.method = "Bicubic";
     resize.dataspec = 0;
     resize.width = 800;
@@ -203,6 +205,9 @@ void ProcParams::setDefaults () {
         hsvequalizer.hue[i] = 0;
     }
     raw.df_autoselect = false;
+    raw.ff_AutoSelect = false;                                      
+    raw.ff_BlurRadius = 32;                                         
+    raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
     raw.cared = 0;
 	raw.cablue = 0;
     raw.ca_autocorrect = false;
@@ -381,6 +386,7 @@ int ProcParams::save (Glib::ustring fname) const {
 
     keyFile.set_boolean ("Resize", "Enabled",resize.enabled);
     keyFile.set_double  ("Resize", "Scale",  resize.scale);
+    keyFile.set_string  ("Resize", "AppliesTo", resize.appliesTo);
     keyFile.set_string  ("Resize", "Method", resize.method);
     keyFile.set_integer ("Resize", "DataSpecified",  resize.dataspec);
     keyFile.set_integer ("Resize", "Width",  resize.width);
@@ -435,6 +441,10 @@ int ProcParams::save (Glib::ustring fname) const {
     // save RAW parameters
     keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
     keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
+    keyFile.set_string  ("RAW", "FlatFieldFile", raw.ff_file );
+    keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
+    keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
+    keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );     
     keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
 	keyFile.set_double	("RAW", "CARed", raw.cared );
     keyFile.set_double	("RAW", "CABlue", raw.cablue );
@@ -461,7 +471,7 @@ int ProcParams::save (Glib::ustring fname) const {
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = g_fopen (safe_locale_from_utf8(fname).c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     
     if (f==NULL)
         return 1;
@@ -478,7 +488,7 @@ int ProcParams::load (Glib::ustring fname) {
     try {
         setDefaults ();
 
-        FILE* f = g_fopen (fname.c_str(), "rt");
+        FILE* f = safe_g_fopen (fname, "rt");
         if (!f)
             return 1;
         char* buffer = new char[1024];
@@ -697,6 +707,7 @@ if (keyFile.has_group ("HLRecovery")) {
 if (keyFile.has_group ("Resize")) {    
     if (keyFile.has_key ("Resize", "Enabled")) resize.enabled = keyFile.get_boolean ("Resize", "Enabled");
     if (keyFile.has_key ("Resize", "Scale"))  resize.scale  = keyFile.get_double ("Resize", "Scale");
+    if (keyFile.has_key ("Resize", "AppliesTo")) resize.appliesTo = keyFile.get_string ("Resize", "AppliesTo");
     if (keyFile.has_key ("Resize", "Method")) resize.method = keyFile.get_string ("Resize", "Method");
     if (keyFile.has_key ("Resize", "DataSpecified")) resize.dataspec = keyFile.get_integer ("Resize", "DataSpecified");
     if (keyFile.has_key ("Resize", "Width"))  resize.width  = keyFile.get_integer ("Resize", "Width");
@@ -760,6 +771,10 @@ if (keyFile.has_group ("HSV Equalizer")) {
 if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
 	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
+	if (keyFile.has_key ("RAW", "FlatFieldFile"))       raw.ff_file = keyFile.get_string  ("RAW", "FlatFieldFile" );                    
+	if (keyFile.has_key ("RAW", "FlatFieldAutoSelect")) raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" ); 
+	if (keyFile.has_key ("RAW", "FlatFieldBlurRadius")) raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" );
+	if (keyFile.has_key ("RAW", "FlatFieldBlurType"))   raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" );		
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
 	if (keyFile.has_key ("RAW", "CARed"))            raw.cared = keyFile.get_double ("RAW", "CARed" );
 	if (keyFile.has_key ("RAW", "CABlue"))            raw.cablue = keyFile.get_double ("RAW", "CABlue" );
@@ -952,12 +967,17 @@ bool ProcParams::operator== (const ProcParams& other) {
         && hlrecovery.enabled   == other.hlrecovery.enabled
         && hlrecovery.method    == other.hlrecovery.method
         && resize.scale     == other.resize.scale
+		&& resize.appliesTo == other.resize.appliesTo
         && resize.method    == other.resize.method
         && resize.dataspec  == other.resize.dataspec
         && resize.width     == other.resize.width
         && resize.height    == other.resize.height
         && raw.dark_frame   == other.raw.dark_frame
-        && raw.df_autoselect == other.raw.df_autoselect
+		&& raw.df_autoselect == other.raw.df_autoselect 
+		&& raw.ff_file   == other.raw.ff_file            
+		&& raw.ff_AutoSelect   == other.raw.ff_AutoSelect
+		&& raw.ff_BlurRadius   == other.raw.ff_BlurRadius
+		&& raw.ff_BlurType   == other.raw.ff_BlurType 
         && raw.dcb_enhance  == other.raw.dcb_enhance
         && raw.dcb_iterations == other.raw.dcb_iterations
         && raw.ccSteps      == other.raw.ccSteps

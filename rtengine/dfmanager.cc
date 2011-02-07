@@ -25,6 +25,7 @@
 #include <sstream>
 #include <iostream>
 #include <stdio.h>
+#include <imagedata.h>
 
 namespace rtengine{
 
@@ -261,25 +262,30 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
         	int res = ri.loadRaw(false); // Read informations about shot
         	if( !res ){
         	   dfList_t::iterator iter;
-        	   if(!pool){
-        	      dfInfo n(filename,"","",0,0,0);
-        	      iter = dfList.insert(std::pair< std::string,dfInfo>( "", n ) );
-        		  return &(iter->second);
-        	   }
+         	   if(!pool){
+         		   dfInfo n(filename,"","",0,0,0);
+         		   iter = dfList.insert(std::pair< std::string,dfInfo>( "", n ) );
+         		   return &(iter->second);
+         	   }
+        	   RawMetaDataLocation rml;
+        	   rml.exifBase = ri.get_exifBase();
+        	   rml.ciffBase = ri.get_ciffBase();
+        	   rml.ciffLength = ri.get_ciffLen();
+        	   ImageData idata(filename, &rml);
          	   /* Files are added in the map, divided by same maker/model,ISO and shutter*/
-        	   std::string key( dfInfo::key(ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter()) );
+        	   std::string key( dfInfo::key(idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed()) );
         	   iter = dfList.find( key );
         	   if( iter == dfList.end() ){
-				   dfInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_timestamp());
+				   dfInfo n(filename, idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(), idata.getDateTimeAsTS() );
 				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         	   }else{
-        		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) >60*60*6 ) // 6 hour difference
+        		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - idata.getDateTimeAsTS()) >60*60*6 ) // 6 hour difference
         			   iter++;
 
         		   if( iter != dfList.end() )
         		      iter->second.pathNames.push_back( filename );
         		   else{
-    				   dfInfo n(filename, ri.get_maker(), ri.get_model(),(int)ri.get_ISOspeed(),ri.get_shutter(),ri.get_timestamp());
+    				   dfInfo n(filename, idata.getMake(), idata.getModel(),idata.getISOSpeed(),idata.getShutterSpeed(),idata.getDateTimeAsTS());
     				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         		   }
         	   }

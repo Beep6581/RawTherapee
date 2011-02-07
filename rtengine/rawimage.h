@@ -123,6 +123,7 @@ public:
 
   double get_ISOspeed() const {return iso_speed;}
   double get_shutter()  const {return shutter; }
+  double get_aperture()  const {return aperture; }
   time_t get_timestamp() const { return timestamp;}
   int get_rotateDegree() const { return rotate_deg;}
   const std::string get_maker() const { return std::string(make); }

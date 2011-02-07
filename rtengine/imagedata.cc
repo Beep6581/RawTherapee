@@ -45,7 +45,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
 #ifdef RAWZOR_SUPPORT
     // RAWZOR support begin
     if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".rwz") && ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
-        FILE* f = g_fopen (fname.c_str (), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
         	fseek (f, 0, SEEK_END);
         	int rzwSize = ftell (f);
@@ -66,7 +66,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
                     else if (ri->ciffBase>=0)
                         root = rtexif::ExifManager::parseCIFF (tf, ri->ciffBase, ri->ciffLength);
                     fclose (tf);
-                    ::g_remove (tfname.c_str());
+                    safe_g_remove (tfname);
                     extractInfo ();
                 }
                 delete [] rawData;
@@ -79,7 +79,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
     else 
 #endif
     if (ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
-        FILE* f = g_fopen (fname.c_str(), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             if (ri->exifBase>=0) {
                 root = rtexif::ExifManager::parse (f, ri->exifBase);
@@ -96,18 +96,18 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
         }
     }    
     else if (dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
-        FILE* f = g_fopen (fname.c_str (), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
             extractInfo ();
             fclose (f);
-            FILE* ff = g_fopen (fname.c_str (), "rb");
+            FILE* ff = safe_g_fopen (fname, "rb");
             iptc = iptc_data_new_from_jpeg_file (ff);
             fclose (ff);
         }
     }    
     else if ((dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
-        FILE* f = g_fopen (fname.c_str (), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseTIFF (f);
             fclose (f);
@@ -141,16 +141,47 @@ void ImageData::extractInfo () {
 
   make = "";
   model = "";
+  serial = "";
   shutter = 0;
   aperture = 0;
   focal_len = 0;
   iso_speed = 0;
   memset (&time, 0, sizeof(time));
+  timeStamp = 0;
   
-  if (root->getTag ("Make"))
-    make = root->getTag ("Make")->valueToString ();  
-  if (root->getTag ("Model"))
-    model = root->getTag ("Model")->valueToString ();  
+  if (root->getTag ("Make")){
+     make = root->getTag ("Make")->valueToString ();
+     // same dcraw treatment
+     static const char *corp[] =
+       { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
+         "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
+         "SAMSUNG", "Mamiya", "MOTOROLA" };
+     for (int i=0; i < sizeof corp / sizeof *corp; i++)
+       if ( make.find( corp[i] ) != std::string::npos ){		/* Simplify company names */
+   	     make = corp[i];
+   	     break;
+       }
+       make.erase( make.find_last_not_of(' ')+1 );
+  }
+  if (root->getTag ("Model")){
+     model = root->getTag ("Model")->valueToString ();
+     std::size_t i=0;
+     if (  make.find("KODAK") != std::string::npos ){
+   	  if( (i = model.find(" DIGITAL CAMERA")) !=  std::string::npos ||
+   	      (i = model.find(" Digital Camera")) !=  std::string::npos ||
+   	      (i = model.find("FILE VERSION")) )
+        model.resize( i );
+     }
+
+     model.erase( model.find_last_not_of(' ')+1 );
+
+     //if( (i=model.find( make )) != std::string::npos )
+     if( !strncasecmp (model.c_str(), make.c_str(), make.size()) )
+     	if( model.at( make.size() )==' ')
+     	   model.erase(0,make.size()+1);
+     if( model.find( "Digital Camera ") != std::string::npos )
+     	model.erase(0,15);
+  }
 
   rtexif::TagDirectory* exif = NULL;
   if (root->getTag ("Exif"))
@@ -175,8 +206,14 @@ void ImageData::extractInfo () {
         if (sscanf ((const char*)exif->getTag("DateTimeOriginal")->getValue(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
             time.tm_year -= 1900;
             time.tm_mon -= 1;
+            timeStamp = mktime(&time);
         }
     }
+    rtexif::Tag *snTag = exif->findTag ("SerialNumber");
+    if(!snTag)
+    	snTag = exif->findTag ("InternalSerialNumber");
+    if ( snTag )
+        serial = snTag->valueToString();
     // guess lens...
     lens = "Unknown";
 

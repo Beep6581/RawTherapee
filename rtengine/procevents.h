@@ -130,11 +130,16 @@ enum ProcEvent {
     EvDefringeRadius=105,
     EvDefringeThreshold=106,
     EvHLComprThreshold=107,
-	EvLAvoidClip=108,
-	EvLSatLimiter=109,
-	EvLSatLimit=110,
-
-    NUMOFEVENTS=111
+    EvLAvoidClip=108,
+    EvLSatLimiter=109,
+    EvLSatLimit=110,
+    EvResizeBoundingBox=111,
+    EvResizeAppliesTo=112,
+    EvFlatFieldFile=113,
+    EvFlatFieldAutoSelect=114,
+    EvFlatFieldBlurRadius=115,
+    EvFlatFieldBlurType=116,
+    NUMOFEVENTS=117
     };
 }
 #endif

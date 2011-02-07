@@ -136,6 +136,11 @@ class Options {
     int multiDisplayMode;  // 0=none, 1=Edit panels on other display
     std::vector<double> cutOverlayBrush;  // Red;Green;Blue;Alpha , all ranging 0..1
     
+    Glib::ustring sndBatchQueueDone;
+    Glib::ustring sndLngEditProcDone;
+    double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
+    bool tunnelMetaData;  // Pass through IPTC and XMP unchanged
+
     Options ();
 
     Options*    copyFrom        (Options* other);
@@ -151,6 +156,7 @@ class Options {
 extern Options options;
 extern Glib::ustring argv0;
 extern Glib::ustring argv1;
+extern bool simpleEditor;
 extern Glib::ustring versionString;
 extern Glib::ustring paramFileExtension;
 

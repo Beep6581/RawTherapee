@@ -198,8 +198,9 @@ bool ToolBar::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
     
-    if (!ctrl) {
+    if (!ctrl && !alt) {
         switch(event->keyval) {
             case GDK_w:
             case GDK_W:
@@ -213,8 +214,8 @@ bool ToolBar::handleShortcutKey (GdkEventKey* event) {
             case GDK_S:
                 stra_pressed ();
                 return true;
-            case GDK_n:
-            case GDK_N:
+            case GDK_h:
+            case GDK_H:
                 hand_pressed ();
                 return true;
         }

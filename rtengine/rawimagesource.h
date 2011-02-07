@@ -114,8 +114,9 @@ class RawImageSource : public ImageSource {
         int         load        (Glib::ustring fname, bool batch = false);
         void        preprocess  (const RAWParams &raw);
         void        demosaic    (const RAWParams &raw);
-        void        copyOriginalPixels( RawImage *ri, RawImage *riDark );
-        void        scaleColors( int winx,int winy,int winw,int winh );
+        void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
+	void		cfaboxblur	(RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
+		void        scaleColors	(int winx,int winy,int winw,int winh );
         void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
@@ -150,7 +151,8 @@ class RawImageSource : public ImageSource {
 
         int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
         void CA_correct_RT	(double cared, double cablue);
-		void exp_bef (float expos, float preser);//exposi		
+		void exp_bef (float expos, float preser);//exposi
+		
         int  cfaCleanFromMap( PixelsMap &bitmapBads );
         int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
         void ddct8x8s(int isgn, float **a);

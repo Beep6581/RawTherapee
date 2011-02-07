@@ -47,18 +47,18 @@ void CacheManager::init () {
     openEntries.clear ();
     baseDir = options.cacheBaseDir;
 
-    if (!Glib::file_test (baseDir, Glib::FILE_TEST_IS_DIR))
-        g_mkdir_with_parents (baseDir.c_str(), 511);
-    if (!Glib::file_test (Glib::build_filename (baseDir, "profiles"), Glib::FILE_TEST_IS_DIR))
-        g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "profiles")).c_str(), 511);
-    if (!Glib::file_test (Glib::build_filename (baseDir, "images"), Glib::FILE_TEST_IS_DIR))
-        g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "images")).c_str(), 511);
-    if (!Glib::file_test (Glib::build_filename (baseDir, "aehistograms"), Glib::FILE_TEST_IS_DIR))
-        g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "aehistograms")).c_str(), 511);
-    if (!Glib::file_test (Glib::build_filename (baseDir, "embprofiles"), Glib::FILE_TEST_IS_DIR))
-        g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "embprofiles")).c_str(), 511);
-    if (!Glib::file_test (Glib::build_filename (baseDir, "data"), Glib::FILE_TEST_IS_DIR))
-        g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "data")).c_str(), 511);
+    if (!safe_file_test (baseDir, Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (baseDir, 511);
+    if (!safe_file_test (Glib::build_filename (baseDir, "profiles"), Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "profiles")), 511);
+    if (!safe_file_test (Glib::build_filename (baseDir, "images"), Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "images")), 511);
+    if (!safe_file_test (Glib::build_filename (baseDir, "aehistograms"), Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "aehistograms")), 511);
+    if (!safe_file_test (Glib::build_filename (baseDir, "embprofiles"), Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "embprofiles")), 511);
+    if (!safe_file_test (Glib::build_filename (baseDir, "data"), Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "data")), 511);
 }
 
 Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
@@ -87,7 +87,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
     Glib::ustring cfname = getCacheFileName ("data", fname, md5) + ".txt";
 
     // let's see if we have it in the cache
-    if (Glib::file_test (cfname, Glib::FILE_TEST_EXISTS)) {
+    if (safe_file_test (cfname, Glib::FILE_TEST_EXISTS)) {
         CacheImageData* cfs = new CacheImageData ();
         int e = cfs->load (cfname);
         if (!e && cfs->supported==true) 
@@ -150,27 +150,43 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 		// if in the editor, the thumbnail still exists. If not, delete it:
 		r = openEntries.find (fname);
 	    if (r==openEntries.end() && md5!="") {
-			::g_remove ((getCacheFileName ("data", fname, md5) + ".txt").c_str());
-			::g_remove ((getCacheFileName ("profiles", fname, md5) + paramFileExtension).c_str());
-			::g_remove ((getCacheFileName ("images", fname, md5) + ".cust").c_str());
-			::g_remove ((getCacheFileName ("images", fname, md5) + ".jpg").c_str());
-			::g_remove ((getCacheFileName ("aehistograms", fname, md5)).c_str());
-			::g_remove ((getCacheFileName ("embprofiles", fname, md5) + ".icc").c_str());
+			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
+			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+			safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
+			safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
+			safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
+			safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
+			safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
 		}
 	}
 	else {
 	    std::string md5 = getMD5 (fname);
 	    if (md5!="") {
-	        ::g_remove ((getCacheFileName ("data", fname, md5) + ".txt").c_str());
-	        ::g_remove ((getCacheFileName ("profiles", fname, md5) + paramFileExtension).c_str());
-	        ::g_remove ((getCacheFileName ("images", fname, md5) + ".cust").c_str());
-	        ::g_remove ((getCacheFileName ("images", fname, md5) + ".jpg").c_str());
-	        ::g_remove ((getCacheFileName ("aehistograms", fname, md5)).c_str());
-	        ::g_remove ((getCacheFileName ("embprofiles", fname, md5) + ".icc").c_str());
+	        safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
+	        safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
+	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
+	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
+	        safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
+	        safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
 	    }
 	}
 }
 
+void CacheManager::clearFromCache (const Glib::ustring& fname, bool leavenotrace) {
+	std::string md5 = getMD5 (fname);
+	if (md5!="") {
+		if (leavenotrace){
+			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
+			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+		}
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
+		safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
+		safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
+	}
+}
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename) {
 
@@ -178,12 +194,13 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
     std::string newmd5 = getMD5 (newfilename);
 
-    ::g_rename ((getCacheFileName ("profiles", oldfilename, oldmd5) + paramFileExtension).c_str(), (getCacheFileName ("profiles", newfilename, newmd5) + paramFileExtension).c_str());
-    ::g_rename ((getCacheFileName ("images", oldfilename, oldmd5) + ".cust").c_str(), (getCacheFileName ("images", newfilename, newmd5) + ".cust").c_str());
-    ::g_rename ((getCacheFileName ("images", oldfilename, oldmd5) + ".jpg").c_str(), (getCacheFileName ("images", newfilename, newmd5) + ".jpg").c_str());
-    ::g_rename ((getCacheFileName ("aehistograms", oldfilename, oldmd5)).c_str(), (getCacheFileName ("aehistograms", newfilename, newmd5)).c_str());
-    ::g_rename ((getCacheFileName ("embprofiles", oldfilename, oldmd5) + ".icc").c_str(), (getCacheFileName ("embprofiles", newfilename, newmd5) + ".icc").c_str());
-    ::g_rename ((getCacheFileName ("data", oldfilename, oldmd5) + ".txt").c_str(), (getCacheFileName ("data", newfilename, newmd5) + ".txt").c_str());
+    safe_g_rename (getCacheFileName ("profiles", oldfilename, oldmd5) + paramFileExtension, (getCacheFileName ("profiles", newfilename, newmd5) + paramFileExtension).c_str());
+    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".cust16", getCacheFileName ("images", newfilename, newmd5) + ".cust16");
+    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".cust", getCacheFileName ("images", newfilename, newmd5) + ".cust");
+    safe_g_rename (getCacheFileName ("images", oldfilename, oldmd5) + ".jpg", getCacheFileName ("images", newfilename, newmd5) + ".jpg");
+    safe_g_rename (getCacheFileName ("aehistograms", oldfilename, oldmd5), getCacheFileName ("aehistograms", newfilename, newmd5));
+    safe_g_rename (getCacheFileName ("embprofiles", oldfilename, oldmd5) + ".icc", getCacheFileName ("embprofiles", newfilename, newmd5) + ".icc");
+    safe_g_rename (getCacheFileName ("data", oldfilename, oldmd5) + ".txt", getCacheFileName ("data", newfilename, newmd5) + ".txt");
 
     // check if it is opened
     string_thumb_map::iterator r = openEntries.find (oldfilename);
@@ -254,7 +271,7 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) {
     try {
         Glib::Dir* dir = new Glib::Dir (Glib::build_filename (baseDir, dirName));
         for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) 
-            ::g_remove (Glib::build_filename (Glib::build_filename (baseDir, dirName), *i).c_str());
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, dirName), *i));
         delete dir;
     }
     catch (const Glib::FileError& fe) {
@@ -290,12 +307,13 @@ void CacheManager::applyCacheSizeLimitation () {
     if (flist.size() > options.maxCacheEntries) {
         std::sort (flist.begin(), flist.end());
         while (flist.size() > options.maxCacheEntries) {
-            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "data"), flist.front().fname) + ".txt").c_str());
-            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust").c_str());
-            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg").c_str());
-            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname)).c_str());
-            ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "embprofiles"), flist.front().fname) + ".icc").c_str());
-            //                ::g_remove ((Glib::build_filename (Glib::build_filename (baseDir, "profiles"), flist.front().fname) + paramFileExtension).c_str());
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "data"), flist.front().fname) + ".txt");
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust16");
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".cust");
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "images"), flist.front().fname) + ".jpg");
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "aehistograms"), flist.front().fname));
+            safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "embprofiles"), flist.front().fname) + ".icc");
+            //                safe_g_remove (Glib::build_filename (Glib::build_filename (baseDir, "profiles"), flist.front().fname) + paramFileExtension);
             flist.erase (flist.begin());
         }
     }

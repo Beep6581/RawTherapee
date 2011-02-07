@@ -119,11 +119,7 @@ setup_read_icc_profile (j_decompress_ptr cinfo)
 /*
  * Handy subroutine to test whether a saved marker is an ICC profile marker.
  */
-#ifdef WIN32
-static jboolean
-#else
 static boolean
-#endif
 marker_is_icc (jpeg_saved_marker_ptr marker)
 {
   return
@@ -164,11 +160,7 @@ marker_is_icc (jpeg_saved_marker_ptr marker)
  * return FALSE.  You might want to issue an error message instead.
  */
 
-#ifdef WIN32
-jboolean
-#else
 boolean
-#endif
 read_icc_profile (j_decompress_ptr cinfo,
 		  JOCTET **icc_data_ptr,
 		  unsigned int *icc_data_len)

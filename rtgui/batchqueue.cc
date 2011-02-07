@@ -91,7 +91,7 @@ bool BatchQueue::saveBatchQueue( )
 {
     Glib::ustring savedQueueFile;
     savedQueueFile = options.rtdir+"/batch/queue";
-    FILE *f = g_fopen (safe_locale_from_utf8(savedQueueFile).c_str(), "wt");
+    FILE *f = safe_g_fopen (savedQueueFile, "wt");
 
     if (f==NULL)
         return false;
@@ -108,7 +108,7 @@ bool BatchQueue::loadBatchQueue( )
 {
     Glib::ustring savedQueueFile;
     savedQueueFile = options.rtdir+"/batch/queue";
-    FILE *f = g_fopen (safe_locale_from_utf8(savedQueueFile).c_str(), "rt");
+    FILE *f = safe_g_fopen (savedQueueFile, "rt");
 
     if (f==NULL)
         return false;
@@ -173,7 +173,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
     strftime (stringTimestamp,sizeof(stringTimestamp),"_%Y%m%d%H%M%S_",timeinfo);
     Glib::ustring savedParamPath;
     savedParamPath = options.rtdir+"/batch/";
-    g_mkdir_with_parents (savedParamPath.c_str(), 0755);
+    safe_g_mkdir_with_parents (savedParamPath, 0755);
     savedParamPath += Glib::path_get_basename (filename);
     savedParamPath += stringTimestamp;
     savedParamPath += paramFileExtension;
@@ -182,7 +182,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
 
 int deleteitem (void* data)
 {
-	::remove( safe_locale_from_utf8( ((BatchQueueEntry*)data)->savedParamsFile).c_str () );
+	safe_g_remove(  ((BatchQueueEntry*)data)->savedParamsFile );
     gdk_threads_enter ();
     delete (BatchQueueEntry*)data;
     gdk_threads_leave ();
@@ -281,7 +281,7 @@ void BatchQueue::startProcessing () {
         // remove button set
         next->removeButtonSet ();
         // start batch processing
-        rtengine::startBatchProcessing (next->job, this);
+        rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
         queue_draw ();
     }
 }
@@ -358,7 +358,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         next->removeButtonSet ();
     }
     if( saveBatchQueue( ) ){
-       ::remove( safe_locale_from_utf8(processedParams).c_str () );
+       safe_g_remove( processedParams );
        // Delete all files in directory \batch when finished, just to be sure to remove zombies
        if( fd.size()==0 ){
     	    std::vector<Glib::ustring> names;
@@ -366,7 +366,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     	    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
     		safe_build_file_list (dir, names, batchdir);
     		for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
-    			::remove( safe_locale_from_utf8(*iter).c_str () );
+    			safe_g_remove( *iter );
        }
     }
     redraw ();
@@ -461,7 +461,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     Glib::ustring dstfname = Glib::path_get_basename (fileName);
 
     // create directory, if does not exist
-    if (g_mkdir_with_parents (dstdir.c_str(), 0755) ) 
+    if (safe_g_mkdir_with_parents (dstdir, 0755) ) 
         return "";
 	
 	// In overwrite mode we TRY to delete the old file first.
@@ -475,11 +475,10 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
         else
             fname = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, format);
 
-		int fileExists=Glib::file_test (fname, Glib::FILE_TEST_EXISTS); 
+		int fileExists=safe_file_test (fname, Glib::FILE_TEST_EXISTS); 
         
 		if (inOverwriteMode && fileExists) {
-			// do NOT use g_remove as it has compiler problems on Unix and OSX (GTK namespace problem)
-			if (::remove(safe_locale_from_utf8(fname).c_str ()) == -1)
+			if (safe_g_remove(fname) == -1)
 				inOverwriteMode = false;  // failed to delete- revert to old naming scheme
 			else
 				fileExists = false;  // deleted now

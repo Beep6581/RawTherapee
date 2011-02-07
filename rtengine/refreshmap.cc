@@ -93,14 +93,14 @@ ALL,              // EvOProfile,
 ALL,              // EvIProfile,
 TRANSFORM,        // EvVignetting,
 RGBCURVE,         // EvChMixer,
-ALL,              // EvResizeScale,
-ALL,              // EvResizeMethod,
+RESIZE,           // EvResizeScale,
+RESIZE,           // EvResizeMethod,
 EXIF,             // EvExif,
 IPTC,             // EvIPTC
-ALL,              // EvResizeSpec,
-ALL,              // EvResizeWidth
-ALL,              // EvResizeHeight
-ALL,              // EvResizeEnabled
+RESIZE,           // EvResizeSpec,
+RESIZE,           // EvResizeWidth
+RESIZE,           // EvResizeHeight
+RESIZE,           // EvResizeEnabled
 ALL,              // EvProfileChangeNotification
 RETINEX,          // EvShrHighQuality
 TRANSFORM,        // EvPerspCorr
@@ -131,5 +131,12 @@ RGBCURVE,         // EvHLComprThreshold,
 LUMINANCECURVE,   // EvCBAvoidClip,
 LUMINANCECURVE,   // EvCBSatLimiter,
 LUMINANCECURVE,   // EvCBSatLimit,
+RESIZE,           // EvResizeBoundingBox
+RESIZE,           // EvResizeAppliesTo
+FLATFIELD,        // EvFlatFieldFile,
+FLATFIELD,        // EvFlatFieldAutoSelect,
+FLATFIELD,        // EvFlatFieldBlurRadius,
+FLATFIELD         // EvFlatFieldBlurType,
+
 };
 

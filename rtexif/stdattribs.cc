@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c)      2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -382,6 +383,12 @@ public:
 };
 UnitsInterpreter unitsInterpreter;
 
+class UTF8BinInterpreter : public Interpreter {
+    public:
+        UTF8BinInterpreter () {}
+};
+UTF8BinInterpreter utf8BinInterpreter;
+
 const TagAttrib exifAttribs[] = {
  {0, 2, 0, 0, 0x0100, "ImageWidth", &stdInterpreter},
  {0, 2, 0, 0, 0x0101, "ImageHeight", &stdInterpreter},
@@ -448,8 +455,11 @@ const TagAttrib exifAttribs[] = {
  {0, 1, 0, 0, 0xA40B, "DeviceSettingDescription", &stdInterpreter},
  {0, 1, 0, 0, 0xA40C, "SubjectDistanceRange", &stdInterpreter},
  {0, 1, 0, 0, 0xA420, "ImageUniqueID", &stdInterpreter},
- {0, 1, 0, 0, 0xa432, "LensInfo", &stdInterpreter},
- {0, 1, 0, 0, 0xa434, "LensModel", &stdInterpreter},
+ {0, 1, 0, 0, 0xA431, "SerialNumber", &stdInterpreter},
+ {0, 1, 0, 0, 0xA432, "LensInfo", &stdInterpreter},
+ {0, 1, 0, 0, 0xA433, "LensMake", &stdInterpreter},
+ {0, 1, 0, 0, 0xA434, "LensModel", &stdInterpreter},
+ {0, 1, 0, 0, 0xA435, "LensSerialNumber", &stdInterpreter},
  {0, 1, 0, 0, 0xc630, "DNGLensInfo", &stdInterpreter},
  {-1, 0, 0, 0, 0, "", NULL }};
 
@@ -525,6 +535,7 @@ const TagAttrib iopAttribs[] = {
  {0, 2, 0, 0, 0x0212, "YCbCrSubSampling", &stdInterpreter},
  {0, 2, 0, 0, 0x0213, "YCbCrPositioning", &stdInterpreter},
  {0, 2, 0, 0, 0x0214, "ReferenceBlackWhite", &stdInterpreter},
+ {0, 2, 0, 0, 0x02bc, "ApplicationNotes", &utf8BinInterpreter},  // XMP
  {0, 1, 0, 0, 0x4746, "Rating",&stdInterpreter},
  {0, 1, 0, 0, 0x4749, "RatingPercent",&stdInterpreter},
  {0, 1, 0, 0, 0x828d, "CFAPatternDim", &stdInterpreter},
@@ -536,8 +547,13 @@ const TagAttrib iopAttribs[] = {
  {0, 1, 0, gpsAttribs,  0x8825, "GPSInfo", &stdInterpreter},
  {0, 1, 0, 0, 0x9003, "DateTimeOriginal", &stdInterpreter},
  {0, 1, 0, 0, 0x9004, "DateTimeDigitized", &stdInterpreter},
+ {0, 1, 0, 0, 0x9211, "ImageNumber", &stdInterpreter},
  {0, 1, 0, iopAttribs,  0xA005, "Interoperability", &stdInterpreter},
  {0, 0, 0, 0, 0xC4A5, "PrintIMInformation", &stdInterpreter},
+ {0, 1, 0, 0, 0xc62f, "CameraSerialNumber", &stdInterpreter},
+ {0, 2, 0, 0, 0xc630, "DNGLensInfo", &stdInterpreter},
+ {0, 1, 0, 0, 0xc65d, "RawDataUniqueID", &stdInterpreter},
+ {0, 0, 0, 0, 0xc761, "NoiseProfile", &stdInterpreter},
  {0, 2, 0, 0, 0x00fe, "NewSubFileType", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
 

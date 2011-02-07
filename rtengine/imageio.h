@@ -82,6 +82,7 @@ class ImageIO {
         cmsHPROFILE getEmbeddedProfile () { return embProfile; }
         void        getEmbeddedProfileData (int& length, unsigned char*& pdata) { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }
 
+        void setMetadata (const rtexif::TagDirectory* eroot);    
         void setMetadata (const rtexif::TagDirectory* eroot, const std::vector<rtengine::procparams::ExifPair>& exif, const std::vector<rtengine::procparams::IPTCPair>& iptcc);    
         void setOutputProfile  (char* pdata, int plen);
         Glib::Mutex& mutex () { return imutex; }

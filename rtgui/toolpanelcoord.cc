@@ -20,6 +20,9 @@
 #include <toolpanelcoord.h>
 #include <ilabel.h>
 #include <options.h>
+#include <imagesource.h>
+#include <dfmanager.h>
+#include <ffmanager.h>
 
 using namespace rtengine::procparams;
 
@@ -36,19 +39,19 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
-	impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
-	defringe			= Gtk::manage (new Defringe ());
-	dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
+    impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
+    defringe            = Gtk::manage (new Defringe ());
+    dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
     lcurve              = Gtk::manage (new LCurve ());
     colorboost          = Gtk::manage (new ColorBoost ());
     colorshift          = Gtk::manage (new ColorShift ());
-    lensgeom			= Gtk::manage (new LensGeometry ());
+    lensgeom            = Gtk::manage (new LensGeometry ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
-    perspective			= Gtk::manage (new PerspCorrection ());
+    perspective         = Gtk::manage (new PerspCorrection ());
     cacorrection        = Gtk::manage (new CACorrection ());
     hlrecovery          = Gtk::manage (new HLRecovery ());
     chmixer             = Gtk::manage (new ChMixer ());
@@ -59,7 +62,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     iptcpanel           = Gtk::manage (new IPTCPanel ());
     equalizer           = Gtk::manage (new Equalizer ());
     dirpyrequalizer     = Gtk::manage (new DirPyrEqualizer ());
-	hsvequalizer        = Gtk::manage (new HSVEqualizer ());
+    hsvequalizer        = Gtk::manage (new HSVEqualizer ());
     rawprocess          = Gtk::manage (new RawProcess ());
     preprocess          = Gtk::manage (new PreProcess ());
 
@@ -71,14 +74,14 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     //addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     //addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
-	addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
-	addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
-	addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
+    addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
+    addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
+    addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     //addPanel (detailsPanel, lumadenoise,        M("TP_LUMADENOISE_LABEL"));    toolPanels.push_back (lumadenoise);
     //addPanel (detailsPanel, colordenoise,       M("TP_COLORDENOISE_LABEL"));   toolPanels.push_back (colordenoise);
-	addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
-	addPanel (detailsPanel, defringe,			M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);
-	addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
+    addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
+    addPanel (detailsPanel, defringe,           M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);
+    addPanel (detailsPanel, dirpyrequalizer,    M("TP_DIRPYREQUALIZER_LABEL"));	toolPanels.push_back (dirpyrequalizer);
     //addPanel (detailsPanel, equalizer,          M("TP_EQUALIZER_LABEL"));      toolPanels.push_back (equalizer);
     addPanel (transformPanel, crop,             M("TP_CROP_LABEL"));           toolPanels.push_back (crop);
     addPanel (transformPanel, resize,           M("TP_RESIZE_LABEL"));         toolPanels.push_back (resize);
@@ -102,11 +105,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
     metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
 
-    Gtk::ScrolledWindow* exposurePanelSW    = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* detailsPanelSW     = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* colorPanelSW       = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* transformPanelSW   = Gtk::manage (new Gtk::ScrolledWindow ());
-    Gtk::ScrolledWindow* rawPanelSW         = Gtk::manage (new Gtk::ScrolledWindow ());
+    exposurePanelSW    = Gtk::manage (new Gtk::ScrolledWindow ());
+    detailsPanelSW     = Gtk::manage (new Gtk::ScrolledWindow ());
+    colorPanelSW       = Gtk::manage (new Gtk::ScrolledWindow ());
+    transformPanelSW   = Gtk::manage (new Gtk::ScrolledWindow ());
+    rawPanelSW         = Gtk::manage (new Gtk::ScrolledWindow ());
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -119,12 +122,47 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     transformPanelSW->add (*transformPanel);
     rawPanelSW->add       (*rawPanel);
 
-    toolPanelNotebook->append_page (*exposurePanelSW,  M("MAIN_TAB_EXPOSURE"));
-    toolPanelNotebook->append_page (*detailsPanelSW,   M("MAIN_TAB_DETAIL"));
-    toolPanelNotebook->append_page (*colorPanelSW,     M("MAIN_TAB_COLOR"));
-    toolPanelNotebook->append_page (*transformPanelSW, M("MAIN_TAB_TRANSFORM"));
-    toolPanelNotebook->append_page (*rawPanelSW,       M("MAIN_TAB_RAW"));
-    toolPanelNotebook->append_page (*metadataPanel,    M("MAIN_TAB_METADATA"));
+    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
+	hbe->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_EXPOSURE"))));
+	hbe->set_spacing (2);
+	hbe->set_tooltip_markup (M("MAIN_TAB_EXPOSURE_TOOLTIP"));
+	hbe->show_all ();
+    toolPanelNotebook->append_page (*exposurePanelSW,  *hbe);
+
+    Gtk::HBox* hbd = Gtk::manage (new Gtk::HBox ());
+	hbd->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_DETAIL"))));
+	hbd->set_spacing (2);
+	hbd->set_tooltip_markup (M("MAIN_TAB_DETAIL_TOOLTIP"));
+	hbd->show_all ();
+    toolPanelNotebook->append_page (*detailsPanelSW,   *hbd);
+
+    Gtk::HBox* hbc = Gtk::manage (new Gtk::HBox ());
+	hbc->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_COLOR"))));
+	hbc->set_spacing (2);
+	hbc->set_tooltip_markup (M("MAIN_TAB_COLOR_TOOLTIP"));
+	hbc->show_all ();
+    toolPanelNotebook->append_page (*colorPanelSW,     *hbc);
+
+    Gtk::HBox* hbt = Gtk::manage (new Gtk::HBox ());
+	hbt->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_TRANSFORM"))));
+	hbt->set_spacing (2);
+	hbt->set_tooltip_markup (M("MAIN_TAB_TRANSFORM_TOOLTIP"));
+	hbt->show_all ();
+    toolPanelNotebook->append_page (*transformPanelSW, *hbt);
+
+    Gtk::HBox* hbr = Gtk::manage (new Gtk::HBox ());
+	hbr->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_RAW"))));
+	hbr->set_spacing (2);
+	hbr->set_tooltip_markup (M("MAIN_TAB_RAW_TOOLTIP"));
+	hbr->show_all ();
+    toolPanelNotebook->append_page (*rawPanelSW,       *hbr);
+
+    Gtk::HBox* hbm = Gtk::manage (new Gtk::HBox ());
+	hbm->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_METADATA"))));
+	hbm->set_spacing (2);
+	hbm->set_tooltip_markup (M("MAIN_TAB_METADATA_TOOLTIP"));
+	hbm->show_all ();
+    toolPanelNotebook->append_page (*metadataPanel,    *hbm);
     toolPanelNotebook->set_current_page (0);
 
     toolPanelNotebook->set_scrollable ();
@@ -135,6 +173,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
     whitebalance->setWBProvider (this);
     whitebalance->setSpotWBListener (this);
+    preprocess->setDFProvider (this);
+    preprocess->setFFProvider (this);
     lensgeom->setLensGeomListener (this);
     rotate->setLensGeomListener (this);
     crop->setCropPanelListener (this);
@@ -173,11 +213,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         toolPanels[i]->write (params);
 
     // some transformations make the crop change for convenience
-    if (event==rtengine::EvResizeScale) {
-        crop->resizeScaleChanged (params->resize.scale);
-        crop->write (params);
-    }
-    else if (event==rtengine::EvCTHFlip) {
+    if (event==rtengine::EvCTHFlip) {
         crop->hFlipCrop ();
         crop->write (params);
     }
@@ -188,6 +224,12 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     else if (event==rtengine::EvCTRotate) {
         crop->rotateCrop (params->coarse.rotate);
         crop->write (params);
+        resize->update (params->crop.enabled, params->crop.w, params->crop.h, ipc->getFullWidth(), ipc->getFullHeight());
+        resize->write (params);
+    }
+    else if (event==rtengine::EvCrop) {
+        resize->update (params->crop.enabled, params->crop.w, params->crop.h);
+        resize->write (params);
     }
 
     ipc->paramsUpdateReady ();
@@ -200,11 +242,25 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
 void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
+	int fw, fh, tr;
+
     if (!ipc) return;
-    ProcParams* params = ipc->getParamsForUpdate (event);
+    ProcParams *params = ipc->getParamsForUpdate (event);
     *params = *nparams;
-    for (int i=0; i<toolPanels.size(); i++) 
-        toolPanels[i]->read (nparams);
+
+    tr = TR_NONE;
+    if (params->coarse.rotate==90)  tr |= TR_R90;
+    if (params->coarse.rotate==180) tr |= TR_R180;
+    if (params->coarse.rotate==270) tr |= TR_R270;
+
+    // trimming overflowing cropped area
+    rtengine::ImageSource *ii = (rtengine::ImageSource*)ipc->getInitialImage();
+    ii->getFullSize (fw, fh, tr);
+    crop->trim(params, fw, fh);
+
+    // updating the GUI with updated values
+    for (unsigned int i=0; i<toolPanels.size(); i++)
+        toolPanels[i]->read (params);
 
     ipc->paramsUpdateReady ();
 
@@ -327,6 +383,42 @@ void ToolPanelCoordinator::autoCropRequested () {
     crop->cropManipReady ();
 }
 
+rtengine::RawImage* ToolPanelCoordinator::getDF()
+{
+    if (!ipc)
+        return NULL;
+    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    if(imd){
+      int iso = imd->getISOSpeed();
+      double shutter = imd->getShutterSpeed();
+      std::string maker( imd->getMake()  );
+      std::string model( imd->getModel() );
+      time_t timestamp = imd->getDateTimeAsTS();
+
+      return rtengine::dfm.searchDarkFrame( maker,model,iso,shutter, timestamp);
+    }
+    return NULL;
+}
+
+rtengine::RawImage* ToolPanelCoordinator::getFF()
+{
+    if (!ipc)
+        return NULL;
+    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    if(imd){
+      int iso = imd->getISOSpeed();
+      double shutter = imd->getShutterSpeed();
+      double aperture = imd->getFNumber();
+      double focallength = imd->getFocalLen();
+      std::string maker( imd->getMake()  );
+      std::string model( imd->getModel() );
+      std::string lens(  imd->getLens()  );
+      time_t timestamp = imd->getDateTimeAsTS();
+
+      return rtengine::ffm.searchFlatField( maker,model,lens,focallength,aperture,timestamp);
+    }
+    return NULL;
+}
 void ToolPanelCoordinator::straightenRequested () {
 
     if (!ipc)
@@ -385,4 +477,39 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
             }
         }
     }
+}
+
+bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
+
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
+
+    if (alt){
+		switch(event->keyval) {
+			case GDK_e:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exposurePanelSW));
+				return true;
+			case GDK_d:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*detailsPanelSW));
+				return true;
+			case GDK_c:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*colorPanelSW));
+				return true;
+			case GDK_t:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*transformPanelSW));
+				return true;
+			case GDK_r:
+				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
+				return true;
+			case GDK_m:
+				// !!! this should be improved by detecting if metadataPanel is present,
+				// as this page is removed in BatchToolPanelCoordinator::BatchToolPanelCoordinator
+				if (toolPanelNotebook->get_n_pages()==6){
+					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
+					return true;
+				}
+		}
+    }
+    return false;
 }

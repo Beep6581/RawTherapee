@@ -27,6 +27,7 @@
 #include <image8.h>
 #include <curves.h>
 #include <dfmanager.h>
+#include <ffmanager.h>
 #include <slicer.h>
 #include <iostream>
 
@@ -952,19 +953,37 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	RawImage *rid=NULL;
 	if (!raw.df_autoselect) {
 		if( raw.dark_frame.size()>0)
-		   rid = dfm.searchDarkFrame( raw.dark_frame );
-	}else{
-		rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+			rid = dfm.searchDarkFrame( raw.dark_frame );
+	} else {
+		rid = dfm.searchDarkFrame( idata->getMake(), idata->getModel(),idata->getISOSpeed(),idata->getShutterSpeed(),idata->getDateTimeAsTS());
 	}
 	if( rid && settings->verbose){
 		printf( "Subtracting Darkframe:%s\n",rid->get_filename().c_str());
 	}
-	copyOriginalPixels(ri, rid);
+	
+	//FLATFIELD start
+	Glib::ustring newFF = raw.ff_file;
+	RawImage *rif=NULL;
+	if (!raw.ff_AutoSelect) {
+		if( raw.ff_file.size()>0)
+			rif = ffm.searchFlatField( raw.ff_file );
+	} else {
+		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
+	}
+	if( rif && settings->verbose) {
+		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());
+	}
+	copyOriginalPixels(raw, ri, rid, rif);
+	//FLATFIELD end
+	
+	
 	PixelsMap bitmapBads(W,H);
 	int totBP=0; // Hold count of bad pixels to correct
 
 	// Always correct camera badpixels
-	std::list<badPix> *bp = dfm.getBadPixels( ri->get_maker(), ri->get_model(), std::string("") );
+	std::list<badPix> *bp = dfm.getBadPixels( idata->getMake(), idata->getModel(), idata->getSerialNumber() );
+	if( !bp && !idata->getSerialNumber().empty() )
+		bp = dfm.getBadPixels( idata->getMake(), idata->getModel(), "" ); // 2nd try without serial number
 	if( bp ){
 		totBP+=bitmapBads.set( *bp );
 		if( settings->verbose ){
@@ -975,7 +994,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	// If darkframe selected, correct hotpixels found on darkframe
 	bp = 0;
 	if( raw.df_autoselect ){
-		bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
+		bp = dfm.getHotPixels( idata->getMake(), idata->getModel(),idata->getISOSpeed(),idata->getShutterSpeed(), idata->getDateTimeAsTS() );
 	}else if( raw.dark_frame.size()>0 )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
@@ -1108,11 +1127,13 @@ void RawImageSource::demosaic(const RAWParams &raw)
 
 }
 
+	
 /* Copy original pixel data and
- * subtract dark frame (if present) from current image
+ * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
+	
 	if (ri->isBayer()) {
 		if (!rawData)
 			rawData = allocArray< unsigned short >(W,H);
@@ -1150,7 +1171,139 @@ void RawImageSource::copyOriginalPixels(RawImage *src, RawImage *riDark )
 			}
 		}
 	}
+	
+	
+	if (ri->isBayer() && riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
+		//TODO: flat field correction for non-Bayer raw data
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		float (*cfablur);
+		cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
+		//#define BS 32	
+		int BS = raw.ff_BlurRadius;
+		if (BS&1) BS++;
+		
+		//function call to cfabloxblur 
+		if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::v_ff])
+			cfaboxblur(riFlatFile, cfablur, 2*BS, 0);
+		else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::h_ff])
+			cfaboxblur(riFlatFile, cfablur, 0, 2*BS);
+		else if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff])
+			//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+			cfaboxblur(riFlatFile, cfablur, BS, BS);//first do area blur to correct vignette
+		else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
+			cfaboxblur(riFlatFile, cfablur, BS, BS);
+		
+		float refctrval,reflocval,refcolor[2][2],vignettecorr,colorcastcorr;
+		//find center ave values by channel
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++) {
+				refcolor[m][n] = MAX(0,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
+			}
+		
+		for (int m=0; m<2; m++)
+			for (int n=0; n<2; n++) {
+				for (int row = 0; row+m < H; row+=2) 
+					for (int col = 0; col+n < W; col+=2) {
+						
+						vignettecorr = ( refcolor[m][n]/MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black()) );
+						rawData[row+m][col+n] = CLIP(round(rawData[row+m][col+n] * vignettecorr)); 	
+						//would rather not clip, but this is the restriction of ushort
+					}
+			}
+		
+		if (raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::vh_ff]) {
+			float (*cfablur1);
+			cfablur1 = (float (*)) calloc (H*W, sizeof *cfablur1);
+			float (*cfablur2);
+			cfablur2 = (float (*)) calloc (H*W, sizeof *cfablur2);
+			//slightly more complicated blur if trying to correct both vertical and horizontal anomalies
+			cfaboxblur(riFlatFile, cfablur1, 0, 2*BS);//now do horizontal blur
+			cfaboxblur(riFlatFile, cfablur2, 2*BS, 0);//now do vertical blur
+			
+			float vlinecorr, hlinecorr;
+			
+			for (int m=0; m<2; m++)
+				for (int n=0; n<2; n++) {
+					for (int row = 0; row+m < H; row+=2) 
+						for (int col = 0; col+n < W; col+=2) {
+							hlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
+							vlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
+							rawData[row+m][col+n] = CLIP(round(rawData[row+m][col+n] * hlinecorr * vlinecorr)); 
+							//would rather not clip, but this is the restriction of ushort
+						}
+				}
+			free (cfablur1);
+			free (cfablur2);
+		}
+		
+		free (cfablur);
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//#undef BS
+		
+		
+	}
+	
 }
+	
+	void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW ) {
+
+		float (*temp);
+		temp = (float (*)) calloc (H*W, sizeof *temp);
+		
+		//box blur cfa image; box size = BS
+		//horizontal blur
+		for (int row = 0; row < H; row++) {
+			int len = boxW/2 + 1;
+			temp[row*W+0] = (float)riFlatFile->data[row][0]/len;
+			temp[row*W+1] = (float)riFlatFile->data[row][1]/len;
+			for (int j=2; j<=boxW; j+=2) {
+				temp[row*W+0] += (float)riFlatFile->data[row][j]/len;
+				temp[row*W+1] += (float)riFlatFile->data[row][j+1]/len;
+			}
+			for (int col=2; col<=boxW; col+=2) {
+				temp[row*W+col] = (temp[row*W+col-2]*len + riFlatFile->data[row][col+boxW])/(len+1);
+				temp[row*W+col+1] = (temp[row*W+col-1]*len + riFlatFile->data[row][col+boxW+1])/(len+1);
+				len ++;
+			}
+			for (int col = boxW+2; col < W-boxW; col++) {
+				temp[row*W+col] = temp[row*W+col-2] + ((float)(riFlatFile->data[row][col+boxW] - riFlatFile->data[row][col-boxW-2]))/len;
+			}
+			for (int col=W-boxW; col<W; col+=2) {
+				temp[row*W+col] = (temp[row*W+col-2]*len - riFlatFile->data[row][col-boxW-2])/(len-1);
+				if ((W&1)==0) 
+					temp[row*W+col+1] = (temp[row*W+col-1]*len - riFlatFile->data[row][col-boxW-1])/(len-1);
+				len --;
+			}
+		}
+
+		//vertical blur
+		for (int col = 0; col < W; col++) {
+			int len = boxH/2 + 1;
+			cfablur[0*W+col] = temp[0*W+col]/len;
+			cfablur[1*W+col] = temp[1*W+col]/len;
+			for (int i=2; i<boxH+2; i+=2) {
+				cfablur[0*W+col] += temp[i*W+col]/len;
+				cfablur[1*W+col] += temp[(i+1)*W+col]/len;
+			}
+			for (int row=2; row<boxH+2; row+=2) {
+				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len + temp[(row+boxH)*W+col])/(len+1);
+				cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len + temp[(row+boxH+1)*W+col])/(len+1);
+				len ++;
+			}
+			for (int row = boxH+2; row < H-boxH; row++) {
+				cfablur[row*W+col] = cfablur[(row-2)*W+col] + (temp[(row+boxH)*W+col] - temp[(row-boxH-2)*W+col])/len;
+			}
+			for (int row=H-boxH; row<H; row+=2) {
+				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - temp[(row-boxH-2)*W+col])/(len-1);
+				if ((H&1)==0) 
+					cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - temp[(row-boxH-1)*W+col])/(len-1);
+				len --;
+			}
+		}
+		free (temp);
+		
+	}
+	
 
 /* Scale original pixels into the range 0 65535 using black offsets and multipliers */
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
@@ -2119,22 +2272,22 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 				int end = MIN(H+W-fw-i, fw+i) - 32;
 				for (int j=start; j<end; j++) {
 					if (!ri->isBayer()) {
-						double d = CLIP(initialGain*(ri->data[i][3*j]-cblack[0])*scale_mul[0]);
+						double d = CLIP(initialGain*(rawData[i][3*j]));
 						if (d>64000)
 							continue;
 						avg_r += d; rn++;
-						d = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
+						d = CLIP(initialGain*(rawData[i][3*j+1]));
 						if (d>64000)
 							continue;
 						avg_g += d; gn++;
-						d = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
+						d = CLIP(initialGain*(rawData[i][3*j+2]));
 						if (d>64000)
 							continue;
 						avg_b += d; bn++;
 					}
 					else {
 						int c = FC( i, j);
-						double d = CLIP(initialGain*(ri->data[i][j]-cblack[c])*scale_mul[c]);
+						double d = CLIP(initialGain*(rawData[i][j]));
 						if (d>64000)
 							continue;
 						double dp = d;
@@ -2158,9 +2311,9 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 			if (!ri->isBayer()) {
 				for (int i=32; i<H-32; i++)
 					for (int j=32; j<W-32; j++) {
-						double dr = CLIP(initialGain*(ri->data[i][3*j]  -cblack[0])*scale_mul[0]);
-						double dg = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
-						double db = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
+						double dr = CLIP(initialGain*(rawData[i][3*j]  ));
+						double dg = CLIP(initialGain*(rawData[i][3*j+1]));
+						double db = CLIP(initialGain*(rawData[i][3*j+2]));
 						if (dr>64000 || dg>64000 || db>64000) continue;
 						avg_r += dr; rn++;
 						avg_g += dg; 
@@ -2179,10 +2332,10 @@ int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
 				for (int i=32; i<H-32; i+=2)
 					for (int j=32; j<W-32; j+=2) {
 						//average a Bayer quartet if nobody is clipped
-						d[0][0] = CLIP(initialGain*(ri->data[i][j]    -cblack[FC(i,j)])*scale_mul[FC(i,j)]);
-						d[0][1] = CLIP(initialGain*(ri->data[i][j+1]  -cblack[FC(i,j+1)])*scale_mul[FC(i,j+1)]);
-						d[1][0] = CLIP(initialGain*(ri->data[i+1][j]  -cblack[FC(i+1,j)])*scale_mul[FC(i+1,j)]);
-						d[1][1] = CLIP(initialGain*(ri->data[i+1][j+1]-cblack[FC(i+1,j+1)])*scale_mul[FC(i+1,j+1)]);
+						d[0][0] = CLIP(initialGain*(rawData[i][j]    ));
+						d[0][1] = CLIP(initialGain*(rawData[i][j+1]  ));
+						d[1][0] = CLIP(initialGain*(rawData[i+1][j]  ));
+						d[1][1] = CLIP(initialGain*(rawData[i+1][j+1]));
 						if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
 						avg_r += d[ey][ex];
 						avg_g += d[1-ey][ex] + d[ey][1-ex];
@@ -2281,17 +2434,17 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
             transformPosition (red[i].x, red[i].y, tran, xr, yr);
 			transformPosition (green[i].x, green[i].y, tran, xg, yg);
 			transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
-			if (initialGain*(ri->data[yr][3*xr]  -cblack[0])*scale_mul[0]>52500 ||
-				initialGain*(ri->data[yg][3*xg+1]-cblack[1])*scale_mul[1]>52500 ||
-				initialGain*(ri->data[yb][3*xb+2]-cblack[2])*scale_mul[2]>52500) continue;
+			if (initialGain*(rawData[yr][3*xr]  )>52500 ||      
+				initialGain*(rawData[yg][3*xg+1])>52500 ||        
+				initialGain*(rawData[yb][3*xb+2])>52500) continue;
 			xmin = MIN(xr,MIN(xg,xb));
 			xmax = MAX(xr,MAX(xg,xb));
 			ymin = MIN(yr,MIN(yg,yb));
 			ymax = MAX(yr,MAX(yg,yb));
 			if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
-				reds	+= (ri->data[yr][3*xr]  -cblack[0])*scale_mul[0];
-				greens	+= (ri->data[yg][3*xg+1]-cblack[1])*scale_mul[1];
-				blues	+= (ri->data[yb][3*xb+2]-cblack[2])*scale_mul[2];
+				reds	+= (rawData[yr][3*xr]  );  
+				greens	+= (rawData[yg][3*xg+1]);
+				blues	+= (rawData[yb][3*xb+2]);  
 				rn++;
             }
         }
@@ -2308,15 +2461,15 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
 				int yv = y + d[k][1];
 				int c = FC(yv,xv);
 				if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
-					rloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
+					rloc += (rawData[yv][xv]);
 					rnbrs++;
 					continue;
 				}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
-					bloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
+					bloc += (rawData[yv][xv]);
 					bnbrs++;
 					continue;
 				} else { // GREEN
-					gloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
+					gloc += (rawData[yv][xv]);
 					gnbrs++;
 					continue;
 				}

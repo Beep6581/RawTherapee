@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2011 Michael Ezra <www.michaelezra.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <filecatalog.h>
+#include <filepanel.h>
 #include <options.h>
 #include <cachemanager.h>
 #include <multilangmgr.h>
@@ -26,6 +28,8 @@
 #include <renamedlg.h>
 #include <thumbimageupdater.h>
 #include <safegtk.h>
+#include <batchqueue.h>
+
 
 #define CHECKTIME 2000
 
@@ -44,7 +48,17 @@ int _directoryUpdater (void* cat) {
 }
 #endif
 
-FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1), listener(NULL), fslistener(NULL), hasValidCurrentEFS(false), filterPanel(NULL), coarsePanel(cp), toolBar(tb) {
+FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
+		selectedDirectoryId(1),
+		listener(NULL),
+		fslistener(NULL),
+		dirlistener(NULL),
+		hasValidCurrentEFS(false),
+		filterPanel(NULL),
+		coarsePanel(cp),
+		toolBar(tb),
+		filepanel(filepanel) {
+
     inTabMode=false;
 
     //  construct and initialize thumbnail browsers
@@ -69,9 +83,22 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
     
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+
+    tbLeftPanel_1 = new Gtk::ToggleButton ();
+    iLeftPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    iLeftPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_left.png");
+
+    tbLeftPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbLeftPanel_1->set_active (true);
+    tbLeftPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDELP1"));
+    tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
+    tbLeftPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbLeftPanel_1_toggled) );
+    buttonBar->pack_start (*tbLeftPanel_1, Gtk::PACK_SHRINK);
+
+    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
     bDir = new Gtk::ToggleButton ();
     bDir->set_active (true);
-    bDir->set_image (*(new Gtk::Image (argv0+"/images/folder.png")));
+    bDir->set_image (*(new Gtk::Image (argv0+"/images/folder_bw.png")));
     bDir->set_relief (Gtk::RELIEF_NONE);
     bDir->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bDir->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
@@ -162,7 +189,37 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     buttonBar2->pack_start (*progressBar, Gtk::PACK_SHRINK, 4);
     progressBar->set_size_request (-1, 16);
 
-    buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);   
+    buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);
+
+    // add browserPath
+    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+
+    iRightArrow = new Gtk::Image(argv0+"/images/right.png");
+    iRightArrow_red = new Gtk::Image(argv0+"/images/right_red.png");
+
+    BrowsePath = new Gtk::Entry ();
+    BrowsePath->set_width_chars (50); // !!! add this value to options
+    BrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHHINT"));
+    Gtk::HBox* hbBrowsePath = new Gtk::HBox ();
+    buttonBrowsePath = new Gtk::Button ();
+    buttonBrowsePath->set_image (*iRightArrow);
+    buttonBrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHBUTTONHINT"));
+    buttonBrowsePath->set_relief (Gtk::RELIEF_NONE);
+    hbBrowsePath->pack_start (*BrowsePath);
+    hbBrowsePath->pack_start (*buttonBrowsePath,Gtk::PACK_SHRINK, 4);
+    buttonBar->pack_start (*hbBrowsePath, Gtk::PACK_EXPAND_WIDGET,4);
+    buttonBrowsePath->signal_clicked().connect( sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed) );
+
+    tbRightPanel_1 = new Gtk::ToggleButton ();
+    iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
+    iRightPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_right.png");
+
+    tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbRightPanel_1->set_active (true);
+    tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
+    tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    tbRightPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &FileCatalog::tbRightPanel_1_toggled) );
+    buttonBar->pack_end (*tbRightPanel_1, Gtk::PACK_SHRINK);
 
     buttonBar->pack_end (*coarsePanel, Gtk::PACK_SHRINK);   
     buttonBar->pack_end (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
@@ -262,6 +319,8 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
             addAndOpenFile (openfile);
 
 		selectedDirectory = dir->get_parse_name();
+		BrowsePath->set_text (selectedDirectory);
+		buttonBrowsePath->set_image (*iRightArrow);
         fileNameList = getFileList ();
 
         for (unsigned int i=0; i<fileNameList.size(); i++) {
@@ -459,13 +518,13 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
     g_idle_add (fcopenimg, params);
 }
 
-void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
+void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {
 
     if (tbe.size()==0)
         return;
 
     Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
-    msd.set_secondary_text(Glib::ustring::compose (M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
+    msd.set_secondary_text(Glib::ustring::compose ( inclBatchProcessed ? M("FILEBROWSER_DELETEDLGMSGINCLPROC") : M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
 
     if (msd.run()==Gtk::RESPONSE_YES) {
         for (unsigned int i=0; i<tbe.size(); i++) {
@@ -477,13 +536,18 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
             // remove from cache
             cacheMgr->deleteEntry (fname);
             // delete from file system
-            ::g_remove (fname.c_str());
+            safe_g_remove (fname);
             // delete paramfile if found
-            ::g_remove (Glib::ustring(fname+paramFileExtension).c_str());
-            ::g_remove (Glib::ustring(removeExtension(fname)+paramFileExtension).c_str());
+            safe_g_remove (Glib::ustring(fname+paramFileExtension));
+            safe_g_remove (Glib::ustring(removeExtension(fname)+paramFileExtension));
             // delete .thm file
-            ::g_remove (Glib::ustring(removeExtension(fname)+".thm").c_str());
-            ::g_remove (Glib::ustring(removeExtension(fname)+".THM").c_str());
+            safe_g_remove (Glib::ustring(removeExtension(fname)+".thm"));
+            safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
+
+			if (inclBatchProcessed) {
+			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
+			}
         }
         redrawAll ();    
     }
@@ -537,7 +601,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
             if (ext=="") 
                 nBaseName += "." + getExtension (baseName);
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
-            if (!::g_rename (ofname.c_str(), nfname.c_str())) {
+            if (!safe_g_rename (ofname, nfname)) {
 				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				reparseDirectory ();
             }
@@ -583,7 +647,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
-            if (!::g_rename (ofname.c_str(), nfname.c_str())) {
+            if (!safe_g_rename (ofname, nfname)) {
 				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				// the remaining part (removing old and adding new entry) is done by the directory monitor
 				reparseDirectory ();
@@ -592,6 +656,18 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
         }
     }
     */
+}
+
+void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {
+
+	 if (tbe.size()==0)
+	        return;
+
+	 for (unsigned int i=0; i<tbe.size(); i++) {
+		 Glib::ustring fname = tbe[i]->filename;
+		 // remove from cache
+		 cacheMgr->clearFromCache (fname,leavenotrace);
+	 }
 }
 
 void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
@@ -734,7 +810,7 @@ int FileCatalog::reparseDirectory () {
     if (selectedDirectory=="")
         return 0;
 
-    if (!Glib::file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
+    if (!safe_file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
         closeDir ();
 		return 0;
 	}
@@ -745,7 +821,7 @@ int FileCatalog::reparseDirectory () {
 	const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries ();
 	std::vector<Glib::ustring> fileNamesToDel;
 	for (size_t i=0; i<t.size(); i++)
-		if (!Glib::file_test (t[i]->filename, Glib::FILE_TEST_EXISTS))
+		if (!safe_file_test (t[i]->filename, Glib::FILE_TEST_EXISTS))
 			fileNamesToDel.push_back (t[i]->filename);
 	for (size_t i=0; i<fileNamesToDel.size(); i++) {
 		delete fileBrowser->delEntry (fileNamesToDel[i]);
@@ -839,7 +915,7 @@ void FileCatalog::emptyTrash () {
     for (size_t i=0; i<t.size(); i++)
         if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
             toDel.push_back (((FileBrowserEntry*)t[i]));
-    deleteRequested (toDel);
+    deleteRequested (toDel, false);
     trashChanged();
 }
 
@@ -898,13 +974,90 @@ void FileCatalog::trashChanged () {
     }
 }
 
+void FileCatalog::buttonBrowsePathPressed () {
+	Glib::ustring sel = BrowsePath->get_text();
+	// validate the path
+	if (safe_file_test(sel, Glib::FILE_TEST_IS_DIR) && dirlistener){
+		dirlistener->selectDir (sel);
+	}
+	else
+		// error, likely path not found: show red arrow
+		buttonBrowsePath->set_image (*iRightArrow_red);
+}
+
+void FileCatalog::tbLeftPanel_1_visible (bool visible){
+	if (visible)
+		tbLeftPanel_1->show();
+	else
+		tbLeftPanel_1->hide();
+}
+void FileCatalog::tbRightPanel_1_visible (bool visible){
+	if (visible)
+		tbRightPanel_1->show();
+	else
+		tbRightPanel_1->hide();
+}
+void FileCatalog::tbLeftPanel_1_toggled () {
+    removeIfThere (filepanel->dirpaned, filepanel->placespaned, false);
+    if (tbLeftPanel_1->get_active()){
+    	filepanel->dirpaned->pack1 (*filepanel->placespaned, false, true);
+        tbLeftPanel_1->set_image (*iLeftPanel_1_Hide);
+    }
+    else {
+    	tbLeftPanel_1->set_image (*iLeftPanel_1_Show);
+    }
+}
+
+void FileCatalog::tbRightPanel_1_toggled () {
+    if (tbRightPanel_1->get_active()){
+    	filepanel->rightBox->show();
+    	tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    }
+    else{
+    	filepanel->rightBox->hide();
+    	tbRightPanel_1->set_image (*iRightPanel_1_Show);
+    }
+}
+
+bool FileCatalog::CheckSidePanelsVisibility(){
+	if(tbLeftPanel_1->get_active()==false && tbRightPanel_1->get_active()==false)
+		return false;
+	else
+		return true;
+}
+void FileCatalog::toggleSidePanels(){
+	// toggle left AND right panels
+
+	bool bAllSidePanelsVisible;
+	bAllSidePanelsVisible= CheckSidePanelsVisibility();
+
+	tbLeftPanel_1->set_active (!bAllSidePanelsVisible);
+	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
+}
+
 bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
     
     modifierKey = event->state;
     
+    // GUI Layout
+    switch(event->keyval) {
+        case GDK_l:
+        	if (!alt)tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active()); // toggle left panel
+			if (alt && !ctrl) tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
+			if (alt && ctrl) {
+				tbLeftPanel_1->set_active (!tbLeftPanel_1->get_active()); // toggle left panel
+				tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
+			}
+			return true;
+        case GDK_m:
+        	if (!ctrl && !alt) toggleSidePanels();
+			return true;
+    }
+
     switch(event->keyval) {
         case GDK_1:
             categoryButtonToggled(bRank[0]);
@@ -924,22 +1077,40 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         case GDK_grave:
             categoryButtonToggled(bUnRanked);
             return true;
-        case GDK_d:
-        case GDK_D:
-            categoryButtonToggled(bDir);
+
+        case GDK_Return:
+        case GDK_KP_Enter:
+            FileCatalog::buttonBrowsePathPressed ();
             return true;
-        case GDK_t:
-        case GDK_T:
-            categoryButtonToggled(bTrash);
-            return true;
+    }
+
+    if (!ctrl && !alt) {
+        switch(event->keyval) {
+			case GDK_d:
+			case GDK_D:
+				categoryButtonToggled(bDir);
+				return true;
+			case GDK_t:
+			case GDK_T:
+				categoryButtonToggled(bTrash);
+				return true;
+        }
     }
 
     if (!ctrl) {
         switch(event->keyval) {
+
+			case GDK_bracketright:
+				coarsePanel->rotateRight();
+				return true;
+			case GDK_bracketleft:
+				coarsePanel->rotateLeft();
+				return true;
             case GDK_i:
             case GDK_I:
                 exifInfo->set_active (!exifInfo->get_active());
                 return true;
+
             case GDK_plus:
             case GDK_equal:
                 zoomIn();
@@ -950,8 +1121,14 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
                 return true;
         }
     }
-    else {
+    else { // with Ctrl
         switch (event->keyval) {
+			case GDK_o:
+				if (!alt){
+					BrowsePath->select_region(0, BrowsePath->get_text_length());
+					BrowsePath->grab_focus();
+					return true;
+				}
         }
     }
 

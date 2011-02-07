@@ -19,6 +19,7 @@
  */
 #include <filepanel.h>
 #include <rtwindow.h>
+#include <safegtk.h>
 
 int fbinit (void* data) {
 
@@ -53,7 +54,7 @@ FilePanel::FilePanel () : parent(NULL) {
     dirpaned->pack1 (*placespaned, false, true);
 
     tpc = new BatchToolPanelCoordinator (this);
-    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
+    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar(), this);
     ribbonPane = new Gtk::Paned();
     ribbonPane->add(*fileCatalog);
     ribbonPane->set_size_request(50,150);
@@ -65,6 +66,7 @@ FilePanel::FilePanel () : parent(NULL) {
     dirBrowser->addDirSelectionListener (recentBrowser);
     dirBrowser->addDirSelectionListener (placesBrowser);
     fileCatalog->setFileSelectionListener (this);
+    fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 
     rightBox = new Gtk::HBox ();
     rightBox->set_size_request(50,100);
@@ -130,7 +132,7 @@ void FilePanel::init () {
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
-    if (argv1!="" && Glib::file_test (argv1, Glib::FILE_TEST_IS_DIR))
+    if (argv1!="" && safe_file_test (argv1, Glib::FILE_TEST_IS_DIR))
         dirBrowser->open (argv1);
     else {
         if (options.startupDir==STARTUPDIR_HOME) 
@@ -200,9 +202,9 @@ void FilePanel::saveOptions () {
 
 void FilePanel::open (const Glib::ustring& d) {
 
-    if (Glib::file_test (d, Glib::FILE_TEST_IS_DIR))
+    if (safe_file_test (d, Glib::FILE_TEST_IS_DIR))
         dirBrowser->open (d.c_str());
-    else if (Glib::file_test (d, Glib::FILE_TEST_EXISTS))
+    else if (safe_file_test (d, Glib::FILE_TEST_EXISTS))
         dirBrowser->open (Glib::path_get_dirname(d), Glib::path_get_basename(d));
 }
 
@@ -236,6 +238,9 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
     if(tpc->getToolBar()->handleShortcutKey(event))
         return true;
     
+    if(tpc->handleShortcutKey(event))
+        return true;
+
     if(fileCatalog->handleShortcutKey(event))
         return true;
 

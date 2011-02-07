@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c)      2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,7 +32,8 @@
 
 namespace rtengine {
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl) {
+// tunnelMetaData copies IPTC and XMP untouched to output
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
 
     errorCode = 0;
 
@@ -51,14 +53,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
     procparams::ProcParams& params = job->pparams;
-    
+
     // aquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
-    if (params.wb.method=="Camera")
-        currWB = imgsrc->getWB ();
-    else if (params.wb.method=="Auto")
-        currWB = imgsrc->getAutoWB ();
 
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -70,25 +67,42 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int fw, fh;
     imgsrc->getFullSize (fw, fh, tr);
 
+    // check the crop params
+	if (params.crop.x > fw || params.crop.y > fh) {
+		// the crop is completely out of the image, so we disable the crop
+		params.crop.enabled = false;
+		// and we set the values to the defaults
+		params.crop.x = 0;
+		params.crop.y = 0;
+		params.crop.w = fw;
+		params.crop.h = fh;
+	}
+	else {
+		if ((params.crop.x + params.crop.w) > fw) {
+			// crop overflow in the width dimension ; we trim it
+			params.crop.w = fw-params.crop.x;
+		}
+		if ((params.crop.y + params.crop.h) > fh) {
+			// crop overflow in the height dimension ; we trim it
+			params.crop.h = fh-params.crop.y;
+		}
+	}
+
     ImProcFunctions ipf (&params, true);
-    
+
+	// set the color temperature
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+    if (params.wb.method=="Camera")
+        currWB = imgsrc->getWB ();
+    else if (params.wb.method=="Auto")
+        currWB = imgsrc->getAutoWB ();
+
     Image16* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw );
     imgsrc->demosaic( params.raw );
-    if (fabs(params.resize.scale-1.0)<1e-5) {
-        baseImg = new Image16 (fw, fh);
-        imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
-    }
-    else {
-        Image16* oorig = new Image16 (fw, fh);
-        imgsrc->getImage (currWB, tr, oorig, pp, params.hlrecovery, params.icm, params.raw);
-        fw *= params.resize.scale;
-        fh *= params.resize.scale;
-        baseImg = new Image16 (fw, fh);
-        ipf.resize (oorig, baseImg);
-        delete oorig;
-    }
+    baseImg = new Image16 (fw, fh);
+    imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) 
         pl->setProgress (0.25);
 
@@ -96,7 +110,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     unsigned int* hist16 = new unsigned int[65536];
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
-    // perform transform
+    // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
         Image16* trImg = new Image16 (fw, fh);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
@@ -183,9 +197,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] buffer;
 
     if (pl) 
-        pl->setProgress (0.75);
+        pl->setProgress (0.70);
 
-    // obtain final image
+    // crop and convert to rgb16
     Image16* readyImg;
     int cx = 0, cy = 0, cw = labView->W, ch = labView->H;
     if (params.crop.enabled) {
@@ -199,10 +213,79 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // we can now safely delete labView
     delete labView;
 
+    if (pl)
+        pl->setProgress (0.85);
+
+    // get the resize parameters
+	int refw, refh;
+	double tmpScale;
+
+	if (params.resize.enabled) {
+
+		if (params.crop.enabled && params.resize.appliesTo == "Cropped area") {
+			// the resize values applies to the crop dimensions
+			refw = cw;
+			refh = ch;
+		}
+		else {
+			// the resize values applies to the image dimensions
+			// if a crop exists, it will be resized to the calculated scale
+			refw = fw;
+			refh = fh;
+		}
+
+		switch(params.resize.dataspec) {
+		case (1):
+			// Width
+			tmpScale = (double)params.resize.width/(double)refw;
+			break;
+		case (2):
+			// Height
+			tmpScale = (double)params.resize.height/(double)refh;
+			break;
+		case (3):
+			// FitBox
+			if ((double)refw/(double)refh > (double)params.resize.width/(double)params.resize.height) {
+				tmpScale = (double)params.resize.width/(double)refw;
+			}
+			else {
+				tmpScale = (double)params.resize.height/(double)refh;
+			}
+			break;
+		default:
+			// Scale
+			tmpScale = params.resize.scale;
+			break;
+		}
+
+	    // resize image
+	    if (fabs(tmpScale-1.0)>1e-5)
+	    {
+	    	int imw, imh;
+			if (params.crop.enabled && params.resize.appliesTo == "Full image") {
+				imw = cw;
+				imh = ch;
+			}
+			else {
+				imw = refw;
+				imh = refh;
+			}
+			imw = (int)( (double)imw * tmpScale + 0.5 );
+			imh = (int)( (double)imh * tmpScale + 0.5 );
+	        Image16* tempImage = new Image16 (imw, imh);
+	        ipf.resize (readyImg, tempImage, tmpScale);
+	        delete readyImg;
+	        readyImg = tempImage;
+	    }
+	}
+
+    if (tunnelMetaData)
+        readyImg->setMetadata (ii->getMetaData()->getExifData ());
+    else
+        readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
+
     if (pl) 
         pl->setProgress (1.0);
-
-    readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 
     ProfileContent pc;
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
@@ -225,23 +308,23 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     return readyImg;
 }
 
-void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl) {
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     ProcessingJob* currentJob = job;
     
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl);
+        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
         if (errorCode) 
             bpl->error ("Can not load input image.");
         currentJob = bpl->imageReady (img);
     }
 }
 
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl) {
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     
 }
 

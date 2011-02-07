@@ -20,6 +20,7 @@
 #include <vector>
 #include <glib/gstdio.h>
 #include <safekeyfile.h>
+#include <safegtk.h>
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rank(0), inTrash(false), recentlySaved(false),
@@ -96,7 +97,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
 
     rtengine::SafeKeyFile keyFile;
     
-    if (::g_file_test(fname.c_str(),G_FILE_TEST_EXISTS)) keyFile.load_from_file (fname); 
+    if (safe_file_test(fname,Glib::FILE_TEST_EXISTS)) keyFile.load_from_file (fname); 
 
     keyFile.set_string  ("General", "MD5", md5);
     keyFile.set_integer ("General", "Version", options.version);
@@ -132,7 +133,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageOffset", thumbOffset);
     }
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     if (!f)
         return 1;
     else {

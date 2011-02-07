@@ -34,8 +34,9 @@ class FileBrowserListener {
         virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
         virtual void developRequested       (std::vector<FileBrowserEntry*> tbe) {}
         virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
-        virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe) {}
+        virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
         virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
+        virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
 };
 
 struct FileBrowserIdleHelper {
@@ -56,16 +57,23 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* develop;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
+	Gtk::MenuItem* removeInclProc;
     Gtk::MenuItem* open;
     Gtk::MenuItem* selall;
     Gtk::MenuItem* selectDF;
     Gtk::MenuItem* thisIsDF;
     Gtk::MenuItem* autoDF;
+    Gtk::MenuItem* selectFF;
+    Gtk::MenuItem* thisIsFF;
+    Gtk::MenuItem* autoFF;
     Gtk::MenuItem* copyprof;
     Gtk::MenuItem* pasteprof;
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* clearprof;
+    Gtk::MenuItem* cachemenu;
+    Gtk::MenuItem* clearFromCache;
+    Gtk::MenuItem* clearFromCacheFull;
     Gtk::Menu* pmenu;
     Gtk::Menu* profmenu;
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;

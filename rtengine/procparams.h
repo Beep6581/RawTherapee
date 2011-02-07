@@ -310,6 +310,7 @@ class ResizeParams {
     public:
         bool enabled;
         double scale;
+        Glib::ustring appliesTo;
         Glib::ustring method;
         int dataspec;
         int width;
@@ -391,10 +392,19 @@ class RAWParams {
 					numMethods }; // This MUST be the last enum
 		static const char *methodstring[numMethods];
 
-
+		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
+								numFlatFileBlurTypes }; // This MUST be the last enum
+		static const char *ff_BlurTypestring[numFlatFileBlurTypes];
+	
 
 	    Glib::ustring dark_frame;
 	    bool df_autoselect;
+	
+		Glib::ustring ff_file;
+		bool ff_AutoSelect;
+		int ff_BlurRadius;
+		Glib::ustring ff_BlurType;
+	
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
@@ -415,38 +425,38 @@ class RAWParams {
 class ProcParams {
 
     public:
-        ToneCurveParams         toneCurve;      ///< Tone curve parameters
-        LCurveParams            labCurve;      ///< CIELAB luminance curve parameters
-        SharpeningParams        sharpening;     ///< Sharpening parameters
-        ColorBoostParams        colorBoost;     ///< Color boost parameters
-        WBParams                wb;             ///< White balance parameters
-        ColorShiftParams        colorShift;     ///< Color shift parameters
-        LumaDenoiseParams       lumaDenoise;    ///< Luminance denoising parameters
-        ColorDenoiseParams      colorDenoise;   ///< Color denoising parameters
-	DefringeParams			defringe; ///< Defringing parameters
-	ImpulseDenoiseParams    impulseDenoise; ///< Impulse denoising parameters
-	DirPyrDenoiseParams		dirpyrDenoise;  ///< Directional Pyramid denoising parameters
-        SHParams                sh;             ///< Shadow/highlight enhancement parameters
-        CropParams              crop;           ///< Crop parameters
-        CoarseTransformParams   coarse;         ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
-        CommonTransformParams	commonTrans;	///< Common transformation parameters (autofill)
-        RotateParams            rotate;         ///< Rotation parameters
-        DistortionParams        distortion;     ///< Lens distortion correction parameters
-        PerspectiveParams       perspective;    ///< Perspective correction parameters
-        CACorrParams            cacorrection;   ///< Lens c/a correction parameters
-        VignettingParams        vignetting;     ///< Lens vignetting correction parameters
-        ChannelMixerParams      chmixer;        ///< Channel mixer parameters
-        HRecParams              hlrecovery;     ///< Highlight recovery parameters
-        ResizeParams            resize;         ///< Resize parameters
-        ColorManagementParams   icm;            ///< profiles/color spaces used during the image processing
-        EqualizerParams         equalizer;      ///< wavelet equalizer parameters
-        RAWParams               raw;            ///< RAW parameters before demosaicing
-	DirPyrEqualizerParams   dirpyrequalizer;	///< directional pyramid equalizer parameters
-	HSVEqualizerParams         hsvequalizer;      ///< hsv equalizer parameters
-        std::vector<ExifPair> exif;             ///< List of modifications appplied on the exif tags of the input image
-        std::vector<IPTCPair> iptc;             ///< The IPTC tags and values to be saved to the output image
-        int version;                            ///< Version of the file from which the parameters have been read
-        
+        ToneCurveParams         toneCurve;       ///< Tone curve parameters
+        LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
+        SharpeningParams        sharpening;      ///< Sharpening parameters
+        ColorBoostParams        colorBoost;      ///< Color boost parameters
+        WBParams                wb;              ///< White balance parameters
+        ColorShiftParams        colorShift;      ///< Color shift parameters
+        LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
+        ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
+        DefringeParams          defringe;        ///< Defringing parameters
+        ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
+        DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
+        SHParams                sh;              ///< Shadow/highlight enhancement parameters
+        CropParams              crop;            ///< Crop parameters
+        CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
+        CommonTransformParams	commonTrans;     ///< Common transformation parameters (autofill)
+        RotateParams            rotate;          ///< Rotation parameters
+        DistortionParams        distortion;      ///< Lens distortion correction parameters
+        PerspectiveParams       perspective;     ///< Perspective correction parameters
+        CACorrParams            cacorrection;    ///< Lens c/a correction parameters
+        VignettingParams        vignetting;      ///< Lens vignetting correction parameters
+        ChannelMixerParams      chmixer;         ///< Channel mixer parameters
+        HRecParams              hlrecovery;      ///< Highlight recovery parameters
+        ResizeParams            resize;          ///< Resize parameters
+        ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
+        EqualizerParams         equalizer;       ///< wavelet equalizer parameters
+        RAWParams               raw;             ///< RAW parameters before demosaicing
+        DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
+        HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
+        std::vector<ExifPair>   exif;            ///< List of modifications appplied on the exif tags of the input image
+        std::vector<IPTCPair>   iptc;            ///< The IPTC tags and values to be saved to the output image
+        int version;                             ///< Version of the file from which the parameters have been read
+
       /**
         * The constructor only sets the hand-wired defaults.
         */
