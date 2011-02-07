@@ -42,6 +42,7 @@ class Splash : public Gtk::Dialog {
 
   public:
     Splash (int maxtime);
+    Splash ();
 
     bool on_timer ();
     virtual bool on_button_release_event (GdkEventButton* event);

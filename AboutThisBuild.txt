@@ -1,0 +1,11 @@
+Branch: default 
+Version: release-3.0-a1_659
+Changset: b29e4497a6d4199f339ccd8cbff3efe8a555bca5
+Compiler: GCC4.5.1 
+Processor: core2
+Gtkmm: V2.22.0
+Build flags: "-mwin32 -mthreads -march=core2 -mfpmath=sse" "-O0 -g2 -Wall -pedantic" 
+Link flags: "-lpthread -mwin32 -mthreads -mthread -static-libgcc -static-libstdc++ -march=core2 -mfpmath=sse" -O0 
+OpenMP support: Yes
+MMAP support: Yes
+Rawzor support: Yes
