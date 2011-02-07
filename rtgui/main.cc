@@ -31,6 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <options.h>
+#include <version.h>
 
 #ifndef WIN32
 #include <config.h>
@@ -225,6 +226,8 @@ int processLineParams( int argc, char **argv )
 			case 'h':
 			case '?':
 			default:
+				std::cerr << "RawTherapee, " << VERSION << std::endl;
+				std::cerr << "Copyright (c)2004-2011 Gabor Horvath <hgabor@rawtherapee.com>"<< std::endl << std::endl;
 				std::cerr << "Usage:"<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " [<selected dir>] : start RT GUI browser inside dir."<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " <file> : start GUI editor with file."<< std::endl;

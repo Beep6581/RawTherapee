@@ -1,12 +1,33 @@
 cmake_minimum_required(VERSION 2.6)
 
+# the default target is 'Debug'
 set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
+
+# set the default target processor to 'native', i.e. the one of your own machine. The complete list of targets is in ProcessorTargets.cmake
+# you can override the cpu list by setting PROC_TARGET_NUMBER to 0, but you have to provide at least
+# the PROC_LABEL value (set to "undefined" by default) in order to provide downloadable builds,
+# and evetually provide PROC_FLAGS if you want to manually set the processor specific flags
+set (PROC_TARGET_NUMBER 2 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # The following line set special compilation flags for RTEngine, and will be added to CMAKE_CXX_FLAGS
 # It were moved away from rtengine/CMakefiles.txt, because some users may want to remove -ffast_math :
 # this flag speeds up the floating-point operations, but with a little bite less precisions. This default value
 # gives the same result/behaviour as before.
 set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
+
+#loading the processor targets list
+set (PROC_LABEL "undefined")
+set (PROC_FLAGS "")
+if (PROC_TARGET_NUMBER GREATER 0)
+	include (ProcessorTargets.cmake)
+	set (PROC_LABEL ${PROC_TARGET_${PROC_TARGET_NUMBER}_LABEL})
+	set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
+endif (PROC_TARGET_NUMBER GREATER 0)
+
+# adding the proc flags to the build flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROC_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROC_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 
 if (WIN32)
     set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
@@ -107,6 +128,16 @@ find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
 
+#generating AboutThisBuild.txt
+if (WIN32)
+    include (About-Windows.cmake)
+elseif (APPLE)
+    include (About-Apple.cmake)
+else (WIN32)
+    include (About-Linux.cmake)
+endif (WIN32)
+add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+
 # link rawzor
 if (WITH_RAWZOR)
     set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor")
@@ -167,6 +198,7 @@ endif (UNIX)
 
 install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
 install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
+install (FILES AboutThisBuild.txt DESTINATION ${BINDIR})
 
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)
