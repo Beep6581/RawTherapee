@@ -1047,7 +1047,7 @@ void Preferences::selectStartupDir () {
 
 void Preferences::aboutPressed () {
 
-    Splash* splash = new Splash (-1);
+    Splash* splash = new Splash ();
     splash->set_transient_for (*this);
     splash->set_modal (true);   
     splash->show ();

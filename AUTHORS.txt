@@ -1,6 +1,6 @@
 Project initiator:
 
-	Gabor Horvath <hgabor@rawtherapee.com>
+	Gábor Horváth <hgabor@rawtherapee.com>
 
 Developement contributors, in last name alphabetical order:
 
