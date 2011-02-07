@@ -1554,16 +1554,16 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         if (hTransform) {
             if (cmp.gammaOnInput) {
                 double gd = pow (2.0, defgain);
-                defgain = 0.0;//TODO: THIS MAKES NO SENSE!!!??? SETS IMAGE TO ZERO...
+                defgain = 0.0;// Writeback defgain to be 0.0
 #pragma omp parallel for
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
-                        im->r[i][j] = CurveFactory::gamma (CLIP(defgain*im->r[i][j]));
-                        im->g[i][j] = CurveFactory::gamma (CLIP(defgain*im->g[i][j]));
-                        im->b[i][j] = CurveFactory::gamma (CLIP(defgain*im->b[i][j]));
+                        im->r[i][j] = CurveFactory::gamma (CLIP(gd*im->r[i][j]));
+                        im->g[i][j] = CurveFactory::gamma (CLIP(gd*im->g[i][j]));
+                        im->b[i][j] = CurveFactory::gamma (CLIP(gd*im->b[i][j]));
                     }
             }
-            cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+            cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
         } else {
           lcmsMutex->lock ();
           hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);    

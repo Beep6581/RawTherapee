@@ -107,13 +107,15 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 		} // end for
     delete buffer;
 
+    float p2 = params->sharpening.deconvamount /100.0;
+    float p1 = 1.0 - p2;
 
 #ifdef _OPENMP
 #pragma omp for
 #endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++)
-            lab->L[i][j] = lab->L[i][j]*(100-params->sharpening.deconvamount) / 100 + (int)CLIP(tmpI[i][j])*params->sharpening.deconvamount / 100;
+            lab->L[i][j] = lab->L[i][j]*p1 + CLIP(tmpI[i][j])*p2;
 
 } // end parallel
 
