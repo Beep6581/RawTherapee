@@ -1512,10 +1512,11 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
     
     if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
+		// use default profiles supplied by dcraw
         // in this case we avoid using the slllllooooooowwww lcms
     
 //        out = iccStore->workingSpace (wProfile);
-//        hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
+//        hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1537,8 +1538,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                 im->g[i][j] = (newg);
                 im->b[i][j] = (newb);
             }
-    }
-    else {
+    } else {// use supplied input profile
 		//color space transform is expecting data in the range (0,1)
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
@@ -1551,7 +1551,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 0);    
         lcmsMutex->unlock ();
-        if (hTransform) {
+        if (hTransform) {//there is an input profile
             if (cmp.gammaOnInput) {
                 double gd = pow (2.0, defgain);
                 defgain = 0.0;// Writeback defgain to be 0.0
@@ -1564,7 +1564,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                     }
             }
             cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
-        } else {
+        } else {//create the profile
           lcmsMutex->lock ();
           hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);    
           lcmsMutex->unlock ();

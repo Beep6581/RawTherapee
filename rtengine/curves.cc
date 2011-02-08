@@ -514,7 +514,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			val = (double)i / 65535.0;
 			
 			// gamma correction
-			if (gamma_>0) 
+			if (gamma_>1) 
 				val = gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve

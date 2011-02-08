@@ -165,7 +165,7 @@ void Crop::update (int todo, bool internal) {
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
 	
-	/*if (cropImg->height>100 & cropImg->width>100)
+	/*if (cropImg->height>100 & cropImg->width>100) //for testing
 		printf("dcrop final R= %d  G= %d  B= %d  \n", \
 			   cropImg->data[3*100*(cropImg->width+1)], \
 			   cropImg->data[3*100*(cropImg->width+1)+1], \

@@ -59,6 +59,7 @@ using namespace procparams;
 #define CLIPS(a) ((a)>-32768?((a)<32767?(a):32767):-32768)
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
+#define CLIP2(a) ((a)<MAXVAL ? a : MAXVAL )
 	
 #define D50x 0.96422
 #define D50z 0.82521
@@ -152,11 +153,8 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 	cmsHPROFILE monitor = iccStore->getProfile ("file:"+settings->monitorProfile);
 	if (monitor) {
         cmsHPROFILE iprof = iccStore->getXYZProfile ();       
-		cmsHPROFILE oprof = iccStore->getProfile (params->icm.output);
-		if (!oprof)
-			oprof = iccStore->getsRGBProfile ();
         lcmsMutex->lock ();
-		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
+		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
         lcmsMutex->unlock ();
 	}
 	
@@ -367,9 +365,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
             float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b) ;
             float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b) ;
 			
-			lab->L[i][j] = 116.0 * (CurveFactory::flinterp(cachef,y)) - 5242.88; //5242.88=16.0*327.68;
-            lab->a[i][j] = 500.0 * (((CurveFactory::flinterp(cachef,x) - CurveFactory::flinterp(cachef,y)) ) );
-            lab->b[i][j] = 200.0 * (((CurveFactory::flinterp(cachef,y) - CurveFactory::flinterp(cachef,z)) ) );
+			/*lab->L[i][j] = CLIP2(116.0 * (CurveFactory::flinterp(cachef,y)) - 5242.88); //5242.88=16.0*327.68;
+            lab->a[i][j] = CLIPS(500.0 * (((CurveFactory::flinterp(cachef,x) - CurveFactory::flinterp(cachef,y)) ) ));
+            lab->b[i][j] = CLIPS(200.0 * (((CurveFactory::flinterp(cachef,y) - CurveFactory::flinterp(cachef,z)) ) ));*/
+			
+			x = (x<65535 ? (CurveFactory::flinterp(cachef,x)) : (327.68*exp(log(x/MAXVAL)/3.0 )));
+			y = (y<65535 ? (CurveFactory::flinterp(cachef,y)) : (327.68*exp(log(y/MAXVAL)/3.0 )));
+			z = (z<65535 ? (CurveFactory::flinterp(cachef,z)) : (327.68*exp(log(z/MAXVAL)/3.0 )));
+
+			lab->L[i][j] = (116.0 * y - 5242.88); //5242.88=16.0*327.68;
+            lab->a[i][j] = (500.0 * (x - y) );
+            lab->b[i][j] = (200.0 * (y - z) );
 
 			//float L1 = lab->L[i][j];//for testing
 			//float a1 = lab->a[i][j];
@@ -387,8 +393,11 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, float* cur
     int W = lold->W;
     //int H = lold->H;
     for (int i=row_from; i<row_to; i++)
-        for (int j=0; j<W; j++)
-            lnew->L[i][j] = CurveFactory::flinterp(curve,lold->L[i][j]);
+        for (int j=0; j<W; j++) {
+			float Lin=lold->L[i][j];
+			if (Lin>0 && Lin<65535)
+				lnew->L[i][j] = CurveFactory::flinterp(curve,Lin);
+		}
 }
 		
 	
@@ -398,13 +407,19 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int chan
 	//int H = lold->H;
 	if (channel==0) {
 		for (int i=row_from; i<row_to; i++)
-			for (int j=0; j<W; j++)
-				lnew->a[i][j] = curve[CLIP((int)lold->a[i][j]+32768)]-32768;
+			for (int j=0; j<W; j++) {
+				float ain=lold->a[i][j];
+				if (fabs(ain)<32767) 
+					lnew->a[i][j] = curve[CLIP((int)lold->a[i][j]+32768)]-32768;
+			}
 	} 
 	if (channel==1) {
 		for (int i=row_from; i<row_to; i++)
-			for (int j=0; j<W; j++)
-				lnew->b[i][j] = curve[CLIP((int)lold->b[i][j]+32768)]-32768;
+			for (int j=0; j<W; j++) {
+				float bin=lold->b[i][j];
+				if (fabs(bin)<32767) 
+					lnew->b[i][j] = curve[CLIP((int)lold->b[i][j]+32768)]-32768;
+			}
 	}
 }
 
@@ -657,6 +672,7 @@ void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, fl
 void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &b) {
 	
 	//Transform to output color.  Standard sRGB is D65, so we use the default D65 adapted matrices
+	//Note that it is only at this point that we should have need of clipping color data
 	
 	/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
 	float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
@@ -670,9 +686,9 @@ void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &
 	g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
 	b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
 	
-	r = sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z ;
-	g = sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z ;
-	b = sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z ;
+	r = (sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)+0.5 ;
+	g = (sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)+0.5 ;
+	b = (sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)+0.5 ;
 
 }
 	

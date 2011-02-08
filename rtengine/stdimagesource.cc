@@ -316,7 +316,6 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 	if (cmp.input!="(none)") {
 		lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
-		// could we use TYPE_RGB_FLT???  seems to give corrupted results
 		lcmsMutex->unlock ();
 		cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
 		cmsDeleteTransform(hTransform);

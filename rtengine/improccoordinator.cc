@@ -235,34 +235,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
             ipf.impulsedenoise (nprevl);
-        }
-		if (scale==1) {
 			progress ("Defringing...",100*readyphase/numofphases);
             ipf.defringe (nprevl);
-		}
-        /*if (scale==1) {
-            progress ("Denoising luminance...",100*readyphase/numofphases);
-            ipf.lumadenoise (nprevl, buffer);
-        }
-        readyphase++;
-		if (scale==1) {
-            progress ("Denoising color...",100*readyphase/numofphases);
-            ipf.colordenoise (nprevl, buffer);
-        }*/
-		if (scale==1) {
+        //	progress ("Denoising luminance...",100*readyphase/numofphases);
+        //    ipf.lumadenoise (nprevl, buffer);
+        //    progress ("Denoising color...",100*readyphase/numofphases);
+        //    ipf.colordenoise (nprevl, buffer);
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
             ipf.dirpyrdenoise (nprevl);
-        }
-		if (scale==1) {
             progress ("Sharpening...",100*readyphase/numofphases);
             ipf.sharpening (nprevl, (float**)buffer);
-        }
-        readyphase++;
-		if (scale==1) {
             progress ("Pyramid equalizer...",100*readyphase/numofphases);
             ipf.dirpyrequalizer (nprevl);
-        }
-		if (scale==1) {
             progress ("Wavelet...",100*readyphase/numofphases);
             ipf.waveletEqualizer (nprevl, true, true);
         }
