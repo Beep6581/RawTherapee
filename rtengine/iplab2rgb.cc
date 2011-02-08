@@ -59,7 +59,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 	if (monitorTransform) {
 	    int ix = 0;
 		float g;
-        short* buffer = new short [3*lab->W];
+        float* buffer = new float [3*lab->W];
 		for (int i=0; i<lab->H; i++) {
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
