@@ -12,7 +12,7 @@ add_custom_target (AboutFile ALL
 	COMMAND rm -f ${OUT_FILE}
 	COMMAND rm -f ${VERSION_FILE}
 	COMMAND for i in \$\( hg branch \)\; do echo Branch: $i >${OUT_FILE}\; done
-	COMMAND hg parents --template=\"Version: {latesttag}_{latesttagdistance}\\nChangset: {node}\\n\" >>${OUT_FILE}
+	COMMAND hg parents --template=\"Version: {latesttag}.{latesttagdistance}\\nChangset: {node|short}\\n\" >>${OUT_FILE}
 	COMMAND for i in \$\( gcc -dumpversion \) \;do echo Compiler: GCC $i >>${OUT_FILE} \; done
 	COMMAND echo Processor: ${PROC_LABEL} >>${OUT_FILE}
 	COMMAND echo Bit depth: ${PROC_BIT_DEPTH} >>${OUT_FILE}

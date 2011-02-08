@@ -18,9 +18,11 @@ set(OPTION_OMP ON CACHE BOOL "Use OpenMP to speedup the preview and batch proces
 # set WITH_MYFILE_MMAP to OFF if you experience crash with thumbnail creation (it should be slower, but more reliable)
 set(WITH_MYFILE_MMAP ON CACHE BOOL "Use the MMAP mechanism to speedup thumbnail creations")
 
+# This line will let you chose the target number, and the associated processor
 set (PROC_TARGET_NUMBER 2 CACHE STRING "Target Processor")
-# If you want to manually specify the target processor name, uncomment the line right under, and set its value
-#set (PROC_LABEL 'Core i7' X2 CACHE STRING "Target Processor label")
+
+# If you want to force the target processor name, uncomment the next line, and replace labelWithoutQuotes by its value
+#set (PROC_FORCED_LABEL labelWithoutQuotes CACHE STRING "Target Processor label")
 
 set(CMAKE_CXX_FLAGS "-mwin32 -mthreads" CACHE STRING "Compiler options for C++ source files")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g2" CACHE STRING "Compiler options for C++ source files and Debug target")
@@ -28,7 +30,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-mwindows -DNDEBUG -O2" CACHE STRING "Compiler opti
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-mwindows -DNDEBUG -Os" CACHE STRING "Compiler options for C++ source files and MinSizeRel target")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C++ source files and RelWithDebInfo target")
 
-# Uncomment the next line and set the right value to override the default value
+# Uncomment the next line and set the right value to override the default value (special compiling flags for RTEngine)
 #set(RTENGINE_CXX_FLAGS "-funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
 
 set(CMAKE_C_FLAGS "-mwin32 -mthreads" CACHE STRING "Compiler options for C source files")
