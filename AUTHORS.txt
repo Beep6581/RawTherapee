@@ -5,6 +5,7 @@ Project initiator:
 Developement contributors, in last name alphabetical order:
 
 	Oliver Duis
+	Michael Ezra
 	Jean-Christophe Frisch
 	Steve Herrell
 	Emil Martinec
@@ -21,8 +22,7 @@ Other contributors (ideas, mockups, testing, forum activity, translations, etc.)
 	Patrik Brunner
 	Fernando Carello
 	Maciek Dworak
-	Michael Ezra
-	David M. Gyurko
+	M. Dávid Gyurkó
 	Arturs Jekabsons
 	Karl Loncarek
 	Paul Matthijsse

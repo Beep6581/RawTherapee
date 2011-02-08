@@ -128,6 +128,13 @@ find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
 
+# set the bit number information of the platform
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(PROC_BIT_DEPTH 32 bits)
+elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(PROC_BIT_DEPTH 64 bits)
+endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+
 #generating AboutThisBuild.txt
 if (WIN32)
     include (About-Windows.cmake)
