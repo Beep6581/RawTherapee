@@ -222,6 +222,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     rm /= mul_lum;
     gm /= mul_lum;
     bm /= mul_lum;    
+    // normalize the gain control
+    double min = rm;
 
 	// in floating point, should keep white point fixed and recover higher values with exposure slider
     //if (hrp.enabled) 
@@ -233,6 +235,12 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         bm *= initialGain;
     //}
 	//defGain = 0.0;//no need now for making headroom for highlights???
+    printf("initial gain= %e\n",initialGain);
+    if (min>gm) min=gm;
+    if (min>bm) min=bm;
+    rm/=min;
+    gm/=min;
+    bm/=min;
 
 	if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
         updateHLRecoveryMap_ColorPropagation ();
@@ -1563,12 +1571,12 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                         im->b[i][j] = CurveFactory::gamma (CLIP(gd*im->b[i][j]));
                     }
             }
-            cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
+            cmsDoTransform (hTransform, im->data, im->data, im->planestride);
         } else {//create the profile
           lcmsMutex->lock ();
           hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);    
           lcmsMutex->unlock ();
-          cmsDoTransform (hTransform, im->data, im->data, im->planestride/4);
+          cmsDoTransform (hTransform, im->data, im->data, im->planestride);
         }
 		//restore normalization to the range (0,65535)
 		for ( int h = 0; h < im->height; ++h )
@@ -1661,13 +1669,13 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 						im->b[i][j] = CurveFactory::gamma (CLIP(defgain*im->b[i][j]));
 					}
 			}
-			cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+			cmsDoTransform (hTransform, im->data, im->data, im->planestride);
 		}
 		else {
 			lcmsMutex->lock ();
 			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
 			lcmsMutex->unlock ();
-			cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+			cmsDoTransform (hTransform, im->data, im->data, im->planestride);
 		}
 		cmsDeleteTransform(hTransform);
 	}

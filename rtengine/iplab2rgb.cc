@@ -245,7 +245,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
         lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
-		cmsDoTransform (hTransform, image->data, image->data, image->planestride/2);
+		cmsDoTransform (hTransform, image->data, image->data, image->planestride);
 		cmsDeleteTransform(hTransform);
 	} else {
 		#pragma omp parallel for if (multiThread)

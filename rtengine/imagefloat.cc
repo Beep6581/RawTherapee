@@ -37,47 +37,53 @@ Imagefloat::Imagefloat (int w, int h)
 Imagefloat::~Imagefloat () {
   
     if (data!=NULL) {
-        delete [] unaligned;    
+        delete [] data;
         delete [] r;
         delete [] g;
         delete [] b;
     }
 }
 
-void Imagefloat::allocate (int width, int height) {
+void Imagefloat::allocate (int W, int H) {
 
-    if (data!=NULL) {
-        delete [] unaligned;    
+	width=W;
+	height=H;
+
+	if (data!=NULL) {
+        delete [] data;
         delete [] r;
         delete [] g;
         delete [] b;
     }
 
+    /*
     int lsize  = width + 8 - width % 8;
     unaligned = new unsigned char[16 + 3 * lsize * sizeof(float) * height];
     memset(unaligned, 0, (16 + 3 * lsize * sizeof(float) * height) * sizeof(unsigned char));
 
     uintptr_t poin = (uintptr_t)unaligned + 16 - (uintptr_t)unaligned % 16;
     data = (float*) (poin);
-
-    rowstride = lsize * sizeof(float);
-    planestride = rowstride * height;
-
-    uintptr_t redstart   = poin + 0*planestride;
-    uintptr_t greenstart = poin + 1*planestride;
-    uintptr_t bluestart  = poin + 2*planestride;
-       
+	*/
     r = new float*[height];
     g = new float*[height];
     b = new float*[height];
+
+    data = new float[W*H*3];
+    rowstride = W;
+    planestride = rowstride * H;
+
+    float * redstart   = data + 0*planestride;
+    float * greenstart = data + 1*planestride;
+    float * bluestart  = data + 2*planestride;
+
+
     for (int i=0; i<height; i++) {
-        r[i] = (float*) (redstart   + i*rowstride);
-        g[i] = (float*) (greenstart + i*rowstride);
-        b[i] = (float*) (bluestart  + i*rowstride);
+        r[i] = (redstart   + i*rowstride);
+        g[i] = (greenstart + i*rowstride);
+        b[i] = (bluestart  + i*rowstride);
     }
 
-    this->width = width;
-    this->height = height;
+
 }
 
 

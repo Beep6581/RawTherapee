@@ -27,23 +27,24 @@
 namespace rtengine {
 
 template<class T> void freeArray (T** a, int H) {
-  for (int i=0; i<H; i++)
-    delete [] a[i];
+  //for (int i=0; i<H; i++)
+    delete [] a[0];
   delete [] a;
 }
 
 template<class T> T** allocArray (int W, int H) {
 
     T** t = new T*[H];
-    for (int i=0; i<H; i++)
-        t[i] = new T[W];
+    t[0] = new T[H*W];
+    for (int i=1; i<H; i++)
+        t[i] = t[i-1]+W;
     return t;
 }
 
 
 template<class T> void freeArray2 (T** a, int H) {
-  for (int i=0; i<H; i++)
-    delete [] a[i];
+  //for (int i=0; i<H; i++)
+    delete [] a[0];
 }
 
 class RawImageSource : public ImageSource {

@@ -293,9 +293,9 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         cshmap = new SHMap (cropw, croph, true);
         
         cbuffer = new int*[croph];
-        cbuf_real= new int[croph*cropw];
+        cbuf_real= new int[(croph+2)*cropw];
         for (int i=0; i<croph; i++)
-            cbuffer[i] = cbuf_real+cropw*i;
+            cbuffer[i] = cbuf_real+cropw*i+cropw;
 
         resizeCrop = NULL;
         transCrop = NULL;
