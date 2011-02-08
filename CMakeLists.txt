@@ -24,6 +24,11 @@ if (PROC_TARGET_NUMBER GREATER 0)
 	set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
 endif (PROC_TARGET_NUMBER GREATER 0)
 
+# if it exists, the PROC_FORCED_LABEL value is loaded in PROC_LABEL to override the one of ProcessorTargets
+if (DEFINED PROC_FORCED_LABEL)
+  set (PROC_LABEL ${PROC_FORCED_LABEL})
+endif (DEFINED PROC_FORCED_LABEL)
+
 # adding the proc flags to the build flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROC_FLAGS}")
