@@ -4947,7 +4947,7 @@ int CLASS parse_tiff_ifd (int base)
       case 513:				/* JpegIFOffset */
       case 61447:
 	tiff_ifd[ifd].offset = get4()+base;
-	if (!tiff_ifd[ifd].bps) {
+/*RT*/if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset>=0) {
 	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
 	  if (ljpeg_start (&jh, 1)) {
 	    tiff_ifd[ifd].comp    = 6;
