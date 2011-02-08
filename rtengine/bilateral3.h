@@ -438,21 +438,24 @@ template<class T> void bilateral (T** src, T** dst, T** buffer, int W, int H, in
 
     // buffer for the final image
     float** buff_final = new float*[H];
+    float * real_buff_final = new float [W*H];
     for (int i=0; i<H; i++) {
-        buff_final[i] = new float*[W];
+        buff_final[i] = real_buff_final+i*W;
         memset (buff_final[i], 0, W*sizeof(float));
     }
     // buffer for the normalization 
     float** buff_norm = new float*[H];
+    float * real_buff_norm = new float [W*H];
     for (int i=0; i<H; i++) {
-        buff_norm[i] = new float*[W];
+        buff_norm[i] =real_buff_norm+i*W;
         for (int j=0; j<W; j++) 
             buff_norm[i][j] = 1.0 - 2.0*src[i][j]*src[i][j] + src[i][j]*src[i][j]*src[i][j]*src[i][j];
     }
     // temporary buffer
     float** buff_temp = new float*[H];
+    float * real_buff_temp = new float[W*H];
     for (int i=0; i<H; i++) 
-        buff_temp[i] = new float*[W];
+        buff_temp[i] = real_buff_temp+ i*W;
 
     // second order gaussian filter approximation
     // first filtered image: temp <-- y_1
@@ -526,12 +529,12 @@ template<class T> void bilateral (T** src, T** dst, T** buffer, int W, int H, in
         }
 
     // cleanup
-    for (int i=0; i<H; i++) {
-        delete [] buff_temp[i];
-        delete [] buff_norm[i];
-        delete [] buff_final[i];
-    }
-     delete [] buff_temp;   
-     delete [] buff_norm;   
-     delete [] buff_final;   
+
+    delete [] real_buff_temp;
+    delete [] real_buff_norm;
+    delete [] real_buff_final;
+
+    delete [] buff_temp;
+    delete [] buff_norm;
+    delete [] buff_final;
 }

@@ -208,8 +208,9 @@ void Crop::freeAll () {
         delete labnCrop;
         delete cropImg;
         delete cshmap;
-        for (int i=0; i<croph; i++)
-            delete [] cbuffer[i];
+        //for (int i=0; i<croph; i++)
+        //    delete [] cbuffer[i];
+        delete [] cbuf_real;
         delete [] cbuffer;
     }
     cropAllocated = false;
@@ -292,8 +293,9 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         cshmap = new SHMap (cropw, croph, true);
         
         cbuffer = new int*[croph];
+        cbuf_real= new int[croph*cropw];
         for (int i=0; i<croph; i++)
-            cbuffer[i] = new int[cropw];
+            cbuffer[i] = cbuf_real+cropw*i;
 
         resizeCrop = NULL;
         transCrop = NULL;

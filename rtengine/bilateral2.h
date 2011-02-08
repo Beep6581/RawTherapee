@@ -451,8 +451,9 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
 
     // buffer for the final image
     float** buff_final = new float*[H];
+    float * real_buff_final = new float[W*H];
     for (int i=0; i<H; i++) {
-        buff_final[i] = new float[W];
+        buff_final[i] = real_buff_final + i*W;
         memset (buff_final[i], 0, W*sizeof(float));
     }
     
@@ -511,8 +512,10 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
     delete [] ec;
     delete [] hist;
     delete [] rhist;
-    for (int i=0; i<H; i++) 
-        delete [] buff_final[i];
+    //for (int i=0; i<H; i++)
+    //    delete [] buff_final[i];
+    delete [] real_buff_final;
+    delete [] buff_final;
 }
 
 #endif
