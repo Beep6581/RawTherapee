@@ -24,9 +24,10 @@
 #include <multilangmgr.h>
 #include <safekeyfile.h>
 #include <addsetids.h>
+#include <version.h>
 
 Options options;
-Glib::ustring versionString      = "v3.0 alpha 1";
+Glib::ustring versionString      = VERSION;
 Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options () {
@@ -74,7 +75,7 @@ void Options::setDefaults () {
     fbShowHidden = false;
     fbArrangement = 0;
     multiUser = false;
-    version = 290;
+    version = TAGDISTANCE;
     thumbSize = 80;
     thumbSizeTab = 80;
     showHistory = true;
@@ -185,8 +186,8 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
-	if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
-	if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
+    if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
+    if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
 }
 
 if (keyFile.has_group ("External Editor")) { 
@@ -323,7 +324,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_string  ("General", "Theme", theme);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
-    keyFile.set_integer ("General", "Version", 290);
+    keyFile.set_integer ("General", "Version", TAGDISTANCE);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
 	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
 	keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);

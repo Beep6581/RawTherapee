@@ -1,5 +1,9 @@
 #00 default translation file 
 #01 Developers should add translations to this file and then run 'generateDifferences.sh' script to update other locales.
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Credits
+ABOUT_TAB_LICENSE;License
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 BATCHQUEUE_AUTOSTART;Auto start
 BATCH_PROCESSING;Batch processing

@@ -1,5 +1,9 @@
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Crédits
+ABOUT_TAB_LICENSE;License
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
 BATCH_PROCESSING;Traitement par lot
