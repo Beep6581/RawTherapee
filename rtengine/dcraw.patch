@@ -1,5 +1,5 @@
---- dcraw.c	Wed Feb 02 23:18:25 2011
-+++ dcraw.cc	Thu Feb 03 00:52:38 2011
+--- H:/rawtherapee_3.0/rtengine/dcraw.c	Wed Feb 02 23:18:25 2011
++++ H:/rawtherapee_3.0/rtengine/dcraw.cc	Tue Feb 08 22:50:40 2011
 @@ -1,5 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -289,6 +289,19 @@
  	  cam_mul[(tag-17)*2] = get2() / 256.0;
  	break;
        case 23:
+@@ -4931,11 +4945,11 @@
+ 	load_flags = 0x2008;
+       case 273:				/* StripOffset */
+       case 513:				/* JpegIFOffset */
+       case 61447:
+ 	tiff_ifd[ifd].offset = get4()+base;
+-	if (!tiff_ifd[ifd].bps) {
++/*RT*/if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset>=0) {
+ 	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
+ 	  if (ljpeg_start (&jh, 1)) {
+ 	    tiff_ifd[ifd].comp    = 6;
+ 	    tiff_ifd[ifd].width   = jh.wide;
+ 	    tiff_ifd[ifd].height  = jh.high;
 @@ -5272,16 +5286,17 @@
    if (sony_length && (buf = (unsigned *) malloc(sony_length))) {
      fseek (ifp, sony_offset, SEEK_SET);
