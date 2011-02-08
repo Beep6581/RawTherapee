@@ -37,7 +37,7 @@ namespace rtengine {
 #define CMAXVAL 0xffff
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
-	
+#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 	
 #define epsilon 0.00885645 //216/24389
 #define kappa 903.2963 //24389/27
@@ -71,13 +71,13 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
-				float y_ = 65535*Lab2xyz(fy);
-				float z_ = 65535*Lab2xyz(fz)*D50z;
+				float x_ = Lab2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
+				float y_ = Lab2xyz(fy);
+				float z_ = Lab2xyz(fz)*D50z;
 
-                buffer[iy++] = CLIP(x_);
-                buffer[iy++] = CLIP(y_);
-                buffer[iy++] = CLIP(z_);
+                buffer[iy++] = CLIP01(x_);
+                buffer[iy++] = CLIP01(y_);
+                buffer[iy++] = CLIP01(z_);
 			}
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
             ix += 3*lab->W;
