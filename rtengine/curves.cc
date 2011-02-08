@@ -472,13 +472,14 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		float exp_scale = a;
 		float scale = 65536.0;
 		float comp = (ecomp)*hlcompr/100.0;
-		int shoulder = round((scale/exp_scale)*(hlcomprthresh/200.0));
+		float shoulder = ((scale/exp_scale)*(hlcomprthresh/200.0))+0.1;
+		printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
 		for (int i=0; i<0x10000; i++) {
 			
 			// change to [0,1] range
-			float val = (float)i / 65535.0;
+			float val = (float)i-shoulder;
 			
 			// apply default multiplier (that is >1 if highlight recovery is on)
 			// val *= def_mul;
@@ -488,12 +489,12 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			//hlCurve[i] = (65535.0 * CLIPD(val));
 			
-			if ((hlcompr>0)&&(exp_scale>1.0))
+			if ((hlcompr>0.0)&&(exp_scale>1.0))
 			{
-				if (i>shoulder) {
-					float Y = (float)(i-shoulder)*exp_scale/(scale-shoulder);
-					float R = (float)(i-shoulder)*comp/(scale-shoulder);
-					hlCurve[i] = log(1+Y*comp)/R;
+				if (val>0.0) {
+					float Y = val*exp_scale/(scale-shoulder);
+					float R = val*comp/(scale-shoulder);
+					hlCurve[i] = log(1.0+Y*comp)/R;
 				} else {
 					hlCurve[i]=exp_scale;
 				}
