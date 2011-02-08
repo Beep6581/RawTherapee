@@ -8,7 +8,7 @@ set (VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h")
 
 add_custom_target (AboutFile ALL
 	COMMAND for /F \"tokens=*\" %%i in \('hg branch'\) do echo Branch: %%i >${OUT_FILE}
-	COMMAND hg parents --template=\"Version: {latesttag}_{latesttagdistance}\\nChangset: {node}\\n\" >>${OUT_FILE}
+	COMMAND hg parents --template=\"Version: {latesttag}.{latesttagdistance}\\nChangset: {node|short}\\n\" >>${OUT_FILE}
 	COMMAND for /F \"tokens=*\" %%i in \('gcc -dumpversion'\) do echo Compiler: GCC%%i >>${OUT_FILE}
 	COMMAND \(echo Processor: ${PROC_LABEL}\) >>${OUT_FILE}
 	COMMAND \(echo Bit depth: ${PROC_BIT_DEPTH}\) >>${OUT_FILE}
