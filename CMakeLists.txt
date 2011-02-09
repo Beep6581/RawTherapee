@@ -141,6 +141,7 @@ elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
 #generating AboutThisBuild.txt
+set (BUILD_TYPE CMAKE_BUILD_TYPE)
 if (WIN32)
     include (About-Windows.cmake)
 elseif (APPLE)
