@@ -171,7 +171,7 @@ void Curve::NURBS_set () {
     	int nbr_points = (int)(((double)(ppn+N-2) * sc_length[i/3] )/ total_length);
     	if (nbr_points<0){
     		for(int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
-    		printf("NURBS: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
+    		//printf("NURBS: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
     		exit(0);
     	}
     	// increment along the curve, not along the X axis
@@ -473,7 +473,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		float scale = 65536.0;
 		float comp = (ecomp)*hlcompr/100.0;
 		float shoulder = ((scale/exp_scale)*(hlcomprthresh/200.0))+0.1;
-		printf("shoulder = %e\n",shoulder);
+		//printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
 		for (int i=0; i<0x10000; i++) {

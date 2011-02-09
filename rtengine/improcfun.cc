@@ -155,7 +155,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 	if (monitor) {
         cmsHPROFILE iprof = iccStore->getXYZProfile ();       
         lcmsMutex->lock ();
-		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent, 0);
+		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
 	}
 	
@@ -361,9 +361,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
 			}
 			//hsv2rgb(h,s,v,r,g,b);
 			 
-			r=FCLIP(r);
-			g=FCLIP(g);
-			b=FCLIP(b);
+			//r=FCLIP(r);
+			//g=FCLIP(g);
+			//b=FCLIP(b);
+			
             float x = (toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b) ;
             float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b) ;
             float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b) ;

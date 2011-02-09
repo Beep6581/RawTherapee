@@ -235,7 +235,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         bm *= initialGain;
     //}
 	//defGain = 0.0;//no need now for making headroom for highlights???
-    printf("initial gain= %e\n",initialGain);
+    //printf("initial gain= %e\n",initialGain);
     if (min>gm) min=gm;
     if (min>bm) min=bm;
     rm/=min;
@@ -451,7 +451,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 	cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
 	
 	int iprev,inext,jprev,jnext;
-	int p[9],temp;
+	float p[9],temp;
 	int top, bottom, left, right;
 
 #pragma omp parallel
@@ -461,7 +461,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 		if (i<2) {iprev=i+2;} else {iprev=i-2;}
 		if (i>H-3) {inext=i-2;} else {inext=i+2;}
 		for (int j=0; j<W; j++) {
-			if (j<2) {jprev=i+2;} else {jprev=i-2;}
+			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
 			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
 				   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
@@ -502,7 +502,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 	}
 	}//end pragma
 	free (cfablur);
-	
+	//printf ("counter %d \n",counter);
 	return counter;
 }
 
@@ -1917,7 +1917,7 @@ ColorTemp RawImageSource::getAutoWB () {
 		}
 	}
 	
-	printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
+	//printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
 	
 	//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
 	
