@@ -1,7 +1,7 @@
 # this will generate a target that will never exist, so it will (should) be executed on each build
 #WARNING: Actually, only Gcc is supported
 
-string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+string (TOUPPER ${BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 set (OUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.txt")
 set (VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h")
