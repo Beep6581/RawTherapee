@@ -19,7 +19,7 @@ set(OPTION_OMP ON CACHE BOOL "Use OpenMP to speedup the preview and batch proces
 set(WITH_MYFILE_MMAP ON CACHE BOOL "Use the MMAP mechanism to speedup thumbnail creations")
 
 # This line will let you chose the target number, and the associated processor
-set (PROC_TARGET_NUMBER 2 CACHE STRING "Target Processor")
+set (PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
 
 # If you want to force the target processor name, uncomment the next line, and replace labelWithoutQuotes by its value
 #set (PROC_FORCED_LABEL labelWithoutQuotes CACHE STRING "Target Processor label")
