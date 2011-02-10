@@ -3,11 +3,9 @@ cmake_minimum_required(VERSION 2.6)
 # the default target is 'Debug'
 set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
 
-# set the default target processor to 'native', i.e. the one of your own machine. The complete list of targets is in ProcessorTargets.cmake
-# you can override the cpu list by setting PROC_TARGET_NUMBER to 0, but you have to provide at least
-# the PROC_LABEL value (set to "undefined" by default) in order to provide downloadable builds,
-# and evetually provide PROC_FLAGS if you want to manually set the processor specific flags
-set (PROC_TARGET_NUMBER 2 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
+# By default, we don't use specific processor target, so  PROC_TARGET_NUMBER is set to 0. If can specify other values to select specific
+# processor targets, which list can be found in ProcessorTargets.cmake.
+set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # The following line set special compilation flags for RTEngine, and will be added to CMAKE_CXX_FLAGS
 # It were moved away from rtengine/CMakefiles.txt, because some users may want to remove -ffast_math :
