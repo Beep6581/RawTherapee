@@ -1,6 +1,21 @@
 If you have problems with the compilation, please ask on the appropriated RawTherapee forum :
 http://www.rawtherapee.com/forum/viewforum.php?f=10
 
+Preamble:
+---------
+
+Cmake is actually used to create the Makefiles (scripts that handle the build process) or specific Integrated Developement Environement (IDE) projects.
+It is designed to find all necessary compilation flags for your specific machine, but everything can be overriden.
+
+RT's build mechanism will generate a build information file, named "AboutThisBuild.txt", and require some parameters that can't be set by Cmake, so it's
+done in our build script, and may be aoverriden at your own will. The build process also enable some sort of cross compiling, since you can only choose
+a specific processor variation of the same type (e.g. core2, athlon64, which are both an x86 architecture). Real cross compiling (e.g. building the windows
+version on a linux platform) has not been tested.
+
+By default, no processor is specified, so Cmake/GCC will build RT for your processor (or maybe a generic processor). Developers that are providing build to
+download then have to set the processor label manually (set to 'undefined' by default) with the PROC_FORCED_LABEL cmake's parameter (we assume that you know
+how to specify a cmake parameter).
+
 
 Windows
 -------
@@ -40,6 +55,15 @@ Windows
 			  You have to restart the console to take this new variables into account
 			- Copy the "Win32CMakeOptions-sample.txt" file located in the root directory of RT's source tree, to "cmo.txt" (e.g.)
 			  You can edit that copy to change the compilation flags to your needs, but the default values should be fine.
+			  However, if you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
+			  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is set the PROC_TARGET_NUMBER parameter in cmo.txt
+			     to the right target number.
+			     If you choose the 'native' solution, you have to set the processor label manually in cmo.txt, by uncommenting and set the PROC_FORCED_LABEL
+			     parameter. Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
+			  2. You don't need specific processor flags, so you'll let PROC_TARGET_NUMBER set to 0, but you have to set the PROC_FORCED_LABEL parameter
+			     in cmo.txt (don't forget to uncomment the line). Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor
+			     frequency if of no use.
+
 
 	Dependancies:
 
@@ -194,6 +218,8 @@ Linux
 	Compile:
 		- Enter the root directory of the RawTherapee source tree
 		- Type: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		        developers that wants to provide a build has to set the PROC_FORCED_LABEL to their processor name, e.g.:
+		        cmake -DPROC_FORCED_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
 		- Type: make install
 		- You find the compiled program in the release directory (you can copy it anywhere you want)
 
@@ -214,6 +240,7 @@ Linux
 		Enter root directory of RawTherapee source tree from a terminal window.
 		configure the source for Eclipse with:
 			cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. -DCMAKE_BUILD_TYPE=Release
+		See above the comment about PROC_FORCED_LABEL
 
 		Eclipse does not do 'make install' but only 'make all' so to get the release there are 2 ways.
 			1. type 'make install' in the console or,
@@ -238,6 +265,13 @@ Compile:
 - Enter root directory of RawTherapee source tree
 - Type: cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 . (to enable OpenMP, assuming you have installed gcc45) OR:
         cmake -D OPTION_OMP=false . (to disable OpenMP and use the default compiler)
+  If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
+  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
+     to cmake's command line
+     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+     in cmake's command line
+     Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
+  2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
 - Type: make install
 - Type: ./tools/osx/make-app-bundle
 - You will find a RawTherapee.dmg file in release/ folder; this is the distribution release and can be run on any machine which meets the 
