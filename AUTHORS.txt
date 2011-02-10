@@ -4,6 +4,7 @@ Project initiator:
 
 Developement contributors, in last name alphabetical order:
 
+	Jacques Desmis
 	Oliver Duis
 	Michael Ezra
 	Jean-Christophe Frisch
