@@ -1,13 +1,10 @@
-Branch: default 
-Version: release-3.0-a1_661
-Changset: 93afbcf693dbfd945429ba14dc4db79ee84aab2c
-Version: release-3.0-a1_661
-Changset: 58b6033409512483a8e5b763afde7a78180d7215
-Compiler: GCC4.5.1 
-Processor: native
+Version: release-3.0-a1.669
+Changset: 92cd1a6ffc04
+Processor: undefined
+Bit depth: 64 bits
 Gtkmm: V2.22.0
-Build flags: " -march=native" -g 
-Link flags: " -march=native" 
-OpenMP support: Yes
+Build flags:  
+Link flags:  
+OpenMP support: No
 MMAP support: Yes
 Rawzor support: No
