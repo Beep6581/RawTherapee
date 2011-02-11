@@ -359,17 +359,27 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 						Gtmp[row*width + col] = rgb[indx][1];
 				}
 
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
 			for (rr=4; rr < rr1-4; rr++)
 				for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
 					
-
-					rbhpfv[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) + \
+					
+					rbhpfv[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) + \
 										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) - \
 										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])));
-					rbhpfh[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) + \
+					rbhpfh[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) + \
 										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) - \
 										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx+4][1]-rgb[indx+4][c])));
 					
+					/*ghpfv = fabs(fabs(rgb[indx][1]-rgb[indx+v4][1])+fabs(rgb[indx][1]-rgb[indx-v4][1]) - \
+					 fabs(rgb[indx+v4][1]-rgb[indx-v4][1]));
+					 ghpfh = fabs(fabs(rgb[indx][1]-rgb[indx+4][1])+fabs(rgb[indx][1]-rgb[indx-4][1]) - \
+					 fabs(rgb[indx+4][1]-rgb[indx-4][1]));
+					 rbhpfv[indx] = fabs(ghpfv - fabs(fabs(rgb[indx][c]-rgb[indx+v4][c])+fabs(rgb[indx][c]-rgb[indx-v4][c]) - \
+					 fabs(rgb[indx+v4][c]-rgb[indx-v4][c])));
+					 rbhpfh[indx] = fabs(ghpfh - fabs(fabs(rgb[indx][c]-rgb[indx+4][c])+fabs(rgb[indx][c]-rgb[indx-4][c]) - \
+					 fabs(rgb[indx+4][c]-rgb[indx-4][c])));*/
 					
 					glpfv = 0.25*(2*rgb[indx][1]+rgb[indx+v2][1]+rgb[indx-v2][1]);
 					glpfh = 0.25*(2*rgb[indx][1]+rgb[indx+2][1]+rgb[indx-2][1]);
@@ -379,47 +389,109 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 					grblpfh[indx] = glpfh + 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]);
 				}
 			
-			for (c=0;c<3;c++) {areawt[0][c]=areawt[1][c]=0;}
-			
 			// along line segments, find the point along each segment that minimizes the color variance
 			// averaged over the tile; evaluate for up/down and left/right away from R/B grid point 
-			for (rr=rrmin+8; rr < rrmax-8; rr++)
-				for (cc=ccmin+8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < ccmax-8; cc+=2, indx+=2) {
+			for (rr=8; rr < rr1-8; rr++)
+				for (cc=8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-8; cc+=2, indx+=2) {
 					
-					if (rgb[indx][c]>0.8*clip_pt || Gtmp[indx]>0.8*clip_pt) continue;
-
+					areawt[0][c]=areawt[1][c]=0;
+					
 					//in linear interpolation, color differences are a quadratic function of interpolation position;
 					//solve for the interpolation position that minimizes color difference variance over the tile
 					
 					//vertical
 					gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
-					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-v4][c]-rgb[indx-v4][1])+(rgb[indx+v4][c]-rgb[indx+v4][1]));
+					deltgrb=(rgb[indx][c]-rgb[indx][1]);
 					
-					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );//*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
-					if (gradwt>eps) {
+					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) )*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
+					
 					coeff[0][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[0][1][c] += gradwt*gdiff*deltgrb;
 					coeff[0][2][c] += gradwt*gdiff*gdiff;
-					areawt[0][c]++;
-					}
+					areawt[0][c]+=1;
+					
 					
 					//horizontal
 					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
-					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-4][c]-rgb[indx-4][1])+(rgb[indx+4][c]-rgb[indx+4][1]));
+					deltgrb=(rgb[indx][c]-rgb[indx][1]);
 					
-					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );//*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
-					if (gradwt>eps) {
+					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) )*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
+					
 					coeff[1][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[1][1][c] += gradwt*gdiff*deltgrb;
 					coeff[1][2][c] += gradwt*gdiff*gdiff;
-					areawt[1][c]++;
-					}
+					areawt[1][c]+=1;
+					
 					
 					//	In Mathematica,
 					//  f[x_]=Expand[Total[Flatten[
 					//  ((1-x) RotateLeft[Gint,shift1]+x RotateLeft[Gint,shift2]-cfapad)^2[[dv;;-1;;2,dh;;-1;;2]]]]];
 					//  extremum = -.5Coefficient[f[x],x]/Coefficient[f[x],x^2]	
-				}
+				}			
+			
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			/*
+			 for (rr=4; rr < rr1-4; rr++)
+			 for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
+			 
+			 
+			 rbhpfv[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) + \
+			 fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+			 fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])));
+			 rbhpfh[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) + \
+			 fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+			 fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx+4][1]-rgb[indx+4][c])));
+			 
+			 
+			 glpfv = 0.25*(2*rgb[indx][1]+rgb[indx+v2][1]+rgb[indx-v2][1]);
+			 glpfh = 0.25*(2*rgb[indx][1]+rgb[indx+2][1]+rgb[indx-2][1]);
+			 rblpfv[indx] = eps+fabs(glpfv - 0.25*(2*rgb[indx][c]+rgb[indx+v2][c]+rgb[indx-v2][c]));
+			 rblpfh[indx] = eps+fabs(glpfh - 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]));
+			 grblpfv[indx] = glpfv + 0.25*(2*rgb[indx][c]+rgb[indx+v2][c]+rgb[indx-v2][c]);
+			 grblpfh[indx] = glpfh + 0.25*(2*rgb[indx][c]+rgb[indx+2][c]+rgb[indx-2][c]);
+			 }
+			 
+			 for (c=0;c<3;c++) {areawt[0][c]=areawt[1][c]=0;}
+			 
+			 // along line segments, find the point along each segment that minimizes the color variance
+			 // averaged over the tile; evaluate for up/down and left/right away from R/B grid point 
+			 for (rr=rrmin+8; rr < rrmax-8; rr++)
+			 for (cc=ccmin+8+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < ccmax-8; cc+=2, indx+=2) {
+			 
+			 if (rgb[indx][c]>0.8*clip_pt || Gtmp[indx]>0.8*clip_pt) continue;
+			 
+			 //in linear interpolation, color differences are a quadratic function of interpolation position;
+			 //solve for the interpolation position that minimizes color difference variance over the tile
+			 
+			 //vertical
+			 gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
+			 deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-v4][c]-rgb[indx-v4][1])+(rgb[indx+v4][c]-rgb[indx+v4][1]));
+			 
+			 gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );//*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
+			 if (gradwt>eps) {
+			 coeff[0][0][c] += gradwt*deltgrb*deltgrb;
+			 coeff[0][1][c] += gradwt*gdiff*deltgrb;
+			 coeff[0][2][c] += gradwt*gdiff*gdiff;
+			 areawt[0][c]++;
+			 }
+			 
+			 //horizontal
+			 gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
+			 deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-4][c]-rgb[indx-4][1])+(rgb[indx+4][c]-rgb[indx+4][1]));
+			 
+			 gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );//*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
+			 if (gradwt>eps) {
+			 coeff[1][0][c] += gradwt*deltgrb*deltgrb;
+			 coeff[1][1][c] += gradwt*gdiff*deltgrb;
+			 coeff[1][2][c] += gradwt*gdiff*gdiff;
+			 areawt[1][c]++;
+			 }
+			 
+			 //	In Mathematica,
+			 //  f[x_]=Expand[Total[Flatten[
+			 //  ((1-x) RotateLeft[Gint,shift1]+x RotateLeft[Gint,shift2]-cfapad)^2[[dv;;-1;;2,dh;;-1;;2]]]]];
+			 //  extremum = -.5Coefficient[f[x],x]/Coefficient[f[x],x^2]	
+			 }*/
 			for (c=0; c<3; c+=2){
 				for (j=0; j<2; j++) {// vert/hor
 					//printf("hblock %d vblock %d j %d c %d areawt %d \n",hblock,vblock,j,c,areawt[j][c]);
