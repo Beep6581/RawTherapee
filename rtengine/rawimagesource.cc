@@ -989,7 +989,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
 		}
-		float varthresh = (10*(1-(float)raw.hotdeadpix_filt/100.0) + 1.0 ); 
+		float varthresh = (20.0*((float)raw.hotdeadpix_thresh/100.0) + 1.0 ); 
 		int nFound =findHotDeadPixel( bitmapBads, varthresh );
 		totBP += nFound;
 		if( settings->verbose && nFound>0){
