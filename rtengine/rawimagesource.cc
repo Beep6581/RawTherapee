@@ -48,6 +48,18 @@ extern const Settings* settings;
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define DIST(a,b) (ABS(a-b))
+	
+#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
+	
+#define med3x3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
+p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; p[5]=a5; p[6]=a6; p[7]=a7; p[8]=a8; \
+PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
+PIX_SORT(p[0],p[1]); PIX_SORT(p[3],p[4]); PIX_SORT(p[6],p[7]); \
+PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); \
+PIX_SORT(p[0],p[3]); PIX_SORT(p[5],p[8]); PIX_SORT(p[4],p[7]); \
+PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); \
+PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
+PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
 
 RawImageSource::RawImageSource ()
 :ImageSource()
@@ -410,129 +422,63 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
 int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 {
 	int counter=0;
-#define range 4
-#define range2 8
 	
-	double (*cfahist);
-	cfahist = (double (*)) calloc (32*W, sizeof *cfahist);
-	float (*cfablur);
-	cfablur = (float (*)) calloc (32*W, sizeof *cfablur);
+	unsigned short (*cfablur);
+	cfablur = (unsigned short (*)) calloc (H*W, sizeof *cfablur);
 	
-	//initialize first (32-range) rows 
-	//compute cumulative histogram of RGGB channels
-	//which is the sum of all pixels of that channel above and left of current pixel
-	//box blur is linear combination of histograms at the four corners of the box
-	cfahist[0]=cfahist[1]=cfahist[W]=cfahist[W+1]=0;
-	for (int cc=2; cc<H; cc++) {//initialize first two rows
-		cfahist[0*W+cc] = cfahist[0*W+cc-2] + rawData[0][cc];
-		cfahist[1*W+cc] = cfahist[1*W+cc-2] + rawData[1][cc];
-	}
-	for (int rr=2; rr < 32; rr++) {
-		double rowcum[2]={rawData[rr][0],rawData[rr][1]};
-		cfahist[rr*W+0]=cfahist[(rr-2)*W+0] + rowcum[0];
-		cfahist[rr*W+1]=cfahist[(rr-2)*W+1] + rowcum[1];
-		for (int cc=2; cc < W; cc++) {
-			//compute cumulative histogram
-			rowcum[cc&1] += rawData[rr][cc];
-			cfahist[rr*W+cc] = cfahist[(rr-2)*W+cc] + rowcum[cc&1];
-			//compute box blur
-			if (rr>=range && cc>=range) {
-				int top = MAX(0,(rr-range2));
-				int left = MAX(0,(cc-range2));
-				cfablur[(rr-range)*W+cc-range] = (cfahist[rr*W+cc] - cfahist[top*W+cc] - \
-												  cfahist[rr*W+left] + cfahist[top*W+left])/((rr-top+1)*(cc-left+1));
-			}
-			if (rr>=range && cc>=(W-range)) {//take care of rightmost columns in the row
-				int top = MAX(0,(rr-range2));
-				int right = MIN(cc+range,W-1);
-				cfablur[(rr-range)*W+cc] = (cfahist[rr*W+right] - cfahist[top*W+right] - \
-											cfahist[rr*W+cc-range] + cfahist[top*W+cc-range])/((rr-top+1)*(right-cc+range+1));
+	int iprev,inext,jprev,jnext;
+	unsigned short p[9],temp;
+	int top, bottom, left, right;
+	
+#pragma omp parallel
+	{
+#pragma omp for
+		for (int i=0; i<H; i++) {
+			if (i<2) {iprev=i+2;} else {iprev=i-2;}
+			if (i>H-3) {inext=i-2;} else {inext=i+2;}
+			for (int j=0; j<W; j++) {
+				if (j<2) {jprev=j+2;} else {jprev=j-2;}
+				if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
+				med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
+					   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
+					   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfablur[i*W+j]);
 			}
 		}
-	}//end of histogram and blur initialization
-	
-	//cfa pixel heat/death evaluation
-	for (int rr=0; rr < H; rr++) {
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		//now compute next row in the histogram, and cfa box blur
-		int top, bottom, left, right;
-		int rr_hist = rr&31;//next row in cyclic storage of histogram data
-		
-		if (rr+32<H) {
-			int rr_cfa = rr+32;//next row in the cfa
-			int rr_prev = (rr-2)&31;//previous row in cyclic storage of histogram data
-			top = (rr-range2)&31;
+#pragma omp  for
+		//cfa pixel heat/death evaluation
+		for (int rr=0; rr < H; rr++) {
 			
-			double rowcum[2]={rawData[rr_cfa][0],rawData[rr_cfa][1]};
-			cfahist[rr_hist*W+0]=cfahist[rr_prev*W+0] + rowcum[0];
-			cfahist[rr_hist*W+1]=cfahist[rr_prev*W+1] + rowcum[1];
-			for (int cc=2; cc < W; cc++) {
-				//compute cumulative histogram
-				rowcum[cc&1] += rawData[rr_cfa][cc];
-				cfahist[rr_hist*W+cc] = cfahist[rr_prev*W+cc] + rowcum[cc&1];
-				//compute box blur
-				if (cc>=range) {
-					left = MAX(0,(cc-range2));
-					cfablur[((rr-range)&31)*W+cc-range] = (cfahist[rr_hist*W+cc] - cfahist[top*W+cc] - \
-														   cfahist[rr_hist*W+left] + cfahist[top*W+left])/((range2+1)*(cc-left+1));
-				}
-				if (cc>=(W-range)) {//take care of rightmost columns in the row
-					right = MIN(cc+range,W-1);
-					cfablur[((rr-range)&31)*W+cc] = (cfahist[rr_hist*W+right] - cfahist[top*W+right] - \
-													 cfahist[rr_hist*W+cc-range] + cfahist[top*W+cc-range])/((range2+1)*(right-cc+range+1));
-				}
-			}
-		} else {//clean up; compute cfa box blur for last few rows
-			for (int cc=2; cc < W; cc++) {
-				top = (rr-range)&31;
-				bottom = (H-1)&31;
-				//compute box blur
-				if (cc>=range) {
-					left = MAX(0,(cc-range2));
-					cfablur[rr_hist*W+cc-range] = (cfahist[bottom*W+cc] - cfahist[top*W+cc] - \
-												   cfahist[bottom*W+left] + cfahist[top*W+left])/((bottom-top+1)*(cc-left+1));
-				}
-				if (cc>=(W-range)) {//take care of rightmost columns in the row
-					right = MIN(cc+range,W-1);
-					cfablur[rr_hist*W+cc] = (cfahist[bottom*W+right] - cfahist[top*W+right] - \
-											 cfahist[bottom*W+cc-range] + cfahist[top*W+cc-range])/((bottom-top+1)*(right-cc+range+1));
-				}
-			}
-		}//end of cfa box blur update
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		for (int cc=0; cc < W; cc++) {
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
-			//evaluate pixel for heat/death
-			float pixdev = fabs(rawData[rr][cc]-cfablur[(rr&31)*W+cc]);
-			float hfnbrave=0;
-			top=MAX(0,rr-2);
-			bottom=MIN(H-1,rr+2);
-			left=MAX(0,cc-2);
-			right=MIN(W-1,cc+2);
-			for (int mm=top; mm<=bottom; mm++)
-				for (int nn=left; nn<=right; nn++) {
-					hfnbrave += fabs(rawData[mm][nn]-cfablur[(mm&31)*W+nn]);
+			for (int cc=0; cc < W; cc++) {
+				//rawData[rr][cc] = cfablur[rr*W+cc];//diagnostic
+				
+				//evaluate pixel for heat/death
+				float pixdev = (float)abs(rawData[rr][cc]-cfablur[rr*W+cc]);
+				float hfnbrave=0;
+				top=MAX(0,rr-2);
+				bottom=MIN(H-1,rr+2);
+				left=MAX(0,cc-2);
+				right=MIN(W-1,cc+2);
+				for (int mm=top; mm<=bottom; mm++)
+					for (int nn=left; nn<=right; nn++) {
+						hfnbrave += (float)abs(rawData[mm][nn]-cfablur[mm*W+nn]);
+					}
+				hfnbrave = (hfnbrave-pixdev)/((bottom-top+1)*(right-left+1)-1);
+				
+				if (pixdev > thresh*hfnbrave) {
+					// mark the pixel as "bad"
+					bpMap.set(cc,rr );
+					counter++;
 				}
-			hfnbrave = (hfnbrave-pixdev)/((bottom-top+1)*(right-left+1)-1);
+			}//end of pixel evaluation
 			
-			if (pixdev > thresh*hfnbrave) {
-				// mark the pixel as "bad"
-				bpMap.set(cc,rr );
-				counter++;
-			}
-		}//end of pixel evaluation
-		
-		
-	}
+			
+		}
+	}//end pragma
 	free (cfablur);
-	free (cfahist);
-#undef range
-#undef range2
-	
+	//printf ("counter %d \n",counter);
 	return counter;
 }
 	
@@ -1013,7 +959,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
 			plistener->setProgress (0.0);
 		}
-		int nFound =findHotDeadPixel( bitmapBads, 5.0 );
+		int nFound =findHotDeadPixel( bitmapBads, 10.0 );
 		totBP += nFound;
 		if( settings->verbose && nFound>0){
 			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
