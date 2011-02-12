@@ -968,13 +968,13 @@ bool ProcParams::operator== (const ProcParams& other) {
         && hlrecovery.enabled   == other.hlrecovery.enabled
         && hlrecovery.method    == other.hlrecovery.method
         && resize.scale     == other.resize.scale
-		&& resize.appliesTo == other.resize.appliesTo
+        && resize.appliesTo == other.resize.appliesTo
         && resize.method    == other.resize.method
         && resize.dataspec  == other.resize.dataspec
         && resize.width     == other.resize.width
         && resize.height    == other.resize.height
         && raw.dark_frame   == other.raw.dark_frame
-		&& raw.df_autoselect == other.raw.df_autoselect 
+        && raw.df_autoselect == other.raw.df_autoselect
 		&& raw.ff_file   == other.raw.ff_file            
 		&& raw.ff_AutoSelect   == other.raw.ff_AutoSelect
 		&& raw.ff_BlurRadius   == other.raw.ff_BlurRadius
