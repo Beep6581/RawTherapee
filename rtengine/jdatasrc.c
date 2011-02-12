@@ -1,3 +1,6 @@
+#ifndef WIN32
+#define jboolean boolean
+#endif
 #include <stdio.h>
 #include <jpeglib.h>
 #include <jerror.h>
@@ -38,7 +41,7 @@ typedef struct {
 
   FILE * infile;		/* source stream */
   JOCTET * buffer;		/* start of buffer */
-  boolean start_of_file;	/* have we gotten any data yet? */
+  jboolean start_of_file;	/* have we gotten any data yet? */
 } my_source_mgr;
 
 typedef my_source_mgr * my_src_ptr;
@@ -97,7 +100,7 @@ my_init_source (j_decompress_ptr cinfo)
  * the front of the buffer rather than discarding it.
  */
 
-METHODDEF(boolean)
+METHODDEF(jboolean)
 my_fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
@@ -328,7 +331,7 @@ format_message (j_common_ptr cinfo, char * buffer)
   const char * msgtext = NULL;
   const char * msgptr;
   char ch;
-  boolean isstring;
+  jboolean isstring;
 
   /* Look up message string in proper table */
   if (msg_code > 0 && msg_code <= err->last_jpeg_message) {
