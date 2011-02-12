@@ -235,6 +235,7 @@ class ResizeParamsEdited {
 
     public:
         bool scale;
+        bool appliesTo;
         bool method;
         bool dataspec;
         bool width;
@@ -321,9 +322,9 @@ class ParamsEdited {
         LumaDenoiseParamsEdited       lumaDenoise;    
         ColorDenoiseParamsEdited      colorDenoise; 
 	
-	DefringeParamsEdited			defringe;    
-	DirPyrDenoiseParamsEdited       dirpyrDenoise;    
-	ImpulseDenoiseParamsEdited		impulseDenoise;    
+        DefringeParamsEdited          defringe;    
+        DirPyrDenoiseParamsEdited     dirpyrDenoise;    
+        ImpulseDenoiseParamsEdited    impulseDenoise;    
 
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           
@@ -340,8 +341,8 @@ class ParamsEdited {
         ColorManagementParamsEdited   icm;            
         EqualizerParamsEdited         equalizer;
         RAWParamsEdited               raw;
-	DirPyrEqualizerParamsEdited   dirpyrequalizer;
-	HSVEqualizerParamsEdited         hsvequalizer;
+        DirPyrEqualizerParamsEdited   dirpyrequalizer;
+        HSVEqualizerParamsEdited      hsvequalizer;
         std::vector<ExifPairEdited>   exif;             
         std::vector<IPTCPairEdited>   iptc;             
         

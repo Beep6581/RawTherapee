@@ -189,6 +189,8 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
     for (int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (&pparams, &pparamsEdited);
 
+    // TODO: We may update the crop on coarse rotate events here, like in ToolPanelCoordinator::panelChanged
+
     if (event==rtengine::EvAutoExp || event==rtengine::EvClip) 
         for (int i=0; i<selected.size(); i++) {
             initialPP[i].toneCurve.autoexp = pparams.toneCurve.autoexp;

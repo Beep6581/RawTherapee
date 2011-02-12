@@ -130,11 +130,12 @@ enum ProcEvent {
     EvDefringeRadius=105,
     EvDefringeThreshold=106,
     EvHLComprThreshold=107,
-	EvLAvoidClip=108,
-	EvLSatLimiter=109,
-	EvLSatLimit=110,
-
-    NUMOFEVENTS=111
+    EvResizeBoundingBox=108,
+    EvResizeAppliesTo=109,
+    EvLAvoidClip=110,
+    EvLSatLimiter=111,
+    EvLSatLimit=112,
+    NUMOFEVENTS=113
     };
 }
 #endif

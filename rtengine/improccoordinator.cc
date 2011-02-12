@@ -112,13 +112,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     int numofphases = 10;
     int readyphase = 0;
 
-    if (!params.resize.enabled)
-        params.resize.scale = 1.0;
-    else if (params.resize.dataspec==1)
-        params.resize.scale = (double)params.resize.width / (params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
-    else if (params.resize.dataspec==2)
-        params.resize.scale = (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
-
     ipf.setScale (scale);
 
     bool highDetailNeeded=false;
@@ -304,7 +297,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (!resultValid) {
         resultValid = true;
         if (imageListener)
-            imageListener->setImage (previmg, scale*params.resize.scale, params.crop);
+            imageListener->setImage (previmg, scale, params.crop);
     }
     if (imageListener)
         imageListener->imageReady (params.crop);
@@ -395,22 +388,8 @@ if (settings->verbose) printf ("setscale before lock\n");
     
     scale = prevscale;
     resultValid = false;
-    if (!params.resize.enabled) {
-        fullw = fw;
-        fullh = fh;
-    }
-    else if (params.resize.dataspec==0) {
-        fullw = fw*params.resize.scale;
-        fullh = fh*params.resize.scale;
-    }
-    else if (params.resize.dataspec==1) {
-        fullw = params.resize.width;
-        fullh = (double)fh*params.resize.width/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fh : fw);
-    }
-    else if (params.resize.dataspec==2) {
-        fullw = (double)fw*params.resize.height/(params.coarse.rotate==90 || params.coarse.rotate==270 ? fw : fh);
-        fullh = params.resize.height;
-    }
+    fullw = fw;
+    fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
     if (sizeListeners.size()>0)
         for (int i=0; i<sizeListeners.size(); i++)

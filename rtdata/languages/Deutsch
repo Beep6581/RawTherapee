@@ -160,7 +160,9 @@ HISTORY_MSG_105;Defringing aktiv
 HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Schwellenwert
 HISTORY_MSG_108;Lichter-Kompression Schwellenwert
+HISTORY_MSG_109;Größenänderung Begrenzungsrahmen
 HISTORY_MSG_10;Schatten-Kompression
+HISTORY_MSG_110;Größenänderung gilt für
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
 HISTORY_MSG_13;Belichtungsbeschneidung
@@ -719,12 +721,16 @@ TP_PREPROCESS_DARKFRAME;Dunkelbild
 TP_PREPROCESS_DFAUTOSELECT;Automatische Auswahl
 TP_RAWPANEL_DEMOSAICING;Demosaic
 TP_RAWPANEL_PREPROCESSING;Vorverarbeitung
+TP_RESIZE_APPLIESTO;Gilt für:
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (Schärfer)
 TP_RESIZE_BILINEAR;Bilinear
+TP_RESIZE_CROPPEDAREA;Ausschnitt
 TP_RESIZE_DOWNSCALEB;Verkleinern (besser)
 TP_RESIZE_DOWNSCALEF;Verkleinern (schneller)
+TP_RESIZE_FITBOX;Begrenzungsrahmen
+TP_RESIZE_FULLIMAGE;Ganzes Bild
 TP_RESIZE_FULLSIZE;Volle Bildgröße:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höhe
