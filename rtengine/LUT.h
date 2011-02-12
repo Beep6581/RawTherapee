@@ -19,7 +19,7 @@
  */
 
 /*
- *  Declaration of flexible 2D arrays
+ *  Declaration of flexible Lookup Tables
  *
  *  Usage:
  *
@@ -47,75 +47,78 @@
  *
  *          LUT<float> my_lut (10,0); // this will extrapolate on either side
  *
+ *      shotcuts:
  *
+ *      	LUTf stands for LUT<float>
+ *          LUTi stands for LUT<int>
+ *          LUTu stands for LUT<unsigned int>
  */
 
 #ifndef LUT_H_
 #define LUT_H_
 
+// bit representations of flags
 #define LUT_CLIP_BELOW 1
-#define LUT_CLIP_ABOVE 	2
+#define LUT_CLIP_ABOVE 2
 
-template <typename T>
-class LUT
-{
+#define LUTf LUT<float>
+#define LUTi LUT<int>
+#define LUTu LUT<unsigned int>
+
+template<typename T>
+class LUT {
 private:
-  int size,owner;
-  unsigned int clip;
-  T * data;
+	int size, owner;
+	unsignedint clip;
+	T * data;
 public:
-  LUT(int s,int flags=0xfffffff)
-  {
-	  clip=flags;
-	  data = new T [s];
-      owner=1;
-	  size=s;
-  }
+	LUT(int s, int flags = 0xfffffff) {
+		clip = flags;
+		data = new T[s];
+		owner = 1;
+		size = s;
+	}
 
-  LUT(int s,T * source)
-  {
-	  data = new T [s];
-      owner=1;
-	  size=s;
-	  for (int i=0;i<s;i++)
-	  {
-		  data[i]=source[i];
-	  }
-  }
+	LUT(int s, T * source) {
+		data = new T[s];
+		owner = 1;
+		size = s;
+		for (int i = 0; i < s; i++) {
+			data[i] = source[i];
+		}
+	}
 
-  ~LUT()
-  {
-	  if (owner) delete [] data;
-  }
+	~LUT() {
+		if (owner)
+			delete[] data;
+	}
 
-  // use with integer indices
-  T& operator[](int index)
-  {
-	  if(index<0) return data[0];
-	  if(index>=size) return data[size-1];
-	  return data[index];
-  }
-  // use with float indices
-  T operator[](float index)
-  {
-	  int idx = floor(index);
-	  if(idx<=0)
-	  {
-		  idx=0;
-		  if (clip&LUT_CLIP_BOTTOM)
-			  return data[0];
-	  }
-	  if(idx>=size-1)
-	  {
-		  idx=size-2;
-		  if (clip&LUT_CLIP_ABOVE)
-			  return data[size-1];
-	  }
-	  float diff=index - (float)idx;
-	  T p1 = data[idx]* (1.0-diff);
-	  T p2 = data[idx+1]*diff;
-	  return p1+p2;
-  }
+	// use with integer indices
+	T& operator[](int index) {
+		if (index < 0)
+			return data[0];
+		if (index > size - 1)
+			return data[size - 1];
+		return data[index];
+	}
+	// use with float indices
+	T operator[](float index) {
+		int idx = floor(index);
+		if (idx < 0) {
+			idx = 0;
+			if (clip & LUT_CLIP_BOTTOM)
+				return data[0];
+		}
+		if (idx > size - 2) {
+			idx = size - 2;
+			if (clip & LUT_CLIP_ABOVE)
+				return data[size - 1];
+		}
+		float diff = index - (float) idx;
+		T p1 = data[idx] * (1.0 - diff);
+		T p2 = data[idx + 1] * diff;
+		return p1 + p2;
+	}
 };
 
 #endif /* LUT_H_ */

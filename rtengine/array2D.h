@@ -45,63 +45,55 @@
  *			<type> *  my_array		gives access to the stored data.
  *
  */
-#include <stdio.h>
-#include <string.h>
 
-template <typename T>
-class array2D
-{
+template<typename T>
+class array2D {
 private:
-  int x,y,owner;
-  T ** ptr;
-  T * data;
+	int x, y, owner;
+	T ** ptr;
+	T * data;
 public:
-  array2D(int h,int w)
-  {
-	  data = new T [h*w];
-      owner=1;
-	  x=w;y=h;
-	  ptr=new T* [h];
-	  for (int i=0;i<h;i++)
-		  ptr[i]=data + i*w;
-  }
-
-
-  array2D(int h,int w,T ** source)
-  {
-	  data = new T [h*w];
-      owner=1;
-	  x=w;y=h;
-	  ptr=new T* [h];
-	  for (int i=0;i<h;i++)
-	  {
-		  ptr[i]=data + i*w;
-		  for (int j=0;j<w;j++)
-			  ptr[i][j]=source[i][j];
-	  }
-  }
-
-  ~array2D()
-  {
-	  if (owner) delete [] data;
-	  delete [] ptr;
-  }
-
-  // use with indices
-  T * operator[](size_t index)
-  {
-	  return ptr[index];
-  }
-
-  // use as pointer to T**
-  operator T** ()
-  {
-	  return ptr;
+	array2D(int h, int w) {
+		data = new T[h * w];
+		owner = 1;
+		x = w;
+		y = h;
+		ptr = new T*[h];
+		for (int i = 0; i < h; i++)
+			ptr[i] = data + i * w;
 	}
 
-  // use as pointer to data
-  operator T* ()
-  {
-	  return data;
-  }
+	array2D(int h, int w, T ** source) {
+		data = new T[h * w];
+		owner = 1;
+		x = w;
+		y = h;
+		ptr = new T*[h];
+		for (int i = 0; i < h; i++) {
+			ptr[i] = data + i * w;
+			for (int j = 0; j < w; j++)
+				ptr[i][j] = source[i][j];
+		}
+	}
+
+	~array2D() {
+		if (owner)
+			delete[] data;
+		delete[] ptr;
+	}
+
+	// use with indices
+	T * operator[](size_t index) {
+		return ptr[index];
+	}
+
+	// use as pointer to T**
+	operator T**() {
+		return ptr;
+	}
+
+	// use as pointer to data
+	operator T*() {
+		return data;
+	}
 };
