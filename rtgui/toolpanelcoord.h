@@ -91,14 +91,14 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
-	Defringe* defringe;
-	ImpulseDenoise* impulsedenoise;
-	DirPyrDenoise* dirpyrdenoise;
+        Defringe* defringe;
+        ImpulseDenoise* impulsedenoise;
+        DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
         LCurve* lcurve;
         Equalizer * equalizer;
-	DirPyrEqualizer * dirpyrequalizer;
-	HSVEqualizer * hsvequalizer;
+        DirPyrEqualizer * dirpyrequalizer;
+        HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
 

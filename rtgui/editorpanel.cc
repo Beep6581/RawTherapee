@@ -1029,11 +1029,6 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
     return false;
 }
 
-/*
-void EditorPanel::saveOptions () {
-}
-*/
-
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
 
     if (beforeIpc) {

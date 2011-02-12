@@ -150,7 +150,12 @@ HISTORY_MSG_105;Defringing
 HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Threshold
 HISTORY_MSG_108;Highlight Compr. Threshold
+HISTORY_MSG_109;Resize bounding box
 HISTORY_MSG_10;Shadow Compression
+HISTORY_MSG_110;Resizing applies to  
+HISTORY_MSG_111;Avoid Color Clipping
+HISTORY_MSG_112;Saturation Limiter
+HISTORY_MSG_113;Saturation Limit
 HISTORY_MSG_11;Tone Curve
 HISTORY_MSG_12;Auto Exposure
 HISTORY_MSG_13;Exposure Clipping
@@ -709,12 +714,16 @@ TP_PREPROCESS_DARKFRAME;Dark frame
 TP_PREPROCESS_DFAUTOSELECT;Auto selection
 TP_RAWPANEL_DEMOSAICING;Demosaicing
 TP_RAWPANEL_PREPROCESSING;Preprocessing
+TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
 TP_RESIZE_BICUBICSH;Bicubic (Sharper)
 TP_RESIZE_BILINEAR;Bilinear
+TP_RESIZE_CROPPEDAREA;Cropped area
 TP_RESIZE_DOWNSCALEB;Downscale (Better)
 TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+TP_RESIZE_FITBOX;Bounding box
+TP_RESIZE_FULLIMAGE;Full image
 TP_RESIZE_FULLSIZE;Full Image Size:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Height

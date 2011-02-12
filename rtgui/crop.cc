@@ -187,8 +187,6 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   dpi->signal_value_changed().connect( sigc::mem_fun(*this, &Crop::refreshSize) );
 
   nx = ny = nw = nh = 0;
-  nsx = nsy = nsw = nsh = 0;
-  lastScale = 1.0;
   lastRotationDeg = 0;
   show_all ();
 }
@@ -217,15 +215,17 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hconn.block (true);
     rconn.block (true);
     fconn.block (true);
+    econn.block (true);
     oconn.block (true);
     gconn.block (true);
+
     enabled->set_active (pp->crop.enabled);
 
     // check if the new values are larger than the maximum
     double tmp, maxw, maxh;
     w->get_range (tmp, maxw);
     h->get_range (tmp, maxh);
-    if (pp->crop.x + pp->crop.w > maxw || pp->crop.y + pp->crop.h > maxh)
+    if (pp->crop.x + pp->crop.w > (int)maxw || pp->crop.y + pp->crop.h > (int)maxh)
         setDimensions (pp->crop.x + pp->crop.w, pp->crop.y + pp->crop.h);
 
     ratio->set_active_text (pp->crop.ratio);
@@ -263,14 +263,6 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     nw = pp->crop.w;
     nh = pp->crop.h;
     
-    if (pp->resize.enabled)
-        lastScale = pp->resize.scale;
-    else
-        lastScale = 1.0;
-    nsx = nx / lastScale;
-    nsy = ny / lastScale;
-    nsw = nw / lastScale;
-    nsh = nh / lastScale;
     lastRotationDeg = pp->coarse.rotate;
 
     wDirty = false;
@@ -302,6 +294,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hconn.block (false);
     rconn.block (false);
     fconn.block (false);
+    econn.block (false);
     oconn.block (false);
     gconn.block (false);
 
@@ -352,6 +345,41 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->crop.y             = yDirty;
     }
 
+}
+
+void Crop::trim (ProcParams* pp, int ow, int oh) {
+
+	int xmin = pp->crop.x;
+	int ymin = pp->crop.y;
+
+	if (xmin > ow || ymin > oh) {
+		// the crop is completely out of the image, so we disable the crop
+		pp->crop.enabled = false;
+		// and we set the values to the defaults
+		pp->crop.x = 0;
+		pp->crop.y = 0;
+		pp->crop.w = ow;
+		pp->crop.h = oh;
+		// the ratio is now not guaranteed, so we set it off
+		pp->crop.fixratio = false;
+	}
+	else {
+		bool unsetRatio = false;
+		if ((xmin + pp->crop.w) > ow) {
+			// crop overflow in the width dimension ; we trim it
+			pp->crop.w = ow-xmin;
+			unsetRatio = true;
+		}
+		if ((ymin + pp->crop.h) > oh) {
+			// crop overflow in the height dimension ; we trim it
+			pp->crop.h = oh-ymin;
+			unsetRatio = true;
+		}
+		if (unsetRatio) {
+			// the ratio is certainly not respected anymore, so we set it off
+			pp->crop.fixratio = false;
+		}
+	}
 }
 
 void Crop::selectPressed () {
@@ -407,32 +435,15 @@ int refreshspins (void* data) {
     return 0;
 }
 
-void Crop::resizeScaleChanged (double rsc) {
-
-    lastScale = rsc;
-
-    nx = (int)round (nsx * rsc);
-    ny = (int)round (nsy * rsc);
-    nw = (int)round (nsw * rsc);
-    nh = (int)round (nsh * rsc);
-
-    if (nx+nw > maxw || ny+nh > maxh) 
-        setDimensions (nx+nw, ny+nh);
-
-    g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
-}
-
 void Crop::hFlipCrop () {
 
     nx = maxw - nx - nw;
-    nsx = nx / lastScale;
     g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 }
 
 void Crop::vFlipCrop () {
 
     ny = maxh - ny - nh;
-    nsy = ny / lastScale;
     g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 }
 
@@ -461,10 +472,6 @@ void Crop::rotateCrop (int deg) {
             ny = maxh - ny - nh;
             break;
     }
-    nsx = nx / lastScale;
-    nsy = ny / lastScale;
-    nsw = nw / lastScale;
-    nsh = nh / lastScale;
 
     lastRotationDeg = deg;
     g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
@@ -561,25 +568,29 @@ void Crop::refreshSize () {
     }
 }
 
+/*
+ * Set the maximum dimensions of the image. This method can be called with wrong values, then
+ * called with the good ones !?
+ */
 void Crop::setDimensions (int mw, int mh) {
 
   maxw = mw;
   maxh = mh;
 
-  xconn.block (true);
-  yconn.block (true);
-  wconn.block (true);
-  hconn.block (true);
+  bool xconnWasBlocked = xconn.block (true);
+  bool yconnWasBlocked = yconn.block (true);
+  bool wconnWasBlocked = wconn.block (true);
+  bool hconnWasBlocked = hconn.block (true);
 
   w->set_range (0, maxw);
   h->set_range (0, maxh);
   x->set_range (0, maxw);
   y->set_range (0, maxh);
 
-  xconn.block (false);
-  yconn.block (false);
-  wconn.block (false);
-  hconn.block (false);
+  if (!xconnWasBlocked) xconn.block (false);
+  if (!yconnWasBlocked) yconn.block (false);
+  if (!wconnWasBlocked) wconn.block (false);
+  if (!hconnWasBlocked) hconn.block (false);
 
   if (enabled->get_active()==false) {
     nx = 0;
@@ -587,12 +598,8 @@ void Crop::setDimensions (int mw, int mh) {
     nw = mw;
     nh = mh;
 
-    nsx = nx / lastScale;
-    nsy = ny / lastScale;
-    nsw = nw / lastScale;
-    nsh = nh / lastScale;
     refreshSpins ();
-  }  
+  }
   refreshSize ();
 }
 
@@ -671,11 +678,6 @@ void Crop::cropMoved (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
-
   g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
@@ -705,11 +707,6 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H) {
   ny = Y;
   nw = W;
   nh = H;
-
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
 
   g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
@@ -743,11 +740,6 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
-
   g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
@@ -778,11 +770,6 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H) {
   ny = Y;
   nw = W;
   nh = H;
-
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
 
   g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
@@ -815,11 +802,6 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
-
   g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
@@ -830,11 +812,6 @@ void Crop::cropInit (int &x, int &y, int &w, int &h) {
   ny = y;
   nw = 1;
   nh = 1;
-
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
 
   w = 1; h = 1;
   
@@ -925,11 +902,6 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2) {
   ny = Y;
   nw = W;
   nh = H;
-
-  nsx = nx / lastScale;
-  nsy = ny / lastScale;
-  nsw = nw / lastScale;
-  nsh = nh / lastScale;
 
   g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));

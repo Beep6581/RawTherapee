@@ -150,7 +150,12 @@ HISTORY_MSG_105;Corr. aberr. chromatique
 HISTORY_MSG_106;Corr. a.c. - Rayon
 HISTORY_MSG_107;Corr. a.c. - Seuil
 HISTORY_MSG_108;Seuil de compr. des hautes lumières
+HISTORY_MSG_109;Redim. - boîte englobante
 HISTORY_MSG_10;Compression des ombres
+HISTORY_MSG_110;Redim. s'applique à
+HISTORY_MSG_111;Éviter l'écrêtage couleur
+HISTORY_MSG_112;Limiteur de saturation
+HISTORY_MSG_113;Limite de saturation
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
 HISTORY_MSG_13;Rognage de l'exposition
@@ -688,10 +693,13 @@ TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
+TP_LABCURVE_AVOIDCOLORCLIP;Éviter l'écrêtage couleur
 TP_LABCURVE_BRIGHTNESS;Luminosité
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
+TP_LABCURVE_ENABLESATLIMITER;Activer le limiteur de saturation
 TP_LABCURVE_LABEL;Courbes Lab
+TP_LABCURVE_SATLIMIT;Limite de saturation
 TP_LABCURVE_SATURATION;Saturation
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
@@ -706,12 +714,16 @@ TP_PREPROCESS_DARKFRAME;Trame noire
 TP_PREPROCESS_DFAUTOSELECT;Sélection automatique
 TP_RAWPANEL_DEMOSAICING;Dématriçage
 TP_RAWPANEL_PREPROCESSING;Traitement pre-dématriçage
+TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)
 TP_RESIZE_BILINEAR;Bilinéaire
+TP_RESIZE_CROPPEDAREA;La zone recadrée
 TP_RESIZE_DOWNSCALEB;Diminuer (Meilleur)
 TP_RESIZE_DOWNSCALEF;Diminuer (Plus rapide)
+TP_RESIZE_FITBOX;Boîte englobante
+TP_RESIZE_FULLIMAGE;L'image entière
 TP_RESIZE_FULLSIZE;Dimensions finales de l'image:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Hauteur
@@ -777,13 +789,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
-!TP_LABCURVE_SATLIMIT;Saturation limit

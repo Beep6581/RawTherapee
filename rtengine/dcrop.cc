@@ -65,13 +65,6 @@ void Crop::update (int todo, bool internal) {
     ProcParams& params = parent->params;
     cropMutex.lock ();
 
-    if (!params.resize.enabled)
-        params.resize.scale = 1.0;
-    else if (params.resize.dataspec==1)
-        params.resize.scale = (double)params.resize.width / (params.coarse.rotate==90 || params.coarse.rotate==270 ? parent->fh : parent->fw);
-    else if (params.resize.dataspec==2)
-        params.resize.scale = (double)params.resize.height / (params.coarse.rotate==90 || params.coarse.rotate==270 ? parent->fw : parent->fh);
-
     parent->ipf.setScale (skip);
 
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
@@ -98,10 +91,7 @@ void Crop::update (int todo, bool internal) {
     if( regenHighDetail )
     	parent->updatePreviewImage (ALL,this); // We have just set skip to 1
 
-    if (resizeCrop)
-        baseCrop = resizeCrop;
-    else
-        baseCrop = origCrop;
+    baseCrop = origCrop;
 
     bool needstransform  = parent->ipf.needsTransform();
 
@@ -119,29 +109,6 @@ void Crop::update (int todo, bool internal) {
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
 
-        if (fabs(params.resize.scale-1.0)<1e-7) {
-            if (resizeCrop) {
-                delete resizeCrop;
-                resizeCrop = NULL;
-            }
-            baseCrop = origCrop;
-        }
-        else {
-            int rcw = trafw*params.resize.scale;
-            int rch = trafh*params.resize.scale;
-            if (!needstransform) {
-                rcw = cropw;
-                rch = croph;
-            }            
-            if (resizeCrop && (resizeCrop->width!=rcw || resizeCrop->height!=rch)) {
-                delete resizeCrop;
-                resizeCrop = NULL;
-            }
-            if (!resizeCrop)
-                resizeCrop = new Image16 (rcw, rch);
-            parent->ipf.resize (origCrop, resizeCrop);
-            baseCrop = resizeCrop;
-        }
         parent->minit.unlock ();
     }
 
@@ -153,7 +120,7 @@ void Crop::update (int todo, bool internal) {
     if (needstransform && !transCrop)
         transCrop = new Image16 (cropw, croph);
     if ((todo & M_TRANSFORM) && needstransform)
-    	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx*params.resize.scale/skip, trafy*params.resize.scale/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
+    	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
     if (transCrop)
         baseCrop = transCrop;
 

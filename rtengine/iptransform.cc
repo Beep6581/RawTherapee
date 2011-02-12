@@ -38,6 +38,7 @@ namespace rtengine {
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
+#define RT_PI 3.141592653589
 
 bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
 
@@ -50,23 +51,6 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
 
     if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective()) {
         if (clipresize) {
-            // Apply resizing
-            if (fabs(params->resize.scale-1.0)>=1e-7) {
-                for (int i=0; i<src.size(); i++) {
-                    red.push_back   (Coord2D (src[i].x / params->resize.scale, src[i].y / params->resize.scale));
-                    green.push_back (Coord2D (src[i].x / params->resize.scale, src[i].y / params->resize.scale));
-                    blue.push_back  (Coord2D (src[i].x / params->resize.scale, src[i].y / params->resize.scale));
-                }
-                for (int i=0; i<src.size(); i++) {
-                    red[i].x = CLIPTOC(red[i].x,0,W-1,clipped);
-                    red[i].y = CLIPTOC(red[i].y,0,H-1,clipped);
-                    green[i].x = CLIPTOC(green[i].x,0,W-1,clipped);
-                    green[i].y = CLIPTOC(green[i].y,0,H-1,clipped);
-                    blue[i].x = CLIPTOC(blue[i].x,0,W-1,clipped);
-                    blue[i].y = CLIPTOC(blue[i].y,0,H-1,clipped);
-                }
-            }
-            else
                 for (int i=0; i<src.size(); i++) {
                     red.push_back   (Coord2D (src[i].x, src[i].y));
                     green.push_back (Coord2D (src[i].x, src[i].y));
@@ -76,21 +60,21 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
         return clipped;
     }
 
-    double oW = W*params->resize.scale;
-    double oH = H*params->resize.scale;
+    double oW = W;
+    double oH = H;
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
 	double a = params->distortion.amount;
-	double cost = cos(params->rotate.degree * 3.14/180.0);
-	double sint = sin(params->rotate.degree * 3.14/180.0);
+	double cost = cos(params->rotate.degree * RT_PI/180.0);
+	double sint = sin(params->rotate.degree * RT_PI/180.0);
 	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
-    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
+    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
-    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
+    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
 	double ascale = ascaleDef>0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0);
@@ -118,16 +102,6 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
 	}
 
 	if (clipresize) {
-        if (fabs(params->resize.scale-1.0)>=1e-7) {
-            for (int i=0; i<src.size(); i++) {
-                red[i].x /= params->resize.scale;
-                red[i].y /= params->resize.scale;
-                green[i].x /= params->resize.scale;
-                green[i].y /= params->resize.scale;
-                blue[i].x /= params->resize.scale;
-                blue[i].y /= params->resize.scale;
-            }
-        }
         for (int i=0; i<src.size(); i++) {
             red[i].x = CLIPTOC(red[i].x,0,W-1,clipped);
             red[i].y = CLIPTOC(red[i].y,0,H-1,clipped);
@@ -287,21 +261,21 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 	double a = params->distortion.amount;
 
 	// auxiliary variables for rotation
-	double cost = cos(params->rotate.degree * 3.14/180.0);
-	double sint = sin(params->rotate.degree * 3.14/180.0);
+	double cost = cos(params->rotate.degree * RT_PI/180.0);
+	double sint = sin(params->rotate.degree * RT_PI/180.0);
 
 	bool dovign = params->vignetting.amount != 0;
 
 	// auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
-    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
+    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
 	// auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
-    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
+    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
@@ -410,21 +384,21 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 	double a = params->distortion.amount;
 
 	// auxiliary variables for rotation
-	double cost = cos(params->rotate.degree * 3.14/180.0);
-	double sint = sin(params->rotate.degree * 3.14/180.0);
+	double cost = cos(params->rotate.degree * RT_PI/180.0);
+	double sint = sin(params->rotate.degree * RT_PI/180.0);
 
 	bool dovign = params->vignetting.amount != 0;
 
 	// auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * 3.14;
-    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
+    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
 	// auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * 3.14;
-    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
+    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
@@ -515,21 +489,21 @@ void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, i
 	double a = params->distortion.amount;
 
 	// auxiliary variables for rotation
-	double cost = cos(params->rotate.degree * 3.14/180.0);
-	double sint = sin(params->rotate.degree * 3.14/180.0);
+	double cost = cos(params->rotate.degree * RT_PI/180.0);
+	double sint = sin(params->rotate.degree * RT_PI/180.0);
 
 	bool dovign = params->vignetting.amount != 0;
 
 	// auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90 - vpdeg) / 180.0 * 3.14;
-    double vpteta  = fabs(vpalpha-3.14/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpalpha = (90 - vpdeg) / 180.0 * RT_PI;
+    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
 	// auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90 - hpdeg) / 180.0 * 3.14;
-    double hpteta  = fabs(hpalpha-3.14/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpalpha = (90 - hpdeg) / 180.0 * RT_PI;
+    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;

@@ -270,6 +270,8 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
     Glib::ustring costr;
     if (a==brightness)
         costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), a->getValue());
+	else if (a==saturationlimiter)
+        costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(1), a->getValue());
     else
         costr = Glib::ustring::format ((int)a->getValue());
 
@@ -280,7 +282,7 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
 	else if (a==saturation)
         listener->panelChanged (EvLSaturation, costr);
 	else if (a==saturationlimiter)
-        listener->panelChanged (EvLSatLimiter, costr);
+        listener->panelChanged (EvLSatLimit, costr);
 }
 
 //attempt to hide unused channels
