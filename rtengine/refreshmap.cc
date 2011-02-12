@@ -128,11 +128,11 @@ DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
 RGBCURVE,         // EvHLComprThreshold,
+RESIZE,           // EvResizeBoundingBox
+RESIZE,           // EvResizeAppliesTo
 LUMINANCECURVE,   // EvCBAvoidClip,
 LUMINANCECURVE,   // EvCBSatLimiter,
 LUMINANCECURVE,   // EvCBSatLimit,
-RESIZE,           // EvResizeBoundingBox
-RESIZE,           // EvResizeAppliesTo
 FLATFIELD,        // EvFlatFieldFile,
 FLATFIELD,        // EvFlatFieldAutoSelect,
 FLATFIELD,        // EvFlatFieldBlurRadius,

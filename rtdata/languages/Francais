@@ -156,10 +156,13 @@ HISTORY_MSG_108;Seuil de compr. des hautes lumières
 HISTORY_MSG_109;Redim. - boîte englobante
 HISTORY_MSG_10;Compression des ombres
 HISTORY_MSG_110;Redim. s'applique à
-HISTORY_MSG_111;Champ Uniforme - Fichier
-HISTORY_MSG_112;Champ Uniforme - Auto sélection
-HISTORY_MSG_113;Champ Uniforme - Rayon
-HISTORY_MSG_114;Champ Uniforme - Type de floutage
+HISTORY_MSG_111;Éviter l'écrêtage couleur
+HISTORY_MSG_112;Limiteur de saturation
+HISTORY_MSG_113;Limite de saturation
+HISTORY_MSG_114;Champ Uniforme - Fichier
+HISTORY_MSG_115;Champ Uniforme - Auto sélection
+HISTORY_MSG_116;Champ Uniforme - Rayon
+HISTORY_MSG_117;Champ Uniforme - Type de floutage
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
 HISTORY_MSG_13;Rognage de l'exposition
@@ -717,10 +720,13 @@ TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
+TP_LABCURVE_AVOIDCOLORCLIP;Éviter l'écrêtage couleur
 TP_LABCURVE_BRIGHTNESS;Luminosité
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
+TP_LABCURVE_ENABLESATLIMITER;Activer le limiteur de saturation
 TP_LABCURVE_LABEL;Courbes Lab
+TP_LABCURVE_SATLIMIT;Limite de saturation
 TP_LABCURVE_SATURATION;Saturation
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir

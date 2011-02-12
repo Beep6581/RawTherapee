@@ -166,10 +166,13 @@ HISTORY_MSG_108;Highlight Compr. Threshold
 HISTORY_MSG_109;Resize bounding box
 HISTORY_MSG_10;Shadow Compression
 HISTORY_MSG_110;Resizing applies to  
-HISTORY_MSG_111;Flat Field File
-HISTORY_MSG_112;Flat Field Auto Select
-HISTORY_MSG_113;Flat Field Blur Radius
-HISTORY_MSG_114;Flat Field Blur Type
+HISTORY_MSG_111;Avoid Color Clipping
+HISTORY_MSG_112;Saturation Limiter
+HISTORY_MSG_113;Saturation Limit
+HISTORY_MSG_114;Flat Field File
+HISTORY_MSG_115;Flat Field Auto Select
+HISTORY_MSG_116;Flat Field Blur Radius
+HISTORY_MSG_117;Flat Field Blur Type
 HISTORY_MSG_11;Tone Curve
 HISTORY_MSG_12;Auto Exposure
 HISTORY_MSG_13;Exposure Clipping
