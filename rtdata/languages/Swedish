@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29, 2010-12-17, 2010-12-30, 2011-01-02, 2011-01-13 update by Johan Andersson
+#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-02-13.
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_SPLASH;Splash
@@ -55,13 +55,18 @@ FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av miniatyrbilder
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
+FILEBROWSER_AUTOFLATFIELD;Automatisk plattfältskorrigering
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
 FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren)
+FILEBROWSER_CACHE;Cache
+FILEBROWSER_CACHECLEARFROMFULL;Rensa från cachen - fullständigt
+FILEBROWSER_CACHECLEARFROMPARTIAL;Rensa från cachen - delvis
 FILEBROWSER_CLEARPROFILE;Återställ profilen
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DELETEDLGLABEL;Bekräftelse vid borttag
 FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
 FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
 FILEBROWSER_EXIFFILTERAPPLY;Använd
@@ -70,6 +75,7 @@ FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
 FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändra inställningar för EXIF-filtret
 FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
+FILEBROWSER_MOVETOFLATFIELDDIR;Flytta till plattfältskatalogen
 FILEBROWSER_NEW_NAME;Nytt namn:
 FILEBROWSER_PARTIALPASTEPROFILE;Klistra in partiell profil
 FILEBROWSER_PASTEPROFILE;Klistra in profil
@@ -84,16 +90,18 @@ FILEBROWSER_POPUPRANK3;Betyg 3
 FILEBROWSER_POPUPRANK4;Betyg 4
 FILEBROWSER_POPUPRANK5;Betyg 5
 FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
+FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
 FILEBROWSER_POPUPRENAME;Byt namn
 FILEBROWSER_POPUPSELECTALL;Markera allt
 FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
 FILEBROWSER_POPUPUNRANK;Ta bort betyg
 FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
 FILEBROWSER_PROCESSINGSETTINGS;Inställningar
-FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målmapp
+FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målkatalog
 FILEBROWSER_RENAMEDLGLABEL;Byt namn
 FILEBROWSER_RENAMEDLGMSG;Byt namn på "%1" till:
 FILEBROWSER_SELECTDARKFRAME;Välj svartbild... 
+FILEBROWSER_SELECTFLATFIELD;Välj plattfält...
 FILEBROWSER_SHOWDIRHINT;Visa alla bilder i biblioteket
 FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information
 FILEBROWSER_SHOWQUEUEHINT;Visa innehållet i behandlingskön
@@ -157,6 +165,10 @@ HISTORY_MSG_108;Storleksförändring på avgränsad yta
 HISTORY_MSG_109;Storleksförändring tillämpas på
 HISTORY_MSG_10;Skuggkomprimering
 HISTORY_MSG_110;Storleksförändring tillämpas på
+HISTORY_MSG_111;Plattfältsfil
+HISTORY_MSG_112;Automatiskt val av plattfält
+HISTORY_MSG_113;Oskärperadie för plattfält
+HISTORY_MSG_114;Oskärpetyp hos plattfältet
 HISTORY_MSG_11;Tonkurva
 HISTORY_MSG_12;Autoexponering
 HISTORY_MSG_13;Exponeringsmarkering
@@ -339,7 +351,7 @@ MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
 MAIN_FRAME_PLACES_DEL;Ta bort
-MAIN_FRAME_RECENT;Nyligen använda mappar
+MAIN_FRAME_RECENT;Nyligen använda kataloger
 MAIN_MSG_ALREADYEXISTS;Filen existerar redan.
 MAIN_MSG_CANNOTLOAD;Kan inte ladda bilden
 MAIN_MSG_CANNOTSAVE;Filsparningsfel
@@ -378,8 +390,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
-MAIN_TOOLTIP_SAVE;Spara bilden till standardmappen
-MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald mapp
+MAIN_TOOLTIP_SAVE;Spara bilden till standardkatalogen
+MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald katalog
 MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>H</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
@@ -420,6 +432,10 @@ PARTIALPASTE_DISTORTION;Distortionsrättning
 PARTIALPASTE_EVERYTHING;Allt
 PARTIALPASTE_EXIFCHANGES;Förändringar i EXIF-informationen
 PARTIALPASTE_EXPOSURE;Exponering
+PARTIALPASTE_FLATFIELDAUTOSELECT;Välj plattfält automatiskt
+PARTIALPASTE_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
+PARTIALPASTE_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
+PARTIALPASTE_FLATFIELDFILE;Plattfältsfil
 PARTIALPASTE_HLRECOVERY;Högdageråterställning
 PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
@@ -491,7 +507,12 @@ PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
 PREFERENCES_FILEFORMAT;Filformat
+PREFERENCES_FLATFIELDAUTOSELECT;Välj plattfält automatiskt
+PREFERENCES_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
+PREFERENCES_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
+PREFERENCES_FLATFIELDFILE;Plattfältsfil
 PREFERENCES_FLATFIELDFOUND;Hittade
+PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
 PREFERENCES_FLATFIELDSHOTS;bilder
 PREFERENCES_FLATFIELDTEMPLATES;mallar
 PREFERENCES_FORIMAGE;För bildfiler
@@ -753,6 +774,10 @@ TP_PERSPECTIVE_LABEL;Perspektiv
 TP_PERSPECTIVE_VERTICAL;Vertikal
 TP_PREPROCESS_DARKFRAME;Svartbild
 TP_PREPROCESS_DFAUTOSELECT;Välj svartbild automatiskt
+TP_PREPROCESS_FLATFIELDAUTOSELECT;Välj plattfält automatiskt
+TP_PREPROCESS_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
+TP_PREPROCESS_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
+TP_PREPROCESS_FLATFIELDFILE;Plattfältsfil
 TP_PREPROCESS_NO_FOUND;Inga hittade
 TP_RAWPANEL_DEMOSAICING;Demosaicing
 TP_RAWPANEL_PREPROCESSING;Förbehandling
@@ -841,28 +866,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!FILEBROWSER_AUTOFLATFIELD;Auto flat field
-!FILEBROWSER_CACHE;Cache
-!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
-!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
-!FILEBROWSER_SELECTFLATFIELD;Select flat field...
-!HISTORY_MSG_111;Flat Field File
-!HISTORY_MSG_112;Flat Field Auto Select
-!HISTORY_MSG_113;Flat Field Blur Radius
-!HISTORY_MSG_114;Flat Field Blur Type
-!PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
-!PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
-!PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
-!PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
-!PREFERENCES_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!PREFERENCES_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!PREFERENCES_FLATFIELDBLURTYPE;Flat Field Blur Type
-!PREFERENCES_FLATFIELDFILE;Flat Field File
-!PREFERENCES_FLATFIELDSDIR;Flat Fields directory
-!TP_PREPROCESS_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!TP_PREPROCESS_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!TP_PREPROCESS_FLATFIELDBLURTYPE;Flat Field Blur Type
-!TP_PREPROCESS_FLATFIELDFILE;Flat Field File
