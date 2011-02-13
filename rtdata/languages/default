@@ -57,8 +57,8 @@ FILEBROWSER_AUTOFLATFIELD;Auto flat field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser)
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
+FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_CURRENT_NAME;Current name:

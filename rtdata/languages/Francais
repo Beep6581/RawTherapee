@@ -824,7 +824,12 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
 
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
+!FILEBROWSER_CACHE;Cache
+!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
