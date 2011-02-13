@@ -35,6 +35,7 @@ class FileBrowserListener {
         virtual void developRequested       (std::vector<FileBrowserEntry*> tbe) {}
         virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
         virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
+        virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
         virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
         virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
 };
@@ -60,6 +61,8 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
 	Gtk::MenuItem* removeInclProc;
     Gtk::MenuItem* open;
     Gtk::MenuItem* selall;
+    Gtk::MenuItem* copyTo;
+    Gtk::MenuItem* moveTo;
 
     Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;

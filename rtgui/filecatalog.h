@@ -162,6 +162,7 @@ class FileCatalog : public Gtk::VBox,
                 
                 void openRequested          (std::vector<Thumbnail*> tbe);
                 void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed);
+                void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested);
                 void developRequested       (std::vector<FileBrowserEntry*> tbe);
                 void renameRequested        (std::vector<FileBrowserEntry*> tbe);
                 void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace);

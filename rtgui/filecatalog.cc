@@ -553,6 +553,91 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
     }
 }
 
+
+void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {
+
+    if (tbe.size()==0)
+        return;
+
+    Gtk::FileChooserDialog fc(M("FILEBROWSER_POPUPMOVETO"),Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+	fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+	fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
+	// open dialog at the 1-st file's path
+	fc.set_filename(tbe[0]->filename);
+	//!!! TOFO prevent dialog closing on "enter" key press
+
+	bool filecopymovecomplete;
+	int i_copyindex;
+
+	if( fc.run() == Gtk::RESPONSE_OK ){
+		Glib::ustring dest_Dir = fc.get_current_folder();
+
+		// iterate through selected files
+		for (unsigned int i=0; i<tbe.size(); i++) {
+			Glib::ustring src_fPath = tbe[i]->filename;
+			Glib::ustring src_Dir = Glib::path_get_dirname(src_fPath);
+			Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( src_fPath );
+			if( !file ) continue; // if file is missing - skip it
+
+			Glib::ustring fname=file->get_basename();
+			Glib::ustring fname_noExt = removeExtension(fname);
+			Glib::ustring fname_Ext = getExtension(fname);
+
+			// construct  destinations File Paths
+			Glib::ustring destfPath = dest_Dir + "/" + fname;
+			Glib::ustring destfPath_param= destfPath + paramFileExtension;
+
+			if (moveRequested && (src_Dir==dest_Dir)) continue;
+			/* comparison of src_Dir and dest_Dir is done per image for compatibility with
+			possible future use of Collections as source where each file's source path may be different.*/
+
+			filecopymovecomplete = false;
+			i_copyindex = 1;
+			while(!filecopymovecomplete){ // should we limit the number of iteration attempts here? (i_copyindex<100)?
+				if (!safe_file_test(destfPath, Glib::FILE_TEST_EXISTS) && !safe_file_test(destfPath_param, Glib::FILE_TEST_EXISTS)){
+					// copy/move file to destination
+					Glib::RefPtr<Gio::File> dest_file = Gio::File::create_for_path ( destfPath );
+					if (moveRequested) {
+						// remove from browser
+						FileBrowserEntry* t = fileBrowser->delEntry (src_fPath);
+						// remove from cache
+						// !!! this could be optimized to re-attach cache files and avoid their regeneration
+						cacheMgr->deleteEntry (src_fPath);
+						// move file
+						file->move(dest_file);
+					}
+					else
+						file->copy(dest_file);
+
+					// attempt to copy/move paramFile only if it exist
+					Glib::RefPtr<Gio::File> file_param = Gio::File::create_for_path (  src_fPath + paramFileExtension );
+					if (safe_file_test( src_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)){
+						Glib::RefPtr<Gio::File> dest_param = Gio::File::create_for_path ( destfPath_param);
+						// copy/move paramFile to destination
+						if (moveRequested){
+							/* comparison of src_fPath and destfPath is done per image for a compatibility with
+							possible future use with collections where each file's source path may be different.*/
+							file_param->move(dest_param);
+						}
+						else
+							file_param->copy(dest_param);
+					}
+
+					filecopymovecomplete = true;
+				}
+				else{
+					// adjust destination fname to avoid conflicts (append "_<index>", preserve extension)
+					fname = Glib::ustring::compose("%1%2%3%4%5",fname_noExt,"_",i_copyindex,".",fname_Ext);
+					// re-construct  destination File Paths
+					destfPath = dest_Dir + "/" + fname;
+					destfPath_param= destfPath + paramFileExtension;
+					i_copyindex++;
+				}
+			}//while
+		} // i<tbe.size() loop
+		redrawAll ();
+	} // Gtk::RESPONSE_OK
+}
 void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
