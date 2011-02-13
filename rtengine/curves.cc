@@ -302,7 +302,7 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 }
 
 
-void CurveFactory::complexsgnCurve (double saturation, const std::vector<double>& curvePoints, float* outCurve, int skip) {
+void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, float* outCurve, int skip) {
 	
 	//colormult = chroma_scale for Lab manipulations
 	
@@ -316,14 +316,32 @@ void CurveFactory::complexsgnCurve (double saturation, const std::vector<double>
 	std::vector<double> satcurvePoints;
 	satcurvePoints.push_back((double)((CurveType)NURBS));
 	if (saturation>0) {
+		double satslope = (0.5+2*saturation/500.0)/(0.5-2*saturation/500.0);
+		double scale = (satlimthresh/100.1);
+		if (!satlimit) scale=100/100.1;
+		
 		satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
-		satcurvePoints.push_back(0.25+saturation/500.0); //toe point
-		satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
-		
-		satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
-		satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
+		//if (satlimit) {
+			satcurvePoints.push_back(0.5-0.5*scale); //toe point
+			satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
+			
+			satcurvePoints.push_back(0.5-(0.5/satslope)*scale); //toe point
+			satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
+			
+			satcurvePoints.push_back(0.5+(0.5/satslope)*scale); //shoulder point
+			satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
+						
+			satcurvePoints.push_back(0.5+0.5*scale); //shoulder point
+			satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point			
+		/*} else {
+			satcurvePoints.push_back(0.25+saturation/500.0); //toe point
+			satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
+			
+			satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
+			satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
+		}*/
 		
 		satcurvePoints.push_back(1); // white point
 		satcurvePoints.push_back(1); // value at white point

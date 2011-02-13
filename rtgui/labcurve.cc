@@ -36,6 +36,32 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd
 
 	pack_start (*saturation);
 	saturation->show ();
+		
+	brightness->setAdjusterListener (this);
+	contrast->setAdjusterListener (this);
+	saturation->setAdjusterListener (this);
+	
+	//%%%%%%%%%%%%%%%%%%
+	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+	
+	avoidclip = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORCLIP")));
+	
+	pack_start (*avoidclip);
+	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+	
+	enablelimiter = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_ENABLESATLIMITER")));
+	pack_start (*enablelimiter);
+	
+	saturationlimiter = new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 0.1, 40);
+	pack_start (*saturationlimiter);
+	saturationlimiter->show ();
+	saturationlimiter->reference ();  
+	
+	//saturation->setAdjusterListener (this);
+	saturationlimiter->setAdjusterListener (this);
+	acconn = avoidclip->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::avoidclip_toggled) );
+	elconn = enablelimiter->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::enablelimiter_toggled) );
+	//%%%%%%%%%%%%%%%%%%%
 
 	Gtk::HSeparator *hsep3 = Gtk::manage (new  Gtk::HSeparator());
 	hsep3->show ();
@@ -52,33 +78,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd
 	curveEditorG->curveListComplete();
 
 	pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
-
-	brightness->setAdjusterListener (this);
-	contrast->setAdjusterListener (this);
-	saturation->setAdjusterListener (this);
 	
-	
-	//%%%%%%%%%%%%%%%%%%
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-	
-	avoidclip = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORCLIP")));
-	
-	pack_start (*avoidclip);
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-	
-	enablelimiter = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_ENABLESATLIMITER")));
-	pack_start (*enablelimiter);
-	
-	saturationlimiter = new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 200, 0.1, 100);
-	saturationlimiter->show ();
-	saturationlimiter->reference ();  
-	
-	//saturation->setAdjusterListener (this);
-	saturationlimiter->setAdjusterListener (this);
-	acconn = avoidclip->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::avoidclip_toggled) );
-	elconn = enablelimiter->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::enablelimiter_toggled) );
-	//%%%%%%%%%%%%%%%%%%%
-
 }
 
 LCurve::~LCurve () {
@@ -119,9 +119,9 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     enablelimiter->set_active (pp->labCurve.enable_saturationlimiter);
     elconn.block (false);
 	
-    removeIfThere (this, saturationlimiter, false);
-    if (enablelimiter->get_active () || enablelimiter->get_inconsistent())
-        pack_start (*saturationlimiter);
+    //removeIfThere (this, saturationlimiter, false);
+    // if (enablelimiter->get_active () || enablelimiter->get_inconsistent())
+    //    pack_start (*saturationlimiter);
 	
     lastACVal = pp->labCurve.avoidclip;
     lastELVal = pp->labCurve.enable_saturationlimiter;
@@ -230,9 +230,9 @@ void LCurve::enablelimiter_toggled () {
         lastELVal = enablelimiter->get_active ();
     }
 	
-    removeIfThere (this, saturationlimiter, false);
-    if (enablelimiter->get_active () || enablelimiter->get_inconsistent())
-        pack_start (*saturationlimiter);
+    //removeIfThere (this, saturationlimiter, false);
+    //if (enablelimiter->get_active () || enablelimiter->get_inconsistent())
+    //    pack_start (*saturationlimiter);
 	
     if (listener) {
         if (enablelimiter->get_active ()) 

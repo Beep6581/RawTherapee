@@ -66,7 +66,7 @@ void ProcParams::setDefaults () {
 	labCurve.saturation      = 0;
 	labCurve.avoidclip                = false;
     labCurve.enable_saturationlimiter = false;
-    labCurve.saturationlimit          = 50;
+    labCurve.saturationlimit          = 40;
     labCurve.lcurve.clear ();
 	labCurve.acurve.clear ();
     labCurve.bcurve.clear ();
