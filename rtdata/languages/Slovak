@@ -735,8 +735,13 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser)
+!FILEBROWSER_CACHE;Cache
+!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
+!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
 !HISTORY_MSG_100;RGB saturation

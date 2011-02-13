@@ -858,4 +858,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!FILEBROWSER_CACHE;Cache
+!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
+!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
+!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
 !TP_PREPROCESS_NO_FOUND;None found
