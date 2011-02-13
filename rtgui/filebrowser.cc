@@ -62,6 +62,8 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*(removeInclProc = new Gtk::MenuItem (M("FILEBROWSER_POPUPREMOVEINCLPROC"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(copyTo = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOPYTO"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*(moveTo = new Gtk::MenuItem (M("FILEBROWSER_POPUPMOVETO"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*(menuDF = new Gtk::MenuItem (M("FILEBROWSER_DARKFRAME"))), 0, 1, p, p+1); p++;
     pmenu->attach (*(menuFF = new Gtk::MenuItem (M("FILEBROWSER_FLATFIELD"))), 0, 1, p, p+1); p++;
@@ -97,6 +99,8 @@ FileBrowser::FileBrowser ()
     remove->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), remove));    
     removeInclProc->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), removeInclProc));
     selall->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), selall));
+    copyTo->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), copyTo));
+    moveTo->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), moveTo));
     copyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), copyprof));    
     pasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), pasteprof));    
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
@@ -337,6 +341,14 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         queue_draw ();
         notifySelectionListener ();
     }
+    else if( m==copyTo){
+    	tbl->copyMoveRequested (mselected, false);
+    }
+
+    else if( m==moveTo){
+       	tbl->copyMoveRequested (mselected, true);
+    }
+
     else if (m==autoDF){
 		for (int i=0; i<mselected.size(); i++){
 			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
