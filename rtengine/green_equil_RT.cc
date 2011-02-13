@@ -68,16 +68,17 @@ void RawImageSource::green_equilibrate(float thresh)
 			int numcols = right - left;
 			
 			int row, col;
-			int rr, cc, c, indx;
+			int rr, cc, indx;
 			int vote1, vote2;
-			
-			float val1;
-			
+			int counter, vtest;
+						
 			float gin, gse, gsw, gne, gnw, wtse, wtsw, wtne, wtnw;
-			float gu, gd, gl, gr;
 			float mcorr, pcorr;
 			float ginterp;
-			float diffvarh, diffvarv, hvwt;
+			
+			float d1,d2,c1,c2;  
+			float o1_1,o1_2,o1_3,o1_4;  
+			float o2_1,o2_2,o2_3,o2_4;
 			
 			// rgb from input CFA data
 			/* rgb values should be floating point number between 0 and 1 
@@ -93,46 +94,45 @@ void RawImageSource::green_equilibrate(float thresh)
 			//The green equilibration algorithm starts here
 			
 			for (rr=2; rr < numrows-2; rr++)
-				//for (cc=3-(FC(rr,2)&1), indx=rr*TS+cc; cc < numcols-2; cc+=2, indx+=2) {
-				for (indx=rr*TS+2; indx < rr*TS+numcols-2; indx++) {
+				for (cc=3-(FC(rr,2)&1), indx=rr*TS+cc; cc < numcols-2; cc+=2, indx+=2) {
 					
-					if (FC(rr,indx)&1) {
-						pcorr = (cfa[indx+p1]-cfa[indx])*(cfa[indx-p1]-cfa[indx]);
-						mcorr = (cfa[indx+m1]-cfa[indx])*(cfa[indx-m1]-cfa[indx]);
-						
-						if (pcorr>0 && mcorr>0) {checker[indx]=1;} else {checker[indx]=0;}
-						
-						//checker[indx]=1;//test what happens if we always interpolate
-					} else {
-						gu=cfa[indx-v1]+0.5*(cfa[indx]-cfa[indx-v2]);
-						gd=cfa[indx+v1]+0.5*(cfa[indx]-cfa[indx+v2]);
-						gl=cfa[indx-1]+0.5*(cfa[indx]-cfa[indx-2]);
-						gr=cfa[indx+1]+0.5*(cfa[indx]-cfa[indx+2]);
-						
-						gdiffh[indx] = SQR((gl-gr)/(eps+gl+gr));
-						gdiffv[indx] = SQR((gu-gd)/(eps+gu+gd));
-						
-						//gvar[indx] = 0.25*(gu*gu+gd*gd+gl*gl+gr*gr)-SQR(0.25*(gu+gd+gl+gr));
-					}
+					pcorr = (cfa[indx+p1]-cfa[indx])*(cfa[indx-p1]-cfa[indx]);
+					mcorr = (cfa[indx+m1]-cfa[indx])*(cfa[indx-m1]-cfa[indx]);
+					
+					if (pcorr>0 && mcorr>0) {checker[indx]=1;} else {checker[indx]=0;}
+					
+					//checker[indx]=1;//test what happens if we always interpolate
 				}
 						
-
+			counter=vtest=0;
 			
 			//now smooth the cfa data
 			for (rr=6; rr < numrows-6; rr++)
 				for (cc=7-(FC(rr,2)&1), indx=rr*TS+cc; cc < numcols-6; cc+=2, indx+=2) {
 					if (checker[indx]) {
+						//%%%%%%%%%%%%%%%%%%%%%%
+						//neighbor checking code from Manuel Llorens Garcia
+						o1_1=cfa[(rr-1)*TS+cc-1]; 
+						o1_2=cfa[(rr-1)*TS+cc+1];  
+						o1_3=cfa[(rr+1)*TS+cc-1]; 
+						o1_4=cfa[(rr+1)*TS+cc+1];  
+						o2_1=cfa[(rr-2)*TS+cc];  
+						o2_2=cfa[(rr+2)*TS+cc];  
+						o2_3=cfa[(rr)*TS+cc-2];  
+						o2_4=cfa[(rr)*TS+cc+2];  
 						
-						diffvarh = eps+(gdiffh[indx-v1]+gdiffh[indx-1]+gdiffh[indx+1]+gdiffh[indx+v1]);
-						diffvarv = eps+(gdiffv[indx-v1]+gdiffv[indx-1]+gdiffv[indx+1]+gdiffv[indx+v1]);
-						hvwt = fabs(diffvarv-diffvarh)/(diffvarv+diffvarh);
+						d1=(o1_1+o1_2+o1_3+o1_4)/4.0;  
+						d2=(o2_1+o2_2+o2_3+o2_4)/4.0;  
 						
+						c1=(fabs(o1_1-o1_2)+fabs(o1_1-o1_3)+fabs(o1_1-o1_4)+fabs(o1_2-o1_3)+fabs(o1_3-o1_4)+fabs(o1_2-o1_4))/6.0;  
+						c2=(fabs(o2_1-o2_2)+fabs(o2_1-o2_3)+fabs(o2_1-o2_4)+fabs(o2_2-o2_3)+fabs(o2_3-o2_4)+fabs(o2_2-o2_4))/6.0;
+						//%%%%%%%%%%%%%%%%%%%%%%
 						
 						vote1=(checker[indx-v2]+checker[indx-2]+checker[indx+2]+checker[indx+v2]);
 						vote2=(checker[indx-m1]+checker[indx+p1]+checker[indx-p1]+checker[indx+m1]);
-						if (vote1>0 && vote2>0 && hvwt<diffthresh) {
+						//if ((vote1==0 || vote2==0) && (c1+c2)<2*thresh*fabs(d1-d2)) vtest++;
+						if (vote1>0 && vote2>0 && (c1+c2)<2*thresh*fabs(d1-d2)) {
 							//pixel interpolation
-							
 							gin=cfa[indx];
 							
 							gse=(cfa[indx+m1])+0.5*(cfa[indx]-cfa[indx+m2]);
@@ -149,14 +149,15 @@ void RawImageSource::green_equilibrate(float thresh)
 							
 							ginterp=(gse*wtse+gnw*wtnw+gne*wtne+gsw*wtsw)/(wtse+wtnw+wtne+wtsw);
 							
-							if (/*(SQR(ginterp-gin) > 0.125*(gvar[indx-1]+gvar[indx+1]+gvar[indx-v1]+gvar[indx+v1])) &&*/ ((ginterp-gin) < thresh*(ginterp+gin)) ) {
+							//if ( ((ginterp-gin) < thresh*(ginterp+gin)) ) {
 								cfa[indx]=0.5*(ginterp+gin);
-							}
+								counter++;
+							//}
 							
 						}
 					}
 				}
-			
+			//printf("pixfix count= %d; vtest= %d \n",counter,vtest);
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			// copy smoothed results back to image matrix
