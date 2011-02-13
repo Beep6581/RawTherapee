@@ -1,5 +1,5 @@
-Version: release-3.0-a1.669
-Changset: 92cd1a6ffc04
+Version: release-3.0-a1.671
+Changset: 965e55a4a9d9
 Processor: undefined
 Bit depth: 64 bits
 Gtkmm: V2.22.0
