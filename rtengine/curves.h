@@ -148,6 +148,10 @@ class CurveFactory {
     static inline double gamma            (double x, double gamma, double start, double slope, double mul, double add){
                                             return (x <= start ? x*slope : exp(log(x)/gamma)*mul-add);
                                           }
+	static inline double igamma           (double x, double gamma, double start, double slope, double mul, double add){
+											return (x <= start*slope ? x/slope : exp(log((x+add)/mul)*gamma) );
+										  }
+	
 
     // gamma functions on [0,65535] based on look-up tables
     static inline int    gamma_srgb       (int x) { return gammatab_srgb[x]; }
@@ -156,7 +160,7 @@ class CurveFactory {
 
   public:
 //    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& cpoints, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip=1);
-    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
+    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma_, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
 	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, float* outCurve, int skip=1);
 
 };
