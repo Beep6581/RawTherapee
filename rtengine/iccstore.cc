@@ -22,7 +22,13 @@
 #else
 #include <netinet/in.h>
 #endif
+#ifdef QTBUILD
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#else
 #include <glib/gstdio.h>
+#endif
 #include <string>
 #include "string.h"
 
@@ -35,6 +41,17 @@ ICCStore* iccStore;
 
 ProfileContent::ProfileContent (const String& fileName) {
 
+#ifdef QTBUILD
+	QFile f (fileName);
+	if (f.open (QFile::ReadOnly)) {
+		QDataStream in (&f);
+		length = QFileInfo(f).size();
+		data = new unsigned char[length+1];
+		in.readRawData ((char*)data, length);
+		data[length] = 0;
+		f.close ();
+	}
+#else
     data = NULL;
     FILE* f = g_fopen (fileName.c_str(), "rb");
     if (!f)
@@ -46,6 +63,7 @@ ProfileContent::ProfileContent (const String& fileName) {
     fread (data, length, 1, f);
 	data[length] = 0;
     fclose (f);
+#endif
 }
 
 ProfileContent::ProfileContent (const ProfileContent& other) {
@@ -117,25 +135,25 @@ ICCStore::ICCStore () {
     srgb = cmsCreate_sRGBProfile ();
 }
 
-std::vector<std::string> ICCStore::getWorkingProfiles () {
+StringList ICCStore::getWorkingProfiles () {
 
-    std::vector<std::string> res;
+    StringList res;
     for (int i=0; i<sizeof(wpnames)/sizeof(wpnames[0]); i++)
         res.push_back (wpnames[i]);
     return res;
 }
 
-std::vector<std::string> ICCStore::getOutputProfiles () {
+StringList ICCStore::getOutputProfiles () {
 
-    std::vector<std::string> res;
-    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
+	StringList res;
+    for (std::map<String, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
         res.push_back (i->first);
     return res;
 }
 
 Matrix33 ICCStore::workingSpaceMatrix (const String& name) {
 
-    std::map<std::string, Matrix33>::iterator r = wMatrices.find (name);
+    std::map<String, Matrix33>::iterator r = wMatrices.find (name);
     if (r!=wMatrices.end()) 
         return r->second;
     else
@@ -144,7 +162,7 @@ Matrix33 ICCStore::workingSpaceMatrix (const String& name) {
 
 Matrix33 ICCStore::workingSpaceInverseMatrix (const String& name) {
 
-    std::map<std::string, Matrix33>::iterator r = iwMatrices.find (name);
+    std::map<String, Matrix33>::iterator r = iwMatrices.find (name);
     if (r!=iwMatrices.end()) 
         return r->second;
     else 
@@ -153,7 +171,7 @@ Matrix33 ICCStore::workingSpaceInverseMatrix (const String& name) {
 
 cmsHPROFILE ICCStore::workingSpace (const String& name) {
 
-    std::map<std::string, cmsHPROFILE>::iterator r = wProfiles.find (name);
+    std::map<String, cmsHPROFILE>::iterator r = wProfiles.find (name);
     if (r!=wProfiles.end()) 
         return r->second;
     else
@@ -162,7 +180,7 @@ cmsHPROFILE ICCStore::workingSpace (const String& name) {
 
 cmsHPROFILE ICCStore::workingSpaceGamma (const String& name) {
 
-    std::map<std::string, cmsHPROFILE>::iterator r = wProfilesGamma.find (name);
+    std::map<String, cmsHPROFILE>::iterator r = wProfilesGamma.find (name);
     if (r!=wProfilesGamma.end()) 
         return r->second;
     else
@@ -171,13 +189,18 @@ cmsHPROFILE ICCStore::workingSpaceGamma (const String& name) {
 
 cmsHPROFILE ICCStore::getProfile (const String& name) {
 
-
-    std::map<std::string, cmsHPROFILE>::iterator r = fileProfiles.find (name);
+    std::map<String, cmsHPROFILE>::iterator r = fileProfiles.find (name);
     if (r!=fileProfiles.end()) 
         return r->second;
     else {
+#ifdef QTBUILD
+    	QFileInfo finfo;
+    	if (name.left(5) == "file:" && (finfo=QFileInfo (name.mid(5))).exists() && !finfo.isDir() && finfo.isReadable()) {
+        	ProfileContent pc (name.mid(5));
+#else
         if (!name.compare (0, 5, "file:") && Glib::file_test (name.substr(5), Glib::FILE_TEST_EXISTS) && !Glib::file_test (name.substr(5), Glib::FILE_TEST_IS_DIR)) {
-            ProfileContent pc (name.substr(5));
+        	ProfileContent pc (name.substr(5));
+#endif
             if (pc.data) {
                 cmsHPROFILE profile = pc.toProfile ();
                 if (profile) {
@@ -196,13 +219,35 @@ ProfileContent ICCStore::getContent (const String& name) {
     return fileProfileContents[name];
 }
 
-std::vector<std::string> ICCStore::parseDir (const String& pdir) {
+StringList ICCStore::parseDir (const String& pdir) {
 
     fileProfiles.clear ();
     fileProfileContents.clear ();
-    std::vector<std::string> result;
+    StringList result;
     if (pdir!="") {
-        // process directory
+#ifdef QTBUILD
+    	QDir dir (pdir);
+    	if (!dir.exists())
+    		return result;
+
+        QStringList filters;
+        filters << "*.icm" << "*.icc";
+
+        QFileInfoList entries = dir.entryInfoList (filters, QDir::Files | QDir::Readable | QDir::NoDotAndDotDot);
+    	foreach (const QFileInfo& fi, entries) {
+    		ProfileContent pc (dir.absoluteFilePath (fi.absoluteFilePath ()));
+			if (pc.data) {
+				cmsHPROFILE profile = pc.toProfile ();
+				if (profile) {
+					QString name = fi.completeBaseName ();
+					fileProfiles[name] = profile;
+					fileProfileContents[name] = pc;
+					result.push_back (name);
+				}
+			}
+    	}
+#else
+    	// process directory
         Glib::ustring dirname = pdir;
         Glib::Dir* dir = NULL;
         try {
@@ -221,8 +266,7 @@ std::vector<std::string> ICCStore::parseDir (const String& pdir) {
             if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
                 if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-//                    printf ("processing file %s...\n", fname.c_str());
-                    Glib::ustring name = sname.substr(0,lastdot);
+                    String name = sname.substr(0,lastdot);
                     ProfileContent pc (fname);
                     if (pc.data) {
                         cmsHPROFILE profile = pc.toProfile ();
@@ -236,6 +280,7 @@ std::vector<std::string> ICCStore::parseDir (const String& pdir) {
             }
         }
         delete dir;
+#endif
     }
     return result;
 }
@@ -309,20 +354,20 @@ cmsHPROFILE ICCStore::createFromMatrix (const Matrix33& matrix, bool gamma, cons
 
     // desc
     oprof[pbody[5]/4+2] = name.size() + 1;   
-    strcpy ((char *)oprof+pbody[5]+12, name.c_str());
+    strcpy ((char *)oprof+pbody[5]+12, String2PChar(name));
 
 
     return cmsOpenProfileFromMem (oprof, ntohl(oprof[0]));
 }
 
-std::vector<std::string> getWorkingProfiles () {
+StringList getWorkingProfiles () {
 
-    return iccStore->getWorkingProfiles ();
+    return getWorkingProfiles ();
 }
 
-std::vector<std::string> getOutputProfiles () {
+StringList getOutputProfiles () {
 
-    return iccStore->getOutputProfiles ();
+    return getOutputProfiles ();
 }
 
 }

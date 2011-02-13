@@ -26,7 +26,7 @@ RawImageSource::~RawImageSource () {
 		cmsCloseProfile (embProfile);
 }
 
-int RawImageSource::load (const Glib::ustring& fileName, ProgressListener* plistener) {
+int RawImageSource::load (const String& fileName, ProgressListener* plistener) {
 
     this->fileName = fileName;
 
@@ -261,7 +261,7 @@ void RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
         int start, end;
         if (img->fujiWidth) {
             int fw = img->fujiWidth;
-            start = ABS(fw-i) + border;
+            start = std::abs(fw-i) + border;
             end = MIN(img->height+ img->width-fw-i, fw+i) - border;
         }
         else {

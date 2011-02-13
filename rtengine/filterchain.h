@@ -23,7 +23,7 @@ protected:
 	ImProcListener* listener;
 	Filter* firstToUpdate;
 	ProcParams* procParams;
-	std::vector<String> filterOrder;
+	StringList filterOrder;
 	bool invalidated;
 	bool oneShot;
 

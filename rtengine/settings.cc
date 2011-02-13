@@ -21,9 +21,11 @@
 #include "curves.h"
 #include "procparams.h"
 #include "filterfactory.h"
-#include <glibmm.h>
 #include <exiv2/exiv2.hpp>
 #include <FreeImage.h>
+#ifndef QTBUILD
+#include <glibmm.h>
+#endif
 
 namespace rtengine {
 
@@ -34,6 +36,10 @@ Settings::Settings () {
 	if (settings)
 		delete settings;
 	settings = this;
+
+#ifndef QTBUILD
+	if(!Glib::thread_supported()) Glib::thread_init();
+#endif
 
 	filterFactory = new FilterFactory ();
 

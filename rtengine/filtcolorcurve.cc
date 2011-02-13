@@ -10,6 +10,7 @@
 #include "macros.h"
 #include "colorclip.h"
 #include "util.h"
+#include <limits>
 
 #define CURVE_LUTSIZE 50000
 #define CURVE_LUTSCALE 100.0
@@ -105,6 +106,7 @@ void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* s
         }
     }
 
+    const float flmax = std::numeric_limits<float>::max();
     #pragma omp parallel for if (multiThread)
     for (int i=0; i<sourceImage->height; i++) {
 		for (int j=0; j<sourceImage->width; j++) {
@@ -120,14 +122,14 @@ void ColorCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* s
             }
 
             if (allowed_mul >= 1.0 && avoidclip) {
-                float cclip = FLT_MAX;
+                float cclip = flmax;
                 float cr = tightestroot (oL, oa, ob, 3.079935, -1.5371515, -0.54278342);
                 float cg = tightestroot (oL, oa, ob, -0.92123418, 1.87599, 0.04524418);
                 float cb = tightestroot (oL, oa, ob, 0.052889682, -0.20404134, 1.15115166);
                 if (cr>1.0 && cr<cclip) cclip = cr;
                 if (cg>1.0 && cg<cclip) cclip = cg;
                 if (cb>1.0 && cb<cclip) cclip = cb;
-                if (cclip<FLT_MAX) {
+                if (cclip<flmax) {
                     allowed_mul = -cclip + 2.0*cclip / (1.0+exp(-2.0*allowed_mul/cclip));
                     if (allowed_mul<1.0)
                         allowed_mul = 1.0;

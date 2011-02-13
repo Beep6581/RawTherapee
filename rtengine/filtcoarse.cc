@@ -48,7 +48,7 @@ ImageView CoarseTransformFilter::calculateSourceImageView (const ImageView& requ
     reverseTransPoint (requestedImView.x, requestedImView.y, x1, y1);
     reverseTransPoint (requestedImView.x + requestedImView.w - 1, requestedImView.y + requestedImView.h - 1, x2, y2);
 
-    return ImageView (std::min(x1,x2), std::min(y1,y2), ABS(x2-x1)+1, ABS(y2-y1)+1, 1);
+    return ImageView (std::min(x1,x2), std::min(y1,y2), std::abs(x2-x1)+1, std::abs(y2-y1)+1, 1);
 }
 
 Dim CoarseTransformFilter::getFullImageSize () {

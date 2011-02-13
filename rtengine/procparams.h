@@ -19,7 +19,6 @@
 #ifndef _PROCPARAMS_H_
 #define _PROCPARAMS_H_
 
-#include <glibmm.h>
 #include <vector>
 #include "rtcommon.h"
 #include <map>
@@ -54,12 +53,13 @@ class IPTCPair {
 
 class ProcParams {
 
+		// to be replaced by QHash later
 		std::map<String,float>   floatParams;
 		std::map<String,int> 	 intParams;
 		std::map<String,bool> 	 boolParams;
 		std::map<String,String> stringParams;
-		std::map<String,FloatList> floatListParams;
-		std::map<String,IntList> intListParams;
+		std::map<String,FloatVector> floatVectorParams;
+		std::map<String,IntVector> intVectorParams;
 		std::map<String,StringList> stringListParams;
 
 		String getKey   (const String& skey) const;
@@ -80,11 +80,11 @@ class ProcParams {
 		void   setString  (const String& group, const String& key, const String& value);
 		String getString  (const String& group, const String& key);
 
-		void   		setFloatList (const String& group, const String& key, const FloatList& value);
-		FloatList&  getFloatList (const String& group, const String& key);
+		void   		 setFloatVector (const String& group, const String& key, const FloatVector& value);
+		FloatVector& getFloatVector (const String& group, const String& key);
 
-		void   		setIntegerList (const String& group, const String& key, const IntList& value);
-		IntList& 	getIntegerList (const String& group, const String& key);
+		void   		setIntegerVector (const String& group, const String& key, const IntVector& value);
+		IntVector& 	getIntegerVector (const String& group, const String& key);
 
 		void   		setStringList (const String& group, const String& key, const StringList& value);
 		StringList& getStringList (const String& group, const String& key);

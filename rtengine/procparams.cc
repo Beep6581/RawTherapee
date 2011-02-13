@@ -17,9 +17,18 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "procparams.h"
-#include <glibmm.h>
-#include <fstream>
 #include <string.h>
+
+#ifdef QTBUILD
+#include <QFile>
+#include <QTextStream>
+#define Compose2(a,b,c) 	(QString(a).arg(b).arg(c)).toStdString()
+#define Number2String(a)	QString::number(a).toStdString()
+#else
+#include <fstream>
+#define Compose2(a,b,c) 	Glib::ustring::compose(a, b, c)
+#define Number2String(a)	Glib::ustring::format(a)
+#endif
 
 namespace rtengine {
 
@@ -85,34 +94,34 @@ String ProcParams::getString  (const String& group, const String& key) {
 		return defaultProcParams.stringParams[key_];
 }
 
-void ProcParams::setFloatList (const String& group, const String& key, const FloatList& value) {
+void ProcParams::setFloatVector (const String& group, const String& key, const FloatVector& value) {
 
 	String key_ = group + '/' + key;
-	floatListParams[key_] = value;
+	floatVectorParams[key_] = value;
 }
 
-FloatList& ProcParams::getFloatList (const String& group, const String& key) {
+FloatVector& ProcParams::getFloatVector (const String& group, const String& key) {
 
 	String key_ = group + '/' + key;
-	if (floatListParams.count (key_))
-		return floatListParams[key_];
+	if (floatVectorParams.count (key_))
+		return floatVectorParams[key_];
 	else
-		return defaultProcParams.floatListParams[key_];
+		return defaultProcParams.floatVectorParams[key_];
 }
 
-void ProcParams::setIntegerList (const String& group, const String& key, const IntList& value) {
+void ProcParams::setIntegerVector (const String& group, const String& key, const IntVector& value) {
 
 	String key_ = group + '/' + key;
-	intListParams[key_] = value;
+	intVectorParams[key_] = value;
 }
 
-IntList& ProcParams::getIntegerList (const String& group, const String& key) {
+IntVector& ProcParams::getIntegerVector (const String& group, const String& key) {
 
 	String key_ = group + '/' + key;
-	if (intListParams.count (key_))
-		return intListParams[key_];
+	if (intVectorParams.count (key_))
+		return intVectorParams[key_];
 	else
-		return defaultProcParams.intListParams[key_];
+		return defaultProcParams.intVectorParams[key_];
 }
 
 void ProcParams::setStringList (const String& group, const String& key, const StringList& value) {
@@ -157,33 +166,53 @@ void ProcParams::setDefaults () {
 	intParams = defaultProcParams.intParams;
 	boolParams = defaultProcParams.boolParams;
 	stringParams = defaultProcParams.stringParams;
-	floatListParams = defaultProcParams.floatListParams;
-	intListParams = defaultProcParams.intListParams;
+	floatVectorParams = defaultProcParams.floatVectorParams;
+	intVectorParams = defaultProcParams.intVectorParams;
 	stringListParams = defaultProcParams.stringListParams;
 }
 
 String ProcParams::getKey (const String& skey) const {
 
+#ifdef QTBUILD
+	int pos = skey.indexOf ('/');
+	if (pos>=0)
+		return skey.mid (pos+1);
+	else
+		return String ("");
+#else
 	int pos = skey.find ('/');
 	if (pos!=String::npos)
 		return skey.substr (pos+1);
 	else
 		return String ("");
+#endif
 }
 
 String ProcParams::getGroup (const String& skey) const{
 
+#ifdef QTBUILD
+	int pos = skey.indexOf ('/');
+	if (pos>=0)
+		return skey.left (pos);
+	else
+		return String ("");
+#else
 	int pos = skey.find ('/');
 	if (pos!=String::npos)
 		return skey.substr (0, pos);
 	else
 		return String ("");
+#endif
 }
 
 String ProcParams::removeQualifier (const String& skey) const {
 
 	if (skey.size() > 3)
-		return skey.substr (3);
+#ifdef QTBUILD
+		return skey.mid (3);
+#else
+	return skey.substr (3);
+#endif
 	else
 		return String ("");
 }
@@ -193,42 +222,42 @@ void ProcParams::addToXmp (Exiv2::XmpData& xmpData) const {
 	try {
 		// save float paramereplaceters. An "F" is appended to the end of the keys to indicate that these are floats.
 		for (std::map<String,float>::const_iterator i=floatParams.begin(); i!=floatParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2F", getGroup (i->first), getKey (i->first))] = Glib::ustring::format (i->second);
+			xmpData[Compose2("Xmp.rt.%1/rt:%2F", getGroup(i->first), getKey(i->first))] = Number2String(i->second);
 
 		// save integer parameters. An "I" is appended to the end of the keys to indicate that these are integers.
 		for (std::map<String,int>::const_iterator i=intParams.begin(); i!=intParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2I", getGroup (i->first), getKey (i->first))] = Glib::ustring::format (i->second);
+			xmpData[Compose2("Xmp.rt.%1/rt:%2I", getGroup(i->first), getKey(i->first))] = Number2String(i->second);
 			
 		// save boolean parameters. A "B" is appended to the end of the keys to indicate that these are booleans.
 		for (std::map<String,bool>::const_iterator i=boolParams.begin(); i!=boolParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2B", getGroup (i->first), getKey (i->first))] = i->second ? "true" : "false";
+			xmpData[Compose2("Xmp.rt.%1/rt:%2B", getGroup(i->first), getKey(i->first))] = i->second ? "true" : "false";
 
 		// save string parameters. An "S" is appended to the end of the keys to indicate that these are strings.
 		for (std::map<String,String>::const_iterator i=stringParams.begin(); i!=stringParams.end(); i++)
-			xmpData[Glib::ustring::compose("Xmp.rt.%1/rt:%2S", getGroup (i->first), getKey (i->first))] = i->second;
+			xmpData[Compose2("Xmp.rt.%1/rt:%2S", getGroup(i->first), getKey(i->first))] = String2StdString(i->second);
 
 		// save float list parameters. An "FL" is appended to the end of the keys to indicate that these are floatlists.
-		for (std::map<String,FloatList>::const_iterator i=floatListParams.begin(); i!=floatListParams.end(); i++) {
+		for (std::map<String,FloatVector>::const_iterator i=floatVectorParams.begin(); i!=floatVectorParams.end(); i++) {
 			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
 			for (int j=0; j<i->second.size(); j++)
-				arr->read (Glib::ustring::format (i->second[j]));
-			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1/rt:%2FL", getGroup (i->first), getKey (i->first))), arr.get());
+				arr->read (Number2String(i->second[j]));
+			xmpData.add (Exiv2::XmpKey (Compose2("Xmp.rt.%1/rt:%2FL", getGroup(i->first), getKey(i->first))), arr.get());
 		}
 
 		// save int list parameters. An "IL" is appended to the end of the keys to indicate that these are intlists.
-		for (std::map<String,IntList>::const_iterator i=intListParams.begin(); i!=intListParams.end(); i++) {
+		for (std::map<String,IntVector>::const_iterator i=intVectorParams.begin(); i!=intVectorParams.end(); i++) {
 			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
 			for (int j=0; j<i->second.size(); j++)
-				arr->read (Glib::ustring::format (i->second[j]));
-			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1/rt:%2IL", getGroup (i->first), getKey (i->first))), arr.get());
+				arr->read (Number2String(i->second[j]));
+			xmpData.add (Exiv2::XmpKey (Compose2("Xmp.rt.%1/rt:%2IL", getGroup(i->first), getKey(i->first))), arr.get());
 		}
 
 		// save string list parameters. An "SL" is appended to the end of the keys to indicate that these are stringlists.
 		for (std::map<String,StringList>::const_iterator i=stringListParams.begin(); i!=stringListParams.end(); i++) {
 			Exiv2::Value::AutoPtr arr = Exiv2::Value::create (Exiv2::xmpSeq);
 			for (int j=0; j<i->second.size(); j++)
-				arr->read (i->second[j]);
-			xmpData.add (Exiv2::XmpKey (Glib::ustring::compose("Xmp.rt.%1/rt:%2SL", getGroup (i->first), getKey (i->first))), arr.get());
+				arr->read (String2StdString(i->second[j]));
+			xmpData.add (Exiv2::XmpKey (Compose2("Xmp.rt.%1/rt:%2SL", getGroup(i->first), getKey(i->first))), arr.get());
 		}
 	}
 	catch (Exiv2::AnyError& e) {
@@ -250,6 +279,16 @@ int ProcParams::save (const String& fname) const {
 			return 1;
 
 		// save to file
+#ifdef QTBUILD
+		QFile f (fname);
+		 if (f.open (QFile::WriteOnly | QFile::Truncate)) {
+		     QTextStream out(&f);
+		     out << StdString2String(xmpPacket);
+		     f.close ();
+		 }
+		 else
+			 return 2;
+#else
 		std::ofstream f (fname.c_str ());
 		if (f.is_open ()) {
 			f << xmpPacket;
@@ -257,6 +296,7 @@ int ProcParams::save (const String& fname) const {
 		}
 		else
 			return 2;
+#endif
 	}
 	catch (Exiv2::AnyError& e) {
 		return 3;
@@ -268,14 +308,25 @@ int ProcParams::load (const String& fname) {
 
 	try {
 		// open file and read content
-		std::ifstream f (fname.c_str ());
 		std::string xmpPacket;
+#ifdef QTBUILD
+		QFile f (fname);
+		 if (f.open (QFile::ReadOnly)) {
+		     QTextStream in(&f);
+		     xmpPacket = String2StdString(in.readAll());
+		     f.close ();
+		 }
+		 else
+			 return 2;
+#else
+		std::ifstream f (fname.c_str ());
 		if (f.is_open ()) {
 			xmpPacket = std::string (std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
 			f.close ();
 		}
 		else
 			return 2;
+#endif
 			
 		// create xmp data and register our namespace
 		Exiv2::XmpData xmpData;
@@ -289,14 +340,14 @@ int ProcParams::load (const String& fname) {
 				// find out type of the item
 				char last = key[key.size()-1];
 				std::string typeID;
-				std::string propName;
+				String propName;
 				if (last=='L') {
 					typeID = std::string (key, key.size()-2, 2);
-					propName = std::string (key, 7, key.size()-9);
+					propName = StdString2String(std::string (key, 7, key.size()-9));
 				}
 				else {
 					typeID = std::string (&last, 1);
-					propName = std::string (key, 7, key.size()-8);
+					propName = StdString2String(std::string (key, 7, key.size()-8));
 				}
 				// store values
 				if (typeID == "F")
@@ -304,28 +355,25 @@ int ProcParams::load (const String& fname) {
 				else if (typeID == "I")
 					setInteger (getGroup (propName), removeQualifier (getKey (propName)), i->toLong());
 				else if (typeID == "S")
-					setString (getGroup (propName), removeQualifier (getKey (propName)), i->toString());
+					setString (getGroup (propName), removeQualifier (getKey (propName)), StdString2String(i->toString()));
 				else if (typeID == "B")
 					setBoolean (getGroup (propName), removeQualifier (getKey (propName)), i->toString()=="true");
 				else if (typeID == "FL") {
-					FloatList arr;
-					arr.resize (i->count ());
+					FloatVector arr;
 					for (int j=0; j<arr.size(); j++)
-						arr[j] = i->toFloat (j);
-					setFloatList (getGroup (propName), removeQualifier (getKey (propName)), arr);
+						arr.push_back (i->toFloat (j));
+					setFloatVector (getGroup (propName), removeQualifier (getKey (propName)), arr);
 				}
 				else if (typeID == "IL") {
-					IntList arr;
-					arr.resize (i->count ());
+					IntVector arr;
 					for (int j=0; j<arr.size(); j++)
-						arr[j] = i->toLong (j);
-					setIntegerList (getGroup (propName), removeQualifier (getKey (propName)), arr);
+						arr.push_back (i->toLong (j));
+					setIntegerVector (getGroup (propName), removeQualifier (getKey (propName)), arr);
 				}
 				else if (typeID == "SL") {
 					StringList arr;
-					arr.resize (i->count ());
 					for (int j=0; j<arr.size(); j++)
-						arr[j] = i->toString (j);
+						arr.push_back (StdString2String(i->toString (j)));
 					setStringList (getGroup (propName), removeQualifier (getKey (propName)), arr);
 				}
 			}
@@ -352,8 +400,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& intParams == other.intParams
 		&& boolParams == other.boolParams
 		&& stringParams == other.stringParams
-		&& floatListParams == other.floatListParams
-		&& intListParams == other.intListParams
+		&& floatVectorParams == other.floatVectorParams
+		&& intVectorParams == other.intVectorParams
 		&& stringListParams == other.stringListParams;
 }
 

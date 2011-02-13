@@ -40,8 +40,8 @@ class ImageData : public ImageMetaData {
     int defRot;
     Exiv2::Rational expTime;
     
-    std::string make, model;
-    std::string lens;
+    String make, model;
+    String lens;
 
     void extractInfo ();
     
@@ -60,11 +60,11 @@ class ImageData : public ImageMetaData {
     Exiv2::Rational getExposureTime () const { return expTime;   }
     int				getDefaultRotation () const { return defRot; }
 
-    std::string getMake     () const { return make;      }
-    std::string getModel    () const { return model;     }
-    std::string getLens     () const { return lens;      }
+    String getMake     () const { return make;      }
+    String getModel    () const { return model;     }
+    String getLens     () const { return lens;      }
     
-    static std::string getIptcKey (const std::string& rtIptcKey);
+    static String getIptcKey (const String& rtIptcKey);
     
 };
 };

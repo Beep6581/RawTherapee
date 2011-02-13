@@ -71,16 +71,16 @@ unsigned char* Image::getData () {
 Image* Image::load (const String& fname, bool fast) {
 
 	// check if format is supported and load it
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType (fname.c_str(), 0);
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType (String2PChar(fname), 0);
 	if (fif == FIF_UNKNOWN)
-		fif = FreeImage_GetFIFFromFilename (fname.c_str());
+		fif = FreeImage_GetFIFFromFilename (String2PChar(fname));
 
 	FIBITMAP* bitmap = NULL;
 
 	if (fif == FIF_PNG || fif == FIF_TIFF)
-		bitmap = FreeImage_Load (fif, fname.c_str(), 0);
+		bitmap = FreeImage_Load (fif, String2PChar(fname), 0);
 	else if (fif == FIF_JPEG)
-		bitmap = FreeImage_Load (FIF_JPEG, fname.c_str(), fast ? JPEG_FAST : JPEG_ACCURATE);
+		bitmap = FreeImage_Load (FIF_JPEG, String2PChar(fname), fast ? JPEG_FAST : JPEG_ACCURATE);
 		
 	if (!bitmap)
 		return NULL;
@@ -173,7 +173,7 @@ Image* Image::load (const String& fname, bool fast) {
 
 int Image::save (const String& fname) {
 	
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename (fname.c_str());
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename (String2PChar(fname));
 
 	if (fif == FIF_PNG)
 		return saveAsPNG (fname);
@@ -237,7 +237,7 @@ int Image::saveAsPNG  (const String& fname, PNGCompression compr, bool bps16) {
 		else if (compr == PNGZNoCompression)
 			flags |= PNG_Z_NO_COMPRESSION;
 		
-		bool success = FreeImage_Save (FIF_PNG, bmp, fname.c_str(), flags);
+		bool success = FreeImage_Save (FIF_PNG, bmp, String2PChar(fname), flags);
 
 		if (bmp != bitmap)
 			FreeImage_Unload (bmp);
@@ -272,7 +272,7 @@ int Image::saveAsJPEG (const String& fname, int quality, JPEGSubSampling ss) {
 		else if (ss == Image::JPEGSubSampling_444)
 			flags |= JPEG_SUBSAMPLING_444;
 		
-		bool success = FreeImage_Save (FIF_JPEG, bmp8, fname.c_str(), flags);
+		bool success = FreeImage_Save (FIF_JPEG, bmp8, String2PChar(fname), flags);
 		FreeImage_Unload (bmp8);
 		
 		if (success) {
@@ -303,7 +303,7 @@ int Image::saveAsTIFF (const String& fname, TIFFCompression compr, bool bps16) {
 		else if (compr == TIFFDeflateCompression)
 			flags |= TIFF_DEFLATE;
 		
-		bool success = FreeImage_Save (FIF_TIFF, bmp, fname.c_str(), flags);
+		bool success = FreeImage_Save (FIF_TIFF, bmp, String2PChar(fname), flags);
 
 		if (bmp != bitmap)
 			FreeImage_Unload (bmp);
@@ -330,7 +330,7 @@ void Image::writeMetadata (const String& fname) {
 
 	try {
 		// open image
-		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open (fname);
+		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open (String2StdString(fname));
 		
 		// read original metadata
 		image->readMetadata();

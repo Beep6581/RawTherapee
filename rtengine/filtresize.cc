@@ -50,7 +50,7 @@ ImageView ResizeFilter::calculateSourceImageView (const ImageView& requestedImVi
     reverseTransPoint (requestedImView.x, requestedImView.y, x1, y1);
     reverseTransPoint (requestedImView.x + requestedImView.w - 1, requestedImView.y + requestedImView.h - 1, x2, y2);
 
-    return ImageView (std::min(x1,x2), std::min(y1,y2), ABS(x2-x1)+1, ABS(y2-y1)+1, 1);
+    return ImageView (std::min(x1,x2), std::min(y1,y2), std::abs(x2-x1)+1, std::abs(y2-y1)+1, 1);
 }
 
 double ResizeFilter::getScale () {
@@ -131,11 +131,15 @@ void ResizeFilter::process (const std::set<ProcEvent>& events, MultiImage* sourc
 	String method = procParams->getString  ("Resize", "Method");
 
 	if (!getFilterChain()->getImageSource()->isThumbnail() && fabs(getResizeScale()-1.0) > 1e-12) {
-        if (method.substr(0,7)=="Bicubic")
+#ifdef QTBUILD
+		if (method.left(7)=="Bicubic")
+#else
+		if (method.substr(0,7)=="Bicubic")
+#endif
             bicubic (sourceImage, targetImage);
-        else if (method.substr(0,7)=="Bilinear")
+        else if (method=="Bilinear")
             bilinear (sourceImage, targetImage);
-        else if (method.substr(0,7)=="Average")
+        else if (method=="Average")
             average (sourceImage, targetImage);
         else
             nearest (sourceImage, targetImage);

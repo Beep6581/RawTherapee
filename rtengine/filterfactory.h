@@ -15,12 +15,12 @@ namespace rtengine {
 
 class FilterFactory {
 
-	std::map<std::string, FilterDescriptor*> filterDescriptors;
+	std::map<String, FilterDescriptor*> filterDescriptors;
 
 public:
 	FilterFactory();
 	void registerFilterDescriptor (FilterDescriptor* descr);
-	FilterDescriptor* getFilterDescriptor (const std::string& name);
+	FilterDescriptor* getFilterDescriptor (const String& name);
 };
 
 extern FilterFactory* filterFactory;

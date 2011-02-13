@@ -40,7 +40,7 @@ public:
 	MultiImage (const MultiImage& other);
 	~MultiImage ();
 
-	void convertTo (ColorSpace cs, bool multiThread=true, std::string workingColorSpace="sRGB");	// "workingColorSpace": the name of the working color space
+	void convertTo (ColorSpace cs, bool multiThread=true, String workingColorSpace="sRGB");	// "workingColorSpace": the name of the working color space
 	void switchTo  (ColorSpace cs);	// just switches the "colorSpace" without doing any conversion
 	bool setDimensions (int w, int h); // sets dimensions without reallocating everything
 	bool copyFrom (MultiImage* other);

@@ -23,7 +23,6 @@
 #include "procevents.h"
 #include <lcms2.h>
 #include <string>
-#include <glibmm.h>
 #include <time.h>
 #include "settings.h"
 #include "colortemp.h"
@@ -63,22 +62,22 @@ namespace rtengine {
           /** @return the shutter speed */
             virtual Exiv2::Rational getExposureTime () const =0;
           /** @return the maker of the camera */
-            virtual std::string getMake     () const =0;
+            virtual String		getMake     () const =0;
           /** @return the model of the camera */
-            virtual std::string getModel    () const =0;
+            virtual String      getModel    () const =0;
           /** @return the lens on the camera  */
-            virtual std::string getLens     () const =0;
+            virtual String      getLens     () const =0;
             
             virtual int			getDefaultRotation () const=0;
             
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string fNumberToString (float fNumber);
+            static String fNumberToString (float fNumber);
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string exposureTimeToString (Exiv2::Rational expTime);
+            static String exposureTimeToString (Exiv2::Rational expTime);
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static float fNumberFromString (const std::string& fNumber);
+            static float fNumberFromString (const String& fNumber);
           /** Functions to convert between floating point and string representation of shutter and aperture */
-            static Exiv2::Rational exposureTimeFromString (const std::string& expTime);
+            static Exiv2::Rational exposureTimeFromString (const String& expTime);
             
           /** Reads metadata from file.
             * @param fname is the name of the file
@@ -209,11 +208,11 @@ namespace rtengine {
 
 /** Returns the available output profile names
   * @return a vector of the available output profile names */
-    std::vector<std::string> getOutputProfiles ();
+    StringList getOutputProfiles ();
 
 /** Returns the available working profile names
   * @return a vector of the available working profile names */
-    std::vector<std::string> getWorkingProfiles ();
+    StringList getWorkingProfiles ();
 
 
     /** This class describes an image processing job. */

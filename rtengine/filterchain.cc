@@ -189,7 +189,7 @@ void FilterChain::process (const std::set<ProcEvent>& events, Buffer<float>* buf
     for (Filter* curr = firstToUpdate; curr; curr = curr->next) {
 
 	    if (Settings::settings->verbose)
-	        std::cout << "Applying filter " << curr->getDescriptor()->getName() << " "
+	        std::cout << "Applying filter " << String2StdString(curr->getDescriptor()->getName()) << " "
                 << curr->sourceImageView << ", " << curr->targetImageView << " in progress...";
 	    std::flush (std::cout);
 
@@ -383,9 +383,15 @@ DisplayImage FilterChain::getDisplayImage () {
 
     last->outputCache->convertTo(MultiImage::RGB, true, workingProfile);
 
+#ifdef QTBUILD
+    DisplayImage final (last->outputCache->width, last->outputCache->height, QImage::Format_RGB888);
+    unsigned char* idata = final.bits ();
+    int pitch = final.bytesPerLine ();
+#else
     DisplayImage final = Cairo::ImageSurface::create (Cairo::FORMAT_RGB24, last->outputCache->width, last->outputCache->height);
     unsigned char* idata = final->get_data ();
     int pitch = final->get_stride ();
+#endif
 
     if (Settings::settings->monitorProfile != "") {
         // custom output icm profile specified, call lcms
@@ -470,21 +476,21 @@ void FilterChain::getMetadataToSave (Exiv2::ExifData& ed, Exiv2::IptcData& id, E
 		// Apply changes requested by the GUI
 		for (int i=0; i<procParams->exif.size (); i++) {
 			if (procParams->exif[i].value == "#delete") {
-				Exiv2::ExifData::iterator it = ed.findKey (Exiv2::ExifKey (procParams->exif[i].field));
+				Exiv2::ExifData::iterator it = ed.findKey (Exiv2::ExifKey (String2StdString(procParams->exif[i].field)));
 				if (it != ed.end())
 					ed.erase (it);
 			}
 			else {
-				Exiv2::AsciiValue nValue (procParams->exif[i].value);
-				ed.add (Exiv2::Exifdatum (Exiv2::ExifKey (procParams->exif[i].field), &nValue));
+				Exiv2::AsciiValue nValue (String2StdString(procParams->exif[i].value));
+				ed.add (Exiv2::Exifdatum (Exiv2::ExifKey (String2StdString(procParams->exif[i].field)), &nValue));
 			}
 		}
 		
 		// Assemble IPTC data
         for (int i=0; i<procParams->iptc.size (); i++)
 			for (int j=0; j<procParams->iptc[i].values.size(); j++) {
-				Exiv2::StringValue value (procParams->iptc[i].values[j]);
-				id.add (Exiv2::IptcKey (procParams->iptc[i].field), &value);
+				Exiv2::StringValue value (String2StdString(procParams->iptc[i].values[j]));
+				id.add (Exiv2::IptcKey (String2StdString(procParams->iptc[i].field)), &value);
 			}
 
 		// Assemble XMP data

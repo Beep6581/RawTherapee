@@ -5,9 +5,11 @@
  *      Author: gabor
  */
 
-#include "rawimage.h"
 #include <libraw/libraw.h>
+#include <limits>
+#include "rawimage.h"
 #include "macros.h"
+
 
 #define FC(row,col) \
 	(filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
@@ -26,12 +28,12 @@ RawImage::~RawImage() {
 	delete [] profileData;
 }
 
-int RawImage::load (const Glib::ustring& fname) {
+int RawImage::load (const String& fname) {
 
 	LibRaw rawproc;
 	
 	// open raw file
-    int res = rawproc.open_file (fname.c_str());
+    int res = rawproc.open_file (String2PChar(fname));
     
     if (res)
 		return res;
@@ -104,7 +106,7 @@ int RawImage::load (const Glib::ustring& fname) {
 		pre_mul[3] = pre_mul[1];
 	unsigned max = rawproc.imgdata.color.maximum - rawproc.imgdata.color.black;
 	double dmin, dmax;
-	for (dmin=DBL_MAX, dmax=c=0; c < 4; c++) {
+	for (dmin=std::numeric_limits<double>::max(), dmax=c=0; c < 4; c++) {
 		if (dmin > pre_mul[c])
 		dmin = pre_mul[c];
 		if (dmax < pre_mul[c])

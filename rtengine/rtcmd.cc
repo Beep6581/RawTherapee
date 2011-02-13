@@ -5,7 +5,6 @@
  *      Author: gabor
  */
 
-#include <glibmm.h>
 #include <iostream>
 #include <string.h>
 #include "rtengine.h"
@@ -21,7 +20,7 @@ void printUsage () {
 
 int main (int argc, char* argv[]) {
 
-    Glib::ustring inFName = "", outFName = "", ppName = "", format = "";
+    String inFName = "", outFName = "", ppName = "", format = "";
 
     for (int i=1; i<argc; i++)
         if (!strcmp (argv[i], "-i") && i<argc-1)
@@ -52,12 +51,12 @@ int main (int argc, char* argv[]) {
     if (format == "")
         format = "jpg";
 
-    Glib::thread_init();
     new Settings;
 
     int errorCode = 0;
     InitialImage* iImg = InitialImage::load (inFName, true, errorCode);
-	if (errorCode)
+
+    if (errorCode)
 		iImg = InitialImage::load (inFName, false, errorCode);
 
     if (errorCode) {

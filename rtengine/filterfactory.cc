@@ -51,7 +51,7 @@ void FilterFactory::registerFilterDescriptor (FilterDescriptor* descr) {
 	descr->getDefaultParameters (defaultProcParams);
 }
 
-FilterDescriptor* FilterFactory::getFilterDescriptor(const std::string& name) {
+FilterDescriptor* FilterFactory::getFilterDescriptor(const String& name) {
 
     return filterDescriptors[name];
 }

@@ -32,7 +32,7 @@ ImageData::ImageData (const String& fname)
 	memset (&time, 0, sizeof(time));
 
 	try {
-		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open (fname);
+		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open (String2StdString(fname));
 		image->readMetadata();
 		exifData = image->exifData ();
 		iptcData = image->iptcData ();
@@ -59,17 +59,17 @@ void ImageData::extractInfo () {
 	std::stringstream ss;
 	if ((i=Exiv2::make (exifData)) != exifData.end())
 		i->write (ss, &exifData);
-	make  = ss.str();
+	make  = StdString2String(ss.str());
 	
 	ss.str(std::string());
 	if ((i=Exiv2::model (exifData)) != exifData.end())
 		i->write (ss, &exifData);
-	model  = ss.str();
+	model  = StdString2String(ss.str());
 
 	ss.str(std::string());
 	if ((i=Exiv2::lensName (exifData)) != exifData.end())
 		i->write (ss, &exifData);
-	lens  = ss.str();
+	lens  = StdString2String(ss.str());
 
 	ss.str(std::string());
 	if ((i=Exiv2::isoSpeed (exifData)) != exifData.end())
@@ -112,14 +112,14 @@ void ImageData::extractInfo () {
 	}
 }
 
-std::string ImageMetaData::fNumberToString (float fNumber) {
+String ImageMetaData::fNumberToString (float fNumber) {
 
 	std::stringstream ss;
 	ss << std::setprecision(2) << fNumber;
-	return ss.str ();
+	return StdString2String (ss.str ());
 }
 
-std::string ImageMetaData::exposureTimeToString (Exiv2::Rational expTime) {
+String ImageMetaData::exposureTimeToString (Exiv2::Rational expTime) {
 
 	std::stringstream ss;
 	if (expTime.first > 1 && expTime.second >= expTime.first) {
@@ -134,24 +134,32 @@ std::string ImageMetaData::exposureTimeToString (Exiv2::Rational expTime) {
 		ss << expTime.first;
 	else
 		ss << expTime.first << '/' << expTime.second;
-	return ss.str ();
+	return StdString2String (ss.str ());
 }
 
-Exiv2::Rational ImageMetaData::exposureTimeFromString (const std::string& s) {
+Exiv2::Rational ImageMetaData::exposureTimeFromString (const String& s) {
 
-    int i = s.find_first_of ('/');
+#ifdef QTBUILD
+	int i = s.indexOf ('/');
+    if (i==-1)
+        return Exiv2::Rational (s.toInt(), 1);
+    else
+        return Exiv2::Rational (s.mid(0,i).toInt(), s.mid(i+1).toInt());
+#else
+	int i = s.find_first_of ('/');
     if (i==std::string::npos)
-        return Exiv2::Rational (atof (s.c_str()), 1);
+        return Exiv2::Rational (atoi (s.c_str()), 1);
     else 
-        return Exiv2::Rational (atof (s.substr(0,i).c_str()), atof (s.substr(i+1).c_str()));
+        return Exiv2::Rational (atoi (s.substr(0,i).c_str()), atoi (s.substr(i+1).c_str()));
+#endif
 }
 
-float ImageMetaData::fNumberFromString (const std::string& s) {
+float ImageMetaData::fNumberFromString (const String& s) {
 
-    return atof (s.c_str());
+    return atof (String2PChar(s));
 }
 
-std::string ImageData::getIptcKey (const std::string& rtIptcKey) {
+String ImageData::getIptcKey (const String& rtIptcKey) {
 
 	if (rtIptcKey == "Caption") 
 		return String ("Iptc.Application2.Caption");

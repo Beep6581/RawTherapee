@@ -21,14 +21,15 @@ ColorMixerFilterDescriptor::ColorMixerFilterDescriptor ()
 
 void ColorMixerFilterDescriptor::getDefaultParameters (ProcParams& defProcParams) const {
 
-	IntList r(3), g(3), b(3);
-	r[0] = 100; r[1] = 0;   r[2] = 0;
-	g[0] = 0;   g[1] = 100; g[2] = 0;
-	b[0] = 0;   b[1] = 0;   b[2] = 100;
+	IntVector r, g, b;
 
-	defProcParams.setIntegerList ("ChMixer", "Red",   r);
-	defProcParams.setIntegerList ("ChMixer", "Green", g);
-	defProcParams.setIntegerList ("ChMixer", "Blue",  b);
+	r.push_back (100); r.push_back (0);  r.push_back (0);
+	g.push_back (0); g.push_back (100);  g.push_back (0);
+	b.push_back (0); b.push_back (0);  b.push_back (100);
+
+	defProcParams.setIntegerVector ("ChMixer", "Red",   r);
+	defProcParams.setIntegerVector ("ChMixer", "Green", g);
+	defProcParams.setIntegerVector ("ChMixer", "Blue",  b);
 }
 
 void ColorMixerFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -42,13 +43,14 @@ ColorMixerFilter::ColorMixerFilter ()
 
 void ColorMixerFilter::process (const std::set<ProcEvent>& events, MultiImage* sourceImage, MultiImage* targetImage, Buffer<float>* buffer) {
 
-	IntList& red   = procParams->getIntegerList ("ChMixer", "Red");
-	IntList& green = procParams->getIntegerList ("ChMixer", "Green");
-	IntList& blue  = procParams->getIntegerList ("ChMixer", "Blue");
+	IntVector& red   = procParams->getIntegerVector ("ChMixer", "Red");
+	IntVector& green = procParams->getIntegerVector ("ChMixer", "Green");
+	IntVector& blue  = procParams->getIntegerVector ("ChMixer", "Blue");
 
-    bool mixchannels = red[0]!=100 || red[1]!=0     || red[2]!=0
+    bool mixchannels = red.size()==3 && green.size()==3 && blue.size()==3 &&
+    				  (red[0]!=100 || red[1]!=0     || red[2]!=0
                     || green[0]!=0 || green[1]!=100 || green[2]!=0
-                    || blue[0]!=0  || blue[1]!=0    || blue[2]!=100;
+                    || blue[0]!=0  || blue[1]!=0    || blue[2]!=100);
 
     if (mixchannels)
         #pragma omp parallel for if (multiThread)

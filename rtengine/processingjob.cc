@@ -20,7 +20,7 @@
 
 namespace rtengine {
 
-ProcessingJob* ProcessingJob::create (const Glib::ustring& fname, bool isRaw, const ProcParams& pparams) {
+ProcessingJob* ProcessingJob::create (const String& fname, bool isRaw, const ProcParams& pparams) {
 
     return new ProcessingJobImpl (fname, isRaw, pparams);
 }

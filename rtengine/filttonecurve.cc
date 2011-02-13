@@ -55,8 +55,8 @@ void ToneCurveFilterDescriptor::getDefaultParameters (ProcParams& defProcParams)
 	defProcParams.setFloat   ("ToneCurve", "Black", 0);
 	defProcParams.setFloat   ("ToneCurve", "HLCompr", 100);
 	defProcParams.setFloat   ("ToneCurve", "SHCompr", 100);
-	FloatList tcurve;
-	defProcParams.setFloatList ("ToneCurve", "CustomCurve", tcurve);
+	FloatVector tcurve;
+	defProcParams.setFloatVector ("ToneCurve", "CustomCurve", tcurve);
 }
 
 void ToneCurveFilterDescriptor::createAndAddToList (Filter* tail) const {
@@ -148,7 +148,7 @@ void ToneCurveFilter::process (const std::set<ProcEvent>& events, MultiImage* so
     	float black = procParams->getFloat ("ToneCurve", "Black");
     	float hlcompr = procParams->getFloat ("ToneCurve", "HLCompr");
     	float shcompr = procParams->getFloat ("ToneCurve", "SHCompr");
-    	FloatList tcurve = procParams->getFloatList ("ToneCurve", "CustomCurve");
+    	FloatVector tcurve = procParams->getFloatVector ("ToneCurve", "CustomCurve");
 
     	if (!curve) {
             curve = new float [TC_LUTSIZE];

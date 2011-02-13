@@ -7,6 +7,17 @@
 
 #include "interactiveimprocimpl.h"
 
+#ifdef QTBUILD
+	#define wakeUpThread	 hasJob.wakeAll();
+	#define waitForJobFinish imProcThread->jobFinished.wait(&nextJobMutex);
+	#define waitForJob 		 parent->hasJob.wait(&parent->nextJobMutex);
+
+#else	
+	#define wakeUpThread	 hasJob.signal ();
+	#define waitForJobFinish imProcThread->jobFinished.wait(nextJobMutex);
+	#define waitForJob 		 parent->hasJob.wait (parent->nextJobMutex);
+#endif
+
 namespace rtengine {
 
 PreviewListenerAdapter::PreviewListenerAdapter () : prevListener (NULL) {}
@@ -27,33 +38,43 @@ void PreviewListenerAdapter::imageReady	(const DisplayImage& img, double scale, 
 	    prevListener->imageReady (img, scale, fullSize, params);
 }
 
-
 InteractiveImageProcessor* InteractiveImageProcessor::create (InitialImage* initialImage, PreviewImageListener* prevListener) {
 
 	return new InteractiveImProcImpl ((ImageSource*)initialImage, prevListener);
 }
 
 InteractiveImProcImpl::InteractiveImProcImpl (ImageSource* imageSource, PreviewImageListener* prevListener)
-	: imageSource (imageSource), thread (NULL), updaterRunning (false), destroying (false) {
+	: imageSource (imageSource), destroyThread (false) {
 
 	prevListAdapter.setPreviewListener (prevListener);
 	filterChainGroup = new FilterChainGroup (imageSource, &params);
 	filterChainGroup->addNewFilterChain (&prevListAdapter);
+	
+	imProcThread = new ImProcThread (this);
+#ifdef QTBUILD
+	imProcThread->start ();
+#else
+	#undef THREAD_PRIORITY_NORMAL
+	Glib::Thread* thread = Glib::Thread::create(sigc::mem_fun(*imProcThread, &ImProcThread::run), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);
+#endif
 }
 
 InteractiveImProcImpl::~InteractiveImProcImpl () {
 
-	destroying = true;
-    updaterThreadStart.lock ();
-    if (updaterRunning && thread)
-        thread->join ();
-    mProcessing.lock();
-    mProcessing.unlock();
+    nextJobMutex.lock ();
+	changeSinceLast.clear ();
+	destroyThread = true;
+    wakeUpThread;
+    waitForJobFinish;
+    nextJobMutex.unlock ();
+
+#ifdef QTBUILD
+	imProcThread->wait ();
+	delete imProcThread;
+#endif
 
     delete filterChainGroup;
-
     imageSource->decreaseRef ();
-    updaterThreadStart.unlock ();
 }
 
 InitialImage* InteractiveImProcImpl::getInitialImage () {
@@ -68,65 +89,58 @@ void InteractiveImProcImpl::getParams (ProcParams& dst) {
 
 ProcParams* InteractiveImProcImpl::getParamsForUpdate (ProcEvent change) {
 
-    paramsUpdateMutex.lock ();
+    nextJobMutex.lock ();
     changeSinceLast.insert (change);
     return &nextParams;
 }
 
 void InteractiveImProcImpl::paramsUpdateReady () {
 
-    paramsUpdateMutex.unlock ();
-    startProcessing ();
+    wakeUpThread;
+    nextJobMutex.unlock ();      
 }
 void InteractiveImProcImpl::stopProcessing () {
 
-	updaterThreadStart.lock ();
-    if (updaterRunning && thread) {
-        changeSinceLast.clear ();
-        thread->join ();
-    }
-    updaterThreadStart.unlock ();
+    nextJobMutex.lock ();
+	changeSinceLast.clear ();
+    wakeUpThread;
+    waitForJobFinish;
+    nextJobMutex.unlock ();
 }
 
-void InteractiveImProcImpl::startProcessing () {
+void ImProcThread::run () {
 
-	#undef THREAD_PRIORITY_NORMAL
+	bool killmyself = false;
 
-	if (!destroying) {
-		updaterThreadStart.lock ();
-		if (!updaterRunning) {
-			thread = NULL;
-			updaterRunning = true;
-			updaterThreadStart.unlock ();
-			thread = Glib::Thread::create(sigc::mem_fun(*this, &InteractiveImProcImpl::process), 0, false, true, Glib::THREAD_PRIORITY_NORMAL);
+	while (!killmyself) {
+
+		parent->nextJobMutex.lock ();
+		if (parent->changeSinceLast.empty ()) {
+			if (parent->progressListener)
+				parent->progressListener->setBusyFlag (false);
+			waitForJob;
+			if (parent->progressListener)
+				parent->progressListener->setBusyFlag (true);
 		}
-		else
-			updaterThreadStart.unlock ();
+		std::set<ProcEvent> events = parent->changeSinceLast;
+		parent->changeSinceLast.clear ();
+		parent->params = parent->nextParams;
+		bool killmyself = parent->destroyThread;
+		parent->nextJobMutex.unlock ();
+		
+		if (!killmyself) {
+			if (!events.empty()) {
+				parent->mProcessing.lock();
+				parent->filterChainGroup->process (events);
+				parent->mProcessing.unlock();
+			}
+			#ifdef QTBUILD
+			jobFinished.wakeAll ();
+			#else
+			jobFinished.signal ();
+			#endif
+		}
 	}
-}
-
-void InteractiveImProcImpl::process () {
-
-    if (progressListener)
-    	progressListener->setBusyFlag (true);
-
-    std::set<ProcEvent> events;
-    paramsUpdateMutex.lock ();
-    while (!changeSinceLast.empty()) {
-        params = nextParams;
-        events = changeSinceLast;
-        changeSinceLast.clear ();
-        paramsUpdateMutex.unlock ();
-        mProcessing.lock();
-        filterChainGroup->process (events);
-        mProcessing.unlock();
-        paramsUpdateMutex.lock ();
-    }
-    paramsUpdateMutex.unlock ();
-    updaterRunning = false;
-
-    if (progressListener)
-    	progressListener->setBusyFlag (false);
 }
 
 void InteractiveImProcImpl::createView (ImProcListener* listener) {

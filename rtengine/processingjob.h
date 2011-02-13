@@ -26,12 +26,12 @@ namespace rtengine {
 class ProcessingJobImpl : public ProcessingJob {
 
     public:
-        Glib::ustring fname;
+        String fname;
         bool isRaw;
         InitialImage* initialImage;
         ProcParams pparams;
         
-        ProcessingJobImpl (const Glib::ustring& fn, bool iR, const ProcParams& pp)
+        ProcessingJobImpl (const String& fn, bool iR, const ProcParams& pp)
            : fname(fn), isRaw(iR), initialImage(NULL) { pparams = pp; }
 
         ProcessingJobImpl (InitialImage* iImage, const ProcParams& pp)

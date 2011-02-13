@@ -19,7 +19,7 @@
 #ifndef _RAWIMAGE_H__
 #define _RAWIMAGE_H__
 
-#include <glibmm.h>
+#include "rtcommon.h"
 #include "matrix33.h"
 #include "colortemp.h"
 
@@ -55,7 +55,7 @@ class RawImage {
 		RawImage ();
 		~RawImage ();
 
-		int load (const Glib::ustring& fname);
+		int load (const String& fname);
 
 		inline bool isRed (int row, int col) {
 			return (filter >> (((row << 1 & 14) + (col & 1)) << 1) & 3)==0;

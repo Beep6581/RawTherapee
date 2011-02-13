@@ -29,7 +29,7 @@
 
 namespace rtengine {
 
-Curve::Curve (const FloatList& p) : x(NULL), y(NULL), ypp(NULL) {
+Curve::Curve (const FloatVector& p) : x(NULL), y(NULL), ypp(NULL) {
 
     if (p.size()<3) {
         kind = 0;
@@ -162,7 +162,7 @@ float Curve::getVal (float t) {
     }
 }
 
-void Curve::getVal (const FloatList& t, FloatList& res) {
+void Curve::getVal (const FloatVector& t, FloatVector& res) {
     
 // TODO!!!! can be made much faster!!! Binary search of getVal(float) at each point can be avoided
 
@@ -189,7 +189,7 @@ float CurveFactory::centercontrast (float x, float b, float m) {
   }
 }
 
-void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, int curveSize, int curveScale, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
+void CurveFactory::complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatVector& curvePoints, unsigned int* histogram, int curveSize, int curveScale, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip) {
 
     // compute parameters of the gamma curve
     float start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));

@@ -117,7 +117,7 @@ Buffer<float> MultiImage::getBufferView (float** channel) {
     return Buffer<float> (width, height, data, channel);
 }
 
-void MultiImage::convertTo (ColorSpace cs, bool multiThread, std::string workingColorSpace) {
+void MultiImage::convertTo (ColorSpace cs, bool multiThread, String workingColorSpace) {
 
 	if (colorSpace==cs || colorSpace==Invalid || cs==Invalid)
 		return;

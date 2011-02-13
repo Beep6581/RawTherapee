@@ -124,7 +124,7 @@ class CurveFactory {
   public:
 	// curveSize: number of values to be computed (= the size of the input histogram and = the size of outCurve)
 	// curveScale: the number of discrete values to cover to 0...1 range. 
-    static void complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatList& curvePoints, unsigned int* histogram, int curveSize, int curveScale, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
+    static void complexCurve (float ecomp, float black, float hlcompr, float shcompr, float br, float contr, float gamma_, bool igamma, const FloatVector& curvePoints, unsigned int* histogram, int curveSize, int curveScale, float* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
 
 };
 
@@ -147,11 +147,11 @@ class Curve {
     
   public:
 
-    Curve (const FloatList& points);
+    Curve (const FloatVector& points);
    ~Curve ();
 
     float getVal (float x);
-    void   getVal (const FloatList& t, FloatList& res);
+    void   getVal (const FloatVector& t, FloatVector& res);
 };
 };
 

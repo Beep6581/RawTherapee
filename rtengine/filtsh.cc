@@ -14,6 +14,7 @@
 #include "bilateral2.h"
 #include "filterchain.h"
 #include "iccstore.h"
+#include <limits>
 
 namespace rtengine {
 
@@ -108,7 +109,7 @@ void PreShadowsHighlightsFilter::process (const std::set<ProcEvent>& events, Mul
         if (!p) {
             avg = 0;
             int n = 1;
-            min = FLT_MAX;
+            min = std::numeric_limits<float>::max();
             max = 0;
             for (int i=32; i<map->height-32; i++)
                 for (int j=32; j<map->width-32; j++) {

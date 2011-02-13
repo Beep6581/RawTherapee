@@ -16,7 +16,7 @@ class Filter;
 class FilterDescriptor {
 
 protected:
-	std::string 	  		name;
+	String		 	  		name;
 	std::set<ProcEvent> 	myEvents;
 	bool 		   	  		forceOutCache;
 	MultiImage::ColorSpace 	inputColorSpace, outputColorSpace;
@@ -25,12 +25,12 @@ protected:
     bool                    applyOnThumbnail;
 
 public:
-	FilterDescriptor (const std::string& name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache = false);
+	FilterDescriptor (const String& name, MultiImage::ColorSpace ics, MultiImage::ColorSpace ocs, bool forceCache = false);
 	void addTriggerEvent (ProcEvent ev);
 
 	virtual void			getDefaultParameters (ProcParams& defProcParams) const {}
 
-	std::string 			getName () const { return name; }
+	String		 			getName () const { return name; }
 	MultiImage::ColorSpace  getInputColorSpace () const { return inputColorSpace; }
 	MultiImage::ColorSpace  getOutputColorSpace () const { return outputColorSpace; }
 	bool					forceOutputCache () const { return forceOutCache; }

@@ -9,11 +9,14 @@
 #define INTERACTIVEIMPROCIMPL_H_
 
 #include "improclistener.h"
-#include <glibmm.h>
 #include "rtengine.h"
 #include "colortemp.h"
 #include "filterchaingroup.h"
 #include <set>
+
+#ifdef QTBUILD
+#include <QThread>
+#endif
 
 namespace rtengine {
 
@@ -31,27 +34,48 @@ class PreviewListenerAdapter : public ImProcListener {
 		void		imageReady 			(const DisplayImage& img, double scale, Dim fullSize, ImageView view, ProcParams params);
 };
 
+class ThreadJob {
+	
+	public:
+		ProcParams params;
+		
+		bool destroy;
+};
+
+class InteractiveImProcImpl;
+#ifdef QTBUILD
+class ImProcThread : public QThread {
+#else
+class ImProcThread {
+#endif	
+		InteractiveImProcImpl* parent;
+
+	public:
+		Condition jobFinished;
+		ImProcThread (InteractiveImProcImpl* p) : parent(p) {}
+		
+		void run ();
+};
+
 class InteractiveImProcImpl : public InteractiveImageProcessor {
 
+		friend class ImProcThread;
+		
 		ImageSource* imageSource;
 		FilterChainGroup* filterChainGroup;
-		Glib::Mutex mProcessing;
 		ProcParams params;
+		Mutex mProcessing;
 		ProgressListener* progressListener;
 		PreviewListenerAdapter prevListAdapter;
 
 		// members of the updater:
-		Glib::Thread* thread;
-		Glib::Mutex updaterThreadStart;
-		Glib::Mutex paramsUpdateMutex;
-		bool updaterRunning;
-		ProcParams nextParams;
-		bool destroying;
+		ImProcThread* imProcThread;
 		std::set<ProcEvent> changeSinceLast;
-
-		void startProcessing ();
-		void process ();
-
+		ProcParams nextParams;
+		Condition hasJob;
+		bool destroyThread;
+		Mutex nextJobMutex;
+		
 	public:
 		InteractiveImProcImpl  (ImageSource* imageSource, PreviewImageListener* prevListener);
 		~InteractiveImProcImpl ();
