@@ -43,7 +43,7 @@ private:
     CurveType selected;
 
     PopUpToggleButton* curveType;
-    unsigned int* histogram;	// histogram values
+    LUTu histogram;	// histogram values
     bool bgHistValid;
 
 	CurveEditorGroup* group;
@@ -64,7 +64,7 @@ public:
 	std::vector<double> getCurve ();
 	bool isUnChanged ();
 	void setUnChanged (bool uc);
-	void updateBackgroundHistogram (unsigned int* hist);
+	void updateBackgroundHistogram (LUTu & hist);
 };
 
 

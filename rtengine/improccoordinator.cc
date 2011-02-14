@@ -34,24 +34,24 @@ ImProcCoordinator::ImProcCoordinator ()
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
     changeSinceLast(0), updaterRunning(false), destroying(false) {
 
-    hltonecurve   = new float[65536];
-    shtonecurve   = new float[65536];
-    tonecurve     = new float[65536];
+    hltonecurve(65536,0);
+    shtonecurve(65536,0);//,1);
+    tonecurve(65536,0);//,1);
 
-    lumacurve     = new float[65536];
-    chroma_acurve = new float[65536];
-    chroma_bcurve = new float[65536];
+    lumacurve(65536,0);
+    chroma_acurve(65536,0);
+    chroma_bcurve(65536,0);
 
-    vhist16 = new unsigned int[65536];
-    lhist16 = new unsigned int[65536];
+    vhist16(65536);
+    lhist16(65536);
 
-    rhist     = new unsigned int[256];
-    ghist     = new unsigned int[256];
-    bhist     = new unsigned int[256];
-    Lhist     = new unsigned int[256];
-    bcrgbhist = new unsigned int[256];
-    bcLhist   = new unsigned int[256];
-    bcabhist  = new unsigned int[256];
+    rhist(65536);
+    ghist(65536);
+    bhist(256);
+    Lhist(256);
+    bcrgbhist(256);
+    bcLhist(256);
+    bcabhist(256);
 
 }
 
@@ -72,25 +72,6 @@ ImProcCoordinator::~ImProcCoordinator () {
     std::vector<Crop*> toDel = crops;
     for (int i=0; i<toDel.size(); i++)
         delete toDel[i];
-
-    delete [] hltonecurve;
-    delete [] shtonecurve;
-    delete [] tonecurve;
-
-    delete [] lumacurve;
-    delete [] chroma_acurve;
-    delete [] chroma_bcurve;
-
-    delete [] vhist16;
-    delete [] lhist16;
-
-    delete [] rhist;
-    delete [] ghist;
-    delete [] bhist;
-    delete [] Lhist;
-    delete [] bcrgbhist;
-    delete [] bcLhist;
-    delete [] bcabhist;
 
     imgsrc->decreaseRef ();
     updaterThreadStart.unlock ();
@@ -188,12 +169,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
-            unsigned int *aehist = new unsigned int[65536]; int aehistcompr;
+            LUTu aehist; int aehistcompr;
             imgsrc->getAEHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
             if (aeListener)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.black);
-            delete [] aehist;
         }
     }
 
@@ -207,7 +187,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
 
         // compute L channel histogram
-        memset (lhist16, 0, 65536*sizeof(int));
+        lhist16.clear();
         for (int i=0; i<pH; i++)
             for (int j=0; j<pW; j++)
                 lhist16[CLIP((int)(oprevl->L[i][j]))]++;
@@ -223,7 +203,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
-        ipf.luminanceCurve (oprevl, nprevl, lumacurve, 0, pH);
+        ipf.luminanceCurve (oprevl, nprevl, lumacurve);
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
@@ -382,9 +362,9 @@ if (settings->verbose) printf ("setscale before lock\n");
 
 void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 
-    memset (rhist, 0, 256*sizeof(int));
-    memset (ghist, 0, 256*sizeof(int));
-    memset (bhist, 0, 256*sizeof(int));
+    rhist.clear();
+    ghist.clear();
+    bhist.clear();
 	//memset (bcrgbhist, 0, 256*sizeof(int));
 	
     for (int i=y1; i<y2; i++) {
@@ -401,10 +381,10 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
         }
     }
 
-    memset (Lhist, 0, 256*sizeof(int));
+    Lhist.clear();
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) {
-            Lhist[CLIPTO((int)(nprevl->L[i][j]/128),0,255)]++;
+            Lhist[(int)(nprevl->L[i][j]/128)]++;
 		}
 	
 	/*for (int i=0; i<256; i++) {

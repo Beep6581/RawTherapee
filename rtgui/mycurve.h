@@ -23,6 +23,7 @@
 #include <vector>
 #include <curvelistener.h>
 #include <cursormanager.h>
+#include <LUT.h>
 
 #define RADIUS			3	/* radius of the control points. Assuming that the center of the spot is in the center of the pixel, the real RADIUS will be this value +0.5 */
 #define MIN_DISTANCE	8	/* min distance between control points */
@@ -84,7 +85,7 @@ class MyCurve : public Gtk::DrawingArea {
         std::vector<Gdk::Point> upoint;
         std::vector<Gdk::Point> lpoint;
         int activeParam;
-        unsigned int* bghist;	// histogram values
+        LUTu bghist;	// histogram values
         bool bghistvalid;
         bool buttonPressed;
         MyCurveIdleHelper* mcih;
@@ -106,7 +107,7 @@ class MyCurve : public Gtk::DrawingArea {
         bool handleEvents (GdkEvent* event);
         void notifyListener ();
         void setActiveParam (int ac);
-        void updateBackgroundHistogram (unsigned int* hist);
+        void updateBackgroundHistogram (LUTu & hist);
         void reset ();
 };
 

@@ -146,12 +146,14 @@ void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, i
 void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp) {
 
     // compute channel multipliers
-    double rm, gm, bm;
-    ctemp.getMultipliers (rm, gm, bm);
+    double drm, dgm, dbm;
+    ctemp.getMultipliers (drm, dgm, dbm);
+    float rm=drm,gm=dgm,bm=dbm;
+
     rm = 1.0 / rm;
     gm = 1.0 / gm;
     bm = 1.0 / bm;
-    double mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
+    float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
     rm /= mul_lum;
     gm /= mul_lum;
     bm /= mul_lum;    
@@ -168,12 +170,12 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
     int mtran = tran;
     int skip = pp.skip;
 
-    if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
+    //if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
 
     // improve speed by integrating the area division into the multipliers
     // switched to using ints for the red/green/blue channel buffer.
     // Incidentally this improves accuracy too.
-    double area=skip*skip;
+    float area=skip*skip;
     rm/=area;
     gm/=area;
     bm/=area;
@@ -182,65 +184,66 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
 #pragma omp parallel
     {
 #endif
-    int *line_red  = new int[imwidth];
-    int *line_green  = new int[imwidth];
-    int *line_blue = new int[imwidth];
+    float *line_red  = new float[imwidth];
+    float *line_green  = new float[imwidth];
+    float *line_blue = new float[imwidth];
 
 #ifdef _OPENMP
 #pragma omp for
 #endif
-    for (int ix=0;ix<imheight;ix++) {
-    	int i=istart+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
-		for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-			int rtot,gtot,btot;
-			rtot=gtot=btot=0;
-
-			for (int m=0; m<skip; m++)
-				for (int n=0; n<skip; n++)
-				{
-					rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
-					gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
-					btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
-				}
-			line_red[j]  = rtot;
-            line_green[j]  = gtot;
-            line_blue[j] = btot;
-		}
-
-// covert back to gamma and clip
+		for (int ix=0;ix<imheight;ix++) {
+			int i=istart+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
+			for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
+				
+				float rtot,gtot,btot;
+				rtot=gtot=btot=0;
+				
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
+					{
+						rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
+						gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
+						btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
+					}
+				line_red[j]  = rtot;
+				line_green[j]  = gtot;
+				line_blue[j] = btot;
+			}
+			
+			// covert back to gamma and clip
 #define GCLIP( x ) CurveFactory::gamma_srgb(CLIP(x))
-
-//        if (hrp.enabled)
-//            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
-    
-        if ((mtran & TR_ROT) == TR_R180) 
-            for (int j=0; j<imwidth; j++) {
-                image->r[imheight-1-ix][imwidth-1-j] = GCLIP(rm*line_red[j])/65535.0;
-                image->g[imheight-1-ix][imwidth-1-j] = GCLIP(gm*line_green[j])/65535.0;
-                image->b[imheight-1-ix][imwidth-1-j] = GCLIP(bm*line_blue[j])/65535.0;
-            }
-        else if ((mtran & TR_ROT) == TR_R90) 
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[j][imheight-1-ix] = GCLIP(rm*line_red[j])/65535.0;
-                image->g[j][imheight-1-ix] = GCLIP(gm*line_green[j])/65535.0;
-                image->b[j][imheight-1-ix] = GCLIP(bm*line_blue[j])/65535.0;
-        }
-        else if ((mtran & TR_ROT) == TR_R270) 
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[imwidth-1-j][ix] = GCLIP(rm*line_red[j])/65535.0;
-                image->g[imwidth-1-j][ix] = GCLIP(gm*line_green[j])/65535.0;
-                image->b[imwidth-1-j][ix] = GCLIP(bm*line_blue[j])/65535.0;
-            }
-        else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[ix][j] = GCLIP(rm*line_red[j])/65535.0;
-                image->g[ix][j] = GCLIP(gm*line_green[j])/65535.0;
-                image->b[ix][j] = GCLIP(bm*line_blue[j])/65535.0;
-				//if (ix==100 && j==100) printf("stdimsrc before R= %f  G= %f  B= %f  \n",65535*image->r[ix][j],65535*image->g[ix][j],65535*image->b[ix][j]);
-
-            }
-        }
-    }
+			
+			//        if (hrp.enabled)
+			//            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
+			
+			if ((mtran & TR_ROT) == TR_R180) 
+				for (int j=0; j<imwidth; j++) {
+					image->r[imheight-1-ix][imwidth-1-j] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[imheight-1-ix][imwidth-1-j] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[imheight-1-ix][imwidth-1-j] = GCLIP(bm*line_blue[j])/65535.0;
+				}
+			else if ((mtran & TR_ROT) == TR_R90) 
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+					image->r[j][imheight-1-ix] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[j][imheight-1-ix] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[j][imheight-1-ix] = GCLIP(bm*line_blue[j])/65535.0;
+				}
+			else if ((mtran & TR_ROT) == TR_R270) 
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+					image->r[imwidth-1-j][ix] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[imwidth-1-j][ix] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[imwidth-1-j][ix] = GCLIP(bm*line_blue[j])/65535.0;
+				}
+			else {
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+					image->r[ix][j] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[ix][j] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[ix][j] = GCLIP(bm*line_blue[j])/65535.0;
+					//if (ix==100 && j==100) printf("stdimsrc before R= %f  G= %f  B= %f  \n",65535*image->r[ix][j],65535*image->g[ix][j],65535*image->b[ix][j]);
+					
+				}
+			}
+		}
 #undef GCLIP
     delete [] line_red;
     delete [] line_green;
@@ -510,17 +513,18 @@ void StdImageSource::hlRecovery (unsigned short* red, unsigned short* green, uns
     rtengine::hlRecovery (red, green, blue, img->height, img->width, i, sx1, sx2, skip, needhr, hrmap);
 }
 */
-int StdImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
+int StdImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
 
     histcompr = 3;
 
-    memset (histogram, 0, (65536>>histcompr)*sizeof(int));
+    histogram(65536>>histcompr);
+    histogram.clear();
 
     for (int i=0; i<img->height; i++)
         for (int j=0; j<img->width; j++) {
-            histogram[CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
-            histogram[CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
-            histogram[CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
+            histogram[(int)CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
+            histogram[(int)CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
+            histogram[(int)CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
         }
     return 1;
 }

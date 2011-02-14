@@ -45,7 +45,7 @@ namespace rtengine {
             double camwbBlue;
             double autowbTemp;
             double autowbGreen;
-            unsigned int* aeHistogram;
+            LUTu aeHistogram;
             int  aeHistCompression;
             int embProfileLength;
             unsigned char* embProfileData;

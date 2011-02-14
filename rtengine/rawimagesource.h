@@ -132,14 +132,14 @@ class RawImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
-        int         getAEHistogram (unsigned int* histogram, int& histcompr);
+        int         getAEHistogram (LUTu & histogram, int& histcompr);
 
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
 		static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
 		static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
-        static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval);
-        static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval, double cam[3][3], double icam[3][3]);
+        static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
+        static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
 
     protected:
         typedef unsigned short ushort;

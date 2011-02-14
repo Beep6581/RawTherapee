@@ -32,7 +32,7 @@ MyCurve::MyCurve () : listener(NULL), activeParam(-1), bghistvalid(false) {
     lit_point = -1;
     buttonPressed = false;
 
-    bghist = new unsigned int[256];
+    bghist (256);
 
     set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
@@ -57,7 +57,6 @@ MyCurve::~MyCurve () {
     else
         delete mcih;
 
-    delete [] bghist;
 }
 
 std::vector<double> MyCurve::get_vector (int veclen) {
@@ -656,10 +655,10 @@ int mchistupdate (void* data) {
     return 0;
 }
 
-void MyCurve::updateBackgroundHistogram (unsigned int* hist) {
+void MyCurve::updateBackgroundHistogram (LUTu & hist) {
 
-    if (hist!=NULL) {
-        memcpy (bghist, hist, 256*sizeof(unsigned int));
+    if (hist) {
+        bghist=hist;
         bghistvalid = true;
     }
     else

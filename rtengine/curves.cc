@@ -24,8 +24,11 @@
 #include <mytime.h>
 #include <string.h>
 
+#include "array2D.h"
+#include "LUT.h"
+
 #undef CLIPD
-#define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
+#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 #define CLIP(a) ((a)<65535 ? (a) : (65535))
 
 
@@ -302,33 +305,15 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
         res[i] = getVal(t[i]);
 }
 
-double CurveFactory::centercontrast (double x, double b, double m) {
-
-  if (b==0)
-    return x;
-  if (b>0) {
-    if (x>m) 
-      return m + (1.0-m) * tanh (b*(x-m)/(1.0-m)) / tanh (b);
-    else
-      return m + m * tanh (b*(x-m)/m) / tanh (b);
-  }
-  else {
-    if (x>m) 
-      return 2.0*x - m - (1.0-m) * tanh (b*(x-m)/(1.0-m)) / tanh (b);
-    else
-      return 2.0*x - m - m * tanh (b*(x-m)/m) / tanh (b);
-  }
-}
-
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, float* outCurve, int skip) {
+	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, LUTf &outCurve, int skip) {
 				
 		// check if contrast curve is needed
 		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
 		
 		// curve without contrast
-		float* dcurve = new float[65536];
+		LUTf dcurve (65536);
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		std::vector<double> satcurvePoints;
@@ -357,11 +342,12 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		// create a curve if needed
+
 		Curve* tcurve = NULL;
 		if (curvePoints.size()>0 && curvePoints[0]!=0)
 			tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		
-		for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
+		for (int i=0; i<=0xffff; i+= (i<0xffff-skip) ? skip : 1 ) {
 			
 			// change to [0,1] range
 			float val = (float)i / 65535.0;
@@ -392,7 +378,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		 
 		for (int i=0; i<=0xffff; i++) 
 			outCurve[i] = (65535.0 * dcurve[i]);
-		delete [] dcurve;
+		//delete [] dcurve;
 		delete satcurve;
 	}
 
@@ -403,9 +389,10 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
 									 double shcompr, double br, double contr, double gamma_, bool igamma_, \
-									 const std::vector<double>& curvePoints, unsigned int* histogram, \
-									 float* hlCurve, float* shCurve, float* outCurve, \
-									 unsigned int* outBeforeCCurveHistogram, int skip) {
+									 const std::vector<double>& curvePoints, LUTu & histogram, \
+									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, \
+									 LUTu & outBeforeCCurveHistogram, int skip) {
+		
 		
 		//double def_mul = pow (2.0, defmul);
 		
@@ -422,7 +409,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		double a = pow (2.0, ecomp);
 		
 		// curve without contrast
-		float* dcurve = new float[2*65536];
+		LUTf dcurve(2*65536,0);
 		
 		// check if contrast curve is needed
 		bool needcontrast = contr>0.00001 || contr<-0.00001;
@@ -436,8 +423,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			tcurve = new Curve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		
 		// clear array that stores histogram valid before applying the custom curve
-		if (outBeforeCCurveHistogram)
-			memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
+		outBeforeCCurveHistogram.clear();
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
@@ -471,7 +457,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		
 		float exp_scale = a;
 		float scale = 65536.0;
-		float comp = (ecomp)*hlcompr/100.0;
+		float comp = (ecomp+1.0)*hlcompr/100.0;
 		float shoulder = ((scale/exp_scale)*(hlcomprthresh/200.0))+0.1;
 		//printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
@@ -489,7 +475,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			//hlCurve[i] = (65535.0 * CLIPD(val));
 			
-			if ((hlcompr>0.0)&&(exp_scale>1.0))
+			if ((hlcompr>0.0)&&(exp_scale>0.5))
 			{
 				if (val>0.0) {
 					float Y = val*exp_scale/(scale-shoulder);
@@ -504,12 +490,12 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// change to [0,1] range
-			val = (double)i / 65535.0;
+			val = (float)i / 65535.0f;
 			
-			val = basecurve (val, 1, black, 1, 0, 1.5*shcompr/100.0);
-			
-			shCurve[i] = (65535.0 * CLIPD(val));
-			
+			float	val2 = basecurve (val, 1.0, black, 1.0, 0.0, 1.5*shcompr/100.0);
+			if (i==0) val=1.0;
+			shCurve[i] = CLIPD(val2)/val;
+
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// change to [0,1] range
 			val = (double)i / 65535.0;
@@ -536,7 +522,8 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			float avg = 0; 
 			//double sqavg = 0;
 			for (int i=0; i<=0xffff; i++) {
-				avg += dcurve[(int)shCurve[CLIP((int)(hlCurve[i]*i))]] * histogram[i];
+				float fi=i;
+				avg += dcurve[shCurve[hlCurve[i]*fi]*fi] * histogram[i];
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
 				sum += histogram[i];
 			}
@@ -566,7 +553,6 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			// apply contrast enhancement
 			for (int i=0; i<=0xffff; i++) {
-				//double val = centercontrast (dcurve[i], contr_b, avg);
 				dcurve[i]  = contrastcurve->getVal (dcurve[i]);
 			}
 			delete contrastcurve;
@@ -579,10 +565,11 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
 				if (outBeforeCCurveHistogram) {
-					float hval = dcurve[(int)shCurve[CLIP((int)(hlCurve[i]*i))]];
+					float fi=i;
+					float hval = dcurve[shCurve[hlCurve[i]*fi]*fi];
 					//if (needigamma)
 					//	hval = igamma2 (hval);
-					int hi = (int)(255.0*CLIPD(hval));
+					int hi = (int)(255.0*(hval));
 					outBeforeCCurveHistogram[hi]+=histogram[i] ;
 				}
 				val = tcurve->getVal (dcurve[i]);
@@ -598,7 +585,6 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		}
 		
 		
-		delete [] dcurve;
 		delete tcurve;
 		delete brightcurve; 
 		/*if (outBeforeCCurveHistogram) {
@@ -613,11 +599,11 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
-									 unsigned int* histogram, float* outCurve, \
-									 unsigned int* outBeforeCCurveHistogram, int skip) {
+									 LUTu & histogram, LUTf & outCurve, \
+									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		// curve without contrast
-		float* dcurve = new float[65536];
+		LUTf dcurve(65536,0);
 		
 		// check if contrast curve is needed
 		bool needcontrast = contr>0.00001 || contr<-0.00001;
@@ -630,7 +616,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		
 		// clear array that stores histogram valid before applying the custom curve
 		if (outBeforeCCurveHistogram)
-			memset (outBeforeCCurveHistogram, 0, 256*sizeof(int));
+			outBeforeCCurveHistogram.clear();
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
@@ -740,7 +726,6 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		for (int i=32768; i<65535; i++) outCurve[i]=i;
 		
 		
-		delete [] dcurve;
 		delete tcurve;
 		delete brightcurve; 
 		/*if (outBeforeCCurveHistogram) {
@@ -754,22 +739,22 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	
 	
 
-int *CurveFactory::gammatab = 0;
-int *CurveFactory::igammatab_srgb = 0;
-int *CurveFactory::gammatab_srgb = 0;
+LUTf CurveFactory::gammatab;
+LUTf CurveFactory::igammatab_srgb;
+LUTf CurveFactory::gammatab_srgb;
 
 void CurveFactory::init () {
 	
-	gammatab = new int[65536];
-	igammatab_srgb = new int[65536];
-	gammatab_srgb = new int[65536];
+	gammatab(65536,0);
+	igammatab_srgb(65536,0);
+	gammatab_srgb(65536,0);
 
   for (int i=0; i<65536; i++)
-    gammatab_srgb[i] = (int)(65535 * gamma2 (i/65535.0));
+    gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
   for (int i=0; i<65536; i++)
-    igammatab_srgb[i] = (int)(65535 * igamma2 (i/65535.0));
+    igammatab_srgb[i] = (65535.0 * igamma2 (i/65535.0));
   for (int i=0; i<65536; i++)
-    gammatab[i] = (int)(65535 * pow (i/65535.0, 0.454545));
+    gammatab[i] = (65535.0 * pow (i/65535.0, 0.454545));
     
 /*    FILE* f = fopen ("c.txt", "wt");
     for (int i=0; i<256; i++)
@@ -779,9 +764,9 @@ void CurveFactory::init () {
 
 void CurveFactory::cleanup () {
 
-  delete [] gammatab;
-  delete [] igammatab_srgb;
-  delete [] gammatab_srgb;
+  //delete [] gammatab;
+  //delete [] igammatab_srgb;
+  //delete [] gammatab_srgb;
 }
 
 }

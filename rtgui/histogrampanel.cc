@@ -77,10 +77,10 @@ void HistogramPanel::rgbv_toggled () {
 HistogramArea::HistogramArea () : 
       valid(false), showFull(true), oldwidth(-1), needVal(true), needRed(true), needGreen(true), needBlue(true) {
 
-    lhist = new unsigned int[256];
-    rhist = new unsigned int[256];
-    ghist = new unsigned int[256];
-    bhist = new unsigned int[256];
+    lhist(256);
+    rhist(256);
+    ghist(256);
+    bhist(256);
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
@@ -97,10 +97,6 @@ HistogramArea::~HistogramArea () {
     else
         delete haih;
 
-    delete [] lhist;
-    delete [] rhist;
-    delete [] ghist;
-    delete [] bhist;
 }
 
 void HistogramArea::updateOptions (bool r, bool g, bool b, bool v) {
@@ -136,13 +132,13 @@ int histupdate (void* data) {
     return 0;
 }
 
-void HistogramArea::update (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh) {
+void HistogramArea::update (LUTu & rh, LUTu & gh, LUTu & bh, LUTu & lh) {
 
-    if (rh!=NULL) {
-        memcpy (lhist, lh, 256*sizeof(unsigned int));
-        memcpy (rhist, rh, 256*sizeof(unsigned int));
-        memcpy (ghist, gh, 256*sizeof(unsigned int));
-        memcpy (bhist, bh, 256*sizeof(unsigned int));
+    if (rh) {
+        lhist=lh;
+        rhist=rh;
+        ghist=gh;
+        bhist=bh;
         valid = true;
     }
     else
@@ -425,7 +421,7 @@ void HistogramArea::on_realize () {
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-    unsigned int * data, double scale, int hsize, int vsize)
+    LUTu & data, double scale, int hsize, int vsize)
 {
     cr->move_to (0, vsize-1);
     for (int i = 0; i < 256; i++) {
@@ -438,7 +434,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-    unsigned int * data, double scale, int hsize, int & ui, int & oi)
+		LUTu & data, double scale, int hsize, int & ui, int & oi)
 {
     int s = 8;
     

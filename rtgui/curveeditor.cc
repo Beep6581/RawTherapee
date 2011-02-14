@@ -37,7 +37,7 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup) {
 	bgHistValid = false;
 	selected = Linear;
 
-    histogram = new unsigned int[256];	// histogram values
+    histogram(256);	// histogram values
 
 	group = ceGroup;
 
@@ -62,7 +62,7 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup) {
 
 CurveEditor::~CurveEditor () {
 
-	delete [] histogram;
+
 }
 
 
@@ -107,10 +107,10 @@ void CurveEditor::setUnChanged (bool uc) {
 /*
  * Update the backgrounds histograms
  */
-void CurveEditor::updateBackgroundHistogram (unsigned int* hist) {
+void CurveEditor::updateBackgroundHistogram (LUTu & hist) {
 	// Copy the histogram in the curve editor cache
-	if (hist!=NULL) {
-		memcpy (histogram, hist, 256*sizeof(unsigned int));
+	if (hist) {
+		histogram=hist;
 		bgHistValid = true;
 	}
 	else

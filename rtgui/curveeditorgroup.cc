@@ -507,10 +507,11 @@ void CurveEditorGroup::storeDisplayedCurve() {
  * Restore the histogram to all types from the CurveEditor object to the widgets
  */
 void CurveEditorGroup::restoreDisplayedHistogram() {
+	LUTu dummy;
 	if (displayedCurve) {
-		paramCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : NULL);
-		customCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : NULL);
-		NURBSCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : NULL);
+		paramCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : dummy);
+		customCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : dummy);
+		NURBSCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : dummy);
 	}
 
 }
@@ -725,8 +726,9 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce) {
 
 void CurveEditorGroup::updateBackgroundHistogram (CurveEditor* ce) {
 	if (ce==displayedCurve) {
-		paramCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
-		customCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
-		NURBSCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
+		LUTu dummy;
+		paramCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : dummy);
+		customCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : dummy);
+		NURBSCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : dummy);
 	}
 }

@@ -26,6 +26,7 @@
 #include <imagesource.h>
 #include <procevents.h>
 #include <dcrop.h>
+#include "LUT.h"
 
 namespace rtengine {
 
@@ -62,18 +63,18 @@ class ImProcCoordinator : public StagedImageProcessor {
         
         void freeAll ();
 
-		float *hltonecurve;
-		float *shtonecurve;
-		float *tonecurve;
+		LUTf hltonecurve;
+		LUTf shtonecurve;
+		LUTf tonecurve;
 	
-		float *lumacurve;
-		float *chroma_acurve;
-		float *chroma_bcurve;
+		LUTf lumacurve;
+		LUTf chroma_acurve;
+		LUTf chroma_bcurve;
         
-		unsigned int *vhist16;
-		unsigned int *lhist16;
+		LUTu vhist16;
+		LUTu lhist16;
 	
-		unsigned int *rhist, *ghist, *bhist, *Lhist, *bcrgbhist, *bcLhist, *bcabhist;
+		LUTu rhist, ghist, bhist, Lhist, bcrgbhist, bcLhist, bcabhist;
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

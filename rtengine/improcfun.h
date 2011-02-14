@@ -26,6 +26,7 @@
 #include <shmap.h>
 #include <coord2d.h>
 #include <labimage.h>
+#include "LUT.h"
 
 namespace rtengine {
 
@@ -33,14 +34,7 @@ using namespace procparams;
 
 class ImProcFunctions {
 
-		static float* cachef;
-		//static float* cacheL;
-		//static float* cachea;
-		//static float* cacheb;
-		//static float* xcache;
-		//static float* ycache;
-		//static float* zcache;
-		static float* gamma2curve;
+		static LUTf gamma2curve;
 
 		cmsHTRANSFORM monitorTransform;
 
@@ -64,6 +58,7 @@ class ImProcFunctions {
 
 
 	public:
+		static LUTf cachef;
 
 		double lumimul[3];
 
@@ -78,10 +73,10 @@ class ImProcFunctions {
 
 		bool needsTransform   ();
 
-		void firstAnalysis    (Imagefloat* working, const ProcParams* params, unsigned int* vhist16, double gamma);
-		void rgbProc          (Imagefloat* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, int sat);
-		void luminanceCurve   (LabImage* lold, LabImage* lnew, float* curve, int row_from, int row_to);
-		void chrominanceCurve (LabImage* lold, LabImage* lnew, float* acurve, float* bcurve);
+		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
+		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, SHMap* shmap, int sat);
+		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
+		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve);
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void lumadenoise      (LabImage* lab, int** buffer);
@@ -117,12 +112,12 @@ class ImProcFunctions {
 
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
 		bool transCoord       (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
-		void getAutoExp       (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
+		void getAutoExp       (LUTu & histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
 		double getTransformAutoFill (int oW, int oH);
 
 		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
-		void xyz2srgb (float x, float y, float z, int &r, int &g, int &b);
+		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
 	
 	void gamutmap(LabImage* );
 

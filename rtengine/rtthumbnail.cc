@@ -96,14 +96,14 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     // histogram computation
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
+    tpp->aeHistogram(65536>>tpp->aeHistCompression);
 	
 	double avg_r = 0;
     double avg_g = 0;
     double avg_b = 0;
     int n = 0;
 	
-    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
+    tpp->aeHistogram.clear();
     int ix = 0;
     for (int i=0; i<img->height*img->width; i++) {
 		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
@@ -382,8 +382,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 	// generate histogram for auto exposure
 	tpp->aeHistCompression = 3;
-	tpp->aeHistogram = new unsigned int[65536 >> tpp->aeHistCompression];
-	memset(tpp->aeHistogram, 0, (65536 >> tpp->aeHistCompression) * sizeof(int));
+	tpp->aeHistogram(65536 >> tpp->aeHistCompression);
+	tpp->aeHistogram.clear();
 	int radd = 4;
 	int gadd = 4;
 	int badd = 4;
@@ -401,18 +401,18 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		}
 		for (int j = start; j < end; j++)
 			if (FISGREEN(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
+                tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
 			else if (FISRED(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
+                tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
 			else if (FISBLUE(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+                tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
 	}
 
 	// generate autoWB
 	double avg_r = 0;
 	double avg_g = 0;
 	double avg_b = 0;
-	int rn = 0, gn = 0, bn = 0;
+	float rn = 0.0, gn = 0.0, bn = 0.0;
 
 	for (int i = 32; i < height - 32; i++) {
 		int start, end;
@@ -508,13 +508,13 @@ void Thumbnail::init () {
 }
 
 Thumbnail::Thumbnail () :
-    camProfile(NULL), thumbImg(NULL), aeHistogram(NULL), embProfileData(NULL), embProfile(NULL) {
+    camProfile(NULL), thumbImg(NULL),  embProfileData(NULL), embProfile(NULL) {
 }
 
 Thumbnail::~Thumbnail () {
 
     delete thumbImg;
-    delete [] aeHistogram;
+    //delete [] aeHistogram;
     delete [] embProfileData;
     if (embProfile)
         cmsCloseProfile(embProfile);
@@ -668,7 +668,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ImProcFunctions ipf (&params, false);
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
 
-    unsigned int* hist16 = new unsigned int [65536];
+    LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, isRaw ? 2.2 : 0.0);
 
     // perform transform
@@ -706,10 +706,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
 
-	float* curve1 = new float [65536];
-    float* curve2 = new float [65536];
-	float* curve = new float [65536];
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
+	LUTf curve1 (65536);
+	LUTf curve2 (65536);
+	LUTf curve (65536);
+	LUTu dummy;
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy, 16);
 
 	LabImage* labView = new LabImage (fw,fh);
 
@@ -719,22 +720,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         delete shmap;
 
     // luminance histogram update
-    memset (hist16, 0, 65536*sizeof(int));
+    hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[CLIP((int)(2*(labView->L[i][j])))]++;
+            hist16[(int)(2*(labView->L[i][j]))]++;
 
     // luminance processing
-    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, NULL, 16);
-    ipf.luminanceCurve (labView, labView, curve, 0, fh);
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 16);
+    ipf.luminanceCurve (labView, labView, curve);
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve1, 16);
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve2, 16);
     ipf.chrominanceCurve (labView, labView, curve1, curve2);
-
-	delete [] curve1;
-    delete [] curve2;
-    delete [] curve;
-    delete [] hist16;
 
     // color processing
     //ipf.colorCurve (labView, labView);
@@ -1291,10 +1287,10 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 
     FILE* f = safe_g_fopen (fname, "rb");
     if (!f) 
-        aeHistogram = NULL;
+        aeHistogram(0);
     else {
-        aeHistogram = new unsigned int[65536>>aeHistCompression];
-        fread (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
+        aeHistogram(65536>>aeHistCompression);
+        fread (&aeHistogram[0], 1, (65536>>aeHistCompression)*sizeof(aeHistogram[0]), f);
         fclose (f);
         return true;
     }
@@ -1306,7 +1302,7 @@ bool Thumbnail::writeAEHistogram (const Glib::ustring& fname) {
     if (aeHistogram) {
         FILE* f = safe_g_fopen (fname, "wb");
         if (f) {
-            fwrite (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
+            fwrite (&aeHistogram[0], 1, (65536>>aeHistCompression)*sizeof(aeHistogram[0]), f);
             fclose (f);
             return true;
         }

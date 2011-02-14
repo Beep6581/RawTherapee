@@ -69,10 +69,18 @@ template<typename T>
 class LUT {
 private:
 	int size, owner;
-	unsignedint clip;
+	unsigned int clip;
 	T * data;
 public:
 	LUT(int s, int flags = 0xfffffff) {
+		clip = flags;
+		data = new T[s];
+		owner = 1;
+		size = s;
+	}
+	void operator ()(int s, int flags = 0xfffffff) {
+		if (owner&&data)
+			delete[] data;
 		clip = flags;
 		data = new T[s];
 		owner = 1;
@@ -88,36 +96,68 @@ public:
 		}
 	}
 
+	LUT(void) {
+		data = NULL;
+		owner = 1;
+		size = 0;
+	}
+
 	~LUT() {
 		if (owner)
 			delete[] data;
 	}
 
+	LUT<T> & operator=(const LUT<T> &rhs) {
+	    if (this != &rhs) {
+	      if (rhs.size>this->size)
+	      {
+	    	delete [] this->data;
+	    	this->data=NULL;
+	      }
+	      if (this->data==NULL) this->data=new T[rhs.size];
+	      this->clip=rhs.clip;
+	      this->owner=1;
+	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
+	      this->size=rhs.size;
+	    }
+
+	    return *this;
+	  }
 	// use with integer indices
 	T& operator[](int index) {
 		if (index < 0)
 			return data[0];
-		if (index > size - 1)
+		if (index < size)
+			return data[index];
+		else
 			return data[size - 1];
-		return data[index];
 	}
 	// use with float indices
 	T operator[](float index) {
 		int idx = floor(index);
 		if (idx < 0) {
-			idx = 0;
-			if (clip & LUT_CLIP_BOTTOM)
+			if (clip & LUT_CLIP_BELOW)
 				return data[0];
+			else idx = 0;
 		}
 		if (idx > size - 2) {
-			idx = size - 2;
 			if (clip & LUT_CLIP_ABOVE)
 				return data[size - 1];
+			else idx = size - 2;
 		}
 		float diff = index - (float) idx;
-		T p1 = data[idx] * (1.0 - diff);
-		T p2 = data[idx + 1] * diff;
-		return p1 + p2;
+		T p1 = data[idx];
+		T p2 = data[idx + 1]-p1;
+		return (p1 + p2*diff);
+	}
+
+	operator bool (void)
+		{
+			return size>0;
+		}
+
+	void clear(void) {
+		memset(data, 0, size * sizeof(T));
 	}
 };
 

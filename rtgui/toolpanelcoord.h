@@ -134,7 +134,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-        void updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl);
+        void updateCurveBackgroundHistogram (LUTu & histrgb, LUTu & histl);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
         void addPParamsChangeListener   (PParamsChangeListener* pp) { paramcListeners.push_back (pp); }

@@ -426,7 +426,7 @@ int ToolPanelCoordinator::getSpotWBRectSize () {
     return whitebalance->getSize ();
 }
 
-void ToolPanelCoordinator::updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl) {
+void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histrgb, LUTu & histl) {
 
     curve->updateCurveBackgroundHistogram (histrgb);
     lcurve->updateCurveBackgroundHistogram (histl);

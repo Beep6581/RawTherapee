@@ -31,7 +31,7 @@
 #include <slicer.h>
 #include <iostream>
 
-
+#include <improcfun.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -210,7 +210,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     tran = defTransform (tran);
 
     // compute channel multipliers
-    double r, g, b, rm, gm, bm;
+    double r, g, b;
+    float rm, gm, bm;
     ctemp.getMultipliers (r, g, b);
     rm = cam_rgb[0][0]*r + cam_rgb[0][1]*g + cam_rgb[0][2]*b;
     gm = cam_rgb[1][0]*r + cam_rgb[1][1]*g + cam_rgb[1][2]*b;
@@ -218,29 +219,36 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     rm = camwb_red / rm;
     gm = camwb_green / gm;
     bm = camwb_blue / bm;
-    double mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
+
+    float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
     rm /= mul_lum;
     gm /= mul_lum;
     bm /= mul_lum;    
-    // normalize the gain control
-    double min = rm;
-
+/*
+    //initialGain=1.0;
 	// in floating point, should keep white point fixed and recover higher values with exposure slider
-    //if (hrp.enabled) 
-    //    defGain = log(initialGain) / log(2.0);
+    //if (hrp.enabled) */
+    float min = rm;
+    if (min>gm) min = gm;
+    if (min>bm) min = bm;
+        defGain=0.0;// = log(initialGain) / log(2.0);
+        printf(" Initial gain is %f defgain is %f min is %f\n",initialGain,defGain,min);
+        printf(" rm %f gm %f bm %f\n",rm,gm,bm);
+        //min/=initialGain;
+   //min=(float)1.0/min;
     //else {
-        defGain = 0.0;
-        rm *= initialGain;
-        gm *= initialGain;
-        bm *= initialGain;
+        //defGain = 0.0;
+        rm /= min;
+        gm /= min;
+        bm /= min;
     //}
 	//defGain = 0.0;//no need now for making headroom for highlights???
     //printf("initial gain= %e\n",initialGain);
-    if (min>gm) min=gm;
-    if (min>bm) min=bm;
-    rm/=min;
-    gm/=min;
-    bm/=min;
+    //TODO: normalize the gain control
+
+
+
+
 
 	if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
         updateHLRecoveryMap_ColorPropagation ();
@@ -269,8 +277,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         imheight = maximheight;
     int maxx=this->W,maxy=this->H,skip=pp.skip;
 
-    if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
-    double area=skip*skip;
+    //if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
+    float area=skip*skip;
     rm/=area;
     gm/=area;
     bm/=area;
@@ -289,9 +297,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 #ifdef _OPENMP
 #pragma omp for
 #endif
-	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
+	for (int ix=0; ix<imheight; ix++) { int i=sy1+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
 		if (ri->isBayer()) {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
 				for (int m=0; m<skip; m++)
@@ -301,12 +309,12 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 						gtot += green[i+m][jx+n];
 						btot += blue[i+m][jx+n];
 					}
-				line_red[j] = CLIP(rm*rtot);
-				line_grn[j] = CLIP(gm*gtot);
-				line_blue[j] = CLIP(bm*btot);
+				line_red[j] = (rm*rtot);//CLIP???
+				line_grn[j] = (gm*gtot);
+				line_blue[j] = (bm*btot);
             }
         } else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>maxx-skip) jx=maxx-skip-1;
             	float rtot,gtot,btot;
             	rtot=gtot=btot=0;
 				for (int m=0; m<skip; m++)
@@ -316,9 +324,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 						gtot += rawData[i+m][(jx+n)*3+1];
 						btot += rawData[i+m][(jx+n)*3+2];
 					}				
-				line_red[j] = CLIP(rm*rtot);
-				line_grn[j] = CLIP(gm*gtot);
-				line_blue[j] = CLIP(bm*btot);
+				line_red[j] = (rm*rtot);//CLIP???
+				line_grn[j] = (gm*gtot);
+				line_blue[j] = (bm*btot);
 				
             }
         }
@@ -385,7 +393,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         
     // Color correction
     if (ri->isBayer() && pp.skip==1)
-        correction_YIQ_LQ (image, raw.ccSteps);
+        correction_YIQ_LQ (image, pp.skip==1?1:raw.ccSteps);
  
     // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
@@ -1528,7 +1536,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 //        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
 //        cmsDeleteTransform(hTransform);
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
-        double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        float mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
@@ -1550,9 +1558,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 		//color space transform is expecting data in the range (0,1)
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
-				im->r[h][w] /= 65535.0 ;
-				im->g[h][w] /= 65535.0 ;
-				im->b[h][w] /= 65535.0 ;
+				im->r[h][w] /= 65535.0f ;
+				im->g[h][w] /= 65535.0f ;
+				im->b[h][w] /= 65535.0f ;
 			}
         out = iccStore->workingSpace (cmp.working);
 //        out = iccStore->workingSpaceGamma (wProfile);
@@ -1561,7 +1569,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         lcmsMutex->unlock ();
         if (hTransform) {//there is an input profile
             if (cmp.gammaOnInput) {
-                double gd = pow (2.0, defgain);
+                float gd = pow (2.0, defgain);
                 defgain = 0.0;// Writeback defgain to be 0.0
 #pragma omp parallel for
                 for (int i=0; i<im->height; i++)
@@ -1659,14 +1667,14 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 		lcmsMutex->unlock ();
 		if (hTransform) {
 			if (cmp.gammaOnInput) {
-				double gd = pow (2.0, defgain);
+				float gd = pow (2.0, defgain);
 				defgain = 0.0;
 #pragma omp parallel for
 				for (int i=0; i<im->height; i++)
 					for (int j=0; j<im->width; j++) {
-						im->r[i][j] = CurveFactory::gamma (CLIP(defgain*im->r[i][j]));
-						im->g[i][j] = CurveFactory::gamma (CLIP(defgain*im->g[i][j]));
-						im->b[i][j] = CurveFactory::gamma (CLIP(defgain*im->b[i][j]));
+						im->r[i][j] = CurveFactory::gamma ((gd*im->r[i][j]));
+						im->g[i][j] = CurveFactory::gamma ((gd*im->g[i][j]));
+						im->b[i][j] = CurveFactory::gamma ((gd*im->b[i][j]));
 					}
 			}
 			cmsDoTransform (hTransform, im->data, im->data, im->planestride);
@@ -1686,14 +1694,14 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 
-void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval) {
+void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval) {
 
     for (int i=0; i<width; i++) {
-        int r = rin[i], g = gin[i], b = bin[i];
+        float r = rin[i], g = gin[i], b = bin[i];
 		if (r>maxval || g>maxval || b>maxval) {
-		    int ro = MIN (r, maxval);
-		    int go = MIN (g, maxval);
-		    int bo = MIN (b, maxval);
+		    float ro = MIN (r, maxval);
+		    float go = MIN (g, maxval);
+		    float bo = MIN (b, maxval);
             double L = r + g + b;
             double C = 1.732050808 * (r - g);
             double H = 2 * b - r - g;
@@ -1704,37 +1712,36 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
                 C *= ratio;
                 H *= ratio;
             }
-            int rr = L / 3.0 - H / 6.0 + C / 3.464101615;
-            int gr = L / 3.0 - H / 6.0 - C / 3.464101615;
-            int br = L / 3.0 + H / 3.0;
-			rout[i] = CLIP(rr);
-			gout[i] = CLIP(gr);
-			bout[i] = CLIP(br);
+            float rr = L / 3.0 - H / 6.0 + C / 3.464101615;
+            float gr = L / 3.0 - H / 6.0 - C / 3.464101615;
+            float br = L / 3.0 + H / 3.0;
+			rout[i] = rr;
+			gout[i] = gr;
+			bout[i] = br;
 		}
         else {
-            rout[i] = CLIP(rin[i]);
-            gout[i] = CLIP(gin[i]);
-            bout[i] = CLIP(bin[i]);
+            rout[i] = rin[i];
+            gout[i] = gin[i];
+            bout[i] = bin[i];
         }
     }
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, int maxval, double xyz_cam[3][3], double cam_xyz[3][3]) {
+void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double xyz_cam[3][3], double cam_xyz[3][3]) {
 
     static bool crTableReady = false;
 	
 	// lookup table for Lab conversion
 	// perhaps should be centralized, universally defined so we don't keep remaking it???
-    static float fv[0x10000];
-    if (!crTableReady) {
-    	for (int ix=0; ix < 0x10000; ix++) {
+    ImProcFunctions::cachef;
+    /*for (int ix=0; ix < 0x10000; ix++) {
     	    float rx = ix / 65535.0;
         	fv[ix] = rx > 0.008856 ? exp(1.0/3 * log(rx)) : 7.787*rx + 16/116.0;
-    	}
-    	crTableReady = true;
-    }
+    	}*/
+    	//crTableReady = true;
+
 
     for (int i=0; i<width; i++) {
         float r = rin[i], g = gin[i], b = bin[i];
@@ -1743,34 +1750,34 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 		    float go = MIN (g, maxval);
 		    float bo = MIN (b, maxval);
             float yy = xyz_cam[1][0]*r + xyz_cam[1][1]*g + xyz_cam[1][2]*b;
-            float fy = CurveFactory::flinterp(fv,yy);
+            float fy = ImProcFunctions::cachef[yy];
             // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
             float x = xyz_cam[0][0]*ro + xyz_cam[0][1]*go + xyz_cam[0][2]*bo;
             float y = xyz_cam[1][0]*ro + xyz_cam[1][1]*go + xyz_cam[1][2]*bo;
             float z = xyz_cam[2][0]*ro + xyz_cam[2][1]*go + xyz_cam[2][2]*bo;
-            x = CurveFactory::flinterp(fv,x);
-            y = CurveFactory::flinterp(fv,y);
-            z = CurveFactory::flinterp(fv,z);
+            x = ImProcFunctions::cachef[x];
+            y = ImProcFunctions::cachef[y];
+            z = ImProcFunctions::cachef[z];
             // convert back to rgb
             double fz = fy - y + z;
             double fx = fy + x - y;
 			// again shouldn't this be a universal, centrally defined function???
             double zr = (fz<=0.206893) ? ((116.0*fz-16.0)/903.3) : (fz * fz * fz);
             double xr = (fx<=0.206893) ? ((116.0*fx-16.0)/903.3) : (fx * fx * fx);
-            x = xr*65535.0 - 0.5;
+            x = xr*65535.0 ;
             y = yy;
-            z = zr*65535.0 - 0.5;
+            z = zr*65535.0 ;
             float rr = cam_xyz[0][0]*x + cam_xyz[0][1]*y + cam_xyz[0][2]*z;
             float gr = cam_xyz[1][0]*x + cam_xyz[1][1]*y + cam_xyz[1][2]*z;
             float br = cam_xyz[2][0]*x + cam_xyz[2][1]*y + cam_xyz[2][2]*z;
-			rout[i] = CLIP(rr);
-			gout[i] = CLIP(gr);
-			bout[i] = CLIP(br);
+			rout[i] = (rr);
+			gout[i] = (gr);
+			bout[i] = (br);
 		}
         else {
-            rout[i] = CLIP(rin[i]);
-            gout[i] = CLIP(gin[i]);
-            bout[i] = CLIP(bin[i]);
+            rout[i] = (rin[i]);
+            gout[i] = (gin[i]);
+            bout[i] = (bin[i]);
         }
     }
 }
@@ -1780,20 +1787,21 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip) {
 
     if (method=="Luminance")
-        HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535 / initialGain);
+        HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
     else if (method=="CIELab blending")
-        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535 / initialGain, xyz_cam, cam_xyz);
+        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, xyz_cam, cam_xyz);
     else if (method=="Color")
         HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
+int RawImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
 
     histcompr = 3;
 
-    memset (histogram, 0, (65536>>histcompr)*sizeof(int));
+    histogram(65536>>histcompr);
+    histogram.clear();
 
     for (int i=border; i<H-border; i++) {
         int start, end;

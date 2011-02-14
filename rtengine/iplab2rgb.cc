@@ -86,13 +86,13 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 	} else {
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
-			float g;
-			int R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
 			int ix = 3*i*lab->W;
 			for (int j=0; j<lab->W; j++) {
+			float g;
+			float R,G,B;
 				
 				//float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 				
@@ -107,9 +107,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				xyz2srgb(x_,y_,z_,R,G,B);
 
 				/* copy RGB */
-				image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
-				image->data[ix++] = (int)gamma2curve[CLIP(G)] >> 8;
-				image->data[ix++] = (int)gamma2curve[CLIP(B)] >> 8;
+				image->data[ix++] = (int)gamma2curve[(R)] >> 8;
+				image->data[ix++] = (int)gamma2curve[(G)] >> 8;
+				image->data[ix++] = (int)gamma2curve[(B)] >> 8;
 			}
 		}
 	}
@@ -164,7 +164,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
 			float g;
-			int R,G,B;
+			float R,G,B;
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
@@ -181,9 +181,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
-                image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
-                image->data[ix++] = (int)gamma2curve[CLIP(G)] >> 8;
-                image->data[ix++] = (int)gamma2curve[CLIP(B)] >> 8;
+                image->data[ix++] = (int)gamma2curve[(R)] >> 8;
+                image->data[ix++] = (int)gamma2curve[(G)] >> 8;
+                image->data[ix++] = (int)gamma2curve[(B)] >> 8;
             }
         }
     }
@@ -238,7 +238,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
 			float g;
-			int R,G,B;
+			float R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -254,9 +254,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
-				image->r[i-cy][j-cx] = gamma2curve[CLIP(R)];
-				image->g[i-cy][j-cx] = gamma2curve[CLIP(G)];
-				image->b[i-cy][j-cx] = gamma2curve[CLIP(B)];
+				image->r[i-cy][j-cx] = (int)gamma2curve[(R)];
+				image->g[i-cy][j-cx] = (int)gamma2curve[(G)];
+				image->b[i-cy][j-cx] = (int)gamma2curve[(B)];
 			}
 		}
 	}

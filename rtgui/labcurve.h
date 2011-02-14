@@ -53,7 +53,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, publ
 
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
-    void updateCurveBackgroundHistogram (unsigned* hist);
+    void updateCurveBackgroundHistogram (LUTu &hist);
 };
 
 #endif

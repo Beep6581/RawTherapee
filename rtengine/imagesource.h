@@ -28,6 +28,7 @@
 #include <coord2d.h>
 #include <vector>
 #include <imagedata.h>
+#include "LUT.h"
 
 namespace rtengine {
 
@@ -86,7 +87,7 @@ class ImageSource : public InitialImage {
 
                 void        increaseRef () { references++; }
                 void        decreaseRef () { references--; if (!references) delete this; }
-        virtual int         getAEHistogram (unsigned int* histogram, int& histcompr) {return 0;}
+        virtual int         getAEHistogram (LUTu & histogram, int& histcompr) {return 0;}
 
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }

@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
+#include <LUT.h>
 
 class HistogramArea;
 struct HistogramAreaIdleHelper {
@@ -44,10 +45,10 @@ class HistogramArea : public Gtk::DrawingArea {
     Gdk::Color lgray;
     Gdk::Color mgray;
     Gdk::Color dgray;
-    unsigned int* lhist;
-    unsigned int* rhist;
-    unsigned int* ghist;
-    unsigned int* bhist;
+    LUTu lhist;
+    LUTu rhist;
+    LUTu ghist;
+    LUTu bhist;
     bool valid;
     bool showFull;
     int oldwidth, oldheight;
@@ -65,7 +66,7 @@ class HistogramArea : public Gtk::DrawingArea {
     ~HistogramArea();
 
     void renderHistogram ();
-    void update (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh);
+    void update (LUTu &rh, LUTu &gh, LUTu &bh, LUTu &lh);
     void updateOptions (bool r, bool g, bool b, bool v);
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
@@ -73,9 +74,9 @@ class HistogramArea : public Gtk::DrawingArea {
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
   private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-        unsigned int * data, double scale, int hsize, int vsize);
+        LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-        unsigned int * data, double scale, int hsize, int & ui, int & oi);
+    	LUTu & data, double scale, int hsize, int & ui, int & oi);
 };
 
 class HistogramPanel : public Gtk::HBox {
@@ -94,7 +95,7 @@ class HistogramPanel : public Gtk::HBox {
 
     HistogramPanel ();
 
-    void histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh) { histogramArea->update (rh, gh, bh, lh); }
+    void histogramChanged (LUTu &rh, LUTu &gh, LUTu &bh, LUTu &lh) { histogramArea->update (rh, gh, bh, lh); }
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 };

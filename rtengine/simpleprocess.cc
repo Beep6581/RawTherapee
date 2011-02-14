@@ -108,7 +108,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgress (0.25);
 
     // perform first analysis
-    unsigned int* hist16 = new unsigned int[65536];
+    LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
     // perform transform (excepted resizing)
@@ -137,17 +137,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int    bl = params.toneCurve.black;
 
     if (params.toneCurve.autoexp) {
-        unsigned int* aehist = new unsigned int [65536]; int aehistcompr;
+        LUTu aehist; int aehistcompr;
         imgsrc->getAEHistogram (aehist, aehistcompr);
         ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
-        delete [] aehist;
     }
 
-    float* curve1 = new float [65536];
-    float* curve2 = new float [65536];
-	float* curve = new float [65536];
+    LUTf curve1 (65536,0);
+    LUTf curve2 (65536,0);
+	LUTf curve (65536,0);
+	LUTu dummy;
 	
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy);
 
 	LabImage* labView = new LabImage (fw,fh);
 
@@ -161,14 +161,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 
     // luminance histogram update
-    memset (hist16, 0, 65536*sizeof(int));
+    hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
             hist16[CLIP((int)(2*(labView->L[i][j])))]++;
 
     // luminance processing
-	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, NULL, 1);
-	ipf.luminanceCurve (labView, labView, curve, 0, fh);
+	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 1);
+	ipf.luminanceCurve (labView, labView, curve);
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve1, 1);
 	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve2, 1);
 	ipf.chrominanceCurve (labView, labView, curve1, curve2);
@@ -177,11 +177,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	ipf.defringe (labView);
 	//ipf.lumadenoise (labView, buffer);
     ipf.sharpening (labView, (float**)buffer);
-
-    delete [] curve1;
-	delete [] curve2;
-	delete [] curve;
-    delete [] hist16;
 
     // color processing
     /*ipf.colorCurve (labView, labView);
