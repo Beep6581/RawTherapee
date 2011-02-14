@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
 # the default target is 'Debug'
-set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif ()
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 # By default, we don't use specific processor target, so  PROC_TARGET_NUMBER is set to 0. If can specify other values to select specific
 # processor targets, which list can be found in ProcessorTargets.cmake.
@@ -139,7 +142,6 @@ elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
 #generating AboutThisBuild.txt
-set (BUILD_TYPE CMAKE_BUILD_TYPE)
 if (WIN32)
     include (About-Windows.cmake)
 elseif (APPLE)
