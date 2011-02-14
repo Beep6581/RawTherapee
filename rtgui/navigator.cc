@@ -99,30 +99,6 @@ void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
 	volatile double var_R = r / 255.0;
 	volatile double var_G = g / 255.0;
 	volatile double var_B = b / 255.0;
-
-	/*volatile double var_Min = MIN(MIN(var_R,var_G),var_B);
-	volatile double var_Max = MAX(MAX(var_R,var_G),var_B);
-	double del_Max = var_Max - var_Min;
-    double	V = (var_Max + var_Min) / 2;
-    double H, S;
-	if (fabs(del_Max)<0.0000001) {
-		H = 0;
-		S = 0;
-	}
-	else {
-		if (V < 0.5) S = del_Max / (var_Max + var_Min);
-		else         S = del_Max / (2 - var_Max - var_Min);
-
-		double del_R = ( ( ( var_Max - var_R ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
-		double del_G = ( ( ( var_Max - var_G ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
-		double del_B = ( ( ( var_Max - var_B ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
-		if      ( var_R == var_Max ) H = del_B - del_G; 
-		else if ( var_G == var_Max ) H = (1.0 / 3.0) + del_R - del_B; 
-		else if ( var_B == var_Max ) H = (2.0 / 3.0) + del_G - del_R; 
-
-		if ( H < 0 )  H += 1;
-		if ( H > 1 )  H -= 1;
-	}*/
 	
 	double var_Min = MIN(MIN(var_R,var_G),var_B);
 	double var_Max = MAX(MAX(var_R,var_G),var_B);

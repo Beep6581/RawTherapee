@@ -97,9 +97,6 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
     }
 
 	wb = ColorTemp (1.0,1.0,1.0);
-    //wb = ColorTemp (6504,1.0);
-	//wb = ColorTemp (0.995701, 1.00266, 1.32172); 
-	//modification for D50 working space -- Bradford chromatic adaptation of (1,1,1) in D65
 	//this is probably a mistake if embedded profile is not D65
 
     return 0;

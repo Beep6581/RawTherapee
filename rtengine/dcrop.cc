@@ -58,6 +58,9 @@ void Crop::setListener (DetailedCropListener* il) {
 }       
 
 void Crop::update (int todo, bool internal) {
+	
+	//flag for testing color accuracy
+	bool colortest = false;
 
     if (!internal)
         parent->mProcessing.lock ();
@@ -108,11 +111,11 @@ void Crop::update (int todo, bool internal) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-		
-		//if (origCrop->height>100 & origCrop->width>100)
-		//	printf("dcrop init R= %f  G= %f  B= %f  \n",origCrop->r[100][100],origCrop->g[100][100],origCrop->b[100][100]);
-
-        parent->minit.unlock ();
+		if (origCrop->height>100 & origCrop->width>100) {
+			printf("dcrop init R= %f  G= %f  B= %f  \n",origCrop->r[100][100]/256,origCrop->g[100][100]/256,origCrop->b[100][100]/256);
+			printf("init  sRGB R= %d  G= %d  B= %d  \n",CurveFactory::gamma_srgb((int)origCrop->r[100][100])/256,CurveFactory::gamma_srgb((int)origCrop->g[100][100])/256,CurveFactory::gamma_srgb((int)origCrop->b[100][100])/256);
+		}
+			parent->minit.unlock ();
     }
 
     // transform
@@ -136,15 +139,39 @@ void Crop::update (int todo, bool internal) {
     }
 
     // shadows & highlights & tone curve & convert to cielab
+	int xref,yref;
+	xref=000;yref=000;
+	if (colortest && cropw>115 && croph>115) 
+		for(int j=1;j<5;j++){	
+			xref+=j*30;yref+=j*30;
+			printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip, \
+				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
+				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
+				   parent->imgsrc->getGamma());
+		}
+	
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, parent->imgsrc->getDefGain(), params.toneCurve.saturation);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, params.toneCurve.saturation);
 
+	xref=000;yref=000;
+	if (colortest && cropw>115 && croph>115) 
+	for(int j=1;j<5;j++){	
+		xref+=j*30;yref+=j*30;
+		printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip, \
+			   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
+			   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+			   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
+		printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
+			   laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			   laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			   laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+	}
 	
 	// apply luminance operations
     if (todo & (M_LUMINANCE+M_COLOR)) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve, 0, croph);
-		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 0, parent->chroma_acurve, 0, croph);
-		parent->ipf.chrominanceCurve (laboCrop, labnCrop, 1, parent->chroma_bcurve, 0, croph);
+		parent->ipf.chrominanceCurve (laboCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve);
 
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 
@@ -160,17 +187,42 @@ void Crop::update (int todo, bool internal) {
         }
 
     }
-    
 
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
+	//parent->ipf.lab2rgb (laboCrop, cropImg);
 	
-	/*if (cropImg->height>100 & cropImg->width>100) //for testing
-		printf("dcrop final R= %d  G= %d  B= %d  \n", \
-			   cropImg->data[3*100*(cropImg->width+1)], \
-			   cropImg->data[3*100*(cropImg->width+1)+1], \
-			   cropImg->data[3*100*(cropImg->width+1)+2]);*/
+	//cropImg = baseCrop->to8();
 
+	//	 int xref,yref;
+	xref=000;yref=000;
+	if (colortest && cropw>115 && croph>115) 
+	for(int j=1;j<5;j++){	
+		xref+=j*30;yref+=j*30;
+		int rlin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))]/255.0) * 255.0);
+		int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
+		int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
+
+		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip, \
+			   rlin,glin,blin);
+			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))], \
+			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)], \
+			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
+		//printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, \
+			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+	}
+	
+
+	if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
+		xref=000;yref=000;
+		printf("dcrop final R= %d  G= %d  B= %d  \n", \
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)], \
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1], \
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
+	}
     if (cropImageListener) {
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)
@@ -275,7 +327,8 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     leftBorder  = SKIPS(rqx1-bx1,skip);
     upperBorder = SKIPS(rqy1-by1,skip);
 
-    if (settings->verbose) printf ("setsizes starts (%d, %d, %d, %d)\n", orW, orH, trafw, trafh);
+    if (settings->verbose) 
+		printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh,cw,ch);
 
     if (cw!=cropw || ch!=croph || orW!=trafw || orH!=trafh) {
 

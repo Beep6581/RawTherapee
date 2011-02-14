@@ -402,7 +402,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
-									 double shcompr, double br, double contr, double defmul, double gamma_, bool igamma, \
+									 double shcompr, double br, double contr, double gamma_, bool igamma_, \
 									 const std::vector<double>& curvePoints, unsigned int* histogram, \
 									 float* hlCurve, float* shCurve, float* outCurve, \
 									 unsigned int* outBeforeCCurveHistogram, int skip) {
@@ -428,7 +428,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 		bool needcontrast = contr>0.00001 || contr<-0.00001;
 		
 		// check if inverse gamma is needed at the end
-		bool needigamma = igamma && gamma_>0;
+		bool needigamma = igamma_ && gamma_>0;
 		
 		// create a curve if needed
 		Curve* tcurve = NULL;
@@ -592,7 +592,7 @@ double CurveFactory::centercontrast (double x, double b, double m) {
 			
 			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)
 			if (needigamma)
-				val = igamma2 (val);
+				val = igamma (val, gamma_, start, slope, mul, add);
 			
 			outCurve[i] = (65535.0 * val);
 		}

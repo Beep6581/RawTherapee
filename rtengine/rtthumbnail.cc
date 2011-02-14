@@ -709,11 +709,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	float* curve1 = new float [65536];
     float* curve2 = new float [65536];
 	float* curve = new float [65536];
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
 
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, logDefGain, params.toneCurve.saturation);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
@@ -727,10 +727,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance processing
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, NULL, 16);
     ipf.luminanceCurve (labView, labView, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve, 16);
-	ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve, 16);
-    ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve1, 16);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve2, 16);
+    ipf.chrominanceCurve (labView, labView, curve1, curve2);
 
 	delete [] curve1;
     delete [] curve2;

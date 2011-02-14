@@ -104,16 +104,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-				/* XYZ-D50 to RGB */
-				//int R = (int)( 3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
-				//int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
-				//int B = (int)( 0.0719453*x_ - 0.2289914*y_ + 1.4052427*z_);
 				xyz2srgb(x_,y_,z_,R,G,B);
-				
-				// XYZ-D65 to RGB 
-				//3.2404542 -1.5371385 -0.4985314
-				//-0.9692660  1.8760108  0.0415560
-				//0.0556434 -0.2040259  1.0572252
 
 				/* copy RGB */
 				image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
@@ -188,10 +179,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-				/* XYZ-D50 to RGB */
-				//int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
-				//int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
-				//int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
 				xyz2srgb(x_,y_,z_,R,G,B);
 
                 image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
@@ -265,10 +252,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-				/* XYZ-D50 to RGB */
-				//int R = (int)(3.1338561*x_ - 1.6168667*y_ - 0.4906146*z_);
-				//int G = (int)(-0.9787684*x_ + 1.9161415*y_ + 0.0334540*z_);
-				//int B = (int)(0.0719453*x_ -0.2289914*y_ + 1.4052427*z_);
 				xyz2srgb(x_,y_,z_,R,G,B);
 
 				image->r[i-cy][j-cx] = gamma2curve[CLIP(R)];

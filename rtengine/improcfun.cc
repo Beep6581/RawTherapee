@@ -67,6 +67,15 @@ using namespace procparams;
 	
 #define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
 #define kappa	903.29630 //24389.0/27.0;
+	
+	
+//%%%%%%%%%%%%
+#define epsilon 0.00885645 //216/24389
+#define kappainv 0.00110706 //inverse of kappa
+#define kapeps 8 // kappa*epsilon
+#define Lab2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
+//%%%%%%%%%%%%
+
 
 extern const Settings* settings;
 
@@ -203,7 +212,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 }
 
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, float defmul, int sat) {
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltonecurve, float* shtonecurve, float* tonecurve, SHMap* shmap, int sat) {
 
     int h_th, s_th;
     if (shmap) {
@@ -294,8 +303,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
                 }
             }
 
-
-			//float tonefactor = (0.299*rtonefactor+0.587*gtonefactor+0.114*btonefactor);
+			//TODO: proper treatment of out-of-gamut colors
 			float tonefactor=(CurveFactory::flinterp(hltonecurve,r) + CurveFactory::flinterp(hltonecurve,g) + CurveFactory::flinterp(hltonecurve,b))/3;
 
 			r = (r*tonefactor);
@@ -359,7 +367,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
 				}
 				hsv2rgb(h,s,v,r,g,b);
 			}
-			//hsv2rgb(h,s,v,r,g,b);
 			 
 			//r=FCLIP(r);
 			//g=FCLIP(g);
@@ -385,11 +392,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, float* hltone
 			//float a1 = lab->a[i][j];
 			//float b1 = lab->b[i][j];
 			//float xxx=1;
+			
+			//test for color accuracy
+			/*float fy = (0.00862069 * lab->L[i][j])/327.68 + 0.137932; // (L+16)/116
+			float fx = (0.002 * lab->a[i][j])/327.68 + fy;
+			float fz = fy - (0.005 * lab->b[i][j])/327.68;
+			
+			float x_ = 65535*Lab2xyz(fx)*D50x;
+			float y_ = 65535*Lab2xyz(fy);
+			float z_ = 65535*Lab2xyz(fz)*D50z;
+			
+			int R,G,B;
+			xyz2srgb(x_,y_,z_,R,G,B);
+			r=(float)R; g=(float)G; b=(float)B;
+			float xxx=1;*/
+
         }
     }
 	
 	delete [] cossq;
-	//delete [] my_tonecurve;
  }
 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, float* curve, int row_from, int row_to) {
@@ -405,28 +426,17 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, float* cur
 }
 		
 	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, int channel, float* curve, int row_from, int row_to) {
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, float* acurve, float* bcurve) {
 	
 	int W = lold->W;
-	//int H = lold->H;
-	if (channel==0) {
-		for (int i=row_from; i<row_to; i++)
-			for (int j=0; j<W; j++) {
-				float ain=lold->a[i][j];
-				if (fabs(ain)<32767) 
-					lnew->a[i][j] = curve[CLIP((int)lold->a[i][j]+32768)]-32768;
-			}
-	} 
-	if (channel==1) {
-		for (int i=row_from; i<row_to; i++)
-			for (int j=0; j<W; j++) {
-				float bin=lold->b[i][j];
-				if (fabs(bin)<32767) 
-					lnew->b[i][j] = curve[CLIP((int)lold->b[i][j]+32768)]-32768;
-			}
-	}
+	int H = lold->H;
+	for (int i=0; i<H; i++)
+		for (int j=0; j<W; j++) {
+			lnew->a[i][j] = CurveFactory::flinterp(acurve,lold->a[i][j]+32768)-32768;
+			lnew->b[i][j] = CurveFactory::flinterp(bcurve,lold->b[i][j]+32768)-32768;
+		}
 }
-
+	
 #include "cubic.cc"
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
@@ -675,7 +685,7 @@ void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, fl
 	
 void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &b) {
 	
-	//Transform to output color.  Standard sRGB is D65, so we use the default D65 adapted matrices
+	//Transform to output color.  Standard sRGB is D65, but internal representation is D50
 	//Note that it is only at this point that we should have need of clipping color data
 	
 	/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
@@ -690,9 +700,9 @@ void ImProcFunctions::xyz2srgb (float x, float y, float z, int &r, int &g, int &
 	g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
 	b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
 	
-	r = (sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)+0.5 ;
-	g = (sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)+0.5 ;
-	b = (sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)+0.5 ;
+	r = (int)((sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)+0.5) ;
+	g = (int)((sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)+0.5) ;
+	b = (int)((sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)+0.5) ;
 
 }
 	

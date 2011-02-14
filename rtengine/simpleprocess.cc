@@ -147,11 +147,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     float* curve2 = new float [65536];
 	float* curve = new float [65536];
 	
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
 
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, imgsrc->getDefGain(),  params.toneCurve.saturation);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
@@ -167,16 +167,15 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             hist16[CLIP((int)(2*(labView->L[i][j])))]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL);
-    ipf.luminanceCurve (labView, labView, curve, 0, fh);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve, 1);
-    ipf.chrominanceCurve (labView, labView, 0, curve, 0, fh);    
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve, 1);
-    ipf.chrominanceCurve (labView, labView, 1, curve, 0, fh);
-	
+	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, NULL, 1);
+	ipf.luminanceCurve (labView, labView, curve, 0, fh);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve1, 1);
+	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve2, 1);
+	ipf.chrominanceCurve (labView, labView, curve1, curve2);
+
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
-	ipf.lumadenoise (labView, buffer);
+	//ipf.lumadenoise (labView, buffer);
     ipf.sharpening (labView, (float**)buffer);
 
     delete [] curve1;
@@ -186,8 +185,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // color processing
     /*ipf.colorCurve (labView, labView);
-    ipf.colordenoise (labView, buffer);
-	ipf.dirpyrdenoise (labView);*/
+    ipf.colordenoise (labView, buffer);*/
+	ipf.dirpyrdenoise (labView);
 
     // wavelet equalizer
     //ipf.waveletEqualizer (labView, true, true);

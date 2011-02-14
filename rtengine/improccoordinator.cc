@@ -202,9 +202,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
 									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
 									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
-									imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, \
+									imgsrc->getGamma(), true, params.toneCurve.curve, \
 									vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, imgsrc->getDefGain(), params.toneCurve.saturation);
+        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
 
         // compute L channel histogram
         memset (lhist16, 0, 65536*sizeof(int));
@@ -227,8 +227,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chrominanceCurve (oprevl, nprevl, 0, chroma_acurve, 0, pH);
-        ipf.chrominanceCurve (oprevl, nprevl, 1, chroma_bcurve, 0, pH);
+		ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve);
         //ipf.colorCurve (nprevl, nprevl);
 
         readyphase++;
