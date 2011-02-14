@@ -1,7 +1,7 @@
 # this will generate a target that will never exist, so it will (should) be executed on each build
 #WARNING: Actually, only Gcc is supported
 
-string (TOUPPER ${BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 set (OUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.txt")
 set (VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h")
@@ -13,6 +13,7 @@ add_custom_target (AboutFile ALL
 	COMMAND \(echo Processor: ${PROC_LABEL}\) >>${OUT_FILE}
 	COMMAND \(echo Bit depth: ${PROC_BIT_DEPTH}\) >>${OUT_FILE}
 	COMMAND \(echo Gtkmm: V${GTKMM_VERSION}\) >>${OUT_FILE}
+	COMMAND \(echo Build type: ${CMAKE_BUILD_TYPE}\) >>${OUT_FILE}
 	COMMAND \(echo Build flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}} \) >>${OUT_FILE}
 	COMMAND \(echo Link flags: ${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}} \) >>${OUT_FILE}
 	COMMAND (if ${OPTION_OMP}==ON       \(echo OpenMP support: Yes\) else \(echo OpenMP support: No\)) >>${OUT_FILE}
