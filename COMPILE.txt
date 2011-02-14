@@ -1,0 +1,139 @@
+If you have problems with the compilation, identified the reason and fixed 
+the bug, please send me the updated build scripts (CMakeLists.txt files) to:
+hgabor@rawtherapee.com
+
+Preamble:
+---------
+
+Cmake is actually used to create the Makefiles (scripts that handle the build process) or specific Integrated Developement Environement (IDE) projects.
+It is designed to find all necessary compilation flags for your specific machine, but everything can be overriden.
+
+RT's build mechanism will generate a build information file, named "AboutThisBuild.txt", and require some parameters that can't be set by Cmake, so it's
+done in our build script, and may be aoverriden at your own will. The build process also enable some sort of cross compiling, since you can only choose
+a specific processor variation of the same type (e.g. core2, athlon64, which are both an x86 architecture). Real cross compiling (e.g. building the windows
+version on a linux platform) has not been tested.
+
+By default, no processor is specified, so Cmake/GCC will build RT for your processor (or maybe a generic processor). Developers that are providing build to
+download then have to set the processor label manually (set to 'undefined' by default) with the PROC_FORCED_LABEL cmake's parameter (we assume that you know
+how to specify a cmake parameter).
+
+
+Windows
+-------
+
+	METHOD 1:
+		Requirements:
+		- MinGW + MSYS
+		- CMake
+		- GTK and GTKMM development environments
+		
+		Compile:
+		- Start MSYS
+		- Enter the root directory of the RawTherapee source tree
+		- Type: cmake -G "MSYS Makefiles" .
+		- Type: make install
+		- You find the compiled program in the release directory
+
+	METHOD 2:
+		Requirements:
+		- tdm-gcc 	(http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
+		- cmake 	(http://www.cmake.org/cmake/resources/software.html)
+		- mercurial (http://mercurial.selenic.com/wiki/WindowsInstall)
+		- gtkmm		(http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
+		
+		Compile:
+		- Enter the root directory of the RawTherapee source tree
+		- Type: cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		  If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
+		  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
+		     to cmake's command line
+		     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+		     in cmake's command line
+		     Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
+		  2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
+		- Type: mingw32-make.exe install
+		- You find the compiled program in the "release" directory
+
+Linux
+-----
+
+	Requirements:
+		- CMake
+		- GTK and GTKMM development packages
+		- libtiff, libpng, libjpeg, lcms, libiptcdata development packages
+		- ...did I forget something?
+
+	On Ubuntu/Debian the requirements can be installed by running:
+		sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev mercurial
+
+	Compile:
+		- Enter the root directory of the RawTherapee source tree
+		- Type: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		- Type: make install
+		- You find the compiled program in the release directory (you can copy it 
+		anywhere you want)
+
+	(By changing the cmake flags, you can change where the release is.  By removing all flags it should go to the standard system install location).
+
+
+	Using Eclipse under Linux:
+
+		Eclipse mercurial plugin:
+			click Help -> Install new Software.
+			The Eclipse Update Site for MercurialEclipse is available at this URL:
+			http://cbes.javaforge.com/update
+					
+		Import the rawtherapee mercurial repository:
+			File->new->'other'->mercurial->Clone existing repository
+			fill in URL: https://rawtherapee.googlecode.com/hg
+
+		Enter root directory of RawTherapee source tree from a terminal window.
+		configure the source for Eclipse with:
+			cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. -DCMAKE_BUILD_TYPE=Release
+		If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
+		1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
+		   to cmake's command line
+		   If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+		   in cmake's command line
+		   Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
+		2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
+
+		Eclipse does not do 'make install' but only 'make all' so to get the release there are 2 ways.
+			1. type 'make install' in the console or,
+			2. in 'Project'->'properties'->'C/C++ Make Project'->'Build (incremental build)' change 'all' to 'install'
+
+
+...	
+	  	
+OSX
+---
+
+Requirements:
+- XCode Development Tools (you only need a subset of these, but it is probably easier to just install all of them)
+- MacPorts
+  - Set /opt/local/etc/macports/variants.conf to include "+no_x11 +quartz"
+  - If you want to build for multiple architectures, add +universal to variants.conf.  Note that this will increase the size of the final application substantially.
+    - Set /opt/local/etc/macports/macports.conf key 'universal_archs' to the architectures you wish to build for.  Possible values
+      include "i386 x86_64 ppc ppc64"
+    - Edit beginning of CMakeLists.txt to enable the same architectures as you added to variants.conf
+  - Run "sudo port install cairomm pango-devel gtk2 cmake glibmm gtkmm lcms libiptcdata" to install all needed libraries and tools
+  - If you don't already have Mercurial installed, run "sudo port install mercurial"
+  - If you want to try OpenMP builds, run "sudo port install gcc45"
+
+Compile:
+- Enter root directory of RawTherapee source tree
+- Type: cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 . (to enable OpenMP, assuming you have installed gcc45) OR:
+        cmake -D OPTION_OMP=false . (to disable OpenMP and use the default compiler)
+  If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
+  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
+     to cmake's command line
+     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+     in cmake's command line
+     Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
+  2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
+- Type: make install
+- Type: ./tools/osx/make-app-bundle
+- You will find a RawTherapee.dmg file in release/ folder; this is the distribution release and can be run on any machine which meets the 
+  architecture requirements you specified in variants.conf earlier.
+
+For any bugs or patches to the OSX build, please contact Wyatt <wyatt@digitalcave.ca>
