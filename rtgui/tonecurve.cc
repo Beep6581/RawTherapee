@@ -36,7 +36,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
 
   sclip = Gtk::manage (new Gtk::SpinButton ());
   sclip->set_range (0.0, 0.9999);
-  sclip->set_increments (0.0001, 0.01);
+  sclip->set_increments (0.001, 0.01);
   sclip->set_value (0.002);
   sclip->set_digits (4);
   sclip->signal_value_changed().connect( sigc::mem_fun(*this, &ToneCurve::clip_changed) );
@@ -49,7 +49,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
 //----------- Exposure Compensation ------------------------
-  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.01, 0));
+  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.05, 0));
   pack_start (*expcomp);
   hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 100, 1, 70));
   pack_start (*hlcompr);
@@ -57,7 +57,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   pack_start (*hlcomprthresh);
 
 //----------- Black Level ----------------------------------
-  black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 1, 0));
+  black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0));
   pack_start (*black);
   shcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50));
   pack_start (*shcompr);
