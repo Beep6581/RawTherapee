@@ -1,9 +1,10 @@
-Version: release-3.0-a1.671
-Changset: 965e55a4a9d9
+Version: release-3.0-a1.679
+Changset: d0d6f122a6ed
 Processor: undefined
 Bit depth: 64 bits
 Gtkmm: V2.22.0
-Build flags:  
+Build type: Debug
+Build flags:   -g
 Link flags:  
 OpenMP support: No
 MMAP support: Yes

@@ -75,14 +75,14 @@ HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	hsvsepb->show ();
 	
 	satbox = new Gtk::VBox ();
-	sat[0] = new Adjuster (M("TP_HSVEQUALIZER1"), -100, 100, 0.1, 0);
-	sat[1] = new Adjuster (M("TP_HSVEQUALIZER2"), -100, 100, 0.1, 0);
-	sat[2] = new Adjuster (M("TP_HSVEQUALIZER3"), -100, 100, 0.1, 0);
-	sat[3] = new Adjuster (M("TP_HSVEQUALIZER4"), -100, 100, 0.1, 0);
-	sat[4] = new Adjuster (M("TP_HSVEQUALIZER5"), -100, 100, 0.1, 0);
-	sat[5] = new Adjuster (M("TP_HSVEQUALIZER6"), -100, 100, 0.1, 0);
-	sat[6] = new Adjuster (M("TP_HSVEQUALIZER7"), -100, 100, 0.1, 0);
-	sat[7] = new Adjuster (M("TP_HSVEQUALIZER8"), -100, 100, 0.1, 0);
+	sat[0] = new Adjuster (M("TP_HSVEQUALIZER1"), -100, 100, 1, 0);
+	sat[1] = new Adjuster (M("TP_HSVEQUALIZER2"), -100, 100, 1, 0);
+	sat[2] = new Adjuster (M("TP_HSVEQUALIZER3"), -100, 100, 1, 0);
+	sat[3] = new Adjuster (M("TP_HSVEQUALIZER4"), -100, 100, 1, 0);
+	sat[4] = new Adjuster (M("TP_HSVEQUALIZER5"), -100, 100, 1, 0);
+	sat[5] = new Adjuster (M("TP_HSVEQUALIZER6"), -100, 100, 1, 0);
+	sat[6] = new Adjuster (M("TP_HSVEQUALIZER7"), -100, 100, 1, 0);
+	sat[7] = new Adjuster (M("TP_HSVEQUALIZER8"), -100, 100, 1, 0);
     for(int i = 0; i < 8; i++)
     {
         sat[i]->setAdjusterListener(this);
@@ -95,14 +95,14 @@ HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	valbox = new Gtk::VBox ();
-	val[0] = new Adjuster (M("TP_HSVEQUALIZER1"), -100, 100, 0.1, 0);
-	val[1] = new Adjuster (M("TP_HSVEQUALIZER2"), -100, 100, 0.1, 0);
-	val[2] = new Adjuster (M("TP_HSVEQUALIZER3"), -100, 100, 0.1, 0);
-	val[3] = new Adjuster (M("TP_HSVEQUALIZER4"), -100, 100, 0.1, 0);
-	val[4] = new Adjuster (M("TP_HSVEQUALIZER5"), -100, 100, 0.1, 0);
-	val[5] = new Adjuster (M("TP_HSVEQUALIZER6"), -100, 100, 0.1, 0);
-	val[6] = new Adjuster (M("TP_HSVEQUALIZER7"), -100, 100, 0.1, 0);
-	val[7] = new Adjuster (M("TP_HSVEQUALIZER8"), -100, 100, 0.1, 0);
+	val[0] = new Adjuster (M("TP_HSVEQUALIZER1"), -100, 100, 1, 0);
+	val[1] = new Adjuster (M("TP_HSVEQUALIZER2"), -100, 100, 1, 0);
+	val[2] = new Adjuster (M("TP_HSVEQUALIZER3"), -100, 100, 1, 0);
+	val[3] = new Adjuster (M("TP_HSVEQUALIZER4"), -100, 100, 1, 0);
+	val[4] = new Adjuster (M("TP_HSVEQUALIZER5"), -100, 100, 1, 0);
+	val[5] = new Adjuster (M("TP_HSVEQUALIZER6"), -100, 100, 1, 0);
+	val[6] = new Adjuster (M("TP_HSVEQUALIZER7"), -100, 100, 1, 0);
+	val[7] = new Adjuster (M("TP_HSVEQUALIZER8"), -100, 100, 1, 0);
     for(int i = 0; i < 8; i++)
     {
         val[i]->setAdjusterListener(this);
@@ -116,14 +116,14 @@ HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	huebox = new Gtk::VBox ();
 	
 	
-	hue[0] = new Adjuster (M("TP_HSVEQUALIZER1"), -100, 100, 0.1, 0);
-	hue[1] = new Adjuster (M("TP_HSVEQUALIZER2"), -100, 100, 0.1, 0);
-	hue[2] = new Adjuster (M("TP_HSVEQUALIZER3"), -100, 100, 0.1, 0);
-	hue[3] = new Adjuster (M("TP_HSVEQUALIZER4"), -100, 100, 0.1, 0);
-	hue[4] = new Adjuster (M("TP_HSVEQUALIZER5"), -100, 100, 0.1, 0);
-	hue[5] = new Adjuster (M("TP_HSVEQUALIZER6"), -100, 100, 0.1, 0);
-	hue[6] = new Adjuster (M("TP_HSVEQUALIZER7"), -100, 100, 0.1, 0);
-	hue[7] = new Adjuster (M("TP_HSVEQUALIZER8"), -100, 100, 0.1, 0);
+	hue[0] = new Adjuster (M("TP_HSVEQUALIZER1"), -100, 100, 1, 0);
+	hue[1] = new Adjuster (M("TP_HSVEQUALIZER2"), -100, 100, 1, 0);
+	hue[2] = new Adjuster (M("TP_HSVEQUALIZER3"), -100, 100, 1, 0);
+	hue[3] = new Adjuster (M("TP_HSVEQUALIZER4"), -100, 100, 1, 0);
+	hue[4] = new Adjuster (M("TP_HSVEQUALIZER5"), -100, 100, 1, 0);
+	hue[5] = new Adjuster (M("TP_HSVEQUALIZER6"), -100, 100, 1, 0);
+	hue[6] = new Adjuster (M("TP_HSVEQUALIZER7"), -100, 100, 1, 0);
+	hue[7] = new Adjuster (M("TP_HSVEQUALIZER8"), -100, 100, 1, 0);
     for(int i = 0; i < 8; i++)
     {
         hue[i]->setAdjusterListener(this);

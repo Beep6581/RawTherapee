@@ -69,7 +69,7 @@ Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
    Gtk::HSeparator *hsep6a = Gtk::manage (new  Gtk::HSeparator());
    amount = Gtk::manage (new Adjuster (M("TP_SHARPENING_AMOUNT"), 1, 1000, 1, 150));
    radius = Gtk::manage (new Adjuster (M("TP_SHARPENING_RADIUS"), 0.3, 3, 0.01, 0.8));
-   threshold = Gtk::manage (new Adjuster (M("TP_SHARPENING_THRESHOLD"), 0, 16384, 1024, 1));
+   threshold = Gtk::manage (new Adjuster (M("TP_SHARPENING_THRESHOLD"), 0, 16384, 50, 1));
    pack_start(*hsep6a, Gtk::PACK_SHRINK, 2);
 
    pack_start (*usm);
