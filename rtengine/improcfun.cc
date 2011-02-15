@@ -79,7 +79,7 @@ using namespace procparams;
 
 extern const Settings* settings;
 
-LUTf ImProcFunctions::cachef = 0;
+LUTf ImProcFunctions::cachef ;
 /*float* ImProcFunctions::cacheL;
 float* ImProcFunctions::cachea;
 float* ImProcFunctions::cacheb;
@@ -92,7 +92,7 @@ LUTf ImProcFunctions::gamma2curve = 0;
 void ImProcFunctions::initCache () {
 
     int maxindex = 65536;
-	cachef(maxindex,0);
+	cachef(maxindex,LUT_CLIP_BELOW);
     //cacheL = new float[maxindex];
     //cachea = new float[maxindex];
     //cacheb = new float[maxindex];

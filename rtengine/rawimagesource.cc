@@ -234,7 +234,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         defGain=0.0;// = log(initialGain) / log(2.0);
         printf(" Initial gain is %f defgain is %f min is %f\n",initialGain,defGain,min);
         printf(" rm %f gm %f bm %f\n",rm,gm,bm);
-        //min/=initialGain;
+        min/=initialGain;
    //min=(float)1.0/min;
     //else {
         //defGain = 0.0;
@@ -309,9 +309,18 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 						gtot += green[i+m][jx+n];
 						btot += blue[i+m][jx+n];
 					}
-				line_red[j] = (rm*rtot);//CLIP???
-				line_grn[j] = (gm*gtot);
-				line_blue[j] = (bm*btot);
+				rtot*=rm;
+				gtot*=gm;
+				btot*=bm;
+				if (!hrp.enabled)
+				{
+					rtot=CLIP(rtot);
+					gtot=CLIP(gtot);
+					btot=CLIP(btot);
+				}
+				line_red[j] = rtot;
+				line_grn[j] = gtot;
+				line_blue[j] = btot;
             }
         } else {
             for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>maxx-skip) jx=maxx-skip-1;
@@ -324,9 +333,18 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 						gtot += rawData[i+m][(jx+n)*3+1];
 						btot += rawData[i+m][(jx+n)*3+2];
 					}				
-				line_red[j] = (rm*rtot);//CLIP???
-				line_grn[j] = (gm*gtot);
-				line_blue[j] = (bm*btot);
+				rtot*=rm;
+				gtot*=gm;
+				btot*=bm;
+				if (!hrp.enabled)
+				{
+					rtot=CLIP(rtot);
+					gtot=CLIP(gtot);
+					btot=CLIP(btot);
+				}
+				line_red[j] = rtot;
+				line_grn[j] = gtot;
+				line_blue[j] = btot;
 				
             }
         }
@@ -1750,14 +1768,14 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 		    float go = MIN (g, maxval);
 		    float bo = MIN (b, maxval);
             float yy = xyz_cam[1][0]*r + xyz_cam[1][1]*g + xyz_cam[1][2]*b;
-            float fy = ImProcFunctions::cachef[yy];
+            float fy = ImProcFunctions::cachef[yy]/327.68;
             // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
             float x = xyz_cam[0][0]*ro + xyz_cam[0][1]*go + xyz_cam[0][2]*bo;
             float y = xyz_cam[1][0]*ro + xyz_cam[1][1]*go + xyz_cam[1][2]*bo;
             float z = xyz_cam[2][0]*ro + xyz_cam[2][1]*go + xyz_cam[2][2]*bo;
-            x = ImProcFunctions::cachef[x];
-            y = ImProcFunctions::cachef[y];
-            z = ImProcFunctions::cachef[z];
+            x = ImProcFunctions::cachef[x]/327.68;
+            y = ImProcFunctions::cachef[y]/327.68;
+            z = ImProcFunctions::cachef[z]/327.68;
             // convert back to rgb
             double fz = fy - y + z;
             double fx = fy + x - y;
