@@ -349,10 +349,10 @@ PREFERENCES_DIRLAST;Son gidilen dizin
 PREFERENCES_DIROTHER;Diğer
 PREFERENCES_DIRSELECTDLG;Başlangıç görüntü dizinini seç...
 PREFERENCES_DIRSOFTWARE;Kurulum dizini
-PREFERENCES_DMETHOD;Yöntem
+TP_RAW_DMETHOD;Yöntem
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;External editor
-PREFERENCES_FALSECOLOR;Hatalı-renk bastırma değerleri
+TP_RAW_FALSECOLOR;Hatalı-renk bastırma değerleri
 PREFERENCES_FBROWSEROPTS;Dosya gezgini seçenekleri
 PREFERENCES_FILEFORMAT;Dosya biçimi
 PREFERENCES_FORIMAGE;Gürüntü dosyaları için

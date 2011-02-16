@@ -419,7 +419,7 @@ PREFERENCES_APPLNEXTSTARTUP;Projeví se při dalším spuštění
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
-PREFERENCES_CABLUE;Manuální korekce modré CA
+TP_RAWCACORR_CABLUE;Manuální korekce modré CA
 PREFERENCES_CACHECLEARALL;Vymaž vše
 PREFERENCES_CACHECLEARPROFILES;Vymaž profily
 PREFERENCES_CACHECLEARTHUMBS;Vymaž náhledy
@@ -432,8 +432,8 @@ PREFERENCES_CACHESTRAT2;Upřednostnit menší spotřebu paměti před rychlostí
 PREFERENCES_CACHESTRAT;Strategie cache
 PREFERENCES_CACHETHUMBFORM;Formát náhledů v cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximální velikost náhledu
-PREFERENCES_CACORRECTION;Aplikovat automatickou korekci chromatické aberace
-PREFERENCES_CARED;Manuální korekce červené CA
+TP_RAWCACORR_AUTO;Aplikovat automatickou korekci chromatické aberace
+TP_RAWCACORR_CARED;Manuální korekce červené CA
 PREFERENCES_CLEARDLG_LINE1;Čištění cache
 PREFERENCES_CLEARDLG_LINE2;může trvat několik sekund.
 PREFERENCES_CLEARDLG_TITLE;Prosím počkejte.
@@ -443,8 +443,8 @@ PREFERENCES_CUTOVERLAYBRUSH;Štětec přesahu
 PREFERENCES_DARKFRAME;Tmavé snímky
 PREFERENCES_DATEFORMAT;Formát data
 PREFERENCES_DATEFORMATHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%y</b><i> : rok (year)</i>\n<b>%m</b><i> : měsíc (month)</i>\n<b>%d</b><i> : den (day)</i>\n<i>\nNapříklad český formát data:</i>\n<b>%d. %m. %y</b>
-PREFERENCES_DCBENHANCE;Aplikovat krok DCB rozšíření
-PREFERENCES_DCBITERATIONS;Počet DCB iterací
+TP_RAW_DCBENHANCE;Aplikovat krok DCB rozšíření
+TP_RAW_DCBITERATIONS;Počet DCB iterací
 PREFERENCES_DEFAULTLANG;Výchozí jazyk
 PREFERENCES_DEFAULTTHEME;Výchozí vzhled
 PREFERENCES_DEMOSAICINGALGO;Demozajkovací algoritmus
@@ -454,28 +454,28 @@ PREFERENCES_DIRLAST;Poslední navštívená složka
 PREFERENCES_DIROTHER;Jiná
 PREFERENCES_DIRSELECTDLG;Zvolte složku s obrázky pro spuštění...
 PREFERENCES_DIRSOFTWARE;Instalační složka
-PREFERENCES_DMETHOD;Metoda
+TP_RAW_DMETHOD;Metoda
 PREFERENCES_EDITORCMDLINE;Jiný příkaz
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXTERNALEDITOR;Externí editor
-PREFERENCES_FALSECOLOR;Počet kroků při potlačování chybných barev
+TP_RAW_FALSECOLOR;Počet kroků při potlačování chybných barev
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů
 PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FORIMAGE;Pro obrázkové soubory
 PREFERENCES_FORRAW;Pro RAW soubory
 PREFERENCES_GIMPPATH;GIMP instalační adresář
-PREFERENCES_GREENEQUIL;Vyrovnání zelené
+TP_PREPROCESS_GREENEQUIL;Vyrovnání zelené
 PREFERENCES_GTKTHEME;GTK výchozí
 PREFERENCES_HINT;Nápověda
 PREFERENCES_HLTHRESHOLD;Práh pro oříznutá světla
-PREFERENCES_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
+TP_PREPROCESS_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
 PREFERENCES_ICCDIR;Složka ICC profilů
 PREFERENCES_IMPROCPARAMS;Výchozí profily pro zpracování obrázku
 PREFERENCES_INTENT_ABSOLUTE;Absolutní kolorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Vnímání
 PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Saturace
-PREFERENCES_LINEDENOISE;Filtrovat linkové rušení
+TP_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
 PREFERENCES_MONITORICC;Profil monitoru
 PREFERENCES_MULTITAB;Mód více karet
@@ -707,10 +707,9 @@ TP_LUMADENOISE_RADIUS;Poloměr
 TP_PERSPECTIVE_HORIZONTAL;Horizontální
 TP_PERSPECTIVE_LABEL;Perspektiva
 TP_PERSPECTIVE_VERTICAL;Vertikální
-TP_PREPROCESS_DARKFRAME;Tmavé snímky
-TP_PREPROCESS_DFAUTOSELECT;Automatický výběr
-TP_RAWPANEL_DEMOSAICING;Demozajkování
-TP_RAWPANEL_PREPROCESSING;Předzpracování
+TP_DARKFRAME_AUTOSELECT;Automatický výběr
+TP_RAW_LABEL;Demozajkování
+TP_PREPROCESS_LABEL;Předzpracování
 TP_RESIZE_BICUBIC;Bikubická
 TP_RESIZE_BICUBICSF;Bikubická (Měkčí)
 TP_RESIZE_BICUBICSH;Bikubická (Ostřejší)

@@ -171,10 +171,10 @@ HISTORY_MSG_108;Lichter-Kompression Schwellenwert
 HISTORY_MSG_109;Größenänderung Begrenzungsrahmen
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_110;Größenänderung gilt für
-HISTORY_MSG_111;Weißbild Datei
-HISTORY_MSG_112;Weißbild Automatische Auswahl
-HISTORY_MSG_113;Weißbild Unschärferadius
-HISTORY_MSG_114;Weißbild Unschärfetyp
+HISTORY_MSG_126;Weißbild Datei
+HISTORY_MSG_127;Weißbild Automatische Auswahl
+HISTORY_MSG_128;Weißbild Unschärferadius
+HISTORY_MSG_129;Weißbild Unschärfetyp
 HISTORY_MSG_11;Tonwertkurve
 HISTORY_MSG_12;Automatische Belichtung
 HISTORY_MSG_13;Belichtungsbeschneidung
@@ -464,7 +464,7 @@ PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_BATCH_PROCESSING;Batch-Verarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche kennzeichnen
-PREFERENCES_CABLUE;Chrom. Aberration blau\nmanuelle Korrektur
+TP_RAWCACORR_CABLUE;Blau
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Voransichten löschen
@@ -477,19 +477,18 @@ PREFERENCES_CACHESTRAT2;Priorität auf minimierten Speicherverbrauch (geringere 
 PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
-PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Aberration
-PREFERENCES_CARED;Chrom. Aberration rot\nmanuelle Korrektur
+TP_RAWCACORR_AUTO;Autom. Korrektur Chrom. Aberration
+TP_RAWCACORR_CARED;Rot
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
 PREFERENCES_CUTOVERLAYBRUSH;Abdeckfarbe für Ausschnitt
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
-PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;<i>Die folgenden Variablen können verwendet werden:</i>\n<b>%y</b><i> : Jahr</i>\n<b>%m</b><i> : Monat</i>\n<b>%d</b><i> : Tag</i>\n<i>\nDas deutsche Datumsformat beispielsweise ist:</i>\n<b>%d.%m.%y</b>
-PREFERENCES_DCBENHANCE;DCB Verfeinerungsschritt durchführen
-PREFERENCES_DCBITERATIONS;Anzahl der DCB Iterationen
+TP_RAW_DCBENHANCE;DCB Verfeinerungsschritt durchführen
+TP_RAW_DCBITERATIONS;Anzahl der DCB Iterationen
 PREFERENCES_DEFAULTLANG;Sprache für Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard-Oberflächendesign
 PREFERENCES_DEMOSAICINGALGO;Algorithmus zur Entrasterung
@@ -499,12 +498,11 @@ PREFERENCES_DIRLAST;Zuletzt geöffnetes Verzeichnis
 PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
-PREFERENCES_DMETHOD;Methode
+TP_RAW_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
-PREFERENCES_EXPOS;Belichtung vor Interpolation:\nKorrektur (lin)
 PREFERENCES_EXTERNALEDITOR;Externer Editor
-PREFERENCES_FALSECOLOR;Falschfarbenunterdrückung\nStufen
+TP_RAW_FALSECOLOR;Stufen Falschfarben-Unterdrückung
 PREFERENCES_FBROWSEROPTS;Dateiverwaltung-Einstellungen
 PREFERENCES_FILEFORMAT;Datei-Format
 PREFERENCES_FLATFIELD;Weißbild
@@ -514,23 +512,22 @@ PREFERENCES_FLATFIELDBLURTYPE;Weißbild Unschärfetyp
 PREFERENCES_FLATFIELDFILE;Weißbild Datei
 PREFERENCES_FLATFIELDFOUND;Gefunden
 PREFERENCES_FLATFIELDSDIR;Weißbild Verzeichnis
-PREFERENCES_FLATFIELDSHOTS;Aufnahmen
 PREFERENCES_FLATFIELDTEMPLATES;Vorlagen
 PREFERENCES_FORIMAGE;Für Bilddateien
 PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
-PREFERENCES_GREENEQUIL;Grün-Ausgleich
+TP_PREPROCESS_GREENEQUIL;Grün-Ausgleich
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
 PREFERENCES_HLTHRESHOLD;Schwellenwert - zu hell
-PREFERENCES_HOTDEADPIXFILT;Hot/Dead-Pixel-Filter anwenden
+TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
 PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
 PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
 PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
-PREFERENCES_LINEDENOISE;Zeilenrausch-Filter
+TP_PREPROCESS_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_METADATA;Metadaten
 PREFERENCES_MONITORICC;Monitor-Profil
@@ -548,7 +545,6 @@ PREFERENCES_PARSEDEXT;In der Dateiverwaltung angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp hinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Eingegebenen Dateityp (Extension) der obigen Liste hinzufügen
 PREFERENCES_PARSEDEXTDELHINT;Markierten Dateityp aus Liste entfernen
-PREFERENCES_PRESER;Belichtung vor Interpolation:\nLichter beibehalten (EV)
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher (Cache)
@@ -768,14 +764,13 @@ TP_LUMADENOISE_RADIUS;Radius
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
-TP_PREPROCESS_DARKFRAME;Dunkelbild
-TP_PREPROCESS_DFAUTOSELECT;Automatische Auswahl
-TP_PREPROCESS_FLATFIELDAUTOSELECT;Weißbild Automatische Auswahl
-TP_PREPROCESS_FLATFIELDBLURRADIUS;Weißbild Unschärferadius
-TP_PREPROCESS_FLATFIELDBLURTYPE;Weißbild Unschärfetyp
-TP_PREPROCESS_FLATFIELDFILE;Weißbild Datei
-TP_RAWPANEL_DEMOSAICING;Farbinterpolation
-TP_RAWPANEL_PREPROCESSING;Vorverarbeitung
+TP_DARKFRAME_AUTOSELECT;Automatische Auswahl
+TP_FLATFIELD_AUTOSELECT;Weißbild Automatische Auswahl
+TP_FLATFIELD_BLURRADIUS;Weißbild Unschärferadius
+TP_FLATFIELD_BLURTYPE;Weißbild Unschärfetyp
+GENERAL_FILE;Datei
+TP_RAW_LABEL;Farbinterpolation
+TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_RESIZE_APPLIESTO;Gilt für:
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
