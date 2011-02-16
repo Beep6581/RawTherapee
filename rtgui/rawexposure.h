@@ -16,28 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PREPROCESS_H_
-#define _PREPROCESS_H_
+#ifndef _RAWEXPOSURE_H_
+#define _RAWEXPOSURE_H_
 
 #include <gtkmm.h>
 #include <adjuster.h>
 #include <toolpanel.h>
 #include <rawimage.h>
 
-class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class RAWExposure : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
-  protected:
+protected:
+	Adjuster* PexPos;
+	Adjuster* PexPreser;
 
-    Adjuster* lineDenoise;
+public:
 
-    Adjuster* greenEqThreshold;
-    Gtk::CheckButton* hotDeadPixel;
-	bool lastHot;
-	sigc::connection hdpixelconn;
-
-  public:
-
-    PreProcess ();
+	RAWExposure ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
@@ -45,7 +40,6 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
     void adjusterChanged     (Adjuster* a, double newval);
-    void hotDeadPixelChanged();
 };
 
 #endif

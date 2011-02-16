@@ -21,16 +21,18 @@
 #include <math.h>
 #include <multilangmgr.h>
 #include <rtengine.h>
+#include <options.h>
 
 extern Glib::ustring argv0;
-
-int Adjuster::delay = 1000;
 
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, bool editedcb) {
 
   adjusterListener = NULL;
   afterReset = false;
   blocked = false;
+
+  // TODO: let the user chose the default value of Adjuster::delay, for slow machines
+  delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (usefull for the RAW editor tab)
 
   set_border_width (2);
 
@@ -210,6 +212,16 @@ void Adjuster::setValue (double a) {
 double Adjuster::getValue () {
 
   return spin->get_value ();
+}
+
+int Adjuster::getIntValue () {
+
+  return spin->get_value_as_int ();
+}
+
+Glib::ustring Adjuster::getTextValue () {
+
+  return spin->get_text ();
 }
 
 bool Adjuster::notifyListener () {

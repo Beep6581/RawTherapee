@@ -423,7 +423,7 @@ PREFERENCES_CACHESTRAT2;Mala zauzetost memorije, uz sporiji rad
 PREFERENCES_CACHESTRAT;Ostava
 PREFERENCES_CACHETHUMBFORM;Format umanjenih prikaza
 PREFERENCES_CACHETHUMBHEIGHT;Najveća visina prikaza
-PREFERENCES_CACORRECTION;Ispravi hromatske aberacije
+TP_RAWCACORR_AUTO;Ispravi hromatske aberacije
 PREFERENCES_CLEARDLG_LINE1;Čišćenje ostave
 PREFERENCES_CLEARDLG_LINE2;Ovo može da potraje nekoliko sekundi.
 PREFERENCES_CLEARDLG_TITLE;Sačekajte
@@ -432,8 +432,8 @@ PREFERENCES_CMETRICINTENT;Kolorimetrijska namera
 PREFERENCES_DARKFRAME;Tamni kadar
 PREFERENCES_DATEFORMAT;Format datuma
 PREFERENCES_DATEFORMATHINT;<i>Možete zadati sledeće formate:</i>\n<b>%y</b><i> :godina</i>\n<b>%m</b><i> : mesec</i>\n<b>%d</b><i> : dan</i>\n<i>\nU Srbiji se najviše koristi:</i>\n<b>%d.%m.%y</b>
-PREFERENCES_DCBENHANCE;Primeni DCB poboljšanje
-PREFERENCES_DCBITERATIONS;Broj DCB prolaza
+TP_RAW_DCBENHANCE;Primeni DCB poboljšanje
+TP_RAW_DCBITERATIONS;Broj DCB prolaza
 PREFERENCES_DEFAULTLANG;Jezik programa
 PREFERENCES_DEFAULTTHEME;Tema programa
 PREFERENCES_DEMOSAICINGALGO;Algoritam za sklapanje
@@ -443,28 +443,28 @@ PREFERENCES_DIRLAST;Poslednji direktorijum
 PREFERENCES_DIROTHER;Neki drugi
 PREFERENCES_DIRSELECTDLG;Bira određeni direktorijum sa slikama...
 PREFERENCES_DIRSOFTWARE;Direktorijum sa instalacijom
-PREFERENCES_DMETHOD;Način
+TP_RAW_DMETHOD;Način
 PREFERENCES_EDITORCMDLINE;Proizvoljna naredba
 PREFERENCES_EDITORLAYOUT;Razmeštaj programa
 PREFERENCES_EXTERNALEDITOR;Spoljni uređivač
-PREFERENCES_FALSECOLOR;Koraci za prigušivanje lažne boje
+TP_RAW_FALSECOLOR;Koraci za prigušivanje lažne boje
 PREFERENCES_FBROWSEROPTS;Opcije razgledača datoteke
 PREFERENCES_FILEFORMAT;Format datoteke
 PREFERENCES_FORIMAGE;Za datoteke sa slikama
 PREFERENCES_FORRAW;Za RAW datoteke
 PREFERENCES_GIMPPATH;Direktorijum sa instaliranim Gimpom
-PREFERENCES_GREENEQUIL;Kalibracija zelene boje
+TP_PREPROCESS_GREENEQUIL;Kalibracija zelene boje
 PREFERENCES_GTKTHEME;GTK tema
 PREFERENCES_HINT;Savet
 PREFERENCES_HLTHRESHOLD;Prag za odsečene svetle delove
-PREFERENCES_HOTDEADPIXFILT;Izbaci pregorele i mrtve piksele
+TP_PREPROCESS_HOTDEADPIXFILT;Izbaci pregorele i mrtve piksele
 PREFERENCES_ICCDIR;ICC direktorijum
 PREFERENCES_IMPROCPARAMS;Podrazumevani parametri za obradu slika
 PREFERENCES_INTENT_ABSOLUTE;Apsolutno kolorimetrijski
 PREFERENCES_INTENT_PERCEPTUAL;Perceptualno
 PREFERENCES_INTENT_RELATIVE;Relativno kolorimetrijski
 PREFERENCES_INTENT_SATURATION;Zasićeni prikaz
-PREFERENCES_LINEDENOISE;Linijski filter šuma
+TP_PREPROCESS_LINEDENOISE;Linijski filter šuma
 PREFERENCES_LIVETHUMBNAILS;„Živi“ prikazi (sporije)
 PREFERENCES_MONITORICC;Profil monitora
 PREFERENCES_MULTITAB;Režim u više listova
@@ -689,10 +689,9 @@ TP_LUMADENOISE_RADIUS;Poluprečnik
 TP_PERSPECTIVE_HORIZONTAL;Horizontalna
 TP_PERSPECTIVE_LABEL;Perspektiva
 TP_PERSPECTIVE_VERTICAL;Vertikalna
-TP_PREPROCESS_DARKFRAME;Tamni kadar
-TP_PREPROCESS_DFAUTOSELECT;Sam izaberi
-TP_RAWPANEL_DEMOSAICING;Rasklapanje mozaika
-TP_RAWPANEL_PREPROCESSING;Predobrada
+TP_DARKFRAME_AUTOSELECT;Sam izaberi
+TP_RAW_LABEL;Rasklapanje mozaika
+TP_PREPROCESS_LABEL;Predobrada
 TP_RESIZE_BICUBIC;Bikubično
 TP_RESIZE_BICUBICSF;Bikubično (mekše)
 TP_RESIZE_BICUBICSH;Bikubično (oštrije)

@@ -155,8 +155,8 @@ HISTORY_MSG_104;Ecualizador HSV
 HISTORY_MSG_105;Quitar borde púrpura
 HISTORY_MSG_106;Quitar borde púrpura Radio
 HISTORY_MSG_107;Quitar borde púrpura Umbral
-HISTORY_MSG_108;Cambiar tamaño rectángulo limitador
-HISTORY_MSG_109;Cambio tamaño aplica a
+HISTORY_MSG_109;Cambiar tamaño rectángulo limitador
+HISTORY_MSG_110;Cambio tamaño aplica a
 HISTORY_MSG_10;Compresión de sombras
 HISTORY_MSG_11;Curva de tono
 HISTORY_MSG_12;Exposición automática
@@ -432,7 +432,7 @@ PREFERENCES_APPLNEXTSTARTUP;aplicado al próximo arranque
 PREFERENCES_BATCH_PROCESSING;Proceso por lotes
 PREFERENCES_BEHAVIOR;Comportamiento
 PREFERENCES_BLINKCLIPPED;Parpadear áreas cortadas
-PREFERENCES_CABLUE;Correcc. manual aberr. cromát. Azul
+TP_RAWCACORR_CABLUE;Azul
 PREFERENCES_CACHECLEARALL;Borrar todo
 PREFERENCES_CACHECLEARPROFILES;Borrar perfiles
 PREFERENCES_CACHECLEARTHUMBS;Borrar miniaturas
@@ -445,8 +445,8 @@ PREFERENCES_CACHESTRAT2;Preferir consumo de memoria bajo sobre velocidad
 PREFERENCES_CACHESTRAT;Estrategia de la memoria intermedia
 PREFERENCES_CACHETHUMBFORM;Formato de las miniaturas
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima de las miniaturas
-PREFERENCES_CACORRECTION;Aplicar autocorrección aberr. cromát.
-PREFERENCES_CARED;Correcc. manual aberr. cromát. Rojo
+TP_RAWCACORR_AUTO;Aplicar autocorrección aberr. cromát.
+TP_RAWCACORR_CARED;Rojo
 PREFERENCES_CLEARDLG_LINE1;Borrando memoria intermedia
 PREFERENCES_CLEARDLG_LINE2;Puede durar unos segundos.
 PREFERENCES_CLEARDLG_TITLE;Aguardar, por favor
@@ -456,8 +456,8 @@ PREFERENCES_CUTOVERLAYBRUSH;Pincel para ventana de recorte
 PREFERENCES_DARKFRAME;Imagen en oscuridad
 PREFERENCES_DATEFORMAT;Formato de fechas
 PREFERENCES_DATEFORMATHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en Argentina es:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DCBENHANCE;Aplicar paso mejora DCB
-PREFERENCES_DCBITERATIONS;Número iteraciones DCB
+TP_RAW_DCBENHANCE;Aplicar paso mejora DCB
+TP_RAW_DCBITERATIONS;Número iteraciones DCB
 PREFERENCES_DEFAULTLANG;Idioma predeterminado
 PREFERENCES_DEFAULTTHEME;Estilo predeterminado
 PREFERENCES_DEMOSAICINGALGO;Algoritmo de desmosaicado
@@ -467,29 +467,28 @@ PREFERENCES_DIRLAST;Última carpeta visitada
 PREFERENCES_DIROTHER;Otro
 PREFERENCES_DIRSELECTDLG;Seleccionar carpeta de imágenes en el arranque...
 PREFERENCES_DIRSOFTWARE;Carpeta de instalación
-PREFERENCES_DMETHOD;Método
+TP_RAW_DMETHOD;Método
 PREFERENCES_EDITORCMDLINE;Otro mandato
 PREFERENCES_EDITORLAYOUT;Aspecto del editor
-PREFERENCES_EXPOS;Exposición antes de interpolación:\n corrección (lin)
 PREFERENCES_EXTERNALEDITOR;Editor externo
-PREFERENCES_FALSECOLOR;Pasos de supresión de colores falsos
+TP_RAW_FALSECOLOR;Pasos de supresión de colores falsos
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos
 PREFERENCES_FILEFORMAT;Formato de archivos
 PREFERENCES_FORIMAGE;Para archivos de imágenes
 PREFERENCES_FORRAW;Para archivos RAW
 PREFERENCES_GIMPPATH;Carpeta de instalación de GIMP
-PREFERENCES_GREENEQUIL;Equilibrado del verde
+TP_PREPROCESS_GREENEQUIL;Equilibrado del verde
 PREFERENCES_GTKTHEME;Estilo de GTK predeterminado
 PREFERENCES_HINT;Consejo
 PREFERENCES_HLTHRESHOLD;Umbral de luces altas cortadas
-PREFERENCES_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
+TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 PREFERENCES_ICCDIR;Carpeta de perfiles ICC
 PREFERENCES_IMPROCPARAMS;Parámetros predeterminados de procesamiento de imágenes
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrico absoluto
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Colorimétrico relativo
 PREFERENCES_INTENT_SATURATION;Saturación
-PREFERENCES_LINEDENOISE;Filtro de ruido de línea
+TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
 PREFERENCES_LIVETHUMBNAILS;Miniaturas 'en vivo' (más lento)
 PREFERENCES_MONITORICC;Perfil de pantalla
 PREFERENCES_MULTITAB;Modo de varias pestañas
@@ -506,7 +505,6 @@ PREFERENCES_PARSEDEXT;Extensiones analizadas
 PREFERENCES_PARSEDEXTADD;Agregar extensión
 PREFERENCES_PARSEDEXTADDHINT;Entra una extensión y pulsa este botón para agregar a la lista
 PREFERENCES_PARSEDEXTDELHINT;Borrar extensión de la lista
-PREFERENCES_PRESER;Exposición antes de interpolación:\n preservar luces altas (EV)
 PREFERENCES_PROFILEHANDLING;Tratamiento de perfiles de procesamiento
 PREFERENCES_PROFILELOADPR;Prioridad de perfiles cuando se abre imagen
 PREFERENCES_PROFILEPRCACHE;Perfil en memoria intermedia
@@ -728,10 +726,9 @@ TP_LUMADENOISE_RADIUS;Radio
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspectiva
 TP_PERSPECTIVE_VERTICAL;Vertical
-TP_PREPROCESS_DARKFRAME;Imagen en oscuridad
-TP_PREPROCESS_DFAUTOSELECT;Selección automática
-TP_RAWPANEL_DEMOSAICING;Desmosaicado
-TP_RAWPANEL_PREPROCESSING;Preprocesado
+TP_DARKFRAME_AUTOSELECT;Selección automática
+TP_RAW_LABEL;Desmosaicado
+TP_PREPROCESS_LABEL;Preprocesado
 TP_RESIZE_APPLIESTO;Aplica a:
 TP_RESIZE_BICUBIC;Bicúbica
 TP_RESIZE_BICUBICSF;Bicúbica (más suave)

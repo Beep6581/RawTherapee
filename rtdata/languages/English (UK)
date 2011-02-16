@@ -28,7 +28,7 @@ PARTIALPASTE_COLORSHIFT;Colour shift
 PREFERENCES_BEHAVIOR;Behaviour
 PREFERENCES_CACHEMAXENTRIES;Maximum Number of Cache Entries
 PREFERENCES_CACHETHUMBHEIGHT;Maximum Thumbnail Height
-PREFERENCES_FALSECOLOR;False colour suppression steps
+TP_RAW_FALSECOLOR;False colour suppression steps
 PREFERENCES_TAB_COLORMGR;Colour Management
 TP_COLORBOOST_AVOIDCOLORCLIP;Avoid colour clipping
 TP_COLORBOOST_LABEL;Colour Boost

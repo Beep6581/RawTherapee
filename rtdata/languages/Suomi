@@ -348,10 +348,10 @@ PREFERENCES_DIRLAST;Viimeksi käytetty hakemisto
 PREFERENCES_DIROTHER;Muu
 PREFERENCES_DIRSELECTDLG;Valitse kuvahakemisto käynnistettäessä...
 PREFERENCES_DIRSOFTWARE;Asennushakemisto
-PREFERENCES_DMETHOD;Menetelmä
+TP_RAW_DMETHOD;Menetelmä
 PREFERENCES_EDITORCMDLINE;Muu komentorivi
 PREFERENCES_EXTERNALEDITOR;Ulkoinen ohjelma
-PREFERENCES_FALSECOLOR;Värivääristymien eston määrä
+TP_RAW_FALSECOLOR;Värivääristymien eston määrä
 PREFERENCES_FBROWSEROPTS;Näytettävät tiedot
 PREFERENCES_FILEFORMAT;Tallennuksen asetukset
 PREFERENCES_FORIMAGE;Kuvatiedostoille

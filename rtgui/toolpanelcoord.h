@@ -59,6 +59,10 @@
 #include <hsvequalizer.h>
 #include <rawprocess.h>
 #include <preprocess.h>
+#include <darkframe.h>
+#include <flatfield.h>
+#include <rawcacorrection.h>
+#include <rawexposure.h>
 
 class ImageEditorCoordinator;
 
@@ -103,6 +107,10 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
+        DarkFrame* darkframe;
+        FlatField* flatfield;
+        RAWCACorr* rawcacorrection;
+        RAWExposure* rawexposure;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 

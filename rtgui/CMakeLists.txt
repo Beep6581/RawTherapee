@@ -26,6 +26,7 @@ set (BASESOURCEFILES
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
+    darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
     equalizer.cc dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 
