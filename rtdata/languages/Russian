@@ -727,6 +727,10 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!ABOUT_TAB_BUILD;Version
+!ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_SPLASH;Splash
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
 !EDITWINDOW_TITLE;Image Edit
@@ -740,6 +744,11 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
+!HISTORY_MSG_109;Resize bounding box
+!HISTORY_MSG_110;Resizing applies to
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
@@ -807,3 +816,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image

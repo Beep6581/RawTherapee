@@ -597,6 +597,10 @@ ZOOMBAR_SMALL;Mazs
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!ABOUT_TAB_BUILD;Version
+!ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_SPLASH;Splash
 !BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CURVE;Curve
@@ -638,6 +642,11 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
+!HISTORY_MSG_109;Resize bounding box
+!HISTORY_MSG_110;Resizing applies to
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
@@ -771,7 +780,7 @@ ZOOMBAR_SMALL;Mazs
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
-!TP_LABCURVE_LABEL;Lab Curves
+!TP_LABCURVE_LABEL;Lab Adjustments
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_LABCURVE_SATURATION;Saturation
 !TP_LENSGEOM_AUTOCROP;Auto Crop
@@ -784,8 +793,12 @@ ZOOMBAR_SMALL;Mazs
 !TP_PREPROCESS_DFAUTOSELECT;Auto selection
 !TP_RAWPANEL_DEMOSAICING;Demosaicing
 !TP_RAWPANEL_PREPROCESSING;Preprocessing
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_HEIGHT;Height
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:

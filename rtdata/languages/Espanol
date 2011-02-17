@@ -672,6 +672,10 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!ABOUT_TAB_BUILD;Version
+!ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_SPLASH;Splash
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_NURBS;Control cage
 !EDITWINDOW_TITLE;Image Edit
@@ -694,6 +698,11 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
+!HISTORY_MSG_109;Resize bounding box
+!HISTORY_MSG_110;Resizing applies to
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_85;Wavelet coefficients
 !HISTORY_MSG_86;Wavelet equalizer
 !HISTORY_MSG_87;Impulse noise reduction
@@ -799,8 +808,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_PREPROCESS_DARKFRAME;Dark frame
 !TP_RAWPANEL_DEMOSAICING;Demosaicing
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)
 !TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_HEIGHT;Height
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:
