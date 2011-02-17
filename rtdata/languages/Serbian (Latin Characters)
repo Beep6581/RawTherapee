@@ -423,7 +423,6 @@ PREFERENCES_CACHESTRAT2;Mala zauzetost memorije, uz sporiji rad
 PREFERENCES_CACHESTRAT;Ostava
 PREFERENCES_CACHETHUMBFORM;Format umanjenih prikaza
 PREFERENCES_CACHETHUMBHEIGHT;Najveća visina prikaza
-TP_RAWCACORR_AUTO;Ispravi hromatske aberacije
 PREFERENCES_CLEARDLG_LINE1;Čišćenje ostave
 PREFERENCES_CLEARDLG_LINE2;Ovo može da potraje nekoliko sekundi.
 PREFERENCES_CLEARDLG_TITLE;Sačekajte
@@ -432,8 +431,6 @@ PREFERENCES_CMETRICINTENT;Kolorimetrijska namera
 PREFERENCES_DARKFRAME;Tamni kadar
 PREFERENCES_DATEFORMAT;Format datuma
 PREFERENCES_DATEFORMATHINT;<i>Možete zadati sledeće formate:</i>\n<b>%y</b><i> :godina</i>\n<b>%m</b><i> : mesec</i>\n<b>%d</b><i> : dan</i>\n<i>\nU Srbiji se najviše koristi:</i>\n<b>%d.%m.%y</b>
-TP_RAW_DCBENHANCE;Primeni DCB poboljšanje
-TP_RAW_DCBITERATIONS;Broj DCB prolaza
 PREFERENCES_DEFAULTLANG;Jezik programa
 PREFERENCES_DEFAULTTHEME;Tema programa
 PREFERENCES_DEMOSAICINGALGO;Algoritam za sklapanje
@@ -443,28 +440,23 @@ PREFERENCES_DIRLAST;Poslednji direktorijum
 PREFERENCES_DIROTHER;Neki drugi
 PREFERENCES_DIRSELECTDLG;Bira određeni direktorijum sa slikama...
 PREFERENCES_DIRSOFTWARE;Direktorijum sa instalacijom
-TP_RAW_DMETHOD;Način
 PREFERENCES_EDITORCMDLINE;Proizvoljna naredba
 PREFERENCES_EDITORLAYOUT;Razmeštaj programa
 PREFERENCES_EXTERNALEDITOR;Spoljni uređivač
-TP_RAW_FALSECOLOR;Koraci za prigušivanje lažne boje
 PREFERENCES_FBROWSEROPTS;Opcije razgledača datoteke
 PREFERENCES_FILEFORMAT;Format datoteke
 PREFERENCES_FORIMAGE;Za datoteke sa slikama
 PREFERENCES_FORRAW;Za RAW datoteke
 PREFERENCES_GIMPPATH;Direktorijum sa instaliranim Gimpom
-TP_PREPROCESS_GREENEQUIL;Kalibracija zelene boje
 PREFERENCES_GTKTHEME;GTK tema
 PREFERENCES_HINT;Savet
 PREFERENCES_HLTHRESHOLD;Prag za odsečene svetle delove
-TP_PREPROCESS_HOTDEADPIXFILT;Izbaci pregorele i mrtve piksele
 PREFERENCES_ICCDIR;ICC direktorijum
 PREFERENCES_IMPROCPARAMS;Podrazumevani parametri za obradu slika
 PREFERENCES_INTENT_ABSOLUTE;Apsolutno kolorimetrijski
 PREFERENCES_INTENT_PERCEPTUAL;Perceptualno
 PREFERENCES_INTENT_RELATIVE;Relativno kolorimetrijski
 PREFERENCES_INTENT_SATURATION;Zasićeni prikaz
-TP_PREPROCESS_LINEDENOISE;Linijski filter šuma
 PREFERENCES_LIVETHUMBNAILS;„Živi“ prikazi (sporije)
 PREFERENCES_MONITORICC;Profil monitora
 PREFERENCES_MULTITAB;Režim u više listova
@@ -602,6 +594,7 @@ TP_CROP_SELECTCROP;    Izaberi oblast
 TP_CROP_W;Š
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Sam izaberi
 TP_DETAIL_AMOUNT;Količina
 TP_DIRPYRDENOISE_CHROMA;Boja
 TP_DIRPYRDENOISE_GAMMA;Gama
@@ -689,9 +682,16 @@ TP_LUMADENOISE_RADIUS;Poluprečnik
 TP_PERSPECTIVE_HORIZONTAL;Horizontalna
 TP_PERSPECTIVE_LABEL;Perspektiva
 TP_PERSPECTIVE_VERTICAL;Vertikalna
-TP_DARKFRAME_AUTOSELECT;Sam izaberi
-TP_RAW_LABEL;Rasklapanje mozaika
+TP_PREPROCESS_GREENEQUIL;Kalibracija zelene boje
+TP_PREPROCESS_HOTDEADPIXFILT;Izbaci pregorele i mrtve piksele
 TP_PREPROCESS_LABEL;Predobrada
+TP_PREPROCESS_LINEDENOISE;Linijski filter šuma
+TP_RAWCACORR_AUTO;Ispravi hromatske aberacije
+TP_RAW_DCBENHANCE;Primeni DCB poboljšanje
+TP_RAW_DCBITERATIONS;Broj DCB prolaza
+TP_RAW_DMETHOD;Način
+TP_RAW_FALSECOLOR;Koraci za prigušivanje lažne boje
+TP_RAW_LABEL;Rasklapanje mozaika
 TP_RESIZE_BICUBIC;Bikubično
 TP_RESIZE_BICUBICSF;Bikubično (mekše)
 TP_RESIZE_BICUBICSH;Bikubično (oštrije)
@@ -775,6 +775,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_FILETYPE;File Type
@@ -784,20 +785,42 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
+!FILEBROWSER_FLATFIELD;Flat field
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
+!FILEBROWSER_POPUPCOPYTO;Copy to...
+!FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
+!FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
 !HISTORY_MSG_110;Resizing applies to
-!HISTORY_MSG_111;Flat Field File
-!HISTORY_MSG_112;Flat Field Auto Select
-!HISTORY_MSG_113;Flat Field Blur Radius
-!HISTORY_MSG_114;Flat Field Blur Type
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
+!HISTORY_MSG_126;Flat Field File
+!HISTORY_MSG_127;Flat Field Auto Select
+!HISTORY_MSG_128;Flat Field Blur Radius
+!HISTORY_MSG_129;Flat Field Blur Type
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR;Editor
@@ -822,18 +845,11 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_RAWGROUP;Raw settings
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_FLATFIELD;Flat Field
-!PREFERENCES_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!PREFERENCES_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!PREFERENCES_FLATFIELDBLURTYPE;Flat Field Blur Type
-!PREFERENCES_FLATFIELDFILE;Flat Field File
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
@@ -841,7 +857,6 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -849,17 +864,31 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+!TP_FLATFIELD_AUTOSELECT;Auto selection
+!TP_FLATFIELD_BLURRADIUS;Blur Radius
+!TP_FLATFIELD_BLURTYPE;Blur Type
+!TP_FLATFIELD_BT_AREA;Area
+!TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+!TP_FLATFIELD_BT_VERTICAL;Vertical
+!TP_FLATFIELD_LABEL;Flat Field
 !TP_ICM_INPUTNONE;No profile
-!TP_PREPROCESS_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!TP_PREPROCESS_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!TP_PREPROCESS_FLATFIELDBLURTYPE;Flat Field Blur Type
-!TP_PREPROCESS_FLATFIELDFILE;Flat Field File
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
