@@ -427,7 +427,6 @@ PREFERENCES_CACHESTRAT2;Langzamer, minder geheugenbeslag
 PREFERENCES_CACHESTRAT;Cache-strategie
 PREFERENCES_CACHETHUMBFORM;Miniatuurformaat cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
-TP_RAWCACORR_AUTO;Automatische CA-correctie
 PREFERENCES_CLEARDLG_LINE1;Cache legen...
 PREFERENCES_CLEARDLG_LINE2;Dit kan even duren.
 PREFERENCES_CLEARDLG_TITLE;Momentje svp.
@@ -436,8 +435,6 @@ PREFERENCES_CMETRICINTENT;Bedoelde colorimetrie
 PREFERENCES_DARKFRAME;Dark-frame
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
-TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
-TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
 PREFERENCES_DEFAULTLANG;Standaardtaal
 PREFERENCES_DEFAULTTHEME;Standaardthema
 PREFERENCES_DEMOSAICINGALGO;Demozaïek-algoritme
@@ -447,28 +444,23 @@ PREFERENCES_DIRLAST;Laatst bezochte map
 PREFERENCES_DIROTHER;Anders
 PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
-TP_RAW_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster 
 PREFERENCES_EXTERNALEDITOR;Externe editor
-TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEFORMAT;Bestandstype
 PREFERENCES_FORIMAGE;Voor niet-RAW-bestanden
 PREFERENCES_FORRAW;Voor RAW-bestanden
 PREFERENCES_GIMPPATH;Installatiemap GIMP
-TP_PREPROCESS_GREENEQUIL;Groenbalans
 PREFERENCES_GTKTHEME;GTK standaard
 PREFERENCES_HINT;Voorbeeld
 PREFERENCES_HLTHRESHOLD;Grenswaarde overbelichting
-TP_PREPROCESS_HOTDEADPIXFILT;Filter hete/dode pixels
 PREFERENCES_ICCDIR;Map met ICC-profielen
 PREFERENCES_IMPROCPARAMS;Standaardprofiel
 PREFERENCES_INTENT_ABSOLUTE;Absolute colorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Waargenomen colorimetrie
 PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
-TP_PREPROCESS_LINEDENOISE;Lijnruisfilter
 PREFERENCES_LIVETHUMBNAILS;Live-miniaturen (langzamer)
 PREFERENCES_MONITORICC;Monitorprofiel
 PREFERENCES_MULTITAB;Multi-tab-modus
@@ -608,6 +600,7 @@ TP_CROP_SELECTCROP;Selecteer gebied
 TP_CROP_W;B
 TP_CROP_X;X
 TP_CROP_Y;Y
+TP_DARKFRAME_AUTOSELECT;Automatische selectie
 TP_DETAIL_AMOUNT;Hoeveelheid
 TP_DIRPYRDENOISE_CHROMA;Chrominantie
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -696,9 +689,16 @@ TP_LUMADENOISE_RADIUS;Straal
 TP_PERSPECTIVE_HORIZONTAL;Horizontaal
 TP_PERSPECTIVE_LABEL;Perspectief
 TP_PERSPECTIVE_VERTICAL;Verticaal
-TP_DARKFRAME_AUTOSELECT;Automatische selectie
-TP_RAW_LABEL;Demozaïekproces
+TP_PREPROCESS_GREENEQUIL;Groenbalans
+TP_PREPROCESS_HOTDEADPIXFILT;Filter hete/dode pixels
 TP_PREPROCESS_LABEL;Voorbewerking
+TP_PREPROCESS_LINEDENOISE;Lijnruisfilter
+TP_RAWCACORR_AUTO;Automatische CA-correctie
+TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
+TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
+TP_RAW_DMETHOD;Methode
+TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
+TP_RAW_LABEL;Demozaïekproces
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (zachter)
 TP_RESIZE_BICUBICSH;Bikubisch (scherper)
@@ -782,6 +782,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !EXIFFILTER_FILETYPE;File Type
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
@@ -790,20 +791,42 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
+!FILEBROWSER_FLATFIELD;Flat field
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
+!FILEBROWSER_POPUPCOPYTO;Copy to...
+!FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
+!FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
 !HISTORY_MSG_110;Resizing applies to
-!HISTORY_MSG_111;Flat Field File
-!HISTORY_MSG_112;Flat Field Auto Select
-!HISTORY_MSG_113;Flat Field Blur Radius
-!HISTORY_MSG_114;Flat Field Blur Type
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
+!HISTORY_MSG_126;Flat Field File
+!HISTORY_MSG_127;Flat Field Auto Select
+!HISTORY_MSG_128;Flat Field Blur Radius
+!HISTORY_MSG_129;Flat Field Blur Type
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR;Editor
@@ -828,24 +851,16 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_RAWGROUP;Raw settings
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_FLATFIELD;Flat Field
-!PREFERENCES_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!PREFERENCES_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!PREFERENCES_FLATFIELDBLURTYPE;Flat Field Blur Type
-!PREFERENCES_FLATFIELDFILE;Flat Field File
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -853,16 +868,30 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_PREPROCESS_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!TP_PREPROCESS_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!TP_PREPROCESS_FLATFIELDBLURTYPE;Flat Field Blur Type
-!TP_PREPROCESS_FLATFIELDFILE;Flat Field File
+!TP_FLATFIELD_AUTOSELECT;Auto selection
+!TP_FLATFIELD_BLURRADIUS;Blur Radius
+!TP_FLATFIELD_BLURTYPE;Blur Type
+!TP_FLATFIELD_BT_AREA;Area
+!TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+!TP_FLATFIELD_BT_VERTICAL;Vertical
+!TP_FLATFIELD_LABEL;Flat Field
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

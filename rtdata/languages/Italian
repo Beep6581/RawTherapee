@@ -419,7 +419,6 @@ PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
 PREFERENCES_BATCH_PROCESSING;Elaborazione batch
 PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BLINKCLIPPED;Lampeggia le aree tosate
-TP_RAWCACORR_CABLUE;Blu
 PREFERENCES_CACHECLEARALL;Ripulisci tutto
 PREFERENCES_CACHECLEARPROFILES;Ripulisci i profili
 PREFERENCES_CACHECLEARTHUMBS;Ripulisci le miniature
@@ -432,8 +431,6 @@ PREFERENCES_CACHESTRAT2;Privilegia il minore consumo di memoria alla rapidità
 PREFERENCES_CACHESTRAT;Strategia di precaricamento
 PREFERENCES_CACHETHUMBFORM;Formato delle miniature precaricate
 PREFERENCES_CACHETHUMBHEIGHT;Massima quantità di miniature
-TP_RAWCACORR_AUTO;Correzione AC automatica
-TP_RAWCACORR_CARED;Rossa
 PREFERENCES_CLEARDLG_LINE1;Ripulitura dati in memoria
 PREFERENCES_CLEARDLG_LINE2;Questa operazione potrebbe impiegare alcuni secondi.
 PREFERENCES_CLEARDLG_TITLE;Prego attendere
@@ -443,8 +440,6 @@ PREFERENCES_CUTOVERLAYBRUSH;Pennello copertura ritaglio
 PREFERENCES_DARKFRAME;Dark frame
 PREFERENCES_DATEFORMAT;Formato data
 PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%y</b><i> : anno</i>\n<b>%m</b><i> : mese</i>\n<b>%d</b><i> : giorno</i>\n<i>\nPer esempio, il formato italiano per la data è:</i>\n<b>%d/%m/%y</b>
-TP_RAW_DCBENHANCE;Applicare passi di miglioramento DCB
-TP_RAW_DCBITERATIONS;Numbero di iterazioni DCB
 PREFERENCES_DEFAULTLANG;Lingua predefinita
 PREFERENCES_DEFAULTTHEME;Aspetto ordinario
 PREFERENCES_DEMOSAICINGALGO;Algoritmo di demosaicizzazione
@@ -454,28 +449,23 @@ PREFERENCES_DIRLAST;Ultima cartella visitata
 PREFERENCES_DIROTHER;Altra
 PREFERENCES_DIRSELECTDLG;Seleziona la cartella delle immagini all'avvio...
 PREFERENCES_DIRSOFTWARE;Cartella d'installazione
-TP_RAW_DMETHOD;Metodo
 PREFERENCES_EDITORCMDLINE;Esegui altro da linea di comando
 PREFERENCES_EDITORLAYOUT;Layout editor
 PREFERENCES_EXTERNALEDITOR;Programmi di ritocco esterni
-TP_RAW_FALSECOLOR;Iterazioni per la soppressione dei falsi colori
 PREFERENCES_FBROWSEROPTS;Opzioni del navigatore di file
 PREFERENCES_FILEFORMAT;Formato file
 PREFERENCES_FORIMAGE;Per file immagine
 PREFERENCES_FORRAW;Per file RAW
 PREFERENCES_GIMPPATH;Cartella d'installazione di GIMP
-TP_PREPROCESS_GREENEQUIL;Equilibrazione del verde
 PREFERENCES_GTKTHEME;Predefinito GTK
 PREFERENCES_HINT;Suggerimento
 PREFERENCES_HLTHRESHOLD;Soglia per le alteluci tosate
-TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/morti
 PREFERENCES_ICCDIR;Cartella profili ICC
 PREFERENCES_IMPROCPARAMS;Parametri predefiniti di elaborazione dell'immagine
 PREFERENCES_INTENT_ABSOLUTE;Colorimetrico Assoluto
 PREFERENCES_INTENT_PERCEPTUAL;Percettivo
 PREFERENCES_INTENT_RELATIVE;Colorimetrico Relativo
 PREFERENCES_INTENT_SATURATION;Saturazione
-TP_PREPROCESS_LINEDENOISE;Filtro rumore di linea
 PREFERENCES_LIVETHUMBNAILS;Miniature sincronizzate (maggiore lentezza)
 PREFERENCES_MONITORICC;Profilo dello schermo
 PREFERENCES_MULTITAB;Modalità tab multipli
@@ -615,6 +605,7 @@ TP_CROP_SELECTCROP;Seleziona Area
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Selezione automatica
 TP_DEFRINGE_LABEL;Rimozione margini colorati
 TP_DEFRINGE_RADIUS;Raggio
 TP_DEFRINGE_THRESHOLD;Soglia
@@ -706,9 +697,18 @@ TP_LUMADENOISE_RADIUS;Raggio
 TP_PERSPECTIVE_HORIZONTAL;Orizzontale
 TP_PERSPECTIVE_LABEL;Prospettiva
 TP_PERSPECTIVE_VERTICAL;Verticale
-TP_DARKFRAME_AUTOSELECT;Selezione automatica
-TP_RAW_LABEL;Demosaicizzazione
+TP_PREPROCESS_GREENEQUIL;Equilibrazione del verde
+TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/morti
 TP_PREPROCESS_LABEL;Pre-elaborazione
+TP_PREPROCESS_LINEDENOISE;Filtro rumore di linea
+TP_RAWCACORR_AUTO;Correzione AC automatica
+TP_RAWCACORR_CABLUE;Blu
+TP_RAWCACORR_CARED;Rossa
+TP_RAW_DCBENHANCE;Applicare passi di miglioramento DCB
+TP_RAW_DCBITERATIONS;Numbero di iterazioni DCB
+TP_RAW_DMETHOD;Metodo
+TP_RAW_FALSECOLOR;Iterazioni per la soppressione dei falsi colori
+TP_RAW_LABEL;Demosaicizzazione
 TP_RESIZE_BICUBIC;Bicubico
 TP_RESIZE_BICUBICSF;Bicubico (più sfumato)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)
@@ -791,6 +791,7 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
+!ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
@@ -798,17 +799,39 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
+!FILEBROWSER_FLATFIELD;Flat field
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem incl. batch processed
+!FILEBROWSER_POPUPCOPYTO;Copy to...
+!FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
+!FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
 !HISTORY_MSG_110;Resizing applies to
-!HISTORY_MSG_111;Flat Field File
-!HISTORY_MSG_112;Flat Field Auto Select
-!HISTORY_MSG_113;Flat Field Blur Radius
-!HISTORY_MSG_114;Flat Field Blur Type
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
+!HISTORY_MSG_126;Flat Field File
+!HISTORY_MSG_127;Flat Field Auto Select
+!HISTORY_MSG_128;Flat Field Blur Radius
+!HISTORY_MSG_129;Flat Field Blur Type
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR;Editor
@@ -836,18 +859,12 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_FLATFIELD;Flat Field
-!PREFERENCES_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!PREFERENCES_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!PREFERENCES_FLATFIELDBLURTYPE;Flat Field Blur Type
-!PREFERENCES_FLATFIELDFILE;Flat Field File
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -855,13 +872,25 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_TUNNELMETADATA;Tunnel IPTC/XMP unchanged to output file
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_PREPROCESS_FLATFIELDAUTOSELECT;Flat Field Auto Select
-!TP_PREPROCESS_FLATFIELDBLURRADIUS;Flat Field Blur Radius
-!TP_PREPROCESS_FLATFIELDBLURTYPE;Flat Field Blur Type
-!TP_PREPROCESS_FLATFIELDFILE;Flat Field File
+!TP_FLATFIELD_AUTOSELECT;Auto selection
+!TP_FLATFIELD_BLURRADIUS;Blur Radius
+!TP_FLATFIELD_BLURTYPE;Blur Type
+!TP_FLATFIELD_BT_AREA;Area
+!TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+!TP_FLATFIELD_BT_VERTICAL;Vertical
+!TP_FLATFIELD_LABEL;Flat Field
+!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
