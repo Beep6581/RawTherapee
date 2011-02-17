@@ -34,6 +34,7 @@ PreProcess::PreProcess () : Gtk::VBox(), FoldableToolPanel(this)
 	lineDenoise->show();
 
 	greenEqThreshold = Gtk::manage(new Adjuster (M("TP_PREPROCESS_GREENEQUIL"),0,100,1,0));
+	greenEqThreshold->setAdjusterListener (this);
 	if (greenEqThreshold->delay < 1000) greenEqThreshold->delay = 1000;
 	greenEqThreshold->show();
 
