@@ -348,10 +348,10 @@ PREFERENCES_DIRLAST;Τελευταία τοποθεσία που χρησιμο�
 PREFERENCES_DIROTHER;Άλλο
 PREFERENCES_DIRSELECTDLG;Επιλέξτε τοποθεσία εικόνων κατά την έναρξη...
 PREFERENCES_DIRSOFTWARE;Τοποθεσία εγκατάστασης
-PREFERENCES_DMETHOD;Μέθοδος
+TP_RAW_DMETHOD;Μέθοδος
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;External editor
-PREFERENCES_FALSECOLOR;Βήματα καταστολής σφαλμένων χρωμάτων
+TP_RAW_FALSECOLOR;Βήματα καταστολής σφαλμένων χρωμάτων
 PREFERENCES_FBROWSEROPTS;Επιλογές περιήγησης αρχείων
 PREFERENCES_FILEFORMAT;Είδος αρχείου
 PREFERENCES_FORIMAGE;Για αρχεία εικόνων

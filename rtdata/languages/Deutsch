@@ -436,7 +436,7 @@ PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche kennzeichnen
-PREFERENCES_CABLUE;CA blau\nmanuelle Korrektur
+TP_RAWCACORR_CABLUE;Blau
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Voransichten löschen
@@ -449,8 +449,8 @@ PREFERENCES_CACHESTRAT2;Priorität auf minimierten Speicherverbrauch (geringere 
 PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
-PREFERENCES_CACORRECTION;Autom. Korrektur Chrom. Aberration
-PREFERENCES_CARED;CA rot\nmanuelle Korrektur
+TP_RAWCACORR_AUTO;Autom. Korrektur Chrom. Aberration
+TP_RAWCACORR_CARED;Rot
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
 PREFERENCES_CUTOVERLAYBRUSH;Abdeckfarbe für Ausschnitt
@@ -460,8 +460,8 @@ PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nDas deutsche Datumsformat beispielsweise ist:\n<b>%d.%m.%y</b>
-PREFERENCES_DCBENHANCE;DCB Verfeinerungsschritt durchführen
-PREFERENCES_DCBITERATIONS;Anzahl der DCB Iterationen
+TP_RAW_DCBENHANCE;DCB Verfeinerungsschritt durchführen
+TP_RAW_DCBITERATIONS;Anzahl der DCB Iterationen
 PREFERENCES_DEFAULTLANG;Sprache für Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard-Oberflächendesign
 PREFERENCES_DEMOSAICINGALGO;Algorithmus zur Entrasterung
@@ -471,29 +471,28 @@ PREFERENCES_DIRLAST;Zuletzt geöffnetes Verzeichnis
 PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
-PREFERENCES_DMETHOD;Methode
+TP_RAW_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
-PREFERENCES_EXPOS;Belichtung vor Interpolation:\nKorrektur (lin)
 PREFERENCES_EXTERNALEDITOR;Externer Editor
-PREFERENCES_FALSECOLOR;Falschfarbenunterdrückung\nStufen
+TP_RAW_FALSECOLOR;Stufen Falschfarben-Unterdrückung
 PREFERENCES_FBROWSEROPTS;Einstellungen zu Bildinformationen
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FORIMAGE;Für Bilddateien
 PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
-PREFERENCES_GREENEQUIL;Grün-Ausgleich
+TP_PREPROCESS_GREENEQUIL;Grün-Ausgleich
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
 PREFERENCES_HLTHRESHOLD;Schwellenwert - zu hell
-PREFERENCES_HOTDEADPIXFILT;Hot/Dead-Pixel-Filter anwenden
+TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
 PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
 PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
 PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
-PREFERENCES_LINEDENOISE;Zeilenrausch-Filter
+TP_PREPROCESS_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
@@ -724,10 +723,10 @@ TP_LUMADENOISE_RADIUS;Radius
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
-TP_PREPROCESS_DARKFRAME;Dunkelbild
-TP_PREPROCESS_DFAUTOSELECT;Automatische Auswahl
-TP_RAWPANEL_DEMOSAICING;Demosaic
-TP_RAWPANEL_PREPROCESSING;Vorverarbeitung
+TP_DARKFRAME_AUTOSELECT;Automatische Auswahl
+GENERAL_FILE;Datei
+TP_RAW_LABEL;Farbinterpolation
+TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_RESIZE_APPLIESTO;Gilt für:
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (Weicher)

@@ -419,7 +419,7 @@ PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
 PREFERENCES_BATCH_PROCESSING;Elaborazione batch
 PREFERENCES_BEHAVIOR;Comportamento
 PREFERENCES_BLINKCLIPPED;Lampeggia le aree tosate
-PREFERENCES_CABLUE;Correzione AC blu manuale
+TP_RAWCACORR_CABLUE;Blu
 PREFERENCES_CACHECLEARALL;Ripulisci tutto
 PREFERENCES_CACHECLEARPROFILES;Ripulisci i profili
 PREFERENCES_CACHECLEARTHUMBS;Ripulisci le miniature
@@ -432,8 +432,8 @@ PREFERENCES_CACHESTRAT2;Privilegia il minore consumo di memoria alla rapidità
 PREFERENCES_CACHESTRAT;Strategia di precaricamento
 PREFERENCES_CACHETHUMBFORM;Formato delle miniature precaricate
 PREFERENCES_CACHETHUMBHEIGHT;Massima quantità di miniature
-PREFERENCES_CACORRECTION;Correzione AC automatica
-PREFERENCES_CARED;Correzione AC rossa manuale
+TP_RAWCACORR_AUTO;Correzione AC automatica
+TP_RAWCACORR_CARED;Rossa
 PREFERENCES_CLEARDLG_LINE1;Ripulitura dati in memoria
 PREFERENCES_CLEARDLG_LINE2;Questa operazione potrebbe impiegare alcuni secondi.
 PREFERENCES_CLEARDLG_TITLE;Prego attendere
@@ -443,8 +443,8 @@ PREFERENCES_CUTOVERLAYBRUSH;Pennello copertura ritaglio
 PREFERENCES_DARKFRAME;Dark frame
 PREFERENCES_DATEFORMAT;Formato data
 PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%y</b><i> : anno</i>\n<b>%m</b><i> : mese</i>\n<b>%d</b><i> : giorno</i>\n<i>\nPer esempio, il formato italiano per la data è:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DCBENHANCE;Applicare passi di miglioramento DCB
-PREFERENCES_DCBITERATIONS;Numbero di iterazioni DCB
+TP_RAW_DCBENHANCE;Applicare passi di miglioramento DCB
+TP_RAW_DCBITERATIONS;Numbero di iterazioni DCB
 PREFERENCES_DEFAULTLANG;Lingua predefinita
 PREFERENCES_DEFAULTTHEME;Aspetto ordinario
 PREFERENCES_DEMOSAICINGALGO;Algoritmo di demosaicizzazione
@@ -454,28 +454,28 @@ PREFERENCES_DIRLAST;Ultima cartella visitata
 PREFERENCES_DIROTHER;Altra
 PREFERENCES_DIRSELECTDLG;Seleziona la cartella delle immagini all'avvio...
 PREFERENCES_DIRSOFTWARE;Cartella d'installazione
-PREFERENCES_DMETHOD;Metodo
+TP_RAW_DMETHOD;Metodo
 PREFERENCES_EDITORCMDLINE;Esegui altro da linea di comando
 PREFERENCES_EDITORLAYOUT;Layout editor
 PREFERENCES_EXTERNALEDITOR;Programmi di ritocco esterni
-PREFERENCES_FALSECOLOR;Iterazioni per la soppressione dei falsi colori
+TP_RAW_FALSECOLOR;Iterazioni per la soppressione dei falsi colori
 PREFERENCES_FBROWSEROPTS;Opzioni del navigatore di file
 PREFERENCES_FILEFORMAT;Formato file
 PREFERENCES_FORIMAGE;Per file immagine
 PREFERENCES_FORRAW;Per file RAW
 PREFERENCES_GIMPPATH;Cartella d'installazione di GIMP
-PREFERENCES_GREENEQUIL;Equilibrazione del verde
+TP_PREPROCESS_GREENEQUIL;Equilibrazione del verde
 PREFERENCES_GTKTHEME;Predefinito GTK
 PREFERENCES_HINT;Suggerimento
 PREFERENCES_HLTHRESHOLD;Soglia per le alteluci tosate
-PREFERENCES_HOTDEADPIXFILT;Filtro pixel caldi/morti
+TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/morti
 PREFERENCES_ICCDIR;Cartella profili ICC
 PREFERENCES_IMPROCPARAMS;Parametri predefiniti di elaborazione dell'immagine
 PREFERENCES_INTENT_ABSOLUTE;Colorimetrico Assoluto
 PREFERENCES_INTENT_PERCEPTUAL;Percettivo
 PREFERENCES_INTENT_RELATIVE;Colorimetrico Relativo
 PREFERENCES_INTENT_SATURATION;Saturazione
-PREFERENCES_LINEDENOISE;Filtro rumore di linea
+TP_PREPROCESS_LINEDENOISE;Filtro rumore di linea
 PREFERENCES_LIVETHUMBNAILS;Miniature sincronizzate (maggiore lentezza)
 PREFERENCES_MONITORICC;Profilo dello schermo
 PREFERENCES_MULTITAB;Modalità tab multipli
@@ -706,10 +706,9 @@ TP_LUMADENOISE_RADIUS;Raggio
 TP_PERSPECTIVE_HORIZONTAL;Orizzontale
 TP_PERSPECTIVE_LABEL;Prospettiva
 TP_PERSPECTIVE_VERTICAL;Verticale
-TP_PREPROCESS_DARKFRAME;Dark frame
-TP_PREPROCESS_DFAUTOSELECT;Selezione automatica
-TP_RAWPANEL_DEMOSAICING;Demosaicizzazione
-TP_RAWPANEL_PREPROCESSING;Pre-elaborazione
+TP_DARKFRAME_AUTOSELECT;Selezione automatica
+TP_RAW_LABEL;Demosaicizzazione
+TP_PREPROCESS_LABEL;Pre-elaborazione
 TP_RESIZE_BICUBIC;Bicubico
 TP_RESIZE_BICUBICSF;Bicubico (più sfumato)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)

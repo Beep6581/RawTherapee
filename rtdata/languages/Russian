@@ -9,6 +9,8 @@
 ADJUSTER_RESET_TO_DEFAULT;По умолчанию
 BATCHQUEUE_AUTOSTART;Автостарт
 BATCH_PROCESSING;Пакетная обработка
+CURVEEDITOR_CURVE;Кривая
+CURVEEDITOR_CURVES;Кривые
 CURVEEDITOR_CUSTOM;Произвольный
 CURVEEDITOR_DARKS;Темные тона
 CURVEEDITOR_FILEDLGFILTERANY;Любые файлы
@@ -25,9 +27,11 @@ CURVEEDITOR_TOOLTIPLINEAR;Выставить линейную тоновую к�
 CURVEEDITOR_TOOLTIPLOAD;Загрузить тоновую кривую
 CURVEEDITOR_TOOLTIPSAVE;Сохранить тоновую кривую
 CURVEEDITOR_TYPE;Тип:
+EDITWINDOW_TITLE;Редактор
 EXIFFILTER_APERTURE;Диафрагма
 EXIFFILTER_CAMERA;Камера
 EXIFFILTER_DIALOGLABEL;Фильтр Exif
+EXIFFILTER_FILETYPE;Тип фильтра
 EXIFFILTER_FOCALLEN;Фокусное расстояние
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Объектив
@@ -139,6 +143,10 @@ HISTORY_CUSTOMCURVE;Пользовательская кривая
 HISTORY_DELSNAPSHOT;Удалить снимок
 HISTORY_FROMCLIPBOARD;Из буфера обмена
 HISTORY_LABEL;История
+HISTORY_MSG_100;RGB насыщенность
+HISTORY_MSG_105;Подавление ореолов
+HISTORY_MSG_106;Подавление ореолов: радиус
+HISTORY_MSG_107;Подавление ореоловЖ порог
 HISTORY_MSG_10;Сжатие теней
 HISTORY_MSG_11;Тоновая кривая
 HISTORY_MSG_12;Автоматическая настройка
@@ -224,11 +232,19 @@ HISTORY_MSG_84;Коррекция перспективы
 HISTORY_MSG_85;Вейвлет коэффициенты
 HISTORY_MSG_86;Вейвлет эквалайзер
 HISTORY_MSG_87;Подаление импульсного шума
+HISTORY_MSG_88;Impulse NR: порог
 HISTORY_MSG_89;Направленная пирамида
 HISTORY_MSG_8;Компенсация экспозиции
 HISTORY_MSG_90;Направленная пирамида яркость
 HISTORY_MSG_91;Направленная пирамида цветность
 HISTORY_MSG_92;Направленная пирамида гамма
+HISTORY_MSG_93;Контраст по уровням детализации: значение
+HISTORY_MSG_94;Контраст по уровням детализации
+HISTORY_MSG_95;Насыщенность
+HISTORY_MSG_96;Кривая 'a'
+HISTORY_MSG_97;Кривая 'b'
+HISTORY_MSG_98;Демозаик
+HISTORY_MSG_99;Припроцессор
 HISTORY_MSG_9;Сжатие светов
 HISTORY_NEWSNAPSHOT;Новый снимок
 HISTORY_NEWSNAPSHOTAS;Как...
@@ -306,6 +322,7 @@ MAIN_BUTTON_SENDTOEDITOR;Открыть в редакторе
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение во внешнем редакторе <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Оконный режим
 MAIN_FRAME_BATCHQUEUE;Очередь обработки
+MAIN_FRAME_EDITOR;Редактор
 MAIN_FRAME_FILEBROWSER;Файловый браузер
 MAIN_FRAME_PLACES;Закладки
 MAIN_FRAME_PLACES_ADD;Добавить
@@ -333,6 +350,7 @@ MAIN_TAB_FILTER;Фильтр
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Метаданные
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Метки
 MAIN_TAB_TRANSFORM;Преобразования
 MAIN_TOGGLE_BEFORE_AFTER;Д|П
@@ -374,11 +392,13 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Тени/света
 PARTIALPASTE_SHARPENING;Повышение резкости
 PARTIALPASTE_VIGNETTING;Коррекция виньетирования
 PARTIALPASTE_WHITEBALANCE;Баланс белого
+POPUPBUTTON_SELECTOPTIONHINT;Нажмите правую кнопку мыши для изменения
 PREFERENCES_ADD;Добавить
 PREFERENCES_APPLNEXTSTARTUP;Нужен перезапуск
 PREFERENCES_BATCH_PROCESSING;Пакетная обработка
 PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
+TP_RAWCACORR_CABLUE;синий
 PREFERENCES_CACHECLEARALL;Удалить все
 PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
 PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
@@ -391,7 +411,8 @@ PREFERENCES_CACHESTRAT2;Меньше расход памяти - скорост�
 PREFERENCES_CACHESTRAT;Стратегия кэширования
 PREFERENCES_CACHETHUMBFORM;Формат кэширования эскизов
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
-PREFERENCES_CACORRECTION;Применить автоматическую коррекцию ХА
+TP_RAWCACORR_AUTO;Применить автоматическую коррекцию ХА
+TP_RAWCACORR_CARED;красный
 PREFERENCES_CLEARDLG_LINE1;Очистка кэша
 PREFERENCES_CLEARDLG_LINE2;Это может занять несколько секунд.
 PREFERENCES_CLEARDLG_TITLE;Пожалуйста, подождите
@@ -400,8 +421,8 @@ PREFERENCES_CMETRICINTENT;Колориметрическое преобразо�
 PREFERENCES_DARKFRAME;Тёмный кадр
 PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DATEFORMATHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%y</b><i> : год</i>\n<b>%m</b><i> : месяц</i>\n<b>%d</b><i> : день</i>\n<i>\nНапример, венгерский формат даты такой:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DCBENHANCE;Применить шаг улучшения DCB
-PREFERENCES_DCBITERATIONS;Количество итераций DCB
+TP_RAW_DCBENHANCE;Применить шаг улучшения DCB
+TP_RAW_DCBITERATIONS;Количество итераций DCB
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
@@ -411,31 +432,32 @@ PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
 PREFERENCES_DIRSELECTDLG;Выберите каталог для хранения изображений
 PREFERENCES_DIRSOFTWARE;Каталог установки
-PREFERENCES_DMETHOD;Метод
+TP_RAW_DMETHOD;Метод
 PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
-PREFERENCES_FALSECOLOR;Шагов для подавления ложных цветов:
+TP_RAW_FALSECOLOR;Шагов для подавления ложных цветов:
 PREFERENCES_FBROWSEROPTS;Настройки
 PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FORIMAGE;Для изображений
 PREFERENCES_FORRAW;Для RAW файлов
 PREFERENCES_GIMPPATH;Каталог установки GIMP
-PREFERENCES_GREENEQUIL;Выравнивание зелёного
+TP_PREPROCESS_GREENEQUIL;Выравнивание зелёного
 PREFERENCES_GTKTHEME;GTK по умолчанию
 PREFERENCES_HINT;Подсказка
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
-PREFERENCES_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
+TP_PREPROCESS_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
 PREFERENCES_ICCDIR;Каталог ICC профилей
 PREFERENCES_IMPROCPARAMS;Параметры обработки по умолчанию
 PREFERENCES_INTENT_ABSOLUTE;Абсолютное
 PREFERENCES_INTENT_PERCEPTUAL;Перцепционное
 PREFERENCES_INTENT_RELATIVE;Относительное
 PREFERENCES_INTENT_SATURATION;По насыщенности
-PREFERENCES_LINEDENOISE;Фильтр линейного шума
+TP_PREPROCESS_LINEDENOISE;Фильтр линейного шума
 PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MONITORICC;Профиль монитора
 PREFERENCES_MULTITAB;Много вкладок
+PREFERENCES_MULTITABDUALMON;Режим многих вкладок, на втором мониторе (если возможно)
 PREFERENCES_OUTDIR;Каталог
 PREFERENCES_OUTDIRFOLDER;Каталог для сохранения изображений
 PREFERENCES_OUTDIRFOLDERHINT;Сохранение изображений в выбранный каталог
@@ -443,6 +465,7 @@ PREFERENCES_OUTDIRHINT;<i>Вы можете использовать следу�
 PREFERENCES_OUTDIRTEMPLATE;Использовать шаблон
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nЭти элементы соответствуют каталогам и подкаталогам в пути к RAW-файлу.\n\nНапример, если был открыт каталог </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, то элементы форматирования будут выглядеть так:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге с оригиналом, введите:\n</i><b>%p1/%f\n</b><i>\nЕсли вы хотите сохранять изображения в каталоге "converted", расположенной в каталоге оригинального файла, введите строку:\n</i><b>%p1/converted/%f\n</b><i>\nДля сохранения изображений папке в "/home/tom/converted" с сохранением подкаталогов с датами, введите строку:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Показывать имена файлов поверх миниатюр
+PREFERENCES_OVERWRITEOUTPUTFILE;Перезаписывать существующие выходные файлы
 PREFERENCES_PARSEDEXT;Расширения для предпросмотра
 PREFERENCES_PARSEDEXTADD;Добавить
 PREFERENCES_PARSEDEXTADDHINT;Введите расширение и нажмите на эту кнопку, чтобы добавить его в список
@@ -466,6 +489,7 @@ PREFERENCES_SHOWDATETIME;Показывать дату и время
 PREFERENCES_SHOWONLYRAW;Показывать только RAW-файлы
 PREFERENCES_SHTHRESHOLD;Порог срабатывания затемнений
 PREFERENCES_SINGLETAB;Одна вкладка
+PREFERENCES_SINGLETABVERTAB;Режим с одной вкладкой редактирования, вертикальные вкладки
 PREFERENCES_STARTUPIMDIR;Каталог изображений при запуске
 PREFERENCES_TAB_BROWSER;Браузер файлов
 PREFERENCES_TAB_COLORMGR;Управления цветом
@@ -557,6 +581,7 @@ TP_COLORSHIFT_LABEL;Сдвиг цвета
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Пропорция:
 TP_CROP_GTDIAGONALS;Правило диагоналей
+TP_CROP_GTGRID;Сетка
 TP_CROP_GTHARMMEANS1;Среднее гармоническое 1
 TP_CROP_GTHARMMEANS2;Среднее гармоническое 2
 TP_CROP_GTHARMMEANS3;Среднее гармоническое 3
@@ -570,6 +595,9 @@ TP_CROP_SELECTCROP; Вкл. режим обрезки
 TP_CROP_W;Ш
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DEFRINGE_LABEL;Подавление ореолов
+TP_DEFRINGE_RADIUS;Радиус
+TP_DEFRINGE_THRESHOLD;Порог
 TP_DETAIL_AMOUNT;Степень
 TP_DIRPYRDENOISE_CHROMA;Цветность
 TP_DIRPYRDENOISE_GAMMA;Гамма
@@ -600,11 +628,20 @@ TP_EXPOSURE_CONTRAST;Контраст
 TP_EXPOSURE_CURVEEDITOR;Тоновая кривая
 TP_EXPOSURE_EXPCOMP;Компенсация экспозиции
 TP_EXPOSURE_LABEL;Экспозиция
+TP_EXPOSURE_SATURATION;Насыщенность
 TP_HLREC_CIELAB;Смешивание CIELab
 TP_HLREC_COLOR;Реконструкция цвета
 TP_HLREC_LABEL;Восстановление ярких участков
 TP_HLREC_LUMINANCE;Восстановление яркости
 TP_HLREC_METHOD;Метод:
+TP_HSVEQUALIZER1;Красный
+TP_HSVEQUALIZER2;Жёлтый
+TP_HSVEQUALIZER3;Лимонный
+TP_HSVEQUALIZER4;Зелёный
+TP_HSVEQUALIZER5;Голубой
+TP_HSVEQUALIZER6;Синий
+TP_HSVEQUALIZER7;Фиолетовый
+TP_HSVEQUALIZER8;Пурпурный
 TP_ICM_FILEDLGFILTERANY;Любые файлы
 TP_ICM_FILEDLGFILTERICM;Файлы ICC профилей
 TP_ICM_GAMMABEFOREINPUT;Применять гамму для профиля
@@ -612,6 +649,7 @@ TP_ICM_INPUTCAMERA;По умолчанию для камеры
 TP_ICM_INPUTCUSTOM;Пользовательский
 TP_ICM_INPUTDLGLABEL;Выберите входной ICC профиль...
 TP_ICM_INPUTEMBEDDED;Использовать встроенный, если это возможно
+TP_ICM_INPUTNONE;Без профиля
 TP_ICM_INPUTPROFILE;Входной профиль
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Без ICM: sRGB на выходе
@@ -642,10 +680,9 @@ TP_LUMADENOISE_RADIUS;радиус
 TP_PERSPECTIVE_HORIZONTAL;Горизонтальная
 TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикальная
-TP_PREPROCESS_DARKFRAME;Темный кадр
-TP_PREPROCESS_DFAUTOSELECT;Автовыбор
-TP_RAWPANEL_DEMOSAICING;Демозаик
-TP_RAWPANEL_PREPROCESSING;Предобработка
+TP_DARKFRAME_AUTOSELECT;Автовыбор
+TP_RAW_LABEL;Демозаик
+TP_PREPROCESS_LABEL;Предобработка
 TP_RESIZE_BICUBIC;Бикубический
 TP_RESIZE_BICUBICSF;Мягкий бикубический
 TP_RESIZE_BICUBICSH;Резкий бикубический

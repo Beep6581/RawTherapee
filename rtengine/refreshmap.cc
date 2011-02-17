@@ -117,8 +117,8 @@ DIRPYREQUALIZER,  // EvDirPyrEqlEnabled,
 LUMINANCECURVE,   // EvLSaturation,
 LUMINANCECURVE,   // EvLaCurve,
 LUMINANCECURVE,   // EvLbCurve,
-DEMOSAIC,         // EvDemosaic
-DARKFRAME,        // EvPreProcess
+DEMOSAIC,         // EvDemosaicMethod
+DARKFRAME,        // EvPreProcessHotDeadPixel
 RGBCURVE,         // EvSaturation,
 RGBCURVE,         // EvHSVEqualizerH,
 RGBCURVE,         // EvHSVEqualizerS,
@@ -133,5 +133,17 @@ RESIZE,           // EvResizeAppliesTo
 LUMINANCECURVE,   // EvCBAvoidClip,
 LUMINANCECURVE,   // EvCBSatLimiter,
 LUMINANCECURVE,   // EvCBSatLimit,
+DEMOSAIC,         // EvDemosaicDCBIter
+DEMOSAIC,         // EvDemosaicFalseColorIter
+DEMOSAIC,         // EvDemosaicDCBEnhanced
+DARKFRAME,        // EvPreProcessCARed
+DARKFRAME,        // EvPreProcessCABlue
+DARKFRAME,        // EvPreProcessLineDenoise
+DARKFRAME,        // EvPreProcessGEquilThresh
+DARKFRAME,        // EvPreProcessAutoCA
+DARKFRAME,        // EvPreProcessAutoDF
+DARKFRAME,        // EvPreProcessDFFile
+DARKFRAME,        // EvPreProcessExpCorrLinear
+DARKFRAME         // EvPreProcessExpCorrPH
 };
 

@@ -348,10 +348,10 @@ PREFERENCES_DIRLAST;Últim directori usat
 PREFERENCES_DIROTHER;Un altre
 PREFERENCES_DIRSELECTDLG;Selecc. directori d'inici...
 PREFERENCES_DIRSOFTWARE;Instal·lació al directori
-PREFERENCES_DMETHOD;Mètode
+TP_RAW_DMETHOD;Mètode
 PREFERENCES_EDITORCMDLINE;Una altra línia de comandament
 PREFERENCES_EXTERNALEDITOR;Editor extern
-PREFERENCES_FALSECOLOR;Passos de supressió del fals color
+TP_RAW_FALSECOLOR;Passos de supressió del fals color
 PREFERENCES_FBROWSEROPTS;Opcions gestor d'arxius
 PREFERENCES_FILEFORMAT;Format de fitxer
 PREFERENCES_FORIMAGE;Per fitxers d'imatge

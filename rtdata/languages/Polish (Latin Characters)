@@ -352,10 +352,10 @@ PREFERENCES_DIRLAST;Ostatnio odwiedzony katalog
 PREFERENCES_DIROTHER;Inny
 PREFERENCES_DIRSELECTDLG;Wybierz katalog z obrazami po uruchomieniu...
 PREFERENCES_DIRSOFTWARE;Katalog instalacyjny
-PREFERENCES_DMETHOD;Metoda
+TP_RAW_DMETHOD;Metoda
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;Zewnetrzny edytor
-PREFERENCES_FALSECOLOR;Kroki zapobiegania zafalszowaniom kolorow
+TP_RAW_FALSECOLOR;Kroki zapobiegania zafalszowaniom kolorow
 PREFERENCES_FBROWSEROPTS;Opcje przegladarki plikow
 PREFERENCES_FILEFORMAT;Format pliku
 PREFERENCES_FORIMAGE;Dla plikow z obrazami

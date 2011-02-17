@@ -57,13 +57,15 @@ class Adjuster : public Gtk::VBox {
 
   public:
 
-    static int delay;
+    int delay;
 
     Adjuster (Glib::ustring label, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
     virtual ~Adjuster ();
     void setAdjusterListener (AdjusterListener* alistener);
 
     double getValue ();
+    int getIntValue ();
+    Glib::ustring getTextValue ();
     void setValue (double a);   
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);
