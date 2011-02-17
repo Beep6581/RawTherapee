@@ -3,6 +3,9 @@
 #01 Translated by Emil Ericsson
 #02 2008-01-22
 #03 2010-10-12, 2010-10-18, 2010-10-24, 2010-11-01, 2010-11-04, 2010-11-07, 2010-11-11, 2010-11-13, 2010-11-29 update by Johan Andersson
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Erkännande
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
@@ -28,6 +31,7 @@ EDITWINDOW_TITLE;Bildredigering
 EXIFFILTER_APERTURE;Bländare
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;EXIF-filter
+EXIFFILTER_FILETYPE;Filtyp
 EXIFFILTER_FOCALLEN;Brännvidd
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
@@ -147,7 +151,10 @@ HISTORY_MSG_104;HSV Equalizer
 HISTORY_MSG_105;Reducering av överstrålning
 HISTORY_MSG_106;Radie för reducering av överstrålning
 HISTORY_MSG_107;Tröskelvärde för reducering av överstrålning
+HISTORY_MSG_108;Storleksförändring på avgränsad yta
+HISTORY_MSG_109;Storleksförändring tillämpas på
 HISTORY_MSG_10;Skuggkomprimering
+HISTORY_MSG_110;Storleksförändring tillämpas på
 HISTORY_MSG_11;Tonkurva
 HISTORY_MSG_12;Autoexponering
 HISTORY_MSG_13;Exponeringsmarkering
@@ -389,11 +396,16 @@ PARTIALPASTE_COLORMIXER;Färgmixer
 PARTIALPASTE_COLORSHIFT;Färgskift
 PARTIALPASTE_COMPOSITIONGROUP;Komponeringsinställningar
 PARTIALPASTE_CROP;Beskär
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatiskt val av svartbild
+PARTIALPASTE_DARKFRAMEFILE;Svartbildsfil
 PARTIALPASTE_DIALOGLABEL;Partiell inklistring av processprofiler
 PARTIALPASTE_DISTORTION;Distortionsrättning
+PARTIALPASTE_EVERYTHING;Allt
 PARTIALPASTE_EXIFCHANGES;Förändringar i EXIF-informationen
 PARTIALPASTE_EXPOSURE;Exponering
 PARTIALPASTE_HLRECOVERY;Högdageråterskapning
+PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
 PARTIALPASTE_ICMSETTINGS;ICM-inställningar
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LABCURVE;Labkurva
@@ -402,6 +414,7 @@ PARTIALPASTE_LUMACURVE;Luminanskurva
 PARTIALPASTE_LUMADENOISE;Reducera luminansbrus
 PARTIALPASTE_LUMINANCEGROUP;Luminansrelaterade inställningar
 PARTIALPASTE_METAICMGROUP;Metadata/ICM inställningar
+PARTIALPASTE_RAWGROUP;Råinställningar
 PARTIALPASTE_RESIZE;Ändra storlek
 PARTIALPASTE_ROTATION;Rotering
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Skuggor/Högdagrar
@@ -414,7 +427,7 @@ PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
 PREFERENCES_BEHAVIOR;Uppträdande
 PREFERENCES_BLINKCLIPPED;Blinka markerade områden
-PREFERENCES_CABLUE;Blå CA manuell korrigering
+TP_RAWCACORR_CABLUE;Blå
 PREFERENCES_CACHECLEARALL;Återställ alla
 PREFERENCES_CACHECLEARPROFILES;Återställ profiler
 PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
@@ -427,8 +440,8 @@ PREFERENCES_CACHESTRAT2;Föredra låg minnesanvändning framför hastighet
 PREFERENCES_CACHESTRAT;Cachestrategi
 PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
-PREFERENCES_CACORRECTION;Reducera kromatiska abberationer
-PREFERENCES_CARED;Röd CA manuell korrigering
+TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
+TP_RAWCACORR_CARED;Röd
 PREFERENCES_CLEARDLG_LINE1;Rensa cache
 PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
 PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
@@ -438,8 +451,8 @@ PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
 PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : månad</i>\n<b>%d</b><i> : dag</i>\n<i>\nTill exempel är det svenska datumformatet:</i>-n<b>%y-%m-%d</b>
-PREFERENCES_DCBENHANCE;Applicera DCB-förbättringssteg
-PREFERENCES_DCBITERATIONS;Antal DCB-iterationer
+TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
+TP_RAW_DCBITERATIONS;Antal DCB-iterationer
 PREFERENCES_DEFAULTLANG;Förvalt språk
 PREFERENCES_DEFAULTTHEME;Förvalt tema
 PREFERENCES_DEMOSAICINGALGO;Algoritm för demosaicing
@@ -449,29 +462,29 @@ PREFERENCES_DIRLAST;Senaste besökta katalog
 PREFERENCES_DIROTHER;Annan
 PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
 PREFERENCES_DIRSOFTWARE;Installationskatalog
-PREFERENCES_DMETHOD;Metod
-PREFERENCES_DMETHODBATCH;Batch
+TP_RAW_DMETHOD;Metod
+TP_RAW_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
 PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
-PREFERENCES_FALSECOLOR;Falskt färgbortträngningssteg
+TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
 PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FORIMAGE;För bildfiler
 PREFERENCES_FORRAW;För råbilder
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
-PREFERENCES_GREENEQUIL;Grönbalansering
+TP_PREPROCESS_GREENEQUIL;Grönbalansering
 PREFERENCES_GTKTHEME;GTK standard
 PREFERENCES_HINT;Tips
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
-PREFERENCES_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
+TP_PREPROCESS_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
 PREFERENCES_ICCDIR;Katalog för ICC-profiler
 PREFERENCES_IMPROCPARAMS;Standardprofiler
 PREFERENCES_INTENT_ABSOLUTE;Totalkolorimetrisk
 PREFERENCES_INTENT_PERCEPTUAL;Upplevd
 PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
-PREFERENCES_LINEDENOISE;Linjärt brusfilter
+TP_PREPROCESS_LINEDENOISE;Linjärt brusfilter
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
@@ -702,16 +715,19 @@ TP_LUMADENOISE_RADIUS;Radie
 TP_PERSPECTIVE_HORIZONTAL;Horisontell
 TP_PERSPECTIVE_LABEL;Perspektiv
 TP_PERSPECTIVE_VERTICAL;Vertikal
-TP_PREPROCESS_DARKFRAME;Svartbild
-TP_PREPROCESS_DFAUTOSELECT;Välj svartbild automatiskt
-TP_RAWPANEL_DEMOSAICING;Demosaicing
-TP_RAWPANEL_PREPROCESSING;Förbehandling
+TP_DARKFRAME_AUTOSELECT;Välj svartbild automatiskt
+TP_RAW_LABEL;Demosaicing
+TP_PREPROCESS_LABEL;Förbehandling
+TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
 TP_RESIZE_BILINEAR;Bilinjär
+TP_RESIZE_CROPPEDAREA;Beskuren yta
 TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
 TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
+TP_RESIZE_FITBOX;Begränsad yta
+TP_RESIZE_FULLIMAGE;Hela bilden
 TP_RESIZE_FULLSIZE;Full bildstorlek:
 TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höjd

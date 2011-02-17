@@ -18,7 +18,6 @@
  */
 #include <options.h>
 #include <stdio.h>
-#include <adjuster.h>
 #include <glib/gstdio.h>
 #include <sstream>
 #include <multilangmgr.h>
@@ -58,6 +57,7 @@ void Options::setDefaults () {
     defProfRaw = "default";
     defProfImg = "neutral";
     dateFormat = "%y-%m-%d";
+    adjusterDelay = 0;
     startupDir = 1;
     startupPath = "";
     profilePath = "profiles";
@@ -177,7 +177,7 @@ if (keyFile.has_group ("General")) {
         
     if (keyFile.has_key ("General", "StartupPath"))      startupPath     = keyFile.get_string ("General", "StartupPath");
     if (keyFile.has_key ("General", "DateFormat"))       dateFormat      = keyFile.get_string ("General", "DateFormat");
-    if (keyFile.has_key ("General", "AdjusterDelay"))    Adjuster::delay = keyFile.get_integer ("General", "AdjusterDelay");
+    if (keyFile.has_key ("General", "AdjusterDelay"))    adjusterDelay   = keyFile.get_integer ("General", "AdjusterDelay");
     if (keyFile.has_key ("General", "StoreLastProfile")) savesParamsAtExit = keyFile.get_boolean ("General", "StoreLastProfile");
     if (keyFile.has_key ("General", "DualProcSupport"))  rtSettings.dualThreadEnabled = keyFile.get_boolean ("General", "DualProcSupport");
     if (keyFile.has_key ("General", "MultiUser"))        multiUser       = keyFile.get_boolean ("General", "MultiUser");
@@ -318,7 +318,7 @@ int Options::saveToFile (Glib::ustring fname) {
         keyFile.set_string ("General", "StartupDirectory", "last");
     keyFile.set_string  ("General", "StartupPath", startupPath);
     keyFile.set_string  ("General", "DateFormat", dateFormat);
-    keyFile.set_integer ("General", "AdjusterDelay", Adjuster::delay);
+    keyFile.set_integer ("General", "AdjusterDelay", adjusterDelay);
     keyFile.set_boolean ("General", "DualProcSupport", rtSettings.dualThreadEnabled);
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
@@ -326,8 +326,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_integer ("General", "Version", TAGDISTANCE);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
-	keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
-	keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
+    keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+    keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
 
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
     keyFile.set_string  ("External Editor", "GimpDir", gimpDir);

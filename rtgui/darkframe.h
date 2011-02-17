@@ -16,36 +16,38 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PREPROCESS_H_
-#define _PREPROCESS_H_
+#ifndef _DARKFRAME_H_
+#define _DARKFRAME_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
 #include <toolpanel.h>
 #include <rawimage.h>
 
-class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class DarkFrame : public Gtk::VBox, public FoldableToolPanel {
 
-  protected:
+protected:
 
-    Adjuster* lineDenoise;
+	Gtk::ComboBoxText* darkFrameMethod;
+	Gtk::FileChooserButton *darkFrameFile;
+    Gtk::HBox *hbdf;
+    Gtk::Button *btnReset;
+    Gtk::Label *dfLabel;
+	Gtk::Label *dfInfo;
+    Gtk::CheckButton* dfAuto;
+    bool dfChanged;
+	bool lastDFauto;
+	sigc::connection dfautoconn, dfFile;
 
-    Adjuster* greenEqThreshold;
-    Gtk::CheckButton* hotDeadPixel;
-	bool lastHot;
-	sigc::connection hdpixelconn;
+public:
 
-  public:
-
-    PreProcess ();
+	DarkFrame ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setBatchMode   (bool batchMode);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
-    void adjusterChanged     (Adjuster* a, double newval);
-    void hotDeadPixelChanged();
+    void darkFrameChanged ();
+    void darkFrameReset   ();
+    void dfAutoChanged    ();
 };
 
 #endif

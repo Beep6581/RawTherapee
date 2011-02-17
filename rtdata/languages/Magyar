@@ -394,7 +394,7 @@ PREFERENCES_CACHESTRAT2;Inkább memóriatakarékos, mint gyors
 PREFERENCES_CACHESTRAT;Gyorsítótár stratégia
 PREFERENCES_CACHETHUMBFORM;Előnézeti kép formátuma
 PREFERENCES_CACHETHUMBHEIGHT;Előnézeti kép maximális magassága
-PREFERENCES_CACORRECTION;Színihiba (kromatikus aberráció) automatikus helyesbítése
+TP_RAWCACORR_AUTO;Színihiba (kromatikus aberráció) automatikus helyesbítése
 PREFERENCES_CLEARDLG_LINE1;Gyorsítótár ürítése
 PREFERENCES_CLEARDLG_LINE2;Ez eltarthat pár másodpercig.
 PREFERENCES_CLEARDLG_TITLE;Kérem várjon
@@ -402,8 +402,8 @@ PREFERENCES_CLIPPINGIND;Kiégett és bebukott részek jelzése
 PREFERENCES_CMETRICINTENT;Intent
 PREFERENCES_DATEFORMAT;Dátumformátum
 PREFERENCES_DATEFORMATHINT;<i>A következő jeleket lehet használni:</i>\n<b>%y</b><i> : év</i>\n<b>%m</b><i> : hónap</i>\n<b>%d</b><i> : nap</i>\n<i>\nPéldául a magyar dátumformátum:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DCBENHANCE;DCB helyesbítő lépés alkalmazása
-PREFERENCES_DCBITERATIONS;DCB iterációk száma
+TP_RAW_DCBENHANCE;DCB helyesbítő lépés alkalmazása
+TP_RAW_DCBITERATIONS;DCB iterációk száma
 PREFERENCES_DEFAULTLANG;Alapértelmezett nyelv
 PREFERENCES_DEFAULTTHEME;Alapértelmezett kinézet
 PREFERENCES_DEMOSAICINGALGO;Bayer interpoláció
@@ -413,11 +413,11 @@ PREFERENCES_DIRLAST;Utoljára látogatott könyvtár
 PREFERENCES_DIROTHER;Más
 PREFERENCES_DIRSELECTDLG;Képek könyvtára induláskor...
 PREFERENCES_DIRSOFTWARE;Telepítés helye
-PREFERENCES_DMETHOD;Algoritmus
+TP_RAW_DMETHOD;Algoritmus
 PREFERENCES_EDITORCMDLINE;Egyéb parancssor
 PREFERENCES_EDITORLAYOUT;Szerkesztési mód
 PREFERENCES_EXTERNALEDITOR;Külső képszerkesztő program
-PREFERENCES_FALSECOLOR;Színhiba-elnyomási lépések
+TP_RAW_FALSECOLOR;Színhiba-elnyomási lépések
 PREFERENCES_FBROWSEROPTS;Állományböngésző beállításai
 PREFERENCES_FILEFORMAT;Állományformátum
 PREFERENCES_FORIMAGE;Egyéb képekhez
@@ -426,14 +426,14 @@ PREFERENCES_GIMPPATH;GIMP telepítési könyvtára
 PREFERENCES_GTKTHEME;Alap GTK kinézet
 PREFERENCES_HINT;Tipp
 PREFERENCES_HLTHRESHOLD;Küszöbérték kiégett területekhez
-PREFERENCES_HOTDEADPIXFILT;Hot/dead pixel szűrő alkalmazása
+TP_PREPROCESS_HOTDEADPIXFILT;Hot/dead pixel szűrő alkalmazása
 PREFERENCES_ICCDIR;ICC profilok könyvtára
 PREFERENCES_IMPROCPARAMS;Alapértelmezett feldolgozási paraméterek
 PREFERENCES_INTENT_ABSOLUTE;Abszolút kolorimetrikus
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuális
 PREFERENCES_INTENT_RELATIVE;Relatív kolorimetrikus
 PREFERENCES_INTENT_SATURATION;Színtelítettség
-PREFERENCES_LINEDENOISE;Sorzaj-szűrő
+TP_PREPROCESS_LINEDENOISE;Sorzaj-szűrő
 PREFERENCES_LIVETHUMBNAILS;Élő előnézeti képek (lassabb)
 PREFERENCES_MONITORICC;Monitor ICC profilja
 PREFERENCES_MULTITAB;Több szerkesztőfül
@@ -660,10 +660,9 @@ TP_LUMADENOISE_RADIUS;Sugár
 TP_PERSPECTIVE_HORIZONTAL;Vízszintes
 TP_PERSPECTIVE_LABEL;Perspektíva
 TP_PERSPECTIVE_VERTICAL;Függőleges
-TP_PREPROCESS_DARKFRAME;Dark frame
-TP_PREPROCESS_DFAUTOSELECT;Auto selection
-TP_RAWPANEL_DEMOSAICING;Deinterpoláció
-TP_RAWPANEL_PREPROCESSING;Előfeldolgozás
+TP_DARKFRAME_AUTOSELECT;Auto selection
+TP_RAW_LABEL;Deinterpoláció
+TP_PREPROCESS_LABEL;Előfeldolgozás
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (lágyabb)
 TP_RESIZE_BICUBICSH;Bicubic (keményebb)

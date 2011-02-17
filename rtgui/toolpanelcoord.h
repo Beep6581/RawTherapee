@@ -59,6 +59,9 @@
 #include <hsvequalizer.h>
 #include <rawprocess.h>
 #include <preprocess.h>
+#include <darkframe.h>
+#include <rawcacorrection.h>
+#include <rawexposure.h>
 
 class ImageEditorCoordinator;
 
@@ -101,6 +104,9 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
+        DarkFrame* darkframe;
+        RAWCACorr* rawcacorrection;
+        RAWExposure* rawexposure;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -160,6 +166,9 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         // wbprovider interface
         void getAutoWB (double& temp, double& green) { if (ipc) ipc->getAutoWB (temp, green); }
         void getCamWB (double& temp, double& green)  { if (ipc) ipc->getCamWB (temp, green); }
+
+        //DFProvider interface
+        rtengine::RawImage* getDF();
 
         // rotatelistener interface
         void straightenRequested ();

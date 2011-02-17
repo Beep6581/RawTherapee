@@ -21,6 +21,7 @@
 #include <ilabel.h>
 #include <options.h>
 #include <imagesource.h>
+#include <dfmanager.h>
 
 using namespace rtengine::procparams;
 
@@ -63,6 +64,9 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     hsvequalizer        = Gtk::manage (new HSVEqualizer ());
     rawprocess          = Gtk::manage (new RawProcess ());
     preprocess          = Gtk::manage (new PreProcess ());
+    darkframe           = Gtk::manage (new DarkFrame ());
+    rawcacorrection     = Gtk::manage (new RAWCACorr ());
+    rawexposure         = Gtk::manage (new RAWExposure ());
 
     addPanel (colorPanel, whitebalance,         M("TP_WBALANCE_LABEL"));       toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, curve,             M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (curve);
@@ -90,8 +94,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL")); toolPanels.push_back (cacorrection);
     addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));   toolPanels.push_back (vignetting);
     addPanel (colorPanel, icm,                  M("TP_ICM_LABEL"));             toolPanels.push_back (icm);
-    addPanel (rawPanel, rawprocess,             M("TP_RAWPANEL_DEMOSAICING"));  toolPanels.push_back (rawprocess);
-    addPanel (rawPanel, preprocess,             M("TP_RAWPANEL_PREPROCESSING"));toolPanels.push_back (preprocess);
+    addPanel (rawPanel, rawprocess,             M("TP_RAW_LABEL"));            toolPanels.push_back (rawprocess);
+    addPanel (rawPanel, preprocess,             M("TP_PREPROCESS_LABEL"));     toolPanels.push_back (preprocess);
+    addPanel (rawPanel, rawexposure,            M("TP_EXPOSCORR_LABEL"));      toolPanels.push_back (rawexposure);
+    addPanel (rawPanel, darkframe,              M("TP_DARKFRAME_LABEL"));      toolPanels.push_back (darkframe);
+    addPanel (rawPanel, rawcacorrection,        M("TP_CHROMATABERR_LABEL"));   toolPanels.push_back (rawcacorrection);
 
     toolPanels.push_back (coarse);
     toolPanels.push_back (exifpanel);
