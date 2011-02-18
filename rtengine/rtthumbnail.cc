@@ -92,6 +92,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     }
 
     // bilinear interpolation
+    if (tpp->thumbImg) delete tpp->thumbImg;
     tpp->thumbImg = img->resize (w, h, TI_Bilinear);
 
     // histogram computation
@@ -204,6 +205,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         tpp->scale = (double)img->width / w;
     }
 
+    if (tpp->thumbImg) delete tpp->thumbImg;
     tpp->thumbImg = img->resize (w, h, TI_Nearest);
     delete img;
 
@@ -232,7 +234,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
 {
 	RawImage *ri= new RawImage (fname);
-	int r = ri->loadRaw();
+	int r = ri->loadRaw(1,0);
 	if( r ){
 		delete ri;
 		return NULL;
@@ -369,11 +371,14 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	else
 		h = tmph * w / tmpw;
 	
-	Image16* resImg = new Image16(tmpw, tmph);
+	Image16* resImg;// = new Image16(tmpw, tmph);<< memory leak!!
 	resImg = tmpImg->to16();
+	delete tmpImg;
+
+	if (tpp->thumbImg) delete tpp->thumbImg;
 	tpp->thumbImg = resImg->resize(w, h, TI_Bilinear);
 	delete resImg;
-	delete tmpImg;
+
 
 	if (ri->get_FujiWidth() != 0)
 		tpp->scale = (double) (height - ri->get_FujiWidth()) / sqrt(0.5) / h;
@@ -553,7 +558,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
     }
 	Image8* img8 = baseImg->to8();
 	delete baseImg;
-	delete tmp;
+	//delete tmp;
 	return img8;
 }
 
@@ -613,19 +618,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         rheight = tmp->height;
         delete resImg;
         resImg = tmp;
-		delete tmp;
+		//delete tmp;
     }
     if (params.coarse.hflip) {
         Image16* tmp = resImg->hflip ();
         delete resImg;
         resImg = tmp;
-		delete tmp;
+		//delete tmp;
     }
     if (params.coarse.vflip) {
         Image16* tmp = resImg->vflip ();
         delete resImg;
         resImg = tmp;
-		delete tmp;
+		//delete tmp;
     }
     // apply white balance
     int val;
@@ -661,7 +666,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         StdImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile);
 	
 	Imagefloat* baseImg = resImg->tofloat();
-        
+    delete resImg;// << avoid mem leak!
     int fw = baseImg->width;
     int fh = baseImg->height;
 
