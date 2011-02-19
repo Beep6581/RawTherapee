@@ -74,7 +74,7 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
           }
           ProcParams* pp = new ProcParams ();
           int res = pp->load (fname);
-          if (!res && pp->version>=220) 
+          if (!res && pp->ppVersion>=220)
             pparams[name] = pp;
           else
             delete pp;
