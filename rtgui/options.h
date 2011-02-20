@@ -84,7 +84,7 @@ class Options {
     int  fbArrangement;
     bool multiUser;
     static Glib::ustring rtdir;
-    int version;
+    Glib::ustring version;
     int thumbSize,thumbSizeTab;
     bool showHistory;
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden

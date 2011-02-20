@@ -75,7 +75,7 @@ void Options::setDefaults () {
     fbShowHidden = false;
     fbArrangement = 0;
     multiUser = false;
-    version = TAGDISTANCE;
+    version = VERSION;
     thumbSize = 80;
     thumbSizeTab = 80;
     showHistory = true;
@@ -181,7 +181,7 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "StoreLastProfile")) savesParamsAtExit = keyFile.get_boolean ("General", "StoreLastProfile");
     if (keyFile.has_key ("General", "DualProcSupport"))  rtSettings.dualThreadEnabled = keyFile.get_boolean ("General", "DualProcSupport");
     if (keyFile.has_key ("General", "MultiUser"))        multiUser       = keyFile.get_boolean ("General", "MultiUser");
-//    if (keyFile.has_key ("General", "Version"))         version         = keyFile.get_integer ("General", "Version");
+    if (keyFile.has_key ("General", "Version"))          version         = keyFile.get_string ("General", "Version");
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
@@ -324,7 +324,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_string  ("General", "Theme", theme);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
-    keyFile.set_integer ("General", "Version", TAGDISTANCE);
+    keyFile.set_string  ("General", "Version", VERSION);
     keyFile.set_boolean ("General", "FirstRun", firstRun);
     keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
     keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);

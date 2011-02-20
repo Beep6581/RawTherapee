@@ -9,13 +9,18 @@ Cmake is actually used to create the Makefiles (scripts that handle the build pr
 It is designed to find all necessary compilation flags for your specific machine, but everything can be overriden.
 
 RT's build mechanism will generate a build information file, named "AboutThisBuild.txt", and require some parameters that can't be set by Cmake, so it's
-done in our build script, and may be aoverriden at your own will. The build process also enable some sort of cross compiling, since you can only choose
+done in our build script, and may be overriden at your own will. The build process also enable some sort of cross compiling, since you can only choose
 a specific processor variation of the same type (e.g. core2, athlon64, which are both an x86 architecture). Real cross compiling (e.g. building the windows
 version on a linux platform) has not been tested.
 
 By default, no processor is specified, so Cmake/GCC will build RT for your processor (or maybe a generic processor). Developers that are providing build to
 download then have to set the processor label manually (set to 'undefined' by default) with the PROC_FORCED_LABEL cmake's parameter (we assume that you know
 how to specify a cmake parameter).
+
+Note for developers that handle an automated build system : Mercurial is requested in order to produce the build information file, but you build system will
+certainly only use the source code without any access to a Mercurial repository. In this case, you have to first build RT like explained below to generates
+the build information files, then you can tell your build system to run cmake with the following additionnal parameter : -D AUTOMATED_BUILD_SYSTEM:BOOL=ON.
+Cmake will then pass the files creation step, but will check the presence of the requested files and stop if they're not there.
 
 
 Windows
