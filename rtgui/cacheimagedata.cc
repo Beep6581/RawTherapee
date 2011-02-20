@@ -37,7 +37,7 @@ int CacheImageData::load (const Glib::ustring& fname) {
 
         if (keyFile.has_group ("General")) { 
             if (keyFile.has_key ("General", "MD5"))             md5         = keyFile.get_string ("General", "MD5");
-            if (keyFile.has_key ("General", "Version"))         version     = keyFile.get_integer ("General", "Version");
+            if (keyFile.has_key ("General", "Version"))         version     = keyFile.get_string ("General", "Version");
             if (keyFile.has_key ("General", "Supported"))       supported   = keyFile.get_boolean ("General", "Supported");
             if (keyFile.has_key ("General", "Format"))          format      = (ThFileType)keyFile.get_integer ("General", "Format");
             if (keyFile.has_key ("General", "Rank"))            rank        = keyFile.get_integer ("General", "Rank");
