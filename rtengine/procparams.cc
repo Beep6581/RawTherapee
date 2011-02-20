@@ -23,8 +23,11 @@
 #include <sstream>
 #include <string.h>
 #include <version.h>
+#include <ppversion.h>
 
 #include <safekeyfile.h>
+
+#define APPVERSION VERSION
 
 namespace rtengine {
 namespace procparams {
@@ -223,14 +226,15 @@ raw.preser=0.0;
     exif.clear ();
     iptc.clear ();
     
-    version = TAGDISTANCE;
+    ppVersion = PPVERSION;
 }
 
 int ProcParams::save (Glib::ustring fname) const {
 
     SafeKeyFile keyFile;
 
-    keyFile.set_integer ("Version", "Version", TAGDISTANCE);
+    keyFile.set_string  ("Version", "AppVersion", APPVERSION);
+    keyFile.set_integer ("Version", "Version",    PPVERSION);
 
     // save tonecurve:
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
@@ -495,9 +499,11 @@ int ProcParams::load (Glib::ustring fname) {
 
     // load tonecurve:
 
-version = TAGDISTANCE;
+ppVersion = PPVERSION;
+appVersion = APPVERSION;
 if (keyFile.has_group ("Version")) {    
-    if (keyFile.has_key ("Version", "Version")) version = keyFile.get_integer ("Version", "Version");
+    if (keyFile.has_key ("Version", "AppVersion")) appVersion = keyFile.get_string  ("Version", "AppVersion");
+    if (keyFile.has_key ("Version", "Version"))    ppVersion  = keyFile.get_integer ("Version", "Version");
 }
 
 if (keyFile.has_group ("Exposure")) {    
@@ -513,7 +519,7 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "HighlightComprThreshold")) toneCurve.hlcomprthresh = keyFile.get_integer ("Exposure", "HighlightComprThreshold");
     if (keyFile.has_key ("Exposure", "ShadowCompr"))    toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr");
     if (toneCurve.shcompr > 100) toneCurve.shcompr = 100; // older pp3 files can have values above 100.
-    if (version>200)
+    if (ppVersion>200)
 	if (keyFile.has_key ("Exposure", "Curve"))          toneCurve.curve         = keyFile.get_double_list ("Exposure", "Curve");
 }
 
@@ -537,7 +543,7 @@ if (keyFile.has_group ("Luminance Curve")) {
 	if (keyFile.has_key ("Luminance Curve", "AvoidColorClipping"))  labCurve.avoidclip               = keyFile.get_boolean ("Luminance Curve", "AvoidColorClipping");
     if (keyFile.has_key ("Luminance Curve", "SaturationLimiter"))   labCurve.enable_saturationlimiter= keyFile.get_boolean ("Luminance Curve", "SaturationLimiter");
     if (keyFile.has_key ("Luminance Curve", "SaturationLimit"))     labCurve.saturationlimit         = keyFile.get_double  ("Luminance Curve", "SaturationLimit");	
-	if (version>200)
+	if (ppVersion>200)
 	if (keyFile.has_key ("Luminance Curve", "LCurve"))          labCurve.lcurve      = keyFile.get_double_list ("Luminance Curve", "LCurve");
 	if (keyFile.has_key ("Luminance Curve", "aCurve"))          labCurve.acurve      = keyFile.get_double_list ("Luminance Curve", "aCurve");
 	if (keyFile.has_key ("Luminance Curve", "bCurve"))          labCurve.bcurve      = keyFile.get_double_list ("Luminance Curve", "bCurve");

@@ -42,6 +42,8 @@ if (APPLE)
     SET (CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
 endif (APPLE)
 
+option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
+
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" OFF)
@@ -139,22 +141,42 @@ else (WIN32)
     find_package (ZLIB REQUIRED)
 endif (WIN32)
 
-# set the bit number information of the platform
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(PROC_BIT_DEPTH 32 bits)
-elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(PROC_BIT_DEPTH 64 bits)
-endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+if (AUTOMATED_BUILD_SYSTEM)
 
-#generating AboutThisBuild.txt
-if (WIN32)
+	message(WARNING "Automated build system mode! You have to make sure that AboutThisBuild.txt and rtgui/version.h are up-to-date by building RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF.")
+
+  # Checking for the presence of AboutThisBuild.txt
+  find_file(ABOUT_FILE AboutThisBuild.txt PATHS "${CMAKE_CURRENT_SOURCE_DIR}" NO_DEFAULT_PATH)
+  if (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
+	  message(FATAL_ERROR "AboutThisBuild.txt not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
+  endif (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
+
+  # Checking for the presence of version.h
+  find_file(VERSION_FILE version.h PATHS "${CMAKE_CURRENT_SOURCE_DIR}/rtgui" NO_DEFAULT_PATH)
+  if (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
+	  message(FATAL_ERROR "rtgui/version.h not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
+  endif (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
+
+else (AUTOMATED_BUILD_SYSTEM)
+
+  # set the bit number information of the platform
+  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(PROC_BIT_DEPTH 32 bits)
+  elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(PROC_BIT_DEPTH 64 bits)
+  endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+
+  #generating AboutThisBuild.txt
+  if (WIN32)
     include (About-Windows.cmake)
-elseif (APPLE)
+  elseif (APPLE)
     include (About-Apple.cmake)
-else (WIN32)
+  else (WIN32)
     include (About-Linux.cmake)
-endif (WIN32)
-add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+  endif (WIN32)
+  add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+
+endif (AUTOMATED_BUILD_SYSTEM)
 
 # link rawzor
 if (WITH_RAWZOR)

@@ -158,7 +158,7 @@ void Thumbnail::loadProcParams () {
     if (options.paramsLoadLocation==PLL_Input) {
         // try to load it from params file next to the image file
         int ppres = pparams.load (fname + paramFileExtension);
-        pparamsValid = !ppres && pparams.version>=220;
+        pparamsValid = !ppres && pparams.ppVersion>=220;
         if (!pparamsValid) 
                 pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
     }
@@ -168,7 +168,7 @@ void Thumbnail::loadProcParams () {
         // if no success, load it from params file next to the image file
         if (!pparamsValid) {
             int ppres = pparams.load (fname + paramFileExtension);
-            pparamsValid = !ppres && pparams.version>=220;
+            pparamsValid = !ppres && pparams.ppVersion>=220;
         }
     }
 }
