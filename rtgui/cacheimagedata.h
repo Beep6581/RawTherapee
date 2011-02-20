@@ -28,7 +28,7 @@ class CacheImageData {
 
         // basic informations
         Glib::ustring  md5;
-        int   version;
+        Glib::ustring  version;
         bool  supported;
         ThFileType  format;
         char  rank;
