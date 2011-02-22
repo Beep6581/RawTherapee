@@ -68,15 +68,17 @@
 template<typename T>
 class LUT {
 private:
-	int size, owner;
-	unsigned int clip;
+	// list of variables ordered to improve cache speed
+	unsigned int maxs; 
 	T * data;
+	unsigned int clip, size, owner;
 public:
 	LUT(int s, int flags = 0xfffffff) {
 		clip = flags;
 		data = new T[s];
 		owner = 1;
 		size = s;
+		maxs=size-2;
 	}
 	void operator ()(int s, int flags = 0xfffffff) {
 		if (owner&&data)
@@ -85,12 +87,14 @@ public:
 		data = new T[s];
 		owner = 1;
 		size = s;
+		maxs=size-2;
 	}
 
 	LUT(int s, T * source) {
 		data = new T[s];
 		owner = 1;
 		size = s;
+		maxs=size-2;
 		for (int i = 0; i < s; i++) {
 			data[i] = source[i];
 		}
@@ -100,6 +104,7 @@ public:
 		data = NULL;
 		owner = 1;
 		size = 0;
+		maxs=0;
 	}
 
 	~LUT() {
@@ -119,31 +124,39 @@ public:
 	      this->owner=1;
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
 	      this->size=rhs.size;
+	      this->maxs=this->size-2;
 	    }
 
 	    return *this;
 	  }
 	// use with integer indices
 	T& operator[](int index) {
-		if (index < 0)
-			return data[0];
-		if (index < size)
-			return data[index];
+		if (((unsigned int)index)<size) return data[index];
 		else
-			return data[size - 1];
+		{
+			if (index < 0)
+				return data[0];
+			else
+				return data[size - 1];
+		}
+		
 	}
 	// use with float indices
 	T operator[](float index) {
 		int idx = floor(index);
-		if (idx < 0) {
-			if (clip & LUT_CLIP_BELOW)
-				return data[0];
-			else idx = 0;
-		}
-		if (idx > size - 2) {
-			if (clip & LUT_CLIP_ABOVE)
-				return data[size - 1];
-			else idx = size - 2;
+		if (((unsigned int)idx) > maxs) {
+			if (idx<0)
+			{
+				if (clip & LUT_CLIP_BELOW)
+					return data[0];
+				idx=0;
+			}
+			else
+			{
+				if (clip & LUT_CLIP_ABOVE)
+					return data[size - 1];
+				idx =maxs;
+			}
 		}
 		float diff = index - (float) idx;
 		T p1 = data[idx];
