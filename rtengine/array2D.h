@@ -22,8 +22,8 @@
  *
  *  Usage:
  *
- *  	array2D<type> name (Y-size,X-size);
- *		array2D<type> name (Y-size,X-size, type ** data);
+ *  	array2D<type> name (X-size,Y-size);
+ *		array2D<type> name (X-size,Y-size type ** data);
  *
  *		creates an array which is valid within the normal C/C++ scope "{ ... }"
  *
@@ -54,20 +54,53 @@
  */
 #ifndef ARRAY2D_H_
 #define ARRAY2D_H_
-#include <unistd.h>  // for sleep()
+#include <csignal>  // for raise()
 // flags for use
 #define ARRAY2D_LOCK_DATA	1
 #define ARRAY2D_CLEAR_DATA	2
+#define ARRAY2D_BYREFERENCE	4
+#define ARRAY2D_VERBOSE		8
 
 template<typename T>
 class array2D {
+
 private:
-	int x, y, owner;
+	int x, y, owner, flags;
 	T ** ptr;
 	T * data;
 	bool lock; // useful lock to ensure data is not changed anymore.
+	void ar_realloc(int w, int h) {
+		if ((ptr) && ((h > y) || (4 * h < y))) {
+			delete[] ptr;
+			ptr = NULL;
+		}
+		if ((data) && (((h * w) > (x * y)) || ((h * w) < ((x * y) / 4)))) {
+			delete[] data;
+			data = NULL;
+		}
+		if (ptr == NULL)
+			ptr = new T*[h];
+		if (data == NULL)
+			data = new T[h * w];
+
+		x = w;
+		y = h;
+		for (int i = 0; i < h; i++)
+			ptr[i] = data + w * i;
+		owner = 1;
+	}
 public:
-	array2D(int h, int w, unsigned int flags = 0) {
+
+	// use as empty declaration, resize before use!
+	// very useful as a member object
+	array2D() :
+		x(0), y(0), owner(0), data(NULL), ptr(NULL), lock(0) {
+		printf("got empty array2D init\n");
+	}
+
+	// creator type1
+	array2D(int w, int h, unsigned int flgs = 0) {
+		flags = flgs;
 		lock = flags & ARRAY2D_LOCK_DATA;
 		data = new T[h * w];
 		owner = 1;
@@ -80,21 +113,37 @@ public:
 			memset(data, 0, w * h * sizeof(T));
 	}
 
-	array2D(int h, int w, T ** source, unsigned int flags = 0) {
-		lock = flags & ARRAY2D_LOCK_DATA;
-		data = new T[h * w];
-		owner = 1;
+	// creator type 2
+	array2D(int w, int h, T ** source, unsigned int flgs = 0) {
+		flags = flgs;
+		//if (lock) { printf("array2D attempt to overwrite data\n");raise(SIGSEGV);}
+		lock |= flags & ARRAY2D_LOCK_DATA;
+		// when by reference
+		// TODO: improve this code with ar_realloc()
+		owner = (flags & ARRAY2D_BYREFERENCE) ? 0 : 1;
+		if (owner)
+			data = new T[h * w];
+		else
+			data = NULL;
 		x = w;
 		y = h;
 		ptr = new T*[h];
 		for (int i = 0; i < h; i++) {
-			ptr[i] = data + i * w;
-			for (int j = 0; j < w; j++)
-				ptr[i][j] = source[i][j];
+			if (owner) {
+				ptr[i] = data + i * w;
+				for (int j = 0; j < w; j++)
+					ptr[i][j] = source[i][j];
+			} else
+				ptr[i] = source[i];
 		}
 	}
 
+	// destructor
 	~array2D() {
+
+		if (flags & ARRAY2D_VERBOSE)
+			printf(" deleting array2D size %dx%d \n", x, y);
+
 		if ((owner) && (data))
 			delete[] data;
 		if (ptr)
@@ -113,79 +162,104 @@ public:
 
 	// use as pointer to data
 	operator T*() {
+		// only if owner this will return a valid pointer
 		return data;
 	}
 
-	// use as empty declaration, resize before use!
-	// very useful as a member object
-	array2D() :
-		x(0), y(0), owner(0), data(NULL), ptr(NULL), lock(0) {
-	}
 
 	// useful within init of parent object
 	// or use as resize of 2D array
-	void operator()(int h, int w, unsigned int flags = 0) {
+	void operator()(int w, int h, unsigned int flgs = 0) {
+		flags = flgs;
+		if (flags & ARRAY2D_VERBOSE) {
+			printf("got init request %dx%d flags=%d\n", w, h, flags);
+			printf("previous was data %p ptr %p \n", data, ptr);
+		}
 		if (lock) // our object was locked so don't allow a change.
 		{
-			// we do a 'hang' here.
-			// in a multithreaded app it should be possible to save
-			// what is left.
-			while (1) {
-				sleep(1);
-			};
+			printf("got init request but object was locked!\n");
+			raise( SIGSEGV);
 		}
 		lock = flags & ARRAY2D_LOCK_DATA;
 
-		// can we reuse the current allocated data?
-		// if less than a quarter of our data then reallocate.
-		if ((ptr) && ((h > y)||(4*h<y))) {
-			delete[] ptr;
-			ptr = NULL;
-		}
-		if ((data) && (((h * w) > (x * y)) || ((h * w) < ((x * y) / 4)))) {
-			delete[] data;
-			data = NULL;
-		}
-		if (ptr == NULL)
-			ptr = new T*[h];
-		if (data == NULL)
-			data = new T[h * w];
+		ar_realloc(w,h);
 		if (flags & ARRAY2D_CLEAR_DATA)
 			memset(data, 0, w * h * sizeof(T));
-		x = w;
-		y = h;
-		for (int i = 0; i < h; i++)
-			ptr[i] = data + w * i;
 	}
 
 	// import from flat data
-	void operator()(int h, int w, T* copy,unsigned int flags = 0) {
+	void operator()(int w, int h, T* copy, unsigned int flgs = 0) {
+		flags = flgs;
+		if (flags & ARRAY2D_VERBOSE) {
+			printf("got init request %dx%d flags=%d\n", w, h, flags);
+			printf("previous was data %p ptr %p \n", data, ptr);
+		}
 		if (lock) // our object was locked so don't allow a change.
 		{
-			// we do a 'hang' here.
-			// in a multithreaded app it should be possible to save
-			// what is left.
-			while (1) {
-				sleep(1);
-			};
+			printf("got init request but object was locked!\n");
+			raise( SIGSEGV);
 		}
 		lock = flags & ARRAY2D_LOCK_DATA;
 
-		// can we reuse the current allocated data?
-		// if less than a quarter of our data then reallocate.
-		if (data) delete[] data;
-		data = new T[h * w];
-		if ((ptr) && ((h > y)||(4*h<y))) {
-			delete[] ptr;
-			ptr = NULL;
-		}
-		if (ptr == NULL)
-			ptr = new T*[h];
+		ar_realloc(w,h);
 		memcpy(data, copy, w * h * sizeof(T));
-		x = w;
-		y = h;
-		for (int i = 0; i < h; i++)
-			ptr[i] = data + w * i;
+	}
+	int width() {
+		return x;
+	}
+	int height() {
+		return y;
+	}
+
+	operator bool() {
+		return (x > 0 && y > 0);
+	}
+
+	array2D<T> & operator=( array2D<T> & rhs) {
+		if (this != &rhs)
+
+		{
+			if (!owner) // we can only copy same size data
+			{
+				if ((x != rhs.x) || (y != rhs.y)) {
+					printf(" assignment error in array2D\n");
+					printf(" sizes differ and not owner\n");
+					raise( SIGSEGV);
+				}
+
+			} else {
+				ar_realloc(rhs.x, rhs.y);
+			}
+			// we could have been created from a different
+			// array format where each row is created by 'new'
+			for (int i=0;i<y;i++)
+				memcpy(ptr[i],rhs.ptr[i],x*sizeof(T));
+		}
+		return *this;
+	}
+
+};
+template<typename T, const size_t num>
+class multi_array2D {
+private:
+	array2D<T> list[num];
+
+public:
+	multi_array2D(int x, int y, int flags = 0) {
+		for (int i = 0; i < num; i++)
+			list[i](x, y, flags | ARRAY2D_VERBOSE);
+	}
+
+	~multi_array2D() {
+		printf("trying to delete the list of array2D objects\n");
+	}
+
+	array2D<T> & operator[](size_t index) {
+		if (index < 0 || index >= num) {
+			printf("index %d is out of range[0..%d]", index, num - 1);
+			raise( SIGSEGV);
+		}
+		return list[index];
 	}
 };
 #endif /* array2D_H_ */
