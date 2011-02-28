@@ -409,7 +409,7 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 		double a = pow (2.0, ecomp);
 		
 		// curve without contrast
-		LUTf dcurve(2*65536,0);
+		LUTf dcurve(0x10000);
 		
 		// check if contrast curve is needed
 		bool needcontrast = contr>0.00001 || contr<-0.00001;
@@ -475,7 +475,7 @@ void Curve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 			
 			//hlCurve[i] = (65535.0 * CLIPD(val));
 			
-			if ((hlcompr>0.0)&&(exp_scale>0.5))
+			if (comp>0.0)
 			{
 				if (val>0.0) {
 					float Y = val*exp_scale/(scale-shoulder);
