@@ -92,9 +92,8 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_)
 
     minWidth = bsw + iw + 2*sideBorderWidth;
     
-    setSize (100, 100);
     cropHandler.newImage (ipc_);
-    cropHandler.setPosition (0,0);
+
     cropHandler.setEnabled (true);
     cropHandler.setCropHandlerListener (this);
 
@@ -195,6 +194,7 @@ void CropWindow::setSize (int w, int h, bool norefresh) {
    
     if (!norefresh)
         cropHandler.setWSize (imgAreaW, imgAreaH);
+
     iarea->redraw ();
 }
 
@@ -746,7 +746,6 @@ double CropWindow::getZoom () {
 }
 
 void CropWindow::setZoom (double zoom) {
-
     int cz = MAXZOOMSTEPS;
     if (zoom < zoomSteps[0].zoom)
         cz = 0;

@@ -30,12 +30,6 @@ class CropHandlerListener {
         virtual void initialImageArrived () {}
 };
 
-class CropHandler;
-struct CropHandlerIdleHelper {
-    CropHandler* cropHandler;
-    bool destroyed;
-    int pending;
-};
 
 class CropHandler : public rtengine::DetailedCropListener, public rtengine::SizeListener {
 
@@ -55,7 +49,6 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         rtengine::DetailedCrop* crop;
 
         CropHandlerListener* listener;
-        CropHandlerIdleHelper* chi;
 
         void    update  ();
         void    compDim ();
