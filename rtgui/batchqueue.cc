@@ -436,8 +436,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                     int i = options.savePathTemplate[ix]-'0';
                     if (i<da.size())
-                        path = path + da[da.size()-i-1] + '/';
-                    ix++;
+                        path = path + da[da.size()-i-1];
                 }
                 else if (options.savePathTemplate[ix]=='f') {
                     path = path + filename;
