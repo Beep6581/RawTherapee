@@ -22,15 +22,21 @@
 
 IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia) {
 
+    Glib::ustring tt;
+
     indclippedh = Gtk::manage (new Gtk::ToggleButton ());
     indclippedh->set_relief(Gtk::RELIEF_NONE);
     indclippedh->add (*Gtk::manage (new Gtk::Image (argv0+"/images/warnhl.png")));   
-    indclippedh->set_tooltip_text (M("MAIN_TOOLTIP_INDCLIPPEDH"));
+    tt = M("MAIN_TOOLTIP_INDCLIPPEDH");
+    if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) indclippedh->set_tooltip_text (tt);
+        else indclippedh->set_tooltip_markup (tt);
 
     indclippeds = Gtk::manage (new Gtk::ToggleButton ());
     indclippeds->set_relief(Gtk::RELIEF_NONE);
     indclippeds->add (*Gtk::manage (new Gtk::Image (argv0+"/images/warnsh.png")));   
-    indclippeds->set_tooltip_text (M("MAIN_TOOLTIP_INDCLIPPEDS"));
+    tt = M("MAIN_TOOLTIP_INDCLIPPEDS");
+    if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) indclippeds->set_tooltip_text (tt);
+        else indclippeds->set_tooltip_markup (tt);
 
     indclippedh->set_active (options.showClippedHighlights);
     indclippeds->set_active (options.showClippedShadows);
