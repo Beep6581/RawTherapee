@@ -398,7 +398,6 @@ PREFERENCES_APPLNEXTSTARTUP;Нужен перезапуск
 PREFERENCES_BATCH_PROCESSING;Пакетная обработка
 PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
-TP_RAWCACORR_CABLUE;синий
 PREFERENCES_CACHECLEARALL;Удалить все
 PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
 PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
@@ -411,8 +410,6 @@ PREFERENCES_CACHESTRAT2;Меньше расход памяти - скорост�
 PREFERENCES_CACHESTRAT;Стратегия кэширования
 PREFERENCES_CACHETHUMBFORM;Формат кэширования эскизов
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
-TP_RAWCACORR_AUTO;Применить автоматическую коррекцию ХА
-TP_RAWCACORR_CARED;красный
 PREFERENCES_CLEARDLG_LINE1;Очистка кэша
 PREFERENCES_CLEARDLG_LINE2;Это может занять несколько секунд.
 PREFERENCES_CLEARDLG_TITLE;Пожалуйста, подождите
@@ -421,8 +418,6 @@ PREFERENCES_CMETRICINTENT;Колориметрическое преобразо�
 PREFERENCES_DARKFRAME;Тёмный кадр
 PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DATEFORMATHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%y</b><i> : год</i>\n<b>%m</b><i> : месяц</i>\n<b>%d</b><i> : день</i>\n<i>\nНапример, венгерский формат даты такой:</i>\n<b>%y/%m/%d</b>
-TP_RAW_DCBENHANCE;Применить шаг улучшения DCB
-TP_RAW_DCBITERATIONS;Количество итераций DCB
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
@@ -432,28 +427,23 @@ PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
 PREFERENCES_DIRSELECTDLG;Выберите каталог для хранения изображений
 PREFERENCES_DIRSOFTWARE;Каталог установки
-TP_RAW_DMETHOD;Метод
 PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
-TP_RAW_FALSECOLOR;Шагов для подавления ложных цветов:
 PREFERENCES_FBROWSEROPTS;Настройки
 PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FORIMAGE;Для изображений
 PREFERENCES_FORRAW;Для RAW файлов
 PREFERENCES_GIMPPATH;Каталог установки GIMP
-TP_PREPROCESS_GREENEQUIL;Выравнивание зелёного
 PREFERENCES_GTKTHEME;GTK по умолчанию
 PREFERENCES_HINT;Подсказка
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
-TP_PREPROCESS_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
 PREFERENCES_ICCDIR;Каталог ICC профилей
 PREFERENCES_IMPROCPARAMS;Параметры обработки по умолчанию
 PREFERENCES_INTENT_ABSOLUTE;Абсолютное
 PREFERENCES_INTENT_PERCEPTUAL;Перцепционное
 PREFERENCES_INTENT_RELATIVE;Относительное
 PREFERENCES_INTENT_SATURATION;По насыщенности
-TP_PREPROCESS_LINEDENOISE;Фильтр линейного шума
 PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MONITORICC;Профиль монитора
 PREFERENCES_MULTITAB;Много вкладок
@@ -595,6 +585,7 @@ TP_CROP_SELECTCROP; Вкл. режим обрезки
 TP_CROP_W;Ш
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Автовыбор
 TP_DEFRINGE_LABEL;Подавление ореолов
 TP_DEFRINGE_RADIUS;Радиус
 TP_DEFRINGE_THRESHOLD;Порог
@@ -680,9 +671,18 @@ TP_LUMADENOISE_RADIUS;радиус
 TP_PERSPECTIVE_HORIZONTAL;Горизонтальная
 TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикальная
-TP_DARKFRAME_AUTOSELECT;Автовыбор
-TP_RAW_LABEL;Демозаик
+TP_PREPROCESS_GREENEQUIL;Выравнивание зелёного
+TP_PREPROCESS_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
 TP_PREPROCESS_LABEL;Предобработка
+TP_PREPROCESS_LINEDENOISE;Фильтр линейного шума
+TP_RAWCACORR_AUTO;Применить автоматическую коррекцию ХА
+TP_RAWCACORR_CABLUE;синий
+TP_RAWCACORR_CARED;красный
+TP_RAW_DCBENHANCE;Применить шаг улучшения DCB
+TP_RAW_DCBITERATIONS;Количество итераций DCB
+TP_RAW_DMETHOD;Метод
+TP_RAW_FALSECOLOR;Шагов для подавления ложных цветов:
+TP_RAW_LABEL;Демозаик
 TP_RESIZE_BICUBIC;Бикубический
 TP_RESIZE_BICUBICSF;Мягкий бикубический
 TP_RESIZE_BICUBICSH;Резкий бикубический
@@ -768,34 +768,30 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!CURVEEDITOR_CURVE;Curve
-!CURVEEDITOR_CURVES;Curves
-!EDITWINDOW_TITLE;Image Edit
-!EXIFFILTER_FILETYPE;File Type
-!HISTORY_MSG_100;RGB saturation
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
 !HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing
-!HISTORY_MSG_106;Defringing Radius
-!HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
 !HISTORY_MSG_110;Resizing applies to
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing
-!HISTORY_MSG_99;Preprocessing
-!MAIN_FRAME_EDITOR;Editor
-!MAIN_TAB_RAW;RAW
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
 !NAVIGATOR_G_NA;G = n/a
@@ -817,42 +813,26 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!TP_CROP_GTGRID;Grid
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_DARKFRAME_LABEL;Dark Frame
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_EXPOSURE_SATURATION;Saturation
-!TP_HSVEQUALIZER1;Red
-!TP_HSVEQUALIZER2;Yellow
-!TP_HSVEQUALIZER3;Lime
-!TP_HSVEQUALIZER4;Green
-!TP_HSVEQUALIZER5;Aqua
-!TP_HSVEQUALIZER6;Blue
-!TP_HSVEQUALIZER7;Purple
-!TP_HSVEQUALIZER8;Magenta
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;Hue
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
 !TP_HSVEQUALIZER_NEUTRAL;Neutral
 !TP_HSVEQUALIZER_SAT;Saturation
 !TP_HSVEQUALIZER_VAL;Value
-!TP_ICM_INPUTNONE;No profile
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

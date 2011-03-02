@@ -1,3 +1,4 @@
+
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
 ABOUT_TAB_BUILD;Version
@@ -117,6 +118,7 @@ GENERAL_DISABLE;Désactiver
 GENERAL_DISABLED;Désactivé
 GENERAL_ENABLE;Activer
 GENERAL_ENABLED;Activé
+GENERAL_FILE;Fichier
 GENERAL_HIGH_QUALITY;Qualité élevée
 GENERAL_LANDSCAPE;Paysage
 GENERAL_LOAD;Charger
@@ -163,6 +165,7 @@ HISTORY_MSG_116;DCB amélioré
 HISTORY_MSG_117;Corr. aberr. chromatique rouge
 HISTORY_MSG_118;Corr. aberr. chromatique bleu
 HISTORY_MSG_119;Filtre de bruit de ligne
+HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_120;Équilibrage du vert
 HISTORY_MSG_121;Corr. auto. de l'aberr. chromatique
 HISTORY_MSG_122;Trame Noire automatique
@@ -173,7 +176,6 @@ HISTORY_MSG_126;Champ Uniforme - Fichier
 HISTORY_MSG_127;Champ Uniforme - Auto sélection
 HISTORY_MSG_128;Champ Uniforme - Rayon
 HISTORY_MSG_129;Champ Uniforme - Type de floutage
-HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_12;Exposition auto
 HISTORY_MSG_13;Rognage de l'exposition
 HISTORY_MSG_14;Luminance - Luminosité
@@ -413,10 +415,17 @@ PARTIALPASTE_COLORMIXER;Mixage couleur
 PARTIALPASTE_COLORSHIFT;Décalage couleur
 PARTIALPASTE_COMPOSITIONGROUP;Réglages de la composition
 PARTIALPASTE_CROP;Recadrage
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Sélection auto de la Trame Noire
+PARTIALPASTE_DARKFRAMEFILE;Fichier de Trame Noire
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
 PARTIALPASTE_DISTORTION;Correction de distortion
+PARTIALPASTE_EVERYTHING;Tout
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
 PARTIALPASTE_EXPOSURE;Exposition
+PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
+PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
+PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
+PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
@@ -427,6 +436,7 @@ PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
+PARTIALPASTE_RAWGROUP;Réglages RAW
 PARTIALPASTE_RESIZE;Redimentionnement
 PARTIALPASTE_ROTATION;Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
@@ -439,7 +449,6 @@ PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
-TP_RAWCACORR_CABLUE;Bleue
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
 PREFERENCES_CACHECLEARTHUMBS;Nettoyer les vignettes
@@ -452,8 +461,6 @@ PREFERENCES_CACHESTRAT2;Optimiser la consommation mémoire au détriment de la v
 PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
-TP_RAWCACORR_AUTO;Correction automatique
-TP_RAWCACORR_CARED;Rouge
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
@@ -463,8 +470,6 @@ PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
-TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
-TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
@@ -474,29 +479,23 @@ PREFERENCES_DIRLAST;Dernier dossier visité
 PREFERENCES_DIROTHER;Autre
 PREFERENCES_DIRSELECTDLG;Choix du dossier Image au lancement...
 PREFERENCES_DIRSOFTWARE;Dossier d'installation
-TP_RAW_DMETHOD;Méthode
 PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
-TP_RAWEXPOS_LINEAR;Facteur de corr. linéaire
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
-TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
-TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
 PREFERENCES_GTKTHEME;GTK par défaut
 PREFERENCES_HINT;Conseil
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
-TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
 PREFERENCES_ICCDIR;Dossier des profils ICC
 PREFERENCES_IMPROCPARAMS;Paramètres de traitement d'image par défaut
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrie absolue
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
-TP_PREPROCESS_LINEDENOISE;Filtre de bruit de Ligne
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_MULTITAB;Mode éditeurs multiple
@@ -513,7 +512,6 @@ PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste
 PREFERENCES_PARSEDEXTDELHINT;Supprime de la liste les extensions sélectionnées
-TP_RAWEXPOS_PRESER;Corr. préservant les HL (EV)
 PREFERENCES_PROFILEHANDLING;Gestionnaire des profils de traitement
 PREFERENCES_PROFILELOADPR;Priorité de chargement des profils
 PREFERENCES_PROFILEPRCACHE;Profil dans le Cache
@@ -640,6 +638,7 @@ TP_CROP_SELECTCROP;    Sélection du recadrage
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Sélection automatique
 TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Suppression de l'aberr. chromatique
 TP_DEFRINGE_RADIUS;Rayon
@@ -730,10 +729,21 @@ TP_LUMADENOISE_RADIUS;Rayon
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
-TP_DARKFRAME_AUTOSELECT;Sélection automatique
-TP_RAW_LABEL;Dématriçage
-TP_PREPROCESS_NO_FOUND;Aucun trouvé
+TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
+TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
 TP_PREPROCESS_LABEL;Traitement pre-dématriçage
+TP_PREPROCESS_LINEDENOISE;Filtre de bruit de Ligne
+TP_PREPROCESS_NO_FOUND;Aucun trouvé
+TP_RAWCACORR_AUTO;Correction automatique
+TP_RAWCACORR_CABLUE;Bleue
+TP_RAWCACORR_CARED;Rouge
+TP_RAWEXPOS_LINEAR;Facteur de corr. linéaire
+TP_RAWEXPOS_PRESER;Corr. préservant les HL (EV)
+TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
+TP_RAW_DMETHOD;Méthode
+TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
+TP_RAW_LABEL;Dématriçage
 TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
@@ -815,12 +825,4 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-PARTIALPASTE_DARKFRAMEAUTOSELECT;Sélection auto de la Trame Noire
-PARTIALPASTE_DARKFRAMEFILE;Fichier de Trame Noire
-PARTIALPASTE_EVERYTHING;Tout
-PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
-PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
-PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
-PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
-PARTIALPASTE_RAWGROUP;Réglages RAW
-GENERAL_FILE;Fichier
+

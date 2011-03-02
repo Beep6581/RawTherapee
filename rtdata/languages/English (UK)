@@ -27,13 +27,13 @@ PARTIALPASTE_COLORSHIFT;Colour shift
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-TP_RAW_FALSECOLOR;False colour suppression steps
 PREFERENCES_TAB_COLORMGR;Colour Management
 TP_COLORBOOST_AVOIDCOLORCLIP;Avoid colour clipping
 TP_COLORBOOST_LABEL;Colour Boost
 TP_COLORDENOISE_LABEL;Colour Noise Reduction
 TP_COLORSHIFT_LABEL;Colour Shift
 TP_HLREC_COLOR;Colour Propagation
+TP_RAW_FALSECOLOR;False colour suppression steps
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -158,11 +158,13 @@ TP_HLREC_COLOR;Colour Propagation
 !GENERAL_DISABLED;Disabled
 !GENERAL_ENABLE;Enable
 !GENERAL_ENABLED;Enabled
+!GENERAL_FILE;File
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_LANDSCAPE;Landscape
 !GENERAL_LOAD;Load
 !GENERAL_NA;n/a
 !GENERAL_NO;No
+!GENERAL_NONE;None
 !GENERAL_OK;OK
 !GENERAL_PORTRAIT;Portrait
 !GENERAL_SAVE;Save
@@ -197,7 +199,19 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
 !HISTORY_MSG_11;Tone Curve
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !HISTORY_MSG_12;Auto Exposure
 !HISTORY_MSG_13;Exposure Clipping
 !HISTORY_MSG_14;Luminance Brightness
@@ -276,7 +290,7 @@ TP_HLREC_COLOR;Colour Propagation
 !HISTORY_MSG_95;Saturation
 !HISTORY_MSG_96;'a' curve
 !HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_99;Preprocessing
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOTAS;As...
 !HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -434,7 +448,6 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
-!PREFERENCES_CABLUE;CA Blue manual correction
 !PREFERENCES_CACHECLEARALL;Clear All
 !PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 !PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
@@ -445,8 +458,6 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
 !PREFERENCES_CACHESTRAT;Cache Strategy
 !PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
@@ -456,8 +467,6 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DATEFORMAT;Date Format
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
-!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-!PREFERENCES_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DEFAULTLANG;Default language
 !PREFERENCES_DEFAULTTHEME;Default theme
 !PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
@@ -467,28 +476,23 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_DIROTHER;Other
 !PREFERENCES_DIRSELECTDLG;Select Image Directory at Startup...
 !PREFERENCES_DIRSOFTWARE;Installation directory
-!PREFERENCES_DMETHOD;Method
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FBROWSEROPTS;File Browser Options
 !PREFERENCES_FILEFORMAT;File format
 !PREFERENCES_FORIMAGE;For image files
 !PREFERENCES_FORRAW;For RAW files
 !PREFERENCES_GIMPPATH;GIMP installation directory
-!PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_GTKTHEME;GTK default
 !PREFERENCES_HINT;Hint
 !PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PREFERENCES_ICCDIR;Directory of ICC profiles
 !PREFERENCES_IMPROCPARAMS;Default image processing parameters
 !PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 !PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
-!PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_MONITORICC;Monitor Profile
 !PREFERENCES_MULTITAB;Multiple tabs mode
@@ -505,7 +509,6 @@ TP_HLREC_COLOR;Colour Propagation
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -591,6 +594,7 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_CHMIXER_GREEN;Green
 !TP_CHMIXER_LABEL;Channel Mixer
 !TP_CHMIXER_RED;Red
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_COARSETRAF_DEGREE;degree:
 !TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 !TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left
@@ -626,6 +630,8 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_CROP_W;W
 !TP_CROP_X;x
 !TP_CROP_Y;y
+!TP_DARKFRAME_AUTOSELECT;Auto selection
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
@@ -649,6 +655,7 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
@@ -713,10 +720,20 @@ TP_HLREC_COLOR;Colour Propagation
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
+!TP_PREPROCESS_GREENEQUIL;Green equilibration
+!TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!TP_PREPROCESS_LABEL;Preprocessing
+!TP_PREPROCESS_LINEDENOISE;Line noise filter
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_AUTO;Auto correction
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD;Method
+!TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_BICUBIC;Bicubic
 !TP_RESIZE_BICUBICSF;Bicubic (Softer)

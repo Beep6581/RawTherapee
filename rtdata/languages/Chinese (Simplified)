@@ -631,7 +631,9 @@ ZOOMBAR_SMALL;小
 !FILEBROWSER_USETEMPLATE;Use template:
 !GENERAL_AFTER;After
 !GENERAL_BEFORE;Before
+!GENERAL_FILE;File
 !GENERAL_HIGH_QUALITY;High Quality
+!GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
@@ -651,6 +653,18 @@ ZOOMBAR_SMALL;小
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
@@ -667,8 +681,8 @@ ZOOMBAR_SMALL;小
 !HISTORY_MSG_95;Saturation
 !HISTORY_MSG_96;'a' curve
 !HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing
-!HISTORY_MSG_99;Preprocessing
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
@@ -707,27 +721,17 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_ADD;ADD
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-!PREFERENCES_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
@@ -738,7 +742,10 @@ ZOOMBAR_SMALL;小
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_AUTOSELECT;Auto selection
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
@@ -760,6 +767,7 @@ ZOOMBAR_SMALL;小
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
@@ -793,10 +801,21 @@ ZOOMBAR_SMALL;小
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
+!TP_PREPROCESS_GREENEQUIL;Green equilibration
+!TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!TP_PREPROCESS_LABEL;Preprocessing
+!TP_PREPROCESS_LINEDENOISE;Line noise filter
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_AUTO;Auto correction
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD;Method
+!TP_RAW_FALSECOLOR;False color suppression steps
+!TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_DOWNSCALEB;Downscale (Better)

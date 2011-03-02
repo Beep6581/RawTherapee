@@ -149,8 +149,8 @@ HISTORY_MSG_105;Quitar borde púrpura
 HISTORY_MSG_106;Quitar borde púrpura Radio
 HISTORY_MSG_107;Quitar borde púrpura Umbral
 HISTORY_MSG_109;Cambiar tamaño rectángulo limitador
-HISTORY_MSG_110;Cambio tamaño aplica a
 HISTORY_MSG_10;Compresión de Sombras
+HISTORY_MSG_110;Cambio tamaño aplica a
 HISTORY_MSG_11;Curva de Tono
 HISTORY_MSG_12;Exposición Automática
 HISTORY_MSG_13;Recorte de Exposición
@@ -419,7 +419,6 @@ PREFERENCES_APPLNEXTSTARTUP;aplicado al próximo arranque
 PREFERENCES_BATCH_PROCESSING;Proceso por lotes
 PREFERENCES_BEHAVIOR;Comportamiento
 PREFERENCES_BLINKCLIPPED;Parpadear áreas cortadas
-TP_RAWCACORR_CABLUE;Azul
 PREFERENCES_CACHECLEARALL;Borrar todo
 PREFERENCES_CACHECLEARPROFILES;Borrar perfiles
 PREFERENCES_CACHECLEARTHUMBS;Borrar miniaturas
@@ -432,8 +431,6 @@ PREFERENCES_CACHESTRAT2;Preferir consume de memoria bajo sobre velocidad
 PREFERENCES_CACHESTRAT;Estrategia de la memoria intermedia
 PREFERENCES_CACHETHUMBFORM;Formato de las miniaturas
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima de las miniaturas
-TP_RAWCACORR_AUTO;Aplicar autocorrección aberr. cromát.
-TP_RAWCACORR_CARED;Rojo
 PREFERENCES_CLEARDLG_LINE1;Borrando memoria intermedia
 PREFERENCES_CLEARDLG_LINE2;Puede durar unos segundos.
 PREFERENCES_CLEARDLG_TITLE;Aguardar, por favor
@@ -441,8 +438,6 @@ PREFERENCES_CLIPPINGIND;Indicación de recortes
 PREFERENCES_CMETRICINTENT;Intento Colorimétrico
 PREFERENCES_DATEFORMAT;Formato de Fechas
 PREFERENCES_DATEFORMATHINT;<i>Se puede usar las variables siguientes:</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en Argentina es:</i>\n<b>%d/%m/%y</b>
-TP_RAW_DCBENHANCE;Aplicar paso mejora DCB
-TP_RAW_DCBITERATIONS;Número iteraciones DCB
 PREFERENCES_DEFAULTLANG;Idioma predeterminado
 PREFERENCES_DEFAULTTHEME;Estilo predeterminado
 PREFERENCES_DEMOSAICINGALGO;Algoritmo de desmosaicado
@@ -451,28 +446,23 @@ PREFERENCES_DIRLAST;Última carpeta visitada
 PREFERENCES_DIROTHER;Otro
 PREFERENCES_DIRSELECTDLG;Seleccionar Carpeta de Imagenes en el arranque...
 PREFERENCES_DIRSOFTWARE;Carpeta de instalación
-TP_RAW_DMETHOD;Método
 PREFERENCES_EDITORCMDLINE;Otro mandato
 PREFERENCES_EDITORLAYOUT;Aspecto del editor
 PREFERENCES_EXTERNALEDITOR;Editor externa
-TP_RAW_FALSECOLOR;Pasos de supresión de colores falsos
 PREFERENCES_FBROWSEROPTS;Opciones del Explorador de archivos
 PREFERENCES_FILEFORMAT;Formato de Archivos
 PREFERENCES_FORIMAGE;Para Archivos de Imágenes
 PREFERENCES_FORRAW;Para archivos RAW
 PREFERENCES_GIMPPATH;Carpeta de instalación de GIMP
-TP_PREPROCESS_GREENEQUIL;Equilibrado del verde
 PREFERENCES_GTKTHEME;Estilo de GTK predeterminado
 PREFERENCES_HINT;Consejo
 PREFERENCES_HLTHRESHOLD;Umbral de luces altas cortados
-TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 PREFERENCES_ICCDIR;Carpeta de Perfiles ICC
 PREFERENCES_IMPROCPARAMS;Parámetros predeterminados de procesamiento de imágenes
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrico Absoluto
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Colorimétrico Relativo
 PREFERENCES_INTENT_SATURATION;Saturación
-TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
 PREFERENCES_LIVETHUMBNAILS;Miniaturas 'en vivo' (mas lento)
 PREFERENCES_MONITORICC;Perfil de Pantalla
 PREFERENCES_OUTDIR;Carpeta de Salida
@@ -602,6 +592,7 @@ TP_CROP_SELECTCROP;    Seleccionar Recorte
 TP_CROP_W;An
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Selección automática
 TP_DEFRINGE_LABEL;Quitar borde púrpura
 TP_DEFRINGE_RADIUS;Radio
 TP_DEFRINGE_THRESHOLD;Umbral
@@ -676,9 +667,18 @@ TP_LUMADENOISE_RADIUS;Radio
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspectiva
 TP_PERSPECTIVE_VERTICAL;Vertical
-TP_DARKFRAME_AUTOSELECT;Selección automática
-TP_RAW_LABEL;Desmosaicado
+TP_PREPROCESS_GREENEQUIL;Equilibrado del verde
+TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 TP_PREPROCESS_LABEL;Preprocesado
+TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
+TP_RAWCACORR_AUTO;Aplicar autocorrección aberr. cromát.
+TP_RAWCACORR_CABLUE;Azul
+TP_RAWCACORR_CARED;Rojo
+TP_RAW_DCBENHANCE;Aplicar paso mejora DCB
+TP_RAW_DCBITERATIONS;Número iteraciones DCB
+TP_RAW_DMETHOD;Método
+TP_RAW_FALSECOLOR;Pasos de supresión de colores falsos
+TP_RAW_LABEL;Desmosaicado
 TP_RESIZE_APPLIESTO;Aplica a:
 TP_RESIZE_BICUBIC;Bicúbica
 TP_RESIZE_BICUBICSF;Bicúbica (más suave)
@@ -768,93 +768,46 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!CURVEEDITOR_DARKS;Darks
-!CURVEEDITOR_NURBS;Control cage
 !EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_FILETYPE;File Type
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-!FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-!HISTOGRAM_BUTTON_B;B
-!HISTOGRAM_BUTTON_G;G
-!HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_R;R
-!HISTORY_MSG_100;RGB saturation
-!HISTORY_MSG_101;HSV EQ -- Hue
-!HISTORY_MSG_102;HSV EQ -- Saturation
-!HISTORY_MSG_103;HSV EQ -- Value
-!HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing
-!HISTORY_MSG_106;Defringing Radius
-!HISTORY_MSG_107;Defringing Threshold
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_98;Demosaicing
-!HISTORY_MSG_99;Preprocessing
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_FRAME_EDITOR;Editor
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
-!MAIN_TOGGLE_BEFORE_AFTER;B|A
-!MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
-!NAVIGATOR_B_NA;B = n/a
-!NAVIGATOR_B_VALUE;B = %1
-!NAVIGATOR_G_NA;G = n/a
-!NAVIGATOR_G_VALUE;G = %1
-!NAVIGATOR_H_NA;H = n/a
-!NAVIGATOR_H_VALUE;H = %1
-!NAVIGATOR_LAB_A_NA;A = n/a
-!NAVIGATOR_LAB_A_VALUE;A = %1
-!NAVIGATOR_LAB_B_NA;B = n/a
-!NAVIGATOR_LAB_B_VALUE;B = %1
-!NAVIGATOR_LAB_L_NA;L = n/a
-!NAVIGATOR_LAB_L_VALUE;L = %1
-!NAVIGATOR_R_NA;R = n/a
-!NAVIGATOR_R_VALUE;R = %1
-!NAVIGATOR_S_NA;S = n/a
-!NAVIGATOR_S_VALUE;S = %1
-!NAVIGATOR_V_NA;V = n/a
-!NAVIGATOR_V_VALUE;V = %1
-!NAVIGATOR_XY_NA;x = n/a, y = n/a
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-!PREFERENCES_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_GREENEQUIL;Green equilibration
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PREFERENCES_LINEDENOISE;Line noise filter
 !PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
@@ -863,19 +816,13 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-!SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-!TP_CROP_GTGRID;Grid
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
-!TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
-!TP_DIRPYREQUALIZER_LUMAFINEST;Finest
-!TP_DIRPYREQUALIZER_THRESHOLD;Threshold
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
 !TP_HSVEQUALIZER3;Lime
@@ -890,27 +837,9 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_HSVEQUALIZER_NEUTRAL;Neutral
 !TP_HSVEQUALIZER_SAT;Saturation
 !TP_HSVEQUALIZER_VAL;Value
-!TP_ICM_INPUTNONE;No profile
-!TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
-!TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_LENSGEOM_AUTOCROP;Auto Crop
-!TP_LENSGEOM_FILL;Auto Fill
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_DOWNSCALEB;Downscale (Better)
-!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
-!TP_RESIZE_HEIGHT;Height
-!TP_RESIZE_LANCZOS;Lanczos
-!TP_RESIZE_SPECIFY;Specify:
-!TP_RESIZE_WIDTH;Width
-!TP_VIGNETTING_CENTER;Center
-!TP_VIGNETTING_CENTER_X;Center X
-!TP_VIGNETTING_CENTER_Y;Center Y
-!TP_VIGNETTING_STRENGTH;Strength
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)

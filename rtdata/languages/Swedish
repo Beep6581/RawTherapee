@@ -427,7 +427,6 @@ PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
 PREFERENCES_BEHAVIOR;Uppträdande
 PREFERENCES_BLINKCLIPPED;Blinka markerade områden
-TP_RAWCACORR_CABLUE;Blå
 PREFERENCES_CACHECLEARALL;Återställ alla
 PREFERENCES_CACHECLEARPROFILES;Återställ profiler
 PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
@@ -440,8 +439,6 @@ PREFERENCES_CACHESTRAT2;Föredra låg minnesanvändning framför hastighet
 PREFERENCES_CACHESTRAT;Cachestrategi
 PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
-TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
-TP_RAWCACORR_CARED;Röd
 PREFERENCES_CLEARDLG_LINE1;Rensa cache
 PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
 PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
@@ -451,8 +448,6 @@ PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
 PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : månad</i>\n<b>%d</b><i> : dag</i>\n<i>\nTill exempel är det svenska datumformatet:</i>-n<b>%y-%m-%d</b>
-TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
-TP_RAW_DCBITERATIONS;Antal DCB-iterationer
 PREFERENCES_DEFAULTLANG;Förvalt språk
 PREFERENCES_DEFAULTTHEME;Förvalt tema
 PREFERENCES_DEMOSAICINGALGO;Algoritm för demosaicing
@@ -462,29 +457,23 @@ PREFERENCES_DIRLAST;Senaste besökta katalog
 PREFERENCES_DIROTHER;Annan
 PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
 PREFERENCES_DIRSOFTWARE;Installationskatalog
-TP_RAW_DMETHOD;Metod
-TP_RAW_DMETHODBATCH;Batch
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
 PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
-TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
 PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FORIMAGE;För bildfiler
 PREFERENCES_FORRAW;För råbilder
 PREFERENCES_GIMPPATH;Installationskatalog för GIMP
-TP_PREPROCESS_GREENEQUIL;Grönbalansering
 PREFERENCES_GTKTHEME;GTK standard
 PREFERENCES_HINT;Tips
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
-TP_PREPROCESS_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
 PREFERENCES_ICCDIR;Katalog för ICC-profiler
 PREFERENCES_IMPROCPARAMS;Standardprofiler
 PREFERENCES_INTENT_ABSOLUTE;Totalkolorimetrisk
 PREFERENCES_INTENT_PERCEPTUAL;Upplevd
 PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
-TP_PREPROCESS_LINEDENOISE;Linjärt brusfilter
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
@@ -624,6 +613,7 @@ TP_CROP_SELECTCROP;Välj beskärningsområde
 TP_CROP_W;B
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Välj svartbild automatiskt
 TP_DEFRINGE_LABEL;Fyll ut överstrålning
 TP_DEFRINGE_RADIUS;Radie
 TP_DEFRINGE_THRESHOLD;Tröskelvärde
@@ -715,9 +705,19 @@ TP_LUMADENOISE_RADIUS;Radie
 TP_PERSPECTIVE_HORIZONTAL;Horisontell
 TP_PERSPECTIVE_LABEL;Perspektiv
 TP_PERSPECTIVE_VERTICAL;Vertikal
-TP_DARKFRAME_AUTOSELECT;Välj svartbild automatiskt
-TP_RAW_LABEL;Demosaicing
+TP_PREPROCESS_GREENEQUIL;Grönbalansering
+TP_PREPROCESS_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
 TP_PREPROCESS_LABEL;Förbehandling
+TP_PREPROCESS_LINEDENOISE;Linjärt brusfilter
+TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
+TP_RAWCACORR_CABLUE;Blå
+TP_RAWCACORR_CARED;Röd
+TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
+TP_RAW_DCBITERATIONS;Antal DCB-iterationer
+TP_RAW_DMETHOD;Metod
+TP_RAW_DMETHODBATCH;Batch
+TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
+TP_RAW_LABEL;Demosaicing
 TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
@@ -803,32 +803,37 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!ABOUT_TAB_BUILD;Version
-!ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
-!ABOUT_TAB_SPLASH;Splash
-!EXIFFILTER_FILETYPE;File Type
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !MAIN_FRAME_EDITOR;Editor
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
