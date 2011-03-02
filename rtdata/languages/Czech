@@ -419,7 +419,6 @@ PREFERENCES_APPLNEXTSTARTUP;Projeví se při dalším spuštění
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
-TP_RAWCACORR_CABLUE;Manuální korekce modré CA
 PREFERENCES_CACHECLEARALL;Vymaž vše
 PREFERENCES_CACHECLEARPROFILES;Vymaž profily
 PREFERENCES_CACHECLEARTHUMBS;Vymaž náhledy
@@ -432,8 +431,6 @@ PREFERENCES_CACHESTRAT2;Upřednostnit menší spotřebu paměti před rychlostí
 PREFERENCES_CACHESTRAT;Strategie cache
 PREFERENCES_CACHETHUMBFORM;Formát náhledů v cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximální velikost náhledu
-TP_RAWCACORR_AUTO;Aplikovat automatickou korekci chromatické aberace
-TP_RAWCACORR_CARED;Manuální korekce červené CA
 PREFERENCES_CLEARDLG_LINE1;Čištění cache
 PREFERENCES_CLEARDLG_LINE2;může trvat několik sekund.
 PREFERENCES_CLEARDLG_TITLE;Prosím počkejte.
@@ -443,8 +440,6 @@ PREFERENCES_CUTOVERLAYBRUSH;Štětec přesahu
 PREFERENCES_DARKFRAME;Tmavé snímky
 PREFERENCES_DATEFORMAT;Formát data
 PREFERENCES_DATEFORMATHINT;<i>Lze použít následující formátovací řetězce:</i>\n<b>%y</b><i> : rok (year)</i>\n<b>%m</b><i> : měsíc (month)</i>\n<b>%d</b><i> : den (day)</i>\n<i>\nNapříklad český formát data:</i>\n<b>%d. %m. %y</b>
-TP_RAW_DCBENHANCE;Aplikovat krok DCB rozšíření
-TP_RAW_DCBITERATIONS;Počet DCB iterací
 PREFERENCES_DEFAULTLANG;Výchozí jazyk
 PREFERENCES_DEFAULTTHEME;Výchozí vzhled
 PREFERENCES_DEMOSAICINGALGO;Demozajkovací algoritmus
@@ -454,28 +449,23 @@ PREFERENCES_DIRLAST;Poslední navštívená složka
 PREFERENCES_DIROTHER;Jiná
 PREFERENCES_DIRSELECTDLG;Zvolte složku s obrázky pro spuštění...
 PREFERENCES_DIRSOFTWARE;Instalační složka
-TP_RAW_DMETHOD;Metoda
 PREFERENCES_EDITORCMDLINE;Jiný příkaz
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXTERNALEDITOR;Externí editor
-TP_RAW_FALSECOLOR;Počet kroků při potlačování chybných barev
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů
 PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FORIMAGE;Pro obrázkové soubory
 PREFERENCES_FORRAW;Pro RAW soubory
 PREFERENCES_GIMPPATH;GIMP instalační adresář
-TP_PREPROCESS_GREENEQUIL;Vyrovnání zelené
 PREFERENCES_GTKTHEME;GTK výchozí
 PREFERENCES_HINT;Nápověda
 PREFERENCES_HLTHRESHOLD;Práh pro oříznutá světla
-TP_PREPROCESS_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
 PREFERENCES_ICCDIR;Složka ICC profilů
 PREFERENCES_IMPROCPARAMS;Výchozí profily pro zpracování obrázku
 PREFERENCES_INTENT_ABSOLUTE;Absolutní kolorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Vnímání
 PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Saturace
-TP_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
 PREFERENCES_MONITORICC;Profil monitoru
 PREFERENCES_MULTITAB;Mód více karet
@@ -616,6 +606,7 @@ TP_CROP_SELECTCROP;    Označení výřezu
 TP_CROP_W;Š
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Automatický výběr
 TP_DEFRINGE_LABEL;Odstranění lemu
 TP_DEFRINGE_RADIUS;Poloměr
 TP_DEFRINGE_THRESHOLD;Práh
@@ -707,9 +698,18 @@ TP_LUMADENOISE_RADIUS;Poloměr
 TP_PERSPECTIVE_HORIZONTAL;Horizontální
 TP_PERSPECTIVE_LABEL;Perspektiva
 TP_PERSPECTIVE_VERTICAL;Vertikální
-TP_DARKFRAME_AUTOSELECT;Automatický výběr
-TP_RAW_LABEL;Demozajkování
+TP_PREPROCESS_GREENEQUIL;Vyrovnání zelené
+TP_PREPROCESS_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
 TP_PREPROCESS_LABEL;Předzpracování
+TP_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
+TP_RAWCACORR_AUTO;Aplikovat automatickou korekci chromatické aberace
+TP_RAWCACORR_CABLUE;Manuální korekce modré CA
+TP_RAWCACORR_CARED;Manuální korekce červené CA
+TP_RAW_DCBENHANCE;Aplikovat krok DCB rozšíření
+TP_RAW_DCBITERATIONS;Počet DCB iterací
+TP_RAW_DMETHOD;Metoda
+TP_RAW_FALSECOLOR;Počet kroků při potlačování chybných barev
+TP_RAW_LABEL;Demozajkování
 TP_RESIZE_BICUBIC;Bikubická
 TP_RESIZE_BICUBICSF;Bikubická (Měkčí)
 TP_RESIZE_BICUBICSH;Bikubická (Ostřejší)
@@ -794,25 +794,43 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
 !HISTORY_MSG_110;Resizing applies to
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !MAIN_FRAME_EDITOR;Editor
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

@@ -14,6 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
+#15 Jan-Feb 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 02.03.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -131,11 +132,13 @@ GENERAL_DISABLE;deaktivieren
 GENERAL_DISABLED;deaktiviert
 GENERAL_ENABLE;Aktivieren
 GENERAL_ENABLED;Aktiv
+GENERAL_FILE;Datei
 GENERAL_HIGH_QUALITY;Hohe Qualität
 GENERAL_LANDSCAPE;Quer
 GENERAL_LOAD;Laden
 GENERAL_NA;n/a
 GENERAL_NO;Nein
+GENERAL_NONE;Keins
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Hoch
 GENERAL_SAVE;Speichern
@@ -156,21 +159,33 @@ HISTORY_DELSNAPSHOT;Entf.
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Historie
 HISTORY_MSG_100;RGB Sättigung
-HISTORY_MSG_101;HSV EQ -- Farbton
-HISTORY_MSG_102;HSV EQ -- Sättigung
-HISTORY_MSG_103;HSV EQ -- Hellwert
+HISTORY_MSG_101;HSV-Mixer - Farbton
+HISTORY_MSG_102;HSV-Mixer - Sättigung
+HISTORY_MSG_103;HSV-Mixer - Hellwert
 HISTORY_MSG_104;HSV-Mixer
 HISTORY_MSG_105;Defringing
 HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Schwellenwert
-HISTORY_MSG_108;Lichter-Kompression Schwellenwert
-HISTORY_MSG_109;Größenänderung Begrenzungsrahmen
+HISTORY_MSG_108;Lichter-Kompression\nSchwellenwert
+HISTORY_MSG_109;Größe ändern\nBegrenzungsrahmen
 HISTORY_MSG_10;Schatten-Kompression
 HISTORY_MSG_110;Größenänderung gilt für
-HISTORY_MSG_111;Verhindere Farbbeschneidungen
+HISTORY_MSG_111;Farbbeschneidungen\nverhindern
 HISTORY_MSG_112;Sättigungsbegrenzung
 HISTORY_MSG_113;Sättigungsgrenze
+HISTORY_MSG_114;DCB-Iterationen
+HISTORY_MSG_115;Falschfarben-Iterationen
+HISTORY_MSG_116;DCB-Verfeinerung
+HISTORY_MSG_117;CA Rot Korrektur
+HISTORY_MSG_118;CA Blau Korrektur
+HISTORY_MSG_119;Zeilenrauschfilter
 HISTORY_MSG_11;Tonwertkurve
+HISTORY_MSG_120;Grün-Ausgleich\nSchwellenwert
+HISTORY_MSG_121;Autom. CA
+HISTORY_MSG_122;Autom. Dunkelbild
+HISTORY_MSG_123;Dunkelbild - Datei
+HISTORY_MSG_124;Belichtungskorrektur\nLinear
+HISTORY_MSG_125;Belichtungskorrektur\nLichter bewahren
 HISTORY_MSG_12;Automatische Belichtung
 HISTORY_MSG_13;Belichtungsbeschneidung
 HISTORY_MSG_14;Luminanz Helligkeit
@@ -178,29 +193,29 @@ HISTORY_MSG_15;Luminanz Kontrast
 HISTORY_MSG_16;Luminanz Schwarz
 HISTORY_MSG_17;Luminanz Lichter-Kompression
 HISTORY_MSG_18;Luminanz Schatten-Kompression
-HISTORY_MSG_19;Luminanz Kurve
+HISTORY_MSG_19;'L'-Kurve
 HISTORY_MSG_1;Bild geladen
 HISTORY_MSG_20;Schärfen
 HISTORY_MSG_21;Schärfen Radius
 HISTORY_MSG_22;Schärfen Stärke
 HISTORY_MSG_23;Schärfen Schwellenwert
 HISTORY_MSG_24;Schärfen Nur Kanten
-HISTORY_MSG_25;Schärfen Kantensuche Radius
+HISTORY_MSG_25;Schärfen Kantensuche\nRadius
 HISTORY_MSG_26;Schärfen Kantentoleranz
 HISTORY_MSG_27;Schärfen Halo-Kontrolle
-HISTORY_MSG_28;Schärfen Halo-Kontrolle Stärke
+HISTORY_MSG_28;Schärfen Halo-Kontrolle\nStärke
 HISTORY_MSG_29;Schärfen Methode
 HISTORY_MSG_2;Profil geladen
 HISTORY_MSG_30;Dekonvolution Radius
 HISTORY_MSG_31;Dekonvolution Stärke
 HISTORY_MSG_32;Dekonvolution Dämpfung
 HISTORY_MSG_33;Dekonvolution Iterationen
-HISTORY_MSG_34;Verhindere Farbbeschneidungen
-HISTORY_MSG_35;Begrenzung der Sättigung
+HISTORY_MSG_34;Farbbeschneidungen\nverhindern
+HISTORY_MSG_35;Sättigung begrenzen
 HISTORY_MSG_36;Sättigungsgrenzwert
 HISTORY_MSG_37;Farbverstärkung
 HISTORY_MSG_38;Weißabgleich Methode
-HISTORY_MSG_39;Weißabgleich Farbtemperatur
+HISTORY_MSG_39;Weißabgleich Farbtemp.
 HISTORY_MSG_3;Profil geändert
 HISTORY_MSG_40;Weißabgleich Farbton
 HISTORY_MSG_41;Farbkorrektur "A"
@@ -213,9 +228,9 @@ HISTORY_MSG_47;Farb-Rauschfilter Radius
 HISTORY_MSG_48;Farb-Rauschfilter Kantentoleranz
 HISTORY_MSG_49;Farb-Rauschfilter Kantensuche
 HISTORY_MSG_4;Historie durchsehen
-HISTORY_MSG_50;Schatten/Lichter-Werkzeug
-HISTORY_MSG_51;Abschwächen der Lichter
-HISTORY_MSG_52;Verstärken der Schatten
+HISTORY_MSG_50;Schatten/Lichter
+HISTORY_MSG_51;Lichter abschwächen
+HISTORY_MSG_52;Schatten verstärken
 HISTORY_MSG_53;Tonweite Lichter
 HISTORY_MSG_54;Tonweite Schatten
 HISTORY_MSG_55;Lokaler Kontrast
@@ -226,47 +241,47 @@ HISTORY_MSG_59;Vertikal spiegeln
 HISTORY_MSG_5;Helligkeit
 HISTORY_MSG_60;Drehung - Grad
 HISTORY_MSG_61;Drehung
-HISTORY_MSG_62;Objektiv-Verzerrungskorrektur
+HISTORY_MSG_62;Verzerrungskorrektur
 HISTORY_MSG_63;Variante gewählt
 HISTORY_MSG_64;Bild beschneiden
 HISTORY_MSG_65;Farbsaum-Entfernung
 HISTORY_MSG_66;Lichter wiederherstellen
-HISTORY_MSG_67;Lichter wiederherstellen Stärke
-HISTORY_MSG_68;Lichter wiederherstellen Methode
+HISTORY_MSG_67;Lichter wiederherstellen\nStärke
+HISTORY_MSG_68;Lichter wiederherstellen\nMethode
 HISTORY_MSG_69;Aktueller Farbraum
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Farbraum für Ausgabe
 HISTORY_MSG_71;Farbraum für Eingabe
 HISTORY_MSG_72;Vignettierungs-Korrektur
 HISTORY_MSG_73;Kanal-Mixer
-HISTORY_MSG_74;Änderung Größe - Maßstab
-HISTORY_MSG_75;Änderung Größe - Methode
+HISTORY_MSG_74;Größe ändern - Maßstab
+HISTORY_MSG_75;Größe ändern - Methode
 HISTORY_MSG_76;Exif Metadaten
 HISTORY_MSG_77;IPTC Metadaten
-HISTORY_MSG_78;Angaben für Änderung Größe
-HISTORY_MSG_79;Änderung Größe - Breite
+HISTORY_MSG_78;Angaben für Größenänderung
+HISTORY_MSG_79;Größe ändern - Breite
 HISTORY_MSG_7;Schwarz
-HISTORY_MSG_80;Änderung Größe - Höhe
-HISTORY_MSG_81;Änderung Größe
+HISTORY_MSG_80;Größe ändern - Höhe
+HISTORY_MSG_81;Größe ändern
 HISTORY_MSG_82;Profil geändert
-HISTORY_MSG_83;Schatten/Lichter hohe Qualität
-HISTORY_MSG_84;Perspektivische Korrektur
+HISTORY_MSG_83;Schatten/Lichter\nHohe Qualität
+HISTORY_MSG_84;Perspektive - Korrektur
 HISTORY_MSG_85;Wavelet Koeffizienten
 HISTORY_MSG_86;Wavelet-Mixer
 HISTORY_MSG_87;Impulsrauschminderung
-HISTORY_MSG_88;Impulsrauschmind. Schwellenwert
+HISTORY_MSG_88;Impulsrauschminderung\nSchwellenwert
 HISTORY_MSG_89;Rauschminderung
 HISTORY_MSG_8;Belichtungskorrektur
-HISTORY_MSG_90;Rauschminderung - Luminanz
-HISTORY_MSG_91;Rauschminderung - Chrominanz
-HISTORY_MSG_92;Rauschminderung - Gamma
-HISTORY_MSG_93;Kontrast nach Detailstufen-Parameter
+HISTORY_MSG_90;Rauschminderung\nLuminanz
+HISTORY_MSG_91;Rauschminderung\nChrominanz
+HISTORY_MSG_92;Rauschminderung\nGamma
+HISTORY_MSG_93;Kontrast nach Detailstufen\nParameter
 HISTORY_MSG_94;Kontrast nach Detailstufen
 HISTORY_MSG_95;Sättigung
 HISTORY_MSG_96;'a'-Kurve
 HISTORY_MSG_97;'b'-Kurve
-HISTORY_MSG_98;Entrasterung
-HISTORY_MSG_99;Vorverarbeitung
+HISTORY_MSG_98;Entrasterung Methode
+HISTORY_MSG_99;Hot/Dead-Pixel-Filter
 HISTORY_MSG_9;Lichter-Kompression
 HISTORY_NEWSNAPSHOT;Hinzuf.
 HISTORY_NEWSNAPSHOTAS;als...
@@ -436,7 +451,6 @@ PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche kennzeichnen
-TP_RAWCACORR_CABLUE;Blau
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Voransichten löschen
@@ -449,8 +463,6 @@ PREFERENCES_CACHESTRAT2;Priorität auf minimierten Speicherverbrauch (geringere 
 PREFERENCES_CACHESTRAT;Strategie des Zwischenspeichers
 PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
-TP_RAWCACORR_AUTO;Autom. Korrektur Chrom. Aberration
-TP_RAWCACORR_CARED;Rot
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
 PREFERENCES_CUTOVERLAYBRUSH;Abdeckfarbe für Ausschnitt
@@ -460,8 +472,6 @@ PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
 PREFERENCES_DATEFORMAT;Datumsformat
 PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nDas deutsche Datumsformat beispielsweise ist:\n<b>%d.%m.%y</b>
-TP_RAW_DCBENHANCE;DCB Verfeinerungsschritt durchführen
-TP_RAW_DCBITERATIONS;Anzahl der DCB Iterationen
 PREFERENCES_DEFAULTLANG;Sprache für Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard-Oberflächendesign
 PREFERENCES_DEMOSAICINGALGO;Algorithmus zur Entrasterung
@@ -471,28 +481,23 @@ PREFERENCES_DIRLAST;Zuletzt geöffnetes Verzeichnis
 PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
-TP_RAW_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
-TP_RAW_FALSECOLOR;Stufen Falschfarben-Unterdrückung
 PREFERENCES_FBROWSEROPTS;Einstellungen zu Bildinformationen
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FORIMAGE;Für Bilddateien
 PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
-TP_PREPROCESS_GREENEQUIL;Grün-Ausgleich
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
 PREFERENCES_HLTHRESHOLD;Schwellenwert - zu hell
-TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead Pixel Filter anwenden
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
 PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
 PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
 PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
-TP_PREPROCESS_LINEDENOISE;Zeilenrausch-Filter
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
@@ -509,7 +514,6 @@ PREFERENCES_PARSEDEXT;Angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Nebenstehenden Dateityp (Extension) der obigen Liste hinzufügen
 PREFERENCES_PARSEDEXTDELHINT;Markierten Dateityp aus Liste entfernen
-PREFERENCES_PRESER;Belichtung vor Interpolation:\nLichter beibehalten (EV)
 PREFERENCES_PROFILEHANDLING;Behandlung der Bearbeitungsprofile
 PREFERENCES_PROFILELOADPR;Priorität der Profile beim Laden
 PREFERENCES_PROFILEPRCACHE;Bearbeitungsprofil im Zwischenspeicher (Cache)
@@ -596,6 +600,7 @@ TP_CHMIXER_BLUE;Blau
 TP_CHMIXER_GREEN;Grün
 TP_CHMIXER_LABEL;Kanal-Mixer
 TP_CHMIXER_RED;Rot
+TP_CHROMATABERR_LABEL;Chromatische Aberration
 TP_COARSETRAF_DEGREE;Grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen
@@ -635,6 +640,8 @@ TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;B
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Automatische Auswahl
+TP_DARKFRAME_LABEL;Dunkelbild
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Schwellenwert
@@ -658,6 +665,7 @@ TP_EQUALIZER_FINEST;Feinstes
 TP_EQUALIZER_LABEL;Wavelet-Mixer
 TP_EQUALIZER_LARGEST;Gröbstes
 TP_EQUALIZER_NEUTRAL;Neutral
+TP_EXPOSCORR_LABEL;Belichtung
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_BLACKLEVEL;Schwarzpegel
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
@@ -706,7 +714,7 @@ TP_ICM_SAVEREFERENCE;Referenzbild für Profilerstellung speichern
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
 TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
 TP_IMPULSEDENOISE_THRESH;Schwellenwert
-TP_LABCURVE_AVOIDCOLORCLIP;Verhindere Farbbeschneidungen
+TP_LABCURVE_AVOIDCOLORCLIP;Farbbeschneidungen verhindern
 TP_LABCURVE_BRIGHTNESS;Helligkeit
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanzkurve
@@ -723,14 +731,25 @@ TP_LUMADENOISE_RADIUS;Radius
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
-TP_DARKFRAME_AUTOSELECT;Automatische Auswahl
-GENERAL_FILE;Datei
-TP_RAW_LABEL;Farbinterpolation
+TP_PREPROCESS_GREENEQUIL;Grün-Ausgleich
+TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead-Pixel-Filter anwenden
 TP_PREPROCESS_LABEL;Vorverarbeitung
+TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
+TP_PREPROCESS_NO_FOUND;Keins gefunden
+TP_RAWCACORR_AUTO;Autom. Korrektur Chrom. Aberration
+TP_RAWCACORR_CABLUE;Blau
+TP_RAWCACORR_CARED;Rot
+TP_RAWEXPOS_LINEAR;Linearer Korrekturfaktor
+TP_RAWEXPOS_PRESER;Lichter bewahrende Korrektur\n(EV)
+TP_RAW_DCBENHANCE;DCB-Verfeinerungsschritt durchführen
+TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
+TP_RAW_DMETHOD;Methode
+TP_RAW_FALSECOLOR;Falschfarbenunterdrückung\nStufen
+TP_RAW_LABEL;Farbinterpolation
 TP_RESIZE_APPLIESTO;Gilt für:
 TP_RESIZE_BICUBIC;Bikubisch
-TP_RESIZE_BICUBICSF;Bikubisch (Weicher)
-TP_RESIZE_BICUBICSH;Bikubisch (Schärfer)
+TP_RESIZE_BICUBICSF;Bikubisch (weicher)
+TP_RESIZE_BICUBICSH;Bikubisch (schärfer)
 TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Ausschnitt
 TP_RESIZE_DOWNSCALEB;Verkleinern (besser)

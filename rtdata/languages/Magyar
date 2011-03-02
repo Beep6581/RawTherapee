@@ -394,7 +394,6 @@ PREFERENCES_CACHESTRAT2;Inkább memóriatakarékos, mint gyors
 PREFERENCES_CACHESTRAT;Gyorsítótár stratégia
 PREFERENCES_CACHETHUMBFORM;Előnézeti kép formátuma
 PREFERENCES_CACHETHUMBHEIGHT;Előnézeti kép maximális magassága
-TP_RAWCACORR_AUTO;Színihiba (kromatikus aberráció) automatikus helyesbítése
 PREFERENCES_CLEARDLG_LINE1;Gyorsítótár ürítése
 PREFERENCES_CLEARDLG_LINE2;Ez eltarthat pár másodpercig.
 PREFERENCES_CLEARDLG_TITLE;Kérem várjon
@@ -402,8 +401,6 @@ PREFERENCES_CLIPPINGIND;Kiégett és bebukott részek jelzése
 PREFERENCES_CMETRICINTENT;Intent
 PREFERENCES_DATEFORMAT;Dátumformátum
 PREFERENCES_DATEFORMATHINT;<i>A következő jeleket lehet használni:</i>\n<b>%y</b><i> : év</i>\n<b>%m</b><i> : hónap</i>\n<b>%d</b><i> : nap</i>\n<i>\nPéldául a magyar dátumformátum:</i>\n<b>%y/%m/%d</b>
-TP_RAW_DCBENHANCE;DCB helyesbítő lépés alkalmazása
-TP_RAW_DCBITERATIONS;DCB iterációk száma
 PREFERENCES_DEFAULTLANG;Alapértelmezett nyelv
 PREFERENCES_DEFAULTTHEME;Alapértelmezett kinézet
 PREFERENCES_DEMOSAICINGALGO;Bayer interpoláció
@@ -413,11 +410,9 @@ PREFERENCES_DIRLAST;Utoljára látogatott könyvtár
 PREFERENCES_DIROTHER;Más
 PREFERENCES_DIRSELECTDLG;Képek könyvtára induláskor...
 PREFERENCES_DIRSOFTWARE;Telepítés helye
-TP_RAW_DMETHOD;Algoritmus
 PREFERENCES_EDITORCMDLINE;Egyéb parancssor
 PREFERENCES_EDITORLAYOUT;Szerkesztési mód
 PREFERENCES_EXTERNALEDITOR;Külső képszerkesztő program
-TP_RAW_FALSECOLOR;Színhiba-elnyomási lépések
 PREFERENCES_FBROWSEROPTS;Állományböngésző beállításai
 PREFERENCES_FILEFORMAT;Állományformátum
 PREFERENCES_FORIMAGE;Egyéb képekhez
@@ -426,14 +421,12 @@ PREFERENCES_GIMPPATH;GIMP telepítési könyvtára
 PREFERENCES_GTKTHEME;Alap GTK kinézet
 PREFERENCES_HINT;Tipp
 PREFERENCES_HLTHRESHOLD;Küszöbérték kiégett területekhez
-TP_PREPROCESS_HOTDEADPIXFILT;Hot/dead pixel szűrő alkalmazása
 PREFERENCES_ICCDIR;ICC profilok könyvtára
 PREFERENCES_IMPROCPARAMS;Alapértelmezett feldolgozási paraméterek
 PREFERENCES_INTENT_ABSOLUTE;Abszolút kolorimetrikus
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuális
 PREFERENCES_INTENT_RELATIVE;Relatív kolorimetrikus
 PREFERENCES_INTENT_SATURATION;Színtelítettség
-TP_PREPROCESS_LINEDENOISE;Sorzaj-szűrő
 PREFERENCES_LIVETHUMBNAILS;Élő előnézeti képek (lassabb)
 PREFERENCES_MONITORICC;Monitor ICC profilja
 PREFERENCES_MULTITAB;Több szerkesztőfül
@@ -572,6 +565,7 @@ TP_CROP_SELECTCROP;    Kijelölés egérrel
 TP_CROP_W;Sz
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Auto selection
 TP_DETAIL_AMOUNT;Mérték
 TP_DIRPYRDENOISE_CHROMA;Színzaj
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -660,9 +654,15 @@ TP_LUMADENOISE_RADIUS;Sugár
 TP_PERSPECTIVE_HORIZONTAL;Vízszintes
 TP_PERSPECTIVE_LABEL;Perspektíva
 TP_PERSPECTIVE_VERTICAL;Függőleges
-TP_DARKFRAME_AUTOSELECT;Auto selection
-TP_RAW_LABEL;Deinterpoláció
+TP_PREPROCESS_HOTDEADPIXFILT;Hot/dead pixel szűrő alkalmazása
 TP_PREPROCESS_LABEL;Előfeldolgozás
+TP_PREPROCESS_LINEDENOISE;Sorzaj-szűrő
+TP_RAWCACORR_AUTO;Színihiba (kromatikus aberráció) automatikus helyesbítése
+TP_RAW_DCBENHANCE;DCB helyesbítő lépés alkalmazása
+TP_RAW_DCBITERATIONS;DCB iterációk száma
+TP_RAW_DMETHOD;Algoritmus
+TP_RAW_FALSECOLOR;Színhiba-elnyomási lépések
+TP_RAW_LABEL;Deinterpoláció
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (lágyabb)
 TP_RESIZE_BICUBICSH;Bicubic (keményebb)
@@ -751,6 +751,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !EXIFFILTER_FILETYPE;File Type
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTOGRAM_BUTTON_B;B
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
@@ -761,6 +763,18 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
 !MAIN_FRAME_EDITOR;Editor
@@ -788,27 +802,31 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_GREENEQUIL;Green equilibration
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_PREPROCESS_GREENEQUIL;Green equilibration
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

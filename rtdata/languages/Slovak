@@ -399,7 +399,6 @@ PREFERENCES_CACHESTRAT2;Uprednostniť malú spotrebu pamäte pred rýchlosťou
 PREFERENCES_CACHESTRAT;Stratégia použitia cache
 PREFERENCES_CACHETHUMBFORM;Formát zmenšenín pre cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximálna výška zmenšenín
-TP_RAWCACORR_AUTO;Použiť automatickú úpravu CA
 PREFERENCES_CLEARDLG_LINE1;Čistím cache
 PREFERENCES_CLEARDLG_LINE2;Môže to pár sekúnd trvať.
 PREFERENCES_CLEARDLG_TITLE;Prosím, čakajte.
@@ -407,8 +406,6 @@ PREFERENCES_CLIPPINGIND;Indikácia orezu
 PREFERENCES_CMETRICINTENT;Kolorimetrický zámer
 PREFERENCES_DATEFORMAT;Formát dátumu
 PREFERENCES_DATEFORMATHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%y</b><i> : rok</i>\n<b>%m</b><i> : mesiac</i>\n<b>%d</b><i> : deň</i>\n<i>\nNapríklad, slovenský formát je:</i>\n<b>%d.%m.%y</b>
-TP_RAW_DCBENHANCE;Použiť vylepšovací krok DCB
-TP_RAW_DCBITERATIONS;Počet iterácií DCB
 PREFERENCES_DEFAULTLANG;Predvolený jazyk
 PREFERENCES_DEFAULTTHEME;Predvolený vzhľad
 PREFERENCES_DEMOSAICINGALGO;Demozaikovací algoritmus
@@ -417,29 +414,23 @@ PREFERENCES_DIRLAST;Posledný navštívený adresár
 PREFERENCES_DIROTHER;Iný
 PREFERENCES_DIRSELECTDLG;Vybrať adresár s obrázkami pri spustení...
 PREFERENCES_DIRSOFTWARE;Inštalačný adresár
-TP_RAW_DMETHOD;Metóda
-TP_RAW_DMETHODBATCH;Dávka
 PREFERENCES_EDITORCMDLINE;Iný príkazový riadok
 PREFERENCES_EDITORLAYOUT;Rozloženie editora
 PREFERENCES_EXTERNALEDITOR;Externý editor
-TP_RAW_FALSECOLOR;Kroky potlačenia chybných farieb
 PREFERENCES_FBROWSEROPTS;Voľby prehliadača súborov
 PREFERENCES_FILEFORMAT;Formát súborov
 PREFERENCES_FORIMAGE;Pre obrazové súbory
 PREFERENCES_FORRAW;Pre RAW súbory
 PREFERENCES_GIMPPATH;Inštalačný adresár GIMPu
-TP_PREPROCESS_GREENEQUIL;Vyvažovanie zelenej
 PREFERENCES_GTKTHEME;GTK predvolený
 PREFERENCES_HINT;Tip
 PREFERENCES_HLTHRESHOLD;Prah pre orezanie najvyšších svetiel
-TP_PREPROCESS_HOTDEADPIXFILT;Použiť filter na horúce/mŕtve pixely
 PREFERENCES_ICCDIR;Adresár s ICC profilmy
 PREFERENCES_IMPROCPARAMS;Predvolené parametre spracovania obrazu
 PREFERENCES_INTENT_ABSOLUTE;Absolútny kolorimetrický
 PREFERENCES_INTENT_PERCEPTUAL;Vnímaný
 PREFERENCES_INTENT_RELATIVE;Relatívny kolorimetrický
 PREFERENCES_INTENT_SATURATION;Sýtosť
-TP_PREPROCESS_LINEDENOISE;Filter šumu vedenia
 PREFERENCES_LIVETHUMBNAILS;Živé zmenšeniny (pomalšie)
 PREFERENCES_MONITORICC;Profil monitora
 PREFERENCES_MULTITAB;Režim viacerých kariet
@@ -649,6 +640,15 @@ TP_LUMADENOISE_RADIUS;Polomer
 TP_PERSPECTIVE_HORIZONTAL;Horizontálne
 TP_PERSPECTIVE_LABEL;Perspektíva
 TP_PERSPECTIVE_VERTICAL;Vertikálne
+TP_PREPROCESS_GREENEQUIL;Vyvažovanie zelenej
+TP_PREPROCESS_HOTDEADPIXFILT;Použiť filter na horúce/mŕtve pixely
+TP_PREPROCESS_LINEDENOISE;Filter šumu vedenia
+TP_RAWCACORR_AUTO;Použiť automatickú úpravu CA
+TP_RAW_DCBENHANCE;Použiť vylepšovací krok DCB
+TP_RAW_DCBITERATIONS;Počet iterácií DCB
+TP_RAW_DMETHOD;Metóda
+TP_RAW_DMETHODBATCH;Dávka
+TP_RAW_FALSECOLOR;Kroky potlačenia chybných farieb
 TP_RESIZE_BICUBIC;Bikubická
 TP_RESIZE_BICUBICSF;Bikubická (Mäkšia)
 TP_RESIZE_BICUBICSH;Bikubická (Ostrejšia)
@@ -735,6 +735,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
@@ -749,14 +751,26 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_93;Contrast by detail levels value
 !HISTORY_MSG_94;Contrast by detail levels
 !HISTORY_MSG_95;Saturation
 !HISTORY_MSG_96;'a' curve
 !HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing
-!HISTORY_MSG_99;Preprocessing
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !MAIN_FRAME_EDITOR;Editor
 !MAIN_TAB_RAW;RAW
 !NAVIGATOR_LAB_A_NA;A = n/a
@@ -768,23 +782,23 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_AUTOSELECT;Auto selection
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_HSVEQUALIZER1;Red
@@ -805,10 +819,13 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_PREPROCESS_DARKFRAME;Dark frame
-!TP_PREPROCESS_DFAUTOSELECT;Auto selection
-!TP_RAWPANEL_DEMOSAICING;Demosaicing
-!TP_RAWPANEL_PREPROCESSING;Preprocessing
+!TP_PREPROCESS_LABEL;Preprocessing
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
+!TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

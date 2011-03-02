@@ -423,7 +423,6 @@ PREFERENCES_CACHESTRAT2;Мала заузетост меморије, уз сп�
 PREFERENCES_CACHESTRAT;Остава
 PREFERENCES_CACHETHUMBFORM;Формат умањених приказа
 PREFERENCES_CACHETHUMBHEIGHT;Највећа висина приказа
-TP_RAWCACORR_AUTO;Исправи хроматске аберације
 PREFERENCES_CLEARDLG_LINE1;Чишћење оставе
 PREFERENCES_CLEARDLG_LINE2;Ово може да потраје неколико секунди.
 PREFERENCES_CLEARDLG_TITLE;Сачекајте
@@ -432,8 +431,6 @@ PREFERENCES_CMETRICINTENT;Колориметријска намера
 PREFERENCES_DARKFRAME;Тамни кадар
 PREFERENCES_DATEFORMAT;Формат датума
 PREFERENCES_DATEFORMATHINT;<i>Можете задати следеће формате:</i>\n<b>%y</b><i> :година</i>\n<b>%m</b><i> : месец</i>\n<b>%d</b><i> : дан</i>\n<i>\nУ Србији се највише користи:</i>\n<b>%d.%m.%y</b>
-TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
-TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
 PREFERENCES_DEFAULTLANG;Језик програма
 PREFERENCES_DEFAULTTHEME;Тема програма
 PREFERENCES_DEMOSAICINGALGO;Алгоритам за склапање
@@ -443,28 +440,23 @@ PREFERENCES_DIRLAST;Последњи директоријум
 PREFERENCES_DIROTHER;Неки други
 PREFERENCES_DIRSELECTDLG;Бира одређени директоријум са сликама...
 PREFERENCES_DIRSOFTWARE;Директоријум са инсталацијом
-TP_RAW_DMETHOD;Начин
 PREFERENCES_EDITORCMDLINE;Произвољна наредба
 PREFERENCES_EDITORLAYOUT;Размештај програма
 PREFERENCES_EXTERNALEDITOR;Спољни уређивач
-TP_RAW_FALSECOLOR;Кораци за пригушивање лажне боје
 PREFERENCES_FBROWSEROPTS;Опције разгледача датотеке
 PREFERENCES_FILEFORMAT;Формат датотеке
 PREFERENCES_FORIMAGE;За датотеке са сликама
 PREFERENCES_FORRAW;За RAW датотеке
 PREFERENCES_GIMPPATH;Директоријум са инсталираним Гимпом
-TP_PREPROCESS_GREENEQUIL;Калибрација зелене боје
 PREFERENCES_GTKTHEME;ГТК тема
 PREFERENCES_HINT;Савет
 PREFERENCES_HLTHRESHOLD;Праг за одсечене светле делове
-TP_PREPROCESS_HOTDEADPIXFILT;Избаци прегореле и мртве пикселе
 PREFERENCES_ICCDIR;ИЦЦ директоријум
 PREFERENCES_IMPROCPARAMS;Подразумевани параметри за обраду слика
 PREFERENCES_INTENT_ABSOLUTE;Апсолутно колориметријски
 PREFERENCES_INTENT_PERCEPTUAL;Перцептуално
 PREFERENCES_INTENT_RELATIVE;Релативно колориметријски
 PREFERENCES_INTENT_SATURATION;Засићени приказ
-TP_PREPROCESS_LINEDENOISE;Линијски филтер шума
 PREFERENCES_LIVETHUMBNAILS;„Живи“ прикази (спорије)
 PREFERENCES_MONITORICC;Профил монитора
 PREFERENCES_MULTITAB;Режим у више листова
@@ -602,6 +594,7 @@ TP_CROP_SELECTCROP;    Изабери област
 TP_CROP_W;Ш
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Сам изабери
 TP_DETAIL_AMOUNT;Количина
 TP_DIRPYRDENOISE_CHROMA;Боја
 TP_DIRPYRDENOISE_GAMMA;Гама
@@ -689,9 +682,16 @@ TP_LUMADENOISE_RADIUS;Полупречник
 TP_PERSPECTIVE_HORIZONTAL;Хоризонтална
 TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикална
-TP_DARKFRAME_AUTOSELECT;Сам изабери
-TP_RAW_LABEL;Расклапање мозаика
+TP_PREPROCESS_GREENEQUIL;Калибрација зелене боје
+TP_PREPROCESS_HOTDEADPIXFILT;Избаци прегореле и мртве пикселе
 TP_PREPROCESS_LABEL;Предобрада
+TP_PREPROCESS_LINEDENOISE;Линијски филтер шума
+TP_RAWCACORR_AUTO;Исправи хроматске аберације
+TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
+TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
+TP_RAW_DMETHOD;Начин
+TP_RAW_FALSECOLOR;Кораци за пригушивање лажне боје
+TP_RAW_LABEL;Расклапање мозаика
 TP_RESIZE_BICUBIC;Бикубично
 TP_RESIZE_BICUBICSF;Бикубично (мекше)
 TP_RESIZE_BICUBICSH;Бикубично (оштрије)
@@ -779,6 +779,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !ABOUT_TAB_SPLASH;Splash
 !EDITWINDOW_TITLE;Image Edit
 !EXIFFILTER_FILETYPE;File Type
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
@@ -788,29 +790,45 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !MAIN_FRAME_EDITOR;Editor
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_ICM_INPUTNONE;No profile
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

@@ -427,7 +427,6 @@ PREFERENCES_CACHESTRAT2;Langzamer, minder geheugenbeslag
 PREFERENCES_CACHESTRAT;Cache-strategie
 PREFERENCES_CACHETHUMBFORM;Miniatuurformaat cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
-TP_RAWCACORR_AUTO;Automatische CA-correctie
 PREFERENCES_CLEARDLG_LINE1;Cache legen...
 PREFERENCES_CLEARDLG_LINE2;Dit kan even duren.
 PREFERENCES_CLEARDLG_TITLE;Momentje svp.
@@ -436,8 +435,6 @@ PREFERENCES_CMETRICINTENT;Bedoelde colorimetrie
 PREFERENCES_DARKFRAME;Dark-frame
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
-TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
-TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
 PREFERENCES_DEFAULTLANG;Standaardtaal
 PREFERENCES_DEFAULTTHEME;Standaardthema
 PREFERENCES_DEMOSAICINGALGO;Demozaïek-algoritme
@@ -447,28 +444,23 @@ PREFERENCES_DIRLAST;Laatst bezochte map
 PREFERENCES_DIROTHER;Anders
 PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
-TP_RAW_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster 
 PREFERENCES_EXTERNALEDITOR;Externe editor
-TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEFORMAT;Bestandstype
 PREFERENCES_FORIMAGE;Voor niet-RAW-bestanden
 PREFERENCES_FORRAW;Voor RAW-bestanden
 PREFERENCES_GIMPPATH;Installatiemap GIMP
-TP_PREPROCESS_GREENEQUIL;Groenbalans
 PREFERENCES_GTKTHEME;GTK standaard
 PREFERENCES_HINT;Voorbeeld
 PREFERENCES_HLTHRESHOLD;Grenswaarde overbelichting
-TP_PREPROCESS_HOTDEADPIXFILT;Filter hete/dode pixels
 PREFERENCES_ICCDIR;Map met ICC-profielen
 PREFERENCES_IMPROCPARAMS;Standaardprofiel
 PREFERENCES_INTENT_ABSOLUTE;Absolute colorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Waargenomen colorimetrie
 PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
-TP_PREPROCESS_LINEDENOISE;Lijnruisfilter
 PREFERENCES_LIVETHUMBNAILS;Live-miniaturen (langzamer)
 PREFERENCES_MONITORICC;Monitorprofiel
 PREFERENCES_MULTITAB;Multi-tab-modus
@@ -608,6 +600,7 @@ TP_CROP_SELECTCROP;Selecteer gebied
 TP_CROP_W;B
 TP_CROP_X;X
 TP_CROP_Y;Y
+TP_DARKFRAME_AUTOSELECT;Automatische selectie
 TP_DETAIL_AMOUNT;Hoeveelheid
 TP_DIRPYRDENOISE_CHROMA;Chrominantie
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -696,9 +689,16 @@ TP_LUMADENOISE_RADIUS;Straal
 TP_PERSPECTIVE_HORIZONTAL;Horizontaal
 TP_PERSPECTIVE_LABEL;Perspectief
 TP_PERSPECTIVE_VERTICAL;Verticaal
-TP_DARKFRAME_AUTOSELECT;Automatische selectie
-TP_RAW_LABEL;Demozaïekproces
+TP_PREPROCESS_GREENEQUIL;Groenbalans
+TP_PREPROCESS_HOTDEADPIXFILT;Filter hete/dode pixels
 TP_PREPROCESS_LABEL;Voorbewerking
+TP_PREPROCESS_LINEDENOISE;Lijnruisfilter
+TP_RAWCACORR_AUTO;Automatische CA-correctie
+TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
+TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
+TP_RAW_DMETHOD;Methode
+TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
+TP_RAW_LABEL;Demozaïekproces
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (zachter)
 TP_RESIZE_BICUBICSH;Bikubisch (scherper)
@@ -785,6 +785,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !EXIFFILTER_FILETYPE;File Type
+!GENERAL_FILE;File
+!GENERAL_NONE;None
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
@@ -794,26 +796,42 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !MAIN_FRAME_EDITOR;Editor
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PREFERENCES_CABLUE;CA Blue manual correction
-!PREFERENCES_CARED;CA Red manual correction
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_EXPOS;Exposure before interpolationn :correction (lin)
-!PREFERENCES_PRESER;Exposure before interpolationn :preserve highlights (EV)
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
+!TP_EXPOSCORR_LABEL;Exposure
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
