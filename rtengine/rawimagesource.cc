@@ -421,19 +421,18 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
  */
 int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 {
-	int counter=0;
+	volatile int counter=0;
 	
 	unsigned short (*cfablur);
 	cfablur = (unsigned short (*)) calloc (H*W, sizeof *cfablur);
-	
-	int iprev,inext,jprev,jnext;
-	unsigned short p[9],temp;
-	int top, bottom, left, right;
 	
 #pragma omp parallel
 	{
 #pragma omp for
 		for (int i=0; i<H; i++) {
+			int iprev,inext,jprev,jnext;
+			unsigned short p[9],temp;
+
 			if (i<2) {iprev=i+2;} else {iprev=i-2;}
 			if (i>H-3) {inext=i-2;} else {inext=i+2;}
 			for (int j=0; j<W; j++) {
@@ -445,6 +444,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 			}
 		}
 		
+		//TODO: counter needs a openmp fix.
 #pragma omp  for
 		//cfa pixel heat/death evaluation
 		for (int rr=0; rr < H; rr++) {
@@ -457,6 +457,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 				//evaluate pixel for heat/death
 				float pixdev = (float)abs(rawData[rr][cc]-cfablur[rr*W+cc]);
 				float hfnbrave=0;
+				int top, bottom, left, right;
 				top=MAX(0,rr-2);
 				bottom=MIN(H-1,rr+2);
 				left=MAX(0,cc-2);
