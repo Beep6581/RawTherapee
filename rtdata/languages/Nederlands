@@ -427,7 +427,7 @@ PREFERENCES_CACHESTRAT2;Langzamer, minder geheugenbeslag
 PREFERENCES_CACHESTRAT;Cache-strategie
 PREFERENCES_CACHETHUMBFORM;Miniatuurformaat cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
-PREFERENCES_CACORRECTION;Automatische CA-correctie
+TP_RAWCACORR_AUTO;Automatische CA-correctie
 PREFERENCES_CLEARDLG_LINE1;Cache legen...
 PREFERENCES_CLEARDLG_LINE2;Dit kan even duren.
 PREFERENCES_CLEARDLG_TITLE;Momentje svp.
@@ -436,8 +436,8 @@ PREFERENCES_CMETRICINTENT;Bedoelde colorimetrie
 PREFERENCES_DARKFRAME;Dark-frame
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DCBENHANCE;Pas DCB-verbetering toe
-PREFERENCES_DCBITERATIONS;Aantal DCB-herhalingen
+TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
+TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
 PREFERENCES_DEFAULTLANG;Standaardtaal
 PREFERENCES_DEFAULTTHEME;Standaardthema
 PREFERENCES_DEMOSAICINGALGO;Demozaïek-algoritme
@@ -447,28 +447,28 @@ PREFERENCES_DIRLAST;Laatst bezochte map
 PREFERENCES_DIROTHER;Anders
 PREFERENCES_DIRSELECTDLG;Selecteer standaardmap bij opstarten...
 PREFERENCES_DIRSOFTWARE;Installatiemap
-PREFERENCES_DMETHOD;Methode
+TP_RAW_DMETHOD;Methode
 PREFERENCES_EDITORCMDLINE;Andere editor, geef pad
 PREFERENCES_EDITORLAYOUT;Bewerkingsvenster 
 PREFERENCES_EXTERNALEDITOR;Externe editor
-PREFERENCES_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
+TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
 PREFERENCES_FBROWSEROPTS;Opties bestandsnavigator
 PREFERENCES_FILEFORMAT;Bestandstype
 PREFERENCES_FORIMAGE;Voor niet-RAW-bestanden
 PREFERENCES_FORRAW;Voor RAW-bestanden
 PREFERENCES_GIMPPATH;Installatiemap GIMP
-PREFERENCES_GREENEQUIL;Groenbalans
+TP_PREPROCESS_GREENEQUIL;Groenbalans
 PREFERENCES_GTKTHEME;GTK standaard
 PREFERENCES_HINT;Voorbeeld
 PREFERENCES_HLTHRESHOLD;Grenswaarde overbelichting
-PREFERENCES_HOTDEADPIXFILT;Filter hete/dode pixels
+TP_PREPROCESS_HOTDEADPIXFILT;Filter hete/dode pixels
 PREFERENCES_ICCDIR;Map met ICC-profielen
 PREFERENCES_IMPROCPARAMS;Standaardprofiel
 PREFERENCES_INTENT_ABSOLUTE;Absolute colorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Waargenomen colorimetrie
 PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
-PREFERENCES_LINEDENOISE;Lijnruisfilter
+TP_PREPROCESS_LINEDENOISE;Lijnruisfilter
 PREFERENCES_LIVETHUMBNAILS;Live-miniaturen (langzamer)
 PREFERENCES_MONITORICC;Monitorprofiel
 PREFERENCES_MULTITAB;Multi-tab-modus
@@ -696,10 +696,9 @@ TP_LUMADENOISE_RADIUS;Straal
 TP_PERSPECTIVE_HORIZONTAL;Horizontaal
 TP_PERSPECTIVE_LABEL;Perspectief
 TP_PERSPECTIVE_VERTICAL;Verticaal
-TP_PREPROCESS_DARKFRAME;Dark-frame
-TP_PREPROCESS_DFAUTOSELECT;Automatische selectie
-TP_RAWPANEL_DEMOSAICING;Demozaïekproces
-TP_RAWPANEL_PREPROCESSING;Voorbewerking
+TP_DARKFRAME_AUTOSELECT;Automatische selectie
+TP_RAW_LABEL;Demozaïekproces
+TP_PREPROCESS_LABEL;Voorbewerking
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (zachter)
 TP_RESIZE_BICUBICSH;Bikubisch (scherper)

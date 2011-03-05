@@ -26,7 +26,7 @@
 #include <guiutils.h>
 
 
-class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public ToolPanel 
+class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel
 {
 
 protected:

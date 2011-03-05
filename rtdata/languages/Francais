@@ -122,6 +122,7 @@ GENERAL_LANDSCAPE;Paysage
 GENERAL_LOAD;Charger
 GENERAL_NA;indisponible
 GENERAL_NO;Non
+GENERAL_NONE;Aucun
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
@@ -440,8 +441,8 @@ PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_DARKFRAME;Soustraction d'image noire
 PREFERENCES_DATEFORMAT;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DCBENHANCE;Appliquer la phase d'amélioration de DCB
-PREFERENCES_DCBITERATIONS;Nombre d'itération de DCB
+TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
@@ -461,18 +462,18 @@ PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
-PREFERENCES_GREENEQUIL;Équilibrage du vert
+TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
 PREFERENCES_GTKTHEME;GTK par défaut
 PREFERENCES_HINT;Conseil
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
-PREFERENCES_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
+TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
 PREFERENCES_ICCDIR;Dossier des profils ICC
 PREFERENCES_IMPROCPARAMS;Paramètres de traitement d'image par défaut
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrie absolue
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
-PREFERENCES_LINEDENOISE;Filtre de bruit de Ligne
+TP_PREPROCESS_LINEDENOISE;Filtre de bruit de Ligne
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_MULTITAB;Mode éditeurs multiple
@@ -574,6 +575,7 @@ TP_CHMIXER_BLUE;Bleu
 TP_CHMIXER_GREEN;Vert
 TP_CHMIXER_LABEL;Mixage des canaux
 TP_CHMIXER_RED;Rouge
+TP_CHROMATABERR_LABEL;Aberration Chromatique
 TP_COARSETRAF_DEGREE;degré:
 TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche
@@ -612,6 +614,7 @@ TP_CROP_SELECTCROP;    Sélection du recadrage
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
+TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Suppression de l'aberr. chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
@@ -635,6 +638,7 @@ TP_EQUALIZER_FINEST;les plus petites
 TP_EQUALIZER_LABEL;Égaliseur d'ondelette
 TP_EQUALIZER_LARGEST;les plus grandes
 TP_EQUALIZER_NEUTRAL;Neutre
+TP_EXPOSCORR_LABEL;Exposition
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
 TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
@@ -646,6 +650,7 @@ TP_EXPOSURE_CURVEEDITOR;Courbe tonale
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_LABEL;Exposition
 TP_EXPOSURE_SATURATION;Saturation
+TP_FLATFIELD_LABEL;Champ Uniforme
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
 TP_HLREC_LABEL;Récupération des hautes lumières

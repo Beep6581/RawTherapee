@@ -19,11 +19,15 @@
 #ifndef __TOOLPANEL__
 #define __TOOLPANEL__
 
+#include <gtkmm.h>
 #include <glibmm.h>
 #include <rtengine.h>
 #include <procparams.h>
 #include <multilangmgr.h>
 #include <paramsedited.h>
+
+class ToolPanel;
+class FoldableToolPanel;
 
 class ToolPanelListener {
 
@@ -43,6 +47,8 @@ class ToolPanel {
 
         ToolPanel () : listener(NULL), tmp(NULL), batchMode(false) {}
 
+                void setParent   (Gtk::Box* parent) {}
+           Gtk::Box* getParent   () { return NULL; }
                 void setListener (ToolPanelListener* tpl) { listener = tpl; }
         virtual void read        (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
         virtual void write       (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
@@ -53,6 +59,22 @@ class ToolPanel {
                 
         virtual void setBatchMode    (bool batchMode) { this->batchMode = batchMode; }
                 
-};  
+};
+
+class FoldableToolPanel : public ToolPanel {
+
+	protected:
+        Gtk::Box* parentContainer;
+        void foldThemAll (GdkEventButton* event);
+
+	public:
+		Gtk::Expander* exp;
+
+		FoldableToolPanel(Gtk::Box* content);
+
+        void setParent (Gtk::Box* parent) { parentContainer = parent; }
+        Gtk::Box* getParent () { return parentContainer; }
+        void setLabel (Glib::ustring label) { exp->set_label(label); }
+};
 
 #endif

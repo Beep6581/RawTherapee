@@ -349,10 +349,10 @@ PREFERENCES_DIRLAST;Sidst anvendte mappe
 PREFERENCES_DIROTHER;Andet
 PREFERENCES_DIRSELECTDLG;Vælg startmappe...
 PREFERENCES_DIRSOFTWARE;Installationsmappe
-PREFERENCES_DMETHOD;Metode
+TP_RAW_DMETHOD;Metode
 PREFERENCES_EDITORCMDLINE;Anden kommandostreng
 PREFERENCES_EXTERNALEDITOR;Eksternt redigeringsprogram
-PREFERENCES_FALSECOLOR;Antal trin til undertrykkelse af forkert farve
+TP_RAW_FALSECOLOR;Antal trin til undertrykkelse af forkert farve
 PREFERENCES_FBROWSEROPTS;Indstllinger til filbrowser
 PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FORIMAGE;Til billedfiler

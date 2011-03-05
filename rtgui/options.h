@@ -58,6 +58,7 @@ class Options {
     Glib::ustring defProfRaw;
     Glib::ustring defProfImg;
     Glib::ustring dateFormat;
+    int adjusterDelay;
     int  startupDir;
     Glib::ustring startupPath;
     Glib::ustring profilePath;

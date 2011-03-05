@@ -24,7 +24,7 @@ using namespace rtengine::procparams;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::HSVEqualizer () : ToolPanel () {
+HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
     enabled->set_active (true);

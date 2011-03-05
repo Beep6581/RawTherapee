@@ -25,7 +25,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve () : ToolPanel(), expAdd(false),hlcompAdd(false),hlcompthreshAdd(false), blackAdd(false), shcompAdd(false), brAdd(false), contrAdd(false) {
+ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hlcompAdd(false),hlcompthreshAdd(false), blackAdd(false), shcompAdd(false), brAdd(false), contrAdd(false) {
 
 //----------- Auto Levels ----------------------------------
   abox = Gtk::manage (new Gtk::HBox ());

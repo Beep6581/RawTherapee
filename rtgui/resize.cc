@@ -23,7 +23,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Resize::Resize () : maxw(100000), maxh(100000) {
+Resize::Resize () : Gtk::VBox(), FoldableToolPanel(this), maxw(100000), maxh(100000) {
 
 	cropw = 0;
 	croph = 0;

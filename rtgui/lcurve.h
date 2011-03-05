@@ -25,7 +25,7 @@
 #include <curveeditor.h>
 #include <mycurve.h>
 
-class LCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, public CurveListener {
+class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener {
 
   protected:
     Adjuster* brightness;

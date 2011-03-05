@@ -59,6 +59,10 @@
 #include <hsvequalizer.h>
 #include <rawprocess.h>
 #include <preprocess.h>
+#include <darkframe.h>
+#include <flatfield.h>
+#include <rawcacorrection.h>
+#include <rawexposure.h>
 
 class ImageEditorCoordinator;
 
@@ -103,6 +107,9 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
         PreProcess* preprocess;
+        DarkFrame* darkframe;
+        FlatField* flatfield;
+        RAWCACorr* rawcacorrection;
 
         std::vector<PParamsChangeListener*> paramcListeners;
 
@@ -119,11 +126,18 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         IPTCPanel* iptcpanel;
         ToolBar* toolBar;
 
+        Gtk::ScrolledWindow* exposurePanelSW;
+        Gtk::ScrolledWindow* detailsPanelSW;
+        Gtk::ScrolledWindow* colorPanelSW;
+        Gtk::ScrolledWindow* transformPanelSW;
+        Gtk::ScrolledWindow* rawPanelSW;
+
         std::vector<Gtk::Expander*> expList;
         
         bool hasChanged;
 
-        void addPanel (Gtk::Box* where, Gtk::Container* panel, Glib::ustring label);
+        void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label);
+        void foldThemAll (GdkEventButton* event);
 
     public:
     
@@ -135,6 +149,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
 
         bool getChangedState                ()                                      { return hasChanged; }
         void updateCurveBackgroundHistogram (LUTu & histrgb, LUTu & histl);
+		void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
         void addPParamsChangeListener   (PParamsChangeListener* pp) { paramcListeners.push_back (pp); }
@@ -187,6 +202,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ToolBar* getToolBar () { return toolBar; }
         int  getSpotWBRectSize ();
         CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return crop; }
+
+        bool handleShortcutKey (GdkEventKey* event);
 };
 
 #endif

@@ -22,6 +22,7 @@
 #include <glibmm.h>
 #include <sstream>
 #include <string.h>
+#include <version.h>
 
 #include <safekeyfile.h>
 
@@ -29,7 +30,7 @@ namespace rtengine {
 namespace procparams {
 
 const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
-const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
+const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area", "Vertical", "Horizontal", "V+H"};
 
 ProcParams::ProcParams () { 
 
@@ -220,14 +221,14 @@ void ProcParams::setDefaults () {
     exif.clear ();
     iptc.clear ();
     
-    version = 249;
+    version = TAGDISTANCE;
 }
 
 int ProcParams::save (Glib::ustring fname) const {
 
     SafeKeyFile keyFile;
 
-    keyFile.set_integer ("Version", "Version", 20101019);
+    keyFile.set_integer ("Version", "Version", TAGDISTANCE);
 
     // save tonecurve:
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
@@ -489,7 +490,7 @@ int ProcParams::load (Glib::ustring fname) {
 
     // load tonecurve:
 
-version = 200;
+version = TAGDISTANCE;
 if (keyFile.has_group ("Version")) {    
     if (keyFile.has_key ("Version", "Version")) version = keyFile.get_integer ("Version", "Version");
 }

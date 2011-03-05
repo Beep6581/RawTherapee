@@ -119,8 +119,8 @@ enum ProcEvent {
 	EvLSaturation=94,
     EvLaCurve=95,
     EvLbCurve=96,
-    EvDemosaic=97,
-    EvPreProcess=98,
+    EvDemosaicMethod=97,
+    EvPreProcessHotDeadPixel=98,
 	EvSaturation=99,
 	EvHSVEqualizerH=100,
 	EvHSVEqualizerS=101,
@@ -129,14 +129,29 @@ enum ProcEvent {
 	EvDefringeEnabled=104,
 	EvDefringeRadius=105,
 	EvDefringeThreshold=106,
+	
     EvResizeBoundingBox=107,
     EvResizeAppliesTo=108,
-	EvFlatFieldFile=109,       
-	EvFlatFieldAutoSelect=110, 
-	EvFlatFieldBlurRadius=111, 
-	EvFlatFieldBlurType=112,   
+	
+	EvLAvoidClip=109,
+    EvLSatLimiter=110,
+    EvLSatLimit=111,
+	EvDemosaicDCBIter=112,
+	EvDemosaicFalseColorIter=113,
+	EvDemosaicDCBEnhanced=114,
+	EvPreProcessCARed=115,
+	EvPreProcessCABlue=116,
+	EvPreProcessLineDenoise=117,
+	EvPreProcessGEquilThresh=118,
+	EvPreProcessAutoCA=119,
+	EvPreProcessAutoDF=120,
+	EvPreProcessDFFile=121,
+	EvFlatFieldFile=122,       
+	EvFlatFieldAutoSelect=123, 
+	EvFlatFieldBlurRadius=124, 
+	EvFlatFieldBlurType=125,   
 
-	NUMOFEVENTS=113
+	NUMOFEVENTS=126
 	};
 }    
 #endif    

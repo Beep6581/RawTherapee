@@ -26,7 +26,7 @@
 #include <curveeditorgroup.h>
 #include <mycurve.h>
 
-class ToneCurve : public Gtk::VBox, public AdjusterListener, public ToolPanel, public rtengine::AutoExpListener, public CurveListener {
+class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener {
 
   protected:
     Gtk::HBox* abox;

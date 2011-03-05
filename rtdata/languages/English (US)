@@ -423,7 +423,7 @@
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
-!PREFERENCES_CABLUE;CA Blue manual correction
+!TP_RAWCACORR_CABLUE;CA Blue manual correction
 !PREFERENCES_CACHECLEARALL;Clear All
 !PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 !PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
@@ -436,16 +436,16 @@
 !PREFERENCES_CACHESTRAT;Cache Strategy
 !PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 !PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-!PREFERENCES_CACORRECTION;Apply CA auto correction
-!PREFERENCES_CARED;CA Red manual correction
+!TP_RAWCACORR_AUTO;Apply CA auto correction
+!TP_RAWCACORR_CARED;CA Red manual correction
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
 !PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMAT;Date Format
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
-!PREFERENCES_DCBENHANCE;Apply DCB enhancement step
-!PREFERENCES_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
 !PREFERENCES_DEFAULTLANG;Default language
 !PREFERENCES_DEFAULTTHEME;Default theme
 !PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
@@ -465,18 +465,18 @@
 !PREFERENCES_FORIMAGE;For image files
 !PREFERENCES_FORRAW;For RAW files
 !PREFERENCES_GIMPPATH;GIMP installation directory
-!PREFERENCES_GREENEQUIL;Green equilibration
+!TP_PREPROCESS_GREENEQUIL;Green equilibration
 !PREFERENCES_GTKTHEME;GTK default
 !PREFERENCES_HINT;Hint
 !PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
-!PREFERENCES_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PREFERENCES_ICCDIR;Directory of ICC profiles
 !PREFERENCES_IMPROCPARAMS;Default image processing parameters
 !PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 !PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
-!PREFERENCES_LINEDENOISE;Line noise filter
+!TP_PREPROCESS_LINEDENOISE;Line noise filter
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_MONITORICC;Monitor Profile
 !PREFERENCES_MULTITAB;Multiple tabs mode

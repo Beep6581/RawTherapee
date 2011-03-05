@@ -24,55 +24,16 @@
 #include <toolpanel.h>
 #include <rawimage.h>
 
-class DFProvider {
-  public:
-    virtual rtengine::RawImage* getDF() {}
-    // add other info here
-};
-
-class FFProvider {
-  public:
-    virtual rtengine::RawImage* getFF() {}
-    // add other info here
-};
-
-class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
+class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
 
-    Gtk::ComboBoxText* darkFrameMethod;
-    Gtk::FileChooserButton *darkFrameFile;
-    Gtk::HBox *hbdf;
-    Gtk::Button *btnReset;
-    Gtk::Label *dfLabel;
-	Gtk::Label *dfInfo;
-    bool dfChanged;
-	
-	Gtk::FileChooserButton *flatFieldFile;
-	Gtk::Label *ffLabel;
-	Gtk::Label *ffInfo;
-	Gtk::Button *flatFieldFileReset; 
-	Gtk::CheckButton* flatFieldAutoSelect;
-	Adjuster* flatFieldBlurRadius; 
-	Gtk::ComboBoxText* flatFieldBlurType; 
-	Gtk::HBox *hbff; 
-	bool ffChanged; 
-
-	Adjuster* caRed;
-    Adjuster* caBlue;
     Adjuster* lineDenoise;
-    Adjuster* greenEqThreshold;
-	Adjuster* hotDeadPixelThresh;
 
+    Adjuster* greenEqThreshold;
     Gtk::CheckButton* hotDeadPixel;
-	Gtk::CheckButton* caAutocorrect;
-    Gtk::CheckButton* dfAuto;
-	bool lastCA,lastHot,lastDFauto, lastFFAutoSelect;
-	
-	DFProvider *dfp;
-	FFProvider *ffp;
-	
-	sigc::connection caacsconn,dfautoconn,hdpixelconn,dfFile,flatFieldFileconn,flatFieldAutoSelectconn,flatFieldBlurTypeconn;
+	bool lastHot;
+	sigc::connection hdpixelconn;
 
   public:
 
@@ -84,20 +45,7 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public ToolPanel{
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
     void adjusterChanged     (Adjuster* a, double newval);
-    void caCorrectionChanged();
     void hotDeadPixelChanged();
-    void darkFrameChanged();
-    void darkFrameReset();
-    void dfAutoChanged();
-    
-    void flatFieldFileChanged();      
-    void flatFieldFile_Reset();       
-    void flatFieldAutoSelectChanged();
-    void flatFieldBlurRadiusChanged();
-    void flatFieldBlurTypeChanged();
-
-    void setDFProvider (DFProvider* p) { dfp = p; };
-    void setFFProvider (FFProvider* p) { ffp = p; };
 };
 
 #endif

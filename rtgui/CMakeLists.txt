@@ -9,7 +9,7 @@ set (BASESOURCEFILES
     colorboost.cc resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     colordenoise.cc
     impulsedenoise.cc dirpyrdenoise.cc
-    exifpanel.cc
+    exifpanel.cc toolpanel.cc
     sharpening.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
     crophandler.cc curveeditorgroup.cc curveeditor.cc dirbrowser.cc
@@ -26,6 +26,7 @@ set (BASESOURCEFILES
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
+    darkframe.cc flatfield.cc rawcacorrection.cc
     equalizer.cc dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 

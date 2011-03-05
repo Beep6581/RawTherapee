@@ -349,10 +349,10 @@ PREFERENCES_DIRLAST;Azkena ikusitako karpeta
 PREFERENCES_DIROTHER;Besterik
 PREFERENCES_DIRSELECTDLG;Abioko irudien karpeta hautatu...
 PREFERENCES_DIRSOFTWARE;Inatalazio karpeta
-PREFERENCES_DMETHOD;Metodoa
+TP_RAW_DMETHOD;Metodoa
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;External editor
-PREFERENCES_FALSECOLOR;Okerreko kolore ezabaketa atalak
+TP_RAW_FALSECOLOR;Okerreko kolore ezabaketa atalak
 PREFERENCES_FBROWSEROPTS;Arakatzailearen aukerak
 PREFERENCES_FILEFORMAT;Artxiboen formatua
 PREFERENCES_FORIMAGE;Irudi artxiboetarako

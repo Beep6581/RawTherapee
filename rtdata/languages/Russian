@@ -398,7 +398,7 @@ PREFERENCES_APPLNEXTSTARTUP;Нужен перезапуск
 PREFERENCES_BATCH_PROCESSING;Пакетная обработка
 PREFERENCES_BEHAVIOR;Поведение
 PREFERENCES_BLINKCLIPPED;Мигать проблемными зонами
-PREFERENCES_CABLUE;Ручная коррекция ХА: синий
+TP_RAWCACORR_CABLUE;Ручная коррекция ХА: синий
 PREFERENCES_CACHECLEARALL;Удалить все
 PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработки
 PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
@@ -411,8 +411,8 @@ PREFERENCES_CACHESTRAT2;Меньше расход памяти - скорост�
 PREFERENCES_CACHESTRAT;Стратегия кэширования
 PREFERENCES_CACHETHUMBFORM;Формат кэширования эскизов
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
-PREFERENCES_CACORRECTION;Применить автоматическую коррекцию ХА
-PREFERENCES_CARED;Ручная коррекция ХА: красный
+TP_RAWCACORR_AUTO;Применить автоматическую коррекцию ХА
+TP_RAWCACORR_CARED;Ручная коррекция ХА: красный
 PREFERENCES_CLEARDLG_LINE1;Очистка кэша
 PREFERENCES_CLEARDLG_LINE2;Это может занять несколько секунд.
 PREFERENCES_CLEARDLG_TITLE;Пожалуйста, подождите
@@ -422,8 +422,8 @@ PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
 PREFERENCES_DARKFRAME;Тёмный кадр
 PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DATEFORMATHINT;<i>Вы можете использовать следующие элементы форматирования:</i>\n<b>%y</b><i> : год</i>\n<b>%m</b><i> : месяц</i>\n<b>%d</b><i> : день</i>\n<i>\nНапример, венгерский формат даты такой:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DCBENHANCE;Применить шаг улучшения DCB
-PREFERENCES_DCBITERATIONS;Количество итераций DCB
+TP_RAW_DCBENHANCE;Применить шаг улучшения DCB
+TP_RAW_DCBITERATIONS;Количество итераций DCB
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
 PREFERENCES_DEMOSAICINGALGO;Алгоритм получения изображения
@@ -433,28 +433,28 @@ PREFERENCES_DIRLAST;Последний каталог
 PREFERENCES_DIROTHER;Другой
 PREFERENCES_DIRSELECTDLG;Выберите каталог для хранения изображений
 PREFERENCES_DIRSOFTWARE;Каталог установки
-PREFERENCES_DMETHOD;Метод
+TP_RAW_DMETHOD;Метод
 PREFERENCES_EDITORCMDLINE;Другой (путь к исполняемому файлу)
 PREFERENCES_EDITORLAYOUT;Тип редактора
 PREFERENCES_EXTERNALEDITOR;Внешний редактор
-PREFERENCES_FALSECOLOR;Шагов для подавления ложных цветов:
+TP_RAW_FALSECOLOR;Шагов для подавления ложных цветов:
 PREFERENCES_FBROWSEROPTS;Настройки
 PREFERENCES_FILEFORMAT;Формат файлов
 PREFERENCES_FORIMAGE;Для изображений
 PREFERENCES_FORRAW;Для RAW файлов
 PREFERENCES_GIMPPATH;Каталог установки GIMP
-PREFERENCES_GREENEQUIL;Выравнивание зелёного
+TP_PREPROCESS_GREENEQUIL;Выравнивание зелёного
 PREFERENCES_GTKTHEME;GTK по умолчанию
 PREFERENCES_HINT;Подсказка
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
-PREFERENCES_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
+TP_PREPROCESS_HOTDEADPIXFILT;Применить фильтр горячих/темных пикселей
 PREFERENCES_ICCDIR;Каталог ICC профилей
 PREFERENCES_IMPROCPARAMS;Параметры обработки по умолчанию
 PREFERENCES_INTENT_ABSOLUTE;Абсолютное
 PREFERENCES_INTENT_PERCEPTUAL;Перцепционное
 PREFERENCES_INTENT_RELATIVE;Относительное
 PREFERENCES_INTENT_SATURATION;По насыщенности
-PREFERENCES_LINEDENOISE;Фильтр линейного шума
+TP_PREPROCESS_LINEDENOISE;Фильтр линейного шума
 PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MONITORICC;Профиль монитора
 PREFERENCES_MULTITAB;Много вкладок
@@ -681,10 +681,9 @@ TP_LUMADENOISE_RADIUS;радиус
 TP_PERSPECTIVE_HORIZONTAL;Горизонтальная
 TP_PERSPECTIVE_LABEL;Перспектива
 TP_PERSPECTIVE_VERTICAL;Вертикальная
-TP_PREPROCESS_DARKFRAME;Темный кадр
-TP_PREPROCESS_DFAUTOSELECT;Автовыбор
-TP_RAWPANEL_DEMOSAICING;Демозаик
-TP_RAWPANEL_PREPROCESSING;Предобработка
+TP_DARKFRAME_AUTOSELECT;Автовыбор
+TP_RAW_LABEL;Демозаик
+TP_PREPROCESS_LABEL;Предобработка
 TP_RESIZE_BICUBIC;Бикубический
 TP_RESIZE_BICUBICSF;Мягкий бикубический
 TP_RESIZE_BICUBICSH;Резкий бикубический

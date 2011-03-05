@@ -42,6 +42,9 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     loadProcParams ();
     _loadThumbnail ();
     generateExifDateTimeStrings ();
+ 
+ 	delete tpp;
+ 	tpp = 0;
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
@@ -56,6 +59,9 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::s
     cfs.recentlySaved = false;
 
 	initial_ = false;
+ 
+ 	delete tpp;
+ 	tpp = 0;
 }
 
 void Thumbnail::_generateThumbnailImage () {
@@ -277,17 +283,30 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
 	Glib::Mutex::Lock lock(mutex);
 
-    if (!tpp)
-        return NULL;
+     if ( tpp == 0 )
+ 	{
+ 		_loadThumbnail();
+ 		if ( tpp == 0 )
+ 		{
+ 			return 0;
+ 		}
+ 	}
+ 
+ 	rtengine::IImage8* image = 0;
 
 	if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL )
 	{
-		return tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
+ 		image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
 	}
 	else
 	{
-		return tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+ 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
 	}
+ 
+ 	//_saveThumbnail();
+ 	delete tpp;
+ 	tpp = 0;
+ 	return image;
 }
 
 rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
@@ -300,7 +319,17 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 	}
 
 	_generateThumbnailImage();
-	return tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+ 	if ( tpp == 0 )
+ 	{
+ 		return 0;
+ 	}
+ 
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+ 
+ 	//_saveThumbnail();
+ 	delete tpp;
+ 	tpp = 0;
+ 	return image;
 }
 
 void Thumbnail::generateExifDateTimeStrings () {
@@ -397,6 +426,8 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
 void Thumbnail::_loadThumbnail(bool firstTrial) {
 
     needsReProcessing = true;
+ 	tw = -1;
+ 	th = options.maxThumbnailHeight;
     delete tpp;
     tpp = new rtengine::Thumbnail ();
     tpp->isRaw = (cfs.format == (int) FT_Raw);
@@ -415,8 +446,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
     else if (!succ) {
         delete tpp;
         tpp = NULL;
+		return;
     }
-    else if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
+ 
+    if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
         // load aehistogram
         tpp->readAEHistogram (getCacheFileName ("aehistograms"));
 
@@ -426,6 +459,8 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
         tpp->init ();
         
     }
+ 
+ 	getThumbnailSize(tw,th);
 }
 
 void Thumbnail::loadThumbnail (bool firstTrial) {

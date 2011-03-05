@@ -22,10 +22,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RawProcess::RawProcess ()
+RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
 {
    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
-   hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("PREFERENCES_DMETHOD") +": ")));
+   hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") +": ")));
    dmethod = Gtk::manage (new Gtk::ComboBoxText ());
    for( size_t i=0; i< procparams::RAWParams::numMethods;i++)
 	   dmethod->append_text(procparams::RAWParams::methodstring[i]);
@@ -37,10 +37,11 @@ RawProcess::RawProcess ()
    dcbOptions = Gtk::manage (new Gtk::VBox ());
    dcbOptions->set_border_width(4);
 
-   dcbIterations = Gtk::manage (new Adjuster (M("PREFERENCES_DCBITERATIONS"),0,5,1,2));
+   dcbIterations = Gtk::manage (new Adjuster (M("TP_RAW_DCBITERATIONS"),0,5,1,2));
    dcbIterations ->setAdjusterListener (this);
+   if (dcbIterations->delay < 1000) dcbIterations->delay = 1000;
    dcbIterations ->show();
-   dcbEnhance = Gtk::manage (new Gtk::CheckButton(M("PREFERENCES_DCBENHANCE")));
+   dcbEnhance = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_DCBENHANCE")));
    dcbOptions->pack_start(*dcbIterations);
    dcbOptions->pack_start(*dcbEnhance);
    pack_start( *dcbOptions, Gtk::PACK_SHRINK, 4);
@@ -48,8 +49,9 @@ RawProcess::RawProcess ()
 
    ccOptions = Gtk::manage (new Gtk::VBox ());
    ccOptions->set_border_width(4);
-   ccSteps = Gtk::manage (new Adjuster (M("PREFERENCES_FALSECOLOR"),0,5,1,2 ));
+   ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"),0,5,1,2 ));
    ccSteps->setAdjusterListener (this);
+   if (ccSteps->delay < 1000) ccSteps->delay = 1000;
    ccSteps->show();
    pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);
 
@@ -103,8 +105,8 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 
 void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-	pp->raw.ccSteps = (int)ccSteps->getValue();
-	pp->raw.dcb_iterations = (int)dcbIterations->getValue();
+	pp->raw.ccSteps = ccSteps->getIntValue();
+	pp->raw.dcb_iterations = dcbIterations->getIntValue();
 	pp->raw.dcb_enhance = dcbEnhance->get_active();
 
 	int currentRow = dmethod->get_active_row_number();
@@ -143,8 +145,12 @@ void RawProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, 
 
 void RawProcess::adjusterChanged (Adjuster* a, double newval)
 {
-    if (listener)
-        listener->panelChanged (EvDemosaic, Glib::ustring("params") );
+    if (listener) {
+    	if (a == dcbIterations)
+    		listener->panelChanged (EvDemosaicDCBIter, a->getTextValue() );
+    	else if (a == ccSteps)
+    		listener->panelChanged (EvDemosaicFalseColorIter, a->getTextValue() );
+    }
 }
 
 void RawProcess::methodChanged ()
@@ -160,7 +166,7 @@ void RawProcess::methodChanged ()
 	    s = procparams::RAWParams::methodstring[curSelection];
 
     if (listener)
-        listener->panelChanged (EvDemosaic, Glib::ustring(M("PREFERENCES_DMETHOD"))+ "="+ s);
+        listener->panelChanged (EvDemosaicMethod, s);
 }
 
 void RawProcess::dcbEnhanceChanged ()
@@ -178,5 +184,5 @@ void RawProcess::dcbEnhanceChanged ()
         lastDCBen = dcbEnhance->get_active ();
     }
     if (listener)
-        listener->panelChanged (EvDemosaic, Glib::ustring("params") );
+        listener->panelChanged (EvDemosaicDCBEnhanced, dcbEnhance->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
 }

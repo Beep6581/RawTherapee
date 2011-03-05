@@ -399,7 +399,7 @@ PREFERENCES_CACHESTRAT2;Uprednostniť malú spotrebu pamäte pred rýchlosťou
 PREFERENCES_CACHESTRAT;Stratégia použitia cache
 PREFERENCES_CACHETHUMBFORM;Formát zmenšenín pre cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximálna výška zmenšenín
-PREFERENCES_CACORRECTION;Použiť automatickú úpravu CA
+TP_RAWCACORR_AUTO;Použiť automatickú úpravu CA
 PREFERENCES_CLEARDLG_LINE1;Čistím cache
 PREFERENCES_CLEARDLG_LINE2;Môže to pár sekúnd trvať.
 PREFERENCES_CLEARDLG_TITLE;Prosím, čakajte.
@@ -407,8 +407,8 @@ PREFERENCES_CLIPPINGIND;Indikácia orezu
 PREFERENCES_CMETRICINTENT;Kolorimetrický zámer
 PREFERENCES_DATEFORMAT;Formát dátumu
 PREFERENCES_DATEFORMATHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%y</b><i> : rok</i>\n<b>%m</b><i> : mesiac</i>\n<b>%d</b><i> : deň</i>\n<i>\nNapríklad, slovenský formát je:</i>\n<b>%d.%m.%y</b>
-PREFERENCES_DCBENHANCE;Použiť vylepšovací krok DCB
-PREFERENCES_DCBITERATIONS;Počet iterácií DCB
+TP_RAW_DCBENHANCE;Použiť vylepšovací krok DCB
+TP_RAW_DCBITERATIONS;Počet iterácií DCB
 PREFERENCES_DEFAULTLANG;Predvolený jazyk
 PREFERENCES_DEFAULTTHEME;Predvolený vzhľad
 PREFERENCES_DEMOSAICINGALGO;Demozaikovací algoritmus
@@ -417,29 +417,29 @@ PREFERENCES_DIRLAST;Posledný navštívený adresár
 PREFERENCES_DIROTHER;Iný
 PREFERENCES_DIRSELECTDLG;Vybrať adresár s obrázkami pri spustení...
 PREFERENCES_DIRSOFTWARE;Inštalačný adresár
-PREFERENCES_DMETHOD;Metóda
-PREFERENCES_DMETHODBATCH;Dávka
+TP_RAW_DMETHOD;Metóda
+TP_RAW_DMETHODBATCH;Dávka
 PREFERENCES_EDITORCMDLINE;Iný príkazový riadok
 PREFERENCES_EDITORLAYOUT;Rozloženie editora
 PREFERENCES_EXTERNALEDITOR;Externý editor
-PREFERENCES_FALSECOLOR;Kroky potlačenia chybných farieb
+TP_RAW_FALSECOLOR;Kroky potlačenia chybných farieb
 PREFERENCES_FBROWSEROPTS;Voľby prehliadača súborov
 PREFERENCES_FILEFORMAT;Formát súborov
 PREFERENCES_FORIMAGE;Pre obrazové súbory
 PREFERENCES_FORRAW;Pre RAW súbory
 PREFERENCES_GIMPPATH;Inštalačný adresár GIMPu
-PREFERENCES_GREENEQUIL;Vyvažovanie zelenej
+TP_PREPROCESS_GREENEQUIL;Vyvažovanie zelenej
 PREFERENCES_GTKTHEME;GTK predvolený
 PREFERENCES_HINT;Tip
 PREFERENCES_HLTHRESHOLD;Prah pre orezanie najvyšších svetiel
-PREFERENCES_HOTDEADPIXFILT;Použiť filter na horúce/mŕtve pixely
+TP_PREPROCESS_HOTDEADPIXFILT;Použiť filter na horúce/mŕtve pixely
 PREFERENCES_ICCDIR;Adresár s ICC profilmy
 PREFERENCES_IMPROCPARAMS;Predvolené parametre spracovania obrazu
 PREFERENCES_INTENT_ABSOLUTE;Absolútny kolorimetrický
 PREFERENCES_INTENT_PERCEPTUAL;Vnímaný
 PREFERENCES_INTENT_RELATIVE;Relatívny kolorimetrický
 PREFERENCES_INTENT_SATURATION;Sýtosť
-PREFERENCES_LINEDENOISE;Filter šumu vedenia
+TP_PREPROCESS_LINEDENOISE;Filter šumu vedenia
 PREFERENCES_LIVETHUMBNAILS;Živé zmenšeniny (pomalšie)
 PREFERENCES_MONITORICC;Profil monitora
 PREFERENCES_MULTITAB;Režim viacerých kariet
