@@ -1061,7 +1061,8 @@ void RawImageSource::demosaic(const RAWParams &raw)
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demo (0,0,W,H);
-            else
+			//nodemosaic();//for testing
+		else
         	nodemosaic();
         t2.set();
         if( settings->verbose )
@@ -1217,7 +1218,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			}
 			for (int col=W-boxW; col<W; col+=2) {
 				temp[row*W+col] = (temp[row*W+col-2]*len - riFlatFile->data[row][col-boxW-2])/(len-1);
-				if ((W&1)==0) 
+				if (col+1<W) 
 					temp[row*W+col+1] = (temp[row*W+col-1]*len - riFlatFile->data[row][col-boxW-1])/(len-1);
 				len --;
 			}
@@ -1242,7 +1243,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			}
 			for (int row=H-boxH; row<H; row+=2) {
 				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - temp[(row-boxH-2)*W+col])/(len-1);
-				if ((H&1)==0) 
+				if (row+1<H) 
 					cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - temp[(row-boxH-1)*W+col])/(len-1);
 				len --;
 			}
@@ -2860,9 +2861,12 @@ void RawImageSource::nodemosaic()
         blue[i] = new unsigned short[W];
         for (int j=0; j<W; j++){
         	switch( FC(i,j)){
-        	case 0: red[i][j] = rawData[i][j]; break;
-        	case 1: green[i][j] = rawData[i][j]; break;
-        	case 2: blue[i][j] = rawData[i][j]; break;
+				case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
+				case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
+				case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
+				//red[i][j] = rawData[i][j]; 
+				//green[i][j] = rawData[i][j]; 
+				//blue[i][j] = rawData[i][j]; b
         	}
         }
     }
