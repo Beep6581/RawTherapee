@@ -471,19 +471,17 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
  */
 int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 {
-	int counter=0;
+	volatile int counter=0;
 	
 	float (*cfablur);
 	cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
 	
-	int iprev,inext,jprev,jnext;
-	float p[9],temp;
-	int top, bottom, left, right;
-
 #pragma omp parallel
 	{
 #pragma omp for
 	for (int i=0; i<H; i++) {
+		int iprev,inext,jprev,jnext;
+		float p[9],temp;
 		if (i<2) {iprev=i+2;} else {iprev=i-2;}
 		if (i>H-3) {inext=i-2;} else {inext=i+2;}
 		for (int j=0; j<W; j++) {
@@ -507,10 +505,10 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 			//evaluate pixel for heat/death
 			float pixdev = fabs(rawData[rr][cc]-cfablur[rr*W+cc]);
 			float hfnbrave=0;
-			top=MAX(0,rr-2);
-			bottom=MIN(H-1,rr+2);
-			left=MAX(0,cc-2);
-			right=MIN(W-1,cc+2);
+			int top=MAX(0,rr-2);
+			int bottom=MIN(H-1,rr+2);
+			int left=MAX(0,cc-2);
+			int right=MIN(W-1,cc+2);
 			for (int mm=top; mm<=bottom; mm++)
 				for (int nn=left; nn<=right; nn++) {
 					hfnbrave += fabs(rawData[mm][nn]-cfablur[mm*W+nn]);
@@ -1110,7 +1108,8 @@ void RawImageSource::demosaic(const RAWParams &raw)
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demo (0,0,W,H);
-            else
+			//nodemosaic();//for testing
+		else
         	nodemosaic();
         t2.set();
         if( settings->verbose )
@@ -1243,7 +1242,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			}
 			for (int col=W-boxW; col<W; col+=2) {
 				temp[row*W+col] = (temp[row*W+col-2]*len - riFlatFile->data[row][col-boxW-2])/(len-1);
-				if ((W&1)==0) 
+				if (col+1<W) 
 					temp[row*W+col+1] = (temp[row*W+col-1]*len - riFlatFile->data[row][col-boxW-1])/(len-1);
 				len --;
 			}
@@ -1268,7 +1267,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			}
 			for (int row=H-boxH; row<H; row+=2) {
 				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - temp[(row-boxH-2)*W+col])/(len-1);
-				if ((H&1)==0) 
+				if (row+1<H) 
 					cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - temp[(row-boxH-1)*W+col])/(len-1);
 				len --;
 			}

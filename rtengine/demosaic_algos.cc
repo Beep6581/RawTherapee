@@ -1089,9 +1089,12 @@ void RawImageSource::nodemosaic()
         blue[i] = new float[W];
         for (int j=0; j<W; j++){
         	switch( FC(i,j)){
-        	case 0: red[i][j] = rawData[i][j]; break;
-        	case 1: green[i][j] = rawData[i][j]; break;
-        	case 2: blue[i][j] = rawData[i][j]; break;
+				case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
+				case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
+				case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
+					//red[i][j] = rawData[i][j];
+					//green[i][j] = rawData[i][j];
+					//blue[i][j] = rawData[i][j];
         	}
         }
     }
