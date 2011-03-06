@@ -62,7 +62,6 @@
 #include <darkframe.h>
 #include <flatfield.h>
 #include <rawcacorrection.h>
-#include <rawexposure.h>
 
 class ImageEditorCoordinator;
 
