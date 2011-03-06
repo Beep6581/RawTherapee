@@ -67,7 +67,7 @@ class RawImageSource : public ImageSource {
         bool fuji;
         bool d1x;
         int border;
-        char** hpmap;
+        //char** hpmap;
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
         int max[3];
@@ -97,7 +97,7 @@ class RawImageSource : public ImageSource {
     
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
-        void hphd_green          ();
+        void hphd_green          (float** hpmap);
         void correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_to);
         void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         int  defTransform        (int tran);

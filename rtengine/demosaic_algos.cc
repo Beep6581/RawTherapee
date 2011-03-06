@@ -384,11 +384,11 @@ void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
         float devR = dev[j+1];
         float hpv = avgL + (avgR - avgL) * devL / (devL + devR);
         if (hpmap[i][j] < 0.8*hpv) 
-            this->hpmap[i][j] = 2;
+            hpmap[i][j] = 2;
         else if (hpv < 0.8*hpmap[i][j]) 
-            this->hpmap[i][j] = 1;
+            hpmap[i][j] = 1;
         else
-            this->hpmap[i][j] = 0;
+            hpmap[i][j] = 0;
     }        
   }
   delete [] temp;
@@ -398,7 +398,7 @@ void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hphd_green () {
+void RawImageSource::hphd_green (float** hpmap) {
 
   #pragma omp parallel for
   for (int i=3; i<H-3; i++) {
@@ -406,7 +406,7 @@ void RawImageSource::hphd_green () {
       if (ri->ISGREEN(i,j))
         green[i][j] = rawData[i][j];
       else {
-        if (this->hpmap[i][j]==1) { 
+        if (hpmap[i][j]==1) { 
             int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) /2);
             int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) /2);
 
@@ -427,7 +427,7 @@ void RawImageSource::hphd_green () {
 
             green[i][j] = CLIP((e2 * g2 + e4 * g4) / (e2 + e4));
         }
-        else if (this->hpmap[i][j]==2) { 
+        else if (hpmap[i][j]==2) { 
             int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) /2);
             int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) /2);
 
@@ -526,7 +526,7 @@ void RawImageSource::hphd_demosaic () {
     plistener->setProgress (0.33);
 
   for (int i=0; i<H; i++)
-    memset(this->hpmap[i], 0, W*sizeof(char));
+    memset(hpmap[i], 0, W*sizeof(char));
 
 #ifdef _OPENMP
   #pragma omp parallel
@@ -549,7 +549,7 @@ void RawImageSource::hphd_demosaic () {
     plistener->setProgress (0.66);
 
     
-  hphd_green ();
+  hphd_green (hpmap);
   for (int i=0; i<H; i++) {
 	  if (i==0)
 		  // rm, gm, bm must be recovered
