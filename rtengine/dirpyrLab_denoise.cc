@@ -429,10 +429,10 @@ namespace rtengine {
 					data_fine->b[i][j] = hipass[2]+data_coarse->b[i][j];
 				}
 			
+	if (level<2) {
 #ifdef _OPENMP
 #pragma omp for
 #endif
-	if (level<2) {
 		for(int  i = 0; i < height; i++)
 			for(int  j = 0; j < width; j++) {
 				
@@ -618,10 +618,10 @@ namespace rtengine {
 				}
 	
 	
+	if (level<2) {
 #ifdef _OPENMP
 #pragma omp for
 #endif
-	if (level<2) {
 		for(int  i = 0; i < height; i++)
 			for(int  j = 0; j < width; j++) {
 				
