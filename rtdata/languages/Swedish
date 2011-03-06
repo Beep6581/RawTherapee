@@ -895,3 +895,8 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!PARTIALPASTE_DIRPYRDENOISE;Noise reduction
+!PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
+!PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
+!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
