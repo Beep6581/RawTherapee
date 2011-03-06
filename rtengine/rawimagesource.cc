@@ -111,8 +111,8 @@ RawImageSource::~RawImageSource () {
     }
     if (needhr)
         freeArray<char>(needhr, H);
-    if (hpmap)
-        freeArray<char>(hpmap, H);
+    //if (hpmap)
+    //    freeArray<char>(hpmap, H);
     if (camProfile)
         cmsCloseProfile (camProfile);
     if (embProfile)
@@ -930,7 +930,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     green = allocArray<float>(W,H);
     red   = allocArray<float>(W,H);
     blue  = allocArray<float>(W,H);
-    hpmap = allocArray<char>(W, H);
+    //hpmap = allocArray<char>(W, H);
 
     if (plistener) {
         plistener->setProgress (1.0);

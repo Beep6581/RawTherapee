@@ -89,19 +89,20 @@ class ImProcFunctions {
 		void waveletEqualizer (LabImage * image, bool luminance, bool chromaticity);
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
-		void dirpyrdenoise    (LabImage* lab);//Emil's impulse denoise
+		void impulse_nr (LabImage* lab, double thresh);
+		void dirpyrdenoise    (LabImage* lab);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
 
 		void dirpyrLab_denoise(LabImage * src, LabImage * dst, int luma, int chroma, float gamma );//Emil's directional pyramid denoise
-		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, float * rangefn_L, float * rangefn_ab, int pitch, int scale, const int luma, int chroma );
-		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, float * nrwt_l, float * nrwt_ab, int pitch, int scale, const int luma, int chroma );
+		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab, int pitch, int scale, const int luma, int chroma );
+		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf &nrwt_l, LUTf &nrwt_ab, int pitch, int scale, const int luma, int chroma );
 
 		void dirpyrLab_equalizer (LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer
-		void dirpyr_eq           (LabImage* data_coarse, LabImage* data_fine, int * rangefn, int level, int pitch, int scale, const double * mult );
-		void idirpyr_eq          (LabImage* data_coarse, LabImage* data_fine, int *** buffer, int * irangefn, int level, int pitch, int scale, const double * mult );
+		void dirpyr_eq           (LabImage* data_coarse, LabImage* data_fine, LUTf & rangefn, int level, int pitch, int scale, const double * mult );
+		void idirpyr_eq          (LabImage* data_coarse, LabImage* data_fine, int *** buffer, int level, int pitch, int scale, const double * mult );
 
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
-		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  );
+		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  );
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
 
 		void defringe         (LabImage* lab);

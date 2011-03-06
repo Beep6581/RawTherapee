@@ -92,7 +92,7 @@ LUTf ImProcFunctions::gamma2curve = 0;
 void ImProcFunctions::initCache () {
 
     int maxindex = 65536;
-	cachef(maxindex,LUT_CLIP_BELOW);
+	cachef(maxindex,0/*LUT_CLIP_BELOW*/);
     //cacheL = new float[maxindex];
     //cachea = new float[maxindex];
     //cacheb = new float[maxindex];
@@ -526,7 +526,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
-			impulse_nr (lab->L, lab->W, lab->H, (float)params->impulseDenoise.thresh/20.0 );
+			impulse_nr (lab, (float)params->impulseDenoise.thresh/20.0 );
 	}
 	
 	void ImProcFunctions::defringe (LabImage* lab) {

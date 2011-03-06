@@ -63,37 +63,15 @@ namespace rtengine {
 		}
 		if (lastlevel==0) return;
 		
-		/*float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
-		 float gamthresh = 0.03;
-		 float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-		 unsigned short *gamcurve = new unsigned short[65536];
-		 for (int i=0; i<65536; i++) {
-		 int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
-		 //if (i<500)  printf("%d %d \n",i,g);
-		 gamcurve[i] = CLIP(g);
-		 }
-		 
-		 
-		 //#pragma omp parallel for if (multiThread)
-		 for (int i=0; i<src->H; i++) {
-		 for (int j=0; j<src->W; j++) {
-		 src[i][j] = gamcurve[src[i][j] ];
-		 }
-		 }*/
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		int * rangefn = new int [0x20000];
-				
-		int intfactor = 1024;//16384;
-		
+		LUTf rangefn(0x20000);
 		
 		//set up range functions
 		
 		for (int i=0; i<0x10000; i++) {
-			rangefn[i] = (int)((thresh/((double)(i) + thresh))*intfactor);
-			//rangefn[i] = (int)(exp(-(double)abs(i)/(5*thresh))*(thresh/((double)(i) + thresh))*intfactor);
-			//rangefn[i] = (int)((thresh*thresh/((double)(i)*(double)(i) + thresh*thresh))*intfactor);
+			rangefn[i] = (int)((thresh/((double)(i) + thresh)));
 		}
 				
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,22 +140,12 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		
-		/*float igam = 1/gam;
-		 float igamthresh = gamthresh*gamslope;
-		 float igamslope = 1/gamslope;
-		 for (int i=0; i<65536; i++) {
-		 int g = (int)(CurveFactory::gamma((float)i/65535.0, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0);
-		 gamcurve[i] = CLIP(g);
-		 }*/
-		
 		
 		for (int i=0; i<srcheight; i++) 
 			for (int j=0; j<srcwidth; j++) {
 				
 				dst[i][j] = CLIP((int)(  buffer[i][j]  ));
-				
-				//dst[i][j] = gamcurve[ dst->L[i][j] ];
-				
+								
 			}
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,14 +158,11 @@ namespace rtengine {
 		
 		freeArray<float>(buffer, srcheight);
 		
-		delete [] rangefn;
-		//delete [] gamcurve;
-		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	}
 	
-	void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int * rangefn, int level, int scale, const double * mult  )
+	void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  )
 	{
 		//scale is spacing of directional averaging weights
 		
@@ -246,7 +211,7 @@ namespace rtengine {
 	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult )
 	{
 		float noisehi = 1.33*noise*mult[4]/pow(3,level), noiselo = 0.66*noise*mult[4]/pow(3,level);
-		float * irangefn = new float [0x20000];
+		LUTf irangefn(0x20000);
 
 		for (int i=0; i<0x20000; i++) {
 			if (abs(i-0x10000)>noisehi || mult[level]<1.0) {
@@ -270,9 +235,7 @@ namespace rtengine {
 				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 			}
 		}
-		
-		delete [] irangefn;
-		
+				
 	}
 	
 	
