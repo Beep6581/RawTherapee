@@ -1,4 +1,19 @@
 
+ *
+ *  (at your option) any later version.
+ *  Copyright (c) **PUT ALL THE CONTRIBUTORS HERE**
+ *  GNU General Public License for more details.
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  This file is part of RawTherapee.
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ */ 
+#
 #00 Espanol
 #01 15.1.2008: keenonkites, first translation
 #02 03.03.2008: Ioritz Ibarguren, corrections
@@ -10,6 +25,10 @@
 #08 19.12.2008: keenonkites, first version for 2.4beta4
 #09 07.12.2010: rickydh, some translations of untranslated keys for 3.0 alpha1
 #10 25.12.2010  plores, translation improvement, translation of untranslated strings
+/*
+ABOUT_TAB_BUILD;Versión
+ABOUT_TAB_CREDITS;Créditos
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
 BATCHQUEUE_AUTOSTART;Inicio automático
 BATCH_PROCESSING;Proceso por lotes
@@ -59,9 +78,14 @@ FILEBROWSER_ADDDELTEMPLATE;Añadir/Borrar plantillas...
 FILEBROWSER_APPLYPROFILE;Aplicar perfil
 FILEBROWSER_ARRANGEMENTHINT;Cambiar disposición de las miniaturas entre horizontal y vertical
 FILEBROWSER_AUTODARKFRAME;Auto Imagen en oscuridad
+FILEBROWSER_AUTOFLATFIELD;Auto Campo plano
+FILEBROWSER_BROWSEPATHBUTTONHINT;Pulsar para examinar la carpeta seleccionada
+FILEBROWSER_CACHECLEARFROMFULL;Limpiar del caché (completo)
+FILEBROWSER_CACHECLEARFROMPARTIAL;Limpiar del caché (parcial)
 FILEBROWSER_CLEARPROFILE;Borrar perfil
 FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_CURRENT_NAME;Nombre actual:
+FILEBROWSER_DARKFRAME;Imagen en oscuridad
 FILEBROWSER_DELETEDLGLABEL;Confirmación de borrar archivos
 FILEBROWSER_DELETEDLGMSG;¿Seguro que quieres borrar los %1 archivos seleccionados?
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
@@ -71,13 +95,17 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activar/desactivar filtro Exif en el explorador 
 FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
 FILEBROWSER_EXIFFILTERSETTINGS;Ajuste
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Cambiar ajustes del filtro Exif
+FILEBROWSER_FLATFIELD;Campo plano
 FILEBROWSER_MOVETODARKFDIR;Mover a carpeta de Imágenes en oscuridad
+FILEBROWSER_MOVETOFLATFIELDDIR;Mover a carpeta de campo plano
 FILEBROWSER_NEW_NAME;Nuevo nombre:
 FILEBROWSER_PARTIALPASTEPROFILE;Pegar perfil parcialmente
 FILEBROWSER_PASTEPROFILE;Pegar perfil
 FILEBROWSER_POPUPCANCELJOB;Cancelar trabajo
+FILEBROWSER_POPUPCOPYTO;Copiar a...
 FILEBROWSER_POPUPMOVEEND;Desplazar al fin de la cola
 FILEBROWSER_POPUPMOVEHEAD;Desplazar al comienzo de la cola
+FILEBROWSER_POPUPMOVETO;Mover a...
 FILEBROWSER_POPUPOPEN;Abrir
 FILEBROWSER_POPUPPROCESS;Poner en la cola
 FILEBROWSER_POPUPRANK1;Valorar con 1 estrella
@@ -86,6 +114,7 @@ FILEBROWSER_POPUPRANK3;Valorar con 3 estrellas
 FILEBROWSER_POPUPRANK4;Valorar con 4 estrellas
 FILEBROWSER_POPUPRANK5;Valorar con 5 estrellas
 FILEBROWSER_POPUPREMOVE;Borrar del sistema
+FILEBROWSER_POPUPREMOVEINCLPROC;Borrar del sistema junto con resultado batch
 FILEBROWSER_POPUPRENAME;Renombrar
 FILEBROWSER_POPUPSELECTALL;Seleccionar todo
 FILEBROWSER_POPUPTRASH;Desplazar a la papelera
@@ -96,6 +125,7 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Ajustar formato de archivo y carpeta de salid
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RENAMEDLGMSG;Renombrar archivo "%1"a:
 FILEBROWSER_SELECTDARKFRAME;Seleccionar imagen en oscuridad...
+FILEBROWSER_SELECTFLATFIELD;Seleccionar campo plano...
 FILEBROWSER_SHOWDIRHINT;Mostrar todas imágenes de la carpeta
 FILEBROWSER_SHOWEXIFINFO;Mostrar información EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Mostrar contenido de la cola de procesamiento
@@ -123,6 +153,7 @@ GENERAL_DISABLE;Desactivar
 GENERAL_DISABLED;Desactivado
 GENERAL_ENABLE;Activar
 GENERAL_ENABLED;Activado
+GENERAL_FILE;Archivo
 GENERAL_HIGH_QUALITY;Alta calidad
 GENERAL_LANDSCAPE;Paisaje
 GENERAL_LOAD;Abrir
@@ -155,9 +186,13 @@ HISTORY_MSG_104;Ecualizador HSV
 HISTORY_MSG_105;Quitar borde púrpura
 HISTORY_MSG_106;Quitar borde púrpura Radio
 HISTORY_MSG_107;Quitar borde púrpura Umbral
-HISTORY_MSG_109;Cambiar tamaño rectángulo limitador
+HISTORY_MSG_108;Cambiar tamaño rectángulo limitador
+HISTORY_MSG_109;Cambio tamaño aplica a
 HISTORY_MSG_10;Compresión de sombras
-HISTORY_MSG_110;Cambio tamaño aplica a
+HISTORY_MSG_110;Archivo de campo plano
+HISTORY_MSG_111;Selección automática de campo plano
+HISTORY_MSG_112;Radio de difuminado de campo plano
+HISTORY_MSG_113;Tipo de difuminado de campo plano
 HISTORY_MSG_11;Curva de tono
 HISTORY_MSG_12;Exposición automática
 HISTORY_MSG_13;Recorte de exposición
@@ -330,6 +365,7 @@ MAIN_BUTTON_SAVEAS;Como...
 MAIN_BUTTON_SAVE_TOOLTIP;Guardar imagen actual <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Abrir con editor
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar imagen actual en editor externo <b>Ctrl+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostrar/ocultar todos los paneles laterales <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Salir de Pantalla completa
 MAIN_FRAME_BATCHQUEUE;Cola por lotes
 MAIN_FRAME_EDITOR;Editor
@@ -372,6 +408,8 @@ MAIN_TOOLTIP_PREFERENCES;Ajustar preferencias
 MAIN_TOOLTIP_QINFO; Información breve de la imagen
 MAIN_TOOLTIP_SAVE;Guardar imagen a la carpeta predeterminada
 MAIN_TOOLTIP_SAVEAS;Guardar imagen a una carpeta seleccionada
+MAIN_TOOLTIP_SHOWHIDELP1;Mostrar/ocultar panel izquierdo <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Mostrar/ocultar panel derecho <b>Alt-l</b>
 MAIN_TOOLTIP_TOGGLE;Cambiar vista antes/después <b>B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
@@ -402,12 +440,18 @@ PARTIALPASTE_COLORMIXER;Mezclador de canal
 PARTIALPASTE_COLORSHIFT;Cambio de colores
 PARTIALPASTE_COMPOSITIONGROUP;Ajustes relativos a la figuración
 PARTIALPASTE_CROP;Recortar
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Auto Selección de imagen en oscuridad
+PARTIALPASTE_DARKFRAMEFILE;Archivo de imagen en oscuridad
 PARTIALPASTE_DIALOGLABEL;Pegar perfil de procesamiento parcialmente
 PARTIALPASTE_DIRPYRDENOISE;Reducción de ruido
 PARTIALPASTE_DIRPYREQUALIZER;Contraste mediante niveles de detalle
 PARTIALPASTE_DISTORTION;Distorsión
 PARTIALPASTE_EXIFCHANGES;Cambio en datos Exif
 PARTIALPASTE_EXPOSURE;Exposición
+PARTIALPASTE_FLATFIELDAUTOSELECT;Auto Selección de campo plano
+PARTIALPASTE_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
+PARTIALPASTE_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
+PARTIALPASTE_FLATFIELDFILE;Archivo de campo plano
 PARTIALPASTE_HLRECOVERY;Recuperación de luces altas
 PARTIALPASTE_HSVEQUALIZER;Ecualizador HSV
 PARTIALPASTE_ICMSETTINGS;Ajustes GIC
@@ -419,6 +463,7 @@ PARTIALPASTE_LUMACURVE;Curva de luminancia
 PARTIALPASTE_LUMADENOISE;Reducción de ruido de luminancia
 PARTIALPASTE_LUMINANCEGROUP;Ajustes de luminancia
 PARTIALPASTE_METAICMGROUP;Ajustes de metadatos/GIC
+PARTIALPASTE_RAWGROUP;Ajustes Raw
 PARTIALPASTE_RESIZE;Cambiar tamaño
 PARTIALPASTE_ROTATION;Rotar
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Sombras/Luces altas
@@ -432,6 +477,7 @@ PREFERENCES_APPLNEXTSTARTUP;aplicado al próximo arranque
 PREFERENCES_BATCH_PROCESSING;Proceso por lotes
 PREFERENCES_BEHAVIOR;Comportamiento
 PREFERENCES_BLINKCLIPPED;Parpadear áreas cortadas
+PREFERENCES_CABLUE;Correcc. manual aberr. cromát. Azul
 PREFERENCES_CACHECLEARALL;Borrar todo
 PREFERENCES_CACHECLEARPROFILES;Borrar perfiles
 PREFERENCES_CACHECLEARTHUMBS;Borrar miniaturas
@@ -444,6 +490,8 @@ PREFERENCES_CACHESTRAT2;Preferir consumo de memoria bajo sobre velocidad
 PREFERENCES_CACHESTRAT;Estrategia de la memoria intermedia
 PREFERENCES_CACHETHUMBFORM;Formato de las miniaturas
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima de las miniaturas
+PREFERENCES_CACORRECTION;Aplicar autocorrección aberr. cromát.
+PREFERENCES_CARED;Correcc. manual aberr. cromát. Rojo
 PREFERENCES_CLEARDLG_LINE1;Borrando memoria intermedia
 PREFERENCES_CLEARDLG_LINE2;Puede durar unos segundos.
 PREFERENCES_CLEARDLG_TITLE;Aguardar, por favor
@@ -451,8 +499,13 @@ PREFERENCES_CLIPPINGIND;Indicación de recortes
 PREFERENCES_CMETRICINTENT;Intento colorimétrico
 PREFERENCES_CUTOVERLAYBRUSH;Pincel para ventana de recorte
 PREFERENCES_DARKFRAME;Imagen en oscuridad
+PREFERENCES_DARKFRAMEFOUND;Encontrado
+PREFERENCES_DARKFRAMESHOTS;disparos
+PREFERENCES_DARKFRAMETEMPLATES;plantillas
 PREFERENCES_DATEFORMAT;Formato de fechas
 PREFERENCES_DATEFORMATHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en Argentina es:</i>\n<b>%d/%m/%y</b>
+PREFERENCES_DCBENHANCE;Aplicar paso mejora DCB
+PREFERENCES_DCBITERATIONS;Número iteraciones DCB
 PREFERENCES_DEFAULTLANG;Idioma predeterminado
 PREFERENCES_DEFAULTTHEME;Estilo predeterminado
 PREFERENCES_DEMOSAICINGALGO;Algoritmo de desmosaicado
@@ -462,24 +515,40 @@ PREFERENCES_DIRLAST;Última carpeta visitada
 PREFERENCES_DIROTHER;Otro
 PREFERENCES_DIRSELECTDLG;Seleccionar carpeta de imágenes en el arranque...
 PREFERENCES_DIRSOFTWARE;Carpeta de instalación
+PREFERENCES_DMETHOD;Método
 PREFERENCES_EDITORCMDLINE;Otro mandato
 PREFERENCES_EDITORLAYOUT;Aspecto del editor
+PREFERENCES_EXPOS;Exposición antes de interpolación:\ncorrección (lineal)
 PREFERENCES_EXTERNALEDITOR;Editor externo
+PREFERENCES_FALSECOLOR;Pasos de supresión de colores falsos
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos
 PREFERENCES_FILEFORMAT;Formato de archivos
+PREFERENCES_FLATFIELD;Campo plano
+PREFERENCES_FLATFIELDAUTOSELECT;Selección automática de campo plano
+PREFERENCES_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
+PREFERENCES_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
+PREFERENCES_FLATFIELDFILE;Archivo de campo plano
+PREFERENCES_FLATFIELDFOUND;Encontrado
+PREFERENCES_FLATFIELDSDIR;Carpeta de archivos de campo plano
+PREFERENCES_FLATFIELDSHOTS;disparos
+PREFERENCES_FLATFIELDTEMPLATES;plantillas
 PREFERENCES_FORIMAGE;Para archivos de imágenes
 PREFERENCES_FORRAW;Para archivos RAW
 PREFERENCES_GIMPPATH;Carpeta de instalación de GIMP
+PREFERENCES_GREENEQUIL;Equilibrado del verde
 PREFERENCES_GTKTHEME;Estilo de GTK predeterminado
 PREFERENCES_HINT;Consejo
 PREFERENCES_HLTHRESHOLD;Umbral de luces altas cortadas
+PREFERENCES_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 PREFERENCES_ICCDIR;Carpeta de perfiles ICC
 PREFERENCES_IMPROCPARAMS;Parámetros predeterminados de procesamiento de imágenes
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrico absoluto
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Colorimétrico relativo
 PREFERENCES_INTENT_SATURATION;Saturación
+PREFERENCES_LINEDENOISE;Filtro de ruido de línea
 PREFERENCES_LIVETHUMBNAILS;Miniaturas 'en vivo' (más lento)
+PREFERENCES_METADATA;Metadatos
 PREFERENCES_MONITORICC;Perfil de pantalla
 PREFERENCES_MULTITAB;Modo de varias pestañas
 PREFERENCES_MULTITABDUALMON;Modo de varias pestañas, si está disponible en segundo monitor
@@ -495,6 +564,7 @@ PREFERENCES_PARSEDEXT;Extensiones analizadas
 PREFERENCES_PARSEDEXTADD;Agregar extensión
 PREFERENCES_PARSEDEXTADDHINT;Entra una extensión y pulsa este botón para agregar a la lista
 PREFERENCES_PARSEDEXTDELHINT;Borrar extensión de la lista
+PREFERENCES_PRESER;Exposición antes de interpolación:\npreservar luces altas (EV)
 PREFERENCES_PROFILEHANDLING;Tratamiento de perfiles de procesamiento
 PREFERENCES_PROFILELOADPR;Prioridad de perfiles cuando se abre imagen
 PREFERENCES_PROFILEPRCACHE;Perfil en memoria intermedia
@@ -508,7 +578,7 @@ PREFERENCES_SELECTICCDIRDLG;Seleccionar carpeta de perfiles ICC...
 PREFERENCES_SELECTLANG;Seleccionar idioma
 PREFERENCES_SELECTMONITORPROFDLG;Seleccionar perfil ICC de la pantalla...
 PREFERENCES_SELECTTHEME;Seleccionar estilo
-PREFERENCES_SET;SET
+PREFERENCES_SET;Establecer
 PREFERENCES_SHOWBASICEXIF;Mostrar datos EXIF básicos
 PREFERENCES_SHOWDATETIME;Mostrar fecha y hora
 PREFERENCES_SHOWONLYRAW;Mostrar solo archivos RAW
@@ -527,6 +597,7 @@ PREFERENCES_TAB_IMPROC;Procesamiento de imágenes
 PREFERENCES_TAB_OUTPUT;Opciones de salida
 PREFERENCES_TAB_SOUND;Sonidos
 PREFERENCES_THUMBSIZE;Tamaño de miniaturas
+PREFERENCES_TUNNELMETADATA;Traspasar IPTC/XMP sin cambios al fichero de salida
 PREFERENCES_USESYSTEMTHEME; Usar tema del sistema
 PREFERENCES_WORKFLOW;Flujo de trabajo
 PROFILEPANEL_FILEDLGFILTERANY;Cualquier archivo
@@ -586,6 +657,7 @@ TP_CHMIXER_BLUE;Azul
 TP_CHMIXER_GREEN;Verde
 TP_CHMIXER_LABEL;Mezclador de canal
 TP_CHMIXER_RED;Rojo
+TP_CHROMATABERR_LABEL;Aberración cromática
 TP_COARSETRAF_DEGREE;Grados:
 TP_COARSETRAF_TOOLTIP_HFLIP;Voltear horizontalmente
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotar a la izquierda
@@ -625,7 +697,8 @@ TP_CROP_SELECTCROP;    Seleccionar recorte
 TP_CROP_W;An
 TP_CROP_X;x
 TP_CROP_Y;y
-TP_DARKFRAME_AUTOSELECT;Selección automática
+TP_DARKFRAME_AUTOSELECT;Auto selección
+TP_DARKFRAME_LABEL;Imagen en oscuridad
 TP_DEFRINGE_LABEL;Quitar borde púrpura
 TP_DEFRINGE_RADIUS;Radio
 TP_DEFRINGE_THRESHOLD;Umbral
@@ -649,17 +722,23 @@ TP_EQUALIZER_FINEST;muy fino
 TP_EQUALIZER_LABEL;Ecualizador de wavelets
 TP_EQUALIZER_LARGEST;muy grueso
 TP_EQUALIZER_NEUTRAL;Neutro
+TP_EXPOSCORR_LABEL;Exposición
 TP_EXPOSURE_AUTOLEVELS;Niveles automáticos
 TP_EXPOSURE_BLACKLEVEL;Negro
 TP_EXPOSURE_BRIGHTNESS;Brillo
 TP_EXPOSURE_CLIP;Recorte
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compresión de luces altas
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Umbral de recuperación de luces altas
 TP_EXPOSURE_COMPRSHADOWS;Compresión de sombras
 TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Curva de tono
 TP_EXPOSURE_EXPCOMP;Comp. de expos.
 TP_EXPOSURE_LABEL;Exposición
 TP_EXPOSURE_SATURATION;Saturación
+TP_FLATFIELD_AUTOSELECT;Auto selección
+TP_FLATFIELD_BLURRADIUS;Radio de difuminado
+TP_FLATFIELD_BLURTYPE;Tipo de difuminado
+TP_FLATFIELD_LABEL;Campo plano
 TP_HLREC_CIELAB;Superposición de CIELab
 TP_HLREC_COLOR;Propagación de color
 TP_HLREC_LABEL;Recuperación de luces altas
@@ -696,10 +775,13 @@ TP_ICM_SAVEREFERENCE;Guardar imagen de referencia para el perfilado
 TP_ICM_WORKINGPROFILE;Perfil de trabajo
 TP_IMPULSEDENOISE_LABEL;Reducc. ruido impulsivo
 TP_IMPULSEDENOISE_THRESH;Umbral
+TP_LABCURVE_AVOIDCOLORCLIP;Evitar recorte de colores
 TP_LABCURVE_BRIGHTNESS;Brillo
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Curva de luminancia
+TP_LABCURVE_ENABLESATLIMITER;Activar limitador de saturación
 TP_LABCURVE_LABEL;Curvas Lab
+TP_LABCURVE_SATLIMIT;Límite de saturación
 TP_LABCURVE_SATURATION;Saturación
 TP_LENSGEOM_AUTOCROP;Auto recorte
 TP_LENSGEOM_FILL;Auto relleno
@@ -717,17 +799,27 @@ TP_LUMADENOISE_RADIUS;Radio
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspectiva
 TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PREPROCESS_DARKFRAME;Imagen en oscuridad
+TP_PREPROCESS_DFAUTOSELECT;Selección automática
+TP_PREPROCESS_FLATFIELDAUTOSELECT;Selección automática de campo plano
+TP_PREPROCESS_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
+TP_PREPROCESS_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
+TP_PREPROCESS_FLATFIELDFILE;Archivo de campo plano
 TP_PREPROCESS_GREENEQUIL;Equilibrado del verde
 TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 TP_PREPROCESS_LABEL;Preprocesado
 TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
-TP_RAWCACORR_AUTO;Aplicar autocorrección aberr. cromát.
+TP_RAWCACORR_AUTO;Auto corrección
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Rojo
-TP_RAW_DCBENHANCE;Aplicar paso mejora DCB
-TP_RAW_DCBITERATIONS;Número iteraciones DCB
+TP_RAWEXPOS_LINEAR;Factor de corrección lineal
+TP_RAWEXPOS_PRESER;Corrección preservando HL (EV)
+TP_RAWPANEL_DEMOSAICING;Desmosaicado
+TP_RAWPANEL_PREPROCESSING;Preprocesado
+TP_RAW_DCBENHANCE;Aplicar paso de mejora DCB
+TP_RAW_DCBITERATIONS;Número de iteraciones DCB
 TP_RAW_DMETHOD;Método
-TP_RAW_FALSECOLOR;Pasos de supresión de colores falsos
+TP_RAW_FALSECOLOR;Pasos de supresión de falso color
 TP_RAW_LABEL;Desmosaicado
 TP_RESIZE_APPLIESTO;Aplica a:
 TP_RESIZE_BICUBIC;Bicúbica
@@ -806,7 +898,6 @@ ZOOMPANEL_ZOOM100;Zoom al 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla <b>F</b>
 ZOOMPANEL_ZOOMIN;Aumentar Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
-﻿#
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -814,31 +905,11 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!ABOUT_TAB_BUILD;Version
-!ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
-!ABOUT_TAB_SPLASH;Splash
-!FILEBROWSER_AUTOFLATFIELD;Auto flat field
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser)
-!FILEBROWSER_CACHE;Cache
-!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
-!FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
-!FILEBROWSER_FLATFIELD;Flat field
-!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
-!FILEBROWSER_POPUPCOPYTO;Copy to...
-!FILEBROWSER_POPUPMOVETO;Move to...
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
-!FILEBROWSER_SELECTFLATFIELD;Select flat field...
-!GENERAL_FILE;File
 !GENERAL_NONE;None
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_114;DCB Iterations
 !HISTORY_MSG_115;False color iterations
 !HISTORY_MSG_116;Enhanced DCB
@@ -855,7 +926,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
 !HISTORY_MSG_129;Flat Field Blur Type
-!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
 !MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
@@ -865,44 +935,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
-!MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
-!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
-!PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
 !PARTIALPASTE_EVERYTHING;Everything
-!PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
-!PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
-!PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
-!PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PARTIALPASTE_RAWGROUP;Raw settings
-!PREFERENCES_DARKFRAMEFOUND;Found
-!PREFERENCES_DARKFRAMESHOTS;shots
-!PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_FLATFIELD;Flat Field
-!PREFERENCES_FLATFIELDFOUND;Found
-!PREFERENCES_FLATFIELDSDIR;Flat Fields directory
-!PREFERENCES_FLATFIELDSHOTS;shots
-!PREFERENCES_FLATFIELDTEMPLATES;templates
-!PREFERENCES_METADATA;Metadata
-!PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_DARKFRAME_LABEL;Dark Frame
-!TP_EXPOSCORR_LABEL;Exposure
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_FLATFIELD_AUTOSELECT;Auto selection
-!TP_FLATFIELD_BLURRADIUS;Blur Radius
-!TP_FLATFIELD_BLURTYPE;Blur Type
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
-!TP_FLATFIELD_LABEL;Flat Field
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
-!TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAWEXPOS_LINEAR;Linear corr. factor
-!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
