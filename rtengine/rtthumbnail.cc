@@ -527,6 +527,7 @@ Thumbnail::~Thumbnail () {
         cmsCloseProfile(camProfile);
 }
 
+// Simple processing of RAW internal JPGs
 IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
 
     int rwidth;
@@ -560,6 +561,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 	return img8;
 }
 
+// Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
 
     // compute WB multipliers
@@ -697,6 +699,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
+
+	// The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
+	// that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
+	if (params.raw.expos!=1) br += (params.raw.expos-1.0);
 
 	float* curve1 = new float [65536];
     float* curve2 = new float [65536];
