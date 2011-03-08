@@ -138,7 +138,11 @@ void Options::setDefaults () {
     rtSettings.darkFramesPath = "";
 	rtSettings.flatFieldsPath = "";
 #ifdef WIN32
-    rtSettings.iccDirectory = "C:/WINDOWS/System32/spool/drivers/color";
+	const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
+	if (sysRoot!=NULL) 
+		rtSettings.iccDirectory = Glib::ustring(sysRoot) + Glib::ustring("\\System32\\spool\\drivers\\color");
+	else 
+		rtSettings.iccDirectory = "C:\\WINDOWS\\System32\\spool\\drivers\\color";
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
