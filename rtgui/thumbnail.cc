@@ -296,10 +296,12 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
 	if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL )
 	{
+		// RAW internal thumbnail, no profile yet: just do some rotation etc.
  		image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
 	}
 	else
 	{
+		// Full thumbnail: apply profile
  		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
 	}
  
