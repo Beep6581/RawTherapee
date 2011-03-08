@@ -68,7 +68,7 @@ PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
 
 namespace rtengine {
 	
-	static const int maxlevel = 4;
+	static const int maxlevel = 3;
 	
 	//sequence of scales
 	//static const int scales[8] = {1,2,4,8,16,32,64,128};
@@ -154,13 +154,13 @@ namespace rtengine {
 		
 		//set up range functions
 		for (int i=0; i<65536; i++) 
-			rangefn_L[i] = (( exp(-(double)fabs(i-32768) * tonefactor / (1+noise_L)) * (1+noisevar_L)/((double)(i-32768)*(double)(i-32768) + noisevar_L+1))); 
+			rangefn_L[i] = (( exp(-(double)fabs(i-32768) * tonefactor / (1.0+noise_L)) * (1.0+noisevar_L)/((double)(i-32768)*(double)(i-32768) + noisevar_L+1.0))); 
 		for (int i=0; i<65536; i++) 
-			rangefn_ab[i] = (( exp(-(double)fabs(i-32768) * tonefactor / (1+3*noise_ab)) * (1+noisevar_ab)/((double)(i-32768)*(double)(i-32768) + noisevar_ab+1))); 
+			rangefn_ab[i] = (( exp(-(double)fabs(i-32768) * tonefactor / (1.0+3*noise_ab)) * (1.0+noisevar_ab)/((double)(i-32768)*(double)(i-32768) + noisevar_ab+1.0))); 
 		
 		
 		for (int i=0; i<65536; i++) 
-			nrwt_ab[i] = ((1+abs(i-32768)/(1+8*noise_ab)) * exp(-(double)fabs(i-32768)/ (1+8*noise_ab) ) );
+			nrwt_ab[i] = ((1.0+abs(i-32768)/(1.0+8*noise_ab)) * exp(-(double)fabs(i-32768)/ (1.0+8*noise_ab) ) );
 		
 		
 		//for (int i=0; i<65536; i+=100)  printf("%d %d \n",i,gamcurve[i]);
@@ -351,7 +351,7 @@ namespace rtengine {
 		int width = data_fine->W;
 		int height = data_fine->H;
 		
-		array2D<float> nrfactorL (height,width);
+		array2D<float> nrfactorL (width,height);
 		
 		//float eps = 0.0;
 		
@@ -410,7 +410,7 @@ namespace rtengine {
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-data_coarse->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+SQR(hipass[1])+SQR(hipass[2])+0.001;
-						nrfactorL[i][j] = (1+hpffluct[0])/(1+hpffluct[0]+noisevar_L);
+						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L);
 						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
 						//data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
 					}
@@ -420,7 +420,7 @@ namespace rtengine {
 					//hipass[2] = data_fine->b[i][j]-data_coarse->b[i][j];
 					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
 					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-					nrfactor = (1+hpffluct[1]+hpffluct[2]) /(1+(hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
 					
 					hipass[1] *= nrfactor;
 					hipass[2] *= nrfactor;
@@ -449,6 +449,8 @@ namespace rtengine {
 				}
 				
 				nrfctrave /= norm_l;
+				//nrfctrave = nrfactorL[i][j];
+				//nrfctrave=1;
 				
 				float hipass[3],p[9],temp,median;
 
@@ -588,7 +590,7 @@ namespace rtengine {
 					
 					double tonefactor = ((NRWT_L(smooth->L[i][j])));
 					//double wtdsum[3], norm;
-					float hipass[3], hpffluct[3],  nrfactor;
+					float hipass[3], hpffluct[3], nrfactor;
 					
 					hipass[1] = data_fine->a[i][j]-smooth->a[i][j];
 					hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
@@ -598,7 +600,7 @@ namespace rtengine {
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+SQR(hipass[1])+SQR(hipass[2])+0.001;
-						nrfactorL[i][j] = (1+hpffluct[0])/(1+hpffluct[0]+noisevar_L);
+						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L);
 						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
 						//data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
 					}
@@ -608,7 +610,7 @@ namespace rtengine {
 					//hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
 					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
 					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-					nrfactor = (1+hpffluct[1]+hpffluct[2]) /(1+(hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
 
 					hipass[1] *= nrfactor;
 					hipass[2] *= nrfactor;
@@ -638,6 +640,9 @@ namespace rtengine {
 				}
 				
 				nrfctrave /= norm_l;
+				//nrfctrave = nrfactorL[i][j];
+				//nrfctrave=1;
+
 				
 				float hipass[3],p[9],temp,median;
 				
