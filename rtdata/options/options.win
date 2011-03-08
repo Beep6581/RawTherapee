@@ -107,7 +107,8 @@ FixRatio=true
 DPI=600
 
 [Color Management]
-ICCDirectory=C:\\WINDOWS\\System32\\spool\\drivers\\color
+# Auto-determined by RT on first start
+# ICCDirectory=
 MonitorProfile=
 Intent=1
 
