@@ -440,6 +440,21 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                 }
                 else if (options.savePathTemplate[ix]=='f') {
                     path = path + filename;
+		}
+                else if (options.savePathTemplate[ix]=='r') {
+		    CacheImageData cid;
+		    char rank;
+
+		    if (cid.load(cacheMgr->getCacheFileName("data", origFileName, CacheManager::getMD5(origFileName))+".txt") == 1) {
+		        rank = '0';
+		    } else {
+			if (!cid.inTrash)
+			    rank = cid.rank + '0';
+			else
+			    rank = 'x';
+		    }
+
+		    path += rank;
                 }
             }
             else
