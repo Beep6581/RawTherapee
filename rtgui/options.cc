@@ -148,6 +148,8 @@ void Options::setDefaults () {
 #endif
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
+	rtSettings.autoMonitorProfile = false;
+
     rtSettings.verbose = false;
 }
 
@@ -303,6 +305,8 @@ if (keyFile.has_group ("Crop Settings")) {
 if (keyFile.has_group ("Color Management")) { 
     if (keyFile.has_key ("Color Management", "ICCDirectory"))   rtSettings.iccDirectory         = keyFile.get_string ("Color Management", "ICCDirectory");
     if (keyFile.has_key ("Color Management", "MonitorProfile")) rtSettings.monitorProfile       = keyFile.get_string ("Color Management", "MonitorProfile");
+    if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
+
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
 }
 
@@ -441,6 +445,7 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
+	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
 
     Glib::ArrayHandle<int> bab = baBehav;

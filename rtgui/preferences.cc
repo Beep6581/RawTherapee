@@ -337,6 +337,8 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     monProfile = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_MONITORICC"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONITORICC")+":"));
 
+	cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
+
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     colt->attach (*intlab, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colt->attach (*intent, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
@@ -344,7 +346,7 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     colt->attach (*iccDir, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*mplabel, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colt->attach (*monProfile, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-
+	colt->attach (*cbAutoMonProfile, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
     return mvbcm;
@@ -809,6 +811,7 @@ void Preferences::storePreferences () {
 
 
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
+	moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
 	moptions.rtSettings.iccDirectory        = iccDir->get_current_folder ();
 	moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
 
@@ -883,6 +886,7 @@ void Preferences::fillPreferences () {
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (moptions.rtSettings.monitorProfile.empty())
     	monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
+	cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 
     if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
