@@ -76,6 +76,7 @@ class Preferences : public Gtk::Dialog {
 
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
+	Gtk::CheckButton* cbAutoMonProfile;
 
     Gtk::CheckButton* blinkClipped;
 	Gtk::SpinButton*  hlThresh;

@@ -25,6 +25,7 @@
 #include <bilateral2.h>
 #include <minmax.h>
 #include <mytime.h>
+#include <glib.h>
 #include <glibmm.h>
 #include <iccstore.h>
 #include <impulse_denoise.h>
@@ -195,7 +196,12 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
 	if (monitorTransform)
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
-	cmsHPROFILE monitor = iccStore->getProfile ("file:"+settings->monitorProfile);
+
+	Glib::ustring monitorProfile=settings->monitorProfile;
+	if (settings->autoMonitorProfile) monitorProfile=iccStore->defaultMonitorProfile;
+	//if (settings->verbose) printf("Using monitor profile: %s\n", monitorProfile.c_str());
+
+	cmsHPROFILE monitor = iccStore->getProfile ("file:"+monitorProfile);
 	if (monitor) {
         cmsHPROFILE iprof = iccStore->getXYZProfile ();       
 		cmsHPROFILE oprof = iccStore->getProfile (params->icm.output);

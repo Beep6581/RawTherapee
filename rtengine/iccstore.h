@@ -63,6 +63,9 @@ class ICCStore {
 
 		static ICCStore* getInstance(void);
         
+		Glib::ustring defaultMonitorProfile;  // Main monitors standard profile name, from OS
+		void findDefaultMonitorProfile();
+
         int     numOfWProfiles ();
         cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");
         cmsHPROFILE workingSpace (Glib::ustring name);
