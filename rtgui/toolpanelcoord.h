@@ -186,6 +186,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         // rotatelistener interface
         void straightenRequested ();
         void autoCropRequested ();
+        double autoDistorRequested ();
 
         // spotwblistener interface
         void spotWBRequested (int size);

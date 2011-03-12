@@ -23,6 +23,7 @@
 #include <imagesource.h>
 #include <dfmanager.h>
 #include <ffmanager.h>
+#include <improcfun.h>
 
 using namespace rtengine::procparams;
 
@@ -185,6 +186,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     flatfield->setFFProvider (this);
     lensgeom->setLensGeomListener (this);
     rotate->setLensGeomListener (this);
+    distortion->setLensGeomListener (this);
     crop->setCropPanelListener (this);
     icm->setICMPanelListener (this);
 
@@ -433,6 +435,12 @@ void ToolPanelCoordinator::straightenRequested () {
         return;
 
     toolBar->setTool (TMStraighten);
+}
+
+double ToolPanelCoordinator::autoDistorRequested () {
+    if (!ipc)
+        return 0.0;
+    return rtengine::ImProcFunctions::getAutoDistor (ipc->getInitialImage()->getFileName(), 400);
 }
 
 void ToolPanelCoordinator::spotWBRequested (int size) {

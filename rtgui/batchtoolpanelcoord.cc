@@ -198,6 +198,12 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
             selected[i]->applyAutoExp (initialPP[i]);
         }
 
+    if (event==rtengine::EvAutoDIST) {
+        for (int i=0; i<selected.size(); i++) {
+            initialPP[i].distortion.amount = pparams.distortion.amount;
+        }
+    }
+
     // combine with initial parameters and set
     ProcParams newParams;
     for (int i=0; i<selected.size(); i++) {

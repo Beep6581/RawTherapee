@@ -22,12 +22,16 @@
 #include <gtkmm.h>
 #include <adjuster.h>
 #include <toolpanel.h>
+#include <lensgeomlistener.h>
 
 class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
+    Gtk::Button*   autoDistor;
     Adjuster* distor;
     bool distAdd;
+    sigc::connection    idConn;
+    LensGeomListener * rlistener;
 
   public:
 
@@ -40,6 +44,8 @@ class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToo
 
     void adjusterChanged     (Adjuster* a, double newval);
     void setAdjusterBehavior (bool bvadd);
+    void idPressed      ();
+    void setLensGeomListener    (LensGeomListener* l) { rlistener = l; }
 };
 
 #endif
