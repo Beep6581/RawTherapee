@@ -15,7 +15,11 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc dcraw.cc iccstore.cc 
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc
 	jpeg_memsrc.c jdatasrc.c
 	PF_correct_RT.cc
-    wavelet_dec.cc ipequalizer.cc dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc)
+    wavelet_dec.cc ipequalizer.cc dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc
+    calc_distort.c
+    klt/convolve.c klt/error.c klt/klt.c klt/klt_util.c klt/pnmio.c klt/pyramid.c klt/selectGoodFeatures.c
+    klt/storeFeatures.c klt/trackFeatures.c klt/writeFeatures.c
+    )
 
 add_library (rtengine ${RTENGINESOURCEFILES})
 #It may be nice to store library version too

@@ -24,6 +24,7 @@ class LensGeomListener {
     public:
         virtual void straightenRequested ()=0;
         virtual void autoCropRequested   ()=0;
+        virtual double autoDistorRequested ()=0;
 };
 
 #endif

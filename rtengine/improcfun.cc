@@ -29,6 +29,8 @@
 #include <glibmm.h>
 #include <iccstore.h>
 #include <impulse_denoise.h>
+#include <imagesource.h>
+#include <rtthumbnail.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -681,6 +683,61 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#include "calc_distort.h"
+
+double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
+    if (fname != "") {
+        rtengine::RawMetaDataLocation ri;
+        int w_raw=-1, h_raw=thumb_size;
+        int w_thumb=-1, h_thumb=thumb_size;
+
+        Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, w_thumb, h_thumb, 1);
+        if (thumb == NULL)
+            return 0.0;
+
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1);
+        if (raw == NULL) {
+            delete thumb;
+            return 0.0;
+        }
+
+        if (h_thumb != h_raw) {
+            delete thumb;
+            delete raw;
+            return 0.0;
+        }
+
+        int width;
+
+        if (w_thumb > w_raw)
+            width = w_raw;
+        else
+            width = w_thumb;
+
+        unsigned char* thumbGray;
+        unsigned char* rawGray;
+        thumbGray = thumb->getGrayscaleHistEQ (width);
+        rawGray = raw->getGrayscaleHistEQ (width);
+
+        if (thumbGray == NULL || rawGray == NULL) {
+            if (thumbGray) delete thumbGray;
+            if (rawGray) delete rawGray;
+            delete thumb;
+            delete raw;
+            return 0.0;
+        }
+
+        double dist_amount = calcDistortion (thumbGray, rawGray, width, h_thumb);
+        delete thumbGray;
+        delete rawGray;
+        delete thumb;
+        delete raw;
+        return dist_amount;
+    }
+    else
+        return 0.0;
+}
 
 void ImProcFunctions::rgb2hsv (int r, int g, int b, float &h, float &s, float &v) {
 	

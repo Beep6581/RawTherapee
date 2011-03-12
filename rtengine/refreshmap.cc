@@ -148,7 +148,8 @@ DARKFRAME,        // EvPreProcessExpCorrPH
 FLATFIELD,        // EvFlatFieldFile,
 FLATFIELD,        // EvFlatFieldAutoSelect,
 FLATFIELD,        // EvFlatFieldBlurRadius,
-FLATFIELD         // EvFlatFieldBlurType,
+FLATFIELD,        // EvFlatFieldBlurType,
+TRANSFORM,        // EvAutoDIST,
 
 };
 
