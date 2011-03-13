@@ -22,9 +22,11 @@
 #include <safegtk.h>
 #include <guiutils.h>
 #include <glib/gstdio.h>
+#include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
-#include <fcntl.h>
+#else
+#include <stdio.h>
 #endif
 
 
