@@ -272,11 +272,9 @@ void Thumbnail::decreaseRef ()
 }
 
 void Thumbnail::getThumbnailSize (int &w, int &h) {
-
-    if (tpp) 
-        w = tpp->getImageWidth (getProcParams(), h);
-    else
-        w = tw * h / th;
+	w=0;
+	if (tpp) w = tpp->getImageWidth (getProcParams(), h);  // this might return 0 if image was just building
+    if (w==0) w = tw * h / th;
 }
 
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
