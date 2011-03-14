@@ -767,6 +767,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 }
 
 int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight) {
+	if (thumbImg==NULL) return 0;  // Can happen if thumb is just building and GUI comes in with resize wishes
 
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) 
@@ -878,6 +879,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     rtemp = ct.getTemp ();
     rgreen = ct.getGreen ();
 }
+
 void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty) {
     
     int W = thumbImg->width;
