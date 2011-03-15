@@ -115,6 +115,7 @@ class Preferences : public Gtk::Dialog {
 	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
 	
     Gtk::CheckButton* ckbTunnelMetaData;
+	Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
     Options moptions;
     sigc::connection tconn, fconn, usethcon, addc, setc, dfconn, ffconn;

@@ -595,12 +595,15 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     Gtk::Frame* fro = new Gtk::Frame (M("PREFERENCES_FBROWSEROPTS"));
     showDateTime = new Gtk::CheckButton (M("PREFERENCES_SHOWDATETIME"));
     showBasicExif = new Gtk::CheckButton (M("PREFERENCES_SHOWBASICEXIF"));
-    Gtk::VBox* vbro = new Gtk::VBox ();
     overlayedFileNames = new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES"));
+	ckbInternalThumbIfUntouched = new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED"));
+
+    Gtk::VBox* vbro = new Gtk::VBox ();
     vbro->set_border_width (4);
     vbro->pack_start (*showDateTime, Gtk::PACK_SHRINK, 0);
     vbro->pack_start (*showBasicExif, Gtk::PACK_SHRINK, 0);
     vbro->pack_start (*overlayedFileNames, Gtk::PACK_SHRINK, 4); 
+	vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
     fro->add (*vbro);  
 
@@ -844,6 +847,7 @@ void Preferences::storePreferences () {
     moptions.maxThumbnailHeight = (int)maxThumbSize->get_value ();
     moptions.maxCacheEntries = (int)maxCacheEntries->get_value ();
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
+    moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active ();
     
     moptions.saveParamsFile = saveParamsFile->get_active ();
     moptions.saveParamsCache = saveParamsCache->get_active ();
@@ -950,6 +954,7 @@ void Preferences::fillPreferences () {
     maxThumbSize->set_value (moptions.maxThumbnailHeight);
     maxCacheEntries->set_value (moptions.maxCacheEntries);
     overlayedFileNames->set_active (moptions.overlayedFileNames);
+    ckbInternalThumbIfUntouched->set_active(moptions.internalThumbIfUntouched);
     
     saveParamsFile->set_active (moptions.saveParamsFile);
     saveParamsCache->set_active (moptions.saveParamsCache);
