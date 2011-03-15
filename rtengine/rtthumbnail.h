@@ -75,8 +75,8 @@ namespace rtengine {
             int      getImageWidth  (const procparams::ProcParams& pparams, int rheight);
             void     getFinalSize   (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
             
-            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh);
-            static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh);
+            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
+            static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
             static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh);           
             
             void getCamWB     (double& temp, double& green);

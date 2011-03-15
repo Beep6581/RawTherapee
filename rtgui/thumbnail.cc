@@ -110,12 +110,12 @@ void Thumbnail::_generateThumbnailImage () {
 		if ( initial_ && options.internalThumbIfUntouched)
 		{
 			quick = true;
-			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1);
+			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1, TRUE);
 		}
 		if ( tpp == 0 )
 		{
 			quick = false;
-			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1);
+			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, TRUE);
 		}
 		if (tpp) {
 			cfs.format = FT_Raw;
