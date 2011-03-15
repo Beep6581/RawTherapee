@@ -131,7 +131,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     return tpp;
 }
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate)
 {
 	RawImage *ri= new RawImage(fname);
 	int r = ri->loadRaw(false,false);
@@ -210,7 +210,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     tpp->autowbTemp=2700;
     tpp->autowbGreen=1.0;
 
-    if (ri->get_rotateDegree() > 0) {
+    if (rotate && ri->get_rotateDegree() > 0) {
         Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
         delete tpp->thumbImg;
         tpp->thumbImg = rot;
@@ -229,7 +229,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 #define FISBLUE(filter,row,col) \
 	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate)
 {
 	RawImage *ri= new RawImage (fname);
 	int r = ri->loadRaw();
@@ -465,7 +465,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 	ColorTemp::mul2temp(rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
 
-	if (ri->get_rotateDegree() > 0) {
+	if (rotate && ri->get_rotateDegree() > 0) {
 		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
 		delete tpp->thumbImg;
 		tpp->thumbImg = rot;
