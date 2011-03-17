@@ -24,11 +24,6 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
 
     set_border_width (0);
 
-    Gtk::Label* label = Gtk::manage (new Gtk::Label (Glib::ustring("<b>") + "Zoom" + ":</b>  "));
-    label->set_use_markup (true);
-    
-    pack_start (*label, Gtk::PACK_SHRINK, 4);
-    
     Gtk::Image* imageOut = Gtk::manage (new Gtk::Image (Gtk::StockID ("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR));
     imageOut->set_padding(0,0);
     Gtk::Image* imageIn = Gtk::manage (new Gtk::Image (Gtk::StockID ("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR));

@@ -44,10 +44,6 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	//int winx=0, winy=0;
 	//int winw=W, winh=H;
 	
-	if (plistener) {
-		plistener->setProgressStr ("Fast demosaicing...");
-		plistener->setProgress (0.0);
-	}
 	float progress = 0.0;
 	
 
@@ -178,7 +174,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 		}//i
 	}//j
 	
-	if(plistener) plistener->setProgress(0.05);
+	if(plistener) plistener->setProgress(0.25);
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -212,7 +208,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 			//progress+=(double)0.33/(H);
 			//if(plistener) plistener->setProgress(progress);
 		}
-		if(plistener) plistener->setProgress(0.4);
+		if(plistener) plistener->setProgress(0.3);
 
 		
 #pragma omp for 		
@@ -235,7 +231,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 			//progress+=(double)0.33/(H);
 			//if(plistener) plistener->setProgress(progress);
 		}
-		if(plistener) plistener->setProgress(0.7);
+		if(plistener) plistener->setProgress(0.35);
 
 #pragma omp barrier
 		
@@ -251,10 +247,9 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 			blue[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j]-blue[i-1][j])+(green[i+1][j]-blue[i+1][j])+ \
 														(green[i][j-1]-blue[i][j-1])+(green[i][j+1]-blue[i][j+1]))));
 		}
-		progress+=(double)0.33/(H);
-		//if(plistener) plistener->setProgress(progress);
+
 	}
-	if(plistener) plistener->setProgress(0.99);
+	if(plistener) plistener->setProgress(0.4 );
 	}
 	
 #undef bord

@@ -40,7 +40,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ProcessingJobImpl* job = (ProcessingJobImpl*) pjob;
 
     if (pl) {
-        pl->setProgressStr ("Processing...");
+        pl->setProgressStr ("PROGRESSBAR_PROCESSING");
         pl->setProgress (0.0);
     }
     
@@ -56,6 +56,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // aquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
+    imgsrc->setProgressListener(NULL);
 
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -100,11 +101,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     Image16* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw );
+    if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw );
+    if (pl) pl->setProgress (0.40);
     baseImg = new Image16 (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
-    if (pl) 
-        pl->setProgress (0.25);
+    if (pl) pl->setProgress (0.45);
 
     // perform first analysis
     unsigned int* hist16 = new unsigned int[65536];
@@ -197,7 +199,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete [] buffer;
 
     if (pl) 
-        pl->setProgress (0.70);
+        pl->setProgress (0.60);
 
     // crop and convert to rgb16
     Image16* readyImg;
@@ -214,7 +216,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete labView;
 
     if (pl)
-        pl->setProgress (0.85);
+        pl->setProgress (0.70);
 
     // get the resize parameters
 	int refw, refh;
@@ -284,8 +286,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else
         readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 
-    if (pl) 
-        pl->setProgress (1.0);
 
     ProfileContent pc;
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
@@ -299,11 +299,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         ii->decreaseRef ();
     
     delete job;
-
-    if (pl) {
-        pl->setProgress (1.0);
-        pl->setProgressStr ("Ready.");
-    }
+    if (pl)
+        pl->setProgress (0.75);
 
     return readyImg;
 }

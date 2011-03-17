@@ -209,14 +209,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	//if (verbose) fprintf (stderr,_("AMaZE interpolation ...\n"));
 	//t1 = clock();
 
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	if (plistener) {
-		plistener->setProgressStr ("AMaZE Demosaicing...");
-		plistener->setProgress (0.0);
-	}
-
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 	//determine GRBG coset; (ey,ex) is the offset of the R subarray
@@ -1002,7 +994,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			{
 				progress=1.0;
 			}
-			if(plistener) plistener->setProgress(progress);
+			if(plistener) plistener->setProgress( 0.2 + 0.2*progress );
 		}
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

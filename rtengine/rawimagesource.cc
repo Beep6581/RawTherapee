@@ -816,7 +816,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     fileName = fname;
 
     if (plistener) {
-        plistener->setProgressStr ("Decoding...");
+        plistener->setProgressStr ("PROGRESSBAR_DECODING");
         plistener->setProgress (0.0);
     }
 
@@ -920,6 +920,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	if( rif && settings->verbose) {
 		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());
 	}
+	if (plistener) {
+		plistener->setProgress (0.0);
+		if( rid || rif)
+			plistener->setProgressStr ("PROGRESSBAR_DARKFRAME");
+	}
 	copyOriginalPixels(raw, ri, rid, rif);
 	//FLATFIELD end
 	
@@ -956,15 +961,16 @@ void RawImageSource::preprocess  (const RAWParams &raw)
     defGain = log(initialGain) / log(2.0);
 
 	if ( raw.hotdeadpix_filt ) {
-		if (plistener) {
-			plistener->setProgressStr ("Hot/Dead Pixel Filter...");
-			plistener->setProgress (0.0);
-		}
+
 		int nFound =findHotDeadPixel( bitmapBads, 10.0 );
 		totBP += nFound;
 		if( settings->verbose && nFound>0){
 			printf( "Correcting %d hot/dead pixels found inside image\n",nFound );
 		}
+	}
+	if (plistener) {
+		plistener->setProgressStr ("PROGRESSBAR_BADPIXELS");
+		plistener->setProgress (0.1);
 	}
 	if( totBP )
 	   cfaCleanFromMap( bitmapBads );
@@ -1003,8 +1009,8 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 
 	if ( raw.greenthresh >0) {
 		if (plistener) {
-			plistener->setProgressStr ("Green equilibrate...");
-			plistener->setProgress (0.0);
+			plistener->setProgressStr ("PROGRESSBAR_GREENEQUIL");
+			plistener->setProgress (0.12);
 		}
 		green_equilibrate(0.01*(raw.greenthresh));
     }
@@ -1012,8 +1018,8 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	
 	if ( raw.linenoise >0 ) {
 		if (plistener) {
-			plistener->setProgressStr ("Line Denoise...");
-			plistener->setProgress (0.0);
+			plistener->setProgressStr ("PROGRESSBAR_LINEDENOISE");
+			plistener->setProgress (0.14);
 		}
 
 		cfa_linedn(0.00002*(raw.linenoise));
@@ -1021,20 +1027,15 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	
 	if ( raw.ca_autocorrect || raw.cared || raw.cablue ) {
 		if (plistener) {
-			plistener->setProgressStr ("CA Auto Correction...");
-			plistener->setProgress (0.0);
+			plistener->setProgressStr ("PROGRESSBAR_CACORRECTION");
+			plistener->setProgress (0.16);
 		}
 		
 		CA_correct_RT(raw.cared, raw.cablue);		
 	}
 	
 	if ( raw.expos !=1 ) { // exposure
-		if (plistener) {
-			plistener->setProgressStr ("Exposure Correction...");
-			plistener->setProgress (0.0);
-		}		
 		exp_bef(raw.expos, raw.preser);
-		
 	}
 	
     t2.set();
@@ -1047,6 +1048,11 @@ void RawImageSource::demosaic(const RAWParams &raw)
     if (ri->isBayer()) {
     	MyTime t1,t2;
     	t1.set();
+
+        if (plistener) {
+            plistener->setProgressStr ("PROGRESSBAR_DEMOSAICING");
+            plistener->setProgress (0.20);
+        }
         if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
                 hphd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
@@ -1068,11 +1074,6 @@ void RawImageSource::demosaic(const RAWParams &raw)
         if( settings->verbose )
            printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
     }
-    if (plistener) {
-        plistener->setProgressStr ("Ready.");
-        plistener->setProgress (1.0);
-    }
-
 }
 
 	
@@ -1081,7 +1082,6 @@ void RawImageSource::demosaic(const RAWParams &raw)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
-	
 	if (ri->isBayer()) {
 		if (!rawData)
 			rawData = allocArray< unsigned short >(W,H);
@@ -1119,8 +1119,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			}
 		}
 	}
-	
-	
+
 	if (ri->isBayer() && riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
 		//TODO: flat field correction for non-Bayer raw data
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1571,11 +1570,6 @@ void RawImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
 
 void RawImageSource::eahd_demosaic () {
 
-  if (plistener) {
-    plistener->setProgressStr ("Demosaicing...");
-    plistener->setProgress (0.0);
-  }
-
   // prepare chache and constants for cielab conversion
   lc00 = (0.412453 * coeff[0][0] + 0.357580 * coeff[1][0] + 0.180423 * coeff[2][0]) / 0.950456;
   lc01 = (0.412453 * coeff[0][1] + 0.357580 * coeff[1][1] + 0.180423 * coeff[2][1]) / 0.950456;
@@ -1788,7 +1782,7 @@ void RawImageSource::eahd_demosaic () {
     }
 
     if (!(i%20) && plistener) 
-      plistener->setProgress ((double)i / (H-2));
+      plistener->setProgress (0.2 + 0.2*(double)i / (H-2) );
   }
   // finish H-2th and H-1th row, homogenity value is still valailable
   int hc, vc;
@@ -2007,10 +2001,6 @@ void RawImageSource::hphd_green () {
 
 void RawImageSource::hphd_demosaic () {
 
-  if (plistener) {
-    plistener->setProgressStr ("Demosaicing...");
-    plistener->setProgress (0.0);
-  }
 
   float** hpmap = new float*[H];
   for (int i=0; i<H; i++) {
@@ -2034,7 +2024,7 @@ void RawImageSource::hphd_demosaic () {
   hphd_vertical (hpmap, 0, W);
 #endif
   if (plistener) 
-    plistener->setProgress (0.33);
+	  plistener->setProgress (0.25);
 
   for (int i=0; i<H; i++)
     memset(this->hpmap[i], 0, W*sizeof(char));
@@ -2057,7 +2047,7 @@ void RawImageSource::hphd_demosaic () {
   freeArray<float>(hpmap, H);
 
   if (plistener) 
-    plistener->setProgress (0.66);
+    plistener->setProgress (0.30);
 
     
   hphd_green ();
@@ -2073,7 +2063,7 @@ void RawImageSource::hphd_demosaic () {
 
   }
   if (plistener) 
-    plistener->setProgress (1.0);
+    plistener->setProgress (0.35);
 }
 
 void RawImageSource::HLRecovery_Luminance (unsigned short* rin, unsigned short* gin, unsigned short* bin, unsigned short* rout, unsigned short* gout, unsigned short* bout, int width, int maxval) {
@@ -2479,10 +2469,6 @@ void RawImageSource::vng4_demosaic () {
     +1,+0,+2,+1,0,0x10
   }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
 
-  if (plistener) {
-    plistener->setProgressStr ("Demosaicing...");
-    plistener->setProgress (0.0);
-  }
 
   ushort (*brow[5])[4], *pix;
   int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
@@ -2615,7 +2601,7 @@ void RawImageSource::vng4_demosaic () {
     for (g=0; g < 4; g++)
       brow[(g-1) & 3] = brow[g];
     if (!(row%20) && plistener) 
-      plistener->setProgress ((double)row / (H-2));
+      plistener->setProgress (0.2 + 0.2*(double)row / (H-2) );
   }
   memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
   memcpy (image[(row-1)*width+2], brow[1]+2, (width-4)*sizeof *image);
@@ -2704,11 +2690,6 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
 
-    if (plistener) {
-        plistener->setProgressStr ("Demosaicing...");
-        plistener->setProgress (0.0);
-    }
-  
     image = (ushort (*)[4]) calloc (H*W, sizeof *image);
     for (int ii=0; ii<H; ii++)
         for (int jj=0; jj<W; jj++)
@@ -2832,11 +2813,10 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
             
             tile++;
             if(plistener) {
-                plistener->setProgress((double)tile / n_tiles);
+                plistener->setProgress(0.20 + 0.20*(double)tile / n_tiles);
             }
         }
   
-    if(plistener) plistener->setProgress (1.0);
     free (buffer);
     for (int i=0; i<H; i++) {
         for (int j=0; j<W; j++){
@@ -3300,11 +3280,6 @@ void RawImageSource::dcb_color_full(ushort (*image)[4], int x0, int y0, float (*
 void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 {
     double currentProgress=0.0;
-    if(plistener) {
-        plistener->setProgressStr ("DCB Demosaicing...");
-        plistener->setProgress (currentProgress);
-    }
-
     int wTiles = W/TILESIZE + (W%TILESIZE?1:0);
     int hTiles = H/TILESIZE + (H%TILESIZE?1:0);
     int numTiles = wTiles * hTiles;
@@ -3393,7 +3368,7 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
         {
     		if( plistener && double(tilesDone)/numTiles > currentProgress){
     			currentProgress+=0.1; // Show progress each 10%
-    			plistener->setProgress (currentProgress);
+    			plistener->setProgress (0.2 + 0.2*currentProgress);
     		}
         }
 #pragma omp atomic
@@ -3413,7 +3388,6 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
     free(image3);
     free(chroma);
 
-    if(plistener) plistener->setProgress (1.0);
 }
 #undef TILEBORDER
 #undef TILESIZE

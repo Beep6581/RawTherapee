@@ -109,8 +109,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     mProcessing.lock ();
 
-    int numofphases = 10;
-    int readyphase = 0;
 
     ipf.setScale (scale);
 
@@ -127,7 +125,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		rp.hotdeadpix_filt = false;
 		rp.ccSteps = 0;
 	}
-    progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
+
     if ( todo & M_PREPROC)
     	imgsrc->preprocess( rp );
     if( todo & M_RAW){
@@ -163,13 +161,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->getFullSize (fw, fh, tr);
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale, true);
+        progress ("Sample ...",45);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
         minit.unlock ();
     }
-    readyphase++;
 
-    progress ("Rotate / Distortion...",100*readyphase/numofphases);
+    progress ("Rotate / Distortion...",50);
     bool needstransform = ipf.needsTransform();
     if (!needstransform && orig_prev!=oprevi) {
         delete oprevi;
@@ -180,15 +178,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if ((todo & M_TRANSFORM) && needstransform)
     	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH);
 
-    readyphase++;
 
-    progress ("Preparing shadow/highlight map...",100*readyphase/numofphases);
+
+    progress ("Shadow/highlight...",55);
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
         shmap->update (oprevi, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }
-    readyphase++;
 
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
@@ -201,7 +198,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
     }
 
-    progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
+    progress ("Lab/curves ...",60);
     if (todo & M_RGBCURVE) {
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
 									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
@@ -216,7 +213,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             for (int j=0; j<pW; j++)
                 lhist16[oprevl->L[i][j]]++;
     }
-    readyphase++;
 
     if (todo & M_LUMACURVE) {
         CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, \
@@ -229,47 +225,38 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	
 	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
-        progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+        progress ("Luminance curve...",65);
         ipf.luminanceCurve (oprevl, nprevl, lumacurve);
 
-        readyphase++;
-		progress ("Applying Color Boost...",100*readyphase/numofphases);
+
+		progress ("Color curve...",70);
         ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve);
         ipf.colorCurve (nprevl, nprevl);
 
-        readyphase++;
+
 		if (scale==1) {
-            progress ("Denoising luminance impulse...",100*readyphase/numofphases);
+            progress ("Denoising ...",75);
             ipf.impulsedenoise (nprevl);
-        }
-		if (scale==1) {
-			progress ("Defringing...",100*readyphase/numofphases);
+
+			progress ("Defringing...",80);
             ipf.defringe (nprevl);
-		}
-        if (scale==1) {
-            progress ("Denoising luminance...",100*readyphase/numofphases);
+
+            progress ("Denoising luminance...",82);
             ipf.lumadenoise (nprevl, buffer);
-        }
-        readyphase++;
-		if (scale==1) {
-            progress ("Denoising color...",100*readyphase/numofphases);
+
+            progress ("Denoising color...",84);
             ipf.colordenoise (nprevl, buffer);
-        }
-		if (scale==1) {
-            progress ("Denoising luma/chroma...",100*readyphase/numofphases);
+
+            progress ("Denoising luma/chroma...",86);
             ipf.dirpyrdenoise (nprevl);
-        }
-		if (scale==1) {
-            progress ("Sharpening...",100*readyphase/numofphases);
+
+            progress ("Sharpening...",88);
             ipf.sharpening (nprevl, (unsigned short**)buffer);
-        }
-        readyphase++;
-		if (scale==1) {
-            progress ("Pyramid equalizer...",100*readyphase/numofphases);
+
+            progress ("Pyramid equalizer...",90);
             ipf.dirpyrequalizer (nprevl);
-        }
-		if (scale==1) {
-            progress ("Wavelet...",100*readyphase/numofphases);
+
+            progress ("Wavelet...",92);
             ipf.waveletEqualizer (nprevl, true, true);
         }
 		
@@ -281,7 +268,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (crops[i]->hasListener () && cropCall != crops[i] )
             crops[i]->update (todo, true);
 
-    progress ("Conversion to RGB...",100*readyphase/numofphases);
+    progress ("Conversion to RGB...",95);
     if (todo!=CROP) {
         previmg->getMutex().lock();
         try
@@ -304,7 +291,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (imageListener)
         imageListener->imageReady (params.crop);
 
-    readyphase++;
 
     if (hListener) {
         int hx1 = 0, hx2 = pW, hy1 = 0, hy2 = pH;
@@ -318,7 +304,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         hListener->histogramChanged (rhist, ghist, bhist, Lhist, bcrgbhist, bcLhist);
     }
 
-    progress ("Ready",100*readyphase/numofphases);
+    progress ("PROGRESSBAR_READY",100);
     mProcessing.unlock ();
 }
 
@@ -442,10 +428,10 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 
 void ImProcCoordinator::progress (Glib::ustring str, int pr) {
 
-/*  if (plistener) {
+  if (plistener) {
     plistener->setProgressStr (str);
     plistener->setProgress ((double)pr / 100.0);
-  }*/
+  }
 }
 
 void ImProcCoordinator::getAutoWB (double& temp, double& green) {

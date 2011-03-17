@@ -467,10 +467,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				//data structure: blockshifts[blocknum][R/B][v/h]
 				//if (c==0) printf("vblock= %d hblock= %d blockshiftsmedian= %f \n",vblock,hblock,blockshifts[(vblock)*hblsz+hblock][c][0]);
 			}
-
-			if(plistener) plistener->setProgress(0.5*fabs((float)top/height));
-
 		}
+		if(plistener) plistener->setProgress(0.16 + 0.02*(double)(top+border)/height);
 	}
 	//end of diagnostic pass
 	
@@ -587,7 +585,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
-	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++)
+	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++){
 		for (left=-border, hblock=1; left < width; left += TS-border2, hblock++) {
 			int bottom = MIN( top+TS,height+border);
 			int right  = MIN(left+TS, width+border);
@@ -825,11 +823,9 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 					//image[indx][c] = CLIP((int)(65535.0*rgb[(rr)*TS+cc][c] + 0.5));//for dcraw implementation
 
 				} 
-			
-			if(plistener) plistener->setProgress(0.5+0.5*fabs((float)top/height));
-
 		}
-	
+		if(plistener) plistener->setProgress(0.18 + 0.02*(double)(top+border)/height);
+	}
 	// clean up
 	free(buffer);
 	free(Gtmp);

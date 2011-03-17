@@ -150,7 +150,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
       return IMIO_CANNOTREADFILE;
 
     if (pl) {
-      pl->setProgressStr ("Loading PNG file...");
+      pl->setProgressStr ("PROGRESSBAR_LOADPNG");
       pl->setProgress (0.0);
     }
 
@@ -266,7 +266,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 	delete [] row;
 	fclose(file);
     if (pl) {
-        pl->setProgressStr ("Ready.");
+        pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
     }
     return IMIO_SUCCESS;
@@ -283,7 +283,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
     {
         if (pl) {
-            pl->setProgressStr ("Loading JPEG file...");
+            pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
             pl->setProgress (0.0);
 
         }
@@ -327,7 +327,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
         jpeg_finish_decompress(&cinfo);
         jpeg_destroy_decompress(&cinfo);
         if (pl) {
-            pl->setProgressStr ("Ready.");
+            pl->setProgressStr ("PROGRESSBAR_READY");
             pl->setProgress (1.0);
         }
         return IMIO_SUCCESS;
@@ -354,7 +354,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
     {
         if (pl) {
-            pl->setProgressStr ("Loading JPEG file...");
+            pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
             pl->setProgress (0.0);
 
         }
@@ -399,7 +399,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
         jpeg_destroy_decompress(&cinfo);
         fclose(file);
         if (pl) {
-            pl->setProgressStr ("Ready.");
+            pl->setProgressStr ("PROGRESSBAR_READY");
             pl->setProgress (1.0);
         }
         return IMIO_SUCCESS;
@@ -423,7 +423,7 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
           return IMIO_CANNOTREADFILE;
 
     if (pl) {
-        pl->setProgressStr ("Loading TIFF file...");
+        pl->setProgressStr ("PROGRESSBAR_LOADTIFF");
         pl->setProgress (0.0);
     }
     
@@ -481,7 +481,7 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
     delete [] linebuffer;
 
     if (pl) {
-      pl->setProgressStr ("Ready.");
+      pl->setProgressStr ("PROGRESSBAR_READY");
       pl->setProgress (1.0);
     }
 
@@ -522,7 +522,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
       return IMIO_CANNOTREADFILE;
 
     if (pl) {
-      pl->setProgressStr ("Saving PNG file...");
+      pl->setProgressStr ("PROGRESSBAR_SAVEPNG");
       pl->setProgress (0.0);
     }
 
@@ -584,7 +584,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 	fclose (file);
 
     if (pl) {
-        pl->setProgressStr ("Ready.");
+        pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
     }
 
@@ -606,7 +606,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
           return IMIO_CANNOTREADFILE;
 
     if (pl) {
-        pl->setProgressStr ("Saving JPEG file...");
+        pl->setProgressStr ("PROGRESSBAR_SAVEJPEG");
         pl->setProgress (0.0);
     }
 
@@ -694,7 +694,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	fclose (file);
 
     if (pl) {
-        pl->setProgressStr ("Ready.");
+        pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
     }
 
@@ -719,7 +719,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
             return IMIO_CANNOTREADFILE;           
             
         if (pl) {
-            pl->setProgressStr ("Saving TIFF file ...");
+            pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
             pl->setProgress (0.0);
         }
         
@@ -772,7 +772,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
             return IMIO_CANNOTREADFILE;
 
         if (pl) {
-            pl->setProgressStr ("Saving TIFF file ...");
+            pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
             pl->setProgress (0.0);
         }
         
@@ -843,7 +843,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
     delete [] linebuffer;
     if (pl) {
-        pl->setProgressStr ("Ready.");
+        pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
     }
 

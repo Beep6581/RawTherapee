@@ -70,6 +70,7 @@ class FilePanel : public Gtk::HPaned,
         void setAspect();
         void open (const Glib::ustring& d); // open a file or a directory
         void refreshEditedState (const std::set<Glib::ustring>& efiles) { fileCatalog->refreshEditedState (efiles); }
+        void loadingThumbs(Glib::ustring str, double rate);
         
         // call this before closeing rt: it saves file browser relating things into options
         void saveOptions ();

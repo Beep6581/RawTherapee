@@ -34,7 +34,6 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
 
-        Gtk::Label prLabel;
         Gtk::ProgressBar prProgBar;
         PLDBridge* pldBridge;
         bool is_fullscreen;

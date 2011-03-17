@@ -76,7 +76,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
 
     img = new Image16 ();
     if (plistener) {
-        plistener->setProgressStr ("Loading...");
+        plistener->setProgressStr ("PROGRESSBAR_LOADING");
         plistener->setProgress (0.0);
         img->setProgressListener (plistener);
     }
@@ -92,7 +92,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
     idata = new ImageData (fname); 
 
     if (plistener) {
-        plistener->setProgressStr ("Ready.");
+        plistener->setProgressStr ("PROGRESSBAR_READY");
         plistener->setProgress (1.0);
     }
 

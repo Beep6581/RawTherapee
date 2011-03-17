@@ -89,7 +89,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     FileBrowserListener* tbl;
     BrowserFilter filter;
     PartialPasteDlg partialPasteDlg;
-
+    int numFiltered;
     FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
@@ -115,6 +115,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void applyMenuItemActivated (Glib::ustring ppname);
 
     void applyFilter (const BrowserFilter& filter);
+    int getNumFiltered(){ return numFiltered;}
 
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);
