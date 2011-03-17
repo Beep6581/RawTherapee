@@ -31,7 +31,7 @@
 extern Options options;
 
 FileBrowser::FileBrowser () 
-    : tbl(NULL) {
+    : tbl(NULL),numFiltered(0) {
 
     fbih = new FileBrowserIdleHelper;
     fbih->fbrowser = this;
@@ -568,8 +568,11 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
 
     // remove items not complying the filter from the selection
     bool selchanged = false;
-    for (int i=0; i<fd.size(); i++) 
-        if (fd[i]->selected && !checkFilter (fd[i])) {
+    numFiltered=0;
+    for (int i=0; i<fd.size(); i++)
+    	if(checkFilter (fd[i]))
+    		numFiltered++;
+    	else if (fd[i]->selected ) {
             fd[i]->selected = false;
             std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
             selected.erase (j);

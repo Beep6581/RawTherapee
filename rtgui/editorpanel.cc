@@ -185,13 +185,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
 
     // Status box
     statusBox = Gtk::manage (new Gtk::HBox ());
-    progressLabel = Gtk::manage (new Gtk::Label(""));
+    progressLabel = Gtk::manage (new Gtk::ProgressBar());
+    progressLabel->set_fraction(0.0);
+    progressLabel->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("red") );
+
     statusBox->pack_start (*progressLabel);
-    red = new Gtk::Image (argv0+"/images/red.png");
-    green = new Gtk::Image (argv0+"/images/green.png");
-    red->show ();
-    green->show ();
-    statusBox->pack_end (*green, Gtk::PACK_SHRINK, 2);
     iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 2);
 
     // tbRightPanel_1
@@ -304,8 +302,6 @@ EditorPanel::~EditorPanel () {
 
     delete tpc;
 
-    delete red;
-    delete green;
     delete leftbox;
     delete vboxright;    
     delete saveAsDialog;
@@ -537,24 +533,23 @@ void EditorPanel::setProgressState (int state) {
 struct spparams {
     double val;
     Glib::ustring str;
-    rtengine::ProgressListener* progListener;
+    Gtk::ProgressBar *pProgress;
 };
-
-int _setprogress( void *p )
-{
-	spparams *s= (spparams*)p;
-	gdk_threads_enter ();
-	s->progListener->setProgress( s->val );
-	gdk_threads_leave ();
-	delete s;
-	return 0;
-}
 
 int _setprogressStr( void *p )
 {
 	spparams *s= (spparams*)p;
 	gdk_threads_enter ();
-	s->progListener->setProgressStr( s->str );
+
+	if( ! s->str.empty() )
+	   s->pProgress->set_text( M(s->str) );
+	if( s->val >=0 ){
+	   s->pProgress->set_fraction( s->val );
+		if( s->val <1.0 )
+			s->pProgress->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("red") );
+		else
+			s->pProgress->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );
+	}
 	gdk_threads_leave ();
 	delete s;
 	return 0;
@@ -564,15 +559,16 @@ void EditorPanel::setProgress (double p)
 {
 	spparams *s=new spparams;
 	s->val = p;
-	s->progListener = parent;
-	g_idle_add (_setprogress, s);
+	s->pProgress = progressLabel;
+	g_idle_add (_setprogressStr, s);
 }
 
 void EditorPanel::setProgressStr (Glib::ustring str)
 {
 	spparams *s=new spparams;
 	s->str = str;
-	s->progListener = parent;
+	s->val = -1;
+	s->pProgress = progressLabel;
 	g_idle_add (_setprogressStr, s);
 }
 
@@ -585,19 +581,14 @@ void EditorPanel::refreshProcessingState (bool inProcessing) {
         openThm->setProcParams (pparams, EDITOR, false);
     }
 
-    // change state of the led
-    std::vector<Widget*> children = (std::vector<Widget*>) statusBox->get_children();
-    if (children.size()>=1) {
-        Gtk::Widget* wlast = children[children.size()-1];
-        if (wlast)
-            statusBox->remove (*wlast);
-    }
-
-
     if (inProcessing) {
         if (processingStartedTime==0) processingStartedTime = ::time(NULL);
 
-        statusBox->pack_end (*red, Gtk::PACK_SHRINK, 2);
+    	spparams *s=new spparams;
+    	s->str = "PROGRESSBAR_PROCESSING";
+    	s->val = 0.0;
+    	s->pProgress = progressLabel;
+    	g_idle_add (_setprogressStr, s);
     } else {
         if (processingStartedTime!=0) {
             time_t curTime= ::time(NULL);
@@ -607,7 +598,11 @@ void EditorPanel::refreshProcessingState (bool inProcessing) {
             processingStartedTime = 0;
         }
 
-        statusBox->pack_end (*green, Gtk::PACK_SHRINK, 2);
+    	spparams *s=new spparams;
+    	s->str = "PROGRESSBAR_READY";
+    	s->val = 1.0;
+    	s->pProgress = progressLabel;
+    	g_idle_add (_setprogressStr, s);
 }
 }
 
@@ -893,6 +888,8 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
         sendtogimp->set_sensitive(true);
 
 	}
+	rtengine::ImageSource* imgsrc = isrc->getImageSource ();
+    imgsrc->setProgressListener(this);
 	return false;
 }
 

@@ -138,8 +138,6 @@ RTWindow::RTWindow ()
 
 		Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
 		mainBox->pack_start (*mainNB);
-		Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
-		mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
 
 		// filling bottom box
 		iFullScreen = new Gtk::Image(argv0+"/images/fullscreen.png");
@@ -157,14 +155,32 @@ RTWindow::RTWindow ()
 		btn_fullscreen->set_tooltip_markup (M("MAIN_BUTTON_FULLSCREEN"));
 		btn_fullscreen->set_image (*iFullScreen);
 		btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
-		bottomBox->pack_start (*preferences, Gtk::PACK_SHRINK, 0);
+#if GTKMM_MINOR_VERSION >= 20
+		if (options.mainNBVertical) {
+			Gtk::VBox* bottomVBox = Gtk::manage (new Gtk::VBox ());
+			bottomVBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 1);
+			bottomVBox->pack_end (*preferences, Gtk::PACK_SHRINK, 0);
+			bottomVBox->pack_end (*btn_fullscreen, Gtk::PACK_EXPAND_WIDGET, 1);
+			prProgBar.set_orientation(Gtk::PROGRESS_BOTTOM_TO_TOP);
+			mainNB->set_action_widget( bottomVBox,Gtk::PACK_END);
+			bottomVBox->show_all();
+		}else{
+			Gtk::HBox* bottomHBox = Gtk::manage (new Gtk::HBox ());
+			bottomHBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 1);
+			bottomHBox->pack_end (*preferences, Gtk::PACK_SHRINK, 0);
+			bottomHBox->pack_start (prProgBar, Gtk::PACK_EXPAND_WIDGET, 1);
+			mainNB->set_action_widget( bottomHBox,Gtk::PACK_END);
+			bottomHBox->show_all();
+		}
+#else
+		Gtk::HBox* bottomBox = Gtk::manage (new Gtk::HBox ());
 		bottomBox->pack_end (*btn_fullscreen, Gtk::PACK_SHRINK, 1);
-		bottomBox->pack_start (*rtWeb, Gtk::PACK_SHRINK, 1);
-		bottomBox->pack_start (prLabel );
-		prLabel.set_alignment(Gtk::ALIGN_RIGHT);
-		bottomBox->pack_start (prProgBar, Gtk::PACK_SHRINK, 1);
+		bottomBox->pack_end (*preferences, Gtk::PACK_SHRINK, 0);
+		bottomBox->pack_start (prProgBar, Gtk::PACK_EXPAND_WIDGET, 1);
+		mainBox->pack_start (*bottomBox, Gtk::PACK_SHRINK, 1);
+#endif
 
-		pldBridge = new PLDBridge(&prLabel,&prProgBar);
+		pldBridge = new PLDBridge(static_cast<rtengine::ProgressListener*>(this));
 
 		Glib::RefPtr<Gtk::RcStyle> style = Gtk::RcStyle::create ();
 		style->set_xthickness (0);
@@ -365,16 +381,15 @@ void RTWindow::setProgress (double p) {
 }
 
 void RTWindow::setProgressStr (Glib::ustring str) {
-	prLabel.set_text ( str );
+	if (!options.mainNBVertical)
+	   prProgBar.set_text ( str );
 }
 
 void RTWindow::setProgressState (int state) {
 	if (state) {
 		prProgBar.show();
-		prLabel.show();
 	} else {
 		prProgBar.hide();
-		prLabel.hide();
 	}
 }
 		
@@ -395,7 +410,7 @@ void RTWindow::toggle_fullscreen () {
 }
 
 void RTWindow::error (Glib::ustring descr){
-	prLabel.set_text ( descr );
+	prProgBar.set_text ( descr );
 }
 
 void RTWindow::SetEditorCurrent()

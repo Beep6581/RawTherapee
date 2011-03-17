@@ -25,6 +25,7 @@
 #include <guiutils.h>
 #include <glib/gstdio.h>
 #include <iostream>
+#include <iomanip>
 #include <renamedlg.h>
 #include <thumbimageupdater.h>
 #include <safegtk.h>
@@ -57,7 +58,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		filterPanel(NULL),
 		coarsePanel(cp),
 		toolBar(tb),
-		filepanel(filepanel) {
+		filepanel(filepanel),
+		previewsToLoad(0),
+		previewsLoaded(0)
+		{
 
     inTabMode=false;
 
@@ -182,12 +186,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hBox->pack_end (*fileBrowser);
     fileBrowser->applyFilter (getFilter());
     pack_start (*hBox);
-
-    buttonBar2 = new Gtk::HBox ();
-    pack_end (*buttonBar2, Gtk::PACK_SHRINK);
-    progressBar = new Gtk::ProgressBar ();
-    buttonBar2->pack_start (*progressBar, Gtk::PACK_SHRINK, 4);
-    progressBar->set_size_request (-1, 16);
 
     buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);
 
@@ -330,6 +328,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         _refreshProgressBar ();
+        filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"),0);
 
 #ifdef _WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
@@ -348,8 +347,6 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 void FileCatalog::enableTabMode(bool enable) {
     inTabMode = enable;
 
-    if (!inTabMode) progressBar->hide ();  // just needed once
-    
     fileBrowser->enableTabMode(inTabMode);
 
     redrawAll();
@@ -360,13 +357,29 @@ void FileCatalog::_refreshProgressBar () {
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode) {
-        if (previewsToLoad>0) {
-            progressBar->set_fraction ((double)previewsLoaded / previewsToLoad);
-            progressBar->show ();
+    	Gtk::Notebook *nb =(Gtk::Notebook *)(filepanel->get_parent());
+    	Gtk::Box* hbb=NULL;
+    	Gtk::Label *label=NULL;
+    	if( options.mainNBVertical )
+           hbb = Gtk::manage (new Gtk::VBox ());
+    	else
+    	   hbb = Gtk::manage (new Gtk::HBox ());
+        if (!previewsToLoad ) {
+            hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
+            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER")+" ("+Glib::ustring::format(fileBrowser->getNumFiltered())+"/"+Glib::ustring::format(previewsLoaded)+")"));
         } else {
-            progressBar->set_fraction (1.0);
-            progressBar->hide ();
+            hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU)));
+            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER")+" [" +Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad*100 )+"%]" ));
+        	filepanel->loadingThumbs("",(double)previewsLoaded / previewsToLoad);
         }
+        if( options.mainNBVertical )
+        	label->set_angle(90);
+        hbb->pack_start (*label);
+        hbb->set_spacing (2);
+        hbb->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
+        hbb->show_all ();
+        nb->set_tab_label(*filepanel,*hbb);
+
     }
 }
 
@@ -432,8 +445,6 @@ void FileCatalog::_previewsFinished () {
 
     redrawAll ();
     previewsToLoad = 0;
-    previewsLoaded = 0;
-    progressBar->hide ();
 
 	if (filterPanel) {
 		filterPanel->set_sensitive (true);
@@ -446,6 +457,9 @@ void FileCatalog::_previewsFinished () {
 	}
  	// restart anything that might have been loaded low quality
  	fileBrowser->refreshQuickThumbImages();
+ 	fileBrowser->applyFilter (getFilter());
+    _refreshProgressBar();
+    filepanel->loadingThumbs(M("PROGRESSBAR_READY"),0);
 }
 
 void FileCatalog::previewsFinished (int dir_id) {
@@ -459,6 +473,7 @@ void FileCatalog::previewsFinished (int dir_id) {
 
     if (!hasValidCurrentEFS) 
         currentEFS = dirEFS;
+
     g_idle_add (prevfinished, this);
 }
 
@@ -860,6 +875,7 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 		}
 
 		fileBrowser->applyFilter (getFilter ());
+		_refreshProgressBar();
 
 		//rearrange panels according to the selected filter
 		removeIfThere (hBox, trashButtonBox);
@@ -896,7 +912,8 @@ BrowserFilter FileCatalog::getFilter () {
 
 void FileCatalog::filterChanged () {
     
-    fileBrowser->applyFilter (getFilter());   
+    fileBrowser->applyFilter (getFilter());
+    _refreshProgressBar();
 }
 
 int FileCatalog::reparseDirectory () {
@@ -1051,6 +1068,7 @@ void FileCatalog::exifFilterChanged () {
 	currentEFS = filterPanel->getFilter ();
     hasValidCurrentEFS = true;
     fileBrowser->applyFilter (getFilter ());
+    _refreshProgressBar();
 }
 
 void FileCatalog::setFilterPanel (FilterPanel* fpanel) { 

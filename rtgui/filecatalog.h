@@ -108,7 +108,6 @@ class FileCatalog : public Gtk::VBox,
 
         Glib::RefPtr<Gio::FileMonitor> dirMonitor;
 
-        Gtk::ProgressBar* progressBar;
         int previewsToLoad;
         int previewsLoaded;
 

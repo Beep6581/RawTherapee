@@ -51,7 +51,7 @@ class EditorPanel : public Gtk::VBox,
                     public rtengine::HistogramListener {
 
     protected:      
-        Gtk::Label *progressLabel;
+        Gtk::ProgressBar  *progressLabel;
         Gtk::ToggleButton* info;
         Gtk::ToggleButton* hidehp;
         Gtk::ToggleButton* tbShowHideSidePanels;
@@ -64,8 +64,6 @@ class EditorPanel : public Gtk::VBox,
         Gtk::HPaned* hpanedl;
         Gtk::HPaned* hpanedr;
         Gtk::HBox* statusBox;
-        Gtk::Image* red;
-        Gtk::Image* green;
         Gtk::Image *iHistoryShow, *iHistoryHide;
         Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
         Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;

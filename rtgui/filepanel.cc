@@ -246,3 +246,10 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
 
     return false;
 }
+
+void FilePanel::loadingThumbs(Glib::ustring str, double rate)
+{
+	if( !str.empty())
+		parent->setProgressStr(str);
+	parent->setProgress( rate );
+}

@@ -77,15 +77,6 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 		dctblock[j] = bbrr[j];
 	}
 
-
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	if (plistener) {
-		plistener->setProgressStr ("Line Denoise...");
-		plistener->setProgress (0.0);
-	}
-	
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	float noisevar=SQR(3*noise*65535); // _noise_ (as a fraction of saturation) is input to the algorithm
 	volatile double progress = 0.0;
 	
@@ -262,9 +253,9 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			{
 				progress=1.0;
 			}
-			if(plistener) plistener->setProgress(progress);
-			
-			//if(plistener) plistener->setProgress(fabs((float)top/height));
+			if(plistener) plistener->setProgress(0.14 +0.02*progress);
+
+
 		}
 	// clean up
 	delete [] cfain;
