@@ -65,7 +65,19 @@ int munmap(void *start, size_t length)
 
 IMFILE* fopen (const char* fname)
 {
-	int fd = ::open(fname,O_RDONLY);
+	int fd=-1;
+#ifdef WIN32
+    // First convert UTF8 to UTF16, then use Windows function to open
+	wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
+    HANDLE hFile = CreateFileW(wFname, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    g_free(wFname);
+
+	// convert back to old file descriptor format
+    if (hFile!=INVALID_HANDLE_VALUE) fd = _open_osfhandle((intptr_t)hFile, 0);
+#else
+    fd = ::open(fname, O_RDONLY);
+#endif
+
 	if ( fd < 0 )
 		return 0;
 
