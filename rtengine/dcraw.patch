@@ -1,5 +1,5 @@
 --- H:/rawtherapee_3.0/rtengine/dcraw.c	Wed Feb 02 23:18:25 2011
-+++ H:/rawtherapee_3.0/rtengine/dcraw.cc	Tue Feb 08 22:50:40 2011
++++ H:/rawtherapee_3.0/rtengine/dcraw.cc	Thu Mar 17 17:39:52 2011
 @@ -1,5 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -234,19 +234,29 @@
  {
    static const uchar xlat[2][256] = {
    { 0xc1,0xbf,0x6d,0x0d,0x59,0xc5,0x13,0x9d,0x83,0x61,0x6b,0x4f,0xc7,0x7f,0x3d,0x3d,
-@@ -4459,11 +4470,11 @@
+@@ -4457,16 +4468,16 @@
+       fread (artist, 64, 1, ifp);
+     if (tag == 0xc && len == 4) {
        cam_mul[0] = getreal(type);
        cam_mul[2] = getreal(type);
      }
-     if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
-       fread (buf97, 1, sizeof buf97, ifp);
+-    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
+-      fread (buf97, 1, sizeof buf97, ifp);
 -      i = (uchar *) memmem (buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-+      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-       if (i < 70 && buf97[i] < 3)
- 	flip = "065"[buf97[i]]-'0';
-     }
+-      if (i < 70 && buf97[i] < 3)
+-	flip = "065"[buf97[i]]-'0';
+-    }
++//    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
++//      fread (buf97, 1, sizeof buf97, ifp);
++//      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
++//      if (i < 70 && buf97[i] < 3)
++//	flip = "065"[buf97[i]]-'0';
++//    }
      if (tag == 0x10 && type == 4)
        unique_id = get4();
+     if (tag == 0x11 && is_raw && !strncmp(make,"NIKON",5)) {
+       fseek (ifp, get4()+base, SEEK_SET);
+       parse_tiff_ifd (base);
 @@ -4842,12 +4853,12 @@
      if (tag == 64020) height = (getint(type)+1) & -2;
      fseek (ifp, save, SEEK_SET);
