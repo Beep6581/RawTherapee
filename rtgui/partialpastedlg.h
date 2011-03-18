@@ -25,36 +25,40 @@
 class PartialPasteDlg : public Gtk::Dialog {
 
     public:
+
+		Gtk::CheckButton* everything;
+
         // main groups:
         Gtk::CheckButton* basic;
-        Gtk::CheckButton* luminance;
+        Gtk::CheckButton* detail;
         Gtk::CheckButton* color;
         Gtk::CheckButton* lens;
         Gtk::CheckButton* composition;
         Gtk::CheckButton* metaicm;
+        Gtk::CheckButton* raw;
 
         // options in basic:
         Gtk::CheckButton* wb;
         Gtk::CheckButton* exposure;
         Gtk::CheckButton* hlrec;
+        Gtk::CheckButton* sh;
+        Gtk::CheckButton* labcurve;
 
-        // options in luminance:
+        // options in detail:
         Gtk::CheckButton* sharpen;
 		Gtk::CheckButton* impden;
         Gtk::CheckButton* lumaden;
-        Gtk::CheckButton* labcurve;
-        Gtk::CheckButton* sh;
-		Gtk::CheckButton* dirpyreq;
 		Gtk::CheckButton* waveq;
+		Gtk::CheckButton* colorden;
+		Gtk::CheckButton* dirpyrden;
+		Gtk::CheckButton* defringe;
+		Gtk::CheckButton* dirpyreq;
 
         // options in color:
-        Gtk::CheckButton* colormixer;
+        Gtk::CheckButton* chmixer;
         Gtk::CheckButton* colorshift;
         Gtk::CheckButton* colorboost;
 		Gtk::CheckButton* hsveq;
-        Gtk::CheckButton* colorden;
-		Gtk::CheckButton* dirpyrden;
-
 
         // options in lens:
         Gtk::CheckButton* distortion;
@@ -66,32 +70,58 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* finerot;
         Gtk::CheckButton* crop;
         Gtk::CheckButton* resize;
+        Gtk::CheckButton* perspective;
+        Gtk::CheckButton* commonTrans;
 
         // options in metaicm:
         Gtk::CheckButton* exifch;
         Gtk::CheckButton* iptc;
         Gtk::CheckButton* icm;
 
-        sigc::connection basicConn, luminanceConn, colorConn, lensConn, compositionConn, metaicmConn;
-        sigc::connection wbConn, exposureConn, hlrecConn;
-        sigc::connection sharpenConn, impdenConn, lumadenConn, labcurveConn, shConn, dirpyreqConn, waveqConn, hsveqConn;
-        sigc::connection colormixerConn, colorshiftConn, colorboostConn, colordenConn, dirpyrdenConn;
-        sigc::connection distortionConn, cacorrConn, vignettingConn;
-        sigc::connection coarserotConn, finerotConn, cropConn, resizeConn;
-        sigc::connection exifchConn, iptcConn, icmConn;
+        // options in raw:
+        Gtk::CheckButton* raw_expos;
+        Gtk::CheckButton* raw_preser;
+        Gtk::CheckButton* raw_ca_autocorrect;
+        Gtk::CheckButton* raw_cared;
+        Gtk::CheckButton* raw_cablue;
+        Gtk::CheckButton* raw_hotdeadpix_filt;
+        Gtk::CheckButton* raw_linenoise;
+        Gtk::CheckButton* raw_greenthresh;
+        Gtk::CheckButton* raw_dmethod;
+        Gtk::CheckButton* raw_ccSteps;
+        Gtk::CheckButton* raw_dcb_iterations;
+        Gtk::CheckButton* raw_dcb_enhance;
+        Gtk::CheckButton* df_file;
+		Gtk::CheckButton* df_AutoSelect;
+		//Gtk::CheckButton* ff_file;
+		//Gtk::CheckButton* ff_AutoSelect;
+		//Gtk::CheckButton* ff_BlurRadius;
+		//Gtk::CheckButton* ff_BlurType;
 
+        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
+
+        sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
+        sigc::connection sharpenConn, impdenConn, lumadenConn, dirpyrdenConn, colordenConn, waveqConn, defringeConn, dirpyreqConn;
+        sigc::connection chmixerConn, colorshiftConn, colorboostConn, hsveqConn;
+        sigc::connection distortionConn, cacorrConn, vignettingConn;
+        sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
+        sigc::connection exifchConn, iptcConn, icmConn;
+        sigc::connection df_fileConn, df_AutoSelectConn;//sigc::connection ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
+        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn;
 
         public:
             PartialPasteDlg ();
 
             void applyPaste (rtengine::procparams::ProcParams* dst, const rtengine::procparams::ProcParams* src);
 
+            void everythingToggled ();
             void basicToggled ();
-            void luminanceToggled ();
+            void detailToggled ();
             void colorToggled ();
             void lensToggled ();
             void compositionToggled ();
             void metaicmToggled ();
+            void rawToggled ();
 };
 
 #endif
