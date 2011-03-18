@@ -109,7 +109,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     mProcessing.lock ();
 
-
     ipf.setScale (scale);
 
     bool highDetailNeeded=false;

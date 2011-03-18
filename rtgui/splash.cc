@@ -18,6 +18,7 @@
  */
 #include <splash.h>
 #include <multilangmgr.h>
+#include <glib/gstdio.h>
 #include <safegtk.h>
 
 extern Glib::ustring argv0;

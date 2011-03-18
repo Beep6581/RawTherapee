@@ -45,9 +45,9 @@ void ParamsEdited::set (bool v) {
 	labCurve.brightness = v;
 	labCurve.contrast   = v;
 	labCurve.saturation = v;
-		labCurve.avoidclip     = v;
-		labCurve.enable_saturationlimiter = v;
-		labCurve.saturationlimit = v;	
+	labCurve.avoidclip     = v;
+	labCurve.enable_saturationlimiter = v;
+	labCurve.saturationlimit = v;	
 	sharpening.enabled   = v;
 	sharpening.radius    = v;
 	sharpening.amount    = v;
