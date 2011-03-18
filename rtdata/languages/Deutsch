@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Feb 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 02.03.2011
+#15 Jan-Mär 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 18.03.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -163,9 +163,9 @@ HISTORY_MSG_101;HSV-Mixer - Farbton
 HISTORY_MSG_102;HSV-Mixer - Sättigung
 HISTORY_MSG_103;HSV-Mixer - Hellwert
 HISTORY_MSG_104;HSV-Mixer
-HISTORY_MSG_105;Defringing
-HISTORY_MSG_106;Defringing Radius
-HISTORY_MSG_107;Defringing Schwellenwert
+HISTORY_MSG_105;Defringe
+HISTORY_MSG_106;Defringe Radius
+HISTORY_MSG_107;Defringe Schwellenwert
 HISTORY_MSG_108;Lichter-Kompression\nSchwellenwert
 HISTORY_MSG_109;Größe ändern\nBegrenzungsrahmen
 HISTORY_MSG_10;Schatten-Kompression
@@ -244,7 +244,7 @@ HISTORY_MSG_61;Drehung
 HISTORY_MSG_62;Verzerrungskorrektur
 HISTORY_MSG_63;Variante gewählt
 HISTORY_MSG_64;Bild beschneiden
-HISTORY_MSG_65;Farbsaum-Entfernung
+HISTORY_MSG_65;Farbsaum entfernen
 HISTORY_MSG_66;Lichter wiederherstellen
 HISTORY_MSG_67;Lichter wiederherstellen\nStärke
 HISTORY_MSG_68;Lichter wiederherstellen\nMethode
@@ -252,7 +252,7 @@ HISTORY_MSG_69;Aktueller Farbraum
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Farbraum für Ausgabe
 HISTORY_MSG_71;Farbraum für Eingabe
-HISTORY_MSG_72;Vignettierungs-Korrektur
+HISTORY_MSG_72;Vignettierungskorrektur
 HISTORY_MSG_73;Kanal-Mixer
 HISTORY_MSG_74;Größe ändern - Maßstab
 HISTORY_MSG_75;Größe ändern - Methode
@@ -389,8 +389,8 @@ MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOGGLE_BEFORE_AFTER;V|N
 MAIN_TOOLTIP_HIDEFP;Unteres Bedienfeld ein-/ausblenden (Verzeichnis- und Datei-Browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (einschließlich der Historie) <b>H</b>         
-MAIN_TOOLTIP_INDCLIPPEDH;Zu helle Bereiche kennzeichnen\n\n(Alternativ kann während der Betätigung eines Schiebereglers die Alt-Taste gedrückt gehalten werden)
-MAIN_TOOLTIP_INDCLIPPEDS;Zu dunkle Bereiche kennzeichnen\n\n(Alternativ kann während der Betätigung eines Schiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten\n\n(Nur Windows: Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten\n\n(Nur Windows: Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
 MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden <b>I</b>
 MAIN_TOOLTIP_SAVE;Bild im Standardverzeichnis speichern
@@ -416,41 +416,68 @@ NAVIGATOR_V_NA;V = k.a.
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = k.a., y = k.a.
 PARTIALPASTE_BASICGROUP;Gruppe Basiseinstellungen
-PARTIALPASTE_CACORRECTION;Farbsaum-Entfernung
-PARTIALPASTE_COARSETRANS;90 Grad Rotieren / Spiegeln
+PARTIALPASTE_CACORRECTION;Farbsaum entfernen
+PARTIALPASTE_CHANNELMIXER;Kanal-Mixer
+PARTIALPASTE_COARSETRANS;Drehen / Spiegeln
 PARTIALPASTE_COLORBOOST;Farbverstärkung
 PARTIALPASTE_COLORDENOISE;Farb-Rauschfilter
 PARTIALPASTE_COLORGROUP;Gruppe Farbeinstellungen
 PARTIALPASTE_COLORMIXER;Kanal-Mixer
 PARTIALPASTE_COLORSHIFT;Farbverschiebung
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-Füllen
 PARTIALPASTE_COMPOSITIONGROUP;Gruppe Gestaltungseinstellungen
 PARTIALPASTE_CROP;Ausschnitt
-PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofiles
-PARTIALPASTE_DISTORTION;Entzerrung
-PARTIALPASTE_EXIFCHANGES;Exif-Daten Änderungen
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Dunkelbild: Automatische Auswahl
+PARTIALPASTE_DARKFRAMEFILE;Dunkelbild: Datei
+PARTIALPASTE_DEFRINGE;Defringe
+PARTIALPASTE_DETAILGROUP;Gruppe Detaileinstellungen
+PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
+PARTIALPASTE_DIRPYRDENOISE;Rauschminderung
+PARTIALPASTE_DIRPYREQUALIZER;Kontrast nach Detailstufen
+PARTIALPASTE_DISTORTION;Verzerrungskorrektur
+PARTIALPASTE_EVERYTHING;Alles
+PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
+PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Lichter wiederherstellen\nSchwellenwert
+PARTIALPASTE_HSVEQUALIZER;HSV-Mixer
 PARTIALPASTE_ICMSETTINGS;ICM-Einstellungen
+PARTIALPASTE_IMPULSEDENOISE;Impulsrauschminderung
 PARTIALPASTE_IPTCINFO;IPTC-Informationen
-PARTIALPASTE_LABCURVE;LAB-Kurve
-PARTIALPASTE_LENSGROUP;Gruppe Farbeinstellungen
+PARTIALPASTE_LABCURVE;LAB-Anpassungen
+PARTIALPASTE_LENSGROUP;Gruppe Objektivkorrekturen
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
 PARTIALPASTE_LUMINANCEGROUP;Gruppe Luminanzeinstellungen
-PARTIALPASTE_METAICMGROUP;Gruppe Einstellungen Metadaten/ICM
+PARTIALPASTE_METAICMGROUP;Gruppe Metadaten / ICM
+PARTIALPASTE_PERSPECTIVE;Perspektive
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Vorverarbeitung: Grün-Ausgleich
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Vorverarbeitung: Hot/Dead-Pixel-Filter anwenden
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Vorverarbeitung: Zeilenrauschfilter
+PARTIALPASTE_RAWCACORR_AUTO;Chromatische Aberration: Automatische Korrektur
+PARTIALPASTE_RAWCACORR_CABLUE;Chromatische Aberration: Blau
+PARTIALPASTE_RAWCACORR_CARED;Chromatische Aberration: Rot
+PARTIALPASTE_RAWEXPOS_LINEAR;Belichtung: Linearer Korrekturfaktor
+PARTIALPASTE_RAWEXPOS_PRESER;Belichtung: Lichter bewahrende Korrektur (EV)
+PARTIALPASTE_RAWGROUP;Gruppe RAW
+PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verfeinerungsschritt durchführen
+PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
+PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
+PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung Stufen
 PARTIALPASTE_RESIZE;Größe ändern
-PARTIALPASTE_ROTATION;Drehen
+PARTIALPASTE_ROTATION;Fein-Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENING;Schärfen
-PARTIALPASTE_VIGNETTING;Korrektur Vignettierung
+PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
+PARTIALPASTE_WAVELETEQUALIZER;Wavelet-Mixer
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
 POPUPBUTTON_SELECTOPTIONHINT;Änderung mittels rechter Maustaste
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
-PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche kennzeichnen
+PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche anzeigen
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Voransichten löschen
@@ -465,7 +492,7 @@ PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
-PREFERENCES_CUTOVERLAYBRUSH;Abdeckfarbe für Ausschnitt
+PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transp. für Ausschnittsmaske
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
@@ -528,7 +555,7 @@ PREFERENCES_SELECTLANG;Sprache
 PREFERENCES_SELECTMONITORPROFDLG;Wähle ICC-Profil für den Monitor...
 PREFERENCES_SELECTTHEME;Oberflächendesign
 PREFERENCES_SET;SETZEN
-PREFERENCES_SHOWBASICEXIF;Grundlegende Exif-Informationen anzeigen
+PREFERENCES_SHOWBASICEXIF;Grundlegende Exif-Daten anzeigen
 PREFERENCES_SHOWDATETIME;Datum und Uhrzeit anzeigen
 PREFERENCES_SHOWONLYRAW;Nur RAW-Dateien anzeigen
 PREFERENCES_SHTHRESHOLD;Schwellenwert - zu dunkel
@@ -541,6 +568,7 @@ PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_OUTPUT;Ausgabe
 PREFERENCES_THUMBSIZE;Größe der Vorschau
+PREFERENCES_TUNNELMETADATA;IPTC/XMP unverändert in Ausgabedatei kopieren (falls Tagging mittels anderer Software)
 PREFERENCES_USESYSTEMTHEME;Systemoberfläche
 PREFERENCES_WORKFLOW;Workflow
 PROFILEPANEL_FILEDLGFILTERANY;Alle Dateien
@@ -594,7 +622,7 @@ TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Leitlinie wählen <b>S</b>
 TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen <b>W</b>
 TP_CACORRECTION_BLUE;Blau
-TP_CACORRECTION_LABEL;Farbsaum-Entfernung
+TP_CACORRECTION_LABEL;Farbsaum entfernen
 TP_CACORRECTION_RED;Rot
 TP_CHMIXER_BLUE;Blau
 TP_CHMIXER_GREEN;Grün
@@ -658,7 +686,7 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Stärke
-TP_DISTORTION_LABEL;Entzerrung
+TP_DISTORTION_LABEL;Verzerrungskorrektur
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;Feinstes
@@ -736,7 +764,7 @@ TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead-Pixel-Filter anwenden
 TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
 TP_PREPROCESS_NO_FOUND;Keins gefunden
-TP_RAWCACORR_AUTO;Autom. Korrektur Chrom. Aberration
+TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
 TP_RAWEXPOS_LINEAR;Linearer Korrekturfaktor
@@ -768,7 +796,7 @@ TP_RESIZE_SPECIFY;Eingabe:
 TP_RESIZE_W;B:
 TP_RESIZE_WIDTH;Breite
 TP_ROTATE_DEGREE;Grad
-TP_ROTATE_LABEL;Drehen
+TP_ROTATE_LABEL;Fein-Rotation
 TP_ROTATE_SELECTLINE;Leitlinie wählen
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Lichter
 TP_SHADOWSHLIGHTS_HLTONALW;Farbtonbereich für Lichter
@@ -796,7 +824,7 @@ TP_VIGNETTING_AMOUNT;Stärke
 TP_VIGNETTING_CENTER;Zentrum
 TP_VIGNETTING_CENTER_X;Zentrum X
 TP_VIGNETTING_CENTER_Y;Zentrum Y
-TP_VIGNETTING_LABEL;Vignettierungs-Korrektur
+TP_VIGNETTING_LABEL;Vignettierungskorrektur
 TP_VIGNETTING_RADIUS;Radius
 TP_VIGNETTING_STRENGTH;Stärke-Faktor
 TP_WBALANCE_AUTO;Automatisch
