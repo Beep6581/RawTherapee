@@ -515,12 +515,10 @@ PREFERENCES_DIRLAST;Última carpeta visitada
 PREFERENCES_DIROTHER;Otro
 PREFERENCES_DIRSELECTDLG;Seleccionar carpeta de imágenes en el arranque...
 PREFERENCES_DIRSOFTWARE;Carpeta de instalación
-PREFERENCES_DMETHOD;Método
 PREFERENCES_EDITORCMDLINE;Otro mandato
 PREFERENCES_EDITORLAYOUT;Aspecto del editor
 PREFERENCES_EXPOS;Exposición antes de interpolación:\ncorrección (lineal)
 PREFERENCES_EXTERNALEDITOR;Editor externo
-PREFERENCES_FALSECOLOR;Pasos de supresión de colores falsos
 PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos
 PREFERENCES_FILEFORMAT;Formato de archivos
 PREFERENCES_FLATFIELD;Campo plano
@@ -800,7 +798,7 @@ TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspectiva
 TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PREPROCESS_DARKFRAME;Imagen en oscuridad
-TP_PREPROCESS_DFAUTOSELECT;Selección automática
+TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
 TP_PREPROCESS_FLATFIELDAUTOSELECT;Selección automática de campo plano
 TP_PREPROCESS_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 TP_PREPROCESS_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
@@ -937,6 +935,10 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
 !PARTIALPASTE_EVERYTHING;Everything
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !TP_FLATFIELD_BT_AREA;Area
@@ -944,3 +946,4 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_EXPOSCORR_LABEL;Exposure

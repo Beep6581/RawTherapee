@@ -911,3 +911,45 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
+!GENERAL_FILE;File
+!GENERAL_NONE;None
+!HISTORY_MSG_109;Resize bounding box
+!HISTORY_MSG_110;Resizing applies to
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_DARKFRAME_AUTOSELECT;Auto selection
+!TP_DARKFRAME_LABEL;Dark Frame
+!TP_EXPOSCORR_LABEL;Exposure
+!TP_PREPROCESS_GREENEQUIL;Green equilibration
+!TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!TP_PREPROCESS_LABEL;Preprocessing
+!TP_PREPROCESS_LINEDENOISE;Line noise filter
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWCACORR_AUTO;Auto correction
+!TP_RAWCACORR_CABLUE;Blue
+!TP_RAWCACORR_CARED;Red
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD;Method
+!TP_RAW_FALSECOLOR;False color suppression steps
+!TP_RAW_LABEL;Demosaicing
+!TP_RESIZE_APPLIESTO;Applies to:
+!TP_RESIZE_CROPPEDAREA;Cropped area
+!TP_RESIZE_FITBOX;Bounding box
+!TP_RESIZE_FULLIMAGE;Full image

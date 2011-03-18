@@ -4470,12 +4470,12 @@ void CLASS parse_makernote (int base, int uptag)
       cam_mul[0] = getreal(type);
       cam_mul[2] = getreal(type);
     }
-    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
-      fread (buf97, 1, sizeof buf97, ifp);
-      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-      if (i < 70 && buf97[i] < 3)
-	flip = "065"[buf97[i]]-'0';
-    }
+//    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
+//      fread (buf97, 1, sizeof buf97, ifp);
+//      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
+//      if (i < 70 && buf97[i] < 3)
+//	flip = "065"[buf97[i]]-'0';
+//    }
     if (tag == 0x10 && type == 4)
       unique_id = get4();
     if (tag == 0x11 && is_raw && !strncmp(make,"NIKON",5)) {
@@ -4947,7 +4947,7 @@ int CLASS parse_tiff_ifd (int base)
       case 513:				/* JpegIFOffset */
       case 61447:
 	tiff_ifd[ifd].offset = get4()+base;
-	if (!tiff_ifd[ifd].bps) {
+/*RT*/if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset>=0) {
 	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
 	  if (ljpeg_start (&jh, 1)) {
 	    tiff_ifd[ifd].comp    = 6;

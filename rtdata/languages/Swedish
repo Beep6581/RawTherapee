@@ -900,3 +900,22 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
+!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
+!TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_DARKFRAME_LABEL;Dark Frame
+!TP_EXPOSCORR_LABEL;Exposure
+!TP_PREPROCESS_NO_FOUND;None found
+!TP_RAWEXPOS_LINEAR;Linear corr. factor
+!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)

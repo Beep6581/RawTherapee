@@ -422,7 +422,6 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
 int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 {
 	volatile int counter=0;
-	
 	unsigned short (*cfablur);
 	cfablur = (unsigned short (*)) calloc (H*W, sizeof *cfablur);
 	
@@ -445,12 +444,10 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 		}
 		
 		//TODO: counter needs a openmp fix.
+
 #pragma omp  for
 		//cfa pixel heat/death evaluation
 		for (int rr=0; rr < H; rr++) {
-			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			
 			for (int cc=0; cc < W; cc++) {
 				//rawData[rr][cc] = cfablur[rr*W+cc];//diagnostic
 				
