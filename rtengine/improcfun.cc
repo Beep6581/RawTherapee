@@ -487,7 +487,7 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, float* a
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
-    double* cmultiplier = new double [181021];
+    /*double* cmultiplier = new double [181021];
 
     double boost_a = (params->colorBoost.amount + 100.0) / 100.0;
     double boost_b = (params->colorBoost.amount + 100.0) / 100.0;
@@ -561,7 +561,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
             lnew->b[i][j] = CLIPTO(nnb,-32000,32000);
         }
 
-    delete [] cmultiplier;
+    delete [] cmultiplier;*/
 }
 	
 	void ImProcFunctions::impulsedenoise (LabImage* lab) {
@@ -597,15 +597,17 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
 void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
 
-    if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
+    /*if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
-    	bilateral<unsigned short, unsigned int> (lab->L, lab->L, (unsigned short**)b2, lab->W, lab->H, params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
+    	bilateral<unsigned short, unsigned int> (lab->L, lab->L, (unsigned short**)b2, lab->W, lab->H, \
+												params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
+	 */
 }
 
 void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
-
+	/*
   if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
 #ifdef _OPENMP
 #pragma omp parallel
@@ -620,6 +622,7 @@ void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
       delete buffer;
   }
   }
+	*/
 }
 
 void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
