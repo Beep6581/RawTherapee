@@ -134,13 +134,13 @@ BatchQueuePanel::BatchQueuePanel () {
     zoomInButton->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*batchQueue, &BatchQueue::zoomIn));    
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
-    zoomInButton->set_tooltip_text (M("FILEBROWSER_ZOOMINHINT"));
+    zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = Gtk::manage (new Gtk::Button ());
     zoomOutButton->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*batchQueue, &BatchQueue::zoomOut));    
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
-    zoomOutButton->set_tooltip_text (M("FILEBROWSER_ZOOMOUTHINT"));
+    zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
     zoomBox->pack_end (*zoomOutButton, Gtk::PACK_SHRINK);   
     bottomBox->pack_end (*zoomBox, Gtk::PACK_SHRINK);   
 
