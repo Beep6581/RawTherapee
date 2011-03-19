@@ -5,6 +5,10 @@
 #03 IMPORTANTE: facci sapere sul forum di rawtherapee nella sezione del locale italiano se ci sono errori, qui http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
 #04 IMPORTANT: post on the italian locale in the rawtherapee if are any errors, here http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
 #05 01-11-2008
+ABOUT_TAB_BUILD;Versione
+ABOUT_TAB_CREDITS;Autori
+ABOUT_TAB_LICENSE;Licenza
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Valori originali
 BATCHQUEUE_AUTOSTART;Sviluppo immediato
 BATCH_PROCESSING;Elaborazione batch
@@ -118,11 +122,13 @@ GENERAL_DISABLE;Disabilita
 GENERAL_DISABLED;Disabilitato
 GENERAL_ENABLE;Abilita
 GENERAL_ENABLED;Abilitato
+GENERAL_FILE;File
 GENERAL_HIGH_QUALITY;Alta qualità
 GENERAL_LANDSCAPE;Panorama
 GENERAL_LOAD;Carica
 GENERAL_NA;n/d
 GENERAL_NO;No
+GENERAL_NONE;Nessuno
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Ritratto
 GENERAL_SAVE;Salva
@@ -150,6 +156,24 @@ HISTORY_MSG_104;Equalizzatore HSV
 HISTORY_MSG_105;Rimozione margini colorati
 HISTORY_MSG_106;Raggio rimozione margini
 HISTORY_MSG_107;Soglia rimozione margini
+HISTORY_MSG_108;Soglia compressione alteluci
+HISTORY_MSG_109;Ridimensiona contorno
+HISTORY_MSG_110;Ridimensiona applica a
+HISTORY_MSG_111;Evita tosaggio colore
+HISTORY_MSG_112;Limite saturazione
+HISTORY_MSG_113;Limite saturazione
+HISTORY_MSG_114;DCB Iterations
+HISTORY_MSG_115;Iteratzioni rid. falsi colori
+HISTORY_MSG_116;Miglioramento DCB
+HISTORY_MSG_117;CA Rosso
+HISTORY_MSG_118;CA Blu
+HISTORY_MSG_119;Riduzione rumore linea
+HISTORY_MSG_120;Soglia eq. verde
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Dark Frame automatico
+HISTORY_MSG_123;Dark Frame File
+HISTORY_MSG_124;Esposizione RAW guadagno
+HISTORY_MSG_125;Esposizione RAW margine
 HISTORY_MSG_10;Compressione ombre
 HISTORY_MSG_11;Curva di tono
 HISTORY_MSG_12;Esposizione automatica
@@ -325,6 +349,7 @@ MAIN_BUTTON_SENDTOEDITOR;Passa al ritocco
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Modifica l'immagine corrente in un editor esterno <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Esci da schermo intero
 MAIN_FRAME_BATCHQUEUE;Coda di sviluppo
+MAIN_FRAME_EDITOR;Foto
 MAIN_FRAME_FILEBROWSER;File Browser 
 MAIN_FRAME_PLACES;Posizioni
 MAIN_FRAME_PLACES_ADD;Aggiungi
@@ -386,20 +411,32 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 PARTIALPASTE_BASICGROUP;Parametri di base
 PARTIALPASTE_CACORRECTION;Correzione AC
+PARTIALPASTE_CHANNELMIXER;Miscelatore canali colore
 PARTIALPASTE_COARSETRANS;Rotazione di 90° / riflessione
 PARTIALPASTE_COLORBOOST;Potenziamento colore
 PARTIALPASTE_COLORDENOISE;Riduzione rumore di crominanza
 PARTIALPASTE_COLORGROUP;Parametri relativi al colore
 PARTIALPASTE_COLORMIXER;Miscelatore colore
 PARTIALPASTE_COLORSHIFT;Spostamento colore
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Riempimento automatico
 PARTIALPASTE_COMPOSITIONGROUP;Parametri di composizione
 PARTIALPASTE_CROP;Ritaglio
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame selezione automatica
+PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
+PARTIALPASTE_DEFRINGE;Rimozione margini colorati
+PARTIALPASTE_DETAILGROUP;Parametri di dettaglio
 PARTIALPASTE_DIALOGLABEL;Incolla una porzione del profilo
+PARTIALPASTE_DIRPYRDENOISE;Riduzione rumore
+PARTIALPASTE_DIRPYREQUALIZER;Contrasto per livello di dettaglio
 PARTIALPASTE_DISTORTION;Correzione distorsione
+PARTIALPASTE_EVERYTHING;Tutto
 PARTIALPASTE_EXIFCHANGES;Cambiamenti nei dati exif
 PARTIALPASTE_EXPOSURE;Esposizione
 PARTIALPASTE_HLRECOVERY;Recupero alteluci
+PARTIALPASTE_HLRECONSTRUCTION;Recupero alteluci
+PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMSETTINGS;Parametri ICM
+PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore puntuale
 PARTIALPASTE_IPTCINFO;Informazioni IPTC
 PARTIALPASTE_LABCURVE;Curva Lab
 PARTIALPASTE_LENSGROUP;Parametri correlati all'ottica
@@ -407,6 +444,20 @@ PARTIALPASTE_LUMACURVE;Curva di luminanza
 PARTIALPASTE_LUMADENOISE;Riduzione rumore di luminanza
 PARTIALPASTE_LUMINANCEGROUP;Parametri riguardanti la luminanza
 PARTIALPASTE_METAICMGROUP;Parametri di Metadati/ICM
+PARTIALPASTE_PERSPECTIVE;Prospettiva
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibrazione del verde
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/spenti
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro rumore di linea
+PARTIALPASTE_RAWCACORR_AUTO;CA correzione automatica
+PARTIALPASTE_RAWCACORR_CABLUE;CA Blu
+PARTIALPASTE_RAWCACORR_CARED;CA Rosso
+PARTIALPASTE_RAWEXPOS_LINEAR;Esposizione guadagno lineare
+PARTIALPASTE_RAWEXPOS_PRESER;Esposizione margine alteluci (EV)
+PARTIALPASTE_RAWGROUP;Parametri RAW
+PARTIALPASTE_RAW_DCBENHANCE;Applica miglioramento DCB 
+PARTIALPASTE_RAW_DCBITERATIONS;Numero iterazioni DCB
+PARTIALPASTE_RAW_DMETHOD;Metodo di demosaicizzazione
+PARTIALPASTE_RAW_FALSECOLOR;Iterazioni per soppressione falsi colori
 PARTIALPASTE_RESIZE;Ridimensionamento
 PARTIALPASTE_ROTATION;Rotazione
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombre/Alteluci
@@ -438,6 +489,9 @@ PREFERENCES_CLIPPINGIND;Indicazione di tosaggio
 PREFERENCES_CMETRICINTENT;Intento colorimetrico
 PREFERENCES_CUTOVERLAYBRUSH;Pennello copertura ritaglio
 PREFERENCES_DARKFRAME;Dark frame
+PREFERENCES_DARKFRAMEFOUND;Trovati
+PREFERENCES_DARKFRAMESHOTS;foto
+PREFERENCES_DARKFRAMETEMPLATES;gruppi
 PREFERENCES_DATEFORMAT;Formato
 PREFERENCES_DATEFORMATFRAME;Formato data
 PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%y</b><i> : anno</i>\n<b>%m</b><i> : mese</i>\n<b>%d</b><i> : giorno</i>\n<i>\nPer esempio, il formato italiano per la data è:</i>\n<b>%d/%m/%y</b>
@@ -502,6 +556,7 @@ PREFERENCES_SHOWDATETIME;Mostra data e ora
 PREFERENCES_SHOWONLYRAW;Mostra solo file RAW
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
 PREFERENCES_SINGLETAB;Modalità tab singolo
+PREFERENCES_SINGLETABVERTAB;Modalità tab singolo, linguette verticali
 PREFERENCES_STARTUPIMDIR;Cartella delle immagini all'avvio
 PREFERENCES_TAB_BROWSER;Navigatore di file
 PREFERENCES_TAB_COLORMGR;Gestione colore
@@ -509,6 +564,7 @@ PREFERENCES_TAB_GENERAL;Generale
 PREFERENCES_TAB_IMPROC;Elaborazione immagine
 PREFERENCES_TAB_OUTPUT;Opzioni di salvataggio
 PREFERENCES_THUMBSIZE;Dimensione miniature
+PREFERENCES_TUNNELMETADATA;Copia IPTC/XMP nel file di output
 PREFERENCES_USESYSTEMTHEME;Usa tema del sistema
 PREFERENCES_WORKFLOW;Flusso di lavoro
 PROFILEPANEL_FILEDLGFILTERANY;Qualsiasi file
@@ -568,6 +624,7 @@ TP_CHMIXER_BLUE;Blu
 TP_CHMIXER_GREEN;Verde
 TP_CHMIXER_LABEL;Miscelatore canali
 TP_CHMIXER_RED;Rosso
+TP_CHROMATABERR_LABEL;Aberrazione cromatica
 TP_COARSETRAF_DEGREE;Angolo:
 TP_COARSETRAF_TOOLTIP_HFLIP;Rifletti orizzontalmente
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Ruota a sinistra
@@ -593,6 +650,7 @@ TP_COLORSHIFT_LABEL;Spostamento colore
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Rapporto fisso:
 TP_CROP_GTDIAGONALS;Regola delle diagonali
+TP_CROP_GTGRID;Griglia
 TP_CROP_GTHARMMEANS1;Media armonica 1
 TP_CROP_GTHARMMEANS2;Media armonica 2
 TP_CROP_GTHARMMEANS3;Media armonica 3
@@ -607,6 +665,7 @@ TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Selezione automatica
+TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Rimozione margini colorati
 TP_DEFRINGE_RADIUS;Raggio
 TP_DEFRINGE_THRESHOLD;Soglia
@@ -630,11 +689,13 @@ TP_EQUALIZER_FINEST;Il più fino
 TP_EQUALIZER_LABEL;Equalizzatore Wavelet
 TP_EQUALIZER_LARGEST;Il più grossolano
 TP_EQUALIZER_NEUTRAL;Neutro
+TP_EXPOSCORR_LABEL;Esposizione RAW
 TP_EXPOSURE_AUTOLEVELS;Livelli automatici
 TP_EXPOSURE_BLACKLEVEL;Nero
 TP_EXPOSURE_BRIGHTNESS;Luminosità
 TP_EXPOSURE_CLIP;Tosaggio
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compressione alteluci
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Soglia compressione alteluci
 TP_EXPOSURE_COMPRSHADOWS;Compressione ombre
 TP_EXPOSURE_CONTRAST;Contrasto
 TP_EXPOSURE_CURVEEDITOR;Curva di tono
@@ -677,10 +738,13 @@ TP_ICM_SAVEREFERENCE;Salva immagine di riferimento per la profilazione
 TP_ICM_WORKINGPROFILE;Profilo di lavoro
 TP_IMPULSEDENOISE_LABEL;Riduzione rumore puntuale
 TP_IMPULSEDENOISE_THRESH;Soglia
+TP_LABCURVE_AVOIDCOLORCLIP;Evita tosaggio colore
 TP_LABCURVE_BRIGHTNESS;Luminosità
 TP_LABCURVE_CONTRAST;Contrasto
 TP_LABCURVE_CURVEEDITOR;Curva di luminanza
+TP_LABCURVE_ENABLESATLIMITER;Abilita limite saturazione
 TP_LABCURVE_LABEL;Curve Lab
+TP_LABCURVE_SATLIMIT;Limite saturazione
 TP_LABCURVE_SATURATION;Saturazione
 TP_LENSGEOM_AUTOCROP;Crop automatico
 TP_LENSGEOM_FILL;Completamento automatico
@@ -699,23 +763,29 @@ TP_PERSPECTIVE_HORIZONTAL;Orizzontale
 TP_PERSPECTIVE_LABEL;Prospettiva
 TP_PERSPECTIVE_VERTICAL;Verticale
 TP_PREPROCESS_GREENEQUIL;Equilibrazione del verde
-TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/morti
+TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/spenti
 TP_PREPROCESS_LABEL;Pre-elaborazione
 TP_PREPROCESS_LINEDENOISE;Filtro rumore di linea
 TP_RAWCACORR_AUTO;Correzione AC automatica
 TP_RAWCACORR_CABLUE;Blu
 TP_RAWCACORR_CARED;Rossa
+TP_RAWEXPOS_LINEAR;Guadagno lineare
+TP_RAWEXPOS_PRESER;Margine alte luci (EV)
 TP_RAW_DCBENHANCE;Applicare passi di miglioramento DCB
 TP_RAW_DCBITERATIONS;Numbero di iterazioni DCB
 TP_RAW_DMETHOD;Metodo
 TP_RAW_FALSECOLOR;Iterazioni per la soppressione dei falsi colori
 TP_RAW_LABEL;Demosaicizzazione
+TP_RESIZE_APPLIESTO;Applica a:
 TP_RESIZE_BICUBIC;Bicubico
 TP_RESIZE_BICUBICSF;Bicubico (più sfumato)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)
 TP_RESIZE_BILINEAR;Bilineare
+TP_RESIZE_CROPPEDAREA;Ritaglio
 TP_RESIZE_DOWNSCALEB;Riduci (migliore)
 TP_RESIZE_DOWNSCALEF;Riduci (più veloce)
+TP_RESIZE_FITBOX;Altezza e larghezza
+TP_RESIZE_FULLIMAGE;Immagine intera
 TP_RESIZE_FULLSIZE;Dimensione dell'intera immagine:
 TP_RESIZE_H;A:
 TP_RESIZE_HEIGHT;Altezza
@@ -788,79 +858,3 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!ABOUT_TAB_BUILD;Version
-!ABOUT_TAB_CREDITS;Credits
-!ABOUT_TAB_LICENSE;License
-!ABOUT_TAB_SPLASH;Splash
-!GENERAL_FILE;File
-!GENERAL_NONE;None
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
-!HISTORY_MSG_114;DCB Iterations
-!HISTORY_MSG_115;False color iterations
-!HISTORY_MSG_116;Enhanced DCB
-!HISTORY_MSG_117;Red CA correction
-!HISTORY_MSG_118;Blue CA correction
-!HISTORY_MSG_119;Line denoise
-!HISTORY_MSG_120;Green equil. threshold
-!HISTORY_MSG_121;Auto CA
-!HISTORY_MSG_122;Auto Dark Frame
-!HISTORY_MSG_123;Dark Frame File
-!HISTORY_MSG_124;Linear exp. correction
-!HISTORY_MSG_125;Expo. correction preserving HL
-!MAIN_FRAME_EDITOR;Editor
-!PARTIALPASTE_CHANNELMIXER;Channel mixer
-!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
-!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
-!PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
-!PARTIALPASTE_DEFRINGE;Defringe
-!PARTIALPASTE_DETAILGROUP;Detail settings
-!PARTIALPASTE_DIRPYRDENOISE;Noise reduction
-!PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
-!PARTIALPASTE_EVERYTHING;Everything
-!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
-!PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
-!PARTIALPASTE_PERSPECTIVE;Perspective
-!PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
-!PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
-!PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
-!PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
-!PARTIALPASTE_RAWGROUP;Raw settings
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PREFERENCES_DARKFRAMEFOUND;Found
-!PREFERENCES_DARKFRAMESHOTS;shots
-!PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_CROP_GTGRID;Grid
-!TP_DARKFRAME_LABEL;Dark Frame
-!TP_EXPOSCORR_LABEL;Exposure
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
-!TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_PREPROCESS_NO_FOUND;None found
-!TP_RAWEXPOS_LINEAR;Linear corr. factor
-!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
