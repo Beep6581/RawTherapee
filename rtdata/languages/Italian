@@ -438,7 +438,8 @@ PREFERENCES_CLIPPINGIND;Indicazione di tosaggio
 PREFERENCES_CMETRICINTENT;Intento colorimetrico
 PREFERENCES_CUTOVERLAYBRUSH;Pennello copertura ritaglio
 PREFERENCES_DARKFRAME;Dark frame
-PREFERENCES_DATEFORMAT;Formato data
+PREFERENCES_DATEFORMAT;Formato
+PREFERENCES_DATEFORMATFRAME;Formato data
 PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%y</b><i> : anno</i>\n<b>%m</b><i> : mese</i>\n<b>%d</b><i> : giorno</i>\n<i>\nPer esempio, il formato italiano per la data è:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DEFAULTLANG;Lingua predefinita
 PREFERENCES_DEFAULTTHEME;Aspetto ordinario
