@@ -133,6 +133,7 @@ class Preferences : public Gtk::Dialog {
     
   public:
          Preferences (RTWindow *rtwindow);
+         ~Preferences ();
     
     void savePressed ();
     void loadPressed ();

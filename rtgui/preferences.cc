@@ -36,6 +36,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 
     // Do not increase height, since it's not visible on e.g. smaller netbook screens
     set_size_request (650, 600);
+    set_default_size (options.preferencesWidth, options.preferencesHeight);
     set_border_width (4);
 
     Gtk::VBox* mainvb = get_vbox ();
@@ -86,6 +87,13 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 
     show_all_children ();
     set_modal (true);
+}
+
+
+Preferences::~Preferences () {
+
+    options.preferencesWidth = get_width();
+    options.preferencesHeight = get_height();
 }
 
 Gtk::Widget* Preferences::getBatchProcPanel () {
