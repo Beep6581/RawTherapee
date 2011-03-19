@@ -418,6 +418,8 @@ Gtk::Widget* Preferences::getGeneralPanel () {
   
 //-----
 
+    Gtk::HBox* hbcd = new Gtk::HBox ();
+
     Gtk::Frame* frl = new Gtk::Frame (M("PREFERENCES_CLIPPINGIND"));
     blinkClipped = new Gtk::CheckButton (M("PREFERENCES_BLINKCLIPPED"));
     Gtk::VBox* vbrl = new Gtk::VBox ();
@@ -431,7 +433,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hlThresh->set_increments (1, 10);
     hlThresh->set_range (0, 255);
     vbhl->pack_start (*hll, Gtk::PACK_SHRINK, 8);
-    vbhl->pack_start (*hlThresh, Gtk::PACK_SHRINK, 8);
+    vbhl->pack_end (*hlThresh, Gtk::PACK_SHRINK, 8);
 
     vbrl->pack_start (*vbhl, Gtk::PACK_SHRINK, 4);
 
@@ -443,14 +445,14 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     shThresh->set_increments (1, 10);
     shThresh->set_range (0, 255);
     vbsh->pack_start (*shl, Gtk::PACK_SHRINK, 8);
-    vbsh->pack_start (*shThresh, Gtk::PACK_SHRINK, 8);
+    vbsh->pack_end (*shThresh, Gtk::PACK_SHRINK, 8);
     vbrl->pack_start (*vbsh, Gtk::PACK_SHRINK, 4);
 
     frl->add (*vbrl);  
-    mvbsd->pack_start (*frl, Gtk::PACK_SHRINK, 4);
+    hbcd->pack_start (*frl, true, true, 0);
 
 //-----
-    Gtk::Frame* fdf = new Gtk::Frame (M("PREFERENCES_DATEFORMAT"));
+    Gtk::Frame* fdf = new Gtk::Frame (M("PREFERENCES_DATEFORMATFRAME"));
 
     Gtk::HBox* hb6 = new Gtk::HBox ();
     Gtk::VBox* dfvb = new Gtk::VBox ();
@@ -464,7 +466,8 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     fdf->add (*dfvb);
     dfvb->set_border_width (4);
 
-    mvbsd->pack_start (*fdf, Gtk::PACK_SHRINK, 4);
+    hbcd->pack_start (*fdf, true, true, 0);
+    mvbsd->pack_start (*hbcd, Gtk::PACK_SHRINK, 4);
 
   //-----
     Gtk::Frame* fdg = new Gtk::Frame (M("PREFERENCES_EXTERNALEDITOR"));
