@@ -1,11 +1,11 @@
-
 #00 Czech
 #01 20.1.2008: translated by absolution
 #02 21.2.2008: updated by mkyral (typos and some missing strings)
 #03 24.4.2008: updated by mkyral (for version 2.4m1)
 #04 28.10.2008: updated by mkyral (for version 2.4 beta1)
 #05 25.11.2010: updated by mkyral (for version 3.0)
-#06 06.03.2011:  updated by mkyral (current default branch)
+#06 06.03.2011: updated by mkyral (default branch)
+#07 20.03.2011: updated by mkyral (default branch)
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -109,7 +109,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Nastavení
 FILEBROWSER_PROCESSINGSETTINGSHINT;Nastavení formátu souboru a výstupní složky
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
 FILEBROWSER_RENAMEDLGMSG;Přejmenovat soubor "%1" na:
-FILEBROWSER_SELECTDARKFRAME;Výběr tmavého snímeku...
+FILEBROWSER_SELECTDARKFRAME;Výběr tmavého snímku...
 FILEBROWSER_SELECTFLATFIELD;Výběr Flat-Field...
 FILEBROWSER_SHOWDIRHINT;Ukázat všechny obrázky ve složce <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Zobrazit EXIF informace <b>i</b>
@@ -440,15 +440,20 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Základní nastavení
 PARTIALPASTE_CACORRECTION;Korekce C/A
+PARTIALPASTE_CHANNELMIXER;Míchání kanálů
+PARTIALPASTE_COARSETRANS;Rotace o 90 stupňů / překlopení
 PARTIALPASTE_COLORBOOST;Posílení barev
 PARTIALPASTE_COLORDENOISE;Odstranění barevného šumu
 PARTIALPASTE_COLORGROUP;Nastavení barev
-PARTIALPASTE_COLORMIXER;Mixér barev
+PARTIALPASTE_COLORMIXER;Míchání barev
 PARTIALPASTE_COLORSHIFT;Posun barev
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Automatické vyplnění
 PARTIALPASTE_COMPOSITIONGROUP;Nastavení kompozice
 PARTIALPASTE_CROP;Ořez
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatický výběr tmavých snímků
 PARTIALPASTE_DARKFRAMEFILE;Soubor tmavého snímku
+PARTIALPASTE_DEFRINGE;Odstranění lemu
+PARTIALPASTE_DETAILGROUP;Nastavení detailů
 PARTIALPASTE_DIALOGLABEL;Nastavení profilu částečného vložení
 PARTIALPASTE_DIRPYRDENOISE;Redukce šumu
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast dle detailu úrovní
@@ -460,6 +465,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;FF Automatický výběr
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF Poloměr rozostření
 PARTIALPASTE_FLATFIELDBLURTYPE;FF Typ rozostření
 PARTIALPASTE_FLATFIELDFILE;Flat-Field (FF) Soubor
+PARTIALPASTE_HLRECONSTRUCTION;Rekonstrukce světel 
 PARTIALPASTE_HLRECOVERY;Obnovení světel
 PARTIALPASTE_HLRECOVERYAMOUNT;Míra obnovení světel
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Práh obnovení světel
@@ -467,12 +473,25 @@ PARTIALPASTE_HSVEQUALIZER;HSV korekce
 PARTIALPASTE_ICMSETTINGS;Nastavení ICM
 PARTIALPASTE_IMPULSEDENOISE;Redukce impulzního šumu
 PARTIALPASTE_IPTCINFO;IPTC info
-PARTIALPASTE_LABCURVE;Lab křivka
+PARTIALPASTE_LABCURVE;Úprava LAB křivek
 PARTIALPASTE_LENSGROUP;Nastavení objektivu
 PARTIALPASTE_LUMADENOISE;Redukce šumu v jasech
 PARTIALPASTE_LUMINANCEGROUP;Nastavení jasu
 PARTIALPASTE_METAICMGROUP;Nastavení metadat a ICM
+PARTIALPASTE_PERSPECTIVE;Perspektiva
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Vyrovnání zelené
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtrovat linkové rušení
+PARTIALPASTE_RAWCACORR_AUTO;Automatická korekce CA
+PARTIALPASTE_RAWCACORR_CABLUE;Chromatická aberace - modrá
+PARTIALPASTE_RAWCACORR_CARED;Chromatická aberace - červená
+PARTIALPASTE_RAWEXPOS_LINEAR;Faktor lineární korekce expozice
+PARTIALPASTE_RAWEXPOS_PRESER;Korekce zachování jasů (EV) expozice
 PARTIALPASTE_RAWGROUP;Nastavení Raw
+PARTIALPASTE_RAW_DCBENHANCE;Aplikovat kroky rozšiřeného DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Počet kroků DCB
+PARTIALPASTE_RAW_DMETHOD;Metoda demozajkování
+PARTIALPASTE_RAW_FALSECOLOR;Kroky potlačení falešných barev demozajkování
 PARTIALPASTE_RESIZE;Změna velikosti
 PARTIALPASTE_ROTATION;Otočení
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Stíny/Světla
@@ -483,6 +502,7 @@ PARTIALPASTE_WHITEBALANCE;Nastavení bílé
 POPUPBUTTON_SELECTOPTIONHINT;Pravé tl. myši pro změnu nastavení
 PREFERENCES_ADD;Přidat
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
+PREFERENCES_AUTOMONPROFILE;Automaticky použít hlavní profil monitoru z operačního systému.
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
@@ -500,7 +520,7 @@ PREFERENCES_CACHETHUMBFORM;Formát náhledů v cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximální výška náhledu
 PREFERENCES_CLIPPINGIND;Indikace oříznutí
 PREFERENCES_CMETRICINTENT;Kolorimetrická metoda
-PREFERENCES_CUTOVERLAYBRUSH;Štětec přesahu
+PREFERENCES_CUTOVERLAYBRUSH;Barva masky ořezu/průhlednosti
 PREFERENCES_DARKFRAME;Tmavý snímek
 PREFERENCES_DARKFRAMEFOUND;Nalezeno
 PREFERENCES_DARKFRAMESHOTS;snímků
@@ -538,6 +558,7 @@ PREFERENCES_INTENT_ABSOLUTE;Absolutní kolorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Vnímání
 PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Sytost
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat interní náhledy RAW nezpracovaných snímků
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Profil monitoru
@@ -548,7 +569,7 @@ PREFERENCES_OUTDIRFOLDER;Ulož do souboru
 PREFERENCES_OUTDIRFOLDERHINT;Uložit obrázky do vybrané složky
 PREFERENCES_OUTDIRHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>converted</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/converted/%f</b>\n\nPro uložení výstupního obrázku do adresáře  "<i>/home/tom/photos/converted/2010-10-31</i>", napište:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Použít šablonu
-PREFERENCES_OUTDIRTEMPLATEHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>converted</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/converted/%f</b>\n\nPro uložení výstupního obrázku do adresáře  "<i>/home/tom/photos/converted/2010-10-31</i>", napište:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii nebo atributů fotografie.\n\nŘetězec %r bude nahrazen hodnocením fotografie.  Pokud není fotografie ohodnocena, bude %r nahrazeno '0'.  Pokud je fotografie uložena v koši, bude  %r nahrazeno znakem 'x'.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>converted</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/converted/%f</b>\n\nPro uložení výstupního obrázku do adresáře  "<i>/home/tomas/fotky/zpracovano/2010-10-31</i>", napište:\n<b>%p2/zpracovano/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Přepsat jména souborů v náhledech
 PREFERENCES_OVERWRITEOUTPUTFILE;Přepsat existující soubory
 PREFERENCES_PARSEDEXT;Zachytávané přípony
@@ -604,9 +625,15 @@ PROFILEPANEL_TOOLTIPCOPY;Uložit aktuální profil do schránky
 PROFILEPANEL_TOOLTIPLOAD;Načíst profil ze souboru
 PROFILEPANEL_TOOLTIPPASTE;Vložit profil ze schránky
 PROFILEPANEL_TOOLTIPSAVE;Uschovat současný profil
+PROGRESSBAR_BADPIXELS;Špatné pixely
+PROGRESSBAR_CACORRECTION;Korekce chromatické aberace...
+PROGRESSBAR_DARKFRAME;Tmavý snímek...
 PROGRESSBAR_DECODING;Dekódování RAW...
 PROGRESSBAR_DEMOSAICING;Demozajkování...
+PROGRESSBAR_GREENEQUIL;Vyrovnání zelené...
+PROGRESSBAR_LINEDENOISE;Linkové odšumění...
 PROGRESSBAR_LOADING;Načítání obrázku...
+PROGRESSBAR_LOADINGTHUMBS;Načítání náhledů...
 PROGRESSBAR_LOADJPEG;Načítání JPEG...
 PROGRESSBAR_LOADPNG;Načítání PNG...
 PROGRESSBAR_LOADTIFF;Načítání TIFF...
@@ -615,10 +642,7 @@ PROGRESSBAR_READY;Připraven.
 PROGRESSBAR_SAVEJPEG;Ukládání JPEG souboru...
 PROGRESSBAR_SAVEPNG;Ukládání PNG souboru...
 PROGRESSBAR_SAVETIFF;Ukládání TIFF souboru...
-PROGRESSDLG_LOADING;Načítání souboru...
-PROGRESSDLG_PROCESSING;Zpracovávaní obrázku...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Změněn profil v prohlížeči
-PROGRESSDLG_SAVING;Ukládání souboru...
 QINFO_FOCALLENGTH;Ohnisková vzdálenost
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
@@ -705,6 +729,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Nejjemnější
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutrální
 TP_DIRPYREQUALIZER_THRESHOLD;Práh
 TP_DISTORTION_AMOUNT;Míra
+TP_DISTORTION_AUTO;Automatická korekce zkreslení
+TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (M4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Oprava zkreslení objektivu
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
@@ -774,7 +800,7 @@ TP_LABCURVE_BRIGHTNESS;Jasnost
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Křivka jasů
 TP_LABCURVE_ENABLESATLIMITER;Omezovat sytost
-TP_LABCURVE_LABEL;Lab křivky
+TP_LABCURVE_LABEL;Úprava LAB křivek
 TP_LABCURVE_SATLIMIT;Limit sytosti
 TP_LABCURVE_SATURATION;Sytost
 TP_LENSGEOM_AUTOCROP;Automatický ořez
@@ -796,8 +822,8 @@ TP_RAWCACORR_CABLUE;Modrá
 TP_RAWCACORR_CARED;Červená
 TP_RAWEXPOS_LINEAR;Lineární kor. faktor
 TP_RAWEXPOS_PRESER;Korekce zach. jasů (EV)
-TP_RAW_DCBENHANCE;Aplikovat rozšířené DCB
-TP_RAW_DCBITERATIONS;Počet iterací DCB
+TP_RAW_DCBENHANCE;Aplikovat kroky rozšiřeného DCB
+TP_RAW_DCBITERATIONS;Počet kroků DCB
 TP_RAW_DMETHOD;Metoda
 TP_RAW_FALSECOLOR;Počet kroků při potlačování chybných barev
 TP_RAW_LABEL;Demozajkování
@@ -883,33 +909,4 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!PARTIALPASTE_CHANNELMIXER;Channel mixer
-!PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
-!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
-!PARTIALPASTE_DEFRINGE;Defringe
-!PARTIALPASTE_DETAILGROUP;Detail settings
-!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_PERSPECTIVE;Perspective
-!PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
-!PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
-!PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
-!PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_DATEFORMATFRAME;Date Format
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
-!PROGRESSBAR_BADPIXELS;Bad pixels...
-!PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
-!PROGRESSBAR_GREENEQUIL;Green equilibrate...
-!PROGRESSBAR_LINEDENOISE;Line Denoise...
-!PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-!TP_DISTORTION_AUTO;Auto distortion correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
