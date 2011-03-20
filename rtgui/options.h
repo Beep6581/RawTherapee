@@ -75,6 +75,8 @@ class Options {
     bool windowMaximized;
     int dirBrowserWidth;
     int dirBrowserHeight;
+	int preferencesWidth;
+	int preferencesHeight; 
     int lastScale;
     int lastCropSize;
     bool fbOnlyRaw;
