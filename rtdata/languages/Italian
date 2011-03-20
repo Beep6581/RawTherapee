@@ -158,6 +158,7 @@ HISTORY_MSG_106;Raggio rimozione margini
 HISTORY_MSG_107;Soglia rimozione margini
 HISTORY_MSG_108;Soglia compressione alteluci
 HISTORY_MSG_109;Ridimensiona contorno
+HISTORY_MSG_10;Compressione ombre
 HISTORY_MSG_110;Ridimensiona applica a
 HISTORY_MSG_111;Evita tosaggio colore
 HISTORY_MSG_112;Limite saturazione
@@ -168,14 +169,13 @@ HISTORY_MSG_116;Miglioramento DCB
 HISTORY_MSG_117;CA Rosso
 HISTORY_MSG_118;CA Blu
 HISTORY_MSG_119;Riduzione rumore linea
+HISTORY_MSG_11;Curva di tono
 HISTORY_MSG_120;Soglia eq. verde
 HISTORY_MSG_121;Auto CA
 HISTORY_MSG_122;Dark Frame automatico
 HISTORY_MSG_123;Dark Frame File
 HISTORY_MSG_124;Esposizione RAW guadagno
 HISTORY_MSG_125;Esposizione RAW margine
-HISTORY_MSG_10;Compressione ombre
-HISTORY_MSG_11;Curva di tono
 HISTORY_MSG_12;Esposizione automatica
 HISTORY_MSG_13;Sovraesposizione
 HISTORY_MSG_14;Luminosità luminanza
@@ -432,8 +432,8 @@ PARTIALPASTE_DISTORTION;Correzione distorsione
 PARTIALPASTE_EVERYTHING;Tutto
 PARTIALPASTE_EXIFCHANGES;Cambiamenti nei dati exif
 PARTIALPASTE_EXPOSURE;Esposizione
-PARTIALPASTE_HLRECOVERY;Recupero alteluci
 PARTIALPASTE_HLRECONSTRUCTION;Recupero alteluci
+PARTIALPASTE_HLRECOVERY;Recupero alteluci
 PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMSETTINGS;Parametri ICM
 PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore puntuale
@@ -858,3 +858,9 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
+!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
+!TP_PREPROCESS_NO_FOUND;None found
