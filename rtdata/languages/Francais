@@ -491,7 +491,8 @@ PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMEFOUND;Trouvé
 PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
-PREFERENCES_DATEFORMAT;Format de la date
+PREFERENCES_DATEFORMAT;Format
+PREFERENCES_DATEFORMATFRAME;Format de la date
 PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut

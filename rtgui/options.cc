@@ -64,6 +64,8 @@ void Options::setDefaults () {
     profilePath = "profiles";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
+	preferencesWidth = 0;
+	preferencesHeight = 0;
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
@@ -274,6 +276,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
+	if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
+	if (keyFile.has_key ("GUI", "PreferencesHeight"))   preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight"); 
     if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth        = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
     if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))  saveAsDialogHeight       = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
     if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth           = keyFile.get_integer ("GUI", "ToolPanelWidth");
@@ -417,6 +421,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
+	keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
+	keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight); 
     keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
     keyFile.set_integer ("GUI", "SaveAsDialogHeight", saveAsDialogHeight);
     keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);

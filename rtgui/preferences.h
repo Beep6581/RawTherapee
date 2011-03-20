@@ -144,7 +144,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getSoundPanel ();
     
   public:
-         Preferences (RTWindow *rtwindow);
+	Preferences (RTWindow *rtwindow);
+	~Preferences ();
     
     void savePressed ();
     void loadPressed ();
