@@ -1,5 +1,4 @@
 
-
 #00 English (UK)
 #01 08.12.2010: Richard Regal
 #01 17.10.2010: Richard Regal
@@ -453,11 +452,15 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
 !PARTIALPASTE_BASICGROUP;Basic settings
 !PARTIALPASTE_CACORRECTION;C/A correction
+!PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
+!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_COMPOSITIONGROUP;Composition settings
 !PARTIALPASTE_CROP;Crop
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
 !PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
+!PARTIALPASTE_DEFRINGE;Defringe
+!PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
@@ -469,6 +472,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
 !PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
 !PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
+!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
@@ -476,12 +480,25 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_IPTCINFO;IPTC info
-!PARTIALPASTE_LABCURVE;Lab curve
+!PARTIALPASTE_LABCURVE;Lab adjustments
 !PARTIALPASTE_LENSGROUP;Lens related settings
 !PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 !PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
 !PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
+!PARTIALPASTE_PERSPECTIVE;Perspective
+!PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
+!PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+!PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
+!PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
+!PARTIALPASTE_RAWCACORR_CARED;CA Red
+!PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
+!PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RESIZE;Resize
 !PARTIALPASTE_ROTATION;Rotation
 !PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
@@ -492,6 +509,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_ADD;ADD
 !PREFERENCES_APPLNEXTSTARTUP;restart required
+!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
 !PREFERENCES_CACHECLEARALL;Clear All
@@ -506,12 +524,13 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
-!PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+!PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DATEFORMAT;Date Format
+!PREFERENCES_DATEFORMATFRAME;Date Format
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
 !PREFERENCES_DEFAULTLANG;Default language
 !PREFERENCES_DEFAULTTHEME;Default theme
@@ -544,6 +563,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MONITORICC;Monitor Profile
@@ -554,7 +574,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
 !PREFERENCES_OUTDIRHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OUTDIRTEMPLATE;Use Template
-!PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>nnThese formatting strings refer to the different parts of the photo's pathname, or some attributes of the photo.nn%r will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in trash bin, %r will be replaced by 'x'.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PARSEDEXT;Parsed Extensions
@@ -609,9 +629,15 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PROFILEPANEL_TOOLTIPLOAD;Load a profile from file
 !PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
 !PROFILEPANEL_TOOLTIPSAVE;Save current profile
+!PROGRESSBAR_BADPIXELS;Bad pixels...
+!PROGRESSBAR_CACORRECTION;CA correction...
+!PROGRESSBAR_DARKFRAME;Darkframe...
 !PROGRESSBAR_DECODING;Decoding raw file...
 !PROGRESSBAR_DEMOSAICING;Demosaicing...
+!PROGRESSBAR_GREENEQUIL;Green equilibrate...
+!PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADING;Loading Image...
+!PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !PROGRESSBAR_LOADJPEG;Loading JPEG file...
 !PROGRESSBAR_LOADPNG;Loading PNG file...
 !PROGRESSBAR_LOADTIFF;Loading TIFF file...
@@ -620,10 +646,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PROGRESSBAR_SAVEJPEG;Saving JPEG file...
 !PROGRESSBAR_SAVEPNG;Saving PNG file...
 !PROGRESSBAR_SAVETIFF;Saving TIFF file...
-!PROGRESSDLG_LOADING;Loading file...
-!PROGRESSDLG_PROCESSING;Processing image...
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-!PROGRESSDLG_SAVING;Saving file...
 !QINFO_FOCALLENGTH;Focal length
 !QINFO_ISO;ISO
 !QINFO_LENS;Lens
@@ -706,6 +729,8 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AMOUNT;Amount
+!TP_DISTORTION_AUTO;Auto distortion correction
+!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_DISTORTION_LABEL;Distortion
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+

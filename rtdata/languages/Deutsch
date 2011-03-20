@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Mär 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 18.03.2011
+#15 Jan-Mär 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 20.03.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -178,9 +178,9 @@ HISTORY_MSG_101;HSV-Mixer - Farbton
 HISTORY_MSG_102;HSV-Mixer - Sättigung
 HISTORY_MSG_103;HSV-Mixer - Hellwert
 HISTORY_MSG_104;HSV-Mixer
-HISTORY_MSG_105;Defringing
-HISTORY_MSG_106;Defringing Radius
-HISTORY_MSG_107;Defringing Schwellenwert
+HISTORY_MSG_105;Defringe
+HISTORY_MSG_106;Defringe Radius
+HISTORY_MSG_107;Defringe Schwellenwert
 HISTORY_MSG_108;Lichter-Kompression\nSchwellenwert
 HISTORY_MSG_109;Größe ändern\nBegrenzungsrahmen
 HISTORY_MSG_10;Schatten-Kompression
@@ -191,11 +191,11 @@ HISTORY_MSG_113;Sättigungsgrenze
 HISTORY_MSG_114;DCB-Iterationen
 HISTORY_MSG_115;Falschfarben-Iterationen
 HISTORY_MSG_116;DCB-Verfeinerung
-HISTORY_MSG_117;CA Rot Korrektur
-HISTORY_MSG_118;CA Blau Korrektur
+HISTORY_MSG_117;CA-Korrektur Rot
+HISTORY_MSG_118;CA-Korrektur Blau
 HISTORY_MSG_119;Zeilenrauschfilter
 HISTORY_MSG_11;Tonwertkurve
-HISTORY_MSG_120;Grün-Ausgleich\nSchwellenwert
+HISTORY_MSG_120;Grün-Ausgleich
 HISTORY_MSG_121;Autom. CA
 HISTORY_MSG_122;Autom. Dunkelbild
 HISTORY_MSG_123;Dunkelbild - Datei
@@ -227,8 +227,8 @@ HISTORY_MSG_29;Schärfen Methode
 HISTORY_MSG_2;Profil geladen
 HISTORY_MSG_30;Dekonvolution Radius
 HISTORY_MSG_31;Dekonvolution Stärke
-HISTORY_MSG_32;Dekonvolution Dämpfung
-HISTORY_MSG_33;Dekonvolution Iterationen
+HISTORY_MSG_32;Dekonvolution\nDämpfung
+HISTORY_MSG_33;Dekonvolution\nIterationen
 HISTORY_MSG_34;Farbbeschneidungen\nverhindern
 HISTORY_MSG_35;Sättigung begrenzen
 HISTORY_MSG_36;Sättigungsgrenzwert
@@ -263,7 +263,7 @@ HISTORY_MSG_61;Drehung
 HISTORY_MSG_62;Verzerrungskorrektur
 HISTORY_MSG_63;Variante gewählt
 HISTORY_MSG_64;Bild beschneiden
-HISTORY_MSG_65;Farbsaum-Entfernung
+HISTORY_MSG_65;Farbsaum entfernen
 HISTORY_MSG_66;Lichter wiederherstellen
 HISTORY_MSG_67;Lichter wiederherstellen\nStärke
 HISTORY_MSG_68;Lichter wiederherstellen\nMethode
@@ -271,7 +271,7 @@ HISTORY_MSG_69;Aktueller Farbraum
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Farbraum für Ausgabe
 HISTORY_MSG_71;Farbraum für Eingabe
-HISTORY_MSG_72;Vignettierungs-Korrektur
+HISTORY_MSG_72;Vignettierungskorrektur
 HISTORY_MSG_73;Kanal-Mixer
 HISTORY_MSG_74;Größe ändern - Maßstab
 HISTORY_MSG_75;Größe ändern - Methode
@@ -294,8 +294,8 @@ HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_90;Rauschminderung\nLuminanz
 HISTORY_MSG_91;Rauschminderung\nChrominanz
 HISTORY_MSG_92;Rauschminderung\nGamma
-HISTORY_MSG_93;Kontrast nach Detailstufen\nParameter
-HISTORY_MSG_94;Kontrast nach Detailstufen
+HISTORY_MSG_93;Kontrast - Detailstufen\nParameter
+HISTORY_MSG_94;Kontrast - Detailstufen
 HISTORY_MSG_95;Sättigung
 HISTORY_MSG_96;'a'-Kurve
 HISTORY_MSG_97;'b'-Kurve
@@ -384,7 +384,7 @@ MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzuf.
 MAIN_FRAME_PLACES_DEL;Entf.
 MAIN_FRAME_RECENT;Verzeichnishistorie
-MAIN_MSG_ALREADYEXISTS;Diese Datei existiert schon.
+MAIN_MSG_ALREADYEXISTS;Diese Datei existiert bereits.
 MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
 MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
 MAIN_MSG_CANNOTSTARTEDITOR;Der Editor kann nicht gestartet werden.
@@ -395,7 +395,7 @@ MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schließen? Es s
 MAIN_MSG_JOBSINQUEUE;Job in Bearbeitung
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_PLACES;Orte
-MAIN_MSG_QOVERWRITE;Wollen sie die Datei überschreiben?
+MAIN_MSG_QOVERWRITE;Möchten Sie die Datei überschreiben?
 MAIN_TAB_BASIC;Basis
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;<b>Alt+C</b>
@@ -418,8 +418,8 @@ MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt+T</b>
 MAIN_TOGGLE_BEFORE_AFTER;V|N
 MAIN_TOOLTIP_HIDEFP;Unteres Bedienfeld ein-/ausblenden (Verzeichnis- und Datei-Browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (einschließlich der Historie) <b>L</b> / <b>Strg+L</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Zu helle Bereiche kennzeichnen (Taste <)\n\n(Alternativ kann während der Betätigung eines Schiebereglers die Alt-Taste gedrückt gehalten werden)
-MAIN_TOOLTIP_INDCLIPPEDS;Zu dunkle Bereiche kennzeichnen (Taste >)\n\n(Alternativ kann während der Betätigung eines Schiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten <b>&lt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten <b>&gt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
 MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden <b>I</b>
 MAIN_TOOLTIP_SAVE;Bild im Standardverzeichnis speichern
@@ -468,12 +468,13 @@ PARTIALPASTE_DIRPYRDENOISE;Rauschminderung
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast nach Detailstufen
 PARTIALPASTE_DISTORTION;Verzerrungskorrektur
 PARTIALPASTE_EVERYTHING;Alles
-PARTIALPASTE_EXIFCHANGES;Exif-Daten Änderungen
+PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
-PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild Automatische Auswahl
-PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild Unschärferadius
-PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild Unschärfetyp
-PARTIALPASTE_FLATFIELDFILE;Weißbild Datei
+PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
+PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
+PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild: Unschärfetyp
+PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
+PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Lichter wiederherstellen\nSchwellenwert
@@ -510,6 +511,7 @@ PARTIALPASTE_WHITEBALANCE;Weißabgleich
 POPUPBUTTON_SELECTOPTIONHINT;Änderung mittels rechter Maustaste
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
+PREFERENCES_AUTOMONPROFILE;Autom. das für den aktuellen Monitor festgelegte Profil verwenden
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche anzeigen
@@ -532,7 +534,8 @@ PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
-PREFERENCES_DATEFORMAT;Datumsformat
+PREFERENCES_DATEFORMAT;Format
+PREFERENCES_DATEFORMATFRAME;Datumsformat
 PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nDas deutsche Datumsformat beispielsweise ist:\n<b>%d.%m.%y</b>
 PREFERENCES_DEFAULTLANG;Sprache für Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard-Oberflächendesign
@@ -546,7 +549,7 @@ PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
-PREFERENCES_FBROWSEROPTS;Einstellungen zu Bildinformationen
+PREFERENCES_FBROWSEROPTS;Bildinformationen und Voransichten
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FLATFIELD;Weißbild
 PREFERENCES_FLATFIELDFOUND;Gefunden
@@ -565,6 +568,7 @@ PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
 PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
 PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Voransicht aus RAW, wenn noch nicht editiert
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
 PREFERENCES_METADATA;Metadaten
 PREFERENCES_MONITORICC;Monitor-Profil
@@ -575,8 +579,8 @@ PREFERENCES_OUTDIRFOLDER;Im Verzeichnis speichern
 PREFERENCES_OUTDIRFOLDERHINT;Alle erzeugten Dateien in dem angegebenen Verzeichnis ablegen
 PREFERENCES_OUTDIRHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
-PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OVERLAY_FILENAMES;Dateiname anzeigen
+PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%d1</b>, <b>%d2</b>, ..., <b>%f</b>, <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes; ihr Inhalt ist für unbewertete Bilder "<i>0</i>", für in den Papierkorb verschobene Bilder "<i>x</i>" und ansonsten - entsprechend der Anzahl der Sterne - eine Ziffer zwischen "<i>1</i>" und "<i>5</i>".
+PREFERENCES_OVERLAY_FILENAMES;Dateiname und Informationen überlagert über Bild
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
 PREFERENCES_PARSEDEXT;Angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
@@ -631,21 +635,24 @@ PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren
 PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden
 PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen
 PROFILEPANEL_TOOLTIPSAVE;Profil speichern
-PROGRESSBAR_DECODING;Dekodierung der Rohdatei (RAW)...
+PROGRESSBAR_BADPIXELS;Fehlerhafte Pixel...
+PROGRESSBAR_CACORRECTION;CA-Korrektur...
+PROGRESSBAR_DARKFRAME;Dunkelbild...
+PROGRESSBAR_DECODING;Dekodiere RAW...
 PROGRESSBAR_DEMOSAICING;Entrasterung...
-PROGRESSBAR_LOADING;Laden des Bildes...
-PROGRESSBAR_LOADJPEG;Laden der JPEG Datei...
-PROGRESSBAR_LOADPNG;Laden der PNG Datei...
-PROGRESSBAR_LOADTIFF;Laden der TIFF Datei...
-PROGRESSBAR_PROCESSING;Berechnen des Bildes...
+PROGRESSBAR_GREENEQUIL;Grün-Ausgleich...
+PROGRESSBAR_LINEDENOISE;Zeilenrauschfilter...
+PROGRESSBAR_LOADING;Lade Bild...
+PROGRESSBAR_LOADINGTHUMBS;Lade Voransichten...
+PROGRESSBAR_LOADJPEG;Lade JPEG...
+PROGRESSBAR_LOADPNG;Lade PNG...
+PROGRESSBAR_LOADTIFF;Lade TIFF...
+PROGRESSBAR_PROCESSING;Berechne Bild...
 PROGRESSBAR_READY;Bereit.
-PROGRESSBAR_SAVEJPEG;Speichern der JPEG Datei...
-PROGRESSBAR_SAVEPNG;Speichern der PNG Datei...
-PROGRESSBAR_SAVETIFF;Speichern der TIFF Datei...
-PROGRESSDLG_LOADING;Laden der Datei...
-PROGRESSDLG_PROCESSING;Berechnen des Bildes...
+PROGRESSBAR_SAVEJPEG;Speichere JPEG...
+PROGRESSBAR_SAVEPNG;Speichere PNG...
+PROGRESSBAR_SAVETIFF;Speichere TIFF...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde im Browser geändert
-PROGRESSDLG_SAVING;Speichern der Datei...
 QINFO_FOCALLENGTH;Brennweite
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
@@ -732,7 +739,9 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Stärke
-TP_DISTORTION_LABEL;Entzerrung
+TP_DISTORTION_AUTO;Automatische Verzerrungskorrektur
+TP_DISTORTION_AUTO_TIP;Linsenverzerrungen automatisch korrigieren (nur für bestimmte\nKameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
+TP_DISTORTION_LABEL;Verzerrungskorrektur
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;Feinstes
@@ -818,7 +827,7 @@ TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead-Pixel-Filter anwenden
 TP_PREPROCESS_LABEL;Vorverarbeitung
 TP_PREPROCESS_LINEDENOISE;Zeilenrauschfilter
 TP_PREPROCESS_NO_FOUND;Keins gefunden
-TP_RAWCACORR_AUTO;Autom. Korrektur Chrom. Aberration
+TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
 TP_RAWEXPOS_LINEAR;Linearer Korrekturfaktor
@@ -850,7 +859,7 @@ TP_RESIZE_SPECIFY;Eingabe:
 TP_RESIZE_W;B:
 TP_RESIZE_WIDTH;Breite
 TP_ROTATE_DEGREE;Grad
-TP_ROTATE_LABEL;Drehen
+TP_ROTATE_LABEL;Fein-Rotation
 TP_ROTATE_SELECTLINE;Leitlinie wählen
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Lichter
 TP_SHADOWSHLIGHTS_HLTONALW;Farbtonbereich für Lichter
@@ -878,7 +887,7 @@ TP_VIGNETTING_AMOUNT;Stärke
 TP_VIGNETTING_CENTER;Zentrum
 TP_VIGNETTING_CENTER_X;Zentrum X
 TP_VIGNETTING_CENTER_Y;Zentrum Y
-TP_VIGNETTING_LABEL;Vignettierungs-Korrektur
+TP_VIGNETTING_LABEL;Vignettierungskorrektur
 TP_VIGNETTING_RADIUS;Radius
 TP_VIGNETTING_STRENGTH;Stärke-Faktor
 TP_WBALANCE_AUTO;Automatisch
