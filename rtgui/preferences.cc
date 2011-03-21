@@ -344,6 +344,7 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     Gtk::Label* mplabel = Gtk::manage (new Gtk::Label (M("PREFERENCES_MONITORICC")+":"));
 
 	cbAutoMonProfile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_AUTOMONPROFILE")));
+	autoMonProfileConn  = cbAutoMonProfile->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::autoMonProfileToggled));
 
     Gtk::Table* colt = Gtk::manage (new Gtk::Table (3, 2));
     colt->attach (*intlab, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -1024,6 +1025,10 @@ void Preferences::savePressed () {
     Options::save ();
 }
 */
+
+void Preferences::autoMonProfileToggled () {
+	monProfile->set_sensitive(!cbAutoMonProfile->get_active());
+}
 
 void Preferences::okPressed () {
 
