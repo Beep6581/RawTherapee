@@ -51,16 +51,15 @@ Crop::~Crop () {
 }
 
 void Crop::setListener (DetailedCropListener* il) { 
-
+	// We can make reads in the IF, because the mProcessing lock is only needed for change
+	if (cropImageListener!=il) {
     parent->mProcessing.lock(); 
     cropImageListener = il; 
     parent->mProcessing.unlock(); 
 }       
+}       
 
-void Crop::update (int todo, bool internal) {
-
-    if (!internal)
-        parent->mProcessing.lock ();
+void Crop::update (int todo) {
 
     ProcParams& params = parent->params;
     cropMutex.lock ();
@@ -88,9 +87,10 @@ void Crop::update (int todo, bool internal) {
     if (needsinitupdate)
         todo = ALL;
 
+ /* Seems to be taken care of by calling improccoordinator::updatePreviewImage
     if( regenHighDetail )
     	parent->updatePreviewImage (ALL,this); // We have just set skip to 1
-
+		*/
     baseCrop = origCrop;
 
     bool needstransform  = parent->ipf.needsTransform();
@@ -113,14 +113,17 @@ void Crop::update (int todo, bool internal) {
     }
 
     // transform
-    if ((!needstransform && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
+    // Delete transfrom if it's not necessary or outdated
+	if (transCrop && (!needstransform || transCrop->width!=cropw || transCrop->height!=croph)) {
         delete transCrop;
         transCrop = NULL;
     }
-    if (needstransform && !transCrop)
-        transCrop = new Image16 (cropw, croph);
-    if ((todo & M_TRANSFORM) && needstransform)
+
+    if ((todo & M_TRANSFORM) && needstransform) {
+		if (!transCrop) transCrop = new Image16 (cropw, croph);
     	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip));
+	}
+
     if (transCrop)
         baseCrop = transCrop;
 
@@ -177,9 +180,6 @@ void Crop::update (int todo, bool internal) {
     }
 
     cropMutex.unlock ();
-
-    if (!internal)
-        parent->mProcessing.unlock ();
 }
 
 void Crop::freeAll () {
@@ -329,7 +329,7 @@ void Crop::fullUpdate () {
     needsNext = true;
     while (needsNext) {
         needsNext = false;
-        update (ALL, true); 
+        update (ALL); 
     }
     updating = false;
 

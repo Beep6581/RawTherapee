@@ -64,7 +64,7 @@ class Crop : public DetailedCrop {
             ~Crop        ();
     
         bool hasListener () { return cropImageListener; }
-        void update      (int todo, bool internal=false);
+        void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
         void fullUpdate  ();
         void setListener (DetailedCropListener* il);

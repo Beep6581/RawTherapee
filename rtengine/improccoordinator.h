@@ -33,6 +33,8 @@ using namespace procparams;
 
 class Crop;
 
+// Manages the image processing, espc. of the preview windows
+// There is one ImProcCoordinator per edit panel
 class ImProcCoordinator : public StagedImageProcessor {
 
     friend class Crop;
@@ -95,7 +97,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void progress (Glib::ustring str, int pr);
         void reallocAll ();
         void updateHistograms (int x1, int y1, int x2, int y2);
-        void setScale (int prevscale, bool internal=false);
+        void setScale (int prevscale);
         void updatePreviewImage (int todo, Crop* cropCall= NULL);
 
         Glib::Mutex mProcessing;
@@ -130,7 +132,6 @@ class ImProcCoordinator : public StagedImageProcessor {
         int  getPreviewScale    () { return scale; }
 
         void fullUpdatePreviewImage  ();
-        void fullUpdateDetailedCrops ();
 
         int getFullWidth ()     { return fullw; }
         int getFullHeight ()    { return fullh; }
