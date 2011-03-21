@@ -118,7 +118,7 @@ class Preferences : public Gtk::Dialog {
 	Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
     Options moptions;
-    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn, ffconn;
+    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -152,6 +152,7 @@ class Preferences : public Gtk::Dialog {
     void okPressed ();
     void cancelPressed ();
     void aboutPressed ();
+	void autoMonProfileToggled ();
 
     void selectStartupDir ();
     void addExtPressed ();
