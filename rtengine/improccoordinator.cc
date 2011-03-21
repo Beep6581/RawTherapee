@@ -565,7 +565,21 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
     Image16* im = new Image16 (fW, fH);
     imgsrc->preprocess( ppar.raw );
     imgsrc->demosaic(ppar.raw );
-    imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+    //imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+        if (params.wb.method=="Camera")
+            currWB = imgsrc->getWB ();
+        else if (params.wb.method=="Auto") {
+            if (!awbComputed) {
+                autoWB = imgsrc->getAutoWB ();
+                awbComputed = true;
+            }
+            currWB = autoWB;
+        }
+        params.wb.temperature = currWB.getTemp ();
+        params.wb.green = currWB.getGreen ();	
+	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	
     im->saveTIFF (fname,16,true);
     mProcessing.unlock ();
 }
