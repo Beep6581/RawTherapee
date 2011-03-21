@@ -259,8 +259,6 @@ namespace rtengine {
             virtual int         getPreviewScale () =0;
             /** Performs a full update on the preview image. The resulting image is passed to the listener. */
             virtual void        fullUpdatePreviewImage () =0;
-            /** Performs a full update on the detailed crops corresponding to the image. The resulting images are passed to the listeners of the crops. */
-            virtual void        fullUpdateDetailedCrops () =0;
             /** Returns the full width of the resulting image (in 1:1 scale). 
               * @return the width of the final image */
             virtual int         getFullWidth () =0;

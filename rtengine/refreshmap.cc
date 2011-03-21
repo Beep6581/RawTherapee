@@ -19,6 +19,8 @@
 #include <refreshmap.h>
 #include <procevents.h>
 
+// Mapping of which event causes what change in the image
+// given to Improccordinator::updatePreviewImage(todo)
 int refreshmap[rtengine::NUMOFEVENTS] = {
 ALL,              // EvPhotoLoaded,
 ALL,              // EvProfileLoaded,
