@@ -23,6 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 #include <curveeditor.h>
+#include <curveeditorgroup.h>
 #include <mycurve.h>
 
 class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener {
@@ -30,7 +31,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
   protected:
     Adjuster* brightness;
     Adjuster* contrast;
-    CurveEditor* shape;
+    DiagonalCurveEditor* shape;
     bool brAdd, contrAdd;
 
   public:

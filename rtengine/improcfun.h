@@ -121,9 +121,6 @@ class ImProcFunctions {
 		bool transCoord       (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
 		void getAutoExp       (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
 		double getTransformAutoFill (int oW, int oH);
-
-		void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
-		void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 };
 }
 #endif

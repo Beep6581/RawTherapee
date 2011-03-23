@@ -24,9 +24,14 @@
 #include <string>
 #include <guiutils.h>
 #include <mycurve.h>
+#include <myflatcurve.h>
+#include <mydiagonalcurve.h>
 #include <shcselector.h>
 #include <adjuster.h>
-#include <curveeditor.h>
+
+class CurveEditor;
+class DiagonalCurveEditorSubGroup;
+class FlatCurveEditorSubGroup;
 
 /*
  * This class handle the curve widgets, shared between any number curve
@@ -34,75 +39,76 @@
  * - to start a new line of curve button, use the 'newLine' method
  * - if you add more than one curve, you must add a "CurveEditor* ce" parameter to your listener
  */
-class CurveEditorGroup : public Gtk::VBox, public CurveListener, public SHCListener, public AdjusterListener {
+class CurveEditorGroup : public Gtk::VBox, public CurveListener {
 
-private:
+	friend class CurveEditor;
+	friend class CurveEditorSubGroup;
+	friend class DiagonalCurveEditorSubGroup;
+	friend class FlatCurveEditorSubGroup;
+
+protected:
 	Gtk::Label* curveGroupLabel;
-
 	Gtk::Button* curve_reset;
-	Gtk::HBox* customCurveBox;
-	Gtk::VBox* paramCurveBox;
-	Gtk::HBox* NURBSCurveBox;
-
-	MyCurve* customCurve;
-	MyCurve* paramCurve;
-	MyCurve* NURBSCurve;
-
-	SHCSelector* shcSelector;
-	Adjuster* highlights;
-	Adjuster* lights;
-	Adjuster* darks;
-	Adjuster* shadows;
-
-	Gtk::Button* saveCustom;
-	Gtk::Button* loadCustom;
-	Gtk::Button* saveNURBS;
-	Gtk::Button* loadNURBS;
-
-	CurveListener* cl;
-
-	CurveType curveTypeIx;
-	unsigned int numberOfPackedCurve;
-
 	std::vector<CurveEditor*> curveEditors;
 	CurveEditor* displayedCurve;
+	FlatCurveEditorSubGroup* flatSubGroup;
+	DiagonalCurveEditorSubGroup* diagonalSubGroup;
 
-	int activeParamControl;
+	CurveListener* cl;
+	ColorProvider* cp;
 
-	void curveResetPressed ();
-	void curveTypeToggled ();
-	void typeSelectionChanged (CurveEditor* ce, int n);
-	void curveTypeToggled (CurveEditor* ce);
-	void savePressed ();
-	void loadPressed ();
-	void hideCurrentCurve ();
-	void setUnChanged (bool uc, CurveEditor* ce);
-	void storeDisplayedCurve ();
-	void restoreDisplayedHistogram();
-	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
-	void typeSelectionChanged (int n);
-	void switchGUI();
-	void updateGUI (CurveEditor* ce);
-	void removeEditor ();
-	void curveChanged ();
-	void shcChanged ();
-	void adjusterChanged (Adjuster* a, double newval);
-	bool adjusterEntered (GdkEventCrossing* ev, int ac);
-	bool adjusterLeft (GdkEventCrossing* ev, int ac);
-	const std::vector<double> getCurveFromGUI (CurveType type);
-	void updateBackgroundHistogram (CurveEditor* ce);
+	unsigned int numberOfPackedCurve;
 
 public:
-	friend class CurveEditor;
 	CurveEditorGroup(Glib::ustring groupLabel = "");
 	~CurveEditorGroup();
-	CurveEditor* addCurve(Glib::ustring curveLabel = "");
 	void newLine();
 	void curveListComplete();
 	void setBatchMode (bool batchMode);
 	void setCurveExternal (CurveEditor* ce, const std::vector<double>& c);
-	//void on_realize ();
 	void setCurveListener (CurveListener* l) { cl = l; }
+	void setColorProvider (ColorProvider* p) { cp = p; }
+	CurveEditor* getDisplayedCurve () { return displayedCurve; }
+	//void on_realize ();
+	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel);
+
+protected:
+	//void curveTypeToggled ();
+	void curveTypeToggled (CurveEditor* ce);
+	//void typeSelectionChanged (int n);
+	void typeSelectionChanged (CurveEditor* ce, int n);
+	void hideCurrentCurve ();
+	void updateGUI (CurveEditor* ce);
+	void curveResetPressed ();
+	void curveChanged ();
+	void setUnChanged (bool uc, CurveEditor* ce);
+};
+
+class CurveEditorSubGroup {
+
+	friend class CurveEditorGroup;
+
+protected:
+	int valLinear;
+	int valUnchanged;
+	CurveEditorGroup *parent;
+
+public:
+	int getValUnchanged() { return valUnchanged; }
+	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
+	virtual void setColorProvider (ColorProvider* p) = 0;
+
+protected:
+	Glib::ustring outputFile ();
+	Glib::ustring inputFile ();
+
+	virtual bool curveReset (int cType) = 0; // Reset a curve editor, return TRUE if successful (curve changed)
+	virtual void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) = 0;
+	virtual void storeDisplayedCurve () = 0;
+	virtual void restoreDisplayedHistogram() {};
+	virtual void switchGUI() = 0;
+	virtual void removeEditor () = 0;
+	virtual const std::vector<double> getCurveFromGUI (int type) = 0;
 };
 
 #endif
