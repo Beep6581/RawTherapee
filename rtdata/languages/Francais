@@ -18,6 +18,7 @@ CURVEEDITOR_HIGHLIGHTS;Hautes lumières
 CURVEEDITOR_LIGHTS;Zones claires
 CURVEEDITOR_LINEAR;Linéaire
 CURVEEDITOR_LOADDLGLABEL;Charger la courbe...
+CURVEEDITOR_MINMAXCPOINTS;Points de contrôle minima/maxima
 CURVEEDITOR_NURBS;Cage de contrôle
 CURVEEDITOR_PARAMETRIC;Paramétrique
 CURVEEDITOR_SAVEDLGLABEL;Enregistrer la courbe...
@@ -499,8 +500,8 @@ PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_MONITORICC;Profil du moniteur
-PREFERENCES_MULTITAB;Mode éditeurs multiple
-PREFERENCES_MULTITABDUALMON;Mode éditeurs multiple, si possible sur un second moniteur
+PREFERENCES_MULTITAB;Éditeurs multiple
+PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
@@ -531,8 +532,8 @@ PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
-PREFERENCES_SINGLETAB;Mode éditeur unique
-PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
+PREFERENCES_SINGLETAB;Éditeur unique
+PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
@@ -691,11 +692,11 @@ TP_HSVEQUALIZER6;Bleu
 TP_HSVEQUALIZER7;Violet
 TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;Canal
-TP_HSVEQUALIZER_HUE;Teinte
+TP_HSVEQUALIZER_HUE;T
 TP_HSVEQUALIZER_LABEL;Égaliseur TSV
 TP_HSVEQUALIZER_NEUTRAL;Neutre
-TP_HSVEQUALIZER_SAT;Saturation
-TP_HSVEQUALIZER_VAL;Valeur
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil

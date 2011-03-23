@@ -19,12 +19,16 @@
 #ifndef _CURVEEDITOR_
 #define _CURVEEDITOR_
 
-#include <gtkmm.h>
 #include <popuptogglebutton.h>
-#include <curveeditorgroup.h>
-#include <mycurve.h>
 
 class CurveEditorGroup;
+class CurveEditorSubGroup;
+
+
+/*
+ *********************** Curve Editor ***********************
+ */
+
 
 /*
  * This class is an interface between RT and the curve editor group ; it handles the methods
@@ -32,40 +36,83 @@ class CurveEditorGroup;
  */
 class CurveEditor {
 
-private:
-
-	/*
-	 * The curve editor contains only one widget (the curve type button) to receive the signals
-	 * but it's co-handled by the CurveEditorGroup too
-	*/
-
-	// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
-    CurveType selected;
-
-    PopUpToggleButton* curveType;
-    unsigned int* histogram;	// histogram values
-    bool bgHistValid;
-
-	CurveEditorGroup* group;
-	std::vector<double> tempCurve;
-	std::vector<double> customCurveEd;
-	std::vector<double> paramCurveEd;
-	std::vector<double> NURBSCurveEd;
-	sigc::connection typeconn;
-
-public:
-
 	friend class CurveEditorGroup;
-	CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup);
-	~CurveEditor ();
-	void typeSelectionChanged (int n);
-	void curveTypeToggled();
-	void setCurve (const std::vector<double>& p);
-	std::vector<double> getCurve ();
-	bool isUnChanged ();
-	void setUnChanged (bool uc);
-	void updateBackgroundHistogram (unsigned int* hist);
+	friend class CurveEditorSubGroup;
+	friend class DiagonalCurveEditorSubGroup;
+	friend class FlatCurveEditorSubGroup;
+	friend class DiagonalCurveEditor;
+	friend class FlatCurveEditor;
+
+	protected:
+
+		/*
+		 * The curve editor contains only one widget (the curve type button) to receive the signals
+		 * but it's co-handled by the CurveEditorGroup too
+		*/
+
+		PopUpToggleButton* curveType;
+		unsigned int* histogram;	// histogram values
+		bool bgHistValid;
+
+		int selected;
+
+		CurveEditorGroup* group;
+		CurveEditorSubGroup* subGroup;
+
+		std::vector<double> tempCurve;
+		sigc::connection typeconn;
+
+	public:
+
+		CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
+		~CurveEditor ();
+		void typeSelectionChanged (int n);
+		void curveTypeToggled();
+		bool isUnChanged ();
+		void setUnChanged (bool uc);
+		void updateBackgroundHistogram (unsigned int* hist);
+		void setCurve (const std::vector<double>& p);
+		virtual std::vector<double> getCurve () = 0;
 };
 
+
+/*
+ ******************** Diagonal Curve Editor ********************
+ */
+
+
+class DiagonalCurveEditor : public CurveEditor {
+
+	friend class DiagonalCurveEditorSubGroup;
+
+	protected:
+		// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
+		std::vector<double> customCurveEd;
+		std::vector<double> paramCurveEd;
+		std::vector<double> NURBSCurveEd;
+
+	public:
+		DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
+		std::vector<double> getCurve ();
+};
+
+
+/*
+ ********************** Flat Curve Editor **********************
+ */
+
+
+class FlatCurveEditor : public CurveEditor {
+
+	friend class FlatCurveEditorSubGroup;
+
+	protected:
+		// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
+		std::vector<double> controlPointsCurveEd;
+
+	public:
+		FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
+		std::vector<double> getCurve ();
+};
 
 #endif

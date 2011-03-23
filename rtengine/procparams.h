@@ -370,16 +370,16 @@ class DirPyrEqualizerParams {
 };
 	
 /**
- * Wavelet equalizer params
+ * HSV equalizer params
  */
 class HSVEqualizerParams {
 	
 	public:
-		bool enabled;
-		Glib::ustring hsvchannel;
-		int sat[8];
-		int val[8];
-		int hue[8];
+		//bool enabled;
+		//Glib::ustring hsvchannel;
+		std::vector<double>   hcurve;
+		std::vector<double>   scurve;
+		std::vector<double>   vcurve;
 };
 
 /**
