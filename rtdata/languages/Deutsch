@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Mär 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 18.03.2011
+#15 Jan-Mär 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 24.03.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -32,6 +32,7 @@ CURVEEDITOR_HIGHLIGHTS;Spitzlichter
 CURVEEDITOR_LIGHTS;Lichter
 CURVEEDITOR_LINEAR;Linear
 CURVEEDITOR_LOADDLGLABEL;Kurve Laden...
+CURVEEDITOR_MINMAXCPOINTS;Min/Max Kontrollpunkte
 CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Kurve Speichern...
@@ -176,11 +177,11 @@ HISTORY_MSG_113;Sättigungsgrenze
 HISTORY_MSG_114;DCB-Iterationen
 HISTORY_MSG_115;Falschfarben-Iterationen
 HISTORY_MSG_116;DCB-Verfeinerung
-HISTORY_MSG_117;CA Rot Korrektur
-HISTORY_MSG_118;CA Blau Korrektur
+HISTORY_MSG_117;CA-Korrektur Rot
+HISTORY_MSG_118;CA-Korrektur Blau
 HISTORY_MSG_119;Zeilenrauschfilter
 HISTORY_MSG_11;Tonwertkurve
-HISTORY_MSG_120;Grün-Ausgleich\nSchwellenwert
+HISTORY_MSG_120;Grün-Ausgleich
 HISTORY_MSG_121;Autom. CA
 HISTORY_MSG_122;Autom. Dunkelbild
 HISTORY_MSG_123;Dunkelbild - Datei
@@ -208,8 +209,8 @@ HISTORY_MSG_29;Schärfen Methode
 HISTORY_MSG_2;Profil geladen
 HISTORY_MSG_30;Dekonvolution Radius
 HISTORY_MSG_31;Dekonvolution Stärke
-HISTORY_MSG_32;Dekonvolution Dämpfung
-HISTORY_MSG_33;Dekonvolution Iterationen
+HISTORY_MSG_32;Dekonvolution\nDämpfung
+HISTORY_MSG_33;Dekonvolution\nIterationen
 HISTORY_MSG_34;Farbbeschneidungen\nverhindern
 HISTORY_MSG_35;Sättigung begrenzen
 HISTORY_MSG_36;Sättigungsgrenzwert
@@ -275,8 +276,8 @@ HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_90;Rauschminderung\nLuminanz
 HISTORY_MSG_91;Rauschminderung\nChrominanz
 HISTORY_MSG_92;Rauschminderung\nGamma
-HISTORY_MSG_93;Kontrast nach Detailstufen\nParameter
-HISTORY_MSG_94;Kontrast nach Detailstufen
+HISTORY_MSG_93;Kontrast - Detailstufen\nParameter
+HISTORY_MSG_94;Kontrast - Detailstufen
 HISTORY_MSG_95;Sättigung
 HISTORY_MSG_96;'a'-Kurve
 HISTORY_MSG_97;'b'-Kurve
@@ -361,7 +362,7 @@ MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzuf.
 MAIN_FRAME_PLACES_DEL;Entf.
 MAIN_FRAME_RECENT;Verzeichnishistorie
-MAIN_MSG_ALREADYEXISTS;Diese Datei existiert schon.
+MAIN_MSG_ALREADYEXISTS;Diese Datei existiert bereits.
 MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
 MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
 MAIN_MSG_CANNOTSTARTEDITOR;Der Editor kann nicht gestartet werden.
@@ -372,7 +373,7 @@ MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schließen? Es s
 MAIN_MSG_JOBSINQUEUE;Job in Bearbeitung
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_PLACES;Orte
-MAIN_MSG_QOVERWRITE;Wollen sie die Datei überschreiben?
+MAIN_MSG_QOVERWRITE;Möchten Sie die Datei überschreiben?
 MAIN_TAB_BASIC;Basis
 MAIN_TAB_COLOR;Farbe
 MAIN_TAB_DETAIL;Detail
@@ -497,7 +498,8 @@ PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
-PREFERENCES_DATEFORMAT;Datumsformat
+PREFERENCES_DATEFORMAT;Format
+PREFERENCES_DATEFORMATFRAME;Datumsformat
 PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nDas deutsche Datumsformat beispielsweise ist:\n<b>%d.%m.%y</b>
 PREFERENCES_DEFAULTLANG;Sprache für Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard-Oberflächendesign
@@ -511,7 +513,7 @@ PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
 PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
-PREFERENCES_FBROWSEROPTS;Einstellungen zu Bildinformationen
+PREFERENCES_FBROWSEROPTS;Bildinformationen und Voransichten
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FORIMAGE;Für Bilddateien
 PREFERENCES_FORRAW;Für RAW-Dateien
@@ -535,7 +537,7 @@ PREFERENCES_OUTDIRFOLDERHINT;Alle erzeugten Dateien in dem angegebenen Verzeichn
 PREFERENCES_OUTDIRHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
 PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OVERLAY_FILENAMES;Dateiname anzeigen
+PREFERENCES_OVERLAY_FILENAMES;Dateiname und Informationen überlagert über Bild
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
 PREFERENCES_PARSEDEXT;Angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
@@ -585,21 +587,21 @@ PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren
 PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden
 PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen
 PROFILEPANEL_TOOLTIPSAVE;Profil speichern
-PROGRESSBAR_DECODING;Dekodierung der Rohdatei (RAW)...
+PROGRESSBAR_DECODING;Dekodiere RAW...
 PROGRESSBAR_DEMOSAICING;Entrasterung...
-PROGRESSBAR_LOADING;Laden des Bildes...
-PROGRESSBAR_LOADJPEG;Laden der JPEG Datei...
-PROGRESSBAR_LOADPNG;Laden der PNG Datei...
-PROGRESSBAR_LOADTIFF;Laden der TIFF Datei...
-PROGRESSBAR_PROCESSING;Berechnen des Bildes...
+PROGRESSBAR_LOADING;Lade Bild...
+PROGRESSBAR_LOADJPEG;Lade JPEG...
+PROGRESSBAR_LOADPNG;Lade PNG...
+PROGRESSBAR_LOADTIFF;Lade TIFF...
+PROGRESSBAR_PROCESSING;Berechne Bild...
 PROGRESSBAR_READY;Bereit.
-PROGRESSBAR_SAVEJPEG;Speichern der JPEG Datei...
-PROGRESSBAR_SAVEPNG;Speichern der PNG Datei...
-PROGRESSBAR_SAVETIFF;Speichern der TIFF Datei...
-PROGRESSDLG_LOADING;Laden der Datei...
-PROGRESSDLG_PROCESSING;Berechnen des Bildes...
+PROGRESSBAR_SAVEJPEG;Speichere JPEG...
+PROGRESSBAR_SAVEPNG;Speichere PNG...
+PROGRESSBAR_SAVETIFF;Speichere TIFF...
+PROGRESSDLG_LOADING;Lade Datei...
+PROGRESSDLG_PROCESSING;Berechne Bild...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde im Browser geändert
-PROGRESSDLG_SAVING;Speichern der Datei...
+PROGRESSDLG_SAVING;Speichere Datei...
 QINFO_FOCALLENGTH;Brennweite
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
@@ -719,12 +721,12 @@ TP_HSVEQUALIZER5;Aquamarin
 TP_HSVEQUALIZER6;Blau
 TP_HSVEQUALIZER7;Purpur
 TP_HSVEQUALIZER8;Magenta
-TP_HSVEQUALIZER_CHANNEL;HSV-Kanal
-TP_HSVEQUALIZER_HUE;Farbton
+TP_HSVEQUALIZER_CHANNEL;Kanal
+TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV-Mixer
 TP_HSVEQUALIZER_NEUTRAL;Neutral
-TP_HSVEQUALIZER_SAT;Sättigung
-TP_HSVEQUALIZER_VAL;Hellwert
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
 TP_ICM_FILEDLGFILTERANY;Alle Dateien
 TP_ICM_FILEDLGFILTERICM;ICC-Profildateien
 TP_ICM_GAMMABEFOREINPUT;Profil enthält Gamma-Anpassung
@@ -857,4 +859,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!PREFERENCES_DATEFORMATFRAME;Date Format

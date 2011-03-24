@@ -804,6 +804,7 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 
 
 !ABOUT_TAB_LICENSE;License
+!CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
 !GENERAL_FILE;File
 !GENERAL_NONE;None
 !HISTORY_MSG_111;Avoid Color Clipping
