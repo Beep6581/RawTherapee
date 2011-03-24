@@ -12,12 +12,13 @@ set (BASESOURCEFILES
     exifpanel.cc toolpanel.cc
     sharpening.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
-    crophandler.cc curveeditorgroup.cc curveeditor.cc dirbrowser.cc
+    crophandler.cc dirbrowser.cc
+    curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
     filecatalog.cc
     previewloader.cc
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
-    multilangmgr.cc mycurve.cc options.cc
+    multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc
     preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc soundman.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc

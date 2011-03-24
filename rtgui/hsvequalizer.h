@@ -24,28 +24,23 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 #include <guiutils.h>
+#include <curveeditor.h>
+#include <curveeditorgroup.h>
+#include <colorprovider.h>
 
 
-class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel
+class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider
 {
 
 protected:
 
     Gtk::CheckButton * enabled;
 	Gtk::ComboBoxText* hsvchannel;
-	
-	Gtk::VBox* satbox;
-    Gtk::VBox* valbox;
-    Gtk::VBox* huebox;
 
-    Adjuster* sat[8]; 
-    Adjuster* val[8]; 
-    Adjuster* hue[8]; 
-
-    sigc::connection enaConn;
-	sigc::connection neutralPressedConn;
-
-    bool lastEnabled;
+	CurveEditorGroup*  curveEditorG;
+	FlatCurveEditor*   hshape;
+	FlatCurveEditor*   sshape;
+	FlatCurveEditor*   vshape;
 
 public:
 
@@ -54,15 +49,12 @@ public:
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void curveChanged   (CurveEditor* ce);
+    //void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
+    virtual void colorForValue (double valX, double valY);
    
-    void adjusterChanged (Adjuster* a, double newval);
-    void enabledToggled ();
-	void hsvchannelChanged ();
-	
-	void neutralPressed ();
-
+    //void adjusterChanged (Adjuster* a, double newval);
 };
 
 #endif

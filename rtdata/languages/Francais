@@ -18,6 +18,7 @@ CURVEEDITOR_HIGHLIGHTS;Hautes lumières
 CURVEEDITOR_LIGHTS;Zones claires
 CURVEEDITOR_LINEAR;Linéaire
 CURVEEDITOR_LOADDLGLABEL;Charger la courbe...
+CURVEEDITOR_MINMAXCPOINTS;Points de contrôle minima/maxima
 CURVEEDITOR_NURBS;Cage de contrôle
 CURVEEDITOR_PARAMETRIC;Paramétrique
 CURVEEDITOR_SAVEDLGLABEL;Enregistrer la courbe...
@@ -532,8 +533,8 @@ PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MONITORICC;Profil du moniteur
-PREFERENCES_MULTITAB;Mode éditeurs multiple
-PREFERENCES_MULTITABDUALMON;Mode éditeurs multiple, si possible sur un second moniteur
+PREFERENCES_MULTITAB;Éditeurs multiple
+PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
@@ -564,8 +565,8 @@ PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
-PREFERENCES_SINGLETAB;Mode éditeur unique
-PREFERENCES_SINGLETABVERTAB;Mode éditeur unique, onglets verticaux
+PREFERENCES_SINGLETAB;Éditeur unique
+PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
 PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
 PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
@@ -738,11 +739,11 @@ TP_HSVEQUALIZER6;Bleu
 TP_HSVEQUALIZER7;Violet
 TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;Canal
-TP_HSVEQUALIZER_HUE;Teinte
+TP_HSVEQUALIZER_HUE;T
 TP_HSVEQUALIZER_LABEL;Égaliseur TSV
 TP_HSVEQUALIZER_NEUTRAL;Neutre
-TP_HSVEQUALIZER_SAT;Saturation
-TP_HSVEQUALIZER_VAL;Valeur
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
