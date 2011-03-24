@@ -490,7 +490,6 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	switch (event->type) {
 	case Gdk::CONFIGURE: {
 		GdkEventConfigure* cEvent = (GdkEventConfigure*)event;
-		printf("MyFlatCurve::handleEvents - CONFIGURE (%d, %d, %d, %d)\n", cEvent->x, cEvent->y, cEvent->width, cEvent->height);
 		if (!sized) {
 			int size = get_allocation().get_width();
 			set_size_request(size, size);
@@ -506,7 +505,6 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			set_size_request(GRAPH_SIZE + RADIUS + 1, GRAPH_SIZE + RADIUS + 1);
 		}
 		sized = false;
-		printf("MyFlatCurve::handleEvents - EXPOSE\n");
 		if (!pixmap) {
 			pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
 			interpolate ();
