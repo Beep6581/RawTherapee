@@ -860,6 +860,7 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser)
