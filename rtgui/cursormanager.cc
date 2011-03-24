@@ -30,6 +30,8 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
     cCropMove = new Gdk::Cursor (Gdk::FLEUR);
     cCropMoving = new Gdk::Cursor (Gdk::HAND2);
     cCropSelection = new Gdk::Cursor (Gdk::CROSSHAIR);
+    cLeftTanMove = new Gdk::Cursor (Gdk::SB_LEFT_ARROW);
+    cRightTanMove = new Gdk::Cursor (Gdk::SB_RIGHT_ARROW);
     cAdd = new Gdk::Cursor (Gdk::PLUS);
 
     Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
@@ -50,7 +52,7 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
 
     if (shape==CSArrow)
 	   // set_cursor without any arguments to select system default
-        window->set_cursor ();    
+        window->set_cursor ();
     else if (shape==CSOpenHand)
         window->set_cursor (*cHand);
     else if (shape==CSClosedHand)
@@ -67,6 +69,10 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         window->set_cursor (*cWB);
     else if (shape==CSCropSelect)
         window->set_cursor (*cCropSelection);
+    else if (shape==CSMoveLeft)
+        window->set_cursor (*cLeftTanMove);
+    else if (shape==CSMoveRight)
+        window->set_cursor (*cRightTanMove);
     else if (shape==CSStraighten)
         window->set_cursor (*cCropSelection);
     else if (shape==CSPlus)

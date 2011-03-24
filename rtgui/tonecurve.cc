@@ -78,7 +78,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   curveEditorG = new CurveEditorGroup (M("TP_EXPOSURE_CURVEEDITOR"));
   curveEditorG->setCurveListener (this);
 
-  shape = curveEditorG->addCurve();
+  shape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "");
 
   // This will add the reset button at the end of the curveType buttons
   curveEditorG->curveListComplete();
@@ -95,7 +95,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   hlcomprthresh->setAdjusterListener (this);
   shcompr->setAdjusterListener (this);
   contrast->setAdjusterListener (this);
-	saturation->setAdjusterListener (this);
+  saturation->setAdjusterListener (this);
 }
 
 void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -394,6 +394,6 @@ void ToneCurve::setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthr
 }
 
 void ToneCurve::updateCurveBackgroundHistogram (unsigned* hist) {
-    
+
     shape->updateBackgroundHistogram (hist);
 }

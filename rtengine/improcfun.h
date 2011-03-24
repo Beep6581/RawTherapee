@@ -122,9 +122,6 @@ class ImProcFunctions {
 		void getAutoExp       (unsigned int* histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);
 		double getTransformAutoFill (int oW, int oH);
-
-		void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
-		void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 };
 }
 #endif
