@@ -140,6 +140,8 @@ void DirBrowser::updateVolumes () {
 
     int nvolumes = GetLogicalDrives ();
     if (nvolumes!=volumes) {
+		gdk_threads_enter();
+
         for (int i=0; i<32; i++) 
             if (((volumes >> i) & 1) && !((nvolumes >> i) & 1)) { // volume i has been deleted
                 for (Gtk::TreeModel::iterator iter = dirTreeModel->children().begin(); iter!=dirTreeModel->children().end(); iter++) 
@@ -151,14 +153,14 @@ void DirBrowser::updateVolumes () {
             else if (!((volumes >> i) & 1) && ((nvolumes >> i) & 1)) 
                 addRoot ('A'+i); // volume i has been added
         volumes = nvolumes;
+
+		gdk_threads_leave();
     }
 }
 
 int _updateVolumes (void* br) {
 
-    gdk_threads_enter ();
     ((DirBrowser*)br)->updateVolumes ();
-    gdk_threads_leave ();
     return 1;
 }
 int _updateDirTree (void* br) {
