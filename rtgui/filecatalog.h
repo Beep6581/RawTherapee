@@ -115,7 +115,6 @@ class FileCatalog : public Gtk::VBox,
 #ifdef _WIN32
         WinDirMonitor* wdMonitor;
      public:
-        int checkCounter;
         void winDirChanged ();
      private:
 #endif		

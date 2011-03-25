@@ -518,7 +518,7 @@ Thumbnail::Thumbnail () :
 
 Thumbnail::~Thumbnail () {
 
-    delete thumbImg;
+    delete thumbImg; thumbImg=NULL;
     delete [] aeHistogram;
     delete [] embProfileData;
     if (embProfile)

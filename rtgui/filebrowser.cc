@@ -190,7 +190,7 @@ struct addparams {
     FileBrowserEntry* entry;
 };
 
-int addfl (void* data) {
+int AddEntryUIThread (void* data) {
     
     addparams* ap = (addparams*) data;
     FileBrowserIdleHelper* fbih = ap->fbih;
@@ -222,7 +222,7 @@ void FileBrowser::addEntry (FileBrowserEntry* entry) {
     addparams* ap = new addparams;
     ap->fbih = fbih;
     ap->entry = entry;
-    g_idle_add (addfl, ap);
+    g_idle_add (AddEntryUIThread, ap);
 }
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry) {

@@ -39,6 +39,7 @@ class WinDirMonitor : public Glib::Object {
             HANDLE hDirectory;
             WinDirChangeListener* listener;
             int bigyo;
+			time_t lastTimeUpdateDir;  // for filtering multiple updates events
         };
     
     private:

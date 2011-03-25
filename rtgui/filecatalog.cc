@@ -36,19 +36,6 @@
 
 extern Glib::ustring argv0;
 
-#ifdef _WIN32
-int _directoryUpdater (void* cat) {
-
-    ((FileCatalog*)cat)->checkCounter++;
-    if (((FileCatalog*)cat)->checkCounter==2) {
-        gdk_threads_enter ();
-        ((FileCatalog*)cat)->reparseDirectory ();
-        gdk_threads_leave ();
-    }
-    return 1;
-}
-#endif
-
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		selectedDirectoryId(1),
 		listener(NULL),
@@ -235,8 +222,6 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     selectedDirectory = "";
 #ifdef _WIN32
     wdMonitor = NULL;
-    checkCounter = 2;
-    g_timeout_add (CHECKTIME, _directoryUpdater, this);
 #endif   
 }
 
@@ -958,9 +943,16 @@ int FileCatalog::reparseDirectory () {
 }
 
 #ifdef _WIN32
-void FileCatalog::winDirChanged () {
+int winDirChangedUITread (void* cat) {
+	gdk_threads_enter ();
+    ((FileCatalog*)cat)->reparseDirectory ();
+    gdk_threads_leave ();
 
-    checkCounter = 0;
+    return 0;
+}
+
+void FileCatalog::winDirChanged () {
+	g_idle_add(winDirChangedUITread, this);
 }
 #endif
 
