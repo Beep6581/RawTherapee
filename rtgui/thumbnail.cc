@@ -140,7 +140,7 @@ bool Thumbnail::isSupported () {
 }
 
 const ProcParams& Thumbnail::getProcParams () {
-	Glib::Mutex::Lock lock(mutex);
+	//Glib::Mutex::Lock lock(mutex);
 
     if (pparamsValid)
         return pparams;
@@ -161,7 +161,7 @@ const ProcParams& Thumbnail::getProcParams () {
 }
 
 void Thumbnail::loadProcParams () {
-	Glib::Mutex::Lock lock(mutex);
+	//Glib::Mutex::Lock lock(mutex);
 
     pparamsValid = false;
     if (options.paramsLoadLocation==PLL_Input) {
@@ -183,7 +183,7 @@ void Thumbnail::loadProcParams () {
 }
 
 void Thumbnail::clearProcParams (int whoClearedIt) {
-	Glib::Mutex::Lock lock(mutex);
+	//Glib::Mutex::Lock lock(mutex);
 
     cfs.recentlySaved = false;
     pparamsValid = false;
@@ -211,7 +211,7 @@ bool Thumbnail::hasProcParams () {
 }
 
 void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool updateCacheNow) {
-	Glib::Mutex::Lock lock(mutex);
+	//Glib::Mutex::Lock lock(mutex);
     
     if (pparams!=pp) 
         cfs.recentlySaved = false;
@@ -518,7 +518,7 @@ void Thumbnail::updateCache () {
 }
 
 Thumbnail::~Thumbnail () {
-	Glib::Mutex::Lock lock(mutex);
+	//Glib::Mutex::Lock lock(mutex);
 
     delete [] lastImg;
     delete tpp;
