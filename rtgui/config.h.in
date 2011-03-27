@@ -21,5 +21,8 @@
 #define __CONFIG_H__
 
 #define DATA_SEARCH_PATH "${DATADIR}"
+#define DOC_SEARCH_PATH "${DOCDIR}"
+#define CREDITS_SEARCH_PATH "${CREDITSDIR}"
+#define LICENCE_SEARCH_PATH "${LICENCEDIR}"
 
 #endif
