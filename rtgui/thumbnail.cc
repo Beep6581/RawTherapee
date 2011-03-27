@@ -276,8 +276,13 @@ void Thumbnail::decreaseRef ()
 }
 
 void Thumbnail::getThumbnailSize (int &w, int &h) {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(mutex);
+	#endif
+
 	w=0;
-	if (tpp) w = tpp->getImageWidth (getProcParams(), h);  // this might return 0 if image was just building
+	if (!initial_ && tpp) w = tpp->getImageWidth (getProcParams(), h);  // this might return 0 if image was just building
     if (w==0) w = tw * h / th;
 }
 

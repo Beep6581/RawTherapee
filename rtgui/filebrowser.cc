@@ -239,6 +239,12 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
     entry->resize (getCurrentThumbSize());
 
     // find place in abc order
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
     std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
     while (i!=fd.end() && *entry < *((FileBrowserEntry*)*i))
         i++;
@@ -246,10 +252,15 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
     fd.insert (i, entry);
 
     initEntry (entry);
+	}
     redraw ();
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
         if ((*i)->filename==fname) {
@@ -270,6 +281,10 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
 }
 
 FileBrowserEntry* FileBrowser::findEntry (const Glib::ustring& fname) {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
         if ((*i)->filename==fname) 
@@ -288,12 +303,19 @@ void FileBrowser::close () {
     fbih->destroyed = false;
     fbih->pending = 0;
 
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
     for (int i=0; i<fd.size(); i++)
     {
         delete fd[i];
     }
     fd.clear ();
     selected.clear ();
+	}
     notifySelectionListener ();
     lastClicked = NULL;
 }
@@ -332,12 +354,19 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         tbl->renameRequested (mselected);
     else if (m==selall) {
         lastClicked = NULL;
+		{
+			// TODO: Check for Linux
+			#ifdef WIN32
+			Glib::Mutex::Lock lock(entryMutex);
+			#endif
+
         selected.clear ();
         for (int i=0; i<fd.size(); i++)
             if (checkFilter (fd[i])) {
                 fd[i]->selected = true;
                 selected.push_back (fd[i]);
             }
+		}
         queue_draw ();
         notifySelectionListener ();
     }
@@ -569,6 +598,12 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
     // remove items not complying the filter from the selection
     bool selchanged = false;
     numFiltered=0;
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
     for (int i=0; i<fd.size(); i++)
     	if(checkFilter (fd[i]))
     		numFiltered++;
@@ -580,6 +615,8 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
                 lastClicked = NULL;
             selchanged = true;
         }
+	}
+
     if (selchanged)
         notifySelectionListener ();
     redraw ();
@@ -682,6 +719,10 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 }
 
 void FileBrowser::openNextImage () {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     if (fd.size()>0) {
         for (int i=fd.size()-1; i>=0; i--)
@@ -701,6 +742,10 @@ void FileBrowser::openNextImage () {
 }
 
 void FileBrowser::openPrevImage () {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     if (fd.size()>0) {
         for (int i=0; i<fd.size(); i++)
