@@ -21,6 +21,10 @@
 #include <glib/gstdio.h>
 #include <safegtk.h>
 
+#ifndef WIN32
+#include <config.h>
+#endif
+
 extern Glib::ustring argv0;
 extern Glib::ustring versionString;
 
@@ -82,7 +86,11 @@ Splash::Splash () {
     splashImage->show ();
 
     // Tab 2: the informations about the current version
-	std::string buildFileName = Glib::build_filename (argv0, "AboutThisBuild.txt");
+#if defined _WIN32 || defined __APPLE__
+ 	std::string buildFileName = Glib::build_filename (argv0, "AboutThisBuild.txt");
+#else
+	std::string buildFileName = Glib::build_filename (CREDITS_SEARCH_PATH, "AboutThisBuild.txt");
+#endif
 	if ( Glib::file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
 	    FILE *f = g_fopen (buildFileName.c_str(), "rt");
 	    if (f != NULL) {
@@ -108,7 +116,7 @@ Splash::Splash () {
 #if defined _WIN32 || defined __APPLE__
 	std::string creditsFileName = Glib::build_filename (argv0, "AUTHORS.txt");
 #else
-	std::string creditsFileName = Glib::build_filename (argv0, "share/doc/AUTHORS.txt");
+	std::string creditsFileName = Glib::build_filename (CREDITS_SEARCH_PATH, "AUTHORS.txt");
 #endif
 	if ( Glib::file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
 	    FILE *f = g_fopen (creditsFileName.c_str(), "rt");
@@ -135,7 +143,7 @@ Splash::Splash () {
 #if defined _WIN32 || defined __APPLE__
 	std::string licenseFileName = Glib::build_filename (argv0, "LICENSE.txt");
 #else
-	std::string licenseFileName = Glib::build_filename (argv0, "share/doc/LICENSE.txt");
+	std::string licenseFileName = Glib::build_filename (LICENCE_SEARCH_PATH, "LICENSE.txt");
 #endif
 	if ( Glib::file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
 	    FILE *f = g_fopen (licenseFileName.c_str(), "rt");
