@@ -5,9 +5,9 @@ string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 set (OUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.txt")
 
-execute_process(COMMAND ${HG_CMD} parents --template={latesttag}.{latesttagdistance} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_VERSION)
-execute_process(COMMAND ${HG_CMD} parents --template={node|short} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_CHANGESET)
-execute_process(COMMAND ${HG_CMD} parents --template={latesttagdistance} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_TAGDISTANCE)
+execute_process(COMMAND hg parents --template={latesttag}.{latesttagdistance} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_VERSION)
+execute_process(COMMAND hg parents --template={node|short} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_CHANGESET)
+execute_process(COMMAND hg parents --template={latesttagdistance} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_TAGDISTANCE)
 
 # build version.h from template
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/rtgui/version.h)
