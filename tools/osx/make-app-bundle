@@ -29,7 +29,7 @@ ETC=${MACOS}/etc
 LIB=${MACOS}/lib
 SHARE=${MACOS}/share
 RELEASE=release
-DMG=${RELEASE}/rawtherapee_osx105_`date +%F`_`hg parents --template '{latesttag}+{latesttagdistance}-{node|short}'`.dmg
+DMG=${RELEASE}/rawtherapee_mac32_`date +%F`_`hg -R . branch`_`hg parents --template '{latesttag}i.{latesttagdistance}-{node|short}'`.dmg
 EXECUTABLE=rt
 
 #Find where MacPorts is installed.  We take a known binary (cmake), which is in <MacPorts>/bin, and 
@@ -88,8 +88,6 @@ cp tools/osx/start ${MACOS}
 echo "Recursively copying libraries referenced by executable..."
 checkLink "${MACOS}/${EXECUTABLE}"
 
-ADDITIONAL_LIB=`find /opt/local/lib /usr/lib -name "gdk-pixbuf-2.0"`
-cp -R ${ADDITIONAL_LIB} ${LIB}
 
 #Make a .dmg for distribution and delete the .app
 echo "Creating distribution .dmg..."
