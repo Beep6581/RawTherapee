@@ -40,6 +40,8 @@ class Crop : public DetailedCrop {
         Imagefloat* *resizeCrop, *transCrop;
         LabImage *laboCrop, *labnCrop;
         Image8 *cropImg;
+		Image8 *cropImgtrue;
+
 
         int** cbuffer;
         int * cbuf_real;

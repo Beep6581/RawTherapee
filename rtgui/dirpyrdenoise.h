@@ -22,13 +22,21 @@
 #include <gtkmm.h>
 #include <adjuster.h>
 #include <toolpanel.h>
+#include <guiutils.h>
+#include <curveeditor.h>
+#include <curveeditorgroup.h>
+#include <colorprovider.h>
 
-class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
     Adjuster* luma;
     Adjuster* chroma;
 	Adjuster* gamma;
+
+	CurveEditorGroup*  curveEditorG;
+	DiagonalCurveEditor*   lumshape;
+	DiagonalCurveEditor*   chromshape;
 
     Gtk::CheckButton* enabled;
     bool lastEnabled;
@@ -45,9 +53,11 @@ class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public Foldable
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void curveChanged   (CurveEditor* ce);
     void enabledChanged ();
 
     void setAdjusterBehavior (bool bedgetoladd);
+    virtual void colorForValue (double valX, double valY);
 };
 
 #endif

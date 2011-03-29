@@ -50,7 +50,10 @@ namespace rtengine {
 
 extern const Settings* settings;
 	
-
+const double (*wprof[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
+const double (*iwprof[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
+const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
+const int numprof = 7;
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 	
@@ -161,6 +164,19 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         delete [] buffer;
         cmsDeleteTransform(hTransform);
     } else {
+		
+		float rgb_xyz[3][3];
+		
+		for (int i=0; i<numprof; i++) {
+			if (profile==wprofnames[i]) {
+				for (int m=0; m<3; m++) 
+					for (int n=0; n<3; n++) {
+						rgb_xyz[m][n] = iwprof[i][m][n];
+					}
+				break;
+			}
+		}
+		
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
 			float g;
@@ -179,7 +195,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float y_ = 65535*Lab2xyz(fy);
 				float z_ = 65535*Lab2xyz(fz)*D50z;
 
-				xyz2srgb(x_,y_,z_,R,G,B);
+				xyz2rgb(x_,y_,z_,R,G,B,rgb_xyz);
 
                 image->data[ix++] = (int)gamma2curve[(R)] >> 8;
                 image->data[ix++] = (int)gamma2curve[(G)] >> 8;

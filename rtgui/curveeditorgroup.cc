@@ -60,15 +60,22 @@ void CurveEditorGroup::hideCurrentCurve() {
 CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel) {
 	switch (cType) {
 	case (CT_Diagonal):
+		slope = 1;
 		if (!diagonalSubGroup) {
-			diagonalSubGroup = new DiagonalCurveEditorSubGroup(this);
+			diagonalSubGroup = new DiagonalCurveEditorSubGroup(this, slope);
 		}
-		return (CurveEditor*)diagonalSubGroup->addCurve(curveLabel);
+		return (CurveEditor*)diagonalSubGroup->addCurve(curveLabel, slope);
 	case (CT_Flat):
 		if (!flatSubGroup) {
 			flatSubGroup = new FlatCurveEditorSubGroup(this);
 		}
 		return (CurveEditor*)flatSubGroup->addCurve(curveLabel);
+	case (CT_FlatNonPeriodic):
+		slope = 0;
+		if (!diagonalSubGroup) {
+			diagonalSubGroup = new DiagonalCurveEditorSubGroup(this, slope);
+		}
+		return (CurveEditor*)diagonalSubGroup->addCurve(curveLabel, slope);
 	default:
 		return (CurveEditor*)NULL;
 		break;

@@ -31,8 +31,8 @@ class Navigator : public Gtk::Frame, public PointerMotionListener {
 		Gtk::Label *H, *S, *V;
 		Gtk::Label *LAB_A, *LAB_B, *LAB_L;
 
-		void rgb2hsv 	(int r, int g, int b, int &h, int &s, int &v);
-		void rgb2lab (int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b);
+		void rgb2hsv (int r, int g, int b, int &h, int &s, int &v);
+		void rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b);
 		void setInvalid ();
 	public:
 		PreviewWindow* previewWindow;
@@ -40,7 +40,7 @@ class Navigator : public Gtk::Frame, public PointerMotionListener {
 		Navigator ();
 
 		// pointermotionlistener interface
-		void pointerMoved (bool validPos, int x, int y, int r, int g, int b);
+		void pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b);
 
 };
 

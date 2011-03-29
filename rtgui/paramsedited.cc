@@ -80,8 +80,10 @@ void ParamsEdited::set (bool v) {
 	impulseDenoise.thresh     = v;
 	dirpyrDenoise.enabled     = v;
 	dirpyrDenoise.luma        = v;
-	dirpyrDenoise.chroma = v;
-	dirpyrDenoise.gamma = v;
+	dirpyrDenoise.chroma      = v;
+	//dirpyrDenoise.gamma       = v;
+	dirpyrDenoise.lumcurve    = v;
+	dirpyrDenoise.chromcurve  = v;
 	sh.enabled       = v;
 	sh.hq            = v;
 	sh.highlights    = v;
@@ -227,7 +229,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
-        dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
+        //dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
+        dirpyrDenoise.lumcurve = dirpyrDenoise.lumcurve && p.dirpyrDenoise.lumcurve == other.dirpyrDenoise.lumcurve;
+        dirpyrDenoise.chromcurve = dirpyrDenoise.chromcurve && p.dirpyrDenoise.chromcurve == other.dirpyrDenoise.chromcurve;
 
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
         sh.hq = sh.hq && p.sh.hq == other.sh.hq;
@@ -376,7 +380,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
 	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= mods.dirpyrDenoise.luma;
 	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= mods.dirpyrDenoise.chroma;
-	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= mods.dirpyrDenoise.gamma;
+	//if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= mods.dirpyrDenoise.gamma;
+	if (dirpyrDenoise.lumcurve)				toEdit.dirpyrDenoise.lumcurve	= mods.dirpyrDenoise.lumcurve;
+	if (dirpyrDenoise.chromcurve)			toEdit.dirpyrDenoise.chromcurve	= mods.dirpyrDenoise.chromcurve;
 
 	if (sh.enabled)		    				toEdit.sh.enabled 	    = mods.sh.enabled;
 	if (sh.hq)		        				toEdit.sh.hq     	    = mods.sh.hq;

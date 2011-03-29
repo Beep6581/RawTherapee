@@ -68,6 +68,8 @@ Enabled=false
 Luma=10
 Chroma=10
 Gamma=2
+LumCurve=0;
+ChromCurve=0;
 
 [Luminance Denoising]
 Enabled=false

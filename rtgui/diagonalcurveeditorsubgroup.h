@@ -36,7 +36,7 @@ private:
 	MyDiagonalCurve* customCurve;
 	MyDiagonalCurve* paramCurve;
 	MyDiagonalCurve* NURBSCurve;
-
+	
 	SHCSelector* shcSelector;
 	Adjuster* highlights;
 	Adjuster* lights;
@@ -51,10 +51,10 @@ private:
 	int activeParamControl;
 
 public:
-	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt/*, int slope*/);
+	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt, int slope);
 	~DiagonalCurveEditorSubGroup();
 
-	DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = ""/*, int slope = 1*/);
+	DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "", int slope = 1);
 	virtual void updateBackgroundHistogram (CurveEditor* ce);
 	virtual void setColorProvider (ColorProvider* p);
 

@@ -19,6 +19,7 @@
 #include <dirpyrdenoise.h>
 #include <iomanip>
 #include <math.h>
+#include <utils.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -43,15 +44,26 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 	luma->setAdjusterListener (this);
 	chroma->setAdjusterListener (this); 
     gamma->setAdjusterListener (this); 
+
+    // curve UI
+	curveEditorG = new CurveEditorGroup (M("TP_NOISEREDUCTION_CHANNEL"));
+	curveEditorG->setCurveListener (this);
+	curveEditorG->setColorProvider (this);
 	
+	lumshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_FlatNonPeriodic, M("TP_NOISEREDUCTION_LUM"));
+	chromshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_FlatNonPeriodic, M("TP_NOISEREDUCTION_CHROM"));
+
+	// This will add the reset button at the end of the curveType buttons
+	curveEditorG->curveListComplete();
+
 	luma->show();
 	chroma->show();
 	gamma->show();
 	
 	pack_start (*luma);
 	pack_start (*chroma);
-	pack_start (*gamma);
-
+	pack_start (*gamma); // !!!TODO - remove
+	pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
 }
 
 void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -62,6 +74,8 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
         luma->setEditedState    (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         chroma->setEditedState      (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
         gamma->setEditedState      (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
+        lumshape->setUnChanged (!pedited->dirpyrDenoise.lumcurve);
+        chromshape->setUnChanged (!pedited->dirpyrDenoise.chromcurve);
         enabled->set_inconsistent (!pedited->dirpyrDenoise.enabled);
     }
 	
@@ -75,6 +89,9 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     chroma->setValue      (pp->dirpyrDenoise.chroma);
 	gamma->setValue      (pp->dirpyrDenoise.gamma);
 
+	lumshape->setCurve         (pp->dirpyrDenoise.lumcurve);
+	chromshape->setCurve       (pp->dirpyrDenoise.chromcurve);
+
     enableListener ();
 }
 
@@ -83,12 +100,16 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->dirpyrDenoise.luma      = luma->getValue ();
 	pp->dirpyrDenoise.chroma	= chroma->getValue ();
 	pp->dirpyrDenoise.gamma		= gamma->getValue ();
+    pp->dirpyrDenoise.lumcurve = lumshape->getCurve ();
+    pp->dirpyrDenoise.chromcurve = chromshape->getCurve ();
 	pp->dirpyrDenoise.enabled   = enabled->get_active();
 	
     if (pedited) {
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
         pedited->dirpyrDenoise.chroma	= chroma->getEditedState ();
 		pedited->dirpyrDenoise.gamma	= gamma->getEditedState ();
+		pedited->dirpyrDenoise.lumcurve = !lumshape->isUnChanged ();
+		pedited->dirpyrDenoise.chromcurve = !chromshape->isUnChanged ();
 		pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
     }
 }
@@ -156,6 +177,7 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     ToolPanel::setBatchMode (batchMode);
     luma->showEditedCB ();
     chroma->showEditedCB ();
+    curveEditorG->setBatchMode (batchMode);
 }
 
 /*void DirPyrDenoise::setAdjusterBehavior (bool bedgetoladd) {
@@ -167,3 +189,39 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
  
  edgetolAdd = bedgetoladd;
  }*/
+
+/*
+ * Curve listener
+ *
+ * If more than one curve has been added, the curve listener is automatically
+ * set to 'multi=true', and send a pointer of the modified curve in a parameter
+ */
+void DirPyrDenoise::curveChanged (CurveEditor* ce) {
+    if (listener) {
+    	if (ce == lumshape)
+        	listener->panelChanged (EvDPDNLumCurve, M("HISTORY_CUSTOMCURVE"));
+    	if (ce == chromshape)
+        	listener->panelChanged (EvDPDNChromCurve, M("HISTORY_CUSTOMCURVE"));
+	}
+}
+
+void DirPyrDenoise::colorForValue (double valX, double valY) {
+
+	CurveEditor* ce = curveEditorG->getDisplayedCurve();
+
+	if (ce == lumshape) {         // Luminance noise reduction = f(L)
+		red = (double)valX;
+		green = (double)valX;
+		blue = (double)valX;
+	}
+	else if (ce == chromshape) {    // Chrominance noise reduction = f(L)
+		// TODO: To be implemented
+		red = (double)valX;
+		green = (double)valX;
+		blue = (double)valX;
+	}
+	else {
+		printf("Error: no curve displayed!\n");
+	}
+
+}

@@ -180,7 +180,8 @@ namespace rtengine {
         public: 
             /** With this member function the staged processor notifies the listener that the detailed crop image has been updated.
               * @param img is a pointer to the detailed crop image */
-            virtual void setDetailedCrop (IImage8* img, procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
+            virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp, \
+										  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
     };
 

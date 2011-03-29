@@ -72,7 +72,7 @@ class MyDiagonalCurve : public MyCurve {
 		std::vector<double> get_vector (int veclen);
 
 	public:
-		MyDiagonalCurve (/*int slope*/);
+		MyDiagonalCurve (int slope);
 		~MyDiagonalCurve ();
 		std::vector<double> getPoints ();
 		void setPoints (const std::vector<double>& p);

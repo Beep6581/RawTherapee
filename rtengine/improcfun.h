@@ -93,9 +93,12 @@ class ImProcFunctions {
 		void dirpyrdenoise    (LabImage* lab);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
 
-		void dirpyrLab_denoise(LabImage * src, LabImage * dst, int luma, int chroma, float gamma );//Emil's directional pyramid denoise
-		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab, int pitch, int scale, const int luma, int chroma );
-		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf &nrwt_l, LUTf &nrwt_ab, int pitch, int scale, const int luma, int chroma );
+		procparams::DirPyrDenoiseParams dnparams;
+		void dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams );//Emil's directional pyramid denoise
+		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab, \
+							   int pitch, int scale, const int luma, int chroma );
+		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab, \
+							   int pitch, int scale, const int luma, const int chroma, LUTf & Lcurve, LUTf & abcurve );
 
 		void dirpyrLab_equalizer (LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer
 		void dirpyr_eq           (LabImage* data_coarse, LabImage* data_fine, LUTf & rangefn, int level, int pitch, int scale, const double * mult );
@@ -120,7 +123,8 @@ class ImProcFunctions {
 		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
-	
+		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
+
 	void gamutmap(LabImage* );
 
 };

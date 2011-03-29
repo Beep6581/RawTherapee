@@ -190,6 +190,7 @@ void Crop::update (int todo, bool internal) {
 
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
+	cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, params.icm.working);
 	//parent->ipf.lab2rgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();
@@ -232,10 +233,14 @@ void Crop::update (int todo, bool internal) {
             finalH = cropImg->getHeight()-upperBorder;
             
         Image8* final = new Image8 (finalW, finalH);
-        for (int i=0; i<finalH; i++)
+		Image8* finaltrue = new Image8 (finalW, finalH);
+        for (int i=0; i<finalH; i++) {
             memcpy (final->data + 3*i*finalW, cropImg->data + 3*(i+upperBorder)*cropw + 3*leftBorder, 3*finalW);
-        cropImageListener->setDetailedCrop (final, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
+			memcpy (finaltrue->data + 3*i*finalW, cropImgtrue->data + 3*(i+upperBorder)*cropw + 3*leftBorder, 3*finalW);
+		}
+        cropImageListener->setDetailedCrop (final, finaltrue, params.icm, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
         delete final;
+		delete finaltrue;
     }
 
     cropMutex.unlock ();
@@ -343,6 +348,8 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         laboCrop = new LabImage (cropw, croph);    
         labnCrop = new LabImage (cropw, croph);    
         cropImg = new Image8 (cropw, croph);
+		cropImgtrue = new Image8 (cropw, croph);
+
         cshmap = new SHMap (cropw, croph, true);
         
         cbuffer = new int*[croph];

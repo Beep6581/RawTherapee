@@ -24,7 +24,7 @@ using namespace rtengine;
 CropHandler::CropHandler () 
     : zoom(10), cx(0), cy(0), cw(0), ch(0),
     cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
-    cropimg(NULL), ipc(NULL), crop(NULL), listener(NULL) {
+    cropimg(NULL), cropimgtrue(NULL), ipc(NULL), crop(NULL), listener(NULL) {
 
     chi = new CropHandlerIdleHelper;
     chi->destroyed = false;
@@ -175,6 +175,8 @@ int createpixbufs (void* data) {
     if (!ch->enabled) {
         delete [] ch->cropimg;
         ch->cropimg = NULL;
+		delete [] ch->cropimgtrue;
+        ch->cropimgtrue = NULL;
         ch->cimg.unlock ();
         gdk_threads_leave ();
         return 0;
@@ -191,13 +193,20 @@ int createpixbufs (void* data) {
             if (imh>ch->wh)
                 imh = ch->wh;
 
-            Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (ch->cropimg, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, ch->cropimg_height, 3*ch->cropimg_width);
+            Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (ch->cropimg, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, 2*ch->cropimg_height, 3*ch->cropimg_width);
             ch->cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
             tmpPixbuf->scale (ch->cropPixbuf, 0, 0, imw, imh, 0, 0, czoom/1000.0, czoom/1000.0, Gdk::INTERP_NEAREST);
             tmpPixbuf.clear ();
+			
+			Glib::RefPtr<Gdk::Pixbuf> tmpPixbuftrue = Gdk::Pixbuf::create_from_data (ch->cropimgtrue, Gdk::COLORSPACE_RGB, false, 8, ch->cropimg_width, 2*ch->cropimg_height, 3*ch->cropimg_width);
+            ch->cropPixbuftrue = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+            tmpPixbuftrue->scale (ch->cropPixbuftrue, 0, 0, imw, imh, 0, 0, czoom/1000.0, czoom/1000.0, Gdk::INTERP_NEAREST);
+            tmpPixbuftrue.clear ();
         }
         delete [] ch->cropimg;
         ch->cropimg = NULL;
+		delete [] ch->cropimgtrue;
+        ch->cropimgtrue = NULL;
     }
     ch->cimg.unlock ();
     if (ch->listener) {
@@ -214,7 +223,8 @@ int createpixbufs (void* data) {
     return 0;
 }
 
-void CropHandler::setDetailedCrop (IImage8* im, rtengine::procparams::CropParams cp, int ax, int ay, int aw, int ah, int askip) {
+void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procparams::ColorManagementParams cmp, \
+								   rtengine::procparams::CropParams cp, int ax, int ay, int aw, int ah, int askip) {
 
    if (!enabled)
         return;
@@ -222,17 +232,23 @@ void CropHandler::setDetailedCrop (IImage8* im, rtengine::procparams::CropParams
     cimg.lock ();
 
     cropParams = cp;
+	colorParams = cmp;
 
     cropPixbuf.clear ();
     if (cropimg)
         delete [] cropimg;
     cropimg = NULL;
+	//if (cropimgtrue)
+    //    delete [] cropimgtrue;
+    //cropimgtrue = NULL;
     
     if (ax==cropX && ay==cropY && aw==cropW && ah==cropH && askip==(zoom>=1000?1:zoom)) {
         cropimg_width = im->getWidth ();
         cropimg_height = im->getHeight ();
-        cropimg = new unsigned char [3*cropimg_width*cropimg_height];
+        cropimg = new unsigned char [6*cropimg_width*cropimg_height];
+		cropimgtrue = new unsigned char [3*cropimg_width*cropimg_height];
         memcpy (cropimg, im->getData(), 3*cropimg_width*cropimg_height);
+		memcpy (cropimgtrue, imtrue->getData(), 3*cropimg_width*cropimg_height);
         cix = ax;
         ciy = ay;
         ciw = aw;
@@ -281,6 +297,8 @@ void CropHandler::setEnabled (bool e) {
         cimg.lock ();
         delete [] cropimg;
         cropimg = NULL;
+		delete [] cropimgtrue;
+        cropimgtrue = NULL;
         cropPixbuf.clear ();
         cimg.unlock ();
     }

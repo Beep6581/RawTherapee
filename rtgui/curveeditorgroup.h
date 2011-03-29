@@ -71,8 +71,9 @@ public:
 	CurveEditor* getDisplayedCurve () { return displayedCurve; }
 	//void on_realize ();
 	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel);
-
+	
 protected:
+	int slope;
 	//void curveTypeToggled ();
 	void curveTypeToggled (CurveEditor* ce);
 	//void typeSelectionChanged (int n);

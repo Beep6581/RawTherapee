@@ -34,7 +34,8 @@
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
 enum CurveType {
 	CT_Flat,
-	CT_Diagonal
+	CT_Diagonal,
+	CT_FlatNonPeriodic
 };
 
 enum SnapToType {

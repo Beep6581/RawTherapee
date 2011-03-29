@@ -42,7 +42,7 @@
 rangefn_ab[(data_fine->L[i1][j1]-data_fine->L[i][j]+32768)] * \
 rangefn_ab[(data_fine->b[i1][j1]-data_fine->b[i][j]+32768)] )
 
-#define NRWT_L(a) (nrwt_l[a] )
+//#define NRWT_L(a) (nrwt_l[a] )
 
 #define NRWT_AB (nrwt_ab[(hipass[1]+32768)] * nrwt_ab[(hipass[2]+32768)])
 
@@ -100,18 +100,34 @@ namespace rtengine {
 	
 	
 	
-	void ImProcFunctions :: dirpyrLab_denoise(LabImage * src, LabImage * dst, const int luma, const int chroma, float gam )
+	void ImProcFunctions :: dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams )
 	{
+		float gam = dnparams.gamma;
 		//float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 		
-		LUTf gamcurve;
-		gamcurve(65536,0);
+		LUTf gamcurve(65536,0);
+		
+		DiagonalCurve* lumacurve = new DiagonalCurve (dnparams.lumcurve, CURVES_MIN_POLY_POINTS);
+		DiagonalCurve* chromacurve = new DiagonalCurve (dnparams.chromcurve, CURVES_MIN_POLY_POINTS);
+		LUTf Lcurve(65536);
+		LUTf abcurve(65536);
 		for (int i=0; i<65536; i++) {
-			gamcurve[i] = (CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
-			//if (i<500)  printf("%d %d \n",i,gamcurve[i]);
+			int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
+			//if (i<500)  printf("%d %d \n",i,g);
+			gamcurve[i] = CLIP(g);
+			float val = (float)i/65535.0;
+			float Lval = (2*(lumacurve->getVal(val)));
+			float abval = (2*(chromacurve->getVal(val)));
+			
+			Lcurve[i] = SQR(Lval);
+			abcurve[i] = SQR(abval);
+			if (i % 1000 ==0) printf("%d Lmult=%f abmult=%f \n",i,Lcurve[i],abcurve[i]);
 		}
+		delete lumacurve;
+		delete chromacurve;
+		
 		
 		
 		//#pragma omp parallel for if (multiThread)
@@ -145,10 +161,10 @@ namespace rtengine {
 		
 		float tonefactor = nrwt_l[32768];
 		
-		float noise_L = 10.0*luma;
+		float noise_L = 10.0*dnparams.luma;
 		float noisevar_L = SQR(noise_L);
 		
-		float noise_ab = 25.0*chroma;
+		float noise_ab = 25.0*dnparams.chroma;
 		float noisevar_ab = SQR(noise_ab);
 		
 		
@@ -200,7 +216,7 @@ namespace rtengine {
 		//int thresh = 10 * c[8];
 		//impulse_nr (src, src, m_w1, m_h1, thresh, noisevar);
 		
-		dirpyr(src, dirpyrLablo[0], 0, rangefn_L, rangefn_ab, pitch, scale, luma, chroma );
+		dirpyr(src, dirpyrLablo[0], 0, rangefn_L, rangefn_ab, pitch, scale, dnparams.luma, dnparams.chroma );
 		
 		level = 1;
 		
@@ -209,7 +225,7 @@ namespace rtengine {
 			scale = scales[level];
 			pitch = pitches[level];
 			
-			dirpyr(dirpyrLablo[level-1], dirpyrLablo[level], level, rangefn_L, rangefn_ab, pitch, scale, luma, chroma );
+			dirpyr(dirpyrLablo[level-1], dirpyrLablo[level], level, rangefn_L, rangefn_ab, pitch, scale, dnparams.luma, dnparams.chroma );
 			
 			level ++;
 		}
@@ -224,13 +240,13 @@ namespace rtengine {
 			
 			int scale = scales[level];
 			int pitch = pitches[level];
-			idirpyr(dirpyrLablo[level], dirpyrLablo[level-1], level, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, luma, chroma );
+			idirpyr(dirpyrLablo[level], dirpyrLablo[level-1], level, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma, Lcurve, abcurve );
 		}
 		
 		
 		scale = scales[0];
 		pitch = pitches[0];
-		idirpyr(dirpyrLablo[0], dst, 0, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, luma, chroma );
+		idirpyr(dirpyrLablo[0], dst, 0, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma, Lcurve, abcurve );
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,7 +260,7 @@ namespace rtengine {
 		}
 		
 		
-		if (luma>0) {
+		if (dnparams.luma>0) {
 			for (int i=0; i<dst->H; i++) 
 				for (int j=0; j<dst->W; j++) {
 					dst->L[i][j] = gamcurve[dst->L[i][j]];
@@ -268,7 +284,9 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	};
 	
-	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab, int pitch, int scale, const int luma, const int chroma )
+	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, \
+								 LUTf & rangefn_L, LUTf & rangefn_ab, int pitch, int scale, \
+								 const int luma, const int chroma )
 	{
 		
 		//pitch is spacing of subsampling
@@ -347,7 +365,8 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf &nrwt_l, LUTf &nrwt_ab, int pitch, int scale, const int luma, const int chroma )
+	void ImProcFunctions::idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab, \
+								  int pitch, int scale, const int luma, const int chroma, LUTf & Lcurve, LUTf & abcurve )
 	{
 		
 		int width = data_fine->W;
@@ -402,7 +421,7 @@ namespace rtengine {
 					double wtdsum[3], norm;
 					float hipass[3], hpffluct[3], tonefactor, nrfactor;
 					
-					tonefactor = ((NRWT_L(data_coarse->L[i][j])));
+					tonefactor = (nrwt_l[data_coarse->L[i][j]]);
 					
 					hipass[1] = data_fine->a[i][j]-data_coarse->a[i][j];
 					hipass[2] = data_fine->b[i][j]-data_coarse->b[i][j];
@@ -412,7 +431,7 @@ namespace rtengine {
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-data_coarse->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+SQR(hipass[1])+SQR(hipass[2])+0.001;
-						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L);
+						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L * Lcurve[data_coarse->L[i][j]]);
 						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
 						//data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
 					}
@@ -590,7 +609,7 @@ namespace rtengine {
 			for( int i = 0; i < height; i++)
 				for(int j = 0; j < width; j++) {
 					
-					double tonefactor = ((NRWT_L(smooth->L[i][j])));
+					float tonefactor = (nrwt_l[smooth->L[i][j]]);
 					//double wtdsum[3], norm;
 					float hipass[3], hpffluct[3], nrfactor;
 					
@@ -602,7 +621,7 @@ namespace rtengine {
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+SQR(hipass[1])+SQR(hipass[2])+0.001;
-						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L);
+						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L * Lcurve[smooth->L[i][j]]);
 						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
 						//data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
 					}
@@ -612,7 +631,7 @@ namespace rtengine {
 					//hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
 					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
 					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB);
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB * abcurve[smooth->L[i][j]]);
 
 					hipass[1] *= nrfactor;
 					hipass[2] *= nrfactor;
@@ -688,7 +707,7 @@ namespace rtengine {
 #undef DIRWT_L
 #undef DIRWT_AB
 	
-#undef NRWT_L	
+//#undef NRWT_L	
 #undef NRWT_AB	
 	
 }

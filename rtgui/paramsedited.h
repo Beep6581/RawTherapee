@@ -133,6 +133,8 @@ public:
 	bool luma;
 	bool chroma;
 	bool gamma;
+	bool lumcurve;
+	bool chromcurve;
 };
 
 class SHParamsEdited {

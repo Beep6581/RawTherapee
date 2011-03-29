@@ -22,7 +22,7 @@
 class PointerMotionListener {
 
 	public:
-		virtual void pointerMoved (bool validPos, int x, int y, int r, int g, int b) {}
+		virtual void pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {}
 };
 
 #endif

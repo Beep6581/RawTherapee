@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string.h>
 #include <version.h>
+#include <mydiagonalcurve.h>
 #include <myflatcurve.h>
 
 #include <safekeyfile.h>
@@ -116,6 +117,10 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.luma          = 10;
     dirpyrDenoise.chroma		= 10;
 	dirpyrDenoise.gamma			= 2.0;
+	dirpyrDenoise.lumcurve.clear ();
+	dirpyrDenoise.lumcurve.push_back (DCT_Linear);
+	dirpyrDenoise.chromcurve.clear ();
+	dirpyrDenoise.chromcurve.push_back (DCT_Linear);
     
     sh.enabled       = false;
     sh.hq            = false;
@@ -311,6 +316,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
 	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
+    Glib::ArrayHandle<double> lumcurve = dirpyrDenoise.lumcurve;
+    Glib::ArrayHandle<double> chromcurve = dirpyrDenoise.chromcurve;
+    keyFile.set_double_list("Directional Pyramid Denoising", "LumCurve", lumcurve);
+    keyFile.set_double_list("Directional Pyramid Denoising", "ChromCurve", chromcurve);
 
     // save lumaDenoise
     keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
@@ -587,6 +596,8 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "LumCurve"))    dirpyrDenoise.lumcurve   = keyFile.get_double_list ("Directional Pyramid Denoising", "LumCurve");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "ChromCurve"))  dirpyrDenoise.chromcurve = keyFile.get_double_list ("Directional Pyramid Denoising", "ChromCurve");
 }
   
     // load lumaDenoise
@@ -860,6 +871,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
+		&& dirpyrDenoise.lumcurve == other.dirpyrDenoise.lumcurve
+		&& dirpyrDenoise.chromcurve == other.dirpyrDenoise.chromcurve
 		&& defringe.enabled == other.defringe.enabled
 		&& defringe.radius == other.defringe.radius
 		&& defringe.threshold == other.defringe.threshold
