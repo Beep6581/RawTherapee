@@ -145,7 +145,8 @@ DARKFRAME,        // EvPreProcessDFFile
 	FLATFIELD,        // EvFlatFieldFile,      
 	FLATFIELD,        // EvFlatFieldAutoSelect,
 	FLATFIELD,        // EvFlatFieldBlurRadius,
-	FLATFIELD        // EvFlatFieldBlurType, 
+	FLATFIELD,        // EvFlatFieldBlurType, 
+RGBCURVE         // EvHLComprThreshold,
 	
 
 };

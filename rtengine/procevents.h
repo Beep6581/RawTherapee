@@ -150,8 +150,10 @@ enum ProcEvent {
 	EvFlatFieldAutoSelect=123, 
 	EvFlatFieldBlurRadius=124, 
 	EvFlatFieldBlurType=125,   
+    EvHLComprThreshold=126,
 
-	NUMOFEVENTS=126
+
+	NUMOFEVENTS=127
 	};
 }    
 #endif    

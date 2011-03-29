@@ -64,6 +64,8 @@ void Options::setDefaults () {
     profilePath = "profiles";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
+	preferencesWidth = 0;
+	preferencesHeight = 0;
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;

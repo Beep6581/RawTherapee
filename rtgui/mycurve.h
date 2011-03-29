@@ -23,92 +23,74 @@
 #include <vector>
 #include <curvelistener.h>
 #include <cursormanager.h>
+#include <colorprovider.h>
 #include <LUT.h>
 
-#define RADIUS			3	/* radius of the control points. Assuming that the center of the spot is in the center of the pixel, the real RADIUS will be this value +0.5 */
-#define MIN_DISTANCE	8	/* min distance between control points */
+#define RADIUS			3	/* radius of the control points */
+#define SQUARE			2	/* half length of the square shape of the tangent handles */
+#define MIN_DISTANCE	5	/* min distance between control points */
 #define GRAPH_SIZE		200 /* size of the curve editor graphic */
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
 enum CurveType {
-	Empty = -1,
-	Linear,			// 0
-	Spline,			// 1
-	Parametric,		// 2
-	NURBS,			// 3
-	// Insert new curve type above this line
-	Unchanged		// Must remain the last of the enum
+	CT_Flat,
+	CT_Diagonal
 };
 
-class CurveDescr {
-
-    public:
-        CurveType type;
-        std::vector<double> x, y;   // in case of parametric curves the curve parameters are stored in vector x. In other cases these vectors store the coordinates of the bullets.
+enum SnapToType {
+	ST_None,
+	ST_Identity,	// Point snapped to the identity curve
+	ST_Neighbors	// Point snapped to the neighbor points
 };
-
-class MyCurve;
-struct MyCurveIdleHelper {
-    MyCurve* myCurve;
-    bool destroyed;
-    int pending;
-};
+class MyCurveIdleHelper;
 
 class MyCurve : public Gtk::DrawingArea {
 
-    friend int mchistupdate (void* data);
+	friend class MyCurveIdleHelper;
 
-    protected:
-        CurveListener* listener;
-        CurveDescr curve;
-        CursorShape cursor_type;
-        Glib::RefPtr<Gdk::Pixmap> pixmap;
-        int innerWidth;		// inner width of the editor, allocated by the system
-        int innerHeight;	// inner height of the editor, allocated by the system
-        int prevInnerHeight;// previous inner height of the editor
-        int grab_point;		// the point that the user is moving
-        int closest_point;	// the point that is the closest from the cursor
-        int lit_point;		// the point that is lit when the cursor is near it
-        //int last;
+	protected:
+		CurveListener* listener;
+		ColorProvider* colorProvider;
+		CursorShape cursor_type;
+		Glib::RefPtr<Gdk::Pixmap> pixmap;
+		int innerWidth;		// inner width of the editor, allocated by the system
+		int innerHeight;	// inner height of the editor, allocated by the system
+		int prevInnerHeight;// previous inner height of the editor
 		Gdk::ModifierType mod_type;
-    	int cursorX;		// X coordinate in the graph of the cursor
-    	int cursorY;		// Y coordinate in the graph of the cursor
-    	double clampedX;	// clamped grabbed point X coordinates in the [0;1] range
-    	double clampedY;	// clamped grabbed point Y coordinates in the [0;1] range
-        double deltaX;		// signed X distance of the cursor between two consecutive MOTION_NOTIFY
-        double deltaY;		// signed Y distance of the cursor between two consecutive MOTION_NOTIFY
-        double distanceX;	// X distance from the cursor to the closest point
-        double distanceY;	// Y distance from the cursor to the closest point
-    	double ugpX;		// unclamped grabbed point X coordinate in the graph
-    	double ugpY;		// unclamped grabbed point Y coordinate in the graph
-        std::vector<Gdk::Point> point;
-        std::vector<Gdk::Point> upoint;
-        std::vector<Gdk::Point> lpoint;
-        int activeParam;
-        LUTu bghist;	// histogram values
-        bool bghistvalid;
-        bool buttonPressed;
-        MyCurveIdleHelper* mcih;
+		int cursorX;		// X coordinate in the graph of the cursor
+		int cursorY;		// Y coordinate in the graph of the cursor
+		std::vector<Gdk::Point> point;
+		std::vector<Gdk::Point> upoint;
+		std::vector<Gdk::Point> lpoint;
+		bool buttonPressed;
+		enum SnapToType snapTo;
+		MyCurveIdleHelper* mcih;
+		bool sized;
 
-        void draw (int handle);
-        void interpolate ();
-        void getCursorPosition(GdkEvent* event);
-        void findClosestPoint();
-        std::vector<double> get_vector (int veclen);
+	public:
+		MyCurve ();
+		~MyCurve ();
 
-    public:
-        MyCurve ();
-        ~MyCurve ();
-        
-        void setCurveListener (CurveListener* cl) { listener = cl; }
-        std::vector<double> getPoints ();
-        void setPoints (const std::vector<double>& p);
-        void setType (CurveType t);
-        bool handleEvents (GdkEvent* event);
-        void notifyListener ();
-        void setActiveParam (int ac);
-        void updateBackgroundHistogram (LUTu & hist);
-        void reset ();
+		void setCurveListener (CurveListener* cl) { listener = cl; }
+		void setColorProvider (ColorProvider* cp) { colorProvider = cp; }
+		void notifyListener ();
+		void updateBackgroundHistogram (LUTu & hist) {return;} ;
+		virtual std::vector<double> getPoints () = 0;
+		virtual void setPoints (const std::vector<double>& p) = 0;
+		virtual bool handleEvents (GdkEvent* event) = 0;
+		virtual void reset () = 0;
+	protected:
+		virtual std::vector<double> get_vector (int veclen) = 0;
+};
+
+class MyCurveIdleHelper {
+	public:
+		MyCurve* myCurve;
+		bool destroyed;
+		int pending;
+
+		void clearPixmap () { myCurve->pixmap.clear (); }
+
 };
 
 #endif

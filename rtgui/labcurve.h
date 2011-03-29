@@ -23,9 +23,10 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 #include <curveeditor.h>
-#include <mycurve.h>
+#include <curveeditorgroup.h>
+#include <colorprovider.h>
 
-class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener {
+class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
 	Gtk::ComboBoxText* channel;
@@ -34,9 +35,18 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     Adjuster* brightness;
     Adjuster* contrast;
 	Adjuster* saturation;
-    CurveEditor* lshape;
-	CurveEditor* ashape;
-    CurveEditor* bshape;
+	DiagonalCurveEditor* lshape;
+	DiagonalCurveEditor* ashape;
+	DiagonalCurveEditor* bshape;
+	
+	//%%%%%%%%%%%%%%%%
+	Gtk::CheckButton* avoidclip;  
+    Gtk::CheckButton* enablelimiter;  
+    Adjuster* saturationlimiter;
+    bool cbAdd;
+    sigc::connection  acconn, elconn;
+    bool lastACVal, lastELVal;
+	//%%%%%%%%%%%%%%%%
 
     bool brAdd, contrAdd, satAdd;
 
@@ -53,7 +63,11 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
 
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
+	void avoidclip_toggled ();
+    void enablelimiter_toggled ();
     void updateCurveBackgroundHistogram (LUTu &hist);
+
+    virtual void colorForValue (double valX, double valY);
 };
 
 #endif

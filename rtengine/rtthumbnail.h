@@ -84,6 +84,7 @@ namespace rtengine {
             void getSpotWB    (const procparams::ProcParams& params, int x, int y, int rect, double& temp, double& green);
             void applyAutoExp (procparams::ProcParams& pparams);
             
+            unsigned char* getGrayscaleHistEQ (int trim_width);
             bool writeImage (const Glib::ustring& fname, int format);
             bool readImage (const Glib::ustring& fname);
             

@@ -24,6 +24,8 @@
 #include <string>
 #include <math.h>
 #include <mycurve.h>
+#include <myflatcurve.h>
+#include <mydiagonalcurve.h>
 
 #include "LUT.h"
 
@@ -206,11 +208,13 @@ class Curve {
     std::vector<double> poly_x;		// X points of the faceted curve
     std::vector<double> poly_y;		// Y points of the faceted curve
     double* ypp;
-    CurveType kind;
 
-  protected:
-    void spline_cubic_set ();
-    void NURBS_set ();
+    // Fields for the elementary curve polygonisation
+    double x1, y1, x2, y2, x3, y3;
+    bool firstPointIncluded;
+    double increment;
+    int nbr_points;
+
     static inline double p00 (double x, double prot) { return CurveFactory::clower (x, 2.0, prot); }
     static inline double p11 (double x, double prot) { return CurveFactory::cupper (x, 2.0, prot); }
     static inline double p01 (double x, double prot) { return x<=0.5 ? CurveFactory::clower (x*2, 2.0, prot)/2.0 : 0.5 + CurveFactory::cupper ((x-0.5)*2, 2.0, prot)/2.0; }
@@ -218,11 +222,44 @@ class Curve {
     static inline double pfull (double x, double prot, double sh, double hl) { return (1-sh)*(1-hl)*p00(x,prot) + sh*hl*p11(x,prot) + (1-sh)*hl*p01(x,prot) + sh*(1-hl)*p10(x,prot); }
 
   public:
+    Curve ();
+    void AddPolygons ();
+    virtual double getVal (double t) = 0;
+    virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) = 0;
 
-    Curve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
-   ~Curve ();
+};
 
-    double getVal (double x);
+class DiagonalCurve : public Curve {
+
+  protected:
+    DiagonalCurveType kind;
+
+    void spline_cubic_set ();
+    void NURBS_set ();
+
+  public:
+    DiagonalCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
+   ~DiagonalCurve ();
+
+    double getVal (double t);
+    void   getVal (const std::vector<double>& t, std::vector<double>& res);
+};
+
+class FlatCurve : public Curve {
+
+  protected:
+    FlatCurveType kind;
+    double* leftTangent;
+    double* rightTangent;
+
+    void CtrlPoints_set ();
+
+  public:
+
+    FlatCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
+   ~FlatCurve ();
+
+    double getVal (double t);
     void   getVal (const std::vector<double>& t, std::vector<double>& res);
 };
 }

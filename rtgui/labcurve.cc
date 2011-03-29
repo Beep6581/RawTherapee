@@ -43,10 +43,11 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd
 
 	curveEditorG = new CurveEditorGroup ();
 	curveEditorG->setCurveListener (this);
+	curveEditorG->setColorProvider (this);
 
-	lshape = curveEditorG->addCurve("L");
-	ashape = curveEditorG->addCurve("a");
-	bshape = curveEditorG->addCurve("b");
+	lshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "L");
+	ashape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "a");
+	bshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "b");
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();
@@ -191,6 +192,32 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvLabCurvetype, channel->get_active_text ());
     
 }*/
+
+void LCurve::colorForValue (double valX, double valY) {
+
+	CurveEditor* ce = curveEditorG->getDisplayedCurve();
+
+	if (ce == lshape) {         // L = f(L)
+		red = (double)valY;
+		green = (double)valY;
+		blue = (double)valY;
+	}
+	else if (ce == ashape) {    // a = f(a)
+		// TODO: To be implemented
+		red = (double)valY;
+		green = (double)valY;
+		blue = (double)valY;
+	}
+	else if (ce == bshape) {    // b = f(b)
+		red = (double)valY;
+		green = (double)valY;
+		blue = (double)valY;
+	}
+	else {
+		printf("Error: no curve displayed!\n");
+	}
+
+}
 
 void LCurve::setBatchMode (bool batchMode) {
 

@@ -44,7 +44,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     bool expAdd,hlcompAdd,hlcompthreshAdd, blackAdd, shcompAdd, brAdd, contrAdd, satAdd, clipDirty, lastAuto;
     sigc::connection autoconn;
     CurveEditorGroup* curveEditorG;
-    CurveEditor* shape;
+    DiagonalCurveEditor* shape;
     double nextBr;
     int nextBl;
   

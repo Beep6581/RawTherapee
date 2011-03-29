@@ -266,11 +266,9 @@ public:
 class HSVEqualizerParamsEdited {
 	
 public:
-	bool enabled;
-	bool sat[8];
-	bool val[8];
-	bool hue[8];
-	int	hsvchannel;
+        bool hcurve;
+        bool scurve;
+        bool vcurve;
 };
 
 class RAWParamsEdited {
@@ -320,11 +318,9 @@ class ParamsEdited {
         ColorShiftParamsEdited        colorShift;     
         LumaDenoiseParamsEdited       lumaDenoise;    
         ColorDenoiseParamsEdited      colorDenoise; 
-	
         DefringeParamsEdited          defringe;    
         DirPyrDenoiseParamsEdited     dirpyrDenoise;    
         ImpulseDenoiseParamsEdited    impulseDenoise;    
-
         SHParamsEdited                sh;             
         CropParamsEdited              crop;           
         CoarseTransformParamsEdited   coarse;         

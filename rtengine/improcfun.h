@@ -114,6 +114,7 @@ class ImProcFunctions {
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
 		bool transCoord       (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
 		void getAutoExp       (LUTu & histogram, int histcompr, double expcomp, double clip, double& br, int& bl);
+		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH);
 
 		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);

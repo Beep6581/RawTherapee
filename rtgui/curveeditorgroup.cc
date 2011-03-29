@@ -18,145 +18,25 @@
  *
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
+
+#include <curveeditor.h>
 #include <curveeditorgroup.h>
+#include <diagonalcurveeditorsubgroup.h>
+#include <flatcurveeditorsubgroup.h>
 #include <multilangmgr.h>
 #include <safegtk.h>
 
 extern Glib::ustring argv0;
 
-CurveEditorGroup::CurveEditorGroup (Glib::ustring groupLabel) : cl(NULL), activeParamControl(-1) {
+CurveEditorGroup::CurveEditorGroup (Glib::ustring groupLabel) : cl(NULL), cp(NULL) {
 	curveEditors.clear();
 	displayedCurve = 0;
 	numberOfPackedCurve = 0;
+	flatSubGroup = 0;
+	diagonalSubGroup = 0;
 
 	// We set the label to the one provided as parameter, even if it's an empty string
 	curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel+":", Gtk::ALIGN_LEFT));
-
-	// custom curve
-	customCurveBox = new Gtk::HBox ();
-	Gtk::HBox* tmpa = Gtk::manage (new Gtk::HBox ());
-	customCurve = Gtk::manage (new MyCurve ());
-	//Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
-	//af->add (*customCurve);
-	customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
-	customCurve->setType (Spline);
-	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
-	tmpa->pack_start (*customCurve, true, false, 4);
-	customCurveBox->pack_start (*tmpa, true, true,4);
-
-	Gtk::VBox* custombbox = Gtk::manage (new Gtk::VBox ());
-	saveCustom = Gtk::manage (new Gtk::Button ());
-	saveCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-	loadCustom = Gtk::manage (new Gtk::Button ());
-	loadCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
-
-	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 4);
-	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 4);
-
-	customCurveBox->pack_end (*custombbox, Gtk::PACK_SHRINK, 0);
-	customCurveBox->show_all ();
-
-	saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::savePressed) );
-	loadCustom->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::loadPressed) );
-	saveCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
-	loadCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
-
-	// NURBS curve
-	NURBSCurveBox = new Gtk::HBox ();
-	Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
-	NURBSCurve = Gtk::manage (new MyCurve ());
-	//Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
-	//af->add (*customCurve);
-	NURBSCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
-	NURBSCurve->setType (NURBS);
-	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
-	tmpb->pack_start (*NURBSCurve, true, false, 4);
-	NURBSCurveBox->pack_start (*tmpb, true, true,4);
-
-	Gtk::VBox* NURBSbbox = Gtk::manage (new Gtk::VBox ());
-	saveNURBS = Gtk::manage (new Gtk::Button ());
-	saveNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-	loadNURBS = Gtk::manage (new Gtk::Button ());
-	loadNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
-
-	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 4);
-	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 4);
-
-	NURBSCurveBox->pack_end (*NURBSbbox, Gtk::PACK_SHRINK, 0);
-	NURBSCurveBox->show_all ();
-
-	saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::savePressed) );
-	loadNURBS->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::loadPressed) );
-	saveNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
-	loadNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
-
-	// parametric curve
-	paramCurveBox = new Gtk::VBox ();
-	paramCurve = Gtk::manage (new MyCurve ());
-	Gtk::Table* paramctab = Gtk::manage (new Gtk::Table (2,1));
-	//Gtk::AspectFrame* afp = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
-	//afp->add (*paramCurve);
-	paramCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
-	paramCurve->setType (Parametric);
-	shcSelector = Gtk::manage (new SHCSelector ());
-	shcSelector->set_size_request (GRAPH_SIZE, 20);
-
-	paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 4, 4);
-	paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS+4, 0);
-
-	Gtk::HBox* tmpc = Gtk::manage (new Gtk::HBox ());
-	tmpc->pack_start (*paramctab, true, false);
-
-	paramCurveBox->pack_start (*tmpc, true, true);
-
-	highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
-	lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
-	darks      = Gtk::manage (new Adjuster (M("CURVEEDITOR_DARKS"), -100, 100, 1, 0));
-	shadows    = Gtk::manage (new Adjuster (M("CURVEEDITOR_SHADOWS"), -100, 100, 1, 0));
-
-	Gtk::EventBox* evhighlights = Gtk::manage (new Gtk::EventBox ());
-	Gtk::EventBox* evlights = Gtk::manage (new Gtk::EventBox ());
-	Gtk::EventBox* evdarks = Gtk::manage (new Gtk::EventBox ());
-	Gtk::EventBox* evshadows = Gtk::manage (new Gtk::EventBox ());
-
-	evhighlights->add (*highlights);
-	evlights->add (*lights);
-	evdarks->add (*darks);
-	evshadows->add (*shadows);
-
-	paramCurveBox->pack_start (*Gtk::manage (new Gtk::HSeparator ()));
-	paramCurveBox->pack_start (*evhighlights);
-	paramCurveBox->pack_start (*evlights);
-	paramCurveBox->pack_start (*evdarks);
-	paramCurveBox->pack_start (*evshadows);
-	paramCurveBox->show_all ();
-
-	customCurveBox->reference ();
-	paramCurveBox->reference ();
-
-	customCurve->setCurveListener (this);
-	NURBSCurve->setCurveListener (this);
-	paramCurve->setCurveListener (this);
-	shcSelector->setSHCListener (this);
-
-	highlights->setAdjusterListener (this);
-	lights->setAdjusterListener (this);
-	darks->setAdjusterListener (this);
-	shadows->setAdjusterListener (this);
-
-	evhighlights->set_events(Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK);
-	evlights->set_events(Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK);
-	evdarks->set_events(Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK);
-	evshadows->set_events(Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK);
-	evhighlights->signal_enter_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterEntered), 4));
-	evlights->signal_enter_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterEntered), 5));
-	evdarks->signal_enter_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterEntered), 6));
-	evshadows->signal_enter_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterEntered), 7));
-	evhighlights->signal_leave_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterLeft), 4));
-	evlights->signal_leave_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterLeft), 5));
-	evdarks->signal_leave_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterLeft), 6));
-	evshadows->signal_leave_notify_event().connect (sigc::bind(sigc::mem_fun(*this, &CurveEditorGroup::adjusterLeft), 7));
-
 }
 
 CurveEditorGroup::~CurveEditorGroup() {
@@ -164,9 +44,8 @@ CurveEditorGroup::~CurveEditorGroup() {
     {
         delete *i;
     }
-    delete customCurveBox;
-    delete paramCurveBox;
-    delete NURBSCurveBox;
+    delete flatSubGroup;
+    delete diagonalSubGroup;
 }
 
 void CurveEditorGroup::hideCurrentCurve() {
@@ -178,17 +57,22 @@ void CurveEditorGroup::hideCurrentCurve() {
 /*
  * Add a new curve to the curves list
  */
-CurveEditor* CurveEditorGroup::addCurve(Glib::ustring curveLabel) {
-	CurveEditor* newCE = new CurveEditor(curveLabel, this);
-
-	// Initialization of the new curve
-	storeCurveValues(newCE, getCurveFromGUI(Spline));
-	storeCurveValues(newCE, getCurveFromGUI(Parametric));
-	storeCurveValues(newCE, getCurveFromGUI(NURBS));
-
-	// We add it to the curve editor list
-	curveEditors.push_back(newCE);
-	return newCE;
+CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel) {
+	switch (cType) {
+	case (CT_Diagonal):
+		if (!diagonalSubGroup) {
+			diagonalSubGroup = new DiagonalCurveEditorSubGroup(this);
+		}
+		return (CurveEditor*)diagonalSubGroup->addCurve(curveLabel);
+	case (CT_Flat):
+		if (!flatSubGroup) {
+			flatSubGroup = new FlatCurveEditorSubGroup(this);
+		}
+		return (CurveEditor*)flatSubGroup->addCurve(curveLabel);
+	default:
+		return (CurveEditor*)NULL;
+		break;
+	}
 }
 
 /*
@@ -234,6 +118,12 @@ void CurveEditorGroup::newLine() {
 void CurveEditorGroup::curveListComplete() {
 	newLine();
 
+	// Set the color provider
+	if (cp) {
+		if (flatSubGroup) flatSubGroup->setColorProvider(cp);
+		if (diagonalSubGroup) diagonalSubGroup->setColorProvider(cp);
+	}
+
 	// We check the length of the label ; if it contains only one char (':'), we set it to the right default string
 	if (curveGroupLabel->get_label().size()==1)
 		curveGroupLabel->set_label(M(curveEditors.size() > 1 ? "CURVEEDITOR_CURVES" : "CURVEEDITOR_CURVE") + ":");
@@ -248,11 +138,11 @@ void CurveEditorGroup::curveListComplete() {
  */
 void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n) {
 	// Same type : do nothing
-	if (ce==displayedCurve && (CurveType)n==ce->selected)
+	if (ce==displayedCurve && n==(int)ce->selected)
 		return;
 
-	if ((CurveType)(n)<Unchanged)
-		ce->selected = (CurveType)n;
+	if (n<ce->subGroup->valUnchanged)
+		ce->selected = n;
 
 	// The user selected a new type from a toggled off button
 	if (ce!=displayedCurve)
@@ -261,11 +151,11 @@ void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n) {
 
 	// If the button was not pressed before
 	if (!ce->curveType->get_active()) {
-		storeDisplayedCurve();
+		ce->subGroup->storeDisplayedCurve();
 		// We set it pressed : it will emit the toggle on signal and update the GUI
-		ce->curveType->set_active( n>Linear && n<Unchanged );
-		if (n==Linear || n==Unchanged) {
-			// Since we do not activate the curve when the user switch the a toggled off button to 'Linear', we have to
+		ce->curveType->set_active( n>ce->subGroup->valLinear && n<ce->subGroup->valUnchanged );
+		if (n==ce->subGroup->valLinear || n==ce->subGroup->valUnchanged) {
+			// Since we do not activate the curve when the user switch the toggled off button to 'Linear', we have to
 			// to call the curve listener manually, because 'curveChanged' uses displayedCurve...
 		    if (cl) {
 		    	if (cl->isMulti())
@@ -279,7 +169,7 @@ void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n) {
 	}
 	else {
 		// The button is already pressed so we switch the GUI ourselves
-	   	switchGUI();
+		ce->subGroup->switchGUI();
 	   	curveChanged ();
 	}
 }
@@ -298,21 +188,21 @@ void CurveEditorGroup::curveTypeToggled(CurveEditor* ce) {
 
 		displayedCurve = ce;
 
-		if (ce->curveType->getSelected()==Unchanged) {
+		if (ce->curveType->getSelected()==ce->subGroup->valUnchanged) {
 			curveRestored = true;
 			ce->curveType->setSelected(ce->selected);
 		}
 
 		// then show this CurveEditor
 		int ct = ce->curveType->getSelected();
-		if (ct < Unchanged)
-			restoreDisplayedHistogram();
+		if (ct < ce->subGroup->valUnchanged)
+			ce->subGroup->restoreDisplayedHistogram();
 	}
 	else {
 		// The button is now released, so we have to hide this CurveEditor
 		displayedCurve = 0;
 	}
-   	switchGUI();
+	ce->subGroup->switchGUI();
 
    	if (curveRestored)
    	    curveChanged ();
@@ -320,49 +210,88 @@ void CurveEditorGroup::curveTypeToggled(CurveEditor* ce) {
 }
 
 /*
- * Switch the editor widgets to the currently edited curve
+ * Update the GUI if the given curveEditor is currently displayed
  */
-void CurveEditorGroup::switchGUI() {
+void CurveEditorGroup::updateGUI (CurveEditor* ce) {
+	if (!ce) {
+    	return;
+    }
 
-	removeEditor();
+	// we update the curve type button to the corresponding curve type, only if it is not currently set to 'Unchanged'
+	if (ce->curveType->getSelected()<ce->subGroup->valUnchanged)
+		ce->curveType->setSelected(ce->selected);
 
+    // if not displayed or "unchanged" is selected, do not change gui
+    if (ce==displayedCurve && ce->curveType->getSelected()<ce->subGroup->valUnchanged) {
+    	ce->subGroup->switchGUI();
+    }
+}
+
+/*
+ * Called from the outside to set the curve type & values
+ */
+void CurveEditorGroup::setCurveExternal (CurveEditor* ce, const std::vector<double>& c) {
+	if (c.size()) {
+		ce->subGroup->storeCurveValues(ce, c);	// The new curve is saved in the CurveEditor
+		(ce)->selected = c[0];		// We set the selected curve type in the CurveEditor to the one of the specified curve
+	}
+	updateGUI((CurveEditor*)ce);				// And we update the GUI if necessary
+}
+
+/*
+ * Listener called when the user has modified the curve
+ */
+void CurveEditorGroup::curveChanged () {
+
+	displayedCurve->subGroup->storeDisplayedCurve();
+    if (cl) {
+    	if (cl->isMulti())
+    		cl->curveChanged (displayedCurve);
+    	else
+    		cl->curveChanged ();
+    }
+}
+
+/*
+ * Call back method when the reset button is pressed :
+ * reset the currently toggled on curve editor
+ */
+void CurveEditorGroup::curveResetPressed () {
 	if (displayedCurve) {
-
-		// Initializing GUI values + repacking the appropriated widget
-		//displayedCurve->typeconn.block(true);
-
-		switch((CurveType)(displayedCurve->curveType->getSelected())) {
-		case (Spline):
-			customCurve->setPoints (displayedCurve->customCurveEd);
-			pack_start (*customCurveBox);
-			break;
-		case (Parametric):
-			paramCurve->setPoints (displayedCurve->paramCurveEd);
-			shcSelector->setPositions (
-					displayedCurve->paramCurveEd.at(1),
-					displayedCurve->paramCurveEd.at(2),
-					displayedCurve->paramCurveEd.at(3)
-			);
-			highlights->setValue (displayedCurve->paramCurveEd.at(4));
-			lights->setValue (displayedCurve->paramCurveEd.at(5));
-			darks->setValue (displayedCurve->paramCurveEd.at(6));
-			shadows->setValue (displayedCurve->paramCurveEd.at(7));
-			pack_start (*paramCurveBox);
-			break;
-		case (NURBS):
-			NURBSCurve->setPoints (displayedCurve->NURBSCurveEd);
-			pack_start (*NURBSCurveBox);
-			break;
-		default:	// (Linear, Unchanged)
-			// ... do nothing
-			break;
+		if (displayedCurve->subGroup->curveReset(displayedCurve->selected)) {
+			curveChanged();
 		}
-
-		//displayedCurve->typeconn.block(false);
 	}
 }
 
-void CurveEditorGroup::savePressed () {
+void CurveEditorGroup::setBatchMode (bool batchMode) {
+	for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
+		(*i)->curveType->addEntry(argv0+"/images/curveType-unchanged.png", M("GENERAL_UNCHANGED"));
+		(*i)->curveType->show();
+	}
+}
+
+void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce) {
+	if (uc) {
+		// the user selected several thumbnails, so we hide the editors and set the curveEditor selection to 'Unchanged'
+		//ce->typeconn.block(true);
+		// we hide the editor widgets
+		hideCurrentCurve();
+		// the curve type selected option is set to unchanged
+		ce->curveType->setSelected(ce->subGroup->valUnchanged);
+		//ce->typeconn.block(false);
+	}
+	else {
+		// we want it to use back the 'CurveEditor::setCurve' memorized in CurveEditor::tempCurve
+		//ce->typeconn.block(true);
+		// we switch back the curve type selected option to the one of the used curve
+		ce->curveType->setSelected(ce->selected);
+		updateGUI (ce);
+		//ce->typeconn.block(false);
+	}
+}
+
+Glib::ustring CurveEditorSubGroup::outputFile () {
 
     Gtk::FileChooserDialog dialog(M("CURVEEDITOR_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
 //    if (options.multiUser)
@@ -385,52 +314,37 @@ void CurveEditorGroup::savePressed () {
 
     dialog.set_do_overwrite_confirmation (true);
 
-    int result = dialog.run();
+	Glib::ustring fname;
+    do {
+		int result = dialog.run();
 
-    if (result==Gtk::RESPONSE_OK) {
+		fname = dialog.get_filename();
 
-        std::string fname = dialog.get_filename();
+		if (result==Gtk::RESPONSE_OK) {
 
-        if (getExtension (fname)!="rtc")
-            fname = fname + ".rtc";
+			if (getExtension (fname)!="rtc")
+				fname = fname + ".rtc";
 
-        if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
-            Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-            Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-            int response = msgd.run ();
-            if (response==Gtk::RESPONSE_NO)
-                return;
-        }
+			if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
+				Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
+				Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+				int response = msgd.run ();
+				if (response==Gtk::RESPONSE_YES)
+					break;
+			}
+			else
+				break;
+		}
+		else {
+			fname = "";
+			break;
+		}
+    } while (1);
 
-        std::ofstream f (fname.c_str());
-        std::vector<double> p = customCurve->getPoints ();
-
-        switch (displayedCurve->selected) {
-        case Spline:		// custom
-        	p = customCurve->getPoints ();
-        	break;
-        case NURBS:		// NURBS
-        	p = NURBSCurve->getPoints ();
-        	break;
-        default:
-        	break;
-        }
-
-        int ix = 0;
-        if (p[ix]==(double)(Linear))
-            f << "Linear\n";
-        else if (p[ix]==(double)(Spline))
-            f << "Spline\n";
-        else if (p[ix]==(double)(NURBS))
-            f << "NURBS\n";
-        ix++;
-        for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
-            f << p[ix] << ' ' << p[ix+1] << std::endl;
-        f.close ();
-    }
+    return fname;
 }
 
-void CurveEditorGroup::loadPressed () {
+Glib::ustring CurveEditorSubGroup::inputFile () {
 
     Gtk::FileChooserDialog dialog(M("CURVEEDITOR_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
 
@@ -449,286 +363,12 @@ void CurveEditorGroup::loadPressed () {
 
     int result = dialog.run();
 
+   	Glib::ustring fname;
     if (result==Gtk::RESPONSE_OK) {
-        std::ifstream f (dialog.get_filename().c_str());
-        if (f) {
-            std::vector<double> p;
-            std::string s;
-            f >> s;
-            if (s=="Linear")
-                p.push_back ((double)(Linear));
-            else if (s=="Spline")
-                p.push_back ((double)(Spline));
-            else if (s=="NURBS")
-                p.push_back ((double)(NURBS));
-            else return;
-            double x;
-            while (f) {
-                f >> x;
-                if (f)
-                    p.push_back (x);
-            }
-            if (p[0] == (double)(Spline)) {
-				customCurve->setPoints (p);
-				customCurve->queue_draw ();
-				customCurve->notifyListener ();
-            }
-            else if (p[0] == (double)(NURBS)) {
-				NURBSCurve->setPoints (p);
-				NURBSCurve->queue_draw ();
-				NURBSCurve->notifyListener ();
-            }
-        }
+   		fname = dialog.get_filename();
+    	if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS))
+    		return fname;
     }
-}
-
-/*
- * Store the curves of the currently displayed type from the widgets to the CurveEditor object
- */
-void CurveEditorGroup::storeDisplayedCurve() {
-	if (displayedCurve) {
-		switch (displayedCurve->selected) {
-		case (Spline):
-			storeCurveValues(displayedCurve, getCurveFromGUI(Spline));
-			break;
-		case (Parametric):
-			storeCurveValues(displayedCurve, getCurveFromGUI(Parametric));
-			break;
-		case (NURBS):
-			storeCurveValues(displayedCurve, getCurveFromGUI(NURBS));
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-/*
- * Restore the histogram to all types from the CurveEditor object to the widgets
- */
-void CurveEditorGroup::restoreDisplayedHistogram() {
-	LUTu dummy;
-	if (displayedCurve) {
-		paramCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : dummy);
-		customCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : dummy);
-		NURBSCurve->updateBackgroundHistogram (displayedCurve->bgHistValid ? displayedCurve->histogram : dummy);
-	}
-
-}
-
-void CurveEditorGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
-	if (p.size()) {
-		CurveType t = (CurveType)p[0];
-		for (int i=0; i<(int)p.size(); i++)
-
-		switch (t) {
-		case (Spline):
-			ce->customCurveEd = p;
-			break;
-		case (Parametric):
-			ce->paramCurveEd = p;
-			break;
-		case (NURBS):
-			ce->NURBSCurveEd = p;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-/*
- * Update the GUI if the given curveEditor is currently displayed
- */
-void CurveEditorGroup::updateGUI (CurveEditor* ce) {
-	if (!ce) {
-    	return;
-    }
-
-	// we update the curve type button to the corresponding curve type, only if it is not currently set to 'Unchanged'
-	if (ce->curveType->getSelected()<Unchanged)
-		ce->curveType->setSelected(ce->selected);
-
-    // if not displayed or "unchanged" is selected, do not change gui
-    if (ce==displayedCurve && ce->curveType->getSelected()<Unchanged) {
-    	switchGUI();
-    }
-}
-
-/*
- * Called from the outside to set the curve type & values
- */
-void CurveEditorGroup::setCurveExternal (CurveEditor* ce, const std::vector<double>& c) {
-	if (c.size()) {
-		storeCurveValues(ce, c);			// The new curve is saved in the CurveEditor
-		ce->selected = (CurveType)(c[0]);	// We set the selected curve type in the CurveEditor to the one of the specified curve
-	}
-	updateGUI(ce);							// And we update the GUI if necessary
-}
-
-/*
- * Called to update the parametric curve graph with new slider values
- */
-const std::vector<double> CurveEditorGroup::getCurveFromGUI (CurveType type) {
-	switch (type) {
-	case (Parametric): {
-		std::vector<double> lcurve (8);
-		lcurve[0] = (double)(Parametric);
-		shcSelector->getPositions (lcurve[1], lcurve[2], lcurve[3]);
-		lcurve[4] = highlights->getValue ();
-		lcurve[5] = lights->getValue ();
-		lcurve[6] = darks->getValue ();
-		lcurve[7] = shadows->getValue ();
-		return lcurve;
-		}
-	case (Spline):
-        return customCurve->getPoints ();
-	case (NURBS):
-        return NURBSCurve->getPoints ();
-	default: {
-		// linear and other solutions
-		std::vector<double> lcurve (1);
-		lcurve[0] = (double)(Linear);
-		return lcurve;
-		}
-	}
-}
-
-/*
- * Unlink the tree editor widgets from their parent box to hide them
- */
-void CurveEditorGroup::removeEditor () {
-    removeIfThere (this, customCurveBox, false);
-    removeIfThere (this, paramCurveBox, false);
-    removeIfThere (this, NURBSCurveBox, false);
-}
-
-/*
- * Listener called when the user has modified the curve
- */
-void CurveEditorGroup::curveChanged () {
-
-	storeDisplayedCurve();
-    if (cl) {
-    	if (cl->isMulti())
-    		cl->curveChanged (displayedCurve);
-    	else
-    		cl->curveChanged ();
-    }
-}
-
-/*
- * Listener
- */
-void CurveEditorGroup::shcChanged () {
-
-    paramCurve->setPoints (getCurveFromGUI(Parametric));
-	storeDisplayedCurve();
-	if (cl->isMulti())
-		cl->curveChanged (displayedCurve);
-	else
-		cl->curveChanged ();
-}
-
-/*
- * Listener
- */
-void CurveEditorGroup::adjusterChanged (Adjuster* a, double newval) {
-
-    paramCurve->setPoints (getCurveFromGUI(Parametric));
-	storeDisplayedCurve();
-	if (cl->isMulti())
-		cl->curveChanged (displayedCurve);
-	else
-		cl->curveChanged ();
-}
-
-/*
- * Listener called when the mouse is over a parametric curve's slider
- */
-bool CurveEditorGroup::adjusterEntered (GdkEventCrossing* ev, int ac) {
-
-    if (ev->detail != GDK_NOTIFY_INFERIOR) {
-        activeParamControl = ac;
-        paramCurve->setActiveParam (activeParamControl);
-    }
-    return true;
-}
-
-/*
- * Listener called when the mouse left the parametric curve's slider
- */
-bool CurveEditorGroup::adjusterLeft (GdkEventCrossing* ev, int ac) {
-
-    if (ev->detail != GDK_NOTIFY_INFERIOR) {
-        activeParamControl = -1;
-        paramCurve->setActiveParam (activeParamControl);
-    }
-    return true;
-}
-
-/*
- * Call back method when the reset button is pressed :
- * reset the currently toggled on curve editor
- */
-void CurveEditorGroup::curveResetPressed() {
-	if (displayedCurve) {
-		switch (displayedCurve->selected) {
-		case (NURBS) :	// = Control cage
-			NURBSCurve->reset ();
-			curveChanged ();
-			break;
-		case (Spline) :	// = Custom
-			customCurve->reset ();
-			curveChanged ();
-			break;
-		case (Parametric) :
-			highlights->resetPressed();
-			lights->resetPressed();
-			darks->resetPressed();
-			shadows->resetPressed();
-			shcSelector->reset();
-			paramCurve->reset ();
-			curveChanged ();
-			break;
-		default:
-			break;
-		}
-	}
-}
-
-void CurveEditorGroup::setBatchMode (bool batchMode) {
-	for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
-		(*i)->curveType->addEntry(argv0+"/images/curveType-unchanged.png", M("GENERAL_UNCHANGED"));
-		(*i)->curveType->show();
-	}
-}
-
-void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce) {
-	if (uc) {
-		// the user selected several thumbnails, so we hide the editors and set the curveEditor selection to 'Unchanged'
-		//ce->typeconn.block(true);
-		// we hide the editor widgets
-		hideCurrentCurve();
-		// the curve type selected option is set to unchanged
-		ce->curveType->setSelected(Unchanged);
-		//ce->typeconn.block(false);
-	}
-	else {
-		// we want it to use back the 'CurveEditor::setCurve' memorized in CurveEditor::tempCurve
-		//ce->typeconn.block(true);
-		// we switch back the curve type selected option to the one of the used curve
-		ce->curveType->setSelected(ce->selected);
-		updateGUI (ce);
-		//ce->typeconn.block(false);
-	}
-}
-
-void CurveEditorGroup::updateBackgroundHistogram (CurveEditor* ce) {
-	if (ce==displayedCurve) {
-		LUTu dummy;
-		paramCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : dummy);
-		customCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : dummy);
-		NURBSCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : dummy);
-	}
+    fname = "";
+    return fname;
 }

@@ -40,7 +40,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd
   hsep3->show ();
   pack_start (*hsep3);
 
-  shape = Gtk::manage (new CurveEditor ());
+  shape = Gtk::manage (new DiagonalCurveEditor ());
   shape->show ();
   shape->setCurveListener (this);
 

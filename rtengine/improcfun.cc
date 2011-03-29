@@ -25,10 +25,15 @@
 #include <bilateral2.h>
 #include <minmax.h>
 #include <mytime.h>
+#include <glib.h>
 #include <glibmm.h>
 #include <iccstore.h>
-#include <iccmatrices.h>
 #include <impulse_denoise.h>
+#include <imagesource.h>
+#include <rtthumbnail.h>
+#include <utils.h>
+
+#include <iccmatrices.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -256,10 +261,26 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 //	float satparam,valparam;
 //	int hue, hueband, hueres, nbrband;
 	double pi = M_PI;
+	FlatCurve* hCurve;
+	FlatCurve* sCurve;
+	FlatCurve* vCurve;
+	
 	
 	float* cossq = new float [8192];
 	for (int i=0; i<8192; i++) 
 		cossq[i] = SQR(cos(pi*(float)i/16384));
+	
+	FlatCurveType hCurveType = (FlatCurveType)params->hsvequalizer.hcurve.at(0);
+	FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at(0);
+	FlatCurveType vCurveType = (FlatCurveType)params->hsvequalizer.vcurve.at(0);
+	bool hCurveEnabled = hCurveType > FCT_Linear;
+	bool sCurveEnabled = sCurveType > FCT_Linear;
+	bool vCurveEnabled = vCurveType > FCT_Linear;
+
+	// TODO: We should create a 'skip' value like for CurveFactory::complexsgnCurve (rtengine/curves.cc)
+	if (hCurveEnabled) hCurve = new FlatCurve(params->hsvequalizer.hcurve);
+	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
+	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
 	
 #pragma omp parallel for if (multiThread)
@@ -323,7 +344,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			g = tonecurve[g];
 			b = tonecurve[b];
 
-			if (abs(sat)>0.5 || params->hsvequalizer.enabled) {
+			if (abs(sat)>0.5 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float h,s,v;
 				rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
@@ -333,38 +354,45 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 						s *= 1+(float)sat/100;	
 				}
 				//HSV equalizer
-				if (params->hsvequalizer.enabled) {
-					int hue = (int)(65535*h);
-					int hueres = hue & 8191;//location of hue within a band
-					int hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
-					int nbrband = (hueband+1)&7;
-					
-					//shift hue
-					h = fmod(h + 0.0025*(params->hsvequalizer.hue[hueband] * cossq[hueres] + params->hsvequalizer.hue[nbrband] * (1-cossq[hueres])),1);
-					if (h<0) h +=1;
-					hue = (int)round(65535*h);
-					hueres = hue & 8191;//location of hue within a band
-					hueband = (hue-hueres) >> 13;//divides hue range into 8 bands
-					nbrband = (hueband+1)&7;
-
-					//change saturation
-					float satparam = 0.01*(params->hsvequalizer.sat[hueband] * cossq[hueres] + params->hsvequalizer.sat[nbrband] * (1-cossq[hueres]));
+				if (hCurveEnabled) {
+					h = (hCurve->getVal((double)h) - 0.5) * 2 + h;
+					if (h > 1.0)
+						h -= 1.0;
+					else if (h < 0.0)
+						h += 1.0;
+				}
+				if (sCurveEnabled) {
+					//shift saturation
+					float satparam = (sCurve->getVal((double)h)-0.5) * 2;
 					if (satparam > 0.00001) {
 						s = (1-satparam)*s+satparam*(1-SQR(1-s));
 					} else {
 						if (satparam < -0.00001)
-							s *= 1+satparam;	
+							s *= 1+satparam;
 					}
 					
-					//change value
-					float valparam = 0.005*(params->hsvequalizer.val[hueband] * cossq[hueres] + params->hsvequalizer.val[nbrband] * (1-cossq[hueres]));
+					/*s = sCurve->getVal((double)s);
+					 if (s > 1.0)
+					 s -= 1.0;
+					 else if (s < 0.0)
+					 s += 1.0;*/
+				}
+				if (vCurveEnabled) {
+					//shift value
+					float valparam = vCurve->getVal((double)h)-0.5;
 					valparam *= (1-SQR(SQR(1-s)));
 					if (valparam > 0.00001) {
 						v = (1-valparam)*v+valparam*(1-SQR(1-v));
 					} else {
 						if (valparam < -0.00001)
-							v *= (1+valparam);	
+							v *= (1+valparam);
 					}
+					
+					/*v = vCurve->getVal((double)v);
+					 if (v > 1.0)
+					 v -= 1.0;
+					 else if (v < 0.0)
+					 v += 1.0;*/
 				}
 				hsv2rgb(h,s,v,r,g,b);
 			}
@@ -411,6 +439,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
         }
     }
 	
+	if (hCurveEnabled) delete hCurve;
+	if (sCurveEnabled) delete sCurve;
+	if (vCurveEnabled) delete vCurve;
 	delete [] cossq;
  }
 
@@ -445,7 +476,7 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
-    LUT<double> cmultiplier(181021);
+/*    LUT<double> cmultiplier(181021);
 
     double boost_a = ((float)params->colorBoost.amount + 100.0) / 100.0;
     double boost_b = ((float)params->colorBoost.amount + 100.0) / 100.0;
@@ -518,7 +549,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
             lnew->a[i][j] = CLIPTO(nna,-32000.0f,32000.0f);
             lnew->b[i][j] = CLIPTO(nnb,-32000.0f,32000.0f);
         }
-
+*/
     //delete [] cmultiplier;
 }
 	
@@ -632,6 +663,63 @@ void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double expco
 	if (br>10.0)	br=10.0;
 }
 	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*	
+#include "calc_distort.h"
+	
+	double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
+		if (fname != "") {
+			rtengine::RawMetaDataLocation ri;
+			int w_raw=-1, h_raw=thumb_size;
+			int w_thumb=-1, h_thumb=thumb_size;
+			
+			Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, w_thumb, h_thumb, 1);
+			if (thumb == NULL)
+				return 0.0;
+			
+			Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1);
+			if (raw == NULL) {
+				delete thumb;
+				return 0.0;
+			}
+			
+			if (h_thumb != h_raw) {
+				delete thumb;
+				delete raw;
+				return 0.0;
+			}
+			
+			int width;
+			
+			if (w_thumb > w_raw)
+				width = w_raw;
+			else
+				width = w_thumb;
+			
+			unsigned char* thumbGray;
+			unsigned char* rawGray;
+			thumbGray = thumb->getGrayscaleHistEQ (width);
+			rawGray = raw->getGrayscaleHistEQ (width);
+			
+			if (thumbGray == NULL || rawGray == NULL) {
+				if (thumbGray) delete thumbGray;
+				if (rawGray) delete rawGray;
+				delete thumb;
+				delete raw;
+				return 0.0;
+			}
+			
+			double dist_amount = calcDistortion (thumbGray, rawGray, width, h_thumb);
+			delete thumbGray;
+			delete rawGray;
+			delete thumb;
+			delete raw;
+			return dist_amount;
+		}
+		else
+			return 0.0;
+	}
+*/	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void ImProcFunctions::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {

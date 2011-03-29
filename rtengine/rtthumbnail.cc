@@ -527,6 +527,7 @@ Thumbnail::~Thumbnail () {
         cmsCloseProfile(camProfile);
 }
 
+// Simple processing of RAW internal JPGs
 IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
 
     int rwidth;
@@ -562,6 +563,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 	return img8;
 }
 
+// Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
 
     // compute WB multipliers
@@ -771,6 +773,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 }
 
 int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight) {
+	if (thumbImg==NULL) return 0;  // Can happen if thumb is just building and GUI comes in with resize wishes
 
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) 
@@ -915,6 +918,101 @@ void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty) {
     }
     tx/=scale;
     ty/=scale;
+}
+
+unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
+    if (!thumbImg)
+        return NULL;
+
+    if (thumbImg->width<trim_width)
+        return NULL;
+    
+    // to utilize the 8 bit color range of the thumbnail we brighten it and apply gamma correction
+    unsigned char* tmpdata = new unsigned char[thumbImg->height*trim_width];
+    int ix = 0,max;
+
+    if (gammaCorrected) {
+        // if it's gamma correct (usually a RAW), we have the problem that there is a lot noise etc. that makes the maximum way too high.
+        // Strategy is limit a certain percent of pixels so the overall picture quality when scaling to 8 bit is way better
+        const double BurnOffPct=0.03;  // *100 = percent pixels that may be clipped
+
+        // Calc the histogram
+        unsigned int* hist16 = new unsigned int [65536];
+        memset(hist16,0,sizeof(int)*65536);
+
+        for (int row=0; row<thumbImg->height; row++)
+            for (int col=0; col<thumbImg->width; col++) {
+                hist16[thumbImg->r[row][col]]++;
+                hist16[thumbImg->g[row][col]]+=2;  // Bayer 2x green correction
+                hist16[thumbImg->b[row][col]]++;
+            }
+
+        // Go down till we cut off that many pixels
+        unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
+
+        int max; unsigned long sum=0;
+        for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+
+        delete[] hist16;
+
+        scaleForSave = 65535*8192 / max;
+
+        // Correction and gamma to 8 Bit
+        for (int i=0; i<thumbImg->height; i++)
+            for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
+                int r= gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
+                int g= gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
+                int b= gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
+                tmpdata[ix++] = r*19595+g*38469+b*7472 >> 16;
+            }
+    }
+    else {
+        // If it's not gamma corrected (usually a JPG) we take the normal maximum
+        max=0;
+
+        for (int row=0; row<thumbImg->height; row++)
+            for (int col=0; col<thumbImg->width; col++) {
+                if (thumbImg->r[row][col]>max) max = thumbImg->r[row][col];
+                if (thumbImg->g[row][col]>max) max = thumbImg->g[row][col];
+                if (thumbImg->b[row][col]>max) max = thumbImg->b[row][col];
+            }
+        
+        if (max < 16384) max = 16384;
+        scaleForSave = 65535*8192 / max;
+
+        // Correction and gamma to 8 Bit
+        for (int i=0; i<thumbImg->height; i++)
+            for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
+                int r=thumbImg->r[i][j] * scaleForSave >> 21;
+                int g=thumbImg->g[i][j] * scaleForSave >> 21;
+                int b=thumbImg->b[i][j] * scaleForSave >> 21;
+                tmpdata[ix++] = (r*19595+g*38469+b*7472)>>16;
+            }
+    }
+
+    // histogram equalization
+    unsigned int hist[256] = {0};
+
+    for (int i=0; i<ix; i++) {
+        hist[tmpdata[i]]++;
+    }
+
+    int cdf = 0, cdf_min=-1;
+    for (int i=0; i<256; i++) {
+        cdf+=hist[i];
+        if (cdf>0 && cdf_min==-1) {
+            cdf_min=cdf;
+        }
+        if (cdf_min!=-1) {
+            hist[i] = (cdf-cdf_min)*255/((thumbImg->height*trim_width)-cdf_min);
+        }
+    }
+
+    for (int i=0; i<ix; i++) {
+        tmpdata[i] = hist[tmpdata[i]];
+    }
+    
+    return tmpdata;
 }
 
 // format: 1=8bit direct, 2=16bit direct, 3=JPG

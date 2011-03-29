@@ -36,7 +36,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
 
   sclip = Gtk::manage (new Gtk::SpinButton ());
   sclip->set_range (0.0, 0.9999);
-  sclip->set_increments (0.0001, 0.01);
+  sclip->set_increments (0.001, 0.01);
   sclip->set_value (0.002);
   sclip->set_digits (4);
   sclip->signal_value_changed().connect( sigc::mem_fun(*this, &ToneCurve::clip_changed) );
@@ -49,7 +49,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
 //----------- Exposure Compensation ------------------------
-  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.01, 0));
+  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.05, 0));
   pack_start (*expcomp);
   hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 100, 1, 70));
   pack_start (*hlcompr);
@@ -57,7 +57,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   pack_start (*hlcomprthresh);
 
 //----------- Black Level ----------------------------------
-  black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 1, 0));
+  black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0));
   pack_start (*black);
   shcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50));
   pack_start (*shcompr);
@@ -78,7 +78,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   curveEditorG = new CurveEditorGroup (M("TP_EXPOSURE_CURVEEDITOR"));
   curveEditorG->setCurveListener (this);
 
-  shape = curveEditorG->addCurve();
+  shape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "");
 
   // This will add the reset button at the end of the curveType buttons
   curveEditorG->curveListComplete();
@@ -95,7 +95,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hl
   hlcomprthresh->setAdjusterListener (this);
   shcompr->setAdjusterListener (this);
   contrast->setAdjusterListener (this);
-	saturation->setAdjusterListener (this);
+  saturation->setAdjusterListener (this);
 }
 
 void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -230,8 +230,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvContrast, costr);
 	else if (a==saturation)
         listener->panelChanged (EvSaturation, costr);
-    else if (a==hlcompr || a==hlcomprthresh)
-        listener->panelChanged (EvHLCompr, Glib::ustring::compose ("%1=%2\n%3=%4",M("TP_EXPOSURE_COMPRHIGHLIGHTS"),(int)hlcompr->getValue(),M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"),(int)hlcomprthresh->getValue()));
+    else if (a==hlcompr)
+        listener->panelChanged (EvHLCompr, costr);
+    else if (a==hlcomprthresh)
+        listener->panelChanged (EvHLComprThreshold, costr);
     else if (a==shcompr)
         listener->panelChanged (EvSHCompr, costr);
 }

@@ -125,6 +125,8 @@ class Preferences : public Gtk::Dialog {
     void themeChanged  ();
     void useThemeChanged();
     void fontChanged   ();
+    void layoutComboChanged ();
+    void cacheFormatComboChanged ();
     void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (Glib::ustring newFont);
 
@@ -135,16 +137,17 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getFileBrowserPanel ();
     Gtk::Widget* getGeneralPanel ();
     Gtk::Widget* getBatchProcPanel ();
-    Gtk::Widget* getSoundPanel ();
+    //Gtk::Widget* getSoundPanel ();
     
   public:
-         Preferences (RTWindow *rtwindow);
+		Preferences (RTWindow *rtwindow);
+		~Preferences ();
     
     void savePressed ();
     void loadPressed ();
     void okPressed ();
     void cancelPressed ();
-    void aboutPressed ();
+    //void aboutPressed ();
 
     void selectStartupDir ();
     void addExtPressed ();
@@ -154,6 +157,7 @@ class Preferences : public Gtk::Dialog {
     void clearProfilesPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();
+
     void behAddRadioToggled (const Glib::ustring& path);
     void behSetRadioToggled (const Glib::ustring& path);
 //    void selectICCProfileDir ();
