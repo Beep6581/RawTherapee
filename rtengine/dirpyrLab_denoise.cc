@@ -305,8 +305,10 @@ namespace rtengine {
 				aout = 0;
 				bout = 0;
 				
-				for(int inbr=MAX(0,i-scalewin); inbr<=MIN(height-1,i+scalewin); inbr+=scale) {
-					for (int jnbr=MAX(0,j-scalewin); jnbr<=MIN(width-1,j+scalewin); jnbr+=scale) {
+				for(int inbr=(i-scalewin); inbr<=(i+scalewin); inbr+=scale) {
+					if (inbr<0 || inbr>height-1) continue;
+					for (int jnbr=(j-scalewin); jnbr<=(j+scalewin); jnbr+=scale) {
+						if (jnbr<0 || jnbr>width-1) continue;
 						dirwt_l = DIRWT_L(inbr, jnbr, i, j);
 						dirwt_ab = DIRWT_AB(inbr, jnbr, i, j);
 						Lout += dirwt_l*data_fine->L[inbr][jnbr];
@@ -631,8 +633,10 @@ namespace rtengine {
 				float nrfctrave=0;
 				norm_l = 0;//if we do want to include the input pixel in the sum
 				
-				for(int inbr=MAX(0,i-pitch); inbr<=MIN(height-1,i+pitch); inbr+=pitch) {
-					for (int jnbr=MAX(0,j-pitch); jnbr<=MIN(width-1,j+pitch); jnbr+=pitch) {
+				for(int inbr=(i-pitch); inbr<=(i+pitch); inbr+=pitch) {
+					if (inbr<0 || inbr>height-1) continue;
+					for (int jnbr=(j-pitch); jnbr<=(j+pitch); jnbr+=pitch) {
+						if (jnbr<0 || jnbr>width-1) continue;
 						dirwt_l = DIRWT_L(inbr, jnbr, i, j);
 						nrfctrave += dirwt_l*nrfactorL[inbr][jnbr];
 						norm_l += dirwt_l;

@@ -525,21 +525,37 @@ void ImProcCoordinator::fullUpdateDetailedCrops () {
 
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
-
-    mProcessing.lock ();
-
-    int fW, fH;
-    imgsrc->getFullSize (fW, fH, 0);
-    PreviewProps pp (0, 0, fW, fH, 1);
-    ProcParams ppar = params;
-    ppar.hlrecovery.enabled = false;
-    ppar.icm.input = "(none)";
-    Imagefloat* im = new Imagefloat (fW, fH);
-    imgsrc->preprocess( ppar.raw );
-    imgsrc->demosaic(ppar.raw );
-    imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
-    im->saveJPEG (fname, 85);
-    mProcessing.unlock ();
+	
+	mProcessing.lock ();
+	
+	int fW, fH;
+	imgsrc->getFullSize (fW, fH, 0);
+	PreviewProps pp (0, 0, fW, fH, 1);
+	ProcParams ppar = params;
+	ppar.hlrecovery.enabled = false;
+	ppar.icm.input = "(none)";
+	Imagefloat* im = new Imagefloat (fW, fH);
+	Image16* im16 = new Image16 (fW, fH);
+	imgsrc->preprocess( ppar.raw );
+	imgsrc->demosaic(ppar.raw );
+	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+	if (params.wb.method=="Camera")
+		currWB = imgsrc->getWB ();
+	else if (params.wb.method=="Auto") {
+		if (!awbComputed) {
+			autoWB = imgsrc->getAutoWB ();
+			awbComputed = true;
+		}
+		currWB = autoWB;
+	}
+	params.wb.temperature = currWB.getTemp ();
+	params.wb.green = currWB.getGreen ();
+	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	im16 = im->to16();
+	im16->saveTIFF (fname,16,true);
+	//im->saveJPEG (fname, 85);
+	mProcessing.unlock ();
 }
 
 void ImProcCoordinator::stopProcessing () {
