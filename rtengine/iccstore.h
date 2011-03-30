@@ -19,7 +19,7 @@
 #ifndef __ICCSTORE__                         
 #define __ICCSTORE__
 
-#include <lcms.h>
+#include <lcms2_plugin.h>
 #include <glibmm.h>
 #include <map>
 #include <string>

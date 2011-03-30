@@ -25,6 +25,7 @@
 #include <tiffio.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 #ifdef WIN32
 #include <winsock2.h>
 #else

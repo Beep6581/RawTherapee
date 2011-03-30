@@ -21,28 +21,6 @@ certainly only use the source code without any access to a Mercurial repository.
 the build information files, then you can tell your build system to run cmake with the following additionnal parameter : -D AUTOMATED_BUILD_SYSTEM:BOOL=ON.
 Cmake will then pass the files creation step, but will check the presence of the requested files and stop if they're not there.
 
-
-Preamble:
----------
-
-Cmake is actually used to create the Makefiles (scripts that handle the build process) or specific Integrated Developement Environement (IDE) projects.
-It is designed to find all necessary compilation flags for your specific machine, but everything can be overriden.
-
-RT's build mechanism will generate a build information file, named "AboutThisBuild.txt", and require some parameters that can't be set by Cmake, so it's
-done in our build script, and may be overriden at your own will. The build process also enable some sort of cross compiling, since you can only choose
-a specific processor variation of the same type (e.g. core2, athlon64, which are both an x86 architecture). Real cross compiling (e.g. building the windows
-version on a linux platform) has not been tested.
-
-By default, no processor is specified, so Cmake/GCC will build RT for your processor (or maybe a generic processor). Developers that are providing build to
-download then have to set the processor label manually (set to 'undefined' by default) with the PROC_FORCED_LABEL cmake's parameter (we assume that you know
-how to specify a cmake parameter).
-
-Note for developers that handle an automated build system : Mercurial is requested in order to produce the build information file, but you build system will
-certainly only use the source code without any access to a Mercurial repository. In this case, you have to first build RT like explained below to generates
-the build information files, then you can tell your build system to run cmake with the following additionnal parameter : -D AUTOMATED_BUILD_SYSTEM:BOOL=ON.
-Cmake will then pass the files creation step, but will check the presence of the requested files and stop if they're not there.
-
-
 Windows
 -------
 
@@ -53,8 +31,8 @@ Windows
 		Of course, you'll have to install the package for the build method explained later in this document.
 
 		The rest of this document assumes that you've installed MinGW, MSYS and Gtkmm respectively to "C:\mingw",
-		"C:\msys" and "C:\Gtkmm". 
-		This tutorial assume that you've installed the packages in a paths THAT DOES NOT CONTAIN SPACES.
+		"C:\msys" and "C:\gtkmm". 
+		This tutorial assume that you've installed the packages in paths THAT DOES NOT CONTAIN SPACES.
 
 		METHOD 1:
 			- MinGW-TDM (http://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/tdm-gcc-4.5.1.exe/download)
@@ -64,6 +42,7 @@ Windows
 			- MSYS      (http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe)
 			            If you have some trouble installing MSYS, see here : http://www.mingw.org/wiki/MSYS
 			- CMake     (http://www.cmake.org/cmake/resources/software.html)
+			            Version 2.8.4 or above si required for this platform
 			- Gtkmm2.22 (http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/)
 
 		METHOD 2:
@@ -118,13 +97,13 @@ Windows
 			Open an MSYS console, that will create a Linux environment, and compile the dependancies in that order:
 
 			zlib:
-			If you have Gtkmm2.22 installed, you can skip this section
+			If you have Gtkmm2.22 installed, you should skip this section
 			- download: http://zlib.net/
 			- how to build:
 			  cd to the unarchiving directory of zlib-1.2.5
-			  make -f win32/Makefile.gcc
+			    make -f win32/Makefile.gcc
 
-				Then, manually copy the files as follows:
+			  Then, manually copy the files as follows (tip: you can individually copy the lines below and paste them in MSys's prompt with the middle mouse button):
 
 				cp -iv zlib1.dll /mingw/bin
 				cp -iv zconf.h zlib.h /mingw/include
@@ -132,7 +111,7 @@ Windows
 				cp -iv libzdll.a /mingw/lib/libz.dll.a
 
 			libpng:
-			If you have Gtkmm2.22 installed, you can skip this section
+			If you have Gtkmm2.22 installed, you should skip this section
 			- download:     http://sourceforge.net/projects/libpng/files/
 			                (please note that libpng 1.5 has not been tested yet)
 			- how to build:
@@ -160,7 +139,11 @@ Windows
 			libtiff:
 			- download:     ftp://ftp.remotesensing.org/pub/libtiff/
 			- how to build:
-			  ./configure --prefix=/mingw
+
+			  In the configure process below, set the zlib include and lib path to the right folder. We're assuming that you're using
+			  the one provided in the gtkmm bundle
+
+			  ./configure --prefix=/mingw --with-zlib-include-dir=/c/gtkmm/include --with-zlib-lib-dir=/c/gtkmm/lib
 			  make
 			  cd libtiff
 			  make install
@@ -177,8 +160,8 @@ Windows
 			  make install
 
 			lcms:
-			- download v1.x (v2.x is not supported yet): http://sourceforge.net/projects/lcms/files/
-			- how to build:
+			- download lcm v1.x for RT3.0, v2.x for RT3.1 and upper: http://sourceforge.net/projects/lcms/files/
+			- how to build (suitable for both version):
 			  ./configure --prefix=/mingw
 			  make
 			  make install
