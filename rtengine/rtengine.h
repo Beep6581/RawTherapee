@@ -257,8 +257,6 @@ namespace rtengine {
             /** Returns the scale of the preview image. 
               * @return the current scale of the preview image */
             virtual int         getPreviewScale () =0;
-            /** Performs a full update on the preview image. The resulting image is passed to the listener. */
-            virtual void        fullUpdatePreviewImage () =0;
             /** Returns the full width of the resulting image (in 1:1 scale). 
               * @return the width of the final image */
             virtual int         getFullWidth () =0;

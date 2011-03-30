@@ -131,7 +131,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setPreviewScale    (int scale) { setScale (scale); }
         int  getPreviewScale    () { return scale; }
 
-        void fullUpdatePreviewImage  ();
+        //void fullUpdatePreviewImage  ();
 
         int getFullWidth ()     { return fullw; }
         int getFullHeight ()    { return fullh; }

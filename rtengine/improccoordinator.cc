@@ -502,28 +502,6 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     mProcessing.unlock ();
 }
 
-void ImProcCoordinator::fullUpdatePreviewImage () {
-
-    if (destroying)
-        return;
-
-    updaterThreadStart.lock ();
-    if (updaterRunning && thread) {
-        changeSinceLast = 0;
-        thread->join ();
-    }
-
-    if (plistener)
-        plistener->setProgressState (1);
-
-    updatePreviewImage (ALL); 
-
-    if (plistener)
-        plistener->setProgressState (0);
-
-    updaterThreadStart.unlock ();
-}
-
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 
