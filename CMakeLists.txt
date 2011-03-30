@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 2.6)
+if (WIN32)
+  cmake_minimum_required(VERSION 2.8.4)
+  cmake_policy(SET CMP0015 OLD)
+else (WIN32)
+  cmake_minimum_required(VERSION 2.6)
+endif (WIN32)
 
 # the default target is 'Debug'
 if (CMAKE_BUILD_TYPE STREQUAL "")
@@ -36,6 +41,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 
 if (WIN32)
+    # we additionnally look in the MinGW path first then in the Gtkmm path,
+    # so if you wish to build some dependant library, you have to install them in MinGW to use them
     set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
 endif (WIN32)
 
@@ -127,10 +134,10 @@ if (WIN32)
     endif (MINGW)
 
     set (EXTRA_LIB "-lws2_32")
-else (WIN32)
 endif (WIN32)
+# you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
+pkg_check_modules (LCMS REQUIRED lcms2)
 pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
-pkg_check_modules (LCMS REQUIRED lcms<=1.99)
 find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)

@@ -19,7 +19,7 @@
 #ifndef _IIMAGE_
 #define _IIMAGE_
 
-#include <lcms.h>
+#include <lcms2_plugin.h>
 #include <glibmm.h>
 
 namespace rtengine {
