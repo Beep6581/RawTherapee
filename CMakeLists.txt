@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 2.6)
+if (WIN32)
+  cmake_minimum_required(VERSION 2.8.4)
+  cmake_policy(SET CMP0015 OLD)
+else (WIN32)
+  cmake_minimum_required(VERSION 2.6)
+endif (WIN32)
 
 # the default target is 'Debug'
 if (CMAKE_BUILD_TYPE STREQUAL "")
@@ -46,7 +51,7 @@ option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
-option (WITH_MYFILE_MMAP "Build using memory mapped file" OFF)
+option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
 
 # set install directories
@@ -134,7 +139,7 @@ if (WIN32)
     endif (MINGW)
 else (WIN32)
     pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
-    pkg_check_modules (LCMS    REQUIRED lcms)
+    pkg_check_modules (LCMS REQUIRED lcms<=1.99)
     find_package (JPEG REQUIRED)
     find_package (PNG REQUIRED)
     find_package (TIFF REQUIRED)
@@ -230,10 +235,10 @@ if (WITH_MYFILE_MMAP)
 endif (WITH_MYFILE_MMAP)
 
 if (OPTION_OMP)
-	find_package(OpenMP)
-	if (OPENMP_FOUND)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-	endif (OPENMP_FOUND)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
 if (UNIX)

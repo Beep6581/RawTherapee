@@ -32,7 +32,7 @@ set (BASESOURCEFILES
     popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 
 if (WIN32)
-    set (EXTRA_SRC windirmonitor.cc myicon.o)
+    set (EXTRA_SRC windirmonitor.cc myicon.rc)
     include_directories ( ../rtengine ${CMAKE_CURRENT_BINARY_DIR} . ../rtexif ${EXTRA_INCDIR} ${GLIB2_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS} ${GIOMM_INCLUDE_DIRS})
     link_directories (. ../rtexif ${EXTRA_LIBDIR} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
