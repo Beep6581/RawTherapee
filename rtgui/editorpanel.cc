@@ -187,7 +187,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     statusBox = Gtk::manage (new Gtk::HBox ());
     progressLabel = Gtk::manage (new Gtk::ProgressBar());
     progressLabel->set_fraction(0.0);
-    progressLabel->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("red") );
+    //progressLabel->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );  // Disable, because in single mode this is may be permanent red without processing
 
     statusBox->pack_start (*progressLabel);
     iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 2);
@@ -348,7 +348,7 @@ void EditorPanel::on_realize () {
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
-    if (ipc) close();
+    close();
     // initialize everything
     openThm = tmb;
     openThm->increaseRef ();
@@ -419,6 +419,10 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     {
     	iarea->imageArea->mainCropWindow->cropHandler.newImage(ipc);
         iarea->imageArea->mainCropWindow->initialImageArrived();
+
+		// In single tab mode, the image is not always updated between switches
+		// normal redraw don't work, so this is the hard way
+		if (!options.tabbedUI) iarea->imageArea->mainCropWindow->cropHandler.update();
     } else {
         Gtk::Allocation alloc;
         iarea->imageArea->on_resized(alloc);
@@ -498,7 +502,7 @@ struct spsparams {
     EditorPanelIdleHelper* epih;
 };
 
-int setprocstate (void* data) {
+int setProgressStateUIThread (void* data) {
 
     gdk_threads_enter ();
     spsparams* p = (spsparams*)data;
@@ -527,19 +531,20 @@ void EditorPanel::setProgressState (int state) {
     spsparams* p = new spsparams;
     p->state = state;
     p->epih = epih;
-    g_idle_add (setprocstate, p);
+    g_idle_add (setProgressStateUIThread, p);
 }
 
 struct spparams {
     double val;
     Glib::ustring str;
     Gtk::ProgressBar *pProgress;
+	bool gtkEnter;
 };
 
 int _setprogressStr( void *p )
 {
 	spparams *s= (spparams*)p;
-	gdk_threads_enter ();
+	if (s->gtkEnter) gdk_threads_enter ();
 
 	if( ! s->str.empty() )
 	   s->pProgress->set_text( M(s->str) );
@@ -550,7 +555,9 @@ int _setprogressStr( void *p )
 		else
 			s->pProgress->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );
 	}
-	gdk_threads_leave ();
+	
+	if (s->gtkEnter) gdk_threads_leave ();
+
 	delete s;
 	return 0;
 }
@@ -560,6 +567,7 @@ void EditorPanel::setProgress (double p)
 	spparams *s=new spparams;
 	s->val = p;
 	s->pProgress = progressLabel;
+	s->gtkEnter = true;
 	g_idle_add (_setprogressStr, s);
 }
 
@@ -569,27 +577,30 @@ void EditorPanel::setProgressStr (Glib::ustring str)
 	s->str = str;
 	s->val = -1;
 	s->pProgress = progressLabel;
+	s->gtkEnter = true;
 	g_idle_add (_setprogressStr, s);
 }
 
+// This is only called from the ThreadUI, so within the gtk thread
 void EditorPanel::refreshProcessingState (bool inProcessing) {
+	spparams *s=new spparams;
+    s->pProgress = progressLabel;
+	s->gtkEnter = false;
 
+    if (inProcessing) {
+        if (processingStartedTime==0) processingStartedTime = ::time(NULL);
+
+    	s->str = "PROGRESSBAR_PROCESSING";
+    	s->val = 0.0;
+    } else {
     // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
-    if (ipc && openThm && !inProcessing && tpc->getChangedState()) {
+			if (ipc && openThm && tpc->getChangedState()) {
         rtengine::procparams::ProcParams pparams;
         ipc->getParams (&pparams);
         openThm->setProcParams (pparams, EDITOR, false);
     }
 
-    if (inProcessing) {
-        if (processingStartedTime==0) processingStartedTime = ::time(NULL);
-
-    	spparams *s=new spparams;
-    	s->str = "PROGRESSBAR_PROCESSING";
-    	s->val = 0.0;
-    	s->pProgress = progressLabel;
-    	g_idle_add (_setprogressStr, s);
-    } else {
+		// Ring a sound if it was a long event
         if (processingStartedTime!=0) {
             time_t curTime= ::time(NULL);
             if (::difftime(curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) 
@@ -598,12 +609,12 @@ void EditorPanel::refreshProcessingState (bool inProcessing) {
             processingStartedTime = 0;
         }
 
-    	spparams *s=new spparams;
+		// Set progress bar "done"
     	s->str = "PROGRESSBAR_READY";
     	s->val = 1.0;
-    	s->pProgress = progressLabel;
-    	g_idle_add (_setprogressStr, s);
 }
+
+	_setprogressStr(s);
 }
 
 struct errparams {

@@ -50,9 +50,9 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
 
         CropHandlerListener* listener;
 
-        void    update  ();
         void    compDim ();
     public:
+       void    update  ();
 
         rtengine::procparams::CropParams cropParams;
         Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
