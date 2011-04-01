@@ -575,12 +575,12 @@ PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
 PREFERENCES_TAB_GENERAL;Général
-PREFERENCES_TAB_IMPROC;Traitement de l'Image
+PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_OUTPUT;Options de sortie
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THUMBSIZE;Tailles des vignettes
-PREFERENCES_TUNNELMETADATA;Utiliser le tunnel pour sortir les données IPTC/XMP inchangées\npar-rapport au fichier d'entrée
-PREFERENCES_USESYSTEMTHEME; Utiliser le thème système
+PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
+PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
 PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
@@ -869,47 +869,41 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_FLATFIELD;Flat field
-!FILEBROWSER_POPUPCOPYTO;Copy to...
-!FILEBROWSER_POPUPMOVETO;Move to...
-!FILEBROWSER_POPUPREMOVESUBMENU;Remove
-!PARTIALPASTE_CHANNELMIXER;Channel mixer
-!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
-!PARTIALPASTE_DEFRINGE;Defringe
-!PARTIALPASTE_DETAILGROUP;Detail settings
-!PARTIALPASTE_DIRPYRDENOISE;Noise reduction
-!PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
-!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
-!PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
-!PARTIALPASTE_PERSPECTIVE;Perspective
-!PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
-!PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
-!PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
-!PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
-!PROGRESSBAR_BADPIXELS;Bad pixels...
-!PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
-!PROGRESSBAR_GREENEQUIL;Green equilibrate...
-!PROGRESSBAR_LINEDENOISE;Line Denoise...
-!PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-!TP_DISTORTION_AUTO;Auto distortion correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+FILEBROWSER_DARKFRAME;Trame Noire
+FILEBROWSER_FLATFIELD;Champ Uniforme
+FILEBROWSER_POPUPCOPYTO;Copier vers...
+FILEBROWSER_POPUPMOVETO;Déplacer vers...
+FILEBROWSER_POPUPREMOVESUBMENU;Retirer
+PARTIALPASTE_CHANNELMIXER;Mixage des canaux
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
+PARTIALPASTE_DEFRINGE;Aberration chromatique
+PARTIALPASTE_DETAILGROUP;Détail
+PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
+PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
+PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
+PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
+PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
+PARTIALPASTE_PERSPECTIVE;Perspective
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
+PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
+PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
+PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
+PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
+PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
+PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
+PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
+PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
+PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
+PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
+PROGRESSBAR_BADPIXELS;Pixels chauds/morts...
+PROGRESSBAR_CACORRECTION;Correction de l'aberr. chomatique...
+PROGRESSBAR_DARKFRAME;Trame noire...
+PROGRESSBAR_GREENEQUIL;Équilibrage du vert...
+PROGRESSBAR_LINEDENOISE;Filtrage de bruit de ligne...
+PROGRESSBAR_LOADINGTHUMBS;Chargement des vignettes...
+TP_DISTORTION_AUTO;Correction auto de la distortion
+TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distortion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
