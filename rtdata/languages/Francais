@@ -64,6 +64,7 @@ FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache - partiel
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
+FILEBROWSER_DARKFRAME;Trame Noire
 FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
 FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnées, INCLUANT une version déjà traitée?
@@ -74,14 +75,17 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
+FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
 FILEBROWSER_MOVETOFLATFIELDDIR;Déplacer vers le dossier de Trame Noire
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Abandonner la file de traitement
+FILEBROWSER_POPUPCOPYTO;Copier vers...
 FILEBROWSER_POPUPMOVEEND;Déplacer à la fin de la file
 FILEBROWSER_POPUPMOVEHEAD;Déplacer en tête de file
+FILEBROWSER_POPUPMOVETO;Déplacer vers...
 FILEBROWSER_POPUPOPEN;Ouvrir
 FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
 FILEBROWSER_POPUPRANK1;1 étoile
@@ -91,6 +95,7 @@ FILEBROWSER_POPUPRANK4;4 étoiles
 FILEBROWSER_POPUPRANK5;5 étoiles
 FILEBROWSER_POPUPREMOVE;Retirer du système de fichier
 FILEBROWSER_POPUPREMOVEINCLPROC;Suppresion du système de fichier, vers. déjà traitée inclus
+FILEBROWSER_POPUPREMOVESUBMENU;Retirer
 FILEBROWSER_POPUPRENAME;Renommer
 FILEBROWSER_POPUPSELECTALL;Sélectionner tout
 FILEBROWSER_POPUPTRASH;Déplacer dans la corbeille
@@ -431,17 +436,23 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Correction aberr./chrom.
+PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
 PARTIALPASTE_COLORBOOST;Réhaussement couleur
 PARTIALPASTE_COLORDENOISE;Réduction du bruit chromatique
 PARTIALPASTE_COLORGROUP;Réglages couleurs
 PARTIALPASTE_COLORMIXER;Mixage couleur
 PARTIALPASTE_COLORSHIFT;Décalage couleur
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
 PARTIALPASTE_COMPOSITIONGROUP;Réglages de la composition
 PARTIALPASTE_CROP;Recadrage
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Sélection auto de la Trame Noire
 PARTIALPASTE_DARKFRAMEFILE;Fichier de Trame Noire
+PARTIALPASTE_DEFRINGE;Aberration chromatique
+PARTIALPASTE_DETAILGROUP;Détail
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
+PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
+PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
 PARTIALPASTE_DISTORTION;Correction de distortion
 PARTIALPASTE_EVERYTHING;Tout
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
@@ -450,26 +461,44 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
+PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
+PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
+PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
 PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
+PARTIALPASTE_PERSPECTIVE;Perspective
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
+PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
+PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
+PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
+PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
+PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
 PARTIALPASTE_RAWGROUP;Réglages RAW
+PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
+PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
+PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
 PARTIALPASTE_RESIZE;Redimentionnement
 PARTIALPASTE_ROTATION;Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_VIGNETTING;Correction du vignettage
+PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 POPUPBUTTON_SELECTOPTIONHINT;'Menu contextuel' pour changer d'option
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
+PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
@@ -530,6 +559,7 @@ PREFERENCES_INTENT_ABSOLUTE;Colorimétrie absolue
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MONITORICC;Profil du moniteur
@@ -596,9 +626,15 @@ PROFILEPANEL_TOOLTIPCOPY;Copie le profil courant dans le presse-papier
 PROFILEPANEL_TOOLTIPLOAD;Charger un profil depuis un fichier
 PROFILEPANEL_TOOLTIPPASTE; Colle le profil depuis le presse-papier
 PROFILEPANEL_TOOLTIPSAVE;Enregistrer le profil actuel
+PROGRESSBAR_BADPIXELS;Pixels chauds/morts...
+PROGRESSBAR_CACORRECTION;Correction de l'aberr. chomatique...
+PROGRESSBAR_DARKFRAME;Trame noire...
 PROGRESSBAR_DECODING;Décodage du fichier RAW...
 PROGRESSBAR_DEMOSAICING;Dématriçage...
+PROGRESSBAR_GREENEQUIL;Équilibrage du vert...
+PROGRESSBAR_LINEDENOISE;Filtrage de bruit de ligne...
 PROGRESSBAR_LOADING;Chargement de l'Image...
+PROGRESSBAR_LOADINGTHUMBS;Chargement des vignettes...
 PROGRESSBAR_LOADJPEG;Chargement du fichier JPEG...
 PROGRESSBAR_LOADPNG;Chargement du fichier PNG...
 PROGRESSBAR_LOADTIFF;Chargement du fichier TIFF...
@@ -697,6 +733,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;les plus petits
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutre
 TP_DIRPYREQUALIZER_THRESHOLD;Seuil
 TP_DISTORTION_AMOUNT;Quantité
+TP_DISTORTION_AUTO;Correction auto de la distortion
+TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distortion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EQUALIZER_CONTRAST_MINUS;Contraste-
 TP_EQUALIZER_CONTRAST_PLUS;Contraste+
@@ -869,41 +907,9 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-FILEBROWSER_DARKFRAME;Trame Noire
-FILEBROWSER_FLATFIELD;Champ Uniforme
-FILEBROWSER_POPUPCOPYTO;Copier vers...
-FILEBROWSER_POPUPMOVETO;Déplacer vers...
-FILEBROWSER_POPUPREMOVESUBMENU;Retirer
-PARTIALPASTE_CHANNELMIXER;Mixage des canaux
-PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
-PARTIALPASTE_DEFRINGE;Aberration chromatique
-PARTIALPASTE_DETAILGROUP;Détail
-PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
-PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
-PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
-PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
-PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
-PARTIALPASTE_PERSPECTIVE;Perspective
-PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
-PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
-PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
-PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
-PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
-PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
-PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
-PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
-PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
-PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
-PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
-PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
-PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
-PROGRESSBAR_BADPIXELS;Pixels chauds/morts...
-PROGRESSBAR_CACORRECTION;Correction de l'aberr. chomatique...
-PROGRESSBAR_DARKFRAME;Trame noire...
-PROGRESSBAR_GREENEQUIL;Équilibrage du vert...
-PROGRESSBAR_LINEDENOISE;Filtrage de bruit de ligne...
-PROGRESSBAR_LOADINGTHUMBS;Chargement des vignettes...
-TP_DISTORTION_AUTO;Correction auto de la distortion
-TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distortion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
