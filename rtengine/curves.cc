@@ -64,64 +64,84 @@ namespace rtengine {
 	
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, LUTf &outCurve, int skip) {
-				
-		// check if contrast curve is needed
-		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
+//static void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, LUTf & outCurve, int skip=1);
+void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, LUTf & outCurve, int skip) {
+	
+	//colormult = chroma_scale for Lab manipulations
+	
+	// check if contrast curve is needed
+	bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
+	
+	// curve without contrast
+	LUTf dcurve (65536);
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	std::vector<double> satcurvePoints;
+	satcurvePoints.push_back((double)DCT_NURBS);
+	if (saturation>0) {
+		double satslope = (0.5+2*saturation/500.0)/(0.5-2*saturation/500.0);
+		double scale = (satlimthresh/100.1);
+		if (!satlimit) scale=100/100.1;
 		
-		// curve without contrast
-		LUTf dcurve (65536);
+		satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+		satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		std::vector<double> satcurvePoints;
-		satcurvePoints.push_back((double)((CurveType)DCT_NURBS));
-		if (saturation>0) {
-			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+		//if (satlimit) {
+			satcurvePoints.push_back(0.5-0.5*scale); //toe point
+			satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
 			
+			satcurvePoints.push_back(0.5-(0.5/satslope)*scale); //toe point
+			satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
+			
+			satcurvePoints.push_back(0.5+(0.5/satslope)*scale); //shoulder point
+			satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
+						
+			satcurvePoints.push_back(0.5+0.5*scale); //shoulder point
+			satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point			
+		/*} else {
 			satcurvePoints.push_back(0.25+saturation/500.0); //toe point
 			satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
 			
 			satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
 			satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
-			
-			satcurvePoints.push_back(1); // white point
-			satcurvePoints.push_back(1); // value at white point
-		} else {
-			satcurvePoints.push_back(0); 
-			satcurvePoints.push_back(-0.5*(saturation/100.0)); 
-			
-			satcurvePoints.push_back(1); 
-			satcurvePoints.push_back(1+saturation/200.0); 
+		}*/
+		
+		satcurvePoints.push_back(1); // white point
+		satcurvePoints.push_back(1); // value at white point
+	} else {
+		satcurvePoints.push_back(0); 
+		satcurvePoints.push_back(-(saturation/200.0)); 
+		
+		satcurvePoints.push_back(1); 
+		satcurvePoints.push_back(1+saturation/200.0); 
+	}
+	DiagonalCurve* satcurve = NULL;
+	satcurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	// create a curve if needed
+	DiagonalCurve* tcurve = NULL;
+	if (curvePoints.size()>0 && curvePoints[0]!=0)
+		tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+	
+	for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
+		
+		// change to [0,1] range
+		double val = (double)i / 65535.0;
+		
+		// apply saturation curve
+		if (needsaturation)
+			val = satcurve->getVal (val);
+		
+		// apply custom/parametric/NURBS curve, if any
+		if (tcurve) {
+			val = tcurve->getVal (val);
 		}
-		DiagonalCurve* satcurve = NULL;
-		satcurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		// create a curve if needed
 
-		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0)
-			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-		
-		for (int i=0; i<=0xffff; i+= (i<0xffff-skip) ? skip : 1 ) {
-			
-			// change to [0,1] range
-			float val = (float)i / 65535.0;
-			
-			// apply saturation curve
-			if (needsaturation)
-				val = satcurve->getVal (val);
-			
-			// apply custom/parametric/NURBS curve, if any
-			if (tcurve) {
-				val = tcurve->getVal (val);
-			}
-			
 			// store result in a temporary array
 			dcurve[i] = (val);
 		}
+
 		delete tcurve;
 		
 		// if skip>1, let apply linear interpolation in the skipped points of the curve

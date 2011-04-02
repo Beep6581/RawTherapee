@@ -56,6 +56,9 @@ class LCurveParams {
         int      	brightness;
         int         contrast;
 		int         saturation;
+		bool    avoidclip;
+		bool    enable_saturationlimiter;
+		double  saturationlimit;	
 };
 
 /**

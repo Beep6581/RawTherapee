@@ -45,6 +45,9 @@ void ParamsEdited::set (bool v) {
 	labCurve.brightness = v;
 	labCurve.contrast   = v;
 	labCurve.saturation = v;
+	labCurve.avoidclip     = v;
+	labCurve.enable_saturationlimiter = v;
+	labCurve.saturationlimit = v;	
 	sharpening.enabled   = v;
 	sharpening.radius    = v;
 	sharpening.amount    = v;
@@ -191,6 +194,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.saturation = labCurve.saturation && p.labCurve.saturation == other.labCurve.saturation;
+		labCurve.avoidclip = labCurve.avoidclip && p.labCurve.avoidclip == other.labCurve.avoidclip;
+		labCurve.enable_saturationlimiter = labCurve.enable_saturationlimiter && p.labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter;
+		labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;		
         sharpening.enabled = sharpening.enabled && p.sharpening.enabled == other.sharpening.enabled;
         sharpening.radius = sharpening.radius && p.sharpening.radius == other.sharpening.radius;
         sharpening.amount = sharpening.amount && p.sharpening.amount == other.sharpening.amount;
@@ -341,6 +347,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.brightness)	toEdit.labCurve.brightness = options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
 	if (labCurve.contrast)		toEdit.labCurve.contrast 	= options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
 	if (labCurve.saturation)	toEdit.labCurve.saturation = options.baBehav[ADDSET_LC_SATURATION] ? toEdit.labCurve.saturation + mods.labCurve.saturation : mods.labCurve.saturation;
+	if (labCurve.avoidclip)				toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
+	if (labCurve.enable_saturationlimiter)toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
+	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
 	if (sharpening.enabled)					toEdit.sharpening.enabled 	= mods.sharpening.enabled;
 	if (sharpening.radius)					toEdit.sharpening.radius 	= mods.sharpening.radius;
 	if (sharpening.amount)					toEdit.sharpening.amount 	= options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;

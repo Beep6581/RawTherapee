@@ -46,6 +46,9 @@ class LCurveParamsEdited {
         bool brightness;
         bool contrast;
 		bool saturation;
+		bool avoidclip;
+		bool enable_saturationlimiter;
+		bool saturationlimit;	
         bool lcurve;
 		bool acurve;
 		bool bcurve;

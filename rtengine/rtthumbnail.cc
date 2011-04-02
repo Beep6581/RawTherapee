@@ -735,8 +735,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance processing
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 16);
     ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.acurve, curve1, 16);
-	CurveFactory::complexsgnCurve (0.0, 100.0, params.labCurve.saturation, params.labCurve.bcurve, curve2, 16);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, 16);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, 16);
     ipf.chrominanceCurve (labView, labView, curve1, curve2);
 
     // color processing

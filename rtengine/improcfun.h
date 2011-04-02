@@ -41,6 +41,7 @@ class ImProcFunctions {
 		const ProcParams* params;
 		double scale;
 		bool multiThread;
+		float g;
 
 		void simpltransform     (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void vignetting         (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
@@ -124,9 +125,13 @@ class ImProcFunctions {
 		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
 		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
+	void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
+	void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
+	void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
+	void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
 
-	void gamutmap(LabImage* );
-
+	//void gamutmap(LabImage* );
+	void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
 };
 }
 #endif

@@ -458,7 +458,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 }
 		
 	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve) {
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve/*, double sat*/) {
 	
 	int W = lold->W;
 	int H = lold->H;
@@ -470,8 +470,42 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 			lnew->a[i][j] = acurve[ain+32768.0f]-32768.0;
 			lnew->b[i][j] = bcurve[bin+32768.0f]-32768.0;
 		}
-}
+
 	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*	
+#pragma omp parallel for if (multiThread)
+    for (int i=0; i<H; i++)
+        for (int j=0; j<W; j++) {
+			
+			int oa = lold->a[i][j];
+			int ob = lold->b[i][j];
+			
+			float atmp = acurve[oa+32768]-32768;
+			float btmp = bcurve[ob+32768]-32768;
+
+            double real_c = 1.0;
+            if (params->labCurve.avoidclip) {
+				double Lclip = MIN(lnew->L[i][j]/655.35,100.0);
+                double cr = tightestroot (Lclip, (double)atmp/chroma_scale, (double)btmp/chroma_scale, 3.079935, -1.5371515, -0.54278342);
+                double cg = tightestroot (Lclip, (double)atmp/chroma_scale, (double)btmp/chroma_scale, -0.92123418, 1.87599, 0.04524418);
+                double cb = tightestroot (Lclip, (double)atmp/chroma_scale, (double)btmp/chroma_scale, 0.052889682, -0.20404134, 1.15115166);
+                if (cr>0 && cr<real_c) real_c = cr;
+                if (cg>0 && cg<real_c) real_c = cg;
+                if (cb>0 && cb<real_c) real_c = cb;
+				//if (i%100==50 && j%100==50) printf ("(i,j)=(%d,%d)  c= %f, rmax= %f \n", i, j, c, real_c);//diagnostic
+            }
+            
+            int nna = (int)((atmp) * real_c );
+            int nnb = (int)((btmp) * real_c );
+			lnew->a[i][j] = CLIPTO(nna,-32000,32000);
+			lnew->b[i][j] = CLIPTO(nnb,-32000,32000);
+        }
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*/	
+}
+
 #include "cubic.cc"
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {

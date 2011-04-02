@@ -66,6 +66,9 @@ void ProcParams::setDefaults () {
     labCurve.brightness    = 0;
     labCurve.contrast      = 0;
 	labCurve.saturation      = 0;
+	labCurve.avoidclip                = false;
+    labCurve.enable_saturationlimiter = false;
+    labCurve.saturationlimit          = 50;
     labCurve.lcurve.clear ();
 	labCurve.acurve.clear ();
     labCurve.bcurve.clear ();
@@ -261,6 +264,9 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer ("Luminance Curve", "Brightness",      labCurve.brightness);
     keyFile.set_integer ("Luminance Curve", "Contrast",        labCurve.contrast);
 	keyFile.set_integer ("Luminance Curve", "Saturation",	   labCurve.saturation);
+	keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
+    keyFile.set_boolean ("Luminance Curve", "SaturationLimiter",   labCurve.enable_saturationlimiter);
+    keyFile.set_double  ("Luminance Curve", "SaturationLimit",     labCurve.saturationlimit);
     Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
 	Glib::ArrayHandle<double> acurve = labCurve.acurve;
     Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
@@ -526,7 +532,10 @@ if (keyFile.has_group ("Luminance Curve")) {
     if (keyFile.has_key ("Luminance Curve", "Brightness"))     labCurve.brightness = keyFile.get_integer  ("Luminance Curve", "Brightness");
     if (keyFile.has_key ("Luminance Curve", "Contrast"))       labCurve.contrast   = keyFile.get_integer ("Luminance Curve", "Contrast");
 	if (keyFile.has_key ("Luminance Curve", "Saturation"))      labCurve.saturation   = keyFile.get_integer ("Luminance Curve", "Saturation");
-    if (version>200)
+	if (keyFile.has_key ("Luminance Curve", "AvoidColorClipping"))  labCurve.avoidclip               = keyFile.get_boolean ("Luminance Curve", "AvoidColorClipping");
+    if (keyFile.has_key ("Luminance Curve", "SaturationLimiter"))   labCurve.enable_saturationlimiter= keyFile.get_boolean ("Luminance Curve", "SaturationLimiter");
+    if (keyFile.has_key ("Luminance Curve", "SaturationLimit"))     labCurve.saturationlimit         = keyFile.get_double  ("Luminance Curve", "SaturationLimit");	
+	if (version>200)
 	if (keyFile.has_key ("Luminance Curve", "LCurve"))          labCurve.lcurve      = keyFile.get_double_list ("Luminance Curve", "LCurve");
 	if (keyFile.has_key ("Luminance Curve", "aCurve"))          labCurve.acurve      = keyFile.get_double_list ("Luminance Curve", "aCurve");
 	if (keyFile.has_key ("Luminance Curve", "bCurve"))          labCurve.bcurve      = keyFile.get_double_list ("Luminance Curve", "bCurve");
@@ -842,6 +851,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.brightness == other.labCurve.brightness
 		&& labCurve.contrast == other.labCurve.contrast
 		&& labCurve.saturation == other.labCurve.saturation
+		&& labCurve.avoidclip == other.labCurve.avoidclip
+		&& labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter
+		&& labCurve.saturationlimit == other.labCurve.saturationlimit	
 		&& sharpening.enabled == other.sharpening.enabled
 		&& sharpening.radius == other.sharpening.radius
 		&& sharpening.amount == other.sharpening.amount
