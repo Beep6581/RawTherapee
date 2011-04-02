@@ -53,16 +53,16 @@ Crop::~Crop () {
 void Crop::setListener (DetailedCropListener* il) { 
 	// We can make reads in the IF, because the mProcessing lock is only needed for change
 	if (cropImageListener!=il) {
-    parent->mProcessing.lock(); 
+
+		Glib::Mutex::Lock lock(cropMutex);
     cropImageListener = il; 
-    parent->mProcessing.unlock(); 
 }       
 }       
 
 void Crop::update (int todo) {
+	Glib::Mutex::Lock lock(cropMutex);
 
     ProcParams& params = parent->params;
-    cropMutex.lock ();
 
     parent->ipf.setScale (skip);
 
@@ -178,8 +178,6 @@ void Crop::update (int todo) {
         cropImageListener->setDetailedCrop (final, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
         delete final;
     }
-
-    cropMutex.unlock ();
 }
 
 void Crop::freeAll () {
@@ -306,14 +304,21 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     return changed;
 }
 
-void Crop::fullUpdate () { 
+// Try a simple, threadless update flag first
+bool Crop::tryUpdate() {
+	bool needsFullUpdate = true;
 
+	// If there are more update request, the following WHILE will collect it
     if (updating) {
         needsNext = true;
-        return;
+        needsFullUpdate = false;
+    } else updating = true;
+
+	return needsFullUpdate;
     }
 
-    updating = true;
+// Full update, should be called via thread
+void Crop::fullUpdate () { 
 
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
@@ -324,7 +329,7 @@ void Crop::fullUpdate () {
     }
 
     if (parent->plistener)
-        parent->plistener->setProgressState (1);
+        parent->plistener->setProgressState (true);
 
     needsNext = true;
     while (needsNext) {
@@ -333,10 +338,10 @@ void Crop::fullUpdate () {
     }
     updating = false;
 
-    if (parent->plistener)
-        parent->plistener->setProgressState (0);
-
     parent->updaterThreadStart.unlock ();
+
+    if (parent->plistener)
+        parent->plistener->setProgressState (false);
 }
 
 }

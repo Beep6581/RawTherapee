@@ -385,13 +385,12 @@ void RTWindow::setProgressStr (Glib::ustring str) {
 	   prProgBar.set_text ( str );
 }
 
-void RTWindow::setProgressState (int state) {
-	if (state) {
+void RTWindow::setProgressState (bool inProcessing) {
+	if (inProcessing)
 		prProgBar.show();
-	} else {
+	else
 		prProgBar.hide();
 	}
-}
 		
 void RTWindow::toggle_fullscreen () {
     if (is_fullscreen) {

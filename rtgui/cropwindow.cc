@@ -49,12 +49,12 @@ ZoomStep zoomSteps[] = {{" 10%",  0.1,     10},
 #define MAXZOOMSTEPS 14
 #define ZOOM11INDEX  7
 
-CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_) 
+CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_) 
     : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false),
     backColor(options.bgcolor), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
     xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
-    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
+    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), isLowUpdatePriority(isLowUpdatePriority_) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       
@@ -195,7 +195,7 @@ void CropWindow::setSize (int w, int h, bool norefresh) {
     if (!norefresh)
         cropHandler.setWSize (imgAreaW, imgAreaH);
 
-    iarea->redraw ();
+    //iarea->redraw ();
 }
 
 void CropWindow::getSize (int& w, int& h) {
@@ -466,13 +466,13 @@ void CropWindow::pointerMoved (int x, int y) {
 		if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) 
 			pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
 		else {
-			cropHandler.cimg.lock ();
+			Glib::Mutex::Lock lock(cropHandler.cimg);
+
 			int vx = x - xpos - imgX;
 			int vy = y - ypos - imgY;
 			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
 			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
 				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
-			cropHandler.cimg.unlock ();
 		}
 	}
 }
@@ -588,6 +588,7 @@ void CropWindow::updateCursor (int x, int y) {
 }
 
 void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
+	Glib::Mutex::Lock lock(cropHandler.cimg);
 
     //MyTime t1, t2, t3, t4;
     
@@ -613,7 +614,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     cr->stroke_preserve ();
     cr->fill ();
 
-    cropHandler.cimg.lock ();
+
     // draw image
     if (state==SCropImgMove || state==SCropWinResize) {
         // draw a rough image
@@ -718,7 +719,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
         drawSpotWBRectangle (cr);
 
     //t2.set ();
-    cropHandler.cimg.unlock ();
+
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
 

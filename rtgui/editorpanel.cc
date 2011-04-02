@@ -361,7 +361,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     ipc = rtengine::StagedImageProcessor::create (isrc);
     ipc->setProgressListener (this);
     ipc->setPreviewImageListener (previewHandler);
-    ipc->setPreviewScale (10);
+    ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType()==FT_Raw);
     ipc->setHistogramListener (this);
 
@@ -498,7 +498,7 @@ void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, r
 }
 
 struct spsparams {
-    bool state;
+    bool inProcessing;
     EditorPanelIdleHelper* epih;
 };
 
@@ -517,19 +517,19 @@ int setProgressStateUIThread (void* data) {
         return 0;
     }
 
-    p->epih->epanel->refreshProcessingState (p->state);
+    p->epih->epanel->refreshProcessingState (p->inProcessing);
     p->epih->pending--;
     delete p;
     gdk_threads_leave ();
     return 0;
 }
 
-void EditorPanel::setProgressState (int state) {
+void EditorPanel::setProgressState (bool inProcessing) {
 
     epih->pending++;
 
     spsparams* p = new spsparams;
-    p->state = state;
+    p->inProcessing = inProcessing;
     p->epih = epih;
     g_idle_add (setProgressStateUIThread, p);
 }

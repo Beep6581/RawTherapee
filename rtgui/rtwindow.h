@@ -66,7 +66,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void toggle_fullscreen ();
         void setProgress (double p);
         void setProgressStr (Glib::ustring str);
-        void setProgressState (int state);
+        void setProgressState (bool inProcessing);
         void error (Glib::ustring descr);
         rtengine::ProgressListener* getProgressListener () { return pldBridge; }
         

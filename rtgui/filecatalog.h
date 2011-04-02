@@ -25,7 +25,6 @@
 #include <dirbrowserremoteinterface.h>
 #include <dirselectionlistener.h>
 #include <filebrowser.h>
-#include <procthread.h>
 #include <exiffiltersettings.h>
 #include <giomm.h>
 #include <fileselectionlistener.h>

@@ -66,7 +66,10 @@ class Crop : public DetailedCrop {
         bool hasListener () { return cropImageListener; }
         void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
-        void fullUpdate  ();
+        
+		bool tryUpdate   ();  // First try, only make fullUpdate if this returns false
+		void fullUpdate  ();  // called via thread
+
         void setListener (DetailedCropListener* il);
         void destroy     () { delete this; }
         int  get_skip    () { return skip;}

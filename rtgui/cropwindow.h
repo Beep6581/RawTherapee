@@ -50,6 +50,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         bool deleted;
         bool fitZoomEnabled;
         bool fitZoom;
+		bool isLowUpdatePriority;
 
         // decoration
         Cairo::RefPtr<Cairo::ImageSurface> resizeSurface;
@@ -93,7 +94,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
     
     public:
         CropHandler cropHandler;
-        CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_);
+        CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_);
         ~CropWindow ();
         
         void setDecorated       (bool decorated)    { this->decorated = decorated; }
