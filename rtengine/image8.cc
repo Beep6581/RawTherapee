@@ -18,7 +18,7 @@
  */
 #include <image8.h>
 #include <rtengine.h>
-
+#include <memory.h>
 using namespace rtengine;
 
 

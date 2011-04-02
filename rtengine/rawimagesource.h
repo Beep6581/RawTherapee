@@ -20,8 +20,7 @@
 #define _RAWIMAGESOURCE_
 
 #include <imagesource.h>
-#include <lcms2_plugin.h>
-
+#include <lcms2.h>
 #define HR_SCALE 2
 
 namespace rtengine {
