@@ -40,9 +40,9 @@
 #endif
 
 namespace rtengine {
-
-using namespace procparams;
-
+	
+	using namespace procparams;
+	
 #undef MAXVAL
 #undef CMAXVAL
 #undef MAXL
@@ -53,7 +53,7 @@ using namespace procparams;
 #undef CLIPS
 #undef CLIPC
 #undef CLIPTO
-
+	
 #define MAXVAL  0xffff
 #define CMAXVAL 0xffff
 #define MAXL 	0xffff
@@ -69,6 +69,8 @@ using namespace procparams;
 	
 #define D50x 0.96422
 #define D50z 0.82521
+#define u0 4.0*D50x/(D50x+15+3*D50z)
+#define v0 9.0/(D50x+15+3*D50z)
 	
 #define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
 #define kappa	903.29630 //24389.0/27.0;
@@ -78,7 +80,7 @@ using namespace procparams;
 #define epsilon 0.00885645 //216/24389
 #define kappainv 0.00110706 //inverse of kappa
 #define kapeps 8 // kappa*epsilon
-#define Lab2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
+#define f2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
 //%%%%%%%%%%%%
 
 
@@ -458,53 +460,102 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 }
 		
 	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve/*, double sat*/) {
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve/*, double sat*/) {
 	
 	int W = lold->W;
 	int H = lold->H;
-	for (int i=0; i<H; i++)
+	
+	/*for (int i=0; i<H; i++)
 		for (int j=0; j<W; j++) {
 			float ain=lold->a[i][j];
 			float bin=lold->b[i][j];
 			//if (fabs(ain)<32767 && fabs(bin)<32767)
 			lnew->a[i][j] = acurve[ain+32768.0f]-32768.0;
 			lnew->b[i][j] = bcurve[bin+32768.0f]-32768.0;
-		}
+		}*/
 
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*	
+	
+	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+	
+	double wp[3][3] = {
+		{wprof[0][0],wprof[0][1],wprof[0][2]},
+		{wprof[1][0],wprof[1][1],wprof[1][2]},
+		{wprof[2][0],wprof[2][1],wprof[2][2]}};
+	
 #pragma omp parallel for if (multiThread)
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
 			
-			int oa = lold->a[i][j];
-			int ob = lold->b[i][j];
+			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;
+			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;
 			
-			float atmp = acurve[oa+32768]-32768;
-			float btmp = bcurve[ob+32768]-32768;
-
-            double real_c = 1.0;
+			float chroma = sqrt(SQR(atmp)+SQR(btmp));
+			float satfactor = (satcurve[chroma+32768.0f]-32768.0f)/chroma;
+			atmp *= satfactor;
+			btmp *= satfactor;
+			
+            //double real_c = 1.0;
             if (params->labCurve.avoidclip) {
-				double Lclip = MIN(lnew->L[i][j]/655.35,100.0);
-                double cr = tightestroot (Lclip, (double)atmp/chroma_scale, (double)btmp/chroma_scale, 3.079935, -1.5371515, -0.54278342);
-                double cg = tightestroot (Lclip, (double)atmp/chroma_scale, (double)btmp/chroma_scale, -0.92123418, 1.87599, 0.04524418);
-                double cb = tightestroot (Lclip, (double)atmp/chroma_scale, (double)btmp/chroma_scale, 0.052889682, -0.20404134, 1.15115166);
+				//Luv limiter
+				float Y,u,v;
+				Lab2Yuv(lold->L[i][j],atmp,btmp,Y,u,v);
+				//Yuv2Lab includes gamut restriction map
+				Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
+				
+				//Gabor's limiter -- needs adapting to float branch
+				/*double Lclip = MIN(lnew->L[i][j]/655.35,100.0);
+                double cr = tightestroot (Lclip, (double)atmp, (double)btmp, 3.079935, -1.5371515, -0.54278342);
+                double cg = tightestroot (Lclip, (double)atmp, (double)btmp, -0.92123418, 1.87599, 0.04524418);
+                double cb = tightestroot (Lclip, (double)atmp, (double)btmp, 0.052889682, -0.20404134, 1.15115166);
                 if (cr>0 && cr<real_c) real_c = cr;
                 if (cg>0 && cg<real_c) real_c = cg;
-                if (cb>0 && cb<real_c) real_c = cb;
+                if (cb>0 && cb<real_c) real_c = cb;*/
 				//if (i%100==50 && j%100==50) printf ("(i,j)=(%d,%d)  c= %f, rmax= %f \n", i, j, c, real_c);//diagnostic
-            }
-            
+            } else {
+				//Luv limiter only
+				lnew->a[i][j] = atmp;
+				lnew->b[i][j] = btmp;
+			}
+            /*
+			//Gabor again 
             int nna = (int)((atmp) * real_c );
             int nnb = (int)((btmp) * real_c );
 			lnew->a[i][j] = CLIPTO(nna,-32000,32000);
-			lnew->b[i][j] = CLIPTO(nnb,-32000,32000);
+			lnew->b[i][j] = CLIPTO(nnb,-32000,32000);*/
         }
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*/	
-}
+	/*
+	float slope = (sat>0) ? (125.0+sat)/(125.0-sat) : (1+sat/100.0);
+	
+	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+	
+	double wp[3][3] = {
+		        {wprof[0][0],wprof[0][1],wprof[0][2]},
+		        {wprof[1][0],wprof[1][1],wprof[1][2]},
+		        {wprof[2][0],wprof[2][1],wprof[2][2]}};
+
+	int W = lold->W;
+	int H = lold->H;
+	for (int i=0; i<H; i++)
+		        for (int j=0; j<W; j++) {
+			                float Y, u, v;
+			                float ain = acurve[lold->a[i][j]+32768.0f]-32768.0;
+			                float bin = bcurve[lold->b[i][j]+32768.0f]-32768.0;
+			                Lab2Yuv(lold->L[i][j],ain,bin,Y,u,v);
+			                u *= slope;
+			                v *= slope;
+			                Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
+			                //float ain=lold->a[i][j];
+			                //float bin=lold->b[i][j];
+			                //if (fabs(ain)<32767 && fabs(bin)<32767)
+			                //lnew->a[i][j] = acurve[ain+32768.0f]-32768.0;
+			                //lnew->b[i][j] = bcurve[bin+32768.0f]-32768.0;
+		}*/
+	}
+	
 
 #include "cubic.cc"
 
@@ -614,250 +665,313 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			
 			//dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
 			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult);
-
+			
 		}
 	}
-
-void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
-
-    if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
+	
+	void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
+		
+		if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
-    	bilateral<float, float> (lab->L, lab->L, (float**)b2, lab->W, lab->H, params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
-}
-
-void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
-
-  if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
+			bilateral<float, float> (lab->L, lab->L, (float**)b2, lab->W, lab->H, params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
+	}
+	
+	void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
+		
+		if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
-	  {
-	  AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
-      gaussHorizontal<float> (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-      gaussHorizontal<float> (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-      gaussVertical<float>   (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-      gaussVertical<float>   (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-
-      delete buffer;
-  }
-  }
-}
-
-void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
-
-    double sum = 0;
-    for (int i=0; i<65536>>histcompr; i++)
-        sum += histogram[i];
-
-    // compute clipping points based on the original histograms (linear, without exp comp.)
-    int clippable = (int)(sum * clip);
-    int clipped = 0;
-    int aw = (65536>>histcompr) - 1;
-    while (aw>1 && histogram[aw]+clipped <= clippable) {
-        clipped += histogram[aw];
-        aw--;
-    }
-
-    clipped = 0;
-    int shc = 0;
-    while (shc<aw-1 && histogram[shc]+clipped <= clippable) {
-        clipped += histogram[shc];
-        shc++;
-    }
-
-    aw <<= histcompr;
-    shc <<= histcompr;
-    
-    double corr = pow(2.0, expcomp);
-
-    // black point selection is based on the linear result (yielding better visual results)
-    bl = (int)(shc * corr);
-    // compute the white point of the exp. compensated gamma corrected image
-    double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
-
-    // compute average intensity of the exp compensated, gamma corrected image
-    double gavg = 0;
-    for (int i=0; i<65536>>histcompr; i++) 
-        gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
-
-    if (bl < gavg) {
-        int maxaw = (gavg - bl) * 4 / 3 + bl; // dont let aw be such large that the histogram average goes above 3/4
-        //double mavg = 65536.0 / (awg-bl) * (gavg - bl);
-        if (awg < maxaw)
-            awg = maxaw;
-    }
-	
-	awg = CurveFactory::igamma2 ((float)(awg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
-
-	bl = (int)((65535*bl)/awg);
-    br = log(65535.0 / (awg)) / log(2.0);
-    if (br<0.0)	br = 0.0;
-	if (br>10.0)	br=10.0;
-}
-	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*	
-#include "calc_distort.h"
-	
-	double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
-		if (fname != "") {
-			rtengine::RawMetaDataLocation ri;
-			int w_raw=-1, h_raw=thumb_size;
-			int w_thumb=-1, h_thumb=thumb_size;
-			
-			Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, w_thumb, h_thumb, 1);
-			if (thumb == NULL)
-				return 0.0;
-			
-			Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1);
-			if (raw == NULL) {
-				delete thumb;
-				return 0.0;
+			{
+				AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
+				gaussHorizontal<float> (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
+				gaussHorizontal<float> (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
+				gaussVertical<float>   (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
+				gaussVertical<float>   (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
+				
+				delete buffer;
 			}
-			
-			if (h_thumb != h_raw) {
-				delete thumb;
-				delete raw;
-				return 0.0;
-			}
-			
-			int width;
-			
-			if (w_thumb > w_raw)
-				width = w_raw;
-			else
-				width = w_thumb;
-			
-			unsigned char* thumbGray;
-			unsigned char* rawGray;
-			thumbGray = thumb->getGrayscaleHistEQ (width);
-			rawGray = raw->getGrayscaleHistEQ (width);
-			
-			if (thumbGray == NULL || rawGray == NULL) {
-				if (thumbGray) delete thumbGray;
-				if (rawGray) delete rawGray;
-				delete thumb;
-				delete raw;
-				return 0.0;
-			}
-			
-			double dist_amount = calcDistortion (thumbGray, rawGray, width, h_thumb);
-			delete thumbGray;
-			delete rawGray;
-			delete thumb;
-			delete raw;
-			return dist_amount;
 		}
-		else
-			return 0.0;
 	}
-*/	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {
 	
-	double var_R = r / 65535.0;
-	double var_G = g / 65535.0;
-	double var_B = b / 65535.0;
-	
-	double var_Min = MIN(MIN(var_R,var_G),var_B);
-	double var_Max = MAX(MAX(var_R,var_G),var_B);
-	double del_Max = var_Max - var_Min;
-	v = var_Max;
-	if (fabs(del_Max)<0.00001) {
-		h = 0;
-		s = 0;
-	}
-	else {
-		s = del_Max/var_Max;
+	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
 		
-		if      ( var_R == var_Max ) h = (var_G - var_B)/del_Max; 
-		else if ( var_G == var_Max ) h = 2.0 + (var_B - var_R)/del_Max; 
-		else if ( var_B == var_Max ) h = 4.0 + (var_R - var_G)/del_Max; 
-		h /= 6.0;
+		double sum = 0;
+		for (int i=0; i<65536>>histcompr; i++)
+			sum += histogram[i];
 		
-		if ( h < 0 )  h += 1;
-		if ( h > 1 )  h -= 1;
+		// compute clipping points based on the original histograms (linear, without exp comp.)
+		int clippable = (int)(sum * clip);
+		int clipped = 0;
+		int aw = (65536>>histcompr) - 1;
+		while (aw>1 && histogram[aw]+clipped <= clippable) {
+			clipped += histogram[aw];
+			aw--;
+		}
+		
+		clipped = 0;
+		int shc = 0;
+		while (shc<aw-1 && histogram[shc]+clipped <= clippable) {
+			clipped += histogram[shc];
+			shc++;
+		}
+		
+		aw <<= histcompr;
+		shc <<= histcompr;
+		
+		double corr = pow(2.0, expcomp);
+		
+		// black point selection is based on the linear result (yielding better visual results)
+		bl = (int)(shc * corr);
+		// compute the white point of the exp. compensated gamma corrected image
+		double awg = (int)(CurveFactory::gamma2 (aw * corr / 65536.0) * 65536.0);
+		
+		// compute average intensity of the exp compensated, gamma corrected image
+		double gavg = 0;
+		for (int i=0; i<65536>>histcompr; i++) 
+			gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
+		
+		if (bl < gavg) {
+			int maxaw = (gavg - bl) * 4 / 3 + bl; // dont let aw be such large that the histogram average goes above 3/4
+			//double mavg = 65536.0 / (awg-bl) * (gavg - bl);
+			if (awg < maxaw)
+				awg = maxaw;
+		}
+		
+		awg = CurveFactory::igamma2 ((float)(awg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
+		
+		bl = (int)((65535*bl)/awg);
+		br = log(65535.0 / (awg)) / log(2.0);
+		if (br<0.0)	br = 0.0;
+		if (br>10.0)	br=10.0;
 	}
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 	
-	float h1 = h*6; // sector 0 to 5
-	int i = floor( h1 );
-	float f = h1 - i; // fractional part of h
-	
-	float p = v * ( 1 - s );
-	float q = v * ( 1 - s * f );
-	float t = v * ( 1 - s * ( 1 - f ) );
-	
-	float r1,g1,b1;
-	
-	if (i==0) {r1 = v;  g1 = t;  b1 = p;}
-	if (i==1) {r1 = q;  g1 = v;  b1 = p;}
-	if (i==2) {r1 = p;  g1 = v;  b1 = t;}
-	if (i==3) {r1 = p;  g1 = q;  b1 = v;}
-	if (i==4) {r1 = t;  g1 = p;  b1 = v;}
-	if (i==5) {r1 = v;  g1 = p;  b1 = q;}
-	
-	r = ((r1)*65535.0);
-	g = ((g1)*65535.0);
-	b = ((b1)*65535.0);
-}
-	
-void ImProcFunctions::xyz2srgb (float x, float y, float z, float &r, float &g, float &b) {
-	
-	//Transform to output color.  Standard sRGB is D65, but internal representation is D50
-	//Note that it is only at this point that we should have need of clipping color data
-	
-	/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
-	float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
-	float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
-	
-	r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
-	g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
-	b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	/*	
+	 #include "calc_distort.h"
 	 
-	/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
-	g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
-	b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
-	
-	r = ((sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)) ;
-	g = ((sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)) ;
-	b = ((sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)) ;
-
-}
-	
-	
-void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]) {
-	
-	//Transform to output color.  Standard sRGB is D65, but internal representation is D50
-	//Note that it is only at this point that we should have need of clipping color data
-	
-	/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
-	 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
-	 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
+	 double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
+	 if (fname != "") {
+	 rtengine::RawMetaDataLocation ri;
+	 int w_raw=-1, h_raw=thumb_size;
+	 int w_thumb=-1, h_thumb=thumb_size;
 	 
-	 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
-	 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
-	 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
+	 Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, w_thumb, h_thumb, 1);
+	 if (thumb == NULL)
+	 return 0.0;
+	 
+	 Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1);
+	 if (raw == NULL) {
+	 delete thumb;
+	 return 0.0;
+	 }
+	 
+	 if (h_thumb != h_raw) {
+	 delete thumb;
+	 delete raw;
+	 return 0.0;
+	 }
+	 
+	 int width;
+	 
+	 if (w_thumb > w_raw)
+	 width = w_raw;
+	 else
+	 width = w_thumb;
+	 
+	 unsigned char* thumbGray;
+	 unsigned char* rawGray;
+	 thumbGray = thumb->getGrayscaleHistEQ (width);
+	 rawGray = raw->getGrayscaleHistEQ (width);
+	 
+	 if (thumbGray == NULL || rawGray == NULL) {
+	 if (thumbGray) delete thumbGray;
+	 if (rawGray) delete rawGray;
+	 delete thumb;
+	 delete raw;
+	 return 0.0;
+	 }
+	 
+	 double dist_amount = calcDistortion (thumbGray, rawGray, width, h_thumb);
+	 delete thumbGray;
+	 delete rawGray;
+	 delete thumb;
+	 delete raw;
+	 return dist_amount;
+	 }
+	 else
+	 return 0.0;
+	 }
+	 */	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
-	 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
-	 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
+	void ImProcFunctions::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {
+		
+		double var_R = r / 65535.0;
+		double var_G = g / 65535.0;
+		double var_B = b / 65535.0;
+		
+		double var_Min = MIN(MIN(var_R,var_G),var_B);
+		double var_Max = MAX(MAX(var_R,var_G),var_B);
+		double del_Max = var_Max - var_Min;
+		v = var_Max;
+		if (fabs(del_Max)<0.00001) {
+			h = 0;
+			s = 0;
+		}
+		else {
+			s = del_Max/var_Max;
+			
+			if      ( var_R == var_Max ) h = (var_G - var_B)/del_Max; 
+			else if ( var_G == var_Max ) h = 2.0 + (var_B - var_R)/del_Max; 
+			else if ( var_B == var_Max ) h = 4.0 + (var_R - var_G)/del_Max; 
+			h /= 6.0;
+			
+			if ( h < 0 )  h += 1;
+			if ( h > 1 )  h -= 1;
+		}
+	}
 	
-
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	r = ((rgb_xyz[0][0]*x + rgb_xyz[0][1]*y + rgb_xyz[0][2]*z)) ;
-	g = ((rgb_xyz[1][0]*x + rgb_xyz[1][1]*y + rgb_xyz[1][2]*z)) ;
-	b = ((rgb_xyz[2][0]*x + rgb_xyz[2][1]*y + rgb_xyz[2][2]*z)) ;
+	void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
+		
+		float h1 = h*6; // sector 0 to 5
+		int i = floor( h1 );
+		float f = h1 - i; // fractional part of h
+		
+		float p = v * ( 1 - s );
+		float q = v * ( 1 - s * f );
+		float t = v * ( 1 - s * ( 1 - f ) );
+		
+		float r1,g1,b1;
+		
+		if (i==0) {r1 = v;  g1 = t;  b1 = p;}
+		if (i==1) {r1 = q;  g1 = v;  b1 = p;}
+		if (i==2) {r1 = p;  g1 = v;  b1 = t;}
+		if (i==3) {r1 = p;  g1 = q;  b1 = v;}
+		if (i==4) {r1 = t;  g1 = p;  b1 = v;}
+		if (i==5) {r1 = v;  g1 = p;  b1 = q;}
+		
+		r = ((r1)*65535.0);
+		g = ((g1)*65535.0);
+		b = ((b1)*65535.0);
+	}
 	
-}
+	void ImProcFunctions::xyz2srgb (float x, float y, float z, float &r, float &g, float &b) {
+		
+		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
+		//Note that it is only at this point that we should have need of clipping color data
+		
+		/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
+		 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
+		 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
+		 
+		 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
+		 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
+		 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
+		
+		/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
+		 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
+		 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
+		
+		r = ((sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)) ;
+		g = ((sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)) ;
+		b = ((sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)) ;
+		
+	}
 	
+	
+	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]) {
+		
+		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
+		//Note that it is only at this point that we should have need of clipping color data
+		
+		/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
+		 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
+		 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
+		 
+		 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
+		 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
+		 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
+		
+		/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
+		 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
+		 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
+		
+		
+		
+		r = ((rgb_xyz[0][0]*x + rgb_xyz[0][1]*y + rgb_xyz[0][2]*z)) ;
+		g = ((rgb_xyz[1][0]*x + rgb_xyz[1][1]*y + rgb_xyz[1][2]*z)) ;
+		b = ((rgb_xyz[2][0]*x + rgb_xyz[2][1]*y + rgb_xyz[2][2]*z)) ;
+		
+	}
+	
+	void ImProcFunctions::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z) {
+		float fy = (0.00862069 * L) + 0.137932; // (L+16)/116
+		float fx = (0.002 * a) + fy;
+		float fz = fy - (0.005 * b);
+		
+		x = 65535*f2xyz(fx)*D50x;
+		y = 65535*f2xyz(fy);
+		z = 65535*f2xyz(fz)*D50z;
+	}
+	
+	void ImProcFunctions::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b) {
+		
+		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
+		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
+		float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
+		
+		L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
+		a = (500.0 * (fx - fy) );
+		b = (200.0 * (fy - fz) );
+		
+	}
+	
+	void ImProcFunctions::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v) {
+		float fy = (0.00862069 * L/327.68) + 0.137932; // (L+16)/116
+		float fx = (0.002 * a/327.68) + fy;
+		float fz = fy - (0.005 * b/327.68);
+		
+		float X = 65535.0*f2xyz(fx)*D50x;
+		Y = 65535.0*f2xyz(fy);
+		float Z = 65535.0*f2xyz(fz)*D50z;
+		
+		u = 4.0*X/(X+15*Y+3*Z)-u0;
+		v = 9.0*Y/(X+15*Y+3*Z)-v0;
+		
+		/*float u0 = 4*D50x/(D50x+15+3*D50z);
+		 float v0 = 9/(D50x+15+3*D50z);
+		 u -= u0;
+		 v -= v0;*/
+		
+	}
+	
+	void ImProcFunctions::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, double wp[3][3]) {
+		
+		float u1 = u + u0;
+		float v1 = v + v0;
+		
+		float Y = Yin;
+		float X = (9*u1*Y)/(4*v1*D50x); 
+		float Z = (12 - 3*u1 - 20*v1)*Y/(4*v1*D50z);
+		
+		gamutmap(X,Y,Z,wp);
+		
+		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
+		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
+		float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
+		
+		L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
+		a = (500.0 * (fx - fy) );
+		b = (200.0 * (fy - fz) );
+		
+	}
+	
+#include "gamutbdy.cc"
 }
 
 #undef eps_max

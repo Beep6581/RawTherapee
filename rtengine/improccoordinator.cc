@@ -41,6 +41,7 @@ ImProcCoordinator::ImProcCoordinator ()
     lumacurve(65536,0);
     chroma_acurve(65536,0);
     chroma_bcurve(65536,0);
+	satcurve(65536,0);
 
     vhist16(65536);
     lhist16(65536);
@@ -197,9 +198,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo & M_LUMACURVE) {
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
-									   params.labCurve.acurve, chroma_acurve, scale==1 ? 1 : 16);
+									   params.labCurve.acurve, chroma_acurve, satcurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
-									   params.labCurve.bcurve, chroma_bcurve, scale==1 ? 1 : 16);
+									   params.labCurve.bcurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
 	}
 	
 	
@@ -209,7 +210,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve);
+		ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*, params.labCurve.saturation*/);
         //ipf.colorCurve (nprevl, nprevl);
 
         readyphase++;

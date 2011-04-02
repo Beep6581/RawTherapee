@@ -716,6 +716,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf curve1 (65536);
 	LUTf curve2 (65536);
 	LUTf curve (65536);
+	LUTf satcurve (65536);
+
 	LUTu dummy;
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy, 16);
 
@@ -735,9 +737,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // luminance processing
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 16);
     ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, 16);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, 16);
-    ipf.chrominanceCurve (labView, labView, curve1, curve2);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, satcurve, 16);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, satcurve, 16);
+    ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
 
     // color processing
     //ipf.colorCurve (labView, labView);

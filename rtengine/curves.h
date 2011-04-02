@@ -194,7 +194,7 @@ class CurveFactory {
 
   public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double gamma_, bool igamma_, const std::vector<double>& curvePoints, LUTu & histogram,LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
-	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, LUTf & outCurve, int skip=1);
+	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, LUTf & outCurve, LUTf & satCurve, int skip=1);
 	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip); 
 };
 

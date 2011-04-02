@@ -145,6 +145,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTf curve1 (65536,0);
     LUTf curve2 (65536,0);
 	LUTf curve (65536,0);
+	LUTf satcurve (65536,0);
 	LUTu dummy;
 	
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy);
@@ -169,9 +170,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // luminance processing
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 1);
 	ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, 1);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, 1);
-	ipf.chrominanceCurve (labView, labView, curve1, curve2);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, satcurve, 1);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, satcurve, 1);
+	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
 
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);

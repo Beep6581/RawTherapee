@@ -171,7 +171,7 @@ void Crop::update (int todo, bool internal) {
 	// apply luminance operations
     if (todo & (M_LUMINANCE+M_COLOR)) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve);
-		parent->ipf.chrominanceCurve (laboCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve/*, params.labCurve.saturation*/);
+		parent->ipf.chrominanceCurve (laboCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve/*, params.labCurve.saturation*/);
 
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 
