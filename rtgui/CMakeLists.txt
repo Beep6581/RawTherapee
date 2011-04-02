@@ -12,13 +12,13 @@ set (BASESOURCEFILES
     exifpanel.cc toolpanel.cc
     sharpening.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
-	crophandler.cc dirbrowser.cc
-	curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
+    crophandler.cc dirbrowser.cc
+    curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
     filecatalog.cc
     previewloader.cc
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
-	multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc
+    multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc
     preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc soundman.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc
@@ -32,8 +32,8 @@ set (BASESOURCEFILES
     popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 
 if (WIN32)
-    set (EXTRA_SRC windirmonitor.cc myicon.o)
-		set (EXTRA_LIB_RTGUI winmm)
+    set (EXTRA_SRC windirmonitor.cc myicon.rc)
+    set (EXTRA_LIB_RTGUI winmm)
     include_directories ( ../rtengine ${CMAKE_CURRENT_BINARY_DIR} . ../rtexif ${EXTRA_INCDIR} ${GLIB2_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS} ${GIOMM_INCLUDE_DIRS})
     link_directories (. ../rtexif ${EXTRA_LIBDIR} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}

@@ -377,8 +377,6 @@ class DirPyrEqualizerParams {
 class HSVEqualizerParams {
 	
 	public:
-		//bool enabled;
-		//Glib::ustring hsvchannel;
 		std::vector<double>   hcurve;
 		std::vector<double>   scurve;
 		std::vector<double>   vcurve;
@@ -456,7 +454,8 @@ class ProcParams {
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
         std::vector<ExifPair>   exif;            ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair>   iptc;            ///< The IPTC tags and values to be saved to the output image
-        int version;                             ///< Version of the file from which the parameters have been read
+        Glib::ustring appVersion;                ///< Version of the application that generated the parameters
+        int ppVersion;                           ///< Version of the PP file from which the parameters have been read
 
       /**
         * The constructor only sets the hand-wired defaults.

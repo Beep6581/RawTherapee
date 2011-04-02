@@ -111,10 +111,10 @@ void Crop::update (int todo, bool internal) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-		if (origCrop->height>100 & origCrop->width>100) {
+		/*if (origCrop->height>100 & origCrop->width>100) {
 			printf("dcrop init R= %f  G= %f  B= %f  \n",origCrop->r[100][100]/256,origCrop->g[100][100]/256,origCrop->b[100][100]/256);
 			printf("init  sRGB R= %d  G= %d  B= %d  \n",CurveFactory::gamma_srgb((int)origCrop->r[100][100])/256,CurveFactory::gamma_srgb((int)origCrop->g[100][100])/256,CurveFactory::gamma_srgb((int)origCrop->b[100][100])/256);
-		}
+		}*/
 			parent->minit.unlock ();
     }
 
@@ -194,7 +194,7 @@ void Crop::update (int todo, bool internal) {
 	//parent->ipf.lab2rgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();
-
+	/*
 	//	 int xref,yref;
 	xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 
@@ -215,8 +215,8 @@ void Crop::update (int todo, bool internal) {
 			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
 			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
 	}
-	
-
+	*/
+	/*
 	if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
 		xref=000;yref=000;
 		printf("dcrop final R= %d  G= %d  B= %d  \n", \
@@ -224,6 +224,7 @@ void Crop::update (int todo, bool internal) {
 			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1], \
 			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
 	}
+	*/
     if (cropImageListener) {
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)

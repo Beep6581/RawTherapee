@@ -1,8 +1,48 @@
-cmake_minimum_required(VERSION 2.6)
+if (WIN32)
+  cmake_minimum_required(VERSION 2.8.4)
+  cmake_policy(SET CMP0015 OLD)
+else (WIN32)
+  cmake_minimum_required(VERSION 2.6)
+endif (WIN32)
 
-set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel.")
+# the default target is 'Debug'
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif ()
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+
+# By default, we don't use specific processor target, so  PROC_TARGET_NUMBER is set to 0. If can specify other values to select specific
+# processor targets, which list can be found in ProcessorTargets.cmake.
+set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
+
+# The following line set special compilation flags for RTEngine, and will be added to CMAKE_CXX_FLAGS
+# It were moved away from rtengine/CMakefiles.txt, because some users may want to remove -ffast_math :
+# this flag speeds up the floating-point operations, but with a little bite less precisions. This default value
+# gives the same result/behaviour as before.
+set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
+
+#loading the processor targets list
+set (PROC_LABEL "undefined")
+set (PROC_FLAGS "")
+if (PROC_TARGET_NUMBER GREATER 0)
+	include (ProcessorTargets.cmake)
+	set (PROC_LABEL ${PROC_TARGET_${PROC_TARGET_NUMBER}_LABEL})
+	set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
+endif (PROC_TARGET_NUMBER GREATER 0)
+
+# if it exists, the PROC_FORCED_LABEL value is loaded in PROC_LABEL to override the one of ProcessorTargets
+if (DEFINED PROC_FORCED_LABEL)
+  set (PROC_LABEL ${PROC_FORCED_LABEL})
+endif (DEFINED PROC_FORCED_LABEL)
+
+# adding the proc flags to the build flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROC_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROC_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 
 if (WIN32)
+    # we additionnally look in the MinGW path first then in the Gtkmm path,
+    # so if you wish to build some dependant library, you have to install them in MinGW to use them
     set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
 endif (WIN32)
 
@@ -12,6 +52,8 @@ if (APPLE)
     SET (CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk")
     SET (CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
 endif (APPLE)
+
+option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
@@ -39,9 +81,38 @@ if (NOT DEFINED LIBDIR)
     if (WIN32 OR APPLE)
         set (LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
     else (WIN32 OR APPLE)
-        set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+        # Respect CMAKE_INSTALL_LIBDIR if set
+        if (DEFINED CMAKE_INSTALL_LIBDIR)
+            set (LIBDIR ${CMAKE_INSTALL_LIBDIR})
+        else (DEFINED CMAKE_INSTALL_LIBDIR)
+            set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+        endif (DEFINED CMAKE_INSTALL_LIBDIR)
     endif (WIN32 OR APPLE)
 endif (NOT DEFINED LIBDIR)
+
+if (NOT DEFINED DOCDIR)
+    if (WIN32 OR APPLE)
+        set (DOCDIR ${CMAKE_CURRENT_SOURCE_DIR}/release/doc)
+    else (WIN32 OR APPLE)
+        set (DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED DOCDIR)
+
+if (NOT DEFINED CREDITSDIR)
+    if (WIN32 OR APPLE)
+        set (CREDITSDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (CREDITSDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED CREDITSDIR)
+
+if (NOT DEFINED LICENCEDIR)
+    if (WIN32 OR APPLE)
+        set (LICENCEDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (LICENCEDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED LICENCEDIR)
 
 # check for libraries
 find_package(PkgConfig)
@@ -63,14 +134,51 @@ if (WIN32)
     endif (MINGW)
 
     set (EXTRA_LIB "-lws2_32")
-else (WIN32)
 endif (WIN32)
-pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
+# you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
 pkg_check_modules (LCMS REQUIRED lcms2)
+pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
 find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
+
+if (AUTOMATED_BUILD_SYSTEM)
+
+	message(WARNING "Automated build system mode! You have to make sure that AboutThisBuild.txt and rtgui/version.h are up-to-date by building RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF.")
+
+  # Checking for the presence of AboutThisBuild.txt
+  find_file(ABOUT_FILE AboutThisBuild.txt PATHS "${CMAKE_CURRENT_SOURCE_DIR}" NO_DEFAULT_PATH)
+  if (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
+	  message(FATAL_ERROR "AboutThisBuild.txt not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
+  endif (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
+
+  # Checking for the presence of version.h
+  find_file(VERSION_FILE version.h PATHS "${CMAKE_CURRENT_SOURCE_DIR}/rtgui" NO_DEFAULT_PATH)
+  if (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
+	  message(FATAL_ERROR "rtgui/version.h not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
+  endif (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
+
+else (AUTOMATED_BUILD_SYSTEM)
+
+  # set the bit number information of the platform
+  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(PROC_BIT_DEPTH 32 bits)
+  elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(PROC_BIT_DEPTH 64 bits)
+  endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+
+  #generating AboutThisBuild.txt
+  if (WIN32)
+    include (About-Windows.cmake)
+  elseif (APPLE)
+    include (About-Apple.cmake)
+  else (WIN32)
+    include (About-Linux.cmake)
+  endif (WIN32)
+  add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+
+endif (AUTOMATED_BUILD_SYSTEM)
 
 # link rawzor
 if (WITH_RAWZOR)
@@ -129,6 +237,10 @@ endif (OPTION_OMP)
 if (UNIX)
     install (PROGRAMS rtstart DESTINATION ${BINDIR})
 endif (UNIX)
+
+install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
+install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
+install (FILES AboutThisBuild.txt DESTINATION ${CREDITSDIR})
 
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)

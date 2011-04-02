@@ -232,8 +232,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     if (min>gm) min = gm;
     if (min>bm) min = bm;
         defGain=0.0;// = log(initialGain) / log(2.0);
-        printf(" Initial gain is %f defgain is %f min is %f\n",initialGain,defGain,min);
-        printf(" rm %f gm %f bm %f\n",rm,gm,bm);
+        //printf(" Initial gain is %f defgain is %f min is %f\n",initialGain,defGain,min);
+        //printf(" rm %f gm %f bm %f\n",rm,gm,bm);
         min/=initialGain;
    //min=(float)1.0/min;
     //else {
