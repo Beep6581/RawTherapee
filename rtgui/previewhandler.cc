@@ -183,9 +183,10 @@ void PreviewHandler::imageReady (CropParams cp) {
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom) {
+	Glib::Mutex::Lock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
-    previewImgMutex.lock ();
+
     if (previewImg) {
         double totalZoom = zoom*previewScale;
         if (w>previewImg->get_width()*totalZoom)
@@ -206,14 +207,15 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
         resPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, w, h);
         previewImg->scale (resPixbuf, 0, 0, w, h, -ix, -iy, totalZoom, totalZoom, Gdk::INTERP_NEAREST);
     }
-    previewImgMutex.unlock ();
+
     return resPixbuf;
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desiredH, double& zoom_) {
+	Glib::Mutex::Lock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
-    previewImgMutex.lock ();
+
     if (previewImg) {
         double zoom1 = (double)desiredW / previewImg->get_width();
         double zoom2 = (double)desiredH / previewImg->get_height();
@@ -223,7 +225,7 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desir
         previewImg->scale (resPixbuf, 0, 0, previewImg->get_width()*zoom, previewImg->get_height()*zoom, 0, 0, zoom, zoom, Gdk::INTERP_NEAREST);
         zoom_ = zoom / previewScale;
     }
-    previewImgMutex.unlock ();
+
     return resPixbuf;
 }
 

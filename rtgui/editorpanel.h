@@ -134,7 +134,7 @@ class EditorPanel : public Gtk::VBox,
         // progresslistener interface
         void setProgress (double p);
         void setProgressStr (Glib::ustring str);
-        void setProgressState (int state);
+        void setProgressState (bool inProcessing);
         void error (Glib::ustring descr);
         void displayError (Glib::ustring descr);  // this is called by error in the gtk thread
         void refreshProcessingState (bool inProcessing); // this is called by setProcessingState in the gtk thread

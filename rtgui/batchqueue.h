@@ -41,7 +41,7 @@ class BatchQueue  : public ThumbBrowserBase,
 
   protected:
 
-    BatchQueueEntry* processing;
+    BatchQueueEntry* processing;  // holds the currently processed image
 
     Glib::ustring nameTemplate;
     

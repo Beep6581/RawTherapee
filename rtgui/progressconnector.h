@@ -47,9 +47,9 @@ class PLDBridge : public rtengine::ProgressListener {
         gdk_threads_leave ();
     }
 
-    void setProgressState (int state){
+    void setProgressState (bool inProcessing){
         gdk_threads_enter ();
-        pl->setProgressState(state);
+        pl->setProgressState(inProcessing);
         gdk_threads_leave ();
     }
 

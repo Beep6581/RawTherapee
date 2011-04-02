@@ -104,8 +104,8 @@ namespace rtengine {
           * @param str is the textual information corresponding to the progress */
           virtual void setProgressStr (Glib::ustring str) {}
         /** This member function is called when the state of the processing has been changed.
-          * @param state =1 if the processing has been started, =0 if it has been stopped */
-          virtual void setProgressState (int state) {}
+          * @param inProcessing =true if the processing has been started, =false if it has been stopped */
+          virtual void setProgressState (bool inProcessing) {}
         /** This member function is called when an error occurs during the operation.
           * @param descr is the error message */
           virtual void error (Glib::ustring descr) {}
@@ -221,6 +221,9 @@ namespace rtengine {
         public:
             /** Sets the window defining the crop. */
             virtual void setWindow   (int cx, int cy, int cw, int ch, int skip) {} 
+
+			/** First try to update (threadless update). If it returns false, make a full update */
+            virtual bool tryUpdate  () { return false; }
             /** Perform a full recalculation of the part of the image corresponding to the crop. */
             virtual void fullUpdate  () {}
             /** Sets the listener of the crop. */

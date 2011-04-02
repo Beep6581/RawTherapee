@@ -135,7 +135,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     	imgsrc->demosaic( rp );
     }
     if (todo & M_INIT) {
-        minit.lock ();
+        Glib::Mutex::Lock lock(minit);
+
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
         currWB = ColorTemp (params.wb.temperature, params.wb.green);
         if (params.wb.method=="Camera")
@@ -163,7 +164,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         progress ("Sample ...",45);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
-        minit.unlock ();
     }
 
     progress ("Rotate / Distortion...",50);
@@ -569,7 +569,7 @@ void ImProcCoordinator::startProcessing () {
 void ImProcCoordinator::process () {
 
     if (plistener)
-        plistener->setProgressState (1);
+        plistener->setProgressState (true);
 
     paramsUpdateMutex.lock ();
     while (changeSinceLast) {
@@ -585,7 +585,7 @@ void ImProcCoordinator::process () {
     updaterRunning = false;
 
     if (plistener)
-        plistener->setProgressState (0);
+        plistener->setProgressState (false);
 }
 
 ProcParams* ImProcCoordinator::getParamsForUpdate (ProcEvent change) {
