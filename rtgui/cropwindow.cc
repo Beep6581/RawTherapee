@@ -661,9 +661,13 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 				for (int i=0; i<tmp->get_height(); i++)
 					for (int j=0; j<tmp->get_width(); j++) {
 						guint8* curr = pix + i*tmp->get_rowstride () + j*3;
-						if (showch && (curr[0]>=options.highlightThreshold || curr[1]>=options.highlightThreshold || curr[2]>=options.highlightThreshold))
+						/*if (showch && (curr[0]>=options.highlightThreshold || curr[1]>=options.highlightThreshold || curr[2]>=options.highlightThreshold))
 							curr[0] = curr[1] = curr[2] = 0;
 						else if (showcs && (curr[0]<=options.shadowThreshold || curr[1]<=options.shadowThreshold || curr[2]<=options.shadowThreshold))
+							curr[0] = curr[1] = curr[2] = 255;*/
+						if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
+							curr[0] = curr[1] = curr[2] = 0;
+						else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
 							curr[0] = curr[1] = curr[2] = 255;
 					}
 				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
