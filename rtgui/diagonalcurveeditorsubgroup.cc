@@ -35,6 +35,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	valLinear = (int)DCT_Linear;
 	valUnchanged = (int)DCT_Unchanged;
 	parent = prt;
+	initslope = slope;
 
 	activeParamControl = -1;
 
@@ -324,7 +325,7 @@ void DiagonalCurveEditorSubGroup::storeDisplayedCurve() {
  * Restore the histogram to all types from the CurveEditor object to the widgets
  */
 void DiagonalCurveEditorSubGroup::restoreDisplayedHistogram() {
-	if (parent->displayedCurve) {
+	if (parent->displayedCurve && initslope==1) {
 		paramCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
 		customCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
 		NURBSCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
@@ -466,7 +467,7 @@ bool DiagonalCurveEditorSubGroup::adjusterLeft (GdkEventCrossing* ev, int ac) {
 }
 
 void DiagonalCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {
-	if (ce==parent->displayedCurve) {
+	if (ce==parent->displayedCurve &&  initslope==1) {
 		paramCurve->updateBackgroundHistogram (ce->histogram);
 		customCurve->updateBackgroundHistogram (ce->histogram);
 		NURBSCurve->updateBackgroundHistogram (ce->histogram);

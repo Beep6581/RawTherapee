@@ -186,17 +186,19 @@ void MyDiagonalCurve::draw (int handle) {
     cr->stroke ();
 
     // draw f(x)=x line
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    std::valarray<double> ds (1);
-    ds[0] = 4;
-    cr->set_dash (ds, 0);
-    cr->move_to (RADIUS, innerHeight + RADIUS);
-    cr->line_to (innerWidth + RADIUS, RADIUS);
-    cr->stroke ();
-    cr->unset_dash ();
-
-    cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    cr->set_line_width (1.0);
+    if (initslope==1) {
+		cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+		std::valarray<double> ds (1);
+		ds[0] = 4;
+		cr->set_dash (ds, 0);
+		cr->move_to (RADIUS, innerHeight + RADIUS);
+		cr->line_to (innerWidth + RADIUS, RADIUS);
+		cr->stroke ();
+		cr->unset_dash ();
+		
+		cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
+		cr->set_line_width (1.0);
+	}
 
     // draw upper and lower bounds
     if (curve.type==DCT_Parametric && activeParam>0 && lpoint.size()>1 && upoint.size()>1) {

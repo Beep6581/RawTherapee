@@ -49,6 +49,7 @@ private:
 	Gtk::Button* loadNURBS;
 
 	int activeParamControl;
+	int initslope;
 
 public:
 	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt, int slope);

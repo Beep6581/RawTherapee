@@ -1,0 +1,13 @@
+Branch: float
+Version: Dev-Float.66
+Changset: 865be513e372
+Compiler: GCC 4.2.1
+Processor: undefined
+Bit depth: 64 bits
+Gtkmm: V2.22.0
+Build type: Debug
+Build flags:   -g
+Link flags:  
+OpenMP support: false
+MMAP support: ON
+Rawzor support: OFF

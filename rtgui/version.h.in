@@ -4,8 +4,8 @@
 #ifndef _VERSION_
 #define _VERSION_
 
-#define VERSION "Dev-Float.66"
-#define TAGDISTANCE 66
+#define VERSION "${HG_VERSION}"
+#define TAGDISTANCE ${HG_TAGDISTANCE}
 
 #endif
 
