@@ -62,8 +62,8 @@ class MyDiagonalCurve : public MyCurve {
 		double ugpX;		// unclamped grabbed point X coordinate in the graph
 		double ugpY;		// unclamped grabbed point Y coordinate in the graph
 		int activeParam;
-		LUTu bghist;
-		//unsigned int* bghist;	// histogram values
+		//LUTu bghist;
+		unsigned int* bghist;	// histogram values
 		bool bghistvalid;
 		void draw (int handle);
 		void interpolate ();

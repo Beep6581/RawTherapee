@@ -64,8 +64,9 @@ namespace rtengine {
 	
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//static void CurveFactory::complexsgnCurve (double satclip, double satcompr, double saturation, const std::vector<double>& curvePoints, LUTf & outCurve, int skip=1);
-	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, LUTf & outCurve, LUTf & satCurve, int skip) {
+	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, \
+										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints, \
+										LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip) {
 		
 		//colormult = chroma_scale for Lab manipulations
 		
@@ -73,8 +74,10 @@ namespace rtengine {
 		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
 		
 		// curve without contrast
-		LUTf dcurve (65536);
-		LUTf d1curve (65536);
+		LUTf dacurve (65536);
+		LUTf dbcurve (65536);
+
+		LUTf dscurve (65536);
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		std::vector<double> satcurvePoints;
@@ -121,33 +124,43 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		// create a curve if needed
-		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0)
-			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+		DiagonalCurve* tacurve = NULL;
+		if (acurvePoints.size()>0 && acurvePoints[0]!=0)
+			tacurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
+		DiagonalCurve* tbcurve = NULL;
+		if (bcurvePoints.size()>0 && bcurvePoints[0]!=0)
+			tbcurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 		
 		for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
 			
 			// change to [0,1] range
-			double val = (double)i / 65535.0;
-			double val1 = (double)i / 65535.0;
+			double aval = (double)i / 65535.0;
+			double bval = (double)i / 65535.0;
+			double sval = (double)i / 65535.0;
 			
 			
 			// apply saturation curve
 			if (needsaturation)
-				val1 = satcurve->getVal (val1);
+				sval = satcurve->getVal (sval);
 			
 			// apply custom/parametric/NURBS curve, if any
-			if (tcurve) {
-				val = tcurve->getVal (val);
+			if (tacurve) {
+				aval = tacurve->getVal (aval);
+			}
+			// apply custom/parametric/NURBS curve, if any
+			if (tbcurve) {
+				bval = tbcurve->getVal (bval);
 			}
 			
 			// store result in a temporary array
-			dcurve[i] = (val);
-			d1curve[i] = (val1);
+			dacurve[i] = (aval);
+			dbcurve[i] = (bval);
+			dscurve[i] = (sval);
 		}
 		
-		delete tcurve;
-		
+		delete tacurve;
+		delete tbcurve;
+
 		// if skip>1, let apply linear interpolation in the skipped points of the curve
 		int prev = 0;
 		for (int i=1; i<=0xffff-skip; i++) {
@@ -155,13 +168,15 @@ namespace rtengine {
 				prev+=skip;
 				continue;
 			}
-			dcurve[i] = ( dcurve[prev] * (skip - i%skip) + dcurve[prev+skip] * (i%skip) ) / skip;
-			d1curve[i] = ( d1curve[prev] * (skip - i%skip) + d1curve[prev+skip] * (i%skip) ) / skip;
+			dacurve[i] = ( dacurve[prev] * (skip - i%skip) + dacurve[prev+skip] * (i%skip) ) / skip;
+			dbcurve[i] = ( dbcurve[prev] * (skip - i%skip) + dbcurve[prev+skip] * (i%skip) ) / skip;
+			dscurve[i] = ( dscurve[prev] * (skip - i%skip) + dscurve[prev+skip] * (i%skip) ) / skip;
 		}
 		
 		for (int i=0; i<=0xffff; i++) { 
-			outCurve[i] = (65535.0 * dcurve[i]);
-			satCurve[i] = (65535.0 * d1curve[i]);
+			aoutCurve[i] = (65535.0 * dacurve[i]);
+			boutCurve[i] = (65535.0 * dbcurve[i]);
+			satCurve[i] = (65535.0 * dscurve[i]);
 		}
 		//delete [] dcurve;
 		//delete satcurve;

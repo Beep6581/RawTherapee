@@ -30,7 +30,7 @@ MyDiagonalCurve::MyDiagonalCurve (int slope) : activeParam(-1), bghistvalid(fals
     lit_point = -1;
     buttonPressed = false;
 
-    //bghist = new unsigned int[256];
+    bghist = new unsigned int[256];
 
     signal_event().connect( sigc::mem_fun(*this, &MyDiagonalCurve::handleEvents) );
 
@@ -52,7 +52,7 @@ MyDiagonalCurve::MyDiagonalCurve (int slope) : activeParam(-1), bghistvalid(fals
 
 MyDiagonalCurve::~MyDiagonalCurve () {
 
-    //delete [] bghist;
+    delete [] bghist;
 }
 
 std::vector<double> MyDiagonalCurve::get_vector (int veclen) {
@@ -650,8 +650,8 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 
     if (hist!=NULL) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));
-		//for (i=0; i<256; i++) hist[i]=bghist[i];
-		hist = bghist;
+		for (int i=0; i<256; i++) bghist[i]=hist[i];
+		//hist = bghist;
         bghistvalid = true;
     }
     else
