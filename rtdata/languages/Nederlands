@@ -4,7 +4,7 @@
 #02 14.03.2008: updated by reggybe
 #03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
 #04 02-05-2010: updated to rt3a1 by paul.matthijsse
-#05 29-11-2010: updated by paul.matthijsse
+#05 03-03-2011: updated to rt3a2 by paul.matthijsse
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batch-verwerking
@@ -109,7 +109,7 @@ FILEBROWSER_TOOLTIP_STOPPROCESSING;Start verwerking automatisch wanneer nieuwe f
 FILEBROWSER_USETEMPLATE;Gebruik sjabloon:
 FILEBROWSER_ZOOMINHINT;Groter
 FILEBROWSER_ZOOMOUTHINT;Kleiner
-GENERAL_ABOUT;Over
+GENERAL_ABOUT;Over RawTherapee
 GENERAL_AFTER;Na
 GENERAL_BEFORE;Voor
 GENERAL_CANCEL;Annuleren
@@ -495,7 +495,7 @@ PREFERENCES_SHOWBASICEXIF;Toon standaard Exif-info
 PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWONLYRAW;Toon alleen RAW-bestanden
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
-PREFERENCES_SINGLETAB;Eén-tab-modus
+PREFERENCES_SINGLETAB;Enkel-tab-modus
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
@@ -780,36 +780,36 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!ABOUT_TAB_BUILD;Version
-!ABOUT_TAB_CREDITS;Credits
-!ABOUT_TAB_LICENSE;License
-!ABOUT_TAB_SPLASH;Splash
+ABOUT_TAB_BUILD;Versie
+ABOUT_TAB_CREDITS;Credits
+ABOUT_TAB_LICENSE;Licentie
+ABOUT_TAB_SPLASH;Splash
+EXIFFILTER_FILETYPE;Bestandstype
+GENERAL_FILE;Bestand
+GENERAL_NONE;Geen
+HISTORY_MSG_105;Randverzachting
+HISTORY_MSG_106;Randverzachting radius
+HISTORY_MSG_107;Randverzachting drempel
+HISTORY_MSG_108;Drempel compr. hoge lichten
+HISTORY_MSG_109;Resize bounding box
+HISTORY_MSG_110;Herschalen van: 
+HISTORY_MSG_111;Vermijd kleuroversturing
+HISTORY_MSG_112;Verzadigingsbegrenzer
+HISTORY_MSG_113;Verzadigingslimiet
+HISTORY_MSG_114;DCB-herhalingen
+HISTORY_MSG_115;Herhaling valse kleuren
+HISTORY_MSG_116;Verbeterd DCB
+HISTORY_MSG_117;CA-correctie Rood
+HISTORY_MSG_118;CA-correctie Blauw
+HISTORY_MSG_119;Lijnruis
+HISTORY_MSG_120;Groenbalans drempel
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Auto dark-frame
+HISTORY_MSG_123;Dark-frame-bestand
+HISTORY_MSG_124;Lineaire bel.correctie
+HISTORY_MSG_125;Bel.correctie behoud HL
+MAIN_FRAME_EDITOR;Fotobewerker
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
-!EXIFFILTER_FILETYPE;File Type
-!GENERAL_FILE;File
-!GENERAL_NONE;None
-!HISTORY_MSG_105;Defringing
-!HISTORY_MSG_106;Defringing Radius
-!HISTORY_MSG_107;Defringing Threshold
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
-!HISTORY_MSG_114;DCB Iterations
-!HISTORY_MSG_115;False color iterations
-!HISTORY_MSG_116;Enhanced DCB
-!HISTORY_MSG_117;Red CA correction
-!HISTORY_MSG_118;Blue CA correction
-!HISTORY_MSG_119;Line denoise
-!HISTORY_MSG_120;Green equil. threshold
-!HISTORY_MSG_121;Auto CA
-!HISTORY_MSG_122;Auto Dark Frame
-!HISTORY_MSG_123;Dark Frame File
-!HISTORY_MSG_124;Linear exp. correction
-!HISTORY_MSG_125;Expo. correction preserving HL
-!MAIN_FRAME_EDITOR;Editor
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
