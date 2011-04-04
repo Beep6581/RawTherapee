@@ -225,7 +225,7 @@ void CropHandler::update () {
         cropPixbuf.clear ();
 
 		// To save threads, try to mark "needUpdate" without a thread first
-		if (!crop->tryUpdate()) {
+		if (crop->tryUpdate()) {
 			if (isLowUpdatePriority)
         Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), 0, false, true, Glib::THREAD_PRIORITY_LOW);
 			else
