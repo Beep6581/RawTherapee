@@ -109,6 +109,7 @@ protected:
 	virtual void switchGUI() = 0;
 	virtual void removeEditor () = 0;
 	virtual const std::vector<double> getCurveFromGUI (int type) = 0;
+
 };
 
 #endif

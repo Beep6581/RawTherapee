@@ -65,15 +65,6 @@ class FlatCurveDescr {
 							rightTangent;	// Range: [0.0 - 1.0], where 1.0 = distance from this to next point
 };
 
-class RectArea {
-
-	public:
-		double top;
-		double left;
-		double bottom;
-		double right;
-};
-
 class HandlePosition {
 
 	public:
@@ -102,8 +93,6 @@ class MyFlatCurve : public MyCurve {
 		double minDistanceX;    	// X minimal distance before point suppression
 		double minDistanceY;    	// Y minimal distance before point suppression
 		double deletedPointX;		// Backup of the X value of the edited point, when deleted while being dragged
-		//RectArea leftTanHandle;		// XY coordinate if the upper left and bottom right corner of the left tangent handle
-		//RectArea rightTanHandle;	// XY coordinate if the upper left and bottom right corner of the right tangent handle
 		HandlePosition leftTanHandle;		// XY coordinate if the upper left and bottom right corner of the left tangent handle
 		HandlePosition rightTanHandle;	// XY coordinate if the upper left and bottom right corner of the right tangent handle
 		bool tanHandlesDisplayed;	// True if the tangent handles are displayed

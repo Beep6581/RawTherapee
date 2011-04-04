@@ -41,6 +41,13 @@ enum SnapToType {
 	ST_Identity,	// Point snapped to the identity curve
 	ST_Neighbors	// Point snapped to the neighbor points
 };
+
+enum ResizeState {
+	RS_Pending = 1,	// Resize has to occure
+	RS_Done    = 2,	// Resize has been done
+	RS_Force   = 4	// Resize has to occure even without CONFIGURE event
+};
+
 class MyCurveIdleHelper;
 
 class MyCurve : public Gtk::DrawingArea {
@@ -64,7 +71,10 @@ class MyCurve : public Gtk::DrawingArea {
 		bool buttonPressed;
 		enum SnapToType snapTo;
 		MyCurveIdleHelper* mcih;
-		bool sized;
+		enum ResizeState sized;
+
+	    virtual std::vector<double> get_vector (int veclen) = 0;
+		int getGraphMinSize() { return GRAPH_SIZE + RADIUS + 1; }
 
 	public:
 		MyCurve ();
@@ -74,12 +84,11 @@ class MyCurve : public Gtk::DrawingArea {
 		void setColorProvider (ColorProvider* cp) { colorProvider = cp; }
 		void notifyListener ();
 		void updateBackgroundHistogram (unsigned int* hist) {return;} ;
+		void forceResize() { sized = RS_Force; }
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;
 		virtual void reset () = 0;
-	protected:
-		virtual std::vector<double> get_vector (int veclen) = 0;
 };
 
 class MyCurveIdleHelper {
