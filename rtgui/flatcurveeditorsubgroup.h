@@ -28,7 +28,7 @@ class FlatCurveEditorSubGroup: public CurveEditorSubGroup  {
 
 	friend class FlatCurveEditor;
 
-private:
+protected:
 	Gtk::HBox* CPointsCurveBox;
 
 	MyFlatCurve* CPointsCurve;
@@ -44,7 +44,7 @@ public:
 	//virtual void updateBackgroundHistogram (CurveEditor* ce);
 	virtual void setColorProvider (ColorProvider* p);
 
-private:
+protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
 	void storeDisplayedCurve ();
 	void restoreDisplayedHistogram ();

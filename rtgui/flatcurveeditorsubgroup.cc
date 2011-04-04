@@ -38,23 +38,21 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt) {
 
 	// ControlPoints curve
 	CPointsCurveBox = new Gtk::HBox ();
-	//Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
+	CPointsCurveBox->set_spacing(4);
 	CPointsCurve = Gtk::manage (new MyFlatCurve ());
-	//Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
 	//CPointsCurve->set_size_request (GRAPH_SIZE+2*RADIUS+1, GRAPH_SIZE+2*RADIUS+1);
 	CPointsCurve->setType (FCT_MinMaxCPoints);
-	//tmpb->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 4);
-	CPointsCurveBox->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET,4);
-	//CPointsCurveBox->pack_start (*tmpb, Gtk::PACK_EXPAND_WIDGET,4);
+	CPointsCurveBox->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	Gtk::VBox* CPointsbbox = Gtk::manage (new Gtk::VBox ());
+	CPointsbbox->set_spacing(4);
 	saveCPoints = Gtk::manage (new Gtk::Button ());
 	saveCPoints->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
 	loadCPoints = Gtk::manage (new Gtk::Button ());
 	loadCPoints->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
 
-	CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 4);
-	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 4);
+	CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 0);
+	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
 
 	CPointsCurveBox->pack_end (*CPointsbbox, Gtk::PACK_SHRINK, 0);
 	CPointsCurveBox->show_all ();
@@ -103,6 +101,8 @@ void FlatCurveEditorSubGroup::switchGUI() {
 		case (FCT_MinMaxCPoints):
 			CPointsCurve->setPoints (dCurve->controlPointsCurveEd);
 			parent->pack_start (*CPointsCurveBox);
+			CPointsCurveBox->check_resize();
+			CPointsCurve->forceResize();
 			break;
 		default:	// (DCT_Linear, DCT_Unchanged)
 			// ... do nothing
