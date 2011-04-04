@@ -40,23 +40,22 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 
 	// custom curve
 	customCurveBox = new Gtk::HBox ();
-	Gtk::HBox* tmpa = Gtk::manage (new Gtk::HBox ());
+	customCurveBox->set_spacing(4);
 	customCurve = Gtk::manage (new MyDiagonalCurve ());
-	//Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
 	customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	customCurve->setType (DCT_Spline);
 	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
-	tmpa->pack_start (*customCurve, true, false, 4);
-	customCurveBox->pack_start (*tmpa, true, true,4);
+	customCurveBox->pack_start (*customCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	Gtk::VBox* custombbox = Gtk::manage (new Gtk::VBox ());
+	custombbox->set_spacing(4);
 	saveCustom = Gtk::manage (new Gtk::Button ());
 	saveCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
 	loadCustom = Gtk::manage (new Gtk::Button ());
 	loadCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
 
-	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 4);
-	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 4);
+	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
+	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
 
 	customCurveBox->pack_end (*custombbox, Gtk::PACK_SHRINK, 0);
 	customCurveBox->show_all ();
@@ -68,24 +67,22 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 
 	// NURBS curve
 	NURBSCurveBox = new Gtk::HBox ();
-	Gtk::HBox* tmpb = Gtk::manage (new Gtk::HBox ());
+	NURBSCurveBox->set_spacing(4);
 	NURBSCurve = Gtk::manage (new MyDiagonalCurve ());
-	//Gtk::AspectFrame* af = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
-	//af->add (*customCurve);
 	NURBSCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	NURBSCurve->setType (DCT_NURBS);
 	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
-	tmpb->pack_start (*NURBSCurve, true, false, 4);
-	NURBSCurveBox->pack_start (*tmpb, true, true,4);
+	NURBSCurveBox->pack_start (*NURBSCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	Gtk::VBox* NURBSbbox = Gtk::manage (new Gtk::VBox ());
+	NURBSbbox->set_spacing(4);
 	saveNURBS = Gtk::manage (new Gtk::Button ());
 	saveNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
 	loadNURBS = Gtk::manage (new Gtk::Button ());
 	loadNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
 
-	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 4);
-	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 4);
+	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 0);
+	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
 
 	NURBSCurveBox->pack_end (*NURBSbbox, Gtk::PACK_SHRINK, 0);
 	NURBSCurveBox->show_all ();
@@ -97,21 +94,18 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 
 	// parametric curve
 	paramCurveBox = new Gtk::VBox ();
+	paramCurveBox->set_spacing(4);
 	paramCurve = Gtk::manage (new MyDiagonalCurve ());
 	Gtk::Table* paramctab = Gtk::manage (new Gtk::Table (2,1));
-	//Gtk::AspectFrame* afp = Gtk::manage (new Gtk::AspectFrame ("",Gtk::ALIGN_CENTER,Gtk::ALIGN_CENTER,1,false));
 	paramCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	paramCurve->setType (DCT_Parametric);
 	shcSelector = Gtk::manage (new SHCSelector ());
 	shcSelector->set_size_request (GRAPH_SIZE, 20);
 
-	paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 4, 4);
-	paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS+4, 0);
+	paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 0, 0);
+	paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS, 0);
 
-	Gtk::HBox* tmpc = Gtk::manage (new Gtk::HBox ());
-	tmpc->pack_start (*paramctab, true, false);
-
-	paramCurveBox->pack_start (*tmpc, true, true);
+	paramCurveBox->pack_start (*paramctab, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
 	lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
@@ -203,6 +197,8 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 		case (DCT_Spline):
 			customCurve->setPoints (dCurve->customCurveEd);
 			parent->pack_start (*customCurveBox);
+			customCurveBox->check_resize();
+			customCurve->forceResize();
 			break;
 		case (DCT_Parametric):
 			paramCurve->setPoints (dCurve->paramCurveEd);
@@ -216,10 +212,13 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 			darks->setValue (dCurve->paramCurveEd.at(6));
 			shadows->setValue (dCurve->paramCurveEd.at(7));
 			parent->pack_start (*paramCurveBox);
+			paramCurve->forceResize();
 			break;
 		case (DCT_NURBS):
 			NURBSCurve->setPoints (dCurve->NURBSCurveEd);
 			parent->pack_start (*NURBSCurveBox);
+			NURBSCurveBox->check_resize();
+			NURBSCurve->forceResize();
 			break;
 		default:	// (DCT_Linear, DCT_Unchanged)
 			// ... do nothing

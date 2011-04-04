@@ -77,7 +77,6 @@ class MyDiagonalCurve : public MyCurve {
 		void setActiveParam (int ac);
 		void reset ();
 		void updateBackgroundHistogram (unsigned int* hist);
-
 };
 
 #endif

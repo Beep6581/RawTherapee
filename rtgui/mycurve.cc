@@ -30,7 +30,7 @@ MyCurve::MyCurve () : listener(NULL) {
     buttonPressed = false;
     snapTo = ST_None;
     colorProvider = NULL;
-    sized = false;
+    sized = RS_Pending;
 
     set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);

@@ -25,6 +25,7 @@
 #include <version.h>
 #include <ppversion.h>
 #include <myflatcurve.h>
+#include <mydiagonalcurve.h>
 
 #include <safekeyfile.h>
 
@@ -64,6 +65,7 @@ void ProcParams::setDefaults () {
     toneCurve.hlcomprthresh = 0;
     toneCurve.shcompr       = 25;
     toneCurve.curve.clear ();
+    toneCurve.curve.push_back(DCT_Linear);
     
     labCurve.brightness    = 0;
     labCurve.contrast      = 0;
@@ -72,8 +74,11 @@ void ProcParams::setDefaults () {
     labCurve.enable_saturationlimiter = false;
     labCurve.saturationlimit          = 40;
     labCurve.lcurve.clear ();
+    labCurve.lcurve.push_back(DCT_Linear);
 	labCurve.acurve.clear ();
+    labCurve.acurve.push_back(DCT_Linear);
     labCurve.bcurve.clear ();
+    labCurve.bcurve.push_back(DCT_Linear);
     
     sharpening.enabled          = true;
     sharpening.radius           = 1.0;
