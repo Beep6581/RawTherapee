@@ -243,6 +243,13 @@ void MyDiagonalCurve::draw (int handle) {
     get_window()->draw_drawable (style->get_fg_gc (state), pixmap, 0, 0, 0, 0, innerWidth + RADIUS * 2, innerHeight + RADIUS * 2);
 }
 
+/*void MyDiagonalCurve::graphSizeRequest (Gtk::Requisition* req) {
+	req->width = getGraphMinSize();
+	// The real height request should take care of the presence of the vertical
+	// scroll bar and its width
+	req->height = sized ? getGraphMinSize() : get_allocation().get_width();
+}*/
+
 bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 
 	CursorShape new_type = cursor_type;
@@ -263,13 +270,24 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		return false;
 
 	switch (event->type) {
-	case Gdk::CONFIGURE:
+	case Gdk::CONFIGURE: {
+		// Happen when the the window is resized
+		if (sized & (RS_Pending | RS_Force)) {
+			int size = get_allocation().get_width();
+			set_size_request(-1, size);
+			sized = RS_Done;
+		}
 		if (pixmap)
 			pixmap.clear ();
 		retval = true;
 		break;
-
+	}
 	case Gdk::EXPOSE:
+		if (sized & (RS_Pending | RS_Force)) {
+			int size = get_allocation().get_width();
+			set_size_request(-1, size);
+		}
+		sized = RS_Pending;
 		if (!pixmap) {
 			pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
 			interpolate ();

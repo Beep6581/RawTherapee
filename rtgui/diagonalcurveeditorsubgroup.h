@@ -28,7 +28,7 @@ class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListen
 
 	friend class DiagonalCurveEditor;
 
-private:
+protected:
 	Gtk::HBox* customCurveBox;
 	Gtk::VBox* paramCurveBox;
 	Gtk::HBox* NURBSCurveBox;
@@ -58,7 +58,7 @@ public:
 	virtual void updateBackgroundHistogram (CurveEditor* ce);
 	virtual void setColorProvider (ColorProvider* p);
 
-private:
+protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
 	void storeDisplayedCurve ();
 	void restoreDisplayedHistogram ();

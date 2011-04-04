@@ -195,7 +195,7 @@ void MyFlatCurve::draw () {
                     double x = (double)RADIUS+0.5 + innerWidth*curve.x[i];
 
                     if (i == lit_point && editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) {
-                        cr->set_line_width (2.0);
+                        cr->set_line_width (4.0);
                     }
                     cr->move_to (x, (double)RADIUS+0.5);
                     cr->line_to (x, (double)RADIUS+0.5 + innerHeight);
@@ -208,7 +208,7 @@ void MyFlatCurve::draw () {
                         if (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point) || editedHandle==FCT_EditedHandle_CPointUD) {
 
                             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
-                                cr->set_line_width (2.0);
+                                cr->set_line_width (4.0);
                             }
 
                             colorProvider->colorForValue(curve.x[i], curve.y[i]);
@@ -467,7 +467,6 @@ bool MyFlatCurve::getHandles(int n) {
 	return true;
 }
 
-
 bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 	CursorShape new_type = cursor_type;
@@ -489,11 +488,11 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 	switch (event->type) {
 	case Gdk::CONFIGURE: {
-		GdkEventConfigure* cEvent = (GdkEventConfigure*)event;
-		if (!sized) {
+		// Happen when the the window is resized
+		if (sized & (RS_Pending | RS_Force)) {
 			int size = get_allocation().get_width();
-			set_size_request(size, size);
-			sized = true;
+			set_size_request(-1, size);
+			sized = RS_Done;
 		}
 		if (pixmap)
 			pixmap.clear ();
@@ -501,10 +500,11 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 		break;
 	}
 	case Gdk::EXPOSE:
-		if (!sized) {
-			set_size_request(GRAPH_SIZE + RADIUS + 1, GRAPH_SIZE + RADIUS + 1);
+		if (sized & (RS_Pending | RS_Force)) {
+			int size = get_allocation().get_width();
+			set_size_request(-1, size);
 		}
-		sized = false;
+		sized = RS_Pending;
 		if (!pixmap) {
 			pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
 			interpolate ();
@@ -694,8 +694,15 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 	case Gdk::MOTION_NOTIFY:
 		if (curve.type == FCT_Linear || curve.type == FCT_MinMaxCPoints) {
+
+			int leftNeigborPoint  = -1;
+			int rightNeigborPoint = -1;
+			double leftNeigborY   = -1.;
+			double rightNeigborY  = -1.;
+
 			int previous_lit_point = lit_point;
 			enum MouseOverAreas prevArea = area;
+
 			// get the pointer position
 			getCursorPosition(event);
 			getMouseOverArea();
@@ -1092,7 +1099,7 @@ void MyFlatCurve::getCursorPosition(GdkEvent* event) {
 void MyFlatCurve::getMouseOverArea () {
 
 	// When dragging an element, editedHandle keep its value
-	if (editedHandle == FCT_EditedHandle_None) {
+	if (editedHandle == FCT_EditedHandle_None) { // && curve.type!=Parametric
 
 		double minDist = 1000;	// used to find out the point pointed by the cursor (over it)
 		double minDistX = 1000;	// used to find out the closest point
@@ -1102,17 +1109,6 @@ void MyFlatCurve::getMouseOverArea () {
 		bool aboveVLine = false;
 
 		// NB: this function assume that the graph's shape is a square
-
-		//if (curve.type!=Parametric) {
-
-		// we first check first if the cursor is still over a tangent handle
-		/*if (area = (FCT_Area_LeftTan|FCT_Area_RightTan)) {
-			if (still over a tangent handle) {
-
-			}
-			area = FCT_Area_None;
-			return;
-		}*/
 
 		// Check if the cursor is over a tangent handle
 		if (tanHandlesDisplayed) {
