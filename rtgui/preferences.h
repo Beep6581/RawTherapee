@@ -120,6 +120,10 @@ class Preferences : public Gtk::Dialog {
     void themeChanged  ();
     void useThemeChanged();
     void fontChanged   ();
+    void forRAWComboChanged ();
+    void forImageComboChanged ();
+    void layoutComboChanged ();
+    void cacheFormatComboChanged ();
     void switchThemeTo (Glib::ustring newTheme);
     void switchFontTo  (Glib::ustring newFont);
 
@@ -148,6 +152,7 @@ class Preferences : public Gtk::Dialog {
     void clearProfilesPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();
+
     void behAddRadioToggled (const Glib::ustring& path);
     void behSetRadioToggled (const Glib::ustring& path);
 //    void selectICCProfileDir ();
