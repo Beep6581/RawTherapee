@@ -1079,10 +1079,31 @@ void FileCatalog::trashChanged () {
 }
 
 void FileCatalog::buttonBrowsePathPressed () {
-	Glib::ustring sel = BrowsePath->get_text();
+	Glib::ustring BrowsePathValue = BrowsePath->get_text();
+	Glib::ustring DecodedPathPrefix="";
+	Glib::ustring FirstChar;
+
+	// handle shortcuts in the BrowsePath -- START
+	// read the 1-st character from the path
+	FirstChar = BrowsePathValue.substr (0,1);
+
+	if (FirstChar=="~"){ // home directory
+		DecodedPathPrefix = Glib::get_home_dir();
+	}
+	else if (FirstChar=="!"){ // user's pictures directory
+		//DecodedPathPrefix = g_get_user_special_dir(G_USER_DIRECTORY_PICTURES);
+		DecodedPathPrefix = Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES);
+	}
+
+	if (DecodedPathPrefix!=""){
+		BrowsePathValue = Glib::ustring::compose ("%1%2",DecodedPathPrefix,BrowsePathValue.substr (1,BrowsePath->get_text_length()-1));
+		BrowsePath->set_text(BrowsePathValue);
+	}
+	// handle shortcuts in the BrowsePath -- END
+
 	// validate the path
-	if (safe_file_test(sel, Glib::FILE_TEST_IS_DIR) && dirlistener){
-		dirlistener->selectDir (sel);
+	if (safe_file_test(BrowsePathValue, Glib::FILE_TEST_IS_DIR) && dirlistener){
+		dirlistener->selectDir (BrowsePathValue);
 	}
 	else
 		// error, likely path not found: show red arrow
