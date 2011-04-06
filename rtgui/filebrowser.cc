@@ -309,14 +309,18 @@ void FileBrowser::close () {
 		Glib::Mutex::Lock lock(entryMutex);
 		#endif
 
+        
+		selected.clear ();
+		notifySelectionListener ();
+
+        // The listener merges parameters with old values, so delete afterwards
     for (int i=0; i<fd.size(); i++)
     {
         delete fd[i];
     }
     fd.clear ();
-    selected.clear ();
 	}
-    notifySelectionListener ();
+
     lastClicked = NULL;
 }
 
