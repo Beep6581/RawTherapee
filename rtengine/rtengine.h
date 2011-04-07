@@ -30,6 +30,7 @@
 #include <iimage.h>
 #include <utils.h>
 #include <settings.h>
+#include "LUT.h"
 /**
  * @file 
  * This file contains the main functionality of the raw therapee engine.
@@ -104,8 +105,8 @@ namespace rtengine {
           * @param str is the textual information corresponding to the progress */
           virtual void setProgressStr (Glib::ustring str) {}
         /** This member function is called when the state of the processing has been changed.
-          * @param inProcessing =true if the processing has been started, =false if it has been stopped */
-          virtual void setProgressState (bool inProcessing) {}
+          * @param state =1 if the processing has been started, =0 if it has been stopped */
+          virtual void setProgressState (int state) {}
         /** This member function is called when an error occurs during the operation.
           * @param descr is the error message */
           virtual void error (Glib::ustring descr) {}
@@ -179,7 +180,8 @@ namespace rtengine {
         public: 
             /** With this member function the staged processor notifies the listener that the detailed crop image has been updated.
               * @param img is a pointer to the detailed crop image */
-            virtual void setDetailedCrop (IImage8* img, procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
+            virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp, \
+										  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
     };
 
@@ -202,7 +204,7 @@ namespace rtengine {
               * @param greenh is the array of size 256 containing the histogram of the green channel
               * @param blueh is the array of size 256 containing the histogram of the blue channel
               * @param lumah is the array of size 256 containing the histogram of the luminance channel */
-            virtual void histogramChanged (unsigned int* redh, unsigned int* greenh, unsigned int* blueh, unsigned int* lumah, unsigned int* bcrgbhist, unsigned int* bcLhist) {}
+            virtual void histogramChanged (LUTu & redh, LUTu & greenh, LUTu & blueh, LUTu & lumah,LUTu & bcrgbhist,LUTu & bcLhist) {}
     };
 
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
@@ -221,11 +223,10 @@ namespace rtengine {
         public:
             /** Sets the window defining the crop. */
             virtual void setWindow   (int cx, int cy, int cw, int ch, int skip) {} 
-
 			/** First try to update (threadless update). If it returns false, make a full update */
-            virtual bool tryUpdate  () { return false; }
-            /** Perform a full recalculation of the part of the image corresponding to the crop. */
-            virtual void fullUpdate  () {}
+			virtual bool tryUpdate  () { return false; }
+			/** Perform a full recalculation of the part of the image corresponding to the crop. */
+			virtual void fullUpdate  () {}
             /** Sets the listener of the crop. */
             virtual void setListener (DetailedCropListener* il) {}       
             /** Destroys the crop. */
@@ -260,6 +261,10 @@ namespace rtengine {
             /** Returns the scale of the preview image. 
               * @return the current scale of the preview image */
             virtual int         getPreviewScale () =0;
+            /** Performs a full update on the preview image. The resulting image is passed to the listener. */
+            virtual void        fullUpdatePreviewImage () =0;
+            /** Performs a full update on the detailed crops corresponding to the image. The resulting images are passed to the listeners of the crops. */
+            virtual void        fullUpdateDetailedCrops () =0;
             /** Returns the full width of the resulting image (in 1:1 scale). 
               * @return the width of the final image */
             virtual int         getFullWidth () =0;
@@ -349,7 +354,6 @@ namespace rtengine {
    * @param job the ProcessingJob to cancel. 
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.) 
    * @param pl is an optional ProgressListener if you want to keep track of the progress
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */  
     IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL, bool tunnelMetaData=false);
 
@@ -368,9 +372,10 @@ namespace rtengine {
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel. 
-   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
+   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener. 
    * @param tunnelMetaData tunnels IPTC and XMP to output without change */  
-    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
+
+	void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
 
     
     extern Glib::Mutex* lcmsMutex;

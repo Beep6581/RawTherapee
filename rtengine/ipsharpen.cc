@@ -35,7 +35,7 @@ namespace rtengine {
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define ABS(a) ((a)<0?-(a):(a))
 
-void ImProcFunctions::dcdamping (float** aI, unsigned short** aO, float damping, int W, int H) {
+void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
 
 #ifdef _OPENMP
 #pragma omp for
@@ -55,7 +55,7 @@ void ImProcFunctions::dcdamping (float** aI, unsigned short** aO, float damping,
         }
 }
 
-void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
+void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 
     if (params->sharpening.enabled==false || params->sharpening.deconvamount<1)
         return;
@@ -107,13 +107,15 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
 		} // end for
     delete buffer;
 
+    float p2 = params->sharpening.deconvamount /100.0;
+    float p1 = 1.0 - p2;
 
 #ifdef _OPENMP
 #pragma omp for
 #endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++)
-            lab->L[i][j] = lab->L[i][j]*(100-params->sharpening.deconvamount) / 100 + (int)CLIP(tmpI[i][j])*params->sharpening.deconvamount / 100;
+            lab->L[i][j] = lab->L[i][j]*p1 + CLIP(tmpI[i][j])*p2;
 
 } // end parallel
 
@@ -122,7 +124,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, unsigned short** b2) {
     delete [] tmpI;
 }
 
-void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
+void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 
     if (params->sharpening.method=="rld") {
         deconvsharpening (lab, b2);
@@ -133,32 +135,33 @@ void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
         return;
 
     int W = lab->W, H = lab->H;
-    unsigned short** b3;
+    float** b3;
     if (params->sharpening.edgesonly)
     {
-    	b3 = new unsigned short*[H];
+    	b3 = new float*[H];
     	for (int i=0; i<H; i++)
-    		b3[i] = new unsigned short[W];
+    	   b3[i] = new float[W];
     }
-
-
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
     {
+
+
     AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
     if (params->sharpening.edgesonly==false) {
-        gaussHorizontal<unsigned short> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
-        gaussVertical<unsigned short>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+
+        gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+        gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
     }
     else {
-		bilateral<unsigned short, unsigned int> (lab->L, (unsigned short**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-		gaussHorizontal<unsigned short> (b3, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
-		gaussVertical<unsigned short>   (b2, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+  		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
+		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
     }
     delete buffer;
 
-    unsigned short** base = lab->L;
+    float** base = lab->L;
     if (params->sharpening.edgesonly)
         base = b3;
 
@@ -184,10 +187,10 @@ void ImProcFunctions::sharpening (LabImage* lab, unsigned short** b2) {
     }
 }
 
-void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, unsigned short** blurmap, unsigned short** base, int W, int H) {
+void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** base, int W, int H) {
 
     int scale = 100 * (100-params->sharpening.halocontrol_amount);
-    unsigned short** nL = base;
+    float** nL = base;
 	#pragma omp parallel for if (multiThread)
     for (int i=2; i<H-2; i++) {
         int max1 = 0, max2 = 0, min1 = 0, min2 = 0, maxn, minn, np1, np2, np3, min, max;

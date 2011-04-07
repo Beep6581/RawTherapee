@@ -44,7 +44,6 @@ inline int feof (IMFILE* f) {
 }
 
 inline void fseek (IMFILE* f, int p, int how) {
-	int fpos = f->pos;
 
 	if (how==SEEK_SET)
 		f->pos = p;
@@ -52,9 +51,6 @@ inline void fseek (IMFILE* f, int p, int how) {
 		f->pos += p;
 	else if (how==SEEK_END)
 		f->pos = f->size-p;
-
-	if (f->pos < 0  || f->pos> f->size)
-		f->pos = fpos;
 }
 
 inline int fgetc (IMFILE* f) {

@@ -25,12 +25,11 @@
 #include <iccmatrices.h>
 #include <glib/gstdio.h>
 #include <safegtk.h>
-#include <options.h>
 
 namespace rtengine {
 
-const double (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
-const double (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
+const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
+const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};         
 
 std::vector<std::string> getWorkingProfiles () {
@@ -51,14 +50,8 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
 	Glib::Mutex::Lock lock(mutex_);
 
     std::vector<std::string> res;
-    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++){
-    	std::string name(i->first);
-    	std::string::size_type  i = name.find_last_of('/');
-    	if( i == std::string::npos )
-    		i = name.find_last_of('\\');
-    	if( i == std::string::npos )
-           res.push_back ( name ); // list only profiles inside selected profiles directory
-    }
+    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
+        res.push_back (i->first);
     return res;
 }
 
@@ -81,7 +74,7 @@ ICCStore::getInstance(void)
 
 ICCStore::ICCStore ()
 {
-   // cmsErrorAction (LCMS_ERROR_SHOW);
+    //cmsErrorAction (LCMS_ERROR_SHOW);
 
     int N = sizeof(wpnames)/sizeof(wpnames[0]);
     for (int i=0; i<N; i++) {
@@ -194,8 +187,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
                 if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-                	if( options.rtSettings.verbose )
-                       printf ("Processing ICC file: %s...\n", fname.c_str());
+//                    printf ("processing file %s...\n", fname.c_str());
                     Glib::ustring name = sname.substr(0,lastdot);
                     ProfileContent pc (fname);
                     if (pc.data) {
@@ -212,32 +204,6 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
         delete dir;
     }
     return result;
-}
-
-// Determine the first monitor default profile of operating system, if selected
-void ICCStore::findDefaultMonitorProfile() {
-	defaultMonitorProfile="";
-
-#ifdef WIN32
-	// Get current main monitor. Could be fine tuned to get the current windows monitor (multi monitor setup),
-	// but problem is that we live in RTEngine with no GUI window to query around
-	HDC hDC=GetDC(NULL);  
-
-	if (hDC!=NULL) {
- 		if (SetICMMode(hDC, ICM_ON)) {
-			char profileName[MAX_PATH+1]; DWORD profileLength=MAX_PATH;
-			if (GetICMProfileA(hDC,&profileLength,profileName)) defaultMonitorProfile=Glib::ustring(profileName);
-			// might fail if e.g. the monitor has no profile
-		}
-
-        ReleaseDC(NULL,hDC);
-    }
-#else
-// TODO: Add other OS specific code here
-printf("Automatic Monitor Profile Detection not supported on your OS\n");
-#endif
-
-	if (options.rtSettings.verbose) printf("Default monitor profile is: %s\n", defaultMonitorProfile.c_str());
 }
 
 ProfileContent::ProfileContent (Glib::ustring fileName) {
@@ -310,7 +276,9 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 	    0x7258595a, 0, 20,	/* rXYZ */
 	    0x6758595a, 0, 20,	/* gXYZ */
 	    0x6258595a, 0, 20 };	/* bXYZ */
-    static const unsigned pwhite[] = { 0xf351, 0x10000, 0x116cc };
+    static const unsigned pwhite[] = { 0xf351, 0x10000, 0x116cc };//D65
+	//static const unsigned pwhite[] = { 0xf6d6, 0x10000, 0xd340 };//D50
+
     // 0x63757276 : curveType, 0 : reserved, 1 : entries (1=gamma, 0=identity), 0x1000000=1.0 
     unsigned pcurve[] = { 0x63757276, 0, 0, 0x1000000 };
 //    unsigned pcurve[] = { 0x63757276, 0, 1, 0x1000000 };
@@ -348,7 +316,7 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 //    pseudoinverse ((double (*)[3]) out_rgb[output_color-1], inverse, 3);
     for (int i=0; i < 3; i++)
       for (int j=0; j < 3; j++) {
-        oprof[pbody[j*3+23]/4+i+2] = matrix[j][i] * 0x10000 + 0.5;
+        oprof[pbody[j*3+23]/4+i+2] = matrix[i][j] * 0x10000 + 0.5;
 //    	for (num = k=0; k < 3; k++)
 //    	  num += xyzd50_srgb[i][k] * inverse[j][k];
       }

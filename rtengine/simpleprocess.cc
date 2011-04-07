@@ -2,7 +2,6 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *  Copyright (c)      2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,9 +29,11 @@
 
 #undef THREAD_PRIORITY_NORMAL
 
+#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
+
+
 namespace rtengine {
 
-// tunnelMetaData copies IPTC and XMP untouched to output
 IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
 
     errorCode = 0;
@@ -56,7 +57,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // aquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
-    imgsrc->setProgressListener(NULL);
 
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -98,23 +98,24 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else if (params.wb.method=="Auto")
         currWB = imgsrc->getAutoWB ();
 
-    Image16* baseImg;
+    Imagefloat* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw );
-    if (pl) pl->setProgress (0.20);
+	if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw );
-    if (pl) pl->setProgress (0.40);
-    baseImg = new Image16 (fw, fh);
+	if (pl) pl->setProgress (0.40);
+    baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+
     // perform first analysis
-    unsigned int* hist16 = new unsigned int[65536];
+    LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
-        Image16* trImg = new Image16 (fw, fh);
+        Imagefloat* trImg = new Imagefloat (fw, fh);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
@@ -130,7 +131,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         shmap = new SHMap (fw, fh, true);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = radius / 1800.0 * params.sh.radius;
-        shmap->update (baseImg, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
+        shmap->update (baseImg, (float**)buffer, shradius, ipf.lumimul, params.sh.hq);
     }
     // RGB processing
 //!!!// auto exposure!!!
@@ -138,20 +139,22 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int    bl = params.toneCurve.black;
 
     if (params.toneCurve.autoexp) {
-        unsigned int* aehist = new unsigned int [65536]; int aehistcompr;
+        LUTu aehist; int aehistcompr;
         imgsrc->getAEHistogram (aehist, aehistcompr);
         ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
-        delete [] aehist;
     }
 
-    float* curve1 = new float [65536];
-    float* curve2 = new float [65536];
-	int* curve = new int [65536];
+    LUTf curve1 (65536,0);
+    LUTf curve2 (65536,0);
+	LUTf curve (65536,0);
+	LUTf satcurve (65536,0);
+	LUTu dummy;
 	
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy);
 
-    LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap,  params.toneCurve.saturation);
+	LabImage* labView = new LabImage (fw,fh);
+
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
@@ -161,35 +164,30 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 
     // luminance histogram update
-    memset (hist16, 0, 65536*sizeof(int));
+    hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[labView->L[i][j]]++;
+            hist16[CLIP((int)(2*(labView->L[i][j])))]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL);
-    ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, 1);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, 1);
-    ipf.chrominanceCurve (labView, labView, curve1, curve2);
-	
+	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 1);
+	ipf.luminanceCurve (labView, labView, curve);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 1);
+	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
+
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
-	ipf.lumadenoise (labView, buffer);
-    ipf.sharpening (labView, (unsigned short**)buffer);
-
-    delete [] curve1;
-	delete [] curve2;
-	delete [] curve;
-    delete [] hist16;
+	//ipf.lumadenoise (labView, buffer);
+    ipf.sharpening (labView, (float**)buffer);
 
     // color processing
-    ipf.colorCurve (labView, labView);
-    ipf.colordenoise (labView, buffer);
+    /*ipf.colorCurve (labView, labView);
+    ipf.colordenoise (labView, buffer);*/
 	ipf.dirpyrdenoise (labView);
 
     // wavelet equalizer
-    ipf.waveletEqualizer (labView, true, true);
+    //ipf.waveletEqualizer (labView, true, true);
 	
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);
@@ -198,8 +196,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         delete [] buffer[i];
     delete [] buffer;
 
-    if (pl) 
-        pl->setProgress (0.60);
+    if (pl) pl->setProgress (0.60);
 
     // crop and convert to rgb16
     Image16* readyImg;
@@ -211,12 +208,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         ch = params.crop.h;
     }
     readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
-
-    // we can now safely delete labView
     delete labView;
-
-    if (pl)
-        pl->setProgress (0.70);
+    if (pl) pl->setProgress (0.70);
 
     // get the resize parameters
 	int refw, refh;
@@ -281,18 +274,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	    }
 	}
 
-    if (tunnelMetaData)
-        readyImg->setMetadata (ii->getMetaData()->getExifData ());
-    else
+
+    //if (tunnelMetaData)
+    //    readyImg->setMetadata (ii->getMetaData()->getExifData ());
+    //else
         readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
-
-
+	
+	
     ProfileContent pc;
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
         pc = iccStore->getContent (params.icm.output);
-
+	
     readyImg->setOutputProfile (pc.data, pc.length);
-
+	
     delete baseImg;
     
     if (!job->initialImage)
@@ -301,8 +295,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete job;
     if (pl)
         pl->setProgress (0.75);
-
+	
     return readyImg;
+	
 }
 
 void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {

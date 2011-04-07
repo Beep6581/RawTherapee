@@ -31,6 +31,7 @@ namespace rtengine {
 #undef CLIP
 #undef CLIPTO
 #undef CLIPTOC
+#undef SQR
 
 #define CMAXVAL 0xffff
 #define MAX(a,b) ((a)<(b)?(b):(a))
@@ -39,6 +40,7 @@ namespace rtengine {
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 #define RT_PI 3.141592653589
+#define SQR(x) ((x)*(x))
 
 bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
 
@@ -183,7 +185,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     return result;
 }
 
-void ImProcFunctions::transform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
 	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective()) && needsVignetting())
 		vignetting (original, transformed, cx, cy, oW, oH);
@@ -216,7 +218,7 @@ void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, do
 	mul = (1.0-v) / tanh(b);
 }
 
-void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int cx, int cy, int oW, int oH) {
+void ImProcFunctions::vignetting (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
 
 	double vig_w2;
 	double vig_h2;
@@ -245,7 +247,7 @@ void ImProcFunctions::vignetting (Image16* original, Image16* transformed, int c
 }
 
 #include "cubint.cc"
-void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transformNonSep (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
 
@@ -353,7 +355,7 @@ void ImProcFunctions::transformNonSep (Image16* original, Image16* transformed, 
 }
 
 #include "cubintch.cc"
-void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
@@ -371,11 +373,11 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
     cdist[0] = params->cacorrection.red;
     cdist[1] = 0.0;
     cdist[2] = params->cacorrection.blue;
-    unsigned short** chorig[3];
+    float** chorig[3];
     chorig[0] = original->r;
     chorig[1] = original->g;
     chorig[2] = original->b;
-    unsigned short** chtrans[3];
+    float** chtrans[3];
     chtrans[0] = transformed->r;
     chtrans[1] = transformed->g;
     chtrans[2] = transformed->b;
@@ -392,13 +394,15 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
 	// auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
-    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
+    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-SQR(oW*tan(vpalpha)) + (vpdeg>0 ? 1.0 : -1.0) * \
+																oW*tan(vpalpha)*sqrt(SQR(4*maxRadius)+SQR(oW*tan(vpalpha))))/(SQR(maxRadius)*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
 	// auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
-    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
+    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-SQR(oH*tan(hpalpha)) + (hpdeg>0 ? 1.0 : -1.0) * \
+																oH*tan(hpalpha)*sqrt(SQR(4*maxRadius)+SQR(oH*tan(hpalpha))))/(SQR(maxRadius)*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
@@ -472,7 +476,7 @@ void ImProcFunctions::transformSep (Image16* original, Image16* transformed, int
     }
 }
 
-void ImProcFunctions::simpltransform (Image16* original, Image16* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
+void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH) {
 
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;

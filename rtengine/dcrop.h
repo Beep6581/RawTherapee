@@ -36,11 +36,15 @@ class ImProcCoordinator;
 class Crop : public DetailedCrop {
 
     protected:
-        Image16* origCrop, *resizeCrop, *transCrop, *baseCrop;
+		Imagefloat* origCrop, *baseCrop;
+        Imagefloat* *resizeCrop, *transCrop;
         LabImage *laboCrop, *labnCrop;
         Image8 *cropImg;
+		Image8 *cropImgtrue;
+
 
         int** cbuffer;
+        int * cbuf_real;
         SHMap* cshmap;
 
         bool updating, needsNext;
@@ -64,12 +68,12 @@ class Crop : public DetailedCrop {
             ~Crop        ();
     
         bool hasListener () { return cropImageListener; }
-        void update      (int todo);
+        void update      (int todo, bool internal=false);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
-        
+		
 		bool tryUpdate   ();  // First try, only make fullUpdate if this returns false
 		void fullUpdate  ();  // called via thread
-
+	
         void setListener (DetailedCropListener* il);
         void destroy     () { delete this; }
         int  get_skip    () { return skip;}

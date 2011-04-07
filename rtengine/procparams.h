@@ -174,6 +174,8 @@ class ColorDenoiseParams {
         int		luma;
         int     chroma;
 		float	gamma;
+		std::vector<double>   lumcurve;
+		std::vector<double>   chromcurve;
 	};
 
 /**
@@ -406,9 +408,8 @@ class RAWParams {
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
-		double expos;
-		double preser; // expos
 		bool hotdeadpix_filt;
+		int hotdeadpix_thresh;
 		int	linenoise;
 		int greenthresh;
         int ccSteps;

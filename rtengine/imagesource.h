@@ -23,10 +23,12 @@
 #include <colortemp.h>
 #include <glibmm.h>
 #include <image16.h>
+#include <imagefloat.h>
 #include <procparams.h>
 #include <coord2d.h>
 #include <vector>
 #include <imagedata.h>
+#include "LUT.h"
 
 namespace rtengine {
 
@@ -68,7 +70,7 @@ class ImageSource : public InitialImage {
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
         virtual void        preprocess  (const RAWParams &raw){};
         virtual void        demosaic    (const RAWParams &raw){};
-        virtual void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+        virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;
@@ -85,7 +87,7 @@ class ImageSource : public InitialImage {
 
                 void        increaseRef () { references++; }
                 void        decreaseRef () { references--; if (!references) delete this; }
-        virtual int         getAEHistogram (unsigned int* histogram, int& histcompr) {return 0;}
+        virtual int         getAEHistogram (LUTu & histogram, int& histcompr) {return 0;}
 
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }

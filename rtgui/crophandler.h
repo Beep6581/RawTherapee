@@ -30,6 +30,12 @@ class CropHandlerListener {
         virtual void initialImageArrived () {}
 };
 
+class CropHandler;
+struct CropHandlerIdleHelper {
+    CropHandler* cropHandler;
+    bool destroyed;
+    int pending;
+};
 
 class CropHandler : public rtengine::DetailedCropListener, public rtengine::SizeListener {
 
@@ -42,21 +48,27 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         int cropX, cropY, cropW, cropH; // position and size of the crop corresponding to cropPixbuf
         bool enabled;
         unsigned char* cropimg;
+		unsigned char* cropimgtrue;
         int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
         bool initial;
-		bool isLowUpdatePriority;
 
         rtengine::StagedImageProcessor* ipc;
         rtengine::DetailedCrop* crop;
 
         CropHandlerListener* listener;
+        CropHandlerIdleHelper* chi;
 
         void    compDim ();
+	
     public:
-       void    update  ();
+
+		void    update  ();
 
         rtengine::procparams::CropParams cropParams;
+		rtengine::procparams::ColorManagementParams colorParams;
         Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
+		Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
+
         Glib::Mutex cimg;
 
         CropHandler ();
@@ -76,10 +88,9 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         void    setEnabled (bool e);
         bool    getEnabled ();
 
-		void    setIsLowUpdatePriority(bool p) { isLowUpdatePriority=p; }
-
         // DetailedCropListener interface
-        void    setDetailedCrop (rtengine::IImage8* im, rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
+        void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking,rtengine::procparams::ColorManagementParams cmp, \
+								 rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
         bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
         // SizeListener interface
         void    sizeChanged  (int w, int h, int ow, int oh);

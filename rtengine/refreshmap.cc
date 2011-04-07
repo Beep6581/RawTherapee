@@ -19,8 +19,6 @@
 #include <refreshmap.h>
 #include <procevents.h>
 
-// Mapping of which event causes what change in the image
-// given to Improccordinator::updatePreviewImage(todo)
 int refreshmap[rtengine::NUMOFEVENTS] = {
 ALL,              // EvPhotoLoaded,
 ALL,              // EvProfileLoaded,
@@ -129,12 +127,11 @@ RGBCURVE,         // EvHSVEqEnabled,
 DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
-RGBCURVE,         // EvHLComprThreshold,
 RESIZE,           // EvResizeBoundingBox
-RESIZE,           // EvResizeAppliesTo
-LUMINANCECURVE,   // EvCBAvoidClip,
-LUMINANCECURVE,   // EvCBSatLimiter,
-LUMINANCECURVE,   // EvCBSatLimit,
+RESIZE,            // EvResizeAppliesTo  
+	LUMINANCECURVE,   // EvCBAvoidClip,
+	LUMINANCECURVE,   // EvCBSatLimiter,
+	LUMINANCECURVE,   // EvCBSatLimit, 
 DEMOSAIC,         // EvDemosaicDCBIter
 DEMOSAIC,         // EvDemosaicFalseColorIter
 DEMOSAIC,         // EvDemosaicDCBEnhanced
@@ -145,13 +142,14 @@ DARKFRAME,        // EvPreProcessGEquilThresh
 DARKFRAME,        // EvPreProcessAutoCA
 DARKFRAME,        // EvPreProcessAutoDF
 DARKFRAME,        // EvPreProcessDFFile
-DARKFRAME,        // EvPreProcessExpCorrLinear
-DARKFRAME,        // EvPreProcessExpCorrPH
-FLATFIELD,        // EvFlatFieldFile,
-FLATFIELD,        // EvFlatFieldAutoSelect,
-FLATFIELD,        // EvFlatFieldBlurRadius,
-FLATFIELD,        // EvFlatFieldBlurType,
-TRANSFORM,        // EvAutoDIST,
+	FLATFIELD,        // EvFlatFieldFile,      
+	FLATFIELD,        // EvFlatFieldAutoSelect,
+	FLATFIELD,        // EvFlatFieldBlurRadius,
+	FLATFIELD,        // EvFlatFieldBlurType, 
+RGBCURVE,         // EvHLComprThreshold,
+	DIRPYRDENOISE,    // EvDPDNLumCurve,
+	DIRPYRDENOISE,    // EvDPDNChromCurve,
+	TRANSFORM		// EvAutoDIST,
 
 };
 

@@ -4470,12 +4470,12 @@ void CLASS parse_makernote (int base, int uptag)
       cam_mul[0] = getreal(type);
       cam_mul[2] = getreal(type);
     }
-//    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
-//      fread (buf97, 1, sizeof buf97, ifp);
-//      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-//      if (i < 70 && buf97[i] < 3)
-//	flip = "065"[buf97[i]]-'0';
-//    }
+    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
+      fread (buf97, 1, sizeof buf97, ifp);
+      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
+      if (i < 70 && buf97[i] < 3)
+	flip = "065"[buf97[i]]-'0';
+    }
     if (tag == 0x10 && type == 4)
       unique_id = get4();
     if (tag == 0x11 && is_raw && !strncmp(make,"NIKON",5)) {
@@ -4887,9 +4887,6 @@ int CLASS parse_tiff_ifd (int base)
       case 6:   height = get2();  break;
       case 7:   width += get2();  break;
       case 9:  filters = get2();  break;
-      case 14: case 15: case 16:
-	maximum = get2();
-	break;
       case 17: case 18:
 	if (type == 3 && len == 1)
 	  cam_mul[(tag-17)*2] = get2() / 256.0;
@@ -4947,7 +4944,7 @@ int CLASS parse_tiff_ifd (int base)
       case 513:				/* JpegIFOffset */
       case 61447:
 	tiff_ifd[ifd].offset = get4()+base;
-/*RT*/if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset>=0) {
+	if (!tiff_ifd[ifd].bps) {
 	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
 	  if (ljpeg_start (&jh, 1)) {
 	    tiff_ifd[ifd].comp    = 6;
@@ -6650,10 +6647,10 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
     { "SONY DSLR-A900", 128, 0,
 	{ 5209,-1072,-397,-8845,16120,2919,-1618,1803,8654 } },
-//  { "SONY NEX-3", 138, 0,		/* DJC */
-//  { 6907,-1256,-645,-4940,12621,2320,-1710,2581,6230 } },
-//  { "SONY NEX-5", 116, 0,		/* DJC */
-//  { 6807,-1350,-342,-4216,11649,2567,-1089,2001,6420 } },
+    { "SONY NEX-3", 138, 0,		/* DJC */
+	{ 6907,-1256,-645,-4940,12621,2320,-1710,2581,6230 } },
+    { "SONY NEX-5", 116, 0,		/* DJC */
+	{ 6807,-1350,-342,-4216,11649,2567,-1089,2001,6420 } },
     { "SONY NEX", 128, 0,		/* Adobe's matrix */
 	{ 6549,-1550,-436,-4880,12435,2753,-854,1868,6976 } },
     { "SONY SLT-A33", 128, 0,
@@ -7040,7 +7037,7 @@ void CLASS identify()
   if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
     { height  = 3124;   width  = 4688; filters = 0x16161616; }
   if (!strcmp(model,"K-r") || !strcmp(model,"K-x"))
-/*RT*/   {			width  = 4308; filters = 0x16161616; }
+    {			width  = 4308; filters = 0x16161616; }
   if (!strcmp(model,"K-5"))
     { left_margin = 10; width  = 4950; filters = 0x16161616; }
   if (!strcmp(model,"K-7"))
@@ -7396,6 +7393,9 @@ canon_cr2:
   } else if (!strcmp(model,"D1X")) {
     width -= 4;
     pixel_aspect = 0.5;
+  } else if (!strcmp(model,"D3100")) {
+    width -= 24;
+    left_margin = 4;
   } else if (!strcmp(model,"D40X") ||
 	     !strcmp(model,"D60")  ||
 	     !strcmp(model,"D80")  ||

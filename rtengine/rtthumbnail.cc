@@ -92,18 +92,19 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     }
 
     // bilinear interpolation
+    if (tpp->thumbImg) delete tpp->thumbImg;
     tpp->thumbImg = img->resize (w, h, TI_Bilinear);
 
     // histogram computation
     tpp->aeHistCompression = 3;
-    tpp->aeHistogram = new unsigned int[65536>>tpp->aeHistCompression];
+    tpp->aeHistogram(65536>>tpp->aeHistCompression);
 	
 	double avg_r = 0;
     double avg_g = 0;
     double avg_b = 0;
     int n = 0;
 	
-    memset (tpp->aeHistogram, 0, (65536>>tpp->aeHistCompression)*sizeof(int));
+    tpp->aeHistogram.clear();
     int ix = 0;
     for (int i=0; i<img->height*img->width; i++) {
 		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
@@ -204,6 +205,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         tpp->scale = (double)img->width / w;
     }
 
+    if (tpp->thumbImg) delete tpp->thumbImg;
     tpp->thumbImg = img->resize (w, h, TI_Nearest);
     delete img;
 
@@ -232,7 +234,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate)
 {
 	RawImage *ri= new RawImage (fname);
-	int r = ri->loadRaw();
+	int r = ri->loadRaw(1,0);
 	if( r ){
 		delete ri;
 		return NULL;
@@ -276,17 +278,10 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		firstgreen++;
 
 	int skip = 1;
-	if (ri->get_FujiWidth() != 0){
-		if (fixwh == 1) // fix height, scale width
-			skip = ((ri->get_height() - ri->get_FujiWidth()) / sqrt(0.5) - firstgreen - 1) / h;
-		else
-			skip = (ri->get_FujiWidth()/sqrt(0.5) - firstgreen - 1) / w;
-	}else{
-		if (fixwh == 1) // fix height, scale width
-			skip = (ri->get_height() - firstgreen - 1) / h;
-		else
-			skip = (ri->get_width() - firstgreen - 1) / w;
-	}
+	if (fixwh == 1) // fix height, scale width
+		skip = (ri->get_height() - firstgreen - 1) / h;
+	else
+		skip = (ri->get_width() - firstgreen - 1) / w;
 	if (skip % 2)
 		skip--;
 	if (skip < 1)
@@ -303,7 +298,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 	DCraw::dcrawImage_t image = ri->get_image();
 
-	Image16* tmpImg = new Image16(tmpw, tmph);
+	Imagefloat* tmpImg = new Imagefloat(tmpw, tmph);
 	if (ri->isBayer()) {
 		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
 			rofs = row * width;
@@ -341,7 +336,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		double step = sqrt(0.5);
 		int wide = fw / step;
 		int high = (tmph - fw) / step;
-		Image16* fImg = new Image16(wide, high);
+		Imagefloat* fImg = new Imagefloat(wide, high);
 		float r, c;
 
 		for (int row = 0; row < high; row++)
@@ -369,17 +364,21 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 			}
 		delete tmpImg;
 		tmpImg = fImg;
-		tmpw = wide;
-		tmph = high;
 	}
 
 	if (fixwh == 1) // fix height, scale width
 		w = tmpw * h / tmph;
 	else
 		h = tmph * w / tmpw;
-
-	tpp->thumbImg = tmpImg->resize(w, h, TI_Bilinear);
+	
+	Image16* resImg;// = new Image16(tmpw, tmph);<< memory leak!!
+	resImg = tmpImg->to16();
 	delete tmpImg;
+
+	if (tpp->thumbImg) delete tpp->thumbImg;
+	tpp->thumbImg = resImg->resize(w, h, TI_Bilinear);
+	delete resImg;
+
 
 	if (ri->get_FujiWidth() != 0)
 		tpp->scale = (double) (height - ri->get_FujiWidth()) / sqrt(0.5) / h;
@@ -388,8 +387,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 	// generate histogram for auto exposure
 	tpp->aeHistCompression = 3;
-	tpp->aeHistogram = new unsigned int[65536 >> tpp->aeHistCompression];
-	memset(tpp->aeHistogram, 0, (65536 >> tpp->aeHistCompression) * sizeof(int));
+	tpp->aeHistogram(65536 >> tpp->aeHistCompression);
+	tpp->aeHistogram.clear();
 	int radd = 4;
 	int gadd = 4;
 	int badd = 4;
@@ -407,18 +406,18 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		}
 		for (int j = start; j < end; j++)
 			if (FISGREEN(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
+                tpp->aeHistogram[((int)(tpp->camwbGreen*image[i* width+j][1]))>>tpp->aeHistCompression]+=gadd;
 			else if (FISRED(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
+                tpp->aeHistogram[((int)(tpp->camwbRed * image[i* width+j][0]))>>tpp->aeHistCompression]+=radd;
 			else if (FISBLUE(filter,i,j))
-                tpp->aeHistogram[CLIP((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
+                tpp->aeHistogram[((int)(tpp->camwbBlue *image[i* width+j][2]))>>tpp->aeHistCompression]+=badd;
 	}
 
 	// generate autoWB
 	double avg_r = 0;
 	double avg_g = 0;
 	double avg_b = 0;
-	int rn = 0, gn = 0, bn = 0;
+	float rn = 0.0, gn = 0.0, bn = 0.0;
 
 	for (int i = 32; i < height - 32; i++) {
 		int start, end;
@@ -504,22 +503,23 @@ void Thumbnail::cleanupGamma () {
 void Thumbnail::init () {
 
     RawImageSource::inverse33 (colorMatrix, iColorMatrix);
-    memset (camToD50, 0, sizeof(camToD50));
+	//colorMatrix is rgb_cam
+    memset (cam2xyz, 0, sizeof(cam2xyz));
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
-                camToD50[i][j] += colorMatrix[k][i] * sRGB_d50[k][j];
-    camProfile = iccStore->createFromMatrix (camToD50, false, "Camera");
+                cam2xyz[i][j] += xyz_sRGB[i][k] * colorMatrix[k][j];
+    camProfile = iccStore->createFromMatrix (cam2xyz, false, "Camera");
 }
 
 Thumbnail::Thumbnail () :
-    camProfile(NULL), thumbImg(NULL), aeHistogram(NULL), embProfileData(NULL), embProfile(NULL) {
+    camProfile(NULL), thumbImg(NULL),  embProfileData(NULL), embProfile(NULL) {
 }
 
 Thumbnail::~Thumbnail () {
 
-    delete thumbImg; thumbImg=NULL;
-    delete [] aeHistogram;
+    delete thumbImg;
+    //delete [] aeHistogram;
     delete [] embProfileData;
     if (embProfile)
         cmsCloseProfile(embProfile);
@@ -537,27 +537,29 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
     }
     else 
         rwidth = thumbImg->width * rheight / thumbImg->height;   
-	Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
+	Image16* tmp = thumbImg->resize (rwidth, rheight, interp);
+	Imagefloat* baseImg =  tmp->tofloat();
 
     if (params.coarse.rotate) {
-        Image16* tmp = baseImg->rotate (params.coarse.rotate);
+        Imagefloat* tmp = baseImg->rotate (params.coarse.rotate);
         rwidth = tmp->width;
         rheight = tmp->height;
         delete baseImg;
         baseImg = tmp;
     }
     if (params.coarse.hflip) {
-        Image16* tmp = baseImg->hflip ();
+        Imagefloat* tmp = baseImg->hflip ();
         delete baseImg;
         baseImg = tmp;
     }
     if (params.coarse.vflip) {
-        Image16* tmp = baseImg->vflip ();
+        Imagefloat* tmp = baseImg->vflip ();
         delete baseImg;
         baseImg = tmp;
     }
 	Image8* img8 = baseImg->to8();
 	delete baseImg;
+	//delete tmp;
 	return img8;
 }
 
@@ -567,6 +569,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
     if (params.wb.method=="Camera") {
+		//recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0]*camwbRed + colorMatrix[0][1]*camwbGreen + colorMatrix[0][2]*camwbBlue;
         double cam_g = colorMatrix[1][0]*camwbRed + colorMatrix[1][1]*camwbGreen + colorMatrix[1][2]*camwbBlue;
         double cam_b = colorMatrix[2][0]*camwbRed + colorMatrix[2][1]*camwbGreen + colorMatrix[2][2]*camwbBlue;
@@ -576,6 +579,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         currWB = ColorTemp (autowbTemp, autowbGreen);
     double r, g, b;
     currWB.getMultipliers (r, g, b);
+	//iColorMatrix is cam_rgb
     double rm = iColorMatrix[0][0]*r + iColorMatrix[0][1]*g + iColorMatrix[0][2]*b;
     double gm = iColorMatrix[1][0]*r + iColorMatrix[1][1]*g + iColorMatrix[1][2]*b;
     double bm = iColorMatrix[2][0]*r + iColorMatrix[2][1]*g + iColorMatrix[2][2]*b;
@@ -605,38 +609,45 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     else 
         rwidth = thumbImg->width * rheight / thumbImg->height;   
 
-    Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
-    
+    Image16* resImg = thumbImg->resize (rwidth, rheight, interp);
+	//Imagefloat* baseImg = resImg->tofloat();
+	//Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
+
+
     if (params.coarse.rotate) {
-        Image16* tmp = baseImg->rotate (params.coarse.rotate);
+        Image16* tmp = resImg->rotate (params.coarse.rotate);
         rwidth = tmp->width;
         rheight = tmp->height;
-        delete baseImg;
-        baseImg = tmp;
+        delete resImg;
+        resImg = tmp;
+		//delete tmp;
     }
     if (params.coarse.hflip) {
-        Image16* tmp = baseImg->hflip ();
-        delete baseImg;
-        baseImg = tmp;
+        Image16* tmp = resImg->hflip ();
+        delete resImg;
+        resImg = tmp;
+		//delete tmp;
     }
     if (params.coarse.vflip) {
-        Image16* tmp = baseImg->vflip ();
-        delete baseImg;
-        baseImg = tmp;
+        Image16* tmp = resImg->vflip ();
+        delete resImg;
+        resImg = tmp;
+		//delete tmp;
     }
     // apply white balance
     int val;
     for (int i=0; i<rheight; i++)
         for (int j=0; j<rwidth; j++) {
-                val = baseImg->r[i][j]*rmi>>10;
-                baseImg->r[i][j] = CLIP(val);
-                val = baseImg->g[i][j]*gmi>>10;
-                baseImg->g[i][j] = CLIP(val);
-                val = baseImg->b[i][j]*bmi>>10;
-                baseImg->b[i][j] = CLIP(val);
+                val = ((int)resImg->r[i][j]*rmi)>>10;
+                resImg->r[i][j] = CLIP(val);
+                val = ((int)resImg->g[i][j]*gmi)>>10;
+                resImg->g[i][j] = CLIP(val);
+                val = ((int)resImg->b[i][j]*bmi)>>10;
+                resImg->b[i][j] = CLIP(val);
         }
-
-    // apply highlight recovery, if needed
+		
+/*
+    // apply highlight recovery, if needed		-- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES; DO WE CARE???
     if (isRaw && params.hlrecovery.enabled) {
         int maxval = 65535 / defGain;
         if (params.hlrecovery.method=="Luminance" || params.hlrecovery.method=="Color") 
@@ -644,30 +655,32 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
                 RawImageSource::HLRecovery_Luminance (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval);
         else if (params.hlrecovery.method=="CIELab blending") {
             double icamToD50[3][3];
-            RawImageSource::inverse33 (camToD50, icamToD50);
+            RawImageSource::inverse33 (cam2xyz, icamToD50);
             for (int i=0; i<rheight; i++)
-                RawImageSource::HLRecovery_CIELab (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval, camToD50, icamToD50);
+                RawImageSource::HLRecovery_CIELab (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval, cam2xyz, icamToD50);
         }
     }
-
+*/
     // perform color space transformation
     if (isRaw)
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, camProfile, camToD50, logDefGain);
+        RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, logDefGain);
     else
-        StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile);
-        
+        StdImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile);
+	
+	Imagefloat* baseImg = resImg->tofloat();
+    delete resImg;// << avoid mem leak!
     int fw = baseImg->width;
     int fh = baseImg->height;
 
     ImProcFunctions ipf (&params, false);
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
 
-    unsigned int* hist16 = new unsigned int [65536];
+    LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, isRaw ? 2.2 : 0.0);
 
     // perform transform
     if (ipf.needsTransform()) {
-        Image16* trImg = new Image16 (fw, fh);
+        Imagefloat* trImg = new Imagefloat (fw, fh);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
@@ -676,11 +689,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // update blurmap
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
-        unsigned short** buffer = NULL;
+        float** buffer = NULL;
         if (params.sh.hq) {
-            buffer = new unsigned short*[fh];
+            buffer = new float*[fh];
             for (int i=0; i<fh; i++)
-                buffer[i] = new unsigned short[fw];
+                buffer[i] = new float[fw];
         }
         shmap = new SHMap (fw, fh, false);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
@@ -700,41 +713,36 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
 
-	// The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
-	// that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
-	if (params.raw.expos!=1) br += (params.raw.expos-1.0);
+	LUTf curve1 (65536);
+	LUTf curve2 (65536);
+	LUTf curve (65536);
+	LUTf satcurve (65536);
 
-	float* curve1 = new float [65536];
-    float* curve2 = new float [65536];
-	int* curve = new int [65536];
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, logDefGain, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL, 16);
+	LUTu dummy;
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy, 16);
 
-    LabImage* labView = new LabImage (baseImg);
+	LabImage* labView = new LabImage (fw,fh);
+
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
         delete shmap;
 
     // luminance histogram update
-    memset (hist16, 0, 65536*sizeof(int));
+    hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[labView->L[i][j]]++;
+            hist16[(int)(2*(labView->L[i][j]))]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL, 16);
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 16);
     ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, 16);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, 16);
-    ipf.chrominanceCurve (labView, labView, curve1, curve2);
-
-	delete [] curve1;
-    delete [] curve2;
-    delete [] curve;
-    delete [] hist16;
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 16);
+    ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
 
     // color processing
-    ipf.colorCurve (labView, labView);
+    //ipf.colorCurve (labView, labView);
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);
@@ -879,7 +887,6 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     rtemp = ct.getTemp ();
     rgreen = ct.getGreen ();
 }
-
 void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty) {
     
     int W = thumbImg->width;
@@ -1385,10 +1392,10 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 
     FILE* f = safe_g_fopen (fname, "rb");
     if (!f) 
-        aeHistogram = NULL;
+        aeHistogram(0);
     else {
-        aeHistogram = new unsigned int[65536>>aeHistCompression];
-        fread (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
+        aeHistogram(65536>>aeHistCompression);
+        fread (&aeHistogram[0], 1, (65536>>aeHistCompression)*sizeof(aeHistogram[0]), f);
         fclose (f);
         return true;
     }
@@ -1400,7 +1407,7 @@ bool Thumbnail::writeAEHistogram (const Glib::ustring& fname) {
     if (aeHistogram) {
         FILE* f = safe_g_fopen (fname, "wb");
         if (f) {
-            fwrite (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
+            fwrite (&aeHistogram[0], 1, (65536>>aeHistCompression)*sizeof(aeHistogram[0]), f);
             fclose (f);
             return true;
         }

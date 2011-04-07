@@ -3,40 +3,43 @@ namespace rtengine {
 
 LabImage::LabImage (int w, int h) : fromImage(false), W(w), H(h) {
 
-    L = new unsigned short*[H];
-    for (int i=0; i<H; i++)
-        L[i] = new unsigned short[W];
+    L = new float*[H];
+    a = new float*[H];
+    b = new float*[H];
 
-    a = new short*[H];
+    data = new float [W*H*3];
+    float * index = data;
     for (int i=0; i<H; i++)
-        a[i] = new short[W];
+        L[i] = index + i*W;
+    index+=W*H;
+    for (int i=0; i<H; i++)
+        a[i] = index + i*W;
+    index+=W*H;
 
-    b = new short*[H];
     for (int i=0; i<H; i++)
-        b[i] = new short[W];
+        b[i] = index + i*W;
 }
 
 LabImage::LabImage (Image16* im) {
 
     W = im->width;
     H = im->height;
-    L = im->r;
-    a = (short**) im->g;
-    b = (short**) im->b;
+	for (int i=0; i<H; i++) 
+		for (int j=0; j<W; j++) {
+			L[i][j] = im->r[i][j];
+			a[i][j] = im->g[i][j];
+			b[i][j] = im->b[i][j];
+		}
     fromImage = true;
 }
 
 LabImage::~LabImage () {
 
     if (!fromImage) {
-        for (int i=0; i<H; i++) {
-            delete [] L[i];
-            delete [] a[i];
-            delete [] b[i];
-        }
         delete [] L;
         delete [] a;
         delete [] b;
+        delete [] data;
     }
 }
 }

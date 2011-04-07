@@ -32,12 +32,11 @@ namespace rtengine {
 FlatCurve::FlatCurve (const std::vector<double>& p, int poly_pn) : leftTangent(NULL), rightTangent(NULL) {
 
     ppn = poly_pn;
-    poly_x.clear();
-    poly_y.clear();
 
-    kind = FCT_Empty;
-
-    if (p.size()>4) {
+    if (p.size()<5) {
+        kind = FCT_Empty;
+    }
+    else {
         kind = (FlatCurveType)p[0];
         if (kind==FCT_MinMaxCPoints) {
             N = (p.size()-1)/4;
