@@ -284,7 +284,14 @@ void CropHandler::update () {
 //        crop->setWindow (cropX, cropY, cropW, cropH, zoom>=1000 ? 1 : zoom); --> we use the "getWindow" hook instead of setting the size before
         crop->setListener (this);
         cropPixbuf.clear ();
+
+		// To save threads, try to mark "needUpdate" without a thread first
+		if (crop->tryUpdate()) {
+			if (isLowUpdatePriority)
         Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), 0, false, true, Glib::THREAD_PRIORITY_LOW);
+			else
+				Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), false );
+		}
     }
 }
 

@@ -51,6 +51,7 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
 		unsigned char* cropimgtrue;
         int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
         bool initial;
+        bool isLowUpdatePriority;
 
         rtengine::StagedImageProcessor* ipc;
         rtengine::DetailedCrop* crop;
