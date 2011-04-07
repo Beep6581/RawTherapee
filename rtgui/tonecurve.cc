@@ -393,7 +393,7 @@ void ToneCurve::setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthr
 	satAdd = satadd;
 }
 
-void ToneCurve::updateCurveBackgroundHistogram (unsigned* hist) {
+void ToneCurve::updateCurveBackgroundHistogram (LUTu & hist) {
 
     shape->updateBackgroundHistogram (hist);
 }

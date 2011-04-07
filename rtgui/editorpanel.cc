@@ -1275,7 +1275,7 @@ void EditorPanel::beforeAfterToggled () {
     }
 }
 
-void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl) {
+void EditorPanel::histogramChanged (LUTu & rh, LUTu & gh, LUTu & bh, LUTu & lh, LUTu & bcrgb, LUTu & bcl) {
 
     histogramPanel->histogramChanged (rh, gh, bh, lh);
     tpc->updateCurveBackgroundHistogram (bcrgb, bcl);

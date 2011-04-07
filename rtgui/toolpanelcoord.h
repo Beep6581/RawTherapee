@@ -149,7 +149,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-        void updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl);
+		void updateCurveBackgroundHistogram (LUTu & histrgb, LUTu & histl);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)

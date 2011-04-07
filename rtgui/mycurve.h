@@ -24,6 +24,7 @@
 #include <curvelistener.h>
 #include <cursormanager.h>
 #include <colorprovider.h>
+#include <LUT.h>
 
 #define RADIUS			3	/* radius of the control points */
 #define SQUARE			2	/* half length of the square shape of the tangent handles */
@@ -83,7 +84,7 @@ class MyCurve : public Gtk::DrawingArea {
 		void setCurveListener (CurveListener* cl) { listener = cl; }
 		void setColorProvider (ColorProvider* cp) { colorProvider = cp; }
 		void notifyListener ();
-		void updateBackgroundHistogram (unsigned int* hist) {return;} ;
+		void updateBackgroundHistogram (LUTu & hist) {return;} ;
 		void forceResize() { sized = RS_Force; }
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;

@@ -22,6 +22,7 @@
 #include <string>
 #include <guiutils.h>
 #include <multilangmgr.h>
+#include <LUT.h>
 
 extern Glib::ustring argv0;
 
@@ -89,7 +90,7 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	bgHistValid = false;
 	selected = DCT_Linear;
 
-    histogram = new unsigned int[256];	// histogram values
+    histogram(256);	// histogram values
 
 	group = ceGroup;
 	subGroup = ceSubGroup;
@@ -107,7 +108,6 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 
 CurveEditor::~CurveEditor () {
 
-	delete [] histogram;
 }
 
 void CurveEditor::setCurve (const std::vector<double>& p) {
@@ -134,15 +134,15 @@ void CurveEditor::setUnChanged (bool uc) {
 /*
  * Update the backgrounds histograms
  */
-void CurveEditor::updateBackgroundHistogram (unsigned int* hist) {
+void CurveEditor::updateBackgroundHistogram (LUTu & hist) {
 	// Copy the histogram in the curve editor cache
-	if (hist!=NULL) {
-		memcpy (histogram, hist, 256*sizeof(unsigned int));
+	if (hist) {
+		histogram=hist;
 		bgHistValid = true;
 	}
 	else
 		bgHistValid = false;
-
+	
 	// Then call the curve editor group to eventually update the histogram
 	subGroup->updateBackgroundHistogram (this);
 }
