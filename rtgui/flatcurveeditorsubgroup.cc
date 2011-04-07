@@ -193,10 +193,10 @@ void FlatCurveEditorSubGroup::storeDisplayedCurve() {
  */
 void FlatCurveEditorSubGroup::restoreDisplayedHistogram() {
 	if (parent->displayedCurve) {
-		//paramCurve->updateBackgroundHistogram (parent->displayedCurve->bgHistValid ? parent->displayedCurve->histogram : NULL);
-		CPointsCurve->updateBackgroundHistogram (parent->displayedCurve->bgHistValid ? parent->displayedCurve->histogram : NULL);
+		//paramCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
+		CPointsCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
 	}
-
+	
 }
 
 void FlatCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {

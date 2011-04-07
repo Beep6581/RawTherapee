@@ -65,7 +65,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void adjusterChanged (Adjuster* a, double newval);
 	void avoidclip_toggled ();
     void enablelimiter_toggled ();
-    void updateCurveBackgroundHistogram (unsigned* hist);
+    void updateCurveBackgroundHistogram (LUTu & hist);
 
     virtual void colorForValue (double valX, double valY);
 };

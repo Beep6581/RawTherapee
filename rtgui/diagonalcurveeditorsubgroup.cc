@@ -323,12 +323,12 @@ void DiagonalCurveEditorSubGroup::storeDisplayedCurve() {
  * Restore the histogram to all types from the CurveEditor object to the widgets
  */
 void DiagonalCurveEditorSubGroup::restoreDisplayedHistogram() {
-	if (parent->displayedCurve) {
-		paramCurve->updateBackgroundHistogram (parent->displayedCurve->bgHistValid ? parent->displayedCurve->histogram : NULL);
-		customCurve->updateBackgroundHistogram (parent->displayedCurve->bgHistValid ? parent->displayedCurve->histogram : NULL);
-		NURBSCurve->updateBackgroundHistogram (parent->displayedCurve->bgHistValid ? parent->displayedCurve->histogram : NULL);
+	if (parent->displayedCurve /*&& initslope==1*/) {
+		paramCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
+		customCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
+		NURBSCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
 	}
-
+	
 }
 
 void DiagonalCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
@@ -465,9 +465,9 @@ bool DiagonalCurveEditorSubGroup::adjusterLeft (GdkEventCrossing* ev, int ac) {
 }
 
 void DiagonalCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {
-	if (ce==parent->displayedCurve) {
-		paramCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
-		customCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
-		NURBSCurve->updateBackgroundHistogram (ce->bgHistValid ? ce->histogram : NULL);
+	if (ce==parent->displayedCurve /*&&  initslope==1*/) {
+		paramCurve->updateBackgroundHistogram (ce->histogram);
+		customCurve->updateBackgroundHistogram (ce->histogram);
+		NURBSCurve->updateBackgroundHistogram (ce->histogram);
 	}
 }

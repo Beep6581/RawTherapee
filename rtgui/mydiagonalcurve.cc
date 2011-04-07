@@ -656,18 +656,20 @@ int diagonalmchistupdate (void* data) {
     return 0;
 }
 
-void MyDiagonalCurve::updateBackgroundHistogram (unsigned int* hist) {
-
+void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
+	
     if (hist!=NULL) {
-        memcpy (bghist, hist, 256*sizeof(unsigned int));
+        //memcpy (bghist, hist, 256*sizeof(unsigned int));
+		for (int i=0; i<256; i++) bghist[i]=hist[i];
+		//hist = bghist;
         bghistvalid = true;
     }
     else
         bghistvalid = false;
-
+	
     mcih->pending++;
     g_idle_add (diagonalmchistupdate, mcih);
-
+	
 }
 
 void MyDiagonalCurve::reset() {
