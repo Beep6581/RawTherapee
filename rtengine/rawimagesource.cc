@@ -358,12 +358,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
             }
         }
                 
-        //if (hrp.enabled)
-          //  hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip);
-		
-		if (ix==imheight-1 && skip==6)
-		printf("getImage before transLine r=%f g=%f b=%f \n",
-			   image->r[828/skip][786/skip],image->g[828/skip][786/skip],image->b[828/skip][786/skip]);
+        if (hrp.enabled)
+			hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip);
 
         transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
 		
@@ -375,7 +371,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 #ifdef _OPENMP
     }
 #endif
-    /*if (fuji) {   
+    if (fuji) {   
         int a = ((tran & TR_ROT) == TR_R90 && image->width%2==0) || ((tran & TR_ROT) == TR_R180 && image->height%2+image->width%2==1) || ((tran & TR_ROT) == TR_R270 && image->height%2==0);
         // first row
         for (int j=1+a; j<image->width-1; j+=2) {
@@ -415,21 +411,18 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
           image->g[image->height-1][j] = (image->g[image->height-2][j] + image->g[image->height-1][j+1] + image->g[image->height-1][j-1]) / 3;
           image->b[image->height-1][j] = (image->b[image->height-2][j] + image->b[image->height-1][j+1] + image->b[image->height-1][j-1]) / 3;
         }
-    }*/
+    }
 
     // Flip if needed
-    /*if (tran & TR_HFLIP)
+    if (tran & TR_HFLIP)
         hflip (image);
     if (tran & TR_VFLIP)
-        vflip (image);*/
+        vflip (image);
         
     // Color correction
-    //if (ri->isBayer() && pp.skip==1)
-    //    correction_YIQ_LQ (image, pp.skip==1?1:raw.ccSteps);
-	if (skip==6)
-	printf("getImage after transLine r=%f g=%f b=%f \n",
-		   image->r[828/skip][786/skip],image->g[828/skip][786/skip],image->b[828/skip][786/skip]);
- 
+    if (ri->isBayer() && pp.skip==1)
+        correction_YIQ_LQ (image, pp.skip==1?1:raw.ccSteps);
+
     // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
 	
@@ -1579,9 +1572,6 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 #pragma omp parallel for
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
-				
-				if (i==828/6 && j==786/6) 
-					printf("colorConv before r=%f g=%f b=%f \n",im->r[i][j],im->g[i][j],im->b[i][j]);
 
                 float newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
                 float newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
@@ -1590,9 +1580,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                 im->r[i][j] = (newr);
                 im->g[i][j] = (newg);
                 im->b[i][j] = (newb);
-				
-				if (i==828/6 && j==786/6) 
-					printf("colorConv after r=%f g=%f b=%f \n",im->r[i][j],im->g[i][j],im->b[i][j]);
+
             }
     } else {// use supplied input profile
 		//color space transform is expecting data in the range (0,1)
