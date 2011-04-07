@@ -22,6 +22,12 @@
 #include <safegtk.h>
 #include <guiutils.h>
 #include <glib/gstdio.h>
+#include <fcntl.h>
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <stdio.h>
+#endif
 
 
 Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename)
@@ -113,6 +119,9 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
     Glib::RefPtr<Gio::FileEnumerator> dirList;
     if (dir)
     {
+        // CD-ROMs with no drive inserted are reported, but do not exist, causing RT to crash
+         if (!safe_file_test(dir->get_path(),Glib::FILE_TEST_EXISTS)) return;
+
 				SAFE_ENUMERATOR_CODE_START
 						if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || add_hidden))
 								subDirs.push_back (info->get_name());
@@ -162,27 +171,6 @@ std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
 	return str;
 }
 
-std::string safe_filename_from_utf8 (const Glib::ustring& utf8_str)
-{
-		std::string str;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
-		try {
-            str = Glib::filename_from_utf8 (utf8_str);
-        }
-        catch (const Glib::ConvertError& e) {
-            //str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?");
-        }
-#else
-        {
-            std::auto_ptr<Glib::Error> error;
-            str = Glib::filename_from_utf8 (utf8_str, error);
-            /*if (error.get())
-                {str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?", error);}*/
-        }
-#endif //GLIBMM_EXCEPTIONS_ENABLED
-	return str;
-}
-
 bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 {
 		std::string cmd;
@@ -190,8 +178,8 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 #ifdef GLIBMM_EXCEPTIONS_ENABLED        
 		try {
 				cmd = Glib::filename_from_utf8(cmd_utf8);
-				printf ("command line: |%s|\n", cmd.c_str());
-				Glib::spawn_command_line_async (cmd);
+				printf ("command line: %s\n", cmd.c_str());
+				Glib::spawn_command_line_async (cmd.c_str());
 				success = true;
 		} catch (Glib::Exception& ex) {
 				printf ("%s\n", ex.what().c_str());
@@ -200,7 +188,7 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 		std::auto_ptr<Glib::Error> error;
 		cmd = Glib::filename_from_utf8(cmd_utf8, error);
 		if (!error.get())	{
-				printf ("command line: |%s|\n", cmd.c_str());
+				printf ("command line: %s\n", cmd.c_str());
 				Glib::spawn_command_line_async (cmd, error);
 			}
 		if (error.get())
@@ -221,38 +209,81 @@ bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 
 		int exitStatus=-1;
         try {
-		    cmd = Glib::filename_from_utf8(cmd_utf8);
-		    printf ("command line: |%s|\n", cmd.c_str());
+		    //cmd = Glib::filename_from_utf8(cmd_utf8);
+		    printf ("command line: %s\n", cmd_utf8.c_str());
 
             // if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory 
-		    Glib::spawn_command_line_sync (cmd,NULL,NULL, &exitStatus);
+		    Glib::spawn_command_line_sync (cmd_utf8, NULL, NULL, &exitStatus);
         } catch (Glib::Exception& ex) {
 				printf ("%s\n", ex.what().c_str());
 		}
         return (exitStatus==0);
 }
 
+// Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
+// (Important on Windows to prevent Explorer to crash RT when parallel scanning e.g. a currently written image file)
+FILE * safe_g_fopen_WriteBinLock(const Glib::ustring& fname) {
+    FILE* f=NULL;
+
+#ifdef WIN32
+    // g_fopen just uses _wfopen internally on Windows, does not lock access and has no options to set this
+    // so use a native function to work around this problem
+    wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
+    HANDLE hFile = CreateFileW(wFname, GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    g_free(wFname);
+
+    if (hFile==INVALID_HANDLE_VALUE)
+        f=NULL;
+    else
+        f=_fdopen( _open_osfhandle((intptr_t)hFile, 0) , "wb");
+#else
+    f = safe_g_fopen(fname, "wb");
+#endif
+
+    return f;
+}
+
+// Covers old UNIX ::open, which expects ANSI instead of UTF8 on Windows
+int safe_open_ReadOnly(const char *fname) {
+	int fd=-1;
+
+#ifdef WIN32
+    // First convert UTF8 to UTF16, then use Windows function to open
+	wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
+    HANDLE hFile = CreateFileW(wFname, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    g_free(wFname);
+
+	// convert back to old file descriptor format
+    if (hFile!=INVALID_HANDLE_VALUE) fd = _open_osfhandle((intptr_t)hFile, 0);
+#else
+    fd = ::open(fname, O_RDONLY);
+#endif
+
+    return fd;
+}
+
+
 FILE * safe_g_fopen(const Glib::ustring& src,const gchar *mode)
 { 
-    return g_fopen(safe_filename_from_utf8(src).c_str(),mode); 
+    return g_fopen(src.c_str(),mode); 
 }
 
 bool safe_file_test (const Glib::ustring& filename, Glib::FileTest test)
 {
-    return Glib::file_test (safe_filename_from_utf8(filename), test);
+    return Glib::file_test (filename, test);
 }
 
 int safe_g_remove(const Glib::ustring& filename)
 {
-   return ::g_remove(safe_filename_from_utf8(filename).c_str());
+   return ::g_remove(filename.c_str());
 }
 
 int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFilename)
 {
-   return ::g_rename(safe_filename_from_utf8(oldFilename).c_str(), safe_filename_from_utf8(newFilename).c_str());
+   return ::g_rename(oldFilename.c_str(), newFilename.c_str());
 }
 
 int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 {
-    return ::g_mkdir_with_parents(safe_filename_from_utf8(dirName).c_str(), mode);
+    return ::g_mkdir_with_parents(dirName.c_str(), mode);
 }

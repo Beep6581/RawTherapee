@@ -105,8 +105,8 @@ namespace rtengine {
           * @param str is the textual information corresponding to the progress */
           virtual void setProgressStr (Glib::ustring str) {}
         /** This member function is called when the state of the processing has been changed.
-          * @param state =1 if the processing has been started, =0 if it has been stopped */
-          virtual void setProgressState (int state) {}
+          * @param inProcessing =true if the processing has been started, =false if it has been stopped */
+          virtual void setProgressState (bool inProcessing) {}
         /** This member function is called when an error occurs during the operation.
           * @param descr is the error message */
           virtual void error (Glib::ustring descr) {}
@@ -261,10 +261,6 @@ namespace rtengine {
             /** Returns the scale of the preview image. 
               * @return the current scale of the preview image */
             virtual int         getPreviewScale () =0;
-            /** Performs a full update on the preview image. The resulting image is passed to the listener. */
-            virtual void        fullUpdatePreviewImage () =0;
-            /** Performs a full update on the detailed crops corresponding to the image. The resulting images are passed to the listeners of the crops. */
-            virtual void        fullUpdateDetailedCrops () =0;
             /** Returns the full width of the resulting image (in 1:1 scale). 
               * @return the width of the final image */
             virtual int         getFullWidth () =0;
@@ -354,6 +350,7 @@ namespace rtengine {
    * @param job the ProcessingJob to cancel. 
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.) 
    * @param pl is an optional ProgressListener if you want to keep track of the progress
+   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */  
     IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL, bool tunnelMetaData=false);
 
