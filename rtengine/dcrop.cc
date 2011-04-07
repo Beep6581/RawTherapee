@@ -51,22 +51,22 @@ Crop::~Crop () {
 }
 
 void Crop::setListener (DetailedCropListener* il) { 
+	// We can make reads in the IF, because the mProcessing lock is only needed for change
+	if (cropImageListener!=il) {
 
-    parent->mProcessing.lock(); 
+		Glib::Mutex::Lock lock(cropMutex);
     cropImageListener = il; 
-    parent->mProcessing.unlock(); 
+}       
 }       
 
-void Crop::update (int todo, bool internal) {
-	
+void Crop::update (int todo) {
+	Glib::Mutex::Lock lock(cropMutex);
+
 	//flag for testing color accuracy
 	bool colortest = false;
 
-    if (!internal)
-        parent->mProcessing.lock ();
-
     ProcParams& params = parent->params;
-    cropMutex.lock ();
+
 
     parent->ipf.setScale (skip);
 
@@ -91,9 +91,10 @@ void Crop::update (int todo, bool internal) {
     if (needsinitupdate)
         todo = ALL;
 
+ /* Seems to be taken care of by calling improccoordinator::updatePreviewImage
     if( regenHighDetail )
     	parent->updatePreviewImage (ALL,this); // We have just set skip to 1
-
+		*/
     baseCrop = origCrop;
 
     bool needstransform  = parent->ipf.needsTransform();
@@ -243,11 +244,6 @@ void Crop::update (int todo, bool internal) {
         delete final;
 		delete finaltrue;
     }
-
-    cropMutex.unlock ();
-
-    if (!internal)
-        parent->mProcessing.unlock ();
 }
 
 void Crop::freeAll () {
@@ -392,14 +388,8 @@ bool Crop::tryUpdate() {
 	return needsFullUpdate;
 }
 
+// Full update, should be called via thread
 void Crop::fullUpdate () { 
-
-    if (updating) {
-        needsNext = true;
-        return;
-    }
-
-    updating = true;
 
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
@@ -410,19 +400,19 @@ void Crop::fullUpdate () {
     }
 
     if (parent->plistener)
-        parent->plistener->setProgressState (1);
+        parent->plistener->setProgressState (true);
 
     needsNext = true;
     while (needsNext) {
         needsNext = false;
-        update (ALL, true); 
+        update (ALL); 
     }
     updating = false;
 
-    if (parent->plistener)
-        parent->plistener->setProgressState (0);
-
     parent->updaterThreadStart.unlock ();
+
+    if (parent->plistener)
+        parent->plistener->setProgressState (false);
 }
 
 }

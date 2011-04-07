@@ -275,9 +275,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	}
 
 
-    //if (tunnelMetaData)
-    //    readyImg->setMetadata (ii->getMetaData()->getExifData ());
-    //else
+    if (tunnelMetaData)
+        readyImg->setMetadata (ii->getMetaData()->getExifData ());
+    else
         readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 	
 	

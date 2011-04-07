@@ -83,6 +83,8 @@ DetailedCrop* ImProcCoordinator::createCrop  () {
     return new Crop (this); 
 }
 
+// todo: bitmask containing desired actions, taken from changesSinceLast
+// cropCall: calling crop, used to prevent self-updates
 void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     mProcessing.lock ();
@@ -92,6 +94,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     ipf.setScale (scale);
 
+	// Check if any detail crops need high detail. If not, take a fast path short cut
     bool highDetailNeeded=false;
 	for (int i=0; i<crops.size(); i++)
 		if (crops[i]->get_skip() == 1 ){
@@ -109,14 +112,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if ( todo & M_PREPROC)
     	imgsrc->preprocess( rp );
     if( todo & M_RAW){
-    	if( !highDetailNeeded ){
-    		fineDetailsProcessed = false;
-    	}else
-    		fineDetailsProcessed = true;
+    	fineDetailsProcessed = highDetailNeeded;
     	imgsrc->demosaic( rp );
     }
     if (todo & M_INIT) {
-        minit.lock ();
+        Glib::Mutex::Lock lock(minit);
+
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
         currWB = ColorTemp (params.wb.temperature, params.wb.green);
         if (params.wb.method=="Camera")
@@ -140,15 +141,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         imgsrc->getFullSize (fw, fh, tr);
         PreviewProps pp (0, 0, fw, fh, scale);
-        setScale (scale, true);
+        setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
-        minit.unlock ();
     }
     readyphase++;
 
     progress ("Rotate / Distortion...",100*readyphase/numofphases);
     bool needstransform = ipf.needsTransform();
+    // Remove transformation if unneeded
     if (!needstransform && orig_prev!=oprevi) {
         delete oprevi;
         oprevi = orig_prev;
@@ -237,7 +238,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     // process crop, if needed
     for (int i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
-            crops[i]->update (todo, true);
+            crops[i]->update (todo);  // may call outselves
 
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {
@@ -249,6 +250,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         catch(char * str)
         {
            progress ("Error converting file...",0);
+			previmg->getMutex().unlock();
             mProcessing.unlock ();
             return;
         }
@@ -304,12 +306,9 @@ void ImProcCoordinator::freeAll () {
     allocated = false;
 }
 
-void ImProcCoordinator::setScale (int prevscale, bool internal) {
+void ImProcCoordinator::setScale (int prevscale) {
 
 if (settings->verbose) printf ("setscale before lock\n");
-
-    if (!internal)
-        mProcessing.lock ();
 
     tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -356,8 +355,6 @@ if (settings->verbose) printf ("setscale before lock\n");
             sizeListeners[i]->sizeChanged (fullw, fullh, fw, fh);
     if (settings->verbose) printf ("setscale ends2\n");
 
-    if (!internal)
-        mProcessing.unlock ();
 }
 
 
@@ -479,51 +476,6 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     mProcessing.unlock ();
 }
 
-void ImProcCoordinator::fullUpdatePreviewImage () {
-
-    if (destroying)
-        return;
-
-    updaterThreadStart.lock ();
-    if (updaterRunning && thread) {
-        changeSinceLast = 0;
-        thread->join ();
-    }
-
-    if (plistener)
-        plistener->setProgressState (1);
-
-    updatePreviewImage (ALL); 
-
-    if (plistener)
-        plistener->setProgressState (0);
-
-    updaterThreadStart.unlock ();
-}
-
-void ImProcCoordinator::fullUpdateDetailedCrops () { 
-
-    if (destroying)
-        return;
-
-    updaterThreadStart.lock ();
-    if (updaterRunning && thread) {
-        changeSinceLast = 0;
-        thread->join ();
-    }
-
-    if (plistener)
-        plistener->setProgressState (1);
-
-    for (int i=0; i<crops.size(); i++)
-        crops[i]->update (ALL, true); 
-
-    if (plistener)
-        plistener->setProgressState (0);
-
-    updaterThreadStart.unlock ();
-}
-
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	
@@ -593,7 +545,7 @@ void ImProcCoordinator::startProcessing () {
 void ImProcCoordinator::process () {
 
     if (plistener)
-        plistener->setProgressState (1);
+        plistener->setProgressState (true);
 
     paramsUpdateMutex.lock ();
     while (changeSinceLast) {
@@ -609,7 +561,7 @@ void ImProcCoordinator::process () {
     updaterRunning = false;
 
     if (plistener)
-        plistener->setProgressState (0);
+        plistener->setProgressState (false);
 }
 
 ProcParams* ImProcCoordinator::getParamsForUpdate (ProcEvent change) {
