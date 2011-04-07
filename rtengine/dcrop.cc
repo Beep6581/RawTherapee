@@ -112,10 +112,7 @@ void Crop::update (int todo) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-		/*if (origCrop->height>100 & origCrop->width>100) {
-			printf("dcrop init R= %f  G= %f  B= %f  \n",origCrop->r[100][100]/256,origCrop->g[100][100]/256,origCrop->b[100][100]/256);
-			printf("init  sRGB R= %d  G= %d  B= %d  \n",CurveFactory::gamma_srgb((int)origCrop->r[100][100])/256,CurveFactory::gamma_srgb((int)origCrop->g[100][100])/256,CurveFactory::gamma_srgb((int)origCrop->b[100][100])/256);
-		}*/
+
 			parent->minit.unlock ();
     }
 
