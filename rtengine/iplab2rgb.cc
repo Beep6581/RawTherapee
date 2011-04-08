@@ -65,7 +65,8 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
         float* buffer = new float [3*lab->W];
 
         // cmsDoTransform is relatively expensive
-		#pragma omp parallel for if (multiThread)
+		// Causes problems on some machines
+        //#pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
@@ -145,7 +146,8 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         short* buffer = new short [3*cw];
 
         // cmsDoTransform is relatively expensive
-		#pragma omp parallel for if (multiThread)
+        // Causes problems on some machines
+		//#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
             float* rL = lab->L[i];
             float* ra = lab->a[i];
