@@ -660,6 +660,9 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                 int pixRowStride = tmp->get_rowstride ();
                 int pixWSRowStride = cropHandler.cropPixbuftrue->get_rowstride ();
 
+                const float ShawdowFac = 64 / (options.shadowThreshold+1);
+                const float HighlightFac = 64 / (256-options.highlightThreshold);
+
                 #ifdef _OPENMP
                 #pragma omp for
                 #endif
@@ -667,16 +670,47 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                     guint8* curr = pix + i*pixRowStride;
                     guint8* currWS = pixWrkSpace + i*pixWSRowStride;
 
+                    int delta; bool changed;
+
                     for (int j=0; j<tmp->get_width(); j++) {
                         // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
-						if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
-							curr[0] = curr[1] = curr[2] = 0;
-						else if (showcs && (currWS[0]<=options.shadowThreshold || currWS[1]<=options.shadowThreshold || currWS[2]<=options.shadowThreshold))
-							curr[0] = curr[1] = curr[2] = 255;
-						/*if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
-							curr[0] = curr[1] = curr[2] = 0;
-						else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
-							curr[0] = curr[1] = curr[2] = 255;*/
+
+                        if (showch) {
+                            delta=0; changed=false;
+
+                            if (currWS[0]>=options.highlightThreshold) { delta += 255-currWS[0]; changed=true; }
+                            if (currWS[1]>=options.highlightThreshold) { delta += 255-currWS[1]; changed=true; }
+                            if (currWS[2]>=options.highlightThreshold) { delta += 255-currWS[2]; changed=true; }
+
+                            if (changed) { 
+                                delta *= HighlightFac; 
+                                curr[0]=delta; curr[1]=delta; curr[2]=delta; 
+                            }
+                        }
+                        if (showcs) {
+                            delta=0; changed=false;
+
+                            if (currWS[0]<=options.shadowThreshold) { delta += currWS[0]; changed=true; }
+                            if (currWS[1]<=options.shadowThreshold) { delta += currWS[1]; changed=true; }
+                            if (currWS[2]<=options.shadowThreshold) { delta += currWS[2]; changed=true; }
+
+                                
+                            if (changed) {
+                                delta = 255 - (delta * ShawdowFac);
+                                curr[0]=delta; curr[1]=delta; curr[2]=delta; 
+                            }
+                        }
+
+                        /*
+						    if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
+							    curr[0] = curr[1] = curr[2] = 0;
+						    else if (showcs && (currWS[0]<=options.shadowThreshold || currWS[1]<=options.shadowThreshold || currWS[2]<=options.shadowThreshold))
+							    curr[0] = curr[1] = curr[2] = 255;
+						    //if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
+							//    curr[0] = curr[1] = curr[2] = 0;
+						    //else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
+							//    curr[0] = curr[1] = curr[2] = 255;
+                        */
 
                         curr+=3; currWS+=3;
 					}
