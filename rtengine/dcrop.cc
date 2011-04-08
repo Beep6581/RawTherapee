@@ -188,7 +188,9 @@ void Crop::update (int todo) {
 
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
-	cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, params.icm.working);
+	
+    // this in workinging space is held in parallel to allow analysis like shadow/highlight
+    cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, params.icm.working);
 	//parent->ipf.lab2rgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();

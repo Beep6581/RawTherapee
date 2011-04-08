@@ -655,22 +655,33 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 			if (showcs || showch) {
 				Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
 				guint8* pix = tmp->get_pixels();
+                guint8* pixWrkSpace = cropHandler.cropPixbuftrue->get_pixels();
+
+                int pixRowStride = tmp->get_rowstride ();
+                int pixWSRowStride = cropHandler.cropPixbuftrue->get_rowstride ();
 
                 #ifdef _OPENMP
                 #pragma omp for
                 #endif
-				for (int i=0; i<tmp->get_height(); i++)
-					for (int j=0; j<tmp->get_width(); j++) {
-						guint8* curr = pix + i*tmp->get_rowstride () + j*3;
-						/*if (showch && (curr[0]>=options.highlightThreshold || curr[1]>=options.highlightThreshold || curr[2]>=options.highlightThreshold))
+				for (int i=0; i<tmp->get_height(); i++) {
+                    guint8* curr = pix + i*pixRowStride;
+                    guint8* currWS = pixWrkSpace + i*pixWSRowStride;
+
+                    for (int j=0; j<tmp->get_width(); j++) {
+                        // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
+						if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
 							curr[0] = curr[1] = curr[2] = 0;
-						else if (showcs && (curr[0]<=options.shadowThreshold || curr[1]<=options.shadowThreshold || curr[2]<=options.shadowThreshold))
-							curr[0] = curr[1] = curr[2] = 255;*/
-						if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
+						else if (showcs && (currWS[0]<=options.shadowThreshold || currWS[1]<=options.shadowThreshold || currWS[2]<=options.shadowThreshold))
+							curr[0] = curr[1] = curr[2] = 255;
+						/*if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
 							curr[0] = curr[1] = curr[2] = 0;
 						else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
-							curr[0] = curr[1] = curr[2] = 255;
+							curr[0] = curr[1] = curr[2] = 255;*/
+
+                        curr+=3; currWS+=3;
 					}
+                }
+
 				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
 			}
 			else
