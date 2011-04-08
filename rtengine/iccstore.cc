@@ -25,6 +25,7 @@
 #include <iccmatrices.h>
 #include <glib/gstdio.h>
 #include <safegtk.h>
+#include <options.h>
 
 namespace rtengine {
 
@@ -50,8 +51,14 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
 	Glib::Mutex::Lock lock(mutex_);
 
     std::vector<std::string> res;
-    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++)
-        res.push_back (i->first);
+    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++){
+    	std::string name(i->first);
+    	std::string::size_type  i = name.find_last_of('/');
+    	if( i == std::string::npos )
+    		i = name.find_last_of('\\');
+    	if( i == std::string::npos )
+           res.push_back ( name ); // list only profiles inside selected profiles directory
+    }
     return res;
 }
 
@@ -204,6 +211,32 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
         delete dir;
     }
     return result;
+}
+
+// Determine the first monitor default profile of operating system, if selected
+void ICCStore::findDefaultMonitorProfile() {
+	defaultMonitorProfile="";
+
+#ifdef WIN32
+	// Get current main monitor. Could be fine tuned to get the current windows monitor (multi monitor setup),
+	// but problem is that we live in RTEngine with no GUI window to query around
+	HDC hDC=GetDC(NULL);  
+
+	if (hDC!=NULL) {
+ 		if (SetICMMode(hDC, ICM_ON)) {
+			char profileName[MAX_PATH+1]; DWORD profileLength=MAX_PATH;
+			if (GetICMProfileA(hDC,&profileLength,profileName)) defaultMonitorProfile=Glib::ustring(profileName);
+			// might fail if e.g. the monitor has no profile
+		}
+
+        ReleaseDC(NULL,hDC);
+    }
+#else
+// TODO: Add other OS specific code here
+printf("Automatic Monitor Profile Detection not supported on your OS\n");
+#endif
+
+	if (options.rtSettings.verbose) printf("Default monitor profile is: %s\n", defaultMonitorProfile.c_str());
 }
 
 ProfileContent::ProfileContent (Glib::ustring fileName) {
