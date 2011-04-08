@@ -149,7 +149,9 @@ DARKFRAME,        // EvPreProcessDFFile
 RGBCURVE,         // EvHLComprThreshold,
 	DIRPYRDENOISE,    // EvDPDNLumCurve,
 	DIRPYRDENOISE,    // EvDPDNChromCurve,
-	TRANSFORM		// EvAutoDIST,
+	TRANSFORM,		// EvAutoDIST
+	DARKFRAME,        // EvPreProcessExpCorrLinear
+	DARKFRAME,        // EvPreProcessExpCorrPH
 
 };
 

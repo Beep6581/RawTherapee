@@ -408,6 +408,11 @@ class RAWParams {
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
+
+		// exposure before interpolation
+		double expos;
+		double preser; 
+		
 		bool hotdeadpix_filt;
 		int hotdeadpix_thresh;
 		int	linenoise;

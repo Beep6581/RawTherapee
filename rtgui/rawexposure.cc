@@ -48,16 +48,16 @@ void RAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 		PexPreser->setEditedState( pedited->raw.exPreser ? Edited : UnEdited );
 	}
 
-	//PexPos->setValue (pp->raw.expos);
-	//PexPreser->setValue (pp->raw.preser);//exposi
+	PexPos->setValue (pp->raw.expos);
+	PexPreser->setValue (pp->raw.preser);//exposi
 
 	enableListener ();
 }
 
 void RAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-	//pp->raw.expos = PexPos->getValue();
-	//pp->raw.preser = PexPreser->getValue();//exposi
+	pp->raw.expos = PexPos->getValue();
+	pp->raw.preser = PexPreser->getValue();//exposi
 
 	if (pedited) {
 		pedited->raw.exPos = PexPos->getEditedState ();
@@ -69,13 +69,11 @@ void RAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 void RAWExposure::adjusterChanged (Adjuster* a, double newval)
 {
 	if (listener) {
-
 		Glib::ustring value = a->getTextValue();
-
-		/*if (a == PexPos)
+		if (a == PexPos) 
 			listener->panelChanged (EvPreProcessExpCorrLinear,  value );
 		else if (a == PexPreser)
-			listener->panelChanged (EvPreProcessExpCorrPH,  value );*/
+			listener->panelChanged (EvPreProcessExpCorrPH,  value );
 	}
 }
 
@@ -88,8 +86,8 @@ void RAWExposure::setBatchMode(bool batchMode)
 
 void RAWExposure::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
-	//PexPos->setDefault( defParams->raw.expos);
-	//PexPreser->setDefault( defParams->raw.preser);
+	PexPos->setDefault( defParams->raw.expos);
+	PexPreser->setDefault( defParams->raw.preser);
 
 	if (pedited) {
 		PexPos->setDefaultEditedState( pedited->raw.exPos ? Edited : UnEdited);
