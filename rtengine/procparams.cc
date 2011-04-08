@@ -228,6 +228,10 @@ void ProcParams::setDefaults () {
     raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
+	// exposure before interpolation
+    raw.expos=1.0;
+    raw.preser=0.0;
+
 
     exif.clear ();
     iptc.clear ();
@@ -455,6 +459,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_string  ("RAW", "Method", raw.dmethod );
     keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
     keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
+    keyFile.set_double ("RAW", "PreExposure", raw.expos );
+    keyFile.set_double ("RAW", "PrePreserv", raw.preser );
+
+	// exposition
 
     // save exif change list
     for (int i=0; i<(int)exif.size(); i++)
@@ -770,6 +778,8 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "Method"))        raw.dmethod = keyFile.get_string ("RAW", "Method");
 	if (keyFile.has_key ("RAW", "DCBIterations")) raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations");
 	if (keyFile.has_key ("RAW", "DCBEnhance"))    raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance");
+	if (keyFile.has_key ("RAW", "PreExposure"))   	  raw.expos =keyFile.get_double("RAW", "PreExposure");
+	if (keyFile.has_key ("RAW", "PrePreserv"))   	  raw.preser =keyFile.get_double("RAW", "PrePreserv");
 }
 
     // load exif change settings
@@ -970,7 +980,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 	  && hsvequalizer.scurve == other.hsvequalizer.scurve
 	  && hsvequalizer.vcurve == other.hsvequalizer.vcurve
 		&& exif==other.exif
-		&& iptc==other.iptc;
+		&& iptc==other.iptc
+		&& raw.expos==other.raw.expos
+		&& raw.preser==other.raw.preser; 
 	}
 
 bool ProcParams::operator!= (const ProcParams& other) {

@@ -1091,6 +1091,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		
 		CA_correct_RT(raw.cared, raw.cablue);
 	}
+	
+	if ( raw.expos !=1 ) { // exposure
+		exp_bef(raw.expos, raw.preser);
+	}
+	
     t2.set();
     if( settings->verbose )
        printf("Preprocessing: %d usec\n", t2.etime(t1));
@@ -2141,6 +2146,7 @@ void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's line denoise
 #include "green_equil_RT.cc"//Emil's green channel equilibration
+#include "expo_before_b.cc"//Jacques's exposure before interpolation
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #undef PIX_SORT

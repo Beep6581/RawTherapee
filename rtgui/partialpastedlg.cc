@@ -552,8 +552,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (raw_ccSteps->get_active ())         dst->raw.ccSteps        =src->raw.ccSteps;
     if (raw_dcb_iterations->get_active ())  dst->raw.dcb_iterations =src->raw.dcb_iterations;
     if (raw_dcb_enhance->get_active ())     dst->raw.dcb_enhance    =src->raw.dcb_enhance;
-    //if (raw_expos->get_active ())           dst->raw.expos          =src->raw.expos;
-    //if (raw_preser->get_active ())          dst->raw.preser         =src->raw.preser;
+    if (raw_expos->get_active ())           dst->raw.expos          =src->raw.expos;
+    if (raw_preser->get_active ())          dst->raw.preser         =src->raw.preser;
     if (raw_ca_autocorrect->get_active ())  dst->raw.ca_autocorrect =src->raw.ca_autocorrect;
     if (raw_cared->get_active ())           dst->raw.cared          =src->raw.cared;
     if (raw_cablue->get_active ())          dst->raw.cablue         =src->raw.cablue;
