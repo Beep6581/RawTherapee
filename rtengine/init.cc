@@ -36,6 +36,8 @@ int init (const Settings* s) {
 
     settings = s;
     iccStore->parseDir (s->iccDirectory);
+	iccStore->findDefaultMonitorProfile();
+
     CurveFactory::init ();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();

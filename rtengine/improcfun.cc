@@ -156,7 +156,11 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 	if (monitorTransform)
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
-	cmsHPROFILE monitor = iccStore->getProfile ("file:"+settings->monitorProfile);
+
+    Glib::ustring monitorProfile=settings->monitorProfile;
+    if (settings->autoMonitorProfile) monitorProfile=iccStore->defaultMonitorProfile;
+
+	cmsHPROFILE monitor = iccStore->getProfile ("file:"+monitorProfile);
 	if (monitor) {
         cmsHPROFILE iprof = iccStore->getXYZProfile ();       
         lcmsMutex->lock ();
