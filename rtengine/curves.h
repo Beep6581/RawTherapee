@@ -191,6 +191,18 @@ class CurveFactory {
 	//static inline float    gamma_srgb       (double x) { return gammatab_srgb[x]; }
 	//static inline float    gamma            (double x) { return gammatab[x]; }
 	//static inline float    igamma_srgb      (double x) { return igammatab_srgb[x]; }
+	
+	static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level) 
+	{
+		if (comp>0.0) {
+			float val = level+(hlrange-65536.0);
+			float Y = val*exp_scale/hlrange;
+			float R = hlrange/(val*comp);
+			return log(1.0+Y*comp)*R;
+		} else {
+			return exp_scale;
+		}
+	}
 
   public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double gamma_, bool igamma_, const std::vector<double>& curvePoints, LUTu & histogram,LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
