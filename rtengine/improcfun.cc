@@ -303,7 +303,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
             }
 
             if (processSH || processLCE) {
-                double mapval = shmap->map[i][j];
+                double mapval = 1.0 + shmap->map[i][j];
                 double factor = 1.0;
                 
                 if (processSH) {
@@ -314,14 +314,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
                 }
                 if (processLCE) {
                     double sub = lceamount*(mapval-factor*(r*lumimul[0] + g*lumimul[1] + b*lumimul[2]));
-                    r = (factor*r-sub);
-                    g = (factor*g-sub);
-                    b = (factor*b-sub);
+                    r = CLIP(factor*r-sub);
+                    g = CLIP(factor*g-sub);
+                    b = CLIP(factor*b-sub);
                 }
                 else {
-                    r = (factor*r);
-                    g = (factor*g);
-                    b = (factor*b);
+                    r = CLIP(factor*r);
+                    g = CLIP(factor*g);
+                    b = CLIP(factor*b);
                 }
             }
 

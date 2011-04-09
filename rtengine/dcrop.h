@@ -43,8 +43,8 @@ class Crop : public DetailedCrop {
 		Image8 *cropImgtrue;
 
 
-        int** cbuffer;
-        int * cbuf_real;
+        float** cbuffer;
+        float * cbuf_real;
         SHMap* cshmap;
 
         bool updating, needsNext;

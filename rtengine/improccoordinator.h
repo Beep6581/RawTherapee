@@ -50,7 +50,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         ImageSource* imgsrc;
         
-        int** buffer;
+        float** buffer;
         
         SHMap* shmap;
         
