@@ -21,7 +21,7 @@
 #include <glibmm.h>
 #include <iccstore.h>
 #include <iccmatrices.h>
-
+#include <mytime.h>
 //#include <sRGBgamutbdy.h>
 
 #ifdef _OPENMP
@@ -56,60 +56,68 @@ const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "Bruce
 const int numprof = 7;
 
 void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
-	
+	//MyTime tBeg,tEnd;
+ //   tBeg.set();
 	//gamutmap(lab);
 
 	if (monitorTransform) {
-	    int ix = 0;
-		float g;
-        float* buffer = new float [3*lab->W];
-
+        
         // cmsDoTransform is relatively expensive
-		// Causes problems on some machines
-        //#pragma omp parallel for if (multiThread)
+        #pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
+            float buffer[3*lab->W];
+
+            const int ix = i * 3 * lab->W;
+            int iy = 0;
+
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
-			int iy = 0;
+
+			float R,G,B;
+            float fy,fx,fz,x_,y_,z_;
+
 			for (int j=0; j<lab->W; j++) {
 								
-				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
-				float fx = (0.002 * ra[j])/327.68 + fy;
-				float fz = fy - (0.005 * rb[j])/327.68;
+				fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
+				fx = (0.002 * ra[j]) / 327.68 + fy;
+				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				float x_ = Lab2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
-				float y_ = Lab2xyz(fy);
-				float z_ = Lab2xyz(fz)*D50z;
+				x_ = Lab2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
+				y_ = Lab2xyz(fy);
+				z_ = Lab2xyz(fz)*D50z;
 
                 buffer[iy++] = CLIP01(x_);
                 buffer[iy++] = CLIP01(y_);
                 buffer[iy++] = CLIP01(z_);
 			}
+
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
-            ix += 3*lab->W;
 		}
-        delete [] buffer;
+        
 	} else {
+
 		#pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
-			int ix = 3*i*lab->W;
-			for (int j=0; j<lab->W; j++) {
-			float g;
+			int ix = i * 3 * lab->W;
+
 			float R,G,B;
-				
+            float fy,fx,fz,x_,y_,z_;
+
+			for (int j=0; j<lab->W; j++) {
+			
 				//float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 				
-				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
-				float fx = (0.002 * ra[j])/327.68 + fy;
-				float fz = fy - (0.005 * rb[j])/327.68;
+				fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
+				fx = (0.002 * ra[j]) / 327.68 + fy;
+				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;
-				float y_ = 65535*Lab2xyz(fy);
-				float z_ = 65535*Lab2xyz(fz)*D50z;
+				x_ = 65535*Lab2xyz(fx)*D50x;
+				y_ = 65535*Lab2xyz(fy);
+				z_ = 65535*Lab2xyz(fz)*D50z;
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
@@ -120,6 +128,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 			}
 		}
 	}
+
+    //tEnd.set();
+    //printf("lab2rgb %i %d\n", lab->W, tEnd.etime(tBeg));
 }
 
 Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile) {
@@ -141,18 +152,19 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_8, settings->colorimetricIntent,
             cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         lcmsMutex->unlock ();
-        int ix = 0;
-		float g;
-        short* buffer = new short [3*cw];
 
         // cmsDoTransform is relatively expensive
-        // Causes problems on some machines
-		//#pragma omp parallel for if (multiThread)
+		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
+            short buffer [3*cw];
+
+            const int ix = i * 3 * cw;
+            int iy = 0;
+
             float* rL = lab->L[i];
             float* ra = lab->a[i];
             float* rb = lab->b[i];
-            int iy = 0;
+
             for (int j=cx; j<cx+cw; j++) {
 				
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
@@ -167,10 +179,10 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
                 buffer[iy++] = CLIP((int)y_);
                 buffer[iy++] = CLIP((int)z_);
             }
+
             cmsDoTransform (hTransform, buffer, image->data + ix, cw);
-            ix += 3*cw;
         }
-        delete [] buffer;
+
         cmsDeleteTransform(hTransform);
     } else {
 		
