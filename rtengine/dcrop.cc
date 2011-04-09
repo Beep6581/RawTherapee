@@ -131,8 +131,9 @@ void Crop::update (int todo) {
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
-        double shradius = radius / 1800.0 * params.sh.radius;
-        cshmap->update (baseCrop, (float**)cbuffer, shradius, parent->ipf.lumimul, params.sh.hq);
+		double shradius = params.sh.radius;
+		if (!params.sh.hq) shradius *= radius / 1800.0;        
+		cshmap->update (baseCrop, cbuffer, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);
     }
 
@@ -348,8 +349,8 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
 
         cshmap = new SHMap (cropw, croph, true);
         
-        cbuffer = new int*[croph];
-        cbuf_real= new int[(croph+2)*cropw];
+        cbuffer = new float*[croph];
+        cbuf_real= new float[(croph+2)*cropw];
         for (int i=0; i<croph; i++)
             cbuffer[i] = cbuf_real+cropw*i+cropw;
 

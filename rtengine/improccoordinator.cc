@@ -164,8 +164,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     progress ("Preparing shadow/highlight map...",100*readyphase/numofphases);
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
-        double shradius = radius / 1800.0 * params.sh.radius;
-        shmap->update (oprevi, (float**)buffer, shradius, ipf.lumimul, params.sh.hq);
+		double shradius = params.sh.radius;
+		if (!params.sh.hq) shradius *= radius / 1800.0;
+		shmap->update (oprevi, buffer, shradius, ipf.lumimul, params.sh.hq, scale);
+		
     }
     readyphase++;
 
@@ -341,9 +343,9 @@ if (settings->verbose) printf ("setscale before lock\n");
 		workimg = new Image8 (pW, pH);
         shmap = new SHMap (pW, pH, true);
         
-        buffer = new int*[pH];
+        buffer = new float*[pH];
         for (int i=0; i<pH; i++)
-            buffer[i] = new int[pW];
+            buffer[i] = new float[pW];
         allocated = true;
     }
     
