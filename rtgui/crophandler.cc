@@ -245,7 +245,7 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
     if (ax==cropX && ay==cropY && aw==cropW && ah==cropH && askip==(zoom>=1000?1:zoom)) {
         cropimg_width = im->getWidth ();
         cropimg_height = im->getHeight ();
-        cropimg = new unsigned char [6*cropimg_width*cropimg_height];
+        cropimg = new unsigned char [3*cropimg_width*cropimg_height];
 		cropimgtrue = new unsigned char [3*cropimg_width*cropimg_height];
         memcpy (cropimg, im->getData(), 3*cropimg_width*cropimg_height);
 		memcpy (cropimgtrue, imtrue->getData(), 3*cropimg_width*cropimg_height);

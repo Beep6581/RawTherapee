@@ -246,7 +246,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         try
         {
             ipf.lab2rgb (nprevl, previmg);
-        }
+			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        }
         catch(char * str)
         {
            progress ("Error converting file...",0);
@@ -298,6 +298,7 @@ void ImProcCoordinator::freeAll () {
         }
         else
             delete previmg;
+		delete workimg;
         delete shmap;
         for (int i=0; i<pH; i++)
             delete [] buffer[i];
@@ -337,6 +338,7 @@ if (settings->verbose) printf ("setscale before lock\n");
         oprevl = new LabImage (pW, pH);    
         nprevl = new LabImage (pW, pH);    
         previmg = new Image8 (pW, pH);
+		workimg = new Image8 (pW, pH);
         shmap = new SHMap (pW, pH, true);
         
         buffer = new int*[pH];
@@ -368,9 +370,9 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
-			int r=previmg->data[ofs++];
-			int g=previmg->data[ofs++];
-			int b=previmg->data[ofs++];
+			int r=workimg->data[ofs++];
+			int g=workimg->data[ofs++];
+			int b=workimg->data[ofs++];
 
 			//bcrgbhist[(int)(0.299*r + 0.587*g + 0.114*b)]++;
             rhist[r]++;

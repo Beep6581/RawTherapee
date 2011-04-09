@@ -229,12 +229,12 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     gm = camwb_green / gm;
     bm = camwb_blue / bm;
 
-    float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
+    /*float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
     rm /= mul_lum;
     gm /= mul_lum;
-    bm /= mul_lum;    
-/*
-    //initialGain=1.0;
+    bm /= mul_lum;*/    
+
+    /*//initialGain=1.0;
 	// in floating point, should keep white point fixed and recover higher values with exposure slider
     //if (hrp.enabled) */
     float min = rm;

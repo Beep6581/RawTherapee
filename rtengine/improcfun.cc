@@ -278,6 +278,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
+	const float exp_scale = pow (2.0, params->toneCurve.expcomp);
+	const float comp = (params->toneCurve.expcomp + 1.0)*params->toneCurve.hlcompr/100.0;
+	const float shoulder = ((65536.0/exp_scale)*(params->toneCurve.hlcomprthresh/200.0))+0.1;
+	const float hlrange = 65536.0-shoulder;
+	
 	
 #pragma omp parallel for if (multiThread)
     for (int i=0; i<tH; i++) {
@@ -322,8 +327,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 			//TODO: proper treatment of out-of-gamut colors
 			//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-			float tonefactor=(hltonecurve[r] + hltonecurve[g] + hltonecurve[b])/3;
-
+			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) + \
+							  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) + \
+							  (r<MAXVAL ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
+			
 			r = (r*tonefactor);
 			g = (g*tonefactor);
 			b = (b*tonefactor);
