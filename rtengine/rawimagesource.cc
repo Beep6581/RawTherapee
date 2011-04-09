@@ -1574,7 +1574,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                 for (int k=0; k<3; k++) 
                     mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * xyz_cam
 
-#pragma omp parallel for
+        #pragma omp parallel for
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
 
@@ -1587,8 +1587,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                 im->b[i][j] = (newb);
 
             }
-    } else {// use supplied input profile
-		//color space transform is expecting data in the range (0,1)
+    } else {
+        // use supplied input profile
+		// color space transform is expecting data in the range (0,1)
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
 				im->r[h][w] /= 65535.0f ;
@@ -1597,14 +1598,19 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 			}
         out = iccStore->workingSpace (cmp.working);
 //        out = iccStore->workingSpaceGamma (wProfile);
+
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 0);    
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
+            cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         lcmsMutex->unlock ();
-        if (hTransform) {//there is an input profile
+
+        if (hTransform) {
+            // there is an input profile
             if (cmp.gammaOnInput) {
                 float gd = pow (2.0, defgain);
-                defgain = 0.0;// Writeback defgain to be 0.0
-#pragma omp parallel for
+                defgain = 0.0; // Writeback defgain to be 0.0
+
+                #pragma omp parallel for
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
 						//TODO: extend beyond 65535
@@ -1613,21 +1619,28 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                         im->b[i][j] = CurveFactory::gamma (CLIP(gd*im->b[i][j]));
                     }
             }
-            cmsDoTransform (hTransform, im->data, im->data, im->planestride);
-        } else {//create the profile
+
+            im->ExecCMSTransform(hTransform);
+        } else {
+          // create the profile from camera
           lcmsMutex->lock ();
-          hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);    
+          hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent,
+              cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety    
           lcmsMutex->unlock ();
-          cmsDoTransform (hTransform, im->data, im->data, im->planestride);
+
+          im->ExecCMSTransform(hTransform);
         }
-		//restore normalization to the range (0,65535)
+
+        cmsDeleteTransform(hTransform);
+
+		// restore normalization to the range (0,65535)
+        #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
 				im->r[h][w] *= 65535.0 ;
 				im->g[h][w] *= 65535.0 ;
 				im->b[h][w] *= 65535.0 ;
 			}
-        cmsDeleteTransform(hTransform);
     }
         t3.set ();
 //        printf ("ICM TIME: %d\n", t3.etime(t1));
@@ -1642,9 +1655,8 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 	if (cmp.input == "(none)")
 		return;
 	
-	MyTime t1, t2, t3;
-	
-	t1.set ();
+	//MyTime t1, t2, t3;
+	//t1.set ();
 	
 	cmsHPROFILE in;
 	cmsHPROFILE out;
@@ -1697,13 +1709,15 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 		out = iccStore->workingSpace (cmp.working);
 		//        out = iccStore->workingSpaceGamma (wProfile);
 		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
 		lcmsMutex->unlock ();
+
 		if (hTransform) {
 			if (cmp.gammaOnInput) {
 				float gd = pow (2.0, defgain);
 				defgain = 0.0;
-#pragma omp parallel for
+
+                #pragma omp parallel for
 				for (int i=0; i<im->height; i++)
 					for (int j=0; j<im->width; j++) {
 						im->r[i][j] = CurveFactory::gamma ((gd*im->r[i][j]));
@@ -1711,17 +1725,21 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 						im->b[i][j] = CurveFactory::gamma ((gd*im->b[i][j]));
 					}
 			}
-			cmsDoTransform (hTransform, im->data, im->data, im->planestride);
+
+			im->ExecCMSTransform(hTransform);
 		}
 		else {
 			lcmsMutex->lock ();
-			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);    
+			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE);   
 			lcmsMutex->unlock ();
-			cmsDoTransform (hTransform, im->data, im->data, im->planestride);
+
+			im->ExecCMSTransform(hTransform);
 		}
+
 		cmsDeleteTransform(hTransform);
 	}
-	t3.set ();
+
+	//t3.set ();
 	//        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
 

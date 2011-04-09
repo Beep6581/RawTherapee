@@ -271,3 +271,10 @@ Image16::tofloat() const
 	}
 	return imgfloat;
 }
+
+// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform) {
+    #pragma omp parallel for
+    for (int i=0; i<height; i++)
+        cmsDoTransform(hTransform, data + 3*i*rowstride, data + 3*i*rowstride, rowstride);
+}

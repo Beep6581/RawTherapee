@@ -21,6 +21,7 @@
 #include <image8.h>
 #include <string.h>
 #include <rtengine.h>
+#include <mytime.h>
 
 using namespace rtengine;
 
@@ -234,4 +235,9 @@ Imagefloat::to16() const
 	return img16;
 }
 
-
+// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform) {
+    #pragma omp parallel for
+    for (int i=0; i<height; i++)
+        cmsDoTransform(hTransform, data + 3*i*rowstride, data + 3*i*rowstride, rowstride);
+}
