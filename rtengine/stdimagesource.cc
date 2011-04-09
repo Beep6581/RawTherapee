@@ -315,10 +315,13 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 	
 	if (cmp.input!="(none)") {
 		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
+            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
 		lcmsMutex->unlock ();
-		cmsDoTransform (hTransform, im->data, im->data, im->planestride);
-		cmsDeleteTransform(hTransform);
+		
+        im->ExecCMSTransform(hTransform);
+		
+        cmsDeleteTransform(hTransform);
 	}
 }
 	
@@ -350,9 +353,11 @@ void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 
     if (cmp.input!="(none)") {
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
-        cmsDoTransform (hTransform, im->data, im->data, im->planestride);
+        
+        im->ExecCMSTransform(hTransform);
+        
         cmsDeleteTransform(hTransform);
     }
 }
