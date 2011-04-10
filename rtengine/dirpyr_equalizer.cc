@@ -25,7 +25,6 @@
 #include <labimage.h>
 #include <improcfun.h>
 #include <rawimagesource.h>
-#include <array2D.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -64,15 +63,19 @@ namespace rtengine {
 		}
 		if (lastlevel==0) return;
 		
+
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		LUTf rangefn(0x20000);
+		LUTf rangefn(0x10000);
+				
+		int intfactor = 1024;//16384;
+		
 		
 		//set up range functions
 		
 		for (int i=0; i<0x10000; i++) {
-			rangefn[i] = (int)((thresh/((double)(i) + thresh)));
+			rangefn[i] = (int)((thresh/((double)(i) + thresh))*intfactor);
 		}
 				
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +99,7 @@ namespace rtengine {
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
 		
-		dirpyrlo[0] = array2D<float> (srcwidth, srcheight);
+		dirpyrlo[0] = allocArray<float> (srcwidth, srcheight);
 		
 		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, rangefn, 0, scale, mult );
 		
@@ -106,7 +109,7 @@ namespace rtengine {
 		{
 			scale = scales[level];
 			
-			dirpyrlo[level] = array2D<float>(srcwidth, srcheight);
+			dirpyrlo[level] = allocArray<float>(srcwidth, srcheight);
 			
 			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, rangefn, level, scale, mult );
 			
@@ -124,6 +127,7 @@ namespace rtengine {
 			}
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
 		
 		
 		for(int level = lastlevel - 1; level > 0; level--)
@@ -146,6 +150,17 @@ namespace rtengine {
 				dst[i][j] = CLIP((int)(  buffer[i][j]  ));
 								
 			}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		
+		for(int i = 0; i < lastlevel; i++)
+		{
+			freeArray<float>(dirpyrlo[i], srcheight);
+		}
+		
+		freeArray<float>(buffer, srcheight);
+				
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	}
@@ -178,10 +193,8 @@ namespace rtengine {
 				float val=0;
 				float norm=0;
 				
-				for(int inbr=(i-scalewin); inbr<=(i+scalewin); inbr+=scale) {
-					if (inbr<0 || inbr>height-1) continue;
-					for (int jnbr=(j-scalewin); jnbr<=(j+scalewin); jnbr+=scale) {
-						if (jnbr<0 || jnbr>width-1) continue;
+				for(int inbr=MAX(0,i-scalewin); inbr<=MIN(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=MAX(0,j-scalewin); jnbr<=MIN(width-1,j+scalewin); jnbr+=scale) {
 						float dirwt = DIRWT(inbr, jnbr, i, j);
 						val += dirwt*data_fine[inbr][jnbr];
 						norm += dirwt;
@@ -201,7 +214,7 @@ namespace rtengine {
 	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult )
 	{
 		float noisehi = 1.33*noise*mult[4]/pow(3,level), noiselo = 0.66*noise*mult[4]/pow(3,level);
-		LUTf irangefn(0x20000);
+		float * irangefn = new float [0x20000];
 
 		for (int i=0; i<0x20000; i++) {
 			if (abs(i-0x10000)>noisehi || mult[level]<1.0) {
@@ -225,7 +238,9 @@ namespace rtengine {
 				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 			}
 		}
-				
+		
+		delete [] irangefn;
+		
 	}
 	
 	
