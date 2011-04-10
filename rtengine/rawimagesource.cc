@@ -1680,7 +1680,7 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 	
 	if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
 
-		out = iccStore->workingSpace (cmp.working);
+/*		out = iccStore->workingSpace (cmp.working);
 
         lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE); //cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
@@ -1688,7 +1688,7 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 
 		im->ExecCMSTransform(hTransform);
 		cmsDeleteTransform(hTransform);
-/*		// TODO: This short cut does not work any more it seems. Because of 
+*/
         // in this case we avoid using the slllllooooooowwww lcms
 TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 		double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -1708,7 +1708,7 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 				im->r[i][j] = (newr);
 				im->g[i][j] = (newg);
 				im->b[i][j] = (newb);
-			}*/
+			}
 	}
 	else {
 		out = iccStore->workingSpace (cmp.working);
