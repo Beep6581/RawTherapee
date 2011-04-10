@@ -19,13 +19,13 @@ execute_process(COMMAND ${HG_CMD} parents --template={node|short} WORKING_DIRECT
 execute_process(COMMAND ${HG_CMD} parents --template={latesttagdistance} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_VARIABLE HG_TAGDISTANCE)
 
 # build version.h from template
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/rtgui/version.h)
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/rtgui/version.h)
 
 add_custom_target (AboutFile ALL
 	COMMAND rm -f ${OUT_FILE}
 	COMMAND echo Branch: `${HG_CMD} -R ${CMAKE_CURRENT_SOURCE_DIR} branch` >>${OUT_FILE}
 	COMMAND echo Version: ${HG_VERSION} >>${OUT_FILE}
-	COMMAND echo Changset: ${HG_CHANGESET} >>${OUT_FILE}
+	COMMAND echo Changeset: ${HG_CHANGESET} >>${OUT_FILE}
 	COMMAND echo Compiler: GCC `gcc -dumpversion` >>${OUT_FILE}
 	COMMAND echo Processor: ${PROC_LABEL} >>${OUT_FILE}
 	COMMAND echo Bit depth: ${PROC_BIT_DEPTH} >>${OUT_FILE}
