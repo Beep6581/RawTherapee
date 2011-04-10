@@ -518,31 +518,48 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
 void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
+	bool success;
+
     RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
     for (size_t i=0; i<tbe.size(); i++) {
-        renameDlg->initName (Glib::path_get_basename (tbe[i]->filename), tbe[i]->thumbnail->getCacheImageData());
+    	renameDlg->initName (Glib::path_get_basename (tbe[i]->filename), tbe[i]->thumbnail->getCacheImageData());
 
         Glib::ustring ofname = tbe[i]->filename;
         Glib::ustring dirName = Glib::path_get_dirname (tbe[i]->filename);
         Glib::ustring baseName = Glib::path_get_basename (tbe[i]->filename);
 
-        if (renameDlg->run ()== Gtk::RESPONSE_OK) {
-            Glib::ustring nBaseName = renameDlg->getNewName ();
-            // if path has directory components, exit
-            if (Glib::path_get_dirname (nBaseName) != ".")
-                continue;
-            // if no extension is given, concatenate the extension of the original file
-            Glib::ustring ext = getExtension (nBaseName);
-            if (ext=="") 
-                nBaseName += "." + getExtension (baseName);
-            Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
-            if (!::g_rename (ofname.c_str(), nfname.c_str())) {
-				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
-				reparseDirectory ();
-            }
-            renameDlg->hide ();
-        }
+    	success = false;
+        do {
+			if (renameDlg->run ()== Gtk::RESPONSE_OK) {
+				Glib::ustring nBaseName = renameDlg->getNewName ();
+				// if path has directory components, exit
+				if (Glib::path_get_dirname (nBaseName) != ".")
+					continue;
+				// if no extension is given, concatenate the extension of the original file
+				Glib::ustring ext = getExtension (nBaseName);
+				if (ext=="")
+					nBaseName += "." + getExtension (baseName);
+				Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
+
+				/* check if filename already exists*/
+				if (Glib::file_test (nfname, Glib::FILE_TEST_EXISTS)) {
+					Glib::ustring msg_ = Glib::ustring("<b>") + nfname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "</b>";
+					Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+					msgd.run ();
+				}
+				else {
+					success = true;
+					if (!::g_rename (ofname.c_str(), nfname.c_str())) {
+						cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
+						reparseDirectory ();
+					}
+				}
+			}
+			else
+				success = true;
+        } while (!success);
+		renameDlg->hide ();
     }
     delete renameDlg;
 /*    // ask for new file name
