@@ -248,14 +248,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || \
 						params->chmixer.blue[0]!=0	|| params->chmixer.blue[1]!=0    || params->chmixer.blue[2]!=100);
 
-//    int mapval;
-//    double factor;
     int tW = working->width;
     int tH = working->height;
-//    int r, g, b;
-//	float h, s, v;
-//	float satparam,valparam;
-//	int hue, hueband, hueres, nbrband;
 	double pi = M_PI;
 	FlatCurve* hCurve;
 	FlatCurve* sCurve;
@@ -264,7 +258,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	
 	float* cossq = new float [8192];
 	for (int i=0; i<8192; i++) 
-		cossq[i] = SQR(cos(pi*(float)i/16384));
+		cossq[i] = SQR(cos(pi*(float)i/16384.0));
 	
 	FlatCurveType hCurveType = (FlatCurveType)params->hsvequalizer.hcurve.at(0);
 	FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at(0);

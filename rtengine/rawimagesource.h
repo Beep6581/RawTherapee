@@ -27,9 +27,9 @@
 namespace rtengine {
 
 template<class T> void freeArray (T** a, int H) {
-  //for (int i=0; i<H; i++)
+    //for (int i=0; i<H; i++)
     delete [] a[0];
-  delete [] a;
+    delete [] a;
 }
 
 template<class T> T** allocArray (int W, int H) {
@@ -51,7 +51,7 @@ class RawImageSource : public ImageSource {
 
     protected:
         Glib::Mutex isrcMutex;
-    
+
         int W, H;
         ColorTemp wb;
         ProgressListener* plistener;
@@ -75,8 +75,8 @@ class RawImageSource : public ImageSource {
         double defGain;
         //int blcode[16][16][32];  // Looks like it's an unused variable...
         bool full;
-		cmsHPROFILE camProfile;
-		cmsHPROFILE embProfile;
+        cmsHPROFILE camProfile;
+        cmsHPROFILE embProfile;
 
         RawImage* ri; // Copy of raw pixels
         
@@ -85,7 +85,7 @@ class RawImageSource : public ImageSource {
         double* cache;
         int threshold;
 
-        float** rawData;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
+        float** rawData;           // holds pixel values, data[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
         float** green; 
@@ -93,8 +93,8 @@ class RawImageSource : public ImageSource {
         float** red;
         // the interpolated blue plane:
         float** blue;
-	
-    
+
+
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
         void hphd_green          (float** hpmap);
@@ -112,13 +112,13 @@ class RawImageSource : public ImageSource {
     public:
         RawImageSource ();
         ~RawImageSource ();
-    
+
         int         load        (Glib::ustring fname, bool batch = false);
         void        preprocess  (const RAWParams &raw);
         void        demosaic    (const RAWParams &raw);
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
-		void		cfaboxblur	(RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
-		void        scaleColors	(int winx,int winy,int winw,int winh );
+        void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
+        void        scaleColors (int winx,int winy,int winw,int winh );
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
@@ -135,8 +135,8 @@ class RawImageSource : public ImageSource {
         int         getAEHistogram (LUTu & histogram, int& histcompr);
 
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
-		static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
-		static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
+        static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
@@ -152,47 +152,47 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
         inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
-		int	LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
-		void CA_correct_RT	(double cared, double cablue);
-		void ddct8x8s(int isgn, float **a);
-    	void exp_bef (float expos, float preser);  // exposure before interpolation
+        int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
+        void CA_correct_RT	(double cared, double cablue);
+        void ddct8x8s(int isgn, float **a);
+        void exp_bef (float expos, float preser);  // exposure before interpolation
 
-		int  cfaCleanFromMap( PixelsMap &bitmapBads );
-		int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
+        int  cfaCleanFromMap( PixelsMap &bitmapBads );
+        int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
 
-		void cfa_linedn (float linenoiselevel);//Emil's line denoise
+        void cfa_linedn (float linenoiselevel);//Emil's line denoise
 
-		void green_equilibrate		(float greenthresh);//Emil's green equilibration
+        void green_equilibrate (float greenthresh);//Emil's green equilibration
 
-	void nodemosaic();
+        void nodemosaic();
         void eahd_demosaic();
         void hphd_demosaic();
         void vng4_demosaic();
         void ppg_demosaic();
-		void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
-		void fast_demo(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
+        void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
+        void fast_demo(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
         void dcb_demosaic(int iterations, int dcb_enhance);
         void ahd_demosaic(int winx, int winy, int winw, int winh);
-	void	border_interpolate(int border, float (*image)[4], int start = 0, int end = 0);
-		void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
-		void fill_raw( ushort (*cache )[4], int x0, int y0, float** rawData);
-		void fill_border( ushort (*cache )[4], int border, int x0, int y0);
-		void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
-		void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
-		void dcb_color(ushort (*image)[4], int x0, int y0);
-		void dcb_hid2(ushort (*image)[4], int x0, int y0);
-		void dcb_map(ushort (*image)[4], int x0, int y0);
-		void dcb_correction(ushort (*image)[4], int x0, int y0);
-		void dcb_pp(ushort (*image)[4], int x0, int y0);
-		void dcb_correction2(ushort (*image)[4], int x0, int y0);
-		void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
-		void dcb_refinement(ushort (*image)[4], int x0, int y0);
-		void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
+        void border_interpolate(int border, float (*image)[4], int start = 0, int end = 0);
+        void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
+        void fill_raw( ushort (*cache )[4], int x0, int y0, float** rawData);
+        void fill_border( ushort (*cache )[4], int border, int x0, int y0);
+        void copy_to_buffer(ushort (*image2)[3], ushort (*image)[4]);
+        void dcb_hid(ushort (*image)[4], ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0);
+        void dcb_color(ushort (*image)[4], int x0, int y0);
+        void dcb_hid2(ushort (*image)[4], int x0, int y0);
+        void dcb_map(ushort (*image)[4], int x0, int y0);
+        void dcb_correction(ushort (*image)[4], int x0, int y0);
+        void dcb_pp(ushort (*image)[4], int x0, int y0);
+        void dcb_correction2(ushort (*image)[4], int x0, int y0);
+        void restore_from_buffer(ushort (*image)[4], ushort (*image2)[3]);
+        void dcb_refinement(ushort (*image)[4], int x0, int y0);
+        void dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2]);
 
         void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw);
         void    hflip       (Imagefloat* im);
-        void    vflip       (Imagefloat* im);      
-        
+        void    vflip       (Imagefloat* im);
+
 };
 };
 #endif

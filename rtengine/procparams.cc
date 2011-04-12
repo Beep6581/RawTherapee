@@ -59,22 +59,26 @@ void ProcParams::setDefaults () {
     toneCurve.expcomp       = 0;
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
-	toneCurve.saturation    = 0;
+    toneCurve.saturation    = 0;
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
     toneCurve.hlcomprthresh = 0;
     toneCurve.shcompr       = 25;
     toneCurve.curve.clear ();
+    toneCurve.curve.push_back(DCT_Linear);
     
     labCurve.brightness    = 0;
     labCurve.contrast      = 0;
-	labCurve.saturation      = 0;
-	labCurve.avoidclip                = false;
+    labCurve.saturation    = 0;
+    labCurve.avoidclip          = false;
     labCurve.enable_saturationlimiter = false;
-    labCurve.saturationlimit          = 50;
+    labCurve.saturationlimit    = 50;
     labCurve.lcurve.clear ();
-	labCurve.acurve.clear ();
+    labCurve.lcurve.push_back(DCT_Linear);
+    labCurve.acurve.clear ();
+    labCurve.acurve.push_back(DCT_Linear);
     labCurve.bcurve.clear ();
+    labCurve.bcurve.push_back(DCT_Linear);
     
     sharpening.enabled          = true;
     sharpening.radius           = 1.0;
@@ -112,21 +116,21 @@ void ProcParams::setDefaults () {
     colorDenoise.radius         = 1.9;
     colorDenoise.edgetolerance  = 2000;
 	
-	impulseDenoise.enabled      = false;
-	impulseDenoise.thresh		= 50;
+    impulseDenoise.enabled      = false;
+    impulseDenoise.thresh       = 50;
 	
-	defringe.enabled			= false;
-    defringe.radius				= 2.0;
-    defringe.threshold			= 25;
+    defringe.enabled            = false;
+    defringe.radius             = 2.0;
+    defringe.threshold          = 25;
 
-	dirpyrDenoise.enabled       = false;
+    dirpyrDenoise.enabled       = false;
     dirpyrDenoise.luma          = 10;
-    dirpyrDenoise.chroma		= 10;
-	dirpyrDenoise.gamma			= 2.0;
-	dirpyrDenoise.lumcurve.clear ();
-	dirpyrDenoise.lumcurve.push_back (DCT_Linear);
-	dirpyrDenoise.chromcurve.clear ();
-	dirpyrDenoise.chromcurve.push_back (DCT_Linear);
+    dirpyrDenoise.chroma        = 10;
+    dirpyrDenoise.gamma         = 2.0;
+    dirpyrDenoise.lumcurve.clear ();
+    dirpyrDenoise.lumcurve.push_back (DCT_Linear);
+    dirpyrDenoise.chromcurve.clear ();
+    dirpyrDenoise.chromcurve.push_back (DCT_Linear);
     
     sh.enabled       = false;
     sh.hq            = false;
@@ -206,29 +210,29 @@ void ProcParams::setDefaults () {
     {
         dirpyrequalizer.mult[i] = 1.0;
     }
-	dirpyrequalizer.mult[4] = 0.0;
-	hsvequalizer.hcurve.clear ();
-	hsvequalizer.hcurve.push_back (FCT_Linear);
-	hsvequalizer.scurve.clear ();
-	hsvequalizer.scurve.push_back (FCT_Linear);
-	hsvequalizer.vcurve.clear ();
-	hsvequalizer.vcurve.push_back (FCT_Linear);
+    dirpyrequalizer.mult[4] = 0.0;
+    hsvequalizer.hcurve.clear ();
+    hsvequalizer.hcurve.push_back (FCT_Linear);
+    hsvequalizer.scurve.clear ();
+    hsvequalizer.scurve.push_back (FCT_Linear);
+    hsvequalizer.vcurve.clear ();
+    hsvequalizer.vcurve.push_back (FCT_Linear);
     raw.df_autoselect = false;
     raw.ff_AutoSelect = false;                                      
     raw.ff_BlurRadius = 32;                                         
     raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
     raw.cared = 0;
-	raw.cablue = 0;
+    raw.cablue = 0;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
-	raw.hotdeadpix_thresh = 40;
+    raw.hotdeadpix_thresh = 40;
     raw.linenoise = 0;
     raw.greenthresh = 0;
     raw.ccSteps = 1;
     raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
-	// exposure before interpolation
+    // exposure before interpolation
     raw.expos=1.0;
     raw.preser=0.0;
 
@@ -449,10 +453,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
     keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );     
     keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
-	keyFile.set_double	("RAW", "CARed", raw.cared );
+    keyFile.set_double	("RAW", "CARed", raw.cared );
     keyFile.set_double	("RAW", "CABlue", raw.cablue );
-	keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
-	keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
+    keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
     keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
     keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
     keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
@@ -956,10 +960,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& resize.height == other.resize.height
 		&& raw.dark_frame == other.raw.dark_frame
 		&& raw.df_autoselect == other.raw.df_autoselect
-		&& raw.ff_file   == other.raw.ff_file
-		&& raw.ff_AutoSelect   == other.raw.ff_AutoSelect
-		&& raw.ff_BlurRadius   == other.raw.ff_BlurRadius
-		&& raw.ff_BlurType   == other.raw.ff_BlurType	
+		&& raw.ff_file == other.raw.ff_file
+		&& raw.ff_AutoSelect == other.raw.ff_AutoSelect
+		&& raw.ff_BlurRadius == other.raw.ff_BlurRadius
+		&& raw.ff_BlurType == other.raw.ff_BlurType	
 		&& raw.dcb_enhance == other.raw.dcb_enhance
 		&& raw.dcb_iterations == other.raw.dcb_iterations
 		&& raw.ccSteps == other.raw.ccSteps
@@ -976,9 +980,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.output == other.icm.output
 		&& equalizer == other.equalizer
 		&& dirpyrequalizer == other.dirpyrequalizer
-	  && hsvequalizer.hcurve == other.hsvequalizer.hcurve
-	  && hsvequalizer.scurve == other.hsvequalizer.scurve
-	  && hsvequalizer.vcurve == other.hsvequalizer.vcurve
+		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
+		&& hsvequalizer.scurve == other.hsvequalizer.scurve
+		&& hsvequalizer.vcurve == other.hsvequalizer.vcurve
 		&& exif==other.exif
 		&& iptc==other.iptc
 		&& raw.expos==other.raw.expos

@@ -127,11 +127,12 @@ RGBCURVE,         // EvHSVEqEnabled,
 DEFRINGE,         // EvDefringeEnabled,
 DEFRINGE,         // EvDefringeRadius,
 DEFRINGE,         // EvDefringeThreshold,
+RGBCURVE,         // EvHLComprThreshold,
 RESIZE,           // EvResizeBoundingBox
-RESIZE,            // EvResizeAppliesTo  
-	LUMINANCECURVE,   // EvCBAvoidClip,
-	LUMINANCECURVE,   // EvCBSatLimiter,
-	LUMINANCECURVE,   // EvCBSatLimit, 
+RESIZE,           // EvResizeAppliesTo
+LUMINANCECURVE,   // EvCBAvoidClip,
+LUMINANCECURVE,   // EvCBSatLimiter,
+LUMINANCECURVE,   // EvCBSatLimit,
 DEMOSAIC,         // EvDemosaicDCBIter
 DEMOSAIC,         // EvDemosaicFalseColorIter
 DEMOSAIC,         // EvDemosaicDCBEnhanced
@@ -142,16 +143,15 @@ DARKFRAME,        // EvPreProcessGEquilThresh
 DARKFRAME,        // EvPreProcessAutoCA
 DARKFRAME,        // EvPreProcessAutoDF
 DARKFRAME,        // EvPreProcessDFFile
-	FLATFIELD,        // EvFlatFieldFile,      
-	FLATFIELD,        // EvFlatFieldAutoSelect,
-	FLATFIELD,        // EvFlatFieldBlurRadius,
-	FLATFIELD,        // EvFlatFieldBlurType, 
-RGBCURVE,         // EvHLComprThreshold,
-	DIRPYRDENOISE,    // EvDPDNLumCurve,
-	DIRPYRDENOISE,    // EvDPDNChromCurve,
-	TRANSFORM,		// EvAutoDIST
-	DARKFRAME,        // EvPreProcessExpCorrLinear
-	DARKFRAME,        // EvPreProcessExpCorrPH
+DARKFRAME,        // EvPreProcessExpCorrLinear
+DARKFRAME,        // EvPreProcessExpCorrPH
+FLATFIELD,        // EvFlatFieldFile,
+FLATFIELD,        // EvFlatFieldAutoSelect,
+FLATFIELD,        // EvFlatFieldBlurRadius,
+FLATFIELD,        // EvFlatFieldBlurType,
+TRANSFORM,        // EvAutoDIST,
+DIRPYRDENOISE,    // EvDPDNLumCurve,
+DIRPYRDENOISE,    // EvDPDNChromCurve,
 
 };
 
