@@ -1,5 +1,5 @@
---- H:/rawtherapee_3.0/rtengine/dcraw.c	Wed Feb 02 23:18:25 2011
-+++ H:/rawtherapee_3.0/rtengine/dcraw.cc	Thu Mar 17 17:39:52 2011
+--- rtengine/dcraw.c	Tue Apr 05 21:33:35 2011
++++ rtengine/dcraw.cc	Tue Apr 12 23:18:14 2011
 @@ -1,5 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -305,8 +305,8 @@
        case 513:				/* JpegIFOffset */
        case 61447:
  	tiff_ifd[ifd].offset = get4()+base;
--	if (!tiff_ifd[ifd].bps) {
-+/*RT*/if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset>=0) {
+-	if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset > 0) {
++    if (!tiff_ifd[ifd].bps && tiff_ifd[ifd].offset > 0) {
  	  fseek (ifp, tiff_ifd[ifd].offset, SEEK_SET);
  	  if (ljpeg_start (&jh, 1)) {
  	    tiff_ifd[ifd].comp    = 6;
@@ -375,7 +375,7 @@
        parse_tiff (12);
        thumb_offset = 0;
        is_raw = 1;
-@@ -5842,11 +5860,15 @@
+@@ -5851,11 +5869,15 @@
        raw_width  = get2();
      }
      order = get2();
@@ -392,7 +392,7 @@
    }
    return 1;
  }
-@@ -6626,14 +6648,14 @@
+@@ -6641,14 +6663,14 @@
  	{ 5775,-805,-359,-8574,16295,2391,-1943,2341,7249 } },
      { "SONY DSLR-A850", 128, 0,
  	{ 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
@@ -411,7 +411,7 @@
      { "SONY SLT-A33", 128, 0,
  	{ 6069,-1221,-366,-5221,12779,2734,-1024,2066,6834 } },
      { "SONY SLT-A55", 128, 0,
-@@ -6877,17 +6899,25 @@
+@@ -6892,17 +6914,25 @@
    hlen = get4();
    fseek (ifp, 0, SEEK_SET);
    fread (head, 1, 32, ifp);
@@ -437,7 +437,7 @@
    } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
  	     !memcmp (head+6,"Exif",4)) {
      fseek (ifp, 4, SEEK_SET);
-@@ -6925,10 +6955,11 @@
+@@ -6940,10 +6970,11 @@
  	parse_fuji (i);
      }
      fseek (ifp, 100, SEEK_SET);
@@ -449,7 +449,7 @@
      fseek (ifp, 0, SEEK_SET);
      parse_riff();
    } else if (!memcmp (head,"\0\001\0\001\0@",6)) {
-@@ -7007,11 +7038,11 @@
+@@ -7022,11 +7053,11 @@
    if (height == 2624 && width == 3936)	/* Pentax K10D and Samsung GX10 */
      { height  = 2616;   width  = 3896; }
    if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
@@ -462,7 +462,7 @@
    if (!strcmp(model,"K-7"))
      { height  = 3122;   width  = 4684; filters = 0x16161616; top_margin = 2; }
    if (!strcmp(model,"645D"))
-@@ -8589,17 +8620,17 @@
+@@ -8625,17 +8656,17 @@
      for (col=0; col < width; col++, soff += cstep)
        if (output_bps == 8)
  	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
@@ -482,7 +482,7 @@
    int timestamp_only=0, thumbnail_only=0, identify_only=0;
    int user_qual=-1, user_black=-1, user_sat=-1, user_flip=-1;
    int use_fuji_rotate=1, write_to_stdout=0, quality, i, c;
-@@ -8708,11 +8739,11 @@
+@@ -8744,11 +8775,11 @@
        case 'z':  timestamp_only    = 1;  break;
        case 'e':  thumbnail_only    = 1;  break;
        case 'i':  identify_only     = 1;  break;
@@ -495,7 +495,7 @@
        case 'a':  use_auto_wb       = 1;  break;
        case 'w':  use_camera_wb     = 1;  break;
        case 'M':  use_camera_matrix = (opm == '+');  break;
-@@ -8971,5 +9002,6 @@
+@@ -9007,5 +9038,6 @@
        else shot_select = 0;
      }
    }
