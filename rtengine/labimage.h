@@ -34,7 +34,6 @@ class LabImage {
         float** b;
 
      LabImage (int w, int h);
-     LabImage (Image16* im);
     ~LabImage ();
 };
 }

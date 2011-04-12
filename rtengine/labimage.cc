@@ -20,19 +20,6 @@ LabImage::LabImage (int w, int h) : fromImage(false), W(w), H(h) {
         b[i] = index + i*W;
 }
 
-LabImage::LabImage (Image16* im) {
-
-    W = im->width;
-    H = im->height;
-	for (int i=0; i<H; i++) 
-		for (int j=0; j<W; j++) {
-			L[i][j] = im->r[i][j];
-			a[i][j] = im->g[i][j];
-			b[i][j] = im->b[i][j];
-		}
-    fromImage = true;
-}
-
 LabImage::~LabImage () {
 
     if (!fromImage) {

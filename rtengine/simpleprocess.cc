@@ -168,7 +168,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[CLIP((int)(2*(labView->L[i][j])))]++;
+            hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 1);
@@ -180,12 +180,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
 	//ipf.lumadenoise (labView, buffer);
+ 	ipf.dirpyrdenoise (labView);
     ipf.sharpening (labView, (float**)buffer);
 
     // color processing
     /*ipf.colorCurve (labView, labView);
     ipf.colordenoise (labView, buffer);*/
-	ipf.dirpyrdenoise (labView);
+
 
     // wavelet equalizer
     //ipf.waveletEqualizer (labView, true, true);
