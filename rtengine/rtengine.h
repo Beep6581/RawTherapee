@@ -223,10 +223,11 @@ namespace rtengine {
         public:
             /** Sets the window defining the crop. */
             virtual void setWindow   (int cx, int cy, int cw, int ch, int skip) {} 
+
 			/** First try to update (threadless update). If it returns false, make a full update */
-			virtual bool tryUpdate  () { return false; }
-			/** Perform a full recalculation of the part of the image corresponding to the crop. */
-			virtual void fullUpdate  () {}
+            virtual bool tryUpdate  () { return false; }
+            /** Perform a full recalculation of the part of the image corresponding to the crop. */
+            virtual void fullUpdate  () {}
             /** Sets the listener of the crop. */
             virtual void setListener (DetailedCropListener* il) {}       
             /** Destroys the crop. */
@@ -369,10 +370,9 @@ namespace rtengine {
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel. 
-   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener. 
+   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
    * @param tunnelMetaData tunnels IPTC and XMP to output without change */  
-
-	void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
+    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
 
     
     extern Glib::Mutex* lcmsMutex;

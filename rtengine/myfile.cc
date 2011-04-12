@@ -19,6 +19,7 @@
 #include <myfile.h>
 #include <cstdarg>
 #include <glibmm.h>
+#include <safegtk.h>
 #ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
 #endif
@@ -65,7 +66,7 @@ int munmap(void *start, size_t length)
 
 IMFILE* fopen (const char* fname)
 {
-	int fd = ::open(fname,O_RDONLY);
+	int fd = safe_open_ReadOnly(fname);
 	if ( fd < 0 )
 		return 0;
 
