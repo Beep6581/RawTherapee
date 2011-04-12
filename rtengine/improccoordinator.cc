@@ -230,8 +230,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             ipf.sharpening (nprevl, (float**)buffer);
             progress ("Pyramid equalizer...",100*readyphase/numofphases);
             ipf.dirpyrequalizer (nprevl);
-            progress ("Wavelet...",100*readyphase/numofphases);
-            ipf.waveletEqualizer (nprevl, true, true);
+
+            // Superset by pyreq
+            //progress ("Wavelet...",100*readyphase/numofphases);
+            //ipf.waveletEqualizer (nprevl, true, true);
         }
 		
 
