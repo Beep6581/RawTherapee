@@ -45,12 +45,14 @@ extern const Settings* settings;
 #undef MAX
 #undef MIN
 #undef DIST
+#undef CLIP
 
 #define ABS(a) ((a)<0?-(a):(a))
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define DIST(a,b) (ABS(a-b))
 #define MAXVAL 0xffff
+#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 	
 #define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	
@@ -1702,17 +1704,12 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 			for (int j=0; j<im->width; j++) {
 				
 				float newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
-                if (newr<0) newr=0; else if (newr>0xffff) newr=0xffff;
-
 				float newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
-                if (newg<0) newg=0; else if (newg>0xffff) newg=0xffff;
-
 				float newb = mat[2][0]*im->r[i][j] + mat[2][1]*im->g[i][j] + mat[2][2]*im->b[i][j];
-                if (newb<0) newb=0; else if (newb>0xffff) newb=0xffff;
 				
-				im->r[i][j] = (newr);
-				im->g[i][j] = (newg);
-				im->b[i][j] = (newb);
+				im->r[i][j] = CLIP((int)newr);
+				im->g[i][j] = CLIP((int)newg);
+				im->b[i][j] = CLIP((int)newb);
 			}
 	}
 	else {

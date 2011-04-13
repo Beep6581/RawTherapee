@@ -128,13 +128,6 @@ void SHMap::update (Imagefloat* img, float** buffer, double radius, double lumi[
 			level += 1;
 			indx = 1-indx;
 		}
-		/*dirpyr_shmap(dirpyrlo[0], dirpyrlo[1], W, H, rangefn, 1, scale );
-		scale = 4;
-		dirpyr_shmap(dirpyrlo[1], dirpyrlo[0], W, H, rangefn, 2, scale );
-		scale = 8;
-		dirpyr_shmap(dirpyrlo[0], dirpyrlo[1], W, H, rangefn, 3, scale );
-		scale = 16;
-		dirpyr_shmap(dirpyrlo[1], map, W, H, rangefn, 3, scale );*/
 
 		dirpyr_shmap(dirpyrlo[1-indx], map, W, H, rangefn, level, scale );
 		
