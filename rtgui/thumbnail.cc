@@ -75,7 +75,6 @@ void Thumbnail::_generateThumbnailImage () {
 	th = options.maxThumbnailHeight;
 
 	// generate thumbnail image
-
 	Glib::ustring ext = getExtension (fname);
 	if (ext=="") 
 		return;
@@ -83,8 +82,6 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.exifValid = false;
 	cfs.timeValid = false;
 
-	delete tpp;
-	tpp = NULL;
 	if (ext.lowercase()=="jpg" || ext.lowercase()=="png" || ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
 			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
 			if (tpp) {
@@ -112,7 +109,7 @@ void Thumbnail::_generateThumbnailImage () {
 			quick = true;
 			tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, tw, th, 1, TRUE);
 		}
-		if ( tpp == 0 )
+		if ( tpp == NULL )
 		{
 			quick = false;
 			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, TRUE);
@@ -123,16 +120,17 @@ void Thumbnail::_generateThumbnailImage () {
 			infoFromImage (fname, &ri);
 		}
 	}
-	if (tpp )
+
+    if (tpp)
 	{
-		_saveThumbnail ();
-		cfs.supported = true;
-	}
-	needsReProcessing = true;
+        _saveThumbnail ();
+        cfs.supported = true;
+        needsReProcessing = true;
 
-	cfs.save (getCacheFileName ("data")+".txt");
+        cfs.save (getCacheFileName ("data")+".txt");
 
-	generateExifDateTimeStrings ();
+        generateExifDateTimeStrings ();
+    }
 }
 
 bool Thumbnail::isSupported () {
@@ -463,6 +461,8 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
         _generateThumbnailImage ();
         if (cfs.supported && firstTrial)
             _loadThumbnail (false);
+
+        if (tpp==NULL) return;
     }
     else if (!succ) {
         delete tpp;
