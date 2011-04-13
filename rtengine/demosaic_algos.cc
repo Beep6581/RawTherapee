@@ -604,14 +604,14 @@ void RawImageSource::vng4_demosaic () {
     plistener->setProgress (0.0);
   }
 
-  ushort (*brow[5])[4], *pix;
+  float (*brow[5])[4], *pix;
   int prow=7, pcol=1, *ip, *code[16][16], gval[8], gmin, gmax, sum[4];
   int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c, width=W, height=H, colors=4;
-  ushort (*image)[4];
+  float (*image)[4];
   int lcode[16][16][32], shift, i, j;
 
-  image = (ushort (*)[4]) calloc (H*W, sizeof *image);
+  image = (float (*)[4]) calloc (H*W, sizeof *image);
   for (int ii=0; ii<H; ii++)
     for (int jj=0; jj<W; jj++)
         image[ii*W+jj][fc(ii,jj)] = rawData[ii][jj];
@@ -629,7 +629,7 @@ void RawImageSource::vng4_demosaic () {
 	  *ip++ = (width*y + x)*4 + color;
 	  *ip++ = shift;
 	  *ip++ = color;
-	  sum[color] += 1 << shift;
+	  sum[color] += (1 << shift);
 	}
       FORCC
 	if (c != fc(row,col)) {
@@ -644,9 +644,9 @@ void RawImageSource::vng4_demosaic () {
       ip = lcode[row & 15][col & 15];
       memset (sum, 0, sizeof sum);
       for (i=8; i--; ip+=3)
-	sum[ip[2]] += pix[ip[0]] << ip[1];
+	sum[ip[2]] += pix[ip[0]] * (1 << ip[1]);
       for (i=colors; --i; ip+=2)
-	pix[ip[0]] = sum[ip[0]] * ip[1] >> 8;
+	pix[ip[0]] = sum[ip[0]] * ip[1] /256;
     }
 
 //  lin_interpolate();
@@ -669,7 +669,7 @@ void RawImageSource::vng4_demosaic () {
 	*ip++ = (y2*width + x2)*4 + color;
 	*ip++ = weight;
 	for (g=0; g < 8; g++)
-	  if (grads & 1<<g) *ip++ = g;
+	  if (grads & (1<<g)) *ip++ = g;
 	*ip++ = -1;
       }
       *ip++ = INT_MAX;
@@ -683,7 +683,7 @@ void RawImageSource::vng4_demosaic () {
 	  *ip++ = 0;
       }
     }
-  brow[4] = (ushort (*)[4]) calloc (width*3, sizeof **brow);
+  brow[4] = (float (*)[4]) calloc (width*3, sizeof **brow);
   for (row=0; row < 3; row++)
     brow[row] = brow[4] + row*width;
   for (row=2; row < height-2; row++) {		/* Do VNG interpolation */
@@ -693,7 +693,7 @@ void RawImageSource::vng4_demosaic () {
       ip = code[row & prow][col & pcol];
       memset (gval, 0, sizeof gval);
       while ((g = ip[0]) != INT_MAX) {		/* Calculate gradients */
-	diff = ABS(pix[g] - pix[ip[1]]) << ip[2];
+	diff = ABS(pix[g] - pix[ip[1]]) * (1<< ip[2]);
 	gval[ip[3]] += diff;
 	ip += 5;
 	if ((g = ip[-1]) == -1) continue;
@@ -711,13 +711,13 @@ void RawImageSource::vng4_demosaic () {
 	memcpy (brow[2][col], pix, sizeof *image);
 	continue;
       }
-      thold = gmin + (gmax >> 1);
+      thold = gmin + (gmax /2);
       memset (sum, 0, sizeof sum);
       for (num=g=0; g < 8; g++,ip+=2) {		/* Average the neighbors */
 	if (gval[g] <= thold) {
 	  FORCC
 	    if (c == color && ip[1])
-	      sum[c] += (pix[c] + pix[ip[1]]) >> 1;
+	      sum[c] += (pix[c] + pix[ip[1]]) /2;
 	    else
 	      sum[c] += pix[ip[0] + c];
 	  num++;
@@ -744,7 +744,7 @@ void RawImageSource::vng4_demosaic () {
 
   for (int i=0; i<H; i++) {
     for (int j=0; j<W; j++)
-        green[i][j] = (image[i*W+j][1] + image[i*W+j][3]) >> 1;
+        green[i][j] = (image[i*W+j][1] + image[i*W+j][3]) /2;
   }
   // Interpolate R and B
   for (int i=0; i<H; i++) {
@@ -835,9 +835,9 @@ void RawImageSource::ppg_demosaic()
 		 - pix[-d][1] - pix[d][1];
       }
       if (diff[0] != diff[1])
-	pix[0][c] = CLIP(guess[diff[0] > diff[1]] >> 1);
+	pix[0][c] = CLIP(guess[diff[0] > diff[1]] /2);
       else
-	pix[0][c] = CLIP((guess[0]+guess[1]) >> 2);
+	pix[0][c] = CLIP((guess[0]+guess[1]) /4);
     }
     if(plistener) plistener->setProgress(0.67 + 0.33*row/(height-1));
   }
@@ -1151,7 +1151,7 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
 	if( x0+TILESIZE+TILEBORDER >= W-border) colMax = TILEBORDER+W-border-x0;
 }
 
-void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, float** rawData)
+void RawImageSource::fill_raw( float (*cache )[4], int x0, int y0, float** rawData)
 {
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,0);
@@ -1162,7 +1162,7 @@ void RawImageSource::fill_raw( ushort (*cache )[4], int x0, int y0, float** rawD
     	}
 }
 
-void RawImageSource::fill_border( ushort (*cache )[4], int border, int x0, int y0)
+void RawImageSource::fill_border( float (*cache )[4], int border, int x0, int y0)
 {
 	unsigned row, col, y, x, f, c, sum[8];
 	int colors = 3;
@@ -1190,7 +1190,7 @@ void RawImageSource::fill_border( ushort (*cache )[4], int border, int x0, int y
 	}
 }
 // saves red and blue
-void RawImageSource::copy_to_buffer( ushort (*buffer)[3], ushort (*image)[4])
+void RawImageSource::copy_to_buffer( float (*buffer)[3], float (*image)[4])
 {
 	for (int indx=0; indx < CACHESIZE*CACHESIZE; indx++) {
 		buffer[indx][0]=image[indx][0]; //R
@@ -1199,7 +1199,7 @@ void RawImageSource::copy_to_buffer( ushort (*buffer)[3], ushort (*image)[4])
 }
 
 // restores red and blue
-void RawImageSource::restore_from_buffer(ushort (*image)[4], ushort (*buffer)[3])
+void RawImageSource::restore_from_buffer(float (*image)[4], float (*buffer)[3])
 {
 	for (int indx=0; indx < CACHESIZE*CACHESIZE; indx++) {
 		image[indx][0]=buffer[indx][0]; //R
@@ -1208,7 +1208,7 @@ void RawImageSource::restore_from_buffer(ushort (*image)[4], ushort (*buffer)[3]
 }
 
 // First pass green interpolation
-void RawImageSource::dcb_hid(ushort (*image)[4],ushort (*bufferH)[3], ushort (*bufferV)[3], int x0, int y0)
+void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*bufferV)[3], int x0, int y0)
 {
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1278,7 +1278,7 @@ void RawImageSource::dcb_hid(ushort (*image)[4],ushort (*bufferH)[3], ushort (*b
 
 
 // missing colors are interpolated
-void RawImageSource::dcb_color(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_color(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1304,7 +1304,7 @@ void RawImageSource::dcb_color(ushort (*image)[4], int x0, int y0)
 }
 
 // green correction
-void RawImageSource::dcb_hid2(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_hid2(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1324,7 +1324,7 @@ void RawImageSource::dcb_hid2(ushort (*image)[4], int x0, int y0)
 // 1 = vertical
 // 0 = horizontal
 // saved in image[][3]
-void RawImageSource::dcb_map(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_map(float (*image)[4], int x0, int y0)
 {	
 	const int u=4*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1332,7 +1332,7 @@ void RawImageSource::dcb_map(ushort (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
-			ushort *pix = &(image[indx][1]);
+			float *pix = &(image[indx][1]);
 			if ( *pix > ( pix[-4] + pix[+4] + pix[-u] + pix[+u])/4 )
 				image[indx][3] = ((MIN( pix[-4], pix[+4]) + pix[-4] + pix[+4] ) < (MIN( pix[-u], pix[+u]) + pix[-u] + pix[+u]));
 			else
@@ -1343,7 +1343,7 @@ void RawImageSource::dcb_map(ushort (*image)[4], int x0, int y0)
 
 
 // interpolated green pixels are corrected using the map
-void RawImageSource::dcb_correction(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_correction(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1360,7 +1360,7 @@ void RawImageSource::dcb_correction(ushort (*image)[4], int x0, int y0)
 }
 
 // R and B smoothing using green contrast, all pixels except 2 pixel wide border
-void RawImageSource::dcb_pp(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_pp(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1371,7 +1371,7 @@ void RawImageSource::dcb_pp(ushort (*image)[4], int x0, int y0)
 			//int r1 = ( image[indx-1][0] + image[indx+1][0] + image[indx-u][0] + image[indx+u][0] + image[indx-u-1][0] + image[indx+u+1][0] + image[indx-u+1][0] + image[indx+u-1][0])/8;
 			//int g1 = ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1] + image[indx-u-1][1] + image[indx+u+1][1] + image[indx-u+1][1] + image[indx+u-1][1])/8;
 			//int b1 = ( image[indx-1][2] + image[indx+1][2] + image[indx-u][2] + image[indx+u][2] + image[indx-u-1][2] + image[indx+u+1][2] + image[indx-u+1][2] + image[indx+u-1][2])/8;
-			ushort (*pix)[4] = image+(indx-u-1);
+			float (*pix)[4] = image+(indx-u-1);
 			int r1 = (*pix)[0];
 			int g1 = (*pix)[1];
 			int b1 = (*pix)[2];
@@ -1415,7 +1415,7 @@ void RawImageSource::dcb_pp(ushort (*image)[4], int x0, int y0)
 
 // interpolated green pixels are corrected using the map
 // with correction
-void RawImageSource::dcb_correction2(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_correction2(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1433,7 +1433,7 @@ void RawImageSource::dcb_correction2(ushort (*image)[4], int x0, int y0)
 }
 
 // image refinement
-void RawImageSource::dcb_refinement(ushort (*image)[4], int x0, int y0)
+void RawImageSource::dcb_refinement(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE, v=2*CACHESIZE, w=3*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1476,7 +1476,7 @@ void RawImageSource::dcb_refinement(ushort (*image)[4], int x0, int y0)
 }
 
 // missing colors are interpolated using high quality algorithm by Luis Sanz Rodr‚àö‚â†guez
-void RawImageSource::dcb_color_full(ushort (*image)[4], int x0, int y0, float (*chroma)[2])
+void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*chroma)[2])
 {
 	const int u=CACHESIZE, v=2*CACHESIZE, w=3*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
@@ -1539,20 +1539,20 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
     int tilesDone=0;
 #ifdef _OPENMP
 	int nthreads = omp_get_max_threads();
- 	ushort (**image)[4]  =  (ushort(**)[4]) calloc( nthreads,sizeof( void*) );
-	ushort (**image2)[3] =	(ushort(**)[3]) calloc( nthreads,sizeof( void*) );
-	ushort (**image3)[3] =	(ushort(**)[3]) calloc( nthreads,sizeof( void*) );
+ 	float (**image)[4]  =  (float(**)[4]) calloc( nthreads,sizeof( void*) );
+	float (**image2)[3] =	(float(**)[3]) calloc( nthreads,sizeof( void*) );
+	float (**image3)[3] =	(float(**)[3]) calloc( nthreads,sizeof( void*) );
 	float  (**chroma)[2] =  (float (**)[2]) calloc( nthreads,sizeof( void*) );
 	for(int i=0; i<nthreads; i++){
-		image[i] = (ushort(*)[4]) calloc( CACHESIZE*CACHESIZE, sizeof **image);
-		image2[i]= (ushort(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof **image2);
-		image3[i]= (ushort(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof **image3);
+		image[i] = (float(*)[4]) calloc( CACHESIZE*CACHESIZE, sizeof **image);
+		image2[i]= (float(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof **image2);
+		image3[i]= (float(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof **image3);
 		chroma[i]= (float (*)[2]) calloc( CACHESIZE*CACHESIZE, sizeof **chroma);
 	}
 #else
-	ushort (*image)[4]  = (ushort(*)[4]) calloc( CACHESIZE*CACHESIZE, sizeof *image);
-	ushort (*image2)[3] = (ushort(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof *image2);
-	ushort (*image3)[3] = (ushort(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof *image3);
+	float (*image)[4]  = (float(*)[4]) calloc( CACHESIZE*CACHESIZE, sizeof *image);
+	float (*image2)[3] = (float(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof *image2);
+	float (*image3)[3] = (float(*)[3]) calloc( CACHESIZE*CACHESIZE, sizeof *image3);
 	float  (*chroma)[2] = (float (*)[2]) calloc( CACHESIZE*CACHESIZE, sizeof *chroma);
 #endif
 
@@ -1565,14 +1565,14 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 
 #ifdef _OPENMP
     	int tid = omp_get_thread_num();
-    	ushort (*tile)[4]   = image[tid];
-    	ushort (*buffer)[3] = image2[tid];
-    	ushort (*buffer2)[3]= image3[tid];
+    	float (*tile)[4]   = image[tid];
+    	float (*buffer)[3] = image2[tid];
+    	float (*buffer2)[3]= image3[tid];
     	float  (*chrm)[2]   = chroma[tid];
 #else
-    	ushort (*tile)[4]   = image;
-    	ushort (*buffer)[3] = image2;
-    	ushort (*buffer2)[3]= image3;
+    	float (*tile)[4]   = image;
+    	float (*buffer)[3] = image2;
+    	float (*buffer2)[3]= image3;
     	float  (*chrm)[2]   = chroma;
 #endif
 
