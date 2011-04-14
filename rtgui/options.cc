@@ -151,6 +151,7 @@ void Options::setDefaults () {
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
+    rtSettings.LCMSSafeMode = false;
 
     rtSettings.verbose = false;
 }
@@ -312,6 +313,8 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
+
+    if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -453,6 +456,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
+    keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
