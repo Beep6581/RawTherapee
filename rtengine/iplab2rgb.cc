@@ -150,7 +150,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_8, settings->colorimetricIntent,
-            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+            settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         lcmsMutex->unlock ();
 
         // cmsDoTransform is relatively expensive
@@ -180,7 +180,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
                 buffer[iy++] = CLIP((int)z_);
             }
 
+            if (settings->LCMSSafeMode) lcmsMutex->lock ();
             cmsDoTransform (hTransform, buffer, image->data + ix, cw);
+            if (settings->LCMSSafeMode) lcmsMutex->unlock ();
         }
 
         cmsDeleteTransform(hTransform);
@@ -265,10 +267,12 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				za[j-cx] = CLIP((int)z_);
 			}
 		}
+
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
+
 		cmsDoTransform (hTransform, image->data, image->data, image->planestride);
 		cmsDeleteTransform(hTransform);
 	} else {

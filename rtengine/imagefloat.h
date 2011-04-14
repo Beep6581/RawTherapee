@@ -90,7 +90,7 @@ class Imagefloat : public ImageIO, public IImagefloat {
         virtual float** getGPlane () { return g; }
         virtual float** getBPlane () { return b; }
 
-        void ExecCMSTransform(cmsHTRANSFORM hTransform);
+        void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
     };
 };
 #endif

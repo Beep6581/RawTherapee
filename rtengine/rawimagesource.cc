@@ -30,6 +30,7 @@
 #include <ffmanager.h>
 #include <slicer.h>
 #include <iostream>
+#include <options.h>
 
 #include <improcfun.h>
 
@@ -1603,7 +1604,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
-            cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+            settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         lcmsMutex->unlock ();
 
         if (hTransform) {
@@ -1622,15 +1623,15 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                     }
             }
 
-            im->ExecCMSTransform(hTransform);
+            im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
         } else {
           // create the profile from camera
           lcmsMutex->lock ();
           hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent,
-              cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety    
+              settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety    
           lcmsMutex->unlock ();
 
-          im->ExecCMSTransform(hTransform);
+          im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
         }
 
         cmsDeleteTransform(hTransform);
@@ -1688,7 +1689,7 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE); //cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
         lcmsMutex->unlock ();
 
-		im->ExecCMSTransform(hTransform);
+		im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
 		cmsDeleteTransform(hTransform);
 */
         // in this case we avoid using the slllllooooooowwww lcms
@@ -1716,7 +1717,8 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 		out = iccStore->workingSpace (cmp.working);
 		//        out = iccStore->workingSpaceGamma (wProfile);
 		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent,
+            settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
 		lcmsMutex->unlock ();
 
 		if (hTransform) {
@@ -1733,14 +1735,15 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 					}
 			}
 
-			im->ExecCMSTransform(hTransform);
+			im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
 		}
 		else {
 			lcmsMutex->lock ();
-			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE);   
+			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent,
+                settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE);   
 			lcmsMutex->unlock ();
 
-			im->ExecCMSTransform(hTransform);
+			im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
 		}
 
 		cmsDeleteTransform(hTransform);
