@@ -128,14 +128,13 @@ skip_block: ;
 
 int RawImage::loadRaw (bool loadData, bool closeFile)
 {
-  ifname = safe_locale_from_utf8(filename).c_str();
+  ifname = filename.c_str();
   image = NULL;
   verbose = settings->verbose;
   oprof = NULL;
 
-  ifp = gfopen (ifname);
-  if (!ifp)
-    return 3;
+  ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+  if (!ifp) return 3;
 
   thumb_length = 0;
   thumb_offset = 0;

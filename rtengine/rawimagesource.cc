@@ -884,9 +884,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     }
 
     ri = new RawImage(fname);
-    int res = ri->loadRaw ();
-    if (res)
-        return res;
+    int errCode = ri->loadRaw ();
+    if (errCode) return errCode;
+
     ri->compress_image();
     if (plistener) {
         plistener->setProgress (0.8);
