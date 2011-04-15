@@ -19,6 +19,8 @@
 #include <crophandler.h>
 #undef THREAD_PRIORITY_NORMAL
 
+#include <cstring>
+
 using namespace rtengine;
 
 CropHandler::CropHandler () 

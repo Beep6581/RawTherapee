@@ -25,6 +25,8 @@
 #include <guiutils.h>
 #include <safegtk.h>
 
+#include <cstring>
+
 using namespace rtengine;
 
 BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {

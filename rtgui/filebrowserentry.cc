@@ -23,6 +23,8 @@
 #include <guiutils.h>
 #include <safegtk.h>
 
+#include <cstring>
+
 #define CROPRESIZEBORDER 4
 
 bool FileBrowserEntry::iconsLoaded = false;
