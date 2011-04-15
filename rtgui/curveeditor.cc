@@ -24,6 +24,8 @@
 #include <multilangmgr.h>
 #include <LUT.h>
 
+#include <cstring>
+
 extern Glib::ustring argv0;
 
 DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, (CurveEditorGroup*) ceGroup, ceSubGroup) {

@@ -61,6 +61,8 @@
 #define ARRAY2D_BYREFERENCE	4
 #define ARRAY2D_VERBOSE		8
 
+#include <cstring>
+
 template<typename T>
 class array2D {
 

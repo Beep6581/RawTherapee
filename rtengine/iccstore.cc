@@ -27,6 +27,8 @@
 #include <safegtk.h>
 #include <options.h>
 
+#include <cstring>
+
 namespace rtengine {
 
 const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
