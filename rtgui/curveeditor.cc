@@ -108,10 +108,6 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	typeconn  = curveType->signal_changed().connect (sigc::mem_fun(*this, &CurveEditor::typeSelectionChanged) );
 }
 
-CurveEditor::~CurveEditor () {
-
-}
-
 void CurveEditor::setCurve (const std::vector<double>& p) {
 	tempCurve = p;
 	group->setCurveExternal(this, p);
