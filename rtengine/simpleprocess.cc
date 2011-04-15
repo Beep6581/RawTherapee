@@ -44,7 +44,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         pl->setProgressStr ("PROGRESSBAR_PROCESSING");
         pl->setProgress (0.0);
     }
-    
+
     InitialImage* ii = job->initialImage;
     if (!ii) {
         ii = InitialImage::load (job->fname, job->isRaw, &errorCode);
@@ -98,13 +98,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else if (params.wb.method=="Auto")
         currWB = imgsrc->getAutoWB ();
 
-    Imagefloat* baseImg;
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw );
 	if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw );
 	if (pl) pl->setProgress (0.40);
-    baseImg = new Imagefloat (fw, fh);
+    Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
@@ -150,7 +149,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf curve (65536,0);
 	LUTf satcurve (65536,0);
 	LUTu dummy;
-	
+
     CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy);
 
 	LabImage* labView = new LabImage (fw,fh);
@@ -158,7 +157,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
-        delete shmap;
+    delete shmap;
 
     if (pl) 
         pl->setProgress (0.5);
@@ -183,9 +182,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
  	ipf.dirpyrdenoise (labView);
     ipf.sharpening (labView, (float**)buffer);
 
-    // color processing
-    /*ipf.colorCurve (labView, labView);
-    ipf.colordenoise (labView, buffer);*/
 
 
     // wavelet equalizer
@@ -201,7 +197,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (pl) pl->setProgress (0.60);
 
     // crop and convert to rgb16
-    Image16* readyImg;
     int cx = 0, cy = 0, cw = labView->W, ch = labView->H;
     if (params.crop.enabled) {
         cx = params.crop.x;
@@ -209,7 +204,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cw = params.crop.w;
         ch = params.crop.h;
     }
-    readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
+    Image16* readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
     delete labView;
     if (pl) pl->setProgress (0.70);
 
@@ -282,7 +277,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else
         readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 	
-	
+
     ProfileContent pc;
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
         pc = iccStore->getContent (params.icm.output);
@@ -293,7 +288,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     
     if (!job->initialImage)
         ii->decreaseRef ();
-    
+
     delete job;
     if (pl)
         pl->setProgress (0.75);

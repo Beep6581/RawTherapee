@@ -190,8 +190,6 @@ void Crop::update (int todo) {
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);
 	
-    // this in workinging space is held in parallel to allow analysis like shadow/highlight
-    cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, params.icm.working);
 	//parent->ipf.lab2rgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();
@@ -227,6 +225,9 @@ void Crop::update (int todo) {
 	}
 	*/
     if (cropImageListener) {
+        // this in workinging space is held in parallel to allow analysis like shadow/highlight
+        Image8 *cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, params.icm.working);
+
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)
             finalW = cropImg->getWidth()-leftBorder;
@@ -243,6 +244,7 @@ void Crop::update (int todo) {
         cropImageListener->setDetailedCrop (final, finaltrue, params.icm, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
         delete final;
 		delete finaltrue;
+        delete cropImgtrue;
     }
 }
 
@@ -345,7 +347,6 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         laboCrop = new LabImage (cropw, croph);    
         labnCrop = new LabImage (cropw, croph);    
         cropImg = new Image8 (cropw, croph);
-		cropImgtrue = new Image8 (cropw, croph);
 
         cshmap = new SHMap (cropw, croph, true);
         

@@ -119,8 +119,7 @@ namespace rtengine {
 			satcurvePoints.push_back(1); 
 			satcurvePoints.push_back(1+saturation/200.0); 
 		}
-		DiagonalCurve* satcurve = NULL;
-		satcurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+		DiagonalCurve* satcurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		// create a curve if needed
@@ -178,8 +177,8 @@ namespace rtengine {
 			boutCurve[i] = (65535.0 * dbcurve[i]);
 			satCurve[i] = (65535.0 * dscurve[i]);
 		}
-		//delete [] dcurve;
-		//delete satcurve;
+
+		delete satcurve;
 	}
 
 	
@@ -251,8 +250,7 @@ namespace rtengine {
 		brightcurvePoints.push_back(1); // white point
 		brightcurvePoints.push_back(1); // value at white point
 		
-		DiagonalCurve* brightcurve = NULL;
-		brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+		DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		float exp_scale = a;
@@ -347,8 +345,7 @@ namespace rtengine {
 			contrastcurvePoints.push_back(1); // white point
 			contrastcurvePoints.push_back(1); // value at white point
 			
-			DiagonalCurve* contrastcurve = NULL;
-			contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			// apply contrast enhancement
@@ -444,8 +441,7 @@ namespace rtengine {
 		brightcurvePoints.push_back(1); // white point
 		brightcurvePoints.push_back(1); // value at white point
 		
-		DiagonalCurve* brightcurve = NULL;
-		brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+		DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		for (int i=0; i<32768; i++) {//L values range up to 32767, higher values are for highlight overflow
@@ -494,14 +490,14 @@ namespace rtengine {
 			contrastcurvePoints.push_back(1); // white point
 			contrastcurvePoints.push_back(1); // value at white point
 			
-			DiagonalCurve* contrastcurve = NULL;
-			contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			// apply contrast enhancement
 			for (int i=0; i<32768; i++) {
 				dcurve[i]  = contrastcurve->getVal (dcurve[i]);
 			}
+
 			delete contrastcurve;
 		}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -560,13 +556,6 @@ void CurveFactory::init () {
     for (int i=0; i<256; i++)
         fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
     fclose (f);*/
-}
-
-void CurveFactory::cleanup () {
-
-  //delete [] gammatab;
-  //delete [] igammatab_srgb;
-  //delete [] gammatab_srgb;
 }
 
 }
