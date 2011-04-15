@@ -240,10 +240,10 @@ void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procp
     if (cropimg)
         delete [] cropimg;
     cropimg = NULL;
-	//if (cropimgtrue)
-    //    delete [] cropimgtrue;
-    //cropimgtrue = NULL;
-    
+	if (cropimgtrue)
+        delete [] cropimgtrue;
+    cropimgtrue = NULL;
+
     if (ax==cropX && ay==cropY && aw==cropW && ah==cropH && askip==(zoom>=1000?1:zoom)) {
         cropimg_width = im->getWidth ();
         cropimg_height = im->getHeight ();
