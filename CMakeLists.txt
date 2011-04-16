@@ -22,13 +22,13 @@ set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list 
 set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
 
 #loading the processor targets list
-set (PROC_LABEL "undefined")
-set (PROC_FLAGS "")
-if (PROC_TARGET_NUMBER GREATER 0)
-	include (ProcessorTargets.cmake)
+include (ProcessorTargets.cmake)
+set (PROC_LABEL "undefined" CACHE STRING "Target processor label, unused if PROC_TARGET_NUMBER = 0 or 2")
+set (PROC_FLAGS "" CACHE STRING "Target processor related build/link flags")
+if ((NOT(PROC_TARGET_NUMBER NOT EQUAL 0)) AND (NOT(PROC_TARGET_NUMBER EQUAL 2)))
 	set (PROC_LABEL ${PROC_TARGET_${PROC_TARGET_NUMBER}_LABEL})
 	set (PROC_FLAGS ${PROC_TARGET_${PROC_TARGET_NUMBER}_FLAGS})
-endif (PROC_TARGET_NUMBER GREATER 0)
+endif ()
 
 # if it exists, the PROC_FORCED_LABEL value is loaded in PROC_LABEL to override the one of ProcessorTargets
 if (DEFINED PROC_FORCED_LABEL)

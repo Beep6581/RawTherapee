@@ -13,7 +13,7 @@ a specific processor variation of the same type (e.g. core2, athlon64, which are
 version on a linux platform) has not been tested.
 
 By default, no processor is specified, so Cmake/GCC will build RT for your processor (or maybe a generic processor). Developers that are providing build to
-download then have to set the processor label manually (set to 'undefined' by default) with the PROC_FORCED_LABEL cmake's parameter (we assume that you know
+download then have to set the processor label manually (set to 'undefined' by default) with the PROC_LABEL cmake's parameter (we assume that you know
 how to specify a cmake parameter).
 
 Note for developers that handle an automated build system : Mercurial is requested in order to produce the build information file, but you build system will
@@ -63,11 +63,11 @@ Windows
 			  However, if you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
 			  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is set the PROC_TARGET_NUMBER parameter in cmo.txt
 			     to the right target number.
-			     If you choose the 'native' solution, you have to set the processor label manually in cmo.txt, by uncommenting and set the PROC_FORCED_LABEL
+			     If you choose the 'native' solution, you have to set the processor label manually in cmo.txt, by uncommenting and set the PROC_LABEL
 			     parameter. Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
-			  2. You don't need specific processor flags, so you'll let PROC_TARGET_NUMBER set to 0, but you have to set the PROC_FORCED_LABEL parameter
-			     in cmo.txt (don't forget to uncomment the line). Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor
-			     frequency if of no use.
+			  2. You don't need specific processor flags, so you'll let PROC_TARGET_NUMBER set to 0, but you have to set the PROC_LABEL parameter
+			     in cmo.txt (don't forget to uncomment the line). Please provide a short name, like "core i5" or "athlon64" (without double quote)...
+			     specifying the processor frequency in it is useless.
 
 
 	Building RT:
@@ -98,10 +98,10 @@ Windows
 		  If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
 		  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
 		     to cmake's command line
-		     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+		     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_LABEL:STRING=procLabel"
 		     in cmake's command line
 		     Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
-		  2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
+		  2. You don't need specific processor flags, you still have to set the PROC_LABEL parameter (see point 1 righ above)
 			- Type: mingw32-make.exe install
 			- You'll find the compiled program in the subdirectory named like the value of CMAKE_BUILD_TYPE ("Release" in this example)
 
@@ -120,8 +120,8 @@ Linux
 	Compile:
 		- Enter the root directory of the RawTherapee source tree
 		- Type: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
-		        developers that wants to provide a build has to set the PROC_FORCED_LABEL to their processor name, e.g.:
-		        cmake -DPROC_FORCED_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+		        developers that wants to provide a build has to set the PROC_LABEL to their processor name, e.g.:
+		        cmake -DPROC_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
 		- Type: make install
 		- You find the compiled program in the release directory (you can copy it anywhere you want)
 
@@ -145,10 +145,10 @@ Linux
 		If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
 		1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
 		   to cmake's command line
-		   If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+		   If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_LABEL:STRING=procLabel"
 		   in cmake's command line
 		   Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
-		2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
+		2. You don't need specific processor flags, you still have to set the PROC_LABEL parameter (see point 1 righ above)
 
 		Eclipse does not do 'make install' but only 'make all' so to get the release there are 2 ways.
 			1. type 'make install' in the console or,
@@ -176,10 +176,10 @@ Compile:
   If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
   1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
      to cmake's command line
-     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_FORCED_LABEL:STRING=procLabel"
+     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_LABEL:STRING=procLabel"
      in cmake's command line
      Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
-  2. You don't need specific processor flags, you still have to set the PROC_FORCED_LABEL parameter (see point 1 righ above)
+  2. You don't need specific processor flags, you still have to set the PROC_LABEL parameter (see point 1 righ above)
 - Type: make install
 - Type: ./tools/osx/make-app-bundle
 - You will find a RawTherapee.dmg file in release/ folder; this is the distribution release and can be run on any machine which meets the 
