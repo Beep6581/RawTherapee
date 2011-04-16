@@ -286,13 +286,25 @@ EditorPanel::~EditorPanel () {
 
     history->setHistoryBeforeLineListener (NULL);
     // the order is important!
+    iarea->setBeforeAfterViews (NULL, iarea);
     delete iarea;
     iarea = NULL;
+
+    if (beforeIpc)
+        beforeIpc->stopProcessing ();
+
     delete beforeIarea;
     beforeIarea = NULL;
 
+    if (beforeIpc)
+        beforeIpc->setPreviewImageListener (NULL);
+
     delete beforePreviewHandler;
-    
+    beforePreviewHandler = NULL;
+    if (beforeIpc)
+        rtengine::StagedImageProcessor::destroy (beforeIpc);
+    beforeIpc = NULL;
+
     close ();
 
     if (epih->pending)
