@@ -102,31 +102,30 @@ namespace rtengine {
 	
 	void ImProcFunctions :: dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams )
 	{
-		float gam = dnparams.gamma;
+		float gam = dnparams.gamma/3.0;
 		//float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 		
 		LUTf gamcurve(65536,0);
 		
-		DiagonalCurve* lumacurve = new DiagonalCurve (dnparams.lumcurve, CURVES_MIN_POLY_POINTS);
-		DiagonalCurve* chromacurve = new DiagonalCurve (dnparams.chromcurve, CURVES_MIN_POLY_POINTS);
-		LUTf Lcurve(65536);
-		LUTf abcurve(65536);
+		//DiagonalCurve* lumacurve = new DiagonalCurve (dnparams.lumcurve, CURVES_MIN_POLY_POINTS);
+		//DiagonalCurve* chromacurve = new DiagonalCurve (dnparams.chromcurve, CURVES_MIN_POLY_POINTS);
+		//LUTf Lcurve(65536);
+		//LUTf abcurve(65536);
 		for (int i=0; i<65536; i++) {
 			int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
-			//if (i<500)  printf("%d %d \n",i,g);
 			gamcurve[i] = CLIP(g);
-			float val = (float)i/65535.0;
+			/*float val = (float)i/65535.0;
 			float Lval = (2*(lumacurve->getVal(val)));
 			float abval = (2*(chromacurve->getVal(val)));
 			
 			Lcurve[i] = SQR(Lval);
 			abcurve[i] = SQR(abval);
-			if (i % 1000 ==0) printf("%d Lmult=%f abmult=%f \n",i,Lcurve[i],abcurve[i]);
+			if (i % 1000 ==0) printf("%d Lmult=%f abmult=%f \n",i,Lcurve[i],abcurve[i]);*/
 		}
-		delete lumacurve;
-		delete chromacurve;
+		//delete lumacurve;
+		//delete chromacurve;
 		
 		
 		
@@ -240,13 +239,13 @@ namespace rtengine {
 			
 			int scale = scales[level];
 			int pitch = pitches[level];
-			idirpyr(dirpyrLablo[level], dirpyrLablo[level-1], level, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma, Lcurve, abcurve );
+			idirpyr(dirpyrLablo[level], dirpyrLablo[level-1], level, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma/*, Lcurve, abcurve*/ );
 		}
 		
 		
 		scale = scales[0];
 		pitch = pitches[0];
-		idirpyr(dirpyrLablo[0], dst, 0, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma, Lcurve, abcurve );
+		idirpyr(dirpyrLablo[0], dst, 0, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma/*, Lcurve, abcurve*/ );
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -366,7 +365,7 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	void ImProcFunctions::idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab, \
-								  int pitch, int scale, const int luma, const int chroma, LUTf & Lcurve, LUTf & abcurve )
+								  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ )
 	{
 		
 		int width = data_fine->W;
@@ -431,7 +430,7 @@ namespace rtengine {
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-data_coarse->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+SQR(hipass[1])+SQR(hipass[2])+0.001;
-						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L * Lcurve[data_coarse->L[i][j]]);
+						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L /* * Lcurve[data_coarse->L[i][j]]*/);
 						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
 						//data_fine->L[i][j] = CLIP(hipass[0]+data_coarse->L[i][j]);
 					}
@@ -621,7 +620,7 @@ namespace rtengine {
 					if (level<2) {
 						hipass[0] = data_fine->L[i][j]-smooth->L[i][j];
 						hpffluct[0]=SQR(hipass[0])+SQR(hipass[1])+SQR(hipass[2])+0.001;
-						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L * Lcurve[smooth->L[i][j]]);
+						nrfactorL[i][j] = (1.0+hpffluct[0])/(1.0+hpffluct[0]+noisevar_L /* * Lcurve[smooth->L[i][j]]*/);
 						//hipass[0] *= hpffluct[0]/(hpffluct[0]+noisevar_L);
 						//data_fine->L[i][j] = CLIP(hipass[0]+smooth->L[i][j]);
 					}
@@ -631,7 +630,7 @@ namespace rtengine {
 					//hipass[2] = data_fine->b[i][j]-smooth->b[i][j];
 					hpffluct[1]=SQR(hipass[1]*tonefactor)+0.001;
 					hpffluct[2]=SQR(hipass[2]*tonefactor)+0.001;
-					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB * abcurve[smooth->L[i][j]]);
+					nrfactor = (hpffluct[1]+hpffluct[2]) /((hpffluct[1]+hpffluct[2]) + noisevar_ab * NRWT_AB /* * abcurve[smooth->L[i][j]]*/);
 
 					hipass[1] *= nrfactor;
 					hipass[2] *= nrfactor;
