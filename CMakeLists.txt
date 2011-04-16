@@ -171,15 +171,76 @@ else (AUTOMATED_BUILD_SYSTEM)
     set(PROC_BIT_DEPTH 64 bits)
   endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
+  string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+
   #generating AboutThisBuild.txt
   if (WIN32)
-    include (About-Windows.cmake)
+
+    add_custom_target (AboutFile ALL
+      COMMAND ${CMAKE_COMMAND}
+              -DSYSTEM:STRING=Windows
+              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
+              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
+              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			  -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+              -DCXX_FLAGS:STRING=\"${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
+              -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
+              -DOPTION_OMP:STRING=${OPTION_OMP}
+              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
+              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Windows.cmake
+      COMMENT "Creating the about file"
+    )
+    find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
+
   elseif (APPLE)
-    include (About-Apple.cmake)
+ 
+    add_custom_target (AboutFile ALL
+      COMMAND ${CMAKE_COMMAND}
+              -DSYSTEM:STRING=Apple
+              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
+              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
+              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			  -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+              -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
+              -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
+              -DOPTION_OMP:STRING=${OPTION_OMP}
+              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
+              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Apple.cmake
+      COMMENT "Creating the about file"
+	)
+    find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
+    find_file(HG_CMD hg)
+
   else (WIN32)
-    include (About-Linux.cmake)
+ 
+    add_custom_target (AboutFile ALL
+      COMMAND ${CMAKE_COMMAND}
+              -DSYSTEM:STRING=Linux
+              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
+              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
+              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			  -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+              -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
+              -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
+              -DOPTION_OMP:STRING=${OPTION_OMP}
+              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
+              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Linux.cmake
+      COMMENT "Creating the about file"
+	)
+    find_file(HG_CMD hg)
+
   endif (WIN32)
+ 
   add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+
+  if (HG_CMD STREQUAL HG_CMD-NOTFOUND)
+    message(FATAL_ERROR "hg command not found!")
+  else (HG_CMD STREQUAL HG_CMD-NOTFOUND)
+    message(STATUS "hg command found: ${HG_CMD}")
+  endif (HG_CMD STREQUAL HG_CMD-NOTFOUND)
 
 endif (AUTOMATED_BUILD_SYSTEM)
 
