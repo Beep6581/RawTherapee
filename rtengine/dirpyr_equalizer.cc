@@ -25,6 +25,7 @@
 #include <labimage.h>
 #include <improcfun.h>
 #include <rawimagesource.h>
+#include <array2D.h>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -82,13 +83,11 @@ namespace rtengine {
 		
 		
 		int level;
-		float ** buffer;
+		array2D<float> buffer (srcwidth, srcheight);
 		
-		float ** dirpyrlo[maxlevel]; 
+		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
-		
-		buffer = allocArray<float> (srcwidth, srcheight);
-		
+				
 		for (int i=0; i<srcheight; i++)
 			for (int j=0; j<srcwidth; j++) {
 				buffer[i][j]=0;
@@ -98,9 +97,7 @@ namespace rtengine {
 		
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
-		
-		dirpyrlo[0] = allocArray<float> (srcwidth, srcheight);
-		
+				
 		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, rangefn, 0, scale, mult );
 		
 		level = 1;
@@ -108,9 +105,7 @@ namespace rtengine {
 		while(level < lastlevel)
 		{
 			scale = scales[level];
-			
-			dirpyrlo[level] = allocArray<float>(srcwidth, srcheight);
-			
+						
 			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, rangefn, level, scale, mult );
 			
 			level ++;
@@ -154,12 +149,6 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		
-		for(int i = 0; i < lastlevel; i++)
-		{
-			freeArray<float>(dirpyrlo[i], srcheight);
-		}
-		
-		freeArray<float>(buffer, srcheight);
 				
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
