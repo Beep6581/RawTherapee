@@ -178,11 +178,12 @@ else (AUTOMATED_BUILD_SYSTEM)
 
     add_custom_target (AboutFile ALL
       COMMAND ${CMAKE_COMMAND}
+              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
               -DSYSTEM:STRING=Windows
               -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
               -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
               -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			  -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
               -DCXX_FLAGS:STRING=\"${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
               -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
               -DOPTION_OMP:STRING=${OPTION_OMP}
@@ -197,11 +198,12 @@ else (AUTOMATED_BUILD_SYSTEM)
  
     add_custom_target (AboutFile ALL
       COMMAND ${CMAKE_COMMAND}
+              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
               -DSYSTEM:STRING=Apple
               -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
               -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
               -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			  -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
               -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
@@ -209,7 +211,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Apple.cmake
       COMMENT "Creating the about file"
-	)
+    )
     find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
     find_file(HG_CMD hg)
 
@@ -217,11 +219,12 @@ else (AUTOMATED_BUILD_SYSTEM)
  
     add_custom_target (AboutFile ALL
       COMMAND ${CMAKE_COMMAND}
+              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
               -DSYSTEM:STRING=Linux
               -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
               -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
               -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			  -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
               -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
@@ -229,7 +232,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Linux.cmake
       COMMENT "Creating the about file"
-	)
+    )
     find_file(HG_CMD hg)
 
   endif (WIN32)
