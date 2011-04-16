@@ -187,7 +187,7 @@ Windows
 
 		METHOD 1:
 			Requirements:
-			- MinGW + MSYS (FIXME: Do we talk
+			- MinGW + MSYS
 			- CMake
 			- GTK and GTKMM development environments
 
@@ -208,14 +208,15 @@ Windows
 			Compile:
 			- Start a standard DOS command line interface (WIN + "R" -> "cmd")
 			- Enter the root directory of the RawTherapee source tree (type: cd C:\Absolute\Path\To\RawTherapee_sourceTree)
-		  If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
-		  1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
-		     to cmake's command line
-		     If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_LABEL:STRING=procLabel"
-		     in cmake's command line
-		     Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
-		  2. You don't need specific processor flags, you still have to set the PROC_LABEL parameter (see point 1 righ above)
-			- Type: mingw32-make.exe install
+			- Type: cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt .
+			  If you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
+			    1. You pickup a target processor from "ProcessorTargets.cmake": all you have to do is adding "-D PROC_TARGET_NUMBER:STRING=number"
+			       to cmake's command line
+			       If you choose the 'native' solution's number, you have to set the processor label manually by setting "-D PROC_LABEL:STRING=procLabel"
+			       in cmake's command line
+			       Please provide a short name, like "core i5" or "athlon64" (without double quote)... processor frequency if of no use.
+			    2. You don't need specific processor flags, you still have to set the PROC_LABEL parameter (see point 1 righ above)
+			- Type: mingw32-make install
 			- You'll find the compiled program in the subdirectory named like the value of CMAKE_BUILD_TYPE ("Release" in this example)
 
 Linux
