@@ -543,13 +543,13 @@ void RawImageSource::hphd_demosaic () {
 #else
   hphd_horizontal (hpmap, 0, H);
 #endif
-  freeArray<float>(hpmap, H);
 
+  hphd_green (hpmap);
+  freeArray<float>(hpmap, H);
+  
   if (plistener) 
     plistener->setProgress (0.66);
 
-    
-  hphd_green (hpmap);
   for (int i=0; i<H; i++) {
 	  if (i==0)
 		  // rm, gm, bm must be recovered
