@@ -247,13 +247,22 @@ EditorPanel::~EditorPanel () {
 
     history->setHistoryBeforeLineListener (NULL);
     // the order is important!
+    iarea->setBeforeAfterViews (NULL, iarea);
     delete iarea;
     iarea = NULL;
+    if (beforeIpc)
+        beforeIpc->stopProcessing ();
+
     delete beforeIarea;
     beforeIarea = NULL;
+    if (beforeIpc)
+        beforeIpc->setPreviewImageListener (NULL);
 
     delete beforePreviewHandler;
-    
+    beforePreviewHandler = NULL;
+    if (beforeIpc)
+        rtengine::StagedImageProcessor::destroy (beforeIpc);
+    beforeIpc = NULL;
     close ();
 
     if (epih->pending)
@@ -1062,6 +1071,10 @@ void EditorPanel::beforeAfterToggled () {
     }
 
     if (beforeAfter->get_active ()) {
+        int errorCode=0;
+        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType()==FT_Raw , &errorCode, NULL);
+        if( !beforeImg || errorCode )
+        	return;
 
         beforeIarea = new ImageAreaPanel ();
 
@@ -1081,8 +1094,8 @@ void EditorPanel::beforeAfterToggled () {
         beforeAfterBox->show_all ();
 
         beforePreviewHandler = new PreviewHandler ();
-        isrc->increaseRef ();
-        beforeIpc = rtengine::StagedImageProcessor::create (isrc);
+
+        beforeIpc = rtengine::StagedImageProcessor::create (beforeImg);
         beforeIpc->setPreviewScale (10);
         beforeIpc->setPreviewImageListener (beforePreviewHandler);
         beforeIarea->imageArea->setPreviewHandler (beforePreviewHandler);
