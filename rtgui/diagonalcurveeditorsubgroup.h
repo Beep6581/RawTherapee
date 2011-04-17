@@ -45,6 +45,8 @@ protected:
 
 	Gtk::Button* saveCustom;
 	Gtk::Button* loadCustom;
+	Gtk::Button* copyCustom;
+	Gtk::Button* pasteCustom;
 	Gtk::Button* saveNURBS;
 	Gtk::Button* loadNURBS;
 
@@ -64,6 +66,8 @@ protected:
 	void restoreDisplayedHistogram ();
 	void savePressed ();
 	void loadPressed ();
+	void copyPressed ();
+	void pastePressed ();
 	void switchGUI();
 	bool curveReset (int cType);
 	void removeEditor ();

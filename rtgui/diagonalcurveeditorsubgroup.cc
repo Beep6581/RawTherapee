@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <clipboard.h>
 #include <gtkmm.h>
 #include <fstream>
 #include <string>
@@ -53,17 +54,31 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	saveCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
 	loadCustom = Gtk::manage (new Gtk::Button ());
 	loadCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+	copyCustom = Gtk::manage (new Gtk::Button ());
+        copyCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-copy"), Gtk::ICON_SIZE_BUTTON)));
+        pasteCustom = Gtk::manage (new Gtk::Button ());
+        pasteCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-paste"), Gtk::ICON_SIZE_BUTTON)));
+
 
 	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
+        custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
+        custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
+
 
 	customCurveBox->pack_end (*custombbox, Gtk::PACK_SHRINK, 0);
 	customCurveBox->show_all ();
 
 	saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
+        copyCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
+        pasteCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
+ 
 	saveCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
+        copyCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
+        pasteCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
+
 
 	// NURBS curve
 	NURBSCurveBox = new Gtk::HBox ();
@@ -297,6 +312,33 @@ void DiagonalCurveEditorSubGroup::loadPressed () {
 		}
     }
 }
+
+void DiagonalCurveEditorSubGroup::copyPressed () {
+
+     std::vector<double> curve;
+
+                switch (parent->displayedCurve->selected) {
+                case DCT_Spline:                // custom
+                        curve = customCurve->getPoints (); 
+                        clipboard.setCurveData (curve);
+                        break;
+                }   
+
+}
+
+void DiagonalCurveEditorSubGroup::pastePressed () {
+
+     std::vector<double> curve;
+
+     if (!clipboard.hasCurveData()) {
+         return; }   
+     curve = clipboard.getCurveData (); 
+
+     customCurve->setPoints (curve);
+     customCurve->queue_draw (); 
+     customCurve->notifyListener (); 
+}
+
 
 /*
  * Store the curves of the currently displayed type from the widgets to the CurveEditor object

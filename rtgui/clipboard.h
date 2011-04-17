@@ -28,6 +28,9 @@ class Clipboard {
     std::vector<rtengine::procparams::IPTCPair> iptc;
     bool _hasProcParams;
     rtengine::procparams::ProcParams procParams;
+    bool _hasCurveData;
+    std::vector<double> curve;
+
 
     public:
         void                                               setIPTC (const std::vector<rtengine::procparams::IPTCPair>& iptcc) { iptc = iptcc; _hasIPTC = true;}
@@ -37,6 +40,12 @@ class Clipboard {
         void                                               setProcParams (const rtengine::procparams::ProcParams& pparams) { procParams = pparams; _hasProcParams = true; }
         const rtengine::procparams::ProcParams&            getProcParams ()                                                { return procParams; }
         bool                                               hasProcParams () { return _hasProcParams; }
+
+        void                                               setCurveData (std::vector<double>& p ) { curve = p;  _hasCurveData = true; return; }
+        const std::vector<double> &                        getCurveData ()                       { return curve; }
+        bool                                               hasCurveData ()                       { return _hasCurveData; }
+
+
 };
 
 extern Clipboard clipboard;
