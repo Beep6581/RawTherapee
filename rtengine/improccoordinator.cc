@@ -32,7 +32,7 @@ ImProcCoordinator::ImProcCoordinator ()
     : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
     pW(-1), pH(-1), plistener(NULL),fineDetailsProcessed(false),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
-    changeSinceLast(0), updaterRunning(false), destroying(false) {
+    changeSinceLast(0), updaterRunning(false), destroying(false), workimg(NULL) {
 
     hltonecurve(65536,0);
     shtonecurve(65536,0);//,1);
@@ -250,7 +250,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         try
         {
             ipf.lab2rgb (nprevl, previmg);
-			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        }
+            delete workimg;
+			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        
+        }
         catch(char * str)
         {
            progress ("Error converting file...",0);
@@ -297,12 +299,14 @@ void ImProcCoordinator::freeAll () {
         delete orig_prev;
         delete oprevl;
         delete nprevl;
+        
         if (imageListener) {
             imageListener->delImage (previmg);
         }
         else
             delete previmg;
-		delete workimg;
+		
+        delete workimg;
         delete shmap;
         for (int i=0; i<pH; i++)
             delete [] buffer[i];
