@@ -151,7 +151,7 @@ void Options::setDefaults () {
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
-    rtSettings.LCMSSafeMode = false;
+    rtSettings.LCMSSafeMode = true;
 
     rtSettings.verbose = false;
 }
@@ -314,7 +314,8 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
 
-    if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
+    // Disabled (default is true) till issues are sorted out
+    //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
