@@ -109,9 +109,10 @@ class FlatCurveEditor : public CurveEditor {
 	protected:
 		// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
 		std::vector<double> controlPointsCurveEd;
+		bool periodic;
 
 	public:
-		FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
+		FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic = true);
 		std::vector<double> getCurve ();
 };
 
