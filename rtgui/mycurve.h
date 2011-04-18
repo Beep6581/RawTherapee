@@ -70,12 +70,25 @@ class MyCurve : public Gtk::DrawingArea {
 		std::vector<Gdk::Point> upoint;
 		std::vector<Gdk::Point> lpoint;
 		bool buttonPressed;
-		enum SnapToType snapTo;
+		/*
+		 * snapToElmt must be interpreted like this:
+		 * -100     : no element (default)
+		 * -3       : maximum value
+		 * -2       : identity value
+		 * -1       : minimum value
+		 * [0;1000[ : control point that it's snapped to
+		 * >=1000   : moved control point which is snapped to to the line made by it neighbors
+		 */
+		int snapToElmt;
+		bool snapTo;
+		double snapToMinDist;
+		double snapToVal;
 		MyCurveIdleHelper* mcih;
 		enum ResizeState sized;
 
 	    virtual std::vector<double> get_vector (int veclen) = 0;
 		int getGraphMinSize() { return GRAPH_SIZE + RADIUS + 1; }
+		bool snapCoordinate(double testedVal, double realVal);
 
 	public:
 		MyCurve ();

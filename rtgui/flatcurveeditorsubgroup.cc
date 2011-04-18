@@ -72,8 +72,8 @@ FlatCurveEditorSubGroup::~FlatCurveEditorSubGroup() {
 /*
  * Add a new curve to the curves list
  */
-FlatCurveEditor* FlatCurveEditorSubGroup::addCurve(Glib::ustring curveLabel) {
-	FlatCurveEditor* newCE = new FlatCurveEditor(curveLabel, parent, this);
+FlatCurveEditor* FlatCurveEditorSubGroup::addCurve(Glib::ustring curveLabel, bool isPeriodic) {
+	FlatCurveEditor* newCE = new FlatCurveEditor(curveLabel, parent, this, isPeriodic);
 
 	// Initialization of the new curve
 	storeCurveValues(newCE, getCurveFromGUI(FCT_MinMaxCPoints));
@@ -99,6 +99,7 @@ void FlatCurveEditorSubGroup::switchGUI() {
 
 		switch((FlatCurveType)(dCurve->curveType->getSelected())) {
 		case (FCT_MinMaxCPoints):
+			CPointsCurve->setPeriodicity(dCurve->periodic);		// Setting Periodicity before setting points
 			CPointsCurve->setPoints (dCurve->controlPointsCurveEd);
 			parent->pack_start (*CPointsCurveBox);
 			CPointsCurveBox->check_resize();
@@ -196,7 +197,7 @@ void FlatCurveEditorSubGroup::restoreDisplayedHistogram() {
 		//paramCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
 		CPointsCurve->updateBackgroundHistogram (parent->displayedCurve->histogram);
 	}
-	
+
 }
 
 void FlatCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {

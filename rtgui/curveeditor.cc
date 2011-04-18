@@ -56,7 +56,9 @@ std::vector<double> DiagonalCurveEditor::getCurve () {
 	}
 }
 
-FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, (CurveEditorGroup*) ceGroup, ceSubGroup) {
+FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic) : CurveEditor::CurveEditor(text, (CurveEditorGroup*) ceGroup, ceSubGroup) {
+
+	periodic = isPeriodic;
 
     // Order set in the same order than "enum FlatCurveType". Shouldn't change, for compatibility reason
     curveType->addEntry(argv0+"/images/curveType-flatLinear.png", M("CURVEEDITOR_LINEAR"));				// 0 Linear

@@ -93,7 +93,7 @@ class MyFlatCurve : public MyCurve {
 		double minDistanceX;    	// X minimal distance before point suppression
 		double minDistanceY;    	// Y minimal distance before point suppression
 		double deletedPointX;		// Backup of the X value of the edited point, when deleted while being dragged
-		HandlePosition leftTanHandle;		// XY coordinate if the upper left and bottom right corner of the left tangent handle
+		HandlePosition leftTanHandle;	// XY coordinate if the upper left and bottom right corner of the left tangent handle
 		HandlePosition rightTanHandle;	// XY coordinate if the upper left and bottom right corner of the right tangent handle
 		bool tanHandlesDisplayed;	// True if the tangent handles are displayed
 		bool periodic;			// Flat curves are periodic by default
@@ -114,6 +114,7 @@ class MyFlatCurve : public MyCurve {
 		MyFlatCurve ();
 		//~MyFlatCurve ();
 		std::vector<double> getPoints ();
+		void setPeriodicity (bool isPeriodic) { periodic = isPeriodic; };
 		void setPoints (const std::vector<double>& p);
 		void setType (FlatCurveType t);
 		bool handleEvents (GdkEvent* event);

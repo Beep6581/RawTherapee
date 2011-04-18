@@ -178,7 +178,10 @@ void MyDiagonalCurve::draw (int handle) {
     cr->stroke ();
 
     // draw f(x)=x line
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    if (snapToElmt == -2)
+        cr->set_source_rgb (1.0, 0.0, 0.0);
+    else
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     std::valarray<double> ds (1);
     ds[0] = 4;
     cr->set_dash (ds, 0);
@@ -205,20 +208,30 @@ void MyDiagonalCurve::draw (int handle) {
 
     // draw the cage of the NURBS curve
     if (curve.type==DCT_NURBS) {
+    	unsigned int nbPoints;
         std::valarray<double> ch_ds (1);
         ch_ds[0] = 2;
         cr->set_dash (ch_ds, 0);
         cr->set_source_rgb (0.0, 0.0, 0.0);
         std::vector<double> points = getPoints();
-        for (int i = 1; i < (int)points.size(); ) {
-			double x = ((innerWidth-1) * points[i++] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
-			double y = innerHeight - ((innerHeight-1) * points[i++] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
-			if (i==3)
-				cr->move_to (x, y);
+        nbPoints = ((int)points.size()-1)/2;
+        for (unsigned int i = 1; i < nbPoints; i++) {
+        	int pos = i*2+1;
+
+        	double x1 = ((innerWidth-1) * points[pos-2] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
+			double y1 = innerHeight - ((innerHeight-1) * points[pos-1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
+			double x2 = ((innerWidth-1) * points[pos] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
+			double y2 = innerHeight - ((innerHeight-1) * points[pos+1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
+
+			// set the color of the line when the point is snapped to the cage
+			if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt-1000)) || (i == (snapToElmt-999))))
+				cr->set_source_rgb (1.0, 0.0, 0.0);
 			else
-				cr->line_to (x, y);
+				cr->set_source_rgb (0.0, 0.0, 0.0);
+			cr->move_to (x1, y1);
+			cr->line_to (x2, y2);
+			cr->stroke ();
         }
-        cr->stroke ();
         cr->unset_dash ();
     }
 
@@ -232,7 +245,17 @@ void MyDiagonalCurve::draw (int handle) {
     // draw bullets
     if (curve.type!=DCT_Parametric)
         for (int i = 0; i < (int)curve.x.size(); ++i) {
-            cr->set_source_rgb ((i == handle ? 1.0 : 0.0), 0.0, 0.0);
+        	if (curve.x[i] == -1) continue;
+        	if (snapToElmt >= 1000) {
+        		int pt = snapToElmt-1000;
+        		if (i >= (pt-1) && i <= (pt+1))
+        			cr->set_source_rgb(1.0, 0.0, 0.0);
+        		else
+        			cr->set_source_rgb(0.0, 0.0, 0.0);
+        	}
+        	else
+        		cr->set_source_rgb ((i == handle || i == snapToElmt ? 1.0 : 0.0), 0.0, 0.0);
+
             double x = ((innerWidth-1) * curve.x[i] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
             double y = innerHeight - ((innerHeight-1) * curve.y[i] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
 
@@ -297,6 +320,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		break;
 
 	case Gdk::BUTTON_PRESS:
+		snapToElmt = -100;
 		if (curve.type!=DCT_Parametric) {
 			if (event->button.button == 1) {
 				buttonPressed = true;
@@ -338,6 +362,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		break;
 
 	case Gdk::BUTTON_RELEASE:
+		snapToElmt = -100;
 		if (curve.type!=DCT_Parametric) {
 			if (buttonPressed && event->button.button == 1) {
 				buttonPressed = false;
@@ -398,7 +423,13 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		break;
 
 	case Gdk::MOTION_NOTIFY:
+		snapToElmt = -100;
 		if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
+
+			snapToMinDist = 10.;
+			snapToVal = 0.;
+			snapToElmt = -100;
+
 			// get the pointer position
 			getCursorPosition(event);
 
@@ -439,6 +470,9 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				ugpX += deltaX;
 				ugpY += deltaY;
 
+				// the unclamped grabbed point is brought back in the range when snapTo is active
+				if (snapTo) ugpY = CLAMP(ugpY, 0.0, 1.0);
+
 				// handling limitations along X axis
 				if (ugpX >= rightDeletionBound && (grab_point > 0 && grab_point < (num-1))) {
 					curve.x[grab_point] = -1.;
@@ -457,9 +491,39 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				else if (ugpY <= bottomDeletionBound && grab_point != 0 && grab_point != num-1) {
 					curve.x[grab_point] = -1.;
 				}
-				else
-					// nextPosY is in the bounds
-					curve.y[grab_point] = CLAMP(ugpY, 0.0, 1.0);
+				else {
+					// snapping point to specific values
+					if (snapTo && curve.x[grab_point] != -1.) {
+						if (grab_point > 0 && grab_point < (curve.y.size()-1)) {
+							double prevX = curve.x[grab_point-1];
+							double prevY = curve.y[grab_point-1];
+							double nextX = curve.x[grab_point+1];
+							double nextY = curve.y[grab_point+1];
+
+							double ratio = (curve.x[grab_point]-prevX)/(nextX-prevX);
+							double y = (nextY-prevY) * ratio + prevY;
+
+							if (snapCoordinate(y, ugpY)) snapToElmt = 1000+grab_point;
+						}
+						if (grab_point > 0) {
+							int prevP = grab_point-1;
+							if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
+						}
+						if (grab_point < (curve.y.size()-1)) {
+							int nextP = grab_point+1;
+							if (snapCoordinate(curve.y[nextP], ugpY)) snapToElmt = nextP;
+						}
+						if (snapCoordinate(1.0,                 ugpY)) snapToElmt = -3;
+						if (snapCoordinate(curve.x[grab_point], ugpY)) snapToElmt = -2;
+						if (snapCoordinate(0.0,                 ugpY)) snapToElmt = -1;
+
+						curve.y[grab_point] = snapToVal;
+					}
+					else {
+						// nextPosY is in the bounds
+						curve.y[grab_point] = CLAMP(ugpY, 0.0, 1.0);
+					}
+				}
 
 				if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
 					// we recalculate the curve only if we have to
@@ -529,9 +593,8 @@ void MyDiagonalCurve::getCursorPosition(GdkEvent* event) {
     	int shift_key = mod_type & GDK_SHIFT_MASK;
 
     	// the increment get smaller if modifier key are used, and "snap to" may be enabled
-    	if      (control_key && shift_key) { snapTo = ST_Neighbors; }
-    	else if (control_key)              { snapTo = ST_Identity;  }
-    	else if (shift_key)                { incrementX *= 0.04; incrementY *= 0.04; }
+    	if (control_key) { incrementX *= 0.05; incrementY *= 0.05; }
+    	if (shift_key)   { snapTo = true; }
 
     	deltaX = (double)(cursorX - prevCursorX) * incrementX;
     	deltaY = (double)(cursorY - prevCursorY) * incrementY;
@@ -660,16 +723,16 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 	
     if (hist!=NULL) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));
-		for (int i=0; i<256; i++) bghist[i]=hist[i];
-		//hist = bghist;
+        for (int i=0; i<256; i++) bghist[i]=hist[i];
+        //hist = bghist;
         bghistvalid = true;
     }
     else
         bghistvalid = false;
-	
+
     mcih->pending++;
     g_idle_add (diagonalmchistupdate, mcih);
-	
+
 }
 
 void MyDiagonalCurve::reset() {
