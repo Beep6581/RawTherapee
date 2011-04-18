@@ -55,8 +55,10 @@ void CurveEditorGroup::hideCurrentCurve() {
 
 /*
  * Add a new curve to the curves list
+ *
+ * The "periodic" parameter is only used by flat curve editors
  */
-CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel) {
+CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, bool periodic) {
 	switch (cType) {
 	case (CT_Diagonal):
 		if (!diagonalSubGroup) {
@@ -67,7 +69,7 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
 		if (!flatSubGroup) {
 			flatSubGroup = new FlatCurveEditorSubGroup(this);
 		}
-		return (CurveEditor*)flatSubGroup->addCurve(curveLabel);
+		return (CurveEditor*)flatSubGroup->addCurve(curveLabel, periodic);
 	default:
 		return (CurveEditor*)NULL;
 		break;

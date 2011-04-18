@@ -40,7 +40,7 @@ public:
 	FlatCurveEditorSubGroup(CurveEditorGroup* prt);
 	~FlatCurveEditorSubGroup();
 
-	FlatCurveEditor* addCurve(Glib::ustring curveLabel = "");
+	FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
 	//virtual void updateBackgroundHistogram (CurveEditor* ce);
 	virtual void setColorProvider (ColorProvider* p);
 
