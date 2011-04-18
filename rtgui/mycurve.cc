@@ -31,6 +31,7 @@ MyCurve::MyCurve () : listener(NULL) {
     snapTo = ST_None;
     colorProvider = NULL;
     sized = RS_Pending;
+    snapToElmt = -100;
 
     set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
@@ -53,4 +54,17 @@ void MyCurve::notifyListener () {
 
     if (listener)
         listener->curveChanged ();
+}
+
+bool MyCurve::snapCoordinate(double testedVal, double realVal) {
+
+	double distY = realVal - testedVal;
+
+	if (distY < 0.) distY = -distY;
+	if (distY < snapToMinDist) {
+		snapToMinDist = distY;
+		snapToVal = testedVal;
+		return true;
+	}
+	return false;
 }

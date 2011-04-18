@@ -54,7 +54,7 @@ std::vector<double> MyFlatCurve::get_vector (int veclen) {
 
     // Get the curve control points
     std::vector<double> curveDescr = getPoints ();
-    rtengine::FlatCurve* rtcurve = new rtengine::FlatCurve (curveDescr, veclen*1.5 > 5000 ? 5000 : veclen*1.5);
+    rtengine::FlatCurve* rtcurve = new rtengine::FlatCurve (curveDescr, periodic, veclen*1.5 > 5000 ? 5000 : veclen*1.5);
 
     // Create the sample values that will be converted
     std::vector<double> samples;
@@ -157,13 +157,20 @@ void MyFlatCurve::draw () {
     double y0 = (double)RADIUS-0.5;
     double y1 = (double)RADIUS-0.5 + (double)innerHeight + 2.;
     for (int i = 0; i < 5; i++) {
-    	double currX = (double)RADIUS-0.5 + (double)i*((double)innerWidth + 2.)/4.;
-    	double currY = (double)RADIUS-0.5 + (double)i*((double)innerHeight + 2.)/4.;
+        cr->move_to (x0, y0);
+        cr->line_to (x0, y1);
+        cr->line_to (x1, y1);
+        cr->line_to (x1, y0);
+        cr->line_to (x0, y0);
+    }
+    /*for (int i = 0; i < 5; i++) {
+        double currX = (double)RADIUS-0.5 + (double)i*((double)innerWidth + 2.)/4.;
+        double currY = (double)RADIUS-0.5 + (double)i*((double)innerHeight + 2.)/4.;
         cr->move_to (x0, currY);
         cr->line_to (x1, currY);
         cr->move_to (currX, y0);
         cr->line_to (currX, y1);
-    }
+    }*/
     cr->stroke ();
 
     // draw f(x)=0.5 line
@@ -171,13 +178,14 @@ void MyFlatCurve::draw () {
     std::valarray<double> ds (1);
     ds[0] = 4;
     cr->set_dash (ds, 0);
-    cr->move_to ((double)RADIUS+0.5                        , (double)RADIUS+0.5 + (double)innerHeight/2.);
-    cr->line_to ((double)RADIUS+0.5 + (double)innerWidth/2., (double)RADIUS+0.5 + (double)innerHeight/2.);
+    cr->move_to (x0, (double)RADIUS+0.5 + (double)innerHeight/2.);
+    cr->line_to (x1, (double)RADIUS+0.5 + (double)innerHeight/2.);
     cr->stroke ();
+
+    cr->unset_dash ();
 
     cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
 
-    cr->unset_dash ();
     cr->set_line_width (1.0);
 
     // draw the color feedback of the control points
@@ -347,6 +355,9 @@ void MyFlatCurve::draw () {
                 	else
                 		cr->set_source_rgb (1.0, 0.0, 0.0);
                 }
+                else if (i == snapToElmt) {
+                    cr->set_source_rgb (1.0, 0.0, 0.0);
+                }
                 else if (curve.y[i] == 0.5)
                     cr->set_source_rgb (0.0, 0.5, 0.0);
                 else
@@ -473,6 +484,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	int src, dst;
 	std::vector<double>::iterator itx, ity, itlt, itrt;
 
+	snapToElmt = -100;
 	bool retval = false;
 	int num = (int)curve.x.size();
 
@@ -548,7 +560,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					curve.rightTangent.insert (itrt, 0);
 					num++;
 
-					// the graph is refreshed only if a new point is created (snaped to a pixel)
+					// the graph is refreshed only if a new point is created
 					curve.x[closest_point] = clampedX;
 					curve.y[closest_point] = clampedY;
 					curve.leftTangent[closest_point] = 0.35;
@@ -695,13 +707,12 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	case Gdk::MOTION_NOTIFY:
 		if (curve.type == FCT_Linear || curve.type == FCT_MinMaxCPoints) {
 
-			int leftNeigborPoint  = -1;
-			int rightNeigborPoint = -1;
-			double leftNeigborY   = -1.;
-			double rightNeigborY  = -1.;
-
 			int previous_lit_point = lit_point;
 			enum MouseOverAreas prevArea = area;
+
+			snapToMinDist = 10.;
+			snapToVal = 0.;
+			snapToElmt = -100;
 
 			// get the pointer position
 			getCursorPosition(event);
@@ -826,13 +837,22 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				break;
 
 			case (FCT_EditedHandle_LeftTan): {
-				double prevValue = ugpX;
+				double prevValue = curve.leftTangent[lit_point];
 
 				ugpX -= deltaX*3;
 				ugpX = CLAMP(ugpX, 0., 1.);
-				curve.leftTangent[lit_point] = ugpX;
+				if (snapTo) {
+					snapCoordinate(0.0,  ugpX);
+					snapCoordinate(0.35, ugpX);
+					snapCoordinate(0.5,  ugpX);
+					snapCoordinate(1.0,  ugpX);
+					curve.leftTangent[lit_point] = snapToVal;
+				}
+				else {
+					curve.leftTangent[lit_point] = ugpX;
+				}
 
-				if (ugpX != prevValue) {
+				if (curve.leftTangent[lit_point] != prevValue) {
 					interpolate ();
 					draw ();
 					notifyListener ();
@@ -841,13 +861,22 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			}
 
 			case (FCT_EditedHandle_RightTan): {
-				double prevValue = ugpX;
+				double prevValue = curve.rightTangent[lit_point];
 
 				ugpX += deltaX*3;
 				ugpX = CLAMP(ugpX, 0., 1.);
-				curve.rightTangent[lit_point] = ugpX;
+				if (snapTo) {
+					snapCoordinate(0.0,  ugpX);
+					snapCoordinate(0.35, ugpX);
+					snapCoordinate(0.5,  ugpX);
+					snapCoordinate(1.0,  ugpX);
+					curve.rightTangent[lit_point] = snapToVal;
+				}
+				else {
+					curve.rightTangent[lit_point] = ugpX;
+				}
 
-				if (ugpX != prevValue) {
+				if (curve.rightTangent[lit_point] != prevValue) {
 					interpolate ();
 					draw ();
 					notifyListener ();
@@ -855,7 +884,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				break;
 			}
 
-			// already process before the "switch" instruction
+			// already processed before the "switch" instruction
 			//case (FCT_EditedHandle_CPointUD):
 
 			default:
@@ -995,8 +1024,40 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 	}
 
 	if (moveY) {
+
 		// we memorize the previous position of the point, for optimization purpose
 		ugpY += deltaY;
+
+		// snapping point to specific values
+		if (snapTo && curve.x[lit_point] != -1) {
+
+			// the unclamped grabbed point is brought back in the range
+			ugpY = CLAMP(ugpY, 0.0, 1.0);
+
+			if (lit_point == 0) {
+				int prevP = curve.y.size()-1;
+				if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
+			}
+			else {
+				int prevP = lit_point-1;
+				if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
+			}
+
+			if (curve.y.size() > 2) {
+				if (lit_point == (curve.y.size()-1)) {
+					if (snapCoordinate(curve.y[0], ugpY)) snapToElmt = 0;
+				}
+				else {
+					int nextP = lit_point+1;
+					if (snapCoordinate(curve.y[nextP], ugpY)) snapToElmt = nextP;
+				}
+			}
+			if (snapCoordinate(1.0, ugpY)) snapToElmt = -3;
+			if (snapCoordinate(0.5, ugpY)) snapToElmt = -2;
+			if (snapCoordinate(0.0, ugpY)) snapToElmt = -1;
+
+			curve.y[lit_point] = snapToVal;
+		}
 
 		// Handling limitations along Y axis
 		if (ugpY >= topDeletionBound && nbPoints>2) {
@@ -1015,7 +1076,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 		}
 		else {
 			// nextPosY is in the bounds
-			curve.y[lit_point] = CLAMP(ugpY, 0.0, 1.0);
+			if (!snapTo)  curve.y[lit_point] = CLAMP(ugpY, 0.0, 1.0);
 			if (!moveX && curve.x[lit_point] == -1.) {
 				// bring back the X value of the point if it reappear
 				curve.x[lit_point] = deletedPointX;
@@ -1024,7 +1085,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 	}
 
 	if (curve.x[lit_point] != prevPosX || curve.y[lit_point] != prevPosY) {
-		// we recalculate the curve only if we have to
+		// we recompute the curve only if we have to
 		interpolate ();
 		draw ();
 		notifyListener ();
@@ -1071,7 +1132,7 @@ void MyFlatCurve::getCursorPosition(GdkEvent* event) {
     preciseCursorX = cursorX * incrementX;
     preciseCursorY = cursorY * incrementY;
 
-    snapTo = ST_None;
+    snapTo = false;
 
     // update deltaX/Y if the user drags a point
     if (editedHandle != FCT_EditedHandle_None) {
@@ -1080,9 +1141,8 @@ void MyFlatCurve::getCursorPosition(GdkEvent* event) {
     	int shift_key = mod_type & GDK_SHIFT_MASK;
 
     	// the increment get smaller if modifier key are used, and "snap to" may be enabled
-    	if      (control_key && shift_key) { snapTo = ST_Neighbors; }
-    	else if (control_key)              { snapTo = ST_Identity;  }
-    	else if (shift_key)                { incrementX *= 0.04; incrementY *= 0.04; }
+    	if (control_key) { incrementX *= 0.05; incrementY *= 0.05; }
+    	if (shift_key)   { snapTo = true; }
 
     	deltaX = (double)(cursorX - prevCursorX) * incrementX;
     	deltaY = (double)(cursorY - prevCursorY) * incrementY;
