@@ -464,15 +464,33 @@ void CropWindow::pointerMoved (int x, int y) {
 		int mx, my;
 		translateCoord (x, y, mx, my);
 		if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) 
-			pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
+		//	pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
+			pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+			
 		else {
-			Glib::Mutex::Lock lock(cropHandler.cimg);
+			/*Glib::Mutex::Lock lock(cropHandler.cimg);
 
 			int vx = x - xpos - imgX;
 			int vy = y - ypos - imgY;
 			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
 			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
 				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
+				
+				*/
+			cropHandler.cimg.lock ();
+			int vx = x - xpos - imgX;
+			int vy = y - ypos - imgY;
+//			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+//			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
+//				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
+			int imwidth = cropHandler.cropPixbuf->get_width();
+			int imheight = cropHandler.cropPixbuf->get_height();
+			guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+			if (vx < imwidth && vy < imheight)
+				pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+
+			cropHandler.cimg.unlock ();
+				
 		}
 	}
 }
