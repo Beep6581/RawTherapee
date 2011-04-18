@@ -264,12 +264,13 @@ class FlatCurve : public Curve {
     FlatCurveType kind;
     double* leftTangent;
     double* rightTangent;
+    bool periodic;
 
     void CtrlPoints_set ();
 
   public:
 
-    FlatCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
+    FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn=CURVES_MIN_POLY_POINTS);
    ~FlatCurve ();
 
     double getVal (double t);

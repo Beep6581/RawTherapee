@@ -29,21 +29,24 @@
 
 namespace rtengine {
 
-FlatCurve::FlatCurve (const std::vector<double>& p, int poly_pn) : leftTangent(NULL), rightTangent(NULL) {
+FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : leftTangent(NULL), rightTangent(NULL) {
 
     ppn = poly_pn;
+    poly_x.clear();
+    poly_y.clear();
 
-    if (p.size()<5) {
-        kind = FCT_Empty;
-    }
-    else {
+    kind = FCT_Empty;
+    periodic = isPeriodic;
+
+    if (p.size()>4) {
         kind = (FlatCurveType)p[0];
         if (kind==FCT_MinMaxCPoints) {
+        	int oneMorePoint = periodic ? 1:0;
             N = (p.size()-1)/4;
-            x = new double[N+1];
-            y = new double[N+1];
-            leftTangent = new double[N+1];
-            rightTangent = new double[N+1];
+            x = new double[N+oneMorePoint];
+            y = new double[N+oneMorePoint];
+            leftTangent = new double[N+oneMorePoint];
+            rightTangent = new double[N+oneMorePoint];
             int ix = 1;
             for (int i=0; i<N; i++) {
                 x[i] = p[ix++];
@@ -52,11 +55,16 @@ FlatCurve::FlatCurve (const std::vector<double>& p, int poly_pn) : leftTangent(N
                 rightTangent[i] = p[ix++];
             }
             // The first point is copied to the end of the point list, to handle the curve periodicity
-			x[N] = p[1]+1.0;
-			y[N] = p[2];
-            leftTangent[N] = p[3];
-            rightTangent[N] = p[4];
-            if (N > 1)
+            if (periodic) {
+				x[N] = p[1]+1.0;
+				y[N] = p[2];
+				leftTangent[N] = p[3];
+				rightTangent[N] = p[4];
+            }
+            else {
+            	N--;
+            }
+            if (N > 0+(periodic?1:0) )
                 CtrlPoints_set ();
         }
         /*else if (kind==FCT_Parametric) {
@@ -239,24 +247,30 @@ void FlatCurve::CtrlPoints_set () {
    	poly_y.clear();
     j = 0;
 
-    // very first point of the curve
+    // adding an initial horizontal line if necessary
+    if (!periodic && sc_x[j] != 0.) {
+		poly_x.push_back(0.);
+		poly_y.push_back(sc_y[j]);
+	}
+
+	// the first point of the curves
 	poly_x.push_back(sc_x[j]);
 	poly_y.push_back(sc_y[j]);
 
 	firstPointIncluded = false;
 
 	// create the polyline with the number of points adapted to the X range of the sub-curve
-    for (unsigned int i=0; i < k; i++) {
-    	if (sc_isLinear[i]) {
-    		j++; // skip the first point
-    		poly_x.push_back(sc_x[j]);
-    		poly_y.push_back(sc_y[j++]);
-    	}
-    	else {
+	for (unsigned int i=0; i < k; i++) {
+		if (sc_isLinear[i]) {
+			j++; // skip the first point
+			poly_x.push_back(sc_x[j]);
+			poly_y.push_back(sc_y[j++]);
+		}
+	else {
 			nbr_points = (int)(((double)(ppn) * sc_length[i] )/ total_length);
 			if (nbr_points<0){
 				for(unsigned int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
-				printf("Flat curve: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
+				printf("Flat curve: error detected!\n i=%d periodic=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,periodic,nbr_points,ppn,N,sc_length[i/3],total_length);
 				exit(0);
 			}
 			// increment along the curve, not along the X axis
@@ -267,6 +281,12 @@ void FlatCurve::CtrlPoints_set () {
 			AddPolygons ();
     	}
     }
+
+    // adding an final horizontal line if necessary
+    if (!periodic && sc_x[--j] != 1.) {
+		poly_x.push_back(1.);
+		poly_y.push_back(sc_y[j]);
+	}
 
     /*
     // Checking the values

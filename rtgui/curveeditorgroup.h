@@ -70,7 +70,7 @@ public:
 	void setColorProvider (ColorProvider* p) { cp = p; }
 	CurveEditor* getDisplayedCurve () { return displayedCurve; }
 	//void on_realize ();
-	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel);
+	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, bool periodic = true);
 
 protected:
 	//void curveTypeToggled ();
