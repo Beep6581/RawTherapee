@@ -29,7 +29,7 @@
 #ifdef WIN32
 
 #include <fcntl.h>
-#include <ddk/ntifs.h>
+#include <windows.h>
 
 // dummy values
 #define MAP_PRIVATE 1
