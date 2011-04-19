@@ -92,7 +92,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
                 buffer[iy++] = CLIP01(z_);
 			}
 
+            if (settings->LCMSSafeMode) lcmsMutex->lock ();
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
+            if (settings->LCMSSafeMode) lcmsMutex->unlock ();
 		}
         
 	} else {
