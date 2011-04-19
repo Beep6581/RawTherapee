@@ -105,6 +105,7 @@ ColorCorrection=1
 Ratio=3:2
 FixRatio=true
 DPI=600
+PPI=300
 
 [Color Management]
 # Auto-determined by RT on first start
