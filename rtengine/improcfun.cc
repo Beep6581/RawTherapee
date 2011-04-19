@@ -496,7 +496,7 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
             if (params->labCurve.avoidclip) {
 				//Luv limiter
 				float Y,u,v;
-				Lab2Yuv(lold->L[i][j],atmp,btmp,Y,u,v);
+				Lab2Yuv(lnew->L[i][j],atmp,btmp,Y,u,v);
 				//Yuv2Lab includes gamut restriction map
 				Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				
