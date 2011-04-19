@@ -84,7 +84,7 @@ void Options::setDefaults () {
     showHistory = true;
     showFilePanelState = 0;
     showInfo = false;
-    cropDPI = 300;
+    cropPPI = 300;
     showClippedHighlights = false;
     showClippedShadows = false;
     highlightThreshold = 254;
@@ -304,7 +304,7 @@ if (keyFile.has_group ("GUI")) {
 
 
 if (keyFile.has_group ("Crop Settings")) { 
-    if (keyFile.has_key ("Crop Settings", "DPI"))       cropDPI      = keyFile.get_integer ("Crop Settings", "DPI");
+    if (keyFile.has_key ("Crop Settings", "PPI"))       cropPPI      = keyFile.get_integer ("Crop Settings", "PPI");
 }
 
 if (keyFile.has_group ("Color Management")) { 
@@ -451,7 +451,7 @@ int Options::saveToFile (Glib::ustring fname) {
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
-    keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
+    keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
 
     keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
