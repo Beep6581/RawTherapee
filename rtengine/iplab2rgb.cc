@@ -66,6 +66,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
         #pragma omp parallel for if (multiThread)
 		for (int i=0; i<lab->H; i++) {
             float buffer[3*lab->W];
+            float g;
 
             const int ix = i * 3 * lab->W;
             int iy = 0;
@@ -74,7 +75,6 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
 
-			float R,G,B;
             float fy,fx,fz,x_,y_,z_;
 
 			for (int j=0; j<lab->W; j++) {
@@ -105,6 +105,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
 			int ix = i * 3 * lab->W;
+			float g;
 
 			float R,G,B;
             float fy,fx,fz,x_,y_,z_;
@@ -117,9 +118,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				x_ = 65535*Lab2xyz(fx)*D50x;
-				y_ = 65535*Lab2xyz(fy);
-				z_ = 65535*Lab2xyz(fz)*D50z;
+				x_ = 65535.0*Lab2xyz(fx)*D50x;
+				y_ = 65535.0*Lab2xyz(fy);
+				z_ = 65535.0*Lab2xyz(fz)*D50z;
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
@@ -162,6 +163,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
             short buffer [3*cw];
+            float g;
 
             const int ix = i * 3 * cw;
             int iy = 0;
@@ -176,9 +178,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;
-				float y_ = 65535*Lab2xyz(fy);
-				float z_ = 65535*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0*Lab2xyz(fx)*D50x;
+				float y_ = 65535.0*Lab2xyz(fy);
+				float z_ = 65535.0*Lab2xyz(fz)*D50z;
 
                 buffer[iy++] = CLIP((int)x_);
                 buffer[iy++] = CLIP((int)y_);
@@ -219,9 +221,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;
-				float y_ = 65535*Lab2xyz(fy);
-				float z_ = 65535*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0*Lab2xyz(fx)*D50x;
+				float y_ = 65535.0*Lab2xyz(fy);
+				float z_ = 65535.0*Lab2xyz(fz)*D50z;
 
 				xyz2rgb(x_,y_,z_,R,G,B,rgb_xyz);
 
@@ -263,9 +265,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;
-				float y_ = 65535*Lab2xyz(fy);
-				float z_ = 65535*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0*Lab2xyz(fx)*D50x;
+				float y_ = 65535.0*Lab2xyz(fy);
+				float z_ = 65535.0*Lab2xyz(fz)*D50z;
 
 				xa[j-cx] = CLIP((int)x_);
 				ya[j-cx] = CLIP((int)y_);
@@ -294,9 +296,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535*Lab2xyz(fx)*D50x;
-				float y_ = 65535*Lab2xyz(fy);
-				float z_ = 65535*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0*Lab2xyz(fx)*D50x;
+				float y_ = 65535.0*Lab2xyz(fy);
+				float z_ = 65535.0*Lab2xyz(fz)*D50z;
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
