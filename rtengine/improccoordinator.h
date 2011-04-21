@@ -79,7 +79,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 		LUTu vhist16;
 		LUTu lhist16;
 	
-		LUTu rhist, ghist, bhist, Lhist, bcrgbhist, bcLhist, bcabhist;
+		LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

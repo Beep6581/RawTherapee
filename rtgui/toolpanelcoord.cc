@@ -36,7 +36,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     rawPanel        = Gtk::manage (new Gtk::VBox ());
 
     coarse              = Gtk::manage (new CoarsePanel ());
-    curve               = Gtk::manage (new ToneCurve ());
+    toneCurve           = Gtk::manage (new ToneCurve ());
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     lumadenoise         = Gtk::manage (new LumaDenoise ());
     colordenoise        = Gtk::manage (new ColorDenoise ());
@@ -72,7 +72,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     rawexposure         = Gtk::manage (new RAWExposure ());
 
     addPanel (colorPanel, whitebalance,         M("TP_WBALANCE_LABEL"));       toolPanels.push_back (whitebalance);
-    addPanel (exposurePanel, curve,             M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (curve);
+    addPanel (exposurePanel, toneCurve,         M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (toneCurve);
     addPanel (exposurePanel, hlrecovery,        M("TP_HLREC_LABEL"));          toolPanels.push_back (hlrecovery);
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
     addPanel (exposurePanel, shadowshighlights, M("TP_SHADOWSHLIGHTS_LABEL")); toolPanels.push_back (shadowshighlights);
@@ -295,16 +295,15 @@ CropGUIListener* ToolPanelCoordinator::getCropGUIListener () {
 void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool raw) {
 
     ipc = ipc_;
-    curve->disableListener ();
-    curve->enableAll ();
-    curve->enableListener ();
-
+    toneCurve->disableListener ();
+    toneCurve->enableAll ();
+    toneCurve->enableListener ();
 
     exifpanel->setImageData (ipc->getInitialImage()->getMetaData());
     iptcpanel->setImageData (ipc->getInitialImage()->getMetaData());
 
     if (ipc) {
-        ipc->setAutoExpListener (curve);
+        ipc->setAutoExpListener (toneCurve);
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
     }
@@ -329,9 +328,6 @@ void ToolPanelCoordinator::readOptions () {
     for (int i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
             expList[i]->set_expanded (options.tpOpen[i]);
-
-    //if (options.crvOpen.size()>1)
-    //    curve->expandCurve (options.crvOpen[0]);
 }
 
 void ToolPanelCoordinator::writeOptions () { 
@@ -340,9 +336,6 @@ void ToolPanelCoordinator::writeOptions () {
     options.tpOpen.clear ();
     for (int i=0; i<expList.size(); i++)
         options.tpOpen.push_back (expList[i]->get_expanded ());
-
-    //options.crvOpen.clear ();
-    //options.crvOpen.push_back (curve->isCurveExpanded());
 }
 
 
@@ -470,10 +463,10 @@ int ToolPanelCoordinator::getSpotWBRectSize () {
     return whitebalance->getSize ();
 }
 
-void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu &histrgb, LUTu &histl) {
+void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu &histToneCurve, LUTu &histLCurve) {
 
-    curve->updateCurveBackgroundHistogram (histrgb);
-    lcurve->updateCurveBackgroundHistogram (histl);
+    toneCurve->updateCurveBackgroundHistogram (histToneCurve);
+    lcurve->updateCurveBackgroundHistogram (histLCurve);
 }
 
 void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection) {

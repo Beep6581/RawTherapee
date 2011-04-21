@@ -200,11 +200,12 @@ namespace rtengine {
     class HistogramListener {
         public:
             /** This member function is called when the histogram of the final image has changed.
-              * @param redh is the array of size 256 containing the histogram of the red channel
-              * @param greenh is the array of size 256 containing the histogram of the green channel
-              * @param blueh is the array of size 256 containing the histogram of the blue channel
-              * @param lumah is the array of size 256 containing the histogram of the luminance channel */
-            virtual void histogramChanged (LUTu & redh, LUTu & greenh, LUTu & blueh, LUTu & lumah,LUTu & bcrgbhist,LUTu & bcLhist) {}
+              * @param histRed is the array of size 256 containing the histogram of the red channel
+              * @param histGreen is the array of size 256 containing the histogram of the green channel
+              * @param histBlue is the array of size 256 containing the histogram of the blue channel
+              * @param histLuma is the array of size 256 containing the histogram of the luminance channel
+              * other for curves backgrounds */
+            virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve,LUTu & histLCurve) {}
     };
 
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
