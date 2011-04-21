@@ -1287,10 +1287,10 @@ void EditorPanel::beforeAfterToggled () {
     }
 }
 
-void EditorPanel::histogramChanged (LUTu & rh, LUTu & gh, LUTu & bh, LUTu & lh, LUTu & bcrgb, LUTu & bcl) {
+void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve) {
 
-    histogramPanel->histogramChanged (rh, gh, bh, lh);
-    tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
+    histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma);
+    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
 }
 
 bool EditorPanel::CheckSidePanelsVisibility(){

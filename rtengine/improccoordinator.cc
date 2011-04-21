@@ -46,12 +46,12 @@ ImProcCoordinator::ImProcCoordinator ()
     vhist16(65536);
     lhist16(65536);
 
-    rhist(65536);
-    ghist(65536);
-    bhist(256);
-    Lhist(256);
-    bcrgbhist(256);
-    bcLhist(256);
+    histRed(65536);
+    histGreen(65536);
+    histBlue(256);
+    histLuma(256);
+    histToneCurve(256);
+    histLCurve(256);
     bcabhist(256);
 
 }
@@ -108,13 +108,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		//rp.hotdeadpix_filt = false;
 		rp.ccSteps = 0;
 	}
+
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC)
     	imgsrc->preprocess( rp );
+
     if( todo & M_RAW){
     	fineDetailsProcessed = highDetailNeeded;
     	imgsrc->demosaic( rp );
     }
+
     if (todo & M_INIT) {
         Glib::Mutex::Lock lock(minit);
 
@@ -187,7 +190,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
 									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
 									imgsrc->getGamma(), true, params.toneCurve.curve, \
-									vhist16, hltonecurve, shtonecurve, tonecurve, bcrgbhist, scale==1 ? 1 : 1);
+									vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
         ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
 
         // compute L channel histogram
@@ -199,11 +202,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if (todo & M_LUMACURVE) {
-        CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, bcLhist, scale==1 ? 1 : 16);
+        CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lumacurve, histLCurve, scale==1 ? 1 : 16);
 		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
 									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
 	}
-	
 	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
@@ -235,8 +237,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             //progress ("Wavelet...",100*readyphase/numofphases);
             //ipf.waveletEqualizer (nprevl, true, true);
         }
-		
-
     }
 
     // process crop, if needed
@@ -280,8 +280,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             hx2 = MIN(pW,MAX(0,(params.crop.x+params.crop.w) / scale)); 
             hy2 = MIN(pH,MAX(0,(params.crop.y+params.crop.h) / scale));
         }
-        updateHistograms (hx1, hy1, hx2, hy2);
-        hListener->histogramChanged (rhist, ghist, bhist, Lhist, bcrgbhist, bcLhist);
+        updateHistograms (hx1, hy1, hx2, hy2);  // just RGBL, not the tone curves
+        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve);
     }
 
     progress ("Ready",100*readyphase/numofphases);
@@ -370,10 +370,9 @@ if (settings->verbose) printf ("setscale before lock\n");
 
 void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 
-    rhist.clear();
-    ghist.clear();
-    bhist.clear();
-	//memset (bcrgbhist, 0, 256*sizeof(int));
+    histRed.clear();
+    histGreen.clear();
+    histBlue.clear();
 	
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
@@ -382,17 +381,16 @@ void ImProcCoordinator::updateHistograms (int x1, int y1, int x2, int y2) {
 			int g=workimg->data[ofs++];
 			int b=workimg->data[ofs++];
 
-			//bcrgbhist[(int)(0.299*r + 0.587*g + 0.114*b)]++;
-            rhist[r]++;
-            ghist[g]++;
-            bhist[b]++;
+            histRed[r]++;
+            histGreen[g]++;
+            histBlue[b]++;
         }
     }
 
-    Lhist.clear();
+    histLuma.clear();
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) {
-            Lhist[(int)(nprevl->L[i][j]/128)]++;
+            histLuma[(int)(nprevl->L[i][j]/128)]++;
 		}
 	
 	/*for (int i=0; i<256; i++) {

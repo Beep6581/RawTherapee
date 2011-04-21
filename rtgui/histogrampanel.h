@@ -95,7 +95,7 @@ class HistogramPanel : public Gtk::HBox {
 
     HistogramPanel ();
 
-    void histogramChanged (LUTu &rh, LUTu &gh, LUTu &bh, LUTu &lh) { histogramArea->update (rh, gh, bh, lh); }
+    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma) { histogramArea->update (histRed, histGreen, histBlue, histLuma); }
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 };
