@@ -5,6 +5,10 @@
 #03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
 #04 02-05-2010: updated to rt3a1 by paul.matthijsse
 #05 03-03-2011: updated to rt3a2 by paul.matthijsse
+ABOUT_TAB_BUILD;Versie
+ABOUT_TAB_CREDITS;Credits
+ABOUT_TAB_LICENSE;Licentie
+ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
 BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batch-verwerking
@@ -30,6 +34,7 @@ EDITWINDOW_TITLE;Bewerk afbeelding
 EXIFFILTER_APERTURE;Diafragma
 EXIFFILTER_CAMERA;Camera
 EXIFFILTER_DIALOGLABEL;Exif-filter
+EXIFFILTER_FILETYPE;Bestandstype
 EXIFFILTER_FOCALLEN;Brandpuntsafstand
 EXIFFILTER_ISO;ISO-waarde
 EXIFFILTER_LENS;Objectief
@@ -117,11 +122,13 @@ GENERAL_DISABLE;Deactiveren
 GENERAL_DISABLED;Gedeactiveerd
 GENERAL_ENABLE;Activeer
 GENERAL_ENABLED;Geactiveerd
+GENERAL_FILE;Bestand
 GENERAL_HIGH_QUALITY;Hoge kwaliteit
 GENERAL_LANDSCAPE;Landschap
 GENERAL_LOAD;Laden
 GENERAL_NA;nvt.
 GENERAL_NO;Nee
+GENERAL_NONE;Geen
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portret
 GENERAL_SAVE;Opslaan
@@ -146,8 +153,29 @@ HISTORY_MSG_101;HSV EQ: tint
 HISTORY_MSG_102;HSV EQ: verzadiging
 HISTORY_MSG_103;HSV EQ: waarde
 HISTORY_MSG_104;HSV-equalizer
+HISTORY_MSG_105;Randverzachting
+HISTORY_MSG_106;Randverzachting radius
+HISTORY_MSG_107;Randverzachting drempel
+HISTORY_MSG_108;Drempel compr. hoge lichten
+HISTORY_MSG_109;Resize bounding box
 HISTORY_MSG_10;Schaduwcompressie
+HISTORY_MSG_110;Herschalen van: 
+HISTORY_MSG_111;Vermijd kleuroversturing
+HISTORY_MSG_112;Verzadigingsbegrenzer
+HISTORY_MSG_113;Verzadigingslimiet
+HISTORY_MSG_114;DCB-herhalingen
+HISTORY_MSG_115;Herhaling valse kleuren
+HISTORY_MSG_116;Verbeterd DCB
+HISTORY_MSG_117;CA-correctie Rood
+HISTORY_MSG_118;CA-correctie Blauw
+HISTORY_MSG_119;Lijnruis
 HISTORY_MSG_11;Tooncurve
+HISTORY_MSG_120;Groenbalans drempel
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Auto dark-frame
+HISTORY_MSG_123;Dark-frame-bestand
+HISTORY_MSG_124;Lineaire bel.correctie
+HISTORY_MSG_125;Bel.correctie behoud HL
 HISTORY_MSG_12;Automatische belichting
 HISTORY_MSG_13;Drempel
 HISTORY_MSG_14;LAB: helderheid
@@ -321,6 +349,7 @@ MAIN_BUTTON_SENDTOEDITOR;Stuur naar fotoprogramma
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Stuur huidige foto naar extern fotobewerkingsprogramma <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Verlaat volledig scherm
 MAIN_FRAME_BATCHQUEUE;Verwerkingsrij 
+MAIN_FRAME_EDITOR;Fotobewerker
 MAIN_FRAME_FILEBROWSER;Bestandsnavigator 
 MAIN_FRAME_PLACES;Locaties
 MAIN_FRAME_PLACES_ADD;Nieuw
@@ -780,35 +809,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-ABOUT_TAB_BUILD;Versie
-ABOUT_TAB_CREDITS;Credits
-ABOUT_TAB_LICENSE;Licentie
-ABOUT_TAB_SPLASH;Splash
-EXIFFILTER_FILETYPE;Bestandstype
-GENERAL_FILE;Bestand
-GENERAL_NONE;Geen
-HISTORY_MSG_105;Randverzachting
-HISTORY_MSG_106;Randverzachting radius
-HISTORY_MSG_107;Randverzachting drempel
-HISTORY_MSG_108;Drempel compr. hoge lichten
-HISTORY_MSG_109;Resize bounding box
-HISTORY_MSG_110;Herschalen van: 
-HISTORY_MSG_111;Vermijd kleuroversturing
-HISTORY_MSG_112;Verzadigingsbegrenzer
-HISTORY_MSG_113;Verzadigingslimiet
-HISTORY_MSG_114;DCB-herhalingen
-HISTORY_MSG_115;Herhaling valse kleuren
-HISTORY_MSG_116;Verbeterd DCB
-HISTORY_MSG_117;CA-correctie Rood
-HISTORY_MSG_118;CA-correctie Blauw
-HISTORY_MSG_119;Lijnruis
-HISTORY_MSG_120;Groenbalans drempel
-HISTORY_MSG_121;Auto CA
-HISTORY_MSG_122;Auto dark-frame
-HISTORY_MSG_123;Dark-frame-bestand
-HISTORY_MSG_124;Lineaire bel.correctie
-HISTORY_MSG_125;Bel.correctie behoud HL
-MAIN_FRAME_EDITOR;Fotobewerker
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
