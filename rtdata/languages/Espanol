@@ -904,7 +904,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 
 !ABOUT_TAB_LICENSE;License
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser)
+!FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !GENERAL_NONE;None
