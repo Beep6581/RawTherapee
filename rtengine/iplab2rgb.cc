@@ -125,12 +125,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				xyz2srgb(x_,y_,z_,R,G,B);
 
 				/* copy RGB */
-				 #pragma omp critical 
-				 {
 				image->data[ix++] = (int)gamma2curve[(R)] >> 8;
 				image->data[ix++] = (int)gamma2curve[(G)] >> 8;
 				image->data[ix++] = (int)gamma2curve[(B)] >> 8;
-				}
 			}
 		}
 	}
