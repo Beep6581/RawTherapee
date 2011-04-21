@@ -408,17 +408,23 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
+PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
 PARTIALPASTE_COLORBOOST;Réhaussement couleur
 PARTIALPASTE_COLORDENOISE;Réduction du bruit chromatique
 PARTIALPASTE_COLORGROUP;Réglages couleurs
 PARTIALPASTE_COLORMIXER;Mixage couleur
 PARTIALPASTE_COLORSHIFT;Décalage couleur
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
 PARTIALPASTE_COMPOSITIONGROUP;Réglages de la composition
 PARTIALPASTE_CROP;Recadrage
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Sélection auto de la Trame Noire
 PARTIALPASTE_DARKFRAMEFILE;Fichier de Trame Noire
+PARTIALPASTE_DEFRINGE;Aberration chromatique
+PARTIALPASTE_DETAILGROUP;Détail
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
+PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
+PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
 PARTIALPASTE_DISTORTION;Correction de distortion
 PARTIALPASTE_EVERYTHING;Tout
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
@@ -427,22 +433,39 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
+PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
+PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
+PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
 PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
+PARTIALPASTE_PERSPECTIVE;Perspective
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
+PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
+PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
+PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
+PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
+PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
 PARTIALPASTE_RAWGROUP;Réglages RAW
+PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
+PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
+PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
 PARTIALPASTE_RESIZE;Redimentionnement
 PARTIALPASTE_ROTATION;Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_VIGNETTING;Correction du vignettage
+PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 POPUPBUTTON_SELECTOPTIONHINT;'Menu contextuel' pour changer d'option
 PREFERENCES_ADD;Ajoute
@@ -541,6 +564,7 @@ PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_OUTPUT;Options de sortie
 PREFERENCES_THUMBSIZE;Tailles des vignettes
+PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
@@ -822,27 +846,9 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-PARTIALPASTE_CHANNELMIXER;Mixage des canaux
-PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
-PARTIALPASTE_DEFRINGE;Aberration chromatique
-PARTIALPASTE_DETAILGROUP;Détail
-PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
-PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
-PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
-PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
-PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
-PARTIALPASTE_PERSPECTIVE;Perspective
-PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
-PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
-PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
-PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
-PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
-PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
-PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
-PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
-PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
-PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
-PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
-PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
-PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
