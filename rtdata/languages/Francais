@@ -165,9 +165,9 @@ HISTORY_MSG_101;Ég. TSV - Teinte
 HISTORY_MSG_102;Ég. TSV - Saturation
 HISTORY_MSG_103;Ég. TSV - Valeur
 HISTORY_MSG_104;Égaliseur TSV
-HISTORY_MSG_105;Corr. aberr. chromatique
-HISTORY_MSG_106;Corr. a.c. - Rayon
-HISTORY_MSG_107;Corr. a.c. - Seuil
+HISTORY_MSG_105;Aberration chromatique
+HISTORY_MSG_106;A.C. - Rayon
+HISTORY_MSG_107;A.C. - Seuil
 HISTORY_MSG_108;Seuil de compr. des hautes lumières
 HISTORY_MSG_109;Redim. - boîte englobante
 HISTORY_MSG_10;Compression des ombres
@@ -178,8 +178,8 @@ HISTORY_MSG_113;Limite de saturation
 HISTORY_MSG_114;Nbr d'itération DCB
 HISTORY_MSG_115;Nbr d'itération des fausses couleurs
 HISTORY_MSG_116;DCB amélioré
-HISTORY_MSG_117;Corr. aberr. chromatique rouge
-HISTORY_MSG_118;Corr. aberr. chromatique bleu
+HISTORY_MSG_117;A.C. - Rouge
+HISTORY_MSG_118;A.C. - Bleu
 HISTORY_MSG_119;Filtre de bruit de ligne
 HISTORY_MSG_11;Courbe tonale
 HISTORY_MSG_120;Équilibrage du vert
@@ -250,7 +250,7 @@ HISTORY_MSG_61;Rotation
 HISTORY_MSG_62;Correction de la distorsion
 HISTORY_MSG_63;Signet sélectionné
 HISTORY_MSG_64;Recadrage de la Photo
-HISTORY_MSG_65;Correction de l'aberration chromatique
+HISTORY_MSG_65;Aberration chromatique
 HISTORY_MSG_66;Récup. Hautes lumières
 HISTORY_MSG_67;Récup. Hautes lumières - Quantité
 HISTORY_MSG_68;Récup. Hautes lumières - Méthode
@@ -435,7 +435,7 @@ NAVIGATOR_V_NA;V = n/d
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 PARTIALPASTE_BASICGROUP;Réglages de base
-PARTIALPASTE_CACORRECTION;Correction aberr./chrom.
+PARTIALPASTE_CACORRECTION;Aberration chromatique
 PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
 PARTIALPASTE_COLORBOOST;Réhaussement couleur
@@ -669,7 +669,7 @@ TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
 TOOLBAR_TOOLTIP_WB;Choix du point déterminant la balance des blancs <b>W</b>
 TP_CACORRECTION_BLUE;Bleu
-TP_CACORRECTION_LABEL;Correction aberration chromatique
+TP_CACORRECTION_LABEL;Aberration chromatique
 TP_CACORRECTION_RED;Rouge
 TP_CHMIXER_BLUE;Bleu
 TP_CHMIXER_GREEN;Vert
@@ -717,7 +717,7 @@ TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Sélection automatique
 TP_DARKFRAME_LABEL;Trame Noire
-TP_DEFRINGE_LABEL;Suppression de l'aberr. chromatique
+TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
 TP_DETAIL_AMOUNT;Quantité
@@ -907,9 +907,27 @@ ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
+PARTIALPASTE_CHANNELMIXER;Mixage des canaux
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
+PARTIALPASTE_DEFRINGE;Aberration chromatique
+PARTIALPASTE_DETAILGROUP;Détail
+PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
+PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
+PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
+PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
+PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
+PARTIALPASTE_PERSPECTIVE;Perspective
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
+PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
+PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
+PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
+PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
+PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
+PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
+PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
+PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
+PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
+PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie

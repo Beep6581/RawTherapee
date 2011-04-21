@@ -708,8 +708,6 @@ void ImProcFunctions::getAutoExp  (unsigned int* histogram, int histcompr, doubl
 	if (br>10) br=10;
 }
 	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 #include "calc_distort.h"
 
 double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
@@ -727,7 +725,6 @@ double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_si
             delete thumb;
             return 0.0;
         }
-
         if (h_thumb != h_raw) {
             delete thumb;
             delete raw;
