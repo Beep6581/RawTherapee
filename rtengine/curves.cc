@@ -188,7 +188,7 @@ namespace rtengine {
 
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
 									 double shcompr, double br, double contr, double gamma_, bool igamma_, \
-									 const std::vector<double>& curvePoints, LUTu & histogram, \
+									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped, \
 									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, \
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
@@ -361,13 +361,13 @@ namespace rtengine {
 			
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
-				if (outBeforeCCurveHistogram) {
+				if (outBeforeCCurveHistogram && histogramCropped) {
 					float fi=i;
 					float hval = dcurve[shCurve[hlCurve[i]*fi]*fi];
 					//if (needigamma)
 					//	hval = igamma2 (hval);
 					int hi = (int)(255.0*(hval));
-					outBeforeCCurveHistogram[hi]+=histogram[i] ;
+					outBeforeCCurveHistogram[hi] += histogramCropped[i] ;
 				}
 				val = tcurve->getVal (dcurve[i]);
 			} else {

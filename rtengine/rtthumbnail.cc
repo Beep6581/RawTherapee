@@ -733,7 +733,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf satcurve (65536);
 
 	LUTu dummy;
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy, 16);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, 
+        hist16, dummy, curve1, curve2, curve, dummy, 16);
 
 	LabImage* labView = new LabImage (fw,fh);
 

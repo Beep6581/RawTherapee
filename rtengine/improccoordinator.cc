@@ -45,6 +45,7 @@ ImProcCoordinator::ImProcCoordinator ()
 
     vhist16(65536);
     lhist16(65536);
+    histCropped(65536);
 
     histRed(65536);
     histGreen(65536);
@@ -185,19 +186,26 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
-    if (todo & M_RGBCURVE) {
+    if ((todo & M_RGBCURVE) || todo==CROP) {
+        if (hListener) oprevi->CalcCroppedHistogram(params, scale, histCropped);
+
+        // complexCurve also calculated pre-curves histogram dependend on crop
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
 									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
 									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
 									imgsrc->getGamma(), true, params.toneCurve.curve, \
-									vhist16, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
-        ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
+									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
+        
+        // if it's just crop we just need the histogram, no image updates
+        if ( todo!=CROP ) {
+            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
 
-        // compute L channel histogram
-        lhist16.clear();
-        for (int i=0; i<pH; i++)
-            for (int j=0; j<pW; j++)
-                lhist16[CLIP((int)(oprevl->L[i][j]))]++;
+            // compute L channel histogram
+            lhist16.clear();
+            for (int i=0; i<pH; i++)
+                for (int j=0; j<pW; j++)
+                    lhist16[CLIP((int)(oprevl->L[i][j]))]++;
+        }
     }
     readyphase++;
 
