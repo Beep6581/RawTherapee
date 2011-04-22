@@ -123,7 +123,8 @@ void ImProcFunctions::setScale (double iscale) {
 	scale = iscale;
 }
 
-void ImProcFunctions::firstAnalysis_ (Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to) {
+// Called from several threads
+void ImProcFunctions::firstAnalysisThread (Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to) {
 
 	TMatrix wprof = iccStore->workingSpaceMatrix (wprofile);
 
@@ -193,12 +194,12 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 		int blk = H/nthreads;
 
 		if (tid<nthreads-1)
-			firstAnalysis_ (original, wprofile, hist[tid], tid*blk, (tid+1)*blk);
+			firstAnalysisThread (original, wprofile, hist[tid], tid*blk, (tid+1)*blk);
 		else
-			firstAnalysis_ (original, wprofile, hist[tid], tid*blk, H);
+			firstAnalysisThread (original, wprofile, hist[tid], tid*blk, H);
     }
 #else
-    firstAnalysis_ (original, wprofile, hist[0], 0, original->height);
+    firstAnalysisThread (original, wprofile, hist[0], 0, original->height);
 #endif
  
 	histogram.clear();
@@ -212,6 +213,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 }
 
+// Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, SHMap* shmap, int sat) {
 
     int h_th, s_th;

@@ -22,6 +22,7 @@
 #include <string.h>
 #include <rtengine.h>
 #include <mytime.h>
+#include <iccstore.h>
 
 using namespace rtengine;
 
@@ -233,6 +234,38 @@ Imagefloat::to16() const
 		}
 	}
 	return img16;
+}
+
+
+void Imagefloat::CalcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist) {
+    hist.clear();
+
+    // Set up factors to calc the lightness
+    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+
+	float facRed   = wprof[1][0];
+	float facGreen = wprof[1][1];
+	float facBlue  = wprof[1][2];
+	
+
+    // calc pixel size
+    int hx1 = 0, hx2 = width, hy1 = 0, hy2 = height;
+    if (params.crop.enabled) {
+        hx1 = MIN(width-1,MAX(0,params.crop.x / scale));
+        hy1 = MIN(height-1,MAX(0,params.crop.y / scale));   
+        hx2 = MIN(width,MAX(0,(params.crop.x+params.crop.w) / scale)); 
+        hy2 = MIN(height,MAX(0,(params.crop.y+params.crop.h) / scale));
+    }
+
+    #pragma omp parallel for
+    for (int y=hy1; y<hy2; y++) {
+        int i;
+        for (int x=hx1; x<hx2; x++) {
+            i = (int)(facRed * r[y][x] + facGreen * g[y][x] + facBlue * b[y][x]);
+            if (i<0) i=0; else if (i>65535) i=65535;
+            hist[i]++;
+        }
+    }
 }
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!

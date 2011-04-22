@@ -24,10 +24,9 @@
 
 #include <imageio.h>
 #include <rtengine.h>
-//#include <image16.h>
 
 namespace rtengine {
-
+    using namespace procparams;
 //enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
 class Image8;
@@ -89,6 +88,8 @@ class Imagefloat : public ImageIO, public IImagefloat {
         virtual float** getRPlane () { return r; }
         virtual float** getGPlane () { return g; }
         virtual float** getBPlane () { return b; }
+
+        void CalcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
         void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
     };

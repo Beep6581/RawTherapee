@@ -150,7 +150,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf satcurve (65536,0);
 	LUTu dummy;
 
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, dummy);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
+        hist16, dummy, curve1, curve2, curve, dummy);
 
 	LabImage* labView = new LabImage (fw,fh);
 
