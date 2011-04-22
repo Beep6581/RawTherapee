@@ -76,11 +76,6 @@ void Crop::update (int todo) {
     if (cropImageListener)
         overrideWindow = cropImageListener->getWindow (wx, wy, ww, wh, ws);
 
-    bool regenHighDetail=false;
-    if( ws==1 && skip>1 && !parent->fineDetailsProcessed ){
-    	regenHighDetail=true;
-    }
-
     // re-allocate sub-images and arrays if their dimensions changed
     bool needsinitupdate = false;
     if (!overrideWindow)
@@ -91,10 +86,6 @@ void Crop::update (int todo) {
     if (needsinitupdate)
         todo = ALL;
 
- /* Seems to be taken care of by calling improccoordinator::updatePreviewImage
-    if( regenHighDetail )
-    	parent->updatePreviewImage (ALL,this); // We have just set skip to 1
-		*/
     baseCrop = origCrop;
 
     bool needstransform  = parent->ipf.needsTransform();
