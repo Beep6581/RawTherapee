@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <rtengine.h>
+#include <mydiagonalcurve.h>
 
 class Clipboard {
     
@@ -28,7 +29,7 @@ class Clipboard {
     std::vector<rtengine::procparams::IPTCPair> iptc;
     bool _hasProcParams;
     rtengine::procparams::ProcParams procParams;
-    bool _hasCurveData;
+    DiagonalCurveType hasCurveDataType;
     std::vector<double> curve;
 
 
@@ -41,9 +42,9 @@ class Clipboard {
         const rtengine::procparams::ProcParams&            getProcParams ()                                                { return procParams; }
         bool                                               hasProcParams () { return _hasProcParams; }
 
-        void                                               setCurveData (std::vector<double>& p ) { curve = p;  _hasCurveData = true; return; }
+        void                                               setCurveData (std::vector<double>& p, DiagonalCurveType type ) { curve = p;  hasCurveDataType = type; return; }
         const std::vector<double> &                        getCurveData ()                       { return curve; }
-        bool                                               hasCurveData ()                       { return _hasCurveData; }
+        DiagonalCurveType                                  hasCurveData ()                       { return hasCurveDataType; }
 
 
 };
