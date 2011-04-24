@@ -31,6 +31,9 @@ class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListen
 protected:
 	Gtk::HBox* customCurveBox;
 	Gtk::VBox* paramCurveBox;
+	// Wolfgang Start
+	Gtk::HBox* paramInnerBox;
+	// Wolfgang End
 	Gtk::HBox* NURBSCurveBox;
 
 	MyDiagonalCurve* customCurve;
@@ -49,6 +52,12 @@ protected:
 	Gtk::Button* pasteCustom;
 	Gtk::Button* saveNURBS;
 	Gtk::Button* loadNURBS;
+	Gtk::Button* copyNURBS;
+	Gtk::Button* pasteNURBS;
+	Gtk::Button* saveParam;
+	Gtk::Button* loadParam;
+	Gtk::Button* copyParam;
+	Gtk::Button* pasteParam;
 
 	int activeParamControl;
 
