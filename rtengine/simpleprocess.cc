@@ -121,9 +121,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     // update blurmap
-    float** buffer = new float*[fh];
-    for (int i=0; i<fh; i++)
-        buffer[i] = new float[fw];
+
 
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
@@ -131,7 +129,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
 		double shradius = params.sh.radius;
 		if (!params.sh.hq) shradius *= radius / 1800.0;
-		shmap->update (baseImg, buffer, shradius, ipf.lumimul, params.sh.hq, 1);
+		shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 1);
     }
     // RGB processing
 //!!!// auto exposure!!!
@@ -181,9 +179,18 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	ipf.defringe (labView);
 	//ipf.lumadenoise (labView, buffer);
  	ipf.dirpyrdenoise (labView);
-    ipf.sharpening (labView, (float**)buffer);
 
+    if (params.sharpening.enabled) {
+        float** buffer = new float*[fh];
+        for (int i=0; i<fh; i++)
+            buffer[i] = new float[fw];
 
+        ipf.sharpening (labView, (float**)buffer);
+
+        for (int i=0; i<fh; i++)
+            delete [] buffer[i];
+        delete [] buffer; buffer=NULL;
+    }
 
     // wavelet equalizer
     //ipf.waveletEqualizer (labView, true, true);
@@ -191,9 +198,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
 
-    for (int i=0; i<fh; i++)
-        delete [] buffer[i];
-    delete [] buffer;
 
     if (pl) pl->setProgress (0.60);
 

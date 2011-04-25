@@ -50,8 +50,6 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         ImageSource* imgsrc;
         
-        float** buffer;
-        
         SHMap* shmap;
         
         ColorTemp currWB;

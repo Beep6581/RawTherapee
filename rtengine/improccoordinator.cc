@@ -172,7 +172,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
 		double shradius = params.sh.radius;
 		if (!params.sh.hq) shradius *= radius / 1800.0;
-		shmap->update (oprevi, buffer, shradius, ipf.lumimul, params.sh.hq, scale);
+		shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
 		
     }
     readyphase++;
@@ -238,8 +238,21 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         //    ipf.colordenoise (nprevl, buffer);
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
             ipf.dirpyrdenoise (nprevl);
-            progress ("Sharpening...",100*readyphase/numofphases);
-            ipf.sharpening (nprevl, (float**)buffer);
+
+            if (params.sharpening.enabled) {
+                progress ("Sharpening...",100*readyphase/numofphases);
+                    
+                float **buffer = new float*[pH];
+                for (int i=0; i<pH; i++)
+                    buffer[i] = new float[pW];
+
+                ipf.sharpening (nprevl, (float**)buffer);
+
+                for (int i=0; i<pH; i++)
+                    delete [] buffer[i];
+                delete [] buffer;
+            }
+
             progress ("Pyramid equalizer...",100*readyphase/numofphases);
             ipf.dirpyrequalizer (nprevl);
 
@@ -265,8 +278,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
         catch(char * str)
         {
-           progress ("Error converting file...",0);
-			previmg->getMutex().unlock();
+            progress ("Error converting file...",0);
+            previmg->getMutex().unlock();
             mProcessing.unlock ();
             return;
         }
@@ -318,9 +331,7 @@ void ImProcCoordinator::freeAll () {
 		
         delete workimg;
         delete shmap;
-        for (int i=0; i<pH; i++)
-            delete [] buffer[i];
-        delete [] buffer;
+
     }
     allocated = false;
 }
@@ -358,10 +369,7 @@ if (settings->verbose) printf ("setscale before lock\n");
         previmg = new Image8 (pW, pH);
 		workimg = new Image8 (pW, pH);
         shmap = new SHMap (pW, pH, true);
-        
-        buffer = new float*[pH];
-        for (int i=0; i<pH; i++)
-            buffer[i] = new float[pW];
+
         allocated = true;
     }
     

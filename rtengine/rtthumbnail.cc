@@ -698,22 +698,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // update blurmap
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
-        float** buffer = NULL;
-        if (params.sh.hq) {
-            buffer = new float*[fh];
-            for (int i=0; i<fh; i++)
-                buffer[i] = new float[fw];
-        }
         shmap = new SHMap (fw, fh, false);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
         double shradius = params.sh.radius;
 		if (!params.sh.hq) shradius *= radius / 1800.0;
-        shmap->update (baseImg, buffer, shradius, ipf.lumimul, params.sh.hq, 16);
-        if (buffer) {
-            for (int i=0; i<fh; i++)
-                delete [] buffer[i];
-            delete [] buffer;
-        }
+        shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 16);
     }
     
     // RGB processing

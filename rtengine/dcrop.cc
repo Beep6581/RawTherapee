@@ -124,7 +124,7 @@ void Crop::update (int todo) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
 		double shradius = params.sh.radius;
 		if (!params.sh.hq) shradius *= radius / 1800.0;        
-		cshmap->update (baseCrop, cbuffer, shradius, parent->ipf.lumimul, params.sh.hq, skip);
+		cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);
     }
 

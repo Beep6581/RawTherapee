@@ -56,7 +56,7 @@ SHMap::~SHMap () {
     delete [] map;
 }
 
-void SHMap::update (Imagefloat* img, float** buffer, double radius, double lumi[3], bool hq, int skip) {
+void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
 
     // fill with luminance
     for (int i=0; i<H; i++)
