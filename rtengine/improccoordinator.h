@@ -81,6 +81,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTu histCropped;
 	
 		LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
+        LUTu histRedRaw, histGreenRaw, histBlueRaw;
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

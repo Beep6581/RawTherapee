@@ -78,14 +78,14 @@ class RawImageSource : public ImageSource {
         cmsHPROFILE camProfile;
         cmsHPROFILE embProfile;
 
-        RawImage* ri; // Copy of raw pixels
+        RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
         
         // to accelerate CIELAB conversion:
         double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
         double* cache;
         int threshold;
 
-        float** rawData;           // holds pixel values, data[i][j] corresponds to the ith row and jth column
+        float** rawData;  // holds preprocessed pixel values, data[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
         float** green; 
@@ -109,6 +109,8 @@ class RawImageSource : public ImageSource {
         void updateHLRecoveryMap_ColorPropagation ();
         void HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         unsigned FC(int row, int col){ return ri->FC(row,col); }
+        inline void getRowStartEnd (int x, int &start, int &end);
+
     public:
         RawImageSource ();
         ~RawImageSource ();
@@ -132,7 +134,8 @@ class RawImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
-        int         getAEHistogram (LUTu & histogram, int& histcompr);
+        void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
+        void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);

@@ -140,7 +140,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     if (params.toneCurve.autoexp) {
         LUTu aehist; int aehistcompr;
-        imgsrc->getAEHistogram (aehist, aehistcompr);
+        imgsrc->getAutoExpHistogram (aehist, aehistcompr);
         ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
     }
 

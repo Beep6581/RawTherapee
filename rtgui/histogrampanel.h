@@ -45,18 +45,14 @@ class HistogramArea : public Gtk::DrawingArea {
     Gdk::Color lgray;
     Gdk::Color mgray;
     Gdk::Color dgray;
-    LUTu lhist;
-    LUTu rhist;
-    LUTu ghist;
-    LUTu bhist;
+    LUTu lhist, rhist, ghist, bhist;
+    LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
+
     bool valid;
     bool showFull;
     int oldwidth, oldheight;
 
-    bool needVal;
-    bool needRed;
-    bool needGreen;
-    bool needBlue;
+    bool needLuma, needRed, needGreen, needBlue, rawMode;
 
     HistogramAreaIdleHelper* haih;
 
@@ -66,8 +62,8 @@ class HistogramArea : public Gtk::DrawingArea {
     ~HistogramArea();
 
     void renderHistogram ();
-    void update (LUTu &rh, LUTu &gh, LUTu &bh, LUTu &lh);
-    void updateOptions (bool r, bool g, bool b, bool v);
+    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw);
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
@@ -88,6 +84,7 @@ class HistogramPanel : public Gtk::HBox {
     Gtk::ToggleButton* showGreen;
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
+    Gtk::ToggleButton* showRAW;
     
     sigc::connection rconn;
     
@@ -95,7 +92,9 @@ class HistogramPanel : public Gtk::HBox {
 
     HistogramPanel ();
 
-    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma) { histogramArea->update (histRed, histGreen, histBlue, histLuma); }
+    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) { 
+        histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
+    }
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 };

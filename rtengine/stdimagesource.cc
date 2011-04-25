@@ -531,7 +531,7 @@ void StdImageSource::hlRecovery (unsigned short* red, unsigned short* green, uns
     rtengine::hlRecovery (red, green, blue, img->height, img->width, i, sx1, sx2, skip, needhr, hrmap);
 }
 */
-int StdImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
+void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     histcompr = 3;
 
@@ -544,7 +544,6 @@ int StdImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
             histogram[(int)CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
             histogram[(int)CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
         }
-    return 1;
 }
 
 ColorTemp StdImageSource::getAutoWB () {
