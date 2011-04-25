@@ -231,6 +231,12 @@ Linux
 	On Ubuntu/Debian the requirements can be installed by running:
 		sudo apt-get install build-essential cmake libgtk2.0-dev libgtkmm-2.4-dev libtiff-dev libpng-dev libjpeg-dev liblcms-dev libiptcdata-dev mercurial
 
+	Optional:
+		- libbz2 available from http://www.bzip.org
+
+	On Ubuntu/Debian the optional libraries can be installed by running:
+	   	sudo apt-get install libbz2-dev
+
 	Compile:
 		- Enter the root directory of the RawTherapee source tree
 		- Type: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
