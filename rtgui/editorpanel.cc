@@ -1287,9 +1287,10 @@ void EditorPanel::beforeAfterToggled () {
     }
 }
 
-void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve) {
+void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
+    LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
 
-    histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma);
+    histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
     tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
 }
 

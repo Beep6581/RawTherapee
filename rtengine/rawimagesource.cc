@@ -1861,7 +1861,7 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
+void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     histcompr = 3;
 
@@ -1870,16 +1870,9 @@ int RawImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
 
     for (int i=border; i<H-border; i++) {
         int start, end;
-        if (fuji) {
-            int fw = ri->get_FujiWidth();
-            start = ABS(fw-i) + border;
-            end = MIN( H+ W-fw-i, fw+i) - border;
-        }
-        else {
-            start = border;
-            end = W-border;
-        }
-        if (ri->isBayer())
+        getRowStartEnd (i, start, end);
+
+        if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
                 if (ri->ISGREEN(i,j))
                     histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
@@ -1887,6 +1880,7 @@ int RawImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
 					histogram[CLIP((int)(camwb_red*rawData[i][j]))>>histcompr]+=4;
 				else if (ri->ISBLUE(i,j))
 					histogram[CLIP((int)(camwb_blue*rawData[i][j]))>>histcompr]+=4;
+			} 
 			} else {
 				for (int j=start; j<3*end; j++) {
                     histogram[CLIP((int)(camwb_red*rawData[i][j+0]))>>histcompr]++;
@@ -1894,9 +1888,61 @@ int RawImageSource::getAEHistogram (LUTu & histogram, int& histcompr) {
                     histogram[CLIP((int)(camwb_blue*rawData[i][j+2]))>>histcompr]++;
 				}
 			}
-		
     }
-    return 1;
+}
+		
+// Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
+void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
+
+    histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
+	
+	float mult = 65535.0 / ri->get_white();
+
+    for (int i=border; i<H-border; i++) {
+        int start, end, idx;
+        getRowStartEnd (i, start, end);
+
+        if (ri->isBayer()) {
+            for (int j=start; j<end; j++) {
+                if (ri->ISGREEN(i,j)) {
+                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));
+                    histGreenRaw[idx>>8]++;
+                } else if (ri->ISRED(i,j)) {
+                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[1])));
+                    histRedRaw[idx>>8]++;
+                } else if (ri->ISBLUE(i,j)) {
+                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[2])));
+                    histBlueRaw[idx>>8]++;
+    }
+            }
+        } else {
+			for (int j=start; j<3*end; j++) {
+				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));
+                histRedRaw[idx>>8]++;
+
+				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+1]-cblack[1])));
+                histGreenRaw[idx>>8]++;
+
+				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+2]-cblack[2])));
+                histBlueRaw[idx>>8]++;
+			}
+		}
+    }
+
+    // since there are twice as many greens, correct for it
+    if (ri->isBayer()) for (int i=0;i<256;i++) histGreenRaw[i]>>=1;
+}
+
+void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
+    if (fuji) {
+        int fw = ri->get_FujiWidth();
+        start = ABS(fw-x) + border;
+        end = MIN( H+ W-fw-x, fw+x) - border;
+    }
+    else {
+        start = border;
+        end = W-border;
+    }
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -49,7 +49,7 @@ class StdImageSource : public ImageSource {
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
 
-        int         getAEHistogram (LUTu &histogram, int& histcompr);
+        void        getAutoExpHistogram (LUTu &histogram, int& histcompr);
         
         double      getDefGain  () { return 0.0; }
         double      getGamma    () { return 0.0; }

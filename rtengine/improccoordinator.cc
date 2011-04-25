@@ -47,9 +47,9 @@ ImProcCoordinator::ImProcCoordinator ()
     lhist16(65536);
     histCropped(65536);
 
-    histRed(65536);
-    histGreen(65536);
-    histBlue(256);
+    histRed(256); histRedRaw(256);
+    histGreen(256); histGreenRaw(256);
+    histBlue(256); histBlueRaw(256);
     histLuma(256);
     histToneCurve(256);
     histLCurve(256);
@@ -111,8 +111,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	}
 
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
-    if ( todo & M_PREPROC)
+    if ( todo & M_PREPROC) {
     	imgsrc->preprocess( rp );
+        imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
+    }
 
     if( todo & M_RAW){
     	fineDetailsProcessed = highDetailNeeded;
@@ -178,7 +180,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
             LUTu aehist; int aehistcompr;
-            imgsrc->getAEHistogram (aehist, aehistcompr);
+            imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
             if (aeListener)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.black);
@@ -289,7 +291,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             hy2 = MIN(pH,MAX(0,(params.crop.y+params.crop.h) / scale));
         }
         updateHistograms (hx1, hy1, hx2, hy2);  // just RGBL, not the tone curves
-        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve);
+        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histRedRaw, histGreenRaw, histBlueRaw);
     }
 
     progress ("Ready",100*readyphase/numofphases);

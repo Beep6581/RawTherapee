@@ -87,7 +87,11 @@ class ImageSource : public InitialImage {
 
                 void        increaseRef () { references++; }
                 void        decreaseRef () { references--; if (!references) delete this; }
-        virtual int         getAEHistogram (LUTu & histogram, int& histcompr) {return 0;}
+
+        virtual void        getAutoExpHistogram (LUTu & histogram, int& histcompr)=0;
+        virtual void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) { 
+            histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear(); // only some sources will supply this
+        }  
 
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }
