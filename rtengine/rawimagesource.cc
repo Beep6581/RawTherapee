@@ -1898,6 +1898,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 	
 	float mult = 65535.0 / ri->get_white();
 
+    #pragma omp parallel for
     for (int i=border; i<H-border; i++) {
         int start, end, idx;
         getRowStartEnd (i, start, end);
