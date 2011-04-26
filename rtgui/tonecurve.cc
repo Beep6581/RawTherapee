@@ -127,6 +127,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hlcompr->setValue (pp->toneCurve.hlcompr);
     hlcomprthresh->setValue (pp->toneCurve.hlcomprthresh);
     shcompr->setValue (pp->toneCurve.shcompr);
+    if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     brightness->setValue (pp->toneCurve.brightness);
     contrast->setValue (pp->toneCurve.contrast);
 	saturation->setValue (pp->toneCurve.saturation);
@@ -224,8 +225,10 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvExpComp, costr);
     else if (a==brightness) 
         listener->panelChanged (EvBrightness, costr);
-    else if (a==black) 
+    else if (a==black){
         listener->panelChanged (EvBlack, costr);
+        if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+    }
     else if (a==contrast)
         listener->panelChanged (EvContrast, costr);
 	else if (a==saturation)
@@ -256,6 +259,7 @@ void ToneCurve::autolevels_toggled () {
     if (!batchMode && autolevels->get_active() && listener) {
         listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
         waitForAutoExp ();
+        if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     } 
     
     if (batchMode) {
@@ -337,6 +341,7 @@ bool ToneCurve::autoExpComputed_ () {
     enableAll ();
     expcomp->setValue (nextBr);
     black->setValue (nextBl);
+    if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     enableListener ();
 
     return false;
