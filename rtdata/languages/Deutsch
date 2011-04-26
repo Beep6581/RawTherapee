@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Mär 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 24.03.2011
+#15 Jan-Apr 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 26.04.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -71,7 +71,7 @@ FILEBROWSER_ARRANGEMENTHINT;Zwischen vertikaler und horizontaler Ausrichtung der
 FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
 FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicken, um angegebenen Pfad zu durchsuchen
-FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (<b>Strg+O</b> zum Setzen des Fokus, <b>Strg+Eingabe</b> zum Durchsuchen)
+FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (<b>Strg+O</b> zum Setzen des Fokus, <b>Strg+Eingabe</b> zum Durchsuchen)\n\nSonderzeichen im Pfad:\n<b>~</b> für Benutzerverzeichnis, <b>!</b> für Bildverzeichnis des Benutzers
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Aus dem Cache entfernen (vollständig)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Aus dem Cache entfernen (teilweise)
@@ -175,10 +175,10 @@ HISTORY_DELSNAPSHOT;Entf.
 HISTORY_FROMCLIPBOARD;Aus der Zwischenablage
 HISTORY_LABEL;Historie
 HISTORY_MSG_100;RGB Sättigung
-HISTORY_MSG_101;HSV-Mixer - Farbton
-HISTORY_MSG_102;HSV-Mixer - Sättigung
-HISTORY_MSG_103;HSV-Mixer - Hellwert
-HISTORY_MSG_104;HSV-Mixer
+HISTORY_MSG_101;HSV-Equalizer Farbton
+HISTORY_MSG_102;HSV-Equalizer Sättigung
+HISTORY_MSG_103;HSV-Equalizer Hellwert
+HISTORY_MSG_104;HSV-Equalizer
 HISTORY_MSG_105;Defringe
 HISTORY_MSG_106;Defringe Radius
 HISTORY_MSG_107;Defringe Schwellenwert
@@ -255,7 +255,7 @@ HISTORY_MSG_53;Tonweite Lichter
 HISTORY_MSG_54;Tonweite Schatten
 HISTORY_MSG_55;Lokaler Kontrast
 HISTORY_MSG_56;Schatten/Lichter Radius
-HISTORY_MSG_57;grobe Drehung
+HISTORY_MSG_57;Grobe Drehung
 HISTORY_MSG_58;Horizontal spiegeln
 HISTORY_MSG_59;Vertikal spiegeln
 HISTORY_MSG_5;Helligkeit
@@ -435,10 +435,10 @@ NAVIGATOR_G_NA;G = k.a.
 NAVIGATOR_G_VALUE;G = %1
 NAVIGATOR_H_NA;H = k.a.
 NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;A = k.a.
-NAVIGATOR_LAB_A_VALUE;A = %1
-NAVIGATOR_LAB_B_NA;B = k.a.
-NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_A_NA;a = k.a.
+NAVIGATOR_LAB_A_VALUE;a = %1
+NAVIGATOR_LAB_B_NA;b = k.a.
+NAVIGATOR_LAB_B_VALUE;b = %1
 NAVIGATOR_LAB_L_NA;L = k.a.
 NAVIGATOR_LAB_L_VALUE;L = %1
 NAVIGATOR_R_NA;R = k.a.
@@ -479,11 +479,11 @@ PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Lichter wiederherstellen\nSchwellenwert
-PARTIALPASTE_HSVEQUALIZER;HSV-Mixer
+PARTIALPASTE_HSVEQUALIZER;HSV-Equalizer
 PARTIALPASTE_ICMSETTINGS;ICM-Einstellungen
 PARTIALPASTE_IMPULSEDENOISE;Impulsrauschminderung
 PARTIALPASTE_IPTCINFO;IPTC-Informationen
-PARTIALPASTE_LABCURVE;LAB-Anpassungen
+PARTIALPASTE_LABCURVE;Lab-Anpassungen
 PARTIALPASTE_LENSGROUP;Gruppe Objektivkorrekturen
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
 PARTIALPASTE_LUMINANCEGROUP;Gruppe Luminanzeinstellungen
@@ -530,7 +530,7 @@ PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
-PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transp. für Ausschnittsmaske
+PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transparenz für Ausschnittsmaske
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
@@ -785,7 +785,7 @@ TP_HSVEQUALIZER7;Purpur
 TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;Kanal
 TP_HSVEQUALIZER_HUE;H
-TP_HSVEQUALIZER_LABEL;HSV-Mixer
+TP_HSVEQUALIZER_LABEL;HSV-Equalizer
 TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
@@ -811,7 +811,7 @@ TP_LABCURVE_BRIGHTNESS;Helligkeit
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanzkurve
 TP_LABCURVE_ENABLESATLIMITER;Sättigungsbegrenzung aktivieren
-TP_LABCURVE_LABEL;LAB-Anpassungen
+TP_LABCURVE_LABEL;Lab-Anpassungen
 TP_LABCURVE_SATLIMIT;Sättigungsgrenze
 TP_LABCURVE_SATURATION;Sättigung
 TP_LENSGEOM_AUTOCROP;Auto-Schneiden
@@ -832,7 +832,7 @@ TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
 TP_RAWEXPOS_LINEAR;Linearer Korrekturfaktor
-TP_RAWEXPOS_PRESER;Lichter bewahrende Korrektur\n(EV)
+TP_RAWEXPOS_PRESER;Lichter bewahrende\nKorrektur (EV)
 TP_RAW_DCBENHANCE;DCB-Verfeinerungsschritt durchführen
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
 TP_RAW_DMETHOD;Methode
