@@ -125,10 +125,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	// parametric curve
 	paramCurveBox = new Gtk::VBox ();
 	paramCurveBox->set_spacing(4);
-	// Wolfgang START
 	paramInnerBox = new Gtk::HBox ();
 	paramInnerBox->set_spacing(4);
-	// Wolfgang END
 
 	paramCurve = Gtk::manage (new MyDiagonalCurve ());
 	Gtk::Table* paramctab = Gtk::manage (new Gtk::Table (2,1));
@@ -141,10 +139,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 0, 0);
 	paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS, 0);
 
-	// Wolfgang Change: paramCurveBox->pack_start (*paramctab, Gtk::PACK_EXPAND_WIDGET, 0);
 	paramInnerBox->pack_start (*paramctab, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	// Wolfgang START
 	Gtk::VBox* Parambbox = Gtk::manage (new Gtk::VBox ());
 	Parambbox->set_spacing(4);
 	saveParam = Gtk::manage (new Gtk::Button ());
@@ -174,7 +170,6 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	paramInnerBox->pack_start (*Parambbox, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	paramCurveBox->pack_start (*paramInnerBox, Gtk::PACK_SHRINK, 0);
-	// Wolfgang END
 
 	highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
 	lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
@@ -233,9 +228,7 @@ DiagonalCurveEditorSubGroup::~DiagonalCurveEditorSubGroup() {
     delete customCurveBox;
     delete paramCurveBox;
     delete NURBSCurveBox;
-    // Wolfgang START
     delete paramInnerBox;
-    // Wolfgang END
 }
 
 /*
@@ -320,11 +313,9 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 		case DCT_NURBS:		// NURBS
 			p = NURBSCurve->getPoints ();
 			break;
-		// Wolfgang Start
 		case DCT_Parametric:
                         p = paramCurve->getPoints ();
 			break;
-		// Wolfgang End
 		default:
 			break;
 		}
@@ -336,7 +327,6 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 			f << "Spline\n";
 		else if (p[ix]==(double)(DCT_NURBS))
 			f << "NURBS\n";
-		// Wolfgang Start
 		else if (p[ix]==(double)(DCT_Parametric))
 			f << "Parametric\n";
 		if (p[ix]==(double)(DCT_Parametric)) {
@@ -344,7 +334,6 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 		  for (unsigned int i=0; i<p.size()-1; i++, ix++)
                         f << p[ix] << std::endl;
 	        }
-		// Wolfgang End
 		else {	
 		   ix++;
 		   for (unsigned int i=0; i<p.size()/2; i++, ix+=2)

@@ -31,9 +31,7 @@ class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListen
 protected:
 	Gtk::HBox* customCurveBox;
 	Gtk::VBox* paramCurveBox;
-	// Wolfgang Start
 	Gtk::HBox* paramInnerBox;
-	// Wolfgang End
 	Gtk::HBox* NURBSCurveBox;
 
 	MyDiagonalCurve* customCurve;
