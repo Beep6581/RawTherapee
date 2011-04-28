@@ -49,6 +49,7 @@ if [ -d "${APP}" ]; then
 fi
 echo "Removing any old disk images..."
 rm ${RELEASE}/rawtherapee*.dmg
+rm ${RELEASE}/rawtherapee*.dmg.zip
 
 echo "Making application directory structure..."
 mkdir -p "${RESOURCES}"
@@ -95,5 +96,8 @@ echo "Creating distribution .dmg..."
 hdiutil create -srcdir ${APP} ${DMG}
 echo "Cleaning up..."
 rm -rf ${APP}
+
+cd ${RELEASE}
+zip ${DMG}.zip ${DMG} AboutThisBuild.txt
 
 echo "All done!"
