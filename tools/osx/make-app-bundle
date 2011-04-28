@@ -29,7 +29,7 @@ ETC=${MACOS}/etc
 LIB=${MACOS}/lib
 SHARE=${MACOS}/share
 RELEASE=release
-DMG=${RELEASE}/rawtherapee_osx105_`date +%F`_`hg parents --template '{latesttag}+{latesttagdistance}-{node|short}'`.dmg
+DMG=${RELEASE}/rawtherapee_mac32_`date +%F`_`hg -R . branch`_`hg parents --template '{latesttag}i.{latesttagdistance}-{node|short}'`.dmg
 EXECUTABLE=rt
 
 #Find where MacPorts is installed.  We take a known binary (cmake), which is in <MacPorts>/bin, and 
@@ -60,6 +60,7 @@ mkdir -p "${SHARE}/mime"
 echo "Copying libraries from ${MACPORTS_PREFIX}..."
 cp -R ${MACPORTS_PREFIX}/lib/pango ${LIB}
 cp -R ${MACPORTS_PREFIX}/lib/gtk-2.0 ${LIB}
+cp -R ${MACPORTS_PREFIX}/lib/gdk-pixbuf* ${LIB}
 
 #Copy over mimes (if a mime is copied, and nobody hears, is it really copied?)
 echo "Copying shared files from ${MACPORTS_PREFIX}..."
@@ -70,9 +71,9 @@ echo "Copying configuration files from ${MACPORTS_PREFIX} and modifying for stan
 cp -R $MACPORTS_PREFIX/etc/gtk-2.0 ${ETC}
 cp -R $MACPORTS_PREFIX/etc/pango ${ETC}
 ESCAPED_MACPORTS_PREFIX=`echo ${MACPORTS_PREFIX} | sed -e 's/\\//\\\\\\//g'`
-sed -i .bak -e "s/${ESCAPED_MACPORTS_PREFIX}/@executable_path/g" ${ETC}/gtk-2.0/gdk-pixbuf.loaders ${ETC}/pango/pango.modules
+sed -i .bak -e "s/${ESCAPED_MACPORTS_PREFIX}/@executable_path/g" ${ETC}/gtk-2.0/gdk-pixbuf.loaders ${ETC}/gtk-2.0/gtk.immodules ${ETC}/pango/pango.modules
 echo -e "[Pango]\nModuleFiles = /tmp/${EXECUTABLE}_pango.modules" > ${ETC}/pango/pangorc
-
+rm ${LIB}/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 #Copy over the release files
 echo "Copying release files..."
