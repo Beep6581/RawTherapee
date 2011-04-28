@@ -71,9 +71,9 @@ echo "Copying configuration files from ${MACPORTS_PREFIX} and modifying for stan
 cp -R $MACPORTS_PREFIX/etc/gtk-2.0 ${ETC}
 cp -R $MACPORTS_PREFIX/etc/pango ${ETC}
 ESCAPED_MACPORTS_PREFIX=`echo ${MACPORTS_PREFIX} | sed -e 's/\\//\\\\\\//g'`
-sed -i .bak -e "s/${ESCAPED_MACPORTS_PREFIX}/@executable_path/g" ${ETC}/gtk-2.0/gdk-pixbuf.loaders ${ETC}/pango/pango.modules
+sed -i .bak -e "s/${ESCAPED_MACPORTS_PREFIX}/@executable_path/g" ${ETC}/gtk-2.0/gdk-pixbuf.loaders ${ETC}/gtk-2.0/gtk.immodules ${ETC}/pango/pango.modules
 echo -e "[Pango]\nModuleFiles = /tmp/${EXECUTABLE}_pango.modules" > ${ETC}/pango/pangorc
-
+rm ${LIB}/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 #Copy over the release files
 echo "Copying release files..."
