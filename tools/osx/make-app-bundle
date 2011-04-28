@@ -96,4 +96,7 @@ hdiutil create -srcdir ${APP} ${DMG}
 echo "Cleaning up..."
 rm -rf ${APP}
 
+cd ${RELEASE}
+zip ${DMG}.zip ${DMG} AboutThisBuild.txt
+
 echo "All done!"
