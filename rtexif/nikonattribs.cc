@@ -642,11 +642,11 @@ class NALensDataInterpreter : public Interpreter {
                 d100 = false;
             }
 
-            unsigned char buffer[15];
+            unsigned char buffer[16];
             if (d100) 
                 memcpy (buffer, t->getValue()+6, 7);
             else
-                memcpy (buffer, t->getValue()+4, 15);
+                memcpy (buffer, t->getValue()+4, 16);
 
             if (ver>=201) {
                 const unsigned char* serval = t->getParent()->getTag(0x001d)->getValue ();
@@ -661,7 +661,7 @@ class NALensDataInterpreter : public Interpreter {
                 unsigned char ci = xlat[0][serial & 0xff];
                 unsigned char cj = xlat[1][key];
                 unsigned char ck = 0x60;
-                for (int i=0; i < 15; i++)
+                for (int i=0; i < 16; i++)
                     buffer[i] ^= (cj += ci * ck++);
             }
                 
