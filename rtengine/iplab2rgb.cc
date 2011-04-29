@@ -39,11 +39,6 @@ namespace rtengine {
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 	
-#define epsilon 0.00885645 //216/24389
-#define kappa 903.2963 //24389/27
-#define kappainv 0.00110706 //inverse of kappa
-#define kapeps 8 // kappa*epsilon
-#define Lab2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
 	
 #define D50x 0.96422
 #define D50z 0.82521
@@ -83,9 +78,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				x_ = Lab2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
-				y_ = Lab2xyz(fy);
-				z_ = Lab2xyz(fz)*D50z;
+				x_ = f2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
+				y_ = f2xyz(fy);
+				z_ = f2xyz(fz)*D50z;
 
                 buffer[iy++] = CLIP01(x_);
                 buffer[iy++] = CLIP01(y_);
@@ -118,9 +113,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				x_ = 65535.0*Lab2xyz(fx)*D50x;
-				y_ = 65535.0*Lab2xyz(fy);
-				z_ = 65535.0*Lab2xyz(fz)*D50z;
+				x_ = 65535.0 * f2xyz(fx)*D50x;
+				y_ = 65535.0 * f2xyz(fy);
+				z_ = 65535.0 * f2xyz(fz)*D50z;
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
@@ -175,9 +170,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0*Lab2xyz(fx)*D50x;
-				float y_ = 65535.0*Lab2xyz(fy);
-				float z_ = 65535.0*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0 * f2xyz(fx)*D50x;
+				float y_ = 65535.0 * f2xyz(fy);
+				float z_ = 65535.0 * f2xyz(fz)*D50z;
 
                 buffer[iy++] = CLIP((int)x_);
                 buffer[iy++] = CLIP((int)y_);
@@ -218,9 +213,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0*Lab2xyz(fx)*D50x;
-				float y_ = 65535.0*Lab2xyz(fy);
-				float z_ = 65535.0*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0 * f2xyz(fx)*D50x;
+				float y_ = 65535.0 * f2xyz(fy);
+				float z_ = 65535.0 * f2xyz(fz)*D50z;
 
 				xyz2rgb(x_,y_,z_,R,G,B,rgb_xyz);
 
@@ -262,9 +257,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0*Lab2xyz(fx)*D50x;
-				float y_ = 65535.0*Lab2xyz(fy);
-				float z_ = 65535.0*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0 * f2xyz(fx)*D50x;
+				float y_ = 65535.0 * f2xyz(fy);
+				float z_ = 65535.0 * f2xyz(fz)*D50z;
 
 				xa[j-cx] = CLIP((int)x_);
 				ya[j-cx] = CLIP((int)y_);
@@ -293,9 +288,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0*Lab2xyz(fx)*D50x;
-				float y_ = 65535.0*Lab2xyz(fy);
-				float z_ = 65535.0*Lab2xyz(fz)*D50z;
+				float x_ = 65535.0 * f2xyz(fx)*D50x;
+				float y_ = 65535.0 * f2xyz(fy);
+				float z_ = 65535.0 * f2xyz(fz)*D50z;
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
