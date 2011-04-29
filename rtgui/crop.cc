@@ -103,6 +103,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
   pack_start (*hb31, Gtk::PACK_SHRINK, 4);
   
+  // ppibox START
   ppibox = Gtk::manage (new Gtk::VBox());
   ppibox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 2);
 
@@ -112,17 +113,22 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   ppi->set_size_request (60, -1);
   hb4->pack_start (*ppi);
 
-  ppibox->pack_start (*hb4, Gtk::PACK_SHRINK, 2);
+  sizebox = Gtk::manage (new Gtk::HBox());
 
   sizecm = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " cm x " + M("GENERAL_NA") + " cm"));
   sizein = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " in x " + M("GENERAL_NA") + " in"));
 
-  ppibox->pack_start (*sizecm, Gtk::PACK_SHRINK, 1);
-  ppibox->pack_start (*sizein, Gtk::PACK_SHRINK, 1);
+  sizebox->pack_start (*sizecm, Gtk::PACK_SHRINK, 4);
+  sizebox->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 6);
+  sizebox->pack_start (*sizein, Gtk::PACK_SHRINK, 4);
+  sizebox->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 6);
+  sizebox->pack_start (*hb4, Gtk::PACK_SHRINK, 2);
   
+  ppibox->pack_start (*sizebox, Gtk::PACK_SHRINK, 1);
   pack_start (*ppibox, Gtk::PACK_SHRINK, 0);
 
   ppi->set_value (300);
+  // ppibox END
 
   ratio->append_text ("3:2");
   ratio->append_text ("4:3");
