@@ -48,6 +48,7 @@ class FileBrowserEntry : public ThumbBrowserEntryBase,
     ImageAreaToolListener* iatlistener;
     int press_x, press_y, action_x, action_y;
     double rot_deg;
+    bool landscape;
     rtengine::procparams::CropParams cropParams;
     CropGUIListener* cropgl;
     FileBrowserEntryIdleHelper* feih;
