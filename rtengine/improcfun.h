@@ -132,6 +132,13 @@ class ImProcFunctions {
 
 	//void gamutmap(LabImage* );
 	void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
+
+    static inline float f2xyz(register float f) {
+        const float epsilonExpInv3 = 6.0/29.0;
+        const float kappaInv = 27.0/24389.0;  // inverse of kappa
+
+        return (f > epsilonExpInv3) ? f*f*f : (116 * f - 16) * kappaInv;
+    }
 };
 }
 #endif

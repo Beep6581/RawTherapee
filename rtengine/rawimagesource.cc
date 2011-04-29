@@ -68,13 +68,6 @@ PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
 PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
 	
 	
-//%%%%%%%%%%%%
-#define epsilon 0.00885645 //216/24389
-#define kappainv 0.00110706 //inverse of kappa
-#define kapeps 8 // kappa*epsilon
-#define f2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
-//%%%%%%%%%%%%
-	
 
 RawImageSource::RawImageSource ()
 :ImageSource()
@@ -1824,11 +1817,10 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
             // convert back to rgb
             double fz = fy - y + z;
             double fx = fy + x - y;
-			// again shouldn't this be a universal, centrally defined function???
-			double zr = f2xyz(fz);
-            double xr = f2xyz(fx);
-            //double zr = (fz<=0.206893) ? ((116.0*fz-16.0)/903.3) : (fz * fz * fz);
-            //double xr = (fx<=0.206893) ? ((116.0*fx-16.0)/903.3) : (fx * fx * fx);
+
+			double zr = ImProcFunctions::f2xyz(fz);
+            double xr = ImProcFunctions::f2xyz(fx);
+
             x = xr*65535.0 ;
             y = yy;
             z = zr*65535.0 ;

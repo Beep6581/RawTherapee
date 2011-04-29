@@ -75,14 +75,6 @@ namespace rtengine {
 #define kappa	903.29630 //24389.0/27.0;
 	
 	
-//%%%%%%%%%%%%
-#define epsilon 0.00885645 //216/24389
-#define kappainv 0.00110706 //inverse of kappa
-#define kapeps 8 // kappa*epsilon
-#define f2xyz(f) (( (g=f*f*f) > epsilon) ? g : (116*f-16)*kappainv)
-//%%%%%%%%%%%%
-
-
 extern const Settings* settings;
 
 LUTf ImProcFunctions::cachef ;
