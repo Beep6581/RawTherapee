@@ -1846,7 +1846,7 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
     if (method=="Luminance")
         HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
     else if (method=="CIELab blending")
-        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0/**initialGain*/, xyz_cam, cam_xyz);
+        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, xyz_cam, cam_xyz);
     else if (method=="Color")
         HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);
 }

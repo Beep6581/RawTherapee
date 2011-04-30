@@ -235,13 +235,13 @@ void RawImageSource::HLRecovery_ColorPropagation (float* red, float* green, floa
             double mulr = mr1*mc1 * hrmap[0][blr][blc] + mr1*(1.0-mc1) * hrmap[0][blr][blc+1] + (1.0-mr1)*mc1 * hrmap[0][blr+1][blc] + (1.0-mr1)*(1.0-mc1) * hrmap[0][blr+1][blc+1];
             double mulg = mr1*mc1 * hrmap[1][blr][blc] + mr1*(1.0-mc1) * hrmap[1][blr][blc+1] + (1.0-mr1)*mc1 * hrmap[1][blr+1][blc] + (1.0-mr1)*(1.0-mc1) * hrmap[1][blr+1][blc+1];
             double mulb = mr1*mc1 * hrmap[2][blr][blc] + mr1*(1.0-mc1) * hrmap[2][blr][blc+1] + (1.0-mr1)*mc1 * hrmap[2][blr+1][blc] + (1.0-mr1)*(1.0-mc1) * hrmap[2][blr+1][blc+1];
-            red[jx] = CLIP(red[jx] * mulr);
-            green[jx] = CLIP(green[jx] * mulg);
-            blue[jx] = CLIP(blue[jx] * mulb);
+            red[jx] = (red[jx] * mulr);
+            green[jx] = (green[jx] * mulg);
+            blue[jx] = (blue[jx] * mulb);
         } else {
-            red[jx] = CLIP(red[jx]);
-            green[jx] = CLIP(green[jx]);
-            blue[jx] = CLIP(blue[jx]);
+            red[jx] = (red[jx]);
+            green[jx] = (green[jx]);
+            blue[jx] = (blue[jx]);
 		}
     }
 }
