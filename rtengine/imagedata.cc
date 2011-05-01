@@ -45,7 +45,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
 #ifdef RAWZOR_SUPPORT
     // RAWZOR support begin
     if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".rwz") && ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
-        FILE* f = g_fopen (fname.c_str (), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
         	fseek (f, 0, SEEK_END);
         	int rzwSize = ftell (f);
@@ -66,7 +66,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
                     else if (ri->ciffBase>=0)
                         root = rtexif::ExifManager::parseCIFF (tf, ri->ciffBase, ri->ciffLength);
                     fclose (tf);
-                    ::g_remove (tfname.c_str());
+                    safe_g_remove (tfname);
                     extractInfo ();
                 }
                 delete [] rawData;
@@ -79,7 +79,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
     else 
 #endif
     if (ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
-        FILE* f = g_fopen (fname.c_str(), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             if (ri->exifBase>=0) {
                 root = rtexif::ExifManager::parse (f, ri->exifBase);
@@ -96,18 +96,18 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
         }
     }    
     else if (dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
-        FILE* f = g_fopen (fname.c_str (), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
             extractInfo ();
             fclose (f);
-            FILE* ff = g_fopen (fname.c_str (), "rb");
+            FILE* ff = safe_g_fopen (fname, "rb");
             iptc = iptc_data_new_from_jpeg_file (ff);
             fclose (ff);
         }
     }    
     else if ((dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
-        FILE* f = g_fopen (fname.c_str (), "rb");
+        FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseTIFF (f);
             fclose (f);

@@ -19,6 +19,7 @@
 #include <myfile.h>
 #include <cstdarg>
 #include <glibmm.h>
+#include <safegtk.h>
 #ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
 #endif
@@ -65,19 +66,7 @@ int munmap(void *start, size_t length)
 
 IMFILE* fopen (const char* fname)
 {
-	int fd=-1;
-#ifdef WIN32
-    // First convert UTF8 to UTF16, then use Windows function to open
-	wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
-    HANDLE hFile = CreateFileW(wFname, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    g_free(wFname);
-
-	// convert back to old file descriptor format
-    if (hFile!=INVALID_HANDLE_VALUE) fd = _open_osfhandle((intptr_t)hFile, 0);
-#else
-    fd = ::open(fname, O_RDONLY);
-#endif
-
+	int fd = safe_open_ReadOnly(fname);
 	if ( fd < 0 )
 		return 0;
 
@@ -116,7 +105,7 @@ IMFILE* gfopen (const char* fname)
 
 IMFILE* fopen (const char* fname) {
 
-	FILE* f = fopen (fname, "rb");
+	FILE* f = g_fopen (fname, "rb");
     if (!f)
         return NULL;
     IMFILE* mf = new IMFILE;
@@ -148,8 +137,7 @@ IMFILE* fopen (const char* fname) {
     }
     // RAWZOR support end
 #endif
-
-	return mf;
+    return mf;
 }
 
 IMFILE* gfopen (const char* fname) {

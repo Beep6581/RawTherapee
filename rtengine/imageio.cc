@@ -130,7 +130,7 @@ void png_flush(png_struct_def *png_ptr);
 
 int ImageIO::loadPNG  (Glib::ustring fname) {
 
-    FILE *file = g_fopen (fname.c_str(),"rb");
+    FILE *file = safe_g_fopen (fname,"rb");
     if (!file) 
       return IMIO_CANNOTREADFILE;
 
@@ -325,7 +325,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (Glib::ustring fname) {
 
-	FILE *file=g_fopen(fname.c_str(),"rb");
+	FILE *file=safe_g_fopen(fname,"rb");
 	if (!file) 
         return IMIO_CANNOTREADFILE;
 
@@ -501,11 +501,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
 
 int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
 
-	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
-	Glib::ustring tmpFname=fname;
-	tmpFname.append(".tmp");
-
-	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
+	FILE *file = safe_g_fopen_WriteBinLock (fname);
 
     if (!file) 
       return IMIO_CANNOTREADFILE;
@@ -572,9 +568,6 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
     delete [] row;
 	fclose (file);
 
-	// Rename temporary filename, practically atomic
-	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
-
     if (pl) {
         pl->setProgressStr ("Ready.");
         pl->setProgress (1.0);
@@ -592,11 +585,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
 
-	// create a temporary file name that is opened in parallel by e.g. image viewers whilte RT is still writing
-	Glib::ustring tmpFname=fname;
-	tmpFname.append(".tmp");
-
-	FILE *file = g_fopen (safe_locale_from_utf8(tmpFname).c_str (), "wb");
+	FILE *file = safe_g_fopen_WriteBinLock (fname);
 
 	if (!file)
           return IMIO_CANNOTREADFILE;
@@ -688,9 +677,6 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 
 	fclose (file);
 
-	// Rename temporary filename, practically atomic
-	g_rename(safe_locale_from_utf8(tmpFname).c_str (),safe_locale_from_utf8(fname).c_str ());
-
     if (pl) {
         pl->setProgressStr ("Ready.");
         pl->setProgress (1.0);
@@ -711,7 +697,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     unsigned char* linebuffer = new unsigned char[lineWidth];
 // TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
     if (exifRoot && uncompressed) {
-        FILE *file = g_fopen (safe_locale_from_utf8(fname).c_str (), "wb");
+        FILE *file = safe_g_fopen_WriteBinLock (fname);
 
         if (!file)
             return IMIO_CANNOTREADFILE;           
@@ -884,7 +870,8 @@ void png_flush(png_structp png_ptr) {
 int ImageIO::load (Glib::ustring fname) {
 
   int lastdot = fname.find_last_of ('.');
-
+  if( Glib::ustring::npos == lastdot )
+    return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return loadPNG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
@@ -897,7 +884,8 @@ int ImageIO::load (Glib::ustring fname) {
 int ImageIO::save (Glib::ustring fname) {
 
   int lastdot = fname.find_last_of ('.');
-
+  if( Glib::ustring::npos == lastdot )
+    return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return savePNG (fname);
   else if (!fname.casefold().compare (lastdot, 4, ".jpg"))

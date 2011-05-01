@@ -477,13 +477,13 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe) {
             // remove from cache
             cacheMgr->deleteEntry (fname);
             // delete from file system
-            ::g_remove (fname.c_str());
+            safe_g_remove (fname);
             // delete paramfile if found
-            ::g_remove (Glib::ustring(fname+paramFileExtension).c_str());
-            ::g_remove (Glib::ustring(removeExtension(fname)+paramFileExtension).c_str());
+            safe_g_remove (Glib::ustring(fname+paramFileExtension));
+            safe_g_remove (Glib::ustring(removeExtension(fname)+paramFileExtension));
             // delete .thm file
-            ::g_remove (Glib::ustring(removeExtension(fname)+".thm").c_str());
-            ::g_remove (Glib::ustring(removeExtension(fname)+".THM").c_str());
+            safe_g_remove (Glib::ustring(removeExtension(fname)+".thm"));
+            safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
         }
         redrawAll ();    
     }
@@ -543,14 +543,14 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 				Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
 
 				/* check if filename already exists*/
-				if (Glib::file_test (nfname, Glib::FILE_TEST_EXISTS)) {
+				if (safe_file_test (nfname, Glib::FILE_TEST_EXISTS)) {
 					Glib::ustring msg_ = Glib::ustring("<b>") + nfname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "</b>";
 					Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 					msgd.run ();
 				}
 				else {
 					success = true;
-					if (!::g_rename (ofname.c_str(), nfname.c_str())) {
+            if (!safe_g_rename (ofname, nfname)) {
 						cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 						reparseDirectory ();
 					}
@@ -600,7 +600,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
-            if (!::g_rename (ofname.c_str(), nfname.c_str())) {
+            if (!safe_g_rename (ofname, nfname)) {
 				cacheMgr->renameEntry (ofname, tbe[i]->thumbnail->getMD5(), nfname);
 				// the remaining part (removing old and adding new entry) is done by the directory monitor
 				reparseDirectory ();
@@ -751,7 +751,7 @@ int FileCatalog::reparseDirectory () {
     if (selectedDirectory=="")
         return 0;
 
-    if (!Glib::file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
+    if (!safe_file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
         closeDir ();
 		return 0;
 	}
@@ -762,7 +762,7 @@ int FileCatalog::reparseDirectory () {
 	const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries ();
 	std::vector<Glib::ustring> fileNamesToDel;
 	for (size_t i=0; i<t.size(); i++)
-		if (!Glib::file_test (t[i]->filename, Glib::FILE_TEST_EXISTS))
+		if (!safe_file_test (t[i]->filename, Glib::FILE_TEST_EXISTS))
 			fileNamesToDel.push_back (t[i]->filename);
 	for (size_t i=0; i<fileNamesToDel.size(); i++) {
 		delete fileBrowser->delEntry (fileNamesToDel[i]);

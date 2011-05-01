@@ -23,6 +23,7 @@
 #include <multilangmgr.h>
 #include <safekeyfile.h>
 #include <addsetids.h>
+#include <safegtk.h>
 #include <version.h>
 
 Options options;
@@ -135,7 +136,11 @@ void Options::setDefaults () {
     rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
 #ifdef WIN32
-    rtSettings.iccDirectory = "C:/WINDOWS/System32/spool/drivers/color";
+	const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
+	if (sysRoot!=NULL) 
+		rtSettings.iccDirectory = Glib::ustring(sysRoot) + Glib::ustring("\\System32\\spool\\drivers\\color");
+	else 
+		rtSettings.iccDirectory = "C:\\WINDOWS\\System32\\spool\\drivers\\color";
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
@@ -155,7 +160,7 @@ int Options::readFromFile (Glib::ustring fname) {
     rtengine::SafeKeyFile keyFile;
 
     try {
-    	if( !Glib::file_test(fname,Glib::FILE_TEST_EXISTS))
+    	if( !safe_file_test(fname,Glib::FILE_TEST_EXISTS))
     		return 1;
         if (!keyFile.load_from_file (fname)) 
             return 1;
@@ -434,7 +439,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+
+    FILE *f = safe_g_fopen (fname, "wt");
     if (f==NULL)
         return 1;
     else {
@@ -454,9 +460,9 @@ void Options::load () {
     cacheBaseDir = argv0 + "/cache";
     if (options.multiUser) {
         int r = options.readFromFile (rtdir + "/options");
-        if (r && !g_mkdir_with_parents (rtdir.c_str(), 511)) {
+        if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
             Glib::ustring profdir = rtdir + "/profiles";
-            g_mkdir_with_parents (profdir.c_str(), 511);
+            safe_g_mkdir_with_parents (profdir, 511);
             options.saveToFile (rtdir + "/options");
         }
 #ifdef _WIN32

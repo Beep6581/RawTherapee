@@ -209,7 +209,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     show_all ();
 
     // save as dialog
-    if (Glib::file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
+    if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
     else
         saveAsDialog = new SaveAsDialog (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
@@ -348,14 +348,17 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     const CacheImageData* cfs=openThm->getCacheImageData();
     if (!options.customProfileBuilder.empty() && !openThm->hasProcParams() && cfs && cfs->exifValid) {
+        // For the filename etc. do NOT use streams, since they are not UTF8 safe
+        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
+        + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
+
+        // ustring doesn't know int etc formatting, so take these via (unsafe) stream
         std::ostringstream strm;
-        strm << Glib::ustring("\"") << options.customProfileBuilder << Glib::ustring("\" \"") << openThm->getFileName() << Glib::ustring("\" \"");
-        strm << options.rtdir << Glib::ustring("/") << options.profilePath << Glib::ustring("/") << defProf << Glib::ustring(".pp3");
-        strm << Glib::ustring("\" ") << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
+        strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
         strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
         strm << cfs->lens << Glib::ustring("\" \"") << cfs->camera << Glib::ustring("\"");
  
-        bool success = safe_spawn_command_line_sync (strm.str());
+        bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
 
         // Now they SHOULD be there, so try to load them
         if (success) openThm->loadProcParams();
@@ -386,6 +389,10 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     {
     	iarea->imageArea->mainCropWindow->cropHandler.newImage(ipc);
         iarea->imageArea->mainCropWindow->initialImageArrived();
+
+		// In single tab mode, the image is not always updated between switches
+		// normal redraw don't work, so this is the hard way
+		if (!options.tabbedUI) iarea->imageArea->mainCropWindow->cropHandler.update();
     } else {
         Gtk::Allocation alloc;
         iarea->imageArea->on_resized(alloc);
@@ -393,15 +400,15 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 }
 
 void EditorPanel::close () {
-
     if (ipc)
     {
         saveProfile ();
         // close image processor and the current thumbnail
         tpc->closeImage ();    // this call stops image processing
         tpc->writeOptions ();
-    rtengine::ImageSource* is=isrc->getImageSource();
-    is->setProgressListener( NULL );
+        rtengine::ImageSource* is=isrc->getImageSource();
+        is->setProgressListener( NULL );
+
         if (ipc)
             ipc->setPreviewImageListener (NULL);
 
@@ -419,17 +426,20 @@ void EditorPanel::close () {
         rtengine::StagedImageProcessor::destroy (ipc);
         ipc = NULL;
         navigator->previewWindow->setPreviewHandler (NULL);
-  //      navigator->previewWindow->setImageArea (NULL);
 
+        // If the file was deleted somewhere, the openThm.descreaseRef delete the object, but we don't know here
+        if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
         openThm->removeThumbnailListener (this);
         openThm->decreaseRef ();
-
+        }
     }
 }
 
 void EditorPanel::saveProfile () {
     if (!ipc || !openThm) return;
 
+    // If the file was deleted, do not generate ghost entries
+    if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
     ProcParams params;
     ipc->getParams (&params);
 
@@ -437,6 +447,7 @@ void EditorPanel::saveProfile () {
         params.save (openThm->getFileName() + paramFileExtension);
     if (options.saveParamsCache)
         openThm->setProcParams (params, EDITOR);
+}
 }
 
 Glib::ustring EditorPanel::getShortName () {
@@ -761,7 +772,7 @@ int EditorPanel::saveImage (rtengine::IImage16* img, Glib::ustring& fname, SaveF
     Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
     if (findNewNameIfNeeded) {
         int tries = 1;
-        while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
+        while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
             fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
             tries++;
         }
@@ -843,7 +854,7 @@ void EditorPanel::saveAsPressed () {
 					else
 						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, sf.format);
 
-					if (!Glib::file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
+					if (!safe_file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
 						fname = fnameTemp;
 						fnameOK = true;
 						break;
@@ -853,7 +864,7 @@ void EditorPanel::saveAsPressed () {
 			// check if it exists
 			if (!fnameOK) {
 				fname = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
-				if (Glib::file_test (fname, Glib::FILE_TEST_EXISTS)) {
+				if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
 					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
 					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 					int response = msgd.run ();
@@ -926,7 +937,7 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
         Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
 
 				int tries = 1;
-				while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
+				while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
 					fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
 					tries++;
 				}
@@ -966,7 +977,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 #ifdef _WIN32
 								executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote");
 								cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" gimp-2.4.exe ") + Glib::ustring("\"") + filename + Glib::ustring("\"");
-								if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 									success = safe_spawn_command_line_async (cmdLine);
 								}
 #else
@@ -978,7 +989,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 										int ver = 12;
 										while (!success && ver) {
 												executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"),ver));
-												if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+												if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 													cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 													success = safe_spawn_command_line_async (cmdLine);
 												}
@@ -996,7 +1007,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 						else if (options.editorToSendTo==2) {
 #ifdef _WIN32
 								executable = Glib::build_filename(options.psDir,"Photoshop.exe");
-								if ( Glib::file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 										cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
 								}
@@ -1011,7 +1022,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 						}
 						else if (options.editorToSendTo==3) {
 #ifdef _WIN32
-								if ( Glib::file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
+								if ( safe_file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 										cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
 								}
