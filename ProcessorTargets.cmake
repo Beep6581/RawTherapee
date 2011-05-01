@@ -29,5 +29,8 @@ set(PROC_TARGET_7_FLAGS "-march=athlon-4" CACHE STRING "Processor-7 flags")
 set(PROC_TARGET_8_LABEL athlon64 CACHE STRING "Processor-8 label - use it to provide a athlon64 optimized build, if you have this processor")
 set(PROC_TARGET_8_FLAGS "-march=pentium2 -mtune=athlon64" CACHE STRING "Processor-8 flags")
 
+set(PROC_TARGET_9_LABEL phenomX4 CACHE STRING "Processor-9 label - use it to provide a phenomX4 optimized build, if you have this processor")
+set(PROC_TARGET_9_FLAGS "-march=amdfam10" CACHE STRING "Processor-9 flags")
+
 #set(PROC_TARGET__LABEL procLabel CACHE STRING "Processor- label")
 #set(PROC_TARGET__FLAGS "procFlags" CACHE STRING "Processor- flags")
