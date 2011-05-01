@@ -42,7 +42,7 @@ set(CMAKE_C_FLAGS_RELEASE "-mwindows -DNDEBUG -O2" CACHE STRING "Compiler option
 set(CMAKE_C_FLAGS_MINSIZEREL "-mwindows -DNDEBUG -Os" CACHE STRING "Compiler options for C source files and MinSizeRel target")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C source files and RelWithDebInfo target")
 
-set(CMAKE_EXE_LINKER_FLAGS "-mwin32 -mthreads -mthread -static-libgcc -static-libstdc++" CACHE STRING "Linker options")
+set(CMAKE_EXE_LINKER_FLAGS "-mwin32 -mthreads -mthread -static-libgcc -static-libstdc++ --large-address-aware" CACHE STRING "Linker options")
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O0" CACHE STRING "Linkage options for the Debug target")
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-mwindows -s -O2" CACHE STRING "Linkage options for the Release target")
 set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "-mwindows -s -Os" CACHE STRING "Linkage options for the MinSizeRel target")
