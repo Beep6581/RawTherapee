@@ -19,6 +19,7 @@
 #include <darkframe.h>
 #include <options.h>
 #include <guiutils.h>
+#include <safegtk.h>
 #include <sstream>
 
 using namespace rtengine;
@@ -52,7 +53,7 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	if(pedited ){
 		dfAuto->set_inconsistent(!pedited->raw.dfAuto );
 	}
-	if (Glib::file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
+	if (safe_file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
 		darkFrameFile->set_filename (pp->raw.dark_frame);
 	else if( !options.rtSettings.darkFramesPath.empty() )
 		darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );

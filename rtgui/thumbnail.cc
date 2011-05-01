@@ -29,6 +29,7 @@
 #include <guiutils.h>
 #include <profilestore.h>
 #include <batchqueue.h>
+#include <safegtk.h>
 
 using namespace rtengine::procparams;
 
@@ -180,16 +181,16 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     needsReProcessing = true;
     // remove param file from cache
     Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
-    if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
-        ::g_remove (fname_.c_str());
+    if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
+        safe_g_remove (fname_);
     // remove param file located next to the file
 //    fname_ = removeExtension(fname) + paramFileExtension;
     fname_ = fname + paramFileExtension;
-    if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
-        ::g_remove (fname_.c_str());
+    if (safe_file_test(fname_, Glib::FILE_TEST_EXISTS))
+        safe_g_remove (fname_);
     fname_ = removeExtension(fname) + paramFileExtension;
-    if (Glib::file_test (fname_, Glib::FILE_TEST_EXISTS))
-        ::g_remove (fname_.c_str());
+    if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
+        safe_g_remove (fname_);
 
     for (int i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
@@ -437,9 +438,9 @@ void Thumbnail::_saveThumbnail () {
     if (!tpp)
         return;
 
-    ::g_remove ((getCacheFileName ("images")+".cust").c_str());
-    ::g_remove ((getCacheFileName ("images")+".cust16").c_str());
-    ::g_remove ((getCacheFileName ("images")+".jpg").c_str());
+    safe_g_remove (getCacheFileName ("images")+".cust");
+    safe_g_remove (getCacheFileName ("images")+".cust16");
+    safe_g_remove (getCacheFileName ("images")+".jpg");
     
     // save thumbnail image
     if (options.thumbnailFormat == FT_Custom) 
@@ -520,8 +521,10 @@ bool Thumbnail::openDefaultViewer(int destination) {
   
     if (destination==1) {
             openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
-            if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
-              ShellExecute(NULL, "open", openFName.c_str(), NULL, NULL, SW_SHOWMAXIMIZED );
+            if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
+              wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (openFName.c_str(), -1, NULL, NULL, NULL);
+              ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
+              g_free(wfilename);
             } else {
                 printf("File not found\n");
                 return false;
@@ -532,25 +535,28 @@ bool Thumbnail::openDefaultViewer(int destination) {
 
         printf("Opening %s\n", openFName.c_str());
 
-        if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
+        if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
             // Output file exists, so open explorer and select output file
-            const char* org=Glib::ustring::compose("/select,\"%1\"", openFName).c_str();
-            char* par=new char[strlen(org)+1];
-            strcpy(par, org);
+            wchar_t* org=(wchar_t*)g_utf8_to_utf16 (Glib::ustring::compose("/select,\"%1\"", openFName).c_str(), -1, NULL, NULL, NULL);
+            wchar_t* par=new wchar_t[wcslen(org)+1];
+            wcscpy(par, org);
 
             // In this case the / disturbs
-            char* p = par+1;  // skip the first backslash
+            wchar_t* p = par+1;  // skip the first backslash
             while (*p!=0) {
-                if (*p=='/') *p='\\';
+                if (*p==L'/') *p=L'\\';
                 p++;
             }
 
-            ShellExecute(NULL, "open", "explorer.exe", par, NULL, SW_SHOWNORMAL );
+            ShellExecuteW(NULL, L"open", L"explorer.exe", par, NULL, SW_SHOWNORMAL );
 
             delete[] par;
-        } else if (Glib::file_test (Glib::path_get_dirname(openFName), Glib::FILE_TEST_EXISTS)) {
+            g_free(org);
+        } else if (safe_file_test (Glib::path_get_dirname(openFName), Glib::FILE_TEST_EXISTS)) {
             // Out file does not exist, but directory
-            ShellExecute(NULL, "explore", Glib::path_get_dirname(openFName).c_str(), NULL, NULL, SW_SHOWNORMAL );
+            wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (Glib::path_get_dirname(openFName).c_str(), -1, NULL, NULL, NULL);
+            ShellExecuteW(NULL, L"explore", wfilename, NULL, NULL, SW_SHOWNORMAL );
+            g_free(wfilename);
         } else {
             printf("File and dir not found\n");
             return false;

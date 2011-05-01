@@ -91,8 +91,8 @@ Splash::Splash () {
 #else
 	std::string buildFileName = Glib::build_filename (CREDITS_SEARCH_PATH, "AboutThisBuild.txt");
 #endif
-	if ( Glib::file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
-	    FILE *f = g_fopen (buildFileName.c_str(), "rt");
+	if ( safe_file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (buildFileName, "rt");
 	    if (f != NULL) {
 	        char* buffer = new char[1024];
 	        std::ostringstream ostr;
@@ -118,8 +118,8 @@ Splash::Splash () {
 #else
 	std::string creditsFileName = Glib::build_filename (CREDITS_SEARCH_PATH, "AUTHORS.txt");
 #endif
-	if ( Glib::file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
-	    FILE *f = g_fopen (creditsFileName.c_str(), "rt");
+	if ( safe_file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (creditsFileName, "rt");
 	    if (f != NULL) {
 	        char* buffer = new char[1024];
 	        std::ostringstream ostr;
@@ -145,8 +145,8 @@ Splash::Splash () {
 #else
 	std::string licenseFileName = Glib::build_filename (LICENCE_SEARCH_PATH, "LICENSE.txt");
 #endif
-	if ( Glib::file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
-	    FILE *f = g_fopen (licenseFileName.c_str(), "rt");
+	if ( safe_file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (licenseFileName, "rt");
 	    if (f != NULL) {
 	        char* buffer = new char[1024];
 	        std::ostringstream ostr;

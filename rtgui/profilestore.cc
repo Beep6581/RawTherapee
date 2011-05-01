@@ -19,6 +19,7 @@
 #include <profilestore.h>
 #include <options.h>
 #include <toolpanel.h>
+#include <safegtk.h>
 
 ProfileStore profileStore;
 
@@ -36,8 +37,8 @@ void ProfileStore::parseProfiles () {
 
     if (options.multiUser) {
         Glib::ustring userPD = options.rtdir + "/" + options.profilePath;
-        if (!Glib::file_test (userPD, Glib::FILE_TEST_IS_DIR))
-            g_mkdir_with_parents (userPD.c_str(), 511);
+        if (!safe_file_test (userPD, Glib::FILE_TEST_IS_DIR))
+            safe_g_mkdir_with_parents (userPD, 511);
         parseDir (userPD);
     }
     parseDir (argv0 + "/" + options.profilePath);
@@ -61,7 +62,7 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
       Glib::ustring fname = dirname + *i;
       Glib::ustring sname = *i;
       // ignore directories
-      if (!Glib::file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+      if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
         int lastdot = sname.find_last_of ('.');
         if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && !sname.casefold().compare (lastdot, 4, paramFileExtension)) {
           if( options.rtSettings.verbose )

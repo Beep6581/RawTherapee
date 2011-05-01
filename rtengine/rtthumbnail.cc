@@ -33,6 +33,7 @@
 #include <glib/gstdio.h>
 #include <setjmp.h>
 #include <safekeyfile.h>
+#include <safegtk.h>
 #include <rawimage.h>
 #include "jpeg.h"
 
@@ -91,6 +92,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     }
 
     // bilinear interpolation
+    if (tpp->thumbImg) delete tpp->thumbImg;
     tpp->thumbImg = img->resize (w, h, TI_Bilinear);
 
     // histogram computation
@@ -203,6 +205,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         tpp->scale = (double)img->width / w;
     }
 
+    if (tpp->thumbImg) delete tpp->thumbImg;
     tpp->thumbImg = img->resize (w, h, TI_Nearest);
     delete img;
 
@@ -377,6 +380,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	else
 		h = tmph * w / tmpw;
 
+	if (tpp->thumbImg) delete tpp->thumbImg;
 	tpp->thumbImg = tmpImg->resize(w, h, TI_Bilinear);
 	delete tmpImg;
 
@@ -559,11 +563,13 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 	return img8;
 }
 
+// Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
 
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
     if (params.wb.method=="Camera") {
+		//recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0]*camwbRed + colorMatrix[0][1]*camwbGreen + colorMatrix[0][2]*camwbBlue;
         double cam_g = colorMatrix[1][0]*camwbRed + colorMatrix[1][1]*camwbGreen + colorMatrix[1][2]*camwbBlue;
         double cam_b = colorMatrix[2][0]*camwbRed + colorMatrix[2][1]*camwbGreen + colorMatrix[2][2]*camwbBlue;
@@ -573,6 +579,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         currWB = ColorTemp (autowbTemp, autowbGreen);
     double r, g, b;
     currWB.getMultipliers (r, g, b);
+	//iColorMatrix is cam_rgb
     double rm = iColorMatrix[0][0]*r + iColorMatrix[0][1]*g + iColorMatrix[0][2]*b;
     double gm = iColorMatrix[1][0]*r + iColorMatrix[1][1]*g + iColorMatrix[1][2]*b;
     double bm = iColorMatrix[2][0]*r + iColorMatrix[2][1]*g + iColorMatrix[2][2]*b;
@@ -760,6 +767,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 }
 
 int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight) {
+	if (thumbImg==NULL) return 0;  // Can happen if thumb is just building and GUI comes in with resize wishes
 
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) 
@@ -975,7 +983,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
         }
 
         if (format==1) {
-            FILE* f = g_fopen (fname.c_str(), "wb");
+            FILE* f = safe_g_fopen (fname, "wb");
             if (!f) {
                 delete [] tmpdata;
                 return false;
@@ -986,7 +994,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             fclose (f);
         }
         else if (format==3) {
-            FILE* f = g_fopen (fname.c_str(), "wb");
+            FILE* f = safe_g_fopen (fname, "wb");
             if (!f) {
                 delete [] tmpdata;
                 return false;
@@ -1031,7 +1039,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
         return true;
     }
     else if (format==2) {
-        FILE* f = g_fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen (fname, "wb");
         if (!f)
             return false;
         fwrite (&thumbImg->width, 1, sizeof (int), f);
@@ -1055,17 +1063,17 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
     thumbImg = NULL;
 
     int imgType = 0;
-    if (Glib::file_test (fname+".cust16", Glib::FILE_TEST_EXISTS))
+    if (safe_file_test (fname+".cust16", Glib::FILE_TEST_EXISTS))
         imgType = 2;
-    if (Glib::file_test (fname+".cust", Glib::FILE_TEST_EXISTS))
+    if (safe_file_test (fname+".cust", Glib::FILE_TEST_EXISTS))
         imgType = 1;
-    else if (Glib::file_test (fname+".jpg", Glib::FILE_TEST_EXISTS))
+    else if (safe_file_test (fname+".jpg", Glib::FILE_TEST_EXISTS))
         imgType = 3;
 
     if (!imgType) 
         return false;
     else if (imgType==1) {
-        FILE* f = g_fopen ((fname+".cust").c_str(), "rb");
+        FILE* f = safe_g_fopen (fname+".cust", "rb");
         if (!f)
             return false;
         int width, height;
@@ -1098,7 +1106,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         return true;
     }
     else if (imgType==2) {
-        FILE* f = g_fopen ((fname+".cust16").c_str(), "rb");
+        FILE* f = safe_g_fopen (fname+".cust16", "rb");
         if (!f)
             return false;
         int width, height;
@@ -1115,7 +1123,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         return true;
     }
     else if (imgType==3) {
-        FILE* f = g_fopen ((fname+".jpg").c_str(), "rb");
+        FILE* f = safe_g_fopen (fname+".jpg", "rb");
         if (!f) 
             return false;
         struct jpeg_decompress_struct cinfo;
@@ -1213,7 +1221,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     SafeKeyFile keyFile;
 
     try {
-    if( Glib::file_test(fname,Glib::FILE_TEST_EXISTS) )
+    if( safe_file_test(fname,Glib::FILE_TEST_EXISTS) )
         keyFile.load_from_file (fname); 
     } catch (...) {}
 
@@ -1233,7 +1241,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
     keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
 
-    FILE *f = g_fopen (fname.c_str(), "wt");
+    FILE *f = safe_g_fopen (fname, "wt");
     if (!f)
         return false;
     else {
@@ -1245,7 +1253,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
 
 bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
 
-    FILE* f = fopen (fname.c_str(), "rb");
+    FILE* f = safe_g_fopen (fname, "rb");
     if (!f) {
         embProfileData = NULL;
         embProfile = NULL;
@@ -1267,7 +1275,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
 bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
     
     if (embProfileData) {
-        FILE* f = fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen(fname, "wb");
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
             fclose (f);
@@ -1279,7 +1287,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname) {
 
 bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 
-    FILE* f = fopen (fname.c_str(), "rb");
+    FILE* f = safe_g_fopen (fname, "rb");
     if (!f) 
         aeHistogram = NULL;
     else {
@@ -1294,7 +1302,7 @@ bool Thumbnail::readAEHistogram  (const Glib::ustring& fname) {
 bool Thumbnail::writeAEHistogram (const Glib::ustring& fname) {
 
     if (aeHistogram) {
-        FILE* f = fopen (fname.c_str(), "wb");
+        FILE* f = safe_g_fopen (fname, "wb");
         if (f) {
             fwrite (aeHistogram, 1, (65536>>aeHistCompression)*sizeof(int), f);
             fclose (f);

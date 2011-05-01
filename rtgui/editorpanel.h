@@ -86,7 +86,9 @@ class EditorPanel : public Gtk::VBox,
         FilePanel* fPanel;
       
     
-        Thumbnail* openThm;
+        Thumbnail* openThm;  // may get invalid on external delete event
+        Glib::ustring fname;  // must be safed seperately
+
         rtengine::InitialImage* isrc;
         rtengine::StagedImageProcessor* ipc;
         rtengine::StagedImageProcessor* beforeIpc;    // for the before-after view
