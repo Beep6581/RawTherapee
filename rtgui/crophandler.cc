@@ -1,0 +1,290 @@
+/*
+ *  This file is part of RawTherapee.
+ *
+ *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include <crophandler.h>
+#undef THREAD_PRIORITY_NORMAL
+
+using namespace rtengine;
+
+CropHandler::CropHandler () 
+    : zoom(10), cx(0), cy(0), cw(0), ch(0),
+    cropX(0), cropY(0), cropW(0), cropH(0), enabled(false),
+    cropimg(NULL), ipc(NULL), crop(NULL), listener(NULL) {
+}
+
+CropHandler::~CropHandler () {
+
+    if (ipc)
+        ipc->delSizeListener (this);
+
+    setEnabled (false);
+    if (crop)
+        crop->destroy ();
+}
+        
+void CropHandler::newImage (StagedImageProcessor* ipc_) {
+
+    ipc = ipc_;
+    cx = 0;
+    cy = 0;
+    
+    if (!ipc)
+	    return;
+	
+	crop = ipc->createCrop ();
+    ipc->setSizeListener (this);
+    crop->setListener (enabled ? this : NULL);
+    initial = true;
+}
+
+void CropHandler::sizeChanged (int x, int y, int ow, int oh) {  // the ipc notifies it to keep track size changes like rotation
+    compDim ();
+}
+
+double CropHandler::getFitZoom () {
+    
+    if (ipc) {
+        double z1 = (double) wh / ipc->getFullHeight ();
+        double z2 = (double) ww / ipc->getFullWidth ();
+        return z1<z2 ? z1 : z2;
+    }
+    else {
+        return 1.0;
+	}
+}
+
+void CropHandler::setZoom (int z, int centerx, int centery) {
+    int x = cx + cw / 2;
+    int y = cy + ch / 2;
+
+    if (centerx>=0)
+            x = centerx;
+    if (centery>=0)
+            y = centery;
+            
+    zoom = z;
+    if (zoom>=1000) {
+        cw = ww * 1000 / zoom;
+        ch = wh * 1000 / zoom;
+    }
+    else {
+        cw = ww * zoom;
+        ch = wh * zoom;
+    }
+    cx = x - cw / 2;
+    cy = y - ch / 2;
+
+    compDim ();
+    if (enabled)
+        update ();
+}
+
+
+void CropHandler::setWSize (int w, int h) {
+
+    ww = w;
+    wh = h;
+
+    if (zoom>=1000) {
+        cw = ww * 1000 / zoom;
+        ch = wh * 1000 / zoom;
+    }
+    else {
+        cw = ww * zoom;
+        ch = wh * zoom;
+    }
+
+    compDim ();
+    if (enabled)
+        update ();   
+}
+
+void CropHandler::getWSize (int& w, int &h) {
+
+    w = ww;
+    h = wh;
+}
+
+void CropHandler::setPosition (int x, int y, bool update_) {
+
+    cx = x;
+    cy = y;
+
+    compDim ();
+    if (enabled && update_)
+        update ();   
+}
+
+void CropHandler::getPosition (int& x, int& y) {
+
+    x = cropX;
+    y = cropY;
+}
+
+void CropHandler::setDetailedCrop (IImage8* im, rtengine::procparams::CropParams cp, int ax, int ay, int aw, int ah, int askip) {
+
+	cimg.lock ();
+
+	cropPixbuf.clear ();
+    if (cropimg) delete [] cropimg;
+    cropimg = NULL;
+
+	if (!enabled) {
+		cimg.unlock ();
+		return;
+	}
+
+    cropParams = cp;
+    
+    if (ax==cropX && ay==cropY && aw==cropW && ah==cropH && askip==(zoom>=1000?1:zoom)) {
+        cropimg_width = im->getWidth ();
+        cropimg_height = im->getHeight ();
+        cropimg = new unsigned char [3*cropimg_width*cropimg_height];
+        memcpy (cropimg, im->getData(), 3*cropimg_width*cropimg_height);
+        cix = ax;
+        ciy = ay;
+        ciw = aw;
+        cih = ah;
+        cis = askip;
+
+		// Create the piece of preview image that will be integrally copied in the preview area
+		if (cix==cropX && ciy==cropY && ciw==cropW && cih==cropH && cis==(zoom>=1000?1:zoom)) {
+			// calculate final image size
+			int czoom = zoom<1000 ? 1000 : zoom;
+			int imw = cropimg_width * czoom / 1000;
+			int imh = cropimg_height * czoom / 1000;
+			if (imw>ww)
+				imw = ww;
+			if (imh>wh)
+				imh = wh;
+
+			// Create a temporary pixbuf to copy the piece of the full size image
+			Glib::RefPtr<Gdk::Pixbuf> tmpPixbuf = Gdk::Pixbuf::create_from_data (cropimg, Gdk::COLORSPACE_RGB, false, 8, cropimg_width, cropimg_height, 3*cropimg_width);
+			// Create the real preview image
+			cropPixbuf = Gdk::Pixbuf::create (Gdk::COLORSPACE_RGB, false, 8, imw, imh);
+			// Rescale the piece of the full size image and put it in the preview image
+			tmpPixbuf->scale (cropPixbuf, 0, 0, imw, imh, 0, 0, czoom/1000.0, czoom/1000.0, Gdk::INTERP_NEAREST);
+			// Delete the temporary pixbuf
+			tmpPixbuf.clear ();
+		}
+		delete [] cropimg;
+		cropimg = NULL;
+
+		cimg.unlock ();
+
+		if (listener) {
+			listener->cropImageUpdated ();
+			if (initial) {
+				listener->initialImageArrived ();  // sets zoomToFit, so it should be the right size image!
+				initial = false;
+			}
+		}
+    } else cimg.unlock ();
+
+ }
+
+bool CropHandler::getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip) { 
+    
+    cwx = cropX;
+    cwy = cropY;
+    cww = cropW;
+    cwh = cropH;
+
+	/*
+    // hack: if called before first size allocation the size will be 0
+    if (cww<10)
+        cww = 10;
+    if (cwh<32)
+        cwh = 32;
+		*/
+    cskip = zoom>=1000 ? 1 : zoom;
+
+    return true; 
+}
+
+void CropHandler::update () {
+
+    if (crop) {
+//        crop->setWindow (cropX, cropY, cropW, cropH, zoom>=1000 ? 1 : zoom); --> we use the "getWindow" hook instead of setting the size before
+        crop->setListener (this);
+        cropPixbuf.clear ();
+
+		// To save threads, try to mark "needUpdate" without a thread first
+		if (crop->tryUpdate()) {
+			if (isLowUpdatePriority)
+        Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), 0, false, true, Glib::THREAD_PRIORITY_LOW);
+			else
+				Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), false );
+		}
+    }
+}
+
+void CropHandler::setEnabled (bool e) {
+
+    enabled = e;
+    if (!enabled) {
+        if (crop)
+            crop->setListener (NULL);
+        cimg.lock ();
+        delete [] cropimg;
+        cropimg = NULL;
+        cropPixbuf.clear ();
+        cimg.unlock ();
+    }
+    else 
+        update ();
+}
+
+bool CropHandler::getEnabled () {
+
+    return enabled;
+}
+
+void CropHandler::getSize (int& w, int& h) {
+    
+    w = cropW;
+    h = cropH;
+}
+
+void CropHandler::compDim () {
+
+    cropX = cx;
+    cropY = cy;
+    cropW = cw;
+    cropH = ch;
+
+    cutRectToImgBounds (cropX, cropY, cropW, cropH);
+}
+
+void CropHandler::cutRectToImgBounds (int& x, int& y, int& w, int& h) {
+
+    if (ipc) {
+        if (w > ipc->getFullWidth())
+            w = ipc->getFullWidth();
+        if (h > ipc->getFullHeight())
+            h = ipc->getFullHeight();
+        if (x < 0) 
+            x = 0;
+        if (y < 0) 
+            y = 0;
+        if (x + w >= ipc->getFullWidth()) 
+            x = ipc->getFullWidth() - w;
+        if (y + h >= ipc->getFullHeight()) 
+            y = ipc->getFullHeight() - h;
+    }
+}
