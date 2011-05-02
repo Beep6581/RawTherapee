@@ -42,7 +42,6 @@ class ICMPanel : public Gtk::VBox, public FoldableToolPanel {
         Gtk::RadioButton*  ofromfile;
         Gtk::RadioButton*  iunchanged;
         Gtk::FileChooserButton* ipDialog;
-        Gtk::FileChooserButton* opDialog;
         Gtk::RadioButton::Group opts;
         Gtk::Button*        saveRef;
         sigc::connection   ipc;
