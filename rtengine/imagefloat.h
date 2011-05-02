@@ -89,7 +89,7 @@ class Imagefloat : public ImageIO, public IImagefloat {
         virtual float** getGPlane () { return g; }
         virtual float** getBPlane () { return b; }
 
-        void CalcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
+        void calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
         void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
     };

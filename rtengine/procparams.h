@@ -209,6 +209,8 @@ class CropParams {
         Glib::ustring   ratio;
         Glib::ustring   orientation;
         Glib::ustring   guide;
+
+        void mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
 };
 
 /**

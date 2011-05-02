@@ -237,7 +237,7 @@ Imagefloat::to16() const
 }
 
 
-void Imagefloat::CalcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist) {
+void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist) {
     hist.clear();
 
     // Set up factors to calc the lightness
@@ -249,18 +249,13 @@ void Imagefloat::CalcCroppedHistogram(const ProcParams &params, float scale, LUT
 	
 
     // calc pixel size
-    int hx1 = 0, hx2 = width, hy1 = 0, hy2 = height;
-    if (params.crop.enabled) {
-        hx1 = MIN(width-1,MAX(0,params.crop.x / scale));
-        hy1 = MIN(height-1,MAX(0,params.crop.y / scale));   
-        hx2 = MIN(width,MAX(0,(params.crop.x+params.crop.w) / scale)); 
-        hy2 = MIN(height,MAX(0,(params.crop.y+params.crop.h) / scale));
-    }
+    int x1, x2, y1, y2;
+    params.crop.mapToResized(width, height, scale, x1, x2, y1, y2);
 
     #pragma omp parallel for
-    for (int y=hy1; y<hy2; y++) {
+    for (int y=y1; y<y2; y++) {
         int i;
-        for (int x=hx1; x<hx2; x++) {
+        for (int x=x1; x<x2; x++) {
             i = (int)(facRed * r[y][x] + facGreen * g[y][x] + facBlue * b[y][x]);
             if (i<0) i=0; else if (i>65535) i=65535;
             hist[i]++;

@@ -739,7 +739,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[(int)(2*(labView->L[i][j]))]++;
 
     // luminance processing
-    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, curve, dummy, 16);
+    CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
+        hist16, hist16, curve, dummy, 16);
     ipf.luminanceCurve (labView, labView, curve);
 	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
 								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 16);
