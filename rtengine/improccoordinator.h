@@ -75,7 +75,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 		LUTf satcurve;
         
 		LUTu vhist16;
-		LUTu lhist16;
+		LUTu lhist16,lhist16Cropped;
         LUTu histCropped;
 	
 		LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
@@ -98,7 +98,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         void progress (Glib::ustring str, int pr);
         void reallocAll ();
-        void updateHistograms (int x1, int y1, int x2, int y2);
+        void updateLRGBHistograms ();
         void setScale (int prevscale);
         void updatePreviewImage (int todo, Crop* cropCall= NULL);
 

@@ -209,7 +209,8 @@ class CurveFactory {
         LUTu & histogram, LUTu & histogramCropped, LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
 	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& acurvePoints, \
 								 const std::vector<double>& bcurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip=1);
-	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip); 
+	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+        LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip); 
 };
 
 class Curve {

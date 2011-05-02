@@ -37,6 +37,17 @@ namespace procparams {
 const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 
+// Maps crop to resized width (e.g. smaller previews)
+void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const {
+    x1 = 0, x2 = resizedWidth, y1 = 0, y2 = resizedHeight;
+    if (enabled) {
+        x1 = MIN(resizedWidth-1,  MAX(0, x / scale));
+        y1 = MIN(resizedHeight-1, MAX(0, y / scale));   
+        x2 = MIN(resizedWidth,    MAX(0, (x+w) / scale)); 
+        y2 = MIN(resizedHeight,   MAX(0, (y+h) / scale));
+    }
+}
+
 ProcParams::ProcParams () { 
 
     setDefaults (); 
