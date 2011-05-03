@@ -325,6 +325,8 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     openThm = tmb;
     openThm->increaseRef ();
 
+    fname=openThm->getFileName();
+
     previewHandler = new PreviewHandler ();
 
     this->isrc = isrc;
