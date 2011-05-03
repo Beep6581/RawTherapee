@@ -317,12 +317,12 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				/*if (!hrp.enabled)
+				if (!hrp.enabled)
 				{
 					rtot=CLIP(rtot);
 					gtot=CLIP(gtot);
 					btot=CLIP(btot);
-				}*/
+				}
 				line_red[j] = rtot;
 				line_grn[j] = gtot;
 				line_blue[j] = btot;
@@ -341,12 +341,12 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				/*if (!hrp.enabled)
+				if (!hrp.enabled)
 				{
 					rtot=CLIP(rtot);
 					gtot=CLIP(gtot);
 					btot=CLIP(btot);
-				}*/
+				}
 				line_red[j] = rtot;
 				line_grn[j] = gtot;
 				line_blue[j] = btot;
