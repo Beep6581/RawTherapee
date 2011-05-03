@@ -31,7 +31,6 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 //    set_border_width (4);
 
     ipDialog = Gtk::manage (new Gtk::FileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-    opDialog = Gtk::manage (new Gtk::FileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 
     Gtk::Label* ilab = Gtk::manage (new Gtk::Label ());
     ilab->set_alignment (0.0, 0.5);
@@ -116,12 +115,9 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_any);
-    opDialog->add_filter (filter_icc);
-    opDialog->add_filter (filter_any);
 
     if (safe_file_test (options.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) {
         ipDialog->set_current_folder (options.rtSettings.iccDirectory);
-        opDialog->set_current_folder (options.rtSettings.iccDirectory);
     }    
 
     oldip = "";
