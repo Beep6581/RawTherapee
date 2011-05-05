@@ -1530,6 +1530,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 	
     if (cmp.input == "(none)")
         return;
+	
 
     MyTime t1, t2, t3;
 

@@ -154,7 +154,8 @@ enum ProcEvent {
 	EvAutoDIST=129,
 	EvDPDNLumCurve=130,
 	EvDPDNChromCurve=131,
-	NUMOFEVENTS=132
+	EvGAMMA=132,
+	NUMOFEVENTS=133
 	
 	};
 }    

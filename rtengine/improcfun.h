@@ -56,11 +56,11 @@ class ImProcFunctions {
 		bool needsRotation      ();
 		bool needsPerspective   ();
 		bool needsVignetting    ();
+ //   static cmsUInt8Number* Mempro = NULL;		
 
 
 	public:
 		static LUTf cachef;
-
 		double lumimul[3];
 
 		static void initCache ();
@@ -113,7 +113,8 @@ class ImProcFunctions {
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh, bool edges);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
-		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
+		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam);// for gamma output
+		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);//without gamma ==>default
 
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
 		bool transCoord       (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);

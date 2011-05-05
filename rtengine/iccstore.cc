@@ -34,6 +34,23 @@ namespace rtengine {
 const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
 const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};         
+const char* wpgamma[] = {"default","BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35","Low_g2.6_s6.9"};  //gamma free
+//default = gamma inside profile
+//BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92  
+//linear g=1.0
+//std22 g=2.2   std18 g=1.8
+// high  g=1.3 s=3.35  for high dynamic images
+//low  g=2.6 s=6.9  for low contrast images
+       
+
+std::vector<std::string> getGamma () {//return gamma
+
+    std::vector<std::string> res;
+    for (unsigned int i=0; i<sizeof(wpgamma)/sizeof(wpgamma[0]); i++)
+        res.push_back (wpgamma[i]);
+    return res;
+}
+
 
 std::vector<std::string> getWorkingProfiles () {
 
@@ -320,7 +337,10 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 
 	if (gamma) {
         pcurve[2] = 1;
-        pcurve[3] = 0x1f00000;
+       // pcurve[3] = 0x1f00000;// pcurve for gamma BT709 : g=2.22 s=4.5
+	   // normalize gamma in RT, default (Emil's choice = sRGB)
+        pcurve[3] = 0x2390000;//pcurve for gamma sRGB : g:2.4 s=12.92
+		
     }
 
     // constructing profile header

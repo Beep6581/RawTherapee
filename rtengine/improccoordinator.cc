@@ -150,6 +150,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
+		
     }
     readyphase++;
 
