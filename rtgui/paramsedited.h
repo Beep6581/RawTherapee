@@ -250,6 +250,7 @@ class ColorManagementParamsEdited {
         bool gammaOnInput;
         bool working;
         bool output;
+		bool gamma;
 };
 
 class EqualizerParamsEdited {

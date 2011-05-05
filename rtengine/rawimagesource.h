@@ -127,8 +127,9 @@ class RawImageSource : public ImageSource {
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
 
         double      getDefGain  () { return defGain; }
-        double      getGamma    () { return 2.2; }
-        
+     //   double      getGamma    () { return 2.2; }
+         double      getGamma    () { return 2.4; }//normalize gamma to sRGB
+       
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 

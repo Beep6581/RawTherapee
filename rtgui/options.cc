@@ -152,6 +152,13 @@ void Options::setDefaults () {
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
     rtSettings.LCMSSafeMode = true;
+    rtSettings.adobe = "AdobeRGB1998";
+    rtSettings.prophoto = "ProPhoto";
+    rtSettings.widegamut = "WideGamutRGB";
+    rtSettings.srgb = "sRGB Color Space Profile";
+    rtSettings.bruce = "Bruce";
+    rtSettings.beta = "BetaRGB";
+    rtSettings.best = "BestRGB";
 
     rtSettings.verbose = false;
 }
@@ -458,6 +465,13 @@ int Options::saveToFile (Glib::ustring fname) {
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
     keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
+    keyFile.set_string  ("Color Management", "Adobe_RGB", rtSettings.adobe);
+    keyFile.set_string  ("Color Management", "Pro_Photo", rtSettings.prophoto);
+    keyFile.set_string  ("Color Management", "Wide_Gamut", rtSettings.widegamut);
+    keyFile.set_string  ("Color Management", "S_rgb", rtSettings.srgb);
+    keyFile.set_string  ("Color Management", "B_eta", rtSettings.beta);
+    keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
+    keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);

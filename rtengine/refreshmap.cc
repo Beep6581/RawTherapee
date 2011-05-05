@@ -152,6 +152,7 @@ FLATFIELD,        // EvFlatFieldBlurType,
 TRANSFORM,        // EvAutoDIST,
 DIRPYRDENOISE,    // EvDPDNLumCurve,
 DIRPYRDENOISE,    // EvDPDNChromCurve,
+ALL,			  // EvGAMMA	
 
 };
 

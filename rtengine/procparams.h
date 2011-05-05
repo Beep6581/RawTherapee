@@ -331,6 +331,8 @@ class ColorManagementParams {
         bool          gammaOnInput;
         Glib::ustring working;
         Glib::ustring output;
+        Glib::ustring gamma;
+		
 };
 
 /**

@@ -210,7 +210,8 @@ void ProcParams::setDefaults () {
     icm.gammaOnInput = false;
     icm.working = "sRGB";
     icm.output  = "sRGB";
-    
+    icm.gamma  = "default";
+   
     equalizer.enabled = false;    
     for(int i = 0; i < 8; i ++)
     {
@@ -427,6 +428,7 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Color Management", "ApplyGammaBeforeInputProfile",   icm.gammaOnInput);
     keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
+    keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
     
     // save wavelet equalizer parameters
     keyFile.set_boolean ("Equalizer", "Enabled", equalizer.enabled);
@@ -741,6 +743,8 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "ApplyGammaBeforeInputProfile"))   icm.gammaOnInput   = keyFile.get_boolean ("Color Management", "ApplyGammaBeforeInputProfile");
     if (keyFile.has_key ("Color Management", "WorkingProfile")) icm.working = keyFile.get_string ("Color Management", "WorkingProfile");
     if (keyFile.has_key ("Color Management", "OutputProfile"))  icm.output  = keyFile.get_string ("Color Management", "OutputProfile");
+    if (keyFile.has_key ("Color Management", "Gammafree"))  icm.gamma  = keyFile.get_string ("Color Management", "Gammafree");
+	
 }
 
     // load wavelet equalizer parameters
@@ -989,6 +993,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.gammaOnInput == other.icm.gammaOnInput
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
+		&& icm.gamma == other.icm.gamma		
 		&& equalizer == other.equalizer
 		&& dirpyrequalizer == other.dirpyrequalizer
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve

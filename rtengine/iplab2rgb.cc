@@ -22,6 +22,9 @@
 #include <iccstore.h>
 #include <iccmatrices.h>
 #include <mytime.h>
+#include <icmpanel.h>
+#include <options.h>
+#include <settings.h>
 //#include <sRGBgamutbdy.h>
 
 #ifdef _OPENMP
@@ -227,7 +230,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
     }
     return image;
 }
-
+// for default (not gamma)
 Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile) {
 	
 	//gamutmap(lab);
@@ -238,8 +241,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     if (cy+ch>lab->H) ch = lab->H-cy;
 
     Image16* image = new Image16 (cw, ch);
-
-    cmsHPROFILE oprof = iccStore->getProfile (profile);
+   cmsHPROFILE oprof = iccStore->getProfile (profile);
+ 
+ 
 
     if (oprof) {
 		#pragma omp parallel for if (multiThread)
@@ -275,6 +279,131 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 		cmsDoTransform (hTransform, image->data, image->data, image->planestride);
 		cmsDeleteTransform(hTransform);
 	} else {
+		#pragma omp parallel for if (multiThread)
+		for (int i=cy; i<cy+ch; i++) {
+			float g;
+			float R,G,B;
+			float* rL = lab->L[i];
+			float* ra = lab->a[i];
+			float* rb = lab->b[i];
+			for (int j=cx; j<cx+cw; j++) {
+				
+				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
+				float fx = (0.002 * ra[j])/327.68 + fy;
+				float fz = fy - (0.005 * rb[j])/327.68;
+				
+				float x_ = 65535.0 * f2xyz(fx)*D50x;
+				float y_ = 65535.0 * f2xyz(fy);
+				float z_ = 65535.0 * f2xyz(fz)*D50z;
+
+				xyz2srgb(x_,y_,z_,R,G,B);
+
+				image->r[i-cy][j-cx] = (int)gamma2curve[(R)];
+				image->g[i-cy][j-cx] = (int)gamma2curve[(G)];
+				image->b[i-cy][j-cx] = (int)gamma2curve[(B)];
+			}
+		}
+	}
+    return image;
+}
+
+
+// for gamma options (BT709...sRGB linear...)
+Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam) {
+	
+	//gamutmap(lab);
+
+    if (cx<0) cx = 0;
+    if (cy<0) cy = 0;
+    if (cx+cw>lab->W) cw = lab->W-cx;
+    if (cy+ch>lab->H) ch = lab->H-cy;
+
+    Image16* image = new Image16 (cw, ch);
+	cmsBool  rc = TRUE;
+	float p1,p2,p3,p4,p5,p6;//primaries
+	float ga0,ga1,ga2,ga3,ga4,ga5=0;//gamma parameters
+	int t50;
+	int select_temp =1;//5003K
+	double eps=0.000000001;// not divide by zero
+	//primaries
+	if(profi=="ProPhoto") 	  {p1=0.7347; p2=0.2653; p3=0.1596; p4=0.8404; p5=0.0366; p6=0.0001;select_temp=1;}//Prophoto primaries
+	else if (profi=="WideGamut") {p1=0.7350; p2=0.2650; p3=0.1150; p4=0.8260; p5=0.1570; p6=0.0180;select_temp=1;}//Widegamut primaries
+	else if (profi=="Adobe RGB") {p1=0.6400; p2=0.3300; p3=0.2100; p4=0.7100; p5=0.1500; p6=0.0600;select_temp=2;}//Adobe primaries
+	else if (profi=="sRGB") {p1=0.6400; p2=0.3300; p3=0.3000; p4=0.6000; p5=0.1500; p6=0.0600;select_temp=2;} // sRGB primaries
+	else if (profi=="BruceRGB") {p1=0.6400; p2=0.3300; p3=0.2800; p4=0.6500; p5=0.1500; p6=0.0600;select_temp=2;} // Bruce primaries
+	else if (profi=="Beta RGB") {p1=0.6888; p2=0.3112; p3=0.1986; p4=0.7551; p5=0.1265; p6=0.0352;select_temp=1;} // Beta primaries
+	else if (profi=="BestRGB") {p1=0.7347; p2=0.2653; p3=0.2150; p4=0.7750; p5=0.1300; p6=0.0350;select_temp=1;} // Best primaries
+	
+	// gamma : ga0,ga1,ga2,ga3,ga4,ga5 by calcul
+    if(gam=="BT709_g2.2_s4.5") 		{ga0=2.222;ga1=1./1.099258;ga2=0.099258/1.099258;ga3=1./4.5; ga4=0.01805;ga5=0;}//BT709  2.2  4.5  - my prefered as D.Coffin ga4=0.01805
+	else if (gam=="sRGB_g2.4_s12.92")	{ga0=2.3999 ; ga1=1./1.0550; ga2=0.0550/1.0550;ga3=1./12.92;ga4=0.039289;}//sRGB 2.4 12.92  - RT default as Lightroom
+	else if (gam=="High_g1.3_s3.35")	{ga0=1.3 ; ga1=1./1.001724; ga2=0.001724/1.001724;ga3=1./3.35;ga4=0.001715;}//for high dynamic images
+	else if (gam== "Low_g2.6_s6.9")   {ga0=2.6 ; ga1=1./1.12213; ga2=0.12213/1.12213;ga3=1./6.90;ga4=0.01;} //gamma 2.6 variable : for low contrast images
+	else if (gam=="linear_g1.0")   {ga0=1.0; ga1=1.;ga2=0.;ga3=1./eps;ga4=0.;}//gamma=1 linear : for high dynamic images (cf : D.Coffin...)
+	else if (gam=="standard_g2.2")   {ga0=2.2; ga1=1.;ga2=0.;ga3=1./eps;ga4=0.;}//gamma=2.2 (as gamma of Adobe, Widegamut...)
+	else if (gam=="standard_g1.8")   {ga0=1.8; ga1=1.;ga2=0.;ga3=1./eps;ga4=0.;}//gamma=1.8  (as gamma of Prophoto)
+
+
+	if(select_temp==1) t50=5003;// for Widegamut, Prophoto Best, Beta   D50
+	else if (select_temp==2) t50=6504;// for sRGB, AdobeRGB, Bruce  D65
+
+	cmsCIExyY       xyD;
+	cmsCIExyYTRIPLE Primaries = {{p1, p2, 1.0},//red primaries
+								{p3, p4, 1.0}, // green
+								{p5, p6, 1.0} //blue
+								};							   
+    cmsToneCurve* GammaTRC[3];
+	cmsFloat64Number Parameters[7];
+    Parameters[0] = ga0;
+    Parameters[1] = ga1;
+    Parameters[2] = ga2;
+    Parameters[3] = ga3;
+    Parameters[4] = ga4;   
+	Parameters[5] = ga5;   
+	Parameters[6] = 0;   
+// 6 parameters for smoother curves
+    cmsWhitePointFromTemp(&xyD, t50);
+    GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, 5, Parameters);//5 = more smoother than 4
+    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC);
+
+    cmsFreeToneCurve(GammaTRC[0]);
+
+	
+    if (oprofdef) {
+		#pragma omp parallel for if (multiThread)
+		for (int i=cy; i<cy+ch; i++) {
+			float g;
+			float* rL = lab->L[i];
+			float* ra = lab->a[i];
+			float* rb = lab->b[i];
+			short* xa = (short*)image->r[i-cy];
+			short* ya = (short*)image->g[i-cy];
+			short* za = (short*)image->b[i-cy];
+			for (int j=cx; j<cx+cw; j++) {
+				
+				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
+				float fx = (0.002 * ra[j])/327.68 + fy;
+				float fz = fy - (0.005 * rb[j])/327.68;
+				
+				float x_ = 65535.0 * f2xyz(fx)*D50x;
+				float y_ = 65535.0 * f2xyz(fy);
+				float z_ = 65535.0 * f2xyz(fz)*D50z;
+
+				xa[j-cx] = CLIP((int)x_);
+				ya[j-cx] = CLIP((int)y_);
+				za[j-cx] = CLIP((int)z_);
+			}
+		}
+
+        cmsHPROFILE iprof = iccStore->getXYZProfile ();
+        lcmsMutex->lock ();
+		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprofdef, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
+        lcmsMutex->unlock ();
+
+		cmsDoTransform (hTransform, image->data, image->data, image->planestride);
+		cmsDeleteTransform(hTransform);
+	} else {
+	// 
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
 			float g;

@@ -199,10 +199,17 @@ namespace rtengine {
 				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
 		
 		// compute parameters of the gamma curve
-		double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
+		/*double start = exp(gamma_*log( -0.099 / ((1.0/gamma_-1.0)*1.099 )));
 		double slope = 1.099 * pow (start, 1.0/gamma_-1) - 0.099/start;
 		double mul = 1.099;
 		double add = 0.099;
+		// gamma BT709*/
+		
+		//normalize gamma to sRGB
+		double start = exp(gamma_*log( -0.055 / ((1.0/gamma_-1.0)*1.055 )));
+		double slope = 1.055 * pow (start, 1.0/gamma_-1) - 0.055/start;
+		double mul = 1.055;
+		double add = 0.055;
 		
 		// a: slope of the curve, black: starting point at the x axis
 		double a = pow (2.0, ecomp);
