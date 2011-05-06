@@ -106,25 +106,6 @@ BatchQueuePanel::BatchQueuePanel () {
     bottomBox = Gtk::manage (new Gtk::HBox ());
     pack_start (*bottomBox, Gtk::PACK_SHRINK);
 
-    // change thumbnail arrangement button
-    hAlignIcon = new Gtk::Image (argv0+"/images/horizontals.png");
-    vAlignIcon = new Gtk::Image (argv0+"/images/verticals.png");
-    hAlignIcon->show ();
-    vAlignIcon->show ();
-    chAlign = Gtk::manage (new Gtk::Button ());
-    chAlign->show ();
-    bottomBox->pack_end (*chAlign, Gtk::PACK_SHRINK);
-    chAlign->set_image (*hAlignIcon);
-    chAlign->set_relief (Gtk::RELIEF_NONE);
-    chAlign->signal_pressed().connect (sigc::mem_fun(*this, &BatchQueuePanel::arrangementButtonPressed));    
-    chAlign->set_tooltip_text (M("FILEBROWSER_ARRANGEMENTHINT"));
-    bottomBox->pack_end (*Gtk::manage (new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
-    if (options.fbArrangement==1) 
-        chAlign->set_image (*vAlignIcon);
-    else 
-        chAlign->set_image (*hAlignIcon);
-    arrangementButtonPressed ();
-
     // thumbnail zoom
     Gtk::HBox* zoomBox = Gtk::manage (new Gtk::HBox ());
     zoomBox->pack_start (*Gtk::manage (new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
@@ -153,17 +134,6 @@ BatchQueuePanel::BatchQueuePanel () {
     batchQueue->notifyListener ();
 }
 
-void BatchQueuePanel::arrangementButtonPressed () {
-
-    if (chAlign->get_image()==hAlignIcon) {
-        chAlign->set_image (*vAlignIcon);
-        batchQueue->setArrangement (BatchQueue::TB_Vertical);
-    }
-    else {
-        chAlign->set_image (*hAlignIcon);
-        batchQueue->setArrangement (BatchQueue::TB_Horizontal);
-    }
-}
 
 void BatchQueuePanel::updateTab (int qsize)
 {
