@@ -19,20 +19,20 @@
 //
 // A class representing a 16 bit rgb image with separate planes and 16 byte aligned data
 //
-#ifndef _IMAGE16_
-#define _IMAGE16_
+#ifndef _IMAGEFLOAT_
+#define _IMAGEFLOAT_
 
 #include <imageio.h>
 #include <rtengine.h>
-#include <imagefloat.h>
 
 namespace rtengine {
-
-enum TypeInterpolation { TI_Nearest, TI_Bilinear };
+    using namespace procparams;
+//enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
 class Image8;
+class Image16;
 
-class Image16 : public ImageIO, public IImage16 {
+class Imagefloat : public ImageIO, public IImagefloat {
 
     private:
         unsigned char* unaligned;
@@ -44,39 +44,40 @@ class Image16 : public ImageIO, public IImage16 {
         int width;
         int height;
 
-        unsigned short* data;
+        float* data;
         
-        unsigned short** r;
-        unsigned short** g;
-        unsigned short** b;
+        float** r;
+        float** g;
+        float** b;
   
   
-        Image16 ();
-        Image16 (int width, int height);
-        ~Image16 ();
+        Imagefloat ();
+        Imagefloat (int width, int height);
+        ~Imagefloat ();
 
-        Image16* copy ();
+        Imagefloat* copy ();
+	
+        Image8* to8() const;
+        Image16* to16() const;
 
-		Image8* to8() const;
-        Imagefloat* tofloat() const;
 
-        Image16* rotate (int deg);
-        Image16* hflip ();
-        Image16* vflip ();
-        Image16* resize (int nw, int nh, TypeInterpolation interp);
+        Imagefloat* rotate (int deg);
+        Imagefloat* hflip ();
+        Imagefloat* vflip ();
+        //Imagefloat* resize (int nw, int nh, TypeInterpolation interp);
 
         virtual int     getW            () { return width;  }
         virtual int     getH            () { return height; }
         virtual void    allocate        (int width, int height);
-        virtual int     getBPS          () { return 16; }
-        virtual void    getScanline     (int row, unsigned char* buffer, int bps);
-        virtual void    setScanline     (int row, unsigned char* buffer, int bps);
+        virtual int     getBPS          () { return 8*sizeof(float); }
+        //virtual void    getScanline     (int row, unsigned char* buffer, int bps);
+        //virtual void    setScanline     (int row, unsigned char* buffer, int bps);
 
-        // functions inherited from IImage16:
-        virtual Glib::Mutex& getMutex () { return mutex (); }
-        virtual cmsHPROFILE getProfile () { return getEmbeddedProfile (); }
+        // functions inherited from IImagefloat:
         virtual int getWidth ()  { return width; }
         virtual int getHeight () { return height; }
+        virtual Glib::Mutex& getMutex () { return mutex (); }
+        virtual cmsHPROFILE getProfile () { return getEmbeddedProfile (); }
         virtual int getBitsPerPixel () { return 16; }
         virtual int saveToFile (Glib::ustring fname) { return save (fname); }
         virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
@@ -84,9 +85,11 @@ class Image16 : public ImageIO, public IImage16 {
         virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
         virtual void setSaveProgressListener (ProgressListener* pl) { return setProgressListener (pl); } 
         virtual void free () { delete this; }
-        virtual unsigned short** getRPlane () { return r; }
-        virtual unsigned short** getGPlane () { return g; }
-        virtual unsigned short** getBPlane () { return b; }
+        virtual float** getRPlane () { return r; }
+        virtual float** getGPlane () { return g; }
+        virtual float** getBPlane () { return b; }
+
+        void calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
         void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
     };

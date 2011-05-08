@@ -31,7 +31,6 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 //    set_border_width (4);
 
     ipDialog = Gtk::manage (new Gtk::FileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
-    opDialog = Gtk::manage (new Gtk::FileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 
     Gtk::Label* ilab = Gtk::manage (new Gtk::Label ());
     ilab->set_alignment (0.0, 0.5);
@@ -93,6 +92,22 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
     for (int i=0; i<wpnames.size(); i++)
         wnames->append_text (wpnames[i]);
+  
+	Gtk::HSeparator* hsep22 = Gtk::manage (new Gtk::HSeparator ());
+    pack_start (*hsep22, Gtk::PACK_SHRINK, 2);
+	
+    Gtk::Label* galab = Gtk::manage (new Gtk::Label ());
+    galab->set_alignment (0.0, 0.5);
+    //galab->set_markup (Glib::ustring("<b>") + M("TP_GAMMA_OUTPUT") + "</b>" +M("TP_GAMMA_COMMENT"));
+    galab->set_markup (Glib::ustring("<b>") + M("TP_GAMMA_OUTPUT") + "</b>");
+	
+    pack_start (*galab, Gtk::PACK_SHRINK, 4);
+    wgamma = Gtk::manage (new Gtk::ComboBoxText ());    
+    pack_start (*wgamma, Gtk::PACK_SHRINK, 4);
+		
+    std::vector<std::string> wpgamma = rtengine::getGamma ();
+    for (int i=0; i<wpgamma.size(); i++)
+        wgamma->append_text (wpgamma[i]);
 
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
@@ -103,6 +118,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     wnames->set_active (0);
     onames->set_active (0);
+	wgamma->set_active (0);
 
     Gtk::FileFilter filter_icc;
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
@@ -116,18 +132,17 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_any);
-    opDialog->add_filter (filter_icc);
-    opDialog->add_filter (filter_any);
 
     if (safe_file_test (options.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) {
         ipDialog->set_current_folder (options.rtSettings.iccDirectory);
-        opDialog->set_current_folder (options.rtSettings.iccDirectory);
     }    
 
     oldip = "";
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
+    wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
+	
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
@@ -161,7 +176,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         igamma->set_sensitive (true);
     }
 
-    wnames->set_active_text (pp->icm.working);    
+    wnames->set_active_text (pp->icm.working);   
+    wgamma->set_active_text (pp->icm.gamma);    
+	
     if (pp->icm.output=="No ICM: sRGB output")
         onames->set_active_text (M("TP_ICM_NOICM"));
     else
@@ -171,7 +188,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         onames->set_active_text (M("TP_ICM_NOICM"));
 
     igamma->set_active (pp->icm.gammaOnInput);
-
+	onames->set_sensitive(wgamma->get_active_row_number()==0); //"default"
+	//thanks to Michael
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
         igamma->set_sensitive (false);
@@ -179,6 +197,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
             onames->set_active_text(M("GENERAL_UNCHANGED"));
+        if (!pedited->icm.gamma)
+            wgamma->set_active_text(M("GENERAL_UNCHANGED"));
+			
     }
         
     ipc.block (false);
@@ -198,18 +219,21 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->icm.input = "file:"+ipDialog->get_filename ();
 
     pp->icm.working = wnames->get_active_text ();
-    
+    pp->icm.gamma = wgamma->get_active_text ();
+   
     if (onames->get_active_text()==M("TP_ICM_NOICM"))
         pp->icm.output  = "No ICM: sRGB output";
     else
         pp->icm.output  = onames->get_active_text();
     pp->icm.gammaOnInput = igamma->get_active ();
-    
+   
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.gammaOnInput = !ifromfile->get_active ();
+        pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
+		
     }
 }
 
@@ -217,6 +241,14 @@ void ICMPanel::wpChanged () {
 
     if (listener)
         listener->panelChanged (EvWProfile, wnames->get_active_text ());
+}
+void ICMPanel::gpChanged () {
+
+    if (listener)
+        {listener->panelChanged (EvGAMMA, wgamma->get_active_text ());
+		onames->set_sensitive(wgamma->get_active_row_number()==0); //"default"//thanks to Michael
+		 }
+
 }
 
 void ICMPanel::ipChanged () {
@@ -301,5 +333,7 @@ void ICMPanel::setBatchMode (bool batchMode) {
     removeIfThere (this, saveRef);
     onames->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
+	wgamma->append_text (M("GENERAL_UNCHANGED"));
+
 }
 

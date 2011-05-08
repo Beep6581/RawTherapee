@@ -567,7 +567,9 @@ static int _am_gauss_jordan_elimination(float **a, int n, float **b, int m)
 	      row=j;
 	      col=k;
 	    }
-	  } else if (ipiv[k] > 1) return KLT_SMALL_DET;
+	  } else if (ipiv[k] > 1) {
+           free(ipiv); free(indxr); free(indxc); return KLT_SMALL_DET;
+      }
 	}
     ++(ipiv[col]);
     if (row != col) {

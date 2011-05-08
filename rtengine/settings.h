@@ -33,7 +33,15 @@ namespace rtengine {
             bool            verbose;
             Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
             Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
-
+            bool            LCMSSafeMode;           // If true, not OMP
+			Glib::ustring   adobe;
+			Glib::ustring   prophoto;
+			Glib::ustring   widegamut;
+			Glib::ustring   beta;
+			Glib::ustring   best;
+			Glib::ustring   bruce;
+			Glib::ustring   srgb;
+			
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */
             static Settings* create  ();

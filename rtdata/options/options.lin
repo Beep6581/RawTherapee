@@ -103,7 +103,7 @@ ColorCorrection=1
 [Crop Settings]
 Ratio=3:2
 FixRatio=true
-DPI=600
+PPI=300
 
 [Color Management]
 ICCDirectory=

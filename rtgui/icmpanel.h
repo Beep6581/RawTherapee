@@ -37,12 +37,13 @@ class ICMPanel : public Gtk::VBox, public FoldableToolPanel {
         Gtk::RadioButton*  ifromfile;
         Gtk::CheckButton*  igamma;
         Gtk::ComboBoxText* wnames;
+        Gtk::ComboBoxText* wgamma;
+		
         Gtk::ComboBoxText* onames;
         Gtk::RadioButton*  ofromdir;
         Gtk::RadioButton*  ofromfile;
         Gtk::RadioButton*  iunchanged;
         Gtk::FileChooserButton* ipDialog;
-        Gtk::FileChooserButton* opDialog;
         Gtk::RadioButton::Group opts;
         Gtk::Button*        saveRef;
         sigc::connection   ipc;
@@ -59,6 +60,7 @@ class ICMPanel : public Gtk::VBox, public FoldableToolPanel {
         void wpChanged ();
         void opChanged ();
         void ipChanged ();
+        void gpChanged ();
 
         void ipSelectionChanged ();
 

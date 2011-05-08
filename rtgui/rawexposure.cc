@@ -69,12 +69,10 @@ void RAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 void RAWExposure::adjusterChanged (Adjuster* a, double newval)
 {
 	if (listener) {
-
 		Glib::ustring value = a->getTextValue();
-
-		if (a == PexPos)
+		if (a == PexPos) 
 			listener->panelChanged (EvPreProcessExpCorrLinear,  value );
-		else if (a == PexPreser)
+		else if (a == PexPreser && ABS(PexPos->getValue()-1.0)>0.0001)  // update takes long, only do it if it would have an effect
 			listener->panelChanged (EvPreProcessExpCorrPH,  value );
 	}
 }

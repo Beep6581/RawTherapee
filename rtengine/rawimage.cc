@@ -133,9 +133,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
   verbose = settings->verbose;
   oprof = NULL;
 
-  ifp = gfopen (ifname);
-  if (!ifp)
-    return 3;
+  ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+  if (!ifp) return 3;
 
   thumb_length = 0;
   thumb_offset = 0;

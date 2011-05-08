@@ -30,6 +30,7 @@
 #include <iimage.h>
 #include <utils.h>
 #include <settings.h>
+#include "LUT.h"
 /**
  * @file 
  * This file contains the main functionality of the raw therapee engine.
@@ -179,7 +180,8 @@ namespace rtengine {
         public: 
             /** With this member function the staged processor notifies the listener that the detailed crop image has been updated.
               * @param img is a pointer to the detailed crop image */
-            virtual void setDetailedCrop (IImage8* img, procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
+            virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp, \
+										  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
     };
 
@@ -198,11 +200,13 @@ namespace rtengine {
     class HistogramListener {
         public:
             /** This member function is called when the histogram of the final image has changed.
-              * @param redh is the array of size 256 containing the histogram of the red channel
-              * @param greenh is the array of size 256 containing the histogram of the green channel
-              * @param blueh is the array of size 256 containing the histogram of the blue channel
-              * @param lumah is the array of size 256 containing the histogram of the luminance channel */
-            virtual void histogramChanged (unsigned int* redh, unsigned int* greenh, unsigned int* blueh, unsigned int* lumah, unsigned int* bcrgbhist, unsigned int* bcLhist) {}
+              * @param histRed is the array of size 256 containing the histogram of the red channel
+              * @param histGreen is the array of size 256 containing the histogram of the green channel
+              * @param histBlue is the array of size 256 containing the histogram of the blue channel
+              * @param histLuma is the array of size 256 containing the histogram of the luminance channel
+              * other for curves backgrounds, histRAW is RAW without colors */
+            virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
+                LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {}
     };
 
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
@@ -315,6 +319,8 @@ namespace rtengine {
 /** Returns the available working profile names
   * @return a vector of the available working profile names */
     std::vector<std::string> getWorkingProfiles ();
+/** return gamma	*/
+    std::vector<std::string> getGamma ();
 
     /** This class  holds all the necessary informations to accomplish the full processing of the image */
     class ProcessingJob {

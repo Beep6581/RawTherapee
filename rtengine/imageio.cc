@@ -691,7 +691,6 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
     delete [] row;
     delete [] buffer;
 
-
 	fclose (file);
 
     if (pl) {
@@ -788,7 +787,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 								
 								exif->write (8, buffer);
 								write (TIFFFileno (out), buffer+8, exif_size);
-								delete buffer;
+								delete[] buffer;
 								// let libtiff know that scanlines or any other following stuff should go 
 								// at a different offset:
 								TIFFSetWriteOffset (out, exif_size+8);

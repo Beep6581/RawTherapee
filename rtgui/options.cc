@@ -84,7 +84,7 @@ void Options::setDefaults () {
     showHistory = true;
     showFilePanelState = 0;
     showInfo = false;
-    cropDPI = 300;
+    cropPPI = 300;
     showClippedHighlights = false;
     showClippedShadows = false;
     highlightThreshold = 254;
@@ -151,6 +151,14 @@ void Options::setDefaults () {
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
+    rtSettings.LCMSSafeMode = true;
+    rtSettings.adobe = "AdobeRGB1998";
+    rtSettings.prophoto = "ProPhoto";
+    rtSettings.widegamut = "WideGamutRGB";
+    rtSettings.srgb = "sRGB Color Space Profile";
+    rtSettings.bruce = "Bruce";
+    rtSettings.beta = "BetaRGB";
+    rtSettings.best = "BestRGB";
 
     rtSettings.verbose = false;
 }
@@ -303,7 +311,7 @@ if (keyFile.has_group ("GUI")) {
 
 
 if (keyFile.has_group ("Crop Settings")) { 
-    if (keyFile.has_key ("Crop Settings", "DPI"))       cropDPI      = keyFile.get_integer ("Crop Settings", "DPI");
+    if (keyFile.has_key ("Crop Settings", "PPI"))       cropPPI      = keyFile.get_integer ("Crop Settings", "PPI");
 }
 
 if (keyFile.has_group ("Color Management")) { 
@@ -312,6 +320,9 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
+
+    // Disabled (default is true) till issues are sorted out
+    //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -447,12 +458,20 @@ int Options::saveToFile (Glib::ustring fname) {
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
-    keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
+    keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
 
     keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
+    keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
+    keyFile.set_string  ("Color Management", "Adobe_RGB", rtSettings.adobe);
+    keyFile.set_string  ("Color Management", "Pro_Photo", rtSettings.prophoto);
+    keyFile.set_string  ("Color Management", "Wide_Gamut", rtSettings.widegamut);
+    keyFile.set_string  ("Color Management", "S_rgb", rtSettings.srgb);
+    keyFile.set_string  ("Color Management", "B_eta", rtSettings.beta);
+    keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
+    keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);

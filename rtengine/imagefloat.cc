@@ -16,26 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <image16.h>
 #include <imagefloat.h>
+#include <image16.h>
 #include <image8.h>
 #include <string.h>
-#include <stdio.h>
 #include <rtengine.h>
+#include <mytime.h>
+#include <iccstore.h>
 
 using namespace rtengine;
 
-Image16::Image16 () 
+Imagefloat::Imagefloat () 
   : unaligned (NULL), data (NULL), r (NULL), g (NULL), b (NULL){
 }
 
-Image16::Image16 (int w, int h) 
+Imagefloat::Imagefloat (int w, int h) 
   : unaligned (NULL), width(w), height (h), data (NULL), r (NULL), g (NULL), b (NULL) {
 
     allocate (w, h);
 }
 
-Image16::~Image16 () {
+Imagefloat::~Imagefloat () {
   
     if (data!=NULL) {
         delete [] data;
@@ -45,104 +46,67 @@ Image16::~Image16 () {
     }
 }
 
-void Image16::allocate (int W, int H) {
+void Imagefloat::allocate (int W, int H) {
 
 	width=W;
 	height=H;
-    if (data!=NULL) {
+
+	if (data!=NULL) {
         delete [] data;
         delete [] r;
         delete [] g;
         delete [] b;
     }
 
-    r = new unsigned short*[height];
-    g = new unsigned short*[height];
-    b = new unsigned short*[height];
-    data = new unsigned short[W*H*3];
+    /*
+    int lsize  = width + 8 - width % 8;
+    unaligned = new unsigned char[16 + 3 * lsize * sizeof(float) * height];
+    memset(unaligned, 0, (16 + 3 * lsize * sizeof(float) * height) * sizeof(unsigned char));
 
+    uintptr_t poin = (uintptr_t)unaligned + 16 - (uintptr_t)unaligned % 16;
+    data = (float*) (poin);
+	*/
+    r = new float*[height];
+    g = new float*[height];
+    b = new float*[height];
+
+    data = new float[W*H*3];
     rowstride = W;
-    planestride = rowstride * height;
+    planestride = rowstride * H;
 
-    unsigned short* redstart   = data + 0*planestride;
-    unsigned short* greenstart = data + 1*planestride;
-    unsigned short* bluestart  = data + 2*planestride;
-       
+    float * redstart   = data + 0*planestride;
+    float * greenstart = data + 1*planestride;
+    float * bluestart  = data + 2*planestride;
+
 
     for (int i=0; i<height; i++) {
-        r[i] = redstart   + i*rowstride;
-        g[i] = greenstart + i*rowstride;
-        b[i] = bluestart  + i*rowstride;
+        r[i] = (redstart   + i*rowstride);
+        g[i] = (greenstart + i*rowstride);
+        b[i] = (bluestart  + i*rowstride);
     }
 
 
 }
 
-void Image16::getScanline (int row, unsigned char* buffer, int bps) {
 
-    if (data==NULL)
-        return;
-        
-    if (bps==16) {
-        int ix = 0;
-        unsigned short* sbuffer = (unsigned short*) buffer;
-        for (int i=0; i<width; i++) {
-            sbuffer[ix++] = r[row][i];
-            sbuffer[ix++] = g[row][i];
-            sbuffer[ix++] = b[row][i];
-        }
-    }
-    else if (bps==8) {
-        int ix = 0;
-        for (int i=0; i<width; i++) {
-            buffer[ix++] = r[row][i] >> 8;
-            buffer[ix++] = g[row][i] >> 8;
-            buffer[ix++] = b[row][i] >> 8;
-        }
-    }        
-}
 
-void Image16::setScanline (int row, unsigned char* buffer, int bps) {
+Imagefloat* Imagefloat::copy () {
 
-    if (data==NULL)
-        return;
-        
-    if (bps==8) {
-        int ix = 0;
-        for (int i=0; i<width; i++) {
-            r[row][i] = buffer[ix++] << 8;
-            g[row][i] = buffer[ix++] << 8;
-            b[row][i] = buffer[ix++] << 8;
-        }
-    }
-    else if (bps==16) {
-        unsigned short* sbuffer = (unsigned short*) buffer;
-        int ix = 0;
-        for (int i=0; i<width; i++) {
-            r[row][i] = sbuffer[ix++];
-            g[row][i] = sbuffer[ix++];
-            b[row][i] = sbuffer[ix++];
-        }
-    }
-}
-
-Image16* Image16::copy () {
-
-  Image16* cp = new Image16 (width, height);
+  Imagefloat* cp = new Imagefloat (width, height);
 
   for (int i=0; i<height; i++) {
-    memcpy (cp->r[i], r[i], width*sizeof(unsigned short));
-    memcpy (cp->g[i], g[i], width*sizeof(unsigned short));
-    memcpy (cp->b[i], b[i], width*sizeof(unsigned short));
+    memcpy (cp->r[i], r[i], width*sizeof(float));
+    memcpy (cp->g[i], g[i], width*sizeof(float));
+    memcpy (cp->b[i], b[i], width*sizeof(float));
   }
 
   return cp;
 }
 
-Image16* Image16::rotate (int deg) {
+Imagefloat* Imagefloat::rotate (int deg) {
 
   if (deg==90) {
-    Image16* result = new Image16 (height, width);
+    Imagefloat* result = new Imagefloat (height, width);
     for (int i=0; i<width; i++)
       for (int j=0; j<height; j++) {
         result->r[i][j] = r[height-1-j][i];
@@ -152,7 +116,7 @@ Image16* Image16::rotate (int deg) {
     return result;
   }
   else if (deg==270) {
-    Image16* result = new Image16 (height, width);
+    Imagefloat* result = new Imagefloat (height, width);
     for (int i=0; i<width; i++)
       for (int j=0; j<height; j++) {
         result->r[i][j] = r[j][width-1-i];
@@ -162,7 +126,7 @@ Image16* Image16::rotate (int deg) {
     return result;
   }
   else if (deg==180) {
-    Image16* result = new Image16 (width, height);
+    Imagefloat* result = new Imagefloat (width, height);
     for (int i=0; i<height; i++)
       for (int j=0; j<width; j++) {
         result->r[i][j] = r[height-1-i][width-1-j];
@@ -175,9 +139,9 @@ Image16* Image16::rotate (int deg) {
     return NULL;
 }
 
-Image16* Image16::hflip () {
+Imagefloat* Imagefloat::hflip () {
  
-  Image16* result = new Image16 (width, height);
+  Imagefloat* result = new Imagefloat (width, height);
   for (int i=0; i<height; i++)
     for (int j=0; j<width; j++) {
       result->r[i][j] = r[i][width-1-j];
@@ -188,9 +152,9 @@ Image16* Image16::hflip () {
 
 }
 
-Image16* Image16::vflip () {
+Imagefloat* Imagefloat::vflip () {
 
-  Image16* result = new Image16 (width, height);
+  Imagefloat* result = new Imagefloat (width, height);
   for (int i=0; i<height; i++)
     for (int j=0; j<width; j++) {
       result->r[i][j] = r[height-1-i][j];
@@ -201,10 +165,10 @@ Image16* Image16::vflip () {
 
 }
 
-Image16* Image16::resize (int nw, int nh, TypeInterpolation interp) {
+/*Imagefloat* Imagefloat::resize (int nw, int nh, TypeInterpolation interp) {
 
     if (interp == TI_Nearest) {
-        Image16* res = new Image16 (nw, nh);
+        Imagefloat* res = new Imagefloat (nw, nh);
         for (int i=0; i<nh; i++) {
             int ri = i*height/nh;
             for (int j=0; j<nw; j++) {
@@ -217,7 +181,7 @@ Image16* Image16::resize (int nw, int nh, TypeInterpolation interp) {
         return res;
     }
     else if (interp == TI_Bilinear) {
-        Image16* res = new Image16 (nw, nh);
+        Imagefloat* res = new Imagefloat (nw, nh);
         for (int i=0; i<nh; i++) {
             int sy = i*height/nh;
             if (sy>=height) sy = height-1;
@@ -238,42 +202,69 @@ Image16* Image16::resize (int nw, int nh, TypeInterpolation interp) {
         return res;
     }
     return NULL;
-}
+}*/
 
 Image8* 
-Image16::to8() const
+Imagefloat::to8() const
 {
 	Image8* img8 = new Image8(width,height);
 	for ( int h = 0; h < height; ++h )
 	{
 		for ( int w = 0; w < width; ++w )
 		{
-			img8->r(h,w,r[h][w] >> 8);
-			img8->g(h,w,g[h][w] >> 8);
-			img8->b(h,w,b[h][w] >> 8);
+			img8->r(h,w,((int)r[h][w]) >> 8);
+			img8->g(h,w,((int)g[h][w]) >> 8);
+			img8->b(h,w,((int)b[h][w]) >> 8);
 		}
 	}
 	return img8;
 }
 
-Imagefloat* 
-Image16::tofloat() const
+Image16* 
+Imagefloat::to16() const
 {
-	Imagefloat* imgfloat = new Imagefloat(width,height);
+	Image16* img16 = new Image16(width,height);
 	for ( int h = 0; h < height; ++h )
 	{
 		for ( int w = 0; w < width; ++w )
 		{
-			imgfloat->r[h][w] = ((float)r[h][w]) ;
-			imgfloat->g[h][w] = ((float)g[h][w]) ;
-			imgfloat->b[h][w] = ((float)b[h][w]) ;
+			img16->r[h][w] = ((int)r[h][w]) ;
+			img16->g[h][w] = ((int)g[h][w]) ;
+			img16->b[h][w] = ((int)b[h][w]) ;
 		}
 	}
-	return imgfloat;
+	return img16;
+}
+
+
+void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist) {
+    hist.clear();
+
+    // Set up factors to calc the lightness
+    TMatrix wprof = iccStore->workingSpaceMatrix (params.icm.working);
+
+	float facRed   = wprof[1][0];
+	float facGreen = wprof[1][1];
+	float facBlue  = wprof[1][2];
+	
+
+    // calc pixel size
+    int x1, x2, y1, y2;
+    params.crop.mapToResized(width, height, scale, x1, x2, y1, y2);
+
+    #pragma omp parallel for
+    for (int y=y1; y<y2; y++) {
+        int i;
+        for (int x=x1; x<x2; x++) {
+            i = (int)(facRed * r[y][x] + facGreen * g[y][x] + facBlue * b[y][x]);
+            if (i<0) i=0; else if (i>65535) i=65535;
+            hist[i]++;
+        }
+    }
 }
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe) {
+void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe) {
     if (safe) {
         cmsDoTransform(hTransform, data, data, planestride);
     } else {

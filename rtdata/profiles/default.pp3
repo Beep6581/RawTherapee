@@ -145,6 +145,7 @@ InputProfile=(camera)
 ApplyGammaBeforeInputProfile=false
 WorkingProfile=sRGB
 OutputProfile=No ICM: sRGB output
+Gammafree=default
 
 [Equalizer]
 Enabled=false

@@ -103,26 +103,32 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
   pack_start (*hb31, Gtk::PACK_SHRINK, 4);
   
-  dpibox = Gtk::manage (new Gtk::VBox());
-  dpibox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 2);
+  // ppibox START
+  ppibox = Gtk::manage (new Gtk::VBox());
+  ppibox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_SHRINK, 2);
 
   Gtk::HBox* hb4 = Gtk::manage (new Gtk::HBox ());
-  hb4->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_DPI"))));
-  dpi = Gtk::manage (new Gtk::SpinButton ());
-  dpi->set_size_request (60, -1);
-  hb4->pack_start (*dpi);
+  hb4->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_PPI"))));
+  ppi = Gtk::manage (new Gtk::SpinButton ());
+  ppi->set_size_request (60, -1);
+  hb4->pack_start (*ppi);
 
-  dpibox->pack_start (*hb4, Gtk::PACK_SHRINK, 2);
+  sizebox = Gtk::manage (new Gtk::HBox());
 
   sizecm = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " cm x " + M("GENERAL_NA") + " cm"));
   sizein = Gtk::manage (new Gtk::Label (M("GENERAL_NA") + " in x " + M("GENERAL_NA") + " in"));
 
-  dpibox->pack_start (*sizecm, Gtk::PACK_SHRINK, 1);
-  dpibox->pack_start (*sizein, Gtk::PACK_SHRINK, 1);
+  sizebox->pack_start (*sizecm, Gtk::PACK_SHRINK, 4);
+  sizebox->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 6);
+  sizebox->pack_start (*sizein, Gtk::PACK_SHRINK, 4);
+  sizebox->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 6);
+  sizebox->pack_start (*hb4, Gtk::PACK_SHRINK, 2);
   
-  pack_start (*dpibox, Gtk::PACK_SHRINK, 0);
+  ppibox->pack_start (*sizebox, Gtk::PACK_SHRINK, 1);
+  pack_start (*ppibox, Gtk::PACK_SHRINK, 0);
 
-  dpi->set_value (300);
+  ppi->set_value (300);
+  // ppibox END
 
   ratio->append_text ("3:2");
   ratio->append_text ("4:3");
@@ -169,10 +175,10 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   h->set_increments (1,100);
   h->set_value (200);
 
-  dpi->set_digits (0);
-  dpi->set_increments (1,100);
-  dpi->set_range (50, 12000);
-  dpi->set_value (300);
+  ppi->set_digits (0);
+  ppi->set_increments (1,100);
+  ppi->set_range (50, 12000);
+  ppi->set_value (300);
 
   xconn = x->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::positionChanged), true);
   yconn = y->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::positionChanged), true);
@@ -184,7 +190,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   oconn = orientation->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
   gconn = guide->signal_changed().connect( sigc::mem_fun(*this, &Crop::notifyListener) );
   selectCrop->signal_pressed().connect( sigc::mem_fun(*this, &Crop::selectPressed) );
-  dpi->signal_value_changed().connect( sigc::mem_fun(*this, &Crop::refreshSize) );
+  ppi->signal_value_changed().connect( sigc::mem_fun(*this, &Crop::refreshSize) );
 
   nx = ny = nw = nh = 0;
   lastRotationDeg = 0;
@@ -193,14 +199,14 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
 void Crop::writeOptions () {
 
-    options.cropDPI = (int)dpi->get_value ();
+    options.cropPPI = (int)ppi->get_value ();
 }
 
 void Crop::readOptions () {
 
     disableListener ();
 
-    dpi->set_value (options.cropDPI);
+    ppi->set_value (options.cropPPI);
 
     enableListener ();
 }
@@ -554,15 +560,15 @@ void Crop::refreshSize () {
 
         std::ostringstream ostrin;
         ostrin.precision (3);
-    //    ostrin << h->get_value()/dpi->get_value() << " in x " << w->get_value()/dpi->get_value() << " in";;
-        ostrin << nh/dpi->get_value() << " in x " << nw/dpi->get_value() << " in";;
+    //    ostrin << h->get_value()/ppi->get_value() << " in x " << w->get_value()/ppi->get_value() << " in";;
+        ostrin << nh/ppi->get_value() << " in x " << nw/ppi->get_value() << " in";;
 
         sizein->set_text (ostrin.str ());
 
         std::ostringstream ostrcm;
         ostrcm.precision (3);
-    //    ostrcm << h->get_value()/dpi->get_value()*2.54 << " cm x " << w->get_value()/dpi->get_value()*2.54 << " cm";;
-        ostrcm << nh/dpi->get_value()*2.54 << " cm x " << nw/dpi->get_value()*2.54 << " cm";;
+    //    ostrcm << h->get_value()/ppi->get_value()*2.54 << " cm x " << w->get_value()/ppi->get_value()*2.54 << " cm";;
+        ostrcm << nh/ppi->get_value()*2.54 << " cm x " << nw/ppi->get_value()*2.54 << " cm";;
 
         sizecm->set_text (ostrcm.str ());
     }
@@ -946,5 +952,5 @@ void Crop::setBatchMode (bool batchMode) {
 	ratio->append_text ("(Unchanged)");
 	orientation->append_text ("(Unchanged)");
 	guide->append_text ("(Unchanged)");
-    removeIfThere (this, dpibox);
+    removeIfThere (this, ppibox);
 }

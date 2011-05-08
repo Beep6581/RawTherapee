@@ -19,6 +19,8 @@
 #include <batchqueueentry.h>
 #include <thumbbrowserbase.h>
 
+#include <cstring>
+
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thumbnail) 
     : ThumbBrowserEntryBase(fname),
       opreview(previmg), origpw(prevw), origph(prevh), thumbnail(thumbnail),

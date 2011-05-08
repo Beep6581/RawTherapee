@@ -19,6 +19,7 @@
 #ifndef __SHMAP__
 #define __SHMAP__
 
+#include <imagefloat.h>
 #include <image16.h>
 
 namespace rtengine {
@@ -27,15 +28,17 @@ class SHMap {
 
     public: 
         int W, H;
-        unsigned short** map;
-        unsigned short   max, min, avg;
+        float** map;
+        float   max, min, avg;
         bool multiThread;
         
      SHMap (int w, int h, bool multiThread);
     ~SHMap ();
 
-    void update (Image16* img, unsigned short** buffer, double radius, double lumi[3], bool hq);
-    void forceStat (unsigned short max_, unsigned short min_, unsigned short avg_);
+    void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
+    void forceStat (float max_, float min_, float avg_);
+	void dirpyr_shmap       (float ** data_fine, float ** data_coarse, 
+							 int width, int height, LUTf & rangefn, int level, int scale);
 };
 };
 #endif

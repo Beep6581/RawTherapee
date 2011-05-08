@@ -20,6 +20,7 @@
 #define _CURVEEDITOR_
 
 #include <popuptogglebutton.h>
+#include <LUT.h>
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
@@ -51,7 +52,7 @@ class CurveEditor {
 		*/
 
 		PopUpToggleButton* curveType;
-		unsigned int* histogram;	// histogram values
+		LUTu histogram;	// histogram values
 		bool bgHistValid;
 
 		int selected;
@@ -65,12 +66,12 @@ class CurveEditor {
 	public:
 
 		CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
-		~CurveEditor ();
+
 		void typeSelectionChanged (int n);
 		void curveTypeToggled();
 		bool isUnChanged ();
 		void setUnChanged (bool uc);
-		void updateBackgroundHistogram (unsigned int* hist);
+		void updateBackgroundHistogram (LUTu & hist);
 		void setCurve (const std::vector<double>& p);
 		virtual std::vector<double> getCurve () = 0;
 };

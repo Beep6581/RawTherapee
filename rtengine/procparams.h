@@ -174,6 +174,8 @@ class ColorDenoiseParams {
         int		luma;
         int     chroma;
 		float	gamma;
+		std::vector<double>   lumcurve;
+		std::vector<double>   chromcurve;
 	};
 
 /**
@@ -207,6 +209,8 @@ class CropParams {
         Glib::ustring   ratio;
         Glib::ustring   orientation;
         Glib::ustring   guide;
+
+        void mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
 };
 
 /**
@@ -327,6 +331,8 @@ class ColorManagementParams {
         bool          gammaOnInput;
         Glib::ustring working;
         Glib::ustring output;
+        Glib::ustring gamma;
+		
 };
 
 /**
@@ -406,9 +412,13 @@ class RAWParams {
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
+
+		// exposure before interpolation
 		double expos;
-		double preser; // expos
+		double preser; 
+		
 		bool hotdeadpix_filt;
+		int hotdeadpix_thresh;
 		int	linenoise;
 		int greenthresh;
         int ccSteps;

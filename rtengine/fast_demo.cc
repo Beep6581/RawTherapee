@@ -44,6 +44,10 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	//int winx=0, winy=0;
 	//int winw=W, winh=H;
 	
+	if (plistener) {
+		plistener->setProgressStr ("Fast demosaicing...");
+		plistener->setProgress (0.0);
+	}
 	float progress = 0.0;
 	
 
@@ -174,7 +178,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 		}//i
 	}//j
 	
-	if(plistener) plistener->setProgress(0.25);
+	if(plistener) plistener->setProgress(0.05);
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -193,10 +197,10 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 					
 				} else {
 					//compute directional weights using image gradients
-					wtu=dirwt[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>4];
-					wtd=dirwt[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>4];
-					wtl=dirwt[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>4];
-					wtr=dirwt[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>4];
+					wtu=dirwt[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>2];
+					wtd=dirwt[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>2];
+					wtl=dirwt[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>2];
+					wtr=dirwt[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>2];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
 					green[i][j]=(int)((wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1])/(wtu+wtd+wtl+wtr));
@@ -208,7 +212,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 			//progress+=(double)0.33/(H);
 			//if(plistener) plistener->setProgress(progress);
 		}
-		if(plistener) plistener->setProgress(0.3);
+		if(plistener) plistener->setProgress(0.4);
 
 		
 #pragma omp for 		
@@ -231,7 +235,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 			//progress+=(double)0.33/(H);
 			//if(plistener) plistener->setProgress(progress);
 		}
-		if(plistener) plistener->setProgress(0.35);
+		if(plistener) plistener->setProgress(0.7);
 
 #pragma omp barrier
 		
@@ -247,9 +251,10 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 			blue[i][j] = CLIP((int)(green[i][j] - 0.25*((green[i-1][j]-blue[i-1][j])+(green[i+1][j]-blue[i+1][j])+ \
 														(green[i][j-1]-blue[i][j-1])+(green[i][j+1]-blue[i][j+1]))));
 		}
-
+		progress+=(double)0.33/(H);
+		//if(plistener) plistener->setProgress(progress);
 	}
-	if(plistener) plistener->setProgress(0.4 );
+	if(plistener) plistener->setProgress(0.99);
 	}
 	
 #undef bord

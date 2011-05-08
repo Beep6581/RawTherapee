@@ -31,20 +31,19 @@
 #endif
 
 // This seems ugly, but way faster than any other solutions I tried
-
-#define ELEM(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+0x10000])
-#define SULY(a,b) (ec[src[i - a][j - b]-src[i][j]+0x10000])
-
+#define ELEM(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+65536.0f])
+#define SULY(a,b) (ec[src[i - a][j - b]-src[i][j]+65536.0f])
+//#define SULY(a,b) (ec[((int)(src[i - a][j - b]-src[i][j]+0x10000))])
 #define BL_BEGIN(a,b)   double scale = (a); \
-                        int* ec = new int [0x20000]; \
+                        LUTf ec (0x20000); \
                         for (int i=0; i<0x20000; i++) \
-                            ec[i] = (int)(exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sens*sens))*scale); \
+                            ec[i] = (exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sens*sens))*scale); \
                         int rstart = b; \
                         int rend = H-b; \
                         int cstart = b; \
                         int cend = W-b;
 
-#define BL_FREE 		buffer[i][j] = v; }} delete [] ec;
+#define BL_FREE 		buffer[i][j] = v; }};
 #define BL_END(b)       for (int i=0; i<H; i++)  \
                             for (int j=0; j<W; j++)  \
                                 if (i<rstart || j<cstart || i>=rend || j>=cend) \
@@ -432,8 +431,8 @@ template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, 
 // START OF EXPERIMENTAL CODE: O(1) bilateral box filter
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
+#define MAXVAL  65535.0
+#define CLIP(a) ((a)>0.0?((a)<MAXVAL?(a):MAXVAL):0.0)
 
 #define BINBIT 12
 #define TRANSBIT 4
@@ -441,28 +440,29 @@ template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, 
 template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, double sigmas, int row_from, int row_to) {
 
     // range weights
-    double* ec = new double [0x20000];
+    LUTf ec(0x20000);
     for (int i=0; i<0x20000; i++) 
         ec[i] = exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sigmar*sigmar)); 
 
     // histogram
-    unsigned short* hist = new unsigned short[1<<BINBIT];
-    unsigned short* rhist = new unsigned short[1<<BINBIT];
+    LUTu hist (1<<BINBIT);
+    LUTu rhist(1<<BINBIT);
 
     // buffer for the final image
     float** buff_final = new float*[H];
+    float * real_buff_final = new float[W*H];
     for (int i=0; i<H; i++) {
-        buff_final[i] = new float[W];
+        buff_final[i] = real_buff_final + i*W;
         memset (buff_final[i], 0, W*sizeof(float));
     }
     
     int r = sigmas;
    
     // calculate histogram at the beginning of the row
-    memset (rhist, 0, (1<<BINBIT)*sizeof(unsigned short));
+    rhist.clear();
     for (int x = MAX(0,row_from-r-1); x<row_from+r; x++)
         for (int y = 0; y<r; y++)
-            rhist[src[x][y]>>TRANSBIT]++;
+            rhist[((int)src[x][y])>>TRANSBIT]++;
 
     sigmar*=2;
 
@@ -471,27 +471,27 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
         // calculate histogram at the beginning of the row
         if (i>r)
             for (int x = 0; x<r; x++) 
-                rhist[src[i-r-1][x]>>TRANSBIT]--;
+                rhist[((int)src[i-r-1][x])>>TRANSBIT]--;
         if (i<H-r)
             for (int x = 0; x<r; x++) 
-                rhist[src[i+r][x]>>TRANSBIT]++;
+                rhist[((int)src[i+r][x])>>TRANSBIT]++;
             
-        memcpy (hist, rhist, (1<<BINBIT)*sizeof(unsigned short));
+        hist=rhist;
         for (int j=0; j<W; j++) {
         
             // substract pixels at the left and add pixels at the right
             if (j>r)
                 for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
-                    hist[src[x][j-r-1]>>TRANSBIT]--;
+                    hist[(int)(src[x][j-r-1])>>TRANSBIT]--;
             if (j<W-r)
                 for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
-                    hist[src[x][j+r]>>TRANSBIT]++;
+                    hist[((int)src[x][j+r])>>TRANSBIT]++;
 
             // calculate pixel value
             float weight = 0.0;
             for (int k=0; k<=(sigmar>>TRANSBIT); k++) {               
                 float w = 1.0 - (double)k/(sigmar>>TRANSBIT);
-                int v = src[i][j]>>TRANSBIT;
+                int v = (int)(src[i][j])>>TRANSBIT;
                 if (v-k >= 0) {
                     weight += hist [v-k] * w;
                     buff_final[i][j] += hist [v-k] * w * (src[i][j]-(k<<TRANSBIT));
@@ -508,11 +508,18 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
         for (int j=0; j<W; j++) 
             dst[i][j] = (T)CLIP(buff_final[i][j]);
 
-    delete [] ec;
-    delete [] hist;
-    delete [] rhist;
-    for (int i=0; i<H; i++) 
-        delete [] buff_final[i];
+    //delete [] ec;
+    //delete [] hist;
+    //delete [] rhist;
+    //for (int i=0; i<H; i++)
+    //    delete [] buff_final[i];
+    delete [] real_buff_final;
+    delete [] buff_final;
 }
+#undef MAXVAL
+#undef CLIP
+
+#undef BINBIT
+#undef TRANSBIT
 
 #endif
