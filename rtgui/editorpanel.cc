@@ -295,8 +295,6 @@ EditorPanel::~EditorPanel () {
 
     delete beforeIarea;
     beforeIarea = NULL;
-    if (beforeIpc)
-        beforeIpc->setPreviewImageListener (NULL);
 
     if (beforeIpc)
         beforeIpc->setPreviewImageListener (NULL);
