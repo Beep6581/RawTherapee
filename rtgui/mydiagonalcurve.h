@@ -24,6 +24,8 @@
 #include <curvelistener.h>
 #include <cursormanager.h>
 #include <mycurve.h>
+#include <LUT.h>
+
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
 enum DiagonalCurveType {
@@ -76,7 +78,7 @@ class MyDiagonalCurve : public MyCurve {
 		bool handleEvents (GdkEvent* event);
 		void setActiveParam (int ac);
 		void reset ();
-		void updateBackgroundHistogram (unsigned int* hist);
+		void updateBackgroundHistogram (LUTu & hist);
 };
 
 #endif

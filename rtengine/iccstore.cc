@@ -27,11 +27,30 @@
 #include <safegtk.h>
 #include <options.h>
 
+#include <cstring>
+
 namespace rtengine {
 
-const double (*wprofiles[])[3]  = {sRGB_d50, adobe_d50, prophoto_d50, widegamut_d50, bruce_d50, beta_d50, best_d50};
-const double (*iwprofiles[])[3] = {d50_sRGB, d50_adobe, d50_prophoto, d50_widegamut, d50_bruce, d50_beta, d50_best};
+const double (*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
+const double (*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz};
 const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};         
+const char* wpgamma[] = {"default","BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35","Low_g2.6_s6.9"};  //gamma free
+//default = gamma inside profile
+//BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92  
+//linear g=1.0
+//std22 g=2.2   std18 g=1.8
+// high  g=1.3 s=3.35  for high dynamic images
+//low  g=2.6 s=6.9  for low contrast images
+       
+
+std::vector<std::string> getGamma () {//return gamma
+
+    std::vector<std::string> res;
+    for (unsigned int i=0; i<sizeof(wpgamma)/sizeof(wpgamma[0]); i++)
+        res.push_back (wpgamma[i]);
+    return res;
+}
+
 
 std::vector<std::string> getWorkingProfiles () {
 
@@ -81,7 +100,7 @@ ICCStore::getInstance(void)
 
 ICCStore::ICCStore ()
 {
-   // cmsErrorAction (LCMS_ERROR_SHOW);
+    //cmsErrorAction (LCMS_ERROR_SHOW);
 
     int N = sizeof(wpnames)/sizeof(wpnames[0]);
     for (int i=0; i<N; i++) {
@@ -194,8 +213,7 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
                 if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-                	if( options.rtSettings.verbose )
-                       printf ("Processing ICC file: %s...\n", fname.c_str());
+//                    printf ("processing file %s...\n", fname.c_str());
                     Glib::ustring name = sname.substr(0,lastdot);
                     ProfileContent pc (fname);
                     if (pc.data) {
@@ -310,14 +328,19 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 	    0x7258595a, 0, 20,	/* rXYZ */
 	    0x6758595a, 0, 20,	/* gXYZ */
 	    0x6258595a, 0, 20 };	/* bXYZ */
-    static const unsigned pwhite[] = { 0xf351, 0x10000, 0x116cc };
+    static const unsigned pwhite[] = { 0xf351, 0x10000, 0x116cc };//D65
+	//static const unsigned pwhite[] = { 0xf6d6, 0x10000, 0xd340 };//D50
+
     // 0x63757276 : curveType, 0 : reserved, 1 : entries (1=gamma, 0=identity), 0x1000000=1.0 
     unsigned pcurve[] = { 0x63757276, 0, 0, 0x1000000 };
 //    unsigned pcurve[] = { 0x63757276, 0, 1, 0x1000000 };
 
 	if (gamma) {
         pcurve[2] = 1;
-        pcurve[3] = 0x1f00000;
+       // pcurve[3] = 0x1f00000;// pcurve for gamma BT709 : g=2.22 s=4.5
+	   // normalize gamma in RT, default (Emil's choice = sRGB)
+        pcurve[3] = 0x2390000;//pcurve for gamma sRGB : g:2.4 s=12.92
+		
     }
 
     // constructing profile header
@@ -348,7 +371,7 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 //    pseudoinverse ((double (*)[3]) out_rgb[output_color-1], inverse, 3);
     for (int i=0; i < 3; i++)
       for (int j=0; j < 3; j++) {
-        oprof[pbody[j*3+23]/4+i+2] = matrix[j][i] * 0x10000 + 0.5;
+        oprof[pbody[j*3+23]/4+i+2] = matrix[i][j] * 0x10000 + 0.5;
 //    	for (num = k=0; k < 3; k++)
 //    	  num += xyzd50_srgb[i][k] * inverse[j][k];
       }

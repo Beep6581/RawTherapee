@@ -93,7 +93,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Resize* resize;
         ICMPanel* icm;
         Crop* crop;
-        ToneCurve* curve;
+        ToneCurve* toneCurve;
         ShadowsHighlights* shadowshighlights;
         LumaDenoise* lumadenoise;
         ColorDenoise* colordenoise;
@@ -149,7 +149,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-        void updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl);
+		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurves);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)

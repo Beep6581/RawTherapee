@@ -464,15 +464,33 @@ void CropWindow::pointerMoved (int x, int y) {
 		int mx, my;
 		translateCoord (x, y, mx, my);
 		if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) 
-			pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
+		//	pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
+			pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+			
 		else {
-			Glib::Mutex::Lock lock(cropHandler.cimg);
+			/*Glib::Mutex::Lock lock(cropHandler.cimg);
 
 			int vx = x - xpos - imgX;
 			int vy = y - ypos - imgY;
 			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
 			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
 				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
+				
+				*/
+			cropHandler.cimg.lock ();
+			int vx = x - xpos - imgX;
+			int vy = y - ypos - imgY;
+//			guint8* pix = cropHandler.cropPixbuf->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+//			if (vx < cropHandler.cropPixbuf->get_width() && vy < cropHandler.cropPixbuf->get_height())
+//				pmlistener->pointerMoved (true, mx, my, pix[0], pix[1], pix[2]);
+			int imwidth = cropHandler.cropPixbuf->get_width();
+			int imheight = cropHandler.cropPixbuf->get_height();
+			guint8* pix = cropHandler.cropPixbuftrue->get_pixels() + vy*cropHandler.cropPixbuf->get_rowstride() + vx*3;
+			if (vx < imwidth && vy < imheight)
+				pmlistener->pointerMoved (true, cropHandler.colorParams.working, mx, my, pix[0], pix[1], pix[2]);
+
+			cropHandler.cimg.unlock ();
+				
 		}
 	}
 }
@@ -655,22 +673,67 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 			if (showcs || showch) {
 				Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
 				guint8* pix = tmp->get_pixels();
+                guint8* pixWrkSpace = cropHandler.cropPixbuftrue->get_pixels();
+
+                int pixRowStride = tmp->get_rowstride ();
+                int pixWSRowStride = cropHandler.cropPixbuftrue->get_rowstride ();
+
+                const float ShawdowFac = 64 / (options.shadowThreshold+1);
+                const float HighlightFac = 64 / (256-options.highlightThreshold);
 
                 #ifdef _OPENMP
                 #pragma omp for
                 #endif
-				for (int i=0; i<tmp->get_height(); i++)
-					for (int j=0; j<tmp->get_width(); j++) {
-						guint8* curr = pix + i*tmp->get_rowstride () + j*3;
-						/*if (showch && (curr[0]>=options.highlightThreshold || curr[1]>=options.highlightThreshold || curr[2]>=options.highlightThreshold))
-							curr[0] = curr[1] = curr[2] = 0;
-						else if (showcs && (curr[0]<=options.shadowThreshold || curr[1]<=options.shadowThreshold || curr[2]<=options.shadowThreshold))
-							curr[0] = curr[1] = curr[2] = 255;*/
-						if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
-							curr[0] = curr[1] = curr[2] = 0;
-						else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
-							curr[0] = curr[1] = curr[2] = 255;
+				for (int i=0; i<tmp->get_height(); i++) {
+                    guint8* curr = pix + i*pixRowStride;
+                    guint8* currWS = pixWrkSpace + i*pixWSRowStride;
+
+                    int delta; bool changed;
+
+                    for (int j=0; j<tmp->get_width(); j++) {
+                        // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
+
+                        if (showch) {
+                            delta=0; changed=false;
+
+                            if (currWS[0]>=options.highlightThreshold) { delta += 255-currWS[0]; changed=true; }
+                            if (currWS[1]>=options.highlightThreshold) { delta += 255-currWS[1]; changed=true; }
+                            if (currWS[2]>=options.highlightThreshold) { delta += 255-currWS[2]; changed=true; }
+
+                            if (changed) { 
+                                delta *= HighlightFac; 
+                                curr[0]=delta; curr[1]=delta; curr[2]=delta; 
+                            }
+                        }
+                        if (showcs) {
+                            delta=0; changed=false;
+
+                            if (currWS[0]<=options.shadowThreshold) { delta += currWS[0]; changed=true; }
+                            if (currWS[1]<=options.shadowThreshold) { delta += currWS[1]; changed=true; }
+                            if (currWS[2]<=options.shadowThreshold) { delta += currWS[2]; changed=true; }
+
+                                
+                            if (changed) {
+                                delta = 255 - (delta * ShawdowFac);
+                                curr[0]=delta; curr[1]=delta; curr[2]=delta; 
+                            }
+                        }
+
+                        /*
+						    if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
+							    curr[0] = curr[1] = curr[2] = 0;
+						    else if (showcs && (currWS[0]<=options.shadowThreshold || currWS[1]<=options.shadowThreshold || currWS[2]<=options.shadowThreshold))
+							    curr[0] = curr[1] = curr[2] = 255;
+						    //if (showch && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])>=options.highlightThreshold))
+							//    curr[0] = curr[1] = curr[2] = 0;
+						    //else if (showcs && ((0.299*curr[0]+0.587*curr[1]+0.114*curr[2])<=options.shadowThreshold))
+							//    curr[0] = curr[1] = curr[2] = 255;
+                        */
+
+                        curr+=3; currWS+=3;
 					}
+                }
+
 				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
 			}
 			else

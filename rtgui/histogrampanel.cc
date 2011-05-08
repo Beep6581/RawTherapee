@@ -19,6 +19,8 @@
 #include <histogrampanel.h>
 #include <multilangmgr.h>
 #include <string.h>
+#include <LUT.h>
+
 
 HistogramPanel::HistogramPanel () {
 
@@ -27,16 +29,19 @@ HistogramPanel::HistogramPanel () {
    showGreen = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_G")));
    showBlue  = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_B")));
    showValue = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_L")));
+   showRAW   = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_RAW")));
    Gtk::VBox* vbox = Gtk::manage (new Gtk::VBox (false, 0));
 
    showRed->set_active (true);
    showGreen->set_active (true);
    showBlue->set_active (true);
    showValue->set_active (true);
+   showRAW->set_active (false);
    vbox->pack_start (*showRed, Gtk::PACK_SHRINK, 2);
    vbox->pack_start (*showGreen, Gtk::PACK_SHRINK, 2);
    vbox->pack_start (*showBlue, Gtk::PACK_SHRINK, 2);
    vbox->pack_start (*showValue, Gtk::PACK_SHRINK, 2);
+   vbox->pack_end (*showRAW, Gtk::PACK_SHRINK, 2);
    pack_start (*histogramArea);
    pack_end (*vbox, Gtk::PACK_SHRINK, 2);
 
@@ -44,6 +49,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
    showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
    showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
 
    show_all ();
 
@@ -51,6 +57,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_tooltip_text (M("HISTOGRAM_TOOLTIP_G"));
    showBlue->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_B"));
    showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
+   showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &HistogramPanel::resized) );
 }
@@ -70,17 +77,12 @@ void HistogramPanel::resized (Gtk::Allocation& req) {
 
 void HistogramPanel::rgbv_toggled () {
 
-  histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active());
+  histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active());
   histogramArea->queue_draw ();
 }
 
 HistogramArea::HistogramArea () : 
-      valid(false), showFull(true), oldwidth(-1), needVal(true), needRed(true), needGreen(true), needBlue(true) {
-
-    lhist = new unsigned int[256];
-    rhist = new unsigned int[256];
-    ghist = new unsigned int[256];
-    bhist = new unsigned int[256];
+      valid(false), showFull(true), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false) {
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
@@ -97,18 +99,15 @@ HistogramArea::~HistogramArea () {
     else
         delete haih;
 
-    delete [] lhist;
-    delete [] rhist;
-    delete [] ghist;
-    delete [] bhist;
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool v) {
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw) {
 
     needRed   = r;
     needGreen = g;
     needBlue  = b;
-    needVal   = v;
+    needLuma  = l;
+    rawMode   = raw;
 
     renderHistogram ();
 }
@@ -136,18 +135,18 @@ int histupdate (void* data) {
     return 0;
 }
 
-void HistogramArea::update (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh) {
+void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) {
+	
+    if (histRed) {
+        lhist=histLuma;
+        rhist=histRed; ghist=histGreen; bhist=histBlue;
+        rhistRaw=histRedRaw; ghistRaw=histGreenRaw; bhistRaw=histBlueRaw;
 
-    if (rh!=NULL) {
-        memcpy (lhist, lh, 256*sizeof(unsigned int));
-        memcpy (rhist, rh, 256*sizeof(unsigned int));
-        memcpy (ghist, gh, 256*sizeof(unsigned int));
-        memcpy (bhist, bh, 256*sizeof(unsigned int));
         valid = true;
     }
     else
         valid = false;
-
+	
     haih->pending++;
     g_idle_add (histupdate, haih);
 }
@@ -169,6 +168,10 @@ void HistogramArea::renderHistogram () {
   backBuffer->draw_rectangle (bgc, true, 0, 0, winw, winh);
 
   if (valid) {
+    // For RAW mode use the other hists
+    LUTu& rh = rawMode ? rhistRaw : rhist;
+    LUTu& gh = rawMode ? ghistRaw : ghist;
+    LUTu& bh = rawMode ? bhistRaw : bhist;
 
     // compute height of the full histogram (realheight) and
     // does not take into account 0 and 255 values
@@ -176,14 +179,14 @@ void HistogramArea::renderHistogram () {
 
     int fullhistheight = 0;
     for (int i=1; i<255; i++) {
-        if (needVal && lhist[i]>fullhistheight)
+        if (needLuma && lhist[i]>fullhistheight)
 	        fullhistheight = lhist[i];
-        if (needRed && rhist[i]>fullhistheight)
-	        fullhistheight = rhist[i];
-        if (needGreen && ghist[i]>fullhistheight)
-	        fullhistheight = ghist[i];
-        if (needBlue && bhist[i]>fullhistheight)
-	        fullhistheight = bhist[i];
+        if (needRed && (rawMode?rhistRaw:rhist)[i]>fullhistheight)
+	        fullhistheight = rh[i];
+        if (needGreen && (rawMode?ghistRaw:ghist)[i]>fullhistheight)
+	        fullhistheight = gh[i];
+        if (needBlue && (rawMode?bhistRaw:bhist)[i]>fullhistheight)
+	        fullhistheight = bh[i];
     }
 
     int realhistheight = fullhistheight;
@@ -194,7 +197,7 @@ void HistogramArea::renderHistogram () {
         int area = 0;
         for (int i=0; i<fullhistheight; i++) {
             for (int j=0; j<256; j++)
-                if ((needVal && lhist[j]>i) || (needRed && rhist[j]>i) || (needGreen && ghist[j]>i) || (needBlue && bhist[j]>i))
+                if ((needLuma && !rawMode && lhist[j]>i) || (needRed && rh[j]>i) || (needGreen && gh[j]>i) || (needBlue && bh[j]>i))
                     area++;
             if (area1thres==0 && (double)area / (256*(i+1)) < 0.3)
                 area1thres = i;
@@ -216,7 +219,7 @@ void HistogramArea::renderHistogram () {
 
     int ui = 0, oi = 0;
 
-    if (needVal) {
+    if (needLuma && !rawMode) {
         drawCurve(cr, lhist, realhistheight, winw, winh);
         cr->set_source_rgb (0.75, 0.75, 0.75);
         cr->fill_preserve ();
@@ -226,162 +229,28 @@ void HistogramArea::renderHistogram () {
         drawMarks(cr, lhist, realhistheight, winw, ui, oi);
     }
     if (needRed) {
-        drawCurve(cr, rhist, realhistheight, winw, winh);
+        drawCurve(cr, rh, realhistheight, winw, winh);
         cr->set_source_rgb (1.0, 0.0, 0.0);
     	cr->stroke ();
 
-        drawMarks(cr, rhist, realhistheight, winw, ui, oi);
+        drawMarks(cr, rh, realhistheight, winw, ui, oi);
     }
     if (needGreen) {
-        drawCurve(cr, ghist, realhistheight, winw, winh);
+        drawCurve(cr, gh, realhistheight, winw, winh);
         cr->set_source_rgb (0.0, 1.0, 0.0);
     	cr->stroke ();
 
-        drawMarks(cr, ghist, realhistheight, winw, ui, oi);
+        drawMarks(cr, gh, realhistheight, winw, ui, oi);
     }
     if (needBlue) {
-        drawCurve(cr, bhist, realhistheight, winw, winh);
+        drawCurve(cr, bh, realhistheight, winw, winh);
         cr->set_source_rgb (0.0, 0.0, 1.0);
     	cr->stroke ();
 
-        drawMarks(cr, bhist, realhistheight, winw, ui, oi);
+        drawMarks(cr, bh, realhistheight, winw, ui, oi);
     }
   }
 
-/*
-
-    // scale histogram to width winw-1
-
-    int* vval   = new int[winw-1];
-    int* vred   = new int[winw-1];
-    int* vgreen = new int[winw-1];
-    int* vblue  = new int[winw-1];
-
-    memset (vval, 0, sizeof(int)*(winw-1));
-    memset (vred, 0, sizeof(int)*(winw-1));
-    memset (vgreen, 0, sizeof(int)*(winw-1));
-    memset (vblue, 0, sizeof(int)*(winw-1));
-
-    int index = 0;
-    double scale = 256.0 / (winw-2);
-    for (int i=0; i<=winw-2; i++) {
-        int samples = 0;
-        while (index < 256 && (int)(index/scale) == i) {
-	        vval[i]    += lhist[index];
-	        vred[i]    += rhist[index];
-	        vgreen[i]  += ghist[index];
-	        vblue[i]   += bhist[index];
-	        index++;
-	        samples++;
-        }
-        if (samples>0) {
-            vval[i] /= samples;
-            vred[i] /= samples;
-            vgreen[i] /= samples;
-            vblue[i] /= samples;
-        }
-    }
-
-    // compute height of the full histogram (realheight) and
-
-    int fullhistheight = 0;
-    for (int i=0; i<=winw-2; i++) {
-        if (needVal && vval[i]>fullhistheight)
-	        fullhistheight = vval[i];
-        if (needRed && vred[i]>fullhistheight)
-	        fullhistheight = vred[i];
-        if (needGreen && vgreen[i]>fullhistheight)
-	        fullhistheight = vgreen[i];
-        if (needBlue && vblue[i]>fullhistheight)
-	        fullhistheight = vblue[i];
-    }
-    
-    // compute two hights, one for the magnified view and one for the threshold
-
-    int realhistheight = fullhistheight;
-
-    if (!showFull) {    
-        int area1thres = 0;
-        int area2thres = 0;
-        int area = 0;
-        for (int i=0; i<fullhistheight; i++) {
-            for (int j=0; j<winw-1; j++)
-                if ((needVal && vval[j]>i) || (needRed && vred[j]>i) || (needGreen && vgreen[j]>i) || (needBlue && vblue[j]>i))
-                    area++;
-            if (area1thres==0 && (double)area / ((winw-1)*(i+1)) < 0.3)
-                area1thres = i;
-            if (area2thres==0 && (double)area / ((winw-1)*(i+1)) < 0.3)
-                area2thres = i;
-            if (area1thres && area2thres)
-                break;
-        }
-        if (area1thres>0 && area2thres>0 && area1thres<fullhistheight)
-            realhistheight = area2thres;
-    }
-    
-    if (realhistheight<winh-2)
-        realhistheight = winh-2;
-
-    Cairo::RefPtr<Cairo::Context> cr = backBuffer->create_cairo_context();
-    cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    cr->set_line_width (1.0);
-    if (needVal) {
-        cr->move_to (0, winh-1);
-        cr->set_source_rgb (0.75, 0.75, 0.75);
-        for (int i=0; i<=winw-2; i++) {
-            int val = (int)(vval[i] * (double)(winh-2) / realhistheight);
-            if (val>winh-1)
-                val = winh-1;
-      	    if (i>0)
-       	        cr->line_to (i+1, winh-1-val);
-    	}
-    	cr->fill_preserve ();
-        cr->set_source_rgb (0.5, 0.5, 0.5);
-    	cr->stroke ();
-    }
-    if (needRed) {
-        cr->move_to (0, winh-1);
-        cr->set_source_rgb (1.0, 0.0, 0.0);
-        for (int i=0; i<=winw-2; i++) {
-            int val = (int)(vred[i] * (double)(winh-2) / realhistheight);
-            if (val>winh-1)
-                val = winh-1;
-  	        if (i>0)
-   	            cr->line_to (i+1, winh-1-val);	
-    	}
-    	cr->stroke ();
-    }
-    if (needGreen) {
-        cr->move_to (0, winh-1);
-        cr->set_source_rgb (0.0, 1.0, 0.0);
-        for (int i=0; i<=winw-2; i++) {
-            int val = (int)(vgreen[i] * (double)(winh-2) / realhistheight);
-            if (val>winh-1)
-                val = winh-1;
-  	        if (i>0)
-   	            cr->line_to (i+1, winh-1-val);	
-    	}
-    	cr->stroke ();
-    }
-    if (needBlue) {
-        cr->move_to (0, winh-1);
-        cr->set_source_rgb (0.0, 0.0, 1.0);
-        for (int i=0; i<=winw-2; i++) {
-            int val = (int)(vblue[i] * (double)(winh-2) / realhistheight);
-            if (val>winh-1)
-                val = winh-1;
-      	    if (i>0)
-       	        cr->line_to (i+1, winh-1-val);
-    	}
-    	cr->stroke ();
-    }
-    
-    delete [] vval;
-    delete [] vred;
-    delete [] vgreen;
-    delete [] vblue;
-  }
-*/
   bgc->set_foreground (mgray);
   backBuffer->draw_rectangle (bgc, false, 0, 0, winw-1, winh-1);
 
@@ -427,7 +296,7 @@ void HistogramArea::on_realize () {
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-    unsigned int * data, double scale, int hsize, int vsize)
+    LUTu & data, double scale, int hsize, int vsize)
 {
     cr->move_to (0, vsize-1);
     for (int i = 0; i < 256; i++) {
@@ -440,7 +309,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
-    unsigned int * data, double scale, int hsize, int & ui, int & oi)
+    LUTu & data, double scale, int hsize, int & ui, int & oi)
 {
     int s = 8;
     

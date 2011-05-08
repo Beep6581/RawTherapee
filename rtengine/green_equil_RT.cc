@@ -21,7 +21,6 @@
 //	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
-
 #define TS 256	 // Tile size
 
 #include <math.h>
@@ -41,6 +40,7 @@ void RawImageSource::green_equilibrate(float thresh)
 	static const int v1=TS, v2=2*TS, v3=3*TS, /*v4=4*TS,*/ p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
 	
 	int height=H, width=W; //for RT only
+	int top, left; 
 
 	int verbose=1;
 	
@@ -90,10 +90,15 @@ void RawImageSource::green_equilibrate(float thresh)
 			int row, col;
 			int rr, cc, indx;
 			int vote1, vote2;
-					
+			int counter, vtest;
+						
 			float gin, gse, gsw, gne, gnw, wtse, wtsw, wtne, wtnw;
 			float mcorr, pcorr;
 			float ginterp;
+			
+			float d1,d2,c1,c2;  
+			float o1_1,o1_2,o1_3,o1_4;  
+			float o2_1,o2_2,o2_3,o2_4;
 			
 			// rgb from input CFA data
 			/* rgb values should be floating point number between 0 and 1 
@@ -108,19 +113,6 @@ void RawImageSource::green_equilibrate(float thresh)
 			
 			//The green equilibration algorithm starts here
 			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%
-			// To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>  
-			// has waived all copyright and related or neighboring rights to this work.  
-			// This code is licensed under CC0 v1.0, see license information at  
-			// http://creativecommons.org/publicdomain/zero/1.0/
-			
-			double d1,d2,c1,c2;  
-			int o1_1,o1_2,o1_3,o1_4;  
-			int o2_1,o2_2,o2_3,o2_4;  
-  
-			
-			//%%%%%%%%%%%%%%%%%%%%%%
-			
 			for (rr=2; rr < numrows-2; rr++)
 				for (cc=3-(FC(rr,2)&1), indx=rr*TS+cc; cc < numcols-2; cc+=2, indx+=2) {
 					
@@ -132,7 +124,7 @@ void RawImageSource::green_equilibrate(float thresh)
 					//checker[indx]=1;//test what happens if we always interpolate
 				}
 						
-
+			counter=vtest=0;
 			
 			//now smooth the cfa data
 			for (rr=6; rr < numrows-6; rr+=2)
@@ -158,6 +150,7 @@ void RawImageSource::green_equilibrate(float thresh)
 						
 						vote1=(checker[indx-v2]+checker[indx-2]+checker[indx+2]+checker[indx+v2]);
 						vote2=(checker[indx-m1]+checker[indx+p1]+checker[indx-p1]+checker[indx+m1]);
+						//if ((vote1==0 || vote2==0) && (c1+c2)<2*thresh*fabs(d1-d2)) vtest++;
 						if (vote1>0 && vote2>0 && (c1+c2)<4*thresh*fabs(d1-d2)) {
 							//pixel interpolation
 							gin=cfa[indx];
@@ -176,11 +169,15 @@ void RawImageSource::green_equilibrate(float thresh)
 							
 							ginterp=(gse*wtse+gnw*wtnw+gne*wtne+gsw*wtsw)/(wtse+wtnw+wtne+wtsw);
 							
-							cfa[indx]=ginterp;//0.5*(ginterp+gin);								
+							//if ( ((ginterp-gin) < thresh*(ginterp+gin)) ) {
+								cfa[indx]=0.5*(ginterp+gin);
+								counter++;
+							//}
+							
 						}
 					}
 				}
-			
+			//printf("pixfix count= %d; vtest= %d \n",counter,vtest);
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			// copy smoothed results back to image matrix
@@ -189,9 +186,9 @@ void RawImageSource::green_equilibrate(float thresh)
 					col = cc + left;
 					//c = FC(row,col);
 					//image[row*width + col][c] = CLIP((int)(cfa[indx] + 0.5)); //for dcraw implementation
-					rawData[row][col] = CLIP((int)(cfa[indx] + 0.5));
+					rawData[row][col] = CLIP(cfa[indx]);
 				} 
-			
+
 			// clean up
 			}
 			free(buffer);

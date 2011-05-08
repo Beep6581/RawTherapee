@@ -149,7 +149,8 @@ class EditorPanel : public Gtk::VBox,
         void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params);
         
         // HistogramListener
-        void histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl);
+		void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, 
+            LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
         // event handlers
         void info_toggled ();

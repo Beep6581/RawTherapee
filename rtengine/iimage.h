@@ -18,6 +18,7 @@
  */
 #ifndef _IIMAGE_
 #define _IIMAGE_
+
 #include <lcms2.h>
 #include <glibmm.h>
 
@@ -89,6 +90,21 @@ namespace rtengine {
         /** Returns the "blue" plane data.
           * @return the two dimensional array of the blue plane */
             virtual unsigned short** getBPlane ()=0;
+    };
+	
+	/** This class represents an image having a float pixel planar representation. 
+	 The planes are stored as two dimensional arrays. All the rows have a 8-byte alignment. */
+    class IImagefloat : public IImage {
+	public:
+        /** Returns the "red" plane data.
+		 * @return the two dimensional array of the red plane */
+		virtual float** getRPlane ()=0;
+        /** Returns the "green" plane data.
+		 * @return the two dimensional array of the green plane */
+		virtual float** getGPlane ()=0;
+        /** Returns the "blue" plane data.
+		 * @return the two dimensional array of the blue plane */
+		virtual float** getBPlane ()=0;
     };
 }
 

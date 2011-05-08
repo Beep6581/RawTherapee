@@ -26,15 +26,14 @@ namespace rtengine {
 class LabImage {
     private:
         bool fromImage;
-
+        float * data;
     public:
         int W, H;
-        unsigned short** L;
-        short** a;
-        short** b;
+        float** L;
+        float** a;
+        float** b;
 
      LabImage (int w, int h);
-     LabImage (Image16* im);
     ~LabImage ();
 };
 }

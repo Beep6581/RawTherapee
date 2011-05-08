@@ -24,6 +24,8 @@
 #include <options.h>
 #include <safegtk.h>
 
+#include <cstring>
+
 #define CHECKTIME 5000
 extern Glib::ustring argv0;
 

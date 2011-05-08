@@ -31,7 +31,7 @@ namespace rtengine {
 
             cmsHPROFILE camProfile;
             double iColorMatrix[3][3];
-            double camToD50[3][3];
+            double cam2xyz[3][3];
 
 
             void transformPixel (int x, int y, int tran, int& tx, int& ty);
@@ -45,7 +45,7 @@ namespace rtengine {
             double camwbBlue;
             double autowbTemp;
             double autowbGreen;
-            unsigned int* aeHistogram;
+            LUTu aeHistogram;
             int  aeHistCompression;
             int embProfileLength;
             unsigned char* embProfileData;

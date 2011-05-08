@@ -96,7 +96,8 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
         plistener->setProgress (1.0);
     }
 
-    wb = ColorTemp (1.0, 1.0, 1.0);
+	wb = ColorTemp (1.0,1.0,1.0);
+	//this is probably a mistake if embedded profile is not D65
 
     return 0;
 }
@@ -139,20 +140,22 @@ void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, i
         sx2 = sx1 + pp.h;
         sy2 = sy1 + pp.w;
     }   
-    printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
+    //printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
     if (sx1<0)sx1=0;
     if (sy1<0)sy1=0;
 }
 
-void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, bool first, HRecParams hrp) {
+void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp) {
 
     // compute channel multipliers
-    double rm, gm, bm;
-    ctemp.getMultipliers (rm, gm, bm);
+    double drm, dgm, dbm;
+    ctemp.getMultipliers (drm, dgm, dbm);
+    float rm=drm,gm=dgm,bm=dbm;
+
     rm = 1.0 / rm;
     gm = 1.0 / gm;
     bm = 1.0 / bm;
-    double mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
+    float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
     rm /= mul_lum;
     gm /= mul_lum;
     bm /= mul_lum;    
@@ -179,12 +182,12 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
     int mtran = tran;
     int skip = pp.skip;
 
-    if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
+    //if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
 
     // improve speed by integrating the area division into the multipliers
     // switched to using ints for the red/green/blue channel buffer.
     // Incidentally this improves accuracy too.
-    double area=skip*skip;
+    float area=skip*skip;
     rm/=area;
     gm/=area;
     bm/=area;
@@ -193,63 +196,66 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
 #pragma omp parallel
     {
 #endif
-    int *line_red  = new int[imwidth];
-    int *line_green  = new int[imwidth];
-    int *line_blue = new int[imwidth];
+    float *line_red  = new float[imwidth];
+    float *line_green  = new float[imwidth];
+    float *line_blue = new float[imwidth];
 
 #ifdef _OPENMP
 #pragma omp for
 #endif
-    for (int ix=0;ix<imheight;ix++) {
-    	int i=istart+skip*ix;if (i>maxy-skip) i=maxy-skip; // avoid trouble
-		for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-			int rtot,gtot,btot;
-			rtot=gtot=btot=0;
-
-			for (int m=0; m<skip; m++)
-				for (int n=0; n<skip; n++)
+		for (int ix=0;ix<imheight;ix++) {
+			int i=istart+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
+			for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
+				
+				float rtot,gtot,btot;
+				rtot=gtot=btot=0;
+				
+				for (int m=0; m<skip; m++)
+					for (int n=0; n<skip; n++)
 					{
-					rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
-					gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
-					btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
+						rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
+						gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
+						btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
 					}
-			line_red[j]  = rtot;
-            line_green[j]  = gtot;
-            line_blue[j] = btot;
-		}
-
-// covert back to gamma and clip
+				line_red[j]  = rtot;
+				line_green[j]  = gtot;
+				line_blue[j] = btot;
+			}
+			
+			// covert back to gamma and clip
 #define GCLIP( x ) CurveFactory::gamma_srgb(CLIP(x))
-
-//        if (hrp.enabled)
-//            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
-    
-        if ((mtran & TR_ROT) == TR_R180) 
-            for (int j=0; j<imwidth; j++) {
-                image->r[imheight-1-ix][imwidth-1-j] = (int)GCLIP(rm*line_red[j]);
-                image->g[imheight-1-ix][imwidth-1-j] = (int)GCLIP(gm*line_green[j]);
-                image->b[imheight-1-ix][imwidth-1-j] = (int)GCLIP(bm*line_blue[j]);
-            }
-        else if ((mtran & TR_ROT) == TR_R90) 
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[j][imheight-1-ix] = (int)GCLIP(rm*line_red[j]);
-                image->g[j][imheight-1-ix] = (int)GCLIP(gm*line_green[j]);
-                image->b[j][imheight-1-ix] = (int)GCLIP(bm*line_blue[j]);
-        }
-        else if ((mtran & TR_ROT) == TR_R270) 
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[imwidth-1-j][ix] = (int)GCLIP(rm*line_red[j]);
-                image->g[imwidth-1-j][ix] = (int)GCLIP(gm*line_green[j]);
-                image->b[imwidth-1-j][ix] = (int)GCLIP(bm*line_blue[j]);
-            }
-        else {
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r[ix][j] = (int)GCLIP(rm*line_red[j]);
-                image->g[ix][j] = (int)GCLIP(gm*line_green[j]);
-                image->b[ix][j] = (int)GCLIP(bm*line_blue[j]);
-            }
-        }
-    }
+			
+			//        if (hrp.enabled)
+			//            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
+			
+			if ((mtran & TR_ROT) == TR_R180) 
+				for (int j=0; j<imwidth; j++) {
+					image->r[imheight-1-ix][imwidth-1-j] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[imheight-1-ix][imwidth-1-j] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[imheight-1-ix][imwidth-1-j] = GCLIP(bm*line_blue[j])/65535.0;
+				}
+			else if ((mtran & TR_ROT) == TR_R90) 
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+					image->r[j][imheight-1-ix] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[j][imheight-1-ix] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[j][imheight-1-ix] = GCLIP(bm*line_blue[j])/65535.0;
+				}
+			else if ((mtran & TR_ROT) == TR_R270) 
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+					image->r[imwidth-1-j][ix] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[imwidth-1-j][ix] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[imwidth-1-j][ix] = GCLIP(bm*line_blue[j])/65535.0;
+				}
+			else {
+				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
+					image->r[ix][j] = GCLIP(rm*line_red[j])/65535.0;
+					image->g[ix][j] = GCLIP(gm*line_green[j])/65535.0;
+					image->b[ix][j] = GCLIP(bm*line_blue[j])/65535.0;
+					//if (ix==100 && j==100) printf("stdimsrc before R= %f  G= %f  B= %f  \n",65535*image->r[ix][j],65535*image->g[ix][j],65535*image->b[ix][j]);
+					
+				}
+			}
+		}
 #undef GCLIP
     delete [] line_red;
     delete [] line_green;
@@ -260,7 +266,7 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Image16* image, Previ
 }
 
 
-void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
+void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
 
     MyTime t1,t2;
 
@@ -269,20 +275,70 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Image16* image, Previe
 //    if (hrp.enabled==true && hrmap[0]==NULL) 
 //        updateHLRecoveryMap ();
     // the code will use OpenMP as of now.
+	
+	//Image16* tmpim = new Image16 (image->width,image->height);
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
-    colorSpaceConversion (image, cmp, embProfile);
-    
+	colorSpaceConversion (image, cmp, embProfile);
+	
+	for ( int h = 0; h < image->height; ++h )
+		for ( int w = 0; w < image->width; ++w ) {
+			image->r[h][w] *= 65535.0 ;
+			image->g[h][w] *= 65535.0 ;
+			image->b[h][w] *= 65535.0 ;
+			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
+		}
+	
     // Flip if needed
     if (tran & TR_HFLIP)
-        hflip (image);
-    if (tran & TR_VFLIP)
-        vflip (image);
-
+	 hflip (image);
+	 if (tran & TR_VFLIP)
+	 vflip (image);
+	
+	
     t2.set ();
 }
+	
+void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
+	
+	cmsHPROFILE in;
+	cmsHPROFILE out = iccStore->workingSpace (cmp.working);
+	if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
+		if (embedded)
+			in = embedded;
+		else
+			in = iccStore->getsRGBProfile ();
+	} else {
+		if (cmp.input!="(none)") {
+			in = iccStore->getProfile (cmp.input);
+			if (in==NULL && embedded)
+				in = embedded;
+			else if (in==NULL)
+				in = iccStore->getsRGBProfile ();
+			else if (cmp.gammaOnInput) 
+				for (int i=0; i<im->height; i++)
+					for (int j=0; j<im->width; j++) {
+						im->r[i][j] = CurveFactory::gamma (im->r[i][j]);
+						im->g[i][j] = CurveFactory::gamma (im->g[i][j]);
+						im->b[i][j] = CurveFactory::gamma (im->b[i][j]);
+					}
+		}
+	}
+	
+	if (cmp.input!="(none)") {
+		lcmsMutex->lock ();
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
+            settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+		lcmsMutex->unlock ();
+		
+        im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+		
+        cmsDeleteTransform(hTransform);
+	}
+}
+	
 
-void StdImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
+void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
 
     cmsHPROFILE in;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);
@@ -309,9 +365,12 @@ void StdImageSource::colorSpaceConversion (Image16* im, ColorManagementParams cm
 
     if (cmp.input!="(none)") {
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 0);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 
+            settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
-        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
+        
+        im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+        
         cmsDeleteTransform(hTransform);
     }
 }
@@ -332,7 +391,7 @@ void StdImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
     h = pp.h / pp.skip + (pp.h % pp.skip > 0);
 }
 
-void StdImageSource::hflip (Image16* image) {
+void StdImageSource::hflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
@@ -354,7 +413,7 @@ void StdImageSource::hflip (Image16* image) {
     delete [] rowb;
 }
 
-void StdImageSource::vflip (Image16* image) {
+void StdImageSource::vflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
@@ -472,19 +531,19 @@ void StdImageSource::hlRecovery (unsigned short* red, unsigned short* green, uns
     rtengine::hlRecovery (red, green, blue, img->height, img->width, i, sx1, sx2, skip, needhr, hrmap);
 }
 */
-int StdImageSource::getAEHistogram (unsigned int* histogram, int& histcompr) {
+void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     histcompr = 3;
 
-    memset (histogram, 0, (65536>>histcompr)*sizeof(int));
+    histogram(65536>>histcompr);
+    histogram.clear();
 
     for (int i=0; i<img->height; i++)
         for (int j=0; j<img->width; j++) {
-            histogram[CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
-            histogram[CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
-            histogram[CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
+            histogram[(int)CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
+            histogram[(int)CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
+            histogram[(int)CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
         }
-    return 1;
 }
 
 ColorTemp StdImageSource::getAutoWB () {

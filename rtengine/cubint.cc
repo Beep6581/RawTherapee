@@ -19,7 +19,7 @@
 #define	A	(-0.85)
 //#define CLIP(a)  ((a>CMAXVAL)?a=CMAXVAL:((a<0)?0:a))
 
-inline void cubint (Image16* src, int xs, int ys, double Dx, double Dy, unsigned short *r, unsigned short *g, unsigned short *b, double mul) {
+inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
 
   register double w[4];
 

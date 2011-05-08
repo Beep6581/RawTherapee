@@ -289,6 +289,7 @@ EditorPanel::~EditorPanel () {
     iarea->setBeforeAfterViews (NULL, iarea);
     delete iarea;
     iarea = NULL;
+
     if (beforeIpc)
         beforeIpc->stopProcessing ();
 
@@ -297,11 +298,15 @@ EditorPanel::~EditorPanel () {
     if (beforeIpc)
         beforeIpc->setPreviewImageListener (NULL);
 
+    if (beforeIpc)
+        beforeIpc->setPreviewImageListener (NULL);
+
     delete beforePreviewHandler;
     beforePreviewHandler = NULL;
     if (beforeIpc)
         rtengine::StagedImageProcessor::destroy (beforeIpc);
     beforeIpc = NULL;
+
     close ();
 
     if (epih->pending)
@@ -1288,10 +1293,11 @@ void EditorPanel::beforeAfterToggled () {
     }
 }
 
-void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl) {
+void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
+    LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
 
-    histogramPanel->histogramChanged (rh, gh, bh, lh);
-    tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
+    histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
+    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
 }
 
 bool EditorPanel::CheckSidePanelsVisibility(){

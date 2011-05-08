@@ -38,10 +38,7 @@
 
 
 
-//#define IDIRWT(i1,j1,i,j) ( irangefn[abs((int)data_fine->L[i1][j1]-data_fine->L[i][j]) + \
-abs((int)data_fine->a[i1][j1]-data_fine->a[i][j])+abs((int)data_fine->b[i1][j1]-data_fine->b[i][j])] )
-
-#define DIRWT(i1,j1,i,j) ( /*domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] */ rangefn[abs((int)data_fine->L[i1][j1]-data_fine->L[i][j])+abs((int)data_fine->a[i1][j1]-data_fine->a[i][j])+abs((int)data_fine->b[i1][j1]-data_fine->b[i][j])] )
+#define DIRWT(i1,j1,i,j) (rangefn[abs((int)data_fine->L[i1][j1]-data_fine->L[i][j])+abs((int)data_fine->a[i1][j1]-data_fine->a[i][j])+abs((int)data_fine->b[i1][j1]-data_fine->b[i][j])] )
 
 namespace rtengine {
 	
@@ -79,32 +76,11 @@ namespace rtengine {
 	
 	void ImProcFunctions :: dirpyrLab_equalizer(LabImage * src, LabImage * dst, /*float luma, float chroma, float gamma*/ const double * mult )
 	{
-		/*float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
-		float gamthresh = 0.03;
-		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-		unsigned short * gamcurve = new unsigned short [65536];
-		for (int i=0; i<65536; i++) {
-			int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
-			//if (i<500)  printf("%d %d \n",i,g);
-			gamcurve[i] = CLIP(g);
-		}
-		
-		
-		//#pragma omp parallel for if (multiThread)
-		for (int i=0; i<src->H; i++) {
-		 for (int j=0; j<src->W; j++) {
-		 src->L[i][j] = gamcurve[src->L[i][j] ];
-		 }
-		 }*/
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		int * rangefn = new int [0x20000];
-		
-		//int * irangefn = new int [0x20000];
-				
-		int intfactor = 1024;//16384;
-		
+		LUTf rangefn(0x20000);
+								
 		
 		//set up weights		
 		float noise = 1500;
@@ -113,11 +89,7 @@ namespace rtengine {
 		//set up range functions
 		
 		for (int i=0; i<0x20000; i++) 
-			rangefn[i] = (int)((noise/((double)i + noise))*intfactor);
-		
-		/*for (int i=0; i<0x20000; i++) 
-			//irangefn[i] = 1+(int)( exp(-(double)fabs(i-0x10000) / (1+16*noise) )*intfactor);
-			irangefn[i] = intfactor*(int)(SQR(noise)/((float)SQR(noise)+SQR(i)));*/
+			rangefn[i] = (int)((noise/((double)i + noise)));
 
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,7 +188,7 @@ namespace rtengine {
 			
 			totalpitch /= pitch;
 			
-			idirpyr_eq(dirpyrLablo[level], dirpyrLablo[level-1], buffer, /*i*/ rangefn, level, pitch, totalpitch, mult );
+			idirpyr_eq(dirpyrLablo[level], dirpyrLablo[level-1], buffer, level, pitch, totalpitch, mult );
 			
 		}
 		
@@ -225,19 +197,10 @@ namespace rtengine {
 		pitch = pitches[0];
 		totalpitch /= pitch;
 		
-		idirpyr_eq(dirpyrLablo[0], dst, buffer, /*i*/ rangefn, 0, pitch, totalpitch, mult );
+		idirpyr_eq(dirpyrLablo[0], dst, buffer, 0, pitch, totalpitch, mult );
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
-		/*float igam = 1/gam;
-		float igamthresh = gamthresh*gamslope;
-		float igamslope = 1/gamslope;
-		for (int i=0; i<65536; i++) {
-			int g = (int)(CurveFactory::gamma((float)i/65535.0, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0);
-			gamcurve[i] = CLIP(g);
-		}*/
 		
 		
 		for (int i=0; i<dst->H; i++) 
@@ -246,9 +209,6 @@ namespace rtengine {
 				dst->L[i][j] = CLIP((int)(  buffer[0][i][j]  ));
 				dst->a[i][j] = CLIPC((int)( buffer[1][i][j]  ));
 				dst->b[i][j] = CLIPC((int)( buffer[2][i][j]  ));
-				
-				
-				//dst->L[i][j] = gamcurve[ dst->L[i][j] ];
 				
 			}
 		
@@ -263,16 +223,11 @@ namespace rtengine {
 		for (int c=0;c<3;c++)
 			freeArray<int>(buffer[c], h+128);
 		
-		//delete [] rangefn_L;
-		//delete [] rangefn_ab;
-		delete [] rangefn;
-		//delete [] gamcurve;
-		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	};
 	
-	void ImProcFunctions::dirpyr_eq(LabImage* data_fine, LabImage* data_coarse, int * rangefn, int level, int pitch, int scale, const double * mult  )
+	void ImProcFunctions::dirpyr_eq(LabImage* data_fine, LabImage* data_coarse, LUTf & rangefn, int level, int pitch, int scale, const double * mult  )
 	{
 		
 		//pitch is spacing of subsampling
@@ -294,16 +249,8 @@ namespace rtengine {
 		//generate domain kernel 
 		int halfwin = 1;//MIN(ceil(2*sig),3);
 		int scalewin = halfwin*scale;
-		//int intfactor = 16384;
 		
-		/*float domker[7][7];
-		 for (int i=-halfwin; i<=halfwin; i++)
-		 for (int j=-halfwin; j<=halfwin; j++) {
-		 domker[i+halfwin][j+halfwin] = (int)(exp(-(i*i+j*j)/(2*sig*sig))*intfactor); //or should we use a value that depends on sigma???
-		 }*/
-		//float domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,4,2,1},{1,2,2,2,1},{1,1,1,1,1}};
-		
-		//float domker[3][3] = {{1,1,1},{1,2,1},{1,1,1}};
+
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -339,7 +286,7 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::idirpyr_eq(LabImage* data_coarse, LabImage* data_fine, int *** buffer, int * irangefn, int level, int pitch, int scale, const double * mult )
+	void ImProcFunctions::idirpyr_eq(LabImage* data_coarse, LabImage* data_fine, int *** buffer, int level, int pitch, int scale, const double * mult )
 	{
 		
 		int width = data_fine->W;
@@ -354,17 +301,6 @@ namespace rtengine {
 		float wtdsum[6], norm, dirwt;
 		float hipass[3];
 		int i1, j1;	
-		
-		
-		//int halfwin = 3;//MIN(ceil(2*sig),3);
-		//int intfactor= 16384; 
-		//int winwidth=1+2*halfwin;//this belongs in calling function
-		/*float domker[7][7];
-		 for (int i=-halfwin; i<=halfwin; i++)
-		 for (int j=-halfwin; j<=halfwin; j++) {
-		 domker[i][j] = (int)(exp(-(i*i+j*j)/(2*sig*sig))*intfactor); //or should we use a value that depends on sigma???
-		 }*/
-		//float domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,4,2,1},{1,2,2,2,1},{1,1,1,1,1}};
 		
 		
 		// for coarsest level, take non-subsampled lopass image and subtract from lopass_fine to generate hipass image

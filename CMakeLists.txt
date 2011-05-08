@@ -57,6 +57,7 @@ option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
+option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
 
@@ -286,6 +287,16 @@ if (WITH_RAWZOR)
         endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
     endif (WIN32)
 endif (WITH_RAWZOR)
+
+# link witz bzip
+if (WITH_BZIP)
+  find_package(BZip2)
+  if (BZIP2_FOUND)
+    add_definitions (-DBZIP_SUPPORT)
+    set (EXTRA_INCDIR ${EXTRA_LIB} ${BZIP2_INCLUDE_DIR})
+    set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
+  endif (BZIP2_FOUND)
+endif (WITH_BZIP)
 
 if (WITH_MYFILE_MMAP)
 	add_definitions (-DMYFILE_MMAP)

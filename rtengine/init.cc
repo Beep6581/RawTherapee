@@ -50,7 +50,6 @@ int init (const Settings* s) {
 
 void cleanup () {
 
-    CurveFactory::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }
