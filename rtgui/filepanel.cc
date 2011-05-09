@@ -70,7 +70,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightBox = Gtk::manage ( new Gtk::HBox () );
     rightBox->set_size_request(50,100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
-    Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
+    //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
 
     history = new History (false);
 
@@ -93,8 +93,8 @@ FilePanel::FilePanel () : parent(NULL) {
     devLab->set_angle (90);
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
     filtLab->set_angle (90);
-    Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
-    tagLab->set_angle (90);
+    //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
+    //tagLab->set_angle (90);
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
@@ -102,7 +102,7 @@ FilePanel::FilePanel () : parent(NULL) {
 
     rightNotebook->append_page (*tpcPaned, *devLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
-    rightNotebook->append_page (*taggingBox, *tagLab);
+    //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
 
     rightBox->pack_start (*rightNotebook);
 
