@@ -25,7 +25,7 @@
 
 BatchQueuePanel::BatchQueuePanel () {
 
-    batchQueue = new BatchQueue();
+    batchQueue = Gtk::manage( new BatchQueue() );
 
     // construct batch queue panel with the extra "start" and "stop" button
     Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
@@ -145,13 +145,13 @@ void BatchQueuePanel::updateTab (int qsize)
 
         if(!qsize ){
             vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing.png")));
-            l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE"));
+            l=Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")) );
         } else if( start->get_active () ){
             vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-play.png")));
-            l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]");
+            l=Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]"));
         } else {
             vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-pause.png")));
-            l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" );
+            l=Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" ));
         }
         l->set_angle (90);
         vbb->pack_start (*l);

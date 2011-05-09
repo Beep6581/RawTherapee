@@ -29,8 +29,8 @@ extern Glib::ustring argv0;
 
 DirBrowser::DirBrowser () {
 
-   dirtree = new Gtk::TreeView();
-   scrolledwindow4 = new Gtk::ScrolledWindow();
+   dirtree = Gtk::manage ( new Gtk::TreeView() );
+   scrolledwindow4 = Gtk::manage ( new Gtk::ScrolledWindow() );
 
 //   dirtree->set_flags(Gtk::CAN_FOCUS);
    dirtree->set_headers_visible(false);
@@ -65,7 +65,7 @@ void DirBrowser::fillDirTree () {
 
   fillRoot ();
 
-  Gtk::CellRendererPixbuf* render_pb = new Gtk::CellRendererPixbuf ();
+  Gtk::CellRendererPixbuf* render_pb = Gtk::manage ( new Gtk::CellRendererPixbuf () );
   tvc.pack_start (*render_pb, false);
   tvc.add_attribute(*render_pb, "pixbuf-expander-closed", 1);
   tvc.add_attribute(*render_pb, "pixbuf", 1);

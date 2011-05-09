@@ -38,7 +38,7 @@ Navigator::Navigator () {
 	LAB_B = Gtk::manage (new Gtk::Label ());
 	LAB_L = Gtk::manage (new Gtk::Label ());
 
-    Gtk::Table* table = new Gtk::Table (3, 3);
+    Gtk::Table* table = Gtk::manage (new Gtk::Table (3, 3));
     table->attach (*R, 0, 1, 0, 1, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
     table->attach (*G, 0, 1, 1, 2, Gtk::EXPAND, Gtk::SHRINK, 0, 0);
     table->attach (*B, 0, 1, 2, 3, Gtk::EXPAND, Gtk::SHRINK, 0, 0);

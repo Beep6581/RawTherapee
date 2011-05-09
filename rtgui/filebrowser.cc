@@ -41,33 +41,33 @@ FileBrowser::FileBrowser ()
     
     int p = 0;
     pmenu = new Gtk::Menu ();
-    pmenu->attach (*(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(develop = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESS"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rank[0] = new Gtk::MenuItem (M("FILEBROWSER_POPUPUNRANK"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rank[1] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK1"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rank[2] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK2"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rank[3] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK3"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rank[4] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK4"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rank[5] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK5"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(trash = new Gtk::MenuItem (M("FILEBROWSER_POPUPTRASH"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(untrash = new Gtk::MenuItem (M("FILEBROWSER_POPUPUNTRASH"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(rename = new Gtk::MenuItem (M("FILEBROWSER_POPUPRENAME"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(remove = new Gtk::MenuItem (M("FILEBROWSER_POPUPREMOVE"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(selectDF = new Gtk::MenuItem (M("FILEBROWSER_SELECTDARKFRAME"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(thisIsDF = new Gtk::MenuItem (M("FILEBROWSER_MOVETODARKFDIR"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*(copyprof = new Gtk::MenuItem (M("FILEBROWSER_COPYPROFILE"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(applyprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage((open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN")))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(develop = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESS"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rank[0] = new Gtk::MenuItem (M("FILEBROWSER_POPUPUNRANK"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rank[1] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK1"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rank[2] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK2"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rank[3] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK3"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rank[4] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK4"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rank[5] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK5"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(trash = new Gtk::MenuItem (M("FILEBROWSER_POPUPTRASH"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(untrash = new Gtk::MenuItem (M("FILEBROWSER_POPUPUNTRASH"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(rename = new Gtk::MenuItem (M("FILEBROWSER_POPUPRENAME"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(remove = new Gtk::MenuItem (M("FILEBROWSER_POPUPREMOVE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(selectDF = new Gtk::MenuItem (M("FILEBROWSER_SELECTDARKFRAME"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(thisIsDF = new Gtk::MenuItem (M("FILEBROWSER_MOVETODARKFDIR"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(copyprof = new Gtk::MenuItem (M("FILEBROWSER_COPYPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(applyprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->show_all ();
 
     pmaccelgroup = Gtk::AccelGroup::create ();
@@ -80,7 +80,6 @@ FileBrowser::FileBrowser ()
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
 
-    profmenu = new Gtk::Menu ();
 
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));    
     for (int i=0; i<6; i++)
@@ -99,6 +98,11 @@ FileBrowser::FileBrowser ()
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
     applyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applyprof));    
     clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));    
+}
+
+FileBrowser::~FileBrowser ()
+{
+    delete pmenu;
 }
 
 void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
