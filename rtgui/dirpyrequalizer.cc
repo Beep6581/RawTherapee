@@ -60,7 +60,7 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
             ss << " (" << M("TP_DIRPYREQUALIZER_LUMAFINEST") << ")";
         if(i == 3)
             ss << " (" << M("TP_DIRPYREQUALIZER_LUMACOARSEST") << ")";
-		multiplier[i] = new Adjuster (ss.str(), 0, 4, 0.01, 1.0);
+		multiplier[i] = Gtk::manage ( new Adjuster (ss.str(), 0, 4, 0.01, 1.0) );
         multiplier[i]->setAdjusterListener(this);
         pack_start(*multiplier[i]);
     }
@@ -68,7 +68,7 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
 	
-	multiplier[4] = new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.0);
+	multiplier[4] = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.0) );
 	multiplier[4]->setAdjusterListener(this);
 	pack_start(*multiplier[4]);
 

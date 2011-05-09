@@ -25,7 +25,7 @@ using namespace rtengine::procparams;
 
 ColorBoost::ColorBoost () : Gtk::VBox(), FoldableToolPanel(this), cbAdd(false) {
 
-  colorboost = new Adjuster (M("TP_COLORBOOST_AMOUNT"), -100, 300, 1, 0);
+  colorboost = Gtk::manage (new Adjuster (M("TP_COLORBOOST_AMOUNT"), -100, 300, 1, 0));
 
   pack_start (*colorboost);
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));

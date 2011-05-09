@@ -67,7 +67,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* clearprof;
     Gtk::Menu* pmenu;
-    Gtk::Menu* profmenu;
+
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
     FileBrowserListener* tbl;
@@ -86,6 +86,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
   public:
    
     FileBrowser ();
+    ~FileBrowser ();
 
     void addEntry (FileBrowserEntry* entry); // can be called from any thread
     void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread 

@@ -55,33 +55,33 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
 
     set_size_request(0,250);
     // construct trash panel with the extra "empty trash" button
-    trashButtonBox = new Gtk::VBox;
-    Gtk::Button* emptyT = new Gtk::Button (M("FILEBROWSER_EMPTYTRASH"));
+    trashButtonBox = Gtk::manage( new Gtk::VBox );
+    Gtk::Button* emptyT = Gtk::manage( new Gtk::Button (M("FILEBROWSER_EMPTYTRASH")));
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
-    emptyT->set_image (*(new Gtk::Image (Gtk::StockID("gtk-delete"), Gtk::ICON_SIZE_BUTTON)));
+    emptyT->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-delete"), Gtk::ICON_SIZE_BUTTON)));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));    
     trashButtonBox->pack_start (*emptyT, Gtk::PACK_SHRINK, 4);
     emptyT->show ();
     trashButtonBox->show ();
     
     // setup button bar
-    buttonBar = new Gtk::HBox ();
+    buttonBar = Gtk::manage( new Gtk::HBox () );
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
     
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
-    bDir = new Gtk::ToggleButton ();
+    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+    bDir = Gtk::manage( new Gtk::ToggleButton () );
     bDir->set_active (true);
-    bDir->set_image (*(new Gtk::Image (argv0+"/images/folder.png")));
+    bDir->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/folder.png")));
     bDir->set_relief (Gtk::RELIEF_NONE);
     bDir->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bDir->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     bCateg[0] = bDir->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bDir));    
     buttonBar->pack_start (*bDir, Gtk::PACK_SHRINK);
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
-    bUnRanked = new Gtk::ToggleButton ();
+    bUnRanked = Gtk::manage( new Gtk::ToggleButton () );
     bUnRanked->set_active (false);
-    bUnRanked->set_image (*(new Gtk::Image (argv0+"/images/unrated.png")));
+    bUnRanked->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/unrated.png")));
     bUnRanked->set_relief (Gtk::RELIEF_NONE);
     bUnRanked->set_tooltip_markup (M("FILEBROWSER_SHOWUNRANKHINT"));
     bCateg[1] = bUnRanked->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnRanked));    
@@ -89,11 +89,11 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
     for (int i=0; i<5; i++) {
-        iranked[i] = new Gtk::Image (argv0+"/images/rated.png");
-        igranked[i] = new Gtk::Image (argv0+"/images/grayrated.png");
+        iranked[i] = Gtk::manage( new Gtk::Image (argv0+"/images/rated.png") );
+        igranked[i] = Gtk::manage( new Gtk::Image (argv0+"/images/grayrated.png") );
         iranked[i]->show ();
         igranked[i]->show ();
-        bRank[i] = new Gtk::ToggleButton ();
+        bRank[i] = Gtk::manage( new Gtk::ToggleButton () );
         bRank[i]->set_image (*igranked[i]);
         bRank[i]->set_relief (Gtk::RELIEF_NONE);
         buttonBar->pack_start (*bRank[i], Gtk::PACK_SHRINK);
@@ -105,19 +105,19 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     bRank[2]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK3HINT"));
     bRank[3]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK4HINT"));
     bRank[4]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK5HINT"));
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
-    iTrashEmpty = new Gtk::Image(argv0+"/images/trash-show-empty.png");
-    iTrashFull = new Gtk::Image(argv0+"/images/trash-show-full.png");
+    iTrashEmpty = Gtk::manage( new Gtk::Image(argv0+"/images/trash-show-empty.png") );
+    iTrashFull  = Gtk::manage( new Gtk::Image(argv0+"/images/trash-show-full.png") );
 
-    bTrash = new Gtk::ToggleButton ();
+    bTrash = Gtk::manage(  new Gtk::ToggleButton () );
     bTrash->set_image (*iTrashEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_markup (M("FILEBROWSER_SHOWTRASHHINT"));
     bCateg[7] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash));    
     bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
-    buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
+    buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
     fileBrowser->trash_changed().connect( sigc::mem_fun(*this, &FileCatalog::trashChanged) );
 
     categoryButtons[0] = bDir;
@@ -127,7 +127,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     categoryButtons[7] = bTrash;
 
     exifInfo = Gtk::manage(new Gtk::ToggleButton ());
-    exifInfo->set_image (*(new Gtk::Image (argv0+"/images/info.png")));
+    exifInfo->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/info.png")));
     exifInfo->set_relief (Gtk::RELIEF_NONE);
     exifInfo->set_tooltip_markup (M("FILEBROWSER_SHOWEXIFINFO"));
     exifInfo->set_active( options.showFileNames );
@@ -135,30 +135,30 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     buttonBar->pack_start (*exifInfo, Gtk::PACK_SHRINK);
 
     // thumbnail zoom
-    Gtk::HBox* zoomBox = new Gtk::HBox ();
-    zoomInButton  = new Gtk::Button ();
-    zoomInButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    Gtk::HBox* zoomBox = Gtk::manage( new Gtk::HBox () );
+    zoomInButton  = Gtk::manage(  new Gtk::Button () );
+    zoomInButton->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
-    zoomOutButton  = new Gtk::Button ();
-    zoomOutButton->set_image (*(new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    zoomOutButton  = Gtk::manage( new Gtk::Button () );
+    zoomOutButton->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
     zoomBox->pack_end (*zoomOutButton, Gtk::PACK_SHRINK);   
 
     // add default panel 
-    hBox = new Gtk::HBox ();
+    hBox = Gtk::manage( new Gtk::HBox () );
     hBox->show ();
     hBox->pack_end (*fileBrowser);
     fileBrowser->applyFilter (getFilter());
     pack_start (*hBox);
 
-    buttonBar2 = new Gtk::HBox ();
+    buttonBar2 = Gtk::manage( new Gtk::HBox () );
     pack_end (*buttonBar2, Gtk::PACK_SHRINK);
-    progressBar = new Gtk::ProgressBar ();
+    progressBar = Gtk::manage( new Gtk::ProgressBar () );
     buttonBar2->pack_start (*progressBar, Gtk::PACK_SHRINK, 4);
     progressBar->set_size_request (-1, 16);
 

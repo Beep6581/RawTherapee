@@ -41,7 +41,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   label = Gtk::manage (new Gtk::Label (vlabel, Gtk::ALIGN_LEFT));
 
   if (editedcb) {
-    editedCheckBox = new Gtk::CheckButton ();
+    editedCheckBox = Gtk::manage (new Gtk::CheckButton ());
     editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
 	hbox->pack_start (*editedCheckBox);
   }
@@ -262,7 +262,7 @@ EditedState Adjuster::getEditedState () {
 void Adjuster::showEditedCB () {
 
     if (!editedCheckBox) {
-        editedCheckBox = new Gtk::CheckButton ();
+        editedCheckBox =  Gtk::manage(new Gtk::CheckButton ());
         hbox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
         hbox->reorder_child (*editedCheckBox, 0);
 	    editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );

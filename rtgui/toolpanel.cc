@@ -21,6 +21,15 @@
 
 using namespace rtengine::procparams;
 
+
+class Frame2: public Gtk::Frame
+{
+	Gtk::Container *pC;
+public:
+	Frame2( Gtk::Container *p):pC(p){}
+	~Frame2( ){ delete pC;}
+};
+
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentContainer(NULL), exp(NULL) {
 
 	exp = Gtk::manage (new Gtk::Expander ());
@@ -28,7 +37,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentCon
 	exp->set_use_markup (true);
 	exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
 
-	Gtk::Frame* pframe = Gtk::manage (new Gtk::Frame ());
+	Frame2* pframe = Gtk::manage (new Frame2 (content));
 
 	pframe->set_name ("ToolPanel");
 
