@@ -130,14 +130,27 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   ppi->set_value (300);
   // ppibox END
 
-  ratio->append_text ("3:2");
-  ratio->append_text ("4:3");
-  ratio->append_text ("16:9");
-  ratio->append_text ("16:10");
-  ratio->append_text ("5:4");
-  ratio->append_text ("2:1");
-  ratio->append_text ("1:1");
-  ratio->append_text ("DIN");
+  ratio->append_text ("3:2");     //0
+  ratio->append_text ("4:3");     //1
+  ratio->append_text ("16:9");    //2
+  ratio->append_text ("16:10");   //3
+  ratio->append_text ("1:1");     //4
+  ratio->append_text ("2:1");     //5
+  ratio->append_text ("3:1");     //6
+  ratio->append_text ("4:1");     //7
+  ratio->append_text ("5:1");     //8
+  ratio->append_text ("6:1");     //9
+  ratio->append_text ("7:1");     //10
+  ratio->append_text ("6:17");    //11
+  ratio->append_text ("5:4");     //12
+  ratio->append_text ("5:7");     //13
+  ratio->append_text ("DIN");     //14
+  ratio->append_text ("8.5:11");  //15
+  ratio->append_text ("11:14");   //16
+  ratio->append_text ("11:17");   //17
+  ratio->append_text ("13:19");   //18
+  ratio->append_text ("17:22");   //19
+
   ratio->set_active (0);
 
   orientation->append_text (M("GENERAL_LANDSCAPE"));
@@ -931,14 +944,41 @@ double Crop::getRatio () {
     r = 16.0/9.0;
   else if (ratio->get_active_row_number()==3)
     r = 16.0/10.0;
+
   else if (ratio->get_active_row_number()==4)
-    r = 5.0/4.0;
+    r = 1.0/1.0;
   else if (ratio->get_active_row_number()==5)
     r = 2.0/1.0;
   else if (ratio->get_active_row_number()==6)
-    r = 1.0/1.0;
+    r = 3.0/1.0;
   else if (ratio->get_active_row_number()==7)
-    r = 1.414;
+    r = 4.0/1.0;
+  else if (ratio->get_active_row_number()==8)
+    r = 5.0/1.0;
+  else if (ratio->get_active_row_number()==9)
+    r = 6.0/1.0;
+  else if (ratio->get_active_row_number()==10)
+    r = 7.0/1.0;
+  else if (ratio->get_active_row_number()==11)
+    r = 6.0/17.0;
+
+  else if (ratio->get_active_row_number()==12)
+    r = 5.0/4.0;
+  else if (ratio->get_active_row_number()==13)
+    r = 5.0/7.0;
+  else if (ratio->get_active_row_number()==14)
+    r = 1.414;//DIN
+  else if (ratio->get_active_row_number()==15)
+    r = 8.5/11.0;
+  else if (ratio->get_active_row_number()==16)
+    r = 11.0/14.0;
+  else if (ratio->get_active_row_number()==17)
+    r = 11.0/17.0;
+  else if (ratio->get_active_row_number()==18)
+    r = 13.0/19.0;
+  else if (ratio->get_active_row_number()==19)
+    r = 17.0/22.0;
+
   if (orientation->get_active_row_number()==0)
     return r;
   else
