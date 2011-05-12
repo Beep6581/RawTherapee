@@ -159,7 +159,7 @@ class RawImageSource : public ImageSource {
         int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
         void CA_correct_RT	(double cared, double cablue);
         void ddct8x8s(int isgn, float **a);
-        void exp_bef (float expos, float preser);  // exposure before interpolation
+        void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
 
         int  cfaCleanFromMap( PixelsMap &bitmapBads );
         int  findHotDeadPixel( PixelsMap &bpMap, float thresh);

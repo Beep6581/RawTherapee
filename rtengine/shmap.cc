@@ -223,8 +223,8 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 				}
 			}
 			data_coarse[i][j]=CLIP((int)(val/norm));//low pass filter
-			if (val<=0 || norm<=0)
-				printf("val=%f norm=%f \n",val,norm);
+			/*if (val<=0 || norm<=0)
+				printf("val=%f norm=%f \n",val,norm); */
 		}
 	}
 	

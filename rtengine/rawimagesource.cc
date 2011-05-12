@@ -1088,9 +1088,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		CA_correct_RT(raw.cared, raw.cablue);
 	}
 	
-	if ( raw.expos !=1 ) { // exposure
-		exp_bef(raw.expos, raw.preser);
-	}
+	if ( raw.expos !=1 ) processRawWhitepoint(raw.expos, raw.preser);
 	
     t2.set();
     if( settings->verbose )
@@ -1295,9 +1293,7 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
 	if( ri->isBayer() ){
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
-				int val = rawData[row][col];
-				if (!val)
-					continue;
+				float val = rawData[row][col];
 				int c = FC(row, col);
 				val -= cblack[c];
 				val *= scale_mul[c];
@@ -1307,7 +1303,7 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
 	}else{
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
-				int val = rawData[row][3*col+0];
+				float val = rawData[row][3*col+0];
 				if (val){
 					val -= cblack[0];
 					val *= scale_mul[0];
