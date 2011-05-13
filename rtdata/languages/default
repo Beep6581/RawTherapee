@@ -1,0 +1,838 @@
+#00 default translation file 
+#01 Developers should add translations to this file and then run 'generateDifferences.sh' script to update other locales.
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Credits
+ABOUT_TAB_LICENSE;License
+ABOUT_TAB_SPLASH;Splash
+ADJUSTER_RESET_TO_DEFAULT;Reset to default
+BATCHQUEUE_AUTOSTART;Auto start
+BATCH_PROCESSING;Batch processing
+CURVEEDITOR_CURVE;Curve
+CURVEEDITOR_CURVES;Curves
+CURVEEDITOR_CUSTOM;Custom
+CURVEEDITOR_DARKS;Darks
+CURVEEDITOR_FILEDLGFILTERANY;Any files
+CURVEEDITOR_FILEDLGFILTERCURVE;Curve files
+CURVEEDITOR_HIGHLIGHTS;Highlights
+CURVEEDITOR_LIGHTS;Lights
+CURVEEDITOR_LINEAR;Linear
+CURVEEDITOR_LOADDLGLABEL;Load Curve...
+CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
+CURVEEDITOR_NURBS;Control cage
+CURVEEDITOR_PARAMETRIC;Parametric
+CURVEEDITOR_SAVEDLGLABEL;Save Curve...
+CURVEEDITOR_SHADOWS;Shadows
+CURVEEDITOR_TOOLTIPLINEAR;Reset curve to linear
+CURVEEDITOR_TOOLTIPLOAD;Load a curve from file
+CURVEEDITOR_TOOLTIPSAVE;Save current curve
+CURVEEDITOR_TYPE;Type:
+EDITWINDOW_TITLE;Image Edit
+EXIFFILTER_APERTURE;Aperture
+EXIFFILTER_CAMERA;Camera
+EXIFFILTER_DIALOGLABEL;Exif Filter
+EXIFFILTER_FILETYPE;File Type
+EXIFFILTER_FOCALLEN;Focal Length
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Lens
+EXIFFILTER_METADATAFILTER;Enable Metadata Filters
+EXIFFILTER_SHUTTER;Shutter
+EXIFPANEL_ADDEDIT;Add/Edit
+EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
+EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
+EXIFPANEL_KEEP;Keep
+EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
+EXIFPANEL_REMOVE;Remove
+EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
+EXIFPANEL_RESET;Reset
+EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_SUBDIRECTORY;Subdirectory
+FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+FILEBROWSER_APPLYPROFILE;Apply profile
+FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
+FILEBROWSER_AUTODARKFRAME;Auto dark frame
+FILEBROWSER_CLEARPROFILE;Clear profile
+FILEBROWSER_COPYPROFILE;Copy profile
+FILEBROWSER_CURRENT_NAME;Current name:
+FILEBROWSER_DELETEDLGLABEL;File delete confirmation
+FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
+FILEBROWSER_EMPTYTRASH;Empty Trash
+FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
+FILEBROWSER_EXIFFILTERAPPLY;Apply
+FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
+FILEBROWSER_EXIFFILTERLABEL;Exif Filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
+FILEBROWSER_NEW_NAME;New name:
+FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
+FILEBROWSER_PASTEPROFILE;Paste profile
+FILEBROWSER_POPUPCANCELJOB;Cancel job
+FILEBROWSER_POPUPMOVEEND;Move to end of queue
+FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
+FILEBROWSER_POPUPOPEN;Open
+FILEBROWSER_POPUPPROCESS;Put to processing queue
+FILEBROWSER_POPUPRANK1;Rank 1
+FILEBROWSER_POPUPRANK2;Rank 2
+FILEBROWSER_POPUPRANK3;Rank 3
+FILEBROWSER_POPUPRANK4;Rank 4
+FILEBROWSER_POPUPRANK5;Rank 5
+FILEBROWSER_POPUPREMOVE;Remove from filesystem
+FILEBROWSER_POPUPRENAME;Rename
+FILEBROWSER_POPUPSELECTALL;Select all
+FILEBROWSER_POPUPTRASH;Move to trash
+FILEBROWSER_POPUPUNRANK;Unrank
+FILEBROWSER_POPUPUNTRASH;Remove from trash
+FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_RENAMEDLGLABEL;Rename file
+FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
+FILEBROWSER_SELECTDARKFRAME;Select dark frame...
+FILEBROWSER_SHOWDIRHINT;Show all images of the directory <b>D</b>
+FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
+FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
+FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star <b>5</b>
+FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
+FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>
+FILEBROWSER_STARTPROCESSING;Start processing
+FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
+FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_THUMBSIZE;Thumb. size
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
+FILEBROWSER_USETEMPLATE;Use template:
+FILEBROWSER_ZOOMINHINT;Increase thumbnail size <b>+</b>
+FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size <b>-</b>
+GENERAL_ABOUT;About
+GENERAL_AFTER;After
+GENERAL_BEFORE;Before
+GENERAL_CANCEL;Cancel
+GENERAL_DISABLE;Disable
+GENERAL_DISABLED;Disabled
+GENERAL_ENABLE;Enable
+GENERAL_ENABLED;Enabled
+GENERAL_FILE;File
+GENERAL_HIGH_QUALITY;High Quality
+GENERAL_LANDSCAPE;Landscape
+GENERAL_LOAD;Load
+GENERAL_NA;n/a
+GENERAL_NO;No
+GENERAL_NONE;None
+GENERAL_OK;OK
+GENERAL_PORTRAIT;Portrait
+GENERAL_SAVE;Save
+GENERAL_UNCHANGED;(Unchanged)
+GENERAL_YES;Yes
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;G
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_R;R
+HISTOGRAM_LABEL;Histogram
+HISTOGRAM_TOOLTIP_B;Show/Hide BLUE histogram
+HISTOGRAM_TOOLTIP_G;Show/Hide GREEN histogram
+HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
+HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
+HISTORY_CHANGED;Changed
+HISTORY_CUSTOMCURVE;Custom Curve
+HISTORY_DELSNAPSHOT;Del
+HISTORY_FROMCLIPBOARD;From clipboard
+HISTORY_LABEL;History
+HISTORY_MSG_100;RGB saturation
+HISTORY_MSG_101;HSV EQ -- Hue
+HISTORY_MSG_102;HSV EQ -- Saturation
+HISTORY_MSG_103;HSV EQ -- Value
+HISTORY_MSG_104;HSV Equalizer
+HISTORY_MSG_105;Defringing
+HISTORY_MSG_106;Defringing Radius
+HISTORY_MSG_107;Defringing Threshold
+HISTORY_MSG_108;Highlight Compr. Threshold
+HISTORY_MSG_109;Resize bounding box
+HISTORY_MSG_10;Shadow Compression
+HISTORY_MSG_110;Resizing applies to  
+HISTORY_MSG_111;Avoid Color Clipping
+HISTORY_MSG_112;Saturation Limiter
+HISTORY_MSG_113;Saturation Limit
+HISTORY_MSG_114;DCB Iterations
+HISTORY_MSG_115;False color iterations
+HISTORY_MSG_116;Enhanced DCB
+HISTORY_MSG_117;Red CA correction
+HISTORY_MSG_118;Blue CA correction
+HISTORY_MSG_119;Line denoise
+HISTORY_MSG_11;Tone Curve
+HISTORY_MSG_120;Green equil. threshold
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Auto Dark Frame
+HISTORY_MSG_123;Dark Frame File
+HISTORY_MSG_124;Linear exp. correction
+HISTORY_MSG_125;Expo. correction preserving HL
+HISTORY_MSG_12;Auto Exposure
+HISTORY_MSG_13;Exposure Clipping
+HISTORY_MSG_14;Luminance Brightness
+HISTORY_MSG_15;Luminance Contrast
+HISTORY_MSG_16;Luminance Black
+HISTORY_MSG_17;Luminance Highlight Compr.
+HISTORY_MSG_18;Luminance Shadow Compr.
+HISTORY_MSG_19;'L' Curve
+HISTORY_MSG_1;Photo Loaded
+HISTORY_MSG_20;Sharpening
+HISTORY_MSG_21;Sharpening Radius
+HISTORY_MSG_22;Sharpening Amount
+HISTORY_MSG_23;Sharpening Threshold
+HISTORY_MSG_24;Sharpen Only Edges
+HISTORY_MSG_25;Sharpening Edge Detection Radius
+HISTORY_MSG_26;Sharpening Edge Tolerance
+HISTORY_MSG_27;Sharpening Halo Control
+HISTORY_MSG_28;Halo Control Amount
+HISTORY_MSG_29;Sharpening Method
+HISTORY_MSG_2;Profile Loaded
+HISTORY_MSG_30;Deconvolution Radius
+HISTORY_MSG_31;Deconvolution Amount
+HISTORY_MSG_32;Deconvolution Damping
+HISTORY_MSG_33;Deconvolution Iterations
+HISTORY_MSG_34;Avoid Color Clipping
+HISTORY_MSG_35;Saturation Limiter
+HISTORY_MSG_36;Saturation Limit
+HISTORY_MSG_37;Color Boost
+HISTORY_MSG_38;White Balance Method
+HISTORY_MSG_39;Color Temperature
+HISTORY_MSG_3;Profile Changed
+HISTORY_MSG_40;White Balance Tint
+HISTORY_MSG_41;Color Shift "A"
+HISTORY_MSG_42;Color Shift "B"
+HISTORY_MSG_43;Luminance Denoising
+HISTORY_MSG_44;Lum. Denoising Radius
+HISTORY_MSG_45;Lum. Denoising Edge Tolerance
+HISTORY_MSG_46;Color Denoising
+HISTORY_MSG_47;Color Denoising Radius
+HISTORY_MSG_48;Color Denoising Edge Tolerance
+HISTORY_MSG_49;Edge Sensitive Color Denoising
+HISTORY_MSG_4;History Browsing
+HISTORY_MSG_50;Shadow/Highlight tool
+HISTORY_MSG_51;Highlight boost
+HISTORY_MSG_52;Shadow Boost
+HISTORY_MSG_53;Highlight Tonal Width
+HISTORY_MSG_54;Shadow Tonal Width
+HISTORY_MSG_55;Local Contrast
+HISTORY_MSG_56;Shadow/Highlight Radius
+HISTORY_MSG_57;Coarse Rotation
+HISTORY_MSG_58;Horizontal Flipping
+HISTORY_MSG_59;Vertical Flipping
+HISTORY_MSG_5;Brightness
+HISTORY_MSG_60;Rotation
+HISTORY_MSG_61;Auto Fill
+HISTORY_MSG_62;Lens Distortion Correction
+HISTORY_MSG_63;Snapshot Selected
+HISTORY_MSG_64;Crop Photo
+HISTORY_MSG_65;C/A Correction
+HISTORY_MSG_66;Highlight Recovery
+HISTORY_MSG_67;Highlight Recovery Amount
+HISTORY_MSG_68;Highlight Recovery Method
+HISTORY_MSG_69;Working Color Space
+HISTORY_MSG_6;Contrast
+HISTORY_MSG_70;Output Color Space
+HISTORY_MSG_71;Input Color Space
+HISTORY_MSG_72;Vignetting Correction
+HISTORY_MSG_73;Channel Mixer
+HISTORY_MSG_74;Resize Scale
+HISTORY_MSG_75;Resize Method
+HISTORY_MSG_76;Exif Metadata
+HISTORY_MSG_77;IPTC Metadata
+HISTORY_MSG_78;Data specified for resize
+HISTORY_MSG_79;Resize width
+HISTORY_MSG_7;Black
+HISTORY_MSG_80;Resize height
+HISTORY_MSG_81;Resize enabled
+HISTORY_MSG_82;Profile Changed
+HISTORY_MSG_83;High quality shadows/highlights
+HISTORY_MSG_84;Perspective correction
+HISTORY_MSG_85;Wavelet coefficients
+HISTORY_MSG_86;Wavelet equalizer
+HISTORY_MSG_87;Impulse noise reduction
+HISTORY_MSG_88;Impulse NR threshold
+HISTORY_MSG_89;Noise reduction
+HISTORY_MSG_8;Exposure Compensation
+HISTORY_MSG_90;NR - luminance
+HISTORY_MSG_91;NR - chrominance
+HISTORY_MSG_92;NR - gamma
+HISTORY_MSG_93;Contrast by detail levels value
+HISTORY_MSG_94;Contrast by detail levels
+HISTORY_MSG_95;Saturation
+HISTORY_MSG_96;'a' curve
+HISTORY_MSG_97;'b' curve
+HISTORY_MSG_98;Demosaicing method
+HISTORY_MSG_99;Hot/dead pixel filtering
+HISTORY_MSG_9;Highlight Compression
+HISTORY_NEWSNAPSHOT;Add
+HISTORY_NEWSNAPSHOTAS;As...
+HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
+HISTORY_NEWSSDIALOGTITLE;Add new snapshot
+HISTORY_SETTO;Set to
+HISTORY_SNAPSHOT;Snapshot
+HISTORY_SNAPSHOTS;Snapshots
+ICMPANEL_FILEDLGFILTERANY;Any files
+ICMPANEL_FILEDLGFILTERICM;ICC Profile Files
+ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
+ICMPANEL_INPUTCAMERA;Camera default
+ICMPANEL_INPUTCUSTOM;Custom
+ICMPANEL_INPUTDLGLABEL;Select Input ICC Profile...
+ICMPANEL_INPUTEMBEDDED;Use Embedded, if possible
+ICMPANEL_INPUTPROFILE;Input Profile
+ICMPANEL_NOICM;No ICM: sRGB output
+ICMPANEL_OUTPUTDLGLABEL;Select Output ICC Profile...
+ICMPANEL_OUTPUTPROFILE;Output Profile
+ICMPANEL_SAVEREFERENCE;Save reference image for profiling
+ICMPANEL_WORKINGPROFILE;Working Profile
+IMAGEAREA_DETAILVIEW;Detail view
+IPTCPANEL_AUTHOR;Author
+IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
+IPTCPANEL_AUTHORSPOSITION;Author's position
+IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
+IPTCPANEL_CAPTION;Caption
+IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
+IPTCPANEL_CAPTIONWRITER;Caption Writer
+IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
+IPTCPANEL_CATEGORY;Category
+IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
+IPTCPANEL_CITY;City
+IPTCPANEL_CITYHINT;City of image origin (City).
+IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
+IPTCPANEL_COPYRIGHT;Copyright
+IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
+IPTCPANEL_COUNTRY;Country
+IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
+IPTCPANEL_CREDIT;Credit
+IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
+IPTCPANEL_DATECREATED;Date Created
+IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
+IPTCPANEL_EMBEDDED;Embedded
+IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
+IPTCPANEL_HEADLINE;Headline
+IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
+IPTCPANEL_INSTRUCTIONS;Instructions
+IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
+IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
+IPTCPANEL_PROVINCE;Province
+IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
+IPTCPANEL_RESET;Reset
+IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_SOURCE;Source
+IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
+IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
+IPTCPANEL_TITLE;Title
+IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+MAIN_BUTTON_EXIT;Exit
+MAIN_BUTTON_FULLSCREEN;Fullscreen
+MAIN_BUTTON_PREFERENCES;Preferences
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+MAIN_BUTTON_QUEUE;Put to queue
+MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
+MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_EDITOR;Editor 
+MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_PLACES_ADD;Add
+MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_RECENT;Recent Folders 
+MAIN_MSG_ALREADYEXISTS;File already exists.
+MAIN_MSG_CANNOTLOAD;Cannot load image
+MAIN_MSG_CANNOTSAVE;File saving error
+MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
+MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
+MAIN_MSG_JOBSINQUEUE;job(s) in the queue
+MAIN_MSG_NAVIGATOR;Navigator
+MAIN_MSG_PLACES;Places
+MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
+MAIN_TAB_BASIC;Basic
+MAIN_TAB_COLOR;Color
+MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DEVELOP;Develop
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_FILTER;Filter
+MAIN_TAB_ICM;ICM
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadata
+MAIN_TAB_RAW;RAW
+MAIN_TAB_TAGGING;Tagging
+MAIN_TAB_TRANSFORM;Transform
+MAIN_TOGGLE_BEFORE_AFTER;B|A
+MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
+MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>H</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication
+MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication
+MAIN_TOOLTIP_PREFERENCES;Set preferences
+MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
+MAIN_TOOLTIP_SAVE;Save image to the default folder
+MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
+MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
+NAVIGATOR_B_NA;B = n/a
+NAVIGATOR_B_VALUE;B = %1
+NAVIGATOR_G_NA;G = n/a
+NAVIGATOR_G_VALUE;G = %1
+NAVIGATOR_H_NA;H = n/a
+NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_LAB_A_NA;A = n/a
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = n/a
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = n/a
+NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_R_NA;R = n/a
+NAVIGATOR_R_VALUE;R = %1
+NAVIGATOR_S_NA;S = n/a
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = n/a
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = n/a, y = n/a
+PARTIALPASTE_BASICGROUP;Basic settings
+PARTIALPASTE_CACORRECTION;C/A correction
+PARTIALPASTE_CHANNELMIXER;Channel mixer
+PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
+PARTIALPASTE_COLORBOOST;Color boost
+PARTIALPASTE_COLORDENOISE;Color denoise
+PARTIALPASTE_COLORGROUP;Color related settings
+PARTIALPASTE_COLORMIXER;Color mixer
+PARTIALPASTE_COLORSHIFT;Color shift
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
+PARTIALPASTE_COMPOSITIONGROUP;Composition settings
+PARTIALPASTE_CROP;Crop
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
+PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
+PARTIALPASTE_DEFRINGE;Defringe
+PARTIALPASTE_DETAILGROUP;Detail settings
+PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
+PARTIALPASTE_DIRPYRDENOISE;Noise reduction
+PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+PARTIALPASTE_DISTORTION;Distortion correction
+PARTIALPASTE_EVERYTHING;Everything
+PARTIALPASTE_EXIFCHANGES;Changes to exif data
+PARTIALPASTE_EXPOSURE;Exposure
+PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
+PARTIALPASTE_HLRECOVERY;Highlight recovery
+PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
+PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
+PARTIALPASTE_ICMSETTINGS;ICM settings
+PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
+PARTIALPASTE_IPTCINFO;IPTC info
+PARTIALPASTE_LABCURVE;Lab adjustments
+PARTIALPASTE_LENSGROUP;Lens related settings
+PARTIALPASTE_LUMADENOISE;Luminance noise reduction
+PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
+PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
+PARTIALPASTE_PERSPECTIVE;Perspective
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
+PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
+PARTIALPASTE_RAWCACORR_CARED;CA Red
+PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
+PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
+PARTIALPASTE_RAWGROUP;Raw settings
+PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+PARTIALPASTE_RESIZE;Resize
+PARTIALPASTE_ROTATION;Rotation
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
+PARTIALPASTE_SHARPENING;Sharpening
+PARTIALPASTE_VIGNETTING;Vignetting correction
+PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
+PARTIALPASTE_WHITEBALANCE;White balance
+POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
+PREFERENCES_ADD;ADD
+PREFERENCES_APPLNEXTSTARTUP;restart required
+PREFERENCES_BATCH_PROCESSING;Batch Processing
+PREFERENCES_BEHAVIOR;Behavior
+PREFERENCES_BLINKCLIPPED;Blink clipped areas
+PREFERENCES_CACHECLEARALL;Clear All
+PREFERENCES_CACHECLEARPROFILES;Clear Profiles
+PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
+PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
+PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
+PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
+PREFERENCES_CACHEOPTS;Cache Options
+PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
+PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
+PREFERENCES_CACHESTRAT;Cache Strategy
+PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
+PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
+PREFERENCES_CLIPPINGIND;Clipping indication
+PREFERENCES_CMETRICINTENT;Colorimetric Intent
+PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+PREFERENCES_DARKFRAME;Dark frame
+PREFERENCES_DARKFRAMEFOUND;Found
+PREFERENCES_DARKFRAMESHOTS;shots
+PREFERENCES_DARKFRAMETEMPLATES;templates
+PREFERENCES_DATEFORMAT;Format
+PREFERENCES_DATEFORMATFRAME;Date Format
+PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DEFAULTLANG;Default language
+PREFERENCES_DEFAULTTHEME;Default theme
+PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
+PREFERENCES_DIRDARKFRAMES;Dark frames directory
+PREFERENCES_DIRHOME;Home directory
+PREFERENCES_DIRLAST;Last visited directory
+PREFERENCES_DIROTHER;Other
+PREFERENCES_DIRSELECTDLG;Select Image Directory at Startup...
+PREFERENCES_DIRSOFTWARE;Installation directory
+PREFERENCES_EDITORCMDLINE;Other command line
+PREFERENCES_EDITORLAYOUT;Editor Layout
+PREFERENCES_EXTERNALEDITOR;External editor
+PREFERENCES_FBROWSEROPTS;File Browser Options
+PREFERENCES_FILEFORMAT;File format
+PREFERENCES_FORIMAGE;For image files
+PREFERENCES_FORRAW;For RAW files
+PREFERENCES_GIMPPATH;GIMP installation directory
+PREFERENCES_GTKTHEME;GTK default
+PREFERENCES_HINT;Hint
+PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
+PREFERENCES_ICCDIR;Directory of ICC profiles
+PREFERENCES_IMPROCPARAMS;Default image processing parameters
+PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
+PREFERENCES_INTENT_PERCEPTUAL;Perceptual
+PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
+PREFERENCES_INTENT_SATURATION;Saturation
+PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_MONITORICC;Monitor Profile
+PREFERENCES_MULTITAB;Multiple tabs mode
+PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+PREFERENCES_OUTDIR;Output Directory
+PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
+PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
+PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_PARSEDEXTADD;Add Extension
+PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
+PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PROFILEHANDLING;Processing Profile Handling
+PREFERENCES_PROFILELOADPR;Profile Loading Priority
+PREFERENCES_PROFILEPRCACHE;Profile in Cache
+PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
+PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
+PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
+PREFERENCES_PROPERTY;Property
+PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_SELECTFONT;Select font
+PREFERENCES_SELECTICCDIRDLG;Select ICC Profile Directory...
+PREFERENCES_SELECTLANG;Select language
+PREFERENCES_SELECTMONITORPROFDLG;Select ICC Profile of the Display...
+PREFERENCES_SELECTTHEME;Select theme
+PREFERENCES_SET;SET
+PREFERENCES_SHOWBASICEXIF;Show basic Exif info
+PREFERENCES_SHOWDATETIME;Show date and time
+PREFERENCES_SHOWONLYRAW;Show only RAW files
+PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
+PREFERENCES_SINGLETAB;Single tab mode
+PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+PREFERENCES_STARTUPIMDIR;Image directory at startup
+PREFERENCES_TAB_BROWSER;File Browser
+PREFERENCES_TAB_COLORMGR;Color Management
+PREFERENCES_TAB_GENERAL;General
+PREFERENCES_TAB_IMPROC;Image Processing
+PREFERENCES_TAB_OUTPUT;Output Options
+PREFERENCES_THUMBSIZE;Thumbnail Size
+PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
+PREFERENCES_USESYSTEMTHEME; Use System Theme
+PREFERENCES_WORKFLOW;Workflow
+PROFILEPANEL_FILEDLGFILTERANY;Any files
+PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
+PROFILEPANEL_LABEL;Postprocessing Profiles
+PROFILEPANEL_LOADDLGLABEL;Load Postprocessing Parameters...
+PROFILEPANEL_PCUSTOM;Custom
+PROFILEPANEL_PFILE;From file
+PROFILEPANEL_PLASTPHOTO;Last Photo
+PROFILEPANEL_PLASTSAVED;Last Saved
+PROFILEPANEL_PROFILE;Profile
+PROFILEPANEL_SAVEDLGLABEL;Save Postprocessing Parameters...
+PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
+PROFILEPANEL_TOOLTIPLOAD;Load a profile from file
+PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
+PROFILEPANEL_TOOLTIPSAVE;Save current profile
+PROGRESSBAR_DECODING;Decoding raw file...
+PROGRESSBAR_DEMOSAICING;Demosaicing...
+PROGRESSBAR_LOADING;Loading Image...
+PROGRESSBAR_LOADJPEG;Loading JPEG file...
+PROGRESSBAR_LOADPNG;Loading PNG file...
+PROGRESSBAR_LOADTIFF;Loading TIFF file...
+PROGRESSBAR_PROCESSING;Processing Image...
+PROGRESSBAR_READY;Ready.
+PROGRESSBAR_SAVEJPEG;Saving JPEG file...
+PROGRESSBAR_SAVEPNG;Saving PNG file...
+PROGRESSBAR_SAVETIFF;Saving TIFF file...
+PROGRESSDLG_LOADING;Loading file...
+PROGRESSDLG_PROCESSING;Processing image...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+PROGRESSDLG_SAVING;Saving file...
+QINFO_FOCALLENGTH;Focal length
+QINFO_ISO;ISO
+QINFO_LENS;Lens
+QINFO_NOEXIF;Exif data not available.
+SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+SAVEDLG_FILEFORMAT;File format
+SAVEDLG_JPEGQUAL;JPEG Quality
+SAVEDLG_JPGFILTER;JPEG files
+SAVEDLG_PNGCOMPR;PNG Compression
+SAVEDLG_PNGFILTER;PNG files
+SAVEDLG_PUTTOQUEUE;Put into processing queue
+SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_SAVEIMMEDIATELY;Save immediately
+SAVEDLG_SAVESPP;Save processing parameters with image
+SAVEDLG_TIFFFILTER;TIFF files
+SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+TOOLBAR_TOOLTIP_CROP;Crop selection <b>C</b>
+TOOLBAR_TOOLTIP_HAND;Hand tool <b>N</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;Straight line selection <b>S</b>
+TOOLBAR_TOOLTIP_WB;Spot white balance <b>W</b>
+TP_CACORRECTION_BLUE;Blue
+TP_CACORRECTION_LABEL;C/A Correction
+TP_CACORRECTION_RED;Red
+TP_CHMIXER_BLUE;Blue
+TP_CHMIXER_GREEN;Green
+TP_CHMIXER_LABEL;Channel Mixer
+TP_CHMIXER_RED;Red
+TP_CHROMATABERR_LABEL;Chromatic Aberration
+TP_COARSETRAF_DEGREE;degree:
+TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right
+TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
+TP_COLORBOOST_ACHANNEL;Channel "a"
+TP_COLORBOOST_AMOUNT;Amount
+TP_COLORBOOST_AVOIDCOLORCLIP;Avoid color clipping
+TP_COLORBOOST_BCHANNEL;Channel "b"
+TP_COLORBOOST_CHAB;a & b
+TP_COLORBOOST_CHANNEL;Channel
+TP_COLORBOOST_CHSEPARATE;separate
+TP_COLORBOOST_ENABLESATLIMITER;Enable saturation limiter
+TP_COLORBOOST_LABEL;Color Boost
+TP_COLORBOOST_SATLIMIT;Saturation limit
+TP_COLORDENOISE_EDGESENSITIVE;Edge Sensitive
+TP_COLORDENOISE_EDGETOLERANCE;Edge Tolerance
+TP_COLORDENOISE_LABEL;Color Noise Reduction
+TP_COLORDENOISE_RADIUS;Radius
+TP_COLORSHIFT_BLUEYELLOW;Blue-Yellow
+TP_COLORSHIFT_GREENMAGENTA;Green-Magenta
+TP_COLORSHIFT_LABEL;Color Shift
+TP_CROP_DPI;DPI=
+TP_CROP_FIXRATIO;Fix Ratio:
+TP_CROP_GTDIAGONALS;Rule of diagonals
+TP_CROP_GTGRID;Grid
+TP_CROP_GTHARMMEANS1;Harmonic means 1
+TP_CROP_GTHARMMEANS2;Harmonic means 2
+TP_CROP_GTHARMMEANS3;Harmonic means 3
+TP_CROP_GTHARMMEANS4;Harmonic means 4
+TP_CROP_GTNONE;None
+TP_CROP_GTRULETHIRDS;Rule of thirds
+TP_CROP_GUIDETYPE;Guide Type:
+TP_CROP_H;H
+TP_CROP_LABEL;Crop
+TP_CROP_SELECTCROP;    Select Crop
+TP_CROP_W;W
+TP_CROP_X;x
+TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Auto selection
+TP_DARKFRAME_LABEL;Dark Frame
+TP_DEFRINGE_LABEL;Defringe
+TP_DEFRINGE_RADIUS;Radius
+TP_DEFRINGE_THRESHOLD;Threshold
+TP_DETAIL_AMOUNT;Amount
+TP_DIRPYRDENOISE_CHROMA;Chrominance
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Noise reduction
+TP_DIRPYRDENOISE_LUMA;Luminance
+TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
+TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
+TP_DIRPYREQUALIZER_LUMAFINEST;Finest
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+TP_DIRPYREQUALIZER_THRESHOLD;Threshold
+TP_DISTORTION_AMOUNT;Amount
+TP_DISTORTION_LABEL;Distortion
+TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+TP_EQUALIZER_FINEST;finest
+TP_EQUALIZER_LABEL;Wavelet equalizer
+TP_EQUALIZER_LARGEST;coarsest
+TP_EQUALIZER_NEUTRAL;Neutral
+TP_EXPOSCORR_LABEL;Exposure
+TP_EXPOSURE_AUTOLEVELS;Auto Levels
+TP_EXPOSURE_BLACKLEVEL;Black
+TP_EXPOSURE_BRIGHTNESS;Brightness
+TP_EXPOSURE_CLIP;Clip
+TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
+TP_EXPOSURE_CONTRAST;Contrast
+TP_EXPOSURE_CURVEEDITOR;Tone Curve
+TP_EXPOSURE_EXPCOMP;Exp. Comp.
+TP_EXPOSURE_LABEL;Exposure
+TP_EXPOSURE_SATURATION;Saturation
+TP_HLREC_CIELAB;CIELab Blending
+TP_HLREC_COLOR;Color Propagation
+TP_HLREC_LABEL;Highlight Reconstruction
+TP_HLREC_LUMINANCE;Luminance Recovery
+TP_HLREC_METHOD;Method: 
+TP_HSVEQUALIZER1;Red
+TP_HSVEQUALIZER2;Yellow
+TP_HSVEQUALIZER3;Lime
+TP_HSVEQUALIZER4;Green
+TP_HSVEQUALIZER5;Aqua
+TP_HSVEQUALIZER6;Blue
+TP_HSVEQUALIZER7;Purple
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;HSV Channel
+TP_HSVEQUALIZER_HUE;H
+TP_HSVEQUALIZER_LABEL;HSV Equalizer
+TP_HSVEQUALIZER_NEUTRAL;Neutral
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
+TP_ICM_FILEDLGFILTERANY;Any files
+TP_ICM_FILEDLGFILTERICM;ICC Profile Files
+TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
+TP_ICM_INPUTCAMERA;Camera default
+TP_ICM_INPUTCUSTOM;Custom
+TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
+TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
+TP_ICM_INPUTNONE;No profile
+TP_ICM_INPUTPROFILE;Input Profile
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;No ICM: sRGB output
+TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
+TP_ICM_OUTPUTPROFILE;Output Profile
+TP_ICM_SAVEREFERENCE;Save reference image for profiling
+TP_ICM_WORKINGPROFILE;Working Profile
+TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
+TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
+TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+TP_LABCURVE_BRIGHTNESS;Brightness
+TP_LABCURVE_CONTRAST;Contrast
+TP_LABCURVE_CURVEEDITOR;Luminance Curve
+TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+TP_LABCURVE_LABEL;Lab Adjustments
+TP_LABCURVE_SATLIMIT;Saturation limit
+TP_LABCURVE_SATURATION;Saturation
+TP_LENSGEOM_AUTOCROP;Auto Crop
+TP_LENSGEOM_FILL;Auto Fill
+TP_LENSGEOM_LABEL;Lens / Geometry
+TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
+TP_LUMADENOISE_LABEL;Luminance Noise Reduction
+TP_LUMADENOISE_RADIUS;Radius
+TP_PERSPECTIVE_HORIZONTAL;Horizontal
+TP_PERSPECTIVE_LABEL;Perspective
+TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PREPROCESS_GREENEQUIL;Green equilibration
+TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+TP_PREPROCESS_LABEL;Preprocessing
+TP_PREPROCESS_LINEDENOISE;Line noise filter
+TP_PREPROCESS_NO_FOUND;None found
+TP_RAWCACORR_AUTO;Auto correction
+TP_RAWCACORR_CABLUE;Blue
+TP_RAWCACORR_CARED;Red
+TP_RAWEXPOS_LINEAR;Linear corr. factor
+TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
+TP_RAW_DCBENHANCE;Apply DCB enhancement step
+TP_RAW_DCBITERATIONS;Number of DCB iterations
+TP_RAW_DMETHOD;Method
+TP_RAW_FALSECOLOR;False color suppression steps
+TP_RAW_LABEL;Demosaicing
+TP_RESIZE_APPLIESTO;Applies to:
+TP_RESIZE_BICUBIC;Bicubic
+TP_RESIZE_BICUBICSF;Bicubic (Softer)
+TP_RESIZE_BICUBICSH;Bicubic (Sharper)
+TP_RESIZE_BILINEAR;Bilinear
+TP_RESIZE_CROPPEDAREA;Cropped area
+TP_RESIZE_DOWNSCALEB;Downscale (Better)
+TP_RESIZE_DOWNSCALEF;Downscale (Faster)
+TP_RESIZE_FITBOX;Bounding box
+TP_RESIZE_FULLIMAGE;Full image
+TP_RESIZE_FULLSIZE;Full Image Size:
+TP_RESIZE_H;H:
+TP_RESIZE_HEIGHT;Height
+TP_RESIZE_LABEL;Resize
+TP_RESIZE_LANCZOS;Lanczos
+TP_RESIZE_METHOD;Method: 
+TP_RESIZE_NEAREST;Nearest
+TP_RESIZE_SCALE;Scale
+TP_RESIZE_SPECIFY;Specify:
+TP_RESIZE_W;W:
+TP_RESIZE_WIDTH;Width
+TP_ROTATE_DEGREE;Degree
+TP_ROTATE_LABEL;Rotate
+TP_ROTATE_SELECTLINE;    Select Straight Line
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Highlights
+TP_SHADOWSHLIGHTS_HLTONALW;Tonal Width for Highlights
+TP_SHADOWSHLIGHTS_LABEL;Shadows/Highlights
+TP_SHADOWSHLIGHTS_LOCALCONTR;Local Contrast
+TP_SHADOWSHLIGHTS_RADIUS;Radius
+TP_SHADOWSHLIGHTS_SHADOWS;Shadows
+TP_SHADOWSHLIGHTS_SHTONALW;Tonal Width for Shadows
+TP_SHARPENING_AMOUNT;Amount
+TP_SHARPENING_EDRADIUS;Radius
+TP_SHARPENING_EDTOLERANCE;Edge tolerance
+TP_SHARPENING_HALOCONTROL;Halo control
+TP_SHARPENING_HCAMOUNT;Amount
+TP_SHARPENING_LABEL;Sharpening
+TP_SHARPENING_METHOD;Method
+TP_SHARPENING_ONLYEDGES;Sharpen only edges
+TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RLD;RL Deconvolution
+TP_SHARPENING_RLD_AMOUNT;Amount
+TP_SHARPENING_RLD_DAMPING;Damping
+TP_SHARPENING_RLD_ITERATIONS;Iterations
+TP_SHARPENING_THRESHOLD;Threshold
+TP_SHARPENING_USM;Unsharp Mask
+TP_VIGNETTING_AMOUNT;Amount
+TP_VIGNETTING_CENTER;Center
+TP_VIGNETTING_CENTER_X;Center X
+TP_VIGNETTING_CENTER_Y;Center Y
+TP_VIGNETTING_LABEL;Vignetting Correction
+TP_VIGNETTING_RADIUS;Radius
+TP_VIGNETTING_STRENGTH;Strength
+TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_CAMERA;Camera
+TP_WBALANCE_CUSTOM;Custom
+TP_WBALANCE_GREEN;Tint
+TP_WBALANCE_LABEL;White Balance
+TP_WBALANCE_METHOD;Method
+TP_WBALANCE_SIZE;Size:
+TP_WBALANCE_SPOTWB;Spot WB
+TP_WBALANCE_TEMPERATURE;Temperature
+ZOOMBAR_DETAIL;Detail
+ZOOMBAR_HUGE;Huge
+ZOOMBAR_LARGE;Large
+ZOOMBAR_NORMAL;Normal
+ZOOMBAR_PREVIEW;Preview
+ZOOMBAR_SCALE;Scale
+ZOOMBAR_SMALL;Small
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
+ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
+ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
