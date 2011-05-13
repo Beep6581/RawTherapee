@@ -116,7 +116,6 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
 
     void openDefaultViewer (int destination);
 
-    void redrawNeeded (ThumbBrowserEntryBase* entry);
     void thumbRearrangementNeeded ();
     void _thumbRearrangementNeeded ();
     

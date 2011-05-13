@@ -566,5 +566,14 @@ int ThumbBrowserBase::getEffectiveHeight() {
     return h;
 }  
 
+void ThumbBrowserBase::redrawNeeded (ThumbBrowserEntryBase* entry) {
+
+    if (entry->insideWindow (0, 0, internal.get_width(), internal.get_height())) {
+        if (!internal.isDirty ()) {
+            internal.setDirty ();
+            internal.queue_draw ();
+        }
+    }
+}
 
 
