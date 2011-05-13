@@ -127,6 +127,7 @@ class FileCatalog : public Gtk::VBox,
             ToolBar* toolBar;
 
                      FileCatalog (CoarsePanel* cp, ToolBar* tb);
+                     ~FileCatalog();
                 void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
                 void closeDir    ();
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);

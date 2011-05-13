@@ -107,8 +107,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     bRank[4]->set_tooltip_markup (M("FILEBROWSER_SHOWRANK5HINT"));
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
-    iTrashEmpty = Gtk::manage( new Gtk::Image(argv0+"/images/trash-show-empty.png") );
-    iTrashFull  = Gtk::manage( new Gtk::Image(argv0+"/images/trash-show-full.png") );
+    iTrashEmpty = new Gtk::Image(argv0+"/images/trash-show-empty.png") ;
+    iTrashFull  = new Gtk::Image(argv0+"/images/trash-show-full.png") ;
 
     bTrash = Gtk::manage(  new Gtk::ToggleButton () );
     bTrash->set_image (*iTrashEmpty);
@@ -183,6 +183,12 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     checkCounter = 2;
     g_timeout_add (CHECKTIME, _directoryUpdater, this);
 #endif   
+}
+
+FileCatalog::~FileCatalog()
+{
+	delete iTrashEmpty;
+	delete iTrashFull;
 }
 
 bool FileCatalog::capture_event(GdkEventButton* event){
