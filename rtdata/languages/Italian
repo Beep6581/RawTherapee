@@ -861,6 +861,8 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 
 
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
@@ -876,6 +878,8 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
 !HISTORY_MSG_126;Flat Field File
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
@@ -919,6 +923,7 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
+!TP_CROP_PPI;PPI=
 !TP_DISTORTION_AUTO;Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
@@ -929,4 +934,6 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
+!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_OUTPUT;Output gamma
 !TP_PREPROCESS_NO_FOUND;None found

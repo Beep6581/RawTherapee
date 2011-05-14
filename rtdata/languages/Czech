@@ -911,4 +911,11 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 
 
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
 !PREFERENCES_DATEFORMATFRAME;Date Format
+!TP_CROP_PPI;PPI=
+!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_OUTPUT;Output gamma
