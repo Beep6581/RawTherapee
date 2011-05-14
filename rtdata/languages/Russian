@@ -770,6 +770,8 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
@@ -787,6 +789,8 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
 !GENERAL_FILE;File
 !GENERAL_NONE;None
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
@@ -870,8 +874,8 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
+!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 !PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
@@ -903,10 +907,11 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_CROP_PPI;PPI=
 !TP_DARKFRAME_LABEL;Dark Frame
 !TP_DISTORTION_AUTO;Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EXPOSCORR_LABEL;Exposure
+!TP_EXPOSCORR_LABEL;Raw white point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
@@ -916,6 +921,8 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
+!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_OUTPUT;Output gamma
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer

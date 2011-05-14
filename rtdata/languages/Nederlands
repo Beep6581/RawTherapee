@@ -810,6 +810,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 
 
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
@@ -825,6 +827,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
 !HISTORY_MSG_126;Flat Field File
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
@@ -867,8 +871,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
+!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 !PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
@@ -903,13 +907,14 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid
+!TP_CROP_PPI;PPI=
 !TP_DARKFRAME_LABEL;Dark Frame
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EXPOSCORR_LABEL;Exposure
+!TP_EXPOSCORR_LABEL;Raw white point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
@@ -919,6 +924,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
+!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_OUTPUT;Output gamma
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit

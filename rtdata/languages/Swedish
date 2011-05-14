@@ -930,3 +930,10 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!TP_CROP_PPI;PPI=
+!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_OUTPUT;Output gamma

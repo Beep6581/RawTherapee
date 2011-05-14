@@ -37,11 +37,11 @@ CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Kurve Speichern...
 CURVEEDITOR_SHADOWS;Schatten
+CURVEEDITOR_TOOLTIPCOPY;Kurve in Zwischenablage kopieren
 CURVEEDITOR_TOOLTIPLINEAR;Kurve zurücksetzen (Linear)
 CURVEEDITOR_TOOLTIPLOAD;Kurve aus Datei laden
-CURVEEDITOR_TOOLTIPSAVE;Kurve speichern
-CURVEEDITOR_TOOLTIPCOPY;Kurve in Zwischenablage kopieren
 CURVEEDITOR_TOOLTIPPASTE;Kurve aus Zwischenablage einfügen
+CURVEEDITOR_TOOLTIPSAVE;Kurve speichern
 CURVEEDITOR_TYPE;Typ
 EDITWINDOW_TITLE;Bildbearbeitung
 EXIFFILTER_APERTURE;Blende
@@ -923,3 +923,8 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!TP_CROP_PPI;PPI=
+!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_OUTPUT;Output gamma
