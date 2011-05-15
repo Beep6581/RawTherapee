@@ -577,6 +577,16 @@ void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles
     queue_draw ();
 }
     
+void ThumbBrowserBase::redrawNeeded (ThumbBrowserEntryBase* entry) {
+ 
+    if (entry->insideWindow (0, 0, internal.get_width(), internal.get_height())) {
+        if (!internal.isDirty ()) {
+            internal.setDirty ();
+            internal.queue_draw ();
+        }
+    }
+}
+
 void ThumbBrowserBase::setArrangement (Arrangement a) {
 
     arrangement = a;    

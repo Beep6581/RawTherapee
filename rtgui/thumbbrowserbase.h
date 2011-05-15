@@ -119,7 +119,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     virtual bool keyPressed (GdkEventKey* event) {return true;}
     virtual void selectionChanged () {}
     
-    virtual void redrawNeeded (ThumbBrowserEntryBase* entry) {}
+    virtual void redrawNeeded (ThumbBrowserEntryBase* entry);
     virtual void thumbRearrangementNeeded () {}
 
     Gtk::Widget* getDrawingArea () { return &internal; }
