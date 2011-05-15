@@ -52,7 +52,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd
 	enablelimiter = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_ENABLESATLIMITER")));
 	pack_start (*enablelimiter);
 	
-	saturationlimiter = new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 1.0, 40);
+	saturationlimiter = Gtk::manage ( new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 1.0, 40) );
 	pack_start (*saturationlimiter);
 	saturationlimiter->show ();
 	saturationlimiter->reference ();  

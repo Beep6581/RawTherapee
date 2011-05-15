@@ -26,7 +26,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     Gtk::VBox* vbox = get_vbox ();
 
-    fchooser = new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE);
+    fchooser = Gtk::manage( new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE) );
     fchooser->set_current_folder (initialDir);
 
     filter_jpg.set_name(M("SAVEDLG_JPGFILTER"));
@@ -40,35 +40,35 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     vbox->pack_start (*fchooser);
 
-    Gtk::HSeparator* hsep1 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep1 = Gtk::manage( new Gtk::HSeparator () );
     vbox->pack_start (*hsep1, Gtk::PACK_SHRINK, 2);
 
 // Unique filename option
 // ~~~~~~~~~~~~~~~~~~~~~~
-    autoSuffix = new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX"));
+    autoSuffix = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX")) );
     autoSuffix->set_active(options.autoSuffix);
 
     vbox->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HSeparator* hsep2 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep2 = Gtk::manage( new Gtk::HSeparator () );
     vbox->pack_start (*hsep2, Gtk::PACK_SHRINK, 2);
 
 // Output Options
 // ~~~~~~~~~~~~~~
-    formatOpts = new SaveFormatPanel ();
+    formatOpts = Gtk::manage( new SaveFormatPanel () );
     formatOpts->init (options.saveFormat);
     formatOpts->setListener (this);
 
     vbox->pack_start (*formatOpts, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HSeparator* hsep3 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep3 = Gtk::manage( new Gtk::HSeparator () );
     vbox->pack_start (*hsep3, Gtk::PACK_SHRINK, 2);
 
 // queue/immediate
 // ~~~~~~~~~~~~~
-    immediately    = new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY"));
-    putToQueueHead = new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD"));
-    putToQueueTail = new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL"));
+    immediately    = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY")) );
+    putToQueueHead = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD")) );
+    putToQueueTail = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL")) );
     vbox->pack_start (*immediately, Gtk::PACK_SHRINK, 4);
     vbox->pack_start (*putToQueueHead, Gtk::PACK_SHRINK, 4);
     vbox->pack_start (*putToQueueTail, Gtk::PACK_SHRINK, 4);
@@ -79,11 +79,11 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
         
 // buttons
 // ~~~~~~    
-    Gtk::Button* ok     = new Gtk::Button (M("GENERAL_OK"));
-    Gtk::Button* cancel = new Gtk::Button (M("GENERAL_CANCEL"));
+    Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
+    Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
 
-    ok->set_image (*(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
-    cancel->set_image (*(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
+    ok->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
+    cancel->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::cancelPressed) );

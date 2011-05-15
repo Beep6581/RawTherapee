@@ -25,9 +25,9 @@ ThumbBrowserBase::ThumbBrowserBase ()
     inTabMode=false;  // corresponding to take thumbSize
     inW = -1; inH = -1;
 
-    Gtk::HBox* hb1 = new Gtk::HBox ();
-    Gtk::HBox* hb2 = new Gtk::HBox ();
-    Gtk::Frame* frame = new Gtk::Frame ();
+    Gtk::HBox* hb1 = Gtk::manage( new Gtk::HBox () );
+    Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
+    Gtk::Frame* frame = Gtk::manage( new Gtk::Frame () );
     frame->add (internal);
     frame->set_shadow_type (Gtk::SHADOW_IN );
     hb1->pack_start (*frame);
@@ -577,15 +577,6 @@ void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles
     queue_draw ();
 }
     
-void ThumbBrowserBase::redrawNeeded (ThumbBrowserEntryBase* entry) {
- 
-    if (entry->insideWindow (0, 0, internal.get_width(), internal.get_height())) {
-        if (!internal.isDirty ()) {
-            internal.setDirty ();
-            internal.queue_draw ();
-        }
-    }
-}
 
 void ThumbBrowserBase::setArrangement (Arrangement a) {
 
@@ -653,5 +644,14 @@ int ThumbBrowserBase::getEffectiveHeight() {
     return h;
 }  
 
+void ThumbBrowserBase::redrawNeeded (ThumbBrowserEntryBase* entry) {
+
+    if (entry->insideWindow (0, 0, internal.get_width(), internal.get_height())) {
+        if (!internal.isDirty ()) {
+            internal.setDirty ();
+            internal.queue_draw ();
+        }
+    }
+}
 
 

@@ -61,7 +61,7 @@ Equalizer::Equalizer () : Gtk::VBox(), FoldableToolPanel(this) {
         if(i == 7)
             ss += Glib::ustring::compose(" (%1)", M("TP_EQUALIZER_LARGEST"));
         
-        correction[i] = new Adjuster (ss, -100, 100, 1, 0);
+        correction[i] = Gtk::manage ( new Adjuster (ss, -100, 100, 1, 0) );
         correction[i]->setAdjusterListener(this);
         pack_start(*correction[i]);
     }

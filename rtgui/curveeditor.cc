@@ -100,9 +100,9 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	subGroup = ceSubGroup;
 
     if (group && text.size())
-    	curveType = Gtk::manage (new PopUpToggleButton(text + ":"));
+    	curveType = new PopUpToggleButton(text + ":");
     else
-    	curveType = Gtk::manage (new PopUpToggleButton());
+    	curveType = new PopUpToggleButton();
 
     curveType->set_tooltip_text(M("CURVEEDITOR_TYPE"));
     // TODO: Does this signal have to be blocked when on curve type change ?
@@ -113,6 +113,10 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 void CurveEditor::setCurve (const std::vector<double>& p) {
 	tempCurve = p;
 	group->setCurveExternal(this, p);
+}
+
+CurveEditor::~CurveEditor () {
+    delete curveType;
 }
 
 void CurveEditor::typeSelectionChanged (int n) {

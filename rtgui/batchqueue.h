@@ -59,6 +59,7 @@ class BatchQueue  : public ThumbBrowserBase,
 
   public:
     BatchQueue ();
+    ~BatchQueue ();
 
     void addEntries (std::vector<BatchQueueEntry*> &entries, bool head=false);
     void cancelItems (std::vector<ThumbBrowserEntryBase*>* items);

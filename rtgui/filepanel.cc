@@ -33,14 +33,14 @@ int fbinit (void* data) {
 FilePanel::FilePanel () : parent(NULL) {
 
     isloading = false;
-    dirpaned = new Gtk::HPaned ();
+    dirpaned = Gtk::manage ( new Gtk::HPaned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
     dirBrowser = new DirBrowser ();
     placesBrowser = new PlacesBrowser ();
     recentBrowser = new RecentBrowser ();
 
-    placespaned = new Gtk::VPaned ();
+    placespaned = Gtk::manage ( new Gtk::VPaned () );
     placespaned->set_size_request(50,100);
     placespaned->set_position (options.dirBrowserHeight);
 
@@ -55,7 +55,7 @@ FilePanel::FilePanel () : parent(NULL) {
 
     tpc = new BatchToolPanelCoordinator (this);
     fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar(), this);
-    ribbonPane = new Gtk::Paned();
+    ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);
     ribbonPane->set_size_request(50,150);
     dirpaned->pack2 (*ribbonPane, true, true);
@@ -68,18 +68,18 @@ FilePanel::FilePanel () : parent(NULL) {
     fileCatalog->setFileSelectionListener (this);
     fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 
-    rightBox = new Gtk::HBox ();
+    rightBox = Gtk::manage ( new Gtk::HBox () );
     rightBox->set_size_request(50,100);
-    rightNotebook = new Gtk::Notebook ();
-    Gtk::VBox* taggingBox = new Gtk::VBox ();
+    rightNotebook = Gtk::manage ( new Gtk::Notebook () );
+    //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
 
     history = new History (false);
 
     tpc->addPParamsChangeListener (history);
     history->setProfileChangeListener (tpc);
 
-    Gtk::ScrolledWindow* sFilterPanel = new Gtk::ScrolledWindow();
-	filterPanel = new FilterPanel ();
+    Gtk::ScrolledWindow* sFilterPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
+	filterPanel = Gtk::manage ( new FilterPanel () );
 	sFilterPanel->add (*filterPanel);
 	sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
@@ -90,20 +90,20 @@ FilePanel::FilePanel () : parent(NULL) {
 
     rightNotebook->set_tab_pos (Gtk::POS_LEFT);
 
-    Gtk::Label* devLab = new Gtk::Label (M("MAIN_TAB_DEVELOP"));
+    Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
     devLab->set_angle (90);
-    Gtk::Label* filtLab = new Gtk::Label (M("MAIN_TAB_FILTER"));
+    Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
     filtLab->set_angle (90);
-    Gtk::Label* tagLab = new Gtk::Label (M("MAIN_TAB_TAGGING"));
-    tagLab->set_angle (90);
+    //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
+    //tagLab->set_angle (90);
 
-    tpcPaned = new Gtk::VPaned ();
+    tpcPaned = Gtk::manage ( new Gtk::VPaned () );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, true);
 
     rightNotebook->append_page (*tpcPaned, *devLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
-    rightNotebook->append_page (*taggingBox, *tagLab);
+    //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
 
     rightBox->pack_start (*rightNotebook);
 
