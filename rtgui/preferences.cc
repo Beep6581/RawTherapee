@@ -201,7 +201,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
 
     behTreeView->expand_all ();
 
-    chOverwriteOutputFile =  new Gtk::CheckButton (M("PREFERENCES_OVERWRITEOUTPUTFILE"));
+    chOverwriteOutputFile =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERWRITEOUTPUTFILE")) );
     mvbpp->pack_start(*chOverwriteOutputFile, Gtk::PACK_SHRINK, 4);
 
     return mvbpp;
@@ -366,13 +366,13 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
 
 Gtk::Widget* Preferences::getGeneralPanel () {
 
-    Gtk::VBox* mvbsd = new Gtk::VBox ();
+    Gtk::VBox* mvbsd = Gtk::manage( new Gtk::VBox () );
 
-    Gtk::Frame* fworklflow = new Gtk::Frame (M("PREFERENCES_WORKFLOW"));
-    Gtk::HBox* hbworkflow = new Gtk::HBox ();
+    Gtk::Frame* fworklflow = Gtk::manage(  new Gtk::Frame (M("PREFERENCES_WORKFLOW")) );
+    Gtk::HBox* hbworkflow = Gtk::manage( new Gtk::HBox () );
     hbworkflow->set_border_width (4);
-    Gtk::Label* flayoutlab = new Gtk::Label (M("PREFERENCES_EDITORLAYOUT")+":");
-    editorLayout = new Gtk::ComboBoxText ();
+    Gtk::Label* flayoutlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_EDITORLAYOUT")+":") );
+    editorLayout = Gtk::manage( new Gtk::ComboBoxText () );
     editorLayout->set_size_request(45, -1);
 
     editorLayout->append_text (M("PREFERENCES_SINGLETAB"));
@@ -385,17 +385,17 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     hbworkflow->pack_start (*flayoutlab, Gtk::PACK_SHRINK, 4);
     hbworkflow->pack_start (*editorLayout);
-    Gtk::Label* lNextStart = new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    Gtk::Label* lNextStart = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     hbworkflow->pack_end (*lNextStart, Gtk::PACK_SHRINK, 4);
 
     fworklflow->add (*hbworkflow);
     mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
      
-    Gtk::Frame* flang = new Gtk::Frame (M("PREFERENCES_DEFAULTLANG"));
-    Gtk::HBox* hblang = new Gtk::HBox ();
+    Gtk::Frame* flang = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DEFAULTLANG")) );
+    Gtk::HBox* hblang = Gtk::manage( new Gtk::HBox () );
     hblang->set_border_width (4);
-    Gtk::Label* langlab = new Gtk::Label (M("PREFERENCES_SELECTLANG")+":");
-    languages = new Gtk::ComboBoxText ();
+    Gtk::Label* langlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTLANG")+":") );
+    languages = Gtk::manage( new Gtk::ComboBoxText () );
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
@@ -405,24 +405,24 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 	}
     }
 
-    Gtk::Label* langw = new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    Gtk::Label* langw = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 4);
     hblang->pack_start (*languages);
     hblang->pack_end (*langw, Gtk::PACK_SHRINK, 4);
     flang->add (*hblang);
     mvbsd->pack_start (*flang, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Frame* ftheme = new Gtk::Frame (M("PREFERENCES_DEFAULTTHEME"));
-    Gtk::VBox* vbftheme = new Gtk::VBox ();
+    Gtk::Frame* ftheme = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DEFAULTTHEME")) );
+    Gtk::VBox* vbftheme = Gtk::manage( new Gtk::VBox () );
     vbftheme->set_border_width(4);
     vbftheme->set_spacing(4);
-    Gtk::HBox* hbUseSystemTheme = new Gtk::HBox ();
+    Gtk::HBox* hbUseSystemTheme = Gtk::manage( new Gtk::HBox () );
     hbUseSystemTheme->set_spacing(4);
-    chUseSystemTheme =  new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME"));
-    Gtk::Label* useNextStart = new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")");
+    chUseSystemTheme =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_USESYSTEMTHEME")) );
+    Gtk::Label* useNextStart = Gtk::manage( new Gtk::Label (Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
 
-    Gtk::Label* cutOverlayLabel = new Gtk::Label (M("PREFERENCES_CUTOVERLAYBRUSH") + ":");
-    butCropCol=new Gtk::ColorButton();
+    Gtk::Label* cutOverlayLabel = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUTOVERLAYBRUSH") + ":") );
+    butCropCol= Gtk::manage( new Gtk::ColorButton() );
     butCropCol->set_use_alpha(true);
 
     hbUseSystemTheme->pack_start(*chUseSystemTheme, Gtk::PACK_SHRINK);
@@ -431,10 +431,10 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbUseSystemTheme->pack_end (*cutOverlayLabel, Gtk::PACK_SHRINK, 0);
     vbftheme->pack_start(*hbUseSystemTheme, Gtk::PACK_SHRINK, 0);
 
-    hbtheme = new Gtk::HBox ();
+    hbtheme = Gtk::manage( new Gtk::HBox () );
     hbtheme->set_spacing (4);
-    Gtk::Label* themelab = new Gtk::Label (M("PREFERENCES_SELECTTHEME")+":");
-    theme = new Gtk::ComboBoxText ();
+    Gtk::Label* themelab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTTHEME")+":") );
+    theme = Gtk::manage( new Gtk::ComboBoxText () );
 
     theme->append_text (Glib::ustring("(")+M("PREFERENCES_GTKTHEME")+")");
     theme->set_active (0);
@@ -443,8 +443,8 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     for (int i=0; i<themes.size(); i++) 
         theme->append_text (themes[i]);
 
-    Gtk::Label* fontlab = new Gtk::Label (M("PREFERENCES_SELECTFONT")+":");
-    fontbutton = new Gtk::FontButton ();
+    Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT")+":") );
+    fontbutton = Gtk::manage( new Gtk::FontButton ());
     fontbutton->set_use_size(true);
     fontbutton->set_font_name(options.font);
 
@@ -458,20 +458,20 @@ Gtk::Widget* Preferences::getGeneralPanel () {
   
 //-----
 
-    Gtk::HBox* hbcd = new Gtk::HBox ();
+    Gtk::HBox* hbcd = Gtk::manage( new Gtk::HBox () );
     hbcd->set_spacing(4);
 
-    Gtk::Frame* frl = new Gtk::Frame (M("PREFERENCES_CLIPPINGIND"));
-    blinkClipped = new Gtk::CheckButton (M("PREFERENCES_BLINKCLIPPED"));
-    Gtk::VBox* vbrl = new Gtk::VBox ();
+    Gtk::Frame* frl = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CLIPPINGIND")));
+    blinkClipped = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_BLINKCLIPPED")) );
+    Gtk::VBox* vbrl = Gtk::manage( new Gtk::VBox () );
     vbrl->set_border_width(4);
     vbrl->set_spacing (4);
     vbrl->pack_start (*blinkClipped, Gtk::PACK_SHRINK, 0);
 
-    Gtk::HBox* vbhl = new Gtk::HBox ();
+    Gtk::HBox* vbhl = Gtk::manage( new Gtk::HBox () );
     vbhl->set_spacing(4);
-    Gtk::Label* hll = new Gtk::Label (M("PREFERENCES_HLTHRESHOLD")+": ");
-    hlThresh = new Gtk::SpinButton ();
+    Gtk::Label* hll = Gtk::manage( new Gtk::Label (M("PREFERENCES_HLTHRESHOLD")+": "));
+    hlThresh = Gtk::manage( new Gtk::SpinButton () );
     hlThresh->set_digits (0);
     hlThresh->set_increments (1, 10);
     hlThresh->set_range (0, 255);
@@ -480,10 +480,10 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     vbrl->pack_start (*vbhl, Gtk::PACK_SHRINK, 0);
 
-    Gtk::HBox* vbsh = new Gtk::HBox ();
+    Gtk::HBox* vbsh = Gtk::manage( new Gtk::HBox () );
     vbsh->set_spacing (4);
-    Gtk::Label* shl = new Gtk::Label (M("PREFERENCES_SHTHRESHOLD")+": ");
-    shThresh = new Gtk::SpinButton ();
+    Gtk::Label* shl = Gtk::manage( new Gtk::Label (M("PREFERENCES_SHTHRESHOLD")+": ") );
+    shThresh = Gtk::manage( new Gtk::SpinButton () );
     shThresh->show ();
     shThresh->set_digits (0);
     shThresh->set_increments (1, 10);
@@ -496,15 +496,15 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbcd->pack_start (*frl, true, true, 0);
 
 //-----
-    Gtk::Frame* fdf = new Gtk::Frame (M("PREFERENCES_DATEFORMATFRAME"));
+    Gtk::Frame* fdf = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DATEFORMATFRAME")) );
 
-    Gtk::HBox* hb6 = new Gtk::HBox ();
+    Gtk::HBox* hb6 = Gtk::manage( new Gtk::HBox () );
     hb6->set_border_width (4);
     hb6->set_spacing (4);
-    Gtk::VBox* dfvb = new Gtk::VBox ();
-    Gtk::Label* dflab = new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":");
+    Gtk::VBox* dfvb = Gtk::manage( new Gtk::VBox () );
+    Gtk::Label* dflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":") );
     hb6->pack_start (*dflab, Gtk::PACK_SHRINK,4);
-    dateformat = new Gtk::Entry ();
+    dateformat = Gtk::manage( new Gtk::Entry () );
     dateformat->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
     dflab->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
     hb6->pack_start (*dateformat);
@@ -515,49 +515,49 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->pack_start (*hbcd, Gtk::PACK_SHRINK, 4);
 
   //-----
-    Gtk::Frame* fdg = new Gtk::Frame (M("PREFERENCES_EXTERNALEDITOR"));
-    Gtk::VBox* dgvb = new Gtk::VBox ();
+    Gtk::Frame* fdg = Gtk::manage( new Gtk::Frame (M("PREFERENCES_EXTERNALEDITOR")) );
+    Gtk::VBox* dgvb = Gtk::manage( new Gtk::VBox () );
 
-    Gtk::HBox* hb7c = new Gtk::HBox ();
-    edOther = new Gtk::RadioButton (M("PREFERENCES_EDITORCMDLINE")+":");
+    Gtk::HBox* hb7c = Gtk::manage( new Gtk::HBox () );
+    edOther = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_EDITORCMDLINE")+":"));
     hb7c->pack_start (*edOther, Gtk::PACK_SHRINK,4);
-    editorToSendTo = new Gtk::Entry ();
+    editorToSendTo = Gtk::manage( new Gtk::Entry () );
     hb7c->pack_start (*editorToSendTo);
     Gtk::RadioButton::Group ge = edOther->get_group();
   
 #ifdef __APPLE__
-  Gtk::HBox* hb7 = new Gtk::HBox ();
-  edGimp = new Gtk::RadioButton ("GIMP");
+  Gtk::HBox* hb7 = Gtk::manage( new Gtk::HBox () );
+  edGimp = Gtk::manage( new Gtk::RadioButton ("GIMP") );
   hb7->pack_start (*edGimp, Gtk::PACK_SHRINK,4);
   dgvb->pack_start (*hb7, Gtk::PACK_SHRINK, 4);
   edGimp->set_group (ge);
  
-  Gtk::HBox* hb7b = new Gtk::HBox ();
-  edPS = new Gtk::RadioButton (M("PREFERENCES_PSPATH")+":");
+  Gtk::HBox* hb7b = Gtk::manage( new Gtk::HBox () );
+  edPS = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_PSPATH")+":"));
   hb7b->pack_start (*edPS, Gtk::PACK_SHRINK,4);
-  psDir = new Gtk::FileChooserButton (M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  psDir = Gtk::manage( new Gtk::FileChooserButton (M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
   hb7b->pack_start (*psDir);
   dgvb->pack_start (*hb7b, Gtk::PACK_SHRINK, 4);
   edPS->set_group (ge);
 #elif defined _WIN32
-  Gtk::HBox* hb7 = new Gtk::HBox ();
-  edGimp = new Gtk::RadioButton (M("PREFERENCES_GIMPPATH")+":");
+  Gtk::HBox* hb7 = Gtk::manage( new Gtk::HBox () );
+  edGimp = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_GIMPPATH")+":") );
   hb7->pack_start (*edGimp, Gtk::PACK_SHRINK,4);
-  gimpDir = new Gtk::FileChooserButton (M("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  gimpDir = Gtk::manage( new Gtk::FileChooserButton (M("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
   hb7->pack_start (*gimpDir);
   dgvb->pack_start (*hb7, Gtk::PACK_SHRINK, 4);
   edGimp->set_group (ge);
  
-  Gtk::HBox* hb7b = new Gtk::HBox ();
-  edPS = new Gtk::RadioButton (M("PREFERENCES_PSPATH")+":");
+  Gtk::HBox* hb7b = Gtk::manage( new Gtk::HBox ());
+  edPS = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_PSPATH")+":") );
   hb7b->pack_start (*edPS, Gtk::PACK_SHRINK,4);
-  psDir = new Gtk::FileChooserButton (M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  psDir = Gtk::manage( new Gtk::FileChooserButton (M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) );
   hb7b->pack_start (*psDir);
   dgvb->pack_start (*hb7b, Gtk::PACK_SHRINK, 4);
   edPS->set_group (ge);
 #else
-    Gtk::HBox* hb7 = new Gtk::HBox ();
-    edGimp = new Gtk::RadioButton ("GIMP");
+    Gtk::HBox* hb7 = Gtk::manage( new Gtk::HBox () );
+    edGimp = Gtk::manage( new Gtk::RadioButton ("GIMP") );
     hb7->pack_start (*edGimp, Gtk::PACK_SHRINK,4);
     dgvb->pack_start (*hb7, Gtk::PACK_SHRINK, 4);
     edGimp->set_group (ge);
@@ -579,30 +579,30 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
 Gtk::Widget* Preferences::getFileBrowserPanel () {
 
-    Gtk::VBox* mvbfb = new Gtk::VBox ();
+    Gtk::VBox* mvbfb = Gtk::manage( new Gtk::VBox () );
     mvbfb->set_border_width (4);
 
-    Gtk::Frame* fsd = new Gtk::Frame (M("PREFERENCES_STARTUPIMDIR"));
+    Gtk::Frame* fsd = Gtk::manage( new Gtk::Frame (M("PREFERENCES_STARTUPIMDIR")) );
 
-    sdcurrent = new Gtk::RadioButton (M("PREFERENCES_DIRSOFTWARE"));
-    sdlast    = new Gtk::RadioButton (M("PREFERENCES_DIRLAST"));
-    sdhome    = new Gtk::RadioButton (M("PREFERENCES_DIRHOME"));
-    sdother   = new Gtk::RadioButton (M("PREFERENCES_DIROTHER")+": ");
-    startupdir = new Gtk::Entry ();
+    sdcurrent = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_DIRSOFTWARE")) );
+    sdlast    = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_DIRLAST")) );
+    sdhome    = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_DIRHOME")) );
+    sdother   = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_DIROTHER")+": ") );
+    startupdir = Gtk::manage( new Gtk::Entry () );
 
-    Gtk::Button* sdselect = new Gtk::Button ("");
-    sdselect->set_image (*(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+    Gtk::Button* sdselect = Gtk::manage( new Gtk::Button ("") );
+    sdselect->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group (opts);
     sdhome->set_group (opts);
     sdother->set_group (opts);
 
-    Gtk::VBox* vbsd = new Gtk::VBox ();
+    Gtk::VBox* vbsd = Gtk::manage( new Gtk::VBox () );
     vbsd->pack_start (*sdcurrent, Gtk::PACK_SHRINK,0);
     vbsd->pack_start (*sdlast, Gtk::PACK_SHRINK,0);
     vbsd->pack_start (*sdhome, Gtk::PACK_SHRINK,0);
-    Gtk::HBox* otherbox = new Gtk::HBox ();
+    Gtk::HBox* otherbox = Gtk::manage( new Gtk::HBox () );
     otherbox->pack_start (*sdother, Gtk::PACK_SHRINK);
     otherbox->pack_start (*startupdir);
     otherbox->pack_end (*sdselect, Gtk::PACK_SHRINK, 4);
@@ -617,13 +617,13 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 //---
 
 
-    Gtk::Frame* fro = new Gtk::Frame (M("PREFERENCES_FBROWSEROPTS"));
-    showDateTime = new Gtk::CheckButton (M("PREFERENCES_SHOWDATETIME"));
-    showBasicExif = new Gtk::CheckButton (M("PREFERENCES_SHOWBASICEXIF"));
-    overlayedFileNames = new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES"));
-	ckbInternalThumbIfUntouched = new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED"));
+    Gtk::Frame* fro = Gtk::manage( new Gtk::Frame (M("PREFERENCES_FBROWSEROPTS")) );
+    showDateTime = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWDATETIME")) );
+    showBasicExif = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWBASICEXIF")) );
+    Gtk::VBox* vbro = Gtk::manage( new Gtk::VBox () );
+    overlayedFileNames = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES")) );
+	ckbInternalThumbIfUntouched = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED")));
 
-    Gtk::VBox* vbro = new Gtk::VBox ();
     vbro->set_border_width (4);
     vbro->pack_start (*showDateTime, Gtk::PACK_SHRINK, 0);
     vbro->pack_start (*showBasicExif, Gtk::PACK_SHRINK, 0);
@@ -632,27 +632,27 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 
     fro->add (*vbro);  
 
-    Gtk::Frame* fre = new Gtk::Frame (M("PREFERENCES_PARSEDEXT"));
-    Gtk::VBox* vbre = new Gtk::VBox ();
+    Gtk::Frame* fre = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PARSEDEXT")) );
+    Gtk::VBox* vbre = Gtk::manage( new Gtk::VBox () );
     vbre->set_border_width (4);
-    Gtk::HBox* hb0 = new Gtk::HBox ();
-    Gtk::Label* elab = new Gtk::Label (M("PREFERENCES_PARSEDEXTADD")+":");
+    Gtk::HBox* hb0 = Gtk::manage( new Gtk::HBox () );
+    Gtk::Label* elab = Gtk::manage( new Gtk::Label (M("PREFERENCES_PARSEDEXTADD")+":") );
     hb0->pack_start (*elab, Gtk::PACK_SHRINK, 4);
-    extension = new Gtk::Entry ();
+    extension = Gtk::manage( new Gtk::Entry () );
     extension->set_width_chars(5);
     hb0->pack_start (*extension);
-    addExt = new Gtk::Button ();
-    delExt = new Gtk::Button ();
+    addExt = Gtk::manage( new Gtk::Button () );
+    delExt = Gtk::manage( new Gtk::Button () );
     addExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTADDHINT"));
     delExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTDELHINT"));
-    Gtk::Image* addExtImg = new Gtk::Image (argv0+"/images/list-add12.png");
-    Gtk::Image* delExtImg = new Gtk::Image (argv0+"/images/list-remove12r.png");
+    Gtk::Image* addExtImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-add12.png") );
+    Gtk::Image* delExtImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-remove12r.png") );
     addExt->add (*addExtImg);
     delExt->add (*delExtImg);
     hb0->pack_end (*delExt, Gtk::PACK_SHRINK, 4);
     hb0->pack_end (*addExt, Gtk::PACK_SHRINK, 4);
-    extensions = new Gtk::TreeView ();
-    Gtk::ScrolledWindow* hscrollw = new Gtk::ScrolledWindow ();
+    extensions = Gtk::manage( new Gtk::TreeView () );
+    Gtk::ScrolledWindow* hscrollw = Gtk::manage( new Gtk::ScrolledWindow () );
     hscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     hscrollw->add (*extensions);
     extensionModel = Gtk::ListStore::create (extensionColumns);
@@ -665,27 +665,27 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 
     fre->add (*vbre);  
 
-    Gtk::Frame* frc = new Gtk::Frame (M("PREFERENCES_CACHEOPTS"));
-    Gtk::VBox* vbc = new Gtk::VBox ();
+    Gtk::Frame* frc = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CACHEOPTS")) );
+    Gtk::VBox* vbc = Gtk::manage( new Gtk::VBox () );
     frc->add (*vbc);  
     vbc->set_border_width (4);
 
-    Gtk::Label* cflab = new Gtk::Label (M("PREFERENCES_CACHETHUMBFORM")+":");
-    cformat = new Gtk::ComboBoxText ();
+    Gtk::Label* cflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHETHUMBFORM")+":") );
+    cformat = Gtk::manage( new Gtk::ComboBoxText () );
     cformat->set_size_request(50, -1);
     cformat->append_text (M("PREFERENCES_CACHEFORMAT1"));
     cformat->append_text (M("PREFERENCES_CACHEFORMAT2"));
     cformat->append_text (M("PREFERENCES_CACHEFORMAT1")+", 16 bit");
     cformat->signal_changed().connect( sigc::mem_fun(*this, &Preferences::cacheFormatComboChanged) );
     cacheFormatComboChanged(); // update the tooltip
-    Gtk::HBox* hb2 = new Gtk::HBox ();
+    Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
     hb2->pack_start (*cflab, Gtk::PACK_SHRINK, 4);
     hb2->pack_start (*cformat);
     vbc->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* hb3 = new Gtk::HBox ();
-    Gtk::Label* chlab = new Gtk::Label (M("PREFERENCES_CACHETHUMBHEIGHT")+":");
-    maxThumbSize = new Gtk::SpinButton ();
+    Gtk::HBox* hb3 = Gtk::manage( new Gtk::HBox () );
+    Gtk::Label* chlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHETHUMBHEIGHT")+":") );
+    maxThumbSize = Gtk::manage( new Gtk::SpinButton () );
     hb3->pack_start (*chlab, Gtk::PACK_SHRINK, 4);
     hb3->pack_start (*maxThumbSize, Gtk::PACK_SHRINK, 4);
 
@@ -694,9 +694,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     maxThumbSize->set_range (40, 800);
     vbc->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* hb4 = new Gtk::HBox ();
-    Gtk::Label* celab = new Gtk::Label (M("PREFERENCES_CACHEMAXENTRIES")+":");
-    maxCacheEntries = new Gtk::SpinButton ();
+    Gtk::HBox* hb4 = Gtk::manage( new Gtk::HBox () );
+    Gtk::Label* celab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHEMAXENTRIES")+":") );
+    maxCacheEntries = Gtk::manage( new Gtk::SpinButton () );
     hb4->pack_start (*celab, Gtk::PACK_SHRINK, 4);
     hb4->pack_start (*maxCacheEntries, Gtk::PACK_SHRINK, 4);
 
@@ -705,17 +705,17 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     maxCacheEntries->set_range (10, 100000);
     vbc->pack_start (*hb4, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* hb5 = new Gtk::HBox ();
-    clearThumbnails = new Gtk::Button (M("PREFERENCES_CACHECLEARTHUMBS"));
-    clearProfiles = new Gtk::Button (M("PREFERENCES_CACHECLEARPROFILES"));
-    clearAll = new Gtk::Button (M("PREFERENCES_CACHECLEARALL"));
+    Gtk::HBox* hb5 = Gtk::manage( new Gtk::HBox () );
+    clearThumbnails = Gtk::manage( new Gtk::Button (M("PREFERENCES_CACHECLEARTHUMBS")) );
+    clearProfiles = Gtk::manage( new Gtk::Button (M("PREFERENCES_CACHECLEARPROFILES")) );
+    clearAll = Gtk::manage( new Gtk::Button (M("PREFERENCES_CACHECLEARALL")) );
     hb5->pack_start (*clearThumbnails, Gtk::PACK_SHRINK, 4);
     hb5->pack_start (*clearProfiles, Gtk::PACK_SHRINK, 4);
     hb5->pack_start (*clearAll, Gtk::PACK_SHRINK, 4);
     vbc->pack_start (*hb5, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* hb6 = new Gtk::HBox ();
-    Gtk::VBox* vb6 = new Gtk::VBox ();
+    Gtk::HBox* hb6 = Gtk::manage( new Gtk::HBox () );
+    Gtk::VBox* vb6 = Gtk::manage( new Gtk::VBox () );
 
     vb6->pack_start (*fro);
     vb6->pack_end (*frc);
@@ -746,7 +746,7 @@ Gtk::Widget* Preferences::getSoundPanel () {
     pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
 
     // BatchQueueDone
-    Gtk::HBox* pBatchQueueDone = new Gtk::HBox();
+    Gtk::HBox* pBatchQueueDone = Gtk::manage( new Gtk::HBox() );
 
     Gtk::Label* lSndBatchQueueDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_BATCHQUEUEDONE") + Glib::ustring(":")));
     pBatchQueueDone->pack_start (*lSndBatchQueueDone, Gtk::PACK_SHRINK, 12);
@@ -757,7 +757,7 @@ Gtk::Widget* Preferences::getSoundPanel () {
     pSnd->pack_start (*pBatchQueueDone, Gtk::PACK_SHRINK, 4);
 
     // LngEditProcDone
-    Gtk::HBox* pSndLngEditProcDone = new Gtk::HBox();
+    Gtk::HBox* pSndLngEditProcDone = Gtk::manage( new Gtk::HBox() );
 
     Gtk::Label* lSndLngEditProcDone = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_LNGEDITPROCDONE") + Glib::ustring(":")));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDone, Gtk::PACK_SHRINK, 12);
@@ -768,7 +768,7 @@ Gtk::Widget* Preferences::getSoundPanel () {
     Gtk::Label* lSndLngEditProcDoneSecs = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_TRESHOLDSECS") + Glib::ustring(":")));
     pSndLngEditProcDone->pack_start (*lSndLngEditProcDoneSecs, Gtk::PACK_SHRINK, 12);
  
-    spbSndLngEditProcDoneSecs = new Gtk::SpinButton ();
+    spbSndLngEditProcDoneSecs = Gtk::manage( new Gtk::SpinButton () );
     spbSndLngEditProcDoneSecs->set_digits (1);
     spbSndLngEditProcDoneSecs->set_increments (0.5, 1);
     spbSndLngEditProcDoneSecs->set_range (0, 10);

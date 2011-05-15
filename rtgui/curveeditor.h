@@ -66,7 +66,7 @@ class CurveEditor {
 	public:
 
 		CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
-
+		virtual ~CurveEditor ();
 		void typeSelectionChanged (int n);
 		void curveTypeToggled();
 		bool isUnChanged ();

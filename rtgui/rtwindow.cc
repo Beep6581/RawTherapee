@@ -54,7 +54,7 @@ RTWindow::RTWindow ()
 
     if(simpleEditor)
     {
-		epanel = new EditorPanel (NULL);
+		epanel = Gtk::manage( new EditorPanel (NULL) );
 		epanel->setParent (this);
     	add (*epanel);
     	show_all ();
@@ -71,7 +71,7 @@ RTWindow::RTWindow ()
 		mainNB->set_scrollable (true);
 		mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
-		fpanel = new FilePanel ();
+        fpanel = Gtk::manage ( new FilePanel () );
 		fpanel->setParent (this);
 
 		// decorate tab
@@ -80,7 +80,7 @@ RTWindow::RTWindow ()
 
 			Gtk::VBox* vbf = Gtk::manage (new Gtk::VBox ());
 			vbf->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-			Gtk::Label* l=new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_FILEBROWSER"));
+            Gtk::Label* l= Gtk::manage(new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_FILEBROWSER")));
 			l->set_angle (90);
 			vbf->pack_start (*l);
 			vbf->set_spacing (2);
@@ -97,22 +97,22 @@ RTWindow::RTWindow ()
 			mainNB->append_page (*fpanel, *hbf);
 		}
 
-		bpanel = new BatchQueuePanel ();
+        bpanel = Gtk::manage ( new BatchQueuePanel () );
 		bpanel->setParent (this);
 
 		// decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
-		Gtk::Label* lbq = new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE"));
+        Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")) );
 		mainNB->append_page (*bpanel, *lbq);
 
 		// epanel is only for single tab mode
-		epanel = new EditorPanel (fpanel);
+        epanel = Gtk::manage ( new EditorPanel (fpanel) );
 		epanel->setParent (this);
 
 		// decorate tab
 		if (options.mainNBVertical) {
 			Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
 			vbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
-			Gtk::Label* l=new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") );
+            Gtk::Label* l=Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
 			//l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
 			l->set_angle (90);
 			vbe->pack_start (*l);

@@ -1361,7 +1361,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
 
 bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
 
-    FILE* f = fopen (fname.c_str(), "rb");
+    FILE* f = safe_g_fopen (fname, "rb");
     if (!f) {
         embProfileData = NULL;
         embProfile = NULL;

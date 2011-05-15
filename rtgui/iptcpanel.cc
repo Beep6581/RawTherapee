@@ -28,14 +28,14 @@ IPTCPanel::IPTCPanel () {
 
     set_border_width (2);
 
-    Gtk::Table* iptc = new Gtk::Table (27, 2);
+    Gtk::Table* iptc = Gtk::manage( new Gtk::Table (27, 2) );
     
     int row = 0;
 
-    Gtk::Label* capl = new Gtk::Label (M("IPTCPANEL_CAPTION")+":");
+    Gtk::Label* capl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CAPTION")+":") );
     captionText = Gtk::TextBuffer::create ();
-    captionView = new Gtk::TextView (captionText);
-    Gtk::ScrolledWindow* scrolledWindowc = new Gtk::ScrolledWindow();
+    captionView = Gtk::manage( new Gtk::TextView (captionText) );
+    Gtk::ScrolledWindow* scrolledWindowc = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowc->add(*captionView);
     capl->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
@@ -45,8 +45,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* capwl = new Gtk::Label (M("IPTCPANEL_CAPTIONWRITER")+":");
-    captionWriter = new Gtk::Entry ();
+    Gtk::Label* capwl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CAPTIONWRITER")+":") );
+    captionWriter = Gtk::manage( new Gtk::Entry () );
     capwl->set_tooltip_text (M("IPTCPANEL_CAPTIONWRITERHINT"));
     captionWriter->set_tooltip_text (M("IPTCPANEL_CAPTIONWRITERHINT"));
     iptc->attach (*capwl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -54,8 +54,8 @@ IPTCPanel::IPTCPanel () {
     
     row++;
 
-    Gtk::Label* headl = new Gtk::Label (M("IPTCPANEL_HEADLINE")+":");
-    headline = new Gtk::Entry ();
+    Gtk::Label* headl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_HEADLINE")+":") );
+    headline = Gtk::manage( new Gtk::Entry () );
     headl->set_tooltip_text (M("IPTCPANEL_HEADLINEHINT"));
     headline->set_tooltip_text (M("IPTCPANEL_HEADLINEHINT"));
     iptc->attach (*headl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -63,8 +63,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* instl = new Gtk::Label (M("IPTCPANEL_INSTRUCTIONS")+":");
-    instructions = new Gtk::Entry ();
+    Gtk::Label* instl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_INSTRUCTIONS")+":") );
+    instructions = Gtk::manage( new Gtk::Entry () );
     instl->set_tooltip_text (M("IPTCPANEL_INSTRUCTIONSHINT"));
     instructions->set_tooltip_text (M("IPTCPANEL_INSTRUCTIONSHINT"));
     iptc->attach (*instl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -72,29 +72,29 @@ IPTCPanel::IPTCPanel () {
     
     row++;
 
-    Gtk::HSeparator* hsep1 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep1 = Gtk::manage( new Gtk::HSeparator () );
     iptc->attach (*hsep1, 0, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     
     row++;
 
-    Gtk::Label* keyl = new Gtk::Label (M("IPTCPANEL_KEYWORDS")+":");
-    keywords = new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE);
+    Gtk::Label* keyl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_KEYWORDS")+":"));
+    keywords = Gtk::manage( new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE) );
     keywords->set_headers_visible (false);
-    Gtk::ScrolledWindow* scrolledWindowkw = new Gtk::ScrolledWindow();
+    Gtk::ScrolledWindow* scrolledWindowkw = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowkw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowkw->add(*keywords);
-    keyword  = new Gtk::ComboBoxEntryText ();
+    keyword  = Gtk::manage( new Gtk::ComboBoxEntryText () );
     keyword->set_size_request (32, -1);
     keyl->set_tooltip_text (M("IPTCPANEL_KEYWORDSHINT"));
     keywords->set_tooltip_text (M("IPTCPANEL_KEYWORDSHINT"));
     keyword->set_tooltip_text (M("IPTCPANEL_KEYWORDSHINT"));
-    addKW = new Gtk::Button ();
-    delKW = new Gtk::Button ();
-    Gtk::Image* addKWImg = new Gtk::Image (argv0+"/images/list-add12.png");
-    Gtk::Image* delKWImg = new Gtk::Image (argv0+"/images/list-remove12r.png");
+    addKW = Gtk::manage( new Gtk::Button () );
+    delKW = Gtk::manage( new Gtk::Button () );
+    Gtk::Image* addKWImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-add12.png") );
+    Gtk::Image* delKWImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-remove12r.png") );
     addKW->add (*addKWImg);
     delKW->add (*delKWImg);
-    Gtk::HBox* kwhb = new Gtk::HBox ();
+    Gtk::HBox* kwhb = Gtk::manage( new Gtk::HBox () );
     kwhb->pack_start (*keyword);
     kwhb->pack_start (*addKW, Gtk::PACK_SHRINK, 2);
     kwhb->pack_start (*delKW, Gtk::PACK_SHRINK, 2);
@@ -104,33 +104,33 @@ IPTCPanel::IPTCPanel () {
     iptc->attach (*scrolledWindowkw, 0, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     row++;
 
-    Gtk::HSeparator* hsep2 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep2 = Gtk::manage( new Gtk::HSeparator () );
     iptc->attach (*hsep2, 0, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     row++;
 
-    Gtk::Label* catl = new Gtk::Label (M("IPTCPANEL_CATEGORY")+":");
-    category = new Gtk::ComboBoxEntryText ();
+    Gtk::Label* catl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CATEGORY")+":") );
+    category = Gtk::manage( new Gtk::ComboBoxEntryText () );
     category->set_size_request (32, -1);
     catl->set_tooltip_text (M("IPTCPANEL_CATEGORYHINT"));
     category->set_tooltip_text (M("IPTCPANEL_CATEGORYHINT"));
-    Gtk::Label* scl = new Gtk::Label (M("IPTCPANEL_SUPPCATEGORIES")+":");
-    suppCategories = new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE);
+    Gtk::Label* scl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_SUPPCATEGORIES")+":") );
+    suppCategories = Gtk::manage( new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE) );
     suppCategories->set_headers_visible (false);
-    Gtk::ScrolledWindow* scrolledWindowsc = new Gtk::ScrolledWindow();
+    Gtk::ScrolledWindow* scrolledWindowsc = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowsc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowsc->add(*suppCategories);
-    suppCategory  = new Gtk::ComboBoxEntryText ();
+    suppCategory  = Gtk::manage( new Gtk::ComboBoxEntryText () );
     suppCategory->set_size_request (32, -1);
     scl->set_tooltip_text (M("IPTCPANEL_SUPPCATEGORIESHINT"));
     suppCategories->set_tooltip_text (M("IPTCPANEL_SUPPCATEGORIESHINT"));
     suppCategory->set_tooltip_text (M("IPTCPANEL_SUPPCATEGORIESHINT"));
-    addSC = new Gtk::Button ();
-    delSC = new Gtk::Button ();
-    Gtk::Image* addSCImg = new Gtk::Image (argv0+"/images/list-add12.png");
-    Gtk::Image* delSCImg = new Gtk::Image (argv0+"/images/list-remove12r.png");
+    addSC = Gtk::manage( new Gtk::Button () );
+    delSC = Gtk::manage( new Gtk::Button () );
+    Gtk::Image* addSCImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-add12.png") );
+    Gtk::Image* delSCImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-remove12r.png") );
     addSC->add (*addSCImg);
     delSC->add (*delSCImg);
-    Gtk::HBox* schb = new Gtk::HBox ();
+    Gtk::HBox* schb = Gtk::manage( new Gtk::HBox () );
     schb->pack_start (*suppCategory);
     schb->pack_start (*addSC, Gtk::PACK_SHRINK, 2);
     schb->pack_start (*delSC, Gtk::PACK_SHRINK, 2);
@@ -143,12 +143,12 @@ IPTCPanel::IPTCPanel () {
     iptc->attach (*scrolledWindowsc, 0, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     row++;
     
-    Gtk::HSeparator* hsep3 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep3 = Gtk::manage( new Gtk::HSeparator () );
     iptc->attach (*hsep3, 0, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);  
     row++;
     
-    Gtk::Label* authl = new Gtk::Label (M("IPTCPANEL_AUTHOR")+":");
-    author = new Gtk::Entry ();
+    Gtk::Label* authl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHOR")+":") );
+    author = Gtk::manage( new Gtk::Entry () );
     authl->set_tooltip_text (M("IPTCPANEL_CREDITHINT"));
     author->set_tooltip_text (M("IPTCPANEL_CREDITHINT"));
     iptc->attach (*authl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -156,8 +156,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* aupl = new Gtk::Label (M("IPTCPANEL_AUTHORSPOSITION")+":");
-    authorPos = new Gtk::Entry ();
+    Gtk::Label* aupl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_AUTHORSPOSITION")+":") );
+    authorPos = Gtk::manage(  new Gtk::Entry () );
     aupl->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
     authorPos->set_tooltip_text (M("IPTCPANEL_AUTHORSPOSITIONHINT"));
     iptc->attach (*aupl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -165,8 +165,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* credl = new Gtk::Label (M("IPTCPANEL_CREDIT")+":");
-    credit = new Gtk::Entry ();
+    Gtk::Label* credl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CREDIT")+":") );
+    credit = Gtk::manage( new Gtk::Entry () );
     credl->set_tooltip_text (M("IPTCPANEL_CREDITHINT"));
     credit->set_tooltip_text (M("IPTCPANEL_CREDITHINT"));
     iptc->attach (*credl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -174,8 +174,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
     
-    Gtk::Label* sourl = new Gtk::Label (M("IPTCPANEL_SOURCE")+":");
-    source = new Gtk::Entry ();
+    Gtk::Label* sourl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_SOURCE")+":") );
+    source = Gtk::manage( new Gtk::Entry () );
     sourl->set_tooltip_text (M("IPTCPANEL_SOURCEHINT"));
     source->set_tooltip_text (M("IPTCPANEL_SOURCEHINT"));
     iptc->attach (*sourl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -183,8 +183,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* cprl = new Gtk::Label (M("IPTCPANEL_COPYRIGHT")+":");
-    copyright = new Gtk::Entry ();
+    Gtk::Label* cprl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_COPYRIGHT")+":") );
+    copyright = Gtk::manage( new Gtk::Entry () );
     cprl->set_tooltip_text (M("IPTCPANEL_COPYRIGHTHINT"));
     copyright->set_tooltip_text (M("IPTCPANEL_COPYRIGHTHINT"));
     iptc->attach (*cprl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -192,13 +192,13 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::HSeparator* hsep4 = new Gtk::HSeparator ();
+    Gtk::HSeparator* hsep4 = Gtk::manage( new Gtk::HSeparator () );
     iptc->attach (*hsep4, 0, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
     
     row++;
 
-    Gtk::Label* cityl = new Gtk::Label (M("IPTCPANEL_CITY")+":");
-    city = new Gtk::Entry ();
+    Gtk::Label* cityl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_CITY")+":") );
+    city = Gtk::manage( new Gtk::Entry () );
     cityl->set_tooltip_text (M("IPTCPANEL_CITYHINT"));
     city->set_tooltip_text (M("IPTCPANEL_CITYHINT"));
     iptc->attach (*cityl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -206,8 +206,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
     
-    Gtk::Label* provl = new Gtk::Label (M("IPTCPANEL_PROVINCE")+":");
-    province = new Gtk::Entry ();
+    Gtk::Label* provl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_PROVINCE")+":") );
+    province = Gtk::manage( new Gtk::Entry () );
     provl->set_tooltip_text (M("IPTCPANEL_PROVINCEHINT"));
     province->set_tooltip_text (M("IPTCPANEL_PROVINCEHINT"));
     iptc->attach (*provl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -215,8 +215,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
     
-    Gtk::Label* ctrl = new Gtk::Label (M("IPTCPANEL_COUNTRY")+":");
-    country = new Gtk::Entry ();
+    Gtk::Label* ctrl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_COUNTRY")+":") );
+    country = Gtk::manage( new Gtk::Entry () );
     ctrl->set_tooltip_text (M("IPTCPANEL_COUNTRYHINT"));
     country->set_tooltip_text (M("IPTCPANEL_COUNTRYHINT"));
     iptc->attach (*ctrl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -224,8 +224,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
     
-    Gtk::Label* titll = new Gtk::Label (M("IPTCPANEL_TITLE")+":");
-    title = new Gtk::Entry ();
+    Gtk::Label* titll = Gtk::manage( new Gtk::Label (M("IPTCPANEL_TITLE")+":") );
+    title = Gtk::manage( new Gtk::Entry () );
     titll->set_tooltip_text (M("IPTCPANEL_TITLEHINT"));
     title->set_tooltip_text (M("IPTCPANEL_TITLEHINT"));
     iptc->attach (*titll, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -233,8 +233,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* dcl = new Gtk::Label (M("IPTCPANEL_DATECREATED")+":");
-    dateCreated = new Gtk::Entry ();
+    Gtk::Label* dcl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_DATECREATED")+":") );
+    dateCreated = Gtk::manage(  new Gtk::Entry () );
     dcl->set_tooltip_text (M("IPTCPANEL_DATECREATEDHINT"));
     dateCreated->set_tooltip_text (M("IPTCPANEL_DATECREATEDHINT"));
     iptc->attach (*dcl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -242,8 +242,8 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::Label* trl = new Gtk::Label (M("IPTCPANEL_TRANSREFERENCE")+":");
-    transReference = new Gtk::Entry ();
+    Gtk::Label* trl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_TRANSREFERENCE")+":") );
+    transReference = Gtk::manage( new Gtk::Entry () );
     trl->set_tooltip_text (M("IPTCPANEL_TRANSREFERENCEHINT"));
     transReference->set_tooltip_text (M("IPTCPANEL_TRANSREFERENCEHINT"));
     iptc->attach (*trl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
@@ -251,7 +251,7 @@ IPTCPanel::IPTCPanel () {
 
     row++;
 
-    Gtk::ScrolledWindow* scrolledWindow = new Gtk::ScrolledWindow();
+    Gtk::ScrolledWindow* scrolledWindow = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindow->set_border_width(2);
     scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
     scrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
@@ -260,27 +260,27 @@ IPTCPanel::IPTCPanel () {
     
     pack_start (*scrolledWindow);
     
-    Gtk::HBox* bbox = new Gtk::HBox ();
+    Gtk::HBox* bbox = Gtk::manage( new Gtk::HBox () );
     
-    reset = new Gtk::Button (M("IPTCPANEL_RESET"));
-    reset->set_image (*(new Gtk::Image (Gtk::StockID ("gtk-undo"), Gtk::IconSize (2))));
+    reset = Gtk::manage( new Gtk::Button (M("IPTCPANEL_RESET")) );
+    reset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-undo"), Gtk::IconSize (2))));
     bbox->pack_start (*reset);
 
-    file = new Gtk::Button (M("IPTCPANEL_EMBEDDED"));
-    file->set_image (*(new Gtk::Image (Gtk::StockID ("gtk-open"), Gtk::IconSize (2))));
+    file = Gtk::manage( new Gtk::Button (M("IPTCPANEL_EMBEDDED")) );
+    file->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-open"), Gtk::IconSize (2))));
     bbox->pack_start (*file);
     
-    copy = new Gtk::Button ();
-    copy->set_image (*(new Gtk::Image (Gtk::StockID ("gtk-copy"), Gtk::IconSize (2))));
+    copy = Gtk::manage( new Gtk::Button () );
+    copy->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-copy"), Gtk::IconSize (2))));
     bbox->pack_start (*copy, Gtk::PACK_SHRINK, 0);
 
-    paste = new Gtk::Button ();
-    paste->set_image (*(new Gtk::Image (Gtk::StockID ("gtk-paste"), Gtk::IconSize (2))));
+    paste = Gtk::manage( new Gtk::Button () );
+    paste->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-paste"), Gtk::IconSize (2))));
     bbox->pack_start (*paste, Gtk::PACK_SHRINK, 0);
     
     pack_end (*bbox, Gtk::PACK_SHRINK, 2);
 
-    Gtk::Tooltips* toolTip = new Gtk::Tooltips ();
+    Gtk::Tooltips* toolTip = Gtk::manage( new Gtk::Tooltips () );
     toolTip->set_tip (*reset, M("IPTCPANEL_RESETHINT"));
     toolTip->set_tip (*file, M("IPTCPANEL_EMBEDDEDHINT"));
     toolTip->set_tip (*copy, M("IPTCPANEL_COPYHINT"));

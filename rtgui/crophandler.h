@@ -65,6 +65,7 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
 
 		void    update  ();
 
+
         rtengine::procparams::CropParams cropParams;
 		rtengine::procparams::ColorManagementParams colorParams;
         Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;

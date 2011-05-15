@@ -43,10 +43,6 @@ class BatchQueuePanel : public Gtk::VBox,
         SaveFormatPanel* saveFormatPanel;
         Gtk::Frame *fdir, *fformat;
 
-        Gtk::Image* hAlignIcon;
-        Gtk::Image* vAlignIcon;
-        Gtk::Button* chAlign;
-
         RTWindow* parent;
         BatchQueue* batchQueue;
         Gtk::HBox* bottomBox;
@@ -57,7 +53,6 @@ class BatchQueuePanel : public Gtk::VBox,
         BatchQueuePanel ();
 
         void setParent (RTWindow* p) { parent = p; }
-        void arrangementButtonPressed ();
 
         void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head=false);
 
