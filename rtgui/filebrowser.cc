@@ -798,16 +798,6 @@ void FileBrowser::notifySelectionListener () {
     }    
 }
 
-void FileBrowser::redrawNeeded (ThumbBrowserEntryBase* entry) {
-
-    if (entry->insideWindow (0, 0, internal.get_width(), internal.get_height())) {
-        if (!internal.isDirty ()) {
-            internal.setDirty ();
-            internal.queue_draw ();
-        }
-    }        
-}
-
 void FileBrowser::redrawNeeded (LWButton* button) {
     
     queue_draw ();
