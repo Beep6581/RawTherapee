@@ -89,8 +89,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
     for (int i=0; i<5; i++) {
-        iranked[i] = Gtk::manage( new Gtk::Image (argv0+"/images/rated.png") );
-        igranked[i] = Gtk::manage( new Gtk::Image (argv0+"/images/grayrated.png") );
+        iranked[i] = new Gtk::Image (argv0+"/images/rated.png");
+        igranked[i] = new Gtk::Image (argv0+"/images/grayrated.png");
         iranked[i]->show ();
         igranked[i]->show ();
         bRank[i] = Gtk::manage( new Gtk::ToggleButton () );
@@ -187,6 +187,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
 
 FileCatalog::~FileCatalog()
 {
+	for (int i=0; i<5; i++) {
+	    delete iranked[i];
+	    delete igranked[i];
+	}
 	delete iTrashEmpty;
 	delete iTrashFull;
 }
