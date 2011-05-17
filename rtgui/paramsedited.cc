@@ -140,6 +140,10 @@ void ParamsEdited::set (bool v) {
 	icm.gammaOnInput = v;
 	icm.working      = v;
 	icm.output       = v;
+	icm.gamma		= v;
+	icm.freegamma		= v;
+	icm.gampos		= v;
+	icm.slpos		= v;	
 	raw.ccSteps = v;
 	raw.dmethod = v;
 	raw.dcbIterations = v;
@@ -301,6 +305,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gammaOnInput = icm.gammaOnInput && p.icm.gammaOnInput == other.icm.gammaOnInput;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
+        icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
+        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;		
+        icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
+        icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
         raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
@@ -454,6 +462,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.gammaOnInput)	toEdit.icm.gammaOnInput = mods.icm.gammaOnInput;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output 	    = mods.icm.output;
+	if (icm.gampos)		    toEdit.icm.gampos 	    = mods.icm.gampos;
+	if (icm.slpos)		    toEdit.icm.slpos 	    = mods.icm.slpos;
+	if (icm.gamma)		    toEdit.icm.gamma 	    = mods.icm.gamma;
+	if (icm.freegamma)		    toEdit.icm.freegamma 	    = mods.icm.freegamma;	
     if (raw.ccSteps)            toEdit.raw.ccSteps      = mods.raw.ccSteps;
     if (raw.dmethod)            toEdit.raw.dmethod      = mods.raw.dmethod;
     if (raw.dcbIterations)      toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;

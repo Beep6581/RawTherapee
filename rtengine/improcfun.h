@@ -113,7 +113,7 @@ class ImProcFunctions {
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh, bool edges);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
-		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam);// for gamma output
+		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos);// for gamma output		
 		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);//without gamma ==>default
 
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
@@ -130,6 +130,7 @@ class ImProcFunctions {
 	void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
 	void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
 	void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
+	void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
 
 	//void gamutmap(LabImage* );
 	void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);

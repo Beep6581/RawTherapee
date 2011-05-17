@@ -152,8 +152,8 @@ void Options::setDefaults () {
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
     rtSettings.LCMSSafeMode = true;
-    rtSettings.adobe = "AdobeRGB1998";
-    rtSettings.prophoto = "ProPhoto";
+    rtSettings.adobe = "AdobeRGB1998"; // put the name of yours profiles (here windows)
+    rtSettings.prophoto = "ProPhoto"; // these names appear in the menu "output profile"
     rtSettings.widegamut = "WideGamutRGB";
     rtSettings.srgb = "sRGB Color Space Profile";
     rtSettings.bruce = "Bruce";

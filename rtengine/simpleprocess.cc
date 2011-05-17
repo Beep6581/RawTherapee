@@ -208,10 +208,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cw = params.crop.w;
         ch = params.crop.h;
     }
-	
-    if(params.icm.gamma != "default")
+  if(params.icm.gamma != "default" || params.icm.freegamma)	
     {	// if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
-	Image16* readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma);
+	//or selected Free gamma
+	Image16* readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos);
+	
     delete labView;
     if (pl) pl->setProgress (0.70);
 
@@ -330,7 +331,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     return readyImg;
 	}
 	else
-	{//if default mode : profil = selection by choice in list (Prophoto.icm, sRGB.icm, etc., etc.) , gamma = gamma of profile
+	{//if default mode : profil = selection by choice in list (Prophoto.icm, sRGB.icm, etc., etc.) , gamma = gamma of profile or  not selected Free gamma
+	
 	Image16* readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
     delete labView;
     if (pl) pl->setProgress (0.70);

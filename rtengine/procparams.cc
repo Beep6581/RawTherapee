@@ -211,7 +211,10 @@ void ProcParams::setDefaults () {
     icm.working = "sRGB";
     icm.output  = "sRGB";
     icm.gamma  = "default";
-   
+ 	icm.gampos =2.22;
+	icm.slpos=4.5;
+    icm.freegamma = false;
+  
     equalizer.enabled = false;    
     for(int i = 0; i < 8; i ++)
     {
@@ -429,6 +432,9 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
     keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
+    keyFile.set_boolean  ("Color Management", "Freegamma",  icm.freegamma);	
+    keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
+    keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
     
     // save wavelet equalizer parameters
     keyFile.set_boolean ("Equalizer", "Enabled", equalizer.enabled);
@@ -744,6 +750,9 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "WorkingProfile")) icm.working = keyFile.get_string ("Color Management", "WorkingProfile");
     if (keyFile.has_key ("Color Management", "OutputProfile"))  icm.output  = keyFile.get_string ("Color Management", "OutputProfile");
     if (keyFile.has_key ("Color Management", "Gammafree"))  icm.gamma  = keyFile.get_string ("Color Management", "Gammafree");
+    if (keyFile.has_key ("Color Management", "Freegamma"))  icm.freegamma  = keyFile.get_boolean ("Color Management", "Freegamma");
+    if (keyFile.has_key ("Color Management", "GammaVal"))  icm.gampos  = keyFile.get_double ("Color Management", "GammaVal");
+    if (keyFile.has_key ("Color Management", "GammaSlope"))  icm.slpos  = keyFile.get_double ("Color Management", "GammaSlope");
 	
 }
 
@@ -994,6 +1003,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
 		&& icm.gamma == other.icm.gamma		
+		&& icm.freegamma == other.icm.freegamma			
+		&& icm.gampos == other.icm.gampos	
+		&& icm.slpos == other.icm.slpos			
 		&& equalizer == other.equalizer
 		&& dirpyrequalizer == other.dirpyrequalizer
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
