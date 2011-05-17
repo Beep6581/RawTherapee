@@ -332,6 +332,9 @@ class ColorManagementParams {
         Glib::ustring working;
         Glib::ustring output;
         Glib::ustring gamma;
+		double gampos;
+		double slpos;
+		bool freegamma;
 		
 };
 

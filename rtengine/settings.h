@@ -34,13 +34,13 @@ namespace rtengine {
             Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
             Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
             bool            LCMSSafeMode;           // If true, not OMP
-			Glib::ustring   adobe;
-			Glib::ustring   prophoto;
-			Glib::ustring   widegamut;
-			Glib::ustring   beta;
-			Glib::ustring   best;
-			Glib::ustring   bruce;
-			Glib::ustring   srgb;
+			Glib::ustring   adobe;					// default name of AdobeRGB1998
+			Glib::ustring   prophoto;				// default name of Prophoto
+			Glib::ustring   widegamut;				//default name of WidegamutRGB
+			Glib::ustring   beta;					// default name of BetaRGB
+			Glib::ustring   best;					// default name of BestRGB
+			Glib::ustring   bruce;					// default name of Bruce
+			Glib::ustring   srgb;					// default name of SRGB space profile
 			
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

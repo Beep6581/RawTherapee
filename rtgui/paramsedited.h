@@ -251,6 +251,10 @@ class ColorManagementParamsEdited {
         bool working;
         bool output;
 		bool gamma;
+		bool gampos;
+		bool slpos;
+		bool gamfree;
+		bool freegamma;		
 };
 
 class EqualizerParamsEdited {

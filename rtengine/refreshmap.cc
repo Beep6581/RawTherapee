@@ -153,6 +153,10 @@ TRANSFORM,        // EvAutoDIST,
 DIRPYRDENOISE,    // EvDPDNLumCurve,
 DIRPYRDENOISE,    // EvDPDNChromCurve,
 ALL,			  // EvGAMMA	
+ALL,			  // EvGAMPOS
+ALL,			  //EvGAMFREE
+ALL,               //EvSLPOS 
+
 
 };
 
