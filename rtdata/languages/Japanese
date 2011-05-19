@@ -948,3 +948,6 @@ ZOOMPANEL_ZOOMOUT;ズームアウト <b>-</b>
 
 
 !TP_CROP_PPI;PPI=
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
+!TP_GAMMA_SLOP;slope (linear)

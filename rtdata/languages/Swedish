@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-02-27.
+#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-05-19.
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
@@ -25,8 +25,10 @@ CURVEEDITOR_NURBS;Kontrollerad justering
 CURVEEDITOR_PARAMETRIC;Parametisk
 CURVEEDITOR_SAVEDLGLABEL;Spara kurva...
 CURVEEDITOR_SHADOWS;Skuggor
+CURVEEDITOR_TOOLTIPCOPY;Kopiera nuvarande kurva till klippbordet
 CURVEEDITOR_TOOLTIPLINEAR;Återställ kurva till linjär
 CURVEEDITOR_TOOLTIPLOAD;Ladda kurva från fil
+CURVEEDITOR_TOOLTIPPASTE;Klistra in kurva från klippbordet
 CURVEEDITOR_TOOLTIPSAVE;Spara nuvarande kurva
 CURVEEDITOR_TYPE;Typ:
 EDITWINDOW_TITLE;Bildredigering
@@ -152,11 +154,13 @@ HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
+HISTOGRAM_BUTTON_RAW;Råbild
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
 HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
+HISTOGRAM_TOOLTIP_RAW;Visa/dölj råbildens histogram
 HISTORY_CHANGED;Ändrad
 HISTORY_CUSTOMCURVE;Egen kurva
 HISTORY_DELSNAPSHOT;Ta bort
@@ -717,6 +721,7 @@ TP_CROP_GTRULETHIRDS;Tredjedelsregeln
 TP_CROP_GUIDETYPE;Guidetyp:
 TP_CROP_H;H
 TP_CROP_LABEL;Beskär
+TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;Välj beskärningsområde
 TP_CROP_W;B
 TP_CROP_X;x
@@ -769,6 +774,8 @@ TP_FLATFIELD_BT_HORIZONTAL;Horisontell
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Plattfält
+TP_GAMMA_COMMENT;(utprofilen inaktiverad förutom "default")
+TP_GAMMA_OUTPUT;Gamma ut
 TP_HLREC_CIELAB;CIELab mix
 TP_HLREC_COLOR;Färgspridning
 TP_HLREC_LABEL;Högdageråterställning
@@ -930,10 +937,6 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
-!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
-!HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
-!TP_CROP_PPI;PPI=
-!TP_GAMMA_COMMENT;(output profile disabled except "default")
-!TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
+!TP_GAMMA_SLOP;slope (linear)
