@@ -866,8 +866,10 @@ ZOOMBAR_SMALL;Μικρό
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
-!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_SLOP;slope (linear)
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
 !TP_HSVEQUALIZER3;Lime

@@ -1,3 +1,4 @@
+
 #00 Czech
 #01 20.1.2008: translated by absolution
 #02 21.2.2008: updated by mkyral (typos and some missing strings)
@@ -911,3 +912,13 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!TP_CROP_PPI;PPI=
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
+!TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_SLOP;slope (linear)

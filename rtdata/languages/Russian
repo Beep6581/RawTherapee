@@ -921,8 +921,10 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
-!TP_GAMMA_COMMENT;(output profile disabled except "default")
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_SLOP;slope (linear)
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
