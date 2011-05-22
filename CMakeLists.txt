@@ -11,6 +11,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
+set (CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave empty to use the default suffix, i.e. latesttag)")
+
 # By default, we don't use specific processor target, so  PROC_TARGET_NUMBER is set to 0. If can specify other values to select specific
 # processor targets, which list can be found in ProcessorTargets.cmake.
 set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
@@ -179,6 +181,7 @@ else (AUTOMATED_BUILD_SYSTEM)
     add_custom_target (AboutFile ALL
       COMMAND ${CMAKE_COMMAND}
               -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
+              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
               -DSYSTEM:STRING=Windows
               -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
               -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
@@ -199,6 +202,7 @@ else (AUTOMATED_BUILD_SYSTEM)
     add_custom_target (AboutFile ALL
       COMMAND ${CMAKE_COMMAND}
               -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
+              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
               -DSYSTEM:STRING=Apple
               -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
               -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
@@ -220,6 +224,7 @@ else (AUTOMATED_BUILD_SYSTEM)
     add_custom_target (AboutFile ALL
       COMMAND ${CMAKE_COMMAND}
               -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
+              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
               -DSYSTEM:STRING=Linux
               -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
               -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
