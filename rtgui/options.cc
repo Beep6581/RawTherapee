@@ -51,7 +51,7 @@ void Options::setDefaults () {
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 8;
     saveFormat.tiffUncompressed = true;
-    saveFormat.saveParams = false;
+    saveFormat.saveParams = true;		// was false
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
     saveUsePathTemplate = true;
@@ -59,7 +59,7 @@ void Options::setDefaults () {
     defProfImg = "neutral";
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
-    startupDir = 1;
+    startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
     startupPath = "";
     profilePath = "profiles";
     dirBrowserWidth = 200;
@@ -69,46 +69,48 @@ void Options::setDefaults () {
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
-    historyPanelWidth = 150;
-    lastScale = 4;
+    historyPanelWidth = 230;			// was 150
+    lastScale = 5;						// was 4
     lastCropSize = 1;
     fbOnlyRaw = false;
     fbShowDateTime = true;
     fbShowBasicExif = true;
     fbShowHidden = false;
-    fbArrangement = 0;
-    multiUser = false;
+    fbArrangement = 2;					// was 0
+    multiUser = true;
     version = VERSION;
-    thumbSize = 80;
+    thumbSize = 240;					// was 80
     thumbSizeTab = 80;
     showHistory = true;
-    showFilePanelState = 0;
-    showInfo = false;
-    cropPPI = 300;
+    showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
+    showInfo = true;					// was false
+    cropPPI = 600;						// was 300
     showClippedHighlights = false;
     showClippedShadows = false;
-    highlightThreshold = 254;
-    shadowThreshold = 0;
+    highlightThreshold = 253;			// was 254
+    shadowThreshold = 8;				// was 0
     bgcolor = 0;
-    blinkClipped = true;
+    blinkClipped = false;				// was true
     language = DefaultLanguage;
     lastSaveAsPath = "";
-    theme = "";
-    useSystemTheme = false;
+    overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
+    theme = "Dark";
+    useSystemTheme = true;
     maxThumbnailHeight = 400;
-    maxCacheEntries = 10000;
-    thumbnailFormat = FT_Custom16;
+    maxCacheEntries = 20000;			// was 10000
+    thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
-    saveParamsFile = false;
-    saveParamsCache = true;
-    paramsLoadLocation = PLL_Cache;
-    procQueueEnabled = true;
-    gimpDir = "C:\\Program Files\\GIMP-2.0";
-    psDir = "C:\\Program Files\\Adobe\\Adobe Photoshop CS3";
-    customEditorProg = "start";
+    saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
+    saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
+    paramsLoadLocation = PLL_Input;		// was PLL_Cache
+    procQueueEnabled = false;			// was true
+    gimpDir = "";
+    psDir = "";
+    customEditorProg = "";
     editorToSendTo = 1;
     liveThumbnails = true;
+    favoriteDirs.clear();
     tpOpen.clear ();
     //crvOpen.clear ();
     parseExtensions.clear ();
@@ -123,8 +125,9 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (0.8);
     thumbnailZoomRatios.push_back (1.0);
     overlayedFileNames = true;
+    internalThumbIfUntouched = true; 	// if TRUE, only fast, internal preview images are taken if the image is not edited yet
     showFileNames = true;
-    tabbedUI = false;
+    tabbedUI = true;					// was false;
     multiDisplayMode = 0;
     tunnelMetaData = false;
 
@@ -361,7 +364,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "Theme", theme);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_string  ("General", "Version", VERSION);
-    keyFile.set_boolean ("General", "FirstRun", firstRun);
+    keyFile.set_boolean ("General", "FirstRun", false);
     keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
     keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
     keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
@@ -496,20 +499,65 @@ Glib::ustring Options::cacheBaseDir;
 
 void Options::load () {
 
-    rtdir = Glib::ustring(g_get_user_config_dir ())+"/RawTherapeeAlpha";
-    options.readFromFile (argv0+"/options");
+	// Find the application data path
+
+#ifdef _WIN32
+	/*
+	 * If LOCALAPPDATA exists, RT run on a WinVista/7 system, so we use LOCALAPPDATA as is
+	 * otherwise RT run on a Win2000/XP system, so we rebuild the path like this: %USERPROFILE%\Local Settings\Application Data
+	 *
+	 * Folder redirection is then fully supported on WinVista/7, but not on Win2000/XP
+	 */
+	const gchar* dataPath;
+	Glib::ustring dPath;
+
+	// ->ODUIS: How to make that commented out code work ?
+
+	/*WCHAR path[MAX_PATH] = {0};
+	if (SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, false)) {
+		dPath = path;
+		printf("SHGetSpecialFolderPathW: \"%s\"\n", dPath.c_str());
+	}
+	else {
+		printf("SHGetSpecialFolderPathW: Fail!\n");
+	}*/
+
+	dataPath = g_getenv("LOCALAPPDATA");
+	if (dataPath != NULL)
+		rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+	else {
+		dataPath = g_getenv("USERPROFILE");
+		if (dataPath != NULL)
+			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+	}
+#else
+    rtdir = Glib::ustring(g_get_user_config_dir ()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
+#endif
+
+    // Set the cache folder in RT's base folder
     cacheBaseDir = argv0 + "/cache";
+
+    // Read the global option file (the one located in the application's base folder)
+    options.readFromFile (argv0+"/options");
+
+    // Check if RT is installed in Multi-User mode
     if (options.multiUser) {
+        // Read the user option file (the one located somewhere in the user's home folder)
+    	// Those values supersets those of the global option file
         int r = options.readFromFile (rtdir + "/options");
+        // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
         if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
+        	// Recreate the user's profile folder
             Glib::ustring profdir = rtdir + "/profiles";
             safe_g_mkdir_with_parents (profdir, 511);
+            // Save the option file
             options.saveToFile (rtdir + "/options");
         }
+        // Modify the path of the cache folder to the user's personal folder
 #ifdef _WIN32
         cacheBaseDir = rtdir + "/cache";
 #else
-        cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + "/RawTherapee";
+        cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
 #endif
     }
 
@@ -517,7 +565,7 @@ void Options::load () {
 	// (most likely using simple English).  The next level is the language: for instance, English, French, Chinese, etc.  This file should contain a 
 	// generic translation for all items which differ from default.  Finally there is the locale.  This is region-specific items which differ from the
 	// language file.  These files must be name in the format <Language> (<LC>), where Language is the name of the language which it inherits from,
-	// and LC is the locale code.  Some examples of this would be English (US) (American English), French (FR) (Franch French), French (CA) (Canadian 
+	// and LC is the local code.  Some examples of this would be English (US) (American English), French (FR) (Franch French), French (CA) (Canadian
 	// French), etc.
 	//
 	// Each level will only contain the differences between itself and its parent translation.  For instance, English (UK) or English (CA) may 

@@ -21,6 +21,7 @@
 #include <glib/gstdio.h>
 #include <safekeyfile.h>
 #include <safegtk.h>
+#include <version.h>
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rank(0), inTrash(false), recentlySaved(false),
@@ -100,7 +101,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
     if (safe_file_test(fname,Glib::FILE_TEST_EXISTS)) keyFile.load_from_file (fname); 
 
     keyFile.set_string  ("General", "MD5", md5);
-    keyFile.set_string  ("General", "Version", options.version);
+    keyFile.set_string  ("General", "Version", VERSION); // Application's version
     keyFile.set_boolean ("General", "Supported", supported);
     keyFile.set_integer ("General", "Format", format);
     keyFile.set_integer ("General", "Rank", rank);

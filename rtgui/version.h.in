@@ -6,6 +6,7 @@
 
 #define VERSION "${HG_VERSION}"
 #define TAGDISTANCE ${HG_TAGDISTANCE}
+#define CACHEFOLDERNAME "RawTherapee${CACHE_NAME_SUFFIX}"
 
 #endif
 
