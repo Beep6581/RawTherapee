@@ -1,20 +1,20 @@
 #!/bin/sh
-rm CMakeCache.txt
-rm install_manifest.txt
-rm -R ./CMakeFiles 
-rm -R ./rtengine/CMakeFiles
-rm -R ./rtexif/CMakeFiles
-rm -R ./rtgui/CMakeFiles
-rm -R ./rtdata/CMakeFiles
-rm ./cmake*
-rm ./rtengine/cmake*
-rm ./rtexif/cmake*
-rm ./rtgui/cmake*
-rm ./rtdata/cmake*
-rm ./Makefile
-rm ./rtengine/Makefile
-rm ./rtexif/Makefile
-rm ./rtgui/Makefile
-rm ./rtengine/librtengine.so
-rm ./rtgui/rt
-rm ./rtexif/librtexif.a
+rm -v CMakeCache.txt
+rm -v install_manifest.txt
+rm -vr ./CMakeFiles 
+rm -vr ./rtengine/CMakeFiles
+rm -vr ./rtexif/CMakeFiles
+rm -vr ./rtgui/CMakeFiles
+rm -vr ./rtdata/CMakeFiles
+rm -v ./cmake*
+rm -v ./rtengine/cmake*
+rm -v ./rtexif/cmake*
+rm -v ./rtgui/cmake*
+rm -v ./rtdata/cmake*
+rm -v ./Makefile
+rm -v ./rtengine/Makefile
+rm -v ./rtexif/Makefile
+rm -v ./rtgui/Makefile
+rm -v ./rtengine/librtengine.so
+rm -v ./rtgui/rt
+rm -v ./rtexif/librtexif.a
