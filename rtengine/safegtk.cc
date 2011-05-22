@@ -50,19 +50,22 @@ Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename)
 	return res;
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const std::string& filename)
+Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& filename)
 {
-	Cairo::RefPtr<Cairo::ImageSurface> res;
+  Cairo::RefPtr<Cairo::ImageSurface> res;
 
-  if (!safe_file_test (filename, Glib::FILE_TEST_EXISTS))  {
-  	printf ("ERROR: File \"%s\" not found.\n", filename.c_str());
-  } else	{
+  // files_test need a std::string which (as stated in its proto) but will only work if
+  // we use the Glib::ustring filename !?
+  if (!Glib::file_test (filename, Glib::FILE_TEST_EXISTS))  {
+    printf ("ERROR: (ustring) File \"%s\" not found.\n", filename.c_str());
+  } else {
       try {
-				res = Cairo::ImageSurface::create_from_png (filename);
+        // create_from_png need a std::string converted from UTF8 with safe_locale_from_utf8
+        res = Cairo::ImageSurface::create_from_png (safe_locale_from_utf8(filename));
       } catch (...) {}
-	}
-	
-	return res;
+  }
+
+  return res;
 }
 
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
