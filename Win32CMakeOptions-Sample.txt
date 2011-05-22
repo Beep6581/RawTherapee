@@ -18,8 +18,10 @@ set(OPTION_OMP ON CACHE BOOL "Use OpenMP to speedup the preview and batch proces
 # set WITH_MYFILE_MMAP to OFF if you experience crash with thumbnail creation (it should be slower, but more reliable)
 set(WITH_MYFILE_MMAP ON CACHE BOOL "Use the MMAP mechanism to speedup thumbnail creations")
 
+set(CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave empty to use the default suffix, i.e. latesttag)")
+
 # This line will let you chose the target number, and the associated processor
-set (PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
+set(PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
 
 # If you want to force the target processor name when PROC_TARGET_NUMBER = 0 or 2,
 # uncomment the next line and replace labelWithoutQuotes by its value
