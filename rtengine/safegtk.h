@@ -6,7 +6,7 @@
 #include <giomm.h>
 
 Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename);
-Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const std::string& filename);
+Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& filename);
 
 class FileMTimeInfo {
 
