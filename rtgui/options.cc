@@ -24,7 +24,7 @@
 #include <safekeyfile.h>
 #include <addsetids.h>
 #include <safegtk.h>
-#include <version.h>
+#include "version.h"
 
 Options options;
 Glib::ustring versionString      = VERSION;

@@ -31,7 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <options.h>
-#include <version.h>
+#include "version.h"
 
 #ifndef WIN32
 #include <config.h>
