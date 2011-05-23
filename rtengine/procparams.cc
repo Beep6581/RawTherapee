@@ -22,7 +22,7 @@
 #include <glibmm.h>
 #include <sstream>
 #include <string.h>
-#include <version.h>
+#include "version.h"
 #include <ppversion.h>
 #include <mydiagonalcurve.h>
 #include <myflatcurve.h>
