@@ -176,14 +176,12 @@ int Options::readFromFile (Glib::ustring fname) {
     
 if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "TabbedEditor"))    tabbedUI= keyFile.get_boolean ("General", "TabbedEditor");    
-    if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "home") 
-        startupDir = STARTUPDIR_HOME;
-    else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "current") 
-        startupDir = STARTUPDIR_CURRENT;
-    else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "last") 
-        startupDir = STARTUPDIR_LAST;
-    else
-        startupDir = STARTUPDIR_CUSTOM;
+    if (keyFile.has_key ("General", "StartupDirectory")){
+    	if( keyFile.get_string ("General", "StartupDirectory") == "home")          startupDir = STARTUPDIR_HOME;
+        else if ( keyFile.get_string ("General", "StartupDirectory") == "current") startupDir = STARTUPDIR_CURRENT;
+        else if ( keyFile.get_string ("General", "StartupDirectory") == "last")    startupDir = STARTUPDIR_LAST;
+        else if ( keyFile.get_string ("General", "StartupDirectory") == "custom")  startupDir = STARTUPDIR_CUSTOM;
+    }
         
     if (keyFile.has_key ("General", "StartupPath"))      startupPath     = keyFile.get_string ("General", "StartupPath");
     if (keyFile.has_key ("General", "DateFormat"))       dateFormat      = keyFile.get_string ("General", "DateFormat");
