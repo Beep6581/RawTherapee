@@ -59,6 +59,8 @@ RTWindow::RTWindow ()
     	add (*epanel);
     	show_all ();
 
+        pldBridge=NULL; // No progress listener
+
     	CacheManager* cm = CacheManager::getInstance();
     	Thumbnail* thm= cm->getEntry( argv1 );
     	if(thm){
