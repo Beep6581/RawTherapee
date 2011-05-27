@@ -99,7 +99,7 @@ class RawImageSource : public ImageSource {
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
         void hphd_green          (float** hpmap);
         void correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_to);
-        void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip);
+        void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw);
         int  defTransform        (int tran);
         void rotateLine          (float* line, float** channel, int tran, int i, int w, int h);
         void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
@@ -144,6 +144,7 @@ class RawImageSource : public ImageSource {
 
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
+		static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw);
 
     protected:
         typedef unsigned short ushort;
