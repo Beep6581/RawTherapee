@@ -32,6 +32,8 @@ HLRecovery::HLRecovery () : Gtk::VBox(), FoldableToolPanel(this) {
 	method->append_text (M("TP_HLREC_LUMINANCE"));
 	method->append_text (M("TP_HLREC_CIELAB"));
 	method->append_text (M("TP_HLREC_COLOR"));
+	method->append_text (M("TP_HLREC_BLEND"));
+	
 	method->set_active (0);
 	Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
 	Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
@@ -57,13 +59,15 @@ void HLRecovery::read (const ProcParams* pp, const ParamsEdited* pedited) {
     enaconn.block (false);
     
     if (pedited && !pedited->hlrecovery.method) 
-        method->set_active (3);
+        method->set_active (4);
 	else if (pp->hlrecovery.method=="Luminance")
 		method->set_active (0);
 	else if (pp->hlrecovery.method=="CIELab blending")
 		method->set_active (1);
 	else if (pp->hlrecovery.method=="Color")
 		method->set_active (2);
+	else if (pp->hlrecovery.method=="Blend")
+		method->set_active (3);
 
     lastEnabled = pp->hlrecovery.enabled;
 
@@ -84,6 +88,9 @@ void HLRecovery::write (ProcParams* pp, ParamsEdited* pedited) {
 		pp->hlrecovery.method = "CIELab blending";
 	else if (method->get_active_row_number()==2)
 		pp->hlrecovery.method = "Color";
+	else if (method->get_active_row_number()==3)
+		pp->hlrecovery.method = "Blend";
+		
 }
 
 void HLRecovery::enabledChanged () {
