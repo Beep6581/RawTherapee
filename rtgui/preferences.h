@@ -117,6 +117,9 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbTunnelMetaData;
 	Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
+    Gtk::Entry* txtCustProfBuilderPath;
+
+
     Options moptions;
     sigc::connection tconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn;
     Glib::ustring initialTheme;

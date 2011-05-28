@@ -161,6 +161,39 @@ const ProcParams& Thumbnail::getProcParams () {
     return pparams; // there is no valid pp to return, but we have to return something
 }
 
+// Create default params on demand and returns a new updatable object
+rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate() {
+    // try to load the last saved parameters from the cache or from the paramfile file
+    ProcParams* ldprof = NULL;
+
+    Glib::ustring defProf = getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
+
+    const CacheImageData* cfs=getCacheImageData();
+    if (!options.customProfileBuilder.empty() && !hasProcParams() && cfs && cfs->exifValid) {
+        // For the filename etc. do NOT use streams, since they are not UTF8 safe
+        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
+        + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
+
+        // ustring doesn't know int etc formatting, so take these via (unsafe) stream
+        std::ostringstream strm;
+        strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
+        strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
+        strm << cfs->lens << Glib::ustring("\" \"") << cfs->camera << Glib::ustring("\"");
+ 
+        bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
+
+        // Now they SHOULD be there, so try to load them
+        if (success) loadProcParams();
+    }
+
+    if (hasProcParams()) {
+        ldprof = new ProcParams ();
+        *ldprof = getProcParams ();
+    }
+
+    return ldprof;
+}
+
 void Thumbnail::loadProcParams () {
 	// TODO: Check for Linux
 	#ifdef WIN32

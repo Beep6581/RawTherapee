@@ -568,6 +568,27 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     fdg->add (*dgvb);
     mvbsd->pack_start (*fdg, Gtk::PACK_SHRINK, 4);
 
+
+    // Custom profile builder box
+    Gtk::Frame* cpfrm = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CUSTPROFBUILD")) );
+
+    Gtk::HBox* cphb = Gtk::manage( new Gtk::HBox () );
+    cphb->set_border_width (4);
+    cphb->set_spacing (4);
+
+    Gtk::Label* cplab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUSTPROFBUILDPATH")+":") );
+    cphb->pack_start (*cplab, Gtk::PACK_SHRINK,4);
+
+    txtCustProfBuilderPath = Gtk::manage( new Gtk::Entry () );
+    txtCustProfBuilderPath->set_tooltip_markup (M("PREFERENCES_CUSTPROFBUILDHINT"));
+    cphb->set_tooltip_markup (M("PREFERENCES_CUSTPROFBUILDHINT"));
+    cphb->pack_start (*txtCustProfBuilderPath);
+    
+    cpfrm->add (*cphb);
+
+    mvbsd->pack_start (*cpfrm, Gtk::PACK_SHRINK, 4);
+
+
     mvbsd->set_border_width (4);
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
@@ -842,6 +863,7 @@ void Preferences::storePreferences () {
     else if (edOther->get_active ())
         moptions.editorToSendTo = 3;
 
+    moptions.customProfileBuilder = txtCustProfBuilderPath->get_text();
 
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
 	moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
@@ -954,6 +976,8 @@ void Preferences::fillPreferences () {
     psDir->set_filename (moptions.psDir); 
 #endif	
     editorToSendTo->set_text (moptions.customEditorProg);
+
+    txtCustProfBuilderPath->set_text(moptions.customProfileBuilder);
 
     if (moptions.startupDir==STARTUPDIR_CURRENT) 
         sdcurrent->set_active ();
