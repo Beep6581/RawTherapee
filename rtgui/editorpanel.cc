@@ -383,37 +383,14 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     navigator->previewWindow->setPreviewHandler (previewHandler);
     navigator->previewWindow->setImageArea (iarea->imageArea);
 
-    // try to load the last saved parameters from the cache or from the paramfile file
-    ProcParams* ldprof = NULL;
-
-    Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
-
-    const CacheImageData* cfs=openThm->getCacheImageData();
-    if (!options.customProfileBuilder.empty() && !openThm->hasProcParams() && cfs && cfs->exifValid) {
-        // For the filename etc. do NOT use streams, since they are not UTF8 safe
-        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
-        + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
-
-        // ustring doesn't know int etc formatting, so take these via (unsafe) stream
-        std::ostringstream strm;
-        strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
-        strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
-        strm << cfs->lens << Glib::ustring("\" \"") << cfs->camera << Glib::ustring("\"");
- 
-        bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
-
-        // Now they SHOULD be there, so try to load them
-        if (success) openThm->loadProcParams();
-    }
-
-    if (openThm->hasProcParams()) {
-        ldprof = new ProcParams ();
-        *ldprof = openThm->getProcParams ();
-    }
-
     rtengine::ImageSource* is=isrc->getImageSource();
     is->setProgressListener( this );
+
+    // try to load the last saved parameters from the cache or from the paramfile file
+    ProcParams* ldprof = openThm->createProcParamsForUpdate();  // will be freed by initProfile
+
     // initialize profile
+    Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof, NULL);
 
     openThm->addThumbnailListener (this);

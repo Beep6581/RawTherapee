@@ -519,6 +519,9 @@ PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 PREFERENCES_CLIPPINGIND;Clipping indication
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
+PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 PREFERENCES_DARKFRAME;Dark frame
 PREFERENCES_DARKFRAMEFOUND;Found
