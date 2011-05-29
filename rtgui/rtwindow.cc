@@ -73,7 +73,7 @@ RTWindow::RTWindow ()
 		mainNB->set_scrollable (true);
 		mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
-        fpanel = Gtk::manage ( new FilePanel () );
+    fpanel =  new FilePanel () ;
 		fpanel->setParent (this);
 
 		// decorate tab

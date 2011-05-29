@@ -195,14 +195,12 @@ int Options::readFromFile (Glib::ustring fname) {
     
 if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "TabbedEditor"))    tabbedUI= keyFile.get_boolean ("General", "TabbedEditor");    
-    if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "home") 
-        startupDir = STARTUPDIR_HOME;
-    else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "current") 
-        startupDir = STARTUPDIR_CURRENT;
-    else if (keyFile.has_key ("General", "StartupDirectory") && keyFile.get_string ("General", "StartupDirectory") == "last") 
-        startupDir = STARTUPDIR_LAST;
-    else
-        startupDir = STARTUPDIR_CUSTOM;
+    if (keyFile.has_key ("General", "StartupDirectory")){
+    	if( keyFile.get_string ("General", "StartupDirectory") == "home")          startupDir = STARTUPDIR_HOME;
+        else if ( keyFile.get_string ("General", "StartupDirectory") == "current") startupDir = STARTUPDIR_CURRENT;
+        else if ( keyFile.get_string ("General", "StartupDirectory") == "last")    startupDir = STARTUPDIR_LAST;
+        else if ( keyFile.get_string ("General", "StartupDirectory") == "custom")  startupDir = STARTUPDIR_CUSTOM;
+    }
         
     if (keyFile.has_key ("General", "StartupPath"))      startupPath     = keyFile.get_string ("General", "StartupPath");
     if (keyFile.has_key ("General", "DateFormat"))       dateFormat      = keyFile.get_string ("General", "DateFormat");
@@ -513,24 +511,28 @@ void Options::load () {
 	 *
 	 * Folder redirection is then fully supported on WinVista/7, but not on Win2000/XP
 	 */
+	const gchar* dataPath;
+	Glib::ustring dPath;
 
-	WCHAR path[MAX_PATH];
+	// ->ODUIS: How to make that commented out code work ?
+
+	/*WCHAR path[MAX_PATH] = {0};
 	if (SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, false)) {
-        gchar* pathUTF8=g_utf16_to_utf8((const gunichar2*)path,-1,NULL,NULL,NULL);
-		rtdir = Glib::ustring(pathUTF8) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
-        g_free(pathUTF8);
+		dPath = path;
+		printf("SHGetSpecialFolderPathW: \"%s\"\n", dPath.c_str());
 	}
 	else {
-	    // Should never fail, but old alternative way as backup
-        const gchar* dataPath = g_getenv("LOCALAPPDATA");
-	    if (dataPath != NULL)
-		    rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
-	    else {
-		    dataPath = g_getenv("USERPROFILE");
-		    if (dataPath != NULL)
-			    rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
-	    }
-    }
+		printf("SHGetSpecialFolderPathW: Fail!\n");
+	}*/
+
+	dataPath = g_getenv("LOCALAPPDATA");
+	if (dataPath != NULL)
+		rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+	else {
+		dataPath = g_getenv("USERPROFILE");
+		if (dataPath != NULL)
+			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+	}
 #else
     rtdir = Glib::ustring(g_get_user_config_dir ()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
 #endif

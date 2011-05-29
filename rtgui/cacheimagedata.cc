@@ -21,7 +21,7 @@
 #include <glib/gstdio.h>
 #include <safekeyfile.h>
 #include <safegtk.h>
-#include "version.h"
+#include <version.h>
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
