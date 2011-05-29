@@ -54,6 +54,19 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*Gtk::manage(rank[4] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK4"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(rank[5] = new Gtk::MenuItem (M("FILEBROWSER_POPUPRANK5"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    
+    pmenu->attach (*Gtk::manage(colorlabel[0] = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCOLORLABEL0"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(colorlabel[1] = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCOLORLABEL1"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(colorlabel[2] = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCOLORLABEL2"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(colorlabel[3] = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCOLORLABEL3"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(colorlabel[4] = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCOLORLABEL4"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(colorlabel[5] = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCOLORLABEL5"))), 0, 1, p, p+1); p++;
+
+    for (int i=1; i<=5; i++){//set color label images
+    	colorlabel[i]->set_image(*Gtk::manage(new Gtk::Image (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",i,".png"))));
+    }
+        
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(trash = new Gtk::MenuItem (M("FILEBROWSER_POPUPTRASH"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(untrash = new Gtk::MenuItem (M("FILEBROWSER_POPUPUNTRASH"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
@@ -89,7 +102,10 @@ FileBrowser::FileBrowser ()
 
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));    
     for (int i=0; i<6; i++)
-        rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));    
+        rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
+    for (int i=0; i<6; i++)
+    	colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
+
     trash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), trash));    
     untrash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), untrash));    
     develop->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), develop));    
@@ -237,6 +253,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
     // add button set to the thumbbrowserentry
     entry->addButtonSet (new FileThumbnailButtonSet (entry));
     entry->getThumbButtonSet()->setRank (entry->thumbnail->getRank());
+    entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
     entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage()==1);
     entry->getThumbButtonSet()->setButtonListener (this);
     entry->resize (getCurrentThumbSize());
@@ -340,7 +357,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         if (m==rank[i]) {
             rankingRequested (mselected, i);
             return;
-        }       
+        }
+    for (int i=0; i<6; i++)
+        if (m==colorlabel[i]) {
+            colorlabelRequested (mselected, i);
+            return;
+        }
     if (m==open) {
         std::vector<Thumbnail*> entries;
         for (int i=0; i<mselected.size(); i++)
@@ -633,9 +655,9 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
     
     FileBrowserEntry* entry = (FileBrowserEntry*)entryb;
     // return false if basic filter settings are not satisfied
-    if (filter.showRanked[entry->thumbnail->getRank()]==false || (entry->thumbnail->getStage()==1 && !filter.showTrash) || (entry->thumbnail->getStage()==0 && !filter.showNotTrash))
+    if (filter.showRanked[entry->thumbnail->getRank()]==false || filter.showCLabeled[entry->thumbnail->getColorLabel()]==false || (entry->thumbnail->getStage()==1 && !filter.showTrash) || (entry->thumbnail->getStage()==0 && !filter.showNotTrash))
         return false;
-    
+
     // check exif filter
     const CacheImageData* cfs = entry->thumbnail->getCacheImageData();
     double tol = 0.01;
@@ -662,11 +684,17 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
 void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
     for (int i=0; i<tbe.size(); i++) {
-        if (tbe[i]->thumbnail->getStage()==1)
+    	// try to load the last saved parameters from the cache or from the paramfile file
+    	tbe[i]->thumbnail->createProcParamsForUpdate();  // this can execute customprofilebuilder to generate param file
+
+    	// no need to notify listeners as item goes to trash, likely to be deleted
+
+    	if (tbe[i]->thumbnail->getStage()==1)
             continue;               
         tbe[i]->thumbnail->setStage (1);
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
+            tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
             tbe[i]->getThumbButtonSet()->setInTrash (true);
             tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
         }
@@ -678,11 +706,14 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
     for (int i=0; i<tbe.size(); i++) {
+    	// if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
+
         if (tbe[i]->thumbnail->getStage()==0)
             continue;
         tbe[i]->thumbnail->setStage (0);
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
+            tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
             tbe[i]->getThumbButtonSet()->setInTrash (false);
             tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
         }
@@ -694,10 +725,36 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank) {
 
     for (int i=0; i<tbe.size(); i++) {
+    	// try to load the last saved parameters from the cache or from the paramfile file
+    	tbe[i]->thumbnail->createProcParamsForUpdate();  // this can execute customprofilebuilder to generate param file
+
+    	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
+    	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+
         tbe[i]->thumbnail->setRank (rank);
         tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+        //TODO? - should update pparams instead?
+
         if (tbe[i]->getThumbButtonSet())
                 tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
+    }
+    applyFilter (filter);
+}
+
+void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int colorlabel) {
+
+    for (int i=0; i<tbe.size(); i++) {
+    	// try to load the last saved parameters from the cache or from the paramfile file
+    	tbe[i]->thumbnail->createProcParamsForUpdate();  // this can execute customprofilebuilder to generate param file
+
+    	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
+    	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+
+        tbe[i]->thumbnail->setColorLabel (colorlabel);
+        tbe[i]->thumbnail->updateCache(); // needed to save the colorlabel to disk
+        //TODO? - should update pparams instead?
+        if (tbe[i]->getThumbButtonSet())
+                tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
     }
     applyFilter (filter);
 }
@@ -709,7 +766,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
         tbe.push_back ((FileBrowserEntry*)actionData);
         rankingRequested (tbe, actionCode);
     }
-    else if (actionCode==6 && tbl) { // to processin queue
+    else if (actionCode==6 && tbl) { // to processing queue
         std::vector<FileBrowserEntry*> tbe;
         tbe.push_back ((FileBrowserEntry*)actionData);
         tbl->developRequested (tbe);

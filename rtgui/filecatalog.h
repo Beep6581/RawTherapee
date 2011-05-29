@@ -73,16 +73,22 @@ class FileCatalog : public Gtk::VBox,
 
         Gtk::HBox* buttonBar;
         Gtk::HBox* buttonBar2;
+        Gtk::HBox* fltrRankbox;
+        Gtk::HBox* fltrLabelbox;
+        Gtk::VBox* fltrVbox1;
         Gtk::ToggleButton* tbLeftPanel_1;
         Gtk::ToggleButton* tbRightPanel_1;
-        Gtk::ToggleButton* bDir;
+        Gtk::ToggleButton* bFilterClear;
         Gtk::ToggleButton* bUnRanked;
         Gtk::ToggleButton* bRank[5];
+        Gtk::ToggleButton* bUnCLabeled;
+        Gtk::ToggleButton* bCLabel[5];//color label
         Gtk::ToggleButton* bTrash;
-        Gtk::ToggleButton* categoryButtons[8];
+        Gtk::ToggleButton* categoryButtons[14];
         Gtk::ToggleButton* exifInfo;
-        sigc::connection bCateg[8];
+        sigc::connection bCateg[14];
         Gtk::Image* iranked[5], *igranked[5];
+        Gtk::Image* iCLabeled[5], *igCLabeled[5];
         Gtk::Image *iTrashEmpty, *iTrashFull;
         Gtk::Image *iRightArrow_red, *iRightArrow;
         Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;
@@ -90,8 +96,8 @@ class FileCatalog : public Gtk::VBox,
         Gtk::Button* buttonBrowsePath;
         sigc::connection BrowsePathconn;
         
-        double hScrollPos[8];
-        double vScrollPos[8];
+        double hScrollPos[14];
+        double vScrollPos[14];
         int lastScrollPos;
 
         Gtk::VBox* trashButtonBox;

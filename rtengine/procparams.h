@@ -466,6 +466,9 @@ class ProcParams {
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
         std::vector<ExifPair>   exif;            ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair>   iptc;            ///< The IPTC tags and values to be saved to the output image
+        char                    rank;            ///< Custom image quality ranking
+        char                    colorlabel;      ///< Custom color label
+        bool                    inTrash;         ///< Marks deleted image
         Glib::ustring appVersion;                ///< Version of the application that generated the parameters
         int ppVersion;                           ///< Version of the PP file from which the parameters have been read
 

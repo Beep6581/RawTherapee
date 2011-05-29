@@ -31,8 +31,8 @@ class CacheImageData {
         Glib::ustring  version;
         bool  supported;
         ThFileType  format;
-        char  rank;
-        bool  inTrash;
+        char  rankOld; // old implementation of rank
+        bool  inTrashOld; // old implementation of inTrash
         bool  recentlySaved;
 
         // time/date info

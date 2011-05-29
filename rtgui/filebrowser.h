@@ -53,6 +53,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
   protected:
 
     Gtk::MenuItem* rank[6];
+    Gtk::ImageMenuItem* colorlabel[6];
     Gtk::MenuItem* trash;
     Gtk::MenuItem* untrash;
     Gtk::MenuItem* develop;
@@ -95,6 +96,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
     void rankingRequested   (std::vector<FileBrowserEntry*> tbe, int rank);
+    void colorlabelRequested   (std::vector<FileBrowserEntry*> tbe, int colorlabel);
     void notifySelectionListener ();
     
     type_trash_changed m_trash_changed;

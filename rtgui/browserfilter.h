@@ -25,8 +25,10 @@ class BrowserFilter {
 
     public:
         bool showRanked[6];
+        bool showCLabeled[6];
         bool showTrash;
         bool showNotTrash;
+        bool showEdited[2];
         
         bool exifFilterEnabled;
         ExifFilterSettings exifFilter;

@@ -254,6 +254,10 @@ void ProcParams::setDefaults () {
 
     exif.clear ();
     iptc.clear ();
+
+    rank = 0;
+    colorlabel = 0;
+    inTrash = false;
     
     ppVersion = PPVERSION;
 }
@@ -264,6 +268,10 @@ int ProcParams::save (Glib::ustring fname) const {
 
     keyFile.set_string  ("Version", "AppVersion", APPVERSION);
     keyFile.set_integer ("Version", "Version",    PPVERSION);
+
+    keyFile.set_integer ("General", "Rank",     rank);
+    keyFile.set_integer ("General", "ColorLabel",  colorlabel);
+    keyFile.set_boolean ("General", "InTrash",  inTrash);
 
     // save tonecurve:
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
@@ -533,6 +541,12 @@ appVersion = APPVERSION;
 if (keyFile.has_group ("Version")) {    
     if (keyFile.has_key ("Version", "AppVersion")) appVersion = keyFile.get_string  ("Version", "AppVersion");
     if (keyFile.has_key ("Version", "Version"))    ppVersion  = keyFile.get_integer ("Version", "Version");
+}
+
+if (keyFile.has_group ("General")) {
+    if (keyFile.has_key ("General", "Rank"))        rank    = keyFile.get_integer ("General", "Rank");
+    if (keyFile.has_key ("General", "ColorLabel"))  colorlabel  = keyFile.get_integer ("General", "ColorLabel");
+    if (keyFile.has_key ("General", "InTrash"))     inTrash = keyFile.get_boolean ("General", "InTrash");
 }
 
 if (keyFile.has_group ("Exposure")) {    
