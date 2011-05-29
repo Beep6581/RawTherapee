@@ -87,6 +87,8 @@ class Thumbnail {
         void              clearProcParams (int whoClearedIt=-1);
         void              loadProcParams ();
 
+        void              notifylisterners_procParamsChanged(int whoChangedIt);
+
 		bool              isQuick() { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
 		bool              isPParamsValid() { return pparamsValid; }
         bool              isRecentlySaved ();
@@ -117,11 +119,14 @@ class Thumbnail {
         const CacheImageData* getCacheImageData() { return &cfs; }
         std::string     getMD5   () { return cfs.md5; }
 
-        int             getRank  () { return cfs.rank; }
-        void            setRank  (int rank) { cfs.rank = rank;  }
+        int             getRank  () { return pparams.rank; }
+        void            setRank  (int rank) { if (pparams.rank != rank) { pparams.rank = rank; pparamsValid = true; } }
 
-        int             getStage () { return cfs.inTrash; }
-        void            setStage (int stage) { cfs.inTrash = stage;  }
+        int             getColorLabel  () { return pparams.colorlabel; }
+        void            setColorLabel  (int colorlabel) { if (pparams.colorlabel != colorlabel) { pparams.colorlabel = colorlabel; pparamsValid = true; } }
+
+        int             getStage () { return pparams.inTrash; }
+        void            setStage (int stage) { if (pparams.inTrash != stage) { pparams.inTrash = stage; pparamsValid = true; } }
 
         void            addThumbnailListener (ThumbnailListener* tnl);
         void            removeThumbnailListener (ThumbnailListener* tnl);

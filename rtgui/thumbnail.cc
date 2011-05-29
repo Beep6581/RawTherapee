@@ -42,7 +42,19 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     loadProcParams ();
     _loadThumbnail ();
     generateExifDateTimeStrings ();
- 
+
+    if (cfs.rankOld >= 0){
+        // rank and inTrash were found in cache (old style), move them over to pparams
+
+        // try to load the last saved parameters from the cache or from the paramfile file
+        createProcParamsForUpdate(); // this can execute customprofilebuilder to generate param file
+
+        // TODO? should we call notifylisterners_procParamsChanged here?
+
+        setRank(cfs.rankOld);
+        setStage(cfs.inTrashOld);
+    }
+
  	delete tpp;
  	tpp = 0;
 }
@@ -194,6 +206,11 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate() {
     return ldprof;
 }
 
+void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
+	for (int i=0; i<listeners.size(); i++)
+		listeners[i]->procParamsChanged (this, whoChangedIt);
+}
+
 void Thumbnail::loadProcParams () {
 	// TODO: Check for Linux
 	#ifdef WIN32
@@ -220,26 +237,62 @@ void Thumbnail::loadProcParams () {
 }
 
 void Thumbnail::clearProcParams (int whoClearedIt) {
+
+/*  Clarification on current "clear profile" functionality:
+    a. if rank/colorlabel/inTrash are NOT set, 
+    the "clear profile" will delete the pp3 file (as before).
+
+    b. if any of the rank/colorlabel/inTrash ARE set, 
+    the "clear profile" will lead to execution of ProcParams::setDefaults 
+    (the CPB is NOT called) to set the params values and will preserve 
+    rank/colorlabel/inTrash in the param file. */
+    
 	// TODO: Check for Linux
 	#ifdef WIN32
 	Glib::Mutex::Lock lock(mutex);
 	#endif
 
+    // preserve rank, colorlabel and inTrash across clear
+    int rank = getRank();
+    int colorlabel = getColorLabel();
+    int inTrash = getStage();
+
+
     cfs.recentlySaved = false;
     pparamsValid = false;
     needsReProcessing = true;
-    // remove param file from cache
-    Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
-    if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
-        safe_g_remove (fname_);
-    // remove param file located next to the file
-//    fname_ = removeExtension(fname) + paramFileExtension;
-    fname_ = fname + paramFileExtension;
-    if (safe_file_test(fname_, Glib::FILE_TEST_EXISTS))
-        safe_g_remove (fname_);
-    fname_ = removeExtension(fname) + paramFileExtension;
-    if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
-        safe_g_remove (fname_);
+
+    //TODO: run though customprofilebuilder?
+    // probably not as this is the only option to set param values to default
+
+    // reset the params to defaults
+    pparams.setDefaults();
+
+    // and restore rank and inTrash
+    setRank(rank);
+    setColorLabel(colorlabel);
+    setStage(inTrash);
+
+    // params could get validated by rank/inTrash values restored above
+    if (pparamsValid)
+    {
+        updateCache();
+    }
+    else
+    {
+        // remove param file from cache
+        Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
+        if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
+            safe_g_remove (fname_);
+        // remove param file located next to the file
+//        fname_ = removeExtension(fname) + paramFileExtension;
+        fname_ = fname + paramFileExtension;
+        if (safe_file_test(fname_, Glib::FILE_TEST_EXISTS))
+            safe_g_remove (fname_);
+        fname_ = removeExtension(fname) + paramFileExtension;
+        if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
+            safe_g_remove (fname_);
+    }
 
     for (int i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
@@ -259,9 +312,19 @@ void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool upda
     if (pparams!=pp) 
         cfs.recentlySaved = false;
 
+    // do not update rank, colorlabel and inTrash
+    int rank = getRank();
+    int colorlabel = getColorLabel();
+    int inTrash = getStage();
+
     pparams = pp;
     pparamsValid = true;
     needsReProcessing = true;
+
+    setRank(rank);
+    setColorLabel(colorlabel);
+    setStage(inTrash);
+
     if (updateCacheNow)
         updateCache ();
 

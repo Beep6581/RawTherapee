@@ -24,7 +24,7 @@
 #include "version.h"
 
 CacheImageData::CacheImageData () 
-    : md5(""), supported(false), format(FT_Invalid), rank(0), inTrash(false), recentlySaved(false),
+    : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
     timeValid(false), exifValid(false), thumbImgType(0) {
 }
 
@@ -41,8 +41,8 @@ int CacheImageData::load (const Glib::ustring& fname) {
             if (keyFile.has_key ("General", "Version"))         version     = keyFile.get_string ("General", "Version");
             if (keyFile.has_key ("General", "Supported"))       supported   = keyFile.get_boolean ("General", "Supported");
             if (keyFile.has_key ("General", "Format"))          format      = (ThFileType)keyFile.get_integer ("General", "Format");
-            if (keyFile.has_key ("General", "Rank"))            rank        = keyFile.get_integer ("General", "Rank");
-            if (keyFile.has_key ("General", "InTrash"))         inTrash     = keyFile.get_boolean ("General", "InTrash");
+            if (keyFile.has_key ("General", "Rank"))            rankOld     = keyFile.get_integer ("General", "Rank");
+            if (keyFile.has_key ("General", "InTrash"))         inTrashOld  = keyFile.get_boolean ("General", "InTrash");
             if (keyFile.has_key ("General", "RecentlySaved"))   recentlySaved = keyFile.get_boolean ("General", "RecentlySaved");
         }
 
@@ -104,9 +104,11 @@ int CacheImageData::save (const Glib::ustring& fname) {
     keyFile.set_string  ("General", "Version", VERSION); // Application's version
     keyFile.set_boolean ("General", "Supported", supported);
     keyFile.set_integer ("General", "Format", format);
-    keyFile.set_integer ("General", "Rank", rank);
-    keyFile.set_boolean ("General", "InTrash", inTrash);
     keyFile.set_boolean ("General", "RecentlySaved", recentlySaved);
+
+    // remove the old implementation of Rank and InTrash from cache
+    if (keyFile.has_key ("General", "Rank")) keyFile.remove_key("General", "Rank");
+    if (keyFile.has_key ("General", "InTrash")) keyFile.remove_key("General", "InTrash");
 
     if (timeValid) { 
         keyFile.set_integer ("DateTime", "Year", year);

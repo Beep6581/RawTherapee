@@ -21,6 +21,8 @@
 BrowserFilter::BrowserFilter () : exifFilterEnabled (false) {
 
     showTrash = true;
-    for (int i=0; i<6; i++)
+    for (int i=0; i<6; i++){
         showRanked[i] = true;
+        showCLabeled[i] = true;
+    }
 }
