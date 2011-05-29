@@ -26,6 +26,11 @@
 #include <safegtk.h>
 #include "version.h"
 
+#ifdef WIN32
+#include <windows.h>
+#include <Shlobj.h>
+#endif
+
 Options options;
 Glib::ustring versionString      = VERSION;
 Glib::ustring paramFileExtension = ".pp3";
@@ -508,28 +513,24 @@ void Options::load () {
 	 *
 	 * Folder redirection is then fully supported on WinVista/7, but not on Win2000/XP
 	 */
-	const gchar* dataPath;
-	Glib::ustring dPath;
 
-	// ->ODUIS: How to make that commented out code work ?
-
-	/*WCHAR path[MAX_PATH] = {0};
+	WCHAR path[MAX_PATH];
 	if (SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, false)) {
-		dPath = path;
-		printf("SHGetSpecialFolderPathW: \"%s\"\n", dPath.c_str());
+        gchar* pathUTF8=g_utf16_to_utf8((const gunichar2*)path,-1,NULL,NULL,NULL);
+		rtdir = Glib::ustring(pathUTF8) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+        g_free(pathUTF8);
 	}
 	else {
-		printf("SHGetSpecialFolderPathW: Fail!\n");
-	}*/
-
-	dataPath = g_getenv("LOCALAPPDATA");
-	if (dataPath != NULL)
-		rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
-	else {
-		dataPath = g_getenv("USERPROFILE");
-		if (dataPath != NULL)
-			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
-	}
+	    // Should never fail, but old alternative way as backup
+        const gchar* dataPath = g_getenv("LOCALAPPDATA");
+	    if (dataPath != NULL)
+		    rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+	    else {
+		    dataPath = g_getenv("USERPROFILE");
+		    if (dataPath != NULL)
+			    rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+	    }
+    }
 #else
     rtdir = Glib::ustring(g_get_user_config_dir ()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
 #endif
