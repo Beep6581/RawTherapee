@@ -359,7 +359,7 @@ void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {
 
 }
 
-void LCurve::updateCurveBackgroundHistogram (unsigned* hist) {
+void LCurve::updateCurveBackgroundHistogram (LUTu & hist) {
     
     lshape->updateBackgroundHistogram (hist);
 }

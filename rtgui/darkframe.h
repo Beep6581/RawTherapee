@@ -23,6 +23,12 @@
 #include <toolpanel.h>
 #include <rawimage.h>
 
+class DFProvider {
+  public:
+    virtual rtengine::RawImage* getDF() {}
+    // add other info here
+};
+
 class DarkFrame : public Gtk::VBox, public FoldableToolPanel {
 
 protected:
@@ -36,6 +42,7 @@ protected:
     Gtk::CheckButton* dfAuto;
     bool dfChanged;
 	bool lastDFauto;
+    DFProvider *dfp;
 	sigc::connection dfautoconn, dfFile;
 
 public:
@@ -48,6 +55,7 @@ public:
     void darkFrameChanged ();
     void darkFrameReset   ();
     void dfAutoChanged    ();
+    void setDFProvider    (DFProvider* p) { dfp = p; };
 };
 
 #endif

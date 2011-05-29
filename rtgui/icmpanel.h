@@ -20,6 +20,8 @@
 #define _ICMPANEL_
 
 #include <gtkmm.h>
+#include <adjuster.h>
+
 #include <toolpanel.h>
 
 class ICMPanelListener {
@@ -28,15 +30,25 @@ class ICMPanelListener {
         virtual void saveInputICCReference (Glib::ustring fname) {}
 };
 
-class ICMPanel : public Gtk::VBox, public FoldableToolPanel {
+class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
+	protected:
+	Adjuster* g_ampos;
+	Adjuster* s_lpos;
+	bool lastgamfree;
+    sigc::connection  gamcsconn; 
+	//bool freegamma;
     private:
-        Gtk::RadioButton*  inone;
+        Gtk::CheckButton*  freegamma;
+    	Gtk::RadioButton*  inone;
+		
         Gtk::RadioButton*  iembedded;
         Gtk::RadioButton*  icamera;
         Gtk::RadioButton*  ifromfile;
         Gtk::CheckButton*  igamma;
         Gtk::ComboBoxText* wnames;
+        Gtk::ComboBoxText* wgamma;
+		
         Gtk::ComboBoxText* onames;
         Gtk::RadioButton*  ofromdir;
         Gtk::RadioButton*  ofromfile;
@@ -54,11 +66,14 @@ class ICMPanel : public Gtk::VBox, public FoldableToolPanel {
         void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
         void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
         void setBatchMode   (bool batchMode);
-        
+		void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+        void adjusterChanged (Adjuster* a, double newval);
+  
         void wpChanged ();
         void opChanged ();
         void ipChanged ();
-
+        void gpChanged ();
+		void GamChanged ();
         void ipSelectionChanged ();
 
         void setRaw (bool raw);

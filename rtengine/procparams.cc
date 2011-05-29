@@ -22,7 +22,7 @@
 #include <glibmm.h>
 #include <sstream>
 #include <string.h>
-#include <version.h>
+#include "version.h"
 #include <ppversion.h>
 #include <mydiagonalcurve.h>
 #include <myflatcurve.h>
@@ -35,6 +35,18 @@ namespace rtengine {
 namespace procparams {
 
 const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
+const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
+
+// Maps crop to resized width (e.g. smaller previews)
+void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const {
+    x1 = 0, x2 = resizedWidth, y1 = 0, y2 = resizedHeight;
+    if (enabled) {
+        x1 = MIN(resizedWidth-1,  MAX(0, x / scale));
+        y1 = MIN(resizedHeight-1, MAX(0, y / scale));   
+        x2 = MIN(resizedWidth,    MAX(0, (x+w) / scale)); 
+        y2 = MIN(resizedHeight,   MAX(0, (y+h) / scale));
+    }
+}
 
 ProcParams::ProcParams () { 
 
@@ -126,6 +138,10 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.luma          = 10;
     dirpyrDenoise.chroma        = 10;
     dirpyrDenoise.gamma         = 2.0;
+    dirpyrDenoise.lumcurve.clear ();
+    dirpyrDenoise.lumcurve.push_back (DCT_Linear);
+    dirpyrDenoise.chromcurve.clear ();
+    dirpyrDenoise.chromcurve.push_back (DCT_Linear);
     
     sh.enabled       = false;
     sh.hq            = false;
@@ -194,7 +210,11 @@ void ProcParams::setDefaults () {
     icm.gammaOnInput = false;
     icm.working = "sRGB";
     icm.output  = "sRGB";
-    
+    icm.gamma  = "default";
+ 	icm.gampos =2.22;
+	icm.slpos=4.5;
+    icm.freegamma = false;
+  
     equalizer.enabled = false;    
     for(int i = 0; i < 8; i ++)
     {
@@ -213,10 +233,14 @@ void ProcParams::setDefaults () {
     hsvequalizer.vcurve.clear ();
     hsvequalizer.vcurve.push_back (FCT_Linear);
     raw.df_autoselect = false;
+    raw.ff_AutoSelect = false;                                      
+    raw.ff_BlurRadius = 32;                                         
+    raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
     raw.cared = 0;
     raw.cablue = 0;
     raw.ca_autocorrect = false;
     raw.hotdeadpix_filt = false;
+    raw.hotdeadpix_thresh = 40;
     raw.linenoise = 0;
     raw.greenthresh = 0;
     raw.ccSteps = 1;
@@ -230,6 +254,10 @@ void ProcParams::setDefaults () {
 
     exif.clear ();
     iptc.clear ();
+
+    rank = 0;
+    colorlabel = 0;
+    inTrash = false;
     
     ppVersion = PPVERSION;
 }
@@ -240,6 +268,10 @@ int ProcParams::save (Glib::ustring fname) const {
 
     keyFile.set_string  ("Version", "AppVersion", APPVERSION);
     keyFile.set_integer ("Version", "Version",    PPVERSION);
+
+    keyFile.set_integer ("General", "Rank",     rank);
+    keyFile.set_integer ("General", "ColorLabel",  colorlabel);
+    keyFile.set_boolean ("General", "InTrash",  inTrash);
 
     // save tonecurve:
     keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
@@ -325,6 +357,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
 	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
+    Glib::ArrayHandle<double> lumcurve = dirpyrDenoise.lumcurve;
+    Glib::ArrayHandle<double> chromcurve = dirpyrDenoise.chromcurve;
+    keyFile.set_double_list("Directional Pyramid Denoising", "LumCurve", lumcurve);
+    keyFile.set_double_list("Directional Pyramid Denoising", "ChromCurve", chromcurve);
 
     // save lumaDenoise
     keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
@@ -403,6 +439,10 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("Color Management", "ApplyGammaBeforeInputProfile",   icm.gammaOnInput);
     keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
+    keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
+    keyFile.set_boolean  ("Color Management", "Freegamma",  icm.freegamma);	
+    keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
+    keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
     
     // save wavelet equalizer parameters
     keyFile.set_boolean ("Equalizer", "Enabled", equalizer.enabled);
@@ -435,10 +475,15 @@ int ProcParams::save (Glib::ustring fname) const {
     // save RAW parameters
     keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
     keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
+    keyFile.set_string  ("RAW", "FlatFieldFile", raw.ff_file );
+    keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
+    keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
+    keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );     
     keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
     keyFile.set_double	("RAW", "CARed", raw.cared );
     keyFile.set_double	("RAW", "CABlue", raw.cablue );
     keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
     keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
     keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
     keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
@@ -496,6 +541,12 @@ appVersion = APPVERSION;
 if (keyFile.has_group ("Version")) {    
     if (keyFile.has_key ("Version", "AppVersion")) appVersion = keyFile.get_string  ("Version", "AppVersion");
     if (keyFile.has_key ("Version", "Version"))    ppVersion  = keyFile.get_integer ("Version", "Version");
+}
+
+if (keyFile.has_group ("General")) {
+    if (keyFile.has_key ("General", "Rank"))        rank    = keyFile.get_integer ("General", "Rank");
+    if (keyFile.has_key ("General", "ColorLabel"))  colorlabel  = keyFile.get_integer ("General", "ColorLabel");
+    if (keyFile.has_key ("General", "InTrash"))     inTrash = keyFile.get_boolean ("General", "InTrash");
 }
 
 if (keyFile.has_group ("Exposure")) {    
@@ -604,6 +655,8 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "LumCurve"))    dirpyrDenoise.lumcurve   = keyFile.get_double_list ("Directional Pyramid Denoising", "LumCurve");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "ChromCurve"))  dirpyrDenoise.chromcurve = keyFile.get_double_list ("Directional Pyramid Denoising", "ChromCurve");
 }
   
     // load lumaDenoise
@@ -710,6 +763,11 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "ApplyGammaBeforeInputProfile"))   icm.gammaOnInput   = keyFile.get_boolean ("Color Management", "ApplyGammaBeforeInputProfile");
     if (keyFile.has_key ("Color Management", "WorkingProfile")) icm.working = keyFile.get_string ("Color Management", "WorkingProfile");
     if (keyFile.has_key ("Color Management", "OutputProfile"))  icm.output  = keyFile.get_string ("Color Management", "OutputProfile");
+    if (keyFile.has_key ("Color Management", "Gammafree"))  icm.gamma  = keyFile.get_string ("Color Management", "Gammafree");
+    if (keyFile.has_key ("Color Management", "Freegamma"))  icm.freegamma  = keyFile.get_boolean ("Color Management", "Freegamma");
+    if (keyFile.has_key ("Color Management", "GammaVal"))  icm.gampos  = keyFile.get_double ("Color Management", "GammaVal");
+    if (keyFile.has_key ("Color Management", "GammaSlope"))  icm.slpos  = keyFile.get_double ("Color Management", "GammaSlope");
+	
 }
 
     // load wavelet equalizer parameters
@@ -747,10 +805,15 @@ if (keyFile.has_group ("HSV Equalizer")) {
 if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
 	if (keyFile.has_key ("RAW", "DarkFrameAuto")) raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" );
+	if (keyFile.has_key ("RAW", "FlatFieldFile"))       raw.ff_file = keyFile.get_string  ("RAW", "FlatFieldFile" );                    
+	if (keyFile.has_key ("RAW", "FlatFieldAutoSelect")) raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" ); 
+	if (keyFile.has_key ("RAW", "FlatFieldBlurRadius")) raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" );
+	if (keyFile.has_key ("RAW", "FlatFieldBlurType"))   raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" );		
 	if (keyFile.has_key ("RAW", "CA"))            raw.ca_autocorrect = keyFile.get_boolean ("RAW", "CA" );
 	if (keyFile.has_key ("RAW", "CARed"))         raw.cared = keyFile.get_double ("RAW", "CARed" );
 	if (keyFile.has_key ("RAW", "CABlue"))        raw.cablue = keyFile.get_double ("RAW", "CABlue" );
 	if (keyFile.has_key ("RAW", "HotDeadPixels")) raw.hotdeadpix_filt = keyFile.get_boolean ("RAW", "HotDeadPixels" );
+	if (keyFile.has_key ("RAW", "HotDeadPixelThresh")) raw.hotdeadpix_thresh = keyFile.get_integer ("RAW", "HotDeadPixelThresh" );
 	if (keyFile.has_key ("RAW", "LineDenoise"))   raw.linenoise = keyFile.get_integer ("RAW", "LineDenoise" );
 	if (keyFile.has_key ("RAW", "GreenEqThreshold")) raw.greenthresh= keyFile.get_integer ("RAW", "GreenEqThreshold");
 	if (keyFile.has_key ("RAW", "CcSteps"))       raw.ccSteps  = keyFile.get_integer ("RAW", "CcSteps");
@@ -877,6 +940,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
+		&& dirpyrDenoise.lumcurve == other.dirpyrDenoise.lumcurve
+		&& dirpyrDenoise.chromcurve == other.dirpyrDenoise.chromcurve
 		&& defringe.enabled == other.defringe.enabled
 		&& defringe.radius == other.defringe.radius
 		&& defringe.threshold == other.defringe.threshold
@@ -933,6 +998,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& resize.height == other.resize.height
 		&& raw.dark_frame == other.raw.dark_frame
 		&& raw.df_autoselect == other.raw.df_autoselect
+		&& raw.ff_file == other.raw.ff_file
+		&& raw.ff_AutoSelect == other.raw.ff_AutoSelect
+		&& raw.ff_BlurRadius == other.raw.ff_BlurRadius
+		&& raw.ff_BlurType == other.raw.ff_BlurType	
 		&& raw.dcb_enhance == other.raw.dcb_enhance
 		&& raw.dcb_iterations == other.raw.dcb_iterations
 		&& raw.ccSteps == other.raw.ccSteps
@@ -947,6 +1016,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.gammaOnInput == other.icm.gammaOnInput
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
+		&& icm.gamma == other.icm.gamma		
+		&& icm.freegamma == other.icm.freegamma			
+		&& icm.gampos == other.icm.gampos	
+		&& icm.slpos == other.icm.slpos			
 		&& equalizer == other.equalizer
 		&& dirpyrequalizer == other.dirpyrequalizer
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve

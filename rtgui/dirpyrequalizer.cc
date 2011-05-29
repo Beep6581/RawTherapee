@@ -54,13 +54,13 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 
     for(int i = 0; i < 4; i++)
     {
-        std::stringstream ss;
-        ss << i;
+        Glib::ustring ss;
+        ss = Glib::ustring::format(i);
         if(i == 0)
-            ss << " (" << M("TP_DIRPYREQUALIZER_LUMAFINEST") << ")";
+            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
         if(i == 3)
-            ss << " (" << M("TP_DIRPYREQUALIZER_LUMACOARSEST") << ")";
-		multiplier[i] = Gtk::manage ( new Adjuster (ss.str(), 0, 4, 0.01, 1.0) );
+            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
+		multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 4, 0.01, 1.0) );
         multiplier[i]->setAdjusterListener(this);
         pack_start(*multiplier[i]);
     }

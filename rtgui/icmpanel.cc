@@ -92,6 +92,44 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
     for (int i=0; i<wpnames.size(); i++)
         wnames->append_text (wpnames[i]);
+  
+ 
+	Gtk::HSeparator* hsep22 = Gtk::manage (new Gtk::HSeparator ());
+    pack_start (*hsep22, Gtk::PACK_SHRINK, 2);
+	
+    Gtk::Label* galab = Gtk::manage (new Gtk::Label ());
+    galab->set_alignment (0.0, 0.5);
+    galab->set_markup (Glib::ustring("<b>") + M("TP_GAMMA_OUTPUT") + "</b>");
+	
+    pack_start (*galab, Gtk::PACK_SHRINK, 4);
+    wgamma = Gtk::manage (new Gtk::ComboBoxText ());    
+    pack_start (*wgamma, Gtk::PACK_SHRINK, 4);
+		
+	Gtk::HSeparator* hsep23 = Gtk::manage (new Gtk::HSeparator ());
+    pack_start (*hsep23, Gtk::PACK_SHRINK, 2);
+	
+	freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));	
+	freegamma->set_active (false);
+	pack_start( *freegamma);
+	
+	g_ampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"),1,3.5,0.01,2.22));
+	g_ampos->setAdjusterListener (this);
+	if (g_ampos->delay < 1000) g_ampos->delay = 1000;
+	g_ampos->show();
+	s_lpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"),0,15,0.01,4.5));
+	s_lpos->setAdjusterListener (this); 
+	if (s_lpos->delay < 1000) s_lpos->delay = 1000;
+	s_lpos->show();
+	pack_start( *g_ampos, Gtk::PACK_SHRINK, 4);//gamma
+	pack_start( *s_lpos, Gtk::PACK_SHRINK, 4);//slope
+		
+	gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
+
+		
+		
+    std::vector<std::string> wpgamma = rtengine::getGamma ();
+    for (int i=0; i<wpgamma.size(); i++)
+        wgamma->append_text (wpgamma[i]);
 
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
@@ -102,6 +140,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     wnames->set_active (0);
     onames->set_active (0);
+	wgamma->set_active (0);
 
     Gtk::FileFilter filter_icc;
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
@@ -124,6 +163,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
+    wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
+	
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
@@ -157,7 +198,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         igamma->set_sensitive (true);
     }
 
-    wnames->set_active_text (pp->icm.working);    
+    wnames->set_active_text (pp->icm.working);   
+    wgamma->set_active_text (pp->icm.gamma);    
+	
     if (pp->icm.output=="No ICM: sRGB output")
         onames->set_active_text (M("TP_ICM_NOICM"));
     else
@@ -167,7 +210,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         onames->set_active_text (M("TP_ICM_NOICM"));
 
     igamma->set_active (pp->icm.gammaOnInput);
-
+	onames->set_sensitive(wgamma->get_active_row_number()==0 || freegamma->get_active()); //"default"
+	wgamma->set_sensitive(!freegamma->get_active());
+	
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
         igamma->set_sensitive (false);
@@ -175,8 +220,24 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
             onames->set_active_text(M("GENERAL_UNCHANGED"));
+        if (!pedited->icm.gamma){
+            wgamma->set_active_text(M("GENERAL_UNCHANGED"));
+            wgamma->set_active_text(M("GENERAL_UNCHANGED"));
+			}
+	    g_ampos->setEditedState      (pedited->icm.gampos ? Edited : UnEdited);
+        s_lpos->setEditedState  	 (pedited->icm.slpos ? Edited : UnEdited);
+		
     }
-        
+	
+	gamcsconn.block (true);
+    freegamma->set_active (pp->icm.freegamma);
+    gamcsconn.block (false);
+
+	lastgamfree = pp->icm.freegamma;
+	g_ampos->setValue (pp->icm.gampos);
+	s_lpos->setValue (pp->icm.slpos);
+       
+       
     ipc.block (false);
 
     enableListener ();
@@ -194,18 +255,55 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->icm.input = "file:"+ipDialog->get_filename ();
 
     pp->icm.working = wnames->get_active_text ();
-    
+    pp->icm.gamma = wgamma->get_active_text ();
+   
     if (onames->get_active_text()==M("TP_ICM_NOICM"))
         pp->icm.output  = "No ICM: sRGB output";
     else
         pp->icm.output  = onames->get_active_text();
+		pp->icm.freegamma = freegamma->get_active();
     pp->icm.gammaOnInput = igamma->get_active ();
-    
+	pp->icm.gampos =(double) g_ampos->getValue();
+	pp->icm.slpos =(double) s_lpos->getValue();
+	
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.gammaOnInput = !ifromfile->get_active ();
+        pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
+		pedited->icm.freegamma =!freegamma->get_inconsistent();
+        pedited->icm.gampos          = g_ampos->getEditedState ();
+        pedited->icm.slpos   		 = s_lpos->getEditedState ();
+		
+    }
+}
+void ICMPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+  g_ampos->setDefault (defParams->icm.gampos);
+  s_lpos->setDefault (defParams->icm.slpos);
+ 
+  if (pedited) {
+          g_ampos->setDefaultEditedState (pedited->icm.gampos ? Edited : UnEdited);
+          s_lpos->setDefaultEditedState (pedited->icm.slpos ? Edited : UnEdited);
+
+  }
+  else {
+          g_ampos->setDefaultEditedState (Irrelevant);
+          s_lpos->setDefaultEditedState (Irrelevant);
+
+  }
+  }
+void ICMPanel::adjusterChanged (Adjuster* a, double newval) {
+
+    if (listener && freegamma->get_active()) {
+
+        Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
+
+        if (a==g_ampos) 
+            listener->panelChanged (EvGAMPOS, costr);
+		else if (a==s_lpos)
+            listener->panelChanged (EvSLPOS, costr);
+		
     }
 }
 
@@ -213,6 +311,14 @@ void ICMPanel::wpChanged () {
 
     if (listener)
         listener->panelChanged (EvWProfile, wnames->get_active_text ());
+}
+
+void ICMPanel::gpChanged () {
+
+    if (listener)
+        {listener->panelChanged (EvGAMMA, wgamma->get_active_text ());
+		onames->set_sensitive(wgamma->get_active_row_number()==0); //"default"
+		 }
 }
 
 void ICMPanel::ipChanged () {
@@ -239,6 +345,33 @@ void ICMPanel::ipChanged () {
         listener->panelChanged (EvIProfile, profname);
 
     oldip = profname;
+}
+void ICMPanel::GamChanged() {
+    if (batchMode) {
+        if (freegamma->get_inconsistent()) {
+            freegamma->set_inconsistent (false);
+            gamcsconn.block (true);
+            freegamma->set_active (false);
+            gamcsconn.block (false);
+        }
+        else if (lastgamfree)
+            freegamma->set_inconsistent (true);
+
+        lastgamfree = freegamma->get_active ();
+    }
+    
+    if (listener) {
+        if (freegamma->get_active()){
+            listener->panelChanged (EvGAMFREE, M("GENERAL_ENABLED"));
+			onames->set_sensitive(!freegamma->get_active());//disabled choice
+			wgamma->set_sensitive(!freegamma->get_active());
+		}
+        else {
+            listener->panelChanged (EvGAMFREE, M("GENERAL_DISABLED"));
+		   	onames->set_sensitive(!freegamma->get_active() && wgamma->get_active_row_number()==0);
+			wgamma->set_sensitive(!freegamma->get_active()); 
+		}
+    }
 }
 
 void ICMPanel::opChanged () {
@@ -297,5 +430,10 @@ void ICMPanel::setBatchMode (bool batchMode) {
     removeIfThere (this, saveRef);
     onames->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
+	wgamma->append_text (M("GENERAL_UNCHANGED"));
+	g_ampos->showEditedCB ();
+	s_lpos->showEditedCB ();
+
+
 }
 

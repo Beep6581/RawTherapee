@@ -20,19 +20,20 @@ set (BASESOURCEFILES
     imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
     multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc
     preferences.cc profilepanel.cc saveasdlg.cc
-    saveformatpanel.cc splash.cc
+    saveformatpanel.cc soundman.cc splash.cc
     thumbnail.cc tonecurve.cc toolbar.cc
     guiutils.cc zoompanel.cc toolpanelcoord.cc
     thumbbrowserentrybase.cc batchqueueentry.cc
     batchqueue.cc lwbutton.cc lwbuttonset.cc
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
-    darkframe.cc rawcacorrection.cc rawexposure.cc
+    darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
     equalizer.cc dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc)
 
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.rc)
+    set (EXTRA_LIB_RTGUI winmm)
     include_directories ( ../rtengine ${CMAKE_CURRENT_BINARY_DIR} . ../rtexif ${EXTRA_INCDIR} ${GLIB2_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS} ${GIOMM_INCLUDE_DIRS})
     link_directories (. ../rtexif ${EXTRA_LIBDIR} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
@@ -53,6 +54,6 @@ set_target_properties (rth PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS}" OUTPUT_
 #target_link_libraries (rth rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${EXTRA_LIB} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
 #   ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${IPTCDATA_LIBRARIES})
 target_link_libraries (rth rtengine ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} ${TIFF_LIBRARIES} ${GOBJECT_LIBRARIES} ${GTHREAD_LIBRARIES}
-   ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${IPTCDATA_LIBRARIES})
+   ${GLIB2_LIBRARIES} ${GLIBMM_LIBRARIES} ${GTK_LIBRARIES} ${GTKMM_LIBRARIES} ${GIO_LIBRARIES} ${GIOMM_LIBRARIES} ${LCMS_LIBRARIES} ${IPTCDATA_LIBRARIES} ${EXTRA_LIB_RTGUI})
 install (TARGETS rth DESTINATION ${BINDIR})
 

@@ -27,48 +27,35 @@
 
 class PLDBridge : public rtengine::ProgressListener {
 
-        Gtk::Label* label;
-        Gtk::ProgressBar* progBar;
+	    rtengine::ProgressListener* pl;
 
     public:
-        PLDBridge ( Gtk::Label* l, Gtk::ProgressBar* pb)
-            : label(l), progBar(pb) {}
+        PLDBridge ( rtengine::ProgressListener* pb)
+            : pl(pb) {}
 
     // ProgressListener interface
     void setProgress (double p) {
         gdk_threads_enter ();
-        progBar->set_fraction (p);
+        pl->setProgress(p);
         gdk_threads_leave ();
     }
     void setProgressStr (Glib::ustring str) {
         gdk_threads_enter ();
         Glib::ustring progrstr;
-        if (str=="Decoding...")
-            progrstr = M("PROGRESSBAR_DECODING");
-        else if (str=="Ready.")
-            progrstr = M("PROGRESSBAR_READY");
-        else if (str=="Demosaicing...")
-            progrstr = M("PROGRESSBAR_DEMOSAICING");
-        else if (str=="Loading...")
-            progrstr = M("PROGRESSBAR_LOADING");
-        else if (str=="Loading PNG file...")
-            progrstr = M("PROGRESSBAR_LOADPNG");
-        else if (str=="Loading JPEG file...")
-            progrstr = M("PROGRESSBAR_LOADJPEG");
-        else if (str=="Loading TIFF file...")
-            progrstr = M("PROGRESSBAR_LOADTIFF");
-        else if (str=="Saving PNG file...")
-            progrstr = M("PROGRESSBAR_SAVEPNG");
-        else if (str=="Saving JPEG file...")
-            progrstr = M("PROGRESSBAR_SAVEJPEG");
-        else if (str=="Saving TIFF file...")
-            progrstr = M("PROGRESSBAR_SAVETIFF");
-        else if (str=="Processing...")
-            progrstr = M("PROGRESSBAR_PROCESSING");
-        else 
-            progrstr = str;
+        progrstr = M(str);
+        pl->setProgressStr(progrstr);
+        gdk_threads_leave ();
+    }
 
-        label->set_text (progrstr);
+    void setProgressState (bool inProcessing){
+        gdk_threads_enter ();
+        pl->setProgressState(inProcessing);
+        gdk_threads_leave ();
+    }
+
+    void error (Glib::ustring descr){
+        gdk_threads_enter ();
+        pl->error(descr);
         gdk_threads_leave ();
     }
 };

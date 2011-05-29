@@ -1119,7 +1119,7 @@ const TagAttrib pentaxAttribs[] = {
  {0, 1, 0, 0, 0x0212, "WB_RGGBLevelsFluorescentN", &stdInterpreter},
  {0, 1, 0, 0, 0x0213, "WB_RGGBLevelsFluorescentW", &stdInterpreter},
  {0, 1, 0, 0, 0x0214, "WB_RGGBLevelsFlash", &stdInterpreter},
- {0, 1, 0, 0, 0x0215, "CameraInfo", &stdInterpreter},
+ {0, 1, 0, pentaxCameraInfoAttribs, 0x0215, "CameraInfo", &stdInterpreter},
  {0, 1, 0, pentaxBatteryInfoAttribs, 0x0216, "BatteryInfo", &stdInterpreter},
  {0, 1, 0, 0, 0x021f, "AFInfo", &stdInterpreter},
  {0, 1, 0, 0, 0x0222, "ColorInfo", &stdInterpreter},
@@ -1190,6 +1190,13 @@ const TagAttrib pentaxBatteryInfoAttribs[] = {
  {0, 1, 0, 0,  3, "BatteryADBodyLoad", &stdInterpreter},
  {0, 1, 0, 0,  4, "BatteryADGripNoLoad", &stdInterpreter},
  {0, 1, 0, 0,  5, "BatteryADGripLoad", &stdInterpreter},
+ {-1, 0, 0,  0, 0, "", NULL}};
+
+const TagAttrib pentaxCameraInfoAttribs[] = {
+ {0, 1, 0, 0,  0, "PentaxModelID", &stdInterpreter},
+ {0, 1, 0, 0,  1, "ManufactureDate", &stdInterpreter},
+ {0, 1, 0, 0,  2, "ProductionCode", &stdInterpreter},
+ {0, 1, 0, 0,  4, "InternalSerialNumber", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
 
 };

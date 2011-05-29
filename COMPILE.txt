@@ -70,6 +70,119 @@ Windows
 			     specifying the processor frequency in it is useless.
 
 
+	Dependancies:
+
+		RawTherapee rely on libraries that may not be part of the Gtkmm or MinGW package. There is two ways of installing
+		thoses libraries.
+
+		The simple way:
+
+			For your convenience, those libraries has been precompiled and are downloadable at :
+
+			         http://www.rawtherapee.com/releases_head/windows/dependencies_for_creating_builds/
+
+			If you don't find a suitable package for your toolchain, take the DIY way or ask a developer
+			to build them for you.
+
+			Just unpack the content of this archive to the base installation dir of MinGW, and everything
+			should work fine.
+
+		The "Do It Yourself" way:
+
+			The MSYS package is required to build the libraries. See above for the download link.
+
+			Before building them, look if they are already installed in your Gtkmm and MinGW directories. There shouldn't be
+			two versions of the same library in different place.
+
+			Open an MSYS console, that will create a Linux environment, and compile the dependancies in that order:
+
+			zlib:
+			If you have Gtkmm2.22 installed, you should skip this section
+			- download: http://zlib.net/
+			- how to build:
+			  cd to the unarchiving directory of zlib-1.2.5
+			    make -f win32/Makefile.gcc
+
+			  Then, manually copy the files as follows (tip: you can individually copy the lines below and paste them in MSys's prompt with the middle mouse button):
+
+				cp -iv zlib1.dll /mingw/bin
+				cp -iv zconf.h zlib.h /mingw/include
+				cp -iv libz.a /mingw/lib
+				cp -iv libzdll.a /mingw/lib/libz.dll.a
+
+			libpng:
+			If you have Gtkmm2.22 installed, you should skip this section
+			- download:     http://sourceforge.net/projects/libpng/files/
+			                (please note that libpng 1.5 has not been tested yet)
+			- how to build:
+			  cd to the unarchiving directory of lpng144
+
+				There's two options to build libpng :
+				1. gtkmm doesn't provide zlib so i've compiled it myself
+				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_BUILD_TYPE:STRING=Release
+				2. gtkmm provide zlib and i want to reuse it (so we're assuming that you didn't compiled zlib like explained here above)
+				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_PREFIX_PATH:PATH=C:/gtkmm -DCMAKE_BUILD_TYPE:STRING=Release
+
+				Then build and install:
+				   make
+				   make install
+
+			libjpeg:
+			- download:     http://www.ijg.org/
+			- how to build:
+			  cd to the unarchiving directory of jpeg-8b
+			  ./configure --prefix=/mingw
+			  copy the content of jconfig.txt to jconfig.h (overwrite the existing file)
+			  make
+			  make install
+
+			libtiff:
+			- download:     ftp://ftp.remotesensing.org/pub/libtiff/
+			- how to build:
+
+			  In the configure process below, set the zlib include and lib path to the right folder. We're assuming that you're using
+			  the one provided in the gtkmm bundle
+
+			  ./configure --prefix=/mingw --with-zlib-include-dir=/c/gtkmm/include --with-zlib-lib-dir=/c/gtkmm/lib
+			  make
+			  cd libtiff
+			  make install
+
+			libiptcdata:
+			- download:     http://libiptcdata.sourceforge.net/
+			- how to build:
+			  ./configure --prefix=/mingw
+
+			  Edit the "Makefile" file from the root dir of libiptcdata, and search for "DIST_SUBDIRS ="
+			  and "SUBDIRS =". You should only find one line for each search. From those lines, remove "iptc", then
+
+			  make
+			  make install
+
+			lcms:
+			- download lcm v1.x for RT3.0, v2.x for RT3.1 and upper: http://sourceforge.net/projects/lcms/files/
+			- how to build (suitable for both version):
+			  ./configure --prefix=/mingw
+			  make
+			  make install
+
+			Rawzor:
+			provided in RT's source tree (downloaded from http://www.rawzor.com/developers/)
+
+			IMPORTANT:
+			   Make sure that the lcms.pc and libiptcdata.pc files located in the pkgconfig dir has the first
+			   line like this : prefix=/mingw
+
+			If everything is well installed, you should see the following lines when running the cmake command (see "Building RT" below) :
+					-- checking for module 'libiptcdata'
+					--   found libiptcdata, version 1.0.4
+					-- checking for module 'lcms<=1.99'
+					--   found lcms, version 1.19
+					-- Found JPEG: C:/mingw/lib/libjpeg.dll.a
+					-- Found ZLIB: C:/gtkmm/lib/libz.dll.a
+					-- Found PNG: C:/gtkmm/lib/libpng.lib
+					-- Found TIFF: C:/mingw/lib/libtiff.dll.a
+
 	Building RT:
 
 		METHOD 1:

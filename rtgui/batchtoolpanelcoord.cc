@@ -120,7 +120,7 @@ void BatchToolPanelCoordinator::initSession () {
         pparams = selected[0]->getProcParams ();
         coarse->initBatchBehavior ();
 
-        curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
+        toneCurve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
         lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_SATURATION]);
         whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
         vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
@@ -197,6 +197,12 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
             initialPP[i].toneCurve.clip = pparams.toneCurve.clip;
             selected[i]->applyAutoExp (initialPP[i]);
         }
+
+    if (event==rtengine::EvAutoDIST) {
+        for (int i=0; i<selected.size(); i++) {
+            initialPP[i].distortion.amount = pparams.distortion.amount;
+        }
+    }
 
     // combine with initial parameters and set
     ProcParams newParams;

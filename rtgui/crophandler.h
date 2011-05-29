@@ -48,8 +48,10 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         int cropX, cropY, cropW, cropH; // position and size of the crop corresponding to cropPixbuf
         bool enabled;
         unsigned char* cropimg;
+		unsigned char* cropimgtrue;
         int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
         bool initial;
+        bool isLowUpdatePriority;
 
         rtengine::StagedImageProcessor* ipc;
         rtengine::DetailedCrop* crop;
@@ -58,12 +60,17 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         CropHandlerIdleHelper* chi;
 
         void    compDim ();
+	
     public:
 
 		void    update  ();
 
+
         rtengine::procparams::CropParams cropParams;
+		rtengine::procparams::ColorManagementParams colorParams;
         Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
+		Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
+
         Glib::Mutex cimg;
 
         CropHandler ();
@@ -84,7 +91,8 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         bool    getEnabled ();
 
         // DetailedCropListener interface
-        void    setDetailedCrop (rtengine::IImage8* im, rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
+        void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking,rtengine::procparams::ColorManagementParams cmp, \
+								 rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
         bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
         // SizeListener interface
         void    sizeChanged  (int w, int h, int ow, int oh);

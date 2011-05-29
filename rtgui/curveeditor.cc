@@ -22,6 +22,9 @@
 #include <string>
 #include <guiutils.h>
 #include <multilangmgr.h>
+#include <LUT.h>
+
+#include <cstring>
 
 extern Glib::ustring argv0;
 
@@ -91,15 +94,15 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	bgHistValid = false;
 	selected = DCT_Linear;
 
-    histogram = new unsigned int[256];	// histogram values
+    histogram(256);	// histogram values
 
 	group = ceGroup;
 	subGroup = ceSubGroup;
 
     if (group && text.size())
-    	curveType = Gtk::manage (new PopUpToggleButton(text + ":"));
+    	curveType = new PopUpToggleButton(text + ":");
     else
-    	curveType = Gtk::manage (new PopUpToggleButton());
+    	curveType = new PopUpToggleButton();
 
     curveType->set_tooltip_text(M("CURVEEDITOR_TYPE"));
     // TODO: Does this signal have to be blocked when on curve type change ?
@@ -107,14 +110,13 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	typeconn  = curveType->signal_changed().connect (sigc::mem_fun(*this, &CurveEditor::typeSelectionChanged) );
 }
 
-CurveEditor::~CurveEditor () {
-
-	delete [] histogram;
-}
-
 void CurveEditor::setCurve (const std::vector<double>& p) {
 	tempCurve = p;
 	group->setCurveExternal(this, p);
+}
+
+CurveEditor::~CurveEditor () {
+    delete curveType;
 }
 
 void CurveEditor::typeSelectionChanged (int n) {
@@ -136,15 +138,15 @@ void CurveEditor::setUnChanged (bool uc) {
 /*
  * Update the backgrounds histograms
  */
-void CurveEditor::updateBackgroundHistogram (unsigned int* hist) {
+void CurveEditor::updateBackgroundHistogram (LUTu & hist) {
 	// Copy the histogram in the curve editor cache
-	if (hist!=NULL) {
-		memcpy (histogram, hist, 256*sizeof(unsigned int));
+	if (hist) {
+		histogram=hist;
 		bgHistValid = true;
 	}
 	else
 		bgHistValid = false;
-
+	
 	// Then call the curve editor group to eventually update the histogram
 	subGroup->updateBackgroundHistogram (this);
 }

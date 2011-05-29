@@ -21,7 +21,9 @@
 #include <preferences.h>
 #include <multilangmgr.h>
 #include <rtwindow.h>
+#include <soundman.h>
 #include <safegtk.h>
+
 
 BatchQueuePanel::BatchQueuePanel () {
 
@@ -156,6 +158,7 @@ void BatchQueuePanel::updateTab (int qsize)
         l->set_angle (90);
         vbb->pack_start (*l);
         vbb->set_spacing (2);
+        vbb->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
         vbb->show_all ();
         nb->set_tab_label(*this,*vbb);
     } else {
@@ -171,6 +174,7 @@ void BatchQueuePanel::updateTab (int qsize)
             hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
         }
         hbb->set_spacing (2);
+        hbb->set_tooltip_markup (M("MAIN_FRAME_BATCHQUEUE_TOOLTIP"));
         hbb->show_all ();
         nb->set_tab_label(*this,*hbb);
     }
@@ -230,6 +234,8 @@ void BatchQueuePanel::queueEmpty () {
     stopBatchProc ();
     fdir->set_sensitive (true);
     fformat->set_sensitive (true);
+
+    SoundManager::playSoundAsync(options.sndBatchQueueDone);
 }
 
 bool BatchQueuePanel::canStartNext () {

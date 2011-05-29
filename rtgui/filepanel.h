@@ -38,13 +38,11 @@ class FilePanel : public Gtk::HPaned,
 {
 
     protected:
-        Gtk::Paned* placespaned;
-        Gtk::HPaned* dirpaned;
         //DirBrowser* dirBrowser;
         PlacesBrowser* placesBrowser;
         RecentBrowser* recentBrowser;
        // FileCatalog* fileCatalog;   // filecatalog is the file browser with the button bar above it
-        Gtk::HBox* rightBox;
+
         Gtk::VPaned* tpcPaned;
         BatchToolPanelCoordinator* tpc;
         History* history;
@@ -57,7 +55,12 @@ class FilePanel : public Gtk::HPaned,
     public:
         FilePanel ();
 
-         DirBrowser* dirBrowser;
+        Gtk::Paned* placespaned;
+        Gtk::HPaned* dirpaned;
+
+        Gtk::HBox* rightBox;
+
+        DirBrowser* dirBrowser;
         FilterPanel* filterPanel;
         FileCatalog* fileCatalog;
         Gtk::Paned *ribbonPane;
@@ -67,6 +70,7 @@ class FilePanel : public Gtk::HPaned,
         void setAspect();
         void open (const Glib::ustring& d); // open a file or a directory
         void refreshEditedState (const std::set<Glib::ustring>& efiles) { fileCatalog->refreshEditedState (efiles); }
+        void loadingThumbs(Glib::ustring str, double rate);
         
         // call this before closeing rt: it saves file browser relating things into options
         void saveOptions ();

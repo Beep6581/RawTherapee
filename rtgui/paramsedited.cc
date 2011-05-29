@@ -140,6 +140,10 @@ void ParamsEdited::set (bool v) {
 	icm.gammaOnInput = v;
 	icm.working      = v;
 	icm.output       = v;
+	icm.gamma		= v;
+	icm.freegamma		= v;
+	icm.gampos		= v;
+	icm.slpos		= v;	
 	raw.ccSteps = v;
 	raw.dmethod = v;
 	raw.dcbIterations = v;
@@ -155,6 +159,10 @@ void ParamsEdited::set (bool v) {
 	raw.exPreser = v;
 	raw.greenEq = v;
 	raw.linenoise = v;
+	raw.ff_file = v;
+	raw.ff_AutoSelect = v;
+	raw.ff_BlurRadius = v;
+	raw.ff_BlurType = v;
 	equalizer.enabled = v;
 	dirpyrequalizer.enabled = v;
 	for(int i = 0; i < 8; i++) {
@@ -297,6 +305,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gammaOnInput = icm.gammaOnInput && p.icm.gammaOnInput == other.icm.gammaOnInput;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
+        icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
+        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;		
+        icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
+        icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
         raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
@@ -308,6 +320,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
 		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser; //exposi
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
+        raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;                        
+        raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
+        raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
+        raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;        
         raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
         raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
         raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
@@ -446,6 +462,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.gammaOnInput)	toEdit.icm.gammaOnInput = mods.icm.gammaOnInput;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output 	    = mods.icm.output;
+	if (icm.gampos)		    toEdit.icm.gampos 	    = mods.icm.gampos;
+	if (icm.slpos)		    toEdit.icm.slpos 	    = mods.icm.slpos;
+	if (icm.gamma)		    toEdit.icm.gamma 	    = mods.icm.gamma;
+	if (icm.freegamma)		    toEdit.icm.freegamma 	    = mods.icm.freegamma;	
     if (raw.ccSteps)            toEdit.raw.ccSteps      = mods.raw.ccSteps;
     if (raw.dmethod)            toEdit.raw.dmethod      = mods.raw.dmethod;
     if (raw.dcbIterations)      toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
@@ -460,6 +480,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
     if (raw.darkFrame)          toEdit.raw.dark_frame   = mods.raw.dark_frame;
     if (raw.dfAuto)             toEdit.raw.df_autoselect= mods.raw.df_autoselect;
+
+    if (raw.ff_file)            toEdit.raw.ff_file= mods.raw.ff_file;         
+    if (raw.ff_AutoSelect)      toEdit.raw.ff_AutoSelect= mods.raw.ff_AutoSelect;
+    if (raw.ff_BlurRadius)      toEdit.raw.ff_BlurRadius= mods.raw.ff_BlurRadius;
+    if (raw.ff_BlurType)        toEdit.raw.ff_BlurType= mods.raw.ff_BlurType;      
+
 	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];

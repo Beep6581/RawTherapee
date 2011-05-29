@@ -22,6 +22,7 @@
 #include <improccoordinator.h>
 #include <curves.h>
 #include <dfmanager.h>
+#include <ffmanager.h>
 #include <rtthumbnail.h>
 
 namespace rtengine {
@@ -35,18 +36,20 @@ int init (const Settings* s) {
 
     settings = s;
     iccStore->parseDir (s->iccDirectory);
+	iccStore->findDefaultMonitorProfile();
+
     CurveFactory::init ();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
     dfm.init( s->darkFramesPath );
+    ffm.init( s->flatFieldsPath );
 	return 0;
 }
 
 void cleanup () {
 
-    CurveFactory::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }

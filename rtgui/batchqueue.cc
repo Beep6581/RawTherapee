@@ -25,6 +25,8 @@
 #include <guiutils.h>
 #include <safegtk.h>
 
+#include <cstring>
+
 using namespace rtengine;
 
 BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
@@ -57,6 +59,12 @@ void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
 
 void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 {
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
 		(*entry)->resize (options.thumbSize);
@@ -87,6 +95,8 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 		(*entry)->addButtonSet (bqbs);
 	}
     saveBatchQueue( );
+	}
+
     arrangeFiles ();
     queue_draw ();
     notifyListener ();
@@ -101,6 +111,7 @@ bool BatchQueue::saveBatchQueue( )
     if (f==NULL)
         return false;
 
+	// method is already running with entryLock, so no need to lock again
     for (std::vector<ThumbBrowserEntryBase*>::iterator pos=fd.begin(); pos!=fd.end(); pos++){
     	BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
     	fprintf(f,"%s;%s\n", bqe->filename.c_str(),bqe->savedParamsFile.c_str() );
@@ -111,6 +122,11 @@ bool BatchQueue::saveBatchQueue( )
 
 bool BatchQueue::loadBatchQueue( )
 {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
+
     Glib::ustring savedQueueFile;
     savedQueueFile = options.rtdir+"/batch/queue";
     FILE *f = safe_g_fopen (savedQueueFile, "rt");
@@ -195,6 +211,11 @@ int deleteitem (void* data)
 }
 
 void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
 
     for (int i=0; i<items->size(); i++) {
         BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
@@ -215,13 +236,17 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
     selected.clear ();
 
     saveBatchQueue( );
-
+	}
     redraw ();
     notifyListener ();
 }
 
 void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
-
+	{
+			// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
     for (int i=items->size()-1; i>=0; i--) {
         BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
         if (entry->processing)
@@ -238,11 +263,16 @@ void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
         }
     }
     saveBatchQueue( );
+	}
     redraw ();
 }
 
 void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
-
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
     for (int i=0; i<items->size(); i++) {
         BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
         if (entry->processing)
@@ -254,10 +284,15 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
         }
     }
     saveBatchQueue( );
+	}
     redraw ();
 }
    
 void BatchQueue::selectAll () {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     lastClicked = NULL;
     selected.clear ();
@@ -270,7 +305,10 @@ void BatchQueue::selectAll () {
     queue_draw ();
 }
 void BatchQueue::startProcessing () {
-
+	// TODO: Check for Linux
+	#ifdef WIN32
+	entryMutex.lock();
+	#endif
     if (!processing && fd.size()>0) {
         BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
         // tag it as processing        
@@ -283,10 +321,16 @@ void BatchQueue::startProcessing () {
                 selected.erase (pos);
             processing->selected = false;
         }
+
+		// TODO: Check for Linux
+		#ifdef WIN32
+		entryMutex.unlock();
+		#endif
+
         // remove button set
         next->removeButtonSet ();
         // start batch processing
-        rtengine::startBatchProcessing (next->job, this);
+        rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
         queue_draw ();
     }
 }
@@ -340,6 +384,12 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     // delete from the queue
     delete processing;
     processing = NULL;
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
     fd.erase (fd.begin());
 
     // return next job
@@ -374,6 +424,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     			safe_g_remove( *iter );
        }
     }
+	}
+
     redraw ();
     notifyListener ();
     gdk_threads_leave ();
@@ -441,13 +493,26 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                     int i = options.savePathTemplate[ix]-'0';
                     if (i<da.size())
-                        path = path + da[da.size()-i-1] + '/';
-                    ix++;
+                        path = path + da[da.size()-i-1];
                 }
                 else if (options.savePathTemplate[ix]=='f') {
                     path = path + filename;
                 }
+                else if (options.savePathTemplate[ix]=='r') { // rank from pparams
+                    char rank;
+					rtengine::procparams::ProcParams pparams;
+					if( pparams.load(origFileName + paramFileExtension)==0 ){
+						if (!pparams.inTrash)
+							rank = pparams.rank + '0';
+						else
+							rank = 'x';
+					}
+					else
+						rank = '0'; // if param file not loaded (e.g. does not exist), default to rank=0
+					path += rank;
+                }
             }
+
             else
                 path = path + options.savePathTemplate[ix];
             ix++;

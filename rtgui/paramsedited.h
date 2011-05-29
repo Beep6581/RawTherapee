@@ -250,6 +250,11 @@ class ColorManagementParamsEdited {
         bool gammaOnInput;
         bool working;
         bool output;
+		bool gamma;
+		bool gampos;
+		bool slpos;
+		bool gamfree;
+		bool freegamma;		
 };
 
 class EqualizerParamsEdited {
@@ -289,6 +294,10 @@ class RAWParamsEdited {
         bool linenoise;
         bool darkFrame;
         bool dfAuto;
+		bool ff_file;
+		bool ff_AutoSelect;
+		bool ff_BlurRadius;
+		bool ff_BlurType;
 		bool exCorrection;
 		bool exPos;
 		bool exPreser;

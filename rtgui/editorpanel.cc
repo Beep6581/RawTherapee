@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
 #include <procparamchangers.h>
 #include <safegtk.h>
 #include <imagesource.h>
+#include <soundman.h>
 
 using namespace rtengine::procparams;
 
@@ -34,13 +36,15 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     epih->destroyed = false;
     epih->pending = 0;
 
+    processingStartedTime = 0;
+
 // construct toolpanelcoordinator
     tpc = new ToolPanelCoordinator ();
 
 // build GUI
     // build left side panel
     leftbox = new Gtk::VBox ();
-    leftbox->set_border_width (4);
+    leftbox->set_border_width (2);
     leftbox->set_size_request(100,250);
 
     histogramPanel = Gtk::manage (new HistogramPanel ());
@@ -55,7 +59,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
 
     navigator = Gtk::manage (new Navigator ());
     navigator->previewWindow->set_size_request (-1, 150);
-    leftbox->pack_start (*navigator, Gtk::PACK_SHRINK, 4);
+    leftbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
     leftbox->pack_start (*history);
@@ -82,21 +86,42 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepi = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vseph = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Label* hidehpLabel = Gtk::manage (new Gtk::Label ());
-    hidehpLabel->set_markup ("<b>H</b>");
-    Gtk::Image* hpimg = Gtk::manage (new Gtk::Image (argv0+"/images/left.png"));
-    Gtk::HBox* hidehpBox = Gtk::manage (new Gtk::HBox ());
-    hidehpBox->pack_start (*hpimg, Gtk::PACK_SHRINK, 2);
-    hidehpBox->pack_start (*hidehpLabel, Gtk::PACK_SHRINK, 2);
-    hidehp->add (*hidehpBox);
+
+    iHistoryShow = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    iHistoryHide = new Gtk::Image(argv0+"/images/panel_to_left.png");
+
     hidehp->set_relief(Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
     hidehp->set_tooltip_markup (M("MAIN_TOOLTIP_HIDEHP"));
+    if (options.showHistory){
+    	hidehp->set_image (*iHistoryHide);
+    }
+    else {
+    	hidehp->set_image (*iHistoryShow);
+    }
+
+    tbTopPanel_1 = new Gtk::ToggleButton ();
+    iTopPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_bottom.png");
+    iTopPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_top.png");
+    tbTopPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbTopPanel_1->set_active (true);
+    tbTopPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDETP1"));
+    tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+
+    tbRightPanel_1 = new Gtk::ToggleButton ();
+    iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
+    iRightPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
+    tbRightPanel_1->set_active (true);
+    tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
+    tbRightPanel_1->set_image (*iRightPanel_1_Hide);
 
     Gtk::VSeparator* vsepcl = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsepz3 = Gtk::manage (new Gtk::VSeparator ());
 
     iarea = new ImageAreaPanel ();
 
@@ -108,8 +133,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     toolBarPanel->pack_start (*vsepi, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_start (*tpc->getToolBar(), Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vsept, Gtk::PACK_SHRINK, 2);
-    toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 4);
-    toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 4);
+    
+    toolBarPanel->pack_end   (*tbTopPanel_1, Gtk::PACK_SHRINK, 1);
+    toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
+    toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
+    toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*iarea->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz, Gtk::PACK_SHRINK, 2);
 
@@ -119,16 +147,16 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     beforeAfterBox = Gtk::manage (new Gtk::HBox());
     beforeAfterBox->pack_start (*afterBox);
 
-    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK);
+    editbox->pack_start (*toolBarPanel, Gtk::PACK_SHRINK,0);
     editbox->pack_start (*beforeAfterBox);
 
     // build right side panel
     vboxright = new Gtk::VBox (false, 0);
     vboxright->set_size_request(100,250);
 
-    vboxright->set_border_width (4);
-    vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
-    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
+    vboxright->set_border_width (2);
+    vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
@@ -151,27 +179,38 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
 
     iops->pack_start (*saveimgas, Gtk::PACK_SHRINK);
-    iops->pack_start (*queueimg, Gtk::PACK_SHRINK);
+    if(!simpleEditor)
+       iops->pack_start (*queueimg, Gtk::PACK_SHRINK);
     iops->pack_start (*sendtogimp, Gtk::PACK_SHRINK);
 
     // Status box
     statusBox = Gtk::manage (new Gtk::HBox ());
-    progressLabel = Gtk::manage (new Gtk::Label(""));
+    progressLabel = Gtk::manage (new Gtk::ProgressBar());
+    progressLabel->set_fraction(0.0);
+    //progressLabel->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );  // Disable, because in single mode this is may be permanent red without processing
+
     statusBox->pack_start (*progressLabel);
-    red = new Gtk::Image (argv0+"/images/red.png");
-    green = new Gtk::Image (argv0+"/images/green.png");
-    red->show ();
-    green->show ();
-    statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
-    iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 4);
+    iops->pack_start(*statusBox, Gtk::PACK_SHRINK, 2);
+
+    // tbRightPanel_1
+    iops->pack_end (*tbRightPanel_1, Gtk::PACK_SHRINK,0);
+
+	// ShowHideSidePanels
+    tbShowHideSidePanels = new Gtk::ToggleButton ();
+    iShowHideSidePanels = new Gtk::Image(argv0+"/images/crossed_arrows_out_45_02.png");
+    tbShowHideSidePanels->set_relief(Gtk::RELIEF_NONE);
+    tbShowHideSidePanels->set_active (false);
+    tbShowHideSidePanels->set_tooltip_markup (M("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
+    tbShowHideSidePanels->set_image (*iShowHideSidePanels);
+    iops->pack_end (*tbShowHideSidePanels, Gtk::PACK_SHRINK,0);
+	iops->pack_end (*vsepz2, Gtk::PACK_SHRINK,1);
 
     // Zoom panel
     iops->pack_end (*iarea->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
-    iops->pack_end (*vsepz2, Gtk::PACK_SHRINK, 2);
+    iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
-
-    editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4);
-    editbox->pack_start (*iops, Gtk::PACK_SHRINK, 4);
+    editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
+    editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
 
     // build screen
@@ -235,13 +274,13 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     info->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::info_toggled) );
     beforeAfter->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::beforeAfterToggled) );
     hidehp->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::hideHistoryActivated) );
+    tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
+    tbRightPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbRightPanel_1_toggled) );
     saveimgas->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::queueImgPressed) );
     sendtogimp->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::sendToGimpPressed) );
-
+    ShowHideSidePanelsconn = tbShowHideSidePanels->signal_toggled().connect ( sigc::mem_fun(*this, &EditorPanel::toggleSidePanels), true);
 }
-
-
 
 EditorPanel::~EditorPanel () {
 
@@ -250,11 +289,13 @@ EditorPanel::~EditorPanel () {
     iarea->setBeforeAfterViews (NULL, iarea);
     delete iarea;
     iarea = NULL;
+
     if (beforeIpc)
         beforeIpc->stopProcessing ();
 
     delete beforeIarea;
     beforeIarea = NULL;
+
     if (beforeIpc)
         beforeIpc->setPreviewImageListener (NULL);
 
@@ -263,6 +304,7 @@ EditorPanel::~EditorPanel () {
     if (beforeIpc)
         rtengine::StagedImageProcessor::destroy (beforeIpc);
     beforeIpc = NULL;
+
     close ();
 
     if (epih->pending)
@@ -272,8 +314,6 @@ EditorPanel::~EditorPanel () {
 
     delete tpc;
 
-    delete red;
-    delete green;
     delete leftbox;
     delete vboxright;    
     delete saveAsDialog;
@@ -320,7 +360,7 @@ void EditorPanel::on_realize () {
 
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
-    if (ipc) close();
+    close();
     // initialize everything
     openThm = tmb;
     openThm->increaseRef ();
@@ -333,7 +373,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     ipc = rtengine::StagedImageProcessor::create (isrc);
     ipc->setProgressListener (this);
     ipc->setPreviewImageListener (previewHandler);
-    ipc->setPreviewScale (10);
+    ipc->setPreviewScale (10);  // Important
     tpc->initImage (ipc, tmb->getType()==FT_Raw);
     ipc->setHistogramListener (this);
 
@@ -343,37 +383,14 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     navigator->previewWindow->setPreviewHandler (previewHandler);
     navigator->previewWindow->setImageArea (iarea->imageArea);
 
-    // try to load the last saved parameters from the cache or from the paramfile file
-    ProcParams* ldprof = NULL;
-
-    Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
-
-    const CacheImageData* cfs=openThm->getCacheImageData();
-    if (!options.customProfileBuilder.empty() && !openThm->hasProcParams() && cfs && cfs->exifValid) {
-        // For the filename etc. do NOT use streams, since they are not UTF8 safe
-        Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
-        + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
-
-        // ustring doesn't know int etc formatting, so take these via (unsafe) stream
-        std::ostringstream strm;
-        strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
-        strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
-        strm << cfs->lens << Glib::ustring("\" \"") << cfs->camera << Glib::ustring("\"");
- 
-        bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
-
-        // Now they SHOULD be there, so try to load them
-        if (success) openThm->loadProcParams();
-    }
-
-    if (openThm->hasProcParams()) {
-        ldprof = new ProcParams ();
-        *ldprof = openThm->getProcParams ();
-    }
-
     rtengine::ImageSource* is=isrc->getImageSource();
     is->setProgressListener( this );
+
+    // try to load the last saved parameters from the cache or from the paramfile file
+    ProcParams* ldprof = openThm->createProcParamsForUpdate();  // will be freed by initProfile
+
     // initialize profile
+    Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof, NULL);
 
     openThm->addThumbnailListener (this);
@@ -470,11 +487,11 @@ void EditorPanel::procParamsChanged (rtengine::procparams::ProcParams* params, r
 }
 
 struct spsparams {
-    bool state;
+    bool inProcessing;
     EditorPanelIdleHelper* epih;
 };
 
-int setprocstate (void* data) {
+int setProgressStateUIThread (void* data) {
 
     gdk_threads_enter ();
     spsparams* p = (spsparams*)data;
@@ -489,45 +506,47 @@ int setprocstate (void* data) {
         return 0;
     }
 
-    p->epih->epanel->refreshProcessingState (p->state);
+    p->epih->epanel->refreshProcessingState (p->inProcessing);
     p->epih->pending--;
     delete p;
     gdk_threads_leave ();
     return 0;
 }
 
-void EditorPanel::setProgressState (int state) {
+void EditorPanel::setProgressState (bool inProcessing) {
 
     epih->pending++;
 
     spsparams* p = new spsparams;
-    p->state = state;
+    p->inProcessing = inProcessing;
     p->epih = epih;
-    g_idle_add (setprocstate, p);
+    g_idle_add (setProgressStateUIThread, p);
 }
 
 struct spparams {
     double val;
     Glib::ustring str;
-    rtengine::ProgressListener* progListener;
+    Gtk::ProgressBar *pProgress;
+	bool gtkEnter;
 };
-
-int _setprogress( void *p )
-{
-	spparams *s= (spparams*)p;
-	gdk_threads_enter ();
-	s->progListener->setProgress( s->val );
-	gdk_threads_leave ();
-	delete s;
-	return 0;
-}
 
 int _setprogressStr( void *p )
 {
 	spparams *s= (spparams*)p;
-	gdk_threads_enter ();
-	s->progListener->setProgressStr( s->str );
-	gdk_threads_leave ();
+	if (s->gtkEnter) gdk_threads_enter ();
+
+	if( ! s->str.empty() )
+	   s->pProgress->set_text( M(s->str) );
+	if( s->val >=0 ){
+	   s->pProgress->set_fraction( s->val );
+		if( s->val <1.0 )
+			s->pProgress->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("red") );
+		else
+			s->pProgress->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );
+	}
+	
+	if (s->gtkEnter) gdk_threads_leave ();
+
 	delete s;
 	return 0;
 }
@@ -536,38 +555,55 @@ void EditorPanel::setProgress (double p)
 {
 	spparams *s=new spparams;
 	s->val = p;
-	s->progListener = parent;
-	g_idle_add (_setprogress, s);
+	s->pProgress = progressLabel;
+	s->gtkEnter = true;
+	g_idle_add (_setprogressStr, s);
 }
 
 void EditorPanel::setProgressStr (Glib::ustring str)
 {
 	spparams *s=new spparams;
 	s->str = str;
-	s->progListener = parent;
+	s->val = -1;
+	s->pProgress = progressLabel;
+	s->gtkEnter = true;
 	g_idle_add (_setprogressStr, s);
 }
 
-void EditorPanel::refreshProcessingState (bool state) {
+// This is only called from the ThreadUI, so within the gtk thread
+void EditorPanel::refreshProcessingState (bool inProcessing) {
+	spparams *s=new spparams;
+    s->pProgress = progressLabel;
+	s->gtkEnter = false;
 
+    if (inProcessing) {
+        if (processingStartedTime==0) processingStartedTime = ::time(NULL);
+
+    	s->str = "PROGRESSBAR_PROCESSING";
+    	s->val = 0.0;
+    } else {
     // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
-    if (ipc && openThm && !state && tpc->getChangedState()) {
+			if (ipc && openThm && tpc->getChangedState()) {
         rtengine::procparams::ProcParams pparams;
         ipc->getParams (&pparams);
         openThm->setProcParams (pparams, EDITOR, false);
     }
 
-    // change state of the led
-    std::vector<Widget*> children = (std::vector<Widget*>) statusBox->get_children();
-    if (children.size()>=1) {
-        Gtk::Widget* wlast = children[children.size()-1];
-        if (wlast)
-            statusBox->remove (*wlast);
-    }
-    if (state)
-        statusBox->pack_end (*red, Gtk::PACK_SHRINK, 4);
-    else
-        statusBox->pack_end (*green, Gtk::PACK_SHRINK, 4);
+		// Ring a sound if it was a long event
+        if (processingStartedTime!=0) {
+            time_t curTime= ::time(NULL);
+            if (::difftime(curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) 
+                SoundManager::playSoundAsync(options.sndLngEditProcDone);
+
+            processingStartedTime = 0;
+        }
+
+		// Set progress bar "done"
+    	s->str = "PROGRESSBAR_READY";
+    	s->val = 1.0;
+}
+
+	_setprogressStr(s);
 }
 
 struct errparams {
@@ -630,7 +666,7 @@ void EditorPanel::info_toggled () {
 //            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
 infoString = Glib::ustring::compose (
             "%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>\n<span size=\"small\">%8</span>",
-            Glib::ustring(idata->getModel()),
+            Glib::ustring(idata->getMake()+" "+idata->getModel()),
             Glib::ustring(idata->getLens()),
             Glib::ustring(idata->apertureToString(idata->getFNumber())),
             Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
@@ -651,75 +687,182 @@ void EditorPanel::hideHistoryActivated () {
     if (hidehp->get_active())
         hpanedl->pack1 (*leftbox, false, true);
     options.showHistory = hidehp->get_active();
+
+    if (options.showHistory){
+    	hidehp->set_image (*iHistoryHide);
+    }
+    else {
+    	hidehp->set_image (*iHistoryShow);
+    }
+
+    tbShowHideSidePanels_managestate();
+}
+
+
+void EditorPanel::tbRightPanel_1_toggled () {
+/*
+    removeIfThere (hpanedr, vboxright, false);
+    if (tbRightPanel_1->get_active()){
+        hpanedr->pack2(*vboxright, false, true);
+    	tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+    }
+    else {
+    	tbRightPanel_1->set_image (*iRightPanel_1_Show);
+    }
+    tbShowHideSidePanels_managestate();
+    */
+	if (vboxright){
+		if (tbRightPanel_1->get_active()){
+			vboxright->show();
+			tbRightPanel_1->set_image (*iRightPanel_1_Hide);
+		}
+		else{
+			vboxright->hide();
+			tbRightPanel_1->set_image (*iRightPanel_1_Show);
+		}
+		tbShowHideSidePanels_managestate();
+	}
+}
+
+void EditorPanel::tbTopPanel_1_visible (bool visible){
+	if (visible)
+		tbTopPanel_1->show();
+	else
+		tbTopPanel_1->hide();
+}
+
+void EditorPanel::tbTopPanel_1_toggled () {
+
+	if (catalogPane){ // catalogPane does not exist in multitab mode
+		tbTopPanel_1_Active = tbTopPanel_1->get_active();
+
+		if (tbTopPanel_1_Active){
+			catalogPane->show();
+			tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+		}
+		else {
+			catalogPane->hide();
+			tbTopPanel_1->set_image (*iTopPanel_1_Show);
+		}
+
+		tbShowHideSidePanels_managestate();
+	}
 }
 
 bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
 
-    if (!ctrl) {
-        // Normal
-        switch(event->keyval) {
-            case GDK_h:
-            case GDK_H:
-                hidehp->set_active (!hidehp->get_active());
-                return true;
-            case GDK_i:
-            case GDK_I:
-                info->set_active (!info->get_active());
-                return true;
-            case GDK_b:
-            case GDK_B:
-                beforeAfter->set_active (!beforeAfter->get_active());
-                return true;
-            case GDK_plus:
-            case GDK_equal:
-                iarea->imageArea->zoomPanel->zoomInClicked();
-                return true;
-            case GDK_minus:
-            case GDK_underscore:
-                iarea->imageArea->zoomPanel->zoomOutClicked();
-                return true;
-            case GDK_1:
-                iarea->imageArea->zoomPanel->zoom11Clicked();
-                return true;
-            case GDK_f:
-            case GDK_F:
-                iarea->imageArea->zoomPanel->zoomFitClicked();
-                return true;
 
-            case GDK_F5:
-                openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
-                return true;
-        }
+    // Editor Layout
+    switch(event->keyval) {
+        case GDK_L:
+		    tbTopPanel_1->set_active (!tbTopPanel_1->get_active()); // toggle top panel
+		    if (ctrl) hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
+			if (alt) tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
+			return true;
+    	case GDK_l:
+    		if (!shift && !alt /*&& !ctrl*/){
+    			hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
+    		    return true;
+    		}
+			if (alt && !ctrl){ // toggle right panel
+				tbRightPanel_1->set_active (!tbRightPanel_1->get_active());
+				return true;
+			}
+			if (alt && ctrl){ // toggle left and right panels
+				hidehp->set_active (!hidehp->get_active());
+				tbRightPanel_1->set_active (!tbRightPanel_1->get_active());
+				return true;
+			}
+        case GDK_m: // Maximize preview panel: hide top AND right AND history panels
+        	if (!ctrl && !alt) {
+        		toggleSidePanels();
+        		return true;
+        	}
+        case GDK_M: // Maximize preview panel: hide top AND right AND history panels AND (fit image preview)
+        	if (!ctrl && !alt) {
+        		toggleSidePanelsZoomFit();
+        		return true;
+        	}
     }
-    else {
-        // With control
-        switch (event->keyval) {
-            case GDK_s:
-                saveAsPressed();
-                return true;
-            case GDK_q:
-                queueImgPressed();
-                return true;
-            case GDK_e:
-                sendToGimpPressed();
-                return true;
-            case GDK_z:
-                history->undo ();
-                return true;
-            case GDK_Z:
-                history->redo ();
-                return true;
-            case GDK_F5:
-                openThm->openDefaultViewer(3);
-                return true;
 
-        }
-    }
+    if (!alt){
+		if (!ctrl) {
+			// Normal
+			switch(event->keyval) {
+				case GDK_bracketright:
+					tpc->coarse->rotateRight();
+					return true;
+				case GDK_bracketleft:
+					tpc->coarse->rotateLeft();
+					return true;
+
+				case GDK_i:
+				case GDK_I:
+					info->set_active (!info->get_active());
+					return true;
+				case GDK_b:
+				case GDK_B:
+					beforeAfter->set_active (!beforeAfter->get_active());
+					return true;
+				case GDK_plus:
+				case GDK_equal:
+					iarea->imageArea->zoomPanel->zoomInClicked();
+					return true;
+				case GDK_minus:
+				case GDK_underscore:
+					iarea->imageArea->zoomPanel->zoomOutClicked();
+					return true;
+				case GDK_1:
+					iarea->imageArea->zoomPanel->zoom11Clicked();
+					return true;
+
+				case GDK_f:
+					iarea->imageArea->zoomPanel->zoomFitClicked();
+					return true;
+				case GDK_less:
+					iarea->imageArea->indClippedPanel->toggleClipped(true);
+					return true;
+				case GDK_greater:
+					iarea->imageArea->indClippedPanel->toggleClipped(false);
+					return true;
+
+				case GDK_F5:
+					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
+					return true;
+			}
+		}
+		else {
+			// With control
+			switch (event->keyval) {
+				case GDK_s:
+					saveAsPressed();
+					return true;
+				case GDK_q:
+					queueImgPressed();
+					return true;
+				case GDK_e:
+					sendToGimpPressed();
+					return true;
+				case GDK_z:
+					history->undo ();
+					return true;
+				case GDK_Z:
+					history->redo ();
+					return true;
+				case GDK_F5:
+					openThm->openDefaultViewer(3);
+					return true;
+			}
+		} //if (!ctrl)
+    } //if (!alt)
 
     if(tpc->getToolBar()->handleShortcutKey(event))
+        return true;
+    if(tpc->handleShortcutKey(event))
         return true;
 
     return false;
@@ -745,6 +888,8 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
         sendtogimp->set_sensitive(true);
 
 	}
+	rtengine::ImageSource* imgsrc = isrc->getImageSource ();
+    imgsrc->setProgressListener(this);
 	return false;
 }
 
@@ -883,7 +1028,7 @@ void EditorPanel::saveAsPressed () {
 				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
 				fname = removeExtension (fname);
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
+				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
 							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
@@ -914,7 +1059,7 @@ void EditorPanel::sendToGimpPressed () {
     ipc->getParams (&pparams);
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
+    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
     saveimgas->set_sensitive(false);
     sendtogimp->set_sensitive(false);
@@ -1123,8 +1268,45 @@ void EditorPanel::beforeAfterToggled () {
     }
 }
 
-void EditorPanel::histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl) {
+void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
+    LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
 
-    histogramPanel->histogramChanged (rh, gh, bh, lh);
-    tpc->updateCurveBackgroundHistogram (bcrgb, bcl);
+    histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
+    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
+}
+
+bool EditorPanel::CheckSidePanelsVisibility(){
+	if(tbTopPanel_1->get_active()==false && tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
+		return false;
+	else
+		return true;
+}
+void EditorPanel::toggleSidePanels(){
+	// Maximize preview panel:
+	// toggle top AND right AND history panels
+
+	bool bAllSidePanelsVisible;
+	bAllSidePanelsVisible= CheckSidePanelsVisibility();
+
+	tbTopPanel_1->set_active (!bAllSidePanelsVisible);
+	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
+	hidehp->set_active (!bAllSidePanelsVisible);
+}
+
+void EditorPanel::toggleSidePanelsZoomFit(){
+	toggleSidePanels();
+
+	// fit image preview
+	// !!! TODO this does not want to work... seems to have an effect on a subsequent key press
+	// iarea->imageArea->zoomPanel->zoomFitClicked();
+}
+
+void EditorPanel::tbShowHideSidePanels_managestate(){
+	bool bAllSidePanelsVisible;
+	bAllSidePanelsVisible = CheckSidePanelsVisibility();
+	ShowHideSidePanelsconn.block (true);
+
+	tbShowHideSidePanels->set_active (!bAllSidePanelsVisible);
+
+	ShowHideSidePanelsconn.block (false);
 }

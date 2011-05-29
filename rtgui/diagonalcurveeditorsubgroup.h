@@ -31,6 +31,7 @@ class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListen
 protected:
 	Gtk::HBox* customCurveBox;
 	Gtk::VBox* paramCurveBox;
+	Gtk::HBox* paramInnerBox;
 	Gtk::HBox* NURBSCurveBox;
 
 	MyDiagonalCurve* customCurve;
@@ -45,8 +46,16 @@ protected:
 
 	Gtk::Button* saveCustom;
 	Gtk::Button* loadCustom;
+	Gtk::Button* copyCustom;
+	Gtk::Button* pasteCustom;
 	Gtk::Button* saveNURBS;
 	Gtk::Button* loadNURBS;
+	Gtk::Button* copyNURBS;
+	Gtk::Button* pasteNURBS;
+	Gtk::Button* saveParam;
+	Gtk::Button* loadParam;
+	Gtk::Button* copyParam;
+	Gtk::Button* pasteParam;
 
 	int activeParamControl;
 
@@ -64,6 +73,8 @@ protected:
 	void restoreDisplayedHistogram ();
 	void savePressed ();
 	void loadPressed ();
+	void copyPressed ();
+	void pastePressed ();
 	void switchGUI();
 	bool curveReset (int cType);
 	void removeEditor ();

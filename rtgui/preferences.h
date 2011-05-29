@@ -67,13 +67,16 @@ class Preferences : public Gtk::Dialog {
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
     Gtk::FileChooserButton* darkFrameDir;
+    Gtk::FileChooserButton* flatFieldDir;
     Gtk::Label *dfLabel;
+    Gtk::Label *ffLabel;
 
     Gtk::CheckButton* showDateTime;
     Gtk::CheckButton* showBasicExif;
 
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
+	Gtk::CheckButton* cbAutoMonProfile;
 
     Gtk::CheckButton* blinkClipped;
 	Gtk::SpinButton*  hlThresh;
@@ -107,8 +110,18 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
 	
+    Gtk::Entry* txtSndBatchQueueDone;
+    Gtk::Entry* txtSndLngEditProcDone;
+	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
+	
+    Gtk::CheckButton* ckbTunnelMetaData;
+	Gtk::CheckButton* ckbInternalThumbIfUntouched;
+
+    Gtk::Entry* txtCustProfBuilderPath;
+
+
     Options moptions;
-    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
+    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -116,6 +129,7 @@ class Preferences : public Gtk::Dialog {
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
     void updateDFinfos ();
+    void updateFFinfos ();
     void workflowUpdate();
     void themeChanged  ();
     void useThemeChanged();
@@ -134,21 +148,24 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getFileBrowserPanel ();
     Gtk::Widget* getGeneralPanel ();
     Gtk::Widget* getBatchProcPanel ();
+    Gtk::Widget* getSoundPanel ();
     
   public:
-         Preferences (RTWindow *rtwindow);
-         ~Preferences ();
+	Preferences (RTWindow *rtwindow);
+	~Preferences ();
     
     void savePressed ();
     void loadPressed ();
     void okPressed ();
     void cancelPressed ();
     void aboutPressed ();
+	void autoMonProfileToggled ();
 
     void selectStartupDir ();
     void addExtPressed ();
     void delExtPressed ();
     void darkFrameChanged ();
+    void flatFieldChanged ();
     void clearProfilesPressed ();
     void clearThumbImagesPressed ();
     void clearAllPressed ();

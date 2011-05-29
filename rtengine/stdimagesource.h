@@ -44,12 +44,12 @@ class StdImageSource : public ImageSource {
         ~StdImageSource ();
     
         int         load        (Glib::ustring fname, bool batch = false);
-        void        getImage    (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
+        void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
 
-        int         getAEHistogram (unsigned int* histogram, int& histcompr);
+        void        getAutoExpHistogram (LUTu &histogram, int& histcompr);
         
         double      getDefGain  () { return 0.0; }
         double      getGamma    () { return 0.0; }
@@ -59,15 +59,16 @@ class StdImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
-        static void colorSpaceConversion (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded);
+		static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 
 
         static inline double intpow (double a, int b) { double r = 1.0; for (int i=0; i<b; i++) r *= a; return r; }
 
     protected:
-        void    getImage_   (ColorTemp ctemp, int tran, Image16* image, PreviewProps pp, bool first, HRecParams hrp);
-        void    hflip       (Image16* im);
-        void    vflip       (Image16* im);
+        void    getImage_   (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp);
+        void    hflip       (Imagefloat* im);
+        void    vflip       (Imagefloat* im);
 };
 };
 #endif

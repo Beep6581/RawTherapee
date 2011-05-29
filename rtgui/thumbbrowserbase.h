@@ -69,10 +69,13 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void configScrollBars ();
     void scrollChanged ();
     void scroll (int direction);
+    void scrollPage (int direction);
 
   protected:
 
     int eventTime;
+
+	Glib::Mutex entryMutex;  // Locks access to following vectors
 
     std::vector<ThumbBrowserEntryBase*> fd;
     std::vector<ThumbBrowserEntryBase*> selected;

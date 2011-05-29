@@ -60,6 +60,7 @@
 #include <rawprocess.h>
 #include <preprocess.h>
 #include <darkframe.h>
+#include <flatfield.h>
 #include <rawcacorrection.h>
 #include <rawexposure.h>
 
@@ -68,6 +69,8 @@ class ImageEditorCoordinator;
 class ToolPanelCoordinator :    public ToolPanelListener, 
                                 public ProfileChangeListener, 
                                 public WBProvider,
+                                public DFProvider,
+                                public FFProvider,
                                 public LensGeomListener,
                                 public SpotWBListener,
                                 public CropPanelListener,
@@ -90,7 +93,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Resize* resize;
         ICMPanel* icm;
         Crop* crop;
-        ToneCurve* curve;
+        ToneCurve* toneCurve;
         ShadowsHighlights* shadowshighlights;
         //LumaDenoise* lumadenoise;
         //ColorDenoise* colordenoise;
@@ -105,6 +108,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         RawProcess* rawprocess;
         PreProcess* preprocess;
         DarkFrame* darkframe;
+        FlatField* flatfield;
         RAWCACorr* rawcacorrection;
         RAWExposure* rawexposure;
 
@@ -123,6 +127,12 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         IPTCPanel* iptcpanel;
         ToolBar* toolBar;
 
+        Gtk::ScrolledWindow* exposurePanelSW;
+        Gtk::ScrolledWindow* detailsPanelSW;
+        Gtk::ScrolledWindow* colorPanelSW;
+        Gtk::ScrolledWindow* transformPanelSW;
+        Gtk::ScrolledWindow* rawPanelSW;
+
         std::vector<Gtk::Expander*> expList;
         
         bool hasChanged;
@@ -139,7 +149,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-        void updateCurveBackgroundHistogram (unsigned* histrgb, unsigned* histl);
+		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurves);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
@@ -170,9 +180,13 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         //DFProvider interface
         rtengine::RawImage* getDF();
 
+        //FFProvider interface
+        rtengine::RawImage* getFF();
+
         // rotatelistener interface
         void straightenRequested ();
         void autoCropRequested ();
+        double autoDistorRequested ();
 
         // spotwblistener interface
         void spotWBRequested (int size);
@@ -190,6 +204,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ToolBar* getToolBar () { return toolBar; }
         int  getSpotWBRectSize ();
         CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return crop; }
+
+        bool handleShortcutKey (GdkEventKey* event);
 };
 
 #endif

@@ -54,6 +54,10 @@ ThumbBrowserBase::ThumbBrowserBase ()
 }
 
 void ThumbBrowserBase::scrollChanged () {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     for (int i=0; i<fd.size(); i++)
         fd[i]->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
@@ -68,11 +72,17 @@ void ThumbBrowserBase::scrollChanged () {
 }
 
 void ThumbBrowserBase::scroll (int direction) {
-
     if (arrangement==TB_Vertical)
         vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_step_increment());
     else
         hscroll.set_value (hscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_step_increment());
+}
+
+void ThumbBrowserBase::scrollPage (int direction) {
+    if (arrangement==TB_Vertical)
+        vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
+    else
+        hscroll.set_value (hscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment());
 }
 
 void ThumbBrowserBase::resizeThumbnailArea (int w, int h) {
@@ -127,6 +137,10 @@ void ThumbBrowserBase::configScrollBars () {
 }
 
 void ThumbBrowserBase::arrangeFiles () {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
 
     int N = fd.size ();
     // apply filter
@@ -243,6 +257,10 @@ void ThumbBrowserBase::Internal::on_realize()
 }
 
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(parent->entryMutex);
+	#endif
 
     Glib::ustring ttip = "";
     for (int i=0; i<parent->fd.size(); i++) 
@@ -301,6 +319,12 @@ bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event) {
 void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh) {
     ThumbBrowserEntryBase* fileDescr = NULL;
     bool handled = false;
+	
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
+
     for (int i=0; i<fd.size(); i++) 
         if (fd[i]->drawable) {
             if (fd[i]->inside (x, y) && fd[i]->insideWindow (clx, cly, clw, clh))            
@@ -403,6 +427,11 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 
     Glib::RefPtr<Gdk::Window> window = get_window();
 
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(parent->entryMutex);
+	#endif
+
     int w = get_width();
     int h = get_height();
 
@@ -424,6 +453,11 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 
 bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event) {
 
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(parent->entryMutex);
+	#endif
+
     int w = get_width();
     int h = get_height();
 
@@ -434,6 +468,10 @@ bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
 }
 
 bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event) {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(parent->entryMutex);
+	#endif
 
     int w = get_width();
     int h = get_height();
@@ -477,8 +515,15 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
     previewHeight = newHeight;
     if (inTabMode) options.thumbSizeTab = newHeight; else options.thumbSize = newHeight;
 
-    for (int i=0; i<fd.size(); i++) 
-        fd[i]->resize (previewHeight);
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
+		for (int i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
+	}
+
     redraw ();
 #ifdef _WIN32
     gdk_window_process_updates (get_window()->gobj(), true);
@@ -488,6 +533,11 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 int ThumbBrowserBase::getCurrentThumbSize() { return inTabMode ? options.thumbSizeTab : options.thumbSize; }
 
 void ThumbBrowserBase::refreshThumbImages () {
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
 
     for (int i=0; i<fd.size(); i++){
     	previewHeight = getCurrentThumbSize();
@@ -495,11 +545,17 @@ void ThumbBrowserBase::refreshThumbImages () {
 		/* called if necessary by resize()
         fd[i]->refreshThumbnailImage ();  TODO: This might cause crashes on some installations */
     }
+	}
 
     redraw ();
 }
 
 void ThumbBrowserBase::refreshQuickThumbImages () {
+	// TODO: Check for Linux
+	#ifdef WIN32
+	Glib::Mutex::Lock lock(entryMutex);
+	#endif
+
     for (int i=0; i<fd.size(); ++i){
 		fd[i]->refreshQuickThumbnailImage ();
     }
@@ -508,11 +564,20 @@ void ThumbBrowserBase::refreshQuickThumbImages () {
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
     editedFiles = efiles;
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
     for (int i=0; i<fd.size(); i++)
         fd[i]->framed = editedFiles.find (fd[i]->filename)!=editedFiles.end();
+	}
+
     queue_draw ();
 }
     
+
 void ThumbBrowserBase::setArrangement (Arrangement a) {
 
     arrangement = a;    
@@ -524,6 +589,11 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     arrangement = inTabMode ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
     
     if (options.thumbSizeTab!=options.thumbSize) {
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
         for (int i=0; i<fd.size(); i++) 
             fd[i]->resize (getCurrentThumbSize());
     }
@@ -562,7 +632,15 @@ void ThumbBrowserBase::setScrollPosition (double h, double v) {
 // needed for auto-height in single tab
 int ThumbBrowserBase::getEffectiveHeight() { 
     int h=0;
+	{
+		// TODO: Check for Linux
+		#ifdef WIN32
+		Glib::Mutex::Lock lock(entryMutex);
+		#endif
+
     if (fd.size()>0) h=fd[0]->getEffectiveHeight();
+	}
+
     return h;
 }  
 

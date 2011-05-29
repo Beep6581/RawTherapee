@@ -27,9 +27,14 @@
 #include <myflatcurve.h>
 #include <mydiagonalcurve.h>
 
+#include "LUT.h"
+
 #define CURVES_MIN_POLY_POINTS  1000
 
 #define SQR(x) ((x)*(x))
+
+#define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
 
 namespace rtengine {
 
@@ -40,10 +45,10 @@ class CurveFactory {
   protected:
 
     // look-up tables for the standard srgb gamma and its inverse (filled by init())
-    static int *igammatab_srgb;
-    static int *gammatab_srgb;
+    static LUTf igammatab_srgb;
+    static LUTf gammatab_srgb;
     // look-up tables for the simple exponential gamma
-    static int *gammatab;
+    static LUTf gammatab;
 
     // functions calculating the parameters of the contrast curve based on the desired slope at the center
     static double solve_upper (double m, double c, double deriv);
@@ -98,19 +103,19 @@ class CurveFactory {
     static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
         if (b<0) {
 			double m = 0.5;
-			double slope = 1+b;
+			double slope = 1.0+b;
 			double y = -b+m*slope;
 			if (x>m) 
 				return y + (x - m)*slope;
 			else 
 				return y*clower2(x/m, slope*m/y, 2.0-sr);
 		} else {
-			double slope = a/(1-b);
-			double m = a*D>1 ? b/a+(0.25)/slope : b+(1-b)/4;
-			double y = a*D>1 ? 0.25 : (m-b/a)*slope;
+			double slope = a/(1.0-b);
+			double m = a*D>1.0 ? b/a+(0.25)/slope : b+(1-b)/4;
+			double y = a*D>1.0 ? 0.25 : (m-b/a)*slope;
 			if (x<=m)
 				return b==0 ? x*slope : clower (x/m, slope*m/y, sr) * y;
-			else if (a*D>1)
+			else if (a*D>1.0)
 				return y+(1.0-y)*cupper2((x-m)/(D-m), slope*(D-m)/(1.0-y), hr);
 			else
 				return y+(x-m)*slope;
@@ -125,9 +130,9 @@ class CurveFactory {
     }
     // brightness curve at point x, positive negative and zero amount are supported
     static inline double brightness (double x, double amount) {
-        if (amount==0)
+        if (amount==0.0)
             return x;
-        else if (amount>0)
+        else if (amount>0.0)
             return brightnessbase (x, amount);
         else 
             return 1.0 - brightnessbase (1.0-x, -amount);
@@ -135,9 +140,31 @@ class CurveFactory {
 	
 
   public:
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// accurately determine value from integer array with float as index
+	//linearly interpolate from ends of range if arg is out of bounds
+	static inline float interp(int *array,float f)
+	{
+		int index = CLIPI(floor(f));
+		float part = (float)((f)-index)*(float)(array[index+1]-array[index]);
+		return (float)array[index]+part;
+	}
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// accurately determine value from float array with float as index
+	//linearly interpolate from ends of range if arg is out of bounds
+	static inline float flinterp(float *array,float f)
+	{
+		int index = CLIPI(floor(f));
+		float part = ((f)-(float)index)*(array[index+1]-array[index]);
+		return array[index]+part;
+	}
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     static void init ();
     static void cleanup ();
+
+    static inline double centercontrast   (double x, double b, double m);
     
     // standard srgb gamma and its inverse
     static inline double gamma2            (double x) {
@@ -150,21 +177,40 @@ class CurveFactory {
     static inline double gamma            (double x, double gamma, double start, double slope, double mul, double add){
                                             return (x <= start ? x*slope : exp(log(x)/gamma)*mul-add);
                                           }
-	static inline double igamma           (double x, double gamma, double start, double slope, double mul, double add){
+    static inline double igamma           (double x, double gamma, double start, double slope, double mul, double add){
 											return (x <= start*slope ? x/slope : exp(log((x+add)/mul)*gamma) );
 										  }
-	
-
+											
     // gamma functions on [0,65535] based on look-up tables
-    static inline int    gamma_srgb       (int x) { return gammatab_srgb[x]; }
-    static inline int    gamma            (int x) { return gammatab[x]; }
-    static inline int    igamma_srgb      (int x) { return igammatab_srgb[x]; }
+	static inline float    gamma_srgb       (int x) { return gammatab_srgb[x]; }
+	static inline float    gamma            (int x) { return gammatab[x]; }
+	static inline float    igamma_srgb      (int x) { return igammatab_srgb[x]; }
+	static inline float    gamma_srgb       (float x) { return gammatab_srgb[x]; }
+	static inline float    gamma            (float x) { return gammatab[x]; }
+	static inline float    igamma_srgb      (float x) { return igammatab_srgb[x]; }
+	//static inline float    gamma_srgb       (double x) { return gammatab_srgb[x]; }
+	//static inline float    gamma            (double x) { return gammatab[x]; }
+	//static inline float    igamma_srgb      (double x) { return igammatab_srgb[x]; }
+	
+	static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level) 
+	{
+		if (comp>0.0) {
+			float val = level+(hlrange-65536.0);
+			float Y = val*exp_scale/hlrange;
+			float R = hlrange/(val*comp);
+			return log(1.0+Y*comp)*R;
+		} else {
+			return exp_scale;
+		}
+	}
 
   public:
-//    static void updateCurve3 (int* curve, int* ohistogram, const std::vector<double>& cpoints, double defmul, double ecomp, int black, double hlcompr, double shcompr, double br, double contr, double gamma_, bool igamma, int skip=1);
-    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double defmul, double gamma_, bool igamma_, const std::vector<double>& curvePoints, unsigned int* histogram, float* hlCurve, float* shCurve, int* outCurve, unsigned int* outBeforeCCurveHistogram, int skip=1);
-	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& curvePoints, float* outCurve, int skip=1);
-
+    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double gamma_, bool igamma_, const std::vector<double>& curvePoints,
+        LUTu & histogram, LUTu & histogramCropped, LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
+	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& acurvePoints, \
+								 const std::vector<double>& bcurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip=1);
+	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+        LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip); 
 };
 
 class Curve {
@@ -233,5 +279,7 @@ class FlatCurve : public Curve {
     void   getVal (const std::vector<double>& t, std::vector<double>& res);
 };
 }
+
+#undef CLIPI
 
 #endif

@@ -27,11 +27,6 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     exifline = thumbnail->getExifString ();
 }
 
-void ThumbBrowserEntry::obtainThumbnailImage () {
-
-    preview = thumbnail ? (guint8*) thumbnail->getThumbnailImage (prew, preh) : NULL;
-}
-
 void ThumbBrowserEntry::obtainThumbnailSize () {
 
     if (thumbnail)

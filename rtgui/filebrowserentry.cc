@@ -23,6 +23,8 @@
 #include <guiutils.h>
 #include <safegtk.h>
 
+#include <cstring>
+
 #define CROPRESIZEBORDER 4
 
 bool FileBrowserEntry::iconsLoaded = false;
@@ -210,8 +212,16 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
     redrawRequests--; 
     scale = s;
     this->cropParams = cropParams;
+
+    bool newLandscape = img->getWidth() > img->getHeight();
+    bool rotated=false;
+
     if (preh == img->getHeight ()) {
         prew = img->getWidth ();
+
+        // Check if image has been rotated since last time
+        rotated = preview!=NULL && newLandscape!=landscape;
+
         guint8* temp = preview;
         preview = NULL;
         delete [] temp;
@@ -220,9 +230,17 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
         preview = temp;
         updateBackBuffer ();
     }
-    if (redrawRequests==0 && parent) 
-        parent->redrawNeeded (this);
+    
+    landscape = newLandscape;
+
     img->free ();
+
+    if (parent!=NULL) {
+        if (rotated)
+            parent->thumbRearrangementNeeded();
+        else if (redrawRequests==0) 
+        parent->redrawNeeded (this);
+    }
 }
 
 bool FileBrowserEntry::motionNotify (int x, int y) {

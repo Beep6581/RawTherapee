@@ -55,11 +55,19 @@ FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
 FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
+FILEBROWSER_AUTOFLATFIELD;Champ Uniforme auto
+FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
+FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (<b>Ctrl-o</b> place le focus,<b>Ctrl-Entrée</b> pour naviguer dans le Navigateur de Fichier)
+FILEBROWSER_CACHE;Cache
+FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache - complet
+FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache - partiel
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
+FILEBROWSER_DARKFRAME;Trame Noire
 FILEBROWSER_DELETEDLGLABEL;Confirmation de la suppression de fichier
 FILEBROWSER_DELETEDLGMSG;Êtes-vous sûr de vouloir supprimer les %1 fichiers selectionnés?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Êtes-vous sûr de vouloir supprimer les %1 fichiers sélectionnées, INCLUANT une version déjà traitée?
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
 FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EXIFFILTERAPPLY;Appliquer
@@ -67,13 +75,17 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigate
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
+FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
+FILEBROWSER_MOVETOFLATFIELDDIR;Déplacer vers le dossier de Trame Noire
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Abandonner la file de traitement
+FILEBROWSER_POPUPCOPYTO;Copier vers...
 FILEBROWSER_POPUPMOVEEND;Déplacer à la fin de la file
 FILEBROWSER_POPUPMOVEHEAD;Déplacer en tête de file
+FILEBROWSER_POPUPMOVETO;Déplacer vers...
 FILEBROWSER_POPUPOPEN;Ouvrir
 FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
 FILEBROWSER_POPUPRANK1;1 étoile
@@ -82,6 +94,8 @@ FILEBROWSER_POPUPRANK3;3 étoiles
 FILEBROWSER_POPUPRANK4;4 étoiles
 FILEBROWSER_POPUPRANK5;5 étoiles
 FILEBROWSER_POPUPREMOVE;Retirer du système de fichier
+FILEBROWSER_POPUPREMOVEINCLPROC;Suppresion du système de fichier, vers. déjà traitée inclus
+FILEBROWSER_POPUPREMOVESUBMENU;Retirer
 FILEBROWSER_POPUPRENAME;Renommer
 FILEBROWSER_POPUPSELECTALL;Sélectionner tout
 FILEBROWSER_POPUPTRASH;Déplacer dans la corbeille
@@ -92,6 +106,7 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de 
 FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
+FILEBROWSER_SELECTFLATFIELD;Sélectionner un Champ Uniforme...
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
@@ -344,10 +359,14 @@ MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement
 MAIN_BUTTON_QUEUE;Envoyer dans la file
 MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Affiche/Cache les 2 panneaux latéraux <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Quitter le plein écran
 MAIN_FRAME_BATCHQUEUE;File d'attente 
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; File de traitement  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Éditeur
+MAIN_FRAME_EDITOR_TOOLTIP; Éditeur  <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de Fichier  <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Emplacements 
 MAIN_FRAME_PLACES_ADD;Ajouter
 MAIN_FRAME_PLACES_DEL;Supprimer
@@ -366,17 +385,23 @@ MAIN_MSG_PLACES;Emplacement
 MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
 MAIN_TAB_BASIC;Basique
 MAIN_TAB_COLOR;Couleur
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Détail
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 MAIN_TAB_DEVELOP;Développer
 MAIN_TAB_EXIF;EXIF
 MAIN_TAB_EXPOSURE;Exposition
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_FILTER;Filtrer
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique) <b>H</b>
@@ -386,6 +411,9 @@ MAIN_TOOLTIP_PREFERENCES;Régler les préférences
 MAIN_TOOLTIP_QINFO;Montrer les infos EXIF <b>I</b>
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
 MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
+MAIN_TOOLTIP_SHOWHIDELP1;Montre/Cache le panneau gauche <b>H</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Affiche/Cache le panneau droit <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Affiche/Cache le panneau supérieur <b>Shift-l</b>
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
 NAVIGATOR_B_NA;B = n/d
 NAVIGATOR_B_VALUE;B = %1
@@ -470,6 +498,7 @@ PARTIALPASTE_WHITEBALANCE;Balance des blancs
 POPUPBUTTON_SELECTOPTIONHINT;'Menu contextuel' pour changer d'option
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
+PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
@@ -509,6 +538,15 @@ PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
 PREFERENCES_FILEFORMAT;Format du fichier
+PREFERENCES_FLATFIELD;Champ Uniforme
+PREFERENCES_FLATFIELDAUTOSELECT;Sélection auto. du Champ Uniforme
+PREFERENCES_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
+PREFERENCES_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
+PREFERENCES_FLATFIELDFILE;Fichier de Champ Uniforme
+PREFERENCES_FLATFIELDFOUND;Trouvé
+PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
+PREFERENCES_FLATFIELDSHOTS;image(s)
+PREFERENCES_FLATFIELDTEMPLATES;modèle(s)
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
@@ -521,7 +559,9 @@ PREFERENCES_INTENT_ABSOLUTE;Colorimétrie absolue
 PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
+PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second moniteur
@@ -557,12 +597,17 @@ PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
+PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
+PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
+PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
+PREFERENCES_SND_TRESHOLDSECS;après (s)
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
 PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_OUTPUT;Options de sortie
+PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THUMBSIZE;Tailles des vignettes
 PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
@@ -581,9 +626,15 @@ PROFILEPANEL_TOOLTIPCOPY;Copie le profil courant dans le presse-papier
 PROFILEPANEL_TOOLTIPLOAD;Charger un profil depuis un fichier
 PROFILEPANEL_TOOLTIPPASTE; Colle le profil depuis le presse-papier
 PROFILEPANEL_TOOLTIPSAVE;Enregistrer le profil actuel
+PROGRESSBAR_BADPIXELS;Pixels chauds/morts...
+PROGRESSBAR_CACORRECTION;Correction de l'aberr. chomatique...
+PROGRESSBAR_DARKFRAME;Trame noire...
 PROGRESSBAR_DECODING;Décodage du fichier RAW...
 PROGRESSBAR_DEMOSAICING;Dématriçage...
+PROGRESSBAR_GREENEQUIL;Équilibrage du vert...
+PROGRESSBAR_LINEDENOISE;Filtrage de bruit de ligne...
 PROGRESSBAR_LOADING;Chargement de l'Image...
+PROGRESSBAR_LOADINGTHUMBS;Chargement des vignettes...
 PROGRESSBAR_LOADJPEG;Chargement du fichier JPEG...
 PROGRESSBAR_LOADPNG;Chargement du fichier PNG...
 PROGRESSBAR_LOADTIFF;Chargement du fichier TIFF...
@@ -682,6 +733,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;les plus petits
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutre
 TP_DIRPYREQUALIZER_THRESHOLD;Seuil
 TP_DISTORTION_AMOUNT;Quantité
+TP_DISTORTION_AUTO;Correction auto de la distortion
+TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distortion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EQUALIZER_CONTRAST_MINUS;Contraste-
 TP_EQUALIZER_CONTRAST_PLUS;Contraste+
@@ -702,6 +755,14 @@ TP_EXPOSURE_CURVEEDITOR;Courbe tonale
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_LABEL;Exposition
 TP_EXPOSURE_SATURATION;Saturation
+TP_FLATFIELD_AUTOSELECT;Sélection automatique
+TP_FLATFIELD_BLURRADIUS;Rayon de floutage
+TP_FLATFIELD_BLURTYPE;Type de floutage
+TP_FLATFIELD_BT_AREA;Zone
+TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+TP_FLATFIELD_BT_VERTICAL;Vertical
+TP_FLATFIELD_LABEL;Champ Uniforme
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
 TP_HLREC_LABEL;Récupération des hautes lumières
@@ -852,3 +913,12 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
+!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!TP_CROP_PPI;PPI=
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
+!TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_SLOP;slope (linear)

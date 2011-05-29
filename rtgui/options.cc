@@ -24,7 +24,12 @@
 #include <safekeyfile.h>
 #include <addsetids.h>
 #include <safegtk.h>
-#include <version.h>
+#include "version.h"
+
+#ifdef WIN32
+#include <windows.h>
+#include <Shlobj.h>
+#endif
 
 Options options;
 Glib::ustring versionString      = VERSION;
@@ -64,8 +69,8 @@ void Options::setDefaults () {
     profilePath = "profiles";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
-    preferencesWidth = 0;
-    preferencesHeight = 0;
+	preferencesWidth = 0;
+	preferencesHeight = 0;
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
@@ -84,7 +89,7 @@ void Options::setDefaults () {
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
     showInfo = true;					// was false
-    cropDPI = 600;						// was 300
+    cropPPI = 600;						// was 300
     showClippedHighlights = false;
     showClippedShadows = false;
     highlightThreshold = 253;			// was 254
@@ -129,15 +134,19 @@ void Options::setDefaults () {
     showFileNames = true;
     tabbedUI = true;					// was false;
     multiDisplayMode = 0;
+    tunnelMetaData = false;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;
+
+    sndLngEditProcDoneSecs=3.0;
 
     int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
+	rtSettings.flatFieldsPath = "";
 #ifdef WIN32
 	const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 	if (sysRoot!=NULL) 
@@ -149,6 +158,16 @@ void Options::setDefaults () {
 #endif
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
+	rtSettings.autoMonitorProfile = false;
+    rtSettings.LCMSSafeMode = true;
+    rtSettings.adobe = "AdobeRGB1998"; // put the name of yours profiles (here windows)
+    rtSettings.prophoto = "ProPhoto"; // these names appear in the menu "output profile"
+    rtSettings.widegamut = "WideGamutRGB";
+    rtSettings.srgb = "sRGB Color Space Profile";
+    rtSettings.bruce = "Bruce";
+    rtSettings.beta = "BetaRGB";
+    rtSettings.best = "BestRGB";
+
     rtSettings.verbose = false;
 }
 
@@ -195,6 +214,7 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
     if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
+    if( keyFile.has_key ("General", "FlatFieldsPath"))   rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
     if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
 }
 
@@ -220,6 +240,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
+	if (keyFile.has_key ("Output", "TunnelMetaData"))   tunnelMetaData             = keyFile.get_boolean("Output", "TunnelMetaData");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -269,8 +290,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
-    if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
-    if (keyFile.has_key ("GUI", "PreferencesHeight"))   preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight");
+	if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
+	if (keyFile.has_key ("GUI", "PreferencesHeight"))   preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight"); 
     if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth        = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
     if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))  saveAsDialogHeight       = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
     if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth           = keyFile.get_integer ("GUI", "ToolPanelWidth");
@@ -296,17 +317,28 @@ if (keyFile.has_group ("GUI")) {
 
 
 if (keyFile.has_group ("Crop Settings")) { 
-    if (keyFile.has_key ("Crop Settings", "DPI"))       cropDPI      = keyFile.get_integer ("Crop Settings", "DPI");
+    if (keyFile.has_key ("Crop Settings", "PPI"))       cropPPI      = keyFile.get_integer ("Crop Settings", "PPI");
 }
 
 if (keyFile.has_group ("Color Management")) { 
     if (keyFile.has_key ("Color Management", "ICCDirectory"))   rtSettings.iccDirectory         = keyFile.get_string ("Color Management", "ICCDirectory");
     if (keyFile.has_key ("Color Management", "MonitorProfile")) rtSettings.monitorProfile       = keyFile.get_string ("Color Management", "MonitorProfile");
+    if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
+
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
+
+    // Disabled (default is true) till issues are sorted out
+    //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
     if (keyFile.has_key ("Batch Processing", "AdjusterBehavior")) baBehav = keyFile.get_integer_list ("Batch Processing", "AdjusterBehavior");
+}
+
+if (keyFile.has_group ("Sounds")) { 
+    if (keyFile.has_key ("Sounds", "BatchQueueDone")) sndBatchQueueDone = keyFile.get_string ("Sounds", "BatchQueueDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDone"))     sndLngEditProcDone     = keyFile.get_string ("Sounds", "LngEditProcDone");
+    if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
 }
 
         return 0;
@@ -337,6 +369,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "Version", VERSION);
     keyFile.set_boolean ("General", "FirstRun", false);
     keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
+    keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
     keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
 
     keyFile.set_integer ("External Editor", "EditorKind", editorToSendTo);
@@ -389,6 +422,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
 	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
+    keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
@@ -404,8 +438,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
-    keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
-    keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight);
+	keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
+	keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight); 
     keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
     keyFile.set_integer ("GUI", "SaveAsDialogHeight", saveAsDialogHeight);
     keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
@@ -430,15 +464,27 @@ int Options::saveToFile (Glib::ustring fname) {
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
 
-    keyFile.set_integer ("Crop Settings", "DPI", cropDPI);
+    keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
 
     keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
+	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
+    keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
+    keyFile.set_string  ("Color Management", "Adobe_RGB", rtSettings.adobe);
+    keyFile.set_string  ("Color Management", "Pro_Photo", rtSettings.prophoto);
+    keyFile.set_string  ("Color Management", "Wide_Gamut", rtSettings.widegamut);
+    keyFile.set_string  ("Color Management", "S_rgb", rtSettings.srgb);
+    keyFile.set_string  ("Color Management", "B_eta", rtSettings.beta);
+    keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
+    keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
+    keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
+    keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
+    keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
 
 
     FILE *f = safe_g_fopen (fname, "wt");

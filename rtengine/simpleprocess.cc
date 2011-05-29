@@ -24,24 +24,26 @@
 #include <iccstore.h>
 #include <processingjob.h>
 #include <glibmm.h>
-
+#include <options.h>
 #include <iostream>
-
+#include <rawimagesource.h>
 #undef THREAD_PRIORITY_NORMAL
 
-namespace rtengine {
+#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl) {
+
+namespace rtengine {
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
 
     errorCode = 0;
 
     ProcessingJobImpl* job = (ProcessingJobImpl*) pjob;
 
     if (pl) {
-        pl->setProgressStr ("Processing...");
+        pl->setProgressStr ("PROGRESSBAR_PROCESSING");
         pl->setProgress (0.0);
     }
-    
+
     InitialImage* ii = job->initialImage;
     if (!ii) {
         ii = InitialImage::load (job->fname, job->isRaw, &errorCode);
@@ -54,11 +56,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // aquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
-    if (params.wb.method=="Camera")
-        currWB = imgsrc->getWB ();
-    else if (params.wb.method=="Auto")
-        currWB = imgsrc->getAutoWB ();
 
     int tr = TR_NONE;
     if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -92,39 +89,46 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	}
 
     ImProcFunctions ipf (&params, true);
-    
-    Image16* baseImg;
+
+	// set the color temperature
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+    if (params.wb.method=="Camera")
+        currWB = imgsrc->getWB ();
+    else if (params.wb.method=="Auto")
+        currWB = imgsrc->getAutoWB ();
+
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw );
+	if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw );
-    baseImg = new Image16 (fw, fh);
+	if (pl) pl->setProgress (0.40);
+    Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
-    if (pl) 
-        pl->setProgress (0.25);
+    if (pl) pl->setProgress (0.45);
+
 
     // perform first analysis
-    unsigned int* hist16 = new unsigned int[65536];
+    LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
-        Image16* trImg = new Image16 (fw, fh);
+        Imagefloat* trImg = new Imagefloat (fw, fh);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
         delete baseImg;
         baseImg = trImg;
     }
 
     // update blurmap
-    int** buffer = new int*[fh];
-    for (int i=0; i<fh; i++)
-        buffer[i] = new int[fw];
+
 
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, true);
         double radius = sqrt (double(fw*fw+fh*fh)) / 2.0;
-        double shradius = radius / 1800.0 * params.sh.radius;
-        shmap->update (baseImg, (unsigned short**)buffer, shradius, ipf.lumimul, params.sh.hq);
+		double shradius = params.sh.radius;
+		if (!params.sh.hq) shradius *= radius / 1800.0;
+		shmap->update (baseImg, shradius, ipf.lumimul, params.sh.hq, 1);
     }
     // RGB processing
 //!!!// auto exposure!!!
@@ -132,71 +136,71 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     int    bl = params.toneCurve.black;
 
     if (params.toneCurve.autoexp) {
-        unsigned int* aehist = new unsigned int [65536]; int aehistcompr;
-        imgsrc->getAEHistogram (aehist, aehistcompr);
+        LUTu aehist; int aehistcompr;
+        imgsrc->getAutoExpHistogram (aehist, aehistcompr);
         ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
-        delete [] aehist;
     }
 
-    float* curve1 = new float [65536];
-    float* curve2 = new float [65536];
-	int* curve = new int [65536];
-	
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getDefGain(), imgsrc->getGamma(), true, params.toneCurve.curve, hist16, curve1, curve2, curve, NULL);
+    LUTf curve1 (65536,0);
+    LUTf curve2 (65536,0);
+	LUTf curve (65536,0);
+	LUTf satcurve (65536,0);
+	LUTu dummy;
 
-    LabImage* labView = new LabImage (baseImg);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap,  params.toneCurve.saturation);
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
+        hist16, dummy, curve1, curve2, curve, dummy);
+
+	LabImage* labView = new LabImage (fw,fh);
+
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
     if (shmap)
-        delete shmap;
+    delete shmap;
 
     if (pl) 
         pl->setProgress (0.5);
 
 
     // luminance histogram update
-    memset (hist16, 0, 65536*sizeof(int));
+    hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[labView->L[i][j]]++;
+            hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
-    CurveFactory::complexCurve (0.0, 0.0, 0.0, 0.0, 0.0, params.labCurve.brightness, params.labCurve.contrast, 0.0, 0.0, false, params.labCurve.lcurve, hist16, curve1, curve2, curve, NULL);
-    ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.acurve, curve1, 1);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, params.labCurve.bcurve, curve2, 1);
-    ipf.chrominanceCurve (labView, labView, curve1, curve2);
-	
+	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1);
+	ipf.luminanceCurve (labView, labView, curve);
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 1);
+	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
+
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
-	ipf.lumadenoise (labView, buffer);
-    ipf.sharpening (labView, (unsigned short**)buffer);
+	//ipf.lumadenoise (labView, buffer);
+ 	ipf.dirpyrdenoise (labView);
 
-    delete [] curve1;
-	delete [] curve2;
-	delete [] curve;
-    delete [] hist16;
+    if (params.sharpening.enabled) {
+        float** buffer = new float*[fh];
+        for (int i=0; i<fh; i++)
+            buffer[i] = new float[fw];
 
-    // color processing
-    ipf.colorCurve (labView, labView);
-    ipf.colordenoise (labView, buffer);
-	ipf.dirpyrdenoise (labView);
+        ipf.sharpening (labView, (float**)buffer);
+
+        for (int i=0; i<fh; i++)
+            delete [] buffer[i];
+        delete [] buffer; buffer=NULL;
+    }
 
     // wavelet equalizer
-    ipf.waveletEqualizer (labView, true, true);
+    //ipf.waveletEqualizer (labView, true, true);
 	
 	// directional pyramid equalizer
-    ipf.dirpyrequalizer (labView);
+    ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
 
-    for (int i=0; i<fh; i++)
-        delete [] buffer[i];
-    delete [] buffer;
 
-    if (pl) 
-        pl->setProgress (0.70);
+    if (pl) pl->setProgress (0.60);
 
     // crop and convert to rgb16
-    Image16* readyImg;
     int cx = 0, cy = 0, cw = labView->W, ch = labView->H;
     if (params.crop.enabled) {
         cx = params.crop.x;
@@ -204,13 +208,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cw = params.crop.w;
         ch = params.crop.h;
     }
-    readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
-
-    // we can now safely delete labView
+  if(params.icm.gamma != "default" || params.icm.freegamma)	
+    {	// if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+	//or selected Free gamma
+	Image16* readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos);
+	
     delete labView;
-
-    if (pl)
-        pl->setProgress (0.85);
+    if (pl) pl->setProgress (0.70);
 
     // get the resize parameters
 	int refw, refh;
@@ -275,49 +279,171 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	    }
 	}
 
-    readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
 
-    if (pl) 
-        pl->setProgress (1.0);
+    if (tunnelMetaData)
+        readyImg->setMetadata (ii->getMetaData()->getExifData ());
+    else
+        readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
+	
 
     ProfileContent pc;
+	Glib::ustring chpro;
+	int present_space[7]={0,0,0,0,0,0,0};
+	 std::vector<std::string> opnames = rtengine::getOutputProfiles ();
+	 //test if files are in system
+    for (int j=0; j<7;j++) {
+	//one can modify "option" [Color Management] to adapt name of profile ih there are different for windows, MacOS, Linux ?? 
+	if(j==0) chpro=options.rtSettings.prophoto;
+	else if(j==1) chpro=options.rtSettings.adobe;
+	else if(j==2) chpro=options.rtSettings.widegamut;	
+	else if(j==3) chpro=options.rtSettings.beta;	
+	else if(j==4) chpro=options.rtSettings.best;	
+	else if(j==5) chpro=options.rtSettings.bruce;	
+	else if(j==6) chpro=options.rtSettings.srgb;	
+	for (int i=0; i<opnames.size(); i++)
+       if(chpro.compare(opnames[i]) ==0) present_space[j]=1; 
+	      if (present_space[j]==0) { if (pl) pl->setProgressStr ("Missing file..");pl->setProgress (0.0);}// display file not present: not very good display information...!!
+        }
+		//choose output profile
+		if(params.icm.working=="ProPhoto" && present_space[0]==1)  params.icm.output=options.rtSettings.prophoto;
+		else if(params.icm.working=="Adobe RGB" && present_space[1]==1)  params.icm.output=options.rtSettings.adobe;
+		else if(params.icm.working=="WideGamut" && present_space[2]==1)  params.icm.output=options.rtSettings.widegamut;
+		else if(params.icm.working=="Beta RGB" && present_space[3]==1)  params.icm.output=options.rtSettings.beta;
+		else if(params.icm.working=="BestRGB" && present_space[4]==1)  params.icm.output=options.rtSettings.best;
+		else if(params.icm.working=="BruceRGB" && present_space[5]==1)  params.icm.output=options.rtSettings.bruce;
+		else params.icm.output=options.rtSettings.srgb; //if not found or choice=srgb
+
+	
     if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
         pc = iccStore->getContent (params.icm.output);
-
+	
     readyImg->setOutputProfile (pc.data, pc.length);
-
+	
     delete baseImg;
     
     if (!job->initialImage)
         ii->decreaseRef ();
-    
+
     delete job;
-
-    if (pl) {
-        pl->setProgress (1.0);
-        pl->setProgressStr ("Ready.");
-    }
-
+    if (pl)
+        pl->setProgress (0.75);
+	
     return readyImg;
+	}
+	else
+	{//if default mode : profil = selection by choice in list (Prophoto.icm, sRGB.icm, etc., etc.) , gamma = gamma of profile or  not selected Free gamma
+	
+	Image16* readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
+    delete labView;
+    if (pl) pl->setProgress (0.70);
+
+    // get the resize parameters
+	int refw, refh;
+	double tmpScale;
+
+	if (params.resize.enabled) {
+
+		if (params.crop.enabled && params.resize.appliesTo == "Cropped area") {
+			// the resize values applies to the crop dimensions
+			refw = cw;
+			refh = ch;
+		}
+		else {
+			// the resize values applies to the image dimensions
+			// if a crop exists, it will be resized to the calculated scale
+			refw = fw;
+			refh = fh;
+		}
+
+		switch(params.resize.dataspec) {
+		case (1):
+			// Width
+			tmpScale = (double)params.resize.width/(double)refw;
+			break;
+		case (2):
+			// Height
+			tmpScale = (double)params.resize.height/(double)refh;
+			break;
+		case (3):
+			// FitBox
+			if ((double)refw/(double)refh > (double)params.resize.width/(double)params.resize.height) {
+				tmpScale = (double)params.resize.width/(double)refw;
+			}
+			else {
+				tmpScale = (double)params.resize.height/(double)refh;
+			}
+			break;
+		default:
+			// Scale
+			tmpScale = params.resize.scale;
+			break;
+		}
+
+	    // resize image
+	    if (fabs(tmpScale-1.0)>1e-5)
+	    {
+	    	int imw, imh;
+			if (params.crop.enabled && params.resize.appliesTo == "Full image") {
+				imw = cw;
+				imh = ch;
+			}
+			else {
+				imw = refw;
+				imh = refh;
+			}
+			imw = (int)( (double)imw * tmpScale + 0.5 );
+			imh = (int)( (double)imh * tmpScale + 0.5 );
+	        Image16* tempImage = new Image16 (imw, imh);
+	        ipf.resize (readyImg, tempImage, tmpScale);
+	        delete readyImg;
+	        readyImg = tempImage;
+	    }
+	}
+
+
+    if (tunnelMetaData)
+        readyImg->setMetadata (ii->getMetaData()->getExifData ());
+    else
+        readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
+	
+
+    ProfileContent pc;
+    if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
+        pc = iccStore->getContent (params.icm.output);
+	
+    readyImg->setOutputProfile (pc.data, pc.length);
+	
+    delete baseImg;
+    
+    if (!job->initialImage)
+        ii->decreaseRef ();
+
+    delete job;
+    if (pl)
+        pl->setProgress (0.75);
+	
+    return readyImg;
+	
+	}
 }
 
-void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl) {
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     ProcessingJob* currentJob = job;
     
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl);
+        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
         if (errorCode) 
             bpl->error ("Can not load input image.");
         currentJob = bpl->imageReady (img);
     }
 }
 
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl) {
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
 
     if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     
 }
 

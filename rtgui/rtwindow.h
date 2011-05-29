@@ -34,12 +34,13 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
 
-        Gtk::Label prLabel;
         Gtk::ProgressBar prProgBar;
         PLDBridge* pldBridge;
         bool is_fullscreen;
         Gtk::Button * btn_fullscreen;
         
+        Gtk::Image *iFullScreen, *iFullScreen_exit;
+
         bool isSingleTabMode() { return !options.tabbedUI && !EditWindow::isMultiDisplayEnabled(); };
 
         bool on_expose_event_epanel(GdkEventExpose* event);
@@ -65,7 +66,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void toggle_fullscreen ();
         void setProgress (double p);
         void setProgressStr (Glib::ustring str);
-        void setProgressState (int state);
+        void setProgressState (bool inProcessing);
         void error (Glib::ustring descr);
         rtengine::ProgressListener* getProgressListener () { return pldBridge; }
         

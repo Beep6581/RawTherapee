@@ -147,7 +147,20 @@ enum ProcEvent {
     EvPreProcessDFFile=122,
     EvPreProcessExpCorrLinear=123,
     EvPreProcessExpCorrPH=124,
-    NUMOFEVENTS=125
-    };
-}
-#endif
+    EvFlatFieldFile=125,
+    EvFlatFieldAutoSelect=126,
+    EvFlatFieldBlurRadius=127,
+    EvFlatFieldBlurType=128,
+	EvAutoDIST=129,
+	EvDPDNLumCurve=130,
+	EvDPDNChromCurve=131,
+	EvGAMMA=132,
+	EvGAMPOS=133,
+	EvGAMFREE=134,
+	EvSLPOS=135,
+	NUMOFEVENTS=136
+	
+	
+	};
+}    
+#endif    

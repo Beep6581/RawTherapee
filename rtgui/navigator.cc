@@ -18,6 +18,11 @@
  */
 #include <navigator.h>
 #include <toolpanel.h>
+#include <iccmatrices.h> // from rtengine
+#include <iccstore.h>
+
+#define D50x 0.96422
+#define D50z 0.82521
 
 Navigator::Navigator () {
 
@@ -71,7 +76,8 @@ void Navigator::setInvalid () {
 	LAB_L->set_text (M("NAVIGATOR_LAB_L_NA"));
 }
 
-void Navigator::pointerMoved (bool validPos, int x, int y, int r, int g, int b) {
+
+void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {
 
 	if (!validPos)
 		setInvalid ();
@@ -86,7 +92,9 @@ void Navigator::pointerMoved (bool validPos, int x, int y, int r, int g, int b) 
 		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), s));
 		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), v));
 		int LAB_a, LAB_b, LAB_l;
-		rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
+		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
+		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);
+		
 		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), LAB_a));
 		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), LAB_b));
 		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), LAB_l));
@@ -150,12 +158,22 @@ void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
     v = (int)(V*255.0);
 }
 
-void Navigator::rgb2lab (int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b) {
+void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b) {
+	
+	double xyz_rgb[3][3];
+	double ep=216.0/24389.0;
+	double ka=24389.0/27.0;
 
 	volatile double var_R = r / 255.0;
 	volatile double var_G = g / 255.0;
 	volatile double var_B = b / 255.0;
 
+	if (profile=="sRGB") {//apply sRGB inverse gamma
+
+    // 
+// if you want display = working space
+// today as the gamma output can not be configured
+// it is better that the user has the gamma of the output space
 	if ( var_R > 0.04045 ) 
 		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), 2.4);
 	else    
@@ -168,30 +186,47 @@ void Navigator::rgb2lab (int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b
 		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), 2.4);
 	else    
 		var_B = var_B / 12.92;
-
-	var_R = var_R * 100;
-	var_G = var_G * 100;
-	var_B = var_B * 100;
-
-	double var_X = ( var_R * 0.4124 + var_G * 0.3576 + var_B * 0.1805 ) / 95.047;
-	double var_Y = ( var_R * 0.2126 + var_G * 0.7152 + var_B * 0.0722 ) / 100.000;
-	double var_Z = ( var_R * 0.0193 + var_G * 0.1192 + var_B * 0.9505 ) / 108.883;
-
-	if ( var_X > 0.008856 ) 
-		var_X = pow (var_X, ( 1.0/3.0 ));
-	else
-		var_X = ( 7.787 * var_X ) + ( 16.0 / 116.0 );
-	if ( var_Y > 0.008856 ) 
-		var_Y = pow (var_Y, ( 1.0/3.0 ));
+	} 
+// if you want display = output space
 	else 
-		var_Y = ( 7.787 * var_Y ) + ( 16.0 / 116.0 );
-	if ( var_Z > 0.008856 ) 
-		var_Z = pow (var_Z, ( 1.0/3.0 ));
-	else  
-		var_Z = ( 7.787 * var_Z ) + ( 16.0 / 116.0 );
+	if (profile=="ProPhoto") {// apply inverse gamma 1.8
+		var_R = pow ( var_R, 1.8);
+		var_G = pow ( var_G, 1.8);
+		var_B = pow ( var_B, 1.8);
+	}
+	else {// apply inverse gamma 2.2
+		var_R = pow ( var_R, 2.2);
+		var_G = pow ( var_G, 2.2);
+		var_B = pow ( var_B, 2.2);
+	}
 
-	LAB_l = ( 116 * var_Y ) - 16;
-	LAB_a = 500 * ( var_X - var_Y );
-	LAB_b = 200 * ( var_Y - var_Z );
+	/*for (int i=0; i<numprofiles; i++) {
+		if (profile==wpnames[i]) {
+			for (int m=0; m<3; m++) 
+				for (int n=0; n<3; n++) {
+					xyz_rgb[m][n] = wprofiles[i][m][n];
+			}
+			break;
+		}
+	}*/
+
+    TMatrix wprof = rtengine::ICCStore::getInstance()->workingSpaceMatrix (profile);
+
+	for (int m=0; m<3; m++) 
+		for (int n=0; n<3; n++) {
+			xyz_rgb[m][n] = wprof[m][n];
+		}
+
+	double varxx,varyy,varzz;
+	double var_X = ( xyz_rgb[0][0]*var_R + xyz_rgb[0][1]*var_G + xyz_rgb[0][2]*var_B ) / D50x;
+	double var_Y = ( xyz_rgb[1][0]*var_R + xyz_rgb[1][1]*var_G + xyz_rgb[1][2]*var_B ) ;
+	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / D50z;
+
+	varxx = var_X>ep?pow (var_X, 1.0/3.0):( ka * var_X  +  16.0) / 116.0 ;
+	varyy = var_Y>ep?pow (var_Y, 1.0/3.0):( ka * var_Y  +  16.0) / 116.0 ;
+	varzz = var_Z>ep?pow (var_Z, 1.0/3.0):( ka * var_Z  +  16.0) / 116.0 ;
+	LAB_l = ( 116 * varyy ) - 16;
+	LAB_a = 500 * ( varxx - varyy );
+	LAB_b = 200 * ( varyy - varzz );
 
 }

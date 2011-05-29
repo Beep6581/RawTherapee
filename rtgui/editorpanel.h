@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2010 Oliver Duis <www.oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -50,15 +51,23 @@ class EditorPanel : public Gtk::VBox,
                     public rtengine::HistogramListener {
 
     protected:      
-        Gtk::Label *progressLabel;
+        Gtk::ProgressBar  *progressLabel;
         Gtk::ToggleButton* info;
         Gtk::ToggleButton* hidehp;
+        Gtk::ToggleButton* tbShowHideSidePanels;
+        Gtk::ToggleButton* tbTopPanel_1;
+        Gtk::ToggleButton* tbRightPanel_1;
+        bool tbTopPanel_1_Active;
+        bool tbRightPanel_1_Active;
+        //bool bAllSidePanelsVisible;
         Gtk::ToggleButton* beforeAfter;
         Gtk::HPaned* hpanedl;
         Gtk::HPaned* hpanedr;
         Gtk::HBox* statusBox;
-        Gtk::Image* red;
-        Gtk::Image* green;
+        Gtk::Image *iHistoryShow, *iHistoryHide;
+        Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
+        Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
+        Gtk::Image *iShowHideSidePanels;
         Gtk::VBox* leftbox, *vboxright;
 
         Gtk::Button* queueimg;
@@ -104,6 +113,11 @@ class EditorPanel : public Gtk::VBox,
         bool                idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc);
         bool                idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring filename);
         int err;
+
+        time_t processingStartedTime;
+
+        sigc::connection ShowHideSidePanelsconn;
+
     public:
 
         EditorPanel (FilePanel* filePanel = NULL);
@@ -120,10 +134,10 @@ class EditorPanel : public Gtk::VBox,
         // progresslistener interface
         void setProgress (double p);
         void setProgressStr (Glib::ustring str);
-        void setProgressState (int state);
+        void setProgressState (bool inProcessing);
         void error (Glib::ustring descr);
-        void refreshProcessingState (bool state); // this is called by setProcessingState in the gtk thread
         void displayError (Glib::ustring descr);  // this is called by error in the gtk thread
+        void refreshProcessingState (bool inProcessing); // this is called by setProcessingState in the gtk thread
         
         // PParamsChangeListener interface
         void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);
@@ -135,23 +149,30 @@ class EditorPanel : public Gtk::VBox,
         void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params);
         
         // HistogramListener
-        void histogramChanged (unsigned int* rh, unsigned int* gh, unsigned int* bh, unsigned int* lh, unsigned int* bcrgb, unsigned int* bcl);
+		void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, 
+            LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
         // event handlers
         void info_toggled ();
         void hideHistoryActivated ();
+        void tbRightPanel_1_toggled ();
+        void tbTopPanel_1_toggled ();
         void beforeAfterToggled ();
         void saveAsPressed ();
         void queueImgPressed ();
         void sendToGimpPressed ();
+
+        void tbTopPanel_1_visible (bool visible);
+        bool CheckSidePanelsVisibility();
+        void tbShowHideSidePanels_managestate();
+        void toggleSidePanels();
+        void toggleSidePanelsZoomFit();
 
         void saveProfile ();
         Glib::ustring getShortName ();
         Glib::ustring getFileName ();
         bool handleShortcutKey (GdkEventKey* event);
         
-        //void saveOptions ();
-
         Gtk::Paned *catalogPane;        
 };
 

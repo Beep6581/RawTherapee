@@ -174,6 +174,8 @@ class ColorDenoiseParams {
         int		luma;
         int     chroma;
 		float	gamma;
+		std::vector<double>   lumcurve;
+		std::vector<double>   chromcurve;
 	};
 
 /**
@@ -207,6 +209,8 @@ class CropParams {
         Glib::ustring   ratio;
         Glib::ustring   orientation;
         Glib::ustring   guide;
+
+        void mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
 };
 
 /**
@@ -327,6 +331,11 @@ class ColorManagementParams {
         bool          gammaOnInput;
         Glib::ustring working;
         Glib::ustring output;
+        Glib::ustring gamma;
+		double gampos;
+		double slpos;
+		bool freegamma;
+		
 };
 
 /**
@@ -375,8 +384,6 @@ class DirPyrEqualizerParams {
 class HSVEqualizerParams {
 	
 	public:
-		//bool enabled;
-		//Glib::ustring hsvchannel;
 		std::vector<double>   hcurve;
 		std::vector<double>   scurve;
 		std::vector<double>   vcurve;
@@ -392,16 +399,29 @@ class RAWParams {
 					numMethods }; // This MUST be the last enum
 		static const char *methodstring[numMethods];
 
-
+		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
+								numFlatFileBlurTypes }; // This MUST be the last enum
+		static const char *ff_BlurTypestring[numFlatFileBlurTypes];
+	
 
 	    Glib::ustring dark_frame;
 	    bool df_autoselect;
+	
+		Glib::ustring ff_file;
+		bool ff_AutoSelect;
+		int ff_BlurRadius;
+		Glib::ustring ff_BlurType;
+	
 		bool ca_autocorrect;
 		double cared;
 		double cablue;
+
+		// exposure before interpolation
 		double expos;
-		double preser; // expos
+		double preser; 
+		
 		bool hotdeadpix_filt;
+		int hotdeadpix_thresh;
 		int	linenoise;
 		int greenthresh;
         int ccSteps;
@@ -446,6 +466,9 @@ class ProcParams {
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
         std::vector<ExifPair>   exif;            ///< List of modifications appplied on the exif tags of the input image
         std::vector<IPTCPair>   iptc;            ///< The IPTC tags and values to be saved to the output image
+        char                    rank;            ///< Custom image quality ranking
+        char                    colorlabel;      ///< Custom color label
+        bool                    inTrash;         ///< Marks deleted image
         Glib::ustring appVersion;                ///< Version of the application that generated the parameters
         int ppVersion;                           ///< Version of the PP file from which the parameters have been read
 

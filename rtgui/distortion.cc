@@ -24,6 +24,13 @@ using namespace rtengine::procparams;
 
 Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
 
+    rlistener = NULL;
+    autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));
+    autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));
+    idConn = autoDistor->signal_pressed().connect( sigc::mem_fun(*this, &Distortion::idPressed) );
+    autoDistor->show();
+    pack_start (*autoDistor);
+
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0));
     distor->setAdjusterListener (this); 
     distor->show();
@@ -35,8 +42,9 @@ void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
-    if (pedited) 
+    if (pedited) {
         distor->setEditedState (pedited->distortion.amount ? Edited : UnEdited);
+    }
 
     distor->setValue (pp->distortion.amount);
     
@@ -47,18 +55,21 @@ void Distortion::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->distortion.amount = distor->getValue ();
 
-    if (pedited) 
+    if (pedited) {
         pedited->distortion.amount = distor->getEditedState ();
+    }
 }
 
 void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
     distor->setDefault (defParams->distortion.amount);
 
-    if (pedited) 
+    if (pedited) {
         distor->setDefaultEditedState (pedited->distortion.amount ? Edited : UnEdited);
-    else 
+    }
+    else  {
         distor->setDefaultEditedState (Irrelevant);
+    }
 }
 
 void Distortion::adjusterChanged (Adjuster* a, double newval) {
@@ -78,6 +89,18 @@ void Distortion::setAdjusterBehavior (bool bvadd) {
 void Distortion::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
+    if (batchMode) {
+        autoDistor->set_sensitive(false);
+    }
     distor->showEditedCB ();
 }
 
+void Distortion::idPressed () {
+    if (!batchMode) {
+        if (rlistener) {
+            double new_amount = rlistener->autoDistorRequested();
+            distor->setValue(new_amount);
+            adjusterChanged (distor, new_amount);
+        }
+    }
+}

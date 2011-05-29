@@ -19,93 +19,96 @@
 //	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 //		     Jacques Desmis <jdesmis@gmail.com>
 //   	     use fast-demo(provisional) from Emil Martinec
 //			 inspired from work Guillermo Luijk and Manuel LLorens(Perfectraw)
-// I use OMP
+//
   // This function uses parameters:
-  //      exposure (lineal): 2^(-8..0..8): currently 0.5 +3
+//      exposure (linear): 2^(-8..0..8): currently 0.5 +3
   //      preserve (log)   : 0..8 : currently 0.1 1
 
-//modi : 31/12/2010
-#define LIM(x,min,max) MAX(min,MIN(x,max))
-#define CLIPF(x) LIM(x,0.0,65535.0)
-
-void RawImageSource::exp_bef(float expos, float preser) {
-	double dt,dT2;
-	clock_t t1, t2,t3,t4,t5;
-	float Yp, exposure2, K, EV;
-//	float LUT[65536];
-float *LUT = new float[65536];
-	int i;
-	int row,col;
+void RawImageSource::processRawWhitepoint(float expos, float preser) {
 	int width=W, height=H;
 
-	// I use with Dcraw FDD interpolate from Luis Sanz , very fast and good, one can change for another : here with Rawtherpee == fastdemo() from Emil Martinec
-	//t1 = clock();
-	 //float *img = new float[H*W];//to save configuration : with RT is it necessary ??
-		unsigned short** imgd; 
-		imgd = allocArray< unsigned short >(W,H);//with memcpy : faster than for (...)
-		for (int i=0; i<H; i++) {
-				memcpy (imgd[i], rawData[i], W*sizeof(**imgd));}//save configuration but perhaps instable...
+    // exposure correction inspired from G.Luijk
+    if (preser==0.0) {	
+        // No highlight protection - simple mutiplication
+#pragma omp parallel for shared(expos)
+        for (int row=0;row<height;row++)
+            for (int col=0;col<width;col++)
+                rawData[row][col] *= expos;
+    } else {
+        // save old image as it's overwritten by demosaic
+        float** imgd = allocArray< float >(W,H); 
 	 
-	 fast_demo (0,0,W,H);//from Emil
+        // with memcpy it's faster than for (...)
+        for (int i=0; i<H; i++) memcpy (imgd[i], rawData[i], W*sizeof(**imgd));
+
+        // Demosaic to calc luminosity
+        fast_demo (0,0,W,H);
+
 // calculate CIE luminosity
-float *YY;
-YY = (float *)calloc(width*height,sizeof *YY);// for CIE luminosity
+        float* luminosity = (float *) new float[width*height];
+
 #pragma omp parallel default(shared)  
 {
+            // CIE luminosity
 #pragma omp for  
 	 for(int row=0;row<height;row++)
 		for(int col=0;col<width;col++)
-			{int i=row*width+col;
-			YY[i]=CLIPF(0.299*(float)red[row][col]+0.587*(float)green[row][col]+0.114*(float)blue[row][col]); // CIE luminosity
-				}
+                    luminosity[row*width+col] = 
+                    0.299*(float)red[row][col] + 0.587*(float)green[row][col] + 0.114*(float)blue[row][col]; 
 }	
 
-		for (int i=0; i<H; i++) {
-				memcpy (rawData[i], imgd[i], W*sizeof(**imgd));}//restore config
+        // restore image destroyed by demosaic
+        for (int i=0; i<H; i++) memcpy (rawData[i], imgd[i], W*sizeof(**imgd));
+        freeArray<float>(imgd, H);
 			
-freeArray<unsigned short>(imgd, H);//free memory imgd
-
-	//exposure correction inspired from G.Luijk
- if(preser==0.0){	// protect highlights 
-#pragma omp parallel for  shared(expos)
+        // Find maximum to adjust LUTs. New float engines clips only at the very end
+        int maxVal=65535;
 	 for(int row=0;row<height;row++)
 		for(int col=0;col<width;col++)
-			{rawData[row][col]=CLIPF((float)rawData[row][col]*expos);}
-  }else{
+                if (rawData[row][col]>maxVal) maxVal = rawData[row][col];
+
     // Exposure correction with highlight preservation
+        LUTf lut(maxVal+1);
     if(expos>1){
-      K=65535/expos*exp(-preser*log((double) 2));
-      for(int j=0;j<=65535;j++) LUT[(int)j]=CLIPF(((65535-K*expos)/(65535-K)*(j-65535)+65535)/j);
+            float K = maxVal / expos*exp(-preser*log(2.0));
+            for (int j=0;j<=maxVal;j++) 
+                lut[(int)j]=((maxVal-K*expos)/(maxVal-K)*(j-maxVal)+maxVal) / j;
 
 #pragma omp parallel for  shared(expos)
 	 for(int row=0;row<height;row++)
 		for(int col=0;col<width;col++){
-			if(YY[row*width+col]<K){
-				rawData[row][col]=CLIPF((float)rawData[row][col]*expos);}
-			else{
-				float exposure2=LUT[(int)YY[row*width+col]];
-				rawData[row][col]=CLIPF((float)rawData[row][col]*exposure2);}}
+                    if (luminosity[row*width + col] < K) {
+                        rawData[row][col] *= expos;
+                    } else {
+                        rawData[row][col] *= lut[luminosity[row*width+col]];
 			}
-	else{
+                }
+        } else {
+            // Negative exposure
       float EV=log(expos)/log(2.0);                              // Convert exp. linear to EV
-      float K=65535.0*exp(-preser*log((double) 2));
-      for(int j=0;j<=65535;j++) LUT[(int)j]=CLIPF(exp(EV*(65535.0-j)/(65535.0-K)*log((double) 2)));
+            float K = (float)maxVal * exp(-preser * log(2.0));
+
+            for (int j=0;j<=maxVal;j++) 
+                lut[(int)j] = exp(EV*((float)maxVal-j) / ((float)maxVal-K) * log(2.0));
+
 #pragma omp parallel for  shared(expos)	  
 	 for(int row=0;row<height;row++)
 		for(int col=0;col<width;col++){
-			if(YY[row*width+col]<K){
-				rawData[row][col]=CLIPF((float)rawData[row][col]*expos);}
-			else{
-				float exposure2=LUT[(int)YY[row*width+col]];
-				rawData[row][col]=CLIPF((float)rawData[row][col]*exposure2);}}
+                    if (luminosity[row*width+col]<K) {
+                        rawData[row][col] *= expos;
+                    } else {
+                        rawData[row][col] *= lut[luminosity[row*width+col]];
     }	
 }
-free(YY);
-delete [] LUT;
 
+        }	
+
+        delete[] luminosity;
+    }
 }

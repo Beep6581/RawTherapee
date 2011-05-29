@@ -22,7 +22,7 @@
 #include <rawmetadatalocation.h>
 #include <procparams.h>
 #include <glibmm.h>
-#include <lcms.h>
+#include <lcms2.h>
 #include <image16.h>
 
 namespace rtengine {
@@ -31,7 +31,7 @@ namespace rtengine {
 
             cmsHPROFILE camProfile;
             double iColorMatrix[3][3];
-            double camToD50[3][3];
+            double cam2xyz[3][3];
 
 
             void transformPixel (int x, int y, int tran, int& tx, int& ty);
@@ -45,7 +45,7 @@ namespace rtengine {
             double camwbBlue;
             double autowbTemp;
             double autowbGreen;
-            unsigned int* aeHistogram;
+            LUTu aeHistogram;
             int  aeHistCompression;
             int embProfileLength;
             unsigned char* embProfileData;
@@ -75,8 +75,8 @@ namespace rtengine {
             int      getImageWidth  (const procparams::ProcParams& pparams, int rheight);
             void     getFinalSize   (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
             
-            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh);
-            static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh);
+            static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
+            static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
             static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh);           
             
             void getCamWB     (double& temp, double& green);
@@ -84,6 +84,7 @@ namespace rtengine {
             void getSpotWB    (const procparams::ProcParams& params, int x, int y, int rect, double& temp, double& green);
             void applyAutoExp (procparams::ProcParams& pparams);
             
+            unsigned char* getGrayscaleHistEQ (int trim_width);
             bool writeImage (const Glib::ustring& fname, int format);
             bool readImage (const Glib::ustring& fname);
             

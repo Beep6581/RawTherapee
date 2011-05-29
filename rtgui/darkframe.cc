@@ -36,9 +36,12 @@ DarkFrame::DarkFrame () : Gtk::VBox(), FoldableToolPanel(this)
 	hbdf->pack_start(*darkFrameFile);
 	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 4);
 	dfAuto = Gtk::manage(new Gtk::CheckButton((M("TP_DARKFRAME_AUTOSELECT"))));
+	dfInfo = Gtk::manage(new Gtk::Label(""));
+	dfInfo->set_alignment(0,0); //left align
 
 	pack_start( *hbdf, Gtk::PACK_SHRINK, 4);
 	pack_start( *dfAuto, Gtk::PACK_SHRINK, 4);
+	pack_start( *dfInfo, Gtk::PACK_SHRINK, 4);
 
 	dfautoconn = dfAuto->signal_toggled().connect ( sigc::mem_fun(*this, &DarkFrame::dfAutoChanged), true);
 	dfFile = darkFrameFile->signal_file_set().connect ( sigc::mem_fun(*this, &DarkFrame::darkFrameChanged), true);
@@ -60,6 +63,17 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	hbdf->set_sensitive( !pp->raw.df_autoselect );
 
 	lastDFauto = pp->raw.df_autoselect;
+
+	if( pp->raw.df_autoselect  && dfp && !batchMode){
+		// retrieve the auto-selected df filename
+		rtengine::RawImage *img = dfp->getDF();
+		if( img ){
+			dfInfo->set_text( Glib::ustring::compose("%1: %2ISO %3s", Glib::path_get_basename(img->get_filename()), img->get_ISOspeed(), img->get_shutter()) );
+		}else{
+			dfInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
+		}
+	}
+	else dfInfo->set_text("");
 
 	dfAuto->set_active( pp->raw.df_autoselect );
 	dfChanged = false;
@@ -95,6 +109,17 @@ void DarkFrame::dfAutoChanged()
         lastDFauto = dfAuto->get_active ();
     }
 
+    if(dfAuto->get_active() && dfp && !batchMode){
+ 	 // retrieve the auto-selected df filename
+      rtengine::RawImage *img = dfp->getDF();
+      if( img ){
+        dfInfo->set_text( Glib::ustring::compose("%1: %2ISO %3s", Glib::path_get_basename(img->get_filename()), img->get_ISOspeed(), img->get_shutter()) );
+      }else{
+		dfInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
+	  }
+    }
+    else{dfInfo->set_text("");}
+
 	hbdf->set_sensitive( !dfAuto->get_active() );
     if (listener)
         listener->panelChanged (EvPreProcessAutoDF, dfAuto->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
@@ -116,6 +141,7 @@ void DarkFrame::darkFrameReset()
 		if( !options.rtSettings.darkFramesPath.empty() )
 	  	darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );
 
+	dfInfo->set_text("");
     if (listener)
         listener->panelChanged (EvPreProcessDFFile, M("GENERAL_NONE"));
 

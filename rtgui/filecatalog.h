@@ -22,9 +22,9 @@
 #ifdef _WIN32
 #include <windirmonitor.h>
 #endif
+#include <dirbrowserremoteinterface.h>
 #include <dirselectionlistener.h>
 #include <filebrowser.h>
-#include <procthread.h>
 #include <exiffiltersettings.h>
 #include <giomm.h>
 #include <fileselectionlistener.h>
@@ -34,6 +34,8 @@
 #include <toolbar.h>
 #include <filterpanel.h>
 #include <previewloader.h>
+#include <multilangmgr.h>
+
 
 class DirEntry {
 
@@ -46,7 +48,7 @@ class DirEntry {
 		return fullName.casefold() < other.fullName.casefold();
 	}
 };
-
+class FilePanel;
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
@@ -57,7 +59,7 @@ class FileCatalog : public Gtk::VBox,
 #endif
  {
 
-
+        FilePanel* filepanel;
         Gtk::HBox* hBox;
         Glib::ustring selectedDirectory;
         int selectedDirectoryId;
@@ -67,21 +69,35 @@ class FileCatalog : public Gtk::VBox,
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
         ImageAreaToolListener* iatlistener;
+        DirBrowserRemoteInterface*   dirlistener;
 
         Gtk::HBox* buttonBar;
         Gtk::HBox* buttonBar2;
-        Gtk::ToggleButton* bDir;
+        Gtk::HBox* fltrRankbox;
+        Gtk::HBox* fltrLabelbox;
+        Gtk::VBox* fltrVbox1;
+        Gtk::ToggleButton* tbLeftPanel_1;
+        Gtk::ToggleButton* tbRightPanel_1;
+        Gtk::ToggleButton* bFilterClear;
         Gtk::ToggleButton* bUnRanked;
         Gtk::ToggleButton* bRank[5];
+        Gtk::ToggleButton* bUnCLabeled;
+        Gtk::ToggleButton* bCLabel[5];//color label
         Gtk::ToggleButton* bTrash;
-        Gtk::ToggleButton* categoryButtons[8];
+        Gtk::ToggleButton* categoryButtons[14];
         Gtk::ToggleButton* exifInfo;
-        sigc::connection bCateg[8];
+        sigc::connection bCateg[14];
         Gtk::Image* iranked[5], *igranked[5];
+        Gtk::Image* iCLabeled[5], *igCLabeled[5];
         Gtk::Image *iTrashEmpty, *iTrashFull;
+        Gtk::Image *iRightArrow_red, *iRightArrow;
+        Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;
+        Gtk::Entry* BrowsePath;
+        Gtk::Button* buttonBrowsePath;
+        sigc::connection BrowsePathconn;
         
-        double hScrollPos[8];
-        double vScrollPos[8];
+        double hScrollPos[14];
+        double vScrollPos[14];
         int lastScrollPos;
 
         Gtk::VBox* trashButtonBox;
@@ -97,7 +113,6 @@ class FileCatalog : public Gtk::VBox,
 
         Glib::RefPtr<Gio::FileMonitor> dirMonitor;
 
-        Gtk::ProgressBar* progressBar;
         int previewsToLoad;
         int previewsLoaded;
 
@@ -105,7 +120,6 @@ class FileCatalog : public Gtk::VBox,
 #ifdef _WIN32
         WinDirMonitor* wdMonitor;
      public:
-        int checkCounter;
         void winDirChanged ();
      private:
 #endif		
@@ -118,7 +132,7 @@ class FileCatalog : public Gtk::VBox,
         std::vector<Glib::ustring> getFileList ();
         BrowserFilter getFilter ();
         void trashChanged ();
-               
+
     public:
             // thumbnail browsers
             FileBrowser* fileBrowser;
@@ -126,7 +140,7 @@ class FileCatalog : public Gtk::VBox,
             CoarsePanel* coarsePanel;
             ToolBar* toolBar;
 
-                     FileCatalog (CoarsePanel* cp, ToolBar* tb);
+                     FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel);
                      ~FileCatalog();
                 void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
                 void closeDir    ();
@@ -151,9 +165,11 @@ class FileCatalog : public Gtk::VBox,
                 void refreshHeight ();
                 
                 void openRequested          (std::vector<Thumbnail*> tbe);
-                void deleteRequested        (std::vector<FileBrowserEntry*> tbe);
+                void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed);
+                void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested);
                 void developRequested       (std::vector<FileBrowserEntry*> tbe);
                 void renameRequested        (std::vector<FileBrowserEntry*> tbe);
+                void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace);
                 void selectionChanged       (std::vector<Thumbnail*> tbe);
                 void emptyTrash ();
                 bool trashIsEmpty ();
@@ -161,6 +177,8 @@ class FileCatalog : public Gtk::VBox,
                 void setFileSelectionListener (FileSelectionListener* l) { listener = l; }
                 void setFileSelectionChangeListener (FileSelectionChangeListener* l) { fslistener = l; }
                 void setImageAreaToolListener (ImageAreaToolListener* l) { iatlistener = l; }
+                void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l) { dirlistener = l; }
+
 				void setFilterPanel (FilterPanel* fpanel);
 				void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
@@ -176,12 +194,20 @@ class FileCatalog : public Gtk::VBox,
                 void zoomIn ();
                 void zoomOut ();
 
+                void buttonBrowsePathPressed ();
+
+                void tbLeftPanel_1_toggled ();
+                void tbLeftPanel_1_visible (bool visible);
+                void tbRightPanel_1_toggled ();
+                void tbRightPanel_1_visible (bool visible);
+
                 void openNextImage () { fileBrowser->openNextImage(); }
                 void openPrevImage () { fileBrowser->openPrevImage(); }               
 
                 bool handleShortcutKey (GdkEventKey* event);
 
-
+                bool CheckSidePanelsVisibility();
+                void toggleSidePanels();
 };
 
 #endif

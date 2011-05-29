@@ -26,7 +26,7 @@
 #include <omp.h>
 #endif 
 
-#define DEBUG(format,args...) 
+#define DEBUG(format,args...)
 //#define DEBUG(format,args...) printf("PreviewLoader::%s: " format "\n", __FUNCTION__, ## args)
 
 class PreviewLoader::Impl
@@ -64,7 +64,7 @@ public:
 
 	typedef std::set<Job,JobCompare> JobSet;
 
-	Impl()
+	Impl():nConcurrentThreads(0)
 	{
 		int threadCount=2;
 		#ifdef _OPENMP
@@ -79,6 +79,8 @@ public:
 	Glib::Mutex mutex_;
 
 	JobSet jobs_;
+
+	gint nConcurrentThreads;
 
 	void
 	processNextJob(void)
@@ -100,27 +102,33 @@ public:
 			DEBUG("processing %s",j.dir_entry_.c_str());
 			DEBUG("%d job(s) remaining",jobs_.size());
 		}
-
+		g_atomic_int_inc (&nConcurrentThreads);
 		// unlock and do processing; will relock on block exit, then call listener
 		// if something got
-		Thumbnail* tmb = 0;
-		{
-			if (safe_file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS))
+		try{
+			Thumbnail* tmb = 0;
 			{
-				tmb = cacheMgr->getEntry(j.dir_entry_);
+				if (safe_file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS))
+				{
+					tmb = cacheMgr->getEntry(j.dir_entry_);
+				}
 			}
-		}
 
-		// we got something so notify listener
-		if ( tmb )
-		{
-			j.listener_->previewReady(j.dir_id_,new FileBrowserEntry(tmb,j.dir_entry_));
-		}
+			// we got something so notify listener
+			if ( tmb )
+			{
+				j.listener_->previewReady(j.dir_id_,new FileBrowserEntry(tmb,j.dir_entry_));
+			}
+		}catch(Glib::Error){
+
+		}catch(...){}
+		bool last = g_atomic_int_dec_and_test(&	nConcurrentThreads);
 
 		// signal at end
 		if ( jobs_.empty() )
 		{
-			j.listener_->previewsFinished(j.dir_id_);
+			if(last)
+			   j.listener_->previewsFinished(j.dir_id_);
 		}
 	}
 };
@@ -163,8 +171,8 @@ PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderList
 void 
 PreviewLoader::removeAllJobs(void) 
 { 
-	DEBUG("stop");
-
+	DEBUG("stop %d",impl_->nConcurrentThreads);
+	Glib::Mutex::Lock lock(impl_->mutex_);
 	impl_->jobs_.clear();
 }
 

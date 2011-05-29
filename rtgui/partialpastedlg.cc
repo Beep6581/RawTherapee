@@ -88,12 +88,12 @@ PartialPasteDlg::PartialPasteDlg () {
     raw_ccSteps			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_FALSECOLOR")));
     raw_dcb_iterations	= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBITERATIONS")));
     raw_dcb_enhance		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBENHANCE")));
-	df_file        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DARKFRAMEFILE")));
-	df_AutoSelect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DARKFRAMEAUTOSELECT")));
-	//ff_file        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFILE")));
-	//ff_AutoSelect  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDAUTOSELECT")));
-	//ff_BlurRadius  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURRADIUS")));
-	//ff_BlurType    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURTYPE")));
+	df_file        		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DARKFRAMEFILE")));
+	df_AutoSelect  		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DARKFRAMEAUTOSELECT")));
+	ff_file        		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFILE")));
+	ff_AutoSelect  		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDAUTOSELECT")));
+	ff_BlurRadius  		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURRADIUS")));
+	ff_BlurType    		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURTYPE")));
 
     Gtk::VBox* vboxes[7];
     Gtk::HSeparator* hseps[7];
@@ -163,10 +163,10 @@ PartialPasteDlg::PartialPasteDlg () {
 	vboxes[6]->pack_start (*raw_preser, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
-	//vboxes[6]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
-	//vboxes[6]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
-	//vboxes[6]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
-	//vboxes[6]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_cared, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_cablue, Gtk::PACK_SHRINK, 2);
@@ -260,12 +260,12 @@ PartialPasteDlg::PartialPasteDlg () {
     raw_hotdeadpix_filtConn = raw_hotdeadpix_filt->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_linenoiseConn       = raw_linenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_greenthreshConn     = raw_greenthresh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    df_fileConn        = df_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    df_AutoSelectConn  = df_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    //ff_fileConn        = ff_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    //ff_AutoSelectConn  = ff_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    //ff_BlurRadiusConn  = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
-    //ff_BlurTypeConn    = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    df_fileConn             = df_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    df_AutoSelectConn       = df_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_fileConn             = ff_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_AutoSelectConn       = ff_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_BlurRadiusConn       = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_BlurTypeConn         = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
     add_button (Gtk::StockID("gtk-ok"), 1);
     add_button (Gtk::StockID("gtk-cancel"), 0);
@@ -329,10 +329,10 @@ void PartialPasteDlg::rawToggled () {
 	raw_greenthreshConn.block (true);
 	df_fileConn.block (true);
 	df_AutoSelectConn.block (true);
-	//ff_fileConn.block (true);
-	//ff_AutoSelectConn.block (true);
-	//ff_BlurRadiusConn.block (true);
-	//ff_BlurTypeConn.block (true);
+	ff_fileConn.block (true);
+	ff_AutoSelectConn.block (true);
+	ff_BlurRadiusConn.block (true);
+	ff_BlurTypeConn.block (true);
 
     raw->set_inconsistent (false);
 
@@ -350,10 +350,10 @@ void PartialPasteDlg::rawToggled () {
     raw_greenthresh->set_active (raw->get_active ());
     df_file->set_active (raw->get_active ());
     df_AutoSelect->set_active (raw->get_active ());
-    //ff_file->set_active (raw->get_active ());
-    //ff_AutoSelect->set_active (raw->get_active ());
-    //ff_BlurRadius->set_active (raw->get_active ());
-    //ff_BlurType->set_active (raw->get_active ());
+    ff_file->set_active (raw->get_active ());
+    ff_AutoSelect->set_active (raw->get_active ());
+    ff_BlurRadius->set_active (raw->get_active ());
+    ff_BlurType->set_active (raw->get_active ());
 
     raw_dmethodConn.block (false);
     raw_ccStepsConn.block (false);
@@ -369,10 +369,10 @@ void PartialPasteDlg::rawToggled () {
     raw_greenthreshConn.block (false);
     df_fileConn.block (false);
     df_AutoSelectConn.block (false);
-    //ff_fileConn.block (false);
-    //ff_AutoSelectConn.block (false);
-    //ff_BlurRadiusConn.block (false);
-    //ff_BlurTypeConn.block (false);
+    ff_fileConn.block (false);
+    ff_AutoSelectConn.block (false);
+    ff_BlurRadiusConn.block (false);
+    ff_BlurTypeConn.block (false);
 }
 
 void PartialPasteDlg::basicToggled () {
@@ -562,9 +562,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (raw_greenthresh->get_active ())     dst->raw.greenthresh    =src->raw.greenthresh;
     if (df_file->get_active ())        dst->raw.dark_frame = src->raw.dark_frame;
     if (df_AutoSelect->get_active ())  dst->raw.df_autoselect = src->raw.df_autoselect;
-    //if (ff_file->get_active ())        dst->raw.ff_file = src->raw.ff_file;
-    //if (ff_AutoSelect->get_active ())  dst->raw.ff_AutoSelect = src->raw.ff_AutoSelect;
-    //if (ff_BlurRadius->get_active ())  dst->raw.ff_BlurRadius = src->raw.ff_BlurRadius;
-    //if (ff_BlurType->get_active ())    dst->raw.ff_BlurType = src->raw.ff_BlurType;
+    if (ff_file->get_active ())        dst->raw.ff_file = src->raw.ff_file;
+    if (ff_AutoSelect->get_active ())  dst->raw.ff_AutoSelect = src->raw.ff_AutoSelect;
+    if (ff_BlurRadius->get_active ())  dst->raw.ff_BlurRadius = src->raw.ff_BlurRadius;
+    if (ff_BlurType->get_active ())    dst->raw.ff_BlurType = src->raw.ff_BlurType;
 }
 

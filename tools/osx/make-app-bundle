@@ -100,4 +100,7 @@ rm -rf ${APP}
 cd ${RELEASE}
 zip ${DMG}.zip ${DMG} AboutThisBuild.txt
 
+cd ${RELEASE}
+zip ${DMG}.zip ${DMG} AboutThisBuild.txt
+
 echo "All done!"

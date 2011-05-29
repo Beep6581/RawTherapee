@@ -197,10 +197,10 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 					
 				} else {
 					//compute directional weights using image gradients
-					wtu=dirwt[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>4];
-					wtd=dirwt[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>4];
-					wtl=dirwt[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>4];
-					wtr=dirwt[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>4];
+					wtu=dirwt[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>2];
+					wtd=dirwt[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>2];
+					wtl=dirwt[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>2];
+					wtr=dirwt[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>2];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
 					green[i][j]=(int)((wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1])/(wtu+wtd+wtl+wtr));

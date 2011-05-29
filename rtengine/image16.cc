@@ -17,8 +17,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <image16.h>
+#include <imagefloat.h>
 #include <image8.h>
 #include <string.h>
+#include <stdio.h>
 #include <rtengine.h>
 
 using namespace rtengine;
@@ -36,47 +38,44 @@ Image16::Image16 (int w, int h)
 Image16::~Image16 () {
   
     if (data!=NULL) {
-        delete [] unaligned;    
+        delete [] data;
         delete [] r;
         delete [] g;
         delete [] b;
     }
 }
 
-void Image16::allocate (int width, int height) {
+void Image16::allocate (int W, int H) {
 
+	width=W;
+	height=H;
     if (data!=NULL) {
-        delete [] unaligned;    
+        delete [] data;
         delete [] r;
         delete [] g;
         delete [] b;
     }
 
-    int lsize  = width + 8 - width % 8;
-    unaligned = new unsigned char[16 + 3 * lsize * sizeof(short) * height];
-    memset(unaligned, 0, (16 + 3 * lsize * sizeof(short) * height) * sizeof(unsigned char));
-
-    uintptr_t poin = (uintptr_t)unaligned + 16 - (uintptr_t)unaligned % 16;
-    data = (unsigned short*) (poin);
-
-    rowstride = lsize * sizeof(unsigned short);
-    planestride = rowstride * height;
-
-    uintptr_t redstart   = poin + 0*planestride;
-    uintptr_t greenstart = poin + 1*planestride;
-    uintptr_t bluestart  = poin + 2*planestride;
-       
     r = new unsigned short*[height];
     g = new unsigned short*[height];
     b = new unsigned short*[height];
+    data = new unsigned short[W*H*3];
+
+    rowstride = W;
+    planestride = rowstride * height;
+
+    unsigned short* redstart   = data + 0*planestride;
+    unsigned short* greenstart = data + 1*planestride;
+    unsigned short* bluestart  = data + 2*planestride;
+       
+
     for (int i=0; i<height; i++) {
-        r[i] = (unsigned short*) (redstart   + i*rowstride);
-        g[i] = (unsigned short*) (greenstart + i*rowstride);
-        b[i] = (unsigned short*) (bluestart  + i*rowstride);
+        r[i] = redstart   + i*rowstride;
+        g[i] = greenstart + i*rowstride;
+        b[i] = bluestart  + i*rowstride;
     }
 
-    this->width = width;
-    this->height = height;
+
 }
 
 void Image16::getScanline (int row, unsigned char* buffer, int bps) {
@@ -255,4 +254,31 @@ Image16::to8() const
 		}
 	}
 	return img8;
+}
+
+Imagefloat* 
+Image16::tofloat() const
+{
+	Imagefloat* imgfloat = new Imagefloat(width,height);
+	for ( int h = 0; h < height; ++h )
+	{
+		for ( int w = 0; w < width; ++w )
+		{
+			imgfloat->r[h][w] = ((float)r[h][w]) ;
+			imgfloat->g[h][w] = ((float)g[h][w]) ;
+			imgfloat->b[h][w] = ((float)b[h][w]) ;
+		}
+	}
+	return imgfloat;
+}
+
+// Parallized transformation; create transform with cmsFLAGS_NOCACHE!
+void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe) {
+    if (safe) {
+        cmsDoTransform(hTransform, data, data, planestride);
+    } else {
+        #pragma omp parallel for
+        for (int i=0; i<height; i++)
+            cmsDoTransform(hTransform, data + 3*i*rowstride, data + 3*i*rowstride, rowstride);
+    }
 }

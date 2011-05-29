@@ -54,7 +54,7 @@ FilePanel::FilePanel () : parent(NULL) {
     dirpaned->pack1 (*placespaned, false, true);
 
     tpc = new BatchToolPanelCoordinator (this);
-    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
+    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar(), this);
     ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);
     ribbonPane->set_size_request(50,150);
@@ -66,6 +66,7 @@ FilePanel::FilePanel () : parent(NULL) {
     dirBrowser->addDirSelectionListener (recentBrowser);
     dirBrowser->addDirSelectionListener (placesBrowser);
     fileCatalog->setFileSelectionListener (this);
+    fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 
     rightBox = Gtk::manage ( new Gtk::HBox () );
     rightBox->set_size_request(50,100);
@@ -243,8 +244,18 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
     if(tpc->getToolBar()->handleShortcutKey(event))
         return true;
     
+    if(tpc->handleShortcutKey(event))
+        return true;
+
     if(fileCatalog->handleShortcutKey(event))
         return true;
 
     return false;
+}
+
+void FilePanel::loadingThumbs(Glib::ustring str, double rate)
+{
+	if( !str.empty())
+		parent->setProgressStr(str);
+	parent->setProgress( rate );
 }

@@ -23,6 +23,9 @@
 #ifdef RAWZOR_SUPPORT
 #include <rwz_sdk.h>
 #endif
+#ifdef BZIP_SUPPORT
+#include <bzlib.h>
+#endif
 
 // get mmap() sorted out
 #ifdef MYFILE_MMAP
@@ -93,6 +96,76 @@ IMFILE* fopen (const char* fname)
 	mf->size = stat_buffer.st_size;
 	mf->data = (char*)data;
 	mf->eof = false;
+
+#ifdef BZIP_SUPPORT
+	{
+	  bool bzip = false;
+	  Glib::ustring bname = Glib::path_get_basename(fname);
+	  int lastdot = bname.find_last_of ('.');
+	  if (lastdot!=bname.npos)
+	    bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
+      
+	  if (bzip) {
+	    int ret;
+
+	    // initialize bzip stream structure
+	    bz_stream stream;
+	    stream.bzalloc = 0;
+	    stream.bzfree = 0;
+	    stream.opaque = 0;
+	    ret = BZ2_bzDecompressInit(&stream, 0, 0);
+
+	    if (ret != BZ_OK) {
+	      printf("bzip initialization failed with error %d\n", ret);
+	    }
+	    else {
+	      // allocate initial buffer for decompressed data
+	      unsigned int buffer_out_count = 0; // bytes of decompressed data
+	      unsigned int buffer_size = 10*1024*1024; // 10 MB, extended dynamically if needed
+	      char* buffer = 0;
+
+	      stream.next_in = mf->data; // input data address
+	      stream.avail_in = mf->size;
+
+	      while (ret == BZ_OK) {
+		buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
+
+		stream.next_out = buffer + buffer_out_count; // output data adress
+		stream.avail_out = buffer_size - buffer_out_count;
+
+		ret = BZ2_bzDecompress(&stream);
+
+		buffer_size *= 2; // increase buffer size for next iteration
+		buffer_out_count = stream.total_out_lo32;
+		if (stream.total_out_hi32 > 0)
+		  printf("bzip decompressed data byte count high byte is nonzero: %d\n", stream.total_out_hi32);
+	      }
+
+	      if (ret == BZ_STREAM_END) {
+		//delete [] mf->data;
+		// close memory mapping, setting fd -1 will ensure deletion of mf->data upon fclose()
+		mf->fd = -1;
+		munmap((void*)mf->data,mf->size);
+		close(mf->fd);
+
+		char* realData = new char [buffer_out_count];
+		memcpy(realData, buffer, buffer_out_count);
+
+		mf->data = realData;
+		mf->size = buffer_out_count;
+	      }
+	      else
+		printf("bzip decompression failed with error %d\n", ret);
+
+	      // cleanup
+	      free(buffer);
+	      ret = BZ2_bzDecompressEnd(&stream);
+	      if (ret != BZ_OK)
+		printf("bzip cleanup failed with error %d\n", ret);
+	    }
+	  }
+	}
+#endif // BZIP_SUPPORT
 
 	return mf;
 }
@@ -175,7 +248,71 @@ IMFILE* gfopen (const char* fname) {
     }
     // RAWZOR support end
 #endif
-	return mf;
+#ifdef BZIP_SUPPORT
+    {
+      bool bzip = false;
+      Glib::ustring bname = Glib::path_get_basename(fname);
+      int lastdot = bname.find_last_of ('.');
+      if (lastdot!=bname.npos)
+        bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
+      
+      if (bzip) {
+	int ret;
+
+	// initialize bzip stream structure
+	bz_stream stream;
+	stream.bzalloc = 0;
+	stream.bzfree = 0;
+	stream.opaque = 0;
+	ret = BZ2_bzDecompressInit(&stream, 0, 0);
+
+	if (ret != BZ_OK) {
+	  printf("bzip initialization failed with error %d\n", ret);
+	}
+	else {
+	  // allocate initial buffer for decompressed data
+	  unsigned int buffer_out_count = 0; // bytes of decompressed data
+	  unsigned int buffer_size = 10*1024*1024; // 10 MB, extended dynamically if needed
+	  char* buffer = 0;
+
+	  stream.next_in = mf->data; // input data address
+	  stream.avail_in = mf->size;
+
+	  while (ret == BZ_OK) {
+	    buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
+
+	    stream.next_out = buffer + buffer_out_count; // output data adress
+	    stream.avail_out = buffer_size - buffer_out_count;
+
+	    ret = BZ2_bzDecompress(&stream);
+
+	    buffer_size *= 2; // increase buffer size for next iteration
+	    buffer_out_count = stream.total_out_lo32;
+	    if (stream.total_out_hi32 > 0)
+	      printf("bzip decompressed data byte count high byte is nonzero: %d\n", stream.total_out_hi32);
+	  }
+
+	  if (ret == BZ_STREAM_END) {
+	    delete [] mf->data;
+	    char* realData = new char [buffer_out_count];
+	    memcpy(realData, buffer, buffer_out_count);
+
+	    mf->data = realData;
+	    mf->size = buffer_out_count;
+	  }
+	  else
+	    printf("bzip decompression failed with error %d\n", ret);
+
+	  // cleanup
+	  free(buffer);
+	  ret = BZ2_bzDecompressEnd(&stream);
+	  if (ret != BZ_OK)
+	    printf("bzip cleanup failed with error %d\n", ret);
+	}
+      }
+    }
+#endif // BZIP_SUPPORT
+    return mf;
 }
 #endif //MYFILE_MMAP
 

@@ -59,6 +59,7 @@ class CacheManager {
         void clearAll ();
         void clearThumbImages ();
         void clearProfiles ();
+        void clearFromCache(const Glib::ustring& fname, bool leavenotrace);
 
         void applyCacheSizeLimitation ();
 

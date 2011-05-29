@@ -22,8 +22,10 @@ CURVEEDITOR_NURBS;Control cage
 CURVEEDITOR_PARAMETRIC;Parametric
 CURVEEDITOR_SAVEDLGLABEL;Save Curve...
 CURVEEDITOR_SHADOWS;Shadows
+CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
 CURVEEDITOR_TOOLTIPLINEAR;Reset curve to linear
 CURVEEDITOR_TOOLTIPLOAD;Load a curve from file
+CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 CURVEEDITOR_TOOLTIPSAVE;Save current curve
 CURVEEDITOR_TYPE;Type:
 EDITWINDOW_TITLE;Image Edit
@@ -54,11 +56,19 @@ FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 FILEBROWSER_AUTODARKFRAME;Auto dark frame
+FILEBROWSER_AUTOFLATFIELD;Auto flat field
+FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
+FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);\nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
+FILEBROWSER_CACHE;Cache
+FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
+FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_CURRENT_NAME;Current name:
+FILEBROWSER_DARKFRAME;Dark frame
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
 FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
@@ -66,21 +76,34 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_FLATFIELD;Flat field
 FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
+FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 FILEBROWSER_NEW_NAME;New name:
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
+FILEBROWSER_POPUPCOLORLABEL;Color label
+FILEBROWSER_POPUPCOLORLABEL0;Label: None
+FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+FILEBROWSER_POPUPCOPYTO;Copy to...
 FILEBROWSER_POPUPMOVEEND;Move to end of queue
 FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
+FILEBROWSER_POPUPMOVETO;Move to...
 FILEBROWSER_POPUPOPEN;Open
 FILEBROWSER_POPUPPROCESS;Put to processing queue
-FILEBROWSER_POPUPRANK1;Rank 1
-FILEBROWSER_POPUPRANK2;Rank 2
-FILEBROWSER_POPUPRANK3;Rank 3
-FILEBROWSER_POPUPRANK4;Rank 4
-FILEBROWSER_POPUPRANK5;Rank 5
+FILEBROWSER_POPUPRANK1;Rank 1 *
+FILEBROWSER_POPUPRANK2;Rank 2 **
+FILEBROWSER_POPUPRANK3;Rank 3 ***
+FILEBROWSER_POPUPRANK4;Rank 4 ****
+FILEBROWSER_POPUPRANK5;Rank 5 *****
 FILEBROWSER_POPUPREMOVE;Remove from filesystem
+FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
+FILEBROWSER_POPUPREMOVESUBMENU;Remove
 FILEBROWSER_POPUPRENAME;Rename
 FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
@@ -91,7 +114,13 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SELECTDARKFRAME;Select dark frame...
-FILEBROWSER_SHOWDIRHINT;Show all images of the directory <b>D</b>
+FILEBROWSER_SELECTFLATFIELD;Select flat field...
+FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;Show all images in the directory (clear all filters) <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star <b>1</b>
@@ -100,6 +129,7 @@ FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star <b>3</b>
 FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star <b>5</b>
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
+FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>
 FILEBROWSER_STARTPROCESSING;Start processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
@@ -134,11 +164,13 @@ HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
+HISTOGRAM_BUTTON_RAW;Raw
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Show/Hide BLUE histogram
 HISTOGRAM_TOOLTIP_G;Show/Hide GREEN histogram
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
 HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
+HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
 HISTORY_CHANGED;Changed
 HISTORY_CUSTOMCURVE;Custom Curve
 HISTORY_DELSNAPSHOT;Del
@@ -172,6 +204,10 @@ HISTORY_MSG_122;Auto Dark Frame
 HISTORY_MSG_123;Dark Frame File
 HISTORY_MSG_124;Linear exp. correction
 HISTORY_MSG_125;Expo. correction preserving HL
+HISTORY_MSG_126;Flat Field File
+HISTORY_MSG_127;Flat Field Auto Select
+HISTORY_MSG_128;Flat Field Blur Radius
+HISTORY_MSG_129;Flat Field Blur Type
 HISTORY_MSG_12;Auto Exposure
 HISTORY_MSG_13;Exposure Clipping
 HISTORY_MSG_14;Luminance Brightness
@@ -339,10 +375,14 @@ MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</
 MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b> 
 MAIN_FRAME_EDITOR;Editor 
+MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
 MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
@@ -361,26 +401,35 @@ MAIN_MSG_PLACES;Places
 MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
 MAIN_TAB_BASIC;Basic
 MAIN_TAB_COLOR;Color
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposure
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transform
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
-MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>H</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication
-MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication
+MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
+MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
 MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
+MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
 MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
@@ -424,6 +473,10 @@ PARTIALPASTE_DISTORTION;Distortion correction
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Changes to exif data
 PARTIALPASTE_EXPOSURE;Exposure
+PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
+PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
+PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
+PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
 PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 PARTIALPASTE_HLRECOVERY;Highlight recovery
 PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
@@ -444,8 +497,8 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 PARTIALPASTE_RAWCACORR_CARED;CA Red
-PARTIALPASTE_RAWEXPOS_LINEAR;Exposure linear corr. factor
-PARTIALPASTE_RAWEXPOS_PRESER;Exposure HL preserving corr. (EV)
+PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 PARTIALPASTE_RAWGROUP;Raw settings
 PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
@@ -457,10 +510,11 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
 PARTIALPASTE_SHARPENING;Sharpening
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-PARTIALPASTE_WHITEBALANCE;White balance
+PARTIALPASTE_WHITEBALANCE;White balance 
 POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 PREFERENCES_ADD;ADD
 PREFERENCES_APPLNEXTSTARTUP;restart required
+PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 PREFERENCES_BATCH_PROCESSING;Batch Processing
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BLINKCLIPPED;Blink clipped areas
@@ -478,13 +532,16 @@ PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 PREFERENCES_CLIPPINGIND;Clipping indication
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
-PREFERENCES_CUTOVERLAYBRUSH;Cut overlay brush
+PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+PREFERENCES_CUSTPROFBUILDPATH;Executable path
+PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 PREFERENCES_DARKFRAME;Dark frame
 PREFERENCES_DARKFRAMEFOUND;Found
 PREFERENCES_DARKFRAMESHOTS;shots
 PREFERENCES_DARKFRAMETEMPLATES;templates
-PREFERENCES_DATEFORMAT;Format
-PREFERENCES_DATEFORMATFRAME;Date Format
+PREFERENCES_DATEFORMAT;Date Format
+PREFERENCES_DATEFORMATFRAME;Date Format 
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Default language
 PREFERENCES_DEFAULTTHEME;Default theme
@@ -500,6 +557,11 @@ PREFERENCES_EDITORLAYOUT;Editor Layout
 PREFERENCES_EXTERNALEDITOR;External editor
 PREFERENCES_FBROWSEROPTS;File Browser Options
 PREFERENCES_FILEFORMAT;File format
+PREFERENCES_FLATFIELD;Flat Field
+PREFERENCES_FLATFIELDFOUND;Found
+PREFERENCES_FLATFIELDSDIR;Flat Fields directory
+PREFERENCES_FLATFIELDSHOTS;shots
+PREFERENCES_FLATFIELDTEMPLATES;templates
 PREFERENCES_FORIMAGE;For image files
 PREFERENCES_FORRAW;For RAW files
 PREFERENCES_GIMPPATH;GIMP installation directory
@@ -512,7 +574,9 @@ PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Monitor Profile
 PREFERENCES_MULTITAB;Multiple tabs mode
 PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
@@ -521,7 +585,7 @@ PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
 PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
-PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname, or some attributes of the photo.\n\n%r will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in trash bin, %r will be replaced by 'x'.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 PREFERENCES_PARSEDEXT;Parsed Extensions
@@ -530,10 +594,10 @@ PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append l
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
-PREFERENCES_PROFILEPRCACHE;Profile in Cache
-PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
-PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
-PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
+PREFERENCES_PROFILEPRCACHE;Profile in cache
+PREFERENCES_PROFILEPRFILE;Profile next to the input file
+PREFERENCES_PROFILESAVECACHE;Save processing parameters to the cache
+PREFERENCES_PROFILESAVEINPUT;Save processing parameters next to the input file
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_SELECTFONT;Select font
@@ -548,12 +612,17 @@ PREFERENCES_SHOWONLYRAW;Show only RAW files
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single tab mode
 PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
+PREFERENCES_SND_TRESHOLDSECS;after secs
 PREFERENCES_STARTUPIMDIR;Image directory at startup
 PREFERENCES_TAB_BROWSER;File Browser
 PREFERENCES_TAB_COLORMGR;Color Management
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_OUTPUT;Output Options
+PREFERENCES_TAB_SOUND;Sounds
 PREFERENCES_THUMBSIZE;Thumbnail Size
 PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 PREFERENCES_USESYSTEMTHEME; Use System Theme
@@ -572,9 +641,15 @@ PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
 PROFILEPANEL_TOOLTIPLOAD;Load a profile from file
 PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
 PROFILEPANEL_TOOLTIPSAVE;Save current profile
+PROGRESSBAR_BADPIXELS;Bad pixels...
+PROGRESSBAR_CACORRECTION;CA correction...
+PROGRESSBAR_DARKFRAME;Darkframe... 
 PROGRESSBAR_DECODING;Decoding raw file...
 PROGRESSBAR_DEMOSAICING;Demosaicing...
+PROGRESSBAR_GREENEQUIL;Green equilibrate...
+PROGRESSBAR_LINEDENOISE;Line Denoise...
 PROGRESSBAR_LOADING;Loading Image...
+PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 PROGRESSBAR_LOADJPEG;Loading JPEG file...
 PROGRESSBAR_LOADPNG;Loading PNG file...
 PROGRESSBAR_LOADTIFF;Loading TIFF file...
@@ -583,10 +658,7 @@ PROGRESSBAR_READY;Ready.
 PROGRESSBAR_SAVEJPEG;Saving JPEG file...
 PROGRESSBAR_SAVEPNG;Saving PNG file...
 PROGRESSBAR_SAVETIFF;Saving TIFF file...
-PROGRESSDLG_LOADING;Loading file...
-PROGRESSDLG_PROCESSING;Processing image...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
-PROGRESSDLG_SAVING;Saving file...
 QINFO_FOCALLENGTH;Focal length
 QINFO_ISO;ISO
 QINFO_LENS;Lens
@@ -605,7 +677,7 @@ SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Crop selection <b>C</b>
-TOOLBAR_TOOLTIP_HAND;Hand tool <b>N</b>
+TOOLBAR_TOOLTIP_HAND;Hand tool <b>H</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Straight line selection <b>S</b>
 TOOLBAR_TOOLTIP_WB;Spot white balance <b>W</b>
 TP_CACORRECTION_BLUE;Blue
@@ -618,8 +690,8 @@ TP_CHMIXER_RED;Red
 TP_CHROMATABERR_LABEL;Chromatic Aberration
 TP_COARSETRAF_DEGREE;degree:
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
 TP_COLORBOOST_ACHANNEL;Channel "a"
 TP_COLORBOOST_AMOUNT;Amount
@@ -638,7 +710,6 @@ TP_COLORDENOISE_RADIUS;Radius
 TP_COLORSHIFT_BLUEYELLOW;Blue-Yellow
 TP_COLORSHIFT_GREENMAGENTA;Green-Magenta
 TP_COLORSHIFT_LABEL;Color Shift
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Fix Ratio:
 TP_CROP_GTDIAGONALS;Rule of diagonals
 TP_CROP_GTGRID;Grid
@@ -651,6 +722,7 @@ TP_CROP_GTRULETHIRDS;Rule of thirds
 TP_CROP_GUIDETYPE;Guide Type:
 TP_CROP_H;H
 TP_CROP_LABEL;Crop
+TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;    Select Crop
 TP_CROP_W;W
 TP_CROP_X;x
@@ -673,6 +745,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DISTORTION_AMOUNT;Amount
+TP_DISTORTION_AUTO;Auto distortion correction
+TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 TP_DISTORTION_LABEL;Distortion
 TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 TP_EQUALIZER_CONTRAST_PLUS;Contrast+
@@ -680,7 +754,7 @@ TP_EQUALIZER_FINEST;finest
 TP_EQUALIZER_LABEL;Wavelet equalizer
 TP_EQUALIZER_LARGEST;coarsest
 TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;Exposure
+TP_EXPOSCORR_LABEL;Raw white point
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Brightness
@@ -693,10 +767,23 @@ TP_EXPOSURE_CURVEEDITOR;Tone Curve
 TP_EXPOSURE_EXPCOMP;Exp. Comp.
 TP_EXPOSURE_LABEL;Exposure
 TP_EXPOSURE_SATURATION;Saturation
+TP_FLATFIELD_AUTOSELECT;Auto selection
+TP_FLATFIELD_BLURRADIUS;Blur Radius
+TP_FLATFIELD_BLURTYPE;Blur Type
+TP_FLATFIELD_BT_AREA;Area
+TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+TP_FLATFIELD_BT_VERTICAL;Vertical
+TP_FLATFIELD_LABEL;Flat Field
+TP_GAMMA_CURV;gamma
+TP_GAMMA_FREE;Free gamma
+TP_GAMMA_OUTPUT;Output gamma
+TP_GAMMA_SLOP;slope (linear)
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
 TP_HLREC_LABEL;Highlight Reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
+TP_HLREC_BLEND;Blend
 TP_HLREC_METHOD;Method: 
 TP_HSVEQUALIZER1;Red
 TP_HSVEQUALIZER2;Yellow

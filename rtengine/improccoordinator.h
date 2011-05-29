@@ -26,6 +26,7 @@
 #include <imagesource.h>
 #include <procevents.h>
 #include <dcrop.h>
+#include "LUT.h"
 
 namespace rtengine {
 
@@ -33,19 +34,21 @@ using namespace procparams;
 
 class Crop;
 
+// Manages the image processing, espc. of the preview windows
+// There is one ImProcCoordinator per edit panel
 class ImProcCoordinator : public StagedImageProcessor {
 
     friend class Crop;
 
     protected:
-        Image16 *orig_prev;
-        Image16 *oprevi;
+        Imagefloat *orig_prev;
+        Imagefloat *oprevi;
         LabImage *oprevl;    
         LabImage *nprevl;    
         Image8 *previmg;
+		Image8 *workimg;
+
         ImageSource* imgsrc;
-        
-        int** buffer;
         
         SHMap* shmap;
         
@@ -62,20 +65,21 @@ class ImProcCoordinator : public StagedImageProcessor {
         
         void freeAll ();
 
-        float *dummy1;
-        float *dummy2;
-        float *hltonecurve;
-        float *shtonecurve;
-        int   *tonecurve;
-
-        int *lumacurve;
-        float *chroma_acurve;
-        float *chroma_bcurve;
+		LUTf hltonecurve;
+		LUTf shtonecurve;
+		LUTf tonecurve;
+	
+		LUTf lumacurve;
+		LUTf chroma_acurve;
+		LUTf chroma_bcurve;
+		LUTf satcurve;
         
-        unsigned int *vhist16;
-        unsigned int *lhist16;
-
-        unsigned int *rhist, *ghist, *bhist, *Lhist, *bcrgbhist, *bcLhist, *bcabhist;
+		LUTu vhist16;
+		LUTu lhist16,lhist16Cropped;
+        LUTu histCropped;
+	
+		LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
+        LUTu histRedRaw, histGreenRaw, histBlueRaw;
         
         int fw, fh, tr, fullw, fullh;
         int pW, pH;
@@ -94,8 +98,8 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         void progress (Glib::ustring str, int pr);
         void reallocAll ();
-        void updateHistograms (int x1, int y1, int x2, int y2);
-        void setScale (int prevscale, bool internal=false);
+        void updateLRGBHistograms ();
+        void setScale (int prevscale);
         void updatePreviewImage (int todo, Crop* cropCall= NULL);
 
         Glib::Mutex mProcessing;
@@ -129,8 +133,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setPreviewScale    (int scale) { setScale (scale); }
         int  getPreviewScale    () { return scale; }
 
-        void fullUpdatePreviewImage  ();
-        void fullUpdateDetailedCrops ();
+        //void fullUpdatePreviewImage  ();
 
         int getFullWidth ()     { return fullw; }
         int getFullHeight ()    { return fullh; }

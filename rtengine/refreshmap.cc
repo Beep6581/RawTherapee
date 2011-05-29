@@ -144,6 +144,19 @@ DARKFRAME,        // EvPreProcessAutoCA
 DARKFRAME,        // EvPreProcessAutoDF
 DARKFRAME,        // EvPreProcessDFFile
 DARKFRAME,        // EvPreProcessExpCorrLinear
-DARKFRAME         // EvPreProcessExpCorrPH
+DARKFRAME,        // EvPreProcessExpCorrPH
+FLATFIELD,        // EvFlatFieldFile,
+FLATFIELD,        // EvFlatFieldAutoSelect,
+FLATFIELD,        // EvFlatFieldBlurRadius,
+FLATFIELD,        // EvFlatFieldBlurType,
+TRANSFORM,        // EvAutoDIST,
+DIRPYRDENOISE,    // EvDPDNLumCurve,
+DIRPYRDENOISE,    // EvDPDNChromCurve,
+ALL,			  // EvGAMMA	
+ALL,			  // EvGAMPOS
+ALL,			  //EvGAMFREE
+ALL,               //EvSLPOS 
+
+
 };
 

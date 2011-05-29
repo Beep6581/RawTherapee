@@ -34,8 +34,10 @@ class FileBrowserListener {
         virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
         virtual void developRequested       (std::vector<FileBrowserEntry*> tbe) {}
         virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
-        virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe) {}
+        virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
+        virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
         virtual void selectionChanged       (std::vector<Thumbnail*> tbe) {}
+        virtual void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {}
 };
 
 struct FileBrowserIdleHelper {
@@ -51,21 +53,36 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
   protected:
 
     Gtk::MenuItem* rank[6];
+    Gtk::ImageMenuItem* colorlabel[6];
     Gtk::MenuItem* trash;
     Gtk::MenuItem* untrash;
     Gtk::MenuItem* develop;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
+	Gtk::MenuItem* removeInclProc;
     Gtk::MenuItem* open;
     Gtk::MenuItem* selall;
+    Gtk::MenuItem* copyTo;
+    Gtk::MenuItem* moveTo;
+
+    Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;
     Gtk::MenuItem* thisIsDF;
     Gtk::MenuItem* autoDF;
+
+    Gtk::MenuItem* menuFF;
+    Gtk::MenuItem* selectFF;
+    Gtk::MenuItem* thisIsFF;
+    Gtk::MenuItem* autoFF;
+
     Gtk::MenuItem* copyprof;
     Gtk::MenuItem* pasteprof;
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* clearprof;
+    Gtk::MenuItem* cachemenu;
+    Gtk::MenuItem* clearFromCache;
+    Gtk::MenuItem* clearFromCacheFull;
     Gtk::Menu* pmenu;
 
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
@@ -73,12 +90,13 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     FileBrowserListener* tbl;
     BrowserFilter filter;
     PartialPasteDlg partialPasteDlg;
-
+    int numFiltered;
     FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
     void rankingRequested   (std::vector<FileBrowserEntry*> tbe, int rank);
+    void colorlabelRequested   (std::vector<FileBrowserEntry*> tbe, int colorlabel);
     void notifySelectionListener ();
     
     type_trash_changed m_trash_changed;
@@ -100,6 +118,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void applyMenuItemActivated (Glib::ustring ppname);
 
     void applyFilter (const BrowserFilter& filter);
+    int getNumFiltered(){ return numFiltered;}
 
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);

@@ -141,16 +141,47 @@ void ImageData::extractInfo () {
 
   make = "";
   model = "";
+  serial = "";
   shutter = 0;
   aperture = 0;
   focal_len = 0;
   iso_speed = 0;
   memset (&time, 0, sizeof(time));
+  timeStamp = 0;
   
-  if (root->getTag ("Make"))
-    make = root->getTag ("Make")->valueToString ();  
-  if (root->getTag ("Model"))
-    model = root->getTag ("Model")->valueToString ();  
+  if (root->getTag ("Make")){
+     make = root->getTag ("Make")->valueToString ();
+     // same dcraw treatment
+     static const char *corp[] =
+       { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
+         "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
+         "SAMSUNG", "Mamiya", "MOTOROLA" };
+     for (int i=0; i < sizeof corp / sizeof *corp; i++)
+       if ( make.find( corp[i] ) != std::string::npos ){		/* Simplify company names */
+   	     make = corp[i];
+   	     break;
+       }
+       make.erase( make.find_last_not_of(' ')+1 );
+  }
+  if (root->getTag ("Model")){
+     model = root->getTag ("Model")->valueToString ();
+     std::size_t i=0;
+     if (  make.find("KODAK") != std::string::npos ){
+   	  if( (i = model.find(" DIGITAL CAMERA")) !=  std::string::npos ||
+   	      (i = model.find(" Digital Camera")) !=  std::string::npos ||
+   	      (i = model.find("FILE VERSION")) )
+        model.resize( i );
+     }
+
+     model.erase( model.find_last_not_of(' ')+1 );
+
+     //if( (i=model.find( make )) != std::string::npos )
+     if( !strncasecmp (model.c_str(), make.c_str(), make.size()) )
+     	if( model.at( make.size() )==' ')
+     	   model.erase(0,make.size()+1);
+     if( model.find( "Digital Camera ") != std::string::npos )
+     	model.erase(0,15);
+  }
 
   rtexif::TagDirectory* exif = NULL;
   if (root->getTag ("Exif"))
@@ -175,8 +206,14 @@ void ImageData::extractInfo () {
         if (sscanf ((const char*)exif->getTag("DateTimeOriginal")->getValue(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
             time.tm_year -= 1900;
             time.tm_mon -= 1;
+            timeStamp = mktime(&time);
         }
     }
+    rtexif::Tag *snTag = exif->findTag ("SerialNumber");
+    if(!snTag)
+    	snTag = exif->findTag ("InternalSerialNumber");
+    if ( snTag )
+        serial = snTag->valueToString();
     // guess lens...
     lens = "Unknown";
 

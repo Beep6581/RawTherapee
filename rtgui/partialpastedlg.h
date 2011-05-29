@@ -93,10 +93,10 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* raw_dcb_enhance;
         Gtk::CheckButton* df_file;
 		Gtk::CheckButton* df_AutoSelect;
-		//Gtk::CheckButton* ff_file;
-		//Gtk::CheckButton* ff_AutoSelect;
-		//Gtk::CheckButton* ff_BlurRadius;
-		//Gtk::CheckButton* ff_BlurType;
+		Gtk::CheckButton* ff_file;
+		Gtk::CheckButton* ff_AutoSelect;
+		Gtk::CheckButton* ff_BlurRadius;
+		Gtk::CheckButton* ff_BlurType;
 
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
 
@@ -106,7 +106,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection distortionConn, cacorrConn, vignettingConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn;
-        sigc::connection df_fileConn, df_AutoSelectConn;//sigc::connection ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
+        sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
         sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn;
 
         public:

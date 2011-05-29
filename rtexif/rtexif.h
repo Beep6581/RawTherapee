@@ -80,6 +80,8 @@ class TagDirectory {
     virtual Tag*     getTag        (const char* name) const;
     virtual Tag*     getTag        (int ID) const;
     virtual Tag*     findTag       (const char* name) const;
+
+    void             keepTag       (int ID);
     virtual void     addTag        (Tag* a);
     virtual void     addTagFront   (Tag* a);
     virtual void     replaceTag    (Tag* a);
@@ -353,6 +355,7 @@ extern const TagAttrib pentaxCameraSettingsAttribs[];
 extern const TagAttrib pentaxFlashInfoAttribs[];
 extern const TagAttrib pentaxSRInfoAttribs[];
 extern const TagAttrib pentaxBatteryInfoAttribs[];
+extern const TagAttrib pentaxCameraInfoAttribs[];
 extern const TagAttrib fujiAttribs[];
 extern const TagAttrib minoltaAttribs[];
 extern const TagAttrib sonyAttribs[];

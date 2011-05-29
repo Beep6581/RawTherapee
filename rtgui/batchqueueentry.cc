@@ -19,6 +19,8 @@
 #include <batchqueueentry.h>
 #include <thumbbrowserbase.h>
 
+#include <cstring>
+
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thumbnail) 
     : ThumbBrowserEntryBase(fname),
       opreview(previmg), origpw(prevw), origph(prevh), thumbnail(thumbnail),
@@ -26,6 +28,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 
     params = pparams;
 
+	// The BatchQueueEntryIdleHelper tracks if 
     bqih = new BatchQueueEntryIdleHelper;
     bqih->bqentry = this;
     bqih->destroyed = false;
@@ -98,19 +101,21 @@ void BatchQueueEntry::removeButtonSet () {
     delete buttonSet;
     buttonSet = NULL;
 }
-struct bqupdate {
+
+struct BQUpdateParam {
     BatchQueueEntryIdleHelper* bqih;
     guint8* img;
     int w,h;
 };
 
-int bqeupdate (void* data) {
+int updateImageUIThread (void* data) {
 
     gdk_threads_enter ();
-    bqupdate* params = (bqupdate*)data;
+    BQUpdateParam* params = (BQUpdateParam*)data;
 
     BatchQueueEntryIdleHelper* bqih = params->bqih;
 
+	// If the BQEntry was destroyed meanwhile, remove all the IdleHelper if all entries came through
     if (bqih->destroyed) {
         if (bqih->pending == 1)
             delete bqih;
@@ -130,16 +135,17 @@ int bqeupdate (void* data) {
     return 0;
 }
 
+// Starts a copy of img->preview via GTK thread
 void BatchQueueEntry::updateImage (guint8* img, int w, int h) {
 
     bqih->pending++;
 
-    bqupdate* param = new bqupdate ();
+    BQUpdateParam* param = new BQUpdateParam ();
     param->bqih = bqih;
     param->img = img;
     param->w = w;
     param->h = h;
-    g_idle_add (bqeupdate, param);
+    g_idle_add (updateImageUIThread, param);
 }
 
 void BatchQueueEntry::_updateImage (guint8* img, int w, int h) {

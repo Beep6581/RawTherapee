@@ -173,6 +173,20 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 	}
 }
 
+void CacheManager::clearFromCache (const Glib::ustring& fname, bool leavenotrace) {
+	std::string md5 = getMD5 (fname);
+	if (md5!="") {
+		if (leavenotrace){
+			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
+			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
+		}
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust");
+		safe_g_remove (getCacheFileName ("images", fname, md5) + ".jpg");
+		safe_g_remove (getCacheFileName ("aehistograms", fname, md5));
+		safe_g_remove (getCacheFileName ("embprofiles", fname, md5) + ".icc");
+	}
+}
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename) {
 

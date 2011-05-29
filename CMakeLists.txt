@@ -42,6 +42,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 
+if (WIN32)
+    # we additionnally look in the MinGW path first then in the Gtkmm path,
+    # so if you wish to build some dependant library, you have to install them in MinGW to use them
+    set(CMAKE_PREFIX_PATH $ENV{MINGW_BASEPATH} $ENV{GTKMM_BASEPATH} CACHE STRING "Additional search paths")
+endif (WIN32)
+
 if (APPLE)
 #    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;" )
 #    SET (CMAKE_TRY_COMPILE_OSX_ARCHITECTURES "i386;x86_64;" )
@@ -53,6 +59,7 @@ option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_RAWZOR "Build with Rawzor support" OFF)
+option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
 
@@ -121,32 +128,23 @@ pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.12)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.16)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.16)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0)
-# NOTE: dependencies should be handled by pkg_check_modules and FIND_PACKAGE
-# on windows too but I don't want to break current build chain
+# NOTE: The new mechanism has been tested with BUILD_SHARED = OFF
 if (WIN32)
-    set (EXTRA_LIBDIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-    set (EXTRA_INCDIR "${CMAKE_CURRENT_SOURCE_DIR}/winclude")
-    set (EXTRA_LIB "-lws2_32")
-    set (IPTCDATA_LIBRARIES iptcdata)
-    set (LCMS_LIBRARIES liblcms.a)
-    set (JPEG_LIBRARIES libjpeg.a)
-    set (PNG_LIBRARIES libpng.a)
-    set (TIFF_LIBRARIES libtiff.a)
-    set (ZLIB_LIBRARIES libz.a)
-
     add_definitions (-DWIN32)
     add_definitions (-D_WIN32)
     if (MINGW)
         add_definitions (-D__MINGW32__)
     endif (MINGW)
-else (WIN32)
-    pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
-    pkg_check_modules (LCMS REQUIRED lcms<=1.99)
-    find_package (JPEG REQUIRED)
-    find_package (PNG REQUIRED)
-    find_package (TIFF REQUIRED)
-    find_package (ZLIB REQUIRED)
+
+    set (EXTRA_LIB "-lws2_32")
 endif (WIN32)
+# you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
+pkg_check_modules (LCMS REQUIRED lcms2)
+pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
+find_package (JPEG REQUIRED)
+find_package (PNG REQUIRED)
+find_package (TIFF REQUIRED)
+find_package (ZLIB REQUIRED)
 
 if (AUTOMATED_BUILD_SYSTEM)
 
@@ -254,50 +252,56 @@ endif (AUTOMATED_BUILD_SYSTEM)
 
 # link rawzor
 if (WITH_RAWZOR)
+    set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor")
+    add_definitions (-DRAWZOR_SUPPORT)
     if (WIN32)
-        set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win")
-        set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win")
-        set (EXTRA_LIB ${EXTRA_LIB} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win/rwz_sdk_s.a")
-        add_definitions (-DRAWZOR_SUPPORT)
-        install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_win/rwz_sdk_s.dll DESTINATION ${BINDIR}
-            PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32")
+            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32/rwz_sdk.dll DESTINATION ${BINDIR}
+                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64")
+            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64/rwz_sdk.dll DESTINATION ${BINDIR}
+                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
     elseif (APPLE)
-        set (EXTRA_INCDIR "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac")
-        set (EXTRA_LIBDIR "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac")
-        set (EXTRA_LIB "-lrwz_sdk_64")
-        add_definitions (-DRAWZOR_SUPPORT)
-        install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac/librwz_sdk_64.dylib DESTINATION ${BINDIR}
-            PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk_64.dylib)
-        if (BUILD_SHARED)
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_mac/librwz_sdk_64.dylib DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk_64.dylib)
-        endif (BUILD_SHARED)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32")
+            set (EXTRA_LIB "-lrwz_sdk")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32/rwz_sdk.dylib DESTINATION ${LIBDIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64")
+            set (EXTRA_LIB "-lrwz_sdk_64")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64/rwz_sdk_64.dylib DESTINATION ${LIBDIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
     else (WIN32)
         if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32")
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32")
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32")
             set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            add_definitions (-DRAWZOR_SUPPORT)
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32/librwz_sdk.so DESTINATION ${BINDIR}
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32/librwz_sdk.so DESTINATION ${LIBDIR}
                 PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            if (BUILD_SHARED)
-                install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin32/librwz_sdk.so DESTINATION ${LIBDIR}
-                    PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            endif (BUILD_SHARED)
         elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64")
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64")
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64")
             set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            add_definitions (-DRAWZOR_SUPPORT)
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64/librwz_sdk.so DESTINATION ${BINDIR}
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64/librwz_sdk.so DESTINATION ${LIBDIR}
                 PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            if (BUILD_SHARED)
-                install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor_lin64/librwz_sdk.so DESTINATION ${LIBDIR}
-                    PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-            endif (BUILD_SHARED)
         endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
     endif (WIN32)
 endif (WITH_RAWZOR)
+
+# link witz bzip
+if (WITH_BZIP)
+  find_package(BZip2)
+  if (BZIP2_FOUND)
+    add_definitions (-DBZIP_SUPPORT)
+    set (EXTRA_INCDIR ${EXTRA_LIB} ${BZIP2_INCLUDE_DIR})
+    set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
+  endif (BZIP2_FOUND)
+endif (WITH_BZIP)
 
 if (WITH_MYFILE_MMAP)
 	add_definitions (-DMYFILE_MMAP)

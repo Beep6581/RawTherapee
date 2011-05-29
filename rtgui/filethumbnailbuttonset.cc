@@ -30,6 +30,12 @@ Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::unRankIcon;
 Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::trashIcon;
 Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::unTrashIcon;
 Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::processIcon;
+Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_0;
+Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_1;
+Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_2;
+Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_3;
+Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_4;
+Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_5;
 
 FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 
@@ -40,6 +46,13 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 				trashIcon   = safe_create_from_png (argv0+"/images/trash.png");
 				unTrashIcon = safe_create_from_png (argv0+"/images/undelete.png");
 				processIcon = safe_create_from_png (argv0+"/images/processing.png");
+				
+				colorLabelIcon_0 = safe_create_from_png (argv0+"/images/nocolorlabel.png");
+				colorLabelIcon_1 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",1,".png"));
+				colorLabelIcon_2 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",2,".png"));
+				colorLabelIcon_3 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",3,".png"));
+				colorLabelIcon_4 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",4,".png"));
+				colorLabelIcon_5 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",5,".png"));
 				iconsLoaded = true;
     }
 
@@ -48,6 +61,8 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
     for (int i=0; i<5; i++)
         add (new LWButton (rankIcon, i+1, myEntry, LWButton::Left));    
     add (new LWButton (trashIcon, 7, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_POPUPTRASH")));
+
+    add (new LWButton (colorLabelIcon_0, 8, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_POPUPCOLORLABEL")));
 
     buttons[2]->setToolTip (M("FILEBROWSER_POPUPRANK1"));
     buttons[3]->setToolTip (M("FILEBROWSER_POPUPRANK2"));
@@ -62,8 +77,18 @@ void FileThumbnailButtonSet::setRank (int stars) {
         buttons[i+1]->setIcon (i<=stars ? rankIcon : gRankIcon);
 }
 
+void FileThumbnailButtonSet::setColorLabel (int colorLabel) {
+
+	if (colorLabel==0) buttons[8]->setIcon (colorLabelIcon_0); //transparent label
+	if (colorLabel==1) buttons[8]->setIcon (colorLabelIcon_1);
+	if (colorLabel==2) buttons[8]->setIcon (colorLabelIcon_2);
+	if (colorLabel==3) buttons[8]->setIcon (colorLabelIcon_3);
+	if (colorLabel==4) buttons[8]->setIcon (colorLabelIcon_4);
+	if (colorLabel==5) buttons[8]->setIcon (colorLabelIcon_5);
+}
+
 void FileThumbnailButtonSet::setInTrash (bool inTrash) {
 
-    buttons[7]->setIcon (inTrash ? unTrashIcon : trashIcon);
-    buttons[7]->setToolTip (inTrash ? M("FILEBROWSER_POPUPUNTRASH") : M("FILEBROWSER_POPUPTRASH"));
+   buttons[7]->setIcon (inTrash ? unTrashIcon : trashIcon);
+   buttons[7]->setToolTip (inTrash ? M("FILEBROWSER_POPUPUNTRASH") : M("FILEBROWSER_POPUPTRASH"));
 }

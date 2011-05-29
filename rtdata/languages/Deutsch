@@ -37,8 +37,10 @@ CURVEEDITOR_NURBS;NURBS-Kurve
 CURVEEDITOR_PARAMETRIC;Parametrisch
 CURVEEDITOR_SAVEDLGLABEL;Kurve Speichern...
 CURVEEDITOR_SHADOWS;Schatten
+CURVEEDITOR_TOOLTIPCOPY;Kurve in Zwischenablage kopieren
 CURVEEDITOR_TOOLTIPLINEAR;Kurve zurücksetzen (Linear)
 CURVEEDITOR_TOOLTIPLOAD;Kurve aus Datei laden
+CURVEEDITOR_TOOLTIPPASTE;Kurve aus Zwischenablage einfügen
 CURVEEDITOR_TOOLTIPSAVE;Kurve speichern
 CURVEEDITOR_TYPE;Typ
 EDITWINDOW_TITLE;Bildbearbeitung
@@ -69,11 +71,19 @@ FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_ARRANGEMENTHINT;Zwischen vertikaler und horizontaler Ausrichtung der Voransichten wechseln
 FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
+FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klicken, um angegebenen Pfad zu durchsuchen
+FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (<b>Strg+O</b> zum Setzen des Fokus, <b>Strg+Eingabe</b> zum Durchsuchen)\n\nSonderzeichen im Pfad:\n<b>~</b> für Benutzerverzeichnis, <b>!</b> für Bildverzeichnis des Benutzers
+FILEBROWSER_CACHE;Cache
+FILEBROWSER_CACHECLEARFROMFULL;Aus dem Cache entfernen (vollständig)
+FILEBROWSER_CACHECLEARFROMPARTIAL;Aus dem Cache entfernen (teilweise)
 FILEBROWSER_CLEARPROFILE;Profil löschen
 FILEBROWSER_COPYPROFILE;Profil kopieren
 FILEBROWSER_CURRENT_NAME;Aktueller Name:
+FILEBROWSER_DARKFRAME;Dunkelbild
 FILEBROWSER_DELETEDLGLABEL;Dateien löschen
 FILEBROWSER_DELETEDLGMSG;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen, SAMT evtl. zugehörigen, aus der Stapelverarbeitung resultierenden Ausgabedateien?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
 FILEBROWSER_EMPTYTRASHHINT;Dateien endgültig aus Papierkorb löschen
 FILEBROWSER_EXIFFILTERAPPLY;Anwenden
@@ -81,13 +91,17 @@ FILEBROWSER_EXIFFILTERAPPLYHINT;Ein-/Ausschalten des Exif Filters im Datei-Brows
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGS;Einstellungen
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändern der Einstellungen des Exif Filters
+FILEBROWSER_FLATFIELD;Weißbild
 FILEBROWSER_MOVETODARKFDIR;In Dunkelbild-Verzeichnis verschieben
+FILEBROWSER_MOVETOFLATFIELDDIR;In Weißbild-Verzeichnis verschieben
 FILEBROWSER_NEW_NAME;Neuer Name:
 FILEBROWSER_PARTIALPASTEPROFILE;Profil selektiv einfügen
 FILEBROWSER_PASTEPROFILE;Profil einfügen
 FILEBROWSER_POPUPCANCELJOB;Job abbrechen
+FILEBROWSER_POPUPCOPYTO;Kopieren nach...
 FILEBROWSER_POPUPMOVEEND;An das Ende der Warteschlange verschieben
 FILEBROWSER_POPUPMOVEHEAD;An den Anfang der Warteschlange verschieben
+FILEBROWSER_POPUPMOVETO;Verschieben nach...
 FILEBROWSER_POPUPOPEN;Öffnen
 FILEBROWSER_POPUPPROCESS;Bild zur Warteschlange hinzufügen
 FILEBROWSER_POPUPRANK1;Mit 1 Stern bewerten
@@ -96,6 +110,8 @@ FILEBROWSER_POPUPRANK3;Mit 3 Sternen bewerten
 FILEBROWSER_POPUPRANK4;Mit 4 Sternen bewerten
 FILEBROWSER_POPUPRANK5;Mit 5 Sternen bewerten
 FILEBROWSER_POPUPREMOVE;Aus Verzeichnis löschen
+FILEBROWSER_POPUPREMOVEINCLPROC;Aus Verzeichnis löschen (auch\n     Resultate der Stapelverarbeitung)
+FILEBROWSER_POPUPREMOVESUBMENU;Löschen
 FILEBROWSER_POPUPRENAME;Umbenennen
 FILEBROWSER_POPUPSELECTALL;Alle auswählen
 FILEBROWSER_POPUPTRASH;In den Papierkorb verschieben
@@ -106,6 +122,7 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Einstellen von Ausgabeformat und Ausgabeverze
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" nach:
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
+FILEBROWSER_SELECTFLATFIELD;Weißbild wählen...
 FILEBROWSER_SHOWDIRHINT;Alle Bilder des Verzeichnisses anzeigen <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden <b>I</b>
 FILEBROWSER_SHOWQUEUEHINT;Inhalt der Warteschlange zeigen
@@ -187,6 +204,10 @@ HISTORY_MSG_122;Autom. Dunkelbild
 HISTORY_MSG_123;Dunkelbild - Datei
 HISTORY_MSG_124;Belichtungskorrektur\nLinear
 HISTORY_MSG_125;Belichtungskorrektur\nLichter bewahren
+HISTORY_MSG_126;Weißbild - Datei
+HISTORY_MSG_127;Autom. Weißbild
+HISTORY_MSG_128;Weißbild Unschärferadius
+HISTORY_MSG_129;Weißbild Unschärfetyp
 HISTORY_MSG_12;Automatische Belichtung
 HISTORY_MSG_13;Belichtungsbeschneidung
 HISTORY_MSG_14;Luminanz Helligkeit
@@ -348,16 +369,20 @@ IPTCPANEL_TITLEHINT;Kurztitel des Bildes (Object Name).
 IPTCPANEL_TRANSREFERENCE;Übertragungs Referenz
 IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung definiert (Original Transmission Reference).
 MAIN_BUTTON_EXIT;Verlassen
-MAIN_BUTTON_FULLSCREEN;Vollbild
+MAIN_BUTTON_FULLSCREEN;Vollbild <b>F11</b>
 MAIN_BUTTON_PREFERENCES;Einstellungen
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild in Warteschlange einreihen <b>Strg+Q</b>
 MAIN_BUTTON_QUEUE;In die Warteschlange
 MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern <b>Strg+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor bearbeiten <b>Strg+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden <b>M</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
 MAIN_FRAME_BATCHQUEUE;Warteschlange
+MAIN_FRAME_BATCHQUEUE_TOOLTIP;Warteschlange <b>Strg+F3</b>
 MAIN_FRAME_EDITOR;Editor
+MAIN_FRAME_EDITOR_TOOLTIP;Editor <b>Strg+F4</b>
 MAIN_FRAME_FILEBROWSER;Dateiverwaltung
+MAIN_FRAME_FILEBROWSER_TOOLTIP;Dateiverwaltung <b>Strg+F2</b>
 MAIN_FRAME_PLACES;Favoriten
 MAIN_FRAME_PLACES_ADD;Hinzuf.
 MAIN_FRAME_PLACES_DEL;Entf.
@@ -376,26 +401,35 @@ MAIN_MSG_PLACES;Orte
 MAIN_MSG_QOVERWRITE;Möchten Sie die Datei überschreiben?
 MAIN_TAB_BASIC;Basis
 MAIN_TAB_COLOR;Farbe
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt+C</b>
 MAIN_TAB_DETAIL;Detail
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt+D</b>
 MAIN_TAB_DEVELOP;Entwickeln
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Belichtung
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt+E</b>
 MAIN_TAB_FILTER;Metadatenfilter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadaten
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt+M</b>
 MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW_TOOLTIP;<b>Alt+R</b>
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Verändern
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt+T</b>
 MAIN_TOGGLE_BEFORE_AFTER;V|N
 MAIN_TOOLTIP_HIDEFP;Unteres Bedienfeld ein-/ausblenden (Verzeichnis- und Datei-Browser) <b>F</b>
-MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (einschließlich der Historie) <b>H</b>         
-MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten\n\n(Nur Windows: Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
-MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten\n\n(Nur Windows: Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (einschließlich der Historie) <b>L</b> / <b>Strg+L</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten <b>&lt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten <b>&gt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
 MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden <b>I</b>
 MAIN_TOOLTIP_SAVE;Bild im Standardverzeichnis speichern
 MAIN_TOOLTIP_SAVEAS;Bild in anderem Verzeichnis speichern
+MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden <b>L</b> / <b>Strg+L</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden <b>Alt+L</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Oberes Bedienfeld ein-/ausblenden <b>Umschalt+L</b>
 MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausblenden <b>B</b>
 NAVIGATOR_B_NA;B = k.a.
 NAVIGATOR_B_VALUE;B = %1
@@ -439,6 +473,10 @@ PARTIALPASTE_DISTORTION;Verzerrungskorrektur
 PARTIALPASTE_EVERYTHING;Alles
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
+PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
+PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
+PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild: Unschärfetyp
+PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
 PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
@@ -476,6 +514,7 @@ PARTIALPASTE_WHITEBALANCE;Weißabgleich
 POPUPBUTTON_SELECTOPTIONHINT;Änderung mittels rechter Maustaste
 PREFERENCES_ADD;HINZU
 PREFERENCES_APPLNEXTSTARTUP;erfordert Neustart
+PREFERENCES_AUTOMONPROFILE;Autom. das für den aktuellen Monitor festgelegte Profil verwenden
 PREFERENCES_BATCH_PROCESSING;Stapelverarbeitung
 PREFERENCES_BEHAVIOR;Verhalten
 PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche anzeigen
@@ -515,6 +554,11 @@ PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Voransichten
 PREFERENCES_FILEFORMAT;Dateiformat
+PREFERENCES_FLATFIELD;Weißbild
+PREFERENCES_FLATFIELDFOUND;Gefunden
+PREFERENCES_FLATFIELDSDIR;Weißbild-Verzeichnis
+PREFERENCES_FLATFIELDSHOTS;Aufnahmen
+PREFERENCES_FLATFIELDTEMPLATES;Vorlagen
 PREFERENCES_FORIMAGE;Für Bilddateien
 PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
@@ -527,7 +571,9 @@ PREFERENCES_INTENT_ABSOLUTE;Absolut farbmetrisch
 PREFERENCES_INTENT_PERCEPTUAL;Wahrnehmungsabhängig
 PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Voransicht aus RAW, wenn noch nicht editiert
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
+PREFERENCES_METADATA;Metadaten
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
 PREFERENCES_MULTITABDUALMON;Multi-Reiter Modus (auf zweitem Monitor, wenn verfügbar)
@@ -536,7 +582,7 @@ PREFERENCES_OUTDIRFOLDER;Im Verzeichnis speichern
 PREFERENCES_OUTDIRFOLDERHINT;Alle erzeugten Dateien in dem angegebenen Verzeichnis ablegen
 PREFERENCES_OUTDIRHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
-PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%d1</b>, <b>%d2</b>, ..., <b>%f</b>, <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes; ihr Inhalt ist für unbewertete Bilder "<i>0</i>", für in den Papierkorb verschobene Bilder "<i>x</i>" und ansonsten - entsprechend der Anzahl der Sterne - eine Ziffer zwischen "<i>1</i>" und "<i>5</i>".
 PREFERENCES_OVERLAY_FILENAMES;Dateiname und Informationen überlagert über Bild
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
 PREFERENCES_PARSEDEXT;Angezeigte Dateitypen
@@ -563,12 +609,17 @@ PREFERENCES_SHOWONLYRAW;Nur RAW-Dateien anzeigen
 PREFERENCES_SHTHRESHOLD;Schwellenwert - zu dunkel
 PREFERENCES_SINGLETAB;Ein-Reiter Modus
 PREFERENCES_SINGLETABVERTAB;Ein-Reiter Modus (vertikale Reiter)
+PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
+PREFERENCES_SND_HELP;Entweder Dateipfad eingeben oder nichts (falls kein Systemklang gewünscht).\nUnter Windows "SystemDefault", "SystemAsterisk" usw. für Systemklänge verwenden.               
+PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
+PREFERENCES_SND_TRESHOLDSECS;nach (s)
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
 PREFERENCES_TAB_COLORMGR;Farbmanagement
 PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_OUTPUT;Ausgabe
+PREFERENCES_TAB_SOUND;Systemklänge
 PREFERENCES_THUMBSIZE;Größe der Vorschau
 PREFERENCES_TUNNELMETADATA;IPTC/XMP unverändert in Ausgabedatei kopieren (falls Tagging mittels anderer Software)
 PREFERENCES_USESYSTEMTHEME;Systemoberfläche
@@ -587,9 +638,15 @@ PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren
 PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden
 PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen
 PROFILEPANEL_TOOLTIPSAVE;Profil speichern
+PROGRESSBAR_BADPIXELS;Fehlerhafte Pixel...
+PROGRESSBAR_CACORRECTION;CA-Korrektur...
+PROGRESSBAR_DARKFRAME;Dunkelbild...
 PROGRESSBAR_DECODING;Dekodiere RAW...
 PROGRESSBAR_DEMOSAICING;Entrasterung...
+PROGRESSBAR_GREENEQUIL;Grün-Ausgleich...
+PROGRESSBAR_LINEDENOISE;Zeilenrauschfilter...
 PROGRESSBAR_LOADING;Lade Bild...
+PROGRESSBAR_LOADINGTHUMBS;Lade Voransichten...
 PROGRESSBAR_LOADJPEG;Lade JPEG...
 PROGRESSBAR_LOADPNG;Lade PNG...
 PROGRESSBAR_LOADTIFF;Lade TIFF...
@@ -598,10 +655,7 @@ PROGRESSBAR_READY;Bereit.
 PROGRESSBAR_SAVEJPEG;Speichere JPEG...
 PROGRESSBAR_SAVEPNG;Speichere PNG...
 PROGRESSBAR_SAVETIFF;Speichere TIFF...
-PROGRESSDLG_LOADING;Lade Datei...
-PROGRESSDLG_PROCESSING;Berechne Bild...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil wurde im Browser geändert
-PROGRESSDLG_SAVING;Speichere Datei...
 QINFO_FOCALLENGTH;Brennweite
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
@@ -620,7 +674,7 @@ SAVEDLG_SAVESPP;Prozessparameter mit dem Bild speichern
 SAVEDLG_TIFFFILTER;TIFF-Datei
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen <b>C</b>\n\n(Zum Verschieben des Ausschnitts die Umschalttaste gedrückt halten) 
-TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug <b>N</b>
+TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug <b>H</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Leitlinie wählen <b>S</b>
 TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen <b>W</b>
 TP_CACORRECTION_BLUE;Blau
@@ -633,8 +687,8 @@ TP_CHMIXER_RED;Rot
 TP_CHROMATABERR_LABEL;Chromatische Aberration
 TP_COARSETRAF_DEGREE;Grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Nach rechts drehen <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Vertikal spiegeln
 TP_COLORBOOST_ACHANNEL;Kanal "a"
 TP_COLORBOOST_AMOUNT;Stärke
@@ -688,6 +742,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Stärke
+TP_DISTORTION_AUTO;Automatische Verzerrungskorrektur
+TP_DISTORTION_AUTO_TIP;Linsenverzerrungen automatisch korrigieren (nur für bestimmte\nKameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
 TP_DISTORTION_LABEL;Verzerrungskorrektur
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
@@ -708,6 +764,14 @@ TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
+TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
+TP_FLATFIELD_BLURRADIUS;Unschärferadius
+TP_FLATFIELD_BLURTYPE;Unschärfetyp
+TP_FLATFIELD_BT_AREA;Bereich
+TP_FLATFIELD_BT_HORIZONTAL;Horizontal
+TP_FLATFIELD_BT_VERTHORIZ;Vertikal + Horizontal
+TP_FLATFIELD_BT_VERTICAL;Vertikal
+TP_FLATFIELD_LABEL;Weißbild
 TP_HLREC_CIELAB;CIELab Überlagerung
 TP_HLREC_COLOR;Farbübertragung
 TP_HLREC_LABEL;Lichter wiederherstellen
@@ -859,3 +923,10 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!TP_CROP_PPI;PPI=
+!TP_GAMMA_CURV;gamma
+!TP_GAMMA_FREE;Free gamma
+!TP_GAMMA_OUTPUT;Output gamma
+!TP_GAMMA_SLOP;slope (linear)

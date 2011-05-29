@@ -145,6 +145,10 @@ InputProfile=(camera)
 ApplyGammaBeforeInputProfile=false
 WorkingProfile=sRGB
 OutputProfile=No ICM: sRGB output
+Gammafree=default
+Freegamma=false
+gampos=2.22
+slpos=4.5
 
 [Equalizer]
 Enabled=false
@@ -168,6 +172,10 @@ Mult4=0
 [RAW]
 DarkFrame=
 DarkFrameAuto=false
+FlatFieldFile=
+FlatFieldAutoSelect=false
+FlatFieldBlurRadius=32
+FlatFieldBlurType=Area Flatfield
 CA=false
 HotDeadPixels=false
 LineDenoise=0

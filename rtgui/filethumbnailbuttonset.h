@@ -35,9 +35,17 @@ class FileThumbnailButtonSet : public LWButtonSet {
         static Cairo::RefPtr<Cairo::ImageSurface> trashIcon;
         static Cairo::RefPtr<Cairo::ImageSurface> unTrashIcon;
         static Cairo::RefPtr<Cairo::ImageSurface> processIcon;
+        
+        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_0;
+        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_1;
+        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_2;
+        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_3;
+        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_4;
+        static Cairo::RefPtr<Cairo::ImageSurface> colorLabelIcon_5;
 
         FileThumbnailButtonSet (FileBrowserEntry* myEntry);
         void    setRank (int stars);
+        void    setColorLabel (int colorlabel);
         void    setInTrash (bool inTrash);
 
 };
