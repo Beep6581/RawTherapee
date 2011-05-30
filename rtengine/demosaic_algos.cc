@@ -501,11 +501,7 @@ void RawImageSource::hphd_demosaic () {
     plistener->setProgress (0.0);
   }
 
-  float** hpmap = new float*[H];
-  for (int i=0; i<H; i++) {
-    hpmap[i] = new float[W];
-    memset(hpmap[i], 0, W*sizeof(float));
-  }
+  float** hpmap = allocArray< float >(W,H, true);
   
 #ifdef _OPENMP
   #pragma omp parallel
