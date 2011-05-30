@@ -1360,18 +1360,11 @@ void RawImageSource::correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_
  
   int W = im->width;
 
-  float** rbconv_Y = new float*[3];
-  float** rbconv_I = new float*[3];
-  float** rbconv_Q = new float*[3];
-  float** rbout_I = new float*[3];
-  float** rbout_Q = new float*[3];
-  for (int i=0; i<3; i++) {
-    rbconv_Y[i] = new float[W];
-    rbconv_I[i] = new float[W];
-    rbconv_Q[i] = new float[W];
-    rbout_I[i] = new float[W];
-    rbout_Q[i] = new float[W];
-  }
+  float** rbconv_Y = allocArray<float>(W,3);
+  float** rbconv_I = allocArray<float>(W,3);
+  float** rbconv_Q = allocArray<float>(W,3);
+  float** rbout_I = allocArray<float>(W,3);
+  float** rbout_Q = allocArray<float>(W,3);
 
   float* row_I = new float[W];
   float* row_Q = new float[W];
