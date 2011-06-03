@@ -200,14 +200,13 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
 
 void ToneCurve::curveChanged () {
 
-    if (listener) {
-        listener->panelChanged (EvToneCurve, M("HISTORY_CUSTOMCURVE"));
-    }
+    if (listener) listener->panelChanged (EvToneCurve, M("HISTORY_CUSTOMCURVE"));
 }
 
 void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
-    if (autolevels->get_active() && (a==expcomp || a==black || a==hlcompr || a==hlcomprthresh || a==shcompr)) {
+    // Switch off auto exposure if user changes sliders manually
+    if (autolevels->get_active() && (a==expcomp || a==black)) {
         autolevels->set_active (false);
         autolevels->set_inconsistent (false);
     }
@@ -312,10 +311,10 @@ int aexpcomputed (void* data) {
     return 0;
 }
 
-void ToneCurve::autoExpChanged (double br, int bl) {
+void ToneCurve::autoExpChanged (double expcomp, int black) {
 
-    nextBl = bl;
-    nextBr = br;
+    nextBlack = black;
+    nextExpcomp = expcomp;
     g_idle_add (aexpcomputed, this);
 
 //    Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::autoExpComputed_));
@@ -339,8 +338,8 @@ bool ToneCurve::autoExpComputed_ () {
 
     disableListener ();
     enableAll ();
-    expcomp->setValue (nextBr);
-    black->setValue (nextBl);
+    expcomp->setValue (nextExpcomp);
+    black->setValue (nextBlack);
     if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     enableListener ();
 
