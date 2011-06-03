@@ -125,11 +125,35 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
+    // load panel endings
+    for (int i=0; i<5; i++) {
+		vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
+		imgPanelEnd[i] = Gtk::manage (new Gtk::Image (argv0+"/images/PanelEnding_01.png"));
+		imgPanelEnd[i]->show ();
+		vbPanelEnd[i]->pack_start (*imgPanelEnd[i],Gtk::PACK_SHRINK);
+		vbPanelEnd[i]->show_all();
+    }
+
     exposurePanelSW->add  (*exposurePanel);
+    exposurePanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    exposurePanel->pack_start (*vbPanelEnd[0],Gtk::PACK_SHRINK,4);
+
     detailsPanelSW->add   (*detailsPanel);
+    detailsPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    detailsPanel->pack_start (*vbPanelEnd[1],Gtk::PACK_SHRINK,4);
+
     colorPanelSW->add     (*colorPanel);
+    colorPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    colorPanel->pack_start (*vbPanelEnd[2],Gtk::PACK_SHRINK,4);
+
     transformPanelSW->add (*transformPanel);
+    transformPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    transformPanel->pack_start (*vbPanelEnd[3],Gtk::PACK_SHRINK,4);
+
     rawPanelSW->add       (*rawPanel);
+    rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
+    rawPanel->pack_start (*vbPanelEnd[4],Gtk::PACK_SHRINK,4);
+
 
     Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
 	hbe->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_EXPOSURE"))));
