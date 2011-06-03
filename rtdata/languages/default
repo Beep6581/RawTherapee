@@ -210,6 +210,13 @@ HISTORY_MSG_128;Flat Field Blur Radius
 HISTORY_MSG_129;Flat Field Blur Type
 HISTORY_MSG_12;Auto Exposure
 HISTORY_MSG_13;Exposure Clipping
+HISTORY_MSG_130;Auto Distorion
+HISTORY_MSG_131;Noise Reduction Luma
+HISTORY_MSG_132;Noise Reduction Chroma
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Gamma Position
+HISTORY_MSG_135;Gamma Free
+HISTORY_MSG_136;Gamma Slope
 HISTORY_MSG_14;Luminance Brightness
 HISTORY_MSG_15;Luminance Contrast
 HISTORY_MSG_16;Luminance Black
