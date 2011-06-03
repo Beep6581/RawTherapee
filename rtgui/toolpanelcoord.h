@@ -127,6 +127,9 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         IPTCPanel* iptcpanel;
         ToolBar* toolBar;
 
+        Gtk::Image* imgPanelEnd[5];
+        Gtk::VBox* vbPanelEnd[5];
+
         Gtk::ScrolledWindow* exposurePanelSW;
         Gtk::ScrolledWindow* detailsPanelSW;
         Gtk::ScrolledWindow* colorPanelSW;
