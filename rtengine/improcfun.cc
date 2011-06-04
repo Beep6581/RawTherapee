@@ -85,7 +85,7 @@ void ImProcFunctions::initCache () {
     int maxindex = 65536;
 	cachef(maxindex,0/*LUT_CLIP_BELOW*/);
 
-	gamma2curve(maxindex);
+	gamma2curve(maxindex,0);
 
     for (int i=0; i<maxindex; i++) {
         if (i>eps_max) {
@@ -333,6 +333,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			r = tonecurve[r];
 			g = tonecurve[g];
 			b = tonecurve[b];
+			
+			//if (r<0 || g<0 || b<0) {
+			//	printf("negative values row=%d col=%d  r=%f  g=%f  b=%f  \n", i,j,r,g,b);
+			//}
 
 			if (abs(sat)>0.5 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float h,s,v;
@@ -360,12 +364,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 						if (satparam < -0.00001)
 							s *= 1+satparam;
 					}
-					
-					/*s = sCurve->getVal((double)s);
-					 if (s > 1.0)
-					 s -= 1.0;
-					 else if (s < 0.0)
-					 s += 1.0;*/
+
 				}
 				if (vCurveEnabled) {
 					//shift value
@@ -378,11 +377,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 							v *= (1+valparam);
 					}
 					
-					/*v = vCurve->getVal((double)v);
-					 if (v > 1.0)
-					 v -= 1.0;
-					 else if (v < 0.0)
-					 v += 1.0;*/
 				}
 				hsv2rgb(h,s,v,r,g,b);
 			}
@@ -395,22 +389,29 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
             float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b) ;
             float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b) ;
 			
-			/*lab->L[i][j] = CLIP2(116.0 * (CurveFactory::flinterp(cachef,y)) - 5242.88); //5242.88=16.0*327.68;
-            lab->a[i][j] = CLIPS(500.0 * (((CurveFactory::flinterp(cachef,x) - CurveFactory::flinterp(cachef,y)) ) ));
-            lab->b[i][j] = CLIPS(200.0 * (((CurveFactory::flinterp(cachef,y) - CurveFactory::flinterp(cachef,z)) ) ));*/
+			float fx,fy,fz;
 			
-			x = (x<65535.0 ? cachef[x] : (327.68*exp(log(x/MAXVAL)/3.0 )));
-			y = (y<65535.0 ? cachef[y] : (327.68*exp(log(y/MAXVAL)/3.0 )));
-			z = (z<65535.0 ? cachef[z] : (327.68*exp(log(z/MAXVAL)/3.0 )));
+			//if (x>0) {
+				fx = (x<65535.0 ? cachef[x] : (327.68*exp(log(x/MAXVAL)/3.0 )));
+			//} else {
+			//	fx = (x>-65535.0 ? -cachef[-x] : (-327.68*exp(log(-x/MAXVAL)/3.0 )));
+			//}
+			//if (y>0) {
+				fy = (y<65535.0 ? cachef[y] : (327.68*exp(log(y/MAXVAL)/3.0 )));
+			//} else {
+			//	fy = (y>-65535.0 ? -cachef[-y] : (-327.68*exp(log(-y/MAXVAL)/3.0 )));
+			//}
+			//if (z>0) {
+				fz = (z<65535.0 ? cachef[z] : (327.68*exp(log(z/MAXVAL)/3.0 )));
+			//} else {
+			//	fz = (z>-65535.0 ? -cachef[-z] : (-327.68*exp(log(-z/MAXVAL)/3.0 )));
+			//}
 
-			lab->L[i][j] = (116.0 * y - 5242.88); //5242.88=16.0*327.68;
-            lab->a[i][j] = (500.0 * (x - y) );
-            lab->b[i][j] = (200.0 * (y - z) );
+			lab->L[i][j] = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
+            lab->a[i][j] = (500.0 * (fx - fy) );
+            lab->b[i][j] = (200.0 * (fy - fz) );
+			
 
-			//float L1 = lab->L[i][j];//for testing
-			//float a1 = lab->a[i][j];
-			//float b1 = lab->b[i][j];
-			//float xxx=1;
 			
 			//test for color accuracy
 			/*float fy = (0.00862069 * lab->L[i][j])/327.68 + 0.137932; // (L+16)/116
@@ -448,19 +449,10 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 }
 		
 	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve/*, double sat*/) {
+void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve) {
 	
 	int W = lold->W;
 	int H = lold->H;
-	
-	/*for (int i=0; i<H; i++)
-		for (int j=0; j<W; j++) {
-			float ain=lold->a[i][j];
-			float bin=lold->b[i][j];
-			//if (fabs(ain)<32767 && fabs(bin)<32767)
-			lnew->a[i][j] = acurve[ain+32768.0f]-32768.0;
-			lnew->b[i][j] = bcurve[bin+32768.0f]-32768.0;
-		}*/
 
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -494,56 +486,16 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 				//Yuv2Lab includes gamut restriction map
 				Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				
-				//Gabor's limiter -- needs adapting to float branch
-				/*double Lclip = MIN(lnew->L[i][j]/655.35,100.0);
-                double cr = tightestroot (Lclip, (double)atmp, (double)btmp, 3.079935, -1.5371515, -0.54278342);
-                double cg = tightestroot (Lclip, (double)atmp, (double)btmp, -0.92123418, 1.87599, 0.04524418);
-                double cb = tightestroot (Lclip, (double)atmp, (double)btmp, 0.052889682, -0.20404134, 1.15115166);
-                if (cr>0 && cr<real_c) real_c = cr;
-                if (cg>0 && cg<real_c) real_c = cg;
-                if (cb>0 && cb<real_c) real_c = cb;*/
-				//if (i%100==50 && j%100==50) printf ("(i,j)=(%d,%d)  c= %f, rmax= %f \n", i, j, c, real_c);//diagnostic
             } else {
 				//Luv limiter only
 				lnew->a[i][j] = atmp;
 				lnew->b[i][j] = btmp;
 			}
-            /*
-			//Gabor again 
-            int nna = (int)((atmp) * real_c );
-            int nnb = (int)((btmp) * real_c );
-			lnew->a[i][j] = CLIPTO(nna,-32000,32000);
-			lnew->b[i][j] = CLIPTO(nnb,-32000,32000);*/
+
         }
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	/*
-	float slope = (sat>0) ? (125.0+sat)/(125.0-sat) : (1+sat/100.0);
-	
-	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-	
-	double wp[3][3] = {
-		        {wprof[0][0],wprof[0][1],wprof[0][2]},
-		        {wprof[1][0],wprof[1][1],wprof[1][2]},
-		        {wprof[2][0],wprof[2][1],wprof[2][2]}};
 
-	int W = lold->W;
-	int H = lold->H;
-	for (int i=0; i<H; i++)
-		        for (int j=0; j<W; j++) {
-			                float Y, u, v;
-			                float ain = acurve[lold->a[i][j]+32768.0f]-32768.0;
-			                float bin = bcurve[lold->b[i][j]+32768.0f]-32768.0;
-			                Lab2Yuv(lold->L[i][j],ain,bin,Y,u,v);
-			                u *= slope;
-			                v *= slope;
-			                Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
-			                //float ain=lold->a[i][j];
-			                //float bin=lold->b[i][j];
-			                //if (fabs(ain)<32767 && fabs(bin)<32767)
-			                //lnew->a[i][j] = acurve[ain+32768.0f]-32768.0;
-			                //lnew->b[i][j] = bcurve[bin+32768.0f]-32768.0;
-		}*/
 	}
 	
 

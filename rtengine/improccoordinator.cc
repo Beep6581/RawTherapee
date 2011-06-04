@@ -35,7 +35,7 @@ ImProcCoordinator::ImProcCoordinator ()
     changeSinceLast(0), updaterRunning(false), destroying(false), workimg(NULL) {
 
     hltonecurve(65536,0);
-    shtonecurve(65536,0);//,1);
+    shtonecurve(65536,1);//,1);
     tonecurve(65536,0);//,1);
 
     lumacurve(65536,0);

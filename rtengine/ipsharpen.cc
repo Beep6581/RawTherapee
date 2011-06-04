@@ -115,7 +115,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++)
-            lab->L[i][j] = lab->L[i][j]*p1 + CLIP(tmpI[i][j])*p2;
+            lab->L[i][j] = lab->L[i][j]*p1 + /*CLIP*/(tmpI[i][j])*p2;
 
 } // end parallel
 
@@ -172,7 +172,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
                 int diff = base[i][j] - b2[i][j];
                 if (ABS(diff)>params->sharpening.threshold) {
                     int val = lab->L[i][j] + params->sharpening.amount * diff / 100;
-                    lab->L[i][j] = CLIP(val);
+                    lab->L[i][j] = /*CLIP*/(val);
                 }
             }
     }
@@ -211,7 +211,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
                 if (min > lab->L[i][j])
                     min = lab->L[i][j];
                 int val = lab->L[i][j] + params->sharpening.amount * diff / 100;
-                int newL = CLIP(val);
+                int newL = /*CLIP*/(val);
                 // applying halo control
                 if (newL > max)
                     newL = max + (newL-max) * scale / 10000;
