@@ -81,7 +81,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				x_ = f2xyz(fx)*D50x;//should this be 32767???  buffer is short int !!!
+				x_ = f2xyz(fx)*D50x;
 				y_ = f2xyz(fy);
 				z_ = f2xyz(fz)*D50z;
 
@@ -121,11 +121,12 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				z_ = 65535.0 * f2xyz(fz)*D50z;
 
 				xyz2srgb(x_,y_,z_,R,G,B);
-
+				
 				/* copy RGB */
-				image->data[ix++] = (int)gamma2curve[(R)] >> 8;
-				image->data[ix++] = (int)gamma2curve[(G)] >> 8;
-				image->data[ix++] = (int)gamma2curve[(B)] >> 8;
+				//int R1=((int)gamma2curve[(R)]) 
+				image->data[ix++] = ((int)gamma2curve[CLIP(R)]) >> 8;
+				image->data[ix++] = ((int)gamma2curve[CLIP(G)]) >> 8;
+				image->data[ix++] = ((int)gamma2curve[CLIP(B)]) >> 8;
 			}
 		}
 	}
@@ -222,9 +223,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 
 				xyz2rgb(x_,y_,z_,R,G,B,rgb_xyz);
 
-                image->data[ix++] = (int)gamma2curve[(R)] >> 8;
-                image->data[ix++] = (int)gamma2curve[(G)] >> 8;
-                image->data[ix++] = (int)gamma2curve[(B)] >> 8;
+                image->data[ix++] = (int)gamma2curve[CLIP(R)] >> 8;
+                image->data[ix++] = (int)gamma2curve[CLIP(G)] >> 8;
+                image->data[ix++] = (int)gamma2curve[CLIP(B)] >> 8;
             }
         }
     }
@@ -298,9 +299,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
-				image->r[i-cy][j-cx] = (int)gamma2curve[(R)];
-				image->g[i-cy][j-cx] = (int)gamma2curve[(G)];
-				image->b[i-cy][j-cx] = (int)gamma2curve[(B)];
+				image->r[i-cy][j-cx] = (int)gamma2curve[CLIP(R)];
+				image->g[i-cy][j-cx] = (int)gamma2curve[CLIP(G)];
+				image->b[i-cy][j-cx] = (int)gamma2curve[CLIP(B)];
 			}
 		}
 	}
@@ -437,9 +438,9 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
 				xyz2srgb(x_,y_,z_,R,G,B);
 
-				image->r[i-cy][j-cx] = (int)gamma2curve[(R)];
-				image->g[i-cy][j-cx] = (int)gamma2curve[(G)];
-				image->b[i-cy][j-cx] = (int)gamma2curve[(B)];
+				image->r[i-cy][j-cx] = (int)gamma2curve[CLIP(R)];
+				image->g[i-cy][j-cx] = (int)gamma2curve[CLIP(G)];
+				image->b[i-cy][j-cx] = (int)gamma2curve[CLIP(B)];
 			}
 		}
 	}

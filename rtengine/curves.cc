@@ -295,10 +295,13 @@ namespace rtengine {
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// change to [0,1] range
-			val = (float)i / 65535.0f;
+			if (i!=0) {
+				val = (float)i / 65535.0f;
+			} else {
+				val = 1.0/65535.0;
+			}
 			
 			float	val2 = basecurve (val, 1.0, black, 1.0, 0.0, 1.5*shcompr/100.0);
-			if (i==0) val=1.0;
 			shCurve[i] = CLIPD(val2)/val;
 
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -526,7 +529,7 @@ namespace rtengine {
 			
 			outCurve[i] = (32767.0 * val);
 		}
-		for (int i=32768; i<65535; i++) outCurve[i]=i;
+		for (int i=32768; i<65536; i++) outCurve[i]=i;
 		
 		
 		delete tcurve;
