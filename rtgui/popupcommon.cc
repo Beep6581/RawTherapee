@@ -138,8 +138,8 @@ void PopUpCommon::show() {
 }
 
 void PopUpCommon::setButtonHint() {
-	Glib::ustring hint = buttonHint.size() ? buttonHint + " : " + sItems.at(selected) : sItems.at(selected);
-	if (hasMenu) hint += "\n(" + M("POPUPBUTTON_SELECTOPTIONHINT") + ")";
+	Glib::ustring hint = buttonHint.size() ? buttonHint + " " + sItems.at(selected) : sItems.at(selected);
+//	if (hasMenu) hint += "\n(" + M("POPUPBUTTON_SELECTOPTIONHINT") + ")";
 	button->set_tooltip_text(hint);
 }
 
