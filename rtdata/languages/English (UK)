@@ -511,7 +511,6 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PARTIALPASTE_WHITEBALANCE;White balance
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_ADD;ADD
 !PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
