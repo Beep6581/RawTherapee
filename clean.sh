@@ -18,3 +18,4 @@ rm ./rtgui/Makefile
 rm ./rtengine/librtengine.so
 rm ./rtgui/rt
 rm ./rtexif/librtexif.a
+exit 0
