@@ -495,7 +495,6 @@ PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_VIGNETTING;Correction du vignettage
 PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
-POPUPBUTTON_SELECTOPTIONHINT;'Menu contextuel' pour changer d'option
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile

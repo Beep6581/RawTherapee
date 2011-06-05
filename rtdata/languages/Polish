@@ -787,7 +787,6 @@ ZOOMBAR_SMALL;Mała
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!POPUPBUTTON_SELECTOPTIONHINT;RMB to change option
 !PREFERENCES_ADD;ADD
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing

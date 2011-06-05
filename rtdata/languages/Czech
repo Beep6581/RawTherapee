@@ -502,7 +502,6 @@ PARTIALPASTE_SHARPENING;Doostření
 PARTIALPASTE_VIGNETTING;Korekce vinětace
 PARTIALPASTE_WAVELETEQUALIZER;Vlnková korekce
 PARTIALPASTE_WHITEBALANCE;Nastavení bílé
-POPUPBUTTON_SELECTOPTIONHINT;Pravé tl. myši pro změnu nastavení
 PREFERENCES_ADD;Přidat
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
 PREFERENCES_AUTOMONPROFILE;Automaticky použít hlavní profil monitoru z operačního systému.
