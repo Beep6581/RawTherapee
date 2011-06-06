@@ -2,7 +2,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-05-19.
+#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-06-06.
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
@@ -492,15 +492,15 @@ PARTIALPASTE_RAWCACORR_AUTO;Reducera kromatiska abberationer
 PARTIALPASTE_RAWCACORR_CABLUE;Blå
 PARTIALPASTE_RAWCACORR_CARED;Röd
 PARTIALPASTE_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
-PARTIALPASTE_RAWEXPOS_PRESER;Bevara högdagrar-korrigering (EV)
-PARTIALPASTE_RAWGROUP;Råinställningar
+PARTIALPASTE_RAWEXPOS_PRESER;Korrigering av högdagrar(EV)
+PARTIALPASTE_RAWGROUP;Råbildsinställningar
 PARTIALPASTE_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
 PARTIALPASTE_RAW_DCBITERATIONS;Antal DCB-iterationer
 PARTIALPASTE_RAW_DMETHOD;Metodi för demosaicing
 PARTIALPASTE_RAW_FALSECOLOR;Falskt färgbortträngningssteg
 PARTIALPASTE_RESIZE;Ändra storlek
 PARTIALPASTE_ROTATION;Rotering
-PARTIALPASTE_SHADOWSHIGHLIGHTS;Skuggor/Högdagrar
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Skugg- och högdageråterställning
 PARTIALPASTE_SHARPENING;Skärpa
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
 PARTIALPASTE_WAVELETEQUALIZER;Waveletequalizer
@@ -535,7 +535,7 @@ PREFERENCES_DARKFRAMESHOTS;bilder
 PREFERENCES_DARKFRAMETEMPLATES;mallar
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATFRAME;Datumformat
-PREFERENCES_DATEFORMATHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : månad</i>\n<b>%d</b><i> : dag</i>\n<i>\nTill exempel är det svenska datumformatet:</i>-n<b>%y-%m-%d</b>
+PREFERENCES_DATEFORMATHINT;Du kan använda följande formatsträngar:\n<b>%y</b>: år\n<b>%m</b>: månad\n<b>%d</b>: dag\n\nTill exempel är det svenska datumformatet:\n<b>%y-%m-%d</b>
 PREFERENCES_DEFAULTLANG;Förvalt språk
 PREFERENCES_DEFAULTTHEME;Förvalt tema
 PREFERENCES_DEMOSAICINGALGO;Algoritm för demosaicing
@@ -576,9 +576,9 @@ PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerflik
 PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
-PREFERENCES_OUTDIRHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om </i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;Du kan använda följande formatsträngar:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012 \n%d1=2010-09-02 \n%d2=bilder \n%p1=/home/tom/bilder/2010-09-02, \n%p2=/home/tom/bilder\n%p3=/home/tom \n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan använda de följande formatteringssträngarna:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om</i> <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b><i>har öppnats, betyder formatsträngen följande:\n</i><b>%f=dsc0012, %d1=2010-09-02, %d2=bildfilen, ...\n%p1=/home/tom/bilder/2010-09-02, %p2=/home/tom/bilder, p3=/home/tom, ...\n</b><i>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n</i><b>%p1/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n</i><b>%p1/Konverterade filer/%f\n</b><i>\nOm du vill spara den behandlade filen i en katalog '/home/tom/Konverterade filer' där du behåller samma underkatalog med datum, skriver du:\n</i><b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Du kan använda följande formatsträngar:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012 \n%d1=2010-09-02 \n%d2=bilder \n%p1=/home/tom/bilder/2010-09-02, \n%p2=/home/tom/bilder\n%p3=/home/tom \n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
 PREFERENCES_OVERWRITEOUTPUTFILE;Skriv över existerande utfiler
 PREFERENCES_PARSEDEXT;Behandlade filtyper
@@ -676,7 +676,7 @@ SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
 TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde. Kortkommando: C
 TOOLBAR_TOOLTIP_HAND;Handverktyg. Kortkommando: N
 TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. Kortkommando: S
-TOOLBAR_TOOLTIP_WB;Egen vitbalans. Kortkommando: 
+TOOLBAR_TOOLTIP_WB;Egen vitbalans. Kortkommando: W
 TP_CACORRECTION_BLUE;Blå
 TP_CACORRECTION_LABEL;Reducera kromatiska abberationer
 TP_CACORRECTION_RED;Röd
@@ -752,10 +752,10 @@ TP_EQUALIZER_FINEST;Finast
 TP_EQUALIZER_LABEL;Waveletequalizer
 TP_EQUALIZER_LARGEST;Grövst
 TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;Exponering
+TP_EXPOSCORR_LABEL;Vitpunktskorrigering, råbild
 TP_EXPOSURE_AUTOLEVELS;Autonivåer
 TP_EXPOSURE_BLACKLEVEL;Svärta
-TP_EXPOSURE_BRIGHTNESS;Ljusstyrka
+TP_EXPOSURE_BRIGHTNESS;Intensitet
 TP_EXPOSURE_CLIP;Klippnivå
 TP_EXPOSURE_COMPRHIGHLIGHTS;Högdageråterställning
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Högdageråterställning, tröskelvärde
@@ -795,7 +795,7 @@ TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;Mättnad
 TP_HSVEQUALIZER_VAL;Värde
 TP_ICM_FILEDLGFILTERANY;Vilka filer som helst
-TP_ICM_FILEDLGFILTERICM;ICC profilfiler
+TP_ICM_FILEDLGFILTERICM;ICC-profiler
 TP_ICM_GAMMABEFOREINPUT;Profilapplicerad gamma
 TP_ICM_INPUTCAMERA;Kameraval
 TP_ICM_INPUTCUSTOM;Egen
@@ -812,7 +812,7 @@ TP_ICM_WORKINGPROFILE;Färgrymd
 TP_IMPULSEDENOISE_LABEL;Brusreducering mha av stegsvar
 TP_IMPULSEDENOISE_THRESH;Tröskelvärde
 TP_LABCURVE_AVOIDCOLORCLIP;Undvik att färgen klipper
-TP_LABCURVE_BRIGHTNESS;Ljushet
+TP_LABCURVE_BRIGHTNESS;Intensitet
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanskurva
 TP_LABCURVE_ENABLESATLIMITER;Slå på mättnadsbegränsare
@@ -823,7 +823,7 @@ TP_LENSGEOM_AUTOCROP;Autobeskärning
 TP_LENSGEOM_FILL;Fyll automatiskt
 TP_LENSGEOM_LABEL;Geometri- och distorsionskorrigering
 TP_LUMACURVE_BLACKLEVEL;Svärta
-TP_LUMACURVE_BRIGHTNESS;Ljusstyrka
+TP_LUMACURVE_BRIGHTNESS;Intensitet
 TP_LUMACURVE_COMPRHIGHLIGHTS;Högdageråterställning
 TP_LUMACURVE_COMPRSHADOWS;Skuggåterställning
 TP_LUMACURVE_CONTRAST;Kontrast
@@ -844,7 +844,7 @@ TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
 TP_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
-TP_RAWEXPOS_PRESER;Bevara högdagrar-korrigering (EV)
+TP_RAWEXPOS_PRESER;Bevara högdagerkorrigering (EV)
 TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
 TP_RAW_DCBITERATIONS;Antal DCB-iterationer
 TP_RAW_DMETHOD;Metod
@@ -879,7 +879,7 @@ TP_ROTATE_LABEL;Räta upp
 TP_ROTATE_SELECTLINE;Välj rak linje
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
-TP_SHADOWSHLIGHTS_LABEL;Skuggor/högdagrar
+TP_SHADOWSHLIGHTS_LABEL;Skugg- och högdageråterställning
 TP_SHADOWSHLIGHTS_LOCALCONTR;Lokal kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radie
 TP_SHADOWSHLIGHTS_SHADOWS;Skuggor
@@ -936,6 +936,6 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!TP_GAMMA_CURV;gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_SLOP;slope (linear)
+TP_GAMMA_CURV;gamma
+TP_GAMMA_FREE;Obunden gamma
+TP_GAMMA_SLOP;lutning(linjär)
