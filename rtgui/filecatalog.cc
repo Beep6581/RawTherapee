@@ -542,7 +542,7 @@ void FileCatalog::refreshAll () {
 }
 
 void FileCatalog::refreshHeight () {
-    int newHeight=fileBrowser->getEffectiveHeight();
+    int newHeight=fileBrowser->getEffectiveHeight() + buttonBar->get_height();
     set_size_request(0, newHeight);
 }
 
