@@ -45,6 +45,8 @@ BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
     head->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::headItems), &selected));    
     tail->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::tailItems), &selected));    
     selall->signal_activate().connect (sigc::mem_fun(*this, &BatchQueue::selectAll));
+
+    setArrangement (ThumbBrowserBase::TB_Vertical);
 }
 
 BatchQueue::~BatchQueue ()
