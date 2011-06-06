@@ -631,14 +631,15 @@ void ThumbBrowserBase::setScrollPosition (double h, double v) {
 
 // needed for auto-height in single tab
 int ThumbBrowserBase::getEffectiveHeight() { 
-    int h=0;
+    int h=hscroll.get_height() + 2;  // have 2 pixels rounding error for scroll bars to appear
+
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
 		Glib::Mutex::Lock lock(entryMutex);
 		#endif
 
-    if (fd.size()>0) h=fd[0]->getEffectiveHeight();
+        if (fd.size()>0) h+=fd[0]->getEffectiveHeight();
 	}
 
     return h;

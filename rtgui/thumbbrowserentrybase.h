@@ -102,7 +102,7 @@ protected:
     int getMinimalHeight    () { return height; }
     int getMinimalWidth     () { return width; }
 
-    int getEffectiveHeight  () { return fnlabh+dtlabh+exlabh+textGap+exp_height; }
+    int getEffectiveHeight  () { return exp_height; }
     int getStartX           () { return startx; }
     int getStartY           () { return starty; }
 
