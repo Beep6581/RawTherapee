@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Apr 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 26.04.2011
+#15 Jan-Mai 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 06.06.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -104,11 +104,11 @@ FILEBROWSER_POPUPMOVEHEAD;An den Anfang der Warteschlange verschieben
 FILEBROWSER_POPUPMOVETO;Verschieben nach...
 FILEBROWSER_POPUPOPEN;Öffnen
 FILEBROWSER_POPUPPROCESS;Bild zur Warteschlange hinzufügen
-FILEBROWSER_POPUPRANK1;Mit 1 Stern bewerten
-FILEBROWSER_POPUPRANK2;Mit 2 Sternen bewerten
-FILEBROWSER_POPUPRANK3;Mit 3 Sternen bewerten
-FILEBROWSER_POPUPRANK4;Mit 4 Sternen bewerten
-FILEBROWSER_POPUPRANK5;Mit 5 Sternen bewerten
+FILEBROWSER_POPUPRANK1;Bewertung: 1 *
+FILEBROWSER_POPUPRANK2;Bewertung: 2 **
+FILEBROWSER_POPUPRANK3;Bewertung: 3 ***
+FILEBROWSER_POPUPRANK4;Bewertung: 4 ****
+FILEBROWSER_POPUPRANK5;Bewertung: 5 *****
 FILEBROWSER_POPUPREMOVE;Aus Verzeichnis löschen
 FILEBROWSER_POPUPREMOVEINCLPROC;Aus Verzeichnis löschen (auch\n     Resultate der Stapelverarbeitung)
 FILEBROWSER_POPUPREMOVESUBMENU;Löschen
@@ -123,7 +123,7 @@ FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" nach:
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
 FILEBROWSER_SELECTFLATFIELD;Weißbild wählen...
-FILEBROWSER_SHOWDIRHINT;Alle Bilder des Verzeichnisses anzeigen <b>D</b>
+FILEBROWSER_SHOWDIRHINT;Alle Bilder des Verzeichnisses anzeigen\n(alle Filter zurücksetzen) <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden <b>I</b>
 FILEBROWSER_SHOWQUEUEHINT;Inhalt der Warteschlange zeigen
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen <b>1</b>
@@ -497,8 +497,8 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Vorverarbeitung: Zeilenrauschfilter
 PARTIALPASTE_RAWCACORR_AUTO;Chromatische Aberration: Automatische Korrektur
 PARTIALPASTE_RAWCACORR_CABLUE;Chromatische Aberration: Blau
 PARTIALPASTE_RAWCACORR_CARED;Chromatische Aberration: Rot
-PARTIALPASTE_RAWEXPOS_LINEAR;Belichtung: Linearer Korrekturfaktor
-PARTIALPASTE_RAWEXPOS_PRESER;Belichtung: Lichter bewahrende Korrektur (EV)
+PARTIALPASTE_RAWEXPOS_LINEAR;RAW-Weißpunkt: Linearer Korrekturfaktor
+PARTIALPASTE_RAWEXPOS_PRESER;RAW-Weißpunkt: Lichter bewahrende Korrektur (EV)
 PARTIALPASTE_RAWGROUP;Gruppe RAW
 PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verfeinerungsschritt durchführen
 PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
@@ -531,7 +531,7 @@ PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
-PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transparenz für Ausschnittsmaske
+PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transp. für Ausschnittsmaske
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
@@ -706,7 +706,6 @@ TP_COLORDENOISE_RADIUS;Radius
 TP_COLORSHIFT_BLUEYELLOW;Blau-Gelb
 TP_COLORSHIFT_GREENMAGENTA;Grün-Magenta
 TP_COLORSHIFT_LABEL;Farbverschiebung
-TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Festes\nVerhältnis:
 TP_CROP_GTDIAGONALS;Diagonalregel
 TP_CROP_GTGRID;Gitternetz
@@ -750,7 +749,7 @@ TP_EQUALIZER_FINEST;Feinstes
 TP_EQUALIZER_LABEL;Wavelet-Mixer
 TP_EQUALIZER_LARGEST;Gröbstes
 TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;Belichtung
+TP_EXPOSCORR_LABEL;RAW-Weißpunkt
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_BLACKLEVEL;Schwarzpegel
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
@@ -922,10 +921,34 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
-!TP_CROP_PPI;PPI=
-!TP_GAMMA_CURV;gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_OUTPUT;Output gamma
-!TP_GAMMA_SLOP;slope (linear)
+FILEBROWSER_POPUPCOLORLABEL;Farbmarkierung
+FILEBROWSER_POPUPCOLORLABEL0;Markierung: keine
+FILEBROWSER_POPUPCOLORLABEL1;Markierung: Rot
+FILEBROWSER_POPUPCOLORLABEL2;Markierung: Gelb
+FILEBROWSER_POPUPCOLORLABEL3;Markierung: Grün
+FILEBROWSER_POPUPCOLORLABEL4;Markierung: Blau
+FILEBROWSER_POPUPCOLORLABEL5;Markierung: Violett
+FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Nur gelb markierte Bilder anzeigen <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen <b>Alt-5</b>
+FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen <b>Alt-`</b>
+HISTOGRAM_BUTTON_RAW;RAW
+HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten
+HISTORY_MSG_130;Autom. Verzerrung
+HISTORY_MSG_131;Rauschminderung\nLuminanz
+HISTORY_MSG_132;Rauschminderung\nChrominanz
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Gamma Position
+HISTORY_MSG_135;Freies Gamma
+HISTORY_MSG_136;Gamma Abfall
+PREFERENCES_CUSTPROFBUILD;Benutzerdefinierter Bildprofilgenerator
+PREFERENCES_CUSTPROFBUILDHINT;Anwendung (oder Skript) zur Erzeugung eines neuen Profils für ein Bild. Folgende Kommandozeilenparameter zur regelbasierten *.PP3-Erzeugung werden übergeben:\n[Pfad RAW/JPEG] [Pfad vorgegebenes Profil] [Blende] [Belichtungszeit in s] [Brennweite in mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
+TP_CROP_PPI;PPI=
+TP_GAMMA_CURV;Gamma
+TP_GAMMA_FREE;Freies Gamma
+TP_GAMMA_OUTPUT;Ausgabe-Gamma
+TP_GAMMA_SLOP;Abfall (linear)
+TP_HLREC_BLEND;Lichter abmischen
