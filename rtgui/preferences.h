@@ -82,6 +82,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* intent;
 
     Gtk::ComboBoxText* theme;
+    Gtk::CheckButton* slimUI;
     Gtk::HBox* hbtheme;
     Gtk::CheckButton* chUseSystemTheme;
     Gtk::FontButton* fontbutton;
@@ -108,7 +109,7 @@ class Preferences : public Gtk::Dialog {
     RTWindow* parent;
 	
     Options moptions;
-    sigc::connection tconn, fconn, usethcon, addc, setc, dfconn;
+    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -124,7 +125,7 @@ class Preferences : public Gtk::Dialog {
     void forImageComboChanged ();
     void layoutComboChanged ();
     void cacheFormatComboChanged ();
-    void switchThemeTo (Glib::ustring newTheme);
+    void switchThemeTo (Glib::ustring newTheme, bool slimInterface);
     void switchFontTo  (Glib::ustring newFont);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);

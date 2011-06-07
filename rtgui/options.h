@@ -101,6 +101,7 @@ class Options {
     int bgcolor;
     Glib::ustring language;
     Glib::ustring theme;
+    bool slimUI;
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;

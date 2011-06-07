@@ -108,15 +108,13 @@ void MyFlatCurve::draw () {
 
     }
 
-    Gtk::StateType state = Gtk::STATE_NORMAL;
-    if (!is_sensitive())
-        state = Gtk::STATE_INSENSITIVE;
+    Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
 
     Glib::RefPtr<Gtk::Style> style = get_style ();
     Cairo::RefPtr<Cairo::Context> cr = pixmap->create_cairo_context();
 
     // bounding rectangle
-    Gdk::Color c = style->get_bg (state);
+    Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->rectangle (0, 0, innerWidth+RADIUS*2+1.5, innerHeight+RADIUS*2+1.5);
     cr->fill ();
@@ -132,7 +130,8 @@ void MyFlatCurve::draw () {
         cr->set_line_width (1.0);
         double stepSize = (innerWidth-1) / 256.0;
         cr->move_to (RADIUS, innerHeight-1+RADIUS);
-        cr->set_source_rgb (0.75, 0.75, 0.75);
+        c = style->get_fg (Gtk::STATE_INSENSITIVE);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
         for (int i=0; i<256; i++) {
             double val = bghist[i] * (double)(innerHeight-2) / (double)histheight;
             if (val>innerHeight-1)
@@ -174,6 +173,7 @@ void MyFlatCurve::draw () {
     cr->stroke ();
 
     // draw f(x)=0.5 line
+    c = style->get_fg (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     std::valarray<double> ds (1);
     ds[0] = 4;
@@ -270,6 +270,7 @@ void MyFlatCurve::draw () {
         bool crossingTheFrame;
 
         // left handle is yellow
+        // TODO: finding a way to set the left handle color for flat curve editor
         cr->set_source_rgb (1.0, 1.0, 0.0);
 
         // draw tangential vectors
@@ -303,6 +304,7 @@ void MyFlatCurve::draw () {
         cr->fill();
 
         // right handle is blue
+        // TODO: finding a way to set the right handle color for flat curve editor
         cr->set_source_rgb (0.0, 0.0, 1.0);
 
         // draw tangential vectors
@@ -337,7 +339,7 @@ void MyFlatCurve::draw () {
     }
 
     // draw curve
-    cr->set_source_rgb (0.0, 0.0, 0.0);
+    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->move_to (point[0].get_x(), point[0].get_y());
     for (int i=1; i<(int)point.size(); i++)
         cr->line_to (point[i].get_x(), point[i].get_y());
@@ -361,7 +363,7 @@ void MyFlatCurve::draw () {
                 else if (curve.y[i] == 0.5)
                     cr->set_source_rgb (0.0, 0.5, 0.0);
                 else
-                    cr->set_source_rgb (0.0, 0.0, 0.0);
+                    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
                 double x = (double)RADIUS+0.5 + (double)innerWidth * curve.x[i];    // project (curve.x[i], 0, 1, innerWidth);
                 double y = (double)RADIUS+0.5 + (double)innerHeight * (1.-curve.y[i]); // project (curve.y[i], 0, 1, innerHeight);
 

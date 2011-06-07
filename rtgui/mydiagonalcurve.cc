@@ -128,15 +128,13 @@ void MyDiagonalCurve::draw (int handle) {
     if (prevInnerHeight != innerHeight || (int)point.size() != innerWidth)
         interpolate ();
 
-    Gtk::StateType state = Gtk::STATE_NORMAL;
-    if (!is_sensitive())
-        state = Gtk::STATE_INSENSITIVE;
+    Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
 
     Glib::RefPtr<Gtk::Style> style = get_style ();
     Cairo::RefPtr<Cairo::Context> cr = pixmap->create_cairo_context();
 
     // bounding rectangle
-    Gdk::Color c = style->get_bg (state);
+    Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->rectangle (0, 0, innerWidth + RADIUS*2, innerHeight + RADIUS*2);
     cr->fill ();
@@ -147,21 +145,22 @@ void MyDiagonalCurve::draw (int handle) {
         unsigned int histheight = 0;
         for (int i=0; i<256; i++)
             if (bghist[i]>histheight)
-	            histheight = bghist[i];
+                histheight = bghist[i];
         // draw histogram
         cr->set_line_width (1.0);
         double stepSize = (innerWidth-1) / 256.0;
         cr->move_to (RADIUS, innerHeight-1+RADIUS);
-        cr->set_source_rgb (0.75, 0.75, 0.75);
+        c = style->get_fg (Gtk::STATE_INSENSITIVE);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
         for (int i=0; i<256; i++) {
             double val = bghist[i] * (double)(innerHeight-2) / (double)histheight;
             if (val>innerHeight-1)
                 val = innerHeight-1;
-      	    if (i>0)
-       	        cr->line_to (i*stepSize+RADIUS, innerHeight-1+RADIUS-val);
-    	}
+            if (i>0)
+                cr->line_to (i*stepSize+RADIUS, innerHeight-1+RADIUS-val);
+        }
         cr->line_to (innerWidth-1+RADIUS, innerHeight-1+RADIUS);
-    	cr->fill ();
+        cr->fill ();
     }
 
     // draw the grid lines:
@@ -178,6 +177,8 @@ void MyDiagonalCurve::draw (int handle) {
     cr->stroke ();
 
     // draw f(x)=x line
+    //c = style->get_light (state);
+    c = style->get_fg (state);
     if (snapToElmt == -2)
         cr->set_source_rgb (1.0, 0.0, 0.0);
     else
@@ -212,31 +213,31 @@ void MyDiagonalCurve::draw (int handle) {
         std::valarray<double> ch_ds (1);
         ch_ds[0] = 2;
         cr->set_dash (ch_ds, 0);
-        cr->set_source_rgb (0.0, 0.0, 0.0);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
         std::vector<double> points = getPoints();
         nbPoints = ((int)points.size()-1)/2;
         for (unsigned int i = 1; i < nbPoints; i++) {
-        	int pos = i*2+1;
+            int pos = i*2+1;
 
-        	double x1 = ((innerWidth-1) * points[pos-2] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
-			double y1 = innerHeight - ((innerHeight-1) * points[pos-1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
-			double x2 = ((innerWidth-1) * points[pos] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
-			double y2 = innerHeight - ((innerHeight-1) * points[pos+1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
+            double x1 = ((innerWidth-1) * points[pos-2] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
+            double y1 = innerHeight - ((innerHeight-1) * points[pos-1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
+            double x2 = ((innerWidth-1) * points[pos] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
+            double y2 = innerHeight - ((innerHeight-1) * points[pos+1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
 
-			// set the color of the line when the point is snapped to the cage
-			if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt-1000)) || (i == (snapToElmt-999))))
-				cr->set_source_rgb (1.0, 0.0, 0.0);
-			else
-				cr->set_source_rgb (0.0, 0.0, 0.0);
-			cr->move_to (x1, y1);
-			cr->line_to (x2, y2);
-			cr->stroke ();
+            // set the color of the line when the point is snapped to the cage
+            if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt-1000)) || (i == (snapToElmt-999))))
+                cr->set_source_rgb (1.0, 0.0, 0.0);
+            else
+                cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            cr->move_to (x1, y1);
+            cr->line_to (x2, y2);
+            cr->stroke ();
         }
         cr->unset_dash ();
     }
 
     // draw curve
-    cr->set_source_rgb (0.0, 0.0, 0.0);
+    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->move_to (point[0].get_x(), point[0].get_y());
     for (int i=1; i<(int)point.size(); i++)
         cr->line_to (point[i].get_x(), point[i].get_y());
@@ -245,16 +246,20 @@ void MyDiagonalCurve::draw (int handle) {
     // draw bullets
     if (curve.type!=DCT_Parametric)
         for (int i = 0; i < (int)curve.x.size(); ++i) {
-        	if (curve.x[i] == -1) continue;
-        	if (snapToElmt >= 1000) {
-        		int pt = snapToElmt-1000;
-        		if (i >= (pt-1) && i <= (pt+1))
-        			cr->set_source_rgb(1.0, 0.0, 0.0);
-        		else
-        			cr->set_source_rgb(0.0, 0.0, 0.0);
-        	}
-        	else
-        		cr->set_source_rgb ((i == handle || i == snapToElmt ? 1.0 : 0.0), 0.0, 0.0);
+            if (curve.x[i] == -1) continue;
+            if (snapToElmt >= 1000) {
+                int pt = snapToElmt-1000;
+                if (i >= (pt-1) && i <= (pt+1))
+                    cr->set_source_rgb(1.0, 0.0, 0.0);
+                else
+                    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            }
+            else {
+                if (i == handle || i == snapToElmt)
+                    cr->set_source_rgb (1.0, 0.0, 0.0);
+                else
+                    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            }
 
             double x = ((innerWidth-1) * curve.x[i] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
             double y = innerHeight - ((innerHeight-1) * curve.y[i] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
