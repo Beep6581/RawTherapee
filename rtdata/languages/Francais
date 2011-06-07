@@ -596,6 +596,7 @@ PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
+PREFERENCES_SLIMUI;Interface compact
 PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
 PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
