@@ -95,6 +95,7 @@ protected:
 
 public:
 	int getValUnchanged() { return valUnchanged; }
+    int getValLinear() { return valLinear; }
 	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
 	virtual void setColorProvider (ColorProvider* p) = 0;
 

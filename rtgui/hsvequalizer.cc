@@ -64,6 +64,11 @@ void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	sshape->setCurve         (pp->hsvequalizer.scurve);
     vshape->setCurve         (pp->hsvequalizer.vcurve);
 	
+    // Open up the first curve if selected
+    bool active = hshape->openIfNonlinear();
+    if (!active) sshape->openIfNonlinear();
+    if (!active) vshape->openIfNonlinear();
+
     enableListener ();
 }
 
