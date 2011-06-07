@@ -26,7 +26,7 @@ using namespace rtengine::procparams;
 
 RAWExposure::RAWExposure () : Gtk::VBox(), FoldableToolPanel(this)
 {
-	PexPos = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_LINEAR"),0.2,4.0,0.1,1));
+	PexPos = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_LINEAR"),0.2,16.0,0.1,1));
 	PexPos->setAdjusterListener (this);
 	if (PexPos->delay < 1000) PexPos->delay = 1000;
 	PexPos->show();
