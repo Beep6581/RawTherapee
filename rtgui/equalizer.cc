@@ -54,14 +54,17 @@ Equalizer::Equalizer () : Gtk::VBox(), FoldableToolPanel(this) {
 
     for(int i = 0; i < 8; i++)
     {
-        std::stringstream ss;
-        ss << i;
-        if(i == 0)
-            ss << " (" << M("TP_EQUALIZER_FINEST") << ")";
-        if(i == 7)
-            ss << " (" << M("TP_EQUALIZER_LARGEST") << ")";
+        Glib::ustring ss;
+        switch( i ){
+        case 0:
+            ss =Glib::ustring::compose( "%1 (%2)",i, M("TP_EQUALIZER_FINEST"));break;
+        case 7:
+        	ss =Glib::ustring::compose( "%1 (%2)",i, M("TP_EQUALIZER_LARGEST"));break;
+        default:
+        	ss =Glib::ustring::compose( "%1",i);
+        }
         
-        correction[i] = Gtk::manage ( new Adjuster (ss.str(), -100, 100, 1, 0) );
+        correction[i] = Gtk::manage ( new Adjuster (ss, -100, 100, 1, 0) );
         correction[i]->setAdjusterListener(this);
         pack_start(*correction[i]);
     }
