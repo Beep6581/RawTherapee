@@ -48,7 +48,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb) : selectedDirectoryId(1)
     inTabMode=false;
 
     //  construct and initialize thumbnail browsers
-        fileBrowser = new FileBrowser();
+        fileBrowser = Gtk::manage( new FileBrowser() );
         fileBrowser->setFileBrowserListener (this);
         fileBrowser->setArrangement (ThumbBrowserBase::TB_Vertical);
         fileBrowser->show ();

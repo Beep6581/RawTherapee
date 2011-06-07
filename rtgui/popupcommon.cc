@@ -61,6 +61,7 @@ PopUpCommon::~PopUpCommon () {
     }
     if (menu) delete menu;
     if (buttonImage) delete buttonImage;
+    delete buttonGroup;
 }
 
 PopUpCommon::type_signal_changed PopUpCommon::signal_changed() {
