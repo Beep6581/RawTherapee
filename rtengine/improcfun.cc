@@ -249,7 +249,7 @@ void ImProcFunctions::firstAnalysis (Image16* original, const ProcParams* params
     	for (int j=0; j<T; j++)
     		histogram[i] += hist[j][i];
 
-    chroma_scale = 32768*32768 / (3*chroma_radius);
+    chroma_scale = 100;    // 32768*32768 / (3*chroma_radius);
 	//printf ("chroma_radius= %d   chroma_scale= %d\n",chroma_radius,chroma_scale);
 
     delete [] cr;
