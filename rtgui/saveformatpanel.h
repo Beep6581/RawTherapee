@@ -47,6 +47,7 @@ class SaveFormatPanel : public Gtk::VBox, public AdjusterListener {
     public:
     
                     SaveFormatPanel ();
+                    ~SaveFormatPanel ();
         void        setListener     (FormatChangeListener* l) { listener = l; }
 
         void        init            (SaveFormat& sf);

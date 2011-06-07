@@ -36,9 +36,9 @@ FilePanel::FilePanel () : parent(NULL) {
     dirpaned = Gtk::manage ( new Gtk::HPaned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
-    dirBrowser = new DirBrowser ();
-    placesBrowser = new PlacesBrowser ();
-    recentBrowser = new RecentBrowser ();
+    dirBrowser = Gtk::manage ( new DirBrowser () );
+    placesBrowser = Gtk::manage ( new PlacesBrowser () );
+    recentBrowser = Gtk::manage ( new RecentBrowser () );
 
     placespaned = Gtk::manage ( new Gtk::VPaned () );
     placespaned->set_size_request(50,100);
@@ -54,7 +54,7 @@ FilePanel::FilePanel () : parent(NULL) {
     dirpaned->pack1 (*placespaned, false, true);
 
     tpc = new BatchToolPanelCoordinator (this);
-    fileCatalog = new FileCatalog (tpc->coarse, tpc->getToolBar());
+    fileCatalog = Gtk::manage ( new FileCatalog (tpc->coarse, tpc->getToolBar()) );
     ribbonPane = Gtk::manage ( new Gtk::Paned() );
     ribbonPane->add(*fileCatalog);
     ribbonPane->set_size_request(50,150);
@@ -72,7 +72,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
 
-    history = new History (false);
+    history = Gtk::manage ( new History (false) );
 
     tpc->addPParamsChangeListener (history);
     history->setProfileChangeListener (tpc);

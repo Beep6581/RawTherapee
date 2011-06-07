@@ -513,6 +513,7 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
     delete [] rhist;
     for (int i=0; i<H; i++) 
         delete [] buff_final[i];
+    delete [] buff_final;
 }
 
 #endif
