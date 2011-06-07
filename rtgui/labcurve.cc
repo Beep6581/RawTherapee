@@ -132,6 +132,10 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	ashape->setCurve         (pp->labCurve.acurve);
     bshape->setCurve         (pp->labCurve.bcurve);
 
+    // Open up the first curve if selected
+    bool active = lshape->openIfNonlinear();
+    if (!active) ashape->openIfNonlinear();
+    if (!active) bshape->openIfNonlinear();
 
     enableListener ();
 }

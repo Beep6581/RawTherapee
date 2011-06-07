@@ -133,6 +133,8 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	saturation->setValue (pp->toneCurve.saturation);
 	shape->setCurve (pp->toneCurve.curve);
 
+    shape->openIfNonlinear();
+
     enableListener ();
 }
 

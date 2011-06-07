@@ -72,6 +72,9 @@ class CurveEditor {
 		bool isUnChanged ();
 		void setUnChanged (bool uc);
 		void updateBackgroundHistogram (LUTu & hist);
+
+        bool openIfNonlinear();  // Open up the curve if it has modifications and it's not already opened
+
 		void setCurve (const std::vector<double>& p);
 		virtual std::vector<double> getCurve () = 0;
 };
