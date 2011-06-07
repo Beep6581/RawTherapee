@@ -618,6 +618,7 @@ PREFERENCES_SHOWONLYRAW;Show only RAW files
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 PREFERENCES_SINGLETAB;Single tab mode
 PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+PREFERENCES_SLIMUI;Slim interface
 PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done

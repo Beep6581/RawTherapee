@@ -36,8 +36,12 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 
     moptions.copyFrom (&options);
 
-    // Do not increase height, since it's not visible on e.g. smaller netbook screens
-    // Default height is about 550 pixels, that's why we do not set the height anymore
+    /*
+     * Do not increase height, since it's not visible on e.g. smaller netbook screens
+     * Default height is about 620 pixels actually, that's why we do not set the height anymore
+     * Netbook users will most certainly set a smaller font and use the "slimUI" mode,
+     * so they'll be able to shrink the pref window and close it.
+     */
     set_size_request (650, -1);
     set_default_size (options.preferencesWidth, options.preferencesHeight);
     set_border_width(4);
@@ -439,7 +443,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     theme->append_text (Glib::ustring("(")+M("PREFERENCES_GTKTHEME")+")");
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
-    parseDir (argv0 + "/themes", themes, "");
+    parseDir (argv0 + "/themes", themes, ".gtkrc");
     for (int i=0; i<themes.size(); i++) 
         theme->append_text (themes[i]);
 
@@ -452,10 +456,14 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbtheme->pack_start (*theme);
     hbtheme->pack_start (*fontlab, Gtk::PACK_SHRINK, 0);
     hbtheme->pack_start (*fontbutton);
-    vbftheme->pack_end(*hbtheme, Gtk::PACK_SHRINK, 0);
+    vbftheme->pack_start(*hbtheme, Gtk::PACK_SHRINK, 0);
+
+    slimUI = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SLIMUI")) );
+    vbftheme->pack_start(*slimUI, Gtk::PACK_SHRINK, 0);
+
     ftheme->add (*vbftheme);
     mvbsd->pack_start (*ftheme, Gtk::PACK_SHRINK, 0);
-  
+
 //-----
 
     Gtk::HBox* hbcd = Gtk::manage( new Gtk::HBox () );
@@ -592,6 +600,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->set_border_width (4);
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
+    sconn = slimUI->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
     fconn = fontbutton->signal_font_set().connect( sigc::mem_fun(*this, &Preferences::fontChanged) );
     usethcon = chUseSystemTheme->signal_clicked ().connect( sigc::mem_fun(*this, &Preferences::useThemeChanged) );
     
@@ -835,6 +844,7 @@ void Preferences::storePreferences () {
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
     moptions.theme           = theme->get_active_text ();
+    moptions.slimUI          = slimUI->get_active ();
     moptions.useSystemTheme  = chUseSystemTheme->get_active ();
      
     Gdk::Color cropCol=butCropCol->get_color();
@@ -931,6 +941,7 @@ void Preferences::storePreferences () {
 void Preferences::fillPreferences () {
 
     tconn.block (true);
+    sconn.block (true);
     dfconn.block (true);
     ffconn.block (true);
 
@@ -948,6 +959,7 @@ void Preferences::fillPreferences () {
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
     theme->set_active_text (moptions.theme);
+    slimUI->set_active(moptions.slimUI);
     chUseSystemTheme->set_active(moptions.useSystemTheme);
 
     Gdk::Color cropCol;
@@ -1045,6 +1057,7 @@ void Preferences::fillPreferences () {
     addc.block (false);
     setc.block (false);
     tconn.block (false);
+    sconn.block (false);
     dfconn.block (false);
     ffconn.block (false);
 
@@ -1088,7 +1101,7 @@ void Preferences::cancelPressed () {
 
 	// set the initial theme back
 	if (theme->get_active_text () != options.theme)
-		switchThemeTo(options.theme);
+		switchThemeTo(options.theme, options.slimUI);
 
 	// set the initial font back
 	if (fontbutton->get_font_name() != options.font)
@@ -1121,7 +1134,7 @@ void Preferences::aboutPressed () {
 
 void Preferences::themeChanged () {
 
-	switchThemeTo(theme->get_active_text ());
+	switchThemeTo(theme->get_active_text (), slimUI->get_active());
 }
 
 void Preferences::forRAWComboChanged () {
@@ -1146,10 +1159,12 @@ void Preferences::fontChanged () {
 	switchFontTo(fontbutton->get_font_name());
 }
 
-void Preferences::switchThemeTo(Glib::ustring newTheme) {
+void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface) {
 
 	std::vector<Glib::ustring> files;
-	files.push_back (argv0+"/themes/"+newTheme);
+	files.push_back (argv0+"/themes/"+newTheme+".gtkrc");
+	if (slimInterface)
+		files.push_back (argv0+"/themes/slim");
 	Gtk::RC::set_default_files (files);
 	Gtk::RC::reparse_all (Gtk::Settings::get_default());
 	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };

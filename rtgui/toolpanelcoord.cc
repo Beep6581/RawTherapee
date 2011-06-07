@@ -219,9 +219,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
 void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label) {
 
-    Gtk::HSeparator *hsep = Gtk::manage (new  Gtk::HSeparator());
-    where->pack_start(*hsep, Gtk::PACK_SHRINK, 0);
-    hsep->show();
+    if (where->children().size()) {
+        Gtk::HSeparator *hsep = Gtk::manage (new  Gtk::HSeparator());
+        where->pack_start(*hsep, Gtk::PACK_SHRINK, 0);
+        hsep->show();
+    }
 
     panel->setParent(where);
     panel->setLabel(label);

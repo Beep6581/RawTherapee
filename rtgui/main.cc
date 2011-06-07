@@ -114,7 +114,9 @@ int main(int argc, char **argv)
    if (!options.useSystemTheme)
    {
        std::vector<Glib::ustring> rcfiles;
-       rcfiles.push_back (argv0+"/themes/"+options.theme);
+       rcfiles.push_back (argv0+"/themes/"+options.theme+".gtkrc");
+   	   if (options.slimUI)
+           rcfiles.push_back (argv0+"/themes/slim");
        // Set the font face and size
        Gtk::RC::parse_string (Glib::ustring::compose(
           "style \"clearlooks-default\" { font_name = \"%1\" }", options.font));
