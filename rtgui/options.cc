@@ -94,7 +94,8 @@ void Options::setDefaults () {
     language = DefaultLanguage;
     lastSaveAsPath = "";
     overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
-    theme = "Dark";
+    theme = "17-Gray-Red";
+    slimUI = false;		// TODO: Should this be TRUE for worst case screen resolution or FALSE for nicer interface by default ???
     useSystemTheme = true;
     maxThumbnailHeight = 400;
     maxCacheEntries = 20000;			// was 10000
@@ -192,6 +193,7 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Version"))          version         = keyFile.get_string ("General", "Version");
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
+    if (keyFile.has_key ("General", "SlimUI"))           slimUI          = keyFile.get_boolean ("General", "SlimUI");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
     if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
     if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
@@ -333,6 +335,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_string  ("General", "Theme", theme);
+    keyFile.set_boolean ("General", "SlimUI", slimUI);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_string  ("General", "Version", VERSION);
     keyFile.set_boolean ("General", "FirstRun", false);

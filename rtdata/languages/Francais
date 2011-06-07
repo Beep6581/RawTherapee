@@ -556,6 +556,7 @@ PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
+PREFERENCES_SLIMUI;Interface compact
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
