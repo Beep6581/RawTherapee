@@ -155,7 +155,12 @@ DIRPYRDENOISE,    // EvDPDNChromCurve,
 ALL,			  // EvGAMMA	
 ALL,			  // EvGAMPOS
 ALL,			  //EvGAMFREE
-ALL,               //EvSLPOS 
+ALL,              //EvSLPOS 
+DARKFRAME,        // EvPreProcessExpBlackzero
+DARKFRAME,        // EvPreProcessExpBlackone
+DARKFRAME,        // EvPreProcessExpBlacktwo
+DARKFRAME,        // EvPreProcessExpBlackthree
+DARKFRAME,		  //EvPreProcessExptwoGreen
 
 
 };

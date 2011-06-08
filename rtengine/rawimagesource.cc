@@ -33,7 +33,6 @@
 #include <options.h>
 
 #include <improcfun.h>
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -409,6 +408,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         }
     }
 
+	
     // Flip if needed
     if (tran & TR_HFLIP)
         hflip (image);
@@ -535,9 +535,6 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 	//printf ("counter %d \n",counter);
 	return counter;
 }
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::rotateLine (float* line, float** channel, int tran, int i, int w, int h) {
 
@@ -911,7 +908,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     inverse33 (xyz_cam, cam_xyz);
 
 	float pre_mul[4];
-	ri->get_colorsCoeff( pre_mul, scale_mul, cblack  );
+	ri->get_colorsCoeff( pre_mul, scale_mu_l, c_black);//modify  for black level
 
 	camwb_red = ri->get_pre_mul(0) / pre_mul[0];
 	camwb_green = ri->get_pre_mul(1) / pre_mul[1];
@@ -1010,7 +1007,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 		}
 	}
 
-    scaleColors( 0,0, W, H);
+    scaleColors( 0,0, W, H, raw);//+ + raw parameters for black level(raw.blackxx)
 
     defGain = 0.0;//log(initialGain) / log(2.0);
 
@@ -1287,16 +1284,56 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 	
 
 /* Scale original pixels into the range 0 65535 using black offsets and multipliers */
-void RawImageSource::scaleColors(int winx,int winy,int winw,int winh)
+void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWParams &raw)
 {
-	// scale image colors
+float black_lev[4];//black level
+
+//adjust black level  (eg Canon)
+// cblack Bayer
+//0 green
+//1 red
+//2 blue
+// cblack no Bayer
+//0 red
+//1 green
+//2 blue
+if( ri->isBayer() ) {
+black_lev[0]=raw.blackzero;//G1
+black_lev[1]=raw.blackone;//R
+black_lev[2]=raw.blacktwo;//B
+black_lev[3]=raw.blackthree;//G2
+
+}
+else {
+black_lev[0]=raw.blackone;//R
+black_lev[1]=raw.blackzero;//G
+black_lev[2]=raw.blacktwo;//B
+black_lev[3]= raw.blackzero;
+}
+  for(int i=0; i<4; i++) {
+   scale_mul[i]=scale_mu_l[i];
+  if( c_black[i]+black_lev[i] >0) cblack[i]=c_black[i]+black_lev[i]; else cblack[i]=0;// adjust black level
+	}	
+		// scale image colors
+		
 	if( ri->isBayer() ){
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
-				float val = rawData[row][col];
+				float val = rawData[row][col];				
 				int c = FC(row, col);
-				val -= cblack[c];
-				val *= scale_mul[c];
+				if (ri->ISGREEN(row,col)) {
+                    if (row&1) {
+						val-=cblack[1]; 
+						val *= scale_mul[1];
+                    }
+                    else {
+                        val-=cblack[3];
+						val *= scale_mul[3];
+                    }
+                }			
+				else {
+				val-=cblack[c];
+				val*=scale_mul[c];}			
 				rawData[row][col] = (val);
 			}
 		}
@@ -1951,18 +1988,19 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
 
     histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
-	
 	float mult = 65535.0 / ri->get_white();
-
     #pragma omp parallel for
     for (int i=border; i<H-border; i++) {
         int start, end, idx;
         getRowStartEnd (i, start, end);
 
+	
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
                 if (ri->ISGREEN(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));
+                    if(i &1) idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));// green 1
+					else 
+					idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[3])));//green 2
                     histGreenRaw[idx>>8]++;
                 } else if (ri->ISRED(i,j)) {
                     idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[1])));
@@ -2264,6 +2302,8 @@ void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
 	cam_rgb[2][1] = -(rgb_cam[0][1]*rgb_cam[2][0]-rgb_cam[0][0]*rgb_cam[2][1]) / nom;
 	cam_rgb[2][2] = (rgb_cam[0][1]*rgb_cam[1][0]-rgb_cam[0][0]*rgb_cam[1][1]) / nom;
 }
+	
+	
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	

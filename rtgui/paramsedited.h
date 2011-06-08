@@ -301,6 +301,11 @@ class RAWParamsEdited {
 		bool exCorrection;
 		bool exPos;
 		bool exPreser;
+		bool exBlackzero;
+		bool exBlackone;
+		bool exBlacktwo;
+		bool exBlackthree;
+		bool exTwoGreen;
 };
 
 class ExifPairEdited {

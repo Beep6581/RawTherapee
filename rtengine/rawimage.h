@@ -90,7 +90,7 @@ public:
   ~RawImage();
 
   int loadRaw (bool loadData=true, bool closeFile=true);
-  int get_colorsCoeff( float *pre_mul, float *scale_mul, int *cblack  );
+  int get_colorsCoeff( float *pre_mul, float *scale_mul, float *cblack  );
   void set_prefilters(){
       if (isBayer() && get_colors() == 3) {
          prefilters = filters;
