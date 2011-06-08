@@ -158,7 +158,12 @@ enum ProcEvent {
 	EvGAMPOS=133,
 	EvGAMFREE=134,
 	EvSLPOS=135,
-	NUMOFEVENTS=136
+	EvPreProcessExpBlackzero=136,
+	EvPreProcessExpBlackone=137,
+	EvPreProcessExpBlacktwo=138,
+	EvPreProcessExpBlackthree=139,
+	EvPreProcessExptwoGreen=140,
+	NUMOFEVENTS=141
 	
 	
 	};

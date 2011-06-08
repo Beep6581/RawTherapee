@@ -217,6 +217,11 @@ HISTORY_MSG_133;Gamma
 HISTORY_MSG_134;Gamma Position
 HISTORY_MSG_135;Gamma Free
 HISTORY_MSG_136;Gamma Slope
+HISTORY_MSG_137;Black level green 1
+HISTORY_MSG_138;Black level red
+HISTORY_MSG_139;Black level blue
+HISTORY_MSG_140;Black level green 2
+HISTORY_MSG_141;Black level green together
 HISTORY_MSG_14;Luminance Brightness
 HISTORY_MSG_15;Luminance Contrast
 HISTORY_MSG_16;Luminance Black
@@ -761,7 +766,7 @@ TP_EQUALIZER_FINEST;finest
 TP_EQUALIZER_LABEL;Wavelet equalizer
 TP_EQUALIZER_LARGEST;coarsest
 TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;Raw white point
+TP_EXPOSCORR_LABEL;Raw white-black point
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Brightness
@@ -848,8 +853,14 @@ TP_PREPROCESS_NO_FOUND;None found
 TP_RAWCACORR_AUTO;Auto correction
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
-TP_RAWEXPOS_LINEAR;Linear corr. factor
-TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
+TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
+TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
+TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
+TP_RAWEXPOS_BLACKONE;Black Level: Red
+TP_RAWEXPOS_BLACKTWO;Black Level: Blue
+TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
+TP_RAWEXPOS_TWOGREEN;Two greens together
+TP_EXPO_AFTER; After interpolation (before RGB conversion)
 TP_RAW_DCBENHANCE;Apply DCB enhancement step
 TP_RAW_DCBITERATIONS;Number of DCB iterations
 TP_RAW_DMETHOD;Method

@@ -28,7 +28,7 @@
 #include <myflatcurve.h>
 
 #include <safekeyfile.h>
-
+#include <rawimage.h>
 #define APPVERSION VERSION
 
 namespace rtengine {
@@ -250,8 +250,11 @@ void ProcParams::setDefaults () {
     // exposure before interpolation
     raw.expos=1.0;
     raw.preser=0.0;
-
-
+	raw.blackzero=0.0;
+	raw.blackone=0.0;
+	raw.blacktwo=0.0;
+	raw.blackthree=0.0;
+	raw.twogreen=true;
     exif.clear ();
     iptc.clear ();
 
@@ -263,7 +266,6 @@ void ProcParams::setDefaults () {
 }
 
 int ProcParams::save (Glib::ustring fname) const {
-
     SafeKeyFile keyFile;
 
     keyFile.set_string  ("Version", "AppVersion", APPVERSION);
@@ -492,6 +494,11 @@ int ProcParams::save (Glib::ustring fname) const {
     keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
     keyFile.set_double ("RAW", "PreExposure", raw.expos );
     keyFile.set_double ("RAW", "PrePreserv", raw.preser );
+    keyFile.set_double ("RAW", "PreBlackzero", raw.blackzero );
+    keyFile.set_double ("RAW", "PreBlackone", raw.blackone );
+    keyFile.set_double ("RAW", "PreBlacktwo", raw.blacktwo );
+    keyFile.set_double ("RAW", "PreBlackthree", raw.blackthree );
+    keyFile.set_boolean ("RAW", "PreTwoGreen", raw.twogreen );
 
 	// exposition
 
@@ -822,6 +829,12 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DCBEnhance"))    raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance");
 	if (keyFile.has_key ("RAW", "PreExposure"))   	  raw.expos =keyFile.get_double("RAW", "PreExposure");
 	if (keyFile.has_key ("RAW", "PrePreserv"))   	  raw.preser =keyFile.get_double("RAW", "PrePreserv");
+	if (keyFile.has_key ("RAW", "PreBlackzero"))   	  raw.blackzero =keyFile.get_double("RAW", "PreBlackzero");
+	if (keyFile.has_key ("RAW", "PreBlackone"))   	  raw.blackone =keyFile.get_double("RAW", "PreBlackone");
+	if (keyFile.has_key ("RAW", "PreBlacktwo"))   	  raw.blacktwo =keyFile.get_double("RAW", "PreBlacktwo");
+	if (keyFile.has_key ("RAW", "PreBlackthree"))   	  raw.blackthree =keyFile.get_double("RAW", "PreBlackthree");
+	if (keyFile.has_key ("RAW", "PreTwoGreen"))   	  raw.twogreen =keyFile.get_boolean("RAW", "PreTwoGreen");	
+	
 }
 
     // load exif change settings
@@ -1028,7 +1041,14 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& exif==other.exif
 		&& iptc==other.iptc
 		&& raw.expos==other.raw.expos
-		&& raw.preser==other.raw.preser; 
+		&& raw.preser==other.raw.preser 
+		&& raw.preser==other.raw.preser
+		&& raw.blackzero==other.raw.blackzero
+		&& raw.blackone==other.raw.blackone
+		&& raw.blacktwo==other.raw.blacktwo
+		&& raw.blackthree==other.raw.blackthree
+		&& raw.twogreen==other.raw.twogreen;
+	
 	}
 
 bool ProcParams::operator!= (const ProcParams& other) {

@@ -157,6 +157,11 @@ void ParamsEdited::set (bool v) {
 	raw.exPos = v;
 	raw.exCorrection = v;
 	raw.exPreser = v;
+	raw.exBlackzero = v;
+	raw.exBlackone = v;
+	raw.exBlacktwo = v;
+	raw.exBlackthree = v;
+	raw.exTwoGreen=v;
 	raw.greenEq = v;
 	raw.linenoise = v;
 	raw.ff_file = v;
@@ -318,6 +323,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
 		raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
 		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser; //exposi
+ 		raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero; //black
+		raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone; //black
+		raw.exBlacktwo = raw.exBlacktwo && p.raw.blacktwo == other.raw.blacktwo; //black
+		raw.exBlackthree = raw.exBlackthree && p.raw.blackthree == other.raw.blackthree; //black
+		raw.exTwoGreen = raw.exTwoGreen && p.raw.twogreen == other.raw.twogreen; //black 2 green		
+		
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;                        
@@ -475,6 +486,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.caBlue)				toEdit.raw.cablue    = mods.raw.cablue;
 	if (raw.exPos)				toEdit.raw.expos     =mods.raw.expos;
 	if (raw.exPreser)			toEdit.raw.preser     =mods.raw.preser;	
+	if (raw.exBlackzero)			toEdit.raw.blackzero     =mods.raw.blackzero;	
+	if (raw.exBlackone)			toEdit.raw.blackone     =mods.raw.blackone;	
+	if (raw.exBlacktwo)			toEdit.raw.blacktwo     =mods.raw.blacktwo;	
+	if (raw.exBlackthree)			toEdit.raw.blackthree     =mods.raw.blackthree;	
+	if (raw.exTwoGreen)			toEdit.raw.twogreen     =mods.raw.twogreen;	
+	
     if (raw.greenEq)            toEdit.raw.greenthresh  = mods.raw.greenthresh;
     if (raw.hotDeadPixel)       toEdit.raw.hotdeadpix_filt= mods.raw.hotdeadpix_filt;
     if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;

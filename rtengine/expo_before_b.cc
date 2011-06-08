@@ -31,6 +31,9 @@
   //      preserve (log)   : 0..8 : currently 0.1 1
 
 void RawImageSource::processRawWhitepoint(float expos, float preser) {
+      	MyTime t1e,t2e;
+    	t1e.set();
+
 	int width=W, height=H;
 
     // exposure correction inspired from G.Luijk
@@ -68,7 +71,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
         freeArray<float>(imgd, H);
 			
         // Find maximum to adjust LUTs. New float engines clips only at the very end
-        int maxVal=65535;
+        int maxVal=0;
 	 for(int row=0;row<height;row++)
 		for(int col=0;col<width;col++)
                 if (rawData[row][col]>maxVal) maxVal = rawData[row][col];
@@ -76,9 +79,9 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
     // Exposure correction with highlight preservation
         LUTf lut(maxVal+1);
     if(expos>1){
-            float K = maxVal / expos*exp(-preser*log(2.0));
+            float K = (float) maxVal / expos*exp(-preser*log(2.0));
             for (int j=0;j<=maxVal;j++) 
-                lut[(int)j]=((maxVal-K*expos)/(maxVal-K)*(j-maxVal)+maxVal) / j;
+                lut[(int)j]=(((float)maxVal-K*expos)/((float)maxVal-K)*(j-maxVal)+(float) maxVal) / j;
 
 #pragma omp parallel for  shared(expos)
 	 for(int row=0;row<height;row++)
@@ -111,4 +114,8 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 
         delete[] luminosity;
     }
+		        t2e.set();
+        if( settings->verbose )
+           printf("Exposure before  %d usec\n", t2e.etime(t1e));
+
 }

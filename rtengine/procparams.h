@@ -419,7 +419,11 @@ class RAWParams {
 		// exposure before interpolation
 		double expos;
 		double preser; 
-		
+		double blackzero;
+		double blackone;
+		double blacktwo;
+		double blackthree;
+		bool twogreen;
 		bool hotdeadpix_filt;
 		int hotdeadpix_thresh;
 		int	linenoise;

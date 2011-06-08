@@ -61,7 +61,10 @@ class RawImageSource : public ImageSource {
         ColorTemp wb;
         ProgressListener* plistener;
         float scale_mul[4]; // multiplier for each color
-        int cblack[4];    // black offsets
+		float cblack[4];// black
+		float scale_mu_l[4];// copy of scale_mul, for saturation
+		float c_black[4]; // copy of cblack Dcraw for black level
+		
         double camwb_red;
         double camwb_green;
         double camwb_blue;
@@ -125,7 +128,8 @@ class RawImageSource : public ImageSource {
         void        demosaic    (const RAWParams &raw);
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
-        void        scaleColors (int winx,int winy,int winw,int winh );
+        void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack
+		
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
