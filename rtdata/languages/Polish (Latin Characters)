@@ -395,6 +395,7 @@ PREFERENCES_SHOWBASICEXIF;Pokaz podstawowe dane Exif
 PREFERENCES_SHOWDATETIME;Pokaz date i czas
 PREFERENCES_SHOWONLYRAW;Pokaz tylko pliki RAW
 PREFERENCES_SHTHRESHOLD;Prog dla niedoswietleñ
+PREFERENCES_SLIMUI;Wazkie suwaki
 PREFERENCES_STARTUPIMDIR;Katalog startowy
 PREFERENCES_TAB_BROWSER;Przegladarka plikow
 PREFERENCES_TAB_COLORMGR;Zarzadzanie kolorami
@@ -836,7 +837,6 @@ ZOOMBAR_SMALL;Mala
 !PREFERENCES_SET;SET
 !PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-PREFERENCES_SLIMUI;Wązkie suwaki
 !PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
