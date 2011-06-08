@@ -163,7 +163,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     // Save buttons
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
 
-    Gtk::Image *saveButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON));
+    //Gtk::Image *saveButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image *saveButtonImage =  Gtk::manage (new Gtk::Image (argv0+"/images/save_hdd_01.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add(*saveButtonImage);
     saveimgas->set_tooltip_markup(M("MAIN_BUTTON_SAVE_TOOLTIP"));

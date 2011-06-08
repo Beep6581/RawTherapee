@@ -24,7 +24,7 @@ extern Glib::ustring argv0;
 ToolBar::ToolBar () : listener (NULL) {
 
    handTool = Gtk::manage (new Gtk::ToggleButton ());
-   Gtk::Image* handimg = Gtk::manage (new Gtk::Image (argv0+"/images/openhand22.png"));
+   Gtk::Image* handimg = Gtk::manage (new Gtk::Image (argv0+"/images/openhand_gray22.png"));
    handTool->add (*handimg);
    handimg->show ();
    handTool->set_relief(Gtk::RELIEF_NONE);
