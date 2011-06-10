@@ -9,5 +9,6 @@ release
 rtengine/librtengine.a
 rtexif/librtexif.a
 rtgui/rt
+rtgui/version.h
 install_manifest.txt
-
+AboutThisBuild.txt
