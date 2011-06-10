@@ -392,7 +392,17 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     Gtk::Label* lNextStart = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
     hbworkflow->pack_end (*lNextStart, Gtk::PACK_SHRINK, 4);
 
-    fworklflow->add (*hbworkflow);
+    Gtk::VBox* vbworkflow = Gtk::manage( new Gtk::VBox () );
+    vbworkflow->pack_start (*hbworkflow, Gtk::PACK_SHRINK, 4);
+
+    Gtk::HBox* hbworkflow2 = Gtk::manage( new Gtk::HBox () );
+    ckbHistogramPositionLeft =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_HISTOGRAMPOSITIONLEFT")) );
+    hbworkflow2->pack_start (*ckbHistogramPositionLeft, Gtk::PACK_SHRINK, 4);
+    ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
+    hbworkflow2->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
+    vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK, 4);
+    
+    fworklflow->add (*vbworkflow);
     mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
      
     Gtk::Frame* flang = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DEFAULTLANG")) );
@@ -930,6 +940,8 @@ void Preferences::storePreferences () {
     moptions.multiDisplayMode = editorMode==3 ? 1:0;
     moptions.mainNBVertical = editorMode==1;
 
+    moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
+    moptions.showProfileSelector = ckbShowProfileSelector->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 
     // Sounds
@@ -1031,6 +1043,10 @@ void Preferences::fillPreferences () {
         editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);
     else 
         editorLayout->set_active(moptions.multiDisplayMode ? 3 : 2);
+
+    ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
+    ckbShowProfileSelector->set_active(moptions.showProfileSelector);
+
 
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();

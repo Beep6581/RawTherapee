@@ -47,9 +47,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     leftbox->set_border_width (2);
     leftbox->set_size_request(100,250);
 
+    if (options.histogramPosition>0) {
     histogramPanel = Gtk::manage (new HistogramPanel ());
     histogramPanel->set_size_request (-1, 150);
-//    leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
+        if (options.histogramPosition==1) leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
+    } else histogramPanel = NULL;
 
     profilep = Gtk::manage (new ProfilePanel ());
     Gtk::Frame* ppframe = Gtk::manage (new Gtk::Frame ());
@@ -155,8 +157,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), be
     vboxright->set_size_request(100,250);
 
     vboxright->set_border_width (2);
-    vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
-    vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
+
+    if (options.histogramPosition==2) vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+    if (options.showProfileSelector) vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
 
@@ -1272,7 +1275,7 @@ void EditorPanel::beforeAfterToggled () {
 void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
     LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
 
-    histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
+    if (histogramPanel) histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
     tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
 }
 

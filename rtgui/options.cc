@@ -136,6 +136,8 @@ void Options::setDefaults () {
     tabbedUI = true;					// was false;
     multiDisplayMode = 0;
     tunnelMetaData = false;
+    histogramPosition = 2;
+    showProfileSelector = true;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;
@@ -314,6 +316,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "MultiDisplayMode"))    multiDisplayMode  = keyFile.get_integer ("GUI", "MultiDisplayMode");
     //if (keyFile.has_key ("GUI", "CurvePanelsExpanded")) crvOpen           = keyFile.get_integer_list ("GUI", "CurvePanelsExpanded");
     if (keyFile.has_key ("GUI", "CutOverlayBrush"))     cutOverlayBrush   = keyFile.get_double_list ("GUI", "CutOverlayBrush");
+    if (keyFile.has_key ("GUI", "HistogramPosition"))   histogramPosition   = keyFile.get_integer ("GUI", "HistogramPosition");
+    if (keyFile.has_key ("GUI", "ShowProfileSelector")) showProfileSelector = keyFile.get_boolean ("GUI", "ShowProfileSelector");
 }
 
 
@@ -463,6 +467,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer_list ("GUI", "ToolPanelsExpanded", tpopen);
     keyFile.set_integer ("GUI", "MultiDisplayMode", multiDisplayMode);
     keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
+    keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
+    keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
 
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
