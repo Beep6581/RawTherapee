@@ -28,7 +28,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     pngcompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
     pngcompr->setAdjusterListener (this);
     pngcompr->show ();
-    tiffuncompressed = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED")));
+    tiffuncompressed = new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED"));
     tiffuncompressed->signal_toggled().connect( sigc::mem_fun(*this,&SaveFormatPanel::formatChanged));
     tiffuncompressed->show();
 
@@ -63,6 +63,12 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     fstr[2] = "tif";
     fstr[3] = "png";
     fstr[4] = "png";
+}
+SaveFormatPanel::~SaveFormatPanel ()
+{
+	delete jpegqual;
+	delete pngcompr;
+	delete tiffuncompressed;
 }
 
 void SaveFormatPanel::init (SaveFormat &sf) {
