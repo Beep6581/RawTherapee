@@ -474,13 +474,13 @@ PREFERENCES_CACHECLEARPROFILES;Ripulisci i profili
 PREFERENCES_CACHECLEARTHUMBS;Ripulisci le miniature
 PREFERENCES_CACHEFORMAT1;Proprietario (più rapido e di migliore qualità)
 PREFERENCES_CACHEFORMAT2;JPEG (minore impatto sul disco)
-PREFERENCES_CACHEMAXENTRIES;Numero massimo di oggetti conservati in memoria
+PREFERENCES_CACHEMAXENTRIES;Massima quantità di miniature in cache
 PREFERENCES_CACHEOPTS;Opzioni per il precaricamento
 PREFERENCES_CACHESTRAT1;Privilegia la rapidità al minore consumo di memoria
 PREFERENCES_CACHESTRAT2;Privilegia il minore consumo di memoria alla rapidità
 PREFERENCES_CACHESTRAT;Strategia di precaricamento
 PREFERENCES_CACHETHUMBFORM;Formato delle miniature precaricate
-PREFERENCES_CACHETHUMBHEIGHT;Massima quantità di miniature
+PREFERENCES_CACHETHUMBHEIGHT;Massima altezza miniature
 PREFERENCES_CLEARDLG_LINE1;Ripulitura dati in memoria
 PREFERENCES_CLEARDLG_LINE2;Questa operazione potrebbe impiegare alcuni secondi.
 PREFERENCES_CLEARDLG_TITLE;Prego attendere

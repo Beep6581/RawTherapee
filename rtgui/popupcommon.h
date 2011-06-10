@@ -34,7 +34,7 @@ public:
 	Gtk::HBox* buttonGroup;		// this is the widget to be packed
 
 	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
-	~PopUpCommon ();
+	virtual ~PopUpCommon ();
 	bool addEntry (Glib::ustring imagePath, Glib::ustring label);
 	bool setSelected (int entryNum);
 	int  getSelected () { return selected; }
