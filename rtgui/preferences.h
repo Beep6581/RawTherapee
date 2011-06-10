@@ -120,6 +120,9 @@ class Preferences : public Gtk::Dialog {
 
     Gtk::Entry* txtCustProfBuilderPath;
 
+    Gtk::CheckButton* ckbHistogramPositionLeft;
+    Gtk::CheckButton* ckbShowProfileSelector;
+
 
     Options moptions;
     sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn;
