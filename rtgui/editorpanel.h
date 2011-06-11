@@ -118,6 +118,9 @@ class EditorPanel : public Gtk::VBox,
 
         sigc::connection ShowHideSidePanelsconn;
 
+        bool isProcessing;
+
+
     public:
 
         EditorPanel (FilePanel* filePanel = NULL);
@@ -173,6 +176,8 @@ class EditorPanel : public Gtk::VBox,
         Glib::ustring getFileName ();
         bool handleShortcutKey (GdkEventKey* event);
         
+        bool getIsProcessing() const { return isProcessing; }
+
         Gtk::Paned *catalogPane;        
 };
 

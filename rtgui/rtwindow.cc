@@ -273,6 +273,8 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 }
 
 void RTWindow::remEditorPanel (EditorPanel* ep) {
+    if (ep->getIsProcessing()) return;  // Will crash if destroyed while loading
+
     if (EditWindow::isMultiDisplayEnabled()) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         wndEdit->remEditorPanel(ep);
@@ -347,6 +349,23 @@ void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries) {
 }
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
+    // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
+    bool isProcessing=false;
+
+    if (isSingleTabMode() || simpleEditor) 
+        isProcessing=epanel->getIsProcessing();
+    else {
+        int pageCount=mainNB->get_n_pages();
+
+        // First and second are file browser and batch queue
+        if (pageCount>2) {
+            for (int i=2;i<pageCount;i++) 
+                isProcessing |= ((EditorPanel*)mainNB->get_nth_page(i))->getIsProcessing();
+        }
+    }
+
+    if (isProcessing) return true;
+
 
     if( fpanel )
        fpanel->saveOptions ();
