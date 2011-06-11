@@ -607,8 +607,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     else {
         rmi = 1024.0 * rm / mul_lum;
         gmi = 1024.0 * gm / mul_lum;
-        bmi = 1024.0 * bm / mul_lum;  
+        bmi = 1024.0 * bm / mul_lum;
     }
+
+    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
+    // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
+    if (isRaw && fabs(1.0-params.raw.expos)>0.001) {
+        rmi*=params.raw.expos;
+        gmi*=params.raw.expos;
+        bmi*=params.raw.expos;
+    }
+
     // resize to requested width and perform coarse transformation
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) {
@@ -619,9 +628,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         rwidth = thumbImg->width * rheight / thumbImg->height;   
 
     Image16* resImg = thumbImg->resize (rwidth, rheight, interp);
-	//Imagefloat* baseImg = resImg->tofloat();
-	//Image16* baseImg = thumbImg->resize (rwidth, rheight, interp);
-
 
     if (params.coarse.rotate) {
         Image16* tmp = resImg->rotate (params.coarse.rotate);
@@ -629,21 +635,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         rheight = tmp->height;
         delete resImg;
         resImg = tmp;
-		//delete tmp;
     }
     if (params.coarse.hflip) {
         Image16* tmp = resImg->hflip ();
         delete resImg;
         resImg = tmp;
-		//delete tmp;
     }
     if (params.coarse.vflip) {
         Image16* tmp = resImg->vflip ();
         delete resImg;
         resImg = tmp;
-		//delete tmp;
     }
-    // apply white balance
+    // apply white balance and raw white point (simulated)
     int val;
     for (int i=0; i<rheight; i++)
         for (int j=0; j<rwidth; j++) {
@@ -711,10 +714,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     if (params.toneCurve.autoexp && aeHistogram) 
         ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
-
-	// The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
-	// that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
-	if (params.raw.expos!=1) br += (params.raw.expos-1.0);
 
 	LUTf curve1 (65536);
 	LUTf curve2 (65536);
