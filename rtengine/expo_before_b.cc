@@ -37,7 +37,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 	int width=W, height=H;
 
     // exposure correction inspired from G.Luijk
-    if (preser==0.0) {	
+    if (fabs(preser)<0.001) {	
         // No highlight protection - simple mutiplication
 #pragma omp parallel for shared(expos)
         for (int row=0;row<height;row++)
