@@ -29,7 +29,8 @@
 
 using namespace rtengine::procparams;
 
-EditorPanel::EditorPanel (FilePanel* filePanel) : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL), ipc(NULL), catalogPane(NULL) {
+EditorPanel::EditorPanel (FilePanel* filePanel) 
+    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL), ipc(NULL), catalogPane(NULL), isProcessing(false) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -365,6 +366,9 @@ void EditorPanel::on_realize () {
 void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     close();
+
+    isProcessing=true;  // prevents closing-on-init
+
     // initialize everything
     openThm = tmb;
     openThm->increaseRef ();
@@ -575,12 +579,12 @@ void EditorPanel::setProgressStr (Glib::ustring str)
 }
 
 // This is only called from the ThreadUI, so within the gtk thread
-void EditorPanel::refreshProcessingState (bool inProcessing) {
+void EditorPanel::refreshProcessingState (bool inProcessingP) {
 	spparams *s=new spparams;
     s->pProgress = progressLabel;
 	s->gtkEnter = false;
 
-    if (inProcessing) {
+    if (inProcessingP) {
         if (processingStartedTime==0) processingStartedTime = ::time(NULL);
 
     	s->str = "PROGRESSBAR_PROCESSING";
@@ -606,6 +610,8 @@ void EditorPanel::refreshProcessingState (bool inProcessing) {
     	s->str = "PROGRESSBAR_READY";
     	s->val = 1.0;
 }
+
+    isProcessing=inProcessingP;
 
 	_setprogressStr(s);
 }
