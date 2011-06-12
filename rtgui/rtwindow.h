@@ -77,6 +77,8 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void SetMainCurrent();
         void MoveFileBrowserToEditor();
         void MoveFileBrowserToMain();
+
+        bool getIsFullscreen() { return is_fullscreen; }
 };
 
 #endif

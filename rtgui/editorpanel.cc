@@ -38,6 +38,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     epih->pending = 0;
 
     processingStartedTime = 0;
+    firstProcessingDone = false;
 
 // construct toolpanelcoordinator
     tpc = new ToolPanelCoordinator ();
@@ -609,6 +610,11 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
 		// Set progress bar "done"
     	s->str = "PROGRESSBAR_READY";
     	s->val = 1.0;
+
+#ifdef WIN32
+        if (!firstProcessingDone && (RTWindow*)parent->getIsFullscreen()) { parent->fullscreen(); }
+#endif
+        firstProcessingDone = true;
 }
 
     isProcessing=inProcessingP;
