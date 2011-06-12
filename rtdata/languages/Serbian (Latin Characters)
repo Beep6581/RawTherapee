@@ -405,6 +405,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Senke/Svetlost
 PARTIALPASTE_SHARPENING;Oštrenje
 PARTIALPASTE_VIGNETTING;Ispravljanje vinjetarenja
 PARTIALPASTE_WHITEBALANCE;Balans bele
+POPUPBUTTON_SELECTOPTIONHINT;RMB za izmenu opcije
 PREFERENCES_ADD;Dodaj
 PREFERENCES_APPLNEXTSTARTUP;primenjuje se nakon ponovnog pokretanja
 PREFERENCES_BATCH_PROCESSING;Obrada zakzanog
@@ -474,7 +475,7 @@ PREFERENCES_PROFILEHANDLING;Rad sa profilima obrade
 PREFERENCES_PROFILELOADPR;Prioritet učitavanja profila
 PREFERENCES_PROFILEPRCACHE;Profil u ostavu
 PREFERENCES_PROFILEPRFILE;Profil uz ulaznu datoteku
-PREFERENCES_PROFILESAVECACHE;Sačuvaj rapametre obrade u ostavu
+PREFERENCES_PROFILESAVECACHE;Sačuvaj parametre obrade u ostavu
 PREFERENCES_PROFILESAVEINPUT;Sačuvaj paramtre obrade pored ulazne datoteke
 PREFERENCES_PROPERTY;Osobina
 PREFERENCES_PSPATH;Direktorijum sa instaliranim Adobe Fotošopom
@@ -765,174 +766,165 @@ ZOOMPANEL_ZOOMFITSCREEN;Uklapa sliku u veličinu prozora <b>F</b>
 ZOOMPANEL_ZOOMIN;Uvećava prikaz slike <b>+</b>
 ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 ﻿HISTOGRAM_BUTTON_B;P
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!ABOUT_TAB_BUILD;Version
-!ABOUT_TAB_CREDITS;Credits
-!ABOUT_TAB_LICENSE;License
-!ABOUT_TAB_SPLASH;Splash
-!CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
-!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
-!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
-!EDITWINDOW_TITLE;Image Edit
-!EXIFFILTER_FILETYPE;File Type
-!FILEBROWSER_AUTOFLATFIELD;Auto flat field
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
-!FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
-!FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
-!FILEBROWSER_FLATFIELD;Flat field
-!FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
-!FILEBROWSER_POPUPCOPYTO;Copy to...
-!FILEBROWSER_POPUPMOVETO;Move to...
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
-!FILEBROWSER_POPUPREMOVESUBMENU;Remove
-!FILEBROWSER_SELECTFLATFIELD;Select flat field...
-!GENERAL_FILE;File
-!GENERAL_NONE;None
-!HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
-!HISTORY_MSG_105;Defringing
-!HISTORY_MSG_106;Defringing Radius
-!HISTORY_MSG_107;Defringing Threshold
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
-!HISTORY_MSG_114;DCB Iterations
-!HISTORY_MSG_115;False color iterations
-!HISTORY_MSG_116;Enhanced DCB
-!HISTORY_MSG_117;Red CA correction
-!HISTORY_MSG_118;Blue CA correction
-!HISTORY_MSG_119;Line denoise
-!HISTORY_MSG_120;Green equil. threshold
-!HISTORY_MSG_121;Auto CA
-!HISTORY_MSG_122;Auto Dark Frame
-!HISTORY_MSG_123;Dark Frame File
-!HISTORY_MSG_124;Linear exp. correction
-!HISTORY_MSG_125;Expo. correction preserving HL
-!HISTORY_MSG_126;Flat Field File
-!HISTORY_MSG_127;Flat Field Auto Select
-!HISTORY_MSG_128;Flat Field Blur Radius
-!HISTORY_MSG_129;Flat Field Blur Type
-!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR;Editor
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
-!MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
-!MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
-!MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
-!MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
-!MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
-!MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
-!MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
-!PARTIALPASTE_CHANNELMIXER;Channel mixer
-!PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
-!PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
-!PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
-!PARTIALPASTE_DEFRINGE;Defringe
-!PARTIALPASTE_DETAILGROUP;Detail settings
-!PARTIALPASTE_DIRPYRDENOISE;Noise reduction
-!PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
-!PARTIALPASTE_EVERYTHING;Everything
-!PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
-!PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
-!PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
-!PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
-!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
-!PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
-!PARTIALPASTE_PERSPECTIVE;Perspective
-!PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
-!PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
-!PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
-!PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
-!PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAWGROUP;Raw settings
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAMEFOUND;Found
-!PREFERENCES_DARKFRAMESHOTS;shots
-!PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DATEFORMATFRAME;Date Format
-!PREFERENCES_FLATFIELD;Flat Field
-!PREFERENCES_FLATFIELDFOUND;Found
-!PREFERENCES_FLATFIELDSDIR;Flat Fields directory
-!PREFERENCES_FLATFIELDSHOTS;shots
-!PREFERENCES_FLATFIELDTEMPLATES;templates
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
-!PREFERENCES_METADATA;Metadata
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
-!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
-!PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
-!PREFERENCES_SND_TRESHOLDSECS;after secs
-!PREFERENCES_TAB_SOUND;Sounds
-!PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!PROGRESSBAR_BADPIXELS;Bad pixels...
-!PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
-!PROGRESSBAR_GREENEQUIL;Green equilibrate...
-!PROGRESSBAR_LINEDENOISE;Line Denoise...
-!PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-!TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_CROP_GTGRID;Grid
-!TP_CROP_PPI;PPI=
-!TP_DARKFRAME_LABEL;Dark Frame
-!TP_DEFRINGE_LABEL;Defringe
-!TP_DEFRINGE_RADIUS;Radius
-!TP_DEFRINGE_THRESHOLD;Threshold
-!TP_DISTORTION_AUTO;Auto distortion correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EXPOSCORR_LABEL;Raw white point
-!TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-!TP_FLATFIELD_AUTOSELECT;Auto selection
-!TP_FLATFIELD_BLURRADIUS;Blur Radius
-!TP_FLATFIELD_BLURTYPE;Blur Type
-!TP_FLATFIELD_BT_AREA;Area
-!TP_FLATFIELD_BT_HORIZONTAL;Horizontal
-!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
-!TP_FLATFIELD_BT_VERTICAL;Vertical
-!TP_FLATFIELD_LABEL;Flat Field
-!TP_GAMMA_CURV;gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_OUTPUT;Output gamma
-!TP_GAMMA_SLOP;slope (linear)
-!TP_ICM_INPUTNONE;No profile
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
-!TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_PREPROCESS_NO_FOUND;None found
-!TP_RAWCACORR_CABLUE;Blue
-!TP_RAWCACORR_CARED;Red
-!TP_RAWEXPOS_LINEAR;Linear corr. factor
-!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
-!TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_FITBOX;Bounding box
-!TP_RESIZE_FULLIMAGE;Full image
+ABOUT_TAB_BUILD;Izdanje
+ABOUT_TAB_CREDITS;Zasluge
+ABOUT_TAB_LICENSE;Licenca
+ABOUT_TAB_SPLASH;Uvod
+CURVEEDITOR_MINMAXCPOINTS;Min/maks. kontrolne tačke
+CURVEEDITOR_TOOLTIPCOPY;Umnožava trenutnu krivulju u ostavu
+CURVEEDITOR_TOOLTIPPASTE;Ubacuje krivulju iz ostave
+EDITWINDOW_TITLE;Uređivanje slike
+EXIFFILTER_FILETYPE;Vrsta datoteke
+FILEBROWSER_AUTOFLATFIELD;Automatski odredi ravno polje
+FILEBROWSER_BROWSEPATHBUTTONHINT;Kliknite za odlazak na uzabranu putanju
+FILEBROWSER_BROWSEPATHHINT;Ukucajte putanju za razgledanje (<b>Ctrl-o</b> postavlja fokus, <b>Ctrl-Enter</b> prikazuje u razgledaču datoteka);nPrečice putanja: <b>~</b> — lični direktorijum, <b>!</b> — direktorijum sa slikama
+FILEBROWSER_CACHE;Ostava
+FILEBROWSER_CACHECLEARFROMFULL;Očisti iz ostave — sve
+FILEBROWSER_CACHECLEARFROMPARTIAL;Očisti iz ostave — polovično
+FILEBROWSER_DARKFRAME;Tamni kadar
+FILEBROWSER_DELETEDLGMSGINCLPROC;Da li želite da obrišete %1 izabranih datoteka, uključujući i one koje su zakazane?
+FILEBROWSER_FLATFIELD;Ravno polje
+FILEBROWSER_MOVETOFLATFIELDDIR;Premesti u fascikli sa ravnim poljima
+FILEBROWSER_POPUPCOPYTO;Umnoži u...
+FILEBROWSER_POPUPMOVETO;Premesti u...
+FILEBROWSER_POPUPREMOVEINCLPROC;Ukloni iz sistema datoteka i zakazanog
+FILEBROWSER_POPUPREMOVESUBMENU;Ukloni
+FILEBROWSER_SELECTFLATFIELD;Izaberi ravno polje...
+GENERAL_FILE;Datoteka
+GENERAL_NONE;Ništa
+HISTOGRAM_BUTTON_RAW;Raw
+HISTOGRAM_TOOLTIP_RAW;Prikazuje/skriva RAW histogram
+HISTORY_MSG_105;Uklanjanje oreola
+HISTORY_MSG_106;Poluprečnik
+HISTORY_MSG_107;Prag
+HISTORY_MSG_108;Prag kompenz. svetlog
+HISTORY_MSG_109;Okvir za promenu veličine
+HISTORY_MSG_110;Promena veličine primenjena na
+HISTORY_MSG_111;Izbegni isecanje boja
+HISTORY_MSG_112;Ograničavanje zasićenja
+HISTORY_MSG_113;Graničnik zasićenja
+HISTORY_MSG_114;DCB ponavljanja
+HISTORY_MSG_115;Ponavljanje lažnih boja
+HISTORY_MSG_116;Unapređeni DCB
+HISTORY_MSG_117;Popravka crvene hrominanse
+HISTORY_MSG_118;Popravka plave hrominanse
+HISTORY_MSG_119;Linijsko uklaljanje šuma
+HISTORY_MSG_120;Prag ujednačenja zelene
+HISTORY_MSG_121;Sam ispravi aberacije
+HISTORY_MSG_122;Sam primeni tamni kadar
+HISTORY_MSG_123;Datoteka za tamni kadar
+HISTORY_MSG_124;Linearna ispravka eksp.
+HISTORY_MSG_125;Popravka eksp. uz očuvanje svetlog
+HISTORY_MSG_126;Datoteka sa ravnim poljem
+HISTORY_MSG_127;Sam izaberi ravno polje
+HISTORY_MSG_128;Poluprečnik ravnog polja
+HISTORY_MSG_129;Način zamućenja ravnog polja
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Prikazuje/sakriva sve bočne površine <b>m</b>
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Zakazano  <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;Uređivač
+MAIN_FRAME_EDITOR_TOOLTIP; Uređivač  <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Razgledač datoteka  <b>Ctrl-F2</b>
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Prikazuje/sakriva levu površ <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Prikazuje/sakriva desnu površ <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Prikazuje/sakriva gornju površ <b>Shift-l</b>
+PARTIALPASTE_CHANNELMIXER;Mešanje kanala
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Sam popuni
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatski izbor tamnog kadra
+PARTIALPASTE_DARKFRAMEFILE;Datoteka za tamni kadar
+PARTIALPASTE_DEFRINGE;Uklanjanje oreola
+PARTIALPASTE_DETAILGROUP;Podešavanje detalja
+PARTIALPASTE_DIRPYRDENOISE;Uklanjanje šuma
+PARTIALPASTE_DIRPYREQUALIZER;Kontrast nivoima detalja
+PARTIALPASTE_EVERYTHING;Sve
+PARTIALPASTE_FLATFIELDAUTOSELECT;Automatski izbor RK
+PARTIALPASTE_FLATFIELDBLURRADIUS;Poluprečnik zamućenja RK
+PARTIALPASTE_FLATFIELDBLURTYPE;Način zamućenja RK
+PARTIALPASTE_FLATFIELDFILE;Datoteka za ravni kadar
+PARTIALPASTE_HLRECONSTRUCTION;Izvlačenje preosvetljenih delova
+PARTIALPASTE_HLRECOVERYAMOUNT;Količina izvlačenja preosvetljenog
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Prag izvlačenja preosvetljenog
+PARTIALPASTE_HSVEQUALIZER;Ujednačenje HSV
+PARTIALPASTE_IMPULSEDENOISE;Impulsno uklanjanje šuma
+PARTIALPASTE_PERSPECTIVE;Perspektiva
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Ujednačavanje zelene
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filter vrelih/mrtvih piksela
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Linijski filter šuma
+PARTIALPASTE_RAWCACORR_AUTO;Auto hromatske aberacije
+PARTIALPASTE_RAWCACORR_CABLUE;Plava hrominansa
+PARTIALPASTE_RAWCACORR_CARED;Crvena hrominansa
+PARTIALPASTE_RAWEXPOS_LINEAR;Linearni faktor ispravke RAW bele tačke
+PARTIALPASTE_RAWEXPOS_PRESER;Raw tačka bele uz očuvanje svetlih delova
+PARTIALPASTE_RAWGROUP;Raw podešavanja
+PARTIALPASTE_RAW_DCBENHANCE;Primeni korak DCB poboljšanja
+PARTIALPASTE_RAW_DCBITERATIONS;Broj DCB ponavljanja
+PARTIALPASTE_RAW_DMETHOD;Način rasklapanja mozaika
+PARTIALPASTE_RAW_FALSECOLOR;Koraci prigušenja lažne boje pri rasklapanju mozaika
+PARTIALPASTE_WAVELETEQUALIZER;Talasno ujednačavanje
+PREFERENCES_AUTOMONPROFILE;Sam primeni profile monitora iz operativnog sistema
+PREFERENCES_CUTOVERLAYBRUSH;Maska isecanja boje/providnog
+PREFERENCES_DARKFRAMEFOUND;Nađen
+PREFERENCES_DARKFRAMESHOTS;snimaka
+PREFERENCES_DARKFRAMETEMPLATES;šabloni
+PREFERENCES_DATEFORMATFRAME;Format
+PREFERENCES_FLATFIELD;Ravno polje
+PREFERENCES_FLATFIELDFOUND;Nađeno
+PREFERENCES_FLATFIELDSDIR;Direktorijum za ravna polja
+PREFERENCES_FLATFIELDSHOTS;snimaka
+PREFERENCES_FLATFIELDTEMPLATES;šabloni
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Koristi ugnježđeni RAW prikaz do izmene
+PREFERENCES_METADATA;Metapodaci
+PREFERENCES_MULTITABDUALMON;Režim u više listova, na drugom monitoru
+PREFERENCES_OVERWRITEOUTPUTFILE;Prepiši postojeće izlazne datoteke
+PREFERENCES_SINGLETABVERTAB;Režim u jednom listu, vertikalni listovi
+PREFERENCES_SND_BATCHQUEUEDONE;Obrađene su zakazane datoteke
+PREFERENCES_SND_HELP;Unesite putanju do datoteke ili ostavite prazno ukoliko ne želite zvuk. Na Windows-u možete da koristite „SystemDefault“, „SystemAsterisk“ za sistemske zvuke.
+PREFERENCES_SND_LNGEDITPROCDONE;Urednik je završio obradu
+PREFERENCES_SND_TRESHOLDSECS;br. sekundi
+PREFERENCES_TAB_SOUND;Zvuci
+PREFERENCES_TUNNELMETADATA;Kopiraj neizmenjene IPTC/XMP (kada je slika označena drugim programom)
+PROGRESSBAR_BADPIXELS;Loši pikseli...
+PROGRESSBAR_CACORRECTION;Hromatske aberacije...
+PROGRESSBAR_DARKFRAME;Tamni kadar...
+PROGRESSBAR_GREENEQUIL;Uravnotežavam zelenu...
+PROGRESSBAR_LINEDENOISE;Linijki šum...
+PROGRESSBAR_LOADINGTHUMBS;Učitavam prikaze...
+TP_CHROMATABERR_LABEL;Hromatske aberacije
+TP_CROP_GTGRID;Mreža
+TP_CROP_PPI;PPI=
+TP_DARKFRAME_LABEL;Tamni kadar
+TP_DEFRINGE_LABEL;Uklaljanje oreola
+TP_DEFRINGE_RADIUS;Poluprečnik
+TP_DEFRINGE_THRESHOLD;Prag
+TP_DISTORTION_AUTO;Sam ispravi izobličenja
+TP_DISTORTION_AUTO_TIP;(Eksperimentalno) Automatski ispravlja izobličenja nekih aparata (M4/3, neki kompakti, i dr.)
+TP_EXPOSCORR_LABEL;Raw bela tačka
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Prag za čupanje svetlih delova
+TP_FLATFIELD_AUTOSELECT;Sam izaberi
+TP_FLATFIELD_BLURRADIUS;Poluprečnik zamućenja
+TP_FLATFIELD_BLURTYPE;Zamuti
+TP_FLATFIELD_BT_AREA;Oblast
+TP_FLATFIELD_BT_HORIZONTAL;Horizontalno
+TP_FLATFIELD_BT_VERTHORIZ;Horiz. i vertik.
+TP_FLATFIELD_BT_VERTICAL;Vertikalno
+TP_FLATFIELD_LABEL;Ravno polje
+TP_GAMMA_COMMENT;(onemogućen je izlazni profil, osim „default“)
+TP_GAMMA_OUTPUT;Izlazna gama
+TP_ICM_INPUTNONE;Nema profila
+TP_LABCURVE_AVOIDCOLORCLIP;Onemogući odsecanje boje
+TP_LABCURVE_ENABLESATLIMITER;Uključi graničnik zasićenosti
+TP_LABCURVE_SATLIMIT;Graničnik zasićenosti
+TP_PREPROCESS_NO_FOUND;Nije pronađeno
+TP_RAWCACORR_CABLUE;Plava
+TP_RAWCACORR_CARED;Crvena
+TP_RAWEXPOS_LINEAR;Linearni faktor korekcije
+TP_RAWEXPOS_PRESER;Očuvanje svetlih delova
+TP_RESIZE_APPLIESTO;Primeni na:
+TP_RESIZE_CROPPEDAREA;Isečenu oblast
+TP_RESIZE_FITBOX;Širinu i visinu
+TP_RESIZE_FULLIMAGE;Celu sliku
