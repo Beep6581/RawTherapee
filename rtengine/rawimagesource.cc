@@ -2028,6 +2028,8 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     if (ri->isBayer()) for (int i=0;i<256;i++) histGreenRaw[i]>>=1;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+
 void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
     if (fuji) {
         int fw = ri->get_FujiWidth();
@@ -2041,110 +2043,192 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-ColorTemp RawImageSource::getAutoWB () {
-	
-	double avg_r = 0;
-	double avg_g = 0;
-	double avg_b = 0;
-	int rn = 0, gn = 0, bn = 0;
-	
-	if (fuji) {
-		for (int i=32; i<H-32; i++) {
-			int fw = ri->get_FujiWidth();
-			int start = ABS(fw-i) + 32;
-			int end = MIN(H+W-fw-i, fw+i) - 32;
-			for (int j=start; j<end; j++) {
-				if (!ri->isBayer()) {
-					double d = CLIP(initialGain*(ri->data[i][3*j]-cblack[0])*scale_mul[0]);
-					if (d>64000)
-						continue;
-					avg_r += d; rn++;
-					d = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
-					if (d>64000)
-						continue;
-					avg_g += d; gn++;
-					d = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
-					if (d>64000)
-						continue;
-					avg_b += d; bn++;
+	ColorTemp RawImageSource::getAutoWB () {
+		
+		double avg_r = 0;
+		double avg_g = 0;
+		double avg_b = 0;
+		int rn = 0, gn = 0, bn = 0;
+		
+		if (fuji) {
+			for (int i=32; i<H-32; i++) {
+				int fw = ri->get_FujiWidth();
+				int start = ABS(fw-i) + 32;
+				int end = MIN(H+W-fw-i, fw+i) - 32;
+				for (int j=start; j<end; j++) {
+					if (!ri->isBayer()) {
+						double d = CLIP(initialGain*(rawData[i][3*j]));
+						if (d>64000)
+							continue;
+						avg_r += d; rn++;
+						d = CLIP(initialGain*(rawData[i][3*j+1]));
+						if (d>64000)
+							continue;
+						avg_g += d; gn++;
+						d = CLIP(initialGain*(rawData[i][3*j+2]));
+						if (d>64000)
+							continue;
+						avg_b += d; bn++;
+					}
+					else {
+						int c = FC( i, j);
+						double d = CLIP(initialGain*(rawData[i][j]));
+						if (d>64000)
+							continue;
+						double dp = d;
+						if (c==0) {
+							avg_r += dp;
+							rn++;
+						}
+						else if (c==1) {
+							avg_g += dp;
+							gn++;
+						}
+						else if (c==2) {
+							avg_b += dp;
+							bn++;
+						}
+					}
 				}
-				else {
-					int c = FC( i, j);
-					double d = CLIP(initialGain*(ri->data[i][j]-cblack[c])*scale_mul[c]);
-					if (d>64000)
-						continue;
-					double dp = d;
-					if (c==0) {
-						avg_r += dp;
+			}
+		}
+		else {
+			if (!ri->isBayer()) {
+				for (int i=32; i<H-32; i++)
+					for (int j=32; j<W-32; j++) {
+						double dr = CLIP(initialGain*(rawData[i][3*j]  ));
+						double dg = CLIP(initialGain*(rawData[i][3*j+1]));
+						double db = CLIP(initialGain*(rawData[i][3*j+2]));
+						if (dr>64000 || dg>64000 || db>64000) continue;
+						avg_r += dr; rn++;
+						avg_g += dg; 
+						avg_b += db; 
+					}
+				gn = rn; bn=rn;
+			} else {
+				//determine GRBG coset; (ey,ex) is the offset of the R subarray
+				int ey, ex;
+				if (ri->ISGREEN(0,0)) {//first pixel is G
+					if (ri->ISRED(0,1)) {ey=0; ex=1;} else {ey=1; ex=0;}
+				} else {//first pixel is R or B
+					if (ri->ISRED(0,0)) {ey=0; ex=0;} else {ey=1; ex=1;}
+				}
+				double d[2][2];
+				for (int i=32; i<H-32; i+=2)
+					for (int j=32; j<W-32; j+=2) {
+						//average a Bayer quartet if nobody is clipped
+						d[0][0] = CLIP(initialGain*(rawData[i][j]    ));
+						d[0][1] = CLIP(initialGain*(rawData[i][j+1]  ));
+						d[1][0] = CLIP(initialGain*(rawData[i+1][j]  ));
+						d[1][1] = CLIP(initialGain*(rawData[i+1][j+1]));
+						if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
+						avg_r += d[ey][ex];
+						avg_g += d[1-ey][ex] + d[ey][1-ex];
+						avg_b += d[1-ey][1-ex];
 						rn++;
 					}
-					else if (c==1) {
-						avg_g += dp;
-						gn++;
-					}
-					else if (c==2) {
-						avg_b += dp;
-						bn++;
-					}
-				}
+				gn = 2*rn;
+				bn = rn;
 			}
 		}
+		if( settings->verbose )
+			printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
+		
+		//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
+		
+		double reds   = avg_r/rn * camwb_red;
+		double greens = avg_g/gn * camwb_green;
+		double blues  = avg_b/bn * camwb_blue;
+		
+		double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
+		double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
+		double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
+		
+		return ColorTemp (rm, gm, bm);
 	}
-	else {
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
+	ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
+		
+		int x; int y;
+		double reds = 0, greens = 0, blues = 0;
+		int rn = 0;
+		
 		if (!ri->isBayer()) {
-			for (int i=32; i<H-32; i++)
-				for (int j=32; j<W-32; j++) {
-					double dr = CLIP(initialGain*(ri->data[i][3*j]  -cblack[0])*scale_mul[0]);
-					double dg = CLIP(initialGain*(ri->data[i][3*j+1]-cblack[1])*scale_mul[1]);
-					double db = CLIP(initialGain*(ri->data[i][3*j+2]-cblack[2])*scale_mul[2]);
-					if (dr>64000 || dg>64000 || db>64000) continue;
-					avg_r += dr; rn++;
-					avg_g += dg; 
-					avg_b += db; 
-				}
-			gn = rn; bn=rn;
-		} else {
-			//determine GRBG coset; (ey,ex) is the offset of the R subarray
-			int ey, ex;
-			if (ri->ISGREEN(0,0)) {//first pixel is G
-				if (ri->ISRED(0,1)) {ey=0; ex=1;} else {ey=1; ex=0;}
-			} else {//first pixel is R or B
-				if (ri->ISRED(0,0)) {ey=0; ex=0;} else {ey=1; ex=1;}
-			}
-			double d[2][2];
-			for (int i=32; i<H-32; i+=2)
-				for (int j=32; j<W-32; j+=2) {
-					//average a Bayer quartet if nobody is clipped
-					d[0][0] = CLIP(initialGain*(ri->data[i][j]    -cblack[FC(i,j)])*scale_mul[FC(i,j)]);
-					d[0][1] = CLIP(initialGain*(ri->data[i][j+1]  -cblack[FC(i,j+1)])*scale_mul[FC(i,j+1)]);
-					d[1][0] = CLIP(initialGain*(ri->data[i+1][j]  -cblack[FC(i+1,j)])*scale_mul[FC(i+1,j)]);
-					d[1][1] = CLIP(initialGain*(ri->data[i+1][j+1]-cblack[FC(i+1,j+1)])*scale_mul[FC(i+1,j+1)]);
-					if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
-					avg_r += d[ey][ex];
-					avg_g += d[1-ey][ex] + d[ey][1-ex];
-					avg_b += d[1-ey][1-ex];
+			int xmin, xmax, ymin, ymax;
+			int xr, xg, xb, yr, yg, yb;
+			for (int i=0; i<red.size(); i++) {
+				transformPosition (red[i].x, red[i].y, tran, xr, yr);
+				transformPosition (green[i].x, green[i].y, tran, xg, yg);
+				transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
+				if (initialGain*(rawData[yr][3*xr]  )>52500 ||      
+					initialGain*(rawData[yg][3*xg+1])>52500 ||        
+					initialGain*(rawData[yb][3*xb+2])>52500) continue;
+				xmin = MIN(xr,MIN(xg,xb));
+				xmax = MAX(xr,MAX(xg,xb));
+				ymin = MIN(yr,MIN(yg,yb));
+				ymax = MAX(yr,MAX(yg,yb));
+				if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
+					reds	+= (rawData[yr][3*xr]  );  
+					greens	+= (rawData[yg][3*xg+1]);
+					blues	+= (rawData[yb][3*xb+2]);  
 					rn++;
 				}
-			gn = 2*rn;
-			bn = rn;
+			}
+			
+		} else {
+			
+			int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
+			int rloc, gloc, bloc, rnbrs, gnbrs, bnbrs;
+			for (int i=0; i<red.size(); i++) {
+				transformPosition (red[i].x, red[i].y, tran, x, y);
+				rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
+				for (int k=0; k<9; k++) {
+					int xv = x + d[k][0];
+					int yv = y + d[k][1];
+					int c = FC(yv,xv);
+					if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
+						rloc += (rawData[yv][xv]);
+						rnbrs++;
+						continue;
+					}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
+						bloc += (rawData[yv][xv]);
+						bnbrs++;
+						continue;
+					} else { // GREEN
+						gloc += (rawData[yv][xv]);
+						gnbrs++;
+						continue;
+					}
+					
+				}
+				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
+				if (rloc*initialGain<64000 && gloc*initialGain<64000 && bloc*initialGain<64000) {
+					reds += rloc; greens += gloc; blues += bloc; rn++;
+				}
+				//transformPosition (green[i].x, green[i].y, tran, x, y);//these are redundant now ??? if not, repeat for these blocks same as for red[]
+				//transformPosition (blue[i].x, blue[i].y, tran, x, y);
+			}
+		}
+		
+		if (2*rn < red.size()) {
+			return ColorTemp ();
+		}
+		else {
+			reds = reds/rn * camwb_red;
+			greens = greens/rn * camwb_green;
+			blues = blues/rn * camwb_blue;
+			
+			double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
+			double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
+			double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
+			
+			return ColorTemp (rm, gm, bm);
 		}
 	}
 	
-	//printf ("AVG: %g %g %g\n", avg_r/rn, avg_g/gn, avg_b/bn);
-	
-	//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
-	
-	double reds   = avg_r/rn * camwb_red;
-	double greens = avg_g/gn * camwb_green;
-	double blues  = avg_b/bn * camwb_blue;
-	
-	double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
-	double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
-	double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
-	
-	return ColorTemp (rm, gm, bm);
-}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2204,88 +2288,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
         tty = ty;
     }
 }
-	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
-
-    int x; int y;
-    double reds = 0, greens = 0, blues = 0;
-    int rn = 0;
-    
-    if (!ri->isBayer()) {
-		int xmin, xmax, ymin, ymax;
-		int xr, xg, xb, yr, yg, yb;
-        for (int i=0; i<red.size(); i++) {
-            transformPosition (red[i].x, red[i].y, tran, xr, yr);
-			transformPosition (green[i].x, green[i].y, tran, xg, yg);
-			transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
-			if (initialGain*(ri->data[yr][3*xr]  -cblack[0])*scale_mul[0]>52500 ||
-				initialGain*(ri->data[yg][3*xg+1]-cblack[1])*scale_mul[1]>52500 ||
-				initialGain*(ri->data[yb][3*xb+2]-cblack[2])*scale_mul[2]>52500) continue;
-			xmin = MIN(xr,MIN(xg,xb));
-			xmax = MAX(xr,MAX(xg,xb));
-			ymin = MIN(yr,MIN(yg,yb));
-			ymax = MAX(yr,MAX(yg,yb));
-			if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
-				reds	+= (ri->data[yr][3*xr]  -cblack[0])*scale_mul[0];
-				greens	+= (ri->data[yg][3*xg+1]-cblack[1])*scale_mul[1];
-				blues	+= (ri->data[yb][3*xb+2]-cblack[2])*scale_mul[2];
-				rn++;
-            }
-        }
 		
-    } else {
-		
-		int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
-		int rloc, gloc, bloc, rnbrs, gnbrs, bnbrs;
-		for (int i=0; i<red.size(); i++) {
-			transformPosition (red[i].x, red[i].y, tran, x, y);
-			rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
-			for (int k=0; k<9; k++) {
-				int xv = x + d[k][0];
-				int yv = y + d[k][1];
-				int c = FC(yv,xv);
-				if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
-					rloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
-					rnbrs++;
-					continue;
-				}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
-					bloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
-					bnbrs++;
-					continue;
-				} else { // GREEN
-					gloc += (ri->data[yv][xv]-cblack[c])*scale_mul[c];
-					gnbrs++;
-					continue;
-				}
-
-			}
-			rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
-			if (rloc*initialGain<64000 && gloc*initialGain<64000 && bloc*initialGain<64000) {
-				reds += rloc; greens += gloc; blues += bloc; rn++;
-			}
-			//transformPosition (green[i].x, green[i].y, tran, x, y);//these are redundant now ??? if not, repeat for these blocks same as for red[]
-			//transformPosition (blue[i].x, blue[i].y, tran, x, y);
-		}
-    }
-	
-	if (2*rn < red.size()) {
-		return ColorTemp ();
-	}
-	else {
-		reds = reds/rn * camwb_red;
-		greens = greens/rn * camwb_green;
-		blues = blues/rn * camwb_blue;
-		
-		double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
-		double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
-		double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
-		
-		return ColorTemp (rm, gm, bm);
-	}
-}
-	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
