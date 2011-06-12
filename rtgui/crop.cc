@@ -76,7 +76,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   pack_start (*hb2, Gtk::PACK_SHRINK, 4);
 
   selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
-  selectCrop->set_image (*Gtk::manage (new Gtk::Image (argv0+"/images/crop16.png")));
+  selectCrop->set_image (*Gtk::manage (new Gtk::Image (argv0+"/images/crop22.png")));
   
   pack_start (*selectCrop, Gtk::PACK_SHRINK, 2);
 
