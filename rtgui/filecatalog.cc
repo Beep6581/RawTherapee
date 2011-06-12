@@ -276,8 +276,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 
         for (unsigned int i=0; i<fileNameList.size(); i++) {
             Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
-            if (f->get_parse_name() != openfile) // if we opened a file at the beginning don't add it again
-                checkAndAddFile (f);
+            checkAndAddFile (f);
         }
 
         _refreshProgressBar ();
@@ -848,7 +847,6 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-			_previewReady (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
