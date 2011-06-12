@@ -21,13 +21,14 @@ inline void cubintch (float** src, int xs, int ys, double Dx, double Dy, float *
 
   register double w[4];
 
-  { register double t1, t2;
-  t1 = -A*(Dx-1.0)*Dx;
-  t2 = (3.0-2.0*Dx)*Dx*Dx;
-  w[3] = t1*Dx;
-  w[2] = t1*(Dx-1.0) + t2;
-  w[1] = -t1*Dx + 1.0 - t2;
-  w[0] = -t1*(Dx-1.0);
+  {
+      register double t1, t2;
+      t1 = -A*(Dx-1.0)*Dx;
+      t2 = (3.0-2.0*Dx)*Dx*Dx;
+      w[3] = t1*Dx;
+      w[2] = t1*(Dx-1.0) + t2;
+      w[1] = -t1*Dx + 1.0 - t2;
+      w[0] = -t1*(Dx-1.0);
   }
 
   register double rd;  
@@ -42,20 +43,19 @@ inline void cubintch (float** src, int xs, int ys, double Dx, double Dy, float *
   }                                                               
 
                                                                     
-  { register double t1, t2;
-  t1 = -A*(Dy-1.0)*Dy;
-  t2 = (3.0-2.0*Dy)*Dy*Dy;
-  w[3] = t1*Dy;
-  w[2] = t1*(Dy-1.0) + t2;
-  w[1] = -t1*Dy + 1.0 - t2;
-  w[0] = -t1*(Dy-1.0);
+  { 
+      register double t1, t2;
+      t1 = -A*(Dy-1.0)*Dy;
+      t2 = (3.0-2.0*Dy)*Dy*Dy;
+      w[3] = t1*Dy;
+      w[2] = t1*(Dy-1.0) + t2;
+      w[1] = -t1*Dy + 1.0 - t2;
+      w[0] = -t1*(Dy-1.0);
   }
 
   rd = 0.0;                                             
   for (int i=0; i<4; i++)
     rd += yr[i] * w[i];
 
-  rd*=mul;
-
-  *r = (int)CLIP(rd); 
+  *r = rd * mul;
 }

@@ -23,13 +23,14 @@ inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float
 
   register double w[4];
 
-  { register double t1, t2;
-  t1 = -A*(Dx-1.0)*Dx;
-  t2 = (3.0-2.0*Dx)*Dx*Dx;
-  w[3] = t1*Dx;
-  w[2] = t1*(Dx-1.0) + t2;
-  w[1] = -t1*Dx + 1.0 - t2;
-  w[0] = -t1*(Dx-1.0);
+  { 
+      register double t1, t2;
+      t1 = -A*(Dx-1.0)*Dx;
+      t2 = (3.0-2.0*Dx)*Dx*Dx;
+      w[3] = t1*Dx;
+      w[2] = t1*(Dx-1.0) + t2;
+      w[1] = -t1*Dx + 1.0 - t2;
+      w[0] = -t1*(Dx-1.0);
   }
 
   register double rd, gd, bd;  
@@ -46,13 +47,15 @@ inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float
   }                                                               
 
                                                                     
-  { register double t1, t2;
-  t1 = -A*(Dy-1.0)*Dy;
-  t2 = (3.0-2.0*Dy)*Dy*Dy;
-  w[3] = t1*Dy;
-  w[2] = t1*(Dy-1.0) + t2;
-  w[1] = -t1*Dy + 1.0 - t2;
-  w[0] = -t1*(Dy-1.0);
+  { 
+      register double t1, t2;
+      
+      t1 = -A*(Dy-1.0)*Dy;
+      t2 = (3.0-2.0*Dy)*Dy*Dy;
+      w[3] = t1*Dy;
+      w[2] = t1*(Dy-1.0) + t2;
+      w[1] = -t1*Dy + 1.0 - t2;
+      w[0] = -t1*(Dy-1.0);
   }
 
   rd = gd = bd = 0.0;                                             
@@ -62,13 +65,9 @@ inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float
     bd += yb[i] * w[i];
   }                                                               
 
-  rd*=mul;
-  gd*=mul;
-  bd*=mul;
-                                                                   
-  *r = (int)CLIP(rd); 
-  *g = (int)CLIP(gd);
-  *b = (int)CLIP(bd);
+  *r = rd * mul;
+  *g = gd * mul;
+  *b = bd * mul;
   
 //  if (xs==100 && ys==100)
 //    printf ("r=%g, g=%g\n", *r, *g);
