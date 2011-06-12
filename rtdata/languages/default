@@ -759,7 +759,7 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DISTORTION_AMOUNT;Amount
-TP_DISTORTION_AUTO;Auto distortion correction
+TP_DISTORTION_AUTO;    Auto distortion correction
 TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 TP_DISTORTION_LABEL;Distortion
 TP_EQUALIZER_CONTRAST_MINUS;Contrast-
@@ -838,7 +838,7 @@ TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_SATLIMIT;Saturation limit
 TP_LABCURVE_SATURATION;Saturation
-TP_LENSGEOM_AUTOCROP;Auto Crop
+TP_LENSGEOM_AUTOCROP;    Auto Crop
 TP_LENSGEOM_FILL;Auto Fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
