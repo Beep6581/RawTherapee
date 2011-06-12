@@ -157,7 +157,7 @@ int processLineParams( int argc, char **argv )
 			case 'o': // outputfile or dir
 				if( iArg+1 <argc ){
 					iArg++;
-					outputPath = safe_locale_to_utf8 (argv[iArg]);
+					outputPath = safe_filename_to_utf8 (argv[iArg]);
 					if( safe_file_test (outputPath, Glib::FILE_TEST_IS_DIR))
 						outputDirectory=true;
 				}
@@ -165,7 +165,7 @@ int processLineParams( int argc, char **argv )
 			case 'p': // processing parameters for all inputs
 				if( iArg+1 <argc ){
 					iArg++;
-					processingParams = safe_locale_to_utf8 ( argv[iArg] );
+					processingParams = safe_filename_to_utf8 ( argv[iArg] );
 				}
 				break;
 			case 'S':
@@ -191,11 +191,11 @@ int processLineParams( int argc, char **argv )
 			case 'c': // MUST be last option
 				while( iArg+1 <argc ){
 					iArg++;
-					if( !safe_file_test( safe_locale_to_utf8(argv[iArg]), Glib::FILE_TEST_EXISTS )){
+					if( !safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_EXISTS )){
 						std::cerr << argv[iArg] << " doesn't exist."<< std::endl;
 						continue;
 					}
-					if( safe_file_test( safe_locale_to_utf8(argv[iArg]), Glib::FILE_TEST_IS_DIR )){
+					if( safe_file_test( safe_filename_to_utf8(argv[iArg]), Glib::FILE_TEST_IS_DIR )){
 						isDirectory = true;
 						std::vector<Glib::ustring> names;
 						Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path ( argv[iArg] );
@@ -213,7 +213,7 @@ int processLineParams( int argc, char **argv )
 							}
 						}
 					}else{
-						inputFiles.push_back( safe_locale_to_utf8 (argv[iArg]) );
+						inputFiles.push_back( safe_filename_to_utf8 (argv[iArg]) );
 					}
 				}
 				break;
@@ -242,7 +242,7 @@ int processLineParams( int argc, char **argv )
 				return -1;
 			}
 		}else{
-			argv1 = safe_locale_to_utf8 ( argv[iArg] );
+			argv1 = safe_filename_to_utf8 ( argv[iArg] );
 			if( outputDirectory ){
 				options.savePathFolder = outputPath;
 				options.saveUsePathTemplate = false;
