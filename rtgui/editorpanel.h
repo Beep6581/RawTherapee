@@ -94,6 +94,7 @@ class EditorPanel : public Gtk::VBox,
         BatchToolPanelCoordinator* btpCoordinator;        
         FilePanel* fPanel;
       
+        bool firstProcessingDone;
     
         Thumbnail* openThm;  // may get invalid on external delete event
         Glib::ustring fname;  // must be safed seperately
