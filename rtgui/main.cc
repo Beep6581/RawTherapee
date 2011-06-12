@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     else
         argv1_ = "";
 
-    argv1 = safe_locale_to_utf8 (argv1_);
+    argv1 = safe_filename_to_utf8 (argv1_);
 
    Glib::thread_init();
    gdk_threads_init();
