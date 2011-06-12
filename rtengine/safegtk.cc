@@ -132,6 +132,35 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
     }
 }
 
+/*
+ * For an unknown reason, Glib::filename_to_utf8 doesn't work on Windows, so we're using
+ * Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows
+ */
+Glib::ustring safe_filename_to_utf8 (const std::string& src)
+{
+	Glib::ustring utf8_str;
+#ifdef _WIN32
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+            try {
+                utf8_str = Glib::locale_to_utf8(src);
+            }
+            catch (const Glib::ConvertError& e) {
+                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
+            }
+#else
+            {
+                std::auto_ptr<Glib::Error> error;
+                utf8_str = locale_to_utf8(src, error);
+                if (error.get())
+                    utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
+            }
+#endif //GLIBMM_EXCEPTIONS_ENABLED
+#else
+            utf8_str = Glib::filename_to_utf8(src);
+#endif
+	return utf8_str;
+}
+
 Glib::ustring safe_locale_to_utf8 (const std::string& src)
 {
 	Glib::ustring utf8_str;
