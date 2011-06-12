@@ -28,15 +28,12 @@ namespace rtengine {
 #undef CMAXVAL
 #undef MAX
 #undef MIN
-#undef CLIP
 #undef CLIPTO
 #undef CLIPTOC
 #undef SQR
 
-#define CMAXVAL 0xffff
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 #define RT_PI 3.141592653589
@@ -236,12 +233,9 @@ void ImProcFunctions::vignetting (Imagefloat* original, Imagefloat* transformed,
 			double vig_x_d = (double) (x + cx) - vig_w2 ;
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 			double vign = v + mul * tanh (b*(maxRadius-r) / maxRadius);
-			val = original->r[y][x] / vign;
-			transformed->r[y][x] = CLIP(val);
-			val =  original->g[y][x] / vign;
-			transformed->g[y][x] = CLIP(val);
-			val = original->b[y][x] / vign;
-			transformed->b[y][x] = CLIP(val);
+			transformed->r[y][x] = original->r[y][x] / vign;
+			transformed->g[y][x] = original->g[y][x] / vign;
+			transformed->b[y][x] = original->b[y][x] / vign;
 		}
 	}
 }
@@ -336,12 +330,9 @@ void ImProcFunctions::transformNonSep (Imagefloat* original, Imagefloat* transfo
                 	int y2 = CLIPTO(yc+1, 0, original->height-1);
                 	int x1 = CLIPTO(xc,   0, original->width-1);
                 	int x2 = CLIPTO(xc+1, 0, original->width-1);
-                    int r = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                    int g = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                    int b = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
-                    transformed->r[y][x] = CLIP(r);
-                    transformed->g[y][x] = CLIP(g);
-                    transformed->b[y][x] = CLIP(b);
+                    transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
+                    transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
+                    transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
                 }
             }
             else {
@@ -464,8 +455,7 @@ void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transforme
 						int y2 = CLIPTO(yc+1, 0, original->height-1);
 						int x1 = CLIPTO(xc,   0, original->width-1);
 						int x2 = CLIPTO(xc+1, 0, original->width-1);
-                        int val = vignmul*(chorig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chorig[c][y1][x2]*Dx*(1.0-Dy) + chorig[c][y2][x1]*(1.0-Dx)*Dy + chorig[c][y2][x2]*Dx*Dy);
-                        chtrans[c][y][x] = CLIP(val);
+                        chtrans[c][y][x] = vignmul*(chorig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chorig[c][y1][x2]*Dx*(1.0-Dy) + chorig[c][y2][x1]*(1.0-Dx)*Dy + chorig[c][y2][x2]*Dx*Dy);
 					}
 				}
 				else
@@ -560,24 +550,18 @@ void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transfor
                 	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
                 if (yc < original->height-1 && xc < original->width-1) {  // all interpolation pixels inside image
-                    int r = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
-                    int g = vignmul*(original->g[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->g[yc][xc+1]*Dx*(1.0-Dy) + original->g[yc+1][xc]*(1.0-Dx)*Dy + original->g[yc+1][xc+1]*Dx*Dy);
-                    int b = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
-                    transformed->r[y][x] = CLIP(r);
-                    transformed->g[y][x] = CLIP(g);
-                    transformed->b[y][x] = CLIP(b);
+                    transformed->r[y][x] = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
+                    transformed->g[y][x] = vignmul*(original->g[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->g[yc][xc+1]*Dx*(1.0-Dy) + original->g[yc+1][xc]*(1.0-Dx)*Dy + original->g[yc+1][xc+1]*Dx*Dy);
+                    transformed->b[y][x] = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
                 }
                 else { // edge pixels
                 	int y1 = CLIPTO(yc,   0, original->height-1);
                 	int y2 = CLIPTO(yc+1, 0, original->height-1);
                 	int x1 = CLIPTO(xc,   0, original->width-1);
                 	int x2 = CLIPTO(xc+1, 0, original->width-1);
-                    int r = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                    int g = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                    int b = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
-                    transformed->r[y][x] = CLIP(r);
-                    transformed->g[y][x] = CLIP(g);
-                    transformed->b[y][x] = CLIP(b);
+                    transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
+                    transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
+                    transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
                 }
             }
             else {
@@ -609,27 +593,26 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
 }
 
 bool ImProcFunctions::needsCA () {
-
 	return fabs (params->cacorrection.red) > 1e-15 || fabs (params->cacorrection.blue) > 1e-15;
 }
-bool ImProcFunctions::needsDistortion () {
 
+bool ImProcFunctions::needsDistortion () {
 	return fabs (params->distortion.amount) > 1e-15;
 }
-bool ImProcFunctions::needsRotation	() {
 
+bool ImProcFunctions::needsRotation	() {
 	return fabs (params->rotate.degree) > 1e-15;
 }
-bool ImProcFunctions::needsPerspective () {
 
+bool ImProcFunctions::needsPerspective () {
 	return params->perspective.horizontal || params->perspective.vertical;
 }
-bool ImProcFunctions::needsVignetting () {
 
+bool ImProcFunctions::needsVignetting () {
 	return params->vignetting.amount;
 }
-bool ImProcFunctions::needsTransform () {
 
+bool ImProcFunctions::needsTransform () {
 	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsVignetting ();
 }
 
