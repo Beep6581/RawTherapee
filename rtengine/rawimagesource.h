@@ -64,7 +64,7 @@ class RawImageSource : public ImageSource {
 		float cblack[4];// black
 		float scale_mu_l[4];// copy of scale_mul, for saturation
 		float c_black[4]; // copy of cblack Dcraw for black level
-		
+		float cblacksom[4];
         double camwb_red;
         double camwb_green;
         double camwb_blue;
