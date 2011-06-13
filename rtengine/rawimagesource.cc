@@ -1311,9 +1311,14 @@ black_lev[2]=raw.blacktwo;//B
 black_lev[3]= raw.blackzero;
 }
   for(int i=0; i<4; i++) {
-   scale_mul[i]=scale_mu_l[i];
-  if( c_black[i]+black_lev[i] >0) cblack[i]=c_black[i]+black_lev[i]; else cblack[i]=0;// adjust black level
-	}	
+   scale_mul[i]=scale_mu_l[i];}
+   
+  if( c_black[0]+black_lev[1] >0) cblacksom[0]=c_black[0]+black_lev[1]; else cblacksom[0]=0;// adjust black level
+  if( c_black[3]+black_lev[3] >0) cblacksom[3]=c_black[3]+black_lev[3]; else cblacksom[3]=0;// adjust black level
+  if( c_black[2]+black_lev[2] >0) cblacksom[2]=c_black[2]+black_lev[2]; else cblacksom[2]=0;// adjust black level
+  if( c_black[1]+black_lev[0] >0) cblacksom[1]=c_black[1]+black_lev[0]; else cblacksom[1]=0;// adjust black level
+// this seems strange, but it works
+
 		// scale image colors
 		
 	if( ri->isBayer() ){
@@ -1323,21 +1328,26 @@ black_lev[3]= raw.blackzero;
 				int c = FC(row, col);
 				if (ri->ISGREEN(row,col)) {
                     if (row&1) {
-						val-=cblack[1]; 
+						val-=cblacksom[1]; 
 						val *= scale_mul[1];
                     }
                     else {
-                        val-=cblack[3];
+                        val-=cblacksom[3];
 						val *= scale_mul[3];
                     }
                 }			
-				else {
-				val-=cblack[c];
-				val*=scale_mul[c];}			
+				else if (ri->ISRED(row,col)) {
+				val-=cblacksom[0];
+				val*=scale_mul[0];}	
+				else if (ri->ISBLUE(row,col)) {
+				val-=cblacksom[2];
+				val*=scale_mul[2];}	
+				
 				rawData[row][col] = (val);
 			}
 		}
 	}else{
+	// i don't know how it's run...
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
 				float val = rawData[row][3*col+0];
@@ -1998,15 +2008,17 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
                 if (ri->ISGREEN(i,j)) {
-                    if(i &1) idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));// green 1
+                    if(i &1) idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
 					else 
-					idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[3])));//green 2
+					idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
                     histGreenRaw[idx>>8]++;
                 } else if (ri->ISRED(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[1])));
+                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
+					
                     histRedRaw[idx>>8]++;
                 } else if (ri->ISBLUE(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[2])));
+                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
+					
                     histBlueRaw[idx>>8]++;
     }
             }
