@@ -49,6 +49,8 @@ RTWindow::RTWindow ()
     	maximize();
     else
     	unmaximize();
+    
+    is_fullscreen = false;
     property_destroy_with_parent().set_value(false);
     signal_window_state_event().connect( sigc::mem_fun(*this, &RTWindow::on_window_state_event) );
 
@@ -68,7 +70,7 @@ RTWindow::RTWindow ()
     		rtengine::InitialImage *ii= rtengine::InitialImage::load(argv1,thm->getType() == FT_Raw,&error,NULL);
     		epanel->open( thm, ii );
     	}
-	}else{
+	} else {
 		mainNB = Gtk::manage (new Gtk::Notebook ());
 		mainNB->set_scrollable (true);
 		mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
@@ -151,7 +153,7 @@ RTWindow::RTWindow ()
 		preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
 		preferences->set_tooltip_markup (M("MAIN_BUTTON_PREFERENCES"));
 		preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
-		is_fullscreen = false;
+
 		//btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
 		btn_fullscreen = Gtk::manage( new Gtk::Button());
 		btn_fullscreen->set_tooltip_markup (M("MAIN_BUTTON_FULLSCREEN"));
