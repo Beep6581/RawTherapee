@@ -118,8 +118,8 @@ inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i) {
       else if (i==H-2)
         gv = (rawData[H-1][j] + rawData[H-3][j]) / 2;
 
-      agh[j] = CLIP(gh);
-      agv[j] = CLIP(gv);
+      agh[j] = gh;
+      agv[j] = gv;
     }
   }
 }
@@ -151,7 +151,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
            n++;
          }
          b = cg[j] + b / n;
-         ab[j] = CLIP(b);
+         ab[j] = b;
       }
       else {
         // linear R-G interp. horizontally
@@ -171,7 +171,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
           b = pg[j] + rawData[H-2][j] - cg[j];
         else
           b = cg[j] + (rawData[i-1][j] - pg[j] + rawData[i+1][j] - ng[j]) / 2;
-        ab[j] = CLIP(b);
+        ab[j] = b;
       }
     }
   }
@@ -202,7 +202,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
          }
          r = cg[j] + r / n;
 
-         ar[j] = CLIP(r);
+         ar[j] = r;
       }
       else {
         // linear B-G interp. horizontally
@@ -222,7 +222,7 @@ inline void RawImageSource::interpolate_row_rb (float* ar, float* ab, float* pg,
           r = pg[j] + rawData[H-2][j] - cg[j];
         else
           r = cg[j] + (rawData[i-1][j] - pg[j] + rawData[i+1][j] - ng[j]) / 2;
-        ar[j] = CLIP(r);
+        ar[j] = r;
       }
     }
   }
@@ -235,7 +235,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
     for (int j=x1, jx=0; jx<width; j+=skip, jx++) {
       if (ri->ISRED(i,j)) {
          // red is simple
-         ar[jx] = CLIP(r_mul * rawData[i][j]);
+         ar[jx] = r_mul * rawData[i][j];
          // blue: cross interpolation
          int b = 0;
          int n = 0;
@@ -256,7 +256,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
            n++;
          }
          b = g_mul*cg[j] + b / n;
-         ab[jx] = CLIP(b);
+         ab[jx] = b;
       }
       else {
         // linear R-G interp. horizontally
@@ -267,7 +267,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
           r = g_mul*cg[W-1] + r_mul*rawData[i][W-2] - g_mul*cg[W-2];
         else
           r = g_mul*cg[j] + (r_mul*rawData[i][j-1] - g_mul*cg[j-1] + r_mul*rawData[i][j+1] - g_mul*cg[j+1]) / 2;
-        ar[jx] = CLIP(r);
+        ar[jx] = r;
         // linear B-G interp. vertically
         int b;
         if (i==0)
@@ -276,7 +276,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
           b = g_mul*pg[j] + b_mul*rawData[H-2][j] - g_mul*cg[j];
         else
           b = g_mul*cg[j] + (b_mul*rawData[i-1][j] - g_mul*pg[j] + b_mul*rawData[i+1][j] - g_mul*ng[j]) / 2;
-        ab[jx] = CLIP(b);
+        ab[jx] = b;
       }
     }
   }
@@ -285,7 +285,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
     for (int j=x1, jx=0; jx<width; j+=skip, jx++) {
       if (ri->ISBLUE(i,j)) {
          // red is simple
-         ab[jx] = CLIP(b_mul*rawData[i][j]);
+         ab[jx] = b_mul*rawData[i][j];
          // blue: cross interpolation
          int r = 0;
          int n = 0;
@@ -307,7 +307,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
          }
          r = g_mul*cg[j] + r / n;
 
-         ar[jx] = CLIP(r);
+         ar[jx] = r;
       }
       else {
         // linear B-G interp. horizontally
@@ -318,7 +318,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
           b = g_mul*cg[W-1] + b_mul*rawData[i][W-2] - g_mul*cg[W-2];
         else
           b = g_mul*cg[j] + (b_mul*rawData[i][j-1] - g_mul*cg[j-1] + b_mul*rawData[i][j+1] - g_mul*cg[j+1]) / 2;
-        ab[jx] = CLIP(b);
+        ab[jx] = b;
         // linear R-G interp. vertically
         int r;
         if (i==0)
@@ -327,7 +327,7 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
           r = g_mul*pg[j] + r_mul*rawData[H-2][j] - g_mul*cg[j];
         else
           r = g_mul*cg[j] + (r_mul*rawData[i-1][j] - g_mul*pg[j] + r_mul*rawData[i+1][j] - g_mul*ng[j]) / 2;
-        ar[jx] = CLIP(r);
+        ar[jx] = r;
       }
     }
   }

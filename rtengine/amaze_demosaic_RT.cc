@@ -33,7 +33,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	//#define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-	//#define CLIP(x) LIM(x,0,65535)
 #define HCLIP(x) x //is this still necessary???
 	//MIN(clip_pt,x)
 
