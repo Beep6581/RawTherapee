@@ -905,7 +905,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 					indx = row*width + col;
 					c = FC(row,col);
 					 
-					rawData[row][col] = CLIP((int)(65535.0f*rgb[(rr)*TS+cc][c] + 0.5f));
+					rawData[row][col] = 65535.0f*rgb[(rr)*TS+cc][c] + 0.5f;
 					//image[indx][c] = CLIP((int)(65535.0*rgb[(rr)*TS+cc][c] + 0.5));//for dcraw implementation
 
 				} 

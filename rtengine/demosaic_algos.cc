@@ -425,7 +425,7 @@ void RawImageSource::hphd_green (float** hpmap) {
         
             double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
-            green[i][j] = CLIP((e2 * g2 + e4 * g4) / (e2 + e4));
+            green[i][j] = (e2 * g2 + e4 * g4) / (e2 + e4);
         }
         else if (hpmap[i][j]==2) { 
             int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) /2);
@@ -446,7 +446,7 @@ void RawImageSource::hphd_green (float** hpmap) {
         
             double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
         
-            green[i][j] = CLIP((e1 * g1 + e3 * g3) / (e1 + e3));
+            green[i][j] = (e1 * g1 + e3 * g3) / (e1 + e3);
         }
         else {
             int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) /2);
@@ -485,7 +485,7 @@ void RawImageSource::hphd_green (float** hpmap) {
         
             double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));            
 
-            green[i][j] = CLIP((e1*g1 + e2*g2 + e3*g3 + e4*g4) / (e1 + e2 + e3 + e4));
+            green[i][j] = (e1*g1 + e2*g2 + e3*g3 + e4*g4) / (e1 + e2 + e3 + e4);
         }
       }
     }
@@ -723,7 +723,7 @@ void RawImageSource::vng4_demosaic () {
 	t = pix[color];
 	if (c != color)
 	  t += (sum[c] - sum[color]) / num;
-	brow[2][col][c] = CLIP(t);
+	brow[2][col][c] = t;
       }
     }
     if (row > 3)				/* Write buffer to image */
@@ -1213,37 +1213,28 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 	// green pixels
 	for (int row = rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			int current = ( image[indx-1][1] + image[indx+1][1])/2;
-			bufferH[indx][1] = CLIP(current);
-			current = (image[indx+u][1] + image[indx-u][1])/2;
-			bufferV[indx][1] = CLIP(current);
+			bufferH[indx][1] = ( image[indx-1][1] + image[indx+1][1]) * 0.5;
+			bufferV[indx][1] = (image[indx+u][1] + image[indx-u][1])*0.5;
 		}
 	}
 	// red in blue pixel, blue in red pixel
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			int current = ( 4*bufferH[indx][1]
+			bufferH[indx][c] = ( 4*bufferH[indx][1]
 			                - bufferH[indx+u+1][1] - bufferH[indx+u-1][1] - bufferH[indx-u+1][1] - bufferH[indx-u-1][1]
-			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] )/4;
-			bufferH[indx][c] = CLIP(current);
-			    current = ( 4*bufferV[indx][1]
+			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
+			bufferV[indx][c] = ( 4*bufferV[indx][1]
 						    - bufferV[indx+u+1][1] - bufferV[indx+u-1][1] - bufferV[indx-u+1][1] - bufferV[indx-u-1][1]
-						    + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] )/4;
-			bufferV[indx][c] = CLIP(current);
-
+						    + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
 		}
 
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
-			int current = ( image[indx+1][c] + image[indx-1][c])/2;
-			bufferH[indx][c] = CLIP( current );
-			current = (2*bufferH[indx][1] - bufferH[indx+u][1] - bufferH[indx-u][1] + image[indx+u][d] + image[indx-u][d])/2;
-			bufferH[indx][d] = CLIP( current );
-			current = (2*bufferV[indx][1] - bufferV[indx+1][1] - bufferV[indx-1][1] + image[indx+1][c] + image[indx-1][c])/2;
-			bufferV[indx][c] = CLIP( current );
-			current = (image[indx+u][d] + image[indx-u][d])/2;
-			bufferV[indx][d] = CLIP( current );
+			bufferH[indx][c] = ( image[indx+1][c] + image[indx-1][c]) * 0.5;
+			bufferH[indx][d] = (2*bufferH[indx][1] - bufferH[indx+u][1] - bufferH[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
+			bufferV[indx][c] = (2*bufferV[indx][1] - bufferV[indx+1][1] - bufferV[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
+			bufferV[indx][d] = (image[indx+u][d] + image[indx-u][d]) * 0.5;
 		}
 
     // Decide green pixels
@@ -1283,19 +1274,16 @@ void RawImageSource::dcb_color(float (*image)[4], int x0, int y0)
 	// red in blue pixel, blue in red pixel
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			int current = ( 4*image[indx][1]
+			image[indx][c] = ( 4*image[indx][1]
 			                - image[indx+u+1][1] - image[indx+u-1][1] - image[indx-u+1][1] - image[indx-u-1][1]
-			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] )/4;
-			image[indx][c] = CLIP(current);
+			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
 		}
 
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
-			int current = (2*image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c])/2;
-			image[indx][c] = CLIP( current );
-			current = (2*image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d])/2;
-			image[indx][d] = CLIP( current );
+			image[indx][c] = (2*image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
+			image[indx][d] = (2*image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
 		}	
 }
 
@@ -1308,9 +1296,8 @@ void RawImageSource::dcb_hid2(float (*image)[4], int x0, int y0)
 	
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			int current = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1])/4 +
-						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c])/4;
-			image[indx][1]=CLIP(current);
+			image[indx][1] = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1])/4 +
+						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c]) * 0.25;
 		}
 	}	
 }
@@ -1404,8 +1391,8 @@ void RawImageSource::dcb_pp(float (*image)[4], int x0, int y0)
 			b1 /=8;
 			r1 = r1 + ( image[indx][1] - g1 );
 			b1 = b1 + ( image[indx][1] - g1 );
-			image[indx][0] = CLIP(r1);
-			image[indx][2] = CLIP(b1);
+			image[indx][0] = r1;
+			image[indx][2] = b1;
 		}
 }
 
@@ -1419,11 +1406,12 @@ void RawImageSource::dcb_correction2(float (*image)[4], int x0, int y0)
 	
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			int current = 4*image[indx][3] +
+			register float current = 4*image[indx][3] +
 						  2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
-			current = ((16-current)*((image[indx-1][1] + image[indx+1][1])/2 + image[indx][c] - (image[indx+2][c] + image[indx-2][c])/2) + current*((image[indx-u][1] + image[indx+u][1])/2 + image[indx][c] - (image[indx+v][c] + image[indx-v][c])/2))/16;
-			image[indx][1] = CLIP(current);
+			image[indx][1] = ((16.0-current)*((image[indx-1][1] + image[indx+1][1]) * 0.5 
+                + image[indx][c] - (image[indx+2][c] + image[indx-2][c]) * 0.5) 
+                + current*((image[indx-u][1] + image[indx+u][1]) * 0.5 + image[indx][c] - (image[indx+v][c] + image[indx-v][c]) * 0.5)) * 0.0625;
 		}
 	}
 }
@@ -1459,7 +1447,7 @@ void RawImageSource::dcb_refinement(float (*image)[4], int x0, int y0)
 
 			g2 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4]))))/3.0;
 
-			image[indx][1] = CLIP((2+image[indx][c])*(current*g1 + (16-current)*g2)/16.0);
+			image[indx][1] = (2.0+image[indx][c]) * (current*g1 + (16-current)*g2) * 0.0625;
 
 // get rid of the overshooted pixels
 		int min = MIN(image[indx+1+u][1], MIN(image[indx+1-u][1], MIN(image[indx-1+u][1], MIN(image[indx-1-u][1], MIN(image[indx-1][1], MIN(image[indx+1][1], MIN(image[indx-u][1], image[indx+u][1])))))));
@@ -1515,8 +1503,8 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
 
 	for(int row=rowMin; row<rowMax; row++)
 		for(int col=colMin,indx=row*CACHESIZE+col; col<colMax; col++,indx++){
-			image[indx][0]=CLIP(chroma[indx][0]+image[indx][1]);
-			image[indx][2]=CLIP(chroma[indx][1]+image[indx][1]);
+			image[indx][0] = chroma[indx][0] + image[indx][1];
+			image[indx][2] = chroma[indx][1] + image[indx][1];
 		}
 }
 

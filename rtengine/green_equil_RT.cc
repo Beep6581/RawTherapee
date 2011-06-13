@@ -186,7 +186,7 @@ void RawImageSource::green_equilibrate(float thresh)
 					col = cc + left;
 					//c = FC(row,col);
 					//image[row*width + col][c] = CLIP((int)(cfa[indx] + 0.5)); //for dcraw implementation
-					rawData[row][col] = CLIP(cfa[indx]);
+					rawData[row][col] = cfa[indx];
 				} 
 
 			// clean up

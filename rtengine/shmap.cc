@@ -25,14 +25,12 @@
 
 
 #undef MAXVAL
-#undef CLIP
 #undef MAX
 #undef MIN
 #undef SQR
 
 #undef THREAD_PRIORITY_NORMAL
 #define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 #define SQR(x) ((x)*(x))
 
 #define MAX(a,b) ((a)<(b)?(b):(a))
@@ -61,8 +59,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     // fill with luminance
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
-			int val = lumi[0]*img->r[i][j] + lumi[1]*img->g[i][j] + lumi[2]*img->b[i][j];
-			map[i][j] = CLIP(val);
+			map[i][j] = lumi[0]*img->r[i][j] + lumi[1]*img->g[i][j] + lumi[2]*img->b[i][j];
 		}
 #ifdef _OPENMP
 #pragma omp parallel
@@ -222,7 +219,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 					}*/
 				}
 			}
-			data_coarse[i][j]=CLIP((int)(val/norm));//low pass filter
+			data_coarse[i][j] = val/norm; // low pass filter
 			/*if (val<=0 || norm<=0)
 				printf("val=%f norm=%f \n",val,norm); */
 		}
