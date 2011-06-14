@@ -682,7 +682,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                 const float HighlightFac = 64 / (256-options.highlightThreshold);
 
                 #ifdef _OPENMP
-                #pragma omp for
+                #pragma omp parallel for
                 #endif
 				for (int i=0; i<tmp->get_height(); i++) {
                     guint8* curr = pix + i*pixRowStride;
@@ -702,7 +702,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 
                             if (changed) { 
                                 delta *= HighlightFac; 
-                                curr[0]=delta; curr[1]=delta; curr[2]=delta; 
+                                curr[0]=curr[1]=curr[2]=delta;
                             }
                         }
                         if (showcs) {
@@ -715,7 +715,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                                 
                             if (changed) {
                                 delta = 255 - (delta * ShawdowFac);
-                                curr[0]=delta; curr[1]=delta; curr[2]=delta; 
+                                curr[0]=curr[1]=curr[2]=delta; 
                             }
                         }
 
