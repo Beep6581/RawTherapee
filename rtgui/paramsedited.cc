@@ -446,6 +446,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.output)		    toEdit.icm.output 	    = mods.icm.output;
     if (raw.dmethod)        toEdit.raw.dmethod         = mods.raw.dmethod;
     if (raw.dcbEnhance)     toEdit.raw.dcb_enhance     = mods.raw.dcb_enhance;
+    if (raw.dcbIterations)  toEdit.raw.dcb_iterations  = mods.raw.dcb_iterations;
     if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
 	if (raw.caRed)          toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     if (raw.caBlue)         toEdit.raw.cablue          = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cablue + mods.raw.cablue : mods.raw.cablue;
