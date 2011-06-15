@@ -25,7 +25,7 @@ extern Glib::ustring argv0;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this), degAdd(false) {
+Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this) {
 
   rlistener = NULL;
 
@@ -99,10 +99,12 @@ void Rotate::setBatchMode (bool batchMode) {
     degree->showEditedCB ();
 }
 
-void Rotate::setAdjusterBehavior (bool brotadd) {
+void Rotate::setAdjusterBehavior (bool rotadd) {
 
-    if ((!degAdd && brotadd) || (degAdd && !brotadd))
-        degree->setLimits (-45, 45, 0.01, 0);
-    
-    degAdd = brotadd;
+	degree->setAddMode(rotadd);
+}
+
+void Rotate::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	degree->trimValue(pp->rotate.degree);
 }

@@ -209,3 +209,23 @@ void RAWExposure::setDefaults(const rtengine::procparams::ProcParams* defParams,
 		
 	}
 }
+
+void RAWExposure::setAdjusterBehavior (bool pexposadd, bool pexpreseradd, bool pexblackadd) {
+
+	PexPos->setAddMode(pexposadd);
+	PexPreser->setAddMode(pexpreseradd);
+	PexBlackzero->setAddMode(pexblackadd);
+	PexBlackone->setAddMode(pexblackadd);
+	PexBlacktwo->setAddMode(pexblackadd);
+	PexBlackthree->setAddMode(pexblackadd);
+}
+
+void RAWExposure::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	PexPos->trimValue(pp->raw.expos);
+	PexPreser->trimValue(pp->raw.preser);
+	PexBlackzero->trimValue(pp->raw.blackzero);
+	PexBlackone->trimValue(pp->raw.blackone);
+	PexBlacktwo->trimValue(pp->raw.blacktwo);
+	PexBlackthree->trimValue(pp->raw.blackthree);
+}

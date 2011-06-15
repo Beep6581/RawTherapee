@@ -233,22 +233,14 @@ void ShadowsHighlights::setBatchMode (bool batchMode) {
 
 void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd, bool lcadd) {
 
-    if (!hAdd && hadd)
-        highlights->setLimits (-100, 100, 1, 0);
-    else if (hAdd && !hadd)
-        highlights->setLimits (0, 100, 1, 0);
+	highlights->setAddMode(hadd);
+	shadows->setAddMode(sadd);
+	lcontrast->setAddMode(lcadd);
+}
 
-    if (!sAdd && sadd)
-        shadows->setLimits (-100, 100, 1, 0);
-    else if (sAdd && !sadd)
-        shadows->setLimits (0, 100, 1, 0);
+void ShadowsHighlights::trimValues (rtengine::procparams::ProcParams* pp) {
 
-    if (!lcAdd && lcadd)
-        lcontrast->setLimits (-100, 100, 1, 0);
-    else if (lcAdd && !lcadd)
-        lcontrast->setLimits (0, 100, 1, 0);
-    
-    hAdd = hadd;
-    sAdd = sadd;
-    lcAdd = lcadd;
+	highlights->trimValue(pp->sh.highlights);
+	shadows->trimValue(pp->sh.shadows);
+	lcontrast->trimValue(pp->sh.localcontrast);
 }

@@ -40,6 +40,8 @@ class ChMixer : public Gtk::VBox, public AdjusterListener, public FoldableToolPa
     void setBatchMode    (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void setAdjusterBehavior (bool rgbadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

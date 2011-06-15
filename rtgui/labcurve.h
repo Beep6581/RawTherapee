@@ -48,8 +48,6 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     bool lastACVal, lastELVal;
 	//%%%%%%%%%%%%%%%%
 
-    bool brAdd, contrAdd, satAdd;
-
   public:
 
     LCurve ();
@@ -59,7 +57,8 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
-    void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);   
+    void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);

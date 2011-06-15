@@ -30,7 +30,6 @@ class Rotate : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     Adjuster*           degree;
     Gtk::Button*        selectStraight;
     LensGeomListener*   rlistener;
-    bool                degAdd;
 
   public:
 
@@ -44,7 +43,8 @@ class Rotate : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void straighten (double deg);
 
     void adjusterChanged        (Adjuster* a, double newval);
-    void setAdjusterBehavior    (bool brotadd);
+    void setAdjusterBehavior    (bool rotadd);
+    void trimValues             (rtengine::procparams::ProcParams* pp);
     void selectStraightPressed  ();
     void setLensGeomListener    (LensGeomListener* l) { rlistener = l; }
 };

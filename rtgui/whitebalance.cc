@@ -29,7 +29,7 @@ extern Glib::ustring argv0;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL), wblistener(NULL), tempAdd(false), greenAdd (false) {
+WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL), wblistener(NULL) {
 
   Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
   hbox->show ();
@@ -114,8 +114,8 @@ void WhiteBalance::optChanged () {
         if (opt==0 && wbp) {
             double ctemp; double cgreen;
             wbp->getCamWB (ctemp, cgreen);
-            temp->setValue (tempAdd ? 0.0 : (int)ctemp);
-            green->setValue (greenAdd ? 0.0 : cgreen);
+            temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
+            green->setValue (green->getAddMode() ? 0.0 : cgreen);
             meth = M("TP_WBALANCE_CAMERA");
             if (batchMode) {
                 temp->setEditedState (UnEdited);
@@ -125,8 +125,8 @@ void WhiteBalance::optChanged () {
         else if (opt==1 && wbp) {
             double ctemp; double cgreen;
             wbp->getAutoWB (ctemp, cgreen);
-            temp->setValue (tempAdd ? 0.0 : (int)ctemp);
-            green->setValue (greenAdd ? 0.0 : cgreen);
+            temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
+            green->setValue (green->getAddMode() ? 0.0 : cgreen);
             meth = M("TP_WBALANCE_AUTO");
             if (batchMode) {
                 temp->setEditedState (UnEdited);
@@ -175,8 +175,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
             if (wbp) {
                 double ctemp; double cgreen;
                 wbp->getCamWB (ctemp, cgreen);
-                temp->setValue (tempAdd ? 0.0 : (int)ctemp);
-                green->setValue (greenAdd ? 0.0 : cgreen);
+                temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
+                green->setValue (green->getAddMode() ? 0.0 : cgreen);
             }
             opt = 0;
         }
@@ -185,8 +185,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
             if (wbp) {
                 double ctemp; double cgreen;
                 wbp->getAutoWB (ctemp, cgreen);
-                temp->setValue (tempAdd ? 0.0 : (int)ctemp);
-                green->setValue (greenAdd ? 0.0 : cgreen);
+                temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
+                green->setValue (green->getAddMode() ? 0.0 : cgreen);
             }
             opt = 1;
         }
@@ -230,14 +230,14 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp; double cgreen;
         wbp->getCamWB (ctemp, cgreen);
-        temp->setDefault (tempAdd ? 0 : (int)ctemp);
-        green->setDefault (greenAdd ? 0 : cgreen);
+        temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
+        green->setDefault (green->getAddMode() ? 0 : cgreen);
     }
     else if (wbp && defParams->wb.method == "Auto") {
         double ctemp; double cgreen;
         wbp->getAutoWB (ctemp, cgreen);
-        temp->setDefault (tempAdd ? 0 : (int)ctemp);
-        green->setDefault (greenAdd ? 0 : cgreen);
+        temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
+        green->setDefault (green->getAddMode() ? 0 : cgreen);
     }
     else if (defParams->wb.method == "Custom") {
         temp->setDefault (defParams->wb.temperature);
@@ -279,19 +279,14 @@ void WhiteBalance::setWB (int vtemp, double vgreen) {
     if (listener) 
         listener->panelChanged (EvWBTemp, Glib::ustring::compose("%1, %2", (int)temp->getValue(), Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), green->getValue())));
 }
-void WhiteBalance::setAdjusterBehavior (bool btempadd, bool bgreenadd) {
+void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd) {
 
-    if (!tempAdd && btempadd)
-        temp->setLimits (-4000, +4000, 1, 0);
-    else if (tempAdd && !btempadd)
-        temp->setLimits (MINTEMP, MAXTEMP, 1, 4750);
-
-    if (!greenAdd && bgreenadd)
-        green->setLimits (-1.0, +1.0, 0.001, 0);
-    else if (greenAdd && bgreenadd)
-        green->setLimits (MINGREEN, MAXGREEN, 0.001, 1.2);
-    
-    tempAdd = btempadd;
-    greenAdd = bgreenadd;
+	temp->setAddMode(tempadd);
+	green->setAddMode(greenadd);
 }
 
+void WhiteBalance::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	temp->trimValue(pp->wb.temperature);
+	green->trimValue(pp->wb.green);
+}

@@ -41,7 +41,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     Adjuster* contrast;
 	Adjuster* saturation;
 
-    bool expAdd,hlcompAdd,hlcompthreshAdd, blackAdd, shcompAdd, brAdd, contrAdd, satAdd, clipDirty, lastAuto;
+    bool clipDirty, lastAuto;
     sigc::connection autoconn;
     CurveEditorGroup* curveEditorG;
     DiagonalCurveEditor* shape;
@@ -54,11 +54,13 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
 
     ToneCurve ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void setBatchMode   (bool batchMode);
+    void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
+    void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+    void setBatchMode        (bool batchMode);
     void setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd);
+    void trimValues           (rtengine::procparams::ProcParams* pp);
+
 
     void adjusterChanged (Adjuster* a, double newval);
     void autolevels_toggled ();

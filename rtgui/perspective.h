@@ -28,7 +28,6 @@ class PerspCorrection : public Gtk::VBox, public AdjusterListener, public Foldab
   protected:
     Adjuster* horiz;
     Adjuster* vert;
-    bool      vAdd;
 
   public:
 
@@ -41,6 +40,7 @@ class PerspCorrection : public Gtk::VBox, public AdjusterListener, public Foldab
 
     void adjusterChanged (Adjuster* a, double newval);
     void setAdjusterBehavior (bool badd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

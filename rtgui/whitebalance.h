@@ -44,7 +44,6 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     WBProvider *wbp;
     SpotWBListener* wblistener;
     sigc::connection methconn;
-    bool tempAdd, greenAdd;
 
   public:
 
@@ -65,7 +64,8 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     void setSpotWBListener (SpotWBListener* l) { wblistener = l; }
     void setWB (int temp, double green);
     
-    void setAdjusterBehavior (bool btempadd, bool bgreenadd);
+    void setAdjusterBehavior (bool tempadd, bool greenadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

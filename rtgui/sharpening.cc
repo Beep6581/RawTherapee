@@ -447,15 +447,14 @@ void Sharpening::setBatchMode (bool batchMode) {
     method->append_text (M("GENERAL_UNCHANGED"));
 }
 
-void Sharpening::setAdjusterBehavior (bool bamountadd) {
+void Sharpening::setAdjusterBehavior (bool amountadd) {
 
-    if (!amountAdd && bamountadd) {
-		amount->setLimits (-100, 100, 1, 0);
-		damount->setLimits (-100, 100, 1, 0);
-	}
-	else if (amountAdd && !bamountadd) {
-		amount->setLimits (1, 1000, 1, 150);
-		damount->setLimits (0, 100, 1, 75);
-    }
-    amountAdd = bamountadd;
+	amount->setAddMode(amountadd);
+	damount->setAddMode(amountadd);
+}
+
+void Sharpening::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	amount->trimValue(pp->sharpening.amount);
+	damount->trimValue(pp->sharpening.deconvamount);
 }
