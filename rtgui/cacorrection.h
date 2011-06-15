@@ -28,7 +28,6 @@ class CACorrection : public Gtk::VBox, public AdjusterListener, public FoldableT
   protected:
     Adjuster* red;
     Adjuster* blue;
-    bool      vAdd;
 
   public:
 
@@ -41,6 +40,7 @@ class CACorrection : public Gtk::VBox, public AdjusterListener, public FoldableT
 
     void adjusterChanged (Adjuster* a, double newval);
     void setAdjusterBehavior (bool badd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

@@ -29,7 +29,6 @@ class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToo
   protected:
     Gtk::Button*   autoDistor;
     Adjuster* distor;
-    bool distAdd;
     sigc::connection    idConn;
     LensGeomListener * rlistener;
 
@@ -43,9 +42,10 @@ class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged     (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool bvadd);
-    void idPressed      ();
-    void setLensGeomListener    (LensGeomListener* l) { rlistener = l; }
+    void setAdjusterBehavior (bool vadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
+    void idPressed           ();
+    void setLensGeomListener (LensGeomListener* l) { rlistener = l; }
 };
 
 #endif

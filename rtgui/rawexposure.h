@@ -48,7 +48,9 @@ public:
     void setBatchMode   (bool batchMode);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void GreenChanged() ;
-	void adjusterChanged     (Adjuster* a, double newval);
+    void adjusterChanged     (Adjuster* a, double newval);
+    void setAdjusterBehavior (bool pexposadd, bool pexpreseradd, bool pexblackadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

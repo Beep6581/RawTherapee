@@ -25,7 +25,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this), expAdd(false),hlcompAdd(false),hlcompthreshAdd(false), blackAdd(false), shcompAdd(false), brAdd(false), contrAdd(false) {
+ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
 //----------- Auto Levels ----------------------------------
   abox = Gtk::manage (new Gtk::HBox ());
@@ -127,7 +127,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     hlcompr->setValue (pp->toneCurve.hlcompr);
     hlcomprthresh->setValue (pp->toneCurve.hlcomprthresh);
     shcompr->setValue (pp->toneCurve.shcompr);
-    if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+    if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     brightness->setValue (pp->toneCurve.brightness);
     contrast->setValue (pp->toneCurve.contrast);
 	saturation->setValue (pp->toneCurve.saturation);
@@ -228,7 +228,7 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvBrightness, costr);
     else if (a==black){
         listener->panelChanged (EvBlack, costr);
-        if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+        if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     }
     else if (a==contrast)
         listener->panelChanged (EvContrast, costr);
@@ -260,15 +260,15 @@ void ToneCurve::autolevels_toggled () {
     if (!batchMode && autolevels->get_active() && listener) {
         listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
         waitForAutoExp ();
-        if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+        if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     } 
     
     if (batchMode) {
         expcomp->setEditedState (UnEdited);
         black->setEditedState (UnEdited);
-        if (expAdd)
+        if (expcomp->getAddMode())
             expcomp->setValue (0);
-        if (blackAdd)
+        if (black->getAddMode())
             black->setValue (0);
         listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
     }
@@ -342,7 +342,7 @@ bool ToneCurve::autoExpComputed_ () {
     enableAll ();
     expcomp->setValue (nextExpcomp);
     black->setValue (nextBlack);
-    if (!blackAdd) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+    if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     enableListener ();
 
     return false;
@@ -370,33 +370,26 @@ void ToneCurve::setBatchMode (bool batchMode) {
 
 void ToneCurve::setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd) {
 
-    if ((!expAdd && expadd) || (expAdd && !expadd))
-        expcomp->setLimits (-5, 5, 0.01, 0);
-    if ((!hlcompAdd && hlcompadd) || (hlcompAdd && !hlcompadd))
-    	hlcompr->setLimits (0, 100, 1, 0);
-    if ((!hlcompthreshAdd && hlcompthreshadd) || (hlcompthreshAdd && !hlcompthreshadd))
-        hlcomprthresh->setLimits (0, 100, 1, 0);
-    if (!blackAdd && blackadd)
-        black->setLimits (0, 16384, 1, 0);
-    else if (blackAdd && !blackadd)
-        black->setLimits (0, 32768, 1, 0);
-    if ((!shcompAdd && shcompadd) || (shcompAdd && !shcompadd))
-    	shcompr->setLimits (0, 100, 1, 0);
-    if ((!brAdd && bradd) || (brAdd && !bradd))
-        brightness->setLimits (-100, 100, 1, 0);
-    if ((!contrAdd && contradd) || (contrAdd && !contradd))
-        contrast->setLimits (-100, 100, 1, 0);
-	if ((!satAdd && satadd) || (satAdd && !satadd))
-        saturation->setLimits (-100, 100, 1, 0);
+	expcomp->setAddMode(expadd);
+	hlcompr->setAddMode(hlcompadd);
+	hlcomprthresh->setAddMode(hlcompthreshadd);
+	brightness->setAddMode(bradd);
+	black->setAddMode(blackadd);
+	shcompr->setAddMode(shcompadd);
+	contrast->setAddMode(contradd);
+	saturation->setAddMode(satadd);
+}
 
-    expAdd = expadd;
-    hlcompAdd = hlcompadd;
-    hlcompthreshAdd = hlcompthreshadd;
-    blackAdd = blackadd;
-    shcompAdd = shcompadd;
-    brAdd = bradd;
-    contrAdd = contradd;
-	satAdd = satadd;
+void ToneCurve::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	expcomp->trimValue(pp->toneCurve.expcomp);
+	hlcompr->trimValue(pp->toneCurve.hlcompr);
+	hlcomprthresh->trimValue(pp->toneCurve.hlcomprthresh);
+	brightness->trimValue(pp->toneCurve.brightness);
+	black->trimValue(pp->toneCurve.black);
+	shcompr->trimValue(pp->toneCurve.shcompr);
+	contrast->trimValue(pp->toneCurve.contrast);
+	saturation->trimValue(pp->toneCurve.saturation);
 }
 
 void ToneCurve::updateCurveBackgroundHistogram (LUTu & hist) {

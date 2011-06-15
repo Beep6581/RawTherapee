@@ -136,3 +136,15 @@ void PreProcess::hotDeadPixelChanged ()
     if (listener)
         listener->panelChanged (EvPreProcessHotDeadPixel, hotDeadPixel->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
 }
+
+void PreProcess::setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd) {
+
+   	lineDenoise->setAddMode(linedenoiseadd);
+   	greenEqThreshold->setAddMode(greenequiladd);
+}
+
+void PreProcess::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	lineDenoise->trimValue(pp->raw.linenoise);
+	greenEqThreshold->trimValue(pp->raw.greenthresh);
+}

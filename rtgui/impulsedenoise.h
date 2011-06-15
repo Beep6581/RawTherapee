@@ -31,7 +31,6 @@ class ImpulseDenoise : public Gtk::VBox, public AdjusterListener, public Foldabl
     Gtk::CheckButton* enabled;
     bool lastEnabled;
     sigc::connection enaConn;
-	bool edgetolAdd;
 
   public:
 
@@ -45,7 +44,8 @@ class ImpulseDenoise : public Gtk::VBox, public AdjusterListener, public Foldabl
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged ();
 
-    void setAdjusterBehavior (bool bedgetoladd);
+    void setAdjusterBehavior (bool threshadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

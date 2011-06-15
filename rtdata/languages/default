@@ -857,6 +857,7 @@ TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
 TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
+TP_RAWEXPOS_BLACKS;Black Levels
 TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
 TP_RAWEXPOS_BLACKONE;Black Level: Red
 TP_RAWEXPOS_BLACKTWO;Black Level: Blue

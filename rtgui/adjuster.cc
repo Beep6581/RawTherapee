@@ -31,6 +31,12 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   afterReset = false;
   blocked = false;
 
+  vMin = vmin;
+  vMax = vmax;
+  vStep = vstep;
+  initialDefaultVal = vdefault;
+  addMode = false;
+
   // TODO: let the user chose the default value of Adjuster::delay, for slow machines
   delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (usefull for the RAW editor tab)
 
@@ -74,11 +80,12 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   setLimits (vmin, vmax, vstep, vdefault);
   
   defaultVal = shapeValue (vdefault);
+  initialDefaultVal = shapeValue (vdefault);
   editedState = defEditedState = Irrelevant;
 
   sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
   spinChange = spin->signal_value_changed().connect ( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
-  reset->signal_clicked().connect( sigc::mem_fun(*this, &Adjuster::resetPressed) );
+  reset->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::resetPressed) );
   slider->set_update_policy (Gtk::UPDATE_CONTINUOUS);
   
   show_all ();
@@ -102,7 +109,7 @@ void Adjuster::setDefaultEditedState (EditedState eState) {
     defEditedState = eState;
 }
 
-void Adjuster::resetPressed () {
+void Adjuster::resetPressed (GdkEventButton* event) {
 
     if (editedState!=Irrelevant) {
         editedState = defEditedState;
@@ -114,7 +121,12 @@ void Adjuster::resetPressed () {
         refreshLabelStyle ();
     }
 	afterReset = true;
-    slider->set_value (defaultVal);
+	if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
+		// CTRL pressed : resetting to current default value
+		slider->set_value (defaultVal);
+	else
+		// no modifier key or addMode=true : resetting to initial default value
+		slider->set_value (initialDefaultVal);
 }
 
 double Adjuster::shapeValue (double a) {
@@ -135,9 +147,26 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
   slider->set_increments (vstep, 2.0*vstep);
   slider->set_range (vmin, vmax);
   slider->set_value (shapeValue(vdefault));
-  defaultVal = shapeValue (vdefault);
+  //defaultVal = shapeValue (vdefault);
   sliderChange.block (false);
   spinChange.block (false);
+}
+
+void Adjuster::setAddMode(bool addM) {
+	if (addM != addMode) {
+		// Switching the Adjuster to the new mode
+		if (addM) {
+			// Switching to the relative mode
+			double range = -vMin + vMax;
+			if (range < 0.) range = -range;
+			setLimits(-range, range, vStep, 0);
+		}
+		else {
+			// Switching to the absolute mode
+			setLimits(vMin, vMax, vStep, defaultVal);
+		}
+		addMode = addM;
+	}
 }
 
 void Adjuster::setAdjusterListener (AdjusterListener* alistener) {
@@ -209,16 +238,19 @@ void Adjuster::setValue (double a) {
   afterReset = false;
 }
 
+// return the value trimmed to the limits at construction time
 double Adjuster::getValue () {
 
   return spin->get_value ();
 }
 
+// return the value trimmed to the limits at construction time
 int Adjuster::getIntValue () {
 
   return spin->get_value_as_int ();
 }
 
+// method only used by the history manager
 Glib::ustring Adjuster::getTextValue () {
 
   return spin->get_text ();
@@ -284,3 +316,25 @@ void Adjuster::editedToggled () {
     if (adjusterListener && !blocked)
         adjusterListener->adjusterChanged (this, spin->get_value ());
 }
+
+double Adjuster::trimValue (double& val) {
+
+    if      (val > vMax) val = vMax;  // shapeValue(vMax) ?
+    else if (val < vMin) val = vMin;  // shapeValue(vMin) ?
+    return val;
+}
+
+int Adjuster::trimValue (int& val) {
+
+    if      (val > (int)vMax) val = (int)vMax;  // shapeValue(vMax) ?
+    else if (val < (int)vMin) val = (int)vMin;  // shapeValue(vMin) ?
+    return val;
+}
+
+float Adjuster::trimValue (float& val) {
+
+    if      (val > (float)vMax) val = (float)vMax;  // shapeValue(vMax) ?
+    else if (val < (float)vMin) val = (float)vMin;  // shapeValue(vMin) ?
+    return val;
+}
+

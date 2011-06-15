@@ -32,7 +32,6 @@ class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolP
     bool lastEnabled;
     sigc::connection enaConn;
 	bool edges;
-	bool thresholdtolAdd;
 
   public:
 
@@ -46,7 +45,6 @@ class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolP
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged ();
 
-    void setAdjusterBehavior (bool bthresholdtoladd);
 };
 
 #endif

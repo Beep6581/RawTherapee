@@ -38,7 +38,6 @@ Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
     distor->setAdjusterListener (this); 
     distor->show();
     pack_start (*distor);
-    distAdd = false;
 }
 
 void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited) {
@@ -81,14 +80,6 @@ void Distortion::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
 }
 
-void Distortion::setAdjusterBehavior (bool bvadd) {
-
-    if ((!distAdd && bvadd) || (distAdd && !bvadd))
-        distor->setLimits (-0.5, 0.5, 0.001, 0);
-    
-    distAdd = bvadd;
-}
-
 void Distortion::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
@@ -106,4 +97,14 @@ void Distortion::idPressed () {
             adjusterChanged (distor, new_amount);
         }
     }
+}
+
+void Distortion::setAdjusterBehavior (bool vadd) {
+
+	distor->setAddMode(vadd);
+}
+
+void Distortion::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	distor->trimValue(pp->distortion.amount);
 }

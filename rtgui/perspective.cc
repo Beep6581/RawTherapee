@@ -21,7 +21,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PerspCorrection::PerspCorrection () : Gtk::VBox(), FoldableToolPanel(this), vAdd(false) {
+PerspCorrection::PerspCorrection () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 1, 0));
 	horiz->setAdjusterListener (this);
@@ -84,12 +84,14 @@ void PerspCorrection::adjusterChanged (Adjuster* a, double newval) {
 
 void PerspCorrection::setAdjusterBehavior (bool badd) {
 
-    if ((!vAdd && badd) || (vAdd && !badd)) {
-//    	horiz->setLimits (-0.005, 0.005, 0.0001, 0);
-//    	vert->setLimits (-0.005, 0.005, 0.0001, 0);
-    }
+	horiz->setAddMode(badd);
+	vert->setAddMode(badd);
+}
 
-    vAdd = badd;
+void PerspCorrection::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	horiz->trimValue(pp->perspective.horizontal);
+	vert->trimValue(pp->perspective.vertical);
 }
 
 void PerspCorrection::setBatchMode (bool batchMode) {
