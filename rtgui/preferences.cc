@@ -136,6 +136,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     // fill model
     Gtk::TreeModel::iterator mi, ci;
 
+    /*
+     *   The TRUE/FALSE values of appendBehavList are replaced by the one defined in options.cc,
+     */
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_EXPOSURE_LABEL"));
     appendBehavList (mi, M("TP_EXPOSURE_EXPCOMP"), ADDSET_TC_EXPCOMP, false);
@@ -168,9 +171,18 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     //appendBehavList (mi, M("TP_LUMADENOISE_EDGETOLERANCE"), ADDSET_LD_EDGETOLERANCE, true);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_DIRPYRDENOISE_LABEL"));
+    appendBehavList (mi, M("TP_DIRPYRDENOISE_LUMA")+", "+M("TP_DIRPYRDENOISE_CHROMA"), ADDSET_DIRPYRDN_CHLUM, true);
+    appendBehavList (mi, M("TP_DIRPYRDENOISE_GAMMA"), ADDSET_DIRPYRDN_GAMMA, true);
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_WBALANCE_LABEL"));
     appendBehavList (mi, M("TP_WBALANCE_TEMPERATURE"), ADDSET_WB_TEMPERATURE, true);
     appendBehavList (mi, M("TP_WBALANCE_GREEN"), ADDSET_WB_GREEN, true);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_CHMIXER_LABEL"));
+    appendBehavList (mi, M("TP_CHMIXER_RED")+", "+M("TP_CHMIXER_GREEN")+", "+M("TP_CHMIXER_BLUE"), ADDSET_CHMIXER, false);
 
     //mi = behModel->append ();
     //mi->set_value (behavColumns.label, M("TP_COLORBOOST_LABEL"));
@@ -200,6 +212,24 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_VIGNETTING_LABEL"));
     appendBehavList (mi, M("TP_VIGNETTING_AMOUNT"), ADDSET_VIGN_AMOUNT, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_DIRPYREQUALIZER_LABEL"));
+    appendBehavList (mi, M("TP_EXPOSURE_CONTRAST")+", "+M("TP_DIRPYREQUALIZER_THRESHOLD"), ADDSET_DIRPYREQ, true);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_PREPROCESS_LABEL"));
+    appendBehavList (mi, M("TP_PREPROCESS_GREENEQUIL"), ADDSET_PREPROCESS_GREENEQUIL, false);
+    appendBehavList (mi, M("TP_PREPROCESS_LINEDENOISE"), ADDSET_PREPROCESS_LINEDENOISE, true);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_EXPOSCORR_LABEL"));
+    appendBehavList (mi, M("TP_RAWEXPOS_LINEAR"), ADDSET_RAWEXPOS_LINEAR, false);
+    appendBehavList (mi, M("TP_RAWEXPOS_PRESER"), ADDSET_RAWEXPOS_PRESER, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_CHROMATABERR_LABEL"));
+    appendBehavList (mi, M("TP_RAWCACORR_CARED")+", "+M("TP_RAWCACORR_CABLUE"), ADDSET_RAWCACORR, true);
 
     behTreeView->expand_all ();
 

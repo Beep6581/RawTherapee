@@ -52,6 +52,7 @@ class ToolPanel {
                 void setListener (ToolPanelListener* tpl) { listener = tpl; }
         virtual void read        (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
         virtual void write       (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
+        virtual void trimValues  (rtengine::procparams::ProcParams* pp) { return; }
         virtual void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL) {}
         
                 void disableListener () { if (tmp==NULL) tmp = listener; listener = NULL; }

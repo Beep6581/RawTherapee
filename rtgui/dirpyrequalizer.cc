@@ -223,4 +223,14 @@ void DirPyrEqualizer::lumacontrastMinusPressed () {
     }
 }
 
+void DirPyrEqualizer::setAdjusterBehavior (bool multiplieradd) {
 
+	for (int i=0; i<5; i++)
+		multiplier[i]->setAddMode(multiplieradd);
+}
+
+void DirPyrEqualizer::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	for (int i=0; i<5; i++)
+		multiplier[i]->trimValue(pp->dirpyrequalizer.mult[i]);
+}

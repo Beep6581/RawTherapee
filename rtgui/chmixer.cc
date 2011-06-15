@@ -149,3 +149,21 @@ void ChMixer::setBatchMode (bool batchMode) {
         blue[i]->showEditedCB ();
     }
 }
+
+void ChMixer::setAdjusterBehavior (bool rgbadd) {
+
+	for (int i=0; i<3; i++) {
+		red[i]->setAddMode(rgbadd);
+		green[i]->setAddMode(rgbadd);
+		blue[i]->setAddMode(rgbadd);
+	}
+}
+
+void ChMixer::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	for (int i=0; i<3; i++) {
+		red[i]->trimValue(pp->chmixer.red[i]);
+		green[i]->trimValue(pp->chmixer.green[i]);
+		blue[i]->trimValue(pp->chmixer.blue[i]);
+	}
+}

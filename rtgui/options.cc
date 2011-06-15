@@ -132,9 +132,45 @@ void Options::setDefaults () {
     multiDisplayMode = 0;
 
     cutOverlayBrush = std::vector<double> (4);
-    cutOverlayBrush[3] = 0.667;
+    cutOverlayBrush[3] = 0.667;  // :-p
 
-    int babehav[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0};
+    int babehav[] = {
+			1,  // ADDSET_TC_EXPCOMP
+			1,  // ADDSET_TC_BRIGHTNESS
+			1,  // ADDSET_TC_BLACKLEVEL
+			1,  // ADDSET_TC_CONTRAST
+			1,  // ADDSET_SH_HIGHLIGHTS
+			1,  // ADDSET_SH_SHADOWS
+			1,  // ADDSET_SH_LOCALCONTRAST
+			1,  // ADDSET_LC_BRIGHTNESS
+			1,  // ADDSET_LC_CONTRAST
+			0,  // ADDSET_SHARP_AMOUNT
+			0,  // ADDSET_LD_EDGETOLERANCE
+			1,  // ADDSET_WB_TEMPERATURE
+			1,  // ADDSET_WB_GREEN
+			0,  // ADDSET_CBOOST_AMOUNT
+			0,  // ADDSET_CS_BLUEYELLOW
+			0,  // ADDSET_CS_GREENMAGENTA
+			0,  // ADDSET_ROTATE_DEGREE
+			0,  // ADDSET_DIST_AMOUNT
+			0,  // ADDSET_PERSPECTIVE
+			0,  // ADDSET_CA
+			1,  // ADDSET_VIGN_AMOUNT
+			1,  // ADDSET_LC_SATURATION
+			1,  // ADDSET_TC_SATURATION
+			1,  // ADDSET_TC_HLCOMPAMOUNT
+			0,  // ADDSET_TC_HLCOMPTHRESH
+			1,  // ADDSET_TC_SHCOMP
+			1,  // ADDSET_DIRPYREQ
+			0,  // ADDSET_DIRPYRDN_CHLUM
+			0,  // ADDSET_DIRPYRDN_GAMMA
+			1,  // ADDSET_CHMIXER
+			1,  // ADDSET_PREPROCESS_GREENEQUIL
+			0,  // ADDSET_PREPROCESS_LINEDENOISE
+			0,  // ADDSET_RAWCACORR
+			1,  // ADDSET_RAWEXPOS_LINEAR
+			1   // ADDSET_RAWEXPOS_PRESER
+	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.dualThreadEnabled = true;

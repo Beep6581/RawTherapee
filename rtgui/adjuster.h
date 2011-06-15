@@ -44,13 +44,18 @@ class Adjuster : public Gtk::VBox {
     sigc::connection sliderChange;
     sigc::connection editedChange;
     bool listenerReady;
-    double defaultVal;
+    double defaultVal;			// current default value (it can change when switching from ADD or SET mode)
+    double initialDefaultVal;	// default value at construction time
     EditedState editedState;
     EditedState defEditedState;
     int digits;
     Gtk::CheckButton* editedCheckBox;
 	bool afterReset;
     bool blocked;
+    bool addMode;
+    double vMin;
+    double vMax;
+    double vStep;
 
     double shapeValue (double a);
     void   refreshLabelStyle ();
@@ -76,12 +81,16 @@ class Adjuster : public Gtk::VBox {
     void showEditedCB ();
     void block(bool isBlocked) { blocked = isBlocked; }
     
-
+    void setAddMode(bool addM);
+    bool getAddMode() { return addMode; };
     void spinChanged ();
     void sliderChanged ();
     bool notifyListener ();
-    void resetPressed ();
+    void resetPressed (GdkEventButton* event);
     void editedToggled ();
+    double trimValue (double& val);
+    float trimValue (float& val);
+    int trimValue (int& val);
 };
 
 #endif

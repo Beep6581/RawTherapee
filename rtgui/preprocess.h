@@ -46,6 +46,8 @@ class PreProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
 
     void adjusterChanged     (Adjuster* a, double newval);
     void hotDeadPixelChanged();
+    void setAdjusterBehavior (bool linedenoiseadd, bool greenequiladd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

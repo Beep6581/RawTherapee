@@ -69,8 +69,13 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
         ProcParams newParams;
         for (int i=0; i<selected.size(); i++) {
             newParams = initialPP[i];
-            pparamsEdited.combine (newParams, pparams);
-            selected[i]->setProcParams (newParams, BATCHEDITOR, true);
+            pparamsEdited.combine (newParams, pparams, selected.size()==1);
+
+    		// trim new adjuster's values to the adjuster's limits
+    		for (unsigned int j=0; j<toolPanels.size(); j++)
+    			toolPanels[j]->trimValues (&newParams);
+
+    		selected[i]->setProcParams (newParams, BATCHEDITOR, true);
         }
     }
     for (int i=0; i<paramcListeners.size(); i++)
@@ -90,18 +95,6 @@ void BatchToolPanelCoordinator::initSession () {
 
     pparamsEdited.initFrom (initialPP);
 
-/*    curve->setAdjusterBehavior (false, false, false, false);
-    whitebalance->setAdjusterBehavior (false, false);
-    vignetting->setAdjusterBehavior (false);
-    rotate->setAdjusterBehavior (false);
-    distortion->setAdjusterBehavior (false);
-    cacorrection->setAdjusterBehavior (false, false);
-    colorshift->setAdjusterBehavior (false, false);
-    colorboost->setAdjusterBehavior (false);
-    lumadenoise->setAdjusterBehavior (false);
-    sharpening->setAdjusterBehavior (false);
-    shadowshighlights->setAdjusterBehavior (false, false, false);
-*/
     crop->setDimensions (100000, 100000);
 
 /*    if (selected.size()>0) {
@@ -117,64 +110,108 @@ void BatchToolPanelCoordinator::initSession () {
 
     if (selected.size()>0) {
 
-        pparams = selected[0]->getProcParams ();
-        coarse->initBatchBehavior ();
+		// The first selected image (in the thumbnail list, not the click list) is used to populate the EditorPanel and set the default values
+		pparams = selected[0]->getProcParams ();
 
-        curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
-        lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_SATURATION]);
-        whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
-        vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
-        rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
-        distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
-        perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
-        cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
-        //colorshift->setAdjusterBehavior (options.baBehav[ADDSET_CS_BLUEYELLOW], options.baBehav[ADDSET_CS_GREENMAGENTA]);
-        //colorboost->setAdjusterBehavior (options.baBehav[ADDSET_CBOOST_AMOUNT]);
-        //lumadenoise->setAdjusterBehavior (options.baBehav[ADDSET_LD_EDGETOLERANCE]);
-        sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
-        shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
-        
-        if (options.baBehav[ADDSET_TC_EXPCOMP])  pparams.toneCurve.expcomp = 0;
-        if (options.baBehav[ADDSET_TC_HLCOMPAMOUNT])  pparams.toneCurve.hlcompr = 0;
-        if (options.baBehav[ADDSET_TC_HLCOMPTHRESH])  pparams.toneCurve.hlcomprthresh = 0;
-        if (options.baBehav[ADDSET_TC_BRIGHTNESS])  pparams.toneCurve.brightness = 0;
-        if (options.baBehav[ADDSET_TC_BLACKLEVEL])  pparams.toneCurve.black = 0;
-        if (options.baBehav[ADDSET_TC_SHCOMP])  pparams.toneCurve.shcompr = 0;
-        if (options.baBehav[ADDSET_TC_CONTRAST])  pparams.toneCurve.contrast = 0;
+		coarse->initBatchBehavior ();
 
-        if (options.baBehav[ADDSET_SH_HIGHLIGHTS])  pparams.sh.highlights = 0;
-        if (options.baBehav[ADDSET_SH_SHADOWS])  pparams.sh.shadows = 0;
-        if (options.baBehav[ADDSET_SH_LOCALCONTRAST])  pparams.sh.localcontrast = 0;
+		if (selected.size()==1) {
 
-        if (options.baBehav[ADDSET_LC_BRIGHTNESS])  pparams.labCurve.brightness = 0;
-        if (options.baBehav[ADDSET_LC_CONTRAST])  pparams.labCurve.contrast = 0;
-		if (options.baBehav[ADDSET_LC_SATURATION])  pparams.labCurve.saturation = 0;
+			curve->setAdjusterBehavior (false, false, false, false, false, false, false, false);
+			lcurve->setAdjusterBehavior (false, false, false);
+			whitebalance->setAdjusterBehavior (false, false);
+			vignetting->setAdjusterBehavior (false);
+			rotate->setAdjusterBehavior (false);
+			distortion->setAdjusterBehavior (false);
+			perspective->setAdjusterBehavior (false);
+			cacorrection->setAdjusterBehavior (false);
+			//colorshift->setAdjusterBehavior (false, false);
+			//colorboost->setAdjusterBehavior (false);
+			//lumadenoise->setAdjusterBehavior (false);
+			sharpening->setAdjusterBehavior (false);
+			chmixer->setAdjusterBehavior (false);
+			shadowshighlights->setAdjusterBehavior (false, false, false);
+			dirpyrequalizer->setAdjusterBehavior (false);
+			dirpyrdenoise->setAdjusterBehavior (false, false);
+			preprocess->setAdjusterBehavior (false, false);
+			rawcacorrection->setAdjusterBehavior (false);
+			rawexposure->setAdjusterBehavior (false, false);
+		}
+		else {
 
-        if (options.baBehav[ADDSET_SHARP_AMOUNT])  pparams.sharpening.amount = 0;
-        if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
+			curve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
+			lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_SATURATION]);
+			whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
+			vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
+			rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
+			distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
+			perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
+			cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
+			//colorshift->setAdjusterBehavior (options.baBehav[ADDSET_CS_BLUEYELLOW], options.baBehav[ADDSET_CS_GREENMAGENTA]);
+			//colorboost->setAdjusterBehavior (options.baBehav[ADDSET_CBOOST_AMOUNT]);
+			//lumadenoise->setAdjusterBehavior (options.baBehav[ADDSET_LD_EDGETOLERANCE]);
+			sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
+			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER]);
+			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
+			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ]);
+			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_CHLUM], options.baBehav[ADDSET_DIRPYRDN_GAMMA]);
+			preprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
+			rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
+			rawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_LINEAR], options.baBehav[ADDSET_RAWEXPOS_PRESER]);
 
-        if (options.baBehav[ADDSET_WB_TEMPERATURE])  pparams.wb.temperature = 0;
-        if (options.baBehav[ADDSET_WB_GREEN])  pparams.wb.green = 0;
+			if (options.baBehav[ADDSET_TC_EXPCOMP])  pparams.toneCurve.expcomp = 0;
+			if (options.baBehav[ADDSET_TC_HLCOMPAMOUNT])  pparams.toneCurve.hlcompr = 0;
+			if (options.baBehav[ADDSET_TC_HLCOMPTHRESH])  pparams.toneCurve.hlcomprthresh = 0;
+			if (options.baBehav[ADDSET_TC_BRIGHTNESS])  pparams.toneCurve.brightness = 0;
+			if (options.baBehav[ADDSET_TC_BLACKLEVEL])  pparams.toneCurve.black = 0;
+			if (options.baBehav[ADDSET_TC_SHCOMP])  pparams.toneCurve.shcompr = 0;
+			if (options.baBehav[ADDSET_TC_CONTRAST])  pparams.toneCurve.contrast = 0;
 
-        if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
+			if (options.baBehav[ADDSET_SH_HIGHLIGHTS])  pparams.sh.highlights = 0;
+			if (options.baBehav[ADDSET_SH_SHADOWS])  pparams.sh.shadows = 0;
+			if (options.baBehav[ADDSET_SH_LOCALCONTRAST])  pparams.sh.localcontrast = 0;
 
-        if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
-        if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
+			if (options.baBehav[ADDSET_LC_BRIGHTNESS])  pparams.labCurve.brightness = 0;
+			if (options.baBehav[ADDSET_LC_CONTRAST])  pparams.labCurve.contrast = 0;
+			if (options.baBehav[ADDSET_LC_SATURATION])  pparams.labCurve.saturation = 0;
 
-        if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
-        if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;
-        if (options.baBehav[ADDSET_PERSPECTIVE])  pparams.perspective.horizontal = pparams.perspective.vertical = 0;
-        if (options.baBehav[ADDSET_CA])  pparams.cacorrection.red = 0;
-        if (options.baBehav[ADDSET_CA])  pparams.cacorrection.blue = 0;
-        if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;
+			if (options.baBehav[ADDSET_SHARP_AMOUNT])  pparams.sharpening.amount = 0;
+			if (options.baBehav[ADDSET_CHMIXER]) for (int i=0; i<3; i++) pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
+			if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 
-        for (int i=0; i<toolPanels.size(); i++) {
-            toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
-            toolPanels[i]->read (&pparams, &pparamsEdited);
-        }
-        for (int i=0; i<paramcListeners.size(); i++)
-	  paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M("BATCH_PROCESSING"), &pparamsEdited);
-    }
+			if (options.baBehav[ADDSET_WB_TEMPERATURE])  pparams.wb.temperature = 0;
+			if (options.baBehav[ADDSET_WB_GREEN])  pparams.wb.green = 0;
+
+			if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
+
+			if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
+			if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
+
+			if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
+			if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;
+			if (options.baBehav[ADDSET_PERSPECTIVE])  pparams.perspective.horizontal = pparams.perspective.vertical = 0;
+			if (options.baBehav[ADDSET_CA])  pparams.cacorrection.red = 0;
+			if (options.baBehav[ADDSET_CA])  pparams.cacorrection.blue = 0;
+			if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;
+
+			if (options.baBehav[ADDSET_DIRPYREQ]) for (int i=0; i<5; i++) pparams.dirpyrequalizer.mult[i] = 0;
+			if (options.baBehav[ADDSET_DIRPYRDN_CHLUM])  pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;
+			if (options.baBehav[ADDSET_DIRPYRDN_GAMMA])  pparams.dirpyrDenoise.gamma = 0;
+
+			if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL])  pparams.raw.greenthresh = 0;
+			if (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE])  pparams.raw.linenoise = 0;
+			if (options.baBehav[ADDSET_RAWCACORR])  pparams.raw.cablue = pparams.raw.cared = 0;
+			if (options.baBehav[ADDSET_RAWEXPOS_LINEAR])  pparams.raw.expos = 0;
+			if (options.baBehav[ADDSET_RAWEXPOS_PRESER])  pparams.raw.preser = 0;
+		}
+
+		for (int i=0; i<toolPanels.size(); i++) {
+			toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
+			toolPanels[i]->read (&pparams, &pparamsEdited);
+		}
+		for (int i=0; i<paramcListeners.size(); i++)
+			paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M("BATCH_PROCESSING"), &pparamsEdited);
+	}
 }
 
 void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr) {
@@ -202,7 +239,14 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
     ProcParams newParams;
     for (int i=0; i<selected.size(); i++) {
         newParams = initialPP[i];
-        pparamsEdited.combine (newParams, pparams);
+        // If only one file is selected, slider's addMode has been set to false, and hence the behave
+        // like in SET mode like in an editor ; that's why we force the combination to the SET mode too
+        pparamsEdited.combine (newParams, pparams, selected.size()==1);
+
+		// trim new adjuster's values to the adjuster's limits
+		for (unsigned int j=0; j<toolPanels.size(); j++)
+			toolPanels[j]->trimValues (&newParams);
+
         selected[i]->setProcParams (newParams, BATCHEDITOR, false);
     }
 
@@ -255,7 +299,7 @@ void BatchToolPanelCoordinator::profileChange  (const ProcParams *nparams, rteng
     ProcParams newParams;
     for (int i=0; i<selected.size(); i++) {
         newParams = initialPP[i];
-        pparamsEdited.combine (newParams, pparams);
+        pparamsEdited.combine (newParams, pparams, true);
         selected[i]->setProcParams (newParams, BATCHEDITOR, false);
     }
 
