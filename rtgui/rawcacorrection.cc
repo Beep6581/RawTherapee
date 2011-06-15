@@ -157,3 +157,15 @@ void RAWCACorr::caCorrectionChanged()
     if (listener)
         listener->panelChanged (EvPreProcessAutoCA, caAutocorrect->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
 }
+
+void RAWCACorr::setAdjusterBehavior (bool caadd) {
+
+	caRed->setAddMode(caadd);
+	caBlue->setAddMode(caadd);
+}
+
+void RAWCACorr::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	caRed->trimValue(pp->raw.cared);
+	caBlue->trimValue(pp->raw.cablue);
+}

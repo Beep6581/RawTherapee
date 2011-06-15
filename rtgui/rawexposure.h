@@ -40,6 +40,8 @@ public:
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 
     void adjusterChanged     (Adjuster* a, double newval);
+    void setAdjusterBehavior (bool pexposadd, bool pexpreseradd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

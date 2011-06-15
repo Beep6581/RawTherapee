@@ -27,7 +27,6 @@ class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToo
 
   protected:
     Adjuster* distor;
-    bool distAdd;
 
   public:
 
@@ -39,7 +38,8 @@ class Distortion : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged     (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool bvadd);
+    void setAdjusterBehavior (bool vadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

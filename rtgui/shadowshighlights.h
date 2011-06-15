@@ -34,7 +34,6 @@ class ShadowsHighlights : public Gtk::VBox, public AdjusterListener, public Fold
     Adjuster* radius;
     Gtk::CheckButton* enabled;
     Gtk::CheckButton* hq;
-    bool                hAdd, sAdd, lcAdd;
     bool                lastEnabled, lastHQ;
     sigc::connection    enaConn, hqConn;
 
@@ -52,6 +51,7 @@ class ShadowsHighlights : public Gtk::VBox, public AdjusterListener, public Fold
     void hqChanged ();
     
     void setAdjusterBehavior (bool hadd, bool sadd, bool lcadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

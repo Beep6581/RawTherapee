@@ -400,10 +400,10 @@ bool DiagonalCurveEditorSubGroup::curveReset(int cType) {
 		return true;
 		break;
 	case (DCT_Parametric) :
-		highlights->resetPressed();
-		lights->resetPressed();
-		darks->resetPressed();
-		shadows->resetPressed();
+		highlights->resetPressed(NULL);
+		lights->resetPressed(NULL);
+		darks->resetPressed(NULL);
+		shadows->resetPressed(NULL);
 		shcSelector->reset();
 		paramCurve->reset ();
 		return true;

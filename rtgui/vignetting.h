@@ -31,7 +31,6 @@ class Vignetting : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Adjuster* strength;
     Adjuster* centerX;
     Adjuster* centerY;
-    bool      vigAdd;
 
   public:
 
@@ -43,7 +42,8 @@ class Vignetting : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool bvadd);
+    void setAdjusterBehavior (bool vadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

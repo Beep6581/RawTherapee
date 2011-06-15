@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this), brAdd(false), contrAdd(false), satAdd(false) {
+LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
@@ -343,23 +343,21 @@ void LCurve::setBatchMode (bool batchMode) {
     curveEditorG->setBatchMode (batchMode);
 }
 
-void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {
+void LCurve::updateCurveBackgroundHistogram (unsigned* hist) {
 
-    if ((!brAdd && bradd) || (brAdd && !bradd))
-        brightness->setLimits (-100, 100, 1, 0);
-    if ((!contrAdd && contradd) || (contrAdd && !contradd))
-        contrast->setLimits (-100, 100, 1, 0);
-	if ((!satAdd && satadd) || (satAdd && !satadd))
-        saturation->setLimits (-100, 100, 1, 0);
-	
-
-    brAdd = bradd;
-    contrAdd = contradd;
-	satAdd = satadd;
-
+    lshape->updateBackgroundHistogram (hist);
 }
 
-void LCurve::updateCurveBackgroundHistogram (unsigned* hist) {
-    
-    lshape->updateBackgroundHistogram (hist);
+void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {
+
+	brightness->setAddMode(bradd);
+	contrast->setAddMode(contradd);
+	saturation->setAddMode(satadd);
+}
+
+void LCurve::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	brightness->trimValue(pp->labCurve.brightness);
+	contrast->trimValue(pp->labCurve.contrast);
+	saturation->trimValue(pp->labCurve.saturation);
 }

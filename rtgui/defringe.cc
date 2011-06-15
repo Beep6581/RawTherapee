@@ -138,13 +138,3 @@ void Defringe::setBatchMode (bool batchMode) {
     radius->showEditedCB ();
     threshold->showEditedCB ();
 }
-
-/*void Defringe::setAdjusterBehavior (bool bthresholdtoladd) {
-
-    if (!thresholdtolAdd && bthresholdtoladd)
-		threshold->setLimits (-10000, 10000, 100, 0);
-	else if (thresholdtolAdd && !bthresholdtoladd)
-		threshold->setLimits (100, 10000, 100, 1000);
-    
-    thresholdtolAdd = bthresholdtoladd;
-}*/

@@ -99,3 +99,15 @@ void RAWExposure::setDefaults(const rtengine::procparams::ProcParams* defParams,
 		PexPreser->setDefaultEditedState( Irrelevant );
 	}
 }
+
+void RAWExposure::setAdjusterBehavior (bool pexposadd, bool pexpreseradd) {
+
+	PexPos->setAddMode(pexposadd);
+	PexPreser->setAddMode(pexpreseradd);
+}
+
+void RAWExposure::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	PexPos->trimValue(pp->raw.expos);
+	PexPreser->trimValue(pp->raw.preser);
+}

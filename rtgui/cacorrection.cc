@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CACorrection::CACorrection () : Gtk::VBox(), FoldableToolPanel(this), vAdd(false) {
+CACorrection::CACorrection () : Gtk::VBox(), FoldableToolPanel(this) {
 
     red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0));
     red->setAdjusterListener (this); 
@@ -85,12 +85,14 @@ void CACorrection::adjusterChanged (Adjuster* a, double newval) {
 
 void CACorrection::setAdjusterBehavior (bool badd) {
 
-    if ((!vAdd && badd) || (vAdd && !badd)) {
-        red->setLimits (-0.005, 0.005, 0.0001, 0);
-        blue->setLimits (-0.005, 0.005, 0.0001, 0);
-    }
+	red->setAddMode(badd);
+	blue->setAddMode(badd);
+}
 
-    vAdd = badd;
+void CACorrection::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	red->trimValue(pp->cacorrection.red);
+	blue->trimValue(pp->cacorrection.blue);
 }
 
 void CACorrection::setBatchMode (bool batchMode) {

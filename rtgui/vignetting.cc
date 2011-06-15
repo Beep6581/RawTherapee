@@ -22,7 +22,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vignetting::Vignetting () : Gtk::VBox(), FoldableToolPanel(this), vigAdd(false) {
+Vignetting::Vignetting () : Gtk::VBox(), FoldableToolPanel(this) {
 
     amount = Gtk::manage (new Adjuster (M("TP_VIGNETTING_AMOUNT"), -100, 100, 1, 0));
     amount->setAdjusterListener (this); 
@@ -96,12 +96,14 @@ void Vignetting::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvVignetting, Glib::ustring::compose ("%1=%5\n%2=%6\n%3=%7\n%4=%8 %9", M("TP_VIGNETTING_AMOUNT"), M("TP_VIGNETTING_RADIUS"), M("TP_VIGNETTING_STRENGTH"), M("TP_VIGNETTING_CENTER"), (int)amount->getValue(), (int)radius->getValue(), (int)strength->getValue(), (int)centerX->getValue(), (int)centerY->getValue()));
 }
 
-void Vignetting::setAdjusterBehavior (bool bvadd) {
+void Vignetting::setAdjusterBehavior (bool vadd) {
 
-    if ((!vigAdd && bvadd) || (vigAdd && !bvadd))
-        amount->setLimits (-100, 100, 1, 0);
-    
-    vigAdd = bvadd;
+	amount->setAddMode(vadd);
+}
+
+void Vignetting::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	amount->trimValue(pp->vignetting.amount);
 }
 
 void Vignetting::setBatchMode (bool batchMode) {

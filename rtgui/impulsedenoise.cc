@@ -118,3 +118,13 @@ void ImpulseDenoise::setBatchMode (bool batchMode) {
     ToolPanel::setBatchMode (batchMode);
     thresh->showEditedCB ();
 }
+
+void ImpulseDenoise::setAdjusterBehavior (bool threshadd) {
+
+	thresh->setAddMode(threshadd);
+}
+
+void ImpulseDenoise::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	thresh->trimValue(pp->impulseDenoise.thresh);
+}

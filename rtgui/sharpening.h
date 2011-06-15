@@ -53,7 +53,6 @@ class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Gtk::CheckButton* halocontrol;  
     bool lastHaloControl;
     sigc::connection hcConn;
-	bool amountAdd;
 
 
 	
@@ -73,7 +72,8 @@ class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void halocontrol_toggled ();
     void method_changed ();
 
-    void setAdjusterBehavior (bool bamountadd);
+    void setAdjusterBehavior (bool amountadd);
+    void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 
 #endif

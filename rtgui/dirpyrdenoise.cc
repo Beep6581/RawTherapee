@@ -158,12 +158,16 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     chroma->showEditedCB ();
 }
 
-/*void DirPyrDenoise::setAdjusterBehavior (bool bedgetoladd) {
- 
- if (!edgetolAdd && bedgetoladd)
- edge->setLimits (-10000, 10000, 100, 0);
- else if (edgetolAdd && !bedgetoladd)
- edge->setLimits (10, 30000, 100, 1500);
- 
- edgetolAdd = bedgetoladd;
- }*/
+void DirPyrDenoise::setAdjusterBehavior (bool chrolumaadd, bool gammaadd) {
+
+	luma->setAddMode(chrolumaadd);
+	chroma->setAddMode(chrolumaadd);
+	gamma->setAddMode(gammaadd);
+}
+
+void DirPyrDenoise::trimValues (rtengine::procparams::ProcParams* pp) {
+
+	luma->trimValue(pp->dirpyrDenoise.luma);
+	chroma->trimValue(pp->dirpyrDenoise.chroma);
+	gamma->trimValue(pp->dirpyrDenoise.gamma);
+}

@@ -328,31 +328,33 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
     }
 }
 
-void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods) {
+void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet) {
+
+	bool dontforceSet = !forceSet;
 
 	if (toneCurve.curve)	    toEdit.toneCurve.curve 	    = mods.toneCurve.curve;
-	if (toneCurve.brightness)	toEdit.toneCurve.brightness = options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
-	if (toneCurve.black)		toEdit.toneCurve.black 	    = options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
-	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;
-	if (toneCurve.saturation)	toEdit.toneCurve.saturation = options.baBehav[ADDSET_TC_SATURATION] ? toEdit.toneCurve.saturation + mods.toneCurve.saturation : mods.toneCurve.saturation;
-	if (toneCurve.shcompr)		toEdit.toneCurve.shcompr 	= options.baBehav[ADDSET_TC_SHCOMP] ? toEdit.toneCurve.shcompr + mods.toneCurve.shcompr : mods.toneCurve.shcompr;
+	if (toneCurve.brightness)	toEdit.toneCurve.brightness = dontforceSet && options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
+	if (toneCurve.black)		toEdit.toneCurve.black 	    = dontforceSet && options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
+	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;
+	if (toneCurve.saturation)	toEdit.toneCurve.saturation = dontforceSet && options.baBehav[ADDSET_TC_SATURATION] ? toEdit.toneCurve.saturation + mods.toneCurve.saturation : mods.toneCurve.saturation;
+	if (toneCurve.shcompr)		toEdit.toneCurve.shcompr 	= dontforceSet && options.baBehav[ADDSET_TC_SHCOMP] ? toEdit.toneCurve.shcompr + mods.toneCurve.shcompr : mods.toneCurve.shcompr;
 	if (toneCurve.autoexp)		toEdit.toneCurve.autoexp 	= mods.toneCurve.autoexp;
 	if (toneCurve.clip)		    toEdit.toneCurve.clip 	    = mods.toneCurve.clip;
-	if (toneCurve.expcomp)		toEdit.toneCurve.expcomp 	= options.baBehav[ADDSET_TC_EXPCOMP] ? toEdit.toneCurve.expcomp + mods.toneCurve.expcomp : mods.toneCurve.expcomp;
-	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= options.baBehav[ADDSET_TC_HLCOMPAMOUNT] ? toEdit.toneCurve.hlcompr + mods.toneCurve.hlcompr : mods.toneCurve.hlcompr;
-	if (toneCurve.hlcomprthresh) toEdit.toneCurve.hlcomprthresh	= options.baBehav[ADDSET_TC_HLCOMPTHRESH] ? toEdit.toneCurve.hlcomprthresh + mods.toneCurve.hlcomprthresh : mods.toneCurve.hlcomprthresh;
+	if (toneCurve.expcomp)		toEdit.toneCurve.expcomp 	= dontforceSet && options.baBehav[ADDSET_TC_EXPCOMP] ? toEdit.toneCurve.expcomp + mods.toneCurve.expcomp : mods.toneCurve.expcomp;
+	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= dontforceSet && options.baBehav[ADDSET_TC_HLCOMPAMOUNT] ? toEdit.toneCurve.hlcompr + mods.toneCurve.hlcompr : mods.toneCurve.hlcompr;
+	if (toneCurve.hlcomprthresh) toEdit.toneCurve.hlcomprthresh	= dontforceSet && options.baBehav[ADDSET_TC_HLCOMPTHRESH] ? toEdit.toneCurve.hlcomprthresh + mods.toneCurve.hlcomprthresh : mods.toneCurve.hlcomprthresh;
 	if (labCurve.lcurve)		toEdit.labCurve.lcurve 	    = mods.labCurve.lcurve;
 	if (labCurve.acurve)		toEdit.labCurve.acurve 	    = mods.labCurve.acurve;
 	if (labCurve.bcurve)		toEdit.labCurve.bcurve 	    = mods.labCurve.bcurve;
-	if (labCurve.brightness)	toEdit.labCurve.brightness = options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
-	if (labCurve.contrast)		toEdit.labCurve.contrast 	= options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
-	if (labCurve.saturation)	toEdit.labCurve.saturation = options.baBehav[ADDSET_LC_SATURATION] ? toEdit.labCurve.saturation + mods.labCurve.saturation : mods.labCurve.saturation;
+	if (labCurve.brightness)	toEdit.labCurve.brightness = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
+	if (labCurve.contrast)		toEdit.labCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
+	if (labCurve.saturation)	toEdit.labCurve.saturation = dontforceSet && options.baBehav[ADDSET_LC_SATURATION] ? toEdit.labCurve.saturation + mods.labCurve.saturation : mods.labCurve.saturation;
 	if (labCurve.avoidclip)				toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
 	if (labCurve.enable_saturationlimiter)toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
 	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
 	if (sharpening.enabled)					toEdit.sharpening.enabled 	= mods.sharpening.enabled;
 	if (sharpening.radius)					toEdit.sharpening.radius 	= mods.sharpening.radius;
-	if (sharpening.amount)					toEdit.sharpening.amount 	= options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
+	if (sharpening.amount)					toEdit.sharpening.amount 	= dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
 	if (sharpening.threshold)				toEdit.sharpening.threshold 	= mods.sharpening.threshold;
 	if (sharpening.edgesonly)				toEdit.sharpening.edgesonly 	= mods.sharpening.edgesonly;
 	if (sharpening.edges_radius)			toEdit.sharpening.edges_radius 	= mods.sharpening.edges_radius;
@@ -360,22 +362,22 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (sharpening.halocontrol)				toEdit.sharpening.halocontrol 	= mods.sharpening.halocontrol;
 	if (sharpening.halocontrol_amount)		toEdit.sharpening.halocontrol_amount 	= mods.sharpening.halocontrol_amount;
 	if (sharpening.method)		    		toEdit.sharpening.method 	= mods.sharpening.method;
-	if (sharpening.deconvamount)			toEdit.sharpening.deconvamount 	= options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.deconvamount + mods.sharpening.deconvamount : mods.sharpening.deconvamount;
+	if (sharpening.deconvamount)			toEdit.sharpening.deconvamount 	= dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.deconvamount + mods.sharpening.deconvamount : mods.sharpening.deconvamount;
 	if (sharpening.deconvradius)			toEdit.sharpening.deconvradius 	= mods.sharpening.deconvradius;
 	if (sharpening.deconviter)				toEdit.sharpening.deconviter 	= mods.sharpening.deconviter;
 	if (sharpening.deconvdamping)			toEdit.sharpening.deconvdamping 	= mods.sharpening.deconvdamping;
-	if (colorBoost.amount)		    		toEdit.colorBoost.amount = options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
+	if (colorBoost.amount)		    		toEdit.colorBoost.amount = dontforceSet && options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
 	if (colorBoost.avoidclip)				toEdit.colorBoost.avoidclip 	= mods.colorBoost.avoidclip;
 	if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter 	= mods.colorBoost.enable_saturationlimiter;
 	if (colorBoost.saturationlimit)			toEdit.colorBoost.saturationlimit 	= mods.colorBoost.saturationlimit;
 	if (wb.method)							toEdit.wb.method 	= mods.wb.method;
-	if (wb.green)							toEdit.wb.green 	= options.baBehav[ADDSET_WB_GREEN] ? toEdit.wb.green + mods.wb.green : mods.wb.green;
-	if (wb.temperature)						toEdit.wb.temperature 	= options.baBehav[ADDSET_WB_TEMPERATURE] ? toEdit.wb.temperature + mods.wb.temperature : mods.wb.temperature;
-	if (colorShift.a)						toEdit.colorShift.a 	= options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;
-	if (colorShift.b)						toEdit.colorShift.b 	= options.baBehav[ADDSET_CS_GREENMAGENTA] ? toEdit.colorShift.b + mods.colorShift.b : mods.colorShift.b;
+	if (wb.green)							toEdit.wb.green 	= dontforceSet && options.baBehav[ADDSET_WB_GREEN] ? toEdit.wb.green + mods.wb.green : mods.wb.green;
+	if (wb.temperature)						toEdit.wb.temperature 	= dontforceSet && options.baBehav[ADDSET_WB_TEMPERATURE] ? toEdit.wb.temperature + mods.wb.temperature : mods.wb.temperature;
+	if (colorShift.a)						toEdit.colorShift.a 	= dontforceSet && options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;
+	if (colorShift.b)						toEdit.colorShift.b 	= dontforceSet && options.baBehav[ADDSET_CS_GREENMAGENTA] ? toEdit.colorShift.b + mods.colorShift.b : mods.colorShift.b;
 	if (lumaDenoise.enabled)				toEdit.lumaDenoise.enabled 	= mods.lumaDenoise.enabled;
 	if (lumaDenoise.radius)					toEdit.lumaDenoise.radius 	= mods.lumaDenoise.radius;
-	if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
+	if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= dontforceSet && options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
 	if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
 	if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
 	
@@ -387,17 +389,17 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
 
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
-	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= mods.dirpyrDenoise.luma;
-	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= mods.dirpyrDenoise.chroma;
-	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= mods.dirpyrDenoise.gamma;
+	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
+	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
+	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;
 
 	if (sh.enabled)		    				toEdit.sh.enabled 	    = mods.sh.enabled;
 	if (sh.hq)		        				toEdit.sh.hq     	    = mods.sh.hq;
-	if (sh.highlights)						toEdit.sh.highlights 	= options.baBehav[ADDSET_SH_HIGHLIGHTS] ? toEdit.sh.highlights + mods.sh.highlights : mods.sh.highlights;
+	if (sh.highlights)						toEdit.sh.highlights 	= dontforceSet && options.baBehav[ADDSET_SH_HIGHLIGHTS] ? toEdit.sh.highlights + mods.sh.highlights : mods.sh.highlights;
 	if (sh.htonalwidth)						toEdit.sh.htonalwidth 	= mods.sh.htonalwidth;
-	if (sh.shadows)		    				toEdit.sh.shadows 	    = options.baBehav[ADDSET_SH_SHADOWS] ? toEdit.sh.shadows + mods.sh.shadows : mods.sh.shadows;
+	if (sh.shadows)		    				toEdit.sh.shadows 	    = dontforceSet && options.baBehav[ADDSET_SH_SHADOWS] ? toEdit.sh.shadows + mods.sh.shadows : mods.sh.shadows;
 	if (sh.stonalwidth)						toEdit.sh.stonalwidth 	= mods.sh.stonalwidth;
-	if (sh.localcontrast)					toEdit.sh.localcontrast = options.baBehav[ADDSET_SH_LOCALCONTRAST] ? toEdit.sh.localcontrast + mods.sh.localcontrast : mods.sh.localcontrast;
+	if (sh.localcontrast)					toEdit.sh.localcontrast = dontforceSet && options.baBehav[ADDSET_SH_LOCALCONTRAST] ? toEdit.sh.localcontrast + mods.sh.localcontrast : mods.sh.localcontrast;
 	if (sh.radius)		    				toEdit.sh.radius 	    = mods.sh.radius;
 	if (crop.enabled)						toEdit.crop.enabled = mods.crop.enabled;
 	if (crop.x)		        				toEdit.crop.x 	    = mods.crop.x;
@@ -412,27 +414,23 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (coarse.hflip)						toEdit.coarse.hflip 	= mods.coarse.hflip ? !toEdit.coarse.hflip : toEdit.coarse.hflip;
 	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip ? !toEdit.coarse.vflip : toEdit.coarse.vflip;
 	if (commonTrans.autofill)				toEdit.commonTrans.autofill		= mods.commonTrans.autofill;
-	if (rotate.degree)						toEdit.rotate.degree 			= options.baBehav[17] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
+	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[17] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
 	if (distortion.uselensfun)				toEdit.distortion.uselensfun	= mods.distortion.uselensfun;
-	if (distortion.amount)					toEdit.distortion.amount 		= options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
-	if (perspective.horizontal)				toEdit.perspective.horizontal 	= options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
-	if (perspective.vertical)				toEdit.perspective.vertical 	= options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
-	if (cacorrection.red)					toEdit.cacorrection.red 	= options.baBehav[ADDSET_CA] ? toEdit.cacorrection.red + mods.cacorrection.red : mods.cacorrection.red;
-	if (cacorrection.blue)					toEdit.cacorrection.blue 	= options.baBehav[ADDSET_CA] ? toEdit.cacorrection.blue + mods.cacorrection.blue : mods.cacorrection.blue;
-	if (vignetting.amount)					toEdit.vignetting.amount 	= options.baBehav[ADDSET_VIGN_AMOUNT] ? toEdit.vignetting.amount + mods.vignetting.amount : mods.vignetting.amount;
+	if (distortion.amount)					toEdit.distortion.amount 		= dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
+	if (perspective.horizontal)				toEdit.perspective.horizontal 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
+	if (perspective.vertical)				toEdit.perspective.vertical 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
+	if (cacorrection.red)					toEdit.cacorrection.red 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.red + mods.cacorrection.red : mods.cacorrection.red;
+	if (cacorrection.blue)					toEdit.cacorrection.blue 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.blue + mods.cacorrection.blue : mods.cacorrection.blue;
+	if (vignetting.amount)					toEdit.vignetting.amount 	= dontforceSet && options.baBehav[ADDSET_VIGN_AMOUNT] ? toEdit.vignetting.amount + mods.vignetting.amount : mods.vignetting.amount;
 	if (vignetting.radius)					toEdit.vignetting.radius 	= mods.vignetting.radius;
-	if (vignetting.strength)					toEdit.vignetting.strength 	= mods.vignetting.strength;
+	if (vignetting.strength)				toEdit.vignetting.strength 	= mods.vignetting.strength;
 	if (vignetting.centerX)					toEdit.vignetting.centerX 	= mods.vignetting.centerX;
 	if (vignetting.centerY)					toEdit.vignetting.centerY 	= mods.vignetting.centerY;
-	if (chmixer.red[0])		toEdit.chmixer.red[0] 	= mods.chmixer.red[0];
-	if (chmixer.red[1])		toEdit.chmixer.red[1] 	= mods.chmixer.red[1];
-	if (chmixer.red[2])		toEdit.chmixer.red[2] 	= mods.chmixer.red[2];
-	if (chmixer.green[0])	toEdit.chmixer.green[0]	= mods.chmixer.green[0];
-	if (chmixer.green[1])	toEdit.chmixer.green[1]	= mods.chmixer.green[1];
-	if (chmixer.green[2])	toEdit.chmixer.green[2]	= mods.chmixer.green[2];
-	if (chmixer.blue[0])	toEdit.chmixer.blue[0] 	= mods.chmixer.blue[0];
-	if (chmixer.blue[1])	toEdit.chmixer.blue[1] 	= mods.chmixer.blue[1];
-	if (chmixer.blue[2])	toEdit.chmixer.blue[2] 	= mods.chmixer.blue[2];
+	for (int i=0; i<3; i++) {
+		if (chmixer.red[i])		toEdit.chmixer.red[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
+		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
+		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
+	}
 	if (hlrecovery.enabled)	toEdit.hlrecovery.enabled 	= mods.hlrecovery.enabled;
 	if (hlrecovery.method)	toEdit.hlrecovery.method 	= mods.hlrecovery.method;
 	if (resize.scale)		toEdit.resize.scale 	= mods.resize.scale;
@@ -446,31 +444,29 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.gammaOnInput)	toEdit.icm.gammaOnInput = mods.icm.gammaOnInput;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output 	    = mods.icm.output;
-    if (raw.ccSteps)            toEdit.raw.ccSteps      = mods.raw.ccSteps;
-    if (raw.dmethod)            toEdit.raw.dmethod      = mods.raw.dmethod;
-    if (raw.dcbIterations)      toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
-    if (raw.dcbEnhance)         toEdit.raw.dcb_enhance  = mods.raw.dcb_enhance;
-    if (raw.caCorrection)       toEdit.raw.ca_autocorrect = mods.raw.ca_autocorrect;
-	if (raw.caRed)				toEdit.raw.cared    = mods.raw.cared;
-    if (raw.caBlue)				toEdit.raw.cablue    = mods.raw.cablue;
-	if (raw.exPos)				toEdit.raw.expos     =mods.raw.expos;
-	if (raw.exPreser)			toEdit.raw.preser     =mods.raw.preser;	
-    if (raw.greenEq)            toEdit.raw.greenthresh  = mods.raw.greenthresh;
-    if (raw.hotDeadPixel)       toEdit.raw.hotdeadpix_filt= mods.raw.hotdeadpix_filt;
-    if (raw.linenoise)          toEdit.raw.linenoise    = mods.raw.linenoise;
-    if (raw.darkFrame)          toEdit.raw.dark_frame   = mods.raw.dark_frame;
-    if (raw.dfAuto)             toEdit.raw.df_autoselect= mods.raw.df_autoselect;
-	if (equalizer.enabled)	    toEdit.equalizer.enabled 	= mods.equalizer.enabled;
+    if (raw.dmethod)        toEdit.raw.dmethod         = mods.raw.dmethod;
+    if (raw.dcbEnhance)     toEdit.raw.dcb_enhance     = mods.raw.dcb_enhance;
+    if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
+	if (raw.caRed)          toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
+    if (raw.caBlue)         toEdit.raw.cablue          = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cablue + mods.raw.cablue : mods.raw.cablue;
+	if (raw.exPos)          toEdit.raw.expos           = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_LINEAR] ? toEdit.raw.expos + mods.raw.expos : mods.raw.expos;
+	if (raw.exPreser)       toEdit.raw.preser          = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_PRESER] ? toEdit.raw.preser + mods.raw.preser : mods.raw.preser;
+    if (raw.greenEq)        toEdit.raw.greenthresh     = dontforceSet && options.baBehav[ADDSET_PREPROCESS_GREENEQUIL] ? toEdit.raw.greenthresh + mods.raw.greenthresh : mods.raw.greenthresh;
+    if (raw.hotDeadPixel)   toEdit.raw.hotdeadpix_filt = mods.raw.hotdeadpix_filt;
+    if (raw.linenoise)      toEdit.raw.linenoise       = dontforceSet && options.baBehav[ADDSET_PREPROCESS_LINEDENOISE] ? toEdit.raw.linenoise + mods.raw.linenoise : mods.raw.linenoise;
+    if (raw.darkFrame)      toEdit.raw.dark_frame      = mods.raw.dark_frame;
+    if (raw.dfAuto)         toEdit.raw.df_autoselect   = mods.raw.df_autoselect;
+	if (equalizer.enabled)	toEdit.equalizer.enabled   = mods.equalizer.enabled;
 	for(int i = 0; i < 8; i++) {
 	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
 	}
-	if (dirpyrequalizer.enabled)	    toEdit.dirpyrequalizer.enabled 	= mods.dirpyrequalizer.enabled;
+	if (dirpyrequalizer.enabled)	toEdit.dirpyrequalizer.enabled	= mods.dirpyrequalizer.enabled;
 	for(int i = 0; i < 5; i++) {
-	    if(dirpyrequalizer.mult[i])  toEdit.dirpyrequalizer.mult[i]   = mods.dirpyrequalizer.mult[i];
+		if(dirpyrequalizer.mult[i])	toEdit.dirpyrequalizer.mult[i]	= dontforceSet && options.baBehav[ADDSET_DIRPYREQ] ? toEdit.dirpyrequalizer.mult[i] + mods.dirpyrequalizer.mult[i] : mods.dirpyrequalizer.mult[i];
 	}
-	if (hsvequalizer.hcurve)		toEdit.hsvequalizer.hcurve 	    = mods.hsvequalizer.hcurve;
-	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve 	    = mods.hsvequalizer.scurve;
-	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve 	    = mods.hsvequalizer.vcurve;
+	if (hsvequalizer.hcurve)		toEdit.hsvequalizer.hcurve		= mods.hsvequalizer.hcurve;
+	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
+	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;
 
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;
