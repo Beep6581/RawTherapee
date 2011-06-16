@@ -215,7 +215,7 @@ void FlatField::flatFieldAutoSelectChanged()
  	  // retrieve the auto-selected ff filename
        rtengine::RawImage *img = ffp->getFF();
       if( img ){
-        ffInfo->set_text( Glib::ustring::compose("%1: f/%2s", Glib::path_get_basename(img->get_filename()), img->get_aperture()) ); // !!! need to add focallength in mm and format aperture to ##.#
+        ffInfo->set_text( Glib::ustring::compose("%1: f/%2", Glib::path_get_basename(img->get_filename()), img->get_aperture()) ); // !!! need to add focallength in mm and format aperture to ##.#
       }else{
     	  ffInfo->set_text(Glib::ustring(M("TP_PREPROCESS_NO_FOUND")));
       }
