@@ -254,6 +254,7 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
 }
 
 void ThumbBrowserEntryBase::resize (int h) {
+    if (h==height && drawable) return;  // Short cut if nothing to do
     
     height = h;
     int old_preh = preh;
