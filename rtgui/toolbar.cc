@@ -89,8 +89,10 @@ void ToolBar::setTool (ToolMode tool) {
   cropTool->set_active (false);
   straTool->set_active (false);
 
-  if (tool==TMHand)
+  if (tool==TMHand){
     handTool->set_active (true);
+    handTool->grab_focus();; // switch focus to the handTool button
+  }
   else if (tool==TMSpotWB)
     wbTool->set_active (true);
   else if (tool==TMCropSelect)
