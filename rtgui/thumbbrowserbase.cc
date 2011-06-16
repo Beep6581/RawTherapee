@@ -539,11 +539,9 @@ void ThumbBrowserBase::refreshThumbImages () {
 		Glib::Mutex::Lock lock(entryMutex);
 		#endif
 
+        int previewHeight = getCurrentThumbSize();
     for (int i=0; i<fd.size(); i++){
-    	previewHeight = getCurrentThumbSize();
     	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
-		/* called if necessary by resize()
-        fd[i]->refreshThumbnailImage ();  TODO: This might cause crashes on some installations */
     }
 	}
 
