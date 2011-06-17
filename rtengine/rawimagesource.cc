@@ -415,9 +415,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     if (tran & TR_VFLIP)
         vflip (image);
         
-    // Color correction
+    // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
-        correction_YIQ_LQ (image, pp.skip==1?1:raw.ccSteps);
+        correction_YIQ_LQ (image, raw.ccSteps);
 
     // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
