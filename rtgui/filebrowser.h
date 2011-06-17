@@ -79,6 +79,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* pasteprof;
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
+    Gtk::MenuItem* applypartprof;
     Gtk::MenuItem* clearprof;
     Gtk::MenuItem* cachemenu;
     Gtk::MenuItem* clearFromCache;
@@ -116,6 +117,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
      
     void menuItemActivated (Gtk::MenuItem* m);
     void applyMenuItemActivated (Glib::ustring ppname);
+    void applyPartialMenuItemActivated (Glib::ustring ppname);
 
     void applyFilter (const BrowserFilter& filter);
     int getNumFiltered(){ return numFiltered;}
