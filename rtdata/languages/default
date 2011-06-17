@@ -54,6 +54,7 @@ EXIFPANEL_RESETHINT;Reset the selected tags to their original values
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply profile
+FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 FILEBROWSER_AUTODARKFRAME;Auto dark frame
 FILEBROWSER_AUTOFLATFIELD;Auto flat field

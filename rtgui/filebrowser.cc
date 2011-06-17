@@ -85,6 +85,7 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*Gtk::manage(pasteprof = new Gtk::MenuItem (M("FILEBROWSER_PASTEPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(applyprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(applypartprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE_PARTIAL"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(cachemenu = new Gtk::MenuItem (M("FILEBROWSER_CACHE"))), 0, 1, p, p+1); p++;
 
@@ -119,6 +120,7 @@ FileBrowser::FileBrowser ()
     pasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), pasteprof));    
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
     applyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applyprof));    
+    applypartprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applypartprof));
     clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));
     cachemenu->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), cachemenu));
 }
@@ -158,7 +160,19 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
         mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyMenuItemActivated), profnames[i]));    
         mi->show ();
     }
-    applyprof->set_submenu (*applmenu);    
+    applyprof->set_submenu (*applmenu);
+
+    // submenu applpartmenu
+        p = 0;
+        Gtk::Menu* applpartmenu = Gtk::manage (new Gtk::Menu ());
+        //std::vector<Glib::ustring> profnames = profileStore.getProfileNames (); // this is already created for submenu applmenu above
+        for (int i=0; i<profnames.size(); i++) {
+            Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
+            applpartmenu->attach (*mi, 0, 1, p, p+1); p++;
+            mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyPartialMenuItemActivated), profnames[i]));
+            mi->show ();
+        }
+    applypartprof->set_submenu (*applpartmenu);
 
     // submenuDF
     Gtk::Menu* submenuDF = Gtk::manage (new Gtk::Menu ());
@@ -618,6 +632,27 @@ void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
             ((FileBrowserEntry*)selected[i])->thumbnail->setProcParams (*pparams, FILEBROWSER);
         queue_draw ();
     }
+}
+
+void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
+
+	if (!tbl || selected.size()==0)
+		return;
+
+	rtengine::procparams::ProcParams* pparams = profileStore.getProfile (ppname);
+
+	if (pparams) {
+		if (partialPasteDlg.run ()) {
+
+			for (int i=0; i<selected.size(); i++) {
+				rtengine::procparams::ProcParams params = ((FileBrowserEntry*)selected[i])->thumbnail->getProcParams ();
+				partialPasteDlg.applyPaste (&params, pparams);
+				((FileBrowserEntry*)selected[i])->thumbnail->setProcParams (params, FILEBROWSER);
+			}
+			queue_draw ();
+		}
+		partialPasteDlg.hide ();
+	}
 }
 
 void FileBrowser::applyFilter (const BrowserFilter& filter) {
