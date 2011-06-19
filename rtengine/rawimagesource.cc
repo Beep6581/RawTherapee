@@ -417,7 +417,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
-        correction_YIQ_LQ (image, raw.ccSteps);
+        processFalseColorCorrection (image, raw.ccSteps);
 
     // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
@@ -1403,7 +1403,8 @@ int RawImageSource::defTransform (int tran) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_to) {
+// Thread called part
+void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row_from, int row_to) {
  
   int W = im->width;
 
@@ -1532,13 +1533,13 @@ void RawImageSource::correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-void RawImageSource::correction_YIQ_LQ  (Imagefloat* im, int times) {
+// correction_YIQ_LQ
+void RawImageSource::processFalseColorCorrection  (Imagefloat* im, int steps) {
 
     if (im->height<4)
         return;
 
-    for (int t=0; t<times; t++) {
+    for (int t=0; t<steps; t++) {
 #ifdef _OPENMP
 	    #pragma omp parallel
     	{
@@ -1547,12 +1548,12 @@ void RawImageSource::correction_YIQ_LQ  (Imagefloat* im, int times) {
     		int blk = (im->height-2)/nthreads;
 
     		if (tid<nthreads-1)
-    			correction_YIQ_LQ_ (im, 1 + tid*blk, 1 + (tid+1)*blk);
+    			processFalseColorCorrectionThread (im, 1 + tid*blk, 1 + (tid+1)*blk);
     		else
-    			correction_YIQ_LQ_ (im, 1 + tid*blk, im->height - 1);
+    			processFalseColorCorrectionThread (im, 1 + tid*blk, im->height - 1);
     	}
 #else
-    	correction_YIQ_LQ_ (im, 1 , im->height - 1);
+    	processFalseColorCorrectionThread (im, 1 , im->height - 1);
 #endif
     }
 }

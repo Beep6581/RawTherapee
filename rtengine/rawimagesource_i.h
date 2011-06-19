@@ -42,12 +42,9 @@ inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, fl
 
 inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
   for (int j=1; j<W-1; j++) {
-    int ir = Y[j] + 0.956*I[j] + 0.621*Q[j];
-    int ig = Y[j] - 0.272*I[j] - 0.647*Q[j];
-    int ib = Y[j] - 1.105*I[j] + 1.702*Q[j];
-    r[j] = CLIP(ir);
-    g[j] = CLIP(ig);
-    b[j] = CLIP(ib);
+    r[j] = Y[j] + 0.956*I[j] + 0.621*Q[j];
+    g[j] = Y[j] - 0.272*I[j] - 0.647*Q[j];
+    b[j] = Y[j] - 1.105*I[j] + 1.702*Q[j];
   }
 }
 
