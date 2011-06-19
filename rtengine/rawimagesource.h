@@ -106,7 +106,7 @@ class RawImageSource : public ImageSource {
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
         void hphd_green          (float** hpmap);
-        void correction_YIQ_LQ_  (Imagefloat* im, int row_from, int row_to);
+        void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
         void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw);
         int  defTransform        (int tran);
         void rotateLine          (float* line, float** channel, int tran, int i, int w, int h);
@@ -157,7 +157,7 @@ class RawImageSource : public ImageSource {
 
     protected:
         typedef unsigned short ushort;
-                void correction_YIQ_LQ  (Imagefloat* i, int times);
+                void processFalseColorCorrection (Imagefloat* i, int steps);
         inline  void convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
         inline  void convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
 
