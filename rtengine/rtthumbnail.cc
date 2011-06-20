@@ -600,6 +600,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         gmi = 1024.0 * gm / mul_lum;
         bmi = 1024.0 * bm / mul_lum;  
     }
+
+    // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
+    // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
+    if (isRaw && fabs(1.0-params.raw.expos)>0.001) {
+        rmi*=params.raw.expos;
+        gmi*=params.raw.expos;
+        bmi*=params.raw.expos;
+    }
+
     // resize to requested width and perform coarse transformation
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) {
