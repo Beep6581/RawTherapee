@@ -70,8 +70,10 @@ YY = (float *)calloc(width*height,sizeof *YY);// for CIE luminosity
 			
 freeArray<unsigned short>(imgd, H);//free memory imgd
 
-	//exposure correction inspired from G.Luijk
- if(preser==0.0){	// protect highlights 
+  //exposure correction inspired from G.Luijk
+  if(fabs(preser)<0.001) {
+    // No highlight protection - simple mutiplication
+
 #pragma omp parallel for  shared(expos)
 	 for(int row=0;row<height;row++)
 		for(int col=0;col<width;col++)
