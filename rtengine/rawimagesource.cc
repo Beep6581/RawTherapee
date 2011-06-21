@@ -208,8 +208,7 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 
 void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
 {
-
-    isrcMutex.lock ();
+    Glib::Mutex::Lock lock(getImageMutex);
 
     tran = defTransform (tran);
 
@@ -421,8 +420,6 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
     // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
-	
-    isrcMutex.unlock ();
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

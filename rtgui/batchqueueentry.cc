@@ -56,8 +56,7 @@ void BatchQueueEntry::refreshThumbnailImage () {
     if (!opreview)
         return;
 
-    batchQueueEntryUpdater.add (opreview, origpw, origph, preh, this);
-    batchQueueEntryUpdater.process ();
+    batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);
 }
 
 void BatchQueueEntry::calcThumbnailSize () {

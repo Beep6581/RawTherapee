@@ -47,14 +47,11 @@ class BatchQueueEntryUpdater {
   public:
     BatchQueueEntryUpdater ();
 
-    void add        (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener);
-    void process    ();
-    void stop       ();
-    void removeJobs ();
+    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 
-    void process_   ();
+    void processThread ();
 };
 
 extern BatchQueueEntryUpdater batchQueueEntryUpdater;

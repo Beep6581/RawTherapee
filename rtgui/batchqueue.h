@@ -56,6 +56,7 @@ class BatchQueue  : public ThumbBrowserBase,
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring filename );
     bool saveBatchQueue( );
+    void notifyListener ();
 
   public:
     BatchQueue ();
@@ -78,8 +79,8 @@ class BatchQueue  : public ThumbBrowserBase,
     void redrawNeeded  (LWButton* button);
     
     void setBatchQueueListener (BatchQueueListener* l) { listener = l; }
-    void notifyListener ();
-    bool loadBatchQueue ();
+
+    void loadBatchQueue ();
 
     static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName);
 };

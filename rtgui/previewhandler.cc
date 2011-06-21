@@ -48,7 +48,7 @@ struct iaimgpar {
     CropParams cp;
 };
 
-int iasetimage (void* data) {
+int setImageThread (void* data) {
 
     gdk_threads_enter ();
 
@@ -66,13 +66,14 @@ int iasetimage (void* data) {
     }
 
     if (pih->phandler->image) {
-        IImage8* temp = pih->phandler->image;
-        temp->getMutex().lock ();
+        IImage8* oldImg = pih->phandler->image;
+        oldImg->getMutex().lock ();
         pih->phandler->image = iap->image;
-        temp->getMutex().unlock ();
+        oldImg->getMutex().unlock ();
     }
     else    
         pih->phandler->image = iap->image;
+
     pih->phandler->cropParams = iap->cp;
     pih->phandler->previewScale = iap->scale;
     pih->pending--;
@@ -93,10 +94,11 @@ void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::pro
     iap->scale      = scale;
     iap->cp         = cp;
 
-    g_idle_add (iasetimage, iap);
+    g_idle_add (setImageThread, iap);
 }
 
-int iadelimage (void* data) {
+
+int delImageThread (void* data) {
 
     gdk_threads_enter ();
 
@@ -114,10 +116,10 @@ int iadelimage (void* data) {
     }
     
     if (pih->phandler->image) {
-        IImage8* temp = pih->phandler->image;
-        temp->getMutex().lock ();
+        IImage8* oldImg = pih->phandler->image;
+        oldImg->getMutex().lock ();
         pih->phandler->image = NULL;
-        temp->getMutex().unlock ();
+        oldImg->getMutex().unlock ();
     }    
     iap->image->free ();
     pih->phandler->previewImgMutex.lock ();
@@ -140,10 +142,10 @@ void PreviewHandler::delImage (IImage8* i) {
     iap->image    = i;
     iap->pih = pih;
 
-    g_idle_add (iadelimage, iap);
+    g_idle_add (delImageThread, iap);
 }
 
-int imready (void* data) {
+int imageReadyThread (void* data) {
 
     gdk_threads_enter ();
     
@@ -179,7 +181,7 @@ void PreviewHandler::imageReady (CropParams cp) {
     iaimgpar* iap = new iaimgpar;
     iap->pih      = pih;
     iap->cp       = cp;
-	g_idle_add (imready, iap);
+	g_idle_add (imageReadyThread, iap);
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom) {
