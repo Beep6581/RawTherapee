@@ -174,7 +174,7 @@ public:
 	void operator()(int w, int h, unsigned int flgs = 0) {
 		flags = flgs;
 		if (flags & ARRAY2D_VERBOSE) {
-			printf("got init request %dx%d flags=%d\n", w, h, flags);
+			printf("got init request %dx%d flags=%u\n", w, h, flags);
 			printf("previous was data %p ptr %p \n", data, ptr);
 		}
 		if (lock) // our object was locked so don't allow a change.
@@ -193,7 +193,7 @@ public:
 	void operator()(int w, int h, T* copy, unsigned int flgs = 0) {
 		flags = flgs;
 		if (flags & ARRAY2D_VERBOSE) {
-			printf("got init request %dx%d flags=%d\n", w, h, flags);
+			printf("got init request %dx%d flags=%u\n", w, h, flags);
 			printf("previous was data %p ptr %p \n", data, ptr);
 		}
 		if (lock) // our object was locked so don't allow a change.
@@ -258,7 +258,7 @@ public:
 
 	array2D<T> & operator[](size_t index) {
 		if (index < 0 || index >= num) {
-			printf("index %d is out of range[0..%d]", index, num - 1);
+			printf("index %zu is out of range[0..%zu]", index, num - 1);
 			raise( SIGSEGV);
 		}
 		return list[index];
