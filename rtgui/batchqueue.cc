@@ -122,68 +122,72 @@ bool BatchQueue::saveBatchQueue( )
     return true;
 }
 
-bool BatchQueue::loadBatchQueue( )
+void BatchQueue::loadBatchQueue( )
 {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
-	#endif
+    {
+        // TODO: Check for Linux
+#ifdef WIN32
+        Glib::Mutex::Lock lock(entryMutex);
+#endif
 
-    Glib::ustring savedQueueFile;
-    savedQueueFile = options.rtdir+"/batch/queue";
-    FILE *f = safe_g_fopen (savedQueueFile, "rt");
+        Glib::ustring savedQueueFile;
+        savedQueueFile = options.rtdir+"/batch/queue";
+        FILE *f = safe_g_fopen (savedQueueFile, "rt");
 
-    if (f==NULL)
-        return false;
-    char *buffer = new char[1024];
-    unsigned numLoaded=0;
-    while (fgets (buffer, 1024, f)){
-    	char *p = strchr(buffer,';' );
-    	if( p ){
-            char *le = buffer + strlen(buffer);
-            while( --le > buffer && (*le == '\n' || *le == '\r') );
-    	    Glib::ustring source(buffer, p-buffer );
-    	    Glib::ustring paramsFile(p+1, (le +1)- (p+1) );
+        if (f!=NULL) {
+            char *buffer = new char[1024];
+            unsigned numLoaded=0;
+            while (fgets (buffer, 1024, f)){
+                char *p = strchr(buffer,';' );
+                if( p ){
+                    char *le = buffer + strlen(buffer);
+                    while( --le > buffer && (*le == '\n' || *le == '\r') );
+                    Glib::ustring source(buffer, p-buffer );
+                    Glib::ustring paramsFile(p+1, (le +1)- (p+1) );
 
-    	    rtengine::procparams::ProcParams pparams;
-    	    if( pparams.load( paramsFile ) )
-    	    	continue;
+                    rtengine::procparams::ProcParams pparams;
+                    if( pparams.load( paramsFile ) )
+                        continue;
 
-    	    ::Thumbnail *thumb = cacheMgr->getEntry( source );
-    	    if( thumb ){
-    	        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
+                    ::Thumbnail *thumb = cacheMgr->getEntry( source );
+                    if( thumb ){
+                        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
 
-				int prevh = options.maxThumbnailHeight;
-				int prevw = prevh;
-				guint8* prev = NULL;
-				double tmpscale;
-				rtengine::IImage8* img = thumb->processThumbImage(pparams, options.maxThumbnailHeight, tmpscale);
-				if (img) {
-					prevw = img->getWidth();
-					prevh = img->getHeight();
-					prev = new guint8[prevw * prevh * 3];
-					memcpy(prev, img->getData(), prevw * prevh * 3);
-					img->free();
-				}
-				BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prev, prevw, prevh, thumb);
-				entry->setParent(this);
-				entry->resize(options.thumbSize);
-				entry->savedParamsFile = paramsFile;
-				entry->selected = false;
-				fd.push_back(entry);
+                        int prevh = options.maxThumbnailHeight;
+                        int prevw = prevh;
+                        guint8* prev = NULL;
+                        double tmpscale;
+                        rtengine::IImage8* img = thumb->processThumbImage(pparams, options.maxThumbnailHeight, tmpscale);
+                        if (img) {
+                            prevw = img->getWidth();
+                            prevh = img->getHeight();
+                            prev = new guint8[prevw * prevh * 3];
+                            memcpy(prev, img->getData(), prevw * prevh * 3);
+                            img->free();
+                        }
+                        BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prev, prevw, prevh, thumb);
+                        entry->setParent(this);
+                        entry->resize(options.thumbSize);
+                        entry->savedParamsFile = paramsFile;
+                        entry->selected = false;
+                        fd.push_back(entry);
 
-				BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
-				bqbs->setButtonListener(this);
-				entry->addButtonSet(bqbs);
-				numLoaded++;
-    	    }
-    	}
+                        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
+                        bqbs->setButtonListener(this);
+                        entry->addButtonSet(bqbs);
+                        numLoaded++;
+                    }
+                }
+            }
+            delete [] buffer;
+            fclose(f);
+        }
     }
-    delete [] buffer;
-    fclose(f);
+
     arrangeFiles ();
     queue_draw ();
-    return numLoaded > 0;
+
+    notifyListener();
 }
 
 Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
@@ -214,95 +218,99 @@ int deleteitem (void* data)
 
 void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
-		#endif
+        // TODO: Check for Linux
+#ifdef WIN32
+        Glib::Mutex::Lock lock(entryMutex);
+#endif
 
-    for (int i=0; i<items->size(); i++) {
-        BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
-        if (entry->processing)
-            continue;
-        std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
-        if (pos!=fd.end()) {
-            fd.erase (pos);
-            rtengine::ProcessingJob::destroy (entry->job);
-            if (entry->thumbnail)
-                entry->thumbnail->imageRemovedFromQueue ();
-            g_idle_add (deleteitem, entry);
+        for (int i=0; i<items->size(); i++) {
+            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+            if (entry->processing)
+                continue;
+            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+            if (pos!=fd.end()) {
+                fd.erase (pos);
+                rtengine::ProcessingJob::destroy (entry->job);
+                if (entry->thumbnail)
+                    entry->thumbnail->imageRemovedFromQueue ();
+                g_idle_add (deleteitem, entry);
+            }
         }
-    }
-    for (int i=0; i<fd.size(); i++) 
-        fd[i]->selected = false;
-    lastClicked = NULL;
-    selected.clear ();
+        for (int i=0; i<fd.size(); i++) 
+            fd[i]->selected = false;
+        lastClicked = NULL;
+        selected.clear ();
 
-    saveBatchQueue( );
-	}
+        saveBatchQueue( );
+    }
+
     redraw ();
     notifyListener ();
 }
 
 void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
-			// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
-		#endif
-    for (int i=items->size()-1; i>=0; i--) {
-        BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
-        if (entry->processing)
-            continue;
-        std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
-        if (pos!=fd.end() && pos!=fd.begin()) {
-            fd.erase (pos);
-            // find the first item that is not under processing
-            for (pos=fd.begin(); pos!=fd.end(); pos++) 
-                if (!(*pos)->processing) {
-                    fd.insert (pos, entry);
-                    break;
-                }
+        // TODO: Check for Linux
+#ifdef WIN32
+        Glib::Mutex::Lock lock(entryMutex);
+#endif
+        for (int i=items->size()-1; i>=0; i--) {
+            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+            if (entry->processing)
+                continue;
+            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+            if (pos!=fd.end() && pos!=fd.begin()) {
+                fd.erase (pos);
+                // find the first item that is not under processing
+                for (pos=fd.begin(); pos!=fd.end(); pos++) 
+                    if (!(*pos)->processing) {
+                        fd.insert (pos, entry);
+                        break;
+                    }
+            }
         }
+        saveBatchQueue( );
     }
-    saveBatchQueue( );
-	}
+
     redraw ();
 }
 
 void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
-		#endif
-    for (int i=0; i<items->size(); i++) {
-        BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
-        if (entry->processing)
-            continue;
-        std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
-        if (pos!=fd.end()) {
-            fd.erase (pos);
-            fd.push_back (entry);
+        // TODO: Check for Linux
+#ifdef WIN32
+        Glib::Mutex::Lock lock(entryMutex);
+#endif
+        for (int i=0; i<items->size(); i++) {
+            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+            if (entry->processing)
+                continue;
+            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+            if (pos!=fd.end()) {
+                fd.erase (pos);
+                fd.push_back (entry);
+            }
         }
+        saveBatchQueue( );
     }
-    saveBatchQueue( );
-	}
+
     redraw ();
 }
    
 void BatchQueue::selectAll () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
-	#endif
+    {// TODO: Check for Linux
+#ifdef WIN32
+        Glib::Mutex::Lock lock(entryMutex);
+#endif
 
-    lastClicked = NULL;
-    selected.clear ();
-    for (int i=0; i<fd.size(); i++) {
-        if (fd[i]->processing)
-            continue;
-        fd[i]->selected = true;
-        selected.push_back (fd[i]);
+        lastClicked = NULL;
+        selected.clear ();
+        for (int i=0; i<fd.size(); i++) {
+            if (fd[i]->processing)
+                continue;
+            fd[i]->selected = true;
+            selected.push_back (fd[i]);
+        }
     }
     queue_draw ();
 }
@@ -387,46 +395,46 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     delete processing;
     processing = NULL;
 	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
-		#endif
+        // TODO: Check for Linux
+#ifdef WIN32
+        Glib::Mutex::Lock lock(entryMutex);
+#endif
 
-    fd.erase (fd.begin());
+        fd.erase (fd.begin());
 
-    // return next job
-    if (fd.size()==0) {
-        if (listener)
-            listener->queueEmpty ();
-    }
-    else if (listener && listener->canStartNext ()) {
-        BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
-        // tag it as selected        
-        next->processing = true;
-        processing = next;
-        // remove from selection
-        if (processing->selected) {
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (selected.begin(), selected.end(), processing);
-            if (pos!=selected.end())
-                selected.erase (pos);
-            processing->selected = false;
+        // return next job
+        if (fd.size()==0) {
+            if (listener)
+                listener->queueEmpty ();
         }
-        // remove button set
-        next->removeButtonSet ();
+        else if (listener && listener->canStartNext ()) {
+            BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
+            // tag it as selected        
+            next->processing = true;
+            processing = next;
+            // remove from selection
+            if (processing->selected) {
+                std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (selected.begin(), selected.end(), processing);
+                if (pos!=selected.end())
+                    selected.erase (pos);
+                processing->selected = false;
+            }
+            // remove button set
+            next->removeButtonSet ();
+        }
+        if( saveBatchQueue( ) ){
+            safe_g_remove( processedParams );
+            // Delete all files in directory \batch when finished, just to be sure to remove zombies
+            if( fd.size()==0 ){
+                std::vector<Glib::ustring> names;
+                Glib::ustring batchdir = options.rtdir+"/batch/";
+                Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
+                safe_build_file_list (dir, names, batchdir);
+                for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
+                    safe_g_remove( *iter );
+            }
+        }
     }
-    if( saveBatchQueue( ) ){
-       safe_g_remove( processedParams );
-       // Delete all files in directory \batch when finished, just to be sure to remove zombies
-       if( fd.size()==0 ){
-    	    std::vector<Glib::ustring> names;
-    	    Glib::ustring batchdir = options.rtdir+"/batch/";
-    	    Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
-    		safe_build_file_list (dir, names, batchdir);
-    		for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
-    			safe_g_remove( *iter );
-       }
-    }
-	}
 
     redraw ();
     notifyListener ();

@@ -26,8 +26,7 @@ BatchQueueEntryUpdater::BatchQueueEntryUpdater ()
     : tostop(false), stopped(true), qMutex(NULL) {
 }
 
-void BatchQueueEntryUpdater::add (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener) {
-
+void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener) {
     if (!qMutex)
         qMutex = new Glib::Mutex ();    
 
@@ -42,6 +41,7 @@ void BatchQueueEntryUpdater::add (guint8* oimg, int ow, int oh, int newh, BQEntr
             i->listener = listener;
             break;
         }
+
     // not found, create and append new job
     if (i==jqueue.end ()) {
         Job j;
@@ -53,33 +53,30 @@ void BatchQueueEntryUpdater::add (guint8* oimg, int ow, int oh, int newh, BQEntr
         jqueue.push_back (j);
     }
     qMutex->unlock ();
-}
 
-void BatchQueueEntryUpdater::process () {
+    // Start thread if not running yet
+    if (stopped) {
+        stopped = false;
+        tostop  = false;
 
-    if (stopped){
         #undef THREAD_PRIORITY_LOW
-        thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::process_), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
+        thread = Glib::Thread::create(sigc::mem_fun(*this, &BatchQueueEntryUpdater::processThread), (unsigned long int)0, true, true, Glib::THREAD_PRIORITY_LOW);
     }
 }
 
-void BatchQueueEntryUpdater::process_ () { 
-
-    stopped = false;
-    tostop = false;
-
-// TODO: process visible jobs first
-	bool isEmpty=false;
+void BatchQueueEntryUpdater::processThread () { 
+    // TODO: process visible jobs first
+    bool isEmpty=false;
 
     while (!tostop && !isEmpty) {
 
         qMutex->lock ();
-			isEmpty=jqueue.empty ();  // do NOT put into while() since it must be within mutex section
-			Job current;
-			if (!isEmpty) {
-				current = jqueue.front ();
-        jqueue.pop_front ();
-			}
+        isEmpty=jqueue.empty ();  // do NOT put into while() since it must be within mutex section
+        Job current;
+        if (!isEmpty) {
+            current = jqueue.front ();
+            jqueue.pop_front ();
+        }
         qMutex->unlock ();
 
         if (!isEmpty && current.listener) {
@@ -89,38 +86,13 @@ void BatchQueueEntryUpdater::process_ () {
             current.listener->updateImage (img, neww, current.newh);
         }
     }
+
     stopped = true;
 }
 
-void BatchQueueEntryUpdater::stop () {
-
-    if (stopped) {
-        tostop = true; 
-        return; }
-        
-    gdk_threads_leave(); 
-    tostop = true; 
-    Glib::Thread::self()->yield(); 
-    if (!stopped) 
-        thread->join ();
-    gdk_threads_enter();
-}
-
-void BatchQueueEntryUpdater::removeJobs () {
-
-    if (!qMutex)
-        return;
-
-    qMutex->lock ();
-    while (!jqueue.empty()) 
-        jqueue.pop_front (); 
-    qMutex->unlock ();
-}
 
 void BatchQueueEntryUpdater::removeJobs (BQEntryUpdateListener* listener) {
-
-    if (!qMutex)
-        return;
+    if (!qMutex) return;
 
     qMutex->lock ();
     bool ready = false;
@@ -138,9 +110,22 @@ void BatchQueueEntryUpdater::removeJobs (BQEntryUpdateListener* listener) {
 }
 
 void BatchQueueEntryUpdater::terminate  () { 
+    // never started or currently not running?
+    if (!qMutex || stopped) return;
 
-    stop (); 
-    removeJobs (); 
+    if (!stopped) {
+        // Yield to currenly running thread and wait till it's finished
+        gdk_threads_leave(); 
+        tostop = true; 
+        Glib::Thread::self()->yield(); 
+        if (!stopped) thread->join ();
+        gdk_threads_enter();
+    }
+
+    // Remove remaining jobs
+    qMutex->lock ();
+    while (!jqueue.empty()) jqueue.pop_front (); 
+    qMutex->unlock ();
 }
 
 

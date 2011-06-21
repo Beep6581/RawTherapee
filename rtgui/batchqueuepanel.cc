@@ -133,7 +133,6 @@ BatchQueuePanel::BatchQueuePanel () {
 
     show_all ();
     batchQueue->loadBatchQueue ();
-    batchQueue->notifyListener ();
 }
 
 

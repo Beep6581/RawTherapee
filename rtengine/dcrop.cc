@@ -91,7 +91,8 @@ void Crop::update (int todo) {
     bool needstransform  = parent->ipf.needsTransform();
 
     if (todo & M_INIT) {
-        parent->minit.lock ();
+        Glib::Mutex::Lock lock(parent->minit);  // Also used in inproccoord
+
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;
         if (params.coarse.rotate==180) tr |= TR_R180;
@@ -103,8 +104,6 @@ void Crop::update (int todo) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-
-			parent->minit.unlock ();
     }
 
     // transform
@@ -134,7 +133,7 @@ void Crop::update (int todo) {
 	if (colortest && cropw>115 && croph>115) 
 		for(int j=1;j<5;j++){	
 			xref+=j*30;yref+=j*30;
-			printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip, \
+			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip, \
 				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
 				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
 				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
@@ -148,14 +147,16 @@ void Crop::update (int todo) {
 	if (colortest && cropw>115 && croph>115) 
 	for(int j=1;j<5;j++){	
 		xref+=j*30;yref+=j*30;
-		printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip, \
-			   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
-			   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
-			   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
-		printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
-			   laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			   laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			   laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+		if (settings->verbose) {
+            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip, \
+			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
+			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+			       baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
+		    printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
+			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			       laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+        }
 	}
 	
 	// apply luminance operations

@@ -122,7 +122,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     if (todo & M_INIT) {
-        Glib::Mutex::Lock lock(minit);
+        Glib::Mutex::Lock lock(minit);  // Also used in crop window
 
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
         currWB = ColorTemp (params.wb.temperature, params.wb.green);
@@ -150,7 +150,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
-		
     }
     readyphase++;
 
@@ -313,7 +312,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histRedRaw, histGreenRaw, histBlueRaw);
     }
 
-    progress ("Ready",100*readyphase/numofphases);
     mProcessing.unlock ();
 }
 
@@ -479,6 +477,7 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
     ColorTemp ret = imgsrc->getSpotWB (red, green, blue, tr);
 	currWB = ColorTemp (params.wb.temperature, params.wb.green);
     mProcessing.unlock ();
+
 	if (ret.getTemp() > 0) {
 		temp = ret.getTemp ();
 		tgreen = ret.getGreen ();

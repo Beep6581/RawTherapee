@@ -55,7 +55,7 @@ template<class T> void freeArray2 (T** a, int H) {
 class RawImageSource : public ImageSource {
 
     protected:
-        Glib::Mutex isrcMutex;
+        Glib::Mutex getImageMutex;  // locks getImage
 
         int W, H;
         ColorTemp wb;

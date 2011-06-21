@@ -75,15 +75,11 @@ public:
 	}
 
 	Glib::ThreadPool* threadPool_;
-
 	Glib::Mutex mutex_;
-
 	JobSet jobs_;
-
 	gint nConcurrentThreads;
 
-	void
-	processNextJob(void)
+	void processNextJob()
 	{ 
 		Job j;
 		{
@@ -102,10 +98,12 @@ public:
 			DEBUG("processing %s",j.dir_entry_.c_str());
 			DEBUG("%d job(s) remaining",jobs_.size());
 		}
-		g_atomic_int_inc (&nConcurrentThreads);
+
+		g_atomic_int_inc (&nConcurrentThreads);  // to detect when last thread in pool has run out
+
 		// unlock and do processing; will relock on block exit, then call listener
 		// if something got
-		try{
+		try {
 			Thumbnail* tmb = 0;
 			{
 				if (safe_file_test(j.dir_entry_, Glib::FILE_TEST_EXISTS))
@@ -114,22 +112,17 @@ public:
 				}
 			}
 
-			// we got something so notify listener
+			// we got something, so notify listener
 			if ( tmb )
 			{
 				j.listener_->previewReady(j.dir_id_,new FileBrowserEntry(tmb,j.dir_entry_));
 			}
-		}catch(Glib::Error){
+		} catch (Glib::Error){} catch(...){}
 
-		}catch(...){}
-		bool last = g_atomic_int_dec_and_test(&	nConcurrentThreads);
+		bool last = g_atomic_int_dec_and_test (&nConcurrentThreads);
 
 		// signal at end
-		if ( jobs_.empty() )
-		{
-			if(last)
-			   j.listener_->previewsFinished(j.dir_id_);
-		}
+		if (last && jobs_.empty()) j.listener_->previewsFinished(j.dir_id_);
 	}
 };
 
@@ -138,29 +131,33 @@ PreviewLoader::PreviewLoader():
 {
 }
 
-PreviewLoader*
-PreviewLoader::getInstance(void)
+PreviewLoader* PreviewLoader::getInstance(void)
 {
 	// this will not be deleted...
-	static PreviewLoader* instance_ = 0;
-	if ( instance_ == 0 )
+	static PreviewLoader* instance_ = NULL;
+	if ( instance_ == NULL )
 	{
-		instance_ = new PreviewLoader();
+        static Glib::Mutex smutex_;
+        Glib::Mutex::Lock lock(smutex_);
+
+        if ( instance_ == NULL ) instance_ = new PreviewLoader();
 	}
+
 	return instance_;
 }
 
-void 
-PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* l)
+void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderListener* l)
 {
 	// somebody listening?
 	if ( l != 0 )
 	{
-		Glib::Mutex::Lock lock(impl_->mutex_);
+        {
+            Glib::Mutex::Lock lock(impl_->mutex_);
 
-		// create a new job and append to queue
-		DEBUG("saving job %s",dir_entry.c_str());
-		impl_->jobs_.insert(Impl::Job(dir_id,dir_entry,l));
+            // create a new job and append to queue
+            DEBUG("saving job %s",dir_entry.c_str());
+            impl_->jobs_.insert(Impl::Job(dir_id,dir_entry,l));
+        }
 
 		// queue a run request
 		DEBUG("adding run request %s",dir_entry.c_str());
@@ -168,8 +165,7 @@ PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoaderList
 	}
 }
 
-void 
-PreviewLoader::removeAllJobs(void) 
+void PreviewLoader::removeAllJobs(void) 
 { 
 	DEBUG("stop %d",impl_->nConcurrentThreads);
 	Glib::Mutex::Lock lock(impl_->mutex_);
