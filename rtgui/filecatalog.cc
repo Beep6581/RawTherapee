@@ -69,6 +69,51 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     emptyT->show ();
     trashButtonBox->show ();
     
+    //initialize hbToolBar1
+    Gtk::HBox* hbToolBar1 = Gtk::manage(new Gtk::HBox ());
+
+    //setup BrowsePath
+    iRefreshWhite = new Gtk::Image(argv0+"/images/refresh_white.png");
+    iRefreshRed = new Gtk::Image(argv0+"/images/refresh_red.png");
+
+    BrowsePath = Gtk::manage(new Gtk::Entry ());
+    BrowsePath->set_width_chars (50);
+    BrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHHINT"));
+    Gtk::HBox* hbBrowsePath = Gtk::manage(new Gtk::HBox ());
+    buttonBrowsePath = Gtk::manage(new Gtk::Button ());
+    buttonBrowsePath->set_image (*iRefreshWhite);
+    buttonBrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHBUTTONHINT"));
+    buttonBrowsePath->set_relief (Gtk::RELIEF_NONE);
+    buttonBrowsePath->signal_clicked().connect( sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed) );
+    hbBrowsePath->pack_start (*BrowsePath, Gtk::PACK_EXPAND_WIDGET,0);
+    hbBrowsePath->pack_start (*buttonBrowsePath,Gtk::PACK_SHRINK, 0);
+    hbToolBar1->pack_start (*hbBrowsePath, Gtk::PACK_EXPAND_WIDGET,0);
+
+    BrowsePath->signal_activate().connect (sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed)); //respond to the Enter key
+
+    //setup Query
+    iQueryClear = new Gtk::Image(argv0+"/images/x_10.png");
+    Gtk::Label* labelQuery = Gtk::manage(new Gtk::Label(M("FILEBROWSER_QUERYLABEL")));
+    Query = Gtk::manage(new Gtk::Entry ()); // cannot use Gtk::manage here as FileCatalog::getFilter will fail on Query->get_text()
+    Query->set_text("");
+    Query->set_width_chars (20); // TODO !!! add this value to options?
+    Query->set_tooltip_markup (M("FILEBROWSER_QUERYHINT"));
+    Gtk::HBox* hbQuery = Gtk::manage(new Gtk::HBox ());
+    buttonQueryClear = Gtk::manage(new Gtk::Button ());
+    buttonQueryClear->set_image (*iQueryClear);
+    buttonQueryClear->set_tooltip_markup (M("FILEBROWSER_QUERYBUTTONHINT"));
+    buttonQueryClear->set_relief (Gtk::RELIEF_NONE);
+    buttonQueryClear->signal_clicked().connect( sigc::mem_fun(*this, &FileCatalog::buttonQueryClearPressed) );
+    hbQuery->pack_start (*labelQuery,Gtk::PACK_SHRINK, 0);
+    hbQuery->pack_start (*Query,Gtk::PACK_SHRINK, 0);
+    hbQuery->pack_start (*buttonQueryClear,Gtk::PACK_SHRINK, 0);
+    hbToolBar1->pack_start (*hbQuery, Gtk::PACK_SHRINK,0);
+
+    Query->signal_activate().connect (sigc::mem_fun(*this, &FileCatalog::executeQuery)); //respond to the Enter key
+
+    // if NOT a single row toolbar
+    if (!options.FileBrowserToolbarSingleRow) pack_start (*hbToolBar1, Gtk::PACK_SHRINK,0);
+
     // setup button bar
     buttonBar = Gtk::manage( new Gtk::HBox () );
     pack_start (*buttonBar, Gtk::PACK_SHRINK);
@@ -220,33 +265,14 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
     zoomBox->pack_end (*zoomOutButton, Gtk::PACK_SHRINK);   
 
-    // add default panel 
-    hBox = Gtk::manage( new Gtk::HBox () );
-    hBox->show ();
-    hBox->pack_end (*fileBrowser);
-    fileBrowser->applyFilter (getFilter());
-    pack_start (*hBox);
-
     buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);
-
-    // add browserPath
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
-    iRightArrow = new Gtk::Image(argv0+"/images/right.png");
-    iRightArrow_red = new Gtk::Image(argv0+"/images/right_red.png");
+    //iRightArrow = new Gtk::Image(argv0+"/images/right.png");
+    //iRightArrow_red = new Gtk::Image(argv0+"/images/right_red.png");
 
-    BrowsePath = new Gtk::Entry ();
-    BrowsePath->set_width_chars (50); // !!! add this value to options
-    BrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHHINT"));
-    Gtk::HBox* hbBrowsePath = new Gtk::HBox ();
-    buttonBrowsePath = new Gtk::Button ();
-    buttonBrowsePath->set_image (*iRightArrow);
-    buttonBrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHBUTTONHINT"));
-    buttonBrowsePath->set_relief (Gtk::RELIEF_NONE);
-    hbBrowsePath->pack_start (*BrowsePath);
-    hbBrowsePath->pack_start (*buttonBrowsePath,Gtk::PACK_SHRINK, 4);
-    buttonBar->pack_start (*hbBrowsePath, Gtk::PACK_EXPAND_WIDGET,4);
-    buttonBrowsePath->signal_clicked().connect( sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed) );
+    // if it IS a single row toolbar
+    if (options.FileBrowserToolbarSingleRow) buttonBar->pack_start (*hbToolBar1, Gtk::PACK_EXPAND_WIDGET,0);
 
     tbRightPanel_1 = new Gtk::ToggleButton ();
     iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
@@ -263,6 +289,14 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_end (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
     buttonBar->pack_end (*toolBar, Gtk::PACK_SHRINK);   
     buttonBar->pack_end (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
+
+    // add default panel
+    hBox = Gtk::manage( new Gtk::HBox () );
+    hBox->show ();
+    hBox->pack_end (*fileBrowser);
+    fileBrowser->applyFilter (getFilter()); // warning: can call this only after all objects used in getFilter (e.g. Query) are instantiated
+    //printf("FileCatalog::FileCatalog  fileBrowser->applyFilter (getFilter())\n");
+    pack_start (*hBox);
 
     enabled = true;  
 
@@ -287,6 +321,13 @@ FileCatalog::~FileCatalog(){
 	}
 	delete iTrashEmpty;
 	delete iTrashFull;
+	delete iRefreshWhite;
+	delete iRefreshRed;
+	delete iQueryClear;
+	delete iLeftPanel_1_Show;
+	delete iLeftPanel_1_Hide;
+	delete iRightPanel_1_Show;
+	delete iRightPanel_1_Hide;
 }
 
 bool FileCatalog::capture_event(GdkEventButton* event){
@@ -366,8 +407,9 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
             addAndOpenFile (openfile);
 
 		selectedDirectory = dir->get_parse_name();
+		//printf("FileCatalog::dirSelected  selectedDirectory = %s\n",selectedDirectory.c_str());
 		BrowsePath->set_text (selectedDirectory);
-		buttonBrowsePath->set_image (*iRightArrow);
+		buttonBrowsePath->set_image (*iRefreshWhite);
         fileNameList = getFileList ();
 
         for (unsigned int i=0; i<fileNameList.size(); i++) {
@@ -1007,11 +1049,26 @@ BrowserFilter FileCatalog::getFilter () {
 			filter.exifFilter = currentEFS;
 		filter.exifFilterEnabled = filterPanel->isEnabled ();
 	}
+
+    //TODO add support for more query options. e.g by date, iso, f-number, etc
+    //TODO could use date:<value>;iso:<value>  etc
+    // default will be filename
+
+    /* // this is for safe execution if getFilter is called before Query object is instantiated
+    Glib::ustring tempQuery;
+    tempQuery="";
+    if (Query) tempQuery = Query->get_text();
+    */
+    filter.queryString = Query->get_text(); // full query string from Query Entry
+    filter.queryFileName = Query->get_text(); // for now Query is only by file name
+
     return filter;
 }
 
 void FileCatalog::filterChanged () {
-    
+    //TODO !!! there is too many repetitive and unnecessary executions of
+	// " fileBrowser->applyFilter (getFilter()); " throughout the code
+	// this needs further analysis and cleanup
     fileBrowser->applyFilter (getFilter());
     _refreshProgressBar();
 }
@@ -1192,6 +1249,20 @@ void FileCatalog::trashChanged () {
         bTrash->set_image(*iTrashFull);
     }
 }
+void FileCatalog::buttonQueryClearPressed () {
+	Query->set_text("");
+	FileCatalog::executeQuery ();
+}
+
+void FileCatalog::executeQuery(){
+	// if BrowsePath text was changed, do a full browse;
+	// otherwise filter only
+
+	if (BrowsePath->get_text()!=selectedDirectory)
+		buttonBrowsePathPressed ();
+	else
+		FileCatalog::filterChanged ();
+}
 
 void FileCatalog::buttonBrowsePathPressed () {
 	Glib::ustring BrowsePathValue = BrowsePath->get_text();
@@ -1222,7 +1293,7 @@ void FileCatalog::buttonBrowsePathPressed () {
 	}
 	else
 		// error, likely path not found: show red arrow
-		buttonBrowsePath->set_image (*iRightArrow_red);
+		buttonBrowsePath->set_image (*iRefreshRed);
 }
 
 void FileCatalog::tbLeftPanel_1_visible (bool visible){
@@ -1392,6 +1463,12 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 				if (!alt){
 					BrowsePath->select_region(0, BrowsePath->get_text_length());
 					BrowsePath->grab_focus();
+					return true;
+				}
+			case GDK_f:
+				if (!alt){
+					Query->select_region(0, Query->get_text_length());
+					Query->grab_focus();
 					return true;
 				}
         }

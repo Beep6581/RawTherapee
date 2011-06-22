@@ -693,6 +693,19 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
     if (filter.showRanked[entry->thumbnail->getRank()]==false || filter.showCLabeled[entry->thumbnail->getColorLabel()]==false || (entry->thumbnail->getStage()==1 && !filter.showTrash) || (entry->thumbnail->getStage()==0 && !filter.showNotTrash))
         return false;
 
+    // return false is query is not satisfied
+    if (filter.queryFileName.size()>0){
+    	// check if image's FileName contains queryFileName (case insensitive)
+    	// TODO should we provide case-sensitive search option via preferences?
+    	Glib::ustring FileName;
+    	FileName = Glib::path_get_basename (entry->thumbnail->getFileName());
+    	FileName = FileName.uppercase();
+    	//printf("FileBrowser::checkFilter FileName = '%s'; find() result= %i \n",FileName.c_str(), FileName.find(filter.queryFileName.uppercase()));
+    	
+    	if (FileName.find(filter.queryFileName.uppercase())==-1)
+    		 return false;
+    }
+
     // check exif filter
     const CacheImageData* cfs = entry->thumbnail->getCacheImageData();
     double tol = 0.01;

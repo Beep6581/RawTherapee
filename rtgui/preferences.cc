@@ -433,6 +433,11 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbworkflow2->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
     vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK, 4);
     
+    Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
+    ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
+    hbworkflow3->pack_start (*ckbFileBrowserToolbarSingleRow, Gtk::PACK_SHRINK, 4);
+    vbworkflow->pack_start (*hbworkflow3, Gtk::PACK_SHRINK, 0);
+
     fworklflow->add (*vbworkflow);
     mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
      
@@ -973,6 +978,7 @@ void Preferences::storePreferences () {
 
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.showProfileSelector = ckbShowProfileSelector->get_active();
+    moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 
     // Sounds
@@ -1077,7 +1083,7 @@ void Preferences::fillPreferences () {
 
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
-
+    ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
 
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();
