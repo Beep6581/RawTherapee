@@ -59,7 +59,10 @@ FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thum
 FILEBROWSER_AUTODARKFRAME;Auto dark frame
 FILEBROWSER_AUTOFLATFIELD;Auto flat field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);\nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
+FILEBROWSER_BROWSEPATHHINT;Type path to browse\n<b>Ctrl-o</b> set focus\n<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
+FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+FILEBROWSER_QUERYHINT;Type a part of filename to search by \n<b>Ctrl-f</b> set focus (in File Browser);\n<b>Enter</b> to find
+FILEBROWSER_QUERYLABEL; Find:
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
@@ -121,7 +124,7 @@ FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
 FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
-FILEBROWSER_SHOWDIRHINT;Show all images in the directory (clear all filters) <b>D</b>
+FILEBROWSER_SHOWDIRHINT;Clear all filters <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star <b>1</b>
@@ -568,6 +571,7 @@ PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EDITORLAYOUT;Editor Layout
 PREFERENCES_EXTERNALEDITOR;External editor
 PREFERENCES_FBROWSEROPTS;File Browser Options
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 PREFERENCES_FILEFORMAT;File format
 PREFERENCES_FLATFIELD;Flat Field
 PREFERENCES_FLATFIELDFOUND;Found

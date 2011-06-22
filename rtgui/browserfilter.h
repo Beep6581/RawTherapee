@@ -20,6 +20,7 @@
 #define _BROWSERFILTER_
 
 #include <exiffiltersettings.h>
+#include <glibmm.h>
 
 class BrowserFilter {
 
@@ -29,7 +30,10 @@ class BrowserFilter {
         bool showTrash;
         bool showNotTrash;
         bool showEdited[2];
-        
+
+        Glib::ustring queryString;
+        Glib::ustring queryFileName;
+
         bool exifFilterEnabled;
         ExifFilterSettings exifFilter;
         

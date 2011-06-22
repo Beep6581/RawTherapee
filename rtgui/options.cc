@@ -138,6 +138,7 @@ void Options::setDefaults () {
     tunnelMetaData = false;
     histogramPosition = 2;
     showProfileSelector = true;
+    FileBrowserToolbarSingleRow = true;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
@@ -355,6 +356,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "CutOverlayBrush"))     cutOverlayBrush   = keyFile.get_double_list ("GUI", "CutOverlayBrush");
     if (keyFile.has_key ("GUI", "HistogramPosition"))   histogramPosition   = keyFile.get_integer ("GUI", "HistogramPosition");
     if (keyFile.has_key ("GUI", "ShowProfileSelector")) showProfileSelector = keyFile.get_boolean ("GUI", "ShowProfileSelector");
+    if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
 }
 
 
@@ -506,6 +508,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
     keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
     keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
+    keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
 
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

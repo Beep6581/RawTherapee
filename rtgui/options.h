@@ -146,6 +146,7 @@ class Options {
     bool tunnelMetaData;  // Pass through IPTC and XMP unchanged
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool showProfileSelector;
+    bool FileBrowserToolbarSingleRow;
 
     Options ();
 

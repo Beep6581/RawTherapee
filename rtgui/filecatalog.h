@@ -90,12 +90,17 @@ class FileCatalog : public Gtk::VBox,
         Gtk::Image* iranked[5], *igranked[5];
         Gtk::Image* iCLabeled[5], *igCLabeled[5];
         Gtk::Image *iTrashEmpty, *iTrashFull;
-        Gtk::Image *iRightArrow_red, *iRightArrow;
+        //Gtk::Image *iRightArrow_red, *iRightArrow;
+        Gtk::Image *iRefreshWhite, *iRefreshRed;
         Gtk::Image *iLeftPanel_1_Show, *iLeftPanel_1_Hide, *iRightPanel_1_Show, *iRightPanel_1_Hide;
+        Gtk::Image *iQueryClear;
+        
         Gtk::Entry* BrowsePath;
         Gtk::Button* buttonBrowsePath;
-        sigc::connection BrowsePathconn;
         
+        Gtk::Entry* Query;
+        Gtk::Button* buttonQueryClear;
+
         double hScrollPos[14];
         double vScrollPos[14];
         int lastScrollPos;
@@ -195,6 +200,8 @@ class FileCatalog : public Gtk::VBox,
                 void zoomOut ();
 
                 void buttonBrowsePathPressed ();
+                void buttonQueryClearPressed ();
+                void executeQuery ();
 
                 void tbLeftPanel_1_toggled ();
                 void tbLeftPanel_1_visible (bool visible);
