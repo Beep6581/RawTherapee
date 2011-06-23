@@ -25,21 +25,16 @@
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//static float *dirwt;
-static LUTf dirwt (0x10000);
+static LUTf dirwt;
 
 static void __attribute__((constructor)) setup_dirwt()
 {
-	//dirwt = new float[0x10000];
+    dirwt (0x10000);
+
 	//set up directional weight function
 	for (int i=0; i<0x10000; i++)
 		dirwt[i] = 1.0/SQR(1.0+i);
 }
-
-/*static void __attribute__((destructor)) cleanup_dirwt()
-{
-	delete [] dirwt;
-}*/
 
 void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	//int winx=0, winy=0;
