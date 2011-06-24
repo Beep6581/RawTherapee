@@ -51,7 +51,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
         for (int i=0; i<H; i++) memcpy (imgd[i], rawData[i], W*sizeof(**imgd));
 
         // Demosaic to calc luminosity
-        fast_demo (0,0,W,H);
+        fast_demosaic (0,0,W,H);
 
 // calculate CIE luminosity
         float* luminosity = (float *) new float[width*height];

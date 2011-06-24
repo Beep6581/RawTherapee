@@ -1110,7 +1110,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
-            fast_demo (0,0,W,H);
+            fast_demosaic (0,0,W,H);
 			//nodemosaic();//for testing
 		else
         	nodemosaic();

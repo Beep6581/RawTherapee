@@ -25,18 +25,22 @@
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-static LUTf dirwt;
 
-static void __attribute__((constructor)) setup_dirwt()
+
+LUTf RawImageSource::initInvGrad()
 {
-    dirwt (0x10000);
+    LUTf invGrad (0x10000);
 
 	//set up directional weight function
 	for (int i=0; i<0x10000; i++)
-		dirwt[i] = 1.0/SQR(1.0+i);
+		invGrad[i] = 1.0/SQR(1.0+i);
+
+    return invGrad;
 }
 
-void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
+LUTf RawImageSource::invGrad = RawImageSource::initInvGrad();
+
+void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 	//int winx=0, winy=0;
 	//int winw=W, winh=H;
 	
@@ -47,7 +51,7 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 	float progress = 0.0;
 	
 
-#define bord 4
+    const int bord=4;
 		
 	int clip_pt = 4*65535*initialGain;
 	
@@ -193,10 +197,10 @@ void RawImageSource::fast_demo(int winx, int winy, int winw, int winh) {
 					
 				} else {
 					//compute directional weights using image gradients
-					wtu=dirwt[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>2];
-					wtd=dirwt[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>2];
-					wtl=dirwt[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>2];
-					wtr=dirwt[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>2];
+					wtu=invGrad[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>2];
+					wtd=invGrad[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>2];
+					wtl=invGrad[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>2];
+					wtr=invGrad[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>2];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
 					green[i][j]=(int)((wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1])/(wtu+wtd+wtl+wtr));
