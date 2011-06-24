@@ -56,7 +56,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::ImageMenuItem* colorlabel[6];
     Gtk::MenuItem* trash;
     Gtk::MenuItem* untrash;
-    Gtk::MenuItem* develop;
+    Gtk::ImageMenuItem* develop;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
 	Gtk::MenuItem* removeInclProc;
@@ -65,6 +65,10 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* copyTo;
     Gtk::MenuItem* moveTo;
 
+    Gtk::MenuItem* menuRank;
+    Gtk::MenuItem* menuLabel;
+    Gtk::MenuItem* menuFileOperations;
+    Gtk::ImageMenuItem* menuProfileOperations;
     Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;
     Gtk::MenuItem* thisIsDF;

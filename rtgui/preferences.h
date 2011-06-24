@@ -103,6 +103,11 @@ class Preferences : public Gtk::Dialog {
     Gtk::Button*    delExt;
     Gtk::CheckButton* overlayedFileNames;
 
+    Gtk::CheckButton* ckbmenuGroupRank;
+    Gtk::CheckButton* ckbmenuGroupLabel;
+    Gtk::CheckButton* ckbmenuGroupFileOperations;
+    Gtk::CheckButton* ckbmenuGroupProfileOperations;
+
     Gtk::CheckButton* chOverwriteOutputFile;
 
     Gtk::CheckButton* saveParamsFile;

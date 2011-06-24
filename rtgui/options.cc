@@ -139,6 +139,10 @@ void Options::setDefaults () {
     histogramPosition = 2;
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = true;
+    menuGroupRank = true;
+    menuGroupLabel = true;
+    menuGroupFileOperations = true;
+    menuGroupProfileOperations = true;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
@@ -317,6 +321,10 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "OverlayedFileNames")) overlayedFileNames = keyFile.get_boolean ("File Browser", "OverlayedFileNames");
     if (keyFile.has_key ("File Browser", "ShowFileNames"))      showFileNames = keyFile.get_boolean ("File Browser", "ShowFileNames");
     if (keyFile.has_key ("File Browser", "InternalThumbIfUntouched")) internalThumbIfUntouched = keyFile.get_boolean ("File Browser", "InternalThumbIfUntouched");
+    if (keyFile.has_key ("File Browser", "menuGroupRank")) menuGroupRank = keyFile.get_boolean ("File Browser", "menuGroupRank");
+    if (keyFile.has_key ("File Browser", "menuGroupLabel")) menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
+    if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
+    if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -450,6 +458,10 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "OverlayedFileNames", overlayedFileNames);
     keyFile.set_boolean ("File Browser", "ShowFileNames", showFileNames );
     keyFile.set_boolean ("File Browser", "InternalThumbIfUntouched", internalThumbIfUntouched );
+    keyFile.set_boolean ("File Browser", "menuGroupRank", menuGroupRank);
+    keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
+    keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
+    keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
    
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);

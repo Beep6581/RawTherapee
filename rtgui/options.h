@@ -148,6 +148,11 @@ class Options {
     bool showProfileSelector;
     bool FileBrowserToolbarSingleRow;
 
+    bool menuGroupRank;
+    bool menuGroupLabel;
+    bool menuGroupFileOperations;
+    bool menuGroupProfileOperations;
+
     Options ();
 
     Options*    copyFrom        (Options* other);
