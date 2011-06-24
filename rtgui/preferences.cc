@@ -708,6 +708,23 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 
     fro->add (*vbro);  
 
+
+    Gtk::Frame* frmnu = Gtk::manage( new Gtk::Frame (M("PREFERENCES_MENUOPTIONS")) );
+    ckbmenuGroupRank = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPRANK")) );
+    ckbmenuGroupLabel = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPLABEL")) );
+    ckbmenuGroupFileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPFILEOPERATIONS")) );
+    ckbmenuGroupProfileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
+    Gtk::VBox* vbmnu = Gtk::manage( new Gtk::VBox () );
+
+    vbmnu->set_border_width (4);
+    vbmnu->pack_start (*ckbmenuGroupRank, Gtk::PACK_SHRINK, 0);
+    vbmnu->pack_start (*ckbmenuGroupLabel, Gtk::PACK_SHRINK, 0);
+    vbmnu->pack_start (*ckbmenuGroupFileOperations, Gtk::PACK_SHRINK, 0);
+    vbmnu->pack_start (*ckbmenuGroupProfileOperations, Gtk::PACK_SHRINK, 0);
+
+	frmnu->add (*vbmnu);
+
+
     Gtk::Frame* fre = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PARSEDEXT")) );
     Gtk::VBox* vbre = Gtk::manage( new Gtk::VBox () );
     vbre->set_border_width (4);
@@ -747,6 +764,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     vbc->set_border_width (4);
 
     Gtk::Label* cflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHETHUMBFORM")+":") );
+    cflab->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP);
     cformat = Gtk::manage( new Gtk::ComboBoxText () );
     cformat->set_size_request(50, -1);
     cformat->append_text (M("PREFERENCES_CACHEFORMAT1"));
@@ -754,10 +772,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     cformat->append_text (M("PREFERENCES_CACHEFORMAT1")+", 16 bit");
     cformat->signal_changed().connect( sigc::mem_fun(*this, &Preferences::cacheFormatComboChanged) );
     cacheFormatComboChanged(); // update the tooltip
-    Gtk::HBox* hb2 = Gtk::manage( new Gtk::HBox () );
-    hb2->pack_start (*cflab, Gtk::PACK_SHRINK, 4);
-    hb2->pack_start (*cformat);
-    vbc->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
+    vbc->pack_start (*cflab, Gtk::PACK_SHRINK, 2);
+    vbc->pack_start (*cformat);
 
     Gtk::HBox* hb3 = Gtk::manage( new Gtk::HBox () );
     Gtk::Label* chlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHETHUMBHEIGHT")+":") );
@@ -794,6 +810,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     Gtk::VBox* vb6 = Gtk::manage( new Gtk::VBox () );
 
     vb6->pack_start (*fro);
+    vb6->pack_start (*frmnu);
     vb6->pack_end (*frc);
     hb6->pack_start (*vb6);
     hb6->pack_start (*fre);
@@ -885,6 +902,10 @@ void Preferences::storePreferences () {
     moptions.dateFormat          = dateformat->get_text();
     moptions.fbShowDateTime  = showDateTime->get_active ();
     moptions.fbShowBasicExif = showBasicExif->get_active ();
+    moptions.menuGroupRank = ckbmenuGroupRank->get_active();
+    moptions.menuGroupLabel = ckbmenuGroupLabel->get_active();
+    moptions.menuGroupFileOperations = ckbmenuGroupFileOperations->get_active();
+    moptions.menuGroupProfileOperations = ckbmenuGroupProfileOperations->get_active();
     moptions.blinkClipped    = blinkClipped->get_active ();
     moptions.highlightThreshold = (int)hlThresh->get_value ();
     moptions.shadowThreshold = (int)shThresh->get_value ();
@@ -1019,6 +1040,10 @@ void Preferences::fillPreferences () {
     fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
+    ckbmenuGroupRank->set_active(moptions.menuGroupRank);
+    ckbmenuGroupLabel->set_active(moptions.menuGroupLabel);
+    ckbmenuGroupFileOperations->set_active(moptions.menuGroupFileOperations);
+    ckbmenuGroupProfileOperations->set_active(moptions.menuGroupProfileOperations);
     blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);
