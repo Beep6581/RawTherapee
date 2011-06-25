@@ -69,39 +69,39 @@ style "wider" {
 	ythickness = 2
 }
 
-style "entry" {
+style "clearlooks-entry" {
 	xthickness = 1
 	ythickness = 1
 }
-style "scale" {
-	xthickness = 1
-	ythickness = 1
-}
-
-style "scrollbar" {
+style "clearlooks-scale" {
 	xthickness = 1
 	ythickness = 1
 }
 
-style "button" {
+style "clearlooks-scrollbar" {
+	xthickness = 1
+	ythickness = 1
+}
+
+style "clearlooks-button" {
 	xthickness = 0
 	ythickness = 0
 }
 
 # The color is changed by the notebook_bg style, this style
 # changes the x/ythickness
-style "notebook" {
+style "clearlooks-notebook" {
 	xthickness = 1
 	ythickness = 1
 }
 
 
-style "menu" {
+style "clearlooks-menu" {
 	xthickness = 0
 	ythickness = 0
 }
 
-style "menu_item" {
+style "clearlooks-menu_item" {
 	xthickness = 2
 	ythickness = 3
 }
@@ -109,7 +109,7 @@ style "menu_item" {
 # This style is there to modify the separator menu items. The goals are:
 # 1. Get a specific height.
 # 2. The line should go to the edges (ie. no border at the left/right)
-style "separator_menu_item" {
+style "clearlooks-separator_menu_item" {
 	xthickness = 1
 	ythickness = 0
 
@@ -118,14 +118,14 @@ style "separator_menu_item" {
 }
 
 # The almost useless progress bar style
-style "progressbar" {
+style "clearlooks-progressbar" {
 	xthickness = 1
 	ythickness = 1
 }
 
 # This style is based on the clearlooks-default style, so that the colors from the button
 # style are overriden again.
-style "treeview_header" {
+style "clearlooks-treeview_header" {
 	xthickness = 2
 	ythickness = 1
 }
