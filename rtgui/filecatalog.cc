@@ -435,9 +435,13 @@ void FileCatalog::refreshHeight () {
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
 
     if (enabled && listener!=NULL) {
-        for (size_t i=0; i<tmb.size(); i++) {
-            if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end())
-                listener->fileSelected (tmb[i]);
+    	bool continueToLoad=true;
+        for (size_t i=0; i< tmb.size() && continueToLoad; i++) {
+            if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end()){
+            	listener->fileSelected (tmb[i]);
+                if( !options.tabbedUI )
+                	continueToLoad = false;
+            }
             tmb[i]->decreaseRef ();
         }
     }
