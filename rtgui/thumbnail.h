@@ -48,6 +48,7 @@ class Thumbnail {
         bool            pparamsValid;
         bool            pparamsSet;
         bool            needsReProcessing;
+        bool            imageLoading;
         
         // these are the data of the result image of the last getthumbnailimage  call (for caching purposes)
         unsigned char*  lastImg;
@@ -129,6 +130,7 @@ class Thumbnail {
         void            saveThumbnail ();
 
         bool            openDefaultViewer(int destination);
+        bool            imageLoad(bool loading);
 };
 
 

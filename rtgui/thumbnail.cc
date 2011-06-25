@@ -35,7 +35,7 @@ using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
-      pparamsValid(false), needsReProcessing(true), lastImg(NULL),
+      pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
 		initial_(false) {
 
     cfs.load (getCacheFileName ("data")+".txt");
@@ -46,7 +46,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
-      needsReProcessing(true), lastImg(NULL),
+      needsReProcessing(true),imageLoading(false), lastImg(NULL),
 		initial_(true) {
 
 
@@ -571,4 +571,16 @@ bool Thumbnail::openDefaultViewer(int destination) {
         return false;
 #endif
 
+}
+
+bool Thumbnail::imageLoad(bool loading)
+{
+	Glib::Mutex::Lock lock(mutex);
+	bool previous = imageLoading;
+	if( loading && !previous ){
+		imageLoading = true;
+		return true;
+	}else if( !loading )
+		imageLoading = false;
+    return false;
 }
