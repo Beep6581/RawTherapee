@@ -276,7 +276,7 @@ HISTORY_MSG_85;Coefficients d'ondelette
 HISTORY_MSG_86;Égaliseur d'ondelette
 HISTORY_MSG_87;Réduction du bruit d'impulsion
 HISTORY_MSG_88;Seuil de réduction de bruit
-HISTORY_MSG_89;Réd. du bruit présevant les bords
+HISTORY_MSG_89;Réd. du bruit
 HISTORY_MSG_8;Compensation d'exposition
 HISTORY_MSG_90;Réd. de bruit Luminance
 HISTORY_MSG_91;Réd. de bruit Chominance
@@ -451,7 +451,7 @@ PARTIALPASTE_DARKFRAMEFILE;Fichier de Trame Noire
 PARTIALPASTE_DEFRINGE;Aberration chromatique
 PARTIALPASTE_DETAILGROUP;Détail
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
-PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
+PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit
 PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
 PARTIALPASTE_DISTORTION;Correction de distortion
 PARTIALPASTE_EVERYTHING;Tout
@@ -723,7 +723,7 @@ TP_DEFRINGE_THRESHOLD;Seuil
 TP_DETAIL_AMOUNT;Quantité
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_LABEL;Réduction du bruit présevant les bords
+TP_DIRPYRDENOISE_LABEL;Réduction du bruit
 TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
@@ -908,17 +908,12 @@ ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
-!CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
-!HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
-!TP_CROP_PPI;PPI=
-!TP_GAMMA_CURV;gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_OUTPUT;Output gamma
-!TP_GAMMA_SLOP;slope (linear)
+CURVEEDITOR_TOOLTIPCOPY;Copie la courbe courante dans le presse-papier
+CURVEEDITOR_TOOLTIPPASTE;Colle la courbe du presse-papier
+HISTOGRAM_BUTTON_RAW;Raw
+HISTOGRAM_TOOLTIP_RAW;Montre/Cache l'histograme des données RAW
+TP_CROP_PPI;PPP=
+TP_GAMMA_CURV;Gamma
+TP_GAMMA_FREE;Manuel
+TP_GAMMA_OUTPUT;Gamma de sortie
+TP_GAMMA_SLOP;Pente (linéaire)
