@@ -203,7 +203,7 @@ namespace rtengine {
 	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult )
 	{
 		float noisehi = 1.33*noise*mult[4]/pow(3,level), noiselo = 0.66*noise*mult[4]/pow(3,level);
-		float * irangefn = new float [0x20000];
+		LUTf irangefn (0x20000);
 
 		for (int i=0; i<0x20000; i++) {
 			if (abs(i-0x10000)>noisehi || mult[level]<1.0) {
@@ -227,8 +227,6 @@ namespace rtengine {
 				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 			}
 		}
-		
-		delete [] irangefn;
 		
 	}
 	
