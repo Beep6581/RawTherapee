@@ -261,7 +261,7 @@ HISTORY_MSG_85;Coefficients d'ondelette
 HISTORY_MSG_86;Égaliseur d'ondelette
 HISTORY_MSG_87;Réduction du bruit d'impulsion
 HISTORY_MSG_88;Seuil de réduction de bruit
-HISTORY_MSG_89;Réd. du bruit présevant les bords
+HISTORY_MSG_89;Réd. du bruit
 HISTORY_MSG_8;Compensation d'exposition
 HISTORY_MSG_90;Réd. de bruit Luminance
 HISTORY_MSG_91;Réd. de bruit Chominance
@@ -423,7 +423,7 @@ PARTIALPASTE_DARKFRAMEFILE;Fichier de Trame Noire
 PARTIALPASTE_DEFRINGE;Aberration chromatique
 PARTIALPASTE_DETAILGROUP;Détail
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
-PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit présevant les bords
+PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit
 PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
 PARTIALPASTE_DISTORTION;Correction de distortion
 PARTIALPASTE_EVERYTHING;Tout
@@ -672,7 +672,7 @@ TP_DEFRINGE_THRESHOLD;Seuil
 TP_DETAIL_AMOUNT;Quantité
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_LABEL;Réduction du bruit présevant les bords
+TP_DIRPYRDENOISE_LABEL;Réduction du bruit
 TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
