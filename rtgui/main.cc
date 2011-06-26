@@ -124,6 +124,16 @@ int main(int argc, char **argv)
    }
    Gtk::Main m(&argc, &argv);
 
+#ifndef _WIN32
+   // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
+   // Anyway, the problem was Linux only
+   static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
+   if (settings)
+      settings->property_gtk_button_images().set_value(true);
+   else
+      printf("Error: no default settings to update!\n");
+#endif
+
    RTWindow *rtWindow = new class RTWindow();
    gdk_threads_enter ();
    m.run(*rtWindow);
