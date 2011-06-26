@@ -102,14 +102,25 @@ int main(int argc, char **argv)
    {
        std::vector<Glib::ustring> rcfiles;
        rcfiles.push_back (argv0+"/themes/"+options.theme+".gtkrc");
-   	   if (options.slimUI)
+       if (options.slimUI)
            rcfiles.push_back (argv0+"/themes/slim");
        // Set the font face and size
        Gtk::RC::parse_string (Glib::ustring::compose(
           "style \"clearlooks-default\" { font_name = \"%1\" }", options.font));
        Gtk::RC::set_default_files (rcfiles);
    }
+
    Gtk::Main m(&argc, &argv);
+
+#ifndef _WIN32
+   // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
+   // Anyway, the problem was Linux only
+   static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
+   if (settings)
+      settings->property_gtk_button_images().set_value(true);
+   else
+      printf("Error: no default settings to update!\n");
+#endif
 
    RTWindow *rtWindow = new class RTWindow();
    gdk_threads_enter ();
