@@ -19,7 +19,7 @@
 
 # Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
 
-gtk-color-scheme = "base_color:#ffffff\nfg_color:#101010\ntooltip_fg_color:#000000\nselected_bg_color:#7C99AD\nselected_fg_color:#ffffff\ntext_color:#000000\nbg_color:#EFEBE7\ntooltip_bg_color:#FFFFBF"
+gtk-color-scheme = "rt_base_color:#ffffff\nrt_fg_color:#101010\nrt_tooltip_fg_color:#000000\nrt_selected_bg_color:#7C99AD\nrt_selected_fg_color:#ffffff\nrt_text_color:#000000\nrt_bg_color:#EFEBE7\nrt_tooltip_bg_color:#FFFFBF"
 
 style "clearlooks-default" {
 	xthickness = 1
@@ -68,29 +68,29 @@ style "clearlooks-default" {
 	####################
 	# Color Definitions
 	####################
-	bg[NORMAL]        = @bg_color
-	bg[PRELIGHT]      = shade (1.02, @bg_color)
-	bg[SELECTED]      = @selected_bg_color
-	bg[INSENSITIVE]   = @bg_color
-	bg[ACTIVE]        = shade (0.9, @bg_color)
+	bg[NORMAL]        = @rt_bg_color
+	bg[PRELIGHT]      = shade (1.02, @rt_bg_color)
+	bg[SELECTED]      = @rt_selected_bg_color
+	bg[INSENSITIVE]   = @rt_bg_color
+	bg[ACTIVE]        = shade (0.9, @rt_bg_color)
 
-	fg[NORMAL]        = @fg_color
-	fg[PRELIGHT]      = @fg_color
-	fg[SELECTED]      = @selected_fg_color
-	fg[INSENSITIVE]   = mix (0.2, @fg_color, @bg_color)
-	fg[ACTIVE]        = @fg_color
+	fg[NORMAL]        = @rt_fg_color
+	fg[PRELIGHT]      = @rt_fg_color
+	fg[SELECTED]      = @rt_selected_fg_color
+	fg[INSENSITIVE]   = mix (0.2, @rt_fg_color, @rt_bg_color)
+	fg[ACTIVE]        = @rt_fg_color
 
-	text[NORMAL]      = @text_color
-	text[PRELIGHT]    = @text_color
-	text[SELECTED]    = @selected_fg_color
-	text[INSENSITIVE] = darker (@bg_color)
-	text[ACTIVE]      = @selected_fg_color
+	text[NORMAL]      = @rt_text_color
+	text[PRELIGHT]    = @rt_text_color
+	text[SELECTED]    = @rt_selected_fg_color
+	text[INSENSITIVE] = darker (@rt_bg_color)
+	text[ACTIVE]      = @rt_selected_fg_color
 
-	base[NORMAL]      = @base_color
-	base[PRELIGHT]    = shade (0.95, @bg_color)
-	base[SELECTED]    = @selected_bg_color
-	base[INSENSITIVE] = @bg_color
-	base[ACTIVE]      = shade (0.9, @selected_bg_color)
+	base[NORMAL]      = @rt_base_color
+	base[PRELIGHT]    = shade (0.95, @rt_bg_color)
+	base[SELECTED]    = @rt_selected_bg_color
+	base[INSENSITIVE] = @rt_bg_color
+	base[ACTIVE]      = shade (0.9, @rt_selected_bg_color)
 
 	engine "clearlooks" {
 		colorize_scrollbar = TRUE
@@ -121,17 +121,17 @@ style "clearlooks-entry" {
 	xthickness = 3
 	ythickness = 3
 
-	bg[SELECTED] = mix (0.4, @selected_bg_color, @base_color)
-	fg[SELECTED] = @text_color
+	bg[SELECTED] = mix (0.4, @rt_selected_bg_color, @rt_base_color)
+	fg[SELECTED] = @rt_text_color
 
 	engine "clearlooks" {
-		focus_color = shade (0.65, @selected_bg_color)
+		focus_color = shade (0.65, @rt_selected_bg_color)
 	}
 }
 
 style "clearlooks-paned" {
 
-	bg[PRELIGHT] = shade (0.9, @bg_color)
+	bg[PRELIGHT] = shade (0.9, @rt_bg_color)
 
 	engine "clearlooks" {
 		hint = "paned"
@@ -157,13 +157,13 @@ style "clearlooks-scale" {
 	xthickness = 2
 	ythickness = 2
 
-	bg[NORMAL]        = shade (1.15, @bg_color)
-	bg[PRELIGHT]      = shade (1.25, @bg_color)
+	bg[NORMAL]        = shade (1.15, @rt_bg_color)
+	bg[PRELIGHT]      = shade (1.25, @rt_bg_color)
 	# when GtkScale::trough-side-details = 1, bg[SELECTED] set the color of the slider background on the left of the knob
-	#bg[SELECTED]      = @bg_color
+	#bg[SELECTED]      = @rt_bg_color
 
 	engine "clearlooks" {
-		focus_color = @selected_bg_color
+		focus_color = @rt_selected_bg_color
 		hint = "scale"
 	}
 }
@@ -186,7 +186,7 @@ style "clearlooks-scrollbar" {
 	xthickness = 2
 	ythickness = 2
 
-	#bg[SELECTED]      = shade (1.50, @bg_color)
+	#bg[SELECTED]      = shade (1.50, @rt_bg_color)
 
 	engine "clearlooks" {
 		hint = "scrollbar"
@@ -209,23 +209,23 @@ style "clearlooks-vscrollbar" {
 
 style "clearlooks-notebook_bg" {
 
-	bg[NORMAL]        = shade (1.02, @bg_color)
+	bg[NORMAL]        = shade (1.02, @rt_bg_color)
 }
 
 style "clearlooks-combobox" {
 
-	text[NORMAL]      = @fg_color
-	text[PRELIGHT]    = @fg_color
-	text[SELECTED]    = @selected_fg_color
-	text[INSENSITIVE] = mix (0.2, @fg_color, @bg_color)
-	text[ACTIVE]      = @fg_color
+	text[NORMAL]      = @rt_fg_color
+	text[PRELIGHT]    = @rt_fg_color
+	text[SELECTED]    = @rt_selected_fg_color
+	text[INSENSITIVE] = mix (0.2, @rt_fg_color, @rt_bg_color)
+	text[ACTIVE]      = @rt_fg_color
 }
 
 style "clearlooks-button" {
 
-	bg[NORMAL]        = shade (0.96, @bg_color)
-	bg[PRELIGHT]      = shade (1.06, @bg_color)
-	bg[ACTIVE]        = shade (0.85, @bg_color)
+	bg[NORMAL]        = shade (0.96, @rt_bg_color)
+	bg[PRELIGHT]      = shade (1.06, @rt_bg_color)
+	bg[ACTIVE]        = shade (0.85, @rt_bg_color)
 
 	engine "clearlooks"
 	{
@@ -259,15 +259,15 @@ style "clearlooks-comboboxentry" {
 
 style "clearlooks-expander" {
 
-	fg[NORMAL]        = @selected_bg_color
-	fg[PRELIGHT]      = @selected_bg_color
-	fg[INSENSITIVE]   = @selected_bg_color
+	fg[NORMAL]        = @rt_selected_bg_color
+	fg[PRELIGHT]      = @rt_selected_bg_color
+	fg[INSENSITIVE]   = @rt_selected_bg_color
 
-	bg[PRELIGHT]      = mix (0.20, @selected_bg_color, @bg_color)
+	bg[PRELIGHT]      = mix (0.20, @rt_selected_bg_color, @rt_bg_color)
 
-	base[NORMAL]      = @selected_bg_color
-	base[PRELIGHT]    = @selected_bg_color
-	base[INSENSITIVE] = @selected_bg_color
+	base[NORMAL]      = @rt_selected_bg_color
+	base[PRELIGHT]    = @rt_selected_bg_color
+	base[INSENSITIVE] = @rt_selected_bg_color
 
 	engine "clearlooks" {
 		hint = "expander"
@@ -285,7 +285,7 @@ style "clearlooks-menu" {
 	xthickness = 0
 	ythickness = 0
 
-	bg[NORMAL]        = shade (1.08, @bg_color)
+	bg[NORMAL]        = shade (1.08, @rt_bg_color)
 
 	engine "clearlooks" {
 		radius = 0.0
@@ -296,9 +296,9 @@ style "clearlooks-menu_item" {
 	xthickness = 2
 	ythickness = 3
 
-	fg[PRELIGHT]      = @selected_fg_color
-	text[NORMAL]      = @fg_color
-	text[PRELIGHT]    = @selected_fg_color
+	fg[PRELIGHT]      = @rt_selected_fg_color
+	text[NORMAL]      = @rt_fg_color
+	text[PRELIGHT]    = @rt_selected_fg_color
 }
 
 # This style is there to modify the separator menu items. The goals are:
@@ -316,14 +316,14 @@ style "clearlooks-separator_menu_item" {
 
 style "clearlooks-frame_title" {
 
-	fg[NORMAL]        = lighter (@fg_color)
+	fg[NORMAL]        = lighter (@rt_fg_color)
 }
 
 style "clearlooks-treeview" {
 
 	# For an unkown reason, shading 7C99AD produce a redish color, so we have to set the value manually
-	text[ACTIVE]      = @text_color
-	base[ACTIVE]      = mix(0.50, @selected_bg_color, @base_color)
+	text[ACTIVE]      = @rt_text_color
+	base[ACTIVE]      = mix(0.50, @rt_selected_bg_color, @rt_base_color)
 
 	engine "clearlooks" {
 		hint = "treeview"
@@ -335,7 +335,7 @@ style "clearlooks-progressbar" {
 	xthickness = 1
 	ythickness = 1
 
-	fg[PRELIGHT]      = @selected_fg_color
+	fg[PRELIGHT]      = @rt_selected_fg_color
 
 	engine "clearlooks" {
 		# Explicitly set the radius for the progress bars inside menu items.
@@ -361,8 +361,8 @@ style "clearlooks-tooltips" {
 	xthickness = 4
 	ythickness = 4
 
-	bg[NORMAL]        = @tooltip_bg_color
-	fg[NORMAL]        = @tooltip_fg_color
+	bg[NORMAL]        = @rt_tooltip_bg_color
+	fg[NORMAL]        = @rt_tooltip_fg_color
 }
 
 ###############################################################################
