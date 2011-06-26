@@ -1244,9 +1244,20 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface) {
 	if (slimInterface)
 		files.push_back (argv0+"/themes/slim");
 	Gtk::RC::set_default_files (files);
-	Gtk::RC::reparse_all (Gtk::Settings::get_default());
-	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
-	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
+
+#ifndef _WIN32
+   // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
+   // Anyway, the problem was Linux only
+   static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
+   if (settings)
+      settings->property_gtk_button_images().set_value(true);
+   else
+      printf("Error: no default settings to update!\n");
+#endif
+
+   Gtk::RC::reparse_all (Gtk::Settings::get_default());
+   GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
+   gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
 void Preferences::workflowUpdate (){
