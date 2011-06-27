@@ -98,9 +98,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         currWB = imgsrc->getAutoWB ();
 
     PreviewProps pp (0, 0, fw, fh, 1);
-    imgsrc->preprocess( params.raw );
+    imgsrc->preprocess( params.raw, params.hlrecovery );
 	if (pl) pl->setProgress (0.20);
-    imgsrc->demosaic( params.raw );
+    imgsrc->demosaic( params.raw, params.hlrecovery );
 	if (pl) pl->setProgress (0.40);
     Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);

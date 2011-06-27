@@ -262,8 +262,8 @@ namespace rtengine {
 		
 		float exp_scale = a;
 		float scale = 65536.0;
-		float comp = (ecomp+1.0)*hlcompr/100.0;
-		float shoulder = ((scale/exp_scale)*(hlcomprthresh/200.0))+0.1;
+		float comp = (MAX(0,ecomp) + 1.0)*hlcompr/100.0;
+		float shoulder = ((scale/MAX(1,exp_scale))*(hlcomprthresh/200.0))+0.1;
 		//printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
@@ -271,14 +271,6 @@ namespace rtengine {
 			
 			// change to [0,1] range
 			float val = (float)i-shoulder;
-			
-			// apply default multiplier (that is >1 if highlight recovery is on)
-			// val *= def_mul;
-			
-			// apply base curve, thus, exposure compensation and black point with shadow and highlight protection
-			//val = basecurve (val*def_mul, a, 0, def_mul, hlcompr/100.0, 0);
-			
-			//hlCurve[i] = (65535.0 * CLIPD(val));
 			
 			if (comp>0.0)
 			{
@@ -313,7 +305,6 @@ namespace rtengine {
 				val = gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve
-			//val = brightness (val, br/100.0);
 			val = brightcurve->getVal (val);
 			
 			// store result in a temporary array

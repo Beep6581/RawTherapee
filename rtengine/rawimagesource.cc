@@ -82,7 +82,7 @@ RawImageSource::RawImageSource ()
     hrmap[0] = NULL;
     hrmap[1] = NULL;
     hrmap[2] = NULL;
-	needhr = NULL;
+	//needhr = NULL;
     //hpmap = NULL;
 	camProfile = NULL;
 	embProfile = NULL;
@@ -113,8 +113,8 @@ RawImageSource::~RawImageSource () {
         freeArray<float>(hrmap[1], dh);
         freeArray<float>(hrmap[2], dh);
     }
-    if (needhr)
-        freeArray<char>(needhr, H);
+    //if (needhr)
+    //    freeArray<char>(needhr, H);
     //if (hpmap)
     //    freeArray<char>(hpmap, H);
     if (camProfile)
@@ -253,8 +253,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
 
 
-	if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
-        updateHLRecoveryMap_ColorPropagation ();
+	//if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
+    //    updateHLRecoveryMap_ColorPropagation ();
 
     // compute image area to render in order to provide the requested part of the image
     int sx1, sy1, imwidth, imheight, fw;
@@ -278,6 +278,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         imwidth = maximwidth;
     if (!fuji && imheight>maximheight)
         imheight = maximheight;
+	
     int maxx=this->W,maxy=this->H,skip=pp.skip;
 
     //if (sx1+skip*imwidth>maxx) imwidth --; // very hard to fix this situation without an 'if' in the loop.
@@ -351,8 +352,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				
             }
         }
-                
-        if (hrp.enabled)
+		
+		//process all highlight recovery other than "Color"
+        if (hrp.enabled && hrp.method!="Color")
 			hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip, raw);
 
         transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
@@ -406,6 +408,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
           image->b[image->height-1][j] = (image->b[image->height-2][j] + image->b[image->height-1][j+1] + image->b[image->height-1][j-1]) / 3;
         }
     }
+
 
 	
     // Flip if needed
@@ -945,7 +948,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::preprocess  (const RAWParams &raw)
+void RawImageSource::preprocess  (const RAWParams &raw, HRecParams hrp)
 {
 	MyTime t1,t2;
 	t1.set();
@@ -1092,7 +1095,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-void RawImageSource::demosaic(const RAWParams &raw)
+void RawImageSource::demosaic(const RAWParams &raw, HRecParams hrp )
 {
     if (ri->isBayer()) {
     	MyTime t1,t2;
@@ -1122,6 +1125,10 @@ void RawImageSource::demosaic(const RAWParams &raw)
         plistener->setProgressStr ("Ready.");
         plistener->setProgress (1.0);
     }
+	
+	//color propagation highlight recovery 
+	if (hrp.enabled && hrp.method=="Color")
+		HLRecovery_inpaint (red,green,blue);
 
 }
 	
@@ -1280,10 +1287,12 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 	}
 	
 
-/* Scale original pixels into the range 0 65535 using black offsets and multipliers */
+// Scale original pixels into the range 0 65535 using black offsets and multipliers 
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWParams &raw)
 {
 float black_lev[4];//black level
+	
+	chmax[0]=chmax[1]=chmax[2]=chmax[3]=0;//channel maxima
 
 //adjust black level  (eg Canon)
 // cblack Bayer
@@ -1341,6 +1350,7 @@ black_lev[3]= raw.blackzero;
 				val*=scale_mul[2];}	
 				
 				rawData[row][col] = (val);
+				chmax[c] = MAX(chmax[c],val);
 			}
 		}
 	}else{
@@ -1352,21 +1362,26 @@ black_lev[3]= raw.blackzero;
 					val -= cblack[0];
 					val *= scale_mul[0];
 					rawData[row][3*col+0] = (val);
+					chmax[0] = MAX(chmax[0],val);
 				}
 				val = rawData[row][3*col+1];
 				if (val){
 					val -= cblack[1];
 					val *= scale_mul[1];
 					rawData[row][3*col+1] = (val);
+					chmax[1] = MAX(chmax[1],val);
 				}
 				val = rawData[row][3*col+2];
 				if (val){
 					val -= cblack[2];
 					val *= scale_mul[2];
 					rawData[row][3*col+2] = (val);
+					chmax[2] = MAX(chmax[2],val);
 				}
 			}
 		}
+		
+		chmax[3]=chmax[1];
 	}
 
 }
@@ -1405,11 +1420,11 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
  
   int W = im->width;
 
-  float** rbconv_Y = allocArray<float>(W,3);
-  float** rbconv_I = allocArray<float>(W,3);
-  float** rbconv_Q = allocArray<float>(W,3);
-  float** rbout_I = allocArray<float>(W,3);
-  float** rbout_Q = allocArray<float>(W,3);
+  array2D<float> rbconv_Y (W,3);
+  array2D<float> rbconv_I (W,3);
+  array2D<float> rbconv_Q (W,3);
+  array2D<float> rbout_I (W,3);
+  array2D<float> rbout_Q (W,3);
 
   float* row_I = new float[W];
   float* row_Q = new float[W];
@@ -1511,11 +1526,6 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
     row_Q[W-1] = rbout_Q[cx][W-1];
     convert_row_to_RGB (im->r[row_to-1], im->g[row_to-1], im->b[row_to-1], rbconv_Y[cx], row_I, row_Q, W);
 
-  freeArray<float>(rbconv_Y, 3);
-  freeArray<float>(rbconv_I, 3);
-  freeArray<float>(rbconv_Q, 3);
-  freeArray<float>(rbout_I, 3);
-  freeArray<float>(rbout_Q, 3);
   delete [] row_I;
   delete [] row_Q;
   delete [] pre1_I;
@@ -1951,8 +1961,8 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
         HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
     else if (method=="CIELab blending")
         HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, xyz_cam, cam_xyz);
-    else if (method=="Color")
-        HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);
+    /*else if (method=="Color")
+        HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);*/
 	else if (method=="Blend")	// derived from Dcraw
 			{	float pre_mul[4];
 				for(int c=0;c<4;c++) pre_mul[c]=ri->get_pre_mul(c);
@@ -2324,12 +2334,14 @@ void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
 //#include "demosaic_algos.cc"
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//Emil's code for AMaZE
+//Emil's code 
 #include "fast_demo.cc"//fast demosaic	
 #include "amaze_demosaic_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
 #include "cfa_linedn_RT.cc"//Emil's line denoise
 #include "green_equil_RT.cc"//Emil's green channel equilibration
+#include "hilite_recon.cc"//Emil's highlight reconstruction
+
 #include "expo_before_b.cc"//Jacques's exposure before interpolation
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

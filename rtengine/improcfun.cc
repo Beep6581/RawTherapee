@@ -266,8 +266,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
 	const float exp_scale = pow (2.0, params->toneCurve.expcomp);
-	const float comp = (params->toneCurve.expcomp + 1.0)*params->toneCurve.hlcompr/100.0;
-	const float shoulder = ((65536.0/exp_scale)*(params->toneCurve.hlcomprthresh/200.0))+0.1;
+	const float comp = (MAX(0,params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
+	const float shoulder = ((65536.0/MAX(1,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
 	
 	
@@ -591,7 +591,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
 			
-			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold, false /*edges only*/ );
+			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
 	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
