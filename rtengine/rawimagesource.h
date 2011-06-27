@@ -21,6 +21,7 @@
 
 #include <imagesource.h>
 #include <lcms2.h>
+#include <array2D.h>
 
 #define HR_SCALE 2
 
@@ -82,10 +83,10 @@ class RawImageSource : public ImageSource {
         //char** hpmap;
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
-        int max[3], g;
+		int max[3];
+		float chmax[4];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;
-        //int blcode[16][16][32];  // Looks like it's an unused variable...
         bool full;
         cmsHPROFILE camProfile;
         cmsHPROFILE embProfile;
@@ -128,8 +129,8 @@ class RawImageSource : public ImageSource {
         ~RawImageSource ();
 
         int         load        (Glib::ustring fname, bool batch = false);
-        void        preprocess  (const RAWParams &raw);
-        void        demosaic    (const RAWParams &raw);
+        void        preprocess  (const RAWParams &raw, HRecParams hrp);
+        void        demosaic    (const RAWParams &raw, HRecParams hrp);
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
         void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack
@@ -155,6 +156,14 @@ class RawImageSource : public ImageSource {
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
+	void boxblur2(float** src, float** dst, int H, int W, int box );
+	void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp ); 
+
+	//void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3], \
+						multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
+	void HLRecovery_inpaint (float** red, float** green, float** blue);
+	//void HLRecovery_inpaint ();
+	
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
 		static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw);

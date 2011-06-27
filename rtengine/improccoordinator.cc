@@ -112,13 +112,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC) {
-    	imgsrc->preprocess( rp );
+    	imgsrc->preprocess( rp, params.hlrecovery );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
     }
 
     if( todo & M_RAW){
     	fineDetailsProcessed = highDetailNeeded;
-    	imgsrc->demosaic( rp );
+    	imgsrc->demosaic( rp, params.hlrecovery );
     }
 
     if (todo & M_INIT) {
@@ -268,7 +268,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             progress ("Pyramid equalizer...",100*readyphase/numofphases);
             ipf.dirpyrequalizer (nprevl);
 
-            // Superset by pyreq
+            // Superseded by dirpyreq
             //progress ("Wavelet...",100*readyphase/numofphases);
             //ipf.waveletEqualizer (nprevl, true, true);
         }
@@ -523,8 +523,8 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	ppar.icm.input = "(none)";
 	Imagefloat* im = new Imagefloat (fW, fH);
 	Image16* im16 = new Image16 (fW, fH);
-	imgsrc->preprocess( ppar.raw );
-	imgsrc->demosaic(ppar.raw );
+	imgsrc->preprocess( ppar.raw, ppar.hlrecovery );
+	imgsrc->demosaic(ppar.raw, ppar.hlrecovery );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
 	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
 	if (params.wb.method=="Camera")

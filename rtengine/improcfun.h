@@ -110,7 +110,7 @@ class ImProcFunctions {
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
 
 		void defringe         (LabImage* lab);
-		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh, bool edges);
+		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos);// for gamma output		

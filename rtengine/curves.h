@@ -92,6 +92,7 @@ class CurveFactory {
         return 1.0 - hr + hr*baseu((x-x1)/hr, m, 0.3*hr);
     }
 	static inline double clower2 (double x, double m, double sr) {
+		//curve for b<0; starts with positive slope and then rolls over toward straight line to x=y=1
 		float x1 = sr/1.5 + 0.00001;
 		float y1 = 1-(1-x1)*m;
 		if (x>x1 || sr<0.001) 
@@ -99,14 +100,15 @@ class CurveFactory {
 		else
 			return y1+m*(x-x1)-(1-m)*SQR(SQR(1-x/x1));
 	}
-    // tone curve base. a: slope (from exp.comp.), b: black, D: max. x value (can be>1), hr,sr: highlight,shadow recovery
+    // tone curve base. a: slope (from exp.comp.), b: black point normalized by 65535, 
+	// D: max. x value (can be>1), hr,sr: highlight,shadow recovery
     static inline double basecurve (double x, double a, double b, double D, double hr, double sr) { 
         if (b<0) {
-			double m = 0.5;
-			double slope = 1.0+b;
-			double y = -b+m*slope;
+			double m = 0.5;//midpoint
+			double slope = 1.0+b;//slope of straight line between (0,-b) and (1,1)
+			double y = -b+m*slope;//value at midpoint
 			if (x>m) 
-				return y + (x - m)*slope;
+				return y + (x - m)*slope;//value on straight line between (m,y) and (1,1)
 			else 
 				return y*clower2(x/m, slope*m/y, 2.0-sr);
 		} else {
@@ -120,22 +122,6 @@ class CurveFactory {
 			else
 				return y+(x-m)*slope;
 		}
-    }
-    // brightness curve at point x, only positive amount it supported
-    static inline double brightnessbase (double x, double amount) {
-        if (x<0.5)
-            return x + amount*cupper(2.0*x, 4.5, 0.0)/3.0;
-        else
-            return x + amount*cupper(2.0-2.0*x, 1.5, 0.0)/3.0;
-    }
-    // brightness curve at point x, positive negative and zero amount are supported
-    static inline double brightness (double x, double amount) {
-        if (amount==0.0)
-            return x;
-        else if (amount>0.0)
-            return brightnessbase (x, amount);
-        else 
-            return 1.0 - brightnessbase (1.0-x, -amount);
     }
 	
 
