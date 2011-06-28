@@ -25,6 +25,7 @@
 
 class SoundManager {
 public:
+    static void init();
     static void playSoundAsync(const Glib::ustring &sound);
 };
 

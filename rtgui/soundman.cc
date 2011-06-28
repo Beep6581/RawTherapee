@@ -19,23 +19,33 @@
 */
 
 #include <soundman.h>
+#include <options.h>
 
 #ifdef WIN32
 #include <windows.h>
 #include <mmsystem.h>
 #endif
 
+
+void SoundManager::init()
+{
+#ifdef WIN32
 // TODO: On Windows Vista/7 RT should register with the OS sound system, so it can enjoy application specific
 // volume, safed, process independent etc. from the start.
 // Function call is IAudioClient::Initialize
 // Unfortunately MinGW does not support this yet. If audioclient.h is available, add an Init
 // called once on program start.
+    //
+    // This mitigation plays an empty file on start, so RT is immidiately avaible in the Windows mixer at least
+    playSoundAsync(Glib::ustring("sounds\\Empty.wav"));
+#endif
+}
 
 // Plays a sound in async mode to not block the main thread
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
 {
-     if (sound.empty()) return;
+     if (sound.empty() || !options.sndEnable) return;
 
 #ifdef WIN32
     DWORD sndParam=SND_ASYNC | SND_NODEFAULT;
