@@ -107,10 +107,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	float (*vcdalt);
 	// alternative horizontal interpolation
 	float (*hcdalt);
-	// square of vcd
-	float (*vcdsq);
-	// square of hcd
-	float (*hcdsq);
 	// square of average color difference
 	float (*cddiffsq);
 	// weight to give horizontal vs vertical interpolation
@@ -153,7 +149,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 
 	// assign working space
-	buffer = (char *) malloc((34*sizeof(float)+sizeof(int))*TS*TS);
+	buffer = (char *) malloc((32*sizeof(float)+sizeof(int))*TS*TS);
 	//merror(buffer,"amaze_interpolate()");
 	//memset(buffer,0,(34*sizeof(float)+sizeof(int))*TS*TS);
 	// rgb array
@@ -167,28 +163,26 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	hcd			= (float (*))			(buffer +  10*sizeof(float)*TS*TS);
 	vcdalt		= (float (*))			(buffer +  11*sizeof(float)*TS*TS);
 	hcdalt		= (float (*))			(buffer +  12*sizeof(float)*TS*TS);
-	vcdsq		= (float (*))			(buffer +  13*sizeof(float)*TS*TS);
-	hcdsq		= (float (*))			(buffer +  14*sizeof(float)*TS*TS);
-	cddiffsq	= (float (*))			(buffer +  15*sizeof(float)*TS*TS);
-	hvwt		= (float (*))			(buffer +  16*sizeof(float)*TS*TS);
-	Dgrb		= (float (*)[2])		(buffer +  17*sizeof(float)*TS*TS);
-	delp		= (float (*))			(buffer +  19*sizeof(float)*TS*TS);
-	delm		= (float (*))			(buffer +  20*sizeof(float)*TS*TS);
-	rbint		= (float (*))			(buffer +  21*sizeof(float)*TS*TS);
-	Dgrbh2		= (float (*))			(buffer +  22*sizeof(float)*TS*TS);
-	Dgrbv2		= (float (*))			(buffer +  23*sizeof(float)*TS*TS);	
-	dgintv		= (float (*))			(buffer +  24*sizeof(float)*TS*TS);
-	dginth		= (float (*))			(buffer +  25*sizeof(float)*TS*TS);
-	Dgrbp1		= (float (*))			(buffer +  26*sizeof(float)*TS*TS);
-	Dgrbm1		= (float (*))			(buffer +  27*sizeof(float)*TS*TS);
-	Dgrbpsq1	= (float (*))			(buffer +  28*sizeof(float)*TS*TS);
-	Dgrbmsq1	= (float (*))			(buffer +  29*sizeof(float)*TS*TS);
-	cfa			= (float (*))			(buffer +  30*sizeof(float)*TS*TS);
-	pmwt		= (float (*))			(buffer +  31*sizeof(float)*TS*TS);
-	rbp			= (float (*))			(buffer +  32*sizeof(float)*TS*TS);
-	rbm			= (float (*))			(buffer +  33*sizeof(float)*TS*TS);
+	cddiffsq	= (float (*))			(buffer +  13*sizeof(float)*TS*TS);
+	hvwt		= (float (*))			(buffer +  14*sizeof(float)*TS*TS);
+	Dgrb		= (float (*)[2])		(buffer +  15*sizeof(float)*TS*TS);
+	delp		= (float (*))			(buffer +  17*sizeof(float)*TS*TS);
+	delm		= (float (*))			(buffer +  18*sizeof(float)*TS*TS);
+	rbint		= (float (*))			(buffer +  19*sizeof(float)*TS*TS);
+	Dgrbh2		= (float (*))			(buffer +  20*sizeof(float)*TS*TS);
+	Dgrbv2		= (float (*))			(buffer +  21*sizeof(float)*TS*TS);	
+	dgintv		= (float (*))			(buffer +  22*sizeof(float)*TS*TS);
+	dginth		= (float (*))			(buffer +  23*sizeof(float)*TS*TS);
+	Dgrbp1		= (float (*))			(buffer +  24*sizeof(float)*TS*TS);
+	Dgrbm1		= (float (*))			(buffer +  25*sizeof(float)*TS*TS);
+	Dgrbpsq1	= (float (*))			(buffer +  26*sizeof(float)*TS*TS);
+	Dgrbmsq1	= (float (*))			(buffer +  27*sizeof(float)*TS*TS);
+	cfa			= (float (*))			(buffer +  28*sizeof(float)*TS*TS);
+	pmwt		= (float (*))			(buffer +  29*sizeof(float)*TS*TS);
+	rbp			= (float (*))			(buffer +  30*sizeof(float)*TS*TS);
+	rbm			= (float (*))			(buffer +  31*sizeof(float)*TS*TS);
 
-	nyquist		= (int (*))				(buffer +  34*sizeof(int)*TS*TS);
+	nyquist		= (int (*))				(buffer +  32*sizeof(int)*TS*TS);
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -498,12 +492,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					dgintv[indx]=MIN(SQR(guha-gdha),SQR(guar-gdar));
 					dginth[indx]=MIN(SQR(glha-grha),SQR(glar-grar));
 					
-					//dgintv[indx]=SQR(guar-gdar);
-					//dginth[indx]=SQR(glar-grar);
-					
-					//vcdsq[indx] = SQR(vcd[indx]);
-					//hcdsq[indx] = SQR(hcd[indx]);
-					//cddiffsq[indx] = SQR(vcd[indx]-hcd[indx]);
 				}
 			//t2_vcdhcd += clock() - t1_vcdhcd;
 
@@ -576,9 +564,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 						//if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
 					}
 					
-					
-					vcdsq[indx] = SQR(vcd[indx]);
-					hcdsq[indx] = SQR(hcd[indx]);
 					cddiffsq[indx] = SQR(vcd[indx]-hcd[indx]);
 				}
 
@@ -586,23 +571,22 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 				for (cc=6+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-6; cc+=2,indx+=2) {
 
 					//compute color difference variances in cardinal directions
-
 					
-					Dgrbvvaru = 4*(vcdsq[indx]+vcdsq[indx-v1]+vcdsq[indx-v2]+vcdsq[indx-v3])-SQR(vcd[indx]+vcd[indx-v1]+vcd[indx-v2]+vcd[indx-v3]);
-					Dgrbvvard = 4*(vcdsq[indx]+vcdsq[indx+v1]+vcdsq[indx+v2]+vcdsq[indx+v3])-SQR(vcd[indx]+vcd[indx+v1]+vcd[indx+v2]+vcd[indx+v3]);
-					Dgrbhvarl = 4*(hcdsq[indx]+hcdsq[indx-1]+hcdsq[indx-2]+hcdsq[indx-3])-SQR(hcd[indx]+hcd[indx-1]+hcd[indx-2]+hcd[indx-3]);
-					Dgrbhvarr = 4*(hcdsq[indx]+hcdsq[indx+1]+hcdsq[indx+2]+hcdsq[indx+3])-SQR(hcd[indx]+hcd[indx+1]+hcd[indx+2]+hcd[indx+3]);
+					float uave = vcd[indx]+vcd[indx-v1]+vcd[indx-v2]+vcd[indx-v3];
+					float dave = vcd[indx]+vcd[indx+v1]+vcd[indx+v2]+vcd[indx+v3];
+					float lave = (hcd[indx]+hcd[indx-1]+hcd[indx-2]+hcd[indx-3]);
+					float rave = (hcd[indx]+hcd[indx+1]+hcd[indx+2]+hcd[indx+3]);
 					
+					Dgrbvvaru = SQR(vcd[indx]-uave)+SQR(vcd[indx-v1]-uave)+SQR(vcd[indx-v2]-uave)+SQR(vcd[indx-v3]-uave);
+					Dgrbvvard = SQR(vcd[indx]-dave)+SQR(vcd[indx+v1]-dave)+SQR(vcd[indx+v2]-dave)+SQR(vcd[indx+v3]-dave);
+					Dgrbhvarl = SQR(hcd[indx]-lave)+SQR(hcd[indx-1]-lave)+SQR(hcd[indx-2]-lave)+SQR(hcd[indx-3]-lave);
+					Dgrbhvarr = SQR(hcd[indx]-rave)+SQR(hcd[indx+1]-rave)+SQR(hcd[indx+2]-rave)+SQR(hcd[indx+3]-rave);
 					
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
 					
 					vcdvar = epssq+vwt*Dgrbvvard+(1.0f-vwt)*Dgrbvvaru;
 					hcdvar = epssq+hwt*Dgrbhvarr+(1.0f-hwt)*Dgrbhvarl;
-					
-					//vcdvar = 5*(vcdsq[indx]+vcdsq[indx-v1]+vcdsq[indx-v2]+vcdsq[indx+v1]+vcdsq[indx+v2])-SQR(vcd[indx]+vcd[indx-v1]+vcd[indx-v2]+vcd[indx+v1]+vcd[indx+v2]);
-					//hcdvar = 5*(hcdsq[indx]+hcdsq[indx-1]+hcdsq[indx-2]+hcdsq[indx+1]+hcdsq[indx+2])-SQR(hcd[indx]+hcd[indx-1]+hcd[indx-2]+hcd[indx+1]+hcd[indx+2]);
-
 
 					//compute fluctuations in up/down and left/right interpolations of colors
 					Dgrbvvaru = (dgintv[indx])+(dgintv[indx-v1])+(dgintv[indx-v2]);
@@ -702,8 +686,8 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 							}
 
 						//horizontal and vertical color differences, and adaptive weight
-						hcdvar=epssq+MAX(0, areawt*sumsqh-sumh*sumh);
-						vcdvar=epssq+MAX(0, areawt*sumsqv-sumv*sumv);
+						hcdvar=epssq+fabs(areawt*sumsqh-sumh*sumh);
+						vcdvar=epssq+fabs(areawt*sumsqv-sumv*sumv);
 						hvwt[indx]=hcdvar/(vcdvar+hcdvar);
 
 						// end of area interpolation
@@ -782,17 +766,9 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					rbvarp = epssq + (gausseven[0]*(Dgrbpsq1[indx-v1]+Dgrbpsq1[indx-1]+Dgrbpsq1[indx+1]+Dgrbpsq1[indx+v1]) + \
 									gausseven[1]*(Dgrbpsq1[indx-v2-1]+Dgrbpsq1[indx-v2+1]+Dgrbpsq1[indx-2-v1]+Dgrbpsq1[indx+2-v1]+ \
 												  Dgrbpsq1[indx-2+v1]+Dgrbpsq1[indx+2+v1]+Dgrbpsq1[indx+v2-1]+Dgrbpsq1[indx+v2+1]));
-					/*rbvarp -=  SQR( (gausseven[0]*(Dgrbp1[indx-v1]+Dgrbp1[indx-1]+Dgrbp1[indx+1]+Dgrbp1[indx+v1]) + \
-					gausseven[1]*(Dgrbp1[indx-v2-1]+Dgrbp1[indx-v2+1]+Dgrbp1[indx-2-v1]+Dgrbp1[indx+2-v1]+ \
-					Dgrbp1[indx-2+v1]+Dgrbp1[indx+2+v1]+Dgrbp1[indx+v2-1]+Dgrbp1[indx+v2+1])));*/
 					rbvarm = epssq + (gausseven[0]*(Dgrbmsq1[indx-v1]+Dgrbmsq1[indx-1]+Dgrbmsq1[indx+1]+Dgrbmsq1[indx+v1]) + \
 									gausseven[1]*(Dgrbmsq1[indx-v2-1]+Dgrbmsq1[indx-v2+1]+Dgrbmsq1[indx-2-v1]+Dgrbmsq1[indx+2-v1]+ \
 												  Dgrbmsq1[indx-2+v1]+Dgrbmsq1[indx+2+v1]+Dgrbmsq1[indx+v2-1]+Dgrbmsq1[indx+v2+1]));
-					/*rbvarm -=  SQR( (gausseven[0]*(Dgrbm1[indx-v1]+Dgrbm1[indx-1]+Dgrbm1[indx+1]+Dgrbm1[indx+v1]) + \
-					gausseven[1]*(Dgrbm1[indx-v2-1]+Dgrbm1[indx-v2+1]+Dgrbm1[indx-2-v1]+Dgrbm1[indx+2-v1]+ \
-					Dgrbm1[indx-2+v1]+Dgrbm1[indx+2+v1]+Dgrbm1[indx+v2-1]+Dgrbm1[indx+v2+1])));*/
-
-
 
 					// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
