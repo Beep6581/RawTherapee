@@ -116,6 +116,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
 	
+    Gtk::CheckButton* ckbSndEnable;
     Gtk::Entry* txtSndBatchQueueDone;
     Gtk::Entry* txtSndLngEditProcDone;
 	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
@@ -131,7 +132,7 @@ class Preferences : public Gtk::Dialog {
 
 
     Options moptions;
-    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn;
+    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn, sndEnableConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -170,6 +171,7 @@ class Preferences : public Gtk::Dialog {
     void cancelPressed ();
     void aboutPressed ();
 	void autoMonProfileToggled ();
+    void sndEnableToggled ();
 
     void selectStartupDir ();
     void addExtPressed ();

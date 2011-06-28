@@ -147,6 +147,7 @@ void Options::setDefaults () {
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
 
+    sndEnable=true;
     sndLngEditProcDoneSecs=3.0;
 
     int babehav[] = {
@@ -389,6 +390,7 @@ if (keyFile.has_group ("Batch Processing")) {
 }
 
 if (keyFile.has_group ("Sounds")) { 
+    if (keyFile.has_key ("Sounds", "Enable"))              sndEnable              = keyFile.get_boolean ("Sounds", "Enable");
     if (keyFile.has_key ("Sounds", "BatchQueueDone")) sndBatchQueueDone = keyFile.get_string ("Sounds", "BatchQueueDone");
     if (keyFile.has_key ("Sounds", "LngEditProcDone"))     sndLngEditProcDone     = keyFile.get_string ("Sounds", "LngEditProcDone");
     if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
@@ -543,6 +545,7 @@ int Options::saveToFile (Glib::ustring fname) {
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
 
+    keyFile.set_boolean ("Sounds", "Enable", sndEnable);
     keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
     keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
     keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);

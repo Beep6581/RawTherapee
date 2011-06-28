@@ -31,6 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <options.h>
+#include <soundman.h>
 #include "version.h"
 
 #ifndef WIN32
@@ -93,6 +94,8 @@ int main(int argc, char **argv)
    Gio::init ();
 
    Options::load ();
+
+   SoundManager::init();
 
    if (argc>1){
 	   int ret = processLineParams( argc, argv);

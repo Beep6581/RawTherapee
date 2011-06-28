@@ -396,6 +396,8 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     colt->attach (*cbAutoMonProfile, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
+    autoMonProfileToggled();
+
     return mvbcm;
 }
 
@@ -835,6 +837,11 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
 Gtk::Widget* Preferences::getSoundPanel () {
     Gtk::VBox* pSnd = new Gtk::VBox ();
 
+    ckbSndEnable = Gtk::manage( new Gtk::CheckButton (M("GENERAL_ENABLE")));
+    sndEnableConn  = ckbSndEnable->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::sndEnableToggled));
+
+    pSnd->pack_start (*ckbSndEnable, Gtk::PACK_SHRINK, 8);
+
     Gtk::Label* lSndHelp = Gtk::manage (new Gtk::Label (M("PREFERENCES_SND_HELP")));
     pSnd->pack_start (*lSndHelp, Gtk::PACK_SHRINK, 4);
 
@@ -870,6 +877,8 @@ Gtk::Widget* Preferences::getSoundPanel () {
     pSnd->pack_start (*pSndLngEditProcDone, Gtk::PACK_SHRINK, 4);
 
     pSnd->set_border_width (4);
+
+    sndEnableToggled();
 
     return pSnd;
 }
@@ -1003,6 +1012,7 @@ void Preferences::storePreferences () {
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 
     // Sounds
+    moptions.sndEnable = ckbSndEnable->get_active ();
     moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text ();
     moptions.sndLngEditProcDone     = txtSndLngEditProcDone->get_text ();
     moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
@@ -1142,6 +1152,7 @@ void Preferences::fillPreferences () {
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 
     // Sounds
+    ckbSndEnable->set_active (moptions.sndEnable);
     txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
     txtSndLngEditProcDone->set_text (moptions.sndLngEditProcDone);
     spbSndLngEditProcDoneSecs->set_value (moptions.sndLngEditProcDoneSecs);
@@ -1165,6 +1176,13 @@ void Preferences::savePressed () {
 void Preferences::autoMonProfileToggled () {
 	monProfile->set_sensitive(!cbAutoMonProfile->get_active());
 }
+
+void Preferences::sndEnableToggled () {
+	txtSndBatchQueueDone->set_sensitive(ckbSndEnable->get_active());
+	txtSndLngEditProcDone->set_sensitive(ckbSndEnable->get_active());
+	spbSndLngEditProcDoneSecs->set_sensitive(ckbSndEnable->get_active());
+}
+
 
 void Preferences::okPressed () {
 
