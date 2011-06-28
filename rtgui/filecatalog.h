@@ -73,9 +73,15 @@ class FileCatalog : public Gtk::VBox,
 
         Gtk::HBox* buttonBar;
         Gtk::HBox* buttonBar2;
+
         Gtk::HBox* fltrRankbox;
         Gtk::HBox* fltrLabelbox;
         Gtk::VBox* fltrVbox1;
+
+        Gtk::HBox* fltrEditedBox;
+        Gtk::HBox* fltrRecentlySavedBox;
+        Gtk::VBox* fltrVbox2;
+
         Gtk::ToggleButton* tbLeftPanel_1;
         Gtk::ToggleButton* tbRightPanel_1;
         Gtk::ToggleButton* bFilterClear;
@@ -83,12 +89,17 @@ class FileCatalog : public Gtk::VBox,
         Gtk::ToggleButton* bRank[5];
         Gtk::ToggleButton* bUnCLabeled;
         Gtk::ToggleButton* bCLabel[5];//color label
+        Gtk::ToggleButton* bEdited[2];
+        Gtk::ToggleButton* bRecentlySaved[2];
         Gtk::ToggleButton* bTrash;
-        Gtk::ToggleButton* categoryButtons[14];
+        Gtk::ToggleButton* categoryButtons[18];
         Gtk::ToggleButton* exifInfo;
-        sigc::connection bCateg[14];
-        Gtk::Image* iranked[5], *igranked[5];
-        Gtk::Image* iCLabeled[5], *igCLabeled[5];
+        sigc::connection bCateg[18];
+        Gtk::Image* iFilterClear, *igFilterClear;
+        Gtk::Image* iranked[5], *igranked[5], *iUnRanked, *igUnRanked;
+        Gtk::Image* iCLabeled[5], *igCLabeled[5], *iUnCLabeled, *igUnCLabeled;
+        Gtk::Image* iEdited[2], *igEdited[2];
+        Gtk::Image* iRecentlySaved[2], *igRecentlySaved[2];
         Gtk::Image *iTrashEmpty, *iTrashFull;
         //Gtk::Image *iRightArrow_red, *iRightArrow;
         Gtk::Image *iRefreshWhite, *iRefreshRed;
@@ -101,8 +112,8 @@ class FileCatalog : public Gtk::VBox,
         Gtk::Entry* Query;
         Gtk::Button* buttonQueryClear;
 
-        double hScrollPos[14];
-        double vScrollPos[14];
+        double hScrollPos[18];
+        double vScrollPos[18];
         int lastScrollPos;
 
         Gtk::VBox* trashButtonBox;

@@ -30,6 +30,8 @@ class BrowserFilter {
         bool showTrash;
         bool showNotTrash;
         bool showEdited[2];
+        bool showRecentlySaved[2];
+        bool multiselect;
 
         Glib::ustring queryString;
         Glib::ustring queryFileName;

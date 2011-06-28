@@ -775,7 +775,17 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
     
     FileBrowserEntry* entry = (FileBrowserEntry*)entryb;
     // return false if basic filter settings are not satisfied
-    if (filter.showRanked[entry->thumbnail->getRank()]==false || filter.showCLabeled[entry->thumbnail->getColorLabel()]==false || (entry->thumbnail->getStage()==1 && !filter.showTrash) || (entry->thumbnail->getStage()==0 && !filter.showNotTrash))
+    if ((filter.showRanked[entry->thumbnail->getRank()]==false ) || \
+        (filter.showCLabeled[entry->thumbnail->getColorLabel()]==false ) || \
+
+        ((entry->thumbnail->hasProcParams() && filter.showEdited[0]) && !filter.showEdited[1]) || \
+        ((!entry->thumbnail->hasProcParams() && filter.showEdited[1])&& !filter.showEdited[0]) || \
+
+        ((entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[0]) && !filter.showRecentlySaved[1]) || \
+        ((!entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[1]) && !filter.showRecentlySaved[0]) || \
+
+        (entry->thumbnail->getStage()==1 && !filter.showTrash) || \
+        (entry->thumbnail->getStage()==0 && !filter.showNotTrash))
         return false;
 
     // return false is query is not satisfied
