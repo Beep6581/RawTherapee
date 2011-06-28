@@ -1054,7 +1054,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, HRecParams hrp)
                 if (ri->ISGREEN(i,j)) {
                     float currData;
                     currData = (float)(rawData[i][j] * ((i&1) ? corrg2 : corrg1));
-                    rawData[i][j] = CLIP(currData);
+                    rawData[i][j] = (currData);
                 }
 	}
 
