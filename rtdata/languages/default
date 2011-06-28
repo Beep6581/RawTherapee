@@ -128,6 +128,8 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Clear all filters <b>D</b>
+FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star <b>1</b>
@@ -135,6 +137,8 @@ FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star <b>3</b>
 FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>

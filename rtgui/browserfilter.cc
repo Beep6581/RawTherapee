@@ -25,4 +25,9 @@ BrowserFilter::BrowserFilter () : exifFilterEnabled (false) {
         showRanked[i] = true;
         showCLabeled[i] = true;
     }
+    for (int i=0; i<2; i++){
+        showEdited[i] = true;
+        showRecentlySaved[i] = true;
+    }
 }
+
