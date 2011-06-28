@@ -51,7 +51,6 @@ class FilePanel : public Gtk::HPaned,
         Gtk::Notebook* rightNotebook;
 
         int error;
-        bool isloading;
     public:
         FilePanel ();
 

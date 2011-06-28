@@ -32,7 +32,6 @@ int fbinit (void* data) {
 
 FilePanel::FilePanel () : parent(NULL) {
 
-    isloading = false;
     dirpaned = Gtk::manage ( new Gtk::HPaned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
@@ -156,11 +155,9 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
         return false;
 
     // try to open the file
-  //  fileCatalog->setEnabled (false);
-    if (isloading)
-        return false;
+    bool loading = thm->imageLoad( true );
+    if( !loading ) return false;
 
-    isloading = true;
     ProgressConnector<rtengine::InitialImage*> *ld = new ProgressConnector<rtengine::InitialImage*>();
     ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType()==FT_Raw, &error, parent->getProgressListener()),
    		           sigc::bind(sigc::mem_fun(*this,&FilePanel::imageLoaded), thm, ld) );
@@ -188,7 +185,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
         
 	parent->setProgress(0.);
 	parent->setProgressStr("");
-        isloading = false;
+	thm->imageLoad( false );
 
 	return false; // MUST return false from idle function
 }
