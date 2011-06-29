@@ -2,6 +2,7 @@
 /*RT*/#include <glib/gstdio.h>
 /*RT*/#undef MAX
 /*RT*/#undef MIN
+/*RT*/#undef ABS
 /*RT*/#define NO_LCMS
 /*RT*/#define NO_JPEG
 /*RT*/#define LOCALTIME
@@ -1263,7 +1264,7 @@ int CLASS minolta_z2()
   int i, nz;
   char tail[424];
 
-  fseek (ifp, -sizeof tail, SEEK_END);
+  fseek (ifp, -(int)sizeof tail, SEEK_END);
   fread (tail, 1, sizeof tail, ifp);
   for (nz=i=0; i < sizeof tail; i++)
     if (tail[i]) nz++;
