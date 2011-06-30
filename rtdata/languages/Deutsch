@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Mai 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 06.06.2011
+#15 Jan-Jun 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 30.06.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -69,11 +69,12 @@ EXIFPANEL_RESETHINT;Gewählte Attribute zu den ursprünglichen Werten zurückset
 EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
 FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
+FILEBROWSER_APPLYPROFILE_PARTIAL;Profil selektiv anwenden
 FILEBROWSER_ARRANGEMENTHINT;Zwischen vertikaler und horizontaler Ausrichtung der Voransichten wechseln
 FILEBROWSER_AUTODARKFRAME;Automatisches Dunkelbild
 FILEBROWSER_AUTOFLATFIELD;Automatisches Weißbild
-FILEBROWSER_BROWSEPATHBUTTONHINT;Klicken, um angegebenen Pfad zu durchsuchen
-FILEBROWSER_BROWSEPATHHINT;Pfad zum Durchsuchen eingeben (<b>Strg+O</b> zum Setzen des Fokus, <b>Strg+Eingabe</b> zum Durchsuchen)\n\nSonderzeichen im Pfad:\n<b>~</b> für Benutzerverzeichnis, <b>!</b> für Bildverzeichnis des Benutzers
+FILEBROWSER_BROWSEPATHBUTTONHINT;Nebenstehenden Pfad öffnen
+FILEBROWSER_BROWSEPATHHINT;Pfad zum Öffnen eingeben\n<b>Strg+O</b> zum Setzen des Fokus\n<b>Eingabe</b> (bzw. <b>Strg+Eingabe</b> im Dateimanager) zum Öffnen\n\nSonderzeichen im Pfad:\n<b>~</b> für Benutzerverzeichnis, <b>!</b> für Bildverzeichnis des Benutzers
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Aus dem Cache entfernen (vollständig)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Aus dem Cache entfernen (teilweise)
@@ -98,19 +99,29 @@ FILEBROWSER_NEW_NAME;Neuer Name:
 FILEBROWSER_PARTIALPASTEPROFILE;Profil selektiv einfügen
 FILEBROWSER_PASTEPROFILE;Profil einfügen
 FILEBROWSER_POPUPCANCELJOB;Job abbrechen
+FILEBROWSER_POPUPCOLORLABEL;Farbmarkierung
+FILEBROWSER_POPUPCOLORLABEL0;Markierung: keine
+FILEBROWSER_POPUPCOLORLABEL1;Markierung: Rot
+FILEBROWSER_POPUPCOLORLABEL2;Markierung: Gelb
+FILEBROWSER_POPUPCOLORLABEL3;Markierung: Grün
+FILEBROWSER_POPUPCOLORLABEL4;Markierung: Blau
+FILEBROWSER_POPUPCOLORLABEL5;Markierung: Violett
 FILEBROWSER_POPUPCOPYTO;Kopieren nach...
+FILEBROWSER_POPUPFILEOPERATIONS;Dateioperationen
 FILEBROWSER_POPUPMOVEEND;An das Ende der Warteschlange verschieben
 FILEBROWSER_POPUPMOVEHEAD;An den Anfang der Warteschlange verschieben
 FILEBROWSER_POPUPMOVETO;Verschieben nach...
+FILEBROWSER_POPUPPROCESS;In Warteschlange legen
+FILEBROWSER_POPUPPROFILEOPERATIONS;Profiloperationen
 FILEBROWSER_POPUPOPEN;Öffnen
-FILEBROWSER_POPUPPROCESS;Bild zur Warteschlange hinzufügen
+FILEBROWSER_POPUPRANK;Bewertung
 FILEBROWSER_POPUPRANK1;Bewertung: 1 *
 FILEBROWSER_POPUPRANK2;Bewertung: 2 **
 FILEBROWSER_POPUPRANK3;Bewertung: 3 ***
 FILEBROWSER_POPUPRANK4;Bewertung: 4 ****
 FILEBROWSER_POPUPRANK5;Bewertung: 5 *****
-FILEBROWSER_POPUPREMOVE;Aus Verzeichnis löschen
-FILEBROWSER_POPUPREMOVEINCLPROC;Aus Verzeichnis löschen (auch\n     Resultate der Stapelverarbeitung)
+FILEBROWSER_POPUPREMOVE;Löschen
+FILEBROWSER_POPUPREMOVEINCLPROC;Löschen (auch Resultate der Stapelverarbeitung)
 FILEBROWSER_POPUPREMOVESUBMENU;Löschen
 FILEBROWSER_POPUPRENAME;Umbenennen
 FILEBROWSER_POPUPSELECTALL;Alle auswählen
@@ -119,11 +130,19 @@ FILEBROWSER_POPUPUNRANK;Bewertung entfernen
 FILEBROWSER_POPUPUNTRASH;Aus dem Papierkorb wiederherstellen
 FILEBROWSER_PROCESSINGSETTINGS;Einstellungen
 FILEBROWSER_PROCESSINGSETTINGSHINT;Einstellen von Ausgabeformat und Ausgabeverzeichnis
+FILEBROWSER_QUERYBUTTONHINT;Nebenstehenden Suchfilter zurücksetzen
+FILEBROWSER_QUERYHINT;Nur Dateien anzeigen, deren Namen die angegebene\nZeichenkette beinhalten\n<b>Strg+F</b> (im Dateimanager) zum Setzen des Fokus\n<b>Eingabe</b> zum Suchen
+FILEBROWSER_QUERYLABEL; Suche:
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" nach:
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
 FILEBROWSER_SELECTFLATFIELD;Weißbild wählen...
-FILEBROWSER_SHOWDIRHINT;Alle Bilder des Verzeichnisses anzeigen\n(alle Filter zurücksetzen) <b>D</b>
+FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Nur gelb markierte Bilder anzeigen <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;Alle Bewertungs- und Farbfilter zurücksetzen <b>D</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden <b>I</b>
 FILEBROWSER_SHOWQUEUEHINT;Inhalt der Warteschlange zeigen
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen <b>1</b>
@@ -132,6 +151,7 @@ FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen <b>3</b>
 FILEBROWSER_SHOWRANK4HINT;Nur mit 4 Sternen bewertete Bilder anzeigen <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen <b>5</b>
 FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen <b>T</b>
+FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen <b>`</b>
 FILEBROWSER_STARTPROCESSING;Verarbeitung starten
 FILEBROWSER_STARTPROCESSINGHINT;Verarbeitung/Speichern der Bilder in der Warteschlange starten
@@ -166,11 +186,13 @@ HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
+HISTOGRAM_BUTTON_RAW;RAW
 HISTOGRAM_LABEL;Histogramm
 HISTOGRAM_TOOLTIP_B;BLAU-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_G;GRÜN-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_L;CIELAB-Luminanz-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_R;ROT-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten
 HISTORY_CHANGED;Verändert
 HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
 HISTORY_DELSNAPSHOT;Entf.
@@ -209,7 +231,19 @@ HISTORY_MSG_127;Autom. Weißbild
 HISTORY_MSG_128;Weißbild Unschärferadius
 HISTORY_MSG_129;Weißbild Unschärfetyp
 HISTORY_MSG_12;Automatische Belichtung
+HISTORY_MSG_130;Autom. Verzerrung
+HISTORY_MSG_131;Rauschminderung\nLuminanz
+HISTORY_MSG_132;Rauschminderung\nChrominanz
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Gamma Position
+HISTORY_MSG_135;Freies Gamma
+HISTORY_MSG_136;Gamma Gradient
+HISTORY_MSG_137;Schwarzpegel Grün 1
+HISTORY_MSG_138;Schwarzpegel Rot
+HISTORY_MSG_139;Schwarzpegel Blau
 HISTORY_MSG_13;Belichtungsbeschneidung
+HISTORY_MSG_140;Schwarzpegel Grün 2
+HISTORY_MSG_141;Schwarzpegel\nGrün-Werte angleichen
 HISTORY_MSG_14;Luminanz Helligkeit
 HISTORY_MSG_15;Luminanz Kontrast
 HISTORY_MSG_16;Luminanz Schwarz
@@ -531,6 +565,9 @@ PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
+PREFERENCES_CUSTPROFBUILD;Benutzerdefinierter Bildprofilgenerator
+PREFERENCES_CUSTPROFBUILDHINT;Anwendung (oder Skript) zur Erzeugung eines neuen Profils für ein Bild. Folgende Kommandozeilenparameter zur regelbasierten *.PP3-Erzeugung werden übergeben:\n[Pfad RAW/JPEG] [Pfad vorgegebenes Profil] [Blende] [Belichtungszeit in s] [Brennweite in mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
 PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transp. für Ausschnittsmaske
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
@@ -552,6 +589,7 @@ PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Voransichten
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Werkzeugleiste in Dateiverwaltung (Bei geringer Bildschirmauflösung deaktivieren)
 PREFERENCES_FILEFORMAT;Dateiformat
 PREFERENCES_FLATFIELD;Weißbild
 PREFERENCES_FLATFIELDFOUND;Gefunden
@@ -563,6 +601,7 @@ PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm im linken Bedienfeld
 PREFERENCES_HLTHRESHOLD;Schwellenwert - zu hell
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
@@ -572,6 +611,11 @@ PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Voransicht aus RAW, wenn noch nicht editiert
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
+PREFERENCES_MENUOPTIONS;Menüoptionen
+PREFERENCES_MENUGROUPRANK;Untermenü Bewertung
+PREFERENCES_MENUGROUPLABEL;Untermenü Farbmarkierung
+PREFERENCES_MENUGROUPFILEOPERATIONS;Untermenü Dateioperationen
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Untermenü Profiloperationen
 PREFERENCES_METADATA;Metadaten
 PREFERENCES_MONITORICC;Monitor-Profil
 PREFERENCES_MULTITAB;Multi-Reiter Modus
@@ -605,9 +649,11 @@ PREFERENCES_SET;SETZEN
 PREFERENCES_SHOWBASICEXIF;Grundlegende Exif-Daten anzeigen
 PREFERENCES_SHOWDATETIME;Datum und Uhrzeit anzeigen
 PREFERENCES_SHOWONLYRAW;Nur RAW-Dateien anzeigen
+PREFERENCES_SHOWPROFILESELECTOR;Profilauswahl anzeigen
 PREFERENCES_SHTHRESHOLD;Schwellenwert - zu dunkel
 PREFERENCES_SINGLETAB;Ein-Reiter Modus
 PREFERENCES_SINGLETABVERTAB;Ein-Reiter Modus (vertikale Reiter)
+PREFERENCES_SLIMUI;Kompakte Oberfläche
 PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Entweder Dateipfad eingeben oder nichts (falls kein Systemklang gewünscht).\nUnter Windows "SystemDefault", "SystemAsterisk" usw. für Systemklänge verwenden.               
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
@@ -622,7 +668,7 @@ PREFERENCES_TAB_SOUND;Systemklänge
 PREFERENCES_THUMBSIZE;Größe der Vorschau
 PREFERENCES_TUNNELMETADATA;IPTC/XMP unverändert in Ausgabedatei kopieren (falls Tagging mittels anderer Software)
 PREFERENCES_USESYSTEMTHEME;Systemoberfläche
-PREFERENCES_WORKFLOW;Workflow
+PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_FILEDLGFILTERANY;Alle Dateien
 PROFILEPANEL_FILEDLGFILTERPP;Bearbeitungsprofile
 PROFILEPANEL_LABEL;Bearbeitungsprofile
@@ -718,6 +764,7 @@ TP_CROP_GTRULETHIRDS;Drittelregel
 TP_CROP_GUIDETYPE;Hilfslinien:
 TP_CROP_H;H
 TP_CROP_LABEL;Ausschnitt
+TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;Ausschnitt wählen
 TP_CROP_W;B
 TP_CROP_X;x
@@ -741,7 +788,7 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Stärke
 TP_DISTORTION_AUTO;Automatische Verzerrungskorrektur
-TP_DISTORTION_AUTO_TIP;Linsenverzerrungen automatisch korrigieren (nur für bestimmte\nKameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
+TP_DISTORTION_AUTO_TIP;Linsenverzerrungen automatisch korrigieren (nur für bestimmte Kameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
 TP_DISTORTION_LABEL;Verzerrungskorrektur
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
@@ -749,7 +796,7 @@ TP_EQUALIZER_FINEST;Feinstes
 TP_EQUALIZER_LABEL;Wavelet-Mixer
 TP_EQUALIZER_LARGEST;Gröbstes
 TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;RAW-Weißpunkt
+TP_EXPOSCORR_LABEL;RAW-Weiß/Schwarz-Punkt
 TP_EXPOSURE_AUTOLEVELS;Auto
 TP_EXPOSURE_BLACKLEVEL;Schwarzpegel
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
@@ -770,6 +817,11 @@ TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Weißbild
+TP_GAMMA_CURV;Gamma
+TP_GAMMA_FREE;Freies Gamma
+TP_GAMMA_OUTPUT;Ausgabe-Gamma
+TP_GAMMA_SLOP;Gradient (linear)
+TP_HLREC_BLEND;Lichter abmischen
 TP_HLREC_CIELAB;CIELab Überlagerung
 TP_HLREC_COLOR;Farbübertragung
 TP_HLREC_LABEL;Lichter wiederherstellen
@@ -831,8 +883,13 @@ TP_PREPROCESS_NO_FOUND;Keins gefunden
 TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
-TP_RAWEXPOS_LINEAR;Linearer Korrekturfaktor
-TP_RAWEXPOS_PRESER;Lichter bewahrende\nKorrektur (EV)
+TP_RAWEXPOS_BLACKZERO;Schwarzpegel: Grün 1 (führend)
+TP_RAWEXPOS_BLACKONE;Schwarzpegel: Rot
+TP_RAWEXPOS_BLACKTWO;Schwarzpegel: Blau
+TP_RAWEXPOS_BLACKTHREE;Schwarzpegel: Grün 2
+TP_RAWEXPOS_LINEAR;Weißpunkt: Linearer\nKorrekturfaktor
+TP_RAWEXPOS_PRESER;Weißpunkt: Lichter\nbewahrende Korrektur (EV)
+TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
 TP_RAW_DCBENHANCE;DCB-Verfeinerungsschritt durchführen
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
 TP_RAW_DMETHOD;Methode
@@ -921,34 +978,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-FILEBROWSER_POPUPCOLORLABEL;Farbmarkierung
-FILEBROWSER_POPUPCOLORLABEL0;Markierung: keine
-FILEBROWSER_POPUPCOLORLABEL1;Markierung: Rot
-FILEBROWSER_POPUPCOLORLABEL2;Markierung: Gelb
-FILEBROWSER_POPUPCOLORLABEL3;Markierung: Grün
-FILEBROWSER_POPUPCOLORLABEL4;Markierung: Blau
-FILEBROWSER_POPUPCOLORLABEL5;Markierung: Violett
-FILEBROWSER_SHOWCOLORLABEL1HINT;Nur rot markierte Bilder anzeigen <b>Alt-1</b>
-FILEBROWSER_SHOWCOLORLABEL2HINT;Nur gelb markierte Bilder anzeigen <b>Alt-2</b>
-FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen <b>Alt-3</b>
-FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen <b>Alt-4</b>
-FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen <b>Alt-5</b>
-FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen <b>Alt-`</b>
-HISTOGRAM_BUTTON_RAW;RAW
-HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten
-HISTORY_MSG_130;Autom. Verzerrung
-HISTORY_MSG_131;Rauschminderung\nLuminanz
-HISTORY_MSG_132;Rauschminderung\nChrominanz
-HISTORY_MSG_133;Gamma
-HISTORY_MSG_134;Gamma Position
-HISTORY_MSG_135;Freies Gamma
-HISTORY_MSG_136;Gamma Abfall
-PREFERENCES_CUSTPROFBUILD;Benutzerdefinierter Bildprofilgenerator
-PREFERENCES_CUSTPROFBUILDHINT;Anwendung (oder Skript) zur Erzeugung eines neuen Profils für ein Bild. Folgende Kommandozeilenparameter zur regelbasierten *.PP3-Erzeugung werden übergeben:\n[Pfad RAW/JPEG] [Pfad vorgegebenes Profil] [Blende] [Belichtungszeit in s] [Brennweite in mm] [ISO] [Objektiv] [Kamera]
-PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
-TP_CROP_PPI;PPI=
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Freies Gamma
-TP_GAMMA_OUTPUT;Ausgabe-Gamma
-TP_GAMMA_SLOP;Abfall (linear)
-TP_HLREC_BLEND;Lichter abmischen
