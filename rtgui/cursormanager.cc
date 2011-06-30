@@ -33,6 +33,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
     cLeftTanMove = new Gdk::Cursor (Gdk::SB_LEFT_ARROW);
     cRightTanMove = new Gdk::Cursor (Gdk::SB_RIGHT_ARROW);
     cAdd = new Gdk::Cursor (Gdk::PLUS);
+    cWait = new Gdk::Cursor (Gdk::CLOCK);
 
     Glib::RefPtr<Gdk::Pixbuf> hand = safe_create_from_file(argv0+"/images/openhand22.png");
     Glib::RefPtr<Gdk::Pixbuf> close_hand = safe_create_from_file(argv0+"/images/closedhand22.png");
@@ -75,6 +76,8 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         window->set_cursor (*cRightTanMove);
     else if (shape==CSStraighten)
         window->set_cursor (*cCropSelection);
+    else if (shape==CSWait)
+        window->set_cursor (*cWait);
     else if (shape==CSPlus)
         window->set_cursor (*cAdd);
     else if (shape==CSEmpty)
