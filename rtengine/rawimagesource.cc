@@ -1109,7 +1109,7 @@ void RawImageSource::demosaic(const RAWParams &raw, HRecParams hrp )
 	    else if (raw.dmethod == RAWParams::methodstring[RAWParams::amaze] )
             amaze_demosaic_RT (0,0,W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::dcb] )
-            dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance? 1:0);
+            dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
