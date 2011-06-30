@@ -69,6 +69,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void configScrollBars ();
     void scrollChanged ();
     void scroll (int direction);
+    int getNumSelected() { return selected.size(); }; // Get the number of selected images
 
   protected:
 

@@ -25,6 +25,7 @@
 #include <iostream>
 #include <renamedlg.h>
 #include <thumbimageupdater.h>
+#include <cursormanager.h>
 #include <safegtk.h>
 
 #define CHECKTIME 2000
@@ -195,6 +196,17 @@ FileCatalog::~FileCatalog()
 	delete iTrashFull;
 }
 
+// This unselect all images, so it should dump all edited image procparams
+void FileCatalog::deselectAll()
+{
+    cursorManager.setCursor(CSWait);
+    if (fileBrowser->getNumSelected()) {
+        std::vector<Thumbnail*> thm;
+        selectionChanged(thm /*empty list*/);
+    }
+    cursorManager.setCursor(CSArrow);
+}
+
 bool FileCatalog::capture_event(GdkEventButton* event){
     // need to record modifiers on the button press, because signal_toggled does not pass the event.
     modifierKey = event->state;
@@ -260,10 +272,14 @@ std::vector<Glib::ustring> FileCatalog::getFileList () {
 void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile) {
 
     try {
+        std::vector<Thumbnail*> thm;
+
         Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dirname);
 
         if (!dir)
             return;
+
+        deselectAll();
         closeDir ();
         previewsToLoad = 0;
         previewsLoaded = 0;
