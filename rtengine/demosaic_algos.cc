@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,29 +28,26 @@
 #include <curves.h>
 #include <dfmanager.h>
 #include <slicer.h>
-
-
+#include <assert.h>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
 namespace rtengine {
-	
 #undef ABS
 #undef MAX
 #undef MIN
 #undef DIST
-	
+
 #define ABS(a) ((a)<0?-(a):(a))
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define DIST(a,b) (ABS(a-b))
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::eahd_demosaic () {
-
   if (plistener) {
     plistener->setProgressStr ("Demosaicing...");
     plistener->setProgress (0.0);
@@ -75,7 +72,7 @@ void RawImageSource::eahd_demosaic () {
   threshold = (int)(0.008856*MAXVAL);
   for (int i=0; i<maxindex; i++)
     cache[i] = exp(1.0/3.0 * log((double)i / MAXVAL));
-  
+
   // end of cielab preparation
 
   float* rh[3];
@@ -94,24 +91,24 @@ void RawImageSource::eahd_demosaic () {
   float* homv[3];
 
   for (int i=0; i<4; i++) {
-    gh[i] = new float[W];  
-    gv[i] = new float[W];  
+    gh[i] = new float[W];
+    gv[i] = new float[W];
   }
 
   for (int i=0; i<3; i++) {
-    rh[i] = new float[W];  
-    bh[i] = new float[W];  
-    rv[i] = new float[W];  
-    bv[i] = new float[W];  
-    lLh[i] = new float[W];  
-    lah[i] = new float[W];  
-    lbh[i] = new float[W];  
-    lLv[i] = new float[W];  
-    lav[i] = new float[W];  
-    lbv[i] = new float[W];  
+    rh[i] = new float[W];
+    bh[i] = new float[W];
+    rv[i] = new float[W];
+    bv[i] = new float[W];
+    lLh[i] = new float[W];
+    lah[i] = new float[W];
+    lbh[i] = new float[W];
+    lLv[i] = new float[W];
+    lav[i] = new float[W];
+    lbv[i] = new float[W];
     homh[i] = new float[W];
     homv[i] = new float[W];
-  }   
+  }
 
   // interpolate first two lines
   interpolate_row_g (gh[0], gv[0], 0);
@@ -126,7 +123,6 @@ void RawImageSource::eahd_demosaic () {
   convert_to_cielab_row (rv[0], gv[0], bv[0], lLv[0], lav[0], lbv[0]);
   convert_to_cielab_row (rh[1], gh[1], bh[1], lLh[1], lah[1], lbh[1]);
   convert_to_cielab_row (rv[1], gv[1], bv[1], lLv[1], lav[1], lbv[1]);
-
 
   for (int j=0; j<W; j++) {
     homh[0][j] = 0;
@@ -145,7 +141,6 @@ void RawImageSource::eahd_demosaic () {
   int dCbmapv[9];
 
   for (int i=1; i<H-1; i++) {
-
     int ix = i%3;
     int imx = (i-1)%3;
     int ipx = (i+1)%3;
@@ -159,7 +154,7 @@ void RawImageSource::eahd_demosaic () {
       interpolate_row_rb (rh[(i+1)%3], bh[(i+1)%3], gh[i%4], gh[(i+1)%4], NULL, i+1);
       interpolate_row_rb (rv[(i+1)%3], bv[(i+1)%3], gv[i%4], gv[(i+1)%4], NULL, i+1);
     }
- 
+
     convert_to_cielab_row (rh[(i+1)%3], gh[(i+1)%4], bh[(i+1)%3], lLh[(i+1)%3], lah[(i+1)%3], lbh[(i+1)%3]);
     convert_to_cielab_row (rv[(i+1)%3], gv[(i+1)%4], bv[(i+1)%3], lLv[(i+1)%3], lav[(i+1)%3], lbv[(i+1)%3]);
 
@@ -169,7 +164,6 @@ void RawImageSource::eahd_demosaic () {
     }
     int sh, sv, idx, idx2;
     for (int j=1; j<W-1; j++) {
-
       int dmi = 0;
       for (int x=-1; x<=1; x++) {
         idx = (i+x)%3;
@@ -221,15 +215,15 @@ void RawImageSource::eahd_demosaic () {
       int eCb = MIN(MAX(dCbmaph[3],dCbmaph[5]),MAX(dCbmapv[1],dCbmapv[7]));
 
       int wh = 0;
-      for (int dmi=0; dmi<9; dmi++) 
-          if (dLmaph[dmi]<=eL && dCamaph[dmi]<=eCa && dCbmaph[dmi]<=eCb) 
+      for (int dmi=0; dmi<9; dmi++)
+          if (dLmaph[dmi]<=eL && dCamaph[dmi]<=eCa && dCbmaph[dmi]<=eCb)
                wh++;
 
       int wv = 0;
-      for (int dmi=0; dmi<9; dmi++) 
-          if (dLmapv[dmi]<=eL && dCamapv[dmi]<=eCa && dCbmapv[dmi]<=eCb) 
+      for (int dmi=0; dmi<9; dmi++)
+          if (dLmapv[dmi]<=eL && dCamapv[dmi]<=eCa && dCbmapv[dmi]<=eCb)
                wv++;
- 
+
       homh[imx][j-1]+=wh;
       homh[imx][j]  +=wh;
       homh[imx][j+1]+=wh;
@@ -256,19 +250,19 @@ void RawImageSource::eahd_demosaic () {
     for (int j=0; j<W; j++) {
       if (ri->ISGREEN(i-1,j))
         green[i-1][j] = rawData[i-1][j];
-      else { 
+      else {
         hc = homh[imx][j];
         vc = homv[imx][j];
-        if (hc > vc) 
+        if (hc > vc)
           green[i-1][j] = gh[(i-1)%4][j];
-        else if (hc < vc) 
+        else if (hc < vc)
           green[i-1][j] = gv[(i-1)%4][j];
-        else 
+        else
           green[i-1][j] = (gh[(i-1)%4][j] + gv[(i-1)%4][j]) / 2;
       }
     }
 
-    if (!(i%20) && plistener) 
+    if (!(i%20) && plistener)
       plistener->setProgress ((double)i / (H-2));
   }
   // finish H-2th and H-1th row, homogenity value is still valailable
@@ -281,10 +275,10 @@ void RawImageSource::eahd_demosaic () {
         green[i-1][j] = gh[(i-1)%4][j];
       else if (hc < vc)
         green[i-1][j] = gv[(i-1)%4][j];
-      else 
+      else
         green[i-1][j] = (gh[(i-1)%4][j] + gv[(i-1)%4][j]) / 2;
     }
-    
+
     freeArray2<float>(rh, 3);
     freeArray2<float>(gh, 4);
     freeArray2<float>(bh, 3);
@@ -310,22 +304,20 @@ void RawImageSource::eahd_demosaic () {
   		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
   	  else
   		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
-
     }
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_vertical (float** hpmap, int col_from, int col_to) {
-
   float* temp = new float[MAX(W,H)];
   float* avg = new float[MAX(W,H)];
   float* dev = new float[MAX(W,H)];
-  
+
   memset (temp, 0, MAX(W,H)*sizeof(float));
   memset (avg, 0, MAX(W,H)*sizeof(float));
   memset (dev, 0, MAX(W,H)*sizeof(float));
-  
+
   for (int k=col_from; k<col_to; k++) {
     for (int i=5; i<H-5; i++) {
       temp[i] = (rawData[i-5][k] - 8*rawData[i-4][k] + 27*rawData[i-3][k] - 48*rawData[i-2][k] + 42*rawData[i-1][k] -
@@ -338,7 +330,7 @@ void RawImageSource::hphd_vertical (float** hpmap, int col_from, int col_to) {
         float devL = ((temp[j-4]-avgL)*(temp[j-4]-avgL) + (temp[j-3]-avgL)*(temp[j-3]-avgL) + (temp[j-2]-avgL)*(temp[j-2]-avgL) + (temp[j-1]-avgL)*(temp[j-1]-avgL) + (temp[j]-avgL)*(temp[j]-avgL) + (temp[j+1]-avgL)*(temp[j+1]-avgL) + (temp[j+2]-avgL)*(temp[j+2]-avgL) + (temp[j+3]-avgL)*(temp[j+3]-avgL) + (temp[j+4]-avgL)*(temp[j+4]-avgL)) / 9.0;
         if (devL<0.001) devL = 0.001;
         dev[j] = devL;
-    }       
+    }
     for (int j=5; j<H-5; j++) {
         float avgL = avg[j-1];
         float avgR = avg[j+1];
@@ -351,15 +343,14 @@ void RawImageSource::hphd_vertical (float** hpmap, int col_from, int col_to) {
   delete [] avg;
   delete [] dev;
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
-
   float* temp = new float[MAX(W,H)];
   float* avg = new float[MAX(W,H)];
   float* dev = new float[MAX(W,H)];
-  
+
   memset (temp, 0, MAX(W,H)*sizeof(float));
   memset (avg, 0, MAX(W,H)*sizeof(float));
   memset (dev, 0, MAX(W,H)*sizeof(float));
@@ -376,37 +367,36 @@ void RawImageSource::hphd_horizontal (float** hpmap, int row_from, int row_to) {
         float devL = ((temp[j-4]-avgL)*(temp[j-4]-avgL) + (temp[j-3]-avgL)*(temp[j-3]-avgL) + (temp[j-2]-avgL)*(temp[j-2]-avgL) + (temp[j-1]-avgL)*(temp[j-1]-avgL) + (temp[j]-avgL)*(temp[j]-avgL) + (temp[j+1]-avgL)*(temp[j+1]-avgL) + (temp[j+2]-avgL)*(temp[j+2]-avgL) + (temp[j+3]-avgL)*(temp[j+3]-avgL) + (temp[j+4]-avgL)*(temp[j+4]-avgL)) / 9.0;
         if (devL<0.001) devL = 0.001;
         dev[j] = devL;
-    }    
+    }
     for (int j=5; j<W-5; j++) {
         float avgL = avg[j-1];
         float avgR = avg[j+1];
         float devL = dev[j-1];
         float devR = dev[j+1];
         float hpv = avgL + (avgR - avgL) * devL / (devL + devR);
-        if (hpmap[i][j] < 0.8*hpv) 
+        if (hpmap[i][j] < 0.8*hpv)
             hpmap[i][j] = 2;
-        else if (hpv < 0.8*hpmap[i][j]) 
+        else if (hpv < 0.8*hpmap[i][j])
             hpmap[i][j] = 1;
         else
             hpmap[i][j] = 0;
-    }        
+    }
   }
   delete [] temp;
   delete [] avg;
   delete [] dev;
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_green (float** hpmap) {
-
   #pragma omp parallel for
   for (int i=3; i<H-3; i++) {
     for (int j=3; j<W-3; j++) {
       if (ri->ISGREEN(i,j))
         green[i][j] = rawData[i][j];
       else {
-        if (hpmap[i][j]==1) { 
+        if (hpmap[i][j]==1) {
             int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) /2);
             int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) /2);
 
@@ -415,19 +405,19 @@ void RawImageSource::hphd_green (float** hpmap) {
             int d2 = rawData[i][j+2] - rawData[i][j];
             int d3 = (rawData[i-1][j+2] - rawData[i-1][j]) /2;
             int d4 = (rawData[i+1][j+2] - rawData[i+1][j]) /2;
-        
+
             double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
-        
+
             d1 = rawData[i][j-3] - rawData[i][j-1];
             d2 = rawData[i][j-2] - rawData[i][j];
             d3 = (rawData[i-1][j-2] - rawData[i-1][j]) /2;
             d4 = (rawData[i+1][j-2] - rawData[i+1][j]) /2;
-        
+
             double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             green[i][j] = (e2 * g2 + e4 * g4) / (e2 + e4);
         }
-        else if (hpmap[i][j]==2) { 
+        else if (hpmap[i][j]==2) {
             int g1 = rawData[i-1][j] + ((rawData[i][j] - rawData[i-2][j]) /2);
             int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) /2);
 
@@ -436,16 +426,16 @@ void RawImageSource::hphd_green (float** hpmap) {
             int d2 = rawData[i][j] - rawData[i-2][j];
             int d3 = (rawData[i][j-1] - rawData[i-2][j-1]) /2;
             int d4 = (rawData[i][j+1] - rawData[i-2][j+1]) /2;
-        
+
             double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
-        
+
             d1 = rawData[i+1][j] - rawData[i+3][j];
             d2 = rawData[i][j] - rawData[i+2][j];
             d3 = (rawData[i][j-1] - rawData[i+2][j-1]) /2;
             d4 = (rawData[i][j+1] - rawData[i+2][j+1]) /2;
-        
+
             double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
-        
+
             green[i][j] = (e1 * g1 + e3 * g3) / (e1 + e3);
         }
         else {
@@ -453,7 +443,7 @@ void RawImageSource::hphd_green (float** hpmap) {
             int g2 = rawData[i][j+1] + ((rawData[i][j] - rawData[i][j+2]) /2);
             int g3 = rawData[i+1][j] + ((rawData[i][j] - rawData[i+2][j]) /2);
             int g4 = rawData[i][j-1] + ((rawData[i][j] - rawData[i][j-2]) /2);
-        
+
             int dx = rawData[i][j+1] - rawData[i][j-1];
             int dy = rawData[i+1][j] - rawData[i-1][j];
 
@@ -461,29 +451,29 @@ void RawImageSource::hphd_green (float** hpmap) {
             int d2 = rawData[i][j] - rawData[i-2][j];
             int d3 = (rawData[i][j-1] - rawData[i-2][j-1]) /2;
             int d4 = (rawData[i][j+1] - rawData[i-2][j+1]) /2;
-        
+
             double e1 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             d1 = rawData[i][j+3] - rawData[i][j+1];
             d2 = rawData[i][j+2] - rawData[i][j];
             d3 = (rawData[i-1][j+2] - rawData[i-1][j]) /2;
             d4 = (rawData[i+1][j+2] - rawData[i+1][j]) /2;
-        
+
             double e2 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             d1 = rawData[i+1][j] - rawData[i+3][j];
             d2 = rawData[i][j] - rawData[i+2][j];
             d3 = (rawData[i][j-1] - rawData[i+2][j-1]) /2;
             d4 = (rawData[i][j+1] - rawData[i+2][j+1]) /2;
-        
+
             double e3 = 1.0 / (1.0 + ABS(dy) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
-            
+
             d1 = rawData[i][j-3] - rawData[i][j-1];
             d2 = rawData[i][j-2] - rawData[i][j];
             d3 = (rawData[i-1][j-2] - rawData[i-1][j]) /2;
             d4 = (rawData[i+1][j-2] - rawData[i+1][j]) /2;
-        
-            double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));            
+
+            double e4 = 1.0 / (1.0 + ABS(dx) + ABS(d1) + ABS(d2) + ABS(d3) + ABS(d4));
 
             green[i][j] = (e1*g1 + e2*g2 + e3*g3 + e4*g4) / (e1 + e2 + e3 + e4);
         }
@@ -491,18 +481,17 @@ void RawImageSource::hphd_green (float** hpmap) {
     }
   }
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hphd_demosaic () {
-
   if (plistener) {
     plistener->setProgressStr ("Demosaicing...");
     plistener->setProgress (0.0);
   }
 
   float** hpmap = allocArray< float >(W,H, true);
-  
+
 #ifdef _OPENMP
   #pragma omp parallel
   {
@@ -518,7 +507,7 @@ void RawImageSource::hphd_demosaic () {
 #else
   hphd_vertical (hpmap, 0, W);
 #endif
-  if (plistener) 
+  if (plistener)
     plistener->setProgress (0.33);
 
   for (int i=0; i<H; i++)
@@ -542,8 +531,8 @@ void RawImageSource::hphd_demosaic () {
 
   hphd_green (hpmap);
   freeArray<float>(hpmap, H);
-  
-  if (plistener) 
+
+  if (plistener)
     plistener->setProgress (0.66);
 
   for (int i=0; i<H; i++) {
@@ -555,13 +544,12 @@ void RawImageSource::hphd_demosaic () {
 		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], NULL, i, 1.0, 1.0, 1.0, 0, W, 1);
 	  else
 		  interpolate_row_rb_mul_pp (red[i], blue[i], green[i-1], green[i], green[i+1], i, 1.0, 1.0, 1.0, 0, W, 1);
-
   }
-  if (plistener) 
+  if (plistener)
     plistener->setProgress (1.0);
 }
-	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #define FORCC for (c=0; c < colors; c++)
@@ -569,7 +557,6 @@ void RawImageSource::hphd_demosaic () {
 	(ri->prefilters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
 typedef unsigned short ushort;
 void RawImageSource::vng4_demosaic () {
-
   static const signed char *cp, terms[] = {
     -2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
     -2,-1,+0,-1,0,0x02, -2,-1,+0,+0,0,0x03, -2,-1,+0,+1,1,0x01,
@@ -646,7 +633,6 @@ void RawImageSource::vng4_demosaic () {
     }
 
 //  lin_interpolate();
-
 
   ip = (int *) calloc ((prow+1)*(pcol+1), 1280);
   for (row=0; row <= prow; row++)		/* Precalculate for VNG */
@@ -730,7 +716,7 @@ void RawImageSource::vng4_demosaic () {
       memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
     for (g=0; g < 4; g++)
       brow[(g-1) & 3] = brow[g];
-    if (!(row%20) && plistener) 
+    if (!(row%20) && plistener)
       plistener->setProgress ((double)row / (H-2));
   }
   memcpy (image[(row-2)*width+2], brow[0]+2, (width-4)*sizeof *image);
@@ -756,9 +742,8 @@ void RawImageSource::vng4_demosaic () {
   free (image);
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
-
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #undef fc
 #define fc(row,col) \
@@ -783,7 +768,7 @@ void RawImageSource::ppg_demosaic()
     plistener->setProgressStr ("Demosaicing...");
     plistener->setProgress (0.0);
   }
-  
+
   image = (float (*)[4]) calloc (H*W, sizeof *image);
   for (int ii=0; ii<H; ii++)
     for (int jj=0; jj<W; jj++)
@@ -884,7 +869,6 @@ void RawImageSource::border_interpolate(int border, float (*image)[4], int start
     }
 }
 
-
 /*
    Adaptive Homogeneity-Directed interpolation is based on
    the work of Keigo Hirakawa, Thomas Parks, and Paul Lee.
@@ -916,7 +900,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
         { 0.212671, 0.715160, 0.072169 },
         { 0.019334, 0.119193, 0.950227 }
     };
-    
+
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
 	const float d50_white[3] = { 0.96422,  1, 0.82521  };
 
@@ -924,7 +908,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
         plistener->setProgressStr ("AHD Demosaicing...");
         plistener->setProgress (0.0);
     }
-  
+
     image = (float (*)[4]) calloc (H*W, sizeof *image);
     for (int ii=0; ii<H; ii++)
         for (int jj=0; jj<W; jj++)
@@ -935,7 +919,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
         r = (double)i / 65535.0;
         cbrt[i] = r > 0.008856 ? pow(r,1/3.0) : 7.787*r + 16/116.0;
     }
-  
+
     for (i=0; i < 3; i++)
         for (j=0; j < colors; j++)
             for (xyz_cam[i][j] = k=0; k < 3; k++)
@@ -947,14 +931,13 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     rgb  = (float(*)[TS][TS][3]) buffer;
     lab  = (float(*)[TS][TS][3])(buffer + 6*TS*TS*sizeof(float));
     homo = (char (*)[TS][TS])   (buffer + 12*TS*TS*sizeof(float));
-    
+
     // helper variables for progress indication
     int n_tiles = ((height-7 + (TS-7))/(TS-6)) * ((width-7 + (TS-7))/(TS-6));
     int tile = 0;
 
     for (top=2; top < height-5; top += TS-6)
         for (left=2; left < width-5; left += TS-6) {
-
             /*  Interpolate green horizontally and vertically:		*/
             for (row = top; row < top+TS && row < height-2; row++) {
 	            col = left + (FC(row,left) & 1);
@@ -997,11 +980,11 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 	                        xyz[1] += xyz_cam[1][c] * rix[0][c];
 	                        xyz[2] += xyz_cam[2][c] * rix[0][c];
 	                    }
-						
+
 						xyz[0] = CurveFactory::flinterp(cbrt,xyz[0]);
 	                    xyz[1] = CurveFactory::flinterp(cbrt,xyz[1]);
 	                    xyz[2] = CurveFactory::flinterp(cbrt,xyz[2]);
-						
+
 						//xyz[0] = xyz[0] > 0.008856 ? pow(xyz[0]/65535,1/3.0) : 7.787*xyz[0] + 16/116.0;
 						//xyz[1] = xyz[1] > 0.008856 ? pow(xyz[1]/65535,1/3.0) : 7.787*xyz[1] + 16/116.0;
 						//xyz[2] = xyz[2] > 0.008856 ? pow(xyz[2]/65535,1/3.0) : 7.787*xyz[2] + 16/116.0;
@@ -1052,13 +1035,13 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
                             0.5*(rgb[0][tr][tc][c] + rgb[1][tr][tc][c]) ;
                 }
             }
-            
+
             tile++;
             if(plistener) {
                 plistener->setProgress((double)tile / n_tiles);
             }
         }
-  
+
     if(plistener) plistener->setProgress (1.0);
     free (buffer);
     for (int i=0; i<H; i++) {
@@ -1100,7 +1083,7 @@ void RawImageSource::nodemosaic()
  *      Redistribution and use in source and binary forms, with or without
  *      modification, are permitted provided that the following conditions are
  *      met:
- *      
+ *
  *      * Redistributions of source code must retain the above copyright
  *        notice, this list of conditions and the following disclaimer.
  *      * Redistributions in binary form must reproduce the above
@@ -1110,7 +1093,7 @@ void RawImageSource::nodemosaic()
  *      * Neither the name of the author nor the names of its
  *        contributors may be used to endorse or promote products derived from
  *        this software without specific prior written permission.
- *      
+ *
  *      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  *      "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *      LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -1160,8 +1143,9 @@ void RawImageSource::fill_raw( float (*cache )[4], int x0, int y0, float** rawDa
 
 void RawImageSource::fill_border( float (*cache )[4], int border, int x0, int y0)
 {
-	unsigned row, col, y, x, f, c, sum[8];
-	int colors = 3;
+	unsigned row, col, y, x, f, c;
+    float sum[8];
+	const int colors = 3;  // used in FORCC
 
 	for (row = y0; row < y0+TILESIZE+TILEBORDER && row<H; row++){
 		for (col = x0; col < x0+TILESIZE+TILEBORDER && col<W; col++) {
@@ -1180,7 +1164,7 @@ void RawImageSource::fill_border( float (*cache )[4], int border, int x0, int y0
 					}
 			f = fc(row,col);
 			FORCC
-				if (c != f && sum[c + 4])
+				if (c != f && sum[c + 4]>0)
 					cache[(row-y0+TILEBORDER) * CACHESIZE +TILEBORDER + col-x0][c] = sum[c] / sum[c + 4];
 		}
 	}
@@ -1213,14 +1197,17 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 	// green pixels
 	for (int row = rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			bufferH[indx][1] = ( image[indx-1][1] + image[indx+1][1]) * 0.5;
-			bufferV[indx][1] = (image[indx+u][1] + image[indx-u][1])*0.5;
+            assert(indx>=0 && indx<u*u);
+			bufferH[indx][1] = (image[indx-1][1] + image[indx+1][1]) * 0.5;
+			bufferV[indx][1] = (image[indx+u][1] + image[indx-u][1]) * 0.5;
 		}
 	}
 	// red in blue pixel, blue in red pixel
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			bufferH[indx][c] = ( 4*bufferH[indx][1]
+            assert(indx>=0 && indx<u*u && c>=0 && c<3);
+
+            bufferH[indx][c] = ( 4*bufferH[indx][1]
 			                - bufferH[indx+u+1][1] - bufferH[indx+u-1][1] - bufferH[indx-u+1][1] - bufferH[indx-u-1][1]
 			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
 			bufferV[indx][c] = ( 4*bufferV[indx][1]
@@ -1231,6 +1218,7 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
+            assert(indx>=0 && indx<u*u && c>=0 && c<3 && d>=0 && d<3);
 			bufferH[indx][c] = ( image[indx+1][c] + image[indx-1][c]) * 0.5;
 			bufferH[indx][d] = (2*bufferH[indx][1] - bufferH[indx+u][1] - bufferH[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
 			bufferV[indx][c] = (2*bufferV[indx][1] - bufferV[indx+1][1] - bufferV[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
@@ -1240,29 +1228,28 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
     // Decide green pixels
     for (int row = rowMin; row < rowMax; row++)
         for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col),d=2-c; col < colMax; col+=2, indx+=2) {
-            int current =   MAX(image[indx+v][c], MAX(image[indx-v][c], MAX(image[indx-2][c], image[indx+2][c]))) -
+            float current =  MAX(image[indx+v][c], MAX(image[indx-v][c], MAX(image[indx-2][c], image[indx+2][c]))) -
                             MIN(image[indx+v][c], MIN(image[indx-v][c], MIN(image[indx-2][c], image[indx+2][c]))) +
                             MAX(image[indx+1+u][d], MAX(image[indx+1-u][d], MAX(image[indx-1+u][d], image[indx-1-u][d]))) -
                             MIN(image[indx+1+u][d], MIN(image[indx+1-u][d], MIN(image[indx-1+u][d], image[indx-1-u][d])));
 
-            int currentH =  MAX(bufferH[indx+v][d], MAX(bufferH[indx-v][d], MAX(bufferH[indx-2][d], bufferH[indx+2][d]))) -
+            float currentH = MAX(bufferH[indx+v][d], MAX(bufferH[indx-v][d], MAX(bufferH[indx-2][d], bufferH[indx+2][d]))) -
                             MIN(bufferH[indx+v][d], MIN(bufferH[indx-v][d], MIN(bufferH[indx-2][d], bufferH[indx+2][d]))) +
                             MAX(bufferH[indx+1+u][c], MAX(bufferH[indx+1-u][c], MAX(bufferH[indx-1+u][c], bufferH[indx-1-u][c]))) -
                             MIN(bufferH[indx+1+u][c], MIN(bufferH[indx+1-u][c], MIN(bufferH[indx-1+u][c], bufferH[indx-1-u][c])));
 
-            int currentV =  MAX(bufferV[indx+v][d], MAX(bufferV[indx-v][d], MAX(bufferV[indx-2][d], bufferV[indx+2][d]))) -
+            float currentV = MAX(bufferV[indx+v][d], MAX(bufferV[indx-v][d], MAX(bufferV[indx-2][d], bufferV[indx+2][d]))) -
                             MIN(bufferV[indx+v][d], MIN(bufferV[indx-v][d], MIN(bufferV[indx-2][d], bufferV[indx+2][d]))) +
                             MAX(bufferV[indx+1+u][c], MAX(bufferV[indx+1-u][c], MAX(bufferV[indx-1+u][c], bufferV[indx-1-u][c]))) -
                             MIN(bufferV[indx+1+u][c], MIN(bufferV[indx+1-u][c], MIN(bufferV[indx-1+u][c], bufferV[indx-1-u][c])));
 
+            assert(indx>=0 && indx<u*u);
             if (ABS(current-currentH) < ABS(current-currentV))
                 image[indx][1] = bufferH[indx][1];
             else
                 image[indx][1] = bufferV[indx][1];
         }
-
 }
-
 
 // missing colors are interpolated
 void RawImageSource::dcb_color(float (*image)[4], int x0, int y0)
@@ -1274,7 +1261,8 @@ void RawImageSource::dcb_color(float (*image)[4], int x0, int y0)
 	// red in blue pixel, blue in red pixel
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			image[indx][c] = ( 4*image[indx][1]
+            assert(indx>=0 && indx<u*u && c>=0 && c<4);
+			image[indx][c] = ( 4.0 * image[indx][1]
 			                - image[indx+u+1][1] - image[indx+u-1][1] - image[indx-u+1][1] - image[indx-u-1][1]
 			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
 		}
@@ -1282,9 +1270,10 @@ void RawImageSource::dcb_color(float (*image)[4], int x0, int y0)
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
-			image[indx][c] = (2*image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
-			image[indx][d] = (2*image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
-		}	
+            assert(indx>=0 && indx<u*u && c>=0 && c<4);
+            image[indx][c] = (2.0 * image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
+			image[indx][d] = (2.0 * image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
+		}
 }
 
 // green correction
@@ -1293,22 +1282,23 @@ void RawImageSource::dcb_hid2(float (*image)[4], int x0, int y0)
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
-	
+
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			image[indx][1] = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1])/4 +
+            assert(indx>=0 && indx<u*u);
+            image[indx][1] = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1]) * 0.25 +
 						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c]) * 0.25;
 		}
-	}	
+	}
 }
 
 // green is used to create
-// an interpolation direction map 
+// an interpolation direction map
 // 1 = vertical
 // 0 = horizontal
 // saved in image[][3]
 void RawImageSource::dcb_map(float (*image)[4], int x0, int y0)
-{	
+{
 	const int u=4*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
@@ -1316,6 +1306,8 @@ void RawImageSource::dcb_map(float (*image)[4], int x0, int y0)
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
 			float *pix = &(image[indx][1]);
+
+            assert(indx>=0 && indx<u*u);
 			if ( *pix > ( pix[-4] + pix[+4] + pix[-u] + pix[+u])/4 )
 				image[indx][3] = ((MIN( pix[-4], pix[+4]) + pix[-4] + pix[+4] ) < (MIN( pix[-u], pix[+u]) + pix[-u] + pix[+u]));
 			else
@@ -1324,20 +1316,21 @@ void RawImageSource::dcb_map(float (*image)[4], int x0, int y0)
 	}
 }
 
-
 // interpolated green pixels are corrected using the map
 void RawImageSource::dcb_correction(float (*image)[4], int x0, int y0)
 {
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
-	
+
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			int current = 4*image[indx][3] +
-						  2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
+			register float current = 4.0 * image[indx][3] +
+						  2.0 * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
-			image[indx][1] = ((16-current)*(image[indx-1][1] + image[indx+1][1])/2 + current*(image[indx-u][1] + image[indx+u][1])/2)/16;
+
+            assert(indx>=0 && indx<u*u);
+			image[indx][1] = ((16.0-current)*(image[indx-1][1] + image[indx+1][1]) * 0.5 + current*(image[indx-u][1] + image[indx+u][1]) * 0.5 ) * 0.0625;
 		}
 	}
 }
@@ -1348,16 +1341,16 @@ void RawImageSource::dcb_pp(float (*image)[4], int x0, int y0)
 	const int u=CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
-	
+
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin, indx=row*CACHESIZE+col; col < colMax; col++, indx++) {
 			//int r1 = ( image[indx-1][0] + image[indx+1][0] + image[indx-u][0] + image[indx+u][0] + image[indx-u-1][0] + image[indx+u+1][0] + image[indx-u+1][0] + image[indx+u-1][0])/8;
 			//int g1 = ( image[indx-1][1] + image[indx+1][1] + image[indx-u][1] + image[indx+u][1] + image[indx-u-1][1] + image[indx+u+1][1] + image[indx-u+1][1] + image[indx+u-1][1])/8;
 			//int b1 = ( image[indx-1][2] + image[indx+1][2] + image[indx-u][2] + image[indx+u][2] + image[indx-u-1][2] + image[indx+u+1][2] + image[indx-u+1][2] + image[indx+u-1][2])/8;
 			float (*pix)[4] = image+(indx-u-1);
-			int r1 = (*pix)[0];
-			int g1 = (*pix)[1];
-			int b1 = (*pix)[2];
+			float r1 = (*pix)[0];
+			float g1 = (*pix)[1];
+			float b1 = (*pix)[2];
 			pix++;
 			r1 += (*pix)[0];
 			g1 += (*pix)[1];
@@ -1386,11 +1379,13 @@ void RawImageSource::dcb_pp(float (*image)[4], int x0, int y0)
 			r1 += (*pix)[0];
 			g1 += (*pix)[1];
 			b1 += (*pix)[2];
-			r1 /=8;
-			g1 /=8;
-			b1 /=8;
+			r1 *=0.125;
+			g1 *=0.125;
+			b1 *=0.125;
 			r1 = r1 + ( image[indx][1] - g1 );
 			b1 = b1 + ( image[indx][1] - g1 );
+
+            assert(indx>=0 && indx<u*u);
 			image[indx][0] = r1;
 			image[indx][2] = b1;
 		}
@@ -1403,14 +1398,16 @@ void RawImageSource::dcb_correction2(float (*image)[4], int x0, int y0)
 	const int u=CACHESIZE, v=2*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,4);
-	
+
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			register float current = 4*image[indx][3] +
-						  2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
+			register float current = 4.0 * image[indx][3] +
+						  2.0 * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
-			image[indx][1] = ((16.0-current)*((image[indx-1][1] + image[indx+1][1]) * 0.5 
-                + image[indx][c] - (image[indx+2][c] + image[indx-2][c]) * 0.5) 
+
+            assert(indx>=0 && indx<u*u);
+			image[indx][1] = ((16.0-current)*((image[indx-1][1] + image[indx+1][1]) * 0.5
+                + image[indx][c] - (image[indx+2][c] + image[indx-2][c]) * 0.5)
                 + current*((image[indx-u][1] + image[indx+u][1]) * 0.5 + image[indx][c] - (image[indx+v][c] + image[indx-v][c]) * 0.5)) * 0.0625;
 		}
 	}
@@ -1424,38 +1421,37 @@ void RawImageSource::dcb_refinement(float (*image)[4], int x0, int y0)
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,4);
 
 	float f[5],g1,g2;
-	
+
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2,indx+=2){
-			int current = 4*image[indx][3] +
+			float current = 4*image[indx][3] +
 				      2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3])
 				      +image[indx+v][3] + image[indx-v][3] + image[indx-2][3] + image[indx+2][3];
 
 			f[0] = (float)(image[indx-u][1] + image[indx+u][1])/(2 + 2*image[indx][c]);
-			f[1] = 2*(float)image[indx-u][1]/(2 + image[indx-v][c] + image[indx][c]);
+			f[1] = 2.0 * image[indx-u][1]/(2 + image[indx-v][c] + image[indx][c]);
 			f[2] = (float)(image[indx-u][1] + image[indx-w][1])/(2 + 2*image[indx-v][c]);
-			f[3] = 2*(float)image[indx+u][1]/(2 + image[indx+v][c] + image[indx][c]);
-			f[4] = (float)(image[indx+u][1] + image[indx+w][1])/(2 + 2*image[indx+v][c]);
+			f[3] = 2.0 * image[indx+u][1]/(2 + image[indx+v][c] + image[indx][c]);
+			f[4] = (float)(image[indx+u][1] + image[indx+w][1])/(2 + 2.0 * image[indx+v][c]);
 
 			g1 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4]))))/3.0;
 
 			f[0] = (float)(image[indx-1][1] + image[indx+1][1])/(2 + 2*image[indx][c]);
-			f[1] = 2*(float)image[indx-1][1]/(2 + image[indx-2][c] + image[indx][c]);
+			f[1] = 2.0 * image[indx-1][1]/(2 + image[indx-2][c] + image[indx][c]);
 			f[2] = (float)(image[indx-1][1] + image[indx-3][1])/(2 + 2*image[indx-2][c]);
-			f[3] = 2*(float)image[indx+1][1]/(2 + image[indx+2][c] + image[indx][c]);
+			f[3] = 2.0 * image[indx+1][1]/(2 + image[indx+2][c] + image[indx][c]);
 			f[4] = (float)(image[indx+1][1] + image[indx+3][1])/(2 + 2*image[indx+2][c]);
 
 			g2 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4]))))/3.0;
 
-			image[indx][1] = (2.0+image[indx][c]) * (current*g1 + (16-current)*g2) * 0.0625;
+            assert(indx>=0 && indx<u*u);
+			image[indx][1] = (2.0+image[indx][c]) * (current*g1 + (16.0-current)*g2) * 0.0625;
 
-// get rid of the overshooted pixels
-		int min = MIN(image[indx+1+u][1], MIN(image[indx+1-u][1], MIN(image[indx-1+u][1], MIN(image[indx-1-u][1], MIN(image[indx-1][1], MIN(image[indx+1][1], MIN(image[indx-u][1], image[indx+u][1])))))));
-		int max = MAX(image[indx+1+u][1], MAX(image[indx+1-u][1], MAX(image[indx-1+u][1], MAX(image[indx-1-u][1], MAX(image[indx-1][1], MAX(image[indx+1][1], MAX(image[indx-u][1], image[indx+u][1])))))));
+            // get rid of the overshooted pixels
+		    float min = MIN(image[indx+1+u][1], MIN(image[indx+1-u][1], MIN(image[indx-1+u][1], MIN(image[indx-1-u][1], MIN(image[indx-1][1], MIN(image[indx+1][1], MIN(image[indx-u][1], image[indx+u][1])))))));
+		    float max = MAX(image[indx+1+u][1], MAX(image[indx+1-u][1], MAX(image[indx-1+u][1], MAX(image[indx-1-u][1], MAX(image[indx-1][1], MAX(image[indx+1][1], MAX(image[indx-u][1], image[indx+u][1])))))));
 
-		image[indx][1] =  LIM(image[indx][1], min, max);
-
-			
+		    image[indx][1] =  LIM(image[indx][1], min, max);
 		}
 }
 
@@ -1470,8 +1466,10 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
 	float f[4],g[4];
 
 	for (int row=1; row < CACHESIZE-1; row++)
-		for (int col=1+(FC(y0-TILEBORDER+row,x0-TILEBORDER+1)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col),d=c/2; col < CACHESIZE-1; col+=2,indx+=2)
+		for (int col=1+(FC(y0-TILEBORDER+row,x0-TILEBORDER+1)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col),d=c/2; col < CACHESIZE-1; col+=2,indx+=2) {
+            assert(indx>=0 && indx<u*u && c>=0 && c<4);
 			chroma[indx][d]=image[indx][c]-image[indx][1];
+        }
 
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=1-FC(y0-TILEBORDER+row,x0-TILEBORDER+col)/2,d=1-c; col<colMax; col+=2,indx+=2) {
@@ -1483,6 +1481,8 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
 			g[1]=1.325*chroma[indx-u+1][c]-0.175*chroma[indx-w+3][c]-0.075*chroma[indx-w+1][c]-0.075*chroma[indx-u+3][c];
 			g[2]=1.325*chroma[indx+u-1][c]-0.175*chroma[indx+w-3][c]-0.075*chroma[indx+w-1][c]-0.075*chroma[indx+u-3][c];
 			g[3]=1.325*chroma[indx+u+1][c]-0.175*chroma[indx+w+3][c]-0.075*chroma[indx+w+1][c]-0.075*chroma[indx+u+3][c];
+
+            assert(indx>=0 && indx<u*u && c>=0 && c<2);
 			chroma[indx][c]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]);
 		}
 	for (int row=rowMin; row<rowMax; row++)
@@ -1492,24 +1492,27 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
 				f[1]=1.0/(float)(1.0+fabs(chroma[indx+1][c]-chroma[indx-1][c])+fabs(chroma[indx+1][c]-chroma[indx+3][c])+fabs(chroma[indx-1][c]-chroma[indx+3][c]));
 				f[2]=1.0/(float)(1.0+fabs(chroma[indx-1][c]-chroma[indx+1][c])+fabs(chroma[indx-1][c]-chroma[indx-3][c])+fabs(chroma[indx+1][c]-chroma[indx-3][c]));
 				f[3]=1.0/(float)(1.0+fabs(chroma[indx+u][c]-chroma[indx-u][c])+fabs(chroma[indx+u][c]-chroma[indx+w][c])+fabs(chroma[indx-u][c]-chroma[indx+w][c]));
-			
+
 				g[0]=0.875*chroma[indx-u][c]+0.125*chroma[indx-w][c];
 				g[1]=0.875*chroma[indx+1][c]+0.125*chroma[indx+3][c];
 				g[2]=0.875*chroma[indx-1][c]+0.125*chroma[indx-3][c];
-				g[3]=0.875*chroma[indx+u][c]+0.125*chroma[indx+w][c];				
+				g[3]=0.875*chroma[indx+u][c]+0.125*chroma[indx+w][c];
 
+                assert(indx>=0 && indx<u*u && c>=0 && c<2);
 				chroma[indx][c]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]);
 			}
 
 	for(int row=rowMin; row<rowMax; row++)
 		for(int col=colMin,indx=row*CACHESIZE+col; col<colMax; col++,indx++){
+            assert(indx>=0 && indx<u*u);
+
 			image[indx][0] = chroma[indx][0] + image[indx][1];
 			image[indx][2] = chroma[indx][1] + image[indx][1];
 		}
 }
 
 // DCB demosaicing main routine (sharp version)
-void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
+void RawImageSource::dcb_demosaic(int iterations, bool dcb_enhance)
 {
     double currentProgress=0.0;
     if(plistener) {
@@ -1630,9 +1633,4 @@ void RawImageSource::dcb_demosaic(int iterations, int dcb_enhance)
 #undef TILEBORDER
 #undef TILESIZE
 #undef CACHESIZE
-	
-
-
 } /* namespace */
-
-
