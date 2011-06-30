@@ -142,8 +142,10 @@ void BatchQueue::loadBatchQueue( )
                 if( p ){
                     char *le = buffer + strlen(buffer);
                     while( --le > buffer && (*le == '\n' || *le == '\r') );
-                    Glib::ustring source(buffer, p-buffer );
-                    Glib::ustring paramsFile(p+1, (le +1)- (p+1) );
+                    std::string _source(buffer, p-buffer );
+                    std::string _paramsFile(p+1, (le +1)- (p+1) );
+                    Glib::ustring source(_source);
+                    Glib::ustring paramsFile(_paramsFile);
 
                     rtengine::procparams::ProcParams pparams;
                     if( pparams.load( paramsFile ) )
