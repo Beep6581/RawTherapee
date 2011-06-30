@@ -39,18 +39,18 @@ class DirEntry {
 
     public:
         Glib::ustring fullName;
-        
+
         DirEntry (const Glib::ustring& n) : fullName (n) {}
-		
-	bool operator< (DirEntry& other) {
-		return fullName.casefold() < other.fullName.casefold();
-	}
+
+    bool operator< (DirEntry& other) {
+        return fullName.casefold() < other.fullName.casefold();
+    }
 };
 
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
-					public FilterPanelListener,
+                    public FilterPanelListener,
                     public FileBrowserListener
 #ifdef _WIN32
                   , public WinDirChangeListener
@@ -93,7 +93,7 @@ class FileCatalog : public Gtk::VBox,
         ExifFilterSettings currentEFS;
         bool hasValidCurrentEFS;  
 
-		FilterPanel* filterPanel;
+        FilterPanel* filterPanel;
 
         Glib::RefPtr<Gio::FileMonitor> dirMonitor;
 
@@ -108,7 +108,7 @@ class FileCatalog : public Gtk::VBox,
         int checkCounter;
         void winDirChanged ();
      private:
-#endif		
+#endif
         std::vector<Glib::ustring> fileNameList;
         std::set<Glib::ustring> editedFiles;
         guint modifierKey; // any modifiers held when rank button was pressed
@@ -118,11 +118,11 @@ class FileCatalog : public Gtk::VBox,
         std::vector<Glib::ustring> getFileList ();
         BrowserFilter getFilter ();
         void trashChanged ();
-               
+
     public:
             // thumbnail browsers
             FileBrowser* fileBrowser;
-            
+
             CoarsePanel* coarsePanel;
             ToolBar* toolBar;
 
@@ -131,17 +131,18 @@ class FileCatalog : public Gtk::VBox,
                 void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
                 void closeDir    ();
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);
-                
+
                 // previewloaderlistener interface
-				void _previewReady (int dir_id, FileBrowserEntry* fdn);
-				void previewReady (int dir_id, FileBrowserEntry* fdn);
-				void previewsFinished (int dir_id);
+                void _previewReady (int dir_id, FileBrowserEntry* fdn);
+                void previewReady (int dir_id, FileBrowserEntry* fdn);
+                void previewsFinished (int dir_id);
                 void _previewsFinished ();
                 void _refreshProgressBar ();
 
-				// filterpanel interface
-				void exifFilterChanged ();
-				
+                // filterpanel interface
+                void exifFilterChanged ();
+                void deselectAll();			// deselect all images
+
        Glib::ustring lastSelectedDir () { return selectedDirectory; }
                 void setEnabled (bool e);   // if not enabled, it does not open image
                 void enableTabMode(bool enable);  // sets progress bar
@@ -149,7 +150,7 @@ class FileCatalog : public Gtk::VBox,
                 void redrawAll ();
                 void refreshAll ();
                 void refreshHeight ();
-                
+
                 void openRequested          (std::vector<Thumbnail*> tbe);
                 void deleteRequested        (std::vector<FileBrowserEntry*> tbe);
                 void developRequested       (std::vector<FileBrowserEntry*> tbe);
@@ -157,12 +158,12 @@ class FileCatalog : public Gtk::VBox,
                 void selectionChanged       (std::vector<Thumbnail*> tbe);
                 void emptyTrash ();
                 bool trashIsEmpty ();
-                
+
                 void setFileSelectionListener (FileSelectionListener* l) { listener = l; }
                 void setFileSelectionChangeListener (FileSelectionChangeListener* l) { fslistener = l; }
                 void setImageAreaToolListener (ImageAreaToolListener* l) { iatlistener = l; }
-				void setFilterPanel (FilterPanel* fpanel);
-				void exifInfoButtonToggled();
+                void setFilterPanel (FilterPanel* fpanel);
+                void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
                 bool capture_event(GdkEventButton* event);
                 void filterChanged ();
@@ -170,9 +171,9 @@ class FileCatalog : public Gtk::VBox,
 
                 void on_realize();
                 void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);
-				int  reparseDirectory ();
+                int  reparseDirectory ();
                 void _openImage (std::vector<Thumbnail*> tmb);
-                
+
                 void zoomIn ();
                 void zoomOut ();
 

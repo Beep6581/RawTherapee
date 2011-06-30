@@ -276,6 +276,7 @@ void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries) {
 bool RTWindow::on_delete_event(GdkEventAny* event) {
 
 
+    fpanel->fileCatalog->deselectAll();
     fpanel->saveOptions ();
     bpanel->saveOptions ();
   
