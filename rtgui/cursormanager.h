@@ -21,7 +21,7 @@
 
 #include <gtkmm.h>
 
-enum CursorShape {CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft, CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal, CSSpotWB, CSCropSelect, CSStraighten, CSPlus, CSEmpty};
+enum CursorShape {CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft, CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal, CSSpotWB, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty};
 
 class CursorManager {
 
@@ -36,6 +36,7 @@ class CursorManager {
         Gdk::Cursor* cNormal;
         Gdk::Cursor* cCropSelection;
         Gdk::Cursor* cAdd;
+        Gdk::Cursor* cWait;
         Gdk::Cursor* cHand;
         Gdk::Cursor* cClosedHand;
         Gdk::Cursor* cWB;
