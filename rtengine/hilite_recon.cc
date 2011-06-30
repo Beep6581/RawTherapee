@@ -489,15 +489,15 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				int notclipped[3] = {pixel[0]<max[0] ? 1 : 0, pixel[1]<max[1] ? 1 : 0, pixel[2]<max[2] ? 1 : 0};
 				
 				if (notclipped[0]==0) {//red clipped
-					red[i][j]  = (clipfix[0]*MAX(1,((notclipped[1]*pixel[1] + notclipped[2]*pixel[2])/ \
+					red[i][j]  = MAX(red[i][j],(clipfix[0]*((notclipped[1]*pixel[1] + notclipped[2]*pixel[2])/ \
 																(notclipped[1]*clipfix[1] + notclipped[2]*clipfix[2]))));
 				}
 				if (notclipped[1]==0) {//green clipped
-					green[i][j] = (clipfix[1]*MAX(1,((notclipped[2]*pixel[2] + notclipped[0]*pixel[0])/ \
+					green[i][j] = MAX(green[i][j],(clipfix[1]*((notclipped[2]*pixel[2] + notclipped[0]*pixel[0])/ \
 																   (notclipped[2]*clipfix[2] + notclipped[0]*clipfix[0]))));
 				}
 				if (notclipped[2]==0) {//blue clipped
-					blue[i][j]  = (clipfix[2]*MAX(1,((notclipped[0]*pixel[0] + notclipped[1]*pixel[1])/ \
+					blue[i][j]  = MAX(blue[i][j],(clipfix[2]*((notclipped[0]*pixel[0] + notclipped[1]*pixel[1])/ \
 																 (notclipped[0]*clipfix[0] + notclipped[1]*clipfix[1]))));
 				}
 			}
