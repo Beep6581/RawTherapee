@@ -461,7 +461,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
-PARTIALPASTE_HLRECONSTRUCTION;Récupération des hautes lumières
+PARTIALPASTE_HLRECONSTRUCTION;Reconstruction des hautes lumières
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
@@ -765,7 +765,7 @@ TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_LABEL;Champ Uniforme
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
-TP_HLREC_LABEL;Récupération des hautes lumières
+TP_HLREC_LABEL;Reconstruction des hautes lumières
 TP_HLREC_LUMINANCE;Récupération de la luminance
 TP_HLREC_METHOD;Méthode: 
 TP_HSVEQUALIZER1;Rouge
