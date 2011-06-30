@@ -40,7 +40,7 @@ protected:
     int sideMargin;
     int lowerMargin;
 
-    guint8* preview;
+    guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
 
     Glib::ustring dispname;
 
@@ -102,7 +102,7 @@ protected:
     int getMinimalHeight    () { return height; }
     int getMinimalWidth     () { return width; }
 
-    int getEffectiveHeight  () { return fnlabh+dtlabh+exlabh+textGap+exp_height; }
+    int getEffectiveHeight  () { return exp_height; }
     int getStartX           () { return startx; }
     int getStartY           () { return starty; }
 
