@@ -21,14 +21,14 @@
 
 #include <gtkmm.h>
 #include <giomm.h>
-#ifdef _WIN32
+#ifdef WIN32
 #include <windirmonitor.h>
 #endif
 #include <dirselectionlistener.h>
 #include <dirbrowserremoteinterface.h>
 
 class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
-#ifdef _WIN32
+#ifdef WIN32
     , public WinDirChangeListener
 #endif
  {
@@ -43,7 +43,7 @@ class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
         Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon1;
         Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon2;
         Gtk::TreeModelColumn<Glib::ustring> dirname;
-        #ifdef _WIN32
+        #ifdef WIN32
         Gtk::TreeModelColumn<Glib::RefPtr<WinDirMonitor>  > monitor;
         #else
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::FileMonitor> > monitor;

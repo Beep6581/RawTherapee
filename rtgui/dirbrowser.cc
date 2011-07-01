@@ -220,7 +220,7 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
 					dirTreeModel->erase (iter->children().begin());
 			expandSuccess = true;
 	}
-#ifdef _WIN32
+#ifdef WIN32
   Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
   iter->set_value (dtColumns.monitor, monitor);
 #elif defined __APPLE__
@@ -293,7 +293,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
     int count = 0;
     expandSuccess = true;
 
-#ifndef _WIN32
+#ifndef WIN32
     Gtk::TreeModel::iterator j = dirTreeModel->get_iter (path);
     path.up ();
     path.append_index (0);
@@ -303,7 +303,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
 
     while (dir) {
         Glib::ustring dirstr = dir;
-#ifdef _WIN32
+#ifdef WIN32
         if (count==0)
             dirstr = dirstr + "\\";
 #endif
@@ -312,7 +312,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
         while (i && expandSuccess) {
             Gtk::TreeModel::Row crow = *i;
             Glib::ustring str =crow[dtColumns.filename]; 
-#ifdef _WIN32
+#ifdef WIN32
             if (str.casefold()==dirstr.casefold()) {
 #else
             if (str==dirstr) {

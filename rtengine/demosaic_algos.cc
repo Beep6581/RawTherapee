@@ -1198,8 +1198,8 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 	for (int row = rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
             assert(indx>=0 && indx<u*u);
-			bufferH[indx][1] = (image[indx-1][1] + image[indx+1][1]) * 0.5;
-			bufferV[indx][1] = (image[indx+u][1] + image[indx-u][1]) * 0.5;
+			bufferH[indx][1] = (image[indx-1][1] + image[indx+1][1]) * 0.5f;
+			bufferV[indx][1] = (image[indx+u][1] + image[indx-u][1]) * 0.5f;
 		}
 	}
 	// red in blue pixel, blue in red pixel
@@ -1207,22 +1207,22 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
             assert(indx>=0 && indx<u*u && c>=0 && c<3);
 
-            bufferH[indx][c] = ( 4*bufferH[indx][1]
+            bufferH[indx][c] = ( 4.f * bufferH[indx][1]
 			                - bufferH[indx+u+1][1] - bufferH[indx+u-1][1] - bufferH[indx-u+1][1] - bufferH[indx-u-1][1]
-			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
-			bufferV[indx][c] = ( 4*bufferV[indx][1]
+			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25f;
+			bufferV[indx][c] = ( 4.f * bufferV[indx][1]
 						    - bufferV[indx+u+1][1] - bufferV[indx+u-1][1] - bufferV[indx-u+1][1] - bufferV[indx-u-1][1]
-						    + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
+						    + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25f;
 		}
 
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
             assert(indx>=0 && indx<u*u && c>=0 && c<3 && d>=0 && d<3);
-			bufferH[indx][c] = ( image[indx+1][c] + image[indx-1][c]) * 0.5;
-			bufferH[indx][d] = (2*bufferH[indx][1] - bufferH[indx+u][1] - bufferH[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
-			bufferV[indx][c] = (2*bufferV[indx][1] - bufferV[indx+1][1] - bufferV[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
-			bufferV[indx][d] = (image[indx+u][d] + image[indx-u][d]) * 0.5;
+			bufferH[indx][c] = (image[indx+1][c] + image[indx-1][c]) * 0.5f;
+			bufferH[indx][d] = (2.f * bufferH[indx][1] - bufferH[indx+u][1] - bufferH[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5f;
+			bufferV[indx][c] = (2.f * bufferV[indx][1] - bufferV[indx+1][1] - bufferV[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5f;
+			bufferV[indx][d] = (image[indx+u][d] + image[indx-u][d]) * 0.5f;
 		}
 
     // Decide green pixels
@@ -1262,17 +1262,17 @@ void RawImageSource::dcb_color(float (*image)[4], int x0, int y0)
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
             assert(indx>=0 && indx<u*u && c>=0 && c<4);
-			image[indx][c] = ( 4.0 * image[indx][1]
+			image[indx][c] = ( 4.f * image[indx][1]
 			                - image[indx+u+1][1] - image[indx+u-1][1] - image[indx-u+1][1] - image[indx-u-1][1]
-			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25;
+			                + image[indx+u+1][c] + image[indx+u-1][c] + image[indx-u+1][c] + image[indx-u-1][c] ) * 0.25f;
 		}
 
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
             assert(indx>=0 && indx<u*u && c>=0 && c<4);
-            image[indx][c] = (2.0 * image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5;
-			image[indx][d] = (2.0 * image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5;
+            image[indx][c] = (2.f * image[indx][1] - image[indx+1][1] - image[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5f;
+			image[indx][d] = (2.f * image[indx][1] - image[indx+u][1] - image[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5f;
 		}
 }
 
@@ -1286,8 +1286,8 @@ void RawImageSource::dcb_hid2(float (*image)[4], int x0, int y0)
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
             assert(indx>=0 && indx<u*u);
-            image[indx][1] = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1]) * 0.25 +
-						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c]) * 0.25;
+            image[indx][1] = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1]) * 0.25f +
+						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c]) * 0.25f;
 		}
 	}
 }
@@ -1325,12 +1325,12 @@ void RawImageSource::dcb_correction(float (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			register float current = 4.0 * image[indx][3] +
-						  2.0 * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
+			register float current = 4.f * image[indx][3] +
+						  2.f * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
 
             assert(indx>=0 && indx<u*u);
-			image[indx][1] = ((16.0-current)*(image[indx-1][1] + image[indx+1][1]) * 0.5 + current*(image[indx-u][1] + image[indx+u][1]) * 0.5 ) * 0.0625;
+			image[indx][1] = ((16.f-current)*(image[indx-1][1] + image[indx+1][1]) * 0.5f + current*(image[indx-u][1] + image[indx+u][1]) * 0.5f ) * 0.0625f;
 		}
 	}
 }
@@ -1379,9 +1379,9 @@ void RawImageSource::dcb_pp(float (*image)[4], int x0, int y0)
 			r1 += (*pix)[0];
 			g1 += (*pix)[1];
 			b1 += (*pix)[2];
-			r1 *=0.125;
-			g1 *=0.125;
-			b1 *=0.125;
+			r1 *=0.125f;
+			g1 *=0.125f;
+			b1 *=0.125f;
 			r1 = r1 + ( image[indx][1] - g1 );
 			b1 = b1 + ( image[indx][1] - g1 );
 
@@ -1401,14 +1401,14 @@ void RawImageSource::dcb_correction2(float (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			register float current = 4.0 * image[indx][3] +
-						  2.0 * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
+			register float current = 4.f * image[indx][3] +
+						  2.f * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
 
             assert(indx>=0 && indx<u*u);
-			image[indx][1] = ((16.0-current)*((image[indx-1][1] + image[indx+1][1]) * 0.5
-                + image[indx][c] - (image[indx+2][c] + image[indx-2][c]) * 0.5)
-                + current*((image[indx-u][1] + image[indx+u][1]) * 0.5 + image[indx][c] - (image[indx+v][c] + image[indx-v][c]) * 0.5)) * 0.0625;
+			image[indx][1] = ((16.f-current)*((image[indx-1][1] + image[indx+1][1]) * 0.5f
+                + image[indx][c] - (image[indx+2][c] + image[indx-2][c]) * 0.5f)
+                + current*((image[indx-u][1] + image[indx+u][1]) * 0.5f + image[indx][c] - (image[indx+v][c] + image[indx-v][c]) * 0.5f)) * 0.0625f;
 		}
 	}
 }
@@ -1424,28 +1424,28 @@ void RawImageSource::dcb_refinement(float (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2,indx+=2){
-			float current = 4*image[indx][3] +
-				      2*(image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3])
+			float current = 4.f * image[indx][3] +
+				      2.f * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3])
 				      +image[indx+v][3] + image[indx-v][3] + image[indx-2][3] + image[indx+2][3];
 
-			f[0] = (float)(image[indx-u][1] + image[indx+u][1])/(2 + 2*image[indx][c]);
-			f[1] = 2.0 * image[indx-u][1]/(2 + image[indx-v][c] + image[indx][c]);
-			f[2] = (float)(image[indx-u][1] + image[indx-w][1])/(2 + 2*image[indx-v][c]);
-			f[3] = 2.0 * image[indx+u][1]/(2 + image[indx+v][c] + image[indx][c]);
-			f[4] = (float)(image[indx+u][1] + image[indx+w][1])/(2 + 2.0 * image[indx+v][c]);
+			f[0] = (float)(image[indx-u][1] + image[indx+u][1])/(2.f + 2.f * image[indx][c]);
+			f[1] = 2.f * image[indx-u][1]/(2 + image[indx-v][c] + image[indx][c]);
+			f[2] = (float)(image[indx-u][1] + image[indx-w][1])/(2.f + 2.f * image[indx-v][c]);
+			f[3] = 2.f * image[indx+u][1]/(2 + image[indx+v][c] + image[indx][c]);
+			f[4] = (float)(image[indx+u][1] + image[indx+w][1])/(2.f + 2.f * image[indx+v][c]);
 
-			g1 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4]))))/3.0;
+			g1 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4])))) / 3.f;
 
-			f[0] = (float)(image[indx-1][1] + image[indx+1][1])/(2 + 2*image[indx][c]);
-			f[1] = 2.0 * image[indx-1][1]/(2 + image[indx-2][c] + image[indx][c]);
-			f[2] = (float)(image[indx-1][1] + image[indx-3][1])/(2 + 2*image[indx-2][c]);
-			f[3] = 2.0 * image[indx+1][1]/(2 + image[indx+2][c] + image[indx][c]);
-			f[4] = (float)(image[indx+1][1] + image[indx+3][1])/(2 + 2*image[indx+2][c]);
+			f[0] = (float)(image[indx-1][1] + image[indx+1][1])/(2.f + 2.f * image[indx][c]);
+			f[1] = 2.f * image[indx-1][1]/(2 + image[indx-2][c] + image[indx][c]);
+			f[2] = (float)(image[indx-1][1] + image[indx-3][1])/(2.f + 2.f * image[indx-2][c]);
+			f[3] = 2.f * image[indx+1][1]/(2 + image[indx+2][c] + image[indx][c]);
+			f[4] = (float)(image[indx+1][1] + image[indx+3][1])/(2.f + 2.f * image[indx+2][c]);
 
-			g2 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4]))))/3.0;
+			g2 = (f[0] + f[1] + f[2] + f[3] + f[4] - MAX(f[1], MAX(f[2], MAX(f[3], f[4]))) - MIN(f[1], MIN(f[2], MIN(f[3], f[4])))) / 3.f;
 
             assert(indx>=0 && indx<u*u);
-			image[indx][1] = (2.0+image[indx][c]) * (current*g1 + (16.0-current)*g2) * 0.0625;
+			image[indx][1] = (2.f+image[indx][c]) * (current*g1 + (16.f-current)*g2) * 0.0625f;
 
             // get rid of the overshooted pixels
 		    float min = MIN(image[indx+1+u][1], MIN(image[indx+1-u][1], MIN(image[indx-1+u][1], MIN(image[indx-1-u][1], MIN(image[indx-1][1], MIN(image[indx+1][1], MIN(image[indx-u][1], image[indx+u][1])))))));
@@ -1473,14 +1473,14 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
 
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=1-FC(y0-TILEBORDER+row,x0-TILEBORDER+col)/2,d=1-c; col<colMax; col+=2,indx+=2) {
-			f[0]=1.0/(float)(1.0+fabs(chroma[indx-u-1][c]-chroma[indx+u+1][c])+fabs(chroma[indx-u-1][c]-chroma[indx-w-3][c])+fabs(chroma[indx+u+1][c]-chroma[indx-w-3][c]));
-			f[1]=1.0/(float)(1.0+fabs(chroma[indx-u+1][c]-chroma[indx+u-1][c])+fabs(chroma[indx-u+1][c]-chroma[indx-w+3][c])+fabs(chroma[indx+u-1][c]-chroma[indx-w+3][c]));
-			f[2]=1.0/(float)(1.0+fabs(chroma[indx+u-1][c]-chroma[indx-u+1][c])+fabs(chroma[indx+u-1][c]-chroma[indx+w+3][c])+fabs(chroma[indx-u+1][c]-chroma[indx+w-3][c]));
-			f[3]=1.0/(float)(1.0+fabs(chroma[indx+u+1][c]-chroma[indx-u-1][c])+fabs(chroma[indx+u+1][c]-chroma[indx+w-3][c])+fabs(chroma[indx-u-1][c]-chroma[indx+w+3][c]));
-			g[0]=1.325*chroma[indx-u-1][c]-0.175*chroma[indx-w-3][c]-0.075*chroma[indx-w-1][c]-0.075*chroma[indx-u-3][c];
-			g[1]=1.325*chroma[indx-u+1][c]-0.175*chroma[indx-w+3][c]-0.075*chroma[indx-w+1][c]-0.075*chroma[indx-u+3][c];
-			g[2]=1.325*chroma[indx+u-1][c]-0.175*chroma[indx+w-3][c]-0.075*chroma[indx+w-1][c]-0.075*chroma[indx+u-3][c];
-			g[3]=1.325*chroma[indx+u+1][c]-0.175*chroma[indx+w+3][c]-0.075*chroma[indx+w+1][c]-0.075*chroma[indx+u+3][c];
+			f[0]=1.f/(float)(1.f+fabs(chroma[indx-u-1][c]-chroma[indx+u+1][c])+fabs(chroma[indx-u-1][c]-chroma[indx-w-3][c])+fabs(chroma[indx+u+1][c]-chroma[indx-w-3][c]));
+			f[1]=1.f/(float)(1.f+fabs(chroma[indx-u+1][c]-chroma[indx+u-1][c])+fabs(chroma[indx-u+1][c]-chroma[indx-w+3][c])+fabs(chroma[indx+u-1][c]-chroma[indx-w+3][c]));
+			f[2]=1.f/(float)(1.f+fabs(chroma[indx+u-1][c]-chroma[indx-u+1][c])+fabs(chroma[indx+u-1][c]-chroma[indx+w+3][c])+fabs(chroma[indx-u+1][c]-chroma[indx+w-3][c]));
+			f[3]=1.f/(float)(1.f+fabs(chroma[indx+u+1][c]-chroma[indx-u-1][c])+fabs(chroma[indx+u+1][c]-chroma[indx+w-3][c])+fabs(chroma[indx-u-1][c]-chroma[indx+w+3][c]));
+			g[0]=1.325f * chroma[indx-u-1][c] - 0.175f*chroma[indx-w-3][c] - 0.075f*chroma[indx-w-1][c] - 0.075f*chroma[indx-u-3][c];
+			g[1]=1.325f * chroma[indx-u+1][c] - 0.175f*chroma[indx-w+3][c] - 0.075f*chroma[indx-w+1][c] - 0.075f*chroma[indx-u+3][c];
+			g[2]=1.325f * chroma[indx+u-1][c] - 0.175f*chroma[indx+w-3][c] - 0.075f*chroma[indx+w-1][c] - 0.075f*chroma[indx+u-3][c];
+			g[3]=1.325f * chroma[indx+u+1][c] - 0.175f*chroma[indx+w+3][c] - 0.075f*chroma[indx+w+1][c] - 0.075f*chroma[indx+u+3][c];
 
             assert(indx>=0 && indx<u*u && c>=0 && c<2);
 			chroma[indx][c]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]);
@@ -1488,15 +1488,15 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1)/2; col<colMax; col+=2,indx+=2)
 			for(int d=0;d<=1;c=1-c,d++){
-				f[0]=1.0/(float)(1.0+fabs(chroma[indx-u][c]-chroma[indx+u][c])+fabs(chroma[indx-u][c]-chroma[indx-w][c])+fabs(chroma[indx+u][c]-chroma[indx-w][c]));
-				f[1]=1.0/(float)(1.0+fabs(chroma[indx+1][c]-chroma[indx-1][c])+fabs(chroma[indx+1][c]-chroma[indx+3][c])+fabs(chroma[indx-1][c]-chroma[indx+3][c]));
-				f[2]=1.0/(float)(1.0+fabs(chroma[indx-1][c]-chroma[indx+1][c])+fabs(chroma[indx-1][c]-chroma[indx-3][c])+fabs(chroma[indx+1][c]-chroma[indx-3][c]));
-				f[3]=1.0/(float)(1.0+fabs(chroma[indx+u][c]-chroma[indx-u][c])+fabs(chroma[indx+u][c]-chroma[indx+w][c])+fabs(chroma[indx-u][c]-chroma[indx+w][c]));
+				f[0]= 1.f/(float)(1.f + fabs(chroma[indx-u][c]-chroma[indx+u][c])+fabs(chroma[indx-u][c]-chroma[indx-w][c])+fabs(chroma[indx+u][c]-chroma[indx-w][c]));
+				f[1]= 1.f/(float)(1.f + fabs(chroma[indx+1][c]-chroma[indx-1][c])+fabs(chroma[indx+1][c]-chroma[indx+3][c])+fabs(chroma[indx-1][c]-chroma[indx+3][c]));
+				f[2]= 1.f/(float)(1.f + fabs(chroma[indx-1][c]-chroma[indx+1][c])+fabs(chroma[indx-1][c]-chroma[indx-3][c])+fabs(chroma[indx+1][c]-chroma[indx-3][c]));
+				f[3]= 1.f/(float)(1.f + fabs(chroma[indx+u][c]-chroma[indx-u][c])+fabs(chroma[indx+u][c]-chroma[indx+w][c])+fabs(chroma[indx-u][c]-chroma[indx+w][c]));
 
-				g[0]=0.875*chroma[indx-u][c]+0.125*chroma[indx-w][c];
-				g[1]=0.875*chroma[indx+1][c]+0.125*chroma[indx+3][c];
-				g[2]=0.875*chroma[indx-1][c]+0.125*chroma[indx-3][c];
-				g[3]=0.875*chroma[indx+u][c]+0.125*chroma[indx+w][c];
+				g[0]= 0.875f * chroma[indx-u][c] + 0.125f * chroma[indx-w][c];
+				g[1]= 0.875f * chroma[indx+1][c] + 0.125f * chroma[indx+3][c];
+				g[2]= 0.875f * chroma[indx-1][c] + 0.125f * chroma[indx-3][c];
+				g[3]= 0.875f * chroma[indx+u][c] + 0.125f * chroma[indx+w][c];
 
                 assert(indx>=0 && indx<u*u && c>=0 && c<2);
 				chroma[indx][c]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3])/(f[0]+f[1]+f[2]+f[3]);

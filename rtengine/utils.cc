@@ -186,18 +186,18 @@ void hsv2rgb (float h, float s, float v, int &r, int &g, int &b) {
 	float r1,g1,b1;
 
 	if (i==0) {r1 = v;  g1 = t;  b1 = p;}
-	if (i==1) {r1 = q;  g1 = v;  b1 = p;}
-	if (i==2) {r1 = p;  g1 = v;  b1 = t;}
-	if (i==3) {r1 = p;  g1 = q;  b1 = v;}
-	if (i==4) {r1 = t;  g1 = p;  b1 = v;}
-	if (i==5) {r1 = v;  g1 = p;  b1 = q;}
+	else if (i==1) {r1 = q;  g1 = v;  b1 = p;}
+	else if (i==2) {r1 = p;  g1 = v;  b1 = t;}
+	else if (i==3) {r1 = p;  g1 = q;  b1 = v;}
+	else if (i==4) {r1 = t;  g1 = p;  b1 = v;}
+	else if (i==5) {r1 = v;  g1 = p;  b1 = q;}
 
-	r = (int)((r1)*65535);
-	g = (int)((g1)*65535);
-	b = (int)((b1)*65535);
+	r = (int)( r1 * 65535);
+	g = (int)( g1 * 65535);
+	b = (int)( b1 * 65535);
 }
 
-// The same function but set float values intead if int
+// The same function but set float values instead if int
 // Function copied for speed concerns
 void hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 
@@ -210,11 +210,11 @@ void hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 	float t = v * ( 1 - s * ( 1 - f ) );
 
 	if (i==0) {r = v;  g = t;  b = p;}
-	if (i==1) {r = q;  g = v;  b = p;}
-	if (i==2) {r = p;  g = v;  b = t;}
-	if (i==3) {r = p;  g = q;  b = v;}
-	if (i==4) {r = t;  g = p;  b = v;}
-	if (i==5) {r = v;  g = p;  b = q;}
+	else if (i==1) {r = q;  g = v;  b = p;}
+	else if (i==2) {r = p;  g = v;  b = t;}
+	else if (i==3) {r = p;  g = q;  b = v;}
+	else if (i==4) {r = t;  g = p;  b = v;}
+	else if (i==5) {r = v;  g = p;  b = q;}
 }
 
 }

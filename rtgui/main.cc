@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 		   return ret;
    }
 
-#ifndef _WIN32
+#ifndef WIN32
    // Move the old path to the new one if the new does not exist
    if (safe_file_test(Glib::build_filename(options.rtdir,"cache"), Glib::FILE_TEST_IS_DIR) && !safe_file_test(options.cacheBaseDir, Glib::FILE_TEST_IS_DIR))
        safe_g_rename(Glib::build_filename(options.rtdir,"cache"), options.cacheBaseDir);
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
    }
    Gtk::Main m(&argc, &argv);
 
-#ifndef _WIN32
+#ifndef WIN32
    // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
    // Anyway, the problem was Linux only
    static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();

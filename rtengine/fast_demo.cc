@@ -61,8 +61,10 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 #pragma omp for
 	//first, interpolate borders using bilinear
 	for (int i=0; i<H; i++) {
+
+        float sum[6];
+
 		for (int j=0; j<bord; j++) {//first few columns
-			unsigned int sum[6];
 			for (int c=0; c<6; c++) sum[c]=0;
 			for (int i1=i-1; i1<i+2; i1++)
 				for (int j1=j-1; j1<j+2; j1++) {
@@ -90,7 +92,6 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 		}//j
 		
 		for (int j=W-bord; j<W; j++) {//last few columns
-			unsigned int sum[6];
 			for (int c=0; c<6; c++) sum[c]=0;
 			for (int i1=i-1; i1<i+2; i1++)
 				for (int j1=j-1; j1<j+2; j1++) {
@@ -121,8 +122,9 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #pragma omp for
 	for (int j=bord; j<W-bord; j++) {
+        float sum[6];
+
 		for (int i=0; i<bord; i++) {//first few rows
-			unsigned int sum[6];
 			for (int c=0; c<6; c++) sum[c]=0;
 			for (int i1=i-1; i1<i+2; i1++)
 				for (int j1=j-1; j1<j+2; j1++) {
@@ -150,7 +152,6 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 		}//i
 		
 		for (int i=H-bord; i<H; i++) {//last few rows
-			unsigned int sum[6];
 			for (int c=0; c<6; c++) sum[c]=0;
 			for (int i1=i-1; i1<i+2; i1++)
 				for (int j1=j-1; j1<j+2; j1++) {
@@ -203,7 +204,7 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 					wtr=invGrad[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>2];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
-					green[i][j]=(int)((wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1])/(wtu+wtd+wtl+wtr));
+					green[i][j]=(wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1]) / (wtu+wtd+wtl+wtr);
 					//red[i][j] = green[i][j];
 					//blue[i][j] = green[i][j];
 					
@@ -224,10 +225,10 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 				
 				if (c==0) {//R site
 					red[i][j] = rawData[i][j];
-					blue[i][j] = green[i][j] - 0.25*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
+					blue[i][j] = green[i][j] - 0.25f*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
 																 MIN(clip_pt,rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]));
 				} else {//B site
-					red[i][j] = green[i][j] - 0.25*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
+					red[i][j] = green[i][j] - 0.25f*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) - \
 															   MIN(clip_pt,rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]));
 					blue[i][j] = rawData[i][j];
 				}
@@ -246,9 +247,9 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 		for (int j=bord+1-(FC(i,2)&1); j < W-bord; j+=2) {
 			
 			//interpolate R and B colors at G sites
-			red[i][j] = green[i][j] - 0.25*((green[i-1][j]-red[i-1][j])+(green[i+1][j]-red[i+1][j])+ \
+			red[i][j] = green[i][j] - 0.25f*((green[i-1][j]-red[i-1][j])+(green[i+1][j]-red[i+1][j])+ \
 													   (green[i][j-1]-red[i][j-1])+(green[i][j+1]-red[i][j+1]));
-			blue[i][j] = green[i][j] - 0.25*((green[i-1][j]-blue[i-1][j])+(green[i+1][j]-blue[i+1][j])+ \
+			blue[i][j] = green[i][j] - 0.25f*((green[i-1][j]-blue[i-1][j])+(green[i+1][j]-blue[i+1][j])+ \
 														(green[i][j-1]-blue[i][j-1])+(green[i][j+1]-blue[i][j+1]));
 		}
 		progress+=(double)0.33/(H);

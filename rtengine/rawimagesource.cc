@@ -704,20 +704,20 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
       if (i==1 || i==2) { // linear interpolation
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) /2;
-          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) /2;
-          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) /2;
+          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) * 0.5f;
+          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) * 0.5f;
+          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) * 0.5f;
         }
       }
       else if (i==imheight-1) {
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) /2;
-          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) /2;
-          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) /2;
-          image->r[row][2*i-3] = (image->r[row][2*i-2] + image->r[row][2*i-4]) /2;
-          image->g[row][2*i-3] = (image->g[row][2*i-2] + image->g[row][2*i-4]) /2;
-          image->b[row][2*i-3] = (image->b[row][2*i-2] + image->b[row][2*i-4]) /2;
+          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) * 0.5f;
+          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) * 0.5f;
+          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) * 0.5f;
+          image->r[row][2*i-3] = (image->r[row][2*i-2] + image->r[row][2*i-4]) * 0.5f;
+          image->g[row][2*i-3] = (image->g[row][2*i-2] + image->g[row][2*i-4]) * 0.5f;
+          image->b[row][2*i-3] = (image->b[row][2*i-2] + image->b[row][2*i-4]) * 0.5f;
         }
       }
       else if (i>0 && i<imheight-1) { // vertical bicubic interpolationi
@@ -759,7 +759,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
         }
       }
     }
-  }
+  }  // if nikon dx1
   // other (conventional) CCD coarse rotation
   else {
     rotateLine (red, image->r, tran, i, imwidth, imheight);

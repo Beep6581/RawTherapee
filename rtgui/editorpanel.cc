@@ -1138,7 +1138,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 						Glib::ustring executable;
 						// start gimp
 						if (options.editorToSendTo==1) {
-#ifdef _WIN32
+#ifdef WIN32
 								executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), "gimp-win-remote");
 								cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" gimp-2.4.exe ") + Glib::ustring("\"") + filename + Glib::ustring("\"");
 								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
@@ -1149,7 +1149,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 								success = safe_spawn_command_line_async (cmdLine);
 #endif
 								if (!success){
-#ifdef _WIN32
+#ifdef WIN32
 										int ver = 12;
 										while (!success && ver) {
 												executable = Glib::build_filename (Glib::build_filename(options.gimpDir,"bin"), Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"),ver));
@@ -1169,7 +1169,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 								}
 						}
 						else if (options.editorToSendTo==2) {
-#ifdef _WIN32
+#ifdef WIN32
 								executable = Glib::build_filename(options.psDir,"Photoshop.exe");
 								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 										cmdLine = Glib::ustring("\"") + executable + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
@@ -1185,7 +1185,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 #endif
 						}
 						else if (options.editorToSendTo==3) {
-#ifdef _WIN32
+#ifdef WIN32
 								if ( safe_file_test(options.customEditorProg, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 										cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);

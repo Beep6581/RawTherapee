@@ -55,6 +55,8 @@
 #ifndef ARRAY2D_H_
 #define ARRAY2D_H_
 #include <csignal>  // for raise()
+#include <assert.h>
+
 // flags for use
 #define ARRAY2D_LOCK_DATA	1
 #define ARRAY2D_CLEAR_DATA	2
@@ -154,6 +156,7 @@ public:
 
 	// use with indices
 	T * operator[](size_t index) {
+        assert(index>=0 && index<y); 
 		return ptr[index];
 	}
 

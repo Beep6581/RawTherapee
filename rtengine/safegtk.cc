@@ -139,7 +139,7 @@ void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ust
 Glib::ustring safe_filename_to_utf8 (const std::string& src)
 {
 	Glib::ustring utf8_str;
-#ifdef _WIN32
+#ifdef WIN32
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
             try {
                 utf8_str = Glib::locale_to_utf8(src);

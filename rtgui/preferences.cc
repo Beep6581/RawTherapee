@@ -595,7 +595,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
   hb7b->pack_start (*psDir);
   dgvb->pack_start (*hb7b, Gtk::PACK_SHRINK, 4);
   edPS->set_group (ge);
-#elif defined _WIN32
+#elif defined WIN32
   Gtk::HBox* hb7 = Gtk::manage( new Gtk::HBox () );
   edGimp = Gtk::manage( new Gtk::RadioButton (M("PREFERENCES_GIMPPATH")+":") );
   hb7->pack_start (*edGimp, Gtk::PACK_SHRINK,4);
@@ -930,7 +930,7 @@ void Preferences::storePreferences () {
     moptions.cutOverlayBrush[3]=butCropCol->get_alpha()/65535.0;
 
     moptions.font            = fontbutton->get_font_name();
-#ifdef _WIN32    
+#ifdef WIN32    
     moptions.gimpDir        = gimpDir->get_filename ();
     moptions.psDir          = psDir->get_filename ();
 #elif defined __APPLE__
@@ -939,7 +939,7 @@ void Preferences::storePreferences () {
     moptions.customEditorProg = editorToSendTo->get_text ();
     if (edGimp->get_active ())
         moptions.editorToSendTo = 1;
-#ifdef _WIN32    
+#ifdef WIN32    
     else if (edPS->get_active ())
         moptions.editorToSendTo = 2;
 #elif defined __APPLE__   
@@ -1060,7 +1060,7 @@ void Preferences::fillPreferences () {
 
     edGimp->set_active (moptions.editorToSendTo==1);
     edOther->set_active (moptions.editorToSendTo==3);
-#ifdef _WIN32    
+#ifdef WIN32    
     edPS->set_active (moptions.editorToSendTo==2);
     if (safe_file_test (moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) 
         gimpDir->set_filename (moptions.gimpDir);
@@ -1263,7 +1263,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface) {
 		files.push_back (argv0+"/themes/slim");
 	Gtk::RC::set_default_files (files);
 
-#ifndef _WIN32
+#ifndef WIN32
    // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...
    // Anyway, the problem was Linux only
    static Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();

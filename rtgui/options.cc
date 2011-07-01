@@ -568,7 +568,7 @@ void Options::load () {
 
 	// Find the application data path
 
-#ifdef _WIN32
+#ifdef WIN32
 	/*
 	 * If LOCALAPPDATA exists, RT run on a WinVista/7 system, so we use LOCALAPPDATA as is
 	 * otherwise RT run on a Win2000/XP system, so we rebuild the path like this: %USERPROFILE%\Local Settings\Application Data
@@ -621,7 +621,7 @@ void Options::load () {
             options.saveToFile (rtdir + "/options");
         }
         // Modify the path of the cache folder to the user's personal folder
-#ifdef _WIN32
+#ifdef WIN32
         cacheBaseDir = rtdir + "/cache";
 #else
         cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
