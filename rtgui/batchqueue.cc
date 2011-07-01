@@ -321,6 +321,7 @@ void BatchQueue::startProcessing () {
 	#ifdef WIN32
 	entryMutex.lock();
 	#endif
+    
     if (!processing && fd.size()>0) {
         BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
         // tag it as processing        
@@ -344,6 +345,11 @@ void BatchQueue::startProcessing () {
         // start batch processing
         rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
         queue_draw ();
+    } else {
+        // TODO: Check for Linux
+        #ifdef WIN32
+        entryMutex.unlock();
+        #endif
     }
 }
 
