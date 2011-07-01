@@ -34,8 +34,6 @@ class StdImageSource : public ImageSource {
 		char** needhr;
         int max[3];
 
-        void updateHLRecoveryMap ();
-        void hlRecovery          (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int sx2, int skip);
         void transform           (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
         void transformPixel      (int x, int y, int tran, int& tx, int& ty);
         

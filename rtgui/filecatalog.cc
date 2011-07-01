@@ -371,7 +371,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     }
     
     selectedDirectory = "";
-#ifdef _WIN32
+#ifdef WIN32
     wdMonitor = NULL;
 #endif   
 }
@@ -431,7 +431,7 @@ void FileCatalog::closeDir () {
 	if (filterPanel)
 		filterPanel->set_sensitive (false);
 
-#ifndef _WIN32
+#ifndef WIN32
     if (dirMonitor)
         dirMonitor->cancel ();
 #else
@@ -497,7 +497,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         _refreshProgressBar ();
         filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"),0);
 
-#ifdef _WIN32
+#ifdef WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
 #elif defined __APPLE__
       printf("TODO fix dir->monitor_directory () for OSX\n");
@@ -1274,7 +1274,7 @@ int FileCatalog::reparseDirectory () {
 	return 1;
 }
 
-#ifdef _WIN32
+#ifdef WIN32
 int winDirChangedUITread (void* cat) {
 	gdk_threads_enter ();
     ((FileCatalog*)cat)->reparseDirectory ();

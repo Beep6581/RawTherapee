@@ -19,7 +19,7 @@
 #ifndef _FILECATALOG_
 #define _FILECATALOG_
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <windirmonitor.h>
 #endif
 #include <dirbrowserremoteinterface.h>
@@ -54,7 +54,7 @@ class FileCatalog : public Gtk::VBox,
                     public PreviewLoaderListener, 
 					public FilterPanelListener,
                     public FileBrowserListener
-#ifdef _WIN32
+#ifdef WIN32
                   , public WinDirChangeListener
 #endif
  {
@@ -133,7 +133,7 @@ class FileCatalog : public Gtk::VBox,
         int previewsLoaded;
 
 
-#ifdef _WIN32
+#ifdef WIN32
         WinDirMonitor* wdMonitor;
      public:
         void winDirChanged ();

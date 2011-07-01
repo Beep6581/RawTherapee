@@ -67,7 +67,7 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
 			for(int row=0;row<height;row++)
 				for(int col=0;col<width;col++)
                     luminosity[row*width+col] = 
-                    0.299*(float)red[row][col] + 0.587*(float)green[row][col] + 0.114*(float)blue[row][col]; 
+                    0.299f * (float)red[row][col] + 0.587f * (float)green[row][col] + 0.114f * (float)blue[row][col]; 
 		}	
 		
         // restore image destroyed by demosaic

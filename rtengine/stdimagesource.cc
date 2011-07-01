@@ -225,9 +225,6 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
 			// covert back to gamma and clip
 #define GCLIP( x ) CurveFactory::gamma_srgb(CLIP(x))
 			
-			//        if (hrp.enabled)
-			//            hlRecovery (red, grn, blue, i, sx1, sx2, pp.skip);
-			
 			if ((mtran & TR_ROT) == TR_R180) 
 				for (int j=0; j<imwidth; j++) {
 					image->r[imheight-1-ix][imwidth-1-j] = GCLIP(rm*line_red[j])/65535.0;
@@ -272,8 +269,6 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
     t1.set ();
 
-//    if (hrp.enabled==true && hrmap[0]==NULL) 
-//        updateHLRecoveryMap ();
     // the code will use OpenMP as of now.
 	
 	//Image16* tmpim = new Image16 (image->width,image->height);
@@ -283,9 +278,9 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 	
 	for ( int h = 0; h < image->height; ++h )
 		for ( int w = 0; w < image->width; ++w ) {
-			image->r[h][w] *= 65535.0 ;
-			image->g[h][w] *= 65535.0 ;
-			image->b[h][w] *= 65535.0 ;
+			image->r[h][w] *= 65535.0f;
+			image->g[h][w] *= 65535.0f;
+			image->b[h][w] *= 65535.0f;
 			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
 		}
 	
@@ -417,7 +412,7 @@ void StdImageSource::vflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
-    register unsigned short tmp;
+    register float tmp;
     for (int i=0; i<height/2; i++) 
       for (int j=0; j<width; j++) {
         tmp = image->r[i][j]; 
@@ -431,106 +426,7 @@ void StdImageSource::vflip (Imagefloat* image) {
         image->b[height-1-i][j] = tmp;
       }
 }
-/*    
-void hlRecovery (unsigned short* red, unsigned short* green, unsigned short* blue, int H, int W, int i, int sx1, int sx2, int skip, char** needhr, float** hrmap[3]);
-void hlmultipliers (int** rec[3], int max[3], int dh, int dw);
 
-void StdImageSource::updateHLRecoveryMap () {
-
-    // detect maximal pixel values
-    int maxr = 0, maxg = 0, maxb = 0;
-    for (int i=32; i<img->height-32; i++)
-        for (int j=32; j<img->width-32; j++) {
-            if (img->r[i][j] > maxr) maxr = img->r[i][j];
-            if (img->g[i][j] > maxg) maxg = img->g[i][j];
-            if (img->b[i][j] > maxb) maxb = img->b[i][j];
-        }
-
-    maxr = maxr * 19 / 20;
-    maxg = maxg * 19 / 20;
-    maxb = maxb * 19 / 20;
-    max[0] = maxr;
-    max[1] = maxg;
-    max[2] = maxb;
-    
-    // downscale image
-    int dw = img->width/HR_SCALE;
-    int dh = img->height/HR_SCALE;
-    Image16* ds = new Image16 (dw, dh);
-
-    // overburnt areas
-    int** rec[3];
-    for (int i=0; i<3; i++)
-        rec[i] = allocArray<int> (dw, dh);
-
-	if (needhr)
-		freeArray<char>(needhr, img->height);
-	needhr = allocArray<char> (img->width, img->height);
-
-	for (int i=0; i<img->height; i++)
-		for (int j=0; j<img->width; j++)
-			if (img->r[i][j]>=max[0] || img->g[i][j]>=max[1] || img->b[i][j]>=max[2])
-				needhr[i][j] = 1;
-			else
-				needhr[i][j] = 0;
-
-
-    for (int i=0; i<ds->height; i++)
-        for (int j=0; j<ds->width; j++) {
-            int sumr = 0; int cr = 0;
-            int sumg = 0; int cg = 0;
-            int sumb = 0; int cb = 0;
-            for (int x=0; x<HR_SCALE; x++)
-                for (int y=0; y<HR_SCALE; y++) {
-                    int ix = HR_SCALE*i+x;
-                    int jy = HR_SCALE*j+y;
-                    sumr += img->r[ix][jy];
-                    if (img->r[ix][jy] < maxr) cr++;
-                    sumg += img->g[ix][jy];
-                    if (img->g[ix][jy] < maxg) cg++;
-                    sumb += img->b[ix][jy];
-                    if (img->b[ix][jy] < maxb) cb++;
-                }
-            if (cr<HR_SCALE*HR_SCALE) rec[0][i][j] = INT_MAX; else rec[0][i][j] = sumr / HR_SCALE/HR_SCALE;
-            if (cg<HR_SCALE*HR_SCALE) rec[1][i][j] = INT_MAX; else rec[1][i][j] = sumg / HR_SCALE/HR_SCALE;
-            if (cb<HR_SCALE*HR_SCALE) rec[2][i][j] = INT_MAX; else rec[2][i][j] = sumb / HR_SCALE/HR_SCALE;
-            ds->r[i][j] = sumr / HR_SCALE/HR_SCALE;
-            ds->g[i][j] = sumg / HR_SCALE/HR_SCALE;
-            ds->b[i][j] = sumb / HR_SCALE/HR_SCALE;
-            
-        }
-
-    hlmultipliers (rec, max, dh, dw);
-
-    if (hrmap[0]!=NULL) {
-        freeArray<float> (hrmap[0], dh);
-        freeArray<float> (hrmap[1], dh);
-        freeArray<float> (hrmap[2], dh);
-    }
-
-    hrmap[0] = allocArray<float> (dw, dh);
-    hrmap[1] = allocArray<float> (dw, dh);
-    hrmap[2] = allocArray<float> (dw, dh);
-
-    for (int i=0; i<dh; i++)
-        for (int j=0; j<dw; j++) {
-            hrmap[0][i][j] = ds->r[i][j]>0 ? (double)rec[0][i][j] / ds->r[i][j] : 1.0;
-            hrmap[1][i][j] = ds->g[i][j]>0 ? (double)rec[1][i][j] / ds->g[i][j] : 1.0;
-            hrmap[2][i][j] = ds->b[i][j]>0 ? (double)rec[2][i][j] / ds->b[i][j] : 1.0;
-        }
-    
-    delete ds;
-    
-    freeArray<int> (rec[0], dh);
-    freeArray<int> (rec[1], dh);
-    freeArray<int> (rec[2], dh);
-}
-
-void StdImageSource::hlRecovery (unsigned short* red, unsigned short* green, unsigned short* blue, int i, int sx1, int sx2, int skip) {
-
-    rtengine::hlRecovery (red, green, blue, img->height, img->width, i, sx1, sx2, skip, needhr, hrmap);
-}
-*/
 void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     histcompr = 3;

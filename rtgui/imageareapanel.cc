@@ -124,7 +124,7 @@ void ImageAreaPanel::scrollChanged () {
 
     imageArea->setScrollPosition ((int)(hscroll->get_value()), (int)(vscroll->get_value()));
     imageArea->queue_draw ();
-#ifdef _WIN32
+#ifdef WIN32
     gdk_window_process_updates (get_window()->gobj(), true);
 #endif
     if (before && this==after) 

@@ -142,7 +142,7 @@ namespace rtengine {
 		for (int i=0; i<srcheight; i++) 
 			for (int j=0; j<srcwidth; j++) {
 				
-				dst[i][j] = CLIP((int)(  buffer[i][j]  ));
+				dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
 								
 			}
 		
@@ -210,9 +210,9 @@ namespace rtengine {
 				irangefn[i] = mult[level] ;
 			} else {
 				if (abs(i-0x10000)<noiselo) {
-					irangefn[i] = 1.0 ;
+					irangefn[i] = 1.f ;
 				} else {
-					irangefn[i] = 1.0 + (mult[level]-1) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01) ;
+					irangefn[i] = 1.f + (mult[level]-1) * (noisehi-abs(i-0x10000))/(noisehi-noiselo+0.01) ;
 				}
 			}
 		}
@@ -223,7 +223,7 @@ namespace rtengine {
 #endif
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
-				int hipass = (data_fine[i][j]-data_coarse[i][j]);
+				register float hipass = (data_fine[i][j]-data_coarse[i][j]);
 				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 			}
 		}

@@ -102,8 +102,8 @@ void RawImageSource::green_equilibrate(float thresh)
 				o2_3=cfa[(rr)][cc-2];  
 				o2_4=cfa[(rr)][cc+2];  
 				
-				d1=(o1_1+o1_2+o1_3+o1_4)/4.0;  
-				d2=(o2_1+o2_2+o2_3+o2_4)/4.0;  
+				d1=(o1_1+o1_2+o1_3+o1_4)*0.25f;  
+				d2=(o2_1+o2_2+o2_3+o2_4)*0.25f;  
 				
 				c1=(fabs(o1_1-o1_2)+fabs(o1_1-o1_3)+fabs(o1_1-o1_4)+fabs(o1_2-o1_3)+fabs(o1_3-o1_4)+fabs(o1_2-o1_4))/6.0;  
 				c2=(fabs(o2_1-o2_2)+fabs(o2_1-o2_3)+fabs(o2_1-o2_4)+fabs(o2_2-o2_3)+fabs(o2_3-o2_4)+fabs(o2_2-o2_4))/6.0;
@@ -131,7 +131,7 @@ void RawImageSource::green_equilibrate(float thresh)
 					ginterp=(gse*wtse+gnw*wtnw+gne*wtne+gsw*wtsw)/(wtse+wtnw+wtne+wtsw);
 					
 					if ( ((ginterp-gin) < thresh*(ginterp+gin)) ) {
-						rawData[rr][cc]=0.5*(ginterp+gin);
+						rawData[rr][cc]=0.5f*(ginterp+gin);
 						counter++;
 					}
 					

@@ -206,6 +206,7 @@ namespace rtengine {
 		for (int i=0; i<dst->H; i++) 
 			for (int j=0; j<dst->W; j++) {
 				
+                // TODO: Is integer cast necessary here?
 				dst->L[i][j] = CLIP((int)(  buffer[0][i][j]  ));
 				dst->a[i][j] = CLIPC((int)( buffer[1][i][j]  ));
 				dst->b[i][j] = CLIPC((int)( buffer[2][i][j]  ));
