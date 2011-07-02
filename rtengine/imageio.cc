@@ -352,7 +352,6 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     cinfo.err = my_jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
 
-
     my_jpeg_stdio_src (&cinfo,file);
     if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
     {
@@ -366,6 +365,12 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
 
         //jpeg_stdio_src(&cinfo,file);
         jpeg_read_header(&cinfo, TRUE);
+
+	//if JPEG is CMYK, then abort reading
+	if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK) {
+	    jpeg_destroy_decompress(&cinfo);
+    	    return IMIO_READERROR;
+    	}
 
         unsigned int proflen;    	
         delete loadedProfileData;
