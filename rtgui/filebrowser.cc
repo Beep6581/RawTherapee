@@ -755,7 +755,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::RWLock::WriterLock l(entryRW);
+		Glib::RWLock::ReaderLock l(entryRW);  // Don't make this a writer lock!
 		#endif
 
         for (int i=0; i<fd.size(); i++) {
