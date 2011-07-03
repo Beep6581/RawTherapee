@@ -726,7 +726,7 @@ int diagonalmchistupdate (void* data) {
 
 void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 	
-    if (hist!=NULL) {
+    if (hist) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));
         for (int i=0; i<256; i++) bghist[i]=hist[i];
         //hist = bghist;
