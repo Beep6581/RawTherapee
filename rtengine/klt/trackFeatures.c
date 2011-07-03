@@ -73,9 +73,9 @@ static void _computeIntensityDifference(
   int width, int height,  /* size of window */
   _FloatWindow imgdiff)   /* output */
 {
-  register int hw = width/2, hh = height/2;
+  int hw = width/2, hh = height/2;
   float g1, g2;
-  register int i, j;
+  int i, j;
 
   /* Compute values */
   for (j = -hh ; j <= hh ; j++)
@@ -106,9 +106,9 @@ static void _computeGradientSum(
   _FloatWindow gradx,      /* output */
   _FloatWindow grady)      /*   " */
 {
-  register int hw = width/2, hh = height/2;
+  int hw = width/2, hh = height/2;
   float g1, g2;
-  register int i, j;
+  int i, j;
 
   /* Compute values */
   for (j = -hh ; j <= hh ; j++)
@@ -138,9 +138,9 @@ static void _computeIntensityDifferenceLightingInsensitive(
   int width, int height,  /* size of window */
   _FloatWindow imgdiff)   /* output */
 {
-  register int hw = width/2, hh = height/2;
+  int hw = width/2, hh = height/2;
   float g1, g2, sum1_squared = 0, sum2_squared = 0;
-  register int i, j;
+  int i, j;
   
   float sum1 = 0, sum2 = 0;
   float mean1, mean2,alpha,belta;
@@ -191,9 +191,9 @@ static void _computeGradientSumLightingInsensitive(
   _FloatWindow gradx,      /* output */
   _FloatWindow grady)      /*   " */
 {
-  register int hw = width/2, hh = height/2;
+  int hw = width/2, hh = height/2;
   float g1, g2, sum1_squared = 0, sum2_squared = 0;
-  register int i, j;
+  int i, j;
   
   float sum1 = 0, sum2 = 0;
   float mean1, mean2, alpha;
@@ -234,8 +234,8 @@ static void _compute2by2GradientMatrix(
   float *gyy) 
 
 {
-  register float gx, gy;
-  register int i;
+  float gx, gy;
+  int i;
 
   /* Compute values */
   *gxx = 0.0;  *gxy = 0.0;  *gyy = 0.0;
@@ -264,8 +264,8 @@ static void _compute2by1ErrorVector(
   float *ex,   /* return values */
   float *ey)
 {
-  register float diff;
-  register int i;
+  float diff;
+  int i;
 
   /* Compute values */
   *ex = 0;  *ey = 0;  
@@ -618,8 +618,8 @@ static void _am_getGradientWinAffine(
 				     _FloatWindow out_gradx,      /* output */
 				     _FloatWindow out_grady)      /* output */
 {
-  register int hw = width/2, hh = height/2;
-  register int i, j;
+  int hw = width/2, hh = height/2;
+  int i, j;
   float mi, mj;
  
   /* Compute values */
@@ -646,8 +646,8 @@ static void _am_computeAffineMappedImage(
 					 int width, int height,  /* size of window */
 					 _FloatWindow imgdiff)   /* output */
 {
-  register int hw = width/2, hh = height/2;
-  register int i, j;
+  int hw = width/2, hh = height/2;
+  int i, j;
   float mi, mj;
 
   /* Compute values */
@@ -669,12 +669,12 @@ static void _am_getSubFloatImage(
 				 float x, float y,     /* center of window */
 				 _KLT_FloatImage window)   /* output */
 {
-  register int hw = window->ncols/2, hh = window->nrows/2;
+  int hw = window->ncols/2, hh = window->nrows/2;
   int x0 = (int) x;
   int y0 = (int) y;
   float * windata = window->data; 
   int offset;
-  register int i, j;
+  int i, j;
 
   assert(x0 - hw >= 0);
   assert(y0 - hh >= 0);
@@ -708,9 +708,9 @@ static void _am_computeIntensityDifferenceAffine(
 						 int width, int height,  /* size of window */
 						 _FloatWindow imgdiff)   /* output */
 {
-  register int hw = width/2, hh = height/2;
+  int hw = width/2, hh = height/2;
   float g1, g2;
-  register int i, j;
+  int i, j;
   float mi, mj;
 
   /* Compute values */
@@ -736,8 +736,8 @@ static void _am_compute6by6GradientMatrix(
 					  int height,
 					  float **T)  /* return values */
 {
-  register int hw = width/2, hh = height/2;
-  register int i, j;
+  int hw = width/2, hh = height/2;
+  int i, j;
   float gx, gy, gxx, gxy, gyy,  x, y, xx, xy, yy;
  
   
@@ -813,9 +813,9 @@ static void _am_compute6by1ErrorVector(
 				       int height,
 				       float **e)  /* return values */
 {
-  register int hw = width/2, hh = height/2;
-  register int i, j;
-  register float diff,  diffgradx,  diffgrady;
+  int hw = width/2, hh = height/2;
+  int i, j;
+  float diff,  diffgradx,  diffgrady;
 
   /* Set values to zero */  
   for(i = 0; i < 6; i++) e[i][0] = 0.0; 
@@ -852,8 +852,8 @@ static void _am_compute4by4GradientMatrix(
 					  int height,
 					  float **T)  /* return values */
 {
-  register int hw = width/2, hh = height/2;
-  register int i, j;
+  int hw = width/2, hh = height/2;
+  int i, j;
   float gx, gy, x, y;
  
   
@@ -907,9 +907,9 @@ static void _am_compute4by1ErrorVector(
 				       int height,
 				       float **e)  /* return values */
 {
-  register int hw = width/2, hh = height/2;
-  register int i, j;
-  register float diff,  diffgradx,  diffgrady;
+  int hw = width/2, hh = height/2;
+  int i, j;
+  float diff,  diffgradx,  diffgrady;
 
   /* Set values to zero */  
   for(i = 0; i < 4; i++) e[i][0] = 0.0; 

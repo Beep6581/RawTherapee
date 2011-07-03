@@ -43,7 +43,7 @@ typedef enum {SELECTING_ALL, REPLACING_SOME} selectionMode;
  */
 
 #define SWAP3(list, i, j)               \
-{register int *pi, *pj, tmp;            \
+{ int *pi, *pj, tmp;            \
      pi=list+3*(i); pj=list+3*(j);      \
                                         \
      tmp=*pi;    \
@@ -373,10 +373,10 @@ void _KLTSelectGoodFeatures(
   /* Compute trackability of each image pixel as the minimum
      of the two eigenvalues of the Z matrix */
   {
-    register float gx, gy;
-    register float gxx, gxy, gyy;
-    register int xx, yy;
-    register int *ptr;
+    float gx, gy;
+    float gxx, gxy, gyy;
+    int xx, yy;
+    int *ptr;
     float val;
     unsigned int limit = 1;
     int borderx = tc->borderx;	/* Must not touch cols */

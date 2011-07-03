@@ -140,8 +140,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;
-        if (params.coarse.rotate==180) tr |= TR_R180;
-        if (params.coarse.rotate==270) tr |= TR_R270;
+        else if (params.coarse.rotate==180) tr |= TR_R180;
+        else if (params.coarse.rotate==270) tr |= TR_R270;
+
         if (params.coarse.hflip)       tr |= TR_HFLIP;
         if (params.coarse.vflip)       tr |= TR_VFLIP;
 

@@ -844,7 +844,7 @@ void RawImageSource::vflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
-    register float tmp;
+    float tmp;
     for (int i=0; i<height/2; i++) 
       for (int j=0; j<width; j++) {
         tmp = image->r[i][j]; 

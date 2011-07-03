@@ -140,12 +140,12 @@ static void _convolveImageHoriz(
   _KLT_FloatImage imgout)
 {
   float *ptrrow = imgin->data;           /* Points to row's first pixel */
-  register float *ptrout = imgout->data, /* Points to next output pixel */
+  float *ptrout = imgout->data, /* Points to next output pixel */
     *ppp;
-  register float sum;
-  register int radius = kernel.width / 2;
-  register int ncols = imgin->ncols, nrows = imgin->nrows;
-  register int i, j, k;
+  float sum;
+  int radius = kernel.width / 2;
+  int ncols = imgin->ncols, nrows = imgin->nrows;
+  int i, j, k;
 
   /* Kernel width must be odd */
   assert(kernel.width % 2 == 1);
@@ -192,12 +192,12 @@ static void _convolveImageVert(
   _KLT_FloatImage imgout)
 {
   float *ptrcol = imgin->data;            /* Points to row's first pixel */
-  register float *ptrout = imgout->data,  /* Points to next output pixel */
+  float *ptrout = imgout->data,  /* Points to next output pixel */
     *ppp;
-  register float sum;
-  register int radius = kernel.width / 2;
-  register int ncols = imgin->ncols, nrows = imgin->nrows;
-  register int i, j, k;
+  float sum;
+  int radius = kernel.width / 2;
+  int ncols = imgin->ncols, nrows = imgin->nrows;
+  int i, j, k;
 
   /* Kernel width must be odd */
   assert(kernel.width % 2 == 1);

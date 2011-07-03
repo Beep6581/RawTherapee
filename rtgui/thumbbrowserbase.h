@@ -75,8 +75,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
 
     int eventTime;
 
-	Glib::Mutex entryMutex;  // Locks access to following vectors
-
+	Glib::RWLock entryRW;  // Locks access to following vectors
     std::vector<ThumbBrowserEntryBase*> fd;
     std::vector<ThumbBrowserEntryBase*> selected;
     ThumbBrowserEntryBase* lastClicked;

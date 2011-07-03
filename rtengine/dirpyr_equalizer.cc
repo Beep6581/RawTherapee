@@ -223,7 +223,7 @@ namespace rtengine {
 #endif
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
-				register float hipass = (data_fine[i][j]-data_coarse[i][j]);
+				float hipass = (data_fine[i][j]-data_coarse[i][j]);
 				buffer[i][j] += irangefn[hipass+0x10000] * hipass ;
 			}
 		}

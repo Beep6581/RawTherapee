@@ -56,7 +56,7 @@ ThumbBrowserBase::ThumbBrowserBase ()
 void ThumbBrowserBase::scrollChanged () {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
     for (int i=0; i<fd.size(); i++)
@@ -139,7 +139,7 @@ void ThumbBrowserBase::configScrollBars () {
 void ThumbBrowserBase::arrangeFiles () {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
     int N = fd.size ();
@@ -259,7 +259,7 @@ void ThumbBrowserBase::Internal::on_realize()
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(parent->entryMutex);
+	Glib::RWLock::ReaderLock l(parent->entryRW);
 	#endif
 
     Glib::ustring ttip = "";
@@ -322,7 +322,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 	
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
     for (int i=0; i<fd.size(); i++) 
@@ -429,7 +429,7 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(parent->entryMutex);
+	Glib::RWLock::ReaderLock l(parent->entryRW);
 	#endif
 
     int w = get_width();
@@ -455,7 +455,7 @@ bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
 
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(parent->entryMutex);
+	Glib::RWLock::ReaderLock l(parent->entryRW);
 	#endif
 
     int w = get_width();
@@ -470,7 +470,7 @@ bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
 bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event) {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(parent->entryMutex);
+	Glib::RWLock::ReaderLock l(parent->entryRW);
 	#endif
 
     int w = get_width();
@@ -518,7 +518,7 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::ReaderLock l(entryRW);
 		#endif
 
 		for (int i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
@@ -536,13 +536,11 @@ void ThumbBrowserBase::refreshThumbImages () {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::ReaderLock l(entryRW);
 		#endif
 
         int previewHeight = getCurrentThumbSize();
-    for (int i=0; i<fd.size(); i++){
-    	fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
-    }
+        for (int i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
 	}
 
     redraw ();
@@ -551,12 +549,10 @@ void ThumbBrowserBase::refreshThumbImages () {
 void ThumbBrowserBase::refreshQuickThumbImages () {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
-    for (int i=0; i<fd.size(); ++i){
-		fd[i]->refreshQuickThumbnailImage ();
-    }
+    for (int i=0; i<fd.size(); ++i) fd[i]->refreshQuickThumbnailImage ();
 }
 
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
@@ -565,7 +561,7 @@ void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::ReaderLock l(entryRW);
 		#endif
 
     for (int i=0; i<fd.size(); i++)
@@ -589,7 +585,7 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     if (options.thumbSizeTab!=options.thumbSize) {
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::ReaderLock l(entryRW);
 		#endif
 
         for (int i=0; i<fd.size(); i++) 
@@ -634,7 +630,7 @@ int ThumbBrowserBase::getEffectiveHeight() {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::ReaderLock l(entryRW);
 		#endif
 
         // Filtered items do not change in size, so take a non-filtered

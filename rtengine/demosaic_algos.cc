@@ -1325,7 +1325,7 @@ void RawImageSource::dcb_correction(float (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			register float current = 4.f * image[indx][3] +
+			float current = 4.f * image[indx][3] +
 						  2.f * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
 
@@ -1401,7 +1401,7 @@ void RawImageSource::dcb_correction2(float (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-			register float current = 4.f * image[indx][3] +
+			float current = 4.f * image[indx][3] +
 						  2.f * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
 
