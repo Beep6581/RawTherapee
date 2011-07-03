@@ -204,7 +204,7 @@ class FileCatalog : public Gtk::VBox,
 
                 void on_realize();
                 void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);
-				int  reparseDirectory ();
+				void reparseDirectory ();
                 void _openImage (std::vector<Thumbnail*> tmb);
                 
                 void zoomIn ();

@@ -1233,14 +1233,14 @@ void FileCatalog::filterChanged () {
     _refreshProgressBar();
 }
 
-int FileCatalog::reparseDirectory () {
+void FileCatalog::reparseDirectory () {
 
     if (selectedDirectory=="")
-        return 0;
+        return;
 
     if (!safe_file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
         closeDir ();
-		return 0;
+		return;
 	}
 	
 	std::vector<Glib::ustring> nfileNameList = getFileList ();
@@ -1271,7 +1271,6 @@ int FileCatalog::reparseDirectory () {
 	}
 
 	fileNameList = nfileNameList;
-	return 1;
 }
 
 #ifdef WIN32

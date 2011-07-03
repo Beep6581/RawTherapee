@@ -28,7 +28,7 @@ inline double tightestroot (double L, double a, double b, double r1, double r2, 
 
 inline double tightestroot (double L, double a, double b, double r1, double r2, double r3) {
   
-  register double an = a/500.0, bn = b/200.0, p = (L+16.0)/116.0;
+  double an = a/500.0, bn = b/200.0, p = (L+16.0)/116.0;
 
   double coeff3 = r1*an*an*an - r3*bn*bn*bn;
   double coeff2 = 3.0 * p * (r1*an*an + r3*bn*bn);

@@ -53,10 +53,9 @@ Crop::~Crop () {
 void Crop::setListener (DetailedCropListener* il) { 
 	// We can make reads in the IF, because the mProcessing lock is only needed for change
 	if (cropImageListener!=il) {
-
 		Glib::Mutex::Lock lock(cropMutex);
-    cropImageListener = il; 
-}       
+        cropImageListener = il; 
+    }       
 }       
 
 void Crop::update (int todo) {
@@ -95,8 +94,9 @@ void Crop::update (int todo) {
 
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;
-        if (params.coarse.rotate==180) tr |= TR_R180;
-        if (params.coarse.rotate==270) tr |= TR_R270;
+        else if (params.coarse.rotate==180) tr |= TR_R180;
+        else if (params.coarse.rotate==270) tr |= TR_R270;
+
         if (params.coarse.hflip)       tr |= TR_HFLIP;
         if (params.coarse.vflip)       tr |= TR_VFLIP;
 

@@ -361,16 +361,16 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
-    std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
-    while (i!=fd.end() && *entry < *((FileBrowserEntry*)*i))
-        i++;
+        std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
+        while (i!=fd.end() && *entry < *((FileBrowserEntry*)*i))
+            i++;
         
-    fd.insert (i, entry);
+        fd.insert (i, entry);
 
-    initEntry (entry);
+        initEntry (entry);
 	}
     redraw ();
 }
@@ -378,7 +378,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::WriterLock l(entryRW);
 	#endif
 
     for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
@@ -387,13 +387,18 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
             entry->selected = false;
             fd.erase (i);
             std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), entry);
+
+            l.release();
+
             if (j!=selected.end()) {
                 selected.erase (j);
                 notifySelectionListener ();
             }
+
             if (lastClicked==entry)
                 lastClicked = NULL;
             redraw ();
+
             return (FileBrowserEntry*)entry;
         }
     return NULL;
@@ -402,12 +407,13 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
 FileBrowserEntry* FileBrowser::findEntry (const Glib::ustring& fname) {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
     for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
         if ((*i)->filename==fname) 
             return (FileBrowserEntry*)*i;
+
     return NULL;
 }
 
@@ -425,19 +431,18 @@ void FileBrowser::close () {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::WriterLock l(entryRW);
 		#endif
-
         
 		selected.clear ();
 		notifySelectionListener ();
 
         // The listener merges parameters with old values, so delete afterwards
-    for (int i=0; i<fd.size(); i++)
-    {
-        delete fd[i];
-    }
-    fd.clear ();
+        for (int i=0; i<fd.size(); i++)
+        {
+            delete fd[i];
+        }
+        fd.clear ();
 	}
 
     lastClicked = NULL;
@@ -485,15 +490,15 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 		{
 			// TODO: Check for Linux
 			#ifdef WIN32
-			Glib::Mutex::Lock lock(entryMutex);
+			Glib::RWLock::ReaderLock l(entryRW);
 			#endif
 
-        selected.clear ();
-        for (int i=0; i<fd.size(); i++)
-            if (checkFilter (fd[i])) {
-                fd[i]->selected = true;
-                selected.push_back (fd[i]);
-            }
+            selected.clear ();
+            for (int i=0; i<fd.size(); i++)
+                if (checkFilter (fd[i])) {
+                    fd[i]->selected = true;
+                    selected.push_back (fd[i]);
+                }
 		}
         queue_draw ();
         notifySelectionListener ();
@@ -750,19 +755,20 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+		Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
-    for (int i=0; i<fd.size(); i++)
-    	if(checkFilter (fd[i]))
-    		numFiltered++;
-    	else if (fd[i]->selected ) {
-            fd[i]->selected = false;
-            std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
-            selected.erase (j);
-            if (lastClicked==fd[i])
-                lastClicked = NULL;
-            selchanged = true;
+        for (int i=0; i<fd.size(); i++) {
+    	    if (checkFilter (fd[i]))
+    		    numFiltered++;
+    	    else if (fd[i]->selected ) {
+                fd[i]->selected = false;
+                std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
+                selected.erase (j);
+                if (lastClicked==fd[i])
+                    lastClicked = NULL;
+                selchanged = true;
+            }
         }
 	}
 
@@ -928,7 +934,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 void FileBrowser::openNextImage () {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
     if (fd.size()>0) {
@@ -951,7 +957,7 @@ void FileBrowser::openNextImage () {
 void FileBrowser::openPrevImage () {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::Mutex::Lock lock(entryMutex);
+	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
     if (fd.size()>0) {

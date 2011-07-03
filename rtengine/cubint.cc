@@ -21,10 +21,10 @@
 
 inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
 
-  register double w[4];
+  double w[4];
 
   { 
-      register double t1, t2;
+      double t1, t2;
       t1 = -A*(Dx-1.0)*Dx;
       t2 = (3.0-2.0*Dx)*Dx*Dx;
       w[3] = t1*Dx;
@@ -33,7 +33,7 @@ inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float
       w[0] = -t1*(Dx-1.0);
   }
 
-  register double rd, gd, bd;  
+  double rd, gd, bd;  
   double yr[4], yg[4], yb[4];
 
   for (int k=ys, kx=0; k<ys+4; k++, kx++) {                                                               
@@ -48,7 +48,7 @@ inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float
 
                                                                     
   { 
-      register double t1, t2;
+      double t1, t2;
       
       t1 = -A*(Dy-1.0)*Dy;
       t2 = (3.0-2.0*Dy)*Dy*Dy;

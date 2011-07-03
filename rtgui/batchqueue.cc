@@ -64,7 +64,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
@@ -127,7 +127,7 @@ void BatchQueue::loadBatchQueue( )
     {
         // TODO: Check for Linux
 #ifdef WIN32
-        Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::WriterLock l(entryRW);
 #endif
 
         Glib::ustring savedQueueFile;
@@ -222,7 +222,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
         // TODO: Check for Linux
 #ifdef WIN32
-        Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::WriterLock l(entryRW);
 #endif
 
         for (int i=0; i<items->size(); i++) {
@@ -254,7 +254,7 @@ void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
         // TODO: Check for Linux
 #ifdef WIN32
-        Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::WriterLock l(entryRW);
 #endif
         for (int i=items->size()-1; i>=0; i--) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
@@ -281,7 +281,7 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
         // TODO: Check for Linux
 #ifdef WIN32
-        Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::WriterLock l(entryRW);
 #endif
         for (int i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
@@ -300,9 +300,10 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 }
    
 void BatchQueue::selectAll () {
-    {// TODO: Check for Linux
+    {
+        // TODO: Check for Linux
 #ifdef WIN32
-        Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::ReaderLock l(entryRW);
 #endif
 
         lastClicked = NULL;
@@ -316,40 +317,36 @@ void BatchQueue::selectAll () {
     }
     queue_draw ();
 }
+
 void BatchQueue::startProcessing () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	entryMutex.lock();
-	#endif
-    
     if (!processing && fd.size()>0) {
-        BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
-        // tag it as processing        
-        next->processing = true;
-        processing = next;
-        // remove from selection
-        if (processing->selected) {
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (selected.begin(), selected.end(), processing);
-            if (pos!=selected.end())
-                selected.erase (pos);
-            processing->selected = false;
+        BatchQueueEntry* next;
+
+        {
+            // TODO: Check for Linux
+	        #ifdef WIN32
+	        Glib::RWLock::WriterLock l(entryRW);
+	        #endif
+
+            next = (BatchQueueEntry*)fd[0];
+            // tag it as processing        
+            next->processing = true;
+            processing = next;
+            // remove from selection
+            if (processing->selected) {
+                std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (selected.begin(), selected.end(), processing);
+                if (pos!=selected.end())
+                    selected.erase (pos);
+                processing->selected = false;
+            }
+
+            // remove button set
+            next->removeButtonSet ();
         }
 
-		// TODO: Check for Linux
-		#ifdef WIN32
-		entryMutex.unlock();
-		#endif
-
-        // remove button set
-        next->removeButtonSet ();
         // start batch processing
         rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
         queue_draw ();
-    } else {
-        // TODO: Check for Linux
-        #ifdef WIN32
-        entryMutex.unlock();
-        #endif
     }
 }
 
@@ -405,7 +402,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 	{
         // TODO: Check for Linux
 #ifdef WIN32
-        Glib::Mutex::Lock lock(entryMutex);
+        Glib::RWLock::WriterLock l(entryRW);
 #endif
 
         fd.erase (fd.begin());

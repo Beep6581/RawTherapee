@@ -29,7 +29,6 @@ namespace rtengine {
 
 const Settings* settings;
 
-extern Glib::Mutex* dcrMutex;
 Glib::Mutex* lcmsMutex = NULL;
 
 int init (const Settings* s) {
