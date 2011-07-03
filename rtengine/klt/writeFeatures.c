@@ -229,7 +229,7 @@ static void _printHeader(
   if (fp != stderr)  {
     fprintf(fp, "Feel free to place comments here.\n\n\n");
     fprintf(fp, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-    fprintf(fp, warning_line);
+    fprintf(fp, "%s", warning_line);
     fprintf(fp, "\n");
   }
   fprintf(fp, "------------------------------\n");
