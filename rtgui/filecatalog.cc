@@ -283,12 +283,12 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         closeDir ();
         previewsToLoad = 0;
         previewsLoaded = 0;
+        selectedDirectory = dir->get_parse_name();
         // if openfile exists, we have to open it first (it is a command line argument)
-        if (openfile!="") 
+        if (openfile!="")
             addAndOpenFile (openfile);
-
-		selectedDirectory = dir->get_parse_name();
-        fileNameList = getFileList ();
+        else
+            fileNameList = getFileList ();
 
         for (unsigned int i=0; i<fileNameList.size(); i++) {
             Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
@@ -840,14 +840,14 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     if (!file )
         return;
     if( !file->query_exists())
-    	return;
+        return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
-						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
+            previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
-				}
+        }
     }
 }
 
@@ -867,6 +867,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
+			_previewReady (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
