@@ -404,19 +404,6 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
     return NULL;
 }
 
-FileBrowserEntry* FileBrowser::findEntry (const Glib::ustring& fname) {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
-
-    for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
-        if ((*i)->filename==fname) 
-            return (FileBrowserEntry*)*i;
-
-    return NULL;
-}
-
 void FileBrowser::close () {
     if (fbih->pending)
         fbih->destroyed = true;
@@ -977,21 +964,19 @@ void FileBrowser::openPrevImage () {
     }
 }
 
-int redrawtb (void* data) {
-
+int refreshThumbImagesUI (void* data) {
     ((FileBrowser*)data)->_thumbRearrangementNeeded ();
     return 0;
 }
 
 void FileBrowser::_thumbRearrangementNeeded () {
-
     refreshThumbImages ();
 }
 
 void FileBrowser::thumbRearrangementNeeded () {
-
-    g_idle_add (redrawtb, this);
+    g_idle_add (refreshThumbImagesUI, this);
 }
+
 void FileBrowser::selectionChanged () {
 
     notifySelectionListener ();

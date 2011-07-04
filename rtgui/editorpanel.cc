@@ -535,13 +535,11 @@ struct spparams {
     double val;
     Glib::ustring str;
     Gtk::ProgressBar *pProgress;
-	bool gtkEnter;
 };
 
-int _setprogressStr( void *p )
+int setprogressStrUI( void *p )
 {
 	spparams *s= (spparams*)p;
-	if (s->gtkEnter) gdk_threads_enter ();
 
 	if( ! s->str.empty() )
 	   s->pProgress->set_text( M(s->str) );
@@ -552,8 +550,6 @@ int _setprogressStr( void *p )
 		else
 			s->pProgress->modify_bg( Gtk::STATE_NORMAL,Gdk::Color("grey") );
 	}
-	
-	if (s->gtkEnter) gdk_threads_leave ();
 
 	delete s;
 	return 0;
@@ -564,8 +560,7 @@ void EditorPanel::setProgress (double p)
 	spparams *s=new spparams;
 	s->val = p;
 	s->pProgress = progressLabel;
-	s->gtkEnter = true;
-	g_idle_add (_setprogressStr, s);
+	g_idle_add (setprogressStrUI, s);
 }
 
 void EditorPanel::setProgressStr (Glib::ustring str)
@@ -574,15 +569,13 @@ void EditorPanel::setProgressStr (Glib::ustring str)
 	s->str = str;
 	s->val = -1;
 	s->pProgress = progressLabel;
-	s->gtkEnter = true;
-	g_idle_add (_setprogressStr, s);
+	g_idle_add (setprogressStrUI, s);
 }
 
 // This is only called from the ThreadUI, so within the gtk thread
 void EditorPanel::refreshProcessingState (bool inProcessingP) {
 	spparams *s=new spparams;
     s->pProgress = progressLabel;
-	s->gtkEnter = false;
 
     if (inProcessingP) {
         if (processingStartedTime==0) processingStartedTime = ::time(NULL);
@@ -618,7 +611,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
 
     isProcessing=inProcessingP;
 
-	_setprogressStr(s);
+	setprogressStrUI(s);
 }
 
 struct errparams {
