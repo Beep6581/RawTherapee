@@ -25,6 +25,7 @@
 #include <safegtk.h>
 
 #include <cstring>
+#include <guiutils.h>
 
 #define CHECKTIME 5000
 extern Glib::ustring argv0;
@@ -142,7 +143,7 @@ void DirBrowser::updateVolumes () {
 
     int nvolumes = GetLogicalDrives ();
     if (nvolumes!=volumes) {
-		gdk_threads_enter();
+		GThreadLock lock;
 
         for (int i=0; i<32; i++) 
             if (((volumes >> i) & 1) && !((nvolumes >> i) & 1)) { // volume i has been deleted
@@ -155,27 +156,21 @@ void DirBrowser::updateVolumes () {
             else if (!((volumes >> i) & 1) && ((nvolumes >> i) & 1)) 
                 addRoot ('A'+i); // volume i has been added
         volumes = nvolumes;
-
-		gdk_threads_leave();
     }
 }
 
-int _updateVolumes (void* br) {
-
+int updateVolumesUI (void* br) {
     ((DirBrowser*)br)->updateVolumes ();
     return 1;
 }
-int _updateDirTree (void* br) {
-
-    gdk_threads_enter ();
+int updateDirTreeUI (void* br) {
     ((DirBrowser*)br)->updateDirTreeRoot ();
-    gdk_threads_leave ();
     return 0;
 }
 
 void DirBrowser::winDirChanged () {
 
-    g_idle_add (_updateDirTree, this);
+    g_idle_add (updateDirTreeUI, this);
 }
 #endif
 
@@ -187,7 +182,7 @@ void DirBrowser::fillRoot () {
     if ((volumes >> i) & 1) 
         addRoot ('A'+i);
   // since sigc++ is not thread safe, we have to use the glib function
-  g_timeout_add (CHECKTIME, _updateVolumes, this);
+  g_timeout_add (CHECKTIME, updateVolumesUI, this);
 #else
   Gtk::TreeModel::Row rootRow = *(dirTreeModel->append());
   rootRow[dtColumns.filename] = "/";

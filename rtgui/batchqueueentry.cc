@@ -109,7 +109,6 @@ struct BQUpdateParam {
 
 int updateImageUIThread (void* data) {
 
-    gdk_threads_enter ();
     BQUpdateParam* params = (BQUpdateParam*)data;
 
     BatchQueueEntryIdleHelper* bqih = params->bqih;
@@ -122,14 +121,13 @@ int updateImageUIThread (void* data) {
             bqih->pending--;
         delete [] params->img;
         delete params;
-        gdk_threads_leave ();
+
         return 0;
     }
     
     bqih->bqentry->_updateImage (params->img, params->w, params->h);
     bqih->pending--;
     
-    gdk_threads_leave ();
     delete params;
     return 0;
 }

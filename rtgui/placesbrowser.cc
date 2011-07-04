@@ -20,6 +20,7 @@
 #include <options.h>
 #include <toolpanel.h>
 #include <safegtk.h>
+#include <guiutils.h>
 
 PlacesBrowser::PlacesBrowser () : listener (NULL) {
 
@@ -211,24 +212,18 @@ bool PlacesBrowser::rowSeparatorFunc (const Glib::RefPtr<Gtk::TreeModel>& model,
 }
 
 void PlacesBrowser::mountChanged (const Glib::RefPtr<Gio::Mount>& m) {
-
-    gdk_threads_enter ();
+    GThreadLock lock;
     refreshPlacesList ();
-    gdk_threads_leave ();
 }
 
 void PlacesBrowser::volumeChanged (const Glib::RefPtr<Gio::Volume>& m) {
-
-    gdk_threads_enter ();
+    GThreadLock lock;
     refreshPlacesList ();
-    gdk_threads_leave ();
 }
 
 void PlacesBrowser::driveChanged (const Glib::RefPtr<Gio::Drive>& m) {
-
-    gdk_threads_enter ();
+    GThreadLock lock;
     refreshPlacesList ();
-    gdk_threads_leave ();
 }
 
 void PlacesBrowser::selectionChanged () {

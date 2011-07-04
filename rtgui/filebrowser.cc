@@ -313,8 +313,6 @@ int AddEntryUIThread (void* data) {
     addparams* ap = (addparams*) data;
     FileBrowserIdleHelper* fbih = ap->fbih;
 
-    gdk_threads_enter();
-
     if (fbih->destroyed) {
         if (fbih->pending == 1)
             delete fbih;
@@ -322,14 +320,14 @@ int AddEntryUIThread (void* data) {
             fbih->pending--;
         delete ap->entry;
         delete ap;
-        gdk_threads_leave ();
+
         return 0;
     }
 
     ap->fbih->fbrowser->addEntry_ (ap->entry);
     delete ap;
     fbih->pending--;
-    gdk_threads_leave();
+
     return 0;
 }
 

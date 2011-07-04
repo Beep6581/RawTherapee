@@ -305,11 +305,8 @@ void ToneCurve::waitForAutoExp () {
     curveEditorG->set_sensitive (false);
 }
 
-int aexpcomputed (void* data) {
-
-    gdk_threads_enter();
+int autoExpChangedUI (void* data) {
     ((ToneCurve*)data)->autoExpComputed_ ();
-    gdk_threads_leave();
     return 0;
 }
 
@@ -317,7 +314,7 @@ void ToneCurve::autoExpChanged (double expcomp, int black) {
 
     nextBlack = black;
     nextExpcomp = expcomp;
-    g_idle_add (aexpcomputed, this);
+    g_idle_add (autoExpChangedUI, this);
 
 //    Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::autoExpComputed_));
 }

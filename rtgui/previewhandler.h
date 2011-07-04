@@ -38,9 +38,9 @@ struct PreviewHandlerIdleHelper {
 
 class PreviewHandler : public rtengine::PreviewImageListener {
 
-    friend int setImageThread   (void* data);
-    friend int delImageThread   (void* data);
-    friend int imageReadyThread (void* data);
+    friend int setImageUI   (void* data);
+    friend int delImageUI   (void* data);
+    friend int imageReadyUI (void* data);
 
     protected:
         rtengine::IImage8* image;       

@@ -112,9 +112,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw) {
     renderHistogram ();
 }
 
-int histupdate (void* data) {
-
-    gdk_threads_enter ();
+int histupdateUI (void* data) {
 
     HistogramAreaIdleHelper* haih = (HistogramAreaIdleHelper*)data;
 
@@ -123,7 +121,7 @@ int histupdate (void* data) {
             delete haih;
         else    
             haih->pending--;
-        gdk_threads_leave ();
+
         return 0;
     }
     
@@ -131,7 +129,7 @@ int histupdate (void* data) {
     haih->harea->queue_draw ();
 
     haih->pending--;
-    gdk_threads_leave ();
+
     return 0;
 }
 
@@ -148,7 +146,7 @@ void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu
         valid = false;
 	
     haih->pending++;
-    g_idle_add (histupdate, haih);
+    g_idle_add (histupdateUI, haih);
 }
 
 void HistogramArea::renderHistogram () {

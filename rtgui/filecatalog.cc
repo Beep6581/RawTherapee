@@ -550,19 +550,18 @@ void FileCatalog::_refreshProgressBar () {
     }
 }
 
-int refreshpb (void* data) {
-
-    gdk_threads_enter ();
+int refreshProgressBarUI (void* data) {
     ((FileCatalog*)data)->_refreshProgressBar ();
-    gdk_threads_leave ();
     return 0;
 }
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
     GThreadLock lock;
-	_previewReady (dir_id,fdn);
+    previewReadyUI (dir_id,fdn);
 }
-void FileCatalog::_previewReady (int dir_id, FileBrowserEntry* fdn) {
+
+// Called WITHIN gtk thread
+void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
 
 	if ( dir_id != selectedDirectoryId )
 	{
@@ -597,18 +596,18 @@ void FileCatalog::_previewReady (int dir_id, FileBrowserEntry* fdn) {
     dirEFS.cameras.insert (cfs->camera);
     dirEFS.lenses.insert (cfs->lens);
     previewsLoaded++;
-    g_idle_add (refreshpb, this);
+
+    g_idle_add (refreshProgressBarUI, this);
 }
 
 int prevfinished (void* data) {
-
-    gdk_threads_enter();
-    ((FileCatalog*)data)->_previewsFinished ();
-    gdk_threads_leave();
+ 	GThreadLock lock;
+    ((FileCatalog*)data)->previewsFinishedUI ();
     return 0;
 }
 
-void FileCatalog::_previewsFinished () {
+// Called within GTK UI thread
+void FileCatalog::previewsFinishedUI () {
 
     redrawAll ();
     previewsToLoad = 0;
@@ -630,8 +629,6 @@ void FileCatalog::_previewsFinished () {
 }
 
 void FileCatalog::previewsFinished (int dir_id) {
-
- 	GThreadLock lock;
 
 	if ( dir_id != selectedDirectoryId )
 	{
@@ -684,13 +681,11 @@ struct FCOIParams {
     std::vector<Thumbnail*> tmb;
 };
 
-int fcopenimg (void* p) {
-
-    gdk_threads_enter ();
+int openRequestedUI (void* p) {
     FCOIParams* params = (FCOIParams*)p;
     params->catalog->_openImage (params->tmb);
     delete params;
-    gdk_threads_leave ();
+
     return 0;
 }
 
@@ -701,7 +696,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
     params->tmb = tmb;
     for (size_t i=0; i<tmb.size(); i++)
         tmb[i]->increaseRef ();
-    g_idle_add (fcopenimg, params);
+    g_idle_add (openRequestedUI, params);
 }
 
 void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {
@@ -1275,10 +1270,7 @@ void FileCatalog::reparseDirectory () {
 
 #ifdef WIN32
 int winDirChangedUITread (void* cat) {
-	gdk_threads_enter ();
     ((FileCatalog*)cat)->reparseDirectory ();
-    gdk_threads_leave ();
-
     return 0;
 }
 
@@ -1331,13 +1323,13 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-			_previewReady (selectedDirectoryId,entry);
+			previewReadyUI (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
             params->tmb.push_back (tmb);
             tmb->increaseRef ();
-            g_idle_add (fcopenimg, params);
+            g_idle_add (openRequestedUI, params);
         }
     }
 }

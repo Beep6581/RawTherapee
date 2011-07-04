@@ -701,9 +701,7 @@ void MyDiagonalCurve::setActiveParam (int ac) {
     queue_draw ();
 }
 
-int diagonalmchistupdate (void* data) {
-
-    gdk_threads_enter ();
+int diagonalmchistupdateUI (void* data) {
 
     MyCurveIdleHelper* mcih = (MyCurveIdleHelper*)data;
 
@@ -712,7 +710,7 @@ int diagonalmchistupdate (void* data) {
             delete mcih;
         else    
             mcih->pending--;
-        gdk_threads_leave ();
+
         return 0;
     }
 
@@ -720,7 +718,7 @@ int diagonalmchistupdate (void* data) {
     mcih->myCurve->queue_draw ();
 
     mcih->pending--;
-    gdk_threads_leave ();
+
     return 0;
 }
 
@@ -736,7 +734,7 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
         bghistvalid = false;
 
     mcih->pending++;
-    g_idle_add (diagonalmchistupdate, mcih);
+    g_idle_add (diagonalmchistupdateUI, mcih);
 
 }
 

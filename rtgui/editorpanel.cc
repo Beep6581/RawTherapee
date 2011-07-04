@@ -502,7 +502,6 @@ struct spsparams {
 
 int setProgressStateUIThread (void* data) {
 
-    gdk_threads_enter ();
     spsparams* p = (spsparams*)data;
 
     if (p->epih->destroyed) {
@@ -511,14 +510,14 @@ int setProgressStateUIThread (void* data) {
         else
             p->epih->pending--;
         delete p;
-        gdk_threads_leave ();
+
         return 0;
     }
 
     p->epih->epanel->refreshProcessingState (p->inProcessing);
     p->epih->pending--;
     delete p;
-    gdk_threads_leave ();
+
     return 0;
 }
 
@@ -637,9 +636,7 @@ void EditorPanel::displayError (Glib::ustring descr) {
     }
 }
 
-int disperror (void* data) {
-
-    gdk_threads_enter ();
+int disperrorUI (void* data) {
     errparams* p = (errparams*)data;
 
     if (p->epih->destroyed) {
@@ -648,14 +645,14 @@ int disperror (void* data) {
         else
             p->epih->pending--;
         delete p;
-        gdk_threads_leave ();
+
         return 0;
     }
 
     p->epih->epanel->displayError (p->descr);
     p->epih->pending--;
     delete p;
-    gdk_threads_leave ();
+
     return 0;
 }
 
@@ -665,7 +662,7 @@ void EditorPanel::error (Glib::ustring descr) {
     errparams* p = new errparams;
     p->descr = descr;
     p->epih = epih;
-    g_idle_add (disperror, p);
+    g_idle_add (disperrorUI, p);
 }
 
 void EditorPanel::info_toggled () {

@@ -48,10 +48,7 @@ struct iaimgpar {
     CropParams cp;
 };
 
-int setImageThread (void* data) {
-
-    gdk_threads_enter ();
-
+int setImageUI (void* data) {
     iaimgpar* iap = (iaimgpar*)data;
     PreviewHandlerIdleHelper* pih = iap->pih;
 
@@ -61,7 +58,7 @@ int setImageThread (void* data) {
         else    
             pih->pending--;
         delete iap;
-        gdk_threads_leave ();
+
         return 0;
     }
 
@@ -78,8 +75,6 @@ int setImageThread (void* data) {
     pih->phandler->previewScale = iap->scale;
     pih->pending--;
     delete iap;
-
-    gdk_threads_leave ();
     
     return 0;
 }
@@ -94,13 +89,11 @@ void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::pro
     iap->scale      = scale;
     iap->cp         = cp;
 
-    g_idle_add (setImageThread, iap);
+    g_idle_add (setImageUI, iap);
 }
 
 
-int delImageThread (void* data) {
-
-    gdk_threads_enter ();
+int delImageUI (void* data) {
 
     iaimgpar* iap = (iaimgpar*)data;
     PreviewHandlerIdleHelper* pih = iap->pih;
@@ -111,7 +104,7 @@ int delImageThread (void* data) {
         else    
             pih->pending--;
         delete iap;
-        gdk_threads_leave ();
+
         return 0;
     }
     
@@ -129,8 +122,6 @@ int delImageThread (void* data) {
     pih->pending--;
     delete iap;
 
-    gdk_threads_leave ();
-
     return 0;
 }
 
@@ -142,12 +133,10 @@ void PreviewHandler::delImage (IImage8* i) {
     iap->image    = i;
     iap->pih = pih;
 
-    g_idle_add (delImageThread, iap);
+    g_idle_add (delImageUI, iap);
 }
 
-int imageReadyThread (void* data) {
-
-    gdk_threads_enter ();
+int imageReadyUI (void* data) {
     
     iaimgpar* iap = (iaimgpar*)data;
     PreviewHandlerIdleHelper* pih = iap->pih;
@@ -158,7 +147,7 @@ int imageReadyThread (void* data) {
         else    
             pih->pending--;
         delete iap;
-        gdk_threads_leave ();
+
         return 0;
     }
 
@@ -170,8 +159,6 @@ int imageReadyThread (void* data) {
     pih->pending--;
     delete iap;
 
-    gdk_threads_leave ();
-
     return 0;
 }
 
@@ -181,7 +168,7 @@ void PreviewHandler::imageReady (CropParams cp) {
     iaimgpar* iap = new iaimgpar;
     iap->pih      = pih;
     iap->cp       = cp;
-	g_idle_add (imageReadyThread, iap);
+	g_idle_add (imageReadyUI, iap);
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom) {

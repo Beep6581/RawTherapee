@@ -158,12 +158,10 @@ struct tiupdate {
     rtengine::procparams::CropParams cropParams;
 };
 
-int fbeupdate (void* data) {
+int updateImageUI (void* data) {
     
     tiupdate* params = (tiupdate*)data;
     FileBrowserEntryIdleHelper* feih = params->feih;
-
-	GThreadLock lock;
 
     if (feih->destroyed) {
         if (feih->pending == 1)
@@ -204,7 +202,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
     param->img = img;
     param->scale = scale;
     param->cropParams = cropParams;
-    g_idle_add (fbeupdate, param);
+    g_idle_add (updateImageUI, param);
 }
 
 void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams) {
