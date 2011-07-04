@@ -386,7 +386,9 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
             fd.erase (i);
             std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), entry);
 
+            #ifdef WIN32
             l.release();
+            #endif
 
             if (j!=selected.end()) {
                 selected.erase (j);
