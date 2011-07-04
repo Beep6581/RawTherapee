@@ -622,7 +622,7 @@ void FileCatalog::previewsFinishedUI () {
 	}
  	// restart anything that might have been loaded low quality
  	fileBrowser->refreshQuickThumbImages();
- 	//fileBrowser->applyFilter (getFilter());
+ 	fileBrowser->applyFilter (getFilter());  // refresh total image count
     _refreshProgressBar();
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"),0);
 }
