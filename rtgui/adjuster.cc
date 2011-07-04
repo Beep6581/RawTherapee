@@ -22,6 +22,7 @@
 #include <multilangmgr.h>
 #include <rtengine.h>
 #include <options.h>
+#include <guiutils.h>
 
 extern Glib::ustring argv0;
 
@@ -258,10 +259,9 @@ Glib::ustring Adjuster::getTextValue () {
 
 bool Adjuster::notifyListener () {
 
-  if (adjusterListener!=NULL  && !blocked) {
-	  gdk_threads_enter();
-	  adjusterListener->adjusterChanged (this, spin->get_value ());
-	  gdk_threads_leave();
+  if (adjusterListener!=NULL && !blocked) {
+    GThreadLock lock;
+    adjusterListener->adjusterChanged (this, spin->get_value ());
   }
   return false;
 }
@@ -271,6 +271,7 @@ void Adjuster::setEnabled (bool enabled) {
     spin->set_sensitive (enabled);
     slider->set_sensitive (enabled);
 }
+
 void Adjuster::setEditedState (EditedState eState) {
 
     if (editedState!=eState) {

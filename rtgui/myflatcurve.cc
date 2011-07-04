@@ -1279,43 +1279,6 @@ void MyFlatCurve::setType (FlatCurveType t) {
     pixmap.clear ();
 }
 
-/*int flatmchistupdate (void* data) {
-
-    gdk_threads_enter ();
-
-    MyFlatCurveIdleHelper* mcih = (MyFlatCurveIdleHelper*)data;
-
-    if (mcih->destroyed) {
-        if (mcih->pending == 1)
-            delete mcih;
-        else    
-            mcih->pending--;
-        gdk_threads_leave ();
-        return 0;
-    }
-    
-    mcih->clearPixmap ();
-    mcih->myCurve->queue_draw ();
-
-    mcih->pending--;
-    gdk_threads_leave ();
-    return 0;
-}*/
-
-/*void MyFlatCurve::updateBackgroundHistogram (unsigned int* hist) {
-
-    if (hist!=NULL) {
-        memcpy (bghist, hist, 256*sizeof(unsigned int));
-        bghistvalid = true;
-    }
-    else
-        bghistvalid = false;
-
-    mcih->pending++;
-    g_idle_add (flatmchistupdate, mcih);
-
-}*/
-
 void MyFlatCurve::reset() {
 	innerWidth = get_allocation().get_width() - RADIUS * 2;
 	innerHeight = get_allocation().get_height() - RADIUS * 2;

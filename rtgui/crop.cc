@@ -436,34 +436,28 @@ void Crop::enabledChanged () {
     }
 }
 
-int notifylistener (void* data) {
-
-    gdk_threads_enter ();
+int notifyListenerUI (void* data) {
     ((Crop*)data)->notifyListener ();
-    gdk_threads_leave ();
     return 0;
 }
 
-int refreshspins (void* data) {
-
-    gdk_threads_enter ();
+int refreshSpinsUI (void* data) {
     RefreshSpinHelper* rsh = (RefreshSpinHelper*) data;
     rsh->crop->refreshSpins (rsh->notify);
     delete rsh;
-    gdk_threads_leave ();
     return 0;
 }
 
 void Crop::hFlipCrop () {
 
     nx = maxw - nx - nw;
-    g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::vFlipCrop () {
 
     ny = maxh - ny - nh;
-    g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::rotateCrop (int deg) {
@@ -493,7 +487,7 @@ void Crop::rotateCrop (int deg) {
     }
 
     lastRotationDeg = deg;
-    g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::positionChanged () {
@@ -506,7 +500,7 @@ void Crop::positionChanged () {
     int W = nw;
     int H = nh;
     cropMoved (X, Y, W, H);
-    g_idle_add (notifylistener, this);
+    g_idle_add (notifyListenerUI, this);
 }
 
 void Crop::widthChanged () {
@@ -518,7 +512,7 @@ void Crop::widthChanged () {
     int W = (int)w->get_value ();
     int H = nh;
     cropWidth2Resized (X, Y, W, H);
-    g_idle_add (notifylistener, this);
+    g_idle_add (notifyListenerUI, this);
 }
 
 void Crop::heightChanged () {
@@ -530,7 +524,7 @@ void Crop::heightChanged () {
     int W = nw;
     int H = (int)h->get_value ();
     cropHeight2Resized (X, Y, W, H);
-    g_idle_add (notifylistener, this);
+    g_idle_add (notifyListenerUI, this);
 }
 
 
@@ -563,7 +557,7 @@ void Crop::ratioChanged () {
     else 
       cropHeight2Resized (X, Y, W, H);
 
-    g_idle_add (refreshspins, new RefreshSpinHelper (this, true));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, true));
   }
 }
 
@@ -628,13 +622,10 @@ struct setdimparams {
     int y;
 };
 
-int setdim (void* data) {
-
-    gdk_threads_enter ();
+int sizeChangedUI (void* data) {
     setdimparams* params = (setdimparams*)data;
     params->crop->setDimensions (params->x, params->y);
     delete params;
-    gdk_threads_leave ();
     return 0;
 }
 
@@ -644,7 +635,7 @@ void Crop::sizeChanged (int x, int y, int ow, int oh) {
     params->x = x;
     params->y = y;
     params->crop = this;
-    g_idle_add (setdim, params);
+    g_idle_add (sizeChangedUI, params);
 }
 
 bool Crop::refreshSpins (bool notify) {
@@ -697,7 +688,7 @@ void Crop::cropMoved (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -727,7 +718,7 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -759,7 +750,7 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -790,7 +781,7 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -821,7 +812,7 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H) {
   nw = W;
   nh = H;
 
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -837,7 +828,7 @@ void Crop::cropInit (int &x, int &y, int &w, int &h) {
   econn.block (true);
   enabled->set_active (1);
   econn.block (false);
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
@@ -922,13 +913,13 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2) {
   nw = W;
   nh = H;
 
-  g_idle_add (refreshspins, new RefreshSpinHelper (this, false));
+  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 //  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
 void Crop::cropManipReady () {
 
-    g_idle_add (notifylistener, this);
+    g_idle_add (notifyListenerUI, this);
 }
 
 double Crop::getRatio () {

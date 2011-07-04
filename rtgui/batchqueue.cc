@@ -209,12 +209,10 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
     return savedParamPath;
 }
 
-int deleteitem (void* data)
+int cancelItemUI (void* data)
 {
-	safe_g_remove(  ((BatchQueueEntry*)data)->savedParamsFile );
-    gdk_threads_enter ();
+	safe_g_remove( ((BatchQueueEntry*)data)->savedParamsFile );
     delete (BatchQueueEntry*)data;
-    gdk_threads_leave ();
     return 0;
 }
 
@@ -235,7 +233,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
                 rtengine::ProcessingJob::destroy (entry->job);
                 if (entry->thumbnail)
                     entry->thumbnail->imageRemovedFromQueue ();
-                g_idle_add (deleteitem, entry);
+                g_idle_add (cancelItemUI, entry);
             }
         }
         for (int i=0; i<fd.size(); i++) 
@@ -351,8 +349,8 @@ void BatchQueue::startProcessing () {
 }
 
 rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
+    GThreadLock lock;
 
-    gdk_threads_enter ();
     // save image img
     Glib::ustring fname;
     SaveFormat saveFormat;
@@ -443,7 +441,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 
     redraw ();
     notifyListener ();
-    gdk_threads_leave ();
+
     return processing ? processing->job : NULL;
 }
 
@@ -575,11 +573,8 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     }
 }
 
-int bqredraw (void* p) {
-
-    gdk_threads_enter ();
+int setProgressUI (void* p) {
     ((BatchQueue*)p)->redraw();
-    gdk_threads_leave ();
     return 0;
 }
 
@@ -588,7 +583,7 @@ void BatchQueue::setProgress (double p) {
     if (processing)
         processing->progress = p;
 
-    g_idle_add (bqredraw, this);
+    g_idle_add (setProgressUI, this);
 }
 
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData) {
@@ -609,13 +604,10 @@ struct NLParams {
     int qsize;
 };
 
-int bqnotifylistener (void* data) {
-
-    gdk_threads_enter ();
+int bqnotifylistenerUI (void* data) {
     NLParams* params = (NLParams*)data;
     params->listener->queueSizeChanged (params->qsize);
     delete params;
-    gdk_threads_leave ();
     return 0;
 }
 
@@ -625,7 +617,7 @@ void BatchQueue::notifyListener () {
         NLParams* params = new NLParams;
         params->listener = listener;
         params->qsize = fd.size();
-        g_idle_add (bqnotifylistener, params);
+        g_idle_add (bqnotifylistenerUI, params);
     }
 }
 

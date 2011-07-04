@@ -21,12 +21,8 @@
 #include <rtwindow.h>
 #include <safegtk.h>
 
-int fbinit (void* data) {
-
-    gdk_threads_enter ();
+int FilePanelInitUI (void* data) {
     ((FilePanel*)data)->init ();
-    gdk_threads_leave ();
-
     return 0;
 }
 
@@ -112,7 +108,7 @@ FilePanel::FilePanel () : parent(NULL) {
     fileCatalog->setFileSelectionChangeListener (tpc);
 
     fileCatalog->setFileSelectionListener (this);
-    g_idle_add (fbinit, this);
+    g_idle_add (FilePanelInitUI, this);
 
     show_all ();
 }

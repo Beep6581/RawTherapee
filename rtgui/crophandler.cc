@@ -20,6 +20,7 @@
 #undef THREAD_PRIORITY_NORMAL
 
 #include <cstring>
+#include <guiutils.h>
 
 using namespace rtengine;
 
@@ -157,7 +158,7 @@ void CropHandler::getPosition (int& x, int& y) {
 
 int createpixbufs (void* data) {
 
-    gdk_threads_enter ();
+    GThreadLock lock;
 
     CropHandlerIdleHelper* chi = (CropHandlerIdleHelper*) data;
     if (chi->destroyed) {
@@ -165,7 +166,7 @@ int createpixbufs (void* data) {
             delete chi;
         else    
             chi->pending--;
-        gdk_threads_leave ();
+
         return 0;
     }
    
@@ -180,7 +181,6 @@ int createpixbufs (void* data) {
 		delete [] ch->cropimgtrue;
         ch->cropimgtrue = NULL;
         ch->cimg.unlock ();
-        gdk_threads_leave ();
         return 0;
     }    
 
@@ -221,7 +221,6 @@ int createpixbufs (void* data) {
   
     chi->pending--;
     
-    gdk_threads_leave ();
     return 0;
 }
 

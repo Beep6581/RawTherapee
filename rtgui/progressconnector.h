@@ -22,6 +22,7 @@
 #include <sigc++/sigc++.h>
 #include <gtkmm.h>
 #include <rtengine.h>
+#include <guiutils.h>
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -35,28 +36,24 @@ class PLDBridge : public rtengine::ProgressListener {
 
     // ProgressListener interface
     void setProgress (double p) {
-        gdk_threads_enter ();
+        GThreadLock lock;
         pl->setProgress(p);
-        gdk_threads_leave ();
     }
     void setProgressStr (Glib::ustring str) {
-        gdk_threads_enter ();
+        GThreadLock lock;
         Glib::ustring progrstr;
         progrstr = M(str);
         pl->setProgressStr(progrstr);
-        gdk_threads_leave ();
     }
 
     void setProgressState (bool inProcessing){
-        gdk_threads_enter ();
+        GThreadLock lock;
         pl->setProgressState(inProcessing);
-        gdk_threads_leave ();
     }
 
     void error (Glib::ustring descr){
-        gdk_threads_enter ();
+        GThreadLock lock;
         pl->error(descr);
-        gdk_threads_leave ();
     }
 };
 
@@ -68,18 +65,18 @@ class ProgressConnector {
         T retval;
         Glib::Thread *workThread;
 
-		static int emitEndSignal (void* data) {
-			gdk_threads_enter ();
+		static int emitEndSignalUI (void* data) {
+
 			sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
 			int r = opEnd->emit ();
 			delete opEnd;
-			gdk_threads_leave ();
+
 			return r;
 		}
         
         void workingThread () {
             retval = opStart.emit ();
-            g_idle_add (ProgressConnector<T>::emitEndSignal, new sigc::signal0<bool> (opEnd));
+            g_idle_add (ProgressConnector<T>::emitEndSignalUI, new sigc::signal0<bool> (opEnd));
             workThread = 0;
         }
         
