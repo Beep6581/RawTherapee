@@ -114,7 +114,6 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void addEntry (FileBrowserEntry* entry); // can be called from any thread
     void addEntry_ (FileBrowserEntry* entry); // this must be executed inside the gtk thread 
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
-    FileBrowserEntry*  findEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
     
     void setFileBrowserListener (FileBrowserListener* l) { tbl = l; }

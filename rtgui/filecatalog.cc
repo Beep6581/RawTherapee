@@ -546,7 +546,6 @@ void FileCatalog::_refreshProgressBar () {
         hbb->set_tooltip_markup (M("MAIN_FRAME_FILEBROWSER_TOOLTIP"));
         hbb->show_all ();
         nb->set_tab_label(*filepanel,*hbb);
-
     }
 }
 
@@ -623,7 +622,7 @@ void FileCatalog::previewsFinishedUI () {
 	}
  	// restart anything that might have been loaded low quality
  	fileBrowser->refreshQuickThumbImages();
- 	fileBrowser->applyFilter (getFilter());
+ 	//fileBrowser->applyFilter (getFilter());
     _refreshProgressBar();
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"),0);
 }
