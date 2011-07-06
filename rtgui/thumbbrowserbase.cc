@@ -54,11 +54,6 @@ ThumbBrowserBase::ThumbBrowserBase ()
 }
 
 void ThumbBrowserBase::scrollChanged () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
-
     for (int i=0; i<fd.size(); i++)
         fd[i]->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
 
@@ -257,11 +252,6 @@ void ThumbBrowserBase::Internal::on_realize()
 }
 
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(parent->entryRW);
-	#endif
-
     Glib::ustring ttip = "";
     for (int i=0; i<parent->fd.size(); i++) 
         if (parent->fd[i]->drawable && parent->fd[i]->inside (x, y)) {
@@ -320,19 +310,16 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
     ThumbBrowserEntryBase* fileDescr = NULL;
     bool handled = false;
 	
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
+    {
+        for (int i=0; i<fd.size(); i++) 
+            if (fd[i]->drawable) {
+                if (fd[i]->inside (x, y) && fd[i]->insideWindow (clx, cly, clw, clh))            
+                    fileDescr = fd[i];
+                bool b = fd[i]->pressNotify (button, type, state, x, y);
+                handled = handled || b;
+            }   
+    }
 
-    for (int i=0; i<fd.size(); i++) 
-        if (fd[i]->drawable) {
-            if (fd[i]->inside (x, y) && fd[i]->insideWindow (clx, cly, clw, clh))            
-                fileDescr = fd[i];
-            bool b = fd[i]->pressNotify (button, type, state, x, y);
-            handled = handled || b;
-        }   
-        
     if (handled || (fileDescr && fileDescr->processing))
         return;
         
@@ -427,11 +414,6 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 
     Glib::RefPtr<Gdk::Window> window = get_window();
 
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(parent->entryRW);
-	#endif
-
     int w = get_width();
     int h = get_height();
 
@@ -452,33 +434,27 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
 }
 
 bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event) {
-
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(parent->entryRW);
-	#endif
-
     int w = get_width();
     int h = get_height();
 
     for (int i=0; i<parent->fd.size(); i++) 
-        if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) 
+        if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
             parent->fd[i]->releaseNotify (event->button, event->type, event->state, (int)event->x, (int)event->y);
+        }
     return true;
 }
 
 bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event) {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(parent->entryRW);
-	#endif
-
     int w = get_width();
     int h = get_height();
 
     for (int i=0; i<parent->fd.size(); i++) 
-        if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) 
+        if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
+            #ifdef WIN32
+	        //l.release();  // motionNotify calls the queue, which locks
+	        #endif
             parent->fd[i]->motionNotify ((int)event->x, (int)event->y);
+        }
     return true;
 }
 
@@ -518,7 +494,7 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);
+		Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
 		for (int i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
@@ -536,7 +512,7 @@ void ThumbBrowserBase::refreshThumbImages () {
 	{
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);
+		Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
         int previewHeight = getCurrentThumbSize();
@@ -549,7 +525,7 @@ void ThumbBrowserBase::refreshThumbImages () {
 void ThumbBrowserBase::refreshQuickThumbImages () {
 	// TODO: Check for Linux
 	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
+	Glib::RWLock::WriterLock l(entryRW);
 	#endif
 
     for (int i=0; i<fd.size(); ++i) fd[i]->refreshQuickThumbnailImage ();
@@ -558,15 +534,8 @@ void ThumbBrowserBase::refreshQuickThumbImages () {
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
     editedFiles = efiles;
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);
-		#endif
-
     for (int i=0; i<fd.size(); i++)
         fd[i]->framed = editedFiles.find (fd[i]->filename)!=editedFiles.end();
-	}
 
     queue_draw ();
 }
@@ -585,7 +554,7 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     if (options.thumbSizeTab!=options.thumbSize) {
 		// TODO: Check for Linux
 		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);
+		Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
         for (int i=0; i<fd.size(); i++) 
@@ -627,19 +596,12 @@ void ThumbBrowserBase::setScrollPosition (double h, double v) {
 int ThumbBrowserBase::getEffectiveHeight() { 
     int h=hscroll.get_height() + 2;  // have 2 pixels rounding error for scroll bars to appear
 
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);
-		#endif
-
-        // Filtered items do not change in size, so take a non-filtered
-        for (int i=0;i<fd.size();i++)
-            if (!fd[i]->filtered) {
-                h+=fd[i]->getEffectiveHeight();
-                break;
-            }
-	}
+    // Filtered items do not change in size, so take a non-filtered
+    for (int i=0;i<fd.size();i++)
+        if (!fd[i]->filtered) {
+            h+=fd[i]->getEffectiveHeight();
+            break;
+        }
 
     return h;
 }  
