@@ -94,8 +94,6 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	bgHistValid = false;
 	selected = DCT_Linear;
 
-    histogram(256);	// histogram values
-
 	group = ceGroup;
 	subGroup = ceSubGroup;
 
