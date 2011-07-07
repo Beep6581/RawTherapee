@@ -63,7 +63,7 @@
 #include <flatfield.h>
 #include <rawcacorrection.h>
 #include <rawexposure.h>
-
+#include <clarity.h>
 class ImageEditorCoordinator;
 
 class ToolPanelCoordinator :    public ToolPanelListener, 
@@ -101,6 +101,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ImpulseDenoise* impulsedenoise;
         DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
+		Clarity* clarity;
         LCurve* lcurve;
         //Equalizer * equalizer;
         DirPyrEqualizer * dirpyrequalizer;

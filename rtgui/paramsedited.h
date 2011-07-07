@@ -54,6 +54,19 @@ class LCurveParamsEdited {
 		bool bcurve;
 };
 
+class ClarityParamsEdited {
+		public :
+  
+		bool clpasses;
+		bool clstrength;
+		bool mlstrength;
+		bool enabled;
+		bool enabledtwo;
+		bool clthreechannels;
+		bool uniformity;
+		bool MLmicromatrix;
+};
+
 class SharpeningParamsEdited {
 
     public:
@@ -327,7 +340,9 @@ class ParamsEdited {
     public:
         ToneCurveParamsEdited         toneCurve;      
         LCurveParamsEdited            labCurve;      
-        SharpeningParamsEdited        sharpening;     
+        SharpeningParamsEdited        sharpening;    
+        ClarityParamsEdited        	  clarity;     
+		
         ColorBoostParamsEdited        colorBoost;     
         WBParamsEdited                wb;             
         ColorShiftParamsEdited        colorShift;     

@@ -129,6 +129,8 @@ void BatchToolPanelCoordinator::initSession () {
 			//colorboost->setAdjusterBehavior (false);
 			//lumadenoise->setAdjusterBehavior (false);
 			sharpening->setAdjusterBehavior (false);
+			clarity->setAdjusterBehavior (false, false, false, false);
+			
 			chmixer->setAdjusterBehavior (false);
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false);
@@ -151,6 +153,8 @@ void BatchToolPanelCoordinator::initSession () {
 			//colorboost->setAdjusterBehavior (options.baBehav[ADDSET_CBOOST_AMOUNT]);
 			//lumadenoise->setAdjusterBehavior (options.baBehav[ADDSET_LD_EDGETOLERANCE]);
 			sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
+			clarity->setAdjusterBehavior (options.baBehav[ADDSET_CLAR_STREN],options.baBehav[ADDSET_CLAR_MLSTREN],options.baBehav[ADDSET_CLAR_PASS],options.baBehav[ADDSET_CLAR_UNIFORMITY]);
+			
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
 			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ]);
@@ -176,6 +180,12 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_LC_SATURATION])  pparams.labCurve.saturation = 0;
 
 			if (options.baBehav[ADDSET_SHARP_AMOUNT])  pparams.sharpening.amount = 0;
+			if (options.baBehav[ADDSET_CLAR_STREN])  pparams.clarity.clstrength = 0;
+			if (options.baBehav[ADDSET_CLAR_MLSTREN])  pparams.clarity.mlstrength = 0;
+			if (options.baBehav[ADDSET_CLAR_PASS])  pparams.clarity.clpasses = 0;
+			if (options.baBehav[ADDSET_CLAR_UNIFORMITY])  pparams.clarity.uniformity = 0;
+			
+			
 			if (options.baBehav[ADDSET_CHMIXER]) for (int i=0; i<3; i++) pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
 			if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 

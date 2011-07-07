@@ -28,7 +28,7 @@ aCurve=0;
 bCurve=0;
 
 [Sharpening]
-Enabled=true
+Enabled=false
 Method=usm
 Radius=0.8
 Amount=120
@@ -42,6 +42,16 @@ DeconvRadius=0.75
 DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
+
+[Clarity]
+Enabled=false
+Clpasses=2
+Clstrength=50
+Clthreechannels=false
+Enabledtwo=false
+Mlstrength=20
+Uniformity=50
+Matrix=false
 
 [Color Boost]
 Amount=0

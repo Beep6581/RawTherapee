@@ -163,7 +163,15 @@ enum ProcEvent {
 	EvPreProcessExpBlacktwo=138,
 	EvPreProcessExpBlackthree=139,
 	EvPreProcessExptwoGreen=140,
-	NUMOFEVENTS=141
+	EvClaritypasses=141,
+	EvClaritystrength=142,
+	EvMLmicrostrength=143,
+	EvMLuniformity=144,
+	EvClarityEnabled=145,
+	EvClaritythreechannels=146,
+	EvClarityEnabledtwo=147,
+	EvClaritymatrix=148,
+	NUMOFEVENTS=149
 	
 	
 	};

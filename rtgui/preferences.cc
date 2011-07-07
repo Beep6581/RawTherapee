@@ -168,6 +168,14 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi->set_value (behavColumns.label, M("TP_SHARPENING_LABEL"));
     appendBehavList (mi, M("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
 
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_CLARITY_LABEL"));
+    appendBehavList (mi, M("TP_CLARITY_PASSES"), ADDSET_CLAR_PASS, false);
+    appendBehavList (mi, M("TP_CLARITY_STRENGTH"), ADDSET_CLAR_STREN, false);
+    appendBehavList (mi, M("TP_MLMICRO_STRENGTH"), ADDSET_CLAR_MLSTREN, false);
+    appendBehavList (mi, M("TP_MLMICRO_UNIFORMITY"), ADDSET_CLAR_UNIFORMITY, false);
+	
+	
     //mi = behModel->append ();
     //mi->set_value (behavColumns.label, M("TP_LUMADENOISE_LABEL"));
     //appendBehavList (mi, M("TP_LUMADENOISE_EDGETOLERANCE"), ADDSET_LD_EDGETOLERANCE, true);
