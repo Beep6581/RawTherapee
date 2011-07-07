@@ -83,7 +83,17 @@ class SharpeningParams {
         int     deconviter;
         int     deconvdamping;
 };
-
+class ClarityParams {
+  public:
+        bool    enabled;
+		int 	clpasses;
+		double 	clstrength;
+		bool    enabledtwo;
+		double	 mlstrength;
+		bool  	clthreechannels;
+		double 	uniformity;
+		bool    MLmicromatrix;
+};
 /**
   * Parameters of the color boost
   */
@@ -443,6 +453,7 @@ class ProcParams {
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
+		ClarityParams			clarity;
         ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
         ColorShiftParams        colorShift;      ///< Color shift parameters

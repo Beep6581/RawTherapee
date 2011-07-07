@@ -43,6 +43,16 @@ DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
 
+[Clarity]
+Enabled=false
+Clpasses=2
+Clstrength=50
+Clthreechannels=false
+Enabledtwo=false
+Mlstrength=20
+Uniformity=50
+Matrix=false
+
 [Color Boost]
 Amount=12
 AvoidColorClipping=false

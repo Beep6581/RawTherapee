@@ -178,7 +178,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	ipf.defringe (labView);
 	//ipf.lumadenoise (labView, buffer);
  	ipf.dirpyrdenoise (labView);
-
+	if (params.clarity.enabled) {
+		 ipf.MLsharpen(labView);
+		 }
+	if (params.clarity.enabledtwo) {		 
+		 ipf.MLmicrocontrast (labView);
+		 }
     if (params.sharpening.enabled) {
         float** buffer = new float*[fh];
         for (int i=0; i<fh; i++)

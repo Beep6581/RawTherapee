@@ -186,7 +186,11 @@ void Options::setDefaults () {
 			0,  // ADDSET_RAWCACORR
 			1,  // ADDSET_RAWEXPOS_LINEAR
 			1,  // ADDSET_RAWEXPOS_PRESER
-			1   // ADDSET_RAWEXPOS_BLACKS
+			1,  // ADDSET_RAWEXPOS_BLACKS
+			0,  // ADDSET_CLAR_STREN
+			0,  // ADDSET_CLAR_MLSTREN
+			0,  // ADDSET_CLAR_PASS
+			0   // ADDSET_CLAR_RELAT
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     

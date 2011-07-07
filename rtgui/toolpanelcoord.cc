@@ -44,6 +44,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     defringe            = Gtk::manage (new Defringe ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
+	clarity				 = Gtk::manage (new Clarity ());
     lcurve              = Gtk::manage (new LCurve ());
     //colorboost          = Gtk::manage (new ColorBoost ());
     //colorshift          = Gtk::manage (new ColorShift ());
@@ -77,6 +78,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
     addPanel (exposurePanel, shadowshighlights, M("TP_SHADOWSHLIGHTS_LABEL")); toolPanels.push_back (shadowshighlights);
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
+    addPanel (detailsPanel, clarity,       		  M("TP_CLARITY_LABEL"));      toolPanels.push_back (clarity);
+	
     //addPanel (colorPanel, colorboost,           M("TP_COLORBOOST_LABEL"));     toolPanels.push_back (colorboost);
     //addPanel (colorPanel, colorshift,           M("TP_COLORSHIFT_LABEL"));     toolPanels.push_back (colorshift);
     addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);

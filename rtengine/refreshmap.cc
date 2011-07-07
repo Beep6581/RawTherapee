@@ -161,7 +161,13 @@ DARKFRAME,        // EvPreProcessExpBlackone
 DARKFRAME,        // EvPreProcessExpBlacktwo
 DARKFRAME,        // EvPreProcessExpBlackthree
 DARKFRAME,		  //EvPreProcessExptwoGreen
-
-
+SHARPENING,       //EvClaritypasses
+SHARPENING,       //EvClaritystrength
+SHARPENING,       //EvMLmicrostrength
+SHARPENING,       //EvMLuniformity
+SHARPENING,       //EvClarityEnabled
+SHARPENING,       //EvClaritythreechannels
+SHARPENING,       //EvClarityEnabledtwo
+SHARPENING,         //EvClaritymatrix
 };
 

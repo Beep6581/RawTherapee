@@ -88,6 +88,8 @@ class ImProcFunctions {
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void waveletEqualizer (Imagefloat * image);
 		void waveletEqualizer (LabImage * image, bool luminance, bool chromaticity);
+		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
+		void MLmicrocontrast(LabImage* lab ); //Manuel's microcontrast
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
 		void impulse_nr (LabImage* lab, double thresh);

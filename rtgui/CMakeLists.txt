@@ -29,7 +29,7 @@ set (BASESOURCEFILES
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
     darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
     equalizer.cc dirpyrequalizer.cc hsvequalizer.cc defringe.cc
-    popupcommon.cc popupbutton.cc popuptogglebutton.cc)
+    popupcommon.cc popupbutton.cc popuptogglebutton.cc clarity.cc)
 
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.rc)

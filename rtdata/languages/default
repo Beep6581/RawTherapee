@@ -328,6 +328,14 @@ HISTORY_MSG_97;'b' curve
 HISTORY_MSG_98;Demosaicing method
 HISTORY_MSG_99;Hot/dead pixel filtering
 HISTORY_MSG_9;Highlight Compression
+HISTORY_MSG_142;Clarity -passes
+HISTORY_MSG_143;Clarity -gradient strength
+HISTORY_MSG_147;Clarity - luminance only
+HISTORY_MSG_144;Microcontrast - strength
+HISTORY_MSG_145;Microcontrast - uniformity
+HISTORY_MSG_146;Clarity Sharpening - enabled
+HISTORY_MSG_148;Clarity Microcontrast - enabled
+HISTORY_MSG_149;Clarity Microcontrast matrix
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -719,6 +727,15 @@ TP_CHMIXER_GREEN;Green
 TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXER_RED;Red
 TP_CHROMATABERR_LABEL;Chromatic Aberration
+TP_CLARITY_LABEL;Clarity and Sharpening
+TP_CLARITY_SHARPEN;Gradient Sharpening (border)
+TP_CLARITY_STRENGTH;Gradient strength
+TP_CLARITY_PASSES;Gradient passes
+TP_CLARITY_MICRO;Microcontrast (texture)
+TP_CLARITY_THREE;Luminance only
+TP_CLARITY_MATRIX;Matrix 3x3 instead of 5x5
+TP_MLMICRO_STRENGTH;Strength
+TP_MLMICRO_UNIFORMITY;Uniformity
 TP_COARSETRAF_DEGREE;degree:
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left <b>[</b>
