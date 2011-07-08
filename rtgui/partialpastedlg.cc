@@ -43,7 +43,9 @@ PartialPasteDlg::PartialPasteDlg () {
 
     // options in detail:
     sharpen     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENING")));
-	impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
+    gradsharpen = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENTSHARPEN")));
+    microcontrast = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_MICROCONTRAST")));
+    impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     //lumaden     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMADENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     //waveq       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETEQUALIZER")));
@@ -78,6 +80,7 @@ PartialPasteDlg::PartialPasteDlg () {
     // options in raw:
     raw_expos			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_LINEAR")));
     raw_preser			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_PRESER")));
+    raw_black			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_BLACK")));
     raw_ca_autocorrect	= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_AUTO")));
     raw_cared			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CARED")));
     raw_cablue			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWCACORR_CABLUE")));
@@ -114,6 +117,8 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*detail, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*hseps[1], Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*gradsharpen, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*microcontrast, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
     //vboxes[1]->pack_start (*lumaden, Gtk::PACK_SHRINK, 2);
     //vboxes[1]->pack_start (*colorden, Gtk::PACK_SHRINK, 2);
@@ -156,17 +161,23 @@ PartialPasteDlg::PartialPasteDlg () {
 	vboxes[6]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_hotdeadpix_filt, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_preser, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*raw_black, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_cared, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_cablue, Gtk::PACK_SHRINK, 2);
@@ -220,6 +231,8 @@ PartialPasteDlg::PartialPasteDlg () {
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    gradsharpenConn = gradsharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    microcontrastConn = microcontrast->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     impdenConn		= impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     //lumadenConn     = lumaden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     //colordenConn    = colorden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
@@ -254,6 +267,7 @@ PartialPasteDlg::PartialPasteDlg () {
     raw_dcb_enhanceConn     = raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_exposConn           = raw_expos->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_preserConn          = raw_preser->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_blackConn           = raw_black->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ca_autocorrectConn  = raw_ca_autocorrect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_caredConn           = raw_cared->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_cablueConn          = raw_cablue->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -321,6 +335,7 @@ void PartialPasteDlg::rawToggled () {
 	raw_dcb_enhanceConn.block (true);
 	raw_exposConn.block (true);
 	raw_preserConn.block (true);
+	raw_blackConn.block (true);
 	raw_ca_autocorrectConn.block (true);
 	raw_caredConn.block (true);
 	raw_cablueConn.block (true);
@@ -342,6 +357,7 @@ void PartialPasteDlg::rawToggled () {
     raw_dcb_enhance->set_active (raw->get_active ());
     raw_expos->set_active (raw->get_active ());
     raw_preser->set_active (raw->get_active ());
+    raw_black->set_active (raw->get_active ());
     raw_ca_autocorrect->set_active (raw->get_active ());
     raw_cared->set_active (raw->get_active ());
     raw_cablue->set_active (raw->get_active ());
@@ -361,6 +377,7 @@ void PartialPasteDlg::rawToggled () {
     raw_dcb_enhanceConn.block (false);
     raw_exposConn.block (false);
     raw_preserConn.block (false);
+    raw_blackConn.block (false);
     raw_ca_autocorrectConn.block (false);
     raw_caredConn.block (false);
     raw_cablueConn.block (false);
@@ -401,7 +418,9 @@ void PartialPasteDlg::basicToggled () {
 void PartialPasteDlg::detailToggled () {
 
     sharpenConn.block (true);
-	impdenConn.block (true);
+    gradsharpenConn.block(true);
+    microcontrastConn.block(true);
+    impdenConn.block (true);
     dirpyrdenConn.block (true);
     //lumadenConn.block (true);
     //colordenConn.block (true);
@@ -412,6 +431,8 @@ void PartialPasteDlg::detailToggled () {
     detail->set_inconsistent (false);
 
     sharpen->set_active (detail->get_active ());
+    gradsharpen->set_active (detail->get_active ());
+    microcontrast->set_active (detail->get_active ());
 	impden->set_active (detail->get_active ());
     dirpyrden->set_active (detail->get_active ());
     //lumaden->set_active (detail->get_active ());
@@ -421,7 +442,9 @@ void PartialPasteDlg::detailToggled () {
     //waveq->set_active (detail->get_active ());
 
     sharpenConn.block (false);
-	impdenConn.block (false);
+    gradsharpenConn.block(false);
+    microcontrastConn.block(false);
+    impdenConn.block (false);
     dirpyrdenConn.block (false);
     //lumadenConn.block (false);
     //colordenConn.block (false);
@@ -520,6 +543,18 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (labcurve->get_active ())    dst->labCurve = src->labCurve;
 
     if (sharpen->get_active ())     dst->sharpening = src->sharpening;
+    if (gradsharpen->get_active ()){
+    	dst->clarity.enabled = src->clarity.enabled;
+    	dst->clarity.clstrength = src->clarity.clstrength;
+    	dst->clarity.clpasses = src->clarity.clpasses;
+    	dst->clarity.clthreechannels = src->clarity.clthreechannels;
+    }
+    if (microcontrast->get_active ()){
+    	dst->clarity.enabledtwo = src->clarity.enabledtwo;
+    	dst->clarity.MLmicromatrix = src->clarity.MLmicromatrix;
+    	dst->clarity.mlstrength = src->clarity.mlstrength;
+    	dst->clarity.uniformity = src->clarity.uniformity;
+    }
     if (impden->get_active ())		dst->impulseDenoise = src->impulseDenoise;
     //if (lumaden->get_active ())     dst->lumaDenoise = src->lumaDenoise;
     if (dirpyreq->get_active ())	dst->dirpyrequalizer = src->dirpyrequalizer;
@@ -554,6 +589,13 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (raw_dcb_enhance->get_active ())     dst->raw.dcb_enhance    =src->raw.dcb_enhance;
     if (raw_expos->get_active ())           dst->raw.expos          =src->raw.expos;
     if (raw_preser->get_active ())          dst->raw.preser         =src->raw.preser;
+    if (raw_black->get_active ()){
+    	dst->raw.blackzero        =src->raw.blackzero;
+    	dst->raw.blackone         =src->raw.blackone;
+    	dst->raw.blacktwo         =src->raw.blacktwo;
+    	dst->raw.blackthree       =src->raw.blackthree;
+    	dst->raw.twogreen         =src->raw.twogreen;
+    }
     if (raw_ca_autocorrect->get_active ())  dst->raw.ca_autocorrect =src->raw.ca_autocorrect;
     if (raw_cared->get_active ())           dst->raw.cared          =src->raw.cared;
     if (raw_cablue->get_active ())          dst->raw.cablue         =src->raw.cablue;
