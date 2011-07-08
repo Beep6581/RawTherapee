@@ -46,6 +46,8 @@ class PartialPasteDlg : public Gtk::Dialog {
 
         // options in detail:
         Gtk::CheckButton* sharpen;
+        Gtk::CheckButton* gradsharpen;
+        Gtk::CheckButton* microcontrast;
 		Gtk::CheckButton* impden;
         Gtk::CheckButton* lumaden;
 		Gtk::CheckButton* waveq;
@@ -81,6 +83,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         // options in raw:
         Gtk::CheckButton* raw_expos;
         Gtk::CheckButton* raw_preser;
+        Gtk::CheckButton* raw_black;
         Gtk::CheckButton* raw_ca_autocorrect;
         Gtk::CheckButton* raw_cared;
         Gtk::CheckButton* raw_cablue;
@@ -101,13 +104,13 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
 
         sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
-        sigc::connection sharpenConn, impdenConn, lumadenConn, dirpyrdenConn, colordenConn, waveqConn, defringeConn, dirpyreqConn;
+        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, lumadenConn, dirpyrdenConn, colordenConn, waveqConn, defringeConn, dirpyreqConn;
         sigc::connection chmixerConn, colorshiftConn, colorboostConn, hsveqConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn;
         sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
-        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn;
+        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
 
         public:
             PartialPasteDlg ();
