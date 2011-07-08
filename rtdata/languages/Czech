@@ -10,6 +10,9 @@
 #09 18.05.2011: updated by mkyral
 #10 04.06.2011: updated by mkyral
 #11 12.06.2011: updated by mkyral
+#12 16.06.2011: updated by mkyral
+#13 03.07.2011: updated by mkyral
+#14 08.07.2011: updated by mkyral
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -64,11 +67,12 @@ EXIFPANEL_RESET;Obnovit
 EXIFPANEL_SUBDIRECTORY;Podadresář
 FILEBROWSER_ADDDELTEMPLATE;Přidat/Smazat šablony...
 FILEBROWSER_APPLYPROFILE;Aplikovat profil
+FILEBROWSER_APPLYPROFILE_PARTIAL;Aplikovat profil (částečně)
 FILEBROWSER_ARRANGEMENTHINT;Přepnout mezi vertikálním/horizontálním zarovnáním náhledů
 FILEBROWSER_AUTODARKFRAME;Auto tmavé snímky
 FILEBROWSER_AUTOFLATFIELD;Auto Flat-Field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klikněte pro výběr cesty
-FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení (<b>Ctrl-o</b> zaměření,<b>Ctrl-Enter</b> pro procházení v prohlížeči souborů);\nZkratky pro cesty: <b>~</b> - domácí složka uživatele, <b>!</b> - složka s obrázky uživatele
+FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení\n<b>Ctrl-o</b> zaměření\n<b>Enter</b>, <b>Ctrl-Enter</b> (v prohlížeči souborů) pro procházení ;\nZkratky pro cesty:\n <b>~</b> - domácí složka uživatele\n <b>!</b> - složka s obrázky uživatele
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Vymazat z cache - úplně
 FILEBROWSER_CACHECLEARFROMPARTIAL;Vymazat z cache - částečně
@@ -77,7 +81,7 @@ FILEBROWSER_COPYPROFILE;Kopírovat profil
 FILEBROWSER_CURRENT_NAME;Současné jméno:
 FILEBROWSER_DARKFRAME;Tmavý snímek
 FILEBROWSER_DELETEDLGLABEL;Potvrzení smazání souboru
-FILEBROWSER_DELETEDLGMSGINCLPROC;Jste si jisti, že chcete vymazat %1 vybraných souborů VČETNĚ verzí dávkového zpracování?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Jste si jisti, že chcete vymazat %1 vybraných souborů VČETNĚ výstupů dávkového zpracování?
 FILEBROWSER_DELETEDLGMSG;Jste si jisti, že chcete vymazat %1 vybraných souborů?
 FILEBROWSER_EMPTYTRASHHINT;Trvalé smazání souborů z koše
 FILEBROWSER_EMPTYTRASH;Vysypat koš
@@ -101,18 +105,21 @@ FILEBROWSER_POPUPCOLORLABEL3;Štítek: Zelený
 FILEBROWSER_POPUPCOLORLABEL4;Štítek: Modrý
 FILEBROWSER_POPUPCOLORLABEL5;Štítek: Růžový
 FILEBROWSER_POPUPCOPYTO;Kopírovat do...
+FILEBROWSER_POPUPFILEOPERATIONS;Souborové operace
 FILEBROWSER_POPUPMOVEEND;Přesunout na konec fronty
 FILEBROWSER_POPUPMOVEHEAD;Přesunout na začátek fronty
 FILEBROWSER_POPUPMOVETO;Přesunout do...
 FILEBROWSER_POPUPOPEN;Otevřít
 FILEBROWSER_POPUPPROCESS;Vložit do fronty
+FILEBROWSER_POPUPPROFILEOPERATIONS;Operace s profiy
+FILEBROWSER_POPUPRANK;Hodnocení
 FILEBROWSER_POPUPRANK1;Hodnocení 1 *
 FILEBROWSER_POPUPRANK2;Hodnocení 2 **
 FILEBROWSER_POPUPRANK3;Hodnocení 3 ***
 FILEBROWSER_POPUPRANK4;Hodnocení 4 ****
 FILEBROWSER_POPUPRANK5;Hodnocení 5 *****
-FILEBROWSER_POPUPREMOVEINCLPROC;Odstranit ze souborového systému a výsledků zpracování
-FILEBROWSER_POPUPREMOVE;Odstranit ze souborového systému
+FILEBROWSER_POPUPREMOVEINCLPROC;Smazat (včetně výstupů z fronty)
+FILEBROWSER_POPUPREMOVE;Smazat
 FILEBROWSER_POPUPREMOVESUBMENU;Smazat
 FILEBROWSER_POPUPRENAME;Přejmenovat
 FILEBROWSER_POPUPSELECTALL;Vybrat vše
@@ -121,6 +128,9 @@ FILEBROWSER_POPUPUNRANK;Odstranit hodnocení
 FILEBROWSER_POPUPUNTRASH;Vymazat z koše
 FILEBROWSER_PROCESSINGSETTINGSHINT;Nastavení formátu souboru a výstupní složky
 FILEBROWSER_PROCESSINGSETTINGS;Nastavení
+FILEBROWSER_QUERYBUTTONHINT;Smaže vyhledávací dotaz
+FILEBROWSER_QUERYHINT;Napiště část jména souboru a použijte \n<b>Ctrl-f</b> k zaměření (v Prohlížeči souborů);\n<b>Enter</b> k nalezení
+FILEBROWSER_QUERYLABEL; Najít:
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
 FILEBROWSER_RENAMEDLGMSG;Přejmenovat soubor "%1" na:
 FILEBROWSER_SELECTDARKFRAME;Výběr tmavého snímku...
@@ -130,7 +140,9 @@ FILEBROWSER_SHOWCOLORLABEL2HINT;Ukázat obrázky se žlutým štítkem <b>Alt-2<
 FILEBROWSER_SHOWCOLORLABEL3HINT;Ukázat obrázky se zeleným štítkem <b>Alt-3</b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Ukázat obrázky s modrým štítkem <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Ukázat obrázky s růžovým štítkem <b>Alt-5</b>
-FILEBROWSER_SHOWDIRHINT;Ukázat všechny obrázky ve složce (zrušit všechny filtry) <b>D</b>
+FILEBROWSER_SHOWDIRHINT;Smazat všechny filtry <b>D</b>
+FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky  <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky  <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Zobrazit EXIF informace <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Ukázat obsah fronty zpracování
 FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené 1 hvězdičkou <b>1</b>
@@ -138,6 +150,8 @@ FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené 2 hvězdičkama <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Ukázat obrázky hodnocené 3 hvězdičkama <b>3</b>
 FILEBROWSER_SHOWRANK4HINT;Ukázat obrázky hodnocené 4 hvězdičkama <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené 5 hvězdičkama <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Ukázat naposledy uložené obrázky <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Ukázat naposledy neuzožené obrázky<b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše <b>T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky  <b>`</b>
@@ -182,7 +196,7 @@ HISTOGRAM_TOOLTIP_L;Skrýt /zobrazit CIELAB histogram jasu
 HISTOGRAM_TOOLTIP_RAW;Skrýt /zobrazit RAW histogram
 HISTOGRAM_TOOLTIP_R;Skrýt /zobrazit histogram pro ČERVENOU barvu
 HISTORY_CUSTOMCURVE;Vlastní křivka
-HISTORY_DELSNAPSHOT;Odstranit snímek
+HISTORY_DELSNAPSHOT;Odstranit
 HISTORY_FROMCLIPBOARD;Ze schránky
 HISTORY_CHANGED;Změněno
 HISTORY_LABEL;Historie
@@ -234,6 +248,14 @@ HISTORY_MSG_139;Úroveň černé: Modrá
 HISTORY_MSG_14;Zářivost jasu
 HISTORY_MSG_140;Úroveň černé: Zelená 2
 HISTORY_MSG_141;Úroveň černé: Zelené zároveň
+HISTORY_MSG_142;Ostrost - průchody
+HISTORY_MSG_143;Ostrost - síla gradientu
+HISTORY_MSG_144;Mikrokontrast - síla
+HISTORY_MSG_145;Mikrokontrast - jednolitost
+HISTORY_MSG_146;Ostrost/doostření - povoleno
+HISTORY_MSG_147;Ostrost - pouze jas
+HISTORY_MSG_148;Ostrost Mikrokontrast - povoleno
+HISTORY_MSG_149;Ostrost Mikrokontrast matice
 HISTORY_MSG_15;Jas Kontrast
 HISTORY_MSG_16;Jas Černá
 HISTORY_MSG_17;Jas Komprese světel
@@ -393,20 +415,20 @@ IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Konec
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_PREFERENCES;Volby
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Vložit současný obrázek do fronty <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Vložit současný obrázek do fronty zpracování <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Vložit do fronty
 MAIN_BUTTON_SAVE_TOOLTIP;Uložit současný obrázek <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editovat současný obrázek v externím editoru <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Zobrazit/skrýt všechny postraní panely <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Ukončit mód celé obrazovky
-MAIN_FRAME_BATCHQUEUE;Fronta
+MAIN_FRAME_BATCHQUEUE;Fronta 
 MAIN_FRAME_BATCHQUEUE_TOOLTIP; Fronta zpracování  <b>Ctrl-F3</b> 
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 MAIN_FRAME_FILEBROWSER;Prohlížeč souborů 
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Prohlížeč souborů  <b>Ctrl-F2</b> 
 MAIN_FRAME_PLACES_ADD;Přidat
-MAIN_FRAME_PLACES_DEL;Odstranit snímek
+MAIN_FRAME_PLACES_DEL;Odstranit
 MAIN_FRAME_PLACES;Místa
 MAIN_FRAME_RECENT;Poslední složky 
 MAIN_MSG_ALREADYEXISTS;Soubor již existuje.
@@ -498,6 +520,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;FF Automatický výběr
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF Poloměr rozostření
 PARTIALPASTE_FLATFIELDBLURTYPE;FF Typ rozostření
 PARTIALPASTE_FLATFIELDFILE;Flat-Field (FF) Soubor
+PARTIALPASTE_GRADIENTSHARPEN;Gradient ostření (okraj)
 PARTIALPASTE_HLRECONSTRUCTION;Rekonstrukce světel 
 PARTIALPASTE_HLRECOVERYAMOUNT;Míra obnovení světel
 PARTIALPASTE_HLRECOVERY;Obnovení světel
@@ -512,6 +535,7 @@ PARTIALPASTE_LENSGROUP;Nastavení objektivu
 PARTIALPASTE_LUMADENOISE;Redukce šumu v jasech
 PARTIALPASTE_LUMINANCEGROUP;Nastavení jasu
 PARTIALPASTE_METAICMGROUP;Nastavení metadat a ICM
+PARTIALPASTE_MICROCONTRAST;Mikrokontrast
 PARTIALPASTE_PERSPECTIVE;Perspektiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vyrovnání zelené
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
@@ -522,6 +546,7 @@ PARTIALPASTE_RAWCACORR_CARED;Chromatická aberace - červená
 PARTIALPASTE_RAW_DCBENHANCE;Aplikovat kroky rozšiřeného DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Počet kroků DCB
 PARTIALPASTE_RAW_DMETHOD;Metoda demozajkování
+PARTIALPASTE_RAWEXPOS_BLACK;Úrovně černé
 PARTIALPASTE_RAWEXPOS_LINEAR;Faktor lineární korekce Raw bílého bodu
 PARTIALPASTE_RAWEXPOS_PRESER;Korekce zach. Raw bílého bodu (EV)
 PARTIALPASTE_RAW_FALSECOLOR;Kroky potlačení falešných barev demozajkování
@@ -529,7 +554,7 @@ PARTIALPASTE_RAWGROUP;Nastavení Raw
 PARTIALPASTE_RESIZE;Změna velikosti
 PARTIALPASTE_ROTATION;Otočení
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Stíny/Světla
-PARTIALPASTE_SHARPENING;Doostření
+PARTIALPASTE_SHARPENING;Doostření (USM/RL)
 PARTIALPASTE_VIGNETTING;Korekce vinětace
 PARTIALPASTE_WAVELETEQUALIZER;Vlnková korekce
 PARTIALPASTE_WHITEBALANCE;Nastavení bílé
@@ -577,6 +602,7 @@ PREFERENCES_EDITORCMDLINE;Jiný příkaz
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXTERNALEDITOR;Externí editor
 PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů (vypněte na nízkých rozlišeních)
 PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FLATFIELD;Flat-Field
 PREFERENCES_FLATFIELDFOUND;Nalezeno
@@ -598,6 +624,11 @@ PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Sytost
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat interní náhledy RAW nezpracovaných snímků
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
+PREFERENCES_MENUGROUPFILEOPERATIONS;Seskupit souborové operace
+PREFERENCES_MENUGROUPLABEL;Seskupit značení
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Seskupit operace s profily
+PREFERENCES_MENUGROUPRANK;Seskupit hodnocení
+PREFERENCES_MENUOPTIONS;Vlastnosti nabídky
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Profil monitoru
 PREFERENCES_MULTITABDUALMON;Mód více karet; pouze pokud je dostupný druhý monitor
@@ -707,6 +738,13 @@ TOOLBAR_TOOLTIP_WB;Bodové vyvážení bílé <b>W</b>
 TP_CACORRECTION_BLUE;Modrá
 TP_CACORRECTION_LABEL;Úprava chromatické vady
 TP_CACORRECTION_RED;Červená
+TP_CLARITY_LABEL;Ostrost a doostření
+TP_CLARITY_MATRIX;Matice 3x3 místo 5x5
+TP_CLARITY_MICRO;Mikrokontrast (textura)
+TP_CLARITY_PASSES;Průchody gradientu
+TP_CLARITY_SHARPEN;Gradient ostření (okraj)
+TP_CLARITY_STRENGTH;Síla gradientu
+TP_CLARITY_THREE;Pouze jas
 TP_COARSETRAF_DEGREE;Stupeň:
 TP_COARSETRAF_TOOLTIP_HFLIP;Překlopit horizontálně
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva
@@ -764,7 +802,7 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Nejjemnější
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutrální
 TP_DIRPYREQUALIZER_THRESHOLD;Práh
 TP_DISTORTION_AMOUNT;Míra
-TP_DISTORTION_AUTO;Automatická korekce zkreslení
+TP_DISTORTION_AUTO;    Automatická korekce zkreslení objektivu
 TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (M4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Oprava zkreslení objektivu
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
@@ -849,12 +887,14 @@ TP_LABCURVE_ENABLESATLIMITER;Omezovat sytost
 TP_LABCURVE_LABEL;Úprava LAB křivek
 TP_LABCURVE_SATLIMIT;Limit sytosti
 TP_LABCURVE_SATURATION;Sytost
-TP_LENSGEOM_AUTOCROP;Automatický ořez
+TP_LENSGEOM_AUTOCROP;    Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
 TP_LUMADENOISE_EDGETOLERANCE;Tolerance okrajům
 TP_LUMADENOISE_LABEL;Redukce šumu v jasech
 TP_LUMADENOISE_RADIUS;Poloměr
+TP_MLMICRO_STRENGTH;Síla
+TP_MLMICRO_UNIFORMITY;Jednolitost
 TP_PERSPECTIVE_HORIZONTAL;Vodorovně
 TP_PERSPECTIVE_LABEL;Perspektiva
 TP_PERSPECTIVE_VERTICAL;Svisle
@@ -870,6 +910,7 @@ TP_RAW_DCBENHANCE;Aplikovat kroky rozšiřeného DCB
 TP_RAW_DCBITERATIONS;Počet kroků DCB
 TP_RAW_DMETHOD;Metoda
 TP_RAWEXPOS_BLACKONE;Úroveň černé: Červená
+TP_RAWEXPOS_BLACKS;Úrovně černé
 TP_RAWEXPOS_BLACKTHREE;Úroveň černé: Zelená 2
 TP_RAWEXPOS_BLACKTWO;Úroveň černé: Modrá
 TP_RAWEXPOS_BLACKZERO;Úroveň černé: Zelená 1 (řídící)
