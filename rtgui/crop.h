@@ -54,7 +54,8 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     int nx, ny, nw, nh;
     int lastRotationDeg;
     sigc::connection xconn, yconn, wconn, hconn, econn, fconn, rconn, oconn, gconn;
-    bool wDirty, hDirty, xDirty, yDirty, lastEnabled, lastAspect;
+    bool wDirty, hDirty, xDirty, yDirty, lastEnabled, lastFixRatio;
+    void adjustCropToRatio();
 
   public:
 
@@ -65,6 +66,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     void setBatchMode   (bool batchMode);
     
     void ratioChanged   ();
+    void ratioFixedChanged ();  // The toggle button
     void refreshSize    ();
     void selectPressed  ();
     void setDimensions   (int mw, int mh);

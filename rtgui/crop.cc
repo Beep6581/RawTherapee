@@ -198,7 +198,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   wconn = w->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::widthChanged), true);
   hconn = h->signal_value_changed().connect ( sigc::mem_fun(*this, &Crop::heightChanged), true);
   econn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Crop::enabledChanged) );
-  fconn = fixr->signal_toggled().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
+  fconn = fixr->signal_toggled().connect( sigc::mem_fun(*this, &Crop::ratioFixedChanged) );
   rconn = ratio->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
   oconn = orientation->signal_changed().connect( sigc::mem_fun(*this, &Crop::ratioChanged) );
   gconn = guide->signal_changed().connect( sigc::mem_fun(*this, &Crop::notifyListener) );
@@ -305,7 +305,7 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
     }
 
     lastEnabled = pp->crop.enabled;
-    lastAspect  = pp->crop.fixratio;
+    lastFixRatio = pp->crop.fixratio;
 
     xconn.block (false);
     yconn.block (false);
@@ -527,23 +527,34 @@ void Crop::heightChanged () {
     g_idle_add (notifyListenerUI, this);
 }
 
-
-void Crop::ratioChanged () {
-
-    if (batchMode && lastAspect != fixr->get_active ()) {
+// Fixed ratio toggle button
+void Crop::ratioFixedChanged () {
+    // Batch mode handling when enabling/disabling fixed crop
+    if (batchMode && lastFixRatio != fixr->get_active ()) {
         if (fixr->get_inconsistent()) {
             fixr->set_inconsistent (false);
             fconn.block (true);
             fixr->set_active (false);
             fconn.block (false);
         }
-        else if (lastAspect)
+        else if (lastFixRatio)
             fixr->set_inconsistent (true);
-
-        lastAspect = fixr->get_active ();
     }
 
+    lastFixRatio = fixr->get_active ();
+    adjustCropToRatio();
+}
 
+// change to orientation or ration
+void Crop::ratioChanged () {
+    if (!fixr->get_active ())
+        fixr->set_active(true);  // will ajust ratio anyway
+    else
+        adjustCropToRatio();
+}
+
+// Correct current crop if it doesn't fit
+void Crop::adjustCropToRatio() {
   if (fixr->get_active() && !fixr->get_inconsistent()) {
  
 //    int W = w->get_value ();
@@ -556,10 +567,11 @@ void Crop::ratioChanged () {
       cropWidth2Resized (X, Y, W, H);
     else 
       cropHeight2Resized (X, Y, W, H);
+    }
 
+    // This will safe the options
     g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, true));
   }
-}
 
 void Crop::refreshSize () {
 
