@@ -20,9 +20,6 @@
 #include <iptcpairs.h>
 #include <glib/gstdio.h>
 #include <safegtk.h>
-#ifdef RAWZOR_SUPPORT
-#include <rwz_sdk.h>
-#endif
 
 #ifndef GLIBMM_EXCEPTIONS_ENABLED
 #include <memory>
@@ -42,42 +39,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
     int dotpos = fname.find_last_of ('.');
     root = NULL;
     iptc = NULL;
-#ifdef RAWZOR_SUPPORT
-    // RAWZOR support begin
-    if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".rwz") && ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
-        FILE* f = safe_g_fopen (fname, "rb");
-        if (f) {
-        	fseek (f, 0, SEEK_END);
-        	int rzwSize = ftell (f);
-            char* rzwData = new char [rzwSize];
-        	fseek (f, 0, SEEK_SET);
-	        fread (rzwData, 1, rzwSize, f);
-            fclose(f);
-            int rawSize;
-            if (!m_rwz_check (rzwData, rzwSize, &rawSize)) {
-                char* rawData = new char [rawSize];
-                if (!m_rwz_get_meta_only (rzwData, rzwSize, rawData, rawSize)) {
-                    std::string tfname;
-                    int fd = Glib::file_open_tmp (tfname, "");
-                    FILE* tf = fdopen (fd, "w+b");
-                    fwrite (rawData, 1, rawSize, tf);
-                    if (ri->exifBase>=0)
-                        root = rtexif::ExifManager::parse (tf, ri->exifBase);
-                    else if (ri->ciffBase>=0)
-                        root = rtexif::ExifManager::parseCIFF (tf, ri->ciffBase, ri->ciffLength);
-                    fclose (tf);
-                    safe_g_remove (tfname);
-                    extractInfo ();
-                }
-                delete [] rawData;
                 
-            }
-            delete [] rzwData;
-        }
-    }    
-    // RAWZOR support end
-    else 
-#endif
     if (ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {

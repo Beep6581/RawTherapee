@@ -13,7 +13,6 @@ set(CREDITSDIR . CACHE PATH "Credit file installation path")
 set(LICENCEDIR . CACHE PATH "Licence file installation path")
 
 set(BUILD_SHARED OFF CACHE BOOL "Should RT generate shared libraries")
-set(WITH_RAWZOR ON CACHE BOOL "With Rawzor")
 set(OPTION_OMP ON CACHE BOOL "Use OpenMP to speedup the preview and batch processing")
 # set WITH_MYFILE_MMAP to OFF if you experience crash with thumbnail creation (it should be slower, but more reliable)
 set(WITH_MYFILE_MMAP ON CACHE BOOL "Use the MMAP mechanism to speedup thumbnail creations")
