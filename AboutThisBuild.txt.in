@@ -11,4 +11,4 @@ Build flags: ${CXX_FLAGS}
 Link flags: ${LFLAGS}
 OpenMP support: ${OPTION_OMP}
 MMAP support: ${WITH_MYFILE_MMAP}
-Rawzor support: ${WITH_RAWZOR}
+

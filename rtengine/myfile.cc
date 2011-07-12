@@ -20,9 +20,6 @@
 #include <cstdarg>
 #include <glibmm.h>
 #include <safegtk.h>
-#ifdef RAWZOR_SUPPORT
-#include <rwz_sdk.h>
-#endif
 #ifdef BZIP_SUPPORT
 #include <bzlib.h>
 #endif
@@ -190,26 +187,7 @@ IMFILE* fopen (const char* fname) {
 	fclose (f);
 	mf->pos = 0;
 	mf->eof = false;
-#ifdef RAWZOR_SUPPORT
-    // RAWZOR support begin
-    bool rawzor = false;
-    Glib::ustring bname = Glib::path_get_basename(fname);
-    int lastdot = bname.find_last_of ('.');
-    if (lastdot!=bname.npos)
-        rawzor = bname.substr (lastdot).casefold() == Glib::ustring(".rwz").casefold();
 
-    if (rawzor) {
-        int realSize = 0;
-        if (!m_rwz_check (mf->data, mf->size, &realSize)) {
-            char* realData = new char [realSize];
-            m_rwz_decompress (mf->data, mf->size, realData, realSize);
-            delete [] mf->data;
-            mf->data = realData;
-            mf->size = realSize;
-        }
-    }
-    // RAWZOR support end
-#endif
     return mf;
 }
 
@@ -228,26 +206,6 @@ IMFILE* gfopen (const char* fname) {
 	mf->pos = 0;
 	mf->eof = false;
 
-#ifdef RAWZOR_SUPPORT
-    // RAWZOR support begin
-    bool rawzor = false;
-    Glib::ustring bname = Glib::path_get_basename(fname);
-    int lastdot = bname.find_last_of ('.');
-    if (lastdot!=bname.npos)
-        rawzor = bname.substr (lastdot).casefold() == Glib::ustring(".rwz").casefold();
-
-    if (rawzor) {
-        int realSize = 0;
-        if (!m_rwz_check (mf->data, mf->size, &realSize)) {
-            char* realData = new char [realSize];
-            m_rwz_decompress (mf->data, mf->size, realData, realSize);
-            delete [] mf->data;
-            mf->data = realData;
-            mf->size = realSize;
-        }
-    }
-    // RAWZOR support end
-#endif
 #ifdef BZIP_SUPPORT
     {
       bool bzip = false;

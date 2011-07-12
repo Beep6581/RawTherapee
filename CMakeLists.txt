@@ -58,7 +58,6 @@ endif (APPLE)
 option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
-option (WITH_RAWZOR "Build with Rawzor support" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
@@ -206,7 +205,6 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Windows.cmake
       COMMENT "Creating the about file"
     )
@@ -227,7 +225,6 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Apple.cmake
       COMMENT "Creating the about file"
     )
@@ -249,7 +246,6 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Linux.cmake
       COMMENT "Creating the about file"
     )
@@ -267,48 +263,6 @@ else (AUTOMATED_BUILD_SYSTEM)
 
 endif (AUTOMATED_BUILD_SYSTEM)
 
-# link rawzor
-if (WITH_RAWZOR)
-    set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor")
-    add_definitions (-DRAWZOR_SUPPORT)
-    if (WIN32)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32")
-            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32/rwz_sdk.dll DESTINATION ${BINDIR}
-                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64")
-            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64/rwz_sdk.dll DESTINATION ${BINDIR}
-                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    elseif (APPLE)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32")
-            set (EXTRA_LIB "-lrwz_sdk")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32/rwz_sdk.dylib DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64")
-            set (EXTRA_LIB "-lrwz_sdk_64")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64/rwz_sdk_64.dylib DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    else (WIN32)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32")
-            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32/librwz_sdk.so DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64")
-            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64/librwz_sdk.so DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    endif (WIN32)
-endif (WITH_RAWZOR)
 
 # link witz bzip
 if (WITH_BZIP)

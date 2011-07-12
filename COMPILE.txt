@@ -166,8 +166,6 @@ Windows
 			  make
 			  make install
 
-			Rawzor:
-			provided in RT's source tree (downloaded from http://www.rawzor.com/developers/)
 
 			IMPORTANT:
 			   Make sure that the lcms.pc and libiptcdata.pc files located in the pkgconfig dir has the first
