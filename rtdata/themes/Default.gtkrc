@@ -278,8 +278,15 @@ style "clearlooks-separator_menu_item" {
 style "clearlooks-frame_title" {
 
 	fg[NORMAL]        = lighter (@rt_fg_color)
+	fg[PRELIGHT]      = lighter (@rt_fg_color)
+	fg[ACTIVE]        = lighter (@rt_fg_color)
+	fg[SELECTED]      = lighter (@rt_fg_color)
 }
 
+style "clearlooks-partialPasteHeaderSep" {
+
+	bg[NORMAL]        = mix (0.10, @rt_fg_color, @rt_bg_color)
+}
 style "clearlooks-treeview" {
 
 	engine "clearlooks" {
@@ -378,6 +385,9 @@ widget_class "*.<GtkTreeView>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCTree>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkList>.<GtkButton>" style "clearlooks-treeview_header"
 widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
+
+widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
+widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

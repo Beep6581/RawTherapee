@@ -25,14 +25,22 @@ PartialPasteDlg::PartialPasteDlg () {
     set_title (M("PARTIALPASTE_DIALOGLABEL"));
 
     everything  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EVERYTHING")));
+    everything  ->set_name("partialPasteHeader");
 
     basic       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_BASICGROUP")));
+    basic       ->set_name("partialPasteHeader");
     detail      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DETAILGROUP")));
+    detail      ->set_name("partialPasteHeader");
     color       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORGROUP")));
+    color       ->set_name("partialPasteHeader");
     lens        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LENSGROUP")));
+    lens        ->set_name("partialPasteHeader");
     composition = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMPOSITIONGROUP")));
+    composition ->set_name("partialPasteHeader");
     metaicm     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_METAICMGROUP")));
+    metaicm     ->set_name("partialPasteHeader");
     raw         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWGROUP")));
+    raw         ->set_name("partialPasteHeader");
 
     // options in basic:
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
@@ -104,6 +112,7 @@ PartialPasteDlg::PartialPasteDlg () {
         vboxes[i] = Gtk::manage (new Gtk::VBox ());
         vboxes[i]->set_border_width (6);
         hseps[i] = Gtk::manage (new Gtk::HSeparator ());
+        hseps[i]->set_name("partialPasteHeaderSep");
     }
     
     vboxes[0]->pack_start (*basic, Gtk::PACK_SHRINK, 2);
