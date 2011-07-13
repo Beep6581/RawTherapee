@@ -96,7 +96,6 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
 	// To make sure it's not flooding update, this gets filtered.
 	time_t curTime= ::time(NULL);
     if (notify && monData->listener && ::difftime(curTime, monData->lastTimeUpdateDir)>1.0) {
-    	printf("----- Appel de WinDirChanged -----\n");
         monData->listener->winDirChanged ();
 		monData->lastTimeUpdateDir = curTime;
 	}
