@@ -17,18 +17,86 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <windirmonitor.h>
+#include <options.h>
 
 static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nBytes, LPOVERLAPPED lpOverlapped) {
+
+    DWORD dwOffset = 0;
+    FILE_NOTIFY_INFORMATION* pInfo = NULL;
+
     WinDirMonitor::MonitorData* monData = (WinDirMonitor::MonitorData*)lpOverlapped;
     if (!nBytes) {
         delete monData;
         return;
     }
 
+    bool notify = false;
+    // Analysis of the modifications
+    do {
+        Glib::ustring fname = "";
+        Glib::ustring action = "";
+        int strLen = 0;
+
+        // Get a pointer to the first change record...
+        pInfo = (FILE_NOTIFY_INFORMATION*) &monData->file_notify_buffer[dwOffset];
+
+        char fnameC[(MAX_PATH+1)*2] = {0};
+        strLen = WideCharToMultiByte(CP_UTF8,0,pInfo->FileName,pInfo->FileNameLength/sizeof(WCHAR),fnameC,sizeof(fnameC),0,0);
+        fnameC[strLen] = 0;
+        fname = fnameC;
+
+        if (options.has_retained_extention(fname))
+        {
+        	switch (pInfo->Action)
+        	{
+			case (FILE_ACTION_ADDED):
+				action = "FILE_ACTION_ADDED";
+				break;
+			case (FILE_ACTION_REMOVED):
+				action = "FILE_ACTION_REMOVED";
+				break;
+			case (FILE_ACTION_MODIFIED):
+				action = "FILE_ACTION_MODIFIED";
+				break;
+			case (FILE_ACTION_RENAMED_OLD_NAME):
+				action = "FILE_ACTION_RENAMED_OLD_NAME";
+				break;
+			case (FILE_ACTION_RENAMED_NEW_NAME):
+				action = "FILE_ACTION_RENAMED_NEW_NAME";
+				break;
+			case (FILE_ACTION_REMOVED_BY_DELETE):
+				action = "FILE_ACTION_REMOVED_BY_DELETE";
+			/*	break;
+			case (FILE_ACTION_ADDED_STREAM):
+				action = "FILE_ACTION_ADDED_STREAM";
+				break;
+			case (FILE_ACTION_REMOVED_STREAM):
+				action = "FILE_ACTION_REMOVED_STREAM";
+				break;
+			case (FILE_ACTION_MODIFIED_STREAM):
+				action = "FILE_ACTION_MODIFIED_STREAM";
+				break;
+			case (FILE_ACTION_ID_NOT_TUNNELLED):
+				action = "FILE_ACTION_ID_NOT_TUNNELLED";
+				break;
+			case (FILE_ACTION_TUNNELLED_ID_COLLISION):
+				action = "FILE_ACTION_TUNNELLED_ID_COLLISION";*/
+			default:
+				break;
+			}
+			notify = true;
+        }
+
+        // More than one change may happen at the same time.  Load the next change and continue...
+        dwOffset += pInfo->NextEntryOffset;
+    }
+    while (pInfo->NextEntryOffset != 0);
+
 	// ReadDirectoryChangesW sometimes emits multiple events per change (one for each change type)
 	// To make sure it's not flooding update, this gets filtered.
 	time_t curTime= ::time(NULL);
-    if (monData->listener && ::difftime(curTime, monData->lastTimeUpdateDir)>1.0) {
+    if (notify && monData->listener && ::difftime(curTime, monData->lastTimeUpdateDir)>1.0) {
+    	printf("----- Appel de WinDirChanged -----\n");
         monData->listener->winDirChanged ();
 		monData->lastTimeUpdateDir = curTime;
 	}

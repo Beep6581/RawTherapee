@@ -471,9 +471,7 @@ void EditorPanel::saveProfile () {
     ProcParams params;
     ipc->getParams (&params);
 
-    if (options.saveParamsFile)
-        params.save (openThm->getFileName() + paramFileExtension);
-    if (options.saveParamsCache)
+        // Will call updateCache, which will update both the cached and sidecar files if necessary
         openThm->setProcParams (params, EDITOR);
 }
 }
