@@ -618,15 +618,15 @@ void Thumbnail::saveThumbnail ()
 	_saveThumbnail(); 
 }
 
-void Thumbnail::updateCache () {
+void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 
-    if (pparamsValid) {
-        if (options.saveParamsCache)
-            pparams.save (getCacheFileName ("profiles")+paramFileExtension);
-        if (options.saveParamsFile)
-//            pparams.save (removeExtension(fname) + paramFileExtension);
-            pparams.save (fname + paramFileExtension);
+    if (updatePParams && pparamsValid) {
+        pparams.save (
+            options.saveParamsCache ? getCacheFileName ("profiles")+paramFileExtension : "",
+            options.saveParamsFile  ? fname + paramFileExtension : ""
+        );
     }
+    if (updateCacheImageData)
     cfs.save (getCacheFileName ("data")+".txt");
 }
 

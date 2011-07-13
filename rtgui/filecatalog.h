@@ -49,6 +49,12 @@ class DirEntry {
 	}
 };
 class FilePanel;
+/*
+ * Class:
+ *   - handling the list of file (add/remove them)
+ *   - handling the thumbnail toolbar,
+ *   - monitoring the directory (for any change)
+ */
 class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
@@ -59,6 +65,7 @@ class FileCatalog : public Gtk::VBox,
 #endif
  {
 
+    private:
         FilePanel* filepanel;
         Gtk::HBox* hBox;
         Glib::ustring selectedDirectory;
@@ -127,21 +134,19 @@ class FileCatalog : public Gtk::VBox,
 
 		FilterPanel* filterPanel;
 
-        Glib::RefPtr<Gio::FileMonitor> dirMonitor;
-
         int previewsToLoad;
         int previewsLoaded;
 
 
-#ifdef WIN32
-        WinDirMonitor* wdMonitor;
-     public:
-        void winDirChanged ();
-     private:
-#endif		
         std::vector<Glib::ustring> fileNameList;
         std::set<Glib::ustring> editedFiles;
         guint modifierKey; // any modifiers held when rank button was pressed
+
+#ifndef _WIN32
+        Glib::RefPtr<Gio::FileMonitor> dirMonitor;
+#else
+        WinDirMonitor* wdMonitor;
+#endif
 
         void addAndOpenFile (const Glib::ustring& fname);
         void checkAndAddFile (Glib::RefPtr<Gio::File> info);
@@ -203,7 +208,6 @@ class FileCatalog : public Gtk::VBox,
                 void runFilterDialog ();
 
                 void on_realize();
-                void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);
 				void reparseDirectory ();
                 void _openImage (std::vector<Thumbnail*> tmb);
                 
@@ -226,6 +230,13 @@ class FileCatalog : public Gtk::VBox,
 
                 bool CheckSidePanelsVisibility();
                 void toggleSidePanels();
+
+#ifndef _WIN32
+                void on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal);
+#else
+                void winDirChanged ();
+#endif
+
 };
 
 #endif

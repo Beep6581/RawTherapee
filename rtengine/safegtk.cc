@@ -106,13 +106,45 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<FileMTimeIn
     }
 }
 
-void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &names, const Glib::ustring &directory)
+/*
+ * safe_build_file_list can now filter out at the source all files that doesn't have the extensions specified (if provided)
+ */
+void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &names, const Glib::ustring &directory, const std::vector<Glib::ustring> *extensions)
 {
     Glib::RefPtr<Gio::FileEnumerator> dirList;
+
     if (dir) {
-				SAFE_ENUMERATOR_CODE_START
-            names.push_back (Glib::build_filename (directory, info->get_name()));
-				SAFE_ENUMERATOR_CODE_END;
+    	if (!extensions) {
+			SAFE_ENUMERATOR_CODE_START
+				names.push_back (Glib::build_filename (directory, info->get_name()));
+			SAFE_ENUMERATOR_CODE_END;
+    	}
+    	else {
+    		// convert extensions to lowercase in a new vector list
+			std::vector<Glib::ustring> lcExtensions;
+			for (unsigned int i=0; i<extensions->size(); i++)
+				lcExtensions.push_back ((*extensions)[i].lowercase());
+
+			SAFE_ENUMERATOR_CODE_START
+			// convert the current filename to lowercase in a new ustring
+			Glib::ustring fname = Glib::ustring(info->get_name()).lowercase();
+
+			int pos = fname.find_last_of('.');
+			if (pos > -1 && pos < (fname.length()-1)) {
+				// there is an extension to the filename
+
+				Glib::ustring lcFileExt = fname.substr(pos+1).lowercase();
+
+				// look out if it has one of the retained extensions
+				for (unsigned int i=0; i<lcExtensions.size(); i++) {
+					if (lcFileExt == lcExtensions[i]) {
+						names.push_back (Glib::build_filename (directory, info->get_name()));
+						break;
+					}
+				}
+			}
+			SAFE_ENUMERATOR_CODE_END;
+    	}
     }
 }
 

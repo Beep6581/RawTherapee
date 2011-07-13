@@ -1197,6 +1197,7 @@ void Preferences::okPressed () {
     storePreferences ();
     workflowUpdate();
     options.copyFrom (&moptions);   
+    options.filterOutParsedExtensions();
     Options::save ();
     hide ();
 }

@@ -23,6 +23,9 @@
 #include <thumbbrowserentrybase.h>
 #include <set>
 
+/*
+ * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
+ */
 class ThumbBrowserBase  :  public Gtk::VBox {  
 
     class Internal : public Gtk::DrawingArea {

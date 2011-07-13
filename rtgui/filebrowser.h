@@ -46,6 +46,9 @@ struct FileBrowserIdleHelper {
     int pending;
 };
 
+/*
+ * Class handling actions common to all thumbnails of the file browser
+ */
 class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {  
 
     typedef sigc::signal<void> type_trash_changed;

@@ -496,11 +496,13 @@ class ProcParams {
         */
         void    setDefaults ();
       /**
-        * Saves the parameters to a file.
-        * @param fname the name of the file
-        * @return Error code (=0 if no error)
+        * Saves the parameters to possibly two files. This is a performance improvement if a function has to
+        * save the same file in two different location, i.e. the cache and the image's directory
+        * @param fname  the name of the first file (can be an empty string)
+        * @param fname2 the name of the second file (can be an empty string) (optional)
+        * @return Error code (=0 if all supplied filenames where created correctly)
         */
-        int     save        (Glib::ustring fname) const;
+        int     save        (Glib::ustring fname, Glib::ustring fname2 = "") const;
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file
@@ -518,6 +520,15 @@ class ProcParams {
 
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);
+
+    private:
+        /** Write the ProcParams's text in the file of the given name.
+        * @param fname the name of the file
+        * @param content the text to write
+        * @return Error code (=0 if no error)
+        * */
+        int write (Glib::ustring &fname, Glib::ustring &content) const;
+
 };
 }
 }

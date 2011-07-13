@@ -832,7 +832,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
             tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
             tbe[i]->getThumbButtonSet()->setInTrash (true);
-            tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+            tbe[i]->thumbnail->updateCache (); // needed to save the colorlabel to disk in the procparam file(s) and the cache image data file
         }
     }
     trash_changed().emit();
@@ -851,7 +851,7 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
             tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
             tbe[i]->getThumbButtonSet()->setInTrash (false);
-            tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+            tbe[i]->thumbnail->updateCache (); // needed to save the colorlabel to disk in the procparam file(s) and the cache image data file
         }
     }
     trash_changed().emit();
@@ -868,7 +868,7 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
     	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
 
         tbe[i]->thumbnail->setRank (rank);
-        tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+        tbe[i]->thumbnail->updateCache (); // needed to save the colorlabel to disk in the procparam file(s) and the cache image data file
         //TODO? - should update pparams instead?
 
         if (tbe[i]->getThumbButtonSet())
@@ -887,7 +887,7 @@ void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int c
     	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
 
         tbe[i]->thumbnail->setColorLabel (colorlabel);
-        tbe[i]->thumbnail->updateCache(); // needed to save the colorlabel to disk
+        tbe[i]->thumbnail->updateCache(); // needed to save the colorlabel to disk in the procparam file(s) and the cache image data file
         //TODO? - should update pparams instead?
         if (tbe[i]->getThumbButtonSet())
                 tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());

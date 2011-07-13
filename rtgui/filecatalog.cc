@@ -464,7 +464,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList () {
 
     std::vector<Glib::ustring> names;
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (selectedDirectory);
-		safe_build_file_list (dir, names, selectedDirectory);
+    safe_build_file_list (dir, names, selectedDirectory, &(options.parsedExtensions));
     return names;
 }
 
@@ -666,9 +666,10 @@ void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
     	bool continueToLoad=true;
         for (size_t i=0; i< tmb.size() && continueToLoad; i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end()){
-            	listener->fileSelected (tmb[i]);
-                if( !options.tabbedUI )
-                	continueToLoad = false;
+                // Open the image here, and stop if in Single Editor mode, or if an image couldn't
+                // be opened, would it be because the file doesn't exist or because of lack of RAM
+                if( !(listener->fileSelected (tmb[i])) && !options.tabbedUI )
+                    continueToLoad = false;
             }
             tmb[i]->decreaseRef ();
         }
@@ -1276,19 +1277,24 @@ int winDirChangedUITread (void* cat) {
 void FileCatalog::winDirChanged () {
 	g_idle_add(winDirChangedUITread, this);
 }
-#endif
+
+#else
 
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal) {
 
-    if (!internal)
-        gdk_threads_enter();
+	if (options.has_retained_extention(file->get_parse_name())) {
+		if (!internal)
+			gdk_threads_enter();
 
-    if (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED) 
-		reparseDirectory ();
+		if (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED)
+			reparseDirectory ();
 
-	if (!internal)
-        gdk_threads_leave();
+		if (!internal)
+			gdk_threads_leave();
+	}
 }
+
+#endif
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
 
