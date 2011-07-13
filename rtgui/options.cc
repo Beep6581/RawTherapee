@@ -23,6 +23,7 @@
 #include <multilangmgr.h>
 #include <safekeyfile.h>
 #include <addsetids.h>
+#include <guiutils.h>
 #include <safegtk.h>
 #include <version.h>
 
@@ -116,6 +117,7 @@ void Options::setDefaults () {
     //crvOpen.clear ();
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
+    parsedExtensions.clear ();
     renameUseTemplates = false;
     renameTemplates.clear ();
     thumbnailZoomRatios.clear ();
@@ -193,6 +195,12 @@ Options* Options::copyFrom (Options* other) {
 
     *this = *other;
 	return this;
+}
+
+void Options::filterOutParsedExtensions () {
+	parsedExtensions.clear();
+	for (unsigned int i=0; i<parseExtensions.size(); i++)
+		if (parseExtensionsEnabled[i]) parsedExtensions.push_back(parseExtensions[i].lowercase());
 }
 
 int Options::readFromFile (Glib::ustring fname) {
@@ -346,6 +354,8 @@ if (keyFile.has_group ("Color Management")) {
 if (keyFile.has_group ("Batch Processing")) { 
     if (keyFile.has_key ("Batch Processing", "AdjusterBehavior")) baBehav = keyFile.get_integer_list ("Batch Processing", "AdjusterBehavior");
 }
+
+        filterOutParsedExtensions ();
 
         return 0;
 }
@@ -601,9 +611,32 @@ void Options::save () {
     }
 }
 
+/*
+ * return true if fname ends with one of the retained image file extensions
+ */
+bool Options::has_retained_extention (Glib::ustring fname) {
+
+	Glib::ustring ext = getExtension(fname).lowercase();
+
+	if (ext.length()) {
+		// there is an extension to the filename
+
+		// look out if it has one of the retained extensions
+		for (unsigned int i=0; i<parsedExtensions.size(); i++) {
+			if (ext == parsedExtensions[i]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/*
+ * return true if ext is an enabled extension
+ */
 bool Options::is_extention_enabled (Glib::ustring ext) {
-		for (int j=0; j<(int)parseExtensions.size(); j++)
-      if (parseExtensions[j].casefold() == ext.casefold())
-				return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
-		return false;
+	for (int j=0; j<(int)parseExtensions.size(); j++)
+		if (parseExtensions[j].casefold() == ext.casefold())
+			return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
+	return false;
 }

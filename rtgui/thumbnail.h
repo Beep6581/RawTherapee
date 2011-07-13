@@ -126,7 +126,7 @@ class Thumbnail {
         void            increaseRef ();
         void            decreaseRef ();
         
-        void            updateCache ();
+        void            updateCache (bool updatePParams = true, bool updateCacheImageData = true);
         void            saveThumbnail ();
 
         bool            openDefaultViewer(int destination);

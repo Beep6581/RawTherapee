@@ -119,8 +119,9 @@ class Options {
     ThFileType thumbnailFormat;
     int thumbInterp; // 0: nearest, 1: bilinear
     bool liveThumbnails;
-    std::vector<Glib::ustring> parseExtensions;
-    std::vector<int> parseExtensionsEnabled;
+    std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
+    std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
+    std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::vector<int> tpOpen;
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
@@ -143,13 +144,15 @@ class Options {
     Options ();
 
     Options*    copyFrom        (Options* other);
+    void        filterOutParsedExtensions ();
     void        setDefaults     ();
     int         readFromFile    (Glib::ustring fname);
     int         saveToFile      (Glib::ustring fname);
     static void load            ();
     static void save            ();
 
-    bool        is_extention_enabled(Glib::ustring ext);
+    bool        has_retained_extention (Glib::ustring fname);
+    bool        is_extention_enabled   (Glib::ustring ext);
 };
 
 extern Options options;

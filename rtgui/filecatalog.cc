@@ -265,7 +265,7 @@ std::vector<Glib::ustring> FileCatalog::getFileList () {
 
     std::vector<Glib::ustring> names;
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (selectedDirectory);
-		safe_build_file_list (dir, names, selectedDirectory);
+    safe_build_file_list (dir, names, selectedDirectory, &(options.parsedExtensions));
     return names;
 }
 
@@ -451,12 +451,13 @@ void FileCatalog::refreshHeight () {
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
 
     if (enabled && listener!=NULL) {
-    	bool continueToLoad=true;
+        bool continueToLoad=true;
         for (size_t i=0; i< tmb.size() && continueToLoad; i++) {
             if (editedFiles.find (tmb[i]->getFileName())==editedFiles.end()){
-            	listener->fileSelected (tmb[i]);
-                if( !options.tabbedUI )
-                	continueToLoad = false;
+                // Open the image here, and stop if in Single Editor mode, or if an image couldn't
+                // be opened, would it be because the file doesn't exist or because of lack of RAM
+                if( !(listener->fileSelected (tmb[i])) && !options.tabbedUI )
+                    continueToLoad = false;
             }
             tmb[i]->decreaseRef ();
         }
@@ -784,7 +785,7 @@ int FileCatalog::reparseDirectory () {
         closeDir ();
 		return 0;
 	}
-	
+
 	std::vector<Glib::ustring> nfileNameList = getFileList ();
 
 	// check if a thumbnailed file has been deleted
@@ -817,37 +818,43 @@ int FileCatalog::reparseDirectory () {
 }
 
 #ifdef _WIN32
+
 void FileCatalog::winDirChanged () {
 
     checkCounter = 0;
 }
-#endif
+
+#else
 
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal) {
 
-    if (!internal)
-        gdk_threads_enter();
+	if (options.has_retained_extention(file->get_parse_name())) {
+		if (!internal)
+			gdk_threads_enter();
 
-    if (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED) 
-		reparseDirectory ();
+		if (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED)
+			reparseDirectory ();
 
-	if (!internal)
-        gdk_threads_leave();
+		if (!internal)
+			gdk_threads_leave();
+	}
 }
+
+#endif
 
 void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
 
     if (!file )
         return;
     if( !file->query_exists())
-        return;
+    	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
         int lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
-            previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
+						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
-        }
+				}
     }
 }
 
