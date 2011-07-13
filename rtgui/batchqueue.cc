@@ -33,12 +33,20 @@ BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
 
     int p = 0;
     pmenu = new Gtk::Menu ();
-    pmenu->attach (*Gtk::manage(cancel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCANCELJOB"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
-    pmenu->attach (*Gtk::manage(head = new Gtk::MenuItem (M("FILEBROWSER_POPUPMOVEHEAD"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*Gtk::manage(tail = new Gtk::MenuItem (M("FILEBROWSER_POPUPMOVEEND"))), 0, 1, p, p+1); p++;
-    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+
+    pmenu->attach (*Gtk::manage(head = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"))), 0, 1, p, p+1); p++;
+    head->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/toleftend.png")));
+
+    pmenu->attach (*Gtk::manage(tail = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"))), 0, 1, p, p+1); p++;
+    tail->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/torightend.png")));
+
+    pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+
+    pmenu->attach (*Gtk::manage(cancel = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"))), 0, 1, p, p+1); p++;
+    cancel->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/deltags.png")));
+
     pmenu->show_all ();
 
     cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));    

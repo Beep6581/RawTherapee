@@ -32,8 +32,8 @@ BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry) {
 
     if (!iconsLoaded) {
         cancelIcon = safe_create_from_png (argv0+"/images/deltags.png");
-        headIcon   = safe_create_from_png (argv0+"/images/head.png");
-        tailIcon   = safe_create_from_png (argv0+"/images/tail.png");
+        headIcon   = safe_create_from_png (argv0+"/images/toleftend.png");
+        tailIcon   = safe_create_from_png (argv0+"/images/torightend.png");
         iconsLoaded = true;
     }
 

@@ -45,9 +45,9 @@ class BatchQueue  : public ThumbBrowserBase,
 
     Glib::ustring nameTemplate;
     
-    Gtk::MenuItem* cancel;
-    Gtk::MenuItem* head;
-    Gtk::MenuItem* tail;
+    Gtk::ImageMenuItem* cancel;
+    Gtk::ImageMenuItem* head;
+    Gtk::ImageMenuItem* tail;
     Gtk::MenuItem* selall;
     Gtk::Menu* pmenu;
 
