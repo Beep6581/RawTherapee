@@ -234,7 +234,10 @@ void ProcParams::setDefaults () {
     ppVersion = PPVERSION;
 }
 
-int ProcParams::save (Glib::ustring fname) const {
+int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
+
+    if (!fname.length() && !fname2.length())
+        return 0;
 
     SafeKeyFile keyFile;
 
@@ -460,15 +463,29 @@ int ProcParams::save (Glib::ustring fname) const {
         keyFile.set_string_list ("IPTC", iptc[i].field, values);
     }
     
-    FILE *f = safe_g_fopen (fname, "wt");
-    
-    if (f==NULL)
-        return 1;
-    else {
-        fprintf (f, "%s", keyFile.to_data().c_str());
-        fclose (f);
-        return 0;
+    Glib::ustring sPParams = keyFile.to_data();
+
+    int error1, error2;
+    error1 = write (fname , sPParams);
+    error2 = write (fname2, sPParams);
+    return error1 & error2;
+}
+
+int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
+
+    int error = 0;
+    if (fname.length()) {
+    	FILE *f;
+        f = safe_g_fopen (fname, "wt");
+
+        if (f==NULL)
+            error = 1;
+        else {
+            fprintf (f, "%s", content.c_str());
+            fclose (f);
+        }
     }
+    return error;
 }
 
 int ProcParams::load (Glib::ustring fname) {

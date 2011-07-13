@@ -17,8 +17,12 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <windirmonitor.h>
+#include <options.h>
 
 static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nBytes, LPOVERLAPPED lpOverlapped) {
+
+    DWORD dwOffset = 0;
+    FILE_NOTIFY_INFORMATION* pInfo = NULL;
 
 //    printf ("hivas: %d %d %d\n", error, nBytes, lpOverlapped);
   
@@ -28,20 +32,84 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
         return;
     }
 
-    if (monData->listener)
+    bool notify = false;
+    // Analysis of the modifications
+    do {
+        Glib::ustring fname = "";
+        Glib::ustring action = "";
+        int strLen = 0;
+
+        // Get a pointer to the first change record...
+        pInfo = (FILE_NOTIFY_INFORMATION*) &monData->file_notify_buffer[dwOffset];
+
+        char fnameC[(MAX_PATH+1)*2] = {0};
+        strLen = WideCharToMultiByte(CP_UTF8,0,pInfo->FileName,pInfo->FileNameLength/sizeof(WCHAR),fnameC,sizeof(fnameC),0,0);
+        fnameC[strLen] = 0;
+        fname = fnameC;
+
+        if (options.has_retained_extention(fname))
+        {
+        	switch (pInfo->Action)
+        	{
+			case (FILE_ACTION_ADDED):
+				action = "FILE_ACTION_ADDED";
+				break;
+			case (FILE_ACTION_REMOVED):
+				action = "FILE_ACTION_REMOVED";
+				break;
+			case (FILE_ACTION_MODIFIED):
+				action = "FILE_ACTION_MODIFIED";
+				break;
+			case (FILE_ACTION_RENAMED_OLD_NAME):
+				action = "FILE_ACTION_RENAMED_OLD_NAME";
+				break;
+			case (FILE_ACTION_RENAMED_NEW_NAME):
+				action = "FILE_ACTION_RENAMED_NEW_NAME";
+				break;
+			case (FILE_ACTION_REMOVED_BY_DELETE):
+				action = "FILE_ACTION_REMOVED_BY_DELETE";
+			/*	break;
+			case (FILE_ACTION_ADDED_STREAM):
+				action = "FILE_ACTION_ADDED_STREAM";
+				break;
+			case (FILE_ACTION_REMOVED_STREAM):
+				action = "FILE_ACTION_REMOVED_STREAM";
+				break;
+			case (FILE_ACTION_MODIFIED_STREAM):
+				action = "FILE_ACTION_MODIFIED_STREAM";
+				break;
+			case (FILE_ACTION_ID_NOT_TUNNELLED):
+				action = "FILE_ACTION_ID_NOT_TUNNELLED";
+				break;
+			case (FILE_ACTION_TUNNELLED_ID_COLLISION):
+				action = "FILE_ACTION_TUNNELLED_ID_COLLISION";*/
+			default:
+				break;
+			}
+			notify = true;
+        }
+
+        // More than one change may happen at the same time.  Load the next change and continue...
+        dwOffset += pInfo->NextEntryOffset;
+    }
+    while (pInfo->NextEntryOffset != 0);
+
+    if (notify && monData->listener)
         monData->listener->winDirChanged ();
-	
-    ReadDirectoryChangesW (monData->hDirectory,
-			 monData->file_notify_buffer,
-			 monData->buffer_allocated_bytes,
-			 FALSE, 
-			 FILE_NOTIFY_CHANGE_FILE_NAME |
-			 FILE_NOTIFY_CHANGE_DIR_NAME |
-			 FILE_NOTIFY_CHANGE_ATTRIBUTES |
-			 FILE_NOTIFY_CHANGE_SIZE,
-			 &monData->buffer_filled_bytes,
-			 &monData->overlapped,
-			 current_directory_monitor_callback);
+
+    ReadDirectoryChangesW (
+            monData->hDirectory,
+            monData->file_notify_buffer,
+            monData->buffer_allocated_bytes,
+            FALSE,
+            FILE_NOTIFY_CHANGE_FILE_NAME |
+            FILE_NOTIFY_CHANGE_DIR_NAME |
+            FILE_NOTIFY_CHANGE_ATTRIBUTES |
+            FILE_NOTIFY_CHANGE_SIZE,
+            &monData->buffer_filled_bytes,
+            &monData->overlapped,
+            current_directory_monitor_callback
+    );
 }
 
 WinDirMonitor::WinDirMonitor (Glib::ustring dirName, WinDirChangeListener* listener) : monData(NULL) {
@@ -60,16 +128,16 @@ WinDirMonitor::WinDirMonitor (Glib::ustring dirName, WinDirChangeListener* liste
         
 //        printf ("mondata=%d\n", monData);
         ReadDirectoryChangesW (monData->hDirectory,
-				  monData->file_notify_buffer,
-				  monData->buffer_allocated_bytes,
-				  FALSE, 
-				  FILE_NOTIFY_CHANGE_FILE_NAME |
-				  FILE_NOTIFY_CHANGE_DIR_NAME |
-				  FILE_NOTIFY_CHANGE_ATTRIBUTES |
-				  FILE_NOTIFY_CHANGE_SIZE,
-				  &monData->buffer_filled_bytes,
-				  &monData->overlapped,
-				  current_directory_monitor_callback);
+                monData->file_notify_buffer,
+                monData->buffer_allocated_bytes,
+                FALSE,
+                FILE_NOTIFY_CHANGE_FILE_NAME |
+                FILE_NOTIFY_CHANGE_DIR_NAME |
+                FILE_NOTIFY_CHANGE_ATTRIBUTES |
+                FILE_NOTIFY_CHANGE_SIZE,
+                &monData->buffer_filled_bytes,
+                &monData->overlapped,
+                current_directory_monitor_callback);
     }
 }
 

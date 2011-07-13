@@ -514,7 +514,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
             tbe[i]->getThumbButtonSet()->setInTrash (true);
-            tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+            tbe[i]->thumbnail->updateCache (false, true); // save the rank to disk by updating the cache image data only
         }
     }
     trash_changed().emit();
@@ -530,7 +530,7 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
             tbe[i]->getThumbButtonSet()->setInTrash (false);
-            tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+            tbe[i]->thumbnail->updateCache (false, true); // save the rank to disk by updating the cache image data only
         }
     }
     trash_changed().emit();
@@ -541,7 +541,7 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
 
     for (int i=0; i<tbe.size(); i++) {
         tbe[i]->thumbnail->setRank (rank);
-        tbe[i]->thumbnail->updateCache(); // needed to save the rank to disk
+        tbe[i]->thumbnail->updateCache (false, true); // save the rank to disk by updating the cache image data only
         if (tbe[i]->getThumbButtonSet())
                 tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
     }

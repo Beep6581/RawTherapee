@@ -442,14 +442,12 @@ void EditorPanel::saveProfile () {
 
     // If the file was deleted, do not generate ghost entries
     if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
-    ProcParams params;
-    ipc->getParams (&params);
+        ProcParams params;
+        ipc->getParams (&params);
 
-    if (options.saveParamsFile)
-        params.save (openThm->getFileName() + paramFileExtension);
-    if (options.saveParamsCache)
+        // Will call updateCache, which will update both the cached and sidecar files if necessary
         openThm->setProcParams (params, EDITOR);
-}
+    }
 }
 
 Glib::ustring EditorPanel::getShortName () {
