@@ -20,7 +20,6 @@
 #include <options.h>
 
 static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nBytes, LPOVERLAPPED lpOverlapped) {
-
     DWORD dwOffset = 0;
     FILE_NOTIFY_INFORMATION* pInfo = NULL;
 
@@ -45,6 +44,7 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
         fnameC[strLen] = 0;
         fname = fnameC;
 
+        // See http://msdn.microsoft.com/en-us/library/aa364391(v=vs.85).aspx for available options
         if (options.has_retained_extention(fname))
         {
         	switch (pInfo->Action)
@@ -64,23 +64,6 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
 			case (FILE_ACTION_RENAMED_NEW_NAME):
 				action = "FILE_ACTION_RENAMED_NEW_NAME";
 				break;
-			case (FILE_ACTION_REMOVED_BY_DELETE):
-				action = "FILE_ACTION_REMOVED_BY_DELETE";
-			/*	break;
-			case (FILE_ACTION_ADDED_STREAM):
-				action = "FILE_ACTION_ADDED_STREAM";
-				break;
-			case (FILE_ACTION_REMOVED_STREAM):
-				action = "FILE_ACTION_REMOVED_STREAM";
-				break;
-			case (FILE_ACTION_MODIFIED_STREAM):
-				action = "FILE_ACTION_MODIFIED_STREAM";
-				break;
-			case (FILE_ACTION_ID_NOT_TUNNELLED):
-				action = "FILE_ACTION_ID_NOT_TUNNELLED";
-				break;
-			case (FILE_ACTION_TUNNELLED_ID_COLLISION):
-				action = "FILE_ACTION_TUNNELLED_ID_COLLISION";*/
 			default:
 				break;
 			}
