@@ -30,7 +30,7 @@ extern Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
-    pW(-1), pH(-1), plistener(NULL),fineDetailsProcessed(false),
+    pW(-1), pH(-1), plistener(NULL), lastHighDetail(false),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
     changeSinceLast(0), updaterRunning(false), destroying(false), workimg(NULL) {
 
@@ -96,17 +96,21 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     ipf.setScale (scale);
 
 	// Check if any detail crops need high detail. If not, take a fast path short cut
-    bool highDetailNeeded=false;
+    bool highDetailNeeded = (todo & M_HIGHQUAL);
+    if (!highDetailNeeded) {
 	for (int i=0; i<crops.size(); i++)
-		if (crops[i]->get_skip() == 1 ){
+		    if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
 			highDetailNeeded=true;
 			break;
 		}
+    }
+
 	RAWParams rp = params.raw;
 	if( !highDetailNeeded ){
+        // if below 100% magnification, take a fast path
 		rp.dmethod = RAWParams::methodstring[RAWParams::fast];
 		rp.ca_autocorrect  = false;
-		//rp.hotdeadpix_filt = false;
+		rp.hotdeadpix_filt = false;
 		rp.ccSteps = 0;
 	}
 
@@ -116,10 +120,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
     }
 
-    if( todo & M_RAW){
-    	fineDetailsProcessed = highDetailNeeded;
+    // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
+    if ((todo & M_RAW) || (!lastHighDetail && highDetailNeeded)) {
+        if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
     	imgsrc->demosaic( rp, params.hlrecovery );
     }
+    lastHighDetail=highDetailNeeded;
+
 
     if (todo & M_INIT) {
         Glib::Mutex::Lock lock(minit);  // Also used in crop window
@@ -574,7 +581,7 @@ void ImProcCoordinator::startProcessing () {
             updaterRunning = true;
             updaterThreadStart.unlock ();
 
-            batchThread->yield(); //the running batch should wait other threads to avoid conflict
+            //batchThread->yield(); //the running batch should wait other threads to avoid conflict
             
             thread = Glib::Thread::create(sigc::mem_fun(*this, &ImProcCoordinator::process), 0, true, true, Glib::THREAD_PRIORITY_NORMAL);
 
@@ -582,6 +589,14 @@ void ImProcCoordinator::startProcessing () {
         else
             updaterThreadStart.unlock ();
     }
+}
+
+void ImProcCoordinator::startProcessing(int changeCode) {
+    paramsUpdateMutex.lock();
+    changeSinceLast |= changeCode;
+    paramsUpdateMutex.unlock();
+
+    startProcessing ();
 }
 
 void ImProcCoordinator::process () {
@@ -592,11 +607,12 @@ void ImProcCoordinator::process () {
     paramsUpdateMutex.lock ();
     while (changeSinceLast) {
         params = nextParams;
-        int ch = changeSinceLast;
+        int change = changeSinceLast;
         changeSinceLast = 0;
         paramsUpdateMutex.unlock ();
-        if (ch&32767)
-            updatePreviewImage (ch);
+
+        // M_VOID means no update, and is a bit higher that the rest
+        if (change & (M_VOID-1)) updatePreviewImage (change);
         paramsUpdateMutex.lock ();
     }    
     paramsUpdateMutex.unlock ();
@@ -616,7 +632,7 @@ ProcParams* ImProcCoordinator::getParamsForUpdate (ProcEvent change) {
 void ImProcCoordinator::paramsUpdateReady () {
 
     paramsUpdateMutex.unlock ();
-    startProcessing ();
+    startProcessing ();  // Executes what has been requested with getParamsForUpdate
 }
 
 

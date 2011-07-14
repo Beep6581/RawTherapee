@@ -23,6 +23,7 @@
 #include <multilangmgr.h>
 #include <iomanip>
 #include <cropwindow.h>
+#include <refreshmap.h>
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
@@ -45,6 +46,16 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
     dirty = false;
     ipc = NULL;
+}
+
+ImageArea::~ImageArea () {
+
+    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+        delete *i;
+    cropWins.clear ();
+
+    if (mainCropWindow)
+        delete mainCropWindow;
 }
 
 void ImageArea::on_realize()
@@ -100,17 +111,6 @@ void ImageArea::setPreviewHandler (PreviewHandler* ph) {
     previewHandler = ph; 
 }
 
-
-ImageArea::~ImageArea () {
-
-    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
-        delete *i;
-    cropWins.clear ();
-
-    if (mainCropWindow)
-        delete mainCropWindow;
-}
-
 void ImageArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 
     // TODO: notify all crop windows that the style has been changed
@@ -149,6 +149,15 @@ CropWindow* ImageArea::getCropWindow (int x, int y) {
         if ((*i)->isInside (x, y))
             return *i;
     return cw;
+}
+
+
+void ImageArea::redraw () {
+    // dirty prevents multiple updates queued up
+    if (!dirty) {
+        dirty = true;
+        queue_draw ();
+    }    
 }
 
 bool ImageArea::on_expose_event(GdkEventExpose* event) {
@@ -252,6 +261,7 @@ void ImageArea::addCropWindow () {
     cw->setPointerMotionListener (pmlistener);
     cropWins.push_front (cw);
 
+    // Position the new crop window in a checkerboard, or used the last position
     if (lastClosedX<0) {
         int K = 2;
         int hBorder = get_width()/K/8;
@@ -273,7 +283,10 @@ void ImageArea::addCropWindow () {
     cw->getCropSize(wc,hc);
     cw->setCropPosition(x0+w/2-wc/2,y0+h/2-hc/2);
     mainCropWindow->setObservedCropWin (cropWins.front());
-    queue_draw (); 
+
+    ipc->startProcessing(M_HIGHQUAL);
+
+//    queue_draw (); 
 }
 
 
@@ -312,14 +325,6 @@ void ImageArea::spotWBSelected (int x, int y) {
 
     if (listener) 
         listener->spotWBselected (x, y);
-}
-
-void ImageArea::redraw () {
-
-    if (!dirty) {
-        dirty = true;
-        queue_draw ();
-    }    
 }
 
 void ImageArea::getScrollImageSize (int& w, int& h) {
@@ -381,6 +386,7 @@ double ImageArea::getZoom () {
         return 1.0;
 }
 
+// Called by imageAreaPanel before/after views
 void ImageArea::setZoom (double zoom) {
 
     if (mainCropWindow)

@@ -25,6 +25,8 @@
 #define M_VOID       (1<<15)
 // Use M_MINUPDATE if you you wish to update the preview without modifying the image (think about it like a "refreshPreview")
 #define M_MINUPDATE  (1<<14)
+// Force high quality
+#define M_HIGHQUAL   (1<<13)   
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
@@ -41,8 +43,8 @@
 
 // Bitfield of functions to do to the preview image when an event occurs
 // Use those or create new ones for your new events
-#define FIRST           65535
-#define ALL             65535
+#define FIRST           (M_PREPROC|M_RAW|M_INIT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
+#define ALL             (M_PREPROC|M_RAW|M_INIT|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
 #define TRANSFORM       (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define RETINEX         (M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define AUTOEXP         (M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)

@@ -99,7 +99,7 @@ public:
 	// very useful as a member object
 	array2D() :
 		x(0), y(0), owner(0), data(NULL), ptr(NULL), lock(0) {
-		printf("got empty array2D init\n");
+		//printf("got empty array2D init\n");
 	}
 
 	// creator type1
@@ -252,11 +252,11 @@ private:
 public:
 	multi_array2D(int x, int y, int flags = 0) {
 		for (int i = 0; i < num; i++)
-			list[i](x, y, flags | ARRAY2D_VERBOSE);
+			list[i](x, y, flags);
 	}
 
 	~multi_array2D() {
-		printf("trying to delete the list of array2D objects\n");
+		//printf("trying to delete the list of array2D objects\n");
 	}
 
 	array2D<T> & operator[](size_t index) {

@@ -161,12 +161,12 @@ void RawProcess::methodChanged ()
 	}else{
 		dcbOptions->hide();
 	}
-	Glib::ustring s="";
+	Glib::ustring methodName="";
 	if( curSelection>=0 && curSelection < procparams::RAWParams::numMethods)
-	    s = procparams::RAWParams::methodstring[curSelection];
+	    methodName = procparams::RAWParams::methodstring[curSelection];
 
     if (listener)
-        listener->panelChanged (EvDemosaicMethod, s);
+        listener->panelChanged (EvDemosaicMethod, methodName);
 }
 
 void RawProcess::dcbEnhanceChanged ()

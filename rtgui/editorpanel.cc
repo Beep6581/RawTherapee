@@ -1206,7 +1206,7 @@ void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcPara
     if (beforeIpc) {
         ProcParams* pparams = beforeIpc->getParamsForUpdate (rtengine::EvProfileChanged);
         *pparams = params;
-        beforeIpc->paramsUpdateReady ();
+        beforeIpc->paramsUpdateReady ();  // starts the IPC processinp
     }
 }
 

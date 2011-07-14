@@ -60,7 +60,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         ImProcFunctions ipf;
 
         int scale;
-        bool fineDetailsProcessed;
+        bool lastHighDetail;  // was the last update running in high detail?
         bool allocated;
         
         void freeAll ();
@@ -125,8 +125,9 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         void        getParams (procparams::ProcParams* dst) { *dst = params; }
 
+        void        startProcessing(int changeCode);
         ProcParams* getParamsForUpdate (ProcEvent change);
-        void        paramsUpdateReady ();
+        void        paramsUpdateReady ();  // must be called after getParamsForUpdate, triggers full update
         void        stopProcessing ();
 
 

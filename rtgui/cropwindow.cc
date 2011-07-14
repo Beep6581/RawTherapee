@@ -790,6 +790,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
 
+// zoom* is called from the zoomPanel
 void CropWindow::zoomIn () {
 
     changeZoom (cropZoom+1);
@@ -867,10 +868,12 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery) {
         zoom = 0;
     else if (zoom>MAXZOOMSTEPS)
         zoom = MAXZOOMSTEPS;
-    if (cropZoom == zoom)
+
+    if (cropZoom == zoom) {
     	// We are already at the start/end of the zoom range, so we do nothing
     	return;
-    else
+    }
+
     	cropZoom = zoom;
 
     cropLabel = zoomSteps[cropZoom].label;
