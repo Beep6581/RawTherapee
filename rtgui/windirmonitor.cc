@@ -33,7 +33,6 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
     // Analysis of the modifications
     do {
         Glib::ustring fname = "";
-        Glib::ustring action = "";
         int strLen = 0;
 
         // Get a pointer to the first change record...
@@ -44,31 +43,9 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
         fnameC[strLen] = 0;
         fname = fnameC;
 
-        // See http://msdn.microsoft.com/en-us/library/aa364391(v=vs.85).aspx for available options
+        // See http://msdn.microsoft.com/en-us/library/aa364391(v=vs.85).aspx for available event type if necessary
         if (options.has_retained_extention(fname))
-        {
-        	switch (pInfo->Action)
-        	{
-			case (FILE_ACTION_ADDED):
-				action = "FILE_ACTION_ADDED";
-				break;
-			case (FILE_ACTION_REMOVED):
-				action = "FILE_ACTION_REMOVED";
-				break;
-			case (FILE_ACTION_MODIFIED):
-				action = "FILE_ACTION_MODIFIED";
-				break;
-			case (FILE_ACTION_RENAMED_OLD_NAME):
-				action = "FILE_ACTION_RENAMED_OLD_NAME";
-				break;
-			case (FILE_ACTION_RENAMED_NEW_NAME):
-				action = "FILE_ACTION_RENAMED_NEW_NAME";
-				break;
-			default:
-				break;
-			}
-			notify = true;
-        }
+            notify = true;
 
         // More than one change may happen at the same time.  Load the next change and continue...
         dwOffset += pInfo->NextEntryOffset;
