@@ -21,6 +21,7 @@
 
 #include <cstring>
 #include <guiutils.h>
+#include <refreshmap.h>
 
 using namespace rtengine;
 
@@ -97,6 +98,9 @@ void CropHandler::setZoom (int z, int centerx, int centery) {
     if (centery>=0)
             y = centery;
             
+    // maybe demosaic etc. if we cross the border to >100%
+    bool needsFullRefresh = (z>=1000 && zoom<1000);
+
     zoom = z;
     if (zoom>=1000) {
         cw = ww * 1000 / zoom;
@@ -110,8 +114,12 @@ void CropHandler::setZoom (int z, int centerx, int centery) {
     cy = y - ch / 2;
 
     compDim ();
-    if (enabled)
+    if (enabled) {
+        if (needsFullRefresh)
+            ipc->startProcessing(M_HIGHQUAL);
+        else
         update ();
+}
 }
 
 

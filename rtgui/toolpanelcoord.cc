@@ -271,7 +271,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         resize->write (params);
     }
 
-    ipc->paramsUpdateReady ();
+    ipc->paramsUpdateReady ();   // starts the IPC processinp
 
     hasChanged = true;
 
@@ -301,7 +301,7 @@ void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::
     for (unsigned int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->read (params);
 
-    ipc->paramsUpdateReady ();
+    ipc->paramsUpdateReady ();  // starts the IPC processinp
 
     hasChanged = event != rtengine::EvProfileChangeNotification;
 

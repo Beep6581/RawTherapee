@@ -256,6 +256,8 @@ namespace rtengine {
               * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
               * and to a DetailedCropListener (if enabled). */
             virtual void        paramsUpdateReady () =0;
+            // Starts a minimal update
+            virtual void        startProcessing(int changeCode) =0;  
             /** Stops image processing. When it returns, the image processing is already stopped. */
             virtual void        stopProcessing () =0;
             /** Sets the scale of the preview image. The larger the number is, the faster the image updates are (typical values are 4-5).
