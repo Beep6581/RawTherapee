@@ -110,6 +110,18 @@ if (NOT DEFINED LICENCEDIR)
     endif (WIN32 OR APPLE)
 endif (NOT DEFINED LICENCEDIR)
 
+if (NOT DEFINED DESKTOPDIR)
+    if (UNIX)
+        set (DESKTOPDIR ${CMAKE_INSTALL_PREFIX}/share/applications)
+    endif (UNIX)
+endif (NOT DEFINED DESKTOPDIR)
+
+if (NOT DEFINED ICONSDIR)
+    if (UNIX)
+        set (ICONSDIR ${CMAKE_INSTALL_PREFIX}/share/icons)
+    endif (UNIX)
+endif (NOT DEFINED ICONSDIR)
+
 # check for libraries
 find_package(PkgConfig)
 pkg_check_modules (GTK     REQUIRED gtk+-2.0>=2.12)
