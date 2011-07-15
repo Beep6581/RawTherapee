@@ -5,12 +5,12 @@ Version=300
 
 [Exposure]
 Auto=true
-Clip=0.0002
+Clip=0.0005
 Compensation=0
-Brightness=10
-Contrast=20
+Brightness=8
+Contrast=0
 Saturation=0
-Black=0
+Black=537
 HighlightCompr=70
 HighlightComprThreshold=30
 ShadowCompr=50
@@ -22,13 +22,13 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
-Contrast=-5
-Saturation=15
+Brightness=0
+Contrast=0
+Saturation=-100
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
-LCurve=0;
+LCurve=3;0;0;0.18623481781376497;0.028340080971659902;0.50607287449392713;0.50607287449392713;0.77732793522267185;0.97975708502024295;1;1;
 aCurve=0;
 bCurve=0;
 
@@ -56,8 +56,8 @@ SaturationLimit=75
 
 [White Balance]
 Setting=Camera
-Temperature=5000
-Green=1
+Temperature=4472
+Green=1.1069999999999993
 
 [Color Shift]
 ChannelA=0

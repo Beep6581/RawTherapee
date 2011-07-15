@@ -5,9 +5,9 @@ Version=300
 
 [Exposure]
 Auto=true
-Clip=0.0002
+Clip=0.0005
 Compensation=0
-Brightness=10
+Brightness=25
 Contrast=20
 Saturation=0
 Black=0
@@ -22,9 +22,9 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
-Contrast=-5
-Saturation=15
+Brightness=-15
+Contrast=15
+Saturation=25
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40

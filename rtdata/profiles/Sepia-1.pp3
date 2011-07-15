@@ -5,12 +5,12 @@ Version=300
 
 [Exposure]
 Auto=true
-Clip=0.0002
+Clip=0.0005
 Compensation=0
-Brightness=10
-Contrast=20
+Brightness=8
+Contrast=0
 Saturation=0
-Black=0
+Black=911
 HighlightCompr=70
 HighlightComprThreshold=30
 ShadowCompr=50
@@ -22,15 +22,15 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
-Contrast=-5
-Saturation=15
+Brightness=0
+Contrast=0
+Saturation=-100
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
-LCurve=0;
-aCurve=0;
-bCurve=0;
+LCurve=2;0.25;0.5;0.75;50;12;-12;-50;
+aCurve=2;0.25;0.5;0.75;0;3;3;0;
+bCurve=2;0.25;0.5;0.75;0;10;5;0;
 
 [Sharpening]
 Enabled=false
@@ -43,7 +43,7 @@ EdgedetectionRadius=1.9
 EdgeTolerance=1800
 HalocontrolEnabled=false
 HalocontrolAmount=85
-DeconvRadius=0.75
+DeconvRadius=0.74999999999999967
 DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
@@ -56,8 +56,8 @@ SaturationLimit=75
 
 [White Balance]
 Setting=Camera
-Temperature=5000
-Green=1
+Temperature=4988
+Green=1.0289999999999992
 
 [Color Shift]
 ChannelA=0
@@ -101,8 +101,8 @@ Radius=30
 Enabled=false
 X=0
 Y=0
-W=4276
-H=2836
+W=4281
+H=2871
 FixedRatio=false
 Ratio=3:2
 Orientation=Landscape
@@ -148,8 +148,8 @@ Scale=1
 AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
-Width=4276
-Height=2836
+Width=4281
+Height=2871
 
 [Color Management]
 InputProfile=(camera)
