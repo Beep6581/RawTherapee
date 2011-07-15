@@ -76,6 +76,11 @@ PlacesBrowser::PlacesBrowser () : listener (NULL) {
     show_all ();
 }
 
+// For drive letter comparison
+bool compareMountByRoot (Glib::RefPtr<Gio::Mount> a,Glib::RefPtr<Gio::Mount> b) { 
+    return a->get_root()->get_parse_name() < b->get_root()->get_parse_name();
+}
+
 void PlacesBrowser::refreshPlacesList () {
 
     placesModel->clear ();
@@ -173,8 +178,16 @@ void PlacesBrowser::refreshPlacesList () {
             }
         }
     }
-    // placess not belonging to volumes
+
+    // places not belonging to volumes
+    // (Drives in Windows)
     std::vector<Glib::RefPtr<Gio::Mount> > mounts = vm->get_mounts ();
+
+#ifdef WIN32
+    // on Windows, it's usual to sort by drive letter, not by name
+    std::sort (mounts.begin(), mounts.end(), compareMountByRoot); 
+#endif
+
     for (int i=0; i<mounts.size (); i++) {
         if (!mounts[i]->get_volume ()) {
             Gtk::TreeModel::Row newrow = *(placesModel->append());
