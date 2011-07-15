@@ -5,11 +5,11 @@ Version=300
 
 [Exposure]
 Auto=true
-Clip=0.0002
+Clip=0.0005
 Compensation=0
-Brightness=10
-Contrast=20
-Saturation=0
+Brightness=8
+Contrast=0
+Saturation=22
 Black=0
 HighlightCompr=70
 HighlightComprThreshold=30
@@ -22,13 +22,13 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
-Contrast=-5
-Saturation=15
+Brightness=0
+Contrast=0
+Saturation=18
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
-LCurve=0;
+LCurve=2;0.25;0.5;0.75;50;12;-12;-50;
 aCurve=0;
 bCurve=0;
 

@@ -1,4 +1,6 @@
+
 [Version]
+AppVersion=3.0B1.62
 Version=300
 
 [Exposure]
@@ -23,6 +25,9 @@ Blue=0;0;100;
 Brightness=0
 Contrast=0
 Saturation=0
+AvoidColorClipping=false
+SaturationLimiter=false
+SaturationLimit=50
 LCurve=0;
 aCurve=0;
 bCurve=0;
@@ -30,8 +35,8 @@ bCurve=0;
 [Sharpening]
 Enabled=false
 Method=usm
-Radius=0.8
-Amount=120
+Radius=0.5
+Amount=125
 Threshold=512
 OnlyEdges=false
 EdgedetectionRadius=1.9
@@ -52,7 +57,7 @@ SaturationLimit=75
 [White Balance]
 Setting=Camera
 Temperature=5200
-Green=1.0
+Green=1
 
 [Color Shift]
 ChannelA=0
@@ -61,6 +66,11 @@ ChannelB=0
 [Impulse Denoising]
 Enabled=false
 Threshold=50
+
+[Defringing]
+Enabled=false
+Radius=2
+Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=false
@@ -135,6 +145,7 @@ Method=CIELab blending
 [Resize]
 Enabled=false
 Scale=1
+AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
 Width=4276
@@ -158,23 +169,30 @@ C6=0
 C7=0
 
 [Directional Pyramid Equalizer]
-Enabled=false
-Mult0=1
+Enabled=true
+Mult0=3
 Mult1=1
 Mult2=1
 Mult3=1
-Mult4=0
+Mult4=0.2
+
+[HSV Equalizer]
+HCurve=0;
+SCurve=0;
+VCurve=0;
 
 [RAW]
 DarkFrame=
 DarkFrameAuto=false
 CA=false
+CARed=0
+CABlue=0
 HotDeadPixels=false
 LineDenoise=0
 GreenEqThreshold=0
-PreExposure=1
-PrePreserv=0
 CcSteps=1
 Method=amaze
 DCBIterations=2
 DCBEnhance=false
+PreExposure=1
+PrePreserv=0

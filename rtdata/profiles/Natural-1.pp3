@@ -5,12 +5,12 @@ Version=300
 
 [Exposure]
 Auto=true
-Clip=0.0002
+Clip=0.0005
 Compensation=0
-Brightness=10
-Contrast=20
+Brightness=0
+Contrast=0
 Saturation=0
-Black=0
+Black=519
 HighlightCompr=70
 HighlightComprThreshold=30
 ShadowCompr=50
@@ -22,13 +22,13 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
-Contrast=-5
-Saturation=15
+Brightness=-10
+Contrast=-20
+Saturation=10
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
-LCurve=0;
+LCurve=3;0;0;0.04270462633451956;0.01423487544483986;0.23843416370106757;0.17437722419928825;0.48042704626334531;0.44128113879003594;0.62989323843416389;0.69039145907473343;0.72953736654804269;0.83274021352313166;0.86120996441281117;0.95729537366548023;1;1;
 aCurve=0;
 bCurve=0;
 
@@ -101,8 +101,8 @@ Radius=30
 Enabled=false
 X=0
 Y=0
-W=4276
-H=2836
+W=4281
+H=2871
 FixedRatio=false
 Ratio=3:2
 Orientation=Landscape
@@ -148,8 +148,8 @@ Scale=1
 AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
-Width=4276
-Height=2836
+Width=4281
+Height=2871
 
 [Color Management]
 InputProfile=(camera)
