@@ -169,12 +169,12 @@ C6=0
 C7=0
 
 [Directional Pyramid Equalizer]
-Enabled=true
-Mult0=3
+Enabled=false
+Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1
-Mult4=0.2
+Mult4=0
 
 [HSV Equalizer]
 HCurve=0;
