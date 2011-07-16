@@ -14,7 +14,7 @@ export GTK_IM_MODULE_FILE="${CWD}/gtk-2.0/gtk.immodules"
 export GDK_PIXBUF_MODULE_FILE="${CWD}/etc/gtk-2.0/gdk-pixbuf.loaders"
 export PANGO_RC_FILE="${CWD}/etc/pango/pangorc"
 
-cp "${CWD}/etc/pango/pango.modules" /tmp/rt_pango.modules
+cp "${CWD}/etc/pango/pango.modules" /tmp/rawtherapee_pango.modules
 
-"${CWD}/rt" 
+"${CWD}/rawtherapee" 
 
