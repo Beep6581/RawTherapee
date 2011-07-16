@@ -28,9 +28,9 @@ BIN=${MACOS}/bin
 ETC=${MACOS}/etc
 LIB=${MACOS}/lib
 SHARE=${MACOS}/share
-RELEASE=release
-DMG=${RELEASE}/rawtherapee_mac32_`date +%F`_`hg -R . branch`_`hg parents --template '{latesttag}i.{latesttagdistance}-{node|short}'`.dmg
-EXECUTABLE=rt
+RELEASE=Release
+DMG=rawtherapee_mac32_`date +%F`_`hg -R . branch`_`hg parents --template '{latesttag}.{latesttagdistance}-{node|short}'`.dmg
+EXECUTABLE=rawtherapee
 
 #Find where MacPorts is installed.  We take a known binary (cmake), which is in <MacPorts>/bin, and 
 # go up a level to get the main install folder.
@@ -78,7 +78,7 @@ rm ${LIB}/gdk-pixbuf-2.0/2.10.0/loaders.cache
 
 #Copy over the release files
 echo "Copying release files..."
-cp -R release/* ${MACOS}
+cp -R ${RELEASE}/* ${MACOS}
 
 #Copy application-specific stuff like icons and startup script
 echo "Creating required application bundle files..."
@@ -93,11 +93,8 @@ checkLink "${MACOS}/${EXECUTABLE}"
 
 #Make a .dmg for distribution and delete the .app
 echo "Creating distribution .dmg..."
-hdiutil create -srcdir ${APP} ${DMG}
+hdiutil create -srcdir ${APP} ${RELEASE}/${DMG}
 echo "Cleaning up..."
 rm -rf ${APP}
-
-cd ${RELEASE}
-zip ${DMG}.zip ${DMG} AboutThisBuild.txt
 
 echo "All done!"
