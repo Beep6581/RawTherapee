@@ -15,6 +15,7 @@
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
 #15 Jan-Jun 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 30.06.2011
+#16 Erweiterung (oduis)
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -611,6 +612,7 @@ PREFERENCES_INTENT_RELATIVE;Relativ farbmetrisch
 PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Voransicht aus RAW, wenn noch nicht editiert
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
+PREFERENCES_LANGAUTODETECT;Betriebssystem-Einstellung verwenden
 PREFERENCES_MENUOPTIONS;Menüoptionen
 PREFERENCES_MENUGROUPRANK;Untermenü Bewertung
 PREFERENCES_MENUGROUPLABEL;Untermenü Farbmarkierung

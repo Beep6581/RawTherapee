@@ -54,6 +54,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::ComboBoxText* rprofiles;
     Gtk::ComboBoxText* iprofiles;
     Gtk::ComboBoxText* languages;
+    Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
     Gtk::Entry* startupdir;
     Gtk::RadioButton* sdcurrent;
@@ -132,7 +133,8 @@ class Preferences : public Gtk::Dialog {
 
 
     Options moptions;
-    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, autoMonProfileConn, sndEnableConn;
+    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn;
+    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -172,6 +174,7 @@ class Preferences : public Gtk::Dialog {
     void aboutPressed ();
 	void autoMonProfileToggled ();
     void sndEnableToggled ();
+    void langAutoDetectToggled ();
 
     void selectStartupDir ();
     void addExtPressed ();

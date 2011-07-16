@@ -98,6 +98,7 @@ void Options::setDefaults () {
     bgcolor = 0;
     blinkClipped = false;				// was true
     language = DefaultLanguage;
+    languageAutoDetect= langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "17-Gray-Red";
@@ -268,6 +269,7 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "MultiUser"))        multiUser       = keyFile.get_boolean ("General", "MultiUser");
     if (keyFile.has_key ("General", "Version"))          version         = keyFile.get_string ("General", "Version");
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
+    if (keyFile.has_key ("General", "LanguageAutoDetect")) languageAutoDetect = keyFile.get_boolean ("General", "LanguageAutoDetect");
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "SlimUI"))           slimUI          = keyFile.get_boolean ("General", "SlimUI");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
@@ -433,6 +435,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "DualProcSupport", rtSettings.dualThreadEnabled);
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
+    keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
     keyFile.set_string  ("General", "Theme", theme);
     keyFile.set_boolean ("General", "SlimUI", slimUI);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
@@ -660,6 +663,8 @@ void Options::load () {
     Glib::ustring defaultTranslation = argv0 + "/languages/default";
 	Glib::ustring languageTranslation = "";
 	Glib::ustring localeTranslation = "";
+
+    if (options.languageAutoDetect) options.language=langMgr.getOSUserLanguage();
 
 	if (!options.language.empty()){
 		std::vector<Glib::ustring> langPortions = Glib::Regex::split_simple(" ", options.language);
