@@ -20,11 +20,19 @@
 #include <multilangmgr.h>
 #include <string.h>
 #include <safegtk.h>
+#ifdef WIN32
+// Desired auto detect function is Vista+
+#define _WIN32_WINNT 0x0600
+#include <windows.h>
+#include <winnls.h>
+#undef _WIN32_WINNT
+#endif
 
 MultiLangMgr langMgr;
 
 Glib::ustring M (std::string key) { return langMgr.getStr (key); }
 
+// fb is fallback manager if the first could not be loaded
 bool MultiLangMgr::load (Glib::ustring fname, MultiLangMgr* fb) {
     FILE *f = safe_g_fopen (fname, "rt");
 
@@ -85,6 +93,79 @@ bool MultiLangMgr::save (Glib::ustring fname) {
     return true;
 }
         
+
+bool MultiLangMgr::isOSLanguageDetectSupported() {
+#ifdef WIN32
+    // Only on Vista or above
+    return LOBYTE(LOWORD(GetVersion()))>=6;
+#else
+    return false;
+#endif
+}
+
+
+// returns Language name mapped from the currently selected OS language
+Glib::ustring MultiLangMgr::getOSUserLanguage() {
+    Glib::ustring langName = Glib::ustring("default");
+
+    if (isOSLanguageDetectSupported()) {
+
+        // TODO: Add support for other OS here
+#ifdef WIN32
+        WCHAR langRFCU[64] = {0};
+        if (GetUserDefaultLocaleName(langRFCU,64)!=0 && lstrlenW(langRFCU)>=2) {
+            // convert UNICODE16 to GTK
+            char langRFC[64];
+            WideCharToMultiByte(CP_UTF8,0,langRFCU,-1,langRFC,64,0,0);
+            Glib::ustring localRFC=Glib::ustring(langRFC);
+
+            langName=TranslateRFC2Language(localRFC);
+        }
+#endif
+    } else printf("Automatic language detection not supported on your OS\n");
+
+    return langName;
+}
+
+// Translates RFC standard language code to file name, e.g. "de-DE" to "Deutsch"
+Glib::ustring MultiLangMgr::TranslateRFC2Language(Glib::ustring rfcName) {
+    if (rfcName.length()<2) return Glib::ustring("default");
+
+    Glib::ustring major=rfcName.substr(0,2).lowercase();
+    Glib::ustring minor;
+    if (rfcName.length()>=5) {
+        minor=rfcName.substr(3,2).uppercase();
+    }
+
+    //printf("Lang: %s - %s\n",major.c_str(),minor.c_str());
+
+    if (major=="cs") return "Czech";
+    if (major=="ca") return "Catala";
+    if (major=="fr") return "Francais";
+    if (major=="de") return "Deutsch";
+    if (major=="sr") return "Serbian (Cyrilic Characters)";
+    if (major=="zh")
+        return (minor=="CN" || minor=="SG") ? "Chinese (Simplified)" : "Chinese (Traditional)";
+    if (major=="da") return "Dansk";
+    if (major=="es") return "Espanol";
+    if (major=="el") return "Greek";
+    if (major=="he") return "Hebrew";
+    if (major=="it") return "Italian";
+    if (major=="ja") return "Japanese";
+    if (major=="nl") return "Nederlands";
+    if (major=="nn" || major=="nb") return "Norsk BM";
+    if (major=="pl") return "Polish";
+    if (major=="pt") return "Portugues (Brasil)";
+    if (major=="ru") return "Russian";
+    if (major=="sk") return "Slovak";
+    if (major=="fi") return "Suomi";
+    if (major=="se") return "Swedish";
+    if (major=="tr") return "Turkish";
+
+    // Don't split en-US, en-GB, etc. since only default english is constantly updated
+    return "default";
+}
+
 Glib::ustring MultiLangMgr::getStr (std::string key) {
 
     std::map<std::string, Glib::ustring>::iterator r = transTable.find (key);

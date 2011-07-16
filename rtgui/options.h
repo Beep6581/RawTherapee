@@ -100,6 +100,7 @@ class Options {
     bool blinkClipped;
     int bgcolor;
     Glib::ustring language;
+    bool languageAutoDetect;
     Glib::ustring theme;
     bool slimUI;
     bool useSystemTheme;

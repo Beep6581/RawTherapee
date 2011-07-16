@@ -454,6 +454,9 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     Gtk::Frame* flang = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DEFAULTLANG")) );
     Gtk::HBox* hblang = Gtk::manage( new Gtk::HBox () );
     hblang->set_border_width (4);
+
+    ckbLangAutoDetect =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_LANGAUTODETECT")) );
+
     Gtk::Label* langlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTLANG")+":") );
     languages = Gtk::manage( new Gtk::ComboBoxText () );
 
@@ -466,11 +469,14 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     }
 
     Gtk::Label* langw = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
-    hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 4);
+    hblang->pack_start (*ckbLangAutoDetect, Gtk::PACK_SHRINK, 4);
+    hblang->pack_start (*langlab, Gtk::PACK_SHRINK, 8);
     hblang->pack_start (*languages);
     hblang->pack_end (*langw, Gtk::PACK_SHRINK, 4);
     flang->add (*hblang);
     mvbsd->pack_start (*flang, Gtk::PACK_SHRINK, 4);
+
+    langAutoDetectConn  = ckbLangAutoDetect->signal_toggled().connect (sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
 
     Gtk::Frame* ftheme = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DEFAULTTHEME")) );
     Gtk::VBox* vbftheme = Gtk::manage( new Gtk::VBox () );
@@ -927,6 +933,7 @@ void Preferences::storePreferences () {
     moptions.highlightThreshold = (int)hlThresh->get_value ();
     moptions.shadowThreshold = (int)shThresh->get_value ();
     moptions.language        = languages->get_active_text ();
+    moptions.languageAutoDetect = ckbLangAutoDetect->get_active ();
     moptions.theme           = theme->get_active_text ();
     moptions.slimUI          = slimUI->get_active ();
     moptions.useSystemTheme  = chUseSystemTheme->get_active ();
@@ -1046,6 +1053,7 @@ void Preferences::fillPreferences () {
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
 	intent->set_active (moptions.rtSettings.colorimetricIntent);
     languages->set_active_text (moptions.language);
+    ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     theme->set_active_text (moptions.theme);
     slimUI->set_active(moptions.slimUI);
     chUseSystemTheme->set_active(moptions.useSystemTheme);
@@ -1191,6 +1199,9 @@ void Preferences::sndEnableToggled () {
 	spbSndLngEditProcDoneSecs->set_sensitive(ckbSndEnable->get_active());
 }
 
+void Preferences::langAutoDetectToggled () {
+	languages->set_sensitive(!ckbLangAutoDetect->get_active());
+}
 
 void Preferences::okPressed () {
 
