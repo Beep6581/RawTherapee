@@ -11,8 +11,8 @@
 MultiUser=true
 
 [File Browser]
-ParseExtensions=jpg;tif;tiff;png;crw;cr2;crf;nef;raf;pef;dng;arw;sr2;mrw;raw;orf;kdc;rwz;rw2;mef;
-ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
+ParseExtensions=arw;cr2;crf;crw;dng;jpg;kdc;mef;mrw;nef;orf;pef;png;raf;raw;rw2;rwz;sr2;srw;tif;tiff;
+ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
 
 [Output]
 PathTemplate=%p1/converted/%f
