@@ -134,6 +134,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
         return;
     }
 
+    // Rest is UNSHARP MASK
     if (params->sharpening.enabled==false || params->sharpening.amount<1 || lab->W<8 || lab->H<8)
         return;
 
@@ -172,10 +173,9 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 		#pragma omp for
     	for (int i=0; i<H; i++)
             for (int j=0; j<W; j++) {
-                int diff = base[i][j] - b2[i][j];
+                float diff = base[i][j] - b2[i][j];
                 if (ABS(diff)>params->sharpening.threshold) {
-                    int val = lab->L[i][j] + params->sharpening.amount * diff / 100;
-                    lab->L[i][j] = /*CLIP*/(val);
+                    lab->L[i][j] = lab->L[i][j] + params->sharpening.amount * diff / 100.f;
                 }
             }
     }
@@ -192,34 +192,41 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 
 void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** base, int W, int H) {
 
-    int scale = 100 * (100-params->sharpening.halocontrol_amount);
+    float scale = (100.f - params->sharpening.halocontrol_amount) * 0.01f;
+    float sharpFac = params->sharpening.amount * 0.01f;
     float** nL = base;
-	#pragma omp parallel for if (multiThread)
+#pragma omp parallel for if (multiThread)
     for (int i=2; i<H-2; i++) {
-        int max1 = 0, max2 = 0, min1 = 0, min2 = 0, maxn, minn, np1, np2, np3, min, max;
+        float max1 = 0, max2 = 0, min1 = 0, min2 = 0, maxn, minn, np1, np2, np3, min, max, labL;
         for (int j=2; j<W-2; j++) {
-            int diff = base[i][j] - blurmap[i][j];
+            // compute 3 iterations, only forward
+            np1 = 2.f * (nL[i-2][j] + nL[i-2][j+1] + nL[i-2][j+2] + nL[i-1][j] + nL[i-1][j+1] + nL[i-1][j+2] + nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2]) / 27.f + nL[i-1][j+1] / 3.f;
+            np2 = 2.f * (nL[i-1][j] + nL[i-1][j+1] + nL[i-1][j+2] + nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2] + nL[i+1][j] + nL[i+1][j+1] + nL[i+1][j+2]) / 27.f + nL[i]  [j+1] / 3.f;
+            np3 = 2.f * (nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2] + nL[i+1][j] + nL[i+1][j+1] + nL[i+1][j+2] + nL[i+2][j] + nL[i+2][j+1] + nL[i+2][j+2]) / 27.f + nL[i+1][j+1] / 3.f;
+
+            // Max/Min of all these deltas and the last two max/min
+            MINMAX3(np1,np2,np3,maxn,minn);
+            MAX3(max1,max2,maxn,max);
+            MIN3(min1,min2,minn,min);
+
+            // Shift the queue
+            max1 = max2; max2 = maxn;
+            min1 = min2; min2 = minn;
+            labL = lab->L[i][j];
+            if (max < labL) max = labL;
+            if (min > labL) min = labL;
+
+            // deviation from the environment as measurement
+            float diff = nL[i][j] - blurmap[i][j];
+
             if (ABS(diff) > params->sharpening.threshold) {
-                // compute maximum/minimum in a delta environment
-                np1 = 2*(nL[i-2][j] + nL[i-2][j+1] + nL[i-2][j+2] + nL[i-1][j] + nL[i-1][j+1] + nL[i-1][j+2] + nL[i][j] + nL[i][j+1] + nL[i][j+2]) / 27 + nL[i-1][j+1] / 3;
-                np2 = 2*(nL[i-1][j] + nL[i-1][j+1] + nL[i-1][j+2] + nL[i][j] + nL[i][j+1] + nL[i][j+2] + nL[i+1][j] + nL[i+1][j+1] + nL[i+1][j+2]) / 27 + nL[i][j+1] / 3;
-                np3 = 2*(nL[i][j] + nL[i][j+1] + nL[i][j+2] + nL[i+1][j] + nL[i+1][j+1] + nL[i+1][j+2] + nL[i+2][j] + nL[i+2][j+1] + nL[i+2][j+2]) / 27 + nL[i+1][j+1] / 3;
-                MINMAX3(np1,np2,np3,maxn,minn);
-                MAX3(max1,max2,maxn,max);
-                MIN3(min1,min2,minn,min);
-                max1 = max2; max2 = maxn;
-                min1 = min2; min2 = minn;
-                if (max < lab->L[i][j])
-                    max = lab->L[i][j];
-                if (min > lab->L[i][j])
-                    min = lab->L[i][j];
-                int val = lab->L[i][j] + params->sharpening.amount * diff / 100;
-                int newL = /*CLIP*/(val);
+                float newL = labL + sharpFac * diff;
                 // applying halo control
                 if (newL > max)
-                    newL = max + (newL-max) * scale / 10000;
-                else if (newL<min)
-                    newL = min - (min-newL) * scale / 10000;
+                    newL = max + (newL-max) * scale;
+                else if (newL < min)
+                    newL = min - (min-newL) * scale;
+
                 lab->L[i][j] = newL;
             }
         }
