@@ -96,8 +96,12 @@ bool MultiLangMgr::save (Glib::ustring fname) {
 
 bool MultiLangMgr::isOSLanguageDetectSupported() {
 #ifdef WIN32
+    #ifdef __MINGW64_VERSION_MAJOR
     // Only on Vista or above
     return LOBYTE(LOWORD(GetVersion()))>=6;
+#else
+    return false;
+#endif
 #else
     return false;
 #endif
@@ -112,6 +116,8 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
 
         // TODO: Add support for other OS here
 #ifdef WIN32
+// When using old versions of MINGW this is not defined
+#ifdef __MINGW64_VERSION_MAJOR
         WCHAR langRFCU[64] = {0};
         if (GetUserDefaultLocaleName(langRFCU,64)!=0 && lstrlenW(langRFCU)>=2) {
             // convert UNICODE16 to GTK
@@ -121,6 +127,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
 
             langName=TranslateRFC2Language(localRFC);
         }
+#endif
 #endif
     } else printf("Automatic language detection not supported on your OS\n");
 
