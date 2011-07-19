@@ -36,7 +36,7 @@ using namespace rtengine::procparams;
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		initial_(false) {
+		initial_(false), lastW(0), lastH(0), lastScale(0) {
 
     cfs.load (getCacheFileName ("data")+".txt");
     loadProcParams ();
@@ -392,6 +392,31 @@ void Thumbnail::getThumbnailSize (int &w, int &h) {
     if (w==0) w = tw * h / th;
 }
 
+void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, int& w, int& h) {
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::Mutex::Lock lock(mutex);
+    #endif
+
+    // WARNING: When downscaled, the ratio have loosed a lot of precision, so we can't get back the exact initial dimensions
+    double fw = lastW*lastScale;
+    double fh = lastH*lastScale;
+
+    if (pparams.coarse.rotate==90 || pparams.coarse.rotate==270) {
+        fh = lastW*lastScale;
+        fw = lastH*lastScale;
+    }
+    if (!pparams.resize.enabled) {
+        w = fw;
+        h = fh;
+    }
+    else {
+        w = (int)(fw+0.5);
+        h = (int)(fh+0.5);
+    }
+}
+
+
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
 
 	Glib::Mutex::Lock lock(mutex);
@@ -418,7 +443,8 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
  		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
 	}
  
- 	//_saveThumbnail();
+    tpp->getDimensions(lastW,lastH,lastScale);
+
  	delete tpp;
  	tpp = 0;
  	return image;
@@ -440,8 +466,8 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  	}
  
  	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+    tpp->getDimensions(lastW,lastH,lastScale);
  
- 	//_saveThumbnail();
  	delete tpp;
  	tpp = 0;
  	return image;

@@ -790,23 +790,11 @@ int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight)
     return rwidth;
 }
 
-void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& params, int& fullw, int& fullh) {
-
-    // WARNING: When downscaled, the ratio have loosed a lot of precision, so we can't get back the exact initial dimensions
-    double fw = thumbImg->width*scale;
-    double fh = thumbImg->height*scale;
-    
-    if (params.coarse.rotate==90 || params.coarse.rotate==270) {
-        fh = thumbImg->width*scale;
-        fw = thumbImg->height*scale;
-    }
-    if (!params.resize.enabled) {
-        fullw = fw;
-        fullh = fh;
-    }
-    else {
-        fullw = (int)((double)fw+0.5);
-        fullh = (int)((double)fh+0.5);
+void Thumbnail::getDimensions (int& w, int& h, double& scaleFac) {
+    if (thumbImg) {
+        w=thumbImg->width; h=thumbImg->height; scaleFac=scale;
+    } else {
+        w=0; h=0; scale=1;
     }
 }
 
