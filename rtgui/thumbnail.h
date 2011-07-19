@@ -54,6 +54,7 @@ class Thumbnail {
         unsigned char*  lastImg;
         int             lastW;
         int             lastH;
+        double          lastScale;
 
         // exif & date/time strings
         Glib::ustring   exifString;
@@ -102,7 +103,7 @@ class Thumbnail {
         rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
         rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
         void            getThumbnailSize        (int &w, int &h);
-        void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h) { if (tpp) tpp->getFinalSize (pparams, w, h); }
+        void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
 
         const Glib::ustring&  getExifString ();
         const Glib::ustring&  getDateTimeString ();
