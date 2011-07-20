@@ -64,7 +64,7 @@ BatchQueue::~BatchQueue ()
 
 void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
 
-    pmenu->popup (3, 0);
+    pmenu->popup (3, this->eventTime);
 }
 
 void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
