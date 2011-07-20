@@ -22,7 +22,8 @@
 
   !include "MUI2.nsh"
   !include "FileFunc.nsh"
-  XPStyle on  
+  !include "x64.nsh"
+  XPStyle on
 
 ;--------------------------------
 ;General
@@ -54,7 +55,7 @@
 
   ;Name and file
   Name "RawTherapee ${TAG}"
-  OutFile "rawtherapee_${TAG}_win32.exe"
+  OutFile "rawtherapee_${TAG}_win64.exe"
   VIProductVersion "${TAG}.${TAGDISTANCE}.0"
 
 	VIAddVersionKey "ProductName" "Raw Therapee"
@@ -70,7 +71,9 @@ the Free Software Foundation, either version 3 of the License, or\
   
   
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\RawTherapee${TAG}"
+  InstallDir "$PROGRAMFILES64\RawTherapee${TAG}"
+  RequestExecutionLevel admin
+
 ;--------------------------------
 ;Variables
 
@@ -105,11 +108,31 @@ the Free Software Foundation, either version 3 of the License, or\
 
 ;--------------------------------
 ;Start function
-
-  
+Function .onInit
+	${If} ${RunningX64}
+		Goto usercheck
+	${EndIf}
+	MessageBox MB_OK|MB_ICONSTOP "$(DESC_MessageAbortOS)" 
+	Abort 
+	
+usercheck:
+	UserInfo::GetName
+	Pop $0
+	UserInfo::GetAccountType
+	Pop $1
+	UserInfo::GetOriginalAccountType
+	Pop $2
+	StrCmp $1 "Admin" 0 +3
+		Goto done
+	MessageBox MB_OK|MB_ICONSTOP "$(DESC_MessageAbortPrivileges)"
+	Abort 
+done:		
+FunctionEnd  
 ;--------------------------------
 ;Installer Sections
  Section "-Program and support libs" SectionApplication
+  SetRegView 64
+  SetShellVarContext all
 
   SetOutPath "$INSTDIR"
   
@@ -149,6 +172,9 @@ the Free Software Foundation, either version 3 of the License, or\
 SectionEnd
 
 Section "GTK 2.22 support libs" SectionLibs
+  SetRegView 64
+  SetShellVarContext all
+
   File ${GTKDir}\redist\*.*
   File /r ${GTKDir}\etc
   CreateDirectory $INSTDIR\lib\gtk-2.0\2.10.0\engines 
@@ -158,11 +184,14 @@ Section "GTK 2.22 support libs" SectionLibs
   File "/oname=$INSTDIR\lib\gtk-2.0\2.10.0\engines\libwimp.dll" ${GTKDir}\lib\gtk-2.0\2.10.0\engines\libwimp.dll
   File "/oname=$INSTDIR\lib\gtk-2.0\modules\libgail.dll" ${GTKDir}\lib\gtk-2.0\modules\libgail.dll
   
-  File ${GCCDir}\bin\libgomp-1.dll
-  File ${GCCDir}\bin\pthreadGC2.dll
+  File ${GCCDir}\bin\libgomp_64-1.dll
+  File ${GCCDir}\bin\pthreadGC2_64.dll
 SectionEnd
 
 Section "FileType shell support" SectionFileType
+   SetRegView 64
+   SetShellVarContext all
+   
    WriteRegStr HKCU "Software\Classes\RAWFile" "" "RAW Image File"
    WriteRegStr HKCU "Software\Classes\RAWFile\shell\open\command" "" "$\"$INSTDIR\rawtherapee.exe$\" $\"%1$\""
    
@@ -193,6 +222,8 @@ SectionEnd
   LangString DESC_SectionApplication ${LANG_ENGLISH} "Raw Therapee application and GTK support library."
   LangString DESC_SectionLibs ${LANG_ENGLISH} "GTK support library."
   LangString DESC_SectionFileType ${LANG_ENGLISH} "Shell support for file extension: .crw .cr2 .crf .nef .raf .pef .dng .arw .sr2 .mrw .raw .orf .kdc .rw2 .mef"
+  LangString DESC_MessageAbortOS ${LANG_ENGLISH} "This installer supports only 64bit Operating Systems"
+  LangString DESC_MessageAbortPrivileges ${LANG_ENGLISH} "Must have administrator privileges to install"
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -205,7 +236,9 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
-
+  SetRegView 64
+  SetShellVarContext all
+  
   ;ADD YOUR OWN FILES HERE...
   Delete "$INSTDIR\*.*"
   RMDir /r "$INSTDIR"
