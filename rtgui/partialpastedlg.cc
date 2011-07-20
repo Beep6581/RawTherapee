@@ -99,6 +99,8 @@ PartialPasteDlg::PartialPasteDlg () {
     raw_ccSteps			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_FALSECOLOR")));
     raw_dcb_iterations	= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBITERATIONS")));
     raw_dcb_enhance		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_DCBENHANCE")));
+    raw_all_enhance		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAW_ALLENHANCE")));
+
 	df_file        		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DARKFRAMEFILE")));
 	df_AutoSelect  		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DARKFRAMEAUTOSELECT")));
 	ff_file        		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFILE")));
@@ -170,6 +172,7 @@ PartialPasteDlg::PartialPasteDlg () {
 	vboxes[6]->pack_start (*raw_ccSteps, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
+	vboxes[6]->pack_start (*raw_all_enhance, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
 	vboxes[6]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
@@ -274,6 +277,8 @@ PartialPasteDlg::PartialPasteDlg () {
     raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_dcb_iterationsConn  = raw_dcb_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_dcb_enhanceConn     = raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    raw_all_enhanceConn     = raw_all_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+
     raw_exposConn           = raw_expos->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_preserConn          = raw_preser->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_blackConn           = raw_black->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -342,6 +347,7 @@ void PartialPasteDlg::rawToggled () {
 	raw_ccStepsConn.block (true);
 	raw_dcb_iterationsConn.block (true);
 	raw_dcb_enhanceConn.block (true);
+	raw_all_enhanceConn.block (true);
 	raw_exposConn.block (true);
 	raw_preserConn.block (true);
 	raw_blackConn.block (true);
@@ -364,6 +370,7 @@ void PartialPasteDlg::rawToggled () {
     raw_ccSteps->set_active (raw->get_active ());
     raw_dcb_iterations->set_active (raw->get_active ());
     raw_dcb_enhance->set_active (raw->get_active ());
+    raw_all_enhance->set_active (raw->get_active ());
     raw_expos->set_active (raw->get_active ());
     raw_preser->set_active (raw->get_active ());
     raw_black->set_active (raw->get_active ());
@@ -384,6 +391,7 @@ void PartialPasteDlg::rawToggled () {
     raw_ccStepsConn.block (false);
     raw_dcb_iterationsConn.block (false);
     raw_dcb_enhanceConn.block (false);
+    raw_all_enhanceConn.block (false);
     raw_exposConn.block (false);
     raw_preserConn.block (false);
     raw_blackConn.block (false);
@@ -596,6 +604,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (raw_ccSteps->get_active ())         dst->raw.ccSteps        =src->raw.ccSteps;
     if (raw_dcb_iterations->get_active ())  dst->raw.dcb_iterations =src->raw.dcb_iterations;
     if (raw_dcb_enhance->get_active ())     dst->raw.dcb_enhance    =src->raw.dcb_enhance;
+    if (raw_all_enhance->get_active ())     dst->raw.all_enhance    =src->raw.all_enhance;
+
     if (raw_expos->get_active ())           dst->raw.expos          =src->raw.expos;
     if (raw_preser->get_active ())          dst->raw.preser         =src->raw.preser;
     if (raw_black->get_active ()){

@@ -299,6 +299,7 @@ class RAWParamsEdited {
         bool dmethod;
         bool dcbIterations;
         bool dcbEnhance;
+        bool allEnhance;	
         bool caCorrection;
 		bool caRed;
 		bool caBlue;

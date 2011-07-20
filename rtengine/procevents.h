@@ -171,7 +171,8 @@ enum ProcEvent {
 	EvClaritythreechannels=146,
 	EvClarityEnabledtwo=147,
 	EvClaritymatrix=148,
-	NUMOFEVENTS=149
+	EvDemosaicALLEnhanced=149,
+	NUMOFEVENTS=150
 	
 	
 	};

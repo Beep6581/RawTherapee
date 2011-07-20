@@ -336,6 +336,7 @@ HISTORY_MSG_145;Microcontrast - uniformity
 HISTORY_MSG_146;Clarity Sharpening - enabled
 HISTORY_MSG_148;Clarity Microcontrast - enabled
 HISTORY_MSG_149;Clarity Microcontrast matrix
+HISTORY_MSG_150;Post demosaic artifact/noise reduction
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -535,6 +536,7 @@ PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 PARTIALPASTE_RAWGROUP;Raw settings
 PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
@@ -907,6 +909,7 @@ TP_RAW_DCBITERATIONS;Number of DCB iterations
 TP_RAW_DMETHOD;Method
 TP_RAW_FALSECOLOR;False color suppression steps
 TP_RAW_LABEL;Demosaicing
+TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (Softer)

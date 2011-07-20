@@ -256,6 +256,8 @@ void ProcParams::setDefaults () {
     raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
+    raw.all_enhance=false;
+	
     // exposure before interpolation
     raw.expos=1.0;
     raw.preser=0.0;
@@ -515,6 +517,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_string  ("RAW", "Method", raw.dmethod );
     keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
     keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
+    keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
+	
     keyFile.set_double ("RAW", "PreExposure", raw.expos );
     keyFile.set_double ("RAW", "PrePreserv", raw.preser );
     keyFile.set_double ("RAW", "PreBlackzero", raw.blackzero );
@@ -879,6 +883,8 @@ if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "Method"))        raw.dmethod = keyFile.get_string ("RAW", "Method");
 	if (keyFile.has_key ("RAW", "DCBIterations")) raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations");
 	if (keyFile.has_key ("RAW", "DCBEnhance"))    raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance");
+	if (keyFile.has_key ("RAW", "ALLEnhance"))    raw.all_enhance =keyFile.get_boolean("RAW", "ALLEnhance");
+	
 	if (keyFile.has_key ("RAW", "PreExposure"))   	  raw.expos =keyFile.get_double("RAW", "PreExposure");
 	if (keyFile.has_key ("RAW", "PrePreserv"))   	  raw.preser =keyFile.get_double("RAW", "PrePreserv");
 	if (keyFile.has_key ("RAW", "PreBlackzero"))   	  raw.blackzero =keyFile.get_double("RAW", "PreBlackzero");

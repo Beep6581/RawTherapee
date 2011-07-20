@@ -156,6 +156,7 @@ void ParamsEdited::set (bool v) {
 	raw.dmethod = v;
 	raw.dcbIterations = v;
 	raw.dcbEnhance = v;
+	raw.allEnhance = v;
 	raw.dfAuto = v;
 	raw.caCorrection = v;
 	raw.hotDeadPixel = v;
@@ -332,6 +333,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
+        raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
+		
         raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
         raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
@@ -503,6 +506,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.dmethod)        toEdit.raw.dmethod      = mods.raw.dmethod;
     if (raw.dcbIterations)  toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
     if (raw.dcbEnhance)     toEdit.raw.dcb_enhance     = mods.raw.dcb_enhance;
+    if (raw.allEnhance)     toEdit.raw.all_enhance     = mods.raw.all_enhance;
+	
     if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
 	if (raw.caRed)          toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
     if (raw.caBlue)         toEdit.raw.cablue          = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cablue + mods.raw.cablue : mods.raw.cablue;
