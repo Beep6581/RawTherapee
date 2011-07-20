@@ -200,3 +200,4 @@ CcSteps=1
 Method=amaze
 DCBIterations=2
 DCBEnhance=false
+ALLEnhance=false

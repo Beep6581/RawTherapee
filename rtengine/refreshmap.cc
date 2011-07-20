@@ -169,5 +169,7 @@ SHARPENING,       //EvClarityEnabled
 SHARPENING,       //EvClaritythreechannels
 SHARPENING,       //EvClarityEnabledtwo
 SHARPENING,         //EvClaritymatrix
+DEMOSAIC,       // EvDemosaicALLEnhanced
+
 };
 

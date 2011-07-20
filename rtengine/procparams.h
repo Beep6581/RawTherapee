@@ -442,6 +442,8 @@ class RAWParams {
         Glib::ustring dmethod;
         int dcb_iterations;
         bool dcb_enhance;
+        bool all_enhance;
+		
 };
 
 /**
@@ -453,7 +455,7 @@ class ProcParams {
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
-		ClarityParams			clarity;
+		ClarityParams			clarity;		  ///< clarity parameters
         ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
         ColorShiftParams        colorShift;      ///< Color shift parameters

@@ -44,7 +44,10 @@ namespace rtengine {
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define DIST(a,b) (ABS(a-b))
+#define CLIREF(x) LIM(x,-200000.0,200000.0) // avoid overflow : do not act directly on image[] or pix[]
 
+#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
+extern Settings* settings;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::eahd_demosaic () {
@@ -1077,6 +1080,148 @@ void RawImageSource::nodemosaic()
         	}
         }
     }
+}
+
+// Refinement based on EECI demosaicing algorithm by L. Chang and Y.P. Tan
+// from "Lassus" : Luis Sanz, adapted by Jacques Desmis - JDC - and Oliver Duis for RawTherapee
+// increases the signal to noise ratio (PSNR) # +1 to +2 dB : tested with Dcraw : eg: Lighthouse + AMaZE : whitout refinement:39.96dB, with refinement:41.86 dB
+// reduce color artifacts, improves the interpolation
+// but it's relatively slow
+void RawImageSource::refinement_lassus()
+{  
+    const int PassCount=2;  // two passes EECI refine, slow but best results...
+
+    if (settings->verbose) printf("Refinement Lassus\n");
+
+    MyTime t1e,t2e;
+    t1e.set();
+    int u=W, v=2*u, w=3*u, x=4*u, y=5*u;
+    float (*image)[4];
+    image = (float(*)[4]) calloc(W*H, sizeof *image);
+#pragma omp parallel shared(image)
+    {
+        // convert red, blue, green to image
+#pragma omp for
+        for (int i=0;i<H;i++) {
+            for (int j=0;j<W;j++) {
+                image[i*W+j][0] = red  [i][j];
+                image[i*W+j][1] = green[i][j];
+                image[i*W+j][2] = blue [i][j];			 
+            }
+        }
+
+        for (int b=0; b<PassCount; b++) {
+            if (plistener) {
+                plistener->setProgressStr ("Refinement...");
+                plistener->setProgress ((float)b/PassCount);
+            }
+
+            // Reinforce interpolated green pixels on RED/BLUE pixel locations
+#pragma omp for
+            for (int row=6; row<H-6; row++) {
+                int c,d;
+                for (int col=6+(FC(row,2)&1),c=FC(row,col); col<W-6; col+=2) {
+                    float (*pix)[4]=image+row*W+col;
+
+                    // Cubic Spline Interpolation by Li and Randhawa, modified by Luis Sanz Rodríguez
+
+                    float f[4];
+                    f[0]=1.0/(1.0+2.0*fabs(1.125*pix[-v][c]-0.875*pix[0][c]-0.250*pix[-x][c])+fabs(0.875*pix[u][1]-1.125*pix[-u][1]+0.250*pix[-w][1])+fabs(0.875*pix[-w][1]-1.125*pix[-u][1]+0.250*pix[-y][1]));   
+                    f[1]=1.0/(1.0+2.0*fabs(1.125*pix[+2][c]-0.875*pix[0][c]-0.250*pix[+4][c])+fabs(0.875*pix[1][1]-1.125*pix[-1][1]+0.250*pix[+3][1])+fabs(0.875*pix[+3][1]-1.125*pix[+1][1]+0.250*pix[+5][1]));
+                    f[2]=1.0/(1.0+2.0*fabs(1.125*pix[-2][c]-0.875*pix[0][c]-0.250*pix[-4][c])+fabs(0.875*pix[1][1]-1.125*pix[-1][1]+0.250*pix[-3][1])+fabs(0.875*pix[-3][1]-1.125*pix[-1][1]+0.250*pix[-5][1]));
+                    f[3]=1.0/(1.0+2.0*fabs(1.125*pix[+v][c]-0.875*pix[0][c]-0.250*pix[+x][c])+fabs(0.875*pix[u][1]-1.125*pix[-u][1]+0.250*pix[+w][1])+fabs(0.875*pix[+w][1]-1.125*pix[+u][1]+0.250*pix[+y][1])); 
+
+                    float g[4];//CLIREF avoid overflow
+                    g[0]=pix[0][c]+(0.875*CLIREF(pix[-u][1]-pix[-u][c])+0.125*CLIREF(pix[+u][1]-pix[+u][c]));
+                    g[1]=pix[0][c]+(0.875*CLIREF(pix[+1][1]-pix[+1][c])+0.125*CLIREF(pix[-1][1]-pix[-1][c]));
+                    g[2]=pix[0][c]+(0.875*CLIREF(pix[-1][1]-pix[-1][c])+0.125*CLIREF(pix[+1][1]-pix[+1][c]));
+                    g[3]=pix[0][c]+(0.875*CLIREF(pix[+u][1]-pix[+u][c])+0.125*CLIREF(pix[-u][1]-pix[-u][c]));
+					
+					
+                    pix[0][1]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3]) / (f[0]+f[1]+f[2]+f[3]);
+
+                }
+            }
+            // Reinforce interpolated red/blue pixels on GREEN pixel locations
+#pragma omp for 
+            for (int row=6; row<H-6; row++) {
+                int c,d;
+                for (int col=6+(FC(row,3)&1),c=FC(row,col+1); col<W-6; col+=2) {
+                    float (*pix)[4]=image+row*W+col;
+                    for (int i=0; i<2; c=2-c,i++) {
+                        float f[4];
+                        f[0]=1.0/(1.0+2.0*fabs(0.875*pix[-v][1]-1.125*pix[0][1]+0.250*pix[-x][1])+fabs(pix[u] [c]-pix[-u][c])+fabs(pix[-w][c]-pix[-u][c]));
+                        f[1]=1.0/(1.0+2.0*fabs(0.875*pix[+2][1]-1.125*pix[0][1]+0.250*pix[+4][1])+fabs(pix[+1][c]-pix[-1][c])+fabs(pix[+3][c]-pix[+1][c]));
+                        f[2]=1.0/(1.0+2.0*fabs(0.875*pix[-2][1]-1.125*pix[0][1]+0.250*pix[-4][1])+fabs(pix[+1][c]-pix[-1][c])+fabs(pix[-3][c]-pix[-1][c]));
+                        f[3]=1.0/(1.0+2.0*fabs(0.875*pix[+v][1]-1.125*pix[0][1]+0.250*pix[+x][1])+fabs(pix[u] [c]-pix[-u][c])+fabs(pix[+w][c]-pix[+u][c]));
+
+                        float g[5];//CLIREF avoid overflow
+                        g[0]=CLIREF(pix[-u][1]-pix[-u][c]);
+                        g[1]=CLIREF(pix[+1][1]-pix[+1][c]);
+                        g[2]=CLIREF(pix[-1][1]-pix[-1][c]);
+                        g[3]=CLIREF(pix[+u][1]-pix[+u][c]);
+                        g[4]=((f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3]) / (f[0]+f[1]+f[2]+f[3]));
+                        pix[0][c]= pix[0][1]-(0.65*g[4]+0.35*CLIREF(pix[0][1]-pix[0][c]));
+                    }
+                }
+				}
+            // Reinforce integrated red/blue pixels on BLUE/RED pixel locations
+#pragma omp for
+            for (int row=6; row<H-6; row++) {
+                int c,d;
+                for (int col=6+(FC(row,2)&1),c=2-FC(row,col),d=2-c; col<W-6; col+=2) {
+                    float (*pix)[4]=image+row*W+col;
+
+                    float f[4];
+                    f[0]=1.0/(1.0+2.0*fabs(1.125*pix[-v][d]-0.875*pix[0][d]-0.250*pix[-x][d])+fabs(0.875*pix[u][1]-1.125*pix[-u][1]+0.250*pix[-w][1])+fabs(0.875*pix[-w][1]-1.125*pix[-u][1]+0.250*pix[-y][1]));   
+                    f[1]=1.0/(1.0+2.0*fabs(1.125*pix[+2][d]-0.875*pix[0][d]-0.250*pix[+4][d])+fabs(0.875*pix[1][1]-1.125*pix[-1][1]+0.250*pix[+3][1])+fabs(0.875*pix[+3][1]-1.125*pix[+1][1]+0.250*pix[+5][1]));
+                    f[2]=1.0/(1.0+2.0*fabs(1.125*pix[-2][d]-0.875*pix[0][d]-0.250*pix[-4][d])+fabs(0.875*pix[1][1]-1.125*pix[-1][1]+0.250*pix[-3][1])+fabs(0.875*pix[-3][1]-1.125*pix[-1][1]+0.250*pix[-5][1]));
+                    f[3]=1.0/(1.0+2.0*fabs(1.125*pix[+v][d]-0.875*pix[0][d]-0.250*pix[+x][d])+fabs(0.875*pix[u][1]-1.125*pix[-u][1]+0.250*pix[+w][1])+fabs(0.875*pix[+w][1]-1.125*pix[+u][1]+0.250*pix[+y][1])); 
+
+                    float g[5];
+                    g[0]=(0.875*(pix[-u][1]-pix[-u][c])+0.125*(pix[-v][1]-pix[-v][c]));
+                    g[1]=(0.875*(pix[+1][1]-pix[+1][c])+0.125*(pix[+2][1]-pix[+2][c]));
+                    g[2]=(0.875*(pix[-1][1]-pix[-1][c])+0.125*(pix[-2][1]-pix[-2][c]));
+                    g[3]=(0.875*(pix[+u][1]-pix[+u][c])+0.125*(pix[+v][1]-pix[+v][c]));
+					
+                    g[4]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3]) / (f[0]+f[1]+f[2]+f[3]);
+
+                    float p[9];
+                    p[0]=(pix[-u-1][1]-pix[-u-1][c]);
+                    p[1]=(pix[-u+0][1]-pix[-u+0][c]);
+                    p[2]=(pix[-u+1][1]-pix[-u+1][c]);
+                    p[3]=(pix[+0-1][1]-pix[+0-1][c]);
+                    p[4]=(pix[+0+0][1]-pix[+0+0][c]);
+                    p[5]=(pix[+0+1][1]-pix[+0+1][c]);
+                    p[6]=(pix[+u-1][1]-pix[+u-1][c]);
+                    p[7]=(pix[+u+0][1]-pix[+u+0][c]);
+                    p[8]=(pix[+u+1][1]-pix[+u+1][c]);
+
+                    // sort p[]
+                    float temp;  // used in PIX_SORT macro;
+                    PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); PIX_SORT(p[0],p[1]); PIX_SORT(p[3],p[4]); PIX_SORT(p[6],p[7]); PIX_SORT(p[1],p[2]); PIX_SORT(p[4],p[5]); PIX_SORT(p[7],p[8]); PIX_SORT(p[0],p[3]); PIX_SORT(p[5],p[8]); PIX_SORT(p[4],p[7]); PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); PIX_SORT(p[4],p[2]);
+                    pix[0][c]=LIM(pix[0][1]-(1.30*g[4]-0.30*(pix[0][1]-pix[0][c])), 0.99*(pix[0][1]-p[4]), 1.01*(pix[0][1]-p[4]));
+
+                }
+            }
+
+        }
+
+        // put modified values to red, green, blue
+#pragma omp for
+        for (int i=0;i<H;i++) {
+            for (int j=0; j<W; j++) {
+                red  [i][j] =image[i*W+j][0];
+                green[i][j] =image[i*W+j][1];
+                blue [i][j] =image[i*W+j][2];			 
+            }
+        }  
+    }
+
+    free(image);
+
+    t2e.set();
+    if (settings->verbose) printf("Refinement %d usec\n", t2e.etime(t1e));
 }
 
 /*

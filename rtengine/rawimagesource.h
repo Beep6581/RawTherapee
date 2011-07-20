@@ -130,6 +130,8 @@ class RawImageSource : public ImageSource {
         int         load        (Glib::ustring fname, bool batch = false);
         void        preprocess  (const RAWParams &raw, HRecParams hrp);
         void        demosaic    (const RAWParams &raw, HRecParams hrp);
+		void 		refinement_lassus ();
+
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
         void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack

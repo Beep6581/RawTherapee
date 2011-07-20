@@ -35,9 +35,12 @@ class RawProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Gtk::VBox *ccOptions;
     Adjuster* dcbIterations;
     Gtk::CheckButton* dcbEnhance;
+    Gtk::VBox *allOptions;
+    Gtk::CheckButton* allEnhance;
 
     bool lastDCBen;
-    sigc::connection methodconn,dcbEnhconn;
+	bool lastALLen;
+    sigc::connection methodconn,dcbEnhconn,allEnhconn;
   public:
 
     RawProcess ();
@@ -50,6 +53,8 @@ class RawProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void methodChanged ();
     void adjusterChanged     (Adjuster* a, double newval);
     void dcbEnhanceChanged();
+    void allEnhanceChanged();
+	
 };
 
 #endif

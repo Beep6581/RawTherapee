@@ -420,8 +420,6 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-
-    // Applying postmul
     colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
 }
 	
@@ -1120,6 +1118,8 @@ void RawImageSource::demosaic(const RAWParams &raw, HRecParams hrp )
         t2.set();
         if( settings->verbose )
            printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
+		
+        if (raw.all_enhance) refinement_lassus();
     }
     if (plistener) {
         plistener->setProgressStr ("Ready.");
