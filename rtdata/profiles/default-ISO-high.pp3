@@ -9,7 +9,7 @@ ColorLabel=0
 InTrash=false
 
 [Exposure]
-Auto=true
+Auto=false
 Clip=0.0002
 Compensation=0
 Brightness=10
@@ -79,8 +79,8 @@ ChannelA=0
 ChannelB=0
 
 [Impulse Denoising]
-Enabled=false
-Threshold=50
+Enabled=true
+Threshold=80
 
 [Defringing]
 Enabled=false
@@ -88,10 +88,10 @@ Radius=2
 Threshold=25
 
 [Directional Pyramid Denoising]
-Enabled=false
-Luma=10
-Chroma=10
-Gamma=2
+Enabled=true
+Luma=0
+Chroma=30
+Gamma=1.1
 LumCurve=0;
 ChromCurve=0;
 
@@ -191,11 +191,11 @@ C7=0
 
 [Directional Pyramid Equalizer]
 Enabled=true
-Mult0=3
-Mult1=1
+Mult0=1
+Mult1=2
 Mult2=1
 Mult3=1
-Mult4=0.2
+Mult4=0.5
 
 [HSV Equalizer]
 HCurve=0;
