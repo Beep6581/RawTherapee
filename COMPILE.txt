@@ -35,7 +35,7 @@ Windows
 		This tutorial assume that you've installed the packages in paths THAT DOES NOT CONTAIN SPACES.
 
 		METHOD 1:
-			- MinGW64-TDM (Bundle or On-Demand insteller from http://tdm-gcc.tdragon.net/download)
+			- MinGW64-TDM (Bundle or On-Demand installer from http://tdm-gcc.tdragon.net/download)
 			            Make sure you use the current 4.5.2 or better, and install MinGW64 (not MinGW32)
 			            MinGW64 is more comprehensive, plus it runs AND compiles both 32bit and 64bit Windows.
 			            Old Mingw32 version miss some required header files, so some Windows functions will be disabled though it will compile.
@@ -60,6 +60,12 @@ Windows
 			- set the PKG_CONFIG_PATH user or system environment variable to the location of the pkgconfig directories:
 			      c:\mingw\lib\pkgconfig;c:\gtkmm\lib\pkgconfig
 			  You have to restart the console to take this new variables into account
+			- On Windows, set Cmake option BUILD_BUNDLE ON
+			- If you run MinGW64 and want to compile for 32bit, change the following vars in CMAKE (use CMAKE-GUI to makes this easier):
+			  CMAKE_CXX_FLAGS,CMAKE_C_FLAGS,CMAKE_SHARED_LINKER_FLAGS: -m32
+			  CMAKE_EXE_LINKER_FLAGS: -m32 --large-address-aware
+			  CMAKE_RC_FLAGS: -F pe-i386
+			  
 			- Copy the "Win32CMakeOptions-sample.txt" file located in the root directory of RT's source tree, to "cmo.txt" (e.g.)
 			  You can edit that copy to change the compilation flags to your needs, but the default values should be fine.
 			  However, if you wants to upload a build, you should set some additionnal information about your processor. There are two possibilities:
