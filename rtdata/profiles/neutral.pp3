@@ -1,9 +1,16 @@
+
 [Version]
+AppVersion=Dev-3.1m6.89
 Version=300
+
+[General]
+Rank=0
+ColorLabel=0
+InTrash=false
 
 [Exposure]
 Auto=false
-Clip=0.001
+Clip=0.0002
 Compensation=0
 Brightness=0
 Contrast=0
@@ -23,6 +30,9 @@ Blue=0;0;100;
 Brightness=0
 Contrast=0
 Saturation=0
+AvoidColorClipping=false
+SaturationLimiter=false
+SaturationLimit=50
 LCurve=0;
 aCurve=0;
 bCurve=0;
@@ -30,8 +40,8 @@ bCurve=0;
 [Sharpening]
 Enabled=false
 Method=usm
-Radius=0.8
-Amount=120
+Radius=0.5
+Amount=125
 Threshold=512
 OnlyEdges=false
 EdgedetectionRadius=1.9
@@ -62,7 +72,7 @@ SaturationLimit=75
 [White Balance]
 Setting=Camera
 Temperature=5200
-Green=1.0
+Green=1
 
 [Color Shift]
 ChannelA=0
@@ -72,11 +82,18 @@ ChannelB=0
 Enabled=false
 Threshold=50
 
+[Defringing]
+Enabled=false
+Radius=2
+Threshold=25
+
 [Directional Pyramid Denoising]
 Enabled=false
 Luma=10
 Chroma=10
 Gamma=2
+LumCurve=0;
+ChromCurve=0;
 
 [Luminance Denoising]
 Enabled=false
@@ -145,6 +162,7 @@ Method=CIELab blending
 [Resize]
 Enabled=false
 Scale=1
+AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
 Width=4276
@@ -153,12 +171,12 @@ Height=2836
 [Color Management]
 InputProfile=(camera)
 ApplyGammaBeforeInputProfile=false
-WorkingProfile=sRGB
-OutputProfile=No ICM: sRGB output
+WorkingProfile=Adobe RGB
+OutputProfile=sRGB Color Space Profile
 Gammafree=default
 Freegamma=false
-gampos=2.22
-slpos=4.5
+GammaValue=2.22
+GammaSlope=4.5
 
 [Equalizer]
 Enabled=false
@@ -179,6 +197,11 @@ Mult2=1
 Mult3=1
 Mult4=0
 
+[HSV Equalizer]
+HCurve=0;
+SCurve=0;
+VCurve=0;
+
 [RAW]
 DarkFrame=
 DarkFrameAuto=false
@@ -187,17 +210,21 @@ FlatFieldAutoSelect=false
 FlatFieldBlurRadius=32
 FlatFieldBlurType=Area Flatfield
 CA=false
+CARed=0
+CABlue=0
 HotDeadPixels=false
+HotDeadPixelThresh=40
 LineDenoise=0
 GreenEqThreshold=0
+CcSteps=1
+Method=amaze
+DCBIterations=2
+DCBEnhance=false
+ALLEnhance=false
 PreExposure=1
 PrePreserv=0
 PreBlackzero=0
 PreBlackone=0
 PreBlacktwo=0
 PreBlackthree=0
-CcSteps=1
-Method=amaze
-DCBIterations=2
-DCBEnhance=false
-ALLEnhance=false
+PreTwoGreen=true

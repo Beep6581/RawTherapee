@@ -10,9 +10,9 @@ InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0.0002
+Clip=0.0005
 Compensation=0
-Brightness=10
+Brightness=25
 Contrast=20
 Saturation=0
 Black=0
@@ -27,9 +27,9 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
-Contrast=0
-Saturation=20
+Brightness=-15
+Contrast=25
+Saturation=25
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
@@ -72,7 +72,7 @@ SaturationLimit=75
 [White Balance]
 Setting=Camera
 Temperature=5000
-Green=1
+Green=1.0
 
 [Color Shift]
 ChannelA=0
@@ -118,8 +118,8 @@ Radius=30
 Enabled=false
 X=0
 Y=0
-W=4281
-H=2871
+W=4276
+H=2836
 FixedRatio=false
 Ratio=3:2
 Orientation=Landscape
@@ -165,8 +165,8 @@ Scale=1
 AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
-Width=4281
-Height=2871
+Width=4276
+Height=2836
 
 [Color Management]
 InputProfile=(camera)
@@ -221,7 +221,7 @@ Method=amaze
 DCBIterations=2
 DCBEnhance=false
 ALLEnhance=false
-PreExposure=0.99999999999999956
+PreExposure=1
 PrePreserv=0
 PreBlackzero=0
 PreBlackone=0
