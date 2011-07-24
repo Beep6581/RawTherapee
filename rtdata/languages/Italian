@@ -22,6 +22,7 @@ CURVEEDITOR_HIGHLIGHTS;Alteluci
 CURVEEDITOR_LIGHTS;Luci
 CURVEEDITOR_LINEAR;Lineare
 CURVEEDITOR_LOADDLGLABEL;Carica curva...
+CURVEEDITOR_MINMAXCPOINTS;Curva personalizzata
 CURVEEDITOR_NURBS;Gabbia di controllo
 CURVEEDITOR_PARAMETRIC;Parametrica
 CURVEEDITOR_SAVEDLGLABEL;Salva curva...
@@ -58,8 +59,8 @@ FILEBROWSER_ADDDELTEMPLATE;Aggiungi/Rimuovi modelli...
 FILEBROWSER_APPLYPROFILE;Applica un profilo
 FILEBROWSER_ARRANGEMENTHINT;Commuta fra la disposizione verticale o orizzontale delle miniature
 FILEBROWSER_AUTODARKFRAME;Dark frame automatico
-FILEBROWSER_CLEARPROFILE;Azzera profilo
-FILEBROWSER_COPYPROFILE;Copia profilo
+FILEBROWSER_CLEARPROFILE;Azzera il profilo
+FILEBROWSER_COPYPROFILE;Copia il profilo
 FILEBROWSER_CURRENT_NAME;Nome corrente:
 FILEBROWSER_DELETEDLGLABEL;Conferma eliminazione file
 FILEBROWSER_DELETEDLGMSG;Sei certo di voler eliminare i %1 file selezionati?
@@ -73,7 +74,7 @@ FILEBROWSER_EXIFFILTERSETTINGSHINT;Modifica le impostazioni del filtro exif
 FILEBROWSER_MOVETODARKFDIR;Sposta nella cartella dark frames
 FILEBROWSER_NEW_NAME;Nuovo nome:
 FILEBROWSER_PARTIALPASTEPROFILE;Incolla profilo parziale
-FILEBROWSER_PASTEPROFILE;Incolla profilo
+FILEBROWSER_PASTEPROFILE;Incolla il profilo
 FILEBROWSER_POPUPCANCELJOB;Cancella compito
 FILEBROWSER_POPUPMOVEEND;Sposta in fondo alla coda
 FILEBROWSER_POPUPMOVEHEAD;Sposta in cima alla coda
@@ -321,7 +322,7 @@ IPTCPANEL_HEADLINE;Intestazione
 IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del contenuto dell'immagine (Headline).
 IPTCPANEL_INSTRUCTIONS;Istruzioni
 IPTCPANEL_INSTRUCTIONSHINT;Altre istruzioni editoriali riguardanti l'uso dell'immagine (Special Instructions).
-IPTCPANEL_KEYWORDS;Parole ChiaveSchwellwert
+IPTCPANEL_KEYWORDS;Parole Chiave
 IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche per il recupero di informazioni specifiche (Keywords).
 IPTCPANEL_PASTEHINT;Incolla le impostazioni IPTC dagli appunti
 IPTCPANEL_PROVINCE;Provincia
@@ -410,7 +411,7 @@ NAVIGATOR_V_NA;V = n/d
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 PARTIALPASTE_BASICGROUP;Parametri di base
-PARTIALPASTE_CACORRECTION;Correzione AC
+PARTIALPASTE_CACORRECTION;Correzione A/C
 PARTIALPASTE_CHANNELMIXER;Miscelatore canali colore
 PARTIALPASTE_COARSETRANS;Rotazione di 90° / riflessione
 PARTIALPASTE_COLORBOOST;Potenziamento colore
@@ -434,6 +435,8 @@ PARTIALPASTE_EXIFCHANGES;Cambiamenti nei dati exif
 PARTIALPASTE_EXPOSURE;Esposizione
 PARTIALPASTE_HLRECONSTRUCTION;Recupero alteluci
 PARTIALPASTE_HLRECOVERY;Recupero alteluci
+PARTIALPASTE_HLRECOVERYAMOUNT;Quantità recupero alte luci
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Soglia recupero alte luci
 PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMSETTINGS;Parametri ICM
 PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore puntuale
@@ -463,6 +466,7 @@ PARTIALPASTE_ROTATION;Rotazione
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombre/Alteluci
 PARTIALPASTE_SHARPENING;Nitidezza
 PARTIALPASTE_VIGNETTING;Correzione vignettatura
+PARTIALPASTE_WAVELETEQUALIZER;Equalizzatore Wavelet
 PARTIALPASTE_WHITEBALANCE;Bilanciamento del bianco
 PREFERENCES_ADD;Aggiungi
 PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
@@ -617,7 +621,7 @@ TOOLBAR_TOOLTIP_HAND;Strumento mano (tasto rapido: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Seleziona linea dritta (tasto rapido: S)
 TOOLBAR_TOOLTIP_WB;Bilanciamento del bianco puntuale (tasto rapido: W)
 TP_CACORRECTION_BLUE;Blu
-TP_CACORRECTION_LABEL;Correzione AC
+TP_CACORRECTION_LABEL;Correzione A/C
 TP_CACORRECTION_RED;Rosso
 TP_CHMIXER_BLUE;Blu
 TP_CHMIXER_GREEN;Verde
@@ -765,6 +769,7 @@ TP_PREPROCESS_GREENEQUIL;Equilibrazione del verde
 TP_PREPROCESS_HOTDEADPIXFILT;Filtro pixel caldi/spenti
 TP_PREPROCESS_LABEL;Pre-elaborazione
 TP_PREPROCESS_LINEDENOISE;Filtro rumore di linea
+TP_PREPROCESS_NO_FOUND;Non trovato
 TP_RAWCACORR_AUTO;Correzione AC automatica
 TP_RAWCACORR_CABLUE;Blu
 TP_RAWCACORR_CARED;Rossa
@@ -858,9 +863,3 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-!CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!TP_PREPROCESS_NO_FOUND;None found
