@@ -1,4 +1,4 @@
-0a1,10
+0a1,11
 > /*RT*/#include <glib.h>
 > /*RT*/#include <glib/gstdio.h>
 > /*RT*/#undef MAX
@@ -6,104 +6,116 @@
 > /*RT*/#undef ABS
 > /*RT*/#define NO_LCMS
 > /*RT*/#define NO_JPEG
+> /*RT*/#define NO_JASPER
 > /*RT*/#define LOCALTIME
 > /*RT*/#define DJGPP
 > 
-98a109
+101,106c112,114
+< #if !defined(uchar)
+< #define uchar unsigned char
+< #endif
+< #if !defined(ushort)
+< #define ushort unsigned short
+< #endif
+---
+> #define ushort UshORt
+> typedef unsigned char uchar;
+> typedef unsigned short ushort;
+107a116
 > #include "dcraw.h"
-103c114
+112c121
 <  */
 ---
 > 
-131,132c142,143
+140,141c149,150
 < float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 < const double xyz_rgb[3][3] = {			/* XYZ from RGB */
 ---
 > float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];*/
 > const double xyz_rgb[3][3] = {			// XYZ from RGB
-137c148
+146c155
 < int histogram[4][0x2000];
 ---
 > /*int histogram[4][0x2000];
-155,156c166,167
+164,165c173,174
 < 
 < #define CLASS
 ---
 > */
 > #define CLASS DCraw::
-273a285
+282a292
 >   /*RT*/  longjmp (failure, 1);
-347c359
+356c366
 <     swab (pixel, pixel, count*2);
 ---
 >     swab ((char*)pixel, (char*)pixel, count*2);
-539c551
+548c558
 < unsigned CLASS getbithuff (int nbits, ushort *huff)
 ---
 > unsigned CLASS getbithuff_t::operator() (int nbits, ushort *huff)
-541,542c553,554
+550,551c560,561
 <   static unsigned bitbuf=0;
 <   static int vbits=0, reset=0;
 ---
 > /*RT static unsigned bitbuf=0; */
 > /*RT static int vbits=0, reset=0; */
-1255c1267
+1264c1274
 <   fseek (ifp, -sizeof tail, SEEK_END);
 ---
 >   fseek (ifp, -(int)sizeof tail, SEEK_END);
-1291c1303
+1300c1310
 < void CLASS jpeg_thumb();
 ---
 > /*RT  void CLASS jpeg_thumb(); */
-1567c1579
+1576c1586
 < unsigned CLASS ph1_bithuff (int nbits, ushort *huff)
 ---
 > unsigned CLASS ph1_bithuff_t::operator() (int nbits, ushort *huff)
-1569,1570c1581,1582
+1578,1579c1588,1589
 <   static UINT64 bitbuf=0;
 <   static int vbits=0;
 ---
 > /*RT  static UINT64 bitbuf=0; */
 > /*RT  static int vbits=0; */
-1696c1708
+1705c1715
 < void CLASS unpacked_load_raw();
 ---
 > /*RT void CLASS unpacked_load_raw(); */
-1837c1849
+1846c1856
 < unsigned CLASS pana_bits (int nbits)
 ---
 > unsigned CLASS pana_bits_t::operator() (int nbits)
-1839,1840c1851,1852
+1848,1849c1858,1859
 <   static uchar buf[0x4000];
 <   static int vbits;
 ---
 > /*RT  static uchar buf[0x4000]; */
 > /*RT  static int vbits;*/
-2129c2141
+2138c2148
 <   static uchar jpeg_buffer[4096];
 ---
 > /*RT  static uchar jpeg_buffer[4096]; */
-2133c2145
+2142c2152
 <   swab (jpeg_buffer, jpeg_buffer, nbytes);
 ---
 >   swab ((char*)jpeg_buffer, (char*)jpeg_buffer, nbytes);
-2405c2417
+2414c2424
 < void CLASS sony_decrypt (unsigned *data, int len, int start, int key)
 ---
 > void CLASS sony_decrypt_t::operator()(unsigned *data, int len, int start, int key)
-2407c2419
+2416c2426
 <   static unsigned pad[128], p;
 ---
 > /*RT  static unsigned pad[128], p;*/
-2654c2666
+2715c2725
 <   static unsigned huff[1024];
 ---
 > /*RT  static unsigned huff[1024];*/
-4338c4350
+4399c4409
 < int CLASS parse_tiff_ifd (int base);
 ---
 > /*RT int CLASS parse_tiff_ifd (int base);*/
-4466,4471c4478,4483
+4529,4534c4539,4544
 <     if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
 <       fread (buf97, 1, sizeof buf97, ifp);
 <       i = (uchar *) memmem (buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
@@ -117,21 +129,21 @@
 > //      if (i < 70 && buf97[i] < 3)
 > //	flip = "065"[buf97[i]]-'0';
 > //    }
-4854,4855c4866,4867
+4913,4914c4923,4924
 < void CLASS parse_minolta (int base);
 < int CLASS parse_tiff (int base);
 ---
 > /*RT void CLASS parse_minolta (int base); */
 > /*RT int CLASS parse_tiff (int base);*/
-4869c4881
+4928c4938
 <   FILE *sfp;
 ---
 > /*RT*/  IMFILE *sfp;
-4885a4898,4900
+4944a4955,4957
 >       case 14: case 15: case 16:
 > 	maximum = get2();
 > 	break;
-5289,5291c5304,5307
+5348,5350c5361,5364
 <     if ((ifp = tmpfile())) {
 <       fwrite (buf, sony_length, 1, ifp);
 <       fseek (ifp, 0, SEEK_SET);
@@ -140,25 +152,25 @@
 > //    if ((ifp = tmpfile())) {
 > //      fwrite (buf, sony_length, 1, ifp);
 > //      fseek (ifp, 0, SEEK_SET);
-5293,5294c5309,5310
+5352,5353c5366,5367
 <       fclose (ifp);
 <     }
 ---
 > //      fclose (ifp);
 > //    }
-5318a5335,5336
+5377a5392,5393
 >   /*RT*/  if (exif_base == -1) exif_base = base;
 > 
-5493c5511
+5552c5568
 <   FILE *save=ifp;
 ---
 > /*RT*/  IMFILE *save=ifp;
-5521c5539,5540
+5580c5596,5597
 <     if ((ifp = fopen (jname, "rb"))) {
 ---
 > /*RT*/    if ((ifp = fopen (jname))) {
 > //    if ((ifp = fopen (jname, "rb"))) {
-5860c5879,5883
+5919c5936,5940
 <       parse_ciff (save+hlen, len-hlen);
 ---
 > /*RT*/    {
@@ -166,43 +178,42 @@
 > /*RT*/      ciff_len = len-hlen;
 >         parse_ciff (save+hlen, len-hlen);
 > /*RT*/    }
-6668,6671c6691,6694
-<     { "SONY NEX-3", 138, 0,		/* DJC */
-< 	{ 6907,-1256,-645,-4940,12621,2320,-1710,2581,6230 } },
-<     { "SONY NEX-5", 116, 0,		/* DJC */
-< 	{ 6807,-1350,-342,-4216,11649,2567,-1089,2001,6420 } },
+6705c6726
+<         { 8407,-3261,-502,-3997,10651,3347,-1095,2742,7294 } },
 ---
-> //  { "SONY NEX-3", 138, 0,		/* DJC */
-> //  { 6907,-1256,-645,-4940,12621,2320,-1710,2581,6230 } },
-> //  { "SONY NEX-5", 116, 0,		/* DJC */
-> //  { 6807,-1350,-342,-4216,11649,2567,-1089,2001,6420 } },
-6918a6942,6947
+>     { 8407,-3261,-502,-3997,10651,3347,-1095,2742,7294 } },
+7023a7045,7050
 > 
 >   /*RT*/ if (fsize<100000) {
 >         is_raw = 0;
 >         return;
 >     }
 > 
-6925a6955,6956
+7030a7058,7059
 > /*RT*/      ciff_base = hlen;
 > /*RT*/      ciff_len = fsize - hlen;
-6968a7000
+7073a7103
 > /*RT*/    exif_base = thumb_offset+12;
-7051c7083
+7119,7120c7149
+<     filters = 0x49494949;
+<   } else if (!memcmp (head,"DSC-Image",9))
+---
+>     filters = 0x49494949;  } else if (!memcmp (head,"DSC-Image",9))
+7175c7204
 <     {			width  = 4309; filters = 0x16161616; }
 ---
 > /*RT*/   {			width  = 4308; filters = 0x16161616; }
-8650c8682
+8794c8823
 <       swab (ppm2, ppm2, width*colors*2);
 ---
 >       swab ((char*)ppm2, (char*)ppm2, width*colors*2);
-8656c8688
+8800c8829
 < int CLASS main (int argc, const char **argv)
 ---
 > /*int CLASS main (int argc, const char **argv)
-8769c8801
+8913c8942
 <       case 'h':  half_size         = 1;		/* "-h" implies "-f" */
 ---
 >       case 'h':  half_size         = 1;		// "-h" implies "-f"
-9031a9064
+9175a9205
 > */
