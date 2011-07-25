@@ -166,6 +166,8 @@ void canon_600_coeff();
 void canon_600_load_raw();
 void remove_zeroes();
 int canon_s2is();
+void redcine_load_raw();
+void parse_redcine();
 
 // getbithuff(int nbits, ushort *huff);
 class getbithuff_t
