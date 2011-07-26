@@ -598,17 +598,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     double mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
     double logDefGain = log(defGain) / log(2.0);
     int rmi, gmi, bmi;
-    if (!isRaw || !params.hlrecovery.enabled) {
+    // Since HL recovery is not rendered in thumbs
+//    if (!isRaw || !params.hlrecovery.enabled) {
         logDefGain = 0.0;
         rmi = 1024.0 * rm * defGain / mul_lum;
         gmi = 1024.0 * gm * defGain / mul_lum;
         bmi = 1024.0 * bm * defGain / mul_lum;
-    }
+/*    }
     else {
         rmi = 1024.0 * rm / mul_lum;
         gmi = 1024.0 * gm / mul_lum;
         bmi = 1024.0 * bm / mul_lum;
-    }
+    }*/
 
     // The RAW exposure is not reflected since it's done in preprocessing. If we only have e.g. the chached thumb,
     // that is already preprocessed. So we simulate the effect here roughly my modifying the exposure accordingly
