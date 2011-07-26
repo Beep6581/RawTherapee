@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Jun 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 30.06.2011
+#15 Jan-Jul 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 26.07.2011
 #16 Erweiterung (oduis)
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -143,7 +143,9 @@ FILEBROWSER_SHOWCOLORLABEL2HINT;Nur gelb markierte Bilder anzeigen <b>Alt-2</b>
 FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen <b>Alt-3</b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen <b>Alt-5</b>
-FILEBROWSER_SHOWDIRHINT;Alle Bewertungs- und Farbfilter zurücksetzen <b>D</b>
+FILEBROWSER_SHOWDIRHINT;Nebenstehende Filter zurücksetzen <b>D</b>
+FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden <b>I</b>
 FILEBROWSER_SHOWQUEUEHINT;Inhalt der Warteschlange zeigen
 FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen <b>1</b>
@@ -151,6 +153,8 @@ FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen <b>3</b>
 FILEBROWSER_SHOWRANK4HINT;Nur mit 4 Sternen bewertete Bilder anzeigen <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Nur kürzlich gespeicherte Bilder anzeigen <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Nur nicht kürzlich gespeicherte Bilder anzeigen <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen <b>T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen <b>`</b>
@@ -245,7 +249,16 @@ HISTORY_MSG_139;Schwarzpegel Blau
 HISTORY_MSG_13;Belichtungsbeschneidung
 HISTORY_MSG_140;Schwarzpegel Grün 2
 HISTORY_MSG_141;Schwarzpegel\nGrün-Werte angleichen
+HISTORY_MSG_142;Gerichtetes Schärfen\nGradient Durchgänge
+HISTORY_MSG_143;Gerichtetes Schärfen\nGradient Stärke
+HISTORY_MSG_144;Mikrokontrast Stärke
+HISTORY_MSG_145;Mikrokontrast\nGleichmäßigkeit
+HISTORY_MSG_146;Gerichtetes Schärfen
+HISTORY_MSG_147;Gerichtetes Schärfen\nNur Luminanz
+HISTORY_MSG_148;Mikrokontrast
+HISTORY_MSG_149;Mikrokontrast\n3×3-Matrix
 HISTORY_MSG_14;Luminanz Helligkeit
+HISTORY_MSG_150;Artifakt-/Rauschmind.\nnach Farbinterpolation
 HISTORY_MSG_15;Luminanz Kontrast
 HISTORY_MSG_16;Luminanz Schwarz
 HISTORY_MSG_17;Luminanz Lichter-Kompression
@@ -512,6 +525,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
 PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
 PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild: Unschärfetyp
 PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
+PARTIALPASTE_GRADIENTSHARPEN;Gerichtetes Schärfen (Kante)
 PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
@@ -525,6 +539,7 @@ PARTIALPASTE_LENSGROUP;Gruppe Objektivkorrekturen
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
 PARTIALPASTE_LUMINANCEGROUP;Gruppe Luminanzeinstellungen
 PARTIALPASTE_METAICMGROUP;Gruppe Metadaten / ICM
+PARTIALPASTE_MICROCONTRAST;Mikrokontrast (Textur)
 PARTIALPASTE_PERSPECTIVE;Perspektive
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vorverarbeitung: Grün-Ausgleich
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Vorverarbeitung: Hot/Dead-Pixel-Filter anwenden
@@ -532,9 +547,11 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Vorverarbeitung: Zeilenrauschfilter
 PARTIALPASTE_RAWCACORR_AUTO;Chromatische Aberration: Automatische Korrektur
 PARTIALPASTE_RAWCACORR_CABLUE;Chromatische Aberration: Blau
 PARTIALPASTE_RAWCACORR_CARED;Chromatische Aberration: Rot
-PARTIALPASTE_RAWEXPOS_LINEAR;RAW-Weißpunkt: Linearer Korrekturfaktor
-PARTIALPASTE_RAWEXPOS_PRESER;RAW-Weißpunkt: Lichter bewahrende Korrektur (EV)
+PARTIALPASTE_RAWEXPOS_BLACK;RAW-Weiß/Schwarz-Punkt: Schwarzpegel
+PARTIALPASTE_RAWEXPOS_LINEAR;RAW-Weiß/Schwarz-Punkt: Linearer Korrekturfaktor
+PARTIALPASTE_RAWEXPOS_PRESER;RAW-Weiß/Schwarz-Punkt: Lichter bewahren (EV)
 PARTIALPASTE_RAWGROUP;Gruppe RAW
+PARTIALPASTE_RAW_ALLENHANCE;Farbinterpolation: Artifakt-/Rauschminderung
 PARTIALPASTE_RAW_DCBENHANCE;Farbinterpolation: DCB-Verfeinerungsschritt durchführen
 PARTIALPASTE_RAW_DCBITERATIONS;Farbinterpolation: Anzahl der DCB-Iterationen
 PARTIALPASTE_RAW_DMETHOD;Farbinterpolation: Methode
@@ -542,7 +559,7 @@ PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung Stufen
 PARTIALPASTE_RESIZE;Größe ändern
 PARTIALPASTE_ROTATION;Fein-Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
-PARTIALPASTE_SHARPENING;Schärfen
+PARTIALPASTE_SHARPENING;Schärfen (USM/RL)
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet-Mixer
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
@@ -732,6 +749,13 @@ TP_CHMIXER_GREEN;Grün
 TP_CHMIXER_LABEL;Kanal-Mixer
 TP_CHMIXER_RED;Rot
 TP_CHROMATABERR_LABEL;Chromatische Aberration
+TP_CLARITY_LABEL;Detailgenauigkeit und Schärfe
+TP_CLARITY_MATRIX;3×3-Matrix statt 5×5-Matrix
+TP_CLARITY_MICRO;Mikrokontrast (Textur)
+TP_CLARITY_PASSES;Gradient Durchgänge
+TP_CLARITY_SHARPEN;Gerichtetes Schärfen (Kante)
+TP_CLARITY_STRENGTH;Gradient Stärke
+TP_CLARITY_THREE;Nur Luminanz
 TP_COARSETRAF_DEGREE;Grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Nach links drehen <b>[</b>
@@ -874,6 +898,8 @@ TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LUMADENOISE_EDGETOLERANCE;Kantentoleranz
 TP_LUMADENOISE_LABEL;Luminanz-Rauschfilter
 TP_LUMADENOISE_RADIUS;Radius
+TP_MLMICRO_STRENGTH;Stärke
+TP_MLMICRO_UNIFORMITY;Gleichmäßigkeit
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
@@ -892,6 +918,7 @@ TP_RAWEXPOS_BLACKTHREE;Schwarzpegel: Grün 2
 TP_RAWEXPOS_LINEAR;Weißpunkt: Linearer\nKorrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter\nbewahrende Korrektur (EV)
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
+TP_RAW_ALLENHANCE;Artifakt-/Rauschminderung nach\nFarbinterpolation durchführen
 TP_RAW_DCBENHANCE;DCB-Verfeinerungsschritt durchführen
 TP_RAW_DCBITERATIONS;Anzahl der DCB-Iterationen
 TP_RAW_DMETHOD;Methode
@@ -933,16 +960,16 @@ TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halo-Kontrolle
 TP_SHARPENING_HCAMOUNT;Stärke
-TP_SHARPENING_LABEL;Schärfen
+TP_SHARPENING_LABEL;Schärfen (USM/RL)
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Nur Kanten schärfen
 TP_SHARPENING_RADIUS;Radius
-TP_SHARPENING_RLD;R-L Deconvolution
+TP_SHARPENING_RLD;RL-Dekonvolution
 TP_SHARPENING_RLD_AMOUNT;Stärke
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwellenwert
-TP_SHARPENING_USM;Unschärfemaske
+TP_SHARPENING_USM;Unscharfmaskierung
 TP_VIGNETTING_AMOUNT;Stärke
 TP_VIGNETTING_CENTER;Zentrum
 TP_VIGNETTING_CENTER_X;Zentrum X
