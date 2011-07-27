@@ -30,6 +30,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
     infotext = "";
     cropgl = NULL;
 	pmlistener = NULL;
+	pmhlistener = NULL;
     focusGrabber = NULL;
     mainCropWindow = NULL;
     previewHandler = NULL;
@@ -78,6 +79,7 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 			mainCropWindow->addCropWindowListener (this);
 			mainCropWindow->setCropGUIListener (cropgl);
 			mainCropWindow->setPointerMotionListener (pmlistener);
+                        mainCropWindow->setPointerMotionHListener (pmhlistener);
 			mainCropWindow->setPosition (0, 0);
 			mainCropWindow->setSize (get_width(), get_height(), false);  // this execute the refresh itself
 		}
@@ -259,6 +261,7 @@ void ImageArea::addCropWindow () {
     cw->zoom11();
     cw->setCropGUIListener (cropgl);
     cw->setPointerMotionListener (pmlistener);
+    cw->setPointerMotionHListener (pmhlistener);
     cropWins.push_front (cw);
 
     // Position the new crop window in a checkerboard, or used the last position
@@ -420,6 +423,15 @@ void ImageArea::setPointerMotionListener (PointerMotionListener* pml) {
         (*i)->setPointerMotionListener (pml);
     if (mainCropWindow)
         mainCropWindow->setPointerMotionListener (pml);
+}
+
+void ImageArea::setPointerMotionHListener (PointerMotionListener* pml) {
+
+    pmhlistener = pml; 
+    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+        (*i)->setPointerMotionHListener (pml);
+    if (mainCropWindow)
+        mainCropWindow->setPointerMotionHListener (pml);
 }
 
 ToolMode ImageArea::getToolMode () {

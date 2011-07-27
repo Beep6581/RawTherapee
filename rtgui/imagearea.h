@@ -55,6 +55,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     CropWindow* focusGrabber;
     CropGUIListener* cropgl;
 	PointerMotionListener* pmlistener;
+	PointerMotionListener* pmhlistener;
     ImageAreaToolListener* listener;
 
     CropWindow* getCropWindow (int x, int y);
@@ -89,7 +90,8 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     void updateScrollbars       ();
 
     void            setCropGUIListener       (CropGUIListener* l);
-	void 			setPointerMotionListener (PointerMotionListener* pml);
+    void            setPointerMotionListener  (PointerMotionListener* pml);
+    void            setPointerMotionHListener (PointerMotionListener* pml);
     void            setImageAreaToolListener (ImageAreaToolListener* l) { listener = l; }
     void            setPreviewHandler        (PreviewHandler* ph);
     PreviewHandler* getPreviewHandler        ()                         { return previewHandler; }

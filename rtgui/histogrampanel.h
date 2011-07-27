@@ -19,9 +19,12 @@
 #ifndef _HISTOGRAMPANEL_
 #define _HISTOGRAMPANEL_
 
+
 #include <gtkmm.h>
 #include <glibmm.h>
 #include <LUT.h>
+
+#include <pointermotionlistener.h>
 
 class HistogramArea;
 struct HistogramAreaIdleHelper {
@@ -29,6 +32,68 @@ struct HistogramAreaIdleHelper {
     bool destroyed;
     int pending;
 };
+
+class HistogramRGBArea;
+struct HistogramRGBAreaIdleHelper {
+    HistogramRGBArea* harea;
+    bool destroyed;
+    int pending;
+};
+
+class HistogramRGBArea : public Gtk::DrawingArea {
+
+  protected:
+
+    Glib::RefPtr<Gdk::GC> rgbgc_;
+    Glib::RefPtr<Gdk::Pixmap> overlay;
+
+    Gdk::Color black;
+    Gdk::Color white;
+    Gdk::Color red;
+    Gdk::Color green;
+    Gdk::Color blue;
+    Gdk::Color lgray;
+    Gdk::Color mgray;
+    Gdk::Color dgray;
+
+    int val;
+    int r;
+    int g;
+    int b;
+
+    bool frozen;
+    bool valid;
+
+    bool needRed;
+    bool needGreen;
+    bool needBlue;
+    bool needLuma;
+    bool rawMode;
+    bool showMode;
+
+    HistogramRGBAreaIdleHelper* harih;
+
+  public:
+
+    HistogramRGBArea();
+    ~HistogramRGBArea();
+
+    void renderRGBMarks (int r, int g, int b);
+    void updateFreeze (bool f);
+    bool getFreeze ();
+    bool getShow ();
+
+    void update (int val, int rh, int gh, int bh);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show);
+
+    void on_realize();
+    bool on_expose_event(GdkEventExpose* event);
+    bool on_button_press_event (GdkEventButton* event);
+    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+  private:
+    // Some ...
+};
+
 
 class HistogramArea : public Gtk::DrawingArea {  
 
@@ -75,18 +140,21 @@ class HistogramArea : public Gtk::DrawingArea {
 				   LUTu & data, double scale, int hsize, int & ui, int & oi);
 };
 
-class HistogramPanel : public Gtk::HBox {
+class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
 
   protected:
 
     HistogramArea* histogramArea;
+    HistogramRGBArea* histogramRGBArea;
     Gtk::ToggleButton* showRed;
     Gtk::ToggleButton* showGreen;
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
     Gtk::ToggleButton* showRAW;
+    Gtk::ToggleButton* showBAR;
     
     sigc::connection rconn;
+    void setHistInvalid ();
     
   public:
 
@@ -95,6 +163,13 @@ class HistogramPanel : public Gtk::HBox {
     void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) { 
         histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
     }
+    // pointermotionlistener interface
+    void pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b);
+    // added pointermotionlistener interface
+    void toggleFreeze();
+    // TODO should be protected
+    void setHistRGBInvalid ();
+
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 };

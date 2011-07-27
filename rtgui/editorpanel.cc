@@ -51,7 +51,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (options.histogramPosition>0) {
     histogramPanel = Gtk::manage (new HistogramPanel ());
-    histogramPanel->set_size_request (-1, 150);
+    histogramPanel->set_size_request (-1, 160);
         if (options.histogramPosition==1) leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
     } else histogramPanel = NULL;
 
@@ -270,7 +270,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->addPParamsChangeListener (this);
     iarea->imageArea->setCropGUIListener (tpc->getCropGUIListener());
     iarea->imageArea->setPointerMotionListener (navigator);
-	iarea->imageArea->setImageAreaToolListener (tpc);
+    iarea->imageArea->setPointerMotionHListener (histogramPanel);
+    iarea->imageArea->setImageAreaToolListener (tpc);
 
 // initialize components
     info->set_active (options.showInfo);

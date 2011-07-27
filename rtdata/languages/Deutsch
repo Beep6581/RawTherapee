@@ -192,12 +192,14 @@ HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_BUTTON_RAW;RAW
+HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_LABEL;Histogramm
 HISTOGRAM_TOOLTIP_B;BLAU-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_G;GRÜN-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_L;CIELAB-Luminanz-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_R;ROT-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten
+HISTOGRAM_TOOLTIP_BAR;RGB Anzeigeleiste ein/ausschalten\nRechte Maustaste im Bildfenster klicken zum fixieren/lösen der Anzeige
 HISTORY_CHANGED;Verändert
 HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
 HISTORY_DELSNAPSHOT;Entf.

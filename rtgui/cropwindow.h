@@ -78,6 +78,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         // crop gui listener
         CropGUIListener* cropgl;
         PointerMotionListener* pmlistener;
+        PointerMotionListener* pmhlistener;
         std::list<CropWindowListener*> listeners;
         
         CropWindow* observedCropWin;
@@ -134,7 +135,8 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         
         // listeners
         void setCropGUIListener 	  (CropGUIListener* cgl) { cropgl = cgl; }
-		void setPointerMotionListener (PointerMotionListener* pml) { pmlistener = pml; }
+	void setPointerMotionListener (PointerMotionListener* pml) { pmlistener = pml; }
+	void setPointerMotionHListener (PointerMotionListener* pml) { pmhlistener = pml; }
         
         // crop window listeners
         void addCropWindowListener (CropWindowListener* l) { listeners.push_back (l); }
