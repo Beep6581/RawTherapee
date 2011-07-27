@@ -62,6 +62,12 @@ namespace rtengine {
 		poly_y.push_back(y3);
 	}
 	
+    // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
+    // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent 
+    // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
+    const double CurveFactory::sRGBGamma = 2.2;
+    const double CurveFactory::sRGBGammaCurve = 2.4;
+
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, \

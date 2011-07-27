@@ -499,9 +499,9 @@ void Thumbnail::initGamma () {
     igammatab = new unsigned short[256];
     gammatab = new unsigned char[65536];
     for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,1.0/0.45));
+        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,CurveFactory::sRGBGamma));
     for (int i=0; i<65536; i++)
-        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,0.45));
+        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,1.f/CurveFactory::sRGBGamma));
 }
 
 void Thumbnail::cleanupGamma () {
@@ -689,7 +689,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
 
     LUTu hist16 (65536);
-    ipf.firstAnalysis (baseImg, &params, hist16, isRaw ? 2.2 : 0.0);
+	double gamma = isRaw ? CurveFactory::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
+    ipf.firstAnalysis (baseImg, &params, hist16,  gamma);
 
     // perform transform
     if (ipf.needsTransform()) {
@@ -722,7 +723,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf satcurve (65536);
 
 	LUTu dummy;
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, isRaw ? 2.2 : 0, true, params.toneCurve.curve, 
+    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, gamma, true, params.toneCurve.curve, 
         hist16, dummy, curve1, curve2, curve, dummy, 16);
 
 	LabImage* labView = new LabImage (fw,fh);
@@ -847,7 +848,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     // calculate spot wb (copy & pasted from stdimagesource)
     unsigned short igammatab[256];
     for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,1.0/0.45));
+        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,CurveFactory::sRGBGamma));
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
