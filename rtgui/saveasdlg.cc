@@ -18,6 +18,7 @@
  */
 #include "saveasdlg.h"
 #include <multilangmgr.h>
+#include <guiutils.h>
 
 extern Options options;
 SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
@@ -117,7 +118,7 @@ bool SaveAsDialog::getToTailOfQueue () {
 
 Glib::ustring SaveAsDialog::getFileName () {
 
-    return fname;
+    return removeExtension(fname) + Glib::ustring(".") + formatOpts->getFormat().format;
 }
 
 Glib::ustring SaveAsDialog::getDirectory () {
