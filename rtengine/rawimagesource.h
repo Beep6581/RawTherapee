@@ -22,6 +22,7 @@
 #include <imagesource.h>
 #include <lcms2.h>
 #include <array2D.h>
+#include <curves.h>
 
 #define HR_SCALE 2
 
@@ -142,8 +143,8 @@ class RawImageSource : public ImageSource {
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
 
         double      getDefGain  () { return defGain; }
-     //   double      getGamma    () { return 2.2; }
-         double      getGamma    () { return 2.4; }//normalize gamma to sRGB
+
+        double      getGamma    () { return CurveFactory::sRGBGamma; }
        
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);

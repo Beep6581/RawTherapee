@@ -20,6 +20,7 @@
 #include <toolpanel.h>
 #include <iccmatrices.h> // from rtengine
 #include <iccstore.h>
+#include <curves.h>
 
 #define D50x 0.96422
 #define D50z 0.82521
@@ -164,9 +165,9 @@ void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l,
 	double ep=216.0/24389.0;
 	double ka=24389.0/27.0;
 
-	volatile double var_R = r / 255.0;
-	volatile double var_G = g / 255.0;
-	volatile double var_B = b / 255.0;
+	double var_R = r / 255.0;
+	double var_G = g / 255.0;
+	double var_B = b / 255.0;
 
 	if (profile=="sRGB") {//apply sRGB inverse gamma
 
@@ -175,15 +176,15 @@ void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l,
 // today as the gamma output can not be configured
 // it is better that the user has the gamma of the output space
 	if ( var_R > 0.04045 ) 
-		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), 2.4);
+		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::CurveFactory::sRGBGammaCurve);
 	else    
 		var_R = var_R / 12.92;
 	if ( var_G > 0.04045 ) 
-		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), 2.4);
+		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::CurveFactory::sRGBGammaCurve);
 	else                   
 		var_G = var_G / 12.92;
 	if ( var_B > 0.04045 ) 
-		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), 2.4);
+		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::CurveFactory::sRGBGammaCurve);
 	else    
 		var_B = var_B / 12.92;
 	} 
