@@ -338,11 +338,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			//	printf("negative values row=%d col=%d  r=%f  g=%f  b=%f  \n", i,j,r,g,b);
 			//}
 
-			if (abs(sat)>0.5 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
+			if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float h,s,v;
 				rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
-					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-s)));
+					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-MIN(s,1))));
+					if (s<0) s=0;
 				} else {
 					if (sat < -0.5)
 						s *= 1+(float)sat/100;	
@@ -359,7 +360,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					//shift saturation
 					float satparam = (sCurve->getVal((double)h)-0.5) * 2;
 					if (satparam > 0.00001) {
-						s = (1-satparam)*s+satparam*(1-SQR(1-s));
+						s = (1-satparam)*s+satparam*(1-SQR(1-MIN(s,1)));
+						if (s<0) s=0;
 					} else {
 						if (satparam < -0.00001)
 							s *= 1+satparam;
@@ -371,7 +373,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					float valparam = vCurve->getVal((double)h)-0.5;
 					valparam *= (1-SQR(SQR(1-s)));
 					if (valparam > 0.00001) {
-						v = (1-valparam)*v+valparam*(1-SQR(1-v));
+						v = (1-valparam)*v+valparam*(1-SQR(1-MIN(v,1)));
+						if (v<0) v=0;
 					} else {
 						if (valparam < -0.00001)
 							v *= (1+valparam);
