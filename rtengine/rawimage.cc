@@ -174,9 +174,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 		  return 200;
 
 	  if (setjmp (failure)) {
-		  if (image)
-			free (image);
-		  fclose (ifp);
+          if (image) { free (image); image=NULL; }
+		  fclose(ifp); ifp=NULL;
 		  return 100;
 	  }
 
@@ -200,10 +199,11 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 		  cblack[c] -= i;
 	  black += i;
   }
-  if( closeFile ){
-      fclose(ifp);
-      ifp=NULL;
+
+  if ( closeFile ) {
+      fclose(ifp); ifp=NULL;
   }
+
   return 0;
 }
 
