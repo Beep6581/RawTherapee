@@ -1341,8 +1341,8 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 
 	// green pixels
 	for (int row = rowMin; row < rowMax; row++) {
-		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-            assert(indx>=0 && indx<u*u);
+		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col; col < colMax; col+=2, indx+=2) {
+            assert(indx-u>=0 && indx+u<u*u);
 			bufferH[indx][1] = (image[indx-1][1] + image[indx+1][1]) * 0.5f;
 			bufferV[indx][1] = (image[indx+u][1] + image[indx-u][1]) * 0.5f;
 		}
@@ -1350,7 +1350,7 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 	// red in blue pixel, blue in red pixel
 	for (int row=rowMin; row < rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin) & 1), indx=row*CACHESIZE+col, c=2-FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-            assert(indx>=0 && indx<u*u && c>=0 && c<3);
+            assert(indx-u-1>=0 && indx+u+1<u*u && c>=0 && c<3);
 
             bufferH[indx][c] = ( 4.f * bufferH[indx][1]
 			                - bufferH[indx+u+1][1] - bufferH[indx+u-1][1] - bufferH[indx-u+1][1] - bufferH[indx-u-1][1]
@@ -1363,7 +1363,7 @@ void RawImageSource::dcb_hid(float (*image)[4],float (*bufferH)[3], float (*buff
 	// red or blue in green pixels
 	for (int row=rowMin; row<rowMax; row++)
 		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin+1)&1), indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col+1),d=2-c; col<colMax; col+=2, indx+=2) {
-            assert(indx>=0 && indx<u*u && c>=0 && c<3 && d>=0 && d<3);
+            assert(indx-u>=0 && indx+u<u*u && c>=0 && c<3 && d>=0 && d<3);
 			bufferH[indx][c] = (image[indx+1][c] + image[indx-1][c]) * 0.5f;
 			bufferH[indx][d] = (2.f * bufferH[indx][1] - bufferH[indx+u][1] - bufferH[indx-u][1] + image[indx+u][d] + image[indx-u][d]) * 0.5f;
 			bufferV[indx][c] = (2.f * bufferV[indx][1] - bufferV[indx+1][1] - bufferV[indx-1][1] + image[indx+1][c] + image[indx-1][c]) * 0.5f;
@@ -1430,7 +1430,7 @@ void RawImageSource::dcb_hid2(float (*image)[4], int x0, int y0)
 
 	for (int row=rowMin; row < rowMax; row++) {
 		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
-            assert(indx>=0 && indx<u*u);
+            assert(indx-v>=0 && indx+v<u*u);
             image[indx][1] = (image[indx+v][1] + image[indx-v][1] + image[indx-2][1] + image[indx+2][1]) * 0.25f +
 						   image[indx][c] - ( image[indx+v][c] + image[indx-v][c] + image[indx-2][c] + image[indx+2][c]) * 0.25f;
 		}
@@ -1697,6 +1697,7 @@ void RawImageSource::dcb_demosaic(int iterations, bool dcb_enhance)
 
 #ifdef _OPENMP
     	int tid = omp_get_thread_num();
+        assert(tid<nthreads);
     	float (*tile)[4]   = image[tid];
     	float (*buffer)[3] = image2[tid];
     	float (*buffer2)[3]= image3[tid];
