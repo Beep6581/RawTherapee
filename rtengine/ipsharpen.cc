@@ -417,9 +417,8 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 	int k;
 	   if(params->clarity.MLmicromatrix == false) k=2; else k=1;
 		// k=2 matrix 5x5  k=1 matrix 3x3
-
 		int offset,offset2,c,i,j,col,row,n; 
-		float temp,temp2,temp3,temp4,tempL;		
+		float temp,temp2,temp3,temp4,tempL;	
 		float *LM,v,s,contrast,w;  
 		int signs[25];  
      	int width = lab->W, height = lab->H;
@@ -428,12 +427,12 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 		unif=(int)(uniform/10.0f); //put unif between 0 to 10
 	    float strength=params->clarity.mlstrength/1500.0f; //strength 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
 		if(strength < 0.000001f) return;
-		if(k==1) strength*=2.0f;//25/9, but reality # 2
+		if(k==1) strength*=2.7f;//25/9 if 3x3
 		if (settings->verbose) printf ("Microcontrast strength %f\n", strength);		
 		if (settings->verbose) printf ("Microcontrast uniformity %i\n",unif);
-		//modualtion uniformity in function of luminance
-		float L98[11]={0.0012f,0.0015f,0.002f,0.004f,0.006f,0.008f,0.01f,0.03f,0.05f,0.1f,0.1f};
-		float L95[11]={0.0015f,0.0025f,0.005f,0.01f,0.02f,0.05f,0.1f,0.12f,0.15f,0.2f,0.25f};
+		//modulation uniformity in function of luminance
+		float L98[11]={0.001f,0.0015f,0.002f,0.004f,0.006f,0.008f,0.01f,0.03f,0.05f,0.1f,0.1f};
+		float L95[11]={0.0012f,0.002f,0.005f,0.01f,0.02f,0.05f,0.1f,0.12f,0.15f,0.2f,0.25f};
 		float L92[11]={0.01f,0.015f,0.02f,0.06f,0.10f,0.13f,0.17f,0.25f,0.3f,0.32f,0.35f};
 		float L90[11]={0.015f,0.02f,0.04f,0.08f,0.12f,0.15f,0.2f,0.3f,0.4f,0.5f,0.6f};
 		float L87[11]={0.025f,0.03f,0.05f,0.1f,0.15f,0.25f,0.3f,0.4f,0.5f,0.63f,0.75f};
@@ -444,6 +443,13 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 		float L63[11]={0.55f,0.6f,0.7f,0.8f,0.85f,0.9f,1.0f,1.0f,1.0f,1.0f,1.0f};
 		float L58[11]={0.75f,0.77f,0.8f,0.9f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f};
 		//default 5
+		//modulation contrast
+		float Cont0[11]={0.05f,0.1f,0.2f,0.25f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f};
+		float Cont1[11]={0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,0.95f,1.0f};
+		float Cont2[11]={0.2f,0.40f,0.6f,0.7f,0.8f,0.85f,0.90f,0.95f,1.0f,1.05f,1.10f};
+		float Cont3[11]={0.5f,0.6f,0.7f,0.8f,0.85f,0.9f,1.0f,1.0f,1.05f,1.10f,1.20f};
+		float Cont4[11]={0.8f,0.85f,0.9f,0.95f,1.0f,1.05f,1.10f,1.150f,1.2f,1.25f,1.40f};
+		float Cont5[11]={1.0f,1.1f,1.2f,1.25f,1.3f,1.4f,1.45f,1.50f,1.6f,1.65f,1.80f};
 		
 		float chmax=8.0f;
 		LM = new float[width*height];//allocation for Luminance
@@ -454,7 +460,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 								LM[offset]=lab->L[j][i]/327.68f;// adjust to 0.100 and to RT variables
 								}
 
-     #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,w,temp2,temp3,tempL,temp4) shared(lab,LM,strength,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58)  
+     #pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,w,temp2,temp3,tempL,temp4) shared(lab,LM,strength,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)  
        for(j=k;j<height-k;j++)  
            for(i=k,offset=j*width+i;i<width-k;i++,offset++){  
 				s=strength;  
@@ -516,18 +522,20 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						n++;  
 							} 
 						}
-						if(LM[offset]>95.0f || LM[offset]<5.0f) contrast*=0.05f; //+ JD : luminance  pyramid to adjust contrast and avoid pseudo halo by evaluation of LM[offset]
-						else if(LM[offset]>90.0f || LM[offset]<10.0f) contrast*=0.3f;
-						else if(LM[offset]>80.0f || LM[offset]<20.0f) contrast*=0.5f;
-						else if(LM[offset]>70.0f || LM[offset]<30.0f) contrast*=0.6f;
-						else if(LM[offset]>60.0f || LM[offset]<40.0f) contrast*=0.7f;
-						else contrast*=0.8f;
-						if(contrast>1.0f) contrast=1.0f;            
+						if(LM[offset]>95.0f || LM[offset]<5.0f) contrast*=Cont0[unif]; //+ JD : luminance  pyramid to adjust contrast by evaluation of LM[offset]
+						else if(LM[offset]>90.0f || LM[offset]<10.0f) contrast*=Cont1[unif];
+						else if(LM[offset]>80.0f || LM[offset]<20.0f) contrast*=Cont2[unif];
+						else if(LM[offset]>70.0f || LM[offset]<30.0f) contrast*=(2.0f/k)*Cont3[unif];
+						else if(LM[offset]>60.0f || LM[offset]<40.0f) contrast*=(2.0f/k)*Cont4[unif];
+						else 
+						contrast*=(2.0f/k)*Cont5[unif];
+						if(contrast>1.0f) {contrast=1.0f;}   
 						tempL=327.68f*(temp*(1.0f-contrast)+LM[offset]*contrast); 
 						// JD: modulation of microcontrast in function of original Luminance and modulation of luminance
 						temp2=tempL/(327.68f*LM[offset]);//for highlights
 						if(temp2>1.0f) {
-						if(LM[offset]>98.0f) {temp3=temp2-1.0f;temp=(L98[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						if(temp2>2.0f) temp2=2.0f;//limit action
+						if(LM[offset]>98.0f) {lab->L[j][i]=LM[offset]*327.68f;}
 						else if(LM[offset]>95.0f) {temp3=temp2-1.0f;temp=(L95[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
 						else if(LM[offset]>92.0f) {temp3=temp2-1.0f;temp=(L92[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
 						else if(LM[offset]>90.0f) {temp3=temp2-1.0f;temp=(L90[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
@@ -538,11 +546,20 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						else if(LM[offset]>70.0f) {temp3=temp2-1.0f;temp=(L70[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
 						else if(LM[offset]>63.0f) {temp3=temp2-1.0f;temp=(L63[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
 						else if(LM[offset]>58.0f) {temp3=temp2-1.0f;temp=(L58[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
-						
-						else lab->L[j][i]=tempL;//no modulation for L <58
+						else if(LM[offset]>42.0f) {temp3=temp2-1.0f;temp=(L58[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>37.0f) {temp3=temp2-1.0f;temp=(L63[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}						
+						else if(LM[offset]>30.0f) {temp3=temp2-1.0f;temp=(L70[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>25.0f) {temp3=temp2-1.0f;temp=(L75[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>20.0f) {temp3=temp2-1.0f;temp=(L80[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>17.0f) {temp3=temp2-1.0f;temp=(L83[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>13.0f) {temp3=temp2-1.0f;temp=(L87[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>10.0f) {temp3=temp2-1.0f;temp=(L90[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>5.0f) {temp3=temp2-1.0f;temp=(L95[unif]*temp3)+1.0f;lab->L[j][i]=temp*LM[offset]*327.68f;}
+						else if(LM[offset]>0.0f) {lab->L[j][i]=LM[offset]*327.68f;}						
 						}
-						temp4=(327.68f*LM[offset])/tempL;//for lowlights
+						temp4=(327.68f*LM[offset])/tempL;//
 						if(temp4>1.0f) {
+						if(temp4>2.f) temp4=2.f;//limit action
 						if(LM[offset]<2.0f) {temp3=temp4-1.0f;temp=(L98[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
 						else if(LM[offset]<5.0f) {temp3=temp4-1.0f;temp=(L95[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
 						else if(LM[offset]<8.0f) {temp3=temp4-1.0f;temp=(L92[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}						
@@ -554,12 +571,19 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						else if(LM[offset]<30.0f) {temp3=temp4-1.0f;temp=(L70[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
 						else if(LM[offset]<37.0f) {temp3=temp4-1.0f;temp=(L63[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
 						else if(LM[offset]<42.0f) {temp3=temp4-1.0f;temp=(L58[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
-						
-						else lab->L[j][i]=tempL;//no modulation for L>42
+						else if(LM[offset]<58.0f) {temp3=temp4-1.0f;temp=(L58[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
+						else if(LM[offset]<63.0f) {temp3=temp4-1.0f;temp=(L63[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}						
+						else if(LM[offset]<70.0f) {temp3=temp4-1.0f;temp=(L70[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
+						else if(LM[offset]<75.0f) {temp3=temp4-1.0f;temp=(L75[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
+						else if(LM[offset]<80.0f) {temp3=temp4-1.0f;temp=(L80[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}					
+						else if(LM[offset]<83.0f) {temp3=temp4-1.0f;temp=(L83[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}						
+						else if(LM[offset]<87.0f) {temp3=temp4-1.0f;temp=(L87[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
+						else if(LM[offset]<90.0f) {temp3=temp4-1.0f;temp=(L90[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
+						else if(LM[offset]<95.0f) {temp3=temp4-1.0f;temp=(L95[unif]*temp3)+1.0f;lab->L[j][i]=(LM[offset]*327.68f)/temp;}
+						else if(LM[offset]<100.0f) {lab->L[j][i]=LM[offset]*327.68f;}										
 						}
 						
 			}  
-
 					delete [] LM;
 		t2e.set();
 		if( settings->verbose )
