@@ -118,7 +118,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++)
-            lab->L[i][j] = lab->L[i][j]*p1 + /*CLIP*/(tmpI[i][j])*p2;
+            lab->L[i][j] = lab->L[i][j]*p1 + MAX(tmpI[i][j],0)*p2;
 
 } // end parallel
 
