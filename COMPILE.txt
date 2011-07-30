@@ -39,6 +39,7 @@ Windows
 			            Make sure you use the current 4.5.2 or better, and install MinGW64 (not MinGW32)
 			            MinGW64 is more comprehensive, plus it runs AND compiles both 32bit and 64bit Windows.
 			            Old Mingw32 version miss some required header files, so some Windows functions will be disabled though it will compile.
+			            However MinGW64 does not fully support XP, only Vista and up.
 			- MSYS      (http://downloads.sourceforge.net/mingw/MSYS-1.0.11.exe)
 			            If you have some trouble installing MSYS, see here : http://www.mingw.org/wiki/MSYS
 			- CMake     (http://www.cmake.org/cmake/resources/software.html)
