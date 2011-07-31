@@ -880,12 +880,24 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
       tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
 }
 
-bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf, bool findNewNameIfNeeded){
+bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf) {
 	rtengine::IImage16* img = pc->returnValue();
 	delete pc;
-	if( img )
-	   saveImage( img, fname, sf, findNewNameIfNeeded);
-	else{
+	if( img ) {
+        setProgressStr(M("GENERAL_SAVE")); setProgress(0.9f);
+
+        ProgressConnector<int> *ld = new ProgressConnector<int>();
+        img->setSaveProgressListener (parent->getProgressListener());
+        if (sf.format=="tif")
+            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fname, sf.tiffBits, sf.tiffUncompressed),
+    			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
+        else if (sf.format=="png")
+            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsPNG), fname, sf.pngCompression, sf.pngBits),
+    			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
+        else if (sf.format=="jpg")
+            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality),
+    			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
+    } else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image processing\n</b>";
 		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 		msgd.run ();
@@ -897,6 +909,38 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
 	rtengine::ImageSource* imgsrc = isrc->getImageSource ();
     imgsrc->setProgressListener(this);
 	return false;
+}
+
+bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring fname, SaveFormat sf){
+	img->free ();
+
+	if (! pc->returnValue() ) {
+		openThm->imageDeveloped ();
+		// save processing parameters, if needed
+		if (sf.saveParams) {
+			rtengine::procparams::ProcParams pparams;
+			ipc->getParams (&pparams);
+			// We keep the extension to avoid overwriting the profile when we have
+			// the same output filename with different extension
+			//pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
+			pparams.save (fname + ".out" + paramFileExtension);
+		}
+	} else {
+		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
+		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+		msgd.run ();
+    }
+
+    saveimgas->set_sensitive(true);
+    sendtogimp->set_sensitive(true);
+
+	parent->setProgressStr("");
+	parent->setProgress(0.);
+
+    setProgressState(false);
+
+	delete pc;
+    return false;
 }
 
 BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
@@ -920,57 +964,7 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
     return new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
 }
 
-int EditorPanel::saveImage (rtengine::IImage16* img, Glib::ustring& fname, SaveFormat sf, bool findNewNameIfNeeded) {
 
-    Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
-    if (findNewNameIfNeeded) {
-        int tries = 1;
-        while (safe_file_test (fileName, Glib::FILE_TEST_EXISTS) && tries<1000) {
-            fileName = Glib::ustring::compose("%1-%2.%3", fname, tries, sf.format);
-            tries++;
-        }
-        if (tries==1000)
-            return -1000;
-    }
-    ProgressConnector<int> *ld = new ProgressConnector<int>();
-    img->setSaveProgressListener (parent->getProgressListener());
-    if (sf.format=="tif")
-    	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsTIFF), fileName, sf.tiffBits, sf.tiffUncompressed),
-    			       sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fileName,sf));
-    else if (sf.format=="png")
-    	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsPNG), fileName, sf.pngCompression, sf.pngBits),
-    			       sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fileName,sf));
-    else if (sf.format=="jpg")
-    	ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsJPEG), fileName, sf.jpegQuality),
-    			       sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fileName,sf));
-    return 0;
-}
-
-bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16* img,Glib::ustring fname, SaveFormat sf){
-	img->free ();
-	if (! pc->returnValue() ) {
-		openThm->imageDeveloped ();
-		// save processing parameters, if needed
-		if (sf.saveParams) {
-			rtengine::procparams::ProcParams pparams;
-			ipc->getParams (&pparams);
-			// We keep the extension to avoid overwriting the profile when we have
-			// the same output filename with different extension
-			//pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
-			pparams.save (fname + ".out" + paramFileExtension);
-		}
-	}else{
-		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
-		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-		msgd.run ();
-    }
-    saveimgas->set_sensitive(true);
-    sendtogimp->set_sensitive(true);
-	parent->setProgressStr("");
-	parent->setProgress(0.);
-	delete pc;
-    return false;
-}
 
 void EditorPanel::saveAsPressed () {
 	if (!ipc || !openThm) return;
@@ -1016,13 +1010,11 @@ void EditorPanel::saveAsPressed () {
 			}
 			// check if it exists
 			if (!fnameOK) {
-				fname = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
 				if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
 					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
 					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 					int response = msgd.run ();
-					if (response==Gtk::RESPONSE_YES)
-						fnameOK = true;
+					fnameOK = (response==Gtk::RESPONSE_YES);
 				}
 				else fnameOK = true;
 			}
@@ -1032,10 +1024,10 @@ void EditorPanel::saveAsPressed () {
 				rtengine::procparams::ProcParams pparams;
 				ipc->getParams (&pparams);
 				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
-				fname = removeExtension (fname);
+
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
 				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
-							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf,false ));
+							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
 			}
