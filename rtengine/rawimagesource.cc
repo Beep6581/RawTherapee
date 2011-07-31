@@ -1121,10 +1121,6 @@ void RawImageSource::demosaic(const RAWParams &raw, HRecParams hrp )
 		
         if (raw.all_enhance) refinement_lassus();
     }
-    if (plistener) {
-        plistener->setProgressStr ("Ready.");
-        plistener->setProgress (1.0);
-    }
 	
 	//color propagation highlight recovery 
 	if (hrp.enabled && hrp.method=="Color")
