@@ -39,19 +39,19 @@ namespace rtengine {
 extern Settings* settings;
 
 void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
-
+    const float dampingFac=2.0/(damping*damping);
 #ifdef _OPENMP
 #pragma omp for
 #endif
 	for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
             float I = aI[i][j];
-            float O = (float)aO[i][j];
-            if (O==0.0 || I==0.0) {
+            float O = aO[i][j];
+            if (O<=0.0 || I<=0.0) {
                 aI[i][j] = 0.0;
                 continue;
             }
-            float U = -(O * log(I/O) - I + O) * 2.0 / (damping*damping);
+            float U = -(O * log(I/O) - I + O) * dampingFac;
             U = MIN(U,1.0);
             U = U*U*U*U*(5.0-U*4.0);
             aI[i][j] = (O - I) / I * U + 1.0;
