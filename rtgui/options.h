@@ -51,7 +51,7 @@ class Options {
   public:
     bool firstRun;
     bool savesParamsAtExit;
-    SaveFormat saveFormat;
+    SaveFormat saveFormat,saveFormatBatch;
     Glib::ustring savePathTemplate;
     Glib::ustring savePathFolder;
     bool saveUsePathTemplate;

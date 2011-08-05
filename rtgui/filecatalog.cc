@@ -726,7 +726,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
             safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
 
 			if (inclBatchProcessed) {
-			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
 				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
 			}
         }

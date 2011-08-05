@@ -702,7 +702,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
     Glib::ustring openFName;
   
     if (destination==1) {
-            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
             if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
               wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (openFName.c_str(), -1, NULL, NULL, NULL);
               ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
@@ -713,7 +713,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
             }
     } else {
         openFName = destination == 3 ? fname
-            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormat.format);
+            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
 
         printf("Opening %s\n", openFName.c_str());
 

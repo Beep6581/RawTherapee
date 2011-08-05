@@ -58,6 +58,15 @@ void Options::setDefaults () {
     saveFormat.tiffBits = 8;
     saveFormat.tiffUncompressed = true;
     saveFormat.saveParams = true;		// was false
+
+    saveFormatBatch.format = "jpg";
+    saveFormatBatch.jpegQuality = 100;
+    saveFormatBatch.pngCompression = 6;
+    saveFormatBatch.pngBits = 8;
+    saveFormatBatch.tiffBits = 8;
+    saveFormatBatch.tiffUncompressed = true;
+    saveFormatBatch.saveParams = true;		// was false
+
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
     saveUsePathTemplate = true;
@@ -294,6 +303,16 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "TiffBps"))          saveFormat.tiffBits        = keyFile.get_integer ("Output", "TiffBps");
     if (keyFile.has_key ("Output", "TiffUncompressed")) saveFormat.tiffUncompressed= keyFile.get_boolean ("Output", "TiffUncompressed");
     if (keyFile.has_key ("Output", "SaveProcParams"))   saveFormat.saveParams      = keyFile.get_boolean ("Output", "SaveProcParams");
+
+
+    if (keyFile.has_key ("Output", "FormatBatch"))           saveFormatBatch.format          = keyFile.get_string ("Output", "FormatBatch");
+    if (keyFile.has_key ("Output", "JpegQualityBatch"))      saveFormatBatch.jpegQuality     = keyFile.get_integer ("Output", "JpegQualityBatch");
+    if (keyFile.has_key ("Output", "PngCompressionBatch"))   saveFormatBatch.pngCompression  = keyFile.get_integer ("Output", "PngCompressionBatch");
+    if (keyFile.has_key ("Output", "PngBpsBatch"))           saveFormatBatch.pngBits         = keyFile.get_integer ("Output", "PngBpsBatch");
+    if (keyFile.has_key ("Output", "TiffBpsBatch"))          saveFormatBatch.tiffBits        = keyFile.get_integer ("Output", "TiffBpsBatch");
+    if (keyFile.has_key ("Output", "TiffUncompressedBatch")) saveFormatBatch.tiffUncompressed= keyFile.get_boolean ("Output", "TiffUncompressedBatch");
+    if (keyFile.has_key ("Output", "SaveProcParamsBatch"))   saveFormatBatch.saveParams      = keyFile.get_boolean ("Output", "SaveProcParamsBatch");
+
     if (keyFile.has_key ("Output", "Path"))             savePathTemplate           = keyFile.get_string ("Output", "Path");
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
     if (keyFile.has_key ("Output", "PathFolder"))       savePathFolder             = keyFile.get_string ("Output", "PathFolder");
@@ -493,6 +512,15 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
     keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
     keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
+
+    keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
+    keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
+    keyFile.set_integer ("Output", "PngCompressionBatch", saveFormatBatch.pngCompression);
+    keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
+    keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
+    keyFile.set_boolean ("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
+    keyFile.set_boolean ("Output", "SaveProcParamsBatch", saveFormatBatch.saveParams);
+
     keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string  ("Output", "PathFolder", savePathFolder);
     keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);

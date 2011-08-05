@@ -78,7 +78,7 @@ BatchQueuePanel::BatchQueuePanel () {
     saveFormatPanel = Gtk::manage (new SaveFormatPanel ());
     fformat->add (*saveFormatPanel);       
 
-    saveFormatPanel->init (options.saveFormat);
+    saveFormatPanel->init (options.saveFormatBatch);
     outdirTemplate->set_text (options.savePathTemplate);
     if (safe_file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) 
         outdirFolder->set_current_folder (options.savePathFolder);
@@ -264,6 +264,6 @@ void BatchQueuePanel::pathFolderChanged () {
 
 void BatchQueuePanel::formatChanged (Glib::ustring f) {
     
-    options.saveFormat          = saveFormatPanel->getFormat ();
+    options.saveFormatBatch = saveFormatPanel->getFormat ();
     
 }
