@@ -928,6 +928,8 @@ if (keyFile.has_group ("IPTC")) {
     }
 }
 
+const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
+
 bool operator==(const EqualizerParams & a, const EqualizerParams & b) {
     if(a.enabled != b.enabled)
         return false;

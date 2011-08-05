@@ -341,6 +341,8 @@ class ColorManagementParams {
         bool          gammaOnInput;
         Glib::ustring working;
         Glib::ustring output;
+        static const Glib::ustring NoICMString;      
+        
         Glib::ustring gamma;
 		double gampos;
 		double slpos;

@@ -314,10 +314,6 @@ namespace rtengine {
 /** Cleanup the RT engine (static variables) */
     void cleanup ();
 
-/** Returns the available output profile names
-  * @return a vector of the available output profile names */
-    std::vector<std::string> getOutputProfiles ();
-
 /** Returns the available working profile names
   * @return a vector of the available working profile names */
     std::vector<std::string> getWorkingProfiles ();
