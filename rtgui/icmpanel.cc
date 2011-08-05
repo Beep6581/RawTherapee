@@ -20,6 +20,7 @@
 #include <options.h>
 #include <guiutils.h>
 #include <safegtk.h>
+#include <iccstore.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -134,7 +135,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
-    std::vector<std::string> opnames = rtengine::getOutputProfiles ();
+    std::vector<std::string> opnames = iccStore->getOutputProfiles ();
     for (int i=0; i<opnames.size(); i++)
         onames->append_text (opnames[i]);
 
@@ -201,7 +202,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     wnames->set_active_text (pp->icm.working);   
     wgamma->set_active_text (pp->icm.gamma);    
 	
-    if (pp->icm.output=="No ICM: sRGB output")
+    if (pp->icm.output==ColorManagementParams::NoICMString)
         onames->set_active_text (M("TP_ICM_NOICM"));
     else
         onames->set_active_text (pp->icm.output);
@@ -258,7 +259,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->icm.gamma = wgamma->get_active_text ();
    
     if (onames->get_active_text()==M("TP_ICM_NOICM"))
-        pp->icm.output  = "No ICM: sRGB output";
+        pp->icm.output  = ColorManagementParams::NoICMString;
     else
         pp->icm.output  = onames->get_active_text();
 		pp->icm.freegamma = freegamma->get_active();

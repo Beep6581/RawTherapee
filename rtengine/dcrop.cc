@@ -220,8 +220,11 @@ void Crop::update (int todo) {
 	}
 	*/
     if (cropImageListener) {
-        // this in workinging space is held in parallel to allow analysis like shadow/highlight
-        Image8 *cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, params.icm.working);
+        // this in output space held in parallel to allow analysis like shadow/highlight
+        Glib::ustring outProfile=params.icm.output;
+        if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+        printf("Using profile %s\n", outProfile.c_str());
+        Image8 *cropImgtrue = parent->ipf.lab2rgb (labnCrop, 0,0,cropw,croph, outProfile);
 
         int finalW = rqcropw;
         if (cropImg->getWidth()-leftBorder < finalW)

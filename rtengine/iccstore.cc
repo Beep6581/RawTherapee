@@ -60,11 +60,6 @@ std::vector<std::string> getWorkingProfiles () {
     return res;
 }
 
-std::vector<std::string> getOutputProfiles () {
-
-    return iccStore->getOutputProfiles ();
-}
-
 std::vector<std::string> ICCStore::getOutputProfiles () {
 
 	Glib::Mutex::Lock lock(mutex_);

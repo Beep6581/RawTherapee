@@ -292,12 +292,12 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	
 
     ProfileContent pc;
-	Glib::ustring chpro;
+    Glib::ustring chpro, outProfile;
 	int present_space[7]={0,0,0,0,0,0,0};
-	 std::vector<std::string> opnames = rtengine::getOutputProfiles ();
+    std::vector<std::string> opnames = iccStore->getOutputProfiles ();
 	 //test if files are in system
     for (int j=0; j<7;j++) {
-	//one can modify "option" [Color Management] to adapt name of profile ih there are different for windows, MacOS, Linux ?? 
+        // one can modify "option" [Color Management] to adapt name of profile if there are different for windows, MacOS, Linux ?? 
 	if(j==0) chpro=options.rtSettings.prophoto;
 	else if(j==1) chpro=options.rtSettings.adobe;
 	else if(j==2) chpro=options.rtSettings.widegamut;	
@@ -309,18 +309,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
        if(chpro.compare(opnames[i]) ==0) present_space[j]=1; 
 	      if (present_space[j]==0) { if (pl) pl->setProgressStr ("Missing file..");pl->setProgress (0.0);}// display file not present: not very good display information...!!
         }
-		//choose output profile
-		if(params.icm.working=="ProPhoto" && present_space[0]==1)  params.icm.output=options.rtSettings.prophoto;
-		else if(params.icm.working=="Adobe RGB" && present_space[1]==1)  params.icm.output=options.rtSettings.adobe;
-		else if(params.icm.working=="WideGamut" && present_space[2]==1)  params.icm.output=options.rtSettings.widegamut;
-		else if(params.icm.working=="Beta RGB" && present_space[3]==1)  params.icm.output=options.rtSettings.beta;
-		else if(params.icm.working=="BestRGB" && present_space[4]==1)  params.icm.output=options.rtSettings.best;
-		else if(params.icm.working=="BruceRGB" && present_space[5]==1)  params.icm.output=options.rtSettings.bruce;
-		else params.icm.output=options.rtSettings.srgb; //if not found or choice=srgb
 
+    // Check that output profiles exist, otherwise revert to sRGB
+    if (params.icm.output=="ProPhoto" && present_space[0]==1) outProfile=options.rtSettings.prophoto;
+    else if (params.icm.output=="Adobe RGB" && present_space[1]==1) outProfile=options.rtSettings.adobe;
+    else if (params.icm.output=="WideGamut" && present_space[2]==1) outProfile=options.rtSettings.widegamut;
+    else if (params.icm.output=="Beta RGB" && present_space[3]==1) outProfile=options.rtSettings.beta;
+    else if (params.icm.output=="BestRGB" && present_space[4]==1) outProfile=options.rtSettings.best;
+    else if (params.icm.output=="BruceRGB" && present_space[5]==1) outProfile=options.rtSettings.bruce;
+    else outProfile=options.rtSettings.srgb; //if not found or choice=srgb
 	
-    if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
-        pc = iccStore->getContent (params.icm.output);
+    pc = iccStore->getContent (outProfile);
 	
     readyImg->setOutputProfile (pc.data, pc.length);
 	
@@ -413,7 +412,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	
 
     ProfileContent pc;
-    if (params.icm.output.compare (0, 6, "No ICM") && params.icm.output!="")  
+    if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString)  
         pc = iccStore->getContent (params.icm.output);
 	
     readyImg->setOutputProfile (pc.data, pc.length);
