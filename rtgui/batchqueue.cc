@@ -364,8 +364,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     SaveFormat saveFormat;
     if (processing->outFileName=="") {   // auto file name
         Glib::ustring s = calcAutoFileNameBase (processing->filename);
-        fname = autoCompleteFileName (s, options.saveFormat.format);
-        saveFormat = options.saveFormat;
+        saveFormat = options.saveFormatBatch;
+        fname = autoCompleteFileName (s, saveFormat.format);
     }
     else {  // use the save-as filename with automatic completion for uniqueness
         fname = autoCompleteFileName (removeExtension(processing->outFileName), getExtension(processing->outFileName));
