@@ -24,7 +24,6 @@ namespace rtengine {
   /** This structure holds the global parameters used by the RT engine. */
     class Settings {
         public:
-            bool            dualThreadEnabled;      ///< If true, the image processing operations with utilize two processor cores (if possible)
             Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
             Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)

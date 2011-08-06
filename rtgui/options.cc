@@ -110,7 +110,7 @@ void Options::setDefaults () {
     languageAutoDetect= langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
-    theme = "17-Gray-Red";
+    theme = "25-Gray-Gray";
     slimUI = false;		// TODO: Should this be TRUE for worst case screen resolution or FALSE for nicer interface by default ???
     useSystemTheme = true;
     maxThumbnailHeight = 400;
@@ -206,7 +206,6 @@ void Options::setDefaults () {
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
-    rtSettings.dualThreadEnabled = true;
     rtSettings.darkFramesPath = "";
 	rtSettings.flatFieldsPath = "";
 #ifdef WIN32
@@ -274,7 +273,6 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "DateFormat"))       dateFormat      = keyFile.get_string ("General", "DateFormat");
     if (keyFile.has_key ("General", "AdjusterDelay"))    adjusterDelay   = keyFile.get_integer ("General", "AdjusterDelay");
     if (keyFile.has_key ("General", "StoreLastProfile")) savesParamsAtExit = keyFile.get_boolean ("General", "StoreLastProfile");
-    if (keyFile.has_key ("General", "DualProcSupport"))  rtSettings.dualThreadEnabled = keyFile.get_boolean ("General", "DualProcSupport");
     if (keyFile.has_key ("General", "MultiUser"))        multiUser       = keyFile.get_boolean ("General", "MultiUser");
     if (keyFile.has_key ("General", "Version"))          version         = keyFile.get_string ("General", "Version");
     if (keyFile.has_key ("General", "Language"))         language        = keyFile.get_string ("General", "Language");
@@ -451,7 +449,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("General", "StartupPath", startupPath);
     keyFile.set_string  ("General", "DateFormat", dateFormat);
     keyFile.set_integer ("General", "AdjusterDelay", adjusterDelay);
-    keyFile.set_boolean ("General", "DualProcSupport", rtSettings.dualThreadEnabled);
     keyFile.set_boolean ("General", "MultiUser", multiUser);
     keyFile.set_string  ("General", "Language", language);
     keyFile.set_boolean ("General", "LanguageAutoDetect", languageAutoDetect);
