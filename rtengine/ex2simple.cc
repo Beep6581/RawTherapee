@@ -82,7 +82,6 @@ int main (int argc, char* argv[]) {
 
     // create and fill settings
     rtengine::Settings* s = rtengine::Settings::create ();
-    s->dualThreadEnabled = true;
     s->demosaicMethod = "hphd";
     s->colorCorrectionSteps = 2;
     s->iccDirectory = "";

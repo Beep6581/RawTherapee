@@ -40,7 +40,6 @@ int main (int argc, char* argv[]) {
     }
 
     rtengine::Settings s;
-    s.dualThreadEnabled = true;
     s.demosaicMethod = "hphd";
     s.colorCorrectionSteps = 2;
     s.iccDirectory = "";
