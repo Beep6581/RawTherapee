@@ -41,7 +41,7 @@ void RawImageSource::green_equilibrate(float thresh)
 
 	// local variables
 	array2D<float> cfa (width,height,rawData);
-	array2D<int> checker (width,height,ARRAY2D_CLEAR_DATA);
+	//array2D<int> checker (width,height,ARRAY2D_CLEAR_DATA);
 	
 	
 	//int verbose=1;
@@ -57,7 +57,7 @@ void RawImageSource::green_equilibrate(float thresh)
 	
 	int rr, cc;
 	int vote1, vote2;
-	int counter, vtest;
+	//int counter, vtest;
 	
 	float gin, gse, gsw, gne, gnw, wtse, wtsw, wtne, wtnw;
 	float ginterp;
@@ -68,6 +68,7 @@ void RawImageSource::green_equilibrate(float thresh)
 	
 	
 	//The green equilibration algorithm starts here
+    /*
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -83,14 +84,14 @@ void RawImageSource::green_equilibrate(float thresh)
 		}
 	
 	counter=vtest=0;
-	
+	*/
 	//now smooth the cfa data
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 	for (rr=4; rr < height-4; rr++)
 		for (cc=5-(FC(rr,2)&1); cc < width-6; cc+=2) {
-			if (checker[rr][cc]) {
+			//if (checker[rr][cc]) {
 				//%%%%%%%%%%%%%%%%%%%%%%
 				//neighbor checking code from Manuel Llorens Garcia
 				o1_1=cfa[(rr-1)][cc-1]; 
@@ -109,10 +110,11 @@ void RawImageSource::green_equilibrate(float thresh)
 				c2=(fabs(o2_1-o2_2)+fabs(o2_1-o2_3)+fabs(o2_1-o2_4)+fabs(o2_2-o2_3)+fabs(o2_3-o2_4)+fabs(o2_2-o2_4))/6.0;
 				//%%%%%%%%%%%%%%%%%%%%%%
 				
-				vote1=(checker[rr-2][cc]+checker[rr][cc-2]+checker[rr][cc+2]+checker[rr+2][cc]);
-				vote2=(checker[rr+1][cc-1]+checker[rr+1][cc+1]+checker[rr-1][cc-1]+checker[rr-1][cc+1]);
+				//vote1=(checker[rr-2][cc]+checker[rr][cc-2]+checker[rr][cc+2]+checker[rr+2][cc]);
+				//vote2=(checker[rr+1][cc-1]+checker[rr+1][cc+1]+checker[rr-1][cc-1]+checker[rr-1][cc+1]);
 				//if ((vote1==0 || vote2==0) && (c1+c2)<2*thresh*fabs(d1-d2)) vtest++;
-				if (vote1>0 && vote2>0 && (c1+c2)<4*thresh*fabs(d1-d2)) {
+				//if (vote1>0 && vote2>0 && (c1+c2)<4*thresh*fabs(d1-d2)) {
+                if ((c1+c2)<4*thresh*fabs(d1-d2)) {
 					//pixel interpolation
 					gin=cfa[rr][cc];
 					
@@ -132,16 +134,14 @@ void RawImageSource::green_equilibrate(float thresh)
 					
 					if ( ((ginterp-gin) < thresh*(ginterp+gin)) ) {
 						rawData[rr][cc]=0.5f*(ginterp+gin);
-						counter++;
+						//counter++;
 					}
 					
 				}
-			}
+		//	}
 		}
 	//printf("pixfix count= %d; vtest= %d \n",counter,vtest);
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
 	
 	
 	// done
