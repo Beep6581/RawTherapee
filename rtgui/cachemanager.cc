@@ -23,6 +23,9 @@
 #include <guiutils.h>
 #include <procparamchangers.h>
 #include <safegtk.h>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 CacheManager*
 CacheManager::getInstance(void)
@@ -282,9 +285,26 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname) {
 
     Glib::RefPtr<Gio::File> file = Gio::File::create_for_path (fname);
     if (file && file->query_exists())	{
+
+        #ifdef WIN32
+        // Windows: file name + size + creation time
+        // Safer because e.g. your camera image counter turns over. Do NOT use modified date, since tagging programs will change that
+        wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
+        WIN32_FILE_ATTRIBUTE_DATA fileAttr;
+        bool success=GetFileAttributesExW(wFname, GetFileExInfoStandard, &fileAttr);
+        g_free(wFname);
+
+        if (success) {
+            // Just need the low file size, since RAWs are never that large
+            Glib::ustring fileID= Glib::ustring::compose ("%1-%2-%3-%4", fileAttr.nFileSizeLow, fileAttr.ftCreationTime.dwHighDateTime, fileAttr.ftCreationTime.dwLowDateTime, fname );
+            return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, fileID);
+        }
+        #else
+        // Least common denominator: file name + size to identify a file
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (file);
         if (info)
             return Glib::Checksum::compute_checksum (Glib::Checksum::CHECKSUM_MD5, Glib::ustring::compose ("%1%2", fname, info->get_size()));
+        #endif
     }
     return "";
 }
@@ -298,6 +318,7 @@ Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subdir, const
 
 void CacheManager::applyCacheSizeLimitation () {
 
+    // TODO: Improve this, it just blindly deletes image without looking at create time or something to keep the current ones
     std::vector<FileMTimeInfo> flist;
     Glib::ustring dataDir = Glib::build_filename (baseDir, "data");
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (dataDir);
