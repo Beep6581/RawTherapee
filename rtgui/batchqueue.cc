@@ -62,6 +62,18 @@ BatchQueue::~BatchQueue ()
 	delete pmenu;
 }
 
+// Reduce the max size of a thumb, since thumb is processed synchronously on adding to queue
+// leading to very long waiting when adding more images
+int BatchQueue::calcMaxThumbnailHeight() {
+    return MIN(options.maxThumbnailHeight, 200);
+}
+
+// Function for virtual override in thumbbrowser base
+int BatchQueue::getMaxThumbnailHeight() const {
+    return calcMaxThumbnailHeight();
+}
+
+
 void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
 
     pmenu->popup (3, this->eventTime);
@@ -163,11 +175,11 @@ void BatchQueue::loadBatchQueue( )
                     if( thumb ){
                         rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
 
-                        int prevh = options.maxThumbnailHeight;
+                        int prevh = getMaxThumbnailHeight();
                         int prevw = prevh;
                         guint8* prev = NULL;
                         double tmpscale;
-                        rtengine::IImage8* img = thumb->processThumbImage(pparams, options.maxThumbnailHeight, tmpscale);
+                        rtengine::IImage8* img = thumb->processThumbImage(pparams, prevh, tmpscale);
                         if (img) {
                             prevw = img->getWidth();
                             prevh = img->getHeight();

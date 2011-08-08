@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <thumbbrowserentrybase.h>
 #include <set>
+#include <options.h>
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
@@ -52,6 +53,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     };
 
   protected:
+    virtual int getMaxThumbnailHeight() const { return options.maxThumbnailHeight; }  // Differs between batch and file
 
     Internal internal;
     Gtk::HScrollbar hscroll;

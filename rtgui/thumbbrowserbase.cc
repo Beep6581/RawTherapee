@@ -478,13 +478,13 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
     int optThumbSize=getCurrentThumbSize();
     if (zoomIn)
         for (i=0; i<options.thumbnailZoomRatios.size(); i++) {
-            newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
+            newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
             if (newHeight > optThumbSize)
                 break;
         }
     else
         for (i=options.thumbnailZoomRatios.size()-1; i>=0; i--) {
-            newHeight = (int)(options.thumbnailZoomRatios[i] * options.maxThumbnailHeight);
+            newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
             if (newHeight < optThumbSize)
                 break;
         }
