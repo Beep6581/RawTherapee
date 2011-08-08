@@ -254,8 +254,6 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
 }
 
 void ThumbBrowserEntryBase::resize (int h) {
-    if (h==height && drawable) return;  // Short cut if nothing to do
-    
     height = h;
     int old_preh = preh;
 
@@ -290,11 +288,7 @@ void ThumbBrowserEntryBase::resize (int h) {
     if (width < bsw + 2*sideMargin + 2*borderWidth)
         width = bsw + 2*sideMargin + 2*borderWidth;
 
-    if ( preh == old_preh )
-    {
-        updateBackBuffer ();
-    }
-    else
+    if ( preh != old_preh )
     {
         delete [] preview;
         preview = NULL;
