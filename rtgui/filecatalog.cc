@@ -832,25 +832,35 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
     if (listener) {
     	std::vector<BatchQueueEntry*> entries;
+
+        #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
             double tmpscale;
-            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, options.maxThumbnailHeight, tmpscale);
+            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
+
+            int pw, ph;
+            guint8* prev=NULL;
+
             if (img) {
-                int pw = img->getWidth ();
-                int ph = img->getHeight ();
-                guint8* prev = new guint8 [pw*ph*3];
+                pw = img->getWidth ();
+                ph = img->getHeight ();
+                prev = new guint8 [pw*ph*3];
                 memcpy (prev, img->getData (), pw*ph*3);
                 img->free();
+ 
+            } else {
+                tbe[i]->thumbnail->getThumbnailSize (pw, ph);
+            }
+
+            // processThumbImage is the processing intensive part, but adding to queue must be ordered
+            #pragma omp ordered
+            {
                 entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
             }
-            else {
-                int pw, ph;
-                tbe[i]->thumbnail->getThumbnailSize (pw, ph);
-                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, NULL, pw, ph, tbe[i]->thumbnail));
             }
-        }
+
         listener->addBatchQueueJobs( entries );
     }
 }

@@ -40,6 +40,7 @@ class BatchQueue  : public ThumbBrowserBase,
                     public LWButtonListener {  
 
   protected:
+    int getMaxThumbnailHeight() const;
 
     BatchQueueEntry* processing;  // holds the currently processed image
 
@@ -83,6 +84,7 @@ class BatchQueue  : public ThumbBrowserBase,
     void loadBatchQueue ();
 
     static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName);
+    static int calcMaxThumbnailHeight();
 };
 
 #endif
