@@ -37,6 +37,7 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     Gtk::RadioButton* immediately;
     Gtk::RadioButton* putToQueueHead;
     Gtk::RadioButton* putToQueueTail;
+    Gtk::ResponseType response;
 
   public:
     SaveAsDialog (Glib::ustring initialDir);
@@ -50,6 +51,7 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     bool            getToTailOfQueue ();    
 
     void  setInitialFileName (Glib::ustring iname);
+    Gtk::ResponseType getResponse    () { return response; };
 
     void okPressed ();
     void cancelPressed ();
