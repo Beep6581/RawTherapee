@@ -54,26 +54,17 @@ void RawImageSource::green_equilibrate(float thresh)
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	// Fill G interpolated values with border interpolation and input values
-	
-	int rr, cc;
-	int vote1, vote2;
+
+	//int vote1, vote2;
 	//int counter, vtest;
-	
-	float gin, gse, gsw, gne, gnw, wtse, wtsw, wtne, wtnw;
-	float ginterp;
-	
-	float d1,d2,c1,c2;  
-	float o1_1,o1_2,o1_3,o1_4;  
-	float o2_1,o2_2,o2_3,o2_4;
-	
 	
 	//The green equilibration algorithm starts here
     /*
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for (rr=1; rr < height-1; rr++)
-		for (cc=3-(FC(rr,2)&1); cc < width-2; cc+=2) {
+	for (int rr=1; rr < height-1; rr++)
+		for (int cc=3-(FC(rr,2)&1); cc < width-2; cc+=2) {
 			
 			float pcorr = (cfa[rr+1][cc+1]-cfa[rr][cc])*(cfa[rr-1][cc-1]-cfa[rr][cc]);
 			float mcorr = (cfa[rr-1][cc+1]-cfa[rr][cc])*(cfa[rr+1][cc-1]-cfa[rr][cc]);
@@ -89,25 +80,25 @@ void RawImageSource::green_equilibrate(float thresh)
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for (rr=4; rr < height-4; rr++)
-		for (cc=5-(FC(rr,2)&1); cc < width-6; cc+=2) {
+	for (int rr=4; rr < height-4; rr++)
+		for (int cc=5-(FC(rr,2)&1); cc < width-6; cc+=2) {
 			//if (checker[rr][cc]) {
 				//%%%%%%%%%%%%%%%%%%%%%%
 				//neighbor checking code from Manuel Llorens Garcia
-				o1_1=cfa[(rr-1)][cc-1]; 
-				o1_2=cfa[(rr-1)][cc+1];  
-				o1_3=cfa[(rr+1)][cc-1]; 
-				o1_4=cfa[(rr+1)][cc+1];  
-				o2_1=cfa[(rr-2)][cc];  
-				o2_2=cfa[(rr+2)][cc];  
-				o2_3=cfa[(rr)][cc-2];  
-				o2_4=cfa[(rr)][cc+2];  
+				float o1_1=cfa[(rr-1)][cc-1];
+				float o1_2=cfa[(rr-1)][cc+1];
+				float o1_3=cfa[(rr+1)][cc-1];
+				float o1_4=cfa[(rr+1)][cc+1];
+				float o2_1=cfa[(rr-2)][cc];
+				float o2_2=cfa[(rr+2)][cc];
+				float o2_3=cfa[(rr)][cc-2];
+				float o2_4=cfa[(rr)][cc+2];
 				
-				d1=(o1_1+o1_2+o1_3+o1_4)*0.25f;  
-				d2=(o2_1+o2_2+o2_3+o2_4)*0.25f;  
+				float d1=(o1_1+o1_2+o1_3+o1_4)*0.25f;
+				float d2=(o2_1+o2_2+o2_3+o2_4)*0.25f;
 				
-				c1=(fabs(o1_1-o1_2)+fabs(o1_1-o1_3)+fabs(o1_1-o1_4)+fabs(o1_2-o1_3)+fabs(o1_3-o1_4)+fabs(o1_2-o1_4))/6.0;  
-				c2=(fabs(o2_1-o2_2)+fabs(o2_1-o2_3)+fabs(o2_1-o2_4)+fabs(o2_2-o2_3)+fabs(o2_3-o2_4)+fabs(o2_2-o2_4))/6.0;
+				float c1=(fabs(o1_1-o1_2)+fabs(o1_1-o1_3)+fabs(o1_1-o1_4)+fabs(o1_2-o1_3)+fabs(o1_3-o1_4)+fabs(o1_2-o1_4))/6.0;
+				float c2=(fabs(o2_1-o2_2)+fabs(o2_1-o2_3)+fabs(o2_1-o2_4)+fabs(o2_2-o2_3)+fabs(o2_3-o2_4)+fabs(o2_2-o2_4))/6.0;
 				//%%%%%%%%%%%%%%%%%%%%%%
 				
 				//vote1=(checker[rr-2][cc]+checker[rr][cc-2]+checker[rr][cc+2]+checker[rr+2][cc]);
@@ -116,21 +107,21 @@ void RawImageSource::green_equilibrate(float thresh)
 				//if (vote1>0 && vote2>0 && (c1+c2)<4*thresh*fabs(d1-d2)) {
                 if ((c1+c2)<4*thresh*fabs(d1-d2)) {
 					//pixel interpolation
-					gin=cfa[rr][cc];
+					float gin=cfa[rr][cc];
 					
-					gse=(cfa[rr+1][cc+1])+0.5*(cfa[rr][cc]-cfa[rr+2][cc+2]);
-					gnw=(cfa[rr-1][cc-1])+0.5*(cfa[rr][cc]-cfa[rr-2][cc-2]);
-					gne=(cfa[rr-1][cc+1])+0.5*(cfa[rr][cc]-cfa[rr-2][cc+2]);
-					gsw=(cfa[rr+1][cc-1])+0.5*(cfa[rr][cc]-cfa[rr+2][cc-2]);
+					float gse=(cfa[rr+1][cc+1])+0.5*(cfa[rr][cc]-cfa[rr+2][cc+2]);
+					float gnw=(cfa[rr-1][cc-1])+0.5*(cfa[rr][cc]-cfa[rr-2][cc-2]);
+					float gne=(cfa[rr-1][cc+1])+0.5*(cfa[rr][cc]-cfa[rr-2][cc+2]);
+					float gsw=(cfa[rr+1][cc-1])+0.5*(cfa[rr][cc]-cfa[rr+2][cc-2]);
 					
 					
 					
-					wtse=1/(eps+SQR(cfa[rr+2][cc+2]-cfa[rr][cc])+SQR(cfa[rr+3][cc+3]-cfa[rr+1][cc+1]));
-					wtnw=1/(eps+SQR(cfa[rr-2][cc-2]-cfa[rr][cc])+SQR(cfa[rr-3][cc-3]-cfa[rr-1][cc-1]));
-					wtne=1/(eps+SQR(cfa[rr-2][cc+2]-cfa[rr][cc])+SQR(cfa[rr-3][cc+3]-cfa[rr-1][cc+1]));
-					wtsw=1/(eps+SQR(cfa[rr+2][cc-2]-cfa[rr][cc])+SQR(cfa[rr+3][cc-3]-cfa[rr+1][cc-1]));
+					float wtse=1.0f/(eps+SQR(cfa[rr+2][cc+2]-cfa[rr][cc])+SQR(cfa[rr+3][cc+3]-cfa[rr+1][cc+1]));
+					float wtnw=1.0f/(eps+SQR(cfa[rr-2][cc-2]-cfa[rr][cc])+SQR(cfa[rr-3][cc-3]-cfa[rr-1][cc-1]));
+					float wtne=1.0f/(eps+SQR(cfa[rr-2][cc+2]-cfa[rr][cc])+SQR(cfa[rr-3][cc+3]-cfa[rr-1][cc+1]));
+					float wtsw=1.0f/(eps+SQR(cfa[rr+2][cc-2]-cfa[rr][cc])+SQR(cfa[rr+3][cc-3]-cfa[rr+1][cc-1]));
 					
-					ginterp=(gse*wtse+gnw*wtnw+gne*wtne+gsw*wtsw)/(wtse+wtnw+wtne+wtsw);
+					float ginterp=(gse*wtse+gnw*wtnw+gne*wtne+gsw*wtsw)/(wtse+wtnw+wtne+wtsw);
 					
 					if ( ((ginterp-gin) < thresh*(ginterp+gin)) ) {
 						rawData[rr][cc]=0.5f*(ginterp+gin);
