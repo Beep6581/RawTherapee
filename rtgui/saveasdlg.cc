@@ -19,6 +19,7 @@
 #include "saveasdlg.h"
 #include <multilangmgr.h>
 #include <guiutils.h>
+#include <safegtk.h>
 
 extern Options options;
 SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
@@ -118,7 +119,11 @@ bool SaveAsDialog::getToTailOfQueue () {
 
 Glib::ustring SaveAsDialog::getFileName () {
 
-    return removeExtension(fname) + Glib::ustring(".") + formatOpts->getFormat().format;
+	// fname is empty if the dialog has been cancelled
+	if (fname.length())
+		return removeExtension(fname) + Glib::ustring(".") + formatOpts->getFormat().format;
+	else
+		return "";
 }
 
 Glib::ustring SaveAsDialog::getDirectory () {
@@ -134,12 +139,24 @@ SaveFormat SaveAsDialog::getFormat () {
 void SaveAsDialog::okPressed () {
 
     fname = fchooser->get_filename();
+
+    // checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
+    // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
+    //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
+    if (!fname.length() || safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_EMPTYFILENAME") + "</b>";
+        Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+        return;
+    }
+    response = Gtk::RESPONSE_OK;
     hide ();
 }
 
 void SaveAsDialog::cancelPressed () {
 
     fname = "";
+    response = Gtk::RESPONSE_CANCEL;
     hide ();
 }
 

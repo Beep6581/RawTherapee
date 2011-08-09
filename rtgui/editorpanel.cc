@@ -974,9 +974,11 @@ void EditorPanel::saveAsPressed () {
 	saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
 	do {
 		saveAsDialog->run ();
-		fname = saveAsDialog->getFileName ();
-		if (fname=="")
+		if (saveAsDialog->getResponse()==Gtk::RESPONSE_CANCEL)
 			return;
+
+		// The SaveAsDialog ensure that a filename has been specified
+		fname = saveAsDialog->getFileName ();
 
 		options.lastSaveAsPath = saveAsDialog->getDirectory ();
 		options.saveAsDialogWidth = saveAsDialog->get_width();
