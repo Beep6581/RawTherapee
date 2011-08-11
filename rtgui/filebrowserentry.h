@@ -66,8 +66,6 @@ public:
     static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
     static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
     
-    Thumbnail* thumbnail;
-  
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry ();
     void draw ();
