@@ -254,8 +254,10 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
 }
 
 void ThumbBrowserEntryBase::resize (int h) {
+    Glib::RWLock::WriterLock l(lockRW);
+
     height = h;
-    int old_preh = preh;
+    int old_preh = preh, old_width = width;
 
     // dimensions of the button set
     int bsw=0, bsh=0;
@@ -278,7 +280,8 @@ void ThumbBrowserEntryBase::resize (int h) {
     	height = preh + (upperMargin + 2*borderWidth + lowerMargin)+ bsh + infoh;
     }
 
-    calcThumbnailSize ();
+    calcThumbnailSize ();  // recalculates prew
+
     width = prew + 2*sideMargin + 2*borderWidth;
     if (options.showFileNames && !options.overlayedFileNames) {
         width = prew + 2*sideMargin + 2*borderWidth;
@@ -288,12 +291,13 @@ void ThumbBrowserEntryBase::resize (int h) {
     if (width < bsw + 2*sideMargin + 2*borderWidth)
         width = bsw + 2*sideMargin + 2*borderWidth;
 
-    if ( preh != old_preh )
+    if ( preh != old_preh || width != old_width )
     {
         delete [] preview;
         preview = NULL;
         refreshThumbnailImage ();
-    }
+    } // causes skewed thumb sometimes: else updateBackBuffer();
+
     drawable = true;
 }
 
@@ -337,6 +341,8 @@ void ThumbBrowserEntryBase::draw () {
     if (!drawable)
         return;
 
+    Glib::RWLock::ReaderLock l(lockRW);
+
     int bbWidth, bbHeight;
     if (backBuffer)
         backBuffer->get_size (bbWidth, bbHeight);
@@ -372,6 +378,7 @@ void ThumbBrowserEntryBase::draw () {
 }
 
 void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h) {
+    Glib::RWLock::WriterLock l(lockRW);
 
     exp_width = w;
     exp_height = h;
@@ -383,6 +390,7 @@ void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h) {
 }
 
 void ThumbBrowserEntryBase::setOffset (int x, int y) {
+    Glib::RWLock::WriterLock l(lockRW);
 
     ofsX = -x;
     ofsY = -y;

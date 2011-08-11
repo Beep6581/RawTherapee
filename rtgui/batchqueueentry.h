@@ -39,7 +39,6 @@ class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListen
     BatchQueueEntryIdleHelper* bqih;
     
 public:
-    Thumbnail* thumbnail;
     rtengine::ProcessingJob* job;
     rtengine::procparams::ProcParams params;
     Glib::ustring savedParamsFile;
@@ -47,7 +46,7 @@ public:
     Glib::ustring outFileName;
     SaveFormat saveFormat;
   
-    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thumbnail=NULL);
+    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm=NULL);
     ~BatchQueueEntry ();
 
     void refreshThumbnailImage ();

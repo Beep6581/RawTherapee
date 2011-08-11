@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <lwbuttonset.h>
+#include <thumbnail.h>
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase {
@@ -39,6 +40,9 @@ protected:
     int textGap;
     int sideMargin;
     int lowerMargin;
+
+    
+    Glib::RWLock lockRW;  // Locks access to all image thumb changing actions
 
     guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
 
@@ -72,6 +76,8 @@ protected:
     
   public:
   
+    Thumbnail* thumbnail;
+
 // thumbnail preview properties:
     Glib::ustring filename;
     Glib::ustring shortname;
@@ -102,9 +108,10 @@ protected:
     int getMinimalHeight    () { return height; }
     int getMinimalWidth     () { return width; }
 
-    int getEffectiveHeight  () { return exp_height; }
-    int getStartX           () { return startx; }
-    int getStartY           () { return starty; }
+    int getEffectiveHeight  () const { return exp_height; }
+    int getPreviewHeight    () const { return preh; }
+    int getStartX           () const { return startx; }
+    int getStartY           () const { return starty; }
 
     bool inside             (int x, int y);
     bool insideWindow       (int x, int y, int w, int h);

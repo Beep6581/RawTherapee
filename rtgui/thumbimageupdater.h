@@ -21,7 +21,7 @@
 
 #include <glibmm.h>
 #include <rtengine.h>
-#include <thumbnail.h>
+#include <thumbbrowserentrybase.h>
 #include <glib.h>
 
 class ThumbImageUpdateListener {
@@ -63,8 +63,7 @@ class ThumbImageUpdater {
 	 * @param priority if \c true then run as soon as possible
 	 * @param l listener waiting on update
 	 */
-    void add(Thumbnail* t, const rtengine::procparams::ProcParams& params,
-					int height, bool* priority, bool upgrade, ThumbImageUpdateListener* l);
+    void add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l);
 
 	/** 
 	 * @brief Remove jobs associated with listener \c l.

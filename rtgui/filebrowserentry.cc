@@ -33,7 +33,8 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname) 
-    : ThumbBrowserEntryBase (fname), iatlistener(NULL), cropgl(NULL), state(SNormal), thumbnail(thm) {
+    : ThumbBrowserEntryBase (fname), iatlistener(NULL), cropgl(NULL), state(SNormal) {
+    thumbnail=thm;
 
     feih = new FileBrowserEntryIdleHelper;
     feih->fbentry = this;
@@ -82,7 +83,7 @@ void FileBrowserEntry::refreshThumbnailImage () {
     if (!thumbnail)
         return;
 
-    thumbImageUpdater->add (thumbnail, thumbnail->getProcParams(), preh, &updatepriority, false, this);    
+    thumbImageUpdater->add (this, &updatepriority, false, this);    
 }
 
 void FileBrowserEntry::refreshQuickThumbnailImage () {
@@ -90,7 +91,7 @@ void FileBrowserEntry::refreshQuickThumbnailImage () {
     if ( thumbnail &&
 			thumbnail->isQuick() && (!options.internalThumbIfUntouched || thumbnail->isPParamsValid()) )
 	{
-		thumbImageUpdater->add(thumbnail, thumbnail->getProcParams(), preh, &updatepriority, true, this);    
+		thumbImageUpdater->add(this, &updatepriority, true, this);    
 	}
 }
 
@@ -206,6 +207,7 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
 }
 
 void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams) {
+    Glib::RWLock::WriterLock l(lockRW);
 
     redrawRequests--; 
     scale = s;

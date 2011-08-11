@@ -36,25 +36,24 @@ public:
 
 	struct Job
 	{
-		Job(Thumbnail* thumbnail, const rtengine::procparams::ProcParams& pparams,
-					int height, bool* priority, bool upgrade,
+		Job(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
 					ThumbImageUpdateListener* listener):
-			thumbnail_(thumbnail),
-			pparams_(pparams),
-			height_(height),
+			tbe_(tbe),
+			/*pparams_(pparams),
+			height_(height), */
 			priority_(priority),
 			upgrade_(upgrade),
 			listener_(listener)
 		{}
 
 		Job():
-			thumbnail_(0),
+			tbe_(0),
 			listener_(0)
 		{}
 
-		Thumbnail* thumbnail_;
-		rtengine::procparams::ProcParams pparams_;
-		int height_;
+		ThumbBrowserEntryBase* tbe_;
+		/*rtengine::procparams::ProcParams pparams_;
+		int height_;*/
 		bool* priority_;
 		bool upgrade_;
 		ThumbImageUpdateListener* listener_;
@@ -108,7 +107,7 @@ public:
 			{
 				if ( *(i->priority_) )
 				{
-					DEBUG("processing(priority) %s",i->thumbnail_->getFileName().c_str());
+					DEBUG("processing(priority) %s",i->tbe_->thumbnail->getFileName().c_str());
 					break;
 				}
 			}
@@ -120,7 +119,7 @@ public:
 				{
 					if ( !i->upgrade_ )
 					{
-						DEBUG("processing(not-upgrade) %s",i->thumbnail_->getFileName().c_str());
+						DEBUG("processing(not-upgrade) %s",i->tbe_->thumbnail->getFileName().c_str());
 						break;
 					}
 				}
@@ -130,7 +129,7 @@ public:
 			if ( i == jobs_.end() )
 			{
 				i = jobs_.begin();
-				DEBUG("processing(first) %s",i->thumbnail_->getFileName().c_str());
+				DEBUG("processing(first) %s",i->tbe_->thumbnail->getFileName().c_str());
 			}
 
 			// copy found job
@@ -146,23 +145,24 @@ public:
 		// unlock and do processing; will relock on block exit, then call listener
 		double scale = 1.0;
 		rtengine::IImage8* img = 0;
+        Thumbnail* thm=j.tbe_->thumbnail;
 
 		if ( j.upgrade_ )
 		{
-			if ( j.thumbnail_->isQuick() )
+			if ( thm->isQuick() )
 			{
-				img = j.thumbnail_->upgradeThumbImage(j.pparams_, j.height_, scale);
+				img = thm->upgradeThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
 			}
 		}
 		else
 		{
-			img = j.thumbnail_->processThumbImage(j.pparams_, j.height_, scale);
+			img = thm->processThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
 		}
 
 		if (img)
 		{
-			DEBUG("pushing image %s",j.thumbnail_->getFileName().c_str());
-			j.listener_->updateImage(img, scale, j.pparams_.crop);
+			DEBUG("pushing image %s",thm->getFileName().c_str());
+			j.listener_->updateImage(img, scale, thm->getProcParams().crop);
 		}
 
 		{
@@ -196,8 +196,7 @@ ThumbImageUpdater::ThumbImageUpdater():
 }
 
 void 
-ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& params,
-							int height, bool* priority, bool upgrade, ThumbImageUpdateListener* l) 
+ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l) 
 {
 	// nobody listening?
 	if ( l == 0 )
@@ -211,14 +210,14 @@ ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& par
 	Impl::JobList::iterator i(impl_->jobs_.begin());
 	for ( ; i != impl_->jobs_.end(); ++i )
 	{
-		if ( i->thumbnail_ == t &&
+		if ( i->tbe_ == tbe &&
 				i->listener_ == l &&
 				i->upgrade_ == upgrade )
 		{
-			DEBUG("updating job %s",t->getFileName().c_str());
+			DEBUG("updating job %s",tbe->getFileName().c_str());
 			// we have one, update queue entry, will be picked up by thread when processed
-			i->pparams_ = params;
-			i->height_ = height;
+			/*i->pparams_ = params;
+			i->height_ = height; */
 			i->priority_ = priority;
 			return;
 		}
@@ -226,7 +225,7 @@ ThumbImageUpdater::add(Thumbnail* t, const rtengine::procparams::ProcParams& par
 
 	// create a new job and append to queue
 	DEBUG("queing job %s",t->getFileName().c_str());
-	impl_->jobs_.push_back(Impl::Job(t,params,height,priority,upgrade,l));
+	impl_->jobs_.push_back(Impl::Job(tbe,priority,upgrade,l));
 
 	DEBUG("adding run request %s",t->getFileName().c_str());
 	impl_->threadPool_->push(sigc::mem_fun(*impl_, &ThumbImageUpdater::Impl::processNextJob));

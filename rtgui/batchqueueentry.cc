@@ -21,11 +21,12 @@
 
 #include <cstring>
 
-BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thumbnail) 
+BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm) 
     : ThumbBrowserEntryBase(fname),
-      opreview(previmg), origpw(prevw), origph(prevh), thumbnail(thumbnail),
+      opreview(previmg), origpw(prevw), origph(prevh),
       job(pjob), progress(0), outFileName("") {
 
+    thumbnail=thm;
     params = pparams;
 
 	// The BatchQueueEntryIdleHelper tracks if 
