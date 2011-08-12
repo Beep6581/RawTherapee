@@ -32,49 +32,47 @@ using namespace rtengine::procparams;
 
 Clarity::Clarity () : Gtk::VBox(), FoldableToolPanel(this)
 {
+    set_border_width(4);
+    set_spacing(4);
 
-   Gtk::HSeparator *hsep66aa = Gtk::manage (new  Gtk::HSeparator());
-   pack_start(*hsep66aa, Gtk::PACK_SHRINK, 2);
-   hsep66aa->show ();
-    Gtk::Label* clsh = Gtk::manage (new Gtk::Label ());
-    clsh->set_alignment (0.0, 0.5);
-    clsh->set_markup (Glib::ustring("<b>") + M("TP_CLARITY_SHARPEN") + "</b>");
-	clsh->show ();
-	pack_start (*clsh);
-   enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-   enabled->set_active (true);
-   pack_start(*enabled);
-   enabled->show ();
-	
+	//******************************** SHARPEN
+
+    Gtk::Frame *sharpenFrame = Gtk::manage (new  Gtk::Frame(M("TP_CLARITY_SHARPEN")));
+    Gtk::VBox *sharpenVBox = Gtk::manage (new  Gtk::VBox());
+    sharpenVBox->set_spacing(2);
+
+    enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
+    enabled->set_active (true);
+    sharpenVBox->pack_start(*enabled, Gtk::PACK_SHRINK, 0);
+
     Claritypasses = Gtk::manage(new Adjuster (M("TP_CLARITY_PASSES"),1,4,1,1));
-	Claritypasses->setAdjusterListener (this);
-	if (Claritypasses->delay < 1000) Claritypasses->delay = 1000;
-	Claritypasses->show();
+    Claritypasses->setAdjusterListener (this);
+    if (Claritypasses->delay < 1000) Claritypasses->delay = 1000;
     Claritystrength = Gtk::manage(new Adjuster (M("TP_CLARITY_STRENGTH"),0,100,1,40));
-	Claritystrength->setAdjusterListener (this);
-	if (Claritystrength->delay < 1000) Claritystrength->delay = 1000;
-	Claritystrength->show();
-	
-	Claritythreechannels = Gtk::manage(new Gtk::CheckButton((M("TP_CLARITY_THREE"))));// L + a + b	
-	Claritythreechannels->set_active (false);
-	pack_start( *Claritypasses, Gtk::PACK_SHRINK, 4);//passes
-	pack_start( *Claritystrength, Gtk::PACK_SHRINK, 4);//strength
-	pack_start( *Claritythreechannels, Gtk::PACK_SHRINK, 4);//one or 3 channels Lab
-	Claritythreechannels->show();
-	Gtk::HSeparator *hsep67aa = Gtk::manage (new  Gtk::HSeparator());
-	pack_start(*hsep67aa, Gtk::PACK_SHRINK, 2);
-	hsep67aa->show ();
-	Gtk::Label* clmc = Gtk::manage (new Gtk::Label ());
-    clmc->set_alignment (0.0, 0.5);
-    clmc->set_markup (Glib::ustring("<b>") + M("TP_CLARITY_MICRO") + "</b>");
-	clmc->show ();
-	pack_start (*clmc);
-	enabledtwo = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
-	enabledtwo->set_active (true);
-	pack_start(*enabledtwo);
-	enabledtwo->show ();
-	
-	
+    Claritystrength->setAdjusterListener (this);
+    if (Claritystrength->delay < 1000) Claritystrength->delay = 1000;
+
+    Claritythreechannels = Gtk::manage(new Gtk::CheckButton((M("TP_CLARITY_THREE"))));// L + a + b
+    Claritythreechannels->set_active (false);
+    sharpenVBox->pack_start( *Claritypasses, Gtk::PACK_SHRINK, 0);//passes
+    sharpenVBox->pack_start( *Claritystrength, Gtk::PACK_SHRINK, 0);//strength
+    sharpenVBox->pack_start( *Claritythreechannels, Gtk::PACK_SHRINK, 0);//one or 3 channels Lab
+
+    sharpenFrame->add (*sharpenVBox);
+    pack_start(*sharpenFrame, Gtk::PACK_SHRINK, 0);
+    sharpenFrame->show ();
+
+    //******************************** MICRO
+
+    Gtk::Frame *microFrame = Gtk::manage (new  Gtk::Frame(M("TP_CLARITY_MICRO")));
+    Gtk::VBox *microVBox = Gtk::manage (new  Gtk::VBox());
+    microVBox->set_spacing(2);
+
+    enabledtwo = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
+    enabledtwo->set_active (true);
+    microVBox->pack_start(*enabledtwo, Gtk::PACK_SHRINK, 0);
+    enabledtwo->show ();
+
 	MLmicrostrength= Gtk::manage(new Adjuster (M("TP_MLMICRO_STRENGTH"),0,100,1,25));
 	MLmicrostrength->setAdjusterListener (this);
 	if (MLmicrostrength->delay < 1000) MLmicrostrength->delay = 1000;
@@ -86,16 +84,20 @@ Clarity::Clarity () : Gtk::VBox(), FoldableToolPanel(this)
 	uniformity->show();
 	MLmicromatrix = Gtk::manage (new Gtk::CheckButton (M("TP_CLARITY_MATRIX")));
 	MLmicromatrix->set_active (true);
-	pack_start(*MLmicromatrix);
+	microVBox->pack_start(*MLmicromatrix, Gtk::PACK_SHRINK, 0);
 	MLmicromatrix->show ();
 
-	pack_start( *MLmicrostrength, Gtk::PACK_SHRINK, 4);//microcontraste strength	
-	pack_start( *uniformity, Gtk::PACK_SHRINK, 4);//uniformity
- 
-    enaconn 	= enabled->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::enabled_toggled) );
-    chanthreeconn 	= Claritythreechannels->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::chanthree_toggled) );
-    enatwoconn 	= enabledtwo->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::enabledtwo_toggled) );
-    matrixconn 	= MLmicromatrix->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::MLmicromatrix_toggled) );
+	microVBox->pack_start( *MLmicrostrength, Gtk::PACK_SHRINK, 0);//microcontraste strength
+	microVBox->pack_start( *uniformity, Gtk::PACK_SHRINK, 0);//uniformity
+
+	microFrame->add (*microVBox);
+    pack_start(*microFrame, Gtk::PACK_SHRINK, 0);
+	microFrame->show ();
+
+    enaconn       = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::enabled_toggled) );
+    chanthreeconn = Claritythreechannels->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::chanthree_toggled) );
+    enatwoconn    = enabledtwo->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::enabledtwo_toggled) );
+    matrixconn    = MLmicromatrix->signal_toggled().connect( sigc::mem_fun(*this, &Clarity::MLmicromatrix_toggled) );
 
 }
 Clarity::~Clarity () {
@@ -158,15 +160,14 @@ void Clarity::write( ProcParams* pp, ParamsEdited* pedited)
 
 
 	if (pedited) {
-		pedited->clarity.clpasses			= Claritypasses->getEditedState ();
-		pedited->clarity.enabled			= !enabled->get_inconsistent();
-		pedited->clarity.clthreechannels		= !Claritythreechannels->get_inconsistent();
-		pedited->clarity.clstrength			= Claritystrength->getEditedState ();
-		pedited->clarity.mlstrength			= MLmicrostrength->getEditedState ();
-		pedited->clarity.uniformity			= uniformity->getEditedState ();
-		pedited->clarity.enabledtwo			= !enabledtwo->get_inconsistent();
-		pedited->clarity.MLmicromatrix	    = !MLmicromatrix->get_inconsistent();
-		
+		pedited->clarity.clpasses           = Claritypasses->getEditedState ();
+		pedited->clarity.enabled            = !enabled->get_inconsistent();
+		pedited->clarity.clthreechannels    = !Claritythreechannels->get_inconsistent();
+		pedited->clarity.clstrength         = Claritystrength->getEditedState ();
+		pedited->clarity.mlstrength         = MLmicrostrength->getEditedState ();
+		pedited->clarity.uniformity         = uniformity->getEditedState ();
+		pedited->clarity.enabledtwo         = !enabledtwo->get_inconsistent();
+		pedited->clarity.MLmicromatrix      = !MLmicromatrix->get_inconsistent();
 	}
 
 }
