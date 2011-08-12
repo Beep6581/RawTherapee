@@ -426,6 +426,7 @@ MAIN_MSG_CANNOTLOAD;Cannot load image
 MAIN_MSG_CANNOTSAVE;File saving error
 MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
+MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
@@ -736,12 +737,12 @@ TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXER_RED;Red
 TP_CHROMATABERR_LABEL;Chromatic Aberration
 TP_CLARITY_LABEL;Clarity and Sharpening
-TP_CLARITY_SHARPEN;Gradient Sharpening (border)
+TP_CLARITY_SHARPEN;Border
 TP_CLARITY_STRENGTH;Gradient strength
 TP_CLARITY_PASSES;Gradient passes
-TP_CLARITY_MICRO;Microcontrast (texture)
+TP_CLARITY_MICRO;Texture
 TP_CLARITY_THREE;Luminance only
-TP_CLARITY_MATRIX;Matrix 3x3 instead of 5x5
+TP_CLARITY_MATRIX;3x3 matrix instead of 5x5
 TP_MLMICRO_STRENGTH;Strength
 TP_MLMICRO_UNIFORMITY;Uniformity
 TP_COARSETRAF_DEGREE;degree:

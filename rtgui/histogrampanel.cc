@@ -18,39 +18,64 @@
  */
 #include <histogrampanel.h>
 #include <multilangmgr.h>
+#include <guiutils.h>
+#include <options.h>
 #include <string.h>
 #include <LUT.h>
+
+extern Glib::ustring argv0;
+extern Options options;
+
 
 //
 //
 // HistogramPanel
 HistogramPanel::HistogramPanel () {
 
-   // Gtk::HBox* outer_hbox = Gtk::manage (new Gtk::HBox (false, 0));
-	   
    histogramArea = Gtk::manage (new HistogramArea ());
    histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
+   histogramRGBArea->show();
 
-   Gtk::VBox* left_vbox = Gtk::manage (new Gtk::VBox (false, 0));
-   left_vbox->pack_start (*histogramArea, Gtk::PACK_EXPAND_WIDGET, 2);
-   left_vbox->pack_start (*histogramRGBArea, Gtk::PACK_SHRINK, 2);
-   set_size_request (-1, 170);
-   histogramArea->set_size_request (-1, 150);
-   histogramRGBArea->set_size_request(-1, 10);
+   gfxVBox = Gtk::manage (new Gtk::VBox (false, 2));
+   histogramRGBArea->setParent(gfxVBox);
+   gfxVBox->pack_start (*histogramArea, Gtk::PACK_EXPAND_WIDGET, 0);
+   if (options.histogramBar)
+	   gfxVBox->pack_start (*histogramRGBArea, Gtk::PACK_SHRINK, 0);
 
-   showRed   = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_R")));
-   showGreen = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_G")));
-   showBlue  = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_B")));
-   showValue = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_L")));
-   showRAW   = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_RAW")));
-   showBAR   = Gtk::manage (new Gtk::ToggleButton (M("HISTOGRAM_BUTTON_BAR")));
+   Gtk::Image* redImage   = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histRed.png")) );
+   Gtk::Image* greenImage = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histGreen.png")) );
+   Gtk::Image* blueImage  = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histBlue.png")) );
+   Gtk::Image* valueImage = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histValue.png")) );
+   Gtk::Image* rawImage   = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histRaw.png")) );
+   Gtk::Image* barImage   = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histBar.png")) );
 
-   showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showRed   = Gtk::manage (new Gtk::ToggleButton ());
+   showGreen = Gtk::manage (new Gtk::ToggleButton ());
+   showBlue  = Gtk::manage (new Gtk::ToggleButton ());
+   showValue = Gtk::manage (new Gtk::ToggleButton ());
+   showRAW   = Gtk::manage (new Gtk::ToggleButton ());
+   showBAR   = Gtk::manage (new Gtk::ToggleButton ());
+
+   showRed->set_name("histButton");
+   showGreen->set_name("histButton");
+   showBlue->set_name("histButton");
+   showValue->set_name("histButton");
+   showRAW->set_name("histButton");
+   showBAR->set_name("histButton");
+
+   showRed->set_relief (Gtk::RELIEF_NONE);
+   showGreen->set_relief (Gtk::RELIEF_NONE);
+   showBlue->set_relief (Gtk::RELIEF_NONE);
+   showValue->set_relief (Gtk::RELIEF_NONE);
+   showRAW->set_relief (Gtk::RELIEF_NONE);
+   showBAR->set_relief (Gtk::RELIEF_NONE);
+
+   showRed->set_image(*redImage);
+   showGreen->set_image(*greenImage);
+   showBlue->set_image(*blueImage);
+   showValue->set_image(*valueImage);
+   showRAW->set_image(*rawImage);
+   showBAR->set_image(*barImage);
 
    showRed->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_R"));
    showGreen->set_tooltip_text (M("HISTOGRAM_TOOLTIP_G"));
@@ -59,22 +84,37 @@ HistogramPanel::HistogramPanel () {
    showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
    showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
 
-   Gtk::VBox* vbox = Gtk::manage (new Gtk::VBox (false, 0));
+   Gtk::VBox* buttonVBox = Gtk::manage (new Gtk::VBox (false, 2));
    showRed->set_active (true);
    showGreen->set_active (true);
    showBlue->set_active (true);
    showValue->set_active (true);
    showRAW->set_active (false);
-   showBAR->set_active (true);
-   vbox->pack_start (*showRed, Gtk::PACK_SHRINK, 2);
-   vbox->pack_start (*showGreen, Gtk::PACK_SHRINK, 2);
-   vbox->pack_start (*showBlue, Gtk::PACK_SHRINK, 2);
-   vbox->pack_start (*showValue, Gtk::PACK_SHRINK, 2);
-   vbox->pack_start (*showRAW, Gtk::PACK_SHRINK, 2);
-   vbox->pack_start (*showBAR, Gtk::PACK_SHRINK, 2);
+   showBAR->set_active (options.histogramBar);
 
-   pack_start (*left_vbox,Gtk::PACK_EXPAND_WIDGET, 2);
-   pack_start (*vbox, Gtk::PACK_SHRINK, 2);
+   showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+
+   buttonVBox->pack_start (*showRed, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showGreen, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showBlue, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showValue, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showRAW, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showBAR, Gtk::PACK_SHRINK, 0);
+
+   // Put the button vbox next to the window's border to be less disturbing
+   if (options.histogramPosition == 1) {
+      pack_start (*buttonVBox, Gtk::PACK_SHRINK, 2);
+      pack_start (*gfxVBox,Gtk::PACK_EXPAND_WIDGET, 2);
+   }
+   else {
+      pack_start (*gfxVBox,Gtk::PACK_EXPAND_WIDGET, 2);
+      pack_start (*buttonVBox, Gtk::PACK_SHRINK, 2);
+   }
 
    show_all ();
 
@@ -84,21 +124,13 @@ HistogramPanel::HistogramPanel () {
 void HistogramPanel::resized (Gtk::Allocation& req) {
 
     rconn.block (true);
-    
-    if (req.get_width()/2>150) {
-        set_size_request (req.get_width(), 170);
-        histogramArea->set_size_request (req.get_width(), 150);
-        histogramRGBArea->set_size_request (req.get_width(), 10);
-	
-	// Probably set R,G,B,V, RAW, and BAR button here to their original size if resizing below is implemented.
-    }
-    else {
-        set_size_request (req.get_width(), req.get_width()/2);
-        histogramArea->set_size_request (req.get_width(), req.get_width()/2);
-        histogramRGBArea->set_size_request(req.get_width(),5);
 
-	// Probably reduce R,G,B,V, RAW, and BAR button here a to a half-sized version.
-    }
+    int gHeight = req.get_width()/2;
+    if (gHeight > 150) gHeight = 150; else if (gHeight < 100) gHeight = 100;
+    int bHeight = req.get_width()/30;
+    if (bHeight >  10) bHeight =  10; else if (bHeight < 5  ) bHeight = 5;
+    histogramArea->set_size_request (req.get_width(), gHeight);
+    histogramRGBArea->set_size_request (req.get_width(), bHeight);
 
     rconn.block (false);
 
@@ -131,36 +163,35 @@ void HistogramPanel::rgbv_toggled () {
   histogramArea->queue_draw ();
 }
 
-
 void HistogramPanel::setHistRGBInvalid () {
-        // do something to un-show vertical bars
-        histogramRGBArea->renderRGBMarks(-1, -1, -1);
-        histogramRGBArea->queue_draw (); 
-        }
-        
+    // do something to un-show vertical bars
+    histogramRGBArea->renderRGBMarks(-1, -1, -1);
+    histogramRGBArea->queue_draw ();
+}
+
 // "Freeze" is not a button, but a RMB-click, so this is not in the RGBV-Toggle method 
 void HistogramPanel::toggleFreeze () {
-        if (histogramRGBArea->getFreeze()==true) { histogramRGBArea->updateFreeze(false); }
-        else {
-	   if (histogramRGBArea->getShow()==true) {
-		histogramRGBArea->updateFreeze(true);
-	   }
-	} 
-        return;
+    if (histogramRGBArea->getFreeze()==true) {
+        histogramRGBArea->updateFreeze(false);
+    }
+    else if (histogramRGBArea->getShow()==true) {
+        histogramRGBArea->updateFreeze(true);
+    }
+    return;
 }
 
 void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {
 
-        if (!validPos) {
-                // do something to un-show vertical bars
-               histogramRGBArea->renderRGBMarks(-1, -1, -1);
-               histogramRGBArea->queue_draw ();
-        }
-        else {
-               // do something to show vertical bars
-              histogramRGBArea->renderRGBMarks(r, g, b);
-              histogramRGBArea->queue_draw ();
-        }
+    if (!validPos) {
+        // do something to un-show vertical bars
+        histogramRGBArea->renderRGBMarks(-1, -1, -1);
+        histogramRGBArea->queue_draw ();
+    }
+    else {
+        // do something to show vertical bars
+        histogramRGBArea->renderRGBMarks(r, g, b);
+        histogramRGBArea->queue_draw ();
+    }
 }
 
 //
@@ -168,7 +199,7 @@ void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, int x, 
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () :
-  frozen(false), valid(false), showMode(true), rawMode(false), needLuma(true), needRed(true), needGreen(true), needBlue(true) {
+  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar) {
 
   harih = new HistogramRGBAreaIdleHelper;
   harih->harea = this;
@@ -224,7 +255,7 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b) {
       window->draw_drawable (rgbgc_, overlay, 0, 0, 0, 0, -1, -1); }
     return; }
   else {
-    ovrl->set_foreground (style->get_fg (Gtk::STATE_NORMAL));
+    ovrl->set_foreground (mgray);
     overlay->draw_rectangle (ovrl, true, 0, 0, winw, winh);
     if (rgbgc_ && overlay) {
       window->draw_drawable (rgbgc_, overlay, 0, 0, 0, 0, -1, -1); }
@@ -305,26 +336,34 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh) {
     g_idle_add (histrgbupdate, harih);
 }
 
-void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show) {
+void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool bar) {
 
     needRed   = r;
     needGreen = g;
     needBlue  = b;
     needLuma  = l;
     rawMode   = raw;
-    showMode   = show;
+    showMode   = bar;
 
     // Histogram RGB BAR button logic goes here
 
-    // Disable bar button when RAW histogram is displayed
-    if ( rawMode && showMode) {
+    if (bar) {
+        // Toggled on, add (show) the widget
+    	parent->pack_start(*this, Gtk::PACK_SHRINK, 0);
+        options.histogramBar = true;
+    }
+    else {
+        // Toggled off, remove (hide) the widget
+    	removeIfThere(parent, this, false);
+        options.histogramBar = false;
+        // unfreeze
+        updateFreeze(false);
+    }
+
+    // Disable (but don't hide it) the bar button when RAW histogram is displayed
+    if (rawMode) {
         showMode = false;
    }
-
-    // When un-showing the bar, set the freeze state to off
-    if (!showMode) {
-        updateFreeze(false); 
-    }
 }
 
 void HistogramRGBArea::on_realize () {
@@ -384,18 +423,18 @@ void HistogramRGBArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 //
 // HistogramArea
 HistogramArea::HistogramArea () : 
-      valid(false), showFull(true), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false) {
+    valid(false), showFull(true), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false) {
 
-         lhist(256);
-	 rhist(256);
-	 ghist(256);
-	 bhist(256);
+    lhist(256);
+    rhist(256);
+    ghist(256);
+    bhist(256);
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
     haih->destroyed = false;
     haih->pending = 0;
-    
+
     signal_style_changed().connect( sigc::mem_fun(*this, &HistogramArea::styleChanged) );
 }
 

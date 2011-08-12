@@ -71,6 +71,8 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     bool rawMode;
     bool showMode;
 
+    Gtk::VBox* parent;
+
     HistogramRGBAreaIdleHelper* harih;
 
   public:
@@ -82,6 +84,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     void updateFreeze (bool f);
     bool getFreeze ();
     bool getShow ();
+    void setParent (Gtk::VBox* p) { parent = p; };
 
     void update (int val, int rh, int gh, int bh);
     void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show);
@@ -144,7 +147,8 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
 
   protected:
 
-    HistogramArea* histogramArea;
+	Gtk::VBox* gfxVBox;
+	HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
     Gtk::ToggleButton* showRed;
     Gtk::ToggleButton* showGreen;
