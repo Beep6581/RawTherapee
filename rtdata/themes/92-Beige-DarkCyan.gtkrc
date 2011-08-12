@@ -233,6 +233,12 @@ style "clearlooks-button" {
 	}
 }
 
+style "clearlooks-histButton" {
+
+	GtkButton::child-displacement-x = 0
+	GtkButton::child-displacement-y = 0
+}
+
 # The color is changed by the notebook_bg style, this style
 # changes the x/ythickness
 style "clearlooks-notebook" {
@@ -435,6 +441,7 @@ widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
 
 widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
 widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
+widget "*.histButton" style "clearlooks-histButton"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

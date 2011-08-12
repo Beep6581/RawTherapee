@@ -40,10 +40,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     processingStartedTime = 0;
     firstProcessingDone = false;
 
-// construct toolpanelcoordinator
+    // construct toolpanelcoordinator
     tpc = new ToolPanelCoordinator ();
 
-// build GUI
+    // build GUI
+
     // build left side panel
     leftbox = new Gtk::VBox ();
     leftbox->set_border_width (2);
@@ -51,7 +52,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (options.histogramPosition>0) {
     histogramPanel = Gtk::manage (new HistogramPanel ());
-    histogramPanel->set_size_request (-1, 160);
         if (options.histogramPosition==1) leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
     } else histogramPanel = NULL;
 
@@ -59,7 +59,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::Frame* ppframe = Gtk::manage (new Gtk::Frame ());
     ppframe->add (*profilep);
     ppframe->set_label (M("PROFILEPANEL_LABEL"));
-//    leftbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
+    //leftbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
     navigator = Gtk::manage (new Navigator ());
     navigator->previewWindow->set_size_request (-1, 150);
@@ -101,10 +101,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     hidehp->set_active (options.showHistory);
     hidehp->set_tooltip_markup (M("MAIN_TOOLTIP_HIDEHP"));
     if (options.showHistory){
-    	hidehp->set_image (*iHistoryHide);
+        hidehp->set_image (*iHistoryHide);
     }
     else {
-    	hidehp->set_image (*iHistoryShow);
+        hidehp->set_image (*iHistoryShow);
     }
 
     tbTopPanel_1 = new Gtk::ToggleButton ();
@@ -137,7 +137,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     toolBarPanel->pack_start (*vsepi, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_start (*tpc->getToolBar(), Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vsept, Gtk::PACK_SHRINK, 2);
-    
+
     toolBarPanel->pack_end   (*tbTopPanel_1, Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
@@ -235,7 +235,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     if(filePanel)
     {
         catalogPane = new Gtk::Paned();
-        viewpaned->pack1(*catalogPane, false, true);                    
+        viewpaned->pack1(*catalogPane, false, true);
     }
     viewpaned->pack2(*editbox, true, true);
 
@@ -247,8 +247,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     hpanedr->pack1(*hpanedl, true, true);
     hpanedr->pack2(*vboxright, false, true);
-	hpanedl->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::leftPaneButtonReleased) );
-	hpanedr->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::rightPaneButtonReleased) );
+    hpanedl->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::leftPaneButtonReleased) );
+    hpanedr->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::rightPaneButtonReleased) );
 
     pack_start (*hpanedr);
     show_all ();
@@ -261,7 +261,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
 
-// connect listeners
+    // connect listeners
     profilep->setProfileChangeListener (tpc);
     history->setProfileChangeListener (tpc);
     history->setHistoryBeforeLineListener (this);
@@ -273,11 +273,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iarea->imageArea->setPointerMotionHListener (histogramPanel);
     iarea->imageArea->setImageAreaToolListener (tpc);
 
-// initialize components
+    // initialize components
     info->set_active (options.showInfo);
     tpc->readOptions ();
 
-// connect event handlers
+    // connect event handlers
     info->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::info_toggled) );
     beforeAfter->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::beforeAfterToggled) );
     hidehp->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::hideHistoryActivated) );
@@ -322,7 +322,7 @@ EditorPanel::~EditorPanel () {
     delete tpc;
 
     delete leftbox;
-    delete vboxright;    
+    delete vboxright;
     delete saveAsDialog;
     if(catalogPane)
         delete catalogPane;
