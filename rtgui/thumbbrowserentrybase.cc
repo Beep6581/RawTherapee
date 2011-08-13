@@ -60,7 +60,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     backBuffer = Gdk::Pixmap::create (w->get_window(), exp_width, exp_height);
 
     // If thumbnail is hidden by a filter drawing to it will crash
-    int backbuffer_w =0, backbuffer_h  = 0;
+    int backbuffer_w=0, backbuffer_h=0;
     backBuffer->get_size(backbuffer_w, backbuffer_h);
     // if either with or height is zero then return early
     if (backbuffer_w * backbuffer_h == 0) return;
@@ -338,23 +338,19 @@ void ThumbBrowserEntryBase::drawFrame (Cairo::RefPtr<Cairo::Context> cr, const G
 
 void ThumbBrowserEntryBase::draw () {
 
-    if (!drawable)
+    if (!drawable || !parent)
         return;
 
-    Glib::RWLock::ReaderLock l(lockRW);
+    Glib::RWLock::ReaderLock l(lockRW);  // No resizes, position moves etc. inbetween
 
     int bbWidth, bbHeight;
     if (backBuffer)
         backBuffer->get_size (bbWidth, bbHeight);
-    
 
     if (!backBuffer || selected!=bbSelected || framed!=bbFramed || preview!=bbPreview 
         || exp_width!=bbWidth || exp_height!=bbHeight || getIconsOnImageArea ()!=bbIcons)
         updateBackBuffer ();
 
-    if (!parent)
-        return;
-        
     Gtk::Widget* w = parent->getDrawingArea ();
 
     Glib::RefPtr<Gdk::GC> gc_ = Gdk::GC::create (w->get_window());

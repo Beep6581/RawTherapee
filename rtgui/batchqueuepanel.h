@@ -57,9 +57,7 @@ class BatchQueuePanel : public Gtk::VBox,
         void addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries , bool head=false);
 
         // batchqueuelistener interface
-        void queueSizeChanged     (int qsize);
-        void imageProcessingReady (Glib::ustring fname);
-        void queueEmpty           ();
+        void queueSizeChanged     (int qsize, bool queueEmptied);
         bool canStartNext         ();
         
         void startBatchProc ();

@@ -177,12 +177,13 @@ class FileCatalog : public Gtk::VBox,
 				// filterpanel interface
 				void exifFilterChanged ();
 				
-       Glib::ustring lastSelectedDir () { return selectedDirectory; }
+				Glib::ustring lastSelectedDir () { return selectedDirectory; }
                 void setEnabled (bool e);   // if not enabled, it does not open image
                 void enableTabMode(bool enable);  // sets progress bar
 
+                // accessors for FileBrowser
                 void redrawAll ();
-                void refreshAll ();
+                void refreshThumbImages ();
                 void refreshHeight ();
                 
                 void openRequested          (std::vector<Thumbnail*> tbe);

@@ -60,7 +60,6 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool on_window_state_event(GdkEventWindowState* event);
         void on_mainNB_switch_page(GtkNotebookPage* page, guint page_num);
 
-        void imageDeveloped (Glib::ustring fname); // called by the batchqueue when it finishes an image
         void showPreferences ();
         void on_realize ();
         void toggle_fullscreen ();

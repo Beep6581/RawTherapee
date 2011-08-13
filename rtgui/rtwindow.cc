@@ -331,11 +331,6 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
     return false;
 }
 
-void RTWindow::imageDeveloped (Glib::ustring fname) {
-
-//    fpanel->refreshThumbnail (fname);
-}
-
 void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head) {
 
 	std::vector<BatchQueueEntry*> entries;

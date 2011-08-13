@@ -217,7 +217,7 @@ bool FilePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries ) {
 void FilePanel::optionsChanged () {
 
     tpc->optionsChanged ();
-    fileCatalog->refreshAll ();
+    fileCatalog->refreshThumbImages ();
 }
 
 bool FilePanel::handleShortcutKey (GdkEventKey* event) {
