@@ -239,7 +239,7 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
         if (rotated)
             parent->thumbRearrangementNeeded();
         else if (redrawRequests==0) 
-        parent->redrawNeeded (this);
+            parent->redrawNeeded (this);
     }
 }
 

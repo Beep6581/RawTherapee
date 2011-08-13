@@ -119,9 +119,8 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
     saveBatchQueue( );
 	}
 
-    arrangeFiles ();
-    queue_draw ();
-    notifyListener ();
+    redraw();
+    notifyListener (false);
 }
 
 bool BatchQueue::saveBatchQueue( )
@@ -206,10 +205,8 @@ void BatchQueue::loadBatchQueue( )
         }
     }
 
-    arrangeFiles ();
-    queue_draw ();
-
-    notifyListener();
+    redraw();
+    notifyListener(false);
 }
 
 Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
@@ -265,7 +262,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
     }
 
     redraw ();
-    notifyListener ();
+    notifyListener (false);
 }
 
 void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
@@ -369,7 +366,6 @@ void BatchQueue::startProcessing () {
 }
 
 rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
-    GThreadLock lock;
 
     // save image img
     Glib::ustring fname;
@@ -407,16 +403,14 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         if (processing->thumbnail) {
             processing->thumbnail->imageDeveloped ();
             processing->thumbnail->imageRemovedFromQueue ();
-            if (listener)
-                listener->imageProcessingReady (processing->filename);
         }
     }
     // save temporary params file name: delete as last thing
     Glib::ustring processedParams = processing->savedParamsFile;
     
     // delete from the queue
-    delete processing;
-    processing = NULL;
+    delete processing; processing = NULL;
+    bool queueEmptied=false;
 	{
         // TODO: Check for Linux
 #ifdef WIN32
@@ -427,8 +421,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 
         // return next job
         if (fd.size()==0) {
-            if (listener)
-                listener->queueEmpty ();
+            queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
             BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
@@ -445,7 +438,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             // remove button set
             next->removeButtonSet ();
         }
-        if( saveBatchQueue( ) ){
+        if (saveBatchQueue( )) {
             safe_g_remove( processedParams );
             // Delete all files in directory \batch when finished, just to be sure to remove zombies
             if( fd.size()==0 ){
@@ -460,7 +453,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     }
 
     redraw ();
-    notifyListener ();
+    notifyListener (queueEmptied);
 
     return processing ? processing->job : NULL;
 }
@@ -622,21 +615,23 @@ void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionDa
 struct NLParams {
     BatchQueueListener* listener;
     int qsize;
+    bool queueEmptied;
 };
 
 int bqnotifylistenerUI (void* data) {
     NLParams* params = (NLParams*)data;
-    params->listener->queueSizeChanged (params->qsize);
+    params->listener->queueSizeChanged (params->qsize, params->queueEmptied);
     delete params;
     return 0;
 }
 
-void BatchQueue::notifyListener () {
+void BatchQueue::notifyListener (bool queueEmptied) {
 
     if (listener) {
         NLParams* params = new NLParams;
         params->listener = listener;
         params->qsize = fd.size();
+        params->queueEmptied = queueEmptied;
         g_idle_add (bqnotifylistenerUI, params);
     }
 }

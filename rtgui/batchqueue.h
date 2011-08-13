@@ -28,9 +28,7 @@
 class BatchQueueListener {
 
     public:
-        virtual void queueSizeChanged     (int qsize) =0;
-        virtual void imageProcessingReady (Glib::ustring fname) =0;
-        virtual void queueEmpty           () =0;
+        virtual void queueSizeChanged     (int qsize, bool queueEmptied) =0;
         virtual bool canStartNext         () =0;
 };
 
@@ -57,7 +55,7 @@ class BatchQueue  : public ThumbBrowserBase,
     Glib::ustring autoCompleteFileName (const Glib::ustring& fileName, const Glib::ustring& format);
     Glib::ustring getTempFilenameForParams( const Glib::ustring filename );
     bool saveBatchQueue( );
-    void notifyListener ();
+    void notifyListener (bool queueEmptied);
 
   public:
     BatchQueue ();

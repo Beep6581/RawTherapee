@@ -970,7 +970,7 @@ int refreshThumbImagesUI (void* data) {
 }
 
 void FileBrowser::_thumbRearrangementNeeded () {
-    refreshThumbImages ();
+    refreshThumbImages ();  // arrangeFiles is NOT enough
 }
 
 void FileBrowser::thumbRearrangementNeeded () {

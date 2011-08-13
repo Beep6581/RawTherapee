@@ -53,7 +53,7 @@ protected:
     int width;      // minimal width
     int height;     // minimal height
 // set by arrangeFiles() of thumbbrowser
-    int exp_width;  // arranged width
+    int exp_width;  // arranged width (backbuffer dimensions)
     int exp_height; // arranged height
     int startx;     // x coord. in the widget
     int starty;     // y coord. in the widget
@@ -72,6 +72,7 @@ protected:
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::Color& bg, const Gdk::Color& fg);
     void getTextSizes (int& w, int& h);
     
+    // called during updateBackBuffer for custom overlays
     virtual void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) {}
     
   public:

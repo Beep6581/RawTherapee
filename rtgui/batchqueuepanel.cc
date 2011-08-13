@@ -179,14 +179,17 @@ void BatchQueuePanel::updateTab (int qsize)
     }
 }
 
-void BatchQueuePanel::queueSizeChanged (int qsize)
+void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied)
 {
 	updateTab ( qsize);
-}
 
-void BatchQueuePanel::imageProcessingReady (Glib::ustring fname) {
+    if (queueEmptied) {
+        stopBatchProc ();
+        fdir->set_sensitive (true);
+        fformat->set_sensitive (true);
 
-    parent->imageDeveloped (fname);
+        SoundManager::playSoundAsync(options.sndBatchQueueDone);
+    }
 }
 
 void BatchQueuePanel::startBatchProc () {
@@ -201,11 +204,12 @@ void BatchQueuePanel::startBatchProc () {
     if (batchQueue->hasJobs()) {
         fdir->set_sensitive (false);
         fformat->set_sensitive (false);
-	saveOptions();
+        saveOptions();
         batchQueue->startProcessing ();
     }
     else 
         stopBatchProc ();
+
     updateTab (batchQueue->getEntries().size());
 }
 
@@ -226,15 +230,6 @@ void BatchQueuePanel::addBatchQueueJobs ( std::vector<BatchQueueEntry*> &entries
     
     if (stop->get_active () && autoStart->get_active ())
         startBatchProc ();
-}
-
-void BatchQueuePanel::queueEmpty () {
-
-    stopBatchProc ();
-    fdir->set_sensitive (true);
-    fformat->set_sensitive (true);
-
-    SoundManager::playSoundAsync(options.sndBatchQueueDone);
 }
 
 bool BatchQueuePanel::canStartNext () {

@@ -641,17 +641,14 @@ void FileCatalog::previewsFinished (int dir_id) {
 }
 
 void FileCatalog::setEnabled (bool e) {
-
     enabled = e;
 }
 
 void FileCatalog::redrawAll () {
-
     fileBrowser->queue_draw ();
 }
 
-void FileCatalog::refreshAll () {
-
+void FileCatalog::refreshThumbImages () {
     fileBrowser->refreshThumbImages ();
 }
 
