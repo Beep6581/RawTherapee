@@ -27,6 +27,8 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
+Glib::ustring ICMPanel::lastICCWorkDir;
+
 ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL) {
 
 //    set_border_width (4);
@@ -156,9 +158,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_any);
 
-    if (safe_file_test (options.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) {
-        ipDialog->set_current_folder (options.rtSettings.iccDirectory);
-    }    
+    ipDialog->set_current_folder ( lastICCWorkDir.empty() ? options.rtSettings.iccDirectory : lastICCWorkDir);
 
     oldip = "";
 
@@ -252,8 +252,14 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->icm.input = "(embedded)";
     else if (icamera->get_active ())
         pp->icm.input = "(camera)";
-    else
+    else {
         pp->icm.input = "file:"+ipDialog->get_filename ();
+
+        Glib::ustring p=Glib::path_get_dirname(ipDialog->get_filename ());
+        if (p!=options.rtSettings.iccDirectory) {
+            lastICCWorkDir=p;
+        }
+     }
 
     pp->icm.working = wnames->get_active_text ();
     pp->icm.gamma = wgamma->get_active_text ();
@@ -397,10 +403,10 @@ void ICMPanel::ipSelectionChanged () {
 
     if (ipDialog->get_filename () == "")
         return;
-    else
-        ipChanged ();
 
+        ipChanged ();
 }
+
 void ICMPanel::saveReferencePressed () {
 
     if (!icmplistener)
@@ -419,8 +425,8 @@ void ICMPanel::saveReferencePressed () {
 
     if (dialog.run()==Gtk::RESPONSE_OK) 
         icmplistener->saveInputICCReference (dialog.get_filename());
-
 }
+
 void ICMPanel::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
