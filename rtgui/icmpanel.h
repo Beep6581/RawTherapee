@@ -60,6 +60,9 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Glib::ustring      oldip;
         ICMPanelListener*  icmplistener;
         
+        static Glib::ustring lastICCWorkDir;
+        bool enableLastICCWorkDirChange;
+
     public:
         ICMPanel ();
         
