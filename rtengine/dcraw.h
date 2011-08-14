@@ -293,6 +293,7 @@ int median4 (int *p);
 void fill_holes (int holes);
 void smal_v9_load_raw();
 
+void redcine_load_raw();
 void foveon_decoder (unsigned size, unsigned code);
 void foveon_thumb();
 void foveon_load_camf();
@@ -350,6 +351,7 @@ int  parse_jpeg (int offset);
 void parse_riff();
 void parse_smal (int offset, int fsize);
 void parse_cine();
+void parse_redcine();
 char *foveon_gets (int offset, char *str, int len);
 void parse_foveon();
 
