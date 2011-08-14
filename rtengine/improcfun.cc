@@ -614,33 +614,6 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		}
 	}
 	
-	void ImProcFunctions::lumadenoise (LabImage* lab, int** b2) {
-		
-		if (params->lumaDenoise.enabled && lab->W>=8 && lab->H>=8)
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-			bilateral<float, float> (lab->L, lab->L, (float**)b2, lab->W, lab->H, params->lumaDenoise.radius / scale, params->lumaDenoise.edgetolerance, multiThread);
-	}
-	
-	void ImProcFunctions::colordenoise (LabImage* lab, int** b2) {
-		
-		if (params->colorDenoise.enabled && lab->W>=8 && lab->H>=8) {
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-			{
-				AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
-				gaussHorizontal<float> (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-				gaussHorizontal<float> (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-				gaussVertical<float>   (lab->a, lab->a, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-				gaussVertical<float>   (lab->b, lab->b, buffer, lab->W, lab->H, params->colorDenoise.amount / 10.0 / scale, multiThread);
-				
-				delete buffer;
-			}
-		}
-	}
-	
 	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double expcomp, double clip, double& br, int& bl) {
 		
 		double sum = 0;

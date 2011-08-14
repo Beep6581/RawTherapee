@@ -125,9 +125,6 @@ void BatchToolPanelCoordinator::initSession () {
 			distortion->setAdjusterBehavior (false);
 			perspective->setAdjusterBehavior (false);
 			cacorrection->setAdjusterBehavior (false);
-			//colorshift->setAdjusterBehavior (false, false);
-			//colorboost->setAdjusterBehavior (false);
-			//lumadenoise->setAdjusterBehavior (false);
 			sharpening->setAdjusterBehavior (false);
 			clarity->setAdjusterBehavior (false, false, false, false);
 			
@@ -149,9 +146,6 @@ void BatchToolPanelCoordinator::initSession () {
 			distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
 			perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
 			cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
-			//colorshift->setAdjusterBehavior (options.baBehav[ADDSET_CS_BLUEYELLOW], options.baBehav[ADDSET_CS_GREENMAGENTA]);
-			//colorboost->setAdjusterBehavior (options.baBehav[ADDSET_CBOOST_AMOUNT]);
-			//lumadenoise->setAdjusterBehavior (options.baBehav[ADDSET_LD_EDGETOLERANCE]);
 			sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
 			clarity->setAdjusterBehavior (options.baBehav[ADDSET_CLAR_STREN],options.baBehav[ADDSET_CLAR_MLSTREN],options.baBehav[ADDSET_CLAR_PASS],options.baBehav[ADDSET_CLAR_UNIFORMITY]);
 			

@@ -169,15 +169,12 @@ void Crop::update (int todo) {
         if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
-            //parent->ipf.lumadenoise (labnCrop, cbuffer);
-            //parent->ipf.colordenoise (labnCrop, cbuffer);
 			parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.MLsharpen (labnCrop);
 			parent->ipf.MLmicrocontrast (labnCrop);
 			//parent->ipf.MLmicrocontrast (labnCrop);
 			parent->ipf.sharpening (labnCrop, (float**)cbuffer);
 			parent->ipf.dirpyrequalizer (labnCrop);
-            //parent->ipf.waveletEqualizer(labnCrop, true, true);
         }
 
     }

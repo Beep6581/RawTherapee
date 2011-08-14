@@ -176,7 +176,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
-	//ipf.lumadenoise (labView, buffer);
  	ipf.dirpyrdenoise (labView);
 	if (params.clarity.enabled) {
 		 ipf.MLsharpen(labView);
@@ -196,9 +195,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         delete [] buffer; buffer=NULL;
     }
 
-    // wavelet equalizer
-    //ipf.waveletEqualizer (labView, true, true);
-	
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
 

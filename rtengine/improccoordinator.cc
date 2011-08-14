@@ -253,10 +253,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             ipf.impulsedenoise (nprevl);
 			progress ("Defringing...",100*readyphase/numofphases);
             ipf.defringe (nprevl);
-        //	progress ("Denoising luminance...",100*readyphase/numofphases);
-        //    ipf.lumadenoise (nprevl, buffer);
-        //    progress ("Denoising color...",100*readyphase/numofphases);
-        //    ipf.colordenoise (nprevl, buffer);
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
             ipf.dirpyrdenoise (nprevl);
 			if (params.clarity.enabled) {
@@ -283,10 +279,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
             progress ("Pyramid equalizer...",100*readyphase/numofphases);
             ipf.dirpyrequalizer (nprevl);
-
-            // Superseded by dirpyreq
-            //progress ("Wavelet...",100*readyphase/numofphases);
-            //ipf.waveletEqualizer (nprevl, true, true);
         }
     }
 

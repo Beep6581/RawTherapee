@@ -177,11 +177,7 @@ void ParamsEdited::set (bool v) {
 	raw.ff_AutoSelect = v;
 	raw.ff_BlurRadius = v;
 	raw.ff_BlurType = v;
-	equalizer.enabled = v;
 	dirpyrequalizer.enabled = v;
-	for(int i = 0; i < 8; i++) {
-		equalizer.c[i] = v;
-	}
 	for(int i = 0; i < 5; i++) {
 		dirpyrequalizer.mult[i] = v;
 	}
@@ -358,10 +354,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
         raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
 
-        equalizer.enabled = equalizer.enabled && p.equalizer.enabled == other.equalizer.enabled;
-        for(int i = 0; i < 8; i++) {
-            equalizer.c[i] = equalizer.c[i] && p.equalizer.c[i] == other.equalizer.c[i];
-        }
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         for(int i = 0; i < 8; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
@@ -530,10 +522,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.ff_BlurRadius)  toEdit.raw.ff_BlurRadius   = mods.raw.ff_BlurRadius;
     if (raw.ff_BlurType)    toEdit.raw.ff_BlurType     = mods.raw.ff_BlurType;      
 
-	if (equalizer.enabled)	toEdit.equalizer.enabled   = mods.equalizer.enabled;
-	for(int i = 0; i < 8; i++) {
-	    if(equalizer.c[i])  toEdit.equalizer.c[i]   = mods.equalizer.c[i];
-	}
 	if (dirpyrequalizer.enabled)	toEdit.dirpyrequalizer.enabled	= mods.dirpyrequalizer.enabled;
 	for(int i = 0; i < 5; i++) {
 		if(dirpyrequalizer.mult[i])	toEdit.dirpyrequalizer.mult[i]	= dontforceSet && options.baBehav[ADDSET_DIRPYREQ] ? toEdit.dirpyrequalizer.mult[i] + mods.dirpyrequalizer.mult[i] : mods.dirpyrequalizer.mult[i];

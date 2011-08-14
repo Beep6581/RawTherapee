@@ -5,9 +5,8 @@ set (BASESOURCEFILES
     ilabel.cc thumbbrowserbase.cc adjuster.cc filebrowserentry.cc filebrowser.cc filethumbnailbuttonset.cc
     cachemanager.cc cacheimagedata.cc shcselector.cc perspective.cc
     clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc
-    coarsepanel.cc cacorrection.cc colorshift.cc hlrec.cc chmixer.cc
-    colorboost.cc resize.cc icmpanel.cc crop.cc shadowshighlights.cc
-    colordenoise.cc
+    coarsepanel.cc cacorrection.cc hlrec.cc chmixer.cc
+    resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     impulsedenoise.cc dirpyrdenoise.cc
     exifpanel.cc toolpanel.cc
     sharpening.cc
@@ -17,7 +16,7 @@ set (BASESOURCEFILES
     filecatalog.cc
     previewloader.cc
     histogrampanel.cc history.cc  imagearea.cc
-    imageareapanel.cc iptcpanel.cc labcurve.cc lumadenoise.cc main.cc
+    imageareapanel.cc iptcpanel.cc labcurve.cc main.cc
     multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc
     preferences.cc profilepanel.cc saveasdlg.cc
     saveformatpanel.cc soundman.cc splash.cc
@@ -28,7 +27,7 @@ set (BASESOURCEFILES
     batchqueuebuttonset.cc browserfilter.cc exiffiltersettings.cc
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
     darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
-    equalizer.cc dirpyrequalizer.cc hsvequalizer.cc defringe.cc
+    dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc clarity.cc)
 
 if (WIN32)

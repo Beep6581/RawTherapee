@@ -176,10 +176,6 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_MLMICRO_UNIFORMITY"), ADDSET_CLAR_UNIFORMITY, false);
 	
 	
-    //mi = behModel->append ();
-    //mi->set_value (behavColumns.label, M("TP_LUMADENOISE_LABEL"));
-    //appendBehavList (mi, M("TP_LUMADENOISE_EDGETOLERANCE"), ADDSET_LD_EDGETOLERANCE, true);
-
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_DIRPYRDENOISE_LABEL"));
     appendBehavList (mi, M("TP_DIRPYRDENOISE_LUMA")+", "+M("TP_DIRPYRDENOISE_CHROMA"), ADDSET_DIRPYRDN_CHLUM, true);
@@ -193,15 +189,6 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CHMIXER_LABEL"));
     appendBehavList (mi, M("TP_CHMIXER_RED")+", "+M("TP_CHMIXER_GREEN")+", "+M("TP_CHMIXER_BLUE"), ADDSET_CHMIXER, false);
-
-    //mi = behModel->append ();
-    //mi->set_value (behavColumns.label, M("TP_COLORBOOST_LABEL"));
-    //appendBehavList (mi, M("TP_COLORBOOST_AMOUNT"), ADDSET_CBOOST_AMOUNT, false);
-
-    //mi = behModel->append ();
-    //mi->set_value (behavColumns.label, M("TP_COLORSHIFT_LABEL"));
-    //appendBehavList (mi, M("TP_COLORSHIFT_BLUEYELLOW"), ADDSET_CS_BLUEYELLOW, false);
-    //appendBehavList (mi, M("TP_COLORSHIFT_GREENMAGENTA"), ADDSET_CS_GREENMAGENTA, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));
