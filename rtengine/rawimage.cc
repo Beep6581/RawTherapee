@@ -175,9 +175,12 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 		  return 200;
 
 	  if (setjmp (failure)) {
-		  if (image)
+		  if (image){
 			free (image);
+            image=NULL;
+          }
 		  fclose (ifp);
+          ifp = NULL;
 		  return 100;
 	  }
 
