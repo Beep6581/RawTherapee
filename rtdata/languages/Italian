@@ -5,6 +5,9 @@
 #03 IMPORTANTE: facci sapere sul forum di rawtherapee nella sezione del locale italiano se ci sono errori, qui http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
 #04 IMPORTANT: post on the italian locale in the rawtherapee if are any errors, here http://www.rawtherapee.com/forum/viewtopic.php?p=3354#3354
 #05 01-11-2008
+#06 19-03-2011 joker
+#07 07-06-2011 joker
+#08 14-08-2011 joker
 ABOUT_TAB_BUILD;Versione
 ABOUT_TAB_CREDITS;Autori
 ABOUT_TAB_LICENSE;Licenza
@@ -560,6 +563,7 @@ PREFERENCES_SHOWONLYRAW;Mostra solo file RAW
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
 PREFERENCES_SINGLETAB;Modalità tab singolo
 PREFERENCES_SINGLETABVERTAB;Modalità tab singolo, linguette verticali
+PREFERENCES_SLIMUI;Interfaccia compatta
 PREFERENCES_STARTUPIMDIR;Cartella delle immagini all'avvio
 PREFERENCES_TAB_BROWSER;Navigatore di file
 PREFERENCES_TAB_COLORMGR;Gestione colore
@@ -862,4 +866,5 @@ ZOOMPANEL_ZOOMOUT;Diminuisci zoom <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
+
 

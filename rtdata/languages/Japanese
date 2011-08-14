@@ -838,6 +838,7 @@ ZOOMPANEL_ZOOMOUT;ズームアウト
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DATEFORMATFRAME;Date Format
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTGRID;Grid

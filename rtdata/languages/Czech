@@ -1,4 +1,3 @@
-
 #00 Czech
 #01 20.1.2008: translated by absolution
 #02 21.2.2008: updated by mkyral (typos and some missing strings)
@@ -7,6 +6,9 @@
 #05 25.11.2010: updated by mkyral (for version 3.0)
 #06 20.03.2011: updated by mkyral (branch_3.0)
 #07 24.04.2011: updated by mkyral (branch_3.0 - 3.0b1)
+#08 01.05.2011: updated by mkyral
+#09 12.06.2011: updated by mkyral
+#10 16.06.2011: updated by mkyral
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -148,7 +150,7 @@ HISTOGRAM_TOOLTIP_L;Skrýt /zobrazit CIELAB histogram jasu
 HISTOGRAM_TOOLTIP_R;Skrýt /zobrazit histogram pro ČERVENOU barvu
 HISTORY_CHANGED;Změněno
 HISTORY_CUSTOMCURVE;Vlastní křivka
-HISTORY_DELSNAPSHOT;Odstranit snímek
+HISTORY_DELSNAPSHOT;Odstranit
 HISTORY_FROMCLIPBOARD;Ze schránky
 HISTORY_LABEL;Historie
 HISTORY_MSG_100;Sytost RGB
@@ -231,7 +233,7 @@ HISTORY_MSG_56;Poloměr světel a stínů
 HISTORY_MSG_57;Hrubé otáčení
 HISTORY_MSG_58;Horizontální překlopení
 HISTORY_MSG_59;Vertikální překlopení
-HISTORY_MSG_5;Jasnost
+HISTORY_MSG_5;Jas
 HISTORY_MSG_60;Otočení
 HISTORY_MSG_61;Automatické vyplnění
 HISTORY_MSG_62;Úprava zkreslení objektivu
@@ -352,7 +354,7 @@ MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_FILEBROWSER;Prohlížeč souborů 
 MAIN_FRAME_PLACES;Místa
 MAIN_FRAME_PLACES_ADD;Přidat
-MAIN_FRAME_PLACES_DEL;Odstranit snímek
+MAIN_FRAME_PLACES_DEL;Odstranit
 MAIN_FRAME_RECENT;Poslední složky 
 MAIN_MSG_ALREADYEXISTS;Soubor již existuje.
 MAIN_MSG_CANNOTLOAD;Nepodařilo se načíst obrázek
@@ -424,7 +426,7 @@ PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatický výběr tmavých snímků
 PARTIALPASTE_DARKFRAMEFILE;Soubor tmavého snímku
 PARTIALPASTE_DEFRINGE;Odstranění lemu
 PARTIALPASTE_DETAILGROUP;Nastavení detailu
-PARTIALPASTE_DIALOGLABEL;Nastavení profilu částečného vložení
+PARTIALPASTE_DIALOGLABEL;Částečné vložení profilu zpracování
 PARTIALPASTE_DIRPYRDENOISE;Redukce šumu
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast dle detailu úrovní
 PARTIALPASTE_DISTORTION;Korekce zkreslení
@@ -554,6 +556,7 @@ PREFERENCES_SHOWONLYRAW;Zobrazovat pouze soubory RAW
 PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
 PREFERENCES_SINGLETAB;Mód jedné karty
 PREFERENCES_SINGLETABVERTAB;Mód jedné karty, svislé karty
+PREFERENCES_SLIMUI;Štíhlé rozhraní
 PREFERENCES_STARTUPIMDIR;Složka obrázků při spuštění
 PREFERENCES_TAB_BROWSER;Prohlížeč souborů
 PREFERENCES_TAB_COLORMGR;Správa barev
@@ -689,7 +692,7 @@ TP_EQUALIZER_NEUTRAL;Neutrální
 TP_EXPOSCORR_LABEL;Expozice
 TP_EXPOSURE_AUTOLEVELS;Úrovně automaticky
 TP_EXPOSURE_BLACKLEVEL;Černá
-TP_EXPOSURE_BRIGHTNESS;Jasnost
+TP_EXPOSURE_BRIGHTNESS;Jas
 TP_EXPOSURE_CLIP;Oříznutí
 TP_EXPOSURE_COMPRHIGHLIGHTS;Míra obnovení světel
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Práh obnovení světel
@@ -736,7 +739,7 @@ TP_ICM_WORKINGPROFILE;Pracovní barevný prostor
 TP_IMPULSEDENOISE_LABEL;Redukce impulzního šumu
 TP_IMPULSEDENOISE_THRESH;Práh
 TP_LABCURVE_AVOIDCOLORCLIP;Zabránit oříznutí barvy
-TP_LABCURVE_BRIGHTNESS;Jasnost
+TP_LABCURVE_BRIGHTNESS;Jas
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Křivka jasů
 TP_LABCURVE_ENABLESATLIMITER;Omezovat sytost

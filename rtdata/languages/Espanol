@@ -837,6 +837,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PREFERENCES_SET;SET
 !PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Workflow

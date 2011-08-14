@@ -1,5 +1,4 @@
 
-
 #00 English (UK)
 #01 05.12.2010: Richard Regal
 #01 17.10.2010: Richard Regal
@@ -558,6 +557,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 !PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_STARTUPIMDIR;Image directory at startup
 !PREFERENCES_TAB_BROWSER;File Browser
 !PREFERENCES_TAB_GENERAL;General

@@ -1,3 +1,4 @@
+
 #00 Nederlands
 #01 26.12.2007: door Rens Duijsens en Brent Huisman
 #02 14.03.2008: updated by reggybe
@@ -770,16 +771,16 @@ TP_PREPROCESS_HOTDEADPIXFILT;Filter hete/dode pixels
 TP_PREPROCESS_LABEL;Voorbewerking
 TP_PREPROCESS_LINEDENOISE;Lijnruisfilter
 TP_PREPROCESS_NO_FOUND;Niet gevonden
-TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
-TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
-TP_RAW_DMETHOD;Methode
-TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
-TP_RAW_LABEL;Demozaïekproces
 TP_RAWCACORR_AUTO;Automatische CA-correctie
 TP_RAWCACORR_CABLUE;Blauw
 TP_RAWCACORR_CARED;Rood
 TP_RAWEXPOS_LINEAR;Lineaire correctiefactor
 TP_RAWEXPOS_PRESER;Herstel hoge lichten (EV)
+TP_RAW_DCBENHANCE;Pas DCB-verbetering toe
+TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
+TP_RAW_DMETHOD;Methode
+TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
+TP_RAW_LABEL;Demozaïekproces
 TP_RESIZE_APPLIESTO;Toepassen op:
 TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (zachter)
@@ -863,3 +864,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!PREFERENCES_SLIMUI;Slim interface
