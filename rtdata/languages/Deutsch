@@ -14,7 +14,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Apr 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 26.04.2011
+#15 Jan-Jun 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 14.07.2011
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -492,7 +492,7 @@ PREFERENCES_CACHETHUMBFORM;Format der Voransichten
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Voransichten
 PREFERENCES_CLIPPINGIND;Anzeige zu heller/dunkler Bereiche
 PREFERENCES_CMETRICINTENT;Farbraumtransformation
-PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transparenz für Ausschnittsmaske
+PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transp. für Ausschnittsmaske
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
@@ -562,6 +562,7 @@ PREFERENCES_SHOWONLYRAW;Nur RAW-Dateien anzeigen
 PREFERENCES_SHTHRESHOLD;Schwellenwert - zu dunkel
 PREFERENCES_SINGLETAB;Ein-Reiter Modus
 PREFERENCES_SINGLETABVERTAB;Ein-Reiter Modus (vertikale Reiter)
+PREFERENCES_SLIMUI;Kompakte Oberfläche
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
 PREFERENCES_TAB_COLORMGR;Farbmanagement
@@ -815,12 +816,12 @@ TP_SHARPENING_LABEL;Schärfen
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Nur Kanten schärfen
 TP_SHARPENING_RADIUS;Radius
-TP_SHARPENING_RLD;R-L Deconvolution
+TP_SHARPENING_RLD;RL-Dekonvolution
 TP_SHARPENING_RLD_AMOUNT;Stärke
 TP_SHARPENING_RLD_DAMPING;Dämpfung
 TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_THRESHOLD;Schwellenwert
-TP_SHARPENING_USM;Unschärfemaske
+TP_SHARPENING_USM;Unscharfmaskierung
 TP_VIGNETTING_AMOUNT;Stärke
 TP_VIGNETTING_CENTER;Zentrum
 TP_VIGNETTING_CENTER_X;Zentrum X

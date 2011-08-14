@@ -1,7 +1,12 @@
 
 #00 Magyar
 #01 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+ABOUT_TAB_BUILD;Verzió
+ABOUT_TAB_CREDITS;Szerzők
+ABOUT_TAB_LICENSE;Licensz
+ABOUT_TAB_SPLASH;Betöltőkép
 ADJUSTER_RESET_TO_DEFAULT;Alaphelyzetbe állítás
+BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Kötegelt feldolgozás
 CURVEEDITOR_CURVE;Görbe
 CURVEEDITOR_CURVES;Görbék
@@ -13,6 +18,7 @@ CURVEEDITOR_HIGHLIGHTS;Csúcsfények
 CURVEEDITOR_LIGHTS;Középfények
 CURVEEDITOR_LINEAR;Lineáris
 CURVEEDITOR_LOADDLGLABEL;Görbe betöltése...
+CURVEEDITOR_MINMAXCPOINTS;Minimum/Maximum kontrollpontok
 CURVEEDITOR_NURBS;Húrkontroll
 CURVEEDITOR_PARAMETRIC;Parametrikus
 CURVEEDITOR_SAVEDLGLABEL;Görbe mentése...
@@ -21,9 +27,11 @@ CURVEEDITOR_TOOLTIPLINEAR;Lineáris görbe visszaállítása
 CURVEEDITOR_TOOLTIPLOAD;Görbe betöltése
 CURVEEDITOR_TOOLTIPSAVE;Görbe mentése
 CURVEEDITOR_TYPE;Típus:
+EDITWINDOW_TITLE;Képszerkesztés
 EXIFFILTER_APERTURE;Rekesz
 EXIFFILTER_CAMERA;Fényképezőgép
 EXIFFILTER_DIALOGLABEL;EXIF szűrő
+EXIFFILTER_FILETYPE;Állománytípus
 EXIFFILTER_FOCALLEN;Fókusztávolság
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektív
@@ -46,6 +54,7 @@ EXIFPANEL_SUBDIRECTORY;Alkönyvtár
 FILEBROWSER_ADDDELTEMPLATE;Sablon hozzáadása/törlése...
 FILEBROWSER_APPLYPROFILE;Feldolgozási paraméter hozzárendelése
 FILEBROWSER_ARRANGEMENTHINT;Váltás az előnézeti képek függőleges/vízszintes elrendezése között
+FILEBROWSER_AUTODARKFRAME;Auto dark frame
 FILEBROWSER_CLEARPROFILE;Feldolgozási paraméter törlése
 FILEBROWSER_COPYPROFILE;Feldolgozási paraméterek másolása
 FILEBROWSER_CURRENT_NAME;Aktuális név:
@@ -82,6 +91,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Beállítások
 FILEBROWSER_PROCESSINGSETTINGSHINT;A fájl formátum és a célkönyvtár beállítása
 FILEBROWSER_RENAMEDLGLABEL;Fájl átnevezése
 FILEBROWSER_RENAMEDLGMSG;%1 új neve:
+FILEBROWSER_SELECTDARKFRAME;Dark frame kiválasztása...
 FILEBROWSER_SHOWDIRHINT;A könyvtárban lévő összes kép mutatása
 FILEBROWSER_SHOWEXIFINFO;EXIF info megjelenítése: <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;A feldolgozási sor tartalmának mutatása
@@ -109,16 +119,19 @@ GENERAL_DISABLE;Kikapcsol
 GENERAL_DISABLED;Kikapcsolva
 GENERAL_ENABLE;Engedélyez
 GENERAL_ENABLED;Engedélyezve
+GENERAL_FILE;Állomány
 GENERAL_HIGH_QUALITY;Jó minőségben
 GENERAL_LANDSCAPE;Fekvő
 GENERAL_LOAD;Betöltés
 GENERAL_NA;n/a
 GENERAL_NO;Nem
+GENERAL_NONE;Nincs
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Álló
 GENERAL_SAVE;Mentés
 GENERAL_UNCHANGED;(Változatlan)
 GENERAL_YES;Igen
+HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;
@@ -137,8 +150,29 @@ HISTORY_MSG_101;HSV EQ -- Árnyalat
 HISTORY_MSG_102;HSV EQ -- Telítettség
 HISTORY_MSG_103;HSV EQ -- Színérték
 HISTORY_MSG_104;HSV Equalizer
+HISTORY_MSG_105;Színaberráció
+HISTORY_MSG_106;Színaberráció sugara
+HISTORY_MSG_107;Színaberráció küszöbe
+HISTORY_MSG_108;Csúcsfény-kompresszió küszöbe
+HISTORY_MSG_109;Átméretezés határolódoboza
 HISTORY_MSG_10;Sötét tónusok tömörítése
+HISTORY_MSG_110;Átméretezés érvényessége...
+HISTORY_MSG_111;Színtelítődés megelőzése
+HISTORY_MSG_112;Színtelítettség-határoló
+HISTORY_MSG_113;Színtelítettség-határ
+HISTORY_MSG_114;DCB ismétlések
+HISTORY_MSG_115;Hamis szín ismétlések
+HISTORY_MSG_116;Fejlesztett DCB
+HISTORY_MSG_117;Vörös CA korrekció
+HISTORY_MSG_118;Kék CA korrekció
+HISTORY_MSG_119;Soronkénti zajszűrés
 HISTORY_MSG_11;Tónusgörbe
+HISTORY_MSG_120;Zöldpixel-egyensúly
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Auto Dark Frame
+HISTORY_MSG_123;Dark Frame állomány
+HISTORY_MSG_124;Lineáris expozíció korrekciója
+HISTORY_MSG_125;Csúcsfényeket megőrző expozíciókorrekció
 HISTORY_MSG_12;Auto szint
 HISTORY_MSG_13;Vágás
 HISTORY_MSG_14;Luminancia, fényerő
@@ -228,6 +262,8 @@ HISTORY_MSG_8;Expozíció kompenzáció
 HISTORY_MSG_90;NR - luminanciazaj
 HISTORY_MSG_91;NR - színzaj
 HISTORY_MSG_92;NR - gamma
+HISTORY_MSG_93;Részletesség szerinti kontraszt értéke
+HISTORY_MSG_94;Részletesség szerinti kontraszt
 HISTORY_MSG_95;Színtelítettség
 HISTORY_MSG_96;'a' görbe
 HISTORY_MSG_97;'b' görbe
@@ -310,6 +346,7 @@ MAIN_BUTTON_SENDTOEDITOR;Megnyitás külső programmal
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Kiválasztott kép szerkesztése külső programmal <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Teljes képernyő elhagyása
 MAIN_FRAME_BATCHQUEUE;Kötegelt feldolgozási sor
+MAIN_FRAME_EDITOR;Szerkesztő
 MAIN_FRAME_FILEBROWSER;Állományböngésző
 MAIN_FRAME_PLACES;Helyek 
 MAIN_FRAME_PLACES_ADD;Hozzáadás
@@ -337,8 +374,10 @@ MAIN_TAB_FILTER;Szűrők
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metaadatok
+MAIN_TAB_RAW;RAW
 MAIN_TAB_TAGGING;Címkézés
 MAIN_TAB_TRANSFORM;Transzformáció
+MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;A fájlkezelő alsó panel elrejtése/megjelenítése (Gyorsbillentyű: F)
 MAIN_TOOLTIP_HIDEHP;Az előzményeket is tartalmazó bal panel elrejtése/megjelenítése (Gyorsbillentyű: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Túlexponált területek jelzése
@@ -348,22 +387,55 @@ MAIN_TOOLTIP_QINFO;Néhány fontos információ megjelenítése a képről
 MAIN_TOOLTIP_SAVE;A kép mentése az alapértelmezett könyvtárba az alapértelmezett néven
 MAIN_TOOLTIP_SAVEAS;A kép mentése a kiválasztott könyvtárba
 MAIN_TOOLTIP_TOGGLE;Előtte/utána nézet be- és kikapcsolása <b>B</b>
+NAVIGATOR_B_NA;B = n/a
+NAVIGATOR_B_VALUE;B = %1
+NAVIGATOR_G_NA;G = n/a
+NAVIGATOR_G_VALUE;G = %1
+NAVIGATOR_H_NA;H = n/a
+NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_LAB_A_NA;A = n/a
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = n/a
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = n/a
+NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_R_NA;R = n/a
+NAVIGATOR_R_VALUE;R = %1
+NAVIGATOR_S_NA;S = n/a
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = n/a
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Alapbeállítások
 PARTIALPASTE_CACORRECTION;Kromatikus aberráció
+PARTIALPASTE_CHANNELMIXER;Színkeverő
 PARTIALPASTE_COARSETRANS;90 fokonkénti forgatás/tükrözés
 PARTIALPASTE_COLORBOOST;Színtelítettség
 PARTIALPASTE_COLORDENOISE;Színzaj-csökkentés
 PARTIALPASTE_COLORGROUP;Színeket érintő beállítások
 PARTIALPASTE_COLORMIXER;Színkeverő
 PARTIALPASTE_COLORSHIFT;Színeltolás
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto kitöltés
 PARTIALPASTE_COMPOSITIONGROUP;Kompozíciós beállítások
 PARTIALPASTE_CROP;Vágás
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Kiválasztás
+PARTIALPASTE_DARKFRAMEFILE;Dark Frame Állomány
+PARTIALPASTE_DEFRINGE;Színaberráció korrekciója
+PARTIALPASTE_DETAILGROUP;Részletek beállításai
 PARTIALPASTE_DIALOGLABEL;Feldolgozási beállítások részleges alkalmazása
+PARTIALPASTE_DIRPYRDENOISE;Zajszűrés
+PARTIALPASTE_DIRPYREQUALIZER;Részletesség szerinti kontraszt
 PARTIALPASTE_DISTORTION;Torzítás
+PARTIALPASTE_EVERYTHING;Minden
 PARTIALPASTE_EXIFCHANGES;EXIF változtatások
 PARTIALPASTE_EXPOSURE;Expozíció
+PARTIALPASTE_HLRECONSTRUCTION;Csúcsfények helyreállítása
 PARTIALPASTE_HLRECOVERY;Kiégett részletek megmentése
+PARTIALPASTE_HLRECOVERYAMOUNT;Csúcsfények helyreállításának mértéke
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Csúcsfények helyreállításának küszöbe
+PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 PARTIALPASTE_ICMSETTINGS;ICM beállítások
+PARTIALPASTE_IMPULSEDENOISE;Szórt zaj szűrése (Impulse)
 PARTIALPASTE_IPTCINFO;IPTC információk
 PARTIALPASTE_LABCURVE;Lab görbe
 PARTIALPASTE_LENSGROUP;Objektív optikai hibáinak javítása
@@ -371,6 +443,20 @@ PARTIALPASTE_LUMACURVE;Luminancia görbe
 PARTIALPASTE_LUMADENOISE;Luminanciazaj-csökkentés
 PARTIALPASTE_LUMINANCEGROUP;Luminanciát érintő beállítások
 PARTIALPASTE_METAICMGROUP;Metaadat/Színprofil beállítások
+PARTIALPASTE_PERSPECTIVE;Perspektíva
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Zöldpixel-egyensúly
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Hot/dead pixel szűrés alkalmazása
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Soronkénti zajszűrés
+PARTIALPASTE_RAWCACORR_AUTO;CA autokorrekció
+PARTIALPASTE_RAWCACORR_CABLUE;CA Kék
+PARTIALPASTE_RAWCACORR_CARED;CA Vörös
+PARTIALPASTE_RAWEXPOS_LINEAR;Expozíció lineáris korr. faktor
+PARTIALPASTE_RAWEXPOS_PRESER;Expozíció csúcsfénymegőrző korr. (EV)
+PARTIALPASTE_RAWGROUP;RAW beállítások
+PARTIALPASTE_RAW_DCBENHANCE;DCB javítólépés alkalmazása
+PARTIALPASTE_RAW_DCBITERATIONS;DCB ismétlések száma
+PARTIALPASTE_RAW_DMETHOD;Interpolációs metódus
+PARTIALPASTE_RAW_FALSECOLOR;Interpoláció színhibáit javító lépések
 PARTIALPASTE_RESIZE;Átméretezés
 PARTIALPASTE_ROTATION;Forgatás
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Árnyékos/Világos részek
@@ -399,7 +485,13 @@ PREFERENCES_CLEARDLG_LINE2;Ez eltarthat pár másodpercig.
 PREFERENCES_CLEARDLG_TITLE;Kérem várjon
 PREFERENCES_CLIPPINGIND;Kiégett és bebukott részek jelzése
 PREFERENCES_CMETRICINTENT;Intent
+PREFERENCES_CUTOVERLAYBRUSH;Képkivágás sötétítése
+PREFERENCES_DARKFRAME;Dark frame
+PREFERENCES_DARKFRAMEFOUND;Találat
+PREFERENCES_DARKFRAMESHOTS;kép
+PREFERENCES_DARKFRAMETEMPLATES;sablonok
 PREFERENCES_DATEFORMAT;Dátumformátum
+PREFERENCES_DATEFORMATFRAME;Dátum formátuma
 PREFERENCES_DATEFORMATHINT;<i>A következő jeleket lehet használni:</i>\n<b>%y</b><i> : év</i>\n<b>%m</b><i> : hónap</i>\n<b>%d</b><i> : nap</i>\n<i>\nPéldául a magyar dátumformátum:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Alapértelmezett nyelv
 PREFERENCES_DEFAULTTHEME;Alapértelmezett kinézet
@@ -430,6 +522,7 @@ PREFERENCES_INTENT_SATURATION;Színtelítettség
 PREFERENCES_LIVETHUMBNAILS;Élő előnézeti képek (lassabb)
 PREFERENCES_MONITORICC;Monitor ICC profilja
 PREFERENCES_MULTITAB;Több szerkesztőfül
+PREFERENCES_MULTITABDUALMON;Több fül, megjelenítés második monitoron (ha elérhető)
 PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
 PREFERENCES_OUTDIRFOLDER;Mentés ebbe a könyvtárba:
 PREFERENCES_OUTDIRFOLDERHINT;Ha ezt a lehetőséget választja, az összes feldolgozott kép ebbe a könyvtárba kerül
@@ -448,6 +541,7 @@ PREFERENCES_PROFILEPRCACHE;A gyorsítótárban lévőt használja
 PREFERENCES_PROFILEPRFILE;A kép mellettit használja
 PREFERENCES_PROFILESAVECACHE;Feldolgozási paraméterek mentése a gyorsítótárba
 PREFERENCES_PROFILESAVEINPUT;Feldolgozási paraméterek mentése a kép mellé
+PREFERENCES_PROPERTY;Jellemző
 PREFERENCES_PSPATH;Adobe Photoshop telepítési könyvtára
 PREFERENCES_SELECTFONT;Betűtípus kiválasztása
 PREFERENCES_SELECTICCDIRDLG;ICC profilok könyvtárának kiválasztása...
@@ -460,6 +554,7 @@ PREFERENCES_SHOWDATETIME;Felvétel dátumának és idejének megjelenítése
 PREFERENCES_SHOWONLYRAW;Csak a RAW fájok megjelenítése
 PREFERENCES_SHTHRESHOLD;Küszöbérték bebukott árnyékokhoz
 PREFERENCES_SINGLETAB;Egyetlen szerkesztőfül
+PREFERENCES_SINGLETABVERTAB;Egy fül, elrendezés függőleges
 PREFERENCES_STARTUPIMDIR;Képek könyvtára induláskor
 PREFERENCES_TAB_BROWSER;Fájl böngésző
 PREFERENCES_TAB_COLORMGR;Színkezelés
@@ -467,6 +562,7 @@ PREFERENCES_TAB_GENERAL;Általános
 PREFERENCES_TAB_IMPROC;Képfeldolgozás
 PREFERENCES_TAB_OUTPUT;Állománymentési beállítások
 PREFERENCES_THUMBSIZE;Képek mérete a böngészőben
+PREFERENCES_TUNNELMETADATA;IPTC/XMP változatlan továbbmásolása a kimeneti állományba
 PREFERENCES_USESYSTEMTHEME;Rendszer megjelenésének használata
 PREFERENCES_WORKFLOW;Munkamenet
 PROFILEPANEL_FILEDLGFILTERANY;Minden állomány
@@ -527,6 +623,7 @@ TP_CHMIXER_BLUE;Kék
 TP_CHMIXER_GREEN;Zöld
 TP_CHMIXER_LABEL;Színkeverő
 TP_CHMIXER_RED;Piros
+TP_CHROMATABERR_LABEL;Színi hiba
 TP_COARSETRAF_DEGREE;fok: 
 TP_COARSETRAF_TOOLTIP_HFLIP;Vizszintes tükrözés
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Forgatás balra
@@ -552,6 +649,7 @@ TP_COLORSHIFT_LABEL;Színeltolás
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Rögzített oldalarány
 TP_CROP_GTDIAGONALS;Diagonál módszer
+TP_CROP_GTGRID;Rács
 TP_CROP_GTHARMMEANS1;Aranymetszés 1
 TP_CROP_GTHARMMEANS2;Aranymetszés 2
 TP_CROP_GTHARMMEANS3;Aranymetszés 3
@@ -566,6 +664,10 @@ TP_CROP_W;Sz
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Auto selection
+TP_DARKFRAME_LABEL;Dark Frame
+TP_DEFRINGE_LABEL;Színaberráció
+TP_DEFRINGE_RADIUS;Sugár
+TP_DEFRINGE_THRESHOLD;Küszöb
 TP_DETAIL_AMOUNT;Mérték
 TP_DIRPYRDENOISE_CHROMA;Színzaj
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -586,11 +688,13 @@ TP_EQUALIZER_FINEST;Finom részletek
 TP_EQUALIZER_LABEL;Wavelet equalizer
 TP_EQUALIZER_LARGEST;Durva részletek
 TP_EQUALIZER_NEUTRAL;Semleges
+TP_EXPOSCORR_LABEL;Expozíció
 TP_EXPOSURE_AUTOLEVELS;Auto szint
 TP_EXPOSURE_BLACKLEVEL;Fekete szint
 TP_EXPOSURE_BRIGHTNESS;Fényerő
 TP_EXPOSURE_CLIP;Vágás
 TP_EXPOSURE_COMPRHIGHLIGHTS;Világos tónusok tömörítése
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Csúcsfények helyreállítási küszöbe
 TP_EXPOSURE_COMPRSHADOWS;Sötét tónusok tömörítése
 TP_EXPOSURE_CONTRAST;Kontraszt
 TP_EXPOSURE_CURVEEDITOR;Tónusgörbe
@@ -633,10 +737,13 @@ TP_ICM_SAVEREFERENCE;Referenciakép mentése profilkalibráláshoz
 TP_ICM_WORKINGPROFILE;Feldolgozási színprofil
 TP_IMPULSEDENOISE_LABEL;Pontzaj-csökkentés
 TP_IMPULSEDENOISE_THRESH;Küszöb
+TP_LABCURVE_AVOIDCOLORCLIP;Színtúltelítődés elkerülése
 TP_LABCURVE_BRIGHTNESS;Világosság
 TP_LABCURVE_CONTRAST;Kontraszt
 TP_LABCURVE_CURVEEDITOR;Luminanciagörbe
+TP_LABCURVE_ENABLESATLIMITER;Színtelitettségi korlát engedélyezése
 TP_LABCURVE_LABEL;Lab görbék
+TP_LABCURVE_SATLIMIT;Színtelítettségi korlát
 TP_LABCURVE_SATURATION;Színtelítettség
 TP_LENSGEOM_AUTOCROP;Automatikus vágás
 TP_LENSGEOM_FILL;Automatikus kitöltés
@@ -654,21 +761,31 @@ TP_LUMADENOISE_RADIUS;Sugár
 TP_PERSPECTIVE_HORIZONTAL;Vízszintes
 TP_PERSPECTIVE_LABEL;Perspektíva
 TP_PERSPECTIVE_VERTICAL;Függőleges
+TP_PREPROCESS_GREENEQUIL;Zöldpixel-egyensúly
 TP_PREPROCESS_HOTDEADPIXFILT;Hot/dead pixel szűrő alkalmazása
 TP_PREPROCESS_LABEL;Előfeldolgozás
 TP_PREPROCESS_LINEDENOISE;Sorzaj-szűrő
+TP_PREPROCESS_NO_FOUND;Nincs találat
 TP_RAWCACORR_AUTO;Színihiba (kromatikus aberráció) automatikus helyesbítése
+TP_RAWCACORR_CABLUE;Kék
+TP_RAWCACORR_CARED;Vörös
+TP_RAWEXPOS_LINEAR;Lineáris korrekciós faktor
+TP_RAWEXPOS_PRESER;Csúcsfénymegőrző korr. (EV)
 TP_RAW_DCBENHANCE;DCB helyesbítő lépés alkalmazása
 TP_RAW_DCBITERATIONS;DCB iterációk száma
 TP_RAW_DMETHOD;Algoritmus
 TP_RAW_FALSECOLOR;Színhiba-elnyomási lépések
 TP_RAW_LABEL;Deinterpoláció
+TP_RESIZE_APPLIESTO;Érvényesség:
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (lágyabb)
 TP_RESIZE_BICUBICSH;Bicubic (keményebb)
 TP_RESIZE_BILINEAR;Bilineáris
+TP_RESIZE_CROPPEDAREA;Kivágott terület
 TP_RESIZE_DOWNSCALEB;Downscale (Jobb minőség)
 TP_RESIZE_DOWNSCALEF;Downscale (Gyorsabb)
+TP_RESIZE_FITBOX;Határolódoboz
+TP_RESIZE_FULLIMAGE;Teljes kép
 TP_RESIZE_FULLSIZE;Képméret:
 TP_RESIZE_H;M:
 TP_RESIZE_HEIGHT;Magasság
@@ -677,6 +794,7 @@ TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Algoritmus: 
 TP_RESIZE_NEAREST;Legközelebbi szomszéd
 TP_RESIZE_SCALE;Szorzó
+TP_RESIZE_SPECIFY;Egyéb:
 TP_RESIZE_W;Sz:
 TP_RESIZE_WIDTH;Szélesség
 TP_ROTATE_AUTOCROP;Automatikus kivágás
@@ -735,129 +853,12 @@ ZOOMPANEL_ZOOM100;Nagyítás 100%-ra <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Képernyő méretéhez igazítás <b>F</b>
 ZOOMPANEL_ZOOMIN;Nagyítás <b>+</b>
 ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
-ABOUT_TAB_BUILD;Verzió
-ABOUT_TAB_CREDITS;Szerzők
-ABOUT_TAB_LICENSE;Licensz
-ABOUT_TAB_SPLASH;Betöltőkép
-BATCHQUEUE_AUTOSTART;Autostart
-CURVEEDITOR_MINMAXCPOINTS;Minimum/Maximum kontrollpontok
-EDITWINDOW_TITLE;Képszerkesztés
-EXIFFILTER_FILETYPE;Állománytípus
-FILEBROWSER_AUTODARKFRAME;Auto dark frame
-FILEBROWSER_SELECTDARKFRAME;Dark frame kiválasztása...
-GENERAL_FILE;Állomány
-GENERAL_NONE;Nincs
-HISTOGRAM_BUTTON_B;B
-HISTORY_MSG_105;Színaberráció
-HISTORY_MSG_106;Színaberráció sugara
-HISTORY_MSG_107;Színaberráció küszöbe
-HISTORY_MSG_108;Csúcsfény-kompresszió küszöbe
-HISTORY_MSG_109;Átméretezés határolódoboza
-HISTORY_MSG_110;Átméretezés érvényessége...
-HISTORY_MSG_111;Színtelítődés megelőzése
-HISTORY_MSG_112;Színtelítettség-határoló
-HISTORY_MSG_113;Színtelítettség-határ
-HISTORY_MSG_114;DCB ismétlések
-HISTORY_MSG_115;Hamis szín ismétlések
-HISTORY_MSG_116;Fejlesztett DCB
-HISTORY_MSG_117;Vörös CA korrekció
-HISTORY_MSG_118;Kék CA korrekció
-HISTORY_MSG_119;Soronkénti zajszűrés
-HISTORY_MSG_120;Zöldpixel-egyensúly
-HISTORY_MSG_121;Auto CA
-HISTORY_MSG_122;Auto Dark Frame
-HISTORY_MSG_123;Dark Frame állomány
-HISTORY_MSG_124;Lineáris expozíció korrekciója
-HISTORY_MSG_125;Csúcsfényeket megőrző expozíciókorrekció
-HISTORY_MSG_93;Részletesség szerinti kontraszt értéke
-HISTORY_MSG_94;Részletesség szerinti kontraszt
-MAIN_FRAME_EDITOR;Szerkesztő
-MAIN_TAB_RAW;RAW
-MAIN_TOGGLE_BEFORE_AFTER;B|A
-NAVIGATOR_B_NA;B = n/a
-NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;G = n/a
-NAVIGATOR_G_VALUE;G = %1
-NAVIGATOR_H_NA;H = n/a
-NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;A = n/a
-NAVIGATOR_LAB_A_VALUE;A = %1
-NAVIGATOR_LAB_B_NA;B = n/a
-NAVIGATOR_LAB_B_VALUE;B = %1
-NAVIGATOR_LAB_L_NA;L = n/a
-NAVIGATOR_LAB_L_VALUE;L = %1
-NAVIGATOR_R_NA;R = n/a
-NAVIGATOR_R_VALUE;R = %1
-NAVIGATOR_S_NA;S = n/a
-NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;V = n/a
-NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
-PARTIALPASTE_CHANNELMIXER;Színkeverő
-PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto kitöltés
-PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Kiválasztás
-PARTIALPASTE_DARKFRAMEFILE;Dark Frame Állomány
-PARTIALPASTE_DEFRINGE;Színaberráció korrekciója
-PARTIALPASTE_DETAILGROUP;Részletek beállításai
-PARTIALPASTE_DIRPYRDENOISE;Zajszűrés
-PARTIALPASTE_DIRPYREQUALIZER;Részletesség szerinti kontraszt
-PARTIALPASTE_EVERYTHING;Minden
-PARTIALPASTE_HLRECONSTRUCTION;Csúcsfények helyreállítása
-PARTIALPASTE_HLRECOVERYAMOUNT;Csúcsfények helyreállításának mértéke
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Csúcsfények helyreállításának küszöbe
-PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
-PARTIALPASTE_IMPULSEDENOISE;Szórt zaj szűrése (Impulse)
-PARTIALPASTE_PERSPECTIVE;Perspektíva
-PARTIALPASTE_PREPROCESS_GREENEQUIL;Zöldpixel-egyensúly
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Hot/dead pixel szűrés alkalmazása
-PARTIALPASTE_PREPROCESS_LINEDENOISE;Soronkénti zajszűrés
-PARTIALPASTE_RAWCACORR_AUTO;CA autokorrekció
-PARTIALPASTE_RAWCACORR_CABLUE;CA Kék
-PARTIALPASTE_RAWCACORR_CARED;CA Vörös
-PARTIALPASTE_RAWEXPOS_LINEAR;Expozíció lineáris korr. faktor
-PARTIALPASTE_RAWEXPOS_PRESER;Expozíció csúcsfénymegőrző korr. (EV)
-PARTIALPASTE_RAWGROUP;RAW beállítások
-PARTIALPASTE_RAW_DCBENHANCE;DCB javítólépés alkalmazása
-PARTIALPASTE_RAW_DCBITERATIONS;DCB ismétlések száma
-PARTIALPASTE_RAW_DMETHOD;Interpolációs metódus
-PARTIALPASTE_RAW_FALSECOLOR;Interpoláció színhibáit javító lépések
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-PREFERENCES_CUTOVERLAYBRUSH;Képkivágás sötétítése
-PREFERENCES_DARKFRAME;Dark frame
-PREFERENCES_DARKFRAMEFOUND;Találat
-PREFERENCES_DARKFRAMESHOTS;kép
-PREFERENCES_DARKFRAMETEMPLATES;sablonok
-PREFERENCES_DATEFORMATFRAME;Dátum formátuma
-PREFERENCES_MULTITABDUALMON;Több fül, megjelenítés második monitoron (ha elérhető)
-PREFERENCES_PROPERTY;Jellemző
-PREFERENCES_SINGLETABVERTAB;Egy fül, elrendezés függőleges
-PREFERENCES_TUNNELMETADATA;IPTC/XMP változatlan továbbmásolása a kimeneti állományba
-TP_CHROMATABERR_LABEL;Színi hiba
-TP_CROP_GTGRID;Rács
-TP_DARKFRAME_LABEL;Dark Frame
-TP_DEFRINGE_LABEL;Színaberráció
-TP_DEFRINGE_RADIUS;Sugár
-TP_DEFRINGE_THRESHOLD;Küszöb
-TP_EXPOSCORR_LABEL;Expozíció
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Csúcsfények helyreállítási küszöbe
-TP_LABCURVE_AVOIDCOLORCLIP;Színtúltelítődés elkerülése
-TP_LABCURVE_ENABLESATLIMITER;Színtelitettségi korlát engedélyezése
-TP_LABCURVE_SATLIMIT;Színtelítettségi korlát
-TP_PREPROCESS_GREENEQUIL;Zöldpixel-egyensúly
-TP_PREPROCESS_NO_FOUND;Nincs találat
-TP_RAWCACORR_CABLUE;Kék
-TP_RAWCACORR_CARED;Vörös
-TP_RAWEXPOS_LINEAR;Lineáris korrekciós faktor
-TP_RAWEXPOS_PRESER;Csúcsfénymegőrző korr. (EV)
-TP_RESIZE_APPLIESTO;Érvényesség:
-TP_RESIZE_CROPPEDAREA;Kivágott terület
-TP_RESIZE_FITBOX;Határolódoboz
-TP_RESIZE_FULLIMAGE;Teljes kép
-TP_RESIZE_SPECIFY;Egyéb:
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-
+!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
+!PREFERENCES_SLIMUI;Slim interface
