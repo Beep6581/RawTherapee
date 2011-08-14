@@ -56,7 +56,7 @@
   ;Name and file
   Name "RawTherapee ${TAG}"
   OutFile "rawtherapee_${TAG}_win64.exe"
-  VIProductVersion "${TAG}.${TAGDISTANCE}.0"
+  VIProductVersion "${TAG}.${TAGDISTANCE}"
 
 	VIAddVersionKey "ProductName" "Raw Therapee"
 	VIAddVersionKey "ProductVersion" "${TAG}"
@@ -161,7 +161,7 @@ FunctionEnd
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "DisplayIcon" "$\"$INSTDIR\rawtherapee.exe$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "Publisher" "RT Team"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "DisplayVersion" "${TAG}.${TAGDISTANCE}.0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "DisplayVersion" "${TAG}.${TAGDISTANCE}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "URLInfoAbout" "http://www.rawtherapee.com"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "URLUpdateInfo" "http://www.rawtherapee.com"  
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RawTherapee ${TAG}" "NoModify" 1
