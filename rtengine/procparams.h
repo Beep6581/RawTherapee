@@ -371,16 +371,6 @@ class IPTCPair {
 };
 
 /**
-  * Wavelet equalizer params
-  */
-class EqualizerParams {
-
-    public:
-        bool enabled;
-        int c[8];
-};
-	
-/**
 * Directional pyramid equalizer params
 */
 class DirPyrEqualizerParams {
@@ -479,7 +469,6 @@ class ProcParams {
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
-        EqualizerParams         equalizer;       ///< wavelet equalizer parameters
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters

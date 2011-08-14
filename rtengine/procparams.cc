@@ -224,11 +224,6 @@ void ProcParams::setDefaults () {
 	icm.slpos=4.5;
     icm.freegamma = false;
   
-    equalizer.enabled = false;    
-    for(int i = 0; i < 8; i ++)
-    {
-        equalizer.c[i] = 0;
-    }
 	dirpyrequalizer.enabled = false;    
     for(int i = 0; i < 4; i ++)
     {
@@ -471,15 +466,6 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
     keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
     
-    // save wavelet equalizer parameters
-    keyFile.set_boolean ("Equalizer", "Enabled", equalizer.enabled);
-    for(int i = 0; i < 8; i++)
-    {
-        std::stringstream ss;
-        ss << "C" << i;
-        keyFile.set_integer("Equalizer", ss.str(), equalizer.c[i]);
-    }
-	
 	// save directional pyramid equalizer parameters
     keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
     for(int i = 0; i < 5; i++)
@@ -833,17 +819,6 @@ if (keyFile.has_group ("Color Management")) {
 	
 }
 
-    // load wavelet equalizer parameters
-if (keyFile.has_group ("Equalizer")) {
-    if (keyFile.has_key ("Equalizer", "Enabled")) equalizer.enabled = keyFile.get_boolean ("Equalizer", "Enabled");
-    for(int i = 0; i < 8; i ++)
-    {
-        std::stringstream ss;
-        ss << "C" << i;
-        if(keyFile.has_key ("Equalizer", ss.str())) equalizer.c[i] = keyFile.get_integer ("Equalizer", ss.str());
-    }
-}
-		
 	// load directional pyramid equalizer parameters
 if (keyFile.has_group ("Directional Pyramid Equalizer")) {
 	if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled");
@@ -930,17 +905,6 @@ if (keyFile.has_group ("IPTC")) {
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 
-bool operator==(const EqualizerParams & a, const EqualizerParams & b) {
-    if(a.enabled != b.enabled)
-        return false;
-
-    for(int i = 0; i < 8; i++) {
-        if(a.c[i] != b.c[i])
-            return false;
-    }
-    return true;
-}
-	
 bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b) {
 	if(a.enabled != b.enabled)
 		return false;
@@ -1101,7 +1065,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.freegamma == other.icm.freegamma			
 		&& icm.gampos == other.icm.gampos	
 		&& icm.slpos == other.icm.slpos			
-		&& equalizer == other.equalizer
 		&& dirpyrequalizer == other.dirpyrequalizer
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
 		&& hsvequalizer.scurve == other.hsvequalizer.scurve

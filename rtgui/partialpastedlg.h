@@ -49,17 +49,13 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* gradsharpen;
         Gtk::CheckButton* microcontrast;
 		Gtk::CheckButton* impden;
-        Gtk::CheckButton* lumaden;
 		Gtk::CheckButton* waveq;
-		Gtk::CheckButton* colorden;
 		Gtk::CheckButton* dirpyrden;
 		Gtk::CheckButton* defringe;
 		Gtk::CheckButton* dirpyreq;
 
         // options in color:
         Gtk::CheckButton* chmixer;
-        Gtk::CheckButton* colorshift;
-        Gtk::CheckButton* colorboost;
 		Gtk::CheckButton* hsveq;
 
         // options in lens:
@@ -106,8 +102,8 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
 
         sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
-        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, lumadenConn, dirpyrdenConn, colordenConn, waveqConn, defringeConn, dirpyreqConn;
-        sigc::connection chmixerConn, colorshiftConn, colorboostConn, hsveqConn;
+        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, dirpyreqConn;
+        sigc::connection chmixerConn, hsveqConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn;

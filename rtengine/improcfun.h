@@ -80,14 +80,10 @@ class ImProcFunctions {
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
-		void lumadenoise      (LabImage* lab, int** buffer);
-		void colordenoise     (LabImage* lab, int** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void lab2rgb          (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, double dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);
-		void waveletEqualizer (Imagefloat * image);
-		void waveletEqualizer (LabImage * image, bool luminance, bool chromaticity);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
 		void MLmicrocontrast(LabImage* lab ); //Manuel's microcontrast
 

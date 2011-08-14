@@ -27,12 +27,9 @@
 #include <imageareatoollistener.h>
 #include <gtkmm.h>
 #include <whitebalance.h>
-#include <colorboost.h>
 #include <coarsepanel.h>
 #include <tonecurve.h>
 #include <shadowshighlights.h>
-#include <lumadenoise.h>
-#include <colordenoise.h>
 #include <impulsedenoise.h>
 #include <defringe.h>
 #include <dirpyrdenoise.h>
@@ -45,7 +42,6 @@
 #include <resize.h>
 #include <chmixer.h>
 #include <hlrec.h>
-#include <colorshift.h>
 #include <cacorrection.h>
 #include <distortion.h>
 #include <perspective.h>
@@ -54,7 +50,6 @@
 #include <toolbar.h>
 #include <lensgeom.h>
 #include <lensgeomlistener.h>
-#include <equalizer.h>
 #include <dirpyrequalizer.h>
 #include <hsvequalizer.h>
 #include <rawprocess.h>
@@ -86,24 +81,19 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Distortion* distortion;
         PerspCorrection* perspective;
         CACorrection* cacorrection;
-        //ColorShift* colorshift;
         HLRecovery* hlrecovery;
         ChMixer* chmixer;
-        //ColorBoost* colorboost;
         Resize* resize;
         ICMPanel* icm;
         Crop* crop;
         ToneCurve* toneCurve;
         ShadowsHighlights* shadowshighlights;
-        //LumaDenoise* lumadenoise;
-        //ColorDenoise* colordenoise;
         Defringe* defringe;
         ImpulseDenoise* impulsedenoise;
         DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
 		Clarity* clarity;
         LCurve* lcurve;
-        //Equalizer * equalizer;
         DirPyrEqualizer * dirpyrequalizer;
         HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;

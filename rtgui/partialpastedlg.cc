@@ -54,16 +54,11 @@ PartialPasteDlg::PartialPasteDlg () {
     gradsharpen = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENTSHARPEN")));
     microcontrast = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_MICROCONTRAST")));
     impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
-    //lumaden     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LUMADENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
-    //waveq       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WAVELETEQUALIZER")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
 
     // options in color:
     chmixer  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXER")));
-    //colorshift  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORSHIFT")));
-    //colorboost  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORBOOST")));
-    //colorden    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORDENOISE")));
     dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
     hsveq		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HSVEQUALIZER")));
 
@@ -131,8 +126,6 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*gradsharpen, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*microcontrast, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
-    //vboxes[1]->pack_start (*lumaden, Gtk::PACK_SHRINK, 2);
-    //vboxes[1]->pack_start (*colorden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
@@ -141,8 +134,6 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[2]->pack_start (*color, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
-    //vboxes[2]->pack_start (*colorshift, Gtk::PACK_SHRINK, 2);
-    //vboxes[2]->pack_start (*colorboost, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hsveq, Gtk::PACK_SHRINK, 2);
 
     vboxes[3]->pack_start (*lens, Gtk::PACK_SHRINK, 2);
@@ -246,16 +237,12 @@ PartialPasteDlg::PartialPasteDlg () {
     gradsharpenConn = gradsharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     microcontrastConn = microcontrast->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     impdenConn		= impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    //lumadenConn     = lumaden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    //colordenConn    = colorden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     //waveqConn	    = waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
     chmixerConn  = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
-    //colorshiftConn  = colorshift->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
-    //colorboostConn  = colorboost->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));    
     hsveqConn		= hsveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
 
     distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
@@ -439,8 +426,6 @@ void PartialPasteDlg::detailToggled () {
     microcontrastConn.block(true);
     impdenConn.block (true);
     dirpyrdenConn.block (true);
-    //lumadenConn.block (true);
-    //colordenConn.block (true);
     defringeConn.block (true);
     dirpyreqConn.block (true);
     //waveqConn.block (true);
@@ -452,8 +437,6 @@ void PartialPasteDlg::detailToggled () {
     microcontrast->set_active (detail->get_active ());
 	impden->set_active (detail->get_active ());
     dirpyrden->set_active (detail->get_active ());
-    //lumaden->set_active (detail->get_active ());
-    //colorden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
     //waveq->set_active (detail->get_active ());
@@ -463,8 +446,6 @@ void PartialPasteDlg::detailToggled () {
     microcontrastConn.block(false);
     impdenConn.block (false);
     dirpyrdenConn.block (false);
-    //lumadenConn.block (false);
-    //colordenConn.block (false);
     defringeConn.block (false);
     dirpyreqConn.block (false);
     //waveqConn.block (false);
@@ -474,20 +455,14 @@ void PartialPasteDlg::colorToggled () {
 
     chmixerConn.block (true);
     hsveqConn.block (true);
-    //colorshiftConn.block (true);
-    //colorboostConn.block (true);
 
     color->set_inconsistent (false);
 
     chmixer->set_active (color->get_active ());
-    //colorshift->set_active (color->get_active ());
-    //colorboost->set_active (color->get_active ());
 	hsveq->set_active (color->get_active ());
 
     chmixerConn.block (false);
     hsveqConn.block (false);
-    //colorshiftConn.block (false);
-    //colorboostConn.block (false);
 }
 
 void PartialPasteDlg::lensToggled () {
@@ -573,18 +548,12 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     	dst->clarity.uniformity = src->clarity.uniformity;
     }
     if (impden->get_active ())		dst->impulseDenoise = src->impulseDenoise;
-    //if (lumaden->get_active ())     dst->lumaDenoise = src->lumaDenoise;
     if (dirpyreq->get_active ())	dst->dirpyrequalizer = src->dirpyrequalizer;
-    //if (waveq->get_active ())		dst->equalizer = src->equalizer;
     if (defringe->get_active ())    dst->defringe = src->defringe;
     if (dirpyrden->get_active ())   dst->dirpyrDenoise = src->dirpyrDenoise;
 
     if (chmixer->get_active ())  dst->chmixer = src->chmixer;
-    //if (colorshift->get_active ())  dst->colorShift = src->colorShift;
-    //if (colorboost->get_active ())  dst->colorBoost = src->colorBoost;
 	if (hsveq->get_active ())		dst->hsvequalizer = src->hsvequalizer;
-    //if (colorden->get_active ())    dst->colorDenoise = src->colorDenoise;
-
     if (distortion->get_active ())  dst->distortion = src->distortion;
     if (cacorr->get_active ())      dst->cacorrection = src->cacorrection;
     if (vignetting->get_active ())  dst->vignetting = src->vignetting;

@@ -270,13 +270,6 @@ class ColorManagementParamsEdited {
 		bool freegamma;		
 };
 
-class EqualizerParamsEdited {
-
-    public:
-        bool enabled;
-        bool c[8];
-};
-
 class DirPyrEqualizerParamsEdited {
 	
 public:
@@ -365,7 +358,6 @@ class ParamsEdited {
         HRecParamsEdited              hlrecovery;     
         ResizeParamsEdited            resize;         
         ColorManagementParamsEdited   icm;            
-        EqualizerParamsEdited         equalizer;
         RAWParamsEdited               raw;
         DirPyrEqualizerParamsEdited   dirpyrequalizer;
         HSVEqualizerParamsEdited      hsvequalizer;
