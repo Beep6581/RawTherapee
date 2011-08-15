@@ -679,6 +679,10 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         menuItemActivated (selall);
         return true;
     }
+    else if (event->keyval==GDK_F2 && !(event->state & GDK_CONTROL_MASK)) {
+        menuItemActivated (rename);
+        return true;
+    }
     else if (event->keyval==GDK_F5) {
         int dest = 1;
         if (event->state & GDK_SHIFT_MASK)
