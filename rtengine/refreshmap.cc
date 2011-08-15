@@ -53,9 +53,22 @@ SHARPENING,       // EvShrDRadius,
 SHARPENING,       // EvShrDAmount,
 SHARPENING,       // EvShrDDamping,
 SHARPENING,       // EvShrDIterations,
+0,                // EvCBAvoidClip: obsolete
+0,                // EvCBSatLimiter: obsolete
+0,                // EvCBSatLimit: obsolete
+0,                // EvCBBoost: obsolete
 WHITEBALANCE,     // EvWBMethod,
 WHITEBALANCE,     // EvWBTemp,
 WHITEBALANCE,     // EvWBGreen,
+0,                // EvCShiftA: obsolete
+0,                // EvCShiftB: obsolete
+0,                // EvLDNEnabled: obsolete,
+0,                // EvLDNRadius: obsolete,
+0,                // EvLDNEdgeTolerance: obsolete,
+0,                // EvCDNEnabled:obsolete,
+0,                // EvCDNRadius: obsolete,
+0,                // EvCDNEdgeTolerance: obsolete,
+0,                // EvCDNEdgeSensitive: obsolete,
 RETINEX,          // EvSHEnabled,
 RGBCURVE,         // EvSHHighlights,
 RGBCURVE,         // EvSHShadows,
@@ -91,6 +104,8 @@ RESIZE,           // EvResizeEnabled
 ALL,              // EvProfileChangeNotification
 RETINEX,          // EvShrHighQuality
 TRANSFORM,        // EvPerspCorr
+0,                // EvEqualizer: obsolete
+0,                // EvEqlEnabled:obsolete
 IMPULSEDENOISE,   // EvIDNEnabled,
 IMPULSEDENOISE,   // EvIDNThresh,
 DIRPYRDENOISE,    // EvDPDNEnabled,
