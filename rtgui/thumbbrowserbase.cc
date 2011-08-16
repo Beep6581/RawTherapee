@@ -516,7 +516,7 @@ void ThumbBrowserBase::refreshThumbImages () {
 		#endif
 
         int previewHeight = getCurrentThumbSize();
-        for (int i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);// TODO!!! Might be performance bottleneck
+        for (int i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
 	}
 
     redraw ();
