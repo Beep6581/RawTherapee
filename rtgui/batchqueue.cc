@@ -89,7 +89,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
-		(*entry)->resize (options.thumbSize);
+		(*entry)->resize (MIN(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
 		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
 
 		// recovery save
