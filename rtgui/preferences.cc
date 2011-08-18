@@ -428,6 +428,8 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbworkflow2->pack_start (*ckbHistogramPositionLeft, Gtk::PACK_SHRINK, 4);
     ckbShowProfileSelector =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWPROFILESELECTOR")) );
     hbworkflow2->pack_start (*ckbShowProfileSelector, Gtk::PACK_SHRINK, 4);
+    ckbSquareDetailWindow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SQUAREDETAILWINDOW")) );
+    hbworkflow2->pack_start (*ckbSquareDetailWindow, Gtk::PACK_SHRINK, 4);
     vbworkflow->pack_start (*hbworkflow2, Gtk::PACK_SHRINK, 4);
     
     Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
@@ -1010,6 +1012,7 @@ void Preferences::storePreferences () {
 
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.showProfileSelector = ckbShowProfileSelector->get_active();
+    moptions.squareDetailWindow = ckbSquareDetailWindow->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 
@@ -1121,6 +1124,7 @@ void Preferences::fillPreferences () {
 
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition==1);
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
+    ckbSquareDetailWindow->set_active(moptions.squareDetailWindow);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
 
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );

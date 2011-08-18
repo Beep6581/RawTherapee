@@ -70,7 +70,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     trashButtonBox->show ();
     
     //initialize hbToolBar1
-    Gtk::HBox* hbToolBar1 = Gtk::manage(new Gtk::HBox ());
+    hbToolBar1 = Gtk::manage(new Gtk::HBox ());
 
     //setup BrowsePath
     iRefreshWhite = new Gtk::Image(argv0+"/images/refresh_white.png");
@@ -654,6 +654,9 @@ void FileCatalog::refreshThumbImages () {
 
 void FileCatalog::refreshHeight () {
     int newHeight=fileBrowser->getEffectiveHeight() + buttonBar->get_height();
+    if (!options.FileBrowserToolbarSingleRow) {
+    	newHeight += hbToolBar1->get_height();
+    }
     set_size_request(0, newHeight);
 }
 

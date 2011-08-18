@@ -130,6 +130,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbHistogramPositionLeft;
     Gtk::CheckButton* ckbShowProfileSelector;
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
+    Gtk::CheckButton* ckbSquareDetailWindow;
 
 
     Options moptions;
