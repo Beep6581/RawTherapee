@@ -79,7 +79,7 @@ class FileCatalog : public Gtk::VBox,
         DirBrowserRemoteInterface*   dirlistener;
 
         Gtk::HBox* buttonBar;
-        Gtk::HBox* buttonBar2;
+        Gtk::HBox* hbToolBar1;
 
         Gtk::HBox* fltrRankbox;
         Gtk::HBox* fltrLabelbox;

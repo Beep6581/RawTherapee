@@ -151,6 +151,7 @@ class Options {
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
     bool showProfileSelector;
+    bool squareDetailWindow;
     bool FileBrowserToolbarSingleRow;
 
     bool menuGroupRank;

@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <cropwindow.h>
 #include <refreshmap.h>
+#include <options.h>
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
@@ -273,8 +274,18 @@ void ImageArea::addCropWindow () {
         int layer = N/K/K;
         int row = K-1 - (N % (K*K)) / K;
         int col = K-1 - (N % (K*K)) % K;
+        int cropwidth, cropheight;
         
-        cw->setSize (get_width()/K - hBorder, get_height()/K - vBorder);
+        cropwidth = get_width()/K - hBorder;
+        cropheight = get_height()/K - vBorder;
+
+        if (options.squareDetailWindow){
+			// force square CropWindow (this is faster as area is smaller)
+			if (cropwidth<cropheight) cropheight=cropwidth;
+			if (cropheight<cropwidth) cropwidth=cropheight;
+        }
+
+        cw->setSize (cropwidth,cropheight);
         cw->setPosition (col*get_width()/K + hBorder/2 + layer*30, row*get_height()/K + vBorder/2 + layer*30);
     }
     else {
