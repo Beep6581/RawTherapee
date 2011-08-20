@@ -121,17 +121,17 @@ int main (int argc, char* argv[]) {
 
     // if you want to change the settings you have to ask for the procparams structure of the staged image processor
     // you have to tell it what has changed. At the first time tell it EvPhotoLoaded so a full processing will be performed
-    rtengine::procparams::ProcParams* params = ipc->getParamsForUpdate (rtengine::EvPhotoLoaded);
+    rtengine::procparams::ProcParams* params = ipc->beginUpdateParams ();
     // change this and that...
     params->toneCurve.brightness = 1.0;   
     // you can load it, too, from a file: params->load (argv[2]);
     // finally you have to call this non-blocking method, and the image processing starts in the background. When finished, the preview image listener will be notified
-    ipc->paramsUpdateReady ();
+    ipc->endUpdateParams (rtengine::EvPhotoLoaded);
     // you can go on with changing of the settings, following the gui actions
     // now we know that only the brightness has changed compared to the previous settings, to only a part of the processing has to be repeated
-    params = ipc->getParamsForUpdate (rtengine::EvBrightness);
+    params = ipc->beginUpdateParams ();
     params->toneCurve.brightness = 1.2;   
-    ipc->paramsUpdateReady ();
+    ipc->endUpdateParams (rtengine::EvBrightness);
     
     // ... and so on. If you dont need it any more, you can destroy it (make sure that no processing is happening when you destroy it!)
     StagedImageProcessor::destroy (ipc);

@@ -250,12 +250,13 @@ namespace rtengine {
               * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady 
               * function to start the image update.
               * @param change is the ID of the changed setting */
-            virtual procparams::ProcParams* getParamsForUpdate (ProcEvent change) =0;
+            virtual procparams::ProcParams* beginUpdateParams () =0;
             /** An essential member function. This indicates that you are ready with the update of the processing parameters you got 
-              * with the getParamsForUpdate call, so the image can be updated. This function returns immediately.
+              * with the beginUpdateParams call, so the image can be updated. This function returns immediately.
               * The image update starts immediately in the background. If it is ready, the result is passed to a PreviewImageListener
               * and to a DetailedCropListener (if enabled). */
-            virtual void        paramsUpdateReady () =0;
+            virtual void        endUpdateParams (ProcEvent change) =0;
+            virtual void        endUpdateParams (int changeFlags) =0;
             // Starts a minimal update
             virtual void        startProcessing(int changeCode) =0;  
             /** Stops image processing. When it returns, the image processing is already stopped. */

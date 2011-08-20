@@ -157,26 +157,26 @@ void ParamsEdited::set (bool v) {
 	raw.dcbIterations = v;
 	raw.dcbEnhance = v;
 	raw.allEnhance = v;
-	raw.dfAuto = v;
 	raw.caCorrection = v;
-	raw.hotDeadPixel = v;
 	raw.caBlue  = v;
 	raw.caRed   = v;
+	raw.greenEq = v;
+	raw.hotDeadPixel = v;
+	raw.linenoise = v;
 	raw.darkFrame = v;
+    raw.dfAuto = v;
+	raw.ff_file = v;
+	raw.ff_AutoSelect = v;
+	raw.ff_BlurRadius = v;
+	raw.ff_BlurType = v;
 	raw.exPos = v;
-	raw.exCorrection = v;
 	raw.exPreser = v;
 	raw.exBlackzero = v;
 	raw.exBlackone = v;
 	raw.exBlacktwo = v;
 	raw.exBlackthree = v;
 	raw.exTwoGreen=v;
-	raw.greenEq = v;
-	raw.linenoise = v;
-	raw.ff_file = v;
-	raw.ff_AutoSelect = v;
-	raw.ff_BlurRadius = v;
-	raw.ff_BlurType = v;
+
 	dirpyrequalizer.enabled = v;
 	for(int i = 0; i < 5; i++) {
 		dirpyrequalizer.mult[i] = v;
@@ -328,31 +328,29 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
+        raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
+        raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
         raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
-		
-        raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
-        raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
 		raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
-		raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
-		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser; //exposi
- 		raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero; //black
-		raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone; //black
-		raw.exBlacktwo = raw.exBlacktwo && p.raw.blacktwo == other.raw.blacktwo; //black
-		raw.exBlackthree = raw.exBlackthree && p.raw.blackthree == other.raw.blackthree; //black
-		raw.exTwoGreen = raw.exTwoGreen && p.raw.twogreen == other.raw.twogreen; //black 2 green		
-		
+        raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
+        raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
+        raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;                        
         raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
         raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
         raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;        
-        raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
-        raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
-        raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
+		raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
+		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
+ 		raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero;
+		raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone;
+		raw.exBlacktwo = p.raw.blacktwo == other.raw.blacktwo;
+		raw.exBlackthree = p.raw.blackthree == other.raw.blackthree;
+		raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;		
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         for(int i = 0; i < 8; i++) {
@@ -532,4 +530,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 //	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
 //	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;
+}
+
+bool RAWParamsEdited::isUnchanged() const {
+    return ccSteps && dmethod && dcbIterations && dcbEnhance && allEnhance && caCorrection && caRed && caBlue && greenEq
+        && hotDeadPixel && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
+	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
 }
