@@ -305,7 +305,6 @@ class RAWParamsEdited {
 		bool ff_AutoSelect;
 		bool ff_BlurRadius;
 		bool ff_BlurType;
-		bool exCorrection;
 		bool exPos;
 		bool exPreser;
 		bool exBlackzero;
@@ -313,6 +312,8 @@ class RAWParamsEdited {
 		bool exBlacktwo;
 		bool exBlackthree;
 		bool exTwoGreen;
+
+        bool isUnchanged() const;
 };
 
 class ExifPairEdited {

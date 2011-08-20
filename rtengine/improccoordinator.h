@@ -126,8 +126,9 @@ class ImProcCoordinator : public StagedImageProcessor {
         void        getParams (procparams::ProcParams* dst) { *dst = params; }
 
         void        startProcessing(int changeCode);
-        ProcParams* getParamsForUpdate (ProcEvent change);
-        void        paramsUpdateReady ();  // must be called after getParamsForUpdate, triggers full update
+        ProcParams* beginUpdateParams ();
+        void        endUpdateParams (ProcEvent change);  // must be called after beginUpdateParams, triggers update
+        void        endUpdateParams (int changeFlags);
         void        stopProcessing ();
 
 

@@ -615,17 +615,21 @@ void ImProcCoordinator::process () {
         plistener->setProgressState (false);
 }
 
-ProcParams* ImProcCoordinator::getParamsForUpdate (ProcEvent change) {
-
+ProcParams* ImProcCoordinator::beginUpdateParams () {
     paramsUpdateMutex.lock ();
-    changeSinceLast |= refreshmap[(int)change];
+
     return &nextParams;
 }
 
-void ImProcCoordinator::paramsUpdateReady () {
+void ImProcCoordinator::endUpdateParams (ProcEvent change) {
+    endUpdateParams( refreshmap[(int)change] );
+}
+
+void ImProcCoordinator::endUpdateParams (int changeFlags) {
+    changeSinceLast |= changeFlags;
 
     paramsUpdateMutex.unlock ();
-    startProcessing ();  // Executes what has been requested with getParamsForUpdate
+    startProcessing ();
 }
 
 

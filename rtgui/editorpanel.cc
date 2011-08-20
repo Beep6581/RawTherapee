@@ -1199,9 +1199,9 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {
 
     if (beforeIpc) {
-        ProcParams* pparams = beforeIpc->getParamsForUpdate (rtengine::EvProfileChanged);
+        ProcParams* pparams = beforeIpc->beginUpdateParams ();
         *pparams = params;
-        beforeIpc->paramsUpdateReady ();  // starts the IPC processinp
+        beforeIpc->endUpdateParams (rtengine::EvProfileChanged);  // starts the IPC processing
     }
 }
 

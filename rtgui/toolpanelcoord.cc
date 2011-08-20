@@ -24,6 +24,8 @@
 #include <dfmanager.h>
 #include <ffmanager.h>
 #include <improcfun.h>
+#include <procevents.h>
+#include <refreshmap.h>
 
 using namespace rtengine::procparams;
 
@@ -236,7 +238,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
     if (!ipc) return;
 
-    ProcParams* params = ipc->getParamsForUpdate (event);
+    ProcParams* params = ipc->beginUpdateParams ();
     for (int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (params);
 
@@ -260,7 +262,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         resize->write (params);
     }
 
-    ipc->paramsUpdateReady ();   // starts the IPC processinp
+    ipc->endUpdateParams (event);   // starts the IPC processing
 
     hasChanged = true;
 
@@ -273,7 +275,20 @@ void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::
 	int fw, fh, tr;
 
     if (!ipc) return;
-    ProcParams *params = ipc->getParamsForUpdate (event);
+    ProcParams *params = ipc->beginUpdateParams ();
+
+    // Derive the effective changes, if it's a profile change, to prevent slow RAW rerendering if not necessary
+    bool filterRawRefresh=false;
+    if (event!=rtengine::EvPhotoLoaded) {
+        ParamsEdited pe;
+        std::vector<rtengine::procparams::ProcParams> lParams(2);
+        lParams[0]=*params; lParams[1]=*nparams;
+        pe.set(true);
+        pe.initFrom (lParams);
+
+        filterRawRefresh=pe.raw.isUnchanged();
+    }
+
     *params = *nparams;
 
     tr = TR_NONE;
@@ -290,7 +305,11 @@ void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::
     for (unsigned int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->read (params);
 
-    ipc->paramsUpdateReady ();  // starts the IPC processinp
+    // start the IPC processing
+    if (filterRawRefresh) {
+        ipc->endUpdateParams ( refreshmap[(int)event] & ALLNORAW );
+    } else 
+        ipc->endUpdateParams (event);  
 
     hasChanged = event != rtengine::EvProfileChangeNotification;
 
