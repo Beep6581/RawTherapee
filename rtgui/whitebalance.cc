@@ -97,6 +97,13 @@ void WhiteBalance::adjusterChanged (Adjuster* a, double newval) {
         method->set_active (2);
         enableListener ();
     }
+    else { //method->get_active_row_number()==2
+        //cache custom WB setting to allow its recall
+        if (a==temp)
+            custom_temp=(int)a->getValue();
+        else if (a==green) 
+            custom_green=a->getValue();
+    }
 
     if (listener) {
         if (a==temp) 
@@ -133,6 +140,19 @@ void WhiteBalance::optChanged () {
                 green->setEditedState (UnEdited);
             }
         }
+        else if (opt==2 && wbp) {
+            // recall custom WB settings
+        	if (custom_temp>0){
+				temp->setValue (temp->getAddMode() ? 0.0 : custom_temp);
+				green->setValue (green->getAddMode() ? 0.0 : custom_green);
+        	}
+            meth = M("TP_WBALANCE_CUSTOM");
+            if (batchMode) {
+                temp->setEditedState (Edited);
+                green->setEditedState (Edited);
+            }
+        }
+
         else if (opt==3) {
             meth = M("GENERAL_UNCHANGED");
             temp->setEditedState (UnEdited);
@@ -177,6 +197,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
                 wbp->getCamWB (ctemp, cgreen);
                 temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
                 green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                cache_customWB ((int)ctemp, cgreen); // this will be used to set initial Custom WB setting
             }
             opt = 0;
         }
@@ -187,6 +208,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
                 wbp->getAutoWB (ctemp, cgreen);
                 temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
                 green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                cache_customWB ((int)ctemp, cgreen); // this will be used to set initial Custom WB setting
             }
             opt = 1;
         }
@@ -194,6 +216,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
             method->set_active (2);
             temp->setValue (pp->wb.temperature);
             green->setValue (pp->wb.green);
+            cache_customWB (pp->wb.temperature, pp->wb.green);
+
             opt = 2;
             if (pedited) {
                 temp->setEditedState (pedited->wb.temperature ? Edited : UnEdited);
@@ -275,6 +299,8 @@ void WhiteBalance::setWB (int vtemp, double vgreen) {
     temp->setEditedState (Edited);
     green->setEditedState (Edited);
     enableListener ();
+
+    cache_customWB (vtemp,vgreen);
 
     if (listener) 
         listener->panelChanged (EvWBTemp, Glib::ustring::compose("%1, %2", (int)temp->getValue(), Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), green->getValue())));
