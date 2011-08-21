@@ -44,6 +44,9 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     WBProvider *wbp;
     SpotWBListener* wblistener;
     sigc::connection methconn;
+    int custom_temp;
+    double custom_green;
+    void cache_customWB(int temp, double green){custom_temp = temp; custom_green=green;}; //cache custom WB setting to allow its recall
 
   public:
 
