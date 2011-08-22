@@ -358,6 +358,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
         keyFile.set_string  ("White Balance", "Setting",     "Camera");
     else
         keyFile.set_string  ("White Balance", "Setting",     "Custom");
+    // not that "Auto" has been ruled out. It's just custom.
+
     keyFile.set_integer ("White Balance", "Temperature", wb.temperature);
     keyFile.set_double  ("White Balance", "Green",       wb.green);
     
