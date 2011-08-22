@@ -240,7 +240,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited) {
     if (method->get_active_row_number()==0)
         pp->wb.method = "Camera";
     else if (method->get_active_row_number()==1)
-        pp->wb.method = "Auto";
+        pp->wb.method = "Custom"; // "Auto";  // "Auto" is never saved to PP3/XMP. However when reopening images (from RAM) it can lead to crashes because the values are not available yet.
     else if (method->get_active_row_number()>=2)
         pp->wb.method = "Custom";      
     
