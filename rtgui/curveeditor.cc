@@ -152,7 +152,7 @@ void CurveEditor::updateBackgroundHistogram (LUTu & hist) {
 // Open up the curve if it has modifications and it's not already opened
 // Returns: is it non-linear?
 bool CurveEditor::openIfNonlinear() {
-    bool nonLinear = tempCurve[0] != subGroup->getValLinear();
+    bool nonLinear = tempCurve.size() && (tempCurve[0] > subGroup->getValLinear()) && (tempCurve[0] < subGroup->getValUnchanged());
 
     if (nonLinear && !curveType->get_active()) {
         // Will toggle the event doing the display
