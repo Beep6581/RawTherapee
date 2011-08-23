@@ -138,7 +138,8 @@ FunctionEnd
   
   ;ADD YOUR OWN FILES HERE...
   File /r ${ReleaseDir}\*.*
-  File ${DocDir}\en\RawTherapeeManual_3.0.pdf
+  File ${DocDir}\en\RawTherapeeManual_3.0_en.pdf
+  File ${DocDir}\de\RawTherapeeManual_3.0_de.pdf
 
   ;Store installation folder
   WriteRegStr HKCU "Software\RawTherapee${TAG}" "" $INSTDIR
@@ -151,7 +152,8 @@ FunctionEnd
   ;Create shortcuts
   CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
   CreateShortCut "$SMPROGRAMS\$StartMenuFolder\RawTherapee.lnk" "$INSTDIR\rawtherapee.exe"
-  CreateShortCut "$SMPROGRAMS\$StartMenuFolder\User Manual.lnk" "$INSTDIR\RawTherapeeManual_3.0.pdf"
+  CreateShortCut "$SMPROGRAMS\$StartMenuFolder\User Manual ENG.lnk" "$INSTDIR\RawTherapeeManual_3.0_en.pdf"
+  CreateShortCut "$SMPROGRAMS\$StartMenuFolder\User Manual DEU.lnk" "$INSTDIR\RawTherapeeManual_3.0_de.pdf"
   CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   ;Browse with RawTherapee
