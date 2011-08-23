@@ -252,6 +252,12 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
     int x1, x2, y1, y2;
     params.crop.mapToResized(width, height, scale, x1, x2, y1, y2);
 
+    /*
+     * WARNING: this parallelization is not 100% safe. Some of its values
+     * are underestimated by 1 or 2, but in practical, it doesn't seem to be
+     * annoying in any way, so i guess we may leave it as is...
+     * (Hombre)
+     */
     #pragma omp parallel for
     for (int y=y1; y<y2; y++) {
         int i;
