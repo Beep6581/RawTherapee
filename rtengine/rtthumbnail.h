@@ -72,7 +72,7 @@ namespace rtengine {
             
             IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
             IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
-            int      getImageWidth  (const procparams::ProcParams& pparams, int rheight);
+            int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
             void     getDimensions  (int& w, int& h, double& scaleFac);
             
             static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);

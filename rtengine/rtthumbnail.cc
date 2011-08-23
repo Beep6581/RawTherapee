@@ -780,14 +780,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     return readyImg;
 }
 
-int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight) {
+int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight, float &ratio) {
 	if (thumbImg==NULL) return 0;  // Can happen if thumb is just building and GUI comes in with resize wishes
 
     int rwidth;
-    if (params.coarse.rotate==90 || params.coarse.rotate==270) 
-        rwidth = thumbImg->height * rheight / thumbImg->width;
-    else 
-        rwidth = thumbImg->width * rheight / thumbImg->height;   
+    if (params.coarse.rotate==90 || params.coarse.rotate==270) {
+    	ratio = (float)(thumbImg->height) / (float)(thumbImg->width);
+    }
+    else {
+    	ratio = (float)(thumbImg->width) / (float)(thumbImg->height);
+    }
+    rwidth = (int)(ratio * (float)rheight);
 
     return rwidth;
 }

@@ -85,6 +85,7 @@ void Thumbnail::_generateThumbnailImage () {
 	lastImg = NULL;
 	tw = -1;
 	th = options.maxThumbnailHeight;
+	imgRatio = -1.;
 
 	// generate thumbnail image
 	Glib::ustring ext = getExtension (fname);
@@ -388,8 +389,13 @@ void Thumbnail::getThumbnailSize (int &w, int &h) {
 	#endif
 
 	w=0;
-	if (!initial_ && tpp) w = tpp->getImageWidth (getProcParams(), h);  // this might return 0 if image was just building
-    if (w==0) w = tw * h / th;
+	if (!initial_ && tpp) w = tpp->getImageWidth (getProcParams(), h, imgRatio);  // this might return 0 if image was just building
+	if (w==0) {
+		if (imgRatio > 0.)
+			w = (int)(imgRatio * (float)h);
+		else
+			w = tw * h / th;
+	}
 }
 
 void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, int& w, int& h) {

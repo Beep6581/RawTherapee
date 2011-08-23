@@ -91,7 +91,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     }
 
     // draw preview frame
-    backBuffer->draw_rectangle (gc_, false, (exp_width-prew)/2, upperMargin+bsHeight, prew+1, preh+1);
+    //backBuffer->draw_rectangle (gc_, false, (exp_width-prew)/2, upperMargin+bsHeight, prew+1, preh+1);
     // draw thumbnail image
     if (preview) {
         prex = borderWidth + (exp_width-prew)/2;
@@ -296,7 +296,9 @@ void ThumbBrowserEntryBase::resize (int h) {
         delete [] preview;
         preview = NULL;
         refreshThumbnailImage ();
-    } // causes skewed thumb sometimes: else updateBackBuffer();
+    }
+    else
+        updateBackBuffer();
 
     drawable = true;
 }

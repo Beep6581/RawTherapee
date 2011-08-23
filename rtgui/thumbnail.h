@@ -41,9 +41,10 @@ class Thumbnail {
        
         // if the thumbnail is in processed mode, this class holds its data:
         rtengine::Thumbnail* tpp;
-        int             tw, th;     // dimensions of timgdata (it stores tpp->width and tpp->height in processed mode for simplicity)
-//        double          scale;      // portion of the sizes of the processed thumbnail image and the full scale image
-        
+        int             tw, th;             // dimensions of timgdata (it stores tpp->width and tpp->height in processed mode for simplicity)
+        float           imgRatio;           // hack to avoid rounding error
+//        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
+
         rtengine::procparams::ProcParams      pparams;
         bool            pparamsValid;
         bool            pparamsSet;
