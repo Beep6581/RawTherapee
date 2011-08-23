@@ -15,11 +15,11 @@ BATCH_PROCESSING;Sviluppo in Serie
 CURVEEDITOR_CURVE;Curva
 CURVEEDITOR_CURVES;Curve
 CURVEEDITOR_CUSTOM;Personalizzata
-CURVEEDITOR_DARKS;Toni Scuri
+CURVEEDITOR_DARKS;Toni scuri
 CURVEEDITOR_FILEDLGFILTERANY;Qualsiasi file
 CURVEEDITOR_FILEDLGFILTERCURVE;File di curve
 CURVEEDITOR_HIGHLIGHTS;Alteluci
-CURVEEDITOR_LIGHTS;Toni Chiari
+CURVEEDITOR_LIGHTS;Toni chiari
 CURVEEDITOR_LINEAR;Lineare
 CURVEEDITOR_LOADDLGLABEL;Carica curva...
 CURVEEDITOR_MINMAXCPOINTS;Punti di controllo minimo/massimo
@@ -136,7 +136,7 @@ GENERAL_SAVE;Salva
 GENERAL_UNCHANGED;(Invariante)
 GENERAL_YES;Sì
 HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;V
+HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Istogramma
@@ -149,41 +149,41 @@ HISTORY_CUSTOMCURVE;Curva personalizzata
 HISTORY_DELSNAPSHOT;Rimuovi
 HISTORY_FROMCLIPBOARD;Dagli appunti
 HISTORY_LABEL;Cronologia
-HISTORY_MSG_100;Saturazione RVB
-HISTORY_MSG_101;Tonalità - Equalizzatore TSL
-HISTORY_MSG_102;Saturazione - Equalizzatore TSL
-HISTORY_MSG_103;Luminosità - Equalizzatore TSL
-HISTORY_MSG_104;Equalizzatore TSL
-HISTORY_MSG_105;Rimozione Aloni Contrastati
-HISTORY_MSG_106;Raggio - Rimozione Aloni Contrastati
-HISTORY_MSG_107;Soglia - Rimozione Aloni Contrastati
-HISTORY_MSG_108;Soglia di Compr. Alteluci
-HISTORY_MSG_109;Riquadro di Selezione - Ridimensiona
-HISTORY_MSG_10;Compressione Ombre
+HISTORY_MSG_100;Saturazione RGB
+HISTORY_MSG_101;Tonalità - Equalizzatore HSV
+HISTORY_MSG_102;Saturazione - Equalizzatore HSV
+HISTORY_MSG_103;Luminosità - Equalizzatore HSV
+HISTORY_MSG_104;Equalizzatore HSV
+HISTORY_MSG_105;Rimozione aloni contrastati
+HISTORY_MSG_106;Raggio - Rimozione aloni contrastati
+HISTORY_MSG_107;Soglia - Rimozione aloni contrastati
+HISTORY_MSG_108;Soglia di compr. alteluci
+HISTORY_MSG_109;Riquadro di selezione - Ridimensiona
+HISTORY_MSG_10;Compressione ombre
 HISTORY_MSG_110;Applica a - Ridimensiona
-HISTORY_MSG_111;Previeni Tosaggio del Colore
-HISTORY_MSG_112;Limitatore di Saturazione
-HISTORY_MSG_113;Limite Saturazione
+HISTORY_MSG_111;Previeni tosaggio del colore
+HISTORY_MSG_112;Limitatore di saturazione
+HISTORY_MSG_113;Limite saturazione
 HISTORY_MSG_114;Iterazioni DCB
 HISTORY_MSG_115;Stadi per falsi colori
 HISTORY_MSG_116;Affinamento DCB
 ISTORY_MSG_117;Correzione AC Rossa
 HISTORY_MSG_118;Correzione AC Blu
-HISTORY_MSG_119;Filtro Rumore a Bande
-HISTORY_MSG_11;Curva di Tono
-HISTORY_MSG_120;Soglia Uniform. Verde
+HISTORY_MSG_119;Filtro rumore a bande
+HISTORY_MSG_11;Curva di tono
+HISTORY_MSG_120;Soglia uniform. verde
 HISTORY_MSG_121;AC automatiche
 HISTORY_MSG_122;Dark-Frame automatica
 HISTORY_MSG_123;File di Dark-Frame
-HISTORY_MSG_124;Compensazione Esp. Lineare
-HISTORY_MSG_125;Comp. di protezione AlteLuci
+HISTORY_MSG_124;Compensazione esp. lineare
+HISTORY_MSG_125;Comp. di protezione alteLuci
 HISTORY_MSG_12;Esposizione automatica
 HISTORY_MSG_13;Tosaggio - Esposizione
 HISTORY_MSG_14;Luminosità - Luminanza
 HISTORY_MSG_15;Contrasto - Luminanza
-HISTORY_MSG_16;Livello del Nero - Luminanza
-HISTORY_MSG_17;Compr. Alteluci - Luminanza
-HISTORY_MSG_18;Compr. Ombre - Luminanza
+HISTORY_MSG_16;Livello del nero - Luminanza
+HISTORY_MSG_17;Compr. alteluci - Luminanza
+HISTORY_MSG_18;Compr. ombre - Luminanza
 HISTORY_MSG_19;Curva per 'L'
 HISTORY_MSG_1;Foto caricata
 HISTORY_MSG_20;Nitidezza
@@ -202,22 +202,22 @@ HISTORY_MSG_31;Quantità - Deconvoluzione
 HISTORY_MSG_32;Smorzamento - Deconvoluzione
 HISTORY_MSG_33;Iterazioni - Deconvoluzione
 HISTORY_MSG_34;Previeni tosaggio dei colori
-HISTORY_MSG_35;Limitatore di Saturazione
+HISTORY_MSG_35;Limitatore di saturazione
 HISTORY_MSG_36;Limite saturazione
-HISTORY_MSG_37;Potenziamento Colore
-HISTORY_MSG_38;Metodo - Bilanciamento del Bianco
+HISTORY_MSG_37;Potenziamento colore
+HISTORY_MSG_38;Metodo - Bilanciamento del bianco
 HISTORY_MSG_39;Temperatura di colore
 HISTORY_MSG_3;Profilo modificato
-HISTORY_MSG_40;Tinta - Bilanciamento del Bianco
-HISTORY_MSG_41;Spostamento Colore "a"
-HISTORY_MSG_42;Spostamento Colore "b"
-HISTORY_MSG_43;Riduzione Rumore Luminanza
-HISTORY_MSG_44;Raggio - Rid. Rumore Luminanza
-HISTORY_MSG_45;Tolleranza bordi- Rid. Rumore Luminanza
-HISTORY_MSG_46;Riduzione Rumore Crominanza
-HISTORY_MSG_47;Raggio - Rid. Rumore Crominanza
-HISTORY_MSG_48;Tolleranza bordi - Rid. Rumore Crominanza
-HISTORY_MSG_49;Sensibilità bordi - Rid. Rumore Crominanza
+HISTORY_MSG_40;Tinta - Bilanciamento del bianco
+HISTORY_MSG_41;Spostamento colore "a"
+HISTORY_MSG_42;Spostamento colore "b"
+HISTORY_MSG_43;Riduzione rumore luminanza
+HISTORY_MSG_44;Raggio - Rid. rumore luminanza
+HISTORY_MSG_45;Tolleranza bordi- Rid. rumore luminanza
+HISTORY_MSG_46;Riduzione rumore crominanza
+HISTORY_MSG_47;Raggio - Rid. rumore crominanza
+HISTORY_MSG_48;Tolleranza bordi - Rid. rumore crominanza
+HISTORY_MSG_49;Sensibilità bordi - Rid. rumore crominanza
 HISTORY_MSG_4;Visualizzazione cronologia
 HISTORY_MSG_50;Strumento Ombre/Alteluci
 HISTORY_MSG_51;Miglioramento alteluci
@@ -227,53 +227,53 @@ HISTORY_MSG_54;Ampiezza tonale - Ombre
 HISTORY_MSG_55;Contrasto locale
 HISTORY_MSG_56;Raggio - Ombre/Alteluci
 HISTORY_MSG_57;Rotazione semplice
-HISTORY_MSG_58;Ribaltamento Orizzontale
-HISTORY_MSG_59;Ribaltamento Verticale
+HISTORY_MSG_58;Ribaltamento orizzontale
+HISTORY_MSG_59;Ribaltamento verticale
 HISTORY_MSG_5;Luminosità - Esposizione
 HISTORY_MSG_60;Ruota
 HISTORY_MSG_61;Riadatta
-HISTORY_MSG_62;Correzione Distorsione dell'obiettivo
+HISTORY_MSG_62;Correzione distorsione dell'obiettivo
 HISTORY_MSG_63;Istantanea selezionata
 HISTORY_MSG_64;Ritaglia
-HISTORY_MSG_65;Correzione Aberrazioni Cromatiche
-HISTORY_MSG_66;Recupero Alteluci
-HISTORY_MSG_67;Quantità - Recupero Alteluci
-HISTORY_MSG_68;Metodo - Ricostruzione Alteluci
-HISTORY_MSG_69;Spazio Colore di lavoro
+HISTORY_MSG_65;Correzione aberrazioni cromatiche
+HISTORY_MSG_66;Recupero alteluci
+HISTORY_MSG_67;Quantità - Recupero alteluci
+HISTORY_MSG_68;Metodo - Ricostruzione alteluci
+HISTORY_MSG_69;Spazio colore di lavoro
 HISTORY_MSG_6;Contrasto - Esposizione
-HISTORY_MSG_70;Spazio Colore di uscita
-HISTORY_MSG_71;Spazio Colore di ingresso
-HISTORY_MSG_72;Correzione Vignettatura
-HISTORY_MSG_73;Miscelatore dei Canali
+HISTORY_MSG_70;Spazio colore di uscita
+HISTORY_MSG_71;Spazio colore di ingresso
+HISTORY_MSG_72;Correzione vignettatura
+HISTORY_MSG_73;Miscelatore dei canali
 HISTORY_MSG_74;Scala - Ridimensiona
 HISTORY_MSG_75;Metodo - Ridimensiona
 HISTORY_MSG_76;Metadati Exif 
 HISTORY_MSG_77;Metadati IPTC 
-HISTORY_MSG_78;Misure specificate per Ridimensiona
+HISTORY_MSG_78;Misure specificate per ridimensiona
 HISTORY_MSG_79;Larghezza - Ridimensiona
-HISTORY_MSG_7;Livello del Nero - Esposizione
+HISTORY_MSG_7;Livello del nero - Esposizione
 HISTORY_MSG_80;Altezza - Ridimensiona
 HISTORY_MSG_81;Ridimensiona
 HISTORY_MSG_82;Profilo modificato
-HISTORY_MSG_83;Ombre/Alteluci in Alta Qualità
-HISTORY_MSG_84;Correzione Prospettiva
-HISTORY_MSG_85;Coefficienti delle ondine (Wavelet)
-HISTORY_MSG_86;Equalizzatore Ondine (Wavelet)
-HISTORY_MSG_87;Riduzione Rumore a Impulso
-HISTORY_MSG_88;Soglia - Riduzione Rumore a Impulso
-HISTORY_MSG_89;Riduzione Rumore
+HISTORY_MSG_83;Ombre/Alteluci in alta qualità
+HISTORY_MSG_84;Correzione prospettiva
+HISTORY_MSG_85;Coefficienti Wavelet
+HISTORY_MSG_86;Equalizzatore Wavelet
+HISTORY_MSG_87;Riduzione rumore impulsivo
+HISTORY_MSG_88;Soglia - Riduzione rumore impulsivo
+HISTORY_MSG_89;Riduzione rumore
 HISTORY_MSG_8;Compensazione dell'esposizione
-HISTORY_MSG_90;Luminanza - Riduzione Rumore
-HISTORY_MSG_91;Crominanza - Riduzione Rumore
-HISTORY_MSG_92;Gamma - Riduzione Rumore
-HISTORY_MSG_93;Valore - Contrasto per Livelli di Dettaglio
-HISTORY_MSG_94;Contrasto per Livelli di Dettaglio
+HISTORY_MSG_90;Luminanza - Riduzione rumore
+HISTORY_MSG_91;Crominanza - Riduzione rumore
+HISTORY_MSG_92;Gamma - Riduzione rumore
+HISTORY_MSG_93;Valore - Contrasto per livelli di dettaglio
+HISTORY_MSG_94;Contrasto per livelli di dettaglio
 HISTORY_MSG_95;Saturazione - Regolazioni Lab
 HISTORY_MSG_96;Curva per 'a'
 HISTORY_MSG_97;Curva per 'b'
 HISTORY_MSG_98;Metodo - Demosaicizzazione
 HISTORY_MSG_99;Interpolazione dei pixel alterati/guasti
-HISTORY_MSG_9;Compressione Alteluci
+HISTORY_MSG_9;Compressione alteluci
 HISTORY_NEWSNAPSHOT;Aggiungi
 HISTORY_NEWSNAPSHOTAS;Come...
 HISTORY_NEWSSDIALOGLABEL;Etichetta dell'istantanea:
@@ -283,7 +283,7 @@ HISTORY_SNAPSHOT;Istantanea
 HISTORY_SNAPSHOTS;Istantanee
 ICMPANEL_FILEDLGFILTERANY;Qualsiasi file
 ICMPANEL_FILEDLGFILTERICM;File di Profili ICC
-ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il Gamma
+ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il gamma
 ICMPANEL_INPUTCAMERA;Predefinito della fotocamera
 ICMPANEL_INPUTCUSTOM;Personalizzato
 ICMPANEL_INPUTDLGLABEL;Seleziona il profilo ICC di ingresso...
@@ -389,10 +389,10 @@ MAIN_TOOLTIP_SAVEAS;Salva l'immagine nella cartella selezionata
 MAIN_TOOLTIP_TOGGLE;Confronto prima/dopo <b>(scorciatoia: B)</b>
 NAVIGATOR_B_NA;B = n/d
 NAVIGATOR_B_VALUE;B = %1
-NAVIGATOR_G_NA;V = n/d
-NAVIGATOR_G_VALUE;V = %1
-NAVIGATOR_H_NA;T = n/d
-NAVIGATOR_H_VALUE;T = %1
+NAVIGATOR_G_NA;G = n/d
+NAVIGATOR_G_VALUE;G = %1
+NAVIGATOR_H_NA;H = n/d
+NAVIGATOR_H_VALUE;H = %1
 NAVIGATOR_LAB_A_NA;a = n/d
 NAVIGATOR_LAB_A_VALUE;a = %1
 NAVIGATOR_LAB_B_NA;b = n/d
@@ -403,55 +403,55 @@ NAVIGATOR_R_NA;R = n/d
 NAVIGATOR_R_VALUE;R = %1
 NAVIGATOR_S_NA;S = n/d
 NAVIGATOR_S_VALUE;S = %1
-NAVIGATOR_V_NA;L = n/d
-NAVIGATOR_V_VALUE;L = %1
+NAVIGATOR_V_NA;V = n/d
+NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
-PARTIALPASTE_BASICGROUP;Parametri Principali
-PARTIALPASTE_CACORRECTION;Correzione Aberrazioni Cromatiche
-PARTIALPASTE_CHANNELMIXER;Miscelatore Canali
+PARTIALPASTE_BASICGROUP;Parametri principali
+PARTIALPASTE_CACORRECTION;Correzione aberrazioni cromatiche
+PARTIALPASTE_CHANNELMIXER;Miscelatore canali
 PARTIALPASTE_COARSETRANS;Rotazione di 90° / Riflessione
-PARTIALPASTE_COLORBOOST;Potenziamento Colore
-PARTIALPASTE_COLORDENOISE;Riduzione Rumore di crominanza
-PARTIALPASTE_COLORGROUP;Parametri relativi al Colore
-PARTIALPASTE_COLORMIXER;Miscelatore Colore
-PARTIALPASTE_COLORSHIFT;Spostamento Colore
+PARTIALPASTE_COLORBOOST;Potenziamento colore
+PARTIALPASTE_COLORDENOISE;Riduzione rumore di crominanza
+PARTIALPASTE_COLORGROUP;Parametri relativi al colore
+PARTIALPASTE_COLORMIXER;Miscelatore colore
+PARTIALPASTE_COLORSHIFT;Spostamento colore
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Riadatta
-PARTIALPASTE_COMPOSITIONGROUP;Parametri di Composizione
+PARTIALPASTE_COMPOSITIONGROUP;Parametri di composizione
 PARTIALPASTE_CROP;Ritaglio
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Autoseleziona Dark-Frame
-PARTIALPASTE_DARKFRAMEFILE;Fotogramma di Fondo (Dark-Frame)
-PARTIALPASTE_DEFRINGE;Rimozione Aloni Contrastati
-PARTIALPASTE_DETAILGROUP;Parametri di Dettaglio
+PARTIALPASTE_DARKFRAMEFILE;Fotogramma Dark-Frame
+PARTIALPASTE_DEFRINGE;Rimozione aloni contrastati
+PARTIALPASTE_DETAILGROUP;Parametri di dettaglio
 PARTIALPASTE_DIALOGLABEL;Incolla una porzione del profilo
-PARTIALPASTE_DIRPYRDENOISE;Riduzione Rumore
-PARTIALPASTE_DIRPYREQUALIZER;Contrasto per Livelli di Dettaglio
-PARTIALPASTE_DISTORTION;Correzione Distorsione
+PARTIALPASTE_DIRPYRDENOISE;Riduzione rumore
+PARTIALPASTE_DIRPYREQUALIZER;Contrasto per livelli di dettaglio
+PARTIALPASTE_DISTORTION;Correzione distorsione
 PARTIALPASTE_EVERYTHING;Tutto
 PARTIALPASTE_EXIFCHANGES;Cambiamenti nei dati Exif
 PARTIALPASTE_EXPOSURE;Esposizione
-PARTIALPASTE_HLRECONSTRUCTION;Ricostruzione Alteluci
+PARTIALPASTE_HLRECONSTRUCTION;Ricostruzione alteluci
 PARTIALPASTE_HLRECOVERY;Recupero alteluci
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantità di recupero alteluci
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Soglia di recupero alteluci
-PARTIALPASTE_HSVEQUALIZER;Equalizzatore TSL
+PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMSETTINGS;Impostazioni ICM
-PARTIALPASTE_IMPULSEDENOISE;Riduzione Rumore a Impulso
+PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore impulsivo
 PARTIALPASTE_IPTCINFO;Informazioni IPTC
 PARTIALPASTE_LABCURVE;Regolazioni Lab
-PARTIALPASTE_LENSGROUP;Parametri correlati all'Ottica
-PARTIALPASTE_LUMADENOISE;Riduzione Rumore di Luminanza
-PARTIALPASTE_LUMINANCEGROUP;Parametri riguardanti la Luminanza
-PARTIALPASTE_METAICMGROUP;Parametri di Metadati e ICM
+PARTIALPASTE_LENSGROUP;Parametri correlati all'ottica
+PARTIALPASTE_LUMADENOISE;Riduzione rumore di luminanza
+PARTIALPASTE_LUMINANCEGROUP;Parametri riguardanti la luminanza
+PARTIALPASTE_METAICMGROUP;Parametri di metadati e ICM
 PARTIALPASTE_PERSPECTIVE;Prospettiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Uniformazione del verde
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Interpolazione dei pixel surriscaldati/guasti
-PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro per Rumore a Bande
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 PARTIALPASTE_RAWCACORR_AUTO;Autocorrezione AC
-PARTIALPASTE_RAWCACORR_CABLUE;Correzione AC Blu
-PARTIALPASTE_RAWCACORR_CARED;Correzione AC Rosse
+PARTIALPASTE_RAWCACORR_CABLUE;Correzione AC blu
+PARTIALPASTE_RAWCACORR_CARED;Correzione AC rosse
 PARTIALPASTE_RAWEXPOS_LINEAR;Fattore di correzione lineare dell'esposizione
 PARTIALPASTE_RAWEXPOS_PRESER;Compensazione d'esposizione a protezione delle alteluci
-PARTIALPASTE_RAWGROUP;Parametri di Elaborazione Raw
+PARTIALPASTE_RAWGROUP;Parametri di elaborazione raw
 PARTIALPASTE_RAW_DCBENHANCE;Fase di affinamento per DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Numero di iterazioni DCB
 PARTIALPASTE_RAW_DMETHOD;Metodo di demosaicizzazione
@@ -461,8 +461,8 @@ PARTIALPASTE_ROTATION;Rotazione
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombre/Alteluci
 PARTIALPASTE_SHARPENING;Nitidezza
 PARTIALPASTE_VIGNETTING;Correzione Vignettatura
-PARTIALPASTE_WAVELETEQUALIZER;Equalizzatore Ondine (Wavelet)
-PARTIALPASTE_WHITEBALANCE;Bilanciamento del Bianco
+PARTIALPASTE_WAVELETEQUALIZER;Equalizzatore Wavelet
+PARTIALPASTE_WHITEBALANCE;Bilanciamento del bianco
 PREFERENCES_ADD;SOMMA
 PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
 PREFERENCES_BATCH_PROCESSING;Sviluppo in serie
@@ -512,9 +512,9 @@ PREFERENCES_HINT;Suggerimento
 PREFERENCES_HLTHRESHOLD;Soglia per le alteluci tosate
 PREFERENCES_ICCDIR;Cartella profili ICC
 PREFERENCES_IMPROCPARAMS;Parametri predefiniti di elaborazione dell'immagine
-PREFERENCES_INTENT_ABSOLUTE;Colorimetrico Assoluto
+PREFERENCES_INTENT_ABSOLUTE;Colorimetrico assoluto
 PREFERENCES_INTENT_PERCEPTUAL;Percettivo
-PREFERENCES_INTENT_RELATIVE;Colorimetrico Relativo
+PREFERENCES_INTENT_RELATIVE;Colorimetrico relativo
 PREFERENCES_INTENT_SATURATION;Saturazione
 PREFERENCES_LIVETHUMBNAILS;Miniature sincronizzate (maggiore lentezza)
 PREFERENCES_MONITORICC;Profilo dello schermo
@@ -564,15 +564,15 @@ PREFERENCES_TUNNELMETADATA;Copia i dati IPTC/XMP non modificati nel file finale 
 PREFERENCES_USESYSTEMTHEME;Usa tema di sistema
 PREFERENCES_WORKFLOW;Flusso di lavoro
 PROFILEPANEL_FILEDLGFILTERANY;Qualsiasi file
-PROFILEPANEL_FILEDLGFILTERPP;Profili di post-elaborazione
-PROFILEPANEL_LABEL;Profili di Post-Elaborazione
-PROFILEPANEL_LOADDLGLABEL;Carico i parametri di post-elaborazione...
+PROFILEPANEL_FILEDLGFILTERPP;Profili di elaborazione
+PROFILEPANEL_LABEL;Profili di elaborazione
+PROFILEPANEL_LOADDLGLABEL;Carico i parametri di elaborazione...
 PROFILEPANEL_PCUSTOM;Personalizzato
 PROFILEPANEL_PFILE;Da file
 PROFILEPANEL_PLASTPHOTO;Ultima foto
 PROFILEPANEL_PLASTSAVED;Ultimo salvato
 PROFILEPANEL_PROFILE;Profilo
-PROFILEPANEL_SAVEDLGLABEL;Salvo i parametri di post-elaborazione...
+PROFILEPANEL_SAVEDLGLABEL;Salvo i parametri di elaborazione...
 PROFILEPANEL_TOOLTIPCOPY;Copia il profilo corrente negli appunti
 PROFILEPANEL_TOOLTIPLOAD;Carica profilo da file
 PROFILEPANEL_TOOLTIPPASTE;Incolla il profilo dagli appunti
@@ -614,13 +614,13 @@ TOOLBAR_TOOLTIP_HAND;Strumento mano <b>(scorciatoia: N)</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Seleziona una linea dritta <b>(scorciatoia: S)</b>
 TOOLBAR_TOOLTIP_WB;Bilanciamento del bianco puntuale <b>(scorciatoia: W)</b>
 TP_CACORRECTION_BLUE;Blu
-TP_CACORRECTION_LABEL;Correzione Aberrazioni Cromatiche
+TP_CACORRECTION_LABEL;Correzione aberrazioni cromatiche
 TP_CACORRECTION_RED;Rosso
 TP_CHMIXER_BLUE;Blu
 TP_CHMIXER_GREEN;Verde
 TP_CHMIXER_LABEL;Miscelatore Canali
 TP_CHMIXER_RED;Rosso
-TP_CHROMATABERR_LABEL;Aberrazioni Cromatiche
+TP_CHROMATABERR_LABEL;Aberrazioni cromatiche
 TP_COARSETRAF_DEGREE;Angolo:
 TP_COARSETRAF_TOOLTIP_HFLIP;Rifletti orizzontalmente
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Ruota a sinistra
@@ -633,12 +633,12 @@ TP_COLORBOOST_BCHANNEL;canale "b"
 TP_COLORBOOST_CHAB;a & b
 TP_COLORBOOST_CHANNEL;Canale
 TP_COLORBOOST_CHSEPARATE;separati
-TP_COLORBOOST_ENABLESATLIMITER;Abilita Limitatore di Saturazione
-TP_COLORBOOST_LABEL;Potenziamento Colore
+TP_COLORBOOST_ENABLESATLIMITER;Abilita limitatore di saturazione
+TP_COLORBOOST_LABEL;Potenziamento colore
 TP_COLORBOOST_SATLIMIT;Limite di saturazione
 TP_COLORDENOISE_EDGESENSITIVE;Sensibile ai bordi
 TP_COLORDENOISE_EDGETOLERANCE;Tolleranza bordi
-TP_COLORDENOISE_LABEL;Riduzione Rumore di Crominanza
+TP_COLORDENOISE_LABEL;Riduzione Rumore di crominanza
 TP_COLORDENOISE_RADIUS;Raggio
 TP_COLORSHIFT_BLUEYELLOW;Blu-Giallo
 TP_COLORSHIFT_GREENMAGENTA;Verde-Magenta
@@ -656,21 +656,21 @@ TP_CROP_GTRULETHIRDS;Regola dei terzi
 TP_CROP_GUIDETYPE;Tipo di guida:
 TP_CROP_H;A
 TP_CROP_LABEL;Ritaglia
-TP_CROP_SELECTCROP;    Seleziona Area
+TP_CROP_SELECTCROP;Seleziona area
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Autoselezione
-TP_DARKFRAME_LABEL;Fotogramma di Fondo (Dark-Frame)
-TP_DEFRINGE_LABEL;Rimozione Aloni Contrastati (PF)
+TP_DARKFRAME_LABEL;Fotogramma di fondo (Dark-Frame)
+TP_DEFRINGE_LABEL;Rimozione aloni contrastati (PF)
 TP_DEFRINGE_RADIUS;Raggio
 TP_DEFRINGE_THRESHOLD;Soglia
 TP_DETAIL_AMOUNT;Quantità
 TP_DIRPYRDENOISE_CHROMA;Crominanza
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_LABEL;Riduzione Rumore
+TP_DIRPYRDENOISE_LABEL;Riduzione rumore
 TP_DIRPYRDENOISE_LUMA;Luminanza
-TP_DIRPYREQUALIZER_LABEL;Contrasto per Livelli di Dettaglio
+TP_DIRPYREQUALIZER_LABEL;Contrasto per livelli di dettaglio
 TP_DIRPYREQUALIZER_LUMACOARSEST;Estesissimo
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrasto-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrasto+
@@ -682,25 +682,25 @@ TP_DISTORTION_LABEL;Distorsione
 TP_EQUALIZER_CONTRAST_MINUS;Contrasto-
 TP_EQUALIZER_CONTRAST_PLUS;Contrasto+
 TP_EQUALIZER_FINEST;finissima
-TP_EQUALIZER_LABEL;Equalizzatore Ondine (Wavelet)
+TP_EQUALIZER_LABEL;Equalizzatore Wavelet
 TP_EQUALIZER_LARGEST;estesissima
 TP_EQUALIZER_NEUTRAL;Neutro
 TP_EXPOSCORR_LABEL;Esposizione
-TP_EXPOSURE_AUTOLEVELS;Livelli Automatici
-TP_EXPOSURE_BLACKLEVEL;Livello del Nero
+TP_EXPOSURE_AUTOLEVELS;Livelli automatici
+TP_EXPOSURE_BLACKLEVEL;Livello del nero
 TP_EXPOSURE_BRIGHTNESS;Luminosità
 TP_EXPOSURE_CLIP;Tosa
-TP_EXPOSURE_COMPRHIGHLIGHTS;Recupero Alteluci
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Soglia di Recupero Alteluci
-TP_EXPOSURE_COMPRSHADOWS;Recupero Ombre
+TP_EXPOSURE_COMPRHIGHLIGHTS;Recupero alteluci
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Soglia di recupero alteluci
+TP_EXPOSURE_COMPRSHADOWS;Recupero ombre
 TP_EXPOSURE_CONTRAST;Contrasto
-TP_EXPOSURE_CURVEEDITOR;Curva di Tono
-TP_EXPOSURE_EXPCOMP;Compensazione Esposizione
+TP_EXPOSURE_CURVEEDITOR;Curva di tono
+TP_EXPOSURE_EXPCOMP;Compensazione esposizione
 TP_EXPOSURE_LABEL;Esposizione
 TP_EXPOSURE_SATURATION;Saturazione
 TP_HLREC_CIELAB;Miscelazione in CIELab 
 TP_HLREC_COLOR;Propagazione di crominanza
-TP_HLREC_LABEL;Ricostruzione Alteluci
+TP_HLREC_LABEL;Ricostruzione alteluci
 TP_HLREC_LUMINANCE;Recupero di luminanza
 TP_HLREC_METHOD;Metodo:
 TP_HSVEQUALIZER1;Rosso
@@ -711,12 +711,12 @@ TP_HSVEQUALIZER5;Ciano
 TP_HSVEQUALIZER6;Blu
 TP_HSVEQUALIZER7;Viola
 TP_HSVEQUALIZER8;Magenta
-TP_HSVEQUALIZER_CHANNEL;Canale TSL
-TP_HSVEQUALIZER_HUE;T
-TP_HSVEQUALIZER_LABEL;Equalizzatore TSL
+TP_HSVEQUALIZER_CHANNEL;Canale HSV
+TP_HSVEQUALIZER_HUE;H
+TP_HSVEQUALIZER_LABEL;Equalizzatore HSV
 TP_HSVEQUALIZER_NEUTRAL;Neutro
 TP_HSVEQUALIZER_SAT;S
-TP_HSVEQUALIZER_VAL;L
+TP_HSVEQUALIZER_VAL;V
 TP_ICM_FILEDLGFILTERANY;Qualsiasi file
 TP_ICM_FILEDLGFILTERICM;File profili ICC
 TP_ICM_GAMMABEFOREINPUT;Il profilo applica il Gamma
@@ -725,20 +725,20 @@ TP_ICM_INPUTCUSTOM;Personalizzato
 TP_ICM_INPUTDLGLABEL;Seleziona il profilo ICC di ingresso...
 TP_ICM_INPUTEMBEDDED;Incorporato, se disponibile
 TP_ICM_INPUTNONE;Nessun profilo
-TP_ICM_INPUTPROFILE;Profilo di Ingresso
+TP_ICM_INPUTPROFILE;Profilo di ingresso
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Nessun ICM: uscita in sRGB
 TP_ICM_OUTPUTDLGLABEL;Seleziona il profilo ICC di uscita...
 TP_ICM_OUTPUTPROFILE;Profilo di Uscita
 TP_ICM_SAVEREFERENCE;Salva riferimento per la profilazione
 TP_ICM_WORKINGPROFILE;Profilo di Lavoro
-TP_IMPULSEDENOISE_LABEL;Riduzione Rumore a Impulso
-TP_IMPULSEDENOISE_THRESH;Soglia RR a Impulso
+TP_IMPULSEDENOISE_LABEL;Riduzione rumore impulsivo
+TP_IMPULSEDENOISE_THRESH;Soglia rumore impulsivo
 TP_LABCURVE_AVOIDCOLORCLIP;Previeni tosaggio dei colori
 TP_LABCURVE_BRIGHTNESS;Luminosità
 TP_LABCURVE_CONTRAST;Contrasto
-TP_LABCURVE_CURVEEDITOR;Curva di Luminanza
-TP_LABCURVE_ENABLESATLIMITER;Abilita Limitatore della Saturazione
+TP_LABCURVE_CURVEEDITOR;Curva di luminanza
+TP_LABCURVE_ENABLESATLIMITER;Abilita limitatore della saturazione
 TP_LABCURVE_LABEL;Regolazioni Lab
 TP_LABCURVE_SATLIMIT;Limite di saturazione
 TP_LABCURVE_SATURATION;Saturazione
@@ -746,15 +746,15 @@ TP_LENSGEOM_AUTOCROP;Ritaglio automatico
 TP_LENSGEOM_FILL;Riadatta
 TP_LENSGEOM_LABEL;Obiettivo / Geometria
 TP_LUMADENOISE_EDGETOLERANCE;Tolleranza bordi
-TP_LUMADENOISE_LABEL;Riduzione Rumore di Luminanza
+TP_LUMADENOISE_LABEL;Riduzione rumore di luminanza
 TP_LUMADENOISE_RADIUS;Raggio
 TP_PERSPECTIVE_HORIZONTAL;Orizzontale
 TP_PERSPECTIVE_LABEL;Prospettiva
 TP_PERSPECTIVE_VERTICAL;Verticale
-TP_PREPROCESS_GREENEQUIL;Uniformazione del Verde
+TP_PREPROCESS_GREENEQUIL;Uniformazione del verde
 TP_PREPROCESS_HOTDEADPIXFILT;Interpola pixel surriscaldati/guasti
 TP_PREPROCESS_LABEL;Pre-Elaborazione
-TP_PREPROCESS_LINEDENOISE;Filtro per Rumore a Bande
+TP_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 TP_PREPROCESS_NO_FOUND;Nessuno presente
 TP_RAWCACORR_AUTO;Autocorrezione
 TP_RAWCACORR_CABLUE;Blu
@@ -772,7 +772,7 @@ TP_RESIZE_BICUBICSF;Bicubico (più graduale)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)
 TP_RESIZE_BILINEAR;Bilineare
 TP_RESIZE_CROPPEDAREA;Zona ritagliata
-TP_RESIZE_DOWNSCALEB;Riduzione (più buona)
+TP_RESIZE_DOWNSCALEB;Riduzione (migliore)
 TP_RESIZE_DOWNSCALEF;Riduzione (più rapida)
 TP_RESIZE_FITBOX;Riquadro delimitato
 TP_RESIZE_FULLIMAGE;Tutta l'immagine
@@ -782,7 +782,7 @@ TP_RESIZE_HEIGHT;Altezza
 TP_RESIZE_LABEL;Ridimensiona
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Metodo:
-TP_RESIZE_NEAREST;Più Prossimo (Nearest)
+TP_RESIZE_NEAREST;Più prossimo (Nearest)
 TP_RESIZE_SCALE;Scala
 TP_RESIZE_SPECIFY;Specifica:
 TP_RESIZE_W;L:
@@ -791,12 +791,12 @@ TP_ROTATE_DEGREE;Angolo
 TP_ROTATE_LABEL;Ruota
 TP_ROTATE_SELECTLINE;    Seleziona una linea dritta
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Alteluci
-TP_SHADOWSHLIGHTS_HLTONALW;Gradualità delle Alteluci
+TP_SHADOWSHLIGHTS_HLTONALW;Gradualità delle alteluci
 TP_SHADOWSHLIGHTS_LABEL;Ombre/Alteluci
-TP_SHADOWSHLIGHTS_LOCALCONTR;Contrasto Locale
+TP_SHADOWSHLIGHTS_LOCALCONTR;Contrasto locale
 TP_SHADOWSHLIGHTS_RADIUS;Raggio
 TP_SHADOWSHLIGHTS_SHADOWS;Ombre
-TP_SHADOWSHLIGHTS_SHTONALW;Gradualità delle Ombre
+TP_SHADOWSHLIGHTS_SHTONALW;Gradualità delle ombre
 TP_SHARPENING_AMOUNT;Quantità
 TP_SHARPENING_EDRADIUS;Raggio
 TP_SHARPENING_EDTOLERANCE;Tolleranza bordi
@@ -823,7 +823,7 @@ TP_WBALANCE_AUTO;Automatico
 TP_WBALANCE_CAMERA;Fotocamera
 TP_WBALANCE_CUSTOM;Personalizzato
 TP_WBALANCE_GREEN;Tinta
-TP_WBALANCE_LABEL;Bilanciamento del Bianco
+TP_WBALANCE_LABEL;Bilanciamento del bianco
 TP_WBALANCE_METHOD;Metodo
 TP_WBALANCE_SIZE;Dimensione:
 TP_WBALANCE_SPOTWB;Punto BB manuale
