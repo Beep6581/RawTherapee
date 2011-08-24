@@ -597,7 +597,7 @@ PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
-PREFERENCES_SLIMUI;Interface compact
+PREFERENCES_SLIMUI;Interface compacte
 PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
 PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
@@ -927,3 +927,31 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Manuel
 TP_GAMMA_OUTPUT;Gamma de sortie
 TP_GAMMA_SLOP;Pente (linéaire)
+
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramme dans le panneau de gauche
+PREFERENCES_SHOWPROFILESELECTOR;Affiche le sélecteur de profils
+PREFERENCES_SQUAREDETAILWINDOW;Fenêtre de détail carrée (plus rapide)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne (à désactiver pour les écrans de faible résolution)
+PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
+PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
+PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'mage personnalisé
+PREFERENCES_MENUOPTIONS;Options du menu
+PREFERENCES_MENUGROUPRANK;Classement
+PREFERENCES_MENUGROUPLABEL;Label
+PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
+PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principale
+TP_RAWEXPOS_BLACKS;Niveaux de noir
+FILEBROWSER_SHOWUNCOLORHINT;Afficher les images non taguées <b>Alt-`</b>
+FILEBROWSER_SHOWCOLORLABEL1HINT;Afficher les images taguées Rouge <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Afficher les images taguées Jaune <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Afficher les images taguées Vert <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Afficher les images taguées Bleu <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Afficher les images taguées Pourpre <b>Alt-5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Afficher les images sauvegardées récemment <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées récemment <b>Alt-6</b>
+FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées <b>6</b>
+FILEBROWSER_QUERYLABEL;Chercher:
+FILEBROWSER_QUERYHINT;Taper la partie du nom du fichier à chercher. \n<b>Ctrl-f</b> Place le curseur dans le champ de saisie;\n<b>Entrée</b> pour lancer la recherche
+FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
