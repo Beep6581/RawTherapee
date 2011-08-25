@@ -330,14 +330,14 @@ HISTORY_MSG_97;'b' curve
 HISTORY_MSG_98;Demosaicing method
 HISTORY_MSG_99;Hot/dead pixel filtering
 HISTORY_MSG_9;Highlight Compression
-HISTORY_MSG_142;Clarity -passes
-HISTORY_MSG_143;Clarity -gradient strength
-HISTORY_MSG_147;Clarity - luminance only
-HISTORY_MSG_144;Microcontrast - strength
+HISTORY_MSG_142;Edges sharpening - iterations
+HISTORY_MSG_143;Edges sharpening - quantity
+HISTORY_MSG_147;Edges sharpening - luminance only
+HISTORY_MSG_144;Microcontrast - quantity
 HISTORY_MSG_145;Microcontrast - uniformity
-HISTORY_MSG_146;Clarity Sharpening - enabled
-HISTORY_MSG_148;Clarity Microcontrast - enabled
-HISTORY_MSG_149;Clarity Microcontrast matrix
+HISTORY_MSG_146;Edges Sharpening
+HISTORY_MSG_148;Microcontrast
+HISTORY_MSG_149;Microcontrast - 3x3 matrix
 HISTORY_MSG_150;Post demosaic artifact/noise reduction
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
@@ -512,7 +512,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
 PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
 PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
-PARTIALPASTE_GRADIENTSHARPEN;Gradient Sharpening (border)
+PARTIALPASTE_GRADIENTSHARPEN;Local Sharpening
 PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 PARTIALPASTE_HLRECOVERY;Highlight recovery
 PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
@@ -571,7 +571,7 @@ PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 PREFERENCES_CLIPPINGIND;Clipping indication
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
 PREFERENCES_CUSTPROFBUILD;Custom image profile builder
-PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 PREFERENCES_DARKFRAME;Dark frame
@@ -737,14 +737,14 @@ TP_CHMIXER_GREEN;Green
 TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXER_RED;Red
 TP_CHROMATABERR_LABEL;Chromatic Aberration
-TP_CLARITY_LABEL;Clarity and Sharpening
-TP_CLARITY_SHARPEN;Border
-TP_CLARITY_STRENGTH;Gradient strength
-TP_CLARITY_PASSES;Gradient passes
-TP_CLARITY_MICRO;Texture
+TP_CLARITY_LABEL;Local Sharpening
+TP_CLARITY_SHARPEN;Edges Sharpening
+TP_CLARITY_STRENGTH;Quantity
+TP_CLARITY_PASSES;Iterations
+TP_CLARITY_MICRO;Microcontrast
 TP_CLARITY_THREE;Luminance only
 TP_CLARITY_MATRIX;3x3 matrix instead of 5x5
-TP_MLMICRO_STRENGTH;Strength
+TP_MLMICRO_STRENGTH;Quantity
 TP_MLMICRO_UNIFORMITY;Uniformity
 TP_COARSETRAF_DEGREE;degree:
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
