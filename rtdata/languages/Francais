@@ -23,8 +23,10 @@ CURVEEDITOR_NURBS;Cage de contrôle
 CURVEEDITOR_PARAMETRIC;Paramétrique
 CURVEEDITOR_SAVEDLGLABEL;Enregistrer la courbe...
 CURVEEDITOR_SHADOWS;Ombres bouchées
+CURVEEDITOR_TOOLTIPCOPY;Copie la courbe courante dans le presse-papier
 CURVEEDITOR_TOOLTIPLINEAR;Réinitialise la courbe en linéaire
 CURVEEDITOR_TOOLTIPLOAD;Charger une courbe depuis un fichier
+CURVEEDITOR_TOOLTIPPASTE;Colle la courbe du presse-papier
 CURVEEDITOR_TOOLTIPSAVE;Enregistrer la courbe actuelle
 CURVEEDITOR_TYPE;Type:
 EDITWINDOW_TITLE;Edition d'Image
@@ -53,11 +55,15 @@ EXIFPANEL_RESETHINT;Réinitialise les données séléctionnés à la valeur init
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
+FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
 FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des vignettes
 FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
 FILEBROWSER_AUTOFLATFIELD;Champ Uniforme auto
 FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
 FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (<b>Ctrl-o</b> place le focus,<b>Ctrl-Entrée</b> pour naviguer dans le Navigateur de Fichier)
+FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
+FILEBROWSER_QUERYHINT;Taper la partie du nom du fichier à chercher. \n<b>Ctrl-f</b> Place le curseur dans le champ de saisie;\n<b>Entrée</b> pour lancer la recherche
+FILEBROWSER_QUERYLABEL;Chercher:
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache - complet
 FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache - partiel
@@ -82,12 +88,22 @@ FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Abandonner la file de traitement
+FILEBROWSER_POPUPCOLORLABEL;Label couleur
+FILEBROWSER_POPUPCOLORLABEL0;Label: Aucun
+FILEBROWSER_POPUPCOLORLABEL1;Label: Rouge
+FILEBROWSER_POPUPCOLORLABEL2;Label: Jaune
+FILEBROWSER_POPUPCOLORLABEL3;Label: Vert
+FILEBROWSER_POPUPCOLORLABEL4;Label: Bleu
+FILEBROWSER_POPUPCOLORLABEL5;Label: Violet
 FILEBROWSER_POPUPCOPYTO;Copier vers...
+FILEBROWSER_POPUPFILEOPERATIONS;Opérations sur les fichiers
 FILEBROWSER_POPUPMOVEEND;Déplacer à la fin de la file
 FILEBROWSER_POPUPMOVEHEAD;Déplacer en tête de file
 FILEBROWSER_POPUPMOVETO;Déplacer vers...
 FILEBROWSER_POPUPOPEN;Ouvrir
 FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
+FILEBROWSER_POPUPPROFILEOPERATIONS;Opérations sur les profils
+FILEBROWSER_POPUPRANK;Étoiles
 FILEBROWSER_POPUPRANK1;1 étoile
 FILEBROWSER_POPUPRANK2;2 étoiles
 FILEBROWSER_POPUPRANK3;3 étoiles
@@ -107,7 +123,14 @@ FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
 FILEBROWSER_SELECTFLATFIELD;Sélectionner un Champ Uniforme...
+FILEBROWSER_SHOWCOLORLABEL1HINT;Afficher les images taguées Rouge <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Afficher les images taguées Jaune <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Afficher les images taguées Vert <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Afficher les images taguées Bleu <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Afficher les images taguées Pourpre <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
+FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
 FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile <b>1</b>
@@ -115,7 +138,10 @@ FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles <b>3</b>
 FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles <b>4</b>
 FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Afficher les images sauvegardées récemment <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées récemment <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille <b>T</b>
+FILEBROWSER_SHOWUNCOLORHINT;Afficher les images sans tag couleur <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile  <b>`</b>
 FILEBROWSER_STARTPROCESSING;Démarrer le traitement
 FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
@@ -150,11 +176,15 @@ HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;V
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
+HISTOGRAM_BUTTON_RAW;Raw
+HISTOGRAM_BUTTON_BAR;RVB
 HISTOGRAM_LABEL;Histogramme
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
 HISTOGRAM_TOOLTIP_R;Montrer/cacher l'histogramme ROUGE
+HISTOGRAM_TOOLTIP_RAW;Montre/Cache l'histograme des données RAW
+HISTOGRAM_TOOLTIP_BAR;Montre/Cache l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTORY_CHANGED;Changé
 HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_DELSNAPSHOT;Supprimer
@@ -194,6 +224,18 @@ HISTORY_MSG_128;Champ Uniforme - Rayon
 HISTORY_MSG_129;Champ Uniforme - Type de floutage
 HISTORY_MSG_12;Exposition auto
 HISTORY_MSG_13;Rognage de l'exposition
+HISTORY_MSG_130;Distorion Auto
+HISTORY_MSG_131;Réd. de bruit - Luminance
+HISTORY_MSG_132;Réd. de bruit - Chrominance
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Gamma - Position
+HISTORY_MSG_135;Gamma - Manuel
+HISTORY_MSG_136;Gamma - Pente
+HISTORY_MSG_137;Niveau de noir - vert 1
+HISTORY_MSG_138;Niveau de noir - rouge
+HISTORY_MSG_139;Niveau de noir - bleu
+HISTORY_MSG_140;Niveau de noir - vert 2
+HISTORY_MSG_141;Niveau de noir - lier les niveaux des verts
 HISTORY_MSG_14;Luminance - Luminosité
 HISTORY_MSG_15;Luminance - Contraste
 HISTORY_MSG_16;Luminance - Noir
@@ -289,6 +331,15 @@ HISTORY_MSG_97;Courbe 'b'
 HISTORY_MSG_98;Algorithme de dématriçage
 HISTORY_MSG_99;Filtrage des pixels chauds/morts
 HISTORY_MSG_9;Compression des hautes lumières
+HISTORY_MSG_142;Netteté des bords - itérations
+HISTORY_MSG_143;Netteté des bords - quantité
+HISTORY_MSG_147;Netteté des bords - luminance uniquement
+HISTORY_MSG_144;Microcontraste - quantité
+HISTORY_MSG_145;Microcontraste - uniformité
+HISTORY_MSG_146;Netteté des bords
+HISTORY_MSG_148;Microcontraste
+HISTORY_MSG_149;Microcontraste - Matrice 3x3
+HISTORY_MSG_150;Réduction du bruit/artefact post-dématriçage
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -462,6 +513,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
+PARTIALPASTE_GRADIENTSHARPEN;Détail local
 PARTIALPASTE_HLRECONSTRUCTION;Reconstruction des hautes lumières
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
@@ -475,6 +527,7 @@ PARTIALPASTE_LENSGROUP;Réglages de l'objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
+PARTIALPASTE_MICROCONTRAST;Microcontraste
 PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Équilibrage du vert
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrage des pixels chauds/morts
@@ -483,9 +536,11 @@ PARTIALPASTE_RAWCACORR_AUTO;Corr. auto. de l'aberr. chromatique
 PARTIALPASTE_RAWCACORR_CABLUE;Aberr. chromatique bleu
 PARTIALPASTE_RAWCACORR_CARED;Aberr. chromatique rouge
 PARTIALPASTE_RAWEXPOS_LINEAR;Facteur de corr. d'expos. linéaire
+PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 PARTIALPASTE_RAWEXPOS_PRESER;Corr. d'expos. préservant les HL
 PARTIALPASTE_RAWGROUP;Réglages RAW
 PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
+PARTIALPASTE_RAW_ALLENHANCE;Applique la réduction de bruit/artefact post-dématriçage
 PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
 PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
 PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
@@ -498,7 +553,7 @@ PARTIALPASTE_WAVELETEQUALIZER;Égaliseur d'ondelette
 PARTIALPASTE_WHITEBALANCE;Balance des blancs
 PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
-PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
+PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principale
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
@@ -516,6 +571,9 @@ PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
+PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
+PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\nParamètres de ligne de commande pour permettre la génération d'un .pp3 basé sur des règles:\n[Chemin vers le fichier RAW/JPG] [Chemin vers le profil par défault] [ouverture f] [tps d'exposition en seconde] [longueur focale en mm] [ISO] [Objectif] [Appareil photo]
+PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMEFOUND;Trouvé
@@ -537,6 +595,7 @@ PREFERENCES_EDITORCMDLINE;Autre ligne de commande
 PREFERENCES_EDITORLAYOUT;Disposition de l'éditeur
 PREFERENCES_EXTERNALEDITOR;Éditeur externe
 PREFERENCES_FBROWSEROPTS;Options du navigateur de fichiers
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne (à désactiver pour les écrans de faible résolution)
 PREFERENCES_FILEFORMAT;Format du fichier
 PREFERENCES_FLATFIELD;Champ Uniforme
 PREFERENCES_FLATFIELDAUTOSELECT;Sélection auto. du Champ Uniforme
@@ -552,6 +611,7 @@ PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
 PREFERENCES_GTKTHEME;GTK par défaut
 PREFERENCES_HINT;Conseil
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramme dans le panneau de gauche
 PREFERENCES_HLTHRESHOLD;Seuil pour le dépassement de domaine supérieur
 PREFERENCES_ICCDIR;Dossier des profils ICC
 PREFERENCES_IMPROCPARAMS;Paramètres de traitement d'image par défaut
@@ -560,7 +620,13 @@ PREFERENCES_INTENT_PERCEPTUAL;Perceptuel
 PREFERENCES_INTENT_RELATIVE;Colorimétrie relative
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
+PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
+PREFERENCES_MENUOPTIONS;Options du menu
+PREFERENCES_MENUGROUPRANK;Classement
+PREFERENCES_MENUGROUPLABEL;Label
+PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
 PREFERENCES_METADATA;Metadonnées
 PREFERENCES_MONITORICC;Profil du moniteur
 PREFERENCES_MULTITAB;Éditeurs multiple
@@ -594,6 +660,7 @@ PREFERENCES_SET;Remplace
 PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
+PREFERENCES_SHOWPROFILESELECTOR;Affiche le sélecteur de profils
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
 PREFERENCES_SINGLETAB;Éditeur unique
 PREFERENCES_SINGLETABVERTAB;Éditeur unique, onglets verticaux
@@ -602,6 +669,7 @@ PREFERENCES_SND_BATCHQUEUEDONE;File de traitement terminée
 PREFERENCES_SND_HELP;Saisissez un chemin de fichier ou rien du tout (pour ne pas avoir de son). Pour Windows,\nsaisissez "SystemDefault", "SystemAsterisk" etc. pour utiliser les sons systèmes.
 PREFERENCES_SND_LNGEDITPROCDONE;Traitement terminée de la zone de prévisualisation
 PREFERENCES_SND_TRESHOLDSECS;après (s)
+PREFERENCES_SQUAREDETAILWINDOW;Fenêtre de détail carrée (plus rapide)
 PREFERENCES_STARTUPIMDIR;Répertoire Image au démarrage
 PREFERENCES_TAB_BROWSER;Navigateur de fichiers
 PREFERENCES_TAB_COLORMGR;Gestion des couleurs
@@ -678,10 +746,10 @@ TP_CHMIXER_LABEL;Mixage des canaux
 TP_CHMIXER_RED;Rouge
 TP_CHROMATABERR_LABEL;Aberration Chromatique
 TP_CLARITY_LABEL;Clareté et netteté
-TP_CLARITY_SHARPEN;Bord
+TP_CLARITY_SHARPEN;Netteté des Bords
 TP_CLARITY_STRENGTH;Quantité
 TP_CLARITY_PASSES;Itérations
-TP_CLARITY_MICRO;Texture
+TP_CLARITY_MICRO;Microcontraste
 TP_CLARITY_THREE;Luminance uniquement
 TP_CLARITY_MATRIX;Matrice 3x3 au lieu de 5x5
 TP_MLMICRO_STRENGTH;Quantité
@@ -708,7 +776,6 @@ TP_COLORDENOISE_RADIUS;Rayon
 TP_COLORSHIFT_BLUEYELLOW;Bleu-Jaune
 TP_COLORSHIFT_GREENMAGENTA;Vert-Magenta
 TP_COLORSHIFT_LABEL;Décalage couleur
-TP_CROP_DPI;PPP=
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTGRID;Grille
@@ -721,6 +788,7 @@ TP_CROP_GTRULETHIRDS;Règle des tiers
 TP_CROP_GUIDETYPE;Type de guide:
 TP_CROP_H;H
 TP_CROP_LABEL;Recadrage
+TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;    Sélection du recadrage
 TP_CROP_W;L
 TP_CROP_X;x
@@ -773,10 +841,15 @@ TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_LABEL;Champ Uniforme
+TP_GAMMA_CURV;Gamma
+TP_GAMMA_FREE;Manuel
+TP_GAMMA_OUTPUT;Gamma de sortie
+TP_GAMMA_SLOP;Pente (linéaire)
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
 TP_HLREC_LABEL;Reconstruction des hautes lumières
 TP_HLREC_LUMINANCE;Récupération de la luminance
+TP_HLREC_BLEND;Blend (mélange)
 TP_HLREC_METHOD;Méthode: 
 TP_HSVEQUALIZER1;Rouge
 TP_HSVEQUALIZER2;Orange
@@ -836,11 +909,19 @@ TP_RAWCACORR_CABLUE;Bleue
 TP_RAWCACORR_CARED;Rouge
 TP_RAWEXPOS_LINEAR;Facteur de corr. linéaire
 TP_RAWEXPOS_PRESER;Corr. préservant les HL (EV)
+TP_RAWEXPOS_BLACKS;Niveaux de noir
+TP_RAWEXPOS_BLACKZERO;Niveau de noir: Vert 1 (maître)
+TP_RAWEXPOS_BLACKONE;Niveau de noir: Rouge
+TP_RAWEXPOS_BLACKTWO;Niveau de noir: Bleu
+TP_RAWEXPOS_BLACKTHREE;Niveau de noir: Vert 2
+TP_RAWEXPOS_TWOGREEN;Lier les 2 niveaux de Vert
+TP_EXPO_AFTER; Après l'interpolation (avant la conversion RVB)
 TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 TP_RAW_DMETHOD;Méthode
 TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 TP_RAW_LABEL;Dématriçage
+TP_RAW_ALLENHANCE;Réduction de bruit/artefact post-dématriçage
 TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_BICUBIC;Bicubique
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
@@ -916,42 +997,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-
-CURVEEDITOR_TOOLTIPCOPY;Copie la courbe courante dans le presse-papier
-CURVEEDITOR_TOOLTIPPASTE;Colle la courbe du presse-papier
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_TOOLTIP_RAW;Montre/Cache l'histograme des données RAW
-TP_CROP_PPI;PPP=
-TP_GAMMA_CURV;Gamma
-TP_GAMMA_FREE;Manuel
-TP_GAMMA_OUTPUT;Gamma de sortie
-TP_GAMMA_SLOP;Pente (linéaire)
-
-PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramme dans le panneau de gauche
-PREFERENCES_SHOWPROFILESELECTOR;Affiche le sélecteur de profils
-PREFERENCES_SQUAREDETAILWINDOW;Fenêtre de détail carrée (plus rapide)
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barre de menu de l'explorateur de fichiers uni-ligne (à désactiver pour les écrans de faible résolution)
-PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
-PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
-PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'mage personnalisé
-PREFERENCES_MENUOPTIONS;Options du menu
-PREFERENCES_MENUGROUPRANK;Classement
-PREFERENCES_MENUGROUPLABEL;Label
-PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
-PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
-PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principale
-TP_RAWEXPOS_BLACKS;Niveaux de noir
-FILEBROWSER_SHOWUNCOLORHINT;Afficher les images non taguées <b>Alt-`</b>
-FILEBROWSER_SHOWCOLORLABEL1HINT;Afficher les images taguées Rouge <b>Alt-1</b>
-FILEBROWSER_SHOWCOLORLABEL2HINT;Afficher les images taguées Jaune <b>Alt-2</b>
-FILEBROWSER_SHOWCOLORLABEL3HINT;Afficher les images taguées Vert <b>Alt-3</b>
-FILEBROWSER_SHOWCOLORLABEL4HINT;Afficher les images taguées Bleu <b>Alt-4</b>
-FILEBROWSER_SHOWCOLORLABEL5HINT;Afficher les images taguées Pourpre <b>Alt-5</b>
-FILEBROWSER_SHOWRECENTLYSAVEDHINT;Afficher les images sauvegardées récemment <b>Alt-7</b>
-FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées récemment <b>Alt-6</b>
-FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées <b>6</b>
-FILEBROWSER_QUERYLABEL;Chercher:
-FILEBROWSER_QUERYHINT;Taper la partie du nom du fichier à chercher. \n<b>Ctrl-f</b> Place le curseur dans le champ de saisie;\n<b>Entrée</b> pour lancer la recherche
-FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
