@@ -295,12 +295,11 @@ void WhiteBalance::setWB (int vtemp, double vgreen) {
     disableListener ();
     temp->setValue (vtemp);
     green->setValue (vgreen);
+    cache_customWB (vtemp,vgreen); // sequence in which this call is made is important; must be before "method->set_active (2);"
     method->set_active (2);
     temp->setEditedState (Edited);
     green->setEditedState (Edited);
     enableListener ();
-
-    cache_customWB (vtemp,vgreen);
 
     if (listener) 
         listener->panelChanged (EvWBTemp, Glib::ustring::compose("%1, %2", (int)temp->getValue(), Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), green->getValue())));
