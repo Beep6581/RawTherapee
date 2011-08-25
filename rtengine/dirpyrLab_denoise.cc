@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Â© 2010 Emil Martinec <ejmartin@uchicago.edu>
+ *  © 2010 Emil Martinec <ejmartin@uchicago.edu>
  *    
  */
 
@@ -68,7 +68,7 @@ PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
 
 namespace rtengine {
 	
-	static const int maxlevel = 3;
+	static const int maxlevel = 4;
 	
 	//sequence of scales
 	//static const int scales[8] = {1,2,4,8,16,32,64,128};
