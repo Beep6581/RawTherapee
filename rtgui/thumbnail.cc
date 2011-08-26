@@ -47,7 +47,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
         // rank and inTrash were found in cache (old style), move them over to pparams
 
         // try to load the last saved parameters from the cache or from the paramfile file
-        createProcParamsForUpdate(); // this can execute customprofilebuilder to generate param file
+        createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
 
         // TODO? should we call notifylisterners_procParamsChanged here?
 
@@ -175,14 +175,14 @@ const ProcParams& Thumbnail::getProcParams () {
 }
 
 // Create default params on demand and returns a new updatable object
-rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate() {
+rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB) {
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = NULL;
 
     Glib::ustring defProf = getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
 
     const CacheImageData* cfs=getCacheImageData();
-    if (!options.customProfileBuilder.empty() && !hasProcParams() && cfs && cfs->exifValid) {
+    if (!options.customProfileBuilder.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
         + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
@@ -199,7 +199,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate() {
         if (success) loadProcParams();
     }
 
-    if (hasProcParams()) {
+    if (returnParams && hasProcParams()) {
         ldprof = new ProcParams ();
         *ldprof = getProcParams ();
     }

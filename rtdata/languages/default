@@ -75,6 +75,7 @@ FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
 FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
+FILEBROWSER_EXEC_CPB;Run custom profile builder
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter

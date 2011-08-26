@@ -1,4 +1,3 @@
-
 #00 Deutsch
 #01 (keenonkites; Aktualisierte Version für 2.3 beta2)
 #02 (phberlin; basiert auf keenonkites' Erstübersetzung)
@@ -16,6 +15,7 @@
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
 #15 Jan-Jul 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 26.07.2011
 #16 Erweiterung (oduis)
+#17 Erweiterung (oduis)
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -87,6 +87,7 @@ FILEBROWSER_DELETEDLGLABEL;Dateien löschen
 FILEBROWSER_DELETEDLGMSG;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen, SAMT evtl. zugehörigen, aus der Stapelverarbeitung resultierenden Ausgabedateien?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
+FILEBROWSER_EXEC_CPB;Benutzerdef. Bildprofilgenerator ausführen
 FILEBROWSER_EMPTYTRASHHINT;Dateien endgültig aus Papierkorb löschen
 FILEBROWSER_EXIFFILTERAPPLY;Anwenden
 FILEBROWSER_EXIFFILTERAPPLYHINT;Ein-/Ausschalten des Exif Filters im Datei-Browser

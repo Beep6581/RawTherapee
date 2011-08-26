@@ -147,6 +147,7 @@ FileBrowser::FileBrowser ()
     	submenuProfileOperations->attach (*Gtk::manage(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
     	submenuProfileOperations->attach (*Gtk::manage(applyprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE"))), 0, 1, p, p+1); p++;
     	submenuProfileOperations->attach (*Gtk::manage(applypartprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE_PARTIAL"))), 0, 1, p, p+1); p++;
+        submenuProfileOperations->attach (*Gtk::manage(execcustprof = new Gtk::MenuItem (M("FILEBROWSER_EXEC_CPB"))), 0, 1, p, p+1); p++;
     	submenuProfileOperations->attach (*Gtk::manage(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p+1); p++;
 
     	submenuProfileOperations->show_all ();
@@ -158,6 +159,7 @@ FileBrowser::FileBrowser ()
         pmenu->attach (*Gtk::manage(partpasteprof = new Gtk::MenuItem (M("FILEBROWSER_PARTIALPASTEPROFILE"))), 0, 1, p, p+1); p++;
         pmenu->attach (*Gtk::manage(applyprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE"))), 0, 1, p, p+1); p++;
         pmenu->attach (*Gtk::manage(applypartprof = new Gtk::MenuItem (M("FILEBROWSER_APPLYPROFILE_PARTIAL"))), 0, 1, p, p+1); p++;
+        pmenu->attach (*Gtk::manage(execcustprof = new Gtk::MenuItem (M("FILEBROWSER_EXEC_CPB"))), 0, 1, p, p+1); p++;
         pmenu->attach (*Gtk::manage(clearprof = new Gtk::MenuItem (M("FILEBROWSER_CLEARPROFILE"))), 0, 1, p, p+1); p++;
     }
 
@@ -204,6 +206,7 @@ FileBrowser::FileBrowser ()
     partpasteprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), partpasteprof));    
     applyprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applyprof));    
     applypartprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), applypartprof));
+    execcustprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), execcustprof));    
     clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));
     cachemenu->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), cachemenu));
 }
@@ -588,8 +591,15 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         for (int i=0; i<mselected.size(); i++) 
             mselected[i]->thumbnail->clearProcParams (FILEBROWSER);
         queue_draw ();
+    } else if (m==execcustprof) {
+        for (int i=0; i<mselected.size(); i++)  {
+            mselected[i]->thumbnail->createProcParamsForUpdate (false, true);
+
+            // Empty run to update the thumb
+            rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
+            mselected[i]->thumbnail->setProcParams (params, FILEBROWSER);
     }
-	else if (m==clearFromCache) {
+    } else if (m==clearFromCache) {
 		for (int i=0; i<mselected.size(); i++)
 			tbl->clearFromCacheRequested (mselected, false);
 		//queue_draw ();
@@ -634,6 +644,7 @@ void FileBrowser::partPasteProfile () {
     if (partialPasteDlg.run ()) {
     
         for (int i=0; i<mselected.size(); i++) {
+            mselected[i]->thumbnail->createProcParamsForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
             partialPasteDlg.applyPaste (&params, &clipboard.getProcParams());
             mselected[i]->thumbnail->setProcParams (params, FILEBROWSER);
@@ -726,6 +737,8 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 		if (partialPasteDlg.run ()) {
 
 			for (int i=0; i<selected.size(); i++) {
+                selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+
 				rtengine::procparams::ProcParams params = ((FileBrowserEntry*)selected[i])->thumbnail->getProcParams ();
 				partialPasteDlg.applyPaste (&params, pparams);
 				((FileBrowserEntry*)selected[i])->thumbnail->setProcParams (params, FILEBROWSER);
@@ -825,7 +838,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
     for (int i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate();  // this can execute customprofilebuilder to generate param file
+    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
     	// no need to notify listeners as item goes to trash, likely to be deleted
 
@@ -866,7 +879,7 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
 
     for (int i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate();  // this can execute customprofilebuilder to generate param file
+    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
     	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
     	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
@@ -885,7 +898,7 @@ void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int c
 
     for (int i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate();  // this can execute customprofilebuilder to generate param file
+    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
     	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
     	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);

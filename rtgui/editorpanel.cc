@@ -397,7 +397,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     is->setProgressListener( this );
 
     // try to load the last saved parameters from the cache or from the paramfile file
-    ProcParams* ldprof = openThm->createProcParamsForUpdate();  // will be freed by initProfile
+    ProcParams* ldprof = openThm->createProcParamsForUpdate(true,false);  // will be freed by initProfile
 
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
