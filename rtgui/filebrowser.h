@@ -87,6 +87,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* partpasteprof;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* applypartprof;
+    Gtk::MenuItem* execcustprof;
     Gtk::MenuItem* clearprof;
     Gtk::MenuItem* cachemenu;
     Gtk::MenuItem* clearFromCache;
