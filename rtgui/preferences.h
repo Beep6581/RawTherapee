@@ -83,6 +83,8 @@ class Preferences : public Gtk::Dialog {
 	Gtk::SpinButton*  hlThresh;
 	Gtk::SpinButton*  shThresh;
 
+	Gtk::SpinButton*  panFactor;
+
     Gtk::ComboBoxText* intent;
 
     Gtk::ComboBoxText* theme;

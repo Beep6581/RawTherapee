@@ -86,6 +86,7 @@ void Options::setDefaults () {
     browserToolPanelHeight = 300;
     historyPanelWidth = 230;			// was 150
     lastScale = 5;						// was 4
+    panAccelFactor = 5;
     lastCropSize = 1;
     fbOnlyRaw = false;
     fbShowDateTime = true;
@@ -383,6 +384,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "BrowserToolPanelHeight"))browserToolPanelHeight = keyFile.get_integer ("GUI", "BrowserToolPanelHeight");
     if (keyFile.has_key ("GUI", "HistoryPanelWidth"))   historyPanelWidth = keyFile.get_integer ("GUI", "HistoryPanelWidth");
     if (keyFile.has_key ("GUI", "LastPreviewScale"))    lastScale         = keyFile.get_integer ("GUI", "LastPreviewScale");
+    if (keyFile.has_key ("GUI", "PanAccelFactor"))      panAccelFactor    = keyFile.get_integer ("GUI", "PanAccelFactor");
     if (keyFile.has_key ("GUI", "LastCropSize"))        lastCropSize      = keyFile.get_integer ("GUI", "LastCropSize");
     if (keyFile.has_key ("GUI", "ShowHistory"))         showHistory       = keyFile.get_boolean ("GUI", "ShowHistory");
     if (keyFile.has_key ("GUI", "ShowFilePanelState"))  showFilePanelState= keyFile.get_integer ("GUI", "ShowFilePanelState");
@@ -553,6 +555,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("GUI", "BrowserToolPanelHeight", browserToolPanelHeight);
     keyFile.set_integer ("GUI", "HistoryPanelWidth", historyPanelWidth);
     keyFile.set_integer ("GUI", "LastPreviewScale", lastScale);
+    keyFile.set_integer ("GUI", "PanAccelFactor", panAccelFactor);
     keyFile.set_integer ("GUI", "LastCropSize", lastCropSize);
     keyFile.set_boolean ("GUI", "ShowHistory", showHistory);
     keyFile.set_integer ("GUI", "ShowFilePanelState", showFilePanelState);
