@@ -640,6 +640,8 @@ PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
+PREFERENCES_PANFACTORFRAME;Accélération du déplacement
+PREFERENCES_PANFACTORLABEL;Facteur
 PREFERENCES_PARSEDEXT;Extensions considérées
 PREFERENCES_PARSEDEXTADD;Ajout de l'extension
 PREFERENCES_PARSEDEXTADDHINT;Tapez une extension et cliquez ce bouton pour l'ajouter à la liste

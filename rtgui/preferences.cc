@@ -555,22 +555,42 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbcd->pack_start (*frl, true, true, 0);
 
 //-----
+    Gtk::VBox* dfpfvb = Gtk::manage( new Gtk::VBox () );
+    dfpfvb->set_spacing (4);
+
     Gtk::Frame* fdf = Gtk::manage( new Gtk::Frame (M("PREFERENCES_DATEFORMATFRAME")) );
 
     Gtk::HBox* hb6 = Gtk::manage( new Gtk::HBox () );
     hb6->set_border_width (4);
     hb6->set_spacing (4);
-    Gtk::VBox* dfvb = Gtk::manage( new Gtk::VBox () );
-    Gtk::Label* dflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":") );
+    Gtk::Label* dflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":", Gtk::ALIGN_LEFT));
     hb6->pack_start (*dflab, Gtk::PACK_SHRINK,4);
     dateformat = Gtk::manage( new Gtk::Entry () );
     dateformat->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
     dflab->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
-    hb6->pack_start (*dateformat);
-    dfvb->pack_start (*hb6, Gtk::PACK_SHRINK, 4);
-    fdf->add (*dfvb);
+    hb6->pack_start (*dflab, Gtk::PACK_SHRINK, 0);
+    hb6->pack_end (*dateformat, Gtk::PACK_SHRINK, 0);
+    fdf->add (*hb6);
 
-    hbcd->pack_start (*fdf, true, true, 0);
+    dfpfvb->pack_start (*fdf, true, true, 0);
+
+//-----
+    Gtk::Frame* pff = Gtk::manage( new Gtk::Frame (M("PREFERENCES_PANFACTORFRAME")) );
+
+    Gtk::HBox* pfhb = Gtk::manage( new Gtk::HBox () );
+    pfhb->set_border_width(4);
+    pfhb->set_spacing(4);
+    Gtk::Label* pfl = Gtk::manage( new Gtk::Label (M("PREFERENCES_PANFACTORLABEL") + ":", Gtk::ALIGN_LEFT));
+    panFactor = Gtk::manage( new Gtk::SpinButton () );
+    panFactor->set_digits (0);
+    panFactor->set_increments (1, 5);
+    panFactor->set_range (1, 10);
+    pfhb->pack_start (*pfl, Gtk::PACK_SHRINK, 0);
+    pfhb->pack_end (*panFactor, Gtk::PACK_SHRINK, 0);
+    pff->add (*pfhb);
+
+    dfpfvb->pack_start (*pff, true, true, 0);
+    hbcd->pack_start (*dfpfvb, Gtk::PACK_SHRINK, 4);
     mvbsd->pack_start (*hbcd, Gtk::PACK_SHRINK, 4);
 
   //-----
@@ -912,6 +932,7 @@ void Preferences::storePreferences () {
     moptions.defProfRaw          = rprofiles->get_active_text();
     moptions.defProfImg          = iprofiles->get_active_text();
     moptions.dateFormat          = dateformat->get_text();
+    moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.fbShowDateTime  = showDateTime->get_active ();
     moptions.fbShowBasicExif = showBasicExif->get_active ();
     moptions.menuGroupRank = ckbmenuGroupRank->get_active();
@@ -1033,6 +1054,7 @@ void Preferences::fillPreferences () {
     rprofiles->set_active_text (moptions.defProfRaw);
     iprofiles->set_active_text (moptions.defProfImg);
     dateformat->set_text (moptions.dateFormat);
+    panFactor->set_value(moptions.panAccelFactor);
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (moptions.rtSettings.monitorProfile.empty())

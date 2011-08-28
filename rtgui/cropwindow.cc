@@ -380,8 +380,9 @@ void CropWindow::pointerMoved (int x, int y) {
         iarea->redraw ();
     }
     else if (state==SCropImgMove) {
-        action_x =  (press_x - x) / zoomSteps[cropZoom].zoom;
-        action_y =  (press_y - y) / zoomSteps[cropZoom].zoom;
+    	double accel = options.panAccelFactor * zoomSteps[cropZoom].zoom;
+        action_x =  (press_x - x) / zoomSteps[cropZoom].zoom * accel;
+        action_y =  (press_y - y) / zoomSteps[cropZoom].zoom * accel;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropPositionChanged (this);
         iarea->redraw ();

@@ -78,6 +78,7 @@ class Options {
 	int preferencesWidth;
 	int preferencesHeight; 
     int lastScale;
+    int panAccelFactor;
     int lastCropSize;
     bool fbOnlyRaw;
     bool fbShowDateTime;
