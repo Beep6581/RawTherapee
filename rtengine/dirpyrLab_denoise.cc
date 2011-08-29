@@ -163,7 +163,7 @@ namespace rtengine {
 		float noise_L = 10.0*dnparams.luma;
 		float noisevar_L = SQR(noise_L);
 		
-		float noise_ab = 25.0*dnparams.chroma;
+		float noise_ab = 100.0*dnparams.chroma;
 		float noisevar_ab = SQR(noise_ab);
 		
 		
