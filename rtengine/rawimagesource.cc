@@ -1650,10 +1650,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                 #pragma omp parallel for
                 for (int i=0; i<im->height; i++)
                     for (int j=0; j<im->width; j++) {
-						//TODO: extend beyond 65535
-                        im->r[i][j] = CurveFactory::gamma (CLIP(gd*im->r[i][j]));
-                        im->g[i][j] = CurveFactory::gamma (CLIP(gd*im->g[i][j]));
-                        im->b[i][j] = CurveFactory::gamma (CLIP(gd*im->b[i][j]));
+                        im->r[i][j] = CurveFactory::gamma (gd*im->r[i][j]);
+                        im->g[i][j] = CurveFactory::gamma (gd*im->g[i][j]);
+                        im->b[i][j] = CurveFactory::gamma (gd*im->b[i][j]);
                     }
             }
 
@@ -1763,9 +1762,9 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
                 #pragma omp parallel for
 				for (int i=0; i<im->height; i++)
 					for (int j=0; j<im->width; j++) {
-						im->r[i][j] = CurveFactory::gamma ((gd*im->r[i][j]));
-						im->g[i][j] = CurveFactory::gamma ((gd*im->g[i][j]));
-						im->b[i][j] = CurveFactory::gamma ((gd*im->b[i][j]));
+						im->r[i][j] = CurveFactory::gamma (gd*im->r[i][j]);
+						im->g[i][j] = CurveFactory::gamma (gd*im->g[i][j]);
+						im->b[i][j] = CurveFactory::gamma (gd*im->b[i][j]);
 					}
 			}
 

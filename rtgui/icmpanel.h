@@ -78,6 +78,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void gpChanged ();
 		void GamChanged ();
         void ipSelectionChanged ();
+        void profAppGammaChanged();
 
         void setRaw (bool raw);
         void saveReferencePressed ();
