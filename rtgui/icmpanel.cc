@@ -169,6 +169,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
+    igamma->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::profAppGammaChanged) );
     ipc = ipDialog->signal_selection_changed().connect( sigc::mem_fun(*this, &ICMPanel::ipSelectionChanged) );
     saveRef->signal_pressed().connect( sigc::mem_fun(*this, &ICMPanel::saveReferencePressed) );
 
@@ -353,6 +354,11 @@ void ICMPanel::ipChanged () {
 
     oldip = profname;
 }
+
+void ICMPanel::profAppGammaChanged() {
+    if (listener) listener->panelChanged (EvIProfile, "");
+}
+
 void ICMPanel::GamChanged() {
     if (batchMode) {
         if (freegamma->get_inconsistent()) {
