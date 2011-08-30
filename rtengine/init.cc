@@ -31,10 +31,10 @@ const Settings* settings;
 
 Glib::Mutex* lcmsMutex = NULL;
 
-int init (const Settings* s) {
+int init (const Settings* s, Glib::ustring baseDir) {
 
     settings = s;
-    iccStore->parseDir (s->iccDirectory);
+    iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
 	iccStore->findDefaultMonitorProfile();
 
     CurveFactory::init ();

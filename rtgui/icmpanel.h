@@ -44,6 +44,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
 		
         Gtk::RadioButton*  iembedded;
         Gtk::RadioButton*  icamera;
+        Gtk::RadioButton*  icameraICC;
         Gtk::RadioButton*  ifromfile;
         Gtk::CheckButton*  igamma;
         Gtk::ComboBoxText* wnames;

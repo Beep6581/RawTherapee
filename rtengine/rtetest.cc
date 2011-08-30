@@ -47,7 +47,7 @@ int main (int argc, char* argv[]) {
     s.monitorProfile = "";
 
     Glib::thread_init ();
-    rtengine::init (s);
+    rtengine::init (s,"");
     PListener pl;
 
     rtengine::InitialImage* ii;

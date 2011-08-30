@@ -573,7 +573,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, double& myscale) {
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, double& myscale) {
 
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
@@ -676,7 +676,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 */
     // perform color space transformation
     if (isRaw)
-        RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, logDefGain);
+        RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, camName, logDefGain );
     else
         StdImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile);
 	

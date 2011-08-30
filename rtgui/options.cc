@@ -712,7 +712,7 @@ void Options::load () {
 
 	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
 
-	rtengine::init (&options.rtSettings);
+	rtengine::init (&options.rtSettings, argv0);
 }
 
 void Options::save () {

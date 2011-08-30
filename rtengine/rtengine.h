@@ -75,6 +75,9 @@ namespace rtengine {
             virtual std::string getMake     () const =0;
           /** @return the model of the camera */
             virtual std::string getModel    () const =0;
+
+            std::string         getCamera   () const { return getMake() + " " + getModel(); }
+
           /** @return the lens on the camera  */
             virtual std::string getLens     () const =0;
           /** Functions to convert between floating point and string representation of shutter and aperture */
@@ -309,8 +312,8 @@ namespace rtengine {
 
 /** 
   *  Initializes the RT engine
-  * @param s is a struct of basic settings */
-    int init (const Settings* s);
+  * @param s is a struct of basic settings, baseDir of RT */
+    int init (const Settings* s, Glib::ustring baseDir);
 
 /** Cleanup the RT engine (static variables) */
     void cleanup ();
