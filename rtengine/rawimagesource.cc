@@ -420,7 +420,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, defGain);
+    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, ((const ImageData*)getMetaData())->getCamera(), defGain);
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1563,47 +1563,18 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, int steps) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+// Converts raw image including ICC input profile to working space - floating point version
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
 
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], double& defgain) {
-
-	//camMatrix is cam2xyz = xyz_cam
-	
-    if (cmp.input == "(none)")
-        return;
-	
-
-    MyTime t1, t2, t3;
-
-    t1.set ();
+    //MyTime t1, t2, t3;
+    //t1.set ();
 
     cmsHPROFILE in;
-    cmsHPROFILE out;
+    if (!findInputProfile(cmp.input, embedded, camName, in)) return;
     
-    Glib::ustring inProfile = cmp.input;
-
-    if (inProfile=="(embedded)") {
-        if (embedded)
-            in = embedded;
-        else
-            in = camprofile;
-    }
-    else if (inProfile=="(camera)" || inProfile=="")
-        in = camprofile;
-    else {
-        in = iccStore->getProfile (inProfile);
-        if (in==NULL)
-            inProfile = "(camera)";
-    }
-
-    
-    if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
-		// use default profiles supplied by dcraw
+    if (in==NULL) {
+		// use default camprofile, supplied by dcraw
         // in this case we avoid using the slllllooooooowwww lcms
-    
-//        out = iccStore->workingSpace (wProfile);
-//        hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
-//        cmsDoTransform (hTransform, im->data, im->data, im->planestride/2);
-//        cmsDeleteTransform(hTransform);
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
         float mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
@@ -1633,7 +1604,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				im->g[h][w] /= 65535.0f ;
 				im->b[h][w] /= 65535.0f ;
 			}
-        out = iccStore->workingSpace (cmp.working);
+        cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 //        out = iccStore->workingSpaceGamma (wProfile);
 
         lcmsMutex->lock ();
@@ -1678,53 +1649,21 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				im->b[h][w] *= 65535.0 ;
 			}
     }
-        t3.set ();
+
+        //t3.set ();
 //        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], double& defgain) {
-	
-	//camMatrix is cam2xyz = xyz_cam
-	
-	if (cmp.input == "(none)")
-		return;
-	
-	//MyTime t1, t2, t3;
-	//t1.set ();
+// Converts raw image including ICC input profile to working space - 16bit int version
+void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
 	
 	cmsHPROFILE in;
-	cmsHPROFILE out;
+    if (!findInputProfile(cmp.input, embedded, camName, in)) return;
 	
-	Glib::ustring inProfile = cmp.input;
-	
-	if (inProfile=="(embedded)") {
-		if (embedded)
-			in = embedded;
-		else
-			in = camprofile;
-	}
-	else if (inProfile=="(camera)" || inProfile=="")
-		in = camprofile;
-	else {
-		in = iccStore->getProfile (inProfile);
-		if (in==NULL)
-			inProfile = "(camera)";
-	}
-	
-	
-	if (inProfile=="(camera)" || inProfile=="" || (inProfile=="(embedded)" && !embedded)) {
-
-/*		out = iccStore->workingSpace (cmp.working);
-
-        lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOCACHE); //cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);//cmsFLAGS_MATRIXINPUT | cmsFLAGS_MATRIXOUTPUT);
-        lcmsMutex->unlock ();
-
-		im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
-		cmsDeleteTransform(hTransform);
-*/
+	if (in==NULL) {
+        // Take camprofile from DCRAW
         // in this case we avoid using the slllllooooooowwww lcms
 TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 		double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -1747,7 +1686,7 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 			}
 	}
 	else {
-		out = iccStore->workingSpace (cmp.working);
+		cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 		//        out = iccStore->workingSpaceGamma (wProfile);
 		lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent,
@@ -1784,6 +1723,25 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 
 	//t3.set ();
 	//        printf ("ICM TIME: %d\n", t3.etime(t1));
+}
+
+// Determine RAW input and output profiles. Returns TRUE on success
+bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in) {
+    in=NULL; // cam will be taken on NULL
+
+    if (inProfile == "(none)") return false;
+
+    if (inProfile == "(embedded)" && embedded) {
+		in = embedded;
+	} else if (inProfile=="(cameraICC)") {
+        in = iccStore->getStdProfile(camName);
+    } else if (inProfile!="(camera)" && inProfile!="") {
+		in = iccStore->getProfile (inProfile);
+    }
+    
+    // "in" might be NULL because of "not found". That's ok, we take the cam profile then
+	
+    return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

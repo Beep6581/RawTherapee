@@ -446,7 +446,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 	else
 	{
 		// Full thumbnail: apply profile
- 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+ 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, scale );
 	}
  
     tpp->getDimensions(lastW,lastH,lastScale);
@@ -471,7 +471,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  		return 0;
  	}
  
- 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, scale);
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, scale );
     tpp->getDimensions(lastW,lastH,lastScale);
  
  	delete tpp;
@@ -555,7 +555,7 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
         cfs.timeValid = true;
         cfs.exifValid = true;
         cfs.lens     = idata->getLens();
-        cfs.camera   = idata->getMake() + " " + idata->getModel();
+        cfs.camera   = idata->getCamera();
     }
 	else {
         cfs.lens     = "Unknown";

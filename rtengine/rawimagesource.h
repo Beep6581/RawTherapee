@@ -23,6 +23,7 @@
 #include <lcms2.h>
 #include <array2D.h>
 #include <curves.h>
+#include <cacheimagedata.h>
 
 #define HR_SCALE 2
 
@@ -59,6 +60,7 @@ class RawImageSource : public ImageSource {
 	private:
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
+        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in);
 
     protected:
         Glib::Mutex getImageMutex;  // locks getImage
@@ -154,8 +156,8 @@ class RawImageSource : public ImageSource {
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
-        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
-        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], double& defgain);
+        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
 	void boxblur2(float** src, float** dst, int H, int W, int box );

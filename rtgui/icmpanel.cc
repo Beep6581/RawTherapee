@@ -49,6 +49,9 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     icamera = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERA")));
     pack_start (*icamera, Gtk::PACK_SHRINK, 4);
 
+    icameraICC = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERAICC")));
+    pack_start (*icameraICC, Gtk::PACK_SHRINK, 4);
+
     ifromfile = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCUSTOM")+":"));
     Gtk::HBox* ffbox = Gtk::manage (new Gtk::HBox ());
     ffbox->pack_start (*ifromfile, Gtk::PACK_SHRINK);
@@ -57,6 +60,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     pack_start (*ffbox, Gtk::PACK_SHRINK, 4);
 
     opts = icamera->get_group();
+    icameraICC->set_group (opts);
     iembedded->set_group (opts);
     ifromfile->set_group (opts);
     inone->set_group (opts);
@@ -167,6 +171,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
 	
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
+    icameraICC->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     igamma->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::profAppGammaChanged) );
@@ -189,13 +194,17 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         iembedded->set_active (true);
         igamma->set_sensitive (false);
     }
+    else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()!=Gtk::STATE_INSENSITIVE) {
+        icameraICC->set_active (true);
+        igamma->set_sensitive (false);
+    }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
         igamma->set_sensitive (false);
     }
     else {
         ifromfile->set_active (true);
-        oldip = pp->icm.input.substr(5);
+        oldip = pp->icm.input.substr(5);  // cut of "file:"
         ipDialog->set_filename (pp->icm.input.substr(5));
         igamma->set_sensitive (true);
     }
@@ -253,6 +262,8 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->icm.input = "(embedded)";
     else if (icamera->get_active ())
         pp->icm.input = "(camera)";
+    else if (icameraICC->get_active ())
+        pp->icm.input = "(cameraICC)";
     else {
         pp->icm.input = "file:"+ipDialog->get_filename ();
 
@@ -344,6 +355,10 @@ void ICMPanel::ipChanged () {
         profname = "(camera)";
         igamma->set_sensitive (false);
     }
+    else if (icameraICC->get_active ()) {
+        profname = "(cameraICC)";
+        igamma->set_sensitive (false);
+    }
     else {
         profname = ipDialog->get_filename ();
         igamma->set_sensitive (true);
@@ -400,6 +415,7 @@ void ICMPanel::setRaw (bool raw) {
     icamera->set_active (raw);
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
+    icameraICC->set_sensitive (raw);
     iembedded->set_sensitive (!raw);  
 
     enableListener ();

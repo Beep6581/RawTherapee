@@ -174,6 +174,17 @@ cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
     return NULL;
 }
 
+cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name) {
+
+	Glib::Mutex::Lock lock(mutex_);
+
+
+    std::map<std::string, cmsHPROFILE>::iterator r = fileStdProfiles.find (name.uppercase());
+    if (r==fileProfiles.end()) return NULL;
+    
+    return r->second;
+}
+
 ProfileContent ICCStore::getContent (Glib::ustring name) {
 
 	Glib::Mutex::Lock lock(mutex_);
@@ -181,24 +192,30 @@ ProfileContent ICCStore::getContent (Glib::ustring name) {
     return fileProfileContents[name];
 }
 
-std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
+// Reads all profiles from the given profiles dir
+void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring stdICCDir) {
 
 	Glib::Mutex::Lock lock(mutex_);
 
-    fileProfiles.clear ();
-    fileProfileContents.clear ();
-    std::vector<std::string> result;
-    if (pdir!="") {
+    // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
+    loadICCs(usrICCDir, false, fileProfiles, fileProfileContents);
+    loadICCs(stdICCDir, true, fileStdProfiles, fileStdProfileContents);
+}
+
+void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents) {
+    resultProfiles.clear ();
+    resultProfileContents.clear ();
+
+    if (rootDirName!="") {
         // process directory
-        Glib::ustring dirname = pdir;
+        Glib::ustring dirname = rootDirName;
         Glib::Dir* dir = NULL;
         try {
-	    if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR))
-                return result;
+	        if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) return;
             dir = new Glib::Dir (dirname);
         }
         catch (Glib::Exception& fe) {
-            return result;
+            return;
         }
         dirname = dirname + "/";
         for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
@@ -208,15 +225,13 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
             if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 int lastdot = sname.find_last_of ('.');
                 if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-//                    printf ("processing file %s...\n", fname.c_str());
-                    Glib::ustring name = sname.substr(0,lastdot);
+                    Glib::ustring name = nameUpper ? sname.substr(0,lastdot).uppercase() : sname.substr(0,lastdot);
                     ProfileContent pc (fname);
                     if (pc.data) {
                         cmsHPROFILE profile = pc.toProfile ();
                         if (profile) {
-                            fileProfiles[name] = profile;
-                            fileProfileContents[name] = pc;
-                            result.push_back (name);
+                            resultProfiles[name] = profile;
+                            resultProfileContents[name] = pc;
                         }
                     }
                 }
@@ -224,7 +239,6 @@ std::vector<std::string> ICCStore::parseDir (Glib::ustring pdir) {
         }
         delete dir;
     }
-    return result;
 }
 
 // Determine the first monitor default profile of operating system, if selected

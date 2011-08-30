@@ -70,7 +70,7 @@ namespace rtengine {
             static void cleanupGamma ();
             void init ();
             
-            IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
+            IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, std::string camName, double& scale);
             IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
             int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
             void     getDimensions  (int& w, int& h, double& scaleFac);

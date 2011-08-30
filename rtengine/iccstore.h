@@ -49,8 +49,13 @@ class ICCStore {
         std::map<std::string, TMatrix> wMatrices;
         std::map<std::string, TMatrix> iwMatrices;
         
+        // these contain profiles from user/system directory (supplied on init)
         std::map<std::string, cmsHPROFILE>    fileProfiles;
         std::map<std::string, ProfileContent> fileProfileContents;
+
+        // these contain standard profiles from RT. keys are all in uppercase
+        std::map<std::string, cmsHPROFILE>    fileStdProfiles;
+        std::map<std::string, ProfileContent> fileStdProfileContents;
 
         cmsHPROFILE xyz;
         cmsHPROFILE srgb;
@@ -58,6 +63,7 @@ class ICCStore {
 		Glib::Mutex mutex_;
 
         ICCStore (); 
+        void loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents);
         
     public:
 
@@ -74,7 +80,9 @@ class ICCStore {
         TMatrix workingSpaceInverseMatrix (Glib::ustring name);
         
         cmsHPROFILE              getProfile   (Glib::ustring name);
-        std::vector<std::string> parseDir     (Glib::ustring pdir);
+        cmsHPROFILE      getStdProfile(Glib::ustring name);
+
+        void             init         (Glib::ustring usrICCDir, Glib::ustring stdICCDir);
         ProfileContent           getContent   (Glib::ustring name);
 
         cmsHPROFILE getXYZProfile ()  { return xyz;  }
