@@ -43,6 +43,7 @@ class ImageData : public ImageMetaData {
     double focal_len;
     double shutter;
     std::string make, model, serial;
+    std::string orientation;
     std::string lens;
 
     void extractInfo ();
@@ -68,6 +69,7 @@ class ImageData : public ImageMetaData {
     std::string getModel    () const { return model;     }
     std::string getLens     () const { return lens;      }
     std::string getSerialNumber () const { return serial;}
+    std::string getOrientation () const { return orientation; }
 };
 };
 #endif

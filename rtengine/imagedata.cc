@@ -89,6 +89,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
         lens = "Unknown";
         make = "Unknown";
         model = "Unknown";
+        orientation = "Unknown";
         focal_len = 0;
         memset (&time, 0, sizeof(time));
     }
@@ -104,6 +105,7 @@ void ImageData::extractInfo () {
   make = "";
   model = "";
   serial = "";
+  orientation = "";
   shutter = 0;
   aperture = 0;
   focal_len = 0;
@@ -143,6 +145,9 @@ void ImageData::extractInfo () {
      	   model.erase(0,make.size()+1);
      if( model.find( "Digital Camera ") != std::string::npos )
      	model.erase(0,15);
+  }
+  if (root->getTag ("Orientation")){
+     orientation = root->getTag ("Orientation")->valueToString ();
   }
 
   rtexif::TagDirectory* exif = NULL;

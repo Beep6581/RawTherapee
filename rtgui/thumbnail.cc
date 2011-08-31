@@ -95,23 +95,23 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.exifValid = false;
 	cfs.timeValid = false;
 
-	if (ext.lowercase()=="jpg" || ext.lowercase()=="png" || ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
-			if (tpp) {
-				if (ext.lowercase()=="jpg") {
+	if (ext.lowercase()=="jpg") {
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
+			if (tpp)
 					cfs.format = FT_Jpeg;
-					infoFromImage (fname);
-				}
-				else if (ext.lowercase()=="png")
-					cfs.format = FT_Png;
-				else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-					cfs.format = FT_Tiff;
-					infoFromImage (fname);
-					}
-			}
 	}
-	else {
-		// RAW works like this:
+	else if (ext.lowercase()=="png") {
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+			if (tpp)
+					cfs.format = FT_Png;
+	}
+	else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
+			if (tpp)
+					cfs.format = FT_Tiff;
+	}
+    else {
+ 		// RAW works like this:
 		//  1. if we are here it's because we aren't in the cache so load the JPG
 		//     image out of the RAW. Mark as "quick".
 		//  2. if we don't find that then just grab the real image.
@@ -534,11 +534,13 @@ ThFileType Thumbnail::getType () {
     return (ThFileType) cfs.format;
 }
 
-void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml) {
+int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml) {
 
     rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, rml);
     if (!idata)
-        return;
+        return 0;
+
+    int deg = 0;
     cfs.timeValid = false;
     cfs.exifValid = false;
     if (idata->hasExif()) {
@@ -556,6 +558,16 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
         cfs.exifValid = true;
         cfs.lens     = idata->getLens();
         cfs.camera   = idata->getCamera();
+
+        if (idata->getOrientation()=="Rotate 90 CW") {
+            deg = 90;
+        }
+        else if (idata->getOrientation()=="Rotate 180") {
+            deg = 180;
+        }
+        else if (idata->getOrientation()=="Rotate 270 CW") {
+            deg = 270;
+        }
     }
 	else {
         cfs.lens     = "Unknown";
@@ -568,6 +580,7 @@ void Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaData
 		else {cfs.filetype="";}
 	
     delete idata;
+    return deg;
 }
 
 void Thumbnail::_loadThumbnail(bool firstTrial) {

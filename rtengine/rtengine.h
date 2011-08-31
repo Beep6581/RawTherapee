@@ -80,6 +80,8 @@ namespace rtengine {
 
           /** @return the lens on the camera  */
             virtual std::string getLens     () const =0;
+          /** @return the orientation of the image */
+            virtual std::string getOrientation () const =0;
           /** Functions to convert between floating point and string representation of shutter and aperture */
             static std::string apertureToString (double aperture);
           /** Functions to convert between floating point and string representation of shutter and aperture */
