@@ -42,13 +42,18 @@
 
 namespace rtengine {
 
-Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh) {
+Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg) {
 
     Image16* img = new Image16 ();
     int err = img->load (fname);
     if (err) {
         delete img;
         return NULL;
+    }
+    if (deg) {
+        Image16* rot = img->rotate(deg);
+        delete img;
+        img = rot;
     }
     
     Thumbnail* tpp = new Thumbnail ();
