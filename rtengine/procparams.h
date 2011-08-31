@@ -339,6 +339,7 @@ class ColorManagementParams {
     public:
         Glib::ustring input;
         bool          gammaOnInput;
+        bool          blendCMSMatrix;
         Glib::ustring working;
         Glib::ustring output;
         static const Glib::ustring NoICMString;      
