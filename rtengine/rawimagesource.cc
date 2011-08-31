@@ -1572,15 +1572,18 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     cmsHPROFILE in;
     if (!findInputProfile(cmp.input, embedded, camName, in)) return;
     
-    if (in==NULL) {
-		// use default camprofile, supplied by dcraw
-        // in this case we avoid using the slllllooooooowwww lcms
+    // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
         float mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
                     mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * xyz_cam
+
+
+    if (in==NULL) {
+		// use default camprofile, supplied by dcraw
+        // in this case we avoid using the slllllooooooowwww lcms
 
         #pragma omp parallel for
         for (int i=0; i<im->height; i++)
@@ -1596,6 +1599,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
             }
     } else {
+        Imagefloat* imgPreLCMS=NULL;
+        if (cmp.blendCMSMatrix) imgPreLCMS=new Imagefloat(*im);
+
         // use supplied input profile
 		// color space transform is expecting data in the range (0,1)
 		for ( int h = 0; h < im->height; ++h )
@@ -1640,14 +1646,36 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
         cmsDeleteTransform(hTransform);
 
-		// restore normalization to the range (0,65535)
+		// restore normalization to the range (0,65535) and blend matrix colors if LCMS is clipping
         #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
 				im->r[h][w] *= 65535.0 ;
 				im->g[h][w] *= 65535.0 ;
 				im->b[h][w] *= 65535.0 ;
+
+                if (cmp.blendCMSMatrix) {
+                    // Red
+                    if (im->r[h][w]>65534.9) {
+                        float f = mat[0][0]*imgPreLCMS->r[h][w] + mat[0][1]*imgPreLCMS->g[h][w] + mat[0][2]*imgPreLCMS->b[h][w];
+                        if (f>im->r[h][w]) im->r[h][w]=f;
 			}
+
+                    // Green
+                    if (im->g[h][w]>65534.9) {
+                        float f = mat[1][0]*imgPreLCMS->r[h][w] + mat[1][1]*imgPreLCMS->g[h][w] + mat[1][2]*imgPreLCMS->b[h][w];
+                        if (f>im->g[h][w]) im->g[h][w]=f;
+                    }
+
+                    // Blue
+                    if (im->b[h][w]>65534.9) {
+                        float f = mat[2][0]*imgPreLCMS->r[h][w] + mat[2][1]*imgPreLCMS->g[h][w] + mat[2][2]*imgPreLCMS->b[h][w];
+                        if (f>im->b[h][w]) im->b[h][w]=f;
+                    }
+                }
+			}
+
+        if (imgPreLCMS!=NULL) delete imgPreLCMS;
     }
 
         //t3.set ();

@@ -69,6 +69,10 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     igamma->set_sensitive (false);
     pack_start (*igamma, Gtk::PACK_SHRINK, 4);
 
+    ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
+    ckbBlendCMSMatrix->set_sensitive (false);
+    pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 4);
+
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
     saveRef->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
     pack_start (*saveRef, Gtk::PACK_SHRINK, 4);
@@ -174,7 +178,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     icameraICC->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
-    igamma->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::profAppGammaChanged) );
+    igamma->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::iccTogglesChanged) );
+    ckbBlendCMSMatrix->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::iccTogglesChanged) );
     ipc = ipDialog->signal_selection_changed().connect( sigc::mem_fun(*this, &ICMPanel::ipSelectionChanged) );
     saveRef->signal_pressed().connect( sigc::mem_fun(*this, &ICMPanel::saveReferencePressed) );
 
@@ -188,25 +193,25 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     ipc.block (true);
     if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         inone->set_active (true);
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active (true);
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()!=Gtk::STATE_INSENSITIVE) {
         icameraICC->set_active (true);
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive (true);
     }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive (false);
     }
     else {
         ifromfile->set_active (true);
         oldip = pp->icm.input.substr(5);  // cut of "file:"
         ipDialog->set_filename (pp->icm.input.substr(5));
-        igamma->set_sensitive (true);
+        igamma->set_sensitive (true); ckbBlendCMSMatrix->set_sensitive (true);
     }
 
     wnames->set_active_text (pp->icm.working);   
@@ -221,12 +226,13 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         onames->set_active_text (M("TP_ICM_NOICM"));
 
     igamma->set_active (pp->icm.gammaOnInput);
+    ckbBlendCMSMatrix->set_active (pp->icm.blendCMSMatrix);
 	onames->set_sensitive(wgamma->get_active_row_number()==0 || freegamma->get_active()); //"default"
 	wgamma->set_sensitive(!freegamma->get_active());
 	
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive (false);
         if (!pedited->icm.working)
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
@@ -282,6 +288,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->icm.output  = onames->get_active_text();
 		pp->icm.freegamma = freegamma->get_active();
     pp->icm.gammaOnInput = igamma->get_active ();
+    pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
 	pp->icm.gampos =(double) g_ampos->getValue();
 	pp->icm.slpos =(double) s_lpos->getValue();
 	
@@ -290,6 +297,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.gammaOnInput = !ifromfile->get_active ();
+        pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->icm.freegamma =!freegamma->get_inconsistent();
         pedited->icm.gampos          = g_ampos->getEditedState ();
@@ -345,23 +353,23 @@ void ICMPanel::ipChanged () {
     std::string profname;
     if (inone->get_active()) {
         profname = "(none)";
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive(false);
     }
     else if (iembedded->get_active ()) {
         profname = "(embedded)";
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive(false);
     }
     else if (icamera->get_active ()) {
         profname = "(camera)";
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive(false);
     }
     else if (icameraICC->get_active ()) {
         profname = "(cameraICC)";
-        igamma->set_sensitive (false);
+        igamma->set_sensitive (false); ckbBlendCMSMatrix->set_sensitive(true);
     }
     else {
         profname = ipDialog->get_filename ();
-        igamma->set_sensitive (true);
+        igamma->set_sensitive (true); ckbBlendCMSMatrix->set_sensitive(true);
     }
     
     if (listener && profname!=oldip)
@@ -370,7 +378,7 @@ void ICMPanel::ipChanged () {
     oldip = profname;
 }
 
-void ICMPanel::profAppGammaChanged() {
+void ICMPanel::iccTogglesChanged() {
     if (listener) listener->panelChanged (EvIProfile, "");
 }
 

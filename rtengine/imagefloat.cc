@@ -36,6 +36,13 @@ Imagefloat::Imagefloat (int w, int h)
     allocate (w, h);
 }
 
+// Copy other image
+Imagefloat::Imagefloat (Imagefloat& other) {
+    unaligned=NULL; data=NULL;
+    allocate (other.width, other.height);
+    memcpy(data, other.data, width*height*3);
+}
+
 Imagefloat::~Imagefloat () {
   
     if (data!=NULL) {
