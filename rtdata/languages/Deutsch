@@ -13,7 +13,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Jul 2011: Erweiterungen und Korrekturen (MaWe). Letzter Stand: 26.07.2011
+#15 Jan-Aug 2011: Erweiterungen und Korrekturen (MaWe, 01.09.2011)
 #16 Erweiterung (oduis)
 #17 Erweiterung (oduis)
 ABOUT_TAB_BUILD;Version
@@ -87,8 +87,8 @@ FILEBROWSER_DELETEDLGLABEL;Dateien löschen
 FILEBROWSER_DELETEDLGMSG;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Möchten Sie wirklich %1 Datei(en) unwiderruflich löschen, SAMT evtl. zugehörigen, aus der Stapelverarbeitung resultierenden Ausgabedateien?
 FILEBROWSER_EMPTYTRASH;Papierkorb leeren
-FILEBROWSER_EXEC_CPB;Benutzerdef. Bildprofilgenerator ausführen
 FILEBROWSER_EMPTYTRASHHINT;Dateien endgültig aus Papierkorb löschen
+FILEBROWSER_EXEC_CPB;Benutzerdef. Bildprofilgenerator ausführen
 FILEBROWSER_EXIFFILTERAPPLY;Anwenden
 FILEBROWSER_EXIFFILTERAPPLYHINT;Ein-/Ausschalten des Exif Filters im Datei-Browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
@@ -189,18 +189,18 @@ GENERAL_SAVE;Speichern
 GENERAL_UNCHANGED;(Unverändert)
 GENERAL_YES;Ja
 HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_BUTTON_RAW;RAW
-HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_LABEL;Histogramm
 HISTOGRAM_TOOLTIP_B;BLAU-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein/ausschalten\n\nRechte Maustaste im Bildfenster klicken,\num Anzeige zu fixieren/lösen
 HISTOGRAM_TOOLTIP_G;GRÜN-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_L;CIELAB-Luminanz-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_R;ROT-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten
-HISTOGRAM_TOOLTIP_BAR;RGB Anzeigeleiste ein/ausschalten\nRechte Maustaste im Bildfenster klicken zum fixieren/lösen der Anzeige
 HISTORY_CHANGED;Verändert
 HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
 HISTORY_DELSNAPSHOT;Entf.
@@ -252,12 +252,12 @@ HISTORY_MSG_139;Schwarzpegel Blau
 HISTORY_MSG_13;Belichtungsbeschneidung
 HISTORY_MSG_140;Schwarzpegel Grün 2
 HISTORY_MSG_141;Schwarzpegel\nGrün-Werte angleichen
-HISTORY_MSG_142;Gerichtetes Schärfen\nGradient Durchgänge
-HISTORY_MSG_143;Gerichtetes Schärfen\nGradient Stärke
-HISTORY_MSG_144;Mikrokontrast Stärke
+HISTORY_MSG_142;Kantenschärfung\nIterationen
+HISTORY_MSG_143;Kantenschärfung\nQuantität
+HISTORY_MSG_144;Mikrokontrast\nQuantität
 HISTORY_MSG_145;Mikrokontrast\nGleichmäßigkeit
-HISTORY_MSG_146;Gerichtetes Schärfen
-HISTORY_MSG_147;Gerichtetes Schärfen\nNur Luminanz
+HISTORY_MSG_146;Kantenschärfung
+HISTORY_MSG_147;Kantenschärfung\nNur Luminanz
 HISTORY_MSG_148;Mikrokontrast
 HISTORY_MSG_149;Mikrokontrast\n3×3-Matrix
 HISTORY_MSG_14;Luminanz Helligkeit
@@ -268,16 +268,16 @@ HISTORY_MSG_17;Luminanz Lichter-Kompression
 HISTORY_MSG_18;Luminanz Schatten-Kompression
 HISTORY_MSG_19;'L'-Kurve
 HISTORY_MSG_1;Bild geladen
-HISTORY_MSG_20;Schärfen
-HISTORY_MSG_21;Schärfen Radius
-HISTORY_MSG_22;Schärfen Stärke
-HISTORY_MSG_23;Schärfen Schwellenwert
-HISTORY_MSG_24;Schärfen Nur Kanten
-HISTORY_MSG_25;Schärfen Kantensuche\nRadius
-HISTORY_MSG_26;Schärfen Kantentoleranz
-HISTORY_MSG_27;Schärfen Halo-Kontrolle
-HISTORY_MSG_28;Schärfen Halo-Kontrolle\nStärke
-HISTORY_MSG_29;Schärfen Methode
+HISTORY_MSG_20;Schärfung
+HISTORY_MSG_21;Unscharfmaskierung\nRadius
+HISTORY_MSG_22;Unscharfmaskierung\nStärke
+HISTORY_MSG_23;Unscharfmaskierung\nSchwellenwert
+HISTORY_MSG_24;Unscharfmaskierung\nNur Kanten
+HISTORY_MSG_25;Unscharfmaskierung\nKanten Radius
+HISTORY_MSG_26;Unscharfmaskierung\nKanten Toleranz
+HISTORY_MSG_27;Unscharfmaskierung\nHalo-Kontrolle
+HISTORY_MSG_28;Unscharfmaskierung\nHalo-Kontrolle Stärke
+HISTORY_MSG_29;Schärfung Methode
 HISTORY_MSG_2;Profil geladen
 HISTORY_MSG_30;Dekonvolution Radius
 HISTORY_MSG_31;Dekonvolution Stärke
@@ -314,7 +314,7 @@ HISTORY_MSG_59;Vertikal spiegeln
 HISTORY_MSG_5;Helligkeit
 HISTORY_MSG_60;Drehung - Grad
 HISTORY_MSG_61;Drehung
-HISTORY_MSG_62;Verzerrungskorrektur
+HISTORY_MSG_62;Verzeichnungskorrektur
 HISTORY_MSG_63;Variante gewählt
 HISTORY_MSG_64;Bild beschneiden
 HISTORY_MSG_65;Farbsaum entfernen
@@ -427,7 +427,7 @@ MAIN_BUTTON_QUEUE;In die Warteschlange
 MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern <b>Strg+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor bearbeiten <b>Strg+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden <b>M</b>
-MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden
+MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden <b>F11</b>
 MAIN_FRAME_BATCHQUEUE;Warteschlange
 MAIN_FRAME_BATCHQUEUE_TOOLTIP;Warteschlange <b>Strg+F3</b>
 MAIN_FRAME_EDITOR;Editor
@@ -443,6 +443,7 @@ MAIN_MSG_CANNOTLOAD;Bild kann nicht geladen werden
 MAIN_MSG_CANNOTSAVE;Fehler beim Speichern
 MAIN_MSG_CANNOTSTARTEDITOR;Der Editor kann nicht gestartet werden.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Setzen Sie bitte den richtigen Pfad in den Einstellungen.
+MAIN_MSG_EMPTYFILENAME;Dateiname fehlt!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Fehler beim Speichern des Bildes
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unverarbeitete Bilder in der Warteschlange gehen beim Verlassen der Anwendung verloren.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schließen? Es sind noch unverarbeitete Bilder in der Warteschlange.
@@ -481,7 +482,7 @@ MAIN_TOOLTIP_SAVEAS;Bild in anderem Verzeichnis speichern
 MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden <b>L</b> / <b>Strg+L</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden <b>Alt+L</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Oberes Bedienfeld ein-/ausblenden <b>Umschalt+L</b>
-MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausblenden <b>B</b>
+MAIN_TOOLTIP_TOGGLE;Vorher/Nachher-Ansicht ein-/ausschalten <b>B</b>
 NAVIGATOR_B_NA;B = k.a.
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = k.a.
@@ -520,7 +521,7 @@ PARTIALPASTE_DETAILGROUP;Gruppe Detaileinstellungen
 PARTIALPASTE_DIALOGLABEL;Selektives Einfügen des Bearbeitungsprofils
 PARTIALPASTE_DIRPYRDENOISE;Rauschminderung
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast nach Detailstufen
-PARTIALPASTE_DISTORTION;Verzerrungskorrektur
+PARTIALPASTE_DISTORTION;Verzeichnungskorrektur
 PARTIALPASTE_EVERYTHING;Alles
 PARTIALPASTE_EXIFCHANGES;Änderungen an Exif-Daten
 PARTIALPASTE_EXPOSURE;Belichtung
@@ -528,7 +529,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
 PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
 PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild: Unschärfetyp
 PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
-PARTIALPASTE_GRADIENTSHARPEN;Gerichtetes Schärfen (Kante)
+PARTIALPASTE_GRADIENTSHARPEN;Kantenschärfung
 PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
@@ -542,7 +543,7 @@ PARTIALPASTE_LENSGROUP;Gruppe Objektivkorrekturen
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
 PARTIALPASTE_LUMINANCEGROUP;Gruppe Luminanzeinstellungen
 PARTIALPASTE_METAICMGROUP;Gruppe Metadaten / ICM
-PARTIALPASTE_MICROCONTRAST;Mikrokontrast (Textur)
+PARTIALPASTE_MICROCONTRAST;Mikrokontrast
 PARTIALPASTE_PERSPECTIVE;Perspektive
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vorverarbeitung: Grün-Ausgleich
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Vorverarbeitung: Hot/Dead-Pixel-Filter anwenden
@@ -562,7 +563,7 @@ PARTIALPASTE_RAW_FALSECOLOR;Farbinterpolation: Falschfarbenunterdrückung Stufen
 PARTIALPASTE_RESIZE;Größe ändern
 PARTIALPASTE_ROTATION;Fein-Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
-PARTIALPASTE_SHARPENING;Schärfen (USM/RL)
+PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet-Mixer
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
@@ -596,7 +597,7 @@ PREFERENCES_DARKFRAMESHOTS;Aufnahmen
 PREFERENCES_DARKFRAMETEMPLATES;Vorlagen
 PREFERENCES_DATEFORMAT;Format
 PREFERENCES_DATEFORMATFRAME;Datumsformat
-PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nDas deutsche Datumsformat beispielsweise ist:\n<b>%d.%m.%y</b>
+PREFERENCES_DATEFORMATHINT;Die folgenden Variablen können verwendet werden:\n<b>%y</b> : <i>Jahr</i>\n<b>%m</b> : <i>Monat</i>\n<b>%d</b> : <i>Tag</i>\n\nBeispiele:\n<b>%d.%m.%y</b> (übliche deutsche Datumsschreibweise)\n<b>%y-%m-%d</b> (Datumsformat nach ISO 8601 und EN 28601)
 PREFERENCES_DEFAULTLANG;Sprache für Menüs und Dialoge
 PREFERENCES_DEFAULTTHEME;Standard-Oberflächendesign
 PREFERENCES_DEMOSAICINGALGO;Algorithmus zur Entrasterung
@@ -606,7 +607,7 @@ PREFERENCES_DIRLAST;Zuletzt geöffnetes Verzeichnis
 PREFERENCES_DIROTHER;Anderes
 PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
-PREFERENCES_EDITORCMDLINE;Andere Befehlszeile
+PREFERENCES_EDITORCMDLINE;Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
 PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Voransichten
@@ -622,7 +623,7 @@ PREFERENCES_FORRAW;Für RAW-Dateien
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
 PREFERENCES_GTKTHEME;Standard GTK
 PREFERENCES_HINT;Erklärungen
-PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm im linken Bedienfeld
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
 PREFERENCES_HLTHRESHOLD;Schwellenwert - zu hell
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bildbearbeitungsparameter
@@ -650,6 +651,8 @@ PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
 PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und ablegen.\n\nDie folgenden Variablen können verwendet werden:\n<b>%d1</b>, <b>%d2</b>, ..., <b>%f</b>, <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich ein Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen "<i>converted</i>" schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad "<i>/home/tom/photos/converted</i>" speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes; ihr Inhalt ist für unbewertete Bilder "<i>0</i>", für in den Papierkorb verschobene Bilder "<i>x</i>" und ansonsten - entsprechend der Anzahl der Sterne - eine Ziffer zwischen "<i>1</i>" und "<i>5</i>".
 PREFERENCES_OVERLAY_FILENAMES;Dateiname und Informationen überlagert über Bild
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
+PREFERENCES_PANFACTORFRAME;Drag'n'Drop im Detailfenster
+PREFERENCES_PANFACTORLABEL;Schrittweite
 PREFERENCES_PARSEDEXT;Angezeigte Dateitypen
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Nebenstehenden Dateityp (Extension) der obigen Liste hinzufügen
@@ -680,6 +683,7 @@ PREFERENCES_SND_BATCHQUEUEDONE;Warteschlange abgearbeitet
 PREFERENCES_SND_HELP;Entweder Dateipfad eingeben oder nichts (falls kein Systemklang gewünscht).\nUnter Windows "SystemDefault", "SystemAsterisk" usw. für Systemklänge verwenden.               
 PREFERENCES_SND_LNGEDITPROCDONE;Bearbeitung abgeschlossen
 PREFERENCES_SND_TRESHOLDSECS;nach (s)
+PREFERENCES_SQUAREDETAILWINDOW;Quadratisches Detailfenster (schneller)
 PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
 PREFERENCES_TAB_COLORMGR;Farbmanagement
@@ -752,12 +756,12 @@ TP_CHMIXER_GREEN;Grün
 TP_CHMIXER_LABEL;Kanal-Mixer
 TP_CHMIXER_RED;Rot
 TP_CHROMATABERR_LABEL;Chromatische Aberration
-TP_CLARITY_LABEL;Detailgenauigkeit und Schärfe
+TP_CLARITY_LABEL;Lokale Schärfung
 TP_CLARITY_MATRIX;3×3-Matrix statt 5×5-Matrix
-TP_CLARITY_MICRO;Mikrokontrast (Textur)
-TP_CLARITY_PASSES;Gradient Durchgänge
-TP_CLARITY_SHARPEN;Gerichtetes Schärfen (Kante)
-TP_CLARITY_STRENGTH;Gradient Stärke
+TP_CLARITY_MICRO;Mikrokontrast
+TP_CLARITY_PASSES;Iterationen
+TP_CLARITY_SHARPEN;Kantenschärfung
+TP_CLARITY_STRENGTH;Quantität
 TP_CLARITY_THREE;Nur Luminanz
 TP_COARSETRAF_DEGREE;Grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
@@ -816,9 +820,9 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Feinstes
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Stärke
-TP_DISTORTION_AUTO;Automatische Verzerrungskorrektur
+TP_DISTORTION_AUTO;Automatische Verzeichnungskorrektur
 TP_DISTORTION_AUTO_TIP;Linsenverzerrungen automatisch korrigieren (nur für bestimmte Kameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
-TP_DISTORTION_LABEL;Verzerrungskorrektur
+TP_DISTORTION_LABEL;Verzeichnungskorrektur
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;Feinstes
@@ -838,6 +842,7 @@ TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
+TP_EXPO_AFTER;Nach Interpolation (vor RGB-Konvertierung)
 TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
 TP_FLATFIELD_BLURRADIUS;Unschärferadius
 TP_FLATFIELD_BLURTYPE;Unschärfetyp
@@ -850,9 +855,9 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Freies Gamma
 TP_GAMMA_OUTPUT;Ausgabe-Gamma
 TP_GAMMA_SLOP;Gradient (linear)
-TP_HLREC_BLEND;Lichter abmischen
-TP_HLREC_CIELAB;CIELab Überlagerung
-TP_HLREC_COLOR;Farbübertragung
+TP_HLREC_BLEND;Blending
+TP_HLREC_CIELAB;CIELab Blending
+TP_HLREC_COLOR;Color Propagation
 TP_HLREC_LABEL;Lichter wiederherstellen
 TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode:
@@ -875,6 +880,7 @@ TP_ICM_FILEDLGFILTERANY;Alle Dateien
 TP_ICM_FILEDLGFILTERICM;ICC-Profildateien
 TP_ICM_GAMMABEFOREINPUT;Profil enthält Gamma-Anpassung
 TP_ICM_INPUTCAMERA;Kamera-Standard
+TP_ICM_INPUTCAMERAICC;Kamera-Standard oder ICC
 TP_ICM_INPUTCUSTOM;Benutzerdefiniert
 TP_ICM_INPUTDLGLABEL;Wähle Eingabe-ICC-Profil...
 TP_ICM_INPUTEMBEDDED;Eingebettetes verwenden, falls möglich
@@ -902,7 +908,7 @@ TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LUMADENOISE_EDGETOLERANCE;Kantentoleranz
 TP_LUMADENOISE_LABEL;Luminanz-Rauschfilter
 TP_LUMADENOISE_RADIUS;Radius
-TP_MLMICRO_STRENGTH;Stärke
+TP_MLMICRO_STRENGTH;Quantität
 TP_MLMICRO_UNIFORMITY;Gleichmäßigkeit
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
@@ -915,10 +921,11 @@ TP_PREPROCESS_NO_FOUND;Keins gefunden
 TP_RAWCACORR_AUTO;Automatische Korrektur
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
-TP_RAWEXPOS_BLACKZERO;Schwarzpegel: Grün 1 (führend)
 TP_RAWEXPOS_BLACKONE;Schwarzpegel: Rot
-TP_RAWEXPOS_BLACKTWO;Schwarzpegel: Blau
+TP_RAWEXPOS_BLACKS;Schwarzpegel
 TP_RAWEXPOS_BLACKTHREE;Schwarzpegel: Grün 2
+TP_RAWEXPOS_BLACKTWO;Schwarzpegel: Blau
+TP_RAWEXPOS_BLACKZERO;Schwarzpegel: Grün 1 (führend)
 TP_RAWEXPOS_LINEAR;Weißpunkt: Linearer\nKorrekturfaktor
 TP_RAWEXPOS_PRESER;Weißpunkt: Lichter\nbewahrende Korrektur (EV)
 TP_RAWEXPOS_TWOGREEN;Grün-Werte automatisch angleichen
@@ -934,8 +941,8 @@ TP_RESIZE_BICUBICSF;Bikubisch (weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (schärfer)
 TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Ausschnitt
-TP_RESIZE_DOWNSCALEB;Verkleinern (besser)
-TP_RESIZE_DOWNSCALEF;Verkleinern (schneller)
+TP_RESIZE_DOWNSCALEB;Downscaling (besser)
+TP_RESIZE_DOWNSCALEF;Downscaling (schneller)
 TP_RESIZE_FITBOX;Begrenzungsrahmen
 TP_RESIZE_FULLIMAGE;Ganzes Bild
 TP_RESIZE_FULLSIZE;Volle Bildgröße:
@@ -944,9 +951,9 @@ TP_RESIZE_HEIGHT;Höhe
 TP_RESIZE_LABEL;Größe ändern
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Methode:
-TP_RESIZE_NEAREST;Nächste
+TP_RESIZE_NEAREST;Nächster Nachbar
 TP_RESIZE_SCALE;Maßstab
-TP_RESIZE_SPECIFY;Eingabe:
+TP_RESIZE_SPECIFY;Vorgabe:
 TP_RESIZE_W;B:
 TP_RESIZE_WIDTH;Breite
 TP_ROTATE_DEGREE;Grad
@@ -964,7 +971,7 @@ TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Kantentoleranz
 TP_SHARPENING_HALOCONTROL;Halo-Kontrolle
 TP_SHARPENING_HCAMOUNT;Stärke
-TP_SHARPENING_LABEL;Schärfen (USM/RL)
+TP_SHARPENING_LABEL;Schärfung
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Nur Kanten schärfen
 TP_SHARPENING_RADIUS;Radius
@@ -980,7 +987,7 @@ TP_VIGNETTING_CENTER_X;Zentrum X
 TP_VIGNETTING_CENTER_Y;Zentrum Y
 TP_VIGNETTING_LABEL;Vignettierungskorrektur
 TP_VIGNETTING_RADIUS;Radius
-TP_VIGNETTING_STRENGTH;Stärke-Faktor
+TP_VIGNETTING_STRENGTH;Faktor
 TP_WBALANCE_AUTO;Automatisch
 TP_WBALANCE_CAMERA;Kamera
 TP_WBALANCE_CUSTOM;Benutzerdefiniert
