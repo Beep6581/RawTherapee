@@ -42,7 +42,9 @@ class ImageData : public ImageMetaData {
     double aperture;
     double focal_len;
     double shutter;
+    double expcomp;
     std::string make, model, serial;
+    std::string orientation;
     std::string lens;
 
     void extractInfo ();
@@ -64,10 +66,12 @@ class ImageData : public ImageMetaData {
     double      getFNumber  () const { return aperture;  }
     double      getFocalLen () const { return focal_len;   }
     double      getShutterSpeed () const { return shutter;   }
+    double      getExpComp  () const { return expcomp;   }
     std::string getMake     () const { return make;      }
     std::string getModel    () const { return model;     }
     std::string getLens     () const { return lens;      }
     std::string getSerialNumber () const { return serial;}
+    std::string getOrientation () const { return orientation; }
 };
 };
 #endif

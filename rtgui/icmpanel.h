@@ -47,6 +47,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  icameraICC;
         Gtk::RadioButton*  ifromfile;
         Gtk::CheckButton*  igamma;
+        Gtk::CheckButton*  ckbBlendCMSMatrix;
         Gtk::ComboBoxText* wnames;
         Gtk::ComboBoxText* wgamma;
 		
@@ -79,7 +80,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void gpChanged ();
 		void GamChanged ();
         void ipSelectionChanged ();
-        void profAppGammaChanged();
+        void iccTogglesChanged();
 
         void setRaw (bool raw);
         void saveReferencePressed ();
