@@ -660,26 +660,37 @@ void EditorPanel::error (Glib::ustring descr) {
 void EditorPanel::info_toggled () {
 
     Glib::ustring infoString;
+    Glib::ustring infoString1; //1-st line
+    Glib::ustring infoString2; //2-nd line
+    Glib::ustring infoString3; //3-rd line
+    Glib::ustring expcomp;
+
     if (!ipc || !openThm) return;
     const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
-    if (idata && idata->hasExif())
-//        infoString = Glib::ustring::compose ("%1 %2\nF/%3 %4 sec\n%5: %6\n%7: %8 mm\n",
-//            Glib::ustring(idata->getMake()), Glib::ustring(idata->getModel()),
-//            Glib::ustring(idata->apertureToString(idata->getFNumber())), Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
-//            M("QINFO_ISO"), idata->getISOSpeed(),
-//            M("QINFO_FOCALLENGTH"), idata->getFocalLen())
-//            + Glib::ustring::compose ("%1: %2", M("QINFO_LENS"), Glib::ustring(idata->getLens()));
-infoString = Glib::ustring::compose (
-            "%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>\n<span size=\"small\">%8</span><span>%9</span>",
-            Glib::ustring(idata->getMake()+" "+idata->getModel()),
-            Glib::ustring(idata->getLens()),
-            Glib::ustring(idata->apertureToString(idata->getFNumber())),
-            Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
-            M("QINFO_ISO"), idata->getISOSpeed(),
-            idata->getFocalLen(),
-            Glib::path_get_dirname(openThm->getFileName()) + G_DIR_SEPARATOR_S,
-            Glib::path_get_basename(openThm->getFileName())
-            );
+    if (idata && idata->hasExif()){
+    	infoString1 = Glib::ustring::compose ("%1 + %2",
+    			Glib::ustring(idata->getMake()+" "+idata->getModel()),
+    			Glib::ustring(idata->getLens()));
+
+        infoString2 = Glib::ustring::compose ("<span size=\"small\">f/</span><span size=\"large\">%1</span>  <span size=\"large\">%2</span><span size=\"small\">s</span>  <span size=\"small\">%3</span><span size=\"large\">%4</span>  <span size=\"large\">%5</span><span size=\"small\">mm</span>",
+        		Glib::ustring(idata->apertureToString(idata->getFNumber())),
+				Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+				M("QINFO_ISO"), idata->getISOSpeed(),
+				idata->getFocalLen());
+
+        expcomp = Glib::ustring(idata->expcompToString(idata->getExpComp()));
+        if (expcomp!=""){
+        		infoString2 = Glib::ustring::compose("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
+        				infoString2,
+        				Glib::ustring(idata->expcompToString(idata->getExpComp())));
+        }
+
+        infoString3 = Glib::ustring::compose ("<span size=\"small\">%1</span><span>%2</span>",
+        		Glib::path_get_dirname(openThm->getFileName()) + G_DIR_SEPARATOR_S,
+        		Glib::path_get_basename(openThm->getFileName()));
+
+        infoString = Glib::ustring::compose ("%1\n%2\n%3",infoString1, infoString2, infoString3);
+    }
     else
         infoString = M("QINFO_NOEXIF");
 
