@@ -71,6 +71,8 @@ namespace rtengine {
             virtual double      getFocalLen () const =0;
           /** @return the shutter speed */
             virtual double      getShutterSpeed () const =0;
+          /** @return the exposure compensation */
+            virtual double      getExpComp () const =0;
           /** @return the maker of the camera */
             virtual std::string getMake     () const =0;
           /** @return the model of the camera */
@@ -80,6 +82,8 @@ namespace rtengine {
 
           /** @return the lens on the camera  */
             virtual std::string getLens     () const =0;
+          /** @return the orientation of the image */
+            virtual std::string getOrientation () const =0;
           /** Functions to convert between floating point and string representation of shutter and aperture */
             static std::string apertureToString (double aperture);
           /** Functions to convert between floating point and string representation of shutter and aperture */
@@ -88,6 +92,8 @@ namespace rtengine {
             static double apertureFromString (std::string shutter);
           /** Functions to convert between floating point and string representation of shutter and aperture */
             static double shutterFromString (std::string shutter);
+          /** Functions to convert between floating point and string representation of exposure compensation */
+            static std::string expcompToString (double expcomp);
             
           /** Reads metadata from file.
             * @param fname is the name of the file

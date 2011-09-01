@@ -89,6 +89,8 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
         lens = "Unknown";
         make = "Unknown";
         model = "Unknown";
+        orientation = "Unknown";
+        expcomp = 0;
         focal_len = 0;
         memset (&time, 0, sizeof(time));
     }
@@ -104,6 +106,8 @@ void ImageData::extractInfo () {
   make = "";
   model = "";
   serial = "";
+  orientation = "";
+  expcomp = 0;
   shutter = 0;
   aperture = 0;
   focal_len = 0;
@@ -144,6 +148,9 @@ void ImageData::extractInfo () {
      if( model.find( "Digital Camera ") != std::string::npos )
      	model.erase(0,15);
   }
+  if (root->getTag ("Orientation")){
+     orientation = root->getTag ("Orientation")->valueToString ();
+  }
 
   rtexif::TagDirectory* exif = NULL;
   if (root->getTag ("Exif"))
@@ -160,6 +167,8 @@ void ImageData::extractInfo () {
         aperture = exif->getTag ("ApertureValue")->toDouble ();
     if (exif->getTag ("FNumber"))
         aperture = exif->getTag ("FNumber")->toDouble ();
+    if (exif->getTag ("ExposureBiasValue"))
+        expcomp = exif->getTag ("ExposureBiasValue")->toDouble ();
     if (exif->getTag ("FocalLength"))
         focal_len = exif->getTag ("FocalLength")->toDouble ();
     if (exif->getTag ("ISOSpeedRatings"))
@@ -327,6 +336,17 @@ std::string ImageMetaData::shutterToString (double shutter) {
     else
         sprintf (buffer, "%0.1f", shutter);
     return buffer;
+}
+
+std::string ImageMetaData::expcompToString (double expcomp) {
+
+    char buffer[256];
+    if (expcomp!=0.0){
+    	sprintf (buffer, "%0.1f", expcomp);
+    	return buffer;
+    }
+    else
+    	return "";
 }
 
 double ImageMetaData::shutterFromString (std::string s) {

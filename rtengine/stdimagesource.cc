@@ -90,6 +90,23 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
 
     embProfile = img->getEmbeddedProfile ();
     idata = new ImageData (fname); 
+    if (idata->hasExif()) {
+        int deg = 0;
+        if (idata->getOrientation()=="Rotate 90 CW") {
+            deg = 90;
+        }
+        else if (idata->getOrientation()=="Rotate 180") {
+            deg = 180;
+        }
+        else if (idata->getOrientation()=="Rotate 270 CW") {
+            deg = 270;
+        }
+        if (deg) {
+            Image16* rot = img->rotate(deg);
+            delete img;
+            img = rot;
+        }
+    }
 
     if (plistener) {
         plistener->setProgressStr ("PROGRESSBAR_READY");
