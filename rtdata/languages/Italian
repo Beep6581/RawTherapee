@@ -2,7 +2,7 @@
 #01 UTF-8(unix mode)
 #02 19-01-2008 v2.3 breek
 #03 01-11-2008 v2.4 pantaraf, chelidon, roberto
-#04 23-07-2011 v3.0 chelidon
+#04 26-08-2011 v3.0 joker, chelidon, ffsup2
 #05 Inserire una nota con la data ad ogni modifica per maggiore chiarezza.
 #06 IMPORTANTE: Contribuisci sul forum di rawtherapee nella pagina di localizzazione italiana se trovi errori http://www.rawtherapee.com/forum/viewtopic.php?p=3354
 ABOUT_TAB_BUILD;Versione
@@ -57,7 +57,7 @@ EXIFPANEL_RESETHINT;Ripristina i campi selezionati ai loro valori originari
 EXIFPANEL_SUBDIRECTORY;Sottocartella
 FILEBROWSER_ADDDELTEMPLATE;Aggiungi/Rimuovi schemi...
 FILEBROWSER_APPLYPROFILE;Applica un profilo
-FILEBROWSER_ARRANGEMENTHINT;Commuta fra la disposizione verticale/orizzontale delle miniature
+FILEBROWSER_ARRANGEMENTHINT;Commuta fra la disposizione verticale o orizzontale delle miniature
 FILEBROWSER_AUTODARKFRAME;Dark-Frame automatico
 FILEBROWSER_CLEARPROFILE;Azzera il profilo
 FILEBROWSER_COPYPROFILE;Copia il profilo
@@ -95,7 +95,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Impostazioni
 FILEBROWSER_PROCESSINGSETTINGSHINT;Scegli il formato del file e la cartella di destinazione
 FILEBROWSER_RENAMEDLGLABEL;Rinomina il file
 FILEBROWSER_RENAMEDLGMSG;Rinomina il file "%1" in:
-FILEBROWSER_SELECTDARKFRAME;Seleziona Dark-Frame...
+FILEBROWSER_SELECTDARKFRAME;Seleziona un Dark-Frame...
 FILEBROWSER_SHOWDIRHINT;Mostra tutte le immagini della cartella <b>(scorciatoia: D)</b>
 FILEBROWSER_SHOWEXIFINFO;Mostra informazioni EXIF <b>(scorciatoia: i)</b>
 FILEBROWSER_SHOWQUEUEHINT;Mostra il contenuto della coda di sviluppo
@@ -124,7 +124,7 @@ GENERAL_DISABLED;Disabilitato
 GENERAL_ENABLE;Abilita
 GENERAL_ENABLED;Abilitato
 GENERAL_FILE;File
-GENERAL_HIGH_QUALITY;Alta qualità
+GENERAL_HIGH_QUALITY;Qualità alta
 GENERAL_LANDSCAPE;Panorama
 GENERAL_LOAD;Carica
 GENERAL_NA;n/d
@@ -140,10 +140,10 @@ HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Istogramma
-HISTOGRAM_TOOLTIP_B;Mostra/Nascondi istogramma del BLU
-HISTOGRAM_TOOLTIP_G;Mostra/Nascondi istogramma del VERDE
-HISTOGRAM_TOOLTIP_L;Mostra/Nascondi istogramma di Luminanza CIELAB
-HISTOGRAM_TOOLTIP_R;Mostra/Nascondi istogramma del ROSSO
+HISTOGRAM_TOOLTIP_B;Mostra/Nascondi l'istogramma del BLU
+HISTOGRAM_TOOLTIP_G;Mostra/Nascondi l'istogramma del VERDE
+HISTOGRAM_TOOLTIP_L;Mostra/Nascondi l'istogramma di Luminanza CIELAB
+HISTOGRAM_TOOLTIP_R;Mostra/Nascondi l'istogramma del ROSSO
 HISTORY_CHANGED;Modificato
 HISTORY_CUSTOMCURVE;Curva personalizzata
 HISTORY_DELSNAPSHOT;Rimuovi
@@ -160,7 +160,7 @@ HISTORY_MSG_107;Soglia - Rimozione aloni contrastati
 HISTORY_MSG_108;Soglia di compr. alteluci
 HISTORY_MSG_109;Riquadro di selezione - Ridimensiona
 HISTORY_MSG_10;Compressione ombre
-HISTORY_MSG_110;Applica a - Ridimensiona
+HISTORY_MSG_110;Ridimensiona applicato a  
 HISTORY_MSG_111;Previeni tosaggio del colore
 HISTORY_MSG_112;Limitatore di saturazione
 HISTORY_MSG_113;Limite saturazione
@@ -244,7 +244,7 @@ HISTORY_MSG_6;Contrasto - Esposizione
 HISTORY_MSG_70;Spazio colore di uscita
 HISTORY_MSG_71;Spazio colore di ingresso
 HISTORY_MSG_72;Correzione vignettatura
-HISTORY_MSG_73;Miscelatore dei canali
+HISTORY_MSG_73;Miscelatore canali
 HISTORY_MSG_74;Scala - Ridimensiona
 HISTORY_MSG_75;Metodo - Ridimensiona
 HISTORY_MSG_76;Metadati Exif 
@@ -255,12 +255,12 @@ HISTORY_MSG_7;Livello del nero - Esposizione
 HISTORY_MSG_80;Altezza - Ridimensiona
 HISTORY_MSG_81;Ridimensiona
 HISTORY_MSG_82;Profilo modificato
-HISTORY_MSG_83;Ombre/Alteluci in alta qualità
+HISTORY_MSG_83;Ombre/Alteluci con qualità alta
 HISTORY_MSG_84;Correzione prospettiva
 HISTORY_MSG_85;Coefficienti Wavelet
 HISTORY_MSG_86;Equalizzatore Wavelet
-HISTORY_MSG_87;Riduzione rumore impulsivo
-HISTORY_MSG_88;Soglia - Riduzione rumore impulsivo
+HISTORY_MSG_87;Riduzione rumore puntuale
+HISTORY_MSG_88;Soglia - Riduzione rumore puntuale
 HISTORY_MSG_89;Riduzione rumore
 HISTORY_MSG_8;Compensazione dell'esposizione
 HISTORY_MSG_90;Luminanza - Riduzione rumore
@@ -283,7 +283,7 @@ HISTORY_SNAPSHOT;Istantanea
 HISTORY_SNAPSHOTS;Istantanee
 ICMPANEL_FILEDLGFILTERANY;Qualsiasi file
 ICMPANEL_FILEDLGFILTERICM;File di Profili ICC
-ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il gamma
+ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il Gamma
 ICMPANEL_INPUTCAMERA;Predefinito della fotocamera
 ICMPANEL_INPUTCUSTOM;Personalizzato
 ICMPANEL_INPUTDLGLABEL;Seleziona il profilo ICC di ingresso...
@@ -323,7 +323,7 @@ IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del c
 IPTCPANEL_INSTRUCTIONS;Istruzioni
 IPTCPANEL_INSTRUCTIONSHINT;Altre istruzioni editoriali riguardanti l'uso dell'immagine (Special Instructions).
 IPTCPANEL_KEYWORDS;Parole Chiave
-IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche all'atto di recuperare informazioni specifiche (Keywords).
+IPTCPANEL_KEYWORDSHINT;Usate per indicare parole emblematiche al fine di recuperare informazioni specifiche (Keywords).
 IPTCPANEL_PASTEHINT;Incolla le impostazioni IPTC dagli appunti
 IPTCPANEL_PROVINCE;Provincia
 IPTCPANEL_PROVINCEHINT;La provincia/regione da cui l'immagine proviene (Province-State).
@@ -345,14 +345,14 @@ MAIN_BUTTON_QUEUE;Accoda
 MAIN_BUTTON_SAVE_TOOLTIP;Salva l'immagine corrente <b>(scorciatoia: Ctrl+S)</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Modifica l'immagine corrente con un programma di ritocco grafico <b>(scorciatoia: Ctrl+E)</b>
 MAIN_BUTTON_UNFULLSCREEN;Esci da schermo intero
-MAIN_FRAME_BATCHQUEUE;Coda di Sviluppo
-MAIN_FRAME_EDITOR;Camera Oscura 
+MAIN_FRAME_BATCHQUEUE;Coda di sviluppo
+MAIN_FRAME_EDITOR;Sviluppo
 MAIN_FRAME_FILEBROWSER;Navigatore 
 MAIN_FRAME_PLACES;Risorse
 MAIN_FRAME_PLACES_ADD;Aggiungi
 MAIN_FRAME_PLACES_DEL;Rimuovi
 MAIN_FRAME_RECENT;Cartelle recenti
-MAIN_MSG_ALREADYEXISTS;Il file esiste già.
+MAIN_MSG_ALREADYEXISTS;Il file esiste già!
 MAIN_MSG_CANNOTLOAD;Impossibile caricare l'immagine
 MAIN_MSG_CANNOTSAVE;Errore nel salvare il file!
 MAIN_MSG_CANNOTSTARTEDITOR;Non riesco ad avviare il programma di ritocco.
@@ -366,7 +366,7 @@ MAIN_MSG_PLACES;Risorse
 MAIN_MSG_QOVERWRITE;Intendi sovrascriverlo?
 MAIN_TAB_BASIC;Principale
 MAIN_TAB_COLOR;Colore
-MAIN_TAB_DETAIL;Dettagli
+MAIN_TAB_DETAIL;Dettaglio
 MAIN_TAB_DEVELOP;Sviluppo
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Esposizione
@@ -419,7 +419,7 @@ PARTIALPASTE_COMMONTRANSFORMPARAMS;Riadatta
 PARTIALPASTE_COMPOSITIONGROUP;Parametri di composizione
 PARTIALPASTE_CROP;Ritaglio
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Autoseleziona Dark-Frame
-PARTIALPASTE_DARKFRAMEFILE;Fotogramma Dark-Frame
+PARTIALPASTE_DARKFRAMEFILE;Fotogramma di fondo (Dark-Frame)
 PARTIALPASTE_DEFRINGE;Rimozione aloni contrastati
 PARTIALPASTE_DETAILGROUP;Parametri di dettaglio
 PARTIALPASTE_DIALOGLABEL;Incolla una porzione del profilo
@@ -435,7 +435,7 @@ PARTIALPASTE_HLRECOVERYAMOUNT;Quantità di recupero alteluci
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Soglia di recupero alteluci
 PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMSETTINGS;Impostazioni ICM
-PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore impulsivo
+PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore puntuale
 PARTIALPASTE_IPTCINFO;Informazioni IPTC
 PARTIALPASTE_LABCURVE;Regolazioni Lab
 PARTIALPASTE_LENSGROUP;Parametri correlati all'ottica
@@ -552,7 +552,7 @@ PREFERENCES_SHOWONLYRAW;Mostra solo file RAW
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
 PREFERENCES_SINGLETAB;Modalità a singola scheda
 PREFERENCES_SINGLETABVERTAB;Modalità a singola scheda, schede verticali
-PREFERENCES_SLIMUI;Interfaccia assottigliata
+PREFERENCES_SLIMUI;Interfaccia compatta
 PREFERENCES_STARTUPIMDIR;Cartella delle immagini all'avvio
 PREFERENCES_TAB_BROWSER;Navigatore di file
 PREFERENCES_TAB_COLORMGR;Gestione colore
@@ -560,19 +560,19 @@ PREFERENCES_TAB_GENERAL;Generale
 PREFERENCES_TAB_IMPROC;Elaborazione immagine
 PREFERENCES_TAB_OUTPUT;Opzioni di salvataggio
 PREFERENCES_THUMBSIZE;Dimensione delle miniature
-PREFERENCES_TUNNELMETADATA;Copia i dati IPTC/XMP non modificati nel file finale (qualora si etichetti con un altro programma)
+PREFERENCES_TUNNELMETADATA;Copia i dati IPTC/XMP non modificati nel file sviluppato (qualora si etichetti con un altro programma)
 PREFERENCES_USESYSTEMTHEME;Usa tema di sistema
 PREFERENCES_WORKFLOW;Flusso di lavoro
 PROFILEPANEL_FILEDLGFILTERANY;Qualsiasi file
-PROFILEPANEL_FILEDLGFILTERPP;Profili di elaborazione
-PROFILEPANEL_LABEL;Profili di elaborazione
-PROFILEPANEL_LOADDLGLABEL;Carico i parametri di elaborazione...
+PROFILEPANEL_FILEDLGFILTERPP;Profili di sviluppo
+PROFILEPANEL_LABEL;Profili di sviluppo
+PROFILEPANEL_LOADDLGLABEL;Carico i parametri di sviluppo...
 PROFILEPANEL_PCUSTOM;Personalizzato
 PROFILEPANEL_PFILE;Da file
 PROFILEPANEL_PLASTPHOTO;Ultima foto
 PROFILEPANEL_PLASTSAVED;Ultimo salvato
 PROFILEPANEL_PROFILE;Profilo
-PROFILEPANEL_SAVEDLGLABEL;Salvo i parametri di elaborazione...
+PROFILEPANEL_SAVEDLGLABEL;Salvo i parametri di sviluppo...
 PROFILEPANEL_TOOLTIPCOPY;Copia il profilo corrente negli appunti
 PROFILEPANEL_TOOLTIPLOAD;Carica profilo da file
 PROFILEPANEL_TOOLTIPPASTE;Incolla il profilo dagli appunti
@@ -618,7 +618,7 @@ TP_CACORRECTION_LABEL;Correzione aberrazioni cromatiche
 TP_CACORRECTION_RED;Rosso
 TP_CHMIXER_BLUE;Blu
 TP_CHMIXER_GREEN;Verde
-TP_CHMIXER_LABEL;Miscelatore Canali
+TP_CHMIXER_LABEL;Miscelatore canali
 TP_CHMIXER_RED;Rosso
 TP_CHROMATABERR_LABEL;Aberrazioni cromatiche
 TP_COARSETRAF_DEGREE;Angolo:
@@ -626,10 +626,10 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Rifletti orizzontalmente
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Ruota a sinistra
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Ruota a destra
 TP_COARSETRAF_TOOLTIP_VFLIP;Rifletti verticalmente
-TP_COLORBOOST_ACHANNEL;canale "a"
+TP_COLORBOOST_ACHANNEL;Canale "a"
 TP_COLORBOOST_AMOUNT;Quantità
 TP_COLORBOOST_AVOIDCOLORCLIP;Previeni tosaggio dei colori
-TP_COLORBOOST_BCHANNEL;canale "b"
+TP_COLORBOOST_BCHANNEL;Canale "b"
 TP_COLORBOOST_CHAB;a & b
 TP_COLORBOOST_CHANNEL;Canale
 TP_COLORBOOST_CHSEPARATE;separati
@@ -656,7 +656,7 @@ TP_CROP_GTRULETHIRDS;Regola dei terzi
 TP_CROP_GUIDETYPE;Tipo di guida:
 TP_CROP_H;A
 TP_CROP_LABEL;Ritaglia
-TP_CROP_SELECTCROP;Seleziona area
+TP_CROP_SELECTCROP;    Seleziona Area
 TP_CROP_W;L
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -732,8 +732,8 @@ TP_ICM_OUTPUTDLGLABEL;Seleziona il profilo ICC di uscita...
 TP_ICM_OUTPUTPROFILE;Profilo di Uscita
 TP_ICM_SAVEREFERENCE;Salva riferimento per la profilazione
 TP_ICM_WORKINGPROFILE;Profilo di Lavoro
-TP_IMPULSEDENOISE_LABEL;Riduzione rumore impulsivo
-TP_IMPULSEDENOISE_THRESH;Soglia rumore impulsivo
+TP_IMPULSEDENOISE_LABEL;Riduzione rumore puntuale
+TP_IMPULSEDENOISE_THRESH;Soglia RR puntuale
 TP_LABCURVE_AVOIDCOLORCLIP;Previeni tosaggio dei colori
 TP_LABCURVE_BRIGHTNESS;Luminosità
 TP_LABCURVE_CONTRAST;Contrasto
@@ -742,7 +742,7 @@ TP_LABCURVE_ENABLESATLIMITER;Abilita limitatore della saturazione
 TP_LABCURVE_LABEL;Regolazioni Lab
 TP_LABCURVE_SATLIMIT;Limite di saturazione
 TP_LABCURVE_SATURATION;Saturazione
-TP_LENSGEOM_AUTOCROP;Ritaglio automatico
+TP_LENSGEOM_AUTOCROP;    Ritaglio automatico
 TP_LENSGEOM_FILL;Riadatta
 TP_LENSGEOM_LABEL;Obiettivo / Geometria
 TP_LUMADENOISE_EDGETOLERANCE;Tolleranza bordi
@@ -753,7 +753,7 @@ TP_PERSPECTIVE_LABEL;Prospettiva
 TP_PERSPECTIVE_VERTICAL;Verticale
 TP_PREPROCESS_GREENEQUIL;Uniformazione del verde
 TP_PREPROCESS_HOTDEADPIXFILT;Interpola pixel surriscaldati/guasti
-TP_PREPROCESS_LABEL;Pre-Elaborazione
+TP_PREPROCESS_LABEL;Pre-elaborazione
 TP_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 TP_PREPROCESS_NO_FOUND;Nessuno presente
 TP_RAWCACORR_AUTO;Autocorrezione
@@ -772,7 +772,7 @@ TP_RESIZE_BICUBICSF;Bicubico (più graduale)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)
 TP_RESIZE_BILINEAR;Bilineare
 TP_RESIZE_CROPPEDAREA;Zona ritagliata
-TP_RESIZE_DOWNSCALEB;Riduzione (migliore)
+TP_RESIZE_DOWNSCALEB;Riduzione (più accurata)
 TP_RESIZE_DOWNSCALEF;Riduzione (più rapida)
 TP_RESIZE_FITBOX;Riquadro delimitato
 TP_RESIZE_FULLIMAGE;Tutta l'immagine
@@ -811,7 +811,7 @@ TP_SHARPENING_RLD_AMOUNT;Quantità
 TP_SHARPENING_RLD_DAMPING;Smorzamento
 TP_SHARPENING_RLD_ITERATIONS;Iterazioni
 TP_SHARPENING_THRESHOLD;Soglia
-TP_SHARPENING_USM;Maschera di Contrasto
+TP_SHARPENING_USM;Maschera di contrasto
 TP_VIGNETTING_AMOUNT;Quantità
 TP_VIGNETTING_CENTER;Centro
 TP_VIGNETTING_CENTER_X;Centra X
