@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <adjuster.h>
+#include <guiutils.h>
 #include <toolpanel.h>
 
 
@@ -28,7 +29,7 @@ class RawProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
 
   protected:
 
-    Gtk::ComboBoxText* dmethod;
+    MyComboBoxText* dmethod;
     Gtk::Label* methodl;
     Adjuster* ccSteps;
     Gtk::VBox *dcbOptions;

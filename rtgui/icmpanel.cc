@@ -33,7 +33,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
 //    set_border_width (4);
 
-    ipDialog = Gtk::manage (new Gtk::FileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+    ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 
     Gtk::Label* ilab = Gtk::manage (new Gtk::Label ());
     ilab->set_alignment (0.0, 0.5);
@@ -86,7 +86,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     wlab->set_markup (Glib::ustring("<b>") + M("TP_ICM_WORKINGPROFILE") + "</b>");
     
     pack_start (*wlab, Gtk::PACK_SHRINK, 4);
-    wnames = Gtk::manage (new Gtk::ComboBoxText ());    
+    wnames = Gtk::manage (new MyComboBoxText ());
     pack_start (*wnames, Gtk::PACK_SHRINK, 4);
 
     Gtk::HSeparator* hsep2 = Gtk::manage (new Gtk::HSeparator ());
@@ -97,7 +97,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     olab->set_markup (Glib::ustring("<b>") + M("TP_ICM_OUTPUTPROFILE") + "</b>");
 
     pack_start (*olab, Gtk::PACK_SHRINK, 4);
-    onames = Gtk::manage (new Gtk::ComboBoxText ());    
+    onames = Gtk::manage (new MyComboBoxText ());
     pack_start (*onames, Gtk::PACK_SHRINK, 4);
 
     std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
@@ -113,7 +113,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     galab->set_markup (Glib::ustring("<b>") + M("TP_GAMMA_OUTPUT") + "</b>");
 	
     pack_start (*galab, Gtk::PACK_SHRINK, 4);
-    wgamma = Gtk::manage (new Gtk::ComboBoxText ());    
+    wgamma = Gtk::manage (new MyComboBoxText ());
     pack_start (*wgamma, Gtk::PACK_SHRINK, 4);
 		
 	Gtk::HSeparator* hsep23 = Gtk::manage (new Gtk::HSeparator ());

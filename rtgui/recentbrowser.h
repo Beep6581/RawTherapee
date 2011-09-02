@@ -23,10 +23,11 @@
 #include <dirbrowserremoteinterface.h>
 #include <dirselectionlistener.h>
 #include <multilangmgr.h>
+#include <guiutils.h>
 
 class RecentBrowser : public Gtk::VBox, public DirSelectionListener {
 
-        Gtk::ComboBoxText*           recentDirs;
+        Gtk::ComboBoxText*              recentDirs;
         sigc::connection             conn;
         DirBrowserRemoteInterface*   listener;
 

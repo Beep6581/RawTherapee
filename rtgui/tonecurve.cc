@@ -20,7 +20,6 @@
 #include <adjuster.h>
 #include <sigc++/class_slot.h>
 #include <iomanip>
-#include <guiutils.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -34,7 +33,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   autolevels = Gtk::manage (new Gtk::ToggleButton (M("TP_EXPOSURE_AUTOLEVELS")));
   autoconn = autolevels->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::autolevels_toggled) );
 
-  sclip = Gtk::manage (new Gtk::SpinButton ());
+  sclip = Gtk::manage (new MySpinButton ());
   sclip->set_range (0.0, 0.9999);
   sclip->set_increments (0.001, 0.01);
   sclip->set_value (0.002);

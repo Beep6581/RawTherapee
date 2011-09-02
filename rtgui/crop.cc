@@ -18,7 +18,6 @@
  */
 #include <crop.h>
 #include <options.h>
-#include <guiutils.h>
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -50,12 +49,12 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
 
   hb1->pack_start (*Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("TP_CROP_X") +": ")));
-  x = Gtk::manage (new Gtk::SpinButton ());
+  x = Gtk::manage (new MySpinButton ());
   x->set_size_request (60, -1);
   hb1->pack_start (*x);
 
   hb1->pack_start (*Gtk::manage (new Gtk::Label (Glib::ustring("   ") + M("TP_CROP_Y") + ": ")));
-  y = Gtk::manage (new Gtk::SpinButton ());
+  y = Gtk::manage (new MySpinButton ());
   y->set_size_request (60, -1);
   hb1->pack_start (*y);
 
@@ -64,12 +63,12 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
 
   hb2->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_W") + ": ")));
-  w = Gtk::manage (new Gtk::SpinButton ());
+  w = Gtk::manage (new MySpinButton ());
   w->set_size_request (60, -1);
   hb2->pack_start (*w);
 
   hb2->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_H") + ": ")));
-  h = Gtk::manage (new Gtk::SpinButton ());
+  h = Gtk::manage (new MySpinButton ());
   h->set_size_request (60, -1);
   hb2->pack_start (*h);
   
@@ -87,10 +86,10 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
   hb3->pack_start (*fixr, Gtk::PACK_SHRINK, 4);
 
-  ratio = Gtk::manage (new Gtk::ComboBoxText ());
-  hb3->pack_start (*ratio, Gtk::PACK_SHRINK, 4);
+  ratio = Gtk::manage (new MyComboBoxText ());
+  hb3->pack_start (*ratio, Gtk::PACK_EXPAND_WIDGET, 4);
 
-  orientation = Gtk::manage (new Gtk::ComboBoxText ());
+  orientation = Gtk::manage (new MyComboBoxText ());
   hb3->pack_start (*orientation);
 
   pack_start (*hb3, Gtk::PACK_SHRINK, 4);
@@ -98,7 +97,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   Gtk::HBox* hb31 = Gtk::manage (new Gtk::HBox ());
 
   hb31->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_GUIDETYPE"))), Gtk::PACK_SHRINK, 4);
-  guide = Gtk::manage (new Gtk::ComboBoxText ());
+  guide = Gtk::manage (new MyComboBoxText ());
   hb31->pack_start (*guide);
 
   pack_start (*hb31, Gtk::PACK_SHRINK, 4);
@@ -109,7 +108,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
   Gtk::HBox* hb4 = Gtk::manage (new Gtk::HBox ());
   hb4->pack_start (*Gtk::manage (new Gtk::Label (M("TP_CROP_PPI"))));
-  ppi = Gtk::manage (new Gtk::SpinButton ());
+  ppi = Gtk::manage (new MySpinButton ());
   ppi->set_size_request (60, -1);
   hb4->pack_start (*ppi);
 

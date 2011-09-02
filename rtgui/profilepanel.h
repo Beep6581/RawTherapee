@@ -24,6 +24,7 @@
 #include <rtengine.h>
 #include <pparamschangelistener.h>
 #include <profilechangelistener.h>
+#include <guiutils.h>
 
 class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 
@@ -33,7 +34,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     Gtk::Button* load;
     Gtk::Button* copy;
     Gtk::Button* paste;
-    Gtk::ComboBoxText* profiles;
+    MyComboBoxText* profiles;
     std::vector<Glib::ustring> pparams;
     rtengine::procparams::ProcParams* custom;
     rtengine::procparams::ProcParams* lastsaved;

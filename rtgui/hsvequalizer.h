@@ -35,7 +35,6 @@ class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableT
 protected:
 
     Gtk::CheckButton * enabled;
-	Gtk::ComboBoxText* hsvchannel;
 
 	CurveEditorGroup*  curveEditorG;
 	FlatCurveEditor*   hshape;

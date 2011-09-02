@@ -21,12 +21,13 @@
 
 #include <gtkmm.h>
 #include <adjuster.h>
+#include <guiutils.h>
 #include <toolpanel.h>
 
 class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
-    Gtk::ComboBoxText* method;
+    MyComboBoxText* method;
     Adjuster* dradius;
     Adjuster* damount;
     Adjuster* ddamping;

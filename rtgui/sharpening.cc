@@ -39,7 +39,7 @@ Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
    hb->show ();
    Gtk::Label* ml = Gtk::manage (new Gtk::Label (M("TP_SHARPENING_METHOD")+":"));
    ml->show ();
-   method = Gtk::manage (new Gtk::ComboBoxText ());
+   method = Gtk::manage (new MyComboBoxText ());
    method->append_text (M("TP_SHARPENING_USM"));
    method->append_text (M("TP_SHARPENING_RLD"));
    method->show ();

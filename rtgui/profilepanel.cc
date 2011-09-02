@@ -32,7 +32,7 @@ ProfilePanel::ProfilePanel () {
 
     tpc = NULL;
   
-    profiles = Gtk::manage (new Gtk::ComboBoxText ());
+    profiles = Gtk::manage (new MyComboBoxText ());
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
     hbox->show ();
 //    pack_start (*profiles, Gtk::PACK_SHRINK, 4);

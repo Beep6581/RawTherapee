@@ -21,7 +21,9 @@
 
 #include <gtkmm.h>
 #include <adjuster.h>
+#include <guiutils.h>
 #include <toolpanel.h>
+#include <guiutils.h>
 
 class Resize : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
 
@@ -29,11 +31,11 @@ class Resize : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     Gtk::CheckButton*  enabled;
     Adjuster*          scale;
     Gtk::VBox*         sizeBox;
-    Gtk::ComboBoxText* appliesTo;
-    Gtk::ComboBoxText* method;
-    Gtk::ComboBoxText* spec;
-    Gtk::SpinButton*   w;
-    Gtk::SpinButton*   h;
+    MyComboBoxText*    appliesTo;
+    MyComboBoxText*    method;
+    MyComboBoxText*    spec;
+    MySpinButton*      w;
+    MySpinButton*      h;
     int                maxw, maxh;
     int                cropw, croph;
     sigc::connection   sconn, aconn, wconn, hconn, enaConn;

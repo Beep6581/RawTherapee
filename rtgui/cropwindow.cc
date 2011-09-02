@@ -802,16 +802,51 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
 
-// zoom* is called from the zoomPanel
-void CropWindow::zoomIn () {
+// calculate the center of the zommed in/out preview given a cursor position
+void CropWindow::findCenter  (int deltaZoom, int& x, int& y) {
+	int cursorX, cursorY;
+	translateCoord(x, y, cursorX, cursorY);
 
-    changeZoom (cropZoom+1);
-    fitZoom = false;
+	int cropX, cropY, cropW, cropH, skip;
+	cropHandler.getWindow (cropX, cropY, cropW, cropH, skip);
+
+	int currCenterX = cropX + cropW/2;
+	int currCenterY = cropY + cropH/2;
+
+	int deltaX = currCenterX - cursorX;
+	int deltaY = currCenterY - cursorY;
+
+	double factor = zoomSteps[cropZoom].zoom / zoomSteps[cropZoom+deltaZoom].zoom;
+	x = cursorX + (int)((double)(deltaX)*factor);
+	y = cursorY + (int)((double)(deltaY)*factor);
 }
 
-void CropWindow::zoomOut () {
+// zoom* is called from the zoomPanel or the scroll wheel in the preview area
+void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY) {
 
-    changeZoom (cropZoom-1);
+    int x = -1;
+    int y = -1;
+
+    if (toCursor) {
+        x = cursorX;
+        y = cursorY;
+    }
+
+	changeZoom (cropZoom+1, true, x, y);
+	fitZoom = false;
+}
+
+void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY) {
+
+    int x = -1;
+    int y = -1;
+
+    if (toCursor) {
+        x = cursorX;
+        y = cursorY;
+    }
+
+    changeZoom (cropZoom-1, true, x, y);
     fitZoom = false;
 }
 
@@ -824,6 +859,14 @@ void CropWindow::zoom11 () {
 double CropWindow::getZoom () {
 
     return zoomSteps[cropZoom].zoom;
+}
+
+bool CropWindow::isMinZoom () {
+    return cropZoom <= 0;
+}
+
+bool CropWindow::isMaxZoom () {
+    return cropZoom >= MAXZOOMSTEPS;
 }
 
 void CropWindow::setZoom (double zoom) {

@@ -290,26 +290,6 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvLSatLimit, costr);
 }
 
-//attempt to hide unused channels
-/*void LCurve::channel_changed () {
-	
-    removeIfThere (this, lcurve, false);
-    removeIfThere (this, acurve, false);
-	removeIfThere (this, bcurve, false);
-
-    if (channel->get_active_row_number()==0) 
-        pack_start (*lcurve);   
-    else if (channel->get_active_row_number()==1) 
-        pack_start (*acurve);
-	else if (method->get_active_row_number()==2) 
-        pack_start (*bcurve);
-
-    
-    if (listener && enabled->get_active ())
-        listener->panelChanged (EvLabCurvetype, channel->get_active_text ());
-    
-}*/
-
 void LCurve::colorForValue (double valX, double valY) {
 
 	CurveEditor* ce = curveEditorG->getDisplayedCurve();

@@ -220,11 +220,16 @@ bool ImageArea::on_scroll_event (GdkEventScroll* event) {
 
     CropWindow* cw = getCropWindow (event->x, event->y);
     if (cw) {
-        if (event->direction==GDK_SCROLL_UP)
-            cw->zoomIn ();
-        else 
-            cw->zoomOut ();
-            return true;
+    	int newCenterX = (int)event->x;
+    	int newCenterY = (int)event->y;
+        if (event->direction==GDK_SCROLL_UP && !cw->isMaxZoom()) {
+            cw->findCenter (1, newCenterX, newCenterY);
+            cw->zoomIn (true, newCenterX, newCenterY);
+        }
+        else if (!cw->isMinZoom()) {
+            cw->findCenter (-1, newCenterX, newCenterY);
+            cw->zoomOut (true, newCenterX, newCenterY);
+        }
     }
     return true;
 }

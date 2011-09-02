@@ -34,7 +34,7 @@ Resize::Resize () : Gtk::VBox(), FoldableToolPanel(this), maxw(100000), maxh(100
 
     Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
 
-    appliesTo = Gtk::manage (new Gtk::ComboBoxText ());
+    appliesTo = Gtk::manage (new MyComboBoxText ());
     appliesTo->append_text (M("TP_RESIZE_CROPPEDAREA"));
     appliesTo->append_text (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
@@ -42,7 +42,7 @@ Resize::Resize () : Gtk::VBox(), FoldableToolPanel(this), maxw(100000), maxh(100
     combos->attach (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO"))), 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
-	method = Gtk::manage (new Gtk::ComboBoxText ());
+	method = Gtk::manage (new MyComboBoxText ());
 	method->append_text (M("TP_RESIZE_NEAREST"));
 	method->append_text (M("TP_RESIZE_BILINEAR"));
 	method->append_text (M("TP_RESIZE_BICUBIC"));
@@ -56,7 +56,7 @@ Resize::Resize () : Gtk::VBox(), FoldableToolPanel(this), maxw(100000), maxh(100
     combos->attach (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"))), 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     combos->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
-	spec = Gtk::manage (new Gtk::ComboBoxText ());
+	spec = Gtk::manage (new MyComboBoxText ());
 	spec->append_text (M("TP_RESIZE_SCALE"));
 	spec->append_text (M("TP_RESIZE_WIDTH"));
 	spec->append_text (M("TP_RESIZE_HEIGHT"));
@@ -78,8 +78,8 @@ Resize::Resize () : Gtk::VBox(), FoldableToolPanel(this), maxw(100000), maxh(100
     Gtk::HBox* sbox = Gtk::manage (new Gtk::HBox ());
     Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
-    w = Gtk::manage (new Gtk::SpinButton ());
-    h = Gtk::manage (new Gtk::SpinButton ());
+    w = Gtk::manage (new MySpinButton ());
+    h = Gtk::manage (new MySpinButton ());
     wbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_W"))), Gtk::PACK_SHRINK, 4);
     wbox->pack_start (*w);
     hbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_H"))), Gtk::PACK_SHRINK, 4);

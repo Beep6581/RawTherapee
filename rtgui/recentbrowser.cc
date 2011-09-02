@@ -19,9 +19,11 @@
 #include <recentbrowser.h>
 #include <multilangmgr.h>
 
+using namespace rtengine;
+
 RecentBrowser::RecentBrowser () : listener (NULL) {
 
-    recentDirs = Gtk::manage (new Gtk::ComboBoxText ());
+    recentDirs = Gtk::manage (new MyComboBoxText ());
 
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame (M("MAIN_FRAME_RECENT")));
     frame->add (*recentDirs);

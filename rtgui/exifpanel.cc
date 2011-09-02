@@ -18,6 +18,7 @@
  */
 #include <exifpanel.h>
 #include <safegtk.h>
+#include <guiutils.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -26,7 +27,7 @@ extern Glib::ustring argv0;
 
 ExifPanel::ExifPanel () : idata(NULL) {
 
-    recursiveOp = true;
+   recursiveOp = true;
 
    exifTree = Gtk::manage(new Gtk::TreeView());
    scrolledWindow = Gtk::manage(new Gtk::ScrolledWindow());
@@ -366,7 +367,7 @@ void ExifPanel::addPressed () {
     Gtk::HBox* hb2 = new Gtk::HBox ();
     
     Gtk::Label* tlabel = new Gtk::Label (M("EXIFPANEL_ADDTAGDLG_SELECTTAG")+":");
-    Gtk::ComboBoxText* tcombo = new Gtk::ComboBoxText ();
+    MyComboBoxText* tcombo = new MyComboBoxText ();
     
     tcombo->append_text ("Artist");
     tcombo->append_text ("Copyright");

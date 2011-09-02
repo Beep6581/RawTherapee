@@ -35,7 +35,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   hbox->show ();
   Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD")));
   lab->show ();
-  method = Gtk::manage (new Gtk::ComboBoxText ());
+  method = Gtk::manage (new MyComboBoxText ());
   method->show ();
   method->append_text (M("TP_WBALANCE_CAMERA"));
   method->append_text (M("TP_WBALANCE_AUTO"));
@@ -60,7 +60,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
   slab->show ();
 
-  spotsize = Gtk::manage (new Gtk::ComboBoxText ());
+  spotsize = Gtk::manage (new MyComboBoxText ());
   spotsize->show ();
   spotsize->append_text ("2");
   spotsize->append_text ("4");
@@ -69,7 +69,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   spotsize->append_text ("32");
   spotsize->set_active (2);
 
-  spotbox->pack_end (*spotsize, Gtk::PACK_SHRINK, 4);
+  spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 4);
   spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 4);
 
   pack_start (*spotbox, Gtk::PACK_SHRINK, 4);

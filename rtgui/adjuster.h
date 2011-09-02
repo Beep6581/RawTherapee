@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <editedstate.h>
+#include <guiutils.h>
 
 class Adjuster;
 class AdjusterListener {
@@ -35,8 +36,8 @@ class Adjuster : public Gtk::VBox {
   protected:
     Gtk::HBox* hbox;
     Gtk::Label* label;
-    Gtk::HScale* slider;
-    Gtk::SpinButton* spin;
+    MyHScale* slider;
+    MySpinButton* spin;
     Gtk::Button* reset;
     AdjusterListener* adjusterListener;
     sigc::connection delayConnection;

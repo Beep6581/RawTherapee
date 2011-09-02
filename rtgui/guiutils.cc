@@ -227,3 +227,89 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     }
     cr->reset_clip ();
 }
+
+
+/*
+ *
+ * Derived class of some widgets to properly handle the scroll wheel ;
+ * the user has to use the Shift key to be able to change the widget's value,
+ * otherwise the mouse wheel will scroll the editor's tabs content.
+ *
+ */
+MyComboBoxText::MyComboBoxText () {
+	set_size_request(40, -1);
+}
+
+bool MyComboBoxText::on_scroll_event (GdkEventScroll* event) {
+
+	// If Shift is pressed, the widget is modified
+	if (event->state & GDK_SHIFT_MASK) {
+		Gtk::ComboBoxText::on_scroll_event(event);
+		return true;
+	}
+	// ... otherwise the scroll event is sent back to an upper level
+	return false;
+}
+
+MyComboBox::MyComboBox () {
+	set_size_request(40, -1);
+}
+
+bool MyComboBox::on_scroll_event (GdkEventScroll* event) {
+
+	// If Shift is pressed, the widget is modified
+	if (event->state & GDK_SHIFT_MASK) {
+		Gtk::ComboBox::on_scroll_event(event);
+		return true;
+	}
+	// ... otherwise the scroll event is sent back to an upper level
+	return false;
+}
+
+MySpinButton::MySpinButton () {
+	set_size_request(50, -1);
+	Gtk::Border border;
+	border.bottom = 0;
+	border.top = 0;
+	border.left = 0;
+	border.right = 0;
+	set_inner_border(border);
+}
+
+bool MySpinButton::on_scroll_event (GdkEventScroll* event) {
+
+	// If Shift is pressed, the widget is modified
+	if (event->state & GDK_SHIFT_MASK) {
+		Gtk::SpinButton::on_scroll_event(event);
+		return true;
+	}
+	// ... otherwise the scroll event is sent back to an upper level
+	return false;
+}
+
+bool MyHScale::on_scroll_event (GdkEventScroll* event) {
+
+	// If Shift is pressed, the widget is modified
+	if (event->state & GDK_SHIFT_MASK) {
+		Gtk::HScale::on_scroll_event(event);
+		return true;
+	}
+	// ... otherwise the scroll event is sent back to an upper level
+	return false;
+}
+
+MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action) {
+	set_size_request(20, -1);
+};
+
+// For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
+bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event) {
+
+	// If Shift is pressed, the widget is modified
+	if (event->state & GDK_SHIFT_MASK) {
+		Gtk::FileChooserButton::on_scroll_event(event);
+		return true;
+	}
+	// ... otherwise the scroll event is sent back to an upper level
+	return false;
+}

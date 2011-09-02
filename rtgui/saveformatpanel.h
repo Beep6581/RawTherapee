@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <adjuster.h>
+#include <guiutils.h>
 #include <options.h>
 
 class FormatChangeListener {
@@ -36,7 +37,7 @@ class SaveFormatPanel : public Gtk::VBox, public AdjusterListener {
         Adjuster*           jpegqual;
         Adjuster*           pngcompr;
         Gtk::CheckButton*   tiffuncompressed;
-        Gtk::ComboBoxText*  format;
+        MyComboBoxText*     format;
         Gtk::VBox*          formatopts;
         int                 oformat;
         FormatChangeListener* listener;

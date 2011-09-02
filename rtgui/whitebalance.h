@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <toolpanel.h>
 #include <adjuster.h>
+#include <guiutils.h>
 #include <wbprovider.h>
 
 class SpotWBListener {
@@ -33,8 +34,8 @@ class SpotWBListener {
 class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
-    Gtk::ComboBoxText* method;
-    Gtk::ComboBoxText* spotsize;
+    MyComboBoxText* method;
+    MyComboBoxText* spotsize;
     Adjuster* temp;
     Adjuster* green;
     Gtk::Button* spotbutton;

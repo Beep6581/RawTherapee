@@ -28,7 +28,7 @@ using namespace rtengine::procparams;
 FlatField::FlatField () : Gtk::VBox(), FoldableToolPanel(this)
 {
 	hbff = Gtk::manage(new Gtk::HBox());
-	flatFieldFile = Gtk::manage(new Gtk::FileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+	flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	flatFieldFileReset = Gtk::manage(new Gtk::Button());
 	flatFieldFileReset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
@@ -45,7 +45,7 @@ FlatField::FlatField () : Gtk::VBox(), FoldableToolPanel(this)
 
 	Gtk::HBox* hbffbt = Gtk::manage (new Gtk::HBox ());
 	hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") +": ")));
-	flatFieldBlurType = Gtk::manage (new Gtk::ComboBoxText ());
+	flatFieldBlurType = Gtk::manage (new MyComboBoxText ());
 	flatFieldBlurType->append_text(M("TP_FLATFIELD_BT_AREA"));
 	flatFieldBlurType->append_text(M("TP_FLATFIELD_BT_VERTICAL"));
 	flatFieldBlurType->append_text(M("TP_FLATFIELD_BT_HORIZONTAL"));
