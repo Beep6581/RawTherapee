@@ -640,13 +640,18 @@ void Options::load () {
 		printf("SHGetSpecialFolderPathW: Fail!\n");
 	}*/
 
-	dataPath = g_getenv("LOCALAPPDATA");
+	dataPath = g_getenv("RT_CACHE");
 	if (dataPath != NULL)
-		rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+		rtdir = Glib::ustring(dataPath);
 	else {
-		dataPath = g_getenv("USERPROFILE");
+		dataPath = g_getenv("LOCALAPPDATA");
 		if (dataPath != NULL)
-			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+		else {
+			dataPath = g_getenv("USERPROFILE");
+			if (dataPath != NULL)
+				rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+		}
 	}
 #else
     rtdir = Glib::ustring(g_get_user_config_dir ()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
