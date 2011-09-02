@@ -71,4 +71,42 @@ public:
 	}
 };
 
+class MyComboBox : public Gtk::ComboBox {
+
+	bool on_scroll_event (GdkEventScroll* event);
+
+public:
+	MyComboBox ();
+};
+
+class MyComboBoxText : public Gtk::ComboBoxText {
+
+	bool on_scroll_event (GdkEventScroll* event);
+
+public:
+	MyComboBoxText ();
+};
+
+class MySpinButton : public Gtk::SpinButton {
+
+	bool on_scroll_event (GdkEventScroll* event);
+
+public:
+	MySpinButton ();
+};
+
+class MyHScale : public Gtk::HScale {
+
+	bool on_scroll_event (GdkEventScroll* event);
+};
+
+class MyFileChooserButton : public Gtk::FileChooserButton {
+
+protected:
+	bool on_scroll_event (GdkEventScroll* event);
+
+public:
+	MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+};
+
 #endif

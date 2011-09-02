@@ -28,7 +28,7 @@ HLRecovery::HLRecovery () : Gtk::VBox(), FoldableToolPanel(this) {
     enabled->set_active (false);
     pack_start (*enabled);
 
-	method = Gtk::manage (new Gtk::ComboBoxText ());
+	method = Gtk::manage (new MyComboBoxText ());
 	method->append_text (M("TP_HLREC_LUMINANCE"));
 	method->append_text (M("TP_HLREC_CIELAB"));
 	method->append_text (M("TP_HLREC_COLOR"));

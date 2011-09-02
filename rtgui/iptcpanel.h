@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <toolpanel.h>
+#include <guiutils.h>
 
 class IPTCPanel : public Gtk::VBox, public ToolPanel {
 

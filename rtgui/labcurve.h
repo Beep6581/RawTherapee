@@ -29,8 +29,6 @@
 class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
-	Gtk::ComboBoxText* channel;
-
 	CurveEditorGroup* curveEditorG;
     Adjuster* brightness;
     Adjuster* contrast;

@@ -21,12 +21,13 @@
 
 #include <gtkmm.h>
 #include <toolpanel.h>
+#include <guiutils.h>
 
 class HLRecovery : public Gtk::VBox, public FoldableToolPanel {
 
   protected:
     Gtk::CheckButton*   enabled;
-	Gtk::ComboBoxText*	method;
+    MyComboBoxText*     method;
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lastEnabled;

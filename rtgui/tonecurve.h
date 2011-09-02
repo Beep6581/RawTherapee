@@ -25,13 +25,14 @@
 #include <curveeditor.h>
 #include <curveeditorgroup.h>
 #include <mycurve.h>
+#include <guiutils.h>
 
 class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener {
 
   protected:
     Gtk::HBox* abox;
     Gtk::ToggleButton* autolevels;
-    Gtk::SpinButton* sclip;
+    MySpinButton* sclip;
     Adjuster* expcomp;
     Adjuster* brightness;
     Adjuster* black;

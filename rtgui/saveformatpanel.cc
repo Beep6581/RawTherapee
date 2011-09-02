@@ -35,7 +35,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* flab = Gtk::manage (new Gtk::Label (M("SAVEDLG_FILEFORMAT")+":"));
     hb1->pack_start (*flab, Gtk::PACK_SHRINK,4);
-    format = Gtk::manage (new Gtk::ComboBoxText ());
+    format = Gtk::manage (new MyComboBoxText ());
     format->append_text ("JPEG (8 bit)");
     format->append_text ("TIFF (8 bit)");
     format->append_text ("TIFF (16 bit)");

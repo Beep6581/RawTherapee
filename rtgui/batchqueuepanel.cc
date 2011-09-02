@@ -64,7 +64,7 @@ BatchQueuePanel::BatchQueuePanel () {
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
     useFolder = Gtk::manage (new Gtk::RadioButton (M("PREFERENCES_OUTDIRFOLDER")+":"));
     hb3->pack_start (*useFolder, Gtk::PACK_SHRINK,4);
-    outdirFolder = Gtk::manage (new Gtk::FileChooserButton (M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    outdirFolder = Gtk::manage (new MyFileChooserButton (M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     hb3->pack_start (*outdirFolder);
     odvb->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
     outdirFolder->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
@@ -87,7 +87,7 @@ BatchQueuePanel::BatchQueuePanel () {
 
     // setup signal handlers
     outdirTemplate->signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
-    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));    
+    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));
     useTemplate->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
     useFolder->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
     saveFormatPanel->setListener (this);
@@ -101,7 +101,6 @@ BatchQueuePanel::BatchQueuePanel () {
     topBox->pack_start (*fformat, Gtk::PACK_SHRINK, 4);
 
     // add middle browser area 
-    Gtk::HBox* hBox = Gtk::manage (new Gtk::HBox ());
     pack_start (*batchQueue);
 
     // lower box with thumbnail zoom

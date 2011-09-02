@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <cropguilistener.h>
 #include <toolpanel.h>
+#include <guiutils.h>
 
 class CropPanelListener {
 
@@ -35,17 +36,17 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
   protected:
     Gtk::CheckButton* enabled;
     Gtk::CheckButton* fixr;
-    Gtk::ComboBoxText* ratio;
-    Gtk::ComboBoxText* orientation;
-    Gtk::ComboBoxText* guide;
+    MyComboBoxText* ratio;
+    MyComboBoxText* orientation;
+    MyComboBoxText* guide;
     Gtk::Button* selectCrop;
     CropPanelListener* clistener;
     int opt;
-    Gtk::SpinButton* x;
-    Gtk::SpinButton* y;
-    Gtk::SpinButton* w;
-    Gtk::SpinButton* h;
-    Gtk::SpinButton* ppi;
+    MySpinButton* x;
+    MySpinButton* y;
+    MySpinButton* w;
+    MySpinButton* h;
+    MySpinButton* ppi;
     Gtk::Label* sizecm;
     Gtk::Label* sizein;
     Gtk::VBox* ppibox;

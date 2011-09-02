@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <batchqueue.h>
 #include <saveformatpanel.h>
+#include <guiutils.h>
 
 class RTWindow;
 class BatchQueuePanel : public Gtk::VBox,
@@ -37,7 +38,7 @@ class BatchQueuePanel : public Gtk::VBox,
         sigc::connection stopConnection;
 
         Gtk::Entry* outdirTemplate;
-        Gtk::FileChooserButton* outdirFolder;
+        MyFileChooserButton* outdirFolder;
         Gtk::RadioButton* useTemplate;
         Gtk::RadioButton* useFolder;
         SaveFormatPanel* saveFormatPanel;

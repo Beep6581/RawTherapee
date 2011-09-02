@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include <toolpanel.h>
 #include <rawimage.h>
+#include <guiutils.h>
 
 class DFProvider {
   public:
@@ -33,8 +34,7 @@ class DarkFrame : public Gtk::VBox, public FoldableToolPanel {
 
 protected:
 
-	Gtk::ComboBoxText* darkFrameMethod;
-	Gtk::FileChooserButton *darkFrameFile;
+	MyFileChooserButton *darkFrameFile;
     Gtk::HBox *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;

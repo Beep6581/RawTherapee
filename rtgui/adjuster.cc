@@ -39,7 +39,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   addMode = false;
 
   // TODO: let the user chose the default value of Adjuster::delay, for slow machines
-  delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (usefull for the RAW editor tab)
+  delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
 
   set_border_width (2);
 
@@ -65,14 +65,13 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
   hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
   
-  spin = Gtk::manage (new Gtk::SpinButton ());
-  spin->set_size_request (70, -1);
+  spin = Gtk::manage (new MySpinButton ());
 
   hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
 
   reset->set_size_request (-1, spin->get_height());
   
-  slider = Gtk::manage (new Gtk::HScale ());
+  slider = Gtk::manage (new MyHScale ());
   slider->set_draw_value (false);
 
   pack_start (*hbox, false, false);
@@ -338,4 +337,3 @@ float Adjuster::trimValue (float& val) {
     else if (val < (float)vMin) val = (float)vMin;  // shapeValue(vMin) ?
     return val;
 }
-

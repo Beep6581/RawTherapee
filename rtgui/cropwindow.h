@@ -43,14 +43,14 @@ class ImageArea;
 class CropWindow : public LWButtonListener, public CropHandlerListener {
 
         // state management
-        ImgEditState state;					// current state of user (see enum State)
+        ImgEditState state;                  // current state of user (see enum State)
         int action_x, action_y, press_x, press_y;
         double rot_deg;
         bool onResizeArea;
         bool deleted;
         bool fitZoomEnabled;
         bool fitZoom;
-		bool isLowUpdatePriority;
+        bool isLowUpdatePriority;
 
         // decoration
         Cairo::RefPtr<Cairo::ImageSurface> resizeSurface;
@@ -59,7 +59,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         Glib::ustring cropLabel;
         int backColor;
         bool decorated;
-        
+
         // crop frame description
         int titleHeight, sideBorderWidth, lowerBorderWidth, upperBorderWidth, sepWidth, minWidth;
         // size & position of the crop relative to the top left corner
@@ -69,12 +69,12 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         int imgAreaX, imgAreaY, imgAreaW, imgAreaH;
         // size & pos of the piece of preview image relative to the top left corner of the crop
         int imgX, imgY, imgW, imgH;
-        
+
         // image handling
-      
+
         ImageArea* iarea;
         int cropZoom; // *1000
-        
+
         // crop gui listener
         CropGUIListener* cropgl;
         PointerMotionListener* pmlistener;
@@ -83,39 +83,43 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         
         CropWindow* observedCropWin;
 
-        bool        onArea              (CursorArea a, int x, int y);
-        void        updateCursor        (int x, int y);
-        void        drawDecoration      (Cairo::RefPtr<Cairo::Context> cr);
-        void        drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr);
-        void        drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr);
-        void        drawObservedFrame   (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
-        void        translateCoord      (int phyx, int phyy, int& imgx, int& imgy);
-        void        changeZoom          (int zoom, bool notify=true, int centerx=-1, int centery=-1); 
-        void        getObservedFrameArea(int& x, int& y, int& w, int& h, int rw=0, int rh=0);
-    
+        bool onArea              (CursorArea a, int x, int y);
+        void updateCursor        (int x, int y);
+        void drawDecoration      (Cairo::RefPtr<Cairo::Context> cr);
+        void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr);
+        void drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr);
+        void drawObservedFrame   (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
+        void translateCoord      (int phyx, int phyy, int& imgx, int& imgy);
+        void changeZoom          (int zoom, bool notify=true, int centerx=-1, int centery=-1);
+        void getObservedFrameArea(int& x, int& y, int& w, int& h, int rw=0, int rh=0);
+
     public:
         CropHandler cropHandler;
         CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_);
         ~CropWindow ();
-        
+
         void setDecorated       (bool decorated)    { this->decorated = decorated; }
         void setFitZoomEnabled  (bool fze)          { fitZoomEnabled = fze; }
         void setObservedCropWin (CropWindow* cw)    { observedCropWin = cw; }
-               
+
         void setPosition (int x, int y);
         void getPosition (int& x, int& y);
         void setSize     (int w, int h, bool norefresh=false);
         void getSize     (int& w, int& h);
-        
+
         // zoomlistener interface
-        void zoomIn      ();
-        void zoomOut     ();
+        void zoomIn      (bool toCursor=false, int cursorX=-1, int cursorY=-1);
+        void zoomOut     (bool toCursor=false, int cursorX=-1, int cursorY=-1);
         void zoom11      ();
         void zoomFit     ();
         double getZoom   ();
-        void   setZoom   (double zoom);
+        bool isMinZoom   ();
+        bool isMaxZoom   ();
+        void setZoom     (double zoom);
 
+        void findCenter  (int deltaZoom, int& x, int& y);
         bool isInside    (int x, int y);
+
 
         void buttonPress   (int button, int num, int state, int x, int y);
         void buttonRelease (int button, int num, int state, int x, int y);
@@ -126,27 +130,27 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         // interface lwbuttonlistener
         void buttonPressed (LWButton* button, int actionCode, void* actionData);
         void redrawNeeded  (LWButton* button);
-        
+
         // crop handling
         void getCropRectangle (int& x, int& y, int& w, int& h);
         void getCropPosition  (int& x, int& y);
         void setCropPosition  (int x, int y);
         void getCropSize      (int& w, int& h);
-        
+
         // listeners
         void setCropGUIListener 	  (CropGUIListener* cgl) { cropgl = cgl; }
-	void setPointerMotionListener (PointerMotionListener* pml) { pmlistener = pml; }
-	void setPointerMotionHListener (PointerMotionListener* pml) { pmhlistener = pml; }
-        
+        void setPointerMotionListener (PointerMotionListener* pml) { pmlistener = pml; }
+        void setPointerMotionHListener (PointerMotionListener* pml) { pmhlistener = pml; }
+
         // crop window listeners
         void addCropWindowListener (CropWindowListener* l) { listeners.push_back (l); }
         void delCropWindowListener (CropWindowListener* l);
-        
+
         // crophandlerlistener interface
         void cropImageUpdated ();
         void cropWindowChanged ();
         void initialImageArrived ();
-        
+
         void remoteMove      (int deltaX, int deltaY);
         void remoteMoveReady ();
 };

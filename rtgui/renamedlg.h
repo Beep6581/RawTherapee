@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <cacheimagedata.h>
+#include <guiutils.h>
 
 #define RESPONSE_ALL 100
 
@@ -41,7 +42,7 @@ class RenameDialog : public Gtk::Dialog {
         Gtk::Label* oldName;
         Gtk::Entry* newName;
         Gtk::CheckButton* useTmpl;
-        Gtk::ComboBox* templates;
+        MyComboBox* templates;
         Gtk::Button* all;
         const CacheImageData* imageData;
 

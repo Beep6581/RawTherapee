@@ -23,6 +23,7 @@
 #include <adjuster.h>
 #include <toolpanel.h>
 #include <rawimage.h>
+#include <guiutils.h>
 
 class FFProvider {
   public:
@@ -34,13 +35,13 @@ class FlatField : public Gtk::VBox, public AdjusterListener, public FoldableTool
 
 protected:
 
-	Gtk::FileChooserButton *flatFieldFile;
+	MyFileChooserButton *flatFieldFile;
 	Gtk::Label *ffLabel;
 	Gtk::Label *ffInfo;
 	Gtk::Button *flatFieldFileReset;
 	Gtk::CheckButton* flatFieldAutoSelect;
 	Adjuster* flatFieldBlurRadius;
-	Gtk::ComboBoxText* flatFieldBlurType;
+	MyComboBoxText* flatFieldBlurType;
 	Gtk::HBox *hbff;
 	bool ffChanged;
 	bool lastFFAutoSelect;

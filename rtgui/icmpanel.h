@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 #include <adjuster.h>
+#include <guiutils.h>
 
 #include <toolpanel.h>
 
@@ -48,14 +49,14 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  ifromfile;
         Gtk::CheckButton*  igamma;
         Gtk::CheckButton*  ckbBlendCMSMatrix;
-        Gtk::ComboBoxText* wnames;
-        Gtk::ComboBoxText* wgamma;
+        MyComboBoxText*    wnames;
+        MyComboBoxText*    wgamma;
 		
-        Gtk::ComboBoxText* onames;
+        MyComboBoxText*    onames;
         Gtk::RadioButton*  ofromdir;
         Gtk::RadioButton*  ofromfile;
         Gtk::RadioButton*  iunchanged;
-        Gtk::FileChooserButton* ipDialog;
+        MyFileChooserButton* ipDialog;
         Gtk::RadioButton::Group opts;
         Gtk::Button*        saveRef;
         sigc::connection   ipc;
