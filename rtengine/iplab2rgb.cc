@@ -62,7 +62,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 	if (monitorTransform) {
         
         // cmsDoTransform is relatively expensive
-        #pragma omp parallel for if (multiThread)
+        #pragma omp parallel for
 		for (int i=0; i<lab->H; i++) {
             float buffer[3*lab->W];
             float g;
@@ -91,9 +91,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
                 buffer[iy++] = CLIP01(z_);
 			}
 
-            if (settings->LCMSSafeMode) lcmsMutex->lock ();
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
-            if (settings->LCMSSafeMode) lcmsMutex->unlock ();
 		}
         
 	} else {
@@ -153,11 +151,11 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_8, settings->colorimetricIntent,
-            settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         lcmsMutex->unlock ();
 
         // cmsDoTransform is relatively expensive
-		#pragma omp parallel for if (multiThread)
+		#pragma omp parallel for
         for (int i=cy; i<cy+ch; i++) {
             short buffer [3*cw];
             float g;
@@ -184,9 +182,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
                 buffer[iy++] = CLIP((int)z_);
             }
 
-            if (settings->LCMSSafeMode) lcmsMutex->lock ();
             cmsDoTransform (hTransform, buffer, image->data + ix, cw);
-            if (settings->LCMSSafeMode) lcmsMutex->unlock ();
         }
 
         cmsDeleteTransform(hTransform);
