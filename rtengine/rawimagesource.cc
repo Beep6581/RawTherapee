@@ -1219,6 +1219,28 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 //#undef BS
 			
 
+		}  // flatfield
+	} else {
+        // No bayer pattern
+        // TODO: Is there a flat field correction possible?
+		if (!rawData) rawData = allocArray<float>(3*W,H);
+
+		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][3*col+0] = MAX (src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
+					rawData[row][3*col+1] = MAX (src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
+					rawData[row][3*col+2] = MAX (src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
+				}
+			}
+		} else {
+			for (int row = 0; row < H; row++) {
+				for (int col = 0; col < W; col++) {
+					rawData[row][3*col+0] = src->data[row][3*col+0];
+					rawData[row][3*col+1] = src->data[row][3*col+1];
+					rawData[row][3*col+2] = src->data[row][3*col+2];
+				}
+			}
 		}
 	}
 }
