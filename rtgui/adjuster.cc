@@ -91,6 +91,71 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   show_all ();
 }
 
+Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep, double vdefault, bool editedcb) {
+
+  adjusterListener = NULL;
+  afterReset = false;
+  blocked = false;
+
+  vMin = vmin;
+  vMax = vmax;
+  vStep = vstep;
+  initialDefaultVal = vdefault;
+  addMode = false;
+
+  // TODO: let the user chose the default value of Adjuster::delay, for slow machines
+  delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
+
+  set_border_width (2);
+
+  hbox = Gtk::manage (new Gtk::HBox ());
+
+
+  if (editedcb) {
+    editedCheckBox = Gtk::manage (new Gtk::CheckButton ());
+    editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
+	hbox->pack_start (*editedCheckBox);
+  }
+  else
+    editedCheckBox = NULL;
+    
+
+  reset = Gtk::manage (new Gtk::Button ());
+  reset->add (*Gtk::manage (new Gtk::Image (argv0+"/images/undo.png")));
+  reset->set_relief (Gtk::RELIEF_NONE);
+  reset->set_border_width (0);
+  reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
+
+  hbox->pack_start (*imgIcon, Gtk::PACK_SHRINK);
+
+  hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
+  
+  spin = Gtk::manage (new MySpinButton ());
+
+  reset->set_size_request (-1, spin->get_height());
+  
+  slider = Gtk::manage (new MyHScale ());
+  slider->set_draw_value (false);
+
+  hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+  hbox->pack_start (*slider);
+
+  pack_start (*hbox, false, false);
+
+  setLimits (vmin, vmax, vstep, vdefault);
+  
+  defaultVal = shapeValue (vdefault);
+  initialDefaultVal = shapeValue (vdefault);
+  editedState = defEditedState = Irrelevant;
+
+  sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
+  spinChange = spin->signal_value_changed().connect ( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
+  reset->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::resetPressed) );
+  slider->set_update_policy (Gtk::UPDATE_CONTINUOUS);
+  
+  show_all ();
+}
+
 Adjuster::~Adjuster () {
 
     sliderChange.block (true);

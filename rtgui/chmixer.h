@@ -29,6 +29,7 @@ class ChMixer : public Gtk::VBox, public AdjusterListener, public FoldableToolPa
     Adjuster *red[3];
     Adjuster *green[3];
     Adjuster *blue[3];
+    Gtk::Image *imgIcon[9];
 
   public:
 
