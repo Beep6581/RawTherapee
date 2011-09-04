@@ -66,6 +66,7 @@ class Adjuster : public Gtk::VBox {
     int delay;
 
     Adjuster (Glib::ustring label, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
+    Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
     virtual ~Adjuster ();
     void setAdjusterListener (AdjusterListener* alistener);
 

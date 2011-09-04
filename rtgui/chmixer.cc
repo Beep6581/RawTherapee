@@ -21,14 +21,27 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+extern Glib::ustring argv0;
+
 ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
 
-    Gtk::Label* rlabel = Gtk::manage (new Gtk::Label ());
-    rlabel->set_markup (Glib::ustring("<span foreground=\"red\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));
+    imgIcon[0] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_RR.png"));
+    imgIcon[1] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_RG.png"));
+    imgIcon[2] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_RB.png"));
+    imgIcon[3] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_GR.png"));
+    imgIcon[4] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_GG.png"));
+    imgIcon[5] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_GB.png"));
+    imgIcon[6] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_BR.png"));
+    imgIcon[7] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_BG.png"));
+    imgIcon[8] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_BB.png"));
 
-    red[0] = Gtk::manage (new Adjuster (M("TP_CHMIXER_RED"),   -200, 200, 1, 100));
-    red[1] = Gtk::manage (new Adjuster (M("TP_CHMIXER_GREEN"), -200, 200, 1, 0));
-    red[2] = Gtk::manage (new Adjuster (M("TP_CHMIXER_BLUE"),  -200, 200, 1, 0));
+    Gtk::Label* rlabel = Gtk::manage (new Gtk::Label ());
+    rlabel->set_markup (Glib::ustring("\t<span foreground=\"#b00000\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));
+    rlabel->set_alignment(Gtk::ALIGN_LEFT);
+
+    red[0] = Gtk::manage (new Adjuster (imgIcon[0],   -200, 200, 1, 100));
+    red[1] = Gtk::manage (new Adjuster (imgIcon[1], -200, 200, 1, 0));
+    red[2] = Gtk::manage (new Adjuster (imgIcon[2],  -200, 200, 1, 0));
 
     Gtk::HSeparator* rsep = Gtk::manage (new Gtk::HSeparator ());
 
@@ -38,11 +51,13 @@ ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
     pack_start (*rsep);
 
     Gtk::Label* glabel = Gtk::manage (new Gtk::Label ());
-    glabel->set_markup (Glib::ustring("<span foreground=\"darkgreen\"><b>") + M("TP_CHMIXER_GREEN") + Glib::ustring(":</b></span>"));
+    glabel->set_markup (Glib::ustring("\t<span foreground=\"#0b8c21\"><b>") + M("TP_CHMIXER_GREEN") + Glib::ustring(":</b></span>"));
+    glabel->set_alignment(Gtk::ALIGN_LEFT);
 
-    green[0] = Gtk::manage (new Adjuster (M("TP_CHMIXER_RED"),   -200, 200, 1, 0));
-    green[1] = Gtk::manage (new Adjuster (M("TP_CHMIXER_GREEN"), -200, 200, 1, 100));
-    green[2] = Gtk::manage (new Adjuster (M("TP_CHMIXER_BLUE"),  -200, 200, 1, 0));
+
+    green[0] = Gtk::manage (new Adjuster (imgIcon[3],   -200, 200, 1, 0));
+    green[1] = Gtk::manage (new Adjuster (imgIcon[4], -200, 200, 1, 100));
+    green[2] = Gtk::manage (new Adjuster (imgIcon[5],  -200, 200, 1, 0));
 
     Gtk::HSeparator* gsep = Gtk::manage (new Gtk::HSeparator ());
 
@@ -52,11 +67,11 @@ ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
     pack_start (*gsep);
 
     Gtk::Label* blabel = Gtk::manage (new Gtk::Label ());
-    blabel->set_markup (Glib::ustring("<span foreground=\"blue\"><b>") + M("TP_CHMIXER_BLUE") + Glib::ustring(":</b></span>"));
-
-    blue[0] = Gtk::manage (new Adjuster (M("TP_CHMIXER_RED"),   -200, 200, 1, 0));
-    blue[1] = Gtk::manage (new Adjuster (M("TP_CHMIXER_GREEN"), -200, 200, 1, 0));
-    blue[2] = Gtk::manage (new Adjuster (M("TP_CHMIXER_BLUE"),  -200, 200, 1, 100));
+    blabel->set_markup (Glib::ustring("\t<span foreground=\"#1377d7\"><b>") + M("TP_CHMIXER_BLUE") + Glib::ustring(":</b></span>"));
+    blabel->set_alignment(Gtk::ALIGN_LEFT);
+    blue[0] = Gtk::manage (new Adjuster (imgIcon[6],   -200, 200, 1, 0));
+    blue[1] = Gtk::manage (new Adjuster (imgIcon[7], -200, 200, 1, 0));
+    blue[2] = Gtk::manage (new Adjuster (imgIcon[8],  -200, 200, 1, 100));
 
     for (int i=0; i<3; i++) {
         red[i]->setAdjusterListener (this); 
