@@ -30,7 +30,11 @@ namespace rtengine {
 
 DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
 
-	ppn = poly_pn;
+    ppn = poly_pn;
+    bool identity = true;
+
+    if (ppn < 500) hashSize = 100;  // Arbitrary cut-off value
+    if (ppn < 50) hashSize = 10;  	// Arbitrary cut-off value
 
     if (p.size()<3) {
         kind = DCT_Empty;
@@ -45,17 +49,28 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
             for (int i=0; i<N; i++) {
                 x[i] = p[ix++];
                 y[i] = p[ix++];
+                if (x[i] != y[i])
+                    identity = false;
             }
-            if (kind==DCT_Spline)
-                spline_cubic_set ();
-            else if (kind==DCT_NURBS && N > 2)
-                NURBS_set ();
-            else kind=DCT_Linear;
+            if (x[0] != 0.0f || x[N-1] != 1.0f)
+                // Special (and very rare) case where all points are on the identity line but
+                // not reaching the limits
+                identity = false;
+
+            if (!identity) {
+                if (kind==DCT_Spline && N > 2)
+                    spline_cubic_set ();
+                else if (kind==DCT_NURBS && N > 2) {
+                    NURBS_set ();
+                    fillHash();
+                }
+                else kind=DCT_Linear;
+            }
         }
         else if (kind==DCT_Parametric) {
-            if (p.size()!=8 && p.size()!=9)
-                kind = DCT_Empty;
-            else {
+            if ((p.size()==8 || p.size()==9) && (p.at(4)!=0.0f || p.at(5)!=0.0f || p.at(6)!=0.0f || p.at(7)!=0.0f)) {
+                identity = false;
+
                 x = new double[9];
                 for (int i=0; i<4; i++)
                     x[i] = p[i];
@@ -66,6 +81,9 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
                 else
                     x[8] = p[8]/100.0;
             }
+        }
+        if (identity) {
+        	kind = DCT_Empty;
         }
     }
 }
@@ -82,7 +100,7 @@ DiagonalCurve::~DiagonalCurve () {
 void DiagonalCurve::spline_cubic_set () {
 
     double* u = new double[N-1];
-    delete [] ypp;
+    delete [] ypp;		// TODO: why do we delete ypp here since it should not be allocated yet?
     ypp = new double [N];
 
     ypp[0] = u[0] = 0.0;	/* set lower boundary condition to "natural" */
@@ -113,7 +131,7 @@ void DiagonalCurve::NURBS_set () {
     double total_length=0.;
 
     // Create the list of Bezier sub-curves
-    // NURBS_set is called if N > 2 only
+    // NURBS_set is called if N > 2 and non identity only
 
     int j = 0;
     int k = 0;
@@ -122,75 +140,83 @@ void DiagonalCurve::NURBS_set () {
         double dx;
         double dy;
 
-    	// first point (on the curve)
-    	if (!i) {
-    		sc_x[j] = x[i];
-    		sc_y[j++] = y[i++];
-    	}
-    	else {
-    		sc_x[j] = (x[i-1] + x[i]) / 2.;
-    		sc_y[j++] = (y[i-1] + y[i]) / 2.;
-    	}
+        // first point (on the curve)
+        if (!i) {
+            sc_x[j] = x[i];
+            sc_y[j++] = y[i++];
+        }
+        else {
+            sc_x[j] = (x[i-1] + x[i]) / 2.;
+            sc_y[j++] = (y[i-1] + y[i]) / 2.;
+        }
 
-		// second point (control point)
-		sc_x[j] = x[i];
-		sc_y[j] = y[i++];
+        // second point (control point)
+        sc_x[j] = x[i];
+        sc_y[j] = y[i++];
 
-		dx = sc_x[j] - sc_x[j-1];
-		dy = sc_y[j] - sc_y[j-1];
-		length = sqrt(dx*dx + dy*dy);
-		j++;
+        dx = sc_x[j] - sc_x[j-1];
+        dy = sc_y[j] - sc_y[j-1];
+        length = sqrt(dx*dx + dy*dy);
+        j++;
 
-    	// third point (on the curve)
-		if (i==N-1) {
-			sc_x[j] = x[i];
-			sc_y[j] = y[i];
-		}
-		else {
-			sc_x[j] =  (x[i-1] + x[i]) / 2.;
-			sc_y[j] =  (y[i-1] + y[i]) / 2.;
-		}
-		dx = sc_x[j] - sc_x[j-1];
-		dy = sc_y[j] - sc_y[j-1];
-		length += sqrt(dx*dx + dy*dy);
-		j++;
+        // third point (on the curve)
+        if (i==N-1) {
+            sc_x[j] = x[i];
+            sc_y[j] = y[i];
+        }
+        else {
+            sc_x[j] =  (x[i-1] + x[i]) / 2.;
+            sc_y[j] =  (y[i-1] + y[i]) / 2.;
+        }
+        dx = sc_x[j] - sc_x[j-1];
+        dy = sc_y[j] - sc_y[j-1];
+        length += sqrt(dx*dx + dy*dy);
+        j++;
 
-		// Storing the length of all sub-curves and the total length (to have a better distribution
-		// of the points along the curve)
-	    sc_length[k++] = length;
-	    total_length += length;
+        // Storing the length of all sub-curves and the total length (to have a better distribution
+        // of the points along the curve)
+        sc_length[k++] = length;
+        total_length += length;
     }
 
     poly_x.clear();
-   	poly_y.clear();
-   	unsigned int sc_xsize=j-1;
+    poly_y.clear();
+    unsigned int sc_xsize=j-1;
     j = 0;
+
+    // adding the initial horizontal segment, if any
+    if (x[0] > 0.) {
+    	poly_x.push_back(0.);
+    	poly_y.push_back(y[0]);
+    }
+
+    // adding the initial horizontal segment, if any
     // create the polyline with the number of points adapted to the X range of the sub-curve
     for (unsigned int i=0; i < sc_xsize /*sc_x.size()*/; i+=3) {
-    	// TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
-    	nbr_points = (int)(((double)(ppn+N-2) * sc_length[i/3] )/ total_length);
-    	if (nbr_points<0){
-    		for(int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
-    		printf("NURBS: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
-    		exit(0);
-    	}
-    	// increment along the curve, not along the X axis
-    	increment = 1.0 / (double)(nbr_points-1);
-    	x1 = sc_x[i];   y1 = sc_y[i];
-		x2 = sc_x[i+1]; y2 = sc_y[i+1];
-		x3 = sc_x[i+2]; y3 = sc_y[i+2];
-		firstPointIncluded = !i;
-		AddPolygons ();
+        // TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
+        nbr_points = (int)(((double)(ppn+N-2) * sc_length[i/3] )/ total_length);
+        if (nbr_points<0){
+            for(int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
+            printf("NURBS diagonal curve: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
+            exit(0);
+        }
+        // increment along the curve, not along the X axis
+        increment = 1.0 / (double)(nbr_points-1);
+        x1 = sc_x[i];   y1 = sc_y[i];
+        x2 = sc_x[i+1]; y2 = sc_y[i+1];
+        x3 = sc_x[i+2]; y3 = sc_y[i+2];
+        firstPointIncluded = !i;
+        AddPolygons ();
     }
+
+    // adding the final horizontal segment, always (see under)
+   	poly_x.push_back(1.1);		// 1.1 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
+   	poly_y.push_back(y[N-1]);
 }
 
 double DiagonalCurve::getVal (double t) {
 
     switch (kind) {
-
-    case DCT_Empty :
-        return t;
-        break;
 
     case DCT_Parametric : {
         if (t<=1e-14)
@@ -222,7 +248,7 @@ double DiagonalCurve::getVal (double t) {
     }
     case DCT_Linear :
     case DCT_Spline : {
-    	// values under and over the first and last point
+        // values under and over the first and last point
         if (t>x[N-1])
             return y[N-1];
         else if (t<x[0])
@@ -252,37 +278,45 @@ double DiagonalCurve::getVal (double t) {
         break;
     }
     case DCT_NURBS : {
-    	// values under and over the first and last point
-        if (t>x[N-1])
-            return y[N-1];
-        else if (t<x[0])
-            return y[0];
-        else if (N == 2)
-            return y[0] + (t - x[0]) * ( y[1] - y[0] ) / (x[1] - x[0]);
+    	// get the hash table entry by rounding the value (previously multiplied by "hashSize")
+    	unsigned short int i = (unsigned short int)(t*hashSize);
 
-        // do a binary search for the right interval:
-        int k_lo = 0, k_hi = poly_x.size() - 1;
-        while (k_hi - k_lo > 1){
-            int k = (k_hi + k_lo) / 2;
-            if (poly_x[k] > t)
-                k_hi = k;
-            else
-                k_lo = k;
-        }
+    	if (i > (hashSize+1)) {
+    		//printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash[i], poly_x.size(), poly_x[hash[i]]);
+    		printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
+    		return t;
+    	}
 
-        double h = poly_x[k_hi] - poly_x[k_lo];
-        return poly_y[k_lo] + (t - poly_x[k_lo]) * ( poly_y[k_hi] - poly_y[k_lo] ) / h;
-		break;
+    	unsigned int k_lo = 0;
+    	unsigned int k_hi = 0;
+
+		k_lo = hash[i];
+		k_hi = hash[i+1];
+
+		// do a binary search for the right interval :
+		while (k_hi - k_lo > 1){
+			unsigned int k = (k_hi + k_lo) / 2;
+			if (poly_x[k] > t)
+				k_hi = k;
+			else
+				k_lo = k;
+		}
+		if (k_lo == k_hi)
+			k_hi = k_lo+1;
+
+        double dx = poly_x[k_hi] - poly_x[k_lo];
+        double dy = poly_y[k_hi] - poly_y[k_lo];
+        return poly_y[k_lo] + (t - poly_x[k_lo]) * ( dy ) / dx;
+        break;
     }
+    case DCT_Empty :
     default:
-    	// all other (unknown) kind
-		return t;
+        // all other (unknown) kind
+        return t;
     }
 }
 
 void DiagonalCurve::getVal (const std::vector<double>& t, std::vector<double>& res) {
-
-// TODO!!!! can be made much faster!!! Binary search of getVal(double) at each point can be avoided
 
     res.resize (t.size());
     for (unsigned int i=0; i<t.size(); i++)

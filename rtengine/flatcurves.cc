@@ -38,10 +38,12 @@ FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn
     kind = FCT_Empty;
     periodic = isPeriodic;
 
+    bool identity = true;
+
     if (p.size()>4) {
         kind = (FlatCurveType)p[0];
         if (kind==FCT_MinMaxCPoints) {
-        	int oneMorePoint = periodic ? 1:0;
+            int oneMorePoint = periodic ? 1:0;
             N = (p.size()-1)/4;
             x = new double[N+oneMorePoint];
             y = new double[N+oneMorePoint];
@@ -53,22 +55,28 @@ FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn
                 y[i] = p[ix++];
                 leftTangent[i] = p[ix++];
                 rightTangent[i] = p[ix++];
+                if (y[i] != 0.5f)
+                	identity = false;
             }
             // The first point is copied to the end of the point list, to handle the curve periodicity
             if (periodic) {
-				x[N] = p[1]+1.0;
-				y[N] = p[2];
-				leftTangent[N] = p[3];
-				rightTangent[N] = p[4];
+                x[N] = p[1]+1.0;
+                y[N] = p[2];
+                leftTangent[N] = p[3];
+                rightTangent[N] = p[4];
             }
             else {
-            	N--;
+                N--;
             }
-            if (N > 0+(periodic?1:0) )
+            if (!identity && N > 0+(periodic?1:0) ) {
                 CtrlPoints_set ();
+                fillHash();
+            }
         }
         /*else if (kind==FCT_Parametric) {
         }*/
+        if (identity)
+            kind = FCT_Empty;
     }
 }
 
@@ -275,11 +283,11 @@ void FlatCurve::CtrlPoints_set () {
 			}
 			// increment along the curve, not along the X axis
 			increment = 1.0 / (double)(nbr_points-1);
-	    	x1 = sc_x[j]; y1 = sc_y[j++];
+			x1 = sc_x[j]; y1 = sc_y[j++];
 			x2 = sc_x[j]; y2 = sc_y[j++];
 			x3 = sc_x[j]; y3 = sc_y[j++];
 			AddPolygons ();
-    	}
+	}
     }
 
     // adding an final horizontal line if necessary
@@ -306,18 +314,16 @@ double FlatCurve::getVal (double t) {
     switch (kind) {
 
     case FCT_MinMaxCPoints : {
-    	/* To be updated if we have to handle non periodic flat curves
-    	// values under and over the first and last point
+        /* To be updated if we have to handle non periodic flat curves
+        // values under and over the first and last point
         if (t>x[N-1])
             return y[N-1];
         else if (t<x[0])
             return y[0];
-        else if (N == 2)
-            return y[0] + (t - x[0]) * ( y[1] - y[0] ) / (x[1] - x[0]);
         */
 
-    	// magic to handle curve periodicity : we look above the 1.0 bound for the value
-    	if (t < poly_x[0]) t += 1.0;
+        // magic to handle curve periodicity : we look above the 1.0 bound for the value
+        if (t < poly_x[0]) t += 1.0;
 
         // do a binary search for the right interval:
         int k_lo = 0, k_hi = poly_x.size() - 1;
@@ -337,15 +343,13 @@ double FlatCurve::getVal (double t) {
         break;
     }*/
     case FCT_Empty :
-    case FCT_Linear :
+    case FCT_Linear :  // Linear doesn't exist yet and is then considered as identity
     default:
-		return t;
+		return 0.5;
     }
 }
 
 void FlatCurve::getVal (const std::vector<double>& t, std::vector<double>& res) {
-
-// TODO!!!! can be made much faster!!! Binary search of getVal(double) at each point can be avoided
 
     res.resize (t.size());
     for (unsigned int i=0; i<t.size(); i++)

@@ -29,7 +29,7 @@
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
 enum DiagonalCurveType {
-	DCT_Empty = -1,
+	DCT_Empty = -1,		// Also used for identity curves
 	DCT_Linear,			// 0
 	DCT_Spline,			// 1
 	DCT_Parametric,		// 2
