@@ -380,9 +380,13 @@ void CropWindow::pointerMoved (int x, int y) {
         iarea->redraw ();
     }
     else if (state==SCropImgMove) {
-    	double accel = options.panAccelFactor * zoomSteps[cropZoom].zoom;
-        action_x =  (press_x - x) / zoomSteps[cropZoom].zoom * accel;
-        action_y =  (press_y - y) / zoomSteps[cropZoom].zoom * accel;
+        // multiplier is the amplification factor ; disabled if the user selected "1" (no amplification)
+        double factor = options.panAccelFactor == 1 ? 1.0 : options.panAccelFactor * zoomSteps[cropZoom].zoom;
+        // never move the preview slower than the cursor
+        if (factor < 1.0)
+        	factor = 1.0;
+        action_x =  (press_x - x) / zoomSteps[cropZoom].zoom * factor;
+        action_y =  (press_y - y) / zoomSteps[cropZoom].zoom * factor;
         for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropPositionChanged (this);
         iarea->redraw ();
