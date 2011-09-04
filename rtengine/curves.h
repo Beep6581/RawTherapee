@@ -35,7 +35,6 @@
 
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
 
-
 namespace rtengine {
 
 class CurveFactory {
@@ -211,7 +210,10 @@ class Curve {
     double* y;
     std::vector<double> poly_x;		// X points of the faceted curve
     std::vector<double> poly_y;		// Y points of the faceted curve
-    double* ypp;
+	unsigned short int* hash;
+	unsigned int hashSize;		// hash table's size, between [10, 100, 1000]
+
+	double* ypp;
 
     // Fields for the elementary curve polygonisation
     double x1, y1, x2, y2, x3, y3;
@@ -225,18 +227,26 @@ class Curve {
     static inline double p10 (double x, double prot) { return x<=0.5 ? CurveFactory::cupper (x*2, 2.0, prot)/2.0 : 0.5 + CurveFactory::clower ((x-0.5)*2, 2.0, prot)/2.0; }
     static inline double pfull (double x, double prot, double sh, double hl) { return (1-sh)*(1-hl)*p00(x,prot) + sh*hl*p11(x,prot) + (1-sh)*hl*p01(x,prot) + sh*(1-hl)*p10(x,prot); }
 
+    void fillHash();
+
   public:
     Curve ();
+    ~Curve ();
     void AddPolygons ();
     virtual double getVal (double t) = 0;
     virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) = 0;
 
+    virtual bool   isIdentity () = 0;
 };
 
 class DiagonalCurve : public Curve {
 
   protected:
     DiagonalCurveType kind;
+
+    unsigned int minSearch;     // a effacer!!!
+    unsigned int maxSearch;     // a effacer!!!
+    unsigned int searchArray[21];     // a effacer!!!
 
     void spline_cubic_set ();
     void NURBS_set ();
@@ -245,8 +255,9 @@ class DiagonalCurve : public Curve {
     DiagonalCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
    ~DiagonalCurve ();
 
-    double getVal (double t);
-    void   getVal (const std::vector<double>& t, std::vector<double>& res);
+    double getVal     (double t);
+    void   getVal     (const std::vector<double>& t, std::vector<double>& res);
+    bool   isIdentity () { return kind==DCT_Empty; };
 };
 
 class FlatCurve : public Curve {
@@ -264,8 +275,9 @@ class FlatCurve : public Curve {
     FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn=CURVES_MIN_POLY_POINTS);
    ~FlatCurve ();
 
-    double getVal (double t);
-    void   getVal (const std::vector<double>& t, std::vector<double>& res);
+    double getVal     (double t);
+    void   getVal     (const std::vector<double>& t, std::vector<double>& res);
+    bool   isIdentity () { return kind==FCT_Empty; };
 };
 }
 

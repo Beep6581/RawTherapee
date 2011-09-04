@@ -27,7 +27,7 @@
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
 enum FlatCurveType {
-	FCT_Empty = -1,
+	FCT_Empty = -1,		// Also used for identity curves
 	FCT_Linear,			// 0
 	FCT_MinMaxCPoints,	// 1
 	//FCT_Parametric,	// 2

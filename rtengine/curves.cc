@@ -38,8 +38,15 @@ namespace rtengine {
 		x = 0;
 		y = 0;
 		ypp = 0;
+	    hash = NULL;
+	    hashSize = 1000;  // has to be initiallised to the maximum value
 	}
 	
+	Curve::~Curve () {
+		if (hash)
+			delete [] hash;
+	}
+
 	void Curve::AddPolygons ()
 	{
 		if (firstPointIncluded) {
@@ -62,12 +69,71 @@ namespace rtengine {
 		poly_y.push_back(y3);
 	}
 	
+	void Curve::fillHash() {
+    	hash = new unsigned short int[hashSize+2];
+
+    	unsigned int polyIter = 0;
+    	double const increment = 1./hashSize;
+    	double milestone = 0.;
+
+    	for (unsigned int i=0; i<(hashSize+1); i++) {
+    		while(poly_x[polyIter] <= milestone) ++polyIter;
+    		hash[i] = polyIter-1;
+    		milestone += increment;
+    	}
+    	hash[hashSize+1] = poly_x.size()-1;
+
+		/*
+		// Debug output to file
+		FILE* f = fopen ("hash.txt", "wt");
+		for (int i=0; i<(hashSize+2); i++)
+			fprintf (f, "%d: %d   >   %.6f, %.6f\n", i, hash[i], poly_x[hash[i]], poly_y[hash[i]]);
+		fprintf (f, "\nppn: %d\npoly_x: %d\n", ppn, poly_x.size());
+		fclose (f);
+		*/
+	}
+
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
     // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent 
     // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
     const double CurveFactory::sRGBGamma = 2.2;
     const double CurveFactory::sRGBGammaCurve = 2.4;
 
+	void fillCurveArray(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed) {
+		if (needed) {
+			LUTf lutCurve (65536);
+
+			for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
+				// change to [0,1] range
+				double val = (double)i / 65535.0;
+				// apply custom/parametric/NURBS curve, if any
+				val = diagCurve->getVal (val);
+				// store result in a temporary array
+				lutCurve[i] = (val);
+			}
+
+			// if skip>1, let apply linear interpolation in the skipped points of the curve
+			if (skip > 1) {
+				int prev = 0;
+				for (int i=1; i<=0xffff-skip; i++) {
+					if (i%skip==0) {
+						prev+=skip;
+						continue;
+					}
+					lutCurve[i] = ( lutCurve[prev] * (skip - i%skip) + lutCurve[prev+skip] * (i%skip) ) / skip;
+				}
+			}
+
+			for (int i=0; i<=0xffff; i++) {
+				outCurve[i] = (65535.0 * lutCurve[i]);
+			}
+		}
+		else {
+			for (int i=0; i<=0xffff; i++) {
+				outCurve[i] = (float)i;
+			}
+		}
+	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, \
@@ -76,118 +142,99 @@ namespace rtengine {
 		
 		//colormult = chroma_scale for Lab manipulations
 		
+		//-----------------------------------------------------
+
+		bool needed;
+		DiagonalCurve* dCurve = NULL;
+
 		// check if contrast curve is needed
-		bool needsaturation = (saturation<-0.0001 || saturation>0.0001);
-		
-		// curve without contrast
-		LUTf dacurve (65536);
-		LUTf dbcurve (65536);
+		needed = (saturation<-0.0001 || saturation>0.0001);
 
-		LUTf dscurve (65536);
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		std::vector<double> satcurvePoints;
-		satcurvePoints.push_back((double)DCT_NURBS);
-		if (saturation>0) {
-			double satslope = (0.5+2*saturation/500.0)/(0.5-2*saturation/500.0);
-			double scale = (satlimthresh/100.1);
-			if (!satlimit) scale=100/100.1;
-			
-			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-			satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-			
-			//if (satlimit) {
-			satcurvePoints.push_back(0.5-0.5*scale); //toe point
-			satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
-			
-			satcurvePoints.push_back(0.5-(0.5/satslope)*scale); //toe point
-			satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
-			
-			satcurvePoints.push_back(0.5+(0.5/satslope)*scale); //shoulder point
-			satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
-			
-			satcurvePoints.push_back(0.5+0.5*scale); //shoulder point
-			satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point			
-			/*} else {
-			 satcurvePoints.push_back(0.25+saturation/500.0); //toe point
-			 satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
-			 
-			 satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
-			 satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
-			 }*/
-			
-			satcurvePoints.push_back(1); // white point
-			satcurvePoints.push_back(1); // value at white point
-		} else {
-			satcurvePoints.push_back(0); 
-			satcurvePoints.push_back(-(saturation/200.0)); 
-			
-			satcurvePoints.push_back(1); 
-			satcurvePoints.push_back(1+saturation/200.0); 
+		// Filling the curve if needed
+		if (needed) {
+
+			//%%%%%%%%%%%%%%%%% Saturation curve's control points %%%%%%%%%%%%%%%%%
+		    std::vector<double> satcurvePoints;
+			satcurvePoints.push_back((double)DCT_NURBS);
+			if (saturation>0) {
+				double satslope = (0.5+2*saturation/500.0)/(0.5-2*saturation/500.0);
+				double scale = (satlimthresh/100.1);
+				if (!satlimit) scale=100/100.1;
+
+				satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+				satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+
+				//if (satlimit) {
+				satcurvePoints.push_back(0.5-0.5*scale); //toe point
+				satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
+
+				satcurvePoints.push_back(0.5-(0.5/satslope)*scale); //toe point
+				satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
+
+				satcurvePoints.push_back(0.5+(0.5/satslope)*scale); //shoulder point
+				satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
+
+				satcurvePoints.push_back(0.5+0.5*scale); //shoulder point
+				satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
+				/*} else {
+				 satcurvePoints.push_back(0.25+saturation/500.0); //toe point
+				 satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
+
+				 satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
+				 satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
+				 }*/
+
+				satcurvePoints.push_back(1); // white point
+				satcurvePoints.push_back(1); // value at white point
+			} else {
+				satcurvePoints.push_back(0);
+				satcurvePoints.push_back(-(saturation/200.0));
+
+				satcurvePoints.push_back(1);
+				satcurvePoints.push_back(1+saturation/200.0);
+			}
+			dCurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+			fillCurveArray(dCurve, satCurve, skip, needed);
+
+			delete dCurve;
+			dCurve = NULL;
 		}
-		DiagonalCurve* satcurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
+		else {
+			fillCurveArray(NULL, satCurve, skip, needed);
+		}
+
+		//-----------------------------------------------------
+
+		needed = false;
 		// create a curve if needed
-		DiagonalCurve* tacurve = NULL;
-		if (acurvePoints.size()>0 && acurvePoints[0]!=0)
-			tacurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
-		DiagonalCurve* tbcurve = NULL;
-		if (bcurvePoints.size()>0 && bcurvePoints[0]!=0)
-			tbcurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
-		
-		for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
-			
-			// change to [0,1] range
-			double aval = (double)i / 65535.0;
-			double bval = (double)i / 65535.0;
-			double sval = (double)i / 65535.0;
-			
-			
-			// apply saturation curve
-			if (needsaturation)
-				sval = satcurve->getVal (sval);
-			
-			// apply custom/parametric/NURBS curve, if any
-			if (tacurve) {
-				aval = tacurve->getVal (aval);
-			}
-			// apply custom/parametric/NURBS curve, if any
-			if (tbcurve) {
-				bval = tbcurve->getVal (bval);
-			}
-			
-			// store result in a temporary array
-			dacurve[i] = (aval);
-			dbcurve[i] = (bval);
-			dscurve[i] = (sval);
+		if (acurvePoints.size()>0 && acurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (dCurve && !dCurve->isIdentity())
+				needed = true;
 		}
-		
-		delete tacurve;
-		delete tbcurve;
-
-		// if skip>1, let apply linear interpolation in the skipped points of the curve
-		int prev = 0;
-		for (int i=1; i<=0xffff-skip; i++) {
-			if (i%skip==0) {
-				prev+=skip;
-				continue;
-			}
-			dacurve[i] = ( dacurve[prev] * (skip - i%skip) + dacurve[prev+skip] * (i%skip) ) / skip;
-			dbcurve[i] = ( dbcurve[prev] * (skip - i%skip) + dbcurve[prev+skip] * (i%skip) ) / skip;
-			dscurve[i] = ( dscurve[prev] * (skip - i%skip) + dscurve[prev+skip] * (i%skip) ) / skip;
-		}
-		
-		for (int i=0; i<=0xffff; i++) { 
-			aoutCurve[i] = (65535.0 * dacurve[i]);
-			boutCurve[i] = (65535.0 * dbcurve[i]);
-			satCurve[i] = (65535.0 * dscurve[i]);
+		fillCurveArray(dCurve, aoutCurve, skip, needed);
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
 		}
 
-		delete satcurve;
+		//-----------------------------------------------------
+
+		needed = false;
+		if (bcurvePoints.size()>0 && bcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (dCurve && !dCurve->isIdentity())
+				needed = true;
+		}
+		fillCurveArray(dCurve, boutCurve, skip, needed);
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
 	}
 
-	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,16 +270,8 @@ namespace rtengine {
 		// curve without contrast
 		LUTf dcurve(0x10000);
 		
-		// check if contrast curve is needed
-		bool needcontrast = contr>0.00001 || contr<-0.00001;
-		
 		// check if inverse gamma is needed at the end
 		bool needigamma = igamma_ && gamma_>0;
-		
-		// create a curve if needed
-		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0)
-			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		
 		// clear array that stores histogram valid before applying the custom curve
 		outBeforeCCurveHistogram.clear();
@@ -241,31 +280,37 @@ namespace rtengine {
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		std::vector<double> brightcurvePoints;
-		brightcurvePoints.push_back((double)DCT_NURBS);
-		
-		brightcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-		brightcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-		
-		if(br>0) {
-			brightcurvePoints.push_back(0.1); //toe point
-			brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+		DiagonalCurve* brightcurve = NULL;
+
+		// check if brightness curve is needed
+		if (br>0.00001 || br<-0.00001) {
+
+			std::vector<double> brightcurvePoints;
+			brightcurvePoints.push_back((double)DCT_NURBS);
+
+			brightcurvePoints.push_back(0.); //black point.  Value in [0 ; 1] range
+			brightcurvePoints.push_back(0.); //black point.  Value in [0 ; 1] range
 			
-			brightcurvePoints.push_back(0.7); //shoulder point
-			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
-		} else {
-			brightcurvePoints.push_back(0.1-br/150.0); //toe point
-			brightcurvePoints.push_back(0.1); //value at toe point
+			if(br>0) {
+				brightcurvePoints.push_back(0.1); //toe point
+				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+
+				brightcurvePoints.push_back(0.7); //shoulder point
+				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+			} else {
+				brightcurvePoints.push_back(0.1-br/150.0); //toe point
+				brightcurvePoints.push_back(0.1); //value at toe point
+
+				brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); //shoulder point
+				brightcurvePoints.push_back(0.7); //value at shoulder point
+			}
+			brightcurvePoints.push_back(1.); // white point
+			brightcurvePoints.push_back(1.); // value at white point
 			
-			brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); //shoulder point
-			brightcurvePoints.push_back(0.7); //value at shoulder point
+			brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 		}
-		brightcurvePoints.push_back(1); // white point
-		brightcurvePoints.push_back(1); // value at white point
-		
-		DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
+
 		float exp_scale = a;
 		float scale = 65536.0;
 		float comp = (MAX(0,ecomp) + 1.0)*hlcompr/100.0;
@@ -307,21 +352,27 @@ namespace rtengine {
 			val = (double)i / 65535.0;
 			
 			// gamma correction
-			if (gamma_>1) 
+			if (gamma_>1)
 				val = gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve
-			val = brightcurve->getVal (val);
-			
+			if (brightcurve)
+				val = brightcurve->getVal (val);  // TODO: getVal(double) is very slow! Optimize with a LUTf
+
 			// store result in a temporary array
 			dcurve[i] = CLIPD(val);
 		}
-		
+
+		if (brightcurve)
+			delete brightcurve;
+
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		if (needcontrast) {  
+
+		// check if contrast curve is needed
+		if (contr>0.00001 || contr<-0.00001) {
+
 			// compute mean luminance of the image with the curve applied
 			int sum = 0;
 			float avg = 0; 
@@ -352,49 +403,64 @@ namespace rtengine {
 			contrastcurvePoints.push_back(1); // white point
 			contrastcurvePoints.push_back(1); // value at white point
 			
-			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			// apply contrast enhancement
 			for (int i=0; i<=0xffff; i++) {
 				dcurve[i]  = contrastcurve->getVal (dcurve[i]);
 			}
+
 			delete contrastcurve;
 		}
+
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
+		// create a curve if needed
+		bool histNeeded = false;
+		DiagonalCurve* tcurve = NULL;
+		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCCurveHistogram && histogramCropped)
+				histNeeded = true;
+		}
+		if (tcurve && tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+
 		for (int i=0; i<=0xffff; i++) {
 			float val;
-			
+
+			if (histNeeded) {
+				float fi=i;
+				float hval = dcurve[shCurve[hlCurve[i]*fi]*fi];
+				//if (needigamma)
+				//	hval = igamma2 (hval);
+				int hi = (int)(255.0*(hval));
+				outBeforeCCurveHistogram[hi] += histogramCropped[i] ;
+			}
+
 			// apply custom/parametric/NURBS curve, if any
 			if (tcurve) {
-				if (outBeforeCCurveHistogram && histogramCropped) {
-					float fi=i;
-					float hval = dcurve[shCurve[hlCurve[i]*fi]*fi];
-					//if (needigamma)
-					//	hval = igamma2 (hval);
-					int hi = (int)(255.0*(hval));
-					outBeforeCCurveHistogram[hi] += histogramCropped[i] ;
-				}
-				val = tcurve->getVal (dcurve[i]);
+				val = tcurve->getVal (dcurve[i]);  // TODO: getVal(double) is very slow! Optimize with a LUTf
 			} else {
 				val = (dcurve[i]);
 			}
-			
+
 			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)
 			if (needigamma)
 				val = igamma (val, gamma_, start, slope, mul, add);
-			
+
 			outCurve[i] = (65535.0 * val);
 		}
-		
-		
-		delete tcurve;
-		delete brightcurve; 
+
+		if (tcurve)
+			delete tcurve;
+
 		/*if (outBeforeCCurveHistogram) {
 			for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
 		}*/
-		
 	}
 
 	
@@ -409,15 +475,6 @@ namespace rtengine {
 		// curve without contrast
 		LUTf dcurve(65536,0);
 		
-		// check if contrast curve is needed
-		bool needcontrast = contr>0.00001 || contr<-0.00001;
-		
-		// create a curve if needed
-		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0)
-			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-
-		
 		// clear array that stores histogram valid before applying the custom curve
 		if (outBeforeCCurveHistogram)
 			outBeforeCCurveHistogram.clear();
@@ -426,48 +483,62 @@ namespace rtengine {
 		// tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		std::vector<double> brightcurvePoints;
-		brightcurvePoints.push_back((double)((CurveType)DCT_NURBS));
-		
-		brightcurvePoints.push_back(0); // black point.  Value in [0 ; 1] range
-		brightcurvePoints.push_back(0); // black point.  Value in [0 ; 1] range
-		
-		if (br>0) {
-			brightcurvePoints.push_back(0.1); // toe point
-			brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+		// check if brightness curve is needed
+		if (br>0.00001 || br<-0.00001) {
+
+			std::vector<double> brightcurvePoints;
+			brightcurvePoints.push_back((double)((CurveType)DCT_NURBS));
+
+			brightcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
+			brightcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
 			
-			brightcurvePoints.push_back(0.7); // shoulder point
-			brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
-		} else {
-			brightcurvePoints.push_back(0.1-br/150.0); // toe point
-			brightcurvePoints.push_back(0.1); // value at toe point
+			if (br>0) {
+				brightcurvePoints.push_back(0.1); // toe point
+				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+
+				brightcurvePoints.push_back(0.7); // shoulder point
+				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+			} else {
+				brightcurvePoints.push_back(0.1-br/150.0); // toe point
+				brightcurvePoints.push_back(0.1); // value at toe point
+
+				brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); // shoulder point
+				brightcurvePoints.push_back(0.7); // value at shoulder point
+			}
+			brightcurvePoints.push_back(1.); // white point
+			brightcurvePoints.push_back(1.); // value at white point
 			
-			brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); // shoulder point
-			brightcurvePoints.push_back(0.7); // value at shoulder point
+			DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+			// Applying brightness curve
+			for (int i=0; i<32768; i++) { // L values range up to 32767, higher values are for highlight overflow
+
+				// change to [0,1] range
+				float val = (float)i / 32767.0;
+
+				// apply brightness curve
+				val = brightcurve->getVal (val);
+
+				// store result in a temporary array
+				dcurve[i] = CLIPD(val);
+			}
+			delete brightcurve;
 		}
-		brightcurvePoints.push_back(1); // white point
-		brightcurvePoints.push_back(1); // value at white point
-		
-		DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		for (int i=0; i<32768; i++) { // L values range up to 32767, higher values are for highlight overflow
-			
-			// change to [0,1] range
-			float val = (float)i / 32767.0;
-			
-			// apply brightness curve
-			val = brightcurve->getVal (val);
-			
-			// store result in a temporary array
-			dcurve[i] = CLIPD(val);
+		else {
+			for (int i=0; i<32768; i++) { // L values range up to 32767, higher values are for highlight overflow
+				// set the identity curve in the temporary array
+				dcurve[i] = (float)i / 32767.0;
+			}
 		}
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		if (needcontrast) {  
+		// check if contrast curve is needed
+		if (contr>0.00001 || contr<-0.00001) {
+
 			// compute mean luminance of the image with the curve applied
 			int sum = 0;
 			float avg = 0; 
@@ -485,8 +556,8 @@ namespace rtengine {
 			std::vector<double> contrastcurvePoints;
 			contrastcurvePoints.push_back((double)((CurveType)DCT_NURBS));
 			
-			contrastcurvePoints.push_back(0); // black point.  Value in [0 ; 1] range
-			contrastcurvePoints.push_back(0); // black point.  Value in [0 ; 1] range
+			contrastcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
+			contrastcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
 			
 			contrastcurvePoints.push_back(avg-avg*(0.6-contr/250.0)); // toe point
 			contrastcurvePoints.push_back(avg-avg*(0.6+contr/250.0)); // value at toe point
@@ -494,10 +565,10 @@ namespace rtengine {
 			contrastcurvePoints.push_back(avg+(1-avg)*(0.6-contr/250.0)); // shoulder point
 			contrastcurvePoints.push_back(avg+(1-avg)*(0.6+contr/250.0)); // value at shoulder point
 			
-			contrastcurvePoints.push_back(1); // white point
-			contrastcurvePoints.push_back(1); // value at white point
+			contrastcurvePoints.push_back(1.); // white point
+			contrastcurvePoints.push_back(1.); // value at white point
 			
-			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip); // Actually, CURVES_MIN_POLY_POINTS = 1000,
+			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			// apply contrast enhancement
@@ -508,39 +579,64 @@ namespace rtengine {
 			delete contrastcurve;
 		}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		for (int i=0; i<32768; i++) { // L values go up to 32767, last stop is for highlight overflow
-			float val;
-			
-			// apply custom/parametric/NURBS curve, if any
-			if (tcurve) {
-				if (outBeforeCCurveHistogram) {
+
+		// create a curve if needed
+		DiagonalCurve* tcurve = NULL;
+		bool histNeeded = false;
+		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCCurveHistogram && histogramCropped)
+				histNeeded = true;
+		}
+		if (tcurve && tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+
+		if (tcurve) {
+			// L values go up to 32767, last stop is for highlight overflow
+			for (int i=0; i<32768; i++) {
+				float val;
+
+				if (histNeeded) {
 					float hval = dcurve[i];
 					int hi = (int)(255.0*CLIPD(hval));
 					outBeforeCCurveHistogram[hi]+=histogramCropped[i] ;
 				}
+
+				// apply custom/parametric/NURBS curve, if any
 				val = tcurve->getVal (dcurve[i]);
-			} else {
-				val = (dcurve[i]);
+
+				outCurve[i] = (32767.0 * val);
 			}
-			
-			outCurve[i] = (32767.0 * val);
 		}
-		for (int i=32768; i<65536; i++) outCurve[i]=i;
-		
-		
-		delete tcurve;
-		delete brightcurve; 
+		else {
+			// Skip the slow getval method if no curve is used (or an identity curve)
+			// L values go up to 32767, last stop is for highlight overflow
+			for (int i=0; i<32768; i++) {
+				if (histNeeded) {
+					float hval = dcurve[i];
+					int hi = (int)(255.0*CLIPD(hval));
+					outBeforeCCurveHistogram[hi]+=histogramCropped[i] ;
+				}
+
+				outCurve[i] = 32767.0*dcurve[i];
+			}
+		}
+		for (int i=32768; i<65536; i++) outCurve[i]=(float)i;
+
+		if (tcurve)
+			delete tcurve;
+
 		/*if (outBeforeCCurveHistogram) {
 			for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
 		}*/
-		
 	}
-	
-	
+
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
+
+
 
 LUTf CurveFactory::gammatab;
 LUTf CurveFactory::igammatab_srgb;
