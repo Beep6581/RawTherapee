@@ -51,8 +51,8 @@ PartialPasteDlg::PartialPasteDlg () {
 
     // options in detail:
     sharpen     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENING")));
-    gradsharpen = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENTSHARPEN")));
-    microcontrast = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_MICROCONTRAST")));
+    sharpenedge = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENEDGE")));
+    sharpenmicro = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENMICRO")));
     impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
@@ -123,8 +123,8 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*detail, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*hseps[1], Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
-    vboxes[1]->pack_start (*gradsharpen, Gtk::PACK_SHRINK, 2);
-    vboxes[1]->pack_start (*microcontrast, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*sharpenedge, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*sharpenmicro, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
@@ -234,8 +234,8 @@ PartialPasteDlg::PartialPasteDlg () {
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    gradsharpenConn = gradsharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    microcontrastConn = microcontrast->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    gradsharpenConn = sharpenedge->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    microcontrastConn = sharpenmicro->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     impdenConn		= impden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyrdenConn   = dirpyrden->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
@@ -433,8 +433,8 @@ void PartialPasteDlg::detailToggled () {
     detail->set_inconsistent (false);
 
     sharpen->set_active (detail->get_active ());
-    gradsharpen->set_active (detail->get_active ());
-    microcontrast->set_active (detail->get_active ());
+    sharpenedge->set_active (detail->get_active ());
+    sharpenmicro->set_active (detail->get_active ());
 	impden->set_active (detail->get_active ());
     dirpyrden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
@@ -535,18 +535,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (labcurve->get_active ())    dst->labCurve = src->labCurve;
 
     if (sharpen->get_active ())     dst->sharpening = src->sharpening;
-    if (gradsharpen->get_active ()){
-    	dst->clarity.enabled = src->clarity.enabled;
-    	dst->clarity.clstrength = src->clarity.clstrength;
-    	dst->clarity.clpasses = src->clarity.clpasses;
-    	dst->clarity.clthreechannels = src->clarity.clthreechannels;
-    }
-    if (microcontrast->get_active ()){
-    	dst->clarity.enabledtwo = src->clarity.enabledtwo;
-    	dst->clarity.MLmicromatrix = src->clarity.MLmicromatrix;
-    	dst->clarity.mlstrength = src->clarity.mlstrength;
-    	dst->clarity.uniformity = src->clarity.uniformity;
-    }
+    if (sharpenedge->get_active ()) dst->sharpenEdge = src->sharpenEdge;
+    if (sharpenmicro->get_active()) dst->sharpenMicro = src->sharpenMicro;
     if (impden->get_active ())		dst->impulseDenoise = src->impulseDenoise;
     if (dirpyreq->get_active ())	dst->dirpyrequalizer = src->dirpyrequalizer;
     if (defringe->get_active ())    dst->defringe = src->defringe;

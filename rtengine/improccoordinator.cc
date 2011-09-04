@@ -255,11 +255,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             ipf.defringe (nprevl);
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
             ipf.dirpyrdenoise (nprevl);
-			if (params.clarity.enabled) {
-                progress ("Clarity...",100*readyphase/numofphases);
+			if (params.sharpenEdge.enabled) {
+                progress ("Edge sharpening...",100*readyphase/numofphases);
 				ipf.MLsharpen (nprevl);
 			}
-			if (params.clarity.enabledtwo) {	
+			if (params.sharpenMicro.enabled) {
                 progress ("Microcontrast...",100*readyphase/numofphases);			
 				ipf.MLmicrocontrast (nprevl);
 			}

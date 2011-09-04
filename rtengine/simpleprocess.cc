@@ -177,10 +177,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
  	ipf.dirpyrdenoise (labView);
-	if (params.clarity.enabled) {
+	if (params.sharpenEdge.enabled) {
 		 ipf.MLsharpen(labView);
 		 }
-	if (params.clarity.enabledtwo) {		 
+	if (params.sharpenMicro.enabled) {
 		 ipf.MLmicrocontrast (labView);
 		 }
     if (params.sharpening.enabled) {

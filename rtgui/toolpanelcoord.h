@@ -58,7 +58,8 @@
 #include <flatfield.h>
 #include <rawcacorrection.h>
 #include <rawexposure.h>
-#include <clarity.h>
+#include <sharpenmicro.h>
+#include <sharpenedge.h>
 class ImageEditorCoordinator;
 
 class ToolPanelCoordinator :    public ToolPanelListener, 
@@ -73,7 +74,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
                                 public ImageAreaToolListener {
 
     protected:
-        
+
         WhiteBalance* whitebalance;
         Vignetting* vignetting;
         LensGeometry* lensgeom;
@@ -92,7 +93,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ImpulseDenoise* impulsedenoise;
         DirPyrDenoise* dirpyrdenoise;
         Sharpening* sharpening;
-		Clarity* clarity;
+        SharpenEdge* sharpenEdge;
+        SharpenMicro* sharpenMicro;
         LCurve* lcurve;
         DirPyrEqualizer * dirpyrequalizer;
         HSVEqualizer * hsvequalizer;

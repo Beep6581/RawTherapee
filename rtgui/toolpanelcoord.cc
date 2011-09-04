@@ -44,7 +44,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     defringe            = Gtk::manage (new Defringe ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     sharpening          = Gtk::manage (new Sharpening ());
-	clarity				 = Gtk::manage (new Clarity ());
+    sharpenEdge         = Gtk::manage (new SharpenEdge ());
+    sharpenMicro        = Gtk::manage (new SharpenMicro ());
     lcurve              = Gtk::manage (new LCurve ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     distortion          = Gtk::manage (new Distortion ());
@@ -75,7 +76,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
     addPanel (exposurePanel, shadowshighlights, M("TP_SHADOWSHLIGHTS_LABEL")); toolPanels.push_back (shadowshighlights);
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
-    addPanel (detailsPanel, clarity,       		  M("TP_CLARITY_LABEL"));      toolPanels.push_back (clarity);
+    addPanel (detailsPanel, sharpenEdge,        M("TP_SHARPENEDGE_LABEL"));    toolPanels.push_back (sharpenEdge);
+    addPanel (detailsPanel, sharpenMicro,       M("TP_SHARPENMICRO_LABEL"));   toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
     addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
     addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);

@@ -239,7 +239,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 	}
 }
 
-// To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>[
+// To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>
 // has waived all copyright and related or neighboring rights to this work.
 // This work is published from: Spain.
 
@@ -247,7 +247,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 void ImProcFunctions::MLsharpen (LabImage* lab) {
 	// JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partialy) the effects of the AA filter)
 	// I think we can use this algorithm alone in most cases, or first to clarify image and if you want a very little USM (unsharp mask sharpening) after...
-	if (params->clarity.enabled==false)
+	if (params->sharpenEdge.enabled==false)
 		return;
 	MyTime t1e,t2e;
 	t1e.set();
@@ -260,13 +260,13 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 	float templab;
 	int iii,kkk;
 	width2 = 2*width;
-	float strength;
-	strength = params->clarity.clstrength / 100.0f;
-	if (strength < 0.00001f)
+	float amount;
+	amount = params->sharpenEdge.amount / 100.0f;
+	if (amount < 0.00001f)
 		return;
 
 	if (settings->verbose)
-		printf ("Clarity strength %f\n", strength);
+		printf ("SharpenEdge amount %f\n", amount);
 
 	L = new float[width*height];
 
@@ -275,13 +275,13 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 	chmax[2] = 3.0f;
 
 	int channels;
-	if (params->clarity.clthreechannels) channels=0; else channels=2;
+	if (params->sharpenEdge.threechannels) channels=0; else channels=2;
 	if (settings->verbose)
-		printf ("Clarity channels %d\n", channels);
+		printf ("SharpenEdge channels %d\n", channels);
 
-	int passes=params->clarity.clpasses;
+	int passes=params->sharpenEdge.passes;
 	if (settings->verbose)
-		printf ("Clarity passes %d\n", passes);
+		printf ("SharpenEdge passes %d\n", passes);
 
 	for (p=0; p<passes; p++)
 		for (c=0; c<=channels; c++) {// c=0 Luminance only
@@ -294,7 +294,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 				else if (c==1) L[offset] = lab->a[ii][kk]/327.68f;
 				else if (c==2) L[offset] = lab->b[ii][kk]/327.68f;
 			}
-#pragma omp parallel for private(j,i,iii,kkk, templab,offset,wH,wV,wD1,wD2,s,lumH,lumV,lumD1,lumD2,v,contrast,f1,f2,f3,f4,difT,difB,difL,difR,difLT,difLB,difRT,difRB) shared(lab,L,strength)
+#pragma omp parallel for private(j,i,iii,kkk, templab,offset,wH,wV,wD1,wD2,s,lumH,lumV,lumD1,lumD2,v,contrast,f1,f2,f3,f4,difT,difB,difL,difR,difLT,difLB,difRT,difRB) shared(lab,L,amount)
 			for(j=2; j<height-2; j++)
 				for(i=2,offset=j*width+i; i<width-2; i++,offset++) {
 					// weight functions
@@ -390,11 +390,11 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					s = strength;
+					s = amount;
  
 					// avoid sharpening diagonals too much
 					if (((fabs(wH/wV)<0.45f)&&(fabs(wH/wV)>0.05f))||((fabs(wV/wH)<0.45f)&&(fabs(wV/wH)>0.05f)))
-						s = strength/3.0f;
+						s = amount/3.0f;
 
 					// final mix
 					if ((wH!=0.0f)&&(wV!=0.0f)&&(wD1!=0.0f)&&(wD2!=0.0f)) {
@@ -413,7 +413,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 
 	t2e.set();
 	if (settings->verbose)
-		printf("Clarity gradient  %d usec\n", t2e.etime(t1e));
+		printf("SharpenEdge gradient  %d usec\n", t2e.etime(t1e));
 }
 
 // To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>
@@ -422,30 +422,30 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 // http://creativecommons.org/publicdomain/zero/1.0/
 // addition from JD : pyramid  + ponderated contrast with matrix 5x5
 void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
-	if (params->clarity.enabledtwo==false)
+	if (params->sharpenMicro.enabled==false)
 		return;
 	MyTime t1e,t2e;
 	t1e.set();
 	int k;
-	if (params->clarity.MLmicromatrix == false) k=2; else k=1;
+	if (params->sharpenMicro.matrix == false) k=2; else k=1;
 	// k=2 matrix 5x5  k=1 matrix 3x3
 	int offset,offset2,c,i,j,col,row,n;
 	float temp,temp2,temp3,temp4,tempL;
 	float *LM,v,s,contrast,w;
 	int signs[25];
 	int width = lab->W, height = lab->H;
-	float uniform = params->clarity.uniformity;//between 0 to 100
+	float uniform = params->sharpenMicro.uniformity;//between 0 to 100
 	int unif;
 	unif = (int)(uniform/10.0f); //put unif between 0 to 10
-	float strength = params->clarity.mlstrength/1500.0f; //strength 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
-	if (strength < 0.000001f)
+	float amount = params->sharpenMicro.amount/1500.0f; //amount 2000.0 quasi no artefacts ==> 1500 = maximum, after artefacts
+	if (amount < 0.000001f)
 		return;
 	if (k==1)
-		strength *= 2.7f;  //25/9 if 3x3
+		amount *= 2.7f;  //25/9 if 3x3
 	if (settings->verbose)
-		printf ("Microcontrast strength %f\n", strength);
+		printf ("Micro-contrast amount %f\n", amount);
 	if (settings->verbose)
-		printf ("Microcontrast uniformity %i\n",unif);
+		printf ("Micro-contrast uniformity %i\n",unif);
 	//modulation uniformity in function of luminance
 	float L98[11] = {0.001f,0.0015f,0.002f,0.004f,0.006f,0.008f,0.01f,0.03f,0.05f,0.1f,0.1f};
 	float L95[11] = {0.0012f,0.002f,0.005f,0.01f,0.02f,0.05f,0.1f,0.12f,0.15f,0.2f,0.25f};
@@ -476,10 +476,10 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 			LM[offset] = lab->L[j][i]/327.68f;// adjust to 0.100 and to RT variables
 		}
 
-#pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,w,temp2,temp3,tempL,temp4) shared(lab,LM,strength,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
+#pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,w,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
 	for(j=k; j<height-k; j++)
 		for(i=k,offset=j*width+i; i<width-k; i++,offset++) {
-			s=strength;
+			s=amount;
 			v=LM[offset];
 			n=0;
 			for(row=j-k; row<=j+k; row++)
@@ -611,7 +611,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 	delete [] LM;
 	t2e.set();
 	if (settings->verbose)
-		printf("Microcontrast  %d usec\n", t2e.etime(t1e));
+		printf("Micro-contrast  %d usec\n", t2e.etime(t1e));
 
 }
 

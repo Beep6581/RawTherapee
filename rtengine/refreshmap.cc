@@ -152,24 +152,24 @@ FLATFIELD,        // EvFlatFieldBlurType,
 TRANSFORM,        // EvAutoDIST,
 DIRPYRDENOISE,    // EvDPDNLumCurve,
 DIRPYRDENOISE,    // EvDPDNChromCurve,
-ALL,			  // EvGAMMA	
-ALL,			  // EvGAMPOS
-ALL,			  //EvGAMFREE
-ALL,              //EvSLPOS 
+ALL,              // EvGAMMA
+ALL,              // EvGAMPOS
+ALL,              // EvGAMFREE
+ALL,              // EvSLPOS
 DARKFRAME,        // EvPreProcessExpBlackzero
 DARKFRAME,        // EvPreProcessExpBlackone
 DARKFRAME,        // EvPreProcessExpBlacktwo
 DARKFRAME,        // EvPreProcessExpBlackthree
-DARKFRAME,		  //EvPreProcessExptwoGreen
-SHARPENING,       //EvClaritypasses
-SHARPENING,       //EvClaritystrength
-SHARPENING,       //EvMLmicrostrength
-SHARPENING,       //EvMLuniformity
-SHARPENING,       //EvClarityEnabled
-SHARPENING,       //EvClaritythreechannels
-SHARPENING,       //EvClarityEnabledtwo
-SHARPENING,         //EvClaritymatrix
-DEMOSAIC,       // EvDemosaicALLEnhanced
+DARKFRAME,        // EvPreProcessExptwoGreen
+SHARPENING,       // EvSharpenEdgePasses
+SHARPENING,       // EvSharpenEdgeStrength
+SHARPENING,       // EvSharpenMicroStrength
+SHARPENING,       // EvSharpenMicroUniformity
+SHARPENING,       // EvSharpenEdgeEnabled
+SHARPENING,       // EvSharpenEdgeThreechannels
+SHARPENING,       // EvSharpenMicroEnabled
+SHARPENING,       // EvSharpenMicroMatrix
+DEMOSAIC,         // EvDemosaicALLEnhanced
 
 };
 
