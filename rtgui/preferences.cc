@@ -169,13 +169,15 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_SHARPENING_AMOUNT"), ADDSET_SHARP_AMOUNT, false);
 
     mi = behModel->append ();
-    mi->set_value (behavColumns.label, M("TP_CLARITY_LABEL"));
-    appendBehavList (mi, M("TP_CLARITY_PASSES"), ADDSET_CLAR_PASS, false);
-    appendBehavList (mi, M("TP_CLARITY_STRENGTH"), ADDSET_CLAR_STREN, false);
-    appendBehavList (mi, M("TP_MLMICRO_STRENGTH"), ADDSET_CLAR_MLSTREN, false);
-    appendBehavList (mi, M("TP_MLMICRO_UNIFORMITY"), ADDSET_CLAR_UNIFORMITY, false);
-	
-	
+    mi->set_value (behavColumns.label, M("TP_SHARPENEDGE_LABEL"));
+    appendBehavList (mi, M("TP_SHARPENEDGE_PASSES"), ADDSET_SHARPENEDGE_PASS, false);
+    appendBehavList (mi, M("TP_SHARPENEDGE_AMOUNT"), ADDSET_SHARPENEDGE_AMOUNT, false);
+
+    mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_SHARPENMICRO_LABEL"));
+    appendBehavList (mi, M("TP_SHARPENMICRO_AMOUNT"), ADDSET_SHARPENMICRO_AMOUNT, false);
+    appendBehavList (mi, M("TP_SHARPENMICRO_UNIFORMITY"), ADDSET_SHARPENMICRO_UNIFORMITY, false);
+
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_DIRPYRDENOISE_LABEL"));
     appendBehavList (mi, M("TP_DIRPYRDENOISE_LUMA")+", "+M("TP_DIRPYRDENOISE_CHROMA"), ADDSET_DIRPYRDN_CHLUM, true);

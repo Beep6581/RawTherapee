@@ -91,15 +91,16 @@ void ProcParams::setDefaults () {
     labCurve.bcurve.clear ();
     labCurve.bcurve.push_back(DCT_Linear);
    
-    clarity.enabled         	= false;
-	clarity.clpasses        	= 2;
-	clarity.clstrength			= 50.0;
-    clarity.enabledtwo         	= false;
-	clarity.mlstrength			= 20.0;
-	clarity.uniformity    		= 50.0;
-	clarity.clthreechannels     = false;
-	clarity.MLmicromatrix    	= false;
-	
+    sharpenEdge.enabled         = false;
+    sharpenEdge.passes          = 2;
+    sharpenEdge.amount        = 50.0;
+    sharpenEdge.threechannels   = false;
+
+    sharpenMicro.enabled        = false;
+    sharpenMicro.amount       = 20.0;
+    sharpenMicro.uniformity     = 50.0;
+    sharpenMicro.matrix         = false;
+
     sharpening.enabled          = false;
     sharpening.radius           = 1.0;
     sharpening.amount           = 90;
@@ -311,15 +312,15 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     // save luma curve
     keyFile.set_integer ("Luminance Curve", "Brightness",      labCurve.brightness);
     keyFile.set_integer ("Luminance Curve", "Contrast",        labCurve.contrast);
-	keyFile.set_integer ("Luminance Curve", "Saturation",	   labCurve.saturation);
-	keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
+    keyFile.set_integer ("Luminance Curve", "Saturation",	   labCurve.saturation);
+    keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
     keyFile.set_boolean ("Luminance Curve", "SaturationLimiter",   labCurve.enable_saturationlimiter);
     keyFile.set_double  ("Luminance Curve", "SaturationLimit",     labCurve.saturationlimit);
     Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
-	Glib::ArrayHandle<double> acurve = labCurve.acurve;
+    Glib::ArrayHandle<double> acurve = labCurve.acurve;
     Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
     keyFile.set_double_list("Luminance Curve", "LCurve",        lcurve);
-	keyFile.set_double_list("Luminance Curve", "aCurve",        acurve);
+    keyFile.set_double_list("Luminance Curve", "aCurve",        acurve);
     keyFile.set_double_list("Luminance Curve", "bCurve",        bcurve);
 
     // save sharpening
@@ -337,17 +338,19 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_integer ("Sharpening", "DeconvAmount",         sharpening.deconvamount);
     keyFile.set_integer ("Sharpening", "DeconvDamping",        sharpening.deconvdamping);
     keyFile.set_integer ("Sharpening", "DeconvIterations",     sharpening.deconviter);
-    //save clarity
-	keyFile.set_boolean ("Clarity", "Enabled",              clarity.enabled);
-    keyFile.set_integer  ("Clarity", "Clpasses",             clarity.clpasses);
-    keyFile.set_double  ("Clarity", "Clstrength",             clarity.clstrength);
-	keyFile.set_boolean ("Clarity", "Clthreechannels",              clarity.clthreechannels);
-	keyFile.set_boolean ("Clarity", "Enabledtwo",              clarity.enabledtwo);
-    keyFile.set_double  ("Clarity", "Mlstrength",             clarity.mlstrength);
-    keyFile.set_double  ("Clarity", "Uniformity",             clarity.uniformity);
-	keyFile.set_boolean ("Clarity", "Matrix",              clarity.MLmicromatrix);
 
-	
+    //save edge sharpening
+    keyFile.set_boolean ("SharpenEdge", "Enabled",             sharpenEdge.enabled);
+    keyFile.set_integer ("SharpenEdge", "Passes",              sharpenEdge.passes);
+    keyFile.set_double  ("SharpenEdge", "Strength",            sharpenEdge.amount);
+    keyFile.set_boolean ("SharpenEdge", "ThreeChannels",       sharpenEdge.threechannels);
+
+    //save micro-contrast sharpening
+    keyFile.set_boolean ("SharpenMicro", "Enabled",            sharpenMicro.enabled);
+    keyFile.set_boolean ("SharpenMicro", "Matrix",             sharpenMicro.matrix);
+    keyFile.set_double  ("SharpenMicro", "Strength",           sharpenMicro.amount);
+    keyFile.set_double  ("SharpenMicro", "Uniformity",         sharpenMicro.uniformity);
+
     // save colorBoost
     keyFile.set_integer ("Color Boost", "Amount",              colorBoost.amount);
     keyFile.set_boolean ("Color Boost", "AvoidColorClipping",  colorBoost.avoidclip);
@@ -647,21 +650,22 @@ if (keyFile.has_group ("Sharpening")) {
     if (keyFile.has_key ("Sharpening", "DeconvIterations"))     sharpening.deconviter       = keyFile.get_integer ("Sharpening", "DeconvIterations");
 }
 
-	
-if (keyFile.has_group ("Clarity")) { 
-    if (keyFile.has_key ("Clarity", "Enabled"))              clarity.enabled          = keyFile.get_boolean ("Clarity", "Enabled");
-    if (keyFile.has_key ("Clarity", "Clpasses"))             clarity.clpasses          = keyFile.get_integer  ("Clarity", "Clpasses");
-    if (keyFile.has_key ("Clarity", "Clstrength"))           clarity.clstrength          = keyFile.get_double  ("Clarity", "Clstrength");
-    if (keyFile.has_key ("Clarity", "Clthreechannels"))      clarity.clthreechannels          = keyFile.get_boolean ("Clarity", "Clthreechannels");	
-    if (keyFile.has_key ("Clarity", "Enabledtwo"))              clarity.enabledtwo          = keyFile.get_boolean ("Clarity", "Enabledtwo");
-    if (keyFile.has_key ("Clarity", "Matrix"))              clarity.MLmicromatrix          = keyFile.get_boolean ("Clarity", "Matrix");
-	
-    if (keyFile.has_key ("Clarity", "Mlstrength"))           clarity.mlstrength          = keyFile.get_double  ("Clarity", "Mlstrength");
-    if (keyFile.has_key ("Clarity", "Uniformity"))           clarity.uniformity          = keyFile.get_double  ("Clarity", "Uniformity");
-	
-
+    // load edge sharpening
+if (keyFile.has_group ("SharpenEdge")) {
+    if (keyFile.has_key ("SharpenEdge", "Enabled"))             sharpenEdge.enabled         = keyFile.get_boolean ("SharpenEdge", "Enabled");
+    if (keyFile.has_key ("SharpenEdge", "Passes"))              sharpenEdge.passes          = keyFile.get_integer  ("SharpenEdge", "Passes");
+    if (keyFile.has_key ("SharpenEdge", "Strength"))            sharpenEdge.amount        = keyFile.get_double  ("SharpenEdge", "Strength");
+    if (keyFile.has_key ("SharpenEdge", "ThreeChannels"))       sharpenEdge.threechannels   = keyFile.get_boolean ("SharpenEdge", "ThreeChannels");
 }
-	
+
+    // load micro-contrast sharpening
+if (keyFile.has_group ("SharpenMicro")) {
+    if (keyFile.has_key ("SharpenMicro", "Enabled"))            sharpenMicro.enabled        = keyFile.get_boolean ("SharpenMicro", "Enabled");
+    if (keyFile.has_key ("SharpenMicro", "Matrix"))             sharpenMicro.matrix         = keyFile.get_boolean ("SharpenMicro", "Matrix");
+    if (keyFile.has_key ("SharpenMicro", "Strength"))           sharpenMicro.amount       = keyFile.get_double  ("SharpenMicro", "Strength");
+    if (keyFile.has_key ("SharpenMicro", "Uniformity"))         sharpenMicro.uniformity     = keyFile.get_double  ("SharpenMicro", "Uniformity");
+}
+
     // load colorBoost
 if (keyFile.has_group ("Color Boost")) {    
     if (keyFile.has_key ("Color Boost", "Amount"))              colorBoost.amount           = keyFile.get_integer ("Color Boost", "Amount");
@@ -953,14 +957,14 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.avoidclip == other.labCurve.avoidclip
 		&& labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter
 		&& labCurve.saturationlimit == other.labCurve.saturationlimit			
-		&& clarity.enabled == other.clarity.enabled 
-		&& clarity.clpasses == other.clarity.clpasses
-		&& clarity.clstrength == other.clarity.clstrength
-		&& clarity.enabledtwo == other.clarity.enabledtwo 		
-		&& clarity.mlstrength == other.clarity.mlstrength
-		&& clarity.uniformity == other.clarity.uniformity
-		&& clarity.MLmicromatrix == other.clarity.MLmicromatrix 			
-		&& clarity.clthreechannels == other.clarity.clthreechannels	
+		&& sharpenEdge.enabled == other.sharpenEdge.enabled
+		&& sharpenEdge.passes == other.sharpenEdge.passes
+		&& sharpenEdge.amount == other.sharpenEdge.amount
+		&& sharpenEdge.threechannels == other.sharpenEdge.threechannels
+		&& sharpenMicro.enabled == other.sharpenMicro.enabled
+		&& sharpenMicro.matrix == other.sharpenMicro.matrix
+		&& sharpenMicro.amount == other.sharpenMicro.amount
+		&& sharpenMicro.uniformity == other.sharpenMicro.uniformity
 		&& sharpening.enabled == other.sharpening.enabled
 		&& sharpening.radius == other.sharpening.radius
 		&& sharpening.amount == other.sharpening.amount

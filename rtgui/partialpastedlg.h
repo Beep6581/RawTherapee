@@ -46,8 +46,8 @@ class PartialPasteDlg : public Gtk::Dialog {
 
         // options in detail:
         Gtk::CheckButton* sharpen;
-        Gtk::CheckButton* gradsharpen;
-        Gtk::CheckButton* microcontrast;
+        Gtk::CheckButton* sharpenedge;
+        Gtk::CheckButton* sharpenmicro;
 		Gtk::CheckButton* impden;
 		Gtk::CheckButton* waveq;
 		Gtk::CheckButton* dirpyrden;

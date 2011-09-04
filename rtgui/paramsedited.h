@@ -31,8 +31,8 @@ class ToneCurveParamsEdited {
         bool brightness;
         bool black;
         bool contrast;
-		bool saturation;
-		bool shcompr;
+        bool saturation;
+        bool shcompr;
         bool hlcompr;
         bool hlcomprthresh;
         bool autoexp;
@@ -45,26 +45,30 @@ class LCurveParamsEdited {
     public:
         bool brightness;
         bool contrast;
-		bool saturation;
-		bool avoidclip;
-		bool enable_saturationlimiter;
-		bool saturationlimit;	
+        bool saturation;
+        bool avoidclip;
+        bool enable_saturationlimiter;
+        bool saturationlimit;
         bool lcurve;
-		bool acurve;
-		bool bcurve;
+        bool acurve;
+        bool bcurve;
 };
 
-class ClarityParamsEdited {
-		public :
-  
-		bool clpasses;
-		bool clstrength;
-		bool mlstrength;
-		bool enabled;
-		bool enabledtwo;
-		bool clthreechannels;
-		bool uniformity;
-		bool MLmicromatrix;
+class SharpenEdgeParamsEdited {
+
+    public :
+        bool enabled;
+        bool passes;
+        bool amount;
+        bool threechannels;
+};
+
+class SharpenMicroParamsEdited {
+    public :
+        bool enabled;
+        bool matrix;
+        bool amount;
+        bool uniformity;
 };
 
 class SharpeningParamsEdited {
@@ -79,7 +83,7 @@ class SharpeningParamsEdited {
         bool edges_tolerance;
         bool halocontrol;
         bool halocontrol_amount;
-        
+
         bool method;
         bool deconvamount;
         bool deconvradius;
@@ -334,38 +338,38 @@ class IPTCPairEdited {
 class ParamsEdited {
 
     public:
-        ToneCurveParamsEdited         toneCurve;      
-        LCurveParamsEdited            labCurve;      
-        SharpeningParamsEdited        sharpening;    
-        ClarityParamsEdited        	  clarity;     
-		
-        ColorBoostParamsEdited        colorBoost;     
-        WBParamsEdited                wb;             
-        ColorShiftParamsEdited        colorShift;     
-        LumaDenoiseParamsEdited       lumaDenoise;    
-        ColorDenoiseParamsEdited      colorDenoise; 
-        DefringeParamsEdited          defringe;    
-        DirPyrDenoiseParamsEdited     dirpyrDenoise;    
-        ImpulseDenoiseParamsEdited    impulseDenoise;    
-        SHParamsEdited                sh;             
-        CropParamsEdited              crop;           
-        CoarseTransformParamsEdited   coarse;         
+        ToneCurveParamsEdited         toneCurve;
+        LCurveParamsEdited            labCurve;
+        SharpeningParamsEdited        sharpening;
+        SharpenEdgeParamsEdited       sharpenEdge;
+        SharpenMicroParamsEdited      sharpenMicro;
+        ColorBoostParamsEdited        colorBoost;
+        WBParamsEdited                wb;
+        ColorShiftParamsEdited        colorShift;
+        LumaDenoiseParamsEdited       lumaDenoise;
+        ColorDenoiseParamsEdited      colorDenoise;
+        DefringeParamsEdited          defringe;
+        DirPyrDenoiseParamsEdited     dirpyrDenoise;
+        ImpulseDenoiseParamsEdited    impulseDenoise;
+        SHParamsEdited                sh;
+        CropParamsEdited              crop;
+        CoarseTransformParamsEdited   coarse;
         CommonTransformParamsEdited	  commonTrans;
-        RotateParamsEdited            rotate;         
+        RotateParamsEdited            rotate;
         DistortionParamsEdited        distortion;
         PerspectiveParamsEdited		  perspective;
-        CACorrParamsEdited            cacorrection;   
-        VignettingParamsEdited        vignetting;     
-        ChannelMixerParamsEdited      chmixer;        
-        HRecParamsEdited              hlrecovery;     
-        ResizeParamsEdited            resize;         
-        ColorManagementParamsEdited   icm;            
+        CACorrParamsEdited            cacorrection;
+        VignettingParamsEdited        vignetting;
+        ChannelMixerParamsEdited      chmixer;
+        HRecParamsEdited              hlrecovery;
+        ResizeParamsEdited            resize;
+        ColorManagementParamsEdited   icm;
         RAWParamsEdited               raw;
         DirPyrEqualizerParamsEdited   dirpyrequalizer;
         HSVEqualizerParamsEdited      hsvequalizer;
-        std::vector<ExifPairEdited>   exif;             
-        std::vector<IPTCPairEdited>   iptc;             
-        
+        std::vector<ExifPairEdited>   exif;
+        std::vector<IPTCPairEdited>   iptc;
+
         ParamsEdited ();
 
         void set   (bool v);

@@ -38,7 +38,7 @@ class ToneCurveParams {
         int         brightness;
         int         black;
         int         contrast;
-		int         saturation;
+        int         saturation;
         int         shcompr;
         int         hlcompr;
         int         hlcomprthresh;
@@ -51,14 +51,14 @@ class LCurveParams {
 
     public:
         std::vector<double>   lcurve;
-		std::vector<double>   acurve;
-		std::vector<double>   bcurve;
-        int      	brightness;
-        int         contrast;
-		int         saturation;
-		bool    avoidclip;
-		bool    enable_saturationlimiter;
-		double  saturationlimit;	
+        std::vector<double>   acurve;
+        std::vector<double>   bcurve;
+        int     brightness;
+        int     contrast;
+        int     saturation;
+        bool    avoidclip;
+        bool    enable_saturationlimiter;
+        double  saturationlimit;
 };
 
 /**
@@ -76,23 +76,25 @@ class SharpeningParams {
         int     edges_tolerance;
         bool    halocontrol;
         int     halocontrol_amount;
-        
         Glib::ustring method;
         int     deconvamount;
         double  deconvradius;
         int     deconviter;
         int     deconvdamping;
 };
-class ClarityParams {
+class SharpenEdgeParams {
   public:
         bool    enabled;
-		int 	clpasses;
-		double 	clstrength;
-		bool    enabledtwo;
-		double	 mlstrength;
-		bool  	clthreechannels;
-		double 	uniformity;
-		bool    MLmicromatrix;
+        int     passes;
+        double  amount;
+        bool    threechannels;
+};
+class SharpenMicroParams {
+  public:
+        bool    enabled;
+        bool    matrix;
+        double  amount;
+        double  uniformity;
 };
 /**
   * Parameters of the color boost
@@ -448,7 +450,8 @@ class ProcParams {
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
-		ClarityParams			clarity;		  ///< clarity parameters
+        SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
+        SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
         ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
         ColorShiftParams        colorShift;      ///< Color shift parameters
