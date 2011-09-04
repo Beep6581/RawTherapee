@@ -304,14 +304,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
                 }
                 if (processLCE) {
                     double sub = lceamount*(mapval-factor*(r*lumimul[0] + g*lumimul[1] + b*lumimul[2]));
-                    r = CLIP(factor*r-sub);
-                    g = CLIP(factor*g-sub);
-                    b = CLIP(factor*b-sub);
+                    r = factor*r-sub;
+                    g = factor*g-sub;
+                    b = factor*b-sub;
                 }
                 else {
-                    r = CLIP(factor*r);
-                    g = CLIP(factor*g);
-                    b = CLIP(factor*b);
+                    r = factor*r;
+                    g = factor*g;
+                    b = factor*b;
                 }
             }
 
