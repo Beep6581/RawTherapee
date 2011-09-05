@@ -92,19 +92,15 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
 
 void WhiteBalance::adjusterChanged (Adjuster* a, double newval) {
 
+	//cache custom WB setting to allow its recall
+	cache_customWB ((int)temp->getValue(), green->getValue());
+
     if (method->get_active_row_number()!=2) {
         disableListener ();    
         method->set_active (2);
         enableListener ();
     }
-    else { //method->get_active_row_number()==2
-        //cache custom WB setting to allow its recall
-        if (a==temp)
-            custom_temp=(int)a->getValue();
-        else if (a==green) 
-            custom_green=a->getValue();
-    }
-
+    
     if (listener) {
         if (a==temp) 
             listener->panelChanged (EvWBTemp, Glib::ustring::format ((int)a->getValue()));
