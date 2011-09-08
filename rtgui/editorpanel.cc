@@ -1321,3 +1321,7 @@ void EditorPanel::tbShowHideSidePanels_managestate(){
 
 	ShowHideSidePanelsconn.block (false);
 }
+
+void EditorPanel::updateTPVScrollbar (bool hide) {
+	tpc->updateTPVScrollbar (hide);
+}

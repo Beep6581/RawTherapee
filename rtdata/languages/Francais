@@ -681,6 +681,7 @@ PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_OUTPUT;Options de sortie
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THUMBSIZE;Tailles des vignettes
+PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale du panneau des outils
 PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_WORKFLOW;Habitudes de travail

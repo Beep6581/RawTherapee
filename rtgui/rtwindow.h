@@ -77,6 +77,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void MoveFileBrowserToEditor();
         void MoveFileBrowserToMain();
 
+   		void updateTPVScrollbar (bool hide);
         bool getIsFullscreen() { return is_fullscreen; }
 };
 

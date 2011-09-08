@@ -71,6 +71,14 @@ public:
 	}
 };
 
+class MyScrolledWindow : public Gtk::ScrolledWindow {
+
+	bool on_scroll_event (GdkEventScroll* event);
+
+public:
+	MyScrolledWindow();
+};
+
 class MyComboBox : public Gtk::ComboBox {
 
 	bool on_scroll_event (GdkEventScroll* event);

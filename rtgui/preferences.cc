@@ -439,6 +439,9 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hbworkflow3->pack_start (*ckbFileBrowserToolbarSingleRow, Gtk::PACK_SHRINK, 4);
     vbworkflow->pack_start (*hbworkflow3, Gtk::PACK_SHRINK, 0);
 
+    ckbHideTPVScrollbar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_TP_VSCROLLBAR")) );
+    vbworkflow->pack_start (*ckbHideTPVScrollbar, Gtk::PACK_SHRINK, 4);
+
     fworklflow->add (*vbworkflow);
     mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
      
@@ -1037,6 +1040,7 @@ void Preferences::storePreferences () {
     moptions.showProfileSelector = ckbShowProfileSelector->get_active();
     moptions.squareDetailWindow = ckbSquareDetailWindow->get_active();
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
+    moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
 
     // Sounds
@@ -1150,6 +1154,7 @@ void Preferences::fillPreferences () {
     ckbShowProfileSelector->set_active(moptions.showProfileSelector);
     ckbSquareDetailWindow->set_active(moptions.squareDetailWindow);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
+    ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
 
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();
@@ -1315,14 +1320,17 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface) {
 
 void Preferences::workflowUpdate (){
 
-    if(moptions.tabbedUI != options.tabbedUI)
-    {
+    if(moptions.tabbedUI != options.tabbedUI) {
         parent->MoveFileBrowserToMain();
         parent->SetMainCurrent();
         if(moptions.tabbedUI)
             parent->epanel->hide_all();
         else
            parent->epanel->show_all();
+    }
+    if (moptions.hideTPVScrollbar != options.hideTPVScrollbar) {
+    	// Update the tool panels
+   		parent->updateTPVScrollbar (moptions.hideTPVScrollbar);
     }
 }
 

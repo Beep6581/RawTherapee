@@ -154,6 +154,7 @@ class Options {
     bool showProfileSelector;
     bool squareDetailWindow;
     bool FileBrowserToolbarSingleRow;
+    bool hideTPVScrollbar;
 
     bool menuGroupRank;
     bool menuGroupLabel;

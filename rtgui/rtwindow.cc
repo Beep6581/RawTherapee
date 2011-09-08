@@ -21,7 +21,6 @@
 #include <preferences.h>
 #include <cursormanager.h>
 
-
 RTWindow::RTWindow ()
 :fpanel(NULL)
 ,epanel(NULL)
@@ -467,3 +466,12 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateTPVScrollbar (bool hide) {
+	fpanel->updateTPVScrollbar (hide);
+	epanel->updateTPVScrollbar (hide);
+
+	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
+	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
+		((*itr).second)->updateTPVScrollbar (hide);
+	}
+}
