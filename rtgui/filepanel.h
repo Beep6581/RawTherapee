@@ -82,6 +82,7 @@ class FilePanel : public Gtk::HPaned,
         bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
 
         bool handleShortcutKey (GdkEventKey* event);
+        void updateTPVScrollbar (bool hide);
 };
 
 #endif

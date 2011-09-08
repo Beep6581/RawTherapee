@@ -135,6 +135,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
 
         void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label);
         void foldThemAll (GdkEventButton* event);
+        void updateVScrollbars (bool hide);
 
     public:
     
@@ -201,6 +202,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         int  getSpotWBRectSize ();
         CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return crop; }
 
+        void updateTPVScrollbar (bool hide);
         bool handleShortcutKey (GdkEventKey* event);
 };
 

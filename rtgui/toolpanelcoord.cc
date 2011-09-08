@@ -26,6 +26,7 @@
 #include <improcfun.h>
 #include <procevents.h>
 #include <refreshmap.h>
+#include <guiutils.h>
 
 using namespace rtengine::procparams;
 
@@ -110,16 +111,13 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
     metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
 
-    exposurePanelSW    = Gtk::manage (new Gtk::ScrolledWindow ());
-    detailsPanelSW     = Gtk::manage (new Gtk::ScrolledWindow ());
-    colorPanelSW       = Gtk::manage (new Gtk::ScrolledWindow ());
-    transformPanelSW   = Gtk::manage (new Gtk::ScrolledWindow ());
-    rawPanelSW         = Gtk::manage (new Gtk::ScrolledWindow ());
-    exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
+    detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
+    colorPanelSW       = Gtk::manage (new MyScrolledWindow ());
+    transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
+    rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
+
+    updateVScrollbars (options.hideTPVScrollbar);
 
     // load panel endings
     for (int i=0; i<5; i++) {
@@ -448,8 +446,8 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
         return NULL;
     const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
-      int iso = imd->getISOSpeed();
-      double shutter = imd->getShutterSpeed();
+      // int iso = imd->getISOSpeed();              temporarilly removed because unused
+      // double shutter = imd->getShutterSpeed();   temporarilly removed because unused
       double aperture = imd->getFNumber();
       double focallength = imd->getFocalLen();
       std::string maker( imd->getMake()  );
@@ -529,8 +527,8 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
 
 bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 
-    bool ctrl = event->state & GDK_CONTROL_MASK;
-    bool shift = event->state & GDK_SHIFT_MASK;
+    //bool ctrl = event->state & GDK_CONTROL_MASK;  temporarilly removed because unused
+    //bool shift = event->state & GDK_SHIFT_MASK;   temporarilly removed because unused
     bool alt = event->state & GDK_MOD1_MASK;
 
     if (alt){
@@ -560,4 +558,17 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 		}
     }
     return false;
+}
+
+void ToolPanelCoordinator::updateVScrollbars (bool hide) {
+    Gtk::PolicyType policy = hide ? Gtk::POLICY_NEVER : Gtk::POLICY_AUTOMATIC;
+    exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
+    detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
+    colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, policy);
+    transformPanelSW->set_policy    (Gtk::POLICY_AUTOMATIC, policy);
+    rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
+}
+
+void ToolPanelCoordinator::updateTPVScrollbar (bool hide) {
+	updateVScrollbars (hide);
 }

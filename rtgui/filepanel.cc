@@ -252,3 +252,7 @@ void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 		parent->setProgressStr(str);
 	parent->setProgress( rate );
 }
+
+void FilePanel::updateTPVScrollbar (bool hide) {
+	tpc->updateTPVScrollbar (hide);
+}

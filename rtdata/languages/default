@@ -676,6 +676,7 @@ PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_OUTPUT;Output Options
 PREFERENCES_TAB_SOUND;Sounds
 PREFERENCES_THUMBSIZE;Thumbnail Size
+PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
 PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 PREFERENCES_USESYSTEMTHEME; Use System Theme
 PREFERENCES_WORKFLOW;Layout

@@ -236,6 +236,44 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
  * otherwise the mouse wheel will scroll the editor's tabs content.
  *
  */
+MyScrolledWindow::MyScrolledWindow () {
+	set_size_request(-1,30);
+}
+
+bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event) {
+	if (!options.hideTPVScrollbar) {
+		Gtk::ScrolledWindow::on_scroll_event (event);
+		return true;
+	}
+
+    Gtk::Adjustment *adjust = get_vadjustment();
+    Gtk::VScrollbar *scroll = get_vscrollbar();
+    if (adjust && scroll) {
+    	double upper = adjust->get_upper();
+    	double lower = adjust->get_lower();
+    	double value = adjust->get_value();
+    	double step  = adjust->get_step_increment();
+    	double value2 = 0.;
+    	if (event->direction == GDK_SCROLL_DOWN) {
+    		value2 = value+step;
+    		if (value2 > upper)
+    			value2 = upper;
+    		if (value2 != value) {
+    			scroll->set_value(value2);
+    		}
+    	}
+    	else {
+    		value2 = value-step;
+    		if (value2 < lower)
+    			value2 = lower;
+    		if (value2 != value) {
+    			scroll->set_value(value2);
+    		}
+    	}
+    }
+    return true;
+}
+
 MyComboBoxText::MyComboBoxText () {
 	set_size_request(40, -1);
 }
