@@ -29,6 +29,8 @@
 #include <array2D.h>
 #include <improcfun.h>
 #include <rawimagesource.h>
+//#include "stack1.h"
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -244,13 +246,16 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	for (int c=0; c<4; c++) camwb[c]=ri->get_cam_mul(c);
 	float min = MIN(MIN(camwb[0],camwb[1]),camwb[2]);
 
+	multi_array2D<float,3> channelblur(width,height,ARRAY2D_CLEAR_DATA);
 	
 	multi_array2D<float,5> hilite_full(width,height,ARRAY2D_CLEAR_DATA);
-
-	multi_array2D<float,4> hilite(hfw,hfh,ARRAY2D_CLEAR_DATA);
-	
-	multi_array2D<float,4*numdirs> hilite_dir(hfw,hfh,ARRAY2D_CLEAR_DATA);
 		
+	// blur RGB channels
+	boxblur2(red  ,channelblur[0],height,width,4);
+	boxblur2(green,channelblur[1],height,width,4);
+	boxblur2(blue ,channelblur[2],height,width,4);
+	
+	float hipass_sum=0, hipass_norm=0.01;
 	
 	// set up which pixels are clipped or near clipping
 #ifdef _OPENMP
@@ -263,17 +268,23 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			
 			if ((red[i][j]>thresh[0] || green[i][j]>thresh[1] || blue[i][j]>thresh[2]) && \
 				(red[i][j]<max[0] && green[i][j]<max[1] && blue[i][j]<max[2])) {
-
+				
+				hipass_sum += fabs(channelblur[0][i][j]-red[i][j]) + fabs(channelblur[1][i][j]-green[i][j]) + fabs(channelblur[2][i][j]-blue[i][j]);
+				hipass_norm++;
+				
 				hilite_full[0][i][j] = red[i][j];
 				hilite_full[1][i][j] = green[i][j];
 				hilite_full[2][i][j] = blue[i][j];
 				hilite_full[3][i][j] = 1;
 				hilite_full[4][i][j] = 1;
+				
 			}
 			//if (i%100==0 && j%100==0)
 			//	printf("row=%d  col=%d  r=%f  g=%f  b=%f hilite=%f  \n",i,j,hilite_full[0][i][j],hilite_full[1][i][j],hilite_full[2][i][j],hilite_full[3][i][j]);
 		}
 	}//end of filling highlight array
+	
+	float hipass_ave = (hipass_sum/hipass_norm);
 	
 	if(plistener) plistener->setProgress(0.25);
 
@@ -286,6 +297,14 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 #endif
 	for (int i=0; i<height; i++) {
 		for (int j=0; j<width; j++) {
+			
+			float hipass = fabs(channelblur[0][i][j]-red[i][j]) + fabs(channelblur[1][i][j]-green[i][j]) + fabs(channelblur[2][i][j]-blue[i][j]);
+
+			if (hipass > 2*hipass_ave) {
+				//too much variation
+				hilite_full[0][i][j] = hilite_full[1][i][j] = hilite_full[2][i][j] = hilite_full[3][i][j] = 0;
+				continue;
+			}
 						
 			if (hilite_full[4][i][j]>0.00001 && hilite_full[4][i][j]<0.95) {
 				//too near an edge, could risk using CA affected pixels, therefore omit
@@ -294,10 +313,18 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		}
 	}
 	
+	for (int c=0; c<3; c++) channelblur[c](1,1);//free up some memory
+	
+	multi_array2D<float,4> hilite(hfw,hfh,ARRAY2D_CLEAR_DATA);
+		
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// blur and resample highlight data; range=size of blur, pitch=sample spacing
 	for (int m=0; m<4; m++)
 		boxblur_resamp(hilite_full[m],hilite[m],chmaxalt[m],height,width,range,pitch);
+	
+	for (int c=0; c<5; c++) hilite_full[c](1,1);//free up some memory
+	
+	multi_array2D<float,4*numdirs> hilite_dir(hfw,hfh,ARRAY2D_CLEAR_DATA);
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -440,8 +467,8 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// now reconstruct clipped channels using color ratios
 	
-	//const float Yclip = (0.299*max[0] + 0.587*max[0] + 0.114*max[0]);
-	const float Yclip = 0.3333*(max[0] + max[1] + max[2]);
+	const float Yclip = (0.299*max[0] + 0.587*max[1] + 0.114*max[2]);
+	//const float Yclip = 0.3333*(max[0] + max[1] + max[2]);
 	
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -455,17 +482,19 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			if (pixel[0]<max[0] && pixel[1]<max[1] && pixel[2]<max[2]) continue;//pixel not clipped
 			//if (pixel[0]<fixthresh[0] && pixel[1]<fixthresh[1] && pixel[2]<fixthresh[2]) continue;//pixel not clipped
 			
+			float pixref[3]={MIN(Yclip,hfsize[0][i1][j1]),MIN(Yclip,hfsize[1][i1][j1]),MIN(Yclip,hfsize[2][i1][j1])};
+			
 			//there are clipped highlights
 			//first, determine weighted average of unclipped extensions (weighting is by 'hue' proximity)
 			float dirwt, totwt=0, factor, Y, I, Q;
 			float clipfix[3]={0,0,0};
 			for (int dir=0; dir<numdirs; dir++) {
 				float Yhi = 0.001+(hilite_dir[dir*4+0][i1][j1] + hilite_dir[dir*4+1][i1][j1] + hilite_dir[dir*4+2][i1][j1]);
-				float Y   = 0.001+(hfsize[0][i1][j1] + hfsize[1][i1][j1] + hfsize[2][i1][j1]);
+				float Y   = 0.001+(pixref[0]+pixref[1]+pixref[2]);
 				if (hilite_dir[dir*4+0][i1][j1]+hilite_dir[dir*4+1][i1][j1]+hilite_dir[dir*4+2][i1][j1]>0.5) {
-					dirwt = invfn[65535*(SQR(hfsize[0][i1][j1]/Y-hilite_dir[dir*4+0][i1][j1]/Yhi) + \
-										 SQR(hfsize[1][i1][j1]/Y-hilite_dir[dir*4+1][i1][j1]/Yhi) + \
-										 SQR(hfsize[2][i1][j1]/Y-hilite_dir[dir*4+2][i1][j1]/Yhi))];
+					dirwt = invfn[65535*(SQR(pixref[0]/Y-hilite_dir[dir*4+0][i1][j1]/Yhi) + \
+										 SQR(pixref[1]/Y-hilite_dir[dir*4+1][i1][j1]/Yhi) + \
+										 SQR(pixref[2]/Y-hilite_dir[dir*4+2][i1][j1]/Yhi))];
 					totwt += dirwt;
 					clipfix[0] += dirwt*hilite_dir[dir*4+0][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
 					clipfix[1] += dirwt*hilite_dir[dir*4+1][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
@@ -536,21 +565,25 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	
 	// diagnostic output
 	/*for (int i=0; i<height; i++) {
-		int i1 = (i-(i%pitch))/pitch;
+		int i1 = MIN(hfh-1,(i-(i%pitch))/pitch);
 		for (int j=0; j<width; j++) {
-			int j1 = (j-(j%pitch))/pitch;
+			int j1 = MIN(hfw-1,(j-(j%pitch))/pitch);
 			
 			//red[i][j]  =hfsize[0][i1][j1];
 			//green[i][j]=hfsize[1][i1][j1];
 			//blue[i][j] =hfsize[2][i1][j1];
+	 
+			//red[i][j]  =clippt/2+red[i][j]-channelblur[0][i][j];
+			//green[i][j]=clippt/2+green[i][j]-channelblur[1][i][j];
+			//blue[i][j] =clippt/2+blue[i][j]-channelblur[2][i][j];
 			
-			//red[i][j]=  hilite[0][i1][j1]/(hilite[3][i1][j1]+0.001);
-			//green[i][j]=hilite[1][i1][j1]/(hilite[3][i1][j1]+0.001);
-			//blue[i][j]= hilite[2][i1][j1]/(hilite[3][i1][j1]+0.001);
+			red[i][j]=  hilite[0][i1][j1]/(hilite[3][i1][j1]+0.001);
+			green[i][j]=hilite[1][i1][j1]/(hilite[3][i1][j1]+0.001);
+			blue[i][j]= hilite[2][i1][j1]/(hilite[3][i1][j1]+0.001);
 			
-			red[i][j]=  hilite_dir[8+0][i1][j1]/hilite_dir[8+3][i1][j1];
-			green[i][j]=hilite_dir[8+1][i1][j1]/hilite_dir[8+3][i1][j1];
-			blue[i][j]= hilite_dir[8+2][i1][j1]/hilite_dir[8+3][i1][j1];
+			//red[i][j]=  hilite_dir[0+0][i1][j1]/hilite_dir[0+3][i1][j1];
+			//green[i][j]=hilite_dir[0+1][i1][j1]/hilite_dir[0+3][i1][j1];
+			//blue[i][j]= hilite_dir[0+2][i1][j1]/hilite_dir[0+3][i1][j1];
 		
 			//red[i][j]=  clipfix[0][i1][j1];
 			//green[i][j]=clipfix[1][i1][j1];
