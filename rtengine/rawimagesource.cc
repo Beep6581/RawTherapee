@@ -1642,19 +1642,6 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
         if (hTransform) {
             // there is an input profile
-            if (cmp.gammaOnInput) {
-                float gd = pow (2.0, defgain);
-                defgain = 0.0; // Writeback defgain to be 0.0
-
-                #pragma omp parallel for
-                for (int i=0; i<im->height; i++)
-                    for (int j=0; j<im->width; j++) {
-                        im->r[i][j] = CurveFactory::gamma (gd*im->r[i][j]);
-                        im->g[i][j] = CurveFactory::gamma (gd*im->g[i][j]);
-                        im->b[i][j] = CurveFactory::gamma (gd*im->b[i][j]);
-                    }
-            }
-
             im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
         } else {
           // create the profile from camera
@@ -1744,19 +1731,6 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 		lcmsMutex->unlock ();
 
 		if (hTransform) {
-			if (cmp.gammaOnInput) {
-				float gd = pow (2.0, defgain);
-				defgain = 0.0;
-
-                #pragma omp parallel for
-				for (int i=0; i<im->height; i++)
-					for (int j=0; j<im->width; j++) {
-						im->r[i][j] = CurveFactory::gamma (gd*im->r[i][j]);
-						im->g[i][j] = CurveFactory::gamma (gd*im->g[i][j]);
-						im->b[i][j] = CurveFactory::gamma (gd*im->b[i][j]);
-					}
-			}
-
 			im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
 		}
 		else {

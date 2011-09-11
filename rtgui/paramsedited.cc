@@ -145,7 +145,6 @@ void ParamsEdited::set (bool v) {
 	resize.height    = v;
 	resize.enabled   = v;
 	icm.input        = v;
-	icm.gammaOnInput = v;
     icm.blendCMSMatrix = v;
 	icm.working      = v;
 	icm.output       = v;
@@ -321,7 +320,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         icm.input = icm.input && p.icm.input == other.icm.input;
-        icm.gammaOnInput = icm.gammaOnInput && p.icm.gammaOnInput == other.icm.gammaOnInput;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
@@ -487,7 +485,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (resize.height)	    toEdit.resize.height 	= mods.resize.height;
 	if (resize.enabled)	    toEdit.resize.enabled 	= mods.resize.enabled;
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
-	if (icm.gammaOnInput)	toEdit.icm.gammaOnInput = mods.icm.gammaOnInput;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output       = mods.icm.output;

@@ -264,7 +264,6 @@ class ColorManagementParamsEdited {
 
     public:
         bool input;
-        bool gammaOnInput;
         bool blendCMSMatrix;
         bool working;
         bool output;

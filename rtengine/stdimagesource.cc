@@ -327,13 +327,6 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				in = embedded;
 			else if (in==NULL)
 				in = iccStore->getsRGBProfile ();
-			else if (cmp.gammaOnInput) 
-				for (int i=0; i<im->height; i++)
-					for (int j=0; j<im->width; j++) {
-						im->r[i][j] = CurveFactory::gamma (im->r[i][j]);
-						im->g[i][j] = CurveFactory::gamma (im->g[i][j]);
-						im->b[i][j] = CurveFactory::gamma (im->b[i][j]);
-					}
 		}
 	}
 	
@@ -366,13 +359,6 @@ void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
             in = embedded;
         else if (in==NULL)
             in = iccStore->getsRGBProfile ();
-        else if (cmp.gammaOnInput) 
-            for (int i=0; i<im->height; i++)
-                for (int j=0; j<im->width; j++) {
-                    im->r[i][j] = CurveFactory::gamma (im->r[i][j]);
-                    im->g[i][j] = CurveFactory::gamma (im->g[i][j]);
-                    im->b[i][j] = CurveFactory::gamma (im->b[i][j]);
-                }
     }
 
     if (cmp.input!="(none)") {

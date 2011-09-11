@@ -217,7 +217,6 @@ void ProcParams::setDefaults () {
     resize.height = 600;
     
     icm.input   = "";
-    icm.gammaOnInput = false;
     icm.blendCMSMatrix = false;
     icm.working = "sRGB";
     icm.output  = "sRGB";
@@ -464,7 +463,6 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
 
     // save color management settings
     keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
-    keyFile.set_boolean ("Color Management", "ApplyGammaBeforeInputProfile",   icm.gammaOnInput);
     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
     keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
@@ -817,7 +815,6 @@ if (keyFile.has_group ("Resize")) {
     // load color management settings
 if (keyFile.has_group ("Color Management")) {    
     if (keyFile.has_key ("Color Management", "InputProfile"))   icm.input   = keyFile.get_string ("Color Management", "InputProfile");
-    if (keyFile.has_key ("Color Management", "ApplyGammaBeforeInputProfile"))   icm.gammaOnInput   = keyFile.get_boolean ("Color Management", "ApplyGammaBeforeInputProfile");
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix"))   icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix");
     if (keyFile.has_key ("Color Management", "WorkingProfile")) icm.working = keyFile.get_string ("Color Management", "WorkingProfile");
     if (keyFile.has_key ("Color Management", "OutputProfile"))  icm.output  = keyFile.get_string ("Color Management", "OutputProfile");
@@ -1067,7 +1064,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& raw.greenthresh == other.raw.greenthresh
 		&& raw.linenoise == other.raw.linenoise
 		&& icm.input == other.icm.input
-		&& icm.gammaOnInput == other.icm.gammaOnInput
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
