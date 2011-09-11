@@ -1,5 +1,7 @@
 
 #00 English
+HISTOGRAM_BUTTON_BAR;RGB
+HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -12,8 +14,8 @@
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !ADJUSTER_RESET_TO_DEFAULT;Reset to default
-!BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
+!BATCHQUEUE_AUTOSTART;Auto start
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_CUSTOM;Custom
@@ -50,22 +52,23 @@
 !EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 !EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 !EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-!EXIFPANEL_KEEP;Keep
 !EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
-!EXIFPANEL_REMOVE;Remove
+!EXIFPANEL_KEEP;Keep
 !EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
-!EXIFPANEL_RESET;Reset
-!EXIFPANEL_RESETALL;Reset All
+!EXIFPANEL_REMOVE;Remove
 !EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+!EXIFPANEL_RESETALL;Reset All
 !EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+!EXIFPANEL_RESET;Reset
 !EXIFPANEL_SUBDIRECTORY;Subdirectory
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE;Apply profile
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
 !FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
@@ -75,14 +78,15 @@
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 !FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
 !FILEBROWSER_EMPTYTRASH;Empty Trash
 !FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
+!FILEBROWSER_EXEC_CPB;Run custom profile builder
 !FILEBROWSER_EXIFFILTERAPPLY;Apply
 !FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 !FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-!FILEBROWSER_EXIFFILTERSETTINGS;Setup
 !FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+!FILEBROWSER_EXIFFILTERSETTINGS;Setup
 !FILEBROWSER_FLATFIELD;Flat field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
@@ -90,32 +94,52 @@
 !FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 !FILEBROWSER_PASTEPROFILE;Paste profile
 !FILEBROWSER_POPUPCANCELJOB;Cancel job
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPCOPYTO;Copy to...
+!FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVEEND;Move to end of queue
 !FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPOPEN;Open
-!FILEBROWSER_POPUPPROCESS;Put to processing queue
-!FILEBROWSER_POPUPRANK1;Rank 1
-!FILEBROWSER_POPUPRANK2;Rank 2
-!FILEBROWSER_POPUPRANK3;Rank 3
-!FILEBROWSER_POPUPRANK4;Rank 4
-!FILEBROWSER_POPUPRANK5;Rank 5
-!FILEBROWSER_POPUPREMOVE;Remove from filesystem
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
+!FILEBROWSER_POPUPPROCESS;Put to Queue
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
+!FILEBROWSER_POPUPRANK1;Rank 1 *
+!FILEBROWSER_POPUPRANK2;Rank 2 **
+!FILEBROWSER_POPUPRANK3;Rank 3 ***
+!FILEBROWSER_POPUPRANK4;Rank 4 ****
+!FILEBROWSER_POPUPRANK5;Rank 5 *****
+!FILEBROWSER_POPUPRANK;Rank
+!FILEBROWSER_POPUPREMOVE;Delete
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_POPUPRENAME;Rename
 !FILEBROWSER_POPUPSELECTALL;Select all
 !FILEBROWSER_POPUPTRASH;Move to trash
 !FILEBROWSER_POPUPUNRANK;Unrank
 !FILEBROWSER_POPUPUNTRASH;Remove from trash
-!FILEBROWSER_PROCESSINGSETTINGS;Settings
 !FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+!FILEBROWSER_PROCESSINGSETTINGS;Settings
+!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
+!FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_RENAMEDLGLABEL;Rename file
 !FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
-!FILEBROWSER_SHOWDIRHINT;Show all images of the directory <b>D</b>
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
+!FILEBROWSER_SHOWDIRHINT;Clear all filters <b>D</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
 !FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
 !FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 !FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star <b>1</b>
@@ -123,12 +147,15 @@
 !FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star <b>3</b>
 !FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star <b>4</b>
 !FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star <b>5</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
 !FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
 !FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>
-!FILEBROWSER_STARTPROCESSING;Start processing
 !FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-!FILEBROWSER_STOPPROCESSING;Stop processing
+!FILEBROWSER_STARTPROCESSING;Start processing
 !FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+!FILEBROWSER_STOPPROCESSING;Stop processing
 !FILEBROWSER_THUMBSIZE;Thumb. size
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 !FILEBROWSER_USETEMPLATE;Use template:
@@ -138,35 +165,31 @@
 !GENERAL_AFTER;After
 !GENERAL_BEFORE;Before
 !GENERAL_CANCEL;Cancel
-!GENERAL_DISABLE;Disable
 !GENERAL_DISABLED;Disabled
-!GENERAL_ENABLE;Enable
+!GENERAL_DISABLE;Disable
 !GENERAL_ENABLED;Enabled
+!GENERAL_ENABLE;Enable
 !GENERAL_FILE;File
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_LANDSCAPE;Landscape
 !GENERAL_LOAD;Load
 !GENERAL_NA;n/a
-!GENERAL_NO;No
 !GENERAL_NONE;None
+!GENERAL_NO;No
 !GENERAL_OK;OK
 !GENERAL_PORTRAIT;Portrait
 !GENERAL_SAVE;Save
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_YES;Yes
-!HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
 !HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_BAR;RGB
+!HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_LABEL;Histogram
-!HISTOGRAM_TOOLTIP_B;Show/Hide BLUE histogram
 !HISTOGRAM_TOOLTIP_G;Show/Hide GREEN histogram
 !HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
-!HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
-HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
+!HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
 !HISTORY_CHANGED;Changed
 !HISTORY_CUSTOMCURVE;Custom Curve
 !HISTORY_DELSNAPSHOT;Del
@@ -183,7 +206,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
 !HISTORY_MSG_10;Shadow Compression
-!HISTORY_MSG_110;Resizing applies to
+!HISTORY_MSG_110;Resizing applies to  
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
@@ -205,8 +228,29 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_128;Flat Field Blur Radius
 !HISTORY_MSG_129;Flat Field Blur Type
 !HISTORY_MSG_12;Auto Exposure
+!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_131;Noise Reduction Luma
+!HISTORY_MSG_132;Noise Reduction Chroma
+!HISTORY_MSG_133;Gamma
+!HISTORY_MSG_134;Gamma Position
+!HISTORY_MSG_135;Gamma Free
+!HISTORY_MSG_136;Gamma Slope
+!HISTORY_MSG_137;Black level green 1
+!HISTORY_MSG_138;Black level red
+!HISTORY_MSG_139;Black level blue
 !HISTORY_MSG_13;Exposure Clipping
+!HISTORY_MSG_140;Black level green 2
+!HISTORY_MSG_141;Black level green together
+!HISTORY_MSG_142;Edges sharpening - iterations
+!HISTORY_MSG_143;Edges sharpening - quantity
+!HISTORY_MSG_144;Microcontrast - quantity
+!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_146;Edges Sharpening
+!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_148;Microcontrast
+!HISTORY_MSG_149;Microcontrast - 3x3 matrix
 !HISTORY_MSG_14;Luminance Brightness
+!HISTORY_MSG_150;Post demosaic artifact/noise reduction
 !HISTORY_MSG_15;Luminance Contrast
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
@@ -347,47 +391,48 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 !IPTCPANEL_HEADLINE;Headline
 !IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-!IPTCPANEL_INSTRUCTIONS;Instructions
 !IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-!IPTCPANEL_KEYWORDS;Keywords
+!IPTCPANEL_INSTRUCTIONS;Instructions
 !IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+!IPTCPANEL_KEYWORDS;Keywords
 !IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-!IPTCPANEL_PROVINCE;Province
 !IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-!IPTCPANEL_RESET;Reset
+!IPTCPANEL_PROVINCE;Province
 !IPTCPANEL_RESETHINT;Reset to profile default
-!IPTCPANEL_SOURCE;Source
+!IPTCPANEL_RESET;Reset
 !IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+!IPTCPANEL_SOURCE;Source
 !IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-!IPTCPANEL_TITLE;Title
+!IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 !IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-!IPTCPANEL_TRANSREFERENCE;Trans. Reference
+!IPTCPANEL_TITLE;Title
 !IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+!IPTCPANEL_TRANSREFERENCE;Trans. Reference
 !MAIN_BUTTON_EXIT;Exit
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PREFERENCES;Preferences
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
-!MAIN_BUTTON_QUEUE;Put to queue
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_QUEUE;Put to Queue
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-!MAIN_FRAME_BATCHQUEUE;Batch Queue
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR;Editor
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER;File Browser
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
-!MAIN_FRAME_PLACES;Places
+!MAIN_FRAME_BATCHQUEUE;Queue 
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
+!MAIN_FRAME_EDITOR;Editor 
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
+!MAIN_FRAME_FILEBROWSER;File Browser 
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
 !MAIN_FRAME_PLACES_ADD;Add
 !MAIN_FRAME_PLACES_DEL;Del
-!MAIN_FRAME_RECENT;Recent Folders
+!MAIN_FRAME_PLACES;Places 
+!MAIN_FRAME_RECENT;Recent Folders 
 !MAIN_MSG_ALREADYEXISTS;File already exists.
 !MAIN_MSG_CANNOTLOAD;Cannot load image
 !MAIN_MSG_CANNOTSAVE;File saving error
 !MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 !MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
+!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 !MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
@@ -412,8 +457,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !MAIN_TAB_RAW;RAW
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TAGGING;Tagging
-!MAIN_TAB_TRANSFORM;Transform
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+!MAIN_TAB_TRANSFORM;Transform
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
 !MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
@@ -421,8 +466,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
 !MAIN_TOOLTIP_PREFERENCES;Set preferences
 !MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
-!MAIN_TOOLTIP_SAVE;Save image to the default folder
 !MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
+!MAIN_TOOLTIP_SAVE;Save image to the default folder
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
@@ -474,8 +519,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
 !PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
 !PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+!PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 !PARTIALPASTE_ICMSETTINGS;ICM settings
@@ -490,23 +535,27 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
+!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+!PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_RESIZE;Resize
 !PARTIALPASTE_ROTATION;Rotation
 !PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
-!PARTIALPASTE_SHARPENING;Sharpening
+!PARTIALPASTE_SHARPENEDGE;Edges
+!PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
+!PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PARTIALPASTE_WHITEBALANCE;White balance
+!PARTIALPASTE_WHITEBALANCE;White balance 
 !PREFERENCES_ADD;ADD
 !PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
@@ -527,13 +576,16 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DATEFORMAT;Date Format
-!PREFERENCES_DATEFORMATFRAME;Date Format
+!PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
 !PREFERENCES_DEFAULTLANG;Default language
 !PREFERENCES_DEFAULTTHEME;Default theme
@@ -548,6 +600,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FBROWSEROPTS;File Browser Options
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 !PREFERENCES_FILEFORMAT;File format
 !PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
@@ -559,6 +612,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_GIMPPATH;GIMP installation directory
 !PREFERENCES_GTKTHEME;GTK default
 !PREFERENCES_HINT;Hint
+!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 !PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
 !PREFERENCES_ICCDIR;Directory of ICC profiles
 !PREFERENCES_IMPROCPARAMS;Default image processing parameters
@@ -567,23 +621,31 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
+!PREFERENCES_MENUGROUPLABEL;Group Labeling
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
+!PREFERENCES_MENUGROUPRANK;Group Ranking
+!PREFERENCES_MENUOPTIONS;Menu Options
 !PREFERENCES_METADATA;Metadata
 !PREFERENCES_MONITORICC;Monitor Profile
-!PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_OUTDIR;Output Directory
-!PREFERENCES_OUTDIRFOLDER;Save to folder
+!PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
+!PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
-!PREFERENCES_OUTDIRTEMPLATE;Use Template
+!PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>nnThese formatting strings refer to the different parts of the photo's pathname, or some attributes of the photo.nn%r will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in trash bin, %r will be replaced by 'x'.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
+!PREFERENCES_OUTDIRTEMPLATE;Use Template
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PARSEDEXT;Parsed Extensions
+!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+!PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 !PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in cache
@@ -601,13 +663,16 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
 !PREFERENCES_SHOWONLYRAW;Show only RAW files
+!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
 !PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+!PREFERENCES_SLIMUI;Slim interface
+!PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
 !PREFERENCES_STARTUPIMDIR;Image directory at startup
 !PREFERENCES_TAB_BROWSER;File Browser
 !PREFERENCES_TAB_COLORMGR;Color Management
@@ -616,9 +681,10 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_TAB_OUTPUT;Output Options
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THUMBSIZE;Thumbnail Size
+!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
-!PREFERENCES_WORKFLOW;Workflow
+!PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_FILEDLGFILTERANY;Any files
 !PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
 !PROFILEPANEL_LABEL;Postprocessing Profiles
@@ -635,7 +701,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PROFILEPANEL_TOOLTIPSAVE;Save current profile
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
+!PROGRESSBAR_DARKFRAME;Darkframe... 
 !PROGRESSBAR_DECODING;Decoding raw file...
 !PROGRESSBAR_DEMOSAICING;Demosaicing...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
@@ -661,8 +727,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !SAVEDLG_JPGFILTER;JPEG files
 !SAVEDLG_PNGCOMPR;PNG Compression
 !SAVEDLG_PNGFILTER;PNG files
-!SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+!SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 !SAVEDLG_SAVEIMMEDIATELY;Save immediately
 !SAVEDLG_SAVESPP;Save processing parameters with image
@@ -675,10 +741,10 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_CACORRECTION_BLUE;Blue
 !TP_CACORRECTION_LABEL;C/A Correction
 !TP_CACORRECTION_RED;Red
-!TP_CHMIXER_BLUE;Blue
-!TP_CHMIXER_GREEN;Green
+!TP_CHMIXER_BLUE;Blue channel
+!TP_CHMIXER_GREEN;Green channel
 !TP_CHMIXER_LABEL;Channel Mixer
-!TP_CHMIXER_RED;Red
+!TP_CHMIXER_RED;Red channel
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_COARSETRAF_DEGREE;degree:
 !TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
@@ -737,7 +803,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AMOUNT;Amount
-!TP_DISTORTION_AUTO;Auto distortion correction
+!TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_DISTORTION_LABEL;Distortion
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
@@ -746,7 +812,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSCORR_LABEL;Raw white point
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
@@ -771,11 +838,12 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output gamma
 !TP_GAMMA_SLOP;slope (linear)
+!TP_HLREC_BLEND;Blend
 !TP_HLREC_CIELAB;CIELab Blending
 !TP_HLREC_COLOR;Color Propagation
 !TP_HLREC_LABEL;Highlight Reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
-!TP_HLREC_METHOD;Method:
+!TP_HLREC_METHOD;Method: 
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
 !TP_HSVEQUALIZER3;Lime
@@ -790,10 +858,12 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_HSVEQUALIZER_NEUTRAL;Neutral
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
+!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_FILEDLGFILTERANY;Any files
 !TP_ICM_FILEDLGFILTERICM;ICC Profile Files
 !TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
-!TP_ICM_INPUTCAMERA;Camera default
+!TP_ICM_INPUTCAMERA;Camera standard
+!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
 !TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
 !TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
@@ -815,7 +885,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_LABCURVE_LABEL;Lab Adjustments
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_LABCURVE_SATURATION;Saturation
-!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
 !TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
@@ -829,14 +899,21 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAWEXPOS_LINEAR;Linear corr. factor
-!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RAW_DCBENHANCE;Apply DCB enhancement step
 !TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAW_DMETHOD;Method
+!TP_RAWEXPOS_BLACKONE;Black Level: Red
+!TP_RAWEXPOS_BLACKS;Black Levels
+!TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
+!TP_RAWEXPOS_BLACKTWO;Black Level: Blue
+!TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
+!TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
+!TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
+!TP_RAWEXPOS_TWOGREEN;Two greens together
 !TP_RAW_FALSECOLOR;False color suppression steps
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
@@ -850,16 +927,16 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_RESIZE_FITBOX;Bounding box
 !TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_FULLSIZE;Full Image Size:
-!TP_RESIZE_H;H:
 !TP_RESIZE_HEIGHT;Height
+!TP_RESIZE_H;H:
 !TP_RESIZE_LABEL;Resize
 !TP_RESIZE_LANCZOS;Lanczos
-!TP_RESIZE_METHOD;Method:
+!TP_RESIZE_METHOD;Method: 
 !TP_RESIZE_NEAREST;Nearest
 !TP_RESIZE_SCALE;Scale
 !TP_RESIZE_SPECIFY;Specify:
-!TP_RESIZE_W;W:
 !TP_RESIZE_WIDTH;Width
+!TP_RESIZE_W;W:
 !TP_ROTATE_DEGREE;Degree
 !TP_ROTATE_LABEL;Rotate
 !TP_ROTATE_SELECTLINE;    Select Straight Line
@@ -870,6 +947,10 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_SHADOWSHLIGHTS_RADIUS;Radius
 !TP_SHADOWSHLIGHTS_SHADOWS;Shadows
 !TP_SHADOWSHLIGHTS_SHTONALW;Tonal Width for Shadows
+!TP_SHARPENEDGE_AMOUNT;Quantity
+!TP_SHARPENEDGE_LABEL;Edges
+!TP_SHARPENEDGE_PASSES;Iterations
+!TP_SHARPENEDGE_THREE;Luminance only
 !TP_SHARPENING_AMOUNT;Amount
 !TP_SHARPENING_EDRADIUS;Radius
 !TP_SHARPENING_EDTOLERANCE;Edge tolerance
@@ -879,12 +960,16 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_SHARPENING_METHOD;Method
 !TP_SHARPENING_ONLYEDGES;Sharpen only edges
 !TP_SHARPENING_RADIUS;Radius
-!TP_SHARPENING_RLD;RL Deconvolution
 !TP_SHARPENING_RLD_AMOUNT;Amount
 !TP_SHARPENING_RLD_DAMPING;Damping
 !TP_SHARPENING_RLD_ITERATIONS;Iterations
+!TP_SHARPENING_RLD;RL Deconvolution
 !TP_SHARPENING_THRESHOLD;Threshold
 !TP_SHARPENING_USM;Unsharp Mask
+!TP_SHARPENMICRO_AMOUNT;Quantity
+!TP_SHARPENMICRO_LABEL;Microcontrast
+!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
+!TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIGNETTING_AMOUNT;Amount
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X
