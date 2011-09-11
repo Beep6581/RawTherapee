@@ -1,4 +1,5 @@
 
+﻿
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
@@ -8,8 +9,8 @@ ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
-BATCHQUEUE_AUTOSTART;Autostart
 BATCH_PROCESSING;Batchbehandling
+BATCHQUEUE_AUTOSTART;Autostart
 CURVEEDITOR_CURVE;Kurva
 CURVEEDITOR_CURVES;Kurvor
 CURVEEDITOR_CUSTOM;Egen
@@ -41,18 +42,18 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Använd metadatafilter
 EXIFFILTER_SHUTTER;Slutartid
-EXIFPANEL_ADDEDIT;Lägg till/Redigera
 EXIFPANEL_ADDEDITHINT;Lägg till en ny eller redigera en etikett
+EXIFPANEL_ADDEDIT;Lägg till/Redigera
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ange värde
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Välj etikett
 EXIFPANEL_ADDTAGDLG_TITLE;Lägg till/redigera etikett
 EXIFPANEL_KEEP;Behåll
 EXIFPANEL_KEEPHINT;Behåll de valda etiketterna vid spara
-EXIFPANEL_REMOVE;Ta bort
 EXIFPANEL_REMOVEHINT;Ta bort de valda etiketterna vid spara
-EXIFPANEL_RESET;Återställ
+EXIFPANEL_REMOVE;Ta bort
 EXIFPANEL_RESETALL;Återställ alla
 EXIFPANEL_RESETALLHINT;Återställ alla etiketter till deras originalvärden
+EXIFPANEL_RESET;Återställ
 EXIFPANEL_RESETHINT;Återställ de valda etiketterna till deras originalvärden
 EXIFPANEL_SUBDIRECTORY;Underkatalog
 FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
@@ -72,13 +73,13 @@ FILEBROWSER_DARKFRAME;Svartbild
 FILEBROWSER_DELETEDLGLABEL;Bekräftelse vid borttag
 FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
 FILEBROWSER_DELETEDLGMSGINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
-FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
+FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EXIFFILTERAPPLY;Använd
 FILEBROWSER_EXIFFILTERAPPLYHINT;Visa/dölj EXIF-filtret i filhanteraren
 FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
-FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändra inställningar för EXIF-filtret
+FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_FLATFIELD;Plattfält
 FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
 FILEBROWSER_MOVETOFLATFIELDDIR;Flytta till plattfältskatalogen
@@ -97,16 +98,16 @@ FILEBROWSER_POPUPRANK2;Betyg 2
 FILEBROWSER_POPUPRANK3;Betyg 3
 FILEBROWSER_POPUPRANK4;Betyg 4
 FILEBROWSER_POPUPRANK5;Betyg 5
-FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
 FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
 FILEBROWSER_POPUPREMOVESUBMENU;Ta bort
+FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
 FILEBROWSER_POPUPRENAME;Byt namn
 FILEBROWSER_POPUPSELECTALL;Markera allt
 FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
 FILEBROWSER_POPUPUNRANK;Ta bort betyg
 FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
-FILEBROWSER_PROCESSINGSETTINGS;Inställningar
 FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målkatalog
+FILEBROWSER_PROCESSINGSETTINGS;Inställningar
 FILEBROWSER_RENAMEDLGLABEL;Byt namn
 FILEBROWSER_RENAMEDLGMSG;Byt namn på "%1" till:
 FILEBROWSER_SELECTDARKFRAME;Välj svartbild... 
@@ -121,8 +122,8 @@ FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4
 FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5
 FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
 FILEBROWSER_SHOWUNRANKHINT;Visa icke-betygsatta bilder
-FILEBROWSER_STARTPROCESSING;Starta behandlingen
 FILEBROWSER_STARTPROCESSINGHINT;Starta behandlingen och spara bilderna i behandlingskön
+FILEBROWSER_STARTPROCESSING;Starta behandlingen
 FILEBROWSER_STOPPROCESSING;Avbryt behandlingen
 FILEBROWSER_STOPPROCESSINGHINT;Avbryt behandlingen av bilderna
 FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
@@ -136,15 +137,15 @@ GENERAL_BEFORE;Före
 GENERAL_CANCEL;Avbryt
 GENERAL_DISABLE;Avaktivera
 GENERAL_DISABLED;Avaktivera
-GENERAL_ENABLE;Verkställ
 GENERAL_ENABLED;Verkställ
+GENERAL_ENABLE;Verkställ
 GENERAL_FILE;Fil
 GENERAL_HIGH_QUALITY;Hög kvalitet
 GENERAL_LANDSCAPE;Landskap
 GENERAL_LOAD;Ladda
 GENERAL_NA;Ej tillgänglig
-GENERAL_NO;Nej
 GENERAL_NONE;Inga
+GENERAL_NO;Nej
 GENERAL_OK;Ok
 GENERAL_PORTRAIT;Porträtt
 GENERAL_SAVE;Spara
@@ -153,14 +154,14 @@ GENERAL_YES;Ja
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_R;R
 HISTOGRAM_BUTTON_RAW;Råbild
+HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
 HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
-HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
 HISTOGRAM_TOOLTIP_RAW;Visa/dölj råbildens histogram
+HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
 HISTORY_CHANGED;Ändrad
 HISTORY_CUSTOMCURVE;Egen kurva
 HISTORY_DELSNAPSHOT;Ta bort
@@ -295,8 +296,8 @@ HISTORY_MSG_97;'b'-kurvan
 HISTORY_MSG_98;Demozaicing
 HISTORY_MSG_99;Förbehandling
 HISTORY_MSG_9;Högdageråterställning
-HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOTAS;Som...
+HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
 HISTORY_NEWSSDIALOGTITLE;Lägg till nytt bokmärke
 HISTORY_SETTO;Ställ in till
@@ -316,54 +317,54 @@ ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
 ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
 ICMPANEL_WORKINGPROFILE;Färgrymd
 IMAGEAREA_DETAILVIEW;Detalj
-IPTCPANEL_AUTHOR;Upphovsman
 IPTCPANEL_AUTHORHINT;Namn på skaparen, t ex skribenten, fotografen eller den grafiska artisten (by-line)
-IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
 IPTCPANEL_AUTHORSPOSITIONHINT;Titeln på upphovsmannen/männen (byline)
+IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
+IPTCPANEL_AUTHOR;Upphovsman
 IPTCPANEL_CAPTIONHINT;En beskrivning av informationen
 IPTCPANEL_CAPTIONWRITERHINT;Namnet på den person som är involverad i att skapa eller redigera eller korrigera bilden
-IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CATEGORYHINT;Identifierar bildens titel enligt tillhandahållaren.
-IPTCPANEL_CITY;Stad
+IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CITYHINT;Staden där bilden togs
+IPTCPANEL_CITY;Stad
 IPTCPANEL_COPYHINT;Kopiera IPTC-inställningarna till klippbordet
-IPTCPANEL_COPYRIGHT;Upphovsrätt
 IPTCPANEL_COPYRIGHTHINT;Nödvändig upphovsrättslig information
-IPTCPANEL_COUNTRY;Land
+IPTCPANEL_COPYRIGHT;Upphovsrätt
 IPTCPANEL_COUNTRYHINT;Namnet på landet/platsen där bilden togs
+IPTCPANEL_COUNTRY;Land
 IPTCPANEL_CREDIT;Erkännande
 IPTCPANEL_CREDITHINT;Identifierar tillhandahållaren av bilden, inte nödvändigtvis upphovsmannen
-IPTCPANEL_DATECREATED;Skapad datum
 IPTCPANEL_DATECREATEDHINT;Datumet då innehållet av bilden skapades. Format: ÅÅÅÅMMDD.
-IPTCPANEL_EMBEDDED;Inbäddad
+IPTCPANEL_DATECREATED;Skapad datum
 IPTCPANEL_EMBEDDEDHINT;Återställ IPTC-informationen till innehållet i bildfilen.
-IPTCPANEL_HEADLINE;Rubrik
+IPTCPANEL_EMBEDDED;Inbäddad
 IPTCPANEL_HEADLINEHINT;En sammanfattning av vad bilden innehåller.
-IPTCPANEL_INSTRUCTIONS;Instruktioner
+IPTCPANEL_HEADLINE;Rubrik
 IPTCPANEL_INSTRUCTIONSHINT;Andra instruktioner som rör användandet av bilden.
-IPTCPANEL_KEYWORDS;Nyckelord
+IPTCPANEL_INSTRUCTIONS;Instruktioner
 IPTCPANEL_KEYWORDSHINT;Indikerar nyckelord
+IPTCPANEL_KEYWORDS;Nyckelord
 IPTCPANEL_PASTEHINT;Klistra in IPTC-inställningar från klippbordet
-IPTCPANEL_PROVINCE;Provins
 IPTCPANEL_PROVINCEHINT;Den provins eller stat från vilken bilden härrör. 
+IPTCPANEL_PROVINCE;Provins
 IPTCPANEL_RESET;Återställ
 IPTCPANEL_RESETHINT;Återställ till standardprofilen
-IPTCPANEL_SOURCE;Källa
 IPTCPANEL_SOURCEHINT;Den ursprungliga ägaren av innehållet.
-IPTCPANEL_SUPPCATEGORIES;Övriga kategorier
+IPTCPANEL_SOURCE;Källa
 IPTCPANEL_SUPPCATEGORIESHINT;Ytterligare beskrivning av bilden
-IPTCPANEL_TITLE;Titel
+IPTCPANEL_SUPPCATEGORIES;Övriga kategorier
 IPTCPANEL_TITLEHINT;En kortfattad bildreferens
-IPTCPANEL_TRANSREFERENCE;Överföringsreferens
+IPTCPANEL_TITLE;Titel
 IPTCPANEL_TRANSREFERENCEHINT;En kod som representerar platsen för överföring
+IPTCPANEL_TRANSREFERENCE;Överföringsreferens
 MAIN_BUTTON_EXIT;Avsluta
 MAIN_BUTTON_FULLSCREEN;Helskärm
 MAIN_BUTTON_PREFERENCES;Inställningar
 MAIN_BUTTON_PUTTOQUEUE;Behandla
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+Q
 MAIN_BUTTON_QUEUE;Placera i behandlingskön
-MAIN_BUTTON_SAVE;Spara
 MAIN_BUTTON_SAVEAS;Som...
+MAIN_BUTTON_SAVE;Spara
 MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. Kortkommando: Ctrl+S
 MAIN_BUTTON_SENDTOEDITOR;Redigera
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
@@ -376,9 +377,9 @@ MAIN_FRAME_EDITOR;Redigering
 MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Filhanterare
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
-MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
 MAIN_FRAME_PLACES_DEL;Ta bort
+MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_RECENT;Nyligen använda kataloger
 MAIN_MSG_ALREADYEXISTS;Filen existerar redan.
 MAIN_MSG_CANNOTLOAD;Kan inte ladda bilden
@@ -418,8 +419,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
-MAIN_TOOLTIP_SAVE;Spara bilden till standardkatalogen
 MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald katalog
+MAIN_TOOLTIP_SAVE;Spara bilden till standardkatalogen
 MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>H</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
@@ -471,8 +472,8 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
 PARTIALPASTE_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
 PARTIALPASTE_FLATFIELDFILE;Plattfältsfil
 PARTIALPASTE_HLRECONSTRUCTION;Högdageråterställning
-PARTIALPASTE_HLRECOVERY;Högdageråterställning
 PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
+PARTIALPASTE_HLRECOVERY;Högdageråterställning
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
 PARTIALPASTE_HSVEQUALIZER;HSV-equalizer
 PARTIALPASTE_ICMSETTINGS;ICM-inställningar
@@ -491,13 +492,13 @@ PARTIALPASTE_PREPROCESS_LINEDENOISE;Linjärt brusfilter
 PARTIALPASTE_RAWCACORR_AUTO;Reducera kromatiska abberationer
 PARTIALPASTE_RAWCACORR_CABLUE;Blå
 PARTIALPASTE_RAWCACORR_CARED;Röd
-PARTIALPASTE_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
-PARTIALPASTE_RAWEXPOS_PRESER;Korrigering av högdagrar(EV)
-PARTIALPASTE_RAWGROUP;Råbildsinställningar
 PARTIALPASTE_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
 PARTIALPASTE_RAW_DCBITERATIONS;Antal DCB-iterationer
 PARTIALPASTE_RAW_DMETHOD;Metodi för demosaicing
+PARTIALPASTE_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
+PARTIALPASTE_RAWEXPOS_PRESER;Korrigering av högdagrar(EV)
 PARTIALPASTE_RAW_FALSECOLOR;Falskt färgbortträngningssteg
+PARTIALPASTE_RAWGROUP;Råbildsinställningar
 PARTIALPASTE_RESIZE;Ändra storlek
 PARTIALPASTE_ROTATION;Rotering
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Skugg- och högdageråterställning
@@ -529,9 +530,9 @@ PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
 PREFERENCES_CLIPPINGIND;Markeringsindikation
 PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
 PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
-PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DARKFRAMEFOUND;Hittade
 PREFERENCES_DARKFRAMESHOTS;bilder
+PREFERENCES_DARKFRAME;Svartbild
 PREFERENCES_DARKFRAMETEMPLATES;mallar
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DATEFORMATFRAME;Datumformat
@@ -550,8 +551,8 @@ PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
 PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
 PREFERENCES_FILEFORMAT;Filformat
-PREFERENCES_FLATFIELD;Plattfält
 PREFERENCES_FLATFIELDFOUND;Hittade
+PREFERENCES_FLATFIELD;Plattfält
 PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
 PREFERENCES_FLATFIELDSHOTS;bilder
 PREFERENCES_FLATFIELDTEMPLATES;mallar
@@ -571,19 +572,19 @@ PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Visa intern råbild om oredigerad
 PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Skärmprofil
-PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerfliksläge
-PREFERENCES_OUTDIR;Utmatningskatalog
-PREFERENCES_OUTDIRFOLDER;Spara till katalog
+PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
+PREFERENCES_OUTDIRFOLDER;Spara till katalog
 PREFERENCES_OUTDIRHINT;Du kan använda följande formatsträngar:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012 \n%d1=2010-09-02 \n%d2=bilder \n%p1=/home/tom/bilder/2010-09-02, \n%p2=/home/tom/bilder\n%p3=/home/tom \n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
 PREFERENCES_OUTDIRTEMPLATEHINT;Du kan använda följande formatsträngar:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012 \n%d1=2010-09-02 \n%d2=bilder \n%p1=/home/tom/bilder/2010-09-02, \n%p2=/home/tom/bilder\n%p3=/home/tom \n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIR;Utmatningskatalog
 PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
 PREFERENCES_OVERWRITEOUTPUTFILE;Skriv över existerande utfiler
-PREFERENCES_PARSEDEXT;Behandlade filtyper
-PREFERENCES_PARSEDEXTADD;Lägg till filtyp
 PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
+PREFERENCES_PARSEDEXTADD;Lägg till filtyp
+PREFERENCES_PARSEDEXT;Behandlade filtyper
 PREFERENCES_PARSEDEXTDELHINT;Ta bort de markerade filändelserna från listan
 PREFERENCES_PROFILEHANDLING;Hantering av bildbehandlingsparametrar
 PREFERENCES_PROFILELOADPR;Laddningsprioritet för profil
@@ -666,8 +667,8 @@ SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filer
-SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
+SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
 SAVEDLG_SAVEIMMEDIATELY;Spara direkt
 SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
@@ -774,7 +775,10 @@ TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Plattfält
 TP_GAMMA_COMMENT;(utprofilen inaktiverad förutom "default")
+TP_GAMMA_CURV;gamma
+TP_GAMMA_FREE;Obunden gamma
 TP_GAMMA_OUTPUT;Gamma ut
+TP_GAMMA_SLOP;lutning(linjär)
 TP_HLREC_CIELAB;CIELab mix
 TP_HLREC_COLOR;Färgspridning
 TP_HLREC_LABEL;Högdageråterställning
@@ -843,12 +847,12 @@ TP_PREPROCESS_NO_FOUND;Inga hittade
 TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
-TP_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
-TP_RAWEXPOS_PRESER;Bevara högdagerkorrigering (EV)
 TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
 TP_RAW_DCBITERATIONS;Antal DCB-iterationer
-TP_RAW_DMETHOD;Metod
 TP_RAW_DMETHODBATCH;Batch
+TP_RAW_DMETHOD;Metod
+TP_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
+TP_RAWEXPOS_PRESER;Bevara högdagerkorrigering (EV)
 TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
 TP_RAW_LABEL;Demosaicing
 TP_RESIZE_APPLIESTO;Tillämpas på:
@@ -862,8 +866,8 @@ TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
 TP_RESIZE_FITBOX;Begränsad yta
 TP_RESIZE_FULLIMAGE;Hela bilden
 TP_RESIZE_FULLSIZE;Full bildstorlek:
-TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Höjd
+TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Ändra storlek
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Metod: 
@@ -893,10 +897,10 @@ TP_SHARPENING_LABEL;Skärpa
 TP_SHARPENING_METHOD;Metod
 TP_SHARPENING_ONLYEDGES;Skärp bara kanter
 TP_SHARPENING_RADIUS;Radie
-TP_SHARPENING_RLD;RL-dekonvolution
 TP_SHARPENING_RLD_AMOUNT;Mängd
 TP_SHARPENING_RLD_DAMPING;Dämpning
 TP_SHARPENING_RLD_ITERATIONS;Upprepningar
+TP_SHARPENING_RLD;RL-dekonvolution
 TP_SHARPENING_THRESHOLD;Tröskelvärde
 TP_SHARPENING_USM;Oskarp mask
 TP_VIGNETTING_AMOUNT;Mängd
@@ -928,7 +932,6 @@ ZOOMPANEL_ZOOM100;Förstora till 100%. Kortkommando: 1
 ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. Kortkommando: F
 ZOOMPANEL_ZOOMIN;Förstora. Kortkommando: +
 ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
-﻿
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -936,6 +939,91 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-TP_GAMMA_CURV;gamma
-TP_GAMMA_FREE;Obunden gamma
-TP_GAMMA_SLOP;lutning(linjär)
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
+!FILEBROWSER_EXEC_CPB;Run custom profile builder
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPCOLORLABEL;Color label
+!FILEBROWSER_POPUPFILEOPERATIONS;File Operations
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
+!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
+!FILEBROWSER_QUERYLABEL; Find:
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
+!HISTOGRAM_BUTTON_BAR;RGB
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
+!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_131;Noise Reduction Luma
+!HISTORY_MSG_132;Noise Reduction Chroma
+!HISTORY_MSG_133;Gamma
+!HISTORY_MSG_134;Gamma Position
+!HISTORY_MSG_135;Gamma Free
+!HISTORY_MSG_136;Gamma Slope
+!HISTORY_MSG_137;Black level green 1
+!HISTORY_MSG_138;Black level red
+!HISTORY_MSG_139;Black level blue
+!HISTORY_MSG_140;Black level green 2
+!HISTORY_MSG_141;Black level green together
+!HISTORY_MSG_142;Edges sharpening - iterations
+!HISTORY_MSG_143;Edges sharpening - quantity
+!HISTORY_MSG_144;Microcontrast - quantity
+!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_146;Edges Sharpening
+!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_148;Microcontrast
+!HISTORY_MSG_149;Microcontrast - 3x3 matrix
+!HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
+!PARTIALPASTE_SHARPENEDGE;Edges
+!PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
+!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+!PREFERENCES_LANGAUTODETECT;Use OS language setting
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
+!PREFERENCES_MENUGROUPLABEL;Group Labeling
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
+!PREFERENCES_MENUGROUPRANK;Group Ranking
+!PREFERENCES_MENUOPTIONS;Menu Options
+!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORLABEL;Factor
+!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
+!PREFERENCES_SLIMUI;Slim interface
+!PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
+!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_HLREC_BLEND;Blend
+!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
+!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RAWEXPOS_BLACKONE;Black Level: Red
+!TP_RAWEXPOS_BLACKS;Black Levels
+!TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
+!TP_RAWEXPOS_BLACKTWO;Black Level: Blue
+!TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
+!TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_SHARPENEDGE_AMOUNT;Quantity
+!TP_SHARPENEDGE_LABEL;Edges
+!TP_SHARPENEDGE_PASSES;Iterations
+!TP_SHARPENEDGE_THREE;Luminance only
+!TP_SHARPENMICRO_AMOUNT;Quantity
+!TP_SHARPENMICRO_LABEL;Microcontrast
+!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
+!TP_SHARPENMICRO_UNIFORMITY;Uniformity
