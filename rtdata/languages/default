@@ -5,8 +5,8 @@ ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;License
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
-BATCHQUEUE_AUTOSTART;Auto start
 BATCH_PROCESSING;Batch processing
+BATCHQUEUE_AUTOSTART;Auto start
 CURVEEDITOR_CURVE;Curve
 CURVEEDITOR_CURVES;Curves
 CURVEEDITOR_CUSTOM;Custom
@@ -43,14 +43,14 @@ EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
-EXIFPANEL_KEEP;Keep
 EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file
-EXIFPANEL_REMOVE;Remove
+EXIFPANEL_KEEP;Keep
 EXIFPANEL_REMOVEHINT;Remove the selected tags when writing output file
-EXIFPANEL_RESET;Reset
-EXIFPANEL_RESETALL;Reset All
+EXIFPANEL_REMOVE;Remove
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values
+EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values
+EXIFPANEL_RESET;Reset
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply profile
@@ -60,9 +60,6 @@ FILEBROWSER_AUTODARKFRAME;Auto dark frame
 FILEBROWSER_AUTOFLATFIELD;Auto flat field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 FILEBROWSER_BROWSEPATHHINT;Type path to browse\n<b>Ctrl-o</b> set focus\n<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
-FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-FILEBROWSER_QUERYHINT;Type a part of filename to search by \n<b>Ctrl-f</b> set focus (in File Browser);\n<b>Enter</b> to find
-FILEBROWSER_QUERYLABEL; Find:
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
@@ -79,8 +76,8 @@ FILEBROWSER_EXEC_CPB;Run custom profile builder
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_FLATFIELD;Flat field
 FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
@@ -88,13 +85,13 @@ FILEBROWSER_NEW_NAME;New name:
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
-FILEBROWSER_POPUPCOLORLABEL;Color label
 FILEBROWSER_POPUPCOLORLABEL0;Label: None
 FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
 FILEBROWSER_POPUPCOLORLABEL3;Label: Green
 FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
 FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+FILEBROWSER_POPUPCOLORLABEL;Color label
 FILEBROWSER_POPUPCOPYTO;Copy to...
 FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 FILEBROWSER_POPUPMOVEEND;Move to end of queue
@@ -103,12 +100,12 @@ FILEBROWSER_POPUPMOVETO;Move to...
 FILEBROWSER_POPUPOPEN;Open
 FILEBROWSER_POPUPPROCESS;Put to Queue
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
-FILEBROWSER_POPUPRANK;Rank
 FILEBROWSER_POPUPRANK1;Rank 1 *
 FILEBROWSER_POPUPRANK2;Rank 2 **
 FILEBROWSER_POPUPRANK3;Rank 3 ***
 FILEBROWSER_POPUPRANK4;Rank 4 ****
 FILEBROWSER_POPUPRANK5;Rank 5 *****
+FILEBROWSER_POPUPRANK;Rank
 FILEBROWSER_POPUPREMOVE;Delete
 FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 FILEBROWSER_POPUPREMOVESUBMENU;Remove
@@ -117,8 +114,11 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+FILEBROWSER_QUERYHINT;Type a part of filename to search by \n<b>Ctrl-f</b> set focus (in File Browser);\n<b>Enter</b> to find
+FILEBROWSER_QUERYLABEL; Find:
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SELECTDARKFRAME;Select dark frame...
@@ -143,10 +143,10 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash <b>T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images  <b>`</b>
-FILEBROWSER_STARTPROCESSING;Start processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STARTPROCESSING;Start processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 FILEBROWSER_USETEMPLATE;Use template:
@@ -156,35 +156,35 @@ GENERAL_ABOUT;About
 GENERAL_AFTER;After
 GENERAL_BEFORE;Before
 GENERAL_CANCEL;Cancel
-GENERAL_DISABLE;Disable
 GENERAL_DISABLED;Disabled
-GENERAL_ENABLE;Enable
+GENERAL_DISABLE;Disable
 GENERAL_ENABLED;Enabled
+GENERAL_ENABLE;Enable
 GENERAL_FILE;File
 GENERAL_HIGH_QUALITY;High Quality
 GENERAL_LANDSCAPE;Landscape
 GENERAL_LOAD;Load
 GENERAL_NA;n/a
-GENERAL_NO;No
 GENERAL_NONE;None
+GENERAL_NO;No
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Save
 GENERAL_UNCHANGED;(Unchanged)
 GENERAL_YES;Yes
+HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_R;R
 HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_BAR;RGB
+HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
+HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 HISTOGRAM_TOOLTIP_B;Show/Hide BLUE histogram
 HISTOGRAM_TOOLTIP_G;Show/Hide GREEN histogram
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
-HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
 HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
-HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
+HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
 HISTORY_CHANGED;Changed
 HISTORY_CUSTOMCURVE;Custom Curve
 HISTORY_DELSNAPSHOT;Del
@@ -223,7 +223,6 @@ HISTORY_MSG_127;Flat Field Auto Select
 HISTORY_MSG_128;Flat Field Blur Radius
 HISTORY_MSG_129;Flat Field Blur Type
 HISTORY_MSG_12;Auto Exposure
-HISTORY_MSG_13;Exposure Clipping
 HISTORY_MSG_130;Auto Distorion
 HISTORY_MSG_131;Noise Reduction Luma
 HISTORY_MSG_132;Noise Reduction Chroma
@@ -234,9 +233,19 @@ HISTORY_MSG_136;Gamma Slope
 HISTORY_MSG_137;Black level green 1
 HISTORY_MSG_138;Black level red
 HISTORY_MSG_139;Black level blue
+HISTORY_MSG_13;Exposure Clipping
 HISTORY_MSG_140;Black level green 2
 HISTORY_MSG_141;Black level green together
+HISTORY_MSG_142;Edges sharpening - iterations
+HISTORY_MSG_143;Edges sharpening - quantity
+HISTORY_MSG_144;Microcontrast - quantity
+HISTORY_MSG_145;Microcontrast - uniformity
+HISTORY_MSG_146;Edges Sharpening
+HISTORY_MSG_147;Edges sharpening - luminance only
+HISTORY_MSG_148;Microcontrast
+HISTORY_MSG_149;Microcontrast - 3x3 matrix
 HISTORY_MSG_14;Luminance Brightness
+HISTORY_MSG_150;Post demosaic artifact/noise reduction
 HISTORY_MSG_15;Luminance Contrast
 HISTORY_MSG_16;Luminance Black
 HISTORY_MSG_17;Luminance Highlight Compr.
@@ -331,15 +340,6 @@ HISTORY_MSG_97;'b' curve
 HISTORY_MSG_98;Demosaicing method
 HISTORY_MSG_99;Hot/dead pixel filtering
 HISTORY_MSG_9;Highlight Compression
-HISTORY_MSG_142;Edges sharpening - iterations
-HISTORY_MSG_143;Edges sharpening - quantity
-HISTORY_MSG_147;Edges sharpening - luminance only
-HISTORY_MSG_144;Microcontrast - quantity
-HISTORY_MSG_145;Microcontrast - uniformity
-HISTORY_MSG_146;Edges Sharpening
-HISTORY_MSG_148;Microcontrast
-HISTORY_MSG_149;Microcontrast - 3x3 matrix
-HISTORY_MSG_150;Post demosaic artifact/noise reduction
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -386,23 +386,23 @@ IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
+IPTCPANEL_KEYWORDS;Keywords
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCE;Province
 IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-IPTCPANEL_RESET;Reset
+IPTCPANEL_PROVINCE;Province
 IPTCPANEL_RESETHINT;Reset to profile default
-IPTCPANEL_SOURCE;Source
+IPTCPANEL_RESET;Reset
 IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+IPTCPANEL_SOURCE;Source
 IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_TITLE;Title
+IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TITLE;Title
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_PREFERENCES;Preferences
@@ -418,9 +418,9 @@ MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 MAIN_FRAME_FILEBROWSER;File Browser 
 MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;File already exists.
 MAIN_MSG_CANNOTLOAD;Cannot load image
@@ -452,8 +452,8 @@ MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Tagging
-MAIN_TAB_TRANSFORM;Transform
 MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TAB_TRANSFORM;Transform
 MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
@@ -461,8 +461,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
 MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
-MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
+MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
@@ -513,10 +513,9 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
 PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
 PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
-PARTIALPASTE_SHARPENEDGE;Edges
 PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-PARTIALPASTE_HLRECOVERY;Highlight recovery
 PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
+PARTIALPASTE_HLRECOVERY;Highlight recovery
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 PARTIALPASTE_ICMSETTINGS;ICM settings
@@ -527,27 +526,28 @@ PARTIALPASTE_LENSGROUP;Lens related settings
 PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
 PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
-PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 PARTIALPASTE_RAWCACORR_CARED;CA Red
-PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
-PARTIALPASTE_RAWEXPOS_BLACK;Black Level
-PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-PARTIALPASTE_RAWGROUP;Raw settings
 PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+PARTIALPASTE_RAWEXPOS_BLACK;Black Level
+PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+PARTIALPASTE_RAWGROUP;Raw settings
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_ROTATION;Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
+PARTIALPASTE_SHARPENEDGE;Edges
 PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
+PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 PARTIALPASTE_WHITEBALANCE;White balance 
@@ -618,29 +618,29 @@ PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
 PREFERENCES_LANGAUTODETECT;Use OS language setting
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
-PREFERENCES_MENUOPTIONS;Menu Options
-PREFERENCES_MENUGROUPRANK;Group Ranking
-PREFERENCES_MENUGROUPLABEL;Group Labeling
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
+PREFERENCES_MENUGROUPLABEL;Group Labeling
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
+PREFERENCES_MENUGROUPRANK;Group Ranking
+PREFERENCES_MENUOPTIONS;Menu Options
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Monitor Profile
-PREFERENCES_MULTITAB;Multiple tabs mode
 PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-PREFERENCES_OUTDIR;Output Directory
-PREFERENCES_OUTDIRFOLDER;Save to folder
+PREFERENCES_MULTITAB;Multiple tabs mode
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
+PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nThese formatting strings refer to the different parts of the photo's pathname.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIR;Output Directory
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname, or some attributes of the photo.\n\n%r will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in trash bin, %r will be replaced by 'x'.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 PREFERENCES_PANFACTORFRAME;Pan rate amplification
 PREFERENCES_PANFACTORLABEL;Factor
-PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in cache
@@ -722,8 +722,8 @@ SAVEDLG_JPEGQUAL;JPEG Quality
 SAVEDLG_JPGFILTER;JPEG files
 SAVEDLG_PNGCOMPR;PNG Compression
 SAVEDLG_PNGFILTER;PNG files
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Save processing parameters with image
@@ -741,14 +741,6 @@ TP_CHMIXER_GREEN;Green channel
 TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXER_RED;Red channel
 TP_CHROMATABERR_LABEL;Chromatic Aberration
-TP_SHARPENEDGE_AMOUNT;Quantity
-TP_SHARPENEDGE_LABEL;Edges
-TP_SHARPENEDGE_PASSES;Iterations
-TP_SHARPENEDGE_THREE;Luminance only
-TP_SHARPENMICRO_AMOUNT;Quantity
-TP_SHARPENMICRO_LABEL;Microcontrast
-TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
-TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_COARSETRAF_DEGREE;degree:
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left <b>[</b>
@@ -815,6 +807,7 @@ TP_EQUALIZER_FINEST;finest
 TP_EQUALIZER_LABEL;Wavelet equalizer
 TP_EQUALIZER_LARGEST;coarsest
 TP_EQUALIZER_NEUTRAL;Neutral
+TP_EXPO_AFTER; After interpolation (before RGB conversion)
 TP_EXPOSCORR_LABEL;Raw white-black point
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_BLACKLEVEL;Black
@@ -840,11 +833,11 @@ TP_GAMMA_CURV;gamma
 TP_GAMMA_FREE;Free gamma
 TP_GAMMA_OUTPUT;Output gamma
 TP_GAMMA_SLOP;slope (linear)
+TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
 TP_HLREC_LABEL;Highlight Reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
-TP_HLREC_BLEND;Blend
 TP_HLREC_METHOD;Method: 
 TP_HSVEQUALIZER1;Red
 TP_HSVEQUALIZER2;Yellow
@@ -901,24 +894,23 @@ TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 TP_PREPROCESS_LABEL;Preprocessing
 TP_PREPROCESS_LINEDENOISE;Line noise filter
 TP_PREPROCESS_NO_FOUND;None found
+TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 TP_RAWCACORR_AUTO;Auto correction
 TP_RAWCACORR_CABLUE;Blue
 TP_RAWCACORR_CARED;Red
-TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
-TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
-TP_RAWEXPOS_BLACKS;Black Levels
-TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
-TP_RAWEXPOS_BLACKONE;Black Level: Red
-TP_RAWEXPOS_BLACKTWO;Black Level: Blue
-TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
-TP_RAWEXPOS_TWOGREEN;Two greens together
-TP_EXPO_AFTER; After interpolation (before RGB conversion)
 TP_RAW_DCBENHANCE;Apply DCB enhancement step
 TP_RAW_DCBITERATIONS;Number of DCB iterations
 TP_RAW_DMETHOD;Method
+TP_RAWEXPOS_BLACKONE;Black Level: Red
+TP_RAWEXPOS_BLACKS;Black Levels
+TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
+TP_RAWEXPOS_BLACKTWO;Black Level: Blue
+TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
+TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
+TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
+TP_RAWEXPOS_TWOGREEN;Two greens together
 TP_RAW_FALSECOLOR;False color suppression steps
 TP_RAW_LABEL;Demosaicing
-TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
@@ -930,16 +922,16 @@ TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 TP_RESIZE_FITBOX;Bounding box
 TP_RESIZE_FULLIMAGE;Full image
 TP_RESIZE_FULLSIZE;Full Image Size:
-TP_RESIZE_H;H:
 TP_RESIZE_HEIGHT;Height
+TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Resize
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Method: 
 TP_RESIZE_NEAREST;Nearest
 TP_RESIZE_SCALE;Scale
 TP_RESIZE_SPECIFY;Specify:
-TP_RESIZE_W;W:
 TP_RESIZE_WIDTH;Width
+TP_RESIZE_W;W:
 TP_ROTATE_DEGREE;Degree
 TP_ROTATE_LABEL;Rotate
 TP_ROTATE_SELECTLINE;    Select Straight Line
@@ -950,6 +942,10 @@ TP_SHADOWSHLIGHTS_LOCALCONTR;Local Contrast
 TP_SHADOWSHLIGHTS_RADIUS;Radius
 TP_SHADOWSHLIGHTS_SHADOWS;Shadows
 TP_SHADOWSHLIGHTS_SHTONALW;Tonal Width for Shadows
+TP_SHARPENEDGE_AMOUNT;Quantity
+TP_SHARPENEDGE_LABEL;Edges
+TP_SHARPENEDGE_PASSES;Iterations
+TP_SHARPENEDGE_THREE;Luminance only
 TP_SHARPENING_AMOUNT;Amount
 TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Edge tolerance
@@ -959,12 +955,16 @@ TP_SHARPENING_LABEL;Sharpening
 TP_SHARPENING_METHOD;Method
 TP_SHARPENING_ONLYEDGES;Sharpen only edges
 TP_SHARPENING_RADIUS;Radius
-TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Amount
 TP_SHARPENING_RLD_DAMPING;Damping
 TP_SHARPENING_RLD_ITERATIONS;Iterations
+TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_THRESHOLD;Threshold
 TP_SHARPENING_USM;Unsharp Mask
+TP_SHARPENMICRO_AMOUNT;Quantity
+TP_SHARPENMICRO_LABEL;Microcontrast
+TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
+TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_VIGNETTING_AMOUNT;Amount
 TP_VIGNETTING_CENTER;Center
 TP_VIGNETTING_CENTER_X;Center X

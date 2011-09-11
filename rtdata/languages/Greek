@@ -17,19 +17,19 @@ EXIFFILTER_FOCALLEN;Focal Length
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
 EXIFFILTER_SHUTTER;Shutter
-EXIFPANEL_ADDEDIT;Προσθήκη/Επεξεργασία
 EXIFPANEL_ADDEDITHINT;Προσθήκη καινούριας ετικέττας ή επεξεργασία
+EXIFPANEL_ADDEDIT;Προσθήκη/Επεξεργασία
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Εισαγωγή τιμής
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Επιλογή ετικέττας
 EXIFPANEL_ADDTAGDLG_TITLE;Προσθήκη/Επεξεργασία ετικέττας
-EXIFPANEL_KEEP;Συγκράτηση
 EXIFPANEL_KEEPHINT;Συγκράτηση των επιλεγμένων ετικεττών κατά την εγγραφή του παραγώμενου αρχείου
-EXIFPANEL_REMOVE;Αφαίρεση
+EXIFPANEL_KEEP;Συγκράτηση
 EXIFPANEL_REMOVEHINT;Αφαίρεση των επιλεγμένων ετικεττών κατά την εγγραφή του παραγώμενου αρχείου
-EXIFPANEL_RESET;Επαναφορά
-EXIFPANEL_RESETALL;Επαναφορά όλων
+EXIFPANEL_REMOVE;Αφαίρεση
 EXIFPANEL_RESETALLHINT;Επαναφορά όλων των ετικεττών στην αρχική τους τιμή
+EXIFPANEL_RESETALL;Επαναφορά όλων
 EXIFPANEL_RESETHINT;Επαναφορά των επιλεγμένων ετικεττών στις πρωτότυπες τους τιμές
+EXIFPANEL_RESET;Επαναφορά
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -42,8 +42,8 @@ FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
+FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -62,8 +62,8 @@ FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
+FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
@@ -75,19 +75,19 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4 star
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5 star
 FILEBROWSER_SHOWTRASHHINT;Show content of the trash
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images
-FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
+FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
 GENERAL_ABOUT;About
 GENERAL_CANCEL;Ακύρωση
-GENERAL_DISABLE;Απενεργοποίηση
 GENERAL_DISABLED;Απενεργοποιημένο
-GENERAL_ENABLE;Ενεργοποίηση
+GENERAL_DISABLE;Απενεργοποίηση
 GENERAL_ENABLED;Ενεργοποιημένο
+GENERAL_ENABLE;Ενεργοποίηση
 GENERAL_LANDSCAPE;Τοπίο
 GENERAL_LOAD;Φόρτωση
 GENERAL_NA;μη διαθέσιμο
@@ -187,13 +187,13 @@ HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_MSG_8;Επανόρθωση Έκθεσης
 HISTORY_MSG_9;Συμπίεση φωτεινών σημείων
-HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
 HISTORY_NEWSNAPSHOTAS;Ως...
+HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
 HISTORY_NEWSSDIALOGLABEL;Όνομα στιγμιοτύπου:
 HISTORY_NEWSSDIALOGTITLE;Προσθήκη νέου στιγμιοτύπου
 HISTORY_SETTO;Ορισμός σε
-HISTORY_SNAPSHOT;Στιγμιότυπο
 HISTORY_SNAPSHOTS;Στιγμιότυπα
+HISTORY_SNAPSHOT;Στιγμιότυπο
 ICMPANEL_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
 ICMPANEL_FILEDLGFILTERICM;Αρχεία προφίλ ICC
 ICMPANEL_GAMMABEFOREINPUT;Το προφίλ αλλάζει την gamma
@@ -208,59 +208,59 @@ ICMPANEL_OUTPUTPROFILE;Προφίλ εξόδου
 ICMPANEL_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφορά για δημιουργία προφίλ.
 ICMPANEL_WORKINGPROFILE;Παρόν προφίλ
 IMAGEAREA_DETAILVIEW;Λεπτομερής προβολή
-IPTCPANEL_AUTHOR;Συγγραφέας
 IPTCPANEL_AUTHORHINT;Όνομα του δημιουργού του αντικειμένου, π.χ. συγγραφέας, φωτογράφος ή γραφίστας (Ανα γραμμή).
-IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
 IPTCPANEL_AUTHORSPOSITIONHINT;Τίτλος που αποδίδεται από τον/τους δημιουργό/γους (Ανα γραμμή τίτλος).
-IPTCPANEL_CAPTION;Λεζάντα
+IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
+IPTCPANEL_AUTHOR;Συγγραφέας
 IPTCPANEL_CAPTIONHINT;Μια λεκτική περιγραφή των στοιχείων (Λεζάντα - Περίληψη).
-IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
 IPTCPANEL_CAPTIONWRITERHINT;Το όνομα του προσώπου που ασχολήθηκε με την συγγραφή, επεξεργασία ή διόρθωση της εικόνας ή λεζάντας/περίληψης (Συγγραφέας - Επιμελητής).
-IPTCPANEL_CATEGORY;Κατηγορία
+IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
+IPTCPANEL_CAPTION;Λεζάντα
 IPTCPANEL_CATEGORYHINT;Ταυτοποιεί το θέμα της εικόνας βάση της άποψης του παροχέα (Κατηγορία).
-IPTCPANEL_CITY;Πόλη
+IPTCPANEL_CATEGORY;Κατηγορία
 IPTCPANEL_CITYHINT;Πόλη προέλευσης εικόνας (Πόλη).
+IPTCPANEL_CITY;Πόλη
 IPTCPANEL_COPYHINT;Αντιγραφή ρυθμίσεων IPTC στην περιοχή αποκομμάτων
-IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
 IPTCPANEL_COPYRIGHTHINT;Όποιο απαραίτητο σχόλιο περι πνευματικής ιδιοκτησίας (Σχόλια περι πνευματική ιδιοκτησία).
-IPTCPANEL_COUNTRY;Χώρα
+IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
 IPTCPANEL_COUNTRYHINT;Χώρα/αρχική τοποθεσία δημιουργίας εικόνας (Χώρα/αρχική τοποθεσία).
-IPTCPANEL_CREDIT;Εύσημα
+IPTCPANEL_COUNTRY;Χώρα
 IPTCPANEL_CREDITHINT;Ταυτοποιεί τον παροχέα της εικόνας, όχι απραίτητα δημιουργό/ιδιοκτήτη (Εύσημα).
-IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
+IPTCPANEL_CREDIT;Εύσημα
 IPTCPANEL_DATECREATEDHINT;Η ημερομηνία δημιουργίας του πνευματικού περιεχομένου; Τύπος: JJJJMMTT (Ημερομηνία δημιουργίας).
-IPTCPANEL_EMBEDDED;Ενσωματωμένο
+IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
 IPTCPANEL_EMBEDDEDHINT;Επαναφορά στοιχείων IPTC αρχείου εικόνας
-IPTCPANEL_HEADLINE;Επικεφαλίδα
+IPTCPANEL_EMBEDDED;Ενσωματωμένο
 IPTCPANEL_HEADLINEHINT;Ένας δημοσιεύσιμος τίτλος που παρέχει μια σύνοψη των περιεχομένων της εικόνας (Επικεφαλίδα).
-IPTCPANEL_INSTRUCTIONS;Οδηγίες
+IPTCPANEL_HEADLINE;Επικεφαλίδα
 IPTCPANEL_INSTRUCTIONSHINT;Άλλες οδηγίες επιμέλειας που αφορούν την χρήση της εικόνας (Ειδικίες οδηγίες).
-IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
+IPTCPANEL_INSTRUCTIONS;Οδηγίες
 IPTCPANEL_KEYWORDSHINT;Χρησιμοποιούνται ενδεικτικά ως λέξεις ανάκτησης(Λέξεις-κλειδιά).
+IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
 IPTCPANEL_PASTEHINT;Επικόλληση ρυθμίσεων IPTC από την περιοχή αποκομμάτων
-IPTCPANEL_PROVINCE;Επαρχία
 IPTCPANEL_PROVINCEHINT;Επαρχία/Πολιτεία/Νομός προέλευσης της εικόνας (Επαρχία/Πολιτεία/Νομός).
-IPTCPANEL_RESET;Επαναφορά
+IPTCPANEL_PROVINCE;Επαρχία
 IPTCPANEL_RESETHINT;Επαναφορά προεπιλεγμένου προφίλ
-IPTCPANEL_SOURCE;Πηγή
+IPTCPANEL_RESET;Επαναφορά
 IPTCPANEL_SOURCEHINT;Αυθεντικός ιδιοκτήτης πνευματικού περιεχομένου της εικόνας (Πηγή).
-IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
+IPTCPANEL_SOURCE;Πηγή
 IPTCPANEL_SUPPCATEGORIESHINT;Προσδιορίζουν επιπλέον το θέμα της εικόνας (Συμπληρωματικές κατηγορίες).
-IPTCPANEL_TITLE;Τίτλος
+IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
 IPTCPANEL_TITLEHINT;Μια σύντομη αναφορά για την εικόνα (Όνομα αντικειμένου).
-IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
+IPTCPANEL_TITLE;Τίτλος
 IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπροσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
+IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Ρυθμίσεις
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
 MAIN_BUTTON_SAVEAS;Ως...
+MAIN_BUTTON_SAVE;Αποθήκευση εικόνας
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Το αρχείο ήδη υπάρχει.
 MAIN_MSG_CANNOTLOAD;Αδύνατη η φόρτωση εικόνας
@@ -289,8 +289,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Ένδειξη ψαλισμού φωτεινών σημ
 MAIN_TOOLTIP_INDCLIPPEDS;Ένδειξη ψαλισμού σκιών
 MAIN_TOOLTIP_PREFERENCES;Ορισμός ρυθμίσεων
 MAIN_TOOLTIP_QINFO;Γρήγορες πληροφορίες στην εικόνα
-MAIN_TOOLTIP_SAVE;Αποθήκευση εικόνας στον προκαθορισμένο φάκελο
 MAIN_TOOLTIP_SAVEAS;Αποθήκευση εικόνας σε ένα επιλεγμένο φάκελο
+MAIN_TOOLTIP_SAVE;Αποθήκευση εικόνας στον προκαθορισμένο φάκελο
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -338,8 +338,8 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Ένδειξη ψαλιδίσματος
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
-PREFERENCES_DATEFORMAT;Διάταξη ημερομηνίας
 PREFERENCES_DATEFORMATHINT;<i>YΜπορείτε να χρησιμοποιήσετε τις εξής εντολές μορφοποίησης:</i>\n<b>%y</b><i> : χρονολογία</i>\n<b>%m</b><i> : μήνας</i>\n<b>%d</b><i> : ημέρα</i>\n<i>\nΓια παράδειγμα, η μορφοποίηση ημερομηνίας στην Ελλάδα είναι:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Διάταξη ημερομηνίας
 PREFERENCES_DEFAULTLANG;Προεπιλεγμένη γλώσσα
 PREFERENCES_DEFAULTTHEME;Προεπιλεγμένο θέμα
 PREFERENCES_DEMOSAICINGALGO;Αλγόριθμος απομωσαϊκοποίησης
@@ -366,16 +366,16 @@ PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;Προφίλ οθόνης
-PREFERENCES_OUTDIR;Τοποθεσία εξόδου
-PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
+PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>Μπορείτε να χρησιμοποιήσετε τις ακόλουθες σειρές μορφοποίησης:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nΑυτές οι σειρές μορφοποίησης αναφέρονται στις τοποθεσίες και τις υπο-διαδρομές της τοποθεσίας του αρχείου raw.\n\nΓια παράδειγμα, αν το</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ανοιχθεί, η σημασία των ακόλουθων σειρών μορφοποίησης είναι:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nΑν θέλεθτε να αποδηκεύσετε την εικόνα εξόδου μαζί με το πρωτότυπο, γράψτε:\n</i><b>%p1/%f\n</b><i>\nΑν θέλετε να αποθηκεύσετε την εικόνα εξόδου σε ένα φάκελο 'converted', μέσα στην τοποθεσία που βρίσκεται το πρωτότυπο, γράψτε:\n</i><b>%p1/converted/%f\n</b><i>\nΑν θέλετε να αποθηκεύσετε την εικόνα εξόδου σε στην τοποθεσία '/home/tom/converted' κρατώντας όμως την ίδια δομή υπο-τοποθεσιών ημερομηνίων, γράψτε:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_PARSEDEXT;Parsed Extensions
+PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIR;Τοποθεσία εξόδου
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
+PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
 PREFERENCES_PROFILELOADPR;Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in Cache
@@ -435,8 +435,8 @@ SAVEDLG_JPEGQUAL;Ποιότητα JPEG
 SAVEDLG_JPGFILTER;Αρχεία JPEG
 SAVEDLG_PNGCOMPR;Συμπίεση PNG
 SAVEDLG_PNGFILTER;Αρχεία PNG
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Αποθήκευση παραμέτρων επεξεργασίας μαζί με την εικόνα
@@ -565,10 +565,10 @@ TP_SHARPENING_LABEL;Όξυνση
 TP_SHARPENING_METHOD;Μέθοδος
 TP_SHARPENING_ONLYEDGES;Όξυνση μόνο ορίων
 TP_SHARPENING_RADIUS;Ακτίνα
-TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Ένταση
 TP_SHARPENING_RLD_DAMPING;Απόσβεση
 TP_SHARPENING_RLD_ITERATIONS;Επαναλήψεις
+TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_THRESHOLD;Κατώφλι
 TP_SHARPENING_USM;Unsharp Mask
 TP_VIGNETTING_AMOUNT;Ένταση
@@ -601,8 +601,8 @@ ZOOMBAR_SMALL;Μικρό
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
+!BATCHQUEUE_AUTOSTART;Auto start
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_CUSTOM;Custom
@@ -620,27 +620,51 @@ ZOOMBAR_SMALL;Μικρό
 !EXIFFILTER_FILETYPE;File Type
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
 !FILEBROWSER_AUTODARKFRAME;Auto dark frame
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browse (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> to browse in File Browser);nPath shortcuts: <b>~</b> - user's home directory, <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a batch processed version?
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
+!FILEBROWSER_EXEC_CPB;Run custom profile builder
 !FILEBROWSER_FLATFIELD;Flat field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPCOPYTO;Copy to...
+!FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
-!FILEBROWSER_POPUPREMOVEINCLPROC;Remove from filesystem & batch result
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
+!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
+!FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
 !FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 !FILEBROWSER_USETEMPLATE;Use template:
 !GENERAL_AFTER;After
@@ -649,11 +673,13 @@ ZOOMBAR_SMALL;Μικρό
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
+!HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
 !HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_BUTTON_RAW;Raw
+!HISTOGRAM_BUTTON_R;R
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
@@ -665,7 +691,7 @@ ZOOMBAR_SMALL;Μικρό
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to
+!HISTORY_MSG_110;Resizing applies to  
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
@@ -685,6 +711,27 @@ ZOOMBAR_SMALL;Μικρό
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
 !HISTORY_MSG_129;Flat Field Blur Type
+!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_131;Noise Reduction Luma
+!HISTORY_MSG_132;Noise Reduction Chroma
+!HISTORY_MSG_133;Gamma
+!HISTORY_MSG_134;Gamma Position
+!HISTORY_MSG_135;Gamma Free
+!HISTORY_MSG_136;Gamma Slope
+!HISTORY_MSG_137;Black level green 1
+!HISTORY_MSG_138;Black level red
+!HISTORY_MSG_139;Black level blue
+!HISTORY_MSG_140;Black level green 2
+!HISTORY_MSG_141;Black level green together
+!HISTORY_MSG_142;Edges sharpening - iterations
+!HISTORY_MSG_143;Edges sharpening - quantity
+!HISTORY_MSG_144;Microcontrast - quantity
+!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_146;Edges Sharpening
+!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_148;Microcontrast
+!HISTORY_MSG_149;Microcontrast - 3x3 matrix
+!HISTORY_MSG_150;Post demosaic artifact/noise reduction
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
@@ -704,15 +751,16 @@ ZOOMBAR_SMALL;Μικρό
 !HISTORY_MSG_98;Demosaicing method
 !HISTORY_MSG_99;Hot/dead pixel filtering
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add current image to processing queue <b>Ctrl+Q</b>
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batch Queue  <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR;Editor
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b>
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
+!MAIN_FRAME_EDITOR;Editor 
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
+!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
@@ -770,56 +818,77 @@ ZOOMBAR_SMALL;Μικρό
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
+!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+!PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_SHARPENEDGE;Edges
+!PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_ADD;ADD
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DATEFORMATFRAME;Date Format
+!PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 !PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_LANGAUTODETECT;Use OS language setting
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
+!PREFERENCES_MENUGROUPLABEL;Group Labeling
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
+!PREFERENCES_MENUGROUPRANK;Group Ranking
+!PREFERENCES_MENUOPTIONS;Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
+!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
+!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SND_BATCHQUEUEDONE;Batch queue done
+!PREFERENCES_SLIMUI;Slim interface
+!PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
 !PREFERENCES_TAB_SOUND;Sounds
+!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
-!PREFERENCES_WORKFLOW;Workflow
+!PREFERENCES_WORKFLOW;Layout
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
+!PROGRESSBAR_DARKFRAME;Darkframe... 
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
@@ -846,7 +915,7 @@ ZOOMBAR_SMALL;Μικρό
 !TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_DISTORTION_AUTO;Auto distortion correction
+!TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
@@ -854,7 +923,8 @@ ZOOMBAR_SMALL;Μικρό
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSCORR_LABEL;Raw white point
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_FLATFIELD_AUTOSELECT;Auto selection
@@ -869,6 +939,7 @@ ZOOMBAR_SMALL;Μικρό
 !TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output gamma
 !TP_GAMMA_SLOP;slope (linear)
+!TP_HLREC_BLEND;Blend
 !TP_HSVEQUALIZER1;Red
 !TP_HSVEQUALIZER2;Yellow
 !TP_HSVEQUALIZER3;Lime
@@ -883,6 +954,8 @@ ZOOMBAR_SMALL;Μικρό
 !TP_HSVEQUALIZER_NEUTRAL;Neutral
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
+!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
+!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
 !TP_ICM_INPUTNONE;No profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
@@ -894,7 +967,7 @@ ZOOMBAR_SMALL;Μικρό
 !TP_LABCURVE_LABEL;Lab Adjustments
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_LABCURVE_SATURATION;Saturation
-!TP_LENSGEOM_AUTOCROP;Auto Crop
+!TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
@@ -905,13 +978,20 @@ ZOOMBAR_SMALL;Μικρό
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAWEXPOS_LINEAR;Linear corr. factor
-!TP_RAWEXPOS_PRESER;HL preserving corr. (EV)
 !TP_RAW_DCBENHANCE;Apply DCB enhancement step
 !TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAWEXPOS_BLACKONE;Black Level: Red
+!TP_RAWEXPOS_BLACKS;Black Levels
+!TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
+!TP_RAWEXPOS_BLACKTWO;Black Level: Blue
+!TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
+!TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
+!TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
+!TP_RAWEXPOS_TWOGREEN;Two greens together
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
@@ -923,6 +1003,14 @@ ZOOMBAR_SMALL;Μικρό
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:
 !TP_RESIZE_WIDTH;Width
+!TP_SHARPENEDGE_AMOUNT;Quantity
+!TP_SHARPENEDGE_LABEL;Edges
+!TP_SHARPENEDGE_PASSES;Iterations
+!TP_SHARPENEDGE_THREE;Luminance only
+!TP_SHARPENMICRO_AMOUNT;Quantity
+!TP_SHARPENMICRO_LABEL;Microcontrast
+!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
+!TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X
 !TP_VIGNETTING_CENTER_Y;Center Y
