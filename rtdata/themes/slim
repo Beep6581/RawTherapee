@@ -1,0 +1,131 @@
+#
+#  This file is part of RawTherapee.
+#
+#  Copyright (c) 2004-2011 Gabor Horvath <hgabor@rawtherapee.com>
+#
+#  RawTherapee is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+# 
+#  RawTherapee is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
+
+gtk-color-scheme = "salt_pinch:#95B0DB\nbase_color:#dddddd\nfg_color:#0A0A0A\ntooltip_fg_color:#000000\nselected_bg_color:#95B0DB\nselected_fg_color:#FFFFFF\ntext_color:#000000\nbg_color:#A1A1A1\ntooltip_bg_color:#F5F5B5"
+
+style "clearlooks-default" {
+	xthickness = 1
+	ythickness = 1
+
+	#######################
+	# Style Properties
+	#######################
+	GtkButton::child-displacement-x = 0
+	GtkButton::child-displacement-y = 0
+	GtkButton::default-border = { 0, 0, 0, 0 }
+	GtkButton::image-spacing = 1
+	GtkToolButton::icon-spacing = 1
+
+	GtkCheckButton::indicator-size = 12
+
+	GtkPaned::handle-size = 3
+
+	GtkRange::slider-width = 12
+	GtkRange::stepper-size = 12
+
+	GtkScale::slider-width = 8
+	GtkScrollbar::slider-width = 12
+
+	GtkMenuBar::internal-padding = 0
+	GtkExpander::expander-size = 11
+	GtkExpander::expander-spacing = 0
+	GtkToolbar::internal-padding = 0
+	GtkTreeView::expander-size = 10
+
+	GtkMenu::horizontal-padding = 0
+	GtkMenu::vertical-padding = 0
+
+	GtkNotebook::tab-curvature = 0
+	
+	GtkEntry::progress-border = { 2, 2, 2, 2 }
+
+}
+
+style "wide" {
+	xthickness = 1
+	ythickness = 1
+}
+
+style "wider" {
+	xthickness = 2
+	ythickness = 2
+}
+
+style "clearlooks-entry" {
+	xthickness = 1
+	ythickness = 1
+}
+style "clearlooks-scale" {
+	xthickness = 1
+	ythickness = 1
+}
+
+style "clearlooks-scrollbar" {
+	xthickness = 1
+	ythickness = 1
+}
+
+style "clearlooks-button" {
+	xthickness = 0
+	ythickness = 0
+}
+
+# The color is changed by the notebook_bg style, this style
+# changes the x/ythickness
+style "clearlooks-notebook" {
+	xthickness = 1
+	ythickness = 1
+}
+
+
+style "clearlooks-menu" {
+	xthickness = 0
+	ythickness = 0
+}
+
+style "clearlooks-menu_item" {
+	xthickness = 2
+	ythickness = 3
+}
+
+# This style is there to modify the separator menu items. The goals are:
+# 1. Get a specific height.
+# 2. The line should go to the edges (ie. no border at the left/right)
+style "clearlooks-separator_menu_item" {
+	xthickness = 1
+	ythickness = 0
+
+	GtkSeparatorMenuItem::horizontal-padding = 0
+	GtkWidget::separator-height = 5
+}
+
+# The almost useless progress bar style
+style "clearlooks-progressbar" {
+	xthickness = 1
+	ythickness = 1
+}
+
+# This style is based on the clearlooks-default style, so that the colors from the button
+# style are overriden again.
+style "clearlooks-treeview_header" {
+	xthickness = 2
+	ythickness = 1
+}
