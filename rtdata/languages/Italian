@@ -2,7 +2,7 @@
 #01 UTF-8(unix mode)
 #02 19-01-2008 v2.3 breek
 #03 01-11-2008 v2.4 pantaraf, chelidon, roberto
-#04 26-08-2011 v3.0 joker, chelidon, ffsup2
+#04 02-09-2011 v3.0 joker, chelidon, ffsup2
 #05 Inserire una nota con la data ad ogni modifica per maggiore chiarezza.
 #06 IMPORTANTE: Contribuisci sul forum di rawtherapee nella pagina di localizzazione italiana se trovi errori http://www.rawtherapee.com/forum/viewtopic.php?p=3354
 ABOUT_TAB_BUILD;Versione
@@ -170,7 +170,7 @@ HISTORY_MSG_116;Affinamento DCB
 ISTORY_MSG_117;Correzione AC Rossa
 HISTORY_MSG_118;Correzione AC Blu
 HISTORY_MSG_119;Filtro rumore a bande
-HISTORY_MSG_11;Curva di tono
+HISTORY_MSG_11;Curva tonale
 HISTORY_MSG_120;Soglia uniform. verde
 HISTORY_MSG_121;AC automatiche
 HISTORY_MSG_122;Dark-Frame automatica
@@ -181,7 +181,7 @@ HISTORY_MSG_12;Esposizione automatica
 HISTORY_MSG_13;Tosaggio - Esposizione
 HISTORY_MSG_14;Luminosità - Luminanza
 HISTORY_MSG_15;Contrasto - Luminanza
-HISTORY_MSG_16;Livello del nero - Luminanza
+HISTORY_MSG_16;Nero - Luminanza
 HISTORY_MSG_17;Compr. alteluci - Luminanza
 HISTORY_MSG_18;Compr. ombre - Luminanza
 HISTORY_MSG_19;Curva per 'L'
@@ -236,7 +236,7 @@ HISTORY_MSG_62;Correzione distorsione dell'obiettivo
 HISTORY_MSG_63;Istantanea selezionata
 HISTORY_MSG_64;Ritaglia
 HISTORY_MSG_65;Correzione aberrazioni cromatiche
-HISTORY_MSG_66;Recupero alteluci
+HISTORY_MSG_66;Ricostruzione alteluci
 HISTORY_MSG_67;Quantità - Recupero alteluci
 HISTORY_MSG_68;Metodo - Ricostruzione alteluci
 HISTORY_MSG_69;Spazio colore di lavoro
@@ -251,7 +251,7 @@ HISTORY_MSG_76;Metadati Exif
 HISTORY_MSG_77;Metadati IPTC 
 HISTORY_MSG_78;Misure specificate per ridimensiona
 HISTORY_MSG_79;Larghezza - Ridimensiona
-HISTORY_MSG_7;Livello del nero - Esposizione
+HISTORY_MSG_7;Nero - Esposizione
 HISTORY_MSG_80;Altezza - Ridimensiona
 HISTORY_MSG_81;Ridimensiona
 HISTORY_MSG_82;Profilo modificato
@@ -283,7 +283,7 @@ HISTORY_SNAPSHOT;Istantanea
 HISTORY_SNAPSHOTS;Istantanee
 ICMPANEL_FILEDLGFILTERANY;Qualsiasi file
 ICMPANEL_FILEDLGFILTERICM;File di Profili ICC
-ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il Gamma
+ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il gamma
 ICMPANEL_INPUTCAMERA;Predefinito della fotocamera
 ICMPANEL_INPUTCUSTOM;Personalizzato
 ICMPANEL_INPUTDLGLABEL;Seleziona il profilo ICC di ingresso...
@@ -662,7 +662,7 @@ TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Autoselezione
 TP_DARKFRAME_LABEL;Fotogramma di fondo (Dark-Frame)
-TP_DEFRINGE_LABEL;Rimozione aloni contrastati (PF)
+TP_DEFRINGE_LABEL;Rimozione aloni contrastati
 TP_DEFRINGE_RADIUS;Raggio
 TP_DEFRINGE_THRESHOLD;Soglia
 TP_DETAIL_AMOUNT;Quantità
@@ -687,14 +687,14 @@ TP_EQUALIZER_LARGEST;estesissima
 TP_EQUALIZER_NEUTRAL;Neutro
 TP_EXPOSCORR_LABEL;Esposizione
 TP_EXPOSURE_AUTOLEVELS;Livelli automatici
-TP_EXPOSURE_BLACKLEVEL;Livello del nero
+TP_EXPOSURE_BLACKLEVEL;Nero
 TP_EXPOSURE_BRIGHTNESS;Luminosità
-TP_EXPOSURE_CLIP;Tosa
-TP_EXPOSURE_COMPRHIGHLIGHTS;Recupero alteluci
+TP_EXPOSURE_CLIP;Tosaggio
+TP_EXPOSURE_COMPRHIGHLIGHTS;Quantità di recupero alteluci
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Soglia di recupero alteluci
 TP_EXPOSURE_COMPRSHADOWS;Recupero ombre
 TP_EXPOSURE_CONTRAST;Contrasto
-TP_EXPOSURE_CURVEEDITOR;Curva di tono
+TP_EXPOSURE_CURVEEDITOR;Curva tonale
 TP_EXPOSURE_EXPCOMP;Compensazione esposizione
 TP_EXPOSURE_LABEL;Esposizione
 TP_EXPOSURE_SATURATION;Saturazione
@@ -719,7 +719,7 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_FILEDLGFILTERANY;Qualsiasi file
 TP_ICM_FILEDLGFILTERICM;File profili ICC
-TP_ICM_GAMMABEFOREINPUT;Il profilo applica il Gamma
+TP_ICM_GAMMABEFOREINPUT;Il profilo applica il gamma
 TP_ICM_INPUTCAMERA;Predefinito della fotocamera
 TP_ICM_INPUTCUSTOM;Personalizzato
 TP_ICM_INPUTDLGLABEL;Seleziona il profilo ICC di ingresso...
@@ -841,3 +841,4 @@ ZOOMPANEL_ZOOM100;Ingrandimento al 100% <b>(scorciatoia: 1)</b>
 ZOOMPANEL_ZOOMFITSCREEN;Adatta allo schermo <b>(scorciatoia: F)</b>
 ZOOMPANEL_ZOOMIN;Ingrandisci <b>(scorciatoia: +)</b>
 ZOOMPANEL_ZOOMOUT;Rimpicciolisci <b>(scorciatoia: -)</b>
+
