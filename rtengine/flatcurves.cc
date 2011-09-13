@@ -290,11 +290,9 @@ void FlatCurve::CtrlPoints_set () {
 	}
     }
 
-    // adding an final horizontal line if necessary
-    if (!periodic && sc_x[--j] != 1.) {
-		poly_x.push_back(1.);
-		poly_y.push_back(sc_y[j]);
-	}
+    // adding the final horizontal segment, always (see under)
+   	poly_x.push_back(3.0);		// 3.0 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
+	poly_y.push_back(sc_y[j-1]);
 
     /*
     // Checking the values
@@ -335,8 +333,9 @@ double FlatCurve::getVal (double t) {
                 k_lo = k;
         }
 
-        double h = poly_x[k_hi] - poly_x[k_lo];
-        return poly_y[k_lo] + (t - poly_x[k_lo]) * ( poly_y[k_hi] - poly_y[k_lo] ) / h;
+        double dx = poly_x[k_hi] - poly_x[k_lo];
+        double dy = poly_y[k_hi] - poly_y[k_lo];
+        return poly_y[k_lo] + (t - poly_x[k_lo]) * dy / dx;
 		break;
     }
     /*case Parametric : {
