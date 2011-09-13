@@ -3,7 +3,7 @@
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
-#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-06-06.
+#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-09-12.
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
@@ -939,91 +939,91 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
-!FILEBROWSER_EXEC_CPB;Run custom profile builder
-!FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
-!FILEBROWSER_POPUPCOLORLABEL;Color label
-!FILEBROWSER_POPUPFILEOPERATIONS;File Operations
-!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
-!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
-!FILEBROWSER_QUERYLABEL; Find:
-!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
-!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
-!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
-!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
-!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
-!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
-!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
-!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
-!HISTOGRAM_BUTTON_BAR;RGB
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTORY_MSG_130;Auto Distorion
-!HISTORY_MSG_131;Noise Reduction Luma
-!HISTORY_MSG_132;Noise Reduction Chroma
-!HISTORY_MSG_133;Gamma
-!HISTORY_MSG_134;Gamma Position
-!HISTORY_MSG_135;Gamma Free
-!HISTORY_MSG_136;Gamma Slope
-!HISTORY_MSG_137;Black level green 1
-!HISTORY_MSG_138;Black level red
-!HISTORY_MSG_139;Black level blue
-!HISTORY_MSG_140;Black level green 2
-!HISTORY_MSG_141;Black level green together
-!HISTORY_MSG_142;Edges sharpening - iterations
-!HISTORY_MSG_143;Edges sharpening - quantity
-!HISTORY_MSG_144;Microcontrast - quantity
-!HISTORY_MSG_145;Microcontrast - uniformity
-!HISTORY_MSG_146;Edges Sharpening
-!HISTORY_MSG_147;Edges sharpening - luminance only
-!HISTORY_MSG_148;Microcontrast
-!HISTORY_MSG_149;Microcontrast - 3x3 matrix
-!HISTORY_MSG_150;Post demosaic artifact/noise reduction
-!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
-!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
-!PARTIALPASTE_SHARPENEDGE;Edges
-!PARTIALPASTE_SHARPENMICRO;Microcontrast
+FILEBROWSER_APPLYPROFILE_PARTIAL;Applicera profil (partiell)
+!FILEBROWSER_EXEC_CPB;Kör Kör custom profile builder
+FILEBROWSER_POPUPCOLORLABEL0;Etikett: Ingen
+FILEBROWSER_POPUPCOLORLABEL1;Etikett: Röd
+FILEBROWSER_POPUPCOLORLABEL2;Etikett: Gul
+FILEBROWSER_POPUPCOLORLABEL3;Etikett: Grön
+FILEBROWSER_POPUPCOLORLABEL4;Etikett: Blå
+FILEBROWSER_POPUPCOLORLABEL5;Etikett: Lila
+FILEBROWSER_POPUPCOLORLABEL;Färgetikett
+FILEBROWSER_POPUPFILEOPERATIONS;Filaktiviteter
+FILEBROWSER_POPUPPROFILEOPERATIONS;Profilaktiviteter
+FILEBROWSER_QUERYBUTTONHINT;Rensa hittafältet
+FILEBROWSER_QUERYHINT;Skriv in en del av filnamnet att söka efter. \nTryck <b>Ctrl-f</b> (i filhanteraren) för att sätta fokus i sökfältet och tryck <b>Enter</b> för att söka
+FILEBROWSER_QUERYLABEL; Hitta:
+FILEBROWSER_SHOWCOLORLABEL1HINT;Visa bilder märkta som röda <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Visa bilder märkta som gula<b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Visa bilder märkta som gröna<b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Visa bilder märkta som blå<b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Visa bilder märkta som lila <b>Alt-5</b>
+FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder <b>6</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Visa bilder som nyligen sparats <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Visa bilder som inte nyligen sparats <b>Alt-6</b>
+FILEBROWSER_SHOWUNCOLORHINT;Visa bilder utan färgetikett <b>Alt-`</b>
+HISTOGRAM_BUTTON_BAR;RGB
+HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer Klicka på höger musknapp på förhandsvisningen för att frysa
+HISTORY_MSG_130;Autodistorion
+HISTORY_MSG_131;Brusreducering, luminans
+HISTORY_MSG_132;Brusreducering, krominans
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Gammaposition
+HISTORY_MSG_135;Gamma, fri
+HISTORY_MSG_136;Gammalutning
+HISTORY_MSG_137;Svartpunktsnivå grön 1
+HISTORY_MSG_138;Svartpunktsnivå röd
+HISTORY_MSG_139;Svartpunktsnivå blå
+HISTORY_MSG_140;Svartpunktsnivå grön 2
+HISTORY_MSG_141;Svartpunktsnivå grön tillsammans
+HISTORY_MSG_142;Kantskärpning - iterationer
+HISTORY_MSG_143;Kantskärpning - mängd
+HISTORY_MSG_144;Mikrokontrast - mängd
+HISTORY_MSG_145;Mikrokontrast - enhetlighet
+HISTORY_MSG_146;Kantskärpning
+HISTORY_MSG_147;Kantskärpning - endast luminans
+HISTORY_MSG_148;Mikrokontrast
+HISTORY_MSG_149;Mikrokontrast- 3x3-matris
+HISTORY_MSG_150;Reducering av artefakter och brus efter demosaicing
+MAIN_MSG_EMPTYFILENAME;Ospecificerat filnamn!
+PARTIALPASTE_RAW_ALLENHANCE;Applicera reducering av artefakter och brus efter demosaicing
+PARTIALPASTE_RAWEXPOS_BLACK;Svärta
+PARTIALPASTE_SHARPENEDGE;Kanter
+PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 !PREFERENCES_CUSTPROFBUILD;Custom image profile builder
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
-!PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_LANGAUTODETECT;Use OS language setting
-!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
-!PREFERENCES_MENUGROUPLABEL;Group Labeling
-!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
-!PREFERENCES_MENUGROUPRANK;Group Ranking
-!PREFERENCES_MENUOPTIONS;Menu Options
-!PREFERENCES_PANFACTORFRAME;Pan rate amplification
-!PREFERENCES_PANFACTORLABEL;Factor
-!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SLIMUI;Slim interface
-!PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
-!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+PREFERENCES_CUSTPROFBUILDHINT;Exekverbar (eller skript) fil som anropas när en ny initial profil skall genereras för en bild. nMottar kommandoradparametrar för att tillåta generering av en regelbaserad .pp3-fil:n[Sökväg Raw/JPG] [Sökväg till standardprofil] [f-nr] [exponering i sek] [brännvidd i mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDPATH;Exekverbar sökväg
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filhanterarens verktygsrad som en rad (avmarkera för lågupplösta skärmar)
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogrammet till vänster
+PREFERENCES_LANGAUTODETECT;Använd oeprativsystemets språkinställning
+PREFERENCES_MENUGROUPFILEOPERATIONS;Gruppera filaktiviteter
+PREFERENCES_MENUGROUPLABEL;Gruppera etikettering
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Gruppera profilaktiviteter
+PREFERENCES_MENUGROUPRANK;Gruppera ranking
+PREFERENCES_MENUOPTIONS;Menyval
+PREFERENCES_PANFACTORFRAME;Förstärkning av panoreringstakten
+PREFERENCES_PANFACTORLABEL;Faktor
+PREFERENCES_SHOWPROFILESELECTOR;Visa profilväljaren
+PREFERENCES_SLIMUI;Slimmat gränssnitt
+PREFERENCES_SQUAREDETAILWINDOW;Kvadratiskt detaljfönster (snabbare)
+PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
+TP_EXPO_AFTER; Efter interpolation (före RGB-konvertering)
 !TP_HLREC_BLEND;Blend
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
-!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
-!TP_RAWEXPOS_BLACKONE;Black Level: Red
-!TP_RAWEXPOS_BLACKS;Black Levels
-!TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
-!TP_RAWEXPOS_BLACKTWO;Black Level: Blue
-!TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
-!TP_RAWEXPOS_TWOGREEN;Two greens together
-!TP_SHARPENEDGE_AMOUNT;Quantity
-!TP_SHARPENEDGE_LABEL;Edges
-!TP_SHARPENEDGE_PASSES;Iterations
-!TP_SHARPENEDGE_THREE;Luminance only
-!TP_SHARPENMICRO_AMOUNT;Quantity
-!TP_SHARPENMICRO_LABEL;Microcontrast
-!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
-!TP_SHARPENMICRO_UNIFORMITY;Uniformity
+TP_ICM_INPUTCAMERAICC;Kamerastandard eller ICC
+TP_RAW_ALLENHANCE;Applicera reducering av artefakter och brus efter demosaicing
+TP_RAWEXPOS_BLACKONE;Svartpunktsnivå: Röd
+TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
+TP_RAWEXPOS_BLACKTHREE;Svartpunktsnivå: Grön 2
+TP_RAWEXPOS_BLACKTWO;Svartpunktsnivå: Blå
+TP_RAWEXPOS_BLACKZERO;Svartpunktsnivå: Grön 1 (ledaren)
+TP_RAWEXPOS_TWOGREEN;Två gröna tillsammans
+TP_SHARPENEDGE_AMOUNT;Mängd
+TP_SHARPENEDGE_LABEL;Kanter
+TP_SHARPENEDGE_PASSES;Iterationer
+TP_SHARPENEDGE_THREE;Endast luminans
+TP_SHARPENMICRO_AMOUNT;Mängd
+TP_SHARPENMICRO_LABEL;Mikrokontrast
+TP_SHARPENMICRO_MATRIX;3×3-matris istället för 5×5
+TP_SHARPENMICRO_UNIFORMITY;Enhetlighet
