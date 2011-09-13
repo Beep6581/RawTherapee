@@ -76,10 +76,10 @@ namespace rtengine {
     	double const increment = 1./hashSize;
     	double milestone = 0.;
 
-    	for (unsigned int i=0; i<(hashSize+1); i++) {
+    	for (unsigned int i=0; i<(hashSize+1);) {
     		while(poly_x[polyIter] <= milestone) ++polyIter;
     		hash[i] = polyIter-1;
-    		milestone += increment;
+    		milestone = (++i)*increment;
     	}
     	hash[hashSize+1] = poly_x.size()-1;
 
