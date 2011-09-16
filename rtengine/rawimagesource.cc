@@ -286,6 +286,11 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     rm/=area;
     gm/=area;
     bm/=area;
+	
+	hlmax[0]=chmax[0]*rm*area;
+	hlmax[1]=chmax[1]*gm*area;
+	hlmax[2]=chmax[2]*bm*area;
+
 
 #ifdef _OPENMP
 #pragma omp parallel
@@ -295,7 +300,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     float* line_red  = new float[imwidth];
     float* line_grn  = new float[imwidth];
     float* line_blue = new float[imwidth];
-
+	//printf("clip[0]=%f  clip[1]=%f  clip[2]=%f\n",hlmax[0],hlmax[1],hlmax[2]);
 
 
 #ifdef _OPENMP
@@ -352,10 +357,10 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				
             }
         }
-		
+
 		//process all highlight recovery other than "Color"
         if (hrp.enabled && hrp.method!="Color")
-			hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip, raw);
+			hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip, raw, hlmax);
 
         transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
 		
@@ -1771,74 +1776,112 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // derived from Dcraw "blend_highlights()"
 //  very effective to reduce (or remove) the magenta, but with levels of grey !
-void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw)
-{
-    const int ColorCount=3;
-    int clip=INT_MAX;
-	
-    // Transform matrixes rgb>lab and back
-    static const float trans[2][ColorCount][ColorCount] =
-    { { { 1,1,1 }, { 1.7320508,-1.7320508,0 }, { -1,-1,2 } },
-    { { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
-    static const float itrans[2][ColorCount][ColorCount] =
-    { { { 1,0.8660254,-0.5 }, { 1,-0.8660254,-0.5 }, { 1,0,1 } },
-    { { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
+void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax)
+	{
+		const int ColorCount=3;
 
+		// Transform matrixes rgb>lab and back
+		static const float trans[2][ColorCount][ColorCount] =
+		{ { { 1,1,1 }, { 1.7320508,-1.7320508,0 }, { -1,-1,2 } },
+			{ { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
+		static const float itrans[2][ColorCount][ColorCount] =
+		{ { { 1,0.8660254,-0.5 }, { 1,-0.8660254,-0.5 }, { 1,0,1 } },
+			{ { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
+		
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
 #define SQR(x) ((x)*(x))
+		
+		
+		float minpt=MIN(MIN(hlmax[0],hlmax[1]),hlmax[2]);
+		//float maxpt=MAX(MAX(hlmax[0],hlmax[1]),hlmax[2]);
+		//float medpt=hlmax[0]+hlmax[1]+hlmax[2]-minpt-maxpt;
+		float maxave=(hlmax[0]+hlmax[1]+hlmax[2])/3;
+		const float clipthresh = 0.95;
+		const float fixthresh = 0.5;
+		const float satthresh = 0.5;
 
-    // Determine the maximum level (clip) of all channels
-    int i;
-    FOREACHCOLOR if (clip > (i = (int) maxval * pre_mul[c] * raw.expos)) clip = i;	
+		float clip[3];
+		FOREACHCOLOR clip[c]=MIN(maxave,hlmax[c]);
+		
+		// Determine the maximum level (clip) of all channels
+		const float clippt = clipthresh*maxval;
+		const float fixpt = fixthresh*minpt;
+		const float desatpt = satthresh*maxave+(1-satthresh)*maxval;
+
 
 #pragma omp parallel for
-    for (int col=0; col<width; col++) {
-        float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
+		for (int col=0; col<width; col++) {
+			float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
+			float L,C,H,Lfrac;
+			
+			// Copy input pixel to rgb so it's easier to access in loops
+			rgb[0] = rin[col]; rgb[1] = gin[col]; rgb[2] = bin[col];
+			
+			// If no channel is clipped, do nothing on pixel
+			int c;
+			for (c=0; c<ColorCount; c++) { if (rgb[c] > clippt) break; }
+			if (c == ColorCount) continue;
+			
+			float clipfrac[3];
+			FOREACHCOLOR clipfrac[c] = MIN(1,rgb[c]/maxave);
+			
+			// Initialize cam with raw input [0] and potentially clipped input [1]
+			FOREACHCOLOR {
+				cam[0][c] = rgb[c];
+				cam[1][c] = MIN(cam[0][c],maxval);
+			}
+			
+			// Calculate the lightness correction ratio (chratio)
+			for (int i=0; i<2; i++) {
+				FOREACHCOLOR {
+					lab[i][c]=0;
+					for (int j=0; j < ColorCount; j++)
+						lab[i][c] += trans[ColorCount-3][c][j] * cam[i][j];
+				}
+				
+				sum[i]=0;
+				for (int c=1; c < ColorCount; c++)
+					sum[i] += SQR(lab[i][c]);
+			}
+			chratio = sqrt(sqrt(sum[1]/sum[0]));
+			
+			// Apply ratio to lightness in lab space
+			for (int c=1; c < ColorCount; c++) 
+				lab[0][c] *= chratio;
+			
+			// Transform back from lab to RGB
+			FOREACHCOLOR {
+				cam[0][c]=0;
+				for (int j=0; j < ColorCount; j++) {
+					cam[0][c] += itrans[ColorCount-3][c][j] * lab[0][j];
+				}
+			}
+			FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
 
-        // Copy input pixel to rgb so it's easier to access in loops
-        rgb[0] = rin[col]; rgb[1] = gin[col]; rgb[2] = bin[col];
-
-        // If no channel is clipped, do nothing on pixel
-        int c;
-        for (c=0; c<ColorCount; c++) { if (rgb[c] > clip) break; }
-        if (c == ColorCount) continue;
-
-        // Initialize cam with raw input [0] and potentially clipped input [1]
-        FOREACHCOLOR {
-            cam[0][c] = rgb[c];
-            cam[1][c] = MIN(cam[0][c],clip);
-        }
-
-        // Calculate the lightness correction ration (chratio)
-        for (int i=0; i<2; i++) {
-            FOREACHCOLOR {
-                lab[i][c]=0;
-                for (int j=0; j < ColorCount; j++)
-                    lab[i][c] += trans[ColorCount-3][c][j] * cam[i][j];
-            }
-
-            sum[i]=0;
-            for (int c=1; c < ColorCount; c++)
-                sum[i] += SQR(lab[i][c]);
-        }
-        chratio = sqrt(sum[1]/sum[0]);
-
-        // Apply ratio to lightness in lab space
-        for (int c=1; c < ColorCount; c++) lab[0][c] *= chratio;
-
-        // Transform back from lab to RGB
-        FOREACHCOLOR {
-            cam[0][c]=0;
-            for (int j=0; j < ColorCount; j++) {
-                cam[0][c] += itrans[ColorCount-3][c][j] * lab[0][j];
-            }
-        }
-        FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
-
-        // Copy converted pixel back
-        rin[col]=rgb[0]; gin[col]=rgb[1]; bin[col]=rgb[2];
-    }
-}
+			// Copy converted pixel back			
+			if (rin[col] > fixpt) {
+				float rfrac = SQR((MIN(clip[0],rin[col])-fixpt)/(clip[0]-fixpt));
+				rin[col]= MIN(maxave,rfrac*rgb[0]+(1-rfrac)*rin[col]);
+			}
+			if (gin[col] > fixpt) {
+				float gfrac = SQR((MIN(clip[1],gin[col])-fixpt)/(clip[1]-fixpt));
+				gin[col]= MIN(maxave,gfrac*rgb[1]+(1-gfrac)*gin[col]); 
+			}
+			if (bin[col] > fixpt) {
+				float bfrac = SQR((MIN(clip[2],bin[col])-fixpt)/(clip[2]-fixpt));
+				bin[col]= MIN(maxave,bfrac*rgb[2]+(1-bfrac)*bin[col]);
+			}
+			
+			if ((L=(rin[col]+gin[col]+bin[col])/3) > desatpt) {
+				Lfrac = MAX(0,(maxave-L)/(maxave-desatpt));
+				C = Lfrac * 1.732050808 * (rin[col] - gin[col]);
+				H = Lfrac * (2 * bin[col] - rin[col] - gin[col]);
+				rin[col] = L - H / 6.0 + C / 3.464101615;
+				gin[col] = L - H / 6.0 - C / 3.464101615;
+				bin[col] = L + H / 3.0;
+			}
+		}
+	}
 
 void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval) {
 
@@ -1932,8 +1975,8 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip,const RAWParams &raw ) {
-
+void RawImageSource::hlRecovery (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip,const RAWParams &raw, float* hlmax ) {
+	
     if (method=="Luminance")
         HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
     else if (method=="CIELab blending")
@@ -1943,7 +1986,7 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
 	else if (method=="Blend")	// derived from Dcraw
 			{	float pre_mul[4];
 				for(int c=0;c<4;c++) pre_mul[c]=ri->get_pre_mul(c);
-				HLRecovery_blend(red, green, blue, width, 65535.0, pre_mul, raw );}
+				HLRecovery_blend(red, green, blue, width, 65535.0, pre_mul, raw, hlmax );}
 
 }
 	

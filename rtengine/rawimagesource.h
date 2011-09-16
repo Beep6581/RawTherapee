@@ -87,7 +87,7 @@ class RawImageSource : public ImageSource {
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
 		int max[3];
-		float chmax[4];
+		float chmax[4],hlmax[4];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;
         bool full;
@@ -115,7 +115,7 @@ class RawImageSource : public ImageSource {
         void hphd_horizontal     (float** hpmap, int row_from, int row_to);
         void hphd_green          (float** hpmap);
         void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
-        void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw);
+        void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
         int  defTransform        (int tran);
         void rotateLine          (float* line, float** channel, int tran, int i, int w, int h);
         void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
@@ -170,7 +170,7 @@ class RawImageSource : public ImageSource {
 	
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
-		static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw);
+		static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
 
     protected:
         typedef unsigned short ushort;
