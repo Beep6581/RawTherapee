@@ -394,6 +394,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
             #endif
 
             if (j!=selected.end()) {
+                if (checkFilter (*j)) numFiltered--;
                 selected.erase (j);
                 notifySelectionListener ();
             }
