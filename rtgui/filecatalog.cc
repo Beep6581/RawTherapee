@@ -533,7 +533,12 @@ void FileCatalog::_refreshProgressBar () {
     	   hbb = Gtk::manage (new Gtk::HBox ());
         if (!previewsToLoad ) {
             hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
-            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER")+" ("+Glib::ustring::format(fileBrowser->getNumFiltered())+"/"+Glib::ustring::format(previewsLoaded)+")"));
+            int filteredCount=fileBrowser->getNumFiltered();
+
+            label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER")+
+                (filteredCount!=previewsLoaded ? " ["+ Glib::ustring::format(filteredCount)+"/" : " (") 
+                + Glib::ustring::format(previewsLoaded) +
+                (filteredCount!=previewsLoaded ? "]" : ")")));
         } else {
             hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU)));
             label = Gtk::manage (new Gtk::Label (M("MAIN_FRAME_FILEBROWSER")+" [" +Glib::ustring::format(std::fixed, std::setprecision(0), std::setw(3), (double)previewsLoaded / previewsToLoad*100 )+"%]" ));
@@ -729,7 +734,11 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
 			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
 				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
 			}
+
+            previewsLoaded--;
         }
+
+        _refreshProgressBar();
         redrawAll ();    
     }
 }
@@ -749,7 +758,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 	fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
 	// open dialog at the 1-st file's path
 	fc.set_filename(tbe[0]->filename);
-	//!!! TOFO prevent dialog closing on "enter" key press
+	//!!! TODO prevent dialog closing on "enter" key press
 
 	bool filecopymovecomplete;
 	int i_copyindex;
@@ -790,6 +799,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 						cacheMgr->renameEntry (src_fPath, tbe[i]->thumbnail->getMD5(), dest_fPath);
 						// remove from browser
 						FileBrowserEntry* t = fileBrowser->delEntry (src_fPath);
+
+                        previewsLoaded--;
 					}
 					else
 						src_file->copy(dest_file);
@@ -826,6 +837,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 			}//while
 		} // i<tbe.size() loop
 		redrawAll ();
+
+        _refreshProgressBar();
 	} // Gtk::RESPONSE_OK
 }
 void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
