@@ -197,7 +197,11 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	int hfh = (height-(height%pitch))/pitch;
 	int hfw = (width-(width%pitch))/pitch;
 	
-	static const int numdirs = 4;
+	static const int numdirs = 4;				
+	
+	static const float threshpct = 0.25;
+	static const float fixthreshpct = 0.7;
+	static const float maxpct = 0.95;
 
 	//%%%%%%%%%%%%%%%%%%%%
 	//for blend algorithm:
@@ -213,7 +217,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%
 
 	
-	float max[3], thresh[3], fixthresh[3];
+	float max[3], thresh[3], fixthresh[3], norm[3];
 		
 	//float red1, green1, blue1;//diagnostic
 	float chmaxalt[4]={0,0,0,0};//diagnostic
@@ -240,39 +244,32 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	static const float threshpct = 0.25;//percentage of channel max above which we have highlights
-	static const float fixthreshpct = 0.7;//percentage of channel max above which we estimate reconstructed highlights
-	static const float maxpct = 0.95;//percentage of channel max above which we consider data to be in clipping range
-	static const float satthreshpct = 0.5;//threshold pct. of clipping above which we desaturate the reconstructed estimate
-	
 	for (int c=0; c<3; c++) {
 		thresh[c] = chmax[c]*threshpct;
 		fixthresh[c] = chmax[c]*fixthreshpct;
-		max[c] = chmax[c]*maxpct;
+		max[c] = chmax[c]*maxpct;//MIN(MIN(chmax[0],chmax[1]),chmax[2])*maxpct;
+		norm[c] = 1.0/(max[c]-fixthresh[c]);
 	}
 	float whitept = MAX(MAX(max[0],max[1]),max[2]);
 	float clippt  = MIN(MIN(max[0],max[1]),max[2]);
-	//float medpt   = max[0]+max[1]+max[2]-whitept-clippt;
-	float maxave=(max[0]+max[1]+max[2])/3;
+	float medpt   = max[0]+max[1]+max[2]-whitept-clippt;
+	float blendpt = blendthresh*clippt;
 	
-	float clip[3];
-	FOREACHCOLOR clip[c]=MIN(maxave,chmax[c]);
-		
-	// Determine the maximum level (clip) of all channels
-	const float fixpt = fixthreshpct*clippt;
-	const float desatpt = satthreshpct*maxave+(1-satthreshpct)*clippt;
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	float sat = ri->get_white();
+	float black = ri->get_black();
+	sat -= black;
+	float camwb[4];
+	for (int c=0; c<4; c++) camwb[c]=ri->get_cam_mul(c);
+	float min = MIN(MIN(camwb[0],camwb[1]),camwb[2]);
 
 	multi_array2D<float,3> channelblur(width,height,ARRAY2D_CLEAR_DATA);
 	
 	multi_array2D<float,5> hilite_full(width,height,ARRAY2D_CLEAR_DATA);
 		
 	// blur RGB channels
-	boxblur2(red  ,channelblur[0],height,width,3);
-	boxblur2(green,channelblur[1],height,width,3);
-	boxblur2(blue ,channelblur[2],height,width,3);
+	boxblur2(red  ,channelblur[0],height,width,4);
+	boxblur2(green,channelblur[1],height,width,4);
+	boxblur2(blue ,channelblur[2],height,width,4);
 	
 	float hipass_sum=0, hipass_norm=0.01;
 	
@@ -506,7 +503,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			//estimate recovered values using modified HLRecovery_blend algorithm
 			
 			float rgb[ColorCount], rgb_blend[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
-			float L,C,H,Lfrac;
 			
 			// Copy input pixel to rgb so it's easier to access in loops
 			rgb[0] = pixel[0]; rgb[1] = pixel[1]; rgb[2] = pixel[2];
@@ -545,40 +541,19 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			}
 			FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
 			
-			// Copy converted pixel back			
-			if (pixel[0] > fixpt) {
-				float rfrac = SQR((MIN(clip[0],pixel[0])-fixpt)/(clip[0]-fixpt));
-				pixel[0]= MIN(maxave,rfrac*rgb[0]+(1-rfrac)*pixel[0]);
-			}
-			if (pixel[1] > fixpt) {
-				float gfrac = SQR((MIN(clip[1],pixel[1])-fixpt)/(clip[1]-fixpt));
-				pixel[1]= MIN(maxave,gfrac*rgb[1]+(1-gfrac)*pixel[1]); 
-			}
-			if (pixel[2] > fixpt) {
-				float bfrac = SQR((MIN(clip[2],pixel[2])-fixpt)/(clip[2]-fixpt));
-				pixel[2]= MIN(maxave,bfrac*rgb[2]+(1-bfrac)*pixel[2]);
-			}
-			
-			if ((L=(pixel[0]+pixel[1]+pixel[2])/3) > desatpt) {
-				Lfrac = MAX(0,(maxave-L)/(maxave-desatpt));
-				C = Lfrac * 1.732050808 * (pixel[0] - pixel[1]);
-				H = Lfrac * (2 * pixel[2] - pixel[0] - pixel[1]);
-				pixel[0] = L - H / 6.0 + C / 3.464101615;
-				pixel[1] = L - H / 6.0 - C / 3.464101615;
-				pixel[2] = L + H / 3.0;
-			}
-			
 			// Copy converted pixel back
-			/*float rfrac = SQR((pixel[0]-clippt)/(chmax[0]-clippt));
-			float gfrac = SQR((pixel[1]-clippt)/(chmax[1]-clippt));
-			float bfrac = SQR((pixel[2]-clippt)/(chmax[2]-clippt));
-			if (pixel[0] > blendthresh*clippt) rgb_blend[0]= rfrac*rgb[0]+(1-rfrac)*pixel[0]; 
-			if (pixel[1] > blendthresh*clippt) rgb_blend[1]= gfrac*rgb[1]+(1-gfrac)*pixel[1]; 
-			if (pixel[2] > blendthresh*clippt) rgb_blend[2]= bfrac*rgb[2]+(1-bfrac)*pixel[2];*/
+			float rfrac = MIN(1,MAX(1,max[0]/medpt)*(pixel[0]-blendpt)/(hlmax[0]-blendpt));
+			float gfrac = MIN(1,MAX(1,max[1]/medpt)*(pixel[1]-blendpt)/(hlmax[1]-blendpt));
+			float bfrac = MIN(1,MAX(1,max[2]/medpt)*(pixel[2]-blendpt)/(hlmax[2]-blendpt));
+			if (pixel[0] > blendpt) rgb_blend[0]= rfrac*rgb[0]+(1-rfrac)*pixel[0]; 
+			if (pixel[1] > blendpt) rgb_blend[1]= gfrac*rgb[1]+(1-gfrac)*pixel[1]; 
+			if (pixel[2] > blendpt) rgb_blend[2]= bfrac*rgb[2]+(1-bfrac)*pixel[2];
 			
 			//end of HLRecovery_blend estimation
 			//%%%%%%%%%%%%%%%%%%%%%%%
-						
+			
+			//float pixref[3]={MIN(Yclip,hfsize[0][i1][j1]),MIN(Yclip,hfsize[1][i1][j1]),MIN(Yclip,hfsize[2][i1][j1])};
+			
 			//there are clipped highlights
 			//first, determine weighted average of unclipped extensions (weighting is by 'hue' proximity)
 			float dirwt, factor, Y, I, Q;
