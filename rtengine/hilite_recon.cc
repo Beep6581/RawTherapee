@@ -41,6 +41,7 @@
 #define MAX(a,b) ((a)<(b)?(b):(a))
 #define MIN(a,b) ((a)>(b)?(b):(a))
 
+#define FOREACHCOLOR for (int c=0; c < ColorCount; c++)				
 
 //#include "RGBdefringe.cc"
 
@@ -196,13 +197,23 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	int hfh = (height-(height%pitch))/pitch;
 	int hfw = (width-(width%pitch))/pitch;
 	
-	static const int numdirs = 4;				
+	static const int numdirs = 4;
+
+	//%%%%%%%%%%%%%%%%%%%%
+	//for blend algorithm:
+	static const float clipthresh = 0.95, blendthresh=1.0;
+	const int ColorCount=3;
+	// Transform matrixes rgb>lab and back
+	static const float trans[2][ColorCount][ColorCount] =
+	{ { { 1,1,1 }, { 1.7320508,-1.7320508,0 }, { -1,-1,2 } },
+		{ { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
+	static const float itrans[2][ColorCount][ColorCount] =
+	{ { { 1,0.8660254,-0.5 }, { 1,-0.8660254,-0.5 }, { 1,0,1 } },
+		{ { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
+	//%%%%%%%%%%%%%%%%%%%%
+
 	
-	static const float threshpct = 0.25;
-	static const float fixthreshpct = 0.7;
-	static const float maxpct = 0.95;
-	
-	float max[3], thresh[3], fixthresh[3], norm[3];
+	float max[3], thresh[3], fixthresh[3];
 		
 	//float red1, green1, blue1;//diagnostic
 	float chmaxalt[4]={0,0,0,0};//diagnostic
@@ -229,31 +240,39 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
+	static const float threshpct = 0.25;//percentage of channel max above which we have highlights
+	static const float fixthreshpct = 0.7;//percentage of channel max above which we estimate reconstructed highlights
+	static const float maxpct = 0.95;//percentage of channel max above which we consider data to be in clipping range
+	static const float satthreshpct = 0.5;//threshold pct. of clipping above which we desaturate the reconstructed estimate
+	
 	for (int c=0; c<3; c++) {
 		thresh[c] = chmax[c]*threshpct;
 		fixthresh[c] = chmax[c]*fixthreshpct;
-		max[c] = chmax[c]*maxpct;//MIN(MIN(chmax[0],chmax[1]),chmax[2])*maxpct;
-		norm[c] = 1.0/(max[c]-fixthresh[c]);
+		max[c] = chmax[c]*maxpct;
 	}
 	float whitept = MAX(MAX(max[0],max[1]),max[2]);
 	float clippt  = MIN(MIN(max[0],max[1]),max[2]);
+	//float medpt   = max[0]+max[1]+max[2]-whitept-clippt;
+	float maxave=(max[0]+max[1]+max[2])/3;
 	
+	float clip[3];
+	FOREACHCOLOR clip[c]=MIN(maxave,chmax[c]);
+		
+	// Determine the maximum level (clip) of all channels
+	const float fixpt = fixthreshpct*clippt;
+	const float desatpt = satthreshpct*maxave+(1-satthreshpct)*clippt;
 	
-	float sat = ri->get_white();
-	float black = ri->get_black();
-	sat -= black;
-	float camwb[4];
-	for (int c=0; c<4; c++) camwb[c]=ri->get_cam_mul(c);
-	float min = MIN(MIN(camwb[0],camwb[1]),camwb[2]);
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	multi_array2D<float,3> channelblur(width,height,ARRAY2D_CLEAR_DATA);
 	
 	multi_array2D<float,5> hilite_full(width,height,ARRAY2D_CLEAR_DATA);
 		
 	// blur RGB channels
-	boxblur2(red  ,channelblur[0],height,width,4);
-	boxblur2(green,channelblur[1],height,width,4);
-	boxblur2(blue ,channelblur[2],height,width,4);
+	boxblur2(red  ,channelblur[0],height,width,3);
+	boxblur2(green,channelblur[1],height,width,3);
+	boxblur2(blue ,channelblur[2],height,width,3);
 	
 	float hipass_sum=0, hipass_norm=0.01;
 	
@@ -469,6 +488,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	
 	const float Yclip = (0.299*max[0] + 0.587*max[1] + 0.114*max[2]);
 	//const float Yclip = 0.3333*(max[0] + max[1] + max[2]);
+	//float sumwt=0, counts=0;
 	
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -477,24 +497,100 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		int i1 = MIN((i-(i%pitch))/pitch,hfh-1);
 		for (int j=0; j<width; j++) {
 			int j1 = MIN((j-(j%pitch))/pitch,hfw-1);
-						
+			
 			float pixel[3]={red[i][j],green[i][j],blue[i][j]};
 			if (pixel[0]<max[0] && pixel[1]<max[1] && pixel[2]<max[2]) continue;//pixel not clipped
 			//if (pixel[0]<fixthresh[0] && pixel[1]<fixthresh[1] && pixel[2]<fixthresh[2]) continue;//pixel not clipped
 			
-			float pixref[3]={MIN(Yclip,hfsize[0][i1][j1]),MIN(Yclip,hfsize[1][i1][j1]),MIN(Yclip,hfsize[2][i1][j1])};
+			//%%%%%%%%%%%%%%%%%%%%%%%
+			//estimate recovered values using modified HLRecovery_blend algorithm
 			
+			float rgb[ColorCount], rgb_blend[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
+			float L,C,H,Lfrac;
+			
+			// Copy input pixel to rgb so it's easier to access in loops
+			rgb[0] = pixel[0]; rgb[1] = pixel[1]; rgb[2] = pixel[2];
+			
+			// Initialize cam with raw input [0] and potentially clipped input [1]
+			FOREACHCOLOR {
+				cam[0][c] = rgb[c];
+				cam[1][c] = MIN(cam[0][c],clippt);
+			}
+			
+			// Calculate the lightness correction ratio (chratio)
+			for (int i=0; i<2; i++) {
+				FOREACHCOLOR {
+					lab[i][c]=0;
+					for (int j=0; j < ColorCount; j++)
+						lab[i][c] += trans[ColorCount-3][c][j] * cam[i][j];
+				}
+				
+				sum[i]=0;
+				for (int c=1; c < ColorCount; c++)
+					sum[i] += SQR(lab[i][c]);
+			}
+			chratio = sqrt(sum[1]/sum[0]);
+			
+			
+			// Apply ratio to lightness in lab space
+			for (int c=1; c < ColorCount; c++) 
+				lab[0][c] *= chratio;
+			
+			// Transform back from lab to RGB
+			FOREACHCOLOR {
+				cam[0][c]=0;
+				for (int j=0; j < ColorCount; j++) {
+					cam[0][c] += itrans[ColorCount-3][c][j] * lab[0][j];
+				}
+			}
+			FOREACHCOLOR rgb[c] = cam[0][c] / ColorCount;
+			
+			// Copy converted pixel back			
+			if (pixel[0] > fixpt) {
+				float rfrac = SQR((MIN(clip[0],pixel[0])-fixpt)/(clip[0]-fixpt));
+				pixel[0]= MIN(maxave,rfrac*rgb[0]+(1-rfrac)*pixel[0]);
+			}
+			if (pixel[1] > fixpt) {
+				float gfrac = SQR((MIN(clip[1],pixel[1])-fixpt)/(clip[1]-fixpt));
+				pixel[1]= MIN(maxave,gfrac*rgb[1]+(1-gfrac)*pixel[1]); 
+			}
+			if (pixel[2] > fixpt) {
+				float bfrac = SQR((MIN(clip[2],pixel[2])-fixpt)/(clip[2]-fixpt));
+				pixel[2]= MIN(maxave,bfrac*rgb[2]+(1-bfrac)*pixel[2]);
+			}
+			
+			if ((L=(pixel[0]+pixel[1]+pixel[2])/3) > desatpt) {
+				Lfrac = MAX(0,(maxave-L)/(maxave-desatpt));
+				C = Lfrac * 1.732050808 * (pixel[0] - pixel[1]);
+				H = Lfrac * (2 * pixel[2] - pixel[0] - pixel[1]);
+				pixel[0] = L - H / 6.0 + C / 3.464101615;
+				pixel[1] = L - H / 6.0 - C / 3.464101615;
+				pixel[2] = L + H / 3.0;
+			}
+			
+			// Copy converted pixel back
+			/*float rfrac = SQR((pixel[0]-clippt)/(chmax[0]-clippt));
+			float gfrac = SQR((pixel[1]-clippt)/(chmax[1]-clippt));
+			float bfrac = SQR((pixel[2]-clippt)/(chmax[2]-clippt));
+			if (pixel[0] > blendthresh*clippt) rgb_blend[0]= rfrac*rgb[0]+(1-rfrac)*pixel[0]; 
+			if (pixel[1] > blendthresh*clippt) rgb_blend[1]= gfrac*rgb[1]+(1-gfrac)*pixel[1]; 
+			if (pixel[2] > blendthresh*clippt) rgb_blend[2]= bfrac*rgb[2]+(1-bfrac)*pixel[2];*/
+			
+			//end of HLRecovery_blend estimation
+			//%%%%%%%%%%%%%%%%%%%%%%%
+						
 			//there are clipped highlights
 			//first, determine weighted average of unclipped extensions (weighting is by 'hue' proximity)
-			float dirwt, totwt=0, factor, Y, I, Q;
-			float clipfix[3]={0,0,0};
+			float dirwt, factor, Y, I, Q;
+			float totwt=0;//0.0003;
+			float clipfix[3]={0,0,0};//={totwt*rgb_blend[0],totwt*rgb_blend[1],totwt*rgb_blend[2]};
 			for (int dir=0; dir<numdirs; dir++) {
 				float Yhi = 0.001+(hilite_dir[dir*4+0][i1][j1] + hilite_dir[dir*4+1][i1][j1] + hilite_dir[dir*4+2][i1][j1]);
-				float Y   = 0.001+(pixref[0]+pixref[1]+pixref[2]);
+				float Y   = 0.001+(rgb_blend[0]+rgb_blend[1]+rgb_blend[2]);
 				if (hilite_dir[dir*4+0][i1][j1]+hilite_dir[dir*4+1][i1][j1]+hilite_dir[dir*4+2][i1][j1]>0.5) {
-					dirwt = invfn[65535*(SQR(pixref[0]/Y-hilite_dir[dir*4+0][i1][j1]/Yhi) + \
-										 SQR(pixref[1]/Y-hilite_dir[dir*4+1][i1][j1]/Yhi) + \
-										 SQR(pixref[2]/Y-hilite_dir[dir*4+2][i1][j1]/Yhi))];
+					dirwt = invfn[65535*(SQR(rgb_blend[0]/Y-hilite_dir[dir*4+0][i1][j1]/Yhi) + \
+										 SQR(rgb_blend[1]/Y-hilite_dir[dir*4+1][i1][j1]/Yhi) + \
+										 SQR(rgb_blend[2]/Y-hilite_dir[dir*4+2][i1][j1]/Yhi))];
 					totwt += dirwt;
 					clipfix[0] += dirwt*hilite_dir[dir*4+0][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
 					clipfix[1] += dirwt*hilite_dir[dir*4+1][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
@@ -504,6 +600,8 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			clipfix[0] /= totwt;
 			clipfix[1] /= totwt;
 			clipfix[2] /= totwt;
+			//sumwt += totwt;
+			//counts ++;
 					
 			//now correct clipped channels
 			if (pixel[0]>max[0] && pixel[1]>max[1] && pixel[2]>max[2]) {
@@ -561,6 +659,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	}
 	
 	if(plistener) plistener->setProgress(1.00);
+	//printf("ave wt=%f\n",sumwt/counts);
 
 	
 	// diagnostic output
