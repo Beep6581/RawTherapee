@@ -143,8 +143,8 @@ RTWindow::RTWindow ()
 		mainBox->pack_start (*mainNB);
 
 		// filling bottom box
-		iFullScreen = new Gtk::Image(argv0+"/images/fullscreen.png");
-		iFullScreen_exit = new Gtk::Image(argv0+"/images/fullscreen_exit.png");
+		iFullscreen = new Gtk::Image(argv0+"/images/fullscreen.png");
+		iFullscreen_exit = new Gtk::Image(argv0+"/images/fullscreen_exit.png");
 
 		Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
 		//Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
@@ -156,7 +156,7 @@ RTWindow::RTWindow ()
 		//btn_fullscreen = Gtk::manage( new Gtk::Button(M("MAIN_BUTTON_FULLSCREEN")));
 		btn_fullscreen = Gtk::manage( new Gtk::Button());
 		btn_fullscreen->set_tooltip_markup (M("MAIN_BUTTON_FULLSCREEN"));
-		btn_fullscreen->set_image (*iFullScreen);
+		btn_fullscreen->set_image (*iFullscreen);
 		btn_fullscreen->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::toggle_fullscreen) );
 #if GTKMM_MINOR_VERSION >= 20
 		if (options.mainNBVertical) {
@@ -415,13 +415,13 @@ void RTWindow::toggle_fullscreen () {
         is_fullscreen = false;
         //btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
         btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_FULLSCREEN"));
-        btn_fullscreen->set_image (*iFullScreen);
+        btn_fullscreen->set_image (*iFullscreen);
     } else {
         fullscreen();
         is_fullscreen = true;
         //btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
         btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_UNFULLSCREEN"));
-        btn_fullscreen->set_image (*iFullScreen_exit);
+        btn_fullscreen->set_image (*iFullscreen_exit);
     }
 }
 
