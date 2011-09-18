@@ -1,8 +1,8 @@
 If you have problems with the compilation, please ask on the appropriated RawTherapee forum :
 http://www.rawtherapee.com/forum/viewforum.php?f=10
 
-Preamble:
----------
+Preamble
+--------
 
 Cmake is actually used to create the Makefiles (scripts that handle the build process) or specific Integrated Developement Environement (IDE) projects.
 It is designed to find all necessary compilation flags for your specific machine, but everything can be overriden.
