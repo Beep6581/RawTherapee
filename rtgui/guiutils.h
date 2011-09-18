@@ -71,6 +71,9 @@ public:
 	}
 };
 
+/**
+ * @brief subclass of Gtk::ScrolledWindow in order to handle the scrollwheel
+ */
 class MyScrolledWindow : public Gtk::ScrolledWindow {
 
 	bool on_scroll_event (GdkEventScroll* event);
@@ -79,6 +82,9 @@ public:
 	MyScrolledWindow();
 };
 
+/**
+ * @brief subclass of Gtk::ComboBox in order to handle the scrollwheel
+ */
 class MyComboBox : public Gtk::ComboBox {
 
 	bool on_scroll_event (GdkEventScroll* event);
@@ -87,6 +93,9 @@ public:
 	MyComboBox ();
 };
 
+/**
+ * @brief subclass of Gtk::ComboBoxText in order to handle the scrollwheel
+ */
 class MyComboBoxText : public Gtk::ComboBoxText {
 
 	bool on_scroll_event (GdkEventScroll* event);
@@ -95,6 +104,9 @@ public:
 	MyComboBoxText ();
 };
 
+/**
+ * @brief subclass of Gtk::SpinButton in order to handle the scrollwheel
+ */
 class MySpinButton : public Gtk::SpinButton {
 
 	bool on_scroll_event (GdkEventScroll* event);
@@ -103,11 +115,17 @@ public:
 	MySpinButton ();
 };
 
+/**
+ * @brief subclass of Gtk::HScale in order to handle the scrollwheel
+ */
 class MyHScale : public Gtk::HScale {
 
 	bool on_scroll_event (GdkEventScroll* event);
 };
 
+/**
+ * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
+ */
 class MyFileChooserButton : public Gtk::FileChooserButton {
 
 protected:
@@ -115,6 +133,30 @@ protected:
 
 public:
 	MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+};
+
+enum TOITypes {
+	TOI_TEXT,
+	TOI_ICON
+};
+
+/**
+ * @brief Handle the switch between text and image to be displayed in the HBox (to be used in a button/toolpanel)
+ */
+class TextOrIcon : public Gtk::HBox {
+
+protected:
+	Gtk::Image* imgIcon;
+	Gtk::Label* label;
+	Glib::ustring filename;
+	Glib::ustring labelText;
+	Glib::ustring tooltipText;
+
+public:
+	TextOrIcon (Glib::ustring filename, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type);
+	~TextOrIcon ();
+
+	void switchTo(TOITypes type);
 };
 
 #endif

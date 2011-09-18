@@ -84,7 +84,7 @@ HistogramPanel::HistogramPanel () {
    showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
    showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
 
-   Gtk::VBox* buttonVBox = Gtk::manage (new Gtk::VBox (false, 2));
+   buttonVBox = Gtk::manage (new Gtk::VBox (false, 2));
    showRed->set_active (true);
    showGreen->set_active (true);
    showBlue->set_active (true);
@@ -192,6 +192,17 @@ void HistogramPanel::pointerMoved (bool validPos, Glib::ustring profile, int x, 
         histogramRGBArea->renderRGBMarks(r, g, b);
         histogramRGBArea->queue_draw ();
     }
+}
+
+/*
+ * Move the vertical button bar to the right side
+ * only allowed values for align are Gtk::ALIGN_LEFT and Gtk::ALIGN_RIGHT
+ */
+void HistogramPanel::reorder (Gtk::AlignmentEnum align) {
+	if (align == Gtk::ALIGN_LEFT)
+		reorder_child(*buttonVBox, 0);
+	else
+		reorder_child(*buttonVBox, 1);
 }
 
 //
@@ -685,7 +696,6 @@ bool HistogramArea::on_expose_event(GdkEventExpose* event) {
 
     return true;
 }
-
 
 bool HistogramArea::on_button_press_event (GdkEventButton* event) {
 

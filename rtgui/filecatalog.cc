@@ -1443,6 +1443,24 @@ void FileCatalog::executeQuery(){
 		FileCatalog::filterChanged ();
 }
 
+void FileCatalog::updateFBQueryTB (bool singleRow) {
+	hbToolBar1->reference();
+	if (singleRow) {
+		bool removed = removeIfThere(this, hbToolBar1, false);
+		if (removed) {
+			buttonBar->pack_start(*hbToolBar1, Gtk::PACK_EXPAND_WIDGET, 0);
+		}
+	}
+	else {
+		bool removed = removeIfThere(buttonBar, hbToolBar1, false);
+		if (removed) {
+			pack_start(*hbToolBar1, Gtk::PACK_SHRINK, 0);
+			reorder_child(*hbToolBar1, 0);
+		}
+	}
+	hbToolBar1->unreference();
+}
+
 void FileCatalog::buttonBrowsePathPressed () {
 	Glib::ustring BrowsePathValue = BrowsePath->get_text();
 	Glib::ustring DecodedPathPrefix="";

@@ -218,6 +218,7 @@ class FileCatalog : public Gtk::VBox,
                 void buttonBrowsePathPressed ();
                 void buttonQueryClearPressed ();
                 void executeQuery ();
+                void updateFBQueryTB (bool singleRow);
 
                 void tbLeftPanel_1_toggled ();
                 void tbLeftPanel_1_visible (bool visible);

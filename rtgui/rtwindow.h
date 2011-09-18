@@ -78,6 +78,10 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         void MoveFileBrowserToMain();
 
    		void updateTPVScrollbar (bool hide);
+   		void updateTPProfileSelector (bool showMe);
+   		void updateHistogramPosition (int oldPosition, int newPosition);
+   		void updateTabsUsesIcons (bool useIcons);
+   		void updateFBQueryTB (bool singleRow);
         bool getIsFullscreen() { return is_fullscreen; }
 };
 

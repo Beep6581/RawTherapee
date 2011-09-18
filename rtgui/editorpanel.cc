@@ -50,13 +50,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     leftbox->set_border_width (2);
     leftbox->set_size_request(100,250);
 
-    if (options.histogramPosition>0) {
-    histogramPanel = Gtk::manage (new HistogramPanel ());
-        if (options.histogramPosition==1) leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 4);
-    } else histogramPanel = NULL;
+    histogramPanel = NULL;
 
     profilep = Gtk::manage (new ProfilePanel ());
-    Gtk::Frame* ppframe = Gtk::manage (new Gtk::Frame ());
+    ppframe = new Gtk::Frame ();
     ppframe->add (*profilep);
     ppframe->set_label (M("PROFILEPANEL_LABEL"));
     //leftbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
@@ -160,7 +157,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     vboxright->set_border_width (2);
 
-    if (options.histogramPosition==2) vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
     if (options.showProfileSelector) vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
     // main notebook
     vboxright->pack_start (*tpc->toolPanelNotebook);
@@ -251,6 +247,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     hpanedr->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &EditorPanel::rightPaneButtonReleased) );
 
     pack_start (*hpanedr);
+
+    updateHistogramPosition (0, options.histogramPosition);
+
     show_all ();
 
     // save as dialog
@@ -270,7 +269,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->addPParamsChangeListener (this);
     iarea->imageArea->setCropGUIListener (tpc->getCropGUIListener());
     iarea->imageArea->setPointerMotionListener (navigator);
-    iarea->imageArea->setPointerMotionHListener (histogramPanel);
     iarea->imageArea->setImageAreaToolListener (tpc);
 
     // initialize components
@@ -321,6 +319,7 @@ EditorPanel::~EditorPanel () {
 
     delete tpc;
 
+    delete ppframe;
     delete leftbox;
     delete vboxright;
     delete saveAsDialog;
@@ -1286,7 +1285,7 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
     tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
 }
 
-bool EditorPanel::CheckSidePanelsVisibility(){
+bool EditorPanel::CheckSidePanelsVisibility() {
 	if(tbTopPanel_1->get_active()==false && tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
 		return false;
 	else
@@ -1304,7 +1303,7 @@ void EditorPanel::toggleSidePanels(){
 	hidehp->set_active (!bAllSidePanelsVisible);
 }
 
-void EditorPanel::toggleSidePanelsZoomFit(){
+void EditorPanel::toggleSidePanelsZoomFit() {
 	toggleSidePanels();
 
 	// fit image preview
@@ -1312,7 +1311,7 @@ void EditorPanel::toggleSidePanelsZoomFit(){
 	// iarea->imageArea->zoomPanel->zoomFitClicked();
 }
 
-void EditorPanel::tbShowHideSidePanels_managestate(){
+void EditorPanel::tbShowHideSidePanels_managestate() {
 	bool bAllSidePanelsVisible;
 	bAllSidePanelsVisible = CheckSidePanelsVisibility();
 	ShowHideSidePanelsconn.block (true);
@@ -1324,4 +1323,77 @@ void EditorPanel::tbShowHideSidePanels_managestate(){
 
 void EditorPanel::updateTPVScrollbar (bool hide) {
 	tpc->updateTPVScrollbar (hide);
+}
+
+void EditorPanel::updateTabsUsesIcons (bool useIcons) {
+	tpc->updateTabsUsesIcons (useIcons);
+}
+
+void EditorPanel::updateProfileSelector (bool showMe) {
+	if (showMe) {
+		// add the profile panel
+		vboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
+		vboxright->reorder_child(*ppframe, 0 + (options.histogramPosition==2?1:0));
+		ppframe->show_all();
+	}
+	else {
+		// remove (but don't delete) the profile panel
+		removeIfThere(vboxright, ppframe, false);
+	}
+}
+
+void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition) {
+
+	switch (newPosition) {
+	case 0:
+		// No histogram
+		if (!oldPosition) {
+			// An histogram actually exist, we delete it
+			if      (oldPosition == 1)
+				removeIfThere(leftbox, histogramPanel, false);
+			else if (oldPosition == 2)
+				removeIfThere(vboxright, histogramPanel, false);
+			delete histogramPanel;
+			histogramPanel = NULL;
+		}
+		// else no need to create it
+		break;
+	case 1:
+		// Histogram on the left pane
+		if (oldPosition == 0) {
+			// There was no Histogram before, so we create it
+			histogramPanel = Gtk::manage (new HistogramPanel ());
+			leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+		}
+		else if (oldPosition == 2) {
+			// The histogram was on the right side, so we move it to the left
+			histogramPanel->reference();
+			removeIfThere(vboxright, histogramPanel, false);
+			leftbox->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+			histogramPanel->unreference();
+		}
+		histogramPanel->reorder(Gtk::ALIGN_LEFT);
+		leftbox->reorder_child(*histogramPanel, 0);
+		break;
+	case 2:
+	default:
+		// Histogram on the right pane
+		if (oldPosition == 0) {
+			// There was no Histogram before, so we create it
+			histogramPanel = Gtk::manage (new HistogramPanel ());
+			vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+		}
+		else if (oldPosition == 1) {
+			// The histogram was on the left side, so we move it to the right
+			histogramPanel->reference();
+			removeIfThere(leftbox, histogramPanel, false);
+			vboxright->pack_start (*histogramPanel, Gtk::PACK_SHRINK, 2);
+			histogramPanel->unreference();
+		}
+		histogramPanel->reorder(Gtk::ALIGN_RIGHT);
+		vboxright->reorder_child(*histogramPanel, 0);
+		break;
+	}
+
+	iarea->imageArea->setPointerMotionHListener (histogramPanel);
 }

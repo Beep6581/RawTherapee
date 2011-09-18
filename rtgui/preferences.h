@@ -134,6 +134,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbHideTPVScrollbar;
     Gtk::CheckButton* ckbSquareDetailWindow;
+    Gtk::CheckButton* ckbUseIconNoText;
 
 
     Options moptions;
