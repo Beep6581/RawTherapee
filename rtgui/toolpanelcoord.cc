@@ -148,48 +148,22 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     rawPanel->pack_start (*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK,4);
     rawPanel->pack_start (*vbPanelEnd[4],Gtk::PACK_SHRINK,4);
 
+    TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
 
-    Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
-	hbe->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_EXPOSURE"))));
-	hbe->set_spacing (2);
-	hbe->set_tooltip_markup (M("MAIN_TAB_EXPOSURE_TOOLTIP"));
-	hbe->show_all ();
-    toolPanelNotebook->append_page (*exposurePanelSW,  *hbe);
+    toiE = Gtk::manage (new TextOrIcon (argv0+"/images/exposure-24.png" , M("MAIN_TAB_EXPOSURE") , M("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
+    toiD = Gtk::manage (new TextOrIcon (argv0+"/images/detail-24.png"   , M("MAIN_TAB_DETAIL")   , M("MAIN_TAB_DETAIL_TOOLTIP")   , type));
+    toiC = Gtk::manage (new TextOrIcon (argv0+"/images/colour-24.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
+    toiT = Gtk::manage (new TextOrIcon (argv0+"/images/transform-24.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
+    toiR = Gtk::manage (new TextOrIcon (argv0+"/images/raw-24.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
+    toiM = Gtk::manage (new TextOrIcon (argv0+"/images/exif-24.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
 
-    Gtk::HBox* hbd = Gtk::manage (new Gtk::HBox ());
-	hbd->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_DETAIL"))));
-	hbd->set_spacing (2);
-	hbd->set_tooltip_markup (M("MAIN_TAB_DETAIL_TOOLTIP"));
-	hbd->show_all ();
-    toolPanelNotebook->append_page (*detailsPanelSW,   *hbd);
+	toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
+	toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
+	toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
+	toolPanelNotebook->append_page (*transformPanelSW, *toiT);
+	toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
+	toolPanelNotebook->append_page (*metadataPanel,    *toiM);
 
-    Gtk::HBox* hbc = Gtk::manage (new Gtk::HBox ());
-	hbc->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_COLOR"))));
-	hbc->set_spacing (2);
-	hbc->set_tooltip_markup (M("MAIN_TAB_COLOR_TOOLTIP"));
-	hbc->show_all ();
-    toolPanelNotebook->append_page (*colorPanelSW,     *hbc);
-
-    Gtk::HBox* hbt = Gtk::manage (new Gtk::HBox ());
-	hbt->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_TRANSFORM"))));
-	hbt->set_spacing (2);
-	hbt->set_tooltip_markup (M("MAIN_TAB_TRANSFORM_TOOLTIP"));
-	hbt->show_all ();
-    toolPanelNotebook->append_page (*transformPanelSW, *hbt);
-
-    Gtk::HBox* hbr = Gtk::manage (new Gtk::HBox ());
-	hbr->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_RAW"))));
-	hbr->set_spacing (2);
-	hbr->set_tooltip_markup (M("MAIN_TAB_RAW_TOOLTIP"));
-	hbr->show_all ();
-    toolPanelNotebook->append_page (*rawPanelSW,       *hbr);
-
-    Gtk::HBox* hbm = Gtk::manage (new Gtk::HBox ());
-	hbm->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_TAB_METADATA"))));
-	hbm->set_spacing (2);
-	hbm->set_tooltip_markup (M("MAIN_TAB_METADATA_TOOLTIP"));
-	hbm->show_all ();
-    toolPanelNotebook->append_page (*metadataPanel,    *hbm);
     toolPanelNotebook->set_current_page (0);
 
     toolPanelNotebook->set_scrollable ();
@@ -549,9 +523,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
 				return true;
 			case GDK_m:
-				// !!! this should be improved by detecting if metadataPanel is present,
-				// as this page is removed in BatchToolPanelCoordinator::BatchToolPanelCoordinator
-				if (toolPanelNotebook->get_n_pages()==6){
+				if (metadataPanel){
 					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
 					return true;
 				}
@@ -569,6 +541,22 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide) {
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
 }
 
+void ToolPanelCoordinator::updateTabsHeader (bool useIcons) {
+	TOITypes type = useIcons ? TOI_ICON : TOI_TEXT;
+
+	toiE->switchTo(type);
+    toiD->switchTo(type);
+    toiC->switchTo(type);
+    toiT->switchTo(type);
+    toiR->switchTo(type);
+    if (toiM)
+        toiM->switchTo(type);
+}
+
 void ToolPanelCoordinator::updateTPVScrollbar (bool hide) {
 	updateVScrollbars (hide);
+}
+
+void ToolPanelCoordinator::updateTabsUsesIcons (bool useIcons) {
+	updateTabsHeader (useIcons);
 }

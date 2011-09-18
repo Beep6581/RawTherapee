@@ -466,6 +466,15 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateTPProfileSelector (bool showMe) {
+	epanel->updateProfileSelector (showMe);
+
+	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
+	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
+		((*itr).second)->updateProfileSelector (showMe);
+	}
+}
+
 void RTWindow::updateTPVScrollbar (bool hide) {
 	fpanel->updateTPVScrollbar (hide);
 	epanel->updateTPVScrollbar (hide);
@@ -473,5 +482,28 @@ void RTWindow::updateTPVScrollbar (bool hide) {
 	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
 	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
 		((*itr).second)->updateTPVScrollbar (hide);
+	}
+}
+
+void RTWindow::updateTabsUsesIcons (bool useIcons) {
+	fpanel->updateTabsUsesIcons (useIcons);
+	epanel->updateTabsUsesIcons (useIcons);
+
+	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
+	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
+		((*itr).second)->updateTabsUsesIcons (useIcons);
+	}
+}
+
+void RTWindow::updateFBQueryTB (bool singleRow) {
+	fpanel->fileCatalog->updateFBQueryTB (singleRow);
+}
+
+void RTWindow::updateHistogramPosition (int oldPosition, int newPosition) {
+	epanel->updateHistogramPosition (oldPosition, newPosition);
+
+	std::map<Glib::ustring, EditorPanel*>::const_iterator itr;
+	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
+		((*itr).second)->updateHistogramPosition (oldPosition, newPosition);
 	}
 }

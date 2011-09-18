@@ -436,11 +436,21 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     
     Gtk::HBox* hbworkflow3 = Gtk::manage( new Gtk::HBox () );
     ckbFileBrowserToolbarSingleRow =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")) );
+
     hbworkflow3->pack_start (*ckbFileBrowserToolbarSingleRow, Gtk::PACK_SHRINK, 4);
     vbworkflow->pack_start (*hbworkflow3, Gtk::PACK_SHRINK, 0);
 
+    Gtk::HBox* hbworkflow4 = Gtk::manage( new Gtk::HBox () );
+
+    Gtk::Label* hb4label =  Gtk::manage( new Gtk::Label (M("PREFERENCES_TP_LABEL")) );
+    hbworkflow4->pack_start (*hb4label, Gtk::PACK_SHRINK, 4);
     ckbHideTPVScrollbar =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_TP_VSCROLLBAR")) );
-    vbworkflow->pack_start (*ckbHideTPVScrollbar, Gtk::PACK_SHRINK, 4);
+    hbworkflow4->pack_start (*ckbHideTPVScrollbar, Gtk::PACK_SHRINK, 4);
+
+    ckbUseIconNoText =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_TP_USEICONORTEXT")) );
+    hbworkflow4->pack_start (*ckbUseIconNoText, Gtk::PACK_SHRINK, 4);
+
+    vbworkflow->pack_start (*hbworkflow4, Gtk::PACK_SHRINK, 4);
 
     fworklflow->add (*vbworkflow);
     mvbsd->pack_start (*fworklflow, Gtk::PACK_SHRINK, 4);
@@ -1042,6 +1052,7 @@ void Preferences::storePreferences () {
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.hideTPVScrollbar = ckbHideTPVScrollbar->get_active();
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
+    moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
     // Sounds
     moptions.sndEnable = ckbSndEnable->get_active ();
@@ -1155,6 +1166,7 @@ void Preferences::fillPreferences () {
     ckbSquareDetailWindow->set_active(moptions.squareDetailWindow);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
+    ckbUseIconNoText->set_active(moptions.UseIconNoText);
 
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();
@@ -1328,10 +1340,27 @@ void Preferences::workflowUpdate (){
         else
            parent->epanel->show_all();
     }
-    if (moptions.hideTPVScrollbar != options.hideTPVScrollbar) {
+    if(moptions.hideTPVScrollbar != options.hideTPVScrollbar) {
     	// Update the tool panels
    		parent->updateTPVScrollbar (moptions.hideTPVScrollbar);
     }
+    if(moptions.UseIconNoText != options.UseIconNoText) {
+    	// Update the tool's tab titles
+    	parent->updateTabsUsesIcons(moptions.UseIconNoText);
+    }
+    if(moptions.FileBrowserToolbarSingleRow != options.FileBrowserToolbarSingleRow) {
+    	// Update the position of the Query toolbar
+    	parent->updateFBQueryTB(moptions.FileBrowserToolbarSingleRow);
+    }
+    if(moptions.histogramPosition != options.histogramPosition) {
+    	// Update the position of the Histogram
+    	parent->updateHistogramPosition(options.histogramPosition, moptions.histogramPosition);
+    }
+    if(moptions.showProfileSelector != options.showProfileSelector) {
+    	// Update the position of the Profile selector
+    	parent->updateTPProfileSelector(moptions.showProfileSelector);
+    }
+
 }
 
 void Preferences::switchFontTo(Glib::ustring newFont) {

@@ -155,6 +155,7 @@ class Options {
     bool squareDetailWindow;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
+    bool UseIconNoText;
 
     bool menuGroupRank;
     bool menuGroupLabel;

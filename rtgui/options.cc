@@ -154,6 +154,7 @@ void Options::setDefaults () {
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = true;
     hideTPVScrollbar = false;
+    UseIconNoText = true;
     squareDetailWindow = false;
     menuGroupRank = true;
     menuGroupLabel = true;
@@ -405,6 +406,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "SquareDetailWindow"))  squareDetailWindow  = keyFile.get_boolean ("GUI", "SquareDetailWindow");
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
     if (keyFile.has_key ("GUI", "HideTPVScrollbar"))    hideTPVScrollbar    = keyFile.get_boolean ("GUI", "HideTPVScrollbar");
+    if (keyFile.has_key ("GUI", "UseIconNoText"))    UseIconNoText    = keyFile.get_boolean ("GUI", "UseIconNoText");
 }
 
 
@@ -577,6 +579,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "SquareDetailWindow", squareDetailWindow);
     keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
     keyFile.set_boolean ("GUI", "HideTPVScrollbar", hideTPVScrollbar);
+    keyFile.set_boolean ("GUI", "UseIconNoText", UseIconNoText);
 
     //Glib::ArrayHandle<int> crvopen = crvOpen;
     //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

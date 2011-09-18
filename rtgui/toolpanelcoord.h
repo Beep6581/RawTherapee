@@ -120,6 +120,26 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         IPTCPanel* iptcpanel;
         ToolBar* toolBar;
 
+        TextOrIcon* toiE;
+        TextOrIcon* toiD;
+        TextOrIcon* toiC;
+        TextOrIcon* toiT;
+        TextOrIcon* toiR;
+        TextOrIcon* toiM;
+
+        Gtk::Label* labelE;
+        Gtk::Label* labelD;
+        Gtk::Label* labelC;
+        Gtk::Label* labelT;
+        Gtk::Label* labelR;
+        Gtk::Label* labelM;
+
+        Gtk::Image* imgIconE;
+        Gtk::Image* imgIconD;
+        Gtk::Image* imgIconC;
+        Gtk::Image* imgIconT;
+        Gtk::Image* imgIconR;
+        Gtk::Image* imgIconM;
         Gtk::Image* imgPanelEnd[5];
         Gtk::VBox* vbPanelEnd[5];
 
@@ -136,6 +156,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label);
         void foldThemAll (GdkEventButton* event);
         void updateVScrollbars (bool hide);
+        void updateTabsHeader (bool useIcons);
 
     public:
     
@@ -203,6 +224,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return crop; }
 
         void updateTPVScrollbar (bool hide);
+        void updateTabsUsesIcons (bool useIcons);
         bool handleShortcutKey (GdkEventKey* event);
 };
 

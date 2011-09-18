@@ -148,6 +148,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
   protected:
 
 	Gtk::VBox* gfxVBox;
+	Gtk::VBox* buttonVBox;
 	HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
     Gtk::ToggleButton* showRed;
@@ -174,6 +175,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
     // TODO should be protected
     void setHistRGBInvalid ();
 
+    void reorder (Gtk::AlignmentEnum align);
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 };

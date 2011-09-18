@@ -256,3 +256,7 @@ void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 void FilePanel::updateTPVScrollbar (bool hide) {
 	tpc->updateTPVScrollbar (hide);
 }
+
+void FilePanel::updateTabsUsesIcons (bool useIcons) {
+	tpc->updateTabsUsesIcons (useIcons);
+}

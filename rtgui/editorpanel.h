@@ -68,7 +68,8 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
         Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
         Gtk::Image *iShowHideSidePanels;
-        Gtk::VBox* leftbox, *vboxright;
+        Gtk::VBox *leftbox;
+        Gtk::VBox *vboxright;
 
         Gtk::Button* queueimg;
         Gtk::Button* saveimgas;
@@ -85,6 +86,7 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Label* afterLabel;
         Gtk::HBox* beforeAfterBox;
         
+        Gtk::Frame* ppframe;
         ProfilePanel* profilep;
         History* history;
         HistogramPanel* histogramPanel;
@@ -177,7 +179,10 @@ class EditorPanel : public Gtk::VBox,
         bool handleShortcutKey (GdkEventKey* event);
 
         bool getIsProcessing() const { return isProcessing; }
+        void updateProfileSelector(bool showMe);
         void updateTPVScrollbar (bool hide);
+        void updateTabsUsesIcons (bool useIcons);
+        void updateHistogramPosition (int oldPosition, int newPosition);
 
         Gtk::Paned *catalogPane;
 };

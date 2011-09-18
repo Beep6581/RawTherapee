@@ -83,6 +83,7 @@ class FilePanel : public Gtk::HPaned,
 
         bool handleShortcutKey (GdkEventKey* event);
         void updateTPVScrollbar (bool hide);
+        void updateTabsUsesIcons (bool useIcons);
 };
 
 #endif
