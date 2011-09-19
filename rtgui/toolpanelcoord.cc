@@ -310,8 +310,9 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     toneCurve->enableAll ();
     toneCurve->enableListener ();
 
-    exifpanel->setImageData (ipc->getInitialImage()->getMetaData());
-    iptcpanel->setImageData (ipc->getInitialImage()->getMetaData());
+    const rtengine::ImageMetaData* pMetaData=ipc->getInitialImage()->getMetaData();
+    exifpanel->setImageData (pMetaData);
+    iptcpanel->setImageData (pMetaData);
 
     if (ipc) {
         ipc->setAutoExpListener (toneCurve);
@@ -319,7 +320,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (resize);
     }
 
-    icm->setRaw (raw); 
+    icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
     hlrecovery->setRaw (raw);
     hasChanged = true;
 }

@@ -408,14 +408,14 @@ void ICMPanel::opChanged () {
         listener->panelChanged (EvOProfile, onames->get_active_text());
 }
 
-void ICMPanel::setRaw (bool raw) {
+void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
 
     disableListener ();
 
     icamera->set_active (raw);
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
-    icameraICC->set_sensitive (raw);
+    icameraICC->set_sensitive (raw && iccStore->getStdProfile(pMeta->getCamera()) != NULL);
     iembedded->set_sensitive (!raw);  
 
     enableListener ();
