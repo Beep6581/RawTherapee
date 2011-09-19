@@ -24,6 +24,7 @@
 #include <guiutils.h>
 
 #include <toolpanel.h>
+#include <imagedata.h>
 
 class ICMPanelListener {
 
@@ -82,7 +83,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void ipSelectionChanged ();
         void iccTogglesChanged();
 
-        void setRaw (bool raw);
+        void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
         void saveReferencePressed ();
 
         void setICMPanelListener (ICMPanelListener* ipl) { icmplistener = ipl; }
