@@ -1627,7 +1627,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
             }
     } else {
         Imagefloat* imgPreLCMS=NULL;
-        if (cmp.blendCMSMatrix) imgPreLCMS=new Imagefloat(*im);
+        if (cmp.blendCMSMatrix) imgPreLCMS=im->copy();
 
         // use supplied input profile
 		// color space transform is expecting data in the range (0,1)
@@ -1661,6 +1661,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         cmsDeleteTransform(hTransform);
 
 		// restore normalization to the range (0,65535) and blend matrix colors if LCMS is clipping
+        const float RecoverTresh = 65535.0 * 0.98;  // just the last few percent highlights are merged
         #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
@@ -1670,21 +1671,43 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
                 if (cmp.blendCMSMatrix) {
                     // Red
-                    if (im->r[h][w]>65534.9) {
-                        float f = mat[0][0]*imgPreLCMS->r[h][w] + mat[0][1]*imgPreLCMS->g[h][w] + mat[0][2]*imgPreLCMS->b[h][w];
-                        if (f>im->r[h][w]) im->r[h][w]=f;
-			}
+                    float red=im->r[h][w];
+                    if (red>RecoverTresh) {
+                        float matrixRed = mat[0][0]*imgPreLCMS->r[h][w] + mat[0][1]*imgPreLCMS->g[h][w] + mat[0][2]*imgPreLCMS->b[h][w];
 
-                    // Green
-                    if (im->g[h][w]>65534.9) {
-                        float f = mat[1][0]*imgPreLCMS->r[h][w] + mat[1][1]*imgPreLCMS->g[h][w] + mat[1][2]*imgPreLCMS->b[h][w];
-                        if (f>im->g[h][w]) im->g[h][w]=f;
+                        if (red>=65535.0)
+                            im->r[h][w] = matrixRed;
+                        else {
+                            float fac = (red - RecoverTresh) / (65535.0 - RecoverTresh);
+                            im->r[h][w] = (1.0-fac) * red + fac * matrixRed;
+                        }
                     }
 
+                    // Green
+                    float green=im->g[h][w];
+                    if (green>RecoverTresh) {
+                        float matrixGreen = mat[1][0]*imgPreLCMS->r[h][w] + mat[1][1]*imgPreLCMS->g[h][w] + mat[1][2]*imgPreLCMS->b[h][w];
+
+                        if (green>=65535.0)
+                            im->g[h][w] = matrixGreen;
+                        else {
+                            float fac = (green - RecoverTresh) / (65535.0 - RecoverTresh);
+                            im->g[h][w] = (1.0-fac) * green + fac * matrixGreen;
+                        }
+                    }
+
+
                     // Blue
-                    if (im->b[h][w]>65534.9) {
-                        float f = mat[2][0]*imgPreLCMS->r[h][w] + mat[2][1]*imgPreLCMS->g[h][w] + mat[2][2]*imgPreLCMS->b[h][w];
-                        if (f>im->b[h][w]) im->b[h][w]=f;
+                    float blue=im->b[h][w];
+                    if (blue>RecoverTresh) {
+                        float matrixBlue = mat[2][0]*imgPreLCMS->r[h][w] + mat[2][1]*imgPreLCMS->g[h][w] + mat[2][2]*imgPreLCMS->b[h][w];
+
+                        if (blue>=65535.0)
+                            im->b[h][w] = matrixBlue;
+                        else {
+                            float fac = (blue - RecoverTresh) / (65535.0 - RecoverTresh);
+                            im->b[h][w] = (1.0-fac) * blue + fac * matrixBlue;
+                        }
                     }
                 }
 			}
