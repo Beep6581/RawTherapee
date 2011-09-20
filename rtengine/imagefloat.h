@@ -53,7 +53,6 @@ class Imagefloat : public ImageIO, public IImagefloat {
   
         Imagefloat ();
         Imagefloat (int width, int height);
-        Imagefloat (Imagefloat& other);
         ~Imagefloat ();
 
         Imagefloat* copy ();
