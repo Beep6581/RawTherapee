@@ -867,7 +867,7 @@ void png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
    /* fread() returns 0 on error, so it is OK to store this in a png_size_t
     * instead of an int, which is what fread() actually returns.
     */
-   check = (png_size_t)fread(data, (png_size_t)1, length, (FILE *)png_ptr->io_ptr);
+   check = (png_size_t)fread(data, (png_size_t)1, length, (FILE *)png_get_io_ptr(png_ptr));
 
    if (check != length)
    {
@@ -878,7 +878,7 @@ void png_read_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 void png_write_data(png_structp png_ptr, png_bytep data, png_size_t length) {
    png_uint_32 check;
 
-   check = fwrite(data, 1, length, (FILE *)(png_ptr->io_ptr));
+   check = fwrite(data, 1, length, (FILE *)png_get_io_ptr(png_ptr));
    if (check != length)
    {
       png_error(png_ptr, "Write Error");
@@ -887,7 +887,7 @@ void png_write_data(png_structp png_ptr, png_bytep data, png_size_t length) {
 
 void png_flush(png_structp png_ptr) {
    FILE *io_ptr;
-   io_ptr = (FILE *)CVT_PTR((png_ptr->io_ptr));
+   io_ptr = (FILE *)(png_get_io_ptr(png_ptr));
    if (io_ptr != NULL)
       fflush(io_ptr);
 }
