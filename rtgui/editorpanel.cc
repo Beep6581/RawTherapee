@@ -82,6 +82,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     beforeAfter->set_relief(Gtk::RELIEF_NONE);
     beforeAfter->set_tooltip_markup (M("MAIN_TOOLTIP_TOGGLE"));
 
+    iBeforeLockON = new Gtk::Image(argv0+"/images/lock_on.png");
+    iBeforeLockOFF = new Gtk::Image(argv0+"/images/lock_off.png");
 
     Gtk::VSeparator* vsept = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
@@ -1221,7 +1223,7 @@ void EditorPanel::beforeAfterToggled () {
         return;
 
     removeIfThere (beforeAfterBox,  beforeBox, false);
-    removeIfThere (afterBox,  afterLabel, false);
+    removeIfThere (afterBox,  afterHeaderBox, false);
 
     if (beforeIarea) {
         if (beforeIpc)
@@ -1246,16 +1248,32 @@ void EditorPanel::beforeAfterToggled () {
 
         beforeIarea = new ImageAreaPanel ();
 
+        int HeaderBoxHeight = 15;
+
         beforeLabel = Gtk::manage (new Gtk::Label ());
         beforeLabel->set_markup (Glib::ustring("<b>") + M("GENERAL_BEFORE") + "</b>");
+        tbBeforeLock = Gtk::manage (new Gtk::ToggleButton ());
+        tbBeforeLock->set_tooltip_markup (M("MAIN_TOOLTIP_BEFOREAFTERLOCK"));
+    	tbBeforeLock->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbBeforeLock_toggled) );
+    	beforeHeaderBox = Gtk::manage (new Gtk::HBox ());
+    	beforeHeaderBox->pack_end (*tbBeforeLock, Gtk::PACK_SHRINK, 2);
+        beforeHeaderBox->pack_end (*beforeLabel, Gtk::PACK_SHRINK, 2);
+        beforeHeaderBox->set_size_request(0, HeaderBoxHeight);
+
+        history->blistenerLock ? tbBeforeLock->set_image (*iBeforeLockON):tbBeforeLock->set_image (*iBeforeLockOFF);
+        tbBeforeLock->set_active(history->blistenerLock);
+
         beforeBox = Gtk::manage (new Gtk::VBox ());
-        beforeBox->pack_start (*beforeLabel, Gtk::PACK_SHRINK, 2);
+        beforeBox->pack_start (*beforeHeaderBox, Gtk::PACK_SHRINK, 2);
         beforeBox->pack_start (*beforeIarea);
 
         afterLabel = Gtk::manage (new Gtk::Label ());
         afterLabel->set_markup (Glib::ustring("<b>") + M("GENERAL_AFTER") + "</b>");
-        afterBox->pack_start (*afterLabel, Gtk::PACK_SHRINK, 2);
-        afterBox->reorder_child (*afterLabel, 0);
+        afterHeaderBox = Gtk::manage (new Gtk::HBox ());
+        afterHeaderBox->set_size_request(0, HeaderBoxHeight);
+        afterHeaderBox->pack_end (*afterLabel, Gtk::PACK_SHRINK, 2);
+        afterBox->pack_start (*afterHeaderBox, Gtk::PACK_SHRINK, 2);
+        afterBox->reorder_child (*afterHeaderBox, 0);
 
         beforeAfterBox->pack_start (*beforeBox);
         beforeAfterBox->reorder_child (*beforeBox, 0);
@@ -1276,6 +1294,11 @@ void EditorPanel::beforeAfterToggled () {
         if (history->getBeforeLineParams (params))
             historyBeforeLineChanged (params);
     }
+}
+
+void EditorPanel::tbBeforeLock_toggled () {
+	history->blistenerLock = tbBeforeLock->get_active();
+	tbBeforeLock->get_active()? tbBeforeLock->set_image (*iBeforeLockON) : tbBeforeLock->set_image (*iBeforeLockOFF);
 }
 
 void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,

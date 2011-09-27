@@ -57,6 +57,7 @@ class EditorPanel : public Gtk::VBox,
         Gtk::ToggleButton* tbShowHideSidePanels;
         Gtk::ToggleButton* tbTopPanel_1;
         Gtk::ToggleButton* tbRightPanel_1;
+        Gtk::ToggleButton* tbBeforeLock;
         bool tbTopPanel_1_Active;
         bool tbRightPanel_1_Active;
         //bool bAllSidePanelsVisible;
@@ -68,6 +69,7 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
         Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
         Gtk::Image *iShowHideSidePanels;
+        Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
         Gtk::VBox *leftbox;
         Gtk::VBox *vboxright;
 
@@ -85,6 +87,8 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Label* beforeLabel;
         Gtk::Label* afterLabel;
         Gtk::HBox* beforeAfterBox;
+        Gtk::HBox* beforeHeaderBox;
+        Gtk::HBox* afterHeaderBox;
         
         Gtk::Frame* ppframe;
         ProfilePanel* profilep;
@@ -163,6 +167,7 @@ class EditorPanel : public Gtk::VBox,
         void tbRightPanel_1_toggled ();
         void tbTopPanel_1_toggled ();
         void beforeAfterToggled ();
+        void tbBeforeLock_toggled();
         void saveAsPressed ();
         void queueImgPressed ();
         void sendToGimpPressed ();

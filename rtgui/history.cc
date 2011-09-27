@@ -27,6 +27,8 @@ extern Glib::ustring argv0;
 
 History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1) {
 
+	blistenerLock = false; // sets default that the Before preview will not be locked
+
     // fill history event message array
     for (int i=0; i<NUMOFEVENTS; i++) 
         eventDescrArray[i] = M(Glib::ustring::compose("HISTORY_MSG_%1", i+1));
@@ -145,7 +147,7 @@ void History::historySelectionChanged () {
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
             tpc->profileChange (&params, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
-        if (blistener) {
+        if (blistener && blistenerLock==false) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
             path.prev ();
             iter = historyModel->get_iter (path);
@@ -208,9 +210,9 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
         newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
         if (ev!=EvBookmarkSelected)
             selection->select (newrow);
-        if (blistener && row)
+        if (blistener && row && blistenerLock==false)
             blistener->historyBeforeLineChanged (row[historyColumns.params]);
-        else if (blistener && size==0) 
+        else if (blistener && size==0 && blistenerLock==false)
             blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
     }
     // else just update it
