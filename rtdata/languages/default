@@ -459,6 +459,7 @@ MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged - \nuseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparison can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
 MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder

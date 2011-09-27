@@ -100,6 +100,8 @@ class History : public Gtk::VBox, public PParamsChangeListener {
 
         void undo ();
         void redo ();
+
+        bool blistenerLock;
 };
 
 #endif
