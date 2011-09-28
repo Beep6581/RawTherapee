@@ -65,13 +65,15 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	
 	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
 
-	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, 2.0, false /*multiThread*/);
-	gaussVertical<float>   (lpf, lpf, buffer, width, height, 2.0, false);
+	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false /*multiThread*/);
+	gaussVertical<float>   (lpf, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false);
 
 	delete buffer;
 
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	float impthr = MAX(1.0,5.5-thresh);
 	
 	for (int i=0; i < height; i++)
 		for (int j=0; j < width; j++) {
@@ -83,7 +85,7 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 					hfnbrave += fabs(lab->L[i1][j1]-lpf[i1][j1]);
 				}
 			hfnbrave = (hfnbrave-hpfabs)/24;
-			hpfabs>(hfnbrave*(5.5-thresh)) ? impish[i][j]=1 : impish[i][j]=0;
+			hpfabs>(hfnbrave*impthr) ? impish[i][j]=1 : impish[i][j]=0;
 			
 		}//now impulsive values have been identified
 	
