@@ -3,6 +3,7 @@ file (GLOB IMAGEFILES "images/*.png")
 file (GLOB PROFILEFILES "profiles/*.pp3")
 file (GLOB LANGUAGEFILES "languages/*")
 file (GLOB SOUNDFILES "sounds/*")
+file (GLOB ICCFILES "iccprofiles/*")
 # THEMEDIR includes subfolders for image resources for some themes; doing the normal glob won't work.
 set (THEMEDIR "themes")
 
@@ -29,6 +30,7 @@ install (FILES ${IMAGEFILES} DESTINATION ${DATADIR}/images)
 install (FILES ${LANGUAGEFILES} DESTINATION ${DATADIR}/languages)
 install (FILES ${PROFILEFILES} DESTINATION ${DATADIR}/profiles)
 install (FILES ${SOUNDFILES} DESTINATION ${DATADIR}/sounds)
+install (FILES ${ICCFILES} DESTINATION ${DATADIR}/iccprofiles)
 install (DIRECTORY ${THEMEDIR} DESTINATION ${DATADIR})
 install (FILES ${OPTIONSFILE} DESTINATION ${DATADIR} PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME options)
 
