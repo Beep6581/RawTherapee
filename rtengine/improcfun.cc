@@ -477,14 +477,13 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;
 			
-			if (params->labCurve.saturation) {
+			if (params->labCurve.saturation && fabs(atmp)<32768.0f && fabs(btmp)<32768.0f) {
 				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001);
 				float satfactor = (satcurve[chroma+32768.0f]-32768.0f)/chroma;
 				atmp *= satfactor;
 				btmp *= satfactor;
 			}
 			
-            //double real_c = 1.0;
             if (params->labCurve.avoidclip) {
 				//Luv limiter
 				float Y,u,v;
