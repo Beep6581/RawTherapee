@@ -150,6 +150,10 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
     if (!parent)
         return false;
 
+    // Check if it's already open BEFORE loading the file
+    if (options.tabbedUI && parent->selectEditorPanel(Glib::path_get_basename (thm->getFileName())))
+        return true;
+
     // try to open the file
     bool loading = thm->imageLoad( true );
     if( !loading ) return false;

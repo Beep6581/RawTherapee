@@ -45,6 +45,7 @@ class EditWindow : public Gtk::Window {
 
         void addEditorPanel (EditorPanel* ep,const std::string &name);
         void remEditorPanel (EditorPanel* ep);
+        bool selectEditorPanel(const std::string &name);
 
         bool keyPressed (GdkEventKey* event);
         bool on_delete_event(GdkEventAny* event);

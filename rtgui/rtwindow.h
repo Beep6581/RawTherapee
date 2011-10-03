@@ -51,6 +51,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
         void addEditorPanel (EditorPanel* ep,const std::string &name);
         void remEditorPanel (EditorPanel* ep);
+        bool selectEditorPanel(const std::string &name);
 
         void addBatchQueueJob       (BatchQueueEntry* bqe, bool head=false);
         void addBatchQueueJobs      (std::vector<BatchQueueEntry*> &entries);
