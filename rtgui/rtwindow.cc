@@ -292,6 +292,22 @@ void RTWindow::remEditorPanel (EditorPanel* ep) {
     }
 }
 
+bool RTWindow::selectEditorPanel(const std::string &name) {
+    if (EditWindow::isMultiDisplayEnabled()) {
+        EditWindow * wndEdit = EditWindow::getInstance(this);
+        if (wndEdit->selectEditorPanel(name)) return true;
+    } else {
+        std::map<Glib::ustring, EditorPanel*>::iterator iep = epanels.find(name);
+
+        if (iep!=epanels.end()) {
+            mainNB->set_current_page (mainNB->page_num (*iep->second));
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool RTWindow::keyPressed (GdkEventKey* event) {
 
 	bool ctrl = event->state & GDK_CONTROL_MASK;

@@ -115,13 +115,6 @@ void EditWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 }
 
 void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
-    if (epanels.find(name)!=epanels.end()) {
-        // remove existing panel
-        mainNB->remove_page (*epanels[name]);
-        epanels.erase (name);
-        filesEdited.erase (name);
-    }
-
     ep->setParent (parent);
 
     // construct closeable tab for the image
@@ -160,6 +153,16 @@ void EditWindow::remEditorPanel (EditorPanel* ep) {
 
     mainNB->remove_page (*ep);
     // TODO: save options if wanted
+}
+
+bool EditWindow::selectEditorPanel(const std::string &name) {
+    std::map<Glib::ustring, EditorPanel*>::iterator iep = epanels.find(name);
+
+    if (iep!=epanels.end()) {
+        mainNB->set_current_page (mainNB->page_num (*iep->second));
+        return true;
+    }
+    return false;
 }
 
 bool EditWindow::keyPressed (GdkEventKey* event) {
