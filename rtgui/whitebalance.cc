@@ -18,6 +18,7 @@
  */
 #include <whitebalance.h>
 #include <iomanip>
+#include <options.h>
 
 #define MINTEMP 1200
 #define MAXTEMP 12000
@@ -62,12 +63,11 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
 
   spotsize = Gtk::manage (new MyComboBoxText ());
   spotsize->show ();
-  spotsize->append_text ("2");
-  spotsize->append_text ("4");
-  spotsize->append_text ("8");
-  spotsize->append_text ("16");
-  spotsize->append_text ("32");
-  spotsize->set_active (2);
+  spotsize->append_text ("2");  if (options.whiteBalanceSpotSize==2)  spotsize->set_active(0);
+  spotsize->append_text ("4");  if (options.whiteBalanceSpotSize==4)  spotsize->set_active(1);
+  spotsize->append_text ("8");  if (options.whiteBalanceSpotSize==8)  spotsize->set_active(2);
+  spotsize->append_text ("16"); if (options.whiteBalanceSpotSize==16) spotsize->set_active(3);
+  spotsize->append_text ("32"); if (options.whiteBalanceSpotSize==32) spotsize->set_active(4);
 
   spotbox->pack_end (*spotsize, Gtk::PACK_EXPAND_WIDGET, 4);
   spotbox->pack_end (*slab, Gtk::PACK_SHRINK, 4);
@@ -166,6 +166,7 @@ void WhiteBalance::spotPressed () {
 }
 
 void WhiteBalance::spotSizeChanged () {
+  options.whiteBalanceSpotSize=getSize();
 
   if (wblistener)
     wblistener->spotWBRequested (getSize());

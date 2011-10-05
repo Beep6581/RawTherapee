@@ -155,6 +155,7 @@ void Options::setDefaults () {
     FileBrowserToolbarSingleRow = true;
     hideTPVScrollbar = false;
     UseIconNoText = true;
+    whiteBalanceSpotSize = 8;
     squareDetailWindow = false;
     menuGroupRank = true;
     menuGroupLabel = true;
@@ -422,6 +423,8 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
 
+    if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
+
     // Disabled (default is true) till issues are sorted out
     //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
@@ -598,6 +601,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "B_eta", rtSettings.beta);
     keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
     keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
+    keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
