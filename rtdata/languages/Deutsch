@@ -1,5 +1,3 @@
-
-﻿
 #00 Deutsch
 #01 (keenonkites; Aktualisierte Version für 2.3 beta2)
 #02 (phberlin; basiert auf keenonkites' Erstübersetzung)
@@ -15,7 +13,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Aug 2011: Erweiterungen und Korrekturen (MaWe, 01.09.2011)
+#15 Jan-Sep 2011: Erweiterungen und Korrekturen (MaWe, 06.10.2011)
 #16 Erweiterung (oduis)
 #17 Erweiterung (oduis)
 ABOUT_TAB_BUILD;Version
@@ -198,11 +196,11 @@ HISTOGRAM_BUTTON_RAW;RAW
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramm
 HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein/ausschalten\n\nRechte Maustaste im Bildfenster klicken,\num Anzeige zu fixieren/lösen
-HISTOGRAM_TOOLTIP_B;BLAU-Histogramm ein-/ausblenden
-HISTOGRAM_TOOLTIP_G;GRÜN-Histogramm ein-/ausblenden
-HISTOGRAM_TOOLTIP_L;CIELAB-Luminanz-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_RAW;Zwischen normalen Histogrammen und\nRAW-Histogrammen umschalten
-HISTOGRAM_TOOLTIP_R;ROT-Histogramm ein-/ausblenden
+HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden
 HISTORY_CHANGED;Verändert
 HISTORY_CUSTOMCURVE;Benutzerdefinierte Kurve
 HISTORY_DELSNAPSHOT;Entf.
@@ -241,7 +239,7 @@ HISTORY_MSG_127;Autom. Weißbild
 HISTORY_MSG_128;Weißbild Unschärferadius
 HISTORY_MSG_129;Weißbild Unschärfetyp
 HISTORY_MSG_12;Automatische Belichtung
-HISTORY_MSG_130;Autom. Verzerrung
+HISTORY_MSG_130;Autom. Verzeichnung
 HISTORY_MSG_131;Rauschminderung\nLuminanz
 HISTORY_MSG_132;Rauschminderung\nChrominanz
 HISTORY_MSG_133;Gamma
@@ -255,8 +253,8 @@ HISTORY_MSG_13;Belichtungsbeschneidung
 HISTORY_MSG_140;Schwarzpegel Grün 2
 HISTORY_MSG_141;Schwarzpegel\nGrün-Werte angleichen
 HISTORY_MSG_142;Kantenschärfung\nIterationen
-HISTORY_MSG_143;Kantenschärfung\nQuantität
-HISTORY_MSG_144;Mikrokontrast\nQuantität
+HISTORY_MSG_143;Kantenschärfung\nStärke
+HISTORY_MSG_144;Mikrokontrast\nStärke
 HISTORY_MSG_145;Mikrokontrast\nGleichmäßigkeit
 HISTORY_MSG_146;Kantenschärfung
 HISTORY_MSG_147;Kantenschärfung\nNur Luminanz
@@ -473,6 +471,7 @@ MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt+T</b>
 MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOGGLE_BEFORE_AFTER;V|N
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher</b>-Ansicht <b>sperren</b>/<b>entsperren</b>\n\n<b>Sperren</b>: Friert die <b>Vorher</b>-Ansicht ein, so dass sich die Gesamtwirkung mehrerer Werkzeuge beurteilen lässt; zudem können Vergleiche zu jedem Stand der Historie angestellt werden\n\n<b>Entsperren</b>: Die <b>Vorher</b>-Ansicht bleibt stets ein Änderungsschritt hinter der <b>Nachher</b>-Ansicht zurück, so dass die Auswirkung des zuletzt angewendeten Werkzeugs ersichtlich wird
 MAIN_TOOLTIP_HIDEFP;Unteres Bedienfeld ein-/ausblenden (Verzeichnis- und Datei-Browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (einschließlich der Historie) <b>L</b> / <b>Strg+L</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten <b>&lt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
@@ -592,7 +591,7 @@ PREFERENCES_CMETRICINTENT;Farbraumtransformation
 PREFERENCES_CUSTPROFBUILD;Benutzerdefinierter Bildprofilgenerator
 PREFERENCES_CUSTPROFBUILDHINT;Anwendung (oder Skript) zur Erzeugung eines neuen Profils für ein Bild. Folgende Kommandozeilenparameter zur regelbasierten *.PP3-Erzeugung werden übergeben:\n[Pfad RAW/JPEG] [Pfad vorgegebenes Profil] [Blende] [Belichtungszeit in s] [Brennweite in mm] [ISO] [Objektiv] [Kamera]
 PREFERENCES_CUSTPROFBUILDPATH;Anwendungspfad
-PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transp. für Ausschnittsmaske
+PREFERENCES_CUTOVERLAYBRUSH;Farbe/Transparenz für Schnittmaske
 PREFERENCES_DARKFRAME;Dunkelbild
 PREFERENCES_DARKFRAMEFOUND;Gefunden
 PREFERENCES_DARKFRAMESHOTS;Aufnahmen
@@ -653,7 +652,7 @@ PREFERENCES_OUTDIRTEMPLATEHINT;Erzeugte Dateien gemäß Vorlage benennen und abl
 PREFERENCES_OUTDIRTEMPLATE;Vorlage verwenden
 PREFERENCES_OVERLAY_FILENAMES;Dateiname und Informationen überlagert über Bild
 PREFERENCES_OVERWRITEOUTPUTFILE;Bestehende Ausgabedateien überschreiben
-PREFERENCES_PANFACTORFRAME;Drag'n'Drop im Detailfenster
+PREFERENCES_PANFACTORFRAME;Hand-Werkzeug
 PREFERENCES_PANFACTORLABEL;Schrittweite
 PREFERENCES_PARSEDEXTADD;Dateityp\nhinzufügen
 PREFERENCES_PARSEDEXTADDHINT;Nebenstehenden Dateityp (Extension) der obigen Liste hinzufügen
@@ -694,6 +693,9 @@ PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_OUTPUT;Ausgabe
 PREFERENCES_TAB_SOUND;Systemklänge
 PREFERENCES_THUMBSIZE;Größe der Vorschau
+PREFERENCES_TP_LABEL;Werkzeugbereich:
+PREFERENCES_TP_USEICONORTEXT;Symbole statt Text in Karteireitern
+PREFERENCES_TP_VSCROLLBAR;Keine vertikale Laufleiste
 PREFERENCES_TUNNELMETADATA;IPTC/XMP unverändert in Ausgabedatei kopieren (falls Tagging mittels anderer Software)
 PREFERENCES_USESYSTEMTHEME;Systemoberfläche
 PREFERENCES_WORKFLOW;Layout
@@ -746,17 +748,17 @@ SAVEDLG_SAVEIMMEDIATELY;Sofort speichern
 SAVEDLG_SAVESPP;Prozessparameter mit dem Bild speichern
 SAVEDLG_TIFFFILTER;TIFF-Datei
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen <b>C</b>\n\n(Zum Verschieben des Ausschnitts die Umschalttaste gedrückt halten) 
+TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen <b>C</b>\n\n(Zum Verschieben des Ausschnitts muss die Umschalttaste gedrückt gehalten werden) 
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug <b>H</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Leitlinie wählen <b>S</b>
 TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen <b>W</b>
 TP_CACORRECTION_BLUE;Blau
 TP_CACORRECTION_LABEL;Farbsaum entfernen
 TP_CACORRECTION_RED;Rot
-TP_CHMIXER_BLUE;Blau
-TP_CHMIXER_GREEN;Grün
+TP_CHMIXER_BLUE;Blau-Kanal
+TP_CHMIXER_GREEN;Grün-Kanal
 TP_CHMIXER_LABEL;Kanal-Mixer
-TP_CHMIXER_RED;Rot
+TP_CHMIXER_RED;Rot-Kanal
 TP_CHROMATABERR_LABEL;Chromatische Aberration
 TP_COARSETRAF_DEGREE;Grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontal spiegeln
@@ -816,7 +818,7 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Schwellenwert
 TP_DISTORTION_AMOUNT;Stärke
 TP_DISTORTION_AUTO;Automatische Verzeichnungskorrektur
-TP_DISTORTION_AUTO_TIP;Linsenverzerrungen automatisch korrigieren (nur für bestimmte Kameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
+TP_DISTORTION_AUTO_TIP;Linsenverzeichnungen automatisch korrigieren (nur für bestimmte Kameras, z.B. Micro 4/3, einige Kompaktkameras, usw.)\n\n(Diese Funktion befindet sich noch im Experimentierstadium)
 TP_DISTORTION_LABEL;Verzeichnungskorrektur
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
@@ -959,7 +961,7 @@ TP_SHADOWSHLIGHTS_LOCALCONTR;Lokaler Kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radius
 TP_SHADOWSHLIGHTS_SHADOWS;Schatten
 TP_SHADOWSHLIGHTS_SHTONALW;Farbtonbereich für Schatten
-TP_SHARPENEDGE_AMOUNT;Quantität
+TP_SHARPENEDGE_AMOUNT;Stärke
 TP_SHARPENEDGE_LABEL;Kantenschärfung
 TP_SHARPENEDGE_PASSES;Iterationen
 TP_SHARPENEDGE_THREE;Nur Luminanz
@@ -978,7 +980,7 @@ TP_SHARPENING_RLD_ITERATIONS;Iterationen
 TP_SHARPENING_RLD;RL-Dekonvolution
 TP_SHARPENING_THRESHOLD;Schwellenwert
 TP_SHARPENING_USM;Unscharfmaskierung
-TP_SHARPENMICRO_AMOUNT;Quantität
+TP_SHARPENMICRO_AMOUNT;Stärke
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
@@ -1018,4 +1020,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
