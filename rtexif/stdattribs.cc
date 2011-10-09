@@ -430,7 +430,7 @@ const TagAttrib exifAttribs[] = {
  {0, 2, 0, 0, 0xA002, "PixelXDimension", &stdInterpreter},
  {0, 2, 0, 0, 0xA003, "PixelYDimension", &stdInterpreter},
  {1, 0, 0, 0, 0xA004, "RelatedSoundFile", &stdInterpreter},
- {0, 1, 0, iopAttribs,  0xA005, "Interoperability", &stdInterpreter},
+  {0, 2, 0, iopAttribs,  0xA005, "Interoperability", &stdInterpreter},  // do not enable, as it causes trouble with FUJI files
  {0, 1, 0, 0, 0xA20B, "FlashEnergy", &stdInterpreter},
  {0, 1, 0, 0, 0xA20C, "SpatialFrequencyResponse", &stdInterpreter},
  {0, 1, 0, 0, 0xA20E, "FocalPlaneXResolution", &stdInterpreter},
