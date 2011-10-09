@@ -30,11 +30,11 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.444 $
-   $Date: 2011/07/23 20:33:32 $
+   $Revision: 1.445 $
+   $Date: 2011/10/07 01:00:37 $
  */
 
-#define DCRAW_VERSION "9.10"
+#define DCRAW_VERSION "9.11"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -2504,7 +2504,7 @@ void CLASS sony_arw2_load_raw()
   merror (data, "sony_arw2_load_raw()");
   for (row=0; row < height; row++) {
     fread (data, 1, raw_width, ifp);
-    for (dp=data, col=0; col < width-30; dp+=16) {
+    for (dp=data, col=0; col < raw_width-30; dp+=16) {
       max = 0x7ff & (val = sget4(dp));
       min = 0x7ff & val >> 11;
       imax = 0x0f & val >> 22;
@@ -2519,7 +2519,7 @@ void CLASS sony_arw2_load_raw()
 	  bit += 7;
 	}
       for (i=0; i < 16; i++, col+=2)
-	BAYER(row,col) = curve[pix[i] << 1] >> 2;
+	if (col < width) BAYER(row,col) = curve[pix[i] << 1] >> 2;
       col -= col & 1 ? 1:31;
     }
   }
@@ -4452,6 +4452,7 @@ void CLASS parse_makernote (int base, int uptag)
    The MakerNote might have its own TIFF header (possibly with
    its own byte-order!), or it might just be a table.
  */
+  if (!strcmp(make,"Nokia")) return;
   fread (buf, 1, 10, ifp);
   if (!strncmp (buf,"KDK" ,3) ||	/* these aren't TIFF tables */
       !strncmp (buf,"VER" ,3) ||
@@ -6388,6 +6389,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { "FUJIFILM FinePix F550EXR", 0, 0,
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
+    { "FUJIFILM FinePix F600EXR", 0, 0,
+	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { "FUJIFILM FinePix X100", 0, 0,  /* RT - Colin Walker */ 
     { 10841,-3288,-807,-4652,12552,2344,-642,1355,7206 } },
     { "Imacon Ixpress", 0, 0,		/* DJC */
@@ -6558,6 +6561,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 9698,-3367,-914,-4706,12584,2368,-837,968,5801 } },
     { "NIKON COOLPIX P7000", 0, 0,
 	{ 11432,-3679,-1111,-3169,11239,2202,-791,1380,4455 } },
+    { "NIKON COOLPIX P7100", 0, 0,
+	{ 11053,-4269,-1024,-1976,10182,2088,-526,1263,4469 } },
     { "OLYMPUS C5050", 0, 0,
 	{ 10508,-3124,-1273,-6079,14294,1901,-1653,2306,6237 } },
     { "OLYMPUS C5060", 0, 0,
@@ -6616,6 +6621,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 11975,-3351,-1184,-4500,12639,2061,-1230,2353,7009 } },
 	{ "OLYMPUS E-PL3", 0, 0, /* RT - Colin Walker */
 	{ 7041,-1794,-336,-3790,11192,2984,-1364,2625,6217 } },
+    { "OLYMPUS E-PM1", 0, 0,
+	{ 7575,-2159,-571,-3722,11341,2725,-1434,2819,6271 } },
     { "OLYMPUS SP350", 0, 0,
 	{ 12078,-4836,-1069,-6671,14306,2578,-786,939,7418 } },
     { "OLYMPUS SP3", 0, 0,
@@ -6712,6 +6719,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 16197,-6146,-1761,-2393,10765,1869,366,2238,5248 } },
     { "LEICA V-LUX 2", 143, 0xfff,
 	{ 16197,-6146,-1761,-2393,10765,1869,366,2238,5248 } },
+    { "Panasonic DMC-FZ150", 143, 0xfff,
+	{ 11904,-4541,-1189,-2355,10899,1662,-296,1586,4289 } },
     { "Panasonic DMC-FX150", 15, 0xfff,
 	{ 9082,-2907,-925,-6119,13377,3058,-1797,2641,5609 } },
     { "Panasonic DMC-G10", 15, 0xf3c, /* RT - Colin Walker */
@@ -6734,14 +6743,18 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } },
     { "Phase One H 20", 0, 0,		/* DJC */
 	{ 1313,1855,-109,-6715,15908,808,-327,1840,6020 } },
+    { "Phase One H 25", 0, 0,
+	{ 2905,732,-237,-8134,16626,1476,-3038,4253,7517 } },
     { "Phase One P 2", 0, 0,
 	{ 2905,732,-237,-8134,16626,1476,-3038,4253,7517 } },
     { "Phase One P 30", 0, 0,
 	{ 4516,-245,-37,-7020,14976,2173,-3206,4671,7087 } },
     { "Phase One P 45", 0, 0,
 	{ 5053,-24,-117,-5684,14076,1702,-2619,4492,5849 } },
+    { "Phase One P40", 0, 0,
+	{ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 } },
     { "Phase One P65", 0, 0,
-	{ 7914,1414,-1190,-8777,16582,2280,-2811,4605,5562 } },
+	{ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 } },
     { "RED ONE", 704, 0xffff,		/* DJC */
 	{ 21014,-7891,-2613,-3056,12201,856,-2203,5125,8042 } },
     { "SAMSUNG EX1", 0, 0x3e00,
@@ -6800,11 +6813,13 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
     { "SONY SLT-A33", 128, 0,
 	{ 6069,-1221,-366,-5221,12779,2734,-1024,2066,6834 } },
-    { "SONY SLT-A35", 128, 0,		/* DJC */
-	{ 4504,-1495,115,-3507,9101,4407,-669,1844,6806 } },
+    { "SONY SLT-A35", 128, 0,
+	{ 5986,-1618,-415,-4557,11820,3120,-681,1404,6971 } },
     { "SONY SLT-A55", 128, 0,
 	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
-    { "SONY SLT-A77V", 128, 0,  /* RT - Colin Walker */
+    { "SONY SLT-A65", 128, 0,
+	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
+    { "SONY SLT-A77", 128, 0,  /* RT - Colin Walker */
     { 5126,-830,-261,-4788,12196,2934,-948,1602,7068 } }
   };
   double cam_xyz[4][3];
@@ -7206,13 +7221,13 @@ void CLASS identify()
     { height  = 2616;   width  = 3896; }
   if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
     { height  = 3124;   width  = 4688; filters = 0x16161616; }
-  if (!strcmp(model,"K-r") || !strcmp(model,"K-x"))
+  if (width == 4352 && (!strcmp(model,"K-r") || !strcmp(model,"K-x")))
 /*RT*/   {			width  = 4308; filters = 0x16161616; }
-  if (!strcmp(model,"K-5"))
+  if (width >= 4960 && !strcmp(model,"K-5"))
     { left_margin = 10; width  = 4950; filters = 0x16161616; }
-  if (!strcmp(model,"K-7"))
+  if (width == 4736 && !strcmp(model,"K-7"))
     { height  = 3122;   width  = 4684; filters = 0x16161616; top_margin = 2; }
-  if (!strcmp(model,"645D"))
+  if (width == 7424 && !strcmp(model,"645D"))
     { height  = 5502;   width  = 7328; filters = 0x61616161; top_margin = 29;
       left_margin = 48; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
@@ -8100,6 +8115,8 @@ wb550:
     adobe_coeff ("SONY","DSC-R1");
     width = 3925;
     order = 0x4d4d;
+  } else if (!strcmp(make,"SONY") && raw_width == 6048) {
+    width -= 24;
   } else if (!strcmp(model,"DSLR-A100")) {
     if (width == 3880) {
       height--;
