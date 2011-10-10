@@ -1,5 +1,5 @@
---- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Sat Oct 08 18:05:56 2011
-+++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Sat Oct 08 18:16:21 2011
+--- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Sun Oct 09 18:44:03 2011
++++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Mon Oct 10 19:12:06 2011
 @@ -1,6 +1,17 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -143,15 +143,6 @@
  
  void CLASS sinar_4shot_load_raw()
  {
-@@ -1731,7 +1741,7 @@
-       if ((r = row-top_margin - (shot >> 1 & 1)) >= height) continue;
-       for (col=0; col < raw_width; col++) {
- 	if ((c = col-left_margin - (shot & 1)) >= width) continue;
--	image[r*width+c][FC(row,col)] = pixel[col];
-+        image[r*width+c][FC(row,col)] = pixel[col];
-       }
-     }
-   }
 @@ -1843,10 +1853,10 @@
    maximum = 0x3ff;
  }
@@ -180,15 +171,6 @@
    cinfo->src->next_input_byte = jpeg_buffer;
    cinfo->src->bytes_in_buffer = nbytes;
    return TRUE;
-@@ -2215,7 +2225,7 @@
-     for (col=0; col < raw_width; col++) {
-       val = curve[pixel[col]];
-       if ((unsigned) (col-left_margin) < width)
--	BAYER(row,col-left_margin) = val;
-+        BAYER(row,col-left_margin) = val;
-       else lblack += val;
-     }
-   }
 @@ -2411,9 +2421,9 @@
    maximum = (1 << (thumb_misc & 31)) - 1;
  }
@@ -210,15 +192,6 @@
    struct decode *cur;
    int i, len;
  
-@@ -3651,7 +3661,7 @@
-       lpass = size*((lev & 1)+1);
-       for (row=0; row < iheight; row++) {
- 	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
--	for (col=0; col < iwidth; col++)
-+        for (col=0; col < iwidth; col++)
- 	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
-       }
-       for (col=0; col < iwidth; col++) {
 @@ -4396,7 +4406,7 @@
    }
  }
@@ -314,14 +287,7 @@
  
    ext  = strrchr (ifname, '.');
    file = strrchr (ifname, '/');
-@@ -5572,13 +5588,14 @@
-   } else
-     while (isdigit(*--jext)) {
-       if (*jext != '9') {
--	(*jext)++;
-+        (*jext)++;
- 	break;
-       }
+@@ -5578,7 +5594,8 @@
        *jext = '0';
      }
    if (strcmp (jname, ifname)) {
@@ -376,15 +342,6 @@
      { "Canon EOS 500D", 0, 0x3479,
  	{ 4763,712,-646,-6821,14399,2640,-1921,3276,6561 } },
      { "Canon EOS 550D", 0, 0x3dd7,
-@@ -6299,7 +6320,7 @@
-     { "Canon PowerShot SX1 IS", 0, 0,
- 	{ 6578,-259,-502,-5974,13030,3309,-308,1058,4970 } },
-     { "Canon PowerShot SX110 IS", 0, 0,	/* DJC */
--	{ 14134,-5576,-1527,-1991,10719,1273,-1158,1929,3581 } },
-+        { 14134,-5576,-1527,-1991,10719,1273,-1158,1929,3581 } },
-     { "CASIO EX-S20", 0, 0,		/* DJC */
- 	{ 11634,-3924,-1128,-4968,12954,2015,-1588,2648,7206 } },
-     { "CASIO EX-Z750", 0, 0,		/* DJC */
 @@ -6370,8 +6391,8 @@
  	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
      { "FUJIFILM FinePix F600EXR", 0, 0,
@@ -396,6 +353,28 @@
      { "Imacon Ixpress", 0, 0,		/* DJC */
  	{ 7025,-1415,-704,-5188,13765,1424,-1248,2742,6038 } },
      { "KODAK NC2000", 0, 0,
+@@ -6470,8 +6491,8 @@
+ 	{ 7702,-2245,-975,-9114,17242,1875,-2679,3055,8521 } },
+     { "NIKON D1", 0, 0, /* multiplied by 2.218750, 1.0, 1.148438 */
+ 	{ 16772,-4726,-2141,-7611,15713,1972,-2846,3494,9521 } },
+-    { "NIKON D200", 0, 0xfbc,
+-	{ 8367,-2248,-763,-8758,16447,2422,-1527,1550,8053 } },
++    { "NIKON D200", 0, 0xfbc,  /* RT */
++	{ 8498,-2633,-295,-5423,12869,2860,-777,1077,8124 } },
+     { "NIKON D2H", 0, 0,
+ 	{ 5710,-901,-615,-8594,16617,2024,-2975,4120,6830 } },
+     { "NIKON D2X", 0, 0,
+@@ -6484,8 +6505,8 @@
+ 	{ 9030,-1992,-715,-8465,16302,2255,-2689,3217,8069 } },
+     { "NIKON D3X", 0, 0,
+ 	{ 7171,-1986,-648,-8085,15555,2718,-2170,2512,7457 } },
+-    { "NIKON D3S", 0, 0,
+-	{ 8828,-2406,-694,-4874,12603,2541,-660,1509,7587 } },
++    { "NIKON D3S", 0, 0,  /* RT */
++	{ 8792,-2663,-344,-5221,12764,2752,-1491,2165,8121 } },
+     { "NIKON D3", 0, 0,
+ 	{ 8139,-2171,-663,-8747,16541,2295,-1925,2008,8093 } },
+     { "NIKON D40X", 0, 0,
 @@ -6502,8 +6523,8 @@
  	{ 8736,-2458,-935,-9075,16894,2251,-1354,1242,8263 } },
      { "NIKON D7000", 0, 0,
@@ -619,15 +598,6 @@
    if (width >= 4960 && !strcmp(model,"K-5"))
      { left_margin = 10; width  = 4950; filters = 0x16161616; }
    if (width == 4736 && !strcmp(model,"K-7"))
-@@ -8517,7 +8544,7 @@
-       for (j=0; j < 3; j++) {
- 	for (num = k=0; k < 3; k++)
- 	  num += xyzd50_srgb[i][k] * inverse[j][k];
--	oprof[pbody[j*3+23]/4+i+2] = num * 0x10000 + 0.5;
-+        oprof[pbody[j*3+23]/4+i+2] = num * 0x10000 + 0.5;
-       }
-     for (i=0; i < phead[0]/4; i++)
-       oprof[i] = htonl(oprof[i]);
 @@ -8816,13 +8843,13 @@
  	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
        else FORCC ppm2[col*colors+c] = curve[image[soff][c]];
