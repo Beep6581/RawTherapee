@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
+#include <shlobj.h>
 #else
 #include <stdio.h>
 #endif
@@ -350,4 +351,23 @@ int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFile
 int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 {
     return ::g_mkdir_with_parents(dirName.c_str(), mode);
+}
+
+Glib::ustring safe_get_user_picture_dir() {
+    #ifdef WIN32
+
+    // get_user_special_dir/pictures crashes on some Windows configurations.
+    // so we use the safe native functions here
+    WCHAR pathW[MAX_PATH]={0};
+	if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_MYPICTURES,false)) {
+        char pathA[MAX_PATH];
+        WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
+        return Glib::ustring(pathA);
+    } else return Glib::ustring("C:\\");
+
+    #else
+
+    return Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES);
+
+    #endif
 }

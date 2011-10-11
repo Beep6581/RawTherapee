@@ -102,7 +102,7 @@ void PlacesBrowser::refreshPlacesList () {
     }
 
     // append pictures directory
-    hfile = Gio::File::create_for_path (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
+    hfile = Gio::File::create_for_path (safe_get_user_picture_dir());
     if (hfile && hfile->query_exists()) {
       try { 
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
