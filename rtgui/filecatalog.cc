@@ -1475,7 +1475,7 @@ void FileCatalog::buttonBrowsePathPressed () {
 	}
 	else if (FirstChar=="!"){ // user's pictures directory
 		//DecodedPathPrefix = g_get_user_special_dir(G_USER_DIRECTORY_PICTURES);
-		DecodedPathPrefix = Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES);
+		DecodedPathPrefix = safe_get_user_picture_dir();
 	}
 
 	if (DecodedPathPrefix!=""){

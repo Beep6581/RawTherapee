@@ -258,7 +258,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
     else
-        saveAsDialog = new SaveAsDialog (Glib::get_user_special_dir (G_USER_DIRECTORY_PICTURES));
+        saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
 

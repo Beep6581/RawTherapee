@@ -39,4 +39,6 @@ bool safe_file_test (const Glib::ustring& filename, Glib::FileTest test);
 int safe_g_remove(const Glib::ustring& filename);
 int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFilename);
 int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode);
+
+Glib::ustring safe_get_user_picture_dir();
 #endif
