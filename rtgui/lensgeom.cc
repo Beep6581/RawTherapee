@@ -18,6 +18,7 @@
  */
 #include <lensgeom.h>
 #include <guiutils.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
@@ -30,7 +31,7 @@ LensGeometry::LensGeometry () : Gtk::VBox(), FoldableToolPanel(this), rlistener(
   pack_start (*fill);
 
   autoCrop = Gtk::manage (new Gtk::Button (M("TP_LENSGEOM_AUTOCROP")));
-  autoCrop->set_image (*Gtk::manage (new Gtk::Image (argv0+"/images/crop_auto_22.png")));
+  autoCrop->set_image (*Gtk::manage (new RTImage ("crop_auto_22.png")));
   pack_start (*autoCrop, Gtk::PACK_SHRINK, 2);
 
   packBox = Gtk::manage (new Gtk::VBox ());

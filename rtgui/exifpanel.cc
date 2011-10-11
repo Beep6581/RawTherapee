@@ -19,6 +19,7 @@
 #include <exifpanel.h>
 #include <safegtk.h>
 #include <guiutils.h>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -46,9 +47,9 @@ ExifPanel::ExifPanel () : idata(NULL) {
    exifTreeModel = Gtk::TreeStore::create(exifColumns);
    exifTree->set_model (exifTreeModel);
 
-   delicon = safe_create_from_file (argv0+"/images/deltags.png");
-   keepicon = safe_create_from_file (argv0+"/images/addtags.png");
-   editicon = safe_create_from_file (argv0+"/images/logoicon16.png");
+   delicon = safe_create_from_file ("deltags.png");
+   keepicon = safe_create_from_file ("addtags.png");
+   editicon = safe_create_from_file ("logoicon16.png");
 
    Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
    Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
@@ -95,12 +96,12 @@ ExifPanel::ExifPanel () : idata(NULL) {
    buttons1->pack_start (*add);
 
    reset = Gtk::manage(new Gtk::Button (M("EXIFPANEL_RESET")));
-   reset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-undo"), Gtk::IconSize (2))));
+   reset->set_image (*Gtk::manage(new RTImage ("gtk-undo-ltr.png", "gtk-undo-rtl.png")));
    reset->set_tooltip_text (M("EXIFPANEL_RESETHINT"));
    buttons2->pack_start (*reset);
 
    resetAll = Gtk::manage(new Gtk::Button (M("EXIFPANEL_RESETALL")));
-   resetAll->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/gtk-undo-ltr.png")));
+   resetAll->set_image (*Gtk::manage(new RTImage ("gtk-undoall-ltr.png", "gtk-undoall-rtl.png")));
    resetAll->set_tooltip_text (M("EXIFPANEL_RESETALLHINT"));
    buttons2->pack_start (*resetAll);
 

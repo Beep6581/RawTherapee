@@ -22,6 +22,7 @@
 #include <multilangmgr.h>
 #include <popupcommon.h>
 #include <safegtk.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
@@ -40,7 +41,7 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 	buttonGroup = Gtk::manage( new Gtk::HBox(false, 0));
 	buttonGroup->pack_start(*button, Gtk::PACK_EXPAND_WIDGET, 0);
 	// Create the list entry
-	imagePaths.clear();
+	imageFilenames.clear();
 	images.clear();
 	sItems.clear();
 	items.clear();
@@ -51,7 +52,7 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 }
 
 PopUpCommon::~PopUpCommon () {
-    for (std::vector<Gtk::Image*>::iterator i = images.begin(); i != images.end(); ++i)
+    for (std::vector<RTImage*>::iterator i = images.begin(); i != images.end(); ++i)
     {
         delete *i;
     }
@@ -68,13 +69,13 @@ PopUpCommon::type_signal_changed PopUpCommon::signal_changed() {
 	return message;
 }
 
-bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
+bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label) {
 	bool added = false;
-	if ( safe_file_test(imagePath, Glib::FILE_TEST_EXISTS) && label.size() ) {
-		imagePaths.push_back(imagePath);
+	if ( label.size() ) {
+		imageFilenames.push_back(fileName);
 		sItems.push_back(label);
 		// Create the image
-		Gtk::Image* newImage = new Gtk::Image(imagePath);
+		RTImage* newImage = new RTImage(fileName);
 		images.push_back(newImage);
 		int currPos = (int)images.size();
 		// Create the menu item
@@ -84,7 +85,7 @@ bool PopUpCommon::addEntry (Glib::ustring imagePath, Glib::ustring label) {
 			// Create the menu on the first item
 			menu = new Gtk::Menu ();
 			// Create the image for the button
-			buttonImage = new Gtk::Image(imagePath);
+			buttonImage = new RTImage(fileName);
 			// Use the first image by default
 			imageContainer->pack_start(*buttonImage,Gtk::PACK_EXPAND_WIDGET);
 			selected = 0;
@@ -124,7 +125,7 @@ bool PopUpCommon::setSelected (int entryNum) {
 		return false;
 	else {
 		// Maybe we could do something better than loading the image file each time the selection is changed !?
-		buttonImage->set(imagePaths.at(entryNum));
+		buttonImage->changeImage(imageFilenames.at(entryNum));
 		selected = entryNum;
 		setButtonHint();
 		return true;

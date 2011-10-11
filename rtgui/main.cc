@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <options.h>
 #include <soundman.h>
+#include <rtimage.h>
 #include "version.h"
 
 #ifndef WIN32
@@ -136,6 +137,8 @@ int main(int argc, char **argv)
        Gtk::RC::set_default_files (rcfiles);
    }
    Gtk::Main m(&argc, &argv);
+
+   RTImage::setPaths(options);
 
 #ifndef WIN32
    // For an unknown reason, gtkmm 2.22 don't know the gtk-button-images property, while it exists in the documentation...

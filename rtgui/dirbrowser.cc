@@ -26,6 +26,7 @@
 
 #include <cstring>
 #include <guiutils.h>
+#include <rtimage.h>
 
 #define CHECKTIME 5000
 extern Glib::ustring argv0;
@@ -54,13 +55,13 @@ DirBrowser::DirBrowser () {
 
 void DirBrowser::fillDirTree () {
 
-  openfolder = safe_create_from_file (argv0+"/images/folder_open.png");
-  closedfolder = safe_create_from_file (argv0+"/images/folder.png");
-  icdrom = safe_create_from_file (argv0+"/images/cdrom.png");
-  ifloppy = safe_create_from_file (argv0+"/images/floppy.png");
-  ihdd = safe_create_from_file (argv0+"/images/hdd.png");
-  iremovable = safe_create_from_file (argv0+"/images/usbpendrive.png");
-  inetwork = safe_create_from_file (argv0+"/images/network.png");
+  openfolder = safe_create_from_file ("folder_open.png");
+  closedfolder = safe_create_from_file ("folder.png");
+  icdrom = safe_create_from_file ("cdrom.png");
+  ifloppy = safe_create_from_file ("floppy.png");
+  ihdd = safe_create_from_file ("hdd.png");
+  iremovable = safe_create_from_file ("usbpendrive.png");
+  inetwork = safe_create_from_file ("network.png");
 
   //Create the Tree model:
   dirTreeModel = Gtk::TreeStore::create(dtColumns);

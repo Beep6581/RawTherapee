@@ -27,6 +27,7 @@
 #include <procevents.h>
 #include <refreshmap.h>
 #include <guiutils.h>
+#include <rtimage.h>
 
 using namespace rtengine::procparams;
 
@@ -122,7 +123,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     // load panel endings
     for (int i=0; i<5; i++) {
 		vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
-		imgPanelEnd[i] = Gtk::manage (new Gtk::Image (argv0+"/images/PanelEnding_01.png"));
+		imgPanelEnd[i] = Gtk::manage (new RTImage("PanelEnding_01.png"));
 		imgPanelEnd[i]->show ();
 		vbPanelEnd[i]->pack_start (*imgPanelEnd[i],Gtk::PACK_SHRINK);
 		vbPanelEnd[i]->show_all();
@@ -150,12 +151,12 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
     TOITypes type = options.UseIconNoText ? TOI_ICON : TOI_TEXT;
 
-    toiE = Gtk::manage (new TextOrIcon (argv0+"/images/exposure-24.png" , M("MAIN_TAB_EXPOSURE") , M("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
-    toiD = Gtk::manage (new TextOrIcon (argv0+"/images/detail-24.png"   , M("MAIN_TAB_DETAIL")   , M("MAIN_TAB_DETAIL_TOOLTIP")   , type));
-    toiC = Gtk::manage (new TextOrIcon (argv0+"/images/colour-24.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
-    toiT = Gtk::manage (new TextOrIcon (argv0+"/images/transform-24.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
-    toiR = Gtk::manage (new TextOrIcon (argv0+"/images/raw-24.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
-    toiM = Gtk::manage (new TextOrIcon (argv0+"/images/exif-24.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
+    toiE = Gtk::manage (new TextOrIcon ("exposure-24.png" , M("MAIN_TAB_EXPOSURE") , M("MAIN_TAB_EXPOSURE_TOOLTIP") , type));
+    toiD = Gtk::manage (new TextOrIcon ("detail-24.png"   , M("MAIN_TAB_DETAIL")   , M("MAIN_TAB_DETAIL_TOOLTIP")   , type));
+    toiC = Gtk::manage (new TextOrIcon ("colour-24.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
+    toiT = Gtk::manage (new TextOrIcon ("transform-24.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
+    toiR = Gtk::manage (new TextOrIcon ("raw-24.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
+    toiM = Gtk::manage (new TextOrIcon ("exif-24.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
 
 	toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
 	toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);

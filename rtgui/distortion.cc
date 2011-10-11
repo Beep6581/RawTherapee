@@ -18,6 +18,7 @@
  */
 #include <distortion.h>
 #include <iomanip>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
@@ -28,7 +29,7 @@ Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
 
     rlistener = NULL;
     autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));
-    autoDistor->set_image (*Gtk::manage (new Gtk::Image (argv0+"/images/distortion_auto.png")));
+    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion_auto.png")));
     autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));
     idConn = autoDistor->signal_pressed().connect( sigc::mem_fun(*this, &Distortion::idPressed) );
     autoDistor->show();

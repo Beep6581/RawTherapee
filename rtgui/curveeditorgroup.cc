@@ -25,6 +25,7 @@
 #include <flatcurveeditorsubgroup.h>
 #include <multilangmgr.h>
 #include <safegtk.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
@@ -90,7 +91,7 @@ void CurveEditorGroup::newLine() {
 			headerBox->pack_start(*curveGroupLabel, Gtk::PACK_SHRINK, 2);
 
 			curve_reset = Gtk::manage (new Gtk::Button ());
-			curve_reset->add (*Gtk::manage (new Gtk::Image (argv0+"/images/undo.png")));
+			curve_reset->add (*Gtk::manage (new RTImage ("default-settings-ltr.png", "default-settings-rtl.png")));
 			curve_reset->set_relief (Gtk::RELIEF_NONE);
 			curve_reset->set_border_width (0);
 			curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
@@ -268,7 +269,7 @@ void CurveEditorGroup::curveResetPressed () {
 
 void CurveEditorGroup::setBatchMode (bool batchMode) {
 	for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
-		(*i)->curveType->addEntry(argv0+"/images/curveType-unchanged.png", M("GENERAL_UNCHANGED"));
+		(*i)->curveType->addEntry("curveType-unchanged.png", M("GENERAL_UNCHANGED"));
 		(*i)->curveType->show();
 	}
 }

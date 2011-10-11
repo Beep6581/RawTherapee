@@ -18,6 +18,7 @@
  */
 #include <whitebalance.h>
 #include <iomanip>
+#include <rtimage.h>
 #include <options.h>
 
 #define MINTEMP 1200
@@ -51,7 +52,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   spotbox->show ();
 
   spotbutton = Gtk::manage (new Gtk::Button (M("TP_WBALANCE_SPOTWB")));
-  Gtk::Image* spotimg = Gtk::manage (new Gtk::Image (argv0+"/images/wbpicker16.png"));
+  Gtk::Image* spotimg = Gtk::manage (new RTImage ("wbpicker16.png"));
   spotimg->show ();
   spotbutton->set_image (*spotimg);
   spotbutton->show ();

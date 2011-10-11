@@ -29,59 +29,55 @@
 #else
 #include <stdio.h>
 #endif
+#include <rtimage.h>
+#include <memory>
 
 
-Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const std::string& filename)
+Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const Glib::ustring& filename)
 {
-		Glib::RefPtr<Gdk::Pixbuf> res;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED        
-    try {
-        res = Gdk::Pixbuf::create_from_file (filename);
-    }
-    catch (Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-#else
-		std::auto_ptr<Glib::Error> error;
-		res = Gdk::Pixbuf::create_from_file (filename, error);
-		if (error.get())
-				printf ("%s\n", error->what().c_str());
-#endif
-	
+	Glib::RefPtr<Gdk::Pixbuf> res;
+	Glib::ustring path = RTImage::findIconAbsolutePath(filename);
+	if (path.length()) {
+		try {
+			res = Gdk::Pixbuf::create_from_file (path);
+		}
+		catch (Glib::Exception& ex) {
+			printf ("ERROR: (ustring) File \"%s\" not found.\n", ex.what().c_str());
+		}
+	}
 	return res;
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& filename)
 {
-  Cairo::RefPtr<Cairo::ImageSurface> res;
-
-  // files_test need a std::string which (as stated in its proto) but will only work if
-  // we use the Glib::ustring filename !?
-  if (!Glib::file_test (filename, Glib::FILE_TEST_EXISTS))  {
-    printf ("ERROR: (ustring) File \"%s\" not found.\n", filename.c_str());
-  } else {
-      try {
-        // create_from_png need a std::string converted from UTF8 with safe_locale_from_utf8
-        res = Cairo::ImageSurface::create_from_png (safe_locale_from_utf8(filename));
-      } catch (...) {}
-  }
-
-  return res;
+	Cairo::RefPtr<Cairo::ImageSurface> res;
+	Glib::ustring path = RTImage::findIconAbsolutePath(filename);
+	if (path.length()) {
+		// files_test need a std::string which (as stated in its proto) but will only work if
+		// we use the Glib::ustring filename !?
+		try {
+			// create_from_png need a std::string converted from UTF8 with safe_locale_from_utf8
+			res = Cairo::ImageSurface::create_from_png (safe_locale_from_utf8(path));
+		} catch (...) {
+			printf("ERROR: (ustring) File \"%s\" not found.\n", path.c_str());
+		}
+	}
+	return res;
 }
 
 Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 {
 		Glib::RefPtr<Gio::FileInfo> info;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED        
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
 		try {	info = file->query_info();	}catch (...) {	}
 #else
 		std::auto_ptr<Glib::Error> error;
 		info = file->query_info("*", Gio::FILE_QUERY_INFO_NONE, error);
-#endif        
+#endif
 		return info;
 }
 
-#ifdef GLIBMM_EXCEPTIONS_ENABLED        
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
 # define SAFE_ENUMERATOR_CODE_START \
 				do{try {	if ((dirList = dir->enumerate_children ())) \
 						for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) {
@@ -99,12 +95,12 @@ Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 
 void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<FileMTimeInfo> &flist)
 {
-    Glib::RefPtr<Gio::FileEnumerator> dirList;
-    if (dir) {
-				SAFE_ENUMERATOR_CODE_START
-						flist.push_back (FileMTimeInfo (removeExtension(info->get_name()), info->modification_time()));
-				SAFE_ENUMERATOR_CODE_END;
-    }
+	Glib::RefPtr<Gio::FileEnumerator> dirList;
+	if (dir) {
+		SAFE_ENUMERATOR_CODE_START
+				flist.push_back (FileMTimeInfo (removeExtension(info->get_name()), info->modification_time()));
+		SAFE_ENUMERATOR_CODE_END;
+	}
 }
 
 /*
@@ -112,16 +108,16 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<FileMTimeIn
  */
 void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &names, const Glib::ustring &directory, const std::vector<Glib::ustring> *extensions)
 {
-    Glib::RefPtr<Gio::FileEnumerator> dirList;
+	Glib::RefPtr<Gio::FileEnumerator> dirList;
 
-    if (dir) {
-    	if (!extensions) {
+	if (dir) {
+		if (!extensions) {
 			SAFE_ENUMERATOR_CODE_START
 				names.push_back (Glib::build_filename (directory, info->get_name()));
 			SAFE_ENUMERATOR_CODE_END;
-    	}
-    	else {
-    		// convert extensions to lowercase in a new vector list
+		}
+		else {
+			// convert extensions to lowercase in a new vector list
 			std::vector<Glib::ustring> lcExtensions;
 			for (unsigned int i=0; i<extensions->size(); i++)
 				lcExtensions.push_back ((*extensions)[i].lowercase());
@@ -145,24 +141,24 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
 				}
 			}
 			SAFE_ENUMERATOR_CODE_END;
-    	}
-    }
+		}
+	}
 }
 
 
 void safe_build_subdir_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustring> &subDirs, bool add_hidden)
 {
-    Glib::RefPtr<Gio::FileEnumerator> dirList;
-    if (dir)
-    {
-        // CD-ROMs with no drive inserted are reported, but do not exist, causing RT to crash
-         if (!safe_file_test(dir->get_path(),Glib::FILE_TEST_EXISTS)) return;
+	Glib::RefPtr<Gio::FileEnumerator> dirList;
+	if (dir)
+	{
+		// CD-ROMs with no drive inserted are reported, but do not exist, causing RT to crash
+		 if (!safe_file_test(dir->get_path(),Glib::FILE_TEST_EXISTS)) return;
 
 				SAFE_ENUMERATOR_CODE_START
 						if (info->get_file_type() == Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || add_hidden))
 								subDirs.push_back (info->get_name());
 				SAFE_ENUMERATOR_CODE_END;
-    }
+	}
 }
 
 /*
@@ -174,22 +170,22 @@ Glib::ustring safe_filename_to_utf8 (const std::string& src)
 	Glib::ustring utf8_str;
 #ifdef WIN32
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
-            try {
-                utf8_str = Glib::locale_to_utf8(src);
-            }
-            catch (const Glib::ConvertError& e) {
-                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
-            }
+	try {
+		utf8_str = Glib::locale_to_utf8(src);
+	}
+	catch (const Glib::ConvertError& e) {
+		utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
+	}
 #else
-            {
-                std::auto_ptr<Glib::Error> error;
-                utf8_str = locale_to_utf8(src, error);
-                if (error.get())
-                    utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
-            }
+	{
+		std::auto_ptr<Glib::Error> error;
+		utf8_str = locale_to_utf8(src, error);
+		if (error.get())
+			utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
+	}
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 #else
-            utf8_str = Glib::filename_to_utf8(src);
+	utf8_str = Glib::filename_to_utf8(src);
 #endif
 	return utf8_str;
 }
@@ -198,40 +194,40 @@ Glib::ustring safe_locale_to_utf8 (const std::string& src)
 {
 	Glib::ustring utf8_str;
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
-            try {
-                utf8_str = Glib::locale_to_utf8(src);
-            }
-            catch (const Glib::ConvertError& e) {
-                utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
-            }
+	try {
+		utf8_str = Glib::locale_to_utf8(src);
+	}
+	catch (const Glib::ConvertError& e) {
+		utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?");
+	}
 #else
-            {
-                std::auto_ptr<Glib::Error> error;
-                utf8_str = locale_to_utf8(src, error);
-                if (error.get())
-                    utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
-            }
+	{
+		std::auto_ptr<Glib::Error> error;
+		utf8_str = locale_to_utf8(src, error);
+		if (error.get())
+			utf8_str = Glib::convert_with_fallback(src, "UTF8", "LATIN1","?", error);
+	}
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 	return utf8_str;
 }
 
 std::string safe_locale_from_utf8 (const Glib::ustring& utf8_str)
 {
-		std::string str;
+	std::string str;
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
-		try {
-            str = Glib::locale_from_utf8(utf8_str);
-        }
-        catch (const Glib::ConvertError& e) {
-            //str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?");
-        }
+	try {
+		str = Glib::locale_from_utf8(utf8_str);
+	}
+	catch (const Glib::ConvertError& e) {
+		//str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?");
+	}
 #else
-        {
-            std::auto_ptr<Glib::Error> error;
+	{
+		std::auto_ptr<Glib::Error> error;
             str = Glib::locale_from_utf8(utf8_str, error);
             /*if (error.get())
                 {str = Glib::convert_with_fallback(utf8_str, "LATIN1", "UTF8", "?", error);}*/
-        }
+	}
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 	return str;
 }
@@ -240,7 +236,7 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 {
 		std::string cmd;
 		bool success = false;
-#ifdef GLIBMM_EXCEPTIONS_ENABLED        
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
 		try {
 				cmd = Glib::filename_from_utf8(cmd_utf8);
 				printf ("command line: %s\n", cmd.c_str());
@@ -266,46 +262,46 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 
 bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 {
-		std::string cmd;
-        std::string stdOut;
-        std::string stdErr;
+	std::string cmd;
+	std::string stdOut;
+	std::string stdErr;
 
-		bool success = false;
+	//bool success = false;  // unused
 
-		int exitStatus=-1;
-        try {
-		    //cmd = Glib::filename_from_utf8(cmd_utf8);
-		    printf ("command line: %s\n", cmd_utf8.c_str());
+	int exitStatus=-1;
+	try {
+		//cmd = Glib::filename_from_utf8(cmd_utf8);
+		printf ("command line: %s\n", cmd_utf8.c_str());
 
-            // if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory 
-		    Glib::spawn_command_line_sync (cmd_utf8, NULL, NULL, &exitStatus);
-        } catch (Glib::Exception& ex) {
-				printf ("%s\n", ex.what().c_str());
-		}
-        return (exitStatus==0);
+		// if it crashes here on windows, make sure you have the GTK runtime files gspawn-win32-helper*.exe files in RT directory
+		Glib::spawn_command_line_sync (cmd_utf8, NULL, NULL, &exitStatus);
+	} catch (Glib::Exception& ex) {
+			printf ("%s\n", ex.what().c_str());
+	}
+	return (exitStatus==0);
 }
 
 // Opens a file for binary writing and request exclusive lock (cases were you need "wb" mode plus locking)
 // (Important on Windows to prevent Explorer to crash RT when parallel scanning e.g. a currently written image file)
 FILE * safe_g_fopen_WriteBinLock(const Glib::ustring& fname) {
-    FILE* f=NULL;
+	FILE* f=NULL;
 
 #ifdef WIN32
-    // g_fopen just uses _wfopen internally on Windows, does not lock access and has no options to set this
-    // so use a native function to work around this problem
-    wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
-    HANDLE hFile = CreateFileW(wFname, GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    g_free(wFname);
+	// g_fopen just uses _wfopen internally on Windows, does not lock access and has no options to set this
+	// so use a native function to work around this problem
+	wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
+	HANDLE hFile = CreateFileW(wFname, GENERIC_READ | GENERIC_WRITE, 0 /* no sharing allowed */, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	g_free(wFname);
 
-    if (hFile==INVALID_HANDLE_VALUE)
-        f=NULL;
-    else
-        f=_fdopen( _open_osfhandle((intptr_t)hFile, 0) , "wb");
+	if (hFile==INVALID_HANDLE_VALUE)
+		f=NULL;
+	else
+		f=_fdopen( _open_osfhandle((intptr_t)hFile, 0) , "wb");
 #else
-    f = safe_g_fopen(fname, "wb");
+	f = safe_g_fopen(fname, "wb");
 #endif
 
-    return f;
+	return f;
 }
 
 // Covers old UNIX ::open, which expects ANSI instead of UTF8 on Windows
@@ -313,44 +309,44 @@ int safe_open_ReadOnly(const char *fname) {
 	int fd=-1;
 
 #ifdef WIN32
-    // First convert UTF8 to UTF16, then use Windows function to open
+	// First convert UTF8 to UTF16, then use Windows function to open
 	wchar_t *wFname = (wchar_t*)g_utf8_to_utf16 (fname, -1, NULL, NULL, NULL);
-    HANDLE hFile = CreateFileW(wFname, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    g_free(wFname);
+	HANDLE hFile = CreateFileW(wFname, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	g_free(wFname);
 
 	// convert back to old file descriptor format
-    if (hFile!=INVALID_HANDLE_VALUE) fd = _open_osfhandle((intptr_t)hFile, 0);
+	if (hFile!=INVALID_HANDLE_VALUE) fd = _open_osfhandle((intptr_t)hFile, 0);
 #else
-    fd = ::open(fname, O_RDONLY);
+	fd = ::open(fname, O_RDONLY);
 #endif
 
-    return fd;
+	return fd;
 }
 
 
 FILE * safe_g_fopen(const Glib::ustring& src,const gchar *mode)
-{ 
-    return g_fopen(src.c_str(),mode); 
+{
+	return g_fopen(src.c_str(),mode);
 }
 
 bool safe_file_test (const Glib::ustring& filename, Glib::FileTest test)
 {
-    return Glib::file_test (filename, test);
+	return Glib::file_test (filename, test);
 }
 
 int safe_g_remove(const Glib::ustring& filename)
 {
-   return ::g_remove(filename.c_str());
+	return ::g_remove(filename.c_str());
 }
 
 int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFilename)
 {
-   return ::g_rename(oldFilename.c_str(), newFilename.c_str());
+	return ::g_rename(oldFilename.c_str(), newFilename.c_str());
 }
 
 int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 {
-    return ::g_mkdir_with_parents(dirName.c_str(), mode);
+	return ::g_mkdir_with_parents(dirName.c_str(), mode);
 }
 
 Glib::ustring safe_get_user_picture_dir() {

@@ -18,6 +18,7 @@
 #include <guiutils.h>
 #include <options.h>
 #include <utils.h>
+#include <rtimage.h>
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
@@ -375,7 +376,7 @@ void TextOrIcon::switchTo(TOITypes type) {
 			removeIfThere(this, label, false);
 			delete label;
 			label = 0;
-			imgIcon = new Gtk::Image (filename);
+			imgIcon = new RTImage (filename);
 			pack_start(*imgIcon, Gtk::PACK_SHRINK, 0);
 			set_tooltip_markup ("<span font_size=\"large\" font_weight=\"bold\">" + labelText  + "</span>\n" + tooltipText);
 		}

@@ -19,18 +19,19 @@
 #include <zoompanel.h>
 #include <multilangmgr.h>
 #include <imagearea.h>
+#include <rtimage.h>
 
 ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
 
     set_border_width (0);
 
-    Gtk::Image* imageOut = Gtk::manage (new Gtk::Image (Gtk::StockID ("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    Gtk::Image* imageOut = Gtk::manage (new RTImage ("gtk-zoom-out.png"));
     imageOut->set_padding(0,0);
-    Gtk::Image* imageIn = Gtk::manage (new Gtk::Image (Gtk::StockID ("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    Gtk::Image* imageIn = Gtk::manage (new RTImage ("gtk-zoom-in.png"));
     imageIn->set_padding(0,0);
-    Gtk::Image* image11 =Gtk::manage ( new Gtk::Image (Gtk::StockID ("gtk-zoom-100"), Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    Gtk::Image* image11 =Gtk::manage ( new RTImage ("gtk-zoom-100.png"));
     image11->set_padding(0,0);
-    Gtk::Image* imageFit = Gtk::manage (new Gtk::Image (Gtk::StockID ("gtk-zoom-fit"), Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    Gtk::Image* imageFit = Gtk::manage (new RTImage ("gtk-zoom-fit.png"));
     imageFit->set_padding(0,0);
 
     zoomOut = Gtk::manage (new Gtk::Button());
@@ -54,7 +55,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoomLabel = Gtk::manage (new Gtk::Label ());
     pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Image* imageCrop = Gtk::manage (new Gtk::Image (Gtk::StockID ("gtk-add"), Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    Gtk::Image* imageCrop = Gtk::manage (new RTImage ("add.png"));
     imageCrop->set_padding(0,0);
     newCrop = Gtk::manage (new Gtk::Button());
     newCrop->add (*imageCrop);

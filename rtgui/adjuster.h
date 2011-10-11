@@ -77,6 +77,7 @@ class Adjuster : public Gtk::VBox {
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);
     void setDefault (double def);
+    void setNbDisplayedChars (int nbr) { spin->set_width_chars(nbr); }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();
     void setDefaultEditedState (EditedState eState);

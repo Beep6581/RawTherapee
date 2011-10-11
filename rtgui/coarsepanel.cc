@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <coarsepanel.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
@@ -27,25 +28,25 @@ CoarsePanel::CoarsePanel () : ToolPanel () {
 
     degree = 0;
 
-    Gtk::Image* rotateli = Gtk::manage (new Gtk::Image (argv0+"/images/stock-rotate-270-16.png"));
+    Gtk::Image* rotateli = Gtk::manage (new RTImage ("stock-rotate-270-16.png"));
     rotate_left = Gtk::manage (new Gtk::Button ());
     rotate_left->add (*rotateli);
     rotate_left->set_relief(Gtk::RELIEF_NONE);
     pack_start (*rotate_left);
 
-    Gtk::Image* rotateri = Gtk::manage (new Gtk::Image (argv0+"/images/stock-rotate-90-16.png"));
+    Gtk::Image* rotateri = Gtk::manage (new RTImage ("stock-rotate-90-16.png"));
     rotate_right = Gtk::manage (new Gtk::Button ());
     rotate_right->add (*rotateri);
     rotate_right->set_relief(Gtk::RELIEF_NONE);
     pack_start (*rotate_right);
 
-    Gtk::Image* fliphi = Gtk::manage (new Gtk::Image (argv0+"/images/stock-flip-horizontal-16.png"));
+    Gtk::Image* fliphi = Gtk::manage (new RTImage ("stock-flip-horizontal-16.png"));
     hflip = Gtk::manage (new Gtk::ToggleButton ());
     hflip->add (*fliphi);
     hflip->set_relief(Gtk::RELIEF_NONE);
     pack_start (*hflip);
 
-    Gtk::Image* flipvi = Gtk::manage (new Gtk::Image (argv0+"/images/stock-flip-vertical-16.png"));
+    Gtk::Image* flipvi = Gtk::manage (new RTImage ("stock-flip-vertical-16.png"));
     vflip = Gtk::manage (new Gtk::ToggleButton ());
     vflip->add (*flipvi);
     vflip->set_relief(Gtk::RELIEF_NONE);

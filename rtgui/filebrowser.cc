@@ -27,6 +27,7 @@
 #include <procparamchangers.h>
 #include <dfmanager.h>
 #include <ffmanager.h>
+#include <rtimage.h>
 
 extern Options options;
 
@@ -46,7 +47,7 @@ FileBrowser::FileBrowser ()
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(develop = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPPROCESS"))), 0, 1, p, p+1); p++;
-    develop->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/processing.png")));
+    develop->set_image(*Gtk::manage(new RTImage ("processing.png")));
 
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
@@ -94,7 +95,7 @@ FileBrowser::FileBrowser ()
     	}
     }
     for (int i=1; i<=5; i++){//set color label images
-    	colorlabel[i]->set_image(*Gtk::manage(new Gtk::Image (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",i,".png"))));
+    	colorlabel[i]->set_image(*Gtk::manage(new RTImage (Glib::ustring::compose("%1%2%3","clabel",i,".png"))));
     }
         
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
@@ -138,7 +139,7 @@ FileBrowser::FileBrowser ()
      * *********************/
     if (options.menuGroupProfileOperations){
     	pmenu->attach (*Gtk::manage(menuProfileOperations = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPPROFILEOPERATIONS"))), 0, 1, p, p+1); p++;
-    	menuProfileOperations->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/logoicon_wind_16.png")));
+    	menuProfileOperations->set_image(*Gtk::manage(new RTImage ("logoicon_wind_16.png")));
 
     	Gtk::Menu* submenuProfileOperations = Gtk::manage (new Gtk::Menu ());
 

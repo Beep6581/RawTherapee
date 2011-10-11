@@ -19,6 +19,7 @@
 #include <rotate.h>
 #include <iomanip>
 #include <guiutils.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
@@ -34,7 +35,7 @@ Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this) {
   pack_start (*degree);
 
   selectStraight = Gtk::manage (new Gtk::Button (M("TP_ROTATE_SELECTLINE")));
-  Gtk::Image* selimg = Gtk::manage (new Gtk::Image (argv0+"/images/straighten16.png"));
+  Gtk::Image* selimg = Gtk::manage (new RTImage ("straighten16.png"));
   selectStraight->set_image (*selimg);
   pack_start (*selectStraight, Gtk::PACK_SHRINK, 2);
 

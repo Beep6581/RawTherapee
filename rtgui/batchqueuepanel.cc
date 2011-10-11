@@ -23,6 +23,7 @@
 #include <rtwindow.h>
 #include <soundman.h>
 #include <safegtk.h>
+#include <rtimage.h>
 
 
 BatchQueuePanel::BatchQueuePanel () {
@@ -114,13 +115,13 @@ BatchQueuePanel::BatchQueuePanel () {
     zoomLabel->set_use_markup (true);
     zoomBox->pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);   
     zoomInButton  = Gtk::manage (new Gtk::Button ());
-    zoomInButton->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    zoomInButton->set_image (*Gtk::manage (new RTImage ("gtk-zoom-in.png")));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*batchQueue, &BatchQueue::zoomIn));    
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = Gtk::manage (new Gtk::Button ());
-    zoomOutButton->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    zoomOutButton->set_image (*Gtk::manage (new RTImage ("gtk-zoom-out.png")));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*batchQueue, &BatchQueue::zoomOut));    
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
@@ -144,13 +145,13 @@ void BatchQueuePanel::updateTab (int qsize)
         Gtk::Label* l;
 
         if(!qsize ){
-            vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing.png")));
+            vbb->pack_start (*Gtk::manage (new RTImage ("processing.png")));
             l=Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")) );
         } else if( start->get_active () ){
-            vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-play.png")));
+            vbb->pack_start (*Gtk::manage (new RTImage ("processing-play.png")));
             l=Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]"));
         } else {
-            vbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-pause.png")));
+            vbb->pack_start (*Gtk::manage (new RTImage ("processing-pause.png")));
             l=Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" ));
         }
         l->set_angle (90);
@@ -162,13 +163,13 @@ void BatchQueuePanel::updateTab (int qsize)
     } else {
         Gtk::HBox* hbb = Gtk::manage (new Gtk::HBox ());
         if (!qsize ) {
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing.png")));
+            hbb->pack_start (*Gtk::manage (new RTImage ("processing.png")));
             hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE") )));
         } else if ( start->get_active () ){
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-play.png")));
+            hbb->pack_start (*Gtk::manage (new RTImage ("processing-play.png")));
             hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
         } else {
-            hbb->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/processing-pause.png")));
+            hbb->pack_start (*Gtk::manage (new RTImage ("processing-pause.png")));
             hbb->pack_start (*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")+" [" +Glib::ustring::format( qsize )+"]" )));
         }
         hbb->set_spacing (2);

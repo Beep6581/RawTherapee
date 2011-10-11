@@ -28,7 +28,7 @@ extern Glib::ustring versionString;
 
 SplashImage::SplashImage () {
 
-    pixbuf = safe_create_from_file (argv0+"/images/splash.png");
+    pixbuf = safe_create_from_file ("splash.png");
     set_size_request (pixbuf->get_width(), pixbuf->get_height());
 }
 

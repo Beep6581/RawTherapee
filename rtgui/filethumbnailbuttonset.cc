@@ -40,19 +40,19 @@ Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_5;
 FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 
     if (!iconsLoaded) {
-				unRankIcon  = safe_create_from_png (argv0+"/images/unrated.png");
-				rankIcon    = safe_create_from_png (argv0+"/images/rated.png");
-				gRankIcon   = safe_create_from_png (argv0+"/images/grayrated.png");
-				trashIcon   = safe_create_from_png (argv0+"/images/trash.png");
-				unTrashIcon = safe_create_from_png (argv0+"/images/undelete.png");
-				processIcon = safe_create_from_png (argv0+"/images/processing.png");
-				
-				colorLabelIcon_0 = safe_create_from_png (argv0+"/images/nocolorlabel.png");
-				colorLabelIcon_1 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",1,".png"));
-				colorLabelIcon_2 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",2,".png"));
-				colorLabelIcon_3 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",3,".png"));
-				colorLabelIcon_4 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",4,".png"));
-				colorLabelIcon_5 = safe_create_from_png (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",5,".png"));
+				unRankIcon  = safe_create_from_png ("unrated.png");
+				rankIcon    = safe_create_from_png ("rated.png");
+				gRankIcon   = safe_create_from_png ("grayrated.png");
+				trashIcon   = safe_create_from_png ("trash.png");
+				unTrashIcon = safe_create_from_png ("undelete.png");
+				processIcon = safe_create_from_png ("processing.png");
+
+				colorLabelIcon_0 = safe_create_from_png ("nocolorlabel.png");
+				colorLabelIcon_1 = safe_create_from_png ("clabel1.png");
+				colorLabelIcon_2 = safe_create_from_png ("clabel2.png");
+				colorLabelIcon_3 = safe_create_from_png ("clabel3.png");
+				colorLabelIcon_4 = safe_create_from_png ("clabel4.png");
+				colorLabelIcon_5 = safe_create_from_png ("clabel5.png");
 				iconsLoaded = true;
     }
 
