@@ -34,6 +34,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 //    set_border_width (4);
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+    ipDialog->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
 
     Gtk::Label* ilab = Gtk::manage (new Gtk::Label ());
     ilab->set_alignment (0.0, 0.5);
@@ -41,19 +42,24 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     pack_start (*ilab, Gtk::PACK_SHRINK, 4);
     
     inone = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTNONE")));
+    inone->set_tooltip_text (M("TP_ICM_INPUTNONE_TOOLTIP"));
     pack_start (*inone, Gtk::PACK_SHRINK, 4);
 
     iembedded = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTEMBEDDED")));
+    iembedded->set_tooltip_text (M("TP_ICM_INPUTEMBEDDED_TOOLTIP"));
     pack_start (*iembedded, Gtk::PACK_SHRINK, 4);
 
     icamera = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERA")));
+    icamera->set_tooltip_text (M("TP_ICM_INPUTCAMERA_TOOLTIP"));
     pack_start (*icamera, Gtk::PACK_SHRINK, 4);
 
     icameraICC = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCAMERAICC")));
+    icameraICC->set_tooltip_text (M("TP_ICM_INPUTCAMERAICC_TOOLTIP"));
     pack_start (*icameraICC, Gtk::PACK_SHRINK, 4);
 
     ifromfile = Gtk::manage (new Gtk::RadioButton (M("TP_ICM_INPUTCUSTOM")+":"));
     Gtk::HBox* ffbox = Gtk::manage (new Gtk::HBox ());
+    ifromfile->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
     ffbox->pack_start (*ifromfile, Gtk::PACK_SHRINK);
     ffbox->pack_start (*ipDialog);
 
@@ -67,6 +73,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
     ckbBlendCMSMatrix->set_sensitive (false);
+    ckbBlendCMSMatrix->set_tooltip_text (M("TP_ICM_BLENDCMSMATRIX_TOOLTIP"));
     pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 4);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
