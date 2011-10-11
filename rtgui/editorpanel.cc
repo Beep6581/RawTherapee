@@ -26,6 +26,7 @@
 #include <safegtk.h>
 #include <imagesource.h>
 #include <soundman.h>
+#include <rtimage.h>
 
 using namespace rtengine::procparams;
 
@@ -71,19 +72,19 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VBox* editbox = Gtk::manage (new Gtk::VBox ());
 
     info = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* infoimg = Gtk::manage (new Gtk::Image (argv0+"/images/info.png"));
+    Gtk::Image* infoimg = Gtk::manage (new RTImage ("info.png"));
     info->add (*infoimg);
     info->set_relief(Gtk::RELIEF_NONE);
     info->set_tooltip_markup (M("MAIN_TOOLTIP_QINFO"));
 
     beforeAfter = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* beforeAfterIcon = Gtk::manage (new Gtk::Image (argv0+"/images/beforeafter.png"));
+    Gtk::Image* beforeAfterIcon = Gtk::manage (new RTImage ("beforeafter.png"));
     beforeAfter->add(*beforeAfterIcon);
     beforeAfter->set_relief(Gtk::RELIEF_NONE);
     beforeAfter->set_tooltip_markup (M("MAIN_TOOLTIP_TOGGLE"));
 
-    iBeforeLockON = new Gtk::Image(argv0+"/images/lock_on.png");
-    iBeforeLockOFF = new Gtk::Image(argv0+"/images/lock_off.png");
+    iBeforeLockON = new RTImage ("lock_on.png");
+    iBeforeLockOFF = new RTImage ("lock_off.png");
 
     Gtk::VSeparator* vsept = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
@@ -93,8 +94,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
 
-    iHistoryShow = new Gtk::Image(argv0+"/images/panel_to_right.png");
-    iHistoryHide = new Gtk::Image(argv0+"/images/panel_to_left.png");
+    iHistoryShow = new RTImage ("panel_to_right.png");
+    iHistoryHide = new RTImage ("panel_to_left.png");
 
     hidehp->set_relief(Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
@@ -107,16 +108,16 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     }
 
     tbTopPanel_1 = new Gtk::ToggleButton ();
-    iTopPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_bottom.png");
-    iTopPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_top.png");
+    iTopPanel_1_Show = new RTImage ("panel_to_bottom.png");
+    iTopPanel_1_Hide = new RTImage ("panel_to_top.png");
     tbTopPanel_1->set_relief(Gtk::RELIEF_NONE);
     tbTopPanel_1->set_active (true);
     tbTopPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDETP1"));
     tbTopPanel_1->set_image (*iTopPanel_1_Hide);
 
     tbRightPanel_1 = new Gtk::ToggleButton ();
-    iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
-    iRightPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    iRightPanel_1_Show = new RTImage ("panel_to_left.png");
+    iRightPanel_1_Hide = new RTImage ("panel_to_right.png");
     tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
     tbRightPanel_1->set_active (true);
     tbRightPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDERP1"));
@@ -167,7 +168,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::HBox* iops = Gtk::manage (new Gtk::HBox ());
 
     //Gtk::Image *saveButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON));
-    Gtk::Image *saveButtonImage =  Gtk::manage (new Gtk::Image (argv0+"/images/save_hdd_01.png"));
+    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save_hdd_01.png"));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->add(*saveButtonImage);
     saveimgas->set_tooltip_markup(M("MAIN_BUTTON_SAVE_TOOLTIP"));
@@ -177,7 +178,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     queueimg->add(*queueButtonImage);
     queueimg->set_tooltip_markup(M("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
 
-    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new Gtk::Image (argv0+"/images/gimp.png"));
+    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("gimp.png"));
     sendtogimp = Gtk::manage (new Gtk::Button ());
     sendtogimp->add(*sendToEditorButtonImage);
     sendtogimp->set_tooltip_markup(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
@@ -201,7 +202,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
 	// ShowHideSidePanels
     tbShowHideSidePanels = new Gtk::ToggleButton ();
-    iShowHideSidePanels = new Gtk::Image(argv0+"/images/crossed_arrows_out_45_02.png");
+    iShowHideSidePanels = new RTImage ("crossed_arrows_out_45_02.png");
     tbShowHideSidePanels->set_relief(Gtk::RELIEF_NONE);
     tbShowHideSidePanels->set_active (false);
     tbShowHideSidePanels->set_tooltip_markup (M("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));

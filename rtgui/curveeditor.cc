@@ -31,10 +31,10 @@ extern Glib::ustring argv0;
 DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, (CurveEditorGroup*) ceGroup, ceSubGroup) {
 
     // Order set in the same order than "enum DiagonalCurveType". Shouldn't change, for compatibility reason
-    curveType->addEntry(argv0+"/images/curveType-linear.png", M("CURVEEDITOR_LINEAR"));			// 0 Linear
-    curveType->addEntry(argv0+"/images/curveType-spline.png", M("CURVEEDITOR_CUSTOM"));			// 1 Spline
-    curveType->addEntry(argv0+"/images/curveType-parametric.png", M("CURVEEDITOR_PARAMETRIC"));	// 2 Parametric
-    curveType->addEntry(argv0+"/images/curveType-NURBS.png", M("CURVEEDITOR_NURBS"));			// 3 NURBS
+    curveType->addEntry("curveType-linear.png",     M("CURVEEDITOR_LINEAR"));		// 0 Linear
+    curveType->addEntry("curveType-spline.png",     M("CURVEEDITOR_CUSTOM"));		// 1 Spline
+    curveType->addEntry("curveType-parametric.png", M("CURVEEDITOR_PARAMETRIC"));	// 2 Parametric
+    curveType->addEntry("curveType-NURBS.png",      M("CURVEEDITOR_NURBS"));		// 3 NURBS
     curveType->setSelected(DCT_Linear);
     curveType->show();
 }
@@ -61,8 +61,8 @@ FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup,
 	periodic = isPeriodic;
 
     // Order set in the same order than "enum FlatCurveType". Shouldn't change, for compatibility reason
-    curveType->addEntry(argv0+"/images/curveType-flatLinear.png", M("CURVEEDITOR_LINEAR"));				// 0 Linear
-    curveType->addEntry(argv0+"/images/curveType-controlPoints.png", M("CURVEEDITOR_MINMAXCPOINTS"));	// 1 Min/Max ControlPoints
+    curveType->addEntry("curveType-flatLinear.png",    M("CURVEEDITOR_LINEAR"));			// 0 Linear
+    curveType->addEntry("curveType-controlPoints.png", M("CURVEEDITOR_MINMAXCPOINTS"));		// 1 Min/Max ControlPoints
     curveType->setSelected(FCT_Linear);
     curveType->show();
 }

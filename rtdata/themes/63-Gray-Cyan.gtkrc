@@ -301,7 +301,7 @@ style "clearlooks-menu" {
 	xthickness = 0
 	ythickness = 0
 
-	bg[NORMAL] = @rt_base_color
+	bg[NORMAL] = shade (1.2, @rt_bg_color)
 
 	engine "clearlooks" {
 		radius = 0.0

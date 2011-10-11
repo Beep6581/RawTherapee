@@ -14,7 +14,7 @@ set (BASESOURCEFILES
     crophandler.cc dirbrowser.cc
     curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
     filecatalog.cc
-    previewloader.cc
+    previewloader.cc rtimage.cc
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc main.cc
     multilangmgr.cc mycurve.cc myflatcurve.cc mydiagonalcurve.cc options.cc

@@ -26,6 +26,7 @@
 #include <ffmanager.h>
 #include <sstream>
 #include <safegtk.h>
+#include <rtimage.h>
 
 extern Options options;
 extern Glib::ustring argv0;
@@ -61,7 +62,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     Gtk::Button* ok     = Gtk::manage (new Gtk::Button (M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage (new Gtk::Button (M("GENERAL_CANCEL")));
 
-    about->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/logoicon16.png")));
+    about->set_image (*Gtk::manage(new RTImage ("logoicon16.png")));
     ok->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
     cancel->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
 
@@ -778,8 +779,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     delExt = Gtk::manage( new Gtk::Button () );
     addExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTADDHINT"));
     delExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTDELHINT"));
-    Gtk::Image* addExtImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-add12.png") );
-    Gtk::Image* delExtImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-remove12r.png") );
+    Gtk::Image* addExtImg = Gtk::manage( new RTImage ("list-add12.png") );
+    Gtk::Image* delExtImg = Gtk::manage( new RTImage ("list-remove12r.png") );
     addExt->add (*addExtImg);
     delExt->add (*delExtImg);
     hb0->pack_end (*delExt, Gtk::PACK_SHRINK, 4);
@@ -1248,8 +1249,11 @@ void Preferences::okPressed () {
 void Preferences::cancelPressed () {
 
 	// set the initial theme back
-	if (theme->get_active_text () != options.theme)
+	if (theme->get_active_text () != options.theme) {
+		RTImage::setPaths(options);
+		RTImage::updateImages();
 		switchThemeTo(options.theme, options.slimUI);
+	}
 
 	// set the initial font back
 	if (fontbutton->get_font_name() != options.font)
@@ -1282,6 +1286,10 @@ void Preferences::aboutPressed () {
 
 void Preferences::themeChanged () {
 
+	moptions.theme = theme->get_active_text ();
+	moptions.useSystemTheme = chUseSystemTheme->get_active ();
+	RTImage::setPaths(moptions);
+	RTImage::updateImages();
 	switchThemeTo(theme->get_active_text (), slimUI->get_active());
 }
 

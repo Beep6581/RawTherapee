@@ -19,6 +19,7 @@
 #include <renamedlg.h>
 #include <multilangmgr.h>
 #include <options.h>
+#include <rtimage.h>
 
 RenameDialog::RenameDialog (Gtk::Window* parent) 
     : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(NULL) {
@@ -157,8 +158,8 @@ RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
     templ = Gtk::manage (new Gtk::Entry ());
     Gtk::Button* add = Gtk::manage (new Gtk::Button ());
     Gtk::Button* del = Gtk::manage (new Gtk::Button ());
-    add->add (*Gtk::manage (new Gtk::Image (argv0+"/images/list-add12.png")));
-    del->add (*Gtk::manage (new Gtk::Image (argv0+"/images/list-remove12r.png")));
+    add->add (*Gtk::manage (new RTImage ("list-add12.png")));
+    del->add (*Gtk::manage (new RTImage ("list-remove12r.png")));
     hb->pack_start (*templ);
     hb->pack_start (*add, Gtk::PACK_SHRINK, 2);
     hb->pack_start (*del, Gtk::PACK_SHRINK, 2);

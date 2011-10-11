@@ -30,6 +30,7 @@
 #include <thumbimageupdater.h>
 #include <safegtk.h>
 #include <batchqueue.h>
+#include <rtimage.h>
 
 
 #define CHECKTIME 2000
@@ -73,8 +74,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hbToolBar1 = Gtk::manage(new Gtk::HBox ());
 
     //setup BrowsePath
-    iRefreshWhite = new Gtk::Image(argv0+"/images/refresh_white.png");
-    iRefreshRed = new Gtk::Image(argv0+"/images/refresh_red.png");
+    iRefreshWhite = new RTImage("refresh_white.png");
+    iRefreshRed = new RTImage("refresh_red.png");
 
     BrowsePath = Gtk::manage(new Gtk::Entry ());
     BrowsePath->set_width_chars (50);
@@ -92,7 +93,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     BrowsePath->signal_activate().connect (sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed)); //respond to the Enter key
 
     //setup Query
-    iQueryClear = new Gtk::Image(argv0+"/images/x_10.png");
+    iQueryClear = new RTImage("x_10.png");
     Gtk::Label* labelQuery = Gtk::manage(new Gtk::Label(M("FILEBROWSER_QUERYLABEL")));
     Query = Gtk::manage(new Gtk::Entry ()); // cannot use Gtk::manage here as FileCatalog::getFilter will fail on Query->get_text()
     Query->set_text("");
@@ -121,8 +122,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     tbLeftPanel_1 = new Gtk::ToggleButton ();
-    iLeftPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_right.png");
-    iLeftPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_left.png");
+    iLeftPanel_1_Show = new RTImage("panel_to_right.png");
+    iLeftPanel_1_Hide = new RTImage("panel_to_left.png");
 
     tbLeftPanel_1->set_relief(Gtk::RELIEF_NONE);
     tbLeftPanel_1->set_active (true);
@@ -134,11 +135,11 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
 
-    iFilterClear = new Gtk::Image (argv0+"/images/filterclear_18.png");
-    igFilterClear = new Gtk::Image (argv0+"/images/filterclearg_18.png");
+    iFilterClear = new RTImage ("filterclear_18.png");
+    igFilterClear = new RTImage ("filterclearg_18.png");
     bFilterClear = Gtk::manage(new Gtk::ToggleButton ());
     bFilterClear->set_active (true);
-    bFilterClear->set_image(*iFilterClear);//(*Gtk::manage(new Gtk::Image (argv0+"/images/filterclear.png")));
+    bFilterClear->set_image(*iFilterClear);//(*Gtk::manage(new RTImage ("filterclear.png")));
     bFilterClear->set_relief (Gtk::RELIEF_NONE);
     bFilterClear->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bFilterClear->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
@@ -150,8 +151,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     fltrRankbox = Gtk::manage (new Gtk::HBox());
     fltrLabelbox = Gtk::manage (new Gtk::HBox());
 
-    iUnRanked = new Gtk::Image (argv0+"/images/ratednot_10.png");
-    igUnRanked = new Gtk::Image (argv0+"/images/ratednotg_10.png");
+    iUnRanked = new RTImage ("ratednot_10.png");
+    igUnRanked = new RTImage ("ratednotg_10.png");
     bUnRanked = Gtk::manage( new Gtk::ToggleButton () );
     bUnRanked->set_active (false);
     bUnRanked->set_image (*igUnRanked);
@@ -162,8 +163,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
     for (int i=0; i<5; i++) {
-        iranked[i] = new Gtk::Image (argv0+"/images/rated.png");
-        igranked[i] = new Gtk::Image (argv0+"/images/grayrated.png");
+        iranked[i] = new RTImage ("rated.png");
+        igranked[i] = new RTImage ("grayrated.png");
         iranked[i]->show ();
         igranked[i]->show ();
         bRank[i] = Gtk::manage( new Gtk::ToggleButton () );
@@ -174,8 +175,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }  
 
-    iUnCLabeled = new Gtk::Image (argv0+"/images/clabel0.png");
-    igUnCLabeled = new Gtk::Image (argv0+"/images/cglabel0.png");
+    iUnCLabeled = new RTImage ("clabel0.png");
+    igUnCLabeled = new RTImage ("cglabel0.png");
     bUnCLabeled = Gtk::manage(new Gtk::ToggleButton ());
     bUnCLabeled->set_active (false);
     bUnCLabeled->set_image (*igUnCLabeled);
@@ -186,8 +187,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bUnCLabeled->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
     for (int i=0; i<5; i++) {
-		iCLabeled[i] = new Gtk::Image (Glib::ustring::compose("%1%2%3%4",argv0,"/images/clabel",i+1,".png"));
-		igCLabeled[i] = new Gtk::Image (Glib::ustring::compose("%1%2%3%4",argv0,"/images/cglabel",i+1,".png"));
+		iCLabeled[i] = new RTImage (Glib::ustring::compose("%1%2%3","clabel",i+1,".png"));
+		igCLabeled[i] = new RTImage (Glib::ustring::compose("%1%2%3","cglabel",i+1,".png"));
 		iCLabeled[i]->show ();
 		igCLabeled[i]->show ();
 		bCLabel[i] = Gtk::manage(new Gtk::ToggleButton ());
@@ -221,10 +222,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     fltrRecentlySavedBox = Gtk::manage (new Gtk::HBox());
 
     // bEdited
-    iEdited[0] = new Gtk::Image (argv0+"/images/editednot_10.png");
-    igEdited[0] = new Gtk::Image (argv0+"/images/editednotg_10.png");
-    iEdited[1] = new Gtk::Image (argv0+"/images/edited_10.png");
-    igEdited[1] = new Gtk::Image (argv0+"/images/editedg_10.png");
+    iEdited[0] = new RTImage ("editednot_10.png");
+    igEdited[0] = new RTImage ("editednotg_10.png");
+    iEdited[1] = new RTImage ("edited_10.png");
+    igEdited[1] = new RTImage ("editedg_10.png");
     for (int i=0; i<2; i++) {
 		iEdited[i]->show ();
 		bEdited[i] = Gtk::manage(new Gtk::ToggleButton ());
@@ -240,10 +241,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bEdited[1]->set_tooltip_markup (M("FILEBROWSER_SHOWEDITEDHINT"));
 
     // RecentlySaved
-    iRecentlySaved[0] = new Gtk::Image (argv0+"/images/savednot_10.png");
-    igRecentlySaved[0] = new Gtk::Image (argv0+"/images/savednotg_10.png");
-    iRecentlySaved[1] = new Gtk::Image (argv0+"/images/saved_10.png");
-    igRecentlySaved[1] = new Gtk::Image (argv0+"/images/savedg_10.png");
+    iRecentlySaved[0] = new RTImage ("savednot_10.png");
+    igRecentlySaved[0] = new RTImage ("savednotg_10.png");
+    iRecentlySaved[1] = new RTImage ("saved_10.png");
+    igRecentlySaved[1] = new RTImage ("savedg_10.png");
     for (int i=0; i<2; i++) {
     	iRecentlySaved[i]->show ();
 		bRecentlySaved[i] = Gtk::manage(new Gtk::ToggleButton ());
@@ -265,8 +266,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     // Trash
-    iTrashEmpty = new Gtk::Image(argv0+"/images/trash-show-empty.png") ;
-    iTrashFull  = new Gtk::Image(argv0+"/images/trash-show-full.png") ;
+    iTrashEmpty = new RTImage("trash-show-empty.png") ;
+    iTrashFull  = new RTImage("trash-show-full.png") ;
 
     bTrash = Gtk::manage(  new Gtk::ToggleButton () );
     bTrash->set_image (*iTrashEmpty);
@@ -307,7 +308,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     categoryButtons[17] = bTrash;
 
     exifInfo = Gtk::manage(new Gtk::ToggleButton ());
-    exifInfo->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/info.png")));
+    exifInfo->set_image (*Gtk::manage(new RTImage ("info.png")));
     exifInfo->set_relief (Gtk::RELIEF_NONE);
     exifInfo->set_tooltip_markup (M("FILEBROWSER_SHOWEXIFINFO"));
     exifInfo->set_active( options.showFileNames );
@@ -317,13 +318,13 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     // thumbnail zoom
     Gtk::HBox* zoomBox = Gtk::manage( new Gtk::HBox () );
     zoomInButton  = Gtk::manage(  new Gtk::Button () );
-    zoomInButton->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-zoom-in"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    zoomInButton->set_image (*Gtk::manage(new RTImage ("gtk-zoom-in.png")));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = Gtk::manage( new Gtk::Button () );
-    zoomOutButton->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-zoom-out"), Gtk::ICON_SIZE_SMALL_TOOLBAR)));
+    zoomOutButton->set_image (*Gtk::manage(new RTImage ("gtk-zoom-out.png")));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomOut));
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
@@ -332,15 +333,15 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*zoomBox, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
-    //iRightArrow = new Gtk::Image(argv0+"/images/right.png");
-    //iRightArrow_red = new Gtk::Image(argv0+"/images/right_red.png");
+    //iRightArrow = new RTImage("right.png");
+    //iRightArrow_red = new RTImage("right_red.png");
 
     // if it IS a single row toolbar
     if (options.FileBrowserToolbarSingleRow) buttonBar->pack_start (*hbToolBar1, Gtk::PACK_EXPAND_WIDGET,0);
 
     tbRightPanel_1 = new Gtk::ToggleButton ();
-    iRightPanel_1_Show = new Gtk::Image(argv0+"/images/panel_to_left.png");
-    iRightPanel_1_Hide = new Gtk::Image(argv0+"/images/panel_to_right.png");
+    iRightPanel_1_Show = new RTImage("panel_to_left.png");
+    iRightPanel_1_Hide = new RTImage("panel_to_right.png");
 
     tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
     tbRightPanel_1->set_active (true);

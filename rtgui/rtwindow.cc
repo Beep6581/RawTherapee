@@ -20,6 +20,7 @@
 #include <options.h>
 #include <preferences.h>
 #include <cursormanager.h>
+#include <rtimage.h>
 
 RTWindow::RTWindow ()
 :fpanel(NULL)
@@ -30,12 +31,15 @@ RTWindow::RTWindow ()
 
     cacheMgr->init ();
 
+    Glib::ustring fName = "logoicon16.png";
+    Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
+
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
-		try { set_default_icon_from_file (argv0+"/images/logoicon16.png");
+		try { set_default_icon_from_file (fullPath);
 		} catch(Glib::Exception& ex) {		printf ("%s\n", ex.what().c_str());	}
 #else
  	  {		std::auto_ptr<Glib::Error> error;
-				set_default_icon_from_file (argv0+"/images/logoicon16.png", error);
+				set_default_icon_from_file (fullPath, error);
 		}
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
@@ -114,7 +118,7 @@ RTWindow::RTWindow ()
 		// decorate tab
 		if (options.mainNBVertical) {
 			Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
-			vbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
+			vbe->pack_start (*Gtk::manage (new RTImage ("logoicon16.png")));
             Gtk::Label* l=Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
 			//l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
 			l->set_angle (90);
@@ -126,8 +130,8 @@ RTWindow::RTWindow ()
 			mainNB->append_page (*epanel, *vbe);
 		} else {
 			Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
-			hbe->pack_start (*Gtk::manage (new Gtk::Image (argv0+"/images/logoicon16.png")));
-			hbe->pack_start (*Gtk::manage (new Gtk::Label(M("MAIN_FRAME_EDITOR"))));
+			hbe->pack_start (*Gtk::manage (new RTImage ("logoicon16.png")));
+			hbe->pack_start (*Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") )));
 			hbe->set_spacing (2);
 			hbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
 			hbe->show_all ();
@@ -143,8 +147,8 @@ RTWindow::RTWindow ()
 		mainBox->pack_start (*mainNB);
 
 		// filling bottom box
-		iFullscreen = new Gtk::Image(argv0+"/images/fullscreen.png");
-		iFullscreen_exit = new Gtk::Image(argv0+"/images/fullscreen_exit.png");
+		iFullscreen = new RTImage ("fullscreen.png");
+		iFullscreen_exit = new RTImage ("fullscreen_exit.png");
 
 		Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
 		//Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));

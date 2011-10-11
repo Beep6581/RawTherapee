@@ -22,6 +22,7 @@
 #include <options.h>
 #include <string.h>
 #include <LUT.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 extern Options options;
@@ -42,12 +43,12 @@ HistogramPanel::HistogramPanel () {
    if (options.histogramBar)
 	   gfxVBox->pack_start (*histogramRGBArea, Gtk::PACK_SHRINK, 0);
 
-   Gtk::Image* redImage   = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histRed.png")) );
-   Gtk::Image* greenImage = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histGreen.png")) );
-   Gtk::Image* blueImage  = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histBlue.png")) );
-   Gtk::Image* valueImage = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histValue.png")) );
-   Gtk::Image* rawImage   = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histRaw.png")) );
-   Gtk::Image* barImage   = Gtk::manage( new Gtk::Image (Glib::ustring::compose("%1%2",argv0,"/images/histBar.png")) );
+   Gtk::Image* redImage   = Gtk::manage( new RTImage ("histRed.png") );
+   Gtk::Image* greenImage = Gtk::manage( new RTImage ("histGreen.png") );
+   Gtk::Image* blueImage  = Gtk::manage( new RTImage ("histBlue.png") );
+   Gtk::Image* valueImage = Gtk::manage( new RTImage ("histValue.png") );
+   Gtk::Image* rawImage   = Gtk::manage( new RTImage ("histRaw.png") );
+   Gtk::Image* barImage   = Gtk::manage( new RTImage ("histBar.png") );
 
    showRed   = Gtk::manage (new Gtk::ToggleButton ());
    showGreen = Gtk::manage (new Gtk::ToggleButton ());

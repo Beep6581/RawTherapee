@@ -24,6 +24,7 @@
 
 #include <gtkmm.h>
 #include <sigc++/sigc++.h>
+#include <rtimage.h>
 
 
 class PopUpCommon {
@@ -35,7 +36,7 @@ public:
 
 	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
 	virtual ~PopUpCommon ();
-	bool addEntry (Glib::ustring imagePath, Glib::ustring label);
+	bool addEntry (Glib::ustring fileName, Glib::ustring label);
 	bool setSelected (int entryNum);
 	int  getSelected () { return selected; }
 	void setButtonHint();
@@ -50,11 +51,11 @@ private:
 	   That's why we store entries strings in sItems, but it would be nice to get ride of it...
 	*/
 	std::vector<Glib::ustring> sItems;
-	std::vector<Glib::ustring> imagePaths;
-	std::vector<Gtk::Image*> images;
+	std::vector<Glib::ustring> imageFilenames;
+	std::vector<RTImage*> images;
 	std::vector<Gtk::ImageMenuItem*> items;
 	Glib::ustring buttonHint;
-	Gtk::Image* buttonImage;
+	RTImage* buttonImage;
 	Gtk::HBox* imageContainer;
 	Gtk::Menu* menu;
 	Gtk::Button* button;

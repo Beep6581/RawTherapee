@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <chmixer.h>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -25,15 +26,15 @@ extern Glib::ustring argv0;
 
 ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
 
-    imgIcon[0] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_RR.png"));
-    imgIcon[1] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_RG.png"));
-    imgIcon[2] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_RB.png"));
-    imgIcon[3] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_GR.png"));
-    imgIcon[4] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_GG.png"));
-    imgIcon[5] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_GB.png"));
-    imgIcon[6] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_BR.png"));
-    imgIcon[7] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_BG.png"));
-    imgIcon[8] = Gtk::manage (new Gtk::Image (argv0+"/images/Chanmixer_BB.png"));
+    imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer_RR.png"));
+    imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer_RG.png"));
+    imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer_RB.png"));
+    imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer_GR.png"));
+    imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer_GG.png"));
+    imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer_GB.png"));
+    imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer_BR.png"));
+    imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer_BG.png"));
+    imgIcon[8] = Gtk::manage (new RTImage ("Chanmixer_BB.png"));
 
     Gtk::Label* rlabel = Gtk::manage (new Gtk::Label ());
     rlabel->set_markup (Glib::ustring("\t<span foreground=\"#b00000\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));

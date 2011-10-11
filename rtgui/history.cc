@@ -18,6 +18,7 @@
  */
 #include <history.h>
 #include <multilangmgr.h>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -77,12 +78,12 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
     addBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_NEWSNAPSHOT")));
-    Gtk::Image* addimg = Gtk::manage (new Gtk::Image (argv0+"/images/list-add.png"));
+    Gtk::Image* addimg = Gtk::manage (new RTImage ("list-add.png"));
     addBookmark->set_image (*addimg);
     ahbox->pack_start (*addBookmark);
 
     delBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_DELSNAPSHOT")));
-    Gtk::Image* delimg = Gtk::manage (new Gtk::Image (argv0+"/images/list-remove.png"));
+    Gtk::Image* delimg = Gtk::manage (new RTImage ("list-remove.png"));
     delBookmark->set_image (*delimg);
     ahbox->pack_start (*delBookmark);
 

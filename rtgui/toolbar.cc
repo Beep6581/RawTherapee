@@ -18,13 +18,14 @@
  */
 #include "toolbar.h"
 #include <multilangmgr.h>
+#include <rtimage.h>
 
 extern Glib::ustring argv0;
 
 ToolBar::ToolBar () : listener (NULL) {
 
    handTool = Gtk::manage (new Gtk::ToggleButton ());
-   Gtk::Image* handimg = Gtk::manage (new Gtk::Image (argv0+"/images/openhand_gray22.png"));
+   Gtk::Image* handimg = Gtk::manage (new RTImage ("openhand_gray22.png"));
    handTool->add (*handimg);
    handimg->show ();
    handTool->set_relief(Gtk::RELIEF_NONE);
@@ -33,7 +34,7 @@ ToolBar::ToolBar () : listener (NULL) {
    pack_start (*handTool);
 
    wbTool = Gtk::manage (new Gtk::ToggleButton ());
-   Gtk::Image* wbimg = Gtk::manage (new Gtk::Image (argv0+"/images/wbpicker22.png"));
+   Gtk::Image* wbimg = Gtk::manage (new RTImage ("wbpicker22.png"));
    wbTool->add (*wbimg);
    wbimg->show ();
    wbTool->set_relief(Gtk::RELIEF_NONE);
@@ -42,7 +43,7 @@ ToolBar::ToolBar () : listener (NULL) {
    pack_start (*wbTool);
 
    cropTool = Gtk::manage (new Gtk::ToggleButton ());
-   Gtk::Image* cropimg = Gtk::manage (new Gtk::Image (argv0+"/images/crop22.png"));
+   Gtk::Image* cropimg = Gtk::manage (new RTImage ("crop22.png"));
    cropTool->add (*cropimg);
    cropimg->show ();
    cropTool->set_relief(Gtk::RELIEF_NONE);
@@ -51,7 +52,7 @@ ToolBar::ToolBar () : listener (NULL) {
    pack_start (*cropTool);
 
    straTool = Gtk::manage (new Gtk::ToggleButton ());
-   Gtk::Image* straimg = Gtk::manage (new Gtk::Image (argv0+"/images/straighten22.png"));
+   Gtk::Image* straimg = Gtk::manage (new RTImage ("straighten22.png"));
    straTool->add (*straimg);
    straimg->show ();
    straTool->set_relief(Gtk::RELIEF_NONE);

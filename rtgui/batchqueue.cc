@@ -24,6 +24,7 @@
 #include <batchqueuebuttonset.h>
 #include <guiutils.h>
 #include <safegtk.h>
+#include <rtimage.h>
 
 #include <cstring>
 
@@ -37,15 +38,15 @@ BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
 
     pmenu->attach (*Gtk::manage(head = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"))), 0, 1, p, p+1); p++;
-    head->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/toleftend.png")));
+    head->set_image(*Gtk::manage(new RTImage ("toleftend.png")));
 
     pmenu->attach (*Gtk::manage(tail = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"))), 0, 1, p, p+1); p++;
-    tail->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/torightend.png")));
+    tail->set_image(*Gtk::manage(new RTImage ("torightend.png")));
 
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
 
     pmenu->attach (*Gtk::manage(cancel = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"))), 0, 1, p, p+1); p++;
-    cancel->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/deltags.png")));
+    cancel->set_image(*Gtk::manage(new RTImage ("deltags.png")));
 
     pmenu->show_all ();
 

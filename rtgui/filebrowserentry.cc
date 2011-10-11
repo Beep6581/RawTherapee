@@ -48,9 +48,9 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     scale = 1;
     
     if (!iconsLoaded) {
-        editedIcon = safe_create_from_file (argv0+"/images/edited.png");
-        recentlySavedIcon = safe_create_from_file (argv0+"/images/saved.png");
-        enqueuedIcon = safe_create_from_file (argv0+"/images/processing.png");
+        editedIcon = safe_create_from_file ("edited.png");
+        recentlySavedIcon = safe_create_from_file ("saved.png");
+        enqueuedIcon = safe_create_from_file ("processing.png");
         iconsLoaded = true;
     }
     
