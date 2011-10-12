@@ -350,7 +350,8 @@ int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 }
 
 Glib::ustring safe_get_user_picture_dir() {
-    #ifdef WIN32
+    // TODO: MINGW32 has a problem with header files
+    #ifdef __MINGW64_VERSION_MAJOR
 
     // get_user_special_dir/pictures crashes on some Windows configurations.
     // so we use the safe native functions here
