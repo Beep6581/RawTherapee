@@ -93,6 +93,7 @@ class RawImageSource : public ImageSource {
         bool full;
         cmsHPROFILE camProfile;
         cmsHPROFILE embProfile;
+        bool rgbSourceModified;
 
         RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
         
@@ -131,9 +132,12 @@ class RawImageSource : public ImageSource {
         ~RawImageSource ();
 
         int         load        (Glib::ustring fname, bool batch = false);
-        void        preprocess  (const RAWParams &raw, HRecParams hrp);
-        void        demosaic    (const RAWParams &raw, HRecParams hrp);
+        void        preprocess  (const RAWParams &raw);
+        void        demosaic    (const RAWParams &raw);
+        void        HLRecovery_Global  (HRecParams hrp);
 		void 		refinement_lassus ();
+
+		bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );

@@ -86,6 +86,7 @@ RawImageSource::RawImageSource ()
     //hpmap = NULL;
 	camProfile = NULL;
 	embProfile = NULL;
+	rgbSourceModified = false;
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -951,7 +952,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::preprocess  (const RAWParams &raw, HRecParams hrp)
+void RawImageSource::preprocess  (const RAWParams &raw)
 {
 	MyTime t1,t2;
 	t1.set();
@@ -1098,7 +1099,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, HRecParams hrp)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-void RawImageSource::demosaic(const RAWParams &raw, HRecParams hrp )
+void RawImageSource::demosaic(const RAWParams &raw)
 {
     if (ri->isBayer()) {
     	MyTime t1,t2;
@@ -1125,14 +1126,25 @@ void RawImageSource::demosaic(const RAWParams &raw, HRecParams hrp )
            printf("Demosaicing: %s - %d usec\n",raw.dmethod.c_str(), t2.etime(t1));
 		
         if (raw.all_enhance) refinement_lassus();
+        
+        rgbSourceModified = false;
     }
-	
-	//color propagation highlight recovery 
-	if (hrp.enabled && hrp.method=="Color")
-		HLRecovery_inpaint (red,green,blue);
-
 }
-	
+
+void RawImageSource::HLRecovery_Global(HRecParams hrp )
+{
+	//color propagation highlight recovery 
+	if (hrp.enabled && hrp.method=="Color"){
+		if (settings->verbose) printf ("Applying Highlight Recovery: Color propagation...\n");
+		HLRecovery_inpaint (red,green,blue);
+		rgbSourceModified = true;
+	}
+	else{
+		rgbSourceModified = false;
+	}
+}
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* Copy original pixel data and
