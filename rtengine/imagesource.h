@@ -68,9 +68,12 @@ class ImageSource : public InitialImage {
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
-        virtual void        preprocess  (const RAWParams &raw, HRecParams hrp){};
-        virtual void        demosaic    (const RAWParams &raw, HRecParams hrp){};
-	virtual void		HLRecovery_inpaint (float** red, float** green, float** blue){};
+        virtual void        preprocess  (const RAWParams &raw){};
+        virtual void        demosaic    (const RAWParams &raw){};
+        virtual void        HLRecovery_Global  (HRecParams hrp){};
+	    virtual void        HLRecovery_inpaint (float** red, float** green, float** blue){};
+        
+        virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
         virtual ColorTemp   getWB       () =0;

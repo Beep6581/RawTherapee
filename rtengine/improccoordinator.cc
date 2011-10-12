@@ -117,20 +117,36 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC) {
-    	imgsrc->preprocess( rp, params.hlrecovery );
+    	imgsrc->preprocess( rp );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
     }
 
+    /*  
+    Demosaic is kicked off only when 
+    Detail considerations: 
+        accurate detail is not displayed yet needed based on preview specifics (driven via highDetailNeeded flag)
+    OR
+    HLR considerations: 
+        Color HLR alters rgb output of demosaic, so re-demosaic is needed when Color HLR is being turned off;
+        if HLR is enabled and changing method *from* Color to any other method
+        OR HLR gets disabled when Color method was selected
+    */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
-    if ((todo & M_RAW) || (!lastHighDetail && highDetailNeeded)) {
-        if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
-    	imgsrc->demosaic( rp, params.hlrecovery );
+    if ((todo & M_RAW)
+    	|| (!lastHighDetail && highDetailNeeded)
+    	|| (params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
+    	|| (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified())){
+
+    	if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
+    	imgsrc->demosaic( rp );
     }
     lastHighDetail=highDetailNeeded;
 
 
     if (todo & M_INIT) {
         Glib::Mutex::Lock lock(minit);  // Also used in crop window
+
+        imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
 
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
         currWB = ColorTemp (params.wb.temperature, params.wb.green);
@@ -531,8 +547,8 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	ppar.icm.input = "(none)";
 	Imagefloat* im = new Imagefloat (fW, fH);
 	Image16* im16 = new Image16 (fW, fH);
-	imgsrc->preprocess( ppar.raw, ppar.hlrecovery );
-	imgsrc->demosaic(ppar.raw, ppar.hlrecovery );
+	imgsrc->preprocess( ppar.raw );
+	imgsrc->demosaic(ppar.raw );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
 	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
 	if (params.wb.method=="Camera")

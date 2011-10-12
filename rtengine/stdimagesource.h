@@ -36,7 +36,7 @@ class StdImageSource : public ImageSource {
 
         void transform           (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
         void transformPixel      (int x, int y, int tran, int& tx, int& ty);
-        
+        bool rgbSourceModified;
     public:
         StdImageSource ();
         ~StdImageSource ();
@@ -62,7 +62,7 @@ class StdImageSource : public ImageSource {
 
 
         static inline double intpow (double a, int b) { double r = 1.0; for (int i=0; i<b; i++) r *= a; return r; }
-
+        bool        IsrgbSourceModified() {return rgbSourceModified;}
     protected:
         void    getImage_   (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp);
         void    hflip       (Imagefloat* im);
