@@ -214,6 +214,12 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
   slider->set_range (vmin, vmax);
   slider->set_value (shapeValue(vdefault));
   //defaultVal = shapeValue (vdefault);
+
+  double maxAbs = fmax(fabs(vmin), fabs(vmax));
+  int digits2;
+  for (digits2=0; maxAbs/pow(double(10),digits2)>=1.0; digits2++);
+  spin->set_width_chars(digits+digits2+(vmin<0?1:0)+(digits>0?1:0));
+
   sliderChange.block (false);
   spinChange.block (false);
 }
