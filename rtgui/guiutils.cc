@@ -306,7 +306,6 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event) {
 }
 
 MySpinButton::MySpinButton () {
-	set_size_request(50, -1);
 	Gtk::Border border;
 	border.bottom = 0;
 	border.top = 0;
