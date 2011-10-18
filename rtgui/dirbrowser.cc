@@ -57,9 +57,9 @@ void DirBrowser::fillDirTree () {
 
   openfolder = safe_create_from_file ("folder_open.png");
   closedfolder = safe_create_from_file ("folder.png");
-  icdrom = safe_create_from_file ("cdrom.png");
-  ifloppy = safe_create_from_file ("floppy.png");
-  ihdd = safe_create_from_file ("hdd.png");
+  icdrom = safe_create_from_file ("drive-optical.png");
+  ifloppy = safe_create_from_file ("drive-removable-media.png");
+  ihdd = safe_create_from_file ("drive-harddisk.png");
   iremovable = safe_create_from_file ("usbpendrive.png");
   inetwork = safe_create_from_file ("network.png");
 

@@ -64,7 +64,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     trashButtonBox = Gtk::manage( new Gtk::VBox );
     Gtk::Button* emptyT = Gtk::manage( new Gtk::Button (M("FILEBROWSER_EMPTYTRASH")));
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
-    emptyT->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-delete"), Gtk::ICON_SIZE_BUTTON)));
+    emptyT->set_image (*Gtk::manage(new RTImage ("trash.png")));
     emptyT->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::emptyTrash));    
     trashButtonBox->pack_start (*emptyT, Gtk::PACK_SHRINK, 4);
     emptyT->show ();

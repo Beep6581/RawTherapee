@@ -18,6 +18,7 @@
  */
 #include <favoritbrowser.h>
 #include <multilangmgr.h>
+#include <rtimage.h>
 
 FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
 
@@ -49,8 +50,8 @@ FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
 
     add = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_ADD")));
     del = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_DEL")));
-    add->set_image (*Gtk::manage (new Gtk::Image (Gtk::Stock::ADD, Gtk::ICON_SIZE_MENU)));
-    del->set_image (*Gtk::manage (new Gtk::Image (Gtk::Stock::REMOVE, Gtk::ICON_SIZE_MENU)));
+    add->set_image (*Gtk::manage (new RTImage ("add.png")));
+    del->set_image (*Gtk::manage (new RTImage ("list-remove.png")));
     Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());
     buttonBox->pack_start (*add);
     buttonBox->pack_start (*del);

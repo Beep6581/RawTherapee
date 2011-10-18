@@ -20,6 +20,7 @@
 #include <multilangmgr.h>
 #include <guiutils.h>
 #include <safegtk.h>
+#include <rtimage.h>
 
 extern Options options;
 SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
@@ -84,8 +85,8 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
     Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
 
-    ok->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
-    cancel->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
+    ok->set_image (*Gtk::manage(new RTImage ("addtags.png")));
+    cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::cancelPressed) );

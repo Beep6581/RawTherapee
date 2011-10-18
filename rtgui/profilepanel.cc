@@ -22,6 +22,7 @@
 #include <clipboard.h>
 #include <multilangmgr.h>
 #include <safegtk.h>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -40,13 +41,13 @@ ProfilePanel::ProfilePanel () {
     pack_start (*hbox, Gtk::PACK_SHRINK, 4);
     
     save = Gtk::manage (new Gtk::Button ());
-    save->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+    save->add (*Gtk::manage (new RTImage ("save_hdd_01.png")));
     load = Gtk::manage (new Gtk::Button ());
-    load->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+    load->add (*Gtk::manage (new RTImage ("folder_open.png")));
     copy = Gtk::manage (new Gtk::Button ());
-    copy->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-copy"), Gtk::ICON_SIZE_BUTTON)));
+    copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
     paste = Gtk::manage (new Gtk::Button ());
-    paste->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-paste"), Gtk::ICON_SIZE_BUTTON)));
+    paste->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 
     hbox->pack_start (*profiles);
     hbox->pack_start (*load, Gtk::PACK_SHRINK, 1);

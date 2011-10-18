@@ -49,7 +49,7 @@ ExifPanel::ExifPanel () : idata(NULL) {
 
    delicon = safe_create_from_file ("deltags.png");
    keepicon = safe_create_from_file ("addtags.png");
-   editicon = safe_create_from_file ("logoicon16.png");
+   editicon = safe_create_from_file ("add.png");
 
    Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
    Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
@@ -361,7 +361,7 @@ void ExifPanel::resetAllPressed () {
 void ExifPanel::addPressed () {
 
     Gtk::Dialog* dialog = new Gtk::Dialog (M("EXIFPANEL_ADDTAGDLG_TITLE"), *((Gtk::Window*)get_toplevel()), true, true);
-    dialog->add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
+    dialog->add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);   
     dialog->add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     
     Gtk::HBox* hb1 = new Gtk::HBox ();

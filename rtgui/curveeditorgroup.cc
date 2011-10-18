@@ -91,7 +91,7 @@ void CurveEditorGroup::newLine() {
 			headerBox->pack_start(*curveGroupLabel, Gtk::PACK_SHRINK, 2);
 
 			curve_reset = Gtk::manage (new Gtk::Button ());
-			curve_reset->add (*Gtk::manage (new RTImage ("default-settings-ltr.png", "default-settings-rtl.png")));
+			curve_reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
 			curve_reset->set_relief (Gtk::RELIEF_NONE);
 			curve_reset->set_border_width (0);
 			curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));

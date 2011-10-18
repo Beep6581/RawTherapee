@@ -113,14 +113,22 @@ void RTImage::setPaths(Options &opt) {
 
 		if (keyFile.has_key ("General", "Iconset"))
 			iSet = keyFile.get_string ("General", "Iconset");
-		if (iSet.length())
+		if (iSet.length()) {
+			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "actions"))));
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", iSet)));
+			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));
+			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "places"))));
+		}
 
 		iSet.clear();
 		if (keyFile.has_key ("General", "FallbackIconset"))
 			iSet = keyFile.get_string ("General", "FallbackIconset");
-		if (iSet.length())
+		if (iSet.length()) {
+			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "actions"))));
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", iSet)));
+			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));
+			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "places"))));
+		}
 	}
 	// The images/ folder is the second fallback solution
 	imagesPaths.push_back (Glib::build_filename(argv0, "images"));

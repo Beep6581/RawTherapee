@@ -59,7 +59,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   hbox->pack_start (*label);
 
   reset = Gtk::manage (new Gtk::Button ());
-  reset->add (*Gtk::manage (new RTImage ("default-settings-ltr.png", "default-settings-rtl.png")));
+  reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
   reset->set_relief (Gtk::RELIEF_NONE);
   reset->set_border_width (0);
   reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -122,7 +122,7 @@ Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep,
     
 
   reset = Gtk::manage (new Gtk::Button ());
-  reset->add (*Gtk::manage (new RTImage ("default-settings-ltr.png", "default-settings-rtl.png")));
+  reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
   reset->set_relief (Gtk::RELIEF_NONE);
   reset->set_border_width (0);
   reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));

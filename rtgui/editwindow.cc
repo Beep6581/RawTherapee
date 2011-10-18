@@ -21,6 +21,7 @@
 #include <cursormanager.h>
 #include <rtwindow.h>
 #include <gtk/gtkwidget.h>
+#include <rtimage.h>
 
 static EditWindow* editWnd = NULL;
 
@@ -123,10 +124,10 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
     // construct closeable tab for the image
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-    hb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FILE, Gtk::ICON_SIZE_MENU)));
+      hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
     hb->pack_start (*Gtk::manage (new Gtk::Label (name)));
     Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-    closeb->set_image (*Gtk::manage(new Gtk::Image (Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU)));
+      closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
     closeb->set_relief (Gtk::RELIEF_NONE);
     closeb->set_focus_on_click (false);
     // make the button as small as possible
