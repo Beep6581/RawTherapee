@@ -180,7 +180,7 @@ cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name) {
 
 
     std::map<std::string, cmsHPROFILE>::iterator r = fileStdProfiles.find (name.uppercase());
-    if (r==fileProfiles.end()) return NULL;
+    if (r==fileStdProfiles.end()) return NULL;
     
     return r->second;
 }
