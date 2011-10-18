@@ -63,8 +63,8 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     Gtk::Button* cancel = Gtk::manage (new Gtk::Button (M("GENERAL_CANCEL")));
 
     about->set_image (*Gtk::manage(new RTImage ("logoicon16.png")));
-    ok->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-ok"), Gtk::ICON_SIZE_BUTTON)));
-    cancel->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
+    ok->set_image (*Gtk::manage(new RTImage ("addtags.png")));
+    cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
 
 
     about->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::aboutPressed) );
@@ -708,7 +708,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     startupdir = Gtk::manage( new Gtk::Entry () );
 
     Gtk::Button* sdselect = Gtk::manage( new Gtk::Button ("") );
-    sdselect->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+    sdselect->set_image (*Gtk::manage(new RTImage ("folder_open.png")));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group (opts);

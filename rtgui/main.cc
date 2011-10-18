@@ -138,6 +138,10 @@ int main(int argc, char **argv)
    }
    Gtk::Main m(&argc, &argv);
 
+   Glib::ustring icon_path = Glib::build_filename(argv0,"images");
+   Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
+   defaultIconTheme->append_search_path(icon_path);
+
    RTImage::setPaths(options);
 
 #ifndef WIN32
@@ -149,6 +153,7 @@ int main(int argc, char **argv)
    else
       printf("Error: no default settings to update!\n");
 #endif
+
 
    RTWindow *rtWindow = new class RTWindow();
    gdk_threads_enter ();

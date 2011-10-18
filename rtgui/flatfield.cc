@@ -21,6 +21,7 @@
 #include <guiutils.h>
 #include <safegtk.h>
 #include <sstream>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -31,7 +32,7 @@ FlatField::FlatField () : Gtk::VBox(), FoldableToolPanel(this)
 	flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	flatFieldFileReset = Gtk::manage(new Gtk::Button());
-	flatFieldFileReset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
+	flatFieldFileReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
 	hbff->pack_start(*ffLabel, Gtk::PACK_SHRINK, 4);
 	hbff->pack_start(*flatFieldFile);
 	hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK, 4);

@@ -42,9 +42,9 @@ BatchQueuePanel::BatchQueuePanel () {
     stop->set_active (true);
     autoStart->set_active (options.procQueueEnabled);
     
-    start->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-media-play"), Gtk::ICON_SIZE_BUTTON)));
+    start->set_image (*Gtk::manage (new RTImage ("gtk-media-play.png")));
     startConnection = start->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::startBatchProc));    
-    stop->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-media-stop"), Gtk::ICON_SIZE_BUTTON)));
+    stop->set_image (*Gtk::manage (new RTImage ("gtk-media-stop.png")));
     stopConnection = stop->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::stopBatchProc));    
     batchQueueButtonBox->pack_start (*start, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*stop, Gtk::PACK_SHRINK, 4);

@@ -153,7 +153,7 @@ RTWindow::RTWindow ()
 		Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
 		//Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));
 		Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
-		preferences->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-preferences"), Gtk::ICON_SIZE_BUTTON)));
+		preferences->set_image (*Gtk::manage(new RTImage ("gtk-preferences.png")));
 		preferences->set_tooltip_markup (M("MAIN_BUTTON_PREFERENCES"));
 		preferences->signal_clicked().connect( sigc::mem_fun(*this, &RTWindow::showPreferences) );
 
@@ -248,10 +248,10 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name) {
 
         // construct closeable tab for the image
         Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-        hb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::FILE, Gtk::ICON_SIZE_MENU)));
+        hb->pack_start (*Gtk::manage (new RTImage ("rtwindow.png")));
         hb->pack_start (*Gtk::manage (new Gtk::Label (name)));
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-        closeb->set_image (*Gtk::manage(new Gtk::Image (Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU)));
+        closeb->set_image (*Gtk::manage(new RTImage ("gtk-close.png")));
         closeb->set_relief (Gtk::RELIEF_NONE);
         closeb->set_focus_on_click (false);
         // make the button as small as possible

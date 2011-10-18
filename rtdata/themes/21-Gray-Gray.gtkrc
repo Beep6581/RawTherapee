@@ -476,3 +476,4 @@ widget "*.histButton" style "clearlooks-histButton"
 ##################################################################
 widget "gtk-tooltip*" style "clearlooks-tooltips"
 
+gtk-icon-theme-name="Dark"

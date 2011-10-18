@@ -21,6 +21,7 @@
 #include <guiutils.h>
 #include <safegtk.h>
 #include <iccstore.h>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -77,7 +78,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 4);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
-    saveRef->set_image (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+    saveRef->set_image (*Gtk::manage (new RTImage ("save_hdd_01.png")));
     pack_start (*saveRef, Gtk::PACK_SHRINK, 4);
 
 

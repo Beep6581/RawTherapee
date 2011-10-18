@@ -173,7 +173,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     saveimgas->add(*saveButtonImage);
     saveimgas->set_tooltip_markup(M("MAIN_BUTTON_SAVE_TOOLTIP"));
 
-    Gtk::Image *queueButtonImage = Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-execute"), Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("processing.png"));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->add(*queueButtonImage);
     queueimg->set_tooltip_markup(M("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));

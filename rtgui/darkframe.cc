@@ -21,6 +21,7 @@
 #include <guiutils.h>
 #include <safegtk.h>
 #include <sstream>
+#include <rtimage.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -31,7 +32,7 @@ DarkFrame::DarkFrame () : Gtk::VBox(), FoldableToolPanel(this)
 	darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	btnReset = Gtk::manage(new Gtk::Button());
-	btnReset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID("gtk-cancel"), Gtk::ICON_SIZE_BUTTON)));
+	btnReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
 	hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 4);
 	hbdf->pack_start(*darkFrameFile);
 	hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 4);

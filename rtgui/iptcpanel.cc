@@ -264,19 +264,19 @@ IPTCPanel::IPTCPanel () {
     Gtk::HBox* bbox = Gtk::manage( new Gtk::HBox () );
     
     reset = Gtk::manage( new Gtk::Button (M("IPTCPANEL_RESET")) );
-    reset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-undo"), Gtk::IconSize (2))));
+    reset->set_image (*Gtk::manage(new RTImage ("gtk-undo-ltr.png", "gtk-undo-rtl.png")));
     bbox->pack_start (*reset);
 
     file = Gtk::manage( new Gtk::Button (M("IPTCPANEL_EMBEDDED")) );
-    file->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-open"), Gtk::IconSize (2))));
+    file->set_image (*Gtk::manage(new RTImage ("folder_open.png")));
     bbox->pack_start (*file);
     
     copy = Gtk::manage( new Gtk::Button () );
-    copy->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-copy"), Gtk::IconSize (2))));
+    copy->set_image (*Gtk::manage(new RTImage ("edit-copy.png")));
     bbox->pack_start (*copy, Gtk::PACK_SHRINK, 0);
 
     paste = Gtk::manage( new Gtk::Button () );
-    paste->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-paste"), Gtk::IconSize (2))));
+    paste->set_image (*Gtk::manage(new RTImage ("edit-paste.png")));
     bbox->pack_start (*paste, Gtk::PACK_SHRINK, 0);
     
     pack_end (*bbox, Gtk::PACK_SHRINK, 2);
