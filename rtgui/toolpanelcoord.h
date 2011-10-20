@@ -63,6 +63,7 @@
 class ImageEditorCoordinator;
 
 class ToolPanelCoordinator :    public ToolPanelListener, 
+                                public ToolBarListener,
                                 public ProfileChangeListener, 
                                 public WBProvider,
                                 public DFProvider,
@@ -226,6 +227,8 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void updateTPVScrollbar (bool hide);
         void updateTabsUsesIcons (bool useIcons);
         bool handleShortcutKey (GdkEventKey* event);
+
+        void toolSelected (ToolMode tool);
 };
 
 #endif

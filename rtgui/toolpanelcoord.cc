@@ -184,6 +184,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     icm->setICMPanelListener (this);
 
     toolBar = new ToolBar ();
+    toolBar->setToolBarListener(this);
 }
 
 void ToolPanelCoordinator::addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label) {
@@ -561,4 +562,24 @@ void ToolPanelCoordinator::updateTPVScrollbar (bool hide) {
 
 void ToolPanelCoordinator::updateTabsUsesIcons (bool useIcons) {
 	updateTabsHeader (useIcons);
+}
+
+void ToolPanelCoordinator::toolSelected (ToolMode tool) {
+	switch (tool) {
+	case TMCropSelect:
+		crop->exp->set_expanded(true);
+		toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
+		break;
+	case TMSpotWB:
+		whitebalance->exp->set_expanded(true);
+		toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*colorPanelSW));
+		break;
+	case TMStraighten:
+		lensgeom->exp->set_expanded(true);
+		rotate->exp->set_expanded(true);
+		toolPanelNotebook->set_current_page(toolPanelNotebook->page_num(*transformPanelSW));
+		break;
+	default:
+		break;
+	}
 }
