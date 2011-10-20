@@ -9,6 +9,7 @@ Developement contributors, in last name alphabetical order:
 	Michael Ezra
 	Jean-Christophe Frisch
 	Steve Herrell
+	Philippe Hupé
 	Wolfgang Kuehnel
 	Guokai Ma
 	Emil Martinec
