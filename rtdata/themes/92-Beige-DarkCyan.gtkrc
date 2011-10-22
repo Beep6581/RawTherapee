@@ -153,6 +153,13 @@ style "clearlooks-spinbutton" {
 	}
 }
 
+style "clearlooks-framelessspinbutton" {
+
+	# IMPORTANT!
+	# base[NORMAL] must have the same color than notebook bg[NORMAL]
+	base[NORMAL]       = shade (1.02, @rt_bg_color)
+}
+
 style "clearlooks-scale" {
 	xthickness = 2
 	ythickness = 2
@@ -209,6 +216,8 @@ style "clearlooks-vscrollbar" {
 
 style "clearlooks-notebook_bg" {
 
+	# IMPORTANT!
+	# If you modify bg[NORMAL] here under, you must set clearlooks-framelessspinbutton -> base[NORMAL] to the very same value
 	bg[NORMAL]        = shade (1.02, @rt_bg_color)
 }
 
@@ -442,6 +451,7 @@ widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
 widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
 widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
 widget "*.histButton" style "clearlooks-histButton"
+widget "*.FramelessSpinButton" style "clearlooks-framelessspinbutton"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

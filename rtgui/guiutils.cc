@@ -309,13 +309,44 @@ MySpinButton::MySpinButton () {
 	Gtk::Border border;
 	border.bottom = 0;
 	border.top = 0;
-	border.left = 0;
-	border.right = 0;
+	border.left = 3;
+	border.right = 3;
 	set_inner_border(border);
+	set_numeric(true);
+	set_wrap(true);
+	set_alignment(Gtk::ALIGN_RIGHT);
+}
+
+void MySpinButton::updateSize() {
+	double vMin, vMax;
+	double step, page;
+	double maxAbs;
+	unsigned int digits, digits2;
+	unsigned int maxLen;
+
+	get_range(vMin, vMax);
+	get_increments (step, page);
+
+	maxAbs = fmax(fabs(vMin), fabs(vMax));
+	digits = get_digits();
+	for (digits2=0; maxAbs/pow(double(10),digits2)>=1.0; digits2++);
+	maxLen = digits+digits2+(vMin<0?1:0)+(digits>0?1:0);
+
+	set_max_length(maxLen);
+	set_width_chars(maxLen);
+}
+
+bool MySpinButton::on_key_press_event (GdkEventKey* event) {
+	bool rcode = Gtk::Widget::on_key_press_event(event);
+	if ( (event->string[0] >= 'a' && event->string[0] <= 'z')
+	   ||(event->string[0] >= 'A' && event->string[0] <= 'Z')
+	   || event->string[0] == '+'
+	)
+		return false;
+	return rcode;
 }
 
 bool MySpinButton::on_scroll_event (GdkEventScroll* event) {
-
 	// If Shift is pressed, the widget is modified
 	if (event->state & GDK_SHIFT_MASK) {
 		Gtk::SpinButton::on_scroll_event(event);
