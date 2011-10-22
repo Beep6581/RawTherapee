@@ -109,10 +109,13 @@ public:
  */
 class MySpinButton : public Gtk::SpinButton {
 
+protected:
 	bool on_scroll_event (GdkEventScroll* event);
+	bool on_key_press_event (GdkEventKey* event);
 
 public:
 	MySpinButton ();
+	void updateSize();
 };
 
 /**

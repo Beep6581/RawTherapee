@@ -67,6 +67,8 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
   
   spin = Gtk::manage (new MySpinButton ());
+  spin->set_has_frame(false);
+  spin->set_name("FramelessSpinButton");
 
   hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
 
@@ -132,6 +134,8 @@ Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep,
   hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
   
   spin = Gtk::manage (new MySpinButton ());
+  spin->set_has_frame(false);
+  spin->set_name("FramelessSpinButton");
 
   reset->set_size_request (-1, spin->get_height());
   
@@ -208,18 +212,13 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
   spin->set_digits (digits);
   spin->set_increments (vstep, 2.0*vstep);
   spin->set_range (vmin, vmax);
+  spin->updateSize();
   spin->set_value (shapeValue(vdefault));
   slider->set_digits (digits);
   slider->set_increments (vstep, 2.0*vstep);
   slider->set_range (vmin, vmax);
   slider->set_value (shapeValue(vdefault));
   //defaultVal = shapeValue (vdefault);
-
-  double maxAbs = fmax(fabs(vmin), fabs(vmax));
-  int digits2;
-  for (digits2=0; maxAbs/pow(double(10),digits2)>=1.0; digits2++);
-  spin->set_width_chars(digits+digits2+(vmin<0?1:0)+(digits>0?1:0));
-
   sliderChange.block (false);
   spinChange.block (false);
 }
