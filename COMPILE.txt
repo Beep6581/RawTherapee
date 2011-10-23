@@ -126,7 +126,7 @@ Windows
 			- how to build:
 			  cd to the unarchiving directory of lpng144
 
-				There's two options to build libpng :
+				There are two options to build libpng:
 				1. gtkmm doesn't provide zlib so i've compiled it myself
 				   cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX:PATH=/mingw -DCMAKE_BUILD_TYPE:STRING=Release
 				2. gtkmm provide zlib and i want to reuse it (so we're assuming that you didn't compiled zlib like explained here above)
