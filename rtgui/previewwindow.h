@@ -34,8 +34,6 @@ class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public Cr
         ImageArea* imageArea;
         int imgX, imgY, imgW, imgH;
         double zoom;
-		Gdk::Cursor* cCropMoving;
-		Gdk::Cursor* cNormal;
 		int press_x, press_y;
 		bool isMoving;
 		
@@ -44,7 +42,6 @@ class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public Cr
         
     public:
         PreviewWindow ();
-		~PreviewWindow ();
         
         void setPreviewHandler  (PreviewHandler* ph);
         void setImageArea       (ImageArea* ia);
