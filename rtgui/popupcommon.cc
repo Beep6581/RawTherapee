@@ -93,8 +93,8 @@ bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label) {
 		// When there is at least 1 choice, we add the arrow button
 		if (images.size() == 1) {
 			Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
-			Gtk::Arrow* arrowObject = Gtk::manage( new Gtk::Arrow(Gtk::ARROW_DOWN, Gtk::SHADOW_NONE) );
-			arrowButton->add(*arrowObject); //menuSymbol);
+			RTImage* arrowImage = Gtk::manage( new RTImage("popuparrow.png") );
+			arrowButton->add(*arrowImage); //menuSymbol);
 			arrowButton->set_relief (Gtk::RELIEF_NONE);
 			arrowButton->set_border_width (0);
 			buttonGroup->pack_start(*arrowButton,Gtk::PACK_SHRINK, 0);

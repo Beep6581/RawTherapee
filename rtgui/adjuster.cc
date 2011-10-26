@@ -25,6 +25,8 @@
 #include <guiutils.h>
 #include <rtimage.h>
 
+#define MIN_RESET_BUTTON_HEIGHT 17
+
 extern Glib::ustring argv0;
 
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, bool editedcb) {
@@ -72,8 +74,8 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
   hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
 
-  reset->set_size_request (-1, spin->get_height());
-  
+  reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height(): MIN_RESET_BUTTON_HEIGHT);
+
   slider = Gtk::manage (new MyHScale ());
   slider->set_draw_value (false);
 
@@ -137,7 +139,8 @@ Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep,
   spin->set_has_frame(false);
   spin->set_name("FramelessSpinButton");
 
-  reset->set_size_request (-1, spin->get_height());
+  reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height(): MIN_RESET_BUTTON_HEIGHT);
+
   
   slider = Gtk::manage (new MyHScale ());
   slider->set_draw_value (false);
