@@ -19,27 +19,17 @@
 #include <previewwindow.h>
 #include <guiutils.h>
 #include <imagearea.h>
+#include <cursormanager.h>
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL),cCropMoving(NULL),cNormal(NULL), isMoving(false), imageArea(NULL) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), isMoving(false), imageArea(NULL) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
-}
-
-PreviewWindow::~PreviewWindow () {
-
-	if( cCropMoving )
-		delete cCropMoving;
-	if( cNormal )
-		delete cNormal;
-
 }
 
 void PreviewWindow::on_realize () {
 
 	Gtk::DrawingArea::on_realize ();
 	add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
-	cCropMoving = new Gdk::Cursor (Gdk::FLEUR);
-	cNormal = new Gdk::Cursor (Gdk::ARROW);
 }
 
 void PreviewWindow::getObservedFrameArea (int& x, int& y, int& w, int& h) {
@@ -169,9 +159,9 @@ bool PreviewWindow::on_motion_notify_event (GdkEventMotion* event) {
 	if (isMoving) 
         mainCropWin->remoteMove ((event->x - press_x)/zoom, (event->y - press_y)/zoom);
 	else if (inside && !moreInside)
-        get_window()->set_cursor (*cCropMoving);
+        cursorManager.setCursor (get_window(), CSClosedHand);
 	else
-        get_window()->set_cursor (*cNormal);
+        cursorManager.setCursor (get_window(), CSArrow);
 	return true;
 }
 
@@ -196,7 +186,7 @@ bool PreviewWindow::on_button_press_event (GdkEventButton* event) {
     		press_x = event->x;
     		press_y = event->y;
     	}
-        get_window()->set_cursor (*cCropMoving);
+        cursorManager.setCursor (get_window(), CSClosedHand);
 	}
 	return true;
 }
@@ -208,7 +198,7 @@ bool PreviewWindow::on_button_release_event (GdkEventButton* event) {
 
 	if (isMoving) {
 		isMoving = false;
-		get_window()->set_cursor (*cNormal);
+        cursorManager.setCursor (get_window(), CSArrow);
 		mainCropWin->remoteMoveReady ();
 	}
 	return true;
