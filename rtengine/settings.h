@@ -40,6 +40,7 @@ namespace rtengine {
 			Glib::ustring   best;					// default name of BestRGB
 			Glib::ustring   bruce;					// default name of Bruce
 			Glib::ustring   srgb;					// default name of SRGB space profile
+			bool		    gamutICC;           // 
 			
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

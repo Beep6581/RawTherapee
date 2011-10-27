@@ -91,6 +91,18 @@ class SharpeningParamsEdited {
         bool deconvdamping;
 };
 
+class VibranceParamsEdited {
+
+    public:
+        bool enabled;
+        bool pastels;
+        bool saturated;
+        bool psthreshold;
+        bool protectskins;
+        bool avoidcolorshift;
+        bool pastsattog;
+};
+
 class ColorBoostParamsEdited {
 
     public: 
@@ -342,6 +354,7 @@ class ParamsEdited {
         SharpeningParamsEdited        sharpening;
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
+        VibranceParamsEdited          vibrance;
         ColorBoostParamsEdited        colorBoost;
         WBParamsEdited                wb;
         ColorShiftParamsEdited        colorShift;

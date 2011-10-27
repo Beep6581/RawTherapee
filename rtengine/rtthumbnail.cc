@@ -751,6 +751,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
 								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 16);
     ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
+	ipf.vibrance(labView);
 
     // color processing
     //ipf.colorCurve (labView, labView);

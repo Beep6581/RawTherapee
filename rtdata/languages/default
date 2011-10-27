@@ -246,6 +246,13 @@ HISTORY_MSG_148;Microcontrast
 HISTORY_MSG_149;Microcontrast - 3x3 matrix
 HISTORY_MSG_14;Luminance Brightness
 HISTORY_MSG_150;Post demosaic artifact/noise reduction
+HISTORY_MSG_151;Vibrance
+HISTORY_MSG_152;Vibrance - Pastels tones
+HISTORY_MSG_153;Vibrance - Saturated tones
+HISTORY_MSG_154;Vibrance - Protect skin tones
+HISTORY_MSG_155;Vibrance - Avoid color drift
+HISTORY_MSG_156;Vibrance - Link Pastels & Saturated
+HISTORY_MSG_157;Vibrance - Pastels/Saturated threshold
 HISTORY_MSG_15;Luminance Contrast
 HISTORY_MSG_16;Luminance Black
 HISTORY_MSG_17;Luminance Highlight Compr.
@@ -549,6 +556,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
 PARTIALPASTE_SHARPENEDGE;Edges
 PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrast
+PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 PARTIALPASTE_WHITEBALANCE;White balance 
@@ -973,6 +981,13 @@ TP_SHARPENMICRO_AMOUNT;Quantity
 TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity
+TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+TP_VIBRANCE_LABEL;Vibrance
+TP_VIBRANCE_PASTELS;Pastels tones
+TP_VIBRANCE_PASTSATTOG;Link Pastels & Saturated
+TP_VIBRANCE_PROTECTSKINS;Protect skin tones
+TP_VIBRANCE_SATURATED;Saturated tones
+TP_VIBRANCE_PSTHRESHOLD;Pastels/Saturated threshold
 TP_VIGNETTING_AMOUNT;Amount
 TP_VIGNETTING_CENTER;Center
 TP_VIGNETTING_CENTER_X;Center X

@@ -90,7 +90,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     mProcessing.lock ();
 
-    int numofphases = 10;
+    int numofphases = 14;
     int readyphase = 0;
 
     ipf.setScale (scale);
@@ -115,7 +115,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		rp.all_enhance = false;
 	}
 
-    progress ("Applying white balance, color correction & sRBG conversion...",100*readyphase/numofphases);
+    progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC) {
     	imgsrc->preprocess( rp );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
@@ -245,6 +245,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     if ((todo & M_LUMACURVE) || todo==CROP) {
+
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16);
     }
@@ -256,28 +257,34 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+
         ipf.luminanceCurve (oprevl, nprevl, lumacurve);
 
         readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
 		ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*, params.labCurve.saturation*/);
         //ipf.colorCurve (nprevl, nprevl);
-
+		ipf.vibrance(nprevl);
         readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
             ipf.impulsedenoise (nprevl);
+            readyphase++;
 			progress ("Defringing...",100*readyphase/numofphases);
             ipf.defringe (nprevl);
+            readyphase++;
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
             ipf.dirpyrdenoise (nprevl);
+            readyphase++;
 			if (params.sharpenEdge.enabled) {
                 progress ("Edge sharpening...",100*readyphase/numofphases);
 				ipf.MLsharpen (nprevl);
+		        readyphase++;
 			}
 			if (params.sharpenMicro.enabled) {
                 progress ("Microcontrast...",100*readyphase/numofphases);			
 				ipf.MLmicrocontrast (nprevl);
+		        readyphase++;
 			}
             if (params.sharpening.enabled) {
                 progress ("Sharpening...",100*readyphase/numofphases);
@@ -291,10 +298,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 for (int i=0; i<pH; i++)
                     delete [] buffer[i];
                 delete [] buffer;
+                readyphase++;
             }
 
             progress ("Pyramid equalizer...",100*readyphase/numofphases);
             ipf.dirpyrequalizer (nprevl);
+            readyphase++;
         }
     }
 

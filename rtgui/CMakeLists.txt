@@ -9,7 +9,7 @@ set (BASESOURCEFILES
     resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     impulsedenoise.cc dirpyrdenoise.cc
     exifpanel.cc toolpanel.cc
-    sharpening.cc
+    sharpening.cc vibrance.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
     crophandler.cc dirbrowser.cc
     curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc

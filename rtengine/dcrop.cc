@@ -163,8 +163,8 @@ void Crop::update (int todo) {
     if (todo & (M_LUMINANCE+M_COLOR)) {
         parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve);
 		parent->ipf.chrominanceCurve (laboCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve);
-
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
+		parent->ipf.vibrance (labnCrop);
 
         if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);

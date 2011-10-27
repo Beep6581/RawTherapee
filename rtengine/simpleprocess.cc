@@ -170,11 +170,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
+
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1);
 	ipf.luminanceCurve (labView, labView, curve);
 	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
 								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 1);
 	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
+	ipf.vibrance(labView);
 
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);

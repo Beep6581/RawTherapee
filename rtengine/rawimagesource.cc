@@ -32,6 +32,8 @@
 #include <iostream>
 #include <options.h>
 
+
+
 #include <improcfun.h>
 #ifdef _OPENMP
 #include <omp.h>
@@ -40,7 +42,6 @@
 namespace rtengine {
 
 extern const Settings* settings;
-
 #undef ABS
 #undef MAX
 #undef MIN
@@ -1607,10 +1608,8 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
     //MyTime t1, t2, t3;
     //t1.set ();
-
     cmsHPROFILE in;
     if (!findInputProfile(cmp.input, embedded, camName, in)) return;
-    
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
         float mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -1649,9 +1648,76 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				im->g[h][w] /= 65535.0f ;
 				im->b[h][w] /= 65535.0f ;
 			}
-        cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-//        out = iccStore->workingSpaceGamma (wProfile);
+	if(settings->gamutICC)  
+	// use Prophoto to apply profil ICC, then converted to cmp.working (sRGB..., Adobe.., Wide..) to avoid color shifts due to relative colorimetric
+	// LCMS use intent for applying profil => suppression of negatives values and > 65535
+	//useful for correcting Munsell Lch
 
+	{ if( settings->verbose ) printf("With Gamut ICC correction float\n");
+		Glib::ustring profi ="ProPhoto";
+        cmsHPROFILE out = iccStore->workingSpace (profi);//Prophoto	
+	TMatrix wprof = iccStore->workingSpaceMatrix (profi);
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);//sRGB .. Adobe...Wide...
+	float toxyz[3][3] = {
+        {
+        	( wprof[0][0]),
+        	( wprof[0][1]),
+        	( wprof[0][2])
+        },{
+			( wprof[1][0]		),
+			( wprof[1][1]		),
+			( wprof[1][2]		)
+        },{
+			( wprof[2][0]),
+			( wprof[2][1]),
+			( wprof[2][2])
+        }
+		};
+	float wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}};
+        lcmsMutex->lock ();
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), 
+            INTENT_RELATIVE_COLORIMETRIC,  // float is clipless, so don't trim it
+            settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+        lcmsMutex->unlock ();
+		if (hTransform) {
+            im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+			}
+			else {
+          // create the profile from camera
+          lcmsMutex->lock ();
+          hTransform = cmsCreateTransform (camprofile, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent,
+              settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety    
+          lcmsMutex->unlock ();
+				
+          im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+				}
+		float x, y,z;
+		Glib::ustring choiceprofile;
+		choiceprofile=cmp.working;
+		if(choiceprofile!="ProPhoto") {
+		for ( int h = 0; h < im->height; ++h )
+			for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
+		     x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
+             y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
+             z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
+			 //convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
+			im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
+			im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
+			im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;			
+			}	
+			}
+			
+		        cmsDeleteTransform(hTransform);
+	
+	}
+     else {	
+	 if( settings->verbose ) printf("Without Gamut ICC correction float\n");
+		cmsHPROFILE out = iccStore->workingSpace (cmp.working);	
+
+//        out = iccStore->workingSpaceGamma (wProfile);
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), 
             INTENT_RELATIVE_COLORIMETRIC,  // float is clipless, so don't trim it
@@ -1672,7 +1738,8 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         }
 
         cmsDeleteTransform(hTransform);
-
+		}
+		
 		// restore normalization to the range (0,65535) and blend matrix colors if LCMS is clipping
         const float RecoverTresh = 65535.0 * 0.98;  // just the last few percent highlights are merged
         #pragma omp parallel for
@@ -1736,7 +1803,6 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 	
 // Converts raw image including ICC input profile to working space - 16bit int version
 void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
-	
 	cmsHPROFILE in;
     if (!findInputProfile(cmp.input, embedded, camName, in)) return;
 	
@@ -1763,7 +1829,8 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 				im->b[i][j] = CLIP((int)newb);
 			}
 	}
-	else {
+	else
+	{
 		cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 		//        out = iccStore->workingSpaceGamma (wProfile);
 		lcmsMutex->lock ();
