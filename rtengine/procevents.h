@@ -172,9 +172,14 @@ enum ProcEvent {
 	EvSharpenMicroEnabled=147,
 	EvSharpenMicroMatrix=148,
 	EvDemosaicALLEnhanced=149,
-	NUMOFEVENTS=150
-	
-	
-	};
+	EvVibranceEnabled=150,
+	EvVibrancePastels=151,
+	EvVibranceSaturated=152,
+	EvVibranceProtectSkins=153,
+	EvVibranceAvoidColorShift=154,
+	EvVibrancePastSatTog=155,
+	EvVibrancePastSatThreshold=156,
+	NUMOFEVENTS=157
+};
 }    
 #endif    

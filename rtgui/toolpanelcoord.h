@@ -29,6 +29,7 @@
 #include <whitebalance.h>
 #include <coarsepanel.h>
 #include <tonecurve.h>
+#include <vibrance.h>
 #include <shadowshighlights.h>
 #include <impulsedenoise.h>
 #include <defringe.h>
@@ -84,6 +85,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         PerspCorrection* perspective;
         CACorrection* cacorrection;
         HLRecovery* hlrecovery;
+        Vibrance* vibrance;
         ChMixer* chmixer;
         Resize* resize;
         ICMPanel* icm;

@@ -9,6 +9,13 @@ endif (WIN32)
 if (CMAKE_BUILD_TYPE STREQUAL "")
   set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
+
+string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
+
+if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+  add_definitions (-D_DEBUG)
+endif ()
+
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 set (CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave empty to use the default suffix, i.e. latesttag)")
@@ -202,8 +209,6 @@ else (AUTOMATED_BUILD_SYSTEM)
   elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(PROC_BIT_DEPTH 64 bits)
   endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-
-  string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
   #generating AboutThisBuild.txt
   if (WIN32)

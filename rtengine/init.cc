@@ -38,6 +38,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 	iccStore->findDefaultMonitorProfile();
 
     CurveFactory::init ();
+    ImProcFunctions::initMunsell();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;

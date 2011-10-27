@@ -170,6 +170,13 @@ SHARPENING,       // EvSharpenEdgeThreechannels
 SHARPENING,       // EvSharpenMicroEnabled
 SHARPENING,       // EvSharpenMicroMatrix
 DEMOSAIC,         // EvDemosaicALLEnhanced
+RGBCURVE,         // EvVibranceEnabled
+RGBCURVE,         // EvVibrancePastels
+RGBCURVE,         // EvVibranceSaturated
+RGBCURVE,         // EvVibranceProtectSkins
+RGBCURVE,         // EvVibranceAvoidColorShift
+RGBCURVE,         // EvVibrancePastSatTog
+RGBCURVE          // EvVibrancePastSatThreshold
 
 };
 

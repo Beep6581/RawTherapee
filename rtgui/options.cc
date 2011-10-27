@@ -168,6 +168,7 @@ void Options::setDefaults () {
     sndEnable=true;
     sndLngEditProcDoneSecs=3.0;
 
+    // Reminder: 0 = SET mode, 1 = ADD mode
     int babehav[] = {
 			1,  // ADDSET_TC_EXPCOMP
 			1,  // ADDSET_TC_BRIGHTNESS
@@ -208,7 +209,11 @@ void Options::setDefaults () {
 			0,  // ADDSET_SHARPENEDGE_AMOUNT
 			0,  // ADDSET_SHARPENMICRO_AMOUNT
 			0,  // ADDSET_SHARPENEDGE_PASS
-			0   // ADDSET_SHARPENMICRO_UNIFORMITY
+			0,  // ADDSET_SHARPENMICRO_UNIFORMITY
+			1,  // ADDSET_VIBRANCE_PASTELS
+			1,  // ADDSET_VIBRANCE_SATURATED
+			0   // ADDSET_VIBRANCE_SATURATED
+
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -234,8 +239,8 @@ void Options::setDefaults () {
     rtSettings.bruce = "Bruce";
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
-
     rtSettings.verbose = false;
+	rtSettings.gamutICC = true;
 }
 
 Options* Options::copyFrom (Options* other) {
@@ -423,7 +428,8 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
 
-    if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
+    if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
+    if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
 
     // Disabled (default is true) till issues are sorted out
     //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
@@ -602,6 +608,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
     keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
     keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
+    keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);

@@ -96,6 +96,22 @@ class SharpenMicroParams {
         double  amount;
         double  uniformity;
 };
+
+/**
+  * Parameters of the vibrance
+  */
+class VibranceParams {
+
+    public:
+        bool    enabled;
+        int     pastels;
+        int     saturated;
+        int     psthreshold;
+        bool    protectskins;
+        bool    avoidcolorshift;
+        bool    pastsattog;
+};
+
 /**
   * Parameters of the color boost
   */
@@ -451,6 +467,7 @@ class ProcParams {
         SharpeningParams        sharpening;      ///< Sharpening parameters
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
+        VibranceParams          vibrance;        ///< Vibrance parameters
         ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
         ColorShiftParams        colorShift;      ///< Color shift parameters

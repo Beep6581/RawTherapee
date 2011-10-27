@@ -115,6 +115,14 @@ void ProcParams::setDefaults () {
     sharpening.deconviter       = 30;
     sharpening.deconvdamping    = 20;
     sharpening.deconvamount     = 75;
+
+    vibrance.enabled            = false;
+    vibrance.pastels            = 0;
+    vibrance.saturated          = 0;
+    vibrance.psthreshold        = 75;
+    vibrance.protectskins       = false;
+    vibrance.avoidcolorshift    = true;
+    vibrance.pastsattog     	= true;
     
     colorBoost.amount                   = 0;
     colorBoost.avoidclip                = false;
@@ -337,6 +345,15 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_integer ("Sharpening", "DeconvAmount",         sharpening.deconvamount);
     keyFile.set_integer ("Sharpening", "DeconvDamping",        sharpening.deconvdamping);
     keyFile.set_integer ("Sharpening", "DeconvIterations",     sharpening.deconviter);
+
+    // save vibrance
+    keyFile.set_boolean ("Vibrance", "Enabled",                vibrance.enabled);
+    keyFile.set_integer ("Vibrance", "Pastels",                vibrance.pastels);
+    keyFile.set_integer ("Vibrance", "Saturated",              vibrance.saturated);
+    keyFile.set_integer ("Vibrance", "PSThreshold",            vibrance.psthreshold);
+    keyFile.set_boolean ("Vibrance", "ProtectSkins",           vibrance.protectskins);
+    keyFile.set_boolean ("Vibrance", "AvoidColorShift",        vibrance.avoidcolorshift);
+    keyFile.set_boolean ("Vibrance", "PastSatTog",             vibrance.pastsattog);
 
     //save edge sharpening
     keyFile.set_boolean ("SharpenEdge", "Enabled",             sharpenEdge.enabled);
@@ -652,7 +669,7 @@ if (keyFile.has_group ("Sharpening")) {
 if (keyFile.has_group ("SharpenEdge")) {
     if (keyFile.has_key ("SharpenEdge", "Enabled"))             sharpenEdge.enabled         = keyFile.get_boolean ("SharpenEdge", "Enabled");
     if (keyFile.has_key ("SharpenEdge", "Passes"))              sharpenEdge.passes          = keyFile.get_integer  ("SharpenEdge", "Passes");
-    if (keyFile.has_key ("SharpenEdge", "Strength"))            sharpenEdge.amount        = keyFile.get_double  ("SharpenEdge", "Strength");
+    if (keyFile.has_key ("SharpenEdge", "Strength"))            sharpenEdge.amount          = keyFile.get_double  ("SharpenEdge", "Strength");
     if (keyFile.has_key ("SharpenEdge", "ThreeChannels"))       sharpenEdge.threechannels   = keyFile.get_boolean ("SharpenEdge", "ThreeChannels");
 }
 
@@ -660,8 +677,19 @@ if (keyFile.has_group ("SharpenEdge")) {
 if (keyFile.has_group ("SharpenMicro")) {
     if (keyFile.has_key ("SharpenMicro", "Enabled"))            sharpenMicro.enabled        = keyFile.get_boolean ("SharpenMicro", "Enabled");
     if (keyFile.has_key ("SharpenMicro", "Matrix"))             sharpenMicro.matrix         = keyFile.get_boolean ("SharpenMicro", "Matrix");
-    if (keyFile.has_key ("SharpenMicro", "Strength"))           sharpenMicro.amount       = keyFile.get_double  ("SharpenMicro", "Strength");
+    if (keyFile.has_key ("SharpenMicro", "Strength"))           sharpenMicro.amount         = keyFile.get_double  ("SharpenMicro", "Strength");
     if (keyFile.has_key ("SharpenMicro", "Uniformity"))         sharpenMicro.uniformity     = keyFile.get_double  ("SharpenMicro", "Uniformity");
+}
+
+    // load vibrance
+if (keyFile.has_group ("Vibrance")) {
+    if (keyFile.has_key ("Vibrance", "Enabled"))                vibrance.enabled            = keyFile.get_boolean ("Vibrance", "Enabled");
+    if (keyFile.has_key ("Vibrance", "Pastels"))                vibrance.pastels            = keyFile.get_integer ("Vibrance", "Pastels");
+    if (keyFile.has_key ("Vibrance", "Saturated"))              vibrance.saturated          = keyFile.get_integer ("Vibrance", "Saturated");
+    if (keyFile.has_key ("Vibrance", "PSThreshold"))            vibrance.psthreshold        = keyFile.get_integer ("Vibrance", "PSThreshold");
+    if (keyFile.has_key ("Vibrance", "ProtectSkins"))           vibrance.protectskins       = keyFile.get_boolean ("Vibrance", "ProtectSkins");
+    if (keyFile.has_key ("Vibrance", "AvoidColorShift"))        vibrance.avoidcolorshift    = keyFile.get_boolean ("Vibrance", "AvoidColorShift");
+    if (keyFile.has_key ("Vibrance", "PastSatTog"))         	vibrance.pastsattog         = keyFile.get_boolean ("Vibrance", "PastSatTog");
 }
 
     // load colorBoost
@@ -976,6 +1004,13 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& sharpening.deconvradius == other.sharpening.deconvradius
 		&& sharpening.deconviter == other.sharpening.deconviter
 		&& sharpening.deconvdamping == other.sharpening.deconvdamping
+		&& vibrance.enabled == other.vibrance.enabled
+		&& vibrance.pastels == other.vibrance.pastels
+		&& vibrance.saturated == other.vibrance.saturated
+		&& vibrance.psthreshold == other.vibrance.psthreshold
+		&& vibrance.protectskins == other.vibrance.protectskins
+		&& vibrance.avoidcolorshift == other.vibrance.avoidcolorshift
+		&& vibrance.pastsattog == other.vibrance.pastsattog
 		&& colorBoost.amount == other.colorBoost.amount
 		&& colorBoost.avoidclip == other.colorBoost.avoidclip
 		&& colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter

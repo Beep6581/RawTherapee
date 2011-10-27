@@ -52,6 +52,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lensgeom            = Gtk::manage (new LensGeometry ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
+    vibrance            = Gtk::manage (new Vibrance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
     perspective         = Gtk::manage (new PerspCorrection ());
@@ -75,6 +76,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, whitebalance,         M("TP_WBALANCE_LABEL"));       toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, toneCurve,         M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (toneCurve);
     addPanel (exposurePanel, hlrecovery,        M("TP_HLREC_LABEL"));          toolPanels.push_back (hlrecovery);
+    addPanel (colorPanel, vibrance,             M("TP_VIBRANCE_LABEL"));       toolPanels.push_back (vibrance);
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
     addPanel (exposurePanel, shadowshighlights, M("TP_SHADOWSHLIGHTS_LABEL")); toolPanels.push_back (shadowshighlights);
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);

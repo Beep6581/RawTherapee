@@ -12,7 +12,7 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc
-    iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc
+    iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
 	jpeg_memsrc.c jdatasrc.c
 	PF_correct_RT.cc
     wavelet_dec.cc dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc
