@@ -755,7 +755,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_COLORBOOST_AMOUNT;Amount
 !TP_COLORBOOST_AVOIDCOLORCLIP;Avoid color clipping
 !TP_COLORBOOST_BCHANNEL;Channel "b"
-!TP_COLORBOOST_CHAB;a & b
 !TP_COLORBOOST_CHANNEL;Channel
 !TP_COLORBOOST_CHSEPARATE;separate
 !TP_COLORBOOST_ENABLESATLIMITER;Enable saturation limiter
