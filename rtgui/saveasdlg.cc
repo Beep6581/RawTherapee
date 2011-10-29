@@ -72,9 +72,14 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     immediately    = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY")) );
     putToQueueHead = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD")) );
     putToQueueTail = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL")) );
+
+    // There is no queue in simple mode, so no need to choose
+    if (!simpleEditor) {
     vbox->pack_start (*immediately, Gtk::PACK_SHRINK, 4);
     vbox->pack_start (*putToQueueHead, Gtk::PACK_SHRINK, 4);
     vbox->pack_start (*putToQueueTail, Gtk::PACK_SHRINK, 4);
+    }
+
     immediately->set_active (true);
     Gtk::RadioButton::Group g = immediately->get_group();
     putToQueueHead->set_group (g);
