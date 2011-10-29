@@ -50,7 +50,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     Gtk::Label* sizecm;
     Gtk::Label* sizein;
     Gtk::VBox* ppibox;
-    Gtk::HBox* sizebox;
+    Gtk::VBox* sizebox;
     int maxw, maxh;
     int nx, ny, nw, nh;
     int lastRotationDeg;
