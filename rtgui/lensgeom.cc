@@ -93,9 +93,9 @@ void LensGeometry::fillPressed () {
 
     if (listener) {
     	if (fill->get_active ())
-    		listener->panelChanged (EvTransAutoFill, M("TP_LENSGEOM_AUTOFILL")+' '+M("GENERAL_ENABLED"));
+    		listener->panelChanged (EvTransAutoFill, M("GENERAL_ENABLED"));
     	else
-    		listener->panelChanged (EvTransAutoFill, M("TP_LENSGEOM_AUTOFILL")+' '+M("GENERAL_DISABLED"));
+    		listener->panelChanged (EvTransAutoFill, M("GENERAL_DISABLED"));
     }
 }
 

@@ -742,14 +742,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     hist16.clear();
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++)
-            hist16[(int)(2*(labView->L[i][j]))]++;
+            hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
         hist16, hist16, curve, dummy, 16);
-    ipf.luminanceCurve (labView, labView, curve);
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+    CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
 								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 16);
+    ipf.luminanceCurve (labView, labView, curve);
     ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
 	ipf.vibrance(labView);
 
