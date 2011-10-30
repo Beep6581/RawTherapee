@@ -49,4 +49,4 @@ do
 done
 
 
-cp $DIR_IN/index.theme $DIR_OUT
+#cp $DIR_IN/index.theme $DIR_OUT

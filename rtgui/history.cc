@@ -78,7 +78,7 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), bmnum (1)
 
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
     addBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_NEWSNAPSHOT")));
-    Gtk::Image* addimg = Gtk::manage (new RTImage ("list-add.png"));
+    Gtk::Image* addimg = Gtk::manage (new RTImage ("gtk-add.png"));
     addBookmark->set_image (*addimg);
     ahbox->pack_start (*addBookmark);
 

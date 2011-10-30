@@ -55,7 +55,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea) {
     zoomLabel = Gtk::manage (new Gtk::Label ());
     pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);
 
-    Gtk::Image* imageCrop = Gtk::manage (new RTImage ("new_detail_window.png"));
+    Gtk::Image* imageCrop = Gtk::manage (new RTImage ("new-detail-window.png"));
     imageCrop->set_padding(0,0);
     newCrop = Gtk::manage (new Gtk::Button());
     newCrop->add (*imageCrop);

@@ -31,7 +31,7 @@ RTWindow::RTWindow ()
 
     cacheMgr->init ();
 
-    Glib::ustring fName = "logoicon16.png";
+    Glib::ustring fName = "rt-logo.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
 
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
@@ -118,7 +118,7 @@ RTWindow::RTWindow ()
 		// decorate tab
 		if (options.mainNBVertical) {
 			Gtk::VBox* vbe = Gtk::manage (new Gtk::VBox ());
-			vbe->pack_start (*Gtk::manage (new RTImage ("logoicon16.png")));
+			vbe->pack_start (*Gtk::manage (new RTImage ("rt-logo.png")));
             Gtk::Label* l=Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") ));
 			//l->set_markup(Glib::ustring("<b>Editor</b>"));  Bold difficult to read
 			l->set_angle (90);
@@ -130,7 +130,7 @@ RTWindow::RTWindow ()
 			mainNB->append_page (*epanel, *vbe);
 		} else {
 			Gtk::HBox* hbe = Gtk::manage (new Gtk::HBox ());
-			hbe->pack_start (*Gtk::manage (new RTImage ("logoicon16.png")));
+			hbe->pack_start (*Gtk::manage (new RTImage ("rt-logo.png")));
 			hbe->pack_start (*Gtk::manage (new Gtk::Label( Glib::ustring(" ") + M("MAIN_FRAME_EDITOR") )));
 			hbe->set_spacing (2);
 			hbe->set_tooltip_markup (M("MAIN_FRAME_EDITOR_TOOLTIP"));
@@ -148,7 +148,7 @@ RTWindow::RTWindow ()
 
 		// filling bottom box
 		iFullscreen = new RTImage ("fullscreen.png");
-		iFullscreen_exit = new RTImage ("fullscreen_exit.png");
+		iFullscreen_exit = new RTImage ("fullscreen-exit.png");
 
 		Gtk::LinkButton* rtWeb = Gtk::manage (new Gtk::LinkButton ("http://rawtherapee.com"));
 		//Gtk::Button* preferences = Gtk::manage (new Gtk::Button (M("MAIN_BUTTON_PREFERENCES")+"..."));

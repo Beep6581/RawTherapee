@@ -61,7 +61,7 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
 
 EditWindow::EditWindow (RTWindow* p) : parent(p) , isFullscreen(false) {
 
-    Glib::ustring fName = "logoicon16.png";
+    Glib::ustring fName = "rt-logo.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
 
 #ifdef GLIBMM_EXCEPTIONS_ENABLED

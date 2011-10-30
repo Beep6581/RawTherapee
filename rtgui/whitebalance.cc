@@ -52,7 +52,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   spotbox->show ();
 
   spotbutton = Gtk::manage (new Gtk::Button (M("TP_WBALANCE_SPOTWB")));
-  Gtk::Image* spotimg = Gtk::manage (new RTImage ("wbpicker16.png"));
+  Gtk::Image* spotimg = Gtk::manage (new RTImage ("gtk-color-picker-small.png"));
   spotimg->show ();
   spotbutton->set_image (*spotimg);
   spotbutton->show ();

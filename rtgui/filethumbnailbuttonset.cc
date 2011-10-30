@@ -40,7 +40,7 @@ Cairo::RefPtr<Cairo::ImageSurface> FileThumbnailButtonSet::colorLabelIcon_5;
 FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 
     if (!iconsLoaded) {
-				unRankIcon  = safe_create_from_png ("ratednotg_10.png");
+				unRankIcon  = safe_create_from_png ("ratednotg.png");
 				rankIcon    = safe_create_from_png ("rated.png");
 				gRankIcon   = safe_create_from_png ("grayrated.png");
 				trashIcon   = safe_create_from_png ("trash-thumbnail.png");

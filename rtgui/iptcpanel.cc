@@ -91,8 +91,8 @@ IPTCPanel::IPTCPanel () {
     keyword->set_tooltip_text (M("IPTCPANEL_KEYWORDSHINT"));
     addKW = Gtk::manage( new Gtk::Button () );
     delKW = Gtk::manage( new Gtk::Button () );
-    Gtk::Image* addKWImg = Gtk::manage( new RTImage ("list-add12.png") );
-    Gtk::Image* delKWImg = Gtk::manage( new RTImage ("list-remove12r.png") );
+    Gtk::Image* addKWImg = Gtk::manage( new RTImage ("list-add-small.png") );
+    Gtk::Image* delKWImg = Gtk::manage( new RTImage ("list-remove-red-small.png") );
     addKW->add (*addKWImg);
     delKW->add (*delKWImg);
     Gtk::HBox* kwhb = Gtk::manage( new Gtk::HBox () );
@@ -127,8 +127,8 @@ IPTCPanel::IPTCPanel () {
     suppCategory->set_tooltip_text (M("IPTCPANEL_SUPPCATEGORIESHINT"));
     addSC = Gtk::manage( new Gtk::Button () );
     delSC = Gtk::manage( new Gtk::Button () );
-    Gtk::Image* addSCImg = Gtk::manage( new RTImage ("list-add12.png") );
-    Gtk::Image* delSCImg = Gtk::manage( new RTImage ("list-remove12r.png") );
+    Gtk::Image* addSCImg = Gtk::manage( new RTImage ("list-add-small.png") );
+    Gtk::Image* delSCImg = Gtk::manage( new RTImage ("list-remove-red-small.png") );
     addSC->add (*addSCImg);
     delSC->add (*delSCImg);
     Gtk::HBox* schb = Gtk::manage( new Gtk::HBox () );
@@ -268,7 +268,7 @@ IPTCPanel::IPTCPanel () {
     bbox->pack_start (*reset);
 
     file = Gtk::manage( new Gtk::Button (M("IPTCPANEL_EMBEDDED")) );
-    file->set_image (*Gtk::manage(new RTImage ("folder_open.png")));
+    file->set_image (*Gtk::manage(new RTImage ("gtk-open.png")));
     bbox->pack_start (*file);
     
     copy = Gtk::manage( new Gtk::Button () );

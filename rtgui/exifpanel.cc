@@ -47,9 +47,9 @@ ExifPanel::ExifPanel () : idata(NULL) {
    exifTreeModel = Gtk::TreeStore::create(exifColumns);
    exifTree->set_model (exifTreeModel);
 
-   delicon = safe_create_from_file ("deltags.png");
-   keepicon = safe_create_from_file ("addtags.png");
-   editicon = safe_create_from_file ("add.png");
+   delicon = safe_create_from_file ("gtk-close.png");
+   keepicon = safe_create_from_file ("gtk-apply.png");
+   editicon = safe_create_from_file ("gtk-add.png");
 
    Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
    Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
