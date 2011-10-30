@@ -916,8 +916,6 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !TP_RESIZE_BICUBICSH;Bicubic (Sharper)
 !TP_RESIZE_BILINEAR;Bilinear
 !TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_DOWNSCALEB;Downscale (Better)
-!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 !TP_RESIZE_FITBOX;Bounding box
 !TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_FULLSIZE;Full Image Size:
