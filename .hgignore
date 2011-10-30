@@ -1,5 +1,7 @@
 syntax: glob
 
+*~
+
 CMakeFiles
 Makefile
 cmake_install.cmake
