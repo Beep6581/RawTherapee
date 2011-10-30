@@ -16,14 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
-#include <glibmm.h>
+
+#include "improcfun.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#include <iostream>
+//#define PROFILE
+
+#ifdef PROFILE
+#   include <iostream>
+#endif
 
 namespace rtengine {
 
@@ -35,55 +39,55 @@ namespace rtengine {
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 
-inline double Lanc(double x, double a)
+static inline float Lanc(float x, float a)
 {
-    if (x * x < 1e-6)
-        return 1.0;
+    if (x * x < 1e-6f)
+        return 1.0f;
     else if (x * x > a * a)
-        return 0.0;
+        return 0.0f;
     else {
-        x = M_PI * x;
-        return sin(x) * sin(x / a) / (x * x / a);
+        x = static_cast<float>(M_PI) * x;
+        return sinf(x) * sinf(x / a) / (x * x / a);
     }
 }
 
-void Lanczos(const Image16* src, Image16* dst, double scale)
+static void Lanczos(const Image16* src, Image16* dst, float scale)
 {
-    const double delta = 1.0 / scale;
-    const double a = 3.0;
-    const double sc = std::min(scale, 1.0);
-    const int support = (int)(2.0 * a / sc) + 1;
+    const float delta = 1.0f / scale;
+    const float a = 3.0f;
+    const float sc = std::min(scale, 1.0f);
+    const int support = static_cast<int>(2.0f * a / sc) + 1;
     
     // storage for precomputed parameters for horisontal interpolation
-    double * wwh = new double[support * dst->width];
+    float * wwh = new float[support * dst->width];
     int * jj0 = new int[dst->width];
     int * jj1 = new int[dst->width];
     
     // temporal storage for vertically-interpolated row of pixels
-    double * lr = new double[src->width];
-    double * lg = new double[src->width];
-    double * lb = new double[src->width];
+    float * lr = new float[src->width];
+    float * lg = new float[src->width];
+    float * lb = new float[src->width];
 
     // Phase 1: precompute coefficients for horisontal interpolation
     
     for (int j = 0; j < dst->width; j++) {
     
         // x coord of the center of pixel on src image
-        double x0 = (j + 0.5) * delta - 0.5;
+        float x0 = (static_cast<float>(j) + 0.5f) * delta - 0.5f;
 
         // weights for interpolation in horisontal direction
-        double * w = wwh + j * support;
+        float * w = wwh + j * support;
         
         // sum of weights used for normalization
-        double ws = 0.0;
+        float ws = 0.0f;
 
-        jj0[j] = std::max(0, (int)floor(x0 - a / sc) + 1);
-        jj1[j] = std::min(src->width, (int)floor(x0 + a / sc) + 1);
+        jj0[j] = std::max(0, static_cast<int>(floorf(x0 - a / sc)) + 1);
+        jj1[j] = std::min(src->width, static_cast<int>(floorf(x0 + a / sc)) + 1);
 
         // calculate weights
         for (int jj = jj0[j]; jj < jj1[j]; jj++) {
             int k = jj - jj0[j];
-            double z = sc * (x0 - jj);
+            float z = sc * (x0 - static_cast<float>(jj));
             w[k] = Lanc(z, a);
             ws += w[k];
         }
@@ -99,21 +103,21 @@ void Lanczos(const Image16* src, Image16* dst, double scale)
     for (int i = 0; i < dst->height; i++) {
         
         // y coord of the center of pixel on src image
-        double y0 = (i + 0.5) * delta - 0.5;
+        float y0 = (static_cast<float>(i) + 0.5f) * delta - 0.5f;
         
         // weights for interpolation in y direction
-        double w[support];
+        float w[support];
         
         // sum of weights used for normalization
-        double ws= 0.0;
+        float ws= 0.0f;
 
-        int ii0 = std::max(0, (int)floor(y0 - a / sc) + 1);
-        int ii1 = std::min(src->height, (int)floor(y0 + a / sc) + 1);
+        int ii0 = std::max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
+        int ii1 = std::min(src->height, static_cast<int>(floorf(y0 + a / sc)) + 1);
         
         // calculate weights for vertical interpolation
         for (int ii = ii0; ii < ii1; ii++) {
             int k = ii - ii0;
-            double z = sc * (y0 - ii);
+            float z = sc * (y0 - static_cast<float>(ii));
             w[k] = Lanc(z, a);
             ws += w[k];
         }
@@ -126,7 +130,7 @@ void Lanczos(const Image16* src, Image16* dst, double scale)
         // Do vertical interpolation. Store results.
         for (int j = 0; j < src->width; j++) {
             
-            double r = 0.0, g = 0.0, b = 0.0;
+            float r = 0.0f, g = 0.0f, b = 0.0f;
             
             for (int ii = ii0; ii < ii1; ii++) {
                 int k = ii - ii0;
@@ -144,9 +148,9 @@ void Lanczos(const Image16* src, Image16* dst, double scale)
         // Do horisontal interpolation
         for(int j = 0; j < dst->width; j++) {
 
-            double * wh = wwh + support * j;
+            float * wh = wwh + support * j;
             
-            double r = 0.0, g = 0.0, b = 0.0;
+            float r = 0.0f, g = 0.0f, b = 0.0f;
             
             for (int jj = jj0[j]; jj < jj1[j]; jj++) {
                 int k = jj - jj0[j];
@@ -156,9 +160,9 @@ void Lanczos(const Image16* src, Image16* dst, double scale)
                 b += wh[k] * lb[jj];
             }
             
-            dst->r[i][j] = CLIP((int)r);
-            dst->g[i][j] = CLIP((int)g);
-            dst->b[i][j] = CLIP((int)b);
+            dst->r[i][j] = CLIP(static_cast<int>(r));
+            dst->g[i][j] = CLIP(static_cast<int>(g));
+            dst->b[i][j] = CLIP(static_cast<int>(b));
         }
     }
     
@@ -170,204 +174,58 @@ void Lanczos(const Image16* src, Image16* dst, double scale)
     delete[] lb;
 }
 
-void ImProcFunctions::resize (Image16* src, Image16* dst, double dScale) {
+void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 
-    //time_t t1 = clock();
+#ifdef PROFILE
+    time_t t1 = clock();
+#endif
 
-    if(params->resize.method == "Lanczos") {
+    if(params->resize.method == "Lanczos" ||
+       params->resize.method == "Downscale (Better)" ||
+       params->resize.method == "Downscale (Faster)"
+      ) {
         Lanczos(src, dst, dScale);
     }
-	else if(params->resize.method == "Downscale (Better)") {
-        // small-scale algorithm by Ilia
-        // provides much better quality on small scales
-        // calculates mean value over source pixels which current destination pixel covers
-        // works only for scales < 1
-        // for scales ~1 it is analogous to bilinear
-        // possibly, for even less scale factors (< 0.2 possibly) boundary pixels are not needed, omitting them can give a speedup
-        // this algorithm is much slower on small factors than others, because it uses all pixels of the SOURCE image
-        // Ilia Popov ilia_popov@rambler.ru 2010
-
-        double delta = 1.0 / dScale;
-        double k = dScale * dScale;
-
-		#pragma omp parallel for if (multiThread)
-        for(int i = 0; i < dst->height; i++) {
-            // top and bottom boundary coordinates
-            double y0 = i * delta;
-            double y1 = (i + 1) * delta;
-
-            int m0 = y0;
-            m0 = CLIPTO(m0, 0, src->height-1);
-
-            int m1 = y1;
-            m1 = CLIPTO(m1, 0, src->height-1);
-
-            // weights of boundary pixels
-            double wy0 = 1.0 - (y0 - m0);
-            double wy1 = y1 - m1;
-
-            for(int j = 0; j < dst->width; j++) {
-                // left and right boundary coordinates
-                double x0 = j * delta;
-                double x1 = (j + 1) * delta;
-
-                int n0 = x0;
-                n0 = CLIPTO(n0, 0, src->width-1);
-                int n1 = x1;
-                n1 = CLIPTO(n1, 0, src->width-1);
-
-                double wx0 = 1.0 - (x0 - n0);
-                double wx1 = x1 - n1;
-
-                double r = 0;
-                double g = 0;
-                double b = 0;
-
-                // integration
-                // corners
-                r += wy0 * wx0 * src->r[m0][n0] + wy0 * wx1 * src->r[m0][n1] + wy1 * wx0 * src->r[m1][n0] + wy1 * wx1 * src->r[m1][n1];
-                g += wy0 * wx0 * src->g[m0][n0] + wy0 * wx1 * src->g[m0][n1] + wy1 * wx0 * src->g[m1][n0] + wy1 * wx1 * src->g[m1][n1];
-                b += wy0 * wx0 * src->b[m0][n0] + wy0 * wx1 * src->b[m0][n1] + wy1 * wx0 * src->b[m1][n0] + wy1 * wx1 * src->b[m1][n1];
-
-                // top and bottom boundaries
-                for(int n = n0 + 1; n < n1; n++) {
-                    r += wy0 * src->r[m0][n] + wy1 * src->r[m1][n];
-                    g += wy0 * src->g[m0][n] + wy1 * src->g[m1][n];
-                    b += wy0 * src->b[m0][n] + wy1 * src->b[m1][n];
-                }
-
-                // inner rows
-                for(int m = m0 + 1; m < m1; m++) {
-                    // left and right boundaries
-                    r += wx0 * src->r[m][n0] + wx1 * src->r[m][n1];
-                    g += wx0 * src->g[m][n0] + wx1 * src->g[m][n1];
-                    b += wx0 * src->b[m][n0] + wx1 * src->b[m][n1];
-                    // inner pixels
-                    for(int n = n0 + 1; n < n1; n++) {
-                        r += src->r[m][n];
-                        g += src->g[m][n];
-                        b += src->b[m][n];
-                    }
-                }
-                // overall weight is equal to the DST pixel area in SRC coordinates
-                r *= k;
-                g *= k;
-                b *= k;
-
-                dst->r[i][j] = CLIP((int)r);
-                dst->g[i][j] = CLIP((int)g);
-                dst->b[i][j] = CLIP((int)b);
-            }
-        }
-    }
-    else if(params->resize.method == "Downscale (Faster)") {
-        // faster version of algo above, does not take into account border pixels,
-        // which are summed with non-unity weights in slow algo. So, no need
-        // for weights at all
-        // Ilia Popov ilia_popov@rambler.ru 5.04.2010
-
-        double delta = 1.0 / dScale;
-
-        int p = (int) delta;
-
-        // if actually we are doing upscaling, behave like Nearest
-        if(p == 0)
-            p = 1;
-
-        int q = p/2;
-
-        // may cause problems on 32-bit systems on extremely small factors.
-        // In that case change 1024 to smth less
-        const int divider = 1024;
-
-        // scaling factor after summation
-        int k = divider / (p * p);
-
-		#pragma omp parallel for if (multiThread)
-        for(int i = 0; i < dst->height; i++) {
-            // y coordinate of center of destination pixel
-            double y = (i + 0.5) * delta;
-
-            int m0 = (int) (y) - q;
-            m0 = CLIPTO(m0, 0, src->height-1);
-
-            int m1 = m0 + p;
-            if(m1 > src->height) {
-                m1 = src->height;
-                m0 = m1 - p;
-            }
-            m1 = CLIPTO(m1, 0, src->height);
-
-            for(int j = 0; j < dst->width; j++) {
-                // x coordinate of center of destination pixel
-                double x = (j + 0.5) * delta;
-
-                int n0 = (int) (x) - q;
-                n0 = CLIPTO(n0, 0, src->width-1);
-
-                int n1 = n0 + p;
-                if(n1 > src->width) {
-                    n1 = src->width;
-                    n0 = n1 - p;
-                }
-                n1 = CLIPTO(n1, 0, src->width);
-
-                int r = 0;
-                int g = 0;
-                int b = 0;
-
-                // integration
-                for(int m = m0; m < m1; m++) {
-                    for(int n = n0; n < n1; n++) {
-                        r += src->r[m][n];
-                        g += src->g[m][n];
-                        b += src->b[m][n];
-                    }
-                }
-                dst->r[i][j] = CLIP( r * k / divider);
-                dst->g[i][j] = CLIP( g * k / divider);
-                dst->b[i][j] = CLIP( b * k / divider);
-            }
-        }
-    }
     else if (params->resize.method.substr(0,7)=="Bicubic") {
-        double Av = -0.5;
+        float Av = -0.5f;
         if (params->resize.method=="Bicubic (Sharper)")
-            Av = -0.75;
+            Av = -0.75f;
         else if (params->resize.method=="Bicubic (Softer)")
-            Av = -0.25;
+            Av = -0.25f;
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
-            double wx[4], wy[4];
-            double Dy = i / dScale;
-            int yc  =  (int) Dy; Dy -= (double)yc;
+            float wx[4], wy[4];
+            float Dy = i / dScale;
+            int yc  =  (int) Dy;
+            Dy -= (float)yc;
             int ys = yc - 1; // smallest y-index used for interpolation
             // compute vertical weights
-            double t1y = -Av*(Dy-1.0)*Dy;
-            double t2y = (3.0-2.0*Dy)*Dy*Dy;
+            float t1y = -Av*(Dy-1.0f)*Dy;
+            float t2y = (3.0f - 2.0f*Dy)*Dy*Dy;
             wy[3] = t1y*Dy;
-            wy[2] = t1y*(Dy-1.0) + t2y;
-            wy[1] = -t1y*Dy + 1.0 - t2y;
-            wy[0] = -t1y*(Dy-1.0);
-            for (int j=0; j<dst->width; j++) {
-                double Dx = j / dScale;
-                int xc  =  (int) Dx; Dx -= (double)xc;
+            wy[2] = t1y*(Dy - 1.0f) + t2y;
+            wy[1] = -t1y*Dy + 1.0f - t2y;
+            wy[0] = -t1y*(Dy - 1.0f);
+            for (int j = 0; j < dst->width; j++) {
+                float Dx = j / dScale;
+                int xc  =  (int) Dx;
+                Dx -= (float)xc;
                 int xs = xc - 1; // smallest x-index used for interpolation
-                if (ys >= 0 && ys <src->height-3 && xs >= 0 && xs <= src->width-3) {
+                if (ys >= 0 && ys < src->height-3 && xs >= 0 && xs <= src->width-3) {
                     // compute horizontal weights
-                    double t1 = -Av*(Dx-1.0)*Dx;
-                    double t2 = (3.0-2.0*Dx)*Dx*Dx;
+                    float t1 = -Av*(Dx-1.0f)*Dx;
+                    float t2 = (3.0f - 2.0f*Dx)*Dx*Dx;
                     wx[3] = t1*Dx;
-                    wx[2] = t1*(Dx-1.0) + t2;
-                    wx[1] = -t1*Dx + 1.0 - t2;
-                    wx[0] = -t1*(Dx-1.0);
+                    wx[2] = t1*(Dx - 1.0f) + t2;
+                    wx[1] = -t1*Dx + 1.0f - t2;
+                    wx[0] = -t1*(Dx - 1.0f);
                     // compute weighted sum
                     int r = 0;
                     int g = 0;
                     int b = 0;
                     for (int x=0; x<4; x++)
                         for (int y=0; y<4; y++) {
-                            double w = wx[x]*wy[y];
+                            float w = wx[x]*wy[y];
                             r += w*src->r[ys+y][xs+x];
                             g += w*src->g[ys+y][xs+x];
                             b += w*src->b[ys+y][xs+x];
@@ -380,10 +238,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, double dScale) {
                     xc = CLIPTO(xc, 0, src->width-1);
                     yc = CLIPTO(yc, 0, src->height-1);
                     int nx = xc + 1;
-                    if (nx>=src->width)
+                    if (nx >= src->width)
                         nx = xc;
                     int ny = yc + 1;
-                    if (ny>=src->height)
+                    if (ny >= src->height)
                         ny = yc;
                     dst->r[i][j] = (1-Dx)*(1-Dy)*src->r[yc][xc] + (1-Dx)*Dy*src->r[ny][xc] + Dx*(1-Dy)*src->r[yc][nx] + Dx*Dy*src->r[ny][nx];
                     dst->g[i][j] = (1-Dx)*(1-Dy)*src->g[yc][xc] + (1-Dx)*Dy*src->g[ny][xc] + Dx*(1-Dy)*src->g[yc][nx] + Dx*Dy*src->g[ny][nx];
@@ -397,14 +255,14 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, double dScale) {
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
             sy = CLIPTO(sy, 0, src->height-1);
-            double dy = i/dScale - sy;
+            float dy = i/dScale - sy;
             int ny = sy+1;
             if (ny>=src->height)
                 ny = sy;
             for (int j=0; j<dst->width; j++) {
                 int sx = j/dScale;
                 sx = CLIPTO(sx, 0, src->width-1);
-                double dx = j/dScale - sx;
+                float dx = j/dScale - sx;
                 int nx = sx+1;
                 if (nx>=src->width)
                     nx = sx;
@@ -415,6 +273,7 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, double dScale) {
         }
     }
     else {
+        // Nearest neighbour algorithm
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
@@ -428,10 +287,12 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, double dScale) {
             }
         }
     }
-    
-    //time_t t2 = clock();
-    //std::cout << "Resize: " << params->resize.method << ": "
-    //    << (double)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
+
+#ifdef PROFILE    
+    time_t t2 = clock();
+    std::cout << "Resize: " << params->resize.method << ": "
+        << (float)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
+#endif
 }
 
 }
