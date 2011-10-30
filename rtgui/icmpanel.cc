@@ -78,7 +78,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 4);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
-    saveRef->set_image (*Gtk::manage (new RTImage ("save_hdd_01.png")));
+    saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
     pack_start (*saveRef, Gtk::PACK_SHRINK, 4);
 
 

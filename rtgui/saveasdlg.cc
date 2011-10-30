@@ -90,7 +90,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
     Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
 
-    ok->set_image (*Gtk::manage(new RTImage ("addtags.png")));
+    ok->set_image (*Gtk::manage(new RTImage ("gtk-apply.png")));
     cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );

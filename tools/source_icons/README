@@ -19,3 +19,10 @@ The repository tools/source_icons contains source icons (in svg format) and the 
 - the main script to create the icons in make_all_icon_theme.bash
 - launch make_all_icon_theme.bash tools/source_icons/scalable /tmp/png
 - the icons and an archive will be created in /tmp/png
+
+================================
+=== guidelines for icon name ===
+================================
+- Use stock item name when prebuilt icon exists (e.g. gtk-open.png). See http://developer.gnome.org/gtk/2.24/gtk-Stock-Items.html
+- Use "-" to separate words (e.g. panel-to-left.png)
+- Avoid the use of icon size as a suffix to name icon (colour.png and nor colour-24.png). If needed, use the suffix -large or -small (gtk-close-small.png).

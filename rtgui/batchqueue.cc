@@ -46,7 +46,7 @@ BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
 
     pmenu->attach (*Gtk::manage(cancel = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"))), 0, 1, p, p+1); p++;
-    cancel->set_image(*Gtk::manage(new RTImage ("deltags.png")));
+    cancel->set_image(*Gtk::manage(new RTImage ("gtk-close.png")));
 
     pmenu->show_all ();
 

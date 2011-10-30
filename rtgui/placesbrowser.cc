@@ -31,7 +31,7 @@ PlacesBrowser::PlacesBrowser () : listener (NULL) {
 
     add = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_ADD")));
     del = Gtk::manage (new Gtk::Button (M("MAIN_FRAME_PLACES_DEL")));
-    add->set_image (*Gtk::manage (new RTImage ("add.png")));
+    add->set_image (*Gtk::manage (new RTImage ("gtk-add.png")));
     del->set_image (*Gtk::manage (new RTImage ("list-remove.png")));
     Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());
     buttonBox->pack_start (*add);

@@ -139,7 +139,7 @@ FileBrowser::FileBrowser ()
      * *********************/
     if (options.menuGroupProfileOperations){
     	pmenu->attach (*Gtk::manage(menuProfileOperations = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPPROFILEOPERATIONS"))), 0, 1, p, p+1); p++;
-    	menuProfileOperations->set_image(*Gtk::manage(new RTImage ("logoicon_wind_16.png")));
+    	menuProfileOperations->set_image(*Gtk::manage(new RTImage ("logoicon-wind.png")));
 
     	Gtk::Menu* submenuProfileOperations = Gtk::manage (new Gtk::Menu ());
 

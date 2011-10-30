@@ -74,8 +74,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hbToolBar1 = Gtk::manage(new Gtk::HBox ());
 
     //setup BrowsePath
-    iRefreshWhite = new RTImage("refresh_white.png");
-    iRefreshRed = new RTImage("refresh_red.png");
+    iRefreshWhite = new RTImage("refresh-white.png");
+    iRefreshRed = new RTImage("refresh-red.png");
 
     BrowsePath = Gtk::manage(new Gtk::Entry ());
     BrowsePath->set_width_chars (50);
@@ -93,7 +93,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     BrowsePath->signal_activate().connect (sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed)); //respond to the Enter key
 
     //setup Query
-    iQueryClear = new RTImage("x_10.png");
+    iQueryClear = new RTImage("gtk-close-small.png");
     Gtk::Label* labelQuery = Gtk::manage(new Gtk::Label(M("FILEBROWSER_QUERYLABEL")));
     Query = Gtk::manage(new Gtk::Entry ()); // cannot use Gtk::manage here as FileCatalog::getFilter will fail on Query->get_text()
     Query->set_text("");
@@ -122,8 +122,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     tbLeftPanel_1 = new Gtk::ToggleButton ();
-    iLeftPanel_1_Show = new RTImage("panel_to_right.png");
-    iLeftPanel_1_Hide = new RTImage("panel_to_left.png");
+    iLeftPanel_1_Show = new RTImage("panel-to-right.png");
+    iLeftPanel_1_Hide = new RTImage("panel-to-left.png");
 
     tbLeftPanel_1->set_relief(Gtk::RELIEF_NONE);
     tbLeftPanel_1->set_active (true);
@@ -135,8 +135,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
 
-    iFilterClear = new RTImage ("filterclear_18.png");
-    igFilterClear = new RTImage ("filterclearg_18.png");
+    iFilterClear = new RTImage ("filterclear.png");
+    igFilterClear = new RTImage ("filter.png");
     bFilterClear = Gtk::manage(new Gtk::ToggleButton ());
     bFilterClear->set_active (true);
     bFilterClear->set_image(*iFilterClear);//(*Gtk::manage(new RTImage ("filterclear.png")));
@@ -151,8 +151,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     fltrRankbox = Gtk::manage (new Gtk::HBox());
     fltrLabelbox = Gtk::manage (new Gtk::HBox());
 
-    iUnRanked = new RTImage ("ratednot_10.png");
-    igUnRanked = new RTImage ("ratednotg_10.png");
+    iUnRanked = new RTImage ("ratednot.png");
+    igUnRanked = new RTImage ("ratednotg.png");
     bUnRanked = Gtk::manage( new Gtk::ToggleButton () );
     bUnRanked->set_active (false);
     bUnRanked->set_image (*igUnRanked);
@@ -222,10 +222,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     fltrRecentlySavedBox = Gtk::manage (new Gtk::HBox());
 
     // bEdited
-    iEdited[0] = new RTImage ("editednot_10.png");
-    igEdited[0] = new RTImage ("editednotg_10.png");
-    iEdited[1] = new RTImage ("edited_10.png");
-    igEdited[1] = new RTImage ("editedg_10.png");
+    iEdited[0] = new RTImage ("editednot-small.png");
+    igEdited[0] = new RTImage ("editednotg-small.png");
+    iEdited[1] = new RTImage ("edited-small.png");
+    igEdited[1] = new RTImage ("editedg-small.png");
     for (int i=0; i<2; i++) {
 		iEdited[i]->show ();
 		bEdited[i] = Gtk::manage(new Gtk::ToggleButton ());
@@ -241,10 +241,10 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bEdited[1]->set_tooltip_markup (M("FILEBROWSER_SHOWEDITEDHINT"));
 
     // RecentlySaved
-    iRecentlySaved[0] = new RTImage ("savednot_10.png");
-    igRecentlySaved[0] = new RTImage ("savednotg_10.png");
-    iRecentlySaved[1] = new RTImage ("saved_10.png");
-    igRecentlySaved[1] = new RTImage ("savedg_10.png");
+    iRecentlySaved[0] = new RTImage ("savednot.png");
+    igRecentlySaved[0] = new RTImage ("savednotg.png");
+    iRecentlySaved[1] = new RTImage ("saved.png");
+    igRecentlySaved[1] = new RTImage ("savedg.png");
     for (int i=0; i<2; i++) {
     	iRecentlySaved[i]->show ();
 		bRecentlySaved[i] = Gtk::manage(new Gtk::ToggleButton ());
@@ -340,8 +340,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     if (options.FileBrowserToolbarSingleRow) buttonBar->pack_start (*hbToolBar1, Gtk::PACK_EXPAND_WIDGET,0);
 
     tbRightPanel_1 = new Gtk::ToggleButton ();
-    iRightPanel_1_Show = new RTImage("panel_to_left.png");
-    iRightPanel_1_Hide = new RTImage("panel_to_right.png");
+    iRightPanel_1_Show = new RTImage("panel-to-left.png");
+    iRightPanel_1_Hide = new RTImage("panel-to-right.png");
 
     tbRightPanel_1->set_relief(Gtk::RELIEF_NONE);
     tbRightPanel_1->set_active (true);

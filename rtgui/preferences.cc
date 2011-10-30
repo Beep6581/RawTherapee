@@ -62,8 +62,8 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     Gtk::Button* ok     = Gtk::manage (new Gtk::Button (M("GENERAL_OK")));
     Gtk::Button* cancel = Gtk::manage (new Gtk::Button (M("GENERAL_CANCEL")));
 
-    about->set_image (*Gtk::manage(new RTImage ("logoicon16.png")));
-    ok->set_image (*Gtk::manage(new RTImage ("addtags.png")));
+    about->set_image (*Gtk::manage(new RTImage ("rt-logo.png")));
+    ok->set_image (*Gtk::manage(new RTImage ("gtk-apply.png")));
     cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
 
 
@@ -714,7 +714,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     startupdir = Gtk::manage( new Gtk::Entry () );
 
     Gtk::Button* sdselect = Gtk::manage( new Gtk::Button ("") );
-    sdselect->set_image (*Gtk::manage(new RTImage ("folder_open.png")));
+    sdselect->set_image (*Gtk::manage(new RTImage ("gtk-open.png")));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group (opts);
@@ -785,8 +785,8 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     delExt = Gtk::manage( new Gtk::Button () );
     addExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTADDHINT"));
     delExt->set_tooltip_text (M("PREFERENCES_PARSEDEXTDELHINT"));
-    Gtk::Image* addExtImg = Gtk::manage( new RTImage ("list-add12.png") );
-    Gtk::Image* delExtImg = Gtk::manage( new RTImage ("list-remove12r.png") );
+    Gtk::Image* addExtImg = Gtk::manage( new RTImage ("list-add-small.png") );
+    Gtk::Image* delExtImg = Gtk::manage( new RTImage ("list-remove-red-small.png") );
     addExt->add (*addExtImg);
     delExt->add (*delExtImg);
     hb0->pack_end (*delExt, Gtk::PACK_SHRINK, 4);

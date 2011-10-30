@@ -31,7 +31,7 @@ Cairo::RefPtr<Cairo::ImageSurface> BatchQueueButtonSet::tailIcon;
 BatchQueueButtonSet::BatchQueueButtonSet (BatchQueueEntry* myEntry) {
 
     if (!iconsLoaded) {
-        cancelIcon = safe_create_from_png ("deltags.png");
+        cancelIcon = safe_create_from_png ("gtk-close.png");
         headIcon   = safe_create_from_png ("toleftend.png");
         tailIcon   = safe_create_from_png ("torightend.png");
         iconsLoaded = true;

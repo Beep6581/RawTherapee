@@ -158,8 +158,8 @@ RenameTemplateEditor::RenameTemplateEditor (Gtk::Window* parent)
     templ = Gtk::manage (new Gtk::Entry ());
     Gtk::Button* add = Gtk::manage (new Gtk::Button ());
     Gtk::Button* del = Gtk::manage (new Gtk::Button ());
-    add->add (*Gtk::manage (new RTImage ("list-add12.png")));
-    del->add (*Gtk::manage (new RTImage ("list-remove12r.png")));
+    add->add (*Gtk::manage (new RTImage ("list-add-small.png")));
+    del->add (*Gtk::manage (new RTImage ("list-remove-red-small.png")));
     hb->pack_start (*templ);
     hb->pack_start (*add, Gtk::PACK_SHRINK, 2);
     hb->pack_start (*del, Gtk::PACK_SHRINK, 2);

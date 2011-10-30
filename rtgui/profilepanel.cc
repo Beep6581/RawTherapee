@@ -41,9 +41,9 @@ ProfilePanel::ProfilePanel () {
     pack_start (*hbox, Gtk::PACK_SHRINK, 4);
     
     save = Gtk::manage (new Gtk::Button ());
-    save->add (*Gtk::manage (new RTImage ("save_hdd_01.png")));
+    save->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
     load = Gtk::manage (new Gtk::Button ());
-    load->add (*Gtk::manage (new RTImage ("folder_open.png")));
+    load->add (*Gtk::manage (new RTImage ("gtk-open.png")));
     copy = Gtk::manage (new Gtk::Button ());
     copy->add (*Gtk::manage (new RTImage ("edit-copy.png")));
     paste = Gtk::manage (new Gtk::Button ());
