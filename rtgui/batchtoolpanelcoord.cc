@@ -131,6 +131,7 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpening->setAdjusterBehavior (false);
 			sharpenEdge->setAdjusterBehavior (false, false);
 			sharpenMicro->setAdjusterBehavior (false, false);
+			icm->setAdjusterBehavior (false, false);
 			
 			chmixer->setAdjusterBehavior (false);
 			shadowshighlights->setAdjusterBehavior (false, false, false);
@@ -154,6 +155,7 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
 			sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT],options.baBehav[ADDSET_SHARPENEDGE_PASS]);
 			sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT],options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
+			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
 			
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
@@ -194,6 +196,9 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_VIBRANCE_PASTELS])  pparams.vibrance.pastels = 0;
 			if (options.baBehav[ADDSET_VIBRANCE_SATURATED])  pparams.vibrance.saturated = 0;
 
+			if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA])  pparams.icm.gampos = 0;
+			if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE])  pparams.icm.slpos = 0;
+			
 			if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
 
 			if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;

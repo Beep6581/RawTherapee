@@ -35,8 +35,8 @@ class ICMPanelListener {
 class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
 	protected:
-	Adjuster* g_ampos;
-	Adjuster* s_lpos;
+	Adjuster* gampos;
+	Adjuster* slpos;
 	bool lastgamfree;
     sigc::connection  gamcsconn; 
 	//bool freegamma;
@@ -74,7 +74,8 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void setBatchMode   (bool batchMode);
 		void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
         void adjusterChanged (Adjuster* a, double newval);
-  
+		void setAdjusterBehavior (bool gammaadd, bool slopeadd);
+ 
         void wpChanged ();
         void opChanged ();
         void ipChanged ();

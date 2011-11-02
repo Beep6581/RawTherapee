@@ -196,6 +196,12 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_VIBRANCE_PSTHRESHOLD"), ADDSET_VIBRANCE_PSTHRESHOLD, false);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_GAMMA_OUTPUT"));
+    appendBehavList (mi, M("TP_GAMMA_CURV"), ADDSET_FREE_OUPUT_GAMMA, false);
+    appendBehavList (mi, M("TP_GAMMA_SLOP"), ADDSET_FREE_OUTPUT_SLOPE, false);
+	
+	
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CHMIXER_LABEL"));
     appendBehavList (mi, M("TP_CHMIXER_RED")+", "+M("TP_CHMIXER_GREEN")+", "+M("TP_CHMIXER_BLUE"), ADDSET_CHMIXER, false);
 

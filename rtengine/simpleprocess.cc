@@ -33,6 +33,8 @@
 
 
 namespace rtengine {
+extern const Settings* settings;
+
 IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
 
     errorCode = 0;
@@ -217,14 +219,48 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
   if(params.icm.gamma != "default" || params.icm.freegamma)	
     {	// if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
 	//or selected Free gamma
+	Image16* readyImgP;
 	Image16* readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos);
-	
+	readyImgP=readyImg;
     delete labView;
     if (pl) pl->setProgress (0.70);
-
+	int drapeau=0;
     // get the resize parameters
 	int refw, refh;
 	double tmpScale;
+    Glib::ustring chpro, outProfile;
+	int present_space[7]={0,0,0,0,0,0,0};
+    std::vector<std::string> opnames = iccStore->getOutputProfiles ();
+	 //test if files are in system
+    for (int j=0; j<7;j++) {
+        // one can modify "option" [Color Management] to adapt name of profile if there are different for windows, MacOS, Linux ?? 
+	if(j==0) chpro=options.rtSettings.prophoto;
+	else if(j==1) chpro=options.rtSettings.adobe;
+	else if(j==2) chpro=options.rtSettings.widegamut;	
+	else if(j==3) chpro=options.rtSettings.beta;	
+	else if(j==4) chpro=options.rtSettings.best;	
+	else if(j==5) chpro=options.rtSettings.bruce;	
+	else if(j==6) chpro=options.rtSettings.srgb;	
+	for (int i=0; i<opnames.size(); i++)
+       if(chpro.compare(opnames[i]) ==0) present_space[j]=1; 
+	      if (present_space[j]==0) { 
+		    if (pl) pl->setProgressStr ("Missing file..");pl->setProgress (0.0);// display file not present: not very good display information...!!
+			if (settings->verbose) printf("Missing file: %s \n", chpro.c_str());}  //c_str()
+        }
+
+    // Check that output profiles exist, otherwise use LCMS2
+    if (params.icm.working=="ProPhoto" && present_space[0]==1) outProfile=options.rtSettings.prophoto;//in option we can change the name of file - if different...
+    else if (params.icm.working=="Adobe RGB" && present_space[1]==1) outProfile=options.rtSettings.adobe;
+    else if (params.icm.working=="WideGamut" && present_space[2]==1) outProfile=options.rtSettings.widegamut;
+    else if (params.icm.working=="Beta RGB" && present_space[3]==1) outProfile=options.rtSettings.beta;
+    else if (params.icm.working=="BestRGB" && present_space[4]==1) outProfile=options.rtSettings.best;
+    else if (params.icm.working=="BruceRGB" && present_space[5]==1) outProfile=options.rtSettings.bruce;
+    else if (params.icm.working== "sRGB" && present_space[6]==1) outProfile=options.rtSettings.srgb;
+	//OutProfile become Profile's system
+	else {if (settings->verbose) printf("No file:%s in system - use LCMS2 substitution\n",params.icm.working.c_str() ); drapeau=1; }
+			
+	if (settings->verbose && drapeau==0) printf("Output profile: %s \n", outProfile.c_str());  //c_str()
+	
 
 	if (params.resize.enabled) {
 
@@ -293,34 +329,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	
 
     ProfileContent pc;
-    Glib::ustring chpro, outProfile;
-	int present_space[7]={0,0,0,0,0,0,0};
-    std::vector<std::string> opnames = iccStore->getOutputProfiles ();
-	 //test if files are in system
-    for (int j=0; j<7;j++) {
-        // one can modify "option" [Color Management] to adapt name of profile if there are different for windows, MacOS, Linux ?? 
-	if(j==0) chpro=options.rtSettings.prophoto;
-	else if(j==1) chpro=options.rtSettings.adobe;
-	else if(j==2) chpro=options.rtSettings.widegamut;	
-	else if(j==3) chpro=options.rtSettings.beta;	
-	else if(j==4) chpro=options.rtSettings.best;	
-	else if(j==5) chpro=options.rtSettings.bruce;	
-	else if(j==6) chpro=options.rtSettings.srgb;	
-	for (int i=0; i<opnames.size(); i++)
-       if(chpro.compare(opnames[i]) ==0) present_space[j]=1; 
-	      if (present_space[j]==0) { if (pl) pl->setProgressStr ("Missing file..");pl->setProgress (0.0);}// display file not present: not very good display information...!!
-        }
-
-    // Check that output profiles exist, otherwise revert to sRGB
-    if (params.icm.output=="ProPhoto" && present_space[0]==1) outProfile=options.rtSettings.prophoto;
-    else if (params.icm.output=="Adobe RGB" && present_space[1]==1) outProfile=options.rtSettings.adobe;
-    else if (params.icm.output=="WideGamut" && present_space[2]==1) outProfile=options.rtSettings.widegamut;
-    else if (params.icm.output=="Beta RGB" && present_space[3]==1) outProfile=options.rtSettings.beta;
-    else if (params.icm.output=="BestRGB" && present_space[4]==1) outProfile=options.rtSettings.best;
-    else if (params.icm.output=="BruceRGB" && present_space[5]==1) outProfile=options.rtSettings.bruce;
-    else outProfile=options.rtSettings.srgb; //if not found or choice=srgb
 	
-    pc = iccStore->getContent (outProfile);
+    if (drapeau==0) pc = iccStore->getContent (outProfile);// use profile in system (Prophoto.icm, sRGB.icm, etc.)  if present, otherwise use LCMS2 profile generate by lab2rgb16b
 	
     readyImg->setOutputProfile (pc.data, pc.length);
 	
@@ -337,7 +347,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	}
 	else
 	{//if default mode : profil = selection by choice in list (Prophoto.icm, sRGB.icm, etc., etc.) , gamma = gamma of profile or  not selected Free gamma
-	
 	Image16* readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
     delete labView;
     if (pl) pl->setProgress (0.70);
