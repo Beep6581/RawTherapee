@@ -240,9 +240,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	else if(j==3) chpro=options.rtSettings.beta;	
 	else if(j==4) chpro=options.rtSettings.best;	
 	else if(j==5) chpro=options.rtSettings.bruce;	
-	else if(j==6) chpro=options.rtSettings.srgb;	
-	for (int i=0; i<opnames.size(); i++)
-       if(chpro.compare(opnames[i]) ==0) present_space[j]=1; 
+	else if(j==6) chpro=options.rtSettings.srgb;
+	for (int i=0; i<opnames.size(); i++){
+       if(chpro.compare(opnames[i]) ==0) present_space[j]=1; }
 	      if (present_space[j]==0) { 
 		    if (pl) pl->setProgressStr ("Missing file..");pl->setProgress (0.0);// display file not present: not very good display information...!!
 			if (settings->verbose) printf("Missing file: %s \n", chpro.c_str());}  //c_str()
