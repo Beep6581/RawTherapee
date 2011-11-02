@@ -431,7 +431,14 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
-    if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
+    if( keyFile.has_key ("Color Management", "GamutICC"))        rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
+    if( keyFile.has_key ("Color Management", "Adobe_RGB"))       rtSettings.adobe            = keyFile.get_string("Color Management", "Adobe_RGB");
+    if( keyFile.has_key ("Color Management", "Pro_Photo"))       rtSettings.prophoto            = keyFile.get_string("Color Management","Pro_Photo");
+    if( keyFile.has_key ("Color Management", "Wide_Gamut"))      rtSettings.widegamut            = keyFile.get_string("Color Management","Wide_Gamut");
+    if( keyFile.has_key ("Color Management", "S_rgb"))      	 rtSettings.srgb            = keyFile.get_string("Color Management","S_rgb");
+    if( keyFile.has_key ("Color Management", "B_eta"))      	 rtSettings.beta            = keyFile.get_string("Color Management","B_eta");
+    if( keyFile.has_key ("Color Management", "B_est"))      	 rtSettings.best            = keyFile.get_string("Color Management","B_est");
+    if( keyFile.has_key ("Color Management", "B_ruce"))      	 rtSettings.bruce            = keyFile.get_string("Color Management","B_ruce");
 
     // Disabled (default is true) till issues are sorted out
     //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
