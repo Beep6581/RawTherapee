@@ -431,6 +431,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (vibrance.protectskins)				toEdit.vibrance.protectskins	= mods.vibrance.protectskins;
 	if (vibrance.avoidcolorshift)			toEdit.vibrance.avoidcolorshift	= mods.vibrance.avoidcolorshift;
 	if (vibrance.pastsattog)				toEdit.vibrance.pastsattog	    = mods.vibrance.pastsattog;
+	
+	
+	
+	
+	
 	if (colorBoost.amount)					toEdit.colorBoost.amount		= dontforceSet && options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
 	if (colorBoost.avoidclip)				toEdit.colorBoost.avoidclip 	= mods.colorBoost.avoidclip;
 	if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter 	= mods.colorBoost.enable_saturationlimiter;
@@ -509,8 +514,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output       = mods.icm.output;
-	if (icm.gampos)		    toEdit.icm.gampos       = mods.icm.gampos;
-	if (icm.slpos)		    toEdit.icm.slpos        = mods.icm.slpos;
+	//if (icm.gampos)		    toEdit.icm.gampos       = mods.icm.gampos;
+	//if (icm.slpos)		    toEdit.icm.slpos        = mods.icm.slpos;
+	if (icm.gampos)			toEdit.icm.gampos		= dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.gampos + mods.icm.gampos : mods.icm.gampos;
+	if (icm.slpos)			toEdit.icm.slpos		= dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;	
 	if (icm.gamma)		    toEdit.icm.gamma        = mods.icm.gamma;
 	if (icm.freegamma)		toEdit.icm.freegamma    = mods.icm.freegamma;	
     if (raw.ccSteps)        toEdit.raw.ccSteps      = mods.raw.ccSteps;

@@ -58,6 +58,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* vibrance;
         Gtk::CheckButton* chmixer;
 		Gtk::CheckButton* hsveq;
+       // Gtk::CheckButton* icm;
 
         // options in lens:
         Gtk::CheckButton* distortion;
@@ -76,6 +77,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* exifch;
         Gtk::CheckButton* iptc;
         Gtk::CheckButton* icm;
+        Gtk::CheckButton* gam;
 
         // options in raw:
         Gtk::CheckButton* raw_expos;
@@ -107,7 +109,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection vibranceConn, chmixerConn, hsveqConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
-        sigc::connection exifchConn, iptcConn, icmConn;
+        sigc::connection exifchConn, iptcConn, icmConn, gamcsconn;
         sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
         sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_all_enhanceConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
 

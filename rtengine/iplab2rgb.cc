@@ -330,7 +330,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 	int t50;
 	int select_temp =1;//5003K
 	double eps=0.000000001;// not divide by zero
-	//primaries
+	//primaries for 7 working profiles ==> output profiles
 	if(profi=="ProPhoto") 	  {p1=0.7347; p2=0.2653; p3=0.1596; p4=0.8404; p5=0.0366; p6=0.0001;select_temp=1;}//Prophoto primaries
 	else if (profi=="WideGamut") {p1=0.7350; p2=0.2650; p3=0.1150; p4=0.8260; p5=0.1570; p6=0.0180;select_temp=1;}//Widegamut primaries
 	else if (profi=="Adobe RGB") {p1=0.6400; p2=0.3300; p3=0.2100; p4=0.7100; p5=0.1500; p6=0.0600;select_temp=2;}//Adobe primaries
@@ -376,7 +376,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 // 7 parameters for smoother curves
     cmsWhitePointFromTemp(&xyD, t50);
     GammaTRC[0] = GammaTRC[1] = GammaTRC[2] =   cmsBuildParametricToneCurve(NULL, 5, Parameters);//5 = more smoother than 4
-    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC);
+    cmsHPROFILE oprofdef = cmsCreateRGBProfileTHR(NULL, &xyD, &Primaries, GammaTRC); //oprofdef  become Outputprofile
 
     cmsFreeToneCurve(GammaTRC[0]);
 

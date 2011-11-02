@@ -62,7 +62,7 @@ PartialPasteDlg::PartialPasteDlg () {
     chmixer     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXER")));
     dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
     hsveq		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HSVEQUALIZER")));
-
+	
     // options in lens:
     distortion  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DISTORTION")));
     cacorr      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CACORRECTION")));
@@ -80,6 +80,7 @@ PartialPasteDlg::PartialPasteDlg () {
     exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
     iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
     icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
+    gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
 
     // options in raw:
     raw_expos			= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RAWEXPOS_LINEAR")));
@@ -158,6 +159,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[5]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
+    vboxes[5]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
 
     vboxes[6]->pack_start (*raw, Gtk::PACK_SHRINK, 2);
 	vboxes[6]->pack_start (*hseps[6], Gtk::PACK_SHRINK, 2);
@@ -247,7 +249,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     hsveqConn		= hsveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
-
+	
     distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
     cacorrConn      = cacorr->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
     vignettingConn  = vignetting->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
@@ -262,6 +264,7 @@ PartialPasteDlg::PartialPasteDlg () {
     exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
     iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
+    gamcsconn		= gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
 
     raw_dmethodConn         = raw_dmethod->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     raw_ccStepsConn         = raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -459,16 +462,19 @@ void PartialPasteDlg::colorToggled () {
 	vibranceConn.block (true);
     chmixerConn.block (true);
     hsveqConn.block (true);
-
+	gamcsconn.block (true);
     color->set_inconsistent (false);
 
     vibrance->set_active (color->get_active ());
     chmixer->set_active (color->get_active ());
 	hsveq->set_active (color->get_active ());
-
+	icm->set_active (color->get_active ());
+	
 	vibranceConn.block (false);
     chmixerConn.block (false);
     hsveqConn.block (false);
+	gamcsconn.block (false);
+	
 }
 
 void PartialPasteDlg::lensToggled () {
@@ -519,16 +525,19 @@ void PartialPasteDlg::metaicmToggled () {
     exifchConn.block (true);
     iptcConn.block (true);
     icmConn.block (true);
-
+	gamcsconn.block (true);
     metaicm->set_inconsistent (false);
 
     exifch->set_active (metaicm->get_active ());
     iptc->set_active (metaicm->get_active ());
     icm->set_active (metaicm->get_active ());
+    gam->set_active (metaicm->get_active ());
 
     exifchConn.block (false);
     iptcConn.block (false);
     icmConn.block (false);
+	gamcsconn.block (false);
+
 }
 
 
@@ -551,6 +560,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (vibrance->get_active ())    dst->vibrance = src->vibrance;
     if (chmixer->get_active ())     dst->chmixer = src->chmixer;
 	if (hsveq->get_active ())		dst->hsvequalizer = src->hsvequalizer;
+	if (icm->get_active ())			dst->icm = src->icm;
+	
     if (distortion->get_active ())  dst->distortion = src->distortion;
     if (cacorr->get_active ())      dst->cacorrection = src->cacorrection;
     if (vignetting->get_active ())  dst->vignetting = src->vignetting;
@@ -565,6 +576,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (exifch->get_active ())      dst->exif = src->exif;
     if (iptc->get_active ())        dst->iptc = src->iptc;
     if (icm->get_active ())         dst->icm = src->icm;
+    if (gam->get_active ())         dst->gam = src->gam;
 
     if (raw_dmethod->get_active ())         dst->raw.dmethod        =src->raw.dmethod;
     if (raw_ccSteps->get_active ())         dst->raw.ccSteps        =src->raw.ccSteps;

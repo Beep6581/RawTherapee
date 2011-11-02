@@ -212,7 +212,9 @@ void Options::setDefaults () {
 			0,  // ADDSET_SHARPENMICRO_UNIFORMITY
 			1,  // ADDSET_VIBRANCE_PASTELS
 			1,  // ADDSET_VIBRANCE_SATURATED
-			0   // ADDSET_VIBRANCE_SATURATED
+			0,   // ADDSET_VIBRANCE_PSTHRESHOLD
+			0,   // ADDSET_FREE_OUPUT_GAMMA
+			0,   // ADDSET_FREE_OUTPUT_SLOPE
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);

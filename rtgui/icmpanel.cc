@@ -127,16 +127,16 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 	freegamma->set_active (false);
 	pack_start( *freegamma);
 	
-	g_ampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"),1,3.5,0.01,2.22));
-	g_ampos->setAdjusterListener (this);
-	if (g_ampos->delay < 1000) g_ampos->delay = 1000;
-	g_ampos->show();
-	s_lpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"),0,15,0.01,4.5));
-	s_lpos->setAdjusterListener (this); 
-	if (s_lpos->delay < 1000) s_lpos->delay = 1000;
-	s_lpos->show();
-	pack_start( *g_ampos, Gtk::PACK_SHRINK, 4);//gamma
-	pack_start( *s_lpos, Gtk::PACK_SHRINK, 4);//slope
+	gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"),1,3.5,0.01,2.22));
+	gampos->setAdjusterListener (this);
+	if (gampos->delay < 1000) gampos->delay = 1000;
+	gampos->show();
+	slpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"),0,15,0.01,4.5));
+	slpos->setAdjusterListener (this); 
+	if (slpos->delay < 1000) slpos->delay = 1000;
+	slpos->show();
+	pack_start( *gampos, Gtk::PACK_SHRINK, 4);//gamma
+	pack_start( *slpos, Gtk::PACK_SHRINK, 4);//slope
 		
 	gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
 
@@ -243,8 +243,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
 			}
-	    g_ampos->setEditedState      (pedited->icm.gampos ? Edited : UnEdited);
-        s_lpos->setEditedState  	 (pedited->icm.slpos ? Edited : UnEdited);
+	    gampos->setEditedState      (pedited->icm.gampos ? Edited : UnEdited);
+        slpos->setEditedState  	 (pedited->icm.slpos ? Edited : UnEdited);
 		
     }
 	
@@ -253,8 +253,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     gamcsconn.block (false);
 
 	lastgamfree = pp->icm.freegamma;
-	g_ampos->setValue (pp->icm.gampos);
-	s_lpos->setValue (pp->icm.slpos);
+	gampos->setValue (pp->icm.gampos);
+	slpos->setValue (pp->icm.slpos);
        
        
     ipc.block (false);
@@ -290,8 +290,8 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pp->icm.output  = onames->get_active_text();
 		pp->icm.freegamma = freegamma->get_active();
     pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
-	pp->icm.gampos =(double) g_ampos->getValue();
-	pp->icm.slpos =(double) s_lpos->getValue();
+	pp->icm.gampos =(double) gampos->getValue();
+	pp->icm.slpos =(double) slpos->getValue();
 	
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();
@@ -300,35 +300,42 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->icm.freegamma =!freegamma->get_inconsistent();
-        pedited->icm.gampos          = g_ampos->getEditedState ();
-        pedited->icm.slpos   		 = s_lpos->getEditedState ();
+        pedited->icm.gampos          = gampos->getEditedState ();
+        pedited->icm.slpos   		 = slpos->getEditedState ();
 		
     }
 }
 void ICMPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
-  g_ampos->setDefault (defParams->icm.gampos);
-  s_lpos->setDefault (defParams->icm.slpos);
+  gampos->setDefault (defParams->icm.gampos);
+  slpos->setDefault (defParams->icm.slpos);
  
   if (pedited) {
-          g_ampos->setDefaultEditedState (pedited->icm.gampos ? Edited : UnEdited);
-          s_lpos->setDefaultEditedState (pedited->icm.slpos ? Edited : UnEdited);
+          gampos->setDefaultEditedState (pedited->icm.gampos ? Edited : UnEdited);
+          slpos->setDefaultEditedState (pedited->icm.slpos ? Edited : UnEdited);
 
   }
   else {
-          g_ampos->setDefaultEditedState (Irrelevant);
-          s_lpos->setDefaultEditedState (Irrelevant);
+          gampos->setDefaultEditedState (Irrelevant);
+          slpos->setDefaultEditedState (Irrelevant);
 
   }
   }
+  
+ void ICMPanel::setAdjusterBehavior (bool gammaadd, bool slopeadd) {
+	gampos->setAddMode (gammaadd);
+	slpos->setAddMode (slopeadd);
+}
+ 
+  
 void ICMPanel::adjusterChanged (Adjuster* a, double newval) {
 
     if (listener && freegamma->get_active()) {
 
         Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
-        if (a==g_ampos) 
+        if (a==gampos) 
             listener->panelChanged (EvGAMPOS, costr);
-		else if (a==s_lpos)
+		else if (a==slpos)
             listener->panelChanged (EvSLPOS, costr);
 		
     }
@@ -468,8 +475,8 @@ void ICMPanel::setBatchMode (bool batchMode) {
     onames->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
 	wgamma->append_text (M("GENERAL_UNCHANGED"));
-	g_ampos->showEditedCB ();
-	s_lpos->showEditedCB ();
+	gampos->showEditedCB ();
+	slpos->showEditedCB ();
 
 
 }
