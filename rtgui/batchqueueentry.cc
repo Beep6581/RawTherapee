@@ -16,10 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <batchqueueentry.h>
-#include <thumbbrowserbase.h>
+#include "batchqueueentry.h"
+#include "thumbbrowserbase.h"
 
 #include <cstring>
+#include "guiutils.h"
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm) 
     : ThumbBrowserEntryBase(fname),
@@ -29,11 +30,13 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
     thumbnail=thm;
     params = pparams;
 
-	// The BatchQueueEntryIdleHelper tracks if 
+    #ifndef WIN32
+	// The BatchQueueEntryIdleHelper tracks if an entry has been deleted while it was sitting wating for "idle"
     bqih = new BatchQueueEntryIdleHelper;
     bqih->bqentry = this;
     bqih->destroyed = false;
     bqih->pending = 0;
+    #endif
 
     if (thumbnail)
         thumbnail->increaseRef ();       
@@ -42,14 +45,16 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 BatchQueueEntry::~BatchQueueEntry () {
 
     batchQueueEntryUpdater.removeJobs (this);
-    delete [] opreview;
+    delete [] opreview; opreview=NULL;
     if (thumbnail)
         thumbnail->decreaseRef ();
 
+    #ifndef WIN32
     if (bqih->pending)
         bqih->destroyed = true;
     else
         delete bqih;
+    #endif
 }
 
 void BatchQueueEntry::refreshThumbnailImage () {
@@ -57,7 +62,7 @@ void BatchQueueEntry::refreshThumbnailImage () {
     if (!opreview)
         return;
 
-    batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);
+    batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);  // this will asynchronously land at this.updateImage
 }
 
 void BatchQueueEntry::calcThumbnailSize () {
@@ -102,6 +107,8 @@ void BatchQueueEntry::removeButtonSet () {
     buttonSet = NULL;
 }
 
+#ifndef WIN32
+
 struct BQUpdateParam {
     BatchQueueEntryIdleHelper* bqih;
     guint8* img;
@@ -132,10 +139,20 @@ int updateImageUIThread (void* data) {
     delete params;
     return 0;
 }
+#endif
 
 // Starts a copy of img->preview via GTK thread
 void BatchQueueEntry::updateImage (guint8* img, int w, int h) {
+    // TODO: Check for Linux/Mac
+#ifdef WIN32
+    // since the update itself is already called in an async thread and there are problem with accessing opreview in thumbbrowserbase,
+    // it's safer to do this synchrously
+    {
+        GThreadLock lock;
 
+        _updateImage(img,w,h);
+    }
+#else
     bqih->pending++;
 
     BQUpdateParam* param = new BQUpdateParam ();
@@ -144,6 +161,7 @@ void BatchQueueEntry::updateImage (guint8* img, int w, int h) {
     param->w = w;
     param->h = h;
     g_idle_add (updateImageUIThread, param);
+#endif
 }
 
 void BatchQueueEntry::_updateImage (guint8* img, int w, int h) {
