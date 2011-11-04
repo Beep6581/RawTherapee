@@ -393,18 +393,18 @@ void StdImageSource::hflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
-    unsigned short* rowr = new unsigned short[width];
-    unsigned short* rowg = new unsigned short[width];
-    unsigned short* rowb = new unsigned short[width];
+    float* rowr = new float[width];
+    float* rowg = new float[width];
+    float* rowb = new float[width];
     for (int i=0; i<height; i++) {
       for (int j=0; j<width; j++) {
         rowr[j] = image->r[i][width-1-j];
         rowg[j] = image->g[i][width-1-j];
         rowb[j] = image->b[i][width-1-j];
       }
-      memcpy (image->r[i], rowr, width*sizeof(unsigned short));
-      memcpy (image->g[i], rowg, width*sizeof(unsigned short));
-      memcpy (image->b[i], rowb, width*sizeof(unsigned short));
+      memcpy (image->r[i], rowr, width*sizeof(float));
+      memcpy (image->g[i], rowg, width*sizeof(float));
+      memcpy (image->b[i], rowb, width*sizeof(float));
     }
     delete [] rowr;
     delete [] rowg;
