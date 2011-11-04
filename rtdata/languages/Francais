@@ -3,7 +3,7 @@
 #01 1.3.2008: Initial translation by Hombre
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
-ABOUT_TAB_LICENSE;License
+ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCH_PROCESSING;Traitement par lot
@@ -29,7 +29,7 @@ CURVEEDITOR_TOOLTIPLOAD;Charger une courbe depuis un fichier
 CURVEEDITOR_TOOLTIPPASTE;Colle la courbe du presse-papier
 CURVEEDITOR_TOOLTIPSAVE;Enregistrer la courbe actuelle
 CURVEEDITOR_TYPE;Type:
-EDITWINDOW_TITLE;Edition d'Image
+EDITWINDOW_TITLE;Édition d'image
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
@@ -50,7 +50,7 @@ EXIFPANEL_REMOVEHINT;Retire les données sélectionnées lors de l'écriture du 
 EXIFPANEL_REMOVE;Retirer
 EXIFPANEL_RESETALLHINT;Réinitialise tous les tags à leur valeur initiale
 EXIFPANEL_RESETALL;Réinitialiser tout
-EXIFPANEL_RESETHINT;Réinitialise les données séléctionnés à la valeur initiale
+EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
 EXIFPANEL_RESET;Réinitialiser
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
@@ -75,7 +75,7 @@ FILEBROWSER_EMPTYTRASHHINT;Supprime définitivement les fichiers de la corbeille
 FILEBROWSER_EMPTYTRASH;Vider la corbeille
 FILEBROWSER_EXEC_CPB;Lancer un constructeur de profil personnalisé
 FILEBROWSER_EXIFFILTERAPPLY;Appliquer
-FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF le navigateur de fichier
+FILEBROWSER_EXIFFILTERAPPLYHINT;Activer/désactiver les filtres EXIF dans le navigateur de fichier
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
@@ -107,7 +107,7 @@ FILEBROWSER_POPUPRANK3;3 étoiles
 FILEBROWSER_POPUPRANK4;4 étoiles
 FILEBROWSER_POPUPRANK5;5 étoiles
 FILEBROWSER_POPUPRANK;Étoiles
-FILEBROWSER_POPUPREMOVEINCLPROC;Suppresion du système de fichier, vers. déjà traitée inclus
+FILEBROWSER_POPUPREMOVEINCLPROC;Supprimer (y compris les sorties de la file de traitement)
 FILEBROWSER_POPUPREMOVE;Retirer du système de fichier
 FILEBROWSER_POPUPREMOVESUBMENU;Retirer
 FILEBROWSER_POPUPRENAME;Renommer
@@ -120,7 +120,7 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
 FILEBROWSER_QUERYHINT;Taper la partie du nom du fichier à chercher. \n<b>Ctrl-f</b> Place le curseur dans le champ de saisie;\n<b>Entrée</b> pour lancer la recherche
 FILEBROWSER_QUERYLABEL;Chercher:
-FILEBROWSER_RENAMEDLGLABEL;Rennommage du fichier
+FILEBROWSER_RENAMEDLGLABEL;Renommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
 FILEBROWSER_SELECTFLATFIELD;Sélectionner un Champ Uniforme...
@@ -177,14 +177,14 @@ HISTOGRAM_BUTTON_BAR;RVB
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;V
 HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
+HISTOGRAM_BUTTON_RAW;RAW
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramme
 HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
-HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histograme des données RAW
+HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
 HISTOGRAM_TOOLTIP_R;Montrer/cacher l'histogramme ROUGE
 HISTORY_CHANGED;Changé
 HISTORY_CUSTOMCURVE;Courbe personnelle
@@ -424,8 +424,8 @@ MAIN_FRAME_BATCHQUEUE;File d'attente
 MAIN_FRAME_BATCHQUEUE_TOOLTIP; File de traitement  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Éditeur
 MAIN_FRAME_EDITOR_TOOLTIP; Éditeur  <b>Ctrl-F4</b>
-MAIN_FRAME_FILEBROWSER;Explorateur de fichiers 
-MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de Fichier  <b>Ctrl-F2</b>
+MAIN_FRAME_FILEBROWSER;Navigateur de fichiers 
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigateur de fichiers  <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES_ADD;Ajouter
 MAIN_FRAME_PLACES_DEL;Supprimer
 MAIN_FRAME_PLACES;Emplacements 
@@ -498,7 +498,7 @@ PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
 PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
-PARTIALPASTE_COLORBOOST;Réhaussement couleur
+PARTIALPASTE_COLORBOOST;Rehaussement couleur
 PARTIALPASTE_COLORDENOISE;Réduction du bruit chromatique
 PARTIALPASTE_COLORGROUP;Réglages couleurs
 PARTIALPASTE_COLORMIXER;Mixage couleur
@@ -513,7 +513,7 @@ PARTIALPASTE_DETAILGROUP;Détail
 PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
 PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit
 PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
-PARTIALPASTE_DISTORTION;Correction de distortion
+PARTIALPASTE_DISTORTION;Correction de distorsion
 PARTIALPASTE_EVERYTHING;Tout
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
 PARTIALPASTE_EXPOSURE;Exposition
@@ -590,7 +590,7 @@ PREFERENCES_DARKFRAME;Soustraction de Trame Noire
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
 PREFERENCES_DATEFORMAT;Format
 PREFERENCES_DATEFORMATFRAME;Format de la date
-PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatés suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
+PREFERENCES_DATEFORMATHINT;<i>Vous pouvez utiliser les paramètres de chaînes formatées suivants:</i>\n<b>%y</b><i> : année</i>\n<b>%m</b><i> : mois</i>\n<b>%d</b><i> : jour</i>\n<i>\nPar exemple, le format de date française est:</i>\n<b>%d/%m/%y</b>
 PREFERENCES_DEFAULTLANG;Langue par défaut
 PREFERENCES_DEFAULTTHEME;Thème par défaut
 PREFERENCES_DEMOSAICINGALGO;Algorithme de dématriçage
@@ -643,8 +643,8 @@ PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
-PREFERENCES_OUTDIRHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatés se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'original, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'original, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'originale, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'originale, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
 PREFERENCES_OVERWRITEOUTPUTFILE;Écraser le fichier s'il existe déjà
@@ -771,7 +771,7 @@ TP_COLORBOOST_BCHANNEL;canal "b"
 TP_COLORBOOST_CHANNEL;Canal
 TP_COLORBOOST_CHSEPARATE;séparé
 TP_COLORBOOST_ENABLESATLIMITER;Activer le limiteur de saturation
-TP_COLORBOOST_LABEL;Réhaussement couleur
+TP_COLORBOOST_LABEL;Rehaussement couleur
 TP_COLORBOOST_SATLIMIT;Limite de saturation
 TP_COLORDENOISE_EDGESENSITIVE;Sensible aux bords
 TP_COLORDENOISE_EDGETOLERANCE;Tolérance des bords
@@ -870,10 +870,13 @@ TP_HSVEQUALIZER_LABEL;Égaliseur TSV
 TP_HSVEQUALIZER_NEUTRAL;Neutre
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
+TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières dans l'espace de la matrice
+TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
+TP_ICM_INPUTCAMERAICC;Celui de l'appareil photo ou ICC
 TP_ICM_INPUTCUSTOM;Personnel
 TP_ICM_INPUTDLGLABEL;Choix du profil ICC d'entrée...
 TP_ICM_INPUTEMBEDDED;Utiliser celui inclus, si possible
@@ -1016,12 +1019,3 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
-!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
