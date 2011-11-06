@@ -13,7 +13,7 @@
 #12 Erweiterung (oduis)
 #13 Erweiterung (oduis)
 #14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan-Sep 2011: Erweiterungen und Korrekturen (MaWe, 06.10.2011)
+#15 Jan-Okt 2011: Erweiterungen und Korrekturen (MaWe, 06.11.2011)
 #16 Erweiterung (oduis)
 #17 Erweiterung (oduis)
 ABOUT_TAB_BUILD;Version
@@ -172,8 +172,8 @@ GENERAL_ABOUT;Über
 GENERAL_AFTER;Nachher
 GENERAL_BEFORE;Vorher
 GENERAL_CANCEL;Abbruch
-GENERAL_DISABLED;deaktiviert
-GENERAL_DISABLE;deaktivieren
+GENERAL_DISABLED;Deaktiviert
+GENERAL_DISABLE;Deaktivieren
 GENERAL_ENABLE;Aktivieren
 GENERAL_ENABLED;Aktiv
 GENERAL_FILE;Datei
@@ -195,7 +195,7 @@ HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_RAW;RAW
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramm
-HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein/ausschalten\n\nRechte Maustaste im Bildfenster klicken,\num Anzeige zu fixieren/lösen
+HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden\n\nZum Fixieren/Lösen der Anzeige muss mit der rechten Maustaste ins Bildfenster geklickt werden
 HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden
 HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden
@@ -262,6 +262,13 @@ HISTORY_MSG_148;Mikrokontrast
 HISTORY_MSG_149;Mikrokontrast\n3×3-Matrix
 HISTORY_MSG_14;Luminanz Helligkeit
 HISTORY_MSG_150;Artifakt-/Rauschmind.\nnach Farbinterpolation
+HISTORY_MSG_151;Dynamik
+HISTORY_MSG_152;Dynamik - Pastelltöne
+HISTORY_MSG_153;Dynamik\nGesättigte Töne
+HISTORY_MSG_154;Dynamik\nHauttöne schützen
+HISTORY_MSG_155;Dynamik - Farbver-\nschiebungen verhindern
+HISTORY_MSG_156;Dynamik - Pastellene und\ngesättigte Töne koppeln
+HISTORY_MSG_157;Dynamik - Schwellenwert\nPastell / gesättigte Töne
 HISTORY_MSG_15;Luminanz Kontrast
 HISTORY_MSG_16;Luminanz Schwarz
 HISTORY_MSG_17;Luminanz Lichter-Kompression
@@ -374,50 +381,50 @@ ICMPANEL_INPUTPROFILE;Eingabeprofil
 ICMPANEL_NOICM;Kein ICM: sRGB-Ausgabe
 ICMPANEL_OUTPUTDLGLABEL;Wähle Ausgabe-ICC-Profil...
 ICMPANEL_OUTPUTPROFILE;Ausgabeprofil
-ICMPANEL_SAVEREFERENCE;Referenzbild für Profilerstellung speichern
+ICMPANEL_SAVEREFERENCE;Referenzbild für Profil speichern
 ICMPANEL_WORKINGPROFILE;Arbeitsfarbraum
 IMAGEAREA_DETAILVIEW;Detailansicht
 IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_AUTHORHINT;Name des Autors, z.B. Name des Fotografen oder des Künstlers (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Titel des Autors oder der Autoren (By-line Title).
+IPTCPANEL_AUTHORHINT;Name des Autors, z.B. Name des Fotografen oder des Künstlers (By-line)
+IPTCPANEL_AUTHORSPOSITIONHINT;Titel des Autors oder der Autoren (By-line Title)
 IPTCPANEL_AUTHORSPOSITION;Position des Autors
 IPTCPANEL_CAPTION;Bildbeschreibung
 IPTCPANEL_CAPTIONHINT;Beschreibung des Bildinhaltes (Caption - Abstract)
 IPTCPANEL_CAPTIONWRITER;Autor der Bildbeschreibung
-IPTCPANEL_CAPTIONWRITERHINT;Name der beim Schreiben, Editieren oder Korrigieren des Bildes oder der Bildbeschreibung beteiligten Person (Writer - Editor).
-IPTCPANEL_CATEGORYHINT;3-stelliger Code, der die Kategorie des Bildes beschreibt (Category).
+IPTCPANEL_CAPTIONWRITERHINT;Name der beim Schreiben, Editieren oder Korrigieren des Bildes oder der Bildbeschreibung beteiligten Person (Writer - Editor)
+IPTCPANEL_CATEGORYHINT;3-stelliger Code, der die Kategorie des Bildes beschreibt (Category)
 IPTCPANEL_CATEGORY;Kategorie
-IPTCPANEL_CITYHINT;Aufnahmeort: Stadt (City).
+IPTCPANEL_CITYHINT;Aufnahmeort: Stadt (City)
 IPTCPANEL_CITY;Stadt
 IPTCPANEL_COPYHINT;IPTC-Werte in die Zwischenablage kopieren
 IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Alle nötigen Hinweise zu Urheberrechten (Copyright Notice).
-IPTCPANEL_COUNTRYHINT;Aufnahmeort: Land (Country - Primary Location Name).
+IPTCPANEL_COPYRIGHTHINT;Alle nötigen Hinweise zu Urheberrechten (Copyright Notice)
+IPTCPANEL_COUNTRYHINT;Aufnahmeort: Land (Country - Primary Location Name)
 IPTCPANEL_COUNTRY;Land
 IPTCPANEL_CREDIT;Bildrechte
-IPTCPANEL_CREDITHINT;Identifiziert den Anbieter des Bildes, es muss nicht der Eigentümer sein (Credit).
+IPTCPANEL_CREDITHINT;Identifiziert den Anbieter des Bildes, es muss nicht der Eigentümer sein (Credit)
 IPTCPANEL_DATECREATED;Erstellt am
-IPTCPANEL_DATECREATEDHINT;Erstellungsdatum des Bildes; Format: JJJJMMTT (Date Created).
+IPTCPANEL_DATECREATEDHINT;Erstellungsdatum des Bildes; Format: JJJJMMTT (Date Created)
 IPTCPANEL_EMBEDDED;Eingebettete
-IPTCPANEL_EMBEDDEDHINT;Zu den im Bild eingebetteten Werten zurücksetzen.
+IPTCPANEL_EMBEDDEDHINT;Zu den im Bild eingebetteten Werten zurücksetzen
 IPTCPANEL_HEADLINE;Bildtitel
-IPTCPANEL_HEADLINEHINT;Kurzform der Bildbeschreibung, könnte als Überschrift an das Bild geklebt werden (Headline).
-IPTCPANEL_INSTRUCTIONSHINT;Besondere Hinweise bezüglich der Verwendung des Bildes (Special Instructions).
+IPTCPANEL_HEADLINEHINT;Kurzform der Bildbeschreibung, könnte als Überschrift an das Bild geklebt werden (Headline)
+IPTCPANEL_INSTRUCTIONSHINT;Besondere Hinweise bezüglich der Verwendung des Bildes (Special Instructions)
 IPTCPANEL_INSTRUCTIONS;Hinweise
-IPTCPANEL_KEYWORDSHINT;Stichwörter für das spätere Wiederfinden der Bilder (Keywords).
+IPTCPANEL_KEYWORDSHINT;Stichwörter für das spätere Wiederfinden der Bilder (Keywords)
 IPTCPANEL_KEYWORDS;Schlagwörter
 IPTCPANEL_PASTEHINT;IPTC-Werte aus der Zwischenablage einfügen
-IPTCPANEL_PROVINCEHINT;Aufnahmeort: Provinz (Province-State).
+IPTCPANEL_PROVINCEHINT;Aufnahmeort: Provinz (Province-State)
 IPTCPANEL_PROVINCE;Provinz
-IPTCPANEL_RESETHINT;Zu den im Profil gesetzten Werten zurücksetzen.
+IPTCPANEL_RESETHINT;Zu den im Profil gesetzten Werten zurücksetzen
 IPTCPANEL_RESET;Zurücksetzen
-IPTCPANEL_SOURCEHINT;Der ursprüngliche Eigentümer des Werkes auf dem Bild (Source).
+IPTCPANEL_SOURCEHINT;Der ursprüngliche Eigentümer des Werkes auf dem Bild (Source)
 IPTCPANEL_SOURCE;Quelle
-IPTCPANEL_SUPPCATEGORIESHINT;Frei wählbare zusätzliche Kategorien (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIESHINT;Frei wählbare zusätzliche Kategorien (Supplemental Categories)
 IPTCPANEL_SUPPCATEGORIES;Zusätz. Kategorien
-IPTCPANEL_TITLEHINT;Kurztitel des Bildes (Object Name).
+IPTCPANEL_TITLEHINT;Kurztitel des Bildes (Object Name)
 IPTCPANEL_TITLE;Titel
-IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung definiert (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCEHINT;Ein Code, der den ursprünglichen Ort der Übertragung definiert (Original Transmission Reference)
 IPTCPANEL_TRANSREFERENCE;Übertragungs Referenz
 MAIN_BUTTON_EXIT;Verlassen
 MAIN_BUTTON_FULLSCREEN;Vollbild <b>F11</b>
@@ -471,11 +478,11 @@ MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt+T</b>
 MAIN_TAB_TRANSFORM;Verändern
 MAIN_TOGGLE_BEFORE_AFTER;V|N
-MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher</b>-Ansicht <b>sperren</b>/<b>entsperren</b>\n\n<b>Sperren</b>: Friert die <b>Vorher</b>-Ansicht ein, so dass sich die Gesamtwirkung mehrerer Werkzeuge beurteilen lässt; zudem können Vergleiche zu jedem Stand der Historie angestellt werden\n\n<b>Entsperren</b>: Die <b>Vorher</b>-Ansicht bleibt stets ein Änderungsschritt hinter der <b>Nachher</b>-Ansicht zurück, so dass die Auswirkung des zuletzt angewendeten Werkzeugs ersichtlich wird
+MAIN_TOOLTIP_BEFOREAFTERLOCK;Vorher-Ansicht <b>sperren</b>/<b>entsperren</b>\n\n<b>Sperren</b>: Friert die Vorher-Ansicht ein, so dass sich die Gesamtwirkung mehrerer Werkzeuge beurteilen lässt; zudem können Vergleiche zu jedem Stand der Historie angestellt werden\n\n<b>Entsperren</b>: Die Vorher-Ansicht bleibt stets einen Änderungsschritt hinter der Nachher-Ansicht zurück, so dass die Auswirkung des zuletzt angewendeten Werkzeugs ersichtlich wird
 MAIN_TOOLTIP_HIDEFP;Unteres Bedienfeld ein-/ausblenden (Verzeichnis- und Datei-Browser) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden (einschließlich der Historie) <b>L</b> / <b>Strg+L</b>
-MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten <b>&lt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
-MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten <b>&gt;</b>\n\n(<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden)
+MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten <b>&lt;</b>\n\n<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden
+MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten <b>&gt;</b>\n\n<i>Nur Windows:</i> Alternativ kann während Betätigung eines\nSchiebereglers die Alt-Taste gedrückt gehalten werden
 MAIN_TOOLTIP_PREFERENCES;Einstellungen ändern
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden <b>I</b>
 MAIN_TOOLTIP_SAVEAS;Bild in anderem Verzeichnis speichern
@@ -535,6 +542,7 @@ PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
 PARTIALPASTE_HLRECOVERY;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Lichter wiederherstellen\nSchwellenwert
 PARTIALPASTE_HSVEQUALIZER;HSV-Equalizer
+PARTIALPASTE_ICMGAMMA;Ausgabe-Gamma
 PARTIALPASTE_ICMSETTINGS;ICM-Einstellungen
 PARTIALPASTE_IMPULSEDENOISE;Impulsrauschminderung
 PARTIALPASTE_IPTCINFO;IPTC-Informationen
@@ -565,6 +573,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Schatten/Lichter
 PARTIALPASTE_SHARPENEDGE;Kantenschärfung
 PARTIALPASTE_SHARPENING;Schärfung
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet-Mixer
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
@@ -577,7 +586,7 @@ PREFERENCES_BLINKCLIPPED;Zu helle/dunkle Bereiche anzeigen
 PREFERENCES_CACHECLEARALL;Alles löschen
 PREFERENCES_CACHECLEARPROFILES;Profile löschen
 PREFERENCES_CACHECLEARTHUMBS;Voransichten löschen
-PREFERENCES_CACHEFORMAT1;Proprietär (schneller; höhere Qualität)
+PREFERENCES_CACHEFORMAT1;Proprietär (schneller und höhere Qualität)
 PREFERENCES_CACHEFORMAT2;JPEG (geringerer Speicherplatzbedarf)
 PREFERENCES_CACHEMAXENTRIES;Höchstzahl der Einträge im Zwischenspeicher
 PREFERENCES_CACHEOPTS;Einstellungen des Zwischenspeichers für Voransichten (Cache)
@@ -748,9 +757,9 @@ SAVEDLG_SAVEIMMEDIATELY;Sofort speichern
 SAVEDLG_SAVESPP;Prozessparameter mit dem Bild speichern
 SAVEDLG_TIFFFILTER;TIFF-Datei
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen <b>C</b>\n\n(Zum Verschieben des Ausschnitts muss die Umschalttaste gedrückt gehalten werden) 
+TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen <b>C</b>\n\nZum Verschieben des Ausschnitts muss die Umschalttaste gedrückt gehalten werden
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug <b>H</b>
-TOOLBAR_TOOLTIP_STRAIGHTEN;Leitlinie wählen <b>S</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;Ausrichten / Fein-Rotation <b>S</b>\n\nRichtet das Bild entlang einer Leitlinie aus; der Drehwinkel wird neben der Leitlinie angezeigt, die Drehung erfolgt um die Bildmitte
 TOOLBAR_TOOLTIP_WB;Weißabgleich manuell setzen <b>W</b>
 TP_CACORRECTION_BLUE;Blau
 TP_CACORRECTION_LABEL;Farbsaum entfernen
@@ -872,26 +881,26 @@ TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Lichter aus Matrix einmischen
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Aktivieren um bei Verwendung von LUT-basierte ICC-Profilen Lichter wiederzustellen
+TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten\nICC-Profilen die Lichter wieder her
 TP_ICM_FILEDLGFILTERANY;Alle Dateien
 TP_ICM_FILEDLGFILTERICM;ICC-Profildateien
 TP_ICM_INPUTCAMERAICC;Kamera-Standard oder ICC
-TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapee Standard ICC Farbprofil verwenden. Präsizer als einfache Matrix, aber nur für einige Kameras verfügbar.
+TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapee Standard ICC-Farbprofil verwenden; präziser als einfache Matrix, aber nur für einige Kameras verfügbar
 TP_ICM_INPUTCAMERA;Kamera-Standard
-TP_ICM_INPUTCAMERA_TOOLTIP;Einfache Standard Farbkorrektur-Matrix von DCRAW oder eingebettet im DNG verwenden
+TP_ICM_INPUTCAMERA_TOOLTIP;Einfache Standard Farbkorrektur-Matrix von DCRAW oder die im DNG eingebettete verwenden
 TP_ICM_INPUTCUSTOM;Benutzerdefiniert
 TP_ICM_INPUTCUSTOM_TOOLTIP;Eigene ICC-Farbprofildatei für die Kamera verwenden
 TP_ICM_INPUTDLGLABEL;Wähle Eingabe-ICC-Profil...
 TP_ICM_INPUTEMBEDDED;Eingebettetes verwenden, falls möglich
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Farbprofil verwenden, das ggf. in nicht-RAW Dateien eingebettet ist
 TP_ICM_INPUTNONE;Kein Profil
-TP_ICM_INPUTNONE_TOOLTIP;Kein Farbprofil verwenden. Nur in speziellen Fällen sinnvoll.
+TP_ICM_INPUTNONE_TOOLTIP;Kein Farbprofil verwenden; nur in speziellen Fällen sinnvoll
 TP_ICM_INPUTPROFILE;Eingabeprofil
 TP_ICM_LABEL;Farbmanagement
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OUTPUTDLGLABEL;Wähle Ausgabe-ICC-Profil...
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
-TP_ICM_SAVEREFERENCE;Referenzbild für Profilerstellung speichern
+TP_ICM_SAVEREFERENCE;Referenzbild für Profil speichern
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
 TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
 TP_IMPULSEDENOISE_THRESH;Schwellenwert
@@ -940,8 +949,6 @@ TP_RESIZE_BICUBICSF;Bikubisch (weicher)
 TP_RESIZE_BICUBICSH;Bikubisch (schärfer)
 TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Ausschnitt
-TP_RESIZE_DOWNSCALEB;Downscaling (besser)
-TP_RESIZE_DOWNSCALEF;Downscaling (schneller)
 TP_RESIZE_FITBOX;Begrenzungsrahmen
 TP_RESIZE_FULLIMAGE;Ganzes Bild
 TP_RESIZE_FULLSIZE;Volle Bildgröße:
@@ -988,6 +995,13 @@ TP_SHARPENMICRO_AMOUNT;Stärke
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-Matrix statt 5×5-Matrix
 TP_SHARPENMICRO_UNIFORMITY;Gleichmäßigkeit
+TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen verhindern
+TP_VIBRANCE_LABEL;Dynamik
+TP_VIBRANCE_PASTELS;Pastelltöne
+TP_VIBRANCE_PASTSATTOG;Pastellene und gesättigte Töne koppeln
+TP_VIBRANCE_PROTECTSKINS;Hauttöne schützen
+TP_VIBRANCE_SATURATED;Gesättigte Töne
+TP_VIBRANCE_PSTHRESHOLD;Pastellene/gesättigte Töne\nSchwellenwert
 TP_VIGNETTING_AMOUNT;Stärke
 TP_VIGNETTING_CENTER_X;Zentrum X
 TP_VIGNETTING_CENTER_Y;Zentrum Y
