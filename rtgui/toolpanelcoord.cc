@@ -216,9 +216,20 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
     if (!ipc) return;
 
+    int changeFlags=refreshmap[(int)event];
+
     ProcParams* params = ipc->beginUpdateParams ();
     for (int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (params);
+
+    // Compensate rotation on flip
+    if (event==rtengine::EvCTHFlip || event==rtengine::EvCTVFlip) {
+        if (fabs(params->rotate.degree)>0.001) {
+              params->rotate.degree *= -1;
+            changeFlags |= refreshmap[(int)rtengine::EvROTDegree];
+            rotate->read (params);
+        }
+    }
 
     // some transformations make the crop change for convenience
     if (event==rtengine::EvCTHFlip) {
@@ -240,7 +251,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
         resize->write (params);
     }
 
-    ipc->endUpdateParams (event);   // starts the IPC processing
+    ipc->endUpdateParams (changeFlags);   // starts the IPC processing
 
     hasChanged = true;
 
