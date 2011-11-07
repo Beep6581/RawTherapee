@@ -11,7 +11,7 @@
 
 /*
    dcraw.c -- Dave Coffin's raw photo decoder
-   Copyright 1997-2010 by Dave Coffin, dcoffin a cybercom o net
+   Copyright 1997-2011 by Dave Coffin, dcoffin a cybercom o net
 
    This is a command-line ANSI C program to convert raw photos from
    any digital camera on any computer running any operating system.
@@ -6229,8 +6229,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6246,-1272,-523,-5075,12357,3075,-1035,1825,7333 } },
     { "Canon EOS 500D", 0, 0x3479,
 	{ 4763,712,-646,-6821,14399,2640,-1921,3276,6561 } },
-    { "Canon EOS 550D", 0, 0x3dd7,
-	{ 6941,-1164,-857,-3825,11597,2534,-416,1540,6039 } },
+    { "Canon EOS 550D", 0, 0x3dd7, /* RT - Lebedev*/
+	{ 6519,-772,-703,-4994,12737,2519,-1387,2492,6175 } },
     { "Canon EOS 600D", 0, 0x3510,
 	{ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 } },
     { "Canon EOS 1000D", 0, 0xe43,
