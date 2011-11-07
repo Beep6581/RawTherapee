@@ -69,6 +69,7 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Image *iTopPanel_1_Show, *iTopPanel_1_Hide;
         Gtk::Image *iRightPanel_1_Show, *iRightPanel_1_Hide;
         Gtk::Image *iShowHideSidePanels;
+        Gtk::Image *iShowHideSidePanels_exit;
         Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
         Gtk::VBox *leftbox;
         Gtk::VBox *vboxright;

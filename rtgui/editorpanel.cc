@@ -203,6 +203,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 	// ShowHideSidePanels
     tbShowHideSidePanels = new Gtk::ToggleButton ();
     iShowHideSidePanels = new RTImage ("crossed-arrows-out.png");
+    iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in.png");
     tbShowHideSidePanels->set_relief(Gtk::RELIEF_NONE);
     tbShowHideSidePanels->set_active (false);
     tbShowHideSidePanels->set_tooltip_markup (M("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
@@ -1325,6 +1326,10 @@ void EditorPanel::toggleSidePanels(){
 	tbTopPanel_1->set_active (!bAllSidePanelsVisible);
 	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
 	hidehp->set_active (!bAllSidePanelsVisible);
+	if (bAllSidePanelsVisible == false)
+	  tbShowHideSidePanels->set_image (*iShowHideSidePanels);
+	else
+	  tbShowHideSidePanels->set_image (*iShowHideSidePanels_exit);
 }
 
 void EditorPanel::toggleSidePanelsZoomFit() {
