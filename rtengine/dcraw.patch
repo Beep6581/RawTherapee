@@ -1,6 +1,6 @@
---- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Sun Oct 09 17:44:03 2011
-+++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Mon Oct 31 07:51:51 2011
-@@ -1,6 +1,17 @@
+--- dcraw.c	2011-10-07 05:00:37.000000000 +0400
++++ dcraw.cc	2011-11-06 15:18:04.953224088 +0400
+@@ -1,3 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
 +/*RT*/#undef MAX
@@ -14,11 +14,7 @@
 +
  /*
     dcraw.c -- Dave Coffin's raw photo decoder
--   Copyright 1997-2011 by Dave Coffin, dcoffin a cybercom o net
-+   Copyright 1997-2010 by Dave Coffin, dcoffin a cybercom o net
- 
-    This is a command-line ANSI C program to convert raw photos from
-    any digital camera on any computer running any operating system.
+    Copyright 1997-2011 by Dave Coffin, dcoffin a cybercom o net
 @@ -98,18 +109,16 @@
  #define LONG_BIT (8 * sizeof (long))
  #endif
@@ -301,16 +297,15 @@
      order = get2();
      hlen  = get4();
      if (get4() == 0x48454150)		/* "HEAP" */
--      parse_ciff (save+hlen, len-hlen);
 +/*RT*/    {
 +/*RT*/      ciff_base = save+hlen;
 +/*RT*/      ciff_len = len-hlen;
-+        parse_ciff (save+hlen, len-hlen);
+       parse_ciff (save+hlen, len-hlen);
 +/*RT*/    }
      if (parse_tiff (save+6)) apply_tiff();
      fseek (ifp, save+len, SEEK_SET);
    }
-@@ -6182,30 +6203,30 @@
+@@ -6182,34 +6203,34 @@
  	{ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 } },
      { "Canon EOS 5D", 0, 0xe6c,
  	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
@@ -348,7 +343,13 @@
 +	{ 6246,-1272,-523,-5075,12357,3075,-1035,1825,7333 } },
      { "Canon EOS 500D", 0, 0x3479,
  	{ 4763,712,-646,-6821,14399,2640,-1921,3276,6561 } },
-     { "Canon EOS 550D", 0, 0x3dd7,
+-    { "Canon EOS 550D", 0, 0x3dd7,
+-	{ 6941,-1164,-857,-3825,11597,2534,-416,1540,6039 } },
++    { "Canon EOS 550D", 0, 0x3dd7, /* RT - Lebedev*/
++	{ 6519,-772,-703,-4994,12737,2519,-1387,2492,6175 } },
+     { "Canon EOS 600D", 0, 0x3510,
+ 	{ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 } },
+     { "Canon EOS 1000D", 0, 0xe43,
 @@ -6222,8 +6243,8 @@
  	{ 6517,-602,-867,-8180,15926,2378,-1618,1771,7633 } },
      { "Canon EOS-1D Mark IV", 0, 0x3bb0,
