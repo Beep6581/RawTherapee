@@ -41,14 +41,21 @@ HistogramPanel::HistogramPanel () {
    histogramRGBArea->setParent(gfxVBox);
    gfxVBox->pack_start (*histogramArea, Gtk::PACK_EXPAND_WIDGET, 0);
    if (options.histogramBar)
-	   gfxVBox->pack_start (*histogramRGBArea, Gtk::PACK_SHRINK, 0);
+      gfxVBox->pack_start (*histogramRGBArea, Gtk::PACK_SHRINK, 0);
 
-   Gtk::Image* redImage   = Gtk::manage( new RTImage ("histRed.png") );
-   Gtk::Image* greenImage = Gtk::manage( new RTImage ("histGreen.png") );
-   Gtk::Image* blueImage  = Gtk::manage( new RTImage ("histBlue.png") );
-   Gtk::Image* valueImage = Gtk::manage( new RTImage ("histValue.png") );
-   Gtk::Image* rawImage   = Gtk::manage( new RTImage ("histRaw.png") );
-   Gtk::Image* barImage   = Gtk::manage( new RTImage ("histBar.png") );
+   redImage   = new RTImage ("histRed.png");
+   greenImage = new RTImage ("histGreen.png");
+   blueImage  = new RTImage ("histBlue.png");
+   valueImage = new RTImage ("histValue.png");
+   rawImage   = new RTImage ("histRaw.png");
+   barImage   = new RTImage ("histBar.png");
+
+   redImage_g   = new RTImage ("histRedg.png");
+   greenImage_g = new RTImage ("histGreeng.png");
+   blueImage_g  = new RTImage ("histBlueg.png");
+   valueImage_g = new RTImage ("histValueg.png");
+   rawImage_g   = new RTImage ("histRawg.png");
+   barImage_g   = new RTImage ("histBarg.png");
 
    showRed   = Gtk::manage (new Gtk::ToggleButton ());
    showGreen = Gtk::manage (new Gtk::ToggleButton ());
@@ -57,12 +64,12 @@ HistogramPanel::HistogramPanel () {
    showRAW   = Gtk::manage (new Gtk::ToggleButton ());
    showBAR   = Gtk::manage (new Gtk::ToggleButton ());
 
-   showRed->set_name("histButton");
-   showGreen->set_name("histButton");
-   showBlue->set_name("histButton");
-   showValue->set_name("histButton");
-   showRAW->set_name("histButton");
-   showBAR->set_name("histButton");
+   showRed->set_name("histButton");   showRed->set_can_focus(false);
+   showGreen->set_name("histButton"); showGreen->set_can_focus(false);
+   showBlue->set_name("histButton");  showBlue->set_can_focus(false);
+   showValue->set_name("histButton"); showValue->set_can_focus(false);
+   showRAW->set_name("histButton");   showRAW->set_can_focus(false);
+   showBAR->set_name("histButton");   showBAR->set_can_focus(false);
 
    showRed->set_relief (Gtk::RELIEF_NONE);
    showGreen->set_relief (Gtk::RELIEF_NONE);
@@ -70,13 +77,6 @@ HistogramPanel::HistogramPanel () {
    showValue->set_relief (Gtk::RELIEF_NONE);
    showRAW->set_relief (Gtk::RELIEF_NONE);
    showBAR->set_relief (Gtk::RELIEF_NONE);
-
-   showRed->set_image(*redImage);
-   showGreen->set_image(*greenImage);
-   showBlue->set_image(*blueImage);
-   showValue->set_image(*valueImage);
-   showRAW->set_image(*rawImage);
-   showBAR->set_image(*barImage);
 
    showRed->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_R"));
    showGreen->set_tooltip_text (M("HISTOGRAM_TOOLTIP_G"));
@@ -93,12 +93,22 @@ HistogramPanel::HistogramPanel () {
    showRAW->set_active (false);
    showBAR->set_active (options.histogramBar);
 
-   showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
-   showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::rgbv_toggled) );
+   showRed->set_image(*redImage);
+   showGreen->set_image(*greenImage);
+   showBlue->set_image(*blueImage);
+   showValue->set_image(*valueImage);
+   showRAW->set_image(*rawImage_g);
+   if (showBAR->get_active())
+     showBAR->set_image(*barImage);
+   else
+     showBAR->set_image(*barImage_g);
+
+   showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::red_toggled), showRed );
+   showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );
+   showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::blue_toggled), showBlue );
+   showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::value_toggled), showValue );
+   showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::raw_toggled), showRAW );
+   showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
 
    buttonVBox->pack_start (*showRed, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showGreen, Gtk::PACK_SHRINK, 0);
@@ -120,6 +130,22 @@ HistogramPanel::HistogramPanel () {
    show_all ();
 
    rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &HistogramPanel::resized) );
+}
+
+HistogramPanel::~HistogramPanel () {
+  delete redImage;
+  delete greenImage;
+  delete blueImage;
+  delete valueImage;
+  delete rawImage;
+  delete barImage;
+
+  delete redImage_g;
+  delete greenImage_g;
+  delete blueImage_g;
+  delete valueImage_g;
+  delete rawImage_g;
+  delete barImage_g;
 }
 
 void HistogramPanel::resized (Gtk::Allocation& req) {
@@ -153,8 +179,41 @@ void HistogramPanel::resized (Gtk::Allocation& req) {
     }
 }
 
-void HistogramPanel::rgbv_toggled () {
+void HistogramPanel::red_toggled () {
+    showRed->set_image(showRed->get_active() ? *redImage : *redImage_g);
+    rgbv_toggled();
+}
+void HistogramPanel::green_toggled () {
+    showGreen->set_image(showGreen->get_active() ? *greenImage : *greenImage_g);
+    rgbv_toggled();
+}
+void HistogramPanel::blue_toggled () {
+    showBlue->set_image(showBlue->get_active() ? *blueImage : *blueImage_g);
+    rgbv_toggled();
+}
+void HistogramPanel::value_toggled () {
+	removeIfThere(showValue, valueImage, false);
+	removeIfThere(showValue, valueImage_g, false);
+    showValue->set_image(showValue->get_active() ? *valueImage : *valueImage_g);
+    rgbv_toggled();
+}
+void HistogramPanel::raw_toggled () {
+	if (showRAW->get_active()) {
+      showRAW->set_image(*rawImage);
+      showValue->set_sensitive(false);
+	}
+	else {
+      showRAW->set_image(*rawImage_g);
+      showValue->set_sensitive(true);
+	}
+    rgbv_toggled();
+}
+void HistogramPanel::bar_toggled () {
+    showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
+    rgbv_toggled();
+}
 
+void HistogramPanel::rgbv_toggled () {
   // Update Display
   histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active());
   histogramArea->queue_draw ();
@@ -211,7 +270,7 @@ void HistogramPanel::reorder (Gtk::AlignmentEnum align) {
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () :
-  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar) {
+  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar) {
 
   harih = new HistogramRGBAreaIdleHelper;
   harih->harea = this;
@@ -355,19 +414,21 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, 
     needBlue  = b;
     needLuma  = l;
     rawMode   = raw;
-    showMode   = bar;
+    showMode  = bar;
 
     // Histogram RGB BAR button logic goes here
 
-    if (bar) {
+    if (bar && !barDisplayed) {
         // Toggled on, add (show) the widget
     	parent->pack_start(*this, Gtk::PACK_SHRINK, 0);
         options.histogramBar = true;
+        barDisplayed = true;
     }
-    else {
+    else if (!bar && barDisplayed){
         // Toggled off, remove (hide) the widget
     	removeIfThere(parent, this, false);
         options.histogramBar = false;
+        barDisplayed = false;
         // unfreeze
         updateFreeze(false);
     }
