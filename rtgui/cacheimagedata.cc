@@ -24,7 +24,7 @@
 #include "version.h"
 
 CacheImageData::CacheImageData () 
-    : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
+    : md5(""), supported(false), format(FT_Invalid), recentlySaved(false),
     timeValid(false), exifValid(false), thumbImgType(0) {
 }
 
@@ -41,8 +41,6 @@ int CacheImageData::load (const Glib::ustring& fname) {
             if (keyFile.has_key ("General", "Version"))         version     = keyFile.get_string ("General", "Version");
             if (keyFile.has_key ("General", "Supported"))       supported   = keyFile.get_boolean ("General", "Supported");
             if (keyFile.has_key ("General", "Format"))          format      = (ThFileType)keyFile.get_integer ("General", "Format");
-            if (keyFile.has_key ("General", "Rank"))            rankOld     = keyFile.get_integer ("General", "Rank");
-            if (keyFile.has_key ("General", "InTrash"))         inTrashOld  = keyFile.get_boolean ("General", "InTrash");
             if (keyFile.has_key ("General", "RecentlySaved"))   recentlySaved = keyFile.get_boolean ("General", "RecentlySaved");
         }
 

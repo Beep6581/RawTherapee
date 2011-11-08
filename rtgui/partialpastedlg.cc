@@ -77,8 +77,8 @@ PartialPasteDlg::PartialPasteDlg () {
     commonTrans = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
     // options in metaicm:
-    exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
-    iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
+    //exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
+    //iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
     icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
     gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
 
@@ -156,8 +156,8 @@ PartialPasteDlg::PartialPasteDlg () {
 
     vboxes[5]->pack_start (*metaicm, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
+    //vboxes[5]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
+    //vboxes[5]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
 
@@ -261,8 +261,8 @@ PartialPasteDlg::PartialPasteDlg () {
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
-    exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
-    iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
+    //exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
+    //iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
     gamcsconn		= gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -522,19 +522,19 @@ void PartialPasteDlg::compositionToggled () {
 
 void PartialPasteDlg::metaicmToggled () {
 
-    exifchConn.block (true);
-    iptcConn.block (true);
+    //exifchConn.block (true);
+    //iptcConn.block (true);
     icmConn.block (true);
 	gamcsconn.block (true);
     metaicm->set_inconsistent (false);
 
-    exifch->set_active (metaicm->get_active ());
-    iptc->set_active (metaicm->get_active ());
+    //exifch->set_active (metaicm->get_active ());
+    //iptc->set_active (metaicm->get_active ());
     icm->set_active (metaicm->get_active ());
     gam->set_active (metaicm->get_active ());
 
-    exifchConn.block (false);
-    iptcConn.block (false);
+    //exifchConn.block (false);
+    //iptcConn.block (false);
     icmConn.block (false);
 	gamcsconn.block (false);
 
@@ -573,8 +573,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (perspective->get_active ()) dst->perspective = src->perspective;
     if (commonTrans->get_active ()) dst->commonTrans = src->commonTrans;
 
-    if (exifch->get_active ())      dst->exif = src->exif;
-    if (iptc->get_active ())        dst->iptc = src->iptc;
+    //if (exifch->get_active ())      dst->exif = src->exif;
+    //if (iptc->get_active ())        dst->iptc = src->iptc;
     if (icm->get_active ())         dst->icm = src->icm;
     if (gam->get_active ())         dst->gam = src->gam;
 
@@ -607,3 +607,61 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const r
     if (ff_BlurType->get_active ())    dst->raw.ff_BlurType = src->raw.ff_BlurType;
 }
 
+PartialPasteIPTCDlg::PartialPasteIPTCDlg( const rtengine::MetadataList &v)
+{
+	iptc = v;
+
+    set_modal (true);
+    set_title (M("PARTIALPASTE_DIALOGIPTCLABEL"));
+    set_size_request (400, -1);
+
+    table = Gtk::manage( new Gtk::Table ( iptc.size(), 2, TRUE) );
+    int row=0;
+    for( rtengine::MetadataList::const_iterator iter = iptc.begin(); iter != iptc.end(); iter++,row++){
+    	rtengine::IPTCMeta  meta = rtengine::IPTCMeta::IPTCtags[ iter->first ];
+
+    	Gtk::CheckButton *descr = Gtk::manage( new Gtk::CheckButton (M(meta.guiName)) );
+    	chk[ iter->first ] = descr;
+    	descr->set_tooltip_text (M(meta.description));
+    	descr->set_active( true );
+    	Glib::ustring s(iter->second[0]);
+    	for( int j=1; j< iter->second.size(); j++ ){
+    		s += ";";
+    		s += iter->second[j];
+    	}
+    	Gtk::Label* val = Gtk::manage( new Gtk::Label ( s ) );
+    	val->set_alignment(Gtk::ALIGN_LEFT);
+    	val->set_tooltip_text (M(meta.description));
+
+    	table->attach (*descr, 0, 1, row, row+1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    	table->attach (*val, 1, 2, row, row+1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    }
+
+    Gtk::ScrolledWindow* scrolledWindow = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindow->set_border_width(2);
+    scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
+    scrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+    scrolledWindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
+    scrolledWindow->add(*table);
+
+    get_vbox()->pack_start (*scrolledWindow);
+
+    add_button (Gtk::StockID("gtk-ok"), 1);
+    add_button (Gtk::StockID("gtk-cancel"), 0);
+
+    set_response_sensitive (1);
+    set_default_response (1);
+    show_all_children ();
+}
+
+rtengine::MetadataList PartialPasteIPTCDlg::getIPTC()
+{
+	rtengine::MetadataList v=iptc;
+	// remove unselected items from v
+	std::map<std::string, Gtk::CheckButton *>::iterator iterC = chk.begin();
+	for( ;iterC!= chk.end();iterC++)
+		if( !iterC->second->get_active() )
+			v.erase( iterC->first );
+
+	return v;
+}

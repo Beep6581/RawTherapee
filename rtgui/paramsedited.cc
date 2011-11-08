@@ -191,8 +191,6 @@ void ParamsEdited::set (bool v) {
 	hsvequalizer.hcurve = v;
 	hsvequalizer.scurve = v;
 	hsvequalizer.vcurve = v;
-	exif.clear ();
-	iptc.clear ();
 }
 
 using namespace rtengine;
@@ -373,8 +371,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
-//        exif = exif && p.exif==other.exif
-//        iptc = other.iptc;
     }
 }
 
@@ -556,8 +552,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
 	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;
 
-//	if (exif)		toEdit.exif==mo.exif 	= mods.exif==other.exif;
-//	if (iptc;)		toEdit.iptc==other.iptc; 	= mods.iptc==other.iptc;;
 }
 
 bool RAWParamsEdited::isUnchanged() const {

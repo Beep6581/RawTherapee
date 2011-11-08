@@ -57,6 +57,8 @@
 #ifndef LUT_H_
 #define LUT_H_
 
+#include <cmath>
+
 // bit representations of flags
 #define LUT_CLIP_BELOW 1
 #define LUT_CLIP_ABOVE 2

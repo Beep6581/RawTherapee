@@ -27,9 +27,18 @@
 #include <rtthumbnail.h>
 #include <cacheimagedata.h>
 #include <thumbnaillistener.h>
+#include <rtXmp.h>
+
+
+class SnapshotListener {
+	public:
+		virtual int  newSnapshot(const Glib::ustring &name, const rtengine::procparams::ProcParams& params, bool queued=false ){};
+		virtual bool deleteSnapshot( int id ){};
+		virtual bool renameSnapshot(int id, const Glib::ustring &newname ){};
+};
 
 class CacheManager;
-class Thumbnail {
+class Thumbnail :public SnapshotListener{
 
         Glib::Mutex    mutex;
 
@@ -45,7 +54,10 @@ class Thumbnail {
         float           imgRatio;           // hack to avoid rounding error
 //        double          scale;            // portion of the sizes of the processed thumbnail image and the full scale image
 
-        rtengine::procparams::ProcParams      pparams;
+        rtengine::ImageMetaData  *idata;    // Metadata
+
+        rtengine::procparams::ProcParams      pparams; // Current parameters for developing the shot
+        int             pparamsId;	        // For identifing current pparams among the snapshots
         bool            pparamsValid;
         bool            pparamsSet;
         bool            needsReProcessing;
@@ -69,26 +81,29 @@ class Thumbnail {
         void            _loadThumbnail (bool firstTrial=true);
         void            _saveThumbnail ();
         void            _generateThumbnailImage ();
-        int             infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml=NULL);
+
         void            loadThumbnail (bool firstTrial=true);
         void            generateExifDateTimeStrings ();
+        int             loadInfoFromImage ( );
 
-        Glib::ustring    getCacheFileName (Glib::ustring subdir);
-        
+        int              initRTXMP();
     public:
         Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
         Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
         ~Thumbnail ();
         
+        int loadXMP( );
+        int saveXMP( ) const;
+
         bool              hasProcParams ();
         const rtengine::procparams::ProcParams& getProcParams ();
+        Glib::ustring    getCacheFileName (const Glib::ustring &subdir) const;
 
         // Use this to create params on demand for update
         rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB);
 
         void              setProcParams (const rtengine::procparams::ProcParams& pp, int whoChangedIt=-1, bool updateCacheNow=true);
         void              clearProcParams (int whoClearedIt=-1);
-        void              loadProcParams ();
 
         void              notifylisterners_procParamsChanged(int whoChangedIt);
 
@@ -96,8 +111,6 @@ class Thumbnail {
 		bool              isPParamsValid() { return pparamsValid; }
         bool              isRecentlySaved ();
         void              imageDeveloped ();
-        void              imageEnqueued ();
-        void              imageRemovedFromQueue ();
         bool              isEnqueued ();
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
@@ -106,6 +119,7 @@ class Thumbnail {
         void            getThumbnailSize        (int &w, int &h);
         void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
 
+        rtengine::ImageMetaData  *getMetadata() { return idata; }
         const Glib::ustring&  getExifString ();
         const Glib::ustring&  getDateTimeString ();
         void                  getCamWB (double& temp, double& green) { if (tpp) tpp->getCamWB (temp, green); }
@@ -122,14 +136,14 @@ class Thumbnail {
         const CacheImageData* getCacheImageData() { return &cfs; }
         std::string     getMD5   () { return cfs.md5; }
 
-        int             getRank  () { return pparams.rank; }
-        void            setRank  (int rank) { if (pparams.rank != rank) { pparams.rank = rank; pparamsValid = true; } }
+        int             getRank  ();
+        void            setRank  (int rank);
 
-        int             getColorLabel  () { return pparams.colorlabel; }
-        void            setColorLabel  (int colorlabel) { if (pparams.colorlabel != colorlabel) { pparams.colorlabel = colorlabel; pparamsValid = true; } }
+        Glib::ustring   getLabel  ();
+        void            setLabel  (const Glib::ustring &colorlabel);
 
-        int             getStage () { return pparams.inTrash; }
-        void            setStage (int stage) { if (pparams.inTrash != stage) { pparams.inTrash = stage; pparamsValid = true; } }
+//        int             getStage ();              // stage => Rank=-1
+//        void            setStage (int stage);
 
         void            addThumbnailListener (ThumbnailListener* tnl);
         void            removeThumbnailListener (ThumbnailListener* tnl);
@@ -142,6 +156,14 @@ class Thumbnail {
 
         bool            openDefaultViewer(int destination);
         bool            imageLoad(bool loading);
+		int 			newSnapshot(const Glib::ustring &name, const rtengine::procparams::ProcParams& params, bool queued=false );
+		bool 			deleteSnapshot( int id );
+		bool 			renameSnapshot(int id, const Glib::ustring &newname );
+		rtengine::snapshotsList_t getSnapshotsList();
+		rtengine::SnapshotInfo    getSnapshot( int id );
+		int				getNumQueued();
+		bool			setQueued( int id, bool inqueue=true );
+		bool			setSaved( int id, bool saved=true, const Glib::ustring &filename="" );
 };
 
 

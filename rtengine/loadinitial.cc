@@ -22,14 +22,15 @@
 
 namespace rtengine {
 
-InitialImage* InitialImage::load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl) {
+InitialImage* InitialImage::load (const Glib::ustring& fname, ImageMetaData *meta, bool isRaw, int* errorCode, ProgressListener* pl)
+{
 
     ImageSource* isrc;
 
     if (!isRaw) 
-        isrc = new StdImageSource ();
+        isrc = new StdImageSource (meta);
     else 
-        isrc = new RawImageSource ();
+        isrc = new RawImageSource (meta);
 
     isrc->setProgressListener (pl);
 

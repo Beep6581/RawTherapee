@@ -69,8 +69,8 @@ PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
 	
 	
 
-RawImageSource::RawImageSource ()
-:ImageSource()
+RawImageSource::RawImageSource (ImageMetaData* meta)
+:ImageSource(meta)
 ,plistener(NULL)
 ,green(NULL)
 ,red(NULL)
@@ -94,7 +94,6 @@ RawImageSource::RawImageSource ()
 
 RawImageSource::~RawImageSource () {
 
-    delete idata;
     if (ri) {
         delete ri;
     }
@@ -427,7 +426,8 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, ((const ImageData*)getMetaData())->getCamera(), defGain);
+    rtengine::ImageMetaData* idata = const_cast<rtengine::ImageMetaData*>(getMetaData());
+    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, idata->getCamera(), defGain);
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -933,7 +933,6 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     rml.exifBase = ri->get_exifBase();
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
-    idata = new ImageData (fname, &rml);
 
     green = allocArray<float>(W,H);
     red   = allocArray<float>(W,H);
@@ -976,7 +975,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	if (!raw.ff_AutoSelect) {
 		if( raw.ff_file.size()>0)
 			rif = ffm.searchFlatField( raw.ff_file );
-	} else {
+	} else if( idata ) {
 		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
 	}
 	if( rif && settings->verbose) {
@@ -1032,7 +1031,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	   cfaCleanFromMap( bitmapBads );
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
-    if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
+    if ( raw.greenthresh || (idata &&(((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer())) ) {
         // global correction
         int ng1=0, ng2=0, i=0;
         double avgg1=0., avgg2=0.;

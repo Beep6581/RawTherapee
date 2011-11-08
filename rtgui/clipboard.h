@@ -26,7 +26,7 @@
 class Clipboard {
     
     bool _hasIPTC;
-    std::vector<rtengine::procparams::IPTCPair> iptc;
+    rtengine::MetadataList iptc;
     bool _hasProcParams;
     rtengine::procparams::ProcParams procParams;
     DiagonalCurveType hasCurveDataType;
@@ -34,8 +34,8 @@ class Clipboard {
 
 
     public:
-        void                                               setIPTC (const std::vector<rtengine::procparams::IPTCPair>& iptcc) { iptc = iptcc; _hasIPTC = true;}
-        const std::vector<rtengine::procparams::IPTCPair>& getIPTC ()                                                           { return iptc;  }
+        void                                               setIPTC (const rtengine::MetadataList& iptcc) { iptc = iptcc; _hasIPTC = true;}
+        const rtengine::MetadataList&                      getIPTC () { return iptc;  }
         bool                                               hasIPTC () { return _hasIPTC; }
         
         void                                               setProcParams (const rtengine::procparams::ProcParams& pparams) { procParams = pparams; _hasProcParams = true; }

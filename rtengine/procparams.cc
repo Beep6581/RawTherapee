@@ -31,6 +31,7 @@
 #include <rawimage.h>
 #define APPVERSION VERSION
 
+
 namespace rtengine {
 namespace procparams {
 
@@ -52,16 +53,6 @@ ProcParams::ProcParams () {
 
     setDefaults (); 
 }       
-
-ProcParams* ProcParams::create () {
-
-    return new ProcParams();
-}
-
-void ProcParams::destroy (ProcParams* pp) {
-
-    delete pp;
-}
 
 void ProcParams::setDefaults () {
 
@@ -270,289 +261,526 @@ void ProcParams::setDefaults () {
 	raw.blacktwo=0.0;
 	raw.blackthree=0.0;
 	raw.twogreen=true;
-    exif.clear ();
-    iptc.clear ();
-
-    rank = 0;
-    colorlabel = 0;
-    inTrash = false;
     
     ppVersion = PPVERSION;
 }
 
-int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
 
-    if (!fname.length() && !fname2.length())
-        return 0;
 
-    SafeKeyFile keyFile;
 
-    keyFile.set_string  ("Version", "AppVersion", APPVERSION);
-    keyFile.set_integer ("Version", "Version",    PPVERSION);
+int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey ) const
+{
+	std::string prefix;
+	xmpData[baseKey+"rt:"+kXmpVersion] =                int(PPVERSION);
 
-    keyFile.set_integer ("General", "Rank",     rank);
-    keyFile.set_integer ("General", "ColorLabel",  colorlabel);
-    keyFile.set_boolean ("General", "InTrash",  inTrash);
+	prefix=baseKey+"rt:ExposureRGB/";
+	xmpData[prefix+"rt:Auto"] =                    toneCurve.autoexp;
+	xmpData[prefix+"rt:Clip"] =                    toneCurve.clip;
+	xmpData[prefix+"rt:Compensation"] =            toneCurve.expcomp;
+	xmpData[prefix+"rt:Brightness"] =              toneCurve.brightness;
+	xmpData[prefix+"rt:Contrast"] =                toneCurve.contrast;
+	xmpData[prefix+"rt:Saturation"] =              toneCurve.saturation;
+	xmpData[prefix+"rt:Black"] =                   toneCurve.black;
+	xmpData[prefix+"rt:HighlightCompression"] =    toneCurve.hlcompr;
+	xmpData[prefix+"rt:HighlightComprThreshold"] = toneCurve.hlcomprthresh;
+	xmpData[prefix+"rt:ShadowCompression"] =       toneCurve.shcompr;
+	xmpData[prefix+"rt:ToneCurve"]= serializeVector(toneCurve.curve);
 
-    // save tonecurve:
-    keyFile.set_boolean ("Exposure", "Auto",            toneCurve.autoexp);
-    keyFile.set_double  ("Exposure", "Clip",            toneCurve.clip);
-    keyFile.set_double  ("Exposure", "Compensation",    toneCurve.expcomp);
-    keyFile.set_integer ("Exposure", "Brightness",      toneCurve.brightness);
-    keyFile.set_integer ("Exposure", "Contrast",        toneCurve.contrast);
-	keyFile.set_integer ("Exposure", "Saturation",      toneCurve.saturation);
-    keyFile.set_integer ("Exposure", "Black",           toneCurve.black);
-    keyFile.set_integer ("Exposure", "HighlightCompr",  toneCurve.hlcompr);
-    keyFile.set_integer ("Exposure", "HighlightComprThreshold",  toneCurve.hlcomprthresh);
-    keyFile.set_integer ("Exposure", "ShadowCompr",     toneCurve.shcompr);
-    Glib::ArrayHandle<double> tcurve = toneCurve.curve;
-    keyFile.set_double_list("Exposure", "Curve",        tcurve);
+	prefix=baseKey+"rt:ChannelMixer/";
+	xmpData[prefix+"rt:Red"]   = serializeArray(chmixer.red,3);
+	xmpData[prefix+"rt:Green"] = serializeArray(chmixer.green,3);
+	xmpData[prefix+"rt:Blue"]  = serializeArray(chmixer.blue,3);
 
-    // save channel mixer
-    Glib::ArrayHandle<int> rmix (chmixer.red, 3, Glib::OWNERSHIP_NONE);
-    Glib::ArrayHandle<int> gmix (chmixer.green, 3, Glib::OWNERSHIP_NONE);
-    Glib::ArrayHandle<int> bmix (chmixer.blue, 3, Glib::OWNERSHIP_NONE);
-    keyFile.set_integer_list("Channel Mixer", "Red",   rmix);
-    keyFile.set_integer_list("Channel Mixer", "Green", gmix);
-    keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
+	prefix=baseKey+"rt:ExposureLab/";
+	xmpData[prefix+"rt:Brightness"] =         labCurve.brightness;
+	xmpData[prefix+"rt:Contrast"] =           labCurve.contrast;
+	xmpData[prefix+"rt:Saturation"] =         labCurve.saturation;
+	xmpData[prefix+"rt:AvoidColorClipping"] = labCurve.avoidclip;
+	xmpData[prefix+"rt:SaturationLimitEnabled"] =  labCurve.enable_saturationlimiter;
+	xmpData[prefix+"rt:SaturationLimit"] =    labCurve.saturationlimit;
+	xmpData[prefix+"rt:LCurve"] = serializeVector(labCurve.lcurve);
+	xmpData[prefix+"rt:aCurve"] = serializeVector(labCurve.acurve);
+	xmpData[prefix+"rt:bCurve"] = serializeVector(labCurve.bcurve);
 
-    // save luma curve
-    keyFile.set_integer ("Luminance Curve", "Brightness",      labCurve.brightness);
-    keyFile.set_integer ("Luminance Curve", "Contrast",        labCurve.contrast);
-    keyFile.set_integer ("Luminance Curve", "Saturation",	   labCurve.saturation);
-    keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
-    keyFile.set_boolean ("Luminance Curve", "SaturationLimiter",   labCurve.enable_saturationlimiter);
-    keyFile.set_double  ("Luminance Curve", "SaturationLimit",     labCurve.saturationlimit);
-    Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
-    Glib::ArrayHandle<double> acurve = labCurve.acurve;
-    Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
-    keyFile.set_double_list("Luminance Curve", "LCurve",        lcurve);
-    keyFile.set_double_list("Luminance Curve", "aCurve",        acurve);
-    keyFile.set_double_list("Luminance Curve", "bCurve",        bcurve);
+	prefix=baseKey+"rt:Vibrance/";
+   	xmpData[prefix+"rt:Enabled"]=         vibrance.enabled;
+    xmpData[prefix+"rt:Pastels"]=         vibrance.pastels;
+    xmpData[prefix+"rt:Saturated"]=       vibrance.saturated;
+    xmpData[prefix+"rt:PSThreshold"]=     vibrance.psthreshold;
+    xmpData[prefix+"rt:ProtectSkins"]=    vibrance.protectskins;
+    xmpData[prefix+"rt:AvoidColorShift"]= vibrance.avoidcolorshift;
+    xmpData[prefix+"rt:PastSatTog"]=      vibrance.pastsattog;
 
-    // save sharpening
-    keyFile.set_boolean ("Sharpening", "Enabled",              sharpening.enabled);
-    keyFile.set_string  ("Sharpening", "Method",               sharpening.method);
-    keyFile.set_double  ("Sharpening", "Radius",               sharpening.radius);
-    keyFile.set_integer ("Sharpening", "Amount",               sharpening.amount);
-    keyFile.set_integer ("Sharpening", "Threshold",            sharpening.threshold);
-    keyFile.set_boolean ("Sharpening", "OnlyEdges",            sharpening.edgesonly);
-    keyFile.set_double  ("Sharpening", "EdgedetectionRadius",  sharpening.edges_radius);
-    keyFile.set_integer ("Sharpening", "EdgeTolerance",        sharpening.edges_tolerance);
-    keyFile.set_boolean ("Sharpening", "HalocontrolEnabled",   sharpening.halocontrol);
-    keyFile.set_integer ("Sharpening", "HalocontrolAmount",    sharpening.halocontrol_amount);
-    keyFile.set_double  ("Sharpening", "DeconvRadius",         sharpening.deconvradius);
-    keyFile.set_integer ("Sharpening", "DeconvAmount",         sharpening.deconvamount);
-    keyFile.set_integer ("Sharpening", "DeconvDamping",        sharpening.deconvdamping);
-    keyFile.set_integer ("Sharpening", "DeconvIterations",     sharpening.deconviter);
+	prefix=baseKey+"rt:Sharpening/";
+	xmpData[prefix+"rt:Enabled"] =             sharpening.enabled;
+	xmpData[prefix+"rt:Method"] =              sharpening.method;
+	xmpData[prefix+"rt:Radius"]=               sharpening.radius;
+	xmpData[prefix+"rt:Amount"]=               sharpening.amount;
+	xmpData[prefix+"rt:Threshold"]=            sharpening.threshold;
+	xmpData[prefix+"rt:OnlyEdges"]=            sharpening.edgesonly;
+	xmpData[prefix+"rt:EdgeDetectionRadius"]=  sharpening.edges_radius;
+	xmpData[prefix+"rt:EdgeTolerance"]=        sharpening.edges_tolerance;
+	xmpData[prefix+"rt:HaloControlEnabled"]=   sharpening.halocontrol;
+	xmpData[prefix+"rt:HaloControlAmount"]=    sharpening.halocontrol_amount;
+	xmpData[prefix+"rt:DeconvRadius"]=         sharpening.deconvradius;
+	xmpData[prefix+"rt:DeconvAmount"]=         sharpening.deconvamount;
+	xmpData[prefix+"rt:DeconvDamping"]=        sharpening.deconvdamping;
+	xmpData[prefix+"rt:DeconvIterations"]=     sharpening.deconviter;
 
-    // save vibrance
-    keyFile.set_boolean ("Vibrance", "Enabled",                vibrance.enabled);
-    keyFile.set_integer ("Vibrance", "Pastels",                vibrance.pastels);
-    keyFile.set_integer ("Vibrance", "Saturated",              vibrance.saturated);
-    keyFile.set_integer ("Vibrance", "PSThreshold",            vibrance.psthreshold);
-    keyFile.set_boolean ("Vibrance", "ProtectSkins",           vibrance.protectskins);
-    keyFile.set_boolean ("Vibrance", "AvoidColorShift",        vibrance.avoidcolorshift);
-    keyFile.set_boolean ("Vibrance", "PastSatTog",             vibrance.pastsattog);
+	prefix=baseKey+"rt:SharpenEdge/";
+	xmpData[prefix+"rt:Enabled"]=       sharpenEdge.enabled;
+	xmpData[prefix+"rt:Passes"]=        sharpenEdge.passes;
+	xmpData[prefix+"rt:ThreeChannels"]= sharpenEdge.threechannels;
+	xmpData[prefix+"rt:Amount"]=        sharpenEdge.amount;
 
-    //save edge sharpening
-    keyFile.set_boolean ("SharpenEdge", "Enabled",             sharpenEdge.enabled);
-    keyFile.set_integer ("SharpenEdge", "Passes",              sharpenEdge.passes);
-    keyFile.set_double  ("SharpenEdge", "Strength",            sharpenEdge.amount);
-    keyFile.set_boolean ("SharpenEdge", "ThreeChannels",       sharpenEdge.threechannels);
+	prefix=baseKey+"rt:MicroContrast/";
+	xmpData[prefix+"rt:Enabled"]=       sharpenMicro.enabled;
+	xmpData[prefix+"rt:Uniformity"]=    sharpenMicro.uniformity;
+	xmpData[prefix+"rt:Matrix"]=        sharpenMicro.matrix;
+	xmpData[prefix+"rt:Amount"]=        sharpenMicro.amount;
 
-    //save micro-contrast sharpening
-    keyFile.set_boolean ("SharpenMicro", "Enabled",            sharpenMicro.enabled);
-    keyFile.set_boolean ("SharpenMicro", "Matrix",             sharpenMicro.matrix);
-    keyFile.set_double  ("SharpenMicro", "Strength",           sharpenMicro.amount);
-    keyFile.set_double  ("SharpenMicro", "Uniformity",         sharpenMicro.uniformity);
-
-    // save colorBoost
-    keyFile.set_integer ("Color Boost", "Amount",              colorBoost.amount);
-    keyFile.set_boolean ("Color Boost", "AvoidColorClipping",  colorBoost.avoidclip);
-    keyFile.set_boolean ("Color Boost", "SaturationLimiter",   colorBoost.enable_saturationlimiter);
-    keyFile.set_double  ("Color Boost", "SaturationLimit",     colorBoost.saturationlimit);
-
-    // save wb
+	prefix=baseKey+"rt:WhiteBalance/";
     if (wb.method=="Camera")
-        keyFile.set_string  ("White Balance", "Setting",     "Camera");
+    	xmpData[prefix+"rt:Mode"]= "Camera";
     else
-        keyFile.set_string  ("White Balance", "Setting",     "Custom");
-    // not that "Auto" has been ruled out. It's just custom.
+    	xmpData[prefix+"rt:Mode"]= "Custom";
+    xmpData[prefix+"rt:Temperature"]= wb.temperature;
+    xmpData[prefix+"rt:Green"]=       wb.green;
 
-    keyFile.set_integer ("White Balance", "Temperature", wb.temperature);
-    keyFile.set_double  ("White Balance", "Green",       wb.green);
-    
-    // save colorShift
-    keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
-    keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
+    prefix=baseKey+"rt:ImpulseDenoise/";
+    xmpData[prefix+"rt:Enabled"]=   impulseDenoise.enabled;
+    xmpData[prefix+"rt:Threshold"]= impulseDenoise.thresh;
+
+    prefix=baseKey+"rt:Defringe/";
+    xmpData[prefix+"rt:Enabled"]=   defringe.enabled;
+    xmpData[prefix+"rt:Radius"]=    defringe.radius;
+    xmpData[prefix+"rt:Threshold"]=	defringe.threshold;
+
+    prefix=baseKey+"rt:PyramidDenoise/";
+    xmpData[prefix+"rt:Enabled"]= dirpyrDenoise.enabled;
+    xmpData[prefix+"rt:Luma"]=    dirpyrDenoise.luma;
+    xmpData[prefix+"rt:Chroma"]=  dirpyrDenoise.chroma;
+    xmpData[prefix+"rt:Gamma"]=   dirpyrDenoise.gamma;
+
+    prefix=baseKey+"rt:ShadowHighlights/";
+    xmpData[prefix+"rt:Enabled"]=               sh.enabled;
+    xmpData[prefix+"rt:HighQuality"]=           sh.hq;
+    xmpData[prefix+"rt:Highlights"]=            sh.highlights;
+    xmpData[prefix+"rt:HighlightTonalWidth"]=   sh.htonalwidth;
+    xmpData[prefix+"rt:Shadows"]=               sh.shadows;
+    xmpData[prefix+"rt:ShadowTonalWidth"]=      sh.stonalwidth;
+    xmpData[prefix+"rt:LocalContrast"]=         sh.localcontrast;
+    xmpData[prefix+"rt:Radius"]=                sh.radius;
+
+    prefix=baseKey+"rt:Crop/";
+    xmpData[prefix+"rt:Enabled"]=     crop.enabled;
+    xmpData[prefix+"rt:X"]=           crop.x;
+    xmpData[prefix+"rt:Y"]=           crop.y;
+    xmpData[prefix+"rt:Width"]=       crop.w;
+    xmpData[prefix+"rt:Height"]=      crop.h;
+ //   xmpData[prefix+"rt:FixedRatio"]=  crop.fixratio;
+ //   xmpData[prefix+"rt:Ratio"]=       crop.ratio;
+ //   xmpData[prefix+"rt:Orientation"]= crop.orientation;
+ //   xmpData[prefix+"rt:Guide"]=       crop.guide;
+
+    prefix=baseKey+"rt:CoarseGeo/";
+    xmpData[prefix+"rt:RotationDegree"]=  coarse.rotate;
+    xmpData[prefix+"rt:HorizontalFlip"]=  coarse.hflip;
+    xmpData[prefix+"rt:VerticalFlip"]=    coarse.vflip;
+
+    prefix=baseKey+"rt:Geometry/";
+    //xmpData[prefix+"rt:Enabled"]=    geo.enabled;
+    xmpData[prefix+"rt:AutoFill"]= commonTrans.autofill;
+    xmpData[prefix+"rt:RotationDegree"]= rotate.degree;
+    xmpData[prefix+"rt:DistortionAmount"]= distortion.amount;
+    //keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
+    xmpData[prefix+"rt:HorizontalPerspective"]= perspective.horizontal;
+    xmpData[prefix+"rt:VerticalPerspective"]=   perspective.vertical;
+
+    prefix=baseKey+"rt:CACorrection/";
+    //xmpData[prefix+"rt:Enabled"]=    cacorrection.enabled;
+    xmpData[prefix+"rt:Red"]=  cacorrection.red;
+    xmpData[prefix+"rt:Blue"]= cacorrection.blue;
+
+    prefix=baseKey+"rt:Vignetting/";
+    //xmpData[prefix+"rt:Enabled"]= vignetting.enabled;
+    xmpData[prefix+"rt:Amount"] = vignetting.amount;
+    xmpData[prefix+"rt:Radius"] = vignetting.radius;
+    xmpData[prefix+"rt:Strength"]= vignetting.strength;
+    xmpData[prefix+"rt:CenterX"] = vignetting.centerX;
+    xmpData[prefix+"rt:CenterY"] = vignetting.centerY;
+
+    prefix=baseKey+"rt:HLRecovery/";
+    xmpData[prefix+"rt:Enabled"]=  hlrecovery.enabled;
+    xmpData[prefix+"rt:Method"]=   hlrecovery.method;
+
+    prefix=baseKey+"rt:Resize/";
+    xmpData[prefix+"rt:Enabled"]=   resize.enabled;
+    xmpData[prefix+"rt:Scale"]  =   resize.scale;
+    xmpData[prefix+"rt:AppliesTo"]= resize.appliesTo;
+    xmpData[prefix+"rt:Method"]=    resize.method;
+    xmpData[prefix+"rt:DataSpecified"]=  resize.dataspec;
+    xmpData[prefix+"rt:Width"] =    resize.width;
+    xmpData[prefix+"rt:Height"] =   resize.height;
+
+    prefix=baseKey+"rt:ColorManagement/";
+    xmpData[prefix+"rt:InputProfile"] =   icm.input;
+    xmpData[prefix+"rt:WorkingProfile"] = icm.working;
+    xmpData[prefix+"rt:OutputProfile"] =  icm.output;
+    xmpData[prefix+"rt:FreeGamma"] =  icm.gamma;
+    xmpData[prefix+"rt:FreeGammaEnabled"] =  icm.freegamma;
+    xmpData[prefix+"rt:GammaValue"]=  icm.gampos;
+    xmpData[prefix+"rt:GammaSlope"]=  icm.slpos;
+
+    prefix=baseKey+"rt:DirectionalPyramidEqualizer/";
+    xmpData[prefix+"rt:Enabled"]=  dirpyrequalizer.enabled ;
+    xmpData[prefix+"rt:Coeff"]= serializeArray( dirpyrequalizer.mult,5);
+
+    prefix=baseKey+"rt:HSVEqualizer/";
+    //xmpData[prefix+"rt:Enabled"]= hsvequalizer.enabled;
+    xmpData[prefix+"rt:HCurve"] = serializeVector(hsvequalizer.hcurve);
+    xmpData[prefix+"rt:SCurve"] = serializeVector(hsvequalizer.scurve);
+    xmpData[prefix+"rt:VCurve"] = serializeVector(hsvequalizer.vcurve);
+
+    prefix=baseKey+"rt:RawArithmetic/";
+    //xmpData[prefix+"rt:Enabled"]=
+    xmpData[prefix+"rt:DarkFrameFile"]= raw.dark_frame;
+    xmpData[prefix+"rt:DarkFrameAutoSelect"]= raw.df_autoselect ;
+    xmpData[prefix+"rt:FlatFieldFile"]= raw.ff_file ;
+    xmpData[prefix+"rt:FlatFieldAutoSelect"]= raw.ff_AutoSelect ;
+    xmpData[prefix+"rt:FlatFieldBlurRadius"]= raw.ff_BlurRadius ;
+    xmpData[prefix+"rt:FlatFieldBlurType"]= raw.ff_BlurType ;
+
+    prefix=baseKey+"rt:RawCACorrection/";
+    //xmpData[prefix+"rt:Enabled"]=
+    xmpData[prefix+"rt:Auto"]= raw.ca_autocorrect ;
+    xmpData[prefix+"rt:Red"] = raw.cared;
+    xmpData[prefix+"rt:Blue"]= raw.cablue;
+
+    prefix=baseKey+"rt:HotDeadPixelCorrection/";
+    xmpData[prefix+"rt:Enabled"]= raw.hotdeadpix_filt;
+    xmpData[prefix+"rt:Threshold"]= raw.hotdeadpix_thresh;
+
+    prefix=baseKey+"rt:RawDenoise/";
+    //xmpData[prefix+"rt:Enabled"]=
+    xmpData[prefix+"rt:LineDenoise"]= raw.linenoise;
+
+    prefix=baseKey+"rt:Demosaicing/";
+    xmpData[prefix+"rt:GreenEqThreshold"] = raw.greenthresh;
+    xmpData[prefix+"rt:CcSteps"] =  raw.ccSteps;
+    xmpData[prefix+"rt:Method"]  = raw.dmethod;
+    xmpData[prefix+"rt:DCBIterations"] =  raw.dcb_iterations;
+    xmpData[prefix+"rt:DCBEnhance"] =  raw.dcb_enhance;
+    xmpData[prefix+"rt:Enhance"]= raw.all_enhance;
+
+    prefix=baseKey+"rt:RawExposure/";
+    xmpData[prefix+"rt:Exposure"] =  raw.expos;
+    xmpData[prefix+"rt:HLPreserving"] = raw.preser;
+    xmpData[prefix+"rt:Blackzero"] = raw.blackzero;
+    xmpData[prefix+"rt:Blackone"] = raw.blackone;
+    xmpData[prefix+"rt:Blacktwo"] = raw.blacktwo;
+    xmpData[prefix+"rt:Blackthree"] = raw.blackthree;
+    xmpData[prefix+"rt:TwoGreen"] = raw.twogreen;
+}
+
+int ProcParams::loadFromXMP(Exiv2::XmpData &xmpData, const std::string& baseKey )
+{
+try{
+	std::string prefix;
+	if(! readVarFromXmp( xmpData, baseKey+"rt:"+kXmpVersion, ppVersion) )
+		return 2;
+
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ExposureRGB")) != xmpData.end()){
+		prefix = baseKey+"rt:ExposureRGB/rt:";
+		readVarFromXmp( xmpData, prefix+"Auto", toneCurve.autoexp );
+		readVarFromXmp( xmpData, prefix+"Clip", toneCurve.clip );
+		readVarFromXmp( xmpData, prefix+"Compensation", toneCurve.expcomp );
+		readVarFromXmp( xmpData, prefix+"Brightness", toneCurve.brightness );
+		readVarFromXmp( xmpData, prefix+"Contrast", toneCurve.contrast );
+		readVarFromXmp( xmpData, prefix+"Saturation", toneCurve.saturation );
+		readVarFromXmp( xmpData, prefix+"Black", toneCurve.black );
+		readVarFromXmp( xmpData, prefix+"HighlightCompression", toneCurve.hlcompr );
+		readVarFromXmp( xmpData, prefix+"HighlightComprThreshold", toneCurve.hlcomprthresh );
+		readVarFromXmp( xmpData, prefix+"ShadowCompression", toneCurve.shcompr );
+		readVarFromXmp( xmpData, prefix+"ToneCurve",toneCurve.curve);
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ChannelMixer")) != xmpData.end()){
+		prefix=baseKey+"rt:ChannelMixer/rt:";
+		readVarFromXmp( xmpData, prefix+"Red",chmixer.red,3 );
+		readVarFromXmp( xmpData, prefix+"Green",chmixer.green,3 );
+		readVarFromXmp( xmpData, prefix+"Blue",chmixer.blue,3 );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ExposureLab")) != xmpData.end()){
+		prefix=baseKey+"rt:ExposureLab/rt:";
+		readVarFromXmp( xmpData, prefix+"Brightness", labCurve.brightness );
+		readVarFromXmp( xmpData, prefix+"Contrast", labCurve.contrast );
+		readVarFromXmp( xmpData, prefix+"Saturation", labCurve.saturation );
+		readVarFromXmp( xmpData, prefix+"AvoidColorClipping", labCurve.avoidclip );
+		readVarFromXmp( xmpData, prefix+"SaturationLimitEnabled", labCurve.enable_saturationlimiter );
+		readVarFromXmp( xmpData, prefix+"SaturationLimit", labCurve.saturationlimit );
+		readVarFromXmp( xmpData, prefix+"LCurve",labCurve.lcurve);
+		readVarFromXmp( xmpData, prefix+"aCurve",labCurve.acurve);
+		readVarFromXmp( xmpData, prefix+"bCurve",labCurve.bcurve);
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Sharpening")) != xmpData.end()){
+		prefix=baseKey+"rt:Sharpening/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpening.enabled );
+		readVarFromXmp( xmpData, prefix+"Method", sharpening.method );
+		readVarFromXmp( xmpData, prefix+"Radius", sharpening.radius );
+		readVarFromXmp( xmpData, prefix+"Amount", sharpening.amount );
+		readVarFromXmp( xmpData, prefix+"Threshold", sharpening.threshold );
+		readVarFromXmp( xmpData, prefix+"OnlyEdges", sharpening.edgesonly );
+		readVarFromXmp( xmpData, prefix+"EdgeDetectionRadius", sharpening.edges_radius );
+		readVarFromXmp( xmpData, prefix+"EdgeTolerance", sharpening.edges_tolerance );
+		readVarFromXmp( xmpData, prefix+"HaloControlEnabled", sharpening.halocontrol );
+		readVarFromXmp( xmpData, prefix+"HaloControlAmount", sharpening.halocontrol_amount );
+		readVarFromXmp( xmpData, prefix+"DeconvRadius", sharpening.deconvradius );
+		readVarFromXmp( xmpData, prefix+"DeconvAmount", sharpening.deconvamount );
+		readVarFromXmp( xmpData, prefix+"DeconvDamping", sharpening.deconvdamping );
+		readVarFromXmp( xmpData, prefix+"DeconvIterations", sharpening.deconviter );
+	}
 	
-	// save impulseDenoise
-    keyFile.set_boolean ("Impulse Denoising", "Enabled",        impulseDenoise.enabled);
-	keyFile.set_integer ("Impulse Denoising", "Threshold",        impulseDenoise.thresh);
-
-	// save defringe
-    keyFile.set_boolean ("Defringing", "Enabled",        defringe.enabled);
-    keyFile.set_double  ("Defringing", "Radius",         defringe.radius);
-    keyFile.set_integer ("Defringing", "Threshold",		defringe.threshold);
-	
-	// save dirpyrDenoise
-    keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
-    keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
-    keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
-	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
-    Glib::ArrayHandle<double> lumcurve = dirpyrDenoise.lumcurve;
-    Glib::ArrayHandle<double> chromcurve = dirpyrDenoise.chromcurve;
-    keyFile.set_double_list("Directional Pyramid Denoising", "LumCurve", lumcurve);
-    keyFile.set_double_list("Directional Pyramid Denoising", "ChromCurve", chromcurve);
-
-    // save lumaDenoise
-    keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
-    keyFile.set_double  ("Luminance Denoising", "Radius",         lumaDenoise.radius);
-    keyFile.set_integer ("Luminance Denoising", "EdgeTolerance",  lumaDenoise.edgetolerance);
-
-    // save colorDenoise
-    keyFile.set_boolean ("Chrominance Denoising", "Enabled",        colorDenoise.enabled);
-    keyFile.set_integer ("Chrominance Denoising", "Amount",  		colorDenoise.amount);
-
-    // save sh
-    keyFile.set_boolean ("Shadows & Highlights", "Enabled",               sh.enabled);
-    keyFile.set_boolean ("Shadows & Highlights", "HighQuality",           sh.hq);
-    keyFile.set_integer ("Shadows & Highlights", "Highlights",            sh.highlights);
-    keyFile.set_integer ("Shadows & Highlights", "HighlightTonalWidth",   sh.htonalwidth);
-    keyFile.set_integer ("Shadows & Highlights", "Shadows",               sh.shadows);
-    keyFile.set_integer ("Shadows & Highlights", "ShadowTonalWidth",      sh.stonalwidth);
-    keyFile.set_integer ("Shadows & Highlights", "LocalContrast",         sh.localcontrast);
-    keyFile.set_integer ("Shadows & Highlights", "Radius",                sh.radius);
-
-    // save crop
-    keyFile.set_boolean ("Crop", "Enabled",     crop.enabled);
-    keyFile.set_integer ("Crop", "X",           crop.x);
-    keyFile.set_integer ("Crop", "Y",           crop.y);
-    keyFile.set_integer ("Crop", "W",           crop.w);
-    keyFile.set_integer ("Crop", "H",           crop.h);
-    keyFile.set_boolean ("Crop", "FixedRatio",  crop.fixratio);
-    keyFile.set_string  ("Crop", "Ratio",       crop.ratio);
-    keyFile.set_string  ("Crop", "Orientation", crop.orientation);
-    keyFile.set_string  ("Crop", "Guide",       crop.guide);
-    
-    // save coarse
-    keyFile.set_integer ("Coarse Transformation", "Rotate",          coarse.rotate);
-    keyFile.set_boolean ("Coarse Transformation", "HorizontalFlip",  coarse.hflip);
-    keyFile.set_boolean ("Coarse Transformation", "VerticalFlip",    coarse.vflip);
-    
-    // save commonTrans
-    keyFile.set_boolean ("Common Properties for Transformations", "AutoFill", commonTrans.autofill);
-
-    // save rotate
-    keyFile.set_double  ("Rotation", "Degree", rotate.degree);
-
-    // save distortion
-    keyFile.set_double  ("Distortion", "Amount", distortion.amount);
-    keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
-
-    // save perspective correction
-    keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
-    keyFile.set_integer  ("Perspective", "Vertical",   perspective.vertical);
-
-    // save C/A correction
-    keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
-    keyFile.set_double  ("CACorrection", "Blue", cacorrection.blue);
-
-    // save vignetting correction
-    keyFile.set_integer ("Vignetting Correction", "Amount", vignetting.amount);
-    keyFile.set_integer ("Vignetting Correction", "Radius", vignetting.radius);
-    keyFile.set_integer ("Vignetting Correction", "Strength", vignetting.strength);
-    keyFile.set_integer ("Vignetting Correction", "CenterX", vignetting.centerX);
-    keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
-
-    // save highlight recovery settings
-    keyFile.set_boolean ("HLRecovery", "Enabled",  hlrecovery.enabled);
-    keyFile.set_string  ("HLRecovery", "Method",   hlrecovery.method);
-
-    keyFile.set_boolean ("Resize", "Enabled",resize.enabled);
-    keyFile.set_double  ("Resize", "Scale",  resize.scale);
-    keyFile.set_string  ("Resize", "AppliesTo", resize.appliesTo);
-    keyFile.set_string  ("Resize", "Method", resize.method);
-    keyFile.set_integer ("Resize", "DataSpecified",  resize.dataspec);
-    keyFile.set_integer ("Resize", "Width",  resize.width);
-    keyFile.set_integer ("Resize", "Height", resize.height);
-
-    // save color management settings
-    keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
-    keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
-    keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
-    keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
-    keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
-    keyFile.set_boolean  ("Color Management", "Freegamma",  icm.freegamma);	
-    keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
-    keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
-    
-	// save directional pyramid equalizer parameters
-    keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
-    for(int i = 0; i < 5; i++)
-    {
-        std::stringstream ss;
-        ss << "Mult" << i;
-        keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
+    if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Vibrance")) != xmpData.end()){
+		prefix=baseKey+"rt:Vibrance/rt:";
+   	    readVarFromXmp( xmpData, prefix+kXmpEnabled, vibrance.enabled);
+   	    readVarFromXmp( xmpData, prefix+"Pastels",  vibrance.pastels);
+   	    readVarFromXmp( xmpData, prefix+"Saturated", vibrance.saturated);
+   	    readVarFromXmp( xmpData, prefix+"PSThreshold", vibrance.psthreshold);
+   	    readVarFromXmp( xmpData, prefix+"ProtectSkins", vibrance.protectskins);
+   	    readVarFromXmp( xmpData, prefix+"AvoidColorShift", vibrance.avoidcolorshift);
+   	    readVarFromXmp( xmpData, prefix+"PastSatTog", vibrance.pastsattog);
     }
 	
-    // save hsv equalizer parameters
-    //keyFile.set_boolean ("HSV Equalizer", "Enabled", hsvequalizer.enabled);
-    //keyFile.set_string  ("HSV Equalizer", "Channel", hsvequalizer.hsvchannel);
-    Glib::ArrayHandle<double> hcurve = hsvequalizer.hcurve;
-    Glib::ArrayHandle<double> scurve = hsvequalizer.scurve;
-    Glib::ArrayHandle<double> vcurve = hsvequalizer.vcurve;
-    keyFile.set_double_list("HSV Equalizer", "HCurve", hcurve);
-    keyFile.set_double_list("HSV Equalizer", "SCurve", scurve);
-    keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:SharpenEdge")) != xmpData.end()){
+		prefix=baseKey+"rt:SharpenEdge/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpenEdge.enabled );
+		readVarFromXmp( xmpData, prefix+"Passes", sharpenEdge.passes );
+		readVarFromXmp( xmpData, prefix+"Amount", sharpenEdge.amount );
+		readVarFromXmp( xmpData, prefix+"ThreeChannels", sharpenEdge.threechannels );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:MicroContrast")) != xmpData.end()){
+		prefix=baseKey+"rt:MicroContrast/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpenMicro.enabled );
+		readVarFromXmp( xmpData, prefix+"Amount", sharpenMicro.amount);
+		readVarFromXmp( xmpData, prefix+"Uniformity", sharpenMicro.uniformity );
+		readVarFromXmp( xmpData, prefix+"Matrix", sharpenMicro.matrix );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:WhiteBalance")) != xmpData.end()){
+		prefix=baseKey+"rt:WhiteBalance/rt:";
+		readVarFromXmp( xmpData, prefix+"Mode", wb.method );
+		readVarFromXmp( xmpData, prefix+"Temperature", wb.temperature );
+		readVarFromXmp( xmpData, prefix+"Green", wb.green );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ImpulseDenoise")) != xmpData.end()){
+		prefix=baseKey+"rt:ImpulseDenoise/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, impulseDenoise.enabled );
+		readVarFromXmp( xmpData, prefix+"Threshold", impulseDenoise.thresh );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Defringe")) != xmpData.end()){
+		prefix=baseKey+"rt:Defringe/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, defringe.enabled );
+		readVarFromXmp( xmpData, prefix+"Radius", defringe.radius );
+		readVarFromXmp( xmpData, prefix+"Threshold", defringe.threshold );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:PyramidDenoise")) != xmpData.end()){
+		prefix=baseKey+"rt:PyramidDenoise/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, dirpyrDenoise.enabled );
+		readVarFromXmp( xmpData, prefix+"Luma", dirpyrDenoise.luma );
+		readVarFromXmp( xmpData, prefix+"Chroma", dirpyrDenoise.chroma );
+		readVarFromXmp( xmpData, prefix+"Gamma", dirpyrDenoise.gamma );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ShadowHighlights")) != xmpData.end()){
+		prefix=baseKey+"rt:ShadowHighlights/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, sh.enabled );
+		readVarFromXmp( xmpData, prefix+"HighQuality", sh.hq );
+		readVarFromXmp( xmpData, prefix+"Highlights", sh.highlights );
+		readVarFromXmp( xmpData, prefix+"HighlightTonalWidth", sh.htonalwidth );
+		readVarFromXmp( xmpData, prefix+"Shadows", sh.shadows );
+		readVarFromXmp( xmpData, prefix+"ShadowTonalWidth", sh.stonalwidth );
+		readVarFromXmp( xmpData, prefix+"LocalContrast", sh.localcontrast );
+		readVarFromXmp( xmpData, prefix+"Radius", sh.radius );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Crop")) != xmpData.end()){
+		prefix=baseKey+"rt:Crop/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, crop.enabled );
+		readVarFromXmp( xmpData, prefix+"X", crop.x );
+		readVarFromXmp( xmpData, prefix+"Y", crop.y );
+		readVarFromXmp( xmpData, prefix+"Width", crop.w );
+		readVarFromXmp( xmpData, prefix+"Height", crop.h );
+	 //   xmpData[prefix+"rt:FixedRatio"]=  crop.fixratio;
+	 //   xmpData[prefix+"rt:Ratio"]=       crop.ratio;
+	 //   xmpData[prefix+"rt:Orientation"]= crop.orientation;
+	 //   xmpData[prefix+"rt:Guide"]=       crop.guide;
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:CoarseGeo")) != xmpData.end()){
+		prefix=baseKey+"rt:CoarseGeo/rt:";
+		readVarFromXmp( xmpData, prefix+"RotationDegree", coarse.rotate );
+		readVarFromXmp( xmpData, prefix+"HorizontalFlip", coarse.hflip );
+		readVarFromXmp( xmpData, prefix+"VerticalFlip", coarse.vflip );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Geometry")) != xmpData.end()){
+		prefix=baseKey+"rt:Geometry/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, geo.enabled);
+		readVarFromXmp( xmpData, prefix+"AutoFill", commonTrans.autofill );
+		readVarFromXmp( xmpData, prefix+"RotationDegree", rotate.degree );
+		readVarFromXmp( xmpData, prefix+"DistortionAmount", distortion.amount );
+		readVarFromXmp( xmpData, prefix+"HorizontalPerspective", perspective.horizontal );
+		readVarFromXmp( xmpData, prefix+"VerticalPerspective", perspective.vertical );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:CACorrection")) != xmpData.end()){
+		prefix=baseKey+"rt:CACorrection/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, cacorrection.enabled);
+		readVarFromXmp( xmpData, prefix+"Red", cacorrection.red );
+		readVarFromXmp( xmpData, prefix+"Blue", cacorrection.blue );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Vignetting")) != xmpData.end()){
+		prefix=baseKey+"rt:Vignetting/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, vignetting.enabled);
+		readVarFromXmp( xmpData, prefix+"Amount", vignetting.amount );
+		readVarFromXmp( xmpData, prefix+"Radius", vignetting.radius );
+		readVarFromXmp( xmpData, prefix+"Strength", vignetting.strength );
+		readVarFromXmp( xmpData, prefix+"CenterX", vignetting.centerX );
+		readVarFromXmp( xmpData, prefix+"CenterY", vignetting.centerY );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:HLRecovery")) != xmpData.end()){
+		prefix=baseKey+"rt:HLRecovery/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, hlrecovery.enabled );
+		readVarFromXmp( xmpData, prefix+"Method", hlrecovery.method );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Resize")) != xmpData.end()){
+		prefix=baseKey+"rt:Resize/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, resize.enabled );
+		readVarFromXmp( xmpData, prefix+"Scale", resize.scale );
+		readVarFromXmp( xmpData, prefix+"AppliesTo", resize.appliesTo );
+		readVarFromXmp( xmpData, prefix+"Method", resize.method );
+		readVarFromXmp( xmpData, prefix+"DataSpecified", resize.dataspec );
+		readVarFromXmp( xmpData, prefix+"Width", resize.width );
+		readVarFromXmp( xmpData, prefix+"Height", resize.height );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ColorManagement")) != xmpData.end()){
+		prefix=baseKey+"rt:ColorManagement/rt:";
+		readVarFromXmp( xmpData, prefix+"InputProfile", icm.input );
+		readVarFromXmp( xmpData, prefix+"WorkingProfile", icm.working );
+		readVarFromXmp( xmpData, prefix+"OutputProfile", icm.output );
+		readVarFromXmp( xmpData, prefix+"FreeGamma", icm.gamma );
+		readVarFromXmp( xmpData, prefix+"FreeGammaEnabled", icm.freegamma );
+		readVarFromXmp( xmpData, prefix+"GammaValue", icm.gampos );
+		readVarFromXmp( xmpData, prefix+"GammaSlope", icm.slpos );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:DirectionalPyramidEqualizer")) != xmpData.end()){
+		prefix=baseKey+"rt:DirectionalPyramidEqualizer/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, dirpyrequalizer.enabled );
+		readVarFromXmp( xmpData, prefix+"Coeff",dirpyrequalizer.mult,5 );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:DirectionalPyramidEqualizer")) != xmpData.end()){
+		prefix=baseKey+"rt:HSVEqualizer/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, hsvequalizer.enabled);
+		readVarFromXmp( xmpData,prefix+"HCurve",hsvequalizer.hcurve);
+		readVarFromXmp( xmpData,prefix+"SCurve",hsvequalizer.scurve);
+		readVarFromXmp( xmpData,prefix+"VCurve",hsvequalizer.vcurve);
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawArithmetic")) != xmpData.end()){
+		prefix=baseKey+"rt:RawArithmetic/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.arithmeticEnabled);
+		readVarFromXmp( xmpData, prefix+"DarkFrameFile", raw.dark_frame );
+		readVarFromXmp( xmpData, prefix+"DarkFrameAutoSelect", raw.df_autoselect );
+		readVarFromXmp( xmpData, prefix+"FlatFieldFile", raw.ff_file );
+		readVarFromXmp( xmpData, prefix+"FlatFieldAutoSelect", raw.ff_AutoSelect );
+		readVarFromXmp( xmpData, prefix+"FlatFieldBlurRadius", raw.ff_BlurRadius );
+		readVarFromXmp( xmpData, prefix+"FlatFieldBlurType", raw.ff_BlurType );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawCACorrection")) != xmpData.end()){
+		prefix=baseKey+"rt:RawCACorrection/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.ca_enabled);
+		readVarFromXmp( xmpData, prefix+"Auto",	raw.ca_autocorrect );
+		readVarFromXmp( xmpData, prefix+"Red", raw.cared );
+		readVarFromXmp( xmpData, prefix+"Blue", raw.cablue );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:HotDeadPixelCorrection")) != xmpData.end()){
+		prefix=baseKey+"rt:HotDeadPixelCorrection/rt:";
+		readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.hotdeadpix_filt );
+		readVarFromXmp( xmpData, prefix+"Threshold", raw.hotdeadpix_thresh );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawDenoise")) != xmpData.end()){
+		prefix=baseKey+"rt:RawDenoise/rt:";
+		//readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.linenoiseEnabled );
+		readVarFromXmp( xmpData, prefix+"LineDenoise", raw.linenoise );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Demosaicing")) != xmpData.end()){
+		prefix=baseKey+"rt:Demosaicing/rt:";
+		readVarFromXmp( xmpData, prefix+"GreenEqThreshold", raw.greenthresh );
+		readVarFromXmp( xmpData, prefix+"CcSteps", raw.ccSteps );
+		readVarFromXmp( xmpData, prefix+"Method", raw.dmethod );
+		readVarFromXmp( xmpData, prefix+"DCBIterations", raw.dcb_iterations );
+		readVarFromXmp( xmpData, prefix+"DCBEnhance", raw.dcb_enhance );
+		readVarFromXmp( xmpData, prefix+"Enhance", raw.all_enhance );
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawExposure")) != xmpData.end()){
+		prefix=baseKey+"rt:RawExposure/rt:";
+		readVarFromXmp( xmpData, prefix+"Exposure", raw.expos );
+		readVarFromXmp( xmpData, prefix+"HLPreserving", raw.preser );
+		readVarFromXmp( xmpData, prefix+"Black0", raw.blackzero );
+		readVarFromXmp( xmpData, prefix+"Black1", raw.blackone );
+		readVarFromXmp( xmpData, prefix+"Black2", raw.blacktwo );
+		readVarFromXmp( xmpData, prefix+"Black3", raw.blackthree );
+		readVarFromXmp( xmpData, prefix+"TwoGreen", raw.twogreen );
+	}
+	return 0;
+}catch( Exiv2::AnyError &e){
+	printf("loadFromXMP error: %s\n",e.what());
+	return 2;
+}
+}
 
-    // save RAW parameters
-    keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
-    keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
-    keyFile.set_string  ("RAW", "FlatFieldFile", raw.ff_file );
-    keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
-    keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
-    keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );     
-    keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
-    keyFile.set_double	("RAW", "CARed", raw.cared );
-    keyFile.set_double	("RAW", "CABlue", raw.cablue );
-    keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
-    keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
-    keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
-    keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
-    keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
-    keyFile.set_string  ("RAW", "Method", raw.dmethod );
-    keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
-    keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
-    keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
-	
-    keyFile.set_double ("RAW", "PreExposure", raw.expos );
-    keyFile.set_double ("RAW", "PrePreserv", raw.preser );
-    keyFile.set_double ("RAW", "PreBlackzero", raw.blackzero );
-    keyFile.set_double ("RAW", "PreBlackone", raw.blackone );
-    keyFile.set_double ("RAW", "PreBlacktwo", raw.blacktwo );
-    keyFile.set_double ("RAW", "PreBlackthree", raw.blackthree );
-    keyFile.set_boolean ("RAW", "PreTwoGreen", raw.twogreen );
+int ProcParams::saveParams ( Glib::ustring fname ) const
+{
+	Exiv2::XmpData  xmpData;
 
-	// exposition
+    xmpData[Glib::ustring::compose("Xmp.rt.%1",kXmpVersion)] = VERSION;
 
-    // save exif change list
-    for (int i=0; i<(int)exif.size(); i++)
-        keyFile.set_string ("Exif", exif[i].field, exif[i].value);
+    Glib::ustring baseKey(Glib::ustring::compose("Xmp.rt.%1",kXmpProcessing));
 
-    // save iptc change list
-    for (int i=0; i<(int)iptc.size(); i++) {
-        Glib::ArrayHandle<Glib::ustring> values = iptc[i].values;
-        keyFile.set_string_list ("IPTC", iptc[i].field, values);
+    Exiv2::XmpTextValue tv("");
+    tv.setXmpArrayType(Exiv2::XmpValue::xaBag);
+    xmpData.add(Exiv2::XmpKey(baseKey), &tv);
+    saveIntoXMP( xmpData, Glib::ustring::compose("Xmp.rt.%1[1]/",kXmpProcessing) );
+
+    std::string xmpPacket;
+    if (0 != Exiv2::XmpParser::encode(xmpPacket, xmpData)) {
+        return 1;
     }
-    
-    Glib::ustring sPParams = keyFile.to_data();
 
-    int error1, error2;
-    error1 = write (fname , sPParams);
-    error2 = write (fname2, sPParams);
-    return error1 & error2;
+    FILE *f = safe_g_fopen (fname, "wt");
+    if (f==NULL)
+         return 1;
+    else {
+    	 fwrite( xmpPacket.c_str(), 1, xmpPacket.size(), f );
+         fclose (f);
+         return 0;
+    }
+}
+
+int ProcParams::loadParams( Glib::ustring fname )
+{
+	Exiv2::XmpData  xmpData;
+    FILE *f = safe_g_fopen(fname,"rb");
+	if ( f == NULL )
+		return 1;
+	fseek (f, 0, SEEK_END);
+	long filesize = ftell (f);
+	char *buffer=new char[filesize];
+
+	fseek (f, 0, SEEK_SET);
+    fread( buffer, 1, filesize, f);
+    fclose(f);
+    std::string xmpPacket(buffer,buffer+filesize);
+
+    if (0 != Exiv2::XmpParser::decode(xmpData,xmpPacket) ) {
+        return 1;
+    }
+    std::string key(Glib::ustring::compose("Xmp.rt.%1[1]/",kXmpProcessing));
+    loadFromXMP( xmpData, key );
+    return 0;
 }
 
 int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
@@ -572,7 +800,7 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
     return error;
 }
 
-int ProcParams::load (Glib::ustring fname) {
+int ProcParams::load (Glib::ustring fname, int *rank) {
 
     SafeKeyFile keyFile;
     try {
@@ -600,9 +828,16 @@ if (keyFile.has_group ("Version")) {
 }
 
 if (keyFile.has_group ("General")) {
-    if (keyFile.has_key ("General", "Rank"))        rank    = keyFile.get_integer ("General", "Rank");
-    if (keyFile.has_key ("General", "ColorLabel"))  colorlabel  = keyFile.get_integer ("General", "ColorLabel");
-    if (keyFile.has_key ("General", "InTrash"))     inTrash = keyFile.get_boolean ("General", "InTrash");
+	if( rank!= NULL){
+		*rank = 0;
+		if (keyFile.has_key ("General", "InTrash")){
+			if( keyFile.get_boolean ("General", "InTrash") )
+				*rank = -1;
+		}
+		if( *rank != -1  && keyFile.has_key ("General", "Rank"))
+			*rank = keyFile.get_integer ("General", "Rank");
+	}
+    //if (keyFile.has_key ("General", "ColorLabel"))  colorlabel  = keyFile.get_integer ("General", "ColorLabel");
 }
 
 if (keyFile.has_group ("Exposure")) {    
@@ -905,24 +1140,24 @@ if (keyFile.has_group ("RAW")) {
 }
 
     // load exif change settings
-if (keyFile.has_group ("Exif")) {
+/*if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
     exif.resize (keys.size());
     for (int i=0; i<(int)keys.size(); i++) {
         exif[i].field = keys[i];
         exif[i].value = keyFile.get_string ("Exif", keys[i]);
     }
-}
+}*/
 
     // load iptc change settings
-if (keyFile.has_group ("IPTC")) {
+/*if (keyFile.has_group ("IPTC")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("IPTC");
     iptc.resize (keys.size());
     for (int i=0; i<(int)keys.size(); i++) {
         iptc[i].field = keys[i];
         iptc[i].values = keyFile.get_string_list ("IPTC", keys[i]);
     }
-}
+}*/
 
 
         return 0;
@@ -950,15 +1185,7 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
 	return true;
 }
 
-bool operator==(const ExifPair& a, const ExifPair& b) {
 
-    return a.field == b.field && a.value == b.value;
-}
-
-bool operator==(const IPTCPair& a, const IPTCPair& b) {
-
-    return a.field == b.field && a.values == b.values;
-}
 bool ProcParams::operator== (const ProcParams& other) {
 
 	return
@@ -1110,8 +1337,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
 		&& hsvequalizer.scurve == other.hsvequalizer.scurve
 		&& hsvequalizer.vcurve == other.hsvequalizer.vcurve
-		&& exif==other.exif
-		&& iptc==other.iptc
 		&& raw.expos==other.raw.expos
 		&& raw.preser==other.raw.preser 
 		&& raw.preser==other.raw.preser
@@ -1127,6 +1352,6 @@ bool ProcParams::operator!= (const ProcParams& other) {
 
     return !(*this==other);
 }
-}
-}
 
+}
+}
