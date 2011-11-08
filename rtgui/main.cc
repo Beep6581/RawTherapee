@@ -174,8 +174,6 @@ int processLineParams( int argc, char **argv )
 	for( int iArg=1; iArg<argc; iArg++){
 		if( argv[iArg][0]=='-' ){
 			switch( argv[iArg][1]){
-			case 'O':
-				copyParamsFile = true;
 			case 'o': // outputfile or dir
 				if( iArg+1 <argc ){
 					iArg++;
@@ -336,11 +334,11 @@ int processLineParams( int argc, char **argv )
 		}
 
 		// Load the image
-		ii = rtengine::InitialImage::load ( inputFile, true, &errorCode, NULL );
+		ii = rtengine::InitialImage::load ( inputFile,NULL, true, &errorCode, NULL ); // TODO check NULL metadata consequences
 		if (ii)
 			isRaw=true;
 		else
-			ii = rtengine::InitialImage::load ( inputFile , false, &errorCode, NULL );
+			ii = rtengine::InitialImage::load ( inputFile, NULL, false, &errorCode, NULL ); // TODO check NULL metada  consequences
 		if (!ii) {
 			errors++;
 			std::cerr << "Error loading file: "<< inputFile << std::endl;
@@ -366,7 +364,7 @@ int processLineParams( int argc, char **argv )
 		}else{
 			currentParams = &paramsImg;
 		}
-		job = rtengine::ProcessingJob::create (ii, *currentParams);
+		job = rtengine::ProcessingJob::create (ii, *currentParams,ii->getMetaData());
 		if( !job ){
 			errors++;
 			std::cerr << "Error creating processing for: "<< inputFile << std::endl;
@@ -395,11 +393,6 @@ int processLineParams( int argc, char **argv )
 		if(errorCode){
 			errors++;
 			std::cerr << "Error saving to: "<< outputFile << std::endl;
-		}else{
-			if( copyParamsFile ){
-			   Glib::ustring outputProcessingParams = outputFile + paramFileExtension;
-			   currentParams->save( outputProcessingParams );
-			}
 		}
 
 		ii->decreaseRef();

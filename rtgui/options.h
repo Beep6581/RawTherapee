@@ -107,9 +107,12 @@ class Options {
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
-    bool saveParamsFile;
+    bool embedXmpIntoDNG;
+    bool embedXmpIntoJPG;
+    bool embedXmpIntoPNG;
+    bool embedXmpIntoTIFF;
     bool saveParamsCache;
-    PPLoadLocation paramsLoadLocation;
+    //PPLoadLocation paramsLoadLocation;
     bool procQueueEnabled;
     Glib::ustring gimpDir;
     Glib::ustring psDir;
@@ -121,6 +124,7 @@ class Options {
     ThFileType thumbnailFormat;
     int thumbInterp; // 0: nearest, 1: bilinear
     bool liveThumbnails;
+    std::vector<Glib::ustring> colorLabels;       // Labels associations for colors
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
@@ -174,6 +178,7 @@ class Options {
 
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled(Glib::ustring ext);
+    unsigned    getColorFromLabel( const Glib::ustring &label );
 };
 
 extern Options options;

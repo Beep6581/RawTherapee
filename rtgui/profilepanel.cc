@@ -22,6 +22,7 @@
 #include <clipboard.h>
 #include <multilangmgr.h>
 #include <safegtk.h>
+#include <guiutils.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -178,7 +179,7 @@ void ProfilePanel::save_clicked () {
             toSave = profileStore.getProfile (profiles->get_active_text());
             
         if (toSave) {
-            toSave->save (fname);
+            toSave->saveParams (fname);
             refreshProfileList ();
         }
     }
@@ -231,10 +232,17 @@ void ProfilePanel::load_clicked () {
             custom = new ProcParams ();
             profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
         }
-        custom->load (dialog.get_filename());
-        profiles->set_active_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
-        old = profiles->get_active_text();
-        changeTo (custom, M("PROFILEPANEL_PFILE"));
+        Glib::ustring filename( dialog.get_filename() );
+        int result;
+        if( getExtension(filename).lowercase().compare( paramFileExtension.substr(1) )==0 )
+        	result = custom->loadParams ( filename );
+        else
+        	result = custom->load( filename );
+        if(!result ){
+			profiles->set_active_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
+			old = profiles->get_active_text();
+			changeTo (custom, M("PROFILEPANEL_PFILE"));
+        }
     }
 }
 

@@ -34,7 +34,7 @@
 
 Options options;
 Glib::ustring versionString      = VERSION;
-Glib::ustring paramFileExtension = ".pp3";
+Glib::ustring paramFileExtension = ".xmp";
 
 Options::Options () {
 
@@ -119,9 +119,12 @@ void Options::setDefaults () {
     thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
-    saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
-    saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
-    paramsLoadLocation = PLL_Input;		// was PLL_Cache
+    embedXmpIntoDNG=false;
+    embedXmpIntoJPG=false;
+    embedXmpIntoPNG=false;
+    embedXmpIntoTIFF=false;
+    saveParamsCache = false;			//
+    //paramsLoadLocation = PLL_Input;		// was PLL_Cache
     procQueueEnabled = false;			// was true
     gimpDir = "";
     psDir = "";
@@ -131,6 +134,13 @@ void Options::setDefaults () {
     favoriteDirs.clear();
     tpOpen.clear ();
     //crvOpen.clear ();
+    colorLabels.resize(6);
+    colorLabels[0] = "Other";
+    colorLabels[1] = "Select";
+    colorLabels[2] = "Second";
+    colorLabels[3] = "Approved";
+    colorLabels[4] = "Review";
+    colorLabels[5] = "To do";
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
     parsedExtensions.clear ();
@@ -330,9 +340,12 @@ if (keyFile.has_group ("Profiles")) {
     if (keyFile.has_key ("Profiles", "Directory"))      profilePath     = keyFile.get_string ("Profiles", "Directory");
     if (keyFile.has_key ("Profiles", "RawDefault"))     defProfRaw      = keyFile.get_string ("Profiles", "RawDefault");
     if (keyFile.has_key ("Profiles", "ImgDefault"))     defProfImg      = keyFile.get_string ("Profiles", "ImgDefault");
-    if (keyFile.has_key ("Profiles", "SaveParamsWithFile")) saveParamsFile  = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideDng"))   embedXmpIntoDNG = keyFile.get_boolean ("Profiles", "SaveXmpInsideDng");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideJpeg"))  embedXmpIntoJPG = keyFile.get_boolean ("Profiles", "SaveXmpInsideJpeg");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsidePng"))   embedXmpIntoPNG = keyFile.get_boolean ("Profiles", "SaveXmpInsidePng");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideTiff"))  embedXmpIntoTIFF = keyFile.get_boolean ("Profiles", "SaveXmpInsideTiff");
     if (keyFile.has_key ("Profiles", "SaveParamsToCache"))  saveParamsCache = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
-    if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
+    //if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
     if (keyFile.has_key ("Profiles", "CustomProfileBuilder"))   customProfileBuilder = keyFile.get_string  ("Profiles", "CustomProfileBuilder");
 }
 
@@ -362,6 +375,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "menuGroupLabel")) menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
     if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
+    if (keyFile.has_key ("File Browser", "colorLabels")) colorLabels = keyFile.get_string_list ("File Browser","colorLabels");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -507,6 +521,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
     keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
+    keyFile.set_string_list ("File Browser","colorLabels",colorLabels);
    
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
@@ -539,9 +554,13 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
-    keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
+
+    keyFile.set_boolean ("Profiles", "SaveXmpInsideDng",   embedXmpIntoDNG);
+    keyFile.set_boolean ("Profiles", "SaveXmpInsideJpeg",  embedXmpIntoJPG);
+    keyFile.set_boolean ("Profiles", "SaveXmpInsidePng",   embedXmpIntoPNG);
+    keyFile.set_boolean ("Profiles", "SaveXmpInsideTiff",  embedXmpIntoTIFF);
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
-    keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
+    //keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     keyFile.set_string  ("Profiles", "CustomProfileBuilder", customProfileBuilder);
     
     keyFile.set_string  ("GUI", "Font", font);
@@ -764,4 +783,12 @@ bool Options::is_extention_enabled (Glib::ustring ext) {
       if (parseExtensions[j].casefold() == ext.casefold())
 				return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
 		return false;
+}
+
+unsigned Options::getColorFromLabel( const Glib::ustring &label)
+{
+	for( unsigned i=0; i<colorLabels.size();i++)
+		if( label.compare( colorLabels[i] )==0 )
+			return i;
+	return 0;
 }

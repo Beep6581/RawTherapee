@@ -21,6 +21,7 @@
 
 #include <glibmm.h>
 #include <vector>
+#include <rtXmp.h>
 
 namespace rtengine {
 namespace procparams {
@@ -185,7 +186,7 @@ class ColorDenoiseParams {
         bool    enabled;
         int		luma;
         int     chroma;
-		float	gamma;
+		double	gamma;
 		std::vector<double>   lumcurve;
 		std::vector<double>   chromcurve;
 	};
@@ -353,26 +354,6 @@ class ColorManagementParams {
 };
 
 /**
-  * A class representing a key/value for the exif metadata information
-  */
-class ExifPair {
-
-    public:
-        Glib::ustring field;
-        Glib::ustring value;
-};
-
-/**
-  * The IPTC key/value pairs
-  */
-class IPTCPair {
-
-    public:
-        Glib::ustring field;
-        std::vector<Glib::ustring> values;
-};
-
-/**
 * Directional pyramid equalizer params
 */
 class DirPyrEqualizerParams {
@@ -475,11 +456,7 @@ class ProcParams {
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
-        std::vector<ExifPair>   exif;            ///< List of modifications appplied on the exif tags of the input image
-        std::vector<IPTCPair>   iptc;            ///< The IPTC tags and values to be saved to the output image
-        char                    rank;            ///< Custom image quality ranking
-        char                    colorlabel;      ///< Custom color label
-        bool                    inTrash;         ///< Marks deleted image
+
         Glib::ustring appVersion;                ///< Version of the application that generated the parameters
         int ppVersion;                           ///< Version of the PP file from which the parameters have been read
 
@@ -491,31 +468,21 @@ class ProcParams {
         * Sets the hand-wired defaults parameters.
         */
         void    setDefaults ();
-      /**
-        * Saves the parameters to possibly two files. This is a performance improvement if a function has to
-        * save the same file in two different location, i.e. the cache and the image's directory
-        * @param fname  the name of the first file (can be an empty string)
-        * @param fname2 the name of the second file (can be an empty string) (optional)
-        * @return Error code (=0 if all supplied filenames where created correctly)
-        */
-        int     save        (Glib::ustring fname, Glib::ustring fname2 = "") const;
+
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file
         * @return Error code (=0 if no error)
         */
-        int     load        (Glib::ustring fname);
-
-      /** Creates a new instance of ProcParams.
-        * @return a pointer to the new ProcParams instance. */
-        static ProcParams* create  ();
-
-      /** Destroys an instance of ProcParams.
-        * @param pp a pointer to the ProcParams instance to destroy. */
-        static void        destroy (ProcParams* pp);
+        int     load        (Glib::ustring fname, int *rank=NULL);
 
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);
+
+        int saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey ) const;
+        int loadFromXMP(Exiv2::XmpData &xmpData, const std::string& baseKey );
+        int saveParams( Glib::ustring fname ) const;
+        int loadParams( Glib::ustring fname );
 
     private:
         /** Write the ProcParams's text in the file of the given name.

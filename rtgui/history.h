@@ -24,12 +24,16 @@
 #include <pparamschangelistener.h>
 #include <profilechangelistener.h>
 #include <paramsedited.h>
+#include <thumbnail.h>
+#include <imagedata.h>
 
 class HistoryBeforeLineListener {
 
     public:
         virtual void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {}
 };
+
+
 
 class History : public Gtk::VBox, public PParamsChangeListener {
 
@@ -48,10 +52,13 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         HistoryColumns historyColumns;
         class BookmarkColumns : public Gtk::TreeModel::ColumnRecord {
             public:
-                Gtk::TreeModelColumn<Glib::ustring>  text;
+                //Gtk::TreeModelColumn<Glib::ustring>  text;
+        	    Gtk::TreeModelColumn<int> id;
                 Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
                 Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
-                BookmarkColumns() { add(text); add(params); add(paramsEdited); }
+                Gtk::TreeModelColumn<Glib::ustring> name;
+
+                BookmarkColumns() { add(id); add(params); add(paramsEdited); add(name); }
         };
         BookmarkColumns bookmarkColumns;
 
@@ -63,6 +70,11 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         Gtk::ScrolledWindow*    bscrollw;
         Gtk::TreeView*          bTreeView;
         Glib::RefPtr<Gtk::ListStore> bookmarkModel;
+        Gtk::CellRendererText m_cellrenderer_validated;
+        Gtk::TreeView::Column m_treeviewcolumn_validated;
+        bool m_validate_retry;
+        Glib::ustring m_invalid_text_for_retry;
+
 
         Gtk::Button*            addBookmark;
         Gtk::Button*            delBookmark;
@@ -71,6 +83,7 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         sigc::connection        selchangebm;
         
         HistoryBeforeLineListener * blistener;
+        SnapshotListener *slistener;
         ProfileChangeListener* tpc;
         ParamsEdited defParamsEdited;
         int bmnum;        
@@ -81,6 +94,7 @@ class History : public Gtk::VBox, public PParamsChangeListener {
 
         void setProfileChangeListener     (ProfileChangeListener* tpc_) { tpc = tpc_; }
         void setHistoryBeforeLineListener (HistoryBeforeLineListener* bll) { blistener = bll; }
+        void setSnapshotListener (SnapshotListener* sl) { slistener = sl; }
         
         // pparamschangelistener interface
         void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);
@@ -95,11 +109,18 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         void addBookmarkWithText (Glib::ustring text);
         void addBookmarkPressed ();
         void delBookmarkPressed ();
+        void addSnapshot(const rtengine::SnapshotInfo &snapInfo );
+        int  getSelectedSnapshot();
+        bool findName( Glib::ustring text );
 
         void resized (Gtk::Allocation& req);
 
         void undo ();
         void redo ();
+        void cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path);
+        void cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text);
+        void column_validated_on_cell_data( Gtk::CellRenderer* renderer , const Gtk::TreeModel::iterator& iter);
+
 };
 
 #endif

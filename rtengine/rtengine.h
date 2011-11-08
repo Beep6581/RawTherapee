@@ -25,12 +25,13 @@
 #include <string>
 #include <glibmm.h>
 #include <time.h>
-#include <rtexif.h>
 #include <rawmetadatalocation.h>
 #include <iimage.h>
 #include <utils.h>
 #include <settings.h>
 #include "LUT.h"
+#include <imagedata.h>
+
 /**
  * @file 
  * This file contains the main functionality of the raw therapee engine.
@@ -39,69 +40,6 @@
 
 
 namespace rtengine {
-
-  /**
-    * This class represents provides functions to obtain exif and IPTC metadata information
-    * from the image file
-    */
-    class ImageMetaData {
-
-        public:
-          /** Checks the availability of exif metadata tags.
-            * @return Returns true if image contains exif metadata tags */
-            virtual bool hasExif () const =0;        
-          /** Returns the directory of exif metadata tags.
-            * @return The directory of exif metadata tags */
-            virtual const rtexif::TagDirectory* getExifData () const =0;
-          /** Checks the availability of IPTC tags.
-            * @return Returns true if image contains IPTC tags */
-            virtual bool hasIPTC () const =0;
-          /** Returns the directory of IPTC tags.
-            * @return The directory of IPTC tags */
-            virtual const std::vector<procparams::IPTCPair> getIPTCData () const =0;
-          /** @return a struct containing the date and time of the image */
-            virtual struct tm   getDateTime () const =0;
-          /** @return a timestamp containing the date and time of the image */
-            virtual time_t   getDateTimeAsTS() const =0;
-          /** @return the ISO of the image */
-            virtual int         getISOSpeed () const =0;
-          /** @return the F number of the image */
-            virtual double      getFNumber  () const =0;
-          /** @return the focal length used at the exposure */
-            virtual double      getFocalLen () const =0;
-          /** @return the shutter speed */
-            virtual double      getShutterSpeed () const =0;
-          /** @return the exposure compensation */
-            virtual double      getExpComp () const =0;
-          /** @return the maker of the camera */
-            virtual std::string getMake     () const =0;
-          /** @return the model of the camera */
-            virtual std::string getModel    () const =0;
-
-            std::string         getCamera   () const { return getMake() + " " + getModel(); }
-
-          /** @return the lens on the camera  */
-            virtual std::string getLens     () const =0;
-          /** @return the orientation of the image */
-            virtual std::string getOrientation () const =0;
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string apertureToString (double aperture);
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string shutterToString (double shutter);
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static double apertureFromString (std::string shutter);
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static double shutterFromString (std::string shutter);
-          /** Functions to convert between floating point and string representation of exposure compensation */
-            static std::string expcompToString (double expcomp);
-            
-          /** Reads metadata from file.
-            * @param fname is the name of the file
-            * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
-            * of jpgs and tiffs pass a NULL pointer. 
-            * @return The metadata */
-            static ImageMetaData* fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml);
-    };
 
   /** This listener interface is used to indicate the progress of time consuming operations */
     class ProgressListener {
@@ -138,7 +76,7 @@ namespace rtengine {
             virtual cmsHPROFILE getEmbeddedProfile () =0;
           /** Returns a class providing access to the exif and iptc metadata tags of the image.
             * @return An instance of the ImageMetaData class */
-            virtual const ImageMetaData* getMetaData () =0;
+            virtual ImageMetaData* getMetaData () =0;
           /** This is a function used for internal purposes only. */
             virtual ImageSource* getImageSource () =0;
           /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
@@ -154,7 +92,7 @@ namespace rtengine {
             * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
             * @param pl is a pointer pointing to an object implementing a progress listener. It can be NULL, in this case progress is not reported.
             * @return an object representing the loaded and pre-processed image */
-            static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
+            static InitialImage* load (const Glib::ustring& fname, ImageMetaData *meta, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
     };
 
     /** When the preview image is ready for display during staged processing (thus the changes have been updated),
@@ -341,7 +279,7 @@ namespace rtengine {
        * @param isRaw shall be true if it is a raw file
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams);
+        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, ImageMetaData* md);
    
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately. This function increases the reference count of the initialImage. If you decide not the process the image you
@@ -350,7 +288,7 @@ namespace rtengine {
        * @param initialImage is a loaded and pre-processed initial image
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */   
-        static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams);
+        static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, ImageMetaData* md);
 
     /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
       * gets invalid, you must not use it any more. Dont call this function while the job is being processed. 
@@ -388,6 +326,7 @@ namespace rtengine {
 
     
     extern Glib::Mutex* lcmsMutex;
+    extern Glib::Mutex* exiv2Mutex;
 }
 
 #endif
