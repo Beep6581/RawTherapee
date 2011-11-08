@@ -118,7 +118,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::VBox* colorPanel;
         Gtk::VBox* transformPanel;
         Gtk::VBox* rawPanel;
-        Gtk::Notebook* metadataPanel;
+
         ExifPanel* exifpanel;
         IPTCPanel* iptcpanel;
         ToolBar* toolBar;
@@ -129,6 +129,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         TextOrIcon* toiT;
         TextOrIcon* toiR;
         TextOrIcon* toiM;
+        TextOrIcon* toiX;
 
         Gtk::Label* labelE;
         Gtk::Label* labelD;
@@ -189,6 +190,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         // init the toolpanelcoordinator with an image & close it        
         void initImage          (rtengine::StagedImageProcessor* ipc_, bool israw);
         void closeImage         ();
+        void saveIPTC           ();
 
         // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
         void readOptions        ();
