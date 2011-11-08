@@ -24,12 +24,15 @@
 #include <dfmanager.h>
 #include <ffmanager.h>
 #include <rtthumbnail.h>
+#include <exiv2/exiv2.hpp>
+#include <imagedata.h>
 
 namespace rtengine {
 
 const Settings* settings;
 
 Glib::Mutex* lcmsMutex = NULL;
+Glib::Mutex* exiv2Mutex = NULL;
 
 int init (const Settings* s, Glib::ustring baseDir) {
 
@@ -42,13 +45,28 @@ int init (const Settings* s, Glib::ustring baseDir) {
     Thumbnail::initGamma ();
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
+    delete exiv2Mutex;
+    exiv2Mutex = new Glib::Mutex;
+
+	//this should be done once
+	Exiv2::XmpProperties::registerNs("http://www.rawtherapee.com/1.0/", "rt");
+	Exiv2::XmpProperties::registerNs("http://ns.adobe.com/xap/1.0/", "xmp");
+	Exiv2::XmpProperties::registerNs("http://ns.adobe.com/exif/1.0/aux/", "aux");
+	Exiv2::XmpProperties::registerNs("http://ns.adobe.com/photoshop/1.0/", "photoshop");
+	Exiv2::XmpProperties::registerNs("http://purl.org/dc/elements/1.1/", "dc");
+	Exiv2::XmpProperties::registerNs("http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/", "Iptc4xmpCore");
+	Exiv2::XmpProperties::registerNs("http://ns.useplus.org/ldf/xmp/1.0/", "plus");
+	Exiv2::XmpProperties::registerNs("http://iptc.org/std/Iptc4xmpExt/2008-02-29/","Iptc4xmpExt");
+	Exiv2::XmpProperties::registerNs("http://ns.adobe.com/xap/1.0/rights/","xmpRights");
+	IPTCMeta::initIPTCMeta();
+
     dfm.init( s->darkFramesPath );
     ffm.init( s->flatFieldsPath );
 	return 0;
 }
 
 void cleanup () {
-
+	Exiv2::XmpParser::terminate();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }

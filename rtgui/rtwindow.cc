@@ -66,7 +66,8 @@ RTWindow::RTWindow ()
     	Thumbnail* thm= cm->getEntry( argv1 );
     	if(thm){
     		int error;
-    		rtengine::InitialImage *ii= rtengine::InitialImage::load(argv1,thm->getType() == FT_Raw,&error,NULL);
+    		Glib::ustring fname(argv1);
+    		rtengine::InitialImage *ii= rtengine::InitialImage::load(argv1, thm->getMetadata(), thm->getType() == FT_Raw,&error,NULL);
     		epanel->open( thm, ii );
     	}
 	} else {

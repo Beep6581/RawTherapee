@@ -730,10 +730,11 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
             safe_g_remove (Glib::ustring(removeExtension(fname)+".thm"));
             safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
 
-			if (inclBatchProcessed) {
+            // take info from snapshots inside thumb
+/*			if (inclBatchProcessed) {
 			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
 				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
-			}
+			}*/
 
             previewsLoaded--;
         }
@@ -849,7 +850,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params, tbe[i]->thumbnail->getMetadata());
             double tmpscale;
             rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
 
@@ -1367,7 +1368,7 @@ void FileCatalog::emptyTrash () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     std::vector<FileBrowserEntry*> toDel;
     for (size_t i=0; i<t.size(); i++)
-        if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
+        if (((FileBrowserEntry*)t[i])->thumbnail->getRank()==-1)
             toDel.push_back (((FileBrowserEntry*)t[i]));
     deleteRequested (toDel, false);
     trashChanged();
@@ -1376,7 +1377,7 @@ void FileCatalog::emptyTrash () {
 bool FileCatalog::trashIsEmpty () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     for (size_t i=0; i<t.size(); i++)
-        if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
+        if (((FileBrowserEntry*)t[i])->thumbnail->getRank()==-1)
             return false;
 
     return true;

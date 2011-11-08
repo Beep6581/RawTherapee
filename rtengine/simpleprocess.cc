@@ -46,7 +46,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     InitialImage* ii = job->initialImage;
     if (!ii) {
-        ii = InitialImage::load (job->fname, job->isRaw, &errorCode);
+        ii = InitialImage::load (job->fname, job->metadata, job->isRaw, &errorCode);
         if (errorCode) {
             delete job;
             return NULL;
@@ -280,12 +280,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	    }
 	}
 
-
+/*
     if (tunnelMetaData)
         readyImg->setMetadata (ii->getMetaData()->getExifData ());
     else
         readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
-	
+*/
+	if( job->metadata ){
+		rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
+		mdata->merge();
+		readyImg->setMetadata( mdata );
+	}
 
     ProfileContent pc;
     Glib::ustring chpro, outProfile;
@@ -400,12 +405,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	    }
 	}
 
-
+/*
     if (tunnelMetaData)
         readyImg->setMetadata (ii->getMetaData()->getExifData ());
     else
         readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
-	
+*/
+	if( job->metadata ){
+		rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
+		mdata->merge();
+		readyImg->setMetadata( mdata );
+	}
 
     ProfileContent pc;
     if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString)  

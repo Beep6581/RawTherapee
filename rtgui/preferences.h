@@ -113,9 +113,12 @@ class Preferences : public Gtk::Dialog {
 
     Gtk::CheckButton* chOverwriteOutputFile;
 
-    Gtk::CheckButton* saveParamsFile;
+    Gtk::CheckButton* saveXmpIntoDng;
+    Gtk::CheckButton* saveXmpIntoJpg;
+    Gtk::CheckButton* saveXmpIntoPng;
+    Gtk::CheckButton* saveXmpIntoTiff;
     Gtk::CheckButton* saveParamsCache;
-    Gtk::ComboBoxText* loadParamsPreference;
+    //Gtk::ComboBoxText* loadParamsPreference;
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
 	

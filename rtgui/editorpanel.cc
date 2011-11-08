@@ -27,6 +27,7 @@
 #include <imagesource.h>
 #include <soundman.h>
 
+
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
@@ -402,6 +403,12 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof, NULL);
 
+    rtengine::snapshotsList_t snapshots = openThm->getSnapshotsList();
+    for( rtengine::snapshotsList_t::iterator iter = snapshots.begin(); iter != snapshots.end(); iter++ ){
+    	if( iter->second.name.compare( rtengine::SnapshotInfo::kCurrentSnapshotName)!= 0 )
+    	   history->addSnapshot( iter->second );
+    }
+    history->setSnapshotListener( openThm );
     openThm->addThumbnailListener (this);
     info_toggled ();
     
@@ -665,10 +672,10 @@ void EditorPanel::info_toggled () {
     Glib::ustring expcomp;
 
     if (!ipc || !openThm) return;
-    const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
-    if (idata && idata->hasExif()){
+    rtengine::ImageMetaData* idata = const_cast<rtengine::ImageMetaData*>(ipc->getInitialImage()->getMetaData());
+    if (idata ){
     	infoString1 = Glib::ustring::compose ("%1 + %2",
-    			Glib::ustring(idata->getMake()+" "+idata->getModel()),
+    			Glib::ustring(idata->getCamera()),
     			Glib::ustring(idata->getLens()));
 
         infoString2 = Glib::ustring::compose ("<span size=\"small\">f/</span><span size=\"large\">%1</span>  <span size=\"large\">%2</span><span size=\"small\">s</span>  <span size=\"small\">%3</span><span size=\"large\">%4</span>  <span size=\"large\">%5</span><span size=\"small\">mm</span>",
@@ -926,15 +933,18 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 
 	if (! pc->returnValue() ) {
 		openThm->imageDeveloped ();
-		// save processing parameters, if needed
-		if (sf.saveParams) {
-			rtengine::procparams::ProcParams pparams;
-			ipc->getParams (&pparams);
-			// We keep the extension to avoid overwriting the profile when we have
-			// the same output filename with different extension
-			//pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
-			pparams.save (fname + ".out" + paramFileExtension);
-		}
+		rtengine::procparams::ProcParams pparams;
+		ipc->getParams (&pparams);
+
+		time_t rawtime;
+		struct tm *timeinfo;
+		char stringTimestamp [80];
+		time ( &rawtime );
+		timeinfo = localtime ( &rawtime );
+		strftime (stringTimestamp,sizeof(stringTimestamp),"Saved_%Y-%m-%d %H:%M:%S",timeinfo);
+		int id = openThm->newSnapshot(stringTimestamp, pparams);
+		openThm->setSaved(id ,true, fname );
+
 	} else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
 		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -957,8 +967,8 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
 
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    //rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams);
+    tpc->saveIPTC();
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams, openThm->getMetadata());
     int prevh = options.maxThumbnailHeight;
     int prevw = prevh;
     guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
@@ -971,7 +981,11 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
         memcpy (prev, img->getData (), prevw*prevh*3);
         img->free();
     }
-    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
+
+    BatchQueueEntry *bqe = new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
+    if( bqe  )
+       bqe->currentSnapshoId = history->getSelectedSnapshot();
+    return bqe;
 }
 
 
@@ -1035,7 +1049,9 @@ void EditorPanel::saveAsPressed () {
 				// save image
 				rtengine::procparams::ProcParams pparams;
 				ipc->getParams (&pparams);
-				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+				tpc->saveIPTC();
+
+				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, ipc->getInitialImage()->getMetaData() );
 
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
 				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
@@ -1067,7 +1083,7 @@ void EditorPanel::sendToGimpPressed () {
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams,ipc->getInitialImage()->getMetaData() );
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
     ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
@@ -1240,7 +1256,7 @@ void EditorPanel::beforeAfterToggled () {
 
     if (beforeAfter->get_active ()) {
         int errorCode=0;
-        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType()==FT_Raw , &errorCode, NULL);
+        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(), openThm->getMetadata(), openThm->getType()==FT_Raw , &errorCode, NULL);
         if( !beforeImg || errorCode )
         	return;
 

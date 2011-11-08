@@ -61,10 +61,10 @@ class ImageSource : public InitialImage {
     protected:
 		cmsHPROFILE embProfile;
         Glib::ustring fileName;
-        ImageData* idata;
+        ImageMetaData* idata;
 
     public:
-                            ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
+                    ImageSource ( ImageMetaData* meta=NULL) : references (1), embProfile(NULL), idata(meta) {}
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
@@ -84,7 +84,6 @@ class ImageSource : public InitialImage {
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
 
-        virtual ImageData*  getImageData () =0;
         virtual void        setProgressListener (ProgressListener* pl) {}
 
                 void        increaseRef () { references++; }
@@ -98,7 +97,7 @@ class ImageSource : public InitialImage {
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }
         virtual cmsHPROFILE getEmbeddedProfile ()   { return embProfile; }
-        virtual const ImageMetaData* getMetaData () { return idata; }
+        virtual ImageMetaData* getMetaData ()       { return idata; }
         virtual ImageSource* getImageSource ()      { return this; }
 };
 };

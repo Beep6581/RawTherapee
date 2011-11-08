@@ -22,12 +22,10 @@
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-using namespace rtexif;
+
 extern Glib::ustring argv0;
 
 ExifPanel::ExifPanel () : idata(NULL) {
-
-   recursiveOp = true;
 
    exifTree = Gtk::manage(new Gtk::TreeView());
    scrolledWindow = Gtk::manage(new Gtk::ScrolledWindow());
@@ -45,10 +43,6 @@ ExifPanel::ExifPanel () : idata(NULL) {
    
    exifTreeModel = Gtk::TreeStore::create(exifColumns);
    exifTree->set_model (exifTreeModel);
-
-   delicon = safe_create_from_file (argv0+"/images/deltags.png");
-   keepicon = safe_create_from_file (argv0+"/images/addtags.png");
-   editicon = safe_create_from_file (argv0+"/images/logoicon16.png");
 
    Gtk::TreeView::Column *viewcol = Gtk::manage(new Gtk::TreeView::Column ("Field Name"));
    Gtk::CellRendererPixbuf* render_pb = Gtk::manage(new Gtk::CellRendererPixbuf ());
@@ -75,47 +69,7 @@ ExifPanel::ExifPanel () : idata(NULL) {
    exifTree->append_column (*viewcolv); 
   
    pack_start (*scrolledWindow);
-   
-   Gtk::HBox* buttons1 = Gtk::manage(new Gtk::HBox ());
-   Gtk::HBox* buttons2 = Gtk::manage(new Gtk::HBox ());
-   
-   remove = Gtk::manage(new Gtk::Button (M("EXIFPANEL_REMOVE")));
-   remove->set_image (*Gtk::manage(new Gtk::Image (delicon)));
-   remove->set_tooltip_text (M("EXIFPANEL_REMOVEHINT"));
-   buttons1->pack_start (*remove);
-   
-   keep = Gtk::manage(new Gtk::Button (M("EXIFPANEL_KEEP")));
-   keep->set_image (*Gtk::manage(new Gtk::Image (keepicon)));
-   keep->set_tooltip_text (M("EXIFPANEL_KEEPHINT"));
-   buttons1->pack_start (*keep);
 
-   add = Gtk::manage(new Gtk::Button (M("EXIFPANEL_ADDEDIT")));
-   add->set_image (*Gtk::manage(new Gtk::Image (editicon)));
-   add->set_tooltip_text (M("EXIFPANEL_ADDEDITHINT"));
-   buttons1->pack_start (*add);
-
-   reset = Gtk::manage(new Gtk::Button (M("EXIFPANEL_RESET")));
-   reset->set_image (*Gtk::manage(new Gtk::Image (Gtk::StockID ("gtk-undo"), Gtk::IconSize (2))));
-   reset->set_tooltip_text (M("EXIFPANEL_RESETHINT"));
-   buttons2->pack_start (*reset);
-
-   resetAll = Gtk::manage(new Gtk::Button (M("EXIFPANEL_RESETALL")));
-   resetAll->set_image (*Gtk::manage(new Gtk::Image (argv0+"/images/gtk-undo-ltr.png")));
-   resetAll->set_tooltip_text (M("EXIFPANEL_RESETALLHINT"));
-   buttons2->pack_start (*resetAll);
-
-   pack_end (*buttons2, Gtk::PACK_SHRINK);
-   pack_end (*buttons1, Gtk::PACK_SHRINK);
-
-   exifTree->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ExifPanel::exifSelectionChanged));
-   exifTree->signal_row_activated().connect(sigc::mem_fun(*this, &ExifPanel::row_activated));
-
-   remove->signal_clicked().connect( sigc::mem_fun(*this, &ExifPanel::removePressed) );
-   keep->signal_clicked().connect( sigc::mem_fun(*this, &ExifPanel::keepPressed) );
-   reset->signal_clicked().connect( sigc::mem_fun(*this, &ExifPanel::resetPressed) );
-   resetAll->signal_clicked().connect( sigc::mem_fun(*this, &ExifPanel::resetAllPressed) );
-   add->signal_clicked().connect( sigc::mem_fun(*this, &ExifPanel::addPressed) );
-   
    show_all ();
 }
 
@@ -126,23 +80,19 @@ void ExifPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
-    changeList = pp->exif;
     setImageData (idata);
-    applyChangeList ();
-    exifSelectionChanged ();
     
     enableListener ();
 }
 
 void ExifPanel::write (ProcParams* pp, ParamsEdited* pedited) {
-    
-//    updateChangeList ();
-    pp->exif = changeList;
+
+
 }
 
 void ExifPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
-    defChangeList = defParams->exif;
+
 }
         
 void ExifPanel::setImageData (const ImageMetaData* id) {
@@ -150,416 +100,43 @@ void ExifPanel::setImageData (const ImageMetaData* id) {
     idata = id; 
     exifTreeModel->clear ();
 
-    const std::vector<Tag*>& defTags = ExifManager::getDefaultTIFFTags (NULL);
-    for (int i=0; i<defTags.size(); i++) 
-        if (defTags[i]->nameToString() == "ImageWidth" || defTags[i]->nameToString() == "ImageHeight" || defTags[i]->nameToString() == "BitsPerSample")
-            addTag (exifTreeModel->children(), defTags[i]->nameToString(), "?", SYSTEM, false);     
-        else
-            addTag (exifTreeModel->children(), defTags[i]->nameToString(), defTags[i]->valueToString(), SYSTEM, false);     
-    
-    if (id && id->getExifData ()) {
-//        id->getExifData ()->printAll ();     
-        addDirectory (id->getExifData (), exifTreeModel->children());
+    if( !idata )
+    	return;
+
+    std::vector<ExifPair>  list=idata->getExifData ();
+
+    // sort elements for grouping into different folders
+    std::sort( list.begin(),list.end());
+    Glib::ustring currentGroup="";
+    Gtk::TreeModel::Children chldr=exifTreeModel->children();
+    for( std::vector<ExifPair>::iterator iter= list.begin(); iter != list.end(); iter++ ){
+        if( iter->group != currentGroup ){
+        	chldr = addGroup (exifTreeModel->children(), iter->group );
+        	currentGroup = iter->group;
+        }
+        addTag (chldr, iter->field, iter->value );
     }
 }
 
-Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value, int action, bool editable) {
-
+Gtk::TreeModel::Children ExifPanel::addGroup (const Gtk::TreeModel::Children& root, Glib::ustring group )
+{
     Gtk::TreeModel::Row row = *(exifTreeModel->append(root));
-    row[exifColumns.action]   = action;
-    row[exifColumns.editable] = editable;
-    row[exifColumns.edited]   = false;
-    row[exifColumns.field_nopango] = field;
-    row[exifColumns.value_nopango] = value;
+
+	row[exifColumns.field] = Glib::ustring("<b>") + group + "</b>";
+
+	return row.children();
+}
+
+Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value )
+{
+    Gtk::TreeModel::Row row = *(exifTreeModel->append(root));
+
     row[exifColumns.orig_value]    = value;
-    
-    if (action==WRITE)
-        row[exifColumns.icon] = keepicon;
-    else if (action==DONTWRITE)
-        row[exifColumns.icon] = delicon;
-    
-    if (editable) {
-        row[exifColumns.field] = Glib::ustring("<b>") + field + "</b>";
-        row[exifColumns.value] = Glib::ustring("<b>") + value + "</b>";
-    }
-    else if (action==SYSTEM) {
-        row[exifColumns.field] = Glib::ustring("<i>") + field + "</i>";
-        row[exifColumns.value] = Glib::ustring("<i>") + value + "</i>";
-    }
-    else {
-        row[exifColumns.field] = field;
-        row[exifColumns.value] = value;
-    }
+
+    row[exifColumns.field] = field;
+    row[exifColumns.value] = Glib::ustring("<i>") + value + "</i>";
     
     return row.children();
-}
-
-void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children root) {
-
-    for (int i=0; i<dir->getCount(); i++) {
-        Tag* t = ((TagDirectory*)dir)->getTagByIndex (i);
-        if (t->getAttrib() && t->getAttrib()->action==SYSTEM)
-            continue;
-        if (t->isDirectory()) 
-            for (int j=0; t->getDirectory(j); j++) {
-                Gtk::TreeModel::Children ch = addTag (root, t->nameToString (j), M("EXIFPANEL_SUBDIRECTORY"), t->getAttrib() ? t->getAttrib()->action : 0, t->getAttrib() && t->getAttrib()->editable);
-                addDirectory (t->getDirectory(j), ch);
-            }
-        else 
-            addTag (root, t->nameToString (), t->valueToString (), t->getAttrib() ? (t->getOwnMemory()?t->getAttrib()->action:SYSTEM) : 0, t->getAttrib() && t->getAttrib()->editable);
-    }
-}
-
-void ExifPanel::exifSelectionChanged () {
-
-    Glib::RefPtr<Gtk::TreeSelection> selection = exifTree->get_selection();
-    std::vector<Gtk::TreeModel::Path> sel = selection->get_selected_rows();
-    if (sel.size()>1) {
-        remove->set_sensitive (1);
-        keep->set_sensitive (1);
-        reset->set_sensitive (1);
-    }
-    else if (sel.size()==1) {
-        Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (sel[0]);
-        if (iter->get_value (exifColumns.action)==SYSTEM) {
-            remove->set_sensitive (0);
-            keep->set_sensitive (0);
-            reset->set_sensitive (0);
-        }
-        else if (iter->children().size()>0) {
-            remove->set_sensitive (1);
-            keep->set_sensitive (1);
-            reset->set_sensitive (1);
-        }
-        else if (iter->get_value(exifColumns.icon)==delicon) {
-            remove->set_sensitive (0);
-            keep->set_sensitive (1);
-            reset->set_sensitive (1);
-        }
-        else if (iter->get_value(exifColumns.icon)==keepicon || iter->get_value(exifColumns.icon)==editicon) {
-            keep->set_sensitive (0);
-            remove->set_sensitive (1);
-            reset->set_sensitive (1);
-        }
-    }
-    else {
-        remove->set_sensitive (0);
-        keep->set_sensitive (0);
-        reset->set_sensitive (0);
-    }
-}
-
-void ExifPanel::delIt (Gtk::TreeModel::iterator iter) {
-    
-    if (!iter)
-        return;
-
-    if (iter->get_value (exifColumns.action) != SYSTEM)
-        iter->set_value (exifColumns.icon, delicon);
-    if (recursiveOp)
-        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
-            delIt (i);
-}
-
-void ExifPanel::removePressed () {
-
-    std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
-    for (int i=0; i<sel.size(); i++) 
-        delIt (exifTreeModel->get_iter (sel[i]));
-
-    exifSelectionChanged ();
-    updateChangeList ();
-    notifyListener ();
-}
-
-void ExifPanel::keepIt (Gtk::TreeModel::iterator iter) {
-    
-    if (!iter)
-        return;
-
-    if (iter->get_value (exifColumns.action) != SYSTEM)
-        iter->set_value (exifColumns.icon, iter->get_value (exifColumns.edited) ? editicon : keepicon);
-    if (recursiveOp)
-        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
-            keepIt (i);
-}
-
-void ExifPanel::keepPressed () {
-
-    std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
-    for (int i=0; i<sel.size(); i++) 
-        keepIt (exifTreeModel->get_iter (sel[i]));
-
-    exifSelectionChanged ();
-    updateChangeList ();
-    notifyListener ();
-}
-
-/*void ExifPanel::resetIt (Gtk::TreeModel::iterator  iter) {
-    
-    if (!iter)
-        return;
-
-    if (iter->get_value (exifColumns.action)!=SYSTEM)
-        iter->set_value (exifColumns.icon, iter->get_value (exifColumns.action) ? keepicon : delicon);
-    if (iter->get_value (exifColumns.edited)) {
-        iter->set_value (exifColumns.value, Glib::ustring("<b>") + iter->get_value(exifColumns.orig_value) + "</b>");
-        iter->set_value (exifColumns.value_nopango, iter->get_value(exifColumns.orig_value));
-        iter->set_value (exifColumns.edited, false);            
-    }
-    if (iter->get_value (exifColumns.action)==100)
-        exifTreeModel->erase (iter);
-    else 
-    if (recursiveOp)
-        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
-            resetIt (i);
-}*/
-Gtk::TreeModel::iterator ExifPanel::resetIt (Gtk::TreeModel::iterator  iter) {
-    
-    if (!iter)
-        return iter;
-
-    if (iter->get_value (exifColumns.action)!=SYSTEM)
-        iter->set_value (exifColumns.icon, iter->get_value (exifColumns.action) ? keepicon : delicon);
-    if (iter->get_value (exifColumns.edited)) {
-        iter->set_value (exifColumns.value, Glib::ustring("<b>") + iter->get_value(exifColumns.orig_value) + "</b>");
-        iter->set_value (exifColumns.value_nopango, iter->get_value(exifColumns.orig_value));
-        iter->set_value (exifColumns.edited, false);            
-    }
-    if (iter->get_value (exifColumns.action)==100) {
-        return exifTreeModel->erase (iter);
-    }
-    else 
-    if (recursiveOp) {
-        Gtk::TreeModel::iterator i = iter->children().begin();
-        while (i && i != iter->children().end())
-            i = resetIt (i);
-    }
-    return ++iter;
-}
-void ExifPanel::resetPressed () {
-
-    std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
-    for (int i=0; i<sel.size(); i++) 
-        resetIt (exifTreeModel->get_iter (sel[i]));
-
-    exifSelectionChanged ();
-    updateChangeList ();
-    notifyListener ();
-}
-
-void ExifPanel::resetAllPressed () {
-
-    setImageData (idata);
-    changeList = defChangeList;
-    applyChangeList ();
-    exifSelectionChanged ();
-    notifyListener ();
-}
-
-void ExifPanel::addPressed () {
-
-    Gtk::Dialog* dialog = new Gtk::Dialog (M("EXIFPANEL_ADDTAGDLG_TITLE"), *((Gtk::Window*)get_toplevel()), true, true);
-    dialog->add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
-    dialog->add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    
-    Gtk::HBox* hb1 = new Gtk::HBox ();
-    Gtk::HBox* hb2 = new Gtk::HBox ();
-    
-    Gtk::Label* tlabel = new Gtk::Label (M("EXIFPANEL_ADDTAGDLG_SELECTTAG")+":");
-    MyComboBoxText* tcombo = new MyComboBoxText ();
-    
-    tcombo->append_text ("Artist");
-    tcombo->append_text ("Copyright");
-    tcombo->append_text ("ImageDescription");
-    tcombo->append_text ("Exif.UserComment");
-    
-    hb1->pack_start (*tlabel, Gtk::PACK_SHRINK, 4);
-    hb1->pack_start (*tcombo);
-
-    Gtk::Label* vlabel = new Gtk::Label (M("EXIFPANEL_ADDTAGDLG_ENTERVALUE")+":");
-    Gtk::Entry* ventry = new Gtk::Entry ();
-    hb2->pack_start (*vlabel, Gtk::PACK_SHRINK, 4);
-    hb2->pack_start (*ventry);
-
-    Glib::ustring sel = getSelection (true);
-    if (sel=="")
-        tcombo->set_active_text ("Exif.UserComment");
-    else {
-        tcombo->set_active_text (sel);
-        if (tcombo->get_active ()<0) {
-            tcombo->append_text (sel);
-            tcombo->set_active_text (sel);
-        }
-        ventry->set_text (getSelectedValue ());
-    }
-    
-    ventry->set_activates_default (true);
-    dialog->set_default_response (Gtk::RESPONSE_OK);
-    dialog->get_vbox()->pack_start (*hb1, Gtk::PACK_SHRINK);
-    dialog->get_vbox()->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
-    tlabel->show ();
-    tcombo->show ();
-    vlabel->show ();
-    ventry->show ();
-    hb1->show ();
-    hb2->show ();
-    
-    if (dialog->run ()== Gtk::RESPONSE_OK) {   
-        editTag (exifTreeModel->children(), tcombo->get_active_text(), ventry->get_text());
-        updateChangeList ();
-        notifyListener ();
-    }
-    
-    delete dialog;
-    delete tlabel;
-    delete tcombo;  
-    delete vlabel;
-    delete ventry;  
-    delete hb1;
-    delete hb2;  
-}
-
-void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib::ustring value) {
-
-    Glib::ustring::size_type dp = name.find_first_of ('.');
-    Glib::ustring fseg = name.substr (0,dp);
-    // look up first segment of the path
-    Gtk::TreeModel::iterator iter;
-    for (iter = root.begin(); iter!=root.end(); iter++) 
-        if (iter->get_value (exifColumns.field_nopango) == fseg)
-            break;
-    
-    if (iter==root.end() && value!="#keep" && value!="#delete") {
-        iter = exifTreeModel->append(root);
-        iter->set_value (exifColumns.field_nopango, fseg);
-        iter->set_value (exifColumns.action, 100);
-        if (dp==Glib::ustring::npos) {
-            iter->set_value (exifColumns.value, Glib::ustring("<b>") + value + "</b>");
-            iter->set_value (exifColumns.value_nopango, value);
-            iter->set_value (exifColumns.orig_value, value);
-            iter->set_value (exifColumns.field, Glib::ustring("<b>") + fseg + "</b>");
-            iter->set_value (exifColumns.edited, true);
-            iter->set_value (exifColumns.editable, true);
-            iter->set_value (exifColumns.icon, editicon);
-        }
-        else {
-            iter->set_value (exifColumns.value, Glib::ustring(M("EXIFPANEL_SUBDIRECTORY")));
-            iter->set_value (exifColumns.value_nopango, Glib::ustring(M("EXIFPANEL_SUBDIRECTORY")));
-            iter->set_value (exifColumns.field, fseg);
-            iter->set_value (exifColumns.icon, keepicon);
-            iter->set_value (exifColumns.orig_value, Glib::ustring(M("EXIFPANEL_SUBDIRECTORY")));
-        }
-    }
-    
-    if (dp==Glib::ustring::npos) {
-        if (value=="#keep" && iter->get_value (exifColumns.action)!=SYSTEM)
-            iter->set_value (exifColumns.icon, iter->get_value (exifColumns.edited) ? editicon : keepicon);
-        else if (value=="#delete" && iter->get_value (exifColumns.action)!=SYSTEM)
-            iter->set_value (exifColumns.icon, delicon);
-        else {
-            iter->set_value (exifColumns.value, Glib::ustring("<b>") + value + "</b>");
-            iter->set_value (exifColumns.value_nopango, value);
-            iter->set_value (exifColumns.edited, true);
-            iter->set_value (exifColumns.icon, editicon);
-        }
-    }
-    else 
-        editTag (iter->children(), name.substr (dp+1, Glib::ustring::npos), value);
-}
-
-Glib::ustring ExifPanel::getSelectedValue () {
-
-    Glib::RefPtr<Gtk::TreeSelection> selection = exifTree->get_selection();
-    std::vector<Gtk::TreeModel::Path> rows = selection->get_selected_rows(); 
-    if (rows.size()!=1)
-        return "";   
-    Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (rows[0]);
-    if (iter) 
-        return iter->get_value (exifColumns.value_nopango);
-    return "";
-}
-
-Glib::ustring ExifPanel::getSelection (bool onlyeditable) {
-
-    Glib::RefPtr<Gtk::TreeSelection> selection = exifTree->get_selection();
-    std::vector<Gtk::TreeModel::Path> rows = selection->get_selected_rows(); 
-
-    if (rows.size()!=1)
-        return "";   
-    Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (rows[0]);
-
-    Glib::ustring ret = "";
-    bool first = true;
-    bool editable = false;
-    while (iter) {
-        if (first)
-            ret = iter->get_value (exifColumns.field_nopango);
-        else
-            ret = iter->get_value (exifColumns.field_nopango) + "." + ret;
-        editable = iter->get_value (exifColumns.editable);
-        iter = iter->parent ();
-        first = false;
-    }
-    if (!editable && onlyeditable)
-        return "";
-    return ret;
-}
-
-void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string prefix) {
-
-    if (prefix!="")
-        prefix = prefix + ".";
-        
-    Gtk::TreeModel::iterator iter;
-    for (iter = root.begin(); iter!=root.end(); iter++)  {
-        if (iter->get_value (exifColumns.edited) == true) {
-            ExifPair ec;
-            ec.field = prefix + iter->get_value (exifColumns.field_nopango);
-            ec.value = iter->get_value (exifColumns.value_nopango);
-            changeList.push_back (ec);
-        }
-        else if (iter->get_value (exifColumns.action) == WRITE && iter->get_value (exifColumns.icon) == delicon) {
-            ExifPair ec;
-            ec.field = prefix + iter->get_value (exifColumns.field_nopango);
-            ec.value = "#delete";
-            changeList.push_back (ec);
-        }
-        else if (iter->get_value (exifColumns.action) == DONTWRITE && iter->get_value (exifColumns.icon) == keepicon) {
-            ExifPair ec;
-            ec.field = prefix + iter->get_value (exifColumns.field_nopango);
-            ec.value = "#keep";
-            changeList.push_back (ec);
-        }
-        if (iter->get_value (exifColumns.icon) == keepicon)
-            updateChangeList (iter->children(), prefix + iter->get_value (exifColumns.field_nopango));
-    }
-}
-
-void ExifPanel::updateChangeList () {
-
-    changeList.clear ();
-    updateChangeList (exifTreeModel->children(), "");
-}
-
-void ExifPanel::applyChangeList () {
-
-    for (int i=0; i<changeList.size(); i++)
-        editTag (exifTreeModel->children(), changeList[i].field, changeList[i].value);
-}
-
-void ExifPanel::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column) {
-
-    Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (path);
-    if (iter) {
-        if (iter->children().size()>0)
-            if (exifTree->row_expanded (path))
-                exifTree->collapse_row (path);
-            else
-                exifTree->expand_row (path, false);
-        else if (iter->get_value (exifColumns.editable))
-            addPressed ();
-    }
 }
 
 
