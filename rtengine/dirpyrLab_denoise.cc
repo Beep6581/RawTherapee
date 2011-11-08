@@ -245,9 +245,16 @@ namespace rtengine {
 		
 		scale = scales[0];
 		pitch = pitches[0];
+		// freeing as much memory as possible since the next call to idirpyr will need lots
+		for(int i = 1; i < maxlevel; i++) {
+			delete dirpyrLablo[i];
+		}
+
 		idirpyr(dirpyrLablo[0], dst, 0, rangefn_L, nrwt_l, nrwt_ab, pitch, scale, dnparams.luma, dnparams.chroma/*, Lcurve, abcurve*/ );
-		
-		
+
+		// freeing the last bunch of memory
+		delete dirpyrLablo[0];
+
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		
@@ -271,16 +278,6 @@ namespace rtengine {
 				}
 		}
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
-		for(int i = 0; i < maxlevel; i++)
-		{
-			delete dirpyrLablo[i];
-		}
-		
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	};
 	
 	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, \

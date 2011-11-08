@@ -102,7 +102,7 @@ class RawImageSource : public ImageSource {
         double* cache;
         int threshold;
 
-        float** rawData;  // holds preprocessed pixel values, data[i][j] corresponds to the ith row and jth column
+        float** rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
         float** green; 
@@ -134,15 +134,17 @@ class RawImageSource : public ImageSource {
         int         load        (Glib::ustring fname, bool batch = false);
         void        preprocess  (const RAWParams &raw);
         void        demosaic    (const RAWParams &raw);
-        void        HLRecovery_Global  (HRecParams hrp);
-		void 		refinement_lassus ();
+        void        flushRawData      ();
+        void        flushRGB          ();
+        void        HLRecovery_Global (HRecParams hrp);
+        void        refinement_lassus ();
 
-		bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
+        bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
         void        copyOriginalPixels(const RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile  );
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
         void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack
-		
+
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
@@ -151,7 +153,7 @@ class RawImageSource : public ImageSource {
         double      getDefGain  () { return defGain; }
 
         double      getGamma    () { return CurveFactory::sRGBGamma; }
-       
+
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 

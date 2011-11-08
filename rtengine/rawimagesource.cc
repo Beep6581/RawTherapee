@@ -1132,6 +1132,32 @@ void RawImageSource::demosaic(const RAWParams &raw)
     }
 }
 
+void RawImageSource::flushRawData() {
+    if(cache) {
+        delete [] cache;
+        cache = 0;
+    }
+    if (rawData) {
+        freeArray<float>(rawData, H);
+        rawData = 0;
+    }
+}
+
+void RawImageSource::flushRGB() {
+    if (green) {
+        freeArray<float>(green, H);
+        green = 0;
+    }
+    if (red) {
+        freeArray<float>(red, H);
+        red = 0;
+    }
+    if (blue) {
+        freeArray<float>(blue, H);
+        blue = 0;
+    }
+}
+
 void RawImageSource::HLRecovery_Global(HRecParams hrp )
 {
 	//color propagation highlight recovery 

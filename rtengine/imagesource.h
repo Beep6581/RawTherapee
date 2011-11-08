@@ -59,7 +59,7 @@ class ImageSource : public InitialImage {
         int references;
 
     protected:
-		cmsHPROFILE embProfile;
+        cmsHPROFILE embProfile;
         Glib::ustring fileName;
         ImageData* idata;
 
@@ -70,9 +70,11 @@ class ImageSource : public InitialImage {
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
         virtual void        preprocess  (const RAWParams &raw){};
         virtual void        demosaic    (const RAWParams &raw){};
+        virtual void        flushRawData       (){};
+        virtual void        flushRGB           (){};
         virtual void        HLRecovery_Global  (HRecParams hrp){};
-	    virtual void        HLRecovery_inpaint (float** red, float** green, float** blue){};
-        
+        virtual void        HLRecovery_inpaint (float** red, float** green, float** blue){};
+
         virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
@@ -81,9 +83,9 @@ class ImageSource : public InitialImage {
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;
 
         virtual double      getDefGain  () { return 1.0; }
-        
+
         virtual double      getGamma    () { return 0.0; }
-        
+
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
 
@@ -96,7 +98,7 @@ class ImageSource : public InitialImage {
         virtual void        getAutoExpHistogram (LUTu & histogram, int& histcompr)=0;
         virtual void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) { 
             histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear(); // only some sources will supply this
-        }  
+        }
 
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }
