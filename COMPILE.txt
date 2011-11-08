@@ -157,17 +157,6 @@ Windows
 			  cd libtiff
 			  make install
 
-			libiptcdata:
-			- download:     http://libiptcdata.sourceforge.net/
-			- how to build:
-			  ./configure --prefix=/mingw
-
-			  Edit the "Makefile" file from the root dir of libiptcdata, and search for "DIST_SUBDIRS ="
-			  and "SUBDIRS =". You should only find one line for each search. From those lines, remove "iptc", then
-
-			  make
-			  make install
-
 			lcms:
 			- download lcm v1.x for RT3.0, v2.x for RT3.1 and upper: http://sourceforge.net/projects/lcms/files/
 			- how to build (suitable for both version):
@@ -175,14 +164,19 @@ Windows
 			  make
 			  make install
 
+            exiv2
+            - download exiv2 from http://www.exiv2.org/
+            - how to build
+              ./configure --prefix=/mingw --with-zlib=/mingw  --disable-visibility --disable-nls --without-libiconv-prefix
+			  make
+			  make install
+              (libgcc_s_sjlj-1.dll provided with gtkmm (36K) doesn't supports __chkstk, so while compiling RT there is a link error: the one with mingw (88K) is OK)
 
 			IMPORTANT:
-			   Make sure that the lcms.pc and libiptcdata.pc files located in the pkgconfig dir has the first
+			   Make sure that the lcms.pc files located in the pkgconfig dir has the first
 			   line like this : prefix=/mingw
 
 			If everything is well installed, you should see the following lines when running the cmake command (see "Building RT" below) :
-					-- checking for module 'libiptcdata'
-					--   found libiptcdata, version 1.0.4
 					-- checking for module 'lcms<=1.99'
 					--   found lcms, version 1.19
 					-- Found JPEG: C:/mingw/lib/libjpeg.dll.a
