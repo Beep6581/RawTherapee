@@ -306,6 +306,9 @@ void ImageMetaData::setIPTCData( const rtengine::MetadataList &meta )
     	IPTCMeta &metaTag = it->second;
     	//IPTCMeta &metaTag = IPTCMeta::IPTCtags[key];
 
+    	if( metaTag.readOnly )
+    		continue;
+
     	Glib::ustring Exiv2Key = metaTag.getXmpKey();
     	Exiv2::XmpData::iterator xIter=xmpData.findKey( Exiv2::XmpKey( Exiv2Key ) );
     	if( iter->second.empty() || iter->second[0].empty() ){ // delete key

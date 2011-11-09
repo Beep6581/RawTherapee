@@ -620,6 +620,8 @@ PartialPasteIPTCDlg::PartialPasteIPTCDlg( const rtengine::MetadataList &v)
     for( rtengine::MetadataList::const_iterator iter = iptc.begin(); iter != iptc.end(); iter++,row++){
     	rtengine::IPTCMeta  meta = rtengine::IPTCMeta::IPTCtags[ iter->first ];
 
+    	if( meta.readOnly )
+    		continue;
     	Gtk::CheckButton *descr = Gtk::manage( new Gtk::CheckButton (M(meta.guiName)) );
     	chk[ iter->first ] = descr;
     	descr->set_tooltip_text (M(meta.description));
