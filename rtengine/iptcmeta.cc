@@ -201,11 +201,16 @@ void IPTCMeta::initIPTCMeta()
 
     // readonly
     IPTCtags[kIPTCDate]           = IPTCMeta(kIPTCDate,     "Date Created" ,"The Date the image was taken IIM 2:55");
+    IPTCtags[kIPTCDate].readOnly  = true;
     IPTCtags[kIPTCGUID]           = IPTCMeta(kIPTCGUID,"Image GUID","Globally unique identifier for this digital image");
+    IPTCtags[kIPTCGUID].readOnly  = true;
     IPTCtags[kIPTCMaxHeight]      = IPTCMeta(kIPTCMaxHeight,"Max Avail Height","The maximum available height in pixels of the original photo from which this photo has been derived by downsizing.");
+    IPTCtags[kIPTCMaxHeight].readOnly = true;
     IPTCtags[kIPTCMaxWidth]       = IPTCMeta(kIPTCMaxWidth,"Max Avail Width","The maximum available width in pixels of the original photo from which this photo has been derived by downsizing.");
+    IPTCtags[kIPTCMaxWidth].readOnly = true;
     // PLUS versione is 1.2.0
     IPTCtags[kIPTCPlusVersion]    = IPTCMeta(kIPTCPlusVersion,"PLUS Version","The version number of the PLUS standards in place at the time of the transaction");
+    IPTCtags[kIPTCPlusVersion].readOnly = true;
 
     /* Scene codes: http://cv.iptc.org/newscodes/scene/ */
     IPTCScene["010100"] = "headshot:a head only view of a person (or animal/s) or persons as in a montage";
