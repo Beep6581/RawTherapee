@@ -62,9 +62,9 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkSource, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkNumber, chgList ) );
 
-    wdgt.push_back( new XRTEntryMultivalue( iptc, row++, kIPTCKeywords, chgList ) );
+    wdgt.push_back( new XRTEntryMultivalue( iptc, row++, kIPTCKeywords, chgList ) );row++;
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCCategory, rtengine::IPTCMeta::IPTCSubject, chgList) );
-    wdgt.push_back( new XRTEntryMultivalue( iptc, row++, kIPTCSuppCateg, chgList ) );
+    wdgt.push_back( new XRTEntryMultivalue( iptc, row++, kIPTCSuppCateg, chgList ) );row++;
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCGenre, rtengine::IPTCMeta::IPTCGenre, chgList) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCScene, rtengine::IPTCMeta::IPTCScene, chgList) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCSubjCode, rtengine::IPTCMeta::IPTCSubject, chgList) );
