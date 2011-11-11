@@ -112,95 +112,15 @@ public:
 
 class IPTCPanel : public Gtk::VBox, public ToolPanel {
 
-    private: 
+    private:
+	    const rtengine::ImageMetaData* idata;
         rtengine::MetadataList chgList;
         
-/*
-        Gtk::TextView*  captionView;
-        Glib::RefPtr<Gtk::TextBuffer> captionText;
-        Gtk::Entry*     captionWriter;
-        Gtk::Entry*     headline;
-        Gtk::Entry*     instructions;
-        Gtk::Entry*     usage;
-        Gtk::ComboBoxEntryText* keyword;
-        Gtk::ListViewText*  keywords;
-
-        Gtk::ComboBoxEntryText* category;
-        Gtk::ComboBoxEntryText* suppCategory;
-		Gtk::ComboBoxEntryText* genre;
-		Gtk::ComboBoxEntryText* scene;
-		Gtk::ComboBoxEntryText* subjectCode;
-        Gtk::ListViewText*      suppCategories;
-        Gtk::Entry*     eventPhoto;
-        Gtk::Entry*     person;
-        Gtk::Entry*     modelAge;
-        Gtk::Entry*     modelInfo;
-
-        Gtk::Button*    addKW;
-        Gtk::Button*    delKW;
-        Gtk::Button*    addSC;
-        Gtk::Button*    delSC;
-
-        Gtk::Entry*     author;
-        Gtk::Entry*     authorPos;
-        Gtk::Entry*     creatorCity;
-        Gtk::Entry*     creatorCountry;
-        Gtk::Entry*     creatorAddr;
-        Gtk::Entry*     creatorPCode;
-        Gtk::Entry*     creatorRegion;
-        Gtk::Entry*     creatorEmail;
-        Gtk::Entry*     creatorTel;
-        Gtk::Entry*     creatorUrl;
-        Gtk::Entry*     credit;
-        Gtk::Entry*     source;
-        Gtk::Entry*     copyright;
-        Gtk::Entry*     rightsOwner;
-        Gtk::Entry*     imageCreator;
-        Gtk::Entry*     licensor;
-        Gtk::Entry*     imageSupplier;
-        Gtk::Entry*     guidSupplier;
-        Gtk::Entry*     minorDisclosure;
-        Gtk::Entry*     modeReleaseID;
-        Gtk::ComboBoxEntryText* modeleReleaseStatus;
-        Gtk::Entry*     propReleaseID;
-        Gtk::ComboBoxEntryText* propReleaseStatus;
-        Gtk::Entry*     registryID;
-        Gtk::Entry*     registrOrgID;
-		Gtk::Entry*     location;
-        Gtk::Entry*     city;
-        Gtk::Entry*     province;
-        Gtk::Entry*     country;
-		Gtk::ComboBoxEntryText* countryCode;
-		Gtk::Entry*     locationCity;
-		Gtk::ComboBoxEntryText* locationCode;
-		Gtk::Entry*     locationCountry;
-		Gtk::Entry*     locationState;
-		Gtk::Entry*     locationSubloc;
-		Gtk::ComboBoxEntryText* locationRegion;
-		Gtk::Entry*     locCreateCity;
-		Gtk::ComboBoxEntryText* locCreateCode;
-		Gtk::Entry*     locCreateCountry;
-		Gtk::Entry*     locCreateState;
-		Gtk::Entry*     locCreateSubloc;
-		Gtk::ComboBoxEntryText* locCreateRegion;
-		Gtk::Entry*     artworkRights;
-		Gtk::Entry*     artworkCreator;
-		Gtk::Entry*     artworkDate;
-		Gtk::Entry*     artworkSource;
-		Gtk::Entry*     artworkNumber;
-		Gtk::Entry*     artworkTitle;
-        Gtk::Entry*     title;
-        Gtk::Label*     dateCreated;
-        Gtk::Label*     imageGuid;
-        Gtk::Label*     imageHeight;
-        Gtk::Label*     imageWidth;
-        Gtk::Entry*     transReference;
-		Gtk::Entry*     urgency;
-*/
         std::vector< XRTWidget* > wdgt;
 
         Gtk::Button*    reset;
-        Gtk::Button*    file;
+        Gtk::Button*    fileOpen;
+        Gtk::Button*    fileSave;
         Gtk::Button*    copy;
         Gtk::Button*    paste;
 
@@ -226,7 +146,8 @@ class IPTCPanel : public Gtk::VBox, public ToolPanel {
         void delSuppCategory ();
         
         void resetClicked   ();
-        void fileClicked    ();
+        void fileOpenClicked();
+        void fileSaveClicked();
         void copyClicked    ();
         void pasteClicked   ();
 };
