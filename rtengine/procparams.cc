@@ -774,9 +774,13 @@ int ProcParams::loadParams( Glib::ustring fname )
     fread( buffer, 1, filesize, f);
     fclose(f);
     std::string xmpPacket(buffer,buffer+filesize);
-
-    if (0 != Exiv2::XmpParser::decode(xmpData,xmpPacket) ) {
-        return 1;
+    try{
+		if (0 != Exiv2::XmpParser::decode(xmpData,xmpPacket) ) {
+			return 1;
+		}
+    }catch(Exiv2::Error &e){
+    	printf("Exception in parser: %s\n", e.what());
+    	return 2;
     }
     std::string key(Glib::ustring::compose("Xmp.rt.%1[1]/",kXmpProcessing));
     loadFromXMP( xmpData, key );
