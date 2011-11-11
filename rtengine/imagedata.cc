@@ -235,9 +235,11 @@ int ImageMetaData::initRTXMP( )
 
     // write empty processing list
     std::string baseKey(Glib::ustring::compose("Xmp.rt.%1",rtengine::kXmpProcessing));
-    Exiv2::XmpTextValue tv("");
-    tv.setXmpArrayType(Exiv2::XmpValue::xaBag);
-    xmpData.add(Exiv2::XmpKey(baseKey), &tv);
+    if( xmpData.findKey(Exiv2::XmpKey(baseKey )) == xmpData.end() ){
+		Exiv2::XmpTextValue tv("");
+		tv.setXmpArrayType(Exiv2::XmpValue::xaBag);
+		xmpData.add(Exiv2::XmpKey(baseKey), &tv);
+    }
     return 0;
 }
 
@@ -504,26 +506,30 @@ std::string ImageMetaData::getCamera()
       { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
         "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
         "SAMSUNG", "Mamiya", "MOTOROLA" };
-    for (int i = 0; i < sizeof corp / sizeof *corp; i++)
-		if (make.find(corp[i]) != std::string::npos) { /* Simplify company names */
-			make = corp[i];
-			break;
+    if( !make.empty()){
+		for (int i = 0; i < sizeof corp / sizeof *corp; i++)
+			if (make.find(corp[i]) != std::string::npos) { /* Simplify company names */
+				make = corp[i];
+				break;
+			}
+		make.erase(make.find_last_not_of(' ') + 1);
+		std::size_t i = 0;
+		if (make.find("KODAK") != std::string::npos) {
+			if ((i = model.find(" DIGITAL CAMERA")) != std::string::npos ||
+				(i = model.find(" Digital Camera")) != std::string::npos ||
+				(i = model.find("FILE VERSION")))
+				model.resize(i);
 		}
-    make.erase(make.find_last_not_of(' ') + 1);
-	std::size_t i = 0;
-	if (make.find("KODAK") != std::string::npos) {
-		if ((i = model.find(" DIGITAL CAMERA")) != std::string::npos ||
-			(i = model.find(" Digital Camera")) != std::string::npos ||
-			(i = model.find("FILE VERSION")))
-			model.resize(i);
-	}
-	model.erase(model.find_last_not_of(' ') + 1);
+    }
+	if( !model.empty() ){
+		model.erase(model.find_last_not_of(' ') + 1);
 
-	if (!strncasecmp(model.c_str(), make.c_str(), make.size()))
-		if (model.at(make.size()) == ' ')
-			model.erase(0, make.size() + 1);
-	if (model.find("Digital Camera ") != std::string::npos)
-		model.erase(0, 15);
+		if (!strncasecmp(model.c_str(), make.c_str(), make.size()))
+			if (model.at(make.size()) == ' ')
+				model.erase(0, make.size() + 1);
+		if (model.find("Digital Camera ") != std::string::npos)
+			model.erase(0, 15);
+	}
 
 	return make + " " + model;
 }
@@ -621,9 +627,15 @@ int ImageMetaData::loadXMP(  )
     fclose(f);
     std::string xmpPacket(buffer,buffer+filesize);
     delete [] buffer;
-    if (0 != Exiv2::XmpParser::decode(xmpData,xmpPacket) ) {
-        return 2;
+    try{
+		if (0 != Exiv2::XmpParser::decode(xmpData,xmpPacket) ) {
+			return 2;
+		}
+    }catch(Exiv2::Error &e){
+    	printf("Exception in parser: %s\n", e.what());
+    	return 2;
     }
+
     return 0;
 }
 
@@ -659,9 +671,26 @@ int ImageMetaData::saveXMP( ) const
 
 int ImageMetaData::resync( )
 {
-	if( !readMetadataFromImage() )
-		return saveXMP( );
-	return -1;
+	Glib::Mutex::Lock lock(* exiv2Mutex );
+
+	Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open( fname );
+	image->readMetadata();
+	Exiv2::XmpData xmp = image->xmpData();
+
+	rtengine::MetadataList iptcc;
+	for( IPTCMeta::IPTCtagsList_t::iterator iter = IPTCMeta::IPTCtags.begin(); iter != IPTCMeta::IPTCtags.end(); iter++ ){
+		Glib::ustring exiv2Key = iter->second.getXmpKey();
+		Exiv2::XmpData::const_iterator xIter = xmp.findKey(Exiv2::XmpKey(exiv2Key));
+		if( xIter != xmp.end()){
+			std::vector< Glib::ustring> v;
+			if( readIPTCFromXmp( xmp, iter->second, v ) )
+				iptcc[iter->first]= v;
+		}else
+			iptcc[iter->first]= std::vector< Glib::ustring>(); // delete
+	}
+	setIPTCData( iptcc );
+	Exiv2::copyIptcToXmp(image->iptcData(), xmpData, 0);
+	return saveXMP( );
 }
 
 /* Create a new snapshot with the given name and save inside it the procparams
