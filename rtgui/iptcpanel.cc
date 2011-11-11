@@ -19,6 +19,7 @@
 #include <iptcpanel.h>
 #include <clipboard.h>
 #include <rtimage.h>
+#include <partialpastedlg.h>
 
 extern Glib::ustring argv0;
 
@@ -126,30 +127,36 @@ IPTCPanel::IPTCPanel () {
     
     reset = Gtk::manage( new Gtk::Button (M("IPTCPANEL_RESET")) );
     reset->set_image (*Gtk::manage(new RTImage ("gtk-undo-ltr.png", "gtk-undo-rtl.png")));
-    bbox->pack_start (*reset);
+    bbox->pack_start (*reset, Gtk::PACK_SHRINK, 0);
 
-    file = Gtk::manage( new Gtk::Button (M("IPTCPANEL_EMBEDDED")) );
-    file->set_image (*Gtk::manage(new RTImage ("gtk-open.png")));
-    bbox->pack_start (*file);
+    fileOpen = Gtk::manage( new Gtk::Button () );
+    fileOpen->set_image (*Gtk::manage(new RTImage ("gtk-open.png")));
+
+    fileSave = Gtk::manage( new Gtk::Button () );
+    fileSave->set_image (*Gtk::manage(new RTImage ("gtk-save-large.png")));
     
     copy = Gtk::manage( new Gtk::Button () );
     copy->set_image (*Gtk::manage(new RTImage ("edit-copy.png")));
-    bbox->pack_start (*copy, Gtk::PACK_SHRINK, 0);
 
     paste = Gtk::manage( new Gtk::Button () );
     paste->set_image (*Gtk::manage(new RTImage ("edit-paste.png")));
-    bbox->pack_start (*paste, Gtk::PACK_SHRINK, 0);
+    bbox->pack_end (*paste, Gtk::PACK_SHRINK, 0);
+    bbox->pack_end (*copy, Gtk::PACK_SHRINK, 0);
+    bbox->pack_end (*fileSave, Gtk::PACK_SHRINK, 0);
+    bbox->pack_end (*fileOpen, Gtk::PACK_SHRINK, 0);
     
     pack_end (*bbox, Gtk::PACK_SHRINK, 2);
 
     Gtk::Tooltips* toolTip = Gtk::manage( new Gtk::Tooltips () );
     toolTip->set_tip (*reset, M("IPTCPANEL_RESETHINT"));
-    toolTip->set_tip (*file, M("IPTCPANEL_EMBEDDEDHINT"));
+    toolTip->set_tip (*fileOpen, M("IPTCPANEL_OPENHINT"));
+    toolTip->set_tip (*fileSave, M("IPTCPANEL_SAVEHINT"));
     toolTip->set_tip (*copy, M("IPTCPANEL_COPYHINT"));
     toolTip->set_tip (*paste, M("IPTCPANEL_PASTEHINT"));
     
     reset->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::resetClicked) );
-    file->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::fileClicked) );
+    fileOpen->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::fileOpenClicked) );
+    fileSave->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::fileSaveClicked) );
     copy->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::copyClicked) );
     paste->signal_clicked().connect( sigc::mem_fun(*this, &IPTCPanel::pasteClicked) );
 
@@ -171,7 +178,8 @@ void IPTCPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
 void IPTCPanel::setImageData (const ImageMetaData* id) {
     
 	if( id ){
-		chgList = id->getIPTCData();
+		idata = id;
+		chgList = idata->getIPTCData();
 		applyChangeList();
 	}
 }
@@ -204,22 +212,93 @@ void IPTCPanel::updateChangeList ()
 
 }
 
-void IPTCPanel::resetClicked () {
+void IPTCPanel::resetClicked ()
+{
+    if(idata){
+    	disableListener ();
+		chgList = idata->getIPTCData();
+		applyChangeList();
+		enableListener ();
+		notifyListener ();
+    }
+}
 
-    disableListener ();
-    // TODO changeList = defChangeList; ... reset metadata to "default" what does it mean?
-    applyChangeList ();
+void IPTCPanel::fileOpenClicked ()
+{
+
+    Gtk::FileChooserDialog dialog(M("IPTCPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
+    if (options.multiUser)
+       dialog.set_current_folder (Options::rtdir + "/iptc" );
+    else
+       dialog.set_current_folder (argv0 + "/iptc" + options.profilePath);
+
+    //Add response buttons the the dialog:
+    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::StockID("gtk-open"), Gtk::RESPONSE_OK);
+
+    //Add filters, so that only certain file types can be selected:
+
+    Gtk::FileFilter filter_pp;
+    filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
+    filter_pp.add_pattern("*"+paramFileExtension);
+    dialog.add_filter(filter_pp);
+
+    int result = dialog.run();
+
+    if (result==Gtk::RESPONSE_OK)
+    {
+    	disableListener ();
+        Glib::ustring filename( dialog.get_filename() );
+        rtengine::ImageMetaData *id = rtengine::ImageMetaData::fromFile("",filename,"",false );
+        if( id ){
+        	rtengine::MetadataList loaded = id->getIPTCData();
+        	for( rtengine::MetadataList::iterator iter = loaded.begin(); iter != loaded.end();iter++)
+       			chgList[ iter->first ] = iter->second;
+        	delete id;
+        }
+        applyChangeList ();
+    }
+
     enableListener ();
     notifyListener ();
 }
 
-void IPTCPanel::fileClicked () {
+void IPTCPanel::fileSaveClicked ()
+{
+	updateChangeList ();
 
-    disableListener ();
-    // changeList =  ... reset metadata to those embedded in file
-    applyChangeList ();
-    enableListener ();
-    notifyListener ();
+    Gtk::FileChooserDialog dialog(M("IPTCPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    if (options.multiUser)
+       dialog.set_current_folder (Options::rtdir + "/iptc" );
+    else
+       dialog.set_current_folder (argv0 + "/iptc" + options.profilePath);
+
+    //Add response buttons the the dialog:
+    dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
+
+    //Add filters, so that only certain file types can be selected:
+    Gtk::FileFilter filter_pp;
+    filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
+    filter_pp.add_pattern("*"+paramFileExtension);
+    dialog.add_filter(filter_pp);
+
+    int result = dialog.run();
+
+    if (result==Gtk::RESPONSE_OK)
+    {
+    	PartialPasteIPTCDlg selectDlg(chgList);
+        if ( selectDlg.run ()) {
+        	rtengine::MetadataList iptc = selectDlg.getIPTC();
+        	Glib::ustring filename( dialog.get_filename() );
+        	rtengine::ImageMetaData *id = new rtengine::ImageMetaData("",filename,"");
+        	if( id ){
+				id->setIPTCData( iptc );
+				id->saveXMP();
+				delete id;
+        	}
+        }
+    }
 }
 
 void IPTCPanel::copyClicked () {
