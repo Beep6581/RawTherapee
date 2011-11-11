@@ -373,48 +373,14 @@ ICMPANEL_OUTPUTPROFILE;Output Profile
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;Working Profile
 IMAGEAREA_DETAILVIEW;Detail view
-IPTCPANEL_AUTHOR;Author
-IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
-IPTCPANEL_AUTHORSPOSITION;Author's position
-IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_CAPTION;Caption
-IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Caption Writer
-IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-IPTCPANEL_CATEGORY;Category
-IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-IPTCPANEL_CITY;City
-IPTCPANEL_CITYHINT;City of image origin (City).
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COUNTRY;Country
-IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Credit
-IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-IPTCPANEL_DATECREATED;Date Created
-IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
-IPTCPANEL_EMBEDDED;Embedded
-IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_HEADLINE;Headline
-IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
-IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_LOADDLGLABEL;Load IPTC settings
+IPTCPANEL_OPENHINT;Load IPTC settings from file
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_RESETHINT;Reset to previous IPTC
 IPTCPANEL_RESET;Reset
-IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-IPTCPANEL_SOURCE;Source
-IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-IPTCPANEL_TITLE;Title
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_SAVEDLGLABEL;Save IPTC settings
+IPTCPANEL_SAVEHINT;Save IPTC settings to file
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_PREFERENCES;Preferences
