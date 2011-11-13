@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=RawTherapee
+GenericName=RAW image editor
+GenericName[cs]=Editor RAW obrázků
+GenericName[fr]=Éditeur d'images RAW
+Comment=The RAW converter and digital photo processing software. 
+Comment[cs]=Program pro konverzi a zpracování digitálních RAW fotografií.
+Comment[fr]=Logiciel de conversion et de traitement de photos numériques de format RAW (but de capteur).
+Exec=${BINDIR}/rawtherapee
+Icon=rawtherapee.png
+Terminal=false
+Categories=Graphics;Photography;GTK;
+
+MimeType=image/jpeg;image/png;image/tiff;image/x-adobe-dng;image/x-canon-crw;image/x-canon-cr2;image/x-fuji-raf;image/x-kodak-dcr;image/x-kodak-kdc;image/x-kodak-k25;image/x-minolta-mrw;image/x-nikon-nef;image/x-olympus-orf;image/x-panasonic-raw;image/x-pentax-pef;image/x-sony-arw;image/x-sony-srf;image/x-sony-sr2;
