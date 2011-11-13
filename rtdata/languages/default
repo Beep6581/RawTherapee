@@ -713,7 +713,6 @@ SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
-SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection <b>C</b>
