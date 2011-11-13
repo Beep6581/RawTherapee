@@ -70,6 +70,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     bool needLuma;
     bool rawMode;
     bool showMode;
+    bool barDisplayed;
 
     Gtk::VBox* parent;
 
@@ -158,12 +159,27 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
     Gtk::ToggleButton* showRAW;
     Gtk::ToggleButton* showBAR;
     
+    Gtk::Image *redImage;
+    Gtk::Image *greenImage;
+    Gtk::Image *blueImage;
+    Gtk::Image *valueImage;
+    Gtk::Image *rawImage;
+    Gtk::Image *barImage;
+    Gtk::Image *redImage_g;
+    Gtk::Image *greenImage_g;
+    Gtk::Image *blueImage_g;
+    Gtk::Image *valueImage_g;
+    Gtk::Image *rawImage_g;
+    Gtk::Image *barImage_g;
+
+
     sigc::connection rconn;
     void setHistInvalid ();
     
   public:
 
     HistogramPanel ();
+    ~HistogramPanel ();
 
     void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) { 
         histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
@@ -176,6 +192,12 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
     void setHistRGBInvalid ();
 
     void reorder (Gtk::AlignmentEnum align);
+    void red_toggled ();
+    void green_toggled ();
+    void blue_toggled ();
+    void value_toggled ();
+    void raw_toggled ();
+    void bar_toggled ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 };

@@ -8,7 +8,7 @@ Cmake is actually used to create the Makefiles (scripts that handle the build pr
 It is designed to find all necessary compilation flags for your specific machine, but everything can be overriden.
 
 RT's build mechanism will generate a build information file, named "AboutThisBuild.txt", and require some parameters that can't be set by Cmake, so it's
-done in our build script, and may be overriden at your own will. The build process also enable some sort of cross compiling, since you can only choose
+done in our build script, and may be overridden at your own will. The build process also enable some sort of cross compiling, since you can only choose
 a specific processor variation of the same type (e.g. core2, athlon64, which are both an x86 architecture). Real cross compiling (e.g. building the windows
 version on a linux platform) has not been tested.
 

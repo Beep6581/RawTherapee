@@ -15,7 +15,7 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.47 r22583"
-   sodipodi:docname="beforeafter.svg"
+   sodipodi:docname="histValue.svg"
    inkscape:export-filename="/home/philippe/devel/rawtherapee/icons/NewIcons/beforeafter.png"
    inkscape:export-xdpi="1.98"
    inkscape:export-ydpi="1.98"
@@ -433,24 +433,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3641"
-       id="linearGradient7354"
-       x1="-1.8872025"
-       y1="-163.78828"
-       x2="323.8822"
-       y2="-163.78828"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-294.13778,123.54099)" />
-    <filter
-       inkscape:collect="always"
-       id="filter7698">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="5.6398262"
-         id="feGaussianBlur7700" />
-    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -459,15 +441,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.45544553"
-     inkscape:cx="-259.32616"
-     inkscape:cy="1221.5756"
+     inkscape:zoom="0.403"
+     inkscape:cx="70.719603"
+     inkscape:cy="500"
      inkscape:document-units="px"
      inkscape:current-layer="g4060"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1032"
+     inkscape:window-width="1280"
+     inkscape:window-height="702"
      inkscape:window-x="-1"
      inkscape:window-y="0"
      showgrid="true"
@@ -497,35 +479,15 @@
       <g
          id="g4060"
          transform="matrix(1.5074827,0,0,1.5074827,-9.4212231,-17.89429)">
-        <path
-           style="opacity:0.25;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           d="m -48.396035,-86.729934 -186.444925,0 c -0.62695,0 -1.14015,0.5132 -1.14015,1.140145 l 0,390.468829 c 0,0.62694 0.5132,1.14014 1.14015,1.14014 l 309.974535,0 c 0.626946,0 1.119416,-0.5132 1.119416,-1.14014 l 0,-119.42509 -123.363771,0 c -0.360289,0 -0.677016,-0.13804 -0.912117,-0.37314 -0.2351,-0.2351 -0.373138,-0.57255 -0.373138,-0.93284 l 0,-270.877904 z"
-           id="path4532" />
         <rect
            style="opacity:0.69999999999999996;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           id="rect2886-6-4-4-1-3"
-           width="312.2338"
-           height="392.74448"
-           x="-16.208817"
-           y="-236.61954"
-           ry="1.1316661" />
-        <path
-           style="opacity:0.8;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           d="m -47.108141,-265.9524 c -0.720621,0 -1.30358,0.58299 -1.30358,1.30358 l 0,448.79813 c -6.9e-5,0.72058 0.582959,1.30358 1.30358,1.30358 l 374.025601,0 c 0.72055,0 1.30358,-0.583 1.30358,-1.30358 l 0,-448.79813 c 0,-0.72059 -0.58303,-1.30358 -1.30358,-1.30358 l -374.025601,0 z m 32.039551,29.33055 309.96687,0 c 0.62694,0 1.12026,0.51369 1.12026,1.14063 l 0,390.4833 c 0,0.62694 -0.49332,1.12026 -1.12026,1.12026 l -309.96687,0 c -0.626943,0 -1.140633,-0.49332 -1.140633,-1.12026 l 0,-390.4833 c 0,-0.62694 0.51369,-1.14063 1.140633,-1.14063 z"
-           id="rect2827-7-3" />
-        <path
-           style="opacity:0.8;fill:#2a7fff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-           d="m -48.396035,-116.06278 -218.472655,0 c -0.72062,0 -1.30599,0.5854 -1.30599,1.30599 l 0,448.80283 c -7e-5,0.72058 0.58537,1.30598 1.30599,1.30598 l 374.03,0 c 0.72055,0 1.28525,-0.5854 1.28525,-1.30598 l 0,-148.59209 -32.193569,0 0,119.44582 c 0,0.62694 -0.49247,1.11941 -1.119416,1.11941 l -309.974535,0 c -0.62694,0 -1.14015,-0.49247 -1.14015,-1.11941 l 0,-390.489559 c 0,-0.626945 0.51321,-1.140145 1.14015,-1.140145 l 186.444925,0 0,-29.332846 z"
-           id="path4557" />
-        <rect
-           style="opacity:0.40000000000000002;fill:url(#linearGradient7354);fill-opacity:1;fill-rule:nonzero;stroke:none;filter:url(#filter7698)"
-           id="rect2886-6-4-4-1-3-8"
-           width="312.2338"
-           height="392.74448"
-           x="-296.02496"
-           y="-236.61954"
-           ry="1.1316661"
-           transform="scale(-1,1)" />
+           id="rect3235"
+           width="577.763"
+           height="577.763"
+           x="-258.85831"
+           y="-254.18169"
+           rx="73.939911"
+           ry="73.939911" />
       </g>
     </g>
   </g>

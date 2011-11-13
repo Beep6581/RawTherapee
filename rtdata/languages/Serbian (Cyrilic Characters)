@@ -1,4 +1,3 @@
-
 #00 Serbian (Cyrilic)
 #01 by gpopac 2010-11-16
 ABOUT_TAB_BUILD;Издање
@@ -927,101 +926,95 @@ ZOOMPANEL_ZOOM100;Повећава преглед на 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозора <b>Ф</b>
 ZOOMPANEL_ZOOMIN;Увећава приказ слике <b>+</b>
 ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
+FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
+FILEBROWSER_EXEC_CPB;Изгради почетни профил
+FILEBROWSER_POPUPCOLORLABEL0;Ознака: Ништа
+FILEBROWSER_POPUPCOLORLABEL1;Ознака: Црвена
+FILEBROWSER_POPUPCOLORLABEL2;Ознака: Жута
+FILEBROWSER_POPUPCOLORLABEL3;Ознака: Зелена
+FILEBROWSER_POPUPCOLORLABEL4;Ознака: Плава
+FILEBROWSER_POPUPCOLORLABEL5;Ознака: Љубичаста
+FILEBROWSER_POPUPCOLORLABEL;Обојена ознака
+FILEBROWSER_POPUPFILEOPERATIONS;Датотека
+FILEBROWSER_POPUPPROFILEOPERATIONS;Профил
+FILEBROWSER_QUERYBUTTONHINT;Очисти поље за претрагу
+FILEBROWSER_QUERYHINT;Унесите део имена датотеке за претрагу n<b>Ctrl-f</b> поставља фокус (у Разгледачу датотека);n<b>Enter</b> претражује
+FILEBROWSER_QUERYLABEL; Тражи:
+FILEBROWSER_SHOWCOLORLABEL1HINT;Приказује слике означене црвеном <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Приказује слике означене жутом <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Приказујеслике означене зеленом <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Приказује слике означене плавом <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Приказује слике означене љубичастом <b>Alt-5</b>
+FILEBROWSER_SHOWEDITEDHINT;Приказује само измењене слике <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Приказује само неисмењене слике <b>6</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Приказује недавно сачуване слике  <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Приказује слике које нису скоро сачуване <b>Alt-6</b>
+FILEBROWSER_SHOWUNCOLORHINT;Приказује слике које нису означене бојом <b>Alt-`</b>
+HISTOGRAM_BUTTON_BAR;РГБ
+HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
+HISTORY_MSG_130;Аутоматска дисторзија
+HISTORY_MSG_131;Уклањање шума луминансе
+HISTORY_MSG_132;Уклањање шума боје
+HISTORY_MSG_133;Гама
+HISTORY_MSG_134;Гама позиција
+HISTORY_MSG_135;Гама слобода
+HISTORY_MSG_136;Гама нагиб
+HISTORY_MSG_137;Ниво црне зелена 1
+HISTORY_MSG_138;Ниво црне црвена 
+HISTORY_MSG_139;Ниво црне плава
+HISTORY_MSG_140;Ниво црне зелена 2
+HISTORY_MSG_141;Ниво црне обе зелене
+HISTORY_MSG_142;Оштрење ивица - бр. понављања
+HISTORY_MSG_143;Оштрење ивица - количина
+HISTORY_MSG_144;Микроконтраст - количина
+HISTORY_MSG_145;Микроконтраст - уједначеност
+HISTORY_MSG_146;Оштрење ивица
+HISTORY_MSG_147;Оштрење ивица - само луминанса
+HISTORY_MSG_148;Микроконтраст
+HISTORY_MSG_149;Микроконтраст - 3x3 матрица
+HISTORY_MSG_150;Уклањање артефакта/шума након расклапања мозаика
+MAIN_MSG_EMPTYFILENAME;Није одређено име датотеке!
+PARTIALPASTE_RAW_ALLENHANCE;Уклони шум након расклапања мозаика
+PARTIALPASTE_RAWEXPOS_BLACK;Ниво црне
+PARTIALPASTE_SHARPENEDGE;Ивице
+PARTIALPASTE_SHARPENMICRO;Микроконтраст
+PREFERENCES_CUSTPROFBUILD;Изградња произвољног почетног профила слике
+PREFERENCES_CUSTPROFBUILDHINT;Извршна датотека (или скрипта) која се позива када изграђујете нови почетни профил за слику.nПрихвата параметре из командне линије ради прављења .pp3 датотеке на основу неких правила:n[Путања до RAW/JPG] [Путања подразумеваног профила] [Бленда] [Експозиција у s] [Жижна дужина mm] [ИСО] [Објектив] [Фото-апарат]
+PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Прикажи алатке у једном реду
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Хистограм у левој површи
+PREFERENCES_LANGAUTODETECT;Сам откриј
+PREFERENCES_MENUGROUPFILEOPERATIONS;Групиши радње над датотекама
+PREFERENCES_MENUGROUPLABEL;Групиши обележавање
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Групиши радње са профилима
+PREFERENCES_MENUGROUPRANK;Групиши оцењивање
+PREFERENCES_MENUOPTIONS;Опције менија
+PREFERENCES_PANFACTORFRAME;Убрзање при померању платна
+PREFERENCES_PANFACTORLABEL;Фактор
+PREFERENCES_SHOWPROFILESELECTOR;Прикажи избор профила
+PREFERENCES_SLIMUI;Танки изглед
+PREFERENCES_SQUAREDETAILWINDOW;Коцкаст прозор са детаљима (брже)
+PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
+TP_EXPO_AFTER; Пре интерполације (пре превода у РГБ)
+P_GAMMA_CURV;гама
+TP_GAMMA_FREE;Гама слобода
+TP_GAMMA_SLOP;нагиб (линеарни)
+TP_HLREC_BLEND;Утапање
+TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
+TP_ICM_INPUTCAMERAICC;Фото-апарат или стандардни ИЦЦ
+TP_RAW_ALLENHANCE;Уклони артафакте/шум након расклапања
+TP_RAWEXPOS_BLACKONE;Ниво црне: Црвена
+TP_RAWEXPOS_BLACKS;Ниво црне
+TP_RAWEXPOS_BLACKTHREE;Ниво црне: Зелена 2
+TP_RAWEXPOS_BLACKTWO;Ниво црне: Плава
+TP_RAWEXPOS_BLACKZERO;Ниво црне: Зелена 1 (водећа)
+TP_RAWEXPOS_TWOGREEN;Обе зелене
+TP_SHARPENEDGE_AMOUNT;Количина
+TP_SHARPENEDGE_LABEL;Ивице
+TP_SHARPENEDGE_PASSES;Понављања
+TP_SHARPENEDGE_THREE;Само луминанса
+TP_SHARPENMICRO_AMOUNT;Количина
+TP_SHARPENMICRO_LABEL;Микроконттраст
+TP_SHARPENMICRO_MATRIX;3×3 матрица уместо 5×5
+TP_SHARPENMICRO_UNIFORMITY;Уједначеност
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
-!FILEBROWSER_EXEC_CPB;Run custom profile builder
-!FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
-!FILEBROWSER_POPUPCOLORLABEL;Color label
-!FILEBROWSER_POPUPFILEOPERATIONS;File Operations
-!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
-!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
-!FILEBROWSER_QUERYLABEL; Find:
-!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
-!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
-!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
-!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
-!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
-!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
-!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
-!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
-!HISTOGRAM_BUTTON_BAR;RGB
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTORY_MSG_130;Auto Distorion
-!HISTORY_MSG_131;Noise Reduction Luma
-!HISTORY_MSG_132;Noise Reduction Chroma
-!HISTORY_MSG_133;Gamma
-!HISTORY_MSG_134;Gamma Position
-!HISTORY_MSG_135;Gamma Free
-!HISTORY_MSG_136;Gamma Slope
-!HISTORY_MSG_137;Black level green 1
-!HISTORY_MSG_138;Black level red
-!HISTORY_MSG_139;Black level blue
-!HISTORY_MSG_140;Black level green 2
-!HISTORY_MSG_141;Black level green together
-!HISTORY_MSG_142;Edges sharpening - iterations
-!HISTORY_MSG_143;Edges sharpening - quantity
-!HISTORY_MSG_144;Microcontrast - quantity
-!HISTORY_MSG_145;Microcontrast - uniformity
-!HISTORY_MSG_146;Edges Sharpening
-!HISTORY_MSG_147;Edges sharpening - luminance only
-!HISTORY_MSG_148;Microcontrast
-!HISTORY_MSG_149;Microcontrast - 3x3 matrix
-!HISTORY_MSG_150;Post demosaic artifact/noise reduction
-!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
-!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
-!PARTIALPASTE_SHARPENEDGE;Edges
-!PARTIALPASTE_SHARPENMICRO;Microcontrast
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
-!PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_LANGAUTODETECT;Use OS language setting
-!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
-!PREFERENCES_MENUGROUPLABEL;Group Labeling
-!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
-!PREFERENCES_MENUGROUPRANK;Group Ranking
-!PREFERENCES_MENUOPTIONS;Menu Options
-!PREFERENCES_PANFACTORFRAME;Pan rate amplification
-!PREFERENCES_PANFACTORLABEL;Factor
-!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SLIMUI;Slim interface
-!PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
-!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
-!TP_GAMMA_CURV;gamma
-!TP_GAMMA_FREE;Free gamma
-!TP_GAMMA_SLOP;slope (linear)
-!TP_HLREC_BLEND;Blend
-!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
-!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
-!TP_RAWEXPOS_BLACKONE;Black Level: Red
-!TP_RAWEXPOS_BLACKS;Black Levels
-!TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
-!TP_RAWEXPOS_BLACKTWO;Black Level: Blue
-!TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
-!TP_RAWEXPOS_TWOGREEN;Two greens together
-!TP_SHARPENEDGE_AMOUNT;Quantity
-!TP_SHARPENEDGE_LABEL;Edges
-!TP_SHARPENEDGE_PASSES;Iterations
-!TP_SHARPENEDGE_THREE;Luminance only
-!TP_SHARPENMICRO_AMOUNT;Quantity
-!TP_SHARPENMICRO_LABEL;Microcontrast
-!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
-!TP_SHARPENMICRO_UNIFORMITY;Uniformity
