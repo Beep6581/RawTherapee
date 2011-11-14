@@ -20,8 +20,6 @@
 #define _ALIGNEDBUFFER_
 #include <stdint.h>
 
-#include <stdint.h>
-
 template <class T> class AlignedBuffer {
 
     private:

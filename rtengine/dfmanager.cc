@@ -29,7 +29,7 @@
 
 namespace rtengine{
 
-extern Settings* settings;
+extern const Settings* settings;
 
 // *********************** class dfInfo **************************************
 

@@ -26,7 +26,7 @@
 
 namespace rtengine {
 
-extern Settings* settings;
+extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent)
     : resizeCrop(NULL), transCrop(NULL), updating(false),
