@@ -524,7 +524,7 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
     return IMIO_SUCCESS;
 }
 
-int ImageIO::savePNG  (Glib::ustring fname, int compression, int bps) {
+int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
 
 	FILE *file = safe_g_fopen_WriteBinLock (fname);
 

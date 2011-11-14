@@ -38,7 +38,7 @@ namespace rtengine {
 #define CLIREF(x) LIM(x,-200000.0,200000.0) // avoid overflow : do not act directly on image[] or pix[]
 
 
-extern Settings* settings;
+extern const Settings* settings;
 
 void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
 

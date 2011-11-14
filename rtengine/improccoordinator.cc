@@ -26,7 +26,7 @@
 
 namespace rtengine {
 
-extern Settings* settings;
+extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
     : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
