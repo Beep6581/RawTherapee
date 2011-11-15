@@ -1,5 +1,5 @@
---- dcraw.c	2011-10-07 05:00:37.000000000 +0400
-+++ dcraw.cc	2011-11-06 15:18:04.953224088 +0400
+--- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Tue Nov 08 07:01:10 2011
++++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Sun Nov 13 17:58:08 2011
 @@ -1,3 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -297,10 +297,11 @@
      order = get2();
      hlen  = get4();
      if (get4() == 0x48454150)		/* "HEAP" */
+-      parse_ciff (save+hlen, len-hlen);
 +/*RT*/    {
 +/*RT*/      ciff_base = save+hlen;
 +/*RT*/      ciff_len = len-hlen;
-       parse_ciff (save+hlen, len-hlen);
++        parse_ciff (save+hlen, len-hlen);
 +/*RT*/    }
      if (parse_tiff (save+6)) apply_tiff();
      fseek (ifp, save+len, SEEK_SET);
@@ -474,6 +475,17 @@
      { "PENTAX *ist DL2", 0, 0,
  	{ 10504,-2438,-1189,-8603,16207,2531,-1022,863,12242 } },
      { "PENTAX *ist DL", 0, 0,
+@@ -6634,8 +6655,8 @@
+ 	{ 11095,-3157,-1324,-8377,15834,2720,-1108,947,11688 } },
+     { "PENTAX K20D", 0, 0,
+ 	{ 9427,-2714,-868,-7493,16092,1373,-2199,3264,7180 } },
+-    { "PENTAX K200D", 0, 0,
+-	{ 9186,-2678,-907,-8693,16517,2260,-1129,1094,8524 } },
++    { "PENTAX K200D", 0, 0,  /* RT */
++	{ 10962,-4428,-542,-5486,13023,2748,-569,842,8390 } },
+     { "PENTAX K2000", 0, 0,
+ 	{ 11057,-3604,-1155,-5152,13046,2329,-282,375,8104 } },
+     { "PENTAX K-m", 0, 0,
 @@ -6692,32 +6713,34 @@
  	{ 10909,-4295,-948,-1333,9306,2399,22,1738,4582 } },
      { "LEICA D-LUX 5", 143, 0,
