@@ -29,6 +29,7 @@
 
 #include <safekeyfile.h>
 #include <rawimage.h>
+#include "ppversion.h"
 #define APPVERSION VERSION
 
 namespace rtengine {
@@ -598,6 +599,7 @@ if (keyFile.has_group ("Version")) {
     if (keyFile.has_key ("Version", "AppVersion")) appVersion = keyFile.get_string  ("Version", "AppVersion");
     if (keyFile.has_key ("Version", "Version"))    ppVersion  = keyFile.get_integer ("Version", "Version");
 }
+//printf("ProcParams::load called ppVersion=%i\n",ppVersion);
 
 if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Rank"))        rank    = keyFile.get_integer ("General", "Rank");
@@ -606,7 +608,11 @@ if (keyFile.has_group ("General")) {
 }
 
 if (keyFile.has_group ("Exposure")) {    
-    if (keyFile.has_key ("Exposure", "Auto"))           toneCurve.autoexp       = keyFile.get_boolean ("Exposure", "Auto");
+	if (ppVersion<PPVERSION_AEXP)
+		toneCurve.autoexp = false; // prevent execution of autoexp when opening file created with earlier verions of autoexp algorithm
+	else
+		if (keyFile.has_key ("Exposure", "Auto"))           toneCurve.autoexp       = keyFile.get_boolean ("Exposure", "Auto");
+
     if (keyFile.has_key ("Exposure", "Clip"))           toneCurve.clip          = keyFile.get_double  ("Exposure", "Clip");
     if (keyFile.has_key ("Exposure", "Compensation"))   toneCurve.expcomp       = keyFile.get_double  ("Exposure", "Compensation");
     if (keyFile.has_key ("Exposure", "Brightness"))     toneCurve.brightness    = keyFile.get_integer ("Exposure", "Brightness");

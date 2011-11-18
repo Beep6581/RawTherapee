@@ -223,8 +223,12 @@ namespace rtengine {
         public:
             /** This member function is called when the auto exposure has been recomputed.
               * @param brightness is the new brightness value (in logarithmic scale)
-              * @param black is the new black level (measured in absolute pixel data) */
-            virtual void autoExpChanged (double brightness, int black) {}
+              * @param, bright is the new ...
+              * @param black is the new black level (measured in absolute pixel data)
+              * @param contrast is the new contrast values
+              * @param hlcompr is the new highlight recovery amount 
+              * #param hlcomprthresh is the new threshold for hlcompr*/
+            virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh) {}
     };
 
     /** This class represents a detailed part of the image (looking through a kind of window).

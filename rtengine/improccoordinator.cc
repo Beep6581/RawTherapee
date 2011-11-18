@@ -21,6 +21,7 @@
 #include <mytime.h>
 #include <refreshmap.h>
 #include <simpleprocess.h>
+#include "ppversion.h"
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
@@ -204,11 +205,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
-            LUTu aehist; int aehistcompr;
-            imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
-            if (aeListener)
-                aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.black);
+			LUTu aehist; int aehistcompr;
+			imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+			ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, 
+							params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+			if (aeListener)
+				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, \
+											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
         }
     }
 

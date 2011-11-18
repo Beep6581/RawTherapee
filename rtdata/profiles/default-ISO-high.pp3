@@ -1,7 +1,7 @@
 
 [Version]
-AppVersion=Dev-3.1m6.89
-Version=300
+AppVersion=4.0.5.7
+Version=301
 
 [General]
 Rank=0
@@ -9,15 +9,15 @@ ColorLabel=0
 InTrash=false
 
 [Exposure]
-Auto=false
-Clip=0.0002
+Auto=true
+Clip=0
 Compensation=0
-Brightness=10
+Brightness=0
 Contrast=20
-Saturation=0
+Saturation=5
 Black=0
-HighlightCompr=70
-HighlightComprThreshold=30
+HighlightCompr=0
+HighlightComprThreshold=33
 ShadowCompr=50
 Curve=0;
 
@@ -27,9 +27,9 @@ Green=0;100;0;
 Blue=0;0;100;
 
 [Luminance Curve]
-Brightness=-5
+Brightness=0
 Contrast=0
-Saturation=20
+Saturation=5
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
@@ -53,15 +53,17 @@ DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
 
-[Clarity]
+[SharpenEdge]
 Enabled=false
-Clpasses=2
-Clstrength=50
-Clthreechannels=false
-Enabledtwo=false
-Mlstrength=20
-Uniformity=50
+Passes=2
+Strength=50
+ThreeChannels=false
+
+[SharpenMicro]
+Enabled=false
 Matrix=false
+Strength=20
+Uniformity=50
 
 [Color Boost]
 Amount=0
@@ -90,8 +92,8 @@ Threshold=25
 [Directional Pyramid Denoising]
 Enabled=true
 Luma=0
-Chroma=30
-Gamma=1.1
+Chroma=10
+Gamma=1.2
 LumCurve=0;
 ChromCurve=0;
 
@@ -131,7 +133,7 @@ HorizontalFlip=false
 VerticalFlip=false
 
 [Common Properties for Transformations]
-AutoFill=true
+AutoFill=false
 
 [Rotation]
 Degree=0
@@ -156,8 +158,8 @@ CenterX=0
 CenterY=0
 
 [HLRecovery]
-Enabled=true
-Method=Luminance
+Enabled=false
+Method=Blend
 
 [Resize]
 Enabled=false
@@ -170,24 +172,13 @@ Height=2871
 
 [Color Management]
 InputProfile=(camera)
-ApplyGammaBeforeInputProfile=false
+BlendCMSMatrix=false
 WorkingProfile=ProPhoto
 OutputProfile=No ICM: sRGB output
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
 GammaSlope=4.5
-
-[Equalizer]
-Enabled=false
-C0=0
-C1=0
-C2=0
-C3=0
-C4=0
-C5=0
-C6=0
-C7=0
 
 [Directional Pyramid Equalizer]
 Enabled=true
@@ -209,7 +200,7 @@ FlatFieldFile=
 FlatFieldAutoSelect=false
 FlatFieldBlurRadius=32
 FlatFieldBlurType=Area Flatfield
-CA=true
+CA=false
 CARed=0
 CABlue=0
 HotDeadPixels=false
@@ -221,7 +212,7 @@ Method=amaze
 DCBIterations=2
 DCBEnhance=false
 ALLEnhance=false
-PreExposure=0.99999999999999956
+PreExposure=1
 PrePreserv=0
 PreBlackzero=0
 PreBlackone=0
