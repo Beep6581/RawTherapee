@@ -298,10 +298,10 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.7); //shoulder point
 				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
-				brightcurvePoints.push_back(0.1-br/150.0); //toe point
+				brightcurvePoints.push_back(MAX(0.0,0.1-br/150.0)); //toe point
 				brightcurvePoints.push_back(0.1); //value at toe point
 
-				brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); //shoulder point
+				brightcurvePoints.push_back(0.7-br/300.0); //shoulder point
 				brightcurvePoints.push_back(0.7); //value at shoulder point
 			}
 			brightcurvePoints.push_back(1.); // white point
@@ -326,9 +326,8 @@ namespace rtengine {
 			if (comp>0.0)
 			{
 				if (val>0.0) {
-					float Y = val*exp_scale/(scale-shoulder);
 					float R = val*comp/(scale-shoulder);
-					hlCurve[i] = log(1.0+Y*comp)/R;
+					hlCurve[i] = log(1.0+R*exp_scale)/R;
 				} else {
 					hlCurve[i]=exp_scale;
 				}
@@ -379,7 +378,8 @@ namespace rtengine {
 			//double sqavg = 0;
 			for (int i=0; i<=0xffff; i++) {
 				float fi=i;
-				avg += dcurve[shCurve[hlCurve[i]*fi]*fi] * histogram[i];
+				fi = hlCurve[fi]*fi;
+				avg += dcurve[(int)(shCurve[fi]*fi)] * histogram[i];
 				//sqavg += dcurve[i]*dcurve[i] * histogram[i];
 				sum += histogram[i];
 			}

@@ -27,6 +27,7 @@
 #include <options.h>
 #include <iostream>
 #include <rawimagesource.h>
+#include "ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
 
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
@@ -110,6 +111,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+
     // perform first analysis
     LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
@@ -135,13 +137,18 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     // RGB processing
 //!!!// auto exposure!!!
-    double br = params.toneCurve.expcomp;
-    int    bl = params.toneCurve.black;
+    double expcomp = params.toneCurve.expcomp;
+	int    bright = params.toneCurve.brightness;
+	int	   contr = params.toneCurve.contrast;
+	int    black = params.toneCurve.black;
+	int	   hlcompr = params.toneCurve.hlcompr;
+	int    hlcomprthresh = params.toneCurve.hlcomprthresh;
 
     if (params.toneCurve.autoexp) {
-        LUTu aehist; int aehistcompr;
-        imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-        ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
+		printf("silpleprocess calling autoexp\n");
+		LUTu aehist; int aehistcompr;
+		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
     }
 
     // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -156,7 +163,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf satcurve (65536,0);
 	LUTu dummy;
 
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
+    CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, bright, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
         hist16, dummy, curve1, curve2, curve, dummy);
 
 	LabImage* labView = new LabImage (fw,fh);

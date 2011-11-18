@@ -49,7 +49,11 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
 
     // used temporarily in eventing
     double nextExpcomp;
+	int nextBrightness;
+	int nextContrast;
     int nextBlack;
+    int nextHlcompr;
+    int nextHlcomprthresh;
   
   public:
 
@@ -68,7 +72,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void clip_changed ();
     bool clip_changed_ ();
     void waitForAutoExp ();
-    void autoExpChanged (double br, int bl);
+    void autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh);
     bool autoExpComputed_ ();
     void enableAll ();
     void curveChanged ();
