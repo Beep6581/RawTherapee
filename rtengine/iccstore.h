@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __ICCSTORE__                         
+#ifndef __ICCSTORE__
 #define __ICCSTORE__
 
 #include <lcms2.h>
@@ -36,7 +36,8 @@ class ProfileContent {
 
         ProfileContent (): data(NULL), length(0) {}
         ProfileContent (Glib::ustring fileName);
-        ProfileContent (const ProfileContent& other);       
+        ProfileContent (const ProfileContent& other);
+        ProfileContent (cmsHPROFILE hProfile);
         ~ProfileContent ();
         ProfileContent& operator= (const ProfileContent other);
         cmsHPROFILE toProfile ();
@@ -60,17 +61,17 @@ class ICCStore {
         cmsHPROFILE xyz;
         cmsHPROFILE srgb;
 
-		Glib::Mutex mutex_;
+        Glib::Mutex mutex_;
 
         ICCStore (); 
         void loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents);
         
     public:
 
-		static ICCStore* getInstance(void);
-        
-		Glib::ustring defaultMonitorProfile;  // Main monitors standard profile name, from OS
-		void findDefaultMonitorProfile();
+        static ICCStore* getInstance(void);
+
+        Glib::ustring defaultMonitorProfile;  // Main monitors standard profile name, from OS
+        void findDefaultMonitorProfile();
 
         int     numOfWProfiles ();
         cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");

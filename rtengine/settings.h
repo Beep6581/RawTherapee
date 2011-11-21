@@ -35,11 +35,15 @@ namespace rtengine {
             bool            LCMSSafeMode;           // If true, not OMP
 			Glib::ustring   adobe;					// default name of AdobeRGB1998
 			Glib::ustring   prophoto;				// default name of Prophoto
+			Glib::ustring   prophoto10;				// default name of Prophoto
+			
 			Glib::ustring   widegamut;				//default name of WidegamutRGB
 			Glib::ustring   beta;					// default name of BetaRGB
 			Glib::ustring   best;					// default name of BestRGB
 			Glib::ustring   bruce;					// default name of Bruce
 			Glib::ustring   srgb;					// default name of SRGB space profile
+			Glib::ustring   srgb10;					// default name of SRGB space profile
+			
 			bool		    gamutICC;           // 
 			
         /** Creates a new instance of Settings.

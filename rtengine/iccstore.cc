@@ -193,25 +193,31 @@ ProfileContent ICCStore::getContent (Glib::ustring name) {
 }
 
 // Reads all profiles from the given profiles dir
-void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring stdICCDir) {
+void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
 
 	Glib::Mutex::Lock lock(mutex_);
 
-    // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
+	//
+    fileProfiles.clear();
+    fileProfileContents.clear();
+    // RawTherapee's profiles take precedence if a user's profile of the same name exists
+    loadICCs(Glib::build_filename(rtICCDir, "output"), false, fileProfiles, fileProfileContents);
     loadICCs(usrICCDir, false, fileProfiles, fileProfileContents);
-    loadICCs(stdICCDir, true, fileStdProfiles, fileStdProfileContents);
+
+    // Input profiles
+    // Load these to different areas, since the short name (e.g. "NIKON D700" may overlap between system/user and RT dir)
+    fileStdProfiles.clear();
+    fileStdProfileContents.clear();
+    loadICCs(Glib::build_filename(rtICCDir, "input"), true, fileStdProfiles, fileStdProfileContents);
 }
 
 void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents) {
-    resultProfiles.clear ();
-    resultProfileContents.clear ();
-
     if (rootDirName!="") {
         // process directory
         Glib::ustring dirname = rootDirName;
         Glib::Dir* dir = NULL;
         try {
-	        if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) return;
+            if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) return;
             dir = new Glib::Dir (dirname);
         }
         catch (Glib::Exception& fe) {
@@ -292,6 +298,23 @@ ProfileContent::ProfileContent (const ProfileContent& other) {
     else
         data = NULL;
 }
+
+ProfileContent::ProfileContent (cmsHPROFILE hProfile) {
+
+    data = NULL;
+    length = 0;
+    if (hProfile != NULL) {
+        cmsUInt32Number bytesNeeded = 0;
+        cmsSaveProfileToMem(hProfile, 0, &bytesNeeded);
+        if (bytesNeeded > 0)
+        {
+          data = new char[bytesNeeded+1];
+          cmsSaveProfileToMem(hProfile, data, &bytesNeeded);
+          length = (int)bytesNeeded;
+        }
+    }
+}
+
 
 ProfileContent& ProfileContent::operator= (const ProfileContent other) {
 

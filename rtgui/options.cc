@@ -234,10 +234,12 @@ void Options::setDefaults () {
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
     rtSettings.LCMSSafeMode = true;
-    rtSettings.adobe = "AdobeRGB1998"; // put the name of yours profiles (here windows)
-    rtSettings.prophoto = "ProPhoto"; // these names appear in the menu "output profile"
+    rtSettings.adobe = "RT_Middle_gsRGB"; // put the name of yours profiles (here windows)
+    rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
+    rtSettings.prophoto10 = "RT_Large_g10"; // these names appear in the menu "output profile"
+    rtSettings.srgb10 = "RT_sRGB_g10";
     rtSettings.widegamut = "WideGamutRGB";
-    rtSettings.srgb = "sRGB Color Space Profile";
+    rtSettings.srgb = "RT_sRGB_gBT709";
     rtSettings.bruce = "Bruce";
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
@@ -432,10 +434,14 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))        rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
-    if( keyFile.has_key ("Color Management", "Adobe_RGB"))       rtSettings.adobe            = keyFile.get_string("Color Management", "Adobe_RGB");
-    if( keyFile.has_key ("Color Management", "Pro_Photo"))       rtSettings.prophoto            = keyFile.get_string("Color Management","Pro_Photo");
+    if( keyFile.has_key ("Color Management", "RT_Adobe_RGB"))       rtSettings.adobe            = keyFile.get_string("Color Management", "RT_Adobe_RGB");
+    if( keyFile.has_key ("Color Management", "RT_Pro_Photo"))       rtSettings.prophoto            = keyFile.get_string("Color Management","RT_Pro_Photo");
+    if( keyFile.has_key ("Color Management", "RT_Pro_Photo10"))       rtSettings.prophoto10            = keyFile.get_string("Color Management","RT_Pro_Photo10");
+	
     if( keyFile.has_key ("Color Management", "Wide_Gamut"))      rtSettings.widegamut            = keyFile.get_string("Color Management","Wide_Gamut");
-    if( keyFile.has_key ("Color Management", "S_rgb"))      	 rtSettings.srgb            = keyFile.get_string("Color Management","S_rgb");
+    if( keyFile.has_key ("Color Management", "RT_S_rgb"))      	 rtSettings.srgb            = keyFile.get_string("Color Management","RT_S_rgb");
+    if( keyFile.has_key ("Color Management", "RT_S_rgb10"))      	 rtSettings.srgb10            = keyFile.get_string("Color Management","RT_S_rgb10");
+	
     if( keyFile.has_key ("Color Management", "B_eta"))      	 rtSettings.beta            = keyFile.get_string("Color Management","B_eta");
     if( keyFile.has_key ("Color Management", "B_est"))      	 rtSettings.best            = keyFile.get_string("Color Management","B_est");
     if( keyFile.has_key ("Color Management", "B_ruce"))      	 rtSettings.bruce            = keyFile.get_string("Color Management","B_ruce");
@@ -609,10 +615,14 @@ int Options::saveToFile (Glib::ustring fname) {
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
     keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
-    keyFile.set_string  ("Color Management", "Adobe_RGB", rtSettings.adobe);
-    keyFile.set_string  ("Color Management", "Pro_Photo", rtSettings.prophoto);
+    keyFile.set_string  ("Color Management", "RT_Adobe_RGB", rtSettings.adobe);
+    keyFile.set_string  ("Color Management", "RT_Pro_Photo", rtSettings.prophoto);
+    keyFile.set_string  ("Color Management", "RT_Pro_Photo10", rtSettings.prophoto10);
+	
     keyFile.set_string  ("Color Management", "Wide_Gamut", rtSettings.widegamut);
-    keyFile.set_string  ("Color Management", "S_rgb", rtSettings.srgb);
+    keyFile.set_string  ("Color Management", "RT_S_rgb", rtSettings.srgb);
+    keyFile.set_string  ("Color Management", "RT_S_rgb10", rtSettings.srgb10);
+	
     keyFile.set_string  ("Color Management", "B_eta", rtSettings.beta);
     keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
     keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
