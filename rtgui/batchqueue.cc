@@ -220,6 +220,12 @@ void BatchQueue::loadBatchQueue( )
     notifyListener(false);
 }
 
+int cancelItemUI (void* data)
+{
+    delete (BatchQueueEntry*)data;
+    return 0;
+}
+
 void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
 	{
         // TODO: Check for Linux
@@ -237,8 +243,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
                 rtengine::ProcessingJob::destroy (entry->job);
                 if (entry->thumbnail)
                     entry->thumbnail->setQueued( entry->currentSnapshoId,false );
-                delete entry;
-
+                g_idle_add (cancelItemUI, entry);
             }
         }
         for (int i=0; i<fd.size(); i++) 
