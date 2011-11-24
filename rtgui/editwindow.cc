@@ -186,9 +186,23 @@ void EditWindow::toggleFullscreen () {
 }
 
 bool EditWindow::on_delete_event(GdkEventAny* event) {
-    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end();iter++ ) {
-        remEditorPanel(epanels[*iter]);
+    // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
+    bool isProcessing=false;
+
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end() && !isProcessing; iter++ ) {
+        if (epanels[*iter]->getIsProcessing()) isProcessing=true;
     }
+
+    if (isProcessing) return false;
+
+
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); iter++ )
+        mainNB->remove_page (*epanels[*iter]);
+
+    epanels.clear();
+
+    filesEdited.clear();
+    parent->fpanel->refreshEditedState (filesEdited);
 
     hide ();
     return true;
