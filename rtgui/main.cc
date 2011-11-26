@@ -372,7 +372,7 @@ int processLineParams( int argc, char **argv )
 		}else{
 			currentParams = &paramsImg;
 		}
-		job = rtengine::ProcessingJob::create (ii, *currentParams,ii->getMetaData());
+		job = rtengine::ProcessingJob::create (ii, *currentParams,ii->getMetaData(),options.outputMetaData);
 		if( !job ){
 			errors++;
 			std::cerr << "Error creating processing for: "<< inputFile << std::endl;
@@ -381,7 +381,7 @@ int processLineParams( int argc, char **argv )
 		}
 
 		// Process image
-		rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, NULL, options.tunnelMetaData);
+		rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, NULL);
         if( !resultImage ){
         	errors++;
         	std::cerr << "Error processing: "<< inputFile << std::endl;

@@ -182,8 +182,8 @@ void BatchQueue::loadBatchQueue( )
                     	SnapshotInfo si = thumb->getSnapshot( id );
                     	if( si.id != id ) // better checking for info returned
                     		continue;
-                    	rtengine::ImageMetaData* md=  new rtengine::ImageMetaData( *(thumb->getMetadata()) );
-                    	rtengine::ProcessingJobImpl* job = (rtengine::ProcessingJobImpl*)rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, si.params, md);
+                    	rtengine::ImageMetaData* md= new rtengine::ImageMetaData( *(thumb->getMetadata()) );
+                    	rtengine::ProcessingJobImpl* job = (rtengine::ProcessingJobImpl*)rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, si.params, md,options.outputMetaData);
 
                         int prevh = getMaxThumbnailHeight();
                         int prevw = prevh;
@@ -353,7 +353,7 @@ void BatchQueue::startProcessing () {
         }
 
         // start batch processing
-        rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
+        rtengine::startBatchProcessing (next->job, this );
         queue_draw ();
     }
 }

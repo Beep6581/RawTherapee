@@ -615,6 +615,7 @@ PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>,
 PREFERENCES_OUTDIR;Output Directory
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname, or some attributes of the photo.\n\n%r will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in trash bin, %r will be replaced by 'x'.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTPUTMETADATA;Write metadata to developed images
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 PREFERENCES_PANFACTORFRAME;Pan rate amplification
@@ -660,12 +661,11 @@ PREFERENCES_THUMBSIZE;Thumbnail Size
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
-PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 PREFERENCES_USESYSTEMTHEME; Use System Theme
 PREFERENCES_WORKFLOW;Layout
 PREFERENCES_XMP_INSIDE_DNG;Save XMP metadata and processing params inside DNG (no sidecar file)
 PREFERENCES_XMP_INSIDE_JPG;Save XMP metadata and processing params inside JPG (no sidecar file)
-PREFERENCES_XMP_INSIDE_PNG;Save XMP metadata and processing paramsinside PNG (no sidecar file)
+PREFERENCES_XMP_INSIDE_PNG;Save XMP metadata and processing params inside PNG (no sidecar file)
 PREFERENCES_XMP_INSIDE_TIFF;Save XMP metadata and processing params inside TIFF (no sidecar file)
 PROFILEPANEL_FILEDLGFILTERANY;Any files
 PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles

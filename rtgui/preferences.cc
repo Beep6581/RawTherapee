@@ -374,8 +374,8 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 
     Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M("PREFERENCES_METADATA")));
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
-    ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_TUNNELMETADATA")));
-    vbmd->pack_start (*ckbTunnelMetaData, Gtk::PACK_SHRINK, 4);
+    ckbWriteMetaData = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_OUTPUTMETADATA")));
+    vbmd->pack_start (*ckbWriteMetaData, Gtk::PACK_SHRINK, 4);
     fmd->add (*vbmd);
     mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
 
@@ -1054,7 +1054,7 @@ void Preferences::storePreferences () {
     moptions.saveParamsCache = saveParamsCache->get_active ();
     //moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
-    moptions.tunnelMetaData = ckbTunnelMetaData->get_active ();
+    moptions.outputMetaData = ckbWriteMetaData->get_active ();
 
     moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath =   flatFieldDir->get_filename();
@@ -1181,7 +1181,7 @@ void Preferences::fillPreferences () {
     saveParamsCache->set_active (moptions.saveParamsCache);
     //loadParamsPreference->set_active (moptions.paramsLoadLocation);
 
-    ckbTunnelMetaData->set_active (moptions.tunnelMetaData); 
+    ckbWriteMetaData->set_active (moptions.outputMetaData);
 
     if (!moptions.tabbedUI)
         editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);

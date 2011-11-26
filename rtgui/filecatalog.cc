@@ -851,7 +851,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params, tbe[i]->thumbnail->getMetadata());
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params, tbe[i]->thumbnail->getMetadata(),options.outputMetaData );
             double tmpscale;
             rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
 

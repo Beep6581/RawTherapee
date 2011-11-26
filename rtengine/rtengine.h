@@ -279,7 +279,7 @@ namespace rtengine {
        * @param isRaw shall be true if it is a raw file
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, ImageMetaData* md);
+        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, ImageMetaData* md, bool writeMeta);
    
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately. This function increases the reference count of the initialImage. If you decide not the process the image you
@@ -288,7 +288,7 @@ namespace rtengine {
        * @param initialImage is a loaded and pre-processed initial image
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */   
-        static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, ImageMetaData* md);
+        static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, ImageMetaData* md, bool writeMeta);
 
     /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
       * gets invalid, you must not use it any more. Dont call this function while the job is being processed. 
@@ -301,9 +301,8 @@ namespace rtengine {
    * @param job the ProcessingJob to cancel. 
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.) 
    * @param pl is an optional ProgressListener if you want to keep track of the progress
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */  
-    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL, bool tunnelMetaData=false);
+    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL );
 
 /** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
    * image is ready and the next job to process is needed. */
@@ -320,9 +319,8 @@ namespace rtengine {
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel. 
-   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change */  
-    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
+   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.*/
+    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl );
 
     
     extern Glib::Mutex* lcmsMutex;

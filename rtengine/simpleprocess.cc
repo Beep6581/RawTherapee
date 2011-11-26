@@ -35,7 +35,7 @@
 namespace rtengine {
 extern const Settings* settings;
 
-IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl, bool tunnelMetaData) {
+IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* pl ) {
 
     errorCode = 0;
 
@@ -325,17 +325,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             }
         }
 
-/*
-        if (tunnelMetaData)
-            readyImg->setMetadata (ii->getMetaData()->getExifData ());
-        else
-            readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
-*/
-	if( job->metadata ){
-		rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
-		mdata->merge();
-		readyImg->setMetadata( mdata );
-	}
+		if( job->metadata && job->writeMetadata ){
+			rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
+			mdata->merge();
+			readyImg->setMetadata( mdata );
+		}
 
         ProfileContent pc;
 
@@ -420,17 +414,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             }
         }
 
-/*
-        if (tunnelMetaData)
-            readyImg->setMetadata (ii->getMetaData()->getExifData ());
-        else
-            readyImg->setMetadata (ii->getMetaData()->getExifData (), params.exif, params.iptc);
-*/
-	if( job->metadata ){
-		rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
-		mdata->merge();
-		readyImg->setMetadata( mdata );
-	}
+		if( job->metadata && job->writeMetadata){
+			rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
+			mdata->merge();
+			readyImg->setMetadata( mdata );
+		}
 
         ProfileContent pc;
         if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString)
@@ -452,23 +440,23 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 }
 
-void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
+void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl ) {
 
     ProcessingJob* currentJob = job;
     
     while (currentJob) {
         int errorCode;
-        IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
+        IImage16* img = processImage (currentJob, errorCode, bpl );
         if (errorCode) 
             bpl->error ("Can not load input image.");
         currentJob = bpl->imageReady (img);
     }
 }
 
-void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData) {
+void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl ) {
 
     if (bpl)
-        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl, tunnelMetaData), 0, true, true, Glib::THREAD_PRIORITY_LOW);
+        Glib::Thread::create(sigc::bind(sigc::ptr_fun(batchProcessingThread), job, bpl ), 0, true, true, Glib::THREAD_PRIORITY_LOW);
     
 }
 
