@@ -151,7 +151,7 @@ class Options {
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
     bool sndEnable;
 
-    bool tunnelMetaData;    // Pass through IPTC and XMP unchanged
+    bool outputMetaData;    // write EXIF IPTC and XMP to developed image
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
     bool showProfileSelector;

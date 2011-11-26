@@ -31,12 +31,13 @@ class ProcessingJobImpl : public ProcessingJob {
         InitialImage* initialImage;
         procparams::ProcParams pparams;
 		ImageMetaData *metadata;
+		bool writeMetadata;
         
-        ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp,rtengine::ImageMetaData* md)
-           : fname(fn), isRaw(iR), initialImage(NULL),metadata( md ) { pparams = pp; }
+        ProcessingJobImpl (const Glib::ustring& fn, bool iR, const procparams::ProcParams& pp,rtengine::ImageMetaData* md, bool writeMeta=true)
+           : fname(fn), isRaw(iR), initialImage(NULL),metadata( md ),writeMetadata(writeMeta) { pparams = pp; }
 
-        ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp, rtengine::ImageMetaData* md)
-           : fname(""), initialImage(iImage),metadata(md) { pparams = pp; iImage->increaseRef(); }
+        ProcessingJobImpl (InitialImage* iImage, const procparams::ProcParams& pp, rtengine::ImageMetaData* md, bool writeMeta=true)
+           : fname(""), initialImage(iImage),metadata(md), writeMetadata(writeMeta) { pparams = pp; iImage->increaseRef(); }
            
         ~ProcessingJobImpl () { if (initialImage) initialImage->decreaseRef();  }
 };

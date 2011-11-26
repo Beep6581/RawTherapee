@@ -972,7 +972,7 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
     tpc->saveIPTC();
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams, openThm->getMetadata());
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams, openThm->getMetadata(),options.outputMetaData );
     int prevh = options.maxThumbnailHeight;
     int prevw = prevh;
     guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
@@ -1055,10 +1055,10 @@ void EditorPanel::saveAsPressed () {
 				ipc->getParams (&pparams);
 				tpc->saveIPTC();
 
-				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, ipc->getInitialImage()->getMetaData() );
+				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, ipc->getInitialImage()->getMetaData(),options.outputMetaData );
 
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
+				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
 							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
@@ -1087,9 +1087,9 @@ void EditorPanel::sendToGimpPressed () {
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams,ipc->getInitialImage()->getMetaData() );
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, ipc->getInitialImage()->getMetaData(),options.outputMetaData );
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
+    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
     saveimgas->set_sensitive(false);
     sendtogimp->set_sensitive(false);

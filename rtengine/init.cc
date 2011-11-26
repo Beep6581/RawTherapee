@@ -50,6 +50,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
     exiv2Mutex = new Glib::Mutex;
 
 	//this should be done once
+    Exiv2::XmpParser::initialize();
 	Exiv2::XmpProperties::registerNs("http://www.rawtherapee.com/1.0/", "rt");
 	Exiv2::XmpProperties::registerNs("http://ns.adobe.com/xap/1.0/", "xmp");
 	Exiv2::XmpProperties::registerNs("http://ns.adobe.com/exif/1.0/aux/", "aux");
