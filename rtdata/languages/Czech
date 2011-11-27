@@ -1,3 +1,4 @@
+
 #00 Czech
 #01 20.1.2008: translated by absolution
 #02 21.2.2008: updated by mkyral (typos and some missing strings)
@@ -101,13 +102,13 @@ FILEBROWSER_NEW_NAME;Nové jméno:
 FILEBROWSER_PARTIALPASTEPROFILE;Vložit částečně
 FILEBROWSER_PASTEPROFILE;Vložit profil
 FILEBROWSER_POPUPCANCELJOB;Zrušit úlohu
-FILEBROWSER_POPUPCOLORLABEL;Barevný štítek
 FILEBROWSER_POPUPCOLORLABEL0;Štítek: Žádný
 FILEBROWSER_POPUPCOLORLABEL1;Štítek: Červený 
 FILEBROWSER_POPUPCOLORLABEL2;Štítek: Žlutý
 FILEBROWSER_POPUPCOLORLABEL3;Štítek: Zelený
 FILEBROWSER_POPUPCOLORLABEL4;Štítek: Modrý
 FILEBROWSER_POPUPCOLORLABEL5;Štítek: Růžový
+FILEBROWSER_POPUPCOLORLABEL;Barevný štítek
 FILEBROWSER_POPUPCOPYTO;Kopírovat do...
 FILEBROWSER_POPUPFILEOPERATIONS;Souborové operace
 FILEBROWSER_POPUPMOVEEND;Přesunout na konec fronty
@@ -116,12 +117,12 @@ FILEBROWSER_POPUPMOVETO;Přesunout do...
 FILEBROWSER_POPUPOPEN;Otevřít
 FILEBROWSER_POPUPPROCESS;Vložit do fronty
 FILEBROWSER_POPUPPROFILEOPERATIONS;Operace s profiy
-FILEBROWSER_POPUPRANK;Hodnocení
 FILEBROWSER_POPUPRANK1;Hodnocení 1 *
 FILEBROWSER_POPUPRANK2;Hodnocení 2 **
 FILEBROWSER_POPUPRANK3;Hodnocení 3 ***
 FILEBROWSER_POPUPRANK4;Hodnocení 4 ****
 FILEBROWSER_POPUPRANK5;Hodnocení 5 *****
+FILEBROWSER_POPUPRANK;Hodnocení
 FILEBROWSER_POPUPREMOVEINCLPROC;Smazat (včetně výstupů z fronty)
 FILEBROWSER_POPUPREMOVE;Smazat
 FILEBROWSER_POPUPREMOVESUBMENU;Smazat
@@ -201,13 +202,11 @@ HISTOGRAM_TOOLTIP_G;Skrýt /zobrazit histogram pro ZELENOU barvu
 HISTOGRAM_TOOLTIP_L;Skrýt /zobrazit CIELAB histogram jasu
 HISTOGRAM_TOOLTIP_RAW;Skrýt /zobrazit RAW histogram
 HISTOGRAM_TOOLTIP_R;Skrýt /zobrazit histogram pro ČERVENOU barvu
+HISTORY_CHANGED;Změněno
 HISTORY_CUSTOMCURVE;Vlastní křivka
 HISTORY_DELSNAPSHOT;Odstranit
 HISTORY_FROMCLIPBOARD;Ze schránky
-HISTORY_CHANGED;Změněno
 HISTORY_LABEL;Historie
-HISTORY_MSG_1;Fotka načtena
-HISTORY_MSG_10;Komprese stínů
 HISTORY_MSG_100;Sytost RGB
 HISTORY_MSG_101;HSV korekce -- Odstín
 HISTORY_MSG_102;HSV korekce -- Sytost
@@ -218,7 +217,7 @@ HISTORY_MSG_106;Odstranění lemu poloměr
 HISTORY_MSG_107;Odstranění lemu práh
 HISTORY_MSG_108;Práh komprese světel
 HISTORY_MSG_109;Změna rozměrů výřezu
-HISTORY_MSG_11;Tónová křivka
+HISTORY_MSG_10;Komprese stínů
 HISTORY_MSG_110;Změna rozměrů aplikována na
 HISTORY_MSG_111;Zabránit oříznutí barev
 HISTORY_MSG_112;Povolit omezení saturace
@@ -229,7 +228,7 @@ HISTORY_MSG_116;Rozšířené DCB
 HISTORY_MSG_117;Korekce červené CA
 HISTORY_MSG_118;Korekce modré CA
 HISTORY_MSG_119;Linkové odšumění
-HISTORY_MSG_12;Automatická expozice
+HISTORY_MSG_11;Tónová křivka
 HISTORY_MSG_120;Práh vyrovnání zelené
 HISTORY_MSG_121;Automatická CA
 HISTORY_MSG_122;Automatický tmavý snímek
@@ -240,7 +239,7 @@ HISTORY_MSG_126;Flat-Field soubor
 HISTORY_MSG_127;Flat-Field Automatický výběr
 HISTORY_MSG_128;Flat-Field Poloměr rozostření
 HISTORY_MSG_129;Flat-Field Typ rozostření
-HISTORY_MSG_13;Oříznutí exozice
+HISTORY_MSG_12;Automatická expozice
 HISTORY_MSG_130;Automatická oprava zkreslení objektivu
 HISTORY_MSG_131;Redukce jasového šumu
 HISTORY_MSG_132;Redukce chromatického šumu
@@ -251,7 +250,7 @@ HISTORY_MSG_136;Sklon gamy
 HISTORY_MSG_137;Úroveň černé: Zelená 1
 HISTORY_MSG_138;Úroveň černé: Červená
 HISTORY_MSG_139;Úroveň černé: Modrá
-HISTORY_MSG_14;Zářivost jasu
+HISTORY_MSG_13;Oříznutí exozice
 HISTORY_MSG_140;Úroveň černé: Zelená 2
 HISTORY_MSG_141;Úroveň černé: Zelené zároveň
 HISTORY_MSG_142;Doostření hran - počet opakování
@@ -262,7 +261,7 @@ HISTORY_MSG_146;Doostření hran
 HISTORY_MSG_147;Doostření hran - pouze jas
 HISTORY_MSG_148;Mikrokontrast
 HISTORY_MSG_149;Mikrokontrast - matice 3x3
-HISTORY_MSG_15;Jas Kontrast
+HISTORY_MSG_14;Zářivost jasu
 HISTORY_MSG_150;Redukce artefaktů/šumu po demozajkování
 HISTORY_MSG_151;Živost
 HISTORY_MSG_152;Živost - pastelové tóny
@@ -271,11 +270,12 @@ HISTORY_MSG_154;Živost - zachovat tóny pleti
 HISTORY_MSG_155;Živost - Vyvarovat se posunu barev
 HISTORY_MSG_156;Živost - propojit pastelové a saturované tóny
 HISTORY_MSG_157;Živost - práh mezi pastelovými a saturovanými tóny
+HISTORY_MSG_15;Jas Kontrast
 HISTORY_MSG_16;Jas Černá
 HISTORY_MSG_17;Jas Komprese světel
 HISTORY_MSG_18;Jas Komprese stínů
 HISTORY_MSG_19;'L' křivka
-HISTORY_MSG_2;Profil načten
+HISTORY_MSG_1;Fotka načtena
 HISTORY_MSG_20;Doostření
 HISTORY_MSG_21;Poloměr doostření
 HISTORY_MSG_22;Míra doostření
@@ -286,7 +286,7 @@ HISTORY_MSG_26;Tolerance okrajů při doostření
 HISTORY_MSG_27;Omezení haló artefatů při doostření
 HISTORY_MSG_28;Míra omezení haló artefatů
 HISTORY_MSG_29;Metoda doostření
-HISTORY_MSG_3;Profil změněn
+HISTORY_MSG_2;Profil načten
 HISTORY_MSG_30;Poloměr dekonvoluce
 HISTORY_MSG_31;Míra dekonvoluce
 HISTORY_MSG_32;Útlum dekonvoluce
@@ -297,7 +297,7 @@ HISTORY_MSG_36;Omezení saturace
 HISTORY_MSG_37;Sytost barev
 HISTORY_MSG_38;Metoda vyvážení bílé
 HISTORY_MSG_39;Barevná teplota
-HISTORY_MSG_4;Prohlížení historie
+HISTORY_MSG_3;Profil změněn
 HISTORY_MSG_40;Odstín vyvážení bílé
 HISTORY_MSG_41;Barevný posun "A"
 HISTORY_MSG_42;Barevný posun "B"
@@ -308,7 +308,7 @@ HISTORY_MSG_46;Redukce barevného šumu
 HISTORY_MSG_47;Poloměr redukce barevného šumu
 HISTORY_MSG_48;Okrajová toleranve v redukci barevného šumu
 HISTORY_MSG_49;Redukce barevného šumu s ohledem na okraje
-HISTORY_MSG_5;Jas
+HISTORY_MSG_4;Prohlížení historie
 HISTORY_MSG_50;Nástroj Stíny/světla
 HISTORY_MSG_51;Zvýraznění světel
 HISTORY_MSG_52;Zvýraznění stínů
@@ -319,7 +319,7 @@ HISTORY_MSG_56;Poloměr světel a stínů
 HISTORY_MSG_57;Hrubé otáčení
 HISTORY_MSG_58;Horizontální překlopení
 HISTORY_MSG_59;Vertikální překlopení
-HISTORY_MSG_6;Kontrast
+HISTORY_MSG_5;Jas
 HISTORY_MSG_60;Otočení
 HISTORY_MSG_61;Automatické vyplnění
 HISTORY_MSG_62;Úprava zkreslení objektivu
@@ -330,7 +330,7 @@ HISTORY_MSG_66;Obnovení světel
 HISTORY_MSG_67;Míra obnovení světel
 HISTORY_MSG_68;Metoda obnovení světel
 HISTORY_MSG_69;Pracovní barevný prostor
-HISTORY_MSG_7;Černá
+HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Výstupní barevný prostor
 HISTORY_MSG_71;Vstupní barevný prostor
 HISTORY_MSG_72;Úprava vinětace
@@ -341,7 +341,7 @@ HISTORY_MSG_76;Exif Metadata
 HISTORY_MSG_77;IPTC Metadata
 HISTORY_MSG_78;Data pro změnu rozměrů
 HISTORY_MSG_79;Změna rozměrů šířka
-HISTORY_MSG_8;Expoziční korekce
+HISTORY_MSG_7;Černá
 HISTORY_MSG_80;Změna rozměrů délka
 HISTORY_MSG_81;Změna rozměrů povolena
 HISTORY_MSG_82;Profil změněn
@@ -352,7 +352,7 @@ HISTORY_MSG_86;Vlnková korekce
 HISTORY_MSG_87;Redukce impulzního šumu
 HISTORY_MSG_88;Redukce impulzního šumu - práh
 HISTORY_MSG_89;Redukce šumu
-HISTORY_MSG_9;Komprese světel
+HISTORY_MSG_8;Expoziční korekce
 HISTORY_MSG_90;Redukce šumu - jas
 HISTORY_MSG_91;Redukce šumu - barevnost 
 HISTORY_MSG_92;Redukce šumu - gama
@@ -363,6 +363,7 @@ HISTORY_MSG_96;'a' křivka
 HISTORY_MSG_97;'b' křivka
 HISTORY_MSG_98;Metoda demozajkování
 HISTORY_MSG_99;Filtr vypálených/mrtvých pixelů
+HISTORY_MSG_9;Komprese světel
 HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSSDIALOGLABEL;Titulek snímku:
@@ -512,6 +513,7 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Základní nastavení
 PARTIALPASTE_CACORRECTION;Korekce C/A
+PARTIALPASTE_CHANNELMIXER;Míchání kanálů
 PARTIALPASTE_COARSETRANS;Rotace o 90 stupňů / překlopení
 PARTIALPASTE_COLORBOOST;Posílení barev
 PARTIALPASTE_COLORDENOISE;Odstranění barevného šumu
@@ -541,7 +543,6 @@ PARTIALPASTE_HLRECOVERYAMOUNT;Míra obnovení světel
 PARTIALPASTE_HLRECOVERY;Obnovení světel
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Práh obnovení světel
 PARTIALPASTE_HSVEQUALIZER;HSV korekce
-PARTIALPASTE_CHANNELMIXER;Míchání kanálů
 PARTIALPASTE_ICMGAMMA;Výstupní gama
 PARTIALPASTE_ICMSETTINGS;Nastavení ICM
 PARTIALPASTE_IMPULSEDENOISE;Redukce impulzního šumu
@@ -590,9 +591,9 @@ PREFERENCES_CACHEFORMAT1;Vlastní (rychlejší a kvalitnější)
 PREFERENCES_CACHEFORMAT2;JPEG (menší velikost)
 PREFERENCES_CACHEMAXENTRIES;Maximální počet záznamů v cache
 PREFERENCES_CACHEOPTS;Vlastnosti cache
-PREFERENCES_CACHESTRAT;Strategie cache
 PREFERENCES_CACHESTRAT1;Upřednostnit rychlost před spotřebou paměti
 PREFERENCES_CACHESTRAT2;Upřednostnit nižší spotřebu paměti před rychlostí
+PREFERENCES_CACHESTRAT;Strategie cache
 PREFERENCES_CACHETHUMBFORM;Formát náhledů v cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximální výška náhledu
 PREFERENCES_CLIPPINGIND;Indikace oříznutí
@@ -764,6 +765,11 @@ TOOLBAR_TOOLTIP_WB;Bodové vyvážení bílé <b>W</b>
 TP_CACORRECTION_BLUE;Modrá
 TP_CACORRECTION_LABEL;Úprava chromatické vady
 TP_CACORRECTION_RED;Červená
+TP_CHMIXER_BLUE;Modrý kanál
+TP_CHMIXER_GREEN;Zelený kanál
+TP_CHMIXER_LABEL;Míchání kanálů
+TP_CHMIXER_RED;Červený kanál
+TP_CHROMATABERR_LABEL;Chromatická Aberace
 TP_COARSETRAF_DEGREE;Stupeň:
 TP_COARSETRAF_TOOLTIP_HFLIP;Překlopit horizontálně
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva
@@ -773,9 +779,9 @@ TP_COLORBOOST_ACHANNEL;Kanál "a"
 TP_COLORBOOST_AMOUNT;Míra
 TP_COLORBOOST_AVOIDCOLORCLIP;Zabránit oříznutí barvy
 TP_COLORBOOST_BCHANNEL;Kanál "b"
-TP_COLORBOOST_ENABLESATLIMITER;Omezovat sytost
 TP_COLORBOOST_CHANNEL;Kanál
 TP_COLORBOOST_CHSEPARATE;zvlášť
+TP_COLORBOOST_ENABLESATLIMITER;Omezovat sytost
 TP_COLORBOOST_LABEL;Sytost barev
 TP_COLORBOOST_SATLIMIT;Limit sytosti
 TP_COLORDENOISE_EDGESENSITIVE;Citlivost k okrajům
@@ -808,8 +814,8 @@ TP_DEFRINGE_LABEL;Odstranění lemu
 TP_DEFRINGE_RADIUS;Poloměr
 TP_DEFRINGE_THRESHOLD;Práh
 TP_DETAIL_AMOUNT;Míra
-TP_DIRPYRDENOISE_GAMMA;Gama
 TP_DIRPYRDENOISE_CHROMA;Barevnost
+TP_DIRPYRDENOISE_GAMMA;Gama
 TP_DIRPYRDENOISE_LABEL;Redukce šumu
 TP_DIRPYRDENOISE_LUMA;Jas
 TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní
@@ -861,12 +867,6 @@ TP_HLREC_COLOR;Propagace barev
 TP_HLREC_LABEL;Rekonstrukce světel
 TP_HLREC_LUMINANCE;Obnovení jasů
 TP_HLREC_METHOD;Metoda:
-TP_HSVEQUALIZER_HUE;H
-TP_HSVEQUALIZER_CHANNEL;HSV kanál
-TP_HSVEQUALIZER_LABEL;HSV korekce
-TP_HSVEQUALIZER_NEUTRAL;Neutrální
-TP_HSVEQUALIZER_SAT;S
-TP_HSVEQUALIZER_VAL;V
 TP_HSVEQUALIZER1;Červená
 TP_HSVEQUALIZER2;Žlutá
 TP_HSVEQUALIZER3;Limetková
@@ -875,11 +875,12 @@ TP_HSVEQUALIZER5;Azurová
 TP_HSVEQUALIZER6;Modrá
 TP_HSVEQUALIZER7;Růžová
 TP_HSVEQUALIZER8;Purpurová
-TP_CHMIXER_BLUE;Modrý kanál
-TP_CHMIXER_GREEN;Zelený kanál
-TP_CHMIXER_LABEL;Míchání kanálů
-TP_CHMIXER_RED;Červený kanál
-TP_CHROMATABERR_LABEL;Chromatická Aberace
+TP_HSVEQUALIZER_CHANNEL;HSV kanál
+TP_HSVEQUALIZER_HUE;H
+TP_HSVEQUALIZER_LABEL;HSV korekce
+TP_HSVEQUALIZER_NEUTRAL;Neutrální
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Smísit světla a matici
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Povolit obnovení vypálených jasů při použití ICC profilů založených na LUT
 TP_ICM_FILEDLGFILTERANY;Jakékoliv soubory
@@ -1025,9 +1026,16 @@ ZOOMBAR_NORMAL;Normální
 ZOOMBAR_PREVIEW;Náhled
 ZOOMBAR_SCALE;Měřítko
 ZOOMBAR_SMALL;Malý
+ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Otevřít (nové) okno detailu
+ZOOMPANEL_ZOOM100;Zvětšit na 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrazovce <b>F</b>
 ZOOMPANEL_ZOOMIN;Přiblížit <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
-ZOOMPANEL_ZOOM100;Zvětšit na 100% <b>1</b>
-ZOOMPANEL_100;(100%)
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+

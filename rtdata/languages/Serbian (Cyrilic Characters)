@@ -1,3 +1,4 @@
+
 #00 Serbian (Cyrilic)
 #01 by gpopac 2010-11-16
 ABOUT_TAB_BUILD;Издање
@@ -53,6 +54,7 @@ EXIFPANEL_RESETHINT;Враћа изабрану ознаку на почетну
 EXIFPANEL_RESET;Врати
 EXIFPANEL_SUBDIRECTORY;Поддиректоријум
 FILEBROWSER_ADDDELTEMPLATE;Додај/уклони шаблоне...
+FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
 FILEBROWSER_APPLYPROFILE;Примени профил
 FILEBROWSER_ARRANGEMENTHINT;Размењује вертикални и хоризонтални распоред умањених приказа
 FILEBROWSER_AUTODARKFRAME;Сам одреди тамни кадар
@@ -71,6 +73,7 @@ FILEBROWSER_DELETEDLGMSGINCLPROC;Да ли желите да обришете %1
 FILEBROWSER_DELETEDLGMSG;Да ли сигурно желите да обришете %1 датотека?
 FILEBROWSER_EMPTYTRASHHINT;Трајно брише датотеке из смећа
 FILEBROWSER_EMPTYTRASH;Избаци смеће
+FILEBROWSER_EXEC_CPB;Изгради почетни профил
 FILEBROWSER_EXIFFILTERAPPLYHINT;Укључује/искључује exif филтер у разгледачу датотека
 FILEBROWSER_EXIFFILTERAPPLY;Примени
 FILEBROWSER_EXIFFILTERLABEL;Exif филтер
@@ -83,12 +86,21 @@ FILEBROWSER_NEW_NAME;Ново име:
 FILEBROWSER_PARTIALPASTEPROFILE;Делимично убаци
 FILEBROWSER_PASTEPROFILE;Убаци профил
 FILEBROWSER_POPUPCANCELJOB;Откажи задатак
+FILEBROWSER_POPUPCOLORLABEL0;Ознака: Ништа
+FILEBROWSER_POPUPCOLORLABEL1;Ознака: Црвена
+FILEBROWSER_POPUPCOLORLABEL2;Ознака: Жута
+FILEBROWSER_POPUPCOLORLABEL3;Ознака: Зелена
+FILEBROWSER_POPUPCOLORLABEL4;Ознака: Плава
+FILEBROWSER_POPUPCOLORLABEL5;Ознака: Љубичаста
+FILEBROWSER_POPUPCOLORLABEL;Обојена ознака
 FILEBROWSER_POPUPCOPYTO;Умножи у...
+FILEBROWSER_POPUPFILEOPERATIONS;Датотека
 FILEBROWSER_POPUPMOVEEND;Премести на крај заказаних
 FILEBROWSER_POPUPMOVEHEAD;Премести на почетак заказаних
 FILEBROWSER_POPUPMOVETO;Премести у...
 FILEBROWSER_POPUPOPEN;Отвори
 FILEBROWSER_POPUPPROCESS;Закажи за обраду
+FILEBROWSER_POPUPPROFILEOPERATIONS;Профил
 FILEBROWSER_POPUPRANK1;Оцени са 1
 FILEBROWSER_POPUPRANK2;Оцени са 2
 FILEBROWSER_POPUPRANK3;Оцени са 3
@@ -104,11 +116,21 @@ FILEBROWSER_POPUPUNRANK;Уклони оцену
 FILEBROWSER_POPUPUNTRASH;Уклони из смећа
 FILEBROWSER_PROCESSINGSETTINGSHINT;Поставља формат датотеке и излазни директоријум
 FILEBROWSER_PROCESSINGSETTINGS;Подешавања
+FILEBROWSER_QUERYBUTTONHINT;Очисти поље за претрагу
+FILEBROWSER_QUERYHINT;Унесите део имена датотеке за претрагу n<b>Ctrl-f</b> поставља фокус (у Разгледачу датотека);n<b>Enter</b> претражује
+FILEBROWSER_QUERYLABEL; Тражи:
 FILEBROWSER_RENAMEDLGLABEL;Преименуј датотеку
 FILEBROWSER_RENAMEDLGMSG;Преименуј датотеку „%1“ у:
 FILEBROWSER_SELECTDARKFRAME;Изабери тамни кадар...
 FILEBROWSER_SELECTFLATFIELD;Изабери равно поље...
+FILEBROWSER_SHOWCOLORLABEL1HINT;Приказује слике означене црвеном <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Приказује слике означене жутом <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Приказујеслике означене зеленом <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Приказује слике означене плавом <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Приказује слике означене љубичастом <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Приказује све слике из директоријума
+FILEBROWSER_SHOWEDITEDHINT;Приказује само измењене слике <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Приказује само неисмењене слике <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Приказује EXIF податке <b>и</b>
 FILEBROWSER_SHOWQUEUEHINT;Приказује слике заказане за обраду
 FILEBROWSER_SHOWRANK1HINT;Приказује слике оцењене са 1 звездицом
@@ -116,7 +138,10 @@ FILEBROWSER_SHOWRANK2HINT;Приказује слике оцењене са 2 з
 FILEBROWSER_SHOWRANK3HINT;Приказује слике оцењене са 3 звездице
 FILEBROWSER_SHOWRANK4HINT;Приказује слике оцењене са 4 звездице
 FILEBROWSER_SHOWRANK5HINT;Приказује слике оцењене са 5 звездица
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Приказује недавно сачуване слике  <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Приказује слике које нису скоро сачуване <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Приказује слике у смећу
+FILEBROWSER_SHOWUNCOLORHINT;Приказује слике које нису означене бојом <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Прикажи неоцењене слике
 FILEBROWSER_STARTPROCESSINGHINT;Почиње обраду и чување заказаних слика
 FILEBROWSER_STARTPROCESSING;Започни обраду
@@ -147,6 +172,7 @@ GENERAL_PORTRAIT;Усправно
 GENERAL_SAVE;Сачувај
 GENERAL_UNCHANGED;(неизмењено)
 GENERAL_YES;Да
+HISTOGRAM_BUTTON_BAR;РГБ
 ﻿HISTOGRAM_BUTTON_B;П
 HISTOGRAM_BUTTON_B;П
 HISTOGRAM_BUTTON_G;З
@@ -154,6 +180,7 @@ HISTOGRAM_BUTTON_L;С
 HISTOGRAM_BUTTON_RAW;Raw
 HISTOGRAM_BUTTON_R;Ц
 HISTOGRAM_LABEL;Хистограм
+HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
 HISTOGRAM_TOOLTIP_B;Приказује плави хистограм
 HISTOGRAM_TOOLTIP_G;Приказује зелени хистограм
 HISTOGRAM_TOOLTIP_L;Приказује ЦиеЛаб хитограм
@@ -197,8 +224,29 @@ HISTORY_MSG_127;Сам изабери равно поље
 HISTORY_MSG_128;Полупречник равног поља
 HISTORY_MSG_129;Начин замућења равног поља
 HISTORY_MSG_12;Ауто експозиција
+HISTORY_MSG_130;Аутоматска дисторзија
+HISTORY_MSG_131;Уклањање шума луминансе
+HISTORY_MSG_132;Уклањање шума боје
+HISTORY_MSG_133;Гама
+HISTORY_MSG_134;Гама позиција
+HISTORY_MSG_135;Гама слобода
+HISTORY_MSG_136;Гама нагиб
+HISTORY_MSG_137;Ниво црне зелена 1
+HISTORY_MSG_138;Ниво црне црвена 
+HISTORY_MSG_139;Ниво црне плава
 HISTORY_MSG_13;Одсецање експозиције
+HISTORY_MSG_140;Ниво црне зелена 2
+HISTORY_MSG_141;Ниво црне обе зелене
+HISTORY_MSG_142;Оштрење ивица - бр. понављања
+HISTORY_MSG_143;Оштрење ивица - количина
+HISTORY_MSG_144;Микроконтраст - количина
+HISTORY_MSG_145;Микроконтраст - уједначеност
+HISTORY_MSG_146;Оштрење ивица
+HISTORY_MSG_147;Оштрење ивица - само луминанса
+HISTORY_MSG_148;Микроконтраст
+HISTORY_MSG_149;Микроконтраст - 3x3 матрица
 HISTORY_MSG_14;Светлина луминансе
+HISTORY_MSG_150;Уклањање артефакта/шума након расклапања мозаика
 HISTORY_MSG_15;Контраст луминансе
 HISTORY_MSG_16;Црна луминансе
 HISTORY_MSG_17;Сабијање сенки л.
@@ -384,6 +432,7 @@ MAIN_MSG_CANNOTLOAD;Не могу да учитам слику
 MAIN_MSG_CANNOTSAVE;Грешка при чувању датотеке
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Изаберите исправну путању у „Поставкама“.
 MAIN_MSG_CANNOTSTARTEDITOR;Не могу да покренем програм за уређивање.
+MAIN_MSG_EMPTYFILENAME;Није одређено име датотеке!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Грешка прилоком чувања слике
 MAIN_MSG_EXITJOBSINQUEUEINFO;Заказане слике неће бити обрађене.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Да ли заиста желите да изађете? Неке слике су још увек заказане за обраду.
@@ -487,12 +536,14 @@ PARTIALPASTE_PERSPECTIVE;Перспектива
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Уједначавање зелене
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Филтер врелих/мртвих пиксела
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Линијски филтер шума
+PARTIALPASTE_RAW_ALLENHANCE;Уклони шум након расклапања мозаика
 PARTIALPASTE_RAWCACORR_AUTO;Ауто хроматске аберације
 PARTIALPASTE_RAWCACORR_CABLUE;Плава хроминанса
 PARTIALPASTE_RAWCACORR_CARED;Црвена хроминанса
 PARTIALPASTE_RAW_DCBENHANCE;Примени корак ДЦБ побољшања
 PARTIALPASTE_RAW_DCBITERATIONS;Број ДЦБ понављања
 PARTIALPASTE_RAW_DMETHOD;Начин расклапања мозаика
+PARTIALPASTE_RAWEXPOS_BLACK;Ниво црне
 PARTIALPASTE_RAWEXPOS_LINEAR;Линеарни фактор исправке RAW беле тачке
 PARTIALPASTE_RAWEXPOS_PRESER;Raw тачка беле уз очување светлих делова
 PARTIALPASTE_RAW_FALSECOLOR;Кораци пригушења лажне боје при расклапању мозаика
@@ -500,10 +551,13 @@ PARTIALPASTE_RAWGROUP;Raw подешавања
 PARTIALPASTE_RESIZE;Промена величине
 PARTIALPASTE_ROTATION;Ротација
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Сенке/Светлост
+PARTIALPASTE_SHARPENEDGE;Ивице
 PARTIALPASTE_SHARPENING;Оштрење
+PARTIALPASTE_SHARPENMICRO;Микроконтраст
 PARTIALPASTE_VIGNETTING;Исправљање вињетарења
 PARTIALPASTE_WAVELETEQUALIZER;Таласно уједначавање
 PARTIALPASTE_WHITEBALANCE;Баланс беле
+P_GAMMA_CURV;гама
 POPUPBUTTON_SELECTOPTIONHINT;РМБ за измену опције
 PREFERENCES_ADD;Додај
 PREFERENCES_APPLNEXTSTARTUP;примењује се након поновног покретања
@@ -528,6 +582,9 @@ PREFERENCES_CLEARDLG_LINE2;Ово може да потраје неколико 
 PREFERENCES_CLEARDLG_TITLE;Сачекајте
 PREFERENCES_CLIPPINGIND;Показивачи одсечених делова
 PREFERENCES_CMETRICINTENT;Колориметријска намера
+PREFERENCES_CUSTPROFBUILDHINT;Извршна датотека (или скрипта) која се позива када изграђујете нови почетни профил за слику.nПрихвата параметре из командне линије ради прављења .pp3 датотеке на основу неких правила:n[Путања до RAW/JPG] [Путања подразумеваног профила] [Бленда] [Експозиција у s] [Жижна дужина mm] [ИСО] [Објектив] [Фото-апарат]
+PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
+PREFERENCES_CUSTPROFBUILD;Изградња произвољног почетног профила слике
 PREFERENCES_CUTOVERLAYBRUSH;Маска исецања боје/провидног
 PREFERENCES_DARKFRAMEFOUND;Нађен
 PREFERENCES_DARKFRAMESHOTS;снимака
@@ -549,6 +606,7 @@ PREFERENCES_EDITORCMDLINE;Произвољна наредба
 PREFERENCES_EDITORLAYOUT;Размештај програма
 PREFERENCES_EXTERNALEDITOR;Спољни уређивач
 PREFERENCES_FBROWSEROPTS;Опције разгледача датотеке
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Прикажи алатке у једном реду
 PREFERENCES_FILEFORMAT;Формат датотеке
 PREFERENCES_FLATFIELDFOUND;Нађено
 PREFERENCES_FLATFIELDSDIR;Директоријум за равна поља
@@ -560,6 +618,7 @@ PREFERENCES_FORRAW;За RAW датотеке
 PREFERENCES_GIMPPATH;Директоријум са инсталираним Гимпом
 PREFERENCES_GTKTHEME;ГТК тема
 PREFERENCES_HINT;Савет
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Хистограм у левој површи
 PREFERENCES_HLTHRESHOLD;Праг за одсечене светле делове
 PREFERENCES_ICCDIR;ИЦЦ директоријум
 PREFERENCES_IMPROCPARAMS;Подразумевани параметри за обраду слика
@@ -568,7 +627,13 @@ PREFERENCES_INTENT_PERCEPTUAL;Перцептуално
 PREFERENCES_INTENT_RELATIVE;Релативно колориметријски
 PREFERENCES_INTENT_SATURATION;Засићени приказ
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Користи угњежђени RAW приказ до измене
+PREFERENCES_LANGAUTODETECT;Сам откриј
 PREFERENCES_LIVETHUMBNAILS;„Живи“ прикази (спорије)
+PREFERENCES_MENUGROUPFILEOPERATIONS;Групиши радње над датотекама
+PREFERENCES_MENUGROUPLABEL;Групиши обележавање
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Групиши радње са профилима
+PREFERENCES_MENUGROUPRANK;Групиши оцењивање
+PREFERENCES_MENUOPTIONS;Опције менија
 PREFERENCES_METADATA;Метаподаци
 PREFERENCES_MONITORICC;Профил монитора
 PREFERENCES_MULTITABDUALMON;Режим у више листова, на другом монитору
@@ -581,6 +646,8 @@ PREFERENCES_OUTDIRTEMPLATE;Употреби шаблон
 PREFERENCES_OUTDIR;Излазни директоријум
 PREFERENCES_OVERLAY_FILENAMES;Постави преко умањеног приказа
 PREFERENCES_OVERWRITEOUTPUTFILE;Препиши постојеће излазне датотеке
+PREFERENCES_PANFACTORFRAME;Убрзање при померању платна
+PREFERENCES_PANFACTORLABEL;Фактор
 PREFERENCES_PARSEDEXTADDHINT;Додаје уписану екстензију на списак
 PREFERENCES_PARSEDEXTADD;Додај екстензију
 PREFERENCES_PARSEDEXTDELHINT;Брише изабрану екстензију из списка
@@ -602,13 +669,16 @@ PREFERENCES_SET;Постави
 PREFERENCES_SHOWBASICEXIF;Прикажи основне Exif податке
 PREFERENCES_SHOWDATETIME;Прикажи датум и време
 PREFERENCES_SHOWONLYRAW;Прикажи само RAW датотеке
+PREFERENCES_SHOWPROFILESELECTOR;Прикажи избор профила
 PREFERENCES_SHTHRESHOLD;Праг за одсечене тамне делове
 PREFERENCES_SINGLETABVERTAB;Режим у једном листу, вертикални листови
 PREFERENCES_SINGLETAB;Режим у једном листу
+PREFERENCES_SLIMUI;Танки изглед
 PREFERENCES_SND_BATCHQUEUEDONE;Обрађене су заказане датотеке
 PREFERENCES_SND_HELP;Унесите путању до датотеке или оставите празно уколико не желите звук. На Windows-у можете да користите „SystemDefault“, „SystemAsterisk“ за системске звуке.
 PREFERENCES_SND_LNGEDITPROCDONE;Уредник је завршио обраду
 PREFERENCES_SND_TRESHOLDSECS;бр. секунди
+PREFERENCES_SQUAREDETAILWINDOW;Коцкаст прозор са детаљима (брже)
 PREFERENCES_STARTUPIMDIR;Директоријум по покретању
 PREFERENCES_TAB_BROWSER;Преглед датотека
 PREFERENCES_TAB_COLORMGR;Управљање бојама
@@ -617,6 +687,7 @@ PREFERENCES_TAB_IMPROC;Обрада сликe
 PREFERENCES_TAB_OUTPUT;Опције на излазу
 PREFERENCES_TAB_SOUND;Звуци
 PREFERENCES_THUMBSIZE;Величина умањеног приказа
+PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
 PREFERENCES_TUNNELMETADATA;Копирај неизмењене IPTC/XMP (када је слика означена другим програмом)
 PREFERENCES_USESYSTEMTHEME; Користи системску тему
 PREFERENCES_WORKFLOW;Ток обраде
@@ -751,6 +822,7 @@ TP_EQUALIZER_FINEST;најфиније
 TP_EQUALIZER_LABEL;Таласно уједначење
 TP_EQUALIZER_LARGEST;најгрубље
 TP_EQUALIZER_NEUTRAL;Неутрално
+TP_EXPO_AFTER; Пре интерполације (пре превода у РГБ)
 TP_EXPOSCORR_LABEL;Raw бела тачка
 TP_EXPOSURE_AUTOLEVELS;Ауто-нивои
 TP_EXPOSURE_BLACKLEVEL;Црна
@@ -773,7 +845,10 @@ TP_FLATFIELD_BT_VERTHORIZ;Хориз. и вертик.
 TP_FLATFIELD_BT_VERTICAL;Вертикално
 TP_FLATFIELD_LABEL;Равно поље
 TP_GAMMA_COMMENT;(онемогућен је излазни профил, осим „default“)
+TP_GAMMA_FREE;Гама слобода
 TP_GAMMA_OUTPUT;Излазна гама
+TP_GAMMA_SLOP;нагиб (линеарни)
+TP_HLREC_BLEND;Утапање
 TP_HLREC_CIELAB;ЦиеЛаб стапање
 TP_HLREC_COLOR;Пропагинација боје
 TP_HLREC_LABEL;Чупање светлих делова
@@ -793,9 +868,11 @@ TP_HSVEQUALIZER_LABEL;Уједначење ХСВ канала
 TP_HSVEQUALIZER_NEUTRAL;Неутрално
 TP_HSVEQUALIZER_SAT;Засићеност
 TP_HSVEQUALIZER_VAL;Вредност
+TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
 TP_ICM_FILEDLGFILTERANY;Било која датотека
 TP_ICM_FILEDLGFILTERICM;ИЦЦ профили
 TP_ICM_GAMMABEFOREINPUT;Профил за примену Гаме
+TP_ICM_INPUTCAMERAICC;Фото-апарат или стандардни ИЦЦ
 TP_ICM_INPUTCAMERA;Подразумевано из апарата
 TP_ICM_INPUTCUSTOM;Произвољно
 TP_ICM_INPUTDLGLABEL;Изаберите улазни ИЦЦ профил...
@@ -839,14 +916,21 @@ TP_PREPROCESS_HOTDEADPIXFILT;Избаци прегореле и мртве пи�
 TP_PREPROCESS_LABEL;Предобрада
 TP_PREPROCESS_LINEDENOISE;Линијски филтер шума
 TP_PREPROCESS_NO_FOUND;Није пронађено
+TP_RAW_ALLENHANCE;Уклони артафакте/шум након расклапања
 TP_RAWCACORR_AUTO;Исправи хроматске аберације
 TP_RAWCACORR_CABLUE;Плава
 TP_RAWCACORR_CARED;Црвена
 TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
 TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
 TP_RAW_DMETHOD;Начин
+TP_RAWEXPOS_BLACKONE;Ниво црне: Црвена
+TP_RAWEXPOS_BLACKS;Ниво црне
+TP_RAWEXPOS_BLACKTHREE;Ниво црне: Зелена 2
+TP_RAWEXPOS_BLACKTWO;Ниво црне: Плава
+TP_RAWEXPOS_BLACKZERO;Ниво црне: Зелена 1 (водећа)
 TP_RAWEXPOS_LINEAR;Линеарни фактор корекције
 TP_RAWEXPOS_PRESER;Очување светлих делова
+TP_RAWEXPOS_TWOGREEN;Обе зелене
 TP_RAW_FALSECOLOR;Кораци за пригушивање лажне боје
 TP_RAW_LABEL;Расклапање мозаика
 TP_RESIZE_APPLIESTO;Примени на:
@@ -882,6 +966,10 @@ TP_SHADOWSHLIGHTS_LOCALCONTR;Локални контраст
 TP_SHADOWSHLIGHTS_RADIUS;Полупречник
 TP_SHADOWSHLIGHTS_SHADOWS;Сенке
 TP_SHADOWSHLIGHTS_SHTONALW;Ширина тонова
+TP_SHARPENEDGE_AMOUNT;Количина
+TP_SHARPENEDGE_LABEL;Ивице
+TP_SHARPENEDGE_PASSES;Понављања
+TP_SHARPENEDGE_THREE;Само луминанса
 TP_SHARPENING_AMOUNT;Количина
 TP_SHARPENING_EDRADIUS;Полупречник
 TP_SHARPENING_EDTOLERANCE;Толеранција ивице
@@ -897,6 +985,10 @@ TP_SHARPENING_RLD_ITERATIONS;Понављања
 TP_SHARPENING_RLD;RL деконволуција
 TP_SHARPENING_THRESHOLD;Праг
 TP_SHARPENING_USM;Оштрина маске
+TP_SHARPENMICRO_AMOUNT;Количина
+TP_SHARPENMICRO_LABEL;Микроконттраст
+TP_SHARPENMICRO_MATRIX;3×3 матрица уместо 5×5
+TP_SHARPENMICRO_UNIFORMITY;Уједначеност
 TP_VIGNETTING_AMOUNT;Количина
 TP_VIGNETTING_CENTER_X;Центар X
 TP_VIGNETTING_CENTER_Y;Центар Y
@@ -926,95 +1018,36 @@ ZOOMPANEL_ZOOM100;Повећава преглед на 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозора <b>Ф</b>
 ZOOMPANEL_ZOOMIN;Увећава приказ слике <b>+</b>
 ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
-FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
-FILEBROWSER_EXEC_CPB;Изгради почетни профил
-FILEBROWSER_POPUPCOLORLABEL0;Ознака: Ништа
-FILEBROWSER_POPUPCOLORLABEL1;Ознака: Црвена
-FILEBROWSER_POPUPCOLORLABEL2;Ознака: Жута
-FILEBROWSER_POPUPCOLORLABEL3;Ознака: Зелена
-FILEBROWSER_POPUPCOLORLABEL4;Ознака: Плава
-FILEBROWSER_POPUPCOLORLABEL5;Ознака: Љубичаста
-FILEBROWSER_POPUPCOLORLABEL;Обојена ознака
-FILEBROWSER_POPUPFILEOPERATIONS;Датотека
-FILEBROWSER_POPUPPROFILEOPERATIONS;Профил
-FILEBROWSER_QUERYBUTTONHINT;Очисти поље за претрагу
-FILEBROWSER_QUERYHINT;Унесите део имена датотеке за претрагу n<b>Ctrl-f</b> поставља фокус (у Разгледачу датотека);n<b>Enter</b> претражује
-FILEBROWSER_QUERYLABEL; Тражи:
-FILEBROWSER_SHOWCOLORLABEL1HINT;Приказује слике означене црвеном <b>Alt-1</b>
-FILEBROWSER_SHOWCOLORLABEL2HINT;Приказује слике означене жутом <b>Alt-2</b>
-FILEBROWSER_SHOWCOLORLABEL3HINT;Приказујеслике означене зеленом <b>Alt-3</b>
-FILEBROWSER_SHOWCOLORLABEL4HINT;Приказује слике означене плавом <b>Alt-4</b>
-FILEBROWSER_SHOWCOLORLABEL5HINT;Приказује слике означене љубичастом <b>Alt-5</b>
-FILEBROWSER_SHOWEDITEDHINT;Приказује само измењене слике <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Приказује само неисмењене слике <b>6</b>
-FILEBROWSER_SHOWRECENTLYSAVEDHINT;Приказује недавно сачуване слике  <b>Alt-7</b>
-FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Приказује слике које нису скоро сачуване <b>Alt-6</b>
-FILEBROWSER_SHOWUNCOLORHINT;Приказује слике које нису означене бојом <b>Alt-`</b>
-HISTOGRAM_BUTTON_BAR;РГБ
-HISTOGRAM_TOOLTIP_BAR;Приказује/сакрива РГБ индикатор. Кликните десни тастер миша на умањени приказ да замрзнете
-HISTORY_MSG_130;Аутоматска дисторзија
-HISTORY_MSG_131;Уклањање шума луминансе
-HISTORY_MSG_132;Уклањање шума боје
-HISTORY_MSG_133;Гама
-HISTORY_MSG_134;Гама позиција
-HISTORY_MSG_135;Гама слобода
-HISTORY_MSG_136;Гама нагиб
-HISTORY_MSG_137;Ниво црне зелена 1
-HISTORY_MSG_138;Ниво црне црвена 
-HISTORY_MSG_139;Ниво црне плава
-HISTORY_MSG_140;Ниво црне зелена 2
-HISTORY_MSG_141;Ниво црне обе зелене
-HISTORY_MSG_142;Оштрење ивица - бр. понављања
-HISTORY_MSG_143;Оштрење ивица - количина
-HISTORY_MSG_144;Микроконтраст - количина
-HISTORY_MSG_145;Микроконтраст - уједначеност
-HISTORY_MSG_146;Оштрење ивица
-HISTORY_MSG_147;Оштрење ивица - само луминанса
-HISTORY_MSG_148;Микроконтраст
-HISTORY_MSG_149;Микроконтраст - 3x3 матрица
-HISTORY_MSG_150;Уклањање артефакта/шума након расклапања мозаика
-MAIN_MSG_EMPTYFILENAME;Није одређено име датотеке!
-PARTIALPASTE_RAW_ALLENHANCE;Уклони шум након расклапања мозаика
-PARTIALPASTE_RAWEXPOS_BLACK;Ниво црне
-PARTIALPASTE_SHARPENEDGE;Ивице
-PARTIALPASTE_SHARPENMICRO;Микроконтраст
-PREFERENCES_CUSTPROFBUILD;Изградња произвољног почетног профила слике
-PREFERENCES_CUSTPROFBUILDHINT;Извршна датотека (или скрипта) која се позива када изграђујете нови почетни профил за слику.nПрихвата параметре из командне линије ради прављења .pp3 датотеке на основу неких правила:n[Путања до RAW/JPG] [Путања подразумеваног профила] [Бленда] [Експозиција у s] [Жижна дужина mm] [ИСО] [Објектив] [Фото-апарат]
-PREFERENCES_CUSTPROFBUILDPATH;Извршна путања
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Прикажи алатке у једном реду
-PREFERENCES_HISTOGRAMPOSITIONLEFT;Хистограм у левој површи
-PREFERENCES_LANGAUTODETECT;Сам откриј
-PREFERENCES_MENUGROUPFILEOPERATIONS;Групиши радње над датотекама
-PREFERENCES_MENUGROUPLABEL;Групиши обележавање
-PREFERENCES_MENUGROUPPROFILEOPERATIONS;Групиши радње са профилима
-PREFERENCES_MENUGROUPRANK;Групиши оцењивање
-PREFERENCES_MENUOPTIONS;Опције менија
-PREFERENCES_PANFACTORFRAME;Убрзање при померању платна
-PREFERENCES_PANFACTORLABEL;Фактор
-PREFERENCES_SHOWPROFILESELECTOR;Прикажи избор профила
-PREFERENCES_SLIMUI;Танки изглед
-PREFERENCES_SQUAREDETAILWINDOW;Коцкаст прозор са детаљима (брже)
-PREFERENCES_TP_VSCROLLBAR;Сакриј клизаче у области са алаткама
-TP_EXPO_AFTER; Пре интерполације (пре превода у РГБ)
-P_GAMMA_CURV;гама
-TP_GAMMA_FREE;Гама слобода
-TP_GAMMA_SLOP;нагиб (линеарни)
-TP_HLREC_BLEND;Утапање
-TP_ICM_BLENDCMSMATRIX;Утопи светле делове у матрицу
-TP_ICM_INPUTCAMERAICC;Фото-апарат или стандардни ИЦЦ
-TP_RAW_ALLENHANCE;Уклони артафакте/шум након расклапања
-TP_RAWEXPOS_BLACKONE;Ниво црне: Црвена
-TP_RAWEXPOS_BLACKS;Ниво црне
-TP_RAWEXPOS_BLACKTHREE;Ниво црне: Зелена 2
-TP_RAWEXPOS_BLACKTWO;Ниво црне: Плава
-TP_RAWEXPOS_BLACKZERO;Ниво црне: Зелена 1 (водећа)
-TP_RAWEXPOS_TWOGREEN;Обе зелене
-TP_SHARPENEDGE_AMOUNT;Количина
-TP_SHARPENEDGE_LABEL;Ивице
-TP_SHARPENEDGE_PASSES;Понављања
-TP_SHARPENEDGE_THREE;Само луминанса
-TP_SHARPENMICRO_AMOUNT;Количина
-TP_SHARPENMICRO_LABEL;Микроконттраст
-TP_SHARPENMICRO_MATRIX;3×3 матрица уместо 5×5
-TP_SHARPENMICRO_UNIFORMITY;Уједначеност
 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vibrance - Pastel tones
+!HISTORY_MSG_153;Vibrance - Saturated tones
+!HISTORY_MSG_154;Vibrance - Protect skin tones
+!HISTORY_MSG_155;Vibrance - Avoid color drift
+!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
+!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
+!PARTIALPASTE_ICMGAMMA;Output gamma
+!PARTIALPASTE_VIBRANCE;Vibrance
+!PREFERENCES_TP_LABEL;Tool panel:
+!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!TP_GAMMA_CURV;gamma
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+!TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_LABEL;Vibrance
+!TP_VIBRANCE_PASTELS;Pastel tones
+!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
+!TP_VIBRANCE_PROTECTSKINS;Protect skin tones
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_SATURATED;Saturated tones
