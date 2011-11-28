@@ -108,7 +108,7 @@ class Thumbnail :public SnapshotListener{
         void              notifylisterners_procParamsChanged(int whoChangedIt);
 
 		bool              isQuick() { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
-		bool              isPParamsValid() { return pparamsValid; }
+
         bool              isRecentlySaved ();
         void              imageDeveloped ();
         bool              isEnqueued ();
