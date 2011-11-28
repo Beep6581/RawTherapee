@@ -176,7 +176,12 @@ RGBCURVE,         // EvVibranceSaturated
 RGBCURVE,         // EvVibranceProtectSkins
 RGBCURVE,         // EvVibranceAvoidColorShift
 RGBCURVE,         // EvVibrancePastSatTog
-RGBCURVE          // EvVibrancePastSatThreshold
+RGBCURVE,         // EvVibrancePastSatThreshold
+SHARPENING,       // EvEPDStrength
+SHARPENING,       // EvEPDEdgeStopping
+SHARPENING,       // EvEPDScale
+SHARPENING,       // EvEPDReweightingIterates
+SHARPENING        // EvEPDEnabled
 
 };
 

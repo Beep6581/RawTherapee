@@ -160,13 +160,18 @@ void Crop::update (int todo) {
 	}
 	
 	// apply luminance operations
-    if (todo & (M_LUMINANCE+M_COLOR)) {
-        parent->ipf.luminanceCurve (laboCrop, labnCrop, parent->lumacurve);
-		parent->ipf.chrominanceCurve (laboCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve);
+	if (todo & (M_LUMINANCE+M_COLOR)) {
+		//I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
+		labnCrop->CopyFrom(laboCrop);
+
+		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
+
+		parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
+		parent->ipf.chrominanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve);
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 		parent->ipf.vibrance (labnCrop);
 
-        if (skip==1) {
+		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
 			parent->ipf.dirpyrdenoise (labnCrop);
@@ -175,9 +180,8 @@ void Crop::update (int todo) {
 			//parent->ipf.MLmicrocontrast (labnCrop);
 			parent->ipf.sharpening (labnCrop, (float**)cbuffer);
 			parent->ipf.dirpyrequalizer (labnCrop);
-        }
-
-    }
+		}
+	}
 
     // switch back to rgb
     parent->ipf.lab2rgb (labnCrop, cropImg);

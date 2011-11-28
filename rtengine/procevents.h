@@ -179,7 +179,12 @@ enum ProcEvent {
 	EvVibranceAvoidColorShift=154,
 	EvVibrancePastSatTog=155,
 	EvVibrancePastSatThreshold=156,
-	NUMOFEVENTS=157
+	EvEPDStrength=157,
+	EvEPDEdgeStopping=158,
+	EvEPDScale=159,
+	EvEPDReweightingIterates=160,
+	EvEPDEnabled=161,
+	NUMOFEVENTS=162
 };
 }    
 #endif    

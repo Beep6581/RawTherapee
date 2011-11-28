@@ -1,4 +1,5 @@
 #include <labimage.h>
+#include <memory.h>
 namespace rtengine {
 
 LabImage::LabImage (int w, int h) : fromImage(false), W(w), H(h) {
@@ -29,4 +30,9 @@ LabImage::~LabImage () {
         delete [] data;
     }
 }
+
+void LabImage::CopyFrom(LabImage *Img){
+	memcpy(data, Img->data, W*H*3*sizeof(float));
+}
+
 }
