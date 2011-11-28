@@ -1921,10 +1921,11 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 #define SQR(x) ((x)*(x))
 		
 		
-		float minpt=MIN(MIN(hlmax[0],hlmax[1]),hlmax[2]);
-		//float maxpt=MAX(MAX(hlmax[0],hlmax[1]),hlmax[2]);
-		//float medpt=hlmax[0]+hlmax[1]+hlmax[2]-minpt-maxpt;
-		float maxave=(hlmax[0]+hlmax[1]+hlmax[2])/3;
+		float minpt=MIN(MIN(hlmax[0],hlmax[1]),hlmax[2]);//min of the raw clip points
+		//float maxpt=MAX(MAX(hlmax[0],hlmax[1]),hlmax[2]);//max of the raw clip points
+		//float medpt=hlmax[0]+hlmax[1]+hlmax[2]-minpt-maxpt;//median of the raw clip points
+		float maxave=(hlmax[0]+hlmax[1]+hlmax[2])/3;//ave of the raw clip points
+		//some thresholds:
 		const float clipthresh = 0.95;
 		const float fixthresh = 0.5;
 		const float satthresh = 0.5;
@@ -1940,7 +1941,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
 #pragma omp parallel for
 		for (int col=0; col<width; col++) {
-			float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio;
+			float rgb[ColorCount], cam[2][ColorCount], lab[2][ColorCount], sum[2], chratio, lratio=0;
 			float L,C,H,Lfrac;
 			
 			// Copy input pixel to rgb so it's easier to access in loops
@@ -1956,6 +1957,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 			
 			// Initialize cam with raw input [0] and potentially clipped input [1]
 			FOREACHCOLOR {
+				lratio += MIN(rgb[c],clip[c]);
 				cam[0][c] = rgb[c];
 				cam[1][c] = MIN(cam[0][c],maxval);
 			}
@@ -1972,13 +1974,13 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 				for (int c=1; c < ColorCount; c++)
 					sum[i] += SQR(lab[i][c]);
 			}
-			chratio = sqrt(sqrt(sum[1]/sum[0]));
+			chratio = (sqrt(sum[1]/sum[0]));
 			
-			// Apply ratio to lightness in lab space
+			// Apply ratio to lightness in LCH space
 			for (int c=1; c < ColorCount; c++) 
 				lab[0][c] *= chratio;
 			
-			// Transform back from lab to RGB
+			// Transform back from LCH to RGB
 			FOREACHCOLOR {
 				cam[0][c]=0;
 				for (int j=0; j < ColorCount; j++) {
@@ -2000,6 +2002,14 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 				float bfrac = SQR((MIN(clip[2],bin[col])-fixpt)/(clip[2]-fixpt));
 				bin[col]= MIN(maxave,bfrac*rgb[2]+(1-bfrac)*bin[col]);
 			}
+			
+			lratio /= (rin[col]+gin[col]+bin[col]);
+			L = (rin[col]+gin[col]+bin[col])/3;
+			C = lratio * 1.732050808 * (rin[col] - gin[col]);
+			H = lratio * (2 * bin[col] - rin[col] - gin[col]);
+			rin[col] = L - H / 6.0 + C / 3.464101615;
+			gin[col] = L - H / 6.0 - C / 3.464101615;
+			bin[col] = L + H / 3.0;
 			
 			if ((L=(rin[col]+gin[col]+bin[col])/3) > desatpt) {
 				Lfrac = MAX(0,(maxave-L)/(maxave-desatpt));
