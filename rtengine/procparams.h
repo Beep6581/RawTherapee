@@ -206,6 +206,16 @@ class ColorDenoiseParams {
 		std::vector<double>   chromcurve;
 	};
 
+//EPD related parameters.
+class EPDParams{
+public:
+	bool enabled;
+	double Strength;
+	double EdgeStopping;
+	double Scale;
+	int ReweightingIterates;
+};
+
 /**
   * Parameters of the shadow/highlight enhancement
   */
@@ -409,6 +419,8 @@ class HSVEqualizerParams {
 		std::vector<double>   vcurve;
 };
 
+
+
 /**
   * Parameters for RAW demosaicing
   */
@@ -476,6 +488,7 @@ class ProcParams {
         DefringeParams          defringe;        ///< Defringing parameters
         ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
         DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
+        EPDParams					  edgePreservingDecompositionUI;
         SHParams                sh;              ///< Shadow/highlight enhancement parameters
         CropParams              crop;            ///< Crop parameters
         CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters

@@ -56,6 +56,7 @@ PartialPasteDlg::PartialPasteDlg () {
     impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
+    edgePreservingDecompositionUI = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
 
     // options in color:
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
@@ -130,6 +131,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*edgePreservingDecompositionUI, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
     //vboxes[1]->pack_start (*waveq, Gtk::PACK_SHRINK, 2);
 
@@ -245,6 +247,7 @@ PartialPasteDlg::PartialPasteDlg () {
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     //waveqConn	    = waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
+    edgePreservingDecompositionUIConn = edgePreservingDecompositionUI->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -433,6 +436,7 @@ void PartialPasteDlg::detailToggled () {
     impdenConn.block (true);
     dirpyrdenConn.block (true);
     defringeConn.block (true);
+    edgePreservingDecompositionUIConn.block(true);
     dirpyreqConn.block (true);
     //waveqConn.block (true);
 
@@ -453,6 +457,7 @@ void PartialPasteDlg::detailToggled () {
     impdenConn.block (false);
     dirpyrdenConn.block (false);
     defringeConn.block (false);
+    edgePreservingDecompositionUIConn.block (false);
     dirpyreqConn.block (false);
     //waveqConn.block (false);
 }

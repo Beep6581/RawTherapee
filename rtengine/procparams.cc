@@ -161,7 +161,13 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.lumcurve.push_back (DCT_Linear);
     dirpyrDenoise.chromcurve.clear ();
     dirpyrDenoise.chromcurve.push_back (DCT_Linear);
-    
+   
+	edgePreservingDecompositionUI.enabled = false;
+	edgePreservingDecompositionUI.Strength = 0.25;
+	edgePreservingDecompositionUI.EdgeStopping = 1.4;
+	edgePreservingDecompositionUI.Scale = 1.0;
+	edgePreservingDecompositionUI.ReweightingIterates = 0;
+
     sh.enabled       = false;
     sh.hq            = false;
     sh.highlights    = 0;
@@ -406,6 +412,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     Glib::ArrayHandle<double> chromcurve = dirpyrDenoise.chromcurve;
     keyFile.set_double_list("Directional Pyramid Denoising", "LumCurve", lumcurve);
     keyFile.set_double_list("Directional Pyramid Denoising", "ChromCurve", chromcurve);
+
+	//Save edgePreservingDecompositionUI.
+	keyFile.set_boolean	("EPD", "Enabled", edgePreservingDecompositionUI.enabled);
+	keyFile.set_double	("EPD", "Strength", edgePreservingDecompositionUI.Strength);
+	keyFile.set_double	("EPD", "EdgeStopping", edgePreservingDecompositionUI.EdgeStopping);
+	keyFile.set_double	("EPD", "Scale", edgePreservingDecompositionUI.Scale);
+	keyFile.set_integer	("EPD", "ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates);
 
     // save lumaDenoise
     keyFile.set_boolean ("Luminance Denoising", "Enabled",        lumaDenoise.enabled);
@@ -746,6 +759,15 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {
 	if (keyFile.has_key ("Directional Pyramid Denoising", "LumCurve"))    dirpyrDenoise.lumcurve   = keyFile.get_double_list ("Directional Pyramid Denoising", "LumCurve");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "ChromCurve"))  dirpyrDenoise.chromcurve = keyFile.get_double_list ("Directional Pyramid Denoising", "ChromCurve");
 }
+
+//Load EPD.
+if (keyFile.has_group ("EPD")) {    
+	if(keyFile.has_key("EPD", "Enabled")) edgePreservingDecompositionUI.enabled = keyFile.get_boolean ("EPD", "Enabled");
+	if(keyFile.has_key("EPD", "Strength")) edgePreservingDecompositionUI.Strength = keyFile.get_double ("EPD", "Strength");
+	if(keyFile.has_key("EPD", "EdgeStopping")) edgePreservingDecompositionUI.EdgeStopping = keyFile.get_double ("EPD", "EdgeStopping");
+	if(keyFile.has_key("EPD", "Scale")) edgePreservingDecompositionUI.Scale = keyFile.get_double ("EPD", "Scale");
+	if(keyFile.has_key("EPD", "ReweightingIterates"))  edgePreservingDecompositionUI.ReweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates");
+}
   
     // load lumaDenoise
 if (keyFile.has_group ("Luminance Denoising")) {    
@@ -1033,6 +1055,11 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
 		&& dirpyrDenoise.lumcurve == other.dirpyrDenoise.lumcurve
 		&& dirpyrDenoise.chromcurve == other.dirpyrDenoise.chromcurve
+		&& edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled
+		&& edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength
+		&& edgePreservingDecompositionUI.EdgeStopping == other.edgePreservingDecompositionUI.EdgeStopping
+		&& edgePreservingDecompositionUI.Scale == other.edgePreservingDecompositionUI.Scale
+		&& edgePreservingDecompositionUI.ReweightingIterates == other.edgePreservingDecompositionUI.ReweightingIterates
 		&& defringe.enabled == other.defringe.enabled
 		&& defringe.radius == other.defringe.radius
 		&& defringe.threshold == other.defringe.threshold

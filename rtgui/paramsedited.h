@@ -167,6 +167,16 @@ public:
 	bool gamma;
 };
 
+class EPDParamsEdited{
+public:
+	bool enabled;
+	bool Strength;
+	bool EdgeStopping;
+	bool Scale;
+	bool ReweightingIterates;
+};
+
+
 class SHParamsEdited {
 
     public:
@@ -362,6 +372,7 @@ class ParamsEdited {
         ColorDenoiseParamsEdited      colorDenoise;
         DefringeParamsEdited          defringe;
         DirPyrDenoiseParamsEdited     dirpyrDenoise;
+        EPDParamsEdited					  edgePreservingDecompositionUI;
         ImpulseDenoiseParamsEdited    impulseDenoise;
         SHParamsEdited                sh;
         CropParamsEdited              crop;

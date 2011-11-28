@@ -757,6 +757,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
+	ipf.EPDToneMap(labView,0,6);
+
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
         hist16, hist16, curve, dummy, 16);
     CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \

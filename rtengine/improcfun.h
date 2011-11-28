@@ -131,6 +131,8 @@ class ImProcFunctions {
 		void dirpyrdenoise    (LabImage* lab);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
 
+		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
+		
 		procparams::DirPyrDenoiseParams dnparams;
 		void dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams );//Emil's directional pyramid denoise
 		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab, \
