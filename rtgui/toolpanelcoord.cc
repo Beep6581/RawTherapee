@@ -45,6 +45,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
+    edgePreservingDecompositionUI = Gtk::manage (new EdgePreservingDecompositionUI ());
     sharpening          = Gtk::manage (new Sharpening ());
     sharpenEdge         = Gtk::manage (new SharpenEdge ());
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
@@ -83,6 +84,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpenEdge,        M("TP_SHARPENEDGE_LABEL"));    toolPanels.push_back (sharpenEdge);
     addPanel (detailsPanel, sharpenMicro,       M("TP_SHARPENMICRO_LABEL"));   toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
+    addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
     addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
