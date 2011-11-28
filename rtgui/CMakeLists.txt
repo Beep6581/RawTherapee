@@ -7,7 +7,7 @@ set (BASESOURCEFILES
     clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc
     coarsepanel.cc cacorrection.cc hlrec.cc chmixer.cc
     resize.cc icmpanel.cc crop.cc shadowshighlights.cc
-    impulsedenoise.cc dirpyrdenoise.cc
+    impulsedenoise.cc dirpyrdenoise.cc epd.cc
     exifpanel.cc toolpanel.cc
     sharpening.cc vibrance.cc
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc

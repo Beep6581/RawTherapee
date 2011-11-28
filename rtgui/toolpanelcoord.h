@@ -34,6 +34,7 @@
 #include <impulsedenoise.h>
 #include <defringe.h>
 #include <dirpyrdenoise.h>
+#include <epd.h>
 #include <sharpening.h>
 #include <labcurve.h>
 #include <exifpanel.h>
@@ -95,6 +96,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Defringe* defringe;
         ImpulseDenoise* impulsedenoise;
         DirPyrDenoise* dirpyrdenoise;
+        EdgePreservingDecompositionUI *edgePreservingDecompositionUI;
         Sharpening* sharpening;
         SharpenEdge* sharpenEdge;
         SharpenMicro* sharpenMicro;

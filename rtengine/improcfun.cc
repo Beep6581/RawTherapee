@@ -34,6 +34,7 @@
 #include <utils.h>
 #include <iccmatrices.h>
 
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -615,6 +616,58 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			
 		}
 	}
+
+//Map tones by way of edge preserving decomposition. Is this the right way to include source?
+#include "EdgePreservingDecomposition.cc"
+void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip){
+	//Hasten access to the parameters.
+	EPDParams *p = (EPDParams *)(&params->edgePreservingDecompositionUI);
+
+	//Enabled? Leave now if not.
+	if(!p->enabled) return;
+
+	//Pointers to whole data and size of it.
+	float *L = lab->L[0];
+	float *a = lab->a[0];
+	float *b = lab->b[0];
+	unsigned int i, N = lab->W*lab->H;
+
+	EdgePreservingDecomposition epd = EdgePreservingDecomposition(lab->W, lab->H);
+
+	//Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
+	float minL = FLT_MAX;
+	for(i = 0; i != N; i++)
+		if(L[i] < minL) minL = L[i];
+	if(minL > 0.0f) minL = 0.0f;		//Disable the shift if there are no negative numbers. I wish there were just no negative numbers to begin with.
+
+	for(i = 0; i != N; i++)
+		L[i] = (L[i] - minL)/32767.0f;
+
+	//Some interpretations.
+	float Compression = expf(-p->Strength);		//This modification turns numbers symmetric around 0 into exponents.
+	float DetailBoost = p->Strength;
+	if(p->Strength < 0.0f) DetailBoost = 0.0f;	//Go with effect of exponent only if uncompressing.
+
+	//Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
+	if(Iterates == 0) Iterates = (unsigned int)(p->EdgeStopping*15.0);
+
+/* Debuggery. Saves L for toying with outside of RT.
+char nm[64];
+sprintf(nm, "%ux%ufloat.bin", lab->W, lab->H);
+FILE *f = fopen(nm, "wb");
+fwrite(L, N, sizeof(float), f);
+fclose(f);*/
+
+	epd.CompressDynamicRange(L, (float)p->Scale/skip, (float)p->EdgeStopping, Compression, DetailBoost, Iterates, p->ReweightingIterates, L);
+
+	//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
+	float s = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));
+	for(i = 0; i != N; i++)
+		a[i] *= s,
+		b[i] *= s,
+		L[i] = L[i]*32767.0f + minL;
+}
+
 	
 	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip, \
 									   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {

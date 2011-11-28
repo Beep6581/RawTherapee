@@ -258,17 +258,21 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
 	}
 	
-    if (todo & (M_LUMINANCE+M_COLOR) ) {
-        progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+	if (todo & (M_LUMINANCE+M_COLOR) ) {
+		nprevl->CopyFrom(oprevl);
 
-        ipf.luminanceCurve (oprevl, nprevl, lumacurve);
+		ipf.EPDToneMap(nprevl,0,scale);
 
-        readyphase++;
+		progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+
+		ipf.luminanceCurve (nprevl, nprevl, lumacurve);
+
+		readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chrominanceCurve (oprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*, params.labCurve.saturation*/);
-        //ipf.colorCurve (nprevl, nprevl);
+		ipf.chrominanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*, params.labCurve.saturation*/);
+		//ipf.colorCurve (nprevl, nprevl);
 		ipf.vibrance(nprevl);
-        readyphase++;
+		readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
             ipf.impulsedenoise (nprevl);

@@ -100,6 +100,11 @@ void ParamsEdited::set (bool v) {
 	dirpyrDenoise.luma         = v;
 	dirpyrDenoise.chroma       = v;
 	dirpyrDenoise.gamma        = v;
+	edgePreservingDecompositionUI.enabled = v;
+	edgePreservingDecompositionUI.Strength = v;
+	edgePreservingDecompositionUI.EdgeStopping = v;
+	edgePreservingDecompositionUI.Scale = v;
+	edgePreservingDecompositionUI.ReweightingIterates = v;
 	sh.enabled       = v;
 	sh.hq            = v;
 	sh.highlights    = v;
@@ -282,6 +287,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
 
+        edgePreservingDecompositionUI.enabled = edgePreservingDecompositionUI.enabled && p.edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled;
+        edgePreservingDecompositionUI.Strength = edgePreservingDecompositionUI.Strength && p.edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength;
+        edgePreservingDecompositionUI.EdgeStopping = edgePreservingDecompositionUI.EdgeStopping && p.edgePreservingDecompositionUI.EdgeStopping == other.edgePreservingDecompositionUI.EdgeStopping;
+        edgePreservingDecompositionUI.Scale = edgePreservingDecompositionUI.Scale && p.edgePreservingDecompositionUI.Scale == other.edgePreservingDecompositionUI.Scale;
+        edgePreservingDecompositionUI.ReweightingIterates = edgePreservingDecompositionUI.ReweightingIterates && p.edgePreservingDecompositionUI.ReweightingIterates == other.edgePreservingDecompositionUI.ReweightingIterates;
+
         sh.enabled = sh.enabled && p.sh.enabled == other.sh.enabled;
         sh.hq = sh.hq && p.sh.hq == other.sh.hq;
         sh.highlights = sh.highlights && p.sh.highlights == other.sh.highlights;
@@ -462,6 +473,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
 	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
 	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;
+
+	if (edgePreservingDecompositionUI.enabled) toEdit.edgePreservingDecompositionUI.enabled = mods.edgePreservingDecompositionUI.enabled;
+	if (edgePreservingDecompositionUI.Strength) toEdit.edgePreservingDecompositionUI.Strength = mods.edgePreservingDecompositionUI.Strength;	
+	if (edgePreservingDecompositionUI.EdgeStopping) toEdit.edgePreservingDecompositionUI.EdgeStopping = mods.edgePreservingDecompositionUI.EdgeStopping;
+	if (edgePreservingDecompositionUI.Scale) toEdit.edgePreservingDecompositionUI.Scale = mods.edgePreservingDecompositionUI.Scale;	
+	if (edgePreservingDecompositionUI.ReweightingIterates) toEdit.edgePreservingDecompositionUI.ReweightingIterates = mods.edgePreservingDecompositionUI.ReweightingIterates;	
 
 	if (sh.enabled)		    				toEdit.sh.enabled 	    = mods.sh.enabled;
 	if (sh.hq)		        				toEdit.sh.hq     	    = mods.sh.hq;
