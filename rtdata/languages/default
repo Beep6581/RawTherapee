@@ -566,6 +566,7 @@ PREFERENCES_DATEFORMATFRAME;Date Format
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DEFAULTLANG;Default language
 PREFERENCES_DEFAULTTHEME;Default theme
+PREFERENCES_DEFAULT_METADATA;Default IPTC metadata
 PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
 PREFERENCES_DIRDARKFRAMES;Dark frames directory
 PREFERENCES_DIRHOME;Home directory

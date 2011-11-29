@@ -376,6 +376,17 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
     ckbWriteMetaData = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_OUTPUTMETADATA")));
     vbmd->pack_start (*ckbWriteMetaData, Gtk::PACK_SHRINK, 4);
+    Gtk::HBox* hb44 = Gtk::manage (new Gtk::HBox ());
+    fcDefMetadata = Gtk::manage (new Gtk::FileChooserButton(M("PREFERENCES_DEFAULT_METADATA"), Gtk::FILE_CHOOSER_ACTION_OPEN) );
+    if (options.multiUser)
+    	fcDefMetadata->set_current_folder (Options::rtdir + "/iptc" );
+    else
+    	fcDefMetadata->set_current_folder (argv0 + "/iptc" );
+
+    Gtk::Label *dmLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DEFAULT_METADATA")));
+    hb44->pack_start(*dmLab , Gtk::PACK_SHRINK, 4 );
+    hb44->pack_start(*fcDefMetadata);
+    vbmd->pack_start (*hb44, Gtk::PACK_SHRINK, 4);
     fmd->add (*vbmd);
     mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
 
@@ -1055,6 +1066,7 @@ void Preferences::storePreferences () {
     //moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
     moptions.outputMetaData = ckbWriteMetaData->get_active ();
+    moptions.defMetadata    = fcDefMetadata->get_filename();
 
     moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath =   flatFieldDir->get_filename();
@@ -1182,6 +1194,7 @@ void Preferences::fillPreferences () {
     //loadParamsPreference->set_active (moptions.paramsLoadLocation);
 
     ckbWriteMetaData->set_active (moptions.outputMetaData);
+    fcDefMetadata->set_filename( moptions.defMetadata );
 
     if (!moptions.tabbedUI)
         editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);

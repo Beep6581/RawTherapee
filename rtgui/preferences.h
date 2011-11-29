@@ -112,6 +112,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbmenuGroupProfileOperations;
 
     Gtk::CheckButton* chOverwriteOutputFile;
+    Gtk::FileChooserButton *fcDefMetadata;
 
     Gtk::CheckButton* saveXmpIntoDng;
     Gtk::CheckButton* saveXmpIntoJpg;

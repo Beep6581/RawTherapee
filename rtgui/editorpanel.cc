@@ -388,7 +388,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     ipc->setProgressListener (this);
     ipc->setPreviewImageListener (previewHandler);
     ipc->setPreviewScale (10);  // Important
-    tpc->initImage (ipc, tmb->getType()==FT_Raw);
+    tpc->initImage (ipc, openThm->getType()==FT_Raw);
     ipc->setHistogramListener (this);
 
 //    iarea->fitZoom ();   // tell to the editorPanel that the next image has to be fitted to the screen
@@ -972,7 +972,8 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
     tpc->saveIPTC();
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams, openThm->getMetadata(),options.outputMetaData );
+    rtengine::ImageMetaData* idata = openThm->getMetadata();
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams, idata,options.outputMetaData );
     int prevh = options.maxThumbnailHeight;
     int prevw = prevh;
     guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
@@ -1054,8 +1055,8 @@ void EditorPanel::saveAsPressed () {
 				rtengine::procparams::ProcParams pparams;
 				ipc->getParams (&pparams);
 				tpc->saveIPTC();
-
-				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, ipc->getInitialImage()->getMetaData(),options.outputMetaData );
+	            rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, idata,options.outputMetaData );
 
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
 				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
@@ -1087,7 +1088,8 @@ void EditorPanel::sendToGimpPressed () {
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, ipc->getInitialImage()->getMetaData(),options.outputMetaData );
+    rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, idata ,options.outputMetaData );
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
     ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
