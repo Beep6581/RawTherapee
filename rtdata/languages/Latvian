@@ -743,6 +743,7 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction

@@ -1044,6 +1044,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !PARTIALPASTE_EPD;Tone Mapping
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_LABEL;Tone Mapping

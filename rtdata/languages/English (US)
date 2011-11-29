@@ -264,6 +264,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_15;Luminance Contrast
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
