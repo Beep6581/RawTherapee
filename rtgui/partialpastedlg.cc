@@ -448,6 +448,7 @@ void PartialPasteDlg::detailToggled () {
 	impden->set_active (detail->get_active ());
     dirpyrden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
+    edgePreservingDecompositionUI->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
     //waveq->set_active (detail->get_active ());
 
