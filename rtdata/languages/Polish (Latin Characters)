@@ -263,7 +263,12 @@ HISTORY_MSG_154;Jaskrawosc - Zachowaj odcienie skory
 HISTORY_MSG_155;Jaskrawosc - Zapobiegaj zmianom kolorow
 HISTORY_MSG_156;Jaskrawosc - Polacz odcienie pastelowe i nasycone
 HISTORY_MSG_157;Jaskrawosc - Prog odcieni pastelowych/nasyconych
+HISTORY_MSG_158;Sila
+HISTORY_MSG_159;Wyszukanie krawedzi
 HISTORY_MSG_15;Kontrast luminancji
+HISTORY_MSG_160;Skala
+HISTORY_MSG_161;Powtarzanie rozwazania
+HISTORY_MSG_162;Tone Mapping
 HISTORY_MSG_16;Czern luminancji
 HISTORY_MSG_17;Kompr. swiatel luminancji
 HISTORY_MSG_18;Kompr. cieni luminancji
@@ -527,6 +532,7 @@ PARTIALPASTE_DIALOGLABEL;Czesciowe wklejenie profilu przetwarzania
 PARTIALPASTE_DIRPYRDENOISE;Redukcja szumu
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast wg. poziomu detali
 PARTIALPASTE_DISTORTION;Korekcja znieksztalcenia
+PARTIALPASTE_EPD;Tone Mapping
 PARTIALPASTE_EVERYTHING;Wszystko
 PARTIALPASTE_EXIFCHANGES;Zmien dane Exif
 PARTIALPASTE_EXPOSURE;Ekspozycja
@@ -833,6 +839,11 @@ TP_DISTORTION_AMOUNT;Sila
 TP_DISTORTION_AUTO;Automatyczna korekcja dystorsji
 TP_DISTORTION_AUTO_TIP;(Eksperymentalne) Automatyczna korekcja dystorsji obiektywu dla niektorych aparatow (M4/3, kompakty DC, itp.)
 TP_DISTORTION_LABEL;Dystorsja
+TP_EPD_EDGESTOPPING;Wyszukiwanie krawedzi
+TP_EPD_LABEL;Tone Mapping
+TP_EPD_REWEIGHTINGITERATES;Powtarzanie rozwazania
+TP_EPD_SCALE;Skala
+TP_EPD_STRENGTH;Sila
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;delikatnie
@@ -1055,13 +1066,3 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
-!PARTIALPASTE_EPD;Tone Mapping
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength

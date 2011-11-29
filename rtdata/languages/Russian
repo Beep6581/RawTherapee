@@ -926,6 +926,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
