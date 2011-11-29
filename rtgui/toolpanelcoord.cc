@@ -330,6 +330,14 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
 
     rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if( idata ){
+    	if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
+            rtengine::ImageMetaData *id = rtengine::ImageMetaData::fromFile("",options.defMetadata,"",false );
+            if( id ){
+            	rtengine::MetadataList loaded = id->getIPTCData();
+            	idata->setIPTCData( loaded );
+            	delete id;
+            }
+    	}
 		idata->updateExif();
 		exifpanel->setImageData (idata );
 		iptcpanel->setImageData (idata );

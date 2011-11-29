@@ -161,6 +161,9 @@ class ImageMetaData {
 	/** return all IPTC metadata */
     const rtengine::MetadataList getIPTCData () const;
 
+    /** return true if changes have been applied */
+    bool  getIPTCDataChanged() const;
+
     /** change IPTC data */
     void setIPTCData( const rtengine::MetadataList &meta );
 

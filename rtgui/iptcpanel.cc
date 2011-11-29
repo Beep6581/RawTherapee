@@ -271,7 +271,7 @@ void IPTCPanel::fileSaveClicked ()
     if (options.multiUser)
        dialog.set_current_folder (Options::rtdir + "/iptc" );
     else
-       dialog.set_current_folder (argv0 + "/iptc" + options.profilePath);
+       dialog.set_current_folder (argv0 + "/iptc" );
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);

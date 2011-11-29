@@ -343,6 +343,7 @@ if (keyFile.has_group ("Profiles")) {
     if (keyFile.has_key ("Profiles", "Directory"))      profilePath     = keyFile.get_string ("Profiles", "Directory");
     if (keyFile.has_key ("Profiles", "RawDefault"))     defProfRaw      = keyFile.get_string ("Profiles", "RawDefault");
     if (keyFile.has_key ("Profiles", "ImgDefault"))     defProfImg      = keyFile.get_string ("Profiles", "ImgDefault");
+    if (keyFile.has_key ("Profiles", "MetaDefault"))    defMetadata     = keyFile.get_string ("Profiles", "MetaDefault");
     if (keyFile.has_key ("Profiles", "SaveXmpInsideDng"))   embedXmpIntoDNG = keyFile.get_boolean ("Profiles", "SaveXmpInsideDng");
     if (keyFile.has_key ("Profiles", "SaveXmpInsideJpeg"))  embedXmpIntoJPG = keyFile.get_boolean ("Profiles", "SaveXmpInsideJpeg");
     if (keyFile.has_key ("Profiles", "SaveXmpInsidePng"))   embedXmpIntoPNG = keyFile.get_boolean ("Profiles", "SaveXmpInsidePng");
@@ -565,6 +566,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
+    keyFile.set_string  ("Profiles", "MetaDefault",defMetadata);
 
     keyFile.set_boolean ("Profiles", "SaveXmpInsideDng",   embedXmpIntoDNG);
     keyFile.set_boolean ("Profiles", "SaveXmpInsideJpeg",  embedXmpIntoJPG);

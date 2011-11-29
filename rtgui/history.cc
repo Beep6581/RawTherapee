@@ -42,8 +42,8 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
     Gtk::Frame* histFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_LABEL")));
     histFrame->add (*hscrollw);
 
-    pack_start (*histFrame);
     
+
     hTreeView = Gtk::manage (new Gtk::TreeView ());
     hscrollw->add (*hTreeView);
     
@@ -74,7 +74,7 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
     // ~~~~~~~~~~~~~
 
     Gtk::HSeparator* hsepb = Gtk::manage (new Gtk::HSeparator ());
-    pack_end (*hsepb, Gtk::PACK_SHRINK, 0);
+
 
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
     addBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_NEWSNAPSHOT")));
@@ -98,8 +98,14 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
     bmBox->pack_start (*bscrollw, Gtk::PACK_SHRINK, 4);
     bmBox->pack_end (*ahbox, Gtk::PACK_SHRINK, 4);
     
-    if (bookmarkSupport)
-        pack_end (*bmFrame, Gtk::PACK_SHRINK, 4);
+    if (bookmarkSupport){
+    	Gtk::VPaned *vpan = Gtk::manage (new Gtk::VPaned());
+    	vpan->pack1( *histFrame );
+    	vpan->pack2( *bmFrame );
+    	pack_start( *vpan );
+    }else{
+    	pack_start (*histFrame);
+    }
     
     bTreeView = Gtk::manage (new Gtk::TreeView ());
     bscrollw->add (*bTreeView);

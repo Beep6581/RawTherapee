@@ -851,7 +851,18 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params, tbe[i]->thumbnail->getMetadata(),options.outputMetaData );
+            rtengine::ImageMetaData* idata = tbe[i]->thumbnail->getMetadata();
+            if( idata ){
+            	if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
+                    rtengine::ImageMetaData *id = rtengine::ImageMetaData::fromFile("",options.defMetadata,"",false );
+                    if( id ){
+                    	rtengine::MetadataList loaded = id->getIPTCData();
+                    	idata->setIPTCData( loaded );
+                    	delete id;
+                    }
+            	}
+            }
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params, idata ,options.outputMetaData );
             double tmpscale;
             rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
 

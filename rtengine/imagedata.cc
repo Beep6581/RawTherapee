@@ -164,7 +164,7 @@ int ImageMetaData::readMetadataFromImage()
 		// Copy embedded EXIF and IPTC into XMP
 		Exiv2::copyExifToXmp(image->exifData(), xmpData);
 		Exiv2::copyIptcToXmp(image->iptcData(), xmpData, 0);
-		xmpData[key] = "True";
+		xmpData[key] = 1;
 	}
 
 	iptcData = image->iptcData();
@@ -296,8 +296,19 @@ const rtengine::MetadataList ImageMetaData::getIPTCData () const
     return iptcc;
 }
 
+bool ImageMetaData::getIPTCDataChanged() const
+{
+	std::string key= Glib::ustring::compose("Xmp.rt.%1",rtengine::kXmpMerged);
+	Exiv2::XmpData::const_iterator iter= xmpData.findKey( Exiv2::XmpKey(key));
+	if( iter != xmpData.end() ){
+		return iter->toLong()==2;
+	}
+	return false;
+}
+
 void ImageMetaData::setIPTCData( const rtengine::MetadataList &meta )
 {
+
     for( rtengine::MetadataList::const_iterator iter = meta.begin(); iter != meta.end(); iter++ ){
     	std::string key = iter->first;
 
@@ -366,6 +377,8 @@ void ImageMetaData::setIPTCData( const rtengine::MetadataList &meta )
     		}
     	}
     }
+   	std::string key = Glib::ustring::compose("Xmp.rt.%1",rtengine::kXmpMerged);
+   	xmpData[key]=2;
     saveXMP();
 }
 

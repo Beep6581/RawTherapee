@@ -56,6 +56,7 @@ class Options {
     bool saveUsePathTemplate;
     Glib::ustring defProfRaw;
     Glib::ustring defProfImg;
+    Glib::ustring defMetadata;
     Glib::ustring dateFormat;
     int adjusterDelay;
     int  startupDir;
