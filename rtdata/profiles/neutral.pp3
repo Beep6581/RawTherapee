@@ -1,7 +1,7 @@
 
 [Version]
-AppVersion=Dev-3.1m6.89
-Version=300
+AppVersion=4.0.6
+Version=301
 
 [General]
 Rank=0
@@ -10,7 +10,7 @@ InTrash=false
 
 [Exposure]
 Auto=false
-Clip=0.0002
+Clip=0.0000
 Compensation=0
 Brightness=0
 Contrast=0
@@ -53,15 +53,17 @@ DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
 
-[Clarity]
+[SharpenEdge]
 Enabled=false
-Clpasses=2
-Clstrength=50
-Clthreechannels=false
-Enabledtwo=false
-Mlstrength=20
-Uniformity=50
+Passes=2
+Strength=50
+ThreeChannels=false
+
+[SharpenMicro]
+Enabled=false
 Matrix=false
+Strength=20
+Uniformity=50
 
 [Color Boost]
 Amount=0
@@ -89,8 +91,8 @@ Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=false
-Luma=10
-Chroma=10
+Luma=5
+Chroma=5
 Gamma=2
 LumCurve=0;
 ChromCurve=0;
@@ -107,9 +109,9 @@ Amount=20
 [Shadows & Highlights]
 Enabled=false
 HighQuality=false
-Highlights=0
+Highlights=10
 HighlightTonalWidth=80
-Shadows=0
+Shadows=10
 ShadowTonalWidth=80
 LocalContrast=0
 Radius=30
@@ -131,7 +133,7 @@ HorizontalFlip=false
 VerticalFlip=false
 
 [Common Properties for Transformations]
-AutoFill=true
+AutoFill=false
 
 [Rotation]
 Degree=0
@@ -157,7 +159,7 @@ CenterY=0
 
 [HLRecovery]
 Enabled=false
-Method=CIELab blending
+Method=Blend
 
 [Resize]
 Enabled=false
@@ -170,24 +172,13 @@ Height=2836
 
 [Color Management]
 InputProfile=(camera)
-ApplyGammaBeforeInputProfile=false
+BlendCMSMatrix=false
 WorkingProfile=Adobe RGB
-OutputProfile=No ICM: sRGB output
+OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
 GammaSlope=4.5
-
-[Equalizer]
-Enabled=false
-C0=0
-C1=0
-C2=0
-C3=0
-C4=0
-C5=0
-C6=0
-C7=0
 
 [Directional Pyramid Equalizer]
 Enabled=false
@@ -195,7 +186,7 @@ Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1
-Mult4=0
+Mult4=0.2
 
 [HSV Equalizer]
 HCurve=0;

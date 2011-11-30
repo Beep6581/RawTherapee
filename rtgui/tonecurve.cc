@@ -20,6 +20,7 @@
 #include <adjuster.h>
 #include <sigc++/class_slot.h>
 #include <iomanip>
+#include "ppversion.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -207,7 +208,7 @@ void ToneCurve::curveChanged () {
 void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
     // Switch off auto exposure if user changes sliders manually
-    if (autolevels->get_active() && (a==expcomp || a==black)) {
+    if (autolevels->get_active() && (a==expcomp || a==brightness || a==contrast || a==black || a==hlcompr || a==hlcomprthresh)) {
         autolevels->set_active (false);
         autolevels->set_inconsistent (false);
     }
@@ -264,11 +265,23 @@ void ToneCurve::autolevels_toggled () {
     
     if (batchMode) {
         expcomp->setEditedState (UnEdited);
+		brightness->setEditedState (UnEdited);
+		contrast->setEditedState (UnEdited);
         black->setEditedState (UnEdited);
+        hlcompr->setEditedState (UnEdited);
+        hlcomprthresh->setEditedState (UnEdited);
         if (expcomp->getAddMode())
             expcomp->setValue (0);
-        if (black->getAddMode())
+		if (brightness->getAddMode())
+            brightness->setValue (0);
+		if (contrast->getAddMode())
+            contrast->setValue (0);
+		if (black->getAddMode())
             black->setValue (0);
+        if (hlcompr->getAddMode())
+        	hlcompr->setValue (0);
+        if (hlcomprthresh->getAddMode())
+        	hlcomprthresh->setValue (0);
         listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
     }
 }
@@ -295,6 +308,7 @@ void ToneCurve::waitForAutoExp () {
     sclip->set_sensitive (false);
     expcomp->setEnabled (false);
     brightness->setEnabled (false);
+	contrast->setEnabled (false);
     black->setEnabled (false);
     hlcompr->setEnabled (false);
     hlcomprthresh->setEnabled (false);
@@ -309,10 +323,14 @@ int autoExpChangedUI (void* data) {
     return 0;
 }
 
-void ToneCurve::autoExpChanged (double expcomp, int black) {
+void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh) {
 
     nextBlack = black;
     nextExpcomp = expcomp;
+	nextBrightness = bright;
+	nextContrast = contr;
+    nextHlcompr = hlcompr;
+    nextHlcomprthresh = hlcomprthresh;
     g_idle_add (autoExpChangedUI, this);
 
 //    Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::autoExpComputed_));
@@ -337,7 +355,11 @@ bool ToneCurve::autoExpComputed_ () {
     disableListener ();
     enableAll ();
     expcomp->setValue (nextExpcomp);
+	brightness->setValue (nextBrightness);
+	contrast->setValue (nextContrast);
     black->setValue (nextBlack);
+    hlcompr->setValue (nextHlcompr);
+    hlcomprthresh->setValue (nextHlcomprthresh);
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     enableListener ();
 

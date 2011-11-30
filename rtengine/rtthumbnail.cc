@@ -36,6 +36,7 @@
 #include <safegtk.h>
 #include <rawimage.h>
 #include "jpeg.h"
+#include "ppversion.h"
 
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
@@ -716,11 +717,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     }
     
     // RGB processing
-    double br = params.toneCurve.expcomp;
-    int    bl = params.toneCurve.black;
-
-    if (params.toneCurve.autoexp && aeHistogram) 
-        ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, br, bl);
+    double	expcomp = params.toneCurve.expcomp;
+    int		bright = params.toneCurve.brightness;
+	int		contr = params.toneCurve.contrast;
+	int		black = params.toneCurve.black;
+	int		hlcompr = params.toneCurve.hlcompr;
+	int		hlcomprthresh = params.toneCurve.hlcomprthresh;
+	
+    if (params.toneCurve.autoexp && aeHistogram) {
+	    ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+	    //ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr);
+    }
 
 	LUTf curve1 (65536);
 	LUTf curve2 (65536);
@@ -728,9 +735,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf satcurve (65536);
 
 	LUTu dummy;
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, gamma, true, params.toneCurve.curve, 
-        hist16, dummy, curve1, curve2, curve, dummy, 16);
-
+    //CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
+								params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
+								gamma, true, params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
+    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, params.toneCurve.hlcomprthresh, \
+								params.toneCurve.shcompr, bright, contr, gamma, true, 
+								params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
+	
+	
 	LabImage* labView = new LabImage (fw,fh);
 
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
@@ -745,6 +757,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
             hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
+	ipf.EPDToneMap(labView,0,6);
+
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
         hist16, hist16, curve, dummy, 16);
     CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
@@ -829,7 +843,8 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params) {
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain) / log(2.0), params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.black);
+        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain)/log(2.0), params.toneCurve.clip, params.toneCurve.expcomp, \
+						params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }
 

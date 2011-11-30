@@ -1,7 +1,7 @@
 
 [Version]
-AppVersion=Dev-3.1m6.89
-Version=300
+AppVersion=4.0.6
+Version=301
 
 [General]
 Rank=0
@@ -10,16 +10,16 @@ InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0.0005
+Clip=0
 Compensation=0
-Brightness=8
-Contrast=0
+Brightness=0
+Contrast=20
 Saturation=0
 Black=0
-HighlightCompr=70
-HighlightComprThreshold=30
+HighlightCompr=0
+HighlightComprThreshold=33
 ShadowCompr=50
-Curve=0;
+Curve=1;0;0;0.45754265471370759;0.57906737998843294;1;1;
 
 [Channel Mixer]
 Red=100;0;0;
@@ -28,12 +28,12 @@ Blue=0;0;100;
 
 [Luminance Curve]
 Brightness=0
-Contrast=5
+Contrast=0
 Saturation=-100
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=40
-LCurve=3;0;0;0.18623481781376497;0.028340080971659902;0.50607287449392713;0.50607287449392713;0.77732793522267185;0.97975708502024295;1;1;
+LCurve=3;0;0;0.84892086330935235;0.69064748201438808;1;1;
 aCurve=0;
 bCurve=0;
 
@@ -53,15 +53,17 @@ DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
 
-[Clarity]
+[SharpenEdge]
 Enabled=false
-Clpasses=2
-Clstrength=50
-Clthreechannels=false
-Enabledtwo=false
-Mlstrength=20
-Uniformity=50
+Passes=2
+Strength=50
+ThreeChannels=false
+
+[SharpenMicro]
+Enabled=false
 Matrix=false
+Strength=20
+Uniformity=50
 
 [Color Boost]
 Amount=0
@@ -72,7 +74,7 @@ SaturationLimit=75
 [White Balance]
 Setting=Camera
 Temperature=5000
-Green=1.0
+Green=1
 
 [Color Shift]
 ChannelA=0
@@ -89,8 +91,8 @@ Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=false
-Luma=10
-Chroma=10
+Luma=5
+Chroma=5
 Gamma=2
 LumCurve=0;
 ChromCurve=0;
@@ -118,8 +120,8 @@ Radius=30
 Enabled=false
 X=0
 Y=0
-W=4276
-H=2836
+W=4281
+H=2871
 FixedRatio=false
 Ratio=3:2
 Orientation=Landscape
@@ -131,7 +133,7 @@ HorizontalFlip=false
 VerticalFlip=false
 
 [Common Properties for Transformations]
-AutoFill=true
+AutoFill=false
 
 [Rotation]
 Degree=0
@@ -156,8 +158,8 @@ CenterX=0
 CenterY=0
 
 [HLRecovery]
-Enabled=true
-Method=Luminance
+Enabled=false
+Method=Blend
 
 [Resize]
 Enabled=false
@@ -165,29 +167,18 @@ Scale=1
 AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
-Width=4276
-Height=2836
+Width=4281
+Height=2871
 
 [Color Management]
 InputProfile=(camera)
-ApplyGammaBeforeInputProfile=false
+BlendCMSMatrix=false
 WorkingProfile=ProPhoto
-OutputProfile=No ICM: sRGB output
+OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
 GammaSlope=4.5
-
-[Equalizer]
-Enabled=false
-C0=0
-C1=0
-C2=0
-C3=0
-C4=0
-C5=0
-C6=0
-C7=0
 
 [Directional Pyramid Equalizer]
 Enabled=true
@@ -209,7 +200,7 @@ FlatFieldFile=
 FlatFieldAutoSelect=false
 FlatFieldBlurRadius=32
 FlatFieldBlurType=Area Flatfield
-CA=true
+CA=false
 CARed=0
 CABlue=0
 HotDeadPixels=false

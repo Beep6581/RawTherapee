@@ -27,6 +27,7 @@
 #include <options.h>
 #include <iostream>
 #include <rawimagesource.h>
+#include "ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
 
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
@@ -110,6 +111,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+
     // perform first analysis
     LUTu hist16 (65536);
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
@@ -123,8 +125,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     // update blurmap
-
-
     SHMap* shmap = NULL;
     if (params.sh.enabled) {
         shmap = new SHMap (fw, fh, true);
@@ -135,20 +135,25 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     // RGB processing
 //!!!// auto exposure!!!
-    double br = params.toneCurve.expcomp;
-    int    bl = params.toneCurve.black;
+    double expcomp = params.toneCurve.expcomp;
+	int    bright = params.toneCurve.brightness;
+	int	   contr = params.toneCurve.contrast;
+	int    black = params.toneCurve.black;
+	int	   hlcompr = params.toneCurve.hlcompr;
+	int    hlcomprthresh = params.toneCurve.hlcomprthresh;
 
     if (params.toneCurve.autoexp) {
-        LUTu aehist; int aehistcompr;
-        imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-        ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, br, bl);
+		printf("silpleprocess calling autoexp\n");
+		LUTu aehist; int aehistcompr;
+		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
     }
 
     // at this stage, we can flush the raw data to free up quite an important amount of memory
-    imgsrc->flushRawData();
-
-    // at this stage, we can flush the raw data to free up quite an important amount of memory
-    imgsrc->flushRGB();
+    // commented out because it make the application crash when batch processing...
+    // TODO: find a better place to flush rawData and rawRGB
+    //imgsrc->flushRawData();
+    //imgsrc->flushRGB();
 
     LUTf curve1 (65536,0);
     LUTf curve2 (65536,0);
@@ -156,15 +161,20 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf satcurve (65536,0);
 	LUTu dummy;
 
-    CurveFactory::complexCurve (br, bl/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
+    CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, bright, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
         hist16, dummy, curve1, curve2, curve, dummy);
 
 	LabImage* labView = new LabImage (fw,fh);
 
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
 
+    // Freeing baseImg because not used anymore
+    delete baseImg;
+    baseImg = NULL;
+
     if (shmap)
     delete shmap;
+    shmap = NULL;
 
     if (pl) 
         pl->setProgress (0.5);
@@ -177,6 +187,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             hist16[CLIP((int)((labView->L[i][j])))]++;
 
     // luminance processing
+
+	ipf.EPDToneMap(labView);
 
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1);
 
@@ -221,198 +233,165 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         cw = params.crop.w;
         ch = params.crop.h;
     }
-    if(params.icm.gamma != "default" || params.icm.freegamma) {	// if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+
+    Image16* readyImg = NULL;
+    cmsHPROFILE jprof = NULL;
+    bool customGamma = false;
+    bool useLCMS;
+
+    if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
+        double ga0,ga1,ga2,ga3,ga4,ga5,ga6;
+        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6 );
+        customGamma = true;
+
         //or selected Free gamma
-        Image16* readyImgP;
-        Image16* readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos);
-        readyImgP=readyImg;
-        delete labView;
-        if (pl) pl->setProgress (0.70);
-        int drapeau=0;
-        // get the resize parameters
-        int refw, refh;
-        double tmpScale;
+        useLCMS=false;
+        bool pro=false;
         Glib::ustring chpro, outProfile;
-        int present_space[7]={0,0,0,0,0,0,0};
+        bool present_space[9]={false,false,false,false,false,false,false,false,false};
         std::vector<std::string> opnames = iccStore->getOutputProfiles ();
         //test if files are in system
-        for (int j=0; j<7;j++) {
-            // one can modify "option" [Color Management] to adapt name of profile if there are different for windows, MacOS, Linux ??
-            if(j==0) chpro=options.rtSettings.prophoto;
+        for (int j=0; j<9; j++) {
+            // one can modify "option" [Color Management] to adapt the profile's name if they are different for windows, MacOS, Linux ??
+            // some of them are actually provided by RT, thanks to Jacques Desmis
+            if     (j==0) chpro=options.rtSettings.prophoto;
             else if(j==1) chpro=options.rtSettings.adobe;
             else if(j==2) chpro=options.rtSettings.widegamut;
             else if(j==3) chpro=options.rtSettings.beta;
             else if(j==4) chpro=options.rtSettings.best;
             else if(j==5) chpro=options.rtSettings.bruce;
             else if(j==6) chpro=options.rtSettings.srgb;
-            for (int i=0; i<opnames.size(); i++) {
-                if(chpro.compare(opnames[i]) ==0) present_space[j]=1;
+            else if(j==7) chpro=options.rtSettings.srgb10;//gamma 1.0
+            else if(j==8) chpro=options.rtSettings.prophoto10;//gamma 1.0
+
+            for (unsigned int i=0; i<opnames.size(); i++) {
+                if(chpro.compare(opnames[i]) ==0) present_space[j]=true;
             }
-            if (present_space[j]==0) {
-                if (pl) pl->setProgressStr ("Missing file..");
-                pl->setProgress (0.0);// display file not present: not very good display information...!!
-                if (settings->verbose) printf("Missing file: %s \n", chpro.c_str());
-            }  //c_str()
+            if (!present_space[j] && settings->verbose) printf("Missing file: %s\n", chpro.c_str());
         }
+        if (params.icm.freegamma && params.icm.gampos < 1.35) pro=true; //select profil with gammaTRC modified :
+        else if (params.icm.gamma=="linear_g1.0" || (params.icm.gamma=="High_g1.3_s3.35")) pro=true;//pro=0  RT_sRGB || Prophoto
 
         // Check that output profiles exist, otherwise use LCMS2
-        if (params.icm.working=="ProPhoto" && present_space[0]==1) outProfile=options.rtSettings.prophoto;//in option we can change the name of file - if different...
-        else if (params.icm.working=="Adobe RGB" && present_space[1]==1) outProfile=options.rtSettings.adobe;
-        else if (params.icm.working=="WideGamut" && present_space[2]==1) outProfile=options.rtSettings.widegamut;
-        else if (params.icm.working=="Beta RGB" && present_space[3]==1) outProfile=options.rtSettings.beta;
-        else if (params.icm.working=="BestRGB" && present_space[4]==1) outProfile=options.rtSettings.best;
-        else if (params.icm.working=="BruceRGB" && present_space[5]==1) outProfile=options.rtSettings.bruce;
-        else if (params.icm.working== "sRGB" && present_space[6]==1) outProfile=options.rtSettings.srgb;
-        //OutProfile become Profile's system
-        else {if (settings->verbose) printf("No file:%s in system - use LCMS2 substitution\n",params.icm.working.c_str() ); drapeau=1; }
-
-        if (settings->verbose && drapeau==0) printf("Output profile: %s \n", outProfile.c_str());  //c_str()
-
-
-        if (params.resize.enabled) {
-
-            if (params.crop.enabled && params.resize.appliesTo == "Cropped area") {
-                // the resize values applies to the crop dimensions
-                refw = cw;
-                refh = ch;
-            }
-            else {
-                // the resize values applies to the image dimensions
-                // if a crop exists, it will be resized to the calculated scale
-                refw = fw;
-                refh = fh;
-            }
-
-            switch(params.resize.dataspec) {
-            case (1):
-                // Width
-                tmpScale = (double)params.resize.width/(double)refw;
-                break;
-            case (2):
-                // Height
-                tmpScale = (double)params.resize.height/(double)refh;
-                break;
-            case (3):
-                // FitBox
-                if ((double)refw/(double)refh > (double)params.resize.width/(double)params.resize.height)
-                    tmpScale = (double)params.resize.width/(double)refw;
-                else
-                    tmpScale = (double)params.resize.height/(double)refh;
-            break;
-            default:
-                // Scale
-                tmpScale = params.resize.scale;
-                break;
-            }
-
-            // resize image
-            if (fabs(tmpScale-1.0)>1e-5) {
-                int imw, imh;
-                if (params.crop.enabled && params.resize.appliesTo == "Full image") {
-                    imw = cw;
-                    imh = ch;
-                }
-                else {
-                    imw = refw;
-                    imh = refh;
-                }
-                imw = (int)( (double)imw * tmpScale + 0.5 );
-                imh = (int)( (double)imh * tmpScale + 0.5 );
-                Image16* tempImage = new Image16 (imw, imh);
-                ipf.resize (readyImg, tempImage, tmpScale);
-                delete readyImg;
-                readyImg = tempImage;
-            }
+        // Use the icc/icm profiles associated to possible working profiles, set in "options"
+        if      (params.icm.working=="ProPhoto"  && present_space[0] && !pro)  outProfile=options.rtSettings.prophoto;
+        else if (params.icm.working=="Adobe RGB" && present_space[1]        )  outProfile=options.rtSettings.adobe;
+        else if (params.icm.working=="WideGamut" && present_space[2]        )  outProfile=options.rtSettings.widegamut;
+        else if (params.icm.working=="Beta RGB"  && present_space[3]        )  outProfile=options.rtSettings.beta;
+        else if (params.icm.working=="BestRGB"   && present_space[4]        )  outProfile=options.rtSettings.best;
+        else if (params.icm.working=="BruceRGB"  && present_space[5]        )  outProfile=options.rtSettings.bruce;
+        else if (params.icm.working=="sRGB"      && present_space[6] && !pro)  outProfile=options.rtSettings.srgb;
+        else if (params.icm.working=="sRGB"      && present_space[7] &&  pro)  outProfile=options.rtSettings.srgb10;
+        else if (params.icm.working=="ProPhoto"  && present_space[8] &&  pro)  outProfile=options.rtSettings.prophoto10;
+        else {
+            // Should not occurs
+            if (settings->verbose) printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", params.icm.working.c_str() );
+            useLCMS=true;
         }
 
+        //begin adaptation rTRC gTRC bTRC
+        //"jprof" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
+        if (!useLCMS) {
+            if (settings->verbose) printf("Output Gamma - profile: \"%s\"\n", outProfile.c_str()  );  //c_str()
+            jprof = iccStore->getProfile(outProfile); //get output profile
+            if (jprof == NULL) {
+                useLCMS = true;
+                if (settings->verbose) printf("\"%s\" ICC output profile not found!\n", outProfile.c_str());
+            }
+            else {
+                cmsToneCurve* GammaTRC[3];
+                cmsFloat64Number Parameters[7];
+                Parameters[0] = ga0;
+                Parameters[1] = ga1;
+                Parameters[2] = ga2;
+                Parameters[3] = ga3;
+                Parameters[4] = ga4;
+                Parameters[5] = ga5;
+                Parameters[6] = ga6;
+                // 7 parameters for smoother curves
+                // Calculate output profile's rTRC bTRC gTRC
+                GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters);
+                cmsWriteTag(jprof, cmsSigGreenTRCTag, (void*)GammaTRC[1] );
+                cmsWriteTag(jprof, cmsSigRedTRCTag,   (void*)GammaTRC[0] );
+                cmsWriteTag(jprof, cmsSigBlueTRCTag,  (void*)GammaTRC[2] );
+            }
+        }
+    }
 		if( job->metadata && job->writeMetadata ){
 			rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
 			mdata->merge();
 			readyImg->setMetadata( mdata );
 		}
-
-        ProfileContent pc;
-
-        if (drapeau==0) pc = iccStore->getContent (outProfile);// use profile in system (Prophoto.icm, sRGB.icm, etc.)  if present, otherwise use LCMS2 profile generate by lab2rgb16b
-
-        readyImg->setOutputProfile (pc.data, pc.length);
-
-        delete baseImg;
-
-        if (!job->initialImage)
-            ii->decreaseRef ();
-
-        delete job;
-        if (pl)
-            pl->setProgress (0.75);
-
-        return readyImg;
-    }
     else {
-        //if default mode : profil = selection by choice in list (Prophoto.icm, sRGB.icm, etc., etc.) , gamma = gamma of profile or  not selected Free gamma
-        Image16* readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
-        delete labView;
-        if (pl) pl->setProgress (0.70);
+        // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
+        // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
+        readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
+        if (settings->verbose) printf("Output profile: \"%s\"\n", params.icm.output.c_str());
+    }
+
+    delete labView;
+    labView = NULL;
+
+    if (pl) pl->setProgress (0.70);
+
+    if (params.resize.enabled) {
 
         // get the resize parameters
         int refw, refh;
         double tmpScale;
+        if (params.crop.enabled && params.resize.appliesTo == "Cropped area") {
+            // the resize values applies to the crop dimensions
+            refw = cw;
+            refh = ch;
+        }
+        else {
+            // the resize values applies to the image dimensions
+            // if a crop exists, it will be resized to the calculated scale
+            refw = fw;
+            refh = fh;
+        }
 
-        if (params.resize.enabled) {
-
-            if (params.crop.enabled && params.resize.appliesTo == "Cropped area") {
-                // the resize values applies to the crop dimensions
-                refw = cw;
-                refh = ch;
-            }
-            else {
-                // the resize values applies to the image dimensions
-                // if a crop exists, it will be resized to the calculated scale
-                refw = fw;
-                refh = fh;
-            }
-
-            switch(params.resize.dataspec) {
-            case (1):
-                // Width
+        switch(params.resize.dataspec) {
+        case (1):
+            // Width
+            tmpScale = (double)params.resize.width/(double)refw;
+            break;
+        case (2):
+            // Height
+            tmpScale = (double)params.resize.height/(double)refh;
+            break;
+        case (3):
+            // FitBox
+            if ((double)refw/(double)refh > (double)params.resize.width/(double)params.resize.height)
                 tmpScale = (double)params.resize.width/(double)refw;
-                break;
-            case (2):
-                // Height
-                tmpScale = (double)params.resize.height/(double)refh;
-                break;
-            case (3):
-                // FitBox
-                if ((double)refw/(double)refh > (double)params.resize.width/(double)params.resize.height)
-                    tmpScale = (double)params.resize.width/(double)refw;
             else
                 tmpScale = (double)params.resize.height/(double)refh;
-                break;
-            default:
-                // Scale
-                tmpScale = params.resize.scale;
-                break;
-            }
-
-            // resize image
-            if (fabs(tmpScale-1.0)>1e-5) {
-                int imw, imh;
-                if (params.crop.enabled && params.resize.appliesTo == "Full image") {
-                    imw = cw;
-                    imh = ch;
-                }
-                else {
-                    imw = refw;
-                    imh = refh;
-                }
-                imw = (int)( (double)imw * tmpScale + 0.5 );
-                imh = (int)( (double)imh * tmpScale + 0.5 );
-                Image16* tempImage = new Image16 (imw, imh);
-                ipf.resize (readyImg, tempImage, tmpScale);
-                delete readyImg;
-                readyImg = tempImage;
-            }
+        break;
+        default:
+            // Scale
+            tmpScale = params.resize.scale;
+            break;
         }
+
+        // resize image
+        if (fabs(tmpScale-1.0)>1e-5) {
+            int imw, imh;
+            if (params.crop.enabled && params.resize.appliesTo == "Full image") {
+                imw = cw;
+                imh = ch;
+            }
+            else {
+                imw = refw;
+                imh = refh;
+            }
+            imw = (int)( (double)imw * tmpScale + 0.5 );
+            imh = (int)( (double)imh * tmpScale + 0.5 );
+            Image16* tempImage = new Image16 (imw, imh);
+            ipf.resize (readyImg, tempImage, tmpScale);
+            delete readyImg;
+            readyImg = tempImage;
+        }
+    }
 
 		if( job->metadata && job->writeMetadata){
 			rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
@@ -420,24 +399,46 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			readyImg->setMetadata( mdata );
 		}
 
-        ProfileContent pc;
-        if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString)
-            pc = iccStore->getContent (params.icm.output);
-
-        readyImg->setOutputProfile (pc.data, pc.length);
-
-        delete baseImg;
-
-        if (!job->initialImage)
-            ii->decreaseRef ();
-
-        delete job;
-        if (pl)
-            pl->setProgress (0.75);
-
-        return readyImg;
-
+    // Setting the output curve to readyImg
+    if (customGamma) {
+        if (!useLCMS) {
+            // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generate by lab2rgb16b
+            ProfileContent pc(jprof);
+            readyImg->setOutputProfile (pc.data, pc.length);
+        }
     }
+    else {
+        // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
+        Glib::ustring outputProfile;
+        if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString) {
+            outputProfile = params.icm.output;
+        }
+        else {
+            // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
+            if (settings->verbose) printf("No output profiles set ; looking for the default sRGB profile (\"%s\")...\n", options.rtSettings.srgb.c_str());
+            outputProfile = options.rtSettings.srgb;
+        }
+
+        // if iccStore->getProfile send back an object, then iccStore->getContent will do too
+        cmsHPROFILE jprof = iccStore->getProfile(outputProfile); //get outProfile
+        if (jprof == NULL) {
+            if (settings->verbose) printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", outputProfile.c_str());
+        }
+        else {
+            if (settings->verbose) printf("Using \"%s\" output profile\n", outputProfile.c_str());
+            ProfileContent pc = iccStore->getContent (outputProfile);
+            readyImg->setOutputProfile (pc.data, pc.length);
+        }
+    }
+
+    if (!job->initialImage)
+        ii->decreaseRef ();
+
+    delete job;
+    if (pl)
+        pl->setProgress (0.75);
+
+    return readyImg;
 }
 
 void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl ) {
