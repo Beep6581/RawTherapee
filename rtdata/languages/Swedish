@@ -1035,7 +1035,6 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
-!HISTORY_MSG_162;Tone Mapping
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
 !PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_ICMGAMMA;Output gamma

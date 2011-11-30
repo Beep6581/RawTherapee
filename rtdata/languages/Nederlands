@@ -890,7 +890,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
-!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
