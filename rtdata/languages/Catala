@@ -1,5 +1,4 @@
 
-
 #00 Catala
 #01 10.10.2009: JMG
 ABOUT_TAB_BUILD;Versió
@@ -987,13 +986,8 @@ ZOOMPANEL_ZOOMOUT;Allunya <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
-!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
@@ -1021,11 +1015,6 @@ ZOOMPANEL_ZOOMOUT;Allunya <b>-</b>
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !TP_CROP_GTGRID;Grid
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_HLREC_BLEND;Blend
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix

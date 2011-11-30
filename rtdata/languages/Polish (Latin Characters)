@@ -1054,13 +1054,3 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
-!PARTIALPASTE_EPD;Tone Mapping
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength
