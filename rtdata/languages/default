@@ -253,7 +253,11 @@ HISTORY_MSG_154;Vibrance - Protect skin tones
 HISTORY_MSG_155;Vibrance - Avoid color drift
 HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+HISTORY_MSG_158;Strength
+HISTORY_MSG_159;Edge stopping
 HISTORY_MSG_15;Luminance Contrast
+HISTORY_MSG_160;Scale
+HISTORY_MSG_161;Reweighting iterates
 HISTORY_MSG_16;Luminance Black
 HISTORY_MSG_17;Luminance Highlight Compr.
 HISTORY_MSG_18;Luminance Shadow Compr.
@@ -347,10 +351,6 @@ HISTORY_MSG_97;'b' curve
 HISTORY_MSG_98;Demosaicing method
 HISTORY_MSG_99;Hot/dead pixel filtering
 HISTORY_MSG_9;Highlight Compression
-HISTORY_MSG_158;Strength
-HISTORY_MSG_159;Edge stopping
-HISTORY_MSG_160;Scale
-HISTORY_MSG_161;Reweighting iterates
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -513,12 +513,12 @@ PARTIALPASTE_CROP;Crop
 PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
 PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
 PARTIALPASTE_DEFRINGE;Defringe
-PARTIALPASTE_EPD;Tone Mapping
 PARTIALPASTE_DETAILGROUP;Detail settings
 PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
 PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 PARTIALPASTE_DISTORTION;Distortion correction
+PARTIALPASTE_EPD;Tone Mapping
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Changes to exif data
 PARTIALPASTE_EXPOSURE;Exposure
@@ -801,11 +801,6 @@ TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
-TP_EPD_LABEL;Tone Mapping
-TP_EPD_STRENGTH;Strength
-TP_EPD_EDGESTOPPING;Edge stopping
-TP_EPD_SCALE;Scale
-TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
 TP_DETAIL_AMOUNT;Amount
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -822,6 +817,11 @@ TP_DISTORTION_AMOUNT;Amount
 TP_DISTORTION_AUTO;    Auto distortion correction
 TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 TP_DISTORTION_LABEL;Distortion
+TP_EPD_EDGESTOPPING;Edge stopping
+TP_EPD_LABEL;Tone Mapping
+TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+TP_EPD_SCALE;Scale
+TP_EPD_STRENGTH;Strength
 TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 TP_EQUALIZER_FINEST;finest
