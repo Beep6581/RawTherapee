@@ -1,4 +1,5 @@
 
+
 #00 English (US)
 HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
@@ -258,7 +259,11 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_15;Luminance Contrast
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
@@ -519,6 +524,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 !PARTIALPASTE_DISTORTION;Distortion correction
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_EXIFCHANGES;Changes to exif data
 !PARTIALPASTE_EXPOSURE;Exposure
@@ -817,6 +823,11 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_DISTORTION_LABEL;Distortion
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
