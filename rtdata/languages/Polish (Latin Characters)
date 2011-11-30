@@ -1,3 +1,5 @@
+
+
 #00 Polish
 #01 24.12.2007
 #02 Mateusz Ludwin
@@ -254,7 +256,19 @@ HISTORY_MSG_148;Kontrast lokalny
 HISTORY_MSG_149;Kontrast lokalny - matryca 3x3
 HISTORY_MSG_14;Jasnosc luminancji
 HISTORY_MSG_150;Redukcja szumu i artefaktow po demozaikowaniu
+HISTORY_MSG_151;Jaskrawosc
+HISTORY_MSG_152;Jaskrawosc - Odcienie pastelowe
+HISTORY_MSG_153;Jaskrawosc - Odcienie nasycone
+HISTORY_MSG_154;Jaskrawosc - Zachowaj odcienie skory
+HISTORY_MSG_155;Jaskrawosc - Zapobiegaj zmianom kolorow
+HISTORY_MSG_156;Jaskrawosc - Polacz odcienie pastelowe i nasycone
+HISTORY_MSG_157;Jaskrawosc - Prog odcieni pastelowych/nasyconych
+HISTORY_MSG_158;Sila
+HISTORY_MSG_159;Wyszukanie krawedzi
 HISTORY_MSG_15;Kontrast luminancji
+HISTORY_MSG_160;Skala
+HISTORY_MSG_161;Powtarzanie rozwazania
+HISTORY_MSG_162;Tone Mapping
 HISTORY_MSG_16;Czern luminancji
 HISTORY_MSG_17;Kompr. swiatel luminancji
 HISTORY_MSG_18;Kompr. cieni luminancji
@@ -409,6 +423,8 @@ IPTCPANEL_SUPPCATEGORIES;Dodatkowe kategorie tematyczne
 IPTCPANEL_SUPPCATEGORIESHINT;Doprecyzowuje kategorie tematyczne zdjecia (Supplemental Categories).
 IPTCPANEL_TITLEHINT;Skrocony temat odniesienia zdjecia (Object Name).
 IPTCPANEL_TITLE;Tytul
+IPTCPANEL_TRANSREFERENCEHINT;Numer badz kod identyfikujacy zlecenie utworzony zazwyczaj przez fotografa przy transmisji umozliwiajacy sledzenie obrazu w obiegu.
+IPTCPANEL_TRANSREFERENCE;Kod ident. zlecenie
 MAIN_BUTTON_EXIT;Wyslij do kolejki
 MAIN_BUTTON_FULLSCREEN;Pelen ekran
 MAIN_BUTTON_PREFERENCES;Preferencje
@@ -464,6 +480,7 @@ MAIN_TAB_TAGGING;Tagowanie
 MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TAB_TRANSFORM;Transformacje
 MAIN_TOGGLE_BEFORE_AFTER;Przed|Po
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zablokuj</b> / <b>Odblokuj</b> widok <b>Przed</b>\n\n<b>Zablokuj</b>: nie zmieniaj widoku <b>Przed</b> - \nPrzydatne w porownywaniu zablokowanego obrazu z obrazem na ktorym wykonano wiele zmian.\n\n<b>Odblokuj</b>: widok <b>Przed</b> bedzie sledzil widok <b>Po</b> o jeden krok do tylu, pokazujac obraz przed efektem aktualnie uzytego narzedzia.
 MAIN_TOOLTIP_HIDEFP;Pokaz/ukryj dolny panel (przegladarka plikow i katalogow, klawisz skrotu: F)
 MAIN_TOOLTIP_HIDEHP;Pokaz/ukryj lewy panel (razem z historia, klawisz skrotu: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Pokaz przeswietlenia
@@ -515,6 +532,7 @@ PARTIALPASTE_DIALOGLABEL;Czesciowe wklejenie profilu przetwarzania
 PARTIALPASTE_DIRPYRDENOISE;Redukcja szumu
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast wg. poziomu detali
 PARTIALPASTE_DISTORTION;Korekcja znieksztalcenia
+PARTIALPASTE_EPD;Tone Mapping
 PARTIALPASTE_EVERYTHING;Wszystko
 PARTIALPASTE_EXIFCHANGES;Zmien dane Exif
 PARTIALPASTE_EXPOSURE;Ekspozycja
@@ -527,6 +545,7 @@ PARTIALPASTE_HLRECOVERYAMOUNT;Sila odzyskiwania przeswietlen
 PARTIALPASTE_HLRECOVERY;Odzyskiwanie przeswietlen
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Prog odzyskiwania przeswietlen
 PARTIALPASTE_HSVEQUALIZER;Korektor HSV
+PARTIALPASTE_ICMGAMMA;Gamma wyjsciowa
 PARTIALPASTE_ICMSETTINGS;Ustawienia ICM
 PARTIALPASTE_IMPULSEDENOISE;Impulsowa redukcja szumu
 PARTIALPASTE_IPTCINFO;Informacje IPTC
@@ -558,6 +577,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Niedoswietlenia/Przeswietlenia
 PARTIALPASTE_SHARPENEDGE;Krawedzie
 PARTIALPASTE_SHARPENING;Wyostrzanie
 PARTIALPASTE_SHARPENMICRO;Kontrast lokalny
+PARTIALPASTE_VIBRANCE;Jaskrawosc
 PARTIALPASTE_VIGNETTING;Korekcja winiety
 PARTIALPASTE_WAVELETEQUALIZER;Korektor Wavelet
 PARTIALPASTE_WHITEBALANCE;Balans bieli
@@ -689,6 +709,9 @@ PREFERENCES_TAB_IMPROC;Przetwarzanie obrazu
 PREFERENCES_TAB_OUTPUT;Opcje wyjsciowe
 PREFERENCES_TAB_SOUND;Dzwieki
 PREFERENCES_THUMBSIZE;Wielkosc miniaturki
+PREFERENCES_TP_LABEL;Panel narzedzi:
+PREFERENCES_TP_USEICONORTEXT;Uzyj ikon w zakladkach zamiast tekstowych etykiet
+PREFERENCES_TP_VSCROLLBAR;Ukry pionowy pasek przesuwania
 PREFERENCES_TUNNELMETADATA;Skopiuj niezmienione IPTC/XMP do pliku wynikowego (gdy tagowane za pomoca innego programu)
 PREFERENCES_USESYSTEMTHEME; Uzyj tematu systemowego
 PREFERENCES_WORKFLOW;Tok pracy
@@ -816,6 +839,11 @@ TP_DISTORTION_AMOUNT;Sila
 TP_DISTORTION_AUTO;Automatyczna korekcja dystorsji
 TP_DISTORTION_AUTO_TIP;(Eksperymentalne) Automatyczna korekcja dystorsji obiektywu dla niektorych aparatow (M4/3, kompakty DC, itp.)
 TP_DISTORTION_LABEL;Dystorsja
+TP_EPD_EDGESTOPPING;Wyszukiwanie krawedzi
+TP_EPD_LABEL;Tone Mapping
+TP_EPD_REWEIGHTINGITERATES;Powtarzanie rozwazania
+TP_EPD_SCALE;Skala
+TP_EPD_STRENGTH;Sila
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;delikatnie
@@ -869,15 +897,21 @@ TP_HSVEQUALIZER_NEUTRAL;Neutralne
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Tlumienie przeswietlen danymi z matrycy
+TP_ICM_BLENDCMSMATRIX_TOOLTIP;Wlacz odzyskiwanie przeswietlonych regionow jesli profil ICC wykorzystuje LUT (tablicowanie).
 TP_ICM_FILEDLGFILTERANY;Wszystkie pliki
 TP_ICM_FILEDLGFILTERICM;Pliki z profilami ICC
 TP_ICM_GAMMABEFOREINPUT;Profil stosuje Gamma
 TP_ICM_INPUTCAMERA;Domyslny aparatu
 TP_ICM_INPUTCAMERAICC;Domyslny aparatu lub ICC
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Uzyj profil ICC stworzony specjalnie na potrzeby RawTherapee. Jest bardziej dokladny niz domyslny matrycowy profil ICC, lecz dostepny tylko dla niektorych aparatow.
+TP_ICM_INPUTCAMERA_TOOLTIP;Uzyj prostej domyslnej matrycy kolorow z DCRAW badz zapisanej w DNG.
 TP_ICM_INPUTCUSTOM;Reczny
+TP_ICM_INPUTCUSTOM_TOOLTIP;Wczytaj wlasny profil ICC z pliku.
 TP_ICM_INPUTDLGLABEL;Wybierz wejsciowy profil ICC...
 TP_ICM_INPUTEMBEDDED;Jesli to mozliwe, uzyj osadzonego
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Uzyj profil kolorow zapisany w plikach nie-raw.
 TP_ICM_INPUTNONE;Bez profilu
+TP_ICM_INPUTNONE_TOOLTIP;Nie uzywaj zadnego profilu kolorow. Pozyteczne jedynie w wyjatkowych przypadkach.
 TP_ICM_INPUTPROFILE;Profil wejsciowy
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: Wyjscie sRGB
@@ -989,6 +1023,13 @@ TP_SHARPENMICRO_AMOUNT;Sila
 TP_SHARPENMICRO_LABEL;Kontrast lokalny
 TP_SHARPENMICRO_MATRIX;Matryca 3×3 zamiast 5×5
 TP_SHARPENMICRO_UNIFORMITY;Jednolitosc
+TP_VIBRANCE_AVOIDCOLORSHIFT;Zapobiegaj przesuniecia kolorow
+TP_VIBRANCE_LABEL;Jaskrawosc
+TP_VIBRANCE_PASTELS;Odcienie pastelowe
+TP_VIBRANCE_PASTSATTOG;Polacz odcienie pastelowe i nasycone
+TP_VIBRANCE_PROTECTSKINS;Zachowaj odcienie skory
+TP_VIBRANCE_PSTHRESHOLD;Prog odcieni pastelowych/nasyconych
+TP_VIBRANCE_SATURATED;Odcienie nasycone
 TP_VIGNETTING_AMOUNT;Ilosc
 TP_VIGNETTING_CENTER;Centrum
 TP_VIGNETTING_CENTER_X;Centrum X
@@ -1025,6 +1066,3 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
-!IPTCPANEL_TRANSREFERENCE;Trans. Reference
-!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar

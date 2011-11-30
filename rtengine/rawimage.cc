@@ -17,7 +17,7 @@
 
 namespace rtengine{
 
-extern Settings* settings;
+extern const Settings* settings;
 
 RawImage::RawImage(  const Glib::ustring name )
 :allocation(NULL)

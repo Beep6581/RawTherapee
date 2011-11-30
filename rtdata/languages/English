@@ -1,4 +1,5 @@
 
+
 #00 English
 HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
@@ -251,7 +252,19 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_149;Microcontrast - 3x3 matrix
 !HISTORY_MSG_14;Luminance Brightness
 !HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vibrance - Pastel tones
+!HISTORY_MSG_153;Vibrance - Saturated tones
+!HISTORY_MSG_154;Vibrance - Protect skin tones
+!HISTORY_MSG_155;Vibrance - Avoid color drift
+!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
+!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
 !HISTORY_MSG_15;Luminance Contrast
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
@@ -460,6 +473,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
 !MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
 !MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
 !MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
@@ -471,7 +485,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
-!MAIN_TOOLTIP_TOGGLE;Toggle before/after view <b>B</b>
+!MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
 !NAVIGATOR_G_NA;G = n/a
@@ -511,6 +525,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 !PARTIALPASTE_DISTORTION;Distortion correction
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_EXIFCHANGES;Changes to exif data
 !PARTIALPASTE_EXPOSURE;Exposure
@@ -523,6 +538,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
+!PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_IPTCINFO;IPTC info
@@ -553,6 +569,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PARTIALPASTE_WHITEBALANCE;White balance 
@@ -681,7 +698,9 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_TAB_OUTPUT;Output Options
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THUMBSIZE;Thumbnail Size
-!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
+!PREFERENCES_TP_LABEL;Tool panel:
+!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Layout
@@ -734,9 +753,9 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !SAVEDLG_SAVESPP;Save processing parameters with image
 !SAVEDLG_TIFFFILTER;TIFF files
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
-!TOOLBAR_TOOLTIP_CROP;Crop selection <b>C</b>
+!TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection <b>C</b>
 !TOOLBAR_TOOLTIP_HAND;Hand tool <b>H</b>
-!TOOLBAR_TOOLTIP_STRAIGHTEN;Straight line selection <b>S</b>
+!TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>  <b>S</b> nnIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 !TOOLBAR_TOOLTIP_WB;Spot white balance <b>W</b>
 !TP_CACORRECTION_BLUE;Blue
 !TP_CACORRECTION_LABEL;C/A Correction
@@ -805,6 +824,11 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_DISTORTION_LABEL;Distortion
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
@@ -858,17 +882,22 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_FILEDLGFILTERANY;Any files
 !TP_ICM_FILEDLGFILTERICM;ICC Profile Files
-!TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
 !TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCAMERAICC;Camera standard or ICC
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM;Custom
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
 !TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
 !TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
 !TP_ICM_INPUTNONE;No profile
+!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_ICM_INPUTPROFILE;Input Profile
-!TP_ICM_LABEL;ICM
+!TP_ICM_LABEL;Color Management
 !TP_ICM_NOICM;No ICM: sRGB output
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 !TP_ICM_OUTPUTPROFILE;Output Profile
@@ -921,8 +950,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_RESIZE_BICUBICSH;Bicubic (Sharper)
 !TP_RESIZE_BILINEAR;Bilinear
 !TP_RESIZE_CROPPEDAREA;Cropped area
-!TP_RESIZE_DOWNSCALEB;Downscale (Better)
-!TP_RESIZE_DOWNSCALEF;Downscale (Faster)
 !TP_RESIZE_FITBOX;Bounding box
 !TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_FULLSIZE;Full Image Size:
@@ -969,6 +996,13 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_LABEL;Vibrance
+!TP_VIBRANCE_PASTELS;Pastel tones
+!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
+!TP_VIBRANCE_PROTECTSKINS;Protect skin tones
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_SATURATED;Saturated tones
 !TP_VIGNETTING_AMOUNT;Amount
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X

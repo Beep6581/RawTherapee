@@ -24,17 +24,22 @@
 namespace rtengine {
 
 class LabImage {
-    private:
-        bool fromImage;
-        float * data;
-    public:
-        int W, H;
-        float** L;
-        float** a;
-        float** b;
+private:
+	bool fromImage;
+	float * data;
 
-     LabImage (int w, int h);
-    ~LabImage ();
+public:
+	int W, H;
+	float** L;
+	float** a;
+	float** b;
+
+	LabImage (int w, int h);
+	~LabImage ();
+
+	//Copies image data in Img into this instance.
+	void CopyFrom(LabImage *Img);
 };
+
 }
 #endif

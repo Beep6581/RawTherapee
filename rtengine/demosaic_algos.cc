@@ -47,7 +47,7 @@ namespace rtengine {
 #define CLIREF(x) LIM(x,-200000.0,200000.0) // avoid overflow : do not act directly on image[] or pix[]
 
 #define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-extern Settings* settings;
+extern const Settings* settings;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::eahd_demosaic () {

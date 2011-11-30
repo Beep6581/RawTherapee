@@ -1,5 +1,6 @@
 
 ﻿#
+
 #00 Nederlands
 #01 26.12.2007: door Rens Duijsens en Brent Huisman
 #02 14.03.2008: updated by reggybe
@@ -878,6 +879,18 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTORY_MSG_148;Microcontrast
 !HISTORY_MSG_149;Microcontrast - 3x3 matrix
 !HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vibrance - Pastel tones
+!HISTORY_MSG_153;Vibrance - Saturated tones
+!HISTORY_MSG_154;Vibrance - Protect skin tones
+!HISTORY_MSG_155;Vibrance - Avoid color drift
+!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
+!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
@@ -889,6 +902,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
@@ -900,6 +914,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -909,6 +924,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
+!PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_PERSPECTIVE;Perspective
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
@@ -928,6 +944,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_CUSTPROFBUILD;Custom image profile builder
@@ -964,7 +981,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
 !PREFERENCES_TAB_SOUND;Sounds
-!PREFERENCES_TP_VSCROLLBAR;Hide tool panel's vertical scrollbar
+!PREFERENCES_TP_LABEL;Tool panel:
+!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
@@ -981,6 +1000,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
@@ -998,7 +1022,13 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_GAMMA_SLOP;slope (linear)
 !TP_HLREC_BLEND;Blend
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_INPUTCAMERAICC;Camera standard or ICC
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
@@ -1026,3 +1056,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_SHARPENMICRO_LABEL;Microcontrast
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_LABEL;Vibrance
+!TP_VIBRANCE_PASTELS;Pastel tones
+!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
+!TP_VIBRANCE_PROTECTSKINS;Protect skin tones
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_SATURATED;Saturated tones

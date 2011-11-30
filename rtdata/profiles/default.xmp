@@ -3,22 +3,22 @@
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:rt="http://www.rawtherapee.com/1.0/"
-   rt:Version="4.0.2.28">
+   rt:Version="4.0.5.104.0.6.4">
    <rt:Processing>
     <rdf:Bag>
      <rdf:li>
       <rdf:Description
-       rt:Version="300">
+       rt:Version="301">
       <rt:ExposureRGB
        rt:Auto="True"
-       rt:Clip="0.0002"
+       rt:Clip="0"
        rt:Compensation="0"
-       rt:Brightness="10"
+       rt:Brightness="0"
        rt:Contrast="20"
-       rt:Saturation="0"
+       rt:Saturation="5"
        rt:Black="0"
-       rt:HighlightCompression="70"
-       rt:HighlightComprThreshold="30"
+       rt:HighlightCompression="0"
+       rt:HighlightComprThreshold="33"
        rt:ShadowCompression="50"
        rt:ToneCurve="0;"/>
       <rt:ChannelMixer
@@ -26,15 +26,23 @@
        rt:Green="0;100;0;"
        rt:Blue="0;0;100;"/>
       <rt:ExposureLab
-       rt:Brightness="-5"
+       rt:Brightness="0"
        rt:Contrast="0"
-       rt:Saturation="20"
+       rt:Saturation="5"
        rt:AvoidColorClipping="False"
        rt:SaturationLimitEnabled="False"
        rt:SaturationLimit="40"
        rt:LCurve="0;"
        rt:aCurve="0;"
        rt:bCurve="0;"/>
+      <rt:Vibrance
+       rt:Enabled="False"
+       rt:Pastels="0"
+       rt:Saturated="0"
+       rt:PSThreshold="75"
+       rt:ProtectSkins="False"
+       rt:AvoidColorShift="True"
+       rt:PastSatTog="True"/>
       <rt:Sharpening
        rt:Enabled="False"
        rt:Method="usm"
@@ -73,8 +81,8 @@
        rt:Threshold="25"/>
       <rt:PyramidDenoise
        rt:Enabled="False"
-       rt:Luma="10"
-       rt:Chroma="10"
+       rt:Luma="5"
+       rt:Chroma="5"
        rt:Gamma="2"/>
       <rt:ShadowHighlights
        rt:Enabled="False"
@@ -89,16 +97,22 @@
        rt:Enabled="False"
        rt:X="0"
        rt:Y="0"
-       rt:W="4281"
-       rt:H="2871"/>
+       rt:Width="4281"
+       rt:Height="2871"/>
       <rt:CoarseGeo
        rt:RotationDegree="0"
        rt:HorizontalFlip="False"
        rt:VerticalFlip="False"/>
+      <rt:EPD
+       rt:Enabled="False"
+       rt:Strength="0.25"
+       rt:EdgeStopping="1.4"
+       rt:Scale="1"
+       rt:ReweightingIterates="0"/>
       <rt:Geometry
-       rt:AutoFill="True"
+       rt:AutoFill="False"
        rt:RotationDegree="0"
-       rt:DistortionA="0"
+       rt:DistortionAmount="0"
        rt:HorizontalPerspective="0"
        rt:VerticalPerspective="0"/>
       <rt:CACorrection
@@ -111,8 +125,8 @@
        rt:CenterX="0"
        rt:CenterY="0"/>
       <rt:HLRecovery
-       rt:Enabled="True"
-       rt:Method="Luminance"/>
+       rt:Enabled="False"
+       rt:Method="Blend"/>
       <rt:Resize
        rt:Enabled="False"
        rt:Scale="1"
@@ -123,11 +137,10 @@
        rt:Height="2871"/>
       <rt:ColorManagement
        rt:InputProfile="(camera)"
-       rt:ApplyGammaBeforeInputProfile="False"
        rt:WorkingProfile="ProPhoto"
-       rt:OutputProfile="No ICM: sRGB output"
-       rt:Gammafree="default"
-       rt:Freegamma="False"
+       rt:OutputProfile="RT_sRGB"
+       rt:FreeGamma="default"
+       rt:FreeGammaEnabled="False"
        rt:GammaValue="2.22"
        rt:GammaSlope="4.5"/>
       <rt:DirectionalPyramidEqualizer
@@ -137,21 +150,21 @@
        rt:HCurve="0;"
        rt:SCurve="0;"
        rt:VCurve="0;"/>
-      <rt:RAWArithmetic
-       rt:DarkFrame=""
-       rt:DarkFrameAuto="False"
+      <rt:RawArithmetic
+       rt:DarkFrameFile=""
+       rt:DarkFrameAutoSelect="False"
        rt:FlatFieldFile=""
        rt:FlatFieldAutoSelect="False"
        rt:FlatFieldBlurRadius="32"
        rt:FlatFieldBlurType="Area Flatfield"/>
-      <rt:RAWCACorrection
-       rt:Auto="True"
+      <rt:RawCACorrection
+       rt:Auto="False"
        rt:Red="0"
        rt:Blue="0"/>
       <rt:HotDeadPixelCorrection
        rt:Enabled="False"
        rt:Threshold="40"/>
-      <rt:RAWDenoise
+      <rt:RawDenoise
        rt:LineDenoise="0"/>
       <rt:Demosaicing
        rt:GreenEqThreshold="0"
@@ -160,7 +173,7 @@
        rt:DCBIterations="2"
        rt:DCBEnhance="False"
        rt:Enhance="False"/>
-      <rt:RAWExposure
+      <rt:RawExposure
        rt:Exposure="1"
        rt:HLPreserving="0"
        rt:Blackzero="0"

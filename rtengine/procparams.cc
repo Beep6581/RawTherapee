@@ -29,6 +29,7 @@
 
 #include <safekeyfile.h>
 #include <rawimage.h>
+#include "ppversion.h"
 #define APPVERSION VERSION
 
 
@@ -151,7 +152,13 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.lumcurve.push_back (DCT_Linear);
     dirpyrDenoise.chromcurve.clear ();
     dirpyrDenoise.chromcurve.push_back (DCT_Linear);
-    
+   
+	edgePreservingDecompositionUI.enabled = false;
+	edgePreservingDecompositionUI.Strength = 0.25;
+	edgePreservingDecompositionUI.EdgeStopping = 1.4;
+	edgePreservingDecompositionUI.Scale = 1.0;
+	edgePreservingDecompositionUI.ReweightingIterates = 0;
+
     sh.enabled       = false;
     sh.hq            = false;
     sh.highlights    = 0;
@@ -388,6 +395,14 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey 
     xmpData[prefix+"rt:HorizontalFlip"]=  coarse.hflip;
     xmpData[prefix+"rt:VerticalFlip"]=    coarse.vflip;
 
+    prefix=baseKey+"rt:EPD/";
+    xmpData[prefix+"rt:Enabled"]= edgePreservingDecompositionUI.enabled;
+    xmpData[prefix+"rt:Strength"]= edgePreservingDecompositionUI.Strength;
+    xmpData[prefix+"rt:EdgeStopping"]= edgePreservingDecompositionUI.EdgeStopping;
+    xmpData[prefix+"rt:Scale"] = edgePreservingDecompositionUI.Scale;
+    xmpData[prefix+"rt:ReweightingIterates"] = edgePreservingDecompositionUI.ReweightingIterates;
+
+
     prefix=baseKey+"rt:Geometry/";
     //xmpData[prefix+"rt:Enabled"]=    geo.enabled;
     xmpData[prefix+"rt:AutoFill"]= commonTrans.autofill;
@@ -618,6 +633,16 @@ try{
 		readVarFromXmp( xmpData, prefix+"HorizontalFlip", coarse.hflip );
 		readVarFromXmp( xmpData, prefix+"VerticalFlip", coarse.vflip );
 	}
+	
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:EPD")) != xmpData.end()){
+	    prefix=baseKey+"rt:EPD/rt:";
+	    readVarFromXmp( xmpData, prefix+kXmpEnabled,edgePreservingDecompositionUI.enabled );
+        readVarFromXmp( xmpData, prefix+"Strength", edgePreservingDecompositionUI.Strength );
+        readVarFromXmp( xmpData, prefix+"EdgeStopping", edgePreservingDecompositionUI.EdgeStopping);
+        readVarFromXmp( xmpData, prefix+"Scale", edgePreservingDecompositionUI.Scale );
+        readVarFromXmp( xmpData, prefix+"ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates);
+    }
+
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Geometry")) != xmpData.end()){
 		prefix=baseKey+"rt:Geometry/rt:";
 		//readVarFromXmp( xmpData, prefix+kXmpEnabled, geo.enabled);
@@ -845,7 +870,11 @@ if (keyFile.has_group ("General")) {
 }
 
 if (keyFile.has_group ("Exposure")) {    
-    if (keyFile.has_key ("Exposure", "Auto"))           toneCurve.autoexp       = keyFile.get_boolean ("Exposure", "Auto");
+	if (ppVersion<PPVERSION_AEXP)
+		toneCurve.autoexp = false; // prevent execution of autoexp when opening file created with earlier verions of autoexp algorithm
+	else
+		if (keyFile.has_key ("Exposure", "Auto"))           toneCurve.autoexp       = keyFile.get_boolean ("Exposure", "Auto");
+
     if (keyFile.has_key ("Exposure", "Clip"))           toneCurve.clip          = keyFile.get_double  ("Exposure", "Clip");
     if (keyFile.has_key ("Exposure", "Compensation"))   toneCurve.expcomp       = keyFile.get_double  ("Exposure", "Compensation");
     if (keyFile.has_key ("Exposure", "Brightness"))     toneCurve.brightness    = keyFile.get_integer ("Exposure", "Brightness");
@@ -978,6 +1007,15 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "LumCurve"))    dirpyrDenoise.lumcurve   = keyFile.get_double_list ("Directional Pyramid Denoising", "LumCurve");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "ChromCurve"))  dirpyrDenoise.chromcurve = keyFile.get_double_list ("Directional Pyramid Denoising", "ChromCurve");
+}
+
+//Load EPD.
+if (keyFile.has_group ("EPD")) {    
+	if(keyFile.has_key("EPD", "Enabled")) edgePreservingDecompositionUI.enabled = keyFile.get_boolean ("EPD", "Enabled");
+	if(keyFile.has_key("EPD", "Strength")) edgePreservingDecompositionUI.Strength = keyFile.get_double ("EPD", "Strength");
+	if(keyFile.has_key("EPD", "EdgeStopping")) edgePreservingDecompositionUI.EdgeStopping = keyFile.get_double ("EPD", "EdgeStopping");
+	if(keyFile.has_key("EPD", "Scale")) edgePreservingDecompositionUI.Scale = keyFile.get_double ("EPD", "Scale");
+	if(keyFile.has_key("EPD", "ReweightingIterates"))  edgePreservingDecompositionUI.ReweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates");
 }
   
     // load lumaDenoise
@@ -1258,6 +1296,11 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
 		&& dirpyrDenoise.lumcurve == other.dirpyrDenoise.lumcurve
 		&& dirpyrDenoise.chromcurve == other.dirpyrDenoise.chromcurve
+		&& edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled
+		&& edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength
+		&& edgePreservingDecompositionUI.EdgeStopping == other.edgePreservingDecompositionUI.EdgeStopping
+		&& edgePreservingDecompositionUI.Scale == other.edgePreservingDecompositionUI.Scale
+		&& edgePreservingDecompositionUI.ReweightingIterates == other.edgePreservingDecompositionUI.ReweightingIterates
 		&& defringe.enabled == other.defringe.enabled
 		&& defringe.radius == other.defringe.radius
 		&& defringe.threshold == other.defringe.threshold
