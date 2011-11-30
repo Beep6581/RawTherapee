@@ -1,0 +1,25 @@
+# Only important or pre-first run parameters are left in this global option file.
+# After the first run, all the parameters will be available in this global option file
+# or in a new local option file, depending on the MultiUser value below
+
+# Most ot the options are modifiable through the Preference window
+
+[General]
+# Setting MultiUser to false will use the application's installation directory as cache directory,
+# which can be usefull if you want to keep the application and all the cache datas in a single place,
+# an external HD for example
+MultiUser=true
+# Windows users should not use the system theme : some composed widget won't be usable
+UseSystemTheme=false
+
+[File Browser]
+ParseExtensions=arw;cr2;crf;crw;dng;jpg;kdc;mef;mrw;nef;orf;pef;png;raf;raw;rw2;rwz;sr2;srw;tif;tiff;
+ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
+
+[Output]
+PathTemplate=%p1/converted/%f
+
+[Profiles]
+# if this is set to a path of a custom program, it will receive the EXIFs as parameters and must generate a PP3 preset file for the given RAW/JPG
+# Parameters: <Path to RAW/JPG> <Path to default profile> <fNumber> <expose in seconds> <focal length in mm> <ISO> <Lens> <Camera>
+CustomProfileBuilder=
