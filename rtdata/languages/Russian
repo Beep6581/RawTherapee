@@ -1,5 +1,4 @@
 
-
 #00 Russian
 #01 23.12.2007
 #02 ArtDen
@@ -922,10 +921,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
@@ -956,7 +951,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
 !PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
 !PARTIALPASTE_DEFRINGE;Defringe
-!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
 !PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
@@ -1004,11 +998,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PROGRESSBAR_DARKFRAME;Darkframe... 
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !TP_DARKFRAME_LABEL;Dark Frame
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal

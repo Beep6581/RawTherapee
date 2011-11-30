@@ -1,4 +1,3 @@
-
 ﻿#
 
 #00 Latvian
@@ -739,10 +738,6 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High quality shadows/highlights
 !HISTORY_MSG_84;Perspective correction
@@ -815,7 +810,6 @@ ZOOMBAR_SMALL;Mazs
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
-!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -934,11 +928,6 @@ ZOOMBAR_SMALL;Mazs
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest

@@ -1,4 +1,3 @@
-
  */ 
  *
 /*
@@ -981,10 +980,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 !MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
@@ -1001,7 +996,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DEFRINGE;Defringe
 !PARTIALPASTE_DETAILGROUP;Detail settings
-!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
@@ -1056,11 +1050,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_CROP_PPI;PPI=
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
