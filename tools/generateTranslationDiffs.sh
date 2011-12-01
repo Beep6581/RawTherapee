@@ -16,7 +16,7 @@ if [[ $? != 0 ]]; then
 fi
 
 #First thing, we want to strip default of any !s and duplicates.
-cat "default" | grep -v '^!' | sort | uniq > "$TEMP"
+cat "default" | grep -v '^!' | sort -Vu > "$TEMP"
 mv "$TEMP" "default"
 
 echo "Generating differences... this may take a few minutes."
@@ -34,7 +34,7 @@ while read X; do
 
 	#Start by copying the existing file to a temporary one, after sorting and removing all 
 	#previous differences
-	cat "$X" | grep -v '^!' | sort | uniq > "$TEMP"
+	cat "$X" | grep -v '^!' | sort -Vu > "$TEMP"
 
 	echo -e "\n\n!!!!!!!!!!!!!!!!!!!!!!!!!\n! Untranslated keys follow; remove the ! prefix after an entry is translated.\n!!!!!!!!!!!!!!!!!!!!!!!!!\n\n" >> "$TEMP"
 

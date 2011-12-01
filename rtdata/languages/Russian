@@ -1,18 +1,10 @@
-
-#00 Russian
-#01 23.12.2007
-#02 ArtDen
-#03 20.07.2008: Denis Artemov
-#04 16.02.2009: Kvark
-#05 26.02.2010: Sergey Smirnov AKA smiserg
-#06 01.11.2010: Ilia Popov <ilia_popov@rambler.ru>
 ABOUT_TAB_BUILD;Версия
 ABOUT_TAB_CREDITS;Авторы
 ABOUT_TAB_LICENSE;Лицензия
 ABOUT_TAB_SPLASH;Заставка
 ADJUSTER_RESET_TO_DEFAULT;По умолчанию
-BATCH_PROCESSING;Пакетная обработка
 BATCHQUEUE_AUTOSTART;Автостарт
+BATCH_PROCESSING;Пакетная обработка
 CURVEEDITOR_CURVES;Кривые
 CURVEEDITOR_CURVE;Кривая
 CURVEEDITOR_CUSTOM;Произвольный
@@ -162,10 +154,15 @@ HISTORY_CUSTOMCURVE;Пользовательская кривая
 HISTORY_DELSNAPSHOT;Удалить снимок
 HISTORY_FROMCLIPBOARD;Из буфера обмена
 HISTORY_LABEL;История
-HISTORY_MSG_100;RGB насыщенность
-HISTORY_MSG_105;Подавление ореолов
-HISTORY_MSG_106;Подавление ореолов: радиус
-HISTORY_MSG_107;Подавление ореоловЖ порог
+HISTORY_MSG_1;Фото загружено
+HISTORY_MSG_2;Профиль загружен
+HISTORY_MSG_3;Профиль изменён
+HISTORY_MSG_4;Просмотр истории
+HISTORY_MSG_5;Яркость
+HISTORY_MSG_6;Контраст
+HISTORY_MSG_7;Уровень чёрного
+HISTORY_MSG_8;Компенсация экспозиции
+HISTORY_MSG_9;Сжатие светов
 HISTORY_MSG_10;Сжатие теней
 HISTORY_MSG_11;Тоновая кривая
 HISTORY_MSG_12;Автоматическая настройка
@@ -176,7 +173,6 @@ HISTORY_MSG_16;Luminance Уровень чёрного
 HISTORY_MSG_17;Luminance Сжатие светов
 HISTORY_MSG_18;Luminance Сжатие теней
 HISTORY_MSG_19;Luminance Тоновая кривая
-HISTORY_MSG_1;Фото загружено
 HISTORY_MSG_20;Резкость
 HISTORY_MSG_21;Радиус резкости
 HISTORY_MSG_22;Величина резкости
@@ -187,7 +183,6 @@ HISTORY_MSG_26;Резкость: Допуск определения грани�
 HISTORY_MSG_27;Резкость: Управление ореолом
 HISTORY_MSG_28;Резкость: Величина Halo
 HISTORY_MSG_29;Резкость: Метод
-HISTORY_MSG_2;Профиль загружен
 HISTORY_MSG_30;Deconvolution: Радиус
 HISTORY_MSG_31;Deconvolution: Значение
 HISTORY_MSG_32;Deconvolution: Ослабление
@@ -198,7 +193,6 @@ HISTORY_MSG_36;Ограничение насыщенности
 HISTORY_MSG_37;Усиление цвета
 HISTORY_MSG_38;Метод определения баланса белого
 HISTORY_MSG_39;Цветовая температура
-HISTORY_MSG_3;Профиль изменён
 HISTORY_MSG_40;Баланс белого: оттенок
 HISTORY_MSG_41;Сдвиг цвета "A"
 HISTORY_MSG_42;Сдвиг цвета "B"
@@ -209,7 +203,6 @@ HISTORY_MSG_46;Удаление цветового шума
 HISTORY_MSG_47;Удаление цветового шума: радиус
 HISTORY_MSG_48;Удаление цветового шума: чувствительность к границам
 HISTORY_MSG_49;Удаление цветового шума с учетом границ
-HISTORY_MSG_4;Просмотр истории
 HISTORY_MSG_50;Инструмент "Тени/Света"
 HISTORY_MSG_51;Подъём светов
 HISTORY_MSG_52;Подъём теней
@@ -220,7 +213,6 @@ HISTORY_MSG_56;Радиус светов/теней
 HISTORY_MSG_57;Грубый поворот
 HISTORY_MSG_58;Зеркальное отражение по горизонтали
 HISTORY_MSG_59;Зеркальное отражение по вертикали
-HISTORY_MSG_5;Яркость
 HISTORY_MSG_60;Поворот
 HISTORY_MSG_61;Поворот
 HISTORY_MSG_62;Коррекция искажений оптики
@@ -231,7 +223,6 @@ HISTORY_MSG_66;Восстановление светов
 HISTORY_MSG_67;Величина восстановления светов
 HISTORY_MSG_68;Способ восстановления светов
 HISTORY_MSG_69;Рабочее цветовое пространство
-HISTORY_MSG_6;Контраст
 HISTORY_MSG_70;Выходное цветовое пространство
 HISTORY_MSG_71;Входное цветовое пространство
 HISTORY_MSG_72;Виньетирование
@@ -242,7 +233,6 @@ HISTORY_MSG_76;Метаданные Exif
 HISTORY_MSG_77;Метаданные IPTC
 HISTORY_MSG_78;Данные изменения размеров
 HISTORY_MSG_79;Ширина изменения размеров
-HISTORY_MSG_7;Уровень чёрного
 HISTORY_MSG_80;Высота изменения размеров
 HISTORY_MSG_81;Изменение размеров включено
 HISTORY_MSG_82;Изменён профиль
@@ -253,7 +243,6 @@ HISTORY_MSG_86;Вейвлет эквалайзер
 HISTORY_MSG_87;Подаление импульсного шума
 HISTORY_MSG_88;Impulse NR: порог
 HISTORY_MSG_89;Направленная пирамида
-HISTORY_MSG_8;Компенсация экспозиции
 HISTORY_MSG_90;Направленная пирамида яркость
 HISTORY_MSG_91;Направленная пирамида цветность
 HISTORY_MSG_92;Направленная пирамида гамма
@@ -264,7 +253,10 @@ HISTORY_MSG_96;Кривая 'a'
 HISTORY_MSG_97;Кривая 'b'
 HISTORY_MSG_98;Демозаик
 HISTORY_MSG_99;Припроцессор
-HISTORY_MSG_9;Сжатие светов
+HISTORY_MSG_100;RGB насыщенность
+HISTORY_MSG_105;Подавление ореолов
+HISTORY_MSG_106;Подавление ореолов: радиус
+HISTORY_MSG_107;Подавление ореоловЖ порог
 HISTORY_NEWSNAPSHOTAS;Как...
 HISTORY_NEWSNAPSHOT;Новый снимок
 HISTORY_NEWSSDIALOGLABEL;Название снимка:
@@ -331,31 +323,31 @@ IPTCPANEL_TRANSREFERENCE;Код поддержки
 MAIN_BUTTON_EXIT;Выход
 MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_PREFERENCES;Настройки
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поместить текущее изображение в очередь на обработку <b>Ctrl+Q</b>
 MAIN_BUTTON_PUTTOQUEUE;В очередь
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поместить текущее изображение в очередь на обработку <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;В очередь
 MAIN_BUTTON_SAVEAS;Сохранить как...
-MAIN_BUTTON_SAVE_TOOLTIP;Сохранить текущее изображение <b>Ctrl+S</b>
 MAIN_BUTTON_SAVE;Сохранить
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение во внешнем редакторе <b>Ctrl+E</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Сохранить текущее изображение <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Открыть в редакторе
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение во внешнем редакторе <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Показать/скрыть все боковые панели <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Оконный режим
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;Очередь пакетной обработки <b>Ctrl-F3</b>
 MAIN_FRAME_BATCHQUEUE;Очередь обработки
-MAIN_FRAME_EDITOR_TOOLTIP;Редактор <b>Ctrl-F4</b>
+MAIN_FRAME_BATCHQUEUE_TOOLTIP;Очередь пакетной обработки <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Редактор
-MAIN_FRAME_FILEBROWSER_TOOLTIP;Проводник <b>Ctrl-F2</b>
+MAIN_FRAME_EDITOR_TOOLTIP;Редактор <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Файловый браузер
+MAIN_FRAME_FILEBROWSER_TOOLTIP;Проводник <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Закладки
 MAIN_FRAME_PLACES_ADD;Добавить
 MAIN_FRAME_PLACES_DEL;Удалить
-MAIN_FRAME_PLACES;Закладки
 MAIN_FRAME_RECENT;Недавние папки 
 MAIN_MSG_ALREADYEXISTS;Файл уже существует.
 MAIN_MSG_CANNOTLOAD;Невозможно загрузить изображение
 MAIN_MSG_CANNOTSAVE;Ошибка при сохранении файла
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный каталог в диалоге "Настройки".
 MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный каталог в диалоге "Настройки".
 MAIN_MSG_ERRORDURINGIMAGESAVING;Ошибка при сохранении изображения
 MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходе из программы.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Вы уверены, что хотите выйти из программы? В очереди остались необработанные изображения.
@@ -580,7 +572,6 @@ QINFO_FOCALLENGTH;Фокусное расстояние
 QINFO_ISO;ISO
 QINFO_LENS;Объектив
 QINFO_NOEXIF;Данные Exif недоступны
-﻿# Russian
 SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс если файл существует
 SAVEDLG_FILEFORMAT;Формат файла
 SAVEDLG_JPEGQUAL;Качество JPEG
@@ -662,8 +653,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Мелкие
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Нейтральн
 TP_DIRPYREQUALIZER_THRESHOLD;Порог
 TP_DISTORTION_AMOUNT;Величина
-TP_DISTORTION_AUTO_TIP;(Экспериментально) Автоматически корректирует дисторсию на некоторых камерах (M4/3, некоторые компактные камеры и т.д.)
 TP_DISTORTION_AUTO;Автоматическая коррекция дисторсии
+TP_DISTORTION_AUTO_TIP;(Экспериментально) Автоматически корректирует дисторсию на некоторых камерах (M4/3, некоторые компактные камеры и т.д.)
 TP_DISTORTION_LABEL;Дисторсия
 TP_EQUALIZER_CONTRAST_MINUS;Контраст-
 TP_EQUALIZER_CONTRAST_PLUS;Контраст+
@@ -792,16 +783,16 @@ TP_SHARPENING_LABEL;Резкость
 TP_SHARPENING_METHOD;Метод
 TP_SHARPENING_ONLYEDGES;Только границы
 TP_SHARPENING_RADIUS;Радиус
+TP_SHARPENING_RLD;Обращённая свёртка RL
 TP_SHARPENING_RLD_AMOUNT;Величина
 TP_SHARPENING_RLD_DAMPING;Ослабление
 TP_SHARPENING_RLD_ITERATIONS;Повторений
-TP_SHARPENING_RLD;Обращённая свёртка RL
 TP_SHARPENING_THRESHOLD;Порог
 TP_SHARPENING_USM;Маска размытия
 TP_VIGNETTING_AMOUNT;Величина
+TP_VIGNETTING_CENTER;Центр
 TP_VIGNETTING_CENTER_X;Центр X
 TP_VIGNETTING_CENTER_Y;Центр Y
-TP_VIGNETTING_CENTER;Центр
 TP_VIGNETTING_LABEL;Виньетирование
 TP_VIGNETTING_RADIUS;Радиус
 TP_VIGNETTING_STRENGTH;Степень
@@ -827,6 +818,15 @@ ZOOMPANEL_ZOOM100;Масштаб 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;По размерам окна <b>F</b>
 ZOOMPANEL_ZOOMIN;Приблизить <b>+</b>
 ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
+
+#00 Russian
+#01 23.12.2007
+#02 ArtDen
+#03 20.07.2008: Denis Artemov
+#04 16.02.2009: Kvark
+#05 26.02.2010: Sergey Smirnov AKA smiserg
+#06 01.11.2010: Ilia Popov <ilia_popov@rambler.ru>
+﻿# Russian
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -921,6 +921,11 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
@@ -951,28 +956,29 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
 !PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
 !PARTIALPASTE_DEFRINGE;Defringe
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
 !PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
 !PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
+!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
+!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
+!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
+!PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
-!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
-!PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
-!PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
-!PARTIALPASTE_RAWGROUP;Raw settings
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
@@ -998,6 +1004,11 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PROGRESSBAR_DARKFRAME;Darkframe... 
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !TP_DARKFRAME_LABEL;Dark Frame
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
@@ -1021,13 +1032,12 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
@@ -1036,6 +1046,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations

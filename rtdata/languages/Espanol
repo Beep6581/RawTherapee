@@ -1,31 +1,11 @@
- */ 
- *
-/*
-#
-
-#00 Espanol
-#01 15.1.2008: keenonkites, first translation
-#02 03.03.2008: Ioritz Ibarguren, corrections
-#03 05.04.2008: keenonkites, completed for 2.4m1
-#04 09.04.2008: Ramon, partly corrected (part of 2.3)
-#05 29.04.2008: Ramon, small correction
-#06 09.06.2008: Ramon, Adaptions regarding 2.4m1 and others
-#07 20.09.2008: keenonkites, first version for 2.4m2
-#08 19.12.2008: keenonkites, first version for 2.4beta4
-#09 07.12.2010: rickydh, some translations of untranslated keys for 3.0 alpha1
-#10 25.12.2010  plores, translation improvement, translation of untranslated strings
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  (at your option) any later version.
-BATCH_PROCESSING;Proceso por lotes
 BATCHQUEUE_AUTOSTART;Inicio automático
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  Copyright (c) **PUT ALL THE CONTRIBUTORS HERE**
-CURVEEDITOR_CURVE;Curva
+BATCH_PROCESSING;Proceso por lotes
 CURVEEDITOR_CURVES;Curvas
+CURVEEDITOR_CURVE;Curva
 CURVEEDITOR_CUSTOM;Personalizado
 CURVEEDITOR_DARKS;Penumbras
 CURVEEDITOR_FILEDLGFILTERANY;Cualquier archivo
@@ -52,15 +32,15 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objetivo
 EXIFFILTER_METADATAFILTER;Activar filtros de metadatos
 EXIFFILTER_SHUTTER;Tiempo de exposición
-EXIFPANEL_ADDEDIT;Agregar/Cambiar
 EXIFPANEL_ADDEDITHINT;Agregar atributo nuevo o cambiar atributo
+EXIFPANEL_ADDEDIT;Agregar/Cambiar
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Introducir valor
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Seleccionar atributo
 EXIFPANEL_ADDTAGDLG_TITLE;Agregar/Cambiar atributo
-EXIFPANEL_KEEP;Conservar
 EXIFPANEL_KEEPHINT;Conserva las etiquetas seleccionadas al escribir el archivo de salida
-EXIFPANEL_REMOVE;Borrar
+EXIFPANEL_KEEP;Conservar
 EXIFPANEL_REMOVEHINT;Quita las etiquetas seleccionadas al escribir el archivo de salida
+EXIFPANEL_REMOVE;Borrar
 EXIFPANEL_RESETALLHINT;Reiniciar todos los atributos a los valores originales
 EXIFPANEL_RESETALL;Reiniciar todo
 EXIFPANEL_RESETHINT;Reiniciar atributos seleccionados a los valores originales
@@ -82,11 +62,11 @@ FILEBROWSER_DELETEDLGLABEL;Confirmación de borrar archivos
 FILEBROWSER_DELETEDLGMSG;¿Seguro que quieres borrar los %1 archivos seleccionados?
 FILEBROWSER_EMPTYTRASHHINT;Borrar archivos de la papelera definitivamente
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
-FILEBROWSER_EXIFFILTERAPPLY;Aplicar
 FILEBROWSER_EXIFFILTERAPPLYHINT;Activar/desactivar filtro Exif en el explorador de archivos
+FILEBROWSER_EXIFFILTERAPPLY;Aplicar
 FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
-FILEBROWSER_EXIFFILTERSETTINGS;Ajuste
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Cambiar ajustes del filtro Exif
+FILEBROWSER_EXIFFILTERSETTINGS;Ajuste
 FILEBROWSER_FLATFIELD;Campo plano
 FILEBROWSER_MOVETODARKFDIR;Mover a carpeta de Imágenes en oscuridad
 FILEBROWSER_MOVETOFLATFIELDDIR;Mover a carpeta de campo plano
@@ -105,15 +85,15 @@ FILEBROWSER_POPUPRANK2;Valorar con 2 estrellas
 FILEBROWSER_POPUPRANK3;Valorar con 3 estrellas
 FILEBROWSER_POPUPRANK4;Valorar con 4 estrellas
 FILEBROWSER_POPUPRANK5;Valorar con 5 estrellas
-FILEBROWSER_POPUPREMOVE;Borrar del sistema
 FILEBROWSER_POPUPREMOVEINCLPROC;Borrar del sistema junto con resultado batch
+FILEBROWSER_POPUPREMOVE;Borrar del sistema
 FILEBROWSER_POPUPRENAME;Renombrar
 FILEBROWSER_POPUPSELECTALL;Seleccionar todo
 FILEBROWSER_POPUPTRASH;Desplazar a la papelera
 FILEBROWSER_POPUPUNRANK;Quitar valoración
 FILEBROWSER_POPUPUNTRASH;Salvar de la papelera
-FILEBROWSER_PROCESSINGSETTINGS;Ajustes
 FILEBROWSER_PROCESSINGSETTINGSHINT;Ajustar formato de archivo y carpeta de salida
+FILEBROWSER_PROCESSINGSETTINGS;Ajustes
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RENAMEDLGMSG;Renombrar archivo "%1"a:
 FILEBROWSER_SELECTDARKFRAME;Seleccionar imagen en oscuridad...
@@ -143,8 +123,8 @@ GENERAL_BEFORE;Antes
 GENERAL_CANCEL;Cancelar
 GENERAL_DISABLED;Desactivado
 GENERAL_DISABLE;Desactivar
-GENERAL_ENABLE;Activar
 GENERAL_ENABLED;Activado
+GENERAL_ENABLE;Activar
 GENERAL_FILE;Archivo
 GENERAL_HIGH_QUALITY;Alta calidad
 GENERAL_LANDSCAPE;Paisaje
@@ -156,7 +136,6 @@ GENERAL_PORTRAIT;Retrato
 GENERAL_SAVE;Guardar
 GENERAL_UNCHANGED;(Sin cambios)
 GENERAL_YES;Sí
- *  GNU General Public License for more details.
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
@@ -171,21 +150,16 @@ HISTORY_CUSTOMCURVE;Curva a medida
 HISTORY_DELSNAPSHOT;Quitar instantánea
 HISTORY_FROMCLIPBOARD;Desde el portapapeles
 HISTORY_LABEL;Historial
-HISTORY_MSG_100;Saturación RGB
-HISTORY_MSG_101;Ec. HSV -- Tono
-HISTORY_MSG_102;Ec. HSV -- Saturación
-HISTORY_MSG_103;Ec. HSV -- Valor
-HISTORY_MSG_104;Ecualizador HSV
-HISTORY_MSG_105;Quitar borde púrpura
-HISTORY_MSG_106;Quitar borde púrpura Radio
-HISTORY_MSG_107;Quitar borde púrpura Umbral
-HISTORY_MSG_108;Cambiar tamaño rectángulo limitador
-HISTORY_MSG_109;Cambio tamaño aplica a
+HISTORY_MSG_1;Foto abierta
+HISTORY_MSG_2;Perfil Abierto
+HISTORY_MSG_3;Perfil cambiado
+HISTORY_MSG_4;Búsqueda de historial
+HISTORY_MSG_5;Brillo
+HISTORY_MSG_6;Contraste
+HISTORY_MSG_7;Negro
+HISTORY_MSG_8;Compensación de exposición
+HISTORY_MSG_9;Compresión de luces altas
 HISTORY_MSG_10;Compresión de sombras
-HISTORY_MSG_110;Archivo de campo plano
-HISTORY_MSG_111;Selección automática de campo plano
-HISTORY_MSG_112;Radio de difuminado de campo plano
-HISTORY_MSG_113;Tipo de difuminado de campo plano
 HISTORY_MSG_11;Curva de tono
 HISTORY_MSG_12;Exposición automática
 HISTORY_MSG_13;Recorte de exposición
@@ -195,7 +169,6 @@ HISTORY_MSG_16;Luminancia Negro
 HISTORY_MSG_17;Luminancia Compr. de luces altas
 HISTORY_MSG_18;Luminancia Compr. de sombras
 HISTORY_MSG_19;Luminancia Curva
-HISTORY_MSG_1;Foto abierta
 HISTORY_MSG_20;Enfoque
 HISTORY_MSG_21;Enfoque Radio
 HISTORY_MSG_22;Enfoque Cantidad
@@ -206,7 +179,6 @@ HISTORY_MSG_26;Enfoque Tolerancia de bordes
 HISTORY_MSG_27;Enfoque Control de halo
 HISTORY_MSG_28;Control de Halo Cantidad
 HISTORY_MSG_29;Enfoque Método
-HISTORY_MSG_2;Perfil Abierto
 HISTORY_MSG_30;Deconvolución Radio
 HISTORY_MSG_31;Deconvolución Cantidad
 HISTORY_MSG_32;Deconvolución Amortiguación
@@ -217,7 +189,6 @@ HISTORY_MSG_36;Límite de saturación
 HISTORY_MSG_37;Aumento de colores
 HISTORY_MSG_38;Equilibrio de Blancos Método
 HISTORY_MSG_39;Temperatura de color
-HISTORY_MSG_3;Perfil cambiado
 HISTORY_MSG_40;Equilibrio de Blancos Tinte
 HISTORY_MSG_41;Cambio de colores "A"
 HISTORY_MSG_42;Cambio de colores "B"
@@ -228,7 +199,6 @@ HISTORY_MSG_46;Red. ruido de color
 HISTORY_MSG_47;Red. ruido de color Radio
 HISTORY_MSG_48;Red. ruido de color Tolerancia de bordes
 HISTORY_MSG_49;Red. ruido de color Sensible a bordes
-HISTORY_MSG_4;Búsqueda de historial
 HISTORY_MSG_50;Herramienta Sombras/Luces altas
 HISTORY_MSG_51;Aumento de luces altas
 HISTORY_MSG_52;Aumento de sombras
@@ -239,7 +209,6 @@ HISTORY_MSG_56;Sombras/Luces altas Radio
 HISTORY_MSG_57;Rotación basta
 HISTORY_MSG_58;Volteo horizontal
 HISTORY_MSG_59;Volteo vertical
-HISTORY_MSG_5;Brillo
 HISTORY_MSG_60;Rotación
 HISTORY_MSG_61;Rotación
 HISTORY_MSG_62;Corrección de distorsión del objetivo
@@ -250,7 +219,6 @@ HISTORY_MSG_66;Recuperación de luces altas
 HISTORY_MSG_67;Recuperación de luces altas Cantidad
 HISTORY_MSG_68;Recuperación de luces altas Método
 HISTORY_MSG_69;Espacio de color de trabajo
-HISTORY_MSG_6;Contraste
 HISTORY_MSG_70;Espacio de color de salida
 HISTORY_MSG_71;Espacio de color de entrada
 HISTORY_MSG_72;Corrección de viñeteo
@@ -261,7 +229,6 @@ HISTORY_MSG_76;Metadato de Exif
 HISTORY_MSG_77;Metadato de IPTC
 HISTORY_MSG_78;Datos especificados para cambio tamaño
 HISTORY_MSG_79;Cambiar tamaño Anchura
-HISTORY_MSG_7;Negro
 HISTORY_MSG_80;Cambiar tamaño Altura
 HISTORY_MSG_81;Cambio tamaño activado
 HISTORY_MSG_82;Perfil cambiado
@@ -272,7 +239,6 @@ HISTORY_MSG_86;Ecualizador wavelet
 HISTORY_MSG_87;Reducción ruido impulsivo
 HISTORY_MSG_88;Umbral reducc. ruido impuls.
 HISTORY_MSG_89;Reducción de ruido
-HISTORY_MSG_8;Compensación de exposición
 HISTORY_MSG_90;NR - luminancia
 HISTORY_MSG_91;NR - crominancia
 HISTORY_MSG_92;NR - gamma
@@ -283,14 +249,27 @@ HISTORY_MSG_96;Curva 'a'
 HISTORY_MSG_97;Curva 'b'
 HISTORY_MSG_98;Desmosaicado
 HISTORY_MSG_99;Preprocesamiento
-HISTORY_MSG_9;Compresión de luces altas
+HISTORY_MSG_100;Saturación RGB
+HISTORY_MSG_101;Ec. HSV -- Tono
+HISTORY_MSG_102;Ec. HSV -- Saturación
+HISTORY_MSG_103;Ec. HSV -- Valor
+HISTORY_MSG_104;Ecualizador HSV
+HISTORY_MSG_105;Quitar borde púrpura
+HISTORY_MSG_106;Quitar borde púrpura Radio
+HISTORY_MSG_107;Quitar borde púrpura Umbral
+HISTORY_MSG_108;Cambiar tamaño rectángulo limitador
+HISTORY_MSG_109;Cambio tamaño aplica a
+HISTORY_MSG_110;Archivo de campo plano
+HISTORY_MSG_111;Selección automática de campo plano
+HISTORY_MSG_112;Radio de difuminado de campo plano
+HISTORY_MSG_113;Tipo de difuminado de campo plano
 HISTORY_NEWSNAPSHOTAS;Como...
 HISTORY_NEWSNAPSHOT;Instantánea nueva
 HISTORY_NEWSSDIALOGLABEL;Etiqueta de la instantánea:
 HISTORY_NEWSSDIALOGTITLE;Añadir instantánea nueva
 HISTORY_SETTO;Ajustado a
-HISTORY_SNAPSHOT;Instantánea
 HISTORY_SNAPSHOTS;Instantáneas
+HISTORY_SNAPSHOT;Instantánea
 ICMPANEL_FILEDLGFILTERANY;Cualquier archivo
 ICMPANEL_FILEDLGFILTERICM;Archivos de perfiles ICC
 ICMPANEL_GAMMABEFOREINPUT;El perfil aplica Gamma
@@ -305,27 +284,27 @@ ICMPANEL_OUTPUTPROFILE;Perfil de salida
 ICMPANEL_SAVEREFERENCE;Guardar imagen de referencia para el perfilado
 ICMPANEL_WORKINGPROFILE;Perfil de trabajo
 IMAGEAREA_DETAILVIEW;Vista de detalle
-IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Nombre del creador del objeto, por ejemplo el escritor, el fotógrafo o el artista gráfico (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Título del creador o de los creadores del objeto (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Tratamiento o título del autor
+IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_CAPTIONHINT;Descripción textual de la información (Caption - Abstract).
-IPTCPANEL_CAPTION;Leyenda
-IPTCPANEL_CAPTIONWRITER;Autor de la leyenda
 IPTCPANEL_CAPTIONWRITERHINT;Nombre de la persona que escribió, modificó o corrigió la imagen o leyenda/resumen (Writer - Editor).
-IPTCPANEL_CATEGORY;Categoría
+IPTCPANEL_CAPTIONWRITER;Autor de la leyenda
+IPTCPANEL_CAPTION;Leyenda
 IPTCPANEL_CATEGORYHINT;Código de tres letras que identifica el sujeto de la imagen en opinión del proveedor (Category).
-IPTCPANEL_CITY;Ciudad
+IPTCPANEL_CATEGORY;Categoría
 IPTCPANEL_CITYHINT;Origen de la imagen: Ciudad (City).
+IPTCPANEL_CITY;Ciudad
 IPTCPANEL_COPYHINT;Copiar ajustes IPTC al portapapeles
-IPTCPANEL_COPYRIGHT;Derechos de autor
 IPTCPANEL_COPYRIGHTHINT;Cualquier llamada de atención necesaria sobre los derechos de autor (Copyright Notice).
+IPTCPANEL_COPYRIGHT;Derechos de autor
 IPTCPANEL_COUNTRYHINT;Origen de la imagen: Pais (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;País
-IPTCPANEL_CREDIT;Créditos
 IPTCPANEL_CREDITHINT;Identifica el proveedor de la imagen, no tiene que ser el creador o el propietario (Credit).
-IPTCPANEL_DATECREATED;Fecha de creación
+IPTCPANEL_CREDIT;Créditos
 IPTCPANEL_DATECREATEDHINT;Fecha de creación del contenido intelectual de la imagen; Formato: AAAAMMDD (Date Created).
+IPTCPANEL_DATECREATED;Fecha de creación
 IPTCPANEL_EMBEDDEDHINT;Reiniciar a los datos IPTC incrustados en el archivo de la imagen
 IPTCPANEL_EMBEDDED;Incrustado
 IPTCPANEL_HEADLINEHINT;Una anotación publicable que provee una sinopsis de los contenidos de la imagen (Headline).
@@ -335,19 +314,18 @@ IPTCPANEL_INSTRUCTIONS;Instrucciones
 IPTCPANEL_KEYWORDSHINT;Palabras clave que hacen la búsqueda de la imagen mas fácil (Keywords).
 IPTCPANEL_KEYWORDS;Palabras clave
 IPTCPANEL_PASTEHINT;Pegar ajustes IPTC desde el portapapeles
-IPTCPANEL_PROVINCE;Estado/Provincia
 IPTCPANEL_PROVINCEHINT;Origen de la imagen: Estado/Provincia (Province-State).
+IPTCPANEL_PROVINCE;Estado/Provincia
 IPTCPANEL_RESETHINT;Reiniciar a los ajustes predeterminados del perfil.
 IPTCPANEL_RESET;Reiniciar
-IPTCPANEL_SOURCE;Fuente
 IPTCPANEL_SOURCEHINT;Propietario original del contenido intelectual de la imagen (Source).
-IPTCPANEL_SUPPCATEGORIES;Categorías suplementarias
+IPTCPANEL_SOURCE;Fuente
 IPTCPANEL_SUPPCATEGORIESHINT;Afinado del sujeto de la imagen (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIES;Categorías suplementarias
 IPTCPANEL_TITLEHINT;Referencia concisa de la imagen (Object Name).
 IPTCPANEL_TITLE;Título
 IPTCPANEL_TRANSREFERENCEHINT;Un código que representa el lugar de la transmisión original (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Ref. trans. original
- *  it under the terms of the GNU General Public License as published by
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Pantalla completa
 MAIN_BUTTON_PREFERENCES;Preferencias
@@ -364,9 +342,9 @@ MAIN_BUTTON_UNFULLSCREEN;Salir de Pantalla completa
 MAIN_FRAME_BATCHQUEUE;Cola por lotes
 MAIN_FRAME_EDITOR;Editor
 MAIN_FRAME_FILEBROWSER;Explorador de archivos
+MAIN_FRAME_PLACES;Ubicaciones
 MAIN_FRAME_PLACES_ADD;Añadir
 MAIN_FRAME_PLACES_DEL;Borrar
-MAIN_FRAME_PLACES;Ubicaciones
 MAIN_FRAME_RECENT;Carpetas recientes
 MAIN_MSG_ALREADYEXISTS;Este archivo ya existe.
 MAIN_MSG_CANNOTLOAD;No se puede abrir imagen
@@ -405,7 +383,6 @@ MAIN_TOOLTIP_SAVE;Guardar imagen a la carpeta predeterminada
 MAIN_TOOLTIP_SHOWHIDELP1;Mostrar/ocultar panel izquierdo <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Mostrar/ocultar panel derecho <b>Alt-l</b>
 MAIN_TOOLTIP_TOGGLE;Cambiar vista antes/después <b>B</b>
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -493,11 +470,11 @@ PREFERENCES_CLIPPINGIND;Indicación de recortes
 PREFERENCES_CMETRICINTENT;Intento colorimétrico
 PREFERENCES_CUTOVERLAYBRUSH;Pincel para ventana de recorte
 PREFERENCES_DARKFRAMEFOUND;Encontrado
-PREFERENCES_DARKFRAME;Imagen en oscuridad
 PREFERENCES_DARKFRAMESHOTS;disparos
 PREFERENCES_DARKFRAMETEMPLATES;plantillas
-PREFERENCES_DATEFORMAT;Formato de fechas
+PREFERENCES_DARKFRAME;Imagen en oscuridad
 PREFERENCES_DATEFORMATHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en Argentina es:</i>\n<b>%d/%m/%y</b>
+PREFERENCES_DATEFORMAT;Formato de fechas
 PREFERENCES_DCBENHANCE;Aplicar paso mejora DCB
 PREFERENCES_DCBITERATIONS;Número iteraciones DCB
 PREFERENCES_DEFAULTLANG;Idioma predeterminado
@@ -518,12 +495,12 @@ PREFERENCES_FILEFORMAT;Formato de archivos
 PREFERENCES_FLATFIELDAUTOSELECT;Selección automática de campo plano
 PREFERENCES_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 PREFERENCES_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
-PREFERENCES_FLATFIELD;Campo plano
 PREFERENCES_FLATFIELDFILE;Archivo de campo plano
 PREFERENCES_FLATFIELDFOUND;Encontrado
 PREFERENCES_FLATFIELDSDIR;Carpeta de archivos de campo plano
 PREFERENCES_FLATFIELDSHOTS;disparos
 PREFERENCES_FLATFIELDTEMPLATES;plantillas
+PREFERENCES_FLATFIELD;Campo plano
 PREFERENCES_FORIMAGE;Para archivos de imágenes
 PREFERENCES_FORRAW;Para archivos RAW
 PREFERENCES_GIMPPATH;Carpeta de instalación de GIMP
@@ -544,16 +521,16 @@ PREFERENCES_METADATA;Metadatos
 PREFERENCES_MONITORICC;Perfil de pantalla
 PREFERENCES_MULTITABDUALMON;Modo de varias pestañas, si está disponible en segundo monitor
 PREFERENCES_MULTITAB;Modo de varias pestañas
-PREFERENCES_OUTDIR;Carpeta de salida
-PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
+PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
+PREFERENCES_OUTDIR;Carpeta de salida
 PREFERENCES_OVERLAY_FILENAMES;Superponer nombres de archivo en miniaturas
 PREFERENCES_OVERWRITEOUTPUTFILE;Sobreescribir archivos de salida existentes
-PREFERENCES_PARSEDEXTADD;Agregar extensión
 PREFERENCES_PARSEDEXTADDHINT;Entra una extensión y pulsa este botón para agregar a la lista
+PREFERENCES_PARSEDEXTADD;Agregar extensión
 PREFERENCES_PARSEDEXTDELHINT;Borrar extensión de la lista
 PREFERENCES_PARSEDEXT;Extensiones analizadas
 PREFERENCES_PRESER;Exposición antes de interpolación:\npreservar luces altas (EV)
@@ -575,8 +552,8 @@ PREFERENCES_SHOWBASICEXIF;Mostrar datos EXIF básicos
 PREFERENCES_SHOWDATETIME;Mostrar fecha y hora
 PREFERENCES_SHOWONLYRAW;Mostrar solo archivos RAW
 PREFERENCES_SHTHRESHOLD;Umbral de sombras cortadas
-PREFERENCES_SINGLETAB;Modo de pestaña única
 PREFERENCES_SINGLETABVERTAB;Modo de pestaña única, pestañas verticales
+PREFERENCES_SINGLETAB;Modo de pestaña única
 PREFERENCES_SND_BATCHQUEUEDONE;Trabajos en cola finalizados
 PREFERENCES_SND_HELP;Introducir el path o dejar en blanco (sin sonido). En Windows, usar "SystemDefault", "SystemAsterisk" etc. para los sonidos del sistema
 PREFERENCES_SND_LNGEDITPROCDONE;Procesado del editor terminado
@@ -625,8 +602,6 @@ QINFO_FOCALLENGTH;Longitud focal
 QINFO_ISO;ISO
 QINFO_LENS;Objetivo
 QINFO_NOEXIF;No hay datos EXIF.
- *  RawTherapee is distributed in the hope that it will be useful,
- *  RawTherapee is free software: you can redistribute it and/or modify
 SAVEDLG_AUTOSUFFIX;Añade un sufijo automáticamente si el archivo existe
 SAVEDLG_FILEFORMAT;Formato de archivo
 SAVEDLG_JPEGQUAL;Calidad JPEG 
@@ -634,14 +609,12 @@ SAVEDLG_JPGFILTER;Archivos JPEG
 SAVEDLG_PNGCOMPR;Compresión PNG
 SAVEDLG_PNGFILTER;Archivos PNG
 SAVEDLG_PUTTOQUEUEHEAD;Poner al principio de la cola
-SAVEDLG_PUTTOQUEUE;Poner en la cola
 SAVEDLG_PUTTOQUEUETAIL;Poner al fin de la cola
+SAVEDLG_PUTTOQUEUE;Poner en la cola
 SAVEDLG_SAVEIMMEDIATELY;Guardar inmediatamente
 SAVEDLG_SAVESPP;Guardar parámetros de procesamiento con la imagen
 SAVEDLG_TIFFFILTER;Archivos TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF sin compresión
- *  the Free Software Foundation, either version 3 of the License, or
- *  This file is part of RawTherapee.
 TOOLBAR_TOOLTIP_CROP;Elección de recorte (tecla C)
 TOOLBAR_TOOLTIP_HAND;Herramienta mano (tecla N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Elección de línea recta (tecla S)
@@ -722,8 +695,8 @@ TP_EXPOSURE_AUTOLEVELS;Niveles automáticos
 TP_EXPOSURE_BLACKLEVEL;Negro
 TP_EXPOSURE_BRIGHTNESS;Brillo
 TP_EXPOSURE_CLIP;Recorte
-TP_EXPOSURE_COMPRHIGHLIGHTS;Compresión de luces altas
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Umbral de recuperación de luces altas
+TP_EXPOSURE_COMPRHIGHLIGHTS;Compresión de luces altas
 TP_EXPOSURE_COMPRSHADOWS;Compresión de sombras
 TP_EXPOSURE_CONTRAST;Contraste
 TP_EXPOSURE_CURVEEDITOR;Curva de tono
@@ -806,19 +779,19 @@ TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
 TP_RAWCACORR_AUTO;Auto corrección
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Rojo
+TP_RAWEXPOS_LINEAR;Factor de corrección lineal
+TP_RAWEXPOS_PRESER;Corrección preservando HL (EV)
+TP_RAWPANEL_DEMOSAICING;Desmosaicado
+TP_RAWPANEL_PREPROCESSING;Preprocesado
 TP_RAW_DCBENHANCE;Aplicar paso de mejora DCB
 TP_RAW_DCBITERATIONS;Número de iteraciones DCB
 TP_RAW_DMETHOD;Método
-TP_RAWEXPOS_LINEAR;Factor de corrección lineal
-TP_RAWEXPOS_PRESER;Corrección preservando HL (EV)
 TP_RAW_FALSECOLOR;Pasos de supresión de falso color
 TP_RAW_LABEL;Desmosaicado
-TP_RAWPANEL_DEMOSAICING;Desmosaicado
-TP_RAWPANEL_PREPROCESSING;Preprocesado
 TP_RESIZE_APPLIESTO;Aplica a:
-TP_RESIZE_BICUBIC;Bicúbica
 TP_RESIZE_BICUBICSF;Bicúbica (más suave)
 TP_RESIZE_BICUBICSH;Bicúbica (más enfocado)
+TP_RESIZE_BICUBIC;Bicúbica
 TP_RESIZE_BILINEAR;Bilineal
 TP_RESIZE_CROPPEDAREA;Área recortada
 TP_RESIZE_DOWNSCALEB;Reducir resolución (más calidad)
@@ -826,16 +799,16 @@ TP_RESIZE_DOWNSCALEF;Reducir resolución (más velocidad)
 TP_RESIZE_FITBOX;Rectángulo límite
 TP_RESIZE_FULLIMAGE;Imagen completa
 TP_RESIZE_FULLSIZE;Tamaño de imagen completo:
-TP_RESIZE_H;Al:
 TP_RESIZE_HEIGHT;Altura
+TP_RESIZE_H;Al:
 TP_RESIZE_LABEL;Cambiar tamaño
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Método: 
 TP_RESIZE_NEAREST;Más cercano
 TP_RESIZE_SCALE;Escala
 TP_RESIZE_SPECIFY;Especificar:
-TP_RESIZE_W;An:
 TP_RESIZE_WIDTH;Anchura
+TP_RESIZE_W;An:
 TP_ROTATE_AUTOCROP;Recorte automático
 TP_ROTATE_DEGREE;Grados
 TP_ROTATE_FILL;Llenar
@@ -857,9 +830,9 @@ TP_SHARPENING_LABEL;Enfoque
 TP_SHARPENING_METHOD;Método
 TP_SHARPENING_ONLYEDGES;Enfocar solo bordes
 TP_SHARPENING_RADIUS;Radio
+TP_SHARPENING_RLD;Deconvolución RL
 TP_SHARPENING_RLD_AMOUNT;Cantidad
 TP_SHARPENING_RLD_DAMPING;Amortiguación
-TP_SHARPENING_RLD;Deconvolución RL
 TP_SHARPENING_RLD_ITERATIONS;Iteraciones
 TP_SHARPENING_THRESHOLD;Umbral
 TP_SHARPENING_USM;Máscara de enfoque
@@ -879,7 +852,6 @@ TP_WBALANCE_METHOD;Método
 TP_WBALANCE_SIZE;Tamaño:
 TP_WBALANCE_SPOTWB;Muestra Eq.Bl.
 TP_WBALANCE_TEMPERATURE;Temperatura
- *  You should have received a copy of the GNU General Public License
 ZOOMBAR_DETAIL;Detalle
 ZOOMBAR_HUGE;Enorme
 ZOOMBAR_LARGE;Grande
@@ -893,6 +865,34 @@ ZOOMPANEL_ZOOM100;Zoom al 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla <b>F</b>
 ZOOMPANEL_ZOOMIN;Aumentar Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
+
+ *
+ *  Copyright (c) **PUT ALL THE CONTRIBUTORS HERE**
+ *  GNU General Public License for more details.
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  RawTherapee is distributed in the hope that it will be useful,
+ *  RawTherapee is free software: you can redistribute it and/or modify
+ *  This file is part of RawTherapee.
+ *  You should have received a copy of the GNU General Public License
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ */ 
+#00 Espanol
+#01 15.1.2008: keenonkites, first translation
+#02 03.03.2008: Ioritz Ibarguren, corrections
+#03 05.04.2008: keenonkites, completed for 2.4m1
+#04 09.04.2008: Ramon, partly corrected (part of 2.3)
+#05 29.04.2008: Ramon, small correction
+#06 09.06.2008: Ramon, Adaptions regarding 2.4m1 and others
+#07 20.09.2008: keenonkites, first version for 2.4m2
+#08 19.12.2008: keenonkites, first version for 2.4beta4
+#09 07.12.2010: rickydh, some translations of untranslated keys for 3.0 alpha1
+#10 25.12.2010  plores, translation improvement, translation of untranslated strings
+#
+/*
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -935,7 +935,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTORY_MSG_114;DCB Iterations
 !HISTORY_MSG_115;False color iterations
 !HISTORY_MSG_116;Enhanced DCB
@@ -980,6 +980,11 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 !MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
@@ -996,6 +1001,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DEFRINGE;Defringe
 !PARTIALPASTE_DETAILGROUP;Detail settings
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
@@ -1005,28 +1011,28 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -1050,6 +1056,11 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_CROP_PPI;PPI=
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
@@ -1066,16 +1077,16 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
 !TP_RAWEXPOS_BLACKTWO;Black Level: Blue
 !TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations

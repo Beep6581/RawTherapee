@@ -1,12 +1,6 @@
-
-#00 Slovenčina
-#01 08.05.2008
-#02 01.02.2009
-#03 23.10.2010
-#04 (Slapo)
 ADJUSTER_RESET_TO_DEFAULT;Resetovať na predvolené nastavenia
-BATCH_PROCESSING;Dávkové spracovanie
 BATCHQUEUE_AUTOSTART;Auto štart
+BATCH_PROCESSING;Dávkové spracovanie
 CURVEEDITOR_CUSTOM;Vlastné
 CURVEEDITOR_DARKS;Tiene
 CURVEEDITOR_FILEDLGFILTERANY;Všetky súbory
@@ -134,6 +128,15 @@ HISTORY_CUSTOMCURVE;Vlastná krivka
 HISTORY_DELSNAPSHOT;Odstrániť Snímok
 HISTORY_FROMCLIPBOARD;Zo schránky
 HISTORY_LABEL;História
+HISTORY_MSG_1;Fotka načítaná
+HISTORY_MSG_2;Profil načítaný
+HISTORY_MSG_3;Profil zmenený
+HISTORY_MSG_4;História prehliadania
+HISTORY_MSG_5;Jas
+HISTORY_MSG_6;Kontrast
+HISTORY_MSG_7;Čierna
+HISTORY_MSG_8;Kompenzácia expozície
+HISTORY_MSG_9;Kompresia najvyšších svetiel
 HISTORY_MSG_10;Kompresia tieňov
 HISTORY_MSG_11;Krivka tónov
 HISTORY_MSG_12;Auto expozícia
@@ -144,7 +147,6 @@ HISTORY_MSG_16;Čierna svietivosti
 HISTORY_MSG_17;Kompresia najvyšších svetiel v oblasti svietivosti
 HISTORY_MSG_18;Kompresia tieňov v oblasti svietivosti
 HISTORY_MSG_19;Krivka svietivosti
-HISTORY_MSG_1;Fotka načítaná
 HISTORY_MSG_20;Doostrenie
 HISTORY_MSG_21;Polomer doostrenia
 HISTORY_MSG_22;Množstvo doostrenia
@@ -155,7 +157,6 @@ HISTORY_MSG_26;Tolerancia okrajov pri doostrení
 HISTORY_MSG_27;Kontrola svätožiary pri doostrení
 HISTORY_MSG_28;Množstvo kontroly svätožiary
 HISTORY_MSG_29;Doostrovacia metóda
-HISTORY_MSG_2;Profil načítaný
 HISTORY_MSG_30;Polomer dekonvolúcie
 HISTORY_MSG_31;Množstvo dekonvolúcie
 HISTORY_MSG_32;Tlmenie dekonvolúcie
@@ -166,7 +167,6 @@ HISTORY_MSG_36;Hranica sýtosti
 HISTORY_MSG_37;Zosilnenie farieb
 HISTORY_MSG_38;Metóda vyváženia bielej
 HISTORY_MSG_39;Farebná teplota
-HISTORY_MSG_3;Profil zmenený
 HISTORY_MSG_40;Nádych vyváženia bielej
 HISTORY_MSG_41;Farebný posun "A"
 HISTORY_MSG_42;Farebný posun "B"
@@ -177,7 +177,6 @@ HISTORY_MSG_46;Farebné odšumenie
 HISTORY_MSG_47;Polomer farebného odšumenia
 HISTORY_MSG_48;Tolerancia okrajov farebného odšumenia
 HISTORY_MSG_49;Citlivosť na okraje pri farebnom odšumení
-HISTORY_MSG_4;História prehliadania
 HISTORY_MSG_50;Nástroj Tiene/Najvyššie svetlá
 HISTORY_MSG_51;Zosilnenie najvyšších svetiel
 HISTORY_MSG_52;Zosilnenie tieňov
@@ -188,7 +187,6 @@ HISTORY_MSG_56;Polomer Tiene/Najvyššie svetlá
 HISTORY_MSG_57;Hrubé otočenie
 HISTORY_MSG_58;Horizontálne preklápanie
 HISTORY_MSG_59;Vertikálne preklápanie
-HISTORY_MSG_5;Jas
 HISTORY_MSG_60;Otočenie
 HISTORY_MSG_61;Otočenie
 HISTORY_MSG_62;Korekcia zakrivenia objektívu
@@ -199,7 +197,6 @@ HISTORY_MSG_66;Obnova najvyšších svetiel
 HISTORY_MSG_67;Množstvo obnovy najvyšších svetiel
 HISTORY_MSG_68;Metóda obnovy najvyšších svetiel
 HISTORY_MSG_69;Pracovný farebný priestor
-HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Výstupný farebný priestor
 HISTORY_MSG_71;Vstupný farebný priestor
 HISTORY_MSG_72;Korekcia vignetácie
@@ -210,7 +207,6 @@ HISTORY_MSG_76;Exif Metadáta
 HISTORY_MSG_77;IPTC Metadáta
 HISTORY_MSG_78;Zadané údaje pre zmenu veľkosti 
 HISTORY_MSG_79;Zmena veľkosti podľa šírky
-HISTORY_MSG_7;Čierna
 HISTORY_MSG_80;Zmena veľkosti podľa výšky
 HISTORY_MSG_81;Zmena veľkosti povolená
 HISTORY_MSG_82;Profil zmenený
@@ -220,18 +216,16 @@ HISTORY_MSG_85;Koeficienty vlnky
 HISTORY_MSG_86;Vyrovnávač vlnky
 HISTORY_MSG_87;Impulzná redukcia šumu
 HISTORY_MSG_89;Smerová pyramída
-HISTORY_MSG_8;Kompenzácia expozície
 HISTORY_MSG_90;Svietivosť smerovej pyramídy
 HISTORY_MSG_91;Farebnosť smerovej pyramídy
 HISTORY_MSG_92;Gamma smerovej pyramídy
-HISTORY_MSG_9;Kompresia najvyšších svetiel
 HISTORY_NEWSNAPSHOTAS;Ako...
 HISTORY_NEWSNAPSHOT;Nový Snímok
 HISTORY_NEWSSDIALOGLABEL;Menovka snímku:
 HISTORY_NEWSSDIALOGTITLE;Pridať nový snímok
 HISTORY_SETTO;Nastaviť na
-HISTORY_SNAPSHOT;Snímok
 HISTORY_SNAPSHOTS;Snímky
+HISTORY_SNAPSHOT;Snímok
 ICMPANEL_FILEDLGFILTERANY;Všetky súbory
 ICMPANEL_FILEDLGFILTERICM;Súbory ICC profilu
 ICMPANEL_GAMMABEFOREINPUT;Profil aplikuje Gamu
@@ -246,27 +240,27 @@ ICMPANEL_OUTPUTPROFILE;Výstupný profil
 ICMPANEL_SAVEREFERENCE;Uložiť referenčný obrázok pre tvorbu profilu
 ICMPANEL_WORKINGPROFILE;Pracovný profil
 IMAGEAREA_DETAILVIEW;Zobrazenie detailov
-IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_AUTHORHINT;Meno tvorcu objektu, napr. pisateľa, fotografa alebo grafika (Meno autora).
-IPTCPANEL_AUTHORSPOSITION;Autorov titul
 IPTCPANEL_AUTHORSPOSITIONHINT;Titul tvorcu alebo tvorcov objektu (Titul pri mene autora).
+IPTCPANEL_AUTHORSPOSITION;Autorov titul
+IPTCPANEL_AUTHOR;Autor
 IPTCPANEL_CAPTIONHINT;Textový opis údajov (Titul - Abstrakt).
-IPTCPANEL_CAPTION;Titul
 IPTCPANEL_CAPTIONWRITERHINT;Meno osoby, ktorá titul/abstrakt obrazu napísala, upravila alebo opravila (Pisateľ - Editor).
 IPTCPANEL_CAPTIONWRITER;Pisateľ titulu
+IPTCPANEL_CAPTION;Titul
 IPTCPANEL_CATEGORYHINT;Identifikuje subjekt obrázka podľa názoru poskytovateľa (Kategória).
 IPTCPANEL_CATEGORY;Kategória
 IPTCPANEL_CITYHINT;Mesto pôvodu (Mesto).
 IPTCPANEL_CITY;Mesto
 IPTCPANEL_COPYHINT;Kopírovať IPTC nastavenia do schránky
-IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Akýkoľvek potrebný oznam o copyrighte (Oznam o copyrighte).
+IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COUNTRYHINT;Názov krajiny/miesta pôvodu (Krajina - miesto pôvodu).
 IPTCPANEL_COUNTRY;Krajina
 IPTCPANEL_CREDITHINT;Identifikuje poskytovateľa obrázka, nemusí byť nevyhnutne vlastníkom/tvorcom (Kredit).
 IPTCPANEL_CREDIT;Kredit
-IPTCPANEL_DATECREATED;Dátum vytvorenia
 IPTCPANEL_DATECREATEDHINT;Dátum, kedy bol vytvorený intelektuálny obsah obrázka; Formát: RRRRMMDD (Deň vytvorenia).
+IPTCPANEL_DATECREATED;Dátum vytvorenia
 IPTCPANEL_EMBEDDEDHINT;Resetovať na IPTV údaje vložené do obrázka
 IPTCPANEL_EMBEDDED;Vložené
 IPTCPANEL_HEADLINEHINT;Publikovateľný vstup poskytujúci zhrnutie obsahu obrázka (Nadpis).
@@ -282,8 +276,8 @@ IPTCPANEL_RESETHINT;Resetovať na predvolené profilom
 IPTCPANEL_RESET;Resetovať
 IPTCPANEL_SOURCEHINT;Pôvodný vlastník intektuálneho obsahu obrázka (Zdroj).
 IPTCPANEL_SOURCE;Zdroj
-IPTCPANEL_SUPPCATEGORIES;Dodatočné kategórie
 IPTCPANEL_SUPPCATEGORIESHINT;Ďalej upresňuje subjekt obrázka (Dodatočné kategórie).
+IPTCPANEL_SUPPCATEGORIES;Dodatočné kategórie
 IPTCPANEL_TITLEHINT;Krátka referencia pre obrázok (Meno objektu).
 IPTCPANEL_TITLE;Názov
 IPTCPANEL_TRANSREFERENCEHINT;Kód reprezentujúci miesto pôvodného prenosu (Pôvodná referencia prenosu).
@@ -291,20 +285,20 @@ IPTCPANEL_TRANSREFERENCE;Referencia prenosu
 MAIN_BUTTON_EXIT;Ukončiť
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_PREFERENCES;Predvoľby
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+Q</b>
 MAIN_BUTTON_PUTTOQUEUE;Vložiť do radu
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Vložiť do radu
 MAIN_BUTTON_SAVEAS;Ako...
-MAIN_BUTTON_SAVE_TOOLTIP;Uložiť súčasný obrázok <b>Ctrl+S</b>
 MAIN_BUTTON_SAVE;Uložiť obrázok
+MAIN_BUTTON_SAVE_TOOLTIP;Uložiť súčasný obrázok <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Odoslať do editora
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Upraviť súčasný obrázok v externom editore <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Ukončiť zobrazenie na celú obrazovku
 MAIN_FRAME_BATCHQUEUE;Dávkový rad 
 MAIN_FRAME_FILEBROWSER;Prehliadač súborov 
+MAIN_FRAME_PLACES;Miesta
 MAIN_FRAME_PLACES_ADD;Pridať
 MAIN_FRAME_PLACES_DEL;Odstrániť
-MAIN_FRAME_PLACES;Miesta
 MAIN_FRAME_RECENT;Nedávne priečinky 
 MAIN_MSG_ALREADYEXISTS;Súbor už existuje.
 MAIN_MSG_CANNOTLOAD;Nemôžem načítať obrázok
@@ -404,8 +398,8 @@ PREFERENCES_CLEARDLG_LINE2;Môže to pár sekúnd trvať.
 PREFERENCES_CLEARDLG_TITLE;Prosím, čakajte.
 PREFERENCES_CLIPPINGIND;Indikácia orezu
 PREFERENCES_CMETRICINTENT;Kolorimetrický zámer
-PREFERENCES_DATEFORMAT;Formát dátumu
 PREFERENCES_DATEFORMATHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%y</b><i> : rok</i>\n<b>%m</b><i> : mesiac</i>\n<b>%d</b><i> : deň</i>\n<i>\nNapríklad, slovenský formát je:</i>\n<b>%d.%m.%y</b>
+PREFERENCES_DATEFORMAT;Formát dátumu
 PREFERENCES_DEFAULTLANG;Predvolený jazyk
 PREFERENCES_DEFAULTTHEME;Predvolený vzhľad
 PREFERENCES_DEMOSAICINGALGO;Demozaikovací algoritmus
@@ -648,9 +642,9 @@ TP_RAW_DCBITERATIONS;Počet iterácií DCB
 TP_RAW_DMETHODBATCH;Dávka
 TP_RAW_DMETHOD;Metóda
 TP_RAW_FALSECOLOR;Kroky potlačenia chybných farieb
-TP_RESIZE_BICUBIC;Bikubická
 TP_RESIZE_BICUBICSF;Bikubická (Mäkšia)
 TP_RESIZE_BICUBICSH;Bikubická (Ostrejšia)
+TP_RESIZE_BICUBIC;Bikubická
 TP_RESIZE_BILINEAR;Bilineárna
 TP_RESIZE_DOWNSCALEB;Downscale (Lepšie)
 TP_RESIZE_DOWNSCALEF;Downscale (Rýchlejšie)
@@ -685,10 +679,10 @@ TP_SHARPENING_LABEL;Doostrenie
 TP_SHARPENING_METHOD;Metóda
 TP_SHARPENING_ONLYEDGES;Doostriť len okraje
 TP_SHARPENING_RADIUS;Polomer
+TP_SHARPENING_RLD;RL Dekonvolúcia
 TP_SHARPENING_RLD_AMOUNT;Množstvo
 TP_SHARPENING_RLD_DAMPING;Tlmenie
 TP_SHARPENING_RLD_ITERATIONS;Iterácie
-TP_SHARPENING_RLD;RL Dekonvolúcia
 TP_SHARPENING_THRESHOLD;Prah
 TP_SHARPENING_USM;Unsharp Mask
 TP_VIGNETTING_AMOUNT;Množstvo
@@ -717,6 +711,12 @@ ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>F</b>
 ZOOMPANEL_ZOOMIN;Priblížiť <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 
+#00 Slovenčina
+#01 08.05.2008
+#02 01.02.2009
+#03 23.10.2010
+#04 (Slapo)
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -727,8 +727,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
@@ -739,9 +739,9 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
 !FILEBROWSER_EXEC_CPB;Run custom profile builder
@@ -781,7 +781,15 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
+!HISTORY_MSG_88;Impulse NR threshold
+!HISTORY_MSG_93;Contrast by detail levels value
+!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
@@ -840,14 +848,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR;Editor 
@@ -858,7 +863,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
@@ -879,6 +884,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -894,41 +900,41 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -969,10 +975,15 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -1006,7 +1017,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
@@ -1014,7 +1025,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
@@ -1025,6 +1035,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area

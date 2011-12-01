@@ -1,7 +1,7 @@
-
-#00 English (US)
 HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on image preview to freeze/unfreeze
+
+#00 English (US)
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -14,10 +14,10 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !ADJUSTER_RESET_TO_DEFAULT;Reset to default
-!BATCH_PROCESSING;Batch processing
 !BATCHQUEUE_AUTOSTART;Auto start
-!CURVEEDITOR_CURVE;Curve
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_FILEDLGFILTERANY;Any files
@@ -47,8 +47,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !EXIFFILTER_LENS;Lens
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
 !EXIFFILTER_SHUTTER;Shutter
-!EXIFPANEL_ADDEDIT;Add/Edit
 !EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
+!EXIFPANEL_ADDEDIT;Add/Edit
 !EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 !EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 !EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
@@ -69,21 +69,21 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CLEARPROFILE;Clear profile
 !FILEBROWSER_COPYPROFILE;Copy profile
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGLABEL;File delete confirmation
-!FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
-!FILEBROWSER_EMPTYTRASH;Empty Trash
+!FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
 !FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
+!FILEBROWSER_EMPTYTRASH;Empty Trash
 !FILEBROWSER_EXEC_CPB;Run custom profile builder
-!FILEBROWSER_EXIFFILTERAPPLY;Apply
 !FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
+!FILEBROWSER_EXIFFILTERAPPLY;Apply
 !FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 !FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 !FILEBROWSER_EXIFFILTERSETTINGS;Setup
@@ -115,9 +115,9 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
 !FILEBROWSER_POPUPRANK;Rank
-!FILEBROWSER_POPUPREMOVE;Delete
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
+!FILEBROWSER_POPUPREMOVE;Delete
 !FILEBROWSER_POPUPRENAME;Rename
 !FILEBROWSER_POPUPSELECTALL;Select all
 !FILEBROWSER_POPUPTRASH;Move to trash
@@ -188,82 +188,32 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTOGRAM_LABEL;Histogram
 !HISTOGRAM_TOOLTIP_G;Show/Hide GREEN histogram
 !HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTOGRAM_TOOLTIP_R;Show/Hide RED histogram
 !HISTORY_CHANGED;Changed
 !HISTORY_CUSTOMCURVE;Custom Curve
 !HISTORY_DELSNAPSHOT;Del
 !HISTORY_FROMCLIPBOARD;From clipboard
 !HISTORY_LABEL;History
-!HISTORY_MSG_100;RGB saturation
-!HISTORY_MSG_101;HSV EQ -- Hue
-!HISTORY_MSG_102;HSV EQ -- Saturation
-!HISTORY_MSG_103;HSV EQ -- Value
-!HISTORY_MSG_104;HSV Equalizer
-!HISTORY_MSG_105;Defringing
-!HISTORY_MSG_106;Defringing Radius
-!HISTORY_MSG_107;Defringing Threshold
-!HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
+!HISTORY_MSG_1;Photo Loaded
+!HISTORY_MSG_2;Profile Loaded
+!HISTORY_MSG_3;Profile Changed
+!HISTORY_MSG_4;History Browsing
+!HISTORY_MSG_5;Brightness
+!HISTORY_MSG_6;Contrast
+!HISTORY_MSG_7;Black
+!HISTORY_MSG_8;Exposure Compensation
+!HISTORY_MSG_9;Highlight Compression
 !HISTORY_MSG_10;Shadow Compression
-!HISTORY_MSG_110;Resizing applies to  
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
-!HISTORY_MSG_114;DCB Iterations
-!HISTORY_MSG_115;False color iterations
-!HISTORY_MSG_116;Enhanced DCB
-!HISTORY_MSG_117;Red CA correction
-!HISTORY_MSG_118;Blue CA correction
-!HISTORY_MSG_119;Line denoise
 !HISTORY_MSG_11;Tone Curve
-!HISTORY_MSG_120;Green equil. threshold
-!HISTORY_MSG_121;Auto CA
-!HISTORY_MSG_122;Auto Dark Frame
-!HISTORY_MSG_123;Dark Frame File
-!HISTORY_MSG_124;Linear exp. correction
-!HISTORY_MSG_125;Expo. correction preserving HL
-!HISTORY_MSG_126;Flat Field File
-!HISTORY_MSG_127;Flat Field Auto Select
-!HISTORY_MSG_128;Flat Field Blur Radius
-!HISTORY_MSG_129;Flat Field Blur Type
 !HISTORY_MSG_12;Auto Exposure
-!HISTORY_MSG_130;Auto Distorion
-!HISTORY_MSG_131;Noise Reduction Luma
-!HISTORY_MSG_132;Noise Reduction Chroma
-!HISTORY_MSG_133;Gamma
-!HISTORY_MSG_134;Gamma Position
-!HISTORY_MSG_135;Gamma Free
-!HISTORY_MSG_136;Gamma Slope
-!HISTORY_MSG_137;Black level green 1
-!HISTORY_MSG_138;Black level red
-!HISTORY_MSG_139;Black level blue
 !HISTORY_MSG_13;Exposure Clipping
-!HISTORY_MSG_140;Black level green 2
-!HISTORY_MSG_141;Black level green together
-!HISTORY_MSG_142;Edges sharpening - iterations
-!HISTORY_MSG_143;Edges sharpening - quantity
-!HISTORY_MSG_144;Microcontrast - quantity
-!HISTORY_MSG_145;Microcontrast - uniformity
-!HISTORY_MSG_146;Edges Sharpening
-!HISTORY_MSG_147;Edges sharpening - luminance only
-!HISTORY_MSG_148;Microcontrast
-!HISTORY_MSG_149;Microcontrast - 3x3 matrix
 !HISTORY_MSG_14;Luminance Brightness
-!HISTORY_MSG_150;Post demosaic artifact/noise reduction
-!HISTORY_MSG_151;Vibrance
-!HISTORY_MSG_152;Vibrance - Pastel tones
-!HISTORY_MSG_153;Vibrance - Saturated tones
-!HISTORY_MSG_154;Vibrance - Protect skin tones
-!HISTORY_MSG_155;Vibrance - Avoid color drift
-!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
-!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
 !HISTORY_MSG_15;Luminance Contrast
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
 !HISTORY_MSG_19;'L' Curve
-!HISTORY_MSG_1;Photo Loaded
 !HISTORY_MSG_20;Sharpening
 !HISTORY_MSG_21;Sharpening Radius
 !HISTORY_MSG_22;Sharpening Amount
@@ -274,7 +224,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_27;Sharpening Halo Control
 !HISTORY_MSG_28;Halo Control Amount
 !HISTORY_MSG_29;Sharpening Method
-!HISTORY_MSG_2;Profile Loaded
 !HISTORY_MSG_30;Deconvolution Radius
 !HISTORY_MSG_31;Deconvolution Amount
 !HISTORY_MSG_32;Deconvolution Damping
@@ -285,7 +234,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_37;Color Boost
 !HISTORY_MSG_38;White Balance Method
 !HISTORY_MSG_39;Color Temperature
-!HISTORY_MSG_3;Profile Changed
 !HISTORY_MSG_40;White Balance Tint
 !HISTORY_MSG_41;Color Shift "A"
 !HISTORY_MSG_42;Color Shift "B"
@@ -296,7 +244,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_47;Color Denoising Radius
 !HISTORY_MSG_48;Color Denoising Edge Tolerance
 !HISTORY_MSG_49;Edge Sensitive Color Denoising
-!HISTORY_MSG_4;History Browsing
 !HISTORY_MSG_50;Shadow/Highlight tool
 !HISTORY_MSG_51;Highlight boost
 !HISTORY_MSG_52;Shadow Boost
@@ -307,7 +254,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_57;Coarse Rotation
 !HISTORY_MSG_58;Horizontal Flipping
 !HISTORY_MSG_59;Vertical Flipping
-!HISTORY_MSG_5;Brightness
 !HISTORY_MSG_60;Rotation
 !HISTORY_MSG_61;Auto Fill
 !HISTORY_MSG_62;Lens Distortion Correction
@@ -318,7 +264,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_67;Highlight Recovery Amount
 !HISTORY_MSG_68;Highlight Recovery Method
 !HISTORY_MSG_69;Working Color Space
-!HISTORY_MSG_6;Contrast
 !HISTORY_MSG_70;Output Color Space
 !HISTORY_MSG_71;Input Color Space
 !HISTORY_MSG_72;Vignetting Correction
@@ -329,7 +274,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_77;IPTC Metadata
 !HISTORY_MSG_78;Data specified for resize
 !HISTORY_MSG_79;Resize width
-!HISTORY_MSG_7;Black
 !HISTORY_MSG_80;Resize height
 !HISTORY_MSG_81;Resize enabled
 !HISTORY_MSG_82;Profile Changed
@@ -340,7 +284,6 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_87;Impulse noise reduction
 !HISTORY_MSG_88;Impulse NR threshold
 !HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_8;Exposure Compensation
 !HISTORY_MSG_90;NR - luminance
 !HISTORY_MSG_91;NR - chrominance
 !HISTORY_MSG_92;NR - gamma
@@ -351,14 +294,76 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !HISTORY_MSG_97;'b' curve
 !HISTORY_MSG_98;Demosaicing method
 !HISTORY_MSG_99;Hot/dead pixel filtering
-!HISTORY_MSG_9;Highlight Compression
-!HISTORY_NEWSNAPSHOT;Add
+!HISTORY_MSG_100;RGB saturation
+!HISTORY_MSG_101;HSV EQ -- Hue
+!HISTORY_MSG_102;HSV EQ -- Saturation
+!HISTORY_MSG_103;HSV EQ -- Value
+!HISTORY_MSG_104;HSV Equalizer
+!HISTORY_MSG_105;Defringing
+!HISTORY_MSG_106;Defringing Radius
+!HISTORY_MSG_107;Defringing Threshold
+!HISTORY_MSG_108;Highlight Compr. Threshold
+!HISTORY_MSG_109;Resize bounding box
+!HISTORY_MSG_110;Resizing applies to  
+!HISTORY_MSG_111;Avoid Color Clipping
+!HISTORY_MSG_112;Saturation Limiter
+!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_114;DCB Iterations
+!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_116;Enhanced DCB
+!HISTORY_MSG_117;Red CA correction
+!HISTORY_MSG_118;Blue CA correction
+!HISTORY_MSG_119;Line denoise
+!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_121;Auto CA
+!HISTORY_MSG_122;Auto Dark Frame
+!HISTORY_MSG_123;Dark Frame File
+!HISTORY_MSG_124;Linear exp. correction
+!HISTORY_MSG_125;Expo. correction preserving HL
+!HISTORY_MSG_126;Flat Field File
+!HISTORY_MSG_127;Flat Field Auto Select
+!HISTORY_MSG_128;Flat Field Blur Radius
+!HISTORY_MSG_129;Flat Field Blur Type
+!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_131;Noise Reduction Luma
+!HISTORY_MSG_132;Noise Reduction Chroma
+!HISTORY_MSG_133;Gamma
+!HISTORY_MSG_134;Gamma Position
+!HISTORY_MSG_135;Gamma Free
+!HISTORY_MSG_136;Gamma Slope
+!HISTORY_MSG_137;Black level green 1
+!HISTORY_MSG_138;Black level red
+!HISTORY_MSG_139;Black level blue
+!HISTORY_MSG_140;Black level green 2
+!HISTORY_MSG_141;Black level green together
+!HISTORY_MSG_142;Edges sharpening - iterations
+!HISTORY_MSG_143;Edges sharpening - quantity
+!HISTORY_MSG_144;Microcontrast - quantity
+!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_146;Edges Sharpening
+!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_148;Microcontrast
+!HISTORY_MSG_149;Microcontrast - 3x3 matrix
+!HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vibrance - Pastel tones
+!HISTORY_MSG_153;Vibrance - Saturated tones
+!HISTORY_MSG_154;Vibrance - Protect skin tones
+!HISTORY_MSG_155;Vibrance - Avoid color drift
+!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
+!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !HISTORY_NEWSNAPSHOTAS;As...
+!HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
 !HISTORY_NEWSSDIALOGTITLE;Add new snapshot
 !HISTORY_SETTO;Set to
-!HISTORY_SNAPSHOT;Snapshot
 !HISTORY_SNAPSHOTS;Snapshots
+!HISTORY_SNAPSHOT;Snapshot
 !ICMPANEL_FILEDLGFILTERANY;Any files
 !ICMPANEL_FILEDLGFILTERICM;ICC Profile Files
 !ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
@@ -373,31 +378,31 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 !ICMPANEL_WORKINGPROFILE;Working Profile
 !IMAGEAREA_DETAILVIEW;Detail view
-!IPTCPANEL_AUTHOR;Author
 !IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
-!IPTCPANEL_AUTHORSPOSITION;Author's position
 !IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-!IPTCPANEL_CAPTION;Caption
+!IPTCPANEL_AUTHORSPOSITION;Author's position
+!IPTCPANEL_AUTHOR;Author
 !IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
-!IPTCPANEL_CAPTIONWRITER;Caption Writer
 !IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-!IPTCPANEL_CATEGORY;Category
+!IPTCPANEL_CAPTIONWRITER;Caption Writer
+!IPTCPANEL_CAPTION;Caption
 !IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-!IPTCPANEL_CITY;City
+!IPTCPANEL_CATEGORY;Category
 !IPTCPANEL_CITYHINT;City of image origin (City).
+!IPTCPANEL_CITY;City
 !IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
-!IPTCPANEL_COPYRIGHT;Copyright
 !IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-!IPTCPANEL_COUNTRY;Country
+!IPTCPANEL_COPYRIGHT;Copyright
 !IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
-!IPTCPANEL_CREDIT;Credit
+!IPTCPANEL_COUNTRY;Country
 !IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-!IPTCPANEL_DATECREATED;Date Created
+!IPTCPANEL_CREDIT;Credit
 !IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
-!IPTCPANEL_EMBEDDED;Embedded
+!IPTCPANEL_DATECREATED;Date Created
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-!IPTCPANEL_HEADLINE;Headline
+!IPTCPANEL_EMBEDDED;Embedded
 !IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
+!IPTCPANEL_HEADLINE;Headline
 !IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 !IPTCPANEL_INSTRUCTIONS;Instructions
 !IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
@@ -430,9 +435,9 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
 !MAIN_FRAME_FILEBROWSER;File Browser 
 !MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
+!MAIN_FRAME_PLACES;Places 
 !MAIN_FRAME_PLACES_ADD;Add
 !MAIN_FRAME_PLACES_DEL;Del
-!MAIN_FRAME_PLACES;Places 
 !MAIN_FRAME_RECENT;Recent Folders 
 !MAIN_MSG_ALREADYEXISTS;File already exists.
 !MAIN_MSG_CANNOTLOAD;Cannot load image
@@ -461,11 +466,11 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !MAIN_TAB_IPTC;IPTC
 !MAIN_TAB_METADATA;Metadata
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TAGGING;Tagging
-!MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TAB_TRANSFORM;Transform
+!MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
 !MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F</b>
@@ -519,6 +524,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 !PARTIALPASTE_DISTORTION;Distortion correction
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_EXIFCHANGES;Changes to exif data
 !PARTIALPASTE_EXPOSURE;Exposure
@@ -528,8 +534,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
 !PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
-!PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
+!PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_ICMSETTINGS;ICM settings
@@ -544,18 +550,18 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RESIZE;Resize
 !PARTIALPASTE_ROTATION;Rotation
 !PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
@@ -586,17 +592,17 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 !PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DATEFORMAT;Date Format
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>n<b>%y</b><i> : year</i>n<b>%m</b><i> : month</i>n<b>%d</b><i> : day</i>n<i>nFor example, the hungarian date format is:</i>n<b>%y/%m/%d</b>
+!PREFERENCES_DATEFORMAT;Date Format
 !PREFERENCES_DEFAULTLANG;Default language
 !PREFERENCES_DEFAULTTHEME;Default theme
 !PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
@@ -612,13 +618,13 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_FBROWSEROPTS;File Browser Options
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 !PREFERENCES_FILEFORMAT;File format
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FORIMAGE;For image files
-!PREFERENCES_FORRAW;For RAW files
+!PREFERENCES_FORRAW;For raw files
 !PREFERENCES_GIMPPATH;GIMP installation directory
 !PREFERENCES_GTKTHEME;GTK default
 !PREFERENCES_HINT;Hint
@@ -630,7 +636,7 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
@@ -645,15 +651,15 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
 !PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...nnThese formatting strings refer to the different parts of the photo's pathname.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
-!PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>nnThese formatting strings refer to the different parts of the photo's pathname, or some attributes of the photo.nn%r will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in trash bin, %r will be replaced by 'x'.nnFor example, if the photo being processed has the following pathname:n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>nthe meaning of the formatting strings are:n<b>%d4</b> = <i>home</i>n<b>%d3</b> = <i>tom</i>n<b>%d2</b> = <i>photos</i>n<b>%d1</b> = <i>2010-10-31</i>n<b>%f</b> = <i>dsc0042</i>n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>n<b>%p2</b> = <i>/home/tom/photos/</i>n<b>%p3</b> = <i>/home/tom/</i>n<b>%p4</b> = <i>/home/</i>nnIf you want to save the output image where the original is, write:n<b>%p1/%f</b>nnIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:n<b>%p1/converted/%f</b>nnIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:n<b>%p2/converted/%d1/%f</b>
 !PREFERENCES_OUTDIRTEMPLATE;Use Template
+!PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PANFACTORFRAME;Pan rate amplification
 !PREFERENCES_PANFACTORLABEL;Factor
-!PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
+!PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 !PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
@@ -672,11 +678,11 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
-!PREFERENCES_SHOWONLYRAW;Show only RAW files
+!PREFERENCES_SHOWONLYRAW;Show only raw files
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
-!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -718,8 +724,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !PROGRESSBAR_DEMOSAICING;Demosaicing...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
-!PROGRESSBAR_LOADING;Loading Image...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
+!PROGRESSBAR_LOADING;Loading Image...
 !PROGRESSBAR_LOADJPEG;Loading JPEG file...
 !PROGRESSBAR_LOADPNG;Loading PNG file...
 !PROGRESSBAR_LOADTIFF;Loading TIFF file...
@@ -740,8 +746,8 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !SAVEDLG_PNGCOMPR;PNG Compression
 !SAVEDLG_PNGFILTER;PNG files
 !SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-!SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+!SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_SAVEIMMEDIATELY;Save immediately
 !SAVEDLG_SAVESPP;Save processing parameters with image
 !SAVEDLG_TIFFFILTER;TIFF files
@@ -817,26 +823,31 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_DISTORTION_LABEL;Distortion
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
-!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+!TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
 !TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
 !TP_EXPOSURE_CONTRAST;Contrast
 !TP_EXPOSURE_CURVEEDITOR;Tone Curve
 !TP_EXPOSURE_EXPCOMP;Exp. Comp.
 !TP_EXPOSURE_LABEL;Exposure
 !TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -873,15 +884,15 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_FILEDLGFILTERANY;Any files
 !TP_ICM_FILEDLGFILTERICM;ICC Profile Files
-!TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCAMERAICC;Camera standard or ICC
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+!TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
 !TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
 !TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_ICM_INPUTPROFILE;Input Profile
@@ -915,13 +926,9 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAW_DCBENHANCE;Apply DCB enhancement step
-!TP_RAW_DCBITERATIONS;Number of DCB iterations
-!TP_RAW_DMETHOD;Method
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
@@ -930,12 +937,16 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD;Method
 !TP_RAW_FALSECOLOR;False color suppression steps
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
-!TP_RESIZE_BICUBIC;Bicubic
 !TP_RESIZE_BICUBICSF;Bicubic (Softer)
 !TP_RESIZE_BICUBICSH;Bicubic (Sharper)
+!TP_RESIZE_BICUBIC;Bicubic
 !TP_RESIZE_BILINEAR;Bilinear
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
@@ -974,10 +985,10 @@ HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator bar\nClick right mouse button on i
 !TP_SHARPENING_METHOD;Method
 !TP_SHARPENING_ONLYEDGES;Sharpen only edges
 !TP_SHARPENING_RADIUS;Radius
+!TP_SHARPENING_RLD;RL Deconvolution
 !TP_SHARPENING_RLD_AMOUNT;Amount
 !TP_SHARPENING_RLD_DAMPING;Damping
 !TP_SHARPENING_RLD_ITERATIONS;Iterations
-!TP_SHARPENING_RLD;RL Deconvolution
 !TP_SHARPENING_THRESHOLD;Threshold
 !TP_SHARPENING_USM;Unsharp Mask
 !TP_SHARPENMICRO_AMOUNT;Quantity

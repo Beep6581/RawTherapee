@@ -1,8 +1,3 @@
-﻿#
-
-#00 Euskara (Basque)
-#01 03.03.2008
-#02 Ioritz Ibarguren
 ADJUSTER_RESET_TO_DEFAULT;Hasierako balioetara itzuli
 CURVEEDITOR_FILEDLGFILTERANY;Artxibo guztiak
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurba artxiboak
@@ -19,8 +14,8 @@ EXIFFILTER_FOCALLEN;Focal Length
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
 EXIFFILTER_SHUTTER;Shutter
-EXIFPANEL_ADDEDIT;Add/Edit
 EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
+EXIFPANEL_ADDEDIT;Add/Edit
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
@@ -39,10 +34,10 @@ FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
-FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
-FILEBROWSER_EXIFFILTERAPPLY;Apply
+FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
+FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_EXIFFILTERSETTINGS;Setup
@@ -108,6 +103,15 @@ HISTORY_CUSTOMCURVE;Neurriko kurba
 HISTORY_DELSNAPSHOT;Argazkia kendu
 HISTORY_FROMCLIPBOARD;From clipboard
 HISTORY_LABEL;Historia
+HISTORY_MSG_1;Argazki irekia
+HISTORY_MSG_2;Profila irekia
+HISTORY_MSG_3;Profila aldatua
+HISTORY_MSG_4;Historia arakatu
+HISTORY_MSG_5;Argitasuna
+HISTORY_MSG_6;Kontrastea
+HISTORY_MSG_7;Beltza
+HISTORY_MSG_8;Esposizio konpentsazioa
+HISTORY_MSG_9;Argi konpresioa
 HISTORY_MSG_10;Itzal konpresioa
 HISTORY_MSG_11;Tonu kurba
 HISTORY_MSG_12;Auto-esposizioa
@@ -118,7 +122,6 @@ HISTORY_MSG_16;Luminantzia beltza
 HISTORY_MSG_17;Liminantzia argi konpresioa
 HISTORY_MSG_18;Luminantzia itzal konpresioa
 HISTORY_MSG_19;Luminantzia kurba
-HISTORY_MSG_1;Argazki irekia
 HISTORY_MSG_20;Fokatzea
 HISTORY_MSG_21;Fokatze erradioa
 HISTORY_MSG_22;Fokatze kopurua
@@ -129,7 +132,6 @@ HISTORY_MSG_26;Ertz tolerantzia fokatzea
 HISTORY_MSG_27;Halo kontrol fokatzea
 HISTORY_MSG_28;Halo kopuru kontrola
 HISTORY_MSG_29;Fokatze metodoa
-HISTORY_MSG_2;Profila irekia
 HISTORY_MSG_30;Dekonboluzio erradioa
 HISTORY_MSG_31;Dekonboluzio kopurua
 HISTORY_MSG_32;Dekonboluzio indargetzea
@@ -140,7 +142,6 @@ HISTORY_MSG_36;Saturazio muga
 HISTORY_MSG_37;Koloreak jaso
 HISTORY_MSG_38;Zuri balantze metodoa
 HISTORY_MSG_39;Kolore tenperatura
-HISTORY_MSG_3;Profila aldatua
 HISTORY_MSG_40;Zuri balantze tonua
 HISTORY_MSG_41;"A" kolore aldaketa
 HISTORY_MSG_42;"B" kolore aldaketa
@@ -151,7 +152,6 @@ HISTORY_MSG_46;Kolore zarata murrizketa
 HISTORY_MSG_47;Kol. zar. murr. erradioa
 HISTORY_MSG_48;Kol. zar. murr. ertz tolerantzia
 HISTORY_MSG_49;Kol. zar. murr. ertzekiko sentikorra
-HISTORY_MSG_4;Historia arakatu
 HISTORY_MSG_50;Itzal/Argi tresna
 HISTORY_MSG_51;Argiak jaso
 HISTORY_MSG_52;Itzalak jaso
@@ -162,7 +162,6 @@ HISTORY_MSG_56;Itzal/Argi erradioa
 HISTORY_MSG_57;Biraketa arrunta
 HISTORY_MSG_58;Horizontalki irauli
 HISTORY_MSG_59;Bertikalki irauli
-HISTORY_MSG_5;Argitasuna
 HISTORY_MSG_60;Biraketa
 HISTORY_MSG_61;Biraketa
 HISTORY_MSG_62;Objetibo deformazio zuzenketa
@@ -173,7 +172,6 @@ HISTORY_MSG_66;Distira berreskurapena
 HISTORY_MSG_67;Distira berreskurapen kopurua
 HISTORY_MSG_68;Distira berreskurapen metodoa
 HISTORY_MSG_69;Lan kolore esparrua
-HISTORY_MSG_6;Kontrastea
 HISTORY_MSG_70;Irteera kolore esparrua
 HISTORY_MSG_71;Sarrera kolore esparrua
 HISTORY_MSG_72;Iluntze zuzenketa
@@ -184,18 +182,15 @@ HISTORY_MSG_76;Exif Metadata
 HISTORY_MSG_77;IPTC Metadata
 HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
-HISTORY_MSG_7;Beltza
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_MSG_8;Esposizio konpentsazioa
-HISTORY_MSG_9;Argi konpresioa
-HISTORY_NEWSNAPSHOT;Argazki berria
 HISTORY_NEWSNAPSHOTAS;Honela...
+HISTORY_NEWSNAPSHOT;Argazki berria
 HISTORY_NEWSSDIALOGLABEL;Argazkiaren etiketa:
 HISTORY_NEWSSDIALOGTITLE;Argazki berria gehitu
 HISTORY_SETTO;Honetara doitua
-HISTORY_SNAPSHOT;Argazkia
 HISTORY_SNAPSHOTS;Argazkiak
+HISTORY_SNAPSHOT;Argazkia
 ICMPANEL_FILEDLGFILTERANY;Artxibo guztiak
 ICMPANEL_FILEDLGFILTERICM;ICC profilen artxiboak
 ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
@@ -210,31 +205,31 @@ ICMPANEL_OUTPUTPROFILE;Irteera profila
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;Lan profila
 IMAGEAREA_DETAILVIEW;Zehaztasun bista
-IPTCPANEL_AUTHOR;Author
 IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
-IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_CAPTION;Caption
+IPTCPANEL_AUTHORSPOSITION;Author's position
+IPTCPANEL_AUTHOR;Author
 IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Caption Writer
 IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor)
-IPTCPANEL_CATEGORY;Category
+IPTCPANEL_CAPTIONWRITER;Caption Writer
+IPTCPANEL_CAPTION;Caption
 IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-IPTCPANEL_CITY;City
+IPTCPANEL_CATEGORY;Category
 IPTCPANEL_CITYHINT;City of image origin (City).
+IPTCPANEL_CITY;City
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
-IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COUNTRY;Country
+IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Credit
+IPTCPANEL_COUNTRY;Country
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-IPTCPANEL_DATECREATED;Date Created
+IPTCPANEL_CREDIT;Credit
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
-IPTCPANEL_EMBEDDED;Embedded
+IPTCPANEL_DATECREATED;Date Created
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_HEADLINE;Headline
+IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
+IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
@@ -260,9 +255,9 @@ MAIN_BUTTON_SAVE;Irudia gorde
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Artxiboa jadanik badago.
 MAIN_MSG_CANNOTLOAD;Ezin dut irudia ireki
@@ -340,8 +335,8 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Itzal/argi moztuen adierazlea
 PREFERENCES_CMETRICINTENT;Saiakera kolorimetrikoa
-PREFERENCES_DATEFORMAT;Data formatua
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Data formatua
 PREFERENCES_DEFAULTLANG;Hizkuntza
 PREFERENCES_DEFAULTTHEME;Default theme
 PREFERENCES_DEMOSAICINGALGO;Demosaikatze algoritmoa
@@ -371,11 +366,11 @@ PREFERENCES_MONITORICC;Pantaila profilak
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
 PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIR;Irteera karpeta
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
-PREFERENCES_PARSEDEXTADD;Add Extension
+PREFERENCES_OUTDIR;Irteera karpeta
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
+PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
@@ -438,8 +433,8 @@ SAVEDLG_JPGFILTER;JPEG artxiboak
 SAVEDLG_PNGCOMPR;PNG konpresioa
 SAVEDLG_PNGFILTER;PNG artxiboak
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Prozesu aldagaiak irudiarekin batera gorde
 SAVEDLG_TIFFFILTER;TIFF artxiboak
@@ -534,9 +529,9 @@ TP_LUMADENOISE_LABEL;Argitasun zarata murrizketa
 TP_LUMADENOISE_RADIUS;Erradioa
 TP_RAW_DMETHOD;Metodoa
 TP_RAW_FALSECOLOR;Okerreko kolore ezabaketa atalak
-TP_RESIZE_BICUBIC;Bikubikoa
 TP_RESIZE_BICUBICSF;Bikubikoa (Biguna)
 TP_RESIZE_BICUBICSH;Bikubikoa (Fokatua)
+TP_RESIZE_BICUBIC;Bikubikoa
 TP_RESIZE_BILINEAR;Bilineala
 TP_RESIZE_FULLSIZE;Irudi tamaina osoa:
 TP_RESIZE_H;H:
@@ -566,10 +561,10 @@ TP_SHARPENING_LABEL;Fokatu
 TP_SHARPENING_METHOD;Metodoa
 TP_SHARPENING_ONLYEDGES;Ertzak bakarrik fokatu
 TP_SHARPENING_RADIUS;Erradioa
+TP_SHARPENING_RLD;RL Dekonboluzioa
 TP_SHARPENING_RLD_AMOUNT;Kopurua
 TP_SHARPENING_RLD_DAMPING;Indargetzea
 TP_SHARPENING_RLD_ITERATIONS;Iterazioak
-TP_SHARPENING_RLD;RL Dekonboluzioa
 TP_SHARPENING_THRESHOLD;Muga
 TP_SHARPENING_USM;Defokatze maskara
 TP_VIGNETTING_AMOUNT;Kopurua
@@ -592,6 +587,11 @@ ZOOMBAR_PREVIEW;Aurrebista
 ZOOMBAR_SCALE;Eskala
 ZOOMBAR_SMALL;Txikia
 
+#00 Euskara (Basque)
+#01 03.03.2008
+#02 Ioritz Ibarguren
+﻿#
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -602,10 +602,10 @@ ZOOMBAR_SMALL;Txikia
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!BATCH_PROCESSING;Batch processing
 !BATCHQUEUE_AUTOSTART;Auto start
-!CURVEEDITOR_CURVE;Curve
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -626,9 +626,9 @@ ZOOMBAR_SMALL;Txikia
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
@@ -681,7 +681,25 @@ ZOOMBAR_SMALL;Txikia
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
+!HISTORY_MSG_89;Noise reduction
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
+!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
@@ -740,24 +758,11 @@ ZOOMBAR_SMALL;Txikia
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
@@ -776,7 +781,7 @@ ZOOMBAR_SMALL;Txikia
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -812,6 +817,7 @@ ZOOMBAR_SMALL;Txikia
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -828,18 +834,18 @@ ZOOMBAR_SMALL;Txikia
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
@@ -848,25 +854,25 @@ ZOOMBAR_SMALL;Txikia
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -884,8 +890,8 @@ ZOOMBAR_SMALL;Txikia
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -930,16 +936,21 @@ ZOOMBAR_SMALL;Txikia
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -973,7 +984,7 @@ ZOOMBAR_SMALL;Txikia
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -997,12 +1008,9 @@ ZOOMBAR_SMALL;Txikia
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAW_DCBENHANCE;Apply DCB enhancement step
-!TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
@@ -1011,6 +1019,9 @@ ZOOMBAR_SMALL;Txikia
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area

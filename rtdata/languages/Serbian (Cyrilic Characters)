@@ -1,13 +1,10 @@
-
-#00 Serbian (Cyrilic)
-#01 by gpopac 2010-11-16
 ABOUT_TAB_BUILD;Издање
 ABOUT_TAB_CREDITS;Заслуге
 ABOUT_TAB_LICENSE;Лиценца
 ABOUT_TAB_SPLASH;Увод
 ADJUSTER_RESET_TO_DEFAULT;Врати на подразумевано
-BATCH_PROCESSING;обрада
 BATCHQUEUE_AUTOSTART;Сам започни
+BATCH_PROCESSING;обрада
 CURVEEDITOR_CURVES;Кривуље
 CURVEEDITOR_CURVE;Кривуља
 CURVEEDITOR_CUSTOM;Произвољно
@@ -54,8 +51,8 @@ EXIFPANEL_RESETHINT;Враћа изабрану ознаку на почетну
 EXIFPANEL_RESET;Врати
 EXIFPANEL_SUBDIRECTORY;Поддиректоријум
 FILEBROWSER_ADDDELTEMPLATE;Додај/уклони шаблоне...
-FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
 FILEBROWSER_APPLYPROFILE;Примени профил
+FILEBROWSER_APPLYPROFILE_PARTIAL;Примени профил (половично)
 FILEBROWSER_ARRANGEMENTHINT;Размењује вертикални и хоризонтални распоред умањених приказа
 FILEBROWSER_AUTODARKFRAME;Сам одреди тамни кадар
 FILEBROWSER_AUTOFLATFIELD;Аутоматски одреди равно поље
@@ -173,7 +170,6 @@ GENERAL_SAVE;Сачувај
 GENERAL_UNCHANGED;(неизмењено)
 GENERAL_YES;Да
 HISTOGRAM_BUTTON_BAR;РГБ
-﻿HISTOGRAM_BUTTON_B;П
 HISTOGRAM_BUTTON_B;П
 HISTOGRAM_BUTTON_G;З
 HISTOGRAM_BUTTON_L;С
@@ -191,68 +187,25 @@ HISTORY_CUSTOMCURVE;Произвољна крива
 HISTORY_DELSNAPSHOT;Уклони
 HISTORY_FROMCLIPBOARD;Из оставе
 HISTORY_LABEL;Историјат
-HISTORY_MSG_100;РГБ засићеност
-HISTORY_MSG_101;ХСВ EQ — Нијанса
-HISTORY_MSG_102;ХСВ EQ — Засићеност
-HISTORY_MSG_103;ХСВ EQ — Вреднсот
-HISTORY_MSG_104;Уједначење ХСВ
-HISTORY_MSG_105;Уклањање ореола
-HISTORY_MSG_106;Полупречник
-HISTORY_MSG_107;Праг
-HISTORY_MSG_108;Праг компенз. светлог
-HISTORY_MSG_109;Оквир за промену величине
+HISTORY_MSG_1;Слика је учитана
+HISTORY_MSG_2;Профил је учитан
+HISTORY_MSG_3;Измена профила
+HISTORY_MSG_4;Разгледање историјата
+HISTORY_MSG_5;Осветљеност
+HISTORY_MSG_6;Контраст
+HISTORY_MSG_7;Црна
+HISTORY_MSG_8;Компензација експозиције
+HISTORY_MSG_9;Сабијање светлог
 HISTORY_MSG_10;Сабијање сенки
-HISTORY_MSG_110;Промена величине примењена на
-HISTORY_MSG_111;Избегни исецање боја
-HISTORY_MSG_112;Ограничавање засићења
-HISTORY_MSG_113;Граничник засићења
-HISTORY_MSG_114;ДЦБ понављања
-HISTORY_MSG_115;Понављање лажних боја
-HISTORY_MSG_116;Унапређени ДЦБ
-HISTORY_MSG_117;Поправка црвене хроминансе
-HISTORY_MSG_118;Поправка плаве хроминансе
-HISTORY_MSG_119;Линијско уклаљање шума
 HISTORY_MSG_11;Крива нијанси
-HISTORY_MSG_120;Праг уједначења зелене
-HISTORY_MSG_121;Сам исправи аберације
-HISTORY_MSG_122;Сам примени тамни кадар
-HISTORY_MSG_123;Датотека за тамни кадар
-HISTORY_MSG_124;Линеарна исправка експ.
-HISTORY_MSG_125;Поправка експ. уз очување светлог
-HISTORY_MSG_126;Датотека са равним пољем
-HISTORY_MSG_127;Сам изабери равно поље
-HISTORY_MSG_128;Полупречник равног поља
-HISTORY_MSG_129;Начин замућења равног поља
 HISTORY_MSG_12;Ауто експозиција
-HISTORY_MSG_130;Аутоматска дисторзија
-HISTORY_MSG_131;Уклањање шума луминансе
-HISTORY_MSG_132;Уклањање шума боје
-HISTORY_MSG_133;Гама
-HISTORY_MSG_134;Гама позиција
-HISTORY_MSG_135;Гама слобода
-HISTORY_MSG_136;Гама нагиб
-HISTORY_MSG_137;Ниво црне зелена 1
-HISTORY_MSG_138;Ниво црне црвена 
-HISTORY_MSG_139;Ниво црне плава
 HISTORY_MSG_13;Одсецање експозиције
-HISTORY_MSG_140;Ниво црне зелена 2
-HISTORY_MSG_141;Ниво црне обе зелене
-HISTORY_MSG_142;Оштрење ивица - бр. понављања
-HISTORY_MSG_143;Оштрење ивица - количина
-HISTORY_MSG_144;Микроконтраст - количина
-HISTORY_MSG_145;Микроконтраст - уједначеност
-HISTORY_MSG_146;Оштрење ивица
-HISTORY_MSG_147;Оштрење ивица - само луминанса
-HISTORY_MSG_148;Микроконтраст
-HISTORY_MSG_149;Микроконтраст - 3x3 матрица
 HISTORY_MSG_14;Светлина луминансе
-HISTORY_MSG_150;Уклањање артефакта/шума након расклапања мозаика
 HISTORY_MSG_15;Контраст луминансе
 HISTORY_MSG_16;Црна луминансе
 HISTORY_MSG_17;Сабијање сенки л.
 HISTORY_MSG_18;Сабијање светлог л.
 HISTORY_MSG_19;Крива луминансе
-HISTORY_MSG_1;Слика је учитана
 HISTORY_MSG_20;Оштрење
 HISTORY_MSG_21;Полупречник оштрења
 HISTORY_MSG_22;Количина оштрења
@@ -263,7 +216,6 @@ HISTORY_MSG_26;Толеранција за налажење ивица
 HISTORY_MSG_27;Контрола ареола оштрења
 HISTORY_MSG_28;Количина контроле ареала
 HISTORY_MSG_29;Начин оштрења
-HISTORY_MSG_2;Профил је учитан
 HISTORY_MSG_30;Полупречник деконволуције
 HISTORY_MSG_31;Количина деконволуције
 HISTORY_MSG_32;Пригушивање деконволуције
@@ -274,7 +226,6 @@ HISTORY_MSG_36;Ограничи засићење
 HISTORY_MSG_37;Појачање боја
 HISTORY_MSG_38;Начин балансирања беле
 HISTORY_MSG_39;Температура боје
-HISTORY_MSG_3;Измена профила
 HISTORY_MSG_40;Заленило боје
 HISTORY_MSG_41;Померај боје „А“
 HISTORY_MSG_42;Померај боје „Б“
@@ -285,7 +236,6 @@ HISTORY_MSG_46;Уклањање колорног шума
 HISTORY_MSG_47;Полупречник укл. колорног шума
 HISTORY_MSG_48;Толеранција ивице укл. к. шума
 HISTORY_MSG_49;Осетљивост ивице укл. к. шума
-HISTORY_MSG_4;Разгледање историјата
 HISTORY_MSG_50;Алат за сенке/светло
 HISTORY_MSG_51;Појачавање светлине
 HISTORY_MSG_52;Појачавање сенки
@@ -296,7 +246,6 @@ HISTORY_MSG_56;Полупречник сенки/светлог
 HISTORY_MSG_57;Груба ротација
 HISTORY_MSG_58;Хоризонтално извртање
 HISTORY_MSG_59;Вертикално извртање
-HISTORY_MSG_5;Осветљеност
 HISTORY_MSG_60;Ротација
 HISTORY_MSG_61;Ротација
 HISTORY_MSG_62;Исправљање изобличења сочива
@@ -307,7 +256,6 @@ HISTORY_MSG_66;Чупање светла
 HISTORY_MSG_67;Количина чупања светла
 HISTORY_MSG_68;Начин чупања светла
 HISTORY_MSG_69;Радни простор боја
-HISTORY_MSG_6;Контраст
 HISTORY_MSG_70;Излазни простор боја
 HISTORY_MSG_71;Улазни профил боја
 HISTORY_MSG_72;Исправљање вињетарења
@@ -318,7 +266,6 @@ HISTORY_MSG_76;Exif метаподаци
 HISTORY_MSG_77;ИПТЦ метаподаци
 HISTORY_MSG_78;Подаци за промени величине
 HISTORY_MSG_79;Ширина при промени величине
-HISTORY_MSG_7;Црна
 HISTORY_MSG_80;Висина при промени величине
 HISTORY_MSG_81;Укључена промена величина
 HISTORY_MSG_82;Профил је измењен
@@ -329,7 +276,6 @@ HISTORY_MSG_86;Таласно уједначење
 HISTORY_MSG_87;Уклањање шума „бибер и со“
 HISTORY_MSG_88;Праг уклањања шума за „бибер и со“
 HISTORY_MSG_89;Уклањање шума
-HISTORY_MSG_8;Компензација експозиције
 HISTORY_MSG_90;Шум — осветљеност
 HISTORY_MSG_91;Шум — боје
 HISTORY_MSG_92;Шум — гама
@@ -340,7 +286,57 @@ HISTORY_MSG_96;„а“ крива
 HISTORY_MSG_97;„б“ крива
 HISTORY_MSG_98;Растављам мозаик
 HISTORY_MSG_99;Обрађујем
-HISTORY_MSG_9;Сабијање светлог
+HISTORY_MSG_100;РГБ засићеност
+HISTORY_MSG_101;ХСВ EQ — Нијанса
+HISTORY_MSG_102;ХСВ EQ — Засићеност
+HISTORY_MSG_103;ХСВ EQ — Вреднсот
+HISTORY_MSG_104;Уједначење ХСВ
+HISTORY_MSG_105;Уклањање ореола
+HISTORY_MSG_106;Полупречник
+HISTORY_MSG_107;Праг
+HISTORY_MSG_108;Праг компенз. светлог
+HISTORY_MSG_109;Оквир за промену величине
+HISTORY_MSG_110;Промена величине примењена на
+HISTORY_MSG_111;Избегни исецање боја
+HISTORY_MSG_112;Ограничавање засићења
+HISTORY_MSG_113;Граничник засићења
+HISTORY_MSG_114;ДЦБ понављања
+HISTORY_MSG_115;Понављање лажних боја
+HISTORY_MSG_116;Унапређени ДЦБ
+HISTORY_MSG_117;Поправка црвене хроминансе
+HISTORY_MSG_118;Поправка плаве хроминансе
+HISTORY_MSG_119;Линијско уклаљање шума
+HISTORY_MSG_120;Праг уједначења зелене
+HISTORY_MSG_121;Сам исправи аберације
+HISTORY_MSG_122;Сам примени тамни кадар
+HISTORY_MSG_123;Датотека за тамни кадар
+HISTORY_MSG_124;Линеарна исправка експ.
+HISTORY_MSG_125;Поправка експ. уз очување светлог
+HISTORY_MSG_126;Датотека са равним пољем
+HISTORY_MSG_127;Сам изабери равно поље
+HISTORY_MSG_128;Полупречник равног поља
+HISTORY_MSG_129;Начин замућења равног поља
+HISTORY_MSG_130;Аутоматска дисторзија
+HISTORY_MSG_131;Уклањање шума луминансе
+HISTORY_MSG_132;Уклањање шума боје
+HISTORY_MSG_133;Гама
+HISTORY_MSG_134;Гама позиција
+HISTORY_MSG_135;Гама слобода
+HISTORY_MSG_136;Гама нагиб
+HISTORY_MSG_137;Ниво црне зелена 1
+HISTORY_MSG_138;Ниво црне црвена 
+HISTORY_MSG_139;Ниво црне плава
+HISTORY_MSG_140;Ниво црне зелена 2
+HISTORY_MSG_141;Ниво црне обе зелене
+HISTORY_MSG_142;Оштрење ивица - бр. понављања
+HISTORY_MSG_143;Оштрење ивица - количина
+HISTORY_MSG_144;Микроконтраст - количина
+HISTORY_MSG_145;Микроконтраст - уједначеност
+HISTORY_MSG_146;Оштрење ивица
+HISTORY_MSG_147;Оштрење ивица - само луминанса
+HISTORY_MSG_148;Микроконтраст
+HISTORY_MSG_149;Микроконтраст - 3x3 матрица
+HISTORY_MSG_150;Уклањање артефакта/шума након расклапања мозаика
 HISTORY_NEWSNAPSHOTAS;Као...
 HISTORY_NEWSNAPSHOT;Додај
 HISTORY_NEWSSDIALOGLABEL;Назив снимка:
@@ -407,31 +403,31 @@ IPTCPANEL_TRANSREFERENCE;Реф. преноса
 MAIN_BUTTON_EXIT;Изађи
 MAIN_BUTTON_FULLSCREEN;Цео екран
 MAIN_BUTTON_PREFERENCES;Поставке
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+Q</b>
 MAIN_BUTTON_PUTTOQUEUE;Закажи
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Закажи
 MAIN_BUTTON_SAVEAS;Као...
-MAIN_BUTTON_SAVE_TOOLTIP;Чува тренутну слику <b>Ctrl+С</b>
 MAIN_BUTTON_SAVE;Сачувај
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Уређује тренутну слику у спољном програму <b>Ctrl+Е</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Чува тренутну слику <b>Ctrl+С</b>
 MAIN_BUTTON_SENDTOEDITOR;Уреди
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Уређује тренутну слику у спољном програму <b>Ctrl+Е</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Приказује/сакрива све бочне површине <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Напусти цео екран
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Заказано  <b>Ctrl-F3</b>
 MAIN_FRAME_BATCHQUEUE;Заказане датотеке
-MAIN_FRAME_EDITOR_TOOLTIP; Уређивач  <b>Ctrl-F4</b>
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Заказано  <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Уређивач
-MAIN_FRAME_FILEBROWSER_TOOLTIP; Разгледач датотека  <b>Ctrl-F2</b>
+MAIN_FRAME_EDITOR_TOOLTIP; Уређивач  <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Разгледач датотека
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Разгледач датотека  <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Места
 MAIN_FRAME_PLACES_ADD;Додај
 MAIN_FRAME_PLACES_DEL;Уклони
-MAIN_FRAME_PLACES;Места
 MAIN_FRAME_RECENT;Recent Фасцикле
 MAIN_MSG_ALREADYEXISTS;Датотека већ постоји.
 MAIN_MSG_CANNOTLOAD;Не могу да учитам слику
 MAIN_MSG_CANNOTSAVE;Грешка при чувању датотеке
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Изаберите исправну путању у „Поставкама“.
 MAIN_MSG_CANNOTSTARTEDITOR;Не могу да покренем програм за уређивање.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Изаберите исправну путању у „Поставкама“.
 MAIN_MSG_EMPTYFILENAME;Није одређено име датотеке!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Грешка прилоком чувања слике
 MAIN_MSG_EXITJOBSINQUEUEINFO;Заказане слике неће бити обрађене.
@@ -441,24 +437,24 @@ MAIN_MSG_NAVIGATOR;Навигатор
 MAIN_MSG_PLACES;Места
 MAIN_MSG_QOVERWRITE;Да ли желите да препишете?
 MAIN_TAB_BASIC;Основно
-MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_COLOR;Боја
-MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Детаљи
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 MAIN_TAB_DEVELOP;Развијање
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_EXPOSURE;Светлост
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_FILTER;Филтер
 MAIN_TAB_ICM;ИЦМ
 MAIN_TAB_IPTC;ИПТЦ
-MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_METADATA;Метаподаци
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Ознаке
-MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TAB_TRANSFORM;Исправке
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;Б|А
 MAIN_TOOLTIP_HIDEFP;Приказује/сакрива доњу површ, директоријуме и разгледач датотека (пречица: Ф)
 MAIN_TOOLTIP_HIDEHP;Приказује/сакрива леву површ, заједно са историјатом (пречица: Х)
@@ -536,18 +532,18 @@ PARTIALPASTE_PERSPECTIVE;Перспектива
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Уједначавање зелене
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Филтер врелих/мртвих пиксела
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Линијски филтер шума
-PARTIALPASTE_RAW_ALLENHANCE;Уклони шум након расклапања мозаика
 PARTIALPASTE_RAWCACORR_AUTO;Ауто хроматске аберације
 PARTIALPASTE_RAWCACORR_CABLUE;Плава хроминанса
 PARTIALPASTE_RAWCACORR_CARED;Црвена хроминанса
-PARTIALPASTE_RAW_DCBENHANCE;Примени корак ДЦБ побољшања
-PARTIALPASTE_RAW_DCBITERATIONS;Број ДЦБ понављања
-PARTIALPASTE_RAW_DMETHOD;Начин расклапања мозаика
 PARTIALPASTE_RAWEXPOS_BLACK;Ниво црне
 PARTIALPASTE_RAWEXPOS_LINEAR;Линеарни фактор исправке RAW беле тачке
 PARTIALPASTE_RAWEXPOS_PRESER;Raw тачка беле уз очување светлих делова
-PARTIALPASTE_RAW_FALSECOLOR;Кораци пригушења лажне боје при расклапању мозаика
 PARTIALPASTE_RAWGROUP;Raw подешавања
+PARTIALPASTE_RAW_ALLENHANCE;Уклони шум након расклапања мозаика
+PARTIALPASTE_RAW_DCBENHANCE;Примени корак ДЦБ побољшања
+PARTIALPASTE_RAW_DCBITERATIONS;Број ДЦБ понављања
+PARTIALPASTE_RAW_DMETHOD;Начин расклапања мозаика
+PARTIALPASTE_RAW_FALSECOLOR;Кораци пригушења лажне боје при расклапању мозаика
 PARTIALPASTE_RESIZE;Промена величине
 PARTIALPASTE_ROTATION;Ротација
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Сенке/Светлост
@@ -557,7 +553,6 @@ PARTIALPASTE_SHARPENMICRO;Микроконтраст
 PARTIALPASTE_VIGNETTING;Исправљање вињетарења
 PARTIALPASTE_WAVELETEQUALIZER;Таласно уједначавање
 PARTIALPASTE_WHITEBALANCE;Баланс беле
-P_GAMMA_CURV;гама
 POPUPBUTTON_SELECTOPTIONHINT;РМБ за измену опције
 PREFERENCES_ADD;Додај
 PREFERENCES_APPLNEXTSTARTUP;примењује се након поновног покретања
@@ -726,6 +721,7 @@ PROGRESSDLG_LOADING;Учитавам датотеку...
 PROGRESSDLG_PROCESSING;Обрађујем слику...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профил измењен у разгледачу
 PROGRESSDLG_SAVING;Чувам датотеку...
+P_GAMMA_CURV;гама
 QINFO_FOCALLENGTH;Жижна дужина
 QINFO_ISO;ИСО
 QINFO_LENS;Објектив
@@ -743,7 +739,6 @@ SAVEDLG_SAVEIMMEDIATELY;Одмах сачувај
 SAVEDLG_SAVESPP;Сачувај параметре обраде уз слику
 SAVEDLG_TIFFFILTER;TIFF датотеке
 SAVEDLG_TIFFUNCOMPRESSED;Незапаковани TIFF
-#  Serbian translation
 TOOLBAR_TOOLTIP_CROP;Поставља оквир за исецање (пречица: Ц)
 TOOLBAR_TOOLTIP_HAND;Алат за померање (пречица: Н)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Исправља линију хоризонта (пречица: С)
@@ -813,8 +808,8 @@ TP_DIRPYREQUALIZER_LUMAFINEST;фино
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Неутрално
 TP_DIRPYREQUALIZER_THRESHOLD;Праг
 TP_DISTORTION_AMOUNT;Количина
-TP_DISTORTION_AUTO_TIP;(Експериментално) Аутоматски исправља изобличења неких апарата (М4/3, неки компакти, и др.)
 TP_DISTORTION_AUTO;Сам исправи изобличења
+TP_DISTORTION_AUTO_TIP;(Експериментално) Аутоматски исправља изобличења неких апарата (М4/3, неки компакти, и др.)
 TP_DISTORTION_LABEL;Изобличења
 TP_EQUALIZER_CONTRAST_MINUS;Контраст -
 TP_EQUALIZER_CONTRAST_PLUS;Контраст +
@@ -822,7 +817,6 @@ TP_EQUALIZER_FINEST;најфиније
 TP_EQUALIZER_LABEL;Таласно уједначење
 TP_EQUALIZER_LARGEST;најгрубље
 TP_EQUALIZER_NEUTRAL;Неутрално
-TP_EXPO_AFTER; Пре интерполације (пре превода у РГБ)
 TP_EXPOSCORR_LABEL;Raw бела тачка
 TP_EXPOSURE_AUTOLEVELS;Ауто-нивои
 TP_EXPOSURE_BLACKLEVEL;Црна
@@ -836,6 +830,7 @@ TP_EXPOSURE_CURVEEDITOR;Крива нијанси
 TP_EXPOSURE_EXPCOMP;Компензација
 TP_EXPOSURE_LABEL;Експозиција
 TP_EXPOSURE_SATURATION;Засићеност
+TP_EXPO_AFTER; Пре интерполације (пре превода у РГБ)
 TP_FLATFIELD_AUTOSELECT;Сам изабери
 TP_FLATFIELD_BLURRADIUS;Полупречник замућења
 TP_FLATFIELD_BLURTYPE;Замути
@@ -916,13 +911,9 @@ TP_PREPROCESS_HOTDEADPIXFILT;Избаци прегореле и мртве пи�
 TP_PREPROCESS_LABEL;Предобрада
 TP_PREPROCESS_LINEDENOISE;Линијски филтер шума
 TP_PREPROCESS_NO_FOUND;Није пронађено
-TP_RAW_ALLENHANCE;Уклони артафакте/шум након расклапања
 TP_RAWCACORR_AUTO;Исправи хроматске аберације
 TP_RAWCACORR_CABLUE;Плава
 TP_RAWCACORR_CARED;Црвена
-TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
-TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
-TP_RAW_DMETHOD;Начин
 TP_RAWEXPOS_BLACKONE;Ниво црне: Црвена
 TP_RAWEXPOS_BLACKS;Ниво црне
 TP_RAWEXPOS_BLACKTHREE;Ниво црне: Зелена 2
@@ -931,6 +922,10 @@ TP_RAWEXPOS_BLACKZERO;Ниво црне: Зелена 1 (водећа)
 TP_RAWEXPOS_LINEAR;Линеарни фактор корекције
 TP_RAWEXPOS_PRESER;Очување светлих делова
 TP_RAWEXPOS_TWOGREEN;Обе зелене
+TP_RAW_ALLENHANCE;Уклони артафакте/шум након расклапања
+TP_RAW_DCBENHANCE;Примени ДЦБ побољшање
+TP_RAW_DCBITERATIONS;Број ДЦБ пролаза
+TP_RAW_DMETHOD;Начин
 TP_RAW_FALSECOLOR;Кораци за пригушивање лажне боје
 TP_RAW_LABEL;Расклапање мозаика
 TP_RESIZE_APPLIESTO;Примени на:
@@ -979,10 +974,10 @@ TP_SHARPENING_LABEL;Оштрење
 TP_SHARPENING_METHOD;Начин
 TP_SHARPENING_ONLYEDGES;Изоштри само ивице
 TP_SHARPENING_RADIUS;Полупречник
+TP_SHARPENING_RLD;RL деконволуција
 TP_SHARPENING_RLD_AMOUNT;Количина
 TP_SHARPENING_RLD_DAMPING;Пригушивање
 TP_SHARPENING_RLD_ITERATIONS;Понављања
-TP_SHARPENING_RLD;RL деконволуција
 TP_SHARPENING_THRESHOLD;Праг
 TP_SHARPENING_USM;Оштрина маске
 TP_SHARPENMICRO_AMOUNT;Количина
@@ -990,9 +985,9 @@ TP_SHARPENMICRO_LABEL;Микроконттраст
 TP_SHARPENMICRO_MATRIX;3×3 матрица уместо 5×5
 TP_SHARPENMICRO_UNIFORMITY;Уједначеност
 TP_VIGNETTING_AMOUNT;Количина
+TP_VIGNETTING_CENTER;Центар
 TP_VIGNETTING_CENTER_X;Центар X
 TP_VIGNETTING_CENTER_Y;Центар Y
-TP_VIGNETTING_CENTER;Центар
 TP_VIGNETTING_LABEL;Вињетарење
 TP_VIGNETTING_RADIUS;Полупречник
 TP_VIGNETTING_STRENGTH;Јачина
@@ -1019,6 +1014,11 @@ ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозор
 ZOOMPANEL_ZOOMIN;Увећава приказ слике <b>+</b>
 ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 
+#00 Serbian (Cyrilic)
+#01 by gpopac 2010-11-16
+#  Serbian translation
+﻿HISTOGRAM_BUTTON_B;П
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -1032,17 +1032,28 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_GAMMA_CURV;gamma
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 !TP_VIBRANCE_LABEL;Vibrance

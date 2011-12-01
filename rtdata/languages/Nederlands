@@ -1,20 +1,12 @@
-﻿#
-
-#00 Nederlands
-#01 26.12.2007: door Rens Duijsens en Brent Huisman
-#02 14.03.2008: updated by reggybe
-#03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
-#04 02-05-2010: updated to rt3a1 by paul.matthijsse
-#05 03-03-2011: updated to rt3a2 by paul.matthijsse
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;Licentie
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Terug naar beginwaarde
-BATCH_PROCESSING;Batch-verwerking
 BATCHQUEUE_AUTOSTART;Autostart
-CURVEEDITOR_CURVE;Curve
+BATCH_PROCESSING;Batch-verwerking
 CURVEEDITOR_CURVES;Curves
+CURVEEDITOR_CURVE;Curve
 CURVEEDITOR_CUSTOM;Handmatig
 CURVEEDITOR_DARKS;Schaduwen
 CURVEEDITOR_FILEDLGFILTERANY;Alle bestanden
@@ -46,14 +38,14 @@ EXIFPANEL_ADDEDIT;Voeg toe/bewerk
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Geef waarde
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Selecteer tag
 EXIFPANEL_ADDTAGDLG_TITLE;Voeg tag toe of bewerk
-EXIFPANEL_KEEP;Bewaar
 EXIFPANEL_KEEPHINT;Bewaar geselecteerde tags in doelbestand
+EXIFPANEL_KEEP;Bewaar
 EXIFPANEL_REMOVEHINT;Verwijder geselecteerde tags in doelbestand
 EXIFPANEL_REMOVE;Verwijder
-EXIFPANEL_RESETALL;Herstel alles
 EXIFPANEL_RESETALLHINT;Zet alle tags terug naar oorspronkelijke waarden
-EXIFPANEL_RESET;Herstel
+EXIFPANEL_RESETALL;Herstel alles
 EXIFPANEL_RESETHINT;Zet geselecteerde tags terug naar oorspronkelijke waarden
+EXIFPANEL_RESET;Herstel
 EXIFPANEL_SUBDIRECTORY;Submap
 FILEBROWSER_ADDDELTEMPLATE;Voeg sjablonen toe of verwijder...
 FILEBROWSER_APPLYPROFILE;Pas profiel toe
@@ -66,8 +58,8 @@ FILEBROWSER_DELETEDLGLABEL;Bevestiging bestand verwijderen
 FILEBROWSER_DELETEDLGMSG;Weet u zeker dat u de geselecteerde %1 bestanden wilt verwijderen?
 FILEBROWSER_EMPTYTRASHHINT;Verwijder bestanden in prullenbak voorgoed
 FILEBROWSER_EMPTYTRASH;Leeg prullenbak
-FILEBROWSER_EXIFFILTERAPPLY;Activeer
 FILEBROWSER_EXIFFILTERAPPLYHINT;Pas Exif-filter toe op bestandsnavigator
+FILEBROWSER_EXIFFILTERAPPLY;Activeer
 FILEBROWSER_EXIFFILTERLABEL;Exif-filter
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Stel Exif-filter in
 FILEBROWSER_EXIFFILTERSETTINGS;Stel in
@@ -119,17 +111,17 @@ GENERAL_ABOUT;Over RawTherapee
 GENERAL_AFTER;Na
 GENERAL_BEFORE;Voor
 GENERAL_CANCEL;Annuleren
-GENERAL_DISABLE;Deactiveren
 GENERAL_DISABLED;Gedeactiveerd
-GENERAL_ENABLE;Activeer
+GENERAL_DISABLE;Deactiveren
 GENERAL_ENABLED;Geactiveerd
+GENERAL_ENABLE;Activeer
 GENERAL_FILE;Bestand
 GENERAL_HIGH_QUALITY;Hoge kwaliteit
 GENERAL_LANDSCAPE;Landschap
 GENERAL_LOAD;Laden
 GENERAL_NA;nvt.
-GENERAL_NO;Nee
 GENERAL_NONE;Geen
+GENERAL_NO;Nee
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portret
 GENERAL_SAVE;Opslaan
@@ -149,34 +141,17 @@ HISTORY_CUSTOMCURVE;Handmatig
 HISTORY_DELSNAPSHOT;Wis
 HISTORY_FROMCLIPBOARD;Van klembord
 HISTORY_LABEL;Geschiedenis
-HISTORY_MSG_100;RGB-verzadiging
-HISTORY_MSG_101;HSV EQ: tint
-HISTORY_MSG_102;HSV EQ: verzadiging
-HISTORY_MSG_103;HSV EQ: waarde
-HISTORY_MSG_104;HSV-equalizer
-HISTORY_MSG_105;Randverzachting
-HISTORY_MSG_106;Randverzachting radius
-HISTORY_MSG_107;Randverzachting drempel
-HISTORY_MSG_108;Drempel compr. hoge lichten
-HISTORY_MSG_109;Resize bounding box
+HISTORY_MSG_1;Foto geladen
+HISTORY_MSG_2;Profiel geladen
+HISTORY_MSG_3;Profiel aangepast
+HISTORY_MSG_4;Door geschiedenis bladeren
+HISTORY_MSG_5;Helderheid
+HISTORY_MSG_6;Contrast
+HISTORY_MSG_7;Schaduwen
+HISTORY_MSG_8;Belichtingscompensatie
+HISTORY_MSG_9;Compressie hoge lichten
 HISTORY_MSG_10;Schaduwcompressie
-HISTORY_MSG_110;Herschalen van: 
-HISTORY_MSG_111;Vermijd kleuroversturing
-HISTORY_MSG_112;Verzadigingsbegrenzer
-HISTORY_MSG_113;Verzadigingslimiet
-HISTORY_MSG_114;DCB-herhalingen
-HISTORY_MSG_115;Herhaling valse kleuren
-HISTORY_MSG_116;Verbeterd DCB
-HISTORY_MSG_117;CA-correctie Rood
-HISTORY_MSG_118;CA-correctie Blauw
-HISTORY_MSG_119;Lijnruis
 HISTORY_MSG_11;Tooncurve
-HISTORY_MSG_120;Groenbalans drempel
-HISTORY_MSG_121;Auto CA
-HISTORY_MSG_122;Auto dark-frame
-HISTORY_MSG_123;Dark-frame-bestand
-HISTORY_MSG_124;Lineaire bel.correctie
-HISTORY_MSG_125;Bel.correctie behoud HL
 HISTORY_MSG_12;Automatische belichting
 HISTORY_MSG_13;Drempel
 HISTORY_MSG_14;LAB: helderheid
@@ -185,7 +160,6 @@ HISTORY_MSG_16;Lum: schaduwen
 HISTORY_MSG_17;Lum: compr. hoge lichten
 HISTORY_MSG_18;Lum: schaduwcompressie
 HISTORY_MSG_19;Luminantiecurve
-HISTORY_MSG_1;Foto geladen
 HISTORY_MSG_20;Verscherping
 HISTORY_MSG_21;Straal verscherping
 HISTORY_MSG_22;Hoeveelheid verscherping
@@ -196,7 +170,6 @@ HISTORY_MSG_26;Tolerantie randverscherping
 HISTORY_MSG_27;Verscherpen halocontrole
 HISTORY_MSG_28;Halocontrole hoeveelheid
 HISTORY_MSG_29;Verscherpingsmethode
-HISTORY_MSG_2;Profiel geladen
 HISTORY_MSG_30;Straal RL-verscherping
 HISTORY_MSG_31;Hoeveelheid RL-verscherping
 HISTORY_MSG_32;Demping RL-verscherping
@@ -207,7 +180,6 @@ HISTORY_MSG_36;Verzadigingslimiet
 HISTORY_MSG_37;Kleurversterking
 HISTORY_MSG_38;Witbalansmethode
 HISTORY_MSG_39;Kleurtemperatuur
-HISTORY_MSG_3;Profiel aangepast
 HISTORY_MSG_40;Groentint WB
 HISTORY_MSG_41;Kleurverschuiving A
 HISTORY_MSG_42;Kleurverschuiving B
@@ -218,7 +190,6 @@ HISTORY_MSG_46;Ruisreductie kleur
 HISTORY_MSG_47;Straal kleurruisreductie
 HISTORY_MSG_48;Randtolerantie kleurruisreductie
 HISTORY_MSG_49;Randgevoeligheid kleurruisreductie
-HISTORY_MSG_4;Door geschiedenis bladeren
 HISTORY_MSG_50;Schaduwen/hoge lichten
 HISTORY_MSG_51;Compressie hoge lichten 
 HISTORY_MSG_52;Schaduwen ophelderen
@@ -229,7 +200,6 @@ HISTORY_MSG_56;Straal schaduwen/hoge lichten
 HISTORY_MSG_57;Grof roteren
 HISTORY_MSG_58;Horizontaal spiegelen
 HISTORY_MSG_59;Vertikaal spiegelen
-HISTORY_MSG_5;Helderheid
 HISTORY_MSG_60;Roteren
 HISTORY_MSG_61;Rotatie
 HISTORY_MSG_62;Corrigeer lensvervorming
@@ -240,7 +210,6 @@ HISTORY_MSG_66;Repareer hoge lichten
 HISTORY_MSG_67;Repareer hoge lichten, hoeveelheid
 HISTORY_MSG_68;Repareer hoge lichten, methode
 HISTORY_MSG_69;Kleurwerkruimte
-HISTORY_MSG_6;Contrast
 HISTORY_MSG_70;Uitvoerkleurruimte
 HISTORY_MSG_71;Invoerkleurruimte
 HISTORY_MSG_72;Vignetteringscorrectie
@@ -251,7 +220,6 @@ HISTORY_MSG_76;Exif-metadata
 HISTORY_MSG_77;IPTC-metadata
 HISTORY_MSG_78;Schalen
 HISTORY_MSG_79;Schalen: breedte
-HISTORY_MSG_7;Schaduwen
 HISTORY_MSG_80;Schalen: hoogte
 HISTORY_MSG_81;Schalen geactiveerd
 HISTORY_MSG_82;Profiel veranderd
@@ -262,7 +230,6 @@ HISTORY_MSG_86;Wavelet-equalizer
 HISTORY_MSG_87;Zout&peper-ruisreductie
 HISTORY_MSG_88;Zout&peper-drempel
 HISTORY_MSG_89;Ruisreductie
-HISTORY_MSG_8;Belichtingscompensatie
 HISTORY_MSG_90;Luminantie
 HISTORY_MSG_91;Chrominantie
 HISTORY_MSG_92;Gamma
@@ -273,14 +240,39 @@ HISTORY_MSG_96;'a'-curve
 HISTORY_MSG_97;'b'-curve
 HISTORY_MSG_98;Demozaïekproces
 HISTORY_MSG_99;Voorbewerking
-HISTORY_MSG_9;Compressie hoge lichten
+HISTORY_MSG_100;RGB-verzadiging
+HISTORY_MSG_101;HSV EQ: tint
+HISTORY_MSG_102;HSV EQ: verzadiging
+HISTORY_MSG_103;HSV EQ: waarde
+HISTORY_MSG_104;HSV-equalizer
+HISTORY_MSG_105;Randverzachting
+HISTORY_MSG_106;Randverzachting radius
+HISTORY_MSG_107;Randverzachting drempel
+HISTORY_MSG_108;Drempel compr. hoge lichten
+HISTORY_MSG_109;Resize bounding box
+HISTORY_MSG_110;Herschalen van: 
+HISTORY_MSG_111;Vermijd kleuroversturing
+HISTORY_MSG_112;Verzadigingsbegrenzer
+HISTORY_MSG_113;Verzadigingslimiet
+HISTORY_MSG_114;DCB-herhalingen
+HISTORY_MSG_115;Herhaling valse kleuren
+HISTORY_MSG_116;Verbeterd DCB
+HISTORY_MSG_117;CA-correctie Rood
+HISTORY_MSG_118;CA-correctie Blauw
+HISTORY_MSG_119;Lijnruis
+HISTORY_MSG_120;Groenbalans drempel
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Auto dark-frame
+HISTORY_MSG_123;Dark-frame-bestand
+HISTORY_MSG_124;Lineaire bel.correctie
+HISTORY_MSG_125;Bel.correctie behoud HL
 HISTORY_NEWSNAPSHOTAS;Als...
 HISTORY_NEWSNAPSHOT;Nieuw
 HISTORY_NEWSSDIALOGLABEL;Naam snapshot:
 HISTORY_NEWSSDIALOGTITLE;Voeg nieuw snapshot toe
 HISTORY_SETTO;Instellen
-HISTORY_SNAPSHOT;Nieuw
 HISTORY_SNAPSHOTS;Snapshots
+HISTORY_SNAPSHOT;Nieuw
 ICMPANEL_FILEDLGFILTERANY;Alle bestanden
 ICMPANEL_FILEDLGFILTERICM;ICC-profielbestanden
 ICMPANEL_GAMMABEFOREINPUT;Profiel past gamma toe
@@ -295,25 +287,25 @@ ICMPANEL_OUTPUTPROFILE;Uitvoerprofiel
 ICMPANEL_SAVEREFERENCE;Bewaar referentiefoto tbv. profiling
 ICMPANEL_WORKINGPROFILE;Werkprofiel
 IMAGEAREA_DETAILVIEW;Detailvenster
-IPTCPANEL_AUTHOR;Auteur
 IPTCPANEL_AUTHORHINT;Naam van de maker van het object, bijv. schrijver, fotograaf of ontwerper (By-line)
 IPTCPANEL_AUTHORSPOSITIONHINT;Titel van de maker(s) van het object (By-line Title)
 IPTCPANEL_AUTHORSPOSITION;Positie van de maker
+IPTCPANEL_AUTHOR;Auteur
 IPTCPANEL_CAPTIONHINT;Tekstuele omschrijving van de data (Omschrijving - abstract)
-IPTCPANEL_CAPTION;Omschrijving
 IPTCPANEL_CAPTIONWRITERHINT;De naam van de persoon betrokken bij het schrijven, bewerken of corrigeren van de foto of omschrijving (Schrijver - Editor)
 IPTCPANEL_CAPTIONWRITER;Maker van de omschrijving
-IPTCPANEL_CATEGORY;Categorie
+IPTCPANEL_CAPTION;Omschrijving
 IPTCPANEL_CATEGORYHINT;Beschrijft het onderwerp van de foto volgens de mening van de maker (Categorie)
+IPTCPANEL_CATEGORY;Categorie
 IPTCPANEL_CITYHINT;Plaats van de opname (Plaats)
 IPTCPANEL_CITY;Plaats
 IPTCPANEL_COPYHINT;Kopieer IPTC-instellingen naar klembord
-IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Eventuele vereiste copyright-meldingen (Copyright-melding)
+IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COUNTRYHINT;De naam van het land/primaire locatie waar de foto werd genomen (Land - Primaire locatienaam)
 IPTCPANEL_COUNTRY;Land
-IPTCPANEL_CREDIT;Credit
 IPTCPANEL_CREDITHINT;Naam van de leverancier van de foto, niet noodzakelijkerwijs de eigenaar/maker (Credit)
+IPTCPANEL_CREDIT;Credit
 IPTCPANEL_DATECREATEDHINT;Datum waarop de foto werd genomen; formaat: JJJJMMDD (Opnamedatum)
 IPTCPANEL_DATECREATED;Opnamedatum
 IPTCPANEL_EMBEDDEDHINT;Keer terug naar IPTC-data die in de foto zijn opgeslagen
@@ -329,10 +321,10 @@ IPTCPANEL_PROVINCEHINT;De provincie/staat/departement waar de foto werd genomen 
 IPTCPANEL_PROVINCE;Provincie
 IPTCPANEL_RESETHINT;Terug naar standaardwaarden
 IPTCPANEL_RESET;Standaardwaarden
-IPTCPANEL_SOURCE;Bron
 IPTCPANEL_SOURCEHINT;De oorspronkelijke eigenaar van de foto (Bron)
-IPTCPANEL_SUPPCATEGORIES;Extra categorieën
+IPTCPANEL_SOURCE;Bron
 IPTCPANEL_SUPPCATEGORIESHINT;Verdere verfijning van het onderwerp van de foto (Extra categorieën)
+IPTCPANEL_SUPPCATEGORIES;Extra categorieën
 IPTCPANEL_TITLEHINT;Een korte referentienaam voor de foto (Objectnaam)
 IPTCPANEL_TITLE;Titel
 IPTCPANEL_TRANSREFERENCEHINT;Een code die de locatie van de oorspronkelijke transmissie representeert (Original Transmission Reference)
@@ -352,9 +344,9 @@ MAIN_BUTTON_UNFULLSCREEN;Verlaat volledig scherm
 MAIN_FRAME_BATCHQUEUE;Verwerkingsrij 
 MAIN_FRAME_EDITOR;Fotobewerker
 MAIN_FRAME_FILEBROWSER;Bestandsnavigator 
+MAIN_FRAME_PLACES;Locaties
 MAIN_FRAME_PLACES_ADD;Nieuw
 MAIN_FRAME_PLACES_DEL;Wis
-MAIN_FRAME_PLACES;Locaties
 MAIN_FRAME_RECENT;Recente mappen 
 MAIN_MSG_ALREADYEXISTS;Bestand bestaat reeds.
 MAIN_MSG_CANNOTLOAD;Fout bij laden
@@ -462,8 +454,8 @@ PREFERENCES_CLEARDLG_TITLE;Momentje svp.
 PREFERENCES_CLIPPINGIND;Indicatie over-/onderbelichting
 PREFERENCES_CMETRICINTENT;Bedoelde colorimetrie
 PREFERENCES_DARKFRAME;Dark-frame
-PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y</b><i> : jaar</i>\n<b>%m</b><i> : maand</i>\n<b>%d</b><i> : dag</i>\n<i>\nHet Nederlandse datumformaat is bijvoorbeeld:</i>\n<b>%d/%m/%y</b>
+PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DEFAULTLANG;Standaardtaal
 PREFERENCES_DEFAULTTHEME;Standaardthema
 PREFERENCES_DEMOSAICINGALGO;Demozaïek-algoritme
@@ -497,8 +489,8 @@ PREFERENCES_MULTITAB;Multi-tab-modus
 PREFERENCES_OUTDIRFOLDERHINT;Sla foto's op in andere map
 PREFERENCES_OUTDIRFOLDER;Sla op in map
 PREFERENCES_OUTDIRHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDeze formaten hebben betrekking op de mappen en submappen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=foto, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Gebruik sjabloon
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDeze formaten hebben betrekking op de mappen en submappen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Gebruik sjabloon
 PREFERENCES_OUTDIR;Uitvoermap
 PREFERENCES_OVERLAY_FILENAMES;Toon bestandsnamen over miniaturen
 PREFERENCES_OVERWRITEOUTPUTFILE;Overschrijf bestaande output-bestanden
@@ -574,8 +566,8 @@ SAVEDLG_JPGFILTER;JPEG-bestanden
 SAVEDLG_PNGCOMPR;PNG-compressie
 SAVEDLG_PNGFILTER;PNG-bestanden
 SAVEDLG_PUTTOQUEUEHEAD;Plaats vooraan in verwerkingsrij
-SAVEDLG_PUTTOQUEUE;Plaats in verwerkingsrij
 SAVEDLG_PUTTOQUEUETAIL;Plaats achteraan in verwerkingsrij
+SAVEDLG_PUTTOQUEUE;Plaats in verwerkingsrij
 SAVEDLG_SAVEIMMEDIATELY;Bewaar meteen
 SAVEDLG_SAVESPP;Bewaar afbeelding met profiel
 SAVEDLG_TIFFFILTER;TIFF-bestanden
@@ -727,9 +719,9 @@ TP_RAW_DCBITERATIONS;Aantal DCB-herhalingen
 TP_RAW_DMETHOD;Methode
 TP_RAW_FALSECOLOR;Stapgrootte kleurfoutonderdrukking
 TP_RAW_LABEL;Demozaïekproces
-TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BICUBICSF;Bikubisch (zachter)
 TP_RESIZE_BICUBICSH;Bikubisch (scherper)
+TP_RESIZE_BICUBIC;Bikubisch
 TP_RESIZE_BILINEAR;Bilineair
 TP_RESIZE_DOWNSCALEB;Neerschalen (beter)
 TP_RESIZE_DOWNSCALEF;Neerschalen (sneller)
@@ -742,8 +734,8 @@ TP_RESIZE_METHOD;Methode:
 TP_RESIZE_NEAREST;Dichtstbij
 TP_RESIZE_SCALE;Schaal
 TP_RESIZE_SPECIFY;Specificeer:
-TP_RESIZE_W;B:
 TP_RESIZE_WIDTH;Breedte
+TP_RESIZE_W;B:
 TP_ROTATE_AUTOCROP;Automatisch bijsnijden
 TP_ROTATE_DEGREE;Graden
 TP_ROTATE_FILL;Uitvullen
@@ -765,10 +757,10 @@ TP_SHARPENING_LABEL;Verscherpen
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Alleen randen verscherpen
 TP_SHARPENING_RADIUS;Straal
+TP_SHARPENING_RLD;RL-verscherping
 TP_SHARPENING_RLD_AMOUNT;Hoeveelheid
 TP_SHARPENING_RLD_DAMPING;Demping
 TP_SHARPENING_RLD_ITERATIONS;Herhaling
-TP_SHARPENING_RLD;RL-verscherping
 TP_SHARPENING_THRESHOLD;Drempel
 TP_SHARPENING_USM;Onscherpmasker
 TP_VIGNETTING_AMOUNT;Hoeveelheid
@@ -801,6 +793,14 @@ ZOOMPANEL_ZOOMFITSCREEN;Passend in venster
 ZOOMPANEL_ZOOMIN;Zoom in
 ZOOMPANEL_ZOOMOUT;Zoom uit
 
+#00 Nederlands
+#01 26.12.2007: door Rens Duijsens en Brent Huisman
+#02 14.03.2008: updated by reggybe
+#03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
+#04 02-05-2010: updated to rt3a1 by paul.matthijsse
+#05 03-03-2011: updated to rt3a2 by paul.matthijsse
+﻿#
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -814,9 +814,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
 !FILEBROWSER_EXEC_CPB;Run custom profile builder
@@ -852,7 +852,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTORY_MSG_126;Flat Field File
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
@@ -885,6 +885,11 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
@@ -908,6 +913,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -923,39 +929,39 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -993,9 +999,14 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -1015,13 +1026,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
@@ -1032,6 +1042,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box
