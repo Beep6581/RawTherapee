@@ -1,21 +1,12 @@
-
-#00 Italian
-#01 UTF-8(unix mode)
-#02 19-01-2008 v2.3 breek
-#03 01-11-2008 v2.4 pantaraf, chelidon, roberto
-#04 26-08-2011 v3.0 joker, chelidon, ffsup2
-#05 31-08-2011 v4.0 chelidon, ffsup2
-#06 Inserire una nota con la data ad ogni modifica per maggiore chiarezza.
-#07 IMPORTANTE: Contribuisci sul forum di rawtherapee nella pagina di localizzazione italiana se trovi errori http://www.rawtherapee.com/forum/viewtopic.php?p=3354
 ABOUT_TAB_BUILD;Versione
 ABOUT_TAB_CREDITS;Riconoscimenti
 ABOUT_TAB_LICENSE;Licenza
 ABOUT_TAB_SPLASH;Emblema
 ADJUSTER_RESET_TO_DEFAULT;Ritorna all'originario
-BATCH_PROCESSING;Sviluppo in Serie
 BATCHQUEUE_AUTOSTART;Autoavvia
-CURVEEDITOR_CURVE;Curva
+BATCH_PROCESSING;Sviluppo in Serie
 CURVEEDITOR_CURVES;Curve
+CURVEEDITOR_CURVE;Curva
 CURVEEDITOR_CUSTOM;Personalizzata
 CURVEEDITOR_DARKS;Toni scuri
 CURVEEDITOR_FILEDLGFILTERANY;Qualsiasi file
@@ -45,8 +36,8 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Obiettivo
 EXIFFILTER_METADATAFILTER;Abilita filtri metadati
 EXIFFILTER_SHUTTER;Tempo d'esposizione
-EXIFPANEL_ADDEDIT;Aggiungi/Modifica
 EXIFPANEL_ADDEDITHINT;Aggiungi un nuovo campo o modificane uno esistente
+EXIFPANEL_ADDEDIT;Aggiungi/Modifica
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Inserisci il valore
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Seleziona un campo
 EXIFPANEL_ADDTAGDLG_TITLE;Aggiungi/Modifica un campo
@@ -80,8 +71,8 @@ FILEBROWSER_DELETEDLGMSG;Sei certo di voler eliminare il/i %1 file selezionato/i
 FILEBROWSER_EMPTYTRASHHINT;Elimina definitivamente i file dal cestino
 FILEBROWSER_EMPTYTRASH;Svuota cestino
 FILEBROWSER_EXEC_CPB;Avvia lo strumento per la generazione dei profili su misura
-FILEBROWSER_EXIFFILTERAPPLY;Applica
 FILEBROWSER_EXIFFILTERAPPLYHINT;Accendi/Spegni il filtro exif nel navigatore
+FILEBROWSER_EXIFFILTERAPPLY;Applica
 FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Modifica le impostazioni del filtro exif
 FILEBROWSER_EXIFFILTERSETTINGS;Imposta
@@ -113,9 +104,9 @@ FILEBROWSER_POPUPRANK3;Classificazione 3 ***
 FILEBROWSER_POPUPRANK4;Classificazione 4 ****
 FILEBROWSER_POPUPRANK5;Classificazione 5 *****
 FILEBROWSER_POPUPRANK;Classificazione
-FILEBROWSER_POPUPREMOVE;Elimina dal disco fisso
 FILEBROWSER_POPUPREMOVEINCLPROC;Elimina (assieme a quanto sviluppato nella coda)
 FILEBROWSER_POPUPREMOVESUBMENU;Elimina
+FILEBROWSER_POPUPREMOVE;Elimina dal disco fisso
 FILEBROWSER_POPUPRENAME;Rinomina
 FILEBROWSER_POPUPSELECTALL;Seleziona tutto
 FILEBROWSER_POPUPTRASH;Butta nel cestino
@@ -150,8 +141,8 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra le immagini salvate non di recente  
 FILEBROWSER_SHOWTRASHHINT;Mostra il contenuto del cestino <b>(scorciatoia: T)</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra le immagini senza targhetta colorata  <b>(scorciatoia: Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate  <b>(scorciatoia: `)</b>
-FILEBROWSER_STARTPROCESSING;Comincia a sviluppare
 FILEBROWSER_STARTPROCESSINGHINT;Inizia lo sviluppo e il salvataggio delle immagini in coda
+FILEBROWSER_STARTPROCESSING;Comincia a sviluppare
 FILEBROWSER_STOPPROCESSINGHINT;Ferma lo sviluppo delle immagini
 FILEBROWSER_STOPPROCESSING;Smetti di sviluppare
 FILEBROWSER_THUMBSIZE;Dimensione miniature
@@ -165,8 +156,8 @@ GENERAL_BEFORE;Prima
 GENERAL_CANCEL;Annulla
 GENERAL_DISABLED;Disabilitato
 GENERAL_DISABLE;Disabilita
-GENERAL_ENABLE;Abilita
 GENERAL_ENABLED;Abilitato
+GENERAL_ENABLE;Abilita
 GENERAL_FILE;File
 GENERAL_HIGH_QUALITY;Qualità alta
 GENERAL_LANDSCAPE;Panorama
@@ -197,67 +188,25 @@ HISTORY_CUSTOMCURVE;Curva personalizzata
 HISTORY_DELSNAPSHOT;Rimuovi
 HISTORY_FROMCLIPBOARD;Dagli appunti
 HISTORY_LABEL;Cronologia
-HISTORY_MSG_100;Saturazione RGB
-HISTORY_MSG_101;Tonalità - Equalizzatore HSV
-HISTORY_MSG_102;Saturazione - Equalizzatore HSV
-HISTORY_MSG_103;Luminosità - Equalizzatore HSV
-HISTORY_MSG_104;Equalizzatore HSV
-HISTORY_MSG_105;Rimozione aloni contrastati
-HISTORY_MSG_106;Raggio - Rimozione aloni contrastati
-HISTORY_MSG_107;Soglia - Rimozione aloni contrastati
-HISTORY_MSG_108;Soglia di compr. alteluci
-HISTORY_MSG_109;Riquadro di selezione - Ridimensiona
+HISTORY_MSG_1;Foto caricata
+HISTORY_MSG_2;Profilo caricato
+HISTORY_MSG_3;Profilo modificato
+HISTORY_MSG_4;Visualizzazione cronologia
+HISTORY_MSG_5;Luminosità - Esposizione
+HISTORY_MSG_6;Contrasto - Esposizione
+HISTORY_MSG_7;Livello del nero - Esposizione
+HISTORY_MSG_8;Compensazione dell'esposizione
+HISTORY_MSG_9;Compressione alteluci
 HISTORY_MSG_10;Compressione ombre
-HISTORY_MSG_110;Ridimensiona applicato a  
-HISTORY_MSG_111;Previeni tosaggio del colore
-HISTORY_MSG_112;Limitatore di saturazione
-HISTORY_MSG_113;Limite saturazione
-HISTORY_MSG_114;Iterazioni DCB
-HISTORY_MSG_115;Stadi per falsi colori
-HISTORY_MSG_116;Affinamento DCB
-HISTORY_MSG_118;Correzione AC Blu
-HISTORY_MSG_119;Filtro rumore a bande
 HISTORY_MSG_11;Curva di tono
-HISTORY_MSG_120;Soglia uniform. verde
-HISTORY_MSG_121;AC automatiche
-HISTORY_MSG_122;Dark-Frame automatica
-HISTORY_MSG_123;File di Dark-Frame
-HISTORY_MSG_124;Compensazione esp. lineare
-HISTORY_MSG_125;Comp. di protezione alteLuci
-HISTORY_MSG_126;File di Flat-Field
-HISTORY_MSG_127;Autoselezione Flat-Field
-HISTORY_MSG_128;Raggio di sfocamento per Flat-Field
-HISTORY_MSG_129;Modalità di sfocamento per Flat-Field
 HISTORY_MSG_12;Esposizione automatica
-HISTORY_MSG_130;Autocorr. Distorsione
-HISTORY_MSG_131;Riduzione rum. luminanza
-HISTORY_MSG_132;Riduzione rum. crominanza
-HISTORY_MSG_133;Gamma
-HISTORY_MSG_134;Posizione del Gamma
-HISTORY_MSG_135;Gamma libero
-HISTORY_MSG_136;Pendenza - Gamma
-HISTORY_MSG_137;Punto del nero: verde 1
-HISTORY_MSG_138;Punto del nero: rosso
-HISTORY_MSG_139;Punto del nero: blu
 HISTORY_MSG_13;Tosaggio - Esposizione
-HISTORY_MSG_140;Punto del nero: verde 2
-HISTORY_MSG_141;Unico valore per verde
-HISTORY_MSG_142;Iterazioni - Gradiente ai margini
-HISTORY_MSG_143;Quantità - Gradiente ai margini
-HISTORY_MSG_144;Quantità - Microcontrasto
-HISTORY_MSG_145;Uniformità - Microcontrasto
-HISTORY_MSG_146;Gradiente ai margini
-HISTORY_MSG_147;Solo per luminanza - Gradiente ai margini
-HISTORY_MSG_148;Microcontrasto
-HISTORY_MSG_149;Matrice 3x3 - Microcontrasto
 HISTORY_MSG_14;Luminosità - Luminanza
-HISTORY_MSG_150;Limita rumore/artefatti di demosaic.
 HISTORY_MSG_15;Contrasto - Luminanza
 HISTORY_MSG_16;Livello del nero - Luminanza
 HISTORY_MSG_17;Compr. alteluci - Luminanza
 HISTORY_MSG_18;Compr. ombre - Luminanza
 HISTORY_MSG_19;Curva per 'L'
-HISTORY_MSG_1;Foto caricata
 HISTORY_MSG_20;Nitidezza
 HISTORY_MSG_21;Raggio - Nitidezza
 HISTORY_MSG_22;Quantità - Nitidezza
@@ -268,7 +217,6 @@ HISTORY_MSG_26;Tolleranza bordi - Nitidezza
 HISTORY_MSG_27;Controllo alone - Nitidezza
 HISTORY_MSG_28;Quantità - Controllo alone
 HISTORY_MSG_29;Metodo - Nitidezza
-HISTORY_MSG_2;Profilo caricato
 HISTORY_MSG_30;Raggio - Deconvoluzione
 HISTORY_MSG_31;Quantità - Deconvoluzione
 HISTORY_MSG_32;Smorzamento - Deconvoluzione
@@ -279,7 +227,6 @@ HISTORY_MSG_36;Limite saturazione
 HISTORY_MSG_37;Potenziamento colore
 HISTORY_MSG_38;Metodo - Bilanciamento del bianco
 HISTORY_MSG_39;Temperatura di colore
-HISTORY_MSG_3;Profilo modificato
 HISTORY_MSG_40;Tinta - Bilanciamento del bianco
 HISTORY_MSG_41;Spostamento colore "a"
 HISTORY_MSG_42;Spostamento colore "b"
@@ -290,7 +237,6 @@ HISTORY_MSG_46;Riduzione rumore crominanza
 HISTORY_MSG_47;Raggio - Rid. rumore crominanza
 HISTORY_MSG_48;Tolleranza bordi - Rid. rumore crominanza
 HISTORY_MSG_49;Sensibilità bordi - Rid. rumore crominanza
-HISTORY_MSG_4;Visualizzazione cronologia
 HISTORY_MSG_50;Strumento Ombre/Alteluci
 HISTORY_MSG_51;Miglioramento alteluci
 HISTORY_MSG_52;Miglioramento ombre
@@ -301,7 +247,6 @@ HISTORY_MSG_56;Raggio - Ombre/Alteluci
 HISTORY_MSG_57;Rotazione semplice
 HISTORY_MSG_58;Ribaltamento orizzontale
 HISTORY_MSG_59;Ribaltamento verticale
-HISTORY_MSG_5;Luminosità - Esposizione
 HISTORY_MSG_60;Ruota
 HISTORY_MSG_61;Riadatta
 HISTORY_MSG_62;Correzione distorsione dell'obiettivo
@@ -312,7 +257,6 @@ HISTORY_MSG_66;Recupero alteluci
 HISTORY_MSG_67;Quantità - Recupero alteluci
 HISTORY_MSG_68;Metodo - Ricostruzione alteluci
 HISTORY_MSG_69;Spazio colore di lavoro
-HISTORY_MSG_6;Contrasto - Esposizione
 HISTORY_MSG_70;Spazio colore di uscita
 HISTORY_MSG_71;Spazio colore di ingresso
 HISTORY_MSG_72;Correzione vignettatura
@@ -323,7 +267,6 @@ HISTORY_MSG_76;Metadati Exif
 HISTORY_MSG_77;Metadati IPTC 
 HISTORY_MSG_78;Misure specificate per ridimensiona
 HISTORY_MSG_79;Larghezza - Ridimensiona
-HISTORY_MSG_7;Livello del nero - Esposizione
 HISTORY_MSG_80;Altezza - Ridimensiona
 HISTORY_MSG_81;Ridimensiona
 HISTORY_MSG_82;Profilo modificato
@@ -334,7 +277,6 @@ HISTORY_MSG_86;Equalizzatore Wavelet
 HISTORY_MSG_87;Riduzione rumore puntuale
 HISTORY_MSG_88;Soglia - Riduzione rumore puntuale
 HISTORY_MSG_89;Riduzione rumore
-HISTORY_MSG_8;Compensazione dell'esposizione
 HISTORY_MSG_90;Luminanza - Riduzione rumore
 HISTORY_MSG_91;Crominanza - Riduzione rumore
 HISTORY_MSG_92;Gamma - Riduzione rumore
@@ -345,14 +287,63 @@ HISTORY_MSG_96;Curva per 'a'
 HISTORY_MSG_97;Curva per 'b'
 HISTORY_MSG_98;Metodo - Demosaicizzazione
 HISTORY_MSG_99;Interpolazione dei pixel alterati/guasti
-HISTORY_MSG_9;Compressione alteluci
-HISTORY_NEWSNAPSHOT;Aggiungi
+HISTORY_MSG_100;Saturazione RGB
+HISTORY_MSG_101;Tonalità - Equalizzatore HSV
+HISTORY_MSG_102;Saturazione - Equalizzatore HSV
+HISTORY_MSG_103;Luminosità - Equalizzatore HSV
+HISTORY_MSG_104;Equalizzatore HSV
+HISTORY_MSG_105;Rimozione aloni contrastati
+HISTORY_MSG_106;Raggio - Rimozione aloni contrastati
+HISTORY_MSG_107;Soglia - Rimozione aloni contrastati
+HISTORY_MSG_108;Soglia di compr. alteluci
+HISTORY_MSG_109;Riquadro di selezione - Ridimensiona
+HISTORY_MSG_110;Ridimensiona applicato a  
+HISTORY_MSG_111;Previeni tosaggio del colore
+HISTORY_MSG_112;Limitatore di saturazione
+HISTORY_MSG_113;Limite saturazione
+HISTORY_MSG_114;Iterazioni DCB
+HISTORY_MSG_115;Stadi per falsi colori
+HISTORY_MSG_116;Affinamento DCB
+HISTORY_MSG_118;Correzione AC Blu
+HISTORY_MSG_119;Filtro rumore a bande
+HISTORY_MSG_120;Soglia uniform. verde
+HISTORY_MSG_121;AC automatiche
+HISTORY_MSG_122;Dark-Frame automatica
+HISTORY_MSG_123;File di Dark-Frame
+HISTORY_MSG_124;Compensazione esp. lineare
+HISTORY_MSG_125;Comp. di protezione alteLuci
+HISTORY_MSG_126;File di Flat-Field
+HISTORY_MSG_127;Autoselezione Flat-Field
+HISTORY_MSG_128;Raggio di sfocamento per Flat-Field
+HISTORY_MSG_129;Modalità di sfocamento per Flat-Field
+HISTORY_MSG_130;Autocorr. Distorsione
+HISTORY_MSG_131;Riduzione rum. luminanza
+HISTORY_MSG_132;Riduzione rum. crominanza
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Posizione del Gamma
+HISTORY_MSG_135;Gamma libero
+HISTORY_MSG_136;Pendenza - Gamma
+HISTORY_MSG_137;Punto del nero: verde 1
+HISTORY_MSG_138;Punto del nero: rosso
+HISTORY_MSG_139;Punto del nero: blu
+HISTORY_MSG_140;Punto del nero: verde 2
+HISTORY_MSG_141;Unico valore per verde
+HISTORY_MSG_142;Iterazioni - Gradiente ai margini
+HISTORY_MSG_143;Quantità - Gradiente ai margini
+HISTORY_MSG_144;Quantità - Microcontrasto
+HISTORY_MSG_145;Uniformità - Microcontrasto
+HISTORY_MSG_146;Gradiente ai margini
+HISTORY_MSG_147;Solo per luminanza - Gradiente ai margini
+HISTORY_MSG_148;Microcontrasto
+HISTORY_MSG_149;Matrice 3x3 - Microcontrasto
+HISTORY_MSG_150;Limita rumore/artefatti di demosaic.
 HISTORY_NEWSNAPSHOTAS;Come...
+HISTORY_NEWSNAPSHOT;Aggiungi
 HISTORY_NEWSSDIALOGLABEL;Etichetta dell'istantanea:
 HISTORY_NEWSSDIALOGTITLE;Aggiungi nuova istantanea
 HISTORY_SETTO;Impostato a
-HISTORY_SNAPSHOT;Istantanea
 HISTORY_SNAPSHOTS;Istantanee
+HISTORY_SNAPSHOT;Istantanea
 ICMPANEL_FILEDLGFILTERANY;Qualsiasi file
 ICMPANEL_FILEDLGFILTERICM;File di Profili ICC
 ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il Gamma
@@ -367,27 +358,27 @@ ICMPANEL_OUTPUTPROFILE;Profilo di uscita
 ICMPANEL_SAVEREFERENCE;Salva immagine di riferimento per la profilazione
 ICMPANEL_WORKINGPROFILE;Profilo di lavoro
 IMAGEAREA_DETAILVIEW;Visualizza dettaglio
-IPTCPANEL_AUTHOR;Autore
 IPTCPANEL_AUTHORHINT;Nome del creatore dell'opera, es. scrittore, fotografo o artista grafico (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Titolo lavorativo del creatore o creatori dell'opera (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Qualifica dell'Autore
-IPTCPANEL_CAPTION;Didascalia
+IPTCPANEL_AUTHOR;Autore
 IPTCPANEL_CAPTIONHINT;Una descrizione testuale dei dati (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Autore della didascalia
 IPTCPANEL_CAPTIONWRITERHINT;Il nome della persona impegnata nella scrittura, modifica o correzione dell'immagine o della descrizione riassuntiva (Writer - Editor).
-IPTCPANEL_CATEGORY;Categoria
+IPTCPANEL_CAPTIONWRITER;Autore della didascalia
+IPTCPANEL_CAPTION;Didascalia
 IPTCPANEL_CATEGORYHINT;Identifica il soggetto dell'immagine secondo l'opinione del curatore (Category).
-IPTCPANEL_CITY;Città
+IPTCPANEL_CATEGORY;Categoria
 IPTCPANEL_CITYHINT;Città o luogo di origine dell'immagine (City).
+IPTCPANEL_CITY;Città
 IPTCPANEL_COPYHINT;Copia le impostazioni IPTC negli appunti
-IPTCPANEL_COPYRIGHT;Diritto d'autore
 IPTCPANEL_COPYRIGHTHINT;Qualsiasi annotazione necessaria riguardante il diritto d'autore (Copyright Notice).
+IPTCPANEL_COPYRIGHT;Diritto d'autore
 IPTCPANEL_COUNTRYHINT;Il nome dello stato/confederazione in cui l'immagine è stata creata (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;Stato
 IPTCPANEL_CREDITHINT;Identifica il fornitore dell'immagine, non necessariamente il possessore/creatore (Credit).
 IPTCPANEL_CREDIT;Riconoscimento
-IPTCPANEL_DATECREATED;Data di creazione
 IPTCPANEL_DATECREATEDHINT;La data in cui è stato creato il contenuto intellettuale dell'immagine; Formato: AAAAMMGG (Date Created).
+IPTCPANEL_DATECREATED;Data di creazione
 IPTCPANEL_EMBEDDEDHINT;Ripristina i dati IPTC incorporati nel file d'immagine
 IPTCPANEL_EMBEDDED;Incorporato
 IPTCPANEL_HEADLINEHINT;Una didascalia pubblicabile che esprime una sinossi del contenuto dell'immagine (Headline).
@@ -403,8 +394,8 @@ IPTCPANEL_RESETHINT;Ripristina il profilo predefinito
 IPTCPANEL_RESET;Ripristina
 IPTCPANEL_SOURCEHINT;Il possessore originario del contenuto intellettuale rappresentato nell'immagine (Source).
 IPTCPANEL_SOURCE;Origine
-IPTCPANEL_SUPPCATEGORIES;Categorie agg.
 IPTCPANEL_SUPPCATEGORIESHINT;Ulteriore affinamento del soggetto dell'immagine (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIES;Categorie agg.
 IPTCPANEL_TITLEHINT;Un'abbreviazione che alluda all'immagine (Object Name).
 IPTCPANEL_TITLE;Titolo
 IPTCPANEL_TRANSREFERENCEHINT;Un codice che rappresenta l'ubicazione da cui è avvenuta la trasmissione originaria (Original Transmission Reference).
@@ -425,9 +416,9 @@ MAIN_FRAME_EDITOR;Sviluppo
 MAIN_FRAME_EDITOR_TOOLTIP; Sviluppatore  <b>(scorciatoia: Ctrl-F4)</b> 
 MAIN_FRAME_FILEBROWSER;Navigatore 
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Navigatore  <b>(scorciatoia: Ctrl-F2)</b> 
+MAIN_FRAME_PLACES;Risorse 
 MAIN_FRAME_PLACES_ADD;Aggiungi
 MAIN_FRAME_PLACES_DEL;Rimuovi
-MAIN_FRAME_PLACES;Risorse 
 MAIN_FRAME_RECENT;Cartelle recenti 
 MAIN_MSG_ALREADYEXISTS;Il file esiste già!
 MAIN_MSG_CANNOTLOAD;Impossibile caricare l'immagine
@@ -459,8 +450,8 @@ MAIN_TAB_METADATA_TOOLTIP;<b>(scorciatoia: Alt-m)</b>
 MAIN_TAB_RAW;RAW
 MAIN_TAB_RAW_TOOLTIP;<b>(scorciatoia: Alt-r)</b>
 MAIN_TAB_TAGGING;Etichette
-MAIN_TAB_TRANSFORM_TOOLTIP;<b>(scorciatoia: Alt-t)</b>
 MAIN_TAB_TRANSFORM;Trasformazione
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>(scorciatoia: Alt-t)</b>
 MAIN_TOGGLE_BEFORE_AFTER;P|D
 MAIN_TOOLTIP_HIDEFP;Mostra/Nascondi il pannello dei pulsanti (cartelle e navigatore di file; <b>scorciatoia: F</b>)
 MAIN_TOOLTIP_HIDEHP;Mostra/Nascondi il pannello sinistro (inclusa la cronologia; <b>scorciatoia: H</b>)
@@ -522,8 +513,8 @@ PARTIALPASTE_FLATFIELDBLURTYPE;Modalità di sfocamento FF
 PARTIALPASTE_FLATFIELDFILE;File di Flat-Field
 PARTIALPASTE_HLRECONSTRUCTION;Ricostruzione alteluci
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantità di recupero alteluci
-PARTIALPASTE_HLRECOVERY;Recupero alteluci
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Soglia di recupero alteluci
+PARTIALPASTE_HLRECOVERY;Recupero alteluci
 PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMSETTINGS;Impostazioni ICM
 PARTIALPASTE_IMPULSEDENOISE;Riduzione rumore puntuale
@@ -537,18 +528,18 @@ PARTIALPASTE_PERSPECTIVE;Prospettiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Uniformazione del verde
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Interpolazione dei pixel surriscaldati/guasti
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
-PARTIALPASTE_RAW_ALLENHANCE;Limita rumore/artefatti dovuti alla demosaicizzazione
 PARTIALPASTE_RAWCACORR_AUTO;Autocorrezione AC
 PARTIALPASTE_RAWCACORR_CABLUE;Correzione AC blu
 PARTIALPASTE_RAWCACORR_CARED;Correzione AC rosse
-PARTIALPASTE_RAW_DCBENHANCE;Fase di affinamento per DCB
-PARTIALPASTE_RAW_DCBITERATIONS;Numero di iterazioni DCB
-PARTIALPASTE_RAW_DMETHOD;Metodo di demosaicizzazione
 PARTIALPASTE_RAWEXPOS_BLACK;Punto del nero
 PARTIALPASTE_RAWEXPOS_LINEAR;Punto del bianco: fattore di comp. lineare
 PARTIALPASTE_RAWEXPOS_PRESER;Punto del bianco: compensazione (EV) preservante le alteluci
-PARTIALPASTE_RAW_FALSECOLOR;Soppressione di falsi colori demosaicizzati
 PARTIALPASTE_RAWGROUP;Parametri di elaborazione raw
+PARTIALPASTE_RAW_ALLENHANCE;Limita rumore/artefatti dovuti alla demosaicizzazione
+PARTIALPASTE_RAW_DCBENHANCE;Fase di affinamento per DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Numero di iterazioni DCB
+PARTIALPASTE_RAW_DMETHOD;Metodo di demosaicizzazione
+PARTIALPASTE_RAW_FALSECOLOR;Soppressione di falsi colori demosaicizzati
 PARTIALPASTE_RESIZE;Ridimensionamento
 PARTIALPASTE_ROTATION;Rotazione
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombre/Alteluci
@@ -582,13 +573,13 @@ PREFERENCES_CUSTPROFBUILDHINT;Un file eseguibile (o uno script) richiamato quand
 PREFERENCES_CUSTPROFBUILDPATH;Percorso dell'eseguibile
 PREFERENCES_CUSTPROFBUILD;Strumento per la generazione di profili su misura
 PREFERENCES_CUTOVERLAYBRUSH;Tinta/opacità della maschera di ritaglio
-PREFERENCES_DARKFRAME;Calibrazione di fondo buio (Dark-Frame)
 PREFERENCES_DARKFRAMEFOUND;Presenti
 PREFERENCES_DARKFRAMESHOTS;fotogrammi
 PREFERENCES_DARKFRAMETEMPLATES;modelli
-PREFERENCES_DATEFORMAT;Formato
+PREFERENCES_DARKFRAME;Calibrazione di fondo buio (Dark-Frame)
 PREFERENCES_DATEFORMATFRAME;Formato della data 
 PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:</i>\n<b>%y</b><i> : anno</i>\n<b>%m</b><i> : mese</i>\n<b>%d</b><i> : giorno</i>\n<i>\nPer esempio, il formato italiano per la data è:</i>\n<b>%d/%m/%y</b>
+PREFERENCES_DATEFORMAT;Formato
 PREFERENCES_DEFAULTLANG;Lingua predefinita
 PREFERENCES_DEFAULTTHEME;Aspetto ordinario
 PREFERENCES_DEMOSAICINGALGO;Algoritmo di demosaicizzazione
@@ -604,11 +595,11 @@ PREFERENCES_EXTERNALEDITOR;Programmi di ritocco esterni
 PREFERENCES_FBROWSEROPTS;Opzioni del navigatore di file
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra di navigazione a singola fila (deseleziona nel caso di schermo a bassa risoluzione)
 PREFERENCES_FILEFORMAT;Formato file
-PREFERENCES_FLATFIELD;Calibrazione di campo piano (Flat-Field)
 PREFERENCES_FLATFIELDFOUND;Presenti
 PREFERENCES_FLATFIELDSDIR;Cartella dei fotogrammi di campo (Flat-Field)
 PREFERENCES_FLATFIELDSHOTS;fotogrammi
 PREFERENCES_FLATFIELDTEMPLATES;modelli
+PREFERENCES_FLATFIELD;Calibrazione di campo piano (Flat-Field)
 PREFERENCES_FORIMAGE;Per file di immagini
 PREFERENCES_FORRAW;Per file di negativi RAW
 PREFERENCES_GIMPPATH;Cartella d'installazione di GIMP
@@ -634,18 +625,18 @@ PREFERENCES_METADATA;Metadati
 PREFERENCES_MONITORICC;Profilo dello schermo
 PREFERENCES_MULTITABDUALMON;Modalità a schede multiple, se disponibile sul secondo schermo
 PREFERENCES_MULTITAB;Modalità a schede multiple
-PREFERENCES_OUTDIR;Cartella di destinazione
 PREFERENCES_OUTDIRFOLDERHINT;Mette le immagini salvate nella cartella scelta
 PREFERENCES_OUTDIRFOLDER;Salva nella cartella
 PREFERENCES_OUTDIRHINT;Puoi usare le seguenti stringhe di formattazione:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nQueste stringhe di formattazione si riferiscono ai vari livelli del percorso in cui si trova la foto.\n\nPer esempio, se la foto sviluppata si trovasse nel seguente percorso:\n<b><i>/home/mario/foto/31-10-2010/dsc0042.nef</i></b>\nil significato delle stringhe di formattazione sarebbe:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>mario</i>\n<b>%d2</b> = <i>foto</i>\n<b>%d1</b> = <i>31-10-2010</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/mario/foto/31-10-2010/</i>\n<b>%p2</b> = <i>/home/mario/foto/</i>\n<b>%p3</b> = <i>/home/mario/</i>\n<b>%p4</b> = <i>/home/</i>\n\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n<b>%p1/%f</b>\n\nSe vuoi salvare l'immagine finale in una cartella chiamata "<i>sviluppate</i>" situata nella cartella degli originali, scrivi:\n<b>%p1/sviluppate/%f</b>\n\nSe intendi salvare l'immagine finale in una cartella chiamata "<i>/home/mario/foto/sviluppate/31-10-2010</i>", scrivi:\n<b>%p2/sviluppate/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;Puoi usare le seguenti stringhe di formattazione:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nQueste stringhe di formattazione si riferiscono ai vari livelli del percorso in cui si trova la foto.\n\nPer esempio, se la foto sviluppata si trovasse nel seguente percorso:\n<b><i>/home/mario/foto/31-10-2010/dsc0042.nef</i></b>\nil significato delle stringhe di formattazione sarebbe:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>mario</i>\n<b>%d2</b> = <i>foto</i>\n<b>%d1</b> = <i>31-10-2010</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/mario/foto/31-10-2010/</i>\n<b>%p2</b> = <i>/home/mario/foto/</i>\n<b>%p3</b> = <i>/home/mario/</i>\n<b>%p4</b> = <i>/home/</i>\n\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n<b>%p1/%f</b>\n\nSe vuoi salvare l'immagine finale in una cartella chiamata "<i>sviluppate</i>" situata nella cartella degli originali, scrivi:\n<b>%p1/sviluppate/%f</b>\n\nSe intendi salvare l'immagine finale in una cartella chiamata "<i>/home/mario/foto/sviluppate/31-10-2010</i>", scrivi:\n<b>%p2/sviluppate/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Segui lo schema
+PREFERENCES_OUTDIR;Cartella di destinazione
 PREFERENCES_OVERLAY_FILENAMES;Mostra i nomi dei file sovrapposti alle miniature
 PREFERENCES_OVERWRITEOUTPUTFILE;Sovrascrivi file già esistenti
 PREFERENCES_PANFACTORFRAME;Accelerazione nello scorrimento
 PREFERENCES_PANFACTORLABEL;Fattore
-PREFERENCES_PARSEDEXTADD;Aggiungi un'estensione
 PREFERENCES_PARSEDEXTADDHINT;Immetti l'estensione e premi questo tasto per aggiungerla alla lista
+PREFERENCES_PARSEDEXTADD;Aggiungi un'estensione
 PREFERENCES_PARSEDEXTDELHINT;Rimuovi l'estensione selezionata dalla lista
 PREFERENCES_PARSEDEXT;Estensioni riconosciute
 PREFERENCES_PROFILEHANDLING;Gestione dei profili di elaborazione
@@ -667,8 +658,8 @@ PREFERENCES_SHOWDATETIME;Mostra data e ora
 PREFERENCES_SHOWONLYRAW;Mostra solo file RAW
 PREFERENCES_SHOWPROFILESELECTOR;Mostra il selettore di profilo
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
-PREFERENCES_SINGLETAB;Modalità a singola scheda
 PREFERENCES_SINGLETABVERTAB;Modalità a singola scheda, schede verticali
+PREFERENCES_SINGLETAB;Modalità a singola scheda
 PREFERENCES_SLIMUI;Interfaccia compatta
 PREFERENCES_SND_BATCHQUEUEDONE;Al termine dell'elaborazione della coda
 PREFERENCES_SND_HELP;Inserire un percorso oppure nulla (per non avere suoni). Con Windows si può usare "SystemDefault", "SystemAsterisk" ecc. per i suoni di sistema.
@@ -707,8 +698,8 @@ PROGRESSBAR_DECODING;Decodifica del file raw...
 PROGRESSBAR_DEMOSAICING;Demosaicizzazione...
 PROGRESSBAR_GREENEQUIL;Uniformazione del verde...
 PROGRESSBAR_LINEDENOISE;Riduzione rumore a bande...
-PROGRESSBAR_LOADING;Caricamento dell'immagine...
 PROGRESSBAR_LOADINGTHUMBS;Caricamento delle miniature...
+PROGRESSBAR_LOADING;Caricamento dell'immagine...
 PROGRESSBAR_LOADJPEG;Caricamento del file JPEG...
 PROGRESSBAR_LOADPNG;Caricamento del file PNG...
 PROGRESSBAR_LOADTIFF;Caricamento del file TIFF...
@@ -729,8 +720,8 @@ SAVEDLG_JPGFILTER;file JPEG
 SAVEDLG_PNGCOMPR;Compressione PNG
 SAVEDLG_PNGFILTER;file PNG
 SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di sviluppo
-SAVEDLG_PUTTOQUEUE;Inserisci nella coda di sviluppo
 SAVEDLG_PUTTOQUEUETAIL;Metti in fondo alla coda di sviluppo
+SAVEDLG_PUTTOQUEUE;Inserisci nella coda di sviluppo
 SAVEDLG_SAVEIMMEDIATELY;Salva subito
 SAVEDLG_SAVESPP;Salva i parametri di elaborazione assieme all'immagine
 SAVEDLG_TIFFFILTER;file TIFF
@@ -812,20 +803,20 @@ TP_EQUALIZER_FINEST;finissima
 TP_EQUALIZER_LABEL;Equalizzatore Wavelet
 TP_EQUALIZER_LARGEST;estesissima
 TP_EQUALIZER_NEUTRAL;Neutro
-TP_EXPO_AFTER; Dopo l'interpolazione (prima della conversione RGB)
 TP_EXPOSCORR_LABEL;Esposizione
 TP_EXPOSURE_AUTOLEVELS;Livelli automatici
 TP_EXPOSURE_BLACKLEVEL;Livello del nero
 TP_EXPOSURE_BRIGHTNESS;Luminosità
 TP_EXPOSURE_CLIP;Tosa
-TP_EXPOSURE_COMPRHIGHLIGHTS;Recupero alteluci
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Soglia di recupero alteluci
+TP_EXPOSURE_COMPRHIGHLIGHTS;Recupero alteluci
 TP_EXPOSURE_COMPRSHADOWS;Recupero ombre
 TP_EXPOSURE_CONTRAST;Contrasto
 TP_EXPOSURE_CURVEEDITOR;Curva di tono
 TP_EXPOSURE_EXPCOMP;Compensazione esposizione
 TP_EXPOSURE_LABEL;Esposizione
 TP_EXPOSURE_SATURATION;Saturazione
+TP_EXPO_AFTER; Dopo l'interpolazione (prima della conversione RGB)
 TP_FLATFIELD_AUTOSELECT;Autoselezione
 TP_FLATFIELD_BLURRADIUS;Raggio di sfocamento
 TP_FLATFIELD_BLURTYPE;Modalità di sfocamento
@@ -898,13 +889,9 @@ TP_PREPROCESS_HOTDEADPIXFILT;Interpola pixel surriscaldati/guasti
 TP_PREPROCESS_LABEL;Pre-elaborazione
 TP_PREPROCESS_LINEDENOISE;Filtro per rumore a bande
 TP_PREPROCESS_NO_FOUND;Nessuno presente
-TP_RAW_ALLENHANCE;Limita rumore/artefatti dovuti alla demosaicizzazione
 TP_RAWCACORR_AUTO;Autocorrezione
 TP_RAWCACORR_CABLUE;Blu
 TP_RAWCACORR_CARED;Rosso
-TP_RAW_DCBENHANCE;Effettua la fase di affinamento per DCB 
-TP_RAW_DCBITERATIONS;Numero di iterazioni DCB
-TP_RAW_DMETHOD;Metodo
 TP_RAWEXPOS_BLACKONE;Punto del nero: rosso
 TP_RAWEXPOS_BLACKS;Livelli del nero
 TP_RAWEXPOS_BLACKTHREE;Punto del nero: verde 2
@@ -913,12 +900,16 @@ TP_RAWEXPOS_BLACKZERO;Punto del nero: verde 1 (riferimento)
 TP_RAWEXPOS_LINEAR;Punto del bianco: fattore di comp. lineare
 TP_RAWEXPOS_PRESER;Punto del bianco: comp. (EV) di protezione alteluci
 TP_RAWEXPOS_TWOGREEN;Valori del verde uniti
+TP_RAW_ALLENHANCE;Limita rumore/artefatti dovuti alla demosaicizzazione
+TP_RAW_DCBENHANCE;Effettua la fase di affinamento per DCB 
+TP_RAW_DCBITERATIONS;Numero di iterazioni DCB
+TP_RAW_DMETHOD;Metodo
 TP_RAW_FALSECOLOR;Stadi per soppressione di falsi colori
 TP_RAW_LABEL;Demosaicizzazione
 TP_RESIZE_APPLIESTO;Applica a:
-TP_RESIZE_BICUBIC;Bicubico
 TP_RESIZE_BICUBICSF;Bicubico (più graduale)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)
+TP_RESIZE_BICUBIC;Bicubico
 TP_RESIZE_BILINEAR;Bilineare
 TP_RESIZE_CROPPEDAREA;Zona ritagliata
 TP_RESIZE_DOWNSCALEB;Riduzione (più accurata)
@@ -926,8 +917,8 @@ TP_RESIZE_DOWNSCALEF;Riduzione (più rapida)
 TP_RESIZE_FITBOX;Riquadro delimitato
 TP_RESIZE_FULLIMAGE;Tutta l'immagine
 TP_RESIZE_FULLSIZE;Dimensione dell'intera immagine:
-TP_RESIZE_H;A:
 TP_RESIZE_HEIGHT;Altezza
+TP_RESIZE_H;A:
 TP_RESIZE_LABEL;Ridimensiona
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Metodo: 
@@ -959,9 +950,9 @@ TP_SHARPENING_LABEL;Nitidezza
 TP_SHARPENING_METHOD;Metodo
 TP_SHARPENING_ONLYEDGES;Definisci solo i bordi
 TP_SHARPENING_RADIUS;Raggio
+TP_SHARPENING_RLD;Deconvoluzione RL
 TP_SHARPENING_RLD_AMOUNT;Quantità
 TP_SHARPENING_RLD_DAMPING;Smorzamento
-TP_SHARPENING_RLD;Deconvoluzione RL
 TP_SHARPENING_RLD_ITERATIONS;Iterazioni
 TP_SHARPENING_THRESHOLD;Soglia
 TP_SHARPENING_USM;Maschera di contrasto
@@ -999,6 +990,15 @@ ZOOMPANEL_ZOOMFITSCREEN;Adatta allo schermo <b>(scorciatoia: F)</b>
 ZOOMPANEL_ZOOMIN;Ingrandisci <b>(scorciatoia: +)</b>
 ZOOMPANEL_ZOOMOUT;Rimpicciolisci <b>(scorciatoia: -)</b>
 
+#00 Italian
+#01 UTF-8(unix mode)
+#02 19-01-2008 v2.3 breek
+#03 01-11-2008 v2.4 pantaraf, chelidon, roberto
+#04 26-08-2011 v3.0 joker, chelidon, ffsup2
+#05 31-08-2011 v4.0 chelidon, ffsup2
+#06 Inserire una nota con la data ad ogni modifica per maggiore chiarezza.
+#07 IMPORTANTE: Contribuisci sul forum di rawtherapee nella pagina di localizzazione italiana se trovi errori http://www.rawtherapee.com/forum/viewtopic.php?p=3354
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -1013,18 +1013,29 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci <b>(scorciatoia: -)</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 !TP_VIBRANCE_LABEL;Vibrance

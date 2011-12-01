@@ -1,10 +1,7 @@
-
-#00 Magyar
-#01 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 ADJUSTER_RESET_TO_DEFAULT;Alaphelyzetbe állítás
 BATCH_PROCESSING;Kötegelt feldolgozás
-CURVEEDITOR_CURVE;Görbe
 CURVEEDITOR_CURVES;Görbék
+CURVEEDITOR_CURVE;Görbe
 CURVEEDITOR_CUSTOM;Egyedi
 CURVEEDITOR_DARKS;Sötétek
 CURVEEDITOR_FILEDLGFILTERANY;Minden állomány
@@ -36,8 +33,8 @@ EXIFPANEL_ADDTAGDLG_SELECTTAG;Tag kijelölése
 EXIFPANEL_ADDTAGDLG_TITLE;Új tagok hozzáadása / Tagok szerkesztése
 EXIFPANEL_KEEPHINT;A kijelölt adatok megtartása a végső fájl mentésekor
 EXIFPANEL_KEEP;Megtart
-EXIFPANEL_REMOVE;Eltávolít
 EXIFPANEL_REMOVEHINT;A kijelölt adatok eldobása a végső fájl mentésekor
+EXIFPANEL_REMOVE;Eltávolít
 EXIFPANEL_RESETALLHINT;Az összes metaadat visszaállítása az eredeti állapotba
 EXIFPANEL_RESETALL;Mindent visszaállít
 EXIFPANEL_RESETHINT;A kijelölt adatok visszaállítása az eredeti állapotba
@@ -53,11 +50,11 @@ FILEBROWSER_DELETEDLGLABEL;Állománytörlés megerősítése
 FILEBROWSER_DELETEDLGMSG;Biztosan törölni kívánja a kijelölt %1 képet?
 FILEBROWSER_EMPTYTRASHHINT;A kukában lévő képek végleges, állományrendszerből történő eltávolítása.
 FILEBROWSER_EMPTYTRASH;Kuka ürítése
-FILEBROWSER_EXIFFILTERAPPLY;Aktív
 FILEBROWSER_EXIFFILTERAPPLYHINT;Az EXIF szűrő ki-/bekapcsolása
+FILEBROWSER_EXIFFILTERAPPLY;Aktív
 FILEBROWSER_EXIFFILTERLABEL;EXIF szűrő
-FILEBROWSER_EXIFFILTERSETTINGS;Beállítások
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Az EXIF szűrő beállítása
+FILEBROWSER_EXIFFILTERSETTINGS;Beállítások
 FILEBROWSER_MOVETODARKFDIR;Mozgatás a 'dark frame' könyvtárba
 FILEBROWSER_NEW_NAME;Új név:
 FILEBROWSER_PARTIALPASTEPROFILE;Részleges beillesztés
@@ -78,8 +75,8 @@ FILEBROWSER_POPUPSELECTALL;Mindent kijelöl
 FILEBROWSER_POPUPTRASH;Kukába dobás
 FILEBROWSER_POPUPUNRANK;Jelölés megszüntetése
 FILEBROWSER_POPUPUNTRASH;Visszaállítás a kukából
-FILEBROWSER_PROCESSINGSETTINGS;Beállítások
 FILEBROWSER_PROCESSINGSETTINGSHINT;A fájl formátum és a célkönyvtár beállítása
+FILEBROWSER_PROCESSINGSETTINGS;Beállítások
 FILEBROWSER_RENAMEDLGLABEL;Fájl átnevezése
 FILEBROWSER_RENAMEDLGMSG;%1 új neve:
 FILEBROWSER_SHOWDIRHINT;A könyvtárban lévő összes kép mutatása
@@ -92,10 +89,10 @@ FILEBROWSER_SHOWRANK4HINT;4 csillaggal jelölt képek mutatása
 FILEBROWSER_SHOWRANK5HINT;5 csillaggal jelölt képek mutatása
 FILEBROWSER_SHOWTRASHHINT;A kuka tartalmának mutatása
 FILEBROWSER_SHOWUNRANKHINT;Meg nem jelölt képek mutatása
-FILEBROWSER_STARTPROCESSING;Feldolgozás indítása
 FILEBROWSER_STARTPROCESSINGHINT;A sorban álló képek feldolgozásának elindítása
-FILEBROWSER_STOPPROCESSING;Feldolgozás leállítása
+FILEBROWSER_STARTPROCESSING;Feldolgozás indítása
 FILEBROWSER_STOPPROCESSINGHINT;A sorban álló képek feldolgozásának leállítása
+FILEBROWSER_STOPPROCESSING;Feldolgozás leállítása
 FILEBROWSER_THUMBSIZE;Bélyegméret
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Új kép érkezése esetén a feldolgozás automatikus indítása.
 FILEBROWSER_USETEMPLATE;Sablon használata:
@@ -132,11 +129,15 @@ HISTORY_CUSTOMCURVE;Saját görbe
 HISTORY_DELSNAPSHOT;Töröl
 HISTORY_FROMCLIPBOARD;Vágólapról
 HISTORY_LABEL;Előzmények
-HISTORY_MSG_100;RGB színtelítettség
-HISTORY_MSG_101;HSV EQ -- Árnyalat
-HISTORY_MSG_102;HSV EQ -- Telítettség
-HISTORY_MSG_103;HSV EQ -- Színérték
-HISTORY_MSG_104;HSV Equalizer
+HISTORY_MSG_1;Kép betöltve
+HISTORY_MSG_2;Beállítások betöltése
+HISTORY_MSG_3;Beállítások változtatása
+HISTORY_MSG_4;Előzményböngészés
+HISTORY_MSG_5;Fényerő
+HISTORY_MSG_6;Kontraszt
+HISTORY_MSG_7;Fekete szint
+HISTORY_MSG_8;Expozíció kompenzáció
+HISTORY_MSG_9;Világos tónusok tömörítése
 HISTORY_MSG_10;Sötét tónusok tömörítése
 HISTORY_MSG_11;Tónusgörbe
 HISTORY_MSG_12;Auto szint
@@ -147,7 +148,6 @@ HISTORY_MSG_16;Luminancia, fekete szint
 HISTORY_MSG_17;Luminancia, világos tónusok tömörítése
 HISTORY_MSG_18;Luminancia, sötét tónusok tömörítése
 HISTORY_MSG_19;Luminancia görbe
-HISTORY_MSG_1;Kép betöltve
 HISTORY_MSG_20;Élesítés
 HISTORY_MSG_21;Élesítés sugara
 HISTORY_MSG_22;Élesítés mértéke
@@ -158,7 +158,6 @@ HISTORY_MSG_26;Élesítés élferismerési toleranciája
 HISTORY_MSG_27;Élesítési mellékhatás csökkentése
 HISTORY_MSG_28;Élesítési mellékhatás-csökkentés mértéke
 HISTORY_MSG_29;Élesítés algoritmusa
-HISTORY_MSG_2;Beállítások betöltése
 HISTORY_MSG_30;Dekonvolúciós sugár
 HISTORY_MSG_31;Deconvolúció mértéke
 HISTORY_MSG_32;Deconvolúció zajelnyomása
@@ -169,7 +168,6 @@ HISTORY_MSG_36;Telítettségi korlát
 HISTORY_MSG_37;Színtelítettség
 HISTORY_MSG_38;Fehéregyensúly beállítása
 HISTORY_MSG_39;Színhőmérséklet
-HISTORY_MSG_3;Beállítások változtatása
 HISTORY_MSG_40;Fehér árnyalat
 HISTORY_MSG_41;Színeltolás "A"
 HISTORY_MSG_42;Színeltolás "B"
@@ -180,7 +178,6 @@ HISTORY_MSG_46;Színzaj-csökkentés
 HISTORY_MSG_47;Színzaj-csökkentés sugara
 HISTORY_MSG_48;Színzaj-csökkentés éltoleranciája
 HISTORY_MSG_49;Élérzékeny színzaj-csökkentés
-HISTORY_MSG_4;Előzményböngészés
 HISTORY_MSG_50;Árnyékok/Fények korrekció
 HISTORY_MSG_51;Fényes részek 
 HISTORY_MSG_52;Sötét részek 
@@ -191,7 +188,6 @@ HISTORY_MSG_56;Árnyékok/Fények sugár
 HISTORY_MSG_57;Durva forgatás
 HISTORY_MSG_58;Vízszintes tükrözés
 HISTORY_MSG_59;Függőleges tükrözés
-HISTORY_MSG_5;Fényerő
 HISTORY_MSG_60;Forgatás
 HISTORY_MSG_61;Forgatás
 HISTORY_MSG_62;Torzításkorrekció
@@ -202,7 +198,6 @@ HISTORY_MSG_66;Kiégett részek megmentése
 HISTORY_MSG_67;Kiégett részek visszaállítása
 HISTORY_MSG_68;Kiégett részek algoritmus
 HISTORY_MSG_69;Feldolgozási (munka-) színprofil
-HISTORY_MSG_6;Kontraszt
 HISTORY_MSG_70;Kimeneti színprofil
 HISTORY_MSG_71;Bemeneti színprofil
 HISTORY_MSG_72;Peremsötétedés
@@ -213,7 +208,6 @@ HISTORY_MSG_76;EXIF Metaadatok
 HISTORY_MSG_77;IPTC Metaadatok
 HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Átméretezés szélesség szerint
-HISTORY_MSG_7;Fekete szint
 HISTORY_MSG_80;Átméretezés magasság szerint
 HISTORY_MSG_81;Átméretezés engedélyezve
 HISTORY_MSG_82;Megváltozott profil
@@ -224,7 +218,6 @@ HISTORY_MSG_86;Wavelet equalizer
 HISTORY_MSG_87;Salt&pepper zajcsökkentés
 HISTORY_MSG_88;Salt&pepper NR küszöb
 HISTORY_MSG_89;Zajcsökkentés (NR)
-HISTORY_MSG_8;Expozíció kompenzáció
 HISTORY_MSG_90;NR - luminanciazaj
 HISTORY_MSG_91;NR - színzaj
 HISTORY_MSG_92;NR - gamma
@@ -233,14 +226,18 @@ HISTORY_MSG_96;'a' görbe
 HISTORY_MSG_97;'b' görbe
 HISTORY_MSG_98;Bayer-deinterpoláció
 HISTORY_MSG_99;Előfeldolgozás
-HISTORY_MSG_9;Világos tónusok tömörítése
+HISTORY_MSG_100;RGB színtelítettség
+HISTORY_MSG_101;HSV EQ -- Árnyalat
+HISTORY_MSG_102;HSV EQ -- Telítettség
+HISTORY_MSG_103;HSV EQ -- Színérték
+HISTORY_MSG_104;HSV Equalizer
 HISTORY_NEWSNAPSHOTAS;címkével...
 HISTORY_NEWSNAPSHOT;Új
 HISTORY_NEWSSDIALOGLABEL;Pillanatkép cimkéje:
 HISTORY_NEWSSDIALOGTITLE;Új pillanatkép
 HISTORY_SETTO;új érték:
-HISTORY_SNAPSHOT;Pillanatkép
 HISTORY_SNAPSHOTS;Pillanatképek
+HISTORY_SNAPSHOT;Pillanatkép
 ICMPANEL_FILEDLGFILTERANY;Minden fájl
 ICMPANEL_FILEDLGFILTERICM;ICC színprofil fájl
 ICMPANEL_GAMMABEFOREINPUT;Gamma korrekció a bemeneti profil előtt
@@ -260,9 +257,9 @@ IPTCPANEL_AUTHORSPOSITIONHINT;A kép létrehozójának munkaköre illetve titulu
 IPTCPANEL_AUTHORSPOSITION;Szerző titulusa
 IPTCPANEL_AUTHOR;Szerző
 IPTCPANEL_CAPTIONHINT;A kép szöveges leírása (Caption - Abstract)
-IPTCPANEL_CAPTION;Leírás
 IPTCPANEL_CAPTIONWRITERHINT;A leírást és az adatok rögzítését/szerkesztését/javítását végző személy neve (Writer - Editor)
 IPTCPANEL_CAPTIONWRITER;Író
+IPTCPANEL_CAPTION;Leírás
 IPTCPANEL_CATEGORYHINT;A kép témáját azonosítja (Category)
 IPTCPANEL_CATEGORY;Kategória
 IPTCPANEL_CITYHINT;A város, ahonnan a kép származik (City)
@@ -274,12 +271,12 @@ IPTCPANEL_COUNTRYHINT;Az ország, ahonnan a kép származik (Country - Primary L
 IPTCPANEL_COUNTRY;Ország
 IPTCPANEL_CREDITHINT;A kép kibocsájtójának neve (nem feltétlenül a szerző) (Credit)
 IPTCPANEL_CREDIT;Rendelkező
-IPTCPANEL_DATECREATED;Dátum
 IPTCPANEL_DATECREATEDHINT;A kép rögzítésének dátuma; formátum: ééééhhnn (Date Created)
-IPTCPANEL_EMBEDDED;Beágyazott
+IPTCPANEL_DATECREATED;Dátum
 IPTCPANEL_EMBEDDEDHINT;A betöltött képbe ágyazott információk kiolvasása
-IPTCPANEL_HEADLINE;Főcím
+IPTCPANEL_EMBEDDED;Beágyazott
 IPTCPANEL_HEADLINEHINT;A kép témájának összegzése (Headline)
+IPTCPANEL_HEADLINE;Főcím
 IPTCPANEL_INSTRUCTIONSHINT;Egyéb, a képre vonatkozó szerkesztési útmutatás (Special Instructions)
 IPTCPANEL_INSTRUCTIONS;Útmutatás
 IPTCPANEL_KEYWORDSHINT;Kategorizáláshoz/szűréshez használatos, a képre vonatkozó kulcsszavak (Keywords)
@@ -289,12 +286,12 @@ IPTCPANEL_PROVINCEHINT;A megye/állam/régió, ahonnan a kép származik (Provin
 IPTCPANEL_PROVINCE;Régió
 IPTCPANEL_RESETHINT;Visszatérés az aktuális profil alapértékéhez
 IPTCPANEL_RESET;Visszaállítás
-IPTCPANEL_SOURCE;Forrás
 IPTCPANEL_SOURCEHINT;A kép szellemi tartalmának eredeti tulajdonosa (Source)
+IPTCPANEL_SOURCE;Forrás
 IPTCPANEL_SUPPCATEGORIESHINT;A kép finomabb, részletesebb kategorizálását teszi lehetővé (Supplemental Categories)
 IPTCPANEL_SUPPCATEGORIES;További kategóriák
-IPTCPANEL_TITLE;Címke
 IPTCPANEL_TITLEHINT;A kép rövid azonosítója (Object Name)
+IPTCPANEL_TITLE;Címke
 IPTCPANEL_TRANSREFERENCEHINT;A továbbítás helyének megjelölése (Original Transmission Reference)
 IPTCPANEL_TRANSREFERENCE;Továbbítás helye
 MAIN_BUTTON_EXIT;Kilépés
@@ -311,9 +308,9 @@ MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Kiválasztott kép szerkesztése külső progra
 MAIN_BUTTON_UNFULLSCREEN;Teljes képernyő elhagyása
 MAIN_FRAME_BATCHQUEUE;Kötegelt feldolgozási sor
 MAIN_FRAME_FILEBROWSER;Állományböngésző
+MAIN_FRAME_PLACES;Helyek 
 MAIN_FRAME_PLACES_ADD;Hozzáadás
 MAIN_FRAME_PLACES_DEL;Törlés
-MAIN_FRAME_PLACES;Helyek 
 MAIN_FRAME_RECENT;Legutóbbi könyvtárak
 MAIN_MSG_ALREADYEXISTS;Ilyen nevű állomány már létezik!
 MAIN_MSG_CANNOTLOAD;A képet nem sikerült betölteni.
@@ -345,8 +342,8 @@ MAIN_TOOLTIP_INDCLIPPEDH;Túlexponált területek jelzése
 MAIN_TOOLTIP_INDCLIPPEDS;Alulexponált területek jelzése
 MAIN_TOOLTIP_PREFERENCES;Beállítások megváltoztatása
 MAIN_TOOLTIP_QINFO;Néhány fontos információ megjelenítése a képről
-MAIN_TOOLTIP_SAVE;A kép mentése az alapértelmezett könyvtárba az alapértelmezett néven
 MAIN_TOOLTIP_SAVEAS;A kép mentése a kiválasztott könyvtárba
+MAIN_TOOLTIP_SAVE;A kép mentése az alapértelmezett könyvtárba az alapértelmezett néven
 MAIN_TOOLTIP_TOGGLE;Előtte/utána nézet be- és kikapcsolása <b>B</b>
 PARTIALPASTE_BASICGROUP;Alapbeállítások
 PARTIALPASTE_CACORRECTION;Kromatikus aberráció
@@ -399,8 +396,8 @@ PREFERENCES_CLEARDLG_LINE2;Ez eltarthat pár másodpercig.
 PREFERENCES_CLEARDLG_TITLE;Kérem várjon
 PREFERENCES_CLIPPINGIND;Kiégett és bebukott részek jelzése
 PREFERENCES_CMETRICINTENT;Intent
-PREFERENCES_DATEFORMAT;Dátumformátum
 PREFERENCES_DATEFORMATHINT;<i>A következő jeleket lehet használni:</i>\n<b>%y</b><i> : év</i>\n<b>%m</b><i> : hónap</i>\n<b>%d</b><i> : nap</i>\n<i>\nPéldául a magyar dátumformátum:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Dátumformátum
 PREFERENCES_DEFAULTLANG;Alapértelmezett nyelv
 PREFERENCES_DEFAULTTHEME;Alapértelmezett kinézet
 PREFERENCES_DEMOSAICINGALGO;Bayer interpoláció
@@ -433,9 +430,9 @@ PREFERENCES_MULTITAB;Több szerkesztőfül
 PREFERENCES_OUTDIRFOLDERHINT;Ha ezt a lehetőséget választja, az összes feldolgozott kép ebbe a könyvtárba kerül
 PREFERENCES_OUTDIRFOLDER;Mentés ebbe a könyvtárba:
 PREFERENCES_OUTDIRHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda kívánja menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba kívánja menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba kívánja menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írja ezt:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda kívánja menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba kívánja menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba kívánja menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írja ezt:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Sablon használata
+PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
 PREFERENCES_OVERLAY_FILENAMES;Állománynevek megjelenítése az előnézeti képeken
 PREFERENCES_OVERWRITEOUTPUTFILE;A már létező kimeneti állományok felülírása
 PREFERENCES_PARSEDEXTADDHINT;A kiterjesztés beírása után ez a gomb felveszi a listára
@@ -509,9 +506,9 @@ SAVEDLG_JPEGQUAL;JPEG Minőség
 SAVEDLG_JPGFILTER;JPEG fájlok
 SAVEDLG_PNGCOMPR;PNG Tömörítés
 SAVEDLG_PNGFILTER;PNG fájlok
-SAVEDLG_PUTTOQUEUE;Feldolgozási sorba helyezés
 SAVEDLG_PUTTOQUEUEHEAD;Feldolgozási sorba helyezés az első helyre
 SAVEDLG_PUTTOQUEUETAIL;Feldolgozási sorba helyezés az utolsó helyre
+SAVEDLG_PUTTOQUEUE;Feldolgozási sorba helyezés
 SAVEDLG_SAVEIMMEDIATELY;Mentés azonnal
 SAVEDLG_SAVESPP;Feldolgozási paraméterek mentése a kép mellé
 SAVEDLG_TIFFFILTER;TIFF fájlok
@@ -662,9 +659,9 @@ TP_RAW_DCBITERATIONS;DCB iterációk száma
 TP_RAW_DMETHOD;Algoritmus
 TP_RAW_FALSECOLOR;Színhiba-elnyomási lépések
 TP_RAW_LABEL;Deinterpoláció
-TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BICUBICSF;Bicubic (lágyabb)
 TP_RESIZE_BICUBICSH;Bicubic (keményebb)
+TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BILINEAR;Bilineáris
 TP_RESIZE_DOWNSCALEB;Downscale (Jobb minőség)
 TP_RESIZE_DOWNSCALEF;Downscale (Gyorsabb)
@@ -699,10 +696,10 @@ TP_SHARPENING_LABEL;Élesítés
 TP_SHARPENING_METHOD;Algoritmus
 TP_SHARPENING_ONLYEDGES;Csak az élek élesítése
 TP_SHARPENING_RADIUS;Sugár
+TP_SHARPENING_RLD;RL Dekonvolúció
 TP_SHARPENING_RLD_AMOUNT;Erősség
 TP_SHARPENING_RLD_DAMPING;Zajelnyomás
 TP_SHARPENING_RLD_ITERATIONS;Iterációszám
-TP_SHARPENING_RLD;RL Dekonvolúció
 TP_SHARPENING_THRESHOLD;Küszöb
 TP_SHARPENING_USM;Unsharp Mask
 TP_VIGNETTING_AMOUNT;Mérték
@@ -735,6 +732,9 @@ ZOOMPANEL_ZOOMFITSCREEN;Képernyő méretéhez igazítás <b>F</b>
 ZOOMPANEL_ZOOMIN;Nagyítás <b>+</b>
 ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 
+#00 Magyar
+#01 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -756,9 +756,9 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
 !FILEBROWSER_EXEC_CPB;Run custom profile builder
@@ -798,7 +798,9 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
+!HISTORY_MSG_93;Contrast by detail levels value
+!HISTORY_MSG_94;Contrast by detail levels
 !HISTORY_MSG_105;Defringing
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
@@ -852,8 +854,11 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR;Editor 
@@ -864,7 +869,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -899,6 +904,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -914,40 +920,40 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -987,9 +993,14 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_DEFRINGE_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -1009,14 +1020,13 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
 !TP_PREPROCESS_GREENEQUIL;Green equilibration
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
@@ -1027,6 +1037,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area
 !TP_RESIZE_FITBOX;Bounding box

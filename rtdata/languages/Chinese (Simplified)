@@ -1,10 +1,3 @@
-
-#00 Chinese (Simplified)
-#01 06.11.2008
-#02 Chinese simplified
-#03 Yang Gao (grantyale)
-#04 Added new translations for 2.4beta, fixed mistranslations(eg. Vignetting - 暗角/失光 instead of 紫边 which corresponds to purple fringing, and RL Deconvolution)
-#05 based on Version 13.2.2008 by Forrest Sun
 ADJUSTER_RESET_TO_DEFAULT;重置缺省参数
 CURVEEDITOR_FILEDLGFILTERANY;任意文件
 CURVEEDITOR_FILEDLGFILTERCURVE;曲线文件
@@ -110,6 +103,15 @@ HISTORY_CUSTOMCURVE;自定义曲线
 HISTORY_DELSNAPSHOT;移除快照
 HISTORY_FROMCLIPBOARD;从剪贴板
 HISTORY_LABEL;历史
+HISTORY_MSG_1;图片加载完
+HISTORY_MSG_2;配置加载完
+HISTORY_MSG_3;配置改变
+HISTORY_MSG_4;历史浏览
+HISTORY_MSG_5;亮度
+HISTORY_MSG_6;对比度
+HISTORY_MSG_7;黑
+HISTORY_MSG_8;曝光补偿
+HISTORY_MSG_9;高光压缩
 HISTORY_MSG_10;阴影压缩
 HISTORY_MSG_11;影调曲线
 HISTORY_MSG_12;自动曝光
@@ -120,7 +122,6 @@ HISTORY_MSG_16;亮度黑
 HISTORY_MSG_17;亮度高光压缩
 HISTORY_MSG_18;亮度阴影压缩
 HISTORY_MSG_19;亮度曲线
-HISTORY_MSG_1;图片加载完
 HISTORY_MSG_20;锐化
 HISTORY_MSG_21;锐化半径
 HISTORY_MSG_22;锐化程度
@@ -131,7 +132,6 @@ HISTORY_MSG_26;锐化边缘容差
 HISTORY_MSG_27;锐化光晕控制
 HISTORY_MSG_28;光晕控制量
 HISTORY_MSG_29;锐化方式
-HISTORY_MSG_2;配置加载完
 HISTORY_MSG_30;重叠半径
 HISTORY_MSG_31;重叠程度
 HISTORY_MSG_32;重叠衰减
@@ -142,7 +142,6 @@ HISTORY_MSG_36;饱和度限制
 HISTORY_MSG_37;色彩增强
 HISTORY_MSG_38;拍平衡方式
 HISTORY_MSG_39;色温
-HISTORY_MSG_3;配置改变
 HISTORY_MSG_40;白平衡微调
 HISTORY_MSG_41;色彩偏移 "A"
 HISTORY_MSG_42;色彩偏移 "B"
@@ -153,7 +152,6 @@ HISTORY_MSG_46;色彩降噪
 HISTORY_MSG_47;色彩降噪半径
 HISTORY_MSG_48;色彩降噪边缘容差
 HISTORY_MSG_49;色彩降噪边缘敏感度
-HISTORY_MSG_4;历史浏览
 HISTORY_MSG_50;阴影/高光工具
 HISTORY_MSG_51;高光增强
 HISTORY_MSG_52;阴影增强
@@ -164,7 +162,6 @@ HISTORY_MSG_56;阴影/高光半径
 HISTORY_MSG_57;粗略旋转
 HISTORY_MSG_58;水平翻转
 HISTORY_MSG_59;竖直翻转
-HISTORY_MSG_5;亮度
 HISTORY_MSG_60;旋转
 HISTORY_MSG_61;旋转
 HISTORY_MSG_62;镜头失真矫正
@@ -175,7 +172,6 @@ HISTORY_MSG_66;高光还原
 HISTORY_MSG_67;高光还原程度
 HISTORY_MSG_68;高光还原方式
 HISTORY_MSG_69;工作色彩空间
-HISTORY_MSG_6;对比度
 HISTORY_MSG_70;输出色彩空间
 HISTORY_MSG_71;输入色参空间
 HISTORY_MSG_72;暗角矫正
@@ -186,11 +182,8 @@ HISTORY_MSG_76;Exif元数据
 HISTORY_MSG_77;IPTC元数据
 HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
-HISTORY_MSG_7;黑
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_MSG_8;曝光补偿
-HISTORY_MSG_9;高光压缩
 HISTORY_NEWSNAPSHOTAS;为...
 HISTORY_NEWSNAPSHOT;新建快照
 HISTORY_NEWSSDIALOGLABEL;快照标签:
@@ -262,15 +255,15 @@ MAIN_BUTTON_SAVE;保存图片
 MAIN_BUTTON_SENDTOEDITOR;发送到编辑器
 MAIN_FRAME_BATCHQUEUE;批量处理序列 
 MAIN_FRAME_FILEBROWSER;文件浏览 
+MAIN_FRAME_PLACES;位置 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;位置 
 MAIN_FRAME_RECENT;最近使用的文件夹 
 MAIN_MSG_ALREADYEXISTS;该文件已存在
 MAIN_MSG_CANNOTLOAD;无法加载图片
 MAIN_MSG_CANNOTSAVE;文件保存中出错
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;请在“首选项“对话框设置正确的路径。
 MAIN_MSG_CANNOTSTARTEDITOR;无法启动编辑器
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;请在“首选项“对话框设置正确的路径。
 MAIN_MSG_EXITJOBSINQUEUEINFO;退出时队列中未处理的图片将被丢弃。
 MAIN_MSG_EXITJOBSINQUEUEQUEST;队列中尚有图片未处理，确认退出？
 MAIN_MSG_JOBSINQUEUE;任务列队中
@@ -568,10 +561,10 @@ TP_SHARPENING_LABEL;锐化
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;仅锐化边缘
 TP_SHARPENING_RADIUS;半径
+TP_SHARPENING_RLD;理查森-露西去卷积法
 TP_SHARPENING_RLD_AMOUNT;程度
 TP_SHARPENING_RLD_DAMPING;衰减
 TP_SHARPENING_RLD_ITERATIONS;迭代
-TP_SHARPENING_RLD;理查森-露西去卷积法
 TP_SHARPENING_THRESHOLD;阈值
 TP_SHARPENING_USM;虚像屏蔽
 TP_VIGNETTING_AMOUNT;程度
@@ -594,6 +587,13 @@ ZOOMBAR_PREVIEW;预览
 ZOOMBAR_SCALE;比例
 ZOOMBAR_SMALL;小
 
+#00 Chinese (Simplified)
+#01 06.11.2008
+#02 Chinese simplified
+#03 Yang Gao (grantyale)
+#04 Added new translations for 2.4beta, fixed mistranslations(eg. Vignetting - 暗角/失光 instead of 紫边 which corresponds to purple fringing, and RL Deconvolution)
+#05 based on Version 13.2.2008 by Forrest Sun
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -604,10 +604,10 @@ ZOOMBAR_SMALL;小
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!BATCH_PROCESSING;Batch processing
 !BATCHQUEUE_AUTOSTART;Auto start
-!CURVEEDITOR_CURVE;Curve
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -628,9 +628,9 @@ ZOOMBAR_SMALL;小
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
@@ -683,7 +683,25 @@ ZOOMBAR_SMALL;小
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
+!HISTORY_MSG_89;Noise reduction
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
+!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
@@ -742,24 +760,11 @@ ZOOMBAR_SMALL;小
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
@@ -778,7 +783,7 @@ ZOOMBAR_SMALL;小
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -814,6 +819,7 @@ ZOOMBAR_SMALL;小
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -830,18 +836,18 @@ ZOOMBAR_SMALL;小
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
@@ -850,25 +856,25 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -886,8 +892,8 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -932,16 +938,21 @@ ZOOMBAR_SMALL;小
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -975,7 +986,7 @@ ZOOMBAR_SMALL;小
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -999,13 +1010,9 @@ ZOOMBAR_SMALL;小
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAW_DCBENHANCE;Apply DCB enhancement step
-!TP_RAW_DCBITERATIONS;Number of DCB iterations
-!TP_RAW_DMETHOD;Method
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
@@ -1014,6 +1021,10 @@ ZOOMBAR_SMALL;小
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD;Method
 !TP_RAW_FALSECOLOR;False color suppression steps
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:

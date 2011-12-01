@@ -1,8 +1,3 @@
-
-#00 Chinese (Traditional)
-#01 29.07.2008
-#02 Chinese Traditional
-#03 Mingjui Liao
 ADJUSTER_RESET_TO_DEFAULT;重置預設參數
 BATCHQUEUE_AUTOSTART;Auto start
 CURVEEDITOR_FILEDLGFILTERANY;任意文件
@@ -20,8 +15,8 @@ EXIFFILTER_FOCALLEN;Focal Length
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
 EXIFFILTER_SHUTTER;Shutter
-EXIFPANEL_ADDEDIT;Add/Edit
 EXIFPANEL_ADDEDITHINT;Add new tag or edit tag
+EXIFPANEL_ADDEDIT;Add/Edit
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
@@ -40,10 +35,10 @@ FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
-FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
-FILEBROWSER_EXIFFILTERAPPLY;Apply
+FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
+FILEBROWSER_EXIFFILTERAPPLY;Apply
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
 FILEBROWSER_EXIFFILTERSETTINGS;Setup
@@ -114,6 +109,15 @@ HISTORY_CUSTOMCURVE;自定義曲線
 HISTORY_DELSNAPSHOT;移除快照
 HISTORY_FROMCLIPBOARD;From clipboard
 HISTORY_LABEL;歷史
+HISTORY_MSG_1;圖片載入完
+HISTORY_MSG_2;配置載入完
+HISTORY_MSG_3;配置改變
+HISTORY_MSG_4;歷史流覽
+HISTORY_MSG_5;亮度
+HISTORY_MSG_6;對比度
+HISTORY_MSG_7;黑
+HISTORY_MSG_8;曝光補償
+HISTORY_MSG_9;亮部壓縮
 HISTORY_MSG_10;暗部壓縮
 HISTORY_MSG_11;色調曲線
 HISTORY_MSG_12;自動曝光
@@ -124,7 +128,6 @@ HISTORY_MSG_16;光強黑
 HISTORY_MSG_17;光強亮部壓縮
 HISTORY_MSG_18;光強暗部壓縮
 HISTORY_MSG_19;光強曲線
-HISTORY_MSG_1;圖片載入完
 HISTORY_MSG_20;銳化
 HISTORY_MSG_21;銳化半徑
 HISTORY_MSG_22;銳化程度
@@ -135,7 +138,6 @@ HISTORY_MSG_26;銳化邊緣容差
 HISTORY_MSG_27;銳化光暈控制
 HISTORY_MSG_28;光暈控制量
 HISTORY_MSG_29;銳化方式
-HISTORY_MSG_2;配置載入完
 HISTORY_MSG_30;重疊半徑
 HISTORY_MSG_31;重疊程度
 HISTORY_MSG_32;重疊衰減
@@ -146,7 +148,6 @@ HISTORY_MSG_36;飽和度限制
 HISTORY_MSG_37;色彩增益
 HISTORY_MSG_38;拍平衡方式
 HISTORY_MSG_39;色溫
-HISTORY_MSG_3;配置改變
 HISTORY_MSG_40;白平衡微調
 HISTORY_MSG_41;色彩偏移 "A"
 HISTORY_MSG_42;色彩偏移 "B"
@@ -157,7 +158,6 @@ HISTORY_MSG_46;色彩降噪
 HISTORY_MSG_47;色彩降噪半徑
 HISTORY_MSG_48;色彩降噪邊緣容差
 HISTORY_MSG_49;色彩降噪邊緣敏感度
-HISTORY_MSG_4;歷史流覽
 HISTORY_MSG_50;暗部/亮部工具
 HISTORY_MSG_51;亮部增益
 HISTORY_MSG_52;暗部增益
@@ -168,7 +168,6 @@ HISTORY_MSG_56;暗部/亮部半徑
 HISTORY_MSG_57;粗略旋轉
 HISTORY_MSG_58;水準翻轉
 HISTORY_MSG_59;豎直翻轉
-HISTORY_MSG_5;亮度
 HISTORY_MSG_60;旋轉
 HISTORY_MSG_61;旋轉
 HISTORY_MSG_62;鏡頭失真矯正
@@ -179,7 +178,6 @@ HISTORY_MSG_66;高光還原
 HISTORY_MSG_67;高光還原程度
 HISTORY_MSG_68;高光還原方式
 HISTORY_MSG_69;工作色彩空間
-HISTORY_MSG_6;對比度
 HISTORY_MSG_70;輸出色彩空間
 HISTORY_MSG_71;輸入色參空間
 HISTORY_MSG_72;邊暈矯正
@@ -190,11 +188,8 @@ HISTORY_MSG_76;Exif Metadata
 HISTORY_MSG_77;IPTC Metadata
 HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
-HISTORY_MSG_7;黑
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_MSG_8;曝光補償
-HISTORY_MSG_9;亮部壓縮
 HISTORY_NEWSNAPSHOTAS;為...
 HISTORY_NEWSNAPSHOT;新建快照
 HISTORY_NEWSSDIALOGLABEL;快照標籤:
@@ -216,31 +211,31 @@ ICMPANEL_OUTPUTPROFILE;輸出配置
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;當前配置
 IMAGEAREA_DETAILVIEW;細節視圖
-IPTCPANEL_AUTHOR;Author
 IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
-IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_CAPTION;Caption
+IPTCPANEL_AUTHORSPOSITION;Author's position
+IPTCPANEL_AUTHOR;Author
 IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITER;Caption Writer
 IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor
-IPTCPANEL_CATEGORY;Category
+IPTCPANEL_CAPTIONWRITER;Caption Writer
+IPTCPANEL_CAPTION;Caption
 IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-IPTCPANEL_CITY;City
+IPTCPANEL_CATEGORY;Category
 IPTCPANEL_CITYHINT;City of image origin (City).
+IPTCPANEL_CITY;City
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
-IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COUNTRY;Country
+IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
-IPTCPANEL_CREDIT;Credit
+IPTCPANEL_COUNTRY;Country
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-IPTCPANEL_DATECREATED;Date Created
+IPTCPANEL_CREDIT;Credit
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
-IPTCPANEL_EMBEDDED;Embedded
+IPTCPANEL_DATECREATED;Date Created
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_HEADLINE;Headline
+IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
+IPTCPANEL_HEADLINE;Headline
 IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
 IPTCPANEL_INSTRUCTIONS;Instructions
 IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (keywords).
@@ -267,9 +262,9 @@ MAIN_BUTTON_SAVE;儲存圖片
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;該文件已存在.
 MAIN_MSG_CANNOTLOAD;無法載入圖片
@@ -387,8 +382,8 @@ PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIR;輸出路徑
-PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
+PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
@@ -451,8 +446,8 @@ SAVEDLG_JPGFILTER;JPEG文件
 SAVEDLG_PNGCOMPR;PNG壓縮
 SAVEDLG_PNGFILTER;PNG文件
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
-SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
+SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;隨圖片儲存處理參數
 SAVEDLG_TIFFFILTER;TIFF文件
@@ -581,10 +576,10 @@ TP_SHARPENING_LABEL;銳化
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;僅銳化邊緣
 TP_SHARPENING_RADIUS;半徑
+TP_SHARPENING_RLD;左右重疊
 TP_SHARPENING_RLD_AMOUNT;程度
 TP_SHARPENING_RLD_DAMPING;衰減
 TP_SHARPENING_RLD_ITERATIONS;迭代
-TP_SHARPENING_RLD;左右重疊
 TP_SHARPENING_THRESHOLD;闕值
 TP_SHARPENING_USM;銳化
 TP_VIGNETTING_AMOUNT;程度
@@ -607,6 +602,11 @@ ZOOMBAR_PREVIEW;預覽
 ZOOMBAR_SCALE;比例
 ZOOMBAR_SMALL;小
 
+#00 Chinese (Traditional)
+#01 29.07.2008
+#02 Chinese Traditional
+#03 Mingjui Liao
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -618,8 +618,8 @@ ZOOMBAR_SMALL;小
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
 !BATCH_PROCESSING;Batch processing
-!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -640,9 +640,9 @@ ZOOMBAR_SMALL;小
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
@@ -690,7 +690,25 @@ ZOOMBAR_SMALL;小
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
+!HISTORY_MSG_89;Noise reduction
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
+!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
@@ -749,24 +767,11 @@ ZOOMBAR_SMALL;小
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
@@ -783,7 +788,7 @@ ZOOMBAR_SMALL;小
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
@@ -817,6 +822,7 @@ ZOOMBAR_SMALL;小
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -833,18 +839,18 @@ ZOOMBAR_SMALL;小
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
@@ -853,25 +859,25 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -889,8 +895,8 @@ ZOOMBAR_SMALL;小
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -934,16 +940,21 @@ ZOOMBAR_SMALL;小
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -977,7 +988,7 @@ ZOOMBAR_SMALL;小
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -1001,13 +1012,9 @@ ZOOMBAR_SMALL;小
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAW_DCBENHANCE;Apply DCB enhancement step
-!TP_RAW_DCBITERATIONS;Number of DCB iterations
-!TP_RAW_DMETHOD;Method
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
@@ -1016,6 +1023,10 @@ ZOOMBAR_SMALL;小
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
+!TP_RAW_DMETHOD;Method
 !TP_RAW_FALSECOLOR;False color suppression steps
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:

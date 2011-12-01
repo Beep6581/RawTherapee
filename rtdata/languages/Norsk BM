@@ -1,7 +1,3 @@
-
-#00 Norwegian
-#01 2009-02-12
-#02 Translated by Esben L. Kristensen
 ADJUSTER_RESET_TO_DEFAULT;Tilbake til standard
 CURVEEDITOR_FILEDLGFILTERANY;Hvilken som helst fil
 CURVEEDITOR_FILEDLGFILTERCURVE;Kurvefiler
@@ -23,10 +19,10 @@ EXIFPANEL_ADDEDIT;Tilføy/Rediger
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Skriv verdi
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Velg tag
 EXIFPANEL_ADDTAGDLG_TITLE;Tilføy/Rediger Tag
-EXIFPANEL_KEEP;Behold
 EXIFPANEL_KEEPHINT;Behold de utvalgte tags når det skrives output fil
-EXIFPANEL_REMOVE;Fjern
+EXIFPANEL_KEEP;Behold
 EXIFPANEL_REMOVEHINT;Fjern de utvalgte tags når det skrives output fil
+EXIFPANEL_REMOVE;Fjern
 EXIFPANEL_RESETALLHINT;Nullstil alle tags til de opprinnelige verdier
 EXIFPANEL_RESETALL;Nullstil alle
 EXIFPANEL_RESETHINT;Nullstil de utvalgte tags til de opprinnelige verdier
@@ -87,8 +83,8 @@ GENERAL_ABOUT;Om
 GENERAL_CANCEL;Annuller
 GENERAL_DISABLED;Deaktivert
 GENERAL_DISABLE;Deaktiver
-GENERAL_ENABLE;Aktiver
 GENERAL_ENABLED;Aktivert
+GENERAL_ENABLE;Aktiver
 GENERAL_LANDSCAPE;Landskap
 GENERAL_LOAD;Åpne
 GENERAL_NA;n/a
@@ -107,6 +103,15 @@ HISTORY_CUSTOMCURVE;Egen kurve
 HISTORY_DELSNAPSHOT;Fjern b.m
 HISTORY_FROMCLIPBOARD;Fra utklippstavlen
 HISTORY_LABEL;Historikk
+HISTORY_MSG_1;Foto åpnet
+HISTORY_MSG_2;Profil åpnet
+HISTORY_MSG_3;Profil endret
+HISTORY_MSG_4;Historikk-gjennomsyn
+HISTORY_MSG_5;Lysstyrke
+HISTORY_MSG_6;Kontrast
+HISTORY_MSG_7;Sort
+HISTORY_MSG_8;Eksponerings-komprimering
+HISTORY_MSG_9;Høylys-komprimering
 HISTORY_MSG_10;Skyggekomprimering
 HISTORY_MSG_11;Tonekurve
 HISTORY_MSG_12;Autoeksponering
@@ -117,7 +122,6 @@ HISTORY_MSG_16;Sort luminans
 HISTORY_MSG_17;Luminans høylys kompr.
 HISTORY_MSG_18;Luminans skygge kompr.
 HISTORY_MSG_19;Luminanskurve
-HISTORY_MSG_1;Foto åpnet
 HISTORY_MSG_20;Skarphet
 HISTORY_MSG_21;Skarphetsradius
 HISTORY_MSG_22;Skarphetsmengde
@@ -128,7 +132,6 @@ HISTORY_MSG_26;Kantskarphetstoleranse
 HISTORY_MSG_27;Halo-skarphetsskontroll
 HISTORY_MSG_28;Halo-kontrollstørrelse
 HISTORY_MSG_29;Skarphetsmetode
-HISTORY_MSG_2;Profil åpnet
 HISTORY_MSG_30;Deconvolution-radius
 HISTORY_MSG_31;Deconvolution-størrelse
 HISTORY_MSG_32;Deconvolution-dempning
@@ -139,7 +142,6 @@ HISTORY_MSG_36;Methetsgrense
 HISTORY_MSG_37;Fargeforsterkning
 HISTORY_MSG_38;Hvitbalansemetode
 HISTORY_MSG_39;Fargetemperatur
-HISTORY_MSG_3;Profil endret
 HISTORY_MSG_40;Hvitbalansenyanse
 HISTORY_MSG_41;Fargeskift "A"
 HISTORY_MSG_42;Fargeskift "B"
@@ -150,7 +152,6 @@ HISTORY_MSG_46;Fargestøyreduksjon
 HISTORY_MSG_47;Fargestøyreduksjon-radius
 HISTORY_MSG_48;Fargestøjreduktion-kanttoleranse
 HISTORY_MSG_49;Kantfølsom fargestøyreduksjon
-HISTORY_MSG_4;Historikk-gjennomsyn
 HISTORY_MSG_50;Skygge/høylys verktøy
 HISTORY_MSG_51;Høylys-forsterkning
 HISTORY_MSG_52;Skyggeforsterkning
@@ -161,7 +162,6 @@ HISTORY_MSG_56;Skygge/høylys -radius
 HISTORY_MSG_57;Enkel rotasjon
 HISTORY_MSG_58;Vend horisontalt
 HISTORY_MSG_59;Vend vertikalt
-HISTORY_MSG_5;Lysstyrke
 HISTORY_MSG_60;Rotasjon
 HISTORY_MSG_61;Rotasjon
 HISTORY_MSG_62;Objektivforvrengning-korrigering
@@ -172,7 +172,6 @@ HISTORY_MSG_66;Høylys-forbedring
 HISTORY_MSG_67;Høylys-forbedringsstyrke
 HISTORY_MSG_68;Høylys-forbedringsmetode
 HISTORY_MSG_69;Arbeidsfargerom
-HISTORY_MSG_6;Kontrast
 HISTORY_MSG_70;Utgangssfargerom
 HISTORY_MSG_71;Inngangsfargerom
 HISTORY_MSG_72;Vignettering-korrigering
@@ -183,18 +182,15 @@ HISTORY_MSG_76;Exif Metadata
 HISTORY_MSG_77;IPTC Metadata
 HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
-HISTORY_MSG_7;Sort
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_MSG_8;Eksponerings-komprimering
-HISTORY_MSG_9;Høylys-komprimering
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt b.m
 HISTORY_NEWSSDIALOGLABEL;Navn på bokmerket:
 HISTORY_NEWSSDIALOGTITLE;Opprett nytt bogmerke
 HISTORY_SETTO;Inntil
-HISTORY_SNAPSHOT;Bokmerke
 HISTORY_SNAPSHOTS;Bokmerker
+HISTORY_SNAPSHOT;Bokmerke
 ICMPANEL_FILEDLGFILTERANY;Alle filer
 ICMPANEL_FILEDLGFILTERICM;ICC profilfiler
 ICMPANEL_GAMMABEFOREINPUT;Profilen tilføyer Gamma
@@ -210,20 +206,20 @@ ICMPANEL_SAVEREFERENCE;Lagre referansebilde til profil
 ICMPANEL_WORKINGPROFILE;Arbeidsprofil
 IMAGEAREA_DETAILVIEW;Detaljert
 IPTCPANEL_AUTHORHINT;Navnet på oppretteren, f.eks. forfatter, fotograf eller grafiker (By-line).
-IPTCPANEL_AUTHOR;Oppretter
 IPTCPANEL_AUTHORSPOSITIONHINT;Beskrivelse av oppretterens tittel (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Oppretterens tittel
-IPTCPANEL_CAPTION;Billdetekst
+IPTCPANEL_AUTHOR;Oppretter
 IPTCPANEL_CAPTIONHINT;Tekstbeskrivelse av bildets innhold (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITER;Bildetekst forfatter
 IPTCPANEL_CAPTIONWRITERHINT;Navnet på personen som har opprettet, redigert eller korrigeret bildeteksten (Writer - Editor).
+IPTCPANEL_CAPTIONWRITER;Bildetekst forfatter
+IPTCPANEL_CAPTION;Billdetekst
 IPTCPANEL_CATEGORYHINT;Brukes til å beskrive innholdet i bildet ifølge kategorien (Category).
 IPTCPANEL_CATEGORY;Kategori
-IPTCPANEL_CITY;By
 IPTCPANEL_CITYHINT;Bildets  opprinnelsesby (City).
+IPTCPANEL_CITY;By
 IPTCPANEL_COPYHINT;Kopier IPTC innstillinger til utklippstavlen
-IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COPYRIGHTHINT;Eventuelle copyright tilføyelser (Copyright Notice).
+IPTCPANEL_COPYRIGHT;Copyright
 IPTCPANEL_COUNTRYHINT;Navnet på landet/primære område hvor bildet er tatt (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;Land
 IPTCPANEL_CREDITHINT;Identifisere oppretteren av bildet, ikke nødvendivis den samme som eieren (Credit).
@@ -247,8 +243,8 @@ IPTCPANEL_SOURCEHINT;Den originale eier af bildets innhold (Source).
 IPTCPANEL_SOURCE;Kilde
 IPTCPANEL_SUPPCATEGORIESHINT;Ytterlige beskrivelser av innholdet i bildet (Supplemental Categories).
 IPTCPANEL_SUPPCATEGORIES;Suppl. kategorier
-IPTCPANEL_TITLE;Bildetittel
 IPTCPANEL_TITLEHINT;En kort beskrivelse av bildet (Object Name).
+IPTCPANEL_TITLE;Bildetittel
 IPTCPANEL_TRANSREFERENCEHINT;En kode som representerer stedet for original transmisjon (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Exit
@@ -259,9 +255,9 @@ MAIN_BUTTON_SAVE;Lagre bilde
 MAIN_BUTTON_SENDTOEDITOR;Send til editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
+MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_PLACES;Places 
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Filen eksisterer allerede.
 MAIN_MSG_CANNOTLOAD;Kan ikke åpne bildet
@@ -339,8 +335,8 @@ PREFERENCES_CLEARDLG_LINE2;Dette kan ta sin tid..
 PREFERENCES_CLEARDLG_TITLE;Vennligst vent
 PREFERENCES_CLIPPINGIND;Markerings-indikasjon
 PREFERENCES_CMETRICINTENT;Kolorimetrisk Inntrykk
-PREFERENCES_DATEFORMAT;Datoformat
 PREFERENCES_DATEFORMATHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%y</b><i> : år</i>\n<b>%m</b><i> : måned</i>\n<b>%d</b><i> : dag</i>\n<i>\nF. eks. er ungarsk datoformat:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Datoformat
 PREFERENCES_DEFAULTLANG;Programspråk
 PREFERENCES_DEFAULTTHEME;Standard tema
 PREFERENCES_DEMOSAICINGALGO;Demosaikking Algoritme
@@ -370,13 +366,13 @@ PREFERENCES_MONITORICC;Skjermprofil
 PREFERENCES_OUTDIRFOLDERHINT;Send lagrede bilder til valgt folder
 PREFERENCES_OUTDIRFOLDER;Lagre til folder
 PREFERENCES_OUTDIRHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nFormateringsstrengene refererer til folderne og understier av stien til RAW-filen.\n\nF. eks., hvis </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>har vært åpnet, vil det bety at formateringsstrengen er:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHvis du vil lagre det prosesserte bildet der originalen er, skriv:\n</i><b>%p1/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i folderen 'converted' under inni originalfolderen, skriv:\n</i><b>%p1/converted/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i '/home/tom/converted' men beholde underfolderens datomerking, skriv:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Bruk mal
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan bruke følgende formattering:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nFormateringsstrengene refererer til folderne og understier av stien til RAW-filen.\n\nF. eks., hvis </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>har vært åpnet, vil det bety at formateringsstrengen er:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nvis du vil lagre det prosesserte bildet der originalen er, skriv:\n</i><b>%p1/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i folderen 'converted' under inni originalfolderen, skriv:\n</i><b>%p1/converted/%f\n</b><i>\nHvis du vil lagre det prosesserte bildet i '/home/tom/converted' men beholde underfolderens datomerking, skriv:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Bruk mal
 PREFERENCES_OUTDIR;Utmappe
 PREFERENCES_PARSEDEXTADDHINT;Skriv inn en utvidelse og trykk på kanppen for å legge til listen
 PREFERENCES_PARSEDEXTADD;Legg til utvidelse
-PREFERENCES_PARSEDEXT;Analyserte utvidelser
 PREFERENCES_PARSEDEXTDELHINT;Fjern valgte utvidelse fra listen
+PREFERENCES_PARSEDEXT;Analyserte utvidelser
 PREFERENCES_PROFILEHANDLING;Prosesserer filbehandling
 PREFERENCES_PROFILELOADPR;Profillastingsprioritet
 PREFERENCES_PROFILEPRCACHE;Profil i Cache
@@ -437,8 +433,8 @@ SAVEDLG_JPGFILTER;JPEG-filter
 SAVEDLG_PNGCOMPR;PNG-komprimering
 SAVEDLG_PNGFILTER;PNG-filter
 SAVEDLG_PUTTOQUEUEHEAD;Sett øverst i prosesseringskøen
-SAVEDLG_PUTTOQUEUE;Sett i prosesseringskø
 SAVEDLG_PUTTOQUEUETAIL;Sett nederst i prosesseringskøen
+SAVEDLG_PUTTOQUEUE;Sett i prosesseringskø
 SAVEDLG_SAVEIMMEDIATELY;Lagre med en gang
 SAVEDLG_SAVESPP;Lagre bildebehandlingsparametre med bildene
 SAVEDLG_TIFFFILTER;TIFF-filter
@@ -533,9 +529,9 @@ TP_LUMADENOISE_LABEL;Luminans-støyredusering
 TP_LUMADENOISE_RADIUS;Radius
 TP_RAW_DMETHOD;Metode
 TP_RAW_FALSECOLOR;Falsk fargefortrengningsverdi
-TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BICUBICSF;Bikubisk (Bløtere)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpere)
+TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BILINEAR;Bilinjær
 TP_RESIZE_FULLSIZE;Bildestørrelse:
 TP_RESIZE_H;H:
@@ -565,10 +561,10 @@ TP_SHARPENING_LABEL;Skarphet
 TP_SHARPENING_METHOD;Metode
 TP_SHARPENING_ONLYEDGES;Skarphet kun i kanter
 TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RLD;RL Dekonvolusjon
 TP_SHARPENING_RLD_AMOUNT;Mengde
 TP_SHARPENING_RLD_DAMPING;Demping
 TP_SHARPENING_RLD_ITERATIONS;Gjentakelse
-TP_SHARPENING_RLD;RL Dekonvolusjon
 TP_SHARPENING_THRESHOLD;Terskelverdi
 TP_SHARPENING_USM;Uskarp maske
 TP_VIGNETTING_AMOUNT;Mengde
@@ -591,6 +587,10 @@ ZOOMBAR_PREVIEW;Filgjennomsyn
 ZOOMBAR_SCALE;Skala
 ZOOMBAR_SMALL;Liten
 
+#00 Norwegian
+#01 2009-02-12
+#02 Translated by Esben L. Kristensen
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -601,10 +601,10 @@ ZOOMBAR_SMALL;Liten
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_SPLASH;Splash
-!BATCH_PROCESSING;Batch processing
 !BATCHQUEUE_AUTOSTART;Auto start
-!CURVEEDITOR_CURVE;Curve
+!BATCH_PROCESSING;Batch processing
 !CURVEEDITOR_CURVES;Curves
+!CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_CUSTOM;Custom
 !CURVEEDITOR_DARKS;Darks
 !CURVEEDITOR_HIGHLIGHTS;Highlights
@@ -625,9 +625,9 @@ ZOOMBAR_SMALL;Liten
 !FILEBROWSER_AUTOFLATFIELD;Auto flat field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
-!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
+!FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
@@ -680,7 +680,25 @@ ZOOMBAR_SMALL;Liten
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide RAW histogram
+!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
+!HISTORY_MSG_82;Profile Changed
+!HISTORY_MSG_83;High quality shadows/highlights
+!HISTORY_MSG_84;Perspective correction
+!HISTORY_MSG_85;Wavelet coefficients
+!HISTORY_MSG_86;Wavelet equalizer
+!HISTORY_MSG_87;Impulse noise reduction
+!HISTORY_MSG_88;Impulse NR threshold
+!HISTORY_MSG_89;Noise reduction
+!HISTORY_MSG_90;NR - luminance
+!HISTORY_MSG_91;NR - chrominance
+!HISTORY_MSG_92;NR - gamma
+!HISTORY_MSG_93;Contrast by detail levels value
+!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_96;'a' curve
+!HISTORY_MSG_97;'b' curve
+!HISTORY_MSG_98;Demosaicing method
+!HISTORY_MSG_99;Hot/dead pixel filtering
 !HISTORY_MSG_100;RGB saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
@@ -739,24 +757,11 @@ ZOOMBAR_SMALL;Liten
 !HISTORY_MSG_155;Vibrance - Avoid color drift
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
-!HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
-!HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
@@ -775,7 +780,7 @@ ZOOMBAR_SMALL;Liten
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-!MAIN_TAB_RAW;RAW
+!MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
@@ -811,6 +816,7 @@ ZOOMBAR_SMALL;Liten
 !PARTIALPASTE_DETAILGROUP;Detail settings
 !PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 !PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
+!PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -827,18 +833,18 @@ ZOOMBAR_SMALL;Liten
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 !PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
-!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
 !PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
 !PARTIALPASTE_RAWCACORR_CARED;CA Red
-!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
-!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAWEXPOS_BLACK;Black Level
 !PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
 !PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_RAWGROUP;Raw settings
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
+!PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+!PARTIALPASTE_RAW_DMETHOD;Demosaic Method
+!PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
@@ -847,25 +853,25 @@ ZOOMBAR_SMALL;Liten
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
-!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
+!PREFERENCES_DARKFRAME;Dark frame
 !PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
-!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_FLATFIELDFOUND;Found
 !PREFERENCES_FLATFIELDSDIR;Flat Fields directory
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
+!PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show RAW internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
 !PREFERENCES_MENUGROUPLABEL;Group Labeling
@@ -883,8 +889,8 @@ ZOOMBAR_SMALL;Liten
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -929,16 +935,21 @@ ZOOMBAR_SMALL;Liten
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AUTO;    Auto distortion correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
 !TP_EQUALIZER_CONTRAST_MINUS;Contrast-
 !TP_EQUALIZER_CONTRAST_PLUS;Contrast+
 !TP_EQUALIZER_FINEST;finest
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
 !TP_FLATFIELD_AUTOSELECT;Auto selection
 !TP_FLATFIELD_BLURRADIUS;Blur Radius
 !TP_FLATFIELD_BLURTYPE;Blur Type
@@ -972,7 +983,7 @@ ZOOMBAR_SMALL;Liten
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
-!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non RAW files
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -996,12 +1007,9 @@ ZOOMBAR_SMALL;Liten
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 !TP_RAWCACORR_AUTO;Auto correction
 !TP_RAWCACORR_CABLUE;Blue
 !TP_RAWCACORR_CARED;Red
-!TP_RAW_DCBENHANCE;Apply DCB enhancement step
-!TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
@@ -1010,6 +1018,9 @@ ZOOMBAR_SMALL;Liten
 !TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
 !TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RAW_DCBENHANCE;Apply DCB enhancement step
+!TP_RAW_DCBITERATIONS;Number of DCB iterations
 !TP_RAW_LABEL;Demosaicing
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped area

@@ -1,6 +1,6 @@
 
 [Version]
-AppVersion=4.0.5.7
+AppVersion=4.0.6
 Version=301
 
 [General]
@@ -183,7 +183,7 @@ Height=2836
 InputProfile=(camera)
 BlendCMSMatrix=false
 WorkingProfile=ProPhoto
-OutputProfile=No ICM: sRGB output
+OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
