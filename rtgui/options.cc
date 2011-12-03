@@ -765,6 +765,13 @@ void Options::load () {
 		}
 	}
 
+	// create iptc templates directory if it doesn't exist
+	Glib::ustring iptcDir = argv0 + "/iptc";
+	if (options.multiUser)
+		iptcDir = rtdir + "/iptc";
+    if (!safe_file_test (iptcDir, Glib::FILE_TEST_IS_DIR))
+        safe_g_mkdir_with_parents (iptcDir, 511);
+
 	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
 
 	rtengine::init (&options.rtSettings, argv0);

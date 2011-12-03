@@ -378,10 +378,6 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     vbmd->pack_start (*ckbWriteMetaData, Gtk::PACK_SHRINK, 4);
     Gtk::HBox* hb44 = Gtk::manage (new Gtk::HBox ());
     fcDefMetadata = Gtk::manage (new Gtk::FileChooserButton(M("PREFERENCES_DEFAULT_METADATA"), Gtk::FILE_CHOOSER_ACTION_OPEN) );
-    if (options.multiUser)
-    	fcDefMetadata->set_current_folder (Options::rtdir + "/iptc" );
-    else
-    	fcDefMetadata->set_current_folder (argv0 + "/iptc" );
 
     Gtk::Label *dmLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DEFAULT_METADATA")));
     hb44->pack_start(*dmLab , Gtk::PACK_SHRINK, 4 );
@@ -1194,8 +1190,15 @@ void Preferences::fillPreferences () {
     //loadParamsPreference->set_active (moptions.paramsLoadLocation);
 
     ckbWriteMetaData->set_active (moptions.outputMetaData);
-    fcDefMetadata->set_filename( moptions.defMetadata );
-
+    if( safe_file_test (moptions.defMetadata, Glib::FILE_TEST_EXISTS))
+       fcDefMetadata->set_filename( moptions.defMetadata );
+    else if( moptions.defMetadata.empty() ){
+    	fcDefMetadata->set_filename("");
+		if (options.multiUser)
+			fcDefMetadata->set_current_folder (Options::rtdir + "/iptc" );
+		else
+			fcDefMetadata->set_current_folder (argv0 + "/iptc" );
+    }
     if (!moptions.tabbedUI)
         editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);
     else 
