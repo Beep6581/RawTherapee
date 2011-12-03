@@ -230,7 +230,7 @@ void IPTCPanel::fileOpenClicked ()
     if (options.multiUser)
        dialog.set_current_folder (Options::rtdir + "/iptc" );
     else
-       dialog.set_current_folder (argv0 + "/iptc" + options.profilePath);
+       dialog.set_current_folder (argv0 + "/iptc" );
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -291,6 +291,7 @@ void IPTCPanel::fileSaveClicked ()
         if ( selectDlg.run ()) {
         	rtengine::MetadataList iptc = selectDlg.getIPTC();
         	Glib::ustring filename( dialog.get_filename() );
+        	filename = removeExtension(filename)+".xmp";
         	rtengine::ImageMetaData *id = new rtengine::ImageMetaData("",filename,"");
         	if( id ){
 				id->setIPTCData( iptc );
