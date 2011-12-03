@@ -256,6 +256,10 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     partpasteprof->set_sensitive (clipboard.hasProcParams());
     copyprof->set_sensitive (selected.size()==1);
     clearprof->set_sensitive (selected.size()>0);
+    copyIPTC->set_sensitive (selected.size()==1);
+    pasteIPTC->set_sensitive (clipboard.hasIPTC());
+    partpasteIPTC->set_sensitive (clipboard.hasIPTC());
+    resyncIPTC->set_sensitive (selected.size()>0);
 
     // submenu applmenu
     int p = 0;
