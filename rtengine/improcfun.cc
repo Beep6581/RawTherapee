@@ -955,13 +955,13 @@ fclose(f);*/
 		float t = v * ( 1 - s * ( 1 - f ) );
 		
 		float r1,g1,b1;
-		
-		if (i==0) {r1 = v;  g1 = t;  b1 = p;}
-		if (i==1) {r1 = q;  g1 = v;  b1 = p;}
-		if (i==2) {r1 = p;  g1 = v;  b1 = t;}
-		if (i==3) {r1 = p;  g1 = q;  b1 = v;}
-		if (i==4) {r1 = t;  g1 = p;  b1 = v;}
-		if (i==5) {r1 = v;  g1 = p;  b1 = q;}
+
+		if      (i==1)    {r1 = q;  g1 = v;  b1 = p;}
+		else if (i==2)    {r1 = p;  g1 = v;  b1 = t;}
+		else if (i==3)    {r1 = p;  g1 = q;  b1 = v;}
+		else if (i==4)    {r1 = t;  g1 = p;  b1 = v;}
+		else if (i==5)    {r1 = v;  g1 = p;  b1 = q;}
+		else /*i==(0|6)*/ {r1 = v;  g1 = t;  b1 = p;}
 		
 		r = ((r1)*65535.0);
 		g = ((g1)*65535.0);
