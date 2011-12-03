@@ -160,8 +160,8 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toiC = Gtk::manage (new TextOrIcon ("colour.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
+    toiX = Gtk::manage (new TextOrIcon ("exif.png"     , M("MAIN_TAB_EXIF")     , M("MAIN_TAB_EXIF_TOOLTIP")     , type));
     toiM = Gtk::manage (new TextOrIcon ("meta.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
-    toiX = Gtk::manage (new TextOrIcon ("meta.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
 
 	toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
 	toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
@@ -172,10 +172,14 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 	toolPanelNotebook->append_page (*exifpanel,    *toiX);
 	toolPanelNotebook->append_page (*iptcpanel,    *toiM);
 
+    /* Note that due to historical reasons, GtkNotebook refuses to switch to a page unless the child widget is visible.
+     * Therefore, it is recommended to show child widgets before adding them to a notebook.
+     * Ref: http://developer.gnome.org/gtk/unstable/GtkNotebook.html#gtk-notebook-set-current-page
+     * Calling show_all() BEFORE setting the page makes it work.
+    */
+	toolPanelNotebook->set_scrollable ();
+	toolPanelNotebook->show_all ();
     toolPanelNotebook->set_current_page (0);
-
-    toolPanelNotebook->set_scrollable ();
-    toolPanelNotebook->show_all ();
 
     for (int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setListener (this);
@@ -548,6 +552,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 		switch(event->keyval) {
 			case GDK_e:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exposurePanelSW));
+				printf ("pagenum exposurePanelSW=%i\n",toolPanelNotebook->page_num(*exposurePanelSW));
 				return true;
 			case GDK_d:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*detailsPanelSW));
@@ -561,11 +566,17 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 			case GDK_r:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
 				return true;
-//			case GDK_m:
-//				if (metadataPanel){
-//					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
-//					return true;
-//				}
+			case GDK_x:
+				if (exifpanel){
+					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exifpanel));
+					printf ("pagenum exifpanel=%i\n",toolPanelNotebook->page_num(*exifpanel));
+					return true;
+				}
+			case GDK_m:
+				if (iptcpanel){
+					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*iptcpanel));
+					return true;
+				}
 		}
     }
     return false;
@@ -588,8 +599,8 @@ void ToolPanelCoordinator::updateTabsHeader (bool useIcons) {
     toiC->switchTo(type);
     toiT->switchTo(type);
     toiR->switchTo(type);
-    toiM->switchTo(type);
-    toiX->switchTo(type);
+    if (toiM) toiM->switchTo(type);
+    if (toiX) toiX->switchTo(type);
 }
 
 void ToolPanelCoordinator::updateTPVScrollbar (bool hide) {
