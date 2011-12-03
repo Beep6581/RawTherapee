@@ -154,7 +154,7 @@ FileBrowser::FileBrowser ()
     	menuProfileOperations->set_submenu (*submenuProfileOperations);
 
     	pmenu->attach (*Gtk::manage(menuIPTCOperations = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPIPTCOPERATIONS"))), 0, 1, p, p+1); p++;
-    	menuIPTCOperations->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/logoicon_wind_16.png")));
+    	menuIPTCOperations->set_image(*Gtk::manage(new Gtk::Image (argv0+"/images/barcode-16.png")));
     	Gtk::Menu* submenuIPTCOperations = Gtk::manage (new Gtk::Menu ());
     	submenuIPTCOperations->attach (*Gtk::manage(copyIPTC = new Gtk::MenuItem (M("FILEBROWSER_COPYIPTC"))), 0, 1, p, p+1); p++;
     	submenuIPTCOperations->attach (*Gtk::manage(pasteIPTC = new Gtk::MenuItem (M("FILEBROWSER_PASTEIPTC"))), 0, 1, p, p+1); p++;
