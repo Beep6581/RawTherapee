@@ -198,7 +198,7 @@ int processLineParams( int argc, char **argv )
 				break;
 			case 'S':
 				useDefaultIfAbsent=false;
-			case 's': // Processing params next to file (.pp3 appended)
+			case 's': // Processing params next to file (.xmp appended)
 				sideProcParams = true;
 				break;
 			case 'Y':
@@ -230,7 +230,7 @@ int processLineParams( int argc, char **argv )
 						safe_build_file_list (dir, names, argv[iArg] );
 						for(size_t iFile=0; iFile< names.size(); iFile++ ){
 							if( !safe_file_test( names[iFile] , Glib::FILE_TEST_IS_DIR)){
-								// skip files without extension and pp3 files
+								// skip files without extension and xmp files
 								Glib::ustring s(names[iFile]);
 								Glib::ustring::size_type ext= s.find_last_of('.');
 								if( Glib::ustring::npos == ext )
@@ -257,12 +257,12 @@ int processLineParams( int argc, char **argv )
 				std::cerr << "Other options used with -c (that must be last option) "<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) <<" [-o <output> | -O <output>] [-s | -S | -p <file>] [-j[1-100]|-t|-n] -Y -c <input>"<< std::endl;
 				std::cerr << " -o <outputFile>|<outputDir> : select output directory."<< std::endl;
-				std::cerr << " -O <outputFile>|<outputDir> : select output dir and copy pp3 file into it"<< std::endl;
-				std::cerr << " -s : select parameters to be pp3 file next to input file (with same name)"<< std::endl;
-				std::cerr << "      ex: for IMG001.NEF there should be IMG001.NEF.pp3 in the same dir" << std::endl;
+				std::cerr << " -O <outputFile>|<outputDir> : select output dir and copy xmp file into it"<< std::endl;
+				std::cerr << " -s : select parameters to be xmp file next to input file (with same name)"<< std::endl;
+				std::cerr << "      ex: for IMG001.NEF there should be IMG001.NEF.xmp in the same dir" << std::endl;
 				std::cerr << "      if absent use default" << std::endl;
-				std::cerr << " -S : like -s but skip if pp3 file not found." << std::endl;
-				std::cerr << " -p <file.pp3> : specify pp3 file to be used for all conversions."<< std::endl;
+				std::cerr << " -S : like -s but skip if xmp file not found." << std::endl;
+				std::cerr << " -p <file.xmp> : specify xmp file to be used for all conversions."<< std::endl;
 				std::cerr << " -j[compression] : specify output to be jpeg.(default)"<< std::endl;
 				std::cerr << " -t : specify output to be tif."<< std::endl;
 				std::cerr << " -n : specify output to be png."<< std::endl;
