@@ -619,7 +619,7 @@ PartialPasteIPTCDlg::PartialPasteIPTCDlg( const rtengine::MetadataList &v)
 
     set_modal (true);
     set_title (M("PARTIALPASTE_DIALOGIPTCLABEL"));
-    set_size_request (400, -1);
+    set_size_request (400, 600);
 
     table = Gtk::manage( new Gtk::Table ( iptc.size(), 2, TRUE) );
     int row=0;
