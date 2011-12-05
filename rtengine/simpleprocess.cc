@@ -317,17 +317,18 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             }
         }
     }
-		if( job->metadata && job->writeMetadata ){
-			rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
-			mdata->merge();
-			readyImg->setMetadata( mdata );
-		}
     else {
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;
         // gamma come from the selected profile, otherwise it comes from "Free gamma" tool
         readyImg = ipf.lab2rgb16 (labView, cx, cy, cw, ch, params.icm.output);
         if (settings->verbose) printf("Output profile: \"%s\"\n", params.icm.output.c_str());
     }
+
+	if( job->metadata && job->writeMetadata ){
+		rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
+		mdata->merge();
+		readyImg->setMetadata( mdata );
+	}
 
     delete labView;
     labView = NULL;
@@ -393,11 +394,11 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         }
     }
 
-		if( job->metadata && job->writeMetadata){
-			rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
-			mdata->merge();
-			readyImg->setMetadata( mdata );
-		}
+	if( job->metadata && job->writeMetadata){
+		rtengine::ImageMetaData *mdata = new rtengine::ImageMetaData ( *(job->metadata) );
+		mdata->merge();
+		readyImg->setMetadata( mdata );
+	}
 
     // Setting the output curve to readyImg
     if (customGamma) {
