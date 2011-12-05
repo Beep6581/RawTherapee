@@ -186,8 +186,14 @@ int ImageMetaData::readMetadataFromImage()
 
 	key = IPTCMeta::IPTCtags[kIPTCDate].getXmpKey();
 	if( xmpData.findKey(Exiv2::XmpKey(key)) == xmpData.end() ){
-		if( exifData.findKey( Exiv2::ExifKey("Exif.Photo.DateTimeDigitized"))!= exifData.end() )
-			xmpData[ key ] = exifData[ "Exif.Photo.DateTimeDigitized" ].getValue()->toString();
+		Exiv2::XmpData::const_iterator iter = xmpData.findKey( Exiv2::XmpKey("Xmp.exif.DateTimeDigitized"));
+		if( iter == xmpData.end() )
+			iter = xmpData.findKey( Exiv2::XmpKey("Xmp.exif.DateTimeOriginal"));
+		if( iter == xmpData.end() )
+			iter = xmpData.findKey( Exiv2::XmpKey("Xmp.tiff.DateTime"));
+		if( iter != xmpData.end() ){
+			xmpData[key] = iter->getValue()->toString();
+		}
 	}
 
     key = IPTCMeta::IPTCtags[kIPTCTitle].getXmpKey();
