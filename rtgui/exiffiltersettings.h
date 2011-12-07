@@ -25,9 +25,10 @@
 class ExifFilterSettings {
 
     public:
-	std::set<std::string> filetypes;
+        std::set<std::string> filetypes;
         std::set<std::string> cameras;
         std::set<std::string> lenses;
+        std::set<std::string> expcomp;
         double fnumberFrom;
         double fnumberTo;
         double shutterFrom;
@@ -41,6 +42,7 @@ class ExifFilterSettings {
 		bool filterShutter;
 		bool filterFocalLen;
 		bool filterISO;
+		bool filterExpComp;
 		bool filterCamera;
 		bool filterLens;
 		bool filterFiletype;

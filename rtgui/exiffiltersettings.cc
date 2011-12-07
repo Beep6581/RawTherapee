@@ -34,12 +34,14 @@ void ExifFilterSettings::clear () {
     focalTo = 0;
     lenses.clear ();
     cameras.clear ();
+    expcomp.clear ();
     filetypes.clear ();
 	
 	filterFNumber = false;
 	filterShutter = false;
 	filterFocalLen = false;
 	filterISO = false;
+	filterExpComp = false;
 	filterCamera = false;
 	filterLens = false;
 	filterFiletype = false;

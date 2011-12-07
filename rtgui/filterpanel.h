@@ -31,9 +31,10 @@ class FilterPanelListener {
 class FilterPanel : public Gtk::VBox {
 
 	protected:
-		Gtk::ListViewText*      filetype;
+        Gtk::ListViewText*      filetype;
         Gtk::ListViewText*      camera;
         Gtk::ListViewText*      lens;
+        Gtk::ListViewText*      expcomp;
         Gtk::Entry* fnumberFrom;
         Gtk::Entry* fnumberTo;
         Gtk::Entry* shutterFrom;
@@ -47,12 +48,13 @@ class FilterPanel : public Gtk::VBox {
 		Gtk::CheckButton* enaShutter;
 		Gtk::CheckButton* enaFocalLen;
 		Gtk::CheckButton* enaISO;
+		Gtk::CheckButton* enaExpComp;
 		Gtk::CheckButton* enaCamera;
 		Gtk::CheckButton* enaLens;
 		Gtk::CheckButton* enaFiletype;
 
 		int conns;
-		sigc::connection sChange[20];
+		sigc::connection sChange[22];
 		
 		ExifFilterSettings curefs;	
 		FilterPanelListener* listener;

@@ -69,6 +69,7 @@ int CacheImageData::load (const Glib::ustring& fname) {
 				if (keyFile.has_key ("ExifInfo", "Shutter"))    shutter     = keyFile.get_double ("ExifInfo", "Shutter");
 				if (keyFile.has_key ("ExifInfo", "FocalLen"))   focalLen    = keyFile.get_double ("ExifInfo", "FocalLen");
 				if (keyFile.has_key ("ExifInfo", "ISO"))        iso         = keyFile.get_integer ("ExifInfo", "ISO");
+				if (keyFile.has_key ("ExifInfo", "ExpComp"))    expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
 			}
 			if (keyFile.has_key ("ExifInfo", "Lens"))       lens        = keyFile.get_string ("ExifInfo", "Lens");
 			if (keyFile.has_key ("ExifInfo", "Camera"))     camera      = keyFile.get_string ("ExifInfo", "Camera");
@@ -126,6 +127,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
         keyFile.set_double  ("ExifInfo", "Shutter", shutter);
         keyFile.set_double  ("ExifInfo", "FocalLen", focalLen);
         keyFile.set_integer ("ExifInfo", "ISO", iso);
+        keyFile.set_string  ("ExifInfo", "ExpComp", expcomp);
     }
     keyFile.set_string  ("ExifInfo", "Lens", lens);
     keyFile.set_string  ("ExifInfo", "Camera", camera);

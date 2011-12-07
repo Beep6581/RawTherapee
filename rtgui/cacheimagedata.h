@@ -54,6 +54,7 @@ class CacheImageData {
         Glib::ustring lens;
         Glib::ustring camera;
         Glib::ustring filetype;
+        Glib::ustring expcomp;
 
         // additional info on raw images
         int   rotate;
