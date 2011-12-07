@@ -1250,7 +1250,7 @@ void EditorPanel::beforeAfterToggled () {
 
         beforeIarea = new ImageAreaPanel ();
 
-        int HeaderBoxHeight = 15;
+        int HeaderBoxHeight = 17;
 
         beforeLabel = Gtk::manage (new Gtk::Label ());
         beforeLabel->set_markup (Glib::ustring("<b>") + M("GENERAL_BEFORE") + "</b>");
