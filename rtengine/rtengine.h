@@ -93,7 +93,7 @@ namespace rtengine {
           /** Functions to convert between floating point and string representation of shutter and aperture */
             static double shutterFromString (std::string shutter);
           /** Functions to convert between floating point and string representation of exposure compensation */
-            static std::string expcompToString (double expcomp);
+            static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
             
           /** Reads metadata from file.
             * @param fname is the name of the file

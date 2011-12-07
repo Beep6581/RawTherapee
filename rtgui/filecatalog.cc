@@ -600,6 +600,7 @@ void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
     dirEFS.filetypes.insert (cfs->filetype);
     dirEFS.cameras.insert (cfs->camera);
     dirEFS.lenses.insert (cfs->lens);
+    dirEFS.expcomp.insert (cfs->expcomp);
     previewsLoaded++;
 
     g_idle_add (refreshProgressBarUI, this);

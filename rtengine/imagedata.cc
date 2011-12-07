@@ -338,15 +338,21 @@ std::string ImageMetaData::shutterToString (double shutter) {
     return buffer;
 }
 
-std::string ImageMetaData::expcompToString (double expcomp) {
+std::string ImageMetaData::expcompToString (double expcomp, bool maskZeroexpcomp) {
 
     char buffer[256];
-    if (expcomp!=0.0){
-    	sprintf (buffer, "%0.1f", expcomp);
+    if (maskZeroexpcomp==true){
+        if (expcomp!=0.0){
+    	    sprintf (buffer, "%0.2f", expcomp);
+    	    return buffer;
+        }
+        else
+    	    return "";
+    }
+    else{
+    	sprintf (buffer, "%0.2f", expcomp);
     	return buffer;
     }
-    else
-    	return "";
 }
 
 double ImageMetaData::shutterFromString (std::string s) {

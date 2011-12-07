@@ -681,11 +681,11 @@ void EditorPanel::info_toggled () {
 				M("QINFO_ISO"), idata->getISOSpeed(),
 				idata->getFocalLen());
 
-        expcomp = Glib::ustring(idata->expcompToString(idata->getExpComp()));
+        expcomp = Glib::ustring(idata->expcompToString(idata->getExpComp(),true)); // maskZeroexpcomp
         if (expcomp!=""){
         		infoString2 = Glib::ustring::compose("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
         				infoString2,
-        				Glib::ustring(idata->expcompToString(idata->getExpComp())));
+        				expcomp /*Glib::ustring(idata->expcompToString(idata->getExpComp()))*/);
         }
 
         infoString3 = Glib::ustring::compose ("<span size=\"small\">%1</span><span>%2</span>",

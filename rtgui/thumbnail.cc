@@ -548,6 +548,7 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
         cfs.fnumber  = idata->getFNumber ();
         cfs.focalLen = idata->getFocalLen ();
         cfs.iso      = idata->getISOSpeed ();
+        cfs.expcomp  = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
         cfs.year     = 1900 + idata->getDateTime().tm_year;
         cfs.month    = idata->getDateTime().tm_mon + 1;
         cfs.day      = idata->getDateTime().tm_mday;
@@ -575,9 +576,9 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
 	}
 		// get image filetype
     std::string::size_type idx;
-		idx = fname.rfind('.');
-		if(idx != std::string::npos){cfs.filetype = fname.substr(idx+1);}
-		else {cfs.filetype="";}
+    idx = fname.rfind('.');
+    if(idx != std::string::npos){cfs.filetype = fname.substr(idx+1);}
+    else {cfs.filetype="";}
 	
     delete idata;
     return deg;
