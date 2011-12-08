@@ -8849,7 +8849,7 @@ void CLASS write_ppm_tiff()
   free (ppm);
 }
 
-/*int CLASS main (int argc, const char **argv)
+int CLASS main (int argc, const char **argv)
 {
   int arg, status=0;
   int timestamp_only=0, thumbnail_only=0, identify_only=0;
@@ -9012,7 +9012,7 @@ void CLASS write_ppm_tiff()
       goto cleanup;
     }
     ifname = argv[arg];
-    if (!(ifp = fopen (ifname, "rb"))) {
+    if (!(ifp = fopen (ifname))) {
       perror (ifname);
       continue;
     }
@@ -9142,7 +9142,7 @@ next:
       fprintf (stderr,_("%s: \"-s %d\" requests a nonexistent image!\n"),
 	ifname, shot_select);
     fseeko (ifp, data_offset, SEEK_SET);
-    (*load_raw)();
+    (this->*load_raw)();
     if (zero_is_bad) remove_zeroes();
     bad_pixels (bpfile);
     if (dark_frame) subtract (dark_frame);
@@ -9210,7 +9210,7 @@ thumbnail:
     }
     if (verbose)
       fprintf (stderr,_("Writing data to %s ...\n"), ofname);
-    (*write_fun)();
+    (this->*write_fun)();
     fclose(ifp);
     if (ofp != stdout) fclose(ofp);
 cleanup:
@@ -9225,4 +9225,4 @@ cleanup:
   }
   return status;
 }
-*/
+

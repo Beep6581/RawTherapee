@@ -61,7 +61,7 @@ public:
         greybox[0]=greybox[1]=0; greybox[2]=greybox[3]= UINT_MAX;
     }
 
-    //int main (int argc, const char **argv);
+    int main (int argc, const char **argv);
 protected:
     int exif_base, ciff_base, ciff_len;
     IMFILE *ifp;

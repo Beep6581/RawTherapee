@@ -66,29 +66,29 @@ int munmap(void *start, size_t length)
 
 IMFILE* fopen (const char* fname)
 {
-	int fd = safe_open_ReadOnly(fname);
-	if ( fd < 0 )
+	int _file = safe_open_ReadOnly(fname);
+	if ( _file < 0 )
 		return 0;
 
 	struct stat stat_buffer;
-	if ( fstat(fd,&stat_buffer) < 0 )
+	if ( fstat(_file,&stat_buffer) < 0 )
 	{
 		printf("no stat\n");
-		close(fd);
+		close(_file);
 		return 0;
 	}
 
-	void* data = mmap(0,stat_buffer.st_size,PROT_READ,MAP_PRIVATE,fd,0);
+	void* data = mmap(0,stat_buffer.st_size,PROT_READ,MAP_PRIVATE,_file,0);
 	if ( data == 0 )
 	{
 		printf("no mmap\n");
-		close(fd);
+		close(_file);
 		return 0;
 	}
 
 	IMFILE* mf = new IMFILE;
 
-	mf->fd = fd;
+	mf->_file = _file;
 	mf->pos = 0;
 	mf->size = stat_buffer.st_size;
 	mf->data = (char*)data;
@@ -140,10 +140,10 @@ IMFILE* fopen (const char* fname)
 
 	      if (ret == BZ_STREAM_END) {
 		//delete [] mf->data;
-		// close memory mapping, setting fd -1 will ensure deletion of mf->data upon fclose()
-		mf->fd = -1;
+		// close memory mapping, setting _file -1 will ensure deletion of mf->data upon fclose()
+		mf->_file = -1;
 		munmap((void*)mf->data,mf->size);
-		close(mf->fd);
+		close(mf->_file);
 
 		char* realData = new char [buffer_out_count];
 		memcpy(realData, buffer, buffer_out_count);
@@ -277,7 +277,7 @@ IMFILE* gfopen (const char* fname) {
 IMFILE* fopen (unsigned* buf, int size) {
 
 	IMFILE* mf = new IMFILE;
-	mf->fd = -1;
+	mf->_file = -1;
 	mf->size = size;
 	mf->data = new char [mf->size];
 	memcpy ((void*)mf->data, buf, size);
@@ -288,14 +288,14 @@ IMFILE* fopen (unsigned* buf, int size) {
 
 void fclose (IMFILE* f) {
 #ifdef MYFILE_MMAP
-	if ( f->fd == -1 )
+	if ( f->_file == -1 )
 	{
 		delete [] f->data;
 	}
 	else
 	{
 		munmap((void*)f->data,f->size);
-		close(f->fd);
+		close(f->_file);
 	}
 #else
 	delete [] f->data;
