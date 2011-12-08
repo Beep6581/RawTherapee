@@ -115,6 +115,7 @@ void ImageMetaData::merge( bool syncExif, bool syncIPTC, bool removeProcessing )
 
 	xmpData["Xmp.tiff.Software"]= "RawTherapee";
 	xmpData["Xmp.rt.Version"] = VERSION;
+	xmpData["Xmp.tiff.Orientation"] = ePhotoOrientationNormal; // Output should be "right" orientation
 
 	if( removeProcessing )
         for( Exiv2::XmpData::iterator iter = xmpData.begin(); iter != xmpData.end(); ){
