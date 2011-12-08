@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 struct IMFILE {
-	int fd;
+	int _file;
 	int pos;
 	int size;
 	char* data;
