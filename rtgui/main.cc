@@ -164,23 +164,69 @@ int main(int argc, char **argv)
    return 0;
 }
 
+class stdProgress: public rtengine::ProgressListener
+{
+protected:
+	char *progBar;
+	char *backSpace;
+	char *spaces;
+	int size;
+public:
+	stdProgress( char c='.', int len=10):size(len){
+		progBar   = new char[size+1];
+		backSpace = new char[size+1];
+		spaces    = new char[size+1];
+		for( int i=0; i<size;i++){
+			progBar[i]=c;
+			backSpace[i]='\b';
+			spaces[i]=' ';
+		}
+		progBar[size]=0;
+		backSpace[size]=0;
+		spaces[size]=0;
+	}
+	~stdProgress(){
+		delete [] progBar;
+		delete [] backSpace;
+		delete [] spaces;
+	}
+
+    void setProgress (double p) {
+    	if(p>1.)p=1.;
+    	if(p<0)p=0;
+    	int nChars = printf("%s%s", progBar+int((1-p)*size), backSpace+int((1-p)*size) );
+    }
+    void setProgressStr (Glib::ustring str){
+    	return;
+    }
+    void setProgressState (bool inProcessing){
+    	return;
+    }
+    void error (Glib::ustring descr){
+    	return;
+    }
+    void reset(){
+    	printf("%s%s",spaces,backSpace);
+    }
+};
+
 int processLineParams( int argc, char **argv )
 {
 	std::vector<Glib::ustring> inputFiles;
 	Glib::ustring outputPath = "";
 	Glib::ustring processingParams = "";
+	Glib::ustring snapshotName = rtengine::SnapshotInfo::kCurrentSnapshotName;
 	bool isDirectory=false;
 	bool outputDirectory=false;
 	bool overwriteFiles=false;
 	bool sideProcParams=false;
-	bool copyParamsFile=false;
 	bool useDefaultIfAbsent=true;
 	int compression=100;
 	int bits=-1;
 	std::string outputType = "";
 	unsigned errors=0;
 	for( int iArg=1; iArg<argc; iArg++){
-		if( argv[iArg][0]=='-' ){
+		if( argv[iArg][0]=='-' || argv[iArg][0]=='/' ){
 			switch( argv[iArg][1]){
 			case 'o': // outputfile or dir
 				if( iArg+1 <argc ){
@@ -200,6 +246,12 @@ int processLineParams( int argc, char **argv )
 				useDefaultIfAbsent=false;
 			case 's': // Processing params next to file (.xmp appended)
 				sideProcParams = true;
+				if( iArg+1 <argc ){
+				   if( argv[iArg+1][0]!= '-' && argv[iArg+1][0]!='/'){
+					   iArg++;
+					   snapshotName = argv[iArg];
+				   }
+				}
 				break;
 			case 'Y':
 				overwriteFiles =true;
@@ -255,13 +307,13 @@ int processLineParams( int argc, char **argv )
 				std::cerr << Glib::path_get_basename(argv[0]) << " <file> : start GUI editor with file."<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " -c <inputDir>|<file list> : convert files in batch with default parameters."<< std::endl<< std::endl;
 				std::cerr << "Other options used with -c (that must be last option) "<< std::endl;
-				std::cerr << Glib::path_get_basename(argv[0]) <<" [-o <output> | -O <output>] [-s | -S | -p <file>] [-j[1-100]|-t|-n] -Y -c <input>"<< std::endl;
+				std::cerr << Glib::path_get_basename(argv[0]) <<" [-o <output>] [-s [<snapshot>]| -S [<snapshot>]| -p <file>] [-j[1-100]|-t|-n] -Y -c <input>"<< std::endl;
 				std::cerr << " -o <outputFile>|<outputDir> : select output directory."<< std::endl;
-				std::cerr << " -O <outputFile>|<outputDir> : select output dir and copy xmp file into it"<< std::endl;
-				std::cerr << " -s : select parameters to be xmp file next to input file (with same name)"<< std::endl;
-				std::cerr << "      ex: for IMG001.NEF there should be IMG001.NEF.xmp in the same dir" << std::endl;
-				std::cerr << "      if absent use default" << std::endl;
-				std::cerr << " -S : like -s but skip if xmp file not found." << std::endl;
+				std::cerr << " -s : select parameters inside xmp: sidecar file next to input file (with same name) or embedded packet"<< std::endl;
+				std::cerr << "      ex: for IMG001.NEF there should be IMG001.xmp in the same dir" << std::endl;
+				std::cerr << "      if xmp is absent use default profiles (see preferences)" << std::endl;
+				std::cerr << "      if snapshot name is not specified, last processing parameters used are applied." << std::endl;
+				std::cerr << " -S : like -s but skip file if xmp is not found." << std::endl;
 				std::cerr << " -p <file.xmp> : specify xmp file to be used for all conversions."<< std::endl;
 				std::cerr << " -j[compression] : specify output to be jpeg.(default)"<< std::endl;
 				std::cerr << " -t : specify output to be tif."<< std::endl;
@@ -298,18 +350,35 @@ int processLineParams( int argc, char **argv )
 		return 2;
 
 	rtengine::procparams::ProcParams params,paramsRaw,paramsImg, *currentParams;
-	if( !sideProcParams ){
-		if( processingParams.length()>0 )
-			params.load ( processingParams );
-		else{
-			paramsRaw.load(options.profilePath+"/"+options.defProfRaw+paramFileExtension);
-			paramsImg.load(options.profilePath+"/"+options.defProfImg+paramFileExtension);
+	if( !sideProcParams || useDefaultIfAbsent ){
+		if( processingParams.length()>0 ){
+			if( getExtension(processingParams).size()==0 )
+				processingParams = processingParams + paramFileExtension;
+			if( Glib::path_get_dirname( processingParams ).compare(".")==0 )
+				processingParams = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+processingParams ;
+			if( params.loadParams ( processingParams )){
+				std::cerr << "Error loading "<< processingParams << std::endl;
+				return 3;
+			}
+		}else{
+			Glib::ustring fname = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+options.defProfRaw+paramFileExtension;
+			if( paramsRaw.loadParams(fname ) ){
+				std::cerr << "Error loading "<< fname << std::endl;
+				return 3;
+			}
+			fname = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+options.defProfImg+paramFileExtension;
+			if( paramsImg.loadParams(fname) ){
+				std::cerr << "Error loading "<< fname << std::endl;
+				return 3;
+			}
 		}
 	}
 
+	stdProgress progList('.',20);
+
 	for( size_t iFile=0; iFile< inputFiles.size(); iFile++){
 		Glib::ustring inputFile = inputFiles[iFile];
-		std::cout << "Processing: " << inputFile << std::endl;
+		std::cerr << inputFile << ": ";
 
 		rtengine::InitialImage* ii=NULL;
 		rtengine::ProcessingJob* job =NULL;
@@ -333,38 +402,47 @@ int processLineParams( int argc, char **argv )
 			outputFile =  s.substr(0,ext) + "." + outputType;
 		}
 		if( inputFile == outputFile){
-			std::cerr << "Cannot overwrite: " << inputFile << std::endl;
+			std::cerr << "Cannot overwrite! Skipped." << std::endl;
 			continue;
 		}
 		if( !overwriteFiles && safe_file_test( outputFile , Glib::FILE_TEST_EXISTS ) ){
-			std::cerr << outputFile  <<" already exists: use -Y option to overwrite. This image has been skipped." << std::endl;
+			std::cerr << outputFile  <<" already exists: use -Y option to overwrite! Skipped." << std::endl;
 			continue;
 		}
 
+		Glib::ustring xmpfname = removeExtension(inputFile) + paramFileExtension;
+		rtengine::ImageMetaData *idata = rtengine::ImageMetaData::fromFile (inputFile,xmpfname,"");
+		if( ! idata ){
+			errors++;
+			std::cerr << "Error loading xmp! Skipped." << std::endl;
+			continue;
+		}
 		// Load the image
-		ii = rtengine::InitialImage::load ( inputFile,NULL, true, &errorCode, NULL ); // TODO check NULL metadata consequences
+		ii = rtengine::InitialImage::load ( inputFile, idata, true, &errorCode, NULL );
 		if (ii)
 			isRaw=true;
 		else
-			ii = rtengine::InitialImage::load ( inputFile, NULL, false, &errorCode, NULL ); // TODO check NULL metada  consequences
+			ii = rtengine::InitialImage::load ( inputFile, idata, false, &errorCode, NULL );
 		if (!ii) {
 			errors++;
-			std::cerr << "Error loading file: "<< inputFile << std::endl;
+			std::cerr << "Error loading! Skipped."<< std::endl;
 			continue;
 		}
 		if( sideProcParams ){
-			Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
-			if( !safe_file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || params.load ( sideProcessingParams )){
-				if( useDefaultIfAbsent ){
-					currentParams = isRaw? &paramsRaw: &paramsImg;
-				}else{
-					delete ii;
-					errors++;
-					std::cerr << "Error loading processing params: "<< sideProcessingParams << std::endl;
-					continue;
-				}
-			}else
-				currentParams = &params;
+		    int snapshotId = idata->getSnapshotId( snapshotName );
+		    if( snapshotId >=0 ){
+		    	rtengine::SnapshotInfo si = idata->getSnapshot( snapshotId );
+		    	params = si.params;
+		    	currentParams = &params;
+			}else if( useDefaultIfAbsent ){
+				currentParams = isRaw? &paramsRaw: &paramsImg;
+				std::cerr << "using default (" << (isRaw?options.defProfRaw:options.defProfImg)<<") ";
+			}else{
+				delete ii;
+				errors++;
+				std::cerr << "snapshot "<< snapshotName << " not found! Skipped."<< std::endl;
+				continue;
+			}
 		}else if( processingParams.length()>0 ){
 			currentParams = &params;
 		}else if(isRaw ){
@@ -375,16 +453,17 @@ int processLineParams( int argc, char **argv )
 		job = rtengine::ProcessingJob::create (ii, *currentParams,ii->getMetaData(),options.outputMetaData);
 		if( !job ){
 			errors++;
-			std::cerr << "Error creating processing for: "<< inputFile << std::endl;
+			std::cerr << "Error creating job! Skipped."<< std::endl;
 			ii->decreaseRef();
 			continue;
 		}
 
 		// Process image
-		rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, NULL);
+		rtengine::IImage16* resultImage = rtengine::processImage (job, errorCode, &progList );
+		progList.reset();
         if( !resultImage ){
         	errors++;
-        	std::cerr << "Error processing: "<< inputFile << std::endl;
+        	std::cerr << "Error processing! Skipped." << std::endl;
         	rtengine::ProcessingJob::destroy( job );
     		continue;
         }
@@ -400,9 +479,11 @@ int processLineParams( int argc, char **argv )
 
 		if(errorCode){
 			errors++;
-			std::cerr << "Error saving to: "<< outputFile << std::endl;
+			std::cerr << "Error saving to "<< outputFile << std::endl;
+		}else{
+			std::cerr << "done." << std::endl;
 		}
-
+		delete idata;
 		ii->decreaseRef();
 		resultImage->free();
 	}
