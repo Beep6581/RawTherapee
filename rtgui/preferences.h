@@ -74,6 +74,7 @@ class Preferences : public Gtk::Dialog {
 
     Gtk::CheckButton* showDateTime;
     Gtk::CheckButton* showBasicExif;
+    Gtk::CheckButton* showExpComp;
 
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;

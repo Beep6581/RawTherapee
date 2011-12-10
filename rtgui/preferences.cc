@@ -749,14 +749,18 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     Gtk::Frame* fro = Gtk::manage( new Gtk::Frame (M("PREFERENCES_FBROWSEROPTS")) );
     showDateTime = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWDATETIME")) );
     showBasicExif = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWBASICEXIF")) );
+    showExpComp = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_SHOWEXPOSURECOMPENSATION")) );
     Gtk::VBox* vbro = Gtk::manage( new Gtk::VBox () );
+    Gtk::HBox* hbro1 = Gtk::manage( new Gtk::HBox () );
     overlayedFileNames = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERLAY_FILENAMES")) );
 	ckbInternalThumbIfUntouched = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_INTERNALTHUMBIFUNTOUCHED")));
 
     vbro->set_border_width (4);
     vbro->pack_start (*showDateTime, Gtk::PACK_SHRINK, 0);
-    vbro->pack_start (*showBasicExif, Gtk::PACK_SHRINK, 0);
-    vbro->pack_start (*overlayedFileNames, Gtk::PACK_SHRINK, 4); 
+    hbro1->pack_start (*showBasicExif, Gtk::PACK_SHRINK, 0);
+    hbro1->pack_start (*showExpComp, Gtk::PACK_SHRINK, 4);
+    vbro->pack_start (*hbro1, Gtk::PACK_SHRINK, 0);
+    vbro->pack_start (*overlayedFileNames, Gtk::PACK_SHRINK, 0);
 	vbro->pack_start (*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
     fro->add (*vbro);  
@@ -963,9 +967,10 @@ void Preferences::storePreferences () {
     moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.fbShowDateTime  = showDateTime->get_active ();
     moptions.fbShowBasicExif = showBasicExif->get_active ();
-    moptions.menuGroupRank = ckbmenuGroupRank->get_active();
-    moptions.menuGroupLabel = ckbmenuGroupLabel->get_active();
-    moptions.menuGroupFileOperations = ckbmenuGroupFileOperations->get_active();
+    moptions.fbShowExpComp   = showExpComp->get_active ();
+    moptions.menuGroupRank              = ckbmenuGroupRank->get_active();
+    moptions.menuGroupLabel             = ckbmenuGroupLabel->get_active();
+    moptions.menuGroupFileOperations    = ckbmenuGroupFileOperations->get_active();
     moptions.menuGroupProfileOperations = ckbmenuGroupProfileOperations->get_active();
     moptions.blinkClipped    = blinkClipped->get_active ();
     moptions.highlightThreshold = (int)hlThresh->get_value ();
@@ -1108,6 +1113,7 @@ void Preferences::fillPreferences () {
     fontbutton->set_font_name(moptions.font);
     showDateTime->set_active (moptions.fbShowDateTime);
     showBasicExif->set_active (moptions.fbShowBasicExif);
+    showExpComp->set_active (moptions.fbShowExpComp);
     ckbmenuGroupRank->set_active(moptions.menuGroupRank);
     ckbmenuGroupLabel->set_active(moptions.menuGroupLabel);
     ckbmenuGroupFileOperations->set_active(moptions.menuGroupFileOperations);
