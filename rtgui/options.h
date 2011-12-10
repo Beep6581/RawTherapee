@@ -83,6 +83,7 @@ class Options {
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
+    bool fbShowExpComp;
     bool fbShowHidden;
     int  fbArrangement;
     bool multiUser;
