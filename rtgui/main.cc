@@ -43,8 +43,6 @@
 
 #include <safegtk.h>
 
-#include "dcraw.h"
-
 extern Options options;
 
 // stores path to data files
@@ -230,13 +228,6 @@ int processLineParams( int argc, char **argv )
 	for( int iArg=1; iArg<argc; iArg++){
 		if( argv[iArg][0]=='-' || argv[iArg][0]=='/' ){
 			switch( argv[iArg][1]){
-			case 'd':
-				{
-					DCraw dcraw;
-					dcraw.main( argc-iArg, (const char **)(argv+iArg) );
-					return 0;
-				}
-				break;
 			case 'o': // outputfile or dir
 				if( iArg+1 <argc ){
 					iArg++;
@@ -315,7 +306,6 @@ int processLineParams( int argc, char **argv )
 				std::cerr << Glib::path_get_basename(argv[0]) << " [<selected dir>] : start RT GUI browser inside dir."<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " <file> : start GUI editor with file."<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " -c <inputDir>|<file list> : convert files in batch with default parameters."<< std::endl<< std::endl;
-				std::cerr << Glib::path_get_basename(argv[0]) << " -d <dcraw options list> file"<< std::endl<< std::endl;
 				std::cerr << "Other options used with -c (that must be last option) "<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) <<" [-o <output>] [-s [<snapshot>]| -S [<snapshot>]| -p <file>] [-j[1-100]|-t|-n] -Y -c <input>"<< std::endl;
 				std::cerr << " -o <outputFile>|<outputDir> : select output directory."<< std::endl;
@@ -329,7 +319,6 @@ int processLineParams( int argc, char **argv )
 				std::cerr << " -t : specify output to be tif."<< std::endl;
 				std::cerr << " -n : specify output to be png."<< std::endl;
 				std::cerr << " -Y : overwrite output if present."<< std::endl;
-				std::cerr << " -d : pass all parameters to dcraw."<< std::endl;
 				return -1;
 			}
 		}else{
@@ -369,18 +358,18 @@ int processLineParams( int argc, char **argv )
 				processingParams = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+processingParams ;
 			if( params.loadParams ( processingParams )){
 				std::cerr << "Error loading "<< processingParams << std::endl;
-				return -3;
+				return 3;
 			}
 		}else{
 			Glib::ustring fname = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+options.defProfRaw+paramFileExtension;
 			if( paramsRaw.loadParams(fname ) ){
 				std::cerr << "Error loading "<< fname << std::endl;
-				return -3;
+				return 3;
 			}
 			fname = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+options.defProfImg+paramFileExtension;
 			if( paramsImg.loadParams(fname) ){
 				std::cerr << "Error loading "<< fname << std::endl;
-				return -3;
+				return 3;
 			}
 		}
 	}
