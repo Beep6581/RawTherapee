@@ -88,14 +88,12 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
     ahbox->pack_start (*delBookmark);
 
     bscrollw = Gtk::manage (new Gtk::ScrolledWindow ());
-//    bscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     bscrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
-    bscrollw->set_size_request (-1, 75);
 
     Gtk::Frame* bmFrame = Gtk::manage (new Gtk::Frame (M("HISTORY_SNAPSHOTS")));
     Gtk::VBox* bmBox = Gtk::manage (new Gtk::VBox ());
     bmFrame->add (*bmBox);
-    bmBox->pack_start (*bscrollw, Gtk::PACK_SHRINK, 4);
+    bmBox->pack_start (*bscrollw);
     bmBox->pack_end (*ahbox, Gtk::PACK_SHRINK, 4);
     
     if (bookmarkSupport){
