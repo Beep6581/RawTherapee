@@ -119,97 +119,96 @@ std::string IPTCMeta::getXmpKey( int index ) const
 
 void IPTCMeta::initIPTCMeta()
 {
+	IPTCtags[kIPTCHeadline] = IPTCMeta(kIPTCHeadline, "IPTC_HEADLINE", "IPTC_HEADLINE_HINT");
+	IPTCtags[kIPTCCity]     = IPTCMeta(kIPTCCity,     "IPTC_CITY", "IPTC_CITY_HINT");
+	IPTCtags[kIPTCCountry]  = IPTCMeta(kIPTCCountry,  "IPTC_COUNTRY", "IPTC_COUNTRY_HINT");
+    IPTCtags[kIPTCState]    = IPTCMeta(kIPTCState,    "IPTC_STATE", "IPTC_STATE_HINT");
+    IPTCtags[kIPTCAuthorPos]= IPTCMeta(kIPTCAuthorPos,"IPTC_AUTHOR_POS","IPTC_AUTHOR_POS_HINT");
 
-	IPTCtags[kIPTCHeadline] = IPTCMeta(kIPTCHeadline, "Headline", "A brief synopsis of the caption.");
-	IPTCtags[kIPTCCity]     = IPTCMeta(kIPTCCity,     "City", "Name of the city of the location shown in the image. IIM 2:90");
-	IPTCtags[kIPTCCountry]  = IPTCMeta(kIPTCCountry,  "Country", "Full name of the country of the location shown in the image. IIM 2:101");
-    IPTCtags[kIPTCState]    = IPTCMeta(kIPTCState,    "Province/State", "Name of the subregion of a country of the location shown in the image. IIM 2:95");
-    IPTCtags[kIPTCAuthorPos]= IPTCMeta(kIPTCAuthorPos,"Creator's job title","The job title of the photographer IIM 2:85 By line title");
+    IPTCtags[kIPTCWriter]   = IPTCMeta(kIPTCWriter, "IPTC_WRITER","IPTC_WRITER_HINT");
+    IPTCtags[kIPTCInstruct] = IPTCMeta(kIPTCInstruct, "IPTC_INSTRUCTIONS", "IPTC_INSTRUCTIONS_HINT");
+    IPTCtags[kIPTCReference]= IPTCMeta(kIPTCReference,"IPTC_JOBID","IPTC_JOBID_HINT");
+    IPTCtags[kIPTCCredit]   = IPTCMeta(kIPTCCredit, "IPTC_CREDIT" ,"IPTC_CREDIT_HINT");
+    IPTCtags[kIPTCSource]   = IPTCMeta(kIPTCSource, "IPTC_SOURCE", "IPTC_SOURCE_HINT");
+    IPTCtags[kIPTCUrgency]  = IPTCMeta(kIPTCUrgency, "IPTC_URGENCY", "IPTC_URGENCY_HINT");
+    IPTCtags[kIPTCCategory] = IPTCMeta(kIPTCCategory,"IPTC_CATEGORY", "IPTC_CATEGORY_HINT");
+    IPTCtags[kIPTCSuppCateg]= IPTCMeta(kIPTCSuppCateg,"IPTC_SUPPLCATEGORIES","IPTC_SUPPLCATEGORIES_HINT");
 
-    IPTCtags[kIPTCWriter]   = IPTCMeta(kIPTCWriter, "Description Writer","The name of the person involved in writing, editing or correcting the description of the image IIM 2:122");
-    IPTCtags[kIPTCInstruct] = IPTCMeta(kIPTCInstruct, "Instructions", "information about embargoes, or other restrictions not covered by the Rights Usage IIM 2:40 ");
-    IPTCtags[kIPTCReference]= IPTCMeta(kIPTCReference,"Job Id","A number or identifier needed for workflow control or tracking IIM 2:103");
-    IPTCtags[kIPTCCredit]   = IPTCMeta(kIPTCCredit, "Credit Line" ,"The credit to person(s) and/or organisation(s) required by the supplier of the image to be used when published IIM 2:110");
-    IPTCtags[kIPTCSource]   = IPTCMeta(kIPTCSource, "Source", "Identifies the original owner of the copyright for the intellectual content of the image. This could be an agency, a member of an agency or an individual. Source could be different from Creator and from the entities in the CopyrightNotice. IIM 2:115");
-    IPTCtags[kIPTCUrgency]  = IPTCMeta(kIPTCUrgency, "Urgency", "IIM  2:09 Urgency (deprecated)");
-    IPTCtags[kIPTCCategory] = IPTCMeta(kIPTCCategory,"Category", "IIM 2:15 Category (deprecated)");
-    IPTCtags[kIPTCSuppCateg]= IPTCMeta(kIPTCSuppCateg,"Supplemental Categories"," IIM 2:20 Supplemental Category (deprecated)");
+    IPTCtags[kIPTCLocation]     = IPTCMeta(kIPTCLocation, "IPTC_SUBLOCATION", "IPTC_SUBLOCATION_HINT");
+    IPTCtags[kIPTCCountryCode]  = IPTCMeta(kIPTCCountryCode, "IPTC_COUNTRYCODE","IPTC_COUNTRYCODE_HINT");
+    IPTCtags[kIPTCGenre]        = IPTCMeta(kIPTCGenre,"IPTC_GENRE" ,"IPTC_GENRE_HINT");
+    IPTCtags[kIPTCScene]        = IPTCMeta(kIPTCScene, "IPTC_SCENE", "IPTC_SCENE_HINT", Exiv2::xmpBag );
+    IPTCtags[kIPTCSubjCode]     = IPTCMeta(kIPTCSubjCode,"IPTC_SUBJECT","IPTC_SUBJECT_HINT", Exiv2::xmpBag );
 
-    IPTCtags[kIPTCLocation]     = IPTCMeta(kIPTCLocation, "Sublocation", "Exact name of the sublocation shown in the image. This sublocation name could either be the name of a sublocation to a city or the name of a well known location or (natural) monument outside a city. IIM 2:92");
-    IPTCtags[kIPTCCountryCode]  = IPTCMeta(kIPTCCountryCode, "Country Code","The code should be taken from ISO 3166 two or three letter code. The full name of a country should go to the 'Country' element IIM 2:100");
-    IPTCtags[kIPTCGenre]        = IPTCMeta(kIPTCGenre,"Intellectual Genre" ,"Describe the nature of the image in terms of its intellectual or journalistic characteristics, such as daybook, or feature (examples at: http://www.newscodes.org/) IIM 2:04 ");
-    IPTCtags[kIPTCScene]        = IPTCMeta(kIPTCScene, "Scene code", "Describes the scene of a photo content. Specifies one ore more terms from the IPTC 'Scene-NewsCodes' (http://www.newscodes.org/). Each Scene is represented as a string of 6 digits in an unordered list.", Exiv2::xmpBag );
-    IPTCtags[kIPTCSubjCode]     = IPTCMeta(kIPTCSubjCode,"Subject Code","Specifies one or more Subjects from the IPTC 'Subject-NewsCodes' (http://www.newscodes.org/) taxonomy to categorise the image. Each Subject is represented as a string of 8 digits in an unordered list.", Exiv2::xmpBag );
+    IPTCtags[kIPTCKeywords]     = IPTCMeta(kIPTCKeywords,"IPTC_KEYWORDS","IPTC_KEYWORDS_HINT", Exiv2::xmpBag );
+    IPTCtags[kIPTCCreator]      = IPTCMeta(kIPTCCreator,"IPTC_AUTHOR","IPTC_AUTHOR_HINT", Exiv2::langAlt );
+    IPTCtags[kIPTCTitle]        = IPTCMeta(kIPTCTitle, "IPTC_TITLE","IPTC_TITLE_HINT", Exiv2::langAlt );
+    IPTCtags[kIPTCRights]       = IPTCMeta(kIPTCRights,"IPTC_RIGHTS", "IPTC_RIGHTS_HINT", Exiv2::langAlt );
+    IPTCtags[kIPTCDescription]  = IPTCMeta(kIPTCDescription, "IPTC_DESCRIPTION", "IPTC_DESCRIPTION_HINT", Exiv2::langAlt );
 
-    IPTCtags[kIPTCKeywords]     = IPTCMeta(kIPTCKeywords,"Keywords","Keywords to express the subject of the image. Any number of keywords, terms or phrases used to express the subject matter in the image. IIM 2:25", Exiv2::xmpBag );
-    IPTCtags[kIPTCCreator]      = IPTCMeta(kIPTCCreator,"Author","Contains the name of the photographer, but in cases where the photographer should not be identified the name of a company or organisation may be appropriate. IIM 2:80 By line", Exiv2::langAlt );
-    IPTCtags[kIPTCTitle]        = IPTCMeta(kIPTCTitle, "Title","A shorthand reference for the digital image; this may be the file name. IIM 2:05 Object Name", Exiv2::langAlt );
-    IPTCtags[kIPTCRights]       = IPTCMeta(kIPTCRights,"Copyright Notice", "Contains any necessary copyright notice for claiming the intellectual property for this photograph and should identify the current owner of the copyright for the photograph IIM 2:116 Copyright Notice", Exiv2::langAlt );
-    IPTCtags[kIPTCDescription]  = IPTCMeta(kIPTCDescription, "Description", "Enter a 'caption' describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image. IIM 2:120 Caption/Abstract", Exiv2::langAlt );
+    IPTCtags[kIPTCUsageTerms]   = IPTCMeta(kIPTCUsageTerms,"IPTC_USAGETERMS","IPTC_USAGETERMS_HINT",Exiv2::langAlt);
 
-    IPTCtags[kIPTCUsageTerms]   = IPTCMeta(kIPTCUsageTerms,"Usage terms","Instructions on how this image can legally be used",Exiv2::langAlt);
+    IPTCtags[kIPTCCreatorAdrCity] = IPTCMeta(kIPTCCreatorAdrCity,"IPTC_CREATORCITY","IPTC_CREATORCITY_HINT" );
+    IPTCtags[kIPTCCreatorAdrCtry] = IPTCMeta(kIPTCCreatorAdrCtry,"IPTC_CREATORCOUNTRY","IPTC_CREATORCOUNTRY_HINT");
+    IPTCtags[kIPTCCreatorExtadr]  = IPTCMeta(kIPTCCreatorExtadr,"IPTC_CREATORADDRESS","IPTC_CREATORADDRESS_HINT");
+    IPTCtags[kIPTCCreatorPcode]   = IPTCMeta(kIPTCCreatorPcode,"IPTC_CREATORPCODE","IPTC_CREATORPCODE_HINT");
+    IPTCtags[kIPTCCreatorRegion]  = IPTCMeta(kIPTCCreatorRegion,"IPTC_CREATORSTATE","IPTC_CREATORSTATE_HINT");
+    IPTCtags[kIPTCCreatorEmail]   = IPTCMeta(kIPTCCreatorEmail,"IPTC_CREATOREMAIL","IPTC_CREATOREMAIL_HINT");
+    IPTCtags[kIPTCCreatorTel]     = IPTCMeta(kIPTCCreatorTel,"IPTC_CREATORPHONE","IPTC_CREATORPHONE_HINT");
+    IPTCtags[kIPTCCreatorUrl]     = IPTCMeta(kIPTCCreatorUrl,"IPTC_CREATORURL","IPTC_CREATORURL_HINT");
 
-    IPTCtags[kIPTCCreatorAdrCity] = IPTCMeta(kIPTCCreatorAdrCity,"Creator city","The city for the address of the person that created this image" );
-    IPTCtags[kIPTCCreatorAdrCtry] = IPTCMeta(kIPTCCreatorAdrCtry,"Creator country","The country name for the address of the person that created this image");
-    IPTCtags[kIPTCCreatorExtadr]  = IPTCMeta(kIPTCCreatorExtadr,"Creator address","The address for the person that created this image");
-    IPTCtags[kIPTCCreatorPcode]   = IPTCMeta(kIPTCCreatorPcode,"Creator postal code","The postal code for the address of the person that created this image");
-    IPTCtags[kIPTCCreatorRegion]  = IPTCMeta(kIPTCCreatorRegion,"Creator State/Province","The state or province for the address of the person that created this image");
-    IPTCtags[kIPTCCreatorEmail]   = IPTCMeta(kIPTCCreatorEmail,"Creator Email(s)","The work Email address(es) for the person that created this image");
-    IPTCtags[kIPTCCreatorTel]     = IPTCMeta(kIPTCCreatorTel,"Creator Phone num.","The work Phone number(s) for the person that created this image, using the international format");
-    IPTCtags[kIPTCCreatorUrl]     = IPTCMeta(kIPTCCreatorUrl,"Creator Web URL","The work Web URL(s) for the person that created this image, such as http://www.domain.com/");
+    IPTCtags[kIPTCModelInfo]      = IPTCMeta(kIPTCModelInfo,"IPTC_MODELINFO","IPTC_MODELINFO_HINT");
+    IPTCtags[kIPTCModelAge]       = IPTCMeta(kIPTCModelAge,"IPTC_MODELAGE","IPTC_MODELAGE_HINT",Exiv2::xmpBag);
+    IPTCtags[kIPTCPerson]         = IPTCMeta(kIPTCPerson,"IPTC_PERSON","IPTC_PERSON_HINT",Exiv2::xmpBag);
+    IPTCtags[kIPTCOrganization]   = IPTCMeta(kIPTCOrganization,"IPTC_ORGANIZATION","IPTC_ORGANIZATION_HINT");
+    IPTCtags[kIPTCCVterm]         = IPTCMeta(kIPTCCVterm,"IPTC_VOCABULARY","IPTC_VOCABULARY_HINT",Exiv2::xmpBag );
+    IPTCtags[kIPTCEvent]          = IPTCMeta(kIPTCEvent,"IPTC_EVENT","IPTC_EVENT_HINT",Exiv2::langAlt);
 
-    IPTCtags[kIPTCModelInfo]      = IPTCMeta(kIPTCModelInfo,"Model information","Information like ethnicity or other details about the model(s) in this image");
-    IPTCtags[kIPTCModelAge]       = IPTCMeta(kIPTCModelAge,"Model(s) Age","The age of the human model(s) at the time this image was made",Exiv2::xmpBag);
-    IPTCtags[kIPTCPerson]         = IPTCMeta(kIPTCPerson,"Person shown","Name of a person shown in the image",Exiv2::xmpBag);
-    IPTCtags[kIPTCOrganization]   = IPTCMeta(kIPTCOrganization,"Code of Organization","Enter an identifier for the controlled vocabulary, then a colon, and finally the code from the vocabulary assigned to the organisation shown in this image (e.g. nasdaq:companyA)");
-    IPTCtags[kIPTCCVterm]         = IPTCMeta(kIPTCCVterm,"Controlled Vocabulary Term","Term to describe the content of the image by a value from a Controlled Vocabulary: an identifier for the controlled vocabulary, then a colon, and finally the code from the vocabulary assigned to the term",Exiv2::xmpBag );
-    IPTCtags[kIPTCEvent]          = IPTCMeta(kIPTCEvent,"Event","the name or description of the event where this image was taken",Exiv2::langAlt);
+    IPTCtags[kIPTCLocationCity]   = IPTCMeta(kIPTCLocationCity,"IPTC_LOCATIONCITY","IPTC_LOCATIONCITY_HINT");
+    IPTCtags[kIPTCLocationCode]   = IPTCMeta(kIPTCLocationCode,"IPTC_LOCATIONCOUNTRYCODE","IPTC_LOCATIONCOUNTRYCODE_HINT");
+    IPTCtags[kIPTCLocationCtry]   = IPTCMeta(kIPTCLocationCtry,"IPTC_LOCATIONCOUNTRY","IPTC_LOCATIONCOUNTRY_HINT");
+    IPTCtags[kIPTCLocationState]  = IPTCMeta(kIPTCLocationState,"IPTC_LOCATIONSTATE","IPTC_LOCATIONSTATE_HINT");
+    IPTCtags[kIPTCLocationSubloc] = IPTCMeta(kIPTCLocationSubloc,"IPTC_LOCATIONSUBLOC","IPTC_LOCATIONSUBLOC_HINT");
+    IPTCtags[kIPTCLocationRegion] = IPTCMeta(kIPTCLocationRegion,"IPTC_LOCATIONREGION","IPTC_LOCATIONREGION_HINT");
 
-    IPTCtags[kIPTCLocationCity]   = IPTCMeta(kIPTCLocationCity,"Location City","Details about the City which is shown in this image");
-    IPTCtags[kIPTCLocationCode]   = IPTCMeta(kIPTCLocationCode,"Location Country code","Enter the 2 or 3 letter ISO 3166 Country Code of the Country");
-    IPTCtags[kIPTCLocationCtry]   = IPTCMeta(kIPTCLocationCtry,"Location Country","Details about the Country which is shown in this image");
-    IPTCtags[kIPTCLocationState]  = IPTCMeta(kIPTCLocationState,"Location State/Province","Details about the State/Province which is shown in this image");
-    IPTCtags[kIPTCLocationSubloc] = IPTCMeta(kIPTCLocationSubloc,"Location Sublocation","Name of a sublocation. This sublocation name could either be the name of a sublocation to a city or the name of a well known location or (natural) monument outside a city. In the sense of a sublocation to a city this element is at the fifth level of a top-down geographical hierarchy.");
-    IPTCtags[kIPTCLocationRegion] = IPTCMeta(kIPTCLocationRegion,"Location World region","The name of a world region of a location. This element is at the first (top I) level of a top-down geographical hierarchy.");
+    IPTCtags[kIPTCLocCreateCity]  = IPTCMeta(kIPTCLocCreateCity,"IPTC_CREATEDCITY","IPTC_CREATEDCITY_HINT");
+    IPTCtags[kIPTCLocCreateCode]  = IPTCMeta(kIPTCLocCreateCode,"IPTC_CREATEDCOUNTRYCODE","IPTC_CREATEDCOUNTRYCODE_HINT");
+    IPTCtags[kIPTCLocCreateCtry]  = IPTCMeta(kIPTCLocCreateCtry,"IPTC_CREATEDCOUNTRY","IPTC_CREATEDCOUNTRY_HINT");
+    IPTCtags[kIPTCLocCreateState] = IPTCMeta(kIPTCLocCreateState,"IPTC_CREATEDSTATE","IPTC_CREATEDSTATE_HINT");
+    IPTCtags[kIPTCLocCreateSubloc]= IPTCMeta(kIPTCLocCreateSubloc,"IPTC_CREATEDSUBLOC","IPTC_CREATEDSUBLOC_HINT");
+    IPTCtags[kIPTCLocCreateRegion]= IPTCMeta(kIPTCLocCreateRegion,"IPTC_CREATEDREGION","IPTC_CREATEDREGION_HINT");
 
-    IPTCtags[kIPTCLocCreateCity]  = IPTCMeta(kIPTCLocCreateCity,"Created City","The location the content of the item was created: details about a location where this image was created");
-    IPTCtags[kIPTCLocCreateCode]  = IPTCMeta(kIPTCLocCreateCode,"Created Country code","The location the content of the item was created: details about a location where this image was created");
-    IPTCtags[kIPTCLocCreateCtry]  = IPTCMeta(kIPTCLocCreateCtry,"Created Country","The location the content of the item was created: details about a location where this image was created");
-    IPTCtags[kIPTCLocCreateState] = IPTCMeta(kIPTCLocCreateState,"Created State/Province","The location the content of the item was created: details about a location where this image was created");
-    IPTCtags[kIPTCLocCreateSubloc]= IPTCMeta(kIPTCLocCreateSubloc,"Created Sublocation","The location the content of the item was created: details about a location where this image was created");
-    IPTCtags[kIPTCLocCreateRegion]= IPTCMeta(kIPTCLocCreateRegion,"Created World region","The location the content of the item was created: details about a location where this image was created");
+    IPTCtags[kIPTCArtworkRights]  = IPTCMeta(kIPTCArtworkRights,"IPTC_ARTWORKRIGHTS","IPTC_ARTWORKRIGHTS_HINT");
+    IPTCtags[kIPTCArtworkCreator] = IPTCMeta(kIPTCArtworkCreator,"IPTC_ARTWORKCREATOR","IPTC_ARTWORKCREATOR_HINT");
+    IPTCtags[kIPTCArtworkDate]    = IPTCMeta(kIPTCArtworkDate,"IPTC_ARTWORKDATE","IPTC_ARTWORKDATE_HINT");
+    IPTCtags[kIPTCArtworkSource]  = IPTCMeta(kIPTCArtworkSource,"IPTC_ARTWORKSOURCE","IPTC_ARTWORKSOURCE_HINT");
+    IPTCtags[kIPTCArtworkNumber]  = IPTCMeta(kIPTCArtworkNumber,"IPTC_ARTWORKNUMBER","IPTC_ARTWORKNUMBER_HINT");
+    IPTCtags[kIPTCArtworkTitle]   = IPTCMeta(kIPTCArtworkTitle,"IPTC_ARTWORKTITLE","IPTC_ARTWORKTITLE_HINT");
 
-    IPTCtags[kIPTCArtworkRights]  = IPTCMeta(kIPTCArtworkRights,"Artwork copyrights","Contains any necessary copyright notice for claiming the intellectual property for artwork or an object in the image and should identify the current owner of the copyright of this work with associated intellectual property rights");
-    IPTCtags[kIPTCArtworkCreator] = IPTCMeta(kIPTCArtworkCreator,"Artwork creator","Contains the name of the artist who has created artwork or an object in the image. In cases where the artist could or should not be identified the name of a company or organisation may be appropriate.");
-    IPTCtags[kIPTCArtworkDate]    = IPTCMeta(kIPTCArtworkDate,"Artwork creation date","Designates the date and optionally the time the artwork or object in the image was created. This relates to artwork or objects with associated intellectual property rights");
-    IPTCtags[kIPTCArtworkSource]  = IPTCMeta(kIPTCArtworkSource,"Artwork source","The organisation or body holding and registering the artwork or object in the image for inventory purposes.");
-    IPTCtags[kIPTCArtworkNumber]  = IPTCMeta(kIPTCArtworkNumber,"Source Inventory Number","The inventory number issued by the organisation or body holding and registering the artwork or object in the image.");
-    IPTCtags[kIPTCArtworkTitle]   = IPTCMeta(kIPTCArtworkTitle,"Artwork title","The verbal and human readable name of the artwork or object in this image");
-
-    IPTCtags[kIPTCRightsOwner]    = IPTCMeta(kIPTCRightsOwner,"Copyright Owner","The owner or owners of the copyright in the licensed image",Exiv2::xmpSeq);
-    IPTCtags[kIPTCImageCreator]   = IPTCMeta(kIPTCImageCreator,"Image Creator","Creator or creators of the image");
-    IPTCtags[kIPTCLicensor]       = IPTCMeta(kIPTCLicensor,"Licensor","A person or company that should be contacted to obtain a licence for using the item or who has licensed the item");
-    IPTCtags[kIPTCImageSupplier]  = IPTCMeta(kIPTCImageSupplier,"Image supplier","The identifier for the most recent supplier of this image - note that this might not be the creator or owner of the image");
-    IPTCtags[kIPTCGUIDSupplier]   = IPTCMeta(kIPTCGUIDSupplier,"Image supplier GUID","Optional identifier assigned by the Image Supplier to the image");
-    IPTCtags[kIPTCMinorDisclosure]= IPTCMeta(kIPTCMinorDisclosure,"Minor Model Age Disclosure","The age of the youngest model pictured in this image, at the time that this image was made.");
-    IPTCtags[kIPTCModelReleaseID] = IPTCMeta(kIPTCModelReleaseID,"Model Release ID","Identifier associated with each Model Release", Exiv2::xmpBag);
-    IPTCtags[kIPTCModelReleaseSt] = IPTCMeta(kIPTCModelReleaseSt,"Model Release Status","The availability and scope of model releases authorising usage of the likenesses of persons appearing in the photograph.");
-    IPTCtags[kIPTCPropertyRelID]  = IPTCMeta(kIPTCPropertyRelID,"Property Release Id","Optional identifier associated with each Property Release", Exiv2::xmpBag);
-    IPTCtags[kIPTCPropertyRelSt]  = IPTCMeta(kIPTCPropertyRelSt,"Property Release Status","The availability and scope of property releases authorising usage of the properties appearing in the photograph.");
-    IPTCtags[kIPTCRegistryID]     = IPTCMeta(kIPTCRegistryID,"Registry Image Id","A unique identifier created by a registry and applied by the creator of the digital image. This value shall not be changed after being applied.");
-    IPTCtags[kIPTCRegistryOrgID]  = IPTCMeta(kIPTCRegistryOrgID,"Registry Organisation Id","An identifier for the registry which issued the corresponding Registry Image Id");
+    IPTCtags[kIPTCRightsOwner]    = IPTCMeta(kIPTCRightsOwner,"IPTC_RIGHTSOWNER","IPTC_RIGHTSOWNER_HINT",Exiv2::xmpSeq);
+    IPTCtags[kIPTCImageCreator]   = IPTCMeta(kIPTCImageCreator,"IPTC_IMAGECREATOR","IPTC_IMAGECREATOR_HINT");
+    IPTCtags[kIPTCLicensor]       = IPTCMeta(kIPTCLicensor,"IPTC_LICENSOR","IPTC_LICENSOR_HINT");
+    IPTCtags[kIPTCImageSupplier]  = IPTCMeta(kIPTCImageSupplier,"IPTC_IMAGESUPPLIER","IPTC_IMAGESUPPLIER_HINT");
+    IPTCtags[kIPTCGUIDSupplier]   = IPTCMeta(kIPTCGUIDSupplier,"IPTC_IMAGESUPPLIERGUID","IPTC_IMAGESUPPLIERGUID_HINT");
+    IPTCtags[kIPTCMinorDisclosure]= IPTCMeta(kIPTCMinorDisclosure,"IPTC_MINORDISCLOSURE","IPTC_MINORDISCLOSURE_HINT");
+    IPTCtags[kIPTCModelReleaseID] = IPTCMeta(kIPTCModelReleaseID,"IPTC_MODELRELID","IPTC_MODELRELID_HINT", Exiv2::xmpBag);
+    IPTCtags[kIPTCModelReleaseSt] = IPTCMeta(kIPTCModelReleaseSt,"IPTC_MODELRELSTATUS","IPTC_MODELRELSTATUS_HINT");
+    IPTCtags[kIPTCPropertyRelID]  = IPTCMeta(kIPTCPropertyRelID,"IPTC_PROPERTYRELID","IPTC_PROPERTYRELID_HINT", Exiv2::xmpBag);
+    IPTCtags[kIPTCPropertyRelSt]  = IPTCMeta(kIPTCPropertyRelSt,"IPTC_PROPERTYRELSTATUS","IPTC_PROPERTYRELSTATUS_HINT");
+    IPTCtags[kIPTCRegistryID]     = IPTCMeta(kIPTCRegistryID,"IPTC_REGISTRYID","IPTC_REGISTRYID_HINT");
+    IPTCtags[kIPTCRegistryOrgID]  = IPTCMeta(kIPTCRegistryOrgID,"IPTC_REGISTRYORG","IPTC_REGISTRYORG_HINT");
 
     // readonly
-    IPTCtags[kIPTCDate]           = IPTCMeta(kIPTCDate,     "Date Created" ,"The Date the image was taken IIM 2:55");
+    IPTCtags[kIPTCDate]           = IPTCMeta(kIPTCDate,"IPTC_DATE" ,"IPTC_DATE_HINT");
     IPTCtags[kIPTCDate].readOnly  = true;
-    IPTCtags[kIPTCGUID]           = IPTCMeta(kIPTCGUID,"Image GUID","Globally unique identifier for this digital image");
+    IPTCtags[kIPTCGUID]           = IPTCMeta(kIPTCGUID,"IPTC_IMAGEGUID","IPTC_IMAGEGUID_HINT");
     IPTCtags[kIPTCGUID].readOnly  = true;
-    IPTCtags[kIPTCMaxHeight]      = IPTCMeta(kIPTCMaxHeight,"Max Avail Height","The maximum available height in pixels of the original photo from which this photo has been derived by downsizing.");
+    IPTCtags[kIPTCMaxHeight]      = IPTCMeta(kIPTCMaxHeight,"IPTC_IMAGEMAXHEIGHT","IPTC_IMAGEMAXHEIGHT_HINT");
     IPTCtags[kIPTCMaxHeight].readOnly = true;
-    IPTCtags[kIPTCMaxWidth]       = IPTCMeta(kIPTCMaxWidth,"Max Avail Width","The maximum available width in pixels of the original photo from which this photo has been derived by downsizing.");
+    IPTCtags[kIPTCMaxWidth]       = IPTCMeta(kIPTCMaxWidth,"IPTC_IMAGEMAXWIDTH","IPTC_IMAGEMAXWIDTH_HINT");
     IPTCtags[kIPTCMaxWidth].readOnly = true;
     // PLUS versione is 1.2.0
-    IPTCtags[kIPTCPlusVersion]    = IPTCMeta(kIPTCPlusVersion,"PLUS Version","The version number of the PLUS standards in place at the time of the transaction");
+    IPTCtags[kIPTCPlusVersion]    = IPTCMeta(kIPTCPlusVersion,"IPTC_PLUSVERSION","IPTC_PLUSVERSION_HINT");
     IPTCtags[kIPTCPlusVersion].readOnly = true;
 
     /* Scene codes: http://cv.iptc.org/newscodes/scene/ */
